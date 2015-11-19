@@ -28,16 +28,14 @@ body > .sapUxAPObjectPageLayout,
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
+}
+
+.sapUxAPObjectPageWrapperTransform {
 	/* Performance tweak - force the objectPageWrapper content on to the GPU effectively separating it in a different
 	composite layer. This is better done with will-change: transform, but at the moment is not supported on
 	many platforms. When will-change becomes widely adopted than it's better to use it rather than translate3d */
 	-webkit-transform: translate3d(0, 0, 0);
 	transform: translate3d(0, 0, 0);
-}
-
-.sapUxAPObjectPageWrapperNoTransform {
-	-webkit-transform: none;
-	transform: none;
 }
 
 .sapUxAPObjectPageScroll {

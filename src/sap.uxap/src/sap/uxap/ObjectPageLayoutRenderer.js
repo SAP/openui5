@@ -65,9 +65,9 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write("<div ");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-opwrapper");
 			oRm.addClass("sapUxAPObjectPageWrapper");
-			// no transform if we have title arrow inside the header content, otherwise the z-index is not working
-			if (oHeader && oControl.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector()) {
-				oRm.addClass("sapUxAPObjectPageWrapperNoTransform");
+			// set transform only if we don't have title arrow inside the header content, otherwise the z-index is not working
+			if (!(oControl.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector())) {
+				oRm.addClass("sapUxAPObjectPageWrapperTransform");
 			}
 			oRm.writeClasses();
 			oRm.write(">");
