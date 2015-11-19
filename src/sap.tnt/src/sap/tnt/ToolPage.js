@@ -10,19 +10,19 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 		/**
 		 * Constructor for a new ToolPage.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The ToolPage TODO. Change the name.
+		 * The ToolPage is a layout control, used to put together the parts of a basic tools app - ToolHeader, SideNavigation and contents area.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @public // TODO privet
-		 * @since 1.36
+		 * @public
+		 * @since 1.34
 		 * @alias sap.tnt.ToolPage
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -31,7 +31,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 				library: 'sap.tnt',
 				properties: {
 					/**
-					 * Indicates if the side navigation is expanded.
+					 * Indicates if the side area is expanded.
 					 */
 					sideExpanded: {type: 'boolean', group: 'Misc', defaultValue: true}
 				},
@@ -54,8 +54,8 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 		});
 
 		/**
-		 * Toggles the expand/collapse state of the side content.
-		 * @returns {sap.tnt.ToolPage} Pointer to the control instance for chaining
+		 * Toggles the expand/collapse state of the SideContent.
+		 * @returns {sap.tnt.ToolPage} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		ToolPage.prototype.toggleSideContentMode = function () {
@@ -63,8 +63,8 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 		};
 
 		/**
-		 * Sets the expand/collapse state of the side content.
-		 * @param {boolean} isSideExpanded - Defines whether the side navigation is expanded.
+		 * Sets the expand/collapse state of the SideContent.
+		 * @param {boolean} isSideExpanded defines whether the SideNavigation is expanded.
 		 * @returns {sap.tnt.ToolPage} Pointer to the control instance for chaining
 		 * @public
 		 */
@@ -159,7 +159,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 		};
 
 		/**
-		 * Sets the last media query
+		 * Sets the last media query.
 		 * @returns {ToolPage}
 		 * @private
 		 */
