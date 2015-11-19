@@ -122,16 +122,36 @@
 		});
 		
 		test("getInstance", function() {
-			var oDate, oJSDate = new Date();
+			var oDate, oGregorian, oJSDate = new Date();
 			
+			// Explicit calendar type
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Gregorian);
 			ok(oDate instanceof sap.ui.core.date.Gregorian, "getInstance returns expected object");
+			equal(oDate.getCalendarType(), "Gregorian", "Calendar type is set correctly");
 
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Islamic);
 			ok(oDate instanceof sap.ui.core.date.Islamic, "getInstance returns expected object");
+			equal(oDate.getCalendarType(), "Islamic", "Calendar type is set correctly");
 
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Japanese);
 			ok(oDate instanceof sap.ui.core.date.Japanese, "getInstance returns expected object");
+			equal(oDate.getCalendarType(), "Japanese", "Calendar type is set correctly");
+			
+			// Default calendar type
+			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate);
+			ok(oDate instanceof sap.ui.core.date.Gregorian, "getInstance returns expected object");
+			equal(oDate.getCalendarType(), "Gregorian", "Calendar type is set correctly");
+			
+			// getInstance with other UniversalDate
+			oGregorian = new sap.ui.core.date.Gregorian();
+			oDate = sap.ui.core.date.UniversalDate.getInstance(oGregorian, sap.ui.core.CalendarType.Islamic);
+			ok(oDate instanceof sap.ui.core.date.Islamic, "getInstance returns expected object");
+			equal(oDate.getCalendarType(), "Islamic", "Calendar type is set correctly");
+		
+			oDate = sap.ui.core.date.UniversalDate.getInstance(oGregorian, sap.ui.core.CalendarType.Japanese);
+			ok(oDate instanceof sap.ui.core.date.Japanese, "getInstance returns expected object");
+			equal(oDate.getCalendarType(), "Japanese", "Calendar type is set correctly");
+			
 		});
 		
 		test("determineType with Gregorian calendar", function () {

@@ -63,7 +63,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	UniversalDate.getInstance = function(oDate, sCalendarType) {
 		var clDate, oInstance;
 		if (oDate instanceof UniversalDate) {
-			return oDate;
+			oDate = oDate.getJSDate();
+		}
+		if (!sCalendarType) {
+			sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		}
 		clDate = UniversalDate.getClass(sCalendarType);
 		oInstance = jQuery.sap.newObject(clDate.prototype);
