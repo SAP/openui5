@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				return ClientTreeBinding.prototype.hasChildren.call(this, oNode.context);
 			}
 		};
-
+		
 		ClientTreeBindingAdapter.prototype.resetData = function(oContext, mParameters) {
 			var vReturn = ClientTreeBinding.prototype.resetData.call(this, oContext, mParameters);
 
