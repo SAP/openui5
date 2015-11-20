@@ -59,16 +59,16 @@ module.exports = function(grunt, config) {
 						dot: true,
 						cwd: 'target/openui5-' + library.name,
 						src: '**',
-						dest: '../packaged-' + library.name
+						dest: 'tmp/packaged-' + library.name
 					},
 					// license and notice file should also be present in each bower repo
 					{
 						src: 'LICENSE.txt',
-						dest: '../packaged-' + library.name + '/LICENSE.txt'
+						dest: 'tmp/packaged-' + library.name + '/LICENSE.txt'
 					},
 					{
 						src: 'NOTICE.txt',
-						dest: '../packaged-' + library.name + '/NOTICE.txt'
+						dest: 'tmp/packaged-' + library.name + '/NOTICE.txt'
 					}
 				]
 			};
