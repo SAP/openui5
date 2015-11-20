@@ -130,8 +130,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
          * @private
          */
         SideNavigation.prototype.onAfterRendering = function () {
-            this._ResizeHandler = ResizeHandler.register(this.getDomRef(), this._changeScrolling.bind(this));
-            this._changeScrolling();
+            this._ResizeHandler = ResizeHandler.register(this.getDomRef(), this._toggleArrows.bind(this));
+            this._toggleArrows();
         };
 
         /**
@@ -139,33 +139,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
          */
         SideNavigation.prototype.exit = function () {
             this._deregisterControl();
-        };
-
-        /**
-         * @private
-         */
-        SideNavigation.prototype._changeScrolling = function () {
-
-            this._toggleArrows();
-
-            if (this.getExpanded() === false) {
-                return;
-            }
-
-            var minSideNavigationHeight = 256;
-            var sideNavigation = document.getElementById(this.getId());
-            var sideNavigationFlexibleContainer = sideNavigation.querySelector('#' + this.getId() + '-Flexible');
-
-            if (sideNavigation.offsetHeight <= minSideNavigationHeight && sideNavigation.classList.contains('sapTntSideNavigationVerticalScrolling')) {
-                return;
-            }
-
-            if (sideNavigation.offsetHeight > minSideNavigationHeight && sideNavigationFlexibleContainer.classList.contains('sapTntSideNavigationVerticalScrolling')) {
-                return;
-            }
-
-            sideNavigation.classList.toggle('sapTntSideNavigationVerticalScrolling');
-            sideNavigationFlexibleContainer.classList.toggle('sapTntSideNavigationVerticalScrolling');
         };
 
         /**
@@ -280,7 +253,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
         };
 
         SideNavigation.prototype._arrowPress = function (event, step) {
-
             event.preventDefault();
 
             var source = document.getElementById(event.oSource.sId);
@@ -290,29 +262,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
             var step = isDirectionForward ? 40 : -40;
             $container[0].scrollTop += step;
-
-            // this._handleArrowBehavior(isDirectionForward);
-        };
-
-        SideNavigation.prototype._handleArrowBehavior = function (isDirectionForward) {
-            var domRef = this.getDomRef();
-            var scrollContainerWrapper = this.$('Flexible')[0];
-            var scrollContainerContent = this.$('Flexible-Content')[0];
-
-            var topArrow = domRef.querySelector('.sapTntSideNavigationScrollIconUp');
-            var bottomArrow = domRef.querySelector('.sapTntSideNavigationScrollIconDown');
-
-            var scrollContainerContentTranslate = scrollContainerWrapper.scrollTop;
-            var margin = scrollContainerContent.offsetHeight - scrollContainerWrapper.offsetHeight;
-
-            if (!isDirectionForward && scrollContainerContentTranslate == 0) {
-                topArrow.classList.add('sapTntSideNavigationScrollIconDisabled');
-            } else if (isDirectionForward && scrollContainerContentTranslate == margin) {
-                bottomArrow.classList.add('sapTntSideNavigationScrollIconDisabled');
-            } else {
-                topArrow.classList.remove('sapTntSideNavigationScrollIconDisabled');
-                bottomArrow.classList.remove('sapTntSideNavigationScrollIconDisabled');
-            }
         };
 
         return SideNavigation;
