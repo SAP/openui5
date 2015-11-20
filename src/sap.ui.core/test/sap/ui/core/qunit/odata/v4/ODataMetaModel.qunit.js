@@ -292,43 +292,43 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		path: "/Employees",
+		path: "/Employees;root=7",
 		expected: sMetaEmployees
 	}, {
-		path: "/Employees(ID='1')",
+		path: "/Employees(ID='1');root=7",
 		expected: sMetaEmployees
 	}, {
-		path: "/Employees[5];list=1",
+		path: "/Employees[5];root=1",
 		expected: sMetaEmployees
 	}, {
-		path: "/Employees(ID='1')/ENTRYDATE",
+		path: "/Employees(ID='1');root=7/ENTRYDATE",
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
 		}],
 		expected: sMetaEmployees + "/EntityType/Properties('ENTRYDATE')"
 	}, {
-		path: "/Employees(ID='1')/LOCATION/City/0/CITYNAME",
+		path: "/Employees(ID='1');root=7/LOCATION/City/0/CITYNAME",
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
 		}],
 		expected: sMetaCityname
 	}, {
-		path: "/Me",
+		path: "/Me;root=7",
 		expected: sMetaMe
 	}, {
-		path: "/Me/ENTRYDATE",
+		path: "/Me;root=7/ENTRYDATE",
 		nav: [{
 			object: oEntityContainer.Singletons[0],
 			property: "Type"
 		}],
 		expected: sMetaMe + "/Type/Properties('ENTRYDATE')"
 	}, {
-		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM/0",
+		path: "/Employees(ID='1');root=7/EMPLOYEE_2_TEAM/0",
 		expected: sMetaTeam
 	}, {
-		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM/Team_Id",
+		path: "/Employees(ID='1');root=7/EMPLOYEE_2_TEAM/Team_Id",
 		nav: [{
 			object: oEntityContainer.EntitySets[1],
 			property: "EntityType",
@@ -336,7 +336,7 @@ sap.ui.require([
 		}],
 		expected: sMetaTeam + "/EntityType/Properties('Team_Id')"
 	}, {
-		path: "/Employees[1];list=0/EMPLOYEE_2_TEAM/0/TEAM_2_EMPLOYEES/0/ID",
+		path: "/Employees[1];root=0/EMPLOYEE_2_TEAM/0/TEAM_2_EMPLOYEES/0/ID",
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
@@ -610,7 +610,7 @@ sap.ui.require([
 			QUnit.test(sTitle, function (assert) {
 				var oConstraints = oFixture.constraints,
 					oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-					sPath = "/Employees[0];list=1/ENTRYDATE",
+					sPath = "/Employees[0];root=1/ENTRYDATE",
 					oMetaContext = {metaContextFor: sPath},
 					oProperty = {
 						"Type" : {
@@ -642,7 +642,7 @@ sap.ui.require([
 	QUnit.test("fetchUI5Type: caching", function (assert) {
 		var oMetaContext = {},
 			oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-			sPath = "/Employees[0];list=1/ENTRYDATE",
+			sPath = "/Employees[0];root=1/ENTRYDATE",
 			oProperty = {
 				"Type" : {
 					"QualifiedName" : "Edm.String"
@@ -668,7 +668,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: not a property", function (assert) {
 		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-			sPath = "/Employees[0];list=1/foo",
+			sPath = "/Employees[0];root=1/foo",
 			oMetaContext = {metaContextFor: sPath},
 			oProperty = {},
 			oSyncPromise;
@@ -688,7 +688,7 @@ sap.ui.require([
 	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
 			var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-				sPath = "/Employees[0];list=1/foo",
+				sPath = "/Employees[0];root=1/foo",
 				oMetaContext = {metaContextFor: sPath},
 				oProperty =  {
 					"Type" : {
@@ -719,10 +719,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		sMetaPath : "/EntitySets('EMPLOYEES')",
-		sPath : "/EMPLOYEES[0];list=0"
+		sPath : "/EMPLOYEES[0];root=0"
 	}, {
 		sMetaPath : "/EntitySets('TEAMS')/NavigationPropertyBindings('TEAM_2_EMPLOYEES')/Target",
-		sPath : "/TEAMS[0];list=0/TEAM_2_EMPLOYEES/0"
+		sPath : "/TEAMS[0];root=0/TEAM_2_EMPLOYEES/0"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestCanonicalUrl: " + oFixture.sPath, function (assert) {
 			var oInstance = {};
@@ -754,7 +754,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		sPath : "/TEAMS[0];list=0/TEAM_2_EMPLOYEES/0/ID"
+		sPath : "/TEAMS[0];root=0/TEAM_2_EMPLOYEES/0/ID"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestCanonicalUrl: error for " + oFixture.sPath, function (assert) {
 			function read(sPath, bAllowObjectAccess) {

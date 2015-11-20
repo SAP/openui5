@@ -75,11 +75,24 @@ sap.ui.define([
 		},
 
 		onSalesOrdersSelect : function (oEvent) {
-			var oView = this.getView(),
-				oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext();
+			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
+				oModel = oSalesOrderContext.getModel(),
+				oView = this.getView();
 
-			oView.byId("SalesOrderLineItems").setBindingContext(oSalesOrderContext);
-			oView.byId("SupplierContactData").setBindingContext(undefined);
+			oModel.read(oSalesOrderContext.getPath() + "/SalesOrderID").then(function (oValue) {
+				// /SalesOrderList('050001110')
+				oView.byId("SalesOrderForm").bindElement({
+					//TODO path computation should be possible via API like requestCanonicalUrl
+					path : "/SalesOrderList('" + oValue.value + "')",
+					parameters: {
+						"$expand" : "SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP"
+							+ "($expand=BP_2_CONTACT)))"
+					}
+				});
+				oView.byId("SalesOrderLineItems").setBindingContext(
+					oView.byId("SalesOrderForm").getElementBinding().getContext());
+				oView.byId("SupplierContactData").setBindingContext(undefined);
+			});
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {

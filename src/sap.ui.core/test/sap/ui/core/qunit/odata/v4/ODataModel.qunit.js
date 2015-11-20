@@ -15,7 +15,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (Model, TypeString, ODataUtils, SyncPromise, Requestor, ODataContextBinding,
 		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
-	/*global odatajs, QUnit, sinon */
+	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
@@ -173,46 +173,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("ODataModel.read: success with query parameters ", function (assert) {
-		var oModel = createModel('?foo=bar');
-
-		this.oSandbox.stub(odatajs.oData, "read", function (oRequest, fnSuccess) {
-			assert.strictEqual(oRequest.requestUri,
-				getServiceUrl("/TEAMS('TEAM_01')/Name") + "?foo=bar");
-			setTimeout(fnSuccess.bind(null, {/*oData*/}, {/*oResponse*/}), 0);
-		});
-
-		return oModel.read("/TEAMS('TEAM_01')/Name").then(function (oData) {
-			//nothing to test
-		}, function (oError) {
-			assert.ok(false, "Unexpected failure");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.skip("ODataModel.read: failure", function (assert) {
-		var sMessage = "The requested entity of type 'TEAM' cannot be accessed. It does not exist."
-				+ " (HTTP request failed - 404 Not Found)",
-			oModel = createModel();
-
-		this.oLogMock.expects("error").withExactArgs(sMessage,
-			"GET " + getServiceUrl("/TEAMS('UNKNOWN')"),
-			"sap.ui.model.odata.v4.ODataModel");
-		this.oSandbox.spy(odatajs.oData, "read");
-		//TODO really implement v4 OData failure handling based on Sinon fake server's response?
-
-		return oModel.read("/TEAMS('UNKNOWN')").then(function (oData) {
-			assert.ok(false, "Unexpected success");
-		}, function (oError) {
-			assert.ok(oError instanceof Error);
-			assert.strictEqual(odatajs.oData.read.args[0][0].headers["Accept-Language"], "ab-CD");
-			assert.strictEqual(odatajs.oData.read.args[0][0].headers["X-CSRF-Token"], "Fetch");
-			assert.strictEqual(oError.error.code, "/IWBEP/CM_V4_APPS/002");
-			assert.strictEqual(oError.message, sMessage);
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("bindList", function (assert) {
 		var oModel = createModel(),
 			oContext = {},
@@ -229,60 +189,57 @@ sap.ui.require([
 			"list binding stores copy of expand param.");
 
 		assert.strictEqual(oModel.bindList("/path", oContext).iIndex, 1);
-		assert.strictEqual(oModel.aLists[0], oBinding, "model stores list bindings");
+		assert.strictEqual(oModel.aRoots[0], oBinding, "model stores list bindings");
 		//TODO add further tests once exact behavior of bindList is clear
 		//TODO parameter aSorters and aFilters
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read /TEAMS[*];list=0", function (assert) {
+	QUnit.test("read /TEAMS[*];root=0", function (assert) {
 		var i = Math.floor(Math.random() * 50), // some index
 			oModel = createModel(),
 			oListBinding = oModel.bindList("/TEAMS"),
 			oResult = {};
 
 		this.oSandbox.mock(oListBinding).expects("readValue")
-			.withExactArgs(i, undefined, true)
+			.withExactArgs(undefined, true, i)
 			.returns(Promise.resolve(oResult));
-		this.oSandbox.mock(odatajs.oData).expects("read").never();
 
-		return oModel.read("/TEAMS[" + i + "];list=0", true)
+		return oModel.read("/TEAMS[" + i + "];root=0", true)
 			.then(function (oData) {
-				assert.strictEqual(oData, oResult, "mimic Olingo data format");
+				assert.strictEqual(oData, oResult);
 			});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read /TEAMS[*];list=0/Name", function (assert) {
+	QUnit.test("read /TEAMS[*];root=0/Name", function (assert) {
 		var i = Math.floor(Math.random() * 50), // some index
 			oModel = createModel(),
 			oListBinding = oModel.bindList("/TEAMS");
 
 		this.oSandbox.mock(oListBinding).expects("readValue")
-			.withExactArgs(i, "Name", undefined)
+			.withExactArgs("Name", undefined, i)
 			.returns(Promise.resolve("Business Suite"));
-		this.oSandbox.mock(odatajs.oData).expects("read").never();
 
-		return oModel.read("/TEAMS[" + i + "];list=0/Name")
+		return oModel.read("/TEAMS[" + i + "];root=0/Name")
 			.then(function (oData) {
-				assert.deepEqual(oData, {value : "Business Suite"}, "mimic Olingo data format");
+				assert.deepEqual(oData, {value : "Business Suite"});
 			});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read /TEAMS[*];list=0/TEAM_2_EMPLOYEES", function (assert) {
+	QUnit.test("read /TEAMS[*];root=0/TEAM_2_EMPLOYEES", function (assert) {
 		var i = Math.floor(Math.random() * 50), // some index
 			oModel = createModel(),
 			oListBinding = oModel.bindList("/TEAMS");
 
 		this.oSandbox.mock(oListBinding).expects("readValue")
-			.withExactArgs(i, "TEAM_2_EMPLOYEES", true)
+			.withExactArgs("TEAM_2_EMPLOYEES", true, i)
 			.returns(Promise.resolve([]));
-		this.oSandbox.mock(odatajs.oData).expects("read").never();
 
-		return oModel.read("/TEAMS[" + i + "];list=0/TEAM_2_EMPLOYEES", true)
+		return oModel.read("/TEAMS[" + i + "];root=0/TEAM_2_EMPLOYEES", true)
 			.then(function (oData) {
-				assert.deepEqual(oData, {value : []}, "mimic Olingo data format");
+				assert.deepEqual(oData, {value : []});
 			});
 	});
 
@@ -294,14 +251,28 @@ sap.ui.require([
 				oError = new Error("Intentionally failed");
 
 			this.oSandbox.mock(oListBinding).expects("readValue").returns(Promise.reject(oError));
-			this.oSandbox.mock(odatajs.oData).expects("read").never();
 
-			return oModel.read("/TEAMS[0];list=0/foo/bar").then(
+			return oModel.read("/TEAMS[0];root=0/foo/bar").then(
 				function () { assert.ok(false, "Unexpected success"); },
 				function (oError0) { assert.strictEqual(oError0, oError); }
 			);
 		}
 	);
+
+	//*********************************************************************************************
+	QUnit.test("read /TEAMS('4711');root=0/Name", function (assert) {
+		var oModel = createModel(),
+			oContextBinding = oModel.bindContext("/TEAMS('4711')");
+
+		this.oSandbox.mock(oContextBinding).expects("readValue")
+			.withArgs("Name", false)
+			.returns(Promise.resolve("Business Suite"));
+
+		return oModel.read("/TEAMS('4711');root=0/Name", false)
+			.then(function (oData) {
+				assert.deepEqual(oData, {value : "Business Suite"});
+			});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getMetaModel", function (assert) {
@@ -351,7 +322,7 @@ sap.ui.require([
 			var sCanonicalUrl = getServiceUrl("/EMPLOYEES(ID='1')"),
 			sEtag = 'W/"19770724000000.0000000"',
 			oModel = createModel(sQuery),
-			sPath = "/EMPLOYEES[0];list=0";
+			sPath = "/EMPLOYEES[0];root=0";
 
 			this.oSandbox.mock(oModel.oRequestor).expects("request")
 			.withExactArgs("DELETE", sCanonicalUrl + oModel._sQuery, {"If-Match" : sEtag})
@@ -411,7 +382,7 @@ sap.ui.require([
 			this.oSandbox.stub(oModel.oRequestor, "request")
 				.returns(Promise.reject(oError));
 
-			return oModel.remove(oModel.getContext("/EMPLOYEES[0];list=0"))
+			return oModel.remove(oModel.getContext("/EMPLOYEES[0];root=0"))
 				.then(function (oResult) {
 					assert.strictEqual(oResult, undefined);
 					assert.ok(oCause && oCause.response.statusCode === 404, "unexpected success");

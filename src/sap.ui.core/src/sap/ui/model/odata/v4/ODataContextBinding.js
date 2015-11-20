@@ -4,8 +4,11 @@
 
 //Provides class sap.ui.model.odata.v4.ODataContextBinding
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/model/ChangeReason", "sap/ui/model/ContextBinding"
-], function (jQuery, ChangeReason, ContextBinding) {
+	"jquery.sap.global",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ContextBinding",
+	"sap/ui/model/odata/v4/lib/_Cache"
+], function (jQuery, ChangeReason, ContextBinding, Cache) {
 	"use strict";
 
 	/**
@@ -17,8 +20,10 @@ sap.ui.define([
 	 *   the binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path
-	 *
-	 * @class Context binding for an OData v4 model.
+	 * @param {number} iIndex
+	 *   the index of this context binding in the array of root bindings kept by the model, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext}
+	 * @class Context binding for an OData v4 model
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -30,8 +35,16 @@ sap.ui.define([
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding",
 			/** @lends sap.ui.model.odata.v4.ODataContextBinding.prototype */
 			{
-				constructor : function () {
-					ContextBinding.apply(this, arguments);
+				constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
+					var bAbsolute = sPath.charAt(0) === "/",
+						sBindingPath = bAbsolute ? sPath + ";root=" + iIndex : sPath;
+
+					ContextBinding.call(this, oModel, sBindingPath, oContext, mParameters);
+					if (bAbsolute) {
+						this.oCache = Cache.createSingle(oModel.oRequestor,
+							oModel.sServiceUrl + oModel.resolve(sPath, oContext).slice(1),
+							oModel.mUriParameters);
+					}
 				},
 				metadata : {
 					publicMethods : []
@@ -70,6 +83,57 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise to read the value for the given path in the context binding.
+	 *
+	 * @param {string} sPath
+	 *   the relative path to the property
+	 * @param {boolean} bAllowObjectAccess
+	 *   whether access to whole objects is allowed
+	 * @return {Promise}
+	 *   the promise which is resolved with the value, e.g. <code>"foo"</code> for simple
+	 *   properties, <code>[...]</code> for collections and <code>{"foo" : "bar", ...}</code> for
+	 *   objects
+	 * @private
+	 */
+	ODataContextBinding.prototype.readValue = function (sPath, bAllowObjectAccess) {
+		var that = this;
+
+		return new Promise(function (fnResolve, fnReject) {
+			function message() {
+				return "Failed to read value for "
+					//TODO use oModel.mUriParameters
+					+ that.getModel().sServiceUrl + that.getPath().slice(1).split(";root=")[0]
+					+ " and path " + sPath;
+			}
+
+			function reject(oError) {
+				jQuery.sap.log.error(message(), oError,
+					"sap.ui.model.odata.v4.ODataContextBinding");
+				fnReject(oError);
+			}
+
+			that.oCache.read().then(function (oData) {
+				if (sPath) {
+					sPath.split("/").every(function (sSegment) { //TODO refactor to Helper.foo?
+						if (!oData) {
+							jQuery.sap.log.warning(message() + ": Invalid segment " + sSegment,
+								null, "sap.ui.model.odata.v4.ODataContextBinding");
+							return false;
+						}
+						oData = oData[sSegment];
+						return true;
+					});
+				}
+				if (!bAllowObjectAccess && oData && typeof oData === "object") {
+					reject(new Error("Accessed value is not primitive"));
+					return;
+				}
+				fnResolve(oData);
+			}, reject);
+		});
+	};
+
+	/**
 	 * Sets the (base) context which is used when the binding path is relative. This triggers a
 	 * {@link #checkUpdate} resulting in an asynchronous change event if the bound context changes.
 	 * Dependent bindings then will react and also check for updates.
@@ -83,6 +147,7 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
 			if (this.isRelative()) {
+				// TODO not tested
 				this.checkUpdate(false);
 			}
 		}

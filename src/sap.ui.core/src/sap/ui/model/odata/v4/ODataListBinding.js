@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path
 	 * @param {number} iIndex
-	 *   the index of this list binding in the array of list bindings kept by the model, see
+	 *   the index of this list binding in the array of root bindings kept by the model, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}
 	 * @param {object} [mParameters]
 	 *   map of parameters
@@ -84,7 +84,7 @@ sap.ui.define([
 			that = this;
 
 		function getBasePath(iIndex) {
-			return sResolvedPath + "[" + iIndex + "];list=" + that.iIndex;
+			return sResolvedPath + "[" + iIndex + "];root=" + that.iIndex;
 		}
 
 		function getDependentPath(iIndex) {
@@ -212,19 +212,19 @@ sap.ui.define([
 	 * Returns a promise to read the value for the given path in the list binding item with the
 	 * given index.
 	 *
-	 * @param {number} iIndex
-	 *   the item's index
 	 * @param {string} sPath
 	 *   the path to the property
-	 * @param {boolean} [bAllowObjectAccess=false]
+	 * @param {boolean} bAllowObjectAccess
 	 *   whether access to whole objects is allowed
+	 * @param {number} iIndex
+	 *   the item's index
 	 * @return {Promise}
 	 *   the promise which is resolved with the value, e.g. <code>"foo"</code> for simple
 	 *   properties, <code>[...]</code> for collections and <code>{"foo" : "bar", ...}</code> for
 	 *   objects
 	 * @private
 	 */
-	ODataListBinding.prototype.readValue = function (iIndex, sPath, bAllowObjectAccess) {
+	ODataListBinding.prototype.readValue = function (sPath, bAllowObjectAccess, iIndex) {
 		var that = this;
 
 		return new Promise(function (fnResolve, fnReject) {

@@ -16,7 +16,7 @@ sap.ui.define([
 		SyncPromise, PropertyBinding) {
 	"use strict";
 
-	var rEntitySetName = /^(\w+)(\[|\(|$)/, // identifier followed by [,( or at end of string
+	var rEntitySetName = /^(\w+)(\[|\(|;|$)/, // identifier followed by [, (, ; or end of string
 		rNumber = /^\d+$/,
 		mUi5TypeForEdmType = {
 			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
@@ -504,7 +504,7 @@ sap.ui.define([
 	 *   root URL of the service
 	 * @param {string} sPath
 	 *   an absolute data binding path pointing to an entity, e.g.
-	 *   "/TEAMS[0];list=0/TEAM_2_EMPLOYEES/0"
+	 *   "/TEAMS[0];root=0/TEAM_2_EMPLOYEES/0"
 	 * @param {function} fnRead
 	 *   function like {@link sap.ui.model.odata.v4.ODataModel#read} which provides access to data
 	 * @returns {Promise}

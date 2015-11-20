@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/URI"
 ], function (View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon, URI) {
+	/*eslint no-multi-str: 0*/
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
@@ -41,14 +42,27 @@ sap.ui.define([
 				this.setModel(oModel);
 			}
 
+			// TODO: Add Mockdata for single sales orders *with expand*
+			// http://localhost:8080/testsuite/proxy/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList('050001110')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/$metadata"
 						: {source : "metadata.xml"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=100"
 						: {source : "BusinessPartnerList.json"},
-					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$skip=0&$top=5"
-						: {source : "SalesOrderList.json"}
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?\
+$expand=SO_2_BP&$skip=0&$top=5"
+						: {source : "SalesOrderList.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList('0500001110')"
+						: {source : "SalesOrderList_0500001110.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList('0500001111')"
+						: {source : "SalesOrderList_0500001111.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList('0500001112')"
+						: {source : "SalesOrderList_0500001112.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList('0500001113')"
+						: {source : "SalesOrderList_0500001113.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList('0500001114')"
+						: {source : "SalesOrderList_0500001114.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data");
 			}
 

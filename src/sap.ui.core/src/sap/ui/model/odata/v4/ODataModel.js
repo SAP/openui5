@@ -28,7 +28,8 @@ sap.ui.define([
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
-		rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)(?:\/(.+))?$/;
+		// /TEAMS[2];root=0/Name or /TEAMS('4711');root=0/Name
+		rRootBindingPath = /^\/.+(?:(?:\[(\d+)\])|(?:\(.+\)));root=(\d+)(?:\/(.+))?$/;
 
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
@@ -103,6 +104,7 @@ sap.ui.define([
 					this.oRequestor = Requestor.create(this.sServiceUrl, {
 						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
 					});
+					this.aRoots = [];
 				}
 			});
 
@@ -121,7 +123,10 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.bindContext = function (sPath, oContext) {
-		return new ODataContextBinding(this, sPath, oContext);
+		var oContextBinding = new ODataContextBinding(this, sPath, oContext, this.aRoots.length);
+
+		this.aRoots.push(oContextBinding);
+		return oContextBinding;
 	};
 
 	/**
@@ -146,11 +151,10 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
-		var oListBinding;
+		var oListBinding = new ODataListBinding(this, sPath, oContext, this.aRoots.length,
+				mParameters);
 
-		this.aLists = this.aLists || [];
-		oListBinding = new ODataListBinding(this, sPath, oContext, this.aLists.length, mParameters);
-		this.aLists.push(oListBinding);
+		this.aRoots.push(oListBinding);
 		return oListBinding;
 	};
 
@@ -228,8 +232,8 @@ sap.ui.define([
 	 *   whether access to whole objects is allowed
 	 * @returns {Promise}
 	 *   A promise to be resolved when the OData request is finished, providing a data object
-	 *   just like Olingo when reading from the OData service, e.g. <code>{"value" : "foo"}</code>
-	 *   for simple properties, <code>{"value" : [...]}</code> for collections and
+	 *   just like the OData v4 JSON format, e.g. <code>{"value" : "foo"}</code> for simple
+	 *   properties, <code>{"value" : [...]}</code> for collections and
 	 *   <code>{"foo" : "bar", ...}</code> for objects
 	 *
 	 * @protected
@@ -242,11 +246,11 @@ sap.ui.define([
 		}
 
 		return new Promise(function (fnResolve, fnReject) {
-			var aMatches = rListBindingPath.exec(sPath); // /TEAMS[2];list=0/Name
+			var aMatches = rRootBindingPath.exec(sPath);
 
 			if (aMatches) { // use list binding to retrieve the value
-				that.aLists[Number(aMatches[2])]
-					.readValue(Number(aMatches[1]), aMatches[3], bAllowObjectAccess)
+				that.aRoots[Number(aMatches[2])]
+					.readValue(aMatches[3], bAllowObjectAccess, Number(aMatches[1]))
 					.then(function (oValue) {
 						// property access: wrap property value just like OData does
 						fnResolve(typeof oValue === "object" && !Array.isArray(oValue)
@@ -257,20 +261,6 @@ sap.ui.define([
 					});
 				return;
 			}
-
-//FIX4MASTER make ODataModel work with non-collection bindings, so to say
-//			var sRequestUri = that.sServiceUrl + sPath.slice(1) + that._sQuery;
-//			odatajs.oData.read({
-//				requestUri: sRequestUri,
-//				headers: that.mHeaders
-//			}, function (oData, oResponse) {
-//				fnResolve(oData);
-//			}, function (oOlingoError) {
-//				var oError = Helper.createError(oOlingoError);
-//
-//				jQuery.sap.log.error(oError.message, "GET " + sRequestUri, sClassName);
-//				fnReject(oError);
-//			});
 		});
 	};
 
