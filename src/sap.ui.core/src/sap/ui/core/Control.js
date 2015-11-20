@@ -593,7 +593,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		var sPreventedEvents = "focusin focusout keydown keypress keyup mousedown touchstart mouseup touchend click",
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
-					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId) {
+					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId && !this.$("busyIndicator").length) {
 						// Also use the BusyIndicatorDelay when a control is initialized with "busy = true"
 						// If the delayed call was already initialized skip any further call if the control was re-rendered while
 						// the delay is on its way.
@@ -755,7 +755,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 					delete this._busyStoredPosition;
 				}
 				fnHandleInteraction.apply(this, [false]);
-				
+
 				BusyIndicatorUtils.animateIE9.stop(this._$BusyIndicator);
 			}
 			return this;
@@ -813,7 +813,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		 * See {@link #checkFieldGroupIds checkFieldGroupIds} for a description of the
 		 * <code>vFieldGroupIds</code> parameter.
 		 * Associated controls are not taken into account.
-		 * 
+		 *
 		 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
 		 * @return {sap.ui.core.Control[]} The list of controls with a field group ID
 		 * @public
@@ -833,7 +833,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		 * If <code>vFieldGroupIds</code> is an empty array or empty string, true is returned if there is no field group ID set for this control.
 		 * If <code>vFieldGroupIds</code> is a string array or a string all expected field group IDs are checked and true is returned if all are contained for given for this control.
 		 * The comma delimiter can be used to seperate multiple field group IDs in one string.
-		 * 
+		 *
 		 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
 		 * @return {boolean} true if a field group ID matches
 		 * @public
