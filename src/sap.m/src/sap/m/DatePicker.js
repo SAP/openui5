@@ -186,14 +186,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				InputBase.prototype.onfocusin.apply(this, arguments);
 			}
 
-			if (this._bMobile && !jQuery(oEvent.target).hasClass("sapUiIcon") && !this._bFocusNoPopup &&
-					this.getEditable() && this.getEnabled()) {
-				// on mobile devices open calendar
-				if (!this._oPopup || !this._oPopup.isOpen()) {
-					_open.call(this);
-				}
-			}
-
 			this._bFocusNoPopup = undefined;
 
 		};
