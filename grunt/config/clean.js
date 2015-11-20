@@ -4,6 +4,9 @@ module.exports = function(grunt, config) {
 	var clean = {
 		'surefire-reports': {
 			src: [ 'target/surefire-reports' ]
+		},
+		'tmp': {
+			src: [ 'tmp' ]
 		}
 	};
 
@@ -21,7 +24,7 @@ module.exports = function(grunt, config) {
 				},
 				files: [ {
 					expand: true,
-					cwd: '../packaged-' + library.name,
+					cwd: 'tmp/packaged-' + library.name,
 					src: [
 						'**/*.*',
 						'**/.*',

@@ -124,9 +124,15 @@ module.exports = function(grunt, config) {
 
 			if (grunt.option('publish')) {
 
+				// clone bower repositories into temp dir
+				aTasks.push('clean:tmp');
+				aTasks.push('gitclone');
+
 				// copy built resources into individual bower repositories
 				config.libraries.forEach(function(library) {
 					if (library.bower !== false) {
+						// Remove existing resources / test-resources and copy built files
+						aTasks.push('clean:bower-' + library.name);
 						aTasks.push('copy:bower-' + library.name);
 					}
 				});
@@ -135,7 +141,11 @@ module.exports = function(grunt, config) {
 				aTasks.push('updateBowerVersions');
 
 				// run git "add commit tag push" to publish the updated bower repo
-				aTasks.push('publishBower');
+				aTasks.push('gitadd');
+				aTasks.push('gitcommit');
+				aTasks.push('gittag');
+				aTasks.push('gitpush');
+
 			}
 
 			// run all build tasks
@@ -180,7 +190,7 @@ module.exports = function(grunt, config) {
 					return;
 				}
 
-				var bowerFilename = '../packaged-' + library.name + '/bower.json';
+				var bowerFilename = 'tmp/packaged-' + library.name + '/bower.json';
 
 				grunt.log.subhead(library.name);
 
@@ -210,38 +220,6 @@ module.exports = function(grunt, config) {
 				grunt.file.write(bowerFilename, JSON.stringify(bower, null, 2));
 
 			});
-
-		},
-
-		// create a git commit + tag for each bower repository (without push)
-		'publishBower': function() {
-
-			var version = grunt.config(['package', 'version']);
-
-			async.each(config.libraries.filter(function(library) {
-				return library.bower !== false;
-			}), function(library, done) {
-
-				function git(args, callback) {
-					grunt.util.spawn({
-							cmd: 'git',
-							args: args,
-							opts: {
-								cwd: '../packaged-' + library.name
-							}
-					}, function () {
-						console.dir(arguments);
-						callback.apply(this, arguments);
-					});
-				}
-
-				async.eachSeries([
-					['add', '-A'],
-					['commit', '-m', version],
-					['tag', '-a', version, '-m', version]
-				], git, done);
-
-			}, this.async());
 
 		},
 
