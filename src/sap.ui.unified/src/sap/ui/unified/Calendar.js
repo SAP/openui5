@@ -1302,7 +1302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}else {
 				sText = aMonthNames[aMonths[0]];
 				if (bShort) {
-					sAriaLabel = aMonthNamesWide[aMonthNames[aMonths[0]]];
+					sAriaLabel = aMonthNamesWide[aMonths[0]];
 				}
 			}
 
