@@ -37,10 +37,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @see sap.ui.model.Binding.prototype.initialize
 	 */
 	ODataContextBinding.prototype.initialize = function() {
-		var that = this, oData,
+		var that = this,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-			oData = this.oModel._getObject(this.sPath, this.oContext),
-			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
+			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
 
 		// don't fire any requests if metadata is not loaded yet.
 		if (this.oModel.oMetadata.isLoaded()) {
@@ -48,6 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 				this.fireDataRequested();
 			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
+				var oData;
 				that.oElementContext = oContext;
 				that._fireChange();
 				if (sResolvedPath && bReloadNeeded) {

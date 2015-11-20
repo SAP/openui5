@@ -59,6 +59,18 @@ xhr.onCreate = function(request) {
 			[200, oXMLHeaders, sRegionsXML],
 		"Products(2)":
 			[200, oXMLHeaders, sProducts2XML],
+		"Products(3)":
+			[200, oXMLHeaders, sProducts3XML],
+		"Products(3)?$select=ProductName":
+			[200, oXMLHeaders, sProducts3SelProductNameXML],
+		"Products(3)?$expand=Category":
+			[200, oXMLHeaders, sProducts3ExpCategoryXML],
+		"Products(3)?$select=ProductName%2cCategory&$expand=Category":
+			[200, oXMLHeaders, sProducts3SelProductNameExpCategoryXML],
+		"Products(3)?$select=Category%2fCategoryName&$expand=Category":
+			[200, oXMLHeaders, sProducts3SelCategoryNameExpCategoryXML],
+		"Products(3)?$select=ProductName%2cCategory%2fCategoryName&$expand=Category":
+			[200, oXMLHeaders, sProducts3SelProductAndCategoryNameExpCategoryXML],
 		"Invoices/$count":
 			[200, oCountHeaders, "9"],
 		"Invoices?$skip=0&$top=100":
@@ -187,6 +199,8 @@ xhr.onCreate = function(request) {
 			[200, oJSONHeaders, sProductSelectExpandJSON],
 		"Products(2)?$select=Category%2c%20ProductID&$expand=Category":
 			[200, oJSONHeaders, sProduct2SelectExpandJSON],
+		"Products?$skip=0&$top=100&$filter=ProductName%20eq%20%27Chang%27&$select=Category%2fCategoryName%2cProductName&$expand=Category":
+			[200, oJSONHeaders, sProduct3SelectExpandJSON],
 		"Products":
 			[200, oXMLHeaders, sProductsAllXML],
 		"Products(1)?$expand=Category%2fProducts%2fSupplier":
@@ -1445,6 +1459,244 @@ var sProducts2XML = '\
 </entry>\
 	';
 
+var sProducts3XML = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Products(3)</id>\
+  <title type="text"></title>\
+  <updated>2013-01-31T08:51:33Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(3)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" />\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+    <d:ProductID m:type="Edm.Int32">3</d:ProductID>\
+    <d:ProductName>Aniseed Syrup</d:ProductName>\
+    <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+    <d:CategoryID m:type="Edm.Int32">2</d:CategoryID>\
+    <d:QuantityPerUnit>12 - 550 ml bottles</d:QuantityPerUnit>\
+    <d:UnitPrice m:type="Edm.Decimal">10.0000</d:UnitPrice>\
+    <d:UnitsInStock m:type="Edm.Int16">13</d:UnitsInStock>\
+    <d:UnitsOnOrder m:type="Edm.Int16">70</d:UnitsOnOrder>\
+    <d:ReorderLevel m:type="Edm.Int16">25</d:ReorderLevel>\
+    <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+    </m:properties>\
+  </content>\
+</entry>\
+	';
+
+var sProducts3SelProductNameXML = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(3)</id>\
+  <title type="text"></title>\
+  <updated>2015-11-17T10:40:06Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(3)" />\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+      <d:ProductName>Aniseed Syrup</d:ProductName>\
+    </m:properties>\
+  </content>\
+</entry>\
+	';
+
+var sProducts3ExpCategoryXML = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(3)</id>\
+  <title type="text"></title>\
+  <updated>2015-11-17T10:42:46Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(3)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category">\
+    <m:inline>\
+      <entry>\
+        <id>http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)</id>\
+        <title type="text"></title>\
+        <updated>2015-11-17T10:42:46Z</updated>\
+        <author>\
+          <name />\
+        </author>\
+        <link rel="edit" title="Category" href="Categories(2)" />\
+        <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Categories(2)/Products" />\
+        <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+        <content type="application/xml">\
+          <m:properties>\
+		    <d:CategoryID m:type="Edm.Int32">2</d:CategoryID>\
+		    <d:CategoryName>Condiments</d:CategoryName>\
+		    <d:Description>Sweet and savory sauces, relishes, spreads, and seasonings</d:Description>\
+           <d:Picture m:type="Edm.Binary"></d:Picture>\
+          </m:properties>\
+        </content>\
+      </entry>\
+    </m:inline>\
+  </link>\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" />\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+    <d:ProductID m:type="Edm.Int32">3</d:ProductID>\
+    <d:ProductName>Aniseed Syrup</d:ProductName>\
+    <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+    <d:CategoryID m:type="Edm.Int32">2</d:CategoryID>\
+    <d:QuantityPerUnit>12 - 550 ml bottles</d:QuantityPerUnit>\
+    <d:UnitPrice m:type="Edm.Decimal">10.0000</d:UnitPrice>\
+    <d:UnitsInStock m:type="Edm.Int16">13</d:UnitsInStock>\
+    <d:UnitsOnOrder m:type="Edm.Int16">70</d:UnitsOnOrder>\
+    <d:ReorderLevel m:type="Edm.Int16">25</d:ReorderLevel>\
+    <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+    </m:properties>\
+  </content>\
+</entry>\
+	';
+
+var sProducts3SelProductNameExpCategoryXML = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(3)</id>\
+  <title type="text"></title>\
+  <updated>2015-11-17T10:42:46Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(3)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category">\
+    <m:inline>\
+      <entry>\
+        <id>http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)</id>\
+        <title type="text"></title>\
+        <updated>2015-11-17T10:42:46Z</updated>\
+        <author>\
+          <name />\
+        </author>\
+        <link rel="edit" title="Category" href="Categories(2)" />\
+        <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Categories(2)/Products" />\
+        <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+        <content type="application/xml">\
+          <m:properties>\
+		    <d:CategoryID m:type="Edm.Int32">2</d:CategoryID>\
+		    <d:CategoryName>Condiments</d:CategoryName>\
+		    <d:Description>Sweet and savory sauces, relishes, spreads, and seasonings</d:Description>\
+            <d:Picture m:type="Edm.Binary"></d:Picture>\
+          </m:properties>\
+        </content>\
+      </entry>\
+    </m:inline>\
+  </link>\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" />\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+      <d:ProductName>Aniseed Syrup</d:ProductName>\
+    </m:properties>\
+  </content>\
+</entry>\
+	';
+	
+var sProducts3SelCategoryNameExpCategoryXML = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(3)</id>\
+  <title type="text"></title>\
+  <updated>2015-11-17T10:42:46Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(3)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category">\
+    <m:inline>\
+      <entry>\
+        <id>http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)</id>\
+        <title type="text"></title>\
+        <updated>2015-11-17T10:42:46Z</updated>\
+        <author>\
+          <name />\
+        </author>\
+        <link rel="edit" title="Category" href="Categories(2)" />\
+        <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Categories(2)/Products" />\
+        <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+        <content type="application/xml">\
+          <m:properties>\
+            <d:CategoryName>Condiments</d:CategoryName>\
+          </m:properties>\
+        </content>\
+      </entry>\
+    </m:inline>\
+  </link>\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" />\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+    <d:ProductID m:type="Edm.Int32">3</d:ProductID>\
+    <d:ProductName>Aniseed Syrup</d:ProductName>\
+    <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>\
+    <d:CategoryID m:type="Edm.Int32">2</d:CategoryID>\
+    <d:QuantityPerUnit>12 - 550 ml bottles</d:QuantityPerUnit>\
+    <d:UnitPrice m:type="Edm.Decimal">10.0000</d:UnitPrice>\
+    <d:UnitsInStock m:type="Edm.Int16">13</d:UnitsInStock>\
+    <d:UnitsOnOrder m:type="Edm.Int16">70</d:UnitsOnOrder>\
+    <d:ReorderLevel m:type="Edm.Int16">25</d:ReorderLevel>\
+    <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+    </m:properties>\
+  </content>\
+</entry>\
+	';
+
+var sProducts3SelProductAndCategoryNameExpCategoryXML = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(3)</id>\
+  <title type="text"></title>\
+  <updated>2015-11-17T10:42:46Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(3)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category">\
+    <m:inline>\
+      <entry>\
+        <id>http://services.odata.org/V2/Northwind/Northwind.svc/Categories(2)</id>\
+        <title type="text"></title>\
+        <updated>2015-11-17T10:42:46Z</updated>\
+        <author>\
+          <name />\
+        </author>\
+        <link rel="edit" title="Category" href="Categories(2)" />\
+        <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Categories(2)/Products" />\
+        <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+        <content type="application/xml">\
+          <m:properties>\
+            <d:CategoryName>Condiments</d:CategoryName>\
+          </m:properties>\
+        </content>\
+      </entry>\
+    </m:inline>\
+  </link>\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" />\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+      <d:ProductName>Aniseed Syrup</d:ProductName>\
+    </m:properties>\
+  </content>\
+</entry>\
+	';
+	
 var sCategoriesOrderDescXML = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\
 <feed xml:base="http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
@@ -5112,6 +5364,22 @@ var sProduct2SelectExpandJSON = "{\n" +
 		"		},\n" + 
 		"		\"ProductID\" : 2\n" + 
 		"	}\n" + 
+		"}";
+
+var sProduct3SelectExpandJSON = "{\n" + 
+		"\"d\" : {\n" + 
+		"\"results\": [\n" + 
+		"{\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Products(2)\", \"type\": \"NorthwindModel.Product\"\n" + 
+		"}, \"ProductName\": \"Chang\", \"Category\": {\n" + 
+		"\"__metadata\": {\n" + 
+		"\"uri\": \"http://services.odata.org/V2/Northwind/Northwind.svc/Categories(1)\", \"type\": \"NorthwindModel.Category\"\n" + 
+		"}, \"CategoryName\": \"Beverages\"\n" + 
+		"}\n" + 
+		"}\n" + 
+		"]\n" + 
+		"}\n" + 
 		"}";
 
 var sProductsAllXML = '<?xml version=\"1.0\" encoding=\"utf-8\"?><feed xml:base=\"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/\" xmlns=\"http://www.w3.org/2005/Atom\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products</id><title type=\"text\">Products</title><updated>2014-07-31T13:52:29Z</updated><link rel=\"self\" title=\"Products\" href=\"Products\" /><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(1)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(1)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(1)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(1)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(1)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">1</d:ProductID><d:ProductName>Chai</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">1</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">1</d:CategoryID><d:QuantityPerUnit>10 boxes x 20 bags</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">18.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">39</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">10</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(2)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(2)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(2)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(2)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(2)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">2</d:ProductID><d:ProductName>Chang</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">1</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">1</d:CategoryID><d:QuantityPerUnit>24 - 12 oz bottles</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">19.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">17</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">40</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">25</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(3)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(3)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(3)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(3)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(3)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">3</d:ProductID><d:ProductName>Aniseed Syrup</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">1</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">2</d:CategoryID><d:QuantityPerUnit>12 - 550 ml bottles</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">10.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">13</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">70</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">25</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(4)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(4)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(4)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(4)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(4)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">4</d:ProductID><d:ProductName>Chef Anton\'s Cajun Seasoning</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">2</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">2</d:CategoryID><d:QuantityPerUnit>48 - 6 oz jars</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">22.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">53</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(5)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(5)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(5)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(5)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(5)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">5</d:ProductID><d:ProductName>Chef Anton\'s Gumbo Mix</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">2</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">2</d:CategoryID><d:QuantityPerUnit>36 boxes</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">21.3500</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">0</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">true</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(6)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(6)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(6)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(6)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(6)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">6</d:ProductID><d:ProductName>Grandma\'s Boysenberry Spread</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">3</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">2</d:CategoryID><d:QuantityPerUnit>12 - 8 oz jars</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">25.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">120</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">25</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(7)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(7)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(7)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(7)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(7)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">7</d:ProductID><d:ProductName>Uncle Bob\'s Organic Dried Pears</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">3</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID><d:QuantityPerUnit>12 - 1 lb pkgs.</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">30.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">15</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">10</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(8)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(8)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(8)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(8)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(8)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">8</d:ProductID><d:ProductName>Northwoods Cranberry Sauce</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">3</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">2</d:CategoryID><d:QuantityPerUnit>12 - 12 oz jars</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">40.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">6</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(9)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(9)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(9)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(9)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(9)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">9</d:ProductID><d:ProductName>Mishi Kobe Niku</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">4</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">6</d:CategoryID><d:QuantityPerUnit>18 - 500 g pkgs.</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">97.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">29</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">true</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(10)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(10)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(10)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(10)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(10)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">10</d:ProductID><d:ProductName>Ikura</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">4</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">8</d:CategoryID><d:QuantityPerUnit>12 - 200 ml jars</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">31.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">31</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(11)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(11)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(11)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(11)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(11)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">11</d:ProductID><d:ProductName>Queso Cabrales</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">5</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">4</d:CategoryID><d:QuantityPerUnit>1 kg pkg.</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">21.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">22</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">30</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">30</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(12)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(12)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(12)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(12)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(12)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">12</d:ProductID><d:ProductName>Queso Manchego La Pastora</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">5</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">4</d:CategoryID><d:QuantityPerUnit>10 - 500 g pkgs.</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">38.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">86</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(13)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(13)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(13)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(13)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(13)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">13</d:ProductID><d:ProductName>Konbu</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">6</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">8</d:CategoryID><d:QuantityPerUnit>2 kg box</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">6.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">24</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">5</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(14)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(14)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(14)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(14)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(14)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">14</d:ProductID><d:ProductName>Tofu</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">6</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID><d:QuantityPerUnit>40 - 100 g pkgs.</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">23.2500</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">35</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(15)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(15)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(15)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(15)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(15)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">15</d:ProductID><d:ProductName>Genen Shouyu</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">6</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">2</d:CategoryID><d:QuantityPerUnit>24 - 250 ml bottles</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">15.5000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">39</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">5</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(16)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(16)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(16)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(16)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(16)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">16</d:ProductID><d:ProductName>Pavlova</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">7</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">3</d:CategoryID><d:QuantityPerUnit>32 - 500 g boxes</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">17.4500</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">29</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">10</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(17)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(17)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(17)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(17)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(17)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">17</d:ProductID><d:ProductName>Alice Mutton</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">7</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">6</d:CategoryID><d:QuantityPerUnit>20 - 1 kg tins</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">39.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">0</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">true</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(18)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(18)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(18)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(18)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(18)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">18</d:ProductID><d:ProductName>Carnarvon Tigers</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">7</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">8</d:CategoryID><d:QuantityPerUnit>16 kg pkg.</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">62.5000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">42</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(19)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(19)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(19)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(19)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(19)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">19</d:ProductID><d:ProductName>Teatime Chocolate Biscuits</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">8</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">3</d:CategoryID><d:QuantityPerUnit>10 boxes x 12 pieces</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">9.2000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">25</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">5</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry><entry><id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Products(20)</id><category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\" /><link rel=\"edit\" title=\"Product\" href=\"Products(20)\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(20)/Category\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(20)/Order_Details\" /><link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(20)/Supplier\" /><title /><updated>2014-07-31T13:52:29Z</updated><author><name /></author><content type=\"application/xml\"><m:properties><d:ProductID m:type=\"Edm.Int32\">20</d:ProductID><d:ProductName>Sir Rodney\'s Marmalade</d:ProductName><d:SupplierID m:type=\"Edm.Int32\">8</d:SupplierID><d:CategoryID m:type=\"Edm.Int32\">3</d:CategoryID><d:QuantityPerUnit>30 gift boxes</d:QuantityPerUnit><d:UnitPrice m:type=\"Edm.Decimal\">81.0000</d:UnitPrice><d:UnitsInStock m:type=\"Edm.Int16\">40</d:UnitsInStock><d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder><d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel><d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued></m:properties></content></entry></feed>';
