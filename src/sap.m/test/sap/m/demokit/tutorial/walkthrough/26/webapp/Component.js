@@ -30,6 +30,11 @@ sap.ui.define([
 			var oConfig = this.getMetadata().getConfig();
 			var oInvoiceModel = new ODataModel(oConfig.invoiceRemote);
 
+			// debug code to show an alert for CORS issues in the tutorial
+			oInvoiceModel.attachMetadataFailed(function(oEvent) {
+				alert("Request to the remote service failed due to CORS issues - Read the tutorial (Walkthrough Step 26) to understand why no data is shown here.");
+			});
+
 			this.setModel(oInvoiceModel, "invoice");
 
 			// set dialog
