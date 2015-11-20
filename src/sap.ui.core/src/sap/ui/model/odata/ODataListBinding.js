@@ -795,10 +795,11 @@ sap.ui.define([
 	 * Filters the list.
 	 * 
 	 * When using sap.ui.model.Filter the filters are first grouped according to their binding path.
-	 * All filters belonging to a group are ORed and after that the
-	 * results of all groups are ANDed.
+	 * All filters belonging to a group are combined with OR and after that the
+	 * results of all groups are combined with AND.
 	 * Usually this means, all filters applied to a single table column
-	 * are ORed, while filters on different table columns are ANDed.
+	 * are combined with OR, while filters on different table columns are combined with AND.
+	 * Please note that a custom filter function is not supported.
 	 * 
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} aFilters Array of filter objects
 	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
@@ -858,8 +859,8 @@ sap.ui.define([
 
 	/**
 	 * Creates a $filter query option string, which will be used
-	 * as an URL part for OData-Requests. If an Array of Application Filters is given as the second
-	 * Argument, the Control-Filters and Application-Filters are ANDed together.
+	 * as part of URL for OData-Requests. If an Array of Application Filters is given as the second
+	 * If an array of application filters is given as second argument, the control filters and application filters are combined with AND.
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} aControlFilters An Array of control filters
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} [aApplicationFilters] An Array of application filters
 	 * @private
