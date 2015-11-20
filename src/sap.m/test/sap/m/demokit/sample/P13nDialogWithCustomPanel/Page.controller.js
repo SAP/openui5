@@ -5,6 +5,9 @@ sap.ui.controller("sap.m.sample.P13nDialogWithCustomPanel.Page", {
 	onInit: function() {
 		// set explored app's demo model on this sample
 		this.getView().setModel(new sap.ui.model.json.JSONModel("test-resources/sap/m/demokit/sample/P13nDialogWithCustomPanel/products.json"));
+		this.getView().setModel(new sap.ui.model.resource.ResourceModel({
+			bundleName: "sap.m.sample.P13nDialogWithCustomPanel.i18n.i18n"
+		}), "i18n");
 	},
 
 	handleClose: function(oEvent) {

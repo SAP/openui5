@@ -329,12 +329,12 @@ sap.ui.define([
 		if (sap.ui.Device.system.phone) {
 			oNavigationItem = new sap.m.StandardListItem({
 				type: sap.m.ListType.Navigation,
-				title: oPanel.getBindingPath("title") ? "{" + oPanel.getBindingPath("title") + "}" : oPanel.getTitle()
+				title: oPanel.getBindingPath("title") ? jQuery.extend(true, {}, oPanel.getBindingInfo("title")) : oPanel.getTitle()
 			});
 		} else {
 			oNavigationItem = new sap.m.Button({
 				type: ButtonType.Default,
-				text: oPanel.getBindingPath("title") ? "{" + oPanel.getBindingPath("title") + "}" : oPanel.getTitle()
+				text: oPanel.getBindingPath("title") ? jQuery.extend(true, {}, oPanel.getBindingInfo("title")) : oPanel.getTitle()
 			});
 			// oNavigationItem.addDelegate({
 			// ontap: function(oEvent) {
