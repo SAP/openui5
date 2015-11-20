@@ -38,6 +38,10 @@ sap.ui.define([
 		},
 		
 		onSelectionModeChange: function(oEvent) {
+			if (oEvent.getParameter("selectedItem").getKey() === "All") {
+				MessageToast.show("selectionMode:All is deprecated. Please select another one.");
+				return;
+			}
 			var oTable = this.getView().byId("table1");
 			oTable.setSelectionMode(oEvent.getParameter("selectedItem").getKey());
 		},
