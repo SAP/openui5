@@ -41,8 +41,10 @@ function(Element, ElementUtil) {
 		if (oElement) {
 			oElement = ElementUtil.fixComponentContainerElement(oElement);
 			oElement = ElementUtil.fixComponentParent(oElement);
-			var sId = oElement.getId();
-			return mOverlays[sId];
+			if (oElement) {
+				var sId = oElement.getId();
+				return mOverlays[sId];
+			}
 		}
 	};
 

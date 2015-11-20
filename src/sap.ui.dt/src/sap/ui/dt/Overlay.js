@@ -260,8 +260,18 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				var iScrollHeight = oGeometry.domRef.scrollHeight;
 				var iScrollWidth = oGeometry.domRef.scrollWidth;
 				if (iScrollHeight > mSize.height || iScrollWidth > mSize.width) {
-					this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
-					this.$().append(this._oDummyScrollContainer);
+					if (!this._oDummyScrollContainer) {
+						this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
+						this.$().append(this._oDummyScrollContainer);
+					} else {
+						this._oDummyScrollContainer.css({
+							"height": iScrollHeight,
+							"width" : iScrollWidth
+						});
+					}
+				} else if (this._oDummyScrollContainer) {
+					this._oDummyScrollContainer.remove();
+					delete this._oDummyScrollContainer;
 				}
 				DOMUtil.syncScroll(oGeometry.domRef, this.getDomRef());
 			}
@@ -269,11 +279,6 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			this.getChildren().forEach(function(oChild) {
 				oChild.applyStyles();
 			});
-
-			if (this._oDummyScrollContainer) {
-				this._oDummyScrollContainer.remove();
-				delete this._oDummyScrollContainer;
-			}
 		}
 	};
 

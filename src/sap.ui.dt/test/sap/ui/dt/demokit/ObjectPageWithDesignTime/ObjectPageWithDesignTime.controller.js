@@ -1,0 +1,33 @@
+sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	'sap/ui/dt/DesignTime',
+	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/plugin/ControlDragDrop',
+	'sap/ui/dt/plugin/MouseSelection',
+	'sap/ui/dt/Preloader'
+], function (Controller, DesignTime, ElementUtil, ControlDragDrop, MouseSelection, Preloader) {
+	"use strict";
+	return Controller.extend("sap.ui.dt.demo.ObjectPageWithDesignTime", {
+		onInit: function () {
+			var aMOVABLE_TYPES = ["sap.uxap.ObjectPageSection", "sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"];
+			var oSelectionPlugin = new MouseSelection({});
+
+			var oDragPlugin = new ControlDragDrop({
+				draggableTypes : aMOVABLE_TYPES
+			});
+
+			var oView = this.getView();
+			var aElements = ElementUtil.findAllPublicElements(oView);
+			Preloader.load(aElements).then(function() {
+				new DesignTime({
+					rootElements : [oView],
+					plugins : [
+						oSelectionPlugin,
+						oDragPlugin
+					]
+				});
+			});
+		}
+	});
+}, true);
+
