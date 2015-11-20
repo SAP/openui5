@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				/**
 				 * The frame type: 1x1 or 2x1.
 				 */
-				"frameType" : {type : "sap.m.FrameType", group : "Misc"}, // TODO: , defaultValue : sap.m.FrameType.OneByOne},
+				"frameType" : {type : "sap.m.FrameType", group : "Misc", defaultValue : sap.m.FrameType.OneByOne},
 				/**
 				 * The URI of the background image.
 				 */
