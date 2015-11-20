@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
 
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
-					"frameOptions"          : { type : "string",   defaultValue : "allow",   noUrl: true }, // allow/deny/trusted
+					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
@@ -365,13 +365,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 				config["bindingSyntax"] = (config.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
 			}
 
-			if (!config["frameOptions"] ||
-				(config["frameOptions"] !== 'allow'
-				&& config["frameOptions"] !== 'deny'
-				&& config["frameOptions"] !== 'trusted')) {
+			// Configure whitelistService / frameOptions via <meta> tag if not already defined via UI5 configuration
+			if (!config["whitelistService"]) {
+				var oMetaTag = document.querySelector("META[name='sap.whitelistService']");
+				if (oMetaTag) {
+					config["whitelistService"] = oMetaTag.getAttribute("content");
+					// Set default "frameOptions" to "trusted" instead of "allow"
+					if (config["frameOptions"] === "default") {
+						config["frameOptions"] = "trusted";
+					}
+				}
+			}
 
-				// default
-				config["frameOptions"] = 'allow';
+			// Verify and set default for "frameOptions" configuration
+			if (config["frameOptions"] === "default" ||
+				(config["frameOptions"] !== "allow"
+				&& config["frameOptions"] !== "deny"
+				&& config["frameOptions"] !== "trusted")) {
+
+				// default => allow
+				config["frameOptions"] = "allow";
 			}
 
 			// log  all non default value
@@ -924,6 +937,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 		 */
 		getFormatSettings : function() {
 			return this.oFormatSettings;
+		},
+
+		/**
+		 * frameOptions mode (allow/deny/trusted).
+		 *
+		 * @return {string} frameOptions mode
+		 * @private
+		 */
+		getFrameOptions : function() {
+			return this.frameOptions;
+		},
+
+		/**
+		 * URL of the whitelist service.
+		 *
+		 * @return {string} whitelist service URL
+		 * @private
+		 */
+		getWhitelistService : function() {
+			return this.whitelistService;
 		},
 
 		_collect : function() {
