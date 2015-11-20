@@ -33,7 +33,8 @@
         "category": "Action",
         "since": "1.34",
         "samples": [
-          "sap.tnt.sample.ToolHeader"
+          "sap.tnt.sample.ToolHeader",
+          "sap.tnt.sample.ToolHeaderControls"
         ]
       },
       {
@@ -63,8 +64,13 @@
         "description": "Tool Header is useful for showing lists of action buttons"
       },
       {
+        "id": "sap.tnt.sample.ToolHeaderControls",
+        "name": "Tool Header Controls",
+        "description": "Tool Header can contain any controls"
+      },
+      {
         "id": "sap.tnt.sample.ToolPage",
-        "name": "ToolPage",
+        "name": "Tool Page",
         "description": "A tool page layout combining ToolHeader, SideNavigation and content part"
       }
     ]
