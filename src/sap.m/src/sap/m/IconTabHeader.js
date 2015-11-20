@@ -306,6 +306,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Sets the selected item, updates the UI, and fires the select event.
 	 * @private
 	 * @param {sap.m.IconTabFilter} oItem The item to be selected
+	 * @param {Boolean} bAPIChange whether this function is called through the API
 	 * @return {sap.m.IconTabHeader} this pointer for chaining
 	 */
 	IconTabHeader.prototype.setSelectedItem = function(oItem, bAPIchange) {
@@ -331,7 +332,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (oItem.getVisible()) {
 			//click on already selected item leads to expanding/collapsing of the content (if expandable enabled)
-			if (this.oSelectedItem === oItem) {
+			if (this.oSelectedItem === oItem && !bAPIchange) {
 				//if content is not expandable nothing should happen otherwise content will be expanded/collapsed
 				if (this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpandable()) {
 					this.getParent()._toggleExpandCollapse();
@@ -367,7 +368,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						}
 					}
 					//if content is not expanded, content will be expanded (first click on item always leads to expanding the right content)
-					if (this.getParent().getExpandable() && !this.getParent().getExpanded()) {
+					if (!bAPIchange && this.getParent().getExpandable() && !this.getParent().getExpanded()) {
 						this.getParent()._toggleExpandCollapse(true);
 					}
 				}
