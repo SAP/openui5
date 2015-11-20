@@ -139,13 +139,15 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 			var sCompName = this._sId;
 
 			this._oComp = sap.ui.component(sCompId);
-			if (!this._oComp) {
-				this._oComp = sap.ui.getCore().createComponent({
-					id : sCompId,
-					name : sCompName
-				});
+
+			if (this._oComp) {
+				this._oComp.destroy();
 			}
 
+			this._oComp = sap.ui.getCore().createComponent({
+				id : sCompId,
+				name : sCompName
+			});
 			// create component container
 			return new sap.ui.core.ComponentContainer({
 				component: this._oComp
