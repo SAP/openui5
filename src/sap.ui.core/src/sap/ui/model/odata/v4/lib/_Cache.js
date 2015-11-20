@@ -22,18 +22,19 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function (URI) {
 	}
 
 	/**
-	 * Fills the given array range with the given value.
+	 * Fills the given array range with the given value. If iEnd is greater than the array length,
+	 * elements are appended to the end, in contrast to Array.fill.
 	 *
 	 * @param {any[]} aArray
 	 *   the array
+	 * @param {any} vValue
+	 *   the value
 	 * @param {int} iStart
 	 *   the start index
 	 * @param {int} iEnd
 	 *   the end index (will not be filled)
-	 * @param {any} vValue
-	 *   the value
 	 */
-	function fill(aArray, iStart, iEnd, vValue) {
+	function fill(aArray, vValue, iStart, iEnd) {
 		var i;
 
 		for (i = iStart; i < iEnd; i++) {
@@ -70,11 +71,11 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function (URI) {
 					oCache.aElements[iStart + i] = oResult.value[i];
 				}
 			})["catch"](function (oError) {
-				fill(oCache.aElements, iStart, iEnd, undefined);
+				fill(oCache.aElements, undefined, iStart, iEnd);
 				throw oError;
 			});
 
-		fill(oCache.aElements, iStart, iEnd, oPromise);
+		fill(oCache.aElements, oPromise, iStart, iEnd);
 	}
 
 	/**
