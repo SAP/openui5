@@ -1,5 +1,4 @@
 @leftIconsSpace: 2rem;
-@datetimeWidth: 20%;
 @containerPadding: 1rem;
 @closeButtonSize: 2.5rem;
 @closeButtonCompactSize: 1.625rem;
@@ -18,10 +17,6 @@
 .sapMNLI.sapMLIB {
   display: block;
   padding: @containerPadding 0 @containerPadding 1.5rem;
-}
-
-.sap-phone .sapMNLI {
-  margin-bottom: 0.25rem;
 }
 
 // Priority styles =====================================================================================================
@@ -137,6 +132,7 @@
   height: 2rem;
   margin-right: 0.75rem;
   display: block;
+  text-align: center;
 }
 
 .sapMNLI-AuthorPicture .sapMImg {
@@ -146,7 +142,7 @@
 }
 
 .sapMNLI-AuthorPicture .sapUiIcon {
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: @sapUiLightText;
 }
 
@@ -177,7 +173,13 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
 
 .sapMNLI-Footer .sapMTB {
   border: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
   justify-content: flex-end;
 }
 

@@ -218,14 +218,14 @@ sap.ui.define([], function () {
 	 */
 	NotificationListGroupRenderer.renderFooter = function (oRm, oControl) {
 		/** @type {sap.m.Button[]} */
-		var buttons = oControl.getButtons();
+		var aButtons = oControl.getButtons();
 
 		oRm.write('<div class=' + classNameFooter + '>');
 		this.renderPriorityArea(oRm, oControl);
 		this.renderCollapseGroupButton(oRm, oControl);
 
-		if (buttons && buttons.length && oControl.getShowButtons()) {
-			this.renderButtons(oRm, oControl, buttons);
+		if (aButtons && aButtons.length && oControl.getShowButtons()) {
+			oRm.renderControl(oControl.getAggregation('_overflowToolbar'));
 		}
 
 		oRm.write('</div>');

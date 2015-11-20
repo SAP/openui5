@@ -1,6 +1,7 @@
 .sapMNLI {
   background-color: @sapUiLightestBG;
   border: 1px solid @sapUiExtraLightBorder;
+  border-left: 0;
   box-shadow: 0 0.125rem 1rem 0 @sapHCShadowTint;
 }
 
@@ -8,7 +9,7 @@
   outline-offset: -0.1875rem;
 }
 
-.sapMNLI:focus .sapMNLI-Priority {
+.sap-desktop .sapMNLI:focus .sapMNLI-Priority {
   width: 0.1875rem;
   left: 0.125rem;
 }
@@ -23,10 +24,6 @@
 
 .sapMNLI-Header > .sapMTitle {
   font-size: @sapMFontLargeSize;
-}
-
-.sapMText.sapMNLI-Datetime {
-  font-size: @sapMFontSmallSize;
 }
 
 .sapMNLI-Body .sapMNLI-Details {
