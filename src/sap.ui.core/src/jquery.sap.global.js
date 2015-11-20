@@ -4372,9 +4372,6 @@
 		});
 	}
 
-	// ************** Include Traces *****************
-	jQuery.sap.require("jquery.sap.trace" + "" /* Make dynamic dependency */);
-
 	// *********** feature detection, enriching jQuery.support *************
 	// this might go into its own file once there is more stuff added
 
