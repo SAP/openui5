@@ -1,0 +1,94 @@
+/* ====================================================== */
+/* CSS for control sap.m/TabStripSelectList.control                   */
+/* ====================================================== */
+
+@sapUiSltLstBtnInnerSize: 1.25rem;
+.sapMTabSelectList {
+  position: relative;
+}
+
+.sapMTabSelectList .sapMSelectListItem {
+  padding: 0 0.25rem 0 1rem;
+  text-overflow: inherit!important;
+  white-space: inherit !important;
+  height: 2rem;
+}
+
+.sapMTabSelectList .sapMSelectListItemBaseSelected {
+
+}
+
+
+.sapMSelectListItemText, .sapMTabSelectListItemModified {
+  height: 100%;
+  line-height: 2rem;
+  float:left;
+  margin: 0;
+}
+
+.sapMTabSelectList .sapMSelectListItemBaseSelected .sapMSelectListItemText,
+.sapMTabSelectList .sapMSelectListItemBaseSelected.sapMTabSelectListItemModified {
+
+}
+
+.sapMSltPicker .sapMBtn.sapMTabSelectListItemCloseBtn  {
+  height: 100%;
+  width: 1.5rem;
+  padding: 0;
+  float: right;
+}
+
+.sapMTabSelectListItemCloseBtn .sapMBtnContent {
+  line-height: @sapUiSltLstBtnInnerSize;
+}
+
+.sapMTabSelectListItemCloseBtn .sapMBtnInner  {
+  height: @sapUiSltLstBtnInnerSize;
+  min-width: @sapUiSltLstBtnInnerSize;
+  width: @sapUiSltLstBtnInnerSize;
+  padding: 0;
+  margin: 0 auto;
+}
+
+.sapMTabSelectListItemCloseBtn .sapMBtnIcon {
+  line-height: @sapUiSltLstBtnInnerSize;
+  width: 100%;
+  height: 100%;
+  font-size: 0.75rem;
+}
+
+
+.sapMTabSelectListItemModified {
+  width: 1.625rem;
+}
+
+.sapMTabSelectList .sapMBtnInner.sapMBtnText {
+  padding: 0;
+}
+
+.sapMTabSelectListItemCloseBtnInvisible, .sapMTabSelectListItemModifiedInvisible {
+  visibility: hidden;
+}
+
+
+
+
+
+.sap-tablet {
+  .sapMTabSelectList .sapMSelectListItem {
+    height: 2.5rem;
+  }
+  .sapMSelectListItemText, .sapMTabSelectListItemModified {
+    line-height: 2.5rem;
+  }
+}
+
+
+.sap-phone {
+  .sapMTabSelectList .sapMSelectListItem {
+    height: 3rem;
+  }
+  .sapMSelectListItemText, .sapMTabSelectListItemModified {
+    line-height: 3rem;
+  }
+}

@@ -1,0 +1,58 @@
+/* ================================================================= */
+/* CSS for control sap.m/TabStrip BlueCrystal theme */
+/* ================================================================= */
+.sapMTabStrip {
+	background: @sapUiExtraLightBG;
+	border: 1px solid @sapUiLightBorder;
+	.sapMTSLeftOverflowButtons {
+		background: linear-gradient(90deg, @sapUiExtraLightBG 0%, @sapUiExtraLightBG 75%, transparent 100%);
+	}
+	.sapMTSTabContainer {
+		.sapMTSTabs {
+			.sapMTabContainerItem {
+				background: @sapUiHeaderBG;
+				border-right: 1px solid @sapUiLightBorder;
+				color: @sapUiDarkText;
+				&.selected {
+					background: @sapUiLightestBG;
+					border-right: 1px solid @sapUiLightBorder;
+					color: @sapUiStandardText;
+				}
+				&:hover {
+					background: darken(@sapUiHeaderBG, 5);
+					border-right: 1px solid @sapUiLightBorder;
+					color: @sapUiDarkText;
+				}
+				&:active {
+					background: @sapUiHighlight;
+					border-right: 1px solid @sapUiLightBorder;
+					color: @sapUiExtraLightBG;
+					.sapMTSTabCloseBtnCnt {
+						.sapMBtn {
+							.sapMBtnIcon {
+								color: @sapUiExtraLightBG;
+							}
+						}
+					}
+				}
+				&:focus {
+				  outline: none;
+				}
+				position: relative;
+				&:focus::before {
+				  pointer-events: none;
+				  content: "";
+				  position: absolute;
+				  top: 0;
+				  left: 0;
+				  right: 0;
+				  bottom: 0;
+				  border: 1px dotted @sapUiFocus;
+				}
+			}
+		}
+	}
+	.sapMTSRightOverflowButtons {
+		background: linear-gradient(90deg, transparent 0%, @sapUiExtraLightBG 25%, @sapUiExtraLightBG 100%);
+	}
+}
