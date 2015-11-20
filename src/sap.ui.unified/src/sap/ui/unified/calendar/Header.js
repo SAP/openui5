@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		Header.prototype.setAriaLabelButton0 = function(sText){
 
-			_setAriaLabel.call(0, sText);
+			_setAriaLabel.call(this, 0, sText);
 
 			return this;
 
@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		Header.prototype.setAriaLabelButton1 = function(sText){
 
-			_setAriaLabel.call(1, sText);
+			_setAriaLabel.call(this, 1, sText);
 
 			return this;
 
@@ -214,7 +214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		Header.prototype.setAriaLabelButton2 = function(sText){
 
-			_setAriaLabel.call(2, sText);
+			_setAriaLabel.call(this, 2, sText);
 
 			return this;
 
