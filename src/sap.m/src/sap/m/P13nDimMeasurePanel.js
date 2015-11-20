@@ -542,8 +542,6 @@ sap.ui.define([
 		sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
 		this._sContainerResizeListener = null;
 
-		sap.ui.Device.resize.detachHandler(this._fnHandleResize);
-
 		this._oToolbar.destroy();
 		this._oToolbar = null;
 
