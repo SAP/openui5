@@ -6,7 +6,8 @@
 <title>Test Page for sap.m.P13nDialog</title>
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-resourceroots='{ "resourceroot": "./" }'>
 	
 </script>
 
@@ -357,7 +358,45 @@
 			// cleanup
 			oP13nDialog.destroy();
 		});
+		test("binding of 'title'", function() {
+			// system under test
+			var oP13nPanelF, oP13nPanelS, oP13nPanelD;
+			sap.ui.getCore().setModel(new sap.ui.model.resource.ResourceModel({
+				bundleName: "resourceroot.data.i18n.i18n"
+			}), "i18n");
 
+			// act
+			var oP13nDialog = new sap.m.P13nDialog({
+				panels: [
+					oP13nPanelD = new sap.m.P13nPanel({
+						title: "Without Binding",
+						type: sap.m.P13nPanelType.dimeasure
+					}), oP13nPanelF = new sap.m.P13nPanel({
+						title: "{i18n>FilterTab}",
+						type: sap.m.P13nPanelType.filter
+					}), oP13nPanelS = new sap.m.P13nPanel({
+						title: "{i18n>SortTab}",
+						type: sap.m.P13nPanelType.sort
+					})
+				]
+			});
+
+			// arrange
+			oP13nDialog.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			strictEqual(oP13nPanelF.getTitle(), "Filter Settings");
+			strictEqual(oP13nPanelS.getTitle(), "Sort Settings");
+			strictEqual(oP13nPanelD.getTitle(), "Without Binding");
+
+			strictEqual(oP13nDialog._getNavigationItemByPanel(oP13nPanelF).getText(), "Filter Settings");
+			strictEqual(oP13nDialog._getNavigationItemByPanel(oP13nPanelS).getText(), "Sort Settings");
+			strictEqual(oP13nDialog._getNavigationItemByPanel(oP13nPanelD).getText(), "Without Binding");
+
+			// cleanup
+			oP13nDialog.destroy();
+		});
 	}());
 </script>
 

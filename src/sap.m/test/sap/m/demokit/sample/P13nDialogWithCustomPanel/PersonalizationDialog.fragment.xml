@@ -4,7 +4,7 @@
 	<P13nDialog ok="handleClose" cancel="handleClose" showReset="true"
 		reset="handleReset" initialVisiblePanelType="custom1">
 		<panels>
-			<custom:CustomPanel title="Columns Setting (Custom Panel)"
+			<custom:CustomPanel title="{i18n>CustomTitle}"
 				visible="true" type="custom1">
 				<custom:content>
 					<RadioButtonGroup columns="2">
@@ -15,7 +15,7 @@
 					</RadioButtonGroup>
 				</custom:content>
 			</custom:CustomPanel>
-			<P13nColumnsPanel title="Columns" visible="true"
+			<P13nColumnsPanel title="{/ColumnTitle}" visible="true"
 				addColumnsItem="onAddColumnsItem" type="columns"
 				items="{
                     path: '/ColumnCollection'

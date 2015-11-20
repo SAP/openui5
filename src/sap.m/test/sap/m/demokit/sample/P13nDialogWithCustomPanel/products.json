@@ -17,5 +17,6 @@
 		{"text" : "Height", "path" : "height"},
 		{"text" : "DimUnit", "path" : "dimUnit"},
 		{"text" : "ProductPicUrl", "path" : "productPicUrl"}
-	]
+	],
+	"ColumnTitle": "My favorite columns"
 }
