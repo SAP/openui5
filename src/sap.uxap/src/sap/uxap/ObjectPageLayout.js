@@ -118,8 +118,14 @@ sap.ui.define([
 				 * Determines whether an Edit button will be shown in Header Content.
 				 * @since 1.34.0
 				 */
-				showEditHeaderButton: {type: "boolean", group: "Behavior", defaultValue: false}
+				showEditHeaderButton: {type: "boolean", group: "Behavior", defaultValue: false},
 
+				/**
+				 * Specifies whether the object page enables flexibility features, such as hiding and adding sections.<br>
+				 * For more information about SAPUI5 flexibility, refer to the Developer Guide.
+				 * @since 1.34.0
+				 */
+				flexEnabled: {type: "boolean", group: "Misc", defaultValue: false}
 			},
 			defaultAggregation: "sections",
 			aggregations: {
