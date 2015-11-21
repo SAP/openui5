@@ -18,7 +18,13 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<!--[if IE]>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 	<style>
 		#testArea div {
 			display: inline-block;
@@ -695,6 +701,38 @@
 			equal($img1.attr("role"), "", "Attribute should be changed");
 			equal($img1.attr("alt"), "test alt message", "Attribute should be changed");
 		});
+
+		test("RenderManager should not break for controls with invalid renderer", function() {
+
+			// define a control without an invalid renderer
+			sap.ui.core.Control.extend("my.InvalidRendererControl", {
+				renderer: {}
+			});
+
+			// create a new instance of the control
+			var oControl = new my.InvalidRendererControl();
+			var oMetadata = oControl.getMetadata();
+			var oRenderer = oControl.getRenderer();
+
+			// check for an invalid renderer (preconditions)
+			ok(!!oRenderer, "A renderer object should be provided");
+			ok(!oRenderer.render, "Invalid renderer should not provide a render function");
+
+			// spy the jQuery.sap.log.error function
+			var oSpy = sinon.spy(jQuery.sap.log, "error");
+
+			// rendering should not lead to an error
+			oControl.placeAt("area8");
+			sap.ui.getCore().applyChanges();
+			oControl.destroy();
+
+			// check the error message
+			equal("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!", oSpy.getCall(0).args[0], "Error should be reported in the console!")
+
+			// restore the spy
+			jQuery.sap.log.error.restore();
+
+		});
 	</script>
   
 </head>
@@ -713,6 +751,7 @@
 		<div id="area5"></div>
 		<div id="area6"></div>
 		<div id="area7"></div>
+		<div id="area8"></div>
 	</div>
 </body>
 </html>
