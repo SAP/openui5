@@ -310,6 +310,40 @@
 				assert.equal(jQuery(this.id + '-TextLabel').text(), 'Updated text', 'should have updated text from the binding.');
 				assert.equal(jQuery(this.id + '-Dialog-title').text(), 'Updated title', 'should have updated title from the binding.');
 			});
+
+			// =========================================================================================================
+			// Testing XML view usage
+			// =========================================================================================================
+
+			QUnit.module('Using BusyDialog in XMLView.');
+
+			QUnit.test('Testing the pseudo renderer', function (assert) {
+
+				// the XML view content
+				var sXMLView =
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml">' +
+					'  <BusyDialog id="busyDialog"/>' +
+					'</mvc:View>';
+
+				// create the view instance
+				var myView = sap.ui.xmlview({
+					viewContent: sXMLView
+				});
+
+				// check the availability of a renderer and a render function
+				// which is required for usage as content in the XMLView
+				var oBusyDialog = myView.byId("busyDialog");
+				var oRenderer = sap.ui.core.RenderManager.getRenderer(oBusyDialog);
+				assert.ok(oRenderer && typeof oRenderer.render === "function", 'The BusyDialog should have a render function!');
+
+				// test the rendering with the XMLView will fail if there is no renderer
+				myView.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// destroy the XMLView
+				myView.destroy();
+
+			});
 		</script>
 	</head>
 	<body id='body' class='sapUiBody'>
