@@ -266,7 +266,11 @@ sap.ui.define([
 		}
 
 		//Render the control using the RenderManager interface
-		oRenderer.render(this.getRendererInterface(), oControl);
+		if (oRenderer && typeof oRenderer.render === "function") {
+			oRenderer.render(this.getRendererInterface(), oControl);
+		} else {
+			jQuery.sap.log.error("The renderer for class " + oMetadata.getName() + " is not defined or does not define a render function! Rendering of " + oControl.getId() + " will be skipped!");
+		}
 
 		this.aStyleStack.pop();
 
