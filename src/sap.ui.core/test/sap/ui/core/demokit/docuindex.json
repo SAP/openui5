@@ -459,7 +459,7 @@
 			{
 				"id": "sap.ui.core.sample.OpaStartup.iStartMyAppInAFrame",
 				"name": "Starting an app in an iFrame",
-				"description": "Use this function if you would like to run your app isolated from the other tests and your app starts with a html file you should use this function for testing with OPA."
+				"description": "Use this function if you would like to run your app isolated from the other tests and your app starts with a html file."
 			},
 			{
 				"id": "sap.ui.core.sample.OpaAction",
