@@ -37,7 +37,7 @@
 				opaTest("Should start and teardown a component", function (Given, When, Then) {
 
 					// Arrangements
-					Given.iStartMyAppInAComponent({
+					Given.iStartMyUIComponent({
 						componentConfig: {
 							name: "sap.ui.sample.appUnderTest"
 						},
@@ -50,7 +50,7 @@
 					}).done(
 						function() {
 							// Assertions
-							Then.iTeardownMyComponent().done(function () {
+							Then.iTeardownMyUIComponent().done(function () {
 								assert.ok(!jQuery(".sapUiOpaComponent").length,
 									"The component was removed");
 							});
