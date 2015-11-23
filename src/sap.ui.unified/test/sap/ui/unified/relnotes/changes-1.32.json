@@ -214,5 +214,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.7": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "879ae35090902833e0cca319b42f7d6b282db495",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: day navigated twice on touch device",
+        "references": []
+      }
+    ]
   }
 }

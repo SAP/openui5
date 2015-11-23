@@ -2348,5 +2348,73 @@
         "references": []
       }
     ]
+  },
+  "1.32.7": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "614a8b559a6ec2abfd0194bd2b26f44a6fde43c8",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.BusyDialog: adding a missing empty renderer obj",
+        "references": []
+      },
+      {
+        "id": "644e2865b8240306b876a00c66e57ef9563aedcf",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: error messages stays after choosing date",
+        "references": []
+      },
+      {
+        "id": "6f67e4812fbc566d6fea0d6d9e366d8c2d482b2d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: opens by scrolling on Win8 phone",
+        "references": []
+      },
+      {
+        "id": "9708a6bb3e32db904dd61514cb50bb9b088f0b71",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Setting selected key through API no longer triggers expand/collapse action",
+        "references": []
+      },
+      {
+        "id": "97ab9f7b40f8b9911336a457225d917ff2cab56e",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: update the aria-describedby attribute after the initial rendering",
+        "references": []
+      },
+      {
+        "id": "2235f22301cea1aeee8983d994f33a99e0a9bd37",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nDialog - \u0027text\u0027 binding of navigationItem is cloned by \u0027title\u0027 binding of panel (downport)",
+        "references": []
+      },
+      {
+        "id": "3bd79130777be03844d60164474c4cf2dca45f33",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: display control tooltip instead of icon tooltip",
+        "references": []
+      },
+      {
+        "id": "52f7f2417ab13247ccf125d98949ef4e5084368a",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: display values using the fixed-point notation",
+        "references": []
+      },
+      {
+        "id": "5eda08ce152f96adc9ca215e795d3f2fa0972fe2",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap/m/BusyDialog: adding a dummy render function to renderer",
+        "references": []
+      }
+    ]
   }
 }

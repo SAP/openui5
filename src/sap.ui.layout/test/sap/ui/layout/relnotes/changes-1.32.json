@@ -151,5 +151,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.7": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "80251897c2ca17c032ed333fe60bb316f55123eb",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.layout.VerticalLayout: fix vertical-align in IE",
+        "references": []
+      }
+    ]
   }
 }

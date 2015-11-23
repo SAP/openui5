@@ -530,5 +530,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.7": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "04959f0ac0cec2ed925b846915fa5ddd55e06b2c",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table: fix SelectionMode change issue of explored sample",
+        "references": []
+      }
+    ]
   }
 }

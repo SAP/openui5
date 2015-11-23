@@ -1566,5 +1566,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.7": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "e4af8f543a3e4d1e28b6115155b9d378be9ade21",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "RenderManager: make the rendering more robust for invalid renderer",
+        "references": []
+      },
+      {
+        "id": "8f79c709d092e64443ea6c57c224541dfa0cd109",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery-mobile-custom: consider window.scrollY in detecting delayed mouse event",
+        "references": []
+      },
+      {
+        "id": "0d13d599c7cf773174998b93bb21db8df6026123",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Control: fixed busy indication of XMLView",
+        "references": []
+      }
+    ]
   }
 }
