@@ -4,7 +4,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title>sap.m.DynamicContainer</title>
+<title>sap.m.SlideTile</title>
 
 <script src="../../../resources/sap-ui-core.js" type="text/javascript"
 	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.layout"
@@ -37,7 +37,7 @@
 <script type="text/javascript">
 	jQuery.sap.initMobile();
 
-	var oDynamicContainerData = {
+	var oSlideTileData = {
 		displayTime : 5000,
 		transitionTime : 500,
 		jamTiles : [{
@@ -95,7 +95,7 @@
 		}]
 	};
 
-	var oDynamicContainerModel = new sap.ui.model.json.JSONModel(oDynamicContainerData);
+	var oSlideTileModel = new sap.ui.model.json.JSONModel(oSlideTileData);
 
 	var oJamTileContent = new sap.m.TileContent({
 		footer : "{footer}",
@@ -133,7 +133,7 @@
 		return fnGenericTileFactory;
 	}
 
-	var oJamDynamicContainer = new sap.m.DynamicContainer("dc-jam", {
+	var oJamSlideTile = new sap.m.SlideTile("dc-jam", {
 		displayTime : "{/displayTime}",
 		transitionTime : "{/transitionTime}",
 		tiles : {
@@ -150,7 +150,7 @@
 		})
 	});
 
-	var oNewsDynamicContainer = new sap.m.DynamicContainer("dc-news", {
+	var oNewsSlideTile = new sap.m.SlideTile("dc-news", {
 		displayTime : "{/displayTime}",
 		transitionTime : "{/transitionTime}",
 		tiles : {
@@ -159,7 +159,7 @@
 		}
 	});
 
-	var oOneDynamicContainer = new sap.m.DynamicContainer("dc-one", {
+	var oOneSlideTile = new sap.m.SlideTile("dc-one", {
 		displayTime : "{/displayTime}",
 		transitionTime : "{/transitionTime}",
 		tiles : {
@@ -184,13 +184,13 @@
 	});
 	var oDcContentForm = new sap.ui.layout.form.SimpleForm("dc-content-form", {
 		maxContainerCols : 2,
-		content : [oNewsDCLbl, oNewsDynamicContainer, oOneDCLbl, oOneDynamicContainer, oJamDCLbl, oJamDynamicContainer]
+		content : [oNewsDCLbl, oNewsSlideTile, oOneDCLbl, oOneSlideTile, oJamDCLbl, oJamSlideTile]
 	});
 
 	var oPage = new sap.m.Page("initial-page", {
 		showHeader : false,
 		content : [oDcContentForm]
-	}).setModel(oDynamicContainerModel);
+	}).setModel(oSlideTileModel);
 
 	var oDTLbl = new sap.m.Label({
 		text : "Display Time",

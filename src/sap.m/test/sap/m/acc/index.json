@@ -51,11 +51,6 @@
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
-			"control": "sap.m.DynamicContainer",
-			"url": "../DynamicContainer.html",
-			"appComponent" : "CA-UI5-BS-FCW"
-		},
-		{
 			"control": "sap.m.FeedInput",
 			"url": "../FeedInput.html",
 			"appComponent": "CA-UI5-BS-FCW"
@@ -250,6 +245,11 @@
 			"control": "sap.m.Slider",
 			"url": "../Slider.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.SlideTile",
+			"url": "../SlideTile.html",
+			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
 			"control": "sap.m.Switch",
