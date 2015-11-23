@@ -47,7 +47,8 @@
 					"sap.ui.unified.sample.CalendarSingleIntervalSelection",
 					"sap.ui.unified.sample.CalendarMultipleDaySelection",
 					"sap.ui.unified.sample.CalendarSpecialDaysLegend",
-					"sap.ui.unified.sample.CalendarMultipleMonth"
+					"sap.ui.unified.sample.CalendarMultipleMonth",
+					"sap.ui.unified.sample.CalendarCalendarType"
 				]
 			},
 			{
@@ -128,6 +129,11 @@
 				"id": "sap.ui.unified.sample.CalendarMultipleMonth",
 				"name": "multiple months",
 				"description": "Calendar with more than one month"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarCalendarType",
+				"name": "calendar type",
+				"description": "islamic Calendar with secondary gregorian type"
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",

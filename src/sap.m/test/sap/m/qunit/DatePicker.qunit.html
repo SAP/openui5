@@ -27,11 +27,13 @@
 
 			var bChange = false;
 			var sValue = "";
+			var bValid = false;
 			var sId = "";
 
 			function handleChange(oEvent){
 					var oDP = oEvent.oSource;
 					sValue = oEvent.getParameter("newValue");
+					bValid = oEvent.getParameter("valid");
 					bChange = true;
 					sId = oDP.getId();
 				};
@@ -54,6 +56,52 @@
 				change: handleChange
 				}).placeAt("uiArea3");
 
+			var oDP5 = new sap.m.DatePicker("DP5", {
+				dateValue: new Date("2015", "10", "23"),
+				displayFormat: "long",
+				displayFormatType: "Islamic",
+				secondaryCalendarType: "Gregorian",
+				change: handleChange
+				}).placeAt("uiArea5");
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({
+				dateValue: new Date("2015", "10", "23")
+			});
+			sap.ui.getCore().setModel(oModel);
+
+			var bParseError = false;
+			sap.ui.getCore().attachParseError(
+					function(oEvent) {
+						sId = oEvent.getParameter("element").getId();
+						sValue = oEvent.getParameter('newValue');
+						bValid = false;
+						bParseError = true;
+					});
+
+			var bValidationSuccess = false;
+			sap.ui.getCore().attachValidationSuccess(
+					function(oEvent) {
+						sId = oEvent.getParameter("element").getId();
+						sValue = oEvent.getParameter('newValue');
+						bValid = true;
+						bValidationSuccess = true;
+					});
+
+			var oDP6 = new sap.m.DatePicker("DP6", {
+				width: "250px",
+				value: {
+					path: "/dateValue",
+					type: new sap.ui.model.type.Date({style: "short", strictParsing: true})}
+				}).placeAt("uiArea6");
+
+			var oDP7 = new sap.m.DatePicker("DP7", {
+				width: "250px",
+				value: {
+					path: "/dateValue",
+					type: new sap.ui.model.type.Date({style: "short", strictParsing: true, calendarType: "Islamic"})}
+				}).placeAt("uiArea6");
+
 			qutils.delayTestStart();
 
 			module("initialization");
@@ -65,6 +113,12 @@
 				equal(oDP2.getDateValue().getTime(), new Date("2014", "03", "01").getTime(), "DP2: DateValue set");
 				equal(oDP3.getValue(), "4/1/14", "DP3: Value in internal format set");
 				equal(oDP3.getDateValue().getTime(), new Date("2014", "03", "01").getTime(), "DP3: DateValue set");
+				equal(oDP5.getValue(), "11/23/15", "DP5: Value in internal format set");
+				equal(oDP5.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP5: DateValue set");
+				equal(oDP6.getValue(), "11/23/15", "DP6: Value in format from binding set");
+				equal(oDP6.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP6: DateValue set");
+				equal(oDP7.getValue(), "2/10/1437 AH", "DP6: Value in format from binding set");
+				equal(oDP7.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DP6: DateValue set");
 			});
 
 			test("calendar and popup", function() {
@@ -86,6 +140,9 @@
 				ok(!jQuery("#DP1").children("input").val(), "DP1 : empty date");
 				equal(jQuery("#DP2").children("input").val(), "01+04+2014", "DP2: defined output format used");
 				equal(jQuery("#DP3").children("input").val(), "April 1, 2014", "DP3: defined output format used");
+				equal(jQuery("#DP5").children("input").val(), "Safar 10, 1437 AH", "DP5: defined islamic output format used");
+				equal(jQuery("#DP6").children("input").val(), "11/23/15", "DP6: defined output format from binding used");
+				equal(jQuery("#DP7").children("input").val(), "2/10/1437 AH", "DP7: defined islamic output format from binding used");
 			});
 
 			module("interaction");
@@ -93,15 +150,66 @@
 			test("change date by typing", function() {
 				bChange = false;
 				sValue = "";
+				bValid = true;
+				sId = "";
+				oDP2.focus();
+				jQuery("#DP2").children("input").val("32+04+2014");
+				qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DP2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				equal(sId, "DP2", "Change event fired");
+				equal(sValue, "32+04+2014", "Value of event has entered value if invalid");
+				ok(!bValid, "Value is not valid");
+				equal(oDP2.getValue(), "32+04+2014", "Value has entered value if invalid");
+				equal(oDP2.getDateValue().getTime(), new Date("2014", "03", "01").getTime(), "DateValue not changed set");
+
+				bChange = false;
+				sValue = "";
+				bValid = false;
 				sId = "";
 				oDP2.focus();
 				jQuery("#DP2").children("input").val("02+04+2014");
 				qutils.triggerKeyboardEvent("DP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-				jQuery("#DP2").children("input").change(); // trigger change exent, because browser do not if value is changed using jQuery
+				jQuery("#DP2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 				equal(sId, "DP2", "Change event fired");
 				equal(sValue, "2014-04-02", "Value in internal format priovided");
+				ok(bValid, "Value is valid");
 				equal(oDP2.getValue(), "2014-04-02", "Value in internal format set");
 				equal(oDP2.getDateValue().getTime(), new Date("2014", "03", "02").getTime(), "DateValue set");
+
+				bChange = false;
+				bParseError = false;
+				bValidationSuccess = false;
+				sValue = "";
+				bValid = false;
+				sId = "";
+				oDP6.focus();
+				jQuery("#DP6").children("input").val("13/23/2015");
+				qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DP6").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				ok(bParseError, "parse error fired");
+				ok(!bValidationSuccess, "no validation success fired");
+				equal(sId, "DP6", "ID of control");
+				equal(sValue, "13/23/2015", "entered Value priovided");
+				equal(oDP6.getValue(), "13/23/2015", "entered Value in set");
+				equal(oDP6.getDateValue().getTime(), new Date("2015", "10", "23").getTime(), "DateValue not changed");
+
+				bChange = false;
+				bParseError = false;
+				bValidationSuccess = false;
+				sValue = "";
+				bValid = false;
+				sId = "";
+				oDP6.focus();
+				jQuery("#DP6").children("input").val("01/01/15");
+				qutils.triggerKeyboardEvent("DP6-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DP6").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				ok(!bParseError, "no parse error fired");
+				ok(bValidationSuccess, "validation success fired");
+				equal(sId, "DP6", "ID of control");
+				equal(sValue, "1/1/15", "Value in binding format priovided");
+				equal(oDP6.getValue(), "1/1/15", "Value in internal format set");
+				equal(jQuery("#DP6").children("input").val(), "1/1/15", "output value formatted in binding format")
+				equal(oDP6.getDateValue().getTime(), new Date("2015", "0", "1").getTime(), "DateValue changed");
 			});
 
 			test("change date by Pageup/down", function() {
@@ -200,6 +308,21 @@
 
 				oDP3.setEditable(true);
 				sap.ui.getCore().applyChanges();
+
+				oDP5.focus();
+				qutils.triggerEvent("click", "DP5-icon");
+				equal(oDP5._oCalendar.getPrimaryCalendarType(), "Islamic", "DP5: Primary calendar type set");
+				equal(oDP5._oCalendar.getSecondaryCalendarType(), "Gregorian", "DP5: Secondary calendar type set");
+				jQuery("#DP5-cal--Month0-20151124").focus();
+				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				equal(oDP5.getValue(), "11/24/15", "Value in internal format set");
+
+				oDP7.focus();
+				qutils.triggerEvent("click", "DP7-icon");
+				equal(oDP7._oCalendar.getPrimaryCalendarType(), "Islamic", "DP7: Primary calendar type set");
+				jQuery("#DP7-cal--Month0-20151124").focus();
+				qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				equal(oDP7.getValue(), "2/11/1437 AH", "Value in binding format set");
 			});
 
 			module("ARIA");
@@ -215,7 +338,7 @@
 				var $LabelledByReference = jQuery.sap.byId($Input.attr("aria-labelledby"));
 				var $DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
 				var sDateAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE");
-				
+
 				strictEqual($DescribedByReference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
 				strictEqual($LabelledByReference.text(), sPlaceholder, "Placholder announcement added into aria-labelledby");
 
@@ -246,5 +369,9 @@
 		<div id="uiArea3"></div>
 		<br>
 		<div id="uiArea4"></div>
+		<br>
+		<div id="uiArea5"></div>
+		<br>
+		<div id="uiArea6"></div>
 	</body>
 </html>

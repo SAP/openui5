@@ -21,6 +21,15 @@
 			id="DP3"
 			displayFormat="short"
 			change="handleChange"/>
+		<Label text="DatePicker with islamic date and secondray gregorian date in calendar" labelFor="DP5"/>
+		<DatePicker
+			id="DP5"
+			value="2015-11-23"
+			valueFormat="yyyy-MM-dd"
+			displayFormat="long"
+			displayFormatType="Islamic"
+			secondaryCalendarType="Gregorian"
+			change="handleChange"/>
 		<Text
 			id="T1"
 			text="change event result"
