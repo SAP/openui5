@@ -141,6 +141,7 @@ sap.ui.define([
 				 * Marks that there are unsaved changes in the objectPageHeader.
 				 * The markChanges state cannot be used together with the markLocked state.
 				 * If both are set to true, only the locked state will be displayed.
+				 * @since 1.34.0
 				 */
 				markChanges: {type: "boolean", group: "Misc", defaultValue: false}
 			},
@@ -236,6 +237,7 @@ sap.ui.define([
 
 						/**
 						 * DOM reference of the changed item's icon to be used for positioning.
+						 * @since 1.34.0
 						 */
 						domRef: {type: "string"}
 					}
