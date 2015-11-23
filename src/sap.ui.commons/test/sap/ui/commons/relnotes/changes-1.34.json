@@ -1,0 +1,140 @@
+{
+  "1.34.0": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "8e7bac69dbad1a513bfa73ef589323f2a584bc7e",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Using FocusInfo Fixed",
+        "references": []
+      },
+      {
+        "id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "906a5883d1a80951e9e0447281c47d2c3b6a783f",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Button: when icon only button, the button\u0027s tooltip is respected.",
+        "references": []
+      },
+      {
+        "id": "5c778e93f9abf7a8835606e9e96ba6f929d55199",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Carousel: Issue with calculating carousel size when width is set fixed",
+        "references": []
+      },
+      {
+        "id": "dd2474cc681c16347c3ca9411785e344b08e5139",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Carousel: Issue with toolbar arrow not on place fixed",
+        "references": []
+      },
+      {
+        "id": "16b43a983c67a915e1a94471cd87e16377e6b5b1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: error if sap.ui.core.Item is used",
+        "references": []
+      },
+      {
+        "id": "fff04dcc0144a5f70398e33829574b298e4f79f3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: screen reader don\u0027t read additional text",
+        "references": []
+      },
+      {
+        "id": "8eade432bc3c86002d4818c091e187ae65f6b559",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdowmBox: cursor moves 2 characters on backspace",
+        "references": []
+      },
+      {
+        "id": "13dc2a34f8b7db64f213f0899ffe77c7297d3cb1",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ListBox: Do nothing when the same height value is set",
+        "references": []
+      },
+      {
+        "id": "a5bc1e0c07ab191aca57da605085113245122c94",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RangeSlider: Grips not visible if invalif values",
+        "references": []
+      },
+      {
+        "id": "7ef56db35b6b804288b6a12a86e92bcbf139814e",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RichTooltip: Enable binding text with curly brace",
+        "references": []
+      },
+      {
+        "id": "69a08e96033eeedbc40fd4bcbbf413deac7eba59",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: focusOut is triggered when switching tabs",
+        "references": []
+      },
+      {
+        "id": "14130ac10a9732003314fa378ae914dce5de7081",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField in IE onInput called",
+        "references": []
+      },
+      {
+        "id": "4075afb2089331fc84d701e68e1cc4d4ea6347fa",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: Allow \"AltGr+z\" as input",
+        "references": []
+      },
+      {
+        "id": "1385295e5c85018b52bb13be3ae1181ed5863a68",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: after enabling still readonly",
+        "references": []
+      },
+      {
+        "id": "e6abf93f6a0098e85d96f4bf855d3d0e5259b89f",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextView: default ARIA role \"Document\" is removed",
+        "references": []
+      },
+      {
+        "id": "c29f0d3e6bb85dd2883fe635cd22cfb76f17745f",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Overflowing inside sap.ui.layout.Splitter is now possible.",
+        "references": []
+      },
+      {
+        "id": "2bae7babba64ba2fd4f68ce32177ce937bf7ca9d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      },
+      {
+        "id": "dca956e5eef5ec9689cf4cbb1253ecb9bdc39b1e",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding - ApplicationFilters were not attached",
+        "references": []
+      }
+    ]
+  }
+}
