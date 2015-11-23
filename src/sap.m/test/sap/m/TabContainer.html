@@ -1,15 +1,15 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta charset="UTF-8">
-		<title>sap.m.TabContainer</title>
-		<script id="sap-ui-bootstrap"
-				src="../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m"
-				data-sap-ui-theme="sap_bluecrystal">
-		</script>
-		<script>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>sap.m.TabContainer</title>
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script>
 
 		jQuery.sap.require("sap.ui.core.IconPool");
 		jQuery.sap.require("sap.m.MessageBox");
@@ -84,15 +84,17 @@
 			sap.m.MessageToast.show("Item selected: " + oEvent.getParameter("item").getName(), {duration: 500});
 		};
 
-		var fnTryToCloseItem = function(oEvent) {
-			// todo: message bundle
-			sap.m.MessageBox.confirm("Do you want to close the tab?", {
-				fnConfirmItemClose: oEvent.getParameter('confirm'), // add here in order to have it available in the onClose scope through 'this'
-				oItemToClose: oEvent.getParameter('item'),
+		var fnCloseItem = function(oEvent) {
+			// prevent the tab being closed by default
+			oEvent.preventDefault();
+			var oItemToClose = oEvent.getParameter('item');
+			sap.m.MessageBox.confirm("Do you want to close the tab '" + oItemToClose.getName() + "'?", {
 				onClose: function (oAction) {
 					if (oAction === sap.m.MessageBox.Action.OK) {
-						this.fnConfirmItemClose();
-						sap.m.MessageToast.show("Item closed: " + this.oItemToClose.getName(), {duration: 500});
+						tabContainer.removeItem(oItemToClose);
+						sap.m.MessageToast.show("Item closed: " + oItemToClose.getName(), {duration: 500});
+					} else {
+						sap.m.MessageToast.show("Item close canceled: " + oItemToClose.getName(), {duration: 500});
 					}
 				}
 			});
@@ -105,7 +107,7 @@
 				template: oTemplate
 			},
 			itemSelect: fnOnItemSelected,
-			itemClose: fnTryToCloseItem,
+			itemClose: fnCloseItem,
 			addNewButtonPress: fnOnAddButtonClick
 		});
 
@@ -235,8 +237,8 @@
 				]
 			})
 		})).placeAt("body");
-		</script>
-	</head>
-	<body id="body" class="sapUiBody">
-	</body>
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
 </html>
