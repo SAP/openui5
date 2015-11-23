@@ -1,0 +1,123 @@
+/* ======================================== */
+/* CSS for control sap.m/FeedContent.control */
+/* ======================================== */
+.sapMFC {
+	display: inline-block;
+	outline: none;
+}
+
+.sapUiMedia-Std-Desktop .sapMFC.Auto,
+.sapUiMedia-Std-Tablet .sapMFC.Auto,
+.sapMFC.L, .sapMFC.M {
+	width: 22.5rem;
+	height: 4.5rem;
+}
+
+.sapUiMedia-Std-Phone .sapMFC.Auto,
+.sapMFC.S, .sapMFC.XS {
+	width: 18rem;
+	height: 3.5rem;
+}
+
+.sapMFCCTxt {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	color: @sapUiDarkText;
+	padding: 0.125rem 0rem;
+	max-width: 22.5rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMFCCTxt.Auto,
+.sapUiMedia-Std-Tablet .sapMFCCTxt.Auto,
+.sapMFCCTxt.L, .sapMFCCTxt.M {
+	height: 3.12rem;
+}
+
+.sapUiMedia-Std-Phone .sapMFCCTxt.Auto,
+.sapMFCCTxt.S, .sapMFCCTxt.XS {
+	height: 2.41rem;
+}
+
+.sapMFCSbh {
+	height: 1rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	color: @sapUiLightText;
+	padding: 0.125rem 0rem;
+	max-width: 22.5rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMFCSbh.Auto,
+.sapUiMedia-Std-Tablet .sapMFCSbh.Auto,
+.sapMFCSbh.L, .sapMFCSbh.M {
+	height: 1rem;
+}
+
+.sapUiMedia-Std-Phone .sapMFCSbh.Auto,
+.sapMFCSbh.S, .sapMFCSbh.XS {
+	height: 0.78rem;
+}
+
+.sapMFCValue {
+	position: relative;
+	float: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapUiMedia-Std-Desktop .sapMFCValue.Auto,
+.sapUiMedia-Std-Tablet .sapMFCValue.Auto,
+.sapMFCValue.L, .sapMFCValue.M {
+	padding-top: 1rem;
+	font-size: 3rem;
+	height: 3.6rem;
+	max-width: 22.5rem;
+}
+
+.sapUiMedia-Std-Phone .sapMFCValue.Auto,
+.sapMFCValue.S, .sapMFCValue.XS {
+	padding-top: 1.3rem;
+	font-size: 2rem;
+	height: 2.45rem;
+	max-width: 18rem;
+}
+.sapMFCCTxt>.sapMText {
+	cursor:inherit;
+}
+
+.sapMFC:focus:not([tabindex]) {
+	outline: none;
+}
+
+.sapUiMedia-Std-Desktop .sapMFCCTxt.Auto > .sapMText,
+.sapUiMedia-Std-Tablet .sapMFCCTxt.Auto > .sapMText,
+.sapMFCCTxt.L > .sapMText, .sapMFCCTxt.M > .sapMText{
+	font-size: 0.875rem;
+}
+
+.sapUiMedia-Std-Phone .sapMFCCTxt.Auto > .sapMText,
+.sapMFCCTxt.S > .sapMText, .sapMFCCTxt.XS > .sapMText {
+	font-size: 0.625rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMFCSbh.Auto,
+.sapUiMedia-Std-Tablet .sapMFCSbh.Auto,
+.sapMFCSbh.L, .sapMFCSbh.M {
+	font-size: 0.875rem;
+}
+
+.sapUiMedia-Std-Phone .sapMFCSbh.Auto,
+.sapMFCSbh.S, .sapMFCSbh.XS {
+	font-size: 0.625rem;
+}
+
+.sapMFCValue {
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+}

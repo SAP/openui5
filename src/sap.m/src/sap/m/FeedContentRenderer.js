@@ -7,18 +7,18 @@ sap.ui.define([],
 	"use strict";
 
 	/**
-	 * JamContent renderer.
+	 * FeedContent renderer.
 	 * @namespace
 	 */
-	var JamContentRenderer = {};
+	var FeedContentRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.m.JamContent} oControl the control to be rendered
+	 * @param {sap.m.FeedContent} oControl the control to be rendered
 	 */
-	JamContentRenderer.render = function(oRm, oControl) {
+	FeedContentRenderer.render = function(oRm, oControl) {
 		var sSize = oControl.getSize();
 		var sSubheader = oControl.getSubheader();
 		var sValue = oControl.getValue();
@@ -31,7 +31,7 @@ sap.ui.define([],
 		oRm.writeControlData(oControl);
 
 		oRm.writeAttributeEscaped("title", sTooltip);
-		oRm.writeAttribute("id", oControl.getId() + "-jam-content");
+		oRm.writeAttribute("id", oControl.getId() + "-feed-content");
 		oRm.writeAttribute("role", "presentation");
 		if (sap.ui.Device.browser.firefox) {
 			oRm.writeAttributeEscaped("aria-label", oControl.getAltText().replace(/\s/g, " ") + "" + sTooltip);
@@ -40,7 +40,7 @@ sap.ui.define([],
 		}
 
 		oRm.addClass(sSize);
-		oRm.addClass("sapMJC");
+		oRm.addClass("sapMFC");
 		if (oControl.hasListeners("press")) {
 			oRm.writeAttribute("tabindex", "0");
 			oRm.addClass("sapMPointer");
@@ -50,7 +50,7 @@ sap.ui.define([],
 
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-value");
-		oRm.addClass("sapMJCValue");
+		oRm.addClass("sapMFCValue");
 		oRm.addClass(sSize);
 		oRm.addClass(oControl.getValueColor());
 		oRm.writeClasses();
@@ -70,7 +70,7 @@ sap.ui.define([],
 		oRm.write("</div>");
 
 		oRm.write("<div");
-		oRm.addClass("sapMJCCTxt");
+		oRm.addClass("sapMFCCTxt");
 		oRm.addClass(sSize);
 		oRm.writeClasses();
 		oRm.write(">");
@@ -79,7 +79,7 @@ sap.ui.define([],
 
 		oRm.write("<div");
 		oRm.writeAttribute("id", oControl.getId() + "-subheader");
-		oRm.addClass("sapMJCSbh");
+		oRm.addClass("sapMFCSbh");
 		oRm.addClass(sSize);
 		oRm.writeClasses();
 		oRm.write(">");
@@ -88,5 +88,5 @@ sap.ui.define([],
 		oRm.write("</div>");
 	};
 
-	return JamContentRenderer;
+	return FeedContentRenderer;
 }, /* bExport= */true);

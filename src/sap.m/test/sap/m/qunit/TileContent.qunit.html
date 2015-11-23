@@ -50,30 +50,30 @@
 
 	QUnit.module("Functional test", {
 		beforeEach : function() {
-			this.oJamTileContent = new sap.m.TileContent("tc2", {
+			this.oFeedTileContent = new sap.m.TileContent("tc2", {
 				footer : "Current Quarter",
 				unit : "EUR",
 				size : "Auto",
-				content : new sap.m.JamContent("jam", {
+				content : new sap.m.FeedContent("feed", {
 					size : "Auto",
 					contentText : "@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London",
 					subheader : "about 1 minute ago in Computer Market",
 					value : "7"
 				})
 			});
-			this.oJamTileContent.placeAt("qunit-fixture");
+			this.oFeedTileContent.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function() {
-			this.oJamTileContent.destroy();
+			this.oFeedTileContent.destroy();
 		}
 	});
 
 	QUnit.test("Getting content type.", function(assert) {
 		assert.ok(jQuery.sap.domById("tc2"), "TileContent2 was rendered successfully");
-		assert.ok(jQuery.sap.domById("jam"), "Jam content was rendered successfully");
+		assert.ok(jQuery.sap.domById("feed"), "Feed content was rendered successfully");
 		assert.ok(jQuery.sap.domById("tc2-footer-text"), "TileContent2 footer was rendered successfully");
-		assert.equal(this.oJamTileContent._getContentType(), undefined, "Type was get successfully");
+		assert.equal(this.oFeedTileContent._getContentType(), undefined, "Type was get successfully");
 	});
 </script>
 </head>

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Test Page for sap.m.JamContent</title>
+<title>Test Page for sap.m.FeedContent</title>
 
 <!-- UI5 Bootstrap -->
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -22,9 +22,9 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	}
 
-	QUnit.module("Rendering test - sap.m.JamContent", {
+	QUnit.module("Rendering test - sap.m.FeedContent", {
 		beforeEach : function() {
-			this.oJamContent = new sap.m.JamContent("jam-cnt", {
+			this.oFeedContent = new sap.m.FeedContent("feed-cnt", {
 				size : sap.m.Size.M,
 				contentText : "@@notify Great outcome of the Presentation today. The new functionality and the new design was well received.",
 				subheader : "about 1 minute ago in Computer Market",
@@ -35,21 +35,21 @@
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function () {
-			this.oJamContent.destroy();
-			this.oJamContent = null;
+			this.oFeedContent.destroy();
+			this.oFeedContent = null;
 		}
 	});
 
-	QUnit.test("Jam Content rendered.", function(assert) {
-		assert.ok(jQuery.sap.domById("jam-cnt"),"JamContent was rendered successfully");
-		assert.ok(jQuery.sap.domById("jam-cnt-content-text"),"Content text was rendered successfully");
-		assert.ok(jQuery.sap.domById("jam-cnt-subheader"),"Subheader was rendered successfully");
-		assert.ok(jQuery.sap.domById("jam-cnt-value"),"Value was rendered successfully");
+	QUnit.test("Feed Content rendered.", function(assert) {
+		assert.ok(jQuery.sap.domById("feed-cnt"),"FeedContent was rendered successfully");
+		assert.ok(jQuery.sap.domById("feed-cnt-content-text"),"Content text was rendered successfully");
+		assert.ok(jQuery.sap.domById("feed-cnt-subheader"),"Subheader was rendered successfully");
+		assert.ok(jQuery.sap.domById("feed-cnt-value"),"Value was rendered successfully");
 	});
 
-	QUnit.module("Functional tests - sap.m.JamContent", {
+	QUnit.module("Functional tests - sap.m.FeedContent", {
 		beforeEach : function() {
-			this.oJamContent = new sap.m.JamContent({
+			this.oFeedContent = new sap.m.FeedContent({
 				size : sap.m.Size.M,
 				valueColor : sap.m.ValueColor.Neutral,
 				truncateValueTo : 4,
@@ -58,52 +58,52 @@
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function () {
-			this.oJamContent.destroy();
-			this.oJamContent = null;
+			this.oFeedContent.destroy();
+			this.oFeedContent = null;
 		}
 	});
 
 	QUnit.test("Alternative text tests", function(assert) {
 		//Act
-		var sAltText = this.oJamContent.getAltText();
+		var sAltText = this.oFeedContent.getAltText();
 		//Assert
 		assert.equal(sAltText, "-888", "Alternative text is correct");
 
 		//Arrange
-		this.oJamContent.setSubheader("Subheader");
+		this.oFeedContent.setSubheader("Subheader");
 		//Act
-		sAltText = this.oJamContent.getAltText();
+		sAltText = this.oFeedContent.getAltText();
 		//Assert
 		assert.equal(sAltText, "Subheader\n-888", "Alternative text is correct with subheader");
 
 		//Arrange
-		this.oJamContent.setContentText("Content");
+		this.oFeedContent.setContentText("Content");
 		//Act
-		sAltText = this.oJamContent.getAltText();
+		sAltText = this.oFeedContent.getAltText();
 		//Assert
 		assert.equal(sAltText, "Content\nSubheader\n-888", "Alternative text is correct with content text");
 	});
 
 	QUnit.test("Tooltip tests", function(assert) {
 		//Arrange
-		this.oJamContent.setTooltip(null);
+		this.oFeedContent.setTooltip(null);
 		//Act
-		var sTooltip = this.oJamContent.getTooltip_AsString();
+		var sTooltip = this.oFeedContent.getTooltip_AsString();
 		//Assert
 		assert.deepEqual(sTooltip, "", "No tooltip is correct");
 
 		//Arrange
-		this.oJamContent.setTooltip("Tooltip");
+		this.oFeedContent.setTooltip("Tooltip");
 		//Act
-		var sTooltip = this.oJamContent.getTooltip_AsString();
+		var sTooltip = this.oFeedContent.getTooltip_AsString();
 		//Assert
 		assert.deepEqual(sTooltip, "Tooltip", "Tooltip is correct");
 
 		//Arrange
 		var oTooltip = new sap.ui.core.TooltipBase({text: "Tooltip"});
-		this.oJamContent.setTooltip(oTooltip);
+		this.oFeedContent.setTooltip(oTooltip);
 		//Act
-		var sTooltip = this.oJamContent.getTooltip_AsString();
+		var sTooltip = this.oFeedContent.getTooltip_AsString();
 		//Assert
 		assert.deepEqual(sTooltip.getText(), "Tooltip", "Tooltip is an object with a text property containing the correct string"); //TODO
 	});
@@ -114,7 +114,7 @@
 	(function() {
 		QUnit.module("Events test", {
 			beforeEach : function() {
-				this.oJamContent = new sap.m.JamContent({
+				this.oFeedContent = new sap.m.FeedContent({
 					size : sap.m.Size.M,
 					valueColor : sap.m.ValueColor.Neutral,
 					truncateValueTo : 4,
@@ -123,52 +123,52 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach : function() {
-				this.oJamContent.destroy();
-				this.oJamContent = null;
+				this.oFeedContent.destroy();
+				this.oFeedContent = null;
 			}
 		});
 
 		QUnit.test("Attach events", function(assert) {
 			//Arrange
 			//Act
-			var oJamContent = this.oJamContent.attachEvent("hover", fnHoverHandler, this.oJamContent);
+			var oFeedContent = this.oFeedContent.attachEvent("hover", fnHoverHandler, this.oFeedContent);
 			//Assert
-			assert.deepEqual(oJamContent, this.oJamContent, "NumericContent returned is equal to initial one");
-			assert.equal(hasAttribute("tabindex", this.oJamContent), false, "Attribute has not been added successfully since press handler was not available");
-			assert.equal(this.oJamContent.$().hasClass("sapMPointer"), false, "Class has not been added successfully since press handler was not available");
+			assert.deepEqual(oFeedContent, this.oFeedContent, "NumericContent returned is equal to initial one");
+			assert.equal(hasAttribute("tabindex", this.oFeedContent), false, "Attribute has not been added successfully since press handler was not available");
+			assert.equal(this.oFeedContent.$().hasClass("sapMPointer"), false, "Class has not been added successfully since press handler was not available");
 
 			//Arrange
 			//Act
-			oJamContent = this.oJamContent.attachEvent("press", fnPressHandler, this.oJamContent);
+			oFeedContent = this.oFeedContent.attachEvent("press", fnPressHandler, this.oFeedContent);
 			//Assert
-			assert.ok(hasAttribute("tabindex", this.oJamContent), "Attribute has been added successfully since press handler was available");
-			assert.ok(this.oJamContent.$().hasClass("sapMPointer"), "Class has been added successfully since press handler was available");
+			assert.ok(hasAttribute("tabindex", this.oFeedContent), "Attribute has been added successfully since press handler was available");
+			assert.ok(this.oFeedContent.$().hasClass("sapMPointer"), "Class has been added successfully since press handler was available");
 		});
 
 		QUnit.test("Detach events.", function(assert) {
 			//Arrange
 			//Act
-			var oJamContent = this.oJamContent.detachEvent("press", fnPressHandler, this.oJamContent);
+			var oFeedContent = this.oFeedContent.detachEvent("press", fnPressHandler, this.oFeedContent);
 			//Assert
-			assert.deepEqual(oJamContent, this.oJamContent, "NumericContentreturned is equal to initial one");
-			assert.equal(hasAttribute("tabindex", this.oJamContent), false, "Attribute not available since press was not defined");
-			assert.equal(this.oJamContent.$().hasClass("sapMPointer"), false, "Class not available since press was not defined");
+			assert.deepEqual(oFeedContent, this.oFeedContent, "NumericContentreturned is equal to initial one");
+			assert.equal(hasAttribute("tabindex", this.oFeedContent), false, "Attribute not available since press was not defined");
+			assert.equal(this.oFeedContent.$().hasClass("sapMPointer"), false, "Class not available since press was not defined");
 
 			//Arrange
-			oJamContent= this.oJamContent.attachEvent("press", fnPressHandler, this.oJamContent);
-			oJamContent = this.oJamContent.attachEvent("hover", fnHoverHandler, this.oJamContent);
+			oFeedContent= this.oFeedContent.attachEvent("press", fnPressHandler, this.oFeedContent);
+			oFeedContent = this.oFeedContent.attachEvent("hover", fnHoverHandler, this.oFeedContent);
 			//Act
-			oJamContent= this.oJamContent.detachEvent("hover", fnHoverHandler, this.oJamContent);
+			oFeedContent= this.oFeedContent.detachEvent("hover", fnHoverHandler, this.oFeedContent);
 			//Assert
-			assert.ok(hasAttribute("tabindex", this.oJamContent), "Attribute still available since hover was unregistered (not press)");
-			assert.ok(this.oJamContent.$().hasClass("sapMPointer"), "Class still available since hover was unregistered (not press)");
+			assert.ok(hasAttribute("tabindex", this.oFeedContent), "Attribute still available since hover was unregistered (not press)");
+			assert.ok(this.oFeedContent.$().hasClass("sapMPointer"), "Class still available since hover was unregistered (not press)");
 
 			//Arrange
 			//Act
-			oJamContent = this.oJamContent.detachEvent("press", fnPressHandler, this.oJamContent);
+			oFeedContent = this.oFeedContent.detachEvent("press", fnPressHandler, this.oFeedContent);
 			//Assert
-			assert.equal(hasAttribute("tabindex", this.oJamContent), false, "Attribute has been removed successfully");
-			assert.equal(this.oJamContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
+			assert.equal(hasAttribute("tabindex", this.oFeedContent), false, "Attribute has been removed successfully");
+			assert.equal(this.oFeedContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
 		});
 
 		/* --- Helpers --- */
