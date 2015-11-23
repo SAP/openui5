@@ -6,10 +6,10 @@ sap.ui.define([], function() {
 	"use strict";
 
 	/**
-	 * DynamicContainer renderer.
+	 * SlideTile renderer.
 	 * @namespace
 	 */
-	var DynamicContainerRenderer = {};
+	var SlideTileRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -17,10 +17,10 @@ sap.ui.define([], function() {
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl the control to be rendered
 	 */
-	DynamicContainerRenderer.render = function(oRm, oControl) {
+	SlideTileRenderer.render = function(oRm, oControl) {
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
-		oRm.addClass("sapMDC");
+		oRm.addClass("sapMST");
 		oRm.writeClasses();
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
@@ -34,7 +34,7 @@ sap.ui.define([], function() {
 		for (var i = 0; i < iLength; i++) {
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-wrapper-" + i);
-			oRm.addClass("sapMDCWrapper");
+			oRm.addClass("sapMSTWrapper");
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.renderControl(oControl.getTiles()[i]);
@@ -43,6 +43,6 @@ sap.ui.define([], function() {
 		oRm.write("</div>");
 	};
 
-	return DynamicContainerRenderer;
+	return SlideTileRenderer;
 
 }, /* bExport= */ true);
