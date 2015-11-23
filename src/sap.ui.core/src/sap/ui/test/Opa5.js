@@ -91,17 +91,17 @@ sap.ui.define([
 
 		/**
 		 * Starts a UIComponent.
-		 * @param {object} options An Object that contains the configuration for starting up a component
-		 * @param {object} options.componentConfig will be passed to {@link sap.ui.component component}, please read the respective documentation
-		 * @param {string} [options.hash] sets the hash {@link sap.ui.core.routing.HashChanger.setHash} to the given value.
-		 * @param {number} [options.timeout=15] The timeout for loading the Component in seconds - {@link sap.ui.test.Opa5#waitFor}
-		 * If this parameter is omitted, the hash will always be reset to the empty hash - ""
-		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * @param {object} oOptions An Object that contains the configuration for starting up a UIComponent.
+		 * @param {object} oOptions.componentConfig Will be passed to {@link sap.ui.component component}, please read the respective documentation.
+		 * @param {string} [oOptions.hash] Sets the hash {@link sap.ui.core.routing.HashChanger.setHash} to the given value.
+		 * If this parameter is omitted, the hash will always be reset to the empty hash - "".
+		 * @param {number} [oOptions.timeout=15] The timeout for loading the UIComponent in seconds - {@link sap.ui.test.Opa5#waitFor}.
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
 		 * @public
 		 * @function
 		 */
-		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (options){
-			options = options || {};
+		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (oOptions){
+			oOptions = oOptions || {};
 
 			// wait for starting of component launcher
 			this.waitFor({
@@ -114,9 +114,9 @@ sap.ui.define([
 					var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
 					jQuery.sap.includeStyleSheet(sComponentStyleLocation);
 
-					HashChanger.getInstance().setHash(options.hash || "");
+					HashChanger.getInstance().setHash(oOptions.hash || "");
 
-					componentLauncher.start(options.componentConfig).then(function () {
+					componentLauncher.start(oOptions.componentConfig).then(function () {
 						bComponentLoaded = true;
 					});
 				}
@@ -131,12 +131,12 @@ sap.ui.define([
 				check: function () {
 					return bComponentLoaded;
 				},
-				errorMessage: "Unable to load the component with the name: " + options.name
+				errorMessage: "Unable to load the component with the name: " + oOptions.name
 			};
 
 			// add timeout to object for waitFor when timeout is specified
-			if (options.timeout) {
-				oPropertiesForWaitFor.timeout = options.timeout;
+			if (oOptions.timeout) {
+				oPropertiesForWaitFor.timeout = oOptions.timeout;
 			}
 
 			return this.waitFor(oPropertiesForWaitFor);
@@ -144,7 +144,7 @@ sap.ui.define([
 
 
 		/**
-		 * Destroys the component and removes the div from the dom like all the references on its objects
+		 * Destroys the UIComponent and removes the div from the dom like all the references on its objects
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 * @function
