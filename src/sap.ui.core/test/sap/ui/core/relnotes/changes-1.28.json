@@ -2683,5 +2683,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "dd56db469ab5193e4a5f6383e7704c08604d027d",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.act: Register touch events only when supported",
+        "references": []
+      },
+      {
+        "id": "75c149e1c8d4f81dcf3af74548f70dfb36b0ef54",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.opaQunit: Timeout was not increased to 90 sec it was 30 sec",
+        "references": []
+      }
+    ]
   }
 }

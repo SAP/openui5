@@ -769,7 +769,26 @@
         "id": "e993e923a8798ba75662b8c665969f323d99360c",
         "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "text": "sap.ui.layout.form.Form: Use Label style only for direct labels",
+        "references": []
+      }
+    ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "4884011222586fedccce3ea51ce686e20297543b",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilterList: Set min content width",
+        "references": []
+      },
+      {
+        "id": "18c14f842486dba7cbe3c911278b82a8411ebe8a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Remove focus outline on windows phone",
         "references": []
       }
     ]

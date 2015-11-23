@@ -4250,5 +4250,122 @@
         "references": []
       }
     ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "2333dc2127747e066145554bda15651da88cb5fe",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Focusin event checks if the current focused element is in the active page",
+        "references": []
+      },
+      {
+        "id": "c62d27a1bc107cc6260484eee7d4315f6a6968d2",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Fix selection issue when the selectedKey property has the default value and the items\u0027 properties (models and bindingContext) are not propagated",
+        "references": []
+      },
+      {
+        "id": "4cc6e31ea0a28f565ff474296e09d9658350b99d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Error messages stays after choosing date",
+        "references": []
+      },
+      {
+        "id": "5894870788cb21080a117fa6188f5887efa3face",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Opens by scrolling on Win8 phone",
+        "references": []
+      },
+      {
+        "id": "4884011222586fedccce3ea51ce686e20297543b",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilterList: Set min content width",
+        "references": []
+      },
+      {
+        "id": "623581f292ba347f3ce1d09a21addde6f86e57db",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: Value state on Windows Phones not visible",
+        "references": []
+      },
+      {
+        "id": "27d4ac886670167617ef2ff4bc7962d67c80740e",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Begin and end button keeps its semantic",
+        "references": []
+      },
+      {
+        "id": "86a70b191625f9b26f84657347d24c06eedc577c",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ResponsivePopover: Begin and end buttons now are with type transparent",
+        "references": []
+      },
+      {
+        "id": "cd0c21cdddcfe1245bef8f34c35afe28eed5f544",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField, focus is lost on Windows Phone",
+        "references": []
+      },
+      {
+        "id": "f2195e7ce0c9abfdc8e523e8eece05249a8032e1",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: Correctly round the value to the nearest step",
+        "references": []
+      },
+      {
+        "id": "b2650da3072a4be3104a423bda3375c9da64d211",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: Display values using the fixed-point notation",
+        "references": []
+      },
+      {
+        "id": "ba2a860084e00f99c41c4b0e98ab14f916903a26",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: don\u0027t round the model value, but only the DOM value",
+        "references": []
+      },
+      {
+        "id": "eb2d1190a781832f59e7f6c827c32fd0b6f9f7c8",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: Fix a bug in the stepUp/stepDown method that prevents keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "63b0d989781ed5ac4b111116d37167809ebee619",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: Fix escaping issue of IDs contains dots",
+        "references": []
+      },
+      {
+        "id": "ee2b4bfb9b0e223b44dae95e71a1e6938475c0b3",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: Fix rendering issue of the progress bar",
+        "references": []
+      },
+      {
+        "id": "246d5ed57514541d5ac58ed4f684426c1b9ad2c4",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Slider: Fix rounding issue of floating-point numbers using e-notation",
+        "references": []
+      }
+    ]
   }
 }
