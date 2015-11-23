@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * The default value is set language dependent.
 			 * @since 1.28
 			 */
-			buttonTooltip : {type : "string" , altTypes : ["sap.ui.core.TooltipBase"], multiple : false, group : "Data", defaultValue : "Submit"},
+			buttonTooltip : {type : "sap.ui.core.TooltipBase", group : "Accessibility", defaultValue : "Submit"},
 
 			/**
 			 * Text for Picture which will be read by screenreader.
@@ -171,11 +171,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-	FeedInput.prototype.setButtonTooltip = function (sButtonTooltip) {
-		this.setProperty("buttonTooltip", sButtonTooltip, true);
-		this._getPostButton().setTooltip(sButtonTooltip);
+	FeedInput.prototype.setButtonTooltip = function (vButtonTooltip) {
+		this.setProperty("buttonTooltip", vButtonTooltip, true);
+		this._getPostButton().setTooltip(vButtonTooltip);
 		return this;
 	};
+
 	/////////////////////////////////// Private /////////////////////////////////////////////////////////
 
 	/**
