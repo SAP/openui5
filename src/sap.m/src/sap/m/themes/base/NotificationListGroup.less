@@ -22,10 +22,6 @@
   position: relative;
 }
 
-.sapMNLG-Collapsed .sapMNLG-Header {
-  padding-bottom: 0;
-}
-
 .sapMNLG-Header > .sapMTitle {
   display: block;
   font-weight: normal;
@@ -61,12 +57,6 @@
   cursor: pointer;
   font-size: 1rem;
   height: @closeButtonSize;
-  line-height: @closeButtonSize;
-  width: @closeButtonSize;
-}
-
-.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnIcon {
-  font-size: 0.75rem;
   line-height: @closeButtonSize;
   width: @closeButtonSize;
 }
@@ -120,24 +110,6 @@
 .sapMNLG-AuthorPicture .sapUiIcon {
   font-size: 1.5rem;
   color: @sapUiLightText;
-}
-
-// Icons styles =========================================================================================================
-
-.sapMNLG-Icons {
-  padding-top: @containerPadding;
-  position: absolute;
-  text-align: center;
-  width: @leftPaddingSpace;
-}
-
-.sapMNLG-Icons .sapUiIcon {
-  color: @sapUiElement;
-  font-size: 0.75rem;
-}
-
-.sapMNLG-ReadStatus {
-  display: none;
 }
 
 // Body styles =========================================================================================================
@@ -238,10 +210,20 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
 // Compact mode ========================================================================================================
 
 .sapUiSizeCompact .sapMNLG-CloseButton {
+  padding: 0;
   width: @closeButtonCompactSize;
   height: @closeButtonCompactSize;
   right: @containerPadding/2;
   top: @containerPadding/2;
+
+  .sapMBtnInner {
+    min-width: 1.625rem;
+    padding-left: 1.625rem;
+
+    .sapMBtnIcon {
+      max-height: 1.625rem;
+    }
+  }
 }
 
 .sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnIcon {
@@ -258,19 +240,6 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
   height: 2.5625rem;
   line-height: 2.5rem;
   box-sizing: border-box;
-}
-
-.sapUiSizeCompact .sapMNLG-CloseButton {
-  padding: 0;
-
-  .sapMBtnInner {
-    min-width: 1.625rem;
-    padding-left: 1.625rem;
-
-    .sapMBtnIcon {
-      max-height: 1.625rem;
-    }
-  }
 }
 
 .sapUiSizeCompact .sapMNLG-Footer .sapMBtn {
