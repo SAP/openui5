@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="/sap/opu/local_V4/IWBEP/TEA_BUSI_PRODUCT/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.iwbep.tea_busi_product.v0001" Alias="TEA_BUSI_Product"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema Namespace="com.sap.gateway.iwbep.tea_busi.v0001" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+		<Schema Namespace="com.sap.gateway.iwbep.tea_busi.v0001" Alias="SAP__self" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 			<EntityType Name="Department" HasStream="false">
 				<Key>
 					<PropertyRef Name="Sector"/>
@@ -23,6 +29,7 @@
 				<Property Name="Name" Type="Edm.String" Nullable="false"/>
 				<Property Name="EmployeeId" Type="Edm.String" Nullable="false"/>
 				<NavigationProperty Name="EQUIPMENT_2_EMPLOYEE" Type="com.sap.gateway.iwbep.tea_busi.v0001.Worker" Nullable="false"/>
+				<NavigationProperty Name="EQUIPMENT_2_PRODUCT" Type="com.sap.gateway.iwbep.tea_busi_product.v0001.Product" Nullable="false"/>
 			</EntityType>
 			<EntityType Name="MANAGER" HasStream="false">
 				<Key>
@@ -61,6 +68,7 @@
 				<Property Name="LOCATION" Type="com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_Location" Nullable="false"/>
 				<Property Name="SALARY" Type="com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_Salary" Nullable="false"/>
 				<NavigationProperty Name="EMPLOYEE_2_EQUIPMENTS" Type="Collection(com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT)" Nullable="true"/>
+				<NavigationProperty Name="EMPLOYEE_2_MANAGER" Type="com.sap.gateway.iwbep.tea_busi.v0001.MANAGER" Nullable="true"/>
 				<NavigationProperty Name="EMPLOYEE_2_TEAM" Type="com.sap.gateway.iwbep.tea_busi.v0001.TEAM" Nullable="false"/>
 			</EntityType>
 			<ComplexType Name="ComplexType_City">
@@ -77,25 +85,92 @@
 				<Property Name="YEARLY_BONUS_AMOUNT" Type="Edm.Decimal" Nullable="false" Precision="16" Scale="variable"/>
 				<Property Name="BONUS_CURR" Type="Edm.String" Nullable="false" MaxLength="5"/>
 			</ComplexType>
-			<EntityContainer Name="Container">
+			<Action Name="AcChangeTeamBudgetByID" IsBound="false">
+				<Parameter Name="TeamID" Type="Edm.String" Nullable="false" MaxLength="10" Precision="10"/>
+				<Parameter Name="Budget" Type="Edm.Decimal" Nullable="false" Scale="variable"/>
+				<ReturnType Type="com.sap.gateway.iwbep.tea_busi.v0001.TEAM" Nullable="false"/>
+			</Action>
+			<Action Name="AcFireEmployee" IsBound="false">
+				<Parameter Name="EmployeeID" Type="Edm.String" Nullable="false" MaxLength="4" Precision="4"/>
+			</Action>
+			<Action Name="AcIncreaseSalaryByFactor" IsBound="false">
+				<Parameter Name="EmployeeID" Type="Edm.String" Nullable="false" MaxLength="4" Precision="4"/>
+				<Parameter Name="Factor" Type="Edm.Int16" Nullable="false"/>
+				<ReturnType Type="Edm.Decimal" Nullable="false" Scale="variable"/>
+			</Action>
+			<Function Name="FuGetEmployeeAges" IsBound="false" IsComposable="false">
+				<ReturnType Type="Collection(Edm.Int16)" Nullable="false"/>
+			</Function>
+			<Function Name="FuGetEmployeeByID" IsBound="false" IsComposable="false">
+				<Parameter Name="EmployeeID" Type="Edm.String" Nullable="false" MaxLength="4" Precision="4"/>
+				<ReturnType Type="com.sap.gateway.iwbep.tea_busi.v0001.Worker" Nullable="false"/>
+			</Function>
+			<Function Name="FuGetEmployeeByManagerID" IsBound="false" IsComposable="false">
+				<Parameter Name="ManagerID" Type="Edm.String" Nullable="false" MaxLength="4" Precision="4"/>
+				<ReturnType Type="Collection(com.sap.gateway.iwbep.tea_busi.v0001.Worker)" Nullable="false"/>
+			</Function>
+			<Function Name="FuGetEmployeeLocationByEmployeeID" IsBound="false" IsComposable="false">
+				<Parameter Name="EmployeeID" Type="Edm.String" Nullable="false" MaxLength="4" Precision="4"/>
+				<ReturnType Type="com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_Location" Nullable="false"/>
+			</Function>
+			<Function Name="FuGetEmployeeMaxAge" IsBound="false" IsComposable="false">
+				<ReturnType Type="Edm.Int16" Nullable="false"/>
+			</Function>
+			<EntityContainer Name="DefaultContainer">
 				<EntitySet Name="Departments" EntityType="com.sap.gateway.iwbep.tea_busi.v0001.Department" IncludeInServiceDocument="true"/>
 				<EntitySet Name="EMPLOYEES" EntityType="com.sap.gateway.iwbep.tea_busi.v0001.Worker" IncludeInServiceDocument="true">
 					<NavigationPropertyBinding Path="EMPLOYEE_2_TEAM" Target="TEAMS"/>
-					<NavigationPropertyBinding Path="EMPLOYEE_2_EQUIPMENTS" Target="com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments"/>
+					<NavigationPropertyBinding Path="EMPLOYEE_2_EQUIPMENTS" Target="Equipments"/>
+					<NavigationPropertyBinding Path="EMPLOYEE_2_MANAGER" Target="MANAGERS"/>
 				</EntitySet>
 				<EntitySet Name="Equipments" EntityType="com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT" IncludeInServiceDocument="true">
-					<NavigationPropertyBinding Path="EQUIPMENT_2_EMPLOYEE" Target="com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES"/>
+					<NavigationPropertyBinding Path="EQUIPMENT_2_EMPLOYEE" Target="EMPLOYEES"/>
+					<NavigationPropertyBinding Path="EQUIPMENT_2_PRODUCT" Target="com.sap.gateway.iwbep.tea_busi_product.v0001.DefaultContainer/Products"/>
 				</EntitySet>
 				<EntitySet Name="MANAGERS" EntityType="com.sap.gateway.iwbep.tea_busi.v0001.MANAGER" IncludeInServiceDocument="true">
-					<NavigationPropertyBinding Path="Manager_to_Team" Target="com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS"/>
+					<NavigationPropertyBinding Path="Manager_to_Team" Target="TEAMS"/>
 				</EntitySet>
 				<EntitySet Name="TEAMS" EntityType="com.sap.gateway.iwbep.tea_busi.v0001.TEAM" IncludeInServiceDocument="true">
-					<NavigationPropertyBinding Path="TEAM_2_EMPLOYEES" Target="com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES"/>
-					<NavigationPropertyBinding Path="TEAM_2_MANAGER" Target="com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS"/>
+					<NavigationPropertyBinding Path="TEAM_2_EMPLOYEES" Target="EMPLOYEES"/>
+					<NavigationPropertyBinding Path="TEAM_2_MANAGER" Target="MANAGERS"/>
 				</EntitySet>
+				<ActionImport Name="ChangeTeamBudgetByID" Action="com.sap.gateway.iwbep.tea_busi.v0001.AcChangeTeamBudgetByID" EntitySet="com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/TEAMS"/>
+				<ActionImport Name="FireEmployee" Action="com.sap.gateway.iwbep.tea_busi.v0001.AcFireEmployee"/>
+				<ActionImport Name="IncreaseSalaryByFactor" Action="com.sap.gateway.iwbep.tea_busi.v0001.AcIncreaseSalaryByFactor"/>
+				<FunctionImport Name="GetEmployeeAges" Function="com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeAges" IncludeInServiceDocument="true"/>
+				<FunctionImport Name="GetEmployeeByID" Function="com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeByID" EntitySet="com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/EMPLOYEES" IncludeInServiceDocument="true"/>
+				<FunctionImport Name="GetEmployeeByManagerID" Function="com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeByManagerID" EntitySet="com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/EMPLOYEES" IncludeInServiceDocument="true"/>
+				<FunctionImport Name="GetEmployeeLocationByEmployeeID" Function="com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeLocationByEmployeeID" IncludeInServiceDocument="true"/>
+				<FunctionImport Name="GetEmployeeMaxAge" Function="com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeMaxAge" IncludeInServiceDocument="true"/>
 				<Singleton Name="Me" Type="com.sap.gateway.iwbep.tea_busi.v0001.Worker">
 				</Singleton>
 			</EntityContainer>
+			<Annotations Target="SAP__self.Worker/ComplexType_Location/COUNTRY">
+				<Annotation Term="SAP__common.Label" String="char255"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Worker/ComplexType_Salary/BASIC_SALARY_CURR">
+				<Annotation Term="SAP__common.Label" String="Währung"/>
+				<Annotation Term="SAP__common.Heading" String="Währg"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Währungsschlüssel"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Worker/ComplexType_Salary/BONUS_CURR">
+				<Annotation Term="SAP__common.Label" String="Währung"/>
+				<Annotation Term="SAP__common.Heading" String="Währg"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Währungsschlüssel"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ComplexType_Location/COUNTRY">
+				<Annotation Term="SAP__common.Label" String="char255"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ComplexType_Salary/BASIC_SALARY_CURR">
+				<Annotation Term="SAP__common.Label" String="Währung"/>
+				<Annotation Term="SAP__common.Heading" String="Währg"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Währungsschlüssel"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ComplexType_Salary/BONUS_CURR">
+				<Annotation Term="SAP__common.Label" String="Währung"/>
+				<Annotation Term="SAP__common.Heading" String="Währg"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Währungsschlüssel"/>
+			</Annotations>
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

@@ -213,39 +213,41 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("transformEntityContainer", function (assert) {
 		var oEntityContainer = {
-				"Name" : "Container",
-				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Container",
+				"Name" : "DefaultContainer",
+				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer",
 				"EntitySets" : [{
 					"Name" : "Departments",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Departments",
+					"Fullname" :
+						"com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/Departments",
 					"NavigationPropertyBindings" : 1,
 					"EntityType" : {
 						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Department"
 					}
 				}, {
 					"Name" : "EMPLOYEES",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/EMPLOYEES",
 					"NavigationPropertyBindings" : 2,
 					"EntityType" : {
 						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
 					}
 				},{
 					"Name" : "Equipments",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments",
+					"Fullname" :
+						"com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/Equipments",
 					"NavigationPropertyBindings" : 3,
 					"EntityType" : {
 						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT"
 					}
 				}, {
 					"Name" : "MANAGERS",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/MANAGERS",
 					"NavigationPropertyBindings" : 4,
 					"EntityType" : {
 						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.MANAGER"
 					}
 				}, {
 					"Name" : "TEAMS",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/TEAMS",
 					"NavigationPropertyBindings" : 5,
 					"EntityType" : {
 						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM"
@@ -253,7 +255,7 @@ sap.ui.require([
 				}],
 				"Singletons" : [{
 					"Name" : "Me",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Me",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/Me",
 					"NavigationPropertyBindings" : 6,
 					"Type" : {
 						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
@@ -338,6 +340,12 @@ sap.ui.require([
 					"Path" : "EMPLOYEE_2_EQUIPMENTS",
 					"Target" : {
 						"Fullname" : sContainerName + "/Equipments"
+					}
+				}, {
+					"Fullname": sContainerName + "/EMPLOYEES/EMPLOYEE_2_MANAGER",
+					"Path": "EMPLOYEE_2_MANAGER",
+					"Target": {
+						"Fullname": sContainerName + "/MANAGERS"
 					}
 				}];
 			assert.deepEqual(OlingoDocument.transformNavigationPropertyBindings(aBindings,

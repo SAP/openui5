@@ -66,7 +66,7 @@ sap.ui.require([
 			oPromise = oCache.read(oFixture.index, oFixture.length);
 
 			assert.ok(oPromise instanceof Promise, "returns a Promise");
-			return oPromise.then(function (aResult){
+			return oPromise.then(function (aResult) {
 				assert.deepEqual(aResult, {
 					"@odata.context": "$metadata#TEAMS",
 					value : oFixture.result
