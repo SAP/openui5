@@ -40,7 +40,7 @@
       {
         "id": "sap.tnt.ToolPage",
         "name": "Tool Page Layout",
-        "category": "Action",
+        "category": "Layout",
         "since": "1.34",
         "samples": [
           "sap.tnt.sample.ToolPage"
