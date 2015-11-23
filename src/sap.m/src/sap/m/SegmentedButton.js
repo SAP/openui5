@@ -551,12 +551,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oItems && oButtons.length !== 0) {
 			this.removeAllButtons();
 		}
-
-		/* Create buttons */
-		for (; i < oItems.length; i++) {
-			this._createButtonFromItem(oItems[i]);
+		if (oItems && oItems.length) {
+			/* Create buttons */
+			for (; i < oItems.length; i++) {
+				this._createButtonFromItem(oItems[i]);
+			}
 		}
-
 	};
 
 	/**

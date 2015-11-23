@@ -1482,6 +1482,51 @@
 		oSegmentedButton.destroy();
 	});
 
+	test("updateItems does not break when getAggregation returns empty result", function() {
+		var mDataInitial = {
+			items: [
+				{key: "b1", text: "Initial btn 1"},
+				{key: "b2", text: "Initial btn 2"},
+				{key: "b3", text: "Initial btn 3"}
+			]
+		};
+		// System under Test
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			selectedKey: "{/selectedKey}",
+			items : {
+				path : "/items",
+				template : new sap.m.SegmentedButtonItem({
+					key: "{key}",
+					text: "{text}",
+					icon: "{icon}",
+					enabled: "{enabled}",
+					textDirection: "{textDirection}"
+				})
+			}
+		});
+		var oModel = new sap.ui.model.json.JSONModel();
+		sap.ui.getCore().setModel(oModel);
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Arrange
+		var fnBackup = oSegmentedButton.getAggregation;
+		oSegmentedButton.getAggregation = function(sName) {
+			if (sName !== 'items') {
+				return fnBackup.call(oSegmentedButton, sName);
+			}
+			return null;
+		};
+		//Act
+		try {
+			oSegmentedButton.updateItems('refresh');
+			ok("Should pass");
+		} catch (err) {
+			ok(false, "Should pass, but threw the error:" + err);
+		}
+		oSegmentedButton.destroy();
+	});
+
 	module("Keyboard handling");
 
 	function checkKeyboardEventhandling(sTestName, oOptions) {
