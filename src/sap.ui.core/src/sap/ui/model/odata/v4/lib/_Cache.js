@@ -79,7 +79,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	}
 
 	/**
-	 * Creates a cache that performs requests using the given requestor.
+	 * Creates a cache for a collection of entities that performs requests using the given
+	 * requestor.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   the requestor
@@ -149,24 +150,81 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		});
 	};
 
+	/**
+	 * Creates a cache for a single entity that performs requests using the given requestor.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
+	 *   the requestor
+	 * @param {string} sUrl
+	 *   the URL to request from
+	 * @param {object} [mQueryParameters]
+	 *   a map of key-value pairs representing the query string
+	 */
+	function SingleCache(oRequestor, sUrl, mQueryParameters) {
+		this.oRequestor = oRequestor;
+		this.sUrl = sUrl + Helper.buildQuery(mQueryParameters);
+		this.oPromise = null;
+	}
+
+	/**
+	 * Returns a promise resolved with an OData object for the requested data.
+	 *
+	 * @returns {Promise}
+	 *   a Promise to be resolved with the element.
+	 */
+	SingleCache.prototype.read = function () {
+		if (!this.oPromise) {
+			this.oPromise = this.oRequestor.request("GET", this.sUrl);
+		}
+		return this.oPromise;
+	};
+
 	return {
 		/**
-		 * Creates a cache that performs requests using the given requestor.
+		 * Creates a cache for a collection of entities that performs requests using the given
+		 * requestor.
 		 *
 		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 		 *   the requestor
 		 * @param {string} sUrl
-		 *   the URL to request from; it must not contain a query string
+		 *   the URL to request from; it must contain the path to the OData service, it must not
+		 *   contain a query string<br>
+		 *   Example: /V4/Northwind/Northwind.svc/Products
 		 * @param {object} mQueryParameters
-		 *   a map of key-value pairs representing the query string; if the value contained in a
-		 *   key-value pair is an array, the resulting query string repeats the key for each array
-		 *   value. (e.g. <code>{foo: ["bar", "baz"]}</code> results in the query string
-		 *   "foo=bar&foo=baz")
+		 *   a map of key-value pairs representing the query string, the value in this pair has to
+		 *   be a string or an array of strings; if it is an array, the resulting query string
+		 *   repeats the key for each array value.
+		 *   Examples:
+		 *   {foo: "bar", "bar": "baz"} results in the query string "foo=bar&bar=baz"
+		 *   {foo: ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   the cache
 		 */
 		create: function _create(oRequestor, sUrl, mQueryParameters) {
 			return new Cache(oRequestor, sUrl, mQueryParameters);
+		},
+
+		/**
+		 * Creates a cache for a single entity that performs requests using the given requestor.
+		 *
+		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
+		 *   the requestor
+		 * @param {string} sUrl
+		 *   the URL to request from; it must contain the path to the OData service, it must not
+		 *   contain a query string<br>
+		 *   Example: /V4/Northwind/Northwind.svc/Products(ProductID=1)
+		 * @param {object} mQueryParameters
+		 *   a map of key-value pairs representing the query string, the value in this pair has to
+		 *   be a string or an array of strings; if it is an array, the resulting query string
+		 *   repeats the key for each array value.
+		 *   Examples:
+		 *   {foo: "bar", "bar": "baz"} results in the query string "foo=bar&bar=baz"
+		 *   {foo: ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+		 * @returns {sap.ui.model.odata.v4.lib._Cache}
+		 *   the cache
+		 */
+		createSingle: function _createSingle(oRequestor, sUrl, mQueryParameters) {
+			return new SingleCache(oRequestor, sUrl, mQueryParameters);
 		}
 	};
 }, /* bExport= */false);

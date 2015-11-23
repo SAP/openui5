@@ -3,9 +3,10 @@
  */
 sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (Cache, Requestor, TestUtils) {
+], function (Cache, Helper, Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -238,4 +239,52 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("read single employee", function (assert) {
+		var mQueryParams = {
+				"sap-client" : "300"
+			},
+			oExpectedResult = {},
+			oRequestor = Requestor.create("/~/"),
+			sUrl = "/~/Employees('1')",
+			oCache,
+			aPromises = [];
+
+		this.oSandbox.mock(Helper).expects("buildQuery").withExactArgs(mQueryParams).returns("?~");
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("GET", sUrl + "?~")
+			.returns(Promise.resolve(oExpectedResult));
+
+		oCache = Cache.createSingle(oRequestor, sUrl, mQueryParams);
+		aPromises.push(oCache.read().then(function (oResult) {
+			assert.strictEqual(oResult, oExpectedResult);
+		}));
+		aPromises.push(oCache.read().then(function (oResult) {
+			assert.strictEqual(oResult, oExpectedResult);
+		}));
+		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
+	if (TestUtils.isRealOData()) {
+		QUnit.test("read single employee (real OData)", function (assert) {
+			var oExpectedResult = {
+					"@odata.context": "$metadata#TEAMS/$entity",
+					"Team_Id": "TEAM_01",
+					Name: "Business Suite",
+					MEMBER_COUNT: 2,
+					MANAGER_ID: "3",
+					BudgetCurrency: "USD",
+					Budget: 555.55
+				},
+				oRequestor = Requestor.create("/sap/opu/local_v4/IWBEP/TEA_BUSI"),
+				sUrl = TestUtils.proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')"),
+				oCache = Cache.createSingle(oRequestor, sUrl);
+
+			return oCache.read().then(function (oResult) {
+				assert.deepEqual(oResult, oExpectedResult);
+			});
+		});
+	}
 });
