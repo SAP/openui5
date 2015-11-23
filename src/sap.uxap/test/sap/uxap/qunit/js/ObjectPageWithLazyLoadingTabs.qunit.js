@@ -79,7 +79,7 @@
 			fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
 		};
 
-	var iLoadingDelay = 2500;
+	var iLoadingDelay = 1000;
 	var oConfigModel = new JSONModel("model/OPLazyLoadingWithTabs.json");
 
 	var oView = xmlview("UxAP-27_ObjectPageConfig", {
@@ -87,22 +87,20 @@
 		controller: oController
 	});
 
-	QUnit.module("ObjectPage with tabs - lazy loading", {
-		beforeEach: function () {
-			oView.setModel(oConfigModel, "objectPageLayoutMetadata");
-			oView.placeAt("qunit-fixture");
-			core.applyChanges();
-			this.oObjectPage = oView.byId("objectPageContainer").getObjectPageLayoutInstance();
-			this.oData = oConfigModel.getData();
-			fnLoadMoreBlocks(this.oData);
-			oConfigModel.setData(this.oData);
-		}
-	});
+	oView.setModel(oConfigModel, "objectPageLayoutMetadata");
+	oView.placeAt("qunit-fixture");
+	core.applyChanges();
+
+	QUnit.module("ObjectPage with tabs - lazy loading");
 
 	QUnit.test("laoding only the selected section/tab", function (assert) {
-		var oObjectPageLayout = this.oObjectPage,
+		var oObjectPageLayout = oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
+			oData = oConfigModel.getData(),
 			aSections = oObjectPageLayout.getSections(),
 			aLoadedSections = [0];
+
+		fnLoadMoreBlocks(oData);
+		oConfigModel.setData(oData);
 
 		core.applyChanges();
 		this.clock.tick(iLoadingDelay);
