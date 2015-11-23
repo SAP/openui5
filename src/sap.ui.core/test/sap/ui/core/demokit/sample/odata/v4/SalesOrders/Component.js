@@ -47,7 +47,7 @@ sap.ui.define([
 						: {source : "metadata.xml"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=100"
 						: {source : "BusinessPartnerList.json"},
-					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?%24expand=SO_2_SOITEM%28%24expand%3DSOITEM_2_PRODUCT%28%24expand%3DPRODUCT_2_BP%28%24expand%3DBP_2_CONTACT%29%29%29&$skip=0&$top=5"
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$skip=0&$top=5"
 						: {source : "SalesOrderList.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data");
 			}
