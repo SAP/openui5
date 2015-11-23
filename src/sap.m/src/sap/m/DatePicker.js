@@ -95,7 +95,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			 * <b>Note:</b> If data binding on <code>value</code> property with type <code>sap.ui.model.type.Date</code> is used, this property will be ignored.
 			 * @since 1.28.6
 			 */
-			displayFormatType : {type : "string", group : "Appearance", defaultValue : ""}
+			displayFormatType : {type : "string", group : "Appearance", defaultValue : ""},
+
+			/**
+			 * If set, the days in the calendar popup are also displayed in this calendar type
+			 * If not set, the dates are only displayed in the primary calendar type
+			 * @since 1.34.1
+			 */
+			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
+
 		}
 	}});
 
@@ -470,6 +478,19 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		};
 
+		DatePicker.prototype.setSecondaryCalendarType = function(sCalendarType){
+
+			this._bSecondaryCalendarTypeSet = true; // as property can not be empty but we use it only if set
+			this.setProperty("secondaryCalendarType", sCalendarType, true);
+
+			if (this._oCalendar) {
+				this._oCalendar.setSecondaryCalendarType(sCalendarType);
+			}
+
+			return this;
+
+		};
+
 		DatePicker.prototype.onChange = function(oEvent) {
 			// don't call InputBase onChange because this calls setValue what would trigger a new formatting
 
@@ -653,8 +674,28 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				if (this.$().closest(".sapUiSizeCompact").length > 0) {
 					this._oCalendar.addStyleClass("sapUiSizeCompact");
 				}
+				if (this._bSecondaryCalendarTypeSet) {
+					this._oCalendar.setSecondaryCalendarType(this.getSecondaryCalendarType());
+				}
 				this._oCalendar.setPopupMode(true);
 				this._oCalendar.setParent(this, undefined, true); // don't invalidate DatePicker
+			}
+
+			// set displayFormatType as PrimaryCalendarType
+			// not only one because it depends on DataBinding
+			var sCalendarType;
+			var oBinding = this.getBinding("value");
+
+			if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
+				sCalendarType = oBinding.oType.oOutputFormat.oFormatOptions.calendarType;
+			}
+
+			if (!sCalendarType) {
+				sCalendarType = this.getDisplayFormatType();
+			}
+
+			if (sCalendarType) {
+				this._oCalendar.setPrimaryCalendarType(sCalendarType);
 			}
 
 			var sValue = this._formatValue(this.getDateValue());

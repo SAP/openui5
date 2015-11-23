@@ -210,8 +210,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oDate = this._getFocusedDate();
 			}
 
-			this._updateHeader(oDate);
-
 			for (var i = 0; i < aMonths.length; i++) {
 				var oMonth = aMonths[i];
 				oMonthDate = this._newUniversalDate(oDate);
@@ -221,6 +219,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}
 				oMonth.setDate(CalendarUtils._createLocalDate(oMonthDate));
 			}
+
+			this._updateHeader(oDate);
 
 		};
 
@@ -438,19 +438,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oMonth.setPrimaryCalendarType(sCalendarType);
 			}
 
-			this._updateHeader(this._oFocusedDate);
-
 			var oMonthPicker = this.getAggregation("monthPicker");
 			oMonthPicker.setPrimaryCalendarType(sCalendarType);
-			if (this.iMode != 1 && oMonthPicker.getDomRef()) {
-				// remove DOM as rerendering only needed if displayed
-				oMonthPicker.$().remove();
-			}
 			var oYearPicker = this.getAggregation("yearPicker");
 			oYearPicker.setPrimaryCalendarType(sCalendarType);
-			if (this.iMode != 2 && oYearPicker.getDomRef()) {
-				// remove DOM as rerendering only needed if displayed
-				oYearPicker.$().remove();
+
+			if (this.getDomRef()) {
+				this._updateHeader(this._oFocusedDate);
+
+				if (this.iMode != 1 && oMonthPicker.getDomRef()) {
+					// remove DOM as rerendering only needed if displayed
+					oMonthPicker.$().remove();
+				}
+				if (this.iMode != 2 && oYearPicker.getDomRef()) {
+					// remove DOM as rerendering only needed if displayed
+					oYearPicker.$().remove();
+				}
 			}
 
 			return this;
@@ -485,7 +488,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oMonth.setSecondaryCalendarType(sCalendarType);
 			}
 
-			this._updateHeader(this._getFocusedDate());
+			if (this.getDomRef()) {
+				this._updateHeader(this._getFocusedDate());
+			}
 
 			return this;
 
