@@ -1,8 +1,8 @@
 sap.ui.define([ 'sap/ui/core/UIComponent' ], function(UIComponent) {
 	"use strict";
-	var Component = UIComponent.extend("sap.m.sample.JamContent.Component", {
+	var Component = UIComponent.extend("sap.m.sample.FeedContent.Component", {
 		metadata : {
-			rootView : "sap.m.sample.JamContent.Page",
+			rootView : "sap.m.sample.FeedContent.Page",
 			dependencies : {
 				libs : [ "sap.m" ]
 			},
