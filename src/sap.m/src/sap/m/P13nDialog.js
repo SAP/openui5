@@ -300,6 +300,7 @@ sap.ui.define([
 					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE") + "\n" + sMessageText;
 					break;
 				case sap.m.P13nPanelType.columns:
+				case sap.m.P13nPanelType.dimeasure:
 					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE") + "\n" + sMessageText;
 					break;
 			}
@@ -344,7 +345,7 @@ sap.ui.define([
 		if (sap.ui.Device.system.phone) {
 			oNavigationItem = new sap.m.StandardListItem({
 				type: sap.m.ListType.Navigation,
-				text: oPanel.getBindingPath("title") ? jQuery.extend(true, {}, oPanel.getBindingInfo("title")) : oPanel.getTitle()
+				title: oPanel.getBindingPath("title") ? jQuery.extend(true, {}, oPanel.getBindingInfo("title")) : oPanel.getTitle()
 			});
 		} else {
 			oNavigationItem = new sap.m.Button({
@@ -571,6 +572,9 @@ sap.ui.define([
 					break;
 				case sap.m.P13nPanelType.columns:
 					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_COLUMNS");
+					break;
+				case sap.m.P13nPanelType.dimeasure:
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_DIMEASURE");
 					break;
 				default:
 					sTitle = oPanel.getTitleLarge() || this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS");

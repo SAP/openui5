@@ -11,15 +11,19 @@
                 }"
 				columnsItems="{
                     path: '/ColumnsItems'
-                }">
+                }"
+				availableChartTypes="{ path: '/ChartTypes'}">
 				<items>
 					<P13nItem columnKey="{path}" text="{text}"
 						aggregationRole="{type}" />
 				</items>
 				<columnsItems>
-					<P13nColumnsItem columnKey="{columnKey}" index="{index}"
+					<P13nDimMeasureItem columnKey="{columnKey}" index="{index}"
 						visible="{visible}" />
 				</columnsItems>
+				<availableChartTypes>
+					<core:Item key="{key}" text="{text}" />
+				</availableChartTypes>
 			</P13nDimMeasurePanel>
 			<P13nSortPanel title="Sort" visible="false" type="sort"
 				containerQuery="true" layoutMode="Desktop"
