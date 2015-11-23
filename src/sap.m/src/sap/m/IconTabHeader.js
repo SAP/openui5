@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._iCurrentScrollLeft = oHead.scrollLeft;
 
-		this._checkOverflow(oHead, this.$());
+		this._checkOverflow();
 
 		if (oIndex !== null && oIndex !== undefined) {
 			this._scrollIntoView(this.getTabFilters()[oIndex], 0);
@@ -425,8 +425,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	IconTabHeader.prototype.onAfterRendering = function() {
-		var oHeadDomRef = this.getDomRef("head"),
-			$bar = this.$();
+		var oHeadDomRef = this.getDomRef("head");
 
 		// initialize scrolling
 		if (this._oScroller) {
@@ -440,9 +439,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if (this._bDoScroll) {
-			jQuery.sap.delayedCall(350, this, "_checkOverflow", [oHeadDomRef, $bar]);
+			jQuery.sap.delayedCall(350, this, "_checkOverflow");
 		} else {
-			this._checkOverflow(oHeadDomRef, $bar);
+			this._checkOverflow();
 		}
 
 		// reset scroll state after re-rendering for non-touch devices (iScroll will handle this internally)
@@ -640,7 +639,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 * @returns True if scrolling is needed, otherwise false
 	 */
-	IconTabHeader.prototype._checkScrolling = function(oHead, $bar) {
+	IconTabHeader.prototype._checkScrolling = function(oHead) {
+
+		var $bar = this.$();
+
 		var bScrolling = false;
 
 		if (this._bDoScroll) { //iScroll is used, therefore we need other calculation then in desktop mode
@@ -716,15 +718,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Changes the state of the scroll arrows depending on whether they are required due to overflow.
-	 *
-	 * @param oListDomRef The ul tag containing the items
-	 * @param of_back The backward scroll arrow
-	 * @param of_fw The forward scroll arrow
 	 * @private
 	 */
-	IconTabHeader.prototype._checkOverflow = function(oBarHead, $bar) {
+	IconTabHeader.prototype._checkOverflow = function() {
 
-		if (this._checkScrolling(oBarHead, $bar) && oBarHead) {
+		var oBarHead = this.getDomRef("head");
+		var $bar = this.$();
+
+		if (this._checkScrolling(oBarHead) && oBarHead) {
 			// check whether scrolling to the left is possible
 			var bScrollBack = false;
 			var bScrollForward = false;
@@ -965,7 +966,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._$bar = null;
 		//update the arrows on desktop
 		if (sap.ui.Device.system.desktop) {
-			this._checkOverflow(this.getDomRef("head"), this.$());
+			this._checkOverflow();
 		}
 	};
 
@@ -984,8 +985,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	*/
 	IconTabHeader.prototype._afterIscroll = function() {
-		var oHead = this.getDomRef("head");
-		this._checkOverflow(oHead, this.$());
+		this._checkOverflow();
 		this._adjustAndShowArrow();
 	};
 
@@ -994,8 +994,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	*/
 	IconTabHeader.prototype._fnResize = function() {
-		var oHead = this.getDomRef("head");
-		this._checkOverflow(oHead, this.$());
+		this._checkOverflow();
 	};
 
 	/**

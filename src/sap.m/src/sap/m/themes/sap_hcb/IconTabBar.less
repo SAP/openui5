@@ -24,7 +24,7 @@
 .sap-tablet .sapMITBHead,
 html[data-sap-ui-os=win8] .sapMITBHead {
 	display: inline-block;
-	margin: 1rem 0.75rem 0 0.75rem;
+	margin: 1rem 0.75rem 0 0.25rem;
 	vertical-align: top;
 }
 
@@ -47,7 +47,7 @@ html[data-sap-ui-os=win8] .sapMITBHead {
 
 .sap-tablet .sapMITBScrollContainer,
 html[data-sap-ui-os=win8] .sapMITBScrollContainer {
-	margin: 0 1.25rem;
+	margin: 0 1.75rem;
 }
 
 /* scrollbar from iscroll should not be visible */
@@ -640,6 +640,13 @@ html[data-sap-ui-os=win8] .sapMITBArrowScroll {
 		.sapMITBArrowScrollRightTextOnly {
 			padding: 1.25rem 0 0.75rem;
 			right: 0.25rem;
+		}
+	}
+
+	html[data-sap-ui-os=win8] .sapMITB.sapUiNoContentPadding,
+	html[data-sap-ui-os=win8] .sapMITB.sapUiResponsiveContentPadding {
+		.sapMITBHead {
+			margin: 1rem 1rem 0 0;
 		}
 	}
 }
