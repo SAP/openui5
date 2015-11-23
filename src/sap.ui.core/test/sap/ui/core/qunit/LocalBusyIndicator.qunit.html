@@ -59,7 +59,7 @@
 			setTimeout(function() {
 				equal($LB.children().length, 2, 'Busy Indicator added to DOM tree');
 				ok($LB[0].hasAttribute("aria-busy", true), 'ARIA busy is set to Control');
-				ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("aria-role", "progressbar"),
+				ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("role", "progressbar"),
 					'ARIA role "progressbar" is set to busy indicator');
 				start();
 			}, 1200);
