@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			placeholder : {type : "string", group : "Appearance", defaultValue : "Post something here"},
 
 			/**
-			 * The text value of the feed input. As long as the user has not entered any text the post butoon is disabled
+			 * The text value of the feed input. As long as the user has not entered any text the post button is disabled
 			 */
 			value : {type : "string", group : "Data", defaultValue : null},
 
@@ -74,19 +74,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * Sets a new tooltip for submit button. The tooltip can either be a simple string (which in most cases will be rendered as the title attribute of this Element)
+			 * Sets a new tooltip for Submit button. The tooltip can either be a simple string (which in most cases will be rendered as the title attribute of this element)
 			 * or an instance of sap.ui.core.TooltipBase.
 			 * If a new tooltip is set, any previously set tooltip is deactivated.
 			 * The default value is set language dependent.
 			 * @since 1.28
 			 */
-			buttonTooltip : {type : "string" , altTypes : ["sap.ui.core.TooltipBase"], multiple : false, group : "Data", defaultValue : "Submit"}
+			buttonTooltip : {type : "string", group : "Accessibility", defaultValue : "Submit"}
 		},
 
 		events : {
 
 			/**
-			 * The post event is triggered when the user has entered a value and pressed the post button. After firing this event the value is reset.
+			 * The Post event is triggered when the user has entered a value and pressed the post button. After firing this event, the value is reset.
 			 */
 			post : {
 				parameters : {
@@ -164,10 +164,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-	FeedInput.prototype.setButtonTooltip = function (sButtonTooltip) {
-		this.setProperty("buttonTooltip", sButtonTooltip, true);
-		this._getPostButton().setTooltip(sButtonTooltip);
-		return this;
+	FeedInput.prototype.setButtonTooltip = function (vButtonTooltip) {
+		if (typeof vButtonTooltip === "string" || vButtonTooltip instanceof String ) {
+			this.setProperty("buttonTooltip", vButtonTooltip, true);
+			this._getPostButton().setTooltip(vButtonTooltip);
+			return this;
+		} else if (vButtonTooltip instanceof sap.ui.core.TooltipBase) {
+			this.setProperty("buttonTooltip", vButtonTooltip.getText(), true);
+			this._getPostButton().setTooltip(vButtonTooltip);
+			return this;
+		} else {
+			throw new Error("\"" + vButtonTooltip + "\" is of type " + typeof vButtonTooltip + ", expected " +
+											"String or sap.ui.core.TooltipBase" + " for property \"buttonTooltip \" of " + this);
+		}
+	};
+
+	FeedInput.prototype.getButtonTooltip = function () {
+		if (this._oButton && this._oButton.getTooltip() instanceof sap.ui.core.TooltipBase ) {
+			return this._oButton.getTooltip();
+		} else {
+			return this.getProperty("buttonTooltip");
+		}
 	};
 	/////////////////////////////////// Private /////////////////////////////////////////////////////////
 
