@@ -2419,7 +2419,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			var iHeight = Math.max($colHeaderContainer.height(), $jqo.height());
 			
 			// Height of one row within the header
-			var iRegularHeight = iHeight / iHeaderRowCount;
+			// avoid half pixels
+			var iRegularHeight = Math.floor(iHeight / iHeaderRowCount);
 			if (this._bjQueryLess18) {
 				$cols.height(iRegularHeight);
 				$jqo.height(iHeight);
