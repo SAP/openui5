@@ -1,9 +1,9 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller",
-	"sap/m/SplitContainer",
-	"sap/ui/Device"
-], function (JSONModel, Controller, SplitContainer, Device) {
+	"sap/ui/Device",
+	"sap/m/SplitContainer"
+], function (JSONModel, Controller, Device, SplitContainer) {
 	"use strict";
 	return Controller.extend("sap.uxap.sample.ObjectPageWithIconTabBar.ObjectPageWithIconTabBar", {
 		onInit: function () {

@@ -4039,6 +4039,30 @@
         }
       }
     },
+    "grunt-git": {
+      "version": "0.3.5",
+      "from": "grunt-git@0.3.5",
+      "resolved": "https://registry.npmjs.org/grunt-git/-/grunt-git-0.3.5.tgz",
+      "dependencies": {
+        "flopmang": {
+          "version": "0.0.1",
+          "from": "flopmang@>=0.0.1 <0.0.2",
+          "resolved": "https://registry.npmjs.org/flopmang/-/flopmang-0.0.1.tgz",
+          "dependencies": {
+            "underscore": {
+              "version": "1.8.3",
+              "from": "underscore@>=1.6.0 <2.0.0",
+              "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.8.3.tgz"
+            },
+            "underscore.string": {
+              "version": "2.4.0",
+              "from": "underscore.string@>=2.3.3 <3.0.0",
+              "resolved": "https://registry.npmjs.org/underscore.string/-/underscore.string-2.4.0.tgz"
+            }
+          }
+        }
+      }
+    },
     "grunt-mocha-test": {
       "version": "0.12.7",
       "from": "grunt-mocha-test@>=0.12.6 <0.13.0",

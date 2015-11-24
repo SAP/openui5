@@ -2,8 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListItemBase', './Title', './Text', './Button', 'sap/ui/core/InvisibleText', './Link'],
-	function (jQuery, library, Control, ListItemBase, Title, Text, Button, InvisibleText, Link) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListItemBase', './Title', './Text',
+		'./Button', 'sap/ui/core/InvisibleText', './Link', 'sap/ui/core/Icon', './Image', './OverflowToolbar'],
+	function (jQuery, library, Control, ListItemBase, Title, Text, Button, InvisibleText, Link, Icon, Image, OverflowToolbar) {
 
 	'use strict';
 
@@ -67,7 +68,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				/**
 				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the developer.
 				 */
-				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true}
+				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true},
+
+				/**
+				 * Determines the notification group's author name.
+				 */
+				authorName: {type: 'string', group: 'Appearance', defaultValue: ''},
+
+				/**
+				 * Determines the URL of the notification group's author picture.
+				 */
+				authorPicture: {type: 'sap.ui.core.URI',  multiple: false}
 			},
 			aggregations: {
 				/**
@@ -88,7 +99,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				/**
 				 * The timestamp string that will be displayed in the NotificationListGroup.
 				 */
-				_dateTime: {type: 'sap.m.Text', multiple: false, visibility: 'hidden'}
+				_dateTime: {type: 'sap.m.Text', multiple: false, visibility: 'hidden'},
+
+				/**
+				 * The sap.m.Image or sap.ui.core.Control control that holds the author image or icon.
+				 * @private
+				 */
+				_authorImage: {type: 'sap.ui.core.Control', multiple: false, visibility: "hidden"},
+
+				/**
+				 * The OverflowToolbar control that holds the footer buttons.
+				 * @private
+				 */
+				_overflowToolbar: {type: 'sap.m.OverflowToolbar', multiple: false, visibility: "hidden"}
 			},
 			events: {
 				/**
@@ -107,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		 * @private
 		 */
 		this._closeButton = new sap.m.Button(this.getId() + '-closeButton', {
-			type: 'Unstyled',
+			type: sap.m.ButtonType.Transparent,
 			icon: sap.ui.core.IconPool.getIconURI('decline'),
 			press: function () {
 				this.close();
@@ -118,11 +141,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		 * @type {sap.m.Link}
 		 * @private
 		 */
-		this._collapseLink = new sap.m.Link({
+		this._collapseButton = new sap.m.Button({
+			type: sap.m.ButtonType.Transparent,
 			press: function () {
 				this.setCollapsed(!this.getCollapsed());
 			}.bind(this)
 		});
+
+		this.setAggregation('_overflowToolbar', new OverflowToolbar());
 	};
 
 	NotificationListGroup.prototype.setTitle = function (title) {
@@ -183,8 +209,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	};
 
 	NotificationListGroup.prototype.onBeforeRendering = function() {
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND');
+		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
+
 		//Making sure the Expand/Collapse link text is set correctly
-		this._collapseLink.setText(this.getCollapsed() ? 'Expand Group' : 'Collapse Group');
+		this._collapseButton.setText(this.getCollapsed() ? expandText : collapseText);
 	};
 
 	NotificationListGroup.prototype.close = function () {
@@ -197,9 +227,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			this._closeButton.destroy();
 			this._closeButton = null;
 		}
-		if (this._collapseLink) {
-			this._collapseLink.destroy();
-			this._collapseLink = null;
+		if (this._collapseButton) {
+			this._collapseButton.destroy();
+			this._collapseButton = null;
 		}
 	};
 
@@ -219,6 +249,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			});
 
 			this.setAggregation('_headerTitle', title);
+		}
+
+		if (this.getUnread()) {
+			title.addStyleClass('sapMNLGTitleUnread');
 		}
 
 		return title;
@@ -246,16 +280,169 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	};
 
 	/**
+	 * Returns the sap.m.Image or the sap.ui.core.Control used in the NotificationListItem's author picture.
+	 * @returns {sap.m.Image|sap.ui.core.Control} The notification author picture text
+	 * @private
+	 */
+	NotificationListGroup.prototype._getAuthorImage = function() {
+		/** @type {sap.m.Image|sap.ui.core.Control} */
+		var authorImage = this.getAggregation('_authorImage');
+
+		if (!authorImage) {
+			var authorPicture = this.getAuthorPicture();
+			var authorName = this.getAuthorName();
+
+			if (isIcon(authorPicture)) {
+				authorImage = new Icon({
+					src: authorPicture,
+					alt: authorName
+				});
+			} else {
+				authorImage = new Image({
+					src: authorPicture,
+					alt: authorName
+				});
+			}
+
+			this.setAggregation('_authorImage', authorImage, true);
+		}
+
+		return authorImage;
+	};
+
+	/**
 	 * Toggles the NotificationListGroup state between collapsed/expanded.
 	 * @private
 	 */
 	NotificationListGroup.prototype._toggleCollapsed = function () {
 		/** @type {boolean} */
 		var newCollapsedState = !this.getCollapsed();
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND');
+		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
 
-		this._collapseLink.setText(newCollapsedState ? 'Expand Group' : 'Collapse Group', true);
+		this._collapseButton.setText(newCollapsedState ? expandText : collapseText, true);
 
-		this.$().find('li').toggleClass('sapMNLG-Collapsed', newCollapsedState);
+		this.$().toggleClass('sapMNLG-Collapsed', newCollapsedState);
+	};
+
+	//================================================================================
+	// Delegation aggregation methods to the Overflow Toolbar
+	//================================================================================
+
+	NotificationListGroup.prototype.bindAggregation = function (aggregationName, bindingInfo) {
+		if (aggregationName == 'buttons') {
+			this.getAggregation('_overflowToolbar').bindAggregation('content', bindingInfo);
+			return this;
+		} else {
+			return sap.ui.core.Control.prototype.bindAggregation.call(this, aggregationName, bindingInfo);
+		}
+	};
+
+	NotificationListGroup.prototype.validateAggregation = function (aggregationName, object, multiple) {
+		if (aggregationName == 'buttons') {
+			this.getAggregation('_overflowToolbar').validateAggregation('content', object, multiple);
+			return this;
+		} else {
+			return sap.ui.core.Control.prototype.validateAggregation.call(this, aggregationName, object, multiple);
+		}
+	};
+
+	NotificationListGroup.prototype.setAggregation = function (aggregationName, object, suppressInvalidate) {
+		if (aggregationName == 'buttons') {
+			this.getAggregation('_overflowToolbar').setAggregation('content', object, suppressInvalidate);
+			return this;
+		} else {
+			return sap.ui.core.Control.prototype.setAggregation.call(this, aggregationName, object, suppressInvalidate);
+		}
+	};
+
+	NotificationListGroup.prototype.getAggregation = function (aggregationName, defaultObjectToBeCreated) {
+		if (aggregationName == 'buttons') {
+			var toolbar = this.getAggregation('_overflowToolbar');
+
+			return toolbar.getContent().filter(function (item) {
+				return item instanceof sap.m.Button;
+			});
+		} else {
+			return sap.ui.core.Control.prototype.getAggregation.call(this, aggregationName, defaultObjectToBeCreated);
+		}
+	};
+
+	NotificationListGroup.prototype.indexOfAggregation = function (aggregationName, object) {
+		if (aggregationName == 'buttons') {
+			this.getAggregation('_overflowToolbar').indexOfAggregation('content', object);
+			return this;
+		} else {
+			return sap.ui.core.Control.prototype.indexOfAggregation.call(this, aggregationName, object);
+		}
+	};
+
+	NotificationListGroup.prototype.insertAggregation = function (aggregationName, object, index, suppressInvalidate) {
+		if (aggregationName == 'buttons') {
+			this.getAggregation('_overflowToolbar').insertAggregation('content', object, index, suppressInvalidate);
+			return this;
+		} else {
+			return sap.ui.core.Control.prototype.insertAggregation.call(this, object, index, suppressInvalidate);
+		}
+	};
+
+	NotificationListGroup.prototype.addAggregation = function (aggregationName, object, suppressInvalidate) {
+		if (aggregationName == 'buttons') {
+			var toolbar = this.getAggregation('_overflowToolbar');
+
+			return toolbar.addAggregation('content', object, suppressInvalidate);
+		} else {
+			return sap.ui.core.Control.prototype.addAggregation.call(this, aggregationName, object, suppressInvalidate);
+		}
+	};
+
+	NotificationListGroup.prototype.removeAggregation = function (aggregationName, object, suppressInvalidate) {
+		if (aggregationName == 'buttons') {
+			return this.getAggregation('_overflowToolbar').removeAggregation('content', object, suppressInvalidate);
+		} else {
+			return sap.ui.core.Control.prototype.removeAggregation.call(this, aggregationName, object, suppressInvalidate);
+		}
+	};
+
+	NotificationListGroup.prototype.removeAllAggregation = function (aggregationName, suppressInvalidate) {
+		if (aggregationName == 'buttons') {
+			return this.getAggregation('_overflowToolbar').removeAllAggregation('content', suppressInvalidate);
+		} else {
+			return sap.ui.core.Control.prototype.removeAllAggregation.call(this, aggregationName, suppressInvalidate);
+		}
+	};
+
+	NotificationListGroup.prototype.destroyAggregation = function (aggregationName, suppressInvalidate) {
+		if (aggregationName == 'buttons') {
+			return this.getAggregation('_overflowToolbar').destroyAggregation('content', suppressInvalidate);
+		} else {
+			return sap.ui.core.Control.prototype.destroyAggregation.call(this, aggregationName, suppressInvalidate);
+		}
+	};
+
+	NotificationListGroup.prototype.getBinding = function (aggregationName) {
+		if (aggregationName == 'buttons') {
+			return this.getAggregation('_overflowToolbar').getBinding('content');
+		} else {
+			return sap.ui.core.Control.prototype.getBinding.call(this, aggregationName);
+		}
+	};
+
+	NotificationListGroup.prototype.getBindingInfo = function (aggregationName) {
+		if (aggregationName == 'buttons') {
+			return this.getAggregation('_overflowToolbar').getBindingInfo('content');
+		} else {
+			return sap.ui.core.Control.prototype.getBindingInfo.call(this, aggregationName);
+		}
+	};
+
+	NotificationListGroup.prototype.getBindingPath = function (aggregationName) {
+		if (aggregationName == 'buttons') {
+			return this.getAggregation('_overflowToolbar').getBindingPath('content');
+		} else {
+			return sap.ui.core.Control.prototype.getBindingPath.call(this, aggregationName);
+		}
 	};
 
 	/**
@@ -283,6 +470,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		}
 
 		return firstPriority;
+	}
+
+	/**
+	 * Checks is a sap.ui.core.URI parameter is a icon src or not.
+	 * @param {string} source The source to be checked.
+	 * @returns {bool} The result of the check
+	 * @private
+	 */
+	function isIcon(source) {
+		if (!source) {
+			return false;
+		}
+
+		var result = window.URI.parse(source);
+		return (result.protocol && result.protocol == 'sap-icon');
 	}
 
 	return NotificationListGroup;

@@ -5,8 +5,8 @@
 		<title>Notification List item - sap.m</title>
 
 		<style>
-			#body {
-				margin: 30px;
+			#content {
+				padding: 30px 0 0 30px;
 			}
 		</style>
 
@@ -18,9 +18,15 @@
 		</script>
 
 		<script type="text/javascript">
+			var compactSizeButton = new sap.m.Button({
+				text : "Toggle Compact mode",
+				press : function() {
+					jQuery('body').toggleClass('sapUiSizeCompact');
+				}
+			}).placeAt('content');
 
 			var listItem = new sap.m.NotificationListItem({
-				title : 'Notification List Title',
+				title : 'Notification List Title Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel',
 				description : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
 						'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
 						'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.',
@@ -116,16 +122,63 @@
 				]
 			});
 
+			var oData = {
+				showClose : true,
+				buttons : [
+					{
+						buttonText : "Accept",
+						buttonType : sap.m.ButtonType.Accept
+					},
+					{
+						buttonText : "Consider",
+						buttonType : sap.m.ButtonType.Default
+					},
+					{
+						buttonText : "Reject",
+						buttonType : sap.m.ButtonType.Reject
+					}
+				]
+			};
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(oData);
+
+			sap.ui.getCore().setModel(oModel);
+
+			var oButtonTemplate = new sap.m.Button({
+				text : "{buttonText}",
+				type : "{buttonType}"
+			});
+
+			var listItem5 = new sap.m.NotificationListItem({
+				id : "test",
+				title : 'Item with binding',
+				description : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+				'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+				'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.',
+				showCloseButton : "{showClose}",
+				datetime : '1 hour',
+				unread : true,
+				authorName : 'Jean Doe',
+				authorPicture : 'images/Woman_04.png',
+				priority: sap.ui.core.Priority.None,
+				buttons: {
+					path : "/buttons",
+					template : oButtonTemplate
+				}
+			});
+
 			var list = new sap.m.List({
 				items: [
 					listItem,
 					listItem2,
 					listItem3,
-					listItem4
+					listItem4,
+					listItem5
 				]
 			});
 
-			list.setWidth("700px").placeAt("content");
+			list.setWidth("480px").placeAt("content");
 		</script>
 	</head>
 

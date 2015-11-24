@@ -13,6 +13,8 @@
 						title="Orders"
 						datetime="1 hour"
 						showCloseButton="true"
+						authorName="Michael Muller"
+						authorPicture="sap-icon://person-placeholder"
 						>
 					<items>
 						<NotificationListItem
@@ -24,6 +26,7 @@
 								priority="None"
 								close="onItemClose"
 								press="onListItemPress"
+								authorPicture="sap-icon://car-rental"
 								/>
 
 						<NotificationListItem

@@ -1044,16 +1044,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		MessagePopover.prototype._restoreExpansionDefaults = function () {
-			if (sap.ui.Device.system.phone) {
+			if (this.getInitiallyExpanded()) {
 				this._fnFilterList("all");
-			} else  if (this.getInitiallyExpanded()) {
-				this._expandMsgPopover();
-				this._fnFilterList("all");
+				this._oSegmentedButton.setSelectedButton(null);
 			} else {
 				this._collapseMsgPopover();
-				LIST_TYPES.forEach(function (sListName) {
-					this._oLists[sListName].setVisible(false);
-				}, this);
 			}
 		};
 
@@ -1073,6 +1068,10 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		MessagePopover.prototype._collapseMsgPopover = function () {
+			LIST_TYPES.forEach(function (sListName) {
+				this._oLists[sListName].setVisible(false);
+			}, this);
+
 			this._oPopover
 				.addStyleClass(CSS_CLASS + "-init")
 				.setContentHeight("auto");

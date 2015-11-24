@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 	/**
 	 * Constructor for Filter.
 	 *
-	 * One can either pass a single object literal with the filter parameters or use the individual constructor arguments.
+	 * You either pass a single object literal with the filter parameters or use the individual constructor arguments.
 	 * No matter which variant is used, only certain combinations of parameters are supported
 	 * (the following list uses the names from the object literal):
 	 * <ul>
@@ -21,6 +21,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 	 *     the filters with an AND (<code>true</code>) or an OR (<code>false</code>) operator.</li>
 	 * </ul>
 	 * An error will be logged to the console if an invalid combination of parameters is provided.
+	 * Please note that a model implementation may not support a custom filter function, e.g. if the model does not perform client side filtering.
+	 * It also depends on the model implementation if the filtering is case sensitive or not.
+	 * See particular model documentation for details.
 	 *
 	 * @example <caption>Using an object with a path, an operator and one or two values</caption>
 	 *

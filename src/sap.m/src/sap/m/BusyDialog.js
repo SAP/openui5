@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var BusyDialog = Control.extend("sap.m.BusyDialog", /** @lends sap.m.BusyDialog.prototype */ {
+
 			metadata: {
 				library: "sap.m",
 				properties: {
@@ -91,7 +92,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 						}
 					}
 				}
-			}
+			},
+
+			// requires a dummy render function to avoid loading of separate
+			// renderer file and in case of usage in control tree a render
+			// function has to be available to not crash the rendering
+			renderer: function(oRm, oControl) { /* just do nothing */ }
+
 		});
 
 		BusyDialog.prototype.init = function () {

@@ -237,13 +237,13 @@
 			var oGrid = sap.ui.getCore().byId("F1C1--Grid");
 			oLayoutData = oGrid._getLayoutDataForControl(oLabel);
 			equal(oLayoutData.getId(), "Layout1--Dummy", "Form1: Label1 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "XL4 L2 M2 S12", "Form1: Label1 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL2 L2 M2 S12", "Form1: Label1 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), true, "Form1: Label1 calculated LayoutData linebreak correct");
 
 			var oField = sap.ui.getCore().byId("F1C1E1_T1");
 			oLayoutData = oGrid._getLayoutDataForControl(oField);
 			equal(oLayoutData.getId(), "Layout1--Dummy", "Form1: Field1 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "XL8 L10 M10 S12", "Form1: Field1 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL10 L10 M10 S12", "Form1: Field1 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), false, "Form1: Field1 calculated LayoutData linebreak correct");
 
 			var oPanel = sap.ui.getCore().byId("F3C1---Panel");

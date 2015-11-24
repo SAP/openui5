@@ -34,22 +34,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * The month is initial focused and selected
 			 * The value must be between 0 and 11
 			 */
-			month : {type : "int", group : "Misc", defaultValue : 0},
+			month : {type : "int", group : "Data", defaultValue : 0},
 
 			/**
 			 * number of displayed months
 			 * The value must be between 1 and 12
 			 * @since 1.30.0
 			 */
-			months : {type : "int", group : "Misc", defaultValue : 12},
+			months : {type : "int", group : "Appearance", defaultValue : 12},
 
 			/**
 			 * number of months in each row
 			 * The value must be between 0 and 12 (0 means just to have all months in one row, independent of the number)
 			 * @since 1.30.0
 			 */
-			columns : {type : "int", group : "Misc", defaultValue : 3}
+			columns : {type : "int", group : "Appearance", defaultValue : 3},
 
+			/**
+			 * If set, the calendar type is used for display.
+			 * If not set, the calendar type of the global configuration is used.
+			 * @since 1.34.0
+			 */
+			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"}
 		},
 		events : {
 
@@ -65,16 +71,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		MonthPicker.prototype.init = function(){
 
+			// set default calendar type from configuration
+			var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+			this.setProperty("primaryCalendarType", sCalendarType);
+
 		};
 
 		MonthPicker.prototype.onAfterRendering = function(){
 
-			var that = this;
-
-			_initItemNavigation(that);
+			_initItemNavigation.call(this);
 
 			// check if day names are too big -> use smaller ones
-			_checkNamesLength(that);
+			_checkNamesLength.call(this);
 
 		};
 
@@ -89,17 +97,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			if (this.getDomRef()) {
-				var that = this;
 				if (this.getMonths() < 12) {
-					var iStartMonth = _getStartMonth(that);
+					var iStartMonth = _getStartMonth.call(this);
 					if (iMonth >= iStartMonth && iMonth <= iStartMonth + this.getMonths() - 1) {
-						_selectMonth(that, iMonth, true);
+						_selectMonth.call(this, iMonth, true);
 						this._oItemNavigation.focusItem(iMonth - iStartMonth);
 					}else {
-						_updateMonths(that, iMonth);
+						_updateMonths.call(this, iMonth);
 					}
 				} else {
-					_selectMonth(that, iMonth, true);
+					_selectMonth.call(this, iMonth, true);
 					this._oItemNavigation.focusItem(iMonth);
 				}
 			}
@@ -149,11 +156,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		MonthPicker.prototype.onsapselect = function(oEvent){
 
 			// focused item must be selected
-			var that = this;
 			var iIndex = this._oItemNavigation.getFocusedIndex();
-			var iMonth = iIndex + _getStartMonth(that);
+			var iMonth = iIndex + _getStartMonth.call(this);
 
-			_selectMonth(that, iMonth);
+			_selectMonth.call(this, iMonth);
 			this.fireSelect();
 
 		};
@@ -181,14 +187,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._bLongMonth = false;
 			var oLocaleData = this._getLocaleData();
 			// change month name on button but not change month picker, because it is hided again
-			var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			var aMonthNames = oLocaleData.getMonthsStandAlone("wide", this.getPrimaryCalendarType());
 			for (var i = 0; i < aMonths.length; i++) {
 				var $Month = jQuery(aMonths[i]);
 				$Month.text(aMonthNames[i]);
 			}
 
-			var that = this;
-			_checkNamesLength(that);
+			_checkNamesLength.call(this);
 
 		};
 
@@ -201,8 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 */
 		MonthPicker.prototype.nextPage = function(){
 
-			var that = this;
-			var iStartMonth = _getStartMonth(that);
+			var iStartMonth = _getStartMonth.call(this);
 			var iIndex = this._oItemNavigation.getFocusedIndex();
 			var iMonth = iIndex + iStartMonth;
 			var iMonths = this.getMonths();
@@ -211,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (iMonth > 11) {
 				iMonth = 11;
 			}
-			_updateMonths(that, iMonth);
+			_updateMonths.call(this, iMonth);
 
 			return this;
 
@@ -226,8 +230,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 */
 		MonthPicker.prototype.previousPage = function(){
 
-			var that = this;
-			var iStartMonth = _getStartMonth(that);
+			var iStartMonth = _getStartMonth.call(this);
 			var iIndex = this._oItemNavigation.getFocusedIndex();
 			var iMonth = iIndex + iStartMonth;
 			var iMonths = this.getMonths();
@@ -236,44 +239,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (iMonth < 0) {
 				iMonth = 0;
 			}
-			_updateMonths(that, iMonth);
+			_updateMonths.call(this, iMonth);
 			return this;
 
 		};
 
-		function _initItemNavigation(oThis){
+		function _initItemNavigation(){
 
-			var oRootDomRef = oThis.getDomRef();
-			var aDomRefs = oThis.$().find(".sapUiCalItem");
-			var iColumns = oThis.getColumns();
-			var iMonths = oThis.getMonths();
+			var oRootDomRef = this.getDomRef();
+			var aDomRefs = this.$().find(".sapUiCalItem");
+			var iColumns = this.getColumns();
+			var iMonths = this.getMonths();
 			var bCycling = true;
 
 			if (iMonths < 12) {
 				bCycling = false;
 			}
 
-			if (!oThis._oItemNavigation) {
-				oThis._oItemNavigation = new ItemNavigation();
-				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, _handleAfterFocus, oThis);
-				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, _handleFocusAgain, oThis);
-				oThis._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, _handleBorderReached, oThis);
-				oThis.addDelegate(oThis._oItemNavigation);
-				oThis._oItemNavigation.setHomeEndColumnMode(true, true);
-				oThis._oItemNavigation.setDisabledModifiers({
+			if (!this._oItemNavigation) {
+				this._oItemNavigation = new ItemNavigation();
+				this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, _handleAfterFocus, this);
+				this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, _handleFocusAgain, this);
+				this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, _handleBorderReached, this);
+				this.addDelegate(this._oItemNavigation);
+				this._oItemNavigation.setHomeEndColumnMode(true, true);
+				this._oItemNavigation.setDisabledModifiers({
 					sapnext : ["alt"],
 					sapprevious : ["alt"],
 					saphome : ["alt"],
 					sapend : ["alt"]
 				});
 			}
-			oThis._oItemNavigation.setRootDomRef(oRootDomRef);
-			oThis._oItemNavigation.setItemDomRefs(aDomRefs);
-			oThis._oItemNavigation.setCycling(bCycling);
-			oThis._oItemNavigation.setColumns(iColumns, !bCycling);
-			var iIndex = oThis.getMonth() - _getStartMonth(oThis);
-			oThis._oItemNavigation.setFocusedIndex(iIndex);
-			oThis._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
+			this._oItemNavigation.setRootDomRef(oRootDomRef);
+			this._oItemNavigation.setItemDomRefs(aDomRefs);
+			this._oItemNavigation.setCycling(bCycling);
+			this._oItemNavigation.setColumns(iColumns, !bCycling);
+			var iIndex = this.getMonth() - _getStartMonth.call(this);
+			this._oItemNavigation.setFocusedIndex(iIndex);
+			this._oItemNavigation.setPageSize(aDomRefs.length); // to make sure that pageup/down goes out of month
 
 		}
 
@@ -288,8 +291,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (oEvent.type == "mousedown") {
 				// as no click event is fired in some cases
-				var that = this;
-				_handleMousedown(that, oEvent, iIndex);
+				_handleMousedown.call(this, oEvent, iIndex);
 			}
 
 		}
@@ -305,23 +307,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (oEvent.type == "mousedown") {
 				// as no click event is fired in some cases
-				var that = this;
-				_handleMousedown(that, oEvent, iIndex);
+				_handleMousedown.call(this, oEvent, iIndex);
 			}
 
 		}
 
-		function _handleMousedown(oThis, oEvent, iIndex){
+		function _handleMousedown(oEvent, iIndex){
 
 			if (oEvent.button) {
 				// only use left mouse button
 				return;
 			}
 
-			var iMonth = iIndex + _getStartMonth(oThis);
+			var iMonth = iIndex + _getStartMonth.call(this);
 
-			_selectMonth(oThis, iMonth);
-			oThis._bMousedownChange = true;
+			_selectMonth.call(this, iMonth);
+			this._bMousedownChange = true;
 
 			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
 			oEvent.setMark("cancelAutoClose");
@@ -333,8 +334,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oEvent = oControlEvent.getParameter("event");
 
 			if (oEvent.type) {
-				var that = this;
-				var iStartMonth = _getStartMonth(that);
+				var iStartMonth = _getStartMonth.call(this);
 				var iIndex = this._oItemNavigation.getFocusedIndex();
 				var iMonth = iIndex + iStartMonth;
 				var iMonths = this.getMonths();
@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				case "sapnextmodifiers":
 					if (iMonth < 11) {
 						iMonth++;
-						_updateMonths(that, iMonth);
+						_updateMonths.call(this, iMonth);
 					}
 					break;
 
@@ -352,21 +352,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				case "sappreviousmodifiers":
 					if (iMonth > 0) {
 						iMonth--;
-						_updateMonths(that, iMonth);
+						_updateMonths.call(this, iMonth);
 					}
 					break;
 
 				case "sappagedown":
 					if (iMonth < 12 - iMonths) {
 						iMonth = iMonth + iMonths;
-						_updateMonths(that, iMonth);
+						_updateMonths.call(this, iMonth);
 					}
 					break;
 
 				case "sappageup":
 					if (iMonth > iMonths) {
 						iMonth = iMonth - iMonths;
-						_updateMonths(that, iMonth);
+						_updateMonths.call(this, iMonth);
 					}
 					break;
 
@@ -377,11 +377,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
-		function _selectMonth(oThis, iMonth, bNoSetDate){
+		function _selectMonth(iMonth, bNoSetDate){
 
-			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
+			var aDomRefs = this._oItemNavigation.getItemDomRefs();
 			var $DomRef;
-			var sId = oThis.getId() + "-m" + iMonth;
+			var sId = this.getId() + "-m" + iMonth;
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				$DomRef = jQuery(aDomRefs[i]);
 				if ($DomRef.attr("id") == sId) {
@@ -392,24 +392,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			if (!bNoSetDate) {
-				oThis.setProperty("month", iMonth, true);
+				this.setProperty("month", iMonth, true);
 			}
 
 		}
 
-		function _checkNamesLength(oThis){
+		function _checkNamesLength(){
 
-			if (!oThis._bNamesLengthChecked) {
+			if (!this._bNamesLengthChecked) {
 				var i = 0;
 				// only once - cannot change by rerendering - only by theme change
-				var aMonths = oThis._oItemNavigation.getItemDomRefs();
+				var aMonths = this._oItemNavigation.getItemDomRefs();
 				var bTooLong = false;
-				var iMonths = oThis.getMonths();
+				var iMonths = this.getMonths();
 				var iBlocks = Math.ceil(12 / iMonths);
 				var iMonth = iMonths - 1;
 				for (var b = 0; b < iBlocks; b++) {
 					if (iMonths < 12) {
-						_updateMonths(oThis, iMonth);
+						_updateMonths.call(this, iMonth);
 						iMonth = iMonth + iMonths;
 						if (iMonth > 11) {
 							iMonth = 11;
@@ -431,44 +431,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 				if (iMonths < 12) {
 					// restore rendered block
-					iMonth = oThis.getMonth();
-					_updateMonths(oThis, iMonth);
+					iMonth = this.getMonth();
+					_updateMonths.call(this, iMonth);
 				}
 
 				if (bTooLong) {
-					oThis._bLongMonth = false;
-					var oLocaleData = oThis._getLocaleData();
+					this._bLongMonth = false;
+					var oLocaleData = this._getLocaleData();
+					var sCalendarType = this.getPrimaryCalendarType();
 					// change month name on button but not change month picker, because it is hided again
-					var aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
-					var aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide");
+					var aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated", sCalendarType);
+					var aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 					for (i = 0; i < aMonths.length; i++) {
 						var $Month = jQuery(aMonths[i]);
 						$Month.text(aMonthNames[i]);
 						$Month.attr("aria-label", aMonthNamesWide[i]);
 					}
 				} else {
-					oThis._bLongMonth = true;
+					this._bLongMonth = true;
 				}
 
-				oThis._bNamesLengthChecked = true;
+				this._bNamesLengthChecked = true;
 			}
 
 		}
 
-		function _getStartMonth(oThis){
+		function _getStartMonth(){
 
-			if (oThis.getMonths() < 12) {
-				var oFirstMonth = oThis._oItemNavigation.getItemDomRefs()[0];
-				return parseInt( oFirstMonth.id.slice( oThis.getId().length + 2), 10);
+			if (this.getMonths() < 12) {
+				var oFirstMonth = this._oItemNavigation.getItemDomRefs()[0];
+				return parseInt( oFirstMonth.id.slice( this.getId().length + 2), 10);
 			} else {
 				return 0;
 			}
 
 		}
 
-		function _updateMonths(oThis, iMonth){
+		function _updateMonths(iMonth){
 
-			var aMonths = oThis._oItemNavigation.getItemDomRefs();
+			var aMonths = this._oItemNavigation.getItemDomRefs();
 			if (aMonths.legth > 11) {
 				return;
 			}
@@ -480,23 +481,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				iStartMonth = 12 - iMonths;
 			}
 
-			var oLocaleData = oThis._getLocaleData();
+			var oLocaleData = this._getLocaleData();
 			var aMonthNames = [];
 			var aMonthNamesWide = [];
-			if (oThis._bLongMonth || !oThis._bNamesLengthChecked) {
-				aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			var sCalendarType = this.getPrimaryCalendarType();
+			if (this._bLongMonth || !this._bNamesLengthChecked) {
+				aMonthNames = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 			} else {
-				aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
-				aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide");
+				aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated", sCalendarType);
+				aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 			}
 
-			var iSelectedMonth = oThis.getMonth();
+			var iSelectedMonth = this.getMonth();
 
 			for (var i = 0; i < aMonths.length; i++) {
 				var $DomRef = jQuery(aMonths[i]);
 				$DomRef.text(aMonthNames[i + iStartMonth]);
-				$DomRef.attr("id", oThis.getId() + "-m" + (i + iStartMonth));
-				if (!oThis._bLongMonth) {
+				$DomRef.attr("id", this.getId() + "-m" + (i + iStartMonth));
+				if (!this._bLongMonth) {
 					$DomRef.attr("aria-label", aMonthNamesWide[i + iStartMonth]);
 				}
 				if (i + iStartMonth == iSelectedMonth) {
@@ -506,7 +508,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}
 			}
 
-			oThis._oItemNavigation.focusItem(iMonth - iStartMonth);
+			this._oItemNavigation.focusItem(iMonth - iStartMonth);
 		}
 
 	}());

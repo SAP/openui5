@@ -963,6 +963,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		
 		this.bIgnoreSuspend = true;
 
+		if (!aSorters) {
+			aSorters = [];
+		}
+		
 		if (aSorters instanceof Sorter) {
 			aSorters = [aSorters];
 		}
@@ -1021,10 +1025,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * Filters the list.
 	 *
 	 * When using sap.ui.model.Filter the filters are first grouped according to their binding path.
-	 * All filters belonging to a group are ORed and after that the
-	 * results of all groups are ANDed.
+	 * All filters belonging to a group are combined with OR and after that the
+	 * results of all groups are combined with AND.
 	 * Usually this means, all filters applied to a single table column
-	 * are ORed, while filters on different table columns are ANDed.
+	 * are combined with OR, while filters on different table columns are combined with AND.
+	 * Please note that a custom filter function is only supported with operation mode <code>sap.ui.model.odata.OperationMode.Client</code>.
 	 *
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} aFilters Array of filter objects
 	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies

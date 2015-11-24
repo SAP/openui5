@@ -39,12 +39,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * it is set to the start date
 			 * So after setting the start date the date should be set to be in the range of the start date
 			 */
-			startDate : {type : "object", group : "Misc"},
+			startDate : {type : "object", group : "Data"},
 
 			/**
 			 * number of days displayed
 			 */
-			days : {type : "int", group : "Misc", defaultValue : 7},
+			days : {type : "int", group : "Appearance", defaultValue : 7},
 
 			/**
 			 * If set the day names are shown in a separate line.
@@ -77,7 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
 			}
 
-			var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate);
+			var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate, this.getPrimaryCalendarType());
 			this.setProperty("startDate", oStartDate, true);
 			this._oUTCStartDate = oUTCDate;
 
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		DatesRow.prototype._getStartDate = function(){
 
 			if (!this._oUTCStartDate) {
-				this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(new Date());
+				this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(new Date(), this.getPrimaryCalendarType());
 			}
 
 			return this._oUTCStartDate;
@@ -154,6 +154,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		DatesRow.prototype.setPrimaryCalendarType = function(sCalendarType){
+
+			Month.prototype.setPrimaryCalendarType.apply(this, arguments);
+
+			if (this._oUTCStartDate) {
+				this._oUTCStartDate = UniversalDate.getInstance(this._oUTCStartDate.getJSDate(), sCalendarType);
+			}
+
+			return this;
+
+		};
+
 		/**
 		 * Setter for property <code>firstDayOfWeek</code>.
 		 *
@@ -179,7 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oEvent = oControlEvent.getParameter("event");
 			var iDays = this.getDays();
 			var oOldDate = this._getDate();
-			var oFocusedDate = new UniversalDate(oOldDate.getTime());
+			var oFocusedDate = this._newUniversalDate(oOldDate);
 
 			if (oEvent.type) {
 				switch (oEvent.type) {
@@ -231,9 +243,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oStartDate = this._getStartDate();
 
-			var oEndDate = new UniversalDate(oStartDate.getTime());
+			var oEndDate = this._newUniversalDate(oStartDate);
 			oEndDate.setUTCDate(oEndDate.getUTCDate() + this.getDays());
-			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate);
+			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
 
 			if (oUTCDate.getTime() >= oStartDate.getTime() && oUTCDate.getTime() < oEndDate.getTime()) {
 				return true;

@@ -48,14 +48,36 @@
 				}
 			}).placeAt("event1");
 
-			var oLabel = new sap.ui.commons.Label({text: "Text 2", labelFor: "TF2"}).placeAt("event1");
+			var oLabel = new sap.ui.commons.Label({text: "additional text 1", labelFor: "TF2"}).placeAt("event1");
 			var oInput = new sap.ui.commons.TextField("TF2",{
 				editable: true,
 				change: function(oEvent){
 					var oTF = oEvent.oSource;
 					var sValue = oEvent.getParameter('newValue');
 					var oHeader = sap.ui.getCore().byId("H1");
+					oHeader.setAdditionalTextButton1(sValue);
+				}
+			}).placeAt("event1");
+
+			var oLabel = new sap.ui.commons.Label({text: "Text 2", labelFor: "TF3"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF3",{
+				editable: true,
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oHeader = sap.ui.getCore().byId("H1");
 					oHeader.setTextButton2(sValue);
+				}
+			}).placeAt("event1");
+
+			var oLabel = new sap.ui.commons.Label({text: "additional text 2", labelFor: "TF4"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF4",{
+				editable: true,
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oHeader = sap.ui.getCore().byId("H1");
+					oHeader.setAdditionalTextButton2(sValue);
 				}
 			}).placeAt("event1");
 

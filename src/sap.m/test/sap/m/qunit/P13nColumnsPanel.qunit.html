@@ -798,8 +798,6 @@
 		test("Shall check exit", function() {
 			ok(oP13nColumnsPanel.exit, "Method does not exist");
 
-			sap.ui.Device.resize.detachHandler = sinon.spy();
-
 			var fMoveToTopButton = oP13nColumnsPanel._oMoveToTopButton.destroy;
 			oP13nColumnsPanel._oMoveToTopButton.destroy = oMoveToTopButtonStub = sinon.stub();
 
@@ -824,7 +822,6 @@
 			// CUT
 			oP13nColumnsPanel.exit();
 
-			strictEqual(sap.ui.Device.resize.detachHandler.called, true, "Detach of resize handler shall be called");
 			strictEqual(oMoveToTopButtonStub.called, true, "Destroy of move to Top button shall be be called");
 			strictEqual(oP13nColumnsPanel._oMoveToTopButton, null, "Move to Top button shall be set to null");
 			strictEqual(oMoveUpButtonStub.called, true, "Destroy of move Up button shall be be called");

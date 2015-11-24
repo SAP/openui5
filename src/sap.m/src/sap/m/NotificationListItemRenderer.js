@@ -49,10 +49,10 @@ sap.ui.define([], function () {
 		oRm.write('>');
 
 		this.renderPriorityArea(oRm, oControl);
-		this.renderCloseButton(oRm, oControl);
 		this.renderHeader(oRm, oControl);
 		this.renderBody(oRm, oControl);
 		this.renderFooter(oRm, oControl);
+		this.renderCloseButton(oRm, oControl);
 
 		oRm.write('</li>');
 	};

@@ -1,0 +1,49 @@
+{
+  "1.34.0": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "c14e2877d8f1c8f81ee639e53b9ce1d4bb178e17",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NavigationBar - late style application would cause a bug in the ux3.Shell",
+        "references": []
+      },
+      {
+        "id": "e8c780cfd29a6778dc6ac9cf01d0039418635b2b",
+        "author": "Martin Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NotificationBar: Calculation of NotifierView when more than 5 items are showed fixed",
+        "references": []
+      },
+      {
+        "id": "34ca1fb2d52a6db6c9131da3667434de1046646d",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
+        "references": []
+      },
+      {
+        "id": "60be951e90fa8156435137027455cecfb16903dd",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Control is now properly sized in sap_goldreflection theme",
+        "references": []
+      },
+      {
+        "id": "dfe4189c804fa45bcd29effea3e0545105cc2d53",
+        "author": "Borislav Yovchev \u003cborislav.yovchev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Explicitly define focus outline in HCB theme",
+        "references": []
+      }
+    ]
+  }
+}

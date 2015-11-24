@@ -61,7 +61,8 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * If you are using a component and add the routing.targets <b>do not set this parameter</b>,
 		 * since the component will set the rootView to the view created by the {@link sap.ui.core.UIComponent.html#createContent} function.
 		 * If you specify the "parent" property of a target, the control will not be searched in the root view but in the view Created by the parent (see parent documentation).
-		 *
+		 * @param {boolean} [oOptions.config.async=false] @since 1.34 Whether the views which are created through this Targets are loaded asyncly. This option can be set only when the Targets
+		 * is used standalone without the involvement of a Router. Otherwise the async option is inherited from the Router.
 		 * @param {object} oOptions.targets One or multiple targets in a map.
 		 * @param {object} oOptions.targets.anyName a new target, the key severs as a name. An example:
 		 * <pre>

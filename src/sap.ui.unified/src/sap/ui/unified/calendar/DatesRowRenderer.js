@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/cale
 
 		var sId = oDatesRow.getId();
 		var iDays = oDatesRow.getDays();
-		var oDay = new UniversalDate(oDate.getTime());
+		var oDay = oDatesRow._newUniversalDate(oDate);
 		var sWidth = "";
 		var iMonth = 0;
 		var aMonthDays = [];
@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/cale
 			oHelper.aWeekDaysWide = oHelper.oLocaleData.getDaysStandAlone("wide");
 		}
 
-		var oDay = new UniversalDate(oDate.getTime());
+		var oDay = oDatesRow._newUniversalDate(oDate);
 
 		for (var i = 0; i < iDays; i++) {
 			this.renderDay(oRm, oDatesRow, oDay, oHelper, false, false, i, sWidth, !bShowDayNamesLine);

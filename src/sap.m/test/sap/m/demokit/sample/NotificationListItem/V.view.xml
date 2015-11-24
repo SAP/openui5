@@ -20,8 +20,8 @@
 						authorName="Jean Doe"
 						authorPicture="test-resources/sap/m/images/Woman_04.png">
 					<buttons>
-						<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
-						<Button text="Reject" type="Reject" press="onRejectPress"></Button>
+						<Button text="Accept All Requested Information" type="Accept" press="onAcceptPress"></Button>
+						<Button text="Reject All Requested Information" type="Reject" press="onRejectPress"></Button>
 					</buttons>
 					</NotificationListItem>
 

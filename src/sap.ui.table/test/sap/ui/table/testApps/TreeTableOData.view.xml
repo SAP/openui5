@@ -115,4 +115,90 @@
 			<table:Table id="tableOData"></table:Table>
 		</content>
 	</Panel>
+		<Panel 
+		expandable="true"
+		expanded="true"
+		width="auto" 
+		class="sapUiResponsiveMargin sapUiNoContentPadding">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Performance" level="H2" id="Performance"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<f:Form 
+				editable="true">
+				<f:layout>
+					<f:ResponsiveGridLayout
+						labelSpanL="5"
+						labelSpanM="5"
+						emptySpanL="1"
+						emptySpanM="1"
+						columnsL="1"
+						columnsM="1" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement label="overall">
+								<f:fields>
+									<Text id="overall"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="onBeforeRendering">
+								<f:fields>
+									<Text id="onBeforeRendering"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="rendering">
+								<f:fields>
+									<Text id="rendering"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="onAfterRendering">
+								<f:fields>
+									<Text id="onAfterRendering"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="tableCreate">
+								<f:fields>
+									<Text id="tableCreate"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="factor">
+								<f:fields>
+									<Text id="factor"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:fields>
+									<Text />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Table._createRows">
+								<f:fields>
+									<Text id="_createRows"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="TreeTable._updateTableContent">
+								<f:fields>
+									<Text id="_updateTableContent"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Table._syncColumnHeaders">
+								<f:fields>
+									<Text id="_syncColumnHeaders"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Table._updateRowHeader">
+								<f:fields>
+									<Text id="_updateRowHeader"/>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+		</content>
+	</Panel>
 </mvc:View>

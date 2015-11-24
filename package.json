@@ -1,6 +1,6 @@
 {
   "name": "openui5",
-  "version": "1.33.0-SNAPSHOT",
+  "version": "1.35.0-SNAPSHOT",
   "description": "OpenUI5 Core & Runtime",
   "private": true,
   "scripts": {
@@ -35,6 +35,7 @@
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-eslint": "^17.2.0",
+    "grunt-git": "^0.3.5",
     "grunt-mocha-test": "^0.12.6",
     "grunt-npm-install": "^0.2.0",
     "grunt-openui5": "^0.7.0",

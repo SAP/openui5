@@ -153,7 +153,9 @@ sap.ui.define([
 
 			this._applyFormAdjustment();
 
-			this._bLazyLoading = this._getObjectPageLayout() && this._getObjectPageLayout().getEnableLazyLoading();
+			//TODO: for iconTabBar mode, specify lazyLoading for selectedTab only?
+			this._bLazyLoading = this._getObjectPageLayout()
+								&& (this._getObjectPageLayout().getEnableLazyLoading() || this._getObjectPageLayout().getUseIconTabBar());
 		};
 
 		BlockBase.prototype.onAfterRendering = function () {
@@ -722,5 +724,5 @@ sap.ui.define([
 			}
 		};
 
-		return BlockBase;
-	});
+	return BlockBase;
+});

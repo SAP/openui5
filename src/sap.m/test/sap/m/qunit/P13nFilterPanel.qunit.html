@@ -186,41 +186,48 @@
 		});
 
 		test("test model update events", function() {
-
+			
+			var removeSpy = sinon.spy(function(oEvent) {
+				var params = oEvent.getParameters();
+				var oModel = oP13nFilterPanel.getModel();
+				var oData = oModel.getData();
+				oData.filterItems.forEach(function(oItem, iIndex) {
+					if (oItem.key === params.key) {
+						oData.filterItems.splice(iIndex, 1);
+						oModel.setData(oData, true);
+						return;
+					}
+				});
+			});
+			
+			var updateSpy = sinon.spy(function(oEvent) {
+				var params = oEvent.getParameters();
+				var oModel = oP13nFilterPanel.getModel();
+				var oData = oModel.getData();
+				var oFilterItemData = params.filterItemData;
+				ok(oFilterItemData instanceof sap.m.P13nFilterItem, "oFilterItemData should be of type P13nFilterItem");
+				strictEqual(oFilterItemData.getValue1(), "foo", "new Value1 value should be 'foo'");					
+			});
+			                          
+			var addSpy = sinon.spy(function(oEvent) {
+				var params = oEvent.getParameters();
+				var oModel = oP13nFilterPanel.getModel();
+				var oData = oModel.getData();
+				var oFilterItemData = params.filterItemData;
+				strictEqual(oFilterItemData.getValue1(), "new", "added condition Value1 value should be 'new'");					
+				if (params.index) {
+					oData.filterItems.splice(params.index, 0, oFilterItemData);
+				} else {
+					oData.filterItems.push(oFilterItemData);
+				}
+				oModel.setData(oData, true);
+			});
+			
 			// system under test
 			var oP13nFilterPanel = new sap.m.P13nFilterPanel({
-				removeFilterItem: function(oEvent) {
-					var params = oEvent.getParameters();
-					var oModel = oP13nFilterPanel.getModel();
-					var oData = oModel.getData();
-					oData.filterItems.forEach(function(oItem, iIndex) {
-						if (oItem.key === params.key) {
-							oData.filterItems.splice(iIndex, 1);
-							oModel.setData(oData, true);
-							return;
-						}
-					});
-				},
-				updateFilterItem: function(oEvent) {
-					var params = oEvent.getParameters();
-					var oModel = oP13nFilterPanel.getModel();
-					var oData = oModel.getData();
-					var oFilterItemData = params.filterItemData;
-					//key : sKey,
-					//index : iIndex,
-				},
-				addFilterItem: function(oEvent) {
-					var params = oEvent.getParameters();
-					var oModel = oP13nFilterPanel.getModel();
-					var oData = oModel.getData();
-					var oFilterItemData = params.filterItemData;
-					if (params.index) {
-						oData.filterItems.splice(params.index, 0, oFilterItemData);
-					} else {
-						oData.filterItems.push(oFilterItemData);
-					}
-					oModel.setData(oData, true);
-				}
+				removeFilterItem: removeSpy,
+				updateFilterItem: updateSpy,
+				addFilterItem: addSpy
 			});
 
 			bindFilterPanel(oP13nFilterPanel);
@@ -229,15 +236,13 @@
 			oP13nFilterPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			// assertions
-
-			var oConditionPanel = oP13nFilterPanel._oIncludeFilterPanel;
 
 			// Change item
+			var oConditionPanel = oP13nFilterPanel._oIncludeFilterPanel;
 			var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
-			oConditionGrid.value1.setValue("foo");
-			oConditionPanel._changeField(oConditionGrid);
 			var sValue1 = "foo";
+			oConditionGrid.value1.setValue(sValue1);
+			oConditionPanel._changeField(oConditionGrid);
 			strictEqual(oP13nFilterPanel.getFilterItems()[1].getValue1(), sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
 
 			// Remove item
@@ -252,6 +257,11 @@
 			oConditionGrid.value1.setValue("new");
 			oConditionPanel._changeField(oConditionGrid);
 			strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
+			
+			// check that all event handlers are called
+			ok(removeSpy.called, "removeFilterItem was called");
+			ok(updateSpy.called, "updateFilterItem was called");
+			ok(addSpy.called, "addFilterItem was called");
 
 			// cleanup
 			oP13nFilterPanel.destroy();

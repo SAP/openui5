@@ -153,7 +153,7 @@
 }
 
 .sapUiCalItemWeekEnd{
-	background-color: sapUiLightBG;
+	background-color: @sapUiLightBG;
 }
 
 .sapUiCalItemSel{
@@ -262,5 +262,25 @@
 
 .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem:focus > .sapUiCalDayName,
 .sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem:hover > .sapUiCalDayName{
+	color: @sapUiTextInverted;
+}
+
+/* 2 calendar types */
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
+	line-height: 20px;
+	vertical-align: top;
+	text-align: start;
+}
+
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+	font-size: 8px;
+	height: 8px;
+	line-height: 8px;
+	padding-right: 1px;
+	padding-bottom: 1px;
+	box-sizing: border-box;
+}
+
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText{
 	color: @sapUiTextInverted;
 }

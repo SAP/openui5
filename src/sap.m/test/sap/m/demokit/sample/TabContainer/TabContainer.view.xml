@@ -1,0 +1,22 @@
+<mvc:View controllerName="sap.m.sample.TabContainer.TabContainer"
+		  height="100%"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:core="sap.ui.core"
+		  xmlns="sap.m">
+	<TabContainer items="{ path: '/employees' }" id="myTabContainer"
+				  showAddNewButton="true"
+				  addNewButtonPress="addNewButtonPressHandler" itemClose="itemCloseHandler">
+		<items >
+			<TabContainerItem name="{name}" modified="{modified}">
+				<content>
+					<Label text="First Name:"></Label>
+					<Input value="{empFirstName}"/>
+					<Label text="First Name:"></Label>
+					<Input value="{empLastName}"/>
+					<Label text="Salary:"/>
+					<Input value="{salary}" description="EUR"/>
+				</content>
+			</TabContainerItem>
+		</items>
+	</TabContainer>
+</mvc:View>

@@ -146,7 +146,12 @@ module.exports = function(grunt) {
 				'replace': 'grunt-text-replace',
 				'openui5_connect': 'grunt-openui5',
 				'openui5_theme': 'grunt-openui5',
-				'openui5_preload': 'grunt-openui5'
+				'openui5_preload': 'grunt-openui5',
+				'gitclone': 'grunt-git',
+				'gitadd': 'grunt-git',
+				'gitcommit': 'grunt-git',
+				'gittag': 'grunt-git',
+				'gitpush': 'grunt-git'
 			}
 		},
 

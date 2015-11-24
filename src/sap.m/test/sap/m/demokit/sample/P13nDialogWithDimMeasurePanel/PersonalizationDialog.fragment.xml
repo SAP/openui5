@@ -4,7 +4,8 @@
 	<P13nDialog ok="onClose" cancel="onClose" showReset="true"
 		reset="onReset" initialVisiblePanelType="dimeasure">
 		<panels>
-			<P13nDimMeasurePanel title="Chart" visible="true"
+			<P13nDimMeasurePanel title="{i18n>Title}"
+				visible="true"
 				items="{
                     path: '/ColumnCollection'
                 }"
@@ -33,8 +34,8 @@
 					<P13nSortItem columnKey="{columnKey}" operation="{operation}" />
 				</sortItems>
 			</P13nSortPanel>
-			<P13nFilterPanel title="Filter" visible="true" type="filter"
-				containerQuery="true" layoutMode="Desktop"
+			<P13nFilterPanel title="{/FilterTitle}" visible="true"
+				type="filter" containerQuery="true" layoutMode="Desktop"
 				items="{
                     path: '/ColumnCollection'
                 }"

@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.TabStrip</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-language="en-US"
+				data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
+		<script>
+			sinon.config.useFakeTimers = true;
+			var oCore = sap.ui.getCore();
+
+			module("API", {
+				beforeEach: function () {
+					this.sut = new sap.m.TabStrip();
+					this.sut.placeAt('content');
+					oCore.applyChanges();
+				},
+				afterEach: function () {
+					this.sut.destroy();
+				}
+			});
+
+			test("DOM", function () {
+				//assert
+				ok(this.sut.$().length > 0, "The control was successfully rendered");
+			});
+
+			test("Control defaults", function () {
+				//assert
+				strictEqual(this.sut.getSelectedTab(), 0, "Correct default selected tab index");
+			});
+
+			test("Render all tabs", function () {
+				//arrange
+				this.sut.addTab(new sap.m.Button({
+					text: "Button tab 1"
+				}));
+				this.sut.addTab(new sap.m.Button({
+					text: "Button tab 2"
+				}));
+				this.sut.addTab(new sap.m.Button({
+					text: "Button tab 3"
+				}));
+				oCore.applyChanges();
+				strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 3, "All tabs are rendered");
+			});
+
+			module("Keyboard Handling", {
+				beforeEach: function () {
+					this.sut = new sap.m.TabStrip({
+						selectedTab: 0,
+						tabs: [
+							new sap.m.Button({
+								text: "Tab 1"
+							}),
+							new sap.m.Button({
+								text: "Tab 2"
+							}),
+							new sap.m.Button({
+								text: "Tab 3"
+							})
+						],
+						downArrowButton: new sap.m.Button("downArrowButton", {
+							type: sap.m.ButtonType.Transparent
+						}),
+						addButton: new sap.m.Button("addButton", {
+							type: sap.m.ButtonType.Transparent
+						})
+					});
+					this.sut.placeAt('content');
+					oCore.applyChanges();
+				},
+				afterEach: function () {
+					this.sut.destroy();
+				}
+			});
+
+			test("Tabs focus handling", function () {
+				var oTabs = this.sut.getTabs();
+				//arrage
+				oTabs[0].focus();
+				this.clock.tick(1);
+				//assert
+				strictEqual(oTabs[0].getId(), document.activeElement.id, "First tab is focused");
+				//arrange
+				qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_RIGHT);
+				this.clock.tick(1);
+				//assert
+				strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on ARROW_RIGHT");
+				//arrange
+				qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_DOWN);
+				this.clock.tick(1);
+				//assert
+				strictEqual(oTabs[2].getId(), document.activeElement.id, "Third tab is focused on ARROW_DOWN");
+				//arrange
+				qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_LEFT);
+				this.clock.tick(1);
+				//assert
+				strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on forth ARROW_LEFT");
+				//arrange
+				qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_UP);
+				this.clock.tick(1);
+				//assert
+				strictEqual(oTabs[0].getId(), document.activeElement.id, "First is focused on fifth ARROW_UP");
+
+			});
+
+			module("Scrolling", {
+				beforeEach: function () {
+					this.sut = new sap.m.TabStrip({
+						selectedTab: 0,
+						tabs: [
+							new sap.m.Button({
+								text: "Tab 1"
+							}),
+							new sap.m.Button({
+								text: "Tab 2"
+							}),
+							new sap.m.Button({
+								text: "Tab 3"
+							})
+						]
+					});
+					this.sut.placeAt('content');
+					oCore.applyChanges();
+				},
+				afterEach: function () {
+					this.sut.destroy();
+				}
+			});
+
+			test("Is scrolling needed", function () {
+				//assert
+				ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow");
+				//arrange
+				this.sut.addTab(new sap.m.Button({
+					text: "Tab 4"
+				}));
+				this.sut.addTab(new sap.m.Button({
+					text: "Tab 5"
+				}));
+				this.sut.addTab(new sap.m.Button({
+					text: "Tab 6"
+				}));
+				oCore.applyChanges();
+				ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow");
+			});
+
+			test("Overflow Buttons", function () {
+				//arrange
+				var iTestCurrentScrollLeft = null;
+				var fnUpdateTestScrollValue = function () {
+					iTestCurrentScrollLeft = this.sut._iCurrentScrollLeft;
+				}.bind(this);
+				this.sut.addTab(new sap.m.Button({
+					text: "Tab 4"
+				}));
+				this.sut.addTab(new sap.m.Button({
+					text: "Tab 5"
+				}));
+				this.sut.addTab(new sap.m.Button({
+					text: "Tab 6"
+				}));
+				this.sut.addTab(new sap.m.Button({
+					text: "Tab 7"
+				}));
+				oCore.applyChanges();
+				fnUpdateTestScrollValue();
+				//assert
+				strictEqual(iTestCurrentScrollLeft, 0, "The initial ScrollLeft value is as expected");
+				//arrange
+				this.sut._oRightArrowButton.firePress({});
+				this.clock.tick(600);
+				//assert
+				ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on RightScrollButton press");
+				//arrange
+				fnUpdateTestScrollValue();
+				//assert
+				strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
+				//arrange
+				this.sut._oLeftArrowButton.firePress({});
+				this.clock.tick(600);
+				//assert
+				ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on LeftScrollButton press");
+				//arrange
+				fnUpdateTestScrollValue();
+				strictEqual(iTestCurrentScrollLeft, 0, "ScrollLeft value is as expected");
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.TabStrip</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

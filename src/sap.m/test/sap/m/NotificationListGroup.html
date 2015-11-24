@@ -5,8 +5,8 @@
 		<title>Notification List item - sap.m</title>
 
 		<style>
-			#body {
-				margin: 30px;
+			#content {
+				padding: 30px 0 0 30px;
 			}
 		</style>
 
@@ -25,6 +25,8 @@
 				title: "Notification List Title",
 				description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. ",
 				showCloseButton: false,
+				authorPicture: 'sap-icon://car-rental',
+				authorName: 'Bai Marin',
 				datetime: '5 minutes',
 				priority: sap.ui.core.Priority.None
 			});
@@ -38,12 +40,14 @@
 				buttons: [
 					new sap.m.Button({
 						text: "Accept",
+						type: sap.m.ButtonType.Accept,
 						tap: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					}),
 					new sap.m.Button({
 						text: "Cancel",
+						type: sap.m.ButtonType.Reject,
 						tap: function () {
 							listItem2.close();
 						}
@@ -60,12 +64,14 @@
 				buttons: [
 					new sap.m.Button({
 						text: "Accept",
+						type: sap.m.ButtonType.Accept,
 						tap: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					}),
 					new sap.m.Button({
 						text: "Cancel",
+						type: sap.m.ButtonType.Reject,
 						tap: function () {
 							listItem2.close();
 						}
@@ -78,15 +84,19 @@
 				id: 'notificationGroup',
 				title: 'Notification List Item Group',
 				datetime: 'More than 5 minutes',
+				authorPicture: 'http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg',
+				authorName: 'Lorem Ipsum',
 				buttons: [
 					new sap.m.Button({
 						text: "Accept All",
+						type: sap.m.ButtonType.Accept,
 						tap: function () {
 							sap.m.MessageToast.show('Accept all button pressed');
 						}
 					}),
 					new sap.m.Button({
 						text: "Cancel All",
+						type: sap.m.ButtonType.Reject,
 						tap: function () {
 							listGroup.close();
 						}
@@ -104,6 +114,13 @@
 					listGroup
 				]
 			});
+
+			var compactSizeButton = new sap.m.Button({
+				text : "Toggle Compact mode",
+				press : function() {
+					jQuery('body').toggleClass('sapUiSizeCompact');
+				}
+			}).placeAt('content');
 
 			list.setWidth("700px").placeAt("content");
 		</script>

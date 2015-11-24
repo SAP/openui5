@@ -138,6 +138,13 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 				},
 
 				/**
+				 * Accessible landmark settings to be applied to the containers of the <code>sap.m.Page</code> control.
+				 *
+				 * If not set, no landmarks will be written.
+				 */
+				landmarkInfo : {type : "sap.m.PageAccessibleLandmarkInfo", multiple : false},
+
+				/**
 				 * Wrapped instance of {@link sap.m.Page}
 				 */
 				_page: {
@@ -282,6 +289,18 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 		this._getPage().setEnableScrolling(bEnable);
 		this.setProperty("enableScrolling", bEnable, true);
 		return this;
+	};
+
+	SemanticPage.prototype.setLandmarkInfo = function (oLandmarkInfo) {
+		return this._getPage().setLandmarkInfo(oLandmarkInfo);
+	};
+
+	SemanticPage.prototype.getLandmarkInfo = function () {
+		return this._getPage().getLandmarkInfo();
+	};
+
+	SemanticPage.prototype.destroyLandmarkInfo = function () {
+		return this._getPage().destroyLandmarkInfo();
 	};
 
 	/*

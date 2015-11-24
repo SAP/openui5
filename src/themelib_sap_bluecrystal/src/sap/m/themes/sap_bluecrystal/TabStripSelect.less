@@ -1,0 +1,29 @@
+/* ================================================================= */
+/* CSS for control sap.m/TabStripSelect.control BlueCrystal theme    */
+/* ================================================================= */
+
+.sapMTabSelect { /* change this only in contexxt of sap.m.TabStripSelect*/
+  &.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+    background-color: transparent;
+
+    &.sapMSltHoverable:hover {
+      background-color: transparent;
+    }
+
+    .sapMSltInner {
+      .sapMSltIcon {
+        background-color: @sapUiFieldActiveBackground;
+      }
+    }
+  }
+
+  &:not(.sapMSltPressed) {
+    &.sapMSltHoverable:hover {
+      .sapMSltInner {
+        .sapMSltIcon {
+            background-color: @sapUiButtonLiteHoverBackground;
+        }
+      }
+    }
+  }
+}

@@ -38,6 +38,17 @@
 	white-space: nowrap;
 }
 
+.sapUiCalHeadB{
+	vertical-align: top;
+}
+
+.sapUiCalHeadBAddText{
+	width: 100%;
+	float: left;
+	color: @sapUiContentLabelColor;
+	font-size: 0.625rem;
+}
+
 .sapUiCalHeadPrev,
 .sapUiCalHeadNext{
 	position: absolute;
@@ -74,6 +85,7 @@
 .sapUiCalHead > button:active,
 .sapUiCalCancel:active,
 .sap-desktop .sapUiCalHead > button:active,
+.sap-desktop .sapUiCalHead > button:active > .sapUiCalHeadBAddText,
 .sap-desktop .sapUiCalCancel:active{
 	background-color: @sapUiButtonActiveBackground;
 	color: @sapUiButtonActiveTextColor;
@@ -262,6 +274,23 @@
 .sapUiCalCancel{
 	display: none; /* cancel button only visible on phones */
 	position: absolute;
+}
+
+/* 2 calendar types */
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem {
+	position: relative;
+}
+
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	height: 33%;
+	width: 50%;
+	color: @sapUiContentLabelColor;
+	overflow: hidden;
+	white-space: nowrap;
+	line-height: 100%;
 }
 
 /* Day, Month and YearPicker on popup */

@@ -158,6 +158,10 @@ sap.ui.define([
 
 		if (oButton) {
 
+			if (oButton.getId() === this.getSelectedButton()) {
+				return;
+			}
+
 			var oSelectedSectionId = oButton.data("sectionId");
 
 			if (oSelectedSectionId) {
@@ -631,29 +635,30 @@ sap.ui.define([
 			}
 
 			var $dom = this.$(),
+				$scrollContainer = $dom.find(".sapUxAPAnchorBarScrollContainer"),
 				bNeedScrollingBegin,
 				bNeedScrollingEnd,
 				iContainerWidth;
 
 
-			iContainerWidth = this.$().find(".sapUxAPAnchorBarScrollContainer").width();
+			iContainerWidth = $scrollContainer.width();
 
 			//do we need to scroll left or right
 			if (this._bRtlScenario) {
 
 				if (Device.browser.firefox) {
-					bNeedScrollingEnd = Math.abs(this._oScroller.getScrollLeft()) + iContainerWidth < (this._iMaxPosition - this._iTolerance);
-					bNeedScrollingBegin = Math.abs(this._oScroller.getScrollLeft()) >= this._iTolerance;
+					bNeedScrollingEnd = Math.abs($scrollContainer.scrollLeft()) + iContainerWidth < (this._iMaxPosition - this._iTolerance);
+					bNeedScrollingBegin = Math.abs($scrollContainer.scrollLeft()) >= this._iTolerance;
 				} else {
-					bNeedScrollingEnd = Math.abs(this._oScroller.getScrollLeft()) >= this._iTolerance;
-					bNeedScrollingBegin = Math.abs(this._oScroller.getScrollLeft()) + iContainerWidth < (this._iMaxPosition - this._iTolerance);
+					bNeedScrollingEnd = Math.abs($scrollContainer.scrollLeft()) >= this._iTolerance;
+					bNeedScrollingBegin = Math.abs($scrollContainer.scrollLeft()) + iContainerWidth < (this._iMaxPosition - this._iTolerance);
 				}
 			} else {
-				bNeedScrollingEnd = this._oScroller.getScrollLeft() + iContainerWidth < (this._iMaxPosition - this._iTolerance);
-				bNeedScrollingBegin = this._oScroller.getScrollLeft() >= this._iTolerance;
+				bNeedScrollingEnd = $scrollContainer.scrollLeft() + iContainerWidth < (this._iMaxPosition - this._iTolerance);
+				bNeedScrollingBegin = $scrollContainer.scrollLeft() >= this._iTolerance;
 			}
 
-			jQuery.sap.log.debug("AnchorBar :: scrolled at " + this._oScroller.getScrollLeft(), "scrollBegin [" + (bNeedScrollingBegin ? "true" : "false") + "] scrollEnd [" + (bNeedScrollingEnd ? "true" : "false") + "]");
+			jQuery.sap.log.debug("AnchorBar :: scrolled at " + $scrollContainer.scrollLeft(), "scrollBegin [" + (bNeedScrollingBegin ? "true" : "false") + "] scrollEnd [" + (bNeedScrollingEnd ? "true" : "false") + "]");
 
 			$dom.toggleClass("sapUxAPAnchorBarScrollLeft", bNeedScrollingBegin);
 			$dom.toggleClass("sapUxAPAnchorBarScrollRight", bNeedScrollingEnd);
