@@ -78,6 +78,36 @@ sap.ui.define(['sap/ui/base/Object'],
 
 	});
 
+	/**
+	 * Default function used for comparing two values, accounting for null-ness and type.
+	 * This function is public for re-use in custom comparator functions.
+	 * @param {number|string} a sort value 1
+	 * @param {number|string} b sort value 2
+	 * @return {number} a value representing the result of the comparision. (0 for equal, 1 if a is greater, -1 if b is greater)
+	 * @public
+	 */
+	Sorter.defaultComparator = function(a, b) {
+		if (a == b) {
+			return 0;
+		}
+		if (b == null) {
+			return -1;
+		}
+		if (a == null) {
+			return 1;
+		}
+		if (typeof a == "string" && typeof b == "string") {
+			return a.localeCompare(b);
+		}
+		if (a < b) {
+			return -1;
+		}
+		if (a > b) {
+			return 1;
+		}
+		return 0;
+	};
+
 	return Sorter;
 
 });
