@@ -75,7 +75,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 *
 			 * If not set, the header column is not shown at all, even if header information are provided.
 			 */
-			showRowHeaders : {type : "boolean", group : "Appearance", defaultValue : true}
+			showRowHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * This text is displayed when no rows are assigned.
+			 */
+			noDataText : {type : "string", group : "Misc", defaultValue : null}
 
 		},
 		aggregations : {
@@ -730,6 +735,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			_positionSelectAllCheckBox.call(this);
 
 			this.$().toggleClass("sapMPlanCalMultiSel", !bSingleSelection);
+
+			return this;
+
+		};
+
+		PlanningCalendar.prototype.setNoDataText = function(sNoDataText) {
+
+			this.setProperty("noDataText", sNoDataText, true);
+
+			var oTable = this.getAggregation("table");
+			oTable.setNoDataText(sNoDataText);
 
 			return this;
 

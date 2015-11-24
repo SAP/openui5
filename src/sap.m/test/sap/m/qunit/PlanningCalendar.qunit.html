@@ -428,6 +428,20 @@
 				ok(jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header visible");
 			});
 
+			test("noDataText", function() {
+				var oTable = sap.ui.getCore().byId("PC1-Table");
+				ok(!oPC1.getNoDataText(), "noDataText empty by default");
+				ok(!oTable.getProperty("noDataText"), "noDataText of table empty by default"); // use getProperty("noDataText") because getter is overwritten in ListBase
+
+				oPC1.setNoDataText("Test");
+				sap.ui.getCore().applyChanges();
+				equal(oPC1.getNoDataText(), "Test", "noDataText set");
+				equal(oTable.getProperty("noDataText"), "Test", "noDataText set on table");
+
+				oPC1.setNoDataText(null);
+				sap.ui.getCore().applyChanges();
+			});
+
 			test("rows", function() {
 				var oTable = sap.ui.getCore().byId("PC1-Table");
 				equal(oPC1.getRows().length, 2, "PlanningCalendarRows assigned");
