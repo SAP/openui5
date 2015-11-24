@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * This MessageProcessor is able to handle Messages with the following target syntax:
 	 * 		'ControlID/PropertyName'
 	 *
-	 * @extends sap.ui.base.EventProvider
+	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
 	 * @version ${version}
