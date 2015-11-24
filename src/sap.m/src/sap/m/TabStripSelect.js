@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 				    showHeader: false,
 				    placement: sap.m.PlacementType.Vertical,
 				    offsetX: 0,
-				    offsetY: TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER,
+				    offsetY: sap.ui.Device.system.phone ? 0 : TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER,
 				    initialFocus: this,
 				    bounce: false
 			    });

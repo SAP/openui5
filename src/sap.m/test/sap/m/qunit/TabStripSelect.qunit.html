@@ -69,7 +69,7 @@
 		test("Misc", function () {
 			this.oMITS.open();
 			this.clock.tick(1000);
-			strictEqual(this.oMITS.$().hasClass('sapMTabSelect'), true, 'Control style class is present.');
+			strictEqual(this.oMITS.$().hasClass('sapMTabStripSelect'), true, 'Control style class is present.');
 			strictEqual(this.oMITS.getList().$().hasClass('sapMTabSelectList'), true, 'Control style class is present.');
 		});
 
@@ -94,7 +94,7 @@
 
 
 		test("Close button", function () {
-			var iItemDomHeight = 32 // "base" height that is expected
+			var iItemDomHeight = 32; // "base" height that is expected
 			this.oMITS.open();
 			this.clock.tick(1000);
 
@@ -146,19 +146,6 @@
 			this.clock.tick(1000);
 			strictEqual(this.oMITS.isOpen(), false, 'Select must close after an item was clicked.');
 			this.oMITS.close();
-		});
-
-		module("TabSelect TABLET", {
-			beforeEach: function () {
-				beforeEachQUnitTest.call(this);
-			},
-			afterEach: function () {
-				afterEachQUnitTest.call(this);
-			}
-		});
-
-		test("Close button", function () {
-			assertAllCloseButtonsVisible.call(this);
 		});
 
 		module("TabSelect PHONE", {

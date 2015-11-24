@@ -114,6 +114,7 @@ function(jQuery, library, Control, SelectList, TabStripItem, ManagedObject) {
 			var oPrevSelectedItem = this.getSelectedItem();
 			if (oPrevSelectedItem !== oItem) {
 				if (sap.ui.Device.system.desktop) {
+					// close button is always visible on phone and tablet
 					oPrevSelectedItem.getAggregation('_closeButton').addStyleClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
 				}
 				this.setSelection(oItem);
