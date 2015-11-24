@@ -230,7 +230,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		rm.addClass("sapMListTblCell sapMListTblCellNoData");
 		rm.writeClasses();
 		rm.write(">");
-		rm.writeEscaped(oControl.getNoDataText());
+		rm.writeEscaped(oControl.getNoDataText(true));
 		rm.write("</td>");
 		
 		rm.write("</tr>");
