@@ -40,12 +40,12 @@
 	var oSlideTileData = {
 		displayTime : 5000,
 		transitionTime : 500,
-		jamTiles : [{
+		feedTiles : [{
 			headerImage : "images/headerImg2.jpg",
 			imageDescription : "portrait of the unknown person",
 			header : "Lorem ipsum dolor sit amet, consectetuer adipiscing elit",
 			frameType : "TwoByOne",
-			message : "Jam Tile 1",
+			message : "Feed Tile 1",
 			tileContent : [{
 				contentText : "@@notify Great outcome of the Presentation today.",
 				footer : "New Notifications",
@@ -97,9 +97,9 @@
 
 	var oSlideTileModel = new sap.ui.model.json.JSONModel(oSlideTileData);
 
-	var oJamTileContent = new sap.m.TileContent({
+	var oFeedTileContent = new sap.m.TileContent({
 		footer : "{footer}",
-		content : new sap.m.JamContent({
+		content : new sap.m.FeedContent({
 			contentText : "{contentText}",
 			subheader : "{subheader}",
 			value : "{value}"
@@ -133,12 +133,12 @@
 		return fnGenericTileFactory;
 	}
 
-	var oJamSlideTile = new sap.m.SlideTile("dc-jam", {
+	var oFeedSlideTile = new sap.m.SlideTile("st-feed", {
 		displayTime : "{/displayTime}",
 		transitionTime : "{/transitionTime}",
 		tiles : {
-			factory : fnGetGTFactory(oJamTileContent),
-			path : "/jamTiles"
+			factory : fnGetGTFactory(oFeedTileContent),
+			path : "/feedTiles"
 		}
 	});
 
@@ -150,7 +150,7 @@
 		})
 	});
 
-	var oNewsSlideTile = new sap.m.SlideTile("dc-news", {
+	var oNewsSlideTile = new sap.m.SlideTile("st-news", {
 		displayTime : "{/displayTime}",
 		transitionTime : "{/transitionTime}",
 		tiles : {
@@ -159,7 +159,7 @@
 		}
 	});
 
-	var oOneSlideTile = new sap.m.SlideTile("dc-one", {
+	var oOneSlideTile = new sap.m.SlideTile("st-one", {
 		displayTime : "{/displayTime}",
 		transitionTime : "{/transitionTime}",
 		tiles : {
@@ -168,23 +168,23 @@
 		}
 	});
 
-	var oNewsDCLbl = new sap.m.Label({
+	var oNewsSTLbl = new sap.m.Label({
 		text : "Example with news content",
-		labelFor : "dc-news"
+		labelFor : "st-news"
 	});
 
-	var oJamDCLbl = new sap.m.Label({
-		text : "Example with jam content",
-		labelFor : "dc-jam"
+	var oFeedSTLbl = new sap.m.Label({
+		text : "Example with feed content",
+		labelFor : "st-feed"
 	});
 
-	var oOneDCLbl = new sap.m.Label({
+	var oOneSTLbl = new sap.m.Label({
 		text : "Example with one tile",
-		labelFor : "dc-one"
+		labelFor : "st-one"
 	});
-	var oDcContentForm = new sap.ui.layout.form.SimpleForm("dc-content-form", {
+	var oDcContentForm = new sap.ui.layout.form.SimpleForm("st-content-form", {
 		maxContainerCols : 2,
-		content : [oNewsDCLbl, oNewsSlideTile, oOneDCLbl, oOneSlideTile, oJamDCLbl, oJamSlideTile]
+		content : [oNewsSTLbl, oNewsSlideTile, oOneSTLbl, oOneSlideTile, oFeedSTLbl, oFeedSlideTile]
 	});
 
 	var oPage = new sap.m.Page("initial-page", {

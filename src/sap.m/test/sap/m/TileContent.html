@@ -45,11 +45,11 @@
 		})
 	});
 
-	var oJamTileContent = new sap.m.TileContent({
+	var oFeedTileContent = new sap.m.TileContent({
 		footer : "{/footer}",
 		unit : "{/unit}",
 		size : "{/size}",
-		content : new sap.m.JamContent({
+		content : new sap.m.FeedContent({
 			size : "{/size}",
 			contentText : "{/jc/contentText}",
 			subheader : "{/jc/subheader}",
@@ -78,7 +78,7 @@
 	});
 
 	var oFlexBox = new sap.m.FlexBox("flexbox", {
-		items : [oNVConfS, oJamTileContent, oNewsTileContent],
+		items : [oNVConfS, oFeedTileContent, oNewsTileContent],
 		alignItems: "Start",
 		justifyContent: "SpaceAround"
 	});

@@ -4,7 +4,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<title>sap.m.JamContent</title>
+<title>sap.m.FeedContent</title>
 
 <!-- UI5 Bootstrap -->
 <script src="../../../resources/sap-ui-core.js"
@@ -50,13 +50,13 @@
 	var oConfModel = new sap.ui.model.json.JSONModel(oConfData);
 	sap.ui.getCore().setModel(oConfModel);
 
-	var aJamConts = [];
+	var aFeedConts = [];
 	var fnPress = function(oEvent) {
-		sap.m.MessageToast.show("The jam content is pressed.");
+		sap.m.MessageToast.show("The feed content is pressed.");
 	};
 
-	var buildJamContent = function(sSize, sText) {
-		var oJamContent = new sap.m.JamContent("configurable-jam-content-"
+	var buildFeedContent = function(sSize, sText) {
+		var oFeedContent = new sap.m.FeedContent("configurable-feed-content-"
 				+ sSize, {
 			contentText : "{/contentText}",
 			subheader : "{/subheader}",
@@ -67,9 +67,9 @@
 			tooltip : "{/tooltip}",
 			press : fnPress
 		});
-		aJamConts.push(oJamContent);
-		return new sap.m.FlexBox("jc-fb" + sSize, {
-			items : [ oJamContent ],
+		aFeedConts.push(oFeedContent);
+		return new sap.m.FlexBox("fc-fb" + sSize, {
+			items : [ oFeedContent ],
 			layoutData : new sap.ui.commons.layout.ResponsiveFlowLayoutData({
 				minWidth : 370
 			}),
@@ -77,11 +77,11 @@
 		});
 	};
 
-	var oJamContent = new sap.ui.layout.form.SimpleForm("jam-content-form",
+	var oFeedContent = new sap.ui.layout.form.SimpleForm("feed-content-form",
 			{
-				content : [ buildJamContent("L", "large"),
-						buildJamContent("S", "small"),
-						buildJamContent("Auto", "auto") ]
+				content : [ buildFeedContent("L", "large"),
+						buildFeedContent("S", "small"),
+						buildFeedContent("Auto", "auto") ]
 			});
 
 	var oCTLbl = new sap.m.Label({
@@ -141,11 +141,11 @@
 		name : "QuickView tooltip",
 		change : function(oE) {
 			var bState = oE.getParameter("state");
-			for (var i = 0; i < aJamConts.length; i++) {
-				aJamConts[i].setTooltip(bState ? new sap.ui.ux3.QuickView({
+			for (var i = 0; i < aFeedConts.length; i++) {
+				aFeedConts[i].setTooltip(bState ? new sap.ui.ux3.QuickView({
 					content : new sap.m.Text({
 						text : oTooltipInput.getValue().split("{AltText}")
-								.join(aJamConts[i].getAltText())
+								.join(aFeedConts[i].getAltText())
 					})
 				}) : oTooltipInput.getValue());
 			}
@@ -210,11 +210,11 @@
 		state : true,
 		change : function(oE) {
 			var bState = oE.getParameter("state");
-			for (var i = 0; i < aJamConts.length; i++) {
+			for (var i = 0; i < aFeedConts.length; i++) {
 				if (bState) {
-					aJamConts[i].attachPress(fnPress);
+					aFeedConts[i].attachPress(fnPress);
 				} else {
-					aJamConts[i].detachPress(fnPress);
+					aFeedConts[i].detachPress(fnPress);
 				}
 			}
 		}
@@ -224,14 +224,14 @@
 		maxContainerCols : 2,
 		editable : true,
 		content : [ new sap.ui.core.Title({
-			text : "Modify Jam Content"
+			text : "Modify Feed Content"
 		}), oCTLbl, oCTInput, oSbhLbl, oSbhInput, oValueLbl, oValueInput,
 				oValueColorChangeLbl, oValueColorChangeSlct, oTruncateLbl,
 				oTruncateInput, oPressLbl, oPressSwtch, oTooltipLbl,
 				oTooltipInput, oTooltipSwtchLbl, oTooltipSwtch ]
 	});
 	var oPage = new sap.m.Page({
-		content : [ oJamContent, editableSimpleForm ]
+		content : [ oFeedContent, editableSimpleForm ]
 	});
 	//create a mobile App embedding the page and place the App into the HTML document
 	var app = new sap.m.App("myApp", {
