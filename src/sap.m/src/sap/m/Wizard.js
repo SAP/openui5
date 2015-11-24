@@ -567,7 +567,8 @@ sap.ui.define([
 			var previousStepIndex = event.getParameter("current") - 2;
 			var previousStep = this._stepPath[previousStepIndex];
 			var subsequentStep = this._getNextStep(previousStep, previousStepIndex);
-			this.goToStep(subsequentStep, true);
+			var focusFirstElement = sap.ui.Device.system.desktop ? true : false;
+			this.goToStep(subsequentStep, focusFirstElement);
 		};
 
 		/**
