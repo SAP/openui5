@@ -8,28 +8,28 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 				oModel.setData({
 					employees: [
 						{
-							name: "Ozzy Osboume",
-							empFirstName: "Ozzy",
-							empLastName: "Osboume",
+							name: "Jean Doe",
+							empFirstName: "Jean",
+							empLastName: "Doe",
 							salary: 1455.22
 						},
 						{
-							name: "James Hetfield",
-							empFirstName: "James",
-							empLastName: "Hetfield",
+							name: "John Smith",
+							empFirstName: "John",
+							empLastName: "Smith",
 							salary: 1390.77,
 							modified: true
 						},
 						{
-							name: "Hammett Kirk",
-							empFirstName: "Hammett",
-							empLastName: "Kirk",
+							name: "Particia Clark",
+							empFirstName: "Particia",
+							empLastName: "Clark",
 							salary: 1189.00
 						},
 						{
-							name: "Klimister Lemmy",
-							empFirstName: "Klimister",
-							empLastName: "Lemmy",
+							name: "Tim McAfeed",
+							empFirstName: "Tim",
+							empLastName: "McAfeed",
 							salary: 1235.37
 						}
 					]
