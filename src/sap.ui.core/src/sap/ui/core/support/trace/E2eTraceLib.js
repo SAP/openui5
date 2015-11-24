@@ -312,7 +312,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.trace'],
 			//  }
 
 			// start jQuery.sap.trace and override xhr
-			jQuery.sap.passport.startTracing();
+			jQuery.sap.passport.setActive(true);
 
 			fopen = window.XMLHttpRequest.prototype.open;
 			fsetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;

@@ -395,7 +395,7 @@
 			if(window.performance && window.performance.getEntries) {
 				equal(oMeasurement.requests.length, 1, "One requests");
 				equal(oMeasurement.measurements.length, 0, "No measurements");
-				ok(oMeasurement.networkTime === 0, "No sap-perf-fsrec response header");
+				ok(oMeasurement.networkTime === 0, "No sap-perf-fesrec response header");
 				ok(oMeasurement.bytesSent === 0, "Nothing posted/putted");
 				ok(oMeasurement.bytesReceived === 0, "No bytes received when fesr is not active"); //parseInt(oReq.getResponseHeader("content-length"), 10)
 			} else {
