@@ -260,6 +260,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			this._setupLang($html);
 
+			this._setupAnimation($html);
+
 			this._setupWeinre();
 
 			// create accessor to the Core API early so that initLibrary and others can use it
@@ -590,6 +592,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// listen to localization change event to update the lang info
 		this.attachLocalizationChanged(fnUpdateLangAttr, this);
+	};
+	
+	/**
+	 * Set the body's Animation-related attribute and configures jQuery accordingly.
+	 * @param $html - jQuery wrapped html object
+	 * @private
+	 */
+	Core.prototype._setupAnimation = function($html) {
+		$html = $html || jQuery("html");
+		
+		var bAnimation = this.oConfiguration.getAnimation();
+		$html.attr("data-sap-ui-animation", bAnimation ? "on" : "off");
+		jQuery.fx.off = !bAnimation;
 	};
 
 	/**
