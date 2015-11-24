@@ -3,28 +3,21 @@
 /* ================================================================= */
 
 .sapMInputBase {
-	background-color: transparent;
 	border: none;
-	position: relative;
-	display: inline-block;
 	padding: 0.25rem 0;
 	height: 3rem;
-	vertical-align: top;
 }
 
 .sapMInputBaseInner {
 	color: @sapHCStandardFG;
-	background-color: @sapHCStandardBG;
+	background: @sapHCStandardBG;
 	border: 0.0625rem solid @sapHCStandardFG;
-	margin: 0;
 	font-size: @sapMFontMediumSize;
 	font-style: normal;
 	font-family: @sapUiFontFamily;
 	line-height: normal;
 	height: 2.5rem;
-	vertical-align: top;
 	padding: 0 0.75rem;
-	-moz-appearance: textfield;
 }
 
 .sapMInputBaseDisabled {
@@ -32,7 +25,7 @@
 }
 
 .sapMInputBaseDisabled .sapMInputBaseInner {
-	background-color: @sapHCReducedBG;
+	background: @sapHCReducedBG;
 	border-color: @sapHCReducedAltFG;
 	color: @sapHCReducedFG;
 	font-weight: normal;
@@ -66,10 +59,6 @@
 	font-size: @sapMFontMediumSize;
 	font-style: normal;
 	font-weight: normal;
-	position: absolute;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
 	line-height: 2.5rem;
 	padding: 0 0.75rem;
 }
@@ -77,18 +66,13 @@
 .sapMInputBaseWarning > .sapMInputBasePlaceholder {
 	color: @sapHCStandardFG;
 	font-style: italic;
-	background-color: @sapHCStandardBG;
+	background: @sapHCStandardBG;
 }
 
 .sapMInputBaseError > .sapMInputBasePlaceholder {
 	color: @sapHCStandardFG;
 	font-style: italic;
 	font-weight: bold;
-}
-
-.sapMInputBaseInner:focus {
-	outline: none;
-	outline-width: 0;
 }
 
 .sapMInputBaseStateInner {
@@ -122,7 +106,7 @@
 }
 
 .sapMInputBaseErrorInner {
-	background-color: @sapHCHighlightBG;
+	background: @sapHCHighlightBG;
 	border-style: dashed;
 	font-style: italic;
 	font-weight: bold;
@@ -149,7 +133,7 @@
 
 .sapMInputBaseInner.sapMInputBaseReadonlyInner {
 	border-color: @sapHCReducedAltFG;
-	background-color: @sapHCReducedBG;
+	background: @sapHCReducedBG;
 }
 
 .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus,
@@ -157,13 +141,9 @@
 	border-color: @sapHCStandardFG;
 }
 
-.sapMILI-CTX .sapMInputBase {
-	display: block;
-}
-
 .sapMILI-CTX .sapMInputBaseInner {
-	text-align:	right;
-	background-color: transparent;
+	text-align: right;
+	background: transparent;
 }
 
 html[dir=rtl] .sapMILI-CTX .sapMInputBaseInner,
