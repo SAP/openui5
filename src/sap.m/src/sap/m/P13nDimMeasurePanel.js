@@ -285,7 +285,7 @@ sap.ui.define([
 		this.getColumnsItems().forEach(function(oColumnsItem) {
 
 			var oModelItem = this._getModelItemByColumnKey(oColumnsItem.getColumnKey());
-			if (!oModelItem || oModelItem.persistentIndex === oColumnsItem.getIndex() && oModelItem.persistentSelected === oColumnsItem.getVisible()) {
+			if (!oModelItem || this._isColumnsItemEqualToModelItem(oColumnsItem, oModelItem)) {
 				return;
 			}
 
@@ -320,11 +320,7 @@ sap.ui.define([
 	};
 
 	P13nDimMeasurePanel.prototype.getOkPayload = function() {
-		var oChanges = {
-			chartTypeChanged: false,
-			columnsItemsChanged: false
-		};
-		this._syncModel2Panel(oChanges);
+		var oChanges = this._syncModel2Panel();
 		return {
 			// We have to return columnsItems as of the fact that new created or deleted columnsItems are not updated in the model via list binding.
 			columnsItems: this.getColumnsItems(),
@@ -336,11 +332,14 @@ sap.ui.define([
 	/**
 	 * @private
 	 */
-	P13nDimMeasurePanel.prototype._syncModel2Panel = function(oChanges) {
+	P13nDimMeasurePanel.prototype._syncModel2Panel = function() {
 		var oData = this.getModel("$sapmP13nDimMeasurePanel").getData();
+		var oChanges = {
+			chartTypeChanged: this.getChartTypeKey() !== oData.selectedChartTypeKey,
+			columnsItemsChanged: false
+		};
 
 		// ChartTypeKey
-		oChanges.chartTypeChanged = this.getChartTypeKey() !== oData.selectedChartTypeKey;
 		if (oChanges.chartTypeChanged) {
 			this.setChartTypeKey(oData.selectedChartTypeKey);
 		}
@@ -349,37 +348,30 @@ sap.ui.define([
 		oData.items.forEach(function(oModelItem) {
 			var oColumnsItem = this._getColumnsItemByColumnKey(oModelItem.columnKey);
 			if (oColumnsItem) {
-				if (oColumnsItem && oColumnsItem.getVisible() && !oModelItem.persistentSelected) {
-					// Remove columnsItem as the item selection has been unselected
-					this.removeAggregation("columnsItems", oColumnsItem, true);
+				// Update existing columnsItem if some properties have been changed
+				if (!this._isColumnsItemEqualToModelItem(oColumnsItem, oModelItem)) {
 					oChanges.columnsItemsChanged = true;
-					return;
+					oColumnsItem.setVisible(oModelItem.persistentSelected);
+					oColumnsItem.setIndex(oModelItem.persistentIndex);
+					oColumnsItem.setRole(oModelItem.role);
 				}
-			} else {
-				if (oModelItem.persistentSelected) {
-					// Add new columnsItem as relevant changes (selected=true) has been done at item
-					oColumnsItem = new sap.m.P13nDimMeasureItem({
-						columnKey: oModelItem.columnKey,
-						visible: oModelItem.persistentSelected
-					});
-					this.addAggregation("columnsItems", oColumnsItem, true);
-					oChanges.columnsItemsChanged = true;
-				} else {
-					// Do nothing as no relevant changes has been done
-					return;
-				}
+				return;
 			}
-
-			if (oModelItem.persistentIndex > -1 && oModelItem.persistentIndex !== oColumnsItem.getIndex()) {
-				oColumnsItem.setIndex(oModelItem.persistentIndex);
-				oChanges.columnsItemsChanged = true;
+			if (!oModelItem.persistentSelected) {
+				// Nothing relevant has been changed as item is not selected
+				return;
 			}
-
-			if (oModelItem.role !== undefined && oModelItem.role !== oColumnsItem.getRole()) {
-				oColumnsItem.setRole(oModelItem.role);
-				oChanges.columnsItemsChanged = true;
-			}
+			// Create a new columnsItem if an item have been changed to 'selected'
+			oColumnsItem = new sap.m.P13nDimMeasureItem({
+				columnKey: oModelItem.columnKey,
+				visible: oModelItem.persistentSelected,
+				index: oModelItem.persistentIndex,
+				role: oModelItem.role
+			});
+			this.addAggregation("columnsItems", oColumnsItem, true);
+			oChanges.columnsItemsChanged = true;
 		}, this);
+		return oChanges;
 	};
 
 	P13nDimMeasurePanel.prototype.exit = function() {
@@ -563,7 +555,7 @@ sap.ui.define([
 			return;
 		}
 		// Take over columnsItem data
-		oModelItem.persistentIndex = oColumnsItem.getIndex();
+		oModelItem.persistentIndex =  oColumnsItem.getIndex();
 		oModelItem.persistentSelected = oColumnsItem.getVisible();
 		oModelItem.role = oColumnsItem.getRole();
 		// Sort the table only by persistentIndex
@@ -585,7 +577,7 @@ sap.ui.define([
 			return;
 		}
 		// Remove columnsItem data
-		oModelItem.persistentIndex = -1;
+		oModelItem.persistentIndex  = -1;
 		oModelItem.persistentSelected = undefined;
 		oModelItem.role = undefined;
 
@@ -609,7 +601,7 @@ sap.ui.define([
 			if (!oModelItem) {
 				return;
 			}
-			oModelItem.persistentIndex = -1;
+			oModelItem.persistentIndex  = -1;
 			oModelItem.persistentSelected = undefined;
 			oModelItem.role = undefined;
 		}, this);
@@ -635,7 +627,7 @@ sap.ui.define([
 			if (!oModelItem) {
 				return;
 			}
-			oModelItem.persistentIndex = -1;
+			oModelItem.persistentIndex  = -1;
 			oModelItem.persistentSelected = undefined;
 			oModelItem.role = undefined;
 		}, this);
@@ -688,15 +680,17 @@ sap.ui.define([
 		};
 		var oModelItem = {
 			columnKey: oItem.getColumnKey(),
-			visible: true, // oItem.getVisible(),
+			visible: true,
 			text: oItem.getText(),
 			tooltip: oItem.getTooltip(),
 			aggregationRole: oItem.getAggregationRole(),
 			availableRoleTypes: fGetAvailableRoleTypes(),
-
+			
+			// default value
 			persistentIndex: -1,
 			persistentSelected: undefined,
 			role: undefined,
+
 			tableIndex: undefined
 		};
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
@@ -917,6 +911,7 @@ sap.ui.define([
 		var iPersistentIndex = -1;
 		oData.countOfSelectedItems = 0;
 		oData.items.forEach(function(oModelItem, iTableIndex) {
+			oModelItem.persistentIndex = -1;
 			if (oModelItem.persistentSelected) {
 				iPersistentIndex++;
 				oData.countOfSelectedItems++;
@@ -933,6 +928,7 @@ sap.ui.define([
 		var iPersistentIndex = -1;
 		oData.countOfSelectedItems = 0;
 		oData.items.forEach(function(oModelItem) {
+			oModelItem.persistentIndex = -1;
 			if (oModelItem.persistentSelected) {
 				iPersistentIndex++;
 				oData.countOfSelectedItems++;
@@ -1238,6 +1234,10 @@ sap.ui.define([
 
 	P13nDimMeasurePanel.prototype._isFilteredByShowSelected = function() {
 		return this.getModel("$sapmP13nDimMeasurePanel").getData().showOnlySelectedItems;
+	};
+
+	P13nDimMeasurePanel.prototype._isColumnsItemEqualToModelItem = function(oColumnsItem, oModelItem) {
+		return oModelItem.persistentIndex === oColumnsItem.getIndex() && oModelItem.persistentSelected === oColumnsItem.getVisible() && oModelItem.role === oColumnsItem.getRole();
 	};
 
 	/**
