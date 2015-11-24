@@ -247,7 +247,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 		});
 
-		Dialog._bIOS7Tablet = sap.ui.Device.os.ios && sap.ui.Device.system.tablet && sap.ui.Device.os.version >= 7 && sap.ui.Device.os.version < 8 && sap.ui.Device.browser.name === "sf";
 		Dialog._bPaddingByDefault = (sap.ui.getCore().getConfiguration().getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
 
 		Dialog._mStateClasses = {};
@@ -303,8 +302,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			 * @private
 			 */
 			this.oPopup._applyPosition = function (oPosition, bFromResize) {
-				var $that = that.$();
-
 				that._setDimensions();
 				that._adjustScrollingPane();
 
@@ -315,13 +312,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				};
 
 				Popup.prototype._applyPosition.call(this, oPosition);
-
-				var iTop = $that.offset().top;
-
-				//TODO: remove this code after Apple fixes the jQuery(window).height() is 20px more than the window.innerHeight issue.
-				if (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape) {
-					$that.css("top", iTop - 10); //the calculated window size is 20px more than the actual size in ios 7 tablet landscape mode.
-				}
 			};
 
 			if (Dialog._bPaddingByDefault) {
