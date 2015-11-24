@@ -182,6 +182,7 @@ sap.ui.define([
 			var oUploadCollection= this.getView().byId("UploadCollection");
 			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
 		},
+
 		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
 			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
@@ -191,17 +192,12 @@ sap.ui.define([
 			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
 			MessageToast.show("BeforeUploadStarts event triggered.");
 		},
+
 		onUploadTerminated: function(oEvent) {
 			// get parameter file name
 			var sFileName = oEvent.getParameter("fileName");
 			// get a header parameter (in case no parameter specified, the callback function getHeaderParameter returns all request headers)
 			var oRequestHeaders = oEvent.getParameters().getHeaderParameter();
-		},
-
-		onCountPress: function(oEvent) {
-			var aSelectedItems = this.getView().byId("UploadCollection").getSelectedItems();
-			var sText = aSelectedItems.length + " items selected";
-			MessageToast.show(sText);
 		},
 
 		onSelectAllPress: function(oEvent) {
@@ -264,7 +260,6 @@ sap.ui.define([
 		},
 
 		enableToolbarItems: function(status){
-			this.getView().byId("countButton").setEnabled(status);
 			this.getView().byId("selectAllButton").setEnabled(status);
 			this.getView().byId("deleteSelectedButton").setEnabled(status);
 		},

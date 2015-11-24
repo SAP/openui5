@@ -7,10 +7,9 @@ sap.ui.define([
 	], function(jQuery, MessageToast, UploadCollectionParameter, Controller, JSONModel) {
 	"use strict";
 
-
 	var PageController = Controller.extend("sap.m.sample.UploadCollectionForPendingUpload.Page", {
 
-		onChange: function(oEvent) {
+		onChange : function(oEvent) {
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
 			var oCustomerHeaderToken = new UploadCollectionParameter({
@@ -21,7 +20,7 @@ sap.ui.define([
 			MessageToast.show("Event change triggered");
 		},
 
-		onFileDeleted: function(oEvent) {
+		onFileDeleted : function(oEvent) {
 			MessageToast.show("Event fileDeleted triggered");
 		},
 
@@ -48,21 +47,16 @@ sap.ui.define([
 			uploadInfo = cFiles + " file(s)";
 			if (oTextArea.getValue().length === 0) {
 				uploadInfo = uploadInfo + " without notes";
-			}
-			else {
+			} else {
 				uploadInfo = uploadInfo + " with notes";
-		    }
+			}
 
 			MessageToast.show("Method Upload is called (" + uploadInfo + ")");
-			sap.m.MessageBox.information(
-				"Uploaded " + uploadInfo
-			);
-
+			sap.m.MessageBox.information("Uploaded " + uploadInfo);
 			oTextArea.setValue("");
-
 		},
 
-		onBeforeUploadStarts: function(oEvent) {
+		onBeforeUploadStarts : function(oEvent) {
 			// Header Slug
 			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
 				name : "slug",
@@ -74,7 +68,7 @@ sap.ui.define([
 			}, 4000);
 		},
 
-		onUploadComplete: function(oEvent) {
+		onUploadComplete : function(oEvent) {
 			var oPage = this.getView().byId("Page");
 			var oTextArea = this.getView().byId("TextArea");
 			var oButton = this.getView().byId("Button");
@@ -85,21 +79,21 @@ sap.ui.define([
 			oPage.removeContent(oUploadCollection);
 			oUploadCollection.destroy();
 
-			oUploadCollection = new sap.m.UploadCollection( {
-				id: this.getView().createId("UploadCollection"),
-				maximumFilenameLength: 55,
-				maximumFileSize: 10,
-				multiple: true,
-				sameFilenameAllowed: true,
-				instantUpload: false,
-				showSeparators: "All",
-				change: [this.getView().getController().onChange, this],
-				fileDeleted: [this.getView().getController().onFileDeleted, this],
-				filenameLengthExceed: [this.getView().getController().onFilenameLengthExceed, this],
-				fileSizeExceed: [this.getView().getController().onFileSizeExceed, this],
-				typeMissmatch: [this.getView().getController().onTypeMissmatch, this],
-				uploadComplete: [this.getView().getController().onUploadComplete, this],
-				beforeUploadStarts: [this.getView().getController().onBeforeUploadStarts, this]
+			oUploadCollection = new sap.m.UploadCollection({
+				id : this.getView().createId("UploadCollection"),
+				maximumFilenameLength : 55,
+				maximumFileSize : 10,
+				multiple : true,
+				sameFilenameAllowed : true,
+				instantUpload : false,
+				showSeparators : "All",
+				change : [this.getView().getController().onChange, this],
+				fileDeleted : [this.getView().getController().onFileDeleted, this],
+				filenameLengthExceed : [this.getView().getController().onFilenameLengthExceed, this],
+				fileSizeExceed : [this.getView().getController().onFileSizeExceed, this],
+				typeMissmatch : [this.getView().getController().onTypeMissmatch, this],
+				uploadComplete : [this.getView().getController().onUploadComplete, this],
+				beforeUploadStarts : [this.getView().getController().onBeforeUploadStarts, this]
 			});
 
 			oPage.insertContent(oUploadCollection, 3);
@@ -110,12 +104,11 @@ sap.ui.define([
 			}, 8000);
 		},
 
-		onSelectChange: function(oEvent) {
+		onSelectChange : function(oEvent) {
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
 		}
 	});
 
 	return PageController;
-
 });
