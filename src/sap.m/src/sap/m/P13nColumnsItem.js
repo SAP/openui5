@@ -68,16 +68,7 @@ sap.ui.define([
 				width: {
 					type: "string",
 					group: "Misc"
-				}, // don't set a default value
-
-				/**
-				 * Defines role. The role is reflected in the manner how the dimension will influence the chart layout.
-				 * 
-				 * @since 1.34.0
-				 */
-				role: {
-					type: "string"
-				}
+				} // don't set a default value
 			}
 		}
 	});
