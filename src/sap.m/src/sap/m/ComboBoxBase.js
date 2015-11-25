@@ -329,7 +329,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		ComboBoxBase.prototype.addContent = function(oPicker) {};
 
 		/**
-		 * Setter for property <code>_sPickerType</code>.
+		 * Sets the property <code>_sPickerType</code>.
 		 *
 		 * @param {string} sPickerType
 		 * @protected
@@ -339,7 +339,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		};
 
 		/**
-		 * Getter for property <code>_sPickerType</code>
+		 * Gets the property <code>_sPickerType</code>
 		 *
 		 * @returns {string}
 		 * @protected
