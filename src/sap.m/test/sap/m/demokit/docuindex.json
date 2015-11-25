@@ -1493,7 +1493,7 @@
 		{
 		  "id": "sap.m.sample.DateTimeInput",
 		  "name": "Date Time Input",
-		  "description": "The Date & Time Input is an extension of the Input control and is dedicated to Date and Time."
+		  "description": "The Date & Time Input is an extension of the Input control and is dedicated to Date and Time. [Deprecated since 1.32.8]"
 		},
 		{
 		  "id": "sap.m.sample.RadioButton",
