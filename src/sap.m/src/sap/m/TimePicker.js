@@ -311,6 +311,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 *
 		 * @param {string} sValue The string value to be synchronized with, if the input value is used
 		 * @private
+		 * @returns {boolean} true if <code>change</code> event was called, false otherwise.
 		 */
 		TimePicker.prototype._handleInputChange = function (sValue) {
 			var oDate,
@@ -354,6 +355,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			if (oPicker) {
 				oPicker.getContent()[0].setTimeValues(oDate);
 			}
+			return true;
 		};
 
 		/**
@@ -361,6 +363,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 *
 		 * @override
 		 * @param {jQuery.Event} oEvent Event object
+		 * @returns {boolean} true if <code>change</code> event was called, false otherwise.
 		 */
 		TimePicker.prototype.onChange = function(oEvent) {
 			// don't call InputBase onChange because this calls setValue what would trigger a new formatting
@@ -369,8 +372,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			// check the control is editable or not
 			if (this.getEditable() && this.getEnabled()) {
-				this._handleInputChange(sValueParam);
+				return this._handleInputChange(sValueParam);
 			}
+			return false;
 		};
 
 		/**
