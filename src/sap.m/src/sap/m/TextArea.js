@@ -74,19 +74,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			}
 		}
 	}});
-	
-	TextArea.prototype.init = function() {
-		InputBase.prototype.init.call(this);
-		this._inputProxy = jQuery.proxy(this._onInput, this);
-	};
-	
+
 	// Attach listeners on after rendering and find iscroll
 	TextArea.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
-	
-		// bind events
-		this.bindToInputEvent(this._inputProxy);
-	
+
 		// touch browser behaviour differs
 		if (sap.ui.Device.support.touch) {
 	
@@ -115,29 +107,46 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	// Overwrite input base revert handling for escape 
 	// to fire own liveChange event and property set
 	TextArea.prototype.onValueRevertedByEscape = function(sValue) {
-		this._onInput();
+		// update value property if needed
+		this.setProperty("value", sValue, true);
+
+		// get the value back maybe there is a formatter
+		sValue = this.getValue();
+
+		this.fireLiveChange({
+			value: sValue,
+
+			// backwards compatibility
+			newValue: sValue
+		});
 	};
 	
-	TextArea.prototype._onInput = function(oEvent) {
-		var value = this._$input.val();
+	TextArea.prototype.oninput = function(oEvent) {
+		InputBase.prototype.oninput.call(this, oEvent);
+		if (oEvent.isMarked("invalid")) {
+			return;
+		}
+
+		var sValue = this._$input.val(),
+			iMaxLength = this.getMaxLength();
 	
-		// some browsers does not respect to maxlength property of textarea
-		if (this.getMaxLength() > 0 && value.length > this.getMaxLength()) {
-			value = value.substring(0, this.getMaxLength());
-			this._$input.val(value);
+		// some browsers do not respect to maxlength property of textarea
+		if (iMaxLength > 0 && sValue.length > iMaxLength) {
+			sValue = sValue.substring(0, iMaxLength);
+			this._$input.val(sValue);
 		}
 	
-		if (value != this.getValue()) {
-			this.setProperty("value", value, true);
+		if (sValue != this.getValue()) {
+			this.setProperty("value", sValue, true);
 
 			// get the value back maybe there is a formatter
-			value = this.getValue();
+			sValue = this.getValue();
 			
 			this.fireLiveChange({
-				value: value,
+				value: sValue,
 	
 				// backwards compatibility
-				newValue: value
+				newValue: sValue
 			});
 		}
 	};
