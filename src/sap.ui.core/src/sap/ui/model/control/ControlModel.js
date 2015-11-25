@@ -42,9 +42,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 
 				// create fake control
 				oControl = sap.ui.getCore().byId(fakeId);
-				if(!oControl) {
+				if (!oControl) {
 					oControl = new sap.ui.core.Control(fakeId);
-					oControl.getProperty = $.noop;
+					oControl.getProperty = jQuery.noop;
 				}
 				/**
 				 * observer listens for created controls, to replace the fake control, when the
