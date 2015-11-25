@@ -71,6 +71,9 @@
 				new sap.m.Label({text: "DRS3 - DateRangeSelection control with placeholder from CLDR:", labelFor: "DRS3"}),
 				new sap.m.DateRangeSelection("DRS3", { delimiter: "", displayFormat: "short", change: handleChange}),
 
+				new sap.m.Label({text: "islamic DateRangeSelection with secondary gregorianic", labelFor: "DRS4"}),
+				new sap.m.DateRangeSelection("DRS4", { displayFormatType: "Islamic", secondaryCalendarType: "Gregorian", change: handleChange }),
+
 				new sap.m.Text({width: "100%"}), new sap.m.Text({width: "100%"}),
 				new sap.m.Text({width: "100%"}), new sap.m.Text({width: "100%"}), // 6 empty lines
 				new sap.m.Text({width: "100%"}), new sap.m.Text({width: "100%"}),
@@ -80,13 +83,13 @@
 
 				new sap.m.Text({width: "100%"}),new sap.m.Text({width: "100%"}), // 2 empty lines
 
-				new sap.m.Label({text: "DRS4 - Error DateRangeSelection:", labelFor: "DRS4"}),
-				new sap.m.DateRangeSelection("DRS4", { displayFormat: "dd.MM.yyyy", valueState: "Error"}),
+				new sap.m.Label({text: "DRS5 - Error DateRangeSelection:", labelFor: "DRS5"}),
+				new sap.m.DateRangeSelection("DRS5", { displayFormat: "dd.MM.yyyy", valueState: "Error"}),
 
 				new sap.m.Text({width: "100%"}),new sap.m.Text({width: "100%"}), // 2 empty lines
 
-				new sap.m.Label({text: "DRS5 - Warning DateRangeSelection:", labelFor: "DRS5"}),
-				new sap.m.DateRangeSelection("DRS5", { displayFormat: "dd.MM.yyyy",  valueState: "Warning"})
+				new sap.m.Label({text: "DRS6 - Warning DateRangeSelection:", labelFor: "DRS6"}),
+				new sap.m.DateRangeSelection("DRS6", { displayFormat: "dd.MM.yyyy",  valueState: "Warning"})
 			],
 			footer: createFooter()
 		});

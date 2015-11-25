@@ -106,11 +106,13 @@
 						path: "/dateValue",
 						type: new sap.ui.model.type.Date({style: "long"})},
 					editable: false}),
+				new sap.m.Label({text: "islamic DatePicker with secondary gregorianic", labelFor: "DP7"}),
+				new sap.m.DatePicker("DP7", { displayFormatType: "Islamic", secondaryCalendarType: "Gregorian", change: handleChange }),
 				new sap.m.Input("I2", {value: "Content of events DatePicker", editable: false}),
-				new sap.m.Label({text: "Warnig DatePicker:", labelFor: "DP7"}),
-				new sap.m.DatePicker("DP7", { valueState: "Warning", valueStateText: "Warning Message" }),
-				new sap.m.Label({text: "Error DatePicker:", labelFor: "DP8"}),
-				new sap.m.DatePicker("DP8", { valueState: "Error", valueStateText: "Error Message" })
+				new sap.m.Label({text: "Warnig DatePicker:", labelFor: "DP8"}),
+				new sap.m.DatePicker("DP8", { valueState: "Warning", valueStateText: "Warning Message" }),
+				new sap.m.Label({text: "Error DatePicker:", labelFor: "DP9"}),
+				new sap.m.DatePicker("DP9", { valueState: "Error", valueStateText: "Error Message" })
 			],
 			footer: createFooter()
 		});
