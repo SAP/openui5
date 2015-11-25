@@ -460,6 +460,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/* =========================================================== */
 
 		/**
+		 * Initialization hook.
+		 *
+		 */
+		Slider.prototype.init = function() {
+
+			// used to track the id of touch points
+			this._iActiveTouchId = -1;
+		};
+
+		/**
 		 * This event handler is called before the rendering of the control is started.
 		 */
 		Slider.prototype.onBeforeRendering = function() {
@@ -500,7 +510,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.setMarked();
 
 			// only process single touches
-			if (oEvent.targetTouches.length > 1 ||
+			if (sap.m.touch.countContained(oEvent.touches, this.getId()) > 1 ||
 				!this.getEnabled() ||
 
 				// detect which mouse button caused the event and only process the standard click
@@ -510,6 +520,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				return;
 			}
+
+			// track the id of the first active touch point
+			this._iActiveTouchId = oTouch.identifier;
 
 			// registers event listeners
 			jQuery(document).on("touchend" + sEventNamespace + " touchcancel" + sEventNamespace + " mouseup" + sEventNamespace, this._ontouchend.bind(this))
@@ -587,7 +600,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			var fMin = this.getMin(),
 				fValue = this.getValue(),
-				iPageX = oEvent.targetTouches ? oEvent.targetTouches[0].pageX : oEvent.pageX,
+				oTouch = sap.m.touch.find(oEvent.changedTouches, this._iActiveTouchId),	// find the active touch point
+				iPageX = oTouch ? oTouch.pageX : oEvent.pageX,
 				fNewValue = (((iPageX - this._fDiffX - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
 			// RTL mirror
