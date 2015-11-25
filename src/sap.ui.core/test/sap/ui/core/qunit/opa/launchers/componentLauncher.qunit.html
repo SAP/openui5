@@ -30,7 +30,7 @@
 				], function (componentLauncher) {
 					QUnit.module("Component-Launcher");
 
-					QUnit.test("Should start and teardown the component", function (assert) {
+					QUnit.test("Should start and teardown the UIComponent", function (assert) {
 						var done = assert.async();
 
 						var  oPromise = componentLauncher.start({
@@ -38,10 +38,10 @@
 						});
 
 						oPromise.then(function() {
-							QUnit.assert.ok(document.getElementsByClassName("sapUiOpaComponent").length, "Created component");
+							QUnit.assert.ok(document.getElementsByClassName("sapUiOpaComponent").length, "Created UIComponent");
 
 							componentLauncher.teardown();
-							QUnit.assert.ok(!document.getElementsByClassName("sapUiOpaComponent").length, "Removed component");
+							QUnit.assert.ok(!document.getElementsByClassName("sapUiOpaComponent").length, "Removed UIComponent");
 
 							done();
 						});
@@ -69,7 +69,7 @@
 
 						oPromise.then(function() {
 							componentLauncher.teardown();
-							QUnit.assert.ok(!document.getElementsByClassName("sapUiOpaComponent").length, "Removed component");
+							QUnit.assert.ok(!document.getElementsByClassName("sapUiOpaComponent").length, "Removed uiComponent");
 
 							done();
 						});
