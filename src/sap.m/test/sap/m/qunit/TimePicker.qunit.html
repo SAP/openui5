@@ -1198,17 +1198,6 @@
 				this._noLeadingZero24HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "H:mm:ss", strictParsing: true, relative: false});
 				this._noLeadingZero12HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "h:mm a", strictParsing: true, relative: false});
 			},
-			_triggerMultipleKeypress: function(timePicker, sFeed) {
-				var aFeed = sFeed.split(""),
-						$TimePicker = timePicker.getDomRef(),
-						sChar;
-
-				while (aFeed.length) {
-					sChar = aFeed.splice(0, 1)[0];
-					qutils.triggerKeydown($TimePicker, sChar);
-					qutils.triggerKeypress($TimePicker, sChar);
-				}
-			},
 			_clearInput: function(timePicker) {
 				jQuery("#" + timePicker.getId() + "-inner").val("");
 			},
@@ -1226,8 +1215,8 @@
 				sap.ui.getCore().applyChanges();
 
 				//act
-//				this._triggerMultipleKeypress(tp, sPrefilledValue + sInput);
-				this._triggerMultipleKeypress(tp, sInput);
+//				triggerMultipleKeypress(tp, sPrefilledValue + sInput);
+				triggerMultipleKeypress(tp, sInput);
 
 				//assert
 				equals(jQuery("#" + tp.getId() + "-inner").val(), sExpectedValue, "$input.val() ok");
@@ -1429,7 +1418,7 @@
 
 			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 A-", "$input.val() correctly preset");
 
-			this._triggerMultipleKeypress(tp, "y");
+			triggerMultipleKeypress(tp, "y");
 
 			//assert
 			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 AM", "$input.val() ok");
@@ -1458,7 +1447,7 @@
 
 			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 P-", "$input.val() correctly preset");
 
-			this._triggerMultipleKeypress(tp, "b");
+			triggerMultipleKeypress(tp, "b");
 
 			//assert
 			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 PM", "$input.val() ok");
@@ -1594,8 +1583,62 @@
 			tp.destroy();
 		});
 
+		module("events and event handlers", {
+			beforeEach: function () {
+				//system under test
+				this.oTp = new sap.m.TimePicker({
+					valueFormat: "hh mm"
+				});
+				this.oSpy = sinon.spy();
+				this.oTp.attachChange(this.oSpy);
+
+				//arrange
+				this.oTp.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oTp.destroy();
+				this.oSpy = null;
+			}
+		});
+
+		test("upon enter, change event fires only once", function() {
+			//act
+			triggerMultipleKeypress(this.oTp, "09");
+			qutils.triggerKeydown(jQuery(this.oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+			equals(this.oSpy.callCount, 1, "changed event must be fired only once");
+		});
+
+		test("upon focusout, change event fires only once", function() {
+			//system under test
+			var	oTp2 = new sap.m.TimePicker({
+				valueFormat: "hh mm"
+			});
+			//arrange
+			oTp2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			triggerMultipleKeypress(this.oTp, "09");
+			jQuery(oTp2.getFocusDomRef()).focus();
+
+			equals(this.oSpy.callCount, 1, "changed event must be fired only once");
+
+			oTp2.destroy();
+		});
 		//todo - test caret position
 
+		function triggerMultipleKeypress(timePicker, sFeed) {
+			var aFeed = sFeed.split(""),
+					$TimePicker = timePicker.getDomRef(),
+					sChar;
+
+			while (aFeed.length) {
+				sChar = aFeed.splice(0, 1)[0];
+				qutils.triggerKeydown($TimePicker, sChar);
+				qutils.triggerKeypress($TimePicker, sChar);
+			}
+		}
 	</script>
 
 </head>

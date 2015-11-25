@@ -174,6 +174,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		keyDownHandler.call(this, oEvent);
 	};
 
+	/**
+	 * Handles enter key. Shell subclasses override this method, bare in mind that [Enter] is not really handled here, but in {@link sap.m.MaskInput.prototype#onkeydown}.
+	 * @param oEvent
+	 */
+	MaskInput.prototype.onsapenter = function(oEvent) {
+		//Nothing to do, [Enter] is already handled in onkeydown part.
+	};
+
 	MaskInput.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 		if (sAggregationName === "rules") {
 			if (!validateRegexAgainstPlaceHolderSymbol.call(this, oObject)) {
@@ -895,8 +903,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 		if (this._sOldInputValue !== this._oTempValue.toString()) {
 			this.setValue(sValue);
-			this.onChange({value: sValue});
-			this.fireChangeEvent(sValue);
+			if (this.onChange && !this.onChange({value: sValue})) {//if the subclass didn't fire the "change" event by itself
+				this.fireChangeEvent(sValue);
+			}
 		}
 	}
 
