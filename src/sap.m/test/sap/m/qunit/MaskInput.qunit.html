@@ -322,9 +322,10 @@
 
 				sap.ui.getCore().applyChanges();
 				this.oChangeListenerPassedEvent = null;
-				this.oMaskInput.attachEvent("change", this.changeListener.bind(this));
-
 				this.sandbox = sinon.sandbox;
+				this.spyChangeEvent = sinon.spy(this.changeListener.bind(this));
+				this.oMaskInput.attachEvent("change", this.spyChangeEvent);
+
 			},
 			afterEach: function () {
 				this.oMaskInput.destroy();
@@ -333,9 +334,6 @@
 			},
 			changeListener: function () {
 				this.oChangeListenerPassedEvent = jQuery.extend({}, arguments[0]);
-			},
-			onChangeListener: function (oEvent) {
-				this.oOnChangeParameter = oEvent;
 			}
 		});
 
@@ -348,7 +346,7 @@
 			jQuery(this.oOtherControl).focus();
 			this.clock.tick(1000);
 
-			ok(this.oChangeListenerPassedEvent, "Change event must be fired");
+			ok(this.spyChangeEvent.called, "Change event must be fired");
 			equal(this.oChangeListenerPassedEvent.mParameters.value, "1__", "Change event must have an exact value");
 		});
 
@@ -359,10 +357,14 @@
 
 			qutils.triggerKeypress(oControl.getDomRef(), "1");
 			ok(getMaskInputDomValue(oControl), "The '1' should go into the input");
-			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
+			ok(!this.spyChangeEvent.called, "Change event must not be called");
 			qutils.triggerKeypress(oControl.getDomRef(), "8");
 			ok(getMaskInputDomValue(oControl), "The '18' should go into the input");
-			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
+			ok(!this.spyChangeEvent.called, "Change event must not be called");
+
+			qutils.triggerKeydown(jQuery(oControl.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+
+			equal(this.spyChangeEvent.callCount, 1, "Change event must be called exactly once");
 		});
 
 		test("Change event must not be called if Escape", function () {
@@ -373,7 +375,7 @@
 			qutils.triggerKeypress(oControl.getDomRef(), "1");
 			ok(getMaskInputDomValue(oControl), "The '1' should go into the input");
 			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
+			ok(!this.spyChangeEvent.called, "Change event must not be called");
 		});
 
 		test("Change event must be called if the existing input value is entirely deleted", function() {
@@ -385,7 +387,7 @@
 
 			jQuery(this.oOtherControl).focus();
 			this.clock.tick(1000);
-			ok(this.oChangeListenerPassedEvent, "Change event must be called");
+			ok(this.spyChangeEvent.called, "Change event must be called");
 			equal(this.oChangeListenerPassedEvent.mParameters.value, "", "Change event must have an exact value");
 		});
 
