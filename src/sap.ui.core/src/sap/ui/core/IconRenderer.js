@@ -73,6 +73,10 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			oRm.addClass("sapUiIconMirrorInRTL");
 		}
 
+		if (oControl.hasListeners("press")) {
+			oRm.addClass("sapUiIconPointer");
+		}
+
 		oRm.writeClasses();
 		oRm.writeStyles();
 
