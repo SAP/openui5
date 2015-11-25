@@ -3511,7 +3511,8 @@ sap.ui.define([
 				annotationData: mAnnotationData,
 				url: null,
 				metadata: this.oMetadata,
-				async: this.bLoadMetadataAsync
+				async: this.bLoadMetadataAsync,
+				headers: this.mCustomHeaders
 			});
 			
 			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
@@ -3931,6 +3932,11 @@ sap.ui.define([
 				}
 			});
 			this.mCustomHeaders = mCheckedHeaders;
+		}
+
+		// Custom set headers should also be used when requesting annotations, but do not instantiate annotations just for this
+		if (this.oAnnotations) {
+			this.oAnnotations.setHeaders(this.mCustomHeaders);
 		}
 	};
 

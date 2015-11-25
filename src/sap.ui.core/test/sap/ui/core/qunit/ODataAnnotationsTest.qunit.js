@@ -4898,5 +4898,85 @@ function runODataAnnotationTests() {
 
 	asyncTest("V1: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 1));
 	asyncTest("V2: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 2));
-		
+
+
+	var fnTestAceptHeader = function(iModelVersion) {
+		expect(12);
+		var oModel = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
+		var oModel2 = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
+		var oModel3 = fnCreateModel(iModelVersion, "fakeService://testdata/odata/northwind/");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		oModel.addAnnotationUrl("fakeService://replay-headers").then(function() {
+			var oAnnotations = oModel.getServiceAnnotations();
+			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en-US", "Accept-Language header set correctly");
+			equals(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header set correctly");
+
+			oModel.setHeaders({
+				"X-Unfug": "Rosinenbroetchen"
+			});
+			sap.ui.getCore().getConfiguration().setLanguage("de");
+			return oModel.addAnnotationUrl("fakeService://replay-headers");
+		}).then(function() {
+			var oAnnotations = oModel.getServiceAnnotations();
+			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de", "Accept-Language header set correctly");
+			equals(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Rosinenbroetchen", "Custom header set correctly");
+
+			oModel.setHeaders({
+				"X-Unfug": "Quarkstrudel"
+			});
+			sap.ui.getCore().getConfiguration().setLanguage("de-DE");
+			return oModel.addAnnotationUrl("fakeService://replay-headers");
+		}).then(function() {
+			var oAnnotations = oModel.getServiceAnnotations();
+			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
+			equals(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Quarkstrudel", "Custom header set correctly");
+
+			// Annotations cannot be removed, just replaced by subsequent Annotation documents, so we need a new model to test the header replay...
+			oModel2.setHeaders({
+				"X-Unfug": "Quarkstrudel"
+			});
+			oModel2.setHeaders(null);
+			sap.ui.getCore().getConfiguration().setLanguage("fr");
+			return oModel2.addAnnotationUrl("fakeService://replay-headers");
+		}).then(function() {
+			var oAnnotations = oModel2.getServiceAnnotations();
+			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "fr", "Accept-Language header set correctly");
+			equals(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
+			
+			oModel2.setHeaders({
+				"X-Unfug": "Mohnschnecke"
+			});
+			sap.ui.getCore().getConfiguration().setLanguage("de-DE");
+			return oModel2.addAnnotationUrl("fakeService://replay-headers");
+		}).then(function() {
+			var oAnnotations = oModel2.getServiceAnnotations();
+			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "de-DE", "Accept-Language header set correctly");
+			equals(oAnnotations["Replay.Headers"]["X-Unfug"]["String"], "Mohnschnecke", "Custom header set correctly");
+
+			// Annotations cannot be removed, just replaced by subsequent Annotation documents, so we need a new model to test the header replay...
+			oModel3.setHeaders({
+				"X-Unfug": "Mohnschnecke"
+			});
+			oModel3.setHeaders({});
+			sap.ui.getCore().getConfiguration().setLanguage("en");
+			return oModel3.addAnnotationUrl("fakeService://replay-headers");
+		}).then(function() {
+			var oAnnotations = oModel3.getServiceAnnotations();
+			equals(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en", "Accept-Language header set correctly");
+			equals(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
+
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			
+			oModel.destroy();
+			oModel2.destroy();
+			oModel3.destroy();
+			
+			sap.ui.getCore().applyChanges();
+			start();
+		});
+	};
+
+	asyncTest("V1: Send Accept-Language Header", fnTestAceptHeader.bind(this, 1));
+	asyncTest("V2: Send Accept-Language Header", fnTestAceptHeader.bind(this, 2));
 }
