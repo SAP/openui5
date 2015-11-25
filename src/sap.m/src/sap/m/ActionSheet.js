@@ -492,6 +492,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			oButton.setType(sap.m.ButtonType.Transparent);
 		}
 		oButton.addStyleClass("sapMBtnInverted"); // dark background
+
+		this._parent && this._parent.invalidate();
+
 		return this;
 	};
 
