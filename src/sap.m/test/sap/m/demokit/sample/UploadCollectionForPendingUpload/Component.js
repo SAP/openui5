@@ -7,19 +7,12 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 		metadata : {
 			rootView : "sap.m.sample.UploadCollectionForPendingUpload.Page",
 			dependencies : {
-				libs : [
-					"sap.m",
-					"sap.ui.layout",
-					"sap.ui.unified"
-				]
+				libs : ["sap.m", "sap.ui.unified"]
 			},
 			config : {
 				sample : {
 					stretch : true,
-					files : [
-						"Page.view.xml",
-						"Page.controller.js"
-					]
+					files : ["Page.view.xml", "Page.controller.js"]
 				}
 			}
 		}
