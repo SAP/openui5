@@ -16,6 +16,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
+			"control": "sap.m.BusyDialog",
+			"url": "../BusyDialog.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
+		},
+		{
 			"control": "sap.m.BusyIndicator",
 			"url": "BusyIndicator.html",
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
@@ -147,6 +152,16 @@
 			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
+			"control": "sap.m.NotificationListGroup",
+			"url": "../NotificationListGroup.html",
+			"appComponent" : "CA-UI5-CTR-SOF-ROD"
+		},
+		{
+			"control": "sap.m.NotificationListItem",
+			"url": "../NotificationListItem.html",
+			"appComponent" : "CA-UI5-CTR-SOF-ROD"
+		},
+		{
 			"control": "sap.m.NumericContent",
 			"url": "../NumericContent.html",
 			"appComponent" : "CA-UI5-BS-FCW"
@@ -195,6 +210,16 @@
 			"control": "sap.m.PullToRefresh",
 			"url": "../PullToRefresh.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.QuickView",
+			"url": "../QuickView.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
+		},
+		{
+			"control": "sap.m.QuickViewCard",
+			"url": "../QuickViewCard.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.RadioButton",
@@ -252,6 +277,11 @@
 			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
+			"control": "sap.m.SplitApp",
+			"url": "../SplitApp.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
+		},
+		{
 			"control": "sap.m.Switch",
 			"url": "../Switch.html",
 			"appComponent": "CA-UI5-CTR-WDF"
@@ -260,6 +290,11 @@
 			"control": "sap.m.Table",
 			"url": "../Table.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.TableSelectDialog",
+			"url": "../TableSelectDialog.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.Text",
