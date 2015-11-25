@@ -3,27 +3,20 @@
 /* ========================================================= */
 
 .sapMInputBase {
-	background-color: transparent;
 	border: none;
-	position: relative;
-	display: inline-block;
 	padding: 0.25rem 0;
 	height: 3rem;
-	vertical-align: top;
 }
 
 .sapMInputBaseInner {
 	color: @sapUiFieldTextColor;
-	background-color: @sapUiFieldBackground;
+	background: @sapUiFieldBackground;
 	border: 1px solid @sapUiFieldBorderColor;
-	margin: 0;
 	font-size: @sapMFontMediumSize;
 	font-family: @sapUiFontFamily;
 	line-height: normal;
 	height: 2.5rem;
-	vertical-align: top;
 	padding: 0 0.75rem;
-	-moz-appearance: textfield;
 }
 
 .sapMInputBaseInner::-webkit-input-placeholder {
@@ -48,17 +41,8 @@
 	color: @sapUiFieldPlaceholderTextColor;
 	font-size: @sapMFontMediumSize;
 	font-style: italic;
-	position: absolute;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
 	line-height: 2.5rem;
 	padding: 0 0.75rem;
-}
-
-.sapMInputBaseInner:focus {
-	outline: none;
-	outline-width: 0;
 }
 
 .sapMInputBaseStateInner {
@@ -80,7 +64,7 @@
 
 .sapMInputBaseInner.sapMInputBaseReadonlyInner {
 	border-color: transparent;
-	background-color: transparent;
+	background: transparent;
 }
 
 .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus {
@@ -91,13 +75,9 @@
 	border-color: @sapUiFieldHoverBorderColor;
 }
 
-.sapMILI-CTX .sapMInputBase {
-	display: block;
-}
-
 .sapMILI-CTX .sapMInputBaseInner {
-	text-align:	right;
-	background-color: transparent;
+	text-align: right;
+	background: transparent;
 }
 
 html[dir=rtl] .sapMILI-CTX .sapMInputBaseInner,
@@ -109,7 +89,7 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 	text-align: right;
 }
 
-.sapMILI-CTX :not(.sapMInputVH) .sapMInputBaseInner:not(.sapMInputBaseStateInner){
+.sapMILI-CTX :not(.sapMInputVH) .sapMInputBaseInner:not(.sapMInputBaseStateInner) {
 	border: none;
 }
 
@@ -168,7 +148,7 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 		padding: 0;
 	}
 
-	.sapMInputBaseInner{
+	.sapMInputBaseInner {
 		border-color: transparent;
 	}
 
