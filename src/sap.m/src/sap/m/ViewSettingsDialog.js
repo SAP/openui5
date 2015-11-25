@@ -50,25 +50,30 @@ function(jQuery, library, Control, IconPool) {
 
 			/**
 			 * The list of items with key and value that can be sorted over (for example, a list of columns for a table).
+			 * @since 1.16
 			 */
 			sortItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "sortItem", bindable : "bindable"},
 
 			/**
 			 * The list of items with key and value that can be grouped on (for example, a list of columns for a table).
+			 * @since 1.16
 			 */
 			groupItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "groupItem", bindable : "bindable"},
 
 			/**
 			 * The list of items with key and value that can be filtered on (for example, a list of columns for a table). A filterItem is associated with one or more detail filters.
+			 * @since 1.16
 			 */
 			filterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "filterItem", bindable : "bindable"},
 
 			/**
 			 * The list of preset filter items that allows the selection of more complex or custom filters. These entries are displayed at the top of the filter tab.
+			 * @since 1.16
 			 */
 			presetFilterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "presetFilterItem", bindable : "bindable"},
 			/**
 			 * The list of all the custom tabs.
+			 * @since 1.30
 			 */
 			customTabs: {type: "sap.m.ViewSettingsCustomTab", multiple: true, singularName: "customTab", bindable : "bindable"}
 		},
