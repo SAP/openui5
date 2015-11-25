@@ -151,6 +151,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		} else {
 			this._oBusy.$().unbind("tap", this._handleOverlayClick);
 		}
+		// attaches handler this._removeTitle to the event mouseenter for all content elements (the handler is executed once per element)
+		this.$().find("*").one("mouseenter", this._removeTitle);
 	};
 
 	/**
@@ -352,64 +354,59 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
-	 * Returns the alternative text for the header
+	 * Returns a text for the tooltip and ARIA label of the header
 	 *
-	 * @returns {String} The alternative text for the header
+	 * @private
+	 * @returns {String} The tooltip and ARIA label text
 	 */
-	GenericTile.prototype.getHeaderAltText = function() {
-		var sAltText = "";
+	GenericTile.prototype._getHeaderAriaAndTooltipText = function() {
+		var sText = "";
 		var bIsFirst = true;
 		if (this.getHeader()) {
-			sAltText += this.getHeader();
+			sText += this.getHeader();
 			bIsFirst = false;
 		}
 
 		if (this.getSubheader()) {
-			sAltText += (bIsFirst ? "" : "\n") + this.getSubheader();
+			sText += (bIsFirst ? "" : "\n") + this.getSubheader();
 			bIsFirst = false;
 		}
 
 		if (this.getImageDescription()) {
-			sAltText += (bIsFirst ? "" : "\n") + this.getImageDescription();
+			sText += (bIsFirst ? "" : "\n") + this.getImageDescription();
 		}
-		return sAltText;
+		return sText;
 	};
 
 	/**
-	 * Returns the alternative text for the body
+	 * Returns a text for the tooltip and ARIA label of the content
 	 *
-	 * @returns {String} The alternative text for the body
+	 * @private
+	 * @returns {String} The tooltip and ARIA label text
 	 */
-	GenericTile.prototype.getBodyAltText = function() {
-		var sAltText = "";
+	GenericTile.prototype._getContentAriaAndTooltipText = function() {
+		var sText = "";
 		var bIsFirst = true;
 		var aTiles = this.getTileContent();
-		var iFt = this._calculateFrameType(this.getFrameType());
-		var iTotalFt = 0;
 
 		for (var i = 0; i < aTiles.length; i++) {
-			if (iFt > iTotalFt) {
-				if (aTiles[i].getAltText) {
-					sAltText += (bIsFirst ? "" : "\n") + aTiles[i].getAltText();
-					bIsFirst = false;
-				} else if (aTiles[i].getTooltip_AsString()) {
-					sAltText += (bIsFirst ? "" : "\n") + aTiles[i].getTooltip_AsString();
-					bIsFirst = false;
-				}
-			} else {
-				break;
+			if (jQuery.isFunction(aTiles[i]._getAriaAndTooltipText)) {
+				sText += (bIsFirst ? "" : "\n") + aTiles[i]._getAriaAndTooltipText();
+			} else if (aTiles[i].getTooltip_AsString()) {
+				sText += (bIsFirst ? "" : "\n") + aTiles[i].getTooltip_AsString();
 			}
-			iTotalFt += this._calculateFrameType(aTiles[i].getFrameType());
+			bIsFirst = false;
 		}
-		return sAltText;
+		return sText;
 	};
 
 	/**
-	 * Returns the alternative text as combination of header and body
+	 * Returns a text for the tooltip and ARIA label as combination of header and content texts
 	 *
-	 * @returns {String} The alternative text
+	 * @private
+	 * @returns {String} The tooltip and ARIA label text
 	 */
-	GenericTile.prototype.getAltText = function() {
+	GenericTile.prototype._getAriaAndTooltipText = function() {
 		switch (this.getState()) {
 			case sap.m.LoadState.Disabled :
 				return "";
@@ -418,8 +415,44 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			case sap.m.LoadState.Failed :
 				return this._oFailedText.getText();
 			default :
-				return this.getHeaderAltText() + "\n" + this.getBodyAltText();
+				return this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText();
 		}
+	};
+
+	/**
+	 * Returns text for ARIA label.
+	 * If the the application provides a specific tooltip, the ARIA label is equal to the tooltip text.
+	 * If the application doesn't provide a tooltip or the provided tooltip contains only white spaces,
+	 * the function returns a default text created by the control.
+	 *
+	 * @private
+	 * @returns {String} Text for ARIA label.
+	 */
+	GenericTile.prototype._getAriaText = function() {
+		var sAriaText = this.getTooltip_Text();
+		if (!sAriaText || this._isTooltipSuppressed()) {
+			sAriaText = this._getAriaAndTooltipText(); // ARIA label set by the control
+		}
+		return sAriaText; // ARIA label set by the app, equal to tooltip 
+	};
+
+	/**
+	 * Returns text for tooltip or null.
+	 * If the the application provides a specific tooltip, the returned string is equal to the tooltip text.
+	 * If the tooltip provided by the application which is a string of only white spaces, the function returns null.
+	 * In other cases, the function returns a default text created by the control.
+	 *
+	 * @returns {String} Text for tooltip or null.
+	 * @private
+	 */
+	GenericTile.prototype._getTooltipText = function() {
+		var sTooltip = this.getTooltip_Text(); // checks (typeof sTooltip === "string" || sTooltip instanceof String || sTooltip instanceof sap.ui.core.TooltipBase), returns text, null or undefined
+		if (!sTooltip) {
+			sTooltip = this._getAriaText(); // tooltip set by the control, equal to ARIA label
+		} else if (this._isTooltipSuppressed() === true) {
+			sTooltip = null; // tooltip suppressed by the app
+		}
+		return sTooltip; // tooltip set by the app
 	};
 
 	/* --- Helpers --- */
@@ -441,23 +474,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/**
-	 * Calculates the relevant frame type numeric value based on given tile
-	 *
-	 * @private
-	 * @param {sap.m.FrameType} frameType used for calculation
-	 * @returns {Integer} Calculated value for tile
-	 */
-	GenericTile.prototype._calculateFrameType = function(frameType) {
-		if (frameType == sap.m.FrameType.TwoByOne) { //Here == is used since the type was moved to new library but not renamed.
-			return 2;
-		} else {
-			return 1;
-		}
-	};
-
-	/**
 	 * Generates text for failed state.
-	 * To avoid multiple calls e.g. in every getAltText call, this is done in onBeforeRendering.
+	 * To avoid multiple calls e.g. in every _getAriaAndTooltipText call, this is done in onBeforeRendering.
 	 *
 	 * @private
 	 */
@@ -468,14 +486,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._oFailedText.setTooltip(sFailedMsg);
 	};
 
-	GenericTile.prototype.getTooltip_AsString = function() {
-		var sTooltip = this.getTooltip();
-		var sAltText = "";
-		if (typeof sTooltip === "string" || sTooltip instanceof String) {
-			return sTooltip;
+	/**
+	 * Returns true if the application suppressed the tooltip rendering, otherwise false.
+	 *
+	 * @private
+	 * @returns {boolean} true if the application suppressed the tooltip rendering, otherwise false.
+	 */
+	GenericTile.prototype._isTooltipSuppressed = function() {
+		var sTooltip = this.getTooltip_Text();
+		if (sTooltip && sTooltip.length > 0 && jQuery.trim(sTooltip).length === 0) {
+			return true;
+		} else {
+			return false;
 		}
-		sAltText = this.getAltText();
-		return sAltText ? sAltText : "";
+	};
+
+	/**
+	 * Removes attribute title.
+	 * The method is called for a given element and all his parents. In each iteration step the method removes attribute title of a given element.
+	 *
+	 * @private
+	 */
+	GenericTile.prototype._removeTitle = function (event) {
+		event.preventDefault();
+		jQuery(this).removeAttr("title");
 	};
 
 	return GenericTile;

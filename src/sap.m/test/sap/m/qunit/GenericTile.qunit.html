@@ -54,7 +54,7 @@
 		}
 	});
 
-	QUnit.test("GenericTile rendered.", function(assert) {
+	QUnit.test("GenericTile rendered", function(assert) {
 		assert.ok(jQuery.sap.domById("generic-tile"), "Generic tile was rendered successfully");
 		assert.ok(jQuery.sap.domById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
 		assert.ok(jQuery.sap.domById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
@@ -101,7 +101,7 @@
 		}
 	});
 
-	QUnit.test("GenericTile in Failed state rendered.", function(assert) {
+	QUnit.test("GenericTile in Failed state rendered", function(assert) {
 		assert.ok(jQuery.sap.domById("generic-tile-failed"), "Generic tile was rendered successfully");
 		assert.ok(jQuery.sap.domById("generic-tile-failed-content"), "Generic tile content was rendered successfully");
 		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-icon"), "Generic tile icone was rendered successfully");
@@ -128,7 +128,7 @@
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed-icon-image"), "Icon was rendered successfully");
 	});
 
-	QUnit.module("Alternative Text tests", {
+	QUnit.module("Tests for ARIA label and tooltip text", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				subheader : "Expenses By Region",
@@ -161,22 +161,119 @@
 		}
 	});
 
-	QUnit.test("AltText generation.", function(assert) {
+	QUnit.test("Generation of text for ARIA label and tooltip", function(assert) {
 		//Arrange
 		var sLoadingText = this.oGenericTile._rb.getText("INFOTILE_LOADING");
 		this.oGenericTile.setState(sap.m.LoadState.Loading);
 		//Act
-		var sAltText = this.oGenericTile.getAltText();
+		var sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
 		//Assert
-		assert.equal(sAltText, sLoadingText, "Alt Text has been generated for Loading state");
+		assert.equal(sAriaAndTooltipText, sLoadingText, "Text for ARIA label and tooltip has been generated for Loading state");
 
 		//Arrange
-		sAltText;
 		this.oGenericTile.setState(sap.m.LoadState.Disabled);
 		//Act
-		sAltText = this.oGenericTile.getAltText();
+		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
 		//Assert
-		assert.equal(sAltText, "", "Alt Text has been generated for Disabled state");
+		assert.equal(sAriaAndTooltipText, "", "Text for ARIA label and tooltip has been generated for Disabled state");
+	});
+
+	QUnit.module("Tooltip handling", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				header : "header text of GenericTile",
+				subheader : "subheader text of GenericTile",
+				tileContent : [
+					new sap.m.TileContent("tile-cont-1", {
+					}),
+					new sap.m.TileContent("tile-cont-2", {
+					})
+				]
+			}).placeAt("qunit-fixture");
+			// stub function _getAriaAndTooltipText of the content
+			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function () {
+				return "ARIA and tooltip text of TileContent 1";
+			};
+			// stub function _getAriaAndTooltipText of the content
+			this.oGenericTile.getTileContent()[1]._getAriaAndTooltipText = function () {
+				return "ARIA and tooltip text of TileContent 2";
+			};
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Generic tile with consistent tooltip provided by the control", function(assert) {
+		//Arrange
+		var sConsistentTooltip = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		//Act
+		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
+		//Assert
+		assert.equal(sGenericTileTooltip, sConsistentTooltip, "Tooltip of generic tile is consistent");
+		assert.equal(sGenericTileTooltip, sGenericTileAriaLabel, "Tooltip of generic tile is identical with ARIA label");
+	});
+
+	QUnit.test("Generic tile with an explicite tooltip", function(assert) {
+		//Arrange
+		this.oGenericTile.setTooltip("tooltip");
+		sap.ui.getCore().applyChanges();
+		//Act
+		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
+		//Assert
+		assert.equal(sGenericTileTooltip, "tooltip", "Explicite tooltip of generic tile is consistent");
+		assert.equal(sGenericTileAriaLabel, sGenericTileTooltip, "Explicite tooltip of generic tile is identical with ARIA label");
+	});
+
+	QUnit.test("Generic tile without tooltip", function(assert) {
+		//Arrange
+		this.oGenericTile.setTooltip(" ");
+		sap.ui.getCore().applyChanges();
+		var sConsistentTooltip = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		//Act
+		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
+		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
+		//Assert
+		assert.equal(sGenericTileTooltip, null, "Generic tile rendered without tooltip");
+		assert.equal(sGenericTileAriaLabel, sConsistentTooltip, "Generic tile has correct ARIA label");
+	});
+
+	QUnit.module("Tooltip handling on content elements", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				header : "header text of GenericTile",
+				subheader : "subheader text of GenericTile",
+				tileContent : [
+					new sap.m.TileContent("tile-cont-1", {
+						tooltip : "tooltip of TileContent 1"
+					}),
+					new sap.m.TileContent("tile-cont-2", {
+						tooltip : "tooltip of TileContent 2"
+					})
+				]
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Generic tile content doesn't contain attribute title", function(assert) {
+		//Arrange
+		jQuery.sap.byId("tile-cont-1").trigger("mouseenter");
+		jQuery.sap.byId("tile-cont-2").trigger("mouseenter");
+		var sTitleOfTileContent1 = jQuery.sap.byId("tile-cont-1").attr("title");
+		var sTitleOfTileContent2 = jQuery.sap.byId("tile-cont-2").attr("title");
+		//Act
+		//Assert
+		assert.ok(!sTitleOfTileContent1,"Generic tile 1 doesn't contain attribute title");
+		assert.ok(!sTitleOfTileContent2,"Generic tile 1 doesn't contain attribute title");
 	});
 
 	/* Module wrapper to define a scope for helper functions. This can be replaced with nested approach of QUnit in the future
@@ -216,7 +313,7 @@
 			}
 		});
 
-		QUnit.test("Attach events.", function(assert) {
+		QUnit.test("Attach events", function(assert) {
 			//Arrange
 			//Act
 			var oGenericTile = this.oGenericTile.attachEvent("hover", fnHoverHandler, this.oGenericTile);
@@ -235,7 +332,7 @@
 			//this.oGenericTile.rerender();
 		});
 
-		QUnit.test("Detach events.", function(assert) {
+		QUnit.test("Detach events", function(assert) {
 			//Arrange
 			//Act
 			var oGenericTile = this.oGenericTile.detachEvent("press", fnPressHandler, this.oGenericTile);
