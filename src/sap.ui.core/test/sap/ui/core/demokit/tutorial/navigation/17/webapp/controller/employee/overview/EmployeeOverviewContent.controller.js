@@ -42,7 +42,6 @@ sap.ui.define([
 				// show dialog via url hash
 				if (!!this._oRouterArgs.query.showDialog) {
 					this._oVSD.open();
-					oEvent.preventDefault();	// make sure the dialog does not get closed automatically
 				}
 
 			}
