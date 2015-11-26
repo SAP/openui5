@@ -37,6 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @param {object} 
 	 *            [mParameters=null] additional control parameters. Supported parameters are:
 	 *            <ul>
+	 *            <li>entitySet: if set, it explicitly specifies the entity set addressed by the last segment of the given binding path</li>
 	 *            <li>useBatchRequests: if true, multiple OData requests will be wrapped into a single batch request, wherever possible</li>
 	 *            <li>provideGrandTotals: if true, grand total values will be provided for all bound measure properties</li>
 	 *            <li>provideTotalResultSize: if true, the total number of matching entries in the bound OData entity set will be provided</li>
