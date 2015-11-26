@@ -19,13 +19,13 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * that the characters "$", "(", ")" and "=" are not encoded, so that OData queries remain
 		 * readable.
 		 *
-		 * @param {map} [mParameters]
+		 * @param {object} [mParameters]
 		 *   a map of key-value pairs representing the query string, the value in this pair has to
 		 *   be a string or an array of strings; if it is an array, the resulting query string
 		 *   repeats the key for each array value.
 		 *   Examples:
-		 *   buildQuery({foo: "bar", "bar": "baz"}) results in the query string "foo=bar&bar=baz"
-		 *   buildQuery({foo: ["bar", "baz"]}) results in the query string "foo=bar&foo=baz"
+		 *   buildQuery({foo: "bar", "bar": "baz"}) results in the query string "?foo=bar&bar=baz"
+		 *   buildQuery({foo: ["bar", "baz"]}) results in the query string "?foo=bar&foo=baz"
 		 * @returns {string}
 		 *   the query string; it is empty if there are no parameters; it starts with "?" otherwise
 		 */
@@ -185,7 +185,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			 * Returns the attributes of the DOM Element as map.
 			 * @param {Element} oElement
 			 *   the element
-			 * @returns {map}
+			 * @returns {object}
 			 *   the attributes
 			 */
 			getAttributes : function (oElement) {
