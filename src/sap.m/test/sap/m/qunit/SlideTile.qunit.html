@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" Content="IE=edge" />
-<title>Test Page for sap.m.DynamicContainer</title>
+<title>Test Page for sap.m.SlideTile</title>
 
 <!-- UI5 Bootstrap -->
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -21,10 +21,10 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	}
 
-	QUnit.module("Rendering - sap.m.DynamicContainer", {
+	QUnit.module("Rendering - sap.m.SlideTile", {
 		beforeEach : function() {
 			//Model
-			var oDynamicContainerData = {
+			var oSlideTileData = {
 				tiles : [{
 					header : "Tile 1",
 					frameType : "TwoByOne",
@@ -67,7 +67,7 @@
 					templateShareable: true
 				}
 			});
-			this.oDynamicContainer = new sap.m.DynamicContainer("dc", {
+			this.oSlideTile = new sap.m.SlideTile("st", {
 				displayTime : 500,
 				transitionTime : 0,
 				tiles : {
@@ -77,23 +77,23 @@
 				}
 			});
 
-			var oDynamicContainerModel = new sap.ui.model.json.JSONModel(oDynamicContainerData);
-			this.oDynamicContainer.setModel(oDynamicContainerModel);
-			this.oDynamicContainer.placeAt("qunit-fixture");
+			var oSlideTileModel = new sap.ui.model.json.JSONModel(oSlideTileData);
+			this.oSlideTile.setModel(oSlideTileModel);
+			this.oSlideTile.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function () {
-			this.oDynamicContainer.destroy();
-			this.oDynamicContainer = null;
+			this.oSlideTile.destroy();
+			this.oSlideTile = null;
 		}
 	});
 
 	QUnit.test("Test tiles displaying", function(assert) {
 		var done = assert.async();
-		assert.equal(jQuery.sap.byId("dc-wrapper-0").css("left"), "0px", "The first tile is shown");
+		assert.equal(jQuery.sap.byId("st-wrapper-0").css("left"), "0px", "The first tile is shown");
 
 		setTimeout(function() {
-			assert.equal(jQuery.sap.byId("dc-wrapper-1").css("left"), "0px", "The second tile is shown");
+			assert.equal(jQuery.sap.byId("st-wrapper-1").css("left"), "0px", "The second tile is shown");
 			done();
 		}, 500);
 	});
@@ -101,17 +101,17 @@
 	QUnit.test("Test mouse handlers", function(assert) {
 		//Arrange
 		var oEvent = {preventDefault: function(){}};
-		assert.equal(this.oDynamicContainer.$().hasClass("sapMDCHvr"), false, "Class not available");
+		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), false, "Class not available");
 		//Act
-		this.oDynamicContainer.onmousedown({preventDefault: function(){}});
+		this.oSlideTile.onmousedown({preventDefault: function(){}});
 		//Assert
-		assert.equal(this.oDynamicContainer.$().hasClass("sapMDCHvr"), true, "Class available");
+		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), true, "Class available");
 
 		//Arrange
 		//Act
-		this.oDynamicContainer.onmouseup(oEvent);
+		this.oSlideTile.onmouseup(oEvent);
 		//Assert
-		assert.equal(this.oDynamicContainer.$().hasClass("sapMDCHvr"), false, "Class not available");
+		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), false, "Class not available");
 	});
 </script>
 </head>

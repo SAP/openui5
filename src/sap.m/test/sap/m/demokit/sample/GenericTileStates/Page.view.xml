@@ -28,7 +28,7 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-	<DynamicContainer class="sapUiSmallMargin">
+	<SlideTile class="sapUiSmallMargin">
 		<tiles>
 			<GenericTile
 				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
@@ -63,7 +63,7 @@
 				</tileContent>
 			</GenericTile>
 		</tiles>
-	</DynamicContainer>
+	</SlideTile>
 	<GenericTile class="sapUiSmallMargin" header="Cumulative Totals"
 		subheader="Expenses" size="M" frameType="OneByOne" state="Disabled">
 		<tileContent>

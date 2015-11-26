@@ -1,9 +1,9 @@
 sap.ui.define(['sap/ui/core/UIComponent'], function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.DynamicContainer.Component", {
+	var Component = UIComponent.extend("sap.m.sample.SlideTile.Component", {
 		metadata : {
-			rootView : "sap.m.sample.DynamicContainer.Page",
+			rootView : "sap.m.sample.SlideTile.Page",
 			dependencies : {
 				libs : ["sap.m"]
 			},
