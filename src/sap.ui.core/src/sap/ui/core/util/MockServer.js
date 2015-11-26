@@ -176,9 +176,12 @@ sap.ui
 			};
 
 			/**
-			 * callback function for attachBefore
+			 * Attaches an event handler to be called before the built-in request processing of the mock server
 			 * @param {string} event type according to HTTP Method
-			 * @param {function} fnCallback - the name of the function that will be called at this exit
+			 * @param {function} fnCallback - the name of the function that will be called at this exit. 
+			 * The callback function exposes an event with parameters, depending on the type of the request.
+			 * oEvent.getParameters() lists the parameters as per the request. Examples are:  
+			 * oXhr : the request object; sUrlParams : the URL parameters of the request; sKeys : key properties of the requested entry; sNavProp/sNavName : name of navigation
 			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
 			 */
@@ -188,9 +191,12 @@ sap.ui
 			};
 
 			/**
-			 * callback function for attachBefore
+			 * Attaches an event handler to be called after the built-in request processing of the mock server
 			 * @param {string} event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
+			 * The callback function exposes an event with parameters, depending on the type of the request.
+			 * oEvent.getParameters() lists the parameters as per the request. Examples are:  
+			 * oXhr : the request object; oFilteredData : the mock data entries that are about to be returned in the response; oEntry : the mock data entry that is about to be returned in the response;
 			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
 			 */
@@ -200,7 +206,7 @@ sap.ui
 			};
 
 			/**
-			 * callback function for detachBefore
+			 * Removes a previously attached event handler 
 			 * @param {string} event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
 			 * @param {string} sEntitySet - (optional) the name of the entity set
@@ -212,7 +218,7 @@ sap.ui
 			};
 
 			/**
-			 * callback function for detachAfter
+			 * Removes a previously attached event handler
 			 * @param {string} event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
 			 * @param {string} sEntitySet - (optional) the name of the entity set
