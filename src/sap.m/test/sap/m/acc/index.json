@@ -11,6 +11,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
+			"control": "sap.m.App",
+			"url": "../App.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
+		},
+		{
 			"control": "sap.m.Bar",
 			"url": "../Bar.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
@@ -24,6 +29,11 @@
 			"control": "sap.m.Button",
 			"url": "Button.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.Breadcrumbs",
+			"url": "../Breadcrumbs.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.Carousel",
@@ -112,6 +122,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
+			"control": "sap.m.MessagePage",
+			"url": "../MessagePage.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
+		},
+		{
 			"control": "sap.m.MessageBox",
 			"url": "MessageBox.html",
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
@@ -142,6 +157,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.sap.m.NavContainer",
+			"url": "../NavContainer.html",
+			"appComponent" : "CA-UI5-CTR-SOF-PIR"
+		},
+		{
 			"control": "sap.m.NewsContent",
 			"url": "../NewsContent.html",
 			"appComponent" : "CA-UI5-BS-FCW"
@@ -159,7 +179,7 @@
 		{
 			"control": "sap.m.ObjectHeader",
 			"url": "../ObjectHeader.html",
-			"appComponent": "CA-UI5-CTR-SOF-BAL"
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.ObjectIdentifier",
@@ -172,9 +192,19 @@
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
+			"control": "sap.m.OverflowToolbar",
+			"url": "../OverflowToolbar.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
+		},
+		{
 			"control": "sap.m.Page",
 			"url": "Page.html",
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
+		},
+		{
+			"control": "sap.m.PagingButton",
+			"url": "../PagingButton.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.Panel",
@@ -189,7 +219,7 @@
 		{
 			"control": "sap.m.ProgressIndicator",
 			"url": "../ProgressIndicator.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.PullToRefresh",
