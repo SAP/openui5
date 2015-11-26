@@ -2403,7 +2403,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var $tableHeaders = $this.find(".sapUiTableCtrlFirstCol > th");
 
 		var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
-		if (bHasRowHeader) {
+		if (bHasRowHeader && $tableHeaders.length > 0) {
 			var oHiddenElement = $tableHeaders.get(0);
 			iInvisibleColWidth = oHiddenElement.getBoundingClientRect().right - oHiddenElement.getBoundingClientRect().left;
 			$tableHeaders = $tableHeaders.not(":nth-child(1)");
