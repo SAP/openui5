@@ -5,13 +5,9 @@ sap.ui.define([
 		'sap/m/Dialog',
 		'sap/m/MessageBox',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/odata/ODataUtils',
-		'sap/ui/model/odata/v4/_ODataHelper',
-		"sap/ui/thirdparty/odatajs-4.0.0"
-	], function(Dialog, MessageBox, Controller, JSONModel, ODataUtils, _ODataHelper, Olingo) {
+		'sap/ui/model/json/JSONModel'
+	], function(Dialog, MessageBox, Controller, JSONModel) {
 	"use strict";
-//	/*global odatajs */
 
 	function onRejected(oError) {
 		MessageBox.alert(oError.message, {
