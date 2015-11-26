@@ -98,6 +98,7 @@ function(jQuery, library, Control, IconPool) {
 
 			/**
 			 * Indicates that the user has pressed the OK button and the selected sort, group, and filter settings should be applied to the data on this page.
+			 * </br></br><b>Note:</b> Custom tabs are not converted to event parameters automatically. For custom tabs, you have to read the state of your controls inside the callback of this event.
 			 */
 			confirm : {
 				parameters : {
