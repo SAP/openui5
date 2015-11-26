@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		if (sCalendarType) {
 			oUTCDate = UniversalDate.getInstance(this._createUTCDate(oDate, bTime), sCalendarType);
 		} else  {
-			oUTCDate = new UniversalDate(this._createUTCDate(oDate, bTime));
+			oUTCDate = new UniversalDate(this._createUTCDate(oDate, bTime).getTime()); // use getTime() because IE and FF can not parse dates < 0100.01.01
 		}
 
 		return oUTCDate;
