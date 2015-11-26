@@ -557,14 +557,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	IconTabHeader.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		var aItems = this.getItems();
+		var aItems = this.getTabFilters();
 
 		var oItem = Control.prototype.removeAggregation.apply(this, arguments);
 
 		if (oItem && oItem == this.oSelectedItem && sAggregationName == 'items') {
 
 			var iIndexOf = jQuery.inArray(oItem, aItems);
-			aItems = this.getItems();
+			aItems = this.getTabFilters();
 
 			iIndexOf = Math.max(0, Math.min(iIndexOf, aItems.length - 1));
 
