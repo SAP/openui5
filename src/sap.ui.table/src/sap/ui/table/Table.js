@@ -1757,14 +1757,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						iSteps = Math.max(0, (oBinding.getLength() || 0) - this.getVisibleRowCount());
 					}
 
+					if ($this) {
+						$this.toggleClass("sapUiTableVScr", iSteps > 0);
+					}
+
 					this._oVSb.setSteps(iSteps);
 					if (this._oVSb.getDomRef()) {
 						this._oVSb.rerender();
 					}
 					this._oVSb.setScrollPosition(this.getFirstVisibleRow());
-
 				});
-
 			}
 
 		} else {
