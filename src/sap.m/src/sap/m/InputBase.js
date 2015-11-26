@@ -311,6 +311,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	InputBase.prototype.onfocusin = function(oEvent) {
+
+		// iE10+ fires the input event when an input field with a native placeholder is focused
+		this._bIgnoreNextInput = !this.bShowLabelAsPlaceholder &&
+									sap.ui.Device.browser.msie &&
+									sap.ui.Device.browser.version > 9 &&
+									!!this.getPlaceholder() && 
+									!this._getInputValue();
+
 		this.$().toggleClass("sapMFocus", true);
 		if (sap.ui.Device.support.touch) {
 			// listen to all touch events
@@ -538,9 +546,34 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * IE9 does not fire an input event when the user removes characters via BACKSPACE / DEL / CUT
 	 * InputBase normalize this behaviour for IE9 and calls oninput for the subclasses
 	 *
+	 * When the input event is buggy the input event is marked as "invalid".
+	 * - IE10+ fires the input event when an input field with a native placeholder is focused.
+	 * - IE11 fires input event from read-only fields.
+	 * - IE11 fires input event after rendering when value contains an accented character
+	 * - IE11 fires input event whenever placeholder attribute is changed
+	 *
 	 * @param {jQuery.Event} oEvent The event object.
 	 */
 	InputBase.prototype.oninput = function(oEvent) {
+		// ie 10+ fires the input event when an input field with a native placeholder is focused
+		if (this._bIgnoreNextInput) {
+			this._bIgnoreNextInput = false;
+			oEvent.setMarked("invalid");
+			return;
+		}
+
+		// ie11 fires input event from read-only fields
+		if (!this.getEditable()) {
+			oEvent.setMarked("invalid");
+			return;
+		}
+
+		// ie11 fires input event after rendering when value contains an accented character
+		// ie11 fires input event whenever placeholder attribute is changed
+		if (document.activeElement !== oEvent.target) {
+			oEvent.setMarked("invalid");
+			return;
+		}
 
 		// dom value updated other than value property
 		this._bCheckDomValue = true;
