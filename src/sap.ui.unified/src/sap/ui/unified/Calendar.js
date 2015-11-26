@@ -465,9 +465,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oJSDate;
 
 			if ((oDate instanceof UniversalDate)) {
-				oJSDate = new Date(oDate.getJSDate());
+				oJSDate = new Date(oDate.getJSDate().getTime()); // use getTime() because IE and FF can not parse dates < 0100.01.01
 			} else {
-				oJSDate = new Date(oDate);
+				oJSDate = new Date(oDate.getTime());
 			}
 
 			return UniversalDate.getInstance(oJSDate, this.getPrimaryCalendarType());

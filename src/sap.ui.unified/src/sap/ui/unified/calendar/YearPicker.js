@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 			if (!this._oUTCDate) {
 				var iYear = this.getYear();
-				this._oUTCDate = this._newUniversalDate(Date.UTC(iYear, 0, 1));
+				this._oUTCDate = this._newUniversalDate(new Date(Date.UTC(iYear, 0, 1)));
 				if (iYear < 100) {
 					this._oUTCDate.setUTCFullYear(iYear);
 				}
@@ -181,9 +181,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			var oJSDate;
 
 			if ((oDate instanceof UniversalDate)) {
-				oJSDate = new Date(oDate.getJSDate());
+				oJSDate = new Date(oDate.getJSDate().getTime()); // use getTime() because IE and FF can not parse dates < 0100.01.01
 			} else {
-				oJSDate = new Date(oDate);
+				oJSDate = new Date(oDate.getTime());
 			}
 
 			return UniversalDate.getInstance(oJSDate, this.getPrimaryCalendarType());
