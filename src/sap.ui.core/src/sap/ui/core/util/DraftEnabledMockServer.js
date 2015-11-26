@@ -627,6 +627,28 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 			var mEntitySets = MockServer.prototype._findEntitySets.apply(this, [oMetadata]);
 			this._prepareDraftMetadata(mEntitySets);
 			return mEntitySets;
+		},
+
+		getEntitySetData: function(sEntitySet) {
+			var aEntitySet = MockServer.prototype.getEntitySetData.apply(this, [sEntitySet]);
+			var fnGetParameter =  function() {
+							return aEntitySet;
+			};
+			if (sEntitySet === this._oDraftMetadata.draftRootName) {
+				this._fnDraftAdministrativeData({
+					getParameter: fnGetParameter
+				});
+				return aEntitySet;
+			}
+			for (var j = 0; j < this._oDraftMetadata.draftNodes.length; j++) {
+				if (sEntitySet === this._oDraftMetadata.draftNodes[j]) {
+					this._fnDraftAdministrativeData({
+						getParameter: fnGetParameter
+					});
+					return aEntitySet;
+				}
+			}
+			return aEntitySet;
 		}
 
 	};
