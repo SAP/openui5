@@ -9,7 +9,7 @@
 				items="{
                     path: '/ColumnCollection'
                 }"
-				columnsItems="{
+				dimMeasureItems="{
                     path: '/ColumnsItems'
                 }"
 				availableChartTypes="{ path: '/ChartTypes'}">
@@ -17,10 +17,10 @@
 					<P13nItem columnKey="{path}" text="{text}"
 						aggregationRole="{type}" />
 				</items>
-				<columnsItems>
+				<dimMeasureItems>
 					<P13nDimMeasureItem columnKey="{columnKey}" index="{index}"
 						visible="{visible}" />
-				</columnsItems>
+				</dimMeasureItems>
 				<availableChartTypes>
 					<core:Item key="{key}" text="{text}" />
 				</availableChartTypes>
