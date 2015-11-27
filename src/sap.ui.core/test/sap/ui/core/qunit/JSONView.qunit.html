@@ -16,6 +16,7 @@ sap.ui.core.mvc.Controller</title>
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons"
+	data-sap-ui-bindingSyntax="complex"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
 </script>
 
@@ -48,6 +49,17 @@ sap.ui.core.mvc.Controller</title>
 	testsuite(oConfig, "JSONView creation via generic view factory", function() {
 		return sap.ui.view({type:sap.ui.core.mvc.ViewType.JSON,viewName:"example.mvc.test", viewData:{test:"testdata"}}); 
 	}, true);
+	
+	QUnit.test("JSONView should be able to resolve controller methods", function(assert) {
+		var oView = sap.ui.jsonview("example.mvc.test");
+		var oButtonWithBinding = oView.byId("ButtonWithBinding");
+		assert.ok(oButtonWithBinding, "button could be found");
+		var oBindingInfo = oButtonWithBinding.getBindingInfo("text");
+		assert.ok(oBindingInfo, "there should be a binding info for property 'text'");
+		assert.ok(typeof oBindingInfo.formatter === 'function', "formatter should have been resolved");
+		assert.ok(oBindingInfo.formatter(42) === 'formatted-42', "formatter should be the one form the controller"); // TODO test should involve instance
+		oView.destroy();
+	});
 	
 </script>
 </head>
