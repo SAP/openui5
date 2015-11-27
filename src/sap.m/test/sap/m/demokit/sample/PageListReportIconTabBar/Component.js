@@ -9,7 +9,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			dependencies : {
 				libs : [
 					"sap.m",
-					"sap.ui.comp"
+					"sap.ui.layout",
+					"sap.ui.table"
 				]
 			},
 			config : {
