@@ -503,6 +503,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 			url: sManifestUrl,
 			dataType: "json",
 			async: typeof bAsync !== "undefined" ? bAsync : false,
+			headers: {
+				"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag()
+			},
 			failOnError: typeof bFailOnError !== "undefined" ? bFailOnError : true
 		});
 		if (bAsync) {
