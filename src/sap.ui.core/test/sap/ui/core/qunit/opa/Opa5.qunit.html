@@ -22,7 +22,7 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			jQuery.sap.require("samples.components.button.Component");
-			jQuery.sap.require("sap.ui.core.routing.HashChanger")
+			jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
 			sinon.config.useFakeTimers = false;
 
@@ -35,7 +35,7 @@
 			QUnit.module("Component");
 
 
-			QUnit.test("Should start and teardown a component", function(assert) {
+			QUnit.test("Should start and teardown a UIComponent", function(assert) {
 				// System under Test
 				var oOpa5 = new Opa5();
 				var done = assert.async();
@@ -47,13 +47,13 @@
 					},
 					hash: ""
 				}).done(function(){
-					assert.ok(jQuery(".sapUiOpaComponent").length, "The component was started");
+					assert.ok(jQuery(".sapUiOpaComponent").length, "The UIComponent was started");
 				});
 
 				oOpa5.iTeardownMyUIComponent();
 
 				oOpa5.emptyQueue().done(function () {
-					assert.ok(!jQuery(".sapUiOpaComponent").length, "The component was removed");
+					assert.ok(!jQuery(".sapUiOpaComponent").length, "The UIComponent was removed");
 					done();
 				});
 
