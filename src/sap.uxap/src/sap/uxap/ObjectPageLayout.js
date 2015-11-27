@@ -647,6 +647,7 @@ sap.ui.define([
 	 ************************************************************************************/
 
 	ObjectPageLayout.prototype.setShowAnchorBarPopover = function (bValue, bSuppressInvalidate) {
+		this._oABHelper._buildAnchorBar();
 		this._oABHelper._getAnchorBar().setShowPopover(bValue);
 		return this.setProperty("showAnchorBarPopover", bValue, true /* don't re-render the whole objectPageLayout */);
 	};
