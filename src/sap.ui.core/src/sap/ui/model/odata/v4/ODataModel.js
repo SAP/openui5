@@ -342,8 +342,8 @@ sap.ui.define([
 			that = this;
 
 		if (iMeta >= 0) {
-			sModelPath = this.resolve(sPath.substring(0, iMeta), oContext);
-			sMetaModelPath = sPath.substring(iMeta + 2);
+			sModelPath = this.resolve(sPath.slice(0, iMeta), oContext);
+			sMetaModelPath = sPath.slice(iMeta + 2);
 			return this.getMetaModel().fetchMetaContext(sModelPath)
 				.then(function (oMetaContext) {
 					return that.getMetaModel().fetchObject(sMetaModelPath, oMetaContext);

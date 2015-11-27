@@ -223,7 +223,7 @@ sap.ui.define([
 			if (sPath.charAt(0) !== '/') {
 				throw new Error("Not an absolute path: " + sPath);
 			}
-			return sPath.substring(1).split('/');
+			return sPath.slice(1).split('/');
 		}
 	};
 
