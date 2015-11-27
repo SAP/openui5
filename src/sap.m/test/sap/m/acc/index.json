@@ -56,6 +56,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.CustomTile",
+			"url": "../CustomTile.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.DatePicker",
 			"url": "DatePicker.html",
 			"appComponent": "CA-UI5-CTR-WDF"
@@ -64,6 +69,11 @@
 			"control": "sap.m.Dialog",
 			"url": "../Dialog.html",
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
+		},
+		{
+			"control": "sap.m.FacetFilter",
+			"url": "../FacetFilter.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.FeedContent",
@@ -132,6 +142,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
+			"control": "sap.m.MaskInput",
+			"url": "../MaskInput.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.MessageBox",
 			"url": "MessageBox.html",
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
@@ -194,7 +209,7 @@
 		{
 			"control": "sap.m.ObjectHeader",
 			"url": "../ObjectHeader.html",
-			"appComponent": "CA-UI5-CTR-SOF-PIR"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.ObjectIdentifier",
@@ -202,14 +217,24 @@
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
-			"control": "sap.m.ObjectStatus",
-			"url": "../ObjectHeader.html",
+			"control": "sap.m.ObjectListItem",
+			"url": "../ObjectListItem.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.ObjectNumber",
+			"url": "../ObjectNumber.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.OverflowToolbar",
 			"url": "../OverflowToolbar.html",
 			"appComponent": "CA-UI5-CTR-SOF-PIR"
+		},
+		{
+			"control": "sap.m.ObjectStatus",
+			"url": "../ObjectHeader.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Page",
@@ -297,6 +322,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.Shell",
+			"url": "../Shell.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.Slider",
 			"url": "../Slider.html",
 			"appComponent": "CA-UI5-CTR-WDF"
@@ -304,7 +334,7 @@
 		{
 			"control": "sap.m.SlideTile",
 			"url": "../SlideTile.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-BS-FCW"
 		},
 		{
 			"control": "sap.m.SplitApp",
@@ -312,9 +342,19 @@
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
+			"control": "sap.m.StandardTile",
+			"url": "../StandardTile.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.Switch",
 			"url": "../Switch.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.TabContainer",
+			"url": "../TabContainer.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Table",
@@ -325,6 +365,11 @@
 			"control": "sap.m.TableSelectDialog",
 			"url": "../TableSelectDialog.html",
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
+		},
+		{
+			"control": "sap.m.TimePicker",
+			"url": "../TimePicker.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Text",
@@ -348,7 +393,7 @@
 		},
 		{
 			"control": "sap.m.Tile",
-			"url": "../TileContainer.html",
+			"url": "../Tile.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
@@ -359,7 +404,7 @@
 		{
 			"control": "sap.m.TileContent",
 			"url": "../TileContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-BS-FCW"
 		},
 		{
 			"control": "sap.m.Title",
@@ -385,6 +430,11 @@
 			"control": "sap.m.UploadCollectionForPendingUpload",
 			"url": "../UploadCollectionForPendingUpload.html",
 			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.ViewSettingsDialog",
+			"url": "../ViewSettingsDialog.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Wizard",
