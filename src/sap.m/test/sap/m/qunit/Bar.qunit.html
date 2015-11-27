@@ -269,6 +269,121 @@
 				oBar.destroy();
 			});
 
+			function getBarContentStyles(sut) {
+				var oBarStyles = getJqueryObjectsForBar(sut);
+
+				return {
+					left: oBarStyles.$left.attr("style") ? oBarStyles.$left.attr("style").replace(/[;|\s]/g, "") : "",
+					right: oBarStyles.$right.attr("style") ? oBarStyles.$right.attr("style").replace(/[;|\s]/g, "") : "",
+					mid: oBarStyles.$mid.attr("style") ? oBarStyles.$mid.attr("style").replace(/[;|\s]/g, "") : ""
+				};
+			}
+			function createSUTSingleAggregation(sAggregationName) {
+				var oSut;
+				switch (sAggregationName) {
+					case "contentLeft":
+						oSut = new sap.m.Bar({contentLeft: [ new sap.m.Button()]});
+						break;
+					case "contentMiddle":
+						oSut = new sap.m.Bar({contentMiddle: [ new sap.m.Button()]});
+						break;
+					case "contentRight":
+						oSut = new sap.m.Bar({contentRight: [ new sap.m.Button()]});
+						break;
+					default: "Invalid aggregation " + sAggregationName;
+				}
+				return oSut;
+			}
+			test("Single left aggregation is set with with 100%", function() {
+				//Sut
+				var sut = createSUTSingleAggregation("contentLeft"),
+						oBarWidths;
+
+				//Assert
+				function check (sMsgPrefix) {
+					oBarWidths = getBarContentStyles(sut);
+					equal("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must be set to 100%");
+					notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
+					notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
+				}
+
+				//Arrange
+				var oStub = sinon.stub(sut, "onAfterRendering", function() {
+				   //Assert
+				   check("just before onAfterRendering:");
+				   sap.m.Bar.prototype.onAfterRendering.apply(sut, arguments);
+				});
+				sut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				check("after onAfterRendering");
+
+				//Cleanup
+				oStub.restore();
+				sut.destroy();
+			});
+
+			test("Single middle aggregation is set with with 100%", function() {
+				//Sut
+				var sut = createSUTSingleAggregation("contentMiddle"),
+						oBarWidths;
+
+				//Assert
+				function check (sMsgPrefix) {
+					oBarWidths = getBarContentStyles(sut);
+					notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
+					equal("width:100%",oBarWidths.mid, sMsgPrefix + " Middle Content width must be set to 100%");
+					notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
+				}
+
+				//Arrange
+				var oStub = sinon.stub(sut, "onAfterRendering", function() {
+					//Assert
+					check("just before onAfterRendering:");
+					sap.m.Bar.prototype.onAfterRendering.apply(sut, arguments);
+				});
+				sut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				check("after onAfterRendering");
+
+				//Cleanup
+				oStub.restore();
+				sut.destroy();
+			});
+
+			test("Single right aggregation is set with with 100%", function() {
+				//Sut
+				var sut = createSUTSingleAggregation("contentRight"),
+						oBarWidths;
+
+				//Assert
+				function check (sMsgPrefix) {
+					oBarWidths = getBarContentStyles(sut);
+					notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
+					notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
+					equal("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must be set to 100%");
+				}
+
+				//Arrange
+				var oStub = sinon.stub(sut, "onAfterRendering", function() {
+					//Assert
+					check("just before onAfterRendering:");
+					sap.m.Bar.prototype.onAfterRendering.apply(sut, arguments);
+				});
+				sut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				check("after onAfterRendering");
+
+				//Cleanup
+				oStub.restore();
+				sut.destroy();
+			});
+
 			//Firefox has flexbox therefore positioning is different
 			if(sap.ui.Device.browser.firefox) {
 				return;
