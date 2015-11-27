@@ -3919,9 +3919,8 @@
 			target : oDomRef
 		});
 
-		// assertions                                  
-		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Focused"),
-				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + 'Focused”');
+		// assertions
+		ok(oMultiComboBox.$().hasClass("sapMFocus"), 'The MultiComboBox has the CSS class "sapMFocus"');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3948,8 +3947,8 @@
 			target : oDomRefArrow
 		});
 
-		// assertions                                  
-		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Focused"), 'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + 'Focused”');
+		// assertions
+		ok(oMultiComboBox.$().hasClass("sapMFocus"), 'The MultiComboBox has the CSS class "sapMFocus"');
 
 		// cleanup
 		oMultiComboBox.destroy();
