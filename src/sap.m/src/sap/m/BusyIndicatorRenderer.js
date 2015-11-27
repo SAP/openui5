@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global'],
 			valuemax: "100"
 		};
 
-		oRm.write("<div");
+		oRm.write("<div tabindex='0' ");
 		oRm.writeControlData(oBusyInd);
 
 		oRm.addClass("sapMBusyIndicator");
