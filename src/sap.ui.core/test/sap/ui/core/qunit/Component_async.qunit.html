@@ -11,7 +11,8 @@
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
-		data-sap-ui-preload="sync">
+		data-sap-ui-preload="sync"
+		data-sap-ui-language="en">
 	</script>
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
@@ -192,6 +193,8 @@
 			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(oComponent.getManifest(), "Manifest is available");
 			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
+			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
 			oDone();
 		}, function(oError) {
 			assert.Ok(false,"Promise of Component hasn't been resolved correctly");
