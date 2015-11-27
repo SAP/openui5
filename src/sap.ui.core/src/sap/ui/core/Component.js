@@ -717,7 +717,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 							// resolve relative to component
 							var oComponentMetadata = mConfig.origin.dataSources[aAnnotations[i]] || this.getMetadata();
-							var oAnnotationUri = Manifest._resolveUri(new URI(oAnnotation.uri), oComponentMetadata.getComponentName()).toString();
+							var oAnnotationUri = oComponentMetadata.getManifestObject().resolveUri(new URI(oAnnotation.uri)).toString();
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
@@ -772,7 +772,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 				// resolve URI relative to component which defined it
 				var oUriSourceComponent = (bIsDataSourceUri ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName]) || this.getMetadata();
-				oUri = Manifest._resolveUri(oUri, oUriSourceComponent.getComponentName());
+				oUri = oUriSourceComponent.getManifestObject().resolveUri(oUri);
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
 				if (oModelConfig.dataSource) {
@@ -1160,7 +1160,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// if we find a manifest URL in the configuration
 		// we will load the manifest from the specified URL (sync or async)
 		if (oConfig.manifestUrl) {
-			oManifest = Manifest.load(oConfig.manifestUrl, oConfig.async);
+			oManifest = Manifest.load({
+				manifestUrl: oConfig.manifestUrl,
+				componentName: sName,
+				async: oConfig.async
+			});
 			// the manifest is stored in the configuration to pass it
 			// into the concrete component instance
 			oConfig._manifest = oManifest;
@@ -1196,7 +1200,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// then we can use the standard capabilities of the framework to resolve
 		// the Components' modules namespace
 		if (bManifestFirst && !oManifest) {
-			oManifest = Manifest.load(jQuery.sap.getModulePath(sName) + "/manifest.json", oConfig.async, false);
+			oManifest = Manifest.load({
+				manifestUrl: jQuery.sap.getModulePath(sName) + "/manifest.json",
+				componentName: sName,
+				async: oConfig.async,
+				failOnError: false
+			});
 			// the manifest is stored in the configuration to pass it
 			// into the concrete component instance
 			oConfig._manifest = oManifest;
