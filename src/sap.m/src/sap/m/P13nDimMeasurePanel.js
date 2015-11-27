@@ -245,13 +245,6 @@ sap.ui.define([
 		oModel.refresh();
 	};
 
-// /**
-// * @private
-// */
-// P13nDimMeasurePanel.prototype._deactivateSelectedItem = function() {
-// this._switchMarkedTableItemTo(null);
-// };
-
 	/**
 	 * @private
 	 */
@@ -299,6 +292,12 @@ sap.ui.define([
 			this._reindexModelItemsByTableIndex(oData);
 		}, this);
 		oModel.refresh();
+
+		// Set marked item initially to the first table item
+		if (!oData.markedTableItem) {
+			var aVisibleTableItems = this._getVisibleTableItems();
+			this._switchMarkedTableItemTo(aVisibleTableItems[0]);
+		}
 	};
 
 	P13nDimMeasurePanel.prototype.onAfterRendering = function() {
@@ -709,12 +708,7 @@ sap.ui.define([
 		this._switchVisibilityOfUnselectedModelItems();
 		this._filterModelItemsBySearchText();
 
-// if (oData.markedTableItem && oData.markedTableItem.getVisible() === false) {
-// this._deactivateSelectedItem();
-// }
-
 		this._scrollToSelectedItem(oData.markedTableItem);
-// oData.markedTableItem.focus();
 
 		this._updateControlLogic();
 
@@ -732,16 +726,9 @@ sap.ui.define([
 		this._switchVisibilityOfUnselectedModelItems();
 		this._filterModelItemsBySearchText();
 
-// // check, whether actual selected item is still visible after filterItems -> if not -> deactivate selected
-// // item
-// if (oData.markedTableItem && oData.markedTableItem.getVisible() === false) {
-// this._deactivateSelectedItem();
-// }
+		this._scrollToSelectedItem(oData.markedTableItem);
 
 		this._updateControlLogic();
-
-		this._scrollToSelectedItem(oData.markedTableItem);
-// oData.markedTableItem.focus();
 	};
 
 	/**
@@ -1059,6 +1046,26 @@ sap.ui.define([
 				})
 			}
 		});
+// this._oTable.selectAll = function() {
+// // var oData = that.getModel("$sapmP13nDimMeasurePanel").getData();
+// that._getVisibleTableItems().forEach(function(oTableItem) {
+// if (!oTableItem.getSelected()) {
+// that._oTable.setSelectedItem(oTableItem, true, true);
+// // oData.countOfSelectedItems++;
+// }
+// });
+// this.updateSelectAllCheckbox();
+// };
+// this._oTable.removeSelections = function() {
+// // var oData = that.getModel("$sapmP13nDimMeasurePanel").getData();
+// that._getVisibleTableItems().forEach(function(oTableItem) {
+// if (oTableItem.getSelected()) {
+// that._oTable.setSelectedItem(oTableItem, false, true);
+// // oData.countOfSelectedItems--;
+// }
+// });
+// this.updateSelectAllCheckbox();
+// };
 		this._oTable.setModel(this.getModel("$sapmP13nDimMeasurePanel"));
 	};
 
@@ -1079,26 +1086,12 @@ sap.ui.define([
 				that._moveMarkedTableItem("Down");
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High,
+				group: 1
 			})
 		});
 		oMoveDownButton.setModel(oModel);
-
-		var oMoveToBottomButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("expand-group"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
-			enabled: {
-				path: '/isMoveDownButtonEnabled'
-			},
-			press: function() {
-				that._moveMarkedTableItem("Bottom");
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
-			})
-		});
-		oMoveToBottomButton.setModel(oModel);
 
 		var oMoveUpButton = new sap.m.OverflowToolbarButton({
 			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-up"),
@@ -1111,10 +1104,30 @@ sap.ui.define([
 				that._moveMarkedTableItem("Up");
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High,
+				group: 1
 			})
 		});
 		oMoveUpButton.setModel(oModel);
+
+		var oMoveToBottomButton = new sap.m.OverflowToolbarButton({
+			icon: sap.ui.core.IconPool.getIconURI("expand-group"),
+			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+			enabled: {
+				path: '/isMoveDownButtonEnabled'
+			},
+			press: function() {
+				that._moveMarkedTableItem("Bottom");
+			},
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.Low,
+				group: 2
+			})
+		});
+		oMoveToBottomButton.setModel(oModel);
 
 		var oMoveToTopButton = new sap.m.OverflowToolbarButton({
 			icon: sap.ui.core.IconPool.getIconURI("collapse-group"),
@@ -1127,7 +1140,9 @@ sap.ui.define([
 				that._moveMarkedTableItem("Top");
 			},
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.Low,
+				group: 2
 			})
 		});
 		oMoveToTopButton.setModel(oModel);
@@ -1141,24 +1156,11 @@ sap.ui.define([
 			},
 			press: jQuery.proxy(this._onSwitchButtonShowSelected, this),
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"moveToOverflow": true
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High
 			})
 		});
-		oShowSelectedButton.setModel(oModel);
-
-		var oChartTypeComboBox = new sap.m.ComboBox({
-			selectedKey: {
-				path: '/selectedChartTypeKey'
-			},
-			items: {
-				path: '/availableChartTypes',
-				template: new sap.ui.core.Item({
-					key: "{key}",
-					text: "{text}"
-				})
-			}
-		});
-		oChartTypeComboBox.setModel(oModel);
+		oShowSelectedButton.setModel(oModel);		
 
 		var iLiveChangeTimer = 0;
 		var oSearchField = new SearchField(this.getId() + "-searchField", {
@@ -1177,15 +1179,32 @@ sap.ui.define([
 			// execute the standard search
 			search: jQuery.proxy(this._onExecuteSearch, this),
 			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"minWidth": "12.5rem",
-				"maxWidth": "23.077rem",
-				"shrinkable": true,
-				"moveToOverflow": false,
-				"stayInOverflow": false
-
+				minWidth: "12.5rem",
+				maxWidth: "23.077rem",
+				shrinkable: true,
+				moveToOverflow: true,
+				priority: sap.m.OverflowToolbarPriority.High
 			})
 		});
 
+		var oChartTypeComboBox = new sap.m.ComboBox({
+			selectedKey: {
+				path: '/selectedChartTypeKey'
+			},
+			items: {
+				path: '/availableChartTypes',
+				template: new sap.ui.core.Item({
+					key: "{key}",
+					text: "{text}"
+				})
+			},
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				moveToOverflow: false,
+				stayInOverflow: false
+			})
+		});
+		oChartTypeComboBox.setModel(oModel);
+		
 		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
 			active: true,
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
@@ -1232,8 +1251,8 @@ sap.ui.define([
 		var aVisibleTableItems = this._getVisibleTableItems();
 
 		// Value in search field has been changed...
-		oData.isMoveUpButtonEnabled = aVisibleTableItems.indexOf(oData.markedTableItem) > -1 && oData.indexOfMarkedTableItem > 0 && bIsSearchActive === false;
-		oData.isMoveDownButtonEnabled = aVisibleTableItems.indexOf(oData.markedTableItem) > -1 && oData.indexOfMarkedTableItem < aVisibleTableItems.length - 1 && oData.indexOfMarkedTableItem > -1 && bIsSearchActive === false;
+		oData.isMoveUpButtonEnabled = aVisibleTableItems.indexOf(oData.markedTableItem) > -1 && oData.indexOfMarkedTableItem > 0;
+		oData.isMoveDownButtonEnabled = aVisibleTableItems.indexOf(oData.markedTableItem) > -1 && oData.indexOfMarkedTableItem < aVisibleTableItems.length - 1 && oData.indexOfMarkedTableItem > -1;
 
 		// Switch off the "Select all (n/m)" checkbox if search
 		var oTableCB = sap.ui.getCore().byId(this._oTable.getId() + '-sa');
