@@ -107,9 +107,11 @@ sap.ui.define([
 			isMoveDownButtonEnabled: false,
 			isMoveUpButtonEnabled: false,
 			showOnlySelectedItems: false,
-			countOfSelectedItems: 0
+			countOfSelectedItems: 0,
+			countOfItems: 0
 		});
 		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+		oModel.setSizeLimit(1000);
 		this.setModel(oModel, "$sapmP13nDimMeasurePanel");
 
 		this.setType(sap.m.P13nPanelType.dimeasure);
@@ -240,7 +242,6 @@ sap.ui.define([
 				oModelItem.visible = true;
 			}
 		});
-
 		oModel.refresh();
 	};
 
@@ -283,7 +284,6 @@ sap.ui.define([
 
 		// Synchronize dimMeasureItems and items
 		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
-
 			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
 			if (!oModelItem || this._isDimMeasureItemEqualToModelItem(oDimMeasureItem, oModelItem)) {
 				return;
@@ -293,10 +293,8 @@ sap.ui.define([
 			oModelItem.persistentIndex = oDimMeasureItem.getIndex();
 			oModelItem.persistentSelected = oDimMeasureItem.getVisible();
 			oModelItem.role = oDimMeasureItem.getRole();
-
 			// Sort the table items only by persistentIndex
 			this._sortModelItemsByPersistentIndex(oData.items);
-
 			// Re-Index only the tableIndex
 			this._reindexModelItemsByTableIndex(oData);
 		}, this);
@@ -322,7 +320,8 @@ sap.ui.define([
 	P13nDimMeasurePanel.prototype.getOkPayload = function() {
 		var oChanges = this._syncModel2Panel();
 		return {
-			// We have to return dimMeasureItems as of the fact that new created or deleted dimMeasureItems are not updated in the model via list binding.
+			// We have to return dimMeasureItems as of the fact that new created or deleted dimMeasureItems are not updated in the model via list
+			// binding.
 			dimMeasureItems: this.getDimMeasureItems(),
 			chartTypeChanged: oChanges.chartTypeChanged,
 			dimMeasureItemsChanged: oChanges.dimMeasureItemsChanged
@@ -397,7 +396,6 @@ sap.ui.define([
 		this.setProperty("chartTypeKey", sChartTypeKey);
 		// Update model in order to notify the chartTypeKey to ComboBox control
 		oModel.getData().selectedChartTypeKey = sChartTypeKey;
-		oModel.refresh();
 		return this;
 	};
 
@@ -410,7 +408,6 @@ sap.ui.define([
 			key: oItem.getKey(),
 			text: oItem.getText()
 		});
-		oModel.refresh();
 		return this;
 	};
 
@@ -422,7 +419,6 @@ sap.ui.define([
 			key: oItem.getKey(),
 			text: oItem.getText()
 		});
-		oModel.refresh();
 		return this;
 	};
 
@@ -431,7 +427,6 @@ sap.ui.define([
 		if (iIndex > -1) {
 			var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 			oModel.getData().availableChartTypes.splice(iIndex, 1);
-			oModel.refresh();
 		}
 		oItem = this.removeAggregation("availableChartTypes", oItem);
 		return oItem;
@@ -441,7 +436,6 @@ sap.ui.define([
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 		var aItems = this.removeAllAggregation("availableChartTypes");
 		oModel.getData().availableChartTypes = [];
-		oModel.refresh();
 		return aItems;
 	};
 
@@ -449,7 +443,6 @@ sap.ui.define([
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 		this.destroyAggregation("availableChartTypes");
 		oModel.getData().availableChartTypes = [];
-		oModel.refresh();
 		return this;
 	};
 
@@ -466,7 +459,6 @@ sap.ui.define([
 		this._sortModelItemsByPersistentIndex(oData.items);
 		// Re-Index the tableIndex
 		this._reindexModelItemsByTableIndex(oData);
-		oModel.refresh();
 		return this;
 	};
 
@@ -481,7 +473,6 @@ sap.ui.define([
 		this._sortModelItemsByPersistentIndex(oData.items);
 		// Re-Index the tableIndex
 		this._reindexModelItemsByTableIndex(oData);
-		oModel.refresh();
 		return this;
 	};
 
@@ -497,7 +488,6 @@ sap.ui.define([
 			this._sortModelItemsByPersistentIndex(oData.items);
 			// Re-Index the tableIndex
 			this._reindexModelItemsByTableIndex(oData);
-			oModel.refresh();
 		}
 		oItem = this.removeAggregation("items", oItem);
 		return oItem;
@@ -508,7 +498,6 @@ sap.ui.define([
 		var aItems = this.removeAllAggregation("items");
 		// Remove items data from model
 		oModel.getData().items = [];
-		oModel.refresh();
 		return aItems;
 	};
 
@@ -517,7 +506,6 @@ sap.ui.define([
 		this.destroyAggregation("items");
 		// Remove items data from model
 		oModel.getData().items = [];
-		oModel.refresh();
 		return this;
 	};
 
@@ -540,8 +528,6 @@ sap.ui.define([
 		this._sortModelItemsByPersistentIndex(oData.items);
 		// Re-Index only the tableIndex
 		this._reindexModelItemsByTableIndex(oData);
-		oModel.refresh();
-
 		return this;
 	};
 
@@ -555,15 +541,13 @@ sap.ui.define([
 			return;
 		}
 		// Take over dimMeasureItem data
-		oModelItem.persistentIndex =  oDimMeasureItem.getIndex();
+		oModelItem.persistentIndex = oDimMeasureItem.getIndex();
 		oModelItem.persistentSelected = oDimMeasureItem.getVisible();
 		oModelItem.role = oDimMeasureItem.getRole();
 		// Sort the table only by persistentIndex
 		this._sortModelItemsByPersistentIndex(oData.items);
 		// Re-Index only the tableIndex
 		this._reindexModelItemsByTableIndex(oData);
-		oModel.refresh();
-
 		return this;
 	};
 
@@ -577,17 +561,13 @@ sap.ui.define([
 			return;
 		}
 		// Remove dimMeasureItem data
-		oModelItem.persistentIndex  = -1;
+		oModelItem.persistentIndex = -1;
 		oModelItem.persistentSelected = undefined;
 		oModelItem.role = undefined;
-
 		// Sort the table items when the dimMeasureItem has been removed programmatically
 		this._sortModelItemsByPersistentIndex(oData.items);
-
 		// Re-Index only tableIndex, keep persistentIndex given by dimMeasureItems
 		this._reindexModelItemsByTableIndex(oData);
-		oModel.refresh();
-
 		return oDimMeasureItem;
 	};
 
@@ -601,18 +581,14 @@ sap.ui.define([
 			if (!oModelItem) {
 				return;
 			}
-			oModelItem.persistentIndex  = -1;
+			oModelItem.persistentIndex = -1;
 			oModelItem.persistentSelected = undefined;
 			oModelItem.role = undefined;
 		}, this);
-
 		// Sort the table items when the dimMeasureItem has been removed programmatically
 		this._sortModelItemsByPersistentIndex(oData.items);
-
 		// Re-Index only tableIndex, keep persistentIndex given by dimMeasureItems
 		this._reindexModelItemsByTableIndex(oData);
-		oModel.refresh();
-
 		var aDimMeasureItems = this.removeAllAggregation("dimMeasureItems");
 		return aDimMeasureItems;
 	};
@@ -627,18 +603,14 @@ sap.ui.define([
 			if (!oModelItem) {
 				return;
 			}
-			oModelItem.persistentIndex  = -1;
+			oModelItem.persistentIndex = -1;
 			oModelItem.persistentSelected = undefined;
 			oModelItem.role = undefined;
 		}, this);
-
 		// Sort the table items when the dimMeasureItem has been removed programmatically
 		this._sortModelItemsByPersistentIndex(oData.items);
-
 		// Re-Index only tableIndex, keep persistentIndex given by dimMeasureItems
 		this._reindexModelItemsByTableIndex(oData);
-		oModel.refresh();
-
 		this.destroyAggregation("dimMeasureItems");
 		return this;
 	};
@@ -685,7 +657,7 @@ sap.ui.define([
 			tooltip: oItem.getTooltip(),
 			aggregationRole: oItem.getAggregationRole(),
 			availableRoleTypes: fGetAvailableRoleTypes(),
-			
+
 			// default value
 			persistentIndex: -1,
 			persistentSelected: undefined,
@@ -695,7 +667,6 @@ sap.ui.define([
 		};
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 		oModel.getData().items.splice(iIndex, 0, oModelItem);
-		oModel.refresh();
 	};
 
 	/**
@@ -910,6 +881,7 @@ sap.ui.define([
 	P13nDimMeasurePanel.prototype._reindexModelItemsByPersistentIndexAndTableIndex = function(oData) {
 		var iPersistentIndex = -1;
 		oData.countOfSelectedItems = 0;
+		oData.countOfItems = 0;
 		oData.items.forEach(function(oModelItem, iTableIndex) {
 			oModelItem.persistentIndex = -1;
 			if (oModelItem.persistentSelected) {
@@ -918,6 +890,7 @@ sap.ui.define([
 				oModelItem.persistentIndex = iPersistentIndex;
 			}
 			oModelItem.tableIndex = iTableIndex;
+			oData.countOfItems++;
 		});
 	};
 
@@ -942,8 +915,10 @@ sap.ui.define([
 	 */
 	P13nDimMeasurePanel.prototype._reindexModelItemsByTableIndex = function(oData) {
 		oData.countOfSelectedItems = 0;
+		oData.countOfItems = 0;
 		oData.items.forEach(function(oModelItem, iTableIndex) {
 			oModelItem.tableIndex = iTableIndex;
+			oData.countOfItems++;
 			if (oModelItem.persistentSelected) {
 				oData.countOfSelectedItems++;
 			}
@@ -1018,10 +993,16 @@ sap.ui.define([
 				new sap.m.Column({
 					header: new sap.m.Text({
 						text: {
-							path: '/countOfSelectedItems',
-							formatter: function(iCountOfSelectedItems) {
+							parts: [
+								{
+									path: '/countOfSelectedItems'
+								}, {
+									path: '/countOfItems'
+								}
+							],
+							formatter: function(iCountOfSelectedItems, iCountOfItems) {
 								return that._oRb.getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [
-									iCountOfSelectedItems, that._oTable.getItems().length
+									iCountOfSelectedItems, iCountOfItems
 								]);
 							}
 						}
