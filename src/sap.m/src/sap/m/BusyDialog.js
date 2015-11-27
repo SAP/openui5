@@ -109,7 +109,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			//create the dialog
 			this._oDialog = new sap.m.Dialog(this.getId() + '-Dialog', {
 				content: this._busyIndicator,
-				showHeader: false
+				showHeader: false,
+				initialFocus: this._busyIndicator
 			}).addStyleClass('sapMBusyDialog');
 
 			this._oDialog.addEventDelegate({
