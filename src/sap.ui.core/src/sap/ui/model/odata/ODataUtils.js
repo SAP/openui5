@@ -410,7 +410,11 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				sValue = "'" + String(vValue).replace(/'/g, "''") + "'";
 				break;
 			case "Edm.Time":
-				sValue = "time'" + vValue + "'";
+				if (typeof vValue === "object") {
+					sValue = this.oTimeFormat.format(new Date(vValue.ms), true);
+				} else {
+					sValue = "time'" + vValue + "'";
+				}
 				break;
 			case "Edm.DateTime":
 				sValue = this.oDateTimeFormat.format(new Date(vValue), true);
