@@ -105,6 +105,7 @@ sap.ui.define([
 	ABHelper.prototype._buildAnchorBarButton = function (oSectionBase, bIsSection) {
 
 		var oButtonClone = null,
+			oObjectPageLayout = this.getObjectPageLayout(),
 			oButton,
 			oSectionBindingInfo,
 			sModelName,
@@ -147,7 +148,7 @@ sap.ui.define([
 			}
 
 			//update the section info
-			this.getObjectPageLayout()._oSectionInfo[oSectionBase.getId()].buttonId = oButtonClone.getId();
+			oObjectPageLayout._oSectionInfo[oSectionBase.getId()].buttonId = oButtonClone.getId();
 
 			//the anchorBar needs to know the sectionId for automatic horizontal scrolling
 			oButtonClone.addCustomData(new CustomData({
@@ -176,9 +177,11 @@ sap.ui.define([
 					value: true
 				}));
 
-				// Add arrow icon-down in order to indicate that on click will open popover
-				oButtonClone.setIcon(IconPool.getIconURI("slim-arrow-down"));
-				oButtonClone.setIconFirst(false);
+				if (oObjectPageLayout.getShowAnchorBarPopover()) {
+					// Add arrow icon-down in order to indicate that on click will open popover
+					oButtonClone.setIcon(IconPool.getIconURI("slim-arrow-down"));
+					oButtonClone.setIconFirst(false);
+				}
 			}
 		}
 
