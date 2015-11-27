@@ -83,11 +83,9 @@ sap.ui.define([
 				oModel = oSalesOrderContext.getModel(),
 				oView = this.getView();
 
-			oModel.read(oSalesOrderContext.getPath() + "/SalesOrderID").then(function (oValue) {
-				// /SalesOrderList('050001110')
+			oModel.requestCanonicalPath(oSalesOrderContext).then(function (sCanonicalPath) {
 				oView.byId("SalesOrderForm").bindElement({
-					//TODO path computation should be possible via API like requestCanonicalUrl
-					path : "/SalesOrderList('" + oValue.value + "')",
+					path : sCanonicalPath,
 					parameters: {
 						"$expand" : "SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP"
 							+ "($expand=BP_2_CONTACT)))"
