@@ -529,14 +529,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 							bRender = bRender || (oRowRect.width !== oPrevRect.width) && (oRowRect.height !== oPrevRect.height);
 						}
 
-						// if this sould be the initial rendering -> do it
+						// if this should be the initial rendering -> do it
 						bRender = bRender || (typeof (bInitial) === "boolean" && bInitial);
 
 						if (this._bLayoutDataChanged || bRender) {
-							this._oDomRef.innerHTML = "";
+
+                            //in IE when setting the innerHTML property to "" the changes do not take effect correctly and all the children are gone
+                            if (sap.ui.Device.browser.internet_explorer){
+                                jQuery(this._oDomRef).empty();
+                            } else {
+                                this._oDomRef.innerHTML = "";
+                            }
+
 							// reset this to be clean for next check interval
 							this._bLayoutDataChanged = false;
-
 							this.renderContent(oTargetWrapping, iInnerWidth);
 						}
 					}
