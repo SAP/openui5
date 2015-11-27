@@ -970,6 +970,24 @@
 				statusLabel.setText(text);
 			}
 
+			var dialogWithOneHundredPercentHeightContent = new sap.m.Dialog('DialogWithTallContent', {
+				title: '100% height content - verticalScrolling: false',
+				content: [
+					new sap.ui.core.HTML({content: '<iframe url="https://w3c.org/" style="height: 100%; width: 100%;"></iframe>'})
+				],
+				contentHeight: "50%",
+				//verticalScrolling should be false so the content will be able to take the heitgt
+				verticalScrolling: false,
+				buttons: [
+					new sap.m.Button({
+						text: "close",
+						press: function() {
+							dialogWithOneHundredPercentHeightContent.close();
+						}
+					})
+				]
+			});
+
 			var dialogWithManyButtons = new sap.m.Dialog('dialogWithManyButtons', {
 				title: 'DialogWithManyButtons',
 				content: [
@@ -1324,6 +1342,8 @@
 						}
 					}),
 
+					new sap.ui.core.HTML({content: "<br/>"}),
+
 					new sap.m.Button({
 						text: "Begin and End buttons with long text",
 						width: _buttonWidth,
@@ -1345,6 +1365,14 @@
 						width: _buttonWidth,
 						press: function () {
 							dragDialogWithMultipleHeaders.open();
+						}
+					}),
+
+					new sap.m.Button({
+						text: "100% Height Content",
+						width: _buttonWidth,
+						press: function () {
+							dialogWithOneHundredPercentHeightContent.open();
 						}
 					})
 				]
