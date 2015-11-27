@@ -989,7 +989,7 @@ sap.ui.define([
 
 		this.iScreenHeight = this.$().height();
 
-		if (!this._bHContentAlwaysExpanded) {
+		if (this.iHeaderContentHeight && !this._bHContentAlwaysExpanded) {
 			iHeaderGap = this.iHeaderTitleHeightStickied - this.iHeaderTitleHeight;
 		}
 
@@ -1346,9 +1346,14 @@ sap.ui.define([
 		}
 
 		var iScrollPageBottom = iScrollTop + iPageHeight,                 //the bottom limit
-			iExpandedHeights = this.iStickyHeaderContentHeight + this.iHeaderTitleHeight + this.iAnchorBarHeight + this._$contentContainer.height() - this.iScreenHeight,
-			iMin = this._bHContentAlwaysExpanded ? iExpandedHeights : this._$contentContainer.height() - this.iScreenHeight, // scroll limit
+			iMin = this._$contentContainer.height() - this.iScreenHeight, // scroll limit
 			sClosestId;
+
+		if (this._bHContentAlwaysExpanded) {
+			iMin += this.iStickyHeaderContentHeight + this.iHeaderTitleHeight + this.iAnchorBarHeight;
+		} else if (!this.iHeaderContentHeight) {
+			iMin += this.iHeaderTitleHeightStickied;
+		}
 
 		// find the closest section
 		jQuery.each(this._oSectionInfo, jQuery.proxy(function (sId, oInfo) {
@@ -1582,7 +1587,9 @@ sap.ui.define([
 
 			//adjust dom element directly depending on the adjusted height
 			// Adjust wrapper top position
-			this._$opWrapper.css("padding-top", this.iHeaderTitleHeight);
+			var iPadding = this.iHeaderContentHeight ? this.iHeaderTitleHeight : this.iHeaderTitleHeightStickied; // if no header content, the top padding has to be larger
+			// so that the static header does not overlap the beginning of the first section
+			this._$opWrapper.css("padding-top", iPadding);
 			this._adjustHeaderBackgroundSize();
 
 			jQuery.sap.log.info("ObjectPageLayout :: adjustHeaderHeight", "headerTitleHeight: " + this.iHeaderTitleHeight + " - headerTitleStickiedHeight: " + this.iHeaderTitleHeightStickied + " - headerContentHeight: " + this.iHeaderContentHeight);
