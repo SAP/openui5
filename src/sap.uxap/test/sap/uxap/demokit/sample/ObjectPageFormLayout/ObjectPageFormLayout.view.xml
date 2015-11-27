@@ -11,12 +11,13 @@
 		   controllerName="sap.uxap.sample.ObjectPageFormLayout.ObjectPageFormLayout"
 		   height="100%">
 
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" showTitleInHeaderContent="true">
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  objectTitle="Denise Smith"
 							  objectImageShape="Circle"
 							  objectImageAlt="Denise Smith"
+							  isObjectIconAlwaysVisible="true"
 							  objectSubtitle="Senior UI Developer">
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
@@ -33,15 +34,14 @@
 			<layout:VerticalLayout>
 				<m:Link text="+33 6 4512 5158"/>
 				<m:Link text="DeniseSmith@sap.com"/>
+				<layout:HorizontalLayout>
+					<m:Image src="./test-resources/sap/uxap/images/linkedin.png"></m:Image>
+					<m:Image src="./test-resources/sap/uxap/images/Twitter.png"></m:Image>
+				</layout:HorizontalLayout>
 			</layout:VerticalLayout>
 
-			<layout:HorizontalLayout>
-				<m:Image src="./test-resources/sap/uxap/images/linkedin.png"></m:Image>
-				<m:Image src="./test-resources/sap/uxap/images/Twitter.png"></m:Image>
-			</layout:HorizontalLayout>
-
 			<layout:VerticalLayout>
-				<m:Label text="Hello! I am Tim and I use UxAP"/>
+				<m:Label text="Hello! I am Denise and I use UxAP"/>
 				<m:VBox height="63px">
 					<m:Label text="Achieved goals"/>
 					<m:ProgressIndicator
