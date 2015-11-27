@@ -52,21 +52,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				/**
 				 * List of items with key and value that can be sorted over (e.g. a list of columns for a table).
+				 * @since 1.16
 				 */
 				sortItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "sortItem", bindable : "bindable"},
 
 				/**
 				 * List of items with key and value that can be grouped on (e.g. a list of columns for a table).
+				 * @since 1.16
 				 */
 				groupItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "groupItem", bindable : "bindable"},
 
 				/**
 				 * List of items with key and value that can be filtered on (e.g. a list of columns for a table). A filterItem is associated with one or more detail filters.
+				 * @since 1.16
 				 */
 				filterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "filterItem", bindable : "bindable"},
 
 				/**
 				 * List of preset filter items that allow the selection of more complex or custom filters. These entries are displayed at the top of the filter tab.
+				 * @since 1.16
 				 */
 				presetFilterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "presetFilterItem", bindable : "bindable"}
 			},
