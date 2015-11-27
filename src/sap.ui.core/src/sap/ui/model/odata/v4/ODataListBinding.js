@@ -136,7 +136,8 @@ sap.ui.define([
 				that.iMaxLength = Math.min(iStart + iResultLength, that.iMaxLength);
 				if (that.aContexts.length > that.iMaxLength) {
 					// delete all contexts after iMaxLength
-					that.aContexts.splice(that.iMaxLength, that.aContexts.length - that.iMaxLength);
+					that.aContexts.splice(that.iMaxLength,
+						that.aContexts.length - that.iMaxLength);
 				}
 			}
 			// some controls use this flag instead of calling isLengthFinal
@@ -161,7 +162,7 @@ sap.ui.define([
 			if (oContext) { // nested list binding
 				oModel.read(sResolvedPath, true)
 					.then(createContexts.bind(undefined, getDependentPath));
-			}  else { // absolute path
+			} else { // absolute path
 				sUrl = oModel.sServiceUrl + sResolvedPath.slice(1);
 				if (!this.oCache) {
 					mParameters = oModel.mUriParameters;
@@ -196,8 +197,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if the length has been determined by the data returned from server.
-	 * If the length is a client side estimation <code>false</code> is returned.
+	 * Returns <code>true</code> if the length has been determined by the data returned from
+	 * server. If the length is a client side estimation <code>false</code> is returned.
 	 *
 	 * @return {boolean}
 	 *   <code>true</true> if the length is determined by server side data
@@ -259,6 +260,21 @@ sap.ui.define([
 				fnResolve(oResult);
 			}, reject);
 		});
+	};
+
+	/**
+	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
+	 * control, that new data is available even if the data has not changed. Same behavior as
+	 * <code>bForceUpdate = true</code> in v2.
+	 *
+	 * @public
+	 */
+	ODataListBinding.prototype.refresh = function () {
+		this.oCache =  undefined;
+		this.aContexts = [];
+		this.iMaxLength = Infinity;
+		this.bLengthFinal = false;
+		this._fireRefresh({reason: ChangeReason.Refresh});
 	};
 
 	/**

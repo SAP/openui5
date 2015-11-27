@@ -50,8 +50,7 @@ sap.ui.define([
 						: {source : "metadata.xml"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=100"
 						: {source : "BusinessPartnerList.json"},
-					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?\
-$expand=SO_2_BP&$skip=0&$top=5"
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_BP&$skip=0&$top=5"
 						: {source : "SalesOrderList.json"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList('0500001110')"
 						: {source : "SalesOrderList_0500001110.json"},
@@ -62,7 +61,20 @@ $expand=SO_2_BP&$skip=0&$top=5"
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList('0500001113')"
 						: {source : "SalesOrderList_0500001113.json"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList('0500001114')"
-						: {source : "SalesOrderList_0500001114.json"}
+						: {source : "SalesOrderList_0500001114.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$skip=0&$top=5"
+						: {source : "SalesOrderList.json"},
+					// TODO enhance TestUtils to support also regular expressions as URLs
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$skip=0&$top=10"
+						: {source : "SalesOrderList.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$skip=0&$top=15"
+						: {source : "SalesOrderList.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$skip=0&$top=20"
+						: {source : "SalesOrderList.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$skip=0&$top=25"
+						: {source : "SalesOrderList.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$skip=20&$top=5"
+						: {source : "SalesOrderListNoMoreData.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data");
 			}
 

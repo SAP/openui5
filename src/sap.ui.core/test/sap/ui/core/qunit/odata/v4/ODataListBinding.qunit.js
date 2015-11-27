@@ -718,12 +718,50 @@ sap.ui.require([
 				});
 			});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh", function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			done = assert.async(),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oListBindingMock = this.oSandbox.mock(oListBinding);
+
+		// change event during getContext
+		oListBindingMock.expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+		// refresh event during refresh
+		oListBindingMock.expects("_fireRefresh")
+			.withExactArgs({reason : ChangeReason.Refresh});
+		oCacheMock.expects("read").withExactArgs(0, 10).returns(createResult(9));
+
+		assert.strictEqual(oListBinding.oCache, undefined);
+		assert.deepEqual(oListBinding.aContexts, []);
+		assert.strictEqual(oListBinding.iMaxLength, Infinity);
+		assert.strictEqual(oListBinding.isLengthFinal(), false);
+		oListBinding.getContexts(0, 10);
+
+		setTimeout(function () {
+			assert.strictEqual(oListBinding.iMaxLength, 9);
+			assert.strictEqual(oListBinding.isLengthFinal(), true);
+
+			//code under test
+			oListBinding.refresh();
+
+			assert.strictEqual(oListBinding.oCache, undefined);
+			assert.deepEqual(oListBinding.aContexts, []);
+			assert.strictEqual(oListBinding.iMaxLength, Infinity);
+			assert.strictEqual(oListBinding.isLengthFinal(), false);
+			done();
+		}, 10); //wait until read is finished
+
+	});
 });
+//TODO delegate the actual refresh to the Cache instead of deleting it to force a new read from
+//the backend
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
 //The implementation of getContexts needs to provide next to the resulting context array a diff
 //array with information which entry has been inserted or deleted (see jQuery.sap.arrayDiff and
 //sap.m.GrowingEnablement)
-//TODO refresh, reset the list binding
 //TODO jsdoc: {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} generates no link as
 //  there is no jsdoc for v4.ODataModel
 //TODO lists within lists for deferred navigation or structural properties
@@ -739,3 +777,4 @@ sap.ui.require([
 //TODO custom headers for read(), e.g. "X-CSRF-Token": "Fetch"
 
 //TODO integration: 2 entity sets with same $expand, but different $select
+//TDOO support suspend/resume

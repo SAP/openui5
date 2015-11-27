@@ -74,6 +74,10 @@ sap.ui.define([
 			);
 		},
 
+		onRefresh : function (oEvent) {
+			this.getView().byId("SalesOrders").getBinding("items").refresh();
+		},
+
 		onSalesOrdersSelect : function (oEvent) {
 			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
 				oModel = oSalesOrderContext.getModel(),
