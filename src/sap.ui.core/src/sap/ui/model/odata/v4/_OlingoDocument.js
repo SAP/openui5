@@ -66,9 +66,9 @@ sap.ui.define([
 		findComplexType: function (oDocument, sQualifiedName) {
 			var i = sQualifiedName.lastIndexOf("."),
 			oResult,
-			sSchemaName = sQualifiedName.substring(0, i),
+			sSchemaName = sQualifiedName.slice(0, i),
 			oSchema = Helper.findInArray(oDocument.dataServices.schema, "namespace", sSchemaName),
-			sTypeName = sQualifiedName.substring(i + 1);
+			sTypeName = sQualifiedName.slice(i + 1);
 
 			if (oSchema) {
 				oResult = Helper.findInArray(oSchema.complexType, "name", sTypeName);
@@ -95,10 +95,10 @@ sap.ui.define([
 		findEntityType : function (oDocument, sQualifiedName) {
 			var i = sQualifiedName.lastIndexOf("."),
 				oResult,
-				sSchemaName = sQualifiedName.substring(0, i),
+				sSchemaName = sQualifiedName.slice(0, i),
 				oSchema = Helper.findInArray(oDocument.dataServices.schema, "namespace",
 					sSchemaName),
-				sTypeName = sQualifiedName.substring(i + 1);
+				sTypeName = sQualifiedName.slice(i + 1);
 
 			if (oSchema) {
 				oResult = Helper.findInArray(oSchema.entityType, "name", sTypeName);
