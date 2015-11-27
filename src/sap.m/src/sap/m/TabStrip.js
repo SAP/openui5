@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		TabStrip.prototype.init = function () {
 			this._bDoScroll             = !sap.ui.Device.system.phone;
 			this._bRtl                  = sap.ui.getCore().getConfiguration().getRTL();
-			this._iCurrentScrollLeft    = null;
+			this._iCurrentScrollLeft    = 0;
 			this._iMaxOffsetLeft        = null;
 			this._scrollable            = null;
 			this._oSelectedTab          = null;
