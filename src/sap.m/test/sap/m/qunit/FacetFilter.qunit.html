@@ -14,13 +14,15 @@
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript">
 	
 	
 //	if(navigator.userAgent.indexOf("MSIE") === -1) {
-		
+
 	
 	module("Control Design");
 		
@@ -2087,7 +2089,7 @@
 					equal(getAddFacetCtrl(oFF).$().find(".sapUiIcon").attr("data-sap-ui-icon-content").charCodeAt(0), 57430,
 							"The add icon should be the add-filter icon font.");
 
-					// Personalization, remove facet icons 
+					// Personalization, remove facet icons
 					ok(getRemoveIconCtrl(oFF, 0).getDomRef(), "Facet filter remove icon should be rendered");
 					ok(getRemoveIconCtrl(oFF, 1).getDomRef(), "Facet filter remove icon should be rendered");
 					equal(getRemoveIconCtrl(oFF, 0).$().attr("data-sap-ui-icon-content").charCodeAt(0), 57799,
@@ -2097,8 +2099,8 @@
 							"The remove icon should be the sys-cancel icon font.");
 					ok(getRemoveIconCtrl(oFF, 1).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should be hidden.");
 				}
-				
-				
+
+
 			};
 
 			fnTestSimple(oFFSimple);
@@ -2119,7 +2121,6 @@
 			sap.ui.getCore().applyChanges();
 
 			var fnTestLight = function(oFF) {
-									
 				var oSummaryBar = oFF.getAggregation("summaryBar");
 				ok(oSummaryBar.getDomRef(), "Summary bar should be rendered");
 				ok(oSummaryBar.getActive(), "Summary bar should be active when type is Light");
@@ -2129,56 +2130,76 @@
 				ok(oSummaryBarText.getTooltip(), "There should be tooltip for the text in the summary bar");
 
 		        testResetInSummaryBar(oFF, true);
-		      
+
 		        oFF.setShowReset(false);
 		  		testResetInSummaryBar(oFF, false);
 		  		};
 			fnTestLight(oFFLight);
-			
 
-			// Switch from simple to light		
+
+			// Switch from simple to light
 			oFFSimple.setType(sap.m.FacetFilterType.Light);
 			sap.ui.getCore().applyChanges();
 			fnTestLight(oFFSimple);
 
-			// Switch from light to simple		
+			// Switch from light to simple
 			oFFLight.setType(sap.m.FacetFilterType.Simple);
 			sap.ui.getCore().applyChanges();
 			fnTestSimple(oFFLight);
 
 			oFFSimple.destroy();
 			oFFLight.destroy();
-			
+
 			// If running on the phone then test behavior if type is explicitly set to Simple
 			/*  if (sap.ui.Device.system.phone) {
-				
+
 				var oFFPhone = new sap.m.FacetFilter({
 					type : sap.m.FacetFilterType.Simple
 				});
 				oFFPhone.setShowPersonalization(true);
-				
+
 				oFFPhone.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				fnTestLight(oFFPhone); 
+				fnTestLight(oFFPhone);
 			 }  */
-			
+
 			 if (sap.ui.Device.system.phone) {
-				
+
 				var oFFPhone = new sap.m.FacetFilter();
-					
+
 				oFFPhone.setType(sap.m.FacetFilterType.Light);
 					oSummaryBar.setActive(true);
 				//oFFPhone.setShowPersonalization(true);
-				
+
 				oFFPhone.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				//fnTestLight(oFFPhone); 
-			 
+				//fnTestLight(oFFPhone);
+
 			 }
-			 
+
 		});
-		
-		
+
+
+		asyncTest("FacetFilter.type interval timer", function() {
+			var oFFLight = new sap.m.FacetFilter({
+				type : sap.m.FacetFilterType.Light
+			});
+			var fnCheckOverflowSpy = sinon.spy(oFFLight, "_checkOverflow");
+
+			oFFLight.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function () {
+				strictEqual(fnCheckOverflowSpy.callCount, 0, 'No _checkOverflow should be registered to the central timer in light mode.');
+
+				fnCheckOverflowSpy.restore();
+				start();
+			}.bind(this), 1000)
+
+			oFFLight.destroy();
+			oFFLight = null;
+		});
+
 		asyncTest("FacetFilter.liveSearch", function() {
 
 			var oFF = new sap.m.FacetFilter();
