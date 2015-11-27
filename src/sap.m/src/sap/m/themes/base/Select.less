@@ -82,6 +82,9 @@
 .sapMSltIcon {
 	position: absolute;
 	display: block;
+
+	/* prevent IE to focus the icon (non-focusable element) */
+	pointer-events: none;
 }
 
 .sapMSltAutoAdjustedWidth .sapMSltIcon {
