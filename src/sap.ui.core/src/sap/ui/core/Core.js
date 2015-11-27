@@ -763,7 +763,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 
 			// remove additional css files (ie9 rule limit fix)
-			if ($this.attr("sap-ui-css-count")) {
+			if ($this.attr("data-sap-ui-css-count")) {
 				$this.remove();
 			}
 
@@ -771,7 +771,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName;
 			if ( sHref != this.href ) {
 				this.href = sHref;
-				$this.removeAttr("sap-ui-ready");
+				$this.removeAttr("data-sap-ui-ready");
 			}
 		});
 	};
