@@ -256,19 +256,6 @@ sap.ui.define([], function () {
 		}
 	};
 
-	/**
-	 * Renders the buttons set in the footer of the NotificationListItem.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
-	 * @param {sap.m.Button[]} aButtons The buttons to be rendered in the footer
-	 */
-	NotificationListItemRenderer.renderButtons = function (oRm, oControl, aButtons) {
-		aButtons.forEach(function (button) {
-			oRm.renderControl(button);
-		});
-	};
-
 	return NotificationListItemRenderer;
 
 }, /* bExport= */ true);
