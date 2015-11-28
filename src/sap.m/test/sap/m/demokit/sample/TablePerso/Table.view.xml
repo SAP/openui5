@@ -13,7 +13,11 @@
 				<!--  Add the Personalization button -->
 				<CheckBox text="Enable Personalization Grouping" select="onTableGrouping" />
 				<!--  Add the Personalization button -->
-				<Button icon="sap-icon://action-settings" press="onPersoButtonPressed" />
+				<Button icon="sap-icon://action-settings" press="onPersoButtonPressed" >
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
 			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
