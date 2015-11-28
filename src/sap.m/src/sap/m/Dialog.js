@@ -1328,6 +1328,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				};
 
 				if ((isHeaderClicked(e.target) && this.getDraggable()) || bResize) {
+					that._bDisableRepositioning = true;
+
 					that._$dialog.addClass('sapDialogDisableTransition');
 					//remove the transform translate
 					that._$dialog.addClass('sapMDialogTouched');
