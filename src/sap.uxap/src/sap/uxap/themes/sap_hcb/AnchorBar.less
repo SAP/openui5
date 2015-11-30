@@ -82,6 +82,17 @@ html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 /* OVERVIEW BUTTON IE focus fix */
 html[data-sap-ui-browser^="ie"] {
 	.sapUxAPAnchorBar.sapUxAPAnchorBarOverflow .sapUxAPHierarchicalSelect.sapMSltIconOnly:focus {
-		right: -16px;
+		right: -28px;
+		overflow: visible;
+		&:before {
+			border: 0 none;
+		}
+	}
+}
+
+/* OVERVIEW BUTTON EDGE focus fix */
+html[data-sap-ui-browser^="ed"] {
+	.sapUxAPAnchorBar.sapUxAPAnchorBarOverflow .sapUxAPHierarchicalSelect.sapMSltIconOnly:focus {
+		overflow: visible;
 	}
 }
