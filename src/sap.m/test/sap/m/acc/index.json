@@ -51,6 +51,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
+			"control": "sap.m.FeedContent",
+			"url": "../FeedContent.html",
+			"appComponent" : "CA-UI5-BS-FCW"
+		},
+		{
 			"control": "sap.m.FeedInput",
 			"url": "../FeedInput.html",
 			"appComponent": "CA-UI5-BS-FCW"
@@ -84,11 +89,6 @@
 			"control": "sap.m.Input",
 			"url": "Input.html",
 			"appComponent": "CA-UI5-CTR-WDF"
-		},
-		{
-			"control": "sap.m.JamContent",
-			"url": "../JamContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
 			"control": "sap.m.Label",

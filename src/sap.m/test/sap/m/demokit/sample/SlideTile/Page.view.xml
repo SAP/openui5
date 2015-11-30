@@ -7,10 +7,10 @@
 				<tileContent>
 					<TileContent footer="New Notifications">
 						<content>
-							<JamContent
+							<FeedContent
 								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London"
 								subheader="about 1 minute ago in Computer Market" value="9">
-							</JamContent>
+							</FeedContent>
 						</content>
 					</TileContent>
 				</tileContent>
@@ -21,10 +21,10 @@
 				<tileContent>
 					<TileContent footer="New Notifications">
 						<content>
-							<JamContent
+							<FeedContent
 								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest."
 								subheader="about 1 minute ago in Computer Cluster" value="9999">
-							</JamContent>
+							</FeedContent>
 						</content>
 					</TileContent>
 				</tileContent>
