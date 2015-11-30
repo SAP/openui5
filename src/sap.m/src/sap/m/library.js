@@ -349,6 +349,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @enum {string}
 	 * @public
+	 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code> and/or <code>sap.m.TimePicker</code> controls. 
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.m.DateTimeInputType = {
@@ -356,20 +357,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		/**
 		 * An input control for specifying a date value. The user can select a month, day of the month, and year.
 		 * @public
-		 * @deprecated Since version 1.22.
-		 * Instead, use dedicated sap.m.DatePicker control.
+		 * @deprecated Since version 1.22.0. Instead, use dedicated <code>sap.m.DatePicker</code> control.
 		 */
 		Date : "Date",
 
 		/**
 		 * An input control for specifying a date and time value. The user can select a month, day of the month, year, and time of day.
 		 * @public
+		 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code> and <code>sap.m.TimePicker</code> controls.
 		 */
 		DateTime : "DateTime",
 
 		/**
 		 * An input control for specifying a time value. The user can select the hour, minute, and optionally AM or PM.
 		 * @public
+		 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.TimePicker</code> control.
 		 */
 		Time : "Time"
 

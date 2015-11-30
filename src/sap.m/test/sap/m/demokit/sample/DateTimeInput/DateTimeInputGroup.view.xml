@@ -3,6 +3,11 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
+		<MessageStrip
+		text="Deprecated since version 1.32.8. Instead, dedicated sap.m.DatePicker and/or sap.m.TimePicker controls should be used."
+		type="Warning"
+		class="sapUiSmallMarginTop sapUiSmallMarginBottom"
+		showIcon="true" />
 		<Label text="Date" />
 		<DateTimeInput
 			type="Date"
@@ -18,5 +23,35 @@
 			type="DateTime"
 			placeholder="Enter Date &amp; Time ..."
 			class="sapUiSmallMarginBottom" />
+	</VBox>
+	
+	<VBox class="sapUiSmallMargin">
+		<MessageStrip
+		text="Dedicated sap.m.DatePicker and sap.m.TimePicker usage."
+		type="Success"
+		class="sapUiMediumMarginTop sapUiSmallMarginBottom"
+		showIcon="true" />
+		<Label text="Date" />
+		<DatePicker
+			placeholder="Enter Date ..."
+			class="sapUiSmallMarginBottom" />
+		<Label text="Time" />
+		<TimePicker
+			width="100%"
+			placeholder="Enter Time ..."
+			class="sapUiSmallMarginBottom" />
+		<Label text="Date &amp; Time" />
+		<HBox class="sapUiSmallMarginBottom" >
+			<DatePicker placeholder="Enter Date ...">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</DatePicker>
+			<TimePicker placeholder="Enter Time ..." width="100%">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</TimePicker>
+		</HBox>
 	</VBox>
 </mvc:View>
