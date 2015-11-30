@@ -19,21 +19,22 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			function updateFeedbackContextTextWithLink() {
-				this._oFeedbackContextText.setText("Location: " + this._getCurrentPageRelativeURL() + "\n" + getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
+				this._oFeedbackContextText.setText("Location: " + this._getCurrentPageRelativeURL() + "\n" + this._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
 			}
 
 			function updateFeedbackContextTextNoLink() {
-				this._oFeedbackContextText.setText(getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
+				this._oFeedbackContextText.setText(this._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
 			}
-
-			function getUI5Distribution() {
-				var oVersionInfo = sap.ui.getVersionInfo();
-				var sUI5Distribution = "SAPUI5";
-				if (oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)) {
-					sUI5Distribution = "OpenUI5";
-				}
-				return sUI5Distribution;
+			
+		};
+		
+		FeedbackClient.prototype._getUI5Distribution = function () {
+			var oVersionInfo = sap.ui.getVersionInfo();
+			var sUI5Distribution = "SAPUI5";
+			if (oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)) {
+				sUI5Distribution = "OpenUI5";
 			}
+			return sUI5Distribution;
 		};
 
 		FeedbackClient.prototype._getCurrentPageRelativeURL = function () {
@@ -243,7 +244,7 @@ sap.ui.define(['jquery.sap.global'],
 								"ratings":{
 									"r1": {"value":iRatingValue}
 								},
-							"context": {"page": that._getCurrentPageRelativeURL(), "attr1": sap.ui.version}
+							"context": {"page": that._getCurrentPageRelativeURL(), "attr1": that._getUI5Distribution() + ":" + sap.ui.version}
 							};
 						} else {
 							data = {
@@ -253,7 +254,7 @@ sap.ui.define(['jquery.sap.global'],
 								"ratings":{
 									"r1": {"value":iRatingValue}
 								},
-								"context": {"attr1": sap.ui.getVersionInfo().version}
+								"context": {"attr1": that._getUI5Distribution() + ":" + sap.ui.version}
 							};
 						}
 
