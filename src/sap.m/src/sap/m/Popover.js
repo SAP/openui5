@@ -1279,7 +1279,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				if (bRtl) {
 					iMarginLeft = $parent.offset().left + oPopoverClass.outerWidth($parent[0], false) + this._arrowOffset + iOffsetX;
 				} else {
-					iMarginRight = iDocumentWidth - $parent.offset().left + this._arrowOffset - iOffsetX;
+					iMarginRight = iDocumentWidth - $parent.offset().left + this._arrowOffset + iOffsetX;
 				}
 				break;
 			case sap.m.PlacementType.Right:
@@ -1290,7 +1290,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				}
 				break;
 			case sap.m.PlacementType.Top:
-				iMarginBottom = iDocumentHeight - $parent.offset().top + this._arrowOffset - iOffsetY;
+				iMarginBottom = iDocumentHeight - $parent.offset().top + this._arrowOffset + iOffsetY;
 				break;
 			case sap.m.PlacementType.Bottom:
 				iMarginTop = $parent.offset().top + $parent.outerHeight() + this._arrowOffset + iOffsetY;
