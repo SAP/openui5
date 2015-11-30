@@ -112,6 +112,7 @@
 						template: oTemplate
 					},
 					itemSelect: fnOnItemSelected,
+                    showAddNewButton: true,
 					addNewButtonPress: fnOnAddButtonClick
 				});
 
@@ -131,6 +132,14 @@
 			sap.ui.test.qunit.triggerEvent("tap", oItem.getAggregation('_closeButton').$());
 			this.clock.tick(1000);
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 0, 'Element with name "'+sName+'" is in not in the DOM.');
+
+			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
+					"Opened tabs",
+					"The select button tooltip is correct");
+
+			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('addButton').$()).attr('title'),
+					"Add new tab",
+					"The add button tooltip is correct");
 		});
 
 		test("Deletion prevented", function () {
