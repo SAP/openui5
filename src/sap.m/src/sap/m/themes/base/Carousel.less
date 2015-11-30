@@ -13,6 +13,11 @@
 	-ms-touch-action: pan-y;
 }
 
+//show the left and right arrows when the carousel is focused
+.sapMCrsl:focus .sapMCrslHud a {
+	opacity: 0.3;
+}
+
 .sapMCrsl.sapMCrslLeft {
 	text-align: left;
 }
@@ -26,7 +31,7 @@
 }
 
 .sapMCrsl.sapMCrslFluid.sapMCrslCenter>.sapMCrslInner>*:first-child {
-	margin-left: 0%;
+	margin-left: 0;
 }
 
 .sapMCrslInner {
