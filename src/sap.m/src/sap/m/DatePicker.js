@@ -124,8 +124,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
 			this._oMaxDate = new UniversalDate(9999, 11, 31);
 
-			this._bMobile = !sap.ui.Device.system.desktop;
-
 		};
 
 		DatePicker.prototype.exit = function() {
@@ -288,9 +286,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 			if (jQuery(oEvent.target).hasClass("sapUiIcon")) {
 				_toggleOpen.call(this);
-			} else if (this._bMobile && (!this._oPopup || !this._oPopup.isOpen()) &&
-					this.getEditable() && this.getEnabled()) {
-				_open.call(this);
 			}
 
 		};
