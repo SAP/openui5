@@ -103,250 +103,246 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		}
 	}});
 
-	(function() {
+	var CalenderRowHeader = StandardListItem.extend("CalenderRowHeader", {
 
-		var CalenderRowHeader = StandardListItem.extend("CalenderRowHeader", {
+		metadata : {
 
-			metadata : {
+			associations: {
+				parentRow: { type: "sap.m.PlanningCalendarRow", multiple: false}
+			}
 
-				associations: {
-					parentRow: { type: "sap.m.PlanningCalendarRow", multiple: false}
-				}
+		},
 
-			},
+		setParentRow: function(sId) {
 
-			setParentRow: function(sId) {
+			this.setAssociation("parentRow", sId, true);
 
-				this.setAssociation("parentRow", sId, true);
+			if (!sId) {
+				this._oRow = undefined;
+			} else if (typeof sId == "string") {
+				this._oRow = sap.ui.getCore().byId(sId);
+			} else {
+				this._oRow = sId;
+			}
 
-				if (!sId) {
-					this._oRow = undefined;
-				} else if (typeof sId == "string") {
-					this._oRow = sap.ui.getCore().byId(sId);
-				} else {
-					this._oRow = sId;
-				}
+			return this;
 
-				return this;
+		},
 
-			},
+		renderer: Renderer.extend(StandardListItemRenderer)
 
-			renderer: Renderer.extend(StandardListItemRenderer)
+	});
 
+	/*global CalenderRowHeaderRenderer:true*/
+	CalenderRowHeaderRenderer.openItemTag = function(oRm, oLI) {
+		oRm.write("<div");
+	};
+
+	CalenderRowHeaderRenderer.closeItemTag = function(oRm, oLI) {
+		oRm.write("</div>");
+	};
+
+	CalenderRowHeaderRenderer.renderTabIndex = function(oRm, oLI) {
+	};
+
+	PlanningCalendarRow.prototype.init = function(){
+
+		var oCalendarRowHeader = new CalenderRowHeader(this.getId() + "-Head", {parentRow: this});
+		var oCalendarRow = new sap.ui.unified.CalendarRow(this.getId() + "-CalRow", {
+			checkResize: false,
+			updateCurrentTime: false
 		});
+		oCalendarRow._oPlanningCalendarRow = this;
 
-		/*global CalenderRowHeaderRenderer:true*/
-		CalenderRowHeaderRenderer.openItemTag = function(oRm, oLI) {
-			oRm.write("<div");
-		};
+		oCalendarRow.getAppointments = function() {
 
-		CalenderRowHeaderRenderer.closeItemTag = function(oRm, oLI) {
-			oRm.write("</div>");
-		};
-
-		CalenderRowHeaderRenderer.renderTabIndex = function(oRm, oLI) {
-		};
-
-		PlanningCalendarRow.prototype.init = function(){
-
-			var oCalendarRowHeader = new CalenderRowHeader(this.getId() + "-Head", {parentRow: this});
-			var oCalendarRow = new sap.ui.unified.CalendarRow(this.getId() + "-CalRow", {
-				checkResize: false,
-				updateCurrentTime: false
-				});
-			oCalendarRow._oPlanningCalendarRow = this;
-
-			oCalendarRow.getAppointments = function() {
-
-				if (this._oPlanningCalendarRow) {
-					return this._oPlanningCalendarRow.getAppointments();
-				}else {
-					return [];
-				}
-
-			};
-
-			oCalendarRow.getIntervalHeaders = function() {
-
-				if (this._oPlanningCalendarRow) {
-					return this._oPlanningCalendarRow.getIntervalHeaders();
-				}else {
-					return [];
-				}
-
-			};
-
-			this._oColumnListItem = new sap.m.ColumnListItem(this.getId() + "-CLI", {
-				cells: [ oCalendarRowHeader,
-				         oCalendarRow]
-			});
-
-		};
-
-		PlanningCalendarRow.prototype.exit = function(){
-
-			this._oColumnListItem.destroy();
-			this._oColumnListItem = undefined;
-
-		};
-
-		PlanningCalendarRow.prototype.setTooltip = function(vTooltip){
-
-			this.setAggregation("tooltip", vTooltip, true); // do not invalidate, only real rendered control must be invalidated
-			this._oColumnListItem.getCells()[0].setTooltip(vTooltip);
-
-			return this;
-
-		};
-
-		PlanningCalendarRow.prototype.setTitle = function(sTitle){
-
-			this.setProperty("title", sTitle, true); // do not invalidate, only real rendered control must be invalidated
-			this._oColumnListItem.getCells()[0].setTitle(sTitle);
-
-			return this;
-
-		};
-
-		PlanningCalendarRow.prototype.setText = function(sText){
-
-			this.setProperty("text", sText, true); // do not invalidate, only real rendered control must be invalidated
-			this._oColumnListItem.getCells()[0].setDescription(sText);
-
-			return this;
-
-		};
-
-		PlanningCalendarRow.prototype.setIcon = function(sIcon){
-
-			this.setProperty("icon", sIcon, true); // do not invalidate, only real rendered control must be invalidated
-			this._oColumnListItem.getCells()[0].setIcon(sIcon);
-
-			return this;
-
-		};
-
-		PlanningCalendarRow.prototype.setNonWorkingDays = function(aNonWorkingDays){
-
-			this.setProperty("nonWorkingDays", aNonWorkingDays, true); // do not invalidate, only real rendered control must be invalidated
-			this.getCalendarRow().setNonWorkingDays(aNonWorkingDays);
-
-			return this;
-
-		};
-
-		PlanningCalendarRow.prototype.setNonWorkingHours = function(aNonWorkingHours){
-
-			this.setProperty("nonWorkingHours", aNonWorkingHours, true); // do not invalidate, only real rendered control must be invalidated
-			this.getCalendarRow().setNonWorkingHours(aNonWorkingHours);
-
-			return this;
-
-		};
-
-		PlanningCalendarRow.prototype.invalidate = function(oOrigin) {
-
-			if (!oOrigin || !(oOrigin instanceof sap.ui.unified.CalendarAppointment)) {
-				Element.prototype.invalidate.apply(this, arguments);
-			}else if (this._oColumnListItem) {
-				// Appointment changed -> only invalidate internal CalendarRow (not if ColumnListItem is already destroyed)
-				this.getCalendarRow().invalidate(oOrigin);
+			if (this._oPlanningCalendarRow) {
+				return this._oPlanningCalendarRow.getAppointments();
+			}else {
+				return [];
 			}
 
 		};
 
-		// overwrite removing of appointments because invalidate don't get information about it
-		PlanningCalendarRow.prototype.removeAppointment = function(vObject) {
+		oCalendarRow.getIntervalHeaders = function() {
 
-			var oRemoved = this.removeAggregation("appointments", vObject, true);
-			this.getCalendarRow().invalidate();
-			return oRemoved;
-
-		};
-
-		PlanningCalendarRow.prototype.removeAllAppointments = function() {
-
-			var aRemoved = this.removeAllAggregation("appointments", true);
-			this.getCalendarRow().invalidate();
-			return aRemoved;
+			if (this._oPlanningCalendarRow) {
+				return this._oPlanningCalendarRow.getIntervalHeaders();
+			}else {
+				return [];
+			}
 
 		};
 
-		PlanningCalendarRow.prototype.destroyAppointments = function() {
+		this._oColumnListItem = new sap.m.ColumnListItem(this.getId() + "-CLI", {
+			cells: [ oCalendarRowHeader,
+			         oCalendarRow]
+		});
 
-			var oDestroyed = this.destroyAggregation("appointments", true);
-			this.getCalendarRow().invalidate();
-			return oDestroyed;
+	};
 
-		};
+	PlanningCalendarRow.prototype.exit = function(){
 
-		PlanningCalendarRow.prototype.removeIntervalHeader = function(vObject) {
+		this._oColumnListItem.destroy();
+		this._oColumnListItem = undefined;
 
-			var oRemoved = this.removeAggregation("intervalHeaders", vObject, true);
-			this.getCalendarRow().invalidate();
-			return oRemoved;
+	};
 
-		};
+	PlanningCalendarRow.prototype.setTooltip = function(vTooltip){
 
-		PlanningCalendarRow.prototype.removeAllIntervalHeaders = function() {
+		this.setAggregation("tooltip", vTooltip, true); // do not invalidate, only real rendered control must be invalidated
+		this._oColumnListItem.getCells()[0].setTooltip(vTooltip);
 
-			var aRemoved = this.removeAllAggregation("intervalHeaders", true);
-			this.getCalendarRow().invalidate();
-			return aRemoved;
+		return this;
 
-		};
+	};
 
-		PlanningCalendarRow.prototype.destroyIntervalHeaders = function() {
+	PlanningCalendarRow.prototype.setTitle = function(sTitle){
 
-			var oDestroyed = this.destroyAggregation("intervalHeaders", true);
-			this.getCalendarRow().invalidate();
-			return oDestroyed;
+		this.setProperty("title", sTitle, true); // do not invalidate, only real rendered control must be invalidated
+		this._oColumnListItem.getCells()[0].setTitle(sTitle);
 
-		};
+		return this;
 
-		PlanningCalendarRow.prototype.setSelected = function(bSelected){
+	};
 
-			this.setProperty("selected", bSelected, true);
-			this._oColumnListItem.setSelected(bSelected);
+	PlanningCalendarRow.prototype.setText = function(sText){
 
-			return this;
+		this.setProperty("text", sText, true); // do not invalidate, only real rendered control must be invalidated
+		this._oColumnListItem.getCells()[0].setDescription(sText);
 
-		};
+		return this;
 
-		/**
-		 * A <code>PlanningCalendarRow</code> is rendered inside a <code>sap.m.Table</code> as <code>sap.m.ColumnListItem</code>.
-		 *
-		 * @returns {sap.m.ColumnListItem} <code>sap.m.ColumnListItem</code> that represents <code>PlanningCalendarRow</code> in the table.
-		 * @private
-		 */
-		PlanningCalendarRow.prototype.getColumnListItem = function(){
+	};
 
-			return this._oColumnListItem;
+	PlanningCalendarRow.prototype.setIcon = function(sIcon){
 
-		};
+		this.setProperty("icon", sIcon, true); // do not invalidate, only real rendered control must be invalidated
+		this._oColumnListItem.getCells()[0].setIcon(sIcon);
 
-		/**
-		 * The <code>PlanningCalendarRow</code> appointments are rendered in a <ode>CalendarRow</code> control.
-		 *
-		 * @returns {sap.ui.uinified.CalendarRow} <code>sap.ui.uinified.CalendarRow</code> that renders <code>PlanningCalendarRow</code> appointments.
-		 * @private
-		 */
-		PlanningCalendarRow.prototype.getCalendarRow = function(){
+		return this;
 
-			return this._oColumnListItem.getCells()[1];
+	};
 
-		};
+	PlanningCalendarRow.prototype.setNonWorkingDays = function(aNonWorkingDays){
 
-		PlanningCalendarRow.prototype.applyFocusInfo = function (oFocusInfo) {
+		this.setProperty("nonWorkingDays", aNonWorkingDays, true); // do not invalidate, only real rendered control must be invalidated
+		this.getCalendarRow().setNonWorkingDays(aNonWorkingDays);
 
-			// forward to CalendarRow
-			this.getCalendarRow().applyFocusInfo(oFocusInfo);
+		return this;
 
-			return this;
+	};
 
-		};
+	PlanningCalendarRow.prototype.setNonWorkingHours = function(aNonWorkingHours){
 
-	}());
+		this.setProperty("nonWorkingHours", aNonWorkingHours, true); // do not invalidate, only real rendered control must be invalidated
+		this.getCalendarRow().setNonWorkingHours(aNonWorkingHours);
+
+		return this;
+
+	};
+
+	PlanningCalendarRow.prototype.invalidate = function(oOrigin) {
+
+		if (!oOrigin || !(oOrigin instanceof sap.ui.unified.CalendarAppointment)) {
+			Element.prototype.invalidate.apply(this, arguments);
+		}else if (this._oColumnListItem) {
+			// Appointment changed -> only invalidate internal CalendarRow (not if ColumnListItem is already destroyed)
+			this.getCalendarRow().invalidate(oOrigin);
+		}
+
+	};
+
+	// overwrite removing of appointments because invalidate don't get information about it
+	PlanningCalendarRow.prototype.removeAppointment = function(vObject) {
+
+		var oRemoved = this.removeAggregation("appointments", vObject, true);
+		this.getCalendarRow().invalidate();
+		return oRemoved;
+
+	};
+
+	PlanningCalendarRow.prototype.removeAllAppointments = function() {
+
+		var aRemoved = this.removeAllAggregation("appointments", true);
+		this.getCalendarRow().invalidate();
+		return aRemoved;
+
+	};
+
+	PlanningCalendarRow.prototype.destroyAppointments = function() {
+
+		var oDestroyed = this.destroyAggregation("appointments", true);
+		this.getCalendarRow().invalidate();
+		return oDestroyed;
+
+	};
+
+	PlanningCalendarRow.prototype.removeIntervalHeader = function(vObject) {
+
+		var oRemoved = this.removeAggregation("intervalHeaders", vObject, true);
+		this.getCalendarRow().invalidate();
+		return oRemoved;
+
+	};
+
+	PlanningCalendarRow.prototype.removeAllIntervalHeaders = function() {
+
+		var aRemoved = this.removeAllAggregation("intervalHeaders", true);
+		this.getCalendarRow().invalidate();
+		return aRemoved;
+
+	};
+
+	PlanningCalendarRow.prototype.destroyIntervalHeaders = function() {
+
+		var oDestroyed = this.destroyAggregation("intervalHeaders", true);
+		this.getCalendarRow().invalidate();
+		return oDestroyed;
+
+	};
+
+	PlanningCalendarRow.prototype.setSelected = function(bSelected){
+
+		this.setProperty("selected", bSelected, true);
+		this._oColumnListItem.setSelected(bSelected);
+
+		return this;
+
+	};
+
+	/**
+	 * A <code>PlanningCalendarRow</code> is rendered inside a <code>sap.m.Table</code> as <code>sap.m.ColumnListItem</code>.
+	 *
+	 * @returns {sap.m.ColumnListItem} <code>sap.m.ColumnListItem</code> that represents <code>PlanningCalendarRow</code> in the table.
+	 * @private
+	 */
+	PlanningCalendarRow.prototype.getColumnListItem = function(){
+
+		return this._oColumnListItem;
+
+	};
+
+	/**
+	 * The <code>PlanningCalendarRow</code> appointments are rendered in a <ode>CalendarRow</code> control.
+	 *
+	 * @returns {sap.ui.uinified.CalendarRow} <code>sap.ui.uinified.CalendarRow</code> that renders <code>PlanningCalendarRow</code> appointments.
+	 * @private
+	 */
+	PlanningCalendarRow.prototype.getCalendarRow = function(){
+
+		return this._oColumnListItem.getCells()[1];
+
+	};
+
+	PlanningCalendarRow.prototype.applyFocusInfo = function (oFocusInfo) {
+
+		// forward to CalendarRow
+		this.getCalendarRow().applyFocusInfo(oFocusInfo);
+
+		return this;
+
+	};
 
 	return PlanningCalendarRow;
 
