@@ -723,7 +723,8 @@
 		  "samples": [
 			"sap.m.sample.SearchField",
 			"sap.m.sample.ListSelectionSearch",
-			"sap.m.sample.DialogSearch"
+			"sap.m.sample.DialogSearch",
+			"sap.m.sample.SearchFieldSuggestions"
 		  ]
 		},
 		{
@@ -1648,6 +1649,11 @@
 		  "id": "sap.m.sample.SearchField",
 		  "name": "Search Field",
 		  "description": "Use the Search Field to let the user enter a search string and trigger the search process."
+		},
+		{
+		  "id": "sap.m.sample.SearchFieldSuggestions",
+		  "name": "Search Field - Suggestions",
+		  "description": "Add suggestion capabilities to a basic Search Field."
 		},
 		{
 		  "id": "sap.m.sample.DialogConfirm",
