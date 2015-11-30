@@ -5,7 +5,7 @@
 		   xmlns:html="http://www.w3.org/1999/xhtml"
 		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 		   controllerName="sap.tnt.sample.ToolPage.ToolPage">
-	<tnt:ToolPage id="toolPage" deviceChange="onDeviceChange">
+	<tnt:ToolPage id="toolPage">
 		<tnt:header>
 			<tnt:ToolHeader>
 				<Button id="sideNavigationToggleButton"

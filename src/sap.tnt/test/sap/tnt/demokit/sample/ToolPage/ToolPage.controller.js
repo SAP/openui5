@@ -298,15 +298,6 @@ sap.ui.define([
 			toolPage.setSideExpanded(!toolPage.getSideExpanded());
 		},
 
-		onDeviceChange : function(oEvent) {
-			var viewId = this.getView().getId();
-			var toolPage = sap.ui.getCore().byId(viewId + "--toolPage");
-			var device = oEvent.getParameter('device');
-			var isPhoneOrTablet = device === 'Phone' || device === 'Tablet'
-
-			this._setToggleButtonTooltip(isPhoneOrTablet);
-		},
-
 		_setToggleButtonTooltip : function(bLarge) {
 			var toggleButton = this.getView().byId('sideNavigationToggleButton');
 			if (bLarge) {

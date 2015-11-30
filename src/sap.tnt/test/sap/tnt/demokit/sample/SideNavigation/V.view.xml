@@ -1,10 +1,14 @@
 <mvc:View
+        controllerName="sap.tnt.sample.SideNavigation.V"
         xmlns:mvc="sap.ui.core.mvc"
         xmlns="sap.tnt"
+        xmlns:m="sap.m"
         height="100%"
         class="side-navigation-demo">
-
-    <SideNavigation>
+    <m:Button text="Toggle Collapse/Exapand"
+              icon="sap-icon://menu2"
+              press="onCollapseExapandPress" />
+    <SideNavigation id="sideNavigation">
         <item>
             <NavigationList>
                 <NavigationListItem
@@ -21,7 +25,7 @@
                 </NavigationListItem>
                 <NavigationListItem
                         text="Item 2"
-                        icon="sap-icon://employee">
+                        icon="sap-icon://building">
                     <NavigationListItem text="Sub Item 1">
                     </NavigationListItem>
                     <NavigationListItem text="Sub Item 2">
@@ -36,8 +40,8 @@
         <fixedItem>
             <NavigationList>
                 <NavigationListItem text="Item 1" icon="sap-icon://employee"></NavigationListItem>
-                <NavigationListItem text="Item 2" icon="sap-icon://employee"></NavigationListItem>
-                <NavigationListItem text="Item 3" icon="sap-icon://employee"></NavigationListItem>
+                <NavigationListItem text="Item 2" icon="sap-icon://building"></NavigationListItem>
+                <NavigationListItem text="Item 3" icon="sap-icon://card"></NavigationListItem>
             </NavigationList>
         </fixedItem>
     </SideNavigation>
