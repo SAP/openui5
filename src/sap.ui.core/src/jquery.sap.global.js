@@ -4168,14 +4168,14 @@
 			}
 
 			var fnError = function() {
-				jQuery(oLink).attr("sap-ui-ready", "false").off("error");
+				jQuery(oLink).attr("data-sap-ui-ready", "false").off("error");
 				if (fnErrorCallback) {
 					fnErrorCallback();
 				}
 			};
 
 			var fnLoad = function() {
-				jQuery(oLink).attr("sap-ui-ready", "true").off("load");
+				jQuery(oLink).attr("data-sap-ui-ready", "true").off("load");
 				if (fnLoadCallback) {
 					fnLoadCallback();
 				}
@@ -4234,7 +4234,7 @@
 				if (!oIEStyleSheetNode) {
 					// create a style sheet to add additional style sheet. But for this the Replace logic will not work any more
 					// the callback functions are not used in this case
-					// the sap-ui-ready attribute will not be set -> maybe problems with ThemeCheck
+					// the data-sap-ui-ready attribute will not be set -> maybe problems with ThemeCheck
 					oIEStyleSheetNode = document.createStyleSheet();
 				}
 				// add up to 30 style sheets to every of this style sheets. (result is a tree of style sheets)
