@@ -174,7 +174,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
 	};
-	
+
+	/**
+	 * Adds the classes needed to recognize the element as focusable.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered
+	 * @protected
+	 */
+	ListItemBaseRenderer.addFocusableClasses = function(rm, oLI) {
+		if (sap.ui.Device.system.desktop) {
+			rm.addClass("sapMLIBFocusable");
+			this.addLegacyOutlineClass(rm, oLI);
+		}
+	};
+
+	/**
+	 * Adds the classes for legacy browsers, which do not support normal outlines.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered
+	 * @protected
+	 */
+	ListItemBaseRenderer.addLegacyOutlineClass = function(rm, oLI) {
+		if (sap.ui.Device.browser.msie) {
+			rm.addClass("sapMLIBLegacyOutline");
+		}
+	};
+
 	/**
 	 * Creates an invisible aria node for the given message bundle text  
 	 * in the static UIArea and returns its id for ARIA announcements
@@ -371,6 +398,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		if (oLI.getListProperty("showUnread") && oLI.getUnread()) {
 			rm.addClass("sapMLIBUnread");
 		}
+
+		this.addFocusableClasses(rm, oLI);
 
 		// attributes
 		this.renderTooltip(rm, oLI);
