@@ -5,8 +5,9 @@
 	margin-left: 20%;
 }
 
-/* Sets the qunit component position and enables the vertical scrolling */
-.sapUiOpaBodyComponent #qunit {
+/* Sets the qunit wrapper position and causes the proper positioning of all elements inside.
+   Enables the vertical scrolling */
+.sapUiOpaBodyComponent #qunit-wrapper {
 	position: fixed;
 	left: 0;
 	width: 20%;
