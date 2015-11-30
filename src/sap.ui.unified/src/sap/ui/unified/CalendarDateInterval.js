@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.unified.Calendar.
+//Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils',
                './Calendar', './calendar/Header', './calendar/Month', './calendar/DatesRow', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/core/date/UniversalDate', './library'],
-	function(jQuery, Control, LocaleData, Date1, CalendarUtils, Calendar, Header, Month, DatesRow, MonthPicker, YearPicker, UniversalDate, library) {
+               function(jQuery, Control, LocaleData, Date1, CalendarUtils, Calendar, Header, Month, DatesRow, MonthPicker, YearPicker, UniversalDate, library) {
 	"use strict";
 
 	/**
@@ -70,440 +70,436 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 	}});
 
-	(function() {
+	CalendarDateInterval.prototype.init = function(){
 
-		CalendarDateInterval.prototype.init = function(){
+		Calendar.prototype.init.apply(this, arguments);
 
-			Calendar.prototype.init.apply(this, arguments);
+		var oMonthPicker = this.getAggregation("monthPicker");
+		oMonthPicker.setColumns(0);
+		oMonthPicker.setMonths(3); // default for 7 days
 
+		var oYearPicker = this.getAggregation("yearPicker");
+		oYearPicker.setColumns(0);
+		oYearPicker.setYears(3); // default for 7 days
+
+		this._iDaysLarge = 10; // if more than this number of days are displayed, start and end month are displayed on the button
+		this._iDaysMonthHead = 35; // if more than this number of days, month names are displayed on top of days
+
+	};
+
+	CalendarDateInterval.prototype._createMonth = function(sId){
+
+		var oMonth = new DatesRow(sId);
+
+		return oMonth;
+
+	};
+
+	CalendarDateInterval.prototype.setStartDate = function(oStartDate){
+
+		if (!(oStartDate instanceof Date)) {
+			throw new Error("Date must be a JavaScript date object; " + this);
+		}
+
+		var iYear = oStartDate.getFullYear();
+		if (iYear < 1 || iYear > 9999) {
+			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
+		}
+
+		var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate, this.getPrimaryCalendarType());
+		this.setProperty("startDate", oStartDate, true);
+		this._oUTCStartDate = oUTCDate;
+
+		var oDatesRow = this.getAggregation("month")[0];
+		oDatesRow.setStartDate(oStartDate);
+
+		this._updateHeader(oUTCDate);
+
+		var oDate = CalendarUtils._createLocalDate(this._getFocusedDate());
+		if (!oDatesRow.checkDateFocusable(oDate)) {
+			//focused date not longer visible -> focus start date  (but don't set focus)
+			this._setFocusedDate(oUTCDate);
+			oDatesRow.displayDate(oStartDate);
+		}
+
+		return this;
+
+	};
+
+	CalendarDateInterval.prototype.setDays = function(iDays){
+
+		this.setProperty("days", iDays, true);
+
+		iDays = this._getDays(); // to use phone limit
+
+		var oDatesRow = this.getAggregation("month")[0];
+		oDatesRow.setDays(iDays);
+
+		if (!this.getPickerPopup()) {
 			var oMonthPicker = this.getAggregation("monthPicker");
-			oMonthPicker.setColumns(0);
-			oMonthPicker.setMonths(3); // default for 7 days
+			var iMonths = Math.ceil(iDays / 3);
+			if (iMonths > 12) {
+				iMonths = 12;
+			}
+			oMonthPicker.setMonths(iMonths);
 
 			var oYearPicker = this.getAggregation("yearPicker");
-			oYearPicker.setColumns(0);
-			oYearPicker.setYears(3); // default for 7 days
+			var iYears = Math.floor(iDays / 2);
+			if (iYears > 20) {
+				iYears = 20;
+			}
+			oYearPicker.setYears(iYears);
+		}
 
-			this._iDaysLarge = 10; // if more than this number of days are displayed, start and end month are displayed on the button
-			this._iDaysMonthHead = 35; // if more than this number of days, month names are displayed on top of days
+		var oStartDate = _getStartDate.call(this);
+		this._updateHeader(oStartDate);
 
-		};
-
-		CalendarDateInterval.prototype._createMonth = function(sId){
-
-			var oMonth = new DatesRow(sId);
-
-			return oMonth;
-
-		};
-
-		CalendarDateInterval.prototype.setStartDate = function(oStartDate){
-
-			if (!(oStartDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
+		if (this.getDomRef()) {
+			if (iDays > this._iDaysLarge) {
+				this.$().addClass("sapUiCalIntLarge");
+			}else {
+				this.$().removeClass("sapUiCalIntLarge");
 			}
 
-			var iYear = oStartDate.getFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
+			if (iDays > this._iDaysMonthHead) {
+				this.$().addClass("sapUiCalIntHead");
+			}else {
+				this.$().removeClass("sapUiCalIntHead");
 			}
+		}
 
-			var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate, this.getPrimaryCalendarType());
-			this.setProperty("startDate", oStartDate, true);
-			this._oUTCStartDate = oUTCDate;
+		return this;
 
+	};
+
+	CalendarDateInterval.prototype._getDays = function(){
+
+		var iDays = this.getDays();
+
+		// in phone mode max 8 days are displayed
+		if (sap.ui.Device.system.phone && iDays > 8) {
+			return 8;
+		} else {
+			return iDays;
+		}
+
+	};
+
+	CalendarDateInterval.prototype.setShowDayNamesLine = function(bShowDayNamesLine){
+
+		this.setProperty("showDayNamesLine", bShowDayNamesLine, true);
+
+		var oDatesRow = this.getAggregation("month")[0];
+		oDatesRow.setShowDayNamesLine(bShowDayNamesLine);
+
+		return this;
+
+	};
+
+	CalendarDateInterval.prototype._getShowMonthHeader = function(){
+
+		var iDays = this._getDays();
+		if (iDays > this._iDaysMonthHead) {
+			return true;
+		}else {
+			return false;
+		}
+
+	};
+
+	CalendarDateInterval.prototype._getFocusedDate = function(){
+
+		if (!this._oFocusedDate) {
+			Calendar.prototype._getFocusedDate.apply(this, arguments);
+			var oStartDate = this.getStartDate();
 			var oDatesRow = this.getAggregation("month")[0];
-			oDatesRow.setStartDate(oStartDate);
+			if (!oStartDate) {
+				// use focused date as start date
+				_setStartDate.call(this, this._oFocusedDate, false, true);
+			}else if (!oDatesRow.checkDateFocusable(CalendarUtils._createLocalDate(this._oFocusedDate))) {
+				this._oFocusedDate = CalendarUtils._createUniversalUTCDate(oStartDate, this.getPrimaryCalendarType());
+			}
+		}
 
-			this._updateHeader(oUTCDate);
 
+		return this._oFocusedDate;
+
+	};
+
+	/**
+	 * Setter for property <code>months</code>.
+	 *
+	 * Property <code>months</code> is not supported in <code>sap.ui.unified.CalendarDateInterval</code> control.
+	 *
+	 * @protected
+	 * @param {int} [iMonths] months
+	 * @name sap.ui.unified.CalendarDateInterval#setMonths
+	 * @function
+	 */
+	CalendarDateInterval.prototype.setMonths = function(iMonths){
+
+		if (iMonths == 1) {
+			this.setProperty("months", iMonths, false); // rerender
+		} else {
+			throw new Error("Property months not supported " + this);
+		}
+
+	};
+
+	/**
+	 * Setter for property <code>firstDayOfWeek</code>.
+	 *
+	 * Property <code>firstDayOfWeek</code> is not supported in <code>sap.ui.unified.CalendarDateInterval</code> control.
+	 *
+	 * @protected
+	 * @param {int} [iFirstDayOfWeek] first day of the week
+	 * @name sap.ui.unified.CalendarDateInterval#setFirstDayOfWeek
+	 * @function
+	 */
+	CalendarDateInterval.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
+
+		if (iFirstDayOfWeek == -1) {
+			this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
+		} else {
+			throw new Error("Property firstDayOfWeek not supported " + this);
+		}
+
+	};
+
+	CalendarDateInterval.prototype.focusDate = function(oDate){
+
+		var oDatesRow = this.getAggregation("month")[0];
+		if (!oDatesRow.checkDateFocusable(oDate)) {
+			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
+			this._focusDateExtend(oUTCDate, true);
+		}
+
+		Calendar.prototype.focusDate.apply(this, arguments);
+
+		return this;
+
+	};
+
+	CalendarDateInterval.prototype._focusDateExtend = function(oDate, bOtherMonth) {
+
+		// set start date according to new focused date
+		// only if focused date is not in current rendered date interval
+		// new focused date should have the same position like the old one
+		if (bOtherMonth) {
+			var oOldDate = this._getFocusedDate();
+			var oStartDate = _getStartDate.call(this);
+			var iDay = Math.ceil((oOldDate.getTime() - oStartDate.getTime()) / (1000 * 3600 * 24));
+			oStartDate = this._newUniversalDate(oDate);
+			oStartDate.setUTCDate( oStartDate.getUTCDate() - iDay);
+			_setStartDate.call(this, oStartDate, false);
+		}
+
+	};
+
+	CalendarDateInterval.prototype.setPickerPopup = function(bPickerPopup){
+
+		this.setProperty("pickerPopup", bPickerPopup, true);
+
+		var oMonthPicker = this.getAggregation("monthPicker");
+		var oYearPicker = this.getAggregation("yearPicker");
+
+		if (bPickerPopup) {
+			oMonthPicker.setColumns(3);
+			oMonthPicker.setMonths(12);
+			oYearPicker.setColumns(4);
+			oYearPicker.setYears(20);
+		} else {
+			oMonthPicker.setColumns(0);
+			oMonthPicker.setMonths(6);
+			oYearPicker.setColumns(0);
+			oYearPicker.setYears(6);
+		}
+
+	};
+
+	CalendarDateInterval.prototype._handlePrevious = function(oEvent){
+
+		var oFocusedDate = this._newUniversalDate(this._getFocusedDate());
+		var oMonthPicker = this.getAggregation("monthPicker");
+		var oYearPicker = this.getAggregation("yearPicker");
+		var oStartDate = this._newUniversalDate(_getStartDate.call(this));
+		var iDays = this._getDays();
+
+		switch (this._iMode) {
+		case 0: // day picker
+			oStartDate.setUTCDate(oStartDate.getUTCDate() - iDays);
+			oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - iDays);
+			this._setFocusedDate(oFocusedDate);
+			_setStartDate.call(this, oStartDate, true);
+			break;
+
+		case 1: // month picker
+			if (oMonthPicker.getMonths() < 12) {
+				oMonthPicker.previousPage();
+			} else {
+				oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() - 1);
+				this._focusDateExtend(oFocusedDate, true);
+				this._setFocusedDate(oFocusedDate);
+				this._updateHeader(oFocusedDate);
+			}
+			break;
+
+		case 2: // year picker
+			oYearPicker.previousPage();
+			break;
+			// no default
+		}
+
+	};
+
+	CalendarDateInterval.prototype._handleNext = function(oEvent){
+
+		var oFocusedDate = this._newUniversalDate(this._getFocusedDate());
+		var oMonthPicker = this.getAggregation("monthPicker");
+		var oYearPicker = this.getAggregation("yearPicker");
+		var oStartDate = this._newUniversalDate(_getStartDate.call(this));
+		var iDays = this._getDays();
+
+		switch (this._iMode) {
+		case 0: // day picker
+			oStartDate.setUTCDate(oStartDate.getUTCDate() + iDays);
+			oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + iDays);
+			this._setFocusedDate(oFocusedDate);
+			_setStartDate.call(this, oStartDate, true);
+			break;
+
+		case 1: // month picker
+			if (oMonthPicker.getMonths() < 12) {
+				oMonthPicker.nextPage();
+			} else {
+				oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() + 1);
+				this._focusDateExtend(oFocusedDate, true);
+				this._setFocusedDate(oFocusedDate);
+				this._updateHeader(oFocusedDate);
+			}
+			break;
+
+		case 2: // year picker
+			oYearPicker.nextPage();
+			break;
+			// no default
+		}
+
+	};
+
+	CalendarDateInterval.prototype._getDisplayedMonths = function(oDate){
+
+		var aMonths = [];
+		var iMonth = oDate.getUTCMonth();
+		var iDays = this._getDays();
+
+		aMonths.push(iMonth);
+		if (iDays > this._iDaysLarge) {
+			// of only a few days displayed, there is not enough space for 2 Months in Button
+			var oEndDate = this._newUniversalDate(oDate);
+			oEndDate.setUTCDate(oEndDate.getUTCDate() + iDays - 1);
+			var iEndMonth = oEndDate.getUTCMonth();
+			while (iMonth != iEndMonth) {
+				iMonth = (iMonth + 1) % 12;
+				aMonths.push(iMonth);
+			}
+		}
+
+		return aMonths;
+
+	};
+
+	Calendar.prototype._getDisplayedSecondaryMonths = function(sPrimaryCalendarType, sSecondaryCalendarType){
+
+		var iDays = this._getDays();
+		var oStartDate = _getStartDate.call(this);
+		oStartDate = UniversalDate.getInstance(oStartDate.getJSDate(), sSecondaryCalendarType);
+		var iStartMonth = oStartDate.getUTCMonth();
+
+		var oEndDate = this._newUniversalDate(oStartDate);
+		oEndDate.setUTCDate(oEndDate.getUTCDate() + iDays - 1);
+		oEndDate = UniversalDate.getInstance(oEndDate.getJSDate(), sSecondaryCalendarType);
+		var iEndMonth = oEndDate.getUTCMonth();
+
+		return {start: iStartMonth, end: iEndMonth};
+
+	};
+
+	CalendarDateInterval.prototype._openPickerPopup = function(oPicker){
+
+		if (!this._oPopup) {
+			jQuery.sap.require("sap.ui.core.Popup");
+			this._oPopup = new sap.ui.core.Popup();
+			this._oPopup.setAutoClose(true);
+			this._oPopup.setAutoCloseAreas([this.getDomRef()]);
+			this._oPopup.setDurations(0, 0); // no animations
+			this._oPopup._oCalendar = this;
+			this._oPopup.attachClosed(_handlePopupClosed, this);
+			this._oPopup.onsapescape = function(oEvent) {
+				this._oCalendar.onsapescape(oEvent);
+			};
+		}
+
+		this._oPopup.setContent(oPicker);
+
+		var oHeader = this.getAggregation("header");
+		var eDock = sap.ui.core.Popup.Dock;
+		this._oPopup.open(0, eDock.CenterTop, eDock.CenterBottom, oHeader, null, "flipfit", true);
+
+	};
+
+	function _setStartDate(oStartDate, bSetFocusDate, bNoEvent){
+
+		var oMaxDate = this._newUniversalDate(this._oMaxDate);
+		oMaxDate.setUTCDate(oMaxDate.getUTCDate() - this._getDays());
+		if (oStartDate.getTime() < this._oMinDate.getTime()) {
+			oStartDate = this._oMinDate;
+		}else if (oStartDate.getTime() > oMaxDate.getTime()){
+			oStartDate = oMaxDate;
+		}
+
+		var oLocaleDate = CalendarUtils._createLocalDate(oStartDate);
+		this.setProperty("startDate", oLocaleDate, true);
+		this._oUTCStartDate = oStartDate;
+
+		var oDatesRow = this.getAggregation("month")[0];
+		oDatesRow.setStartDate(oLocaleDate);
+
+		this._updateHeader(oStartDate);
+
+		if (bSetFocusDate) {
 			var oDate = CalendarUtils._createLocalDate(this._getFocusedDate());
 			if (!oDatesRow.checkDateFocusable(oDate)) {
-				//focused date not longer visible -> focus start date  (but don't set focus)
-				this._setFocusedDate(oUTCDate);
-				oDatesRow.displayDate(oStartDate);
-			}
-
-			return this;
-
-		};
-
-		CalendarDateInterval.prototype.setDays = function(iDays){
-
-			this.setProperty("days", iDays, true);
-
-			iDays = this._getDays(); // to use phone limit
-
-			var oDatesRow = this.getAggregation("month")[0];
-			oDatesRow.setDays(iDays);
-
-			if (!this.getPickerPopup()) {
-				var oMonthPicker = this.getAggregation("monthPicker");
-				var iMonths = Math.ceil(iDays / 3);
-				if (iMonths > 12) {
-					iMonths = 12;
-				}
-				oMonthPicker.setMonths(iMonths);
-
-				var oYearPicker = this.getAggregation("yearPicker");
-				var iYears = Math.floor(iDays / 2);
-				if (iYears > 20) {
-					iYears = 20;
-				}
-				oYearPicker.setYears(iYears);
-			}
-
-			var oStartDate = _getStartDate.call(this);
-			this._updateHeader(oStartDate);
-
-			if (this.getDomRef()) {
-				if (iDays > this._iDaysLarge) {
-					this.$().addClass("sapUiCalIntLarge");
-				}else {
-					this.$().removeClass("sapUiCalIntLarge");
-				}
-
-				if (iDays > this._iDaysMonthHead) {
-					this.$().addClass("sapUiCalIntHead");
-				}else {
-					this.$().removeClass("sapUiCalIntHead");
-				}
-			}
-
-			return this;
-
-		};
-
-		CalendarDateInterval.prototype._getDays = function(){
-
-			var iDays = this.getDays();
-
-			// in phone mode max 8 days are displayed
-			if (sap.ui.Device.system.phone && iDays > 8) {
-				return 8;
-			} else {
-				return iDays;
-			}
-
-		};
-
-		CalendarDateInterval.prototype.setShowDayNamesLine = function(bShowDayNamesLine){
-
-			this.setProperty("showDayNamesLine", bShowDayNamesLine, true);
-
-			var oDatesRow = this.getAggregation("month")[0];
-			oDatesRow.setShowDayNamesLine(bShowDayNamesLine);
-
-			return this;
-
-		};
-
-		CalendarDateInterval.prototype._getShowMonthHeader = function(){
-
-			var iDays = this._getDays();
-			if (iDays > this._iDaysMonthHead) {
-				return true;
+				//focused date not longer visible -> focus start date
+				this._setFocusedDate(oStartDate);
+				oDatesRow.setDate(oLocaleDate);
 			}else {
-				return false;
+				oDatesRow.setDate(oDate);
 			}
-
-		};
-
-		CalendarDateInterval.prototype._getFocusedDate = function(){
-
-			if (!this._oFocusedDate) {
-				Calendar.prototype._getFocusedDate.apply(this, arguments);
-				var oStartDate = this.getStartDate();
-				var oDatesRow = this.getAggregation("month")[0];
-				if (!oStartDate) {
-					// use focused date as start date
-					_setStartDate.call(this, this._oFocusedDate, false, true);
-				}else if (!oDatesRow.checkDateFocusable(CalendarUtils._createLocalDate(this._oFocusedDate))) {
-					this._oFocusedDate = CalendarUtils._createUniversalUTCDate(oStartDate, this.getPrimaryCalendarType());
-				}
-			}
-
-
-			return this._oFocusedDate;
-
-		};
-
-		/**
-		 * Setter for property <code>months</code>.
-		 *
-		 * Property <code>months</code> is not supported in <code>sap.ui.unified.CalendarDateInterval</code> control.
-		 *
-		 * @protected
-		 * @param {int} [iMonths] months
-		 * @name sap.ui.unified.CalendarDateInterval#setMonths
-		 * @function
-		 */
-		CalendarDateInterval.prototype.setMonths = function(iMonths){
-
-			if (iMonths == 1) {
-				this.setProperty("months", iMonths, false); // rerender
-			} else {
-				throw new Error("Property months not supported " + this);
-			}
-
-		};
-
-		/**
-		 * Setter for property <code>firstDayOfWeek</code>.
-		 *
-		 * Property <code>firstDayOfWeek</code> is not supported in <code>sap.ui.unified.CalendarDateInterval</code> control.
-		 *
-		 * @protected
-		 * @param {int} [iFirstDayOfWeek] first day of the week
-		 * @name sap.ui.unified.CalendarDateInterval#setFirstDayOfWeek
-		 * @function
-		 */
-		CalendarDateInterval.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
-
-			if (iFirstDayOfWeek == -1) {
-				this.setProperty("firstDayOfWeek", iFirstDayOfWeek, false); // rerender
-			} else {
-				throw new Error("Property firstDayOfWeek not supported " + this);
-			}
-
-		};
-
-		CalendarDateInterval.prototype.focusDate = function(oDate){
-
-			var oDatesRow = this.getAggregation("month")[0];
-			if (!oDatesRow.checkDateFocusable(oDate)) {
-				var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
-				this._focusDateExtend(oUTCDate, true);
-			}
-
-			Calendar.prototype.focusDate.apply(this, arguments);
-
-			return this;
-
-		};
-
-		CalendarDateInterval.prototype._focusDateExtend = function(oDate, bOtherMonth) {
-
-			// set start date according to new focused date
-			// only if focused date is not in current rendered date interval
-			// new focused date should have the same position like the old one
-			if (bOtherMonth) {
-				var oOldDate = this._getFocusedDate();
-				var oStartDate = _getStartDate.call(this);
-				var iDay = Math.ceil((oOldDate.getTime() - oStartDate.getTime()) / (1000 * 3600 * 24));
-				oStartDate = this._newUniversalDate(oDate);
-				oStartDate.setUTCDate( oStartDate.getUTCDate() - iDay);
-				_setStartDate.call(this, oStartDate, false);
-			}
-
-		};
-
-		CalendarDateInterval.prototype.setPickerPopup = function(bPickerPopup){
-
-			this.setProperty("pickerPopup", bPickerPopup, true);
-
-			var oMonthPicker = this.getAggregation("monthPicker");
-			var oYearPicker = this.getAggregation("yearPicker");
-
-			if (bPickerPopup) {
-				oMonthPicker.setColumns(3);
-				oMonthPicker.setMonths(12);
-				oYearPicker.setColumns(4);
-				oYearPicker.setYears(20);
-			} else {
-				oMonthPicker.setColumns(0);
-				oMonthPicker.setMonths(6);
-				oYearPicker.setColumns(0);
-				oYearPicker.setYears(6);
-			}
-
-		};
-
-		CalendarDateInterval.prototype._handlePrevious = function(oEvent){
-
-			var oFocusedDate = this._newUniversalDate(this._getFocusedDate());
-			var oMonthPicker = this.getAggregation("monthPicker");
-			var oYearPicker = this.getAggregation("yearPicker");
-			var oStartDate = this._newUniversalDate(_getStartDate.call(this));
-			var iDays = this._getDays();
-
-			switch (this._iMode) {
-			case 0: // day picker
-				oStartDate.setUTCDate(oStartDate.getUTCDate() - iDays);
-				oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - iDays);
-				this._setFocusedDate(oFocusedDate);
-				_setStartDate.call(this, oStartDate, true);
-				break;
-
-			case 1: // month picker
-				if (oMonthPicker.getMonths() < 12) {
-					oMonthPicker.previousPage();
-				} else {
-					oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() - 1);
-					this._focusDateExtend(oFocusedDate, true);
-					this._setFocusedDate(oFocusedDate);
-					this._updateHeader(oFocusedDate);
-				}
-				break;
-
-			case 2: // year picker
-				oYearPicker.previousPage();
-				break;
-				// no default
-			}
-
-		};
-
-		CalendarDateInterval.prototype._handleNext = function(oEvent){
-
-			var oFocusedDate = this._newUniversalDate(this._getFocusedDate());
-			var oMonthPicker = this.getAggregation("monthPicker");
-			var oYearPicker = this.getAggregation("yearPicker");
-			var oStartDate = this._newUniversalDate(_getStartDate.call(this));
-			var iDays = this._getDays();
-
-			switch (this._iMode) {
-			case 0: // day picker
-				oStartDate.setUTCDate(oStartDate.getUTCDate() + iDays);
-				oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() + iDays);
-				this._setFocusedDate(oFocusedDate);
-				_setStartDate.call(this, oStartDate, true);
-				break;
-
-			case 1: // month picker
-				if (oMonthPicker.getMonths() < 12) {
-					oMonthPicker.nextPage();
-				} else {
-					oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() + 1);
-					this._focusDateExtend(oFocusedDate, true);
-					this._setFocusedDate(oFocusedDate);
-					this._updateHeader(oFocusedDate);
-				}
-				break;
-
-			case 2: // year picker
-				oYearPicker.nextPage();
-				break;
-				// no default
-			}
-
-		};
-
-		CalendarDateInterval.prototype._getDisplayedMonths = function(oDate){
-
-			var aMonths = [];
-			var iMonth = oDate.getUTCMonth();
-			var iDays = this._getDays();
-
-			aMonths.push(iMonth);
-			if (iDays > this._iDaysLarge) {
-				// of only a few days displayed, there is not enough space for 2 Months in Button
-				var oEndDate = this._newUniversalDate(oDate);
-				oEndDate.setUTCDate(oEndDate.getUTCDate() + iDays - 1);
-				var iEndMonth = oEndDate.getUTCMonth();
-				while (iMonth != iEndMonth) {
-					iMonth = (iMonth + 1) % 12;
-					aMonths.push(iMonth);
-				}
-			}
-
-			return aMonths;
-
-		};
-
-		Calendar.prototype._getDisplayedSecondaryMonths = function(sPrimaryCalendarType, sSecondaryCalendarType){
-
-			var iDays = this._getDays();
-			var oStartDate = _getStartDate.call(this);
-			oStartDate = UniversalDate.getInstance(oStartDate.getJSDate(), sSecondaryCalendarType);
-			var iStartMonth = oStartDate.getUTCMonth();
-
-			var oEndDate = this._newUniversalDate(oStartDate);
-			oEndDate.setUTCDate(oEndDate.getUTCDate() + iDays - 1);
-			oEndDate = UniversalDate.getInstance(oEndDate.getJSDate(), sSecondaryCalendarType);
-			var iEndMonth = oEndDate.getUTCMonth();
-
-			return {start: iStartMonth, end: iEndMonth};
-
-		};
-
-		CalendarDateInterval.prototype._openPickerPopup = function(oPicker){
-
-			if (!this._oPopup) {
-				jQuery.sap.require("sap.ui.core.Popup");
-				this._oPopup = new sap.ui.core.Popup();
-				this._oPopup.setAutoClose(true);
-				this._oPopup.setAutoCloseAreas([this.getDomRef()]);
-				this._oPopup.setDurations(0, 0); // no animations
-				this._oPopup._oCalendar = this;
-				this._oPopup.attachClosed(_handlePopupClosed, this);
-				this._oPopup.onsapescape = function(oEvent) {
-					this._oCalendar.onsapescape(oEvent);
-				};
-			}
-
-			this._oPopup.setContent(oPicker);
-
-			var oHeader = this.getAggregation("header");
-			var eDock = sap.ui.core.Popup.Dock;
-			this._oPopup.open(0, eDock.CenterTop, eDock.CenterBottom, oHeader, null, "flipfit", true);
-
-		};
-
-		function _setStartDate(oStartDate, bSetFocusDate, bNoEvent){
-
-			var oMaxDate = this._newUniversalDate(this._oMaxDate);
-			oMaxDate.setUTCDate(oMaxDate.getUTCDate() - this._getDays());
-			if (oStartDate.getTime() < this._oMinDate.getTime()) {
-				oStartDate = this._oMinDate;
-			}else if (oStartDate.getTime() > oMaxDate.getTime()){
-				oStartDate = oMaxDate;
-			}
-
-			var oLocaleDate = CalendarUtils._createLocalDate(oStartDate);
-			this.setProperty("startDate", oLocaleDate, true);
-			this._oUTCStartDate = oStartDate;
-
-			var oDatesRow = this.getAggregation("month")[0];
-			oDatesRow.setStartDate(oLocaleDate);
-
-			this._updateHeader(oStartDate);
-
-			if (bSetFocusDate) {
-				var oDate = CalendarUtils._createLocalDate(this._getFocusedDate());
-				if (!oDatesRow.checkDateFocusable(oDate)) {
-					//focused date not longer visible -> focus start date
-					this._setFocusedDate(oStartDate);
-					oDatesRow.setDate(oLocaleDate);
-				}else {
-					oDatesRow.setDate(oDate);
-				}
-			}
-
-			if (!bNoEvent) {
-				this.fireStartDateChange();
-			}
-
 		}
 
-		function _getStartDate(){
-
-			if (!this._oUTCStartDate) {
-				// no start date set, use focused date
-				this._oUTCStartDate = this._getFocusedDate();
-			}
-
-			return this._oUTCStartDate;
-
+		if (!bNoEvent) {
+			this.fireStartDateChange();
 		}
 
-		function _handlePopupClosed(oEvent) {
+	}
 
-			this._closedPickers();
+	function _getStartDate(){
 
+		if (!this._oUTCStartDate) {
+			// no start date set, use focused date
+			this._oUTCStartDate = this._getFocusedDate();
 		}
 
-	}());
+		return this._oUTCStartDate;
+
+	}
+
+	function _handlePopupClosed(oEvent) {
+
+		this._closedPickers();
+
+	}
 
 	return CalendarDateInterval;
 

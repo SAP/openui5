@@ -82,10 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		}
 	}});
 
-	(function() {
-
-	}());
-
 	return PlanningCalendarView;
 
 }, /* bExport= */ true);
