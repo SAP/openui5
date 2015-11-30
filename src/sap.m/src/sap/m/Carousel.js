@@ -719,6 +719,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {Object} oEvent - key object
 	 */
 	Carousel.prototype.onkeydown = function(oEvent) {
+
+		// Exit the function if the event is not from the Carousel
+		if (oEvent.target != this.getDomRef()) {
+			return;
+		}
+
 		switch (oEvent.keyCode) {
 			// F7 key
 			case jQuery.sap.KeyCodes.F7:
@@ -965,13 +971,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Carousel.prototype._fnSkipToIndex = function(oEvent, nIndex) {
-		oEvent.preventDefault();
 		var nNewIndex = nIndex;
 
 		// Exit the function if the event is not from the Carousel
-		if (oEvent.target !== this.$()[0]) {
+		if (oEvent.target !== this.getDomRef()) {
 			return;
 		}
+
+		oEvent.preventDefault();
 
 		// Calculate the index of the next page that will be shown
 		if (nIndex !== 0) {
