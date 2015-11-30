@@ -64,7 +64,33 @@ sap.ui.define(['jquery.sap.global'],
 		rm.renderControl(oFileUploader.oFilePath);
 		rm.write('</div><div>');  //-> per style margin
 		rm.renderControl(oFileUploader.oBrowse);
-		rm.write('<span id="' + oFileUploader.getId() + '-AccDescr" class="sapUiInvisibleText" aria-hidden="true">' + oFileUploader._sAccText + '</span>');
+
+		var sAriaText;
+		var sTooltip = "";
+		if (oFileUploader.getTooltip()) {
+			sTooltip = oFileUploader.getTooltip_AsString();
+		}
+		var sPlaceholder = "";
+		if (oFileUploader.getPlaceholder()) {
+			sPlaceholder = oFileUploader.getPlaceholder();
+		}
+		var sValue = "";
+		if (oFileUploader.getValue()) {
+			sValue = oFileUploader.getValue();
+		}
+		var sButtonText = "";
+		if (oFileUploader.getButtonText()) {
+			sButtonText = oFileUploader.getButtonText();
+		}
+		if (!sValue) {
+			sAriaText = sTooltip + " " + sPlaceholder + " " + sButtonText;
+		} else {
+			sAriaText = sTooltip + " " + sValue + " " + sButtonText;
+		}
+
+		rm.write('<span id="' + oFileUploader.getId() + '-AccDescr" class="sapUiInvisibleText" aria-hidden="true">');
+		rm.writeEscaped(sAriaText + " " + oFileUploader._sAccText);
+		rm.write('</span>');
 		rm.write('</div></div></div>');
 
 		// hidden pure input type file (surrounded by a div which is responsible for giving the input the correct size)
