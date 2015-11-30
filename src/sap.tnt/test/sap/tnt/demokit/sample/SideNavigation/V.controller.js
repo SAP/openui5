@@ -17,7 +17,6 @@ sap.ui.define([
 			var expanded = !sideNavigation.getExpanded();
 
 			sideNavigation.setExpanded(expanded);
-			//sideNavigation.setWidth(expanded? '20rem': '3rem');
 		}
 	});
 
