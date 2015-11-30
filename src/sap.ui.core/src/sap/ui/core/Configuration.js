@@ -123,6 +123,10 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-lesssupport"        : { type : "boolean",  defaultValue : false },
 					"xx-handleValidation"   : { type : "boolean",  defaultValue : false },
 					"xx-fiori2Adaptation"   : { type : "string[]",  defaultValue : [] },
+					"xx-cache-use"          : { type : "boolean",  defaultValue : true},
+					"xx-cache-excludedKeys" : { type : "string[]", defaultValue : []},
+					"xx-cache-serialization": { type : "boolean",  defaultValue : false},
+					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
