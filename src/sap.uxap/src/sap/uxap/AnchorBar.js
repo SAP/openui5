@@ -148,7 +148,6 @@ sap.ui.define([
 	 ******************************************************************************/
 	AnchorBar.SCROLL_STEP = 250;// how many pixels to scroll with every overflow arrow click
 	AnchorBar.SCROLL_DURATION = 500; // ms
-	AnchorBar.DOM_CALC_DELAY = 200; //ms.
 
 	AnchorBar.prototype.setSelectedButton = function (oButton) {
 
@@ -960,7 +959,6 @@ sap.ui.define([
 	/**
 	 * called for figuring out responsive scenarios
 	 */
-
 	AnchorBar.prototype.onAfterRendering = function () {
 		if (Toolbar.prototype.onAfterRendering) {
 			Toolbar.prototype.onAfterRendering.call(this);
@@ -980,6 +978,11 @@ sap.ui.define([
 		if (this.getSelectedButton()) {
 			this.setSelectedButton(this.getSelectedButton());
 		}
+
+		//initial state
+		if (this._bHasButtonsBar) {
+			this._adjustSize();
+		}
 	};
 
 	AnchorBar.prototype._onScroll = function () {
@@ -989,7 +992,6 @@ sap.ui.define([
 				this._adjustSize();
 			});
 		}
-
 	};
 
 	AnchorBar.prototype._computeBarSectionsInfo = function () {
