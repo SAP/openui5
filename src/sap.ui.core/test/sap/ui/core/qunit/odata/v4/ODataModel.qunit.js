@@ -6,6 +6,7 @@ sap.ui.require([
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/_SyncPromise",
+	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataListBinding",
@@ -13,8 +14,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (Model, TypeString, ODataUtils, SyncPromise, Requestor, ODataContextBinding,
-		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
+], function (Model, TypeString, ODataUtils, SyncPromise, MetadataRequestor, Requestor,
+		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -84,7 +86,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var oDocumentModel,
+		var oMetadataRequestor = {},
+			oMetadataRequestorMock = this.mock(MetadataRequestor),
+			oMetaModel,
 			oModel;
 
 		assert.throws(function () {
@@ -97,18 +101,25 @@ sap.ui.require([
 		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo/");
 		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo/",
 			"serviceUrl in mParameters");
+
+		oMetadataRequestorMock.expects("create").withExactArgs(null, {"sap-client": "111"})
+			.returns(oMetadataRequestor);
 		oModel = new ODataModel("/foo/?sap-client=111");
 		assert.strictEqual(oModel.sServiceUrl, "/foo/");
 		assert.deepEqual(oModel.mUriParameters, {"sap-client": "111"});
-		oDocumentModel = oModel.getMetaModel().oModel;
-		assert.ok(oDocumentModel instanceof sap.ui.model.odata.v4.ODataDocumentModel);
-		assert.strictEqual(oDocumentModel.sDocumentUrl, "/foo/$metadata?sap-client=111");
+		oMetaModel = oModel.getMetaModel();
+		assert.ok(oMetaModel instanceof ODataMetaModel);
+		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
+		assert.strictEqual(oMetaModel.sUrl, "/foo/$metadata");
 
+		oMetadataRequestorMock.expects("create").withExactArgs(null, {})
+			.returns(oMetadataRequestor);
 		oModel = new ODataModel("/foo/");
 		assert.deepEqual(oModel.mUriParameters, {});
-		oDocumentModel = oModel.getMetaModel().oModel;
-		assert.ok(oDocumentModel instanceof sap.ui.model.odata.v4.ODataDocumentModel);
-		assert.strictEqual(oDocumentModel.sDocumentUrl, "/foo/$metadata");
+		oMetaModel = oModel.getMetaModel();
+		assert.ok(oMetaModel instanceof ODataMetaModel);
+		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
+		assert.strictEqual(oMetaModel.sUrl, "/foo/$metadata");
 	});
 
 	//*********************************************************************************************
@@ -282,26 +293,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestObject to metamodel", function (assert) {
-		var oModel = createModel(),
-			oMetaModel = oModel.getMetaModel(),
-			oMetaModelMock = this.oSandbox.mock(oMetaModel),
-			oMetaContext = oMetaModel.getContext("/path/into/metamodel");
-
-		oMetaModelMock.expects("fetchMetaContext")
-			.withExactArgs("/EMPLOYEES(ID='1')/ENTRYDATE")
-			.returns(Promise.resolve(oMetaContext));
-		oMetaModelMock.expects("fetchObject")
-			.withExactArgs("Type/QualifiedName", oMetaContext)
-			.returns(SyncPromise.resolve("Edm.Date"));
-		return oModel.requestObject(
-			"ENTRYDATE/#Type/QualifiedName", oModel.getContext("/EMPLOYEES(ID='1')")
-		).then(function (sResult) {
-			assert.strictEqual(sResult, "Edm.Date");
-		});
-	});
-
-	//*********************************************************************************************
 	[undefined, "?foo=bar"].forEach(function (sQuery) {
 		QUnit.test("create", function (assert) {
 			var oEmployeeData = {},
@@ -329,7 +320,6 @@ sap.ui.require([
 			.returns(Promise.resolve(undefined));
 			//TODO make such basic APIs like sap.ui.model.Context#getProperty work?!
 			//     they could be used instead of async read()...
-			//TODO use requestObject() instead of read()?
 			this.oSandbox.stub(oModel, "read", function (sPath0, bAllowObjectAccess) {
 				if (bAllowObjectAccess) {
 					// ignore "probe call" by requestCanonicalUrl's stub
@@ -461,3 +451,5 @@ sap.ui.require([
 //TODO etag handling
 //TODO use 'sap/ui/thirdparty/URI' for URL handling?
 
+//TODO support "/#" syntax, e.g. "/EMPLOYEES(ID='1')/ENTRYDATE/#Type/QualifiedName"
+//     do it for bindings, not as a JS API (getMetaModel().getMetaContext() etc. is already there)

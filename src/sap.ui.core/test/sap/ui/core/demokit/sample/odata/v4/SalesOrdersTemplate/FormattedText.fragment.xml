@@ -5,12 +5,12 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<template:alias name=".format"
 			value="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Helper.format">
-		<template:if test="{= ${objectWithName>Name}.indexOf('Sales') === 0 }">
+		<template:if test="{= ${objectWithKind>$kind} === 'EntityContainer' }">
 			<template:then>
-				<Text text="~{path : 'objectWithName>Name', formatter : '.format'}~"/>
+				<Text text="{objectWithKind>@sapui.name}/$kind: ~EntityContainer~"/>
 			</template:then>
 			<template:else>
-				<Text text="{path : 'objectWithName>Name', formatter : '.format'}"/>
+				<Text text="{objectWithKind>@sapui.name}/$kind: {path : 'objectWithKind>$kind', formatter : '.format'}"/>
 			</template:else>
 		</template:if>
 	</template:alias>

@@ -4,23 +4,27 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<VBox>
+		<template:with path="meta>/$EntityContainer/." var="objectWithKind">
+			<core:Fragment
+				fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText"
+				type="XML"/>
+		</template:with>
+		<Text text="----------"/>
+		<template:with path="meta>/$EntityContainer/BusinessPartnerList" var="objectWithKind">
+			<core:Fragment
+				fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText"
+				type="XML"/>
+		</template:with>
+		<Text text="----------"/>
 		<template:repeat
-			list="{path: 'meta>/', filters: {path: '@sapui.name', operator: 'EndsWith', value1: 'Name'}}"
-			var="containerProperty">
-				<Text text="{containerProperty>}"/>
+			list="{path: 'meta>/$EntityContainer', filters: {path: '@sapui.name', operator: 'EndsWith', value1: 'List'}}"
+			var="entitySet">
+				<Text text="{entitySet>@sapui.name}: {entitySet>$Type}"/>
 		</template:repeat>
-		<template:with path="meta>/EntitySets('SalesOrderList')" var="objectWithName">
-			<core:Fragment
-				fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText"
-				type="XML"/>
-		</template:with>
-		<template:repeat list="{meta>/EntitySets('SalesOrderList')/EntityType/Properties}" var="property">
-			<Text text="{property>Name}"/>
+		<Text text="----------"/>
+		<template:repeat list="{meta>/$EntityContainer/SalesOrderList}" var="property">
+			<Text text="{property>@sapui.name}: {property>$Type}"/>
 		</template:repeat>
-		<template:with path="meta>/EntitySets('BusinessPartnerList')" var="objectWithName">
-			<core:Fragment
-				fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText"
-				type="XML"/>
-		</template:with>
+		<!-- repeat over $* properties! -->
 	</VBox>
 </mvc:View>

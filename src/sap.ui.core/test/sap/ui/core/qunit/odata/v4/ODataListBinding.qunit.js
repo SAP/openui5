@@ -393,8 +393,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	//TODO unclear how to handle errors in jQuery.Deferred success handlers, open issue on Olingo
-	// to use promises
+	//TODO QUnit.test!
 	QUnit.skip("getContexts handles error in change event handler", function (assert) {
 		var done = assert.async(),
 			oError = new SyntaxError("Intentionally failed"),
