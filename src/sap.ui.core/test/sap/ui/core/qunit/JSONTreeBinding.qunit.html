@@ -138,6 +138,44 @@
 		sap.ui.getCore().setModel(oModel);
 
 	};
+	
+
+	//creates a certain data
+	function createData(iAmount) {
+		var oData = {
+			root:{
+				id: "root",
+				name: "root",
+				description: "moep moep",
+				checked: false,
+				children: []
+			}
+		};
+
+		var addChildren = function (oNode, iChildCount) {
+			for (var i = 0; i < iChildCount; i++) {
+				var sGroupID = oNode.id + "-" + i;
+				oNode.children.push({
+					id: sGroupID,
+					name: "Node(" + sGroupID +")",
+					description: "Hello, I am the description for node #" + sGroupID,
+					children: []
+				});
+			}
+		};
+
+		addChildren(oData.root, iAmount);
+
+		for (var i = 0; i < oData.root.children.length; i++) {
+			var oChild = oData.root.children[i];
+			addChildren(oChild, iAmount);
+		}
+		
+		oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oData);
+		sap.ui.getCore().setModel(oModel);
+	};
+	
 
 	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
 		// create binding
@@ -571,7 +609,39 @@
 		equal(aChildContexts[1].getProperty("name"), "Frank Wallace", "Inga child node[1] after sorting is: Frank Wallace");
 		equal(aChildContexts[2].getProperty("name"), "Gina Rush", "Inga child node[2] after sorting is: Gina Rush");
 	});
-
+	
+	test("Check public API calls for tree with >1000 nodes", function () {
+		//create a tree with 2 levels and 200 * 200 nodes
+		createData(200);
+		createTreeBinding("/root", null, [], {
+			displayRootNode: false
+		});
+		
+		var oBinding = bindings[0];
+		
+		ok(oBinding.hasChildren(), "hasChildren(): root level children are available");
+		ok(oBinding.hasChildren(), "hasChildren(null): root level children are available");
+		
+		var aRootContexts = oBinding.getRootContexts(0, 200);
+		
+		equal(aRootContexts.length, 200, "Number of Root Contexts is correct");
+		equal(oBinding.getChildCount(), 200, "getChildCount() returns the correct value (200)");
+		equal(oBinding.getChildCount(null), 200, "getChildCount(null) returns the correct value (200)");
+		
+		//check if child contexts are returned correctly
+		var oContext = aRootContexts[42];
+		//paged access with some additional nodes at the end (should not be there)
+		var aChildContexts = oBinding.getNodeContexts(oContext, 30, 400);
+		
+		equal(aChildContexts.length, 170, "Number of child contexts is correct (170)");
+		equal(oBinding.getChildCount(oContext), 200, "getChildCount(oContext) returns the correct number of child nodes (200)");
+		
+		//one level deeper should be empty
+		var oContext = aChildContexts[128];
+		ok(oContext, "level 1 child is available");
+		equal(oBinding.getChildCount(oContext), 0, "getChildCount(oContext) returns the correct number of child nodes (0)");
+	});
+	
 	</script>
 
 </head>

@@ -68,19 +68,23 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 			if (this.bDisplayRootNode) {
 				aContexts = [oContext];
 			} else {
-				aContexts = this.getNodeContexts(oContext);
+				aContexts = this.getNodeContexts(oContext, iStartIndex, iLength);
 			}
 		} else {
-			jQuery.each(this.oModel._getObject(this.sPath), function(iIndex, oObject) {
-				that._saveSubContext(oObject, aContexts, that.sPath + (jQuery.sap.endsWith(that.sPath, "/") ? "" : "/"), iIndex);
+			var sContextPath = this._sanitizePath(this.sPath);
+			
+			jQuery.each(this.oModel._getObject(sContextPath), function(iIndex, oObject) {
+				that._saveSubContext(oObject, aContexts, sContextPath, iIndex);
 			});
+
+			this._applySorter(aContexts);
+			
+			this._setLengthCache(sContextPath, aContexts.length);
+			
+			return aContexts.slice(iStartIndex, iStartIndex + iLength);
 		}
 		
-		this._applySorter(aContexts);
-		
-		this._setLengthCache(this.sPath, aContexts.length);
-		
-		return aContexts.slice(iStartIndex, iStartIndex + iLength);
+		return aContexts;
 	};
 	
 	/**
@@ -99,13 +103,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 			iLength = this.oModel.iSizeLimit;
 		}
 		
-		var sContextPath = oContext.getPath();
-		if (!jQuery.sap.endsWith(sContextPath,"/")) {
-			sContextPath = sContextPath + "/";
-		}
-		if (!jQuery.sap.startsWith(sContextPath,"/")) {
-			sContextPath = "/" + sContextPath;
-		}
+		var sContextPath = this._sanitizePath(oContext.getPath());
 	
 		var aContexts = [],
 			that = this,
@@ -144,7 +142,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	};
 
 	/**
-	 * Returns if the node has child nodes
+	 * Returns if the node has child nodes.
 	 *
 	 * @param {object} oContext the context element of the node
 	 * @return {boolean} true if node has children
@@ -152,16 +150,48 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	 * @public
 	 */
 	ClientTreeBinding.prototype.hasChildren = function(oContext) {
-		if (oContext) {
-			//check if the context's child count is already cached
-			if (this._mLengthsCache[oContext.sPath] !== undefined) {
-				return this._mLengthsCache[oContext.sPath] > 0;
+		return this.getChildCount(oContext) > 0;
+	};
+	
+	/**
+	 * Retrieves the number of children for the given context.
+	 * Makes sure the child count is retrieved from the length cache, and fills the cache if necessary.
+	 * Calling it with no arguments or 'null' returns the number of root level nodes.
+	 * 
+	 * @param {sap.ui.model.Context} oContext the context for which the child count should be retrieved
+	 * @return {int} the number of children for the given context
+	 * @public
+	 * @override
+	 */
+	ClientTreeBinding.prototype.getChildCount = function(oContext) {
+		//if oContext is null or empty -> root level count is requested
+		var sPath = oContext ? oContext.sPath : this.getPath();
+		sPath = this._sanitizePath(sPath);
+		
+		// if the length is not cached, call the get*Contexts functions to fill it
+		if (this._mLengthsCache[sPath] === undefined) {
+			if (oContext) {
+				this.getNodeContexts(oContext);
 			} else {
-				// if not: find the child contexts, cache is set implicitly 
-				return this.getNodeContexts(oContext).length > 0;
+				this.getRootContexts();
 			}
 		}
-		return false;
+		
+		return this._mLengthsCache[sPath];
+	};
+	
+	/**
+	 * Makes sure the path is prepended and appended with a "/" if necessary.
+	 * @param {string} sContextPath the path to be checked
+	 */
+	ClientTreeBinding.prototype._sanitizePath = function (sContextPath) {
+		if (!jQuery.sap.endsWith(sContextPath,"/")) {
+			sContextPath = sContextPath + "/";
+		}
+		if (!jQuery.sap.startsWith(sContextPath,"/")) {
+			sContextPath = "/" + sContextPath;
+		}
+		return sContextPath;
 	};
 	
 	ClientTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
@@ -295,6 +325,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	 * 
 	 * @param {sap.ui.model.Sorter[]} an array of Sorter instances which will be applied
 	 * @return {sap.ui.model.ClientTreeBinding} returns <code>this</code> to facilitate method chaining
+	 * @public
 	 */
 	ClientTreeBinding.prototype.sort = function (aSorters) {
 		aSorters = aSorters || [];
