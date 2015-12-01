@@ -434,7 +434,8 @@
 	module("Navigation Paginator", {
 		setup: function() {
 			createTable({
-				navigationMode: sap.ui.table.NavigationMode.Paginator
+				navigationMode: sap.ui.table.NavigationMode.Paginator,
+				visibleRowCount: 13
 			})
 		},
 		teardown: destroyTable
@@ -443,6 +444,8 @@
 	test("After initialization", function(){
 		var $table = oTable.$();
 		equal($table.find('#table-paginator').length, 1, 'The paginator exists');
+		oTable._oPaginator.getDomRef("-lastPageLink").click();
+		equal(oTable.getFirstVisibleRow(), 195 , "Navigation to last page OK");
 	});
 
 	module("VisibleRowcountMode Interactive", {
