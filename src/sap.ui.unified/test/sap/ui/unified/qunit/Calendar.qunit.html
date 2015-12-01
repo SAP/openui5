@@ -31,10 +31,15 @@
 
 			var bSelectFired = false;
 			var oSelectedDate = undefined;
+			var iStartDateChangeFired = 0;
 			var oLocaleUS = new sap.ui.core.Locale("en-US");
 			var oLocaleDE = new sap.ui.core.Locale("de-DE");
 			var oLocaleDataUS = sap.ui.core.LocaleData.getInstance(oLocaleUS);
 			var oLocaleDataDE = sap.ui.core.LocaleData.getInstance(oLocaleDE);
+
+			var handleStartDateChange = function(oEvent) {
+				iStartDateChangeFired++;
+			};
 
 			var oCal1 = new sap.ui.unified.Calendar("Cal1",{
 				select: function(oEvent){
@@ -44,14 +49,16 @@
 					if (aSelectedDates.length > 0 ) {
 						oSelectedDate = aSelectedDates[0].getStartDate();
 					}
-				}
+				},
+				startDateChange: handleStartDateChange
 			}).placeAt("uiArea1");
 
 			var oCal2 = new sap.ui.unified.Calendar("Cal2",{
 				intervalSelection: true,
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2011", "0", "10"), endDate: new Date("2011", "0", "13")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "1"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-				               new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})]
+				               new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
+				startDateChange: handleStartDateChange
 			}).placeAt("uiArea2");
 			oCal2.setLocale("de-DE");
 
@@ -60,6 +67,7 @@
 				firstDayOfWeek: 2,
 				nonWorkingDays: [3, 5],
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "0", "5")})],
+				startDateChange: handleStartDateChange
 			}).placeAt("uiArea3");
 			oCal3.setLocale("de-DE");
 
@@ -82,6 +90,9 @@
 				$Month = sap.ui.getCore().byId("Cal3").getAggregation("month")[0].$();
 				var aWeekHeaders = $Month.find(".sapUiCalWH");
 				equal(jQuery(aWeekHeaders[0]).text(), "Di", "Thuesday ist first weekday for custom setting");
+
+				equal(iStartDateChangeFired, 0, "Initially no startdateChange event fired");
+				equal(oFormatYyyymmdd.format(oCal2.getStartDate()), "20110101", "Cal2: Start date");
 			});
 
 			test("rendered month", function() {
@@ -147,6 +158,7 @@
 			});
 
 			test("focusDate method", function() {
+				iStartDateChangeFired = 0;
 				oCal2.focusDate(new Date(2012, 11, 12));
 				equal(jQuery("#Cal2--Head-B1").text(), "Dezember", "December shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2012", "year 2012 shown");
@@ -159,6 +171,7 @@
 					}
 				}
 				ok((bFound && jQuery(aDays[i]).attr("data-sap-day") == "20121212"), "20121212 focused");
+				equal(iStartDateChangeFired, 0, "no startdateChange event fired");
 
 				oCal2.focusDate(new Date(2011, 0, 10));
 			});
@@ -245,6 +258,7 @@
 			module("Interaction");
 
 			test("month switch", function() {
+				iStartDateChangeFired = 0;
 				qutils.triggerEvent("click", "Cal2--Head-prev");
 				equal(jQuery("#Cal2--Head-B1").text(), "Dezember", "December shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2010", "year 2010 shown");
@@ -253,7 +267,10 @@
 				ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110102", "last displayed day");
 				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is in other month");
+				equal(iStartDateChangeFired, 1, "startdateChange event fired");
+				equal(oFormatYyyymmdd.format(oCal2.getStartDate()), "20101201", "Start date");
 
+				iStartDateChangeFired = 0;
 				qutils.triggerEvent("click", "Cal2--Head-next");
 				equal(jQuery("#Cal2--Head-B1").text(), "Januar", "january shown again");
 				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown again");
@@ -262,7 +279,10 @@
 				ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110206", "last displayed day");
 				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is in other month");
+				equal(iStartDateChangeFired, 1, "startdateChange event fired");
+				equal(oFormatYyyymmdd.format(oCal2.getStartDate()), "20110101", "Start date");
 
+				iStartDateChangeFired = 0;
 				qutils.triggerEvent("click", "Cal2--Head-B1");
 				ok(jQuery(jQuery("#Cal2--MP").get(0)).is(":visible"), "Month picker rendered");
 				var $July = jQuery("#Cal2--MP-m6"); // use keybord to select month to prevent event processing from ItemNavigation
@@ -275,6 +295,8 @@
 				ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110731", "last displayed day");
 				ok(!jQuery(aDays[aDays.length-1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is not in other month");
+				equal(iStartDateChangeFired, 1, "startdateChange event fired");
+				equal(oFormatYyyymmdd.format(oCal2.getStartDate()), "20110701", "Start date");
 
 				// go back to january
 				qutils.triggerEvent("click", "Cal2--Head-B1");
@@ -300,6 +322,7 @@
 			});
 
 			test("year switch", function() {
+				iStartDateChangeFired = 0;
 				qutils.triggerEvent("click", "Cal2--Head-B2");
 				ok(jQuery("#Cal2--YP").get(0), "Year picker rendered");
 				ok(jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker visible");
@@ -324,6 +347,8 @@
 				ok(jQuery(aDays[0]).hasClass("sapUiCalItemOtherMonth"), "first displayed day is in other month");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "19990131", "last displayed day");
 				ok(!jQuery(aDays[aDays.length-1]).hasClass("sapUiCalItemOtherMonth"), "last displayed day is not in other month");
+				equal(iStartDateChangeFired, 1, "startdateChange event fired");
+				equal(oFormatYyyymmdd.format(oCal2.getStartDate()), "19990101", "Start date");
 
 				qutils.triggerEvent("click", "Cal2--Head-B2");
 				ok(jQuery("#Cal2--YP").get(0), "Year picker rendered");
