@@ -59,14 +59,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 */
 			pickerPopup : {type : "boolean", group : "Appearance", defaultValue : false}
 
-		},
-		events : {
-
-			/**
-			 * <code>startDate</code> was changed while navigation in <code>CalendarDateInterval</code>
-			 * @since 1.34.0
-			 */
-			startDateChange : {}
 		}
 	}});
 
@@ -123,6 +115,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		return this;
+
+	};
+
+	// needs to be overwritten because differently implemented in Calendar
+	/**
+	 * Gets current value of property startDate.
+	 *
+	 * Start date of the Interval
+	 * @returns {object} JavaScript date object for property startDate
+	 */
+	CalendarDateInterval.prototype.getStartDate = function(){
+
+		return this.getProperty("startDate");
 
 	};
 
@@ -271,7 +276,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oDatesRow = this.getAggregation("month")[0];
 		if (!oDatesRow.checkDateFocusable(oDate)) {
 			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
-			this._focusDateExtend(oUTCDate, true);
+			this._focusDateExtend(oUTCDate, true, true);
 		}
 
 		Calendar.prototype.focusDate.apply(this, arguments);
@@ -280,7 +285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	CalendarDateInterval.prototype._focusDateExtend = function(oDate, bOtherMonth) {
+	CalendarDateInterval.prototype._focusDateExtend = function(oDate, bOtherMonth, bNoEvent) {
 
 		// set start date according to new focused date
 		// only if focused date is not in current rendered date interval
@@ -291,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var iDay = Math.ceil((oOldDate.getTime() - oStartDate.getTime()) / (1000 * 3600 * 24));
 			oStartDate = this._newUniversalDate(oDate);
 			oStartDate.setUTCDate( oStartDate.getUTCDate() - iDay);
-			_setStartDate.call(this, oStartDate, false);
+			_setStartDate.call(this, oStartDate, false, bNoEvent);
 		}
 
 	};
