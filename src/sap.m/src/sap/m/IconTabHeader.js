@@ -227,6 +227,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._sResizeListenerId = null;
 		}
 
+		var oParent = this.getParent();
+		var bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
+
 		if (aItems.length > 0) {
 			if (!this.oSelectedItem || sSelectedKey && sSelectedKey !== this.oSelectedItem._getNonEmptyKey()) {
 				if (sSelectedKey) {
@@ -240,7 +243,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 
 				// no key and no item, we set the first visible item as selected if container is not explicitly set to collapsed
-				if (!this.oSelectedItem && this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpanded()) {
+				if (!this.oSelectedItem &&
+					(!bIsParentIconTabBar || bIsParentIconTabBar && oParent.getExpanded())) {
 					for (i = 0; i < aItems.length; i++) { // tab item
 						if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i].getVisible()) {
 							this.oSelectedItem = aItems[i];
@@ -251,7 +255,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			//in case the selected tab is not visible anymore and the content is expanded, the selected tab will change to the first visible tab
-			if (this.oSelectedItem && !this.oSelectedItem.getVisible() && this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpanded()) {
+			if (this.oSelectedItem &&
+				!this.oSelectedItem.getVisible() &&
+				(!bIsParentIconTabBar || bIsParentIconTabBar && oParent.getExpanded())) {
 				for (i = 0; i < aItems.length; i++) { // tab item
 					if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i].getVisible()) {
 						this.oSelectedItem = aItems[i];
@@ -315,6 +321,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		}
 
+		var oParent = this.getParent();
+		var bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
+
 		//if the old selected tab and the new selected tab both have no own content, which means they both use the same content from the icontabbar
 		//there is no need to rerender the content
 		//fix for xml views css: 0120061532 0001427250 2014
@@ -323,7 +332,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			bIsContentTheSame = true;
 		}
 
-		if (this.oSelectedItem && this.oSelectedItem.getVisible() && (this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpandable() || this.oSelectedItem !== oItem )) {
+		if (this.oSelectedItem &&
+			this.oSelectedItem.getVisible() &&
+			(bIsParentIconTabBar && oParent.getExpandable() || this.oSelectedItem !== oItem)) {
 			this.oSelectedItem.$()
 					.removeClass("sapMITBSelected")
 					.removeAttr('aria-selected')
@@ -334,23 +345,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			//click on already selected item leads to expanding/collapsing of the content (if expandable enabled)
 			if (this.oSelectedItem === oItem && !bAPIchange) {
 				//if content is not expandable nothing should happen otherwise content will be expanded/collapsed
-				if (this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpandable()) {
-					this.getParent()._toggleExpandCollapse();
+				if (bIsParentIconTabBar && oParent.getExpandable()) {
+					oParent._toggleExpandCollapse();
 				}
 			//click on other item leads to showing the right content of this item
 			} else {
 				//change the content aria-labaled by the newly selected tab;
-				if (this.getParent() instanceof sap.m.IconTabBar) {
-					this.getParent().$("content").attr('aria-labelledby', oItem.sId);
+				if (bIsParentIconTabBar) {
+					oParent.$("content").attr('aria-labelledby', oItem.sId);
 				}
 
 				// set new item
 				this.oSelectedItem = oItem;
 				this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
 
+				if (!bIsParentIconTabBar) {
+					this.oSelectedItem.$()
+						.addClass("sapMITBSelected")
+						.attr({ 'aria-selected': true });
+				}
+
 				//if the IconTabBar is not expandable and the content not expanded (which means content can never be expanded), we do not need
 				//to visualize the selection and we do not need to render the content
-				if (this.getParent() instanceof sap.m.IconTabBar && (this.getParent().getExpandable() || this.getParent().getExpanded())) {
+				if (bIsParentIconTabBar && (oParent.getExpandable() || oParent.getExpanded())) {
 					// add selected styles
 					this.oSelectedItem.$()
 							.addClass("sapMITBSelected")
@@ -359,17 +376,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					//if item has own content, this content is shown
 					var oSelectedItemContent = this.oSelectedItem.getContent();
 					if (oSelectedItemContent.length > 0) {
-						this.getParent()._rerenderContent(oSelectedItemContent);
+						oParent._rerenderContent(oSelectedItemContent);
 					//if item has not own content, general content of the icontabbar is shown
 					} else {
 						//if the general content was already shown there is no need to rerender
 						if (!bIsContentTheSame) {
-							this.getParent()._rerenderContent(this.getParent().getContent());
+							oParent._rerenderContent(oParent.getContent());
 						}
 					}
 					//if content is not expanded, content will be expanded (first click on item always leads to expanding the right content)
-					if (!bAPIchange && this.getParent().getExpandable() && !this.getParent().getExpanded()) {
-						this.getParent()._toggleExpandCollapse(true);
+					if (!bAPIchange && oParent.getExpandable() && !oParent.getExpanded()) {
+						oParent._toggleExpandCollapse(true);
 					}
 				}
 			}
@@ -385,14 +402,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sSelectedKey = this.oSelectedItem._getNonEmptyKey();
 		this.oSelectedItem = oItem;
 		this.setProperty("selectedKey", sSelectedKey, true);
-		if (this.getParent() instanceof sap.m.IconTabBar) {
-			this.getParent().setProperty("selectedKey", sSelectedKey, true);
+		if (bIsParentIconTabBar) {
+			oParent.setProperty("selectedKey", sSelectedKey, true);
 		}
 
 		if (!bAPIchange) {
 			// fire event on iconTabBar
-			if (this.getParent() instanceof sap.m.IconTabBar) {
-				this.getParent().fireSelect({
+			if (bIsParentIconTabBar) {
+				oParent.fireSelect({
 					selectedItem: this.oSelectedItem,
 					selectedKey: sSelectedKey,
 					item: this.oSelectedItem,
@@ -432,7 +449,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oScroller.setIconTabBar(this, jQuery.proxy(this._afterIscroll, this), jQuery.proxy(this._scrollPreparation, this));
 		}
 
-		if (this.oSelectedItem && this.getParent() instanceof sap.m.IconTabBar && this.getParent().getExpanded()) {
+		var oParent = this.getParent();
+		var bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
+
+		if (this.oSelectedItem &&
+			(!bIsParentIconTabBar || bIsParentIconTabBar && oParent.getExpanded())) {
 			this.oSelectedItem.$()
 					.addClass("sapMITBSelected")
 					.attr({ 'aria-selected': true });
@@ -497,9 +518,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// Change ITB content height on resize when ITB stretchContentHeight is set to true (IE9 fix)
 		if (!jQuery.support.newFlexBoxLayout &&
-			this.getParent() instanceof sap.m.IconTabBar &&
-			this.getParent().getStretchContentHeight()) {
-			this._sResizeListenerNoFlexboxSupportId = sap.ui.core.ResizeHandler.register(this.getParent().getDomRef(), jQuery.proxy(this._fnResizeNoFlexboxSupport, this));
+			bIsParentIconTabBar &&
+			oParent.getStretchContentHeight()) {
+			this._sResizeListenerNoFlexboxSupportId = sap.ui.core.ResizeHandler.register(oParent.getDomRef(), jQuery.proxy(this._fnResizeNoFlexboxSupport, this));
 			this._fnResizeNoFlexboxSupport();
 		}
 
