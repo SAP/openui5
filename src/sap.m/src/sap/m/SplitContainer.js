@@ -560,6 +560,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	SplitContainer.prototype.onswiperight = function(oEvent) {
+		// Makes sure that the logic will work only when the device touch display
+		// BSP: 1580084594
+		if (sap.ui.Device.support.touch === false) {
+			return;
+		}
+
 		//only enabled on tablet or Windows 8
 		if ((sap.ui.Device.system.tablet || (sap.ui.Device.os.windows && sap.ui.Device.os.version >= 8))
 			&& (this._portraitHide() || this._hideMode())
