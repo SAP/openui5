@@ -6,7 +6,6 @@
 	xmlns:table="sap.ui.table"
 	controllerName="sap.ui.table.testApps.SimpleOData"
 	>
-	
 	<Panel 
 		expandable="true"
 		expanded="true"
@@ -89,6 +88,21 @@
 									<Input value="{/filterValue}" id="filterValue"/>
 								</f:fields>
 							</f:FormElement>
+							<f:FormElement label="VisibleRowCount">
+								<f:fields>
+									<Input value="{/visibleRowCount}" id="visibleRowCount"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="VisibleRowCountMode">
+								<f:fields>
+									<Select width="100%" id="visibleRowCountMode" selectedKey="{/visibleRowCountMode}">
+										<items>
+											<core:Item text="Fixed" key="Fixed"/>
+											<core:Item text="Auto" key="Auto"/>
+										</items>
+									</Select>
+								</f:fields>
+							</f:FormElement>
 						</f:formElements>
 					</f:FormContainer>
 				</f:formContainers>
@@ -107,7 +121,12 @@
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<table:Table id="tableOData"></table:Table>
+			<table:Table 
+				id="tableOData" 
+				visibleRowCount="{path: '/visibleRowCount', type:'Integer'}" 
+				visibleRowCountMode="{/visibleRowCountMode}" 
+				threshold="{/tableThreshold}">
+			</table:Table>
 		</content>
 	</Panel>
 		<Panel 
@@ -118,6 +137,7 @@
 		<headerToolbar>
 			<Toolbar>
 				<Title text="Performance" level="H2" id="Performance"/>
+				<Button icon="sap-icon://download" press="onDownload"/>
 			</Toolbar>
 		</headerToolbar>
 		<content>
@@ -137,32 +157,32 @@
 						<f:formElements>
 							<f:FormElement label="overall">
 								<f:fields>
-									<Text id="overall"/>
+									<Text id="overall" text="{/overall}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="onBeforeRendering">
 								<f:fields>
-									<Text id="onBeforeRendering"/>
+									<Text id="onBeforeRendering"  text="{/onBeforeRendering}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="rendering">
 								<f:fields>
-									<Text id="rendering"/>
+									<Text id="rendering" text="{/rendering}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="onAfterRendering">
 								<f:fields>
-									<Text id="onAfterRendering"/>
+									<Text id="onAfterRendering" text="{/onAfterRendering}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="tableCreate">
 								<f:fields>
-									<Text id="tableCreate"/>
+									<Text id="tableCreate" text="{/tableCreate}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="factor">
 								<f:fields>
-									<Text id="factor"/>
+									<Text id="factor" text="{/factor}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement>
@@ -172,22 +192,22 @@
 							</f:FormElement>
 							<f:FormElement label="Table._createRows">
 								<f:fields>
-									<Text id="_createRows"/>
+									<Text id="_createRows" text="{/createRows}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="Table._updateTableContent">
 								<f:fields>
-									<Text id="_updateTableContent"/>
+									<Text id="_updateTableContent" text="{/updateTableContent}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="Table._syncColumnHeaders">
 								<f:fields>
-									<Text id="_syncColumnHeaders"/>
+									<Text id="_syncColumnHeaders" text="{/syncColumnHeaders}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement label="Table._updateRowHeader">
 								<f:fields>
-									<Text id="_updateRowHeader"/>
+									<Text id="_updateRowHeader" text="{/updateRowHeader}"/>
 								</f:fields>
 							</f:FormElement>
 						</f:formElements>
