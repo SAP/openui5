@@ -68,10 +68,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 							oPendingInteraction.component,
 							oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter)
 						);
-					} else {
-						sTransactionId = createGUID();
-						// set passport with Root Context ID, Transaction ID, Component Name, Action
-						this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
 					}
 				};
 
@@ -283,9 +279,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					// inject function in window.XMLHttpRequest.open for E2eTraceLib
 					window.XMLHttpRequest.prototype.open = function() {
 						fnXHRopen.apply(this, arguments);
-						sTransactionId = createGUID();
-						// set passport with Root Context ID, Transaction ID
-						this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
+						var sHost = new URI(arguments[1]).host();
+						// only use passport for non CORS requests (relative or with same host)
+						if (!sHost || sHost === HOST) {
+							sTransactionId = createGUID();
+							// set passport with Root Context ID, Transaction ID
+							this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
+						}
 					};
 				}
 			};
