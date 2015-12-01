@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class This control serves as a universal container for different types of content and footer.
+	 * @class This control is used within the GenericTile control.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

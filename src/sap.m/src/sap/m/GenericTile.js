@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class The tile control that displays the title, description, and customizable main area.
+	 * @class Displays the title, description, and a customizable main area.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
