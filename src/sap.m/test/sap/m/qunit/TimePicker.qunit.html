@@ -1626,6 +1626,25 @@
 
 			oTp2.destroy();
 		});
+
+		test("upon focusout, change event not fired when no value change", function() {
+			//system under test
+			var	oTp2 = new sap.m.TimePicker({
+				valueFormat: "hh mm"
+			});
+			//arrange
+			this.oTp.setValue("07:15");
+			oTp2.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			jQuery(this.oTp.getFocusDomRef()).focus();
+			jQuery(oTp2.getFocusDomRef()).focus();
+
+			equals(this.oSpy.callCount, 0, "changed event must not be fired");
+
+			oTp2.destroy();
+		});
 		//todo - test caret position
 
 		function triggerMultipleKeypress(timePicker, sFeed) {
