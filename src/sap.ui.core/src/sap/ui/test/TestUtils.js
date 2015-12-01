@@ -330,17 +330,31 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 * @param {object} oSandbox
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
 		 * @param {map} mFixture
-		 *   the fixture for {@link sap.ui.test.TestUtils#.useFakeServer}
+		 *   the fixture for {@link sap.ui.test.TestUtils#.useFakeServer}. If the value for a URL
+		 *   contains <code>always:true</code>, this URL is faked even with <code>realOData</code>.
 		 * @param {string} [sBase="sap/ui/core/qunit/odata/v4/data"]
 		 *   The base path for <code>source</code> values in the fixture. The path must be relative
 		 *   to the <code>test</code> folder of the <code>sap.ui.core</code> project, typically it
 		 *   should start with "sap". It must not end with '/'.
 		 */
 		setupODataV4Server : function (oSandbox, mFixture, sBase) {
-			if (!bRealOData) {
-				TestUtils.useFakeServer(oSandbox, sBase || "sap/ui/core/qunit/odata/v4/data",
-					mFixture);
+			var bStart = false, mAlwaysFixture;
+
+			if (bRealOData) {
+				mAlwaysFixture = {};
+				Object.keys(mFixture).forEach(function (sUrl) {
+					if (mFixture[sUrl].always) {
+						mAlwaysFixture[sUrl] = mFixture[sUrl];
+						bStart = true;
+					}
+				});
+				if (!bStart) {
+					return;
+				}
+				mFixture = mAlwaysFixture;
 			}
+			TestUtils.useFakeServer(oSandbox, sBase || "sap/ui/core/qunit/odata/v4/data",
+				mFixture);
 		}
 	};
 
