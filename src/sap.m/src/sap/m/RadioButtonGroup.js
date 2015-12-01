@@ -140,10 +140,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				this._initItemNavigation();
 
-				// update ARIA information of RadioButtons
-				for (var i = 0; i < this.aRBs.length; i++) {
-					this.aRBs[i].getDomRef().setAttribute("aria-posinset", i + 1);
-					this.aRBs[i].getDomRef().setAttribute("aria-setsize", this.aRBs.length);
+				// update ARIA information of RadioButtons with visible buttons only
+				var aVisibleRBs = this.aRBs.filter(function(oButton) {
+					return oButton.getVisible();
+				});
+
+				for (var i = 0; i < aVisibleRBs.length; i++) {
+					var oRBDomRef = aVisibleRBs[i].getDomRef();
+					oRBDomRef.setAttribute("aria-posinset", i + 1);
+					oRBDomRef.setAttribute("aria-setsize", aVisibleRBs.length);
 				}
 			};
 
