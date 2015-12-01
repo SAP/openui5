@@ -273,7 +273,7 @@ sap.ui.define([
 			if (this.bTokenHandling && this.oServiceData.securityToken) {
 				this.oHeaders["x-csrf-token"] = this.oServiceData.securityToken;
 			}
-			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguage();
+			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguageTag();
 
 			// set version to 2.0 because 1.0 does not support e.g. skip/top, inlinecount...
 			// states the version of the Open Data Protocol used by the client to generate the request.
