@@ -820,12 +820,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._setInitialFocus = function () {
-
 			var sFocusId = this._getFocusId();
 			var oControl = sap.ui.getCore().byId(sFocusId);
 			var oFocusDomRef;
 
 			if (oControl) {
+				//if someone tryies to focus an existing but not visible control, focus the Dialog itself.
+				if (!oControl.getVisible()) {
+					this.focus();
+					return;
+				}
+
 				oFocusDomRef = oControl.getFocusDomRef();
 			}
 
