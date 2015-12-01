@@ -30,6 +30,13 @@
 				}
 			});
 
+			var customCancelButtonTextBusyDialog = new sap.m.BusyDialog('customCancelButtonTextBusyDialog', {
+				showCancelButton: true,
+				cancelButtonText: 'Custom Close Text',
+				customIcon: 'images/synchronise_48.png',
+				customIconRotationSpeed: 5000
+			});
+
 			var standartNoHeaderBusyDialog = new sap.m.BusyDialog('standartNoHeaderBusyDialog', {
 				text: 'Sending data...',
 				showCancelButton: true
@@ -82,6 +89,7 @@
 							standartBusyDialog.open();
 						}
 					}),
+					new sap.ui.core.HTML({content: "<br/>"}),
 					new sap.m.Button({
 						text: 'Standart (testing setters)',
 						width: _buttonWidth,
@@ -155,6 +163,7 @@
 							});
 						}
 					}),
+					new sap.ui.core.HTML({content: "<br/>"}),
 					new sap.m.Button({
 						text: "Binding BusyDialog",
 						width: _buttonWidth,
@@ -177,6 +186,13 @@
 							sap.ui.getCore().applyChanges();
 
 							alert('oBusyDialog.$() should be 1 dom element: ' + defaultLightBusyDialog.$().length);
+						}
+					}),
+					new sap.m.Button({
+						text: 'Cancel Text and Icon',
+						width: _buttonWidth,
+						press: function () {
+							customCancelButtonTextBusyDialog.open();
 						}
 					})
 				]
