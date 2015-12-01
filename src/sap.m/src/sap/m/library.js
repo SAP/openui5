@@ -431,7 +431,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * Enum for the trend of the deviation marker within sap.m.NumericContent control.
+	 * Enum of the available deviation markers for the NumericContent control.
 	 *
 	 * @enum {string}
 	 * @public
