@@ -160,6 +160,18 @@
 		oTable.filter(oTable.getColumns()[0], "");
 		equal(oTable.getBinding("rows").getLength(), 6, "Row count is correct!");
 	});
+
+	test("Paginator", function() {
+		oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
+		oTable.setVisibleRowCount(4);
+		sap.ui.getCore().applyChanges();
+
+		var $table = oTable.$();
+		equal($table.find('#' + oTable.getId() + '-paginator').length, 1, 'The paginator exists');
+		oTable._oPaginator.getDomRef("-forwardLink").click();
+		equal(oTable.getFirstVisibleRow(), 4, "Navigation to last page OK");
+	});
+
 	
 	</script>
   </head>
