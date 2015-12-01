@@ -233,9 +233,10 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 		if (oTabStripParent && oTabStripParent.getRenderer && oTabStripParent.getRenderer().getContentDomId) {
 			mAccAttributes["controls"] = oTabStripParent.getRenderer().getContentDomId(oTabStripParent);
 		}
-		mAccAttributes["selected"] = "false";
 		if (oSelectedItem && oSelectedItem.getId() === oItem.getId()) {
-			mAccAttributes["aria-selected"] = "true";
+			mAccAttributes["selected"] = "true";
+		} else {
+			mAccAttributes["selected"] = "false";
 		}
 		return mAccAttributes;
 	}
