@@ -142,7 +142,7 @@ sap.ui.require([
 
 				assert.strictEqual(aChildControls.length, iEntityCount, "# child controls");
 				for (i = 0; i < iEntityCount; i += 1) {
-					sExpectedPath = "/EMPLOYEES[" + (i + iStartIndex) + "];list=" + iListIndex;
+					sExpectedPath = "/EMPLOYEES[" + (i + iStartIndex) + "];root=" + iListIndex;
 					assert.strictEqual(aChildControls[i].getBindingContext().getPath(),
 						sExpectedPath, "child control binding path: " + sExpectedPath);
 				}
@@ -187,7 +187,7 @@ sap.ui.require([
 	QUnit.test("nested listbinding", function (assert) {
 		var oControl = new TestControl(),
 			done = assert.async(),
-			oContext = new Context(this.oModel, "/TEAMS[0];list=0"),
+			oContext = new Context(this.oModel, "/TEAMS[0];root=0"),
 			sPath = "TEAM_2_EMPLOYEES",
 			oRange = {startIndex : 1, length : 3};
 
@@ -344,7 +344,7 @@ sap.ui.require([
 					assert.strictEqual(aContexts[i], undefined, sMessage);
 				} else {
 					assert.strictEqual(aContexts[i].getPath(),
-						"/EMPLOYEES[" + (iStart + i)  + "];list=" + oListBinding.iIndex,
+						"/EMPLOYEES[" + (iStart + i)  + "];root=" + oListBinding.iIndex,
 						sMessage);
 				}
 			}
@@ -433,16 +433,16 @@ sap.ui.require([
 		oListBinding.getContexts(0, 10); // creates cache
 
 		return Promise.all([
-			oListBinding.readValue(iIndex, "LOCATION/COUNTRY").then(function (oValue) {
+			oListBinding.readValue("LOCATION/COUNTRY", false, iIndex).then(function (oValue) {
 				assert.strictEqual(oValue, "COUNTRY " + iIndex, "LOCATION/COUNTRY");
 			}),
-			oListBinding.readValue(iIndex, "Foo").then(function (oValue) {
+			oListBinding.readValue("Foo", false, iIndex).then(function (oValue) {
 				assert.strictEqual(oValue, undefined, "Foo");
 			}),
-			oListBinding.readValue(iIndex, "Foo1/Bar").then(function (oValue) {
+			oListBinding.readValue("Foo1/Bar", false, iIndex).then(function (oValue) {
 				assert.strictEqual(oValue, undefined, "Foo1/Bar");
 			}),
-			oListBinding.readValue(iIndex, "NullValue").then(function (oValue) {
+			oListBinding.readValue("NullValue", false, iIndex).then(function (oValue) {
 				assert.strictEqual(oValue, null, "NullValue");
 			})
 		]);
@@ -469,7 +469,7 @@ sap.ui.require([
 				oError, "sap.ui.model.odata.v4.ODataListBinding");
 		oListBinding.getContexts(0, 10); // creates cache
 
-		return oListBinding.readValue(0, "foo/bar").then(
+		return oListBinding.readValue("foo/bar", false, 0).then(
 			function () { assert.ok(false, "Unexpected success"); },
 			function (oError0) { assert.strictEqual(oError0, oError); }
 		);
@@ -494,7 +494,7 @@ sap.ui.require([
 				oError, "sap.ui.model.odata.v4.ODataListBinding");
 		oListBinding.getContexts(0, 10); // creates cache
 
-		return oListBinding.readValue(0, "LOCATION").then(
+		return oListBinding.readValue("LOCATION", false, 0).then(
 			function () {
 				assert.ok(false, "Unexpected success");
 			},
@@ -566,7 +566,7 @@ sap.ui.require([
 						oFixture.length - (oFixture.isFinal ? 0 : 10), "Context array length");
 					for (i = oFixture.start, n = oFixture.start + oFixture.result; i < n; i++) {
 						assert.strictEqual(oListBinding.aContexts[i].sPath,
-							"/EMPLOYEES[" + i + "];list=0", "check content");
+							"/EMPLOYEES[" + i + "];root=0", "check content");
 					}
 					done();
 				}, 10);
@@ -708,7 +708,7 @@ sap.ui.require([
 			.returns(createResult(1, iIndex));
 		oListBinding.getContexts(0, 10); // creates cache
 
-		return oListBinding.readValue(iIndex, undefined, true).then(function (oValue) {
+		return oListBinding.readValue(undefined, true, iIndex).then(function (oValue) {
 				assert.deepEqual(oValue, {
 					Name : "Name " + iIndex,
 					LOCATION : {
@@ -730,6 +730,8 @@ sap.ui.require([
 //TODO (how to) get rid of global cache objects when model is garbage collected
 //TODO integration test for cache eviction if size exceeds cacheSize (1MB per default)
 //TODO (how to) set pageSize, prefetchSize, cacheSize of cache?
+
+//TODO move cache creation to constructor (analogous to ODataContextBinding)
 //TODO setContext() must delete this.oCache when it has its own cache (e.g. scenario
 //  where listbinding is not nested but has a context. This is currently not possible but
 //  if you think on a relative binding "TEAMS" which becomes context "/" -> here the relative

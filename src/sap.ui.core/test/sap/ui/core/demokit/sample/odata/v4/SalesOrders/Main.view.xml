@@ -6,8 +6,7 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
 		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
-			items="{path: '/SalesOrderList', parameters: {'$expand':
-			'SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))'}}"
+			items="{path: '/SalesOrderList', parameters: {'$expand':'SO_2_BP'}}"
 			mode="SingleSelectMaster" selectionChange="onSalesOrdersSelect">
 			<headerToolbar>
 				<Toolbar>
@@ -66,6 +65,9 @@
 					<Text text="Currency"/>
 				</Column>
 				<Column>
+					<Text text="Supplier Company Name"/>
+				</Column>
+				<Column>
 					<Text text="Delete Sales Order"/>
 				</Column>
 			</columns>
@@ -84,12 +86,29 @@
 						<Text text="{CurrencyCode}"/>
 					</cells>
 					<cells>
+						<Text text="{SO_2_BP/CompanyName}"/>
+					</cells>
+					<cells>
 						<Button text="Delete" press="onDeleteSalesOrder"
 							enabled="{ui>/bRealOData}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
 		</Table>
+		<form:SimpleForm id="SalesOrderForm" layout="ResponsiveGridLayout">
+			<form:content>
+				<Label text="Sales Order ID" />
+				<Text text="{SalesOrderID}" />
+				<Label text="Created At" />
+				<Text text="{CreatedAt}" />
+				<Label text="Changed At" />
+				<Text text="{ChangedAt}" />
+				<Label text="Lifecycle Status Desc" />
+				<Text text="{LifecycleStatusDesc}" />
+				<Label text="Note" />
+				<Text text="{Note}" />
+			</form:content>
+		</form:SimpleForm>
 		<Table id="SalesOrderLineItems" headerText="Sales Order Line Items"
 			items="{SO_2_SOITEM}" mode="SingleSelectMaster"
 			selectionChange="onSalesOrderLineItemSelect">
@@ -130,13 +149,13 @@
 				</ColumnListItem>
 			</items>
 		</Table>
-	<List id="SupplierContactData"
-		headerText="Supplier Contact Information"
-		items="{SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT}">
-		<StandardListItem
-			title="{FirstName} {LastName} {DateOfBirth}"
-			description="{PhoneNumber}"
-			info="{EmailAddress}"/>
-	</List>
-  </VBox>
+		<List id="SupplierContactData"
+			headerText="Supplier Contact Information"
+			items="{SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT}">
+			<StandardListItem
+				title="{FirstName} {LastName} {DateOfBirth}"
+				description="{PhoneNumber}"
+				info="{EmailAddress}"/>
+		</List>
+	</VBox>
 </mvc:View>

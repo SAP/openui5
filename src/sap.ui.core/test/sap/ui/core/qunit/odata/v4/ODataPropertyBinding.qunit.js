@@ -137,7 +137,7 @@ sap.ui.require([
 			done();
 		});
 
-		oModelMock.expects("read").withExactArgs("/EntitySet('foo')/property")
+		oModelMock.expects("read").withExactArgs("/EntitySet('foo');root=0/property")
 			.returns(Promise.resolve({value: "value"}));
 
 		// This creates and initializes a context binding at the control. The change handler of the
@@ -191,19 +191,19 @@ sap.ui.require([
 			var oBinding,
 				oModel = new ODataModel("/service/"),
 				oControl = new TestControl({models: oModel}),
-				sPath = "property",
+				sPath = "p",
 				oType = new TypeString(),
 				done = assert.async();
 
-			this.oSandbox.mock(oModel).expects("read").withExactArgs("/EntitySet('foo')/property")
+			this.oSandbox.mock(oModel).expects("read").withExactArgs("/EntitySet('foo');root=0/p")
 				.returns(Promise.resolve({value: vValue}));
 			this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
-				.withExactArgs("/EntitySet('foo')/property")
+				.withExactArgs("/EntitySet('foo');root=0/p")
 				.returns(Promise.resolve(oType));
 			this.oSandbox.mock(oType).expects("formatValue").withExactArgs(vValue, "string");
 
 			oControl.bindProperty("text", sPath);
-			oControl.bindObject("/EntitySet('foo')/");
+			oControl.bindObject("/EntitySet('foo')");
 			oBinding = oControl.getBinding("text");
 			oBinding.attachChange(function () {
 				assert.strictEqual(oBinding.getType(), oType);
