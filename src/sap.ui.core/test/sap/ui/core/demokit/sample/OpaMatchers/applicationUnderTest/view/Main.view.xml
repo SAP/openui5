@@ -2,10 +2,13 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<App>
-		<Page>
+		<Page id="myPage">
 			<headerContent>
-				<Button id="changingButton" text="My text will change after 5 seconds"/>
+				<Button id="changingButton" text="My text will change after 5 seconds" class="mySuperButton"/>
 			</headerContent>
+			<content>
+				<Button text="Button in a Page" id="buttonInAPage"></Button>
+			</content>
 			<footer>
 				<Toolbar>
 					<Button text="You won't find me" />
