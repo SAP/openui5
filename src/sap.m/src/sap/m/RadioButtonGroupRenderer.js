@@ -23,11 +23,17 @@ sap.ui.define(['jquery.sap.global'],
 	RadioButtonGroupRenderer.render = function(oRenderManager, oRBGroup) {
 		// convenience variable
 		var rm = oRenderManager;
+		oRBGroup.aRBs = oRBGroup.getButtons();
 
 		// Return immediately if control has no RadioButtons
 		if (!oRBGroup.aRBs) {
 			return;
 		}
+
+		// Should render only visible buttons
+		var aVisibleRBs = oRBGroup.aRBs.filter(function(oButton) {
+			return oButton.getVisible();
+		});
 
 		var iColumns = oRBGroup.getColumns();
 		var bEnabled = oRBGroup.getEnabled();
@@ -50,7 +56,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeControlData(oRBGroup);
 		rm.addClass("sapMRbG");
 		if (iColumns > 1) {
-			if (iColumns == oRBGroup.aRBs.length) {
+			if (iColumns == aVisibleRBs.length) {
 				rm.addClass("sapMRbG1Row");
 			} else {
 				rm.addClass("sapMRbGTab");
@@ -86,7 +92,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		// columns
 		for (var c = 0; c < iColumns; c++) {
-			if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
+			if (iColumns > 1 && iColumns != aVisibleRBs.length) {
 				// if only 1 column -> no DIV necessary
 				rm.write("<div");
 				rm.addClass("sapMRbGCol");
@@ -95,16 +101,16 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			// render RadioButtons
-			for (var i = c; i < oRBGroup.aRBs.length; i = i + iColumns) {
-				rm.renderControl(oRBGroup.aRBs[i]);
+			for (var i = c; i < aVisibleRBs.length; i = i + iColumns) {
+				rm.renderControl(aVisibleRBs[i]);
 			}
 
-			if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
+			if (iColumns > 1 && iColumns != aVisibleRBs.length) {
 				rm.write("</div>");
 			}
 		}
 
-		if (iColumns > 1 && iColumns != oRBGroup.aRBs.length) {
+		if (iColumns > 1 && iColumns != aVisibleRBs.length) {
 			// dummy Column to avoid big spaces between RadioButtons in Safari
 			rm.write('<div class="sapMRbGDummy"> </div>');
 		}
