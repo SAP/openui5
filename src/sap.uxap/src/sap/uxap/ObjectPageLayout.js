@@ -1456,12 +1456,12 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._toggleHeaderStyleRules = function (bStuck) {
 		bStuck = !!bStuck;
-		var sValue = bStuck ? "hidden" : "inherit",
-			sABarVisible = this._bIsHeaderExpanded ? "hidden" : "inherit";
+		var sValue = bStuck ? "hidden" : "inherit";
+
 		this._bStickyAnchorBar = bStuck;
 		this._$headerContent.css("overflow", sValue);
 		this._$headerContent.css("visibility", sValue);
-		this._$anchorBar.css("visibility", sABarVisible);
+		this._$anchorBar.css("visibility", sValue);
 		this.fireToggleAnchorBar({fixed: bStuck});
 	};
 
