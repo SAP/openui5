@@ -75,12 +75,12 @@
 				"islamic": {"year": 1430, "month": 2, "date": 2, "day": 6, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0}
 			},
 			t2014_10_23__12_34_56_0: {
-				"gregorian": {"year": 2014, "month": 9, "date": 23, "day": 5, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0},
-				"islamic": {"year": 1435, "month": 11, "date": 28, "day": 5, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0}
+				"gregorian": {"year": 2014, "month": 9, "date": 23, "day": 4, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0},
+				"islamic": {"year": 1435, "month": 11, "date": 28, "day": 4, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0}
 			},
 			t2014_10_24__12_34_56_0: {
-				"gregorian": {"year": 2014, "month": 9, "date": 24, "day": 4, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0},
-				"islamic": {"year": 1436, "month": 0, "date": 1, "day": 4, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0}
+				"gregorian": {"year": 2014, "month": 9, "date": 24, "day": 5, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0},
+				"islamic": {"year": 1436, "month": 0, "date": 1, "day": 5, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0}
 			},
 			t2014_10_25__12_34_56_0: {
 				"gregorian": {"year": 2014, "month": 9, "date": 25, "day": 6, "hours": 12, "minutes": 34, "seconds": 56, "milliseconds": 0},
@@ -93,6 +93,27 @@
 		// records (customizationInfo data above). If new test entries are added they must obey the same rule,
 		// otherwise an unexpected conversion result may appear
 		var oCivilTestData = {};
+
+		/* Border cases - the fisrt day of Islamic Calendar*/
+		oCivilTestData["0001/01/1"] = JSON.parse('{' +
+		'"timestamp" : -42521597999000,' +
+		'"islamic":  {"year":1,"month":0, "date":1, "day": 5, "hours":0, "minutes":0, "seconds":1, "milliseconds":0},' +
+		'"gregorian":{"year":622,"month":6, "date":19, "day" : 5, "hours":0, "minutes":0, "seconds":1, "milliseconds":0}}');
+
+		/* Border cases - one day before Islamic Calendar Start*/
+	   oCivilTestData["0000/12/29"] = JSON.parse('{' +
+		'"timestamp" : -42524179199000,' +
+		'"islamic":  {"year":0,"month":11, "date":29, "day": 4, "hours":0, "minutes":0, "seconds":1, "milliseconds":0},' +
+		'"gregorian":{"year":622,"month":6, "date":18, "day" : 4, "hours":0, "minutes":0, "seconds":1, "milliseconds":0}}');
+
+	  /* Border cases - more than year before Islamic Calendar Start*/
+		oCivilTestData["-0001/11/20"] = JSON.parse('{' +
+		'"islamic":  {"year":-1,"month":10, "date":20, "day": 2, "hours":0, "minutes":0, "seconds":1, "milliseconds":0},' +
+		'"gregorian":{"year":621,"month":5, "date":19, "day" : 2, "hours":0, "minutes":0, "seconds":1, "milliseconds":0}}');
+
+		 oCivilTestData["-0012/06/29"] = JSON.parse('{' +
+		'"islamic":  {"year":-12,"month":5, "date":29, "day": 5, "hours":0, "minutes":0, "seconds":1, "milliseconds":0},' +
+		'"gregorian":{"year":610,"month":5, "date":1, "day": 5, "hours":0, "minutes":0, "seconds":1, "milliseconds":0}}');
 
 		oCivilTestData.t1430_01_03__00_00_00_000 = JSON.parse('{' +
 		'"timestamp" : 1230760800000,' +
@@ -180,7 +201,7 @@
 
 		test("with value parameter (timestamp)", function () {
 			var oIslamicDate;
-			
+
 			oIslamicDate = new sap.ui.core.date.Islamic("invalid islamic date timestamp");
 			ok(isInvalid(oIslamicDate), "Constructor with invalid string as timestamp must return an invalid date");
 
@@ -208,7 +229,7 @@
 		test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: invalid parameter type )", function () {
 			// ------------- object -----------------------------
 			var oIslamicDate = null;
-		
+
 			oIslamicDate = new sap.ui.core.date.Islamic(1430, 0, "alabala");
 			ok(isInvalid(oIslamicDate), "Constructor with invalid string as day must return invalid date");
 
@@ -745,7 +766,7 @@
 				cleanup.call(this);
 			}
 		});
-		
+
 		test("Setters have to return the time since 1.1.1970", function () {
 			var oDate = new sap.ui.core.date.Islamic(1354, 0, 1, 8, 10, 15, 119);
 
@@ -753,7 +774,7 @@
 				equal(typeof iTimestamp, "number", sSetter + " did return a numeric value");
 				equal(iTimestamp, oDate.getTime(), sSetter + " return value matches date timestamp");
 			}
-			
+
 			check(oDate.setFullYear(1435), "setFullYear");
 			check(oDate.setYear(35), "setYear");
 			check(oDate.setMonth(5), "setMonth");
@@ -784,11 +805,7 @@
 		});
 
 		test("Convert Gregorian to Islamic dates", function () {
-			var oTestDate = oCivilTestData.t1435_06_11__23_16_10_118;
-			var oLocalGregDate = new Date(oTestDate.timestamp);
-			var oTestDateIslamic = oTestDate.islamic;
-			var oLocalIslamicDate = new sap.ui.core.date.Islamic(oLocalGregDate.getTime());
-			verifyDateWithTestDate("12.04.2014 -> 11.06.1435", oLocalIslamicDate, oTestDateIslamic, true);
+			testGregorian2IslamicWithTestDataSet(oCivilTestData);
 		});
 
 		test("Convert Islamic to Gregorian dates", function () {
@@ -825,8 +842,7 @@
 			for (sTestDate in testDataset) {
 				var oGregorianDate = createGregorianDateFromTestEntry(testDataset[sTestDate]);
 				var oRealIslamicDate = new sap.ui.core.date.Islamic(oGregorianDate.getTime());
-				var oExpectedIslamicDate = createIslamicDateFromTestEntry(testDataset[sTestDate]);
-				compareTwoDates("Gregorian2Islamic: " + sTestDate, oRealIslamicDate, oExpectedIslamicDate);
+				verifyDateWithTestDate("Gregorian2Islamic: " + sTestDate, oRealIslamicDate, testDataset[sTestDate].islamic);
 			}
 		}
 
@@ -840,9 +856,9 @@
 		}
 
 		function verifyDate(sMessage, oDate, year, month, date, day, hours, minutes, seconds, milliseconds, bUTC) {
-			var sExpected = formatDateTime(year, month + 1, date, day, hours, minutes, seconds, milliseconds);
+			var sExpected = formatDateTime(year, month, date, day, hours, minutes, seconds, milliseconds);
 			var sReal = formatDateTime(String(bUTC ? oDate.getUTCFullYear() : oDate.getFullYear()),
-					String(bUTC ? (oDate.getUTCMonth() + 1) : (oDate.getMonth() + 1)),
+					String(bUTC ? (oDate.getUTCMonth()) : (oDate.getMonth())),
 					String(bUTC ? oDate.getUTCDate() : oDate.getDate()),
 					String(bUTC ? oDate.getUTCDay() : oDate.getDay()),
 					String(bUTC ? oDate.getUTCHours() : oDate.getHours()),
@@ -884,7 +900,7 @@
 		function getTimezoneOffset(oDate) {
 			return -1 * oDate.getTimezoneOffset() * 60 * 1000;
 		}
-		
+
 		function isInvalid(oDate) {
 			return isNaN(oDate.getTime());
 		}
