@@ -862,7 +862,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 */
 	ODataMetadata.prototype._createRequest = function(sUrl) {
 
-		var oHeaders = {}, oLangHeader = {"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()};
+		var oHeaders = {}, oLangHeader = {"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()};
 
 		jQuery.extend(oHeaders, this.mHeaders, oLangHeader);
 
