@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested class: sap.ui.core.Component, sap.ui.core.UIComponent
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-noConflict="true">
+	</script>
+	<link rel="stylesheet"
+		href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+		media="screen" />
+	<script type="text/javascript"
+		src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript"
+		src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript"
+		src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript"
+		src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript"
+		src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script type="text/javascript"
+		src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<!-- Initialization -->
+	<script language="javascript">
+	sinon.config.useFakeTimers = true;
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+	QUnit.config.autostart = false;
+	jQuery(document).ready(function() {
+		QUnit.start();
+	});
+
+	QUnit.module("Basic Components", {
+		beforeEach: function() {
+
+			// define the Component
+			sap.ui.define("my/test/Component", ["sap/ui/core/UIComponent", "sap/m/Button"], function(UIComponent, Button) {
+
+				return UIComponent.extend("my.test.Component", {
+
+					createContent: function() {
+						return new Button("theButton", {
+							"text": "The Button"
+						});
+					}
+
+				});
+
+			});
+
+			// define the Manifest
+			var oManifest = this.oManifest = {
+				"sap.app" : {
+					"id" : "my.test"
+				},
+				"sap.ui5" : {}
+			};
+
+			// create the MockServer
+			var oServer = this.oServer = sinon.fakeServer.create();
+			oServer.xhr.supportCORS = true;
+			oServer.xhr.useFilters = true;
+			oServer.xhr.addFilter(function(method, url) {
+				return "/anylocation/manifest.json" !== url;
+			});
+			oServer.autoRespond = true;
+
+			// define a shorthand function to respond with a JSON object
+			this.oServer.respondWithJSONContent = function(oContent) {
+				this.respondWith("GET", "/anylocation/manifest.json", [
+					200, 
+					{
+						"Content-Type": "application/json"
+					},
+					JSON.stringify(oContent)
+				]);
+			}
+
+		},
+
+		afterEach: function() {
+
+			this.oServer.restore();
+
+		}
+
+	});
+
+	QUnit.test("UIComponent check for no autoPrefixId", function(assert) {
+
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		var oComponent = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json"
+		});
+
+		var oComponentContainer = new sap.ui.core.ComponentContainer({
+			component: oComponent
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
+
+		var oButton = sap.ui.getCore().byId("theButton");
+		assert.ok(!!oButton, "Button was prefixed with Component id!");
+
+		oComponentContainer.destroy();
+		oComponent.destroy();
+
+	});
+
+	QUnit.test("UIComponent check for autoPrefixId=true", function(assert) {
+
+		this.oManifest["sap.ui5"]["autoPrefixId"] = true;
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		var oComponent = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json"
+		});
+
+		var oComponentContainer = new sap.ui.core.ComponentContainer({
+			component: oComponent
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oComponent.getAutoPrefixId(), true, "AutoPrefixId is true!");
+
+		var oButton = sap.ui.getCore().byId(oComponent.createId("theButton"));
+		assert.ok(!!oButton, "Button was prefixed with Component id!");
+
+		oComponentContainer.destroy();
+		oComponent.destroy();
+
+	});
+
+	QUnit.test("UIComponent check for autoPrefixId=false", function(assert) {
+
+		this.oManifest["sap.ui5"]["autoPrefixId"] = false;
+		this.oServer.respondWithJSONContent(this.oManifest);
+
+		var oComponent = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json"
+		});
+
+		var oComponentContainer = new sap.ui.core.ComponentContainer({
+			component: oComponent
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
+
+		var oButton = sap.ui.getCore().byId("theButton");
+		assert.ok(!!oButton, "Button was not prefixed with Component id!");
+
+		oComponentContainer.destroy();
+		oComponent.destroy();
+
+	});
+
+	</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="content"></div>
+	</body>
+</html>
