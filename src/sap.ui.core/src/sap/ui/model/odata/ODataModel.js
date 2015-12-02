@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			this.sUser = sUser;
 			this.sPassword = sPassword;
 
-			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguage();
+			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguageTag();
 
 			if (!this.oServiceData.oMetadata) {
 				//create Metadata object

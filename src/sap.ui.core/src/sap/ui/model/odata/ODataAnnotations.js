@@ -541,7 +541,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 				url: sUrl,
 				async: that.bAsync,
 				headers: jQuery.extend({}, that.mCustomHeaders, {
-					"Accept-Language": sap.ui.getCore().getConfiguration().getLanguage() // Always overwrite
+					"Accept-Language": sap.ui.getCore().getConfiguration().getLanguageTag() // Always overwrite
 				})
 			};
 
