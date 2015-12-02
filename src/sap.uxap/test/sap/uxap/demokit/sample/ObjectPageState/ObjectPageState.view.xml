@@ -10,7 +10,7 @@
 		   height="100%"
 		>
 
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false">
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" showTitleInHeaderContent="true">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  objectTitle="Denise Smith"
@@ -24,7 +24,6 @@
 		</headerTitle>
 
 		<headerContent>
-			<m:Image src="./test-resources/sap/uxap/images/imageID_275314.png" height="100%"/>
 			<layout:VerticalLayout>
 				<m:Link text="+33 6 4512 5158"/>
 				<m:Link text="DeniseSmith@sap.com"/>
