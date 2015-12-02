@@ -502,6 +502,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._handleClosed = function () {
+			// TODO: remove the following three lines after the popup open state problem is fixed
+			if (!this.oPopup) {
+				return;
+			}
+
 			this.oPopup.detachClosed(this._handleClosed, this);
 
 			// Not removing the content DOM leads to the  problem that control DOM with the same ID exists in two places if
