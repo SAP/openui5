@@ -52,7 +52,7 @@
 
 		assert.strictEqual(jQuery(classNameCloseButton).length, 1, 'Close Button should be rendered');
 		assert.strictEqual(jQuery(classNameHeader).children('.sapMTitle').length, 1, 'Title should be rendered');
-		assert.strictEqual(jQuery(classNameText).length, 1, 'Text should be rendered');
+		assert.strictEqual(jQuery(classNameText).length, 2, 'Text and author placeholders should be rendered');
 		assert.strictEqual(jQuery(classNameDatetime).length, 1, 'DateTime should be rendered');
 		assert.strictEqual(jQuery(classNameUnread).length, 1, 'Unread status should be rendered');
 	});
