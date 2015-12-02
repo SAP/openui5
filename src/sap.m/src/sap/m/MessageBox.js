@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @static
 				 */
 				MessageBox.show = function (vMessage, mOptions) {
-					var oDialog, oResult = null, that = this, aButtons = [], i,
+					var oDialog, oMessageText, oMessageContent, oResult = null, that = this, aButtons = [], i,
 							sIcon, sTitle, vActions, fnCallback, sDialogId, sClass,
 							mDefaults = {
 								id: sap.ui.core.ElementMetadata.uid("mbox"),
@@ -253,7 +253,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 							//Using stringify() with "tab" as space argument
 							mOptions.details = JSON.stringify(mOptions.details, null, '\t');
 						}
-						vMessage = getInformationLayout(mOptions, vMessage);
 					}
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
@@ -290,15 +289,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						aButtons.push(button(mOptions.actions[i]));
 					}
 
-					function getInformationLayout(mOptions, vMessage) {
+					function getInformationLayout(mOptions, oMessageText) {
 						//Generate MessageBox Layout
-
-						var oContent;
-						if (typeof vMessage === "string") {
-							oContent = new Text().setText(vMessage).addStyleClass("sapMMsgBoxText");
-						} else if (vMessage instanceof sap.ui.core.Control) {
-							oContent = vMessage.addStyleClass("sapMMsgBoxText");
-						}
 
 						var oTextArea = new sap.m.TextArea({
 							editable: false,
@@ -320,7 +312,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						var oLayout = new sap.ui.layout.VerticalLayout({
 							width: "100%",
 							content: [
-								oContent,
+								oMessageText,
 								oLink,
 								oTextArea
 							]
@@ -365,19 +357,32 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 					}
 
 					if (typeof (vMessage) === "string") {
-						vMessage = new Text({
+						oMessageText = new Text({
 								textDirection: mOptions.textDirection
 							}).setText(vMessage).addStyleClass("sapMMsgBoxText");
-					} else if (vMessage instanceof sap.ui.core.Control) {
-						vMessage.addStyleClass("sapMMsgBoxText");
+					}
+
+					if (mOptions && mOptions.hasOwnProperty("details") && mOptions.details !== "") {
+						oMessageContent = getInformationLayout(mOptions, oMessageText);
+					} else {
+						oMessageContent = oMessageText;
 					}
 
 					function onOpen () {
-						var oInitiallyFocusedControl = sap.ui.getCore().byId(oDialog.getInitialFocus());
+						if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+							var $Dialog = oDialog.$(),
+								sMessageTextId;
 
-						oDialog.$().attr("role", "alertdialog");
-						if (vMessage instanceof sap.m.Text) {
-							oInitiallyFocusedControl.$().attr("aria-describedby", vMessage.getId());
+							$Dialog.attr("role", "alertdialog");
+
+							if (oMessageText) {
+								sMessageTextId = oMessageText.getId();
+
+								// Appends a value to the aria-labelledby attribute
+								$Dialog.attr("aria-labelledby", function (ix, val) {
+									return val ? val + " " + sMessageTextId : sMessageTextId;
+								});
+							}
 						}
 					}
 
@@ -385,7 +390,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						id: mOptions.id,
 						type: sap.m.DialogType.Message,
 						title: mOptions.title,
-						content: vMessage,
+						content: oMessageContent,
 						icon: mIcons[mOptions.icon],
 						initialFocus: getInitialFocusControl(),
 						verticalScrolling: mOptions.verticalScrolling,
