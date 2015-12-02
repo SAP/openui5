@@ -3,7 +3,7 @@ sap.ui.define([
 	], function (opaTest) {
 		"use strict";
 
-		module("Worklist");
+		QUnit.module("Worklist");
 
 		opaTest("Should see the table with all entries", function (Given, When, Then) {
 			// Arrangements
