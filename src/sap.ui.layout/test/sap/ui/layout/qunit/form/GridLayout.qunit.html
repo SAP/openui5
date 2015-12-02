@@ -293,7 +293,9 @@
 				]
 			}).placeAt("uiArea1");
 
-		var oLayout2 = new sap.ui.layout.form.GridLayout("Layout2");
+		var oLayout2 = new sap.ui.layout.form.GridLayout("Layout2", {
+			backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent
+		});
 
 		var oForm2 = new sap.ui.layout.form.Form("F2",{
 			title: new sap.ui.core.Title("F2T",{text: "16 cells without separator", level: sap.ui.core.TitleLevel.H1}),
@@ -322,7 +324,10 @@
 				]
 			}).placeAt("uiArea2");
 
-		var oLayout3 = new sap.ui.layout.form.GridLayout("Layout3", {singleColumn: true});
+		var oLayout3 = new sap.ui.layout.form.GridLayout("Layout3", {
+			singleColumn: true,
+			backgroundDesign: sap.ui.layout.BackgroundDesign.Solid
+			});
 
 		var oForm2 = new sap.ui.layout.form.Form("F3",{
 			title: "8 cells without separator",
@@ -413,6 +418,13 @@
 			ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
 			ok(jQuery('h3:contains("Container1")').get(0), "Title (as text) is renderd");
 			equal(jQuery('h3:contains("Container1")').parent().attr("title"), "Container tooltip", "Container tooltip is renderd");
+		});
+
+		test("BackgroundDesign", function() {
+			ok(jQuery("#Layout1").hasClass("sapUiFormBackgrTranslucent"), "Form1: translucent design per default");
+			ok(!jQuery("#Layout2").hasClass("sapUiFormBackgrTranslucent"), "Form2: no translucent design");
+			ok(!jQuery("#Layout2").hasClass("sapUiFormBackgrSolid"), "Form2: no solid design");
+			ok(jQuery("#Layout3").hasClass("sapUiFormBackgrSolid"), "Form1: solid design");
 		});
 
 		test("Element", function() {

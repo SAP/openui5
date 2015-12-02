@@ -8,14 +8,17 @@
 	font-size: @sapUiDesktopFontSize;
 }
 
+.sapUiGrid.sapUiFormBackgrTranslucent > tbody > tr {
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiGrid.sapUiFormBackgrSolid > tbody > tr {
+	background-color: @sapUiGroupContentBackground;
+}
+
 .sapUiGrid > tbody > tr.sapUiGridTitle{
 	background-color: transparent;
 }
-
-.sapUiGrid > tbody > tr{
-	background-color: fade(@sapUiLightestBG, @sapUiTranslucentBGOpacity);
-}
-
 
 .sapUiGrid > tbody > tr > td{
 	padding: 0.25rem 0 0.25rem 0.5rem;

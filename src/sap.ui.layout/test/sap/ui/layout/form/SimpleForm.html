@@ -101,6 +101,21 @@ body {
 								oForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
 							}
 						}
+					}),
+					new sap.ui.commons.Label({text:"BackgroundDesign"}),
+					new sap.ui.commons.SegmentedButton("BackCol", {
+						buttons: [ new sap.ui.commons.Button("Back1", {text: sap.ui.layout.BackgroundDesign.Transparent}),
+						         new sap.ui.commons.Button("Back2", {text: sap.ui.layout.BackgroundDesign.Solid}),
+						         new sap.ui.commons.Button("Back3", {text: sap.ui.layout.BackgroundDesign.Translucent})
+						        ],
+						selectedButton: "Back3",
+						select: function(oEvent) {
+							var sButtonId = oEvent.getParameter("selectedButtonId");
+							var oButton = sap.ui.getCore().byId(sButtonId);
+							var sBackground = oButton.getText();
+							var oForm = sap.ui.getCore().byId("sf");
+							oForm.setBackgroundDesign(sBackground);
+						}
 					})
 				]
 			});

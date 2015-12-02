@@ -11,6 +11,14 @@
 	font-size: @sapUiDesktopFontSize;
 }
 
+.sapUiFormLayout.sapUiFormBackgrTranslucent > section{
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiFormLayout.sapUiFormBackgrSolid > section{
+	background-color: @sapUiGroupContentBackground;
+}
+
 .sapUiForm .sapUiFormTitle{
 	border-width: 0.0625rem;
 	font-family: @sapUiFontHeaderFamily;

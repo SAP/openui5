@@ -42,6 +42,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("<div");
 		rm.writeControlData(oLayout);
 		rm.addClass(this.getMainClass());
+		this.addBackgroundClass(rm, oLayout);
 		rm.writeClasses();
 		rm.write(">");
 
@@ -56,6 +57,15 @@ sap.ui.define(['jquery.sap.global'],
 
 	FormLayoutRenderer.getMainClass = function(){
 		return "sapUiFormLayout";
+	};
+
+	FormLayoutRenderer.addBackgroundClass = function(rm, oLayout){
+
+		var sBackgroundDesign = oLayout.getBackgroundDesign();
+		if (sBackgroundDesign != sap.ui.layout.BackgroundDesign.Transparent) {
+			rm.addClass("sapUiFormBackgr" + sBackgroundDesign);
+		}
+
 	};
 
 	FormLayoutRenderer.renderContainers = function(rm, oLayout, oForm){

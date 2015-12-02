@@ -19,10 +19,17 @@
 }
 
 .sapUiFormResGrid > div {
-	background-color: fade(@sapUiLightestBG, @sapUiTranslucentBGOpacity);
 	padding: 1rem 0.75rem; /* because fields have 0.25rem padding on left and right */
 	-moz-box-sizing: padding-box;
 	box-sizing: border-box;
+}
+
+.sapUiFormResGrid.sapUiFormBackgrTranslucent > div {
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiFormResGrid.sapUiFormBackgrSolid > div {
+	background-color: @sapUiGroupContentBackground;
 }
 
 /* Special styles for Mobile controls */

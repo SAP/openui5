@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
 		types: [
+			"sap.ui.layout.BackgroundDesign",
 			"sap.ui.layout.GridIndent",
 			"sap.ui.layout.GridPosition",
 			"sap.ui.layout.GridSpan",
@@ -64,6 +65,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		]
 	});
 
+	/**
+	 * Available Background Design.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.36.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.BackgroundDesign = {
+
+		/**
+		 * A solid background color dependent on the theme.
+		 * @public
+		 */
+		Solid : "Solid",
+
+		/**
+		 * Transparent background.
+		 * @public
+		 */
+		Transparent : "Transparent",
+
+		/**
+		 * A translucent background depending on the opacity value of the theme.
+		 * @public
+		 */
+		Translucent : "Translucent"
+
+	};
 
 	/**
 	 * @classdesc A string type that represents Grid's indent values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 11 that the container has to take, for example: "L2 M4 S6", "M11", "s10" or "l4 m4". Note that the parameters have to be provided in the order large  medium  small.
