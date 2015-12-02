@@ -4,11 +4,6 @@
   border-bottom: 0;
 }
 
-.sap-desktop .sapMNLI:focus .sapMNLI-Priority {
-  width: 0.25rem;
-  left: 0.0625rem;
-}
-
 .sapMNLI-UnreadStatus {
   background: @sapUiAccent5;
 }
@@ -43,4 +38,21 @@
 
 .sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
   border: none;
+}
+
+// Focus Styles ========================================================================================================
+
+.sap-desktop .sapMLIB.sapMNLI:focus {
+  outline: none;
+}
+
+.sapMNLI:focus::before {
+  border: 1px dotted @sapUiFocus;
+  position: absolute;
+  content: " ";
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
+  left: 1px;
+  z-index: 2;
 }

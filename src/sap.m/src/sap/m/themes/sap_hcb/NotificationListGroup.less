@@ -1,3 +1,61 @@
+.sapMNLG-Header .sapMNLG-Priority {
+  top: -1px;
+  &.sapMNLG-None {
+    border-top: 1px solid @sapHCNeutral;
+    border-bottom: 1px solid @sapHCNeutral;
+  }
+
+  &.sapMNLG-Low {
+    border-top: 1px solid @sapHCPositive;
+    border-bottom: 1px solid @sapHCPositive;
+  }
+
+  &.sapMNLG-Medium {
+    border-top: 1px solid @sapHCCritical;
+    border-bottom: 1px solid @sapHCCritical;
+  }
+
+  &.sapMNLG-High {
+    border-top: 1px solid @sapHCNegative;
+    border-bottom: 1px solid @sapHCNegative;
+  }
+}
+
+.sapMNLG-Body .sapMNLI-Priority {
+  top: 0;
+  &.sapMNLI-None {
+    border: none;
+  }
+  &.sapMNLI-Low {
+    border: none;
+  }
+  &.sapMNLI-Medium {
+    border: none;
+  }
+  &.sapMNLI-High {
+    border: none;
+  }
+}
+
+.sapMNLG-Footer .sapMNLG-Priority {
+  bottom: -1px;
+  &.sapMNLG-None {
+    border-bottom: 1px solid @sapHCNeutral;
+  }
+
+  &.sapMNLG-Low {
+    border-bottom: 1px solid @sapHCPositive;
+  }
+
+  &.sapMNLG-Medium {
+    border-bottom: 1px solid @sapHCCritical;
+  }
+
+  &.sapMNLG-High {
+    border-bottom: 1px solid @sapHCNegative;
+  }
+}
+
 .sapMNLG-None {
   background-color: @sapHCNeutral;
 }
@@ -32,4 +90,64 @@
 
 .sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner .sapMBtnIcon {
   line-height: 1.5rem;
+}
+
+// Focus Styles ========================================================================================================
+
+.sap-desktop .sapMLIB.sapMNLG:focus {
+  outline: none;
+}
+
+.sap-desktop .sapMLIB.sapMNLG:focus::before, {
+  content: "";
+  border: 0.125rem dotted @sapHCStandardFG;
+  border-left-style: solid;
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  bottom: 0.5625rem;
+  left: 1px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.sap-desktop .sapMLIB.sapMNLG:focus::after, {
+  content: "";
+  border-left: 0.125rem dotted @sapHCStandardBG;
+  position: absolute;
+  top: 1px;
+  bottom: 0.5625rem;
+  left: 1px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+html[data-sap-ui-browser*='ie'].sap-desktop .sapMLIB.sapMNLG:focus .sapMNLI::before {
+  border-left: none;
+  border-right: none;
+}
+
+[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLG:focus::before {
+  content: "";
+  border: 0.125rem dotted @sapHCStandardFG;
+  border-left-style: solid;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 1px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLG:focus::after {
+  content: "";
+  border-left: 0.125rem dotted @sapHCStandardBG;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 1px;
+  pointer-events: none;
+  z-index: 2;
 }
