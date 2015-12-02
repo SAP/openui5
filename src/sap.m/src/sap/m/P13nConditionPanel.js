@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The ConditionPanel Control will be used to implement the Sorting, Filtering and Grouping panel of the new Personalization dialog.
-	 * @extends sap.m.P13nPanel
+	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 * @constructor
 	 * @public
@@ -516,8 +516,10 @@ sap.ui.define([
 	 * @since 1.30.0
 	 */
 	P13nConditionPanel.prototype.setContainerQuery = function(bEnabled) {
+		this._unregisterResizeHandler();
 		this.setProperty("containerQuery", bEnabled);
-
+		this._registerResizeHandler();
+		
 		// we have to refill the content grids
 		this._clearConditions();
 		this._fillConditions();
@@ -570,8 +572,6 @@ sap.ui.define([
 
 		// init some resources
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._sBetweenOperation = this._oRb.getText("CONDITIONPANEL_OPTIONBT");
-		this._sInitialOperation = this._oRb.getText("CONDITIONPANEL_OPTIONInitial");
 		this._sFromLabelText = this._oRb.getText("CONDITIONPANEL_LABELFROM");
 		this._sToLabelText = this._oRb.getText("CONDITIONPANEL_LABELTO");
 		this._sValueLabelText = this._oRb.getText("CONDITIONPANEL_LABELVALUE");
@@ -604,6 +604,8 @@ sap.ui.define([
 		}).toggleStyleClass("conditionRootGrid", this.getLayoutMode() !== "Desktop"); // && !this.getAlwaysShowAddIcon());
 
 		this.addAggregation("content", this._oConditionsGrid);
+		
+		this._registerResizeHandler();
 
 		this._aConditionsFields = [
 			{
@@ -682,16 +684,12 @@ sap.ui.define([
 	};
 
 	/*
-	 * destroy and remove all internal references @private
+	 * destroy and remove all internal references 
+	 * @private
 	 */
 	P13nConditionPanel.prototype.exit = function() {
 
-		if (this._sContainerResizeListener) {
-			sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
-			this._sContainerResizeListener = null;
-		}
-
-		sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+		this._unregisterResizeHandler();
 
 		this._aConditionsFields = null;
 
@@ -701,8 +699,6 @@ sap.ui.define([
 
 		this._oRb = null;
 
-		this._sBetweenOperation = null;
-		this._sInitialOperation = null;
 		this._sFromLabelText = null;
 		this._sToLabelText = null;
 		this._sValueLabelText = null;
@@ -740,7 +736,7 @@ sap.ui.define([
 		}
 
 		// create empty Conditions row/fields
-		if ((this.getAutoAddNewRow() || this._oConditionsGrid.getContent().length === 0) && this._oConditionsGrid.getContent().length < iMaxConditions) {
+		if ((this.getAutoAddNewRow() && this._oConditionsGrid.getContent().length === 0) && this._oConditionsGrid.getContent().length < iMaxConditions) {
 			this._createConditionRow(this._oConditionsGrid);
 		}
 	};
@@ -771,7 +767,27 @@ sap.ui.define([
 			this._sLayoutMode = this.getLayoutMode();
 			return;
 		}
+	};
 
+	P13nConditionPanel.prototype._handleMediaChange = function(p) {
+		this._sLayoutMode = p.name;
+
+//		if (window.console) {
+//		 window.console.log(" ---> MediaChange " + p.name);
+//		}
+
+		this._updateLayout(p);
+	};
+
+	P13nConditionPanel.prototype._unregisterResizeHandler = function() {
+		if (this._sContainerResizeListener) {
+			sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
+			this._sContainerResizeListener = null;
+		}
+		sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+	};
+	
+	P13nConditionPanel.prototype._registerResizeHandler = function() {
 		if (this.getContainerQuery()) {
 			this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(this._oConditionsGrid, jQuery.proxy(this._onGridResize, this));
 			this._onGridResize();
@@ -780,27 +796,7 @@ sap.ui.define([
 		}
 	};
 
-	P13nConditionPanel.prototype.onBeforeRendering = function() {
-		this._cleanup();
-	};
 
-	P13nConditionPanel.prototype._handeMediaChange = function(p) {
-		this._sLayoutMode = p.name;
-
-		// if (window.console) {
-		// console.log(" ---> MediaChange " + p.name);
-		// }
-
-		this._updateLayout(p);
-	};
-
-	P13nConditionPanel.prototype._cleanup = function() {
-		if (this._sContainerResizeListener) {
-			sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
-			this._sContainerResizeListener = null;
-		}
-		sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
-	};
 
 	/**
 	 * returns the key of the condition grid or creates a new key
@@ -2403,9 +2399,9 @@ sap.ui.define([
 			oRangeInfo.name = "Desktop";
 		}
 
-// if (window.console) {
-// window.console.log(w + " resize ---> " + oRangeInfo.name);
-// }
+ //if (window.console) {
+ //window.console.log(w + " resize ---> " + oRangeInfo.name);
+ //}
 
 		if (oRangeInfo.name === "Phone" && this._sLayoutMode !== oRangeInfo.name) {
 			this._updateLayout(oRangeInfo);
