@@ -860,7 +860,7 @@
 			text : "second button"
 		}), oButton3 = new sap.m.Button({
 			text : "third button"
-		});
+		}), oThisForChaining;
 
 		// System under test
 		var oSegmentedButton = new sap.m.SegmentedButton({
@@ -876,12 +876,13 @@
 				"the first button's DOM element initially has style class \"sapMSegBBtnSel\"");
 
 		// Act
-		oSegmentedButton.setSelectedButton(oButton2);
+		oThisForChaining = oSegmentedButton.setSelectedButton(oButton2);
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedButton(), oButton2.getId(), "now the second button is selected");
 		ok(oButton2.$().hasClass("sapMSegBBtnSel"), "the second button's DOM element has style class \"sapMSegBBtnSel\"");
-
+		ok(oThisForChaining instanceof sap.m.SegmentedButton, "the setter should return 'this' instance of the control itself to enable chaining");
+		
 		// Act
 		oSegmentedButton.setSelectedButton(oButton3.getId());
 
@@ -1188,7 +1189,8 @@
 					text: "Button 3"
 				})
 			]
-		});
+		}),
+		oThisForChaining;
 
 		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
@@ -1200,11 +1202,12 @@
 
 		// Act
 		// Change selectedKey to "b2"
-		oSegmentedButton.setSelectedKey("b2");
+		oThisForChaining = oSegmentedButton.setSelectedKey("b2");
 
 		// Assert
 		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
 		strictEqual(oSegmentedButton.getProperty("selectedKey"), "b2", "selectedKey property should be 'b2'");
+		ok(oThisForChaining instanceof sap.m.SegmentedButton, "the setter should return 'this' instance of the control itself to enable chaining");
 
 		// Act
 		// Change selectedKey to non existing key
