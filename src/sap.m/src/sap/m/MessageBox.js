@@ -580,13 +580,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Error'] Title of the error dialog
 				 * @param {string} [mOptions.id] ID for the error dialog. Intended for test scenarios, not recommended for productive apps
-				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the error dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string} [mOptions.styleClass] CSS style class which is added to the error dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
+				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] This option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * The usage of sap.ui.core.Control to set initialFocus is deprecated since version 1.30.4.
-				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [deprecated mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [deprecated mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
+                                 * @since 1.30
 				 * @static
 				 */
 				MessageBox.error = function (vMessage, mOptions) {
@@ -633,13 +634,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Information'] Title of the information dialog
 				 * @param {string} [mOptions.id] ID for the information dialog. Intended for test scenarios, not recommended for productive apps
-				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the information dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string} [mOptions.styleClass] CSS style class which is added to the information dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
+				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] This option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * The usage of sap.ui.core.Control to set initialFocus is deprecated since version 1.30.4.
-				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [deprecated mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [deprecated mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
+                                 * @since 1.30
 				 * @static
 				 */
 				MessageBox.information = function (vMessage, mOptions) {
@@ -686,13 +688,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Warning'] Title of the warning dialog
 				 * @param {string} [mOptions.id] ID to for the warning dialog. Intended for test scenarios, not recommended for productive apps
-				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the warning dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string} [mOptions.styleClass] CSS style class which is added to the warning dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
+				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] This option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * The usage of sap.ui.core.Control to set initialFocus is deprecated since version 1.30.4.
-				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [deprecated mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [deprecated mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
+                                 * @since 1.30
 				 * @static
 				 */
 				MessageBox.warning = function (vMessage, mOptions) {
@@ -739,13 +742,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Success'] Title of the success dialog
 				 * @param {string} [mOptions.id] ID for the success dialog. Intended for test scenarios, not recommended for productive apps
-				 * @param {string} [mOptions.styleClass] Added since version 1.21.2. CSS style class which is added to the success dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
-				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] Added since version 1.28.0. initialFocus, this option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
+				 * @param {string} [mOptions.styleClass] CSS style class which is added to the success dialog's root DOM node. The compact design can be activated by setting this to "sapUiSizeCompact"
+				 * @param {string|sap.m.MessageBox.Action} [mOptions.initialFocus] This option sets the action name, the text of the button or the control that gets the focus as first focusable element after the MessageBox is opened.
 				 * The usage of sap.ui.core.Control to set initialFocus is deprecated since version 1.30.4.
-				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [deprecated mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [deprecated mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @public
+                                 * @since 1.30
 				 * @static
 				 */
 				MessageBox.success = function (vMessage, mOptions) {
