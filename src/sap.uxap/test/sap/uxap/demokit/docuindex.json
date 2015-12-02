@@ -40,7 +40,7 @@
 		"since": "1.26",
 		"samples": [
 		  "sap.uxap.sample.ObjectPageOnJSON",
-		  "sap.uxap.sample.ObjectPageWithIconTabBar",
+		  "sap.uxap.sample.ObjectPageTabNavigationMode",
 		  "sap.uxap.sample.ObjectPageTitleOnLeft",
 		  "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading",
 		  "sap.uxap.sample.ObjectPageState",
@@ -129,9 +129,9 @@
 		"description": "Object Page sample showing a layout with subsection titles on top. This is the default layout. The sample also shows the 'Edit header' button in the Header Content area."
 	  },
 	  {
-		"id": "sap.uxap.sample.ObjectPageWithIconTabBar",
-		"name": "Object Page with sap.m.IconTabBar as a navigation bar",
-		"description": "Object Page sample showing a layout where the navigation is done with sap.m.IconTabBar instead of sap.uxap.AnchorBar"
+		"id": "sap.uxap.sample.ObjectPageTabNavigationMode",
+		"name": "Object Page using the Tab navigation mode",
+		"description": "Object Page sample showing a layout where the navigation is Tab based (one Tab per section) rather than having all of the sections visible at the same time."
 	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageState",
