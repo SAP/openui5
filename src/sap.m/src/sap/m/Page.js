@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Page.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement"],
-	function (jQuery, library, Control, ScrollEnablement) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/delegate/ScrollEnablement", "sap/m/Title", "sap/m/Button", "sap/m/Bar"],
+	function (jQuery, library, Control, ScrollEnablement, Title, Button, Bar) {
 		"use strict";
 
 
@@ -246,7 +246,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		Page.prototype.setTitle = function (sTitle) {
 			var bWasNull = !this._headerTitle;
 
-			this._headerTitle = this._headerTitle || new sap.m.Title(this.getId() + "-title", {
+			this._headerTitle = this._headerTitle || new Title(this.getId() + "-title", {
 					text: sTitle,
 					level: this.getTitleLevel()
 				});
@@ -266,7 +266,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			if (!this._navBtn) {
 				var sNavButtonType = this.getNavButtonType();
 
-				this._navBtn = new sap.m.Button(this.getId() + "-navButton", {
+				this._navBtn = new Button(this.getId() + "-navButton", {
 					press: jQuery.proxy(function () {
 						this.fireNavButtonPress();
 						this.fireNavButtonTap();
@@ -402,7 +402,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		Page.prototype._getInternalHeader = function () {
 			var oInternalHeader = this.getAggregation("_internalHeader");
 			if (!oInternalHeader) {
-				this.setAggregation("_internalHeader", new sap.m.Bar(this.getId() + "-intHeader"), true); // don"t invalidate - this is only called before/during rendering, where invalidation would lead to double rendering,  or when invalidation anyway happens
+				this.setAggregation("_internalHeader", new Bar(this.getId() + "-intHeader"), true); // don"t invalidate - this is only called before/during rendering, where invalidation would lead to double rendering,  or when invalidation anyway happens
 				oInternalHeader = this.getAggregation("_internalHeader");
 				if (sap.ui.Device.os.ios) {
 					if (this.getShowNavButton() && this._navBtn) {
