@@ -365,6 +365,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		return this;
 	};
 
+	/**
+	 * Redefinition of sap.m.ListItemBase.setUnread: Unread is not supported for FeedListItem
+	 * @public
+	 * @param {boolean} new value for property unread is ignored
+	 */
+	FeedListItem.prototype.setUnread = function(bValue) {
+		this.setProperty("unread", false);
+		return this;
+	};
+
 	return FeedListItem;
 
 }, /* bExport= */ true);
