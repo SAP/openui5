@@ -136,7 +136,7 @@ sap.ui.define([
 				 * Enables support of a placeholder image in case no image is specified or the URL of the provided image is invalid.
 				 */
 				showPlaceholder: {type: "boolean", group: "Misc", defaultValue: false},
-				
+
 				/**
 				 * Marks that there are unsaved changes in the objectPageHeader.
 				 * The markChanges state cannot be used together with the markLocked state.
@@ -638,7 +638,6 @@ sap.ui.define([
 		if (!this._iResizeId) {
 			this._iResizeId = ResizeHandler.register(this, this._adaptLayout.bind(this));
 		}
-		this._shiftHeaderTitle();
 
 		this._attachDetachActionButtonsHandler(true);
 	};
@@ -767,7 +766,7 @@ sap.ui.define([
 			iVisibleActionsWidth = this._oOverflowButton.$().show().width(),
 			aActions = this.getActions(),
 			oActionSheetButton;
-		
+
 		aActions.sort(ObjectPageHeader._sortActionsByImportance);
 
 		aActions.forEach(function (oAction) {
