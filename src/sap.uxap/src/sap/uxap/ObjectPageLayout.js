@@ -347,6 +347,7 @@ sap.ui.define([
 		}
 
 		this._initAnchorBarScroll();
+		this.getHeaderTitle() && this.getHeaderTitle()._shiftHeaderTitle();
 
 		this._setSectionsFocusValues();
 	};
@@ -457,7 +458,7 @@ sap.ui.define([
 			if (oHeaderTitle && oHeaderTitle.getIsActionAreaAlwaysVisible() && !oHeaderTitle.getIsObjectTitleAlwaysVisible()) {
 				oHeaderTitle._setActionsPaddingStatus(bExpand);
 			}
-			this._$headerContent.css("height", this.iHeaderContentHeight).children().appendTo(this._$stickyHeaderContent); // when removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off) 
+			this._$headerContent.css("height", this.iHeaderContentHeight).children().appendTo(this._$stickyHeaderContent); // when removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off)
 			this._toggleStickyHeader(bExpand);
 		} else if (!bExpand && this._bIsHeaderExpanded) {
 			this._$headerContent.css("height", "auto").append(this._$stickyHeaderContent.children());
@@ -854,6 +855,8 @@ sap.ui.define([
 
 			this._preloadSectionsOnScroll(oSection);
 
+			this.getHeaderTitle() && this.getHeaderTitle()._shiftHeaderTitle();
+
 			this._scrollTo(iScrollTo + iOffset, iDuration);
 		}
 
@@ -1074,7 +1077,7 @@ sap.ui.define([
 			//calculate the required additional space for the last section only
 			if (iLastVisibleHeight < this.iScreenHeight) {// see if this line can be skipped
 
-				if (this._isScrollingRequired(oLastVisibleSubSection, iLastVisibleHeight)) {
+				if (this._isSpacerRequired(oLastVisibleSubSection, iLastVisibleHeight)) {
 
 					//the amount of space required is what is needed to get the latest position you can scroll to up to the "top"
 					//therefore we need to create enough space below the last subsection to get it displayed on top = the spacer
@@ -1103,10 +1106,19 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype._isScrollingRequired = function (oLastVisibleSubSection, iLastVisibleHeight) {
+	/*
+	* Determines wheder spacer, after the last subsection, is needed on the screen.
+	* The main reason for spacer to exist is to have enogth space for scrolling to the last section.
+	*/
+	ObjectPageLayout.prototype._isSpacerRequired = function (oLastVisibleSubSection, iLastVisibleHeight) {
+		var oSelectedSection = this.getAggregation("_anchorBar").getSelectedSection(),
+			bIconTabBarWithOneSectionAndOneSubsection = this.getUseIconTabBar() && oSelectedSection
+					&& oSelectedSection.getSubSections().length === 1,
+			bOneSectionOneSubsection = this.getSections().length === 1 && this.getSections()[0].getSubSections().length === 1;
 
-		if (!this.getUseIconTabBar()) { // if anchor bar is used, scrolling is needed
-			return true;
+		// When there there is only one element the scrolling is not required so the spacer is redundant.
+		if (bIconTabBarWithOneSectionAndOneSubsection || bOneSectionOneSubsection) {
+			return false;
 		}
 
 		if (this._bStickyAnchorBar) { // UX Rule: if the user has scrolled to sticky anchorBar, keep it sticky i.e. do not expand the header *automatically*
