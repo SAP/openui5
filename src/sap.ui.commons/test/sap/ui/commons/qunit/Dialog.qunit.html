@@ -174,6 +174,44 @@
 			this.oDialog.open();
 		});
 
+		QUnit.test("Test dialog onClick event handling", function () {
+			var 	done = assert.async(),
+					that = this;
+
+			function fnClosed () {
+				assert.equal(that.oDialog.isOpen(), false, 'Dialog should be closed now!');
+				assert.equal(jQuery('#Dialog').length, 0, 'Dialog DOM should be removed after closing');
+				done();
+			}
+
+			this.oDialog.oPopup.attachOpened(function fnOpened() {
+				that.oDialog.oPopup.attachClosed(fnClosed);
+				var $CloseBtn = that.oDialog.$("close");
+				$CloseBtn.trigger("click");
+			});
+
+			this.oDialog.open();
+
+		});
+
+		QUnit.test('Test setAutoClose API', function(assert) {
+			var that = this,
+				done = assert.async(),
+				popupSetAutoCloseSpy = sinon.spy(this.oDialog.oPopup, 'setAutoClose');
+
+			function fnOpened() {
+				assert.ok(popupSetAutoCloseSpy.calledOnce, 'should call setAutoClose on the popup');
+				assert.equal(that.oDialog.getAutoClose(), true, 'Popup autoclose should be true');
+				popupSetAutoCloseSpy.restore();
+				done();
+			}
+
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.setAutoClose(true);
+			this.oDialog.getAutoClose();
+			this.oDialog.open();
+		});
+
 		QUnit.test('Pressing enter', function(assert) {
 			var fnBtnClickSpy = sinon.spy(this.btnOk, 'onclick')
 				that = this,
@@ -207,12 +245,12 @@
 		});
 
 		QUnit.test('Moving the dialog', function(assert) {
-			var that = this;
-				done = assert.async();
+			var that = this,
+				done = assert.async(),
 				mouseDownSpy = sinon.spy(this.oDialog, 'onmousedown'),
 				mouseMoveSpy = sinon.spy(this.oDialog, 'handleMove'),
 				mouseUpSpy = sinon.spy(this.oDialog, 'handleMouseUp'),
-				popupPositionSpy = sinon.spy(this.oDialog.oPopup, 'setPosition')
+				popupPositionSpy = sinon.spy(this.oDialog.oPopup, 'setPosition');
 
 			function fnOpened() {
 				var sHeaderId = that.oDialog.getId() + '-hdr';
