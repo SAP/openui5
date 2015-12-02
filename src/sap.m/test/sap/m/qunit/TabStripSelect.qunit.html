@@ -119,13 +119,14 @@
 
 
 			var oItem = this.oMITS.getItems()[0];
-			var fnFireItemClosePressedSpy = sinon.spy(oItem, "fireItemClosePressed");
-			sap.ui.test.qunit.triggerTouchEvent("tap", oItem.$().children('.sapMTabSelectListItemCloseBtn')[0]);
+			// ToDo: This is now handled in TabStrip by adding ontap delegate of TabStripSelectItems
+//			var fnFireItemClosePressedSpy = sinon.spy(oItem, "fireItemClosePressed");
+//			sap.ui.test.qunit.triggerTouchEvent("tap", oItem.$().children('.sapMTabSelectListItemCloseBtn')[0]);
 
 			this.clock.tick(1000);
 
 			strictEqual(this.oMITS.isOpen(), true, 'Select must remain open if close button was clicked.');
-			strictEqual(fnFireItemClosePressedSpy.callCount, 1, "The tab close event was fired");
+//			strictEqual(fnFireItemClosePressedSpy.callCount, 1, "The tab close event was fired");
 			// ToDo: assert for correct tab id on the event
 			this.clock.tick(1000);
 
