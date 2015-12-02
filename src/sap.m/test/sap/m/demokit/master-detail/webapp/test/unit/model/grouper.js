@@ -41,7 +41,7 @@ sap.ui.define([
 		// Assert
 		oGrouperReturn = fnGroup(oContextObject);
 		assert.strictEqual(oGrouperReturn.key, "LE20", "The key is as expected for a low value");
-		assert.strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header1"), "The group header is as expected for a low value");;
+		assert.strictEqual(oGrouperReturn.text, this._oResourceModel.getResourceBundle().getText("masterGroup1Header1"), "The group header is as expected for a low value");
 	});
 
 	QUnit.test("Should group the price", function (assert) {

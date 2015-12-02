@@ -81,7 +81,7 @@ sap.ui.define([
 					var sObjectPath = this.getModel().createKey("Objects", {
 						ObjectID :  sObjectId
 					});
-					this._bindView("/"+sObjectPath);
+					this._bindView("/" + sObjectPath);
 				}.bind(this));
 			},
 
