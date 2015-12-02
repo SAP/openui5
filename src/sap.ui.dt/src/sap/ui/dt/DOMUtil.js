@@ -102,7 +102,8 @@ function(jQuery) {
 			return {
 				domRef : oDomRef,
 				size : this.getSize(oDomRef),
-				position :  jQuery(oDomRef).offset()
+				position :  jQuery(oDomRef).offset(),
+				visible : this.isVisible(oDomRef)
 			};
 		}
 	};
@@ -143,6 +144,15 @@ function(jQuery) {
 			return document.querySelector(sCSSSelector.replace(":sap-domref", "#" + this.getEscapedString(oDomRef.id)));
 		}
 		return oDomRef ? oDomRef.querySelector(sCSSSelector) : undefined;
+	};
+
+	/**
+	 *
+	 */
+	DOMUtil.isVisible = function(oDomRef) {
+		oDomRef = jQuery(oDomRef);
+
+		return oDomRef.is(":visible");
 	};
 
 	/**

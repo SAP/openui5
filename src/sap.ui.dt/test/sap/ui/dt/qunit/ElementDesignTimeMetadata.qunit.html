@@ -39,7 +39,6 @@
 				}
 			});
 			QUnit.test("when the ElementDesignTimeMetadata is initialized", function(assert) {
-				assert.strictEqual(Object.keys(this.oElementDesignTimeMetadata.getAggregations()).length, 3, "getAggregations returns all aggregations data");
 				assert.strictEqual(this.oElementDesignTimeMetadata.hasAggregation("testAggregation"), true, "hasAggregations is true when aggregation data exists");
 				assert.strictEqual(this.oElementDesignTimeMetadata.hasAggregation("fakeAggregation"), false, "hasAggregations is false when aggregation data not exists");
 				assert.strictEqual(this.oElementDesignTimeMetadata.getAggregation("testAggregation").testField, "testValue", "getAggregation returns data when aggregation it exists");

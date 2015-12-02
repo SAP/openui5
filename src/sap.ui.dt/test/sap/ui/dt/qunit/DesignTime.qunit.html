@@ -74,8 +74,6 @@
 						ok(sap.ui.dt.OverlayRegistry.getOverlay(oLayout), "overlay for the layout exists");
 
 						done();
-						// cleanup
-						oLayout.destroy();
 					}
 				}, this);
 
@@ -90,9 +88,15 @@
 			});
 
 			QUnit.test("... and the control is removed from root element", function(assert) {
+				var that = this;
+				var done = assert.async();
+
 				this.oInnerLayout.removeContent(this.oButton1);
 
-				assert.strictEqual(isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime), false, "no overlay for button1");
+				this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
+					assert.strictEqual(oEvent.getParameter("overlay").getElementInstance(), that.oButton1, "overlay for button is destroyed");
+					done();
+				});
 			});
 
 			QUnit.module("Given that an DesignTime is created for a root control", {
