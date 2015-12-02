@@ -39,3 +39,20 @@
 .sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
   border: none;
 }
+
+// Focus Styles ========================================================================================================
+
+.sap-desktop .sapMLIB.sapMNLG:focus {
+  outline: none;
+}
+
+.sapMNLG:focus::before {
+  border: 1px dotted @sapUiFocus;
+  position: absolute;
+  content: " ";
+  top: 1px;
+  right: 1px;
+  bottom: 0.5625rem;
+  left: 1px;
+  z-index: 2;
+}
