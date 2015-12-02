@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/li
 			// use preprocessors to fix IDs, associations and event handler references
 			ManagedObject.runWithPreprocessors(function() {
 					// parse
-					that.applySettings({ content : that._oJSONView.content});
+					that.applySettings({ content : that._oJSONView.content}, oController);
 				},
 
 				{
