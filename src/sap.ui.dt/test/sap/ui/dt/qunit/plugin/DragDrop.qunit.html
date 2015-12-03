@@ -50,6 +50,7 @@
 				this.oButton = new sap.m.Button();
 				this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oButton]});
 				this.oLayout.placeAt("content");
+				sap.ui.getCore().applyChanges();
 
 
 				this.oLayoutOverlay = new sap.ui.dt.ElementOverlay({element : this.oLayout});

@@ -101,7 +101,8 @@ sap.ui.define([
 				position: {
 					left: minLeft,
 					top: minTop
-				}
+				},
+				visible : true
 			};
 		}
 	};

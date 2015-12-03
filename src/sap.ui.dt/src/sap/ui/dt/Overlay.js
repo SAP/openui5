@@ -83,6 +83,14 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				 */
 				destroyed : {
 					parameters : {}
+				},
+				/**
+				 * Event fired when the Overlay visibility is changed
+				 */
+				visibleChanged : {
+					parameters : {
+						visible : "boolean"
+					}
 				}
 			}
 		}
@@ -225,9 +233,14 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function() {
+		if (!this.getDomRef()) {
+			return;
+		}
+
+		delete this._mGeometry;
 		var oGeometry = this.getGeometry();
 
-		if (oGeometry) {
+		if (oGeometry && oGeometry.visible) {
 			var $overlay = this.$();
 
 			var oOverlayParent = this.getParent();
@@ -279,6 +292,14 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			this.getChildren().forEach(function(oChild) {
 				oChild.applyStyles();
 			});
+
+			if (!this.$().is(":visible")) {
+				this.$().css("display", "block");
+			}
+
+			this._cloneDomRef(oGeometry.domRef);
+		} else if (this.$().is(":visible")) {
+			this.$().css("display", "none");
 		}
 	};
 
@@ -290,20 +311,23 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @return {object} geometry object describing the DOM of the Element associated with this Overlay
 	 * @public
 	 */
-	Overlay.prototype.getGeometry = function() {
+	Overlay.prototype.getGeometry = function(bForceCalculation) {
+		if (bForceCalculation || !this._mGeometry) {
+			var oDomRef = this.getAssociatedDomRef();
+			var mGeometry = DOMUtil.getGeometry(oDomRef);
 
-		var oDomRef = this.getAssociatedDomRef();
-		var mGeometry = DOMUtil.getGeometry(oDomRef);
+			if (!mGeometry) {
+				var aChildrenGeometry = [];
+				this.getChildren().forEach(function(oChildOverlay) {
+					aChildrenGeometry.push(oChildOverlay.getGeometry(true));
+				});
+				mGeometry = OverlayUtil.getGeometry(aChildrenGeometry);
+			}
 
-		if (!mGeometry) {
-			var aChildrenGeometry = [];
-			this.getChildren().forEach(function(oChildOverlay) {
-				aChildrenGeometry.push(oChildOverlay.getGeometry());
-			});
-			mGeometry = OverlayUtil.getGeometry(aChildrenGeometry);
+			this._mGeometry = mGeometry;
 		}
 
-		return mGeometry;
+		return this._mGeometry;
 	};
 
 	/**
@@ -347,7 +371,6 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @private
 	 */
 	Overlay.prototype._updateDom = function() {
-		var oGeometry = this.getGeometry();
 		var $this = this.$();
 
 		var oParent = this.getParent();
@@ -367,13 +390,6 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				}
 				this.applyStyles();
 			}
-		}
-		if (oGeometry && this.isVisible()) {
-			this._cloneDomRef(oGeometry.domRef);
-			$this.show();
-		} else {
-			// we should always be in DOM to make sure, that drop events (dragend) will be fired even if the overlay isn't visible anymore
-			$this.hide();
 		}
 	};
 
@@ -420,8 +436,11 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.setVisible = function(bVisible) {
-		this.setProperty("visible", bVisible);
-		this._bVisible = bVisible;
+		if (this.getVisible() !== bVisible) {
+			this.setProperty("visible", bVisible);
+			this._bVisible = bVisible;
+			this.fireVisibleChanged({visible : bVisible});
+		}
 
 		return this;
 	};
