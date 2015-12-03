@@ -124,7 +124,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 	
 			$.each(aClasses, function(iIndex, oValue) {
 				if (typeof (that._mAddedClasses[oValue]) === 'undefined') {
-					rm.write('<option>' + oValue + '</option>');
+					rm.write('<option>');
+					rm.writeEscaped("" + oValue);
+					rm.write('</option>');
 				}
 			});
 	
@@ -147,14 +149,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 					bpCountText = bpCount.active + " / " + bpCount.all;
 				}
 	
-				rm.write('<li data-class-name="' + oValue + '"');
+				rm.write('<li data-class-name="');
+				rm.writeEscaped("" + oValue);
+				rm.write('"');
 	
 				if (that._sSelectedClass === oValue) {
 					rm.write(' class="selected"');
 				}
 	
-				rm.write('><div><span class="className">' + oValue + '</span>' +
-						 '<span class="breakpoints">' + bpCountText + '</span></div>' +
+				rm.write('><div><span class="className">' + jQuery.sap.escapeHTML(oValue + "") + '</span>' +
+						 '<span class="breakpoints">' + jQuery.sap.escapeHTML(bpCountText + "") + '</span></div>' +
 						 '<img class="remove-class" style="cursor:pointer;margin-left:5px" ' +
 						 'src="../../debug/images/delete.gif" alt="X"></li>');
 			});
@@ -182,7 +186,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 	
 			$.each(mMethods, function(iIndex, oValue) {
 				if (!oValue.active) {
-					rm.write('<option data-method-type="' + oValue.type + '">' + oValue.name + '</option>');
+					rm.write('<option data-method-type="');
+					rm.writeEscaped("" + oValue.type);
+					rm.write('">');
+					rm.writeEscaped("" + oValue.name);
+					rm.write('</option>');
 				}
 			});
 	
@@ -198,7 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 					return;
 				}
 	
-				rm.write('<li data-method-type="' + oValue.type + '"><span>' + oValue.name + '</span>' +
+				rm.write('<li data-method-type="' + jQuery.sap.escapeHTML(oValue.type + "") + '"><span>' + jQuery.sap.escapeHTML(oValue.name + "") + '</span>' +
 						 '<img class="remove-breakpoint" style="cursor:pointer;margin-left:5px" ' +
 						 'src="../../debug/images/delete.gif" alt="Remove"></li>');
 			});
