@@ -457,6 +457,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					type: sap.m.SelectType.IconOnly,
 					autoAdjustWidth : true,
 					icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
+					tooltip: oRb.getText("TABSTRIP_OPENED_TABS"),
 					change: function (oEvent) {
 						oSelectedSelectItem = oEvent.getParameters()['selectedItem'];
 						oSelectedTabStripItem = oAggregationsHelper.findTabStripItemFromSelectItem.call(this,oSelectedSelectItem);

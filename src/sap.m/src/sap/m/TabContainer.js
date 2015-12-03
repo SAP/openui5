@@ -113,10 +113,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		TabContainer.prototype._getAddNewTabButton = function() {
 			var oControl = this.getAggregation("_addNewButton");
+			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			if (!oControl) {
 				oControl = new sap.m.Button({
 					type: sap.m.ButtonType.Transparent,
+					tooltip: oRb.getText("TABCONTAINER_ADD_NEW_TAB"),
 					icon: sap.ui.core.IconPool.getIconURI("add"),
 					press: function() {
 						this.getParent().getParent().fireAddNewButtonPress();
