@@ -7,12 +7,32 @@ sap.ui.define([], function () {
 	"use strict";
 
 	var MetadataConverter,
+		rCollection = /^Collection\((.*)\)$/,
 		oAliasConfig = {
 			"Reference" : {
 				"Include" : {__processor : processAlias}
 			},
 			"DataServices" : {
 				"Schema" : {__processor : processAlias}
+			}
+		},
+		oStructuredTypeConfig = {
+			"Property" : {
+				__processor : processTypeProperty
+			},
+			"NavigationProperty" : {
+				__processor : processTypeNavigationProperty,
+				"OnDelete" : {
+					__processor : processTypeNavigationPropertyOnDelete
+				},
+				"ReferentialConstraint" : {
+					__processor : processTypeNavigationPropertyReferentialConstraint
+				}
+			}
+		},
+		oEntitySetConfig = {
+			"NavigationPropertyBinding" : {
+				__processor : processNavigationPropertyBinding
 			}
 		},
 		oFullConfig = {
@@ -27,40 +47,26 @@ sap.ui.define([], function () {
 					__processor : processSchema,
 					"EntityType" : {
 						__processor : processEntityType,
+						__include : oStructuredTypeConfig,
 						"Key" : {
 							"PropertyRef" : {
 								__processor : processEntityTypeKeyPropertyRef
 							}
-						},
-						"Property" : {
-							__processor : processTypeProperty
-						},
-						"NavigationProperty" : {
-							__processor : processTypeNavigationProperty
 						}
 					},
 					"ComplexType" : {
 						__processor : processComplexType,
-						"Property" : {
-							__processor : processTypeProperty
-						},
-						"NavigationProperty" : {
-							__processor : processTypeNavigationProperty
-						}
+						__include : oStructuredTypeConfig
 					},
 					"EntityContainer" : {
 						__processor : processEntityContainer,
 						"EntitySet" : {
 							__processor : processEntitySet,
-							"NavigationPropertyBinding" : {
-								__processor : processNavigationPropertyBinding
-							}
+							__include : oEntitySetConfig
 						},
 						"Singleton" : {
 							__processor : processSingleton,
-							"NavigationPropertyBinding" : {
-								__processor : processNavigationPropertyBinding
-							}
+							__include : oEntitySetConfig
 						}
 					}
 				}
@@ -98,6 +104,23 @@ sap.ui.define([], function () {
 	}
 
 	/**
+	 * Copies all attributes from oAttributes to oTarget according to oConfig.
+	 * @param {object} oAttributes the attribute of an Element as returned by getAttributes
+	 * @param {object} oTarget the target object
+	 * @param {object} oConfig
+	 *   the configuration: each property describes a property of oAttributes to copy; the value is
+	 *   a conversion function, if this function returns undefined, the property is not set
+	 */
+	function processAttributes(oAttributes, oTarget, oConfig) {
+		Object.keys(oConfig).forEach(function (sProperty) {
+			var sValue = oConfig[sProperty](oAttributes[sProperty]);
+			if (sValue !== undefined) {
+				oTarget["$" + sProperty] = sValue;
+			}
+		});
+	}
+
+	/**
 	 * Processes a ComplexType element.
 	 * @param {Element} oElement the element
 	 * @param {object} oAggregate the aggregate
@@ -113,7 +136,7 @@ sap.ui.define([], function () {
 	 */
 	function processEntityContainer(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name");
-		oAggregate.result.$Schema[sQualifiedName] = oAggregate.entityContainer = {
+		oAggregate.result[sQualifiedName] = oAggregate.entityContainer = {
 			"$kind" : "EntityContainer"
 		};
 		oAggregate.result.$EntityContainer = sQualifiedName;
@@ -167,7 +190,7 @@ sap.ui.define([], function () {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processInclude(oElement, oAggregate) {
-		oAggregate.result.$Schema[oElement.getAttribute("Namespace")] = {
+		oAggregate.result[oElement.getAttribute("Namespace")] = {
 			"$kind" : "Reference",
 			"$ref" : oAggregate.referenceUri
 		};
@@ -179,9 +202,13 @@ sap.ui.define([], function () {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processNavigationPropertyBinding(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement);
+		var oAttributes = getAttributes(oElement),
+			oNavigationPropertyBinding = oAggregate.entitySet.$NavigationPropertyBinding;
 
-		oAggregate.entitySet[oAttributes.Path]
+		if (!oNavigationPropertyBinding) {
+			oAggregate.entitySet.$NavigationPropertyBinding = oNavigationPropertyBinding = {};
+		}
+		oNavigationPropertyBinding[oAttributes.Path]
 			= MetadataConverter.resolveAlias(oAttributes.Target, oAggregate);
 	}
 
@@ -226,20 +253,31 @@ sap.ui.define([], function () {
 		var oAttributes = getAttributes(oElement),
 			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name;
 
-		if (oAttributes.OpenType === "true") {
-			oType.$OpenType = true;
-		}
-		if (oAttributes.HasStream === "true") {
-			oType.$HasStream = true;
-		}
-		if (oAttributes.Abstract === "true") {
-			oType.$Abstract = true;
-		}
-		if (oAttributes.BaseType) {
-			oType.$BaseType = oAttributes.BaseType;
-		}
+		processAttributes(oAttributes, oType, {
+			"OpenType" : setIfTrue,
+			"HasStream" : setIfTrue,
+			"Abstract" : setIfTrue,
+			"BaseType" : setValue
+		});
 
-		oAggregate.result.$Schema[sQualifiedName] = oAggregate.type = oType;
+		oAggregate.result[sQualifiedName] = oAggregate.type = oType;
+	}
+
+	/**
+	 * Processes the type in the form "Type" or "Collection(Type)" and sets the appropriate
+	 * properties.
+	 * @param {string} sType the type attribute from the Element
+	 * @param {object} oProperty the property attribute in the JSON
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processTypedCollection(sType, oProperty, oAggregate) {
+		var aMatches = rCollection.exec(sType);
+
+		if (aMatches) {
+			oProperty.$isCollection = true;
+			sType = aMatches[1];
+		}
+		oProperty.$Type = MetadataConverter.resolveAlias(sType, oAggregate);
 	}
 
 	/**
@@ -250,21 +288,42 @@ sap.ui.define([], function () {
 	function processTypeNavigationProperty(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement),
 			oProperty = {
-				$kind : "navigation",
-				$Type : MetadataConverter.resolveAlias(oAttributes.Type, oAggregate)
+				$kind : "navigation"
 			};
 
-		if (oAttributes.Nullable === "false") {
-			oProperty.$Nullable = false;
-		}
-		if (oAttributes.Partner) {
-			oProperty.$Partner = oAttributes.Partner;
-		}
-		if (oAttributes.ContainsTarget === "true") {
-			oProperty.$ContainsTarget = true;
+		processTypedCollection(oAttributes.Type, oProperty, oAggregate);
+		processAttributes(oAttributes, oProperty, {
+			"Nullable" : setIfFalse,
+			"Partner" : setValue,
+			"ContainsTarget" : setIfTrue
+		});
+
+		oAggregate.type[oAttributes.Name] = oAggregate.navigationProperty = oProperty;
+	}
+
+	/**
+	 * Processes a NavigationProperty OnDelete element.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processTypeNavigationPropertyOnDelete(oElement, oAggregate) {
+		oAggregate.navigationProperty.$OnDelete = oElement.getAttribute("Action");
+	}
+
+	/**
+	 * Processes a NavigationProperty OnDelete element.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processTypeNavigationPropertyReferentialConstraint(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			oReferentialConstraint = oAggregate.navigationProperty.$ReferentialConstraint;
+
+		if (!oReferentialConstraint) {
+			oAggregate.navigationProperty.$ReferentialConstraint = oReferentialConstraint = {};
 		}
 
-		oAggregate.type[oAttributes.Name] = oProperty;
+		oReferentialConstraint[oAttributes.Property] = oAttributes.ReferencedProperty;
 	}
 
 	/**
@@ -274,36 +333,60 @@ sap.ui.define([], function () {
 	 */
 	function processTypeProperty(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement),
-		oProperty = {
-			$Type : MetadataConverter.resolveAlias(oAttributes.Type, oAggregate)
-		};
+			oProperty = {};
 
-		if (oAttributes.Nullable === "false") {
-			oProperty.$Nullable = false;
-		}
-		if (oAttributes.MaxLength) {
-			oProperty.$MaxLength = parseInt(oAttributes.MaxLength, 10);
-		}
-		if (oAttributes.Precision) {
-			oProperty.$Precision = parseInt(oAttributes.Precision, 10);
-		}
-		if (oAttributes.Scale) {
-			if (oAttributes.Scale === "variable") {
-				oProperty.$Scale = oAttributes.Scale;
-			} else {
-				oProperty.$Scale = parseInt(oAttributes.Scale, 10);
-			}
-		}
-		if (oAttributes.Unicode === "false") {
-			oProperty.$Unicode = false;
-		}
-		if (oAttributes.SRID) {
-			oProperty.$SRID = oAttributes.SRID;
-		}
-		if (oAttributes.DefaultValue) {
-			oProperty.$DefaultValue = oAttributes.DefaultValue;
-		}
+		processTypedCollection(oAttributes.Type, oProperty, oAggregate);
+		processAttributes(oAttributes, oProperty, {
+			"DefaultValue" : setValue,
+			"Nullable" : setIfFalse,
+			"MaxLength" : setNumber,
+			"Precision" : setNumber,
+			"Scale" : function (sValue) {
+				return sValue === "variable" ? sValue : setNumber(sValue);
+			},
+			"SRID" : setValue,
+			"Unicode" : setIfFalse
+		});
+
 		oAggregate.type[oAttributes.Name] = oProperty;
+	}
+
+	/**
+	 * Helper for processAttributes, returns false if sValue is "false", returns undefined
+	 * otherwise.
+	 * @param {string} sValue the attribute value in the element
+	 * @returns {boolean} false or undefined
+	 */
+	function setIfFalse(sValue) {
+		return sValue === "false" ? false : undefined;
+	}
+
+	/**
+	 * Helper for processAttributes, returns true if sValue is "true", returns undefined
+	 * otherwise.
+	 * @param {string} sValue the attribute value in the element
+	 * @returns {boolean} true or undefined
+	 */
+	function setIfTrue(sValue) {
+		return sValue === "true" ? true : undefined;
+	}
+
+	/**
+	 * Helper for processAttributes, returns sValue converted to a number.
+	 * @param {string} sValue the attribute value in the element
+	 * @returns {number} the value as number or undefined
+	 */
+	function setNumber(sValue) {
+		return sValue ? parseInt(sValue, 10) : undefined;
+	}
+
+	/**
+	 * Helper for processAttributes, returns sValue.
+	 * @param {string} sValue the attribute value in the element
+	 * @returns {string} sValue
+	 */
+	function setValue(sValue) {
+		return sValue;
 	}
 
 	MetadataConverter = {
@@ -322,11 +405,10 @@ sap.ui.define([], function () {
 					entityContainer : null, // the current EntityContainer
 					entitySet : null, // the current EntitySet/Singleton
 					namespace : null, // the namespace of the current Schema
+					navigationProperty : null, // the current NavigationProperty
 					referenceUri : null, // the URI of the current Reference
 					type : null, // the current EntityType/ComplexType
-					result : {
-						$Schema : {}
-					}
+					result : {}
 				},
 				oElement = oDocument.documentElement;
 
@@ -380,6 +462,9 @@ sap.ui.define([], function () {
 				oChildNode = oChildList.item(i);
 				if (oChildNode.nodeType === 1) { // Node.ELEMENT_NODE
 					oNodeInfo = oSchemaConfig[oChildNode.localName];
+					if (!oNodeInfo && oSchemaConfig.__include) {
+						oNodeInfo = oSchemaConfig.__include[oChildNode.localName];
+					}
 					if (oNodeInfo) {
 						MetadataConverter.traverse(oChildNode, oAggregate, oNodeInfo);
 					}

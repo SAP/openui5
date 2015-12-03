@@ -59,17 +59,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("xml.traverse", function (assert) {
+	QUnit.test("traverse", function (assert) {
 		var oXML = xml(assert, "<foo><!-- a comment -->text<bar/>more text <ignore/><bar/>"
+				+ "<bar><included/></bar>"
 				+ "\n<bar><innerBar/><innerBar/><innerBar2/></bar></foo>"),
 			oAggregate = {
 				bar: 0,
 				innerBar: 0,
-				innerBar2: 0
+				innerBar2: 0,
+				included: 0
+			},
+			oIncludeConfig = {
+				"included" : {
+					__processor: processor.bind(null, "included")
+				}
 			},
 			oSchemaConfig = {
 				"bar": {
 					__processor: processor.bind(null, "bar"),
+					__include: oIncludeConfig,
 					"innerBar": {
 						__processor: processor.bind(null, "innerBar")
 					},
@@ -87,9 +95,10 @@ sap.ui.require([
 		}
 
 		MetadataConverter.traverse(oXML.documentElement, oAggregate, oSchemaConfig);
-		assert.strictEqual(oAggregate.bar, 3);
+		assert.strictEqual(oAggregate.bar, 4);
 		assert.strictEqual(oAggregate.innerBar, 2);
 		assert.strictEqual(oAggregate.innerBar2, 1);
+		assert.strictEqual(oAggregate.included, 1);
 	});
 
 	//*********************************************************************************************
@@ -112,7 +121,6 @@ sap.ui.require([
 		assert.strictEqual(MetadataConverter.resolveAlias("display.Container/Foo", oAggregate),
 			"org.example.vocabularies.display.Container/Foo");
 	});
-	// TODO "Collection(display.Foo)" not supported yet (wait for review results)
 	// TODO paths with type cast (not relevant for walking skeleton)
 
 	//*********************************************************************************************
@@ -129,14 +137,14 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
-				"$Schema": {
-					"foo.Container": {
-						"$kind": "EntityContainer",
-						"Me": {
-							"$kind": "Singleton",
-							"$Type": "foo.Worker",
+				"foo.Container": {
+					"$kind": "EntityContainer",
+					"Me": {
+						"$kind": "Singleton",
+						"$NavigationPropertyBinding" : {
 							"Manager" : "foo.Manager"
-						}
+						},
+						"$Type": "foo.Worker"
 					}
 				}
 			});
@@ -152,37 +160,46 @@ sap.ui.require([
 					<Schema Namespace="bar">\
 						<ComplexType Name="Worker">\
 							<Property Name="Something" Type="q.Something"/>\
-							<NavigationProperty Name="Address" Type="f.Address"/>\
+							<Property Name="ManyThings" Type="Collection(q.Something)"/>\
+							<NavigationProperty Name="DefaultAddress" Type="f.Address"/>\
+							<NavigationProperty Name="AllAddresses" Type="Collection(f.Address)"/>\
 						</ComplexType>\
 					</Schema>\
 					<Schema Namespace="foo" Alias="f"/>\
 				</DataServices>',
 			{
-				"$Schema": {
-					"qux": {
-						"$kind": "Reference",
-						"$ref": "qux/$metadata"
+				"qux": {
+					"$kind": "Reference",
+					"$ref": "qux/$metadata"
+				},
+				"bar.Worker": {
+					"$kind": "ComplexType",
+					"Something": {
+						"$Type": "qux.Something"
 					},
-					"bar.Worker": {
-						"$kind": "ComplexType",
-						"Something": {
-							"$Type": "qux.Something"
-						},
-						"Address": {
-							"$kind": "navigation",
-							"$Type": "foo.Address"
-						}
+					"ManyThings" : {
+						"$isCollection" : true,
+						"$Type": "qux.Something"
+					},
+					"DefaultAddress": {
+						"$kind": "navigation",
+						"$Type": "foo.Address"
+					},
+					"AllAddresses": {
+						"$kind": "navigation",
+						"$isCollection" : true,
+						"$Type": "foo.Address"
 					}
 				}
 			});
 	});
-
-	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: aliases in container", function (assert) {
 		testConversion(assert, '\
 				<DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<EntityContainer Name="Container">\
+							<EntitySet Name="SpecialTeams" EntityType="f.Team">\
+							</EntitySet>\
 							<EntitySet Name="Teams" EntityType="f.Team">\
 								<NavigationPropertyBinding Path="Manager" Target="f.Container/Managers"/>\
 							</EntitySet>\
@@ -191,13 +208,16 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
-				"$Schema": {
-					"foo.Container": {
-						"$kind": "EntityContainer",
-						"Teams": {
-							"$Type": "foo.Team",
+				"foo.Container": {
+					"$kind": "EntityContainer",
+					"SpecialTeams": {
+						"$Type": "foo.Team"
+					},
+					"Teams": {
+						"$NavigationPropertyBinding" : {
 							"Manager": "foo.Container/Managers"
-						}
+						},
+						"$Type": "foo.Team"
 					}
 				}
 			});
@@ -217,19 +237,17 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
-				"$Schema": {
-					"foo.Container": {
-						"$kind": "EntityContainer",
-						"Teams": {
-							"$Type": "foo.Team",
-							"$IncludeInServiceDocument": false
-						},
-						"Teams2": {
-							"$Type": "foo.Team"
-						},
-						"Teams3": {
-							"$Type": "foo.Team"
-						}
+				"foo.Container": {
+					"$kind": "EntityContainer",
+					"Teams": {
+						"$Type": "foo.Team",
+						"$IncludeInServiceDocument": false
+					},
+					"Teams2": {
+						"$Type": "foo.Team"
+					},
+					"Teams3": {
+						"$Type": "foo.Team"
 					}
 				}
 			});
@@ -250,22 +268,20 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"$Schema": {
-					"foo.Worker": {
-						"$Key": [
-							{"qux": "Bar/Baz"}
-						],
-						"$OpenType": true,
-						"$HasStream": true
-					},
-					"foo.Base": {
-						"$Key": [],
-						"$Abstract": true
-					},
-					"foo.Derived": {
-						"$Key": [],
-						"$BaseType": "foo.Base"
-					}
+				"foo.Worker": {
+					"$Key": [
+						{"qux": "Bar/Baz"}
+					],
+					"$OpenType": true,
+					"$HasStream": true
+				},
+				"foo.Base": {
+					"$Key": [],
+					"$Abstract": true
+				},
+				"foo.Derived": {
+					"$Key": [],
+					"$BaseType": "foo.Base"
 				}
 			});
 	});
@@ -281,45 +297,27 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"$Schema": {
-					"foo.Worker": {
-						"$kind": "ComplexType",
-						"$OpenType": true,
-						"$HasStream": true
-					},
-					"foo.Base": {
-						"$kind": "ComplexType",
-						"$Abstract": true
-					},
-					"foo.Derived": {
-						"$kind": "ComplexType",
-						"$BaseType": "foo.Base"
-					}
+				"foo.Worker": {
+					"$kind": "ComplexType",
+					"$OpenType": true,
+					"$HasStream": true
+				},
+				"foo.Base": {
+					"$kind": "ComplexType",
+					"$Abstract": true
+				},
+				"foo.Derived": {
+					"$kind": "ComplexType",
+					"$BaseType": "foo.Base"
 				}
 			});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("convertXMLMetadata: Property and NavigationProperty", function (assert) {
-		testConversion(assert, '\
-				<DataServices>\
-					<Schema Namespace="foo">\
-						<EntityType Name="Worker">\
-							<Property Name="Salary" Type="Edm.Decimal" Precision="8" Scale="2"/>\
-							<Property Name="p1" Type="Edm.String" Unicode="false" />\
-							<Property Name="p2" Type="Edm.String" Unicode="true" />\
-							<Property Name="p3" Type="Edm.Geometry" SRID="42" />\
-							<Property Name="p4" Type="Edm.Int32" DefaultValue="12345" />\
-							<NavigationProperty Name="team1" Type="foo.Team" Partner="worker" />\
-							<NavigationProperty Name="team2" Type="foo.Team" ContainsTarget="true" />\
-							<NavigationProperty Name="team3" Type="foo.Team" ContainsTarget="false" />\
-						</EntityType>\
-					</Schema>\
-				</DataServices>',
-			{
-				"$Schema": {
+	["ComplexType", "EntityType"].forEach(function (sType) {
+		QUnit.test("convertXMLMetadata: " + sType + ": (Navigation)Property", function (assert) {
+			var oExpected = {
 					"foo.Worker": {
-						"$Key": [],
 						"Salary": {
 							"$Type": "Edm.Decimal",
 							"$Precision": 8,
@@ -343,7 +341,12 @@ sap.ui.require([
 						"team1": {
 							"$kind": "navigation",
 							"$Type": "foo.Team",
-							"$Partner": "worker"
+							"$Partner": "worker",
+							"$OnDelete": "SetDefault",
+							"$ReferentialConstraint": {
+								"p1": "p1Key",
+								"p2": "p2Key"
+							}
 						},
 						"team2": {
 							"$kind": "navigation",
@@ -355,11 +358,36 @@ sap.ui.require([
 							"$Type": "foo.Team"
 						}
 					}
-				}
-			});
+				};
+
+			if (sType === "ComplexType") {
+				oExpected["foo.Worker"].$kind = sType;
+			} else {
+				oExpected["foo.Worker"].$Key = [];
+			}
+			testConversion(assert, '\
+					<DataServices>\
+						<Schema Namespace="foo">\
+							<' + sType + ' Name="Worker">\
+								<Property Name="Salary" Type="Edm.Decimal" Precision="8" Scale="2"/>\
+								<Property Name="p1" Type="Edm.String" Unicode="false" />\
+								<Property Name="p2" Type="Edm.String" Unicode="true" />\
+								<Property Name="p3" Type="Edm.Geometry" SRID="42" />\
+								<Property Name="p4" Type="Edm.Int32" DefaultValue="12345" />\
+								<NavigationProperty Name="team1" Type="foo.Team" Partner="worker">\
+									<OnDelete Action="SetDefault"/>\
+									<ReferentialConstraint Property="p1" ReferencedProperty="p1Key" />\
+									<ReferentialConstraint Property="p2" ReferencedProperty="p2Key" />\
+								</NavigationProperty>\
+								<NavigationProperty Name="team2" Type="foo.Team" ContainsTarget="true" />\
+								<NavigationProperty Name="team3" Type="foo.Team" ContainsTarget="false" />\
+							</' + sType + '>\
+						</Schema>\
+					</DataServices>',
+				oExpected);
+		});
 	});
 	// TODO adjust $DefaultValue to property type?
-	// TODO ReferentialConstraint, OnDelete
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
