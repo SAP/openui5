@@ -26,3 +26,17 @@
 	padding-right: .25rem;
 }
 
+/*
+	FIX for 1580155978.
+	Fiori design guidelines say that statuses should be specially styled for forms
+	and share looks with other text only controls.
+*/
+.sapUiForm .sapMObjStatus > .sapMObjStatusTitle,
+.sapUiForm .sapMObjStatus > .sapMObjStatusText {
+  line-height: 3rem;
+}
+
+.sapUiSizeCompact .sapUiForm .sapMObjStatus > .sapMObjStatusTitle,
+.sapUiSizeCompact .sapUiForm .sapMObjStatus > .sapMObjStatusText {
+  line-height: 2rem;
+}
