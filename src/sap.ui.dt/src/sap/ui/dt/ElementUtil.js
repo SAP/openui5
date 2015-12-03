@@ -87,6 +87,23 @@ function(jQuery) {
 	};
 
 	/**
+	 * ! Please, use this method only if OverlayUtil.getClosestOverlayForType is not available in your case !
+	 * find the closest element of the given type
+	 * @param  {sap.ui.core.Element} oSourceElement to start search for
+	 * @param  {string} sType to check instance of
+	 * @return {sap.ui.core.Element} element of the given type, if found
+	 */
+	ElementUtil.getClosestElementOfType = function(oSourceElement, sType) {
+		var oElement = oSourceElement;
+
+		while (oElement && !this.isInstanceOf(oElement, sType)) {
+			oElement = oElement.getParent();
+		}
+
+		return oElement;
+	};
+
+	/**
 	 *
 	 */
 	ElementUtil.fixComponentParent = function(oElement) {
