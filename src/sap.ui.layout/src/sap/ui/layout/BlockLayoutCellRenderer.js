@@ -53,8 +53,9 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		BlockLayoutCellRenderer.addFlex = function (rm, flex) {
-			rm.addStyle("flex", flex);
 			rm.addStyle("-webkit-flex", flex);
+			rm.addStyle("-ms-flex", flex);
+			rm.addStyle("flex", flex);
 		};
 
 		BlockLayoutCellRenderer.addTitle = function (rm, blockLayoutCell) {
