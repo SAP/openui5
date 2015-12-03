@@ -81,12 +81,19 @@
 				},
 				cancel: function(oEvent){
 					alert("Cancel");
+				},
+				startDateChange: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF2");
+					var oCalendar = oEvent.oSource;
+					var oDate = oCalendar.getStartDate();
+					oTF.setValue(oFormatYyyymmdd.format(oDate));
 				}
 			}).placeAt("sample1");
 
 			var oLabel = new sap.ui.commons.Label({text: "selected date", labelFor: "TF1"}).placeAt("event1");
 			var oInput = new sap.ui.commons.TextField("TF1",{
 				editable: true,
+				width: "8em",
 				placeholder: "yyyyMMdd",
 				change: function(oEvent){
 					var oTF = oEvent.oSource;
@@ -109,10 +116,22 @@
 				}
 			}).placeAt("event1");
 
+			oLabel = new sap.ui.commons.Label({text: "start date", labelFor: "TF2"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF2",{
+				editable: false,
+				width: "8em",
+				placeholder: "yyyyMMdd",
+				value: oFormatYyyymmdd.format(oCal.getStartDate())
+			}).placeAt("event1");
+
 			var oButton = new sap.ui.commons.Button({
 				text: "focus today",
 				press: function(oEvent){
 					sap.ui.getCore().byId("Cal1").focusDate(new Date());
+					var oTF = sap.ui.getCore().byId("TF2");
+					var oCalendar = sap.ui.getCore().byId("Cal1");
+					var oDate = oCalendar.getStartDate();
+					oTF.setValue(oFormatYyyymmdd.format(oDate));
 				}
 			}).placeAt("event1");
 
@@ -145,6 +164,7 @@
 			oLabel = new sap.ui.commons.Label({text: "primary calendar type", labelFor: "CB1"}).placeAt("event1");
 			oCB1 = new sap.ui.commons.ComboBox("CB1",{
 				editable: true,
+				width: "9em",
 				items: [
 								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
 								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
@@ -165,6 +185,7 @@
 			oLabel = new sap.ui.commons.Label({text: "secondary calendar type", labelFor: "CB2"}).placeAt("event1");
 			oCB2 = new sap.ui.commons.ComboBox("CB2",{
 				editable: true,
+				width: "9em",
 				items: [
 								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
 								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
