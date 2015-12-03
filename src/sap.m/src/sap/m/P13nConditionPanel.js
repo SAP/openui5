@@ -736,7 +736,7 @@ sap.ui.define([
 		}
 
 		// create empty Conditions row/fields
-		if ((this.getAutoAddNewRow() && this._oConditionsGrid.getContent().length === 0) && this._oConditionsGrid.getContent().length < iMaxConditions) {
+		if ((this.getAutoAddNewRow() || this._oConditionsGrid.getContent().length === 0) && this._oConditionsGrid.getContent().length < iMaxConditions) {
 			this._createConditionRow(this._oConditionsGrid);
 		}
 	};
