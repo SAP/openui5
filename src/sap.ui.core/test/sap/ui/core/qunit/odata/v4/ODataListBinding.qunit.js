@@ -8,10 +8,11 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Context, Model, Cache, Requestor, ODataListBinding,
-		ODataModel) {
+], function (ManagedObject, ChangeReason, Context, Model, Cache, Requestor, Helper,
+		ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -753,6 +754,50 @@ sap.ui.require([
 			done();
 		}, 10); //wait until read is finished
 
+	});
+
+
+	//*********************************************************************************************
+	QUnit.test("bindList with parameters", function (assert) {
+		var oBinding,
+			oError = new Error("Unsupported ..."),
+			oHelperMock,
+			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
+			mQueryOptions = {};
+
+		oHelperMock = this.mock(Helper);
+		oHelperMock.expects("buildQueryOptions")
+			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
+			.returns(mQueryOptions);
+//TODO (1) add once cache creation is done in constructor
+//		this.mock(Cache).expects("create")
+//			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "/service/EMPLOYEES",
+//				sinon.match.same(mQueryOptions));
+
+		oBinding = this.oModel.bindList("/EMPLOYEES", null, undefined, undefined, mParameters);
+
+//TODO remove once cache creation is done in constructor
+		assert.strictEqual(oBinding.mParameters, mQueryOptions,
+			"temporary solution to store parameters for cache creation");
+
+		//no call to buildQueryOptions for binding with relative path and no parameters
+		oBinding = this.oModel.bindList("EMPLOYEE_2_TEAM");
+
+//TODO (2) add once cache creation is done in constructor
+//		assert.strictEqual(oBinding.mParameters, undefined,
+//			"do not propagate unchecked query options");
+
+		//error for invalid parameters
+		oHelperMock.expects("buildQueryOptions").throws(oError);
+
+		assert.throws(function () {
+			this.oModel.bindList("/EMPLOYEES", null, undefined, undefined, mParameters);
+		}, oError);
+
+		//error for relative paths
+		assert.throws(function () {
+			this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS", null, undefined, undefined, mParameters);
+		}, new Error("Bindings with a relative path do not support parameters"));
 	});
 });
 //TODO delegate the actual refresh to the Cache instead of deleting it to force a new read from

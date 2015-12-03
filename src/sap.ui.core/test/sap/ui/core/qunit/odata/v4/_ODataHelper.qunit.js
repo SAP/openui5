@@ -86,4 +86,56 @@ sap.ui.require([
 		});
 	});
 	//TODO handle keys with aliases!
+
+	//*********************************************************************************************
+	[{
+		mModelOptions : {"sap-client" : "111"},
+		mOptions : {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
+		allowed : ["$expand", "$select"]
+	}, {
+		mModelOptions : {"custom" : "bar"},
+		mOptions : {"custom" : "foo"},
+		allowed : []
+	}, {
+		mOptions : undefined,
+		mModelOptions : undefined,
+		allowed : undefined
+	}].forEach(function (o) {
+		QUnit.test("buildQueryOptions success " + JSON.stringify(o), function (assert) {
+			var mOptions,
+				mOriginalModelOptions =
+					o.mModelOptions && JSON.parse(JSON.stringify(o.mModelOptions)),
+				mOriginalOptions = o.mOptions && JSON.parse(JSON.stringify(o.mOptions));
+
+			mOptions = Helper.buildQueryOptions(o.mModelOptions, o.mOptions, o.allowed);
+
+			assert.deepEqual(mOptions, jQuery.extend({}, o.mModelOptions, o.mOptions));
+			assert.deepEqual(o.mModelOptions, mOriginalModelOptions);
+			assert.deepEqual(o.mOptions, mOriginalOptions);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		mModelOptions : {},
+		mOptions : {"$foo" : "foo"},
+		allowed : ["$expand", "$select"],
+		error : "Parameter $foo is not supported"
+	}, {
+		mModelOptions : {},
+		mOptions : {"@alias" : "alias"},
+		allowed : ["$expand", "$select"],
+		error : "Parameter @alias is not supported"
+	}, {
+		mModelOptions : undefined,
+		mOptions : {"$expand" : "foo"},
+		allowed : undefined,
+		error : "Parameter $expand is not supported"
+	}].forEach(function (o) {
+		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
+			assert.throws(function () {
+				Helper.buildQueryOptions(o.mModelOptions, o.mOptions, o.allowed);
+			}, new Error(o.error));
+		});
+	});
 });

@@ -1,116 +1,12 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList",
-	"value" : [ {
-		"SalesOrderID" : "0500001110",
-		"Note" : "EPM DG: SO ID 0500001110 Deliver as fast as possible",
-		"NoteLanguage" : "",
-		"BuyerID" : "0100000000",
-		"BuyerName" : "SAP",
-		"CurrencyCode" : "EUR",
-		"GrossAmount" : 25867.03,
-		"NetAmount" : 21737,
-		"TaxAmount" : 4130.03,
-		"LifecycleStatus" : "N",
-		"LifecycleStatusDesc" : "New",
-		"BillingStatus" : "",
-		"BillingStatusDesc" : "Initial",
-		"DeliveryStatus" : "",
-		"DeliveryStatusDesc" : "Initial",
-		"CreatedAt" : "20150702220000.0000000 ",
-		"ChangedAt" : "20150702220000.0000000 ",
-		"SOItemCount" : 10,
-		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20150702121621.0000000\"",
-			"BusinessPartnerID" : "0100000000",
-			"BusinessPartnerRole" : "01",
-			"CompanyName" : "SAP",
-			"WebAddress" : "http://www.sap.com",
-			"EmailAddress" : "do.not.reply@sap.com",
-			"PhoneNumber" : "0622734567",
-			"FaxNumber" : "0622734004",
-			"LegalForm" : "SE",
-			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2015-07-02T12:16:21Z",
-			"ChangedAt" : "2015-07-02T12:16:21Z",
-			"Address" : {
-				"City" : "Walldorf",
-				"PostalCode" : "69190",
-				"Street" : "Dietmar-Hopp-Allee",
-				"Building" : "16",
-				"Country" : "DE",
-				"AddressType" : "02",
-				"GeoLocation" : {
-					"Latitude" : 49.293673600000,
-					"Longitude" : 8.641701933686
-				}
-			}
-		}
-	}, {
-		"SalesOrderID" : "0500001111",
-		"Note" : "EPM DG: SO ID 0500001111 Deliver as fast as possible",
-		"NoteLanguage" : "",
-		"BuyerID" : "0100000002",
-		"BuyerName" : "DelBont Industries",
-		"CurrencyCode" : "EUR",
-		"GrossAmount" : 14602.49,
-		"NetAmount" : 12271,
-		"TaxAmount" : 2331.49,
-		"LifecycleStatus" : "N",
-		"LifecycleStatusDesc" : "New",
-		"BillingStatus" : "",
-		"BillingStatusDesc" : "Initial",
-		"DeliveryStatus" : "",
-		"DeliveryStatusDesc" : "Initial",
-		"CreatedAt" : "20150702220000.0000000 ",
-		"ChangedAt" : "20150702220000.0000000 ",
-		"SOItemCount" : 10,
-		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20150702121621.0000000\"",
-			"BusinessPartnerID" : "0100000002",
-			"BusinessPartnerRole" : "01",
-			"CompanyName" : "DelBont Industries",
-			"WebAddress" : "http://www.delbont.com",
-			"EmailAddress" : "maria.brown@delbont.com",
-			"PhoneNumber" : "3023352668",
-			"FaxNumber" : "3023352004",
-			"LegalForm" : "Ltd.",
-			"CurrencyCode" : "USD",
-			"CreatedAt" : "2015-07-02T12:16:21Z",
-			"ChangedAt" : "2015-07-02T12:16:21Z",
-			"Address" : {
-				"City" : "Wilmington, Delaware",
-				"PostalCode" : "19899",
-				"Street" : "1 2345 King Street",
-				"Building" : "1",
-				"Country" : "US",
-				"AddressType" : "02",
-				"GeoLocation" : {
-					"Latitude" : 39.745946800000,
-					"Longitude" : -75.546589000000
-				}
-			}
-		}
-	}, {
-		"SalesOrderID" : "0500001112",
-		"Note" : "EPM DG: SO ID 0500001112 Deliver as fast as possible",
-		"NoteLanguage" : "",
-		"BuyerID" : "0100000005",
+	"@odata.context" : "$metadata#SalesOrderList(SalesOrderID,BuyerName,GrossAmount,CurrencyCode)",
+	"value" : [{
+		"SalesOrderID" : "0500000002",
 		"BuyerName" : "TECUM",
-		"CurrencyCode" : "EUR",
 		"GrossAmount" : 5631.08,
-		"NetAmount" : 4732,
-		"TaxAmount" : 899.08,
-		"LifecycleStatus" : "N",
-		"LifecycleStatusDesc" : "New",
-		"BillingStatus" : "",
-		"BillingStatusDesc" : "Initial",
-		"DeliveryStatus" : "",
-		"DeliveryStatusDesc" : "Initial",
-		"CreatedAt" : "20150702220000.0000000 ",
-		"ChangedAt" : "20150702220000.0000000 ",
-		"SOItemCount" : 8,
+		"CurrencyCode" : "EUR",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20150702121621.0000000\"",
+			"@odata.etag" : "W/\"20151120072614.0000000\"",
 			"BusinessPartnerID" : "0100000005",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "TECUM",
@@ -120,8 +16,8 @@
 			"FaxNumber" : "2511004",
 			"LegalForm" : "AG",
 			"CurrencyCode" : "EUR",
-			"CreatedAt" : "2015-07-02T12:16:21Z",
-			"ChangedAt" : "2015-07-02T12:16:21Z",
+			"CreatedAt" : "2015-11-20T07:26:14Z",
+			"ChangedAt" : "2015-11-20T07:26:14Z",
 			"Address" : {
 				"City" : "Münster",
 				"PostalCode" : "48155",
@@ -130,32 +26,18 @@
 				"Country" : "DE",
 				"AddressType" : "02",
 				"GeoLocation" : {
-					"Latitude" : 51.940081800000,
-					"Longitude" : 7.651731300000
+					"Longitude" : 7.651731300000,
+					"Latitude" : 51.940081800000
 				}
 			}
 		}
 	}, {
-		"SalesOrderID" : "0500001113",
-		"Note" : "EPM DG: SO ID 0500001113 Deliver as fast as possible",
-		"NoteLanguage" : "",
-		"BuyerID" : "0100000006",
+		"SalesOrderID" : "0500000003",
 		"BuyerName" : "Asia High tech",
-		"CurrencyCode" : "EUR",
 		"GrossAmount" : 1704.04,
-		"NetAmount" : 1431.97,
-		"TaxAmount" : 272.07,
-		"LifecycleStatus" : "N",
-		"LifecycleStatusDesc" : "New",
-		"BillingStatus" : "",
-		"BillingStatusDesc" : "Initial",
-		"DeliveryStatus" : "",
-		"DeliveryStatusDesc" : "Initial",
-		"CreatedAt" : "20150702220000.0000000 ",
-		"ChangedAt" : "20150702220000.0000000 ",
-		"SOItemCount" : 5,
+		"CurrencyCode" : "EUR",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20150702121621.0000000\"",
+			"@odata.etag" : "W/\"20151120072614.0000000\"",
 			"BusinessPartnerID" : "0100000006",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "Asia High tech",
@@ -165,8 +47,8 @@
 			"FaxNumber" : "9078563004",
 			"LegalForm" : "Inc.",
 			"CurrencyCode" : "JPY",
-			"CreatedAt" : "2015-07-02T12:16:21Z",
-			"ChangedAt" : "2015-07-02T12:16:21Z",
+			"CreatedAt" : "2015-11-20T07:26:14Z",
+			"ChangedAt" : "2015-11-20T07:26:14Z",
 			"Address" : {
 				"City" : "Tokyo",
 				"PostalCode" : "100-0004",
@@ -175,32 +57,18 @@
 				"Country" : "JP",
 				"AddressType" : "02",
 				"GeoLocation" : {
-					"Latitude" : 35.693347450000,
-					"Longitude" : 139.763682287452
+					"Longitude" : 139.763682287452,
+					"Latitude" : 35.693347450000
 				}
 			}
 		}
 	}, {
-		"SalesOrderID" : "0500001114",
-		"Note" : "EPM DG: SO ID 0500001114 Deliver as fast as possible",
-		"NoteLanguage" : "",
-		"BuyerID" : "0100000006",
+		"SalesOrderID" : "0500000004",
 		"BuyerName" : "Asia High tech",
-		"CurrencyCode" : "EUR",
 		"GrossAmount" : 761.24,
-		"NetAmount" : 639.7,
-		"TaxAmount" : 121.54,
-		"LifecycleStatus" : "N",
-		"LifecycleStatusDesc" : "New",
-		"BillingStatus" : "",
-		"BillingStatusDesc" : "Initial",
-		"DeliveryStatus" : "",
-		"DeliveryStatusDesc" : "Initial",
-		"CreatedAt" : "20150702220000.0000000 ",
-		"ChangedAt" : "20150702220000.0000000 ",
-		"SOItemCount" : 5,
+		"CurrencyCode" : "EUR",
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20150702121621.0000000\"",
+			"@odata.etag" : "W/\"20151120072614.0000000\"",
 			"BusinessPartnerID" : "0100000006",
 			"BusinessPartnerRole" : "01",
 			"CompanyName" : "Asia High tech",
@@ -210,8 +78,8 @@
 			"FaxNumber" : "9078563004",
 			"LegalForm" : "Inc.",
 			"CurrencyCode" : "JPY",
-			"CreatedAt" : "2015-07-02T12:16:21Z",
-			"ChangedAt" : "2015-07-02T12:16:21Z",
+			"CreatedAt" : "2015-11-20T07:26:14Z",
+			"ChangedAt" : "2015-11-20T07:26:14Z",
 			"Address" : {
 				"City" : "Tokyo",
 				"PostalCode" : "100-0004",
@@ -220,55 +88,103 @@
 				"Country" : "JP",
 				"AddressType" : "02",
 				"GeoLocation" : {
-					"Latitude" : 35.693347450000,
-					"Longitude" : 139.763682287452
+					"Longitude" : 139.763682287452,
+					"Latitude" : 35.693347450000
 				}
 			}
 		}
 	}, {
-		"SalesOrderID" : "0500001115",
-		"Note" : "EPM DG: SO ID 0500001115 Deliver as fast as possible",
-		"NoteLanguage" : "",
-		"BuyerID" : "0100000006",
-		"BuyerName" : "Asia High tech",
+		"SalesOrderID" : "0500000005",
+		"BuyerName" : "AVANTEL",
+		"GrossAmount" : 101299.22,
 		"CurrencyCode" : "EUR",
-		"GrossAmount" : 761.24,
-		"NetAmount" : 639.7,
-		"TaxAmount" : 121.54,
-		"LifecycleStatus" : "N",
-		"LifecycleStatusDesc" : "New",
-		"BillingStatus" : "",
-		"BillingStatusDesc" : "Initial",
-		"DeliveryStatus" : "",
-		"DeliveryStatusDesc" : "Initial",
-		"CreatedAt" : "20150702220000.0000000 ",
-		"ChangedAt" : "20150702220000.0000000 ",
-		"SOItemCount" : 7,
 		"SO_2_BP" : {
-			"@odata.etag" : "W/\"20150702121621.0000000\"",
-			"BusinessPartnerID" : "0100000006",
+			"@odata.etag" : "W/\"20151120072614.0000000\"",
+			"BusinessPartnerID" : "0100000008",
 			"BusinessPartnerRole" : "01",
-			"CompanyName" : "Asia High tech",
-			"WebAddress" : "http://www.asia-ht.com",
-			"EmailAddress" : "yoko.nakamura@asia-ht.com",
-			"PhoneNumber" : "9078563412",
-			"FaxNumber" : "9078563004",
-			"LegalForm" : "Inc.",
-			"CurrencyCode" : "JPY",
-			"CreatedAt" : "2015-07-02T12:16:21Z",
-			"ChangedAt" : "2015-07-02T12:16:21Z",
+			"CompanyName" : "AVANTEL",
+			"WebAddress" : "http://www.avantel.com",
+			"EmailAddress" : "victor.sanchez@avantel.com",
+			"PhoneNumber" : "7257716",
+			"FaxNumber" : "7257004",
+			"LegalForm" : "S.A.",
+			"CurrencyCode" : "MXN",
+			"CreatedAt" : "2015-11-20T07:26:14Z",
+			"ChangedAt" : "2015-11-20T07:26:14Z",
 			"Address" : {
-				"City" : "Tokyo",
-				"PostalCode" : "100-0004",
-				"Street" : "1-7-2 Otemachi",
-				"Building" : "1",
-				"Country" : "JP",
+				"City" : "Mexiko City",
+				"PostalCode" : "17000",
+				"Street" : "Bosque de Duraznos",
+				"Building" : "24",
+				"Country" : "MX",
 				"AddressType" : "02",
 				"GeoLocation" : {
-					"Latitude" : 35.693347450000,
-					"Longitude" : 139.763682287452
+					"Longitude" : -99.133210200000,
+					"Latitude" : 19.432530100000
 				}
 			}
 		}
-	} ]
+	}, {
+		"SalesOrderID" : "0500000006",
+		"BuyerName" : "Talpa",
+		"GrossAmount" : 250.73,
+		"CurrencyCode" : "EUR",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20151120072614.0000000\"",
+			"BusinessPartnerID" : "0100000003",
+			"BusinessPartnerRole" : "01",
+			"CompanyName" : "Talpa",
+			"WebAddress" : "http://www.talpa-hannover.de",
+			"EmailAddress" : "saskia.sommer@talpa-hannover.de",
+			"PhoneNumber" : "511403266",
+			"FaxNumber" : "511403004",
+			"LegalForm" : "GmbH",
+			"CurrencyCode" : "EUR",
+			"CreatedAt" : "2015-11-20T07:26:14Z",
+			"ChangedAt" : "2015-11-20T07:26:14Z",
+			"Address" : {
+				"City" : "Hannover",
+				"PostalCode" : "30625",
+				"Street" : "An der Breiten Wiese",
+				"Building" : "422",
+				"Country" : "DE",
+				"AddressType" : "02",
+				"GeoLocation" : {
+					"Longitude" : 9.823618171812,
+					"Latitude" : 52.382990802599
+				}
+			}
+		}
+	}, {
+		"SalesOrderID" : "0500000007",
+		"BuyerName" : "Panorama Studios",
+		"GrossAmount" : 10311.35,
+		"CurrencyCode" : "EUR",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20151120072614.0000000\"",
+			"BusinessPartnerID" : "0100000004",
+			"BusinessPartnerRole" : "01",
+			"CompanyName" : "Panorama Studios",
+			"WebAddress" : "http://www.panorama-studios.biz",
+			"EmailAddress" : "bob.buyer@panorama-studios.biz",
+			"PhoneNumber" : "2244668800",
+			"FaxNumber" : "2244668004",
+			"LegalForm" : "Inc.",
+			"CurrencyCode" : "USD",
+			"CreatedAt" : "2015-11-20T07:26:14Z",
+			"ChangedAt" : "2015-11-20T07:26:14Z",
+			"Address" : {
+				"City" : "Hollywood, California",
+				"PostalCode" : "91602",
+				"Street" : "Morning Drive",
+				"Building" : "178",
+				"Country" : "US",
+				"AddressType" : "02",
+				"GeoLocation" : {
+					"Longitude" : -118.352803603805,
+					"Latitude" : 34.136429050000
+				}
+			}
+		}
+	}]
 }

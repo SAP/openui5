@@ -83,16 +83,19 @@ sap.ui.define([
 				oModel = oSalesOrderContext.getModel(),
 				oView = this.getView();
 
+			//TODO use path "" for bindElement and call setBindingContext(oSalesOrderContext) on
+			//  the control; this leads to a .setContext call on the binding.
+			//  This requires the binding to create a cache even for a relative path in case the
+			//  binding has parameters.
 			oModel.requestCanonicalPath(oSalesOrderContext).then(function (sCanonicalPath) {
-				oView.byId("SalesOrderForm").bindElement({
+				oView.byId("ObjectPage").bindElement({
 					path : sCanonicalPath,
 					parameters: {
 						"$expand" : "SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP"
-							+ "($expand=BP_2_CONTACT)))"
+							+ "($expand=BP_2_CONTACT)))",
+						"$select" : "ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
 					}
 				});
-				oView.byId("SalesOrderLineItems").setBindingContext(
-					oView.byId("SalesOrderForm").getElementBinding().getContext());
 				oView.byId("SupplierContactData").setBindingContext(undefined);
 			});
 		},

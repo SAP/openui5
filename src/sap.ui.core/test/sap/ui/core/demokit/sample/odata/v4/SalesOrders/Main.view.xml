@@ -6,7 +6,8 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
 		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
-			items="{path: '/SalesOrderList', parameters: {'$expand':'SO_2_BP'}}"
+			items="{path: '/SalesOrderList', parameters: {'$expand':'SO_2_BP',
+				'$select' : 'SalesOrderID,BuyerName,GrossAmount,CurrencyCode'}}"
 			mode="SingleSelectMaster" selectionChange="onSalesOrdersSelect">
 			<headerToolbar>
 				<Toolbar>
@@ -96,60 +97,62 @@
 				</ColumnListItem>
 			</items>
 		</Table>
-		<form:SimpleForm id="SalesOrderForm" layout="ResponsiveGridLayout">
-			<form:content>
-				<Label text="Sales Order ID" />
-				<Text text="{SalesOrderID}" />
-				<Label text="Created At" />
-				<Text text="{CreatedAt}" />
-				<Label text="Changed At" />
-				<Text text="{ChangedAt}" />
-				<Label text="Lifecycle Status Desc" />
-				<Text text="{LifecycleStatusDesc}" />
-				<Label text="Note" />
-				<Text text="{Note}" />
-			</form:content>
-		</form:SimpleForm>
-		<Table id="SalesOrderLineItems" headerText="Sales Order Line Items"
-			items="{SO_2_SOITEM}" mode="SingleSelectMaster"
-			selectionChange="onSalesOrderLineItemSelect">
-			<columns>
-				<Column>
-					<Text text="Sales Order ID"/>
-				</Column>
-				<Column>
-					<Text text="Product"/>
-				</Column>
-				<Column>
-					<Text text="Supplier"/>
-				</Column>
-				<Column>
-					<Text text="Gross Amount"/>
-				</Column>
-				<Column>
-					<Text text="Delivery Date"/>
-				</Column>
-			</columns>
-			<items>
-				<ColumnListItem>
-					<cells>
-						<Text text="{SalesOrderID}"/>
-					</cells>
-					<cells>
-						<Text text="{Product/ProductName}"/>
-					</cells>
-					<cells>
-						<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
-					</cells>
-					<cells>
-						<Text text="{GrossAmount}"/>
-					</cells>
-					<cells>
-						<Text text="{DeliveryDate}"/>
-					</cells>
-				</ColumnListItem>
-			</items>
-		</Table>
+		<VBox id="ObjectPage">
+			<form:SimpleForm id="SalesOrderForm" layout="ResponsiveGridLayout">
+				<form:content>
+					<Label text="Sales Order ID" />
+					<Text text="{SalesOrderID}" />
+					<Label text="Created At" />
+					<Text text="{CreatedAt}" />
+					<Label text="Changed At" />
+					<Text text="{ChangedAt}" />
+					<Label text="Lifecycle Status Desc" />
+					<Text text="{LifecycleStatusDesc}" />
+					<Label text="Note" />
+					<Text text="{Note}" />
+				</form:content>
+			</form:SimpleForm>
+			<Table id="SalesOrderLineItems" headerText="Sales Order Line Items"
+				items="{SO_2_SOITEM}" mode="SingleSelectMaster"
+				selectionChange="onSalesOrderLineItemSelect">
+				<columns>
+					<Column>
+						<Text text="Sales Order ID"/>
+					</Column>
+					<Column>
+						<Text text="Product"/>
+					</Column>
+					<Column>
+						<Text text="Supplier"/>
+					</Column>
+					<Column>
+						<Text text="Gross Amount"/>
+					</Column>
+					<Column>
+						<Text text="Delivery Date"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="{SalesOrderID}"/>
+						</cells>
+						<cells>
+							<Text text="{Product/ProductName}"/>
+						</cells>
+						<cells>
+							<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
+						</cells>
+						<cells>
+							<Text text="{GrossAmount}"/>
+						</cells>
+						<cells>
+							<Text text="{DeliveryDate}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</VBox>
 		<List id="SupplierContactData"
 			headerText="Supplier Contact Information"
 			items="{SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT}">

@@ -7,12 +7,14 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"sap/ui/model/odata/v4/lib/_Cache"
-], function (jQuery, ChangeReason, ContextBinding, Cache) {
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/_ODataHelper"
+], function (jQuery, ChangeReason, ContextBinding, Cache, Helper) {
 	"use strict";
 
 	/**
-	 * Constructor for a new ODataContextBinding.
+	 * DO NOT CALL this private constructor for a new <code>ODataContextBinding</code>,
+	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   the OData v4 model
@@ -23,6 +25,14 @@ sap.ui.define([
 	 * @param {number} iIndex
 	 *   the index of this context binding in the array of root bindings kept by the model, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext}
+	 * @param {object} [mParameters]
+	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
+	 *   $select "5.1 System Query Options" (see OData V4 specification part 2) are allowed. All
+	 *   other query options lead to an error. Query options specified for the binding overwrite
+	 *   model query options.
+	 *   Note: Query options may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
+	 * @throws {Error} when disallowed OData query options are provided
 	 * @class Context binding for an OData v4 model
 	 *
 	 * @author SAP SE
@@ -30,26 +40,26 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.ODataContextBinding
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
-	 * @since 1.31.0
 	 */
-	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding",
-			/** @lends sap.ui.model.odata.v4.ODataContextBinding.prototype */
-			{
-				constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
-					var bAbsolute = sPath.charAt(0) === "/",
-						sBindingPath = bAbsolute ? sPath + ";root=" + iIndex : sPath;
+	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
+			constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
+				var bAbsolute = sPath.charAt(0) === "/",
+					sBindingPath = bAbsolute ? sPath + ";root=" + iIndex : sPath;
 
-					ContextBinding.call(this, oModel, sBindingPath, oContext, mParameters);
-					if (bAbsolute) {
-						this.oCache = Cache.createSingle(oModel.oRequestor,
-							oModel.sServiceUrl + oModel.resolve(sPath, oContext).slice(1),
-							oModel.mUriParameters);
-					}
-				},
-				metadata : {
-					publicMethods : []
+				if (bAbsolute) {
+					this.oCache = Cache.createSingle(oModel.oRequestor,
+						oModel.sServiceUrl + oModel.resolve(sPath, oContext).slice(1),
+						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
+							["$expand", "$select"]));
+				} else if (mParameters) {
+					throw new Error("Bindings with a relative path do not support parameters");
 				}
-			});
+				ContextBinding.call(this, oModel, sBindingPath, oContext);
+			},
+			metadata : {
+				publicMethods : []
+			}
+		});
 
 	/**
 	 * Checks for an update of this binding's context. If the binding can be resolved and the bound

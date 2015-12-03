@@ -18,11 +18,12 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"./lib/_MetadataRequestor",
 	"./lib/_Requestor",
+	"./_ODataHelper",
 	"./ODataContextBinding",
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Model, URI, MetadataRequestor, Requestor, ODataContextBinding,
+], function(jQuery, Model, URI, MetadataRequestor, Requestor, Helper, ODataContextBinding,
 		ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 	"use strict";
 
@@ -54,13 +55,23 @@ sap.ui.define([
 	 * @param {string} [sServiceUrl]
 	 *   root URL of the service to request data from; it is required, but may also be given via
 	 *   <code>mParameters.serviceUrl</code>. Must end with a forward slash according to OData V4
-	 *   specification ABNF, rule "serviceRoot".
+	 *   specification ABNF, rule "serviceRoot" unless you append OData custom query options
+	 *   to the service root URL separated with a "?", e.g. "/MyService/?custom=foo". See parameter
+	 *   <code>mParameters.serviceUrlParams</code> for details on custom query options.
 	 * @param {object} [mParameters]
 	 *   the parameters
 	 * @param {string} [mParameters.serviceUrl]
-	 *   root URL of the service to request data from; only used if the parameter
-	 *   <code>sServiceUrl</code> has not been given
-	 * @throws {Error} if the given service root URL does not end with a forward slash
+	 *   root URL of the service to request data from as specified for the parameter
+	 *   <code>sServiceUrl</code>; only used if the parameter <code>sServiceUrl</code> has not been
+	 *   given
+	 * @param {object} [mParameters.serviceUrlParams]
+	 *   map of OData custom query options to be used in each data service request for this model,
+	 *   see OData V4 specification part 2, "5.2 Custom Query Options". OData system query options
+	 *   and OData parameter aliases lead to an error.
+	 *   Query options from this map overwrite query options with the same name specified via the
+	 *   <code>sServiceUrl</code> parameter.
+	 * @throws {Error} if the given service root URL does not end with a forward slash or if
+	 *   OData system query options or parameter aliases are specified as parameters
 	 *
 	 * @class Model implementation for OData v4.
 	 *
@@ -68,7 +79,6 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @extends sap.ui.model.Model
 	 * @public
-	 * @since 1.31.0
 	 * @version ${version}
 	 */
 	var ODataModel = Model.extend(sClassName,
@@ -93,14 +103,13 @@ sap.ui.define([
 					}
 					//TODO remove usage once cache is used for all crud operations
 					this._sQuery = oUri.search(); //return query part with leading "?"
-					//TODO use mUriParameters for creating cache
-					this.mUriParameters = oUri.query(true);
+					this.mUriParameters = Helper.buildQueryOptions(jQuery.extend({},
+						oUri.query(true), mParameters && mParameters.serviceUrlParams));
 					this.sServiceUrl = oUri.query("").toString();
 
 					this.oMetaModel = new ODataMetaModel(
 						MetadataRequestor.create(null, this.mUriParameters),
 						this.sServiceUrl + "$metadata");
-					this.mParameters = mParameters;
 					this.oRequestor = Requestor.create(this.sServiceUrl, {
 						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
 					});
@@ -109,21 +118,36 @@ sap.ui.define([
 			});
 
 	/**
-	 * Creates a new context binding for the given path. This binding is inactive and will not know
-	 * the bound context initially. You have to call {@link sap.ui.model.Binding#initialize
-	 * initialize()} to get it updated asynchronously and register a change listener at the binding
-	 * to be informed when the bound context is available.
+	 * Creates a new context binding for the given path and context. The key value pairs from the
+	 * given parameters map combined with the query options provided in the
+	 * {@link sap.ui.model.odata.v4.ODataModel model constructor} are used as OData query options in
+	 * each data service request. Query options specified for the binding overwrite model query
+	 * options.
+	 *
+	 * This binding is inactive and will not know the bound context initially.
+	 * You have to call {@link sap.ui.model.Binding#initialize initialize()} to get it updated
+	 * asynchronously and register a change listener at the binding to be informed when the bound
+	 * context is available.
 	 *
 	 * @param {string} sPath
 	 *   the binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path
+	 * @param {object} [mParameters]
+	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
+	 *   $select "5.1 System Query Options" (see OData V4 specification part 2) are allowed. All
+	 *   other query options lead to an error. Query options specified for the binding overwrite
+	 *   model query options.
+	 *   Note: Query options may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
 	 *   the context binding
+	 * @throws {Error} when disallowed OData query options are provided
 	 * @public
 	 */
-	ODataModel.prototype.bindContext = function (sPath, oContext) {
-		var oContextBinding = new ODataContextBinding(this, sPath, oContext, this.aRoots.length);
+	ODataModel.prototype.bindContext = function (sPath, oContext, mParameters) {
+		var oContextBinding = new ODataContextBinding(this, sPath, oContext, this.aRoots.length,
+				mParameters);
 
 		this.aRoots.push(oContextBinding);
 		return oContextBinding;
@@ -142,12 +166,15 @@ sap.ui.define([
 	 * @param {sap.ui.model.Filter[]} [aFilters]
 	 *   predefined filters
 	 * @param {object} [mParameters]
-	 *   map of parameters
-	 * @param {string} [mParameters.$expand]
-	 *   the "$expand" system query option used in each data service request for returned
-	 *   list binding
+	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
+	 *   $select "5.1 System Query Options" (see OData V4 specification part 2) are allowed. All
+	 *   other query options lead to an error. Query options specified for the binding overwrite
+	 *   model query options.
+	 *   Note: Query options may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
 	 * @return {sap.ui.model.odata.v4.ODataListBinding}
 	 *   the list binding
+	 * @throws {Error} when disallowed OData query options are provided
 	 * @public
 	 */
 	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
@@ -168,11 +195,19 @@ sap.ui.define([
 	 *   the binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path
+	 * @param {object} [mParameters=null]
+	 *   Not supported; providing parameters leads to an error. Provide OData query options via the
+	 *   {@link #constructor model} or the parent list binding (see {@link bindList}) or context
+	 *   binding (see {@link bindContext}) instead.
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   the property binding
+	 * @throws {Error} when parameters are provided
 	 * @public
 	 */
-	ODataModel.prototype.bindProperty = function (sPath, oContext) {
+	ODataModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
+		if (mParameters) {
+			throw new Error("ODataPropertyBinding does not support parameters");
+		}
 		return new ODataPropertyBinding(this, sPath, oContext);
 	};
 

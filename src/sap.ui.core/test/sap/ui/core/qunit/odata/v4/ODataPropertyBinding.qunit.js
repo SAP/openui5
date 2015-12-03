@@ -306,6 +306,18 @@ sap.ui.require([
 		);
 	});
 
+
+	//*********************************************************************************************
+	QUnit.test("bindProperty error if parameters are provided", function (assert) {
+		var oModel = new ODataModel("/service/");
+
+		assert.throws(function () {
+			oModel.bindProperty("/EMPLOYEES('4711')/Name", null, {$select : "AGE"});
+		}, new Error("ODataPropertyBinding does not support parameters"));
+		//TODO a property binding should allow for an absolute path and be able to trigger a request
+		//     this means it needs to be able to specify query options
+	});
 	// TODO bSuspended? In v2 it is ignored (check with core)
 	// TODO read in initialize and refresh? This forces checkUpdate to use getProperty.
+
 });
