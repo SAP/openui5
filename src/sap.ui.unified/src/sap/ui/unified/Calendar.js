@@ -123,7 +123,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Date selection was cancelled
 			 */
-			cancel : {}
+			cancel : {},
+
+			/**
+			 * <code>startDate</code> was changed while navigation in <code>Calendar</code>
+			 *
+			 * Use <code>getStartDate</code> function to determine the current start date
+			 * @since 1.34.0
+			 */
+			startDateChange : {}
 		}
 	}});
 
@@ -362,6 +370,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		_displayDate.call(this, oDate, true);
 
 		return this;
+
+	};
+
+	/**
+	 * Returns the first day of the displayed month.
+	 *
+	 * There might be some days of the previous month shown, but they can not be focused.
+	 *
+	 * @returns {object} JavaScript date object for start date.
+	 * @since 1.34.1
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	Calendar.prototype.getStartDate = function(){
+
+		var oStartDate;
+
+		if (this.getDomRef()) {
+			// if rendered just use the date of the first month
+			var aMonths = this.getAggregation("month");
+			oStartDate = CalendarUtils._createUniversalUTCDate(aMonths[0].getDate(), this.getPrimaryCalendarType());
+		} else {
+			// if not rendered use the focused date
+			oStartDate = this._getFocusedDate();
+		}
+
+		oStartDate.setUTCDate(1);
+
+		return CalendarUtils._createLocalDate(oStartDate);
 
 	};
 
@@ -794,7 +831,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			oFocusedDate.setUTCDate(oFocusedDate.getUTCDate() - 1);
 			_renderMonth.call(this, bNoFocus, true);
-
 			break;
 
 		case 1: // month picker
@@ -921,8 +957,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @param {sap.ui.unified.Calendar} this Calendar instance
 	 * @param {boolean} bNoFolus if set no focus is set to the date
 	 * @param {boolean} bInLastMont if more than one month is used, date is rendered in last month
+	 * @param {boolean} bNoEvent if set, no startDateChange event is fired
 	 */
-	function _renderMonth(bNoFocus, bInLastMonth){
+	function _renderMonth(bNoFocus, bInLastMonth, bNoEvent){
 
 		var oDate = this._getFocusedDate();
 		var aMonths = this.getAggregation("month");
@@ -971,6 +1008,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			// change month and year
 			this._updateHeader(oFirstDate);
+
+			if (!bNoEvent) {
+				this.fireStartDateChange();
+			}
 		}
 
 	}
@@ -1188,7 +1229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}else if (this.getMonths() > 1) {
 			// on rerendering focus might be set on wrong month
-			_focusDate.call(this, this._getFocusedDate(), true);
+			_focusDate.call(this, this._getFocusedDate(), true, true);
 		}
 
 	}
@@ -1226,7 +1267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}
 
-	function _focusDate (oDate, bOtherMonth){
+	function _focusDate (oDate, bOtherMonth, bNoEvent){
 
 		// if a date should be focused thats out of the borders -> focus the border
 		var oFocusedDate;
@@ -1243,7 +1284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (this._focusDateExtend) {
 			// hook for CalenarDateInterval
-			this._focusDateExtend(oDate, bOtherMonth);
+			this._focusDateExtend(oDate, bOtherMonth, bNoEvent);
 		}
 
 		var bInLastMonth = oFocusedDate.getTime() < this._getFocusedDate().getTime();
@@ -1251,7 +1292,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._setFocusedDate(oFocusedDate);
 
 		if (bChanged || bOtherMonth) {
-			_renderMonth.call(this, false, bInLastMonth);
+			_renderMonth.call(this, false, bInLastMonth, bNoEvent);
 		}
 
 	}
@@ -1344,7 +1385,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._setFocusedDate(oDate);
 
 			if (this.getDomRef() && this._iMode == 0) {
-				_renderMonth.call(this, bNoFocus);
+				_renderMonth.call(this, bNoFocus, false, true); // fire no startDateChange event on programmatical change
 			}
 		}
 
@@ -1414,7 +1455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (bRestoreOldDate) {
 			// in multimonth mode stay at the last focused date
 			if (!jQuery.sap.equal(this._getFocusedDate(), oDate)) {
-				_renderMonth.call(this, false);
+				_renderMonth.call(this, false, false, true);
 			}
 		} else {
 			_focusDate.call(this, oDate, bOtherMonth);
@@ -1502,7 +1543,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (aMonths.length > 1) {
 			// restore focus
-			_focusDate.call(this, this._getFocusedDate(), true);
+			_focusDate.call(this, this._getFocusedDate(), true, true);
 		}
 		this._bDateRangeChanged = undefined;
 

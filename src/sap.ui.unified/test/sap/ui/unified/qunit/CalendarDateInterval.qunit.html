@@ -42,9 +42,9 @@
 			var oLocaleUS = new sap.ui.core.Locale("en-US");
 			var oLocaleDataUS = sap.ui.core.LocaleData.getInstance(oLocaleUS);
 
-			var bStartDateChanged = false;
+			var iStartDateChanged = 0;
 			var handleStartDateChange = function(oEvent){
-				bStartDateChanged = true;
+				iStartDateChanged++;
 			};
 
 			var oCal1 = new sap.ui.unified.CalendarDateInterval("Cal1",{
@@ -105,6 +105,8 @@
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150202", "Calendar3: first day");
 				equal(jQuery(aDays[0]).children(".sapUiCalDayName").length, 1, "Calendar3: day name rendered");
 				equal(jQuery(aDays[0]).children(".sapUiCalDayName").text(), "Mon", "Weekday of first day");
+
+				equal(iStartDateChanged, 0, "no startDateChangeEvent fired by rendering");
 			});
 
 			test("width", function() {
@@ -114,13 +116,17 @@
 
 			module("change date via API");
 			test("setStartDate", function() {
+				iStartDateChanged = 0;
 				oCal1.setStartDate(new Date("2015", "2", "10"));
 				var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
 				var aDays = $DatesRow.find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150310", "Calendar1: new start date");
+
+				equal(iStartDateChanged, 0, "no startDateChangeEvent fired by API change");
 			});
 
 			test("focusDate", function() {
+				iStartDateChanged = 0;
 				oCal1.focusDate(new Date("2015", "2", "11"));
 				var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
 				var aDays = $DatesRow.find(".sapUiCalItem");
@@ -131,21 +137,25 @@
 				aDays = $DatesRow.find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150410", "Calendar2: new start date");
 				equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar2: second day still has focus");
+
+				equal(iStartDateChanged, 0, "no startDateChangeEvent fired by API change");
 			});
 
 			module("change date via navigation");
 			test("next/prev days", function() {
-				bStartDateChanged = false;
+				iStartDateChanged = 0;
 				qutils.triggerEvent("click", "Cal1--Head-next");
-				ok(bStartDateChanged, "Calendar1: startDateChangeEvent fired");
+				equal(iStartDateChanged, 1, "Calendar1: startDateChangeEvent fired");
+				equal(oFormatYyyymmdd.format(oCal1.getStartDate()), "20150417", "Calendar1: Start date property");
 				var $DatesRow = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();
 				var aDays = $DatesRow.find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150417", "Calendar1: new start date");
 				equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar1: second day still has focus");
 
-				bStartDateChanged = false;
+				iStartDateChanged = 0;
 				qutils.triggerEvent("click", "Cal1--Head-prev");
-				ok(bStartDateChanged, "Calendar1: startDateChangeEvent fired");
+				equal(iStartDateChanged, 1, "Calendar1: startDateChangeEvent fired");
+				equal(oFormatYyyymmdd.format(oCal1.getStartDate()), "20150410", "Calendar1: Start date property");
 				aDays = $DatesRow.find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150410", "Calendar1: new start date");
 				equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar1: second day still has focus");
