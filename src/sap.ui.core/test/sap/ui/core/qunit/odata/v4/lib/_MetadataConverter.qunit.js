@@ -390,6 +390,76 @@ sap.ui.require([
 	// TODO adjust $DefaultValue to property type?
 
 	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: EnumType", function (assert) {
+		testConversion(assert, '\
+				<DataServices>\
+					<Schema Namespace="foo">\
+						<EnumType Name="Bar1" IsFlags="true">\
+							<Member Name="p_1" Value="1" />\
+						</EnumType>\
+						<EnumType Name="Bar2" UnderlyingType="Edm.Int32" >\
+							<Member Name="_1" />\
+							<Member Name="_2" />\
+						</EnumType>\
+						<EnumType Name="Baz1"  IsFlags="false" UnderlyingType="Edm.Int64">\
+							<Member Name="_1" Value="123456789123456789" />\
+						</EnumType>\
+						<EnumType Name="Baz2" UnderlyingType="Edm.Int64">\
+							<Member Name="_1" />\
+							<Member Name="_2" />\
+						</EnumType>\
+						<EnumType Name="Qux1" UnderlyingType="Edm.Int16">\
+							<Member Name="_1" />\
+						</EnumType>\
+						<EnumType Name="Qux2" UnderlyingType="Edm.Byte">\
+							<Member Name="_1" />\
+						</EnumType>\
+						<EnumType Name="Qux3" UnderlyingType="Edm.SByte">\
+							<Member Name="_1" />\
+						</EnumType>\
+					</Schema>\
+				</DataServices>',
+			{
+				"foo.Bar1": {
+					"$kind": "EnumType",
+					"$IsFlags": true,
+					"p_1": 1
+				},
+				"foo.Bar2": {
+					"$kind": "EnumType",
+					"_1": 0,
+					"_2": 1
+				},
+				"foo.Baz1": {
+					"$kind": "EnumType",
+					"$UnderlyingType": "Edm.Int64",
+					"_1": "123456789123456789"
+				},
+				"foo.Baz2": {
+					"$kind": "EnumType",
+					"$UnderlyingType": "Edm.Int64",
+					"_1": 0,
+					"_2": 1
+				},
+				"foo.Qux1": {
+					"$kind": "EnumType",
+					"$UnderlyingType": "Edm.Int16",
+					"_1": 0
+				},
+				"foo.Qux2": {
+					"$kind": "EnumType",
+					"$UnderlyingType": "Edm.Byte",
+					"_1": 0
+				},
+				"foo.Qux3": {
+					"$kind": "EnumType",
+					"$UnderlyingType": "Edm.SByte",
+					"_1": 0
+				}
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
 		return Promise.all([
 			jQuery.ajax("/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata")

@@ -68,6 +68,12 @@ sap.ui.define([], function () {
 							__processor : processSingleton,
 							__include : oEntitySetConfig
 						}
+					},
+					"EnumType" : {
+						__processor : processEnumType,
+						"Member" : {
+							__processor : processEnumTypeMember
+						}
 					}
 				}
 			}
@@ -182,6 +188,51 @@ sap.ui.define([], function () {
 			vKey = oAttributes.Name;
 		}
 		oAggregate.type.$Key = oAggregate.type.$Key.concat(vKey);
+	}
+
+	/**
+	 * Processes an EnumType element.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processEnumType(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name,
+			oEnumType = {
+				"$kind": "EnumType"
+			};
+
+		processAttributes(oAttributes, oEnumType, {
+			"IsFlags" : setIfTrue,
+			"UnderlyingType" : function (sValue) {
+				return sValue !== "Edm.Int32" ? sValue : undefined;
+			}
+		});
+
+		oAggregate.result[sQualifiedName] = oAggregate.enumType = oEnumType;
+		oAggregate.enumTypeMemberCounter = 0;
+	}
+
+	/**
+	 * Processes an Member element within a EnumType.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processEnumTypeMember(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			sValue = oAttributes.Value,
+			vValue;
+
+		if (sValue) {
+			vValue = parseInt(sValue, 10);
+			if (sValue !== "" + vValue) {
+				vValue = sValue;
+			}
+		} else {
+			vValue = oAggregate.enumTypeMemberCounter;
+			oAggregate.enumTypeMemberCounter++;
+		}
+		oAggregate.enumType[oAttributes.Name] = vValue;
 	}
 
 	/**
@@ -404,6 +455,8 @@ sap.ui.define([], function () {
 					aliases : {}, // maps alias -> namespace
 					entityContainer : null, // the current EntityContainer
 					entitySet : null, // the current EntitySet/Singleton
+					enumType : null, // the current EnumType
+					enumTypeMemberCounter : 0, // the current EnumType member value counter
 					namespace : null, // the namespace of the current Schema
 					navigationProperty : null, // the current NavigationProperty
 					referenceUri : null, // the URI of the current Reference
