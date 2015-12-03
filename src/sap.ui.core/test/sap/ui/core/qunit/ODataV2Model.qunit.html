@@ -644,6 +644,36 @@
 		});	
 	});
 
+	asyncTest("test isreloadneeded - category expanded, but null", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI, {json: false});
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindContext("/Products(4)", null, {expand: "Category"});
+		oBinding.attachChange(function(oContext) {
+			equal(spy.callCount, 1, "get request should be send");
+			
+			oContext = oModel.createBindingContext("/Products(4)", null, {});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+
+			oContext = oModel.createBindingContext("/Products(4)", null, {select: "ProductName"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+
+			oContext = oModel.createBindingContext("/Products(4)", null, {expand: "Category"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for category expand");
+		
+			oContext = oModel.createBindingContext("/Products(4)", null, {select: "ProductName,Category", expand: "Category"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
+	
+			oContext = oModel.createBindingContext("/Products(4)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
+			ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
+	
+			OData.defaultHttpClient.request.restore();
+			start();
+		});	
+	});
+
 	asyncTest("test getProperty on label", function(){
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, {json:false});
