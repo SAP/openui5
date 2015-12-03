@@ -890,7 +890,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			var oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 			if (!oLD) {
 				// only needed if container has no own LayoutData
-				var bLinebreakXL = (iVisibleContainer % iColumnsXL) == 1;
 				var bLastXL = (iVisibleContainer % iColumnsXL) == 0;
 				var bLastRowXL = iVisibleContainer > (iVisibleContainers - iColumnsXL + (iVisibleContainers % iColumnsXL));
 				var bLinebreakL = (iVisibleContainer % iColumnsL) == 1;
@@ -955,10 +954,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 				oLD = oControl.getLayoutData();
 				if (!oLD) {
-					oLD = new GridData(oControl.getId() + "--LD", { linebreakXL: bLinebreakXL, linebreakL: bLinebreakL, linebreakM: bLinebreakM });
+					oLD = new GridData(oControl.getId() + "--LD", { linebreakL: bLinebreakL, linebreakM: bLinebreakM });
 					oControl.setLayoutData( oLD );
 				} else {
-					oLD.setLinebreakXL(bLinebreakXL);
 					oLD.setLinebreakL(bLinebreakL);
 					oLD.setLinebreakM(bLinebreakM);
 				}
