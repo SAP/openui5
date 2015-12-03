@@ -71,6 +71,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 		oRM.addClass('sapMBarLeft');
 		oRM.addClass('sapMBarContainer');
 		oRM.writeClasses();
+		writeWidthIfContentOccupiesWholeArea("left", oRM, oControl);
 		oRM.write(">");
 
 		this.renderAllControls(oControl.getContentLeft(), oRM, oControl);
@@ -84,7 +85,13 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 		oRM.write(">");
 		if (oControl.getEnableFlexBox()) {
 			oControl._oflexBox = oControl._oflexBox || new sap.m.HBox(oControl.getId() + "-BarPH", {alignItems: "Center"}).addStyleClass("sapMBarPH").setParent(oControl, null, true);
+			var bContentLeft = !!oControl.getContentLeft().length,
+				bContentMiddle = !!oControl.getContentMiddle().length,
+				bContentRight = !!oControl.getContentRight().length;
+			if (bContentMiddle && !bContentLeft && !bContentRight) {
+				oControl._oflexBox.addStyleClass("sapMBarFlexBoxWidth100");
 
+			}
 			oControl.getContentMiddle().forEach(function(oMidContent) {
 				oControl._oflexBox.addItem(oMidContent);
 			});
@@ -94,6 +101,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 			oRM.write("<div id='" + oControl.getId() + "-BarPH' ");
 			oRM.addClass('sapMBarPH');
 			oRM.addClass('sapMBarContainer');
+			writeWidthIfContentOccupiesWholeArea("middle", oRM, oControl);
 			oRM.writeClasses();
 			oRM.write(">");
 
@@ -112,6 +120,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 			oRM.addClass("sapMRTL");
 		}
 		oRM.writeClasses();
+		writeWidthIfContentOccupiesWholeArea("right", oRM, oControl);
 		oRM.write(">");
 
 		this.renderAllControls(oControl.getContentRight(), oRM, oControl);
@@ -152,6 +161,43 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 
 		return mContexts[sDesign] || mContexts.Default;
 	};
+
+	/**
+	 * Adds width style to 100% in case of the given content container is the only container with content amongst the three (left, middle, right)
+	 * @param {string} sArea The content container - one of the left, middle or right
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.Control} oControl the Bar instance
+	 * @private
+	 */
+	function writeWidthIfContentOccupiesWholeArea(sArea, oRm, oControl) {
+		var bContentLeft = !!oControl.getContentLeft().length,
+			bContentMiddle = !!oControl.getContentMiddle().length,
+			bContentRight = !!oControl.getContentRight().length;
+
+		function writeAndUpdate() {
+			oRm.addStyle("width", "100%");
+			oRm.writeStyles();
+		}
+		switch (sArea.toLowerCase()) {
+			case "left":
+				if (bContentLeft && !bContentMiddle && !bContentRight) {
+					writeAndUpdate();
+				}
+				break;
+			case "middle":
+				if (bContentMiddle && !bContentLeft && !bContentRight) {
+					writeAndUpdate();
+				}
+				break;
+			case "right" :
+				if (bContentRight && !bContentLeft && !bContentMiddle) {
+					writeAndUpdate();
+				}
+				break;
+			default:
+				jQuery.sap.log.error("Cannot determine which of the three content aggregations is alone");
+		}
+	}
 
 
 
