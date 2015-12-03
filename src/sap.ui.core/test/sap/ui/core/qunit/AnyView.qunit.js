@@ -6,7 +6,7 @@ test("InitialCheck", 6, function() {
 	jQuery.sap.require("sap.ui.core.mvc.JSONView");
 	jQuery.sap.require("sap.ui.core.mvc.JSView");
 	jQuery.sap.require("sap.ui.core.mvc.XMLView");
-	jQuery.sap.require("sap.ui.core.mvc.HTMLView")
+	jQuery.sap.require("sap.ui.core.mvc.HTMLView");
 	ok(sap.ui.core.mvc.Controller, "sap.ui.core.mvc.Controller must be defined");
 	ok(sap.ui.core.mvc.JSONView, "sap.ui.core.mvc.JSONView must be defined");
 	ok(sap.ui.core.mvc.JSView, "sap.ui.core.mvc.JSView must be defined");
