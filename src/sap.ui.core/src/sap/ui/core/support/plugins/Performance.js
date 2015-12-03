@@ -96,13 +96,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			this.$("clear").click(jQuery.proxy(function(oEvent) {
 				this._oStub.sendEvent(this.getId() + "Clear");
 			}, this));
-	/*		this.$("start").click(jQuery.proxy(function(oEvent) {
-				this._oStub.sendEvent(this.getId() + "Start");
-			}, this));
-			this.$("end").click(jQuery.proxy(function(oEvent) {
-				this._oStub.sendEvent(this.getId() + "End");
-			}, this));
-	*/
 			this.$("active").click(jQuery.proxy(function(oEvent) {
 				var bActive = false;
 				if (this.$("active").prop("checked")) {
@@ -143,12 +136,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			for ( var i = 0; i < aMeasurements.length; i++) {
 				var oMeasurement = aMeasurements[i];
 				rm.write("<tr>");
-				rm.write("<td>" + oMeasurement.id + "</td>");
-				rm.write("<td>" + oMeasurement.info + "</td>");
+				rm.write("<td>" + jQuery.sap.escapeHTML(oMeasurement.id + "") + "</td>");
+				rm.write("<td>" + jQuery.sap.escapeHTML(oMeasurement.info + "") + "</td>");
 				rm.write("<td>" + this._oDateFormat.format(new Date(oMeasurement.start)) + "</td>");
 				rm.write("<td>" + this._oDateFormat.format(new Date(oMeasurement.end)) + "</td>");
-				rm.write("<td>" + oMeasurement.time + "</td>");
-				rm.write("<td>" + oMeasurement.duration + "</td>");
+				rm.write("<td>" + jQuery.sap.escapeHTML(oMeasurement.time + "") + "</td>");
+				rm.write("<td>" + jQuery.sap.escapeHTML(oMeasurement.duration + "") + "</td>");
 				rm.write("</tr>");
 			}
 			rm.flush(oTableBody[0]);
