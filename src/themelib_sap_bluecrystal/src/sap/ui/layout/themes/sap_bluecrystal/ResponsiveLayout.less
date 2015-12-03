@@ -4,10 +4,17 @@
 /* =========================================================== */
 
 .sapUiFormResLayout > div {
-	background-color: fade(@sapUiLightestBG, @sapUiTranslucentBGOpacity);
 	padding: 1rem;
 	-moz-box-sizing: padding-box;
 	box-sizing: border-box;
+}
+
+.sapUiFormResLayout.sapUiFormBackgrTranslucent > div {
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiFormResLayout.sapUiFormBackgrSolid > div {
+	background-color: @sapUiGroupContentBackground;
 }
 
 .sapUiFormResLayout .sapUiFormTitle > img,

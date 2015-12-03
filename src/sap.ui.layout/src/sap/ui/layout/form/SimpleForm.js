@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * We suggest using the <code>ResponsiveGridLayout</code> for rendering a <code>SimpleForm</code>, as its responsiveness uses the space available in the best way possible.
 			 */
 			layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout},
-			
+
 			/**
 			 * Default span for labels in extra large size.
 			 *
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * @since 1.34.0
 			 */
 			labelSpanXL : {type : "int", group : "Misc", defaultValue : -1},
-			
+
 			/**
 			 * Default span for labels in large size.
 			 *
@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * @since 1.34.0
 			 */
 			adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
-			
+
 			/**
 			 * Number of grid cells that are empty at the end of each line on extra large size.
 			 *
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * @since 1.34.0
 			 */
 			emptySpanXL : {type : "int", group : "Misc", defaultValue : -1},
-			
+
 			/**
 			 * Number of grid cells that are empty at the end of each line on large size.
 			 *
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * @since 1.34.0
 			 */
 			columnsXL : {type : "int", group : "Misc", defaultValue : -1},
-			
+
 			/**
 			 * Form columns for large size.
 			 * The number of columns for large size must not be smaller than the number of columns for medium size.
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * @since 1.34.0
 			 */
 			breakpointXL : {type : "int", group : "Misc", defaultValue : 1440},
-			
+
 			/**
 			 * Breakpoint between Medium size and Large size.
 			 *
@@ -218,7 +218,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
-			breakpointM : {type : "int", group : "Misc", defaultValue : 600}
+			breakpointM : {type : "int", group : "Misc", defaultValue : 600},
+
+			/**
+			 * Specifies the background color of the <code>SimpleForm</code> content.
+			 *
+			 * The visualization of the different options depends on the used theme.
+			 *
+			 * @since 1.36.0
+			 */
+			backgroundDesign : {type : "sap.ui.layout.BackgroundDesign", group : "Appearance", defaultValue : sap.ui.layout.BackgroundDesign.Translucent}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -977,7 +986,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			oThis._changedFormContainers = [];
 
 			var sLayout = oThis.getLayout();
-			var oLayout;
+			var oLayout = oThis.getAggregation("form").getLayout();
+
+			oLayout.setBackgroundDesign(oThis.getBackgroundDesign());
 
 			switch (sLayout) {
 			case sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout:
@@ -988,7 +999,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 				_applyContainerSize(oThis);
 				break;
 			case sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout:
-				oLayout = oThis.getAggregation("form").getLayout();
 				oLayout.setLabelSpanXL(oThis.getLabelSpanXL());
 				oLayout.setLabelSpanL(oThis.getLabelSpanL());
 				oLayout.setLabelSpanM(oThis.getLabelSpanM());

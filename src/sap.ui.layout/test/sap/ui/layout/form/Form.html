@@ -162,6 +162,32 @@
 							fields: [new sap.ui.commons.TextField({value: 'Hello'})]
 						})
 					]
+				}),
+				new sap.ui.layout.form.FormContainer("C6",{
+					title: "Background",
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "BackgroundDesign",
+							fields: [new sap.ui.commons.SegmentedButton("BackCol", {
+								buttons: [ new sap.ui.commons.Button("Back1", {text: sap.ui.layout.BackgroundDesign.Transparent}),
+								         new sap.ui.commons.Button("Back2", {text: sap.ui.layout.BackgroundDesign.Solid}),
+								         new sap.ui.commons.Button("Back3", {text: sap.ui.layout.BackgroundDesign.Translucent})
+								        ],
+								selectedButton: "Back3",
+								select: function(oEvent) {
+									var sButtonId = oEvent.getParameter("selectedButtonId");
+									var oButton = sap.ui.getCore().byId(sButtonId);
+									var sBackground = oButton.getText();
+									oLayout1.setBackgroundDesign(sBackground);
+									oLayout2.setBackgroundDesign(sBackground);
+									oLayout3.setBackgroundDesign(sBackground);
+									oLayout4.setBackgroundDesign(sBackground);
+								}
+							})]
+						})
+					],
+				layoutData: new sap.ui.core.VariantLayoutData({
+					multipleLayoutData: [new sap.ui.layout.ResponsiveFlowLayoutData({linebreak: true})]})
 				})]
 		});
 
