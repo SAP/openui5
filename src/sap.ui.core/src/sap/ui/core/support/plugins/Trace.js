@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var sStyle = " style='color:" + aLevelInfo[1] + ";'";
 			var sResult = "<div class='sapUiSupportTraceEntry'><span class='sapUiSupportTraceEntryLevel'" + sStyle + ">" + aLevelInfo[0] +
 					"</span><span class='sapUiSupportTraceEntryTime'" + sStyle + ">" + oPlugin._oDateFormat.format(new Date(oEntry.timestamp)) +
-					"</span><span class='sapUiSupportTraceEntryMessage'>" + oEntry.message + "</div>";
+					"</span><span class='sapUiSupportTraceEntryMessage'>" + jQuery.sap.escapeHTML(oEntry.message || "") + "</div>";
 			return sResult;
 		}
 		
@@ -208,4 +208,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 	return Trace;
 
-}, /* bExport= */ true);
+});

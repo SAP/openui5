@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.support.plugins.MessageTest (Test  plugin for support tool communication)
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/support/Plugin'],
-	function(jQuery, RenderManager, Plugin) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
+	function(jQuery, Plugin) {
 	"use strict";
 
 
@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 		
 		function report(oPlugin, sMessageId, sMessage, bReceive){
 			jQuery(".sapUiSupportMessageCntnt", oPlugin.$()).append("<b style=\"color:" + (bReceive ? "green" : "blue") + ";\">Message '" + sMessageId + "' " + (bReceive ? "received" : "send") +
-					(sMessage ? ":</b> " + sMessage : "</b>") + "<br>");
+					(sMessage ? ":</b> " + jQuery.sap.escapeHTML(sMessage) : "</b>") + "<br>");
 		}
 	
 	
@@ -94,4 +94,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 
 	return MessageTest;
 
-}, /* bExport= */ true);
+});
