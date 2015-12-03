@@ -1537,6 +1537,13 @@ sap.ui.define([
 					return true;
 				}
 				vNavData = oEntity[sExpand];
+				
+				// if nav property is null, no further checks are required
+				if (!vNavData) {
+					continue;
+				}
+				
+				// if nav property is deferred, it needs to be loaded
 				if (vNavData.__deferred) {
 					return true;
 				} 
