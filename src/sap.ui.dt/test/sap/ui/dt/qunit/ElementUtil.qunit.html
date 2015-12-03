@@ -28,7 +28,7 @@
 		<script type="text/javascript">
 
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		
+
 			jQuery.sap.require("sap.ui.dt.ElementUtil");
 			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.m.Button");
@@ -41,7 +41,7 @@
 
 					this.oButton = new sap.m.Button({text : "Button"});
 
-					this.oVerticalLayoutChild = new sap.ui.layout.VerticalLayout({
+					this.oHorizontalLayoutChild = new sap.ui.layout.HorizontalLayout({
 						content : [
 							new sap.m.Button({text : "Button"}),
 							this.oButton
@@ -54,7 +54,7 @@
 							new sap.m.Button({text : "Button"}),
 							new sap.m.Button({text : "Button"}),
 							new sap.m.Button({text : "Button"}),
-							this.oVerticalLayoutChild
+							this.oHorizontalLayoutChild
 						]
 					});
 
@@ -79,6 +79,12 @@
 
 			QUnit.test("when the type of the instance is checked based on a wrong type", function(assert) {
 				assert.equal(ElementUtil.isInstanceOf(this.oVerticalLayout, "sap.m.Button"), false, 'then the static method "isInstanceOf" returns false');
+			});
+
+			QUnit.test("when the element of given type is asked", function(assert) {
+				assert.equal(ElementUtil.getClosestElementOfType(this.oButton, "sap.ui.layout.HorizontalLayout"), this.oHorizontalLayoutChild, 'closest element to button of type horizontal layout -> found');
+				assert.equal(ElementUtil.getClosestElementOfType(this.oButton, "sap.ui.layout.VerticalLayout"), this.oVerticalLayout, 'closest element to button of type vertical layout -> found');
+				assert.equal(ElementUtil.getClosestElementOfType(this.oHorizontalLayoutChild, "sap.ui.layout.HorizontalLayout"), this.oHorizontalLayoutChild, 'closest element to vertical of type vertical layout -> same element');
 			});
 
 			QUnit.test("when the DesingTime Metadata is not yet loaded", function(assert) {
@@ -159,7 +165,7 @@
 			QUnit.test("when the control is added into a child of itself", function(assert) {
 				var that = this;
 				assert.throws(function() {
-					ElementUtil.addAggregation(that.oVerticalLayoutChild, "content", this.oVerticalLayout);
+					ElementUtil.addAggregation(that.oHorizontalLayoutChild, "content", this.oVerticalLayout);
 				}, /Trying to add an element to itself or its successors/, "then an Exception is thrown");
 			});
 
@@ -175,17 +181,17 @@
 
 			QUnit.test("when a control is added to an aggregation at a certain position which is already added", function(assert) {
 				var iLengthBefore = this.oVerticalLayout.getContent().length;
-				ElementUtil.insertAggregation(this.oVerticalLayout, "content", this.oVerticalLayoutChild, 1);
+				ElementUtil.insertAggregation(this.oVerticalLayout, "content", this.oHorizontalLayoutChild, 1);
 				var iLengthAfter = this.oVerticalLayout.getContent().length;
 				assert.equal(iLengthAfter, iLengthBefore, "then the number of controls in the aggregation is right");
-				assert.strictEqual(this.oVerticalLayout.getContent()[1], this.oVerticalLayoutChild, "and the control is at the right position");
+				assert.strictEqual(this.oVerticalLayout.getContent()[1], this.oHorizontalLayoutChild, "and the control is at the right position");
 			});
 
 
 			QUnit.test("when the control is added into a child of itself at a certain position", function(assert) {
 				var that = this;
 				assert.throws(function() {
-					ElementUtil.insertAggregation(that.oVerticalLayoutChild, "content", this.oVerticalLayout,1);
+					ElementUtil.insertAggregation(that.oHorizontalLayoutChild, "content", this.oVerticalLayout,1);
 				}, /Trying to add an element to itself or its successors/, "then an Exception is thrown");
 			});
 
@@ -198,7 +204,7 @@
 
 			QUnit.test("when a child control is removed from an aggregation of the control", function(assert) {
 				var iLengthBefore = this.oVerticalLayout.getContent().length;
-				ElementUtil.removeAggregation(this.oVerticalLayout, "content", this.oVerticalLayoutChild);
+				ElementUtil.removeAggregation(this.oVerticalLayout, "content", this.oHorizontalLayoutChild);
 				var iLengthAfter = this.oVerticalLayout.getContent().length;
 				assert.equal(iLengthAfter, iLengthBefore - 1, 'then the number of controls is right');
 			});
@@ -212,9 +218,9 @@
 			});
 
 			QUnit.test("when an element is checked if it is valid for an aggregation of one of its children", function(assert) {
-				assert.equal(ElementUtil.isValidForAggregation(this.oVerticalLayoutChild, "content", this.oVerticalLayout), false, 'then the static method "isValidForAggregation" returns false');
+				assert.equal(ElementUtil.isValidForAggregation(this.oHorizontalLayoutChild, "content", this.oVerticalLayout), false, 'then the static method "isValidForAggregation" returns false');
 			});
-			
+
 		</script>
 	</head>
 	<body>
