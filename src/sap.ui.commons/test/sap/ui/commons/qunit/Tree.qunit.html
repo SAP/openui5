@@ -16,6 +16,8 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script language="javascript">
 		
@@ -780,8 +782,117 @@
 	
 			
 		});
-		
-			
+
+		module("Nodes expand and collapse", {
+			beforeEach: function () {
+				//system under test
+				this.oTree = new sap.ui.commons.Tree("trtree", {
+					nodes: [
+						new sap.ui.commons.TreeNode("trnode1", {
+							text: "n1",
+							expanded: true,
+							nodes: [
+								new sap.ui.commons.TreeNode("trnode11", {
+									text: "n11",
+									expanded: true,
+									nodes: [
+										new sap.ui.commons.TreeNode("trnode111", {
+											text: "n111",
+											expanded: true
+										}),
+										new sap.ui.commons.TreeNode("trnode112", {
+											text: "n112",
+											expanded: true
+										})
+									]
+								}),
+								new sap.ui.commons.TreeNode("trnode12", {
+									text: "n12",
+									expanded: true
+								})
+							]
+						}),
+						new sap.ui.commons.TreeNode("trnode2", {
+							text: "n2",
+							expanded: true,
+							nodes: [
+								new sap.ui.commons.TreeNode("trnode21", {
+									text: "n21",
+									expanded: true,
+									nodes: [
+										new sap.ui.commons.TreeNode("trnode211", {
+											text: "n211",
+											expanded: true
+										}),
+										new sap.ui.commons.TreeNode("trnode212", {
+											text: "n212",
+											expanded: true
+										})
+									]
+								}),
+								new sap.ui.commons.TreeNode("trnode22", {
+									text: "n22",
+									expanded: true
+								})
+							]
+						})
+					]
+				});
+				this.oTree.setTitle("Tree");
+				this.oTree.setWidth("100%");
+				this.oTree.setHeight("auto");
+				this.oTree.setSelectionMode(sap.ui.commons.TreeSelectionMode.Multi);
+
+				//arrange
+				this.oTree.placeAt("target4");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oTree.destroy();
+				this.oTree = null;
+			}
+		});
+
+		test("Selection is adjusted only once for the real target node on collapse", function() {
+			var oAdjustSelectionSpy = this.spy(this.oTree, "_adjustSelectionOnCollapsing"),
+				oTargetNode = sap.ui.getCore().byId("trnode1"),
+				oSelectedChildNode = sap.ui.getCore().byId("trnode111");
+
+			//Act
+			oSelectedChildNode.setIsSelected(true);
+			oTargetNode.collapse(true);
+
+			//Assert
+			equal(oAdjustSelectionSpy.callCount, 1, "Selection is adjusted only once.");
+			ok(oAdjustSelectionSpy.calledWith(oTargetNode), "Selection is adjusted starting from collapsed target node.");
+
+			oAdjustSelectionSpy.restore();
+		});
+
+		test("Selection is adjusted only once for the real target node on expand", function() {
+			var oAdjustSelectionSpy = this.spy(sap.ui.commons.Tree.prototype, "_adjustSelectionOnExpanding"),
+					oTargetNode = sap.ui.getCore().byId("trnode1"),
+					oSelectedChildNode = sap.ui.getCore().byId("trnode111");
+
+			//Act
+			oSelectedChildNode.setIsSelected(true);
+			this.oTree.collapseAll();
+			oTargetNode.expand(true);
+
+			//Assert
+			equal(oAdjustSelectionSpy.callCount, 1, "Selection is adjusted only once.");
+			ok(oAdjustSelectionSpy.calledWith(oTargetNode), "Selection is adjusted starting from expanded target node.");
+		});
+
+		test("Animating only when collapse is not propagated to children", function() {
+			var oJqueryShowSpy = this.spy(jQuery.fn, "hide"),
+				oTargetNode = sap.ui.getCore().byId("trnode1");
+
+			oTargetNode.collapse(true);
+			equal(oJqueryShowSpy.callCount, 2, "All nodes with children hide.");
+			equal(oJqueryShowSpy.args[0].length, 0, "Node1 hides without animation.");
+			equal(oJqueryShowSpy.args[1].length, 0, "Node11 hides without animation.");
+		});
 		</script>
 	</head>
 	<body>

@@ -206,7 +206,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Tree.prototype.expandAll = function(){
 		var aNodes = this._getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
-			aNodes[i].expand(true);
+			aNodes[i].expand(true, true);
+			this._adjustSelectionOnExpanding(aNodes[i]);
 		}
 	};
 
@@ -221,8 +222,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Tree.prototype.collapseAll = function(){
 		var aNodes = this._getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
-			aNodes[i].collapse(true);
+			aNodes[i].collapse(true, true);
+			this._adjustSelectionOnCollapsing(aNodes[i]);
 		}
+
+		this._adjustFocus();
 	};
 
 	/***********************************************************************************
@@ -421,7 +425,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @private
 	 */
-	Tree.prototype.adjustFocus = function(){
+	Tree.prototype._adjustFocus = function(){
 
 		var oFocusableNode = this.$().find('.sapUiTreeNode[tabIndex="0"]');
 
@@ -469,71 +473,91 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/***********************************************************************************
 	* HELPER METHODS - SELECTION MANAGEMENT
 	***********************************************************************************/
-	/**Adjusts the selection, when expanding, by re-selecting a children node when the expanded node was
-	   selected only to reprensented the selection of a children node
-	 * @param oExpandingDomNode The Node being expanded
+	/**
+	 * Adjusts the selection, when expanding, by re-selecting a children node when the expanded node was
+	 * selected only to represented the selection of a children node.
+	 * @param {sap.ui.commons.TreeNode} oExpandingNode The Node being expanded
 	 * @private
 	 */
-	Tree.prototype.adjustSelectionOnExpanding = function(oExpandingDomNode) {
-
-		var $Tree = this.$(),
-			$ExpandingDomNode = jQuery(oExpandingDomNode),
-			$DomSelectedNode,
-			$DomParent;
-
-		//Current node is a fake selection, remove it. A child will be either another fake selection or an actual one.
-		if ($ExpandingDomNode.hasClass("sapUiTreeNodeSelectedParent")) {
-			$ExpandingDomNode.removeClass("sapUiTreeNodeSelectedParent");
+	Tree.prototype._adjustSelectionOnExpanding = function(oExpandingNode) {
+		if (!oExpandingNode) {
+			return;
 		}
 
-		//If the actual selection now visible, remove all fake ones
-		var $DomActualSelection = $Tree.find(".sapUiTreeNodeSelected:visible");
-		if ($DomActualSelection.length) {
-			$Tree.find(".sapUiTreeNodeSelectedParent").removeClass("sapUiTreeNodeSelectedParent");
-		} else {
-			$DomSelectedNode = $Tree.find(".sapUiTreeNodeSelected");
+		restoreSelectedChildren(oExpandingNode);
 
-			//Find first visible parent node
-			$DomParent = $DomSelectedNode.parent(".sapUiTreeChildrenNodes").prev(".sapUiTreeNode");
-
-			while ($DomParent.length && !$DomParent.is(":visible")) {
-				$DomParent = $DomParent.parent(".sapUiTreeChildrenNodes").prev(".sapUiTreeNode");
-			}
-			$DomParent.addClass("sapUiTreeNodeSelectedParent");
+		//update dom if necessary
+		var $ExpandingNode = oExpandingNode.$();
+		if ($ExpandingNode && $ExpandingNode.hasClass('sapUiTreeNodeSelectedParent')) {
+			$ExpandingNode.removeClass('sapUiTreeNodeSelectedParent');
 		}
+
+		var $SelectedChildrenForTheirChildren = oExpandingNode.$('children').find('.sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent');
+		$SelectedChildrenForTheirChildren.removeClass('sapUiTreeNodeSelectedParent');
 	};
 
-	/**Adjusts the selection, when collapsing, selecting a parent when the actual selected node is
+	/**
+	 * Removes the references inside the expanded node of its selected children, because
+	 * they are no longer needed.
+	 * @param {sap.ui.commons.TreeNode} oNode The current node to look at
+	 */
+	function restoreSelectedChildren(oNode) {
+		//children are still selected (they were never deselected), so just restore the selectedForNodes association
+		if (!oNode.getExpanded()) {
+			return;
+		}
+
+		oNode.removeAllAssociation("selectedForNodes", true);
+
+		var aNodes = oNode._getNodes();
+		for (var i = 0; i < aNodes.length; i++) {
+			restoreSelectedChildren(aNodes[i]);
+		}
+	}
+
+	/**
+	 * Adds references inside the collapsed node of all its selected children recursively.
+	 * @param {sap.ui.commons.TreeNode} oNode The current node to look at
+	 * @param {sap.ui.commons.TreeNode} oRootNode The root node that was collapsed
+	 */
+	function rememberSelectedChildren(oNode, oRootNode, oTree) {
+		var aNodes = oNode._getNodes();
+		var oCurrentNode = null;
+		for (var i = 0; i < aNodes.length; i++) {
+			oCurrentNode = aNodes[i];
+
+			if (oTree.getSelectionMode() === sap.ui.commons.TreeSelectionMode.Multi && oCurrentNode.getIsSelected()) {
+				oTree._delMultiSelection(oCurrentNode);
+			}
+
+			if (oCurrentNode.getIsSelected()) {
+				oRootNode.addAssociation("selectedForNodes", oCurrentNode, true);
+			}
+
+			rememberSelectedChildren(oCurrentNode, oRootNode, oTree);
+		}
+	}
+
+	/**
+	 * Adjusts the selection, when collapsing, selecting a parent when the actual selected node is
 	 * not visible.
-	 * @param oDomCollapsingNode The Node being expanded
+	 * @param {sap.ui.commons.TreeNode} oCollapsingNode The Node being collapsed
 	 * @private
 	 */
-	Tree.prototype.adjustSelectionOnCollapsing = function(oDomCollapsingNode){
-		var that = this;
-		if (this.getSelectionMode() != sap.ui.commons.TreeSelectionMode.Multi) {
-			var $DomCollapsingNode = jQuery(oDomCollapsingNode),
-			sChildrenId = "#" + $DomCollapsingNode.attr("id") + "-children",
-			$DomActualSelSubNode = $DomCollapsingNode.siblings(sChildrenId).find(".sapUiTreeNodeSelected"),
-			$DomParentSelSubNode = $DomCollapsingNode.siblings(sChildrenId).find(".sapUiTreeNodeSelectedParent");
+	Tree.prototype._adjustSelectionOnCollapsing = function(oCollapsingNode) {
+		if (!oCollapsingNode) {
+			return;
+		}
 
-			if ($DomActualSelSubNode.length || $DomParentSelSubNode.length) {
-				$DomCollapsingNode.addClass("sapUiTreeNodeSelectedParent");
+		// the root node, which needs to update references for selected children,
+		// is also the first node to look at
+		rememberSelectedChildren(oCollapsingNode, oCollapsingNode, this);
 
-				if ($DomParentSelSubNode.length) {
-					$DomParentSelSubNode.removeClass("sapUiTreeNodeSelectedParent");
-				}
-			}
-		} else {
-			var $DomCollapsingNode = jQuery(oDomCollapsingNode),
-			sChildrenId = "#" + $DomCollapsingNode.attr("id") + "-children",
-			$DomActualSelSubNode = $DomCollapsingNode.siblings(sChildrenId).find(".sapUiTreeNodeSelected");
-			var aSelNode = $DomActualSelSubNode.control();
-			if (aSelNode) {
-				if (jQuery.isEmptyObject(aSelNode) == false) {
-					jQuery.each(aSelNode, function(sId, oNode){
-						that._delMultiSelection(oNode);
-					});
-				}
+		//update dom if necessary
+		if (oCollapsingNode.getSelectedForNodes().length) {
+			var $CollapsingNode = oCollapsingNode.$();
+			if ($CollapsingNode && !$CollapsingNode.hasClass('sapUiTreeNodeSelectedParent')) {
+				$CollapsingNode.addClass('sapUiTreeNodeSelectedParent');
 			}
 		}
 	};
@@ -812,26 +836,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Tree.prototype._setNodeSelection = function(oNode, bIsSelected, bSuppressEvent) {
 		var aSelectedNodes = [],
 			aSelectedNodeContexts = [];
-		var oVisibleDomNode;
+		var oVisibleNode;
 
 		if (this.getSelectionMode() == sap.ui.commons.TreeSelectionMode.Single) {
 			if (bIsSelected) {
 				var oSelectedNode = this.getSelection();
 				this._setSelectedNode(oNode, bSuppressEvent);
 				if (!oNode.isVisible()) {
-					oVisibleDomNode = this._getVisibleNode(oNode).getDomRef();
-					this.adjustSelectionOnCollapsing(oVisibleDomNode);
+					oVisibleNode = this._getVisibleNode(oNode);
+					this._adjustSelectionOnCollapsing(oVisibleNode);
 				}
 				if (oSelectedNode && !oSelectedNode.isVisible()) {
-					oVisibleDomNode = this._getVisibleNode(oSelectedNode).getDomRef();
-					this.adjustSelectionOnExpanding(oVisibleDomNode);
+					oVisibleNode = this._getVisibleNode(oSelectedNode);
+					this._adjustSelectionOnExpanding(oVisibleNode);
 				}
 				return;
 			} else {
 				this._delMultiSelection(oNode, bSuppressEvent);
 				if (!oNode.isVisible()) {
-					oVisibleDomNode = this._getVisibleNode(oNode).getDomRef();
-					this.adjustSelectionOnExpanding(oVisibleDomNode);
+					oVisibleNode = this._getVisibleNode(oNode);
+					this._adjustSelectionOnExpanding(oVisibleNode);
 				}
 			}
 		}
