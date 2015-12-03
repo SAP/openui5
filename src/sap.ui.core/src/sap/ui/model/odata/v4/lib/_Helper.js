@@ -472,6 +472,62 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					}
 				}
 			}
+		},
+
+		/** Serializes an array of requests to an object containing the batch request body and
+		 * mandatory headers for the batch request.
+		 *
+		 * @param {array} aRequests
+		 *  an array of requests objects <code>oRequest</code>
+		 * @param {string} oRequest.method
+		 *   HTTP method, e.g. "GET"
+		 * @param {string} oRequest.url
+		 *   absolute or relative URL
+		 * @param {object} oRequest.headers
+		 *   map of request headers
+		 * @returns {object} object containing the following properties:
+		 *   <ul>
+		 *     <li><code>body</code>: batch request body;
+		 *     <li><code>Content-Type</code>: value for the 'Content-Type' header;
+		 *     <li><code>MIME-Version</code>: value for the 'MIME-Version' header.
+		 *   </ul>
+		 */
+		serializeBatchRequest : function (aRequests) {
+			var sBatchBoundary = jQuery.sap.uid(),
+				aRequestBody = [];
+
+			/**
+			 * Serializes a map of request headers to be used in a $batch request.
+			 *
+			 * @param {object} mHeaders
+			 *   a map of request headers
+			 * @returns {string} serialized string of the given headers
+			 */
+			function serializeHeaders (mHeaders) {
+				var sHeaderName,
+					aHeaders = [];
+
+				for (sHeaderName in mHeaders) {
+					aHeaders = aHeaders.concat(sHeaderName, ":", mHeaders[sHeaderName], "\r\n");
+				}
+
+				return aHeaders.concat("\r\n");
+			}
+
+			aRequests.forEach(function(oRequest) {
+				aRequestBody = aRequestBody.concat("--", sBatchBoundary,
+					"\r\nContent-Type:application/http\r\n",
+					"Content-Transfer-Encoding:binary\r\n\r\n",
+					oRequest.method, " ", oRequest.url, " HTTP/1.1\r\n",
+					serializeHeaders(oRequest.headers), "\r\n");
+			});
+			aRequestBody = aRequestBody.concat("--", sBatchBoundary, "--\r\n");
+
+			return {
+				body : aRequestBody.join(""),
+				"Content-Type" : "multipart/mixed; boundary=" + sBatchBoundary,
+				"MIME-Version" : "1.0"
+			};
 		}
 	};
 
