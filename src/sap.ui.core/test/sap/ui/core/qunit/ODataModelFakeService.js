@@ -71,6 +71,8 @@ xhr.onCreate = function(request) {
 			[200, oXMLHeaders, sProducts3SelCategoryNameExpCategoryXML],
 		"Products(3)?$select=ProductName%2cCategory%2fCategoryName&$expand=Category":
 			[200, oXMLHeaders, sProducts3SelProductAndCategoryNameExpCategoryXML],
+		"Products(4)?$expand=Category":
+			[200, oXMLHeaders, sProducts4ExpCategoryXML],
 		"Invoices/$count":
 			[200, oCountHeaders, "9"],
 		"Invoices?$skip=0&$top=100":
@@ -1561,6 +1563,40 @@ var sProducts3ExpCategoryXML = '\
   </content>\
 </entry>\
 	';
+
+var sProducts4ExpCategoryXML = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<entry xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <id>http://services.odata.org/V2/Northwind/Northwind.svc/Products(4)</id>\
+  <title type="text"></title>\
+  <updated>2015-11-17T10:42:46Z</updated>\
+  <author>\
+    <name />\
+  </author>\
+  <link rel="edit" title="Product" href="Products(4)" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(4)/Category">\
+    <m:inline />\
+  </link>\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(4)/Order_Details" />\
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(4)/Supplier" />\
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />\
+  <content type="application/xml">\
+    <m:properties>\
+	    <d:ProductID m:type="Edm.Int32">4</d:ProductID>\
+	    <d:ProductName>Chef Anton\'s Cajun Seasoning</d:ProductName>\
+	    <d:SupplierID m:type="Edm.Int32">2</d:SupplierID>\
+	    <d:CategoryID m:type="Edm.Int32">2</d:CategoryID>\
+	    <d:QuantityPerUnit>48 - 6 oz jars</d:QuantityPerUnit>\
+	    <d:UnitPrice m:type="Edm.Decimal">22.0000</d:UnitPrice>\
+	    <d:UnitsInStock m:type="Edm.Int16">53</d:UnitsInStock>\
+	    <d:UnitsOnOrder m:type="Edm.Int16">0</d:UnitsOnOrder>\
+	    <d:ReorderLevel m:type="Edm.Int16">0</d:ReorderLevel>\
+	    <d:Discontinued m:type="Edm.Boolean">false</d:Discontinued>\
+    </m:properties>\
+  </content>\
+</entry>\
+	';
+
 
 var sProducts3SelProductNameExpCategoryXML = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\
