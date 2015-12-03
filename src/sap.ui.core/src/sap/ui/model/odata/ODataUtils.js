@@ -393,7 +393,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''"
 			});
 			this.oTimeFormat = DateFormat.getTimeInstance({
-				pattern: "'time'''HH:mm:ss''"
+				pattern: "'time''PT'HH'H'mm'M'ss'S'''"
 			});
 		}
 
