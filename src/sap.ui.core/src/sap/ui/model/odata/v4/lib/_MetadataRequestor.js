@@ -3,7 +3,11 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._MetadataRequestor
-sap.ui.define(["jquery.sap.global","./_Helper"], function (jQuery, Helper) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./_Helper",
+	"./_MetadataConverter"
+], function (jQuery, Helper, MetadataConverter) {
 	"use strict";
 
 	return {
@@ -40,7 +44,7 @@ sap.ui.define(["jquery.sap.global","./_Helper"], function (jQuery, Helper) {
 							fnReject(Helper.createError(jqXHR));
 						});
 					}).then(function (oXMLMetadata) {
-						return Helper.convertXMLMetadata(oXMLMetadata);
+						return MetadataConverter.convertXMLMetadata(oXMLMetadata);
 					});
 				}
 			};
