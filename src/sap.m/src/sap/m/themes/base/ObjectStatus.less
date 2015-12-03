@@ -3,7 +3,7 @@
 /* CSS for control sap.m/ObjectStatus.control */
 /* ============================================= */
 
-.sapMObjStatus {	
+.sapMObjStatus {
 }
 
 .sapMObjStatusText {
@@ -11,12 +11,13 @@
 
 .sapMObjStatusIcon {
 }
+
 .sapMObjStatusIcon > .sapUiIcon {
 	font-size: 1rem;
 }
 
 .sapMObjStatusIcon {
-	padding-right: .25rem;
+	padding-right: .5rem;
 }
 
 .sap-phone .sapMObjStatusIcon {
@@ -26,17 +27,39 @@
 	padding-right: .25rem;
 }
 
+.sapUiTableCell .sapMObjStatusText,
+.sapUiTableCell .sapMObjStatusTitle,
+.sapUiTableCell .sapMObjStatusIcon .sapUiIcon,
+.sapMListTbl .sapMObjStatusText,
+.sapMListTbl .sapMObjStatusTitle,
+.sapMListTbl .sapMObjStatusIcon .sapUiIcon,
+.sapUiForm .sapMObjStatusIcon .sapUiIcon {
+	vertical-align: middle;
+}
+
+.sapUiForm .sapMObjStatusIcon,
+.sapUiForm .sapMObjStatusTitle,
+.sapUiForm .sapMObjStatusText {
+	overflow: hidden;
+	display: inline-block;
+	-webkit-user-select: text;
+	-ms-user-select: text;
+	user-select: text;
+}
+
 /*
 	FIX for 1580155978.
 	Fiori design guidelines say that statuses should be specially styled for forms
 	and share looks with other text only controls.
 */
+.sapUiForm .sapMObjStatus > .sapMObjStatusIcon,
 .sapUiForm .sapMObjStatus > .sapMObjStatusTitle,
 .sapUiForm .sapMObjStatus > .sapMObjStatusText {
-  line-height: 3rem;
+	line-height: 3rem;
 }
 
+.sapUiSizeCompact .sapUiForm .sapMObjStatus > .sapMObjStatusIcon,
 .sapUiSizeCompact .sapUiForm .sapMObjStatus > .sapMObjStatusTitle,
 .sapUiSizeCompact .sapUiForm .sapMObjStatus > .sapMObjStatusText {
-  line-height: 2rem;
+	line-height: 2rem;
 }
