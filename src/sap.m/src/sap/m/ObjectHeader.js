@@ -236,7 +236,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @since 1.21.1
 			 */
 			headerContainer : {type : "sap.m.ObjectHeaderContainer", multiple : false}
-
 		},
 		associations : {
 
@@ -350,8 +349,87 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._fNumberWidth = undefined;
 		this._titleText = new sap.m.Text(this.getId() + "-titleText");
 		this._titleText.setMaxLines(3);
+
 	};
 
+	ObjectHeader.prototype.insertAttribute = function (oAttribute, iIndex) {
+		var vResult = this.insertAggregation("attributes", oAttribute, iIndex);
+		this._registerControlListener(oAttribute);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.addAttribute = function (oAttribute) {
+		var vResult = this.addAggregation("attributes", oAttribute);
+		this._registerControlListener(oAttribute);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.removeAttribute = function (oAttribute) {
+		this._deregisterControlListener(oAttribute);
+		return this.removeAggregation("attributes", oAttribute);
+	};
+
+	ObjectHeader.prototype.removeAllAttributes = function () {
+		this.getAggregation("attributes").forEach(this._deregisterControlListener, this);
+		return this.removeAllAggregation("attributes");
+	};
+
+	ObjectHeader.prototype.destroyAttributes = function () {
+		this.getAggregation("attributes").forEach(this._deregisterControlListener, this);
+		return this.destroyAggregation("attributes");
+	};
+
+
+	ObjectHeader.prototype.insertStatus = function (oStatus, iIndex) {
+		var vResult = this.insertAggregation("attributes", oStatus, iIndex);
+		this._registerControlListener(oStatus);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.addStatus = function (oStatus) {
+		var vResult = this.addAggregation("statuses", oStatus);
+		this._registerControlListener(oStatus);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.removeStatus = function (oStatus) {
+		this._deregisterControlListener(oStatus);
+		return this.removeAggregation("statuses", oStatus);
+	};
+
+	ObjectHeader.prototype.removeAllStatuses = function () {
+		this.getAggregation("statuses").forEach(this._deregisterControlListener, this);
+		return this.removeAllAggregation("statuses");
+	};
+
+	ObjectHeader.prototype.destroyStatuses = function () {
+		this.getAggregation("statuses").forEach(this._deregisterControlListener, this);
+		return this.destroyAggregation("statuses");
+	};
+
+	/**
+	 * Every time a control is inserted in the ObjectHeader, it must be monitored for size/visibility changes
+	 * @param oControl
+	 * @private
+	 */
+	ObjectHeader.prototype._registerControlListener = function (oControl) {
+		if (oControl) {
+			oControl.attachEvent("_change", this.invalidate, this);
+		}
+	};
+
+	/**
+	 * Each time a control is removed from the ObjectHeader, detach listeners
+	 * @param oControl
+	 * @private
+	 */
+	ObjectHeader.prototype._deregisterControlListener = function (oControl) {
+		if (oControl) {
+			oControl.detachEvent("_change", this.invalidate, this);
+		}
+	};
+
+	
 	/**
 	 * Set the condensed flag
 	 * @override
@@ -421,7 +499,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oTitleArrowIcon.setTooltip(sTooltip);
 		return this;
 	};
-	
+
 	/**
 	 * lazy initializes the object number aggregation
 	 * @private
@@ -647,7 +725,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype.exit = function() {
 		if (sap.ui.Device.system.desktop) {
-			sap.ui.Device.media.detachHandler(this._rerenderOH, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+			sap.ui.Device.media.detachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 		}
 
 		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
