@@ -100,17 +100,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		});
 
-
-		TabContainer.prototype.onBeforeRendering = function() {
-
-			if (this.getSelectedItem()) {
-				return;
-			}
-
-			// ToDo: remove tab to item everywhere
-			this._setDefaultTab();
-		};
-
 		TabContainer.prototype._getAddNewTabButton = function() {
 			var oControl = this.getAggregation("_addNewButton");
 			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -216,14 +205,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return oSelectedItem ? oSelectedItem.getContent() : null;
 		};
 
-		TabContainer.prototype._setDefaultTab = function() {
-			var oSelectedItem = this.getItems()[0] || null;
-
-			this.setSelectedItem(oSelectedItem);
-
-			return oSelectedItem;
-		};
-
 		/**
 		 * Removes an item from the aggregation named <code>items</code>.
 		 *
@@ -241,7 +222,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 
 			if (vItem.getId() === this.getSelectedItem()) {
-				this._setDefaultTab();
+				//ToDo (by Niki): Apply the removal logic here
 			}
 
 			oTabStripItem = this._toTabStripItem(vItem);

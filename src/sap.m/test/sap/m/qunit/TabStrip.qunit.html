@@ -27,12 +27,11 @@
 
 		module("API", {
 			beforeEach: function () {
-				this.oDefaultSelectedTab = new sap.m.TabStripItem({
-					text: "Tab 1"
-				});
 				this.sut = new sap.m.TabStrip({
 					items: [
-						this.oDefaultSelectedTab,
+						new sap.m.TabStripItem({
+							text: "Tab 1"
+						}),
 						new sap.m.TabStripItem({
 							text: "Tab 2"
 						}),
@@ -56,7 +55,9 @@
 
 		test("Control defaults", function () {
 			//assert
-			strictEqual(this.sut.getSelectedItem(), this.oDefaultSelectedTab, "Correct default selected tab index");
+			ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
+			strictEqual(this.sut.$("touchArea").children(".sapMTabSelect").length, 0, "Select is not rendered in DOM");
+			strictEqual(this.sut.getSelectedItem(), null, "Correct default selectedItem property value");
 		});
 
 		test("Render all tabs", function () {
@@ -151,7 +152,6 @@
 			},
 			afterEach: function () {
 				this.sut.destroy();
-				oCore.applyChanges();
 			}
 		});
 
@@ -249,7 +249,7 @@
 				ok(bHasRole, this.id + " has role attribute assigned");
 				strictEqual(sRoleValue, "tab", this.id + " has a correct role value");
 				ok(bHasAriaSelected, this.id + " has aria-selected attribute");
-				if (that.sut.getSelectedItem().getId() === this.id) {
+				if (that.sut.getSelectedItem() === this.id) {
 					strictEqual(bIsSelected, "true", this.id + " has correct aria-selected value (true)");
 				} else {
 					strictEqual(bIsSelected, "false", this.id + " has correct aria-selected value (false)");
@@ -309,6 +309,51 @@
 			this.stub(jQuery.device, "is", oSystem);
 			jQuery('body').addClass('sap-phone');
 		}
+
+		module("Selection", {
+			beforeEach: function () {
+				this.selectedItem = new sap.m.TabStripItem({
+					text: "Initially selected tab"
+				});
+				this.items = [
+					new sap.m.TabStripItem({
+						text: "Tab 1"
+					}),
+					this.selectedItem,
+					new sap.m.TabStripItem({
+						text: "Tab 3"
+					})
+				];
+				this.selectedItemIndex = this.items.indexOf(this.selectedItem);
+			},
+			afterEach: function () {
+				this.sut.destroy();
+			}
+		});
+
+		test("Initial selection if no selected item is passed", function () {
+			//arragnge
+			this.sut = new sap.m.TabStrip({
+				items: this.items
+			});
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.sut.$("tabs").children(".selected").length, 0, "The initial selection is not applied");
+			strictEqual(this.sut.getSelectedItem(), null, "Correct value of selectedItem association");
+		});
+
+		test("Initial selection if selected item is applied", function () {
+			//arrange
+			this.sut = new sap.m.TabStrip({
+				selectedItem: this.selectedItem,
+				items: this.items
+			});
+			this.sut.placeAt('content');
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
+			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass("selected"), "The initial selection is applied correctly");
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">
