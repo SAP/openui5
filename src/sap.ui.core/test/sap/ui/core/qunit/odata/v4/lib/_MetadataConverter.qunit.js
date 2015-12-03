@@ -314,6 +314,30 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("processFacetAttributes", function (assert) {
+		function test(sProperty, sValue, vExpectedValue) {
+			var oAttributes = {},
+				oResult = {},
+				oExpectedResult = {};
+
+			oAttributes[sProperty] = sValue;
+			if (vExpectedValue !== undefined) {
+				oExpectedResult["$" + sProperty] = vExpectedValue;
+			}
+			MetadataConverter.processFacetAttributes(oAttributes, oResult);
+			assert.deepEqual(oResult, oExpectedResult);
+		}
+
+		test("Precision", "8", 8);
+		test("Scale", "2", 2);
+		test("Scale", "variable", "variable");
+		test("Unicode", "false", false);
+		test("Unicode", "true", undefined);
+		test("MaxLength", "12345", 12345);
+		test("SRID", "42", "42");
+	});
+
+	//*********************************************************************************************
 	["ComplexType", "EntityType"].forEach(function (sType) {
 		QUnit.test("convertXMLMetadata: " + sType + ": (Navigation)Property", function (assert) {
 			var oExpected = {
@@ -455,6 +479,30 @@ sap.ui.require([
 					"$kind": "EnumType",
 					"$UnderlyingType": "Edm.SByte",
 					"_1": 0
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: TypeDefinition", function (assert) {
+		this.mock(MetadataConverter).expects("processFacetAttributes")
+			.withExactArgs({
+				Name: "Bar",
+				UnderlyingType: "Edm.String"
+			}, {
+				$kind: "TypeDefinition",
+				$UnderlyingType: "Edm.String"
+			});
+		testConversion(assert, '\
+				<DataServices>\
+					<Schema Namespace="foo">\
+						<TypeDefinition Name="Bar" UnderlyingType="Edm.String"/>\
+					</Schema>\
+				</DataServices>',
+			{
+				"foo.Bar": {
+					"$kind": "TypeDefinition",
+					"$UnderlyingType": "Edm.String"
 				}
 			});
 	});

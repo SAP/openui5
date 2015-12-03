@@ -74,6 +74,9 @@ sap.ui.define([], function () {
 						"Member" : {
 							__processor : processEnumTypeMember
 						}
+					},
+					"TypeDefinition" : {
+						__processor : processTypeDefinition
 					}
 				}
 			}
@@ -332,6 +335,23 @@ sap.ui.define([], function () {
 	}
 
 	/**
+	 * Processes an TypeDefinition element.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processTypeDefinition(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name,
+			oTypeDefinition = {
+				"$kind" : "TypeDefinition",
+				"$UnderlyingType" : oAttributes.UnderlyingType
+			};
+
+		oAggregate.result[sQualifiedName] = oTypeDefinition;
+		MetadataConverter.processFacetAttributes(oAttributes, oTypeDefinition);
+	}
+
+	/**
 	 * Processes a NavigationProperty element of a structured type.
 	 * @param {Element} oElement the element
 	 * @param {object} oAggregate the aggregate
@@ -389,15 +409,9 @@ sap.ui.define([], function () {
 		processTypedCollection(oAttributes.Type, oProperty, oAggregate);
 		processAttributes(oAttributes, oProperty, {
 			"DefaultValue" : setValue,
-			"Nullable" : setIfFalse,
-			"MaxLength" : setNumber,
-			"Precision" : setNumber,
-			"Scale" : function (sValue) {
-				return sValue === "variable" ? sValue : setNumber(sValue);
-			},
-			"SRID" : setValue,
-			"Unicode" : setIfFalse
+			"Nullable" : setIfFalse
 		});
+		MetadataConverter.processFacetAttributes(oAttributes, oProperty);
 
 		oAggregate.type[oAttributes.Name] = oProperty;
 	}
@@ -441,7 +455,6 @@ sap.ui.define([], function () {
 	}
 
 	MetadataConverter = {
-
 		/**
 		 * Converts the metadata from XML format to a JSON object.
 		 *
@@ -470,6 +483,24 @@ sap.ui.define([], function () {
 			// second round, full conversion
 			MetadataConverter.traverse(oElement, oAggregate, oFullConfig);
 			return oAggregate.result;
+		},
+
+		/**
+		 * Processes the TFacetAttributes and TPropertyFacetAttributes of the elements Property,
+		 * TypeDefinition etc.
+		 * @param {object} oAttributes the element attributes
+		 * @param {object} oResult the result object to fill
+		 */
+		processFacetAttributes : function (oAttributes, oResult) {
+			processAttributes(oAttributes, oResult, {
+				"MaxLength" : setNumber,
+				"Precision" : setNumber,
+				"Scale" : function (sValue) {
+					return sValue === "variable" ? sValue : setNumber(sValue);
+				},
+				"SRID" : setValue,
+				"Unicode" : setIfFalse
+			});
 		},
 
 		/**
