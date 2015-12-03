@@ -39,16 +39,25 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	FormLayoutRenderer.renderForm = function(rm, oLayout, oForm){
 
+		var oToolbar = oForm.getToolbar();
+
 		rm.write("<div");
 		rm.writeControlData(oLayout);
 		rm.addClass(this.getMainClass());
+		if (oToolbar) {
+			rm.addClass("sapUiFormToolbar");
+		}
 		this.addBackgroundClass(rm, oLayout);
 		rm.writeClasses();
 		rm.write(">");
 
 		// Form header
-		var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:sapUiFormTitleSize');
-		this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
+		if (oToolbar) {
+			rm.renderControl(oToolbar);
+		} else {
+			var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:sapUiFormTitleSize');
+			this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
+		}
 
 		this.renderContainers(rm, oLayout, oForm);
 
@@ -83,10 +92,18 @@ sap.ui.define(['jquery.sap.global'],
 	FormLayoutRenderer.renderContainer = function(rm, oLayout, oContainer){
 
 		var bExpandable = oContainer.getExpandable();
+		var oToolbar = oContainer.getToolbar();
+		var oTitle = oContainer.getTitle();
 
 		rm.write("<section");
 		rm.writeElementData(oContainer);
 		rm.addClass("sapUiFormContainer");
+
+		if (oToolbar) {
+			rm.addClass("sapUiFormContainerToolbar");
+		} else if (oTitle) {
+			rm.addClass("sapUiFormContainerTitle");
+		}
 
 		if (oContainer.getTooltip_AsString()) {
 			rm.writeAttributeEscaped('title', oContainer.getTooltip_AsString());
@@ -96,7 +113,12 @@ sap.ui.define(['jquery.sap.global'],
 		this.writeAccessibilityStateContainer(rm, oContainer);
 
 		rm.write(">");
-		this.renderTitle(rm, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, sap.ui.core.TitleLevel.H4, oContainer.getId());
+
+		if (oToolbar) {
+			rm.renderControl(oToolbar);
+		} else {
+			this.renderTitle(rm, oTitle, oContainer._oExpandButton, bExpandable, sap.ui.core.TitleLevel.H4, oContainer.getId());
+		}
 
 		if (bExpandable) {
 			rm.write("<div id='" + oContainer.getId() + "-content'");

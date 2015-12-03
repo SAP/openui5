@@ -2,10 +2,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.layout.sample.FormToolbar.Component", {
+	var Component = UIComponent.extend("sap.ui.layout.sample.SimpleFormToolbar.Component", {
 
 		metadata : {
-			rootView : "sap.ui.layout.sample.FormToolbar.Page",
+			rootView : "sap.ui.layout.sample.SimpleFormToolbar.Page",
 			dependencies : {
 				libs : [
 					"sap.m",

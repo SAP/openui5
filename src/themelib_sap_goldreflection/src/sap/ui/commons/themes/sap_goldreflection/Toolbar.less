@@ -86,3 +86,18 @@ html[data-sap-ui-browser="ie10"] {
 .sapUiTbInner > * , .sapUiTbInnerRight > * {
 	margin-right: 6px;
 }
+
+/* Toolbar inside of Form as Form- and Container- header */
+.sapUiFormContainerToolbar > .sapUiTb{
+	border-bottom: 2px solid @sapUiMediumBorder;
+}
+
+.sapUiGridTitle > th > .sapUiTb > .sapUiTbInnerRight > *:last-child,
+.sapUiGridHeader > .sapUiTb > .sapUiTbInnerRight > *:last-child{
+	margin-right: 0;
+}
+
+.sapUiFormResGrid.sapUiFormToolbar > .sapUiTb > .sapUiTbInnerRight > *:last-child,
+.sapUiRGLContainer.sapUiFormContainerToolbar > .sapUiTb > .sapUiTbInnerRight > *:last-child{
+	margin-right: 4px;
+}

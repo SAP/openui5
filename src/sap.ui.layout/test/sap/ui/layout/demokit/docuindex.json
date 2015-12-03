@@ -42,7 +42,8 @@
 					"sap.ui.layout.sample.SimpleForm471",
 					"sap.ui.layout.sample.SimpleForm480",
 					"sap.ui.layout.sample.SimpleForm480_12120",
-					"sap.ui.layout.sample.SimpleForm480_Trial"
+					"sap.ui.layout.sample.SimpleForm480_Trial",
+					"sap.ui.layout.sample.SimpleFormToolbar"
 				]
 			},
 			{
@@ -173,9 +174,14 @@
 				"description": "This is an example of a dual-column layout using the SimpleForm control. On large screens a dual-column 4:8:0 layout (label:input:emptyspace) is used, on medium screens a dual-column 12:12:0 layout is used and on small screens a one-column 12:12:0 layout is used. In the second SimpleForm only one Container is used, but an empty column is displayed beside to be aligned with the first SimpleForm."
 			},
 			{
+				"id": "sap.ui.layout.sample.SimpleFormToolbar",
+				"name": "SimpleForm With Toolbar",
+				"description": "A SimpleForm that used Toolbars as Form header and FormContainer headers."
+			},
+			{
 				"id": "sap.ui.layout.sample.FormToolbar",
 				"name": "Form With Toolbar",
-				"description": "Unfortunately the form control has no toolbar. As remedy you can put the form inside a Panel that carries the toolbar."
+				"description": "A Form that used Toolbars as Form header and FormContainer headers."
 			},
 			{
 				"id": "sap.ui.layout.sample.FixFlexVertical",
