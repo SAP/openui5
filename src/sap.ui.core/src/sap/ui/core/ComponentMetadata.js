@@ -139,8 +139,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		this._convertLegacyMetadata(oStaticInfo, oManifest);
 
 		this._oStaticInfo = oStaticInfo;
-		
-		this._oManifest = new Manifest(oManifest, oStaticInfo.__metadataVersion === 2);
+
+		this._oManifest = new Manifest(oManifest, {
+			componentName: this._sComponentName,
+			baseUrl: jQuery.sap.getModulePath(this._sComponentName) + "/",
+			process: oStaticInfo.__metadataVersion === 2
+		});
 
 	};
 

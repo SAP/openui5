@@ -54,8 +54,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	/**
 	 * Utility function to access a child member by a given path
 	 * 
-	 * @param {object} Object
-	 * @param {string} Path starting with a slash (/)
+	 * @param {object} oObject Object
+	 * @param {string} sPath Path starting with a slash (/)
 	 * @return {any|null} value of a member specified by its path; 
 	 *         if the path doesn't start with a slash it returns the value for the given path of the object
 	 */
@@ -103,8 +103,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 *
 	 * @param {object}
 	 *            oManifest the manifest object
+	 * @param {object}
+	 *            [mOptions] (optional) the configuration options
+	 * @param {string}
+	 *            [mOptions.componentName] (optional) the name of the component
+	 * @param {string}
+	 *            [mOptions.baseUrl] (optional) the base URL which is used to resolve relative URLs against
 	 * @param {boolean}
-	 *            [bProcess=true] (optional) Flag whether the manifest object should be processed or not
+	 *            [mOptions.process=true] (optional) Flag whether the manifest object should be processed or not
 	 *            which means that the placeholders will be replaced with resource bundle values
 	 *
 	 *
@@ -121,12 +127,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 	{
 
-		constructor : function(oManifest, bProcess) {
+		constructor : function(oManifest, mOptions) {
 
 			BaseObject.apply(this, arguments);
 
+			// apply the manifest related values
 			this._oRawManifest = oManifest;
-			this._bProcess = !(bProcess === false);
+			this._bProcess = !(mOptions && mOptions.process === false);
+
+			// component name is passed via options (overrides the one defined in manifest)
+			this._sComponentName = mOptions && mOptions.componentName;
+
+			// resolve the base URL of the component depending of given base 
+			// URL or the module path of the component
+			var sComponentName = this.getComponentName(),
+			    sBaseUrl = mOptions && mOptions.baseUrl || sComponentName && jQuery.sap.getModulePath(sComponentName, "/");
+			if (sBaseUrl) {
+				this._oBaseUri = new URI(sBaseUrl).absoluteTo(new URI().search(""));
+			}
 
 			// make sure to freeze the raw manifest (avoid manipulations)
 			deepFreeze(this._oRawManifest);
@@ -159,7 +177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 					// only create a resource bundle if there is something to replace
 					if (!oResourceBundle) {
 						oResourceBundle = jQuery.sap.resources({
-							url: Manifest._resolveUri(new URI(sComponentRelativeI18nUri), that.getComponentName()).toString()
+							url: that.resolveUri(new URI(sComponentRelativeI18nUri)).toString()
 						});
 					}
 					return oResourceBundle.getText(s1);
@@ -295,11 +313,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 						// load javascript file
 						var m = sFile.match(/\.js$/i);
 						if (m) {
-							// prepend lib name to path, remove extension
-							var sPath = sComponentName.replace(/\./g, '/') + (sFile.slice(0, 1) === '/' ? '' : '/') + sFile.slice(0, m.index);
-							jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading JS: \"" + sPath + "\"");
+							//var sJsUrl = this.resolveUri(new URI(sFile.slice(0, m.index))).toString();
+							var sJsUrl = sComponentName.replace(/\./g, '/') + (sFile.slice(0, 1) === '/' ? '' : '/') + sFile.slice(0, m.index);
+							jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading JS: \"" + sJsUrl + "\"");
 							// call internal require variant that accepts a requireJS path
-							jQuery.sap._requirePath(sPath);
+							jQuery.sap._requirePath(sJsUrl);
 						}
 					}
 				}
@@ -311,7 +329,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 				for (var j = 0; j < aCSSResources.length; j++) {
 					var oCSSResource = aCSSResources[j];
 					if (oCSSResource.uri) {
-						var sCssUrl = Manifest._resolveUri(new URI(oCSSResource.uri), sComponentName).toString();
+						var sCssUrl = this.resolveUri(new URI(oCSSResource.uri)).toString();
 						jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading CSS: \"" + sCssUrl + "\"");
 						jQuery.sap.includeStyleSheet(sCssUrl, oCSSResource.id);
 					}
@@ -373,7 +391,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 */
 		defineResourceRoots: function() {
 			var mResourceRoots = this.getEntry("/sap.ui5/resourceRoots");
-			Manifest._registerResourceRoots(mResourceRoots, this.getComponentName());
+
+			if (mResourceRoots) {
+				for (var sResourceRoot in mResourceRoots) {
+					var sResourceRootPath = mResourceRoots[sResourceRoot];
+					var oResourceRootURI = new URI(sResourceRootPath);
+					if (oResourceRootURI.is("absolute") || (oResourceRootURI.path() && oResourceRootURI.path()[0] === "/")) {
+						jQuery.sap.log.error("Resource root for \"" + sResourceRoot + "\" is absolute and therefore won't be registered! \"" + sResourceRootPath + "\"", this.getComponentName());
+						continue;
+					}
+					sResourceRootPath = this.resolveUri(oResourceRootURI).toString();
+					jQuery.sap.registerModulePath(sResourceRoot, sResourceRootPath);
+				}
+			}
+
 		},
 
 
@@ -386,7 +417,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 */
 		getComponentName: function() {
 			var oRawJson = this.getRawJson();
-			return getObject(oRawJson, "/sap.ui5/componentName") || getObject(oRawJson, "/sap.app/id");
+			return this._sComponentName || getObject(oRawJson, "/sap.ui5/componentName") || getObject(oRawJson, "/sap.app/id");
+		},
+
+
+		/**
+		 * Resolves the given URI relative to the manifest.
+		 *
+		 * @param {URI} oUri URI to resolve
+		 * @return {URI} resolved URI
+		 * @private
+		 */
+		resolveUri: function(oUri) {
+			return Manifest._resolveUriRelativeTo(oUri, this._oBaseUri);
 		},
 
 
@@ -429,19 +472,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 
 	/**
-	 * Resolves the given URI relative to the component.
-	 *
-	 * @param {URI} oUri URI to resolve
-	 * @param {string} sComponentName Component name
-	 * @return {URI} resolved URI
-	 * @static
-	 * @private
-	 */
-	Manifest._resolveUri = function(oUri, sComponentName) {
-		return Manifest._resolveUriRelativeTo(oUri, new URI(jQuery.sap.getModulePath(sComponentName) + "/"));
-	};
-
-	/**
 	 * Resolves the given URI relative to the given base URI.
 	 *
 	 * @param {URI} oUri URI to resolve
@@ -459,45 +489,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		return oUri.absoluteTo(oBase).relativeTo(oPageBase);
 	};
 
-	/**
-	 * Registers the given resource roots configuration. Only relative paths 
-	 * are allowed here and will be registered. Other paths will be ignored.
-	 * 
-	 * @param {object} mResourceRoots the resource roots configuration (key=namespace; value=relative path)
-	 * @param {string} sComponentName the name of the component
-	 * 
-	 * @static
-	 * @private
-	 */
-	Manifest._registerResourceRoots = function(mResourceRoots, sComponentName) {
-
-		if (!mResourceRoots) {
-			return;
-		}
-
-		for (var sResourceRoot in mResourceRoots) {
-			var sResourceRootPath = mResourceRoots[sResourceRoot];
-			var oResourceRootURI = new URI(sResourceRootPath);
-			if (oResourceRootURI.is("absolute") || (oResourceRootURI.path() && oResourceRootURI.path()[0] === "/")) {
-				jQuery.sap.log.error("Resource root for \"" + sResourceRoot + "\" is absolute and therefore won't be registered! \"" + sResourceRootPath + "\"", sComponentName);
-				continue;
-			}
-			sResourceRootPath = Manifest._resolveUri(oResourceRootURI, sComponentName).toString();
-			jQuery.sap.registerModulePath(sResourceRoot, sResourceRootPath);
-		}
-
-	};
 
 	/**
 	 * Function to load the manifest by URL
 	 *
-	 * @param {string} sManifestUrl URL of the manifest
-	 * @param {boolean} [bAsync] Flag whether to load the manifest async or not (defaults to false)
-	 * @param {boolean} [bFailOnError] Flag whether to fail if an error occurs or not (defaults to true)
+	 * @param {object} mOptions the configuration options
+	 * @param {string} mOptions.manifestUrl URL of the manifest
+	 * @param {string} [mOptions.componentName] name of the component
+	 * @param {boolean} [mOptions.async] Flag whether to load the manifest async or not (defaults to false)
+	 * @param {boolean} [mOptions.failOnError] Flag whether to fail if an error occurs or not (defaults to true)
 	 * @return {sap.ui.core.Manifest|Promise} Manifest object or for asynchronous calls an ECMA Script 6 Promise object will be returned.
 	 * @protected
 	 */
-	Manifest.load = function fnLoadManifest(sManifestUrl, bAsync, bFailOnError) {
+	Manifest.load = function(mOptions) {
+		var sManifestUrl = mOptions && mOptions.manifestUrl,
+		    sComponentName = mOptions && mOptions.componentName,
+		    bAsync = mOptions && mOptions.async,
+		    bFailOnError = mOptions && mOptions.failOnError;
 		jQuery.sap.log.info("Loading manifest via URL: " + sManifestUrl);
 		var oManifestJSON = jQuery.sap.loadResource({
 			url: sManifestUrl,
@@ -510,10 +518,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		});
 		if (bAsync) {
 			return oManifestJSON.then(function(oManifestJSON) {
-				return new Manifest(oManifestJSON, false);
+				return new Manifest(oManifestJSON, {
+					componentName: sComponentName,
+					process: false
+				});
 			});
 		}
-		return new Manifest(oManifestJSON, false);
+		return new Manifest(oManifestJSON, {
+			componentName: sComponentName,
+			process: false
+		});
 	};
 
 	return Manifest;
