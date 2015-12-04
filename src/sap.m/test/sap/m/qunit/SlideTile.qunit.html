@@ -113,6 +113,31 @@
 		//Assert
 		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), false, "Class not available");
 	});
+
+	QUnit.module("Rendering - EmptyTile", {
+		beforeEach : function() {
+
+			//One empty tile
+			this.oEmptySlideTile = new sap.m.SlideTile("st-empty", {
+				displayTime : 500,
+				transitionTime : 0,
+				tiles : []
+			});
+
+			this.oEmptySlideTile.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach : function() {
+			this.oEmptySlideTile.destroy();
+			this.oEmptySlideTile = null;
+		}
+	});
+
+	QUnit.test("Empty tile displaying", function(assert) {
+		assert.ok(jQuery.sap.byId("st-empty").length !== 0, "empty tile is shown");
+	});
+
 </script>
 </head>
 <body id="body" class="sapUiBody">

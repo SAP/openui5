@@ -168,6 +168,9 @@
 		}
 	});
 
+	var oTileNoContent = new sap.m.SlideTile("st-noContent");
+
+
 	var oNewsSTLbl = new sap.m.Label({
 		text : "Example with news content",
 		labelFor : "st-news"
@@ -182,9 +185,14 @@
 		text : "Example with one tile",
 		labelFor : "st-one"
 	});
+
+	var oTileNoContLbl = new sap.m.Label({
+		text : "Example without content",
+		labelFor : "st-noContent"
+	});
 	var oDcContentForm = new sap.ui.layout.form.SimpleForm("st-content-form", {
 		maxContainerCols : 2,
-		content : [oNewsSTLbl, oNewsSlideTile, oOneSTLbl, oOneSlideTile, oFeedSTLbl, oFeedSlideTile]
+		content : [oNewsSTLbl, oNewsSlideTile, oOneSTLbl, oOneSlideTile, oFeedSTLbl, oFeedSlideTile, oTileNoContLbl, oTileNoContent]
 	});
 
 	var oPage = new sap.m.Page("initial-page", {
