@@ -3944,7 +3944,7 @@
 			});
 		};
 
-		oModel.attachMetadataLoaded(this, fnTest);
+		oModel.metadataLoaded().then(fnTest);
 	});
 
 	asyncTest("test oDataModel callFunction: Parameter without mode", function() {

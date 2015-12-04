@@ -940,7 +940,7 @@ function runODataAnnotationTests() {
 			// Metadata must be loaded before annotations
 			oModel.attachMetadataLoaded(function() {
 				bMetadataLoaded = true;
-				if (oModel.bLoadMetadataAsync && oModel.bLoadAnnotationsJoined){
+				if (oModel.bLoadAnnotationsJoined){
 					// Metadata loaded event is only fired after both metadata and annotations have been loaded successfully, so we can also set bAnnotationsloaded to true
 					bAnnotationsLoaded = true;
 				}
@@ -964,9 +964,7 @@ function runODataAnnotationTests() {
 				ok(false, 'Metadata promise rejected');
 			});
 		} else if (bServiceValid && sAnnotationsValid === "metadata") {
-			jQuery.when(internalMetadataDfd).done(function(){
-				fnOnLoaded("Both");
-			});
+			oModel.metadataLoaded().then(fnOnLoaded.bind(this, "Both"))
 		} else if (bServiceValid && sAnnotationsValid === "none"){
 				//internal metadata needs to be sucessful prior to the failed annotations
 				jQuery.when(internalMetadataDfd).done(function(){
@@ -3467,7 +3465,7 @@ function runODataAnnotationTests() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
 			ok(!!oMetadata, "Metadata is available.");
-			ok(!oAnnotations, "Annotations are not available...");
+			ok(!oAnnotations || Object.keys(oAnnotations).length === 0, "Annotations are not available...");
 
 			oModel.addAnnotationXML(sFirstAnnotations).then(function(mResults) {
 				ok(!!mResults.annotations, "First Annotations loaded...");
@@ -4667,6 +4665,7 @@ function runODataAnnotationTests() {
 	var fnTestOverwritingOnTermLevel = function(iModelVersion) {
 		expect(3);
 
+		cleanOdataCache();
 		var mTest = mAdditionalTestsServices["Overwrite on Term Level"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
 
@@ -4744,6 +4743,7 @@ function runODataAnnotationTests() {
 				"Correctly overwritten annotations: EntityContainer.ui5.test.NorthwindEntities"
 			);
 
+			oModel.destroy();
 			start();
 		});
 
@@ -4998,7 +4998,7 @@ function runODataAnnotationTests() {
 		oModel.attachMetadataLoaded(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
 
-			equals(Object.keys(oAnnotations).length, 0, "No Annotations loaded from service metadata");
+			equals(oAnnotations["NorthwindModel.Supplier"], undefined, "Annotations not loaded from service metadata");
 
 			oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
 				var oAnnotations = oModel.getServiceAnnotations();
