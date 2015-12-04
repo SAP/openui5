@@ -229,6 +229,26 @@ var mPredefinedServiceResponses = {
 					});
 					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
 					break;
+					
+				// Special function import for showing use of invalid targets 
+				case "fakeservice://testdata/odata/northwind/functionWithInvalidTarget":
+					iStatus = 204;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		Date.now(),
+						"message":	"This is FunctionImport specific message that will stay until the function is called again.",
+						"severity":	"error",
+						"target": "/PersistedMessages/functionWithInvalidTarget",
+						"details": [{
+							"code":		Date.now(),
+							"message":	"This is a message for '/Products(1)'.",
+							"severity":	"warning",
+							"target": "/Products(1)/SupplierID",
+						}]
+					});
+					mResponseHeaders["location"] = "fakeservice://testdata/odata/northwind/Products(1)";
+					sAnswer = "";
+					break;
 
 				default:
 					if (sUrl.startsWith(mServiceData["serviceUrl"])) {
@@ -1567,7 +1587,8 @@ mPredefinedServiceResponses.northwindMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">\
 	<edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0"\
-		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
+		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+		xmlns:sap="http://www.sap.com/Protocols/SAPData">\
 		<Schema Namespace="NorthwindModel" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
 			<EntityType Name="Category">\
 				<Key>\
@@ -2084,6 +2105,10 @@ mPredefinedServiceResponses.northwindMetadata = '\
 					</Dependent>\
 				</ReferentialConstraint>\
 			</Association>\
+			<EntityContainer Name="FunctionImports">\
+				<FunctionImport Name="functionWithInvalidTarget" m:HttpMethod="POST">\
+				</FunctionImport>\
+			</EntityContainer>\
 		</Schema>\
 		<Schema Namespace="ODataWebV3.Northwind.Model" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
 			<EntityContainer Name="NorthwindEntities" m:IsDefaultEntityContainer="true" p6:LazyLoadingEnabled="true"\
