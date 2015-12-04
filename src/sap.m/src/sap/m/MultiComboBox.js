@@ -310,24 +310,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	};
 
 	/**
-	 * Get the reference element which the message popup should dock to.
-	 *
-	 * @return {object} Dom Element which the message popup should dock to.
-	 * @since 1.26
-	 * @protected
-	 */
-	MultiComboBox.prototype.getDomRefForValueStateMessage = function() {
-		return this.getDomRef("border");
-	};
-
-	/**
 	 * Handle the focus in event.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
-		this.addStyleClass(this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Focused");
+		this.addStyleClass("sapMFocus");
 
 		if (oEvent.target === this.getOpenArea()) {
 			// force the focus to stay in the input field
@@ -765,9 +754,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		var that = this;
 
 		oPopover.open = function() {
-			var oDomRef = jQuery(that.getDomRef());
-			var oBorder = oDomRef.find(MultiComboBoxRenderer.DOT_CSS_CLASS_MULTICOMBOBOX + "Border");
-			return this.openBy(oBorder[0]);
+			return this.openBy(that);
 		};
 	};
 
@@ -1484,7 +1471,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
-		this.removeStyleClass(this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Focused");
+		this.removeStyleClass("sapMFocus");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
 	};
 

@@ -322,6 +322,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		ComboBoxBase.prototype.bShowLabelAsPlaceholder = sap.ui.Device.browser.msie;
 
 		/**
+		 * Gets the DOM reference the popup should be docked.
+		 *
+		 * @return {object}
+		 */
+		ComboBoxBase.prototype.getPopupAnchorDomRef = function() {
+			return this.getDomRef();
+		};
+
+		/**
+		 * Gets the DOM reference the message popup should be docked.
+		 *
+		 * @return {object}
+		 */
+		ComboBoxBase.prototype.getDomRefForValueStateMessage = function() {
+			return this.getDomRef();
+		};
+
+		/**
 		 * Hook method, can be used to add additional content to the control's picker popup.
 		 *
 		 * @param {sap.m.Dialog | sap.m.Popover} [oPicker]
