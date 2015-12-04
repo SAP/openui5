@@ -23,7 +23,6 @@ sap.ui.define([],
 	RadioButtonGroupRenderer.render = function(oRenderManager, oRBGroup) {
 		// convenience variable
 		var rm = oRenderManager;
-		oRBGroup.aRBs = oRBGroup.getButtons();
 
 		// Return immediately if control has no RadioButtons
 		if (!oRBGroup.aRBs) {
