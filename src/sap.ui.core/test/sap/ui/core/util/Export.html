@@ -30,27 +30,27 @@
 		</tr>
 		<tr class="data-source-json">
 			<td>Rows</td>
-			<td><input id="json-rows" value="10"/></td>
+			<td><input id="json-rows" value="10"></td>
 		</tr>
 		<tr class="data-source-json">
 			<td>Columns</td>
-			<td><input id="json-columns" value="4"/></td>
+			<td><input id="json-columns" value="4"></td>
 		</tr>
 		<tr class="data-source-odata" style="display:none">
 			<td>Service URL</td>
-			<td><input id="odata-service-url" value="../../../../../proxy/http/services.odata.org/Northwind/Northwind.svc/"/></td>
+			<td><input id="odata-service-url" value="../../../../../proxy/http/services.odata.org/Northwind/Northwind.svc/"></td>
 		</tr>
 		<tr class="data-source-odata" style="display:none">
 			<td>Collection</td>
-			<td><input id="odata-collection" value="Products"/></td>
+			<td><input id="odata-collection" value="Products"></td>
 		</tr>
 		<tr class="data-source-odata" style="display:none">
 			<td>Column name</td>
-			<td><input id="odata-column-name" value="Product Name"/></td>
+			<td><input id="odata-column-name" value="Product Name"></td>
 		</tr>
 		<tr class="data-source-odata" style="display:none">
 			<td>Column property</td>
-			<td><input id="odata-column-property" value="ProductName"/></td>
+			<td><input id="odata-column-property" value="ProductName"></td>
 		</tr>
 		<tr>
 			<td>Export type</td>
@@ -62,7 +62,7 @@
 		</tr>
 		<tr>
 			<td>Separator char</td>
-			<td><input id="separator-char" value="," maxlength="1"/></td>
+			<td><input id="separator-char" value="," maxlength="1"></td>
 		</tr>
 		<tr>
 			<td></td>
@@ -161,7 +161,7 @@ sap.ui.require(['jquery.sap.global', 'sap/ui/model/json/JSONModel', 'sap/ui/mode
 
 			oExport.generate()
 			.then(function(sFile) {
-				$("#result").html(sFile.replace(/\n/g, '<br/>'));
+				$("#result").html(sFile.replace(/\n/g, '<br>'));
 			})
 			.then(destroyExportObject, destroyExportObject);
 		});

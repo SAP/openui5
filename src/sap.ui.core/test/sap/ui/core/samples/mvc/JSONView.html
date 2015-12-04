@@ -45,7 +45,7 @@
 			var view = sap.ui.view({id:"myView",viewName:"sap.ui.core.mvctest.Test",type:sap.ui.core.mvc.ViewType.JSON});
 			view.placeAt("content");
 
-			var sJson = '{ "Type": "sap.ui.core.JSONView",	"controllerName":"sap.ui.core.mvctest.Test",	"content": [{"Type":"sap.ui.core.HTML","content":"<span>JSON view instantiated with JSON string:</span><br/>"},{		"Type":"sap.ui.commons.layout.MatrixLayout",		"rows": [{			"Type":"sap.ui.commons.layout.MatrixLayoutRow",			"cells": [{				"Type":"sap.ui.commons.layout.MatrixLayoutCell",				"content": [{					"Type":"sap.ui.commons.Button",					"text":"Button in Layout",					"press":"doIt"				}]			}]		}]	},	{		"Type":"sap.ui.commons.Panel",		"id":"myPanel",		"content":[{			"Type":"sap.ui.commons.Button",			"id":"Button1",			"text":"Button in Panel",			"press": "doIt"		},		{			"Type":"sap.ui.commons.Button",			"text":"Another Button for the Panel"		}]	},	{		"Type":"sap.ui.core.mvc.XMLView",		"id":"myViewEmbedded",		"viewName":"sap.ui.core.mvctest.Test2"	}]}';
+			var sJson = '{ "Type": "sap.ui.core.JSONView",	"controllerName":"sap.ui.core.mvctest.Test",	"content": [{"Type":"sap.ui.core.HTML","content":"<span>JSON view instantiated with JSON string:</span><br>"},{		"Type":"sap.ui.commons.layout.MatrixLayout",		"rows": [{			"Type":"sap.ui.commons.layout.MatrixLayoutRow",			"cells": [{				"Type":"sap.ui.commons.layout.MatrixLayoutCell",				"content": [{					"Type":"sap.ui.commons.Button",					"text":"Button in Layout",					"press":"doIt"				}]			}]		}]	},	{		"Type":"sap.ui.commons.Panel",		"id":"myPanel",		"content":[{			"Type":"sap.ui.commons.Button",			"id":"Button1",			"text":"Button in Panel",			"press": "doIt"		},		{			"Type":"sap.ui.commons.Button",			"text":"Another Button for the Panel"		}]	},	{		"Type":"sap.ui.core.mvc.XMLView",		"id":"myViewEmbedded",		"viewName":"sap.ui.core.mvctest.Test2"	}]}';
 			var view2 = sap.ui.view({id:"id2",viewContent:sJson, type:sap.ui.core.mvc.ViewType.JSON});
 			view2.placeAt("content2");
 			//var html = new sap.ui.core.HTML({content:"<&lt;span&gt;JSON view instantiated with JSON string:&lt;/span&gt;&lt;br/&gt;"});
@@ -60,7 +60,7 @@
 		<div id="functions"></div>
 		<hr/>
 		<div id="content"></div>
-		<br/>
+		<br>
 		<hr/>
 		<div id="content2"></div>
 	</body>

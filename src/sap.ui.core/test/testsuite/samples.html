@@ -136,7 +136,7 @@
 				var sText = sUrl;
 				if ( sText.length > 40 && sText.lastIndexOf('/') >= 0 )
 					sText = "..." + sText.slice(sText.lastIndexOf('/'));
-				oNewSampleDomRef.innerHTML = "<img style=\"border:none;vertical-align:middle;margin-right:2px;\" src='images/test.gif' />" + sText;
+				oNewSampleDomRef.innerHTML = "<img style=\"border:none;vertical-align:middle;margin-right:2px;\" src='images/test.gif'>" + sText;
 				oCustomSample.appendChild(oNewSampleDomRef);
 				/*
 				var oDeleteIcon = document.createElement("IMG");
@@ -189,7 +189,7 @@
 				content.push(" ref='", sUrl, "'");
 				content.push(" title='", sUrl, "'");
 				content.push(" onmousedown='return mouseDownLink(this);' onclick='return triggerLink(this);' id='" + sUrl + "' target='sap-ui-ContentWindow' >");
-				content.push("<img style=\"border:none;vertical-align:middle;margin-right:2px;\" src='images/test.gif' />");			
+				content.push("<img style=\"border:none;vertical-align:middle;margin-right:2px;\" src='images/test.gif'>");
 				content.push(name); 
 				content.push("</a></div>");
 			}				
@@ -209,7 +209,7 @@
 				}
 				content.push("\"/>");
 				if ( level == 0 ) {
-					content.push("<img style=\"border:none;vertical-align:middle;margin-right:4px;\" src='images/library.gif' />");			
+					content.push("<img style=\"border:none;vertical-align:middle;margin-right:4px;\" src='images/library.gif'>");
 				}
 				content.push("<span>", name, "</span>");  
 				content.push("<span class='matches'></span>");  
@@ -530,32 +530,32 @@
 		<div id="title" class="title">Test Navigation View</div>		
 		<div id="toolbar" class="toolbar" style="height:24px;display:;">
 		<!-- <span id="filter-count" style="float:right"></span> -->
-		<a href="javascript:clearFilter();" tabindex="3" ><img class="clickable" style="border:none;vertical-align:middle;margin-right:2px;float:right" src="images/delete.gif" /></a>
+		<a href="javascript:clearFilter();" tabindex="3" ><img class="clickable" style="border:none;vertical-align:middle;margin-right:2px;float:right" src="images/delete.gif"></a>
 		<input tabindex="2" id="filter" style="height:15px;width:8em;float:right" type="text" onkeyup="setSampleFilter(this)" title="Show only those samples whose name contains the given text">
 		<span style="height:20px;padding:3px 4px 3px 0px;float:right;">Filter: </span>
 		</div>
 		<div id="samples" class="border right scrollpanel" style="border:1px solid buttonshadow;">					
 				
 			<div id="library-tests-node" class='node section' onclick='toggleNode(this);'>
-				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif">
 				<span>Library Tests</span>
 				<span class="matches"></span>
 			</div>
 			<div id="library-tests" class="showdiv" style="padding-left:10px;" >
-				<img style="display:block;margin-left:auto;margin-right:auto;border:none;vertical-align:middle;" src="images/loading.gif" />
+				<img style="display:block;margin-left:auto;margin-right:auto;border:none;vertical-align:middle;" src="images/loading.gif">
 			</div>
 				
 			<div id="application-pages-node" class='node section' onclick='toggleNode(this);'>
-				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif">
 				<span>Application Pages</span>
 				<span class="matches"></span>
 			</div>
 			<div id="application-pages" class="showdiv" style="padding-left:10px;" >
-				<img style="display:block;margin-left:auto;margin-right:auto;border:none;vertical-align:middle;" src="images/loading.gif" />
+				<img style="display:block;margin-left:auto;margin-right:auto;border:none;vertical-align:middle;" src="images/loading.gif">
 			</div>
 
 			<div id="custom-tests-node" class='node section' onclick='toggleNode(this);'>
-				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif">
 				<span>Custom Tests</span>
 				<span class="matches"></span>
 			</div>
@@ -565,7 +565,7 @@
 			<div id="add-custom-test" style="padding-left:10px;margin-top:10px" >
 				<Label>URL to HTML resource:</Label> 
 				<div style="display:block">
-				<input id="sampleurl" value="" onkeydown="keydownUrl(this,event)" />
+				<input id="sampleurl" value="" onkeydown="keydownUrl(this,event)">
 				<button onclick="clickAdd()">Add</button><br>
 				</div>
 			</div>
