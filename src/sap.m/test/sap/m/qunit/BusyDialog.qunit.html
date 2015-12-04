@@ -103,10 +103,10 @@
 
 				//check the footer
 				assert.equal(jQuery(this.id + '-Dialog-footer').length, 1, 'should have Toolbar/footer rendered.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have CloseButton button rendered.');
+				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have CancelButton button rendered.');
 
 				//test the close button text
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'Abort', 'should have CloseButton text set properly.');
+				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'Abort', 'should have CancelButton text set properly.');
 			});
 
 			// =========================================================================================================
@@ -174,7 +174,7 @@
 
 			QUnit.test('Setting setShowCancelButton and CancelButton', function (assert) {
 				assert.equal(jQuery(this.id + '-Dialog-footer').length, 0, 'should not be rendered before being set.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 0, 'should not render CloseButton before being set.');
+				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 0, 'should not render CancelButton before being set.');
 
 				this.busyDialog.setCancelButtonText('test');
 				this.busyDialog.setShowCancelButton(false);
@@ -201,8 +201,8 @@
 				sap.ui.getCore().applyChanges();
 
 				assert.equal(jQuery(this.id + '-Dialog-footer').length, 1, 'should render the footer if the CancelButtonText is changed from an empty string.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have rendered CloseButton.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'test2', 'should have rendered CloseButton with the new text value.');
+				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have rendered CancelButton.');
+				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'test2', 'should have rendered CancelButton with the new text value.');
 			});
 
 			QUnit.test('Setting BusyIndicator properties', function (assert) {
@@ -255,9 +255,9 @@
 				assert.strictEqual(fnEventSpy.callCount, 1, 'should fire on calling the close() method.');
 				assert.strictEqual(isClosedByUser, false, 'should pass cancelPressed: false on closing by calling the close() method.');
 
-				this.busyDialog._getCloseButton().firePress();
-				assert.strictEqual(fnEventSpy.callCount, 2, 'should fire close event after pressing the CloseButton.');
-				assert.strictEqual(isClosedByUser, true, 'should pass cancelPressed: true on closing by pressing the CloseButton.');
+				this.busyDialog._getCancelButton().firePress();
+				assert.strictEqual(fnEventSpy.callCount, 2, 'should fire close event after pressing the CancelButton.');
+				assert.strictEqual(isClosedByUser, true, 'should pass cancelPressed: true on closing by pressing the CancelButton.');
 
 				//trigger esc press with jQuery
 				var esc = jQuery.Event("keydown", {keyCode: 27});
@@ -348,7 +348,7 @@
 		</script>
 	</head>
 	<body id='body' class='sapUiBody'>
-		<h1 id='qunit-header'>qUnit Page for sap.m.BusyDialogr</h1>
+		<h1 id='qunit-header'>qUnit Page for sap.m.BusyDialog</h1>
 
 		<h2 id='qunit-banner'></h2>
 
