@@ -6,7 +6,7 @@
 	background: @sapHCStandardBG;
 	border: 1px solid @sapHCStandardFG;
 	.sapMTSLeftOverflowButtons {
-		background: linear-gradient(90deg, @sapHCStandardBG 0%, @sapHCStandardBG 75%, transparent 100%);
+		background: linear-gradient(90deg, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%);
 		.sapMBtn {
 			.sapMBtnInner  {
 				.sapUiIcon {
@@ -61,7 +61,7 @@
 		}
 	}
 	.sapMTSRightOverflowButtons {
-		background: linear-gradient(90deg,  transparent  0%,  @sapHCStandardBG  25%, @sapHCStandardBG 100%);
+		background: linear-gradient(90deg,  fade(@sapHCStandardBG, 0)  0%,  @sapHCStandardBG  25%, @sapHCStandardBG 100%);
 		.sapMBtn {
 			.sapMBtnInner  {
 				.sapUiIcon {
