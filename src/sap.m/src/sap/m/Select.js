@@ -707,8 +707,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			// rendering phase is started
 			this._bRenderingPhase = true;
 
-			// note: in IE11 and Firefox 38, the focusout event is not fired when the select is removed
-			if (this.getFocusDomRef() === document.activeElement) {
+			// note: in Firefox 38, the focusout event is not fired when the select is removed
+			if (sap.ui.Device.browser.firefox && (this.getFocusDomRef() === document.activeElement)) {
 				this._handleFocusout();
 			}
 
