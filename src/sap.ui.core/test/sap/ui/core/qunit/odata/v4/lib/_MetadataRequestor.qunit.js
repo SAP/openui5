@@ -3,9 +3,10 @@
  */
 sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/test/TestUtils"
-], function (Helper, MetadataRequestor, TestUtils) {
+], function (Helper, MetadataConverter, MetadataRequestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -80,7 +81,7 @@ sap.ui.require([
 				method : "GET"
 			}).returns(createMock(oExpectedXml));
 
-		this.oSandbox.mock(Helper).expects("convertXMLMetadata")
+		this.oSandbox.mock(MetadataConverter).expects("convertXMLMetadata")
 			.withExactArgs(sinon.match.same(oExpectedXml))
 			.returns(oExpectedJson);
 
