@@ -45,7 +45,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * Model implementation for oData format
 	 * Binding to V4 metadata annotations is experimental!
 	 *
-	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -53,6 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.odata.ODataModel
+	 * @extends sap.ui.model.Model
 	 */
 	var ODataModel = Model.extend("sap.ui.model.odata.ODataModel", /** @lends sap.ui.model.odata.ODataModel.prototype */ {
 
