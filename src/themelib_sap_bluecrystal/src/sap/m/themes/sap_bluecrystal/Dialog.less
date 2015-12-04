@@ -1,14 +1,10 @@
 .sapMDialog {
-	background: @sapUiGroupContentBackground;
+	background: darken(@sapUiGroupContentBackground, 2);
 	border: solid 1px @sapUiContentForegroundBorderColor;
 	border-radius: 2px;
 	box-shadow: 0 0 30px 2px fade(@sapUiDarkShadowTint, 15);
 	-moz-box-shadow: 0 0 30px 2px fade(@sapUiDarkShadowTint, 15);
 	-webkit-box-shadow: 0 0 30px 2px fade(@sapUiDarkShadowTint, 15);
-
-	.sapMDialogSection {
-		background: darken(@sapUiGroupContentBackground, 2);
-	}
 }
 
 .sapMMessageDialog.sapMPopup-CTX > header.sapMDialogTitle {
