@@ -635,6 +635,8 @@
 				ok(oIconTabHeader.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
 				ok(!oIconTabHeader.getItems()[1].$().hasClass("sapMITBFilter"), "IconTabSeparator does not have class sapMITBFilter");
 
+				ok(oIconTabHeader.getItems()[0].$().hasClass("sapMITBSelected"), "First IconTabBarFilter has class sapMITBSelected");
+
 				// Clean up
 				oIconTabHeader.destroy();
 			});
