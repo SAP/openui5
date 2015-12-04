@@ -8,30 +8,83 @@
 
 @sapUiSltBtnInnerSize: 1.25rem;
 
-.sapMSltPressed .sapMSltIcon {
-  color: white;
-}
 
 .sapMSltInvisible {
-  visibility: hidden;
-}
-.sapMSlt.sapMTabSelect {
-  width: @sapUiSltBtnInnerSize;
-  height: @sapUiSltBtnInnerSize;
-  background: transparent;
-  float: left; /* ToDo: this is needed for the tabstrip layout but may be optional? */
+	visibility: hidden;
 }
 
-.sapMSlt.sapMTabSelect {
-  border-radius: 0.3125em;
-  border: none;
-  text-align: center;
-  vertical-align: middle;
+.sapMSlt.sapMTabStripSelect span {
+	font-size: 0.75rem;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	line-height: 1.25rem;
 }
-.sapMSlt.sapMTabSelect span {
-  font-size: 0.75rem;
-  padding: 0;
-  height: 100%;
-  width:  100%;
-  line-height: @sapUiSltBtnInnerSize;
+
+
+.sapMSlt.sapMTabStripSelect {
+	width: @sapUiSltBtnInnerSize;
+	height: @sapUiSltBtnInnerSize;
+	float: left;
+
+	border-radius: 0.3125em;
+	border: none;
+	text-align: center;
+	vertical-align: middle;
+
+	position: relative;
+	float: left;
+
+	width: 2rem;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+
+	.sapMSltInner {
+		position: relative;
+
+		width: 1.625rem;
+		height: 1.625rem;
+
+		.sapMSltIcon {
+			position: absolute;
+			top: 0;
+			left: 0;
+
+			height: 100%;
+			width: 100%;
+		}
+
+		.sapUiIcon:before {
+			position: relative;
+			top: 0.2rem;
+		}
+	}
+}
+
+.sap-phone {
+
+.sapMSlt.sapMTabStripSelect span {
+	height: 3rem;
+	width: 2rem;
+	line-height: 3rem;
+	padding-right: 0.25rem
+}
+
+	.sapMSlt.sapMTabStripSelect {
+		.sapMSltLabel {
+			line-height: 3rem;
+		}
+		.sapMSltInner {
+			position: static;
+			width: 2rem;
+			height: 3rem;
+		}
+		height: 3rem;
+		width: 100%;
+		margin: 0;
+		padding: 0 0 0 1rem;
+		text-align: left;
+		box-shadow: none;
+	}
 }
