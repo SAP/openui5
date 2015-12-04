@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/SplitContainer"
 ], function (JSONModel, Controller, Device, SplitContainer) {
 	"use strict";
-	return Controller.extend("sap.uxap.sample.ObjectPageWithIconTabBar.ObjectPageWithIconTabBar", {
+	return Controller.extend("sap.uxap.sample.ObjectPageTabNavigationMode.ObjectPageTabNavigationMode", {
 		onInit: function () {
 			//by default we always show the master
 			if (Device.system.desktop) {
@@ -22,7 +22,7 @@ sap.ui.define([
 				}
 			}
 
-			var oJsonModel = new sap.ui.model.json.JSONModel("./test-resources/sap/uxap/demokit/sample/ObjectPageWithIconTabBar/HRData.json");
+			var oJsonModel = new sap.ui.model.json.JSONModel("./test-resources/sap/uxap/demokit/sample/ObjectPageTabNavigationMode/HRData.json");
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
 		},
 		onBeforeRendering: function () {
