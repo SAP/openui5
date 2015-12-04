@@ -593,7 +593,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		// listen to localization change event to update the lang info
 		this.attachLocalizationChanged(fnUpdateLangAttr, this);
 	};
-	
+
 	/**
 	 * Set the body's Animation-related attribute and configures jQuery accordingly.
 	 * @param $html - jQuery wrapped html object
@@ -601,7 +601,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 	Core.prototype._setupAnimation = function($html) {
 		$html = $html || jQuery("html");
-		
+
 		var bAnimation = this.oConfiguration.getAnimation();
 		$html.attr("data-sap-ui-animation", bAnimation ? "on" : "off");
 		jQuery.fx.off = !bAnimation;
@@ -2097,26 +2097,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @private
 	 */
 	Core.prototype.registerElement = function(oElement) {
-		var oldElement = this.byId(oElement.getId());
+
+		var sId = oElement.getId(),
+			oldElement = this.mElements[sId];
+
 		if ( oldElement && oldElement !== oElement ) {
 			if ( oldElement._sapui_candidateForDestroy ) {
 				jQuery.sap.log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
 				oldElement.destroy();
-				oldElement = null;
-			}
-		}
-		if ( oldElement && oldElement !== oElement ) {
-
-			// duplicate ID detected => fail or at least log a warning
-			if (this.oConfiguration.getNoDuplicateIds()) {
-				jQuery.sap.log.error("adding element with duplicate id '" + oElement.getId() + "'");
-				throw new Error("Error: adding element with duplicate id '" + oElement.getId() + "'");
 			} else {
-				jQuery.sap.log.warning("adding element with duplicate id '" + oElement.getId() + "'");
+				// duplicate ID detected => fail or at least log a warning
+				if (this.oConfiguration.getNoDuplicateIds()) {
+					jQuery.sap.log.error("adding element with duplicate id '" + sId + "'");
+					throw new Error("Error: adding element with duplicate id '" + sId + "'");
+				} else {
+					jQuery.sap.log.warning("adding element with duplicate id '" + sId + "'");
+				}
 			}
 		}
 
-		this.mElements[oElement.getId()] = oElement;
+		this.mElements[sId] = oElement;
+
 	};
 
 	/**

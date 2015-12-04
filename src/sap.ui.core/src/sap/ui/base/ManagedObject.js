@@ -18,6 +18,8 @@ sap.ui.define([
 
 	"use strict";
 
+	// shortcut for the sap.ui.core.ID type
+	var IDType;
 
 	/**
 	 * Constructs and initializes a managed object with the given <code>sId</code> and settings.
@@ -66,8 +68,9 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] id for the new managed object; generated automatically if no non-empty id is given
 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
-	 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new object
-	 * @param {object} [oScope] scope object for resolving string based type and formatter references in bindings
+	 * @param {object} [mSettings] Optional map/JSON-object with initial property values, aggregated objects etc. for the new object
+	 * @param {object} [oScope] Scope object for resolving string based type and formatter references in bindings.
+	 *      When a scope object is given, <code>mSettings</code> cannot be omitted, at least <code>null</code> or an empty object literal must be given.
 	 *
 	 *
 	 * @class Base Class that introduces some basic concepts like state management or databinding.
@@ -355,24 +358,22 @@ sap.ui.define([
 
 		constructor : function(sId, mSettings, oScope) {
 
+			var that = this;
+
 			EventProvider.call(this); // no use to pass our arguments
-			if (typeof (sId) != "string" && arguments.length > 0) {
+			if ( typeof sId !== 'string' && sId !== undefined ) {
 				// shift arguments in case sId was missing, but mSettings was given
 				oScope = mSettings;
 				mSettings = sId;
-				if (mSettings && mSettings.id) {
-					sId = mSettings["id"];
-				} else {
-					sId = null;
-				}
+				sId = mSettings && mSettings.id;
 			}
 
 			if (!sId) {
-				sId = this.getMetadata().uid() || jQuery.sap.uid();
+				sId = this.getMetadata().uid();
 			} else {
 				var preprocessor = ManagedObject._fnIdPreprocessor;
 				sId = (preprocessor ? preprocessor.call(this, sId) : sId);
-				var oType = DataType.getType("sap.ui.core.ID");
+				var oType = IDType || (IDType = DataType.getType("sap.ui.core.ID"));
 				if (!oType.isValid(sId)) {
 					throw new Error("\"" + sId + "\" is not a valid ID.");
 				}
@@ -384,7 +385,6 @@ sap.ui.define([
 			this.mProperties = this.getMetadata().createPropertyBag();
 			this.mAggregations = {};
 			this.mAssociations = {};
-			this.mMethods = {};
 
 			// private properties
 			this.oParent = null;
@@ -409,37 +409,40 @@ sap.ui.define([
 
 			// make sure that the object is registered before initializing
 			// and to deregister the object in case of errors
-			try {
+			(function() {
 
-				// registers the object in the Core
-				if (this.register) {
-					this.register();
+				try {
+					// registers the object in the Core
+					if (that.register) {
+						that.register();
+					}
+
+					// TODO: generic concept for init hooks?
+					if ( that._initCompositeSupport ) {
+						that._initCompositeSupport(mSettings);
+					}
+
+					// Call init method here instead of specific Controls constructor.
+					if (that.init) {
+						that.init();
+					}
+
+					// apply the settings
+					that.applySettings(mSettings, oScope);
+
+				} catch (ex) {
+
+					// unregisters the object in the Core
+					if (that.deregister) {
+						that.deregister();
+					}
+
+					// forward the exception
+					throw ex;
+
 				}
 
-				// TODO: generic concept for init hooks?
-				if ( this._initCompositeSupport ) {
-					this._initCompositeSupport(mSettings);
-				}
-
-				// Call init method here instead of specific Controls constructor.
-				if (this.init) {
-					this.init();
-				}
-
-				// apply the settings
-				this.applySettings(mSettings, oScope);
-
-			} catch (ex) {
-
-				// unregisters the object in the Core
-				if (this.deregister) {
-					this.deregister();
-				}
-
-				// forward the exception
-				throw ex;
-
-			}
+			}());
 
 		}
 
@@ -809,7 +812,7 @@ sap.ui.define([
 		function addAllToAggregation(aObjects) {
 			for (var i = 0, len = aObjects.length; i < len; i++) {
 				var vObject = aObjects[i];
-				if ( jQuery.isArray(vObject) ) {
+				if ( Array.isArray(vObject) ) {
 					addAllToAggregation(vObject);
 				} else {
 					that[oKeyInfo._sMutator](makeObject(vObject, oKeyInfo, oScope));
@@ -832,7 +835,6 @@ sap.ui.define([
 					this.setModel(mSettings.models[sKey], sKey === "undefined" ? undefined : sKey);
 				}
 			}
-			delete mSettings.models;
 		}
 		//process BindingContext
 		if ( mSettings.bindingContexts ) {
@@ -846,7 +848,6 @@ sap.ui.define([
 					this.setBindingContext(mSettings.bindingContexts[sKey], sKey === "undefined" ? undefined : sKey);
 				}
 			}
-			delete mSettings.bindingContexts;
 		}
 		//process object bindings
 		if ( mSettings.objectBindings ) {
@@ -861,7 +862,6 @@ sap.ui.define([
 					this.bindObject(mSettings.objectBindings[sKey]);
 				}
 			}
-			delete mSettings.objectBindings;
 		}
 
 		// process all settings
@@ -885,7 +885,7 @@ sap.ui.define([
 					if ( oBindingInfo && typeof oBindingInfo === "object" ) {
 						this.bindProperty(sKey, oBindingInfo);
 					} else {
-						if (jQuery.isArray(oValue)){
+						if (Array.isArray(oValue)){
 							// assumption: we have an extensionPoint here which is always an array, even if it contains a single control
 							if (oValue.length > 1){
 								jQuery.sap.log.error("Tried to add an array of controls to a single aggregation");
@@ -902,7 +902,11 @@ sap.ui.define([
 					} else {
 						oValue = oBindingInfo || oValue; // could be an unescaped string if altTypes contains 'string'
 						if ( oValue ) {
-							addAllToAggregation(jQuery.isArray(oValue) ? oValue : [oValue]); // wrap a single object as array
+							if ( Array.isArray(oValue) ) {
+								addAllToAggregation(oValue); // wrap a single object as array
+							} else {
+								that[oKeyInfo._sMutator](makeObject(oValue, oKeyInfo, oScope));
+							}
 						}
 					}
 					break;
@@ -910,12 +914,13 @@ sap.ui.define([
 					this[oKeyInfo._sMutator](oValue);
 					break;
 				case 4: // MULTIPLE_ASSOCIATION
-					if ( oValue && !jQuery.isArray(oValue) ) {
-						oValue = [oValue];
-					}
 					if ( oValue ) {
-						for (var i = 0,l = oValue.length; i < l; i++) {
-							this[oKeyInfo._sMutator](oValue[i]);
+						if ( Array.isArray(oValue) ) {
+							for (var i = 0,l = oValue.length; i < l; i++) {
+								this[oKeyInfo._sMutator](oValue[i]);
+							}
+						} else {
+							this[oKeyInfo._sMutator](oValue);
 						}
 					}
 					break;
@@ -1019,14 +1024,15 @@ sap.ui.define([
 		// check whether property is bound and update model in case of two way binding
 		this.updateModelProperty(sPropertyName, oValue, oOldValue);
 
-		// prototype for generic property change events
-		// TODO: THINK ABOUT CONFIGURATION TO ENABLE THIS
-		EventProvider.prototype.fireEvent.call(this, "_change", {
-			"id": this.getId(),
-			"name": sPropertyName,
-			"oldValue": oOldValue,
-			"newValue": oValue
-		});
+		// fire property change event (experimental, only for internal use)
+		if ( this.mEventRegistry["_change"] ) {
+			EventProvider.prototype.fireEvent.call(this, "_change", {
+				"id": this.getId(),
+				"name": sPropertyName,
+				"oldValue": oOldValue,
+				"newValue": oValue
+			});
+		}
 
 		// reset suppress invalidate flag
 		if (bSuppressInvalidate) {
@@ -2301,7 +2307,7 @@ sap.ui.define([
 	 * @param {object} [vPath.parameters] map of additional parameters for this binding
 	 * @param {string} [vPath.model] name of the model
 	 * @param {object} [vPath.events] map of event listeners for the binding events
-	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string). 
+	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string).
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
@@ -2468,15 +2474,9 @@ sap.ui.define([
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
-	ManagedObject.prototype.bindProperty = function(sName, oBindingInfo) {
-		var sPath,
-			oFormat,
-			sMode,
-			fnFormatter,
-			oType,
-			iSeparatorPos,
+	ManagedObject.prototype.bindProperty = function(sName, oBindingInfo, /* undocumented, old API only: */ _vFormat, _sMode) {
+		var iSeparatorPos,
 			bAvailable = true,
-			that = this,
 			oProperty = this.getMetadata().getPropertyLikeSetting(sName);
 
 		// check whether property or alternative type on aggregation exists
@@ -2484,19 +2484,16 @@ sap.ui.define([
 			throw new Error("Property \"" + sName + "\" does not exist in " + this);
 		}
 
-		// old API compatbility (sName, sPath, oFormat, sMode)
+		// old API compatbility (sName, sPath, _vFormat, _sMode)
 		if (typeof oBindingInfo == "string") {
-			sPath = arguments[1];
-			oFormat = arguments[2];
-			sMode = arguments[3];
-
-			// find out whether formatter or type has been provided
-			if (typeof oFormat == "function") {
-				fnFormatter = oFormat;
-			} else if (oFormat instanceof Type) {
-				oType = oFormat;
-			}
-			oBindingInfo = {formatter: fnFormatter, parts : [ {path: sPath, type: oType, mode: sMode} ]};
+			oBindingInfo = {
+				parts: [ {
+					path: oBindingInfo,
+					type: _vFormat instanceof Type ? _vFormat : undefined,
+					mode: _sMode
+				} ],
+				formatter: typeof _vFormat === 'function' ? _vFormat : undefined
+			};
 		}
 
 		// only one binding object with one binding specified
@@ -2515,11 +2512,14 @@ sap.ui.define([
 			delete oBindingInfo.model;
 		}
 
-		jQuery.each(oBindingInfo.parts, function(i, oPart) {
+		for ( var i = 0; i < oBindingInfo.parts.length; i++ ) {
+
+			var oPart = oBindingInfo.parts[i];
 			if (typeof oPart == "string") {
 				oPart = { path: oPart };
 				oBindingInfo.parts[i] = oPart;
 			}
+
 			// if a model separator is found in the path, extract model name and path
 			iSeparatorPos = oPart.path.indexOf(">");
 			if (iSeparatorPos > 0) {
@@ -2531,11 +2531,11 @@ sap.ui.define([
 				oPart.mode = BindingMode.OneWay;
 			}
 
-			if (!that.getModel(oPart.model)) {
+			if (!this.getModel(oPart.model)) {
 				bAvailable = false;
 			}
 
-		});
+		}
 
 		// if property is already bound, unbind it first
 		if (this.isBound(sName)) {
@@ -2833,7 +2833,7 @@ sap.ui.define([
 	 * @param {number} oBindingInfo.length the amount of entries to be created (may exceed the sizelimit of the model)
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [oBindingInfo.sorter] the initial sort order (optional)
 	 * @param {sap.ui.model.Filter[]} [oBindingInfo.filters] the predefined filters for this aggregation (optional)
-	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding. 
+	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding.
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ListBinding</code> or <code>sap.ui.model.TreeBinding</code>.
 	 * @param {function} [oBindingInfo.groupHeaderFactory] a factory function to generate custom group visualization (optional)
 	 *
@@ -3154,7 +3154,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype.updateBindings = function(bUpdateAll, sModelName) {
-		var that = this;
+		var that = this,
+			sName,
+			oBindingInfo;
 
 		/*
 		 * Checks whether the binding for the given oBindingInfo became invalid because
@@ -3210,7 +3212,9 @@ sap.ui.define([
 		}
 
 		// create property and aggregation bindings if they don't exist yet
-		jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+		for ( sName in this.mBindingInfos ) {
+
+			oBindingInfo = this.mBindingInfos[sName];
 
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
@@ -3226,13 +3230,13 @@ sap.ui.define([
 			// if there is no binding and if all required information is available, create a binding object
 			if ( !oBindingInfo.binding && canCreate(oBindingInfo) ) {
 				if (oBindingInfo.factory) {
-					that._bindAggregation(sName, oBindingInfo);
+					this._bindAggregation(sName, oBindingInfo);
 				} else {
-					that._bindProperty(sName, oBindingInfo);
+					this._bindProperty(sName, oBindingInfo);
 				}
 			}
 
-		});
+		}
 
 	};
 
@@ -3344,8 +3348,9 @@ sap.ui.define([
 			oModelNames = {},
 			sModelName,
 			oContext,
+			sName,
 			oBoundObject,
-			that = this;
+			i;
 
 		// find models that need an context update
 		if (bUpdateAll) {
@@ -3363,7 +3368,6 @@ sap.ui.define([
 			oModelNames[sFixedModelName] = sFixedModelName;
 		}
 
-		/*eslint-disable no-loop-func */
 		for (sModelName in oModelNames ) {
 			if ( oModelNames.hasOwnProperty(sModelName) ) {
 				sModelName = sModelName === "undefined" ? undefined : sModelName;
@@ -3381,44 +3385,47 @@ sap.ui.define([
 					}
 					continue;
 				}
+
+				oContext = this.getBindingContext(sModelName);
+
 				// update context in existing bindings
-				jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-					var oBinding = oBindingInfo.binding;
-					var aParts = oBindingInfo.parts,
-						i;
+				for ( sName in this.mBindingInfos ){
+					var oBindingInfo = this.mBindingInfos[sName],
+						oBinding = oBindingInfo.binding,
+						aParts = oBindingInfo.parts;
+
 					if (!oBinding) {
-						return;
+						continue;
 					}
 					if (aParts && aParts.length > 1) {
 						// composite binding: update required  when a part use the model with the same name
 						for (i = 0; i < aParts.length; i++) {
 							if ( aParts[i].model == sModelName ) {
-								oBinding.aBindings[i].setContext(that.getBindingContext(aParts[i].model));
+								oBinding.aBindings[i].setContext(oContext);
 							}
 						}
 					} else if (oBindingInfo.factory) {
 						// list binding: update required when the model has the same name (or updateall)
 						if ( oBindingInfo.model == sModelName) {
-							oBinding.setContext(that.getBindingContext(oBindingInfo.model));
+							oBinding.setContext(oContext);
 						}
 
 					} else {
 						// simple property binding: update required when the model has the same name
 						if ( aParts[0].model == sModelName) {
-							oBinding.setContext(that.getBindingContext(aParts[0].model));
+							oBinding.setContext(oContext);
 						}
 					}
-				});
+				}
 				if (!bSkipChildren) {
-					var oContext = this.getBindingContext(sModelName);
 					// also update context in all child elements
-					for (var sName in this.mAggregations) {
+					for ( sName in this.mAggregations ) {
 						var oAggregation = this.mAggregations[sName];
 						if (oAggregation instanceof ManagedObject) {
 							oAggregation.oPropagatedProperties.oBindingContexts[sModelName] = oContext;
 							oAggregation.updateBindingContext(false,false,sModelName);
 						} else if (oAggregation instanceof Array) {
-							for (var i = 0; i < oAggregation.length; i++) {
+							for (i = 0; i < oAggregation.length; i++) {
 								oAggregation[i].oPropagatedProperties.oBindingContexts[sModelName] = oContext;
 								oAggregation[i].updateBindingContext(false,false,sModelName);
 							}
@@ -3427,7 +3434,7 @@ sap.ui.define([
 				}
 			}
 		}
-		/*eslint-enable no-loop-func */
+
 	};
 
 
@@ -3700,12 +3707,16 @@ sap.ui.define([
 			sKey,
 			sName,
 			oClone,
-			escape = ManagedObject.bindingParser.escape;
+			escape = ManagedObject.bindingParser.escape,
+			i;
 
 		// Clone properties (only those with non-default value)
-		for (sKey in mProps) {
+		var aKeys = Object.keys(mProps);
+		i = aKeys.length;
+		while ( i > 0 ) {
+			sKey = aKeys[--i];
 			//do not clone properties if property is bound and bindings are cloned; Property is set on update
-			if ( mProps.hasOwnProperty(sKey) && !(this.isBound(sKey) && bCloneBindings)) {
+			if ( /*mProps.hasOwnProperty(sKey) && */ !(this.isBound(sKey) && bCloneBindings)) {
 				// Note: to avoid double resolution of binding expressions, we have to escape string values once again
 				if (typeof mProps[sKey] === "string") {
 					mSettings[sKey] = escape(mProps[sKey]);
