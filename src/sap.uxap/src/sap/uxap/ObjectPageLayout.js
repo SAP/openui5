@@ -1346,37 +1346,27 @@ sap.ui.define([
 		}
 
 		var iScrollPageBottom = iScrollTop + iPageHeight,                 //the bottom limit
-			iMin = this._$contentContainer.height() - this.iScreenHeight, // scroll limit
 			sClosestId;
 
-		if (this._bHContentAlwaysExpanded) {
-			iMin += this.iStickyHeaderContentHeight + this.iHeaderTitleHeight + this.iAnchorBarHeight;
-		} else if (!this.iHeaderContentHeight) {
-			iMin += this.iHeaderTitleHeightStickied;
-		}
-
-		// find the closest section
-		jQuery.each(this._oSectionInfo, jQuery.proxy(function (sId, oInfo) {
-			// on desktop/tablet, find a section, not a subsection
+		jQuery.each(this._oSectionInfo, function (sId, oInfo) {
+			// on desktop/tablet, skip subsections
 			if (oInfo.isSection || this._bMobileScenario) {
-
 				//we need to set the sClosest to the first section for handling the scrollTop = 0
 				if (!sClosestId) {
 					sClosestId = sId;
 				}
 
-				//find closest
-				// 1D segment intersection
+				// current section/subsection is inside the view port
 				if (oInfo.positionTop <= iScrollPageBottom && iScrollTop <= oInfo.positionBottom) {
-					// find the closest section: the sections that intersect the visible page and that ends the closest to iScrollTop
-					if (oInfo.positionBottom - iScrollTop < iMin) {
+					// scrolling position is over current section/subsection
+					if (oInfo.positionTop <= iScrollTop && oInfo.positionBottom >= iScrollTop) {
 						sClosestId = sId;
-						iMin = oInfo.positionBottom - iScrollTop;
+						return false;
 					}
 				}
 			}
 
-		}, this));
+		}.bind(this));
 
 		return sClosestId;
 	};
