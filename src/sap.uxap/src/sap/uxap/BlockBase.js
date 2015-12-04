@@ -481,11 +481,14 @@ sap.ui.define([
 			return oView;
 		};
 
+		// This offset is needed so the breakpoints of the simpleForm match those of the GridLayout
+		BlockBase.FORM_ADUSTMENT_OFFSET = 24;
+
 		BlockBase._FORM_ADJUSTMENT_CONST = {
 			breakpoints: {
-				XL: Device.media._predefinedRangeSets.StdExt.points[2],
-				L: Device.media._predefinedRangeSets.StdExt.points[1],
-				M: Device.media._predefinedRangeSets.StdExt.points[0]
+				XL: Device.media._predefinedRangeSets.StdExt.points[2] - BlockBase.FORM_ADUSTMENT_OFFSET,
+				L: Device.media._predefinedRangeSets.StdExt.points[1] - BlockBase.FORM_ADUSTMENT_OFFSET,
+				M: Device.media._predefinedRangeSets.StdExt.points[0] - BlockBase.FORM_ADUSTMENT_OFFSET
 			},
 			labelSpan: {
 				/* values specified by design requirement */
