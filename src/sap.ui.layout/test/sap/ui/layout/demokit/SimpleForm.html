@@ -7,17 +7,16 @@
 		<title>SimpleForm - SAPUI5 Demo Kit</title>
 		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
 		<script id="sap-ui-bootstrap"
-				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.layout,sap.ui.commons,sap.ui.demokit"
 				data-sap-ui-language="en"
 				>
 		</script>
-		<script type="text/javascript">sap.ui.demokit._supportedThemes = ["sap_goldreflection", "sap_hcb"];</script>
-		<script type="text/javascript" src="../../../../../js/utils.js"></script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_goldreflection", "sap_hcb"];</script>
+		<script src="../../../../../js/utils.js"></script>
 
-		<script id='samplescript1' type="text/javascript">
+		<script id='samplescript1'>
 var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 	"sf1",
 	{
@@ -63,7 +62,7 @@ var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 	}).placeAt("sample1");
 		</script>
 
-		<script id='samplescript2' type="text/javascript">
+		<script id='samplescript2'>
 var html =	'<template>' +
 		'<div data-sap-ui-type="sap.ui.layout.form.SimpleForm" id="sf2" data-editable="true">' +
 		'<div data-sap-ui-type="sap.ui.core.Title" id="T1" data-text="Person"></div>' +
