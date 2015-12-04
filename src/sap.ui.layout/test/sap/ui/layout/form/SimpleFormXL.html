@@ -16,35 +16,10 @@
 	</style>
 
 	<script type="text/javascript">
-		var oButton1 = new sap.m.Button("B1",{
-			text: "ResponsiveLayout",
-			press: function(oEvent){
-					var oSimpleForm = sap.ui.getCore().byId("SF1");
-					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);
-			
-				}
-			}).placeAt("button");
-		var oButton2 = new sap.m.Button("B2",{
-			text: "Grid layout",
-			press: function(oEvent){
-					var oSimpleForm = sap.ui.getCore().byId("SF1");
-					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.GridLayout);
-			
-				}
-			}).placeAt("button");
-		var oButton3 = new sap.m.Button("B3",{
-			text: "Grid",
-			press: function(oEvent){
-					var oSimpleForm = sap.ui.getCore().byId("SF1");
-					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
-			
-				}
-			}).placeAt("button");
 
 		var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 				"SF1",
 				{
-					minWidth : 1024,
 					columnsXL: 3,
 					maxContainerCols: 3,
 					editable: true,
@@ -54,7 +29,7 @@
 					        new sap.m.Input("I1",{value:"Value 1"}),
 					        new sap.m.Label({text:"Label 2"}),
 					        new sap.m.Input("I2",{value:"Value 2/1"}),
-					        new sap.m.Input("I3",{value:"Value 2/2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),new sap.ui.layout.GridData({span: "XL3 L6 M2 S2"})]})}),
+					        new sap.m.Input("I3",{value:"Value 2/2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),new sap.ui.layout.GridData({span: "XL3 L6 M2 S2", linebreakL: true})]})}),
 					        new sap.ui.core.Title({text:"Title 2"}),
 					        new sap.m.Label({text:"Label 1"}),
 					        new sap.m.Input({value:"Value 1"}),
@@ -68,7 +43,7 @@
 					        new sap.m.Input("I6",{value:"Value 2/1"})
 					]
 				});
-
+		oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
 		oSimpleForm.placeAt('content');
 
 
