@@ -109,6 +109,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					_overflowToolbar: {type: 'sap.m.OverflowToolbar', multiple: false, visibility: "hidden"},
 
 					/**
+					 * The sap.m.Text that holds the author name.
+					 * @private
+					 */
+					_authorName: {type: 'sap.m.Text', multiple: false, visibility: "hidden"},
+
+					/**
 					 * The sap.m.Image or sap.ui.core.Control control that holds the author image or icon.
 					 * @private
 					 */
@@ -156,6 +162,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			this.setAggregation('_overflowToolbar', new OverflowToolbar());
 		};
 
+		//================================================================================
+		// Overwritten setters and getters
+		//================================================================================
+
 		NotificationListItem.prototype.setTitle = function (title) {
 			var result = this.setProperty('title', title, true);
 
@@ -197,6 +207,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			var result = this.setProperty('priority', priority, suppressInvalidation);
 
 			this._updateAriaAdditionalInfo();
+
+			return result;
+		};
+
+		NotificationListItem.prototype.setAuthorName = function(authorName) {
+			var result = this.setProperty('authorName', authorName, true);
+
+			this._getAuthorName().setText(authorName);
 
 			return result;
 		};
@@ -349,6 +367,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			}
 		};
 
+		//================================================================================
+		// Private getters and setters
+		//================================================================================
+
 		/**
 		 * Returns the sap.m.Title control used in the NotificationListItem's header title.
 		 * @returns {sap.m.Title} The title control inside the Notification List Item
@@ -406,6 +428,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			}
 
 			return dateTime;
+		};
+
+		/**
+		 * Returns the sap.m.Text control used in the NotificationListItem's author name.
+		 * @returns {sap.m.Text} The notification author name text
+		 * @private
+		 */
+		NotificationListItem.prototype._getAuthorName = function() {
+			/** @type {sap.m.Text} */
+			var authorName = this.getAggregation('_authorName');
+
+			if (!authorName) {
+			    authorName = new Text({
+					text: this.getAuthorName()
+				}).addStyleClass('sapMNLI-Text');
+
+				this.setAggregation('_authorName', authorName, true);
+			}
+
+			return authorName;
 		};
 
 		/**
