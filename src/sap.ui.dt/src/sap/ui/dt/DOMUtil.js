@@ -255,12 +255,12 @@ function(jQuery) {
 	/**
 	 *
 	 */
-	DOMUtil._copyComputedStylesAndCleanUp = function(oSrc, oDest) {
+	DOMUtil.copyComputedStyles = function(oSrc, oDest) {
 		oSrc = jQuery(oSrc).get(0);
 		oDest = jQuery(oDest).get(0);
 
 		for (var i = 0; i < oSrc.children.length; i++) {
-			this._copyComputedStylesAndCleanUp(oSrc.children[i], oDest.children[i]);
+			this.copyComputedStyles(oSrc.children[i], oDest.children[i]);
 		}
 
 		// we shouldn't copy classes because they can affect styling
@@ -269,6 +269,7 @@ function(jQuery) {
 		jQuery(oDest).attr("id", "");
 		jQuery(oDest).attr("role", "");
 		jQuery(oDest).attr("data-sap-ui", "");
+		jQuery(oDest).attr("for", "");
 
 		jQuery(oDest).attr("tabIndex", -1);
 		this.copyComputedStyle(oSrc, oDest);
@@ -282,7 +283,7 @@ function(jQuery) {
 		oTarget = jQuery(oTarget).get(0);
 
 		var oCopy = oNode.cloneNode(true);
-		this._copyComputedStylesAndCleanUp(oNode, oCopy);
+		this.copyComputedStyles(oNode, oCopy);
 
 		var $copy = jQuery(oCopy);
 
