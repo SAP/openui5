@@ -393,6 +393,54 @@ sap.ui.require([
 				});
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("requestCanonicalPath fulfills", function (assert) {
+		var oModel = createModel(),
+			oEntityContext = oModel.getContext("/EMPLOYEES[42];root=2"),
+			oMetaModel = oModel.getMetaModel(),
+			oMetaModelMock = this.oSandbox.mock(oMetaModel);
+
+		oMetaModelMock.expects("requestCanonicalUrl")
+			.withExactArgs(oModel.sServiceUrl, oEntityContext.getPath(), sinon.match.func)
+			.returns(Promise.resolve(oModel.sServiceUrl + "EMPLOYEES(ID='1')"));
+
+		return oModel.requestCanonicalPath(oEntityContext).then(function (sCanonicalPath) {
+			assert.strictEqual(sCanonicalPath, "/EMPLOYEES(ID='1')");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestCanonicalPath rejects", function (assert) {
+		var oError = new Error("Intentionally failed"),
+			oModel = createModel(),
+			oNotAnEntityContext = oModel.getContext("/EMPLOYEES[42];root=2/Name"),
+			oMetaModel = oModel.getMetaModel(),
+			oMetaModelMock = this.oSandbox.mock(oMetaModel);
+
+		oMetaModelMock.expects("requestCanonicalUrl")
+			.returns(Promise.reject(oError));
+
+		return oModel.requestCanonicalPath(oNotAnEntityContext).then(
+			function () { assert.ok(false, "Unexpected success"); },
+			function (oError0) { assert.strictEqual(oError0, oError); }
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestCanonicalPath, context from different model", function (assert) {
+		var oModel = createModel(),
+			oModel2 = createModel(),
+			oEntityContext = oModel2.getContext("/EMPLOYEES[42];root=2"),
+			oMetaModel = oModel.getMetaModel(),
+			oMetaModelMock = this.oSandbox.mock(oMetaModel);
+
+		oMetaModelMock.expects("requestCanonicalUrl").returns(Promise.resolve(""));
+		this.mock(jQuery.sap).expects("assert")
+			.withExactArgs(false, "oEntityContext must belong to this model");
+
+		oModel.requestCanonicalPath(oEntityContext);
+	});
 });
 // TODO constructor: sDefaultBindingMode, mSupportedBindingModes
 // TODO constructor: test that the service root URL is absolute?

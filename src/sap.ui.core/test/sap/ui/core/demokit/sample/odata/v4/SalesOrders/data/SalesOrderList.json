@@ -225,5 +225,50 @@
 				}
 			}
 		}
+	}, {
+		"SalesOrderID" : "0500001115",
+		"Note" : "EPM DG: SO ID 0500001115 Deliver as fast as possible",
+		"NoteLanguage" : "",
+		"BuyerID" : "0100000006",
+		"BuyerName" : "Asia High tech",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : 761.24,
+		"NetAmount" : 639.7,
+		"TaxAmount" : 121.54,
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "New",
+		"BillingStatus" : "",
+		"BillingStatusDesc" : "Initial",
+		"DeliveryStatus" : "",
+		"DeliveryStatusDesc" : "Initial",
+		"CreatedAt" : "20150702220000.0000000 ",
+		"ChangedAt" : "20150702220000.0000000 ",
+		"SOItemCount" : 7,
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20150702121621.0000000\"",
+			"BusinessPartnerID" : "0100000006",
+			"BusinessPartnerRole" : "01",
+			"CompanyName" : "Asia High tech",
+			"WebAddress" : "http://www.asia-ht.com",
+			"EmailAddress" : "yoko.nakamura@asia-ht.com",
+			"PhoneNumber" : "9078563412",
+			"FaxNumber" : "9078563004",
+			"LegalForm" : "Inc.",
+			"CurrencyCode" : "JPY",
+			"CreatedAt" : "2015-07-02T12:16:21Z",
+			"ChangedAt" : "2015-07-02T12:16:21Z",
+			"Address" : {
+				"City" : "Tokyo",
+				"PostalCode" : "100-0004",
+				"Street" : "1-7-2 Otemachi",
+				"Building" : "1",
+				"Country" : "JP",
+				"AddressType" : "02",
+				"GeoLocation" : {
+					"Latitude" : 35.693347450000,
+					"Longitude" : 139.763682287452
+				}
+			}
+		}
 	} ]
 }

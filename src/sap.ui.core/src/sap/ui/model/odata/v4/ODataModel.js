@@ -302,6 +302,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise for the "canonical path" of the entity for the given context.
+	 * According to "4.3.1 Canonical URL" of the OData V4 specification part 2, this is the "name
+	 * of the entity set associated with the entity followed by the key predicate identifying the
+	 * entity within the collection".
+	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
+	 * binding.
+	 *
+	 * @param {sap.ui.model.Context} oEntityContext
+	 *   a context in this model which must point to a non-contained OData entity
+	 * @returns {Promise}
+	 *   a promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
+	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
+	 *   the given context does not point to an entity
+	 *
+	 * @public
+	 */
+	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
+		var that = this;
+
+		jQuery.sap.assert(oEntityContext.getModel() === this,
+				"oEntityContext must belong to this model");
+		return this.getMetaModel()
+			.requestCanonicalUrl(this.sServiceUrl, oEntityContext.getPath(), this.read.bind(this))
+			.then(function (sCanonicalUrl) {
+				return sCanonicalUrl.slice(that.sServiceUrl.length - 1);
+			});
+	};
+
+	/**
 	 * Requests the object for the given path relative to the given context.
 	 *
 	 * If the path does not contain a <code>/#</code>, path and context are used to get the object
