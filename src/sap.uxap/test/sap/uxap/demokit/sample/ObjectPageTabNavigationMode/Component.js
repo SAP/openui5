@@ -12,8 +12,8 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 				sample: {
 					stretch: true,
 					files: [
-						"ObjectPageWithIconTabBar.view.xml",
-						"ObjectPageWithIconTabBar.controller.js",
+						"ObjectPageTabNavigationMode.view.xml",
+						"ObjectPageTabNavigationMode.controller.js",
 						"../SharedBlocks/employment/BlockEmpDetailPart1.js",
 						"../SharedBlocks/employment/BlockEmpDetailPart1.view.xml",
 						"../SharedBlocks/employment/BlockEmpDetailPart2.js",
