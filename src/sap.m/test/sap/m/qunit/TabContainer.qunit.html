@@ -164,16 +164,45 @@
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
 		});
 
+        module("Misc", {
+            beforeEach: function () {
+                this.oTabContainer = new sap.m.TabContainer({
+                    items: {
+                        path: "/ProductCollection",
+                        template: oTemplate
+                    },
+                    itemSelect: fnOnItemSelected,
+                    addNewButtonPress: fnOnAddButtonClick
+                });
 
-	</script>
+                this.oTabContainer.placeAt("qunit-fixture");
+                sap.ui.getCore().applyChanges();
+            },
+            afterEach: function () {
+                this.oTabContainer.destroy();
+                this.oTabContainer = null;
+            }
+        });
+
+        test("Rerendering", function () {
+            var oItem = this.oTabContainer._getTabStrip().getItems()[0];
+            var sName = oItem.getText();
+            //sapMTabSelect
+            strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 1, 'TabStrip is initially rendered.');
+            this.oTabContainer.destroyAggregation('_tabStrip');
+            this.clock.tick(1000);
+            strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
+        });
+
+
+    </script>
 </head>
 <body id="body" class="sapUiBody">
-	<h1 id="qunit-header">qUnit Page for sap.m.TabContainer</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-	<div id="content"></div>
-	<div id="qunit-fixture"></div>
-	<div style="padding-left: 800px" id="visible-content"></div>
+<h1 id="qunit-header">qUnit Page for sap.m.TabContainer</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture"></div>
+<div style="padding-left: 800px" id="visible-content"></div>
 </body>
 </html>
