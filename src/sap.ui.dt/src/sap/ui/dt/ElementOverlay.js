@@ -527,7 +527,9 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		var sAggregationName = oEvent.getParameters().name;
 		if (sAggregationName) {
 			this.sync();
-			var bAggregationOverlayVisible = this.getAggregationOverlay(sAggregationName).isVisible();
+			var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
+			// private aggregations are also skipped
+			var bAggregationOverlayVisible = oAggregationOverlay && oAggregationOverlay.isVisible();
 			if (bAggregationOverlayVisible) {
 				this.fireElementModified(oParams);
 			}
