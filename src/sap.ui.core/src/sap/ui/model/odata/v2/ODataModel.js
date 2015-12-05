@@ -2613,12 +2613,12 @@ sap.ui.define([
 		if (mLocalGetEntities && this.oData[oRequest.key] && this.oData[oRequest.key].__metadata.created && this.oData[oRequest.key].__metadata.created.functionImport) {
 			var aResults = [];
 			var oResult = this.oData[oRequest.key]["$result"];
-			if (oResult.__list) {
+			if (oResult && oResult.__list) {
 				jQuery.each(mLocalGetEntities, function(sKey) {
 					aResults.push(sKey);
 				});
 				oResult.__list = aResults;
-			} else if (oResult.__ref){
+			} else if (oResult && oResult.__ref){
 				//there should be only 1 entity in mLocalGetEntities
 				jQuery.each(mLocalGetEntities, function(sKey) {
 					oResult.__ref = sKey; 
