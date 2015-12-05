@@ -64,7 +64,6 @@
 			});
 			
 			QUnit.test("access and parsing (async)", function(assert) {
-				console.log("async: stopping ");
 				loadBundle(assert, {url : "testdata/resources/bundle.properties", locale : "zh_HK", async: true}, testAccessAndParsing);
 			});
 
