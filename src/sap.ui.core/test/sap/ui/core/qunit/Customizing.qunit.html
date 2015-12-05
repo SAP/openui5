@@ -208,6 +208,7 @@
 							equal(aLifeCycleCalls[0], "Sub2 Controller onInit()", "1st lifecycle method to be called should be: Sub2 Controller onInit()");
 							equal(aLifeCycleCalls[1], "Sub2ControllerExtension Controller onInit()", "2nd lifecycle method to be called should be: Sub2ControllerExtension Controller onInit()");
 							aLifeCycleCalls.push("ControllerExtension onInit()");
+							equal(sap.ui.core.Component.getOwnerIdFor(this.byId("standardBtnWithStandardAction")), this.getOwnerComponent().getId(), "Propagation of owner component to view creation works!");
 						},
 						onBeforeRendering: function() {
 							equal(aLifeCycleCalls.length, 3, "ControllerExtension lifecycle method execution count is correct!");
@@ -266,7 +267,7 @@
 		
 	});
 
-	asyncTest("Register ExtensionProvider (sync)", 20, function() {
+	asyncTest("Register ExtensionProvider (sync)", 21, function() {
 		
 		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
 		var that = this;
@@ -292,7 +293,7 @@
 		
 	});
 
-	asyncTest("Register ExtensionProvider (async)", 20, function() {
+	asyncTest("Register ExtensionProvider (async)", 21, function() {
 		
 		// make all views async
 		var fnOrg = sap.ui.core.mvc.View.prototype._initCompositeSupport;
