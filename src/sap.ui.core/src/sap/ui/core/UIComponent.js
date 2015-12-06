@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 * @since 1.20
 	 * The namespace of the router that is used in the component.
 	 * If you are using an own router extension, it has to be required before the constructor of the component is invoked.
-	 * If you use "sap.m.routing.Router" the component will automatically create a {@link sap.m.routing.Targets} instance.
+	 * If you use <code>sap.m.routing.Router</code> the component will automatically create a {@link sap.m.routing.Targets} instance.
 	 * If you pass a function, it has to be a constructor function extending a router.
 	 *
 	 * @param {string|function} [oClassInfo.metadata.routing.config.targetsClass]
@@ -205,9 +205,8 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 		}
 
 		// create the routing
-		var oMetadata = this.getMetadata(),
-			// extend the metadata config, so that the metadata object cannot be modified afterwards
-			oRoutingManifestEntry = oMetadata._getRoutingSection() || {},
+		// extend the metadata config, so that the metadata object cannot be modified afterwards
+		var oRoutingManifestEntry = this._getManifestEntry("/sap.ui5/routing", true) || {},
 			oRoutingConfig = oRoutingManifestEntry.config || {},
 			vRoutes = oRoutingManifestEntry.routes;
 
@@ -405,14 +404,14 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	};
 
 	/**
-	 * The method to create the Content (UI Control Tree) of the Component.
+	 * The method to create the content (UI Control Tree) of the Component.
 	 * This method has to be overwritten in the implementation of the component
 	 * if the root view is not declared in the component metadata.
 	 *
 	 * @public
 	 */
 	UIComponent.prototype.createContent = function() {
-		var oRootView = this.getMetadata().getRootView();
+		var oRootView = this._getManifestEntry("/sap.ui5/rootView", true);
 		if (oRootView && typeof oRootView === "string") {
 			// This is a duplication of the logic in UIComponentMetadata#_convertLegacyMetadata
 			// to convert the string into a configuration object for the view factory in

@@ -134,7 +134,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 						}
 					}
 			
-				}
+				},
+
+				"foo": {}, // getEntry is not allowed for keys without a dot
+				"foo.bar": "string as entry value is not valid!"
 
 			},
 		

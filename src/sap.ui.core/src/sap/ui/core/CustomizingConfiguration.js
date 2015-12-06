@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 			},
 				
 			/**
-			 * Activates the customizing of a component by registering the component
+			 * Activates the Customizing of a component by registering the component
 			 * configuration in the central customizing configuration.
 			 * @param {string} sComponentName the name of the component
 			 * @private
@@ -106,35 +106,41 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 			 * @private
 			 */
 			deactivateForComponent: function(sComponentName) {
-				jQuery.sap.log.info("CustomizingConfiguration: deactivateForComponent('" + sComponentName + "')");
-				delete mComponentConfigs[sComponentName];
+				if (mComponentConfigs[sComponentName]) {
+					jQuery.sap.log.info("CustomizingConfiguration: deactivateForComponent('" + sComponentName + "')");
+					delete mComponentConfigs[sComponentName];
+				}
 			},
 			
 			/**
-			 * Activates the customizing of a component instance by registering the component
-			 * configuration in the central customizing configuration.
+			 * Activates the Customizing of a component instance by registering the component
+			 * configuration in the central Customizing configuration.
 			 * @param {sap.ui.core.Component} oComponent the component instance
 			 * @private
 			 */
 			activateForComponentInstance: function(oComponent) {
 				jQuery.sap.log.info("CustomizingConfiguration: activateForComponentInstance('" + oComponent.getId() + "')");
-				var sComponentName = oComponent.getMetadata().getComponentName();
-				var oCustomizingConfig = oComponent.getManifest()["sap.ui5"] && oComponent.getManifest()["sap.ui5"]["extends"] && oComponent.getManifest()["sap.ui5"]["extends"]["extensions"];
-				mComponentConfigs[sComponentName + "::" + oComponent.getId()] = oCustomizingConfig;
+				var sComponentName = oComponent.getMetadata().getComponentName(),
+				    sKey = sComponentName + "::" + oComponent.getId(),
+				    oCustomizingConfig = oComponent.getManifest()["sap.ui5"] && oComponent.getManifest()["sap.ui5"]["extends"] && oComponent.getManifest()["sap.ui5"]["extends"]["extensions"];
+				mComponentConfigs[sKey] = oCustomizingConfig;
 				
-				jQuery.sap.log.debug("CustomizingConfiguration: customizing configuration for component '" + oComponent.getId() + "' loaded: " + JSON.stringify(oCustomizingConfig));
+				jQuery.sap.log.debug("CustomizingConfiguration: customizing configuration for component '" + sKey + "' loaded: " + JSON.stringify(oCustomizingConfig));
 			},
 			
 			/**
-			 * Deactivates the customizing of a component instance by removing the component
-			 * configuration in the central customizing configuration.
+			 * Deactivates the Customizing of a component instance by removing the component
+			 * configuration in the central Customizing configuration.
 			 * @param {sap.ui.core.Component} oComponent the component instance
 			 * @private
 			 */
 			deactivateForComponentInstance: function(oComponent) {
-				jQuery.sap.log.info("CustomizingConfiguration: deactivateForComponent('" + oComponent.getId() + "')");
-				var sComponentName = oComponent.getMetadata().getComponentName();
-				delete mComponentConfigs[sComponentName + "::" + oComponent.getId()];
+				var sComponentName = oComponent.getMetadata().getComponentName(),
+				    sKey = sComponentName + "::" + oComponent.getId();
+				if (mComponentConfigs[sKey]) {
+					jQuery.sap.log.info("CustomizingConfiguration: deactivateForComponent('" + sKey + "')");
+					delete mComponentConfigs[sKey];
+				}
 			},
 			
 			/**
