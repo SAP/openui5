@@ -283,7 +283,9 @@
 						}
 					]
 				}
-			}
+			},
+			"foo": {}, // getEntry is not allowed for keys without a dot
+			"foo.bar": "string as entry value is not valid!"
 		};
 		this.oExpectedRawManifest = jQuery.extend(true, {}, this.oExpectedManifest);
 		this.oExpectedRawManifest["sap.app"]["title"] = "{{title}}";
@@ -318,6 +320,7 @@
 			deepEqual(this.oMetadata.getComponents(), this.oExpectedMetadata.dependencies.components, "Components are correct!");
 			equal(this.oMetadata.getUI5Version(), this.oExpectedMetadata.dependencies.ui5version, "UI5 version is correct!");
 			deepEqual(this.oMetadata.getConfig(), this.oExpectedMetadata.config, "Config is correct!");
+			this.oMetadata.getConfig()["any1"] = "modified!"; // config should be immutable!
 			deepEqual(this.oMetadata.getConfig("any1"), this.oExpectedMetadata.config.any1, "Config 'any1' is correct!");
 			deepEqual(this.oMetadata.getConfig("any2"), this.oExpectedMetadata.config.any2, "Config 'any2' is correct!");
 			deepEqual(this.oMetadata.getConfig("any3"), this.oExpectedMetadata.config.any3, "Config 'any3' is correct!");
@@ -355,6 +358,9 @@
 
 			deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 			deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
+			strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
+			strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
+			strictEqual(this.oMetadata.getManifestEntry("baz.buz"), null, "Not existing manifest entry should return null");
 
 		});
 
@@ -378,6 +384,8 @@
 					delete oManifest["sap.ui5"]["resourceRoots"];
 					delete oManifest["sap.app"]["title"];
 					delete oManifest["sap.app"]["description"];
+					delete oManifest["foo"];
+					delete oManifest["foo.bar"];
 				});
 		},
 		teardown: function() {
@@ -463,6 +471,8 @@
 				delete oManifest["sap.ui5"]["resourceRoots"];
 				delete oManifest["sap.app"]["title"];
 				delete oManifest["sap.app"]["description"];
+				delete oManifest["foo"];
+				delete oManifest["foo.bar"];
 			});
 		},
 		teardown: function() {
@@ -625,6 +635,8 @@
 
 		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
+		strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
+		strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
 
 	});
 
@@ -684,7 +696,6 @@
 		deepEqual(this.oMetadata.getRootView(), this.oExpectedMetadata.rootView, "RootView is correct!");
 		deepEqual(this.oMetadata.getRoutingConfig(), this.oExpectedMetadata.routing.config, "RoutingConfig is correct!");
 		deepEqual(this.oMetadata.getRoutes(), this.oExpectedMetadata.routing.routes, "Routes are correct!");
-		deepEqual(this.oMetadata._getRoutingSection(), this.oExpectedMetadata.routing, "Routing section is correct!");
 		deepEqual(this.oMetadata.getCustomEntry("custom.entry"), this.oExpectedMetadata["custom.entry"], "CustomEntry are correct!");
 
 	});
@@ -708,6 +719,8 @@
 
 		deepEqual(this.oMetadata.getManifest(), this.oExpectedManifest, "Manifest is correct!");
 		deepEqual(this.oMetadata.getRawManifest(), this.oExpectedRawManifest, "Raw Manifest is correct!");
+		strictEqual(this.oMetadata.getManifestEntry("foo.bar"), null, "Manifest entry with string value is not allowed and should return null");
+		strictEqual(this.oMetadata.getManifestEntry("foo"), null, "Manifest entry without a dot is not allowed and should return null");
 
 	});
 

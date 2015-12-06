@@ -45,79 +45,65 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 
 	/**
 	 * Returns the root view of the component.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the 
+	 * "manifest first" strategy), this function ignores the entries of the 
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @param {boolean} [bDoNotMerge] Returns the local root view configuration if set to <code>true</code>.
 	 * @return {object} root view as configuration object or null ({@link sap.ui.view})
 	 * @protected
 	 * @since 1.15.1
 	 * @experimental Since 1.15.1. Implementation might change.
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/rootView")
 	 */
 	UIComponentMetadata.prototype.getRootView = function(bDoNotMerge) {
-		return this._getAndMergeEntry(bDoNotMerge, "rootView", "getRootView");
+		return this.getManifestEntry("/sap.ui5/rootView", !bDoNotMerge);
 	};
-
-	/**
-	 * Returns the routing section.
-	 * @return {object} routing section
-	 * @private
-	 */
-	UIComponentMetadata.prototype._getRoutingSection = function(bDoNotMerge) {
-		return this._getAndMergeEntry(bDoNotMerge, "routing", "_getRoutingSection");
-	};
-
 
 	/**
 	 * Returns the routing configuration.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the 
+	 * "manifest first" strategy), this function ignores the entries of the 
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @return {object} routing configuration
 	 * @private
 	 * @since 1.16.1
 	 * @experimental Since 1.16.1. Implementation might change.
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/routing/config")
 	 */
 	UIComponentMetadata.prototype.getRoutingConfig = function(bDoNotMerge) {
-		var oRoutingSection = this._getRoutingSection(bDoNotMerge);
-		return oRoutingSection && oRoutingSection.config;
+		return this.getManifestEntry("/sap.ui5/routing/config", !bDoNotMerge);
 	};
 
 	/**
 	 * Returns the array of routes. If not defined the array is undefined.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the 
+	 * "manifest first" strategy), this function ignores the entries of the 
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @return {array} routes
 	 * @private
 	 * @since 1.16.1
 	 * @experimental Since 1.16.1. Implementation might change.
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/routing/routes")
 	 */
 	UIComponentMetadata.prototype.getRoutes = function(bDoNotMerge) {
-		var oRoutingSection = this._getRoutingSection(bDoNotMerge);
-		return oRoutingSection && oRoutingSection.routes;
+		return this.getManifestEntry("/sap.ui5/routing/routes", !bDoNotMerge);
 	};
 
-
-		/**
-		 * Returns the config entry and merges it if doNotMerge is false.
-		 * @param bDoNotMerge true = merge with parent
-		 * @param sEntry entry in the manifest
-		 * @param sFunctionName getter function of the parent
-		 * @returns {null|*}
-		 * @private
-		 */
-	UIComponentMetadata.prototype._getAndMergeEntry = function(bDoNotMerge, sEntry, sFunctionName) {
-		var oParent,
-			oUI5Manifest = this.getManifestEntry("sap.ui5"),
-			mObject = jQuery.extend(true, {}, oUI5Manifest && oUI5Manifest[sEntry]);
-
-		if (!bDoNotMerge && (oParent = this.getParent()) instanceof UIComponentMetadata) {
-			// merge the root view object if defined via parameter
-			mObject = jQuery.extend(true, {}, oParent[sFunctionName](bDoNotMerge), mObject);
-		}
-
-		// in case of no root view is defined the object is empty
-		return jQuery.isEmptyObject(mObject) ? null : mObject;
-	};
 
 	/**
 	 * Converts the legacy metadata into the new manifest format
-	 *
 	 * @private
 	 */
 	UIComponentMetadata.prototype._convertLegacyMetadata = function(oStaticInfo, oManifest) {
