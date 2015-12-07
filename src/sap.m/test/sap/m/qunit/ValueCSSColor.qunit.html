@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Test Page for sap.m.ValueCSSColor</title>
+
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-language="en">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"/>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+<script type="text/javascript">
+	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
+	/* --------------------------------------- */
+	/* Test properties                         */
+	/* --------------------------------------- */
+	QUnit.module("RegEx check for additional sap.m.ValueColor enum type");
+
+	QUnit.test("All sap.m.ValueColors are supported.", function(assert) {
+		assert.expect(4);
+		for (var sValueColor in sap.m.ValueColor){
+			assert.ok(sap.m.ValueCSSColor.isValid(sValueColor));
+		}
+	});
+
+	QUnit.test("CSS values are supported", function(assert) {
+		assert.ok(sap.m.ValueCSSColor.isValid("yellow"));
+	});
+
+	QUnit.test("Validation of not in type fails", function(assert) {
+		assert.ok(!sap.m.ValueCSSColor.isValid(500));
+	});
+
+</script>
+
+</head>
+<body class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
