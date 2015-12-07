@@ -195,6 +195,8 @@ sap.ui.require([
 				}
 			});
 	});
+
+	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: aliases in container", function (assert) {
 		testConversion(assert, '\
 				<DataServices>\
@@ -375,8 +377,7 @@ sap.ui.require([
 						},
 						"p4": {
 							"$kind": "Property",
-							"$Type": "Edm.Int32",
-							"$DefaultValue": "12345"
+							"$Type": "Edm.Int32"
 						},
 						"team1": {
 							"$kind": "NavigationProperty",
@@ -411,7 +412,7 @@ sap.ui.require([
 								<Property Name="p1" Type="Edm.String" Unicode="false" />\
 								<Property Name="p2" Type="Edm.String" Unicode="true" />\
 								<Property Name="p3" Type="Edm.Geometry" SRID="42" />\
-								<Property Name="p4" Type="Edm.Int32" DefaultValue="12345" />\
+								<Property Name="p4" Type="Edm.Int32" />\
 								<NavigationProperty Name="team1" Type="foo.Team" Partner="worker">\
 									<OnDelete Action="SetDefault"/>\
 									<ReferentialConstraint Property="p1" ReferencedProperty="p1Key" />\
@@ -425,7 +426,6 @@ sap.ui.require([
 				oExpected);
 		});
 	});
-	// TODO adjust $DefaultValue to property type?
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: EnumType", function (assert) {
@@ -519,6 +519,65 @@ sap.ui.require([
 					"$UnderlyingType": "Edm.String"
 				}
 			});
+	});
+
+	//*********************************************************************************************
+	["Action", "Function"].forEach(function (sRunnable) {
+		var oExpected = {
+				"foo.Baz": [{
+					"$kind": sRunnable,
+					"$EntitySetPath": "Employees",
+					"$Parameter": [{
+						"$kind": "Parameter",
+						"$Name": "p1",
+						"$Type": "foo.Bar",
+						"$Nullable": false
+					},{
+						"$kind": "Parameter",
+						"$Name": "p2",
+						"$isCollection": true,
+						"$Type": "foo.Bar",
+						"$MaxLength": 10,
+						"$Precision": 2,
+						"$Scale": "variable",
+						"$SRID": "42"
+					}],
+					"$ReturnType" : {
+						"$isCollection": true,
+						"$Type": "Edm.String",
+						"$Nullable": false,
+						"$MaxLength": 10,
+						"$Precision": 2,
+						"$Scale": "variable",
+						"$SRID": "42"
+					}
+				},{
+					"$kind": sRunnable,
+					"$IsBound": true,
+					"$Parameter": []
+				}]
+			};
+
+		if (sRunnable === "Function") {
+			oExpected["foo.Baz"][1].$IsComposable = true;
+		}
+		QUnit.test("convertXMLMetadata: " + sRunnable, function (assert) {
+			testConversion(assert, '\
+					<DataServices>\
+						<Schema Namespace="foo" Alias="f">\
+							<' + sRunnable + ' Name="Baz" EntitySetPath="Employees"\
+								IsBound="false" >\
+								<Parameter Name="p1" Type="f.Bar" Nullable="false"/>\
+								<Parameter Name="p2" Type="Collection(f.Bar)" MaxLength="10"\
+									Precision="2" Scale="variable" SRID="42"/>\
+								<ReturnType Type="Collection(Edm.String)" Nullable="false"\
+									MaxLength="10" Precision="2" Scale="variable" SRID="42"/>\
+							</' + sRunnable + '>\
+							<' + sRunnable + ' Name="Baz" IsComposable="true" IsBound="true"/>\
+						</Schema>\
+					</DataServices>',
+				oExpected);
+		});
 	});
 
 	//*********************************************************************************************

@@ -35,6 +35,14 @@ sap.ui.define([], function () {
 				__processor : processNavigationPropertyBinding
 			}
 		},
+		oActionOrFunctionConfig = {
+			"Parameter" : {
+				__processor : processParameter
+			},
+			"ReturnType" : {
+				__processor : processReturnType
+			}
+		},
 		oFullConfig = {
 			"Reference" : {
 				__processor : processReference,
@@ -45,6 +53,14 @@ sap.ui.define([], function () {
 			"DataServices" : {
 				"Schema" : {
 					__processor : processSchema,
+					"Action" : {
+						__processor : processActionOrFunction,
+						__include : oActionOrFunctionConfig
+					},
+					"Function" : {
+						__processor : processActionOrFunction,
+						__include : oActionOrFunctionConfig
+					},
 					"EntityType" : {
 						__processor : processEntityType,
 						__include : oStructuredTypeConfig,
@@ -97,6 +113,33 @@ sap.ui.define([], function () {
 			oResult[oAttribute.name] = oAttribute.value;
 		}
 		return oResult;
+	}
+
+	/**
+	 * Processes an Action or Function element.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processActionOrFunction(oElement, oAggregate) {
+		var sKind = oElement.localName,
+			oAttributes = getAttributes(oElement),
+			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name,
+			aActions = oAggregate.result[sQualifiedName] || [],
+			oAction = {
+				$kind: sKind,
+				$Parameter: []
+			};
+
+		processAttributes(oAttributes, oAction, {
+			"IsBound" : setIfTrue,
+			"EntitySetPath" : setValue,
+			"IsComposable" : function(sValue) {
+				return sKind === "Function" ? setIfTrue(sValue) : undefined;
+			}
+		});
+
+		oAggregate.result[sQualifiedName] = aActions.concat(oAction);
+		oAggregate.actionOrFunction = oAction;
 	}
 
 	/**
@@ -271,12 +314,53 @@ sap.ui.define([], function () {
 	}
 
 	/**
+	 * Processes a Parameter element within an Action or Function.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processParameter(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			oActionOrFunction = oAggregate.actionOrFunction,
+			oParameter = {
+				$kind: "Parameter"
+			};
+
+		processTypedCollection(oAttributes.Type, oParameter, oAggregate);
+		processAttributes(oAttributes, oParameter, {
+			"Name" : setValue,
+			"Nullable" : setIfFalse
+		});
+		MetadataConverter.processFacetAttributes(oAttributes, oParameter);
+
+		oActionOrFunction.$Parameter.push(oParameter);
+	}
+
+	/**
 	 * Processes a Reference element.
 	 * @param {Element} oElement the element
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processReference(oElement, oAggregate) {
 		oAggregate.referenceUri = oElement.getAttribute("Uri");
+	}
+
+	/**
+	 * Processes a ReturnType element within an Action or Function.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processReturnType(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			oActionOrFunction = oAggregate.actionOrFunction,
+			oReturnType = {};
+
+		processTypedCollection(oAttributes.Type, oReturnType, oAggregate);
+		processAttributes(oAttributes, oReturnType, {
+			"Nullable" : setIfFalse
+		});
+		MetadataConverter.processFacetAttributes(oAttributes, oReturnType);
+
+		oActionOrFunction.$ReturnType = oReturnType;
 	}
 
 	/**
@@ -414,7 +498,6 @@ sap.ui.define([], function () {
 
 		processTypedCollection(oAttributes.Type, oProperty, oAggregate);
 		processAttributes(oAttributes, oProperty, {
-			"DefaultValue" : setValue,
 			"Nullable" : setIfFalse
 		});
 		MetadataConverter.processFacetAttributes(oAttributes, oProperty);
@@ -471,16 +554,17 @@ sap.ui.define([], function () {
 		 */
 		convertXMLMetadata : function (oDocument) {
 			var oAggregate = {
-					aliases : {}, // maps alias -> namespace
-					entityContainer : null, // the current EntityContainer
-					entitySet : null, // the current EntitySet/Singleton
-					enumType : null, // the current EnumType
-					enumTypeMemberCounter : 0, // the current EnumType member value counter
-					namespace : null, // the namespace of the current Schema
-					navigationProperty : null, // the current NavigationProperty
-					referenceUri : null, // the URI of the current Reference
-					type : null, // the current EntityType/ComplexType
-					result : {}
+					"actionOrFunction" : null, // the current action or function
+					"aliases" : {}, // maps alias -> namespace
+					"entityContainer" : null, // the current EntityContainer
+					"entitySet" : null, // the current EntitySet/Singleton
+					"enumType" : null, // the current EnumType
+					"enumTypeMemberCounter" : 0, // the current EnumType member value counter
+					"namespace" : null, // the namespace of the current Schema
+					"navigationProperty" : null, // the current NavigationProperty
+					"referenceUri" : null, // the URI of the current Reference
+					"type" : null, // the current EntityType/ComplexType
+					"result" : {}
 				},
 				oElement = oDocument.documentElement;
 
