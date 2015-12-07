@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new sap.ui.dt.ContextMenuControl control.
-	 * 
+	 *
 	 * @class Context - Menu for Design time
 	 * @extends sap.ui.unified.Menu
 	 * @author SAP SE
@@ -34,7 +34,7 @@ sap.ui.define([
 
 	/**
 	 * Initialize the context menu
-	 * 
+	 *
 	 * @private
 	 */
 	ContextMenuControl.prototype.init = function() {
@@ -57,7 +57,7 @@ sap.ui.define([
 
 	/**
 	 * Set overlay which invoked the context menu
-	 * 
+	 *
 	 * @param {sap.ui.core.Element} oOverlay variable object instance of the overlay
 	 */
 	ContextMenuControl.prototype.setOverlayDomRef = function(oOverlay) {
@@ -66,7 +66,7 @@ sap.ui.define([
 
 	/**
 	 * Creates the context menu items based on the currently associated element
-	 * 
+	 *
 	 * @param {array} aMenuItems array with menu item settings
 	 * @param {string} aMenuItems.id id, which corresponds to the text key
 	 * @param {string} aMenuItems.text menu item text (translated)
@@ -87,8 +87,14 @@ sap.ui.define([
 		aMenuItems.forEach(function(oItem) {
 			if (!oItem.available || oItem.available(oElement)) {
 				var bEnabled = !oItem.enabled || oItem.enabled(oElement);
+
+				var sText = oItem.text;
+				if (typeof oItem.text === "function") {
+					sText = oItem.text(oElement);
+				}
+
 				var oMenuItem = new MenuItem({
-					text: oItem.text,
+					text: sText,
 					enabled: bEnabled
 				});
 				oMenuItem.data({
@@ -105,7 +111,7 @@ sap.ui.define([
 
 	/**
 	 * Method for calculating the x, y-offset for opening the context menu at the current mouse position
-	 * 
+	 *
 	 * @param {number} iPageX mouse x position
 	 * @param {number} iPageY mouse y position
 	 */
@@ -147,7 +153,7 @@ sap.ui.define([
 
 	/**
 	 * Handler Method for event open menu
-	 * 
+	 *
 	 * @param {object} oContextInfo Information on the context
 	 */
 	ContextMenuControl.prototype.openMenu = function(oContextInfo) {
@@ -156,7 +162,7 @@ sap.ui.define([
 
 	/**
 	 * Handle keydown event
-	 * 
+	 *
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
@@ -173,7 +179,7 @@ sap.ui.define([
 
 	/**
 	 * Handle Context Menu
-	 * 
+	 *
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
