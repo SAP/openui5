@@ -489,5 +489,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.24": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "9e64070f6e975422fe1cc3fae0152efd47bb5122",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
+        "references": []
+      }
+    ]
   }
 }

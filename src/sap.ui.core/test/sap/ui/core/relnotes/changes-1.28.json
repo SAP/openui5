@@ -2702,5 +2702,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.24": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "3c5fadcedc0ddcbd011fdb0de6afb7fcd881e744",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "CompositeBinding: Fixed issue with validation",
+        "references": []
+      },
+      {
+        "id": "46f1a0725768dc5fc898e9024697d0b3a0f4c5e8",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "SupportTool: Escaping issues",
+        "references": []
+      }
+    ]
   }
 }

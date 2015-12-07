@@ -4367,5 +4367,150 @@
         "references": []
       }
     ]
+  },
+  "1.28.24": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "81bfbb0f8e87188f9190e3e6c0713009df045bee",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "focused TextArea is hidden in Fiori Client for Windows Phone",
+        "references": []
+      },
+      {
+        "id": "0cdad306e37d83ca52050614566cde987ab2d81c",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: set correct height on phone when buttons are added after opening of the ActionSheet",
+        "references": []
+      },
+      {
+        "id": "bdc1b0a0f7c5d02ee9e2b48f7782125725567d9b",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: TextArea inside a Carousel can accept \u0027-\u0027 and \u0027+\u0027 now",
+        "references": []
+      },
+      {
+        "id": "a41ff7ac4e9c8e0db2a24a381083852f3f3d5fd8",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: the arrows are now visible when the control is in focus",
+        "references": []
+      },
+      {
+        "id": "7c1f40fd13dc904158a59a8032c6494f8d74df03",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Unread property disabled",
+        "references": []
+      },
+      {
+        "id": "7c0bd0cb02377407b8dca9c11309456528bba4ce",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Arrows position in Win8 is correct now",
+        "references": []
+      },
+      {
+        "id": "3f47047ec3f6fc914bebf52c470a0e656338d327",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fixed selecting new element when selected element is removed",
+        "references": []
+      },
+      {
+        "id": "f653fff964b218084b62a8d569366997577271e2",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Setting selected key through API no longer triggers expand/collapse action",
+        "references": []
+      },
+      {
+        "id": "66bc6851c1f79516e4fe19a4bd7bb7e62e4bbedb",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabHeader: Selection is correct when IconTabHeader is used standalone",
+        "references": []
+      },
+      {
+        "id": "94a4945b2e093e4cd7e62f3f7b640f5babdd6412",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: move description on a new line when it is too small",
+        "references": []
+      },
+      {
+        "id": "c710212bc74d845dafa9674149f5a2619ae05e79",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Vertical alignment inside forms corrected",
+        "references": []
+      },
+      {
+        "id": "16e2b740b0415af60a1322aa6390992d98d59df1",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Popover places itself with correct offset when Left or Top placement is used.",
+        "references": []
+      },
+      {
+        "id": "fc13f3b398d6999450b94023b4f3734c17f33ea6",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: Area attribute should not be set to invisible buttons",
+        "references": []
+      },
+      {
+        "id": "fb02994dc85f8c2e006b256d69816e3652e6d855",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: refresh of items is correctly handled.",
+        "references": []
+      },
+      {
+        "id": "85ecb60a04ac5dbdc29022286317fc08e97a2f32",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: fix auto close issue of the dropdown list in IE",
+        "references": []
+      },
+      {
+        "id": "260fe28ed11bbdc41bc97ec2303d5c2d9a302de0",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: prevent IE to focus non-focusable elements",
+        "references": []
+      },
+      {
+        "id": "78e5442162f5daeabfad889f465a2c097a4f82a8",
+        "author": "Krasimir Chariyski \u003ckrasimir.chariyski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Remove swipe on desktop",
+        "references": []
+      },
+      {
+        "id": "cc92d7d9fd13bf492fcb2cda49b0beb3c5b9d11b",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Loading message should not be shown if re-rendering happens.",
+        "references": []
+      },
+      {
+        "id": "d5d6a61949df2f1302ff7af7c041ef3bc97a4590",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Label not visible on iOS devices",
+        "references": []
+      },
+      {
+        "id": "f5f9ecc46b438232d8da55c15adc58366132fb34",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": ": sap.m.InputBase: Buggy event detection.",
+        "references": []
+      }
+    ]
   }
 }
