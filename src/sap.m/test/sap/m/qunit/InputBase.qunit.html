@@ -1123,13 +1123,11 @@
 					}
 				});
 				
-				oValueStateInput.onfocusin();
 				oValueStateInput.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				
 				//warning state
-				oValueStateInput._$input.focus();
-				oValueStateInput.updateDomValue("1");
+				oValueStateInput.updateDomValue("1").focus();
 				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
 				this.clock.tick(1000);
 				strictEqual(oValueStateInput.getValueState(), "Warning");
