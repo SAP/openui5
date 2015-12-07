@@ -883,15 +883,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			var iColumnsL = oLayout.getColumnsL();
 			// If the columsnXL is not set the value of columnsL is used
 			var iColumnsXL = oLayout.getColumnsXL();
-			if (iColumnsXL < 0) {
-				iColumnsXL = iColumnsL;
-			}
 
 			var oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
+			var bLinebreakXL = false;
+			var bLastXL = false;
+			var bLastRowXL = false;
 			if (!oLD) {
 				// only needed if container has no own LayoutData
-				var bLastXL = (iVisibleContainer % iColumnsXL) == 0;
-				var bLastRowXL = iVisibleContainer > (iVisibleContainers - iColumnsXL + (iVisibleContainers % iColumnsXL));
 				var bLinebreakL = (iVisibleContainer % iColumnsL) == 1;
 				var bLastL = (iVisibleContainer % iColumnsL) == 0;
 				var bLastRowL = iVisibleContainer > (iVisibleContainers - iColumnsL + (iVisibleContainers % iColumnsL));
@@ -899,6 +897,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				var bLastM = (iVisibleContainer % iColumnsM) == 0;
 				var bLastRowM = iVisibleContainer > (iVisibleContainers - iColumnsM + (iVisibleContainers % iColumnsM));
 
+				if (iColumnsXL > 0) {
+					bLinebreakXL = (iVisibleContainer % iColumnsXL) == 1;
+					bLastXL = (iVisibleContainer % iColumnsXL) == 0;
+					bLastRowXL = iVisibleContainer > (iVisibleContainers - iColumnsXL + (iVisibleContainers % iColumnsXL));
+				} else {
+					bLastXL = bLastL;
+					bLastRowXL = bLastRowL;
+				}
+				
 				if (oContainerNext) {
 					var oLDNext = oLayout.getLayoutDataForElement(oContainerNext, "sap.ui.layout.GridData");
 					if (oLDNext && ( oLDNext.getLinebreak() || oLDNext.getLinebreakXL() )) {
@@ -924,7 +931,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					if (sStyle) {
 						sStyle = sStyle + " ";
 					}
-					sStyle = "sapUiFormResGridLastContL";
+					sStyle = sStyle + "sapUiFormResGridLastContL";
 				}
 				if (bLastM) {
 					if (sStyle) {
@@ -959,6 +966,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				} else {
 					oLD.setLinebreakL(bLinebreakL);
 					oLD.setLinebreakM(bLinebreakM);
+				}
+				if (iColumnsXL > 0) {
+					oLD.setLinebreakXL(bLinebreakXL);
 				}
 				oLD._setStylesInternal(sStyle);
 			}
