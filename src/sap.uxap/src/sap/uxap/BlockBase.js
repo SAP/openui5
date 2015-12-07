@@ -607,21 +607,21 @@ sap.ui.define([
 
 		BlockBase.prototype._applyFormAdjustmentFields = function (oFormAdjustmentFields, oFormLayout) {
 
-			//oFormLayout.setColumnsXL(oFormAdjustmentFields.columns.XL);
+			oFormLayout.setColumnsXL(oFormAdjustmentFields.columns.XL);
 			oFormLayout.setColumnsL(oFormAdjustmentFields.columns.L);
 			oFormLayout.setColumnsM(oFormAdjustmentFields.columns.M);
 
-			//oFormLayout.setLabelSpanXL(oFormAdjustmentFields.labelSpan.XL);
+			oFormLayout.setLabelSpanXL(oFormAdjustmentFields.labelSpan.XL);
 			oFormLayout.setLabelSpanL(oFormAdjustmentFields.labelSpan.L);
 			oFormLayout.setLabelSpanM(oFormAdjustmentFields.labelSpan.M);
 			oFormLayout.setLabelSpanS(oFormAdjustmentFields.labelSpan.S);
 
-			//oFormLayout.setEmptySpanXL(oFormAdjustmentFields.emptySpan.XL);
+			oFormLayout.setEmptySpanXL(oFormAdjustmentFields.emptySpan.XL);
 			oFormLayout.setEmptySpanL(oFormAdjustmentFields.emptySpan.L);
 			oFormLayout.setEmptySpanM(oFormAdjustmentFields.emptySpan.M);
 			oFormLayout.setEmptySpanS(oFormAdjustmentFields.emptySpan.S);
 
-			//oFormLayout.setBreakpointXL(oFormAdjustmentFields.breakpoint.XL);
+			oFormLayout.setBreakpointXL(oFormAdjustmentFields.breakpoints.XL);
 			oFormLayout.setBreakpointL(oFormAdjustmentFields.breakpoints.L);
 			oFormLayout.setBreakpointM(oFormAdjustmentFields.breakpoints.M);
 		};
