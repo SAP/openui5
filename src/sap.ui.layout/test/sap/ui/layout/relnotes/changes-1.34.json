@@ -122,5 +122,17 @@
         "references": []
       }
     ]
+  },
+  "1.34.1": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "e559f930517a4a3cafb1fc1032dc6695ed6b3c47",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.BlockLayout: add flex prefixes for IE 10",
+        "references": []
+      }
+    ]
   }
 }

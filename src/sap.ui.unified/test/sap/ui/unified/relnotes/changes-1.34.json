@@ -136,5 +136,45 @@
         "references": []
       }
     ]
+  },
+  "1.34.1": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "d8d4b4ea83cd348c36a1930c36adc1d8dd592140",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DatePicker: display 2 calendar types in calendar",
+        "references": []
+      },
+      {
+        "id": "94a7b91de6f7bae53f98f1527cc6cab80c96679c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: startDateChange event added",
+        "references": []
+      },
+      {
+        "id": "9cacefdfdc46d7473f296c4f75863be80aa8a584",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: IE and FF error if date \u003c 0100.01.01",
+        "references": []
+      },
+      {
+        "id": "b5cb5ee18e09a53f8eb6b0992ae2b7ee6ae034fa",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Aria Text enhanced",
+        "references": []
+      },
+      {
+        "id": "06d21124e214b1f37e21698b5ac2e726122449da",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
+        "references": []
+      }
+    ]
   }
 }

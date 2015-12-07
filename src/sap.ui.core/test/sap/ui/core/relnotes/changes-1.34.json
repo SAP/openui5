@@ -1193,5 +1193,129 @@
         "references": []
       }
     ]
+  },
+  "1.34.1": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "e0cbf2638ed4e36100a52c3e10ec0bad8da06357",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Component: manifest.json request incl. Accept-Language header",
+        "references": []
+      },
+      {
+        "id": "be642f7390864834d6a9acef54e9a23dbf2777bf",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "UIComponent: added option in manifest to enable autoPrefixId",
+        "references": []
+      },
+      {
+        "id": "4d9f0d98eff6198c7f94d8d874b2d81509ca70cf",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: Binding of FunctionImport parameters",
+        "references": []
+      },
+      {
+        "id": "85ec839ac5830da1590fa1103dc422e71ab47b02",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "CompositeBinding: Fixed issue with validation",
+        "references": []
+      },
+      {
+        "id": "2b2a6a824190d8c827f636994c02369f7d7ff814",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Provide animation switch for CSS declaration",
+        "references": []
+      },
+      {
+        "id": "ec4eacfe36412b14e133436cbe22fd2e6efab1ee",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: propagate scope object when creating nested objects",
+        "references": []
+      },
+      {
+        "id": "2c14eb863e641bb386a5454c90d50add1b3f439b",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: adapt changeHandle to correctly abort requests",
+        "references": []
+      },
+      {
+        "id": "fd32cf1dd00ea0d04bff41e45da8c302140c43bb",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataUtils: Create proper time filter from model property",
+        "references": []
+      },
+      {
+        "id": "a2bb279d86a1cb30511318ba25e4a91d14024a87",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataUtils: Fixed formatValue for Edm.Time according to PDF spec",
+        "references": []
+      },
+      {
+        "id": "2ae0e2f3cb46d13e61e5f46aeae81e1320e9cce5",
+        "author": "D060268 \u003cvaleri.cernyh@sap.com\u003e",
+        "type": "FIX",
+        "text": "OPA Startup Explored App Sample: Starting a UI Component",
+        "references": []
+      },
+      {
+        "id": "584421b961ddbf37af374dca526ef73fe0c00a1c",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "SupportTool: Escaping issues",
+        "references": []
+      },
+      {
+        "id": "d5c11bca53be28f471e376174dac65f4231200da",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: Rename attributes sap-ui-ready and sap-ui-css-count to ensure valid HTML",
+        "references": []
+      },
+      {
+        "id": "6d382297e4bf2d1fdab74dc9cb0322b7abe523d6",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "View: propagate owner for async controller initialization",
+        "references": []
+      },
+      {
+        "id": "63184d69e0970fbb61ac8d6feeffe5549abcca8a",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.validateUrl: accept same fragment chars as in RFC3986",
+        "references": []
+      },
+      {
+        "id": "3ad9af7d6e0579fcd29213b561d5889f89edd75c",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.trace: do not send passport to cross origins",
+        "references": []
+      },
+      {
+        "id": "48c4f75024ed1f21acaa3a7785c6e7b84917112e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextArea: typed text lost after re-rendering",
+        "references": []
+      },
+      {
+        "id": "1e8ef3f0202995570f41811700bb927cd03cc6e3",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Handle 204 Responses for FunctionImports",
+        "references": []
+      }
+    ]
   }
 }
