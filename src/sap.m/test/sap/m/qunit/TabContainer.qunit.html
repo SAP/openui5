@@ -9,6 +9,7 @@
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
+			data-sap-ui-language="en"
 			data-sap-ui-libs="sap.m">
 	</script>
 
@@ -133,12 +134,13 @@
 			this.clock.tick(1000);
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 0, 'Element with name "'+sName+'" is in not in the DOM.');
 
+			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
-					"Opened tabs",
+					oMessageBundle.getText("TABSTRIP_OPENED_TABS"),
 					"The select button tooltip is correct");
 
 			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('addButton').$()).attr('title'),
-					"Add new tab",
+					oMessageBundle.getText("TABCONTAINER_ADD_NEW_TAB"),
 					"The add button tooltip is correct");
 		});
 
