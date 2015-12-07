@@ -84,7 +84,6 @@ sap.ui.define([
 		}
 	});
 
-
 	/**
 	 * @private
 	 */
@@ -115,7 +114,7 @@ sap.ui.define([
 			this.setAggregation("_grid", new Grid({
 				id: this.getId() + "-innerGrid",
 				defaultSpan: "XL12 L12 M12 S12",
-				hSpacing: 0,
+				hSpacing: 1,
 				vSpacing: 1,
 				width: "100%",
 				containerQuery: true
