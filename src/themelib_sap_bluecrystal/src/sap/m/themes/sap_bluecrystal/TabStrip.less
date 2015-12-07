@@ -5,7 +5,7 @@
 	background: @sapUiExtraLightBG;
 	border: 1px solid @sapUiLightBorder;
 	.sapMTSLeftOverflowButtons {
-		background: linear-gradient(90deg, @sapUiExtraLightBG 0%, @sapUiExtraLightBG 75%, transparent 100%);
+		background: linear-gradient(90deg, @sapUiExtraLightBG 0%, @sapUiExtraLightBG 75%, fade(@sapUiExtraLightBG, 0) 100%);
 	}
 	.sapMTSTabContainer {
 		.sapMTSTabs {
@@ -53,6 +53,6 @@
 		}
 	}
 	.sapMTSRightOverflowButtons {
-		background: linear-gradient(90deg, transparent 0%, @sapUiExtraLightBG 25%, @sapUiExtraLightBG 100%);
+		background: linear-gradient(90deg, fade(@sapUiExtraLightBG, 0) 0%, @sapUiExtraLightBG 25%, @sapUiExtraLightBG 100%);
 	}
 }

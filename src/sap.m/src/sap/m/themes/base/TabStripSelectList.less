@@ -3,6 +3,7 @@
 /* ====================================================== */
 
 @sapUiSltLstBtnInnerSize: 1.25rem;
+@sapUiSltLstBtnInnerSizePhone: 1.5rem;
 .sapMTabSelectList {
   position: relative;
 }
@@ -90,5 +91,33 @@
   }
   .sapMSelectListItemText, .sapMTabSelectListItemModified {
     line-height: 3rem;
+  }
+
+  .sapMSltPicker .sapMBtn.sapMTabSelectListItemCloseBtn  {
+    width: 2rem;
+  }
+
+  .sapMTabSelectListItemCloseBtn .sapMBtnContent {
+    line-height: @sapUiSltLstBtnInnerSizePhone;
+  }
+
+  .sapMTabSelectListItemCloseBtn .sapMBtnInner  {
+    height: @sapUiSltLstBtnInnerSizePhone;
+    min-width: @sapUiSltLstBtnInnerSizePhone;
+    width: @sapUiSltLstBtnInnerSizePhone;
+    padding: 0;
+    margin: 0 auto;
+  }
+}
+
+.sapUiSizeCompact {
+  .sapMTabSelectListItemCloseBtn {
+    .sapMBtnInner.sapMBtnIconFirst {
+      padding: 0;
+      .sapMBtnIcon {
+        margin: 0;
+        padding: 0;
+      }
+    }
   }
 }

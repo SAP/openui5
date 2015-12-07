@@ -24,45 +24,52 @@
 		jQuery.sap.require("sap.ui.core.IconPool");
 		sinon.config.useFakeTimers = true;
 
+		function beforeEachQUnitTest () {
+			this.oMITS = new sap.m.TabStripSelect({
+				type: sap.m.SelectType.IconOnly,
+				autoAdjustWidth: true,
+				icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
+				items: [
+					new sap.m.TabStripItem({
+						key: "0",
+						text: "01234567890123456789012345"
+					}),
+
+					new sap.m.TabStripItem({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.m.TabStripItem({
+						key: "2",
+						text: "item 2"
+					}),
+
+				]
+			});
+
+			this.oMITS.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		}
+
+		function afterEachQUnitTest () {
+			this.oMITS.destroy();
+			this.oMITS = null;
+		}
+
 		module("TabSelect", {
-			setup: function () {
-				this.oMITS = new sap.m.TabStripSelect({
-					type: sap.m.SelectType.IconOnly,
-					autoAdjustWidth: true,
-					icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
-					items: [
-						new sap.m.TabStripItem({
-							key: "0",
-							text: "01234567890123456789012345"
-						}),
-
-						new sap.m.TabStripItem({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.m.TabStripItem({
-							key: "2",
-							text: "item 2"
-						}),
-
-					]
-				});
-
-				this.oMITS.placeAt("qunit-fixture");
-//				this.oMITS.placeAt("visible-content");
-				sap.ui.getCore().applyChanges();
+			beforeEach: function () {
+				beforeEachQUnitTest.call(this);
 			},
-			teardown: function () {
-				this.oMITS.destroy();
-				this.oMITS = null;
+			afterEach: function () {
+				afterEachQUnitTest.call(this);
 			}
 		});
 
 		test("Misc", function () {
 			this.oMITS.open();
 			this.clock.tick(1000);
-			strictEqual(this.oMITS.$().hasClass('sapMTabSelect'), true, 'Control style class is present.');
+			strictEqual(this.oMITS.$().hasClass('sapMTabStripSelect'), true, 'Control style class is present.');
 			strictEqual(this.oMITS.getList().$().hasClass('sapMTabSelectList'), true, 'Control style class is present.');
 		});
 
@@ -87,7 +94,7 @@
 
 
 		test("Close button", function () {
-			var iItemDomHeight = 32 // "base" height that is expected
+			var iItemDomHeight = 32; // "base" height that is expected
 			this.oMITS.open();
 			this.clock.tick(1000);
 
@@ -118,13 +125,13 @@
 
 
 			var oItem = this.oMITS.getItems()[0];
-			var fnFireTabClosePressedSpy = sinon.spy(oItem, "fireTabClosePressed");
+			var fnFireItemClosePressedSpy = sinon.spy(oItem, "fireItemClosePressed");
 			sap.ui.test.qunit.triggerTouchEvent("tap", oItem.$().children('.sapMTabSelectListItemCloseBtn')[0]);
 
 			this.clock.tick(1000);
 
 			strictEqual(this.oMITS.isOpen(), true, 'Select must remain open if close button was clicked.');
-			strictEqual(fnFireTabClosePressedSpy.callCount, 1, "The tab close event was fired");
+			strictEqual(fnFireItemClosePressedSpy.callCount, 1, "The tab close event was fired");
 			// ToDo: assert for correct tab id on the event
 			this.clock.tick(1000);
 
@@ -139,21 +146,36 @@
 			this.clock.tick(1000);
 			strictEqual(this.oMITS.isOpen(), false, 'Select must close after an item was clicked.');
 			this.oMITS.close();
+		});
 
+		module("TabSelect PHONE", {
+			beforeEach: function () {
+				beforeEachQUnitTest.call(this);
+			},
+			afterEach: function () {
+				afterEachQUnitTest.call(this);
+			}
+		});
 
-			// TABLET
+		test("Close button", function () {
+			assertAllCloseButtonsVisible.call(this, true);
+		});
+
+		assertAllCloseButtonsVisible = function (bIsPhone) {
 			var oSystem = {
 				desktop : false,
-				phone : false,
-				tablet : true
+				phone : bIsPhone ? true : false,
+				tablet : bIsPhone ? false : true
 			};
-			this.stub(sap.ui.Device, "system", oSystem);
-			this.stub(jQuery.device, "is", oSystem);
+			var stub1 = this.stub(sap.ui.Device, "system", oSystem);
+			var stub2 = this.stub(jQuery.device, "is", oSystem);
 			this.oMITS.open();
 			this.clock.tick(1000);
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtn').length, this.oMITS.getList().getItems().length, 'Tablet: The number of visible close buttons in the DOM is the same as the number of items in the list instance.');
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'Tablet: The number of invisible close buttons in the DOM is 0.');
-					});
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtn').length, this.oMITS.getList().getItems().length, 'The number of close buttons in the DOM is the same as the number of items in the list instance.');
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'The number of invisible close buttons in the DOM is 0.');
+			stub1.restore();
+			stub2.restore();
+		}
 
 	</script>
 </head>

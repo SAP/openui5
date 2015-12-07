@@ -8,28 +8,28 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 				oModel.setData({
 					employees: [
 						{
-							name: "Ozzy Osboume",
-							empFirstName: "Ozzy",
-							empLastName: "Osboume",
+							name: "Jean Doe",
+							empFirstName: "Jean",
+							empLastName: "Doe",
 							salary: 1455.22
 						},
 						{
-							name: "James Hetfield",
-							empFirstName: "James",
-							empLastName: "Hetfield",
+							name: "John Smith",
+							empFirstName: "John",
+							empLastName: "Smith",
 							salary: 1390.77,
 							modified: true
 						},
 						{
-							name: "Hammett Kirk",
-							empFirstName: "Hammett",
-							empLastName: "Kirk",
+							name: "Particia Clark",
+							empFirstName: "Particia",
+							empLastName: "Clark",
 							salary: 1189.00
 						},
 						{
-							name: "Klimister Lemmy",
-							empFirstName: "Klimister",
-							empLastName: "Lemmy",
+							name: "Tim McAfeed",
+							empFirstName: "Tim",
+							empLastName: "McAfeed",
 							salary: 1235.37
 						}
 					]
@@ -59,13 +59,19 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 			},
 
 			itemCloseHandler: function(oEvent) {
-				sap.m.MessageBox.confirm("Do you want to close the tab?", {
-					fnConfirmItemClose: oEvent.getParameter('confirm'), // add here in order to have it available in the onClose scope through 'this'
-					oItemToClose: oEvent.getParameter('item'),
+				// prevent the tab being closed by default
+				oEvent.preventDefault();
+
+				var oTabContainer = this.getView().byId("myTabContainer");
+				var oItemToClose = oEvent.getParameter('item');
+
+				sap.m.MessageBox.confirm("Do you want to close the tab '" + oItemToClose.getName() + "'?", {
 					onClose: function (oAction) {
 						if (oAction === sap.m.MessageBox.Action.OK) {
-							this.fnConfirmItemClose();
-							sap.m.MessageToast.show("Item closed: " + this.oItemToClose.getName(), {duration: 500});
+							oTabContainer.removeItem(oItemToClose);
+							sap.m.MessageToast.show("Item closed: " + oItemToClose.getName(), {duration: 500});
+						} else {
+							sap.m.MessageToast.show("Item close canceled: " + oItemToClose.getName(), {duration: 500});
 						}
 					}
 				});
