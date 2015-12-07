@@ -150,6 +150,9 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	 * @public
 	 */
 	ClientTreeBinding.prototype.hasChildren = function(oContext) {
+		if (oContext == undefined) {
+			return false;
+		}
 		return this.getChildCount(oContext) > 0;
 	};
 	
