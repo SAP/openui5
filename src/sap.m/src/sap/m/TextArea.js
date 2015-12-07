@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			/**
 			 * Indicates how the control wraps the text, e.g. <code>Soft</code>, <code>Hard</code>, <code>Off</code>.
 			 */
-			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : null},
+			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : sap.ui.core.Wrapping.None},
 	
 			/**
 			 * Indicates when the <code>value</code> property gets updated with the user changes. Setting it to <code>true</code> updates the <code>value</code> property whenever the user has modified the text shown on the text area.
