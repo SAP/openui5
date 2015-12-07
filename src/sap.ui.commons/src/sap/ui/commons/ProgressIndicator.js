@@ -97,24 +97,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oBox  = this.getDomRef("box");
 
 		jQuery(this.oEnd).removeClass('sapUiProgIndEndHidden');
-
-		switch (sBarColor) {
-			case "POSITIVE":
-				jQuery(this.oEnd).addClass('sapUiProgIndPosEnd');
-				break;
-			case "NEGATIVE":
-				jQuery(this.oEnd).addClass('sapUiProgIndNegEnd');
-				break;
-			case "CRITICAL":
-				jQuery(this.oEnd).addClass('sapUiProgIndCritEnd');
-				break;
-			case "NEUTRAL":
-				jQuery(this.oEnd).addClass('sapUiProgIndEnd');
-				break;
-			default:
-				jQuery(this.oEnd).addClass('sapUiProgIndEnd');
-				break;
-		}
+		jQuery(this.oEnd).addClass(this._getProgIndTypeClass(sBarColor));
 
 		if (widthBar > 100) {
 			widthBorder = (10000 / widthBar) + '%';
@@ -167,24 +150,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			widthBorder = '100%';
 		}
 
-		switch (sBarColor) {
-			case "POSITIVE":
-				jQuery(this.oEnd).removeClass('sapUiProgIndPosEnd');
-				break;
-			case "NEGATIVE":
-				jQuery(this.oEnd).removeClass('sapUiProgIndNegEnd');
-				break;
-			case "CRITICAL":
-				jQuery(this.oEnd).removeClass('sapUiProgIndCritEnd');
-				break;
-			case "NEUTRAL":
-				jQuery(this.oEnd).removeClass('sapUiProgIndEnd');
-				break;
-			default:
-				jQuery(this.oEnd).removeClass('sapUiProgIndEnd');
-				break;
-		}
-
+		jQuery(this.oEnd).removeClass(this._getProgIndTypeClass(sBarColor));
 		jQuery(this.oEnd).addClass('sapUiProgIndEndHidden');
 
 		if (widthBar > 100) {
@@ -300,6 +266,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 
+	ProgressIndicator.prototype._getProgIndTypeClass = function(sBarColor) {
+		switch (sBarColor) {
+			case "POSITIVE":
+				return 'sapUiProgIndPosEnd';
+			case "NEGATIVE":
+				return 'sapUiProgIndNegEnd';
+			case "CRITICAL":
+				return 'sapUiProgIndCritEnd';
+			case "NEUTRAL":
+				return 'sapUiProgIndEnd';
+			default:
+				return 'sapUiProgIndEnd';
+		}
+	};
 
 	return ProgressIndicator;
 
