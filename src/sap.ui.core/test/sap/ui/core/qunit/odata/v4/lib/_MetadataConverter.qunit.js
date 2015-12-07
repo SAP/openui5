@@ -175,18 +175,20 @@ sap.ui.require([
 				"bar.Worker": {
 					"$kind": "ComplexType",
 					"Something": {
+						"$kind": "Property",
 						"$Type": "qux.Something"
 					},
 					"ManyThings" : {
+						"$kind": "Property",
 						"$isCollection" : true,
 						"$Type": "qux.Something"
 					},
 					"DefaultAddress": {
-						"$kind": "navigation",
+						"$kind": "NavigationProperty",
 						"$Type": "foo.Address"
 					},
 					"AllAddresses": {
-						"$kind": "navigation",
+						"$kind": "NavigationProperty",
 						"$isCollection" : true,
 						"$Type": "foo.Address"
 					}
@@ -211,9 +213,11 @@ sap.ui.require([
 				"foo.Container": {
 					"$kind": "EntityContainer",
 					"SpecialTeams": {
+						"$kind": "EntitySet",
 						"$Type": "foo.Team"
 					},
 					"Teams": {
+						"$kind": "EntitySet",
 						"$NavigationPropertyBinding" : {
 							"Manager": "foo.Container/Managers"
 						},
@@ -240,13 +244,16 @@ sap.ui.require([
 				"foo.Container": {
 					"$kind": "EntityContainer",
 					"Teams": {
+						"$kind": "EntitySet",
 						"$Type": "foo.Team",
 						"$IncludeInServiceDocument": false
 					},
 					"Teams2": {
+						"$kind": "EntitySet",
 						"$Type": "foo.Team"
 					},
 					"Teams3": {
+						"$kind": "EntitySet",
 						"$Type": "foo.Team"
 					}
 				}
@@ -269,6 +276,7 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"foo.Worker": {
+					"$kind": "EntityType",
 					"$Key": [
 						{"qux": "Bar/Baz"}
 					],
@@ -276,10 +284,12 @@ sap.ui.require([
 					"$HasStream": true
 				},
 				"foo.Base": {
+					"$kind": "EntityType",
 					"$Key": [],
 					"$Abstract": true
 				},
 				"foo.Derived": {
+					"$kind": "EntityType",
 					"$Key": [],
 					"$BaseType": "foo.Base"
 				}
@@ -318,28 +328,34 @@ sap.ui.require([
 		QUnit.test("convertXMLMetadata: " + sType + ": (Navigation)Property", function (assert) {
 			var oExpected = {
 					"foo.Worker": {
+						"$kind": sType,
 						"Salary": {
+							"$kind": "Property",
 							"$Type": "Edm.Decimal",
 							"$Precision": 8,
 							"$Scale": 2
 						},
 						"p1": {
+							"$kind": "Property",
 							"$Type": "Edm.String",
 							"$Unicode": false
 						},
 						"p2": {
+							"$kind": "Property",
 							"$Type": "Edm.String"
 						},
 						"p3": {
+							"$kind": "Property",
 							"$Type": "Edm.Geometry",
 							"$SRID":"42"
 						},
 						"p4": {
+							"$kind": "Property",
 							"$Type": "Edm.Int32",
 							"$DefaultValue": "12345"
 						},
 						"team1": {
-							"$kind": "navigation",
+							"$kind": "NavigationProperty",
 							"$Type": "foo.Team",
 							"$Partner": "worker",
 							"$OnDelete": "SetDefault",
@@ -349,20 +365,18 @@ sap.ui.require([
 							}
 						},
 						"team2": {
-							"$kind": "navigation",
+							"$kind": "NavigationProperty",
 							"$Type": "foo.Team",
 							"$ContainsTarget": true
 						},
 						"team3": {
-							"$kind": "navigation",
+							"$kind": "NavigationProperty",
 							"$Type": "foo.Team"
 						}
 					}
 				};
 
-			if (sType === "ComplexType") {
-				oExpected["foo.Worker"].$kind = sType;
-			} else {
+			if (sType === "EntityType") {
 				oExpected["foo.Worker"].$Key = [];
 			}
 			testConversion(assert, '\

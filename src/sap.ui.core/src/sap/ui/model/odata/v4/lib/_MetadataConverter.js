@@ -156,6 +156,7 @@ sap.ui.define([], function () {
 	function processEntitySet(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement);
 		oAggregate.entityContainer[oAttributes.Name] = oAggregate.entitySet = {
+			$kind : "EntitySet",
 			$Type : MetadataConverter.resolveAlias(oAttributes.EntityType, oAggregate)
 		};
 		if (oAttributes.IncludeInServiceDocument === "false") {
@@ -169,7 +170,10 @@ sap.ui.define([], function () {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processEntityType(oElement, oAggregate) {
-		processType(oElement, oAggregate, {$Key : []});
+		processType(oElement, oAggregate, {
+			$kind: "EntityType",
+			$Key : []
+		});
 	}
 
 	/**
@@ -339,7 +343,7 @@ sap.ui.define([], function () {
 	function processTypeNavigationProperty(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement),
 			oProperty = {
-				$kind : "navigation"
+				$kind : "NavigationProperty"
 			};
 
 		processTypedCollection(oAttributes.Type, oProperty, oAggregate);
@@ -384,7 +388,9 @@ sap.ui.define([], function () {
 	 */
 	function processTypeProperty(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement),
-			oProperty = {};
+			oProperty = {
+				"$kind" : "Property"
+			};
 
 		processTypedCollection(oAttributes.Type, oProperty, oAggregate);
 		processAttributes(oAttributes, oProperty, {
