@@ -178,5 +178,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.11": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "5d1d49f07f889b27eb6edf15afeeca7de1cd6b2d",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
+        "references": []
+      }
+    ]
   }
 }
