@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
-		<title>Dialog - sap.m</title>
+		<title>BusyDialog - sap.m</title>
 		<script src='../../../resources/sap-ui-core.js'
 				type='text/javascript'
 				id='sap-ui-bootstrap'
@@ -31,7 +31,7 @@
 			});
 
 			var customCancelButtonTextBusyDialog = new sap.m.BusyDialog('customCancelButtonTextBusyDialog', {
-				showCancelButton: true,
+				tooltip: 'BusyDialog example with custom "cancel button text, custom icon and tooltip.',
 				cancelButtonText: 'Custom Close Text',
 				customIcon: 'images/synchronise_48.png',
 				customIconRotationSpeed: 5000
@@ -189,7 +189,7 @@
 						}
 					}),
 					new sap.m.Button({
-						text: 'Cancel Text and Icon',
+						text: 'Custom Cancel Text and Icon',
 						width: _buttonWidth,
 						press: function () {
 							customCancelButtonTextBusyDialog.open();
