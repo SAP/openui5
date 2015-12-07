@@ -2416,5 +2416,171 @@
         "references": []
       }
     ]
+  },
+  "1.32.8": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "30fa692a02a88b93b0bd191e39461241de447160",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DateTimeInput: Deprecated.",
+        "references": []
+      },
+      {
+        "id": "61c7a1ebd6687ecab37a290d730a4aad7a15267f",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "Explored: Changed content of floorplans to avoid dependencies",
+        "references": []
+      },
+      {
+        "id": "8080ac6639b43fc1245210f8c3896224c3aebc88",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "focused TextArea is hidden in Fiori Client for Windows Phone",
+        "references": []
+      },
+      {
+        "id": "b7d9a56dff3bd04e764e8a562455ac3cc19730ac",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: set correct height on phone when buttons are added after opening of the ActionSheet",
+        "references": []
+      },
+      {
+        "id": "baf5ddeea38ed405de560ea13c1d8100f96a762b",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: TextArea inside a Carousel can accept \u0027-\u0027 and \u0027+\u0027 now",
+        "references": []
+      },
+      {
+        "id": "6a40e31574fff0ca99e735b212c437b329143d8b",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: the arrows are now visible when the control is in focus",
+        "references": []
+      },
+      {
+        "id": "c3f4353d84bc4fe45832e8ae40b2bd1d1471b8fc",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Unread property disabled",
+        "references": []
+      },
+      {
+        "id": "f79d2de0f94478ebfdad7cb11ca89807b24936bd",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Arrows position in Win8 is correct now",
+        "references": []
+      },
+      {
+        "id": "0b514c06c9f8ab450e57d85522e64818507f8307",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fixed selecting new element when selected element is removed",
+        "references": []
+      },
+      {
+        "id": "29464696629826f92cc5274987c434a354ab179e",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabHeader: Selection is correct when IconTabHeader is used standalone",
+        "references": []
+      },
+      {
+        "id": "8bedb14a01c1c602f90f7caa96bb6868279e33a7",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: fix border issue at zoom in \u003c 100% (hcb theme)",
+        "references": []
+      },
+      {
+        "id": "c755e77866744dafcb60cf78926754e1a43263ef",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: move description on a new line when it is too small",
+        "references": []
+      },
+      {
+        "id": "a8a562cf9eaed22369e78d73e05da69470d5c346",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Vertical alignment inside forms corrected",
+        "references": []
+      },
+      {
+        "id": "d8aced2f15dbdfb03c212da074a09d66cf87b1c6",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Popover places itself with correct offset when Left or Top placement is used.",
+        "references": []
+      },
+      {
+        "id": "6c9c9f8a77d92f087416ee188b81304a8df5c2a9",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: Area attribute should not be set to invisible buttons",
+        "references": []
+      },
+      {
+        "id": "c1040ccc0dfa77f79cdb9025578db6140953d578",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: fix auto close issue of the dropdown list in IE",
+        "references": []
+      },
+      {
+        "id": "3b2f993ca37e397370b362f7ae3e8b2b84c807aa",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: prevent IE to focus non-focusable elements",
+        "references": []
+      },
+      {
+        "id": "0fc41afc6716b6b952053feef8fbf9d5646e72cb",
+        "author": "Krasimir Chariyski \u003ckrasimir.chariyski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Remove swipe on desktop",
+        "references": []
+      },
+      {
+        "id": "46e691c4e3b11007cf523fe394c146e29774b8f6",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Loading message should not be shown if re-rendering happens.",
+        "references": []
+      },
+      {
+        "id": "2d5c7b68471635e319ff7613091864e15fcf2336",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: not set focus back after token deletion in phone mode",
+        "references": []
+      },
+      {
+        "id": "c91b35f65fe4b73fe70d066570fd81f68c0c9f11",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Dialog does not crash when wrong sort item is set",
+        "references": []
+      },
+      {
+        "id": "16027a39db8039ad7b3e3c17e2b78a511b578f5a",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog: Improved documentation for collecting the settings of custom tabs",
+        "references": []
+      },
+      {
+        "id": "ee57a1380c10f50d502c1c4582910449c37c87fd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Label not visible on iOS devices",
+        "references": []
+      }
+    ]
   }
 }

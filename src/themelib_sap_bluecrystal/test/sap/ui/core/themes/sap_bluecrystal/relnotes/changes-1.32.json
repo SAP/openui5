@@ -343,5 +343,38 @@
         "references": []
       }
     ]
+  },
+  "1.32.8": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "30fa692a02a88b93b0bd191e39461241de447160",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.DateTimeInput: Deprecated.",
+        "references": []
+      },
+      {
+        "id": "f79d2de0f94478ebfdad7cb11ca89807b24936bd",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Arrows position in Win8 is correct now",
+        "references": []
+      },
+      {
+        "id": "a8a562cf9eaed22369e78d73e05da69470d5c346",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Vertical alignment inside forms corrected",
+        "references": []
+      },
+      {
+        "id": "ee57a1380c10f50d502c1c4582910449c37c87fd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Label not visible on iOS devices",
+        "references": []
+      }
+    ]
   }
 }

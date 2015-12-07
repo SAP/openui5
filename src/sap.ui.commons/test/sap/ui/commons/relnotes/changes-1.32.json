@@ -310,5 +310,24 @@
         "references": []
       }
     ]
+  },
+  "1.32.8": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "3033f6fb3194dc619fc4c33900b9542433477564",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextArea: typed text lost after re-rendering",
+        "references": []
+      },
+      {
+        "id": "0a76f3f3a3f704ec4167531405667ebe5936d184",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree: Expand and collapse performance improved",
+        "references": []
+      }
+    ]
   }
 }

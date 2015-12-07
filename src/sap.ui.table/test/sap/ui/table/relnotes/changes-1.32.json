@@ -542,5 +542,38 @@
         "references": []
       }
     ]
+  },
+  "1.32.8": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "01fed37a121969b880cc59f09efecf05e9e80680",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: fixes navigation to last page with paginator",
+        "references": []
+      },
+      {
+        "id": "ce2152d7c58120d5f08f70a82a09c1766012b8d5",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes ScrollBar visibility",
+        "references": []
+      },
+      {
+        "id": "4bed665ca9d7df139fde4e1c9db3a27f5010b783",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes display issue with MultiLabels and fixedColumnCount",
+        "references": []
+      },
+      {
+        "id": "98e0bc602e9a7e79fd271c00798b112e23a32e64",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes undefined DomRef in delayed call",
+        "references": []
+      }
+    ]
   }
 }

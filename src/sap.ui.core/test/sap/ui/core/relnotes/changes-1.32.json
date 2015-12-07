@@ -1592,5 +1592,80 @@
         "references": []
       }
     ]
+  },
+  "1.32.8": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "f4a950cc70d8534592b8d2fbe30fb20273055300",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "CompositeBinding: Fixed issue with validation",
+        "references": []
+      },
+      {
+        "id": "776f3d70fbd0b0c4b3c3ed807214d6c6707672f3",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Provide animation switch for CSS declaration",
+        "references": []
+      },
+      {
+        "id": "ba5743cafe5cc152b42aa7469c2755967e36329e",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Add Headers to Requests",
+        "references": []
+      },
+      {
+        "id": "4e5e4871ac6aef5dfae791cf030e2d193f18ea8a",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: adapt changeHandle to correctly abort requests",
+        "references": []
+      },
+      {
+        "id": "3e641ad19534d93abe1db55415acbecc56e05d5c",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "SupportTool: Escaping issues",
+        "references": []
+      },
+      {
+        "id": "42285fd1b76e26565d02016026293d2bb065ac01",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: Rename attributes sap-ui-ready and sap-ui-css-count to ensure valid HTML",
+        "references": []
+      },
+      {
+        "id": "a123eda25d2e50139194c2cb059f625f4c84a339",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.validateUrl: accept same fragment chars as in RFC3986",
+        "references": []
+      },
+      {
+        "id": "e85d2abdaaf3b3cfd091cde0eaf9450c5f1c4471",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.trace: do not send passport to cross origins",
+        "references": []
+      },
+      {
+        "id": "3033f6fb3194dc619fc4c33900b9542433477564",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextArea: typed text lost after re-rendering",
+        "references": []
+      },
+      {
+        "id": "fc4b61a1022a13dcd37a71883a103769b300c7ae",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: fire \u0027opened\u0027 event after the entire \u0027open\u0027 method finishes when no animation is selected",
+        "references": []
+      }
+    ]
   }
 }

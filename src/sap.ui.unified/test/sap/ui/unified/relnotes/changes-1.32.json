@@ -226,5 +226,24 @@
         "references": []
       }
     ]
+  },
+  "1.32.8": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "c709780528040addce34271d9be723352b539e54",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Aria Text enhanced",
+        "references": []
+      },
+      {
+        "id": "52dc328e55e56098a8c01c13dfed672233373192",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
+        "references": []
+      }
+    ]
   }
 }
