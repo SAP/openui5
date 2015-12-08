@@ -14,9 +14,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 			       CSS_CLASS = SelectRenderer.CSS_CLASS;
 
 			oRm.write("<button");
-			if (bEnabled && sap.ui.Device.system.desktop) {
-				oRm.addClass(CSS_CLASS + "Hoverable");
-			}
 
 			oRm.addClass('sapMTabStripSelect');
 
@@ -53,6 +50,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 
 			oRm.write("<div");
 			oRm.addClass("sapMSltInner");
+			if (bEnabled && sap.ui.Device.system.desktop) {
+				oRm.addClass(CSS_CLASS + "Hoverable");
+			}
 			oRm.writeClasses();
 			oRm.write(">");
 

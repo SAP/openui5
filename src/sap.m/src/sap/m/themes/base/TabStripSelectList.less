@@ -2,8 +2,6 @@
 /* CSS for control sap.m/TabStripSelectList.control                   */
 /* ====================================================== */
 
-@sapUiSltLstBtnInnerSize: 1.25rem;
-@sapUiSltLstBtnInnerSizePhone: 1.5rem;
 .sapMTabSelectList {
   position: relative;
 }
@@ -34,25 +32,21 @@
 
 .sapMSltPicker .sapMBtn.sapMTabSelectListItemCloseBtn  {
   height: 100%;
-  width: 1.5rem;
+  width: 2rem;
   padding: 0;
   float: right;
 }
 
-.sapMTabSelectListItemCloseBtn .sapMBtnContent {
-  line-height: @sapUiSltLstBtnInnerSize;
-}
-
 .sapMTabSelectListItemCloseBtn .sapMBtnInner  {
-  height: @sapUiSltLstBtnInnerSize;
-  min-width: @sapUiSltLstBtnInnerSize;
-  width: @sapUiSltLstBtnInnerSize;
+  height: 1.625rem;
+  min-width: 1.625rem;
+  width: 1.625rem;
   padding: 0;
   margin: 0 auto;
 }
 
 .sapMTabSelectListItemCloseBtn .sapMBtnIcon {
-  line-height: @sapUiSltLstBtnInnerSize;
+  line-height: 1.45rem;
   width: 100%;
   height: 100%;
   font-size: 0.75rem;
@@ -72,10 +66,51 @@
 }
 
 
+.sapUiSizeCompact {
+  .sapMTabSelectListItemCloseBtn {
+    .sapMSltPicker .sapMBtn.sapMTabSelectListItemCloseBtn  {
+      width: 1.5rem;
+    }
 
+    .sapMBtnContent {
+      line-height: 1.25rem;
+    }
 
+    .sapMBtnInner  {
+      height: 1.25rem;
+      min-width: 1.25rem;
+      width: 1.25rem;
+      padding: 0;
+      margin: 0 auto;
+    }
+
+    .sapMBtnIcon {
+      line-height: 1.15rem;
+    }
+
+    /* icon first is here just to override another rule */
+    .sapMBtnInner.sapMBtnIconFirst {
+      padding: 0;
+      .sapMBtnIcon {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+}
 
 .sap-tablet {
+  .sapMSltPicker .sapMBtn.sapMTabSelectListItemCloseBtn {
+    width: 2rem;
+    .sapMBtnInner {
+      height: 1.625rem;
+      min-width: 1.625rem;
+      width: 1.625rem;
+      .sapMBtnIcon {
+        line-height: 1.45rem;
+      }
+    }
+  }
   .sapMTabSelectList .sapMSelectListItem {
     height: 2.5rem;
   }
@@ -86,6 +121,7 @@
 
 
 .sap-phone {
+
   .sapMTabSelectList .sapMSelectListItem {
     height: 3rem;
   }
@@ -98,14 +134,15 @@
   }
 
   .sapMTabSelectListItemCloseBtn .sapMBtnContent {
-    line-height: @sapUiSltLstBtnInnerSizePhone;
+    line-height: 1.5rem;
   }
 
   .sapMTabSelectListItemCloseBtn .sapMBtnInner  {
-    height: @sapUiSltLstBtnInnerSizePhone;
-    min-width: @sapUiSltLstBtnInnerSizePhone;
-    width: @sapUiSltLstBtnInnerSizePhone;
+    height: 1.5rem;
+    min-width: 1.5rem;
+    width: 1.5rem;
     padding: 0;
     margin: 0 auto;
   }
 }
+
