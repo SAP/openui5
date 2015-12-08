@@ -16,11 +16,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				sample: {
 					files: [
 						"V.view.xml",
-						"C.controller.js",
-						"ApproveDialog.fragment.xml",
-						"RejectDialog.fragment.xml",
-						"SubmitDialog.fragment.xml",
-						"ConfirmDialog.fragment.xml"
+						"C.controller.js"
 					]
 				}
 			}
