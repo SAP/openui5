@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global'],
 				CSS_CLASS = SliderRenderer.CSS_CLASS;
 
 			oRm.write("<div");
-			oRm.addClass(CSS_CLASS);
+			this.addStyleClass(oRm, oSlider);
 
 			if (!bEnabled) {
 				oRm.addClass(CSS_CLASS + "Disabled");
@@ -71,6 +71,17 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write("</div>");
+		};
+
+		/**
+		 * This method is reserved for derived classes to add extra CSS classes to the HTML root element of the control.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
+		 * @since 1.36
+		 */
+		SliderRenderer.addStyleClass = function(oRm, oSlider) {
+			oRm.addClass(SliderRenderer.CSS_CLASS);
 		};
 
 		SliderRenderer.renderProgressIndicator = function(oRm, oSlider) {
