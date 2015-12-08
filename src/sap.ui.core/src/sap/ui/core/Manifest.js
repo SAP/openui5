@@ -85,14 +85,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 * @param oObject the object to deep freeze
 	 */
 	function deepFreeze(oObject) {
-		var oInnerObject, sKey;
-		Object.freeze(oObject);
-		for (sKey in oObject) {
-			oInnerObject = oObject[sKey];
-			if (!oObject.hasOwnProperty(sKey) || !(typeof oInnerObject === 'object') || Object.isFrozen(oInnerObject)) {
-				continue;
+		if (oObject && typeof oObject === 'object' && !Object.isFrozen(oObject)) {
+			Object.freeze(oObject);
+			for (var sKey in oObject) {
+				if (oObject.hasOwnProperty(sKey)) {
+					deepFreeze(oObject[sKey]);
+				}
 			}
-			deepFreeze(oInnerObject);
 		}
 	}
 
