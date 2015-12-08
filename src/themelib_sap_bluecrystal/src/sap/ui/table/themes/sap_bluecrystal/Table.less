@@ -481,6 +481,7 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	.sapUiTableRowHdrScr,
 	.sapUiTableColRowHdr {
 		width: @sapUiTableCompactRowHdrWidth;
+		min-height: @sapUiTableCompactRowHeight;
 	}
 }
 
@@ -488,8 +489,10 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	.sapUiTableRowHdrScr,
 	.sapUiTableColRowHdr {
 		width: @sapUiTableCozyRowHdrWidth;
+		min-height: @sapUiTableCozyRowHdrHeight;
 	}
 }
+
 /* Table Column Resizer */
 .sapUiTableColRsz:hover {
 	background-color: @sapUiListHighlightColor;
