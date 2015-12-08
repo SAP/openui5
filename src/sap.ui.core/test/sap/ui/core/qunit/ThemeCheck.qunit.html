@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.ui.core.ThemeCheck</title>
+		<script>
+			window["sap-ui-config"] = {
+				themeRoots: {
+					"customcss": {
+						"sap.ui.core": "./testdata/customcss/"
+					}
+				}
+			};
+		</script>
+		<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_hcb"
+			data-sap-ui-noConflict="true">
+		</script>
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+
+		// Wait until the theme is changed
+		function themeChanged() {
+			return new Promise(function(resolve) {
+				function onChanged() {
+					sap.ui.getCore().detachThemeChanged(onChanged);
+					resolve();
+				}
+				sap.ui.getCore().attachThemeChanged(onChanged);
+			});
+		}
+
+		// Wait until the theme is applied
+		function themeApplied() {
+			if (sap.ui.getCore().isThemeApplied()) {
+				return Promise.resolve();
+			} else {
+				return themeChanged();
+			}
+		}
+
+		function getSheetHref(oLink) {
+			if (oLink.sheet) {
+				return oLink.sheet.href;
+			} else if (oCustomCss.styleSheet) {
+				return oLink.styleSheet.href;
+			}
+			return undefined;
+		}
+
+		QUnit.test("Initial theme theck", function(assert) {
+			var done = assert.async();
+
+			themeApplied().then(function() {
+
+				// Check if the declared stylesheet has been fully loaded
+				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
+				var sSheetHref = getSheetHref(oLibraryCss);
+				assert.equal(sSheetHref, oLibraryCss.href, "href of loaded stylesheet should be equal with link href.");
+
+				done();
+			});
+		});
+
+		QUnit.test("After theme change with custom.css", function(assert) {
+			var done = assert.async();
+
+			 themeChanged().then(function() {
+
+				// Check if the declared stylesheet has been fully loaded
+				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
+				var sSheetHref = getSheetHref(oLibraryCss);
+
+				assert.equal(sSheetHref, oLibraryCss.href, "href of loaded stylesheet should be equal with link href.");
+
+				// Check if the custom.css has been included
+				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
+				if (!oCustomCss) {
+					assert.ok(false, "Custom CSS file hasn't been included");
+					return;
+				}
+				var oCustomCssHref = oCustomCss.getAttribute("href");
+				var sExpectedCustomCssPath = "./testdata/customcss/sap/ui/core/themes/customcss/custom.css";
+				assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
+
+				done();
+			});
+			sap.ui.getCore().applyTheme("customcss");
+		});
+
+		QUnit.test("After theme change without custom.css", function(assert) {
+			var done = assert.async();
+
+			 themeChanged().then(function() {
+
+				// Check if the declared stylesheet has been fully loaded
+				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
+				var sSheetHref = getSheetHref(oLibraryCss);
+				assert.equal(sSheetHref, oLibraryCss.href, "href of loaded stylesheet should be equal with link href.");
+
+				// Check if the custom.css has been included
+				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
+				assert.strictEqual(oCustomCss, null, "Custom CSS file should not be included.");
+
+				done();
+			});
+			sap.ui.getCore().applyTheme("sap_hcb");
+		});
+
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>
