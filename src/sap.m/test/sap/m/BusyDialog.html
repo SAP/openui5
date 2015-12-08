@@ -172,6 +172,15 @@
 				]
 			});
 
+			var busyDialogInstantOpen = new sap.m.BusyDialog({
+				text: "new sap.m.BusyDialog().open() should work. This will self close after: 3.5sec.",
+				title: 'busyDialogInstantOpen'
+			}).open();
+
+			jQuery.sap.delayedCall(3500, this, function () {
+				busyDialogInstantOpen.close();
+			});
+
 			app.addPage(initialPage).placeAt('content');
 		</script>
 
