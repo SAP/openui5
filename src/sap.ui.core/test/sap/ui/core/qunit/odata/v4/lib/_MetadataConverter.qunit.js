@@ -583,7 +583,6 @@ sap.ui.require([
 		});
 	});
 
-
 	//*********************************************************************************************
 	["Action", "Function"].forEach(function (sWhat) {
 		QUnit.test("convertXMLMetadata: " + sWhat + "Import", function (assert) {
@@ -636,6 +635,35 @@ sap.ui.require([
 					</DataServices>',
 				oExpected);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: Term", function (assert) {
+		testConversion(assert, '\
+				<DataServices>\
+					<Schema Namespace="foo" Alias="f">\
+						<Term Name="Term1" Type="Collection(Edm.String)" Nullable="false"\
+							MaxLength="10" Precision="2" Scale="variable" SRID="42"/>\
+						<Term Name="Term2" Type="f.Bar" BaseTerm="f.Term1" Nullable="true"/>\
+					</Schema>\
+				</DataServices>',
+			{
+				"foo.Term1": {
+					"$kind": "Term",
+					"$isCollection": true,
+					"$Type": "Edm.String",
+					"$Nullable": false,
+					"$MaxLength": 10,
+					"$Precision": 2,
+					"$Scale": "variable",
+					"$SRID": "42"
+				},
+				"foo.Term2": {
+					"$kind": "Term",
+					"$Type": "foo.Bar",
+					"$BaseTerm": "foo.Term1"
+				}
+			});
 	});
 
 	//*********************************************************************************************

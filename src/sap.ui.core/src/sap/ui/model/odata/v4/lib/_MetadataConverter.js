@@ -97,6 +97,9 @@ sap.ui.define([], function () {
 							__processor : processEnumTypeMember
 						}
 					},
+					"Term" : {
+						__processor : processTerm
+					},
 					"TypeDefinition" : {
 						__processor : processTypeDefinition
 					}
@@ -410,6 +413,30 @@ sap.ui.define([], function () {
 			$kind : "Singleton",
 			$Type : MetadataConverter.resolveAlias(oAttributes.Type, oAggregate)
 		};
+	}
+
+	/**
+	 * Processes a Term element.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processTerm(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name,
+			oTerm = {
+				$kind: "Term"
+			};
+
+		processTypedCollection(oAttributes.Type, oTerm, oAggregate);
+		processAttributes(oAttributes, oTerm, {
+			"Nullable" : setIfFalse,
+			"BaseTerm" : function (sValue) {
+				return sValue ? MetadataConverter.resolveAlias(sValue, oAggregate) : undefined;
+			}
+		});
+		MetadataConverter.processFacetAttributes(oAttributes, oTerm);
+
+		oAggregate.result[sQualifiedName] = oTerm;
 	}
 
 	/**
