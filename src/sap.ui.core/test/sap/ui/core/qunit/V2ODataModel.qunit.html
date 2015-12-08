@@ -4002,6 +4002,31 @@
 		
 	});
 	
+	asyncTest("test oDataModel binding function import with empty parameter deferred", function() {
+		var iCount = 0;
+		var oContext;
+		oModel.setDefaultBindingMode("TwoWay");
+		var oHandle = oModel.callFunction("/SalesOrder_InvoiceCreated", {
+			groupId: "changes", 
+			method: "POST", 
+			urlParameters: {"SalesOrderID": ""}
+		});
+		
+		oInput = new sap.m.Input();
+		oInput.bindValue("SalesOrderID");
+		oInput.setModel(oModel);
+				
+		oHandle.contextCreated().then(function(oContext) {
+			oModel.submitChanges();
+		}, function() {
+			ok(false, "Test failed");
+		});
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID=''");
+			start();
+		});
+	});
+	
 	asyncTest("test getETag", 3, function(){
 		oInput = new sap.m.Input();
 		oInput.setModel(oModel);

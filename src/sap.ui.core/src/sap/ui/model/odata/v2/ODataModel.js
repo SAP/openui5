@@ -3421,7 +3421,7 @@ sap.ui.define([
 				//jQuery.each(mUrlParams, function (sParameterName, oParameterValue) {
 				jQuery.each(oFunctionMetadata.parameter, function (iIndex, oParam) {
 					oData[oParam.name] = that._createPropertyValue(oParam.type);
-					if (mUrlParams && mUrlParams[oParam.name]) {
+					if (mUrlParams && mUrlParams[oParam.name] !== undefined) {
 						oData[oParam.name] = mUrlParams[oParam.name];
 						mInputParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name], oParam.type);
 						delete mUrlParams[oParam.name];
