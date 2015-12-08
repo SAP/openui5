@@ -854,6 +854,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 			iHours += 12;
 		}
 
+		if (iQuarter !== null && iMonth === null && iDay === null) {
+			iMonth = 3 * iQuarter;
+			iDay = 1;
+		}
+
 		if (bValid) {
 			if (bUTC || iTZDiff != null) {
 				oDate = DateFormat.createDate(sCalendarType, 0);
