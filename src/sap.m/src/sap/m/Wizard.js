@@ -244,6 +244,15 @@ sap.ui.define([
 		 * @public
 		 */
 		Wizard.prototype.goToStep = function (step, focusFirstStepElement) {
+			if (this._scrollLocked) {
+				/**
+				 * Defensive code
+				 * Prevents an endless loop, if the developer calls
+				 * 2 times in a row the goToStep() method.
+				 */
+				return;
+			}
+
 			this._scrollLocked = true;
 			this._scroller.scrollTo(0, this._getStepScrollOffset(step), Wizard.CONSTANTS.ANIMATION_TIME);
 
