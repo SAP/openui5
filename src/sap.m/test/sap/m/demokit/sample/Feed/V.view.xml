@@ -4,7 +4,7 @@
 	xmlns="sap.m">
 	<FeedInput 
 		post="onPost"
-		icon="http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg"
+		icon="test-resources/sap/m/images/dronning_victoria.jpg"
 		class="sapUiSmallMarginTopBottom" />
 	<List
 		showSeparators="Inner"
