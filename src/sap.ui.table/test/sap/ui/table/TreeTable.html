@@ -183,6 +183,16 @@ var oTable = new sap.ui.table.TreeTable({
 					oTable.collapse(iSelectedIndex);
 					oTable.setSelectedIndex(iSelectedIndex);
 				}
+			}),
+			new sap.ui.commons.Button({text: "Toggle Group Mode",
+				press: function() {
+					if (oTable.getUseGroupMode()) {
+						oTable.setUseGroupMode(false);
+					} else {
+						oTable.setUseGroupMode(true);
+						oTable.setGroupHeaderProperty("name");
+					}
+				}
 			})
 		]
 	}),
