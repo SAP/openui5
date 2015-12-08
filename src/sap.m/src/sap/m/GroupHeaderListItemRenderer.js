@@ -115,7 +115,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 		rm.write("</label>");
 	};
-	
+
+	GroupHeaderListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
+		if (!oLI.getTable()) {
+			ListItemBaseRenderer.addLegacyOutlineClass.apply(this, arguments);
+		}
+	};
 
 	return GroupHeaderListItemRenderer;
 
