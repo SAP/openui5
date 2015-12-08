@@ -28,6 +28,7 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 
 	var MainAction = SemanticButton.extend("sap.m.semantic.MainAction", /** @lends sap.m.semantic.MainAction.prototype */ {
 		metadata: {
+			library : "sap.m",
 			properties : {
 
 				/**

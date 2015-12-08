@@ -46,6 +46,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	 */
 	var FullscreenPage = ShareMenuPage.extend("sap.m.semantic.FullscreenPage", /** @lends sap.m.semantic.FullscreenPage.prototype */ {
 		metadata: {
+			library: "sap.m",
 			aggregations: {
 				/**
 				 * Add action

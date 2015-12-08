@@ -29,6 +29,8 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 	var SemanticSelect = SemanticControl.extend("sap.m.semantic.SemanticSelect", /** @lends sap.m.semantic.SemanticSelect.prototype */ {
 		metadata: {
 
+			library: "sap.m",
+
 			properties: {
 				/**
 				 * See {@link sap.m.Select#enabled}

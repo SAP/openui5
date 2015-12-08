@@ -48,6 +48,7 @@ sap.ui.define([ 'jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/seman
 	 */
 	var MasterPage = SemanticPage.extend("sap.m.semantic.MasterPage", /** @lends sap.m.semantic.MasterPage.prototype */ {
 		metadata: {
+			library: "sap.m",
 			aggregations: {
 				/**
 				 * Add action

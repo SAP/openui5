@@ -27,7 +27,9 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 */
 
 	var ShareInJamAction = SemanticButton.extend("sap.m.semantic.ShareInJamAction", /** @lends sap.m.semantic.ShareInJamAction.prototype */ {
-
+		metadata: {
+			library: "sap.m"
+		}
 	});
 
 	return ShareInJamAction;

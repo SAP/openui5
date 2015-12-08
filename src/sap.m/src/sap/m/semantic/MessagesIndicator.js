@@ -27,7 +27,9 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 */
 
 	var MessagesIndicator = SemanticButton.extend("sap.m.semantic.MessagesIndicator", /** @lends sap.m.semantic.MessagesIndicator.prototype */ {
-
+		metadata: {
+			library: "sap.m"
+		}
 	});
 
 	return MessagesIndicator;
