@@ -55,14 +55,28 @@ sap.ui.define([
 	ODataMetaContextBinding
 		= ContextBinding.extend("sap.ui.model.odata.v4.ODataMetaContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
+				jQuery.sap.assert(!oContext || oContext.getModel() === oModel,
+					"oContext must belong to this model");
 				ContextBinding.call(this, oModel, sPath, oContext, mParameters);
-				this.bInitial = false;
-				this.oElementContext = oModel.createBindingContext(sPath, oContext);
 			},
 			initialize : function () {
-				this._fireChange();
+				var oElementContext = this.oModel.createBindingContext(this.sPath, this.oContext);
+				this.bInitial = false; // initialize() has been called
+				if (oElementContext !== this.oElementContext) {
+					this.oElementContext = oElementContext;
+					this._fireChange();
+				}
 			},
-			setContext : null
+			setContext : function (oContext) {
+				jQuery.sap.assert(!oContext || oContext.getModel() === this.oModel,
+					"oContext must belong to this model");
+				if (oContext !== this.oContext) {
+					this.oContext = oContext;
+					if (!this.bInitial) {
+						this.initialize();
+					} // else: do not cause implicit 1st initialize(), avoid _fireChange!
+				}
+			}
 		});
 
 	/**
@@ -93,8 +107,9 @@ sap.ui.define([
 		constructor : function () {
 			JSONListBinding.apply(this, arguments);
 		},
-		enableExtendedChangeDetection : null,
-		setContext : null
+		enableExtendedChangeDetection : function () {
+			throw new Error("Unsupported operation");
+		}
 		//TODO improve performance? see below:
 		// update() makes a shallow copy of this.oList, avoid?!
 		// checkUpdate() calls _getObject() twice; uses jQuery.sap.equal(); avoid?!
@@ -146,7 +161,8 @@ sap.ui.define([
 
 	/**
 	 * Returns the value of the object or property inside this model's data which can be reached,
-	 * starting at the given context, by following the given path.
+	 * starting at the given context, by following the given path. The resulting value is suitable
+	 * for a list binding, e.g. <code>&lt;template:repeat list="{context>path}" ...&gt;</code>.
 	 *
 	 * @param {string} sPath
 	 *   a relative or absolute path
@@ -203,15 +219,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the meta data object for the given path relative to the given context.
-	 *
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta model
+	 *   A relative or absolute path within the meta model, e.g.
+	 *   "/$EntityContainer/EMPLOYEES/ENTRYDATE"
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {SyncPromise}
 	 *   A promise which is resolved with the requested meta model object as soon as it is
 	 *   available
+	 * @see #requestObject
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchObject = function (sPath, oContext) {
@@ -235,6 +251,8 @@ sap.ui.define([
 
 			if (sResolvedPath !== "/") {
 				sResolvedPath.slice(1).split("/").every(function (sSegment, i, aSegments) {
+					var bStartsWithDollar = sSegment.charAt(0) === "$";
+
 					/*
 					 * Returns meta data for the given qualified name, warns about invalid names.
 					 * @param {string} sQualifiedName
@@ -244,40 +262,44 @@ sap.ui.define([
 					 */
 					function lookup(sQualifiedName) {
 						if (!(sQualifiedName in oMetadata)) {
-							warn("Invalid qualified name", sQualifiedName, "before", sSegment);
+							warn("Unknown qualified name", sQualifiedName, "before", sSegment);
 						}
+						sName = sQualifiedName;
 						return oMetadata[sQualifiedName];
 					}
 
 					// Note: "@sapui.name" refers back to the object's OData name
 					if (sSegment === "@sapui.name") {
 						vResult = sName;
+						if (vResult === undefined) {
+							warn("Invalid path before @sapui.name");
+						}
 						if (i + 1 < aSegments.length) {
 							warn("Invalid path after @sapui.name");
 							vResult = undefined;
 						}
-						return false;
+						return false; // path must not continue
 					}
 					// implicit map lookup
 					if (typeof vResult === "string" && !(vResult = lookup(vResult))) {
-						return false;
+						return false; // "Unknown qualified name"
+					}
+					if (!vResult || typeof vResult !== "object") {
+						warn("Invalid part:", sSegment);
+						vResult = undefined;
+						return false; // cannot continue
 					}
 					// OData: implicitly drill down into type, e.g. at (navigation) property
-					if (vResult && !(sSegment in vResult) && ("$Type" in vResult)
-						&& !(vResult = lookup(vResult.$Type))) {
-						return false;
-					}
-
-					if (!vResult) {
-						warn("Invalid part:", sSegment);
-						return false;
+					if (!bStartsWithDollar && !(sSegment in vResult)
+						&& ("$Type" in vResult) && !(vResult = lookup(vResult.$Type))) {
+						return false; // "Unknown qualified name"
 					}
 					// Note: "." is useful to force implicit lookup or drill-down
 					if (sSegment !== ".") {
-						sName = sSegment.charAt(0) === "$" ? undefined : sSegment;
+						sName = bStartsWithDollar ? undefined : sSegment;
 						vResult = vResult[sSegment];
 					}
-					return true;
+					return true; // next segment, please
 				});
 			}
 
@@ -298,16 +320,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
+		// Note: undefined is more efficient than "" here
 		return this.fetchObject(undefined, this.getMetaContext(sPath)).then(function (oProperty) {
-			var oConstraints,
+			var mConstraints,
 				sName,
 				oType = oProperty["$ui5.type"],
 				oTypeInfo;
 
 			function setConstraint(sKey, vValue) {
 				if (vValue !== undefined) {
-					oConstraints = oConstraints || {};
-					oConstraints[sKey] = vValue;
+					mConstraints = mConstraints || {};
+					mConstraints[sKey] = vValue;
 				}
 			}
 
@@ -326,7 +349,7 @@ sap.ui.define([
 			if (oProperty.$Nullable === false) {
 				setConstraint("nullable", false);
 			}
-			oType = new (jQuery.sap.getObject(oTypeInfo.type, 0))({}, oConstraints);
+			oType = new (jQuery.sap.getObject(oTypeInfo.type, 0))({}, mConstraints);
 			oProperty["$ui5.type"] = oType;
 
 			return oType;
@@ -337,9 +360,10 @@ sap.ui.define([
 	 * Returns the OData meta model context corresponding to the given OData model path.
 	 *
 	 * @param {string} sPath
-	 *   an absolute data path within the OData data model
+	 *   an absolute data path within the OData data model, e.g. "/EMPLOYEES[0];list=1/ENTRYDATE"
 	 * @returns {sap.ui.model.Context}
-	 *   the corresponding meta data context within the OData meta model
+	 *   the corresponding meta data context within the OData meta model, e.g. with meta data path
+	 *   "/$EntityContainer/EMPLOYEES/ENTRYDATE"
 	 * @public
 	 */
 	ODataMetaModel.prototype.getMetaContext = function (sPath) {
@@ -360,8 +384,30 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("fetchObject");
 
-	ODataMetaModel.prototype.getProperty = function () {
-		return this.getObject.apply(this, arguments); //TODO differentiate property vs. object!
+	/**
+	 * Returns the meta data value for the given path relative to the given context. Returns
+	 * <code>undefined</code> in case the meta data is not (yet) available. Returns
+	 * <code>null</code> instead of object values!
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the meta model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @returns {any}
+	 *   the requested meta model value if it is already available, or <code>undefined</code> or
+	 *   <code>null</code>
+	 * @public
+	 */
+	ODataMetaModel.prototype.getProperty = function (sPath, oContext) {
+		var vResult = this.getObject(sPath, oContext);
+		if (vResult && typeof vResult === "object") {
+			if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+				jQuery.sap.log.warning("Accessed value is not primitive",
+					this.resolve(sPath, oContext), sODataMetaModel);
+			}
+			return null;
+		}
+		return vResult;
 	};
 
 	/**
@@ -430,17 +476,56 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the meta data object for the given path relative to the given context.
-	 *
-	 * Returns a <code>Promise</code> which is resolved with the requested meta model object or
+	 * Requests the meta data value for the given path relative to the given context.
+	 * Returns a <code>Promise</code> which is resolved with the requested meta model value or
 	 * rejected with an error.
+	 *
+	 * The resolved path "/" addresses the global scope of all known qualified names.
+	 *
+	 * "/$EntityContainer" addresses the name of the single entity container for this meta model's
+	 * service. If a path comes across a string value like this and continues, the string value is
+	 * treated as a qualified name and looked up in the global scope first ("map lookup"). This
+	 * way, "/$EntityContainer/EMPLOYEES" addresses the "EMPLOYEES" child of the entity container.
+	 * A warning is logged in case the string value is not a known qualified name.
+	 *
+	 * If a path continues with an OData simple identifier which is not a property of the current
+	 * object, "$Type" is inserted into the path implicitly ("implicit drill-down into type"). This
+	 * way, "/$EntityContainer/EMPLOYEES/ENTRYDATE" addresses the same object as
+	 * "/$EntityContainer/EMPLOYEES/$Type/ENTRYDATE", namely the "ENTRYDATE" child of the entity
+	 * type corresponding to the "EMPLOYEES" child of the entity container.
+	 *
+	 * "." can be used as a segment to continue a path and thus force map lookup or implicit
+	 * drill-down, but then stay at the resulting object ("current directory"). This way,
+	 * "/$EntityContainer/EMPLOYEES/$Type/." addresses the entity type itself corresponding to the
+	 * "EMPLOYEES" child of the entity container. Although "." is not an OData simple identifier,
+	 * it can be used as a placeholder for one. In this way, "/$EntityContainer/EMPLOYEES/."
+	 * addresses the same entity type as "/$EntityContainer/EMPLOYEES/$Type/.". That entity type in
+	 * turn is a map of all its OData children (structural and navigation properties) and thus
+	 * determines the set of possible child names to use instead of the "." placeholder.
+	 *
+	 * "@sapui.name" can be used as a segment to refer back to the last OData name (simple
+	 * identifier or qualified name) immediately before that segment, e.g.
+	 * "/$EntityContainer/EMPLOYEES/@sapui.name" results in "EMPLOYEES". It does not matter whether
+	 * that name is valid or not. No map lookup or implicit drill-down is triggered by
+	 * "@sapui.name" itself, but "." can still be used. Lookup of a qualified name also contributes
+	 * here, i.e. "/$EntityContainer/EMPLOYEES/./@sapui.name" results in the name of the
+	 * entity type corresponding to the "EMPLOYEES" child of the entity container.
+	 * Any technical property (i.e. one with a "$" as first character of the name) immediately
+	 * before "@sapui.name", e.g. "/$EntityContainer/EMPLOYEES/$kind/@sapui.name", leads to an
+	 * <code>undefined</code> result and a warning is logged.
+	 * In case a path continues after "@sapui.name", this leads to an <code>undefined</code> result
+	 * and a warning is logged.
+	 *
+	 * In case a path comes across a non-object value and continues (except for map lookup or
+	 * "@sapui.name"), this leads to an <code>undefined</code> result and a warning
+	 * ("Invalid part") is logged.
 	 *
 	 * @param {string} sPath
 	 *   A relative or absolute path within the meta model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {Promise}
-	 *   A promise which is resolved with the requested meta model object as soon as it is
+	 *   A promise which is resolved with the requested meta model value as soon as it is
 	 *   available
 	 * @public
 	 */

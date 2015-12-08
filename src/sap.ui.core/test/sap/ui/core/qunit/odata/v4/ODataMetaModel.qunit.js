@@ -253,17 +253,18 @@ sap.ui.require([
 	//    set of (non-binding) parameter names" is unique.
 
 	//*********************************************************************************************
-	//TODO "/$EntityContainer/$kind/@sapui.name" --> warning, undefined, "$kind"?
-	//TODO avoid implicit OData drill-down for following $ segments?
-	//TODO @sapui.name and lookup/drill-down?
+	//TODO extend map lookup from QualifiedName to TargetPath?
 	[{
 		metaPath : "/",
 		result : oMetadata
 	}, {
-		metaPath : "/$Foo",
+		metaPath : "/Foo",
 		result : undefined
+	}, { // "It does not matter whether that name is valid or not."
+		metaPath : "/Foo/@sapui.name",
+		result : "Foo"
 	}, {
-		metaPath : "/@sapui.name",
+		metaPath : "/$Foo",
 		result : undefined
 	}, {
 		metaPath : "/$EntityContainer",
@@ -276,6 +277,9 @@ sap.ui.require([
 		metaPath : "$kind",
 		result : "EntityContainer"
 	}, {
+		metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/$kind",
+		result : "EntityContainer"
+	}, {
 		metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/Foo",
 		result : undefined
 	}, {
@@ -285,20 +289,29 @@ sap.ui.require([
 		metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/@sapui.name",
 		result : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer"
 	}, {
+		metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/./@sapui.name",
+		result : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer"
+	}, {
 		metaPath : "/$EntityContainer/Foo",
 		result : undefined
 	}, {
 		metaPath : "/$EntityContainer/$Foo",
 		result : undefined
-	}, {
-		metaPath : "/$EntityContainer",
-		result : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer"
+	}, { // avoid implicit OData drill-down for following $ segments
+		metaPath : "/$EntityContainer/T€AMS/$Key",
+		result : undefined
 	}, {
 		metaPath : "/$EntityContainer/T€AMS/@sapui.name",
 		result : "T€AMS"
 	}, {
+		metaPath : "/$EntityContainer/T€AMS/./@sapui.name",
+		result : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM"
+	}, {
 		metaPath : "/$EntityContainer/T€AMS/Team_Id/@sapui.name",
 		result : "Team_Id"
+	}, {
+		metaPath : "/$EntityContainer/T€AMS/$Type/Team_Id",
+		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"].Team_Id
 	}, {
 		metaPath : "/$EntityContainer/T€AMS/Team_Id",
 		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"].Team_Id
@@ -318,13 +331,16 @@ sap.ui.require([
 		metaPath : "/$EntityContainer/T€AMS/$Type/.",
 		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"]
 	}, {
+		metaPath : "/$EntityContainer/T€AMS/.",
+		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"]
+	}, {
 		metaPath : "/$EntityContainer/T€AMS/Foo",
 		result : undefined
 	}, {
 		metaPath : "/$EntityContainer/T€AMS/$Foo",
 		result : undefined
 	}, {
-		metaPath : "/$Term/AGE", // map lookup AND drill-down into type!
+		metaPath : "/$Term/AGE", // map lookup, then drill-down into type!
 		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.Worker"].AGE
 	}].forEach(function (oFixture) {
 		var sPath = oFixture.contextPath
@@ -344,7 +360,9 @@ sap.ui.require([
 			assert.strictEqual(oSyncPromise.getResult(), oFixture.result);
 		});
 	});
-	//TODO special cases from sap.ui.model.odata.ODataMetaModel.prototype._getObject
+	//TODO special cases from sap.ui.model.odata.ODataMetaModel#_getObject:
+	// - "Invalid relative path w/o context"
+	// - BindingParser.parseExpression() ??? we hardly have any arrays...
 	//TODO $count?
 	//TODO this.oList => getObject/getProperty MUST also accept object instead of context!
 
@@ -361,18 +379,27 @@ sap.ui.require([
 			metaPath : "/$Foo/$Bar/$Baz",
 			warning : "Invalid part: $Bar"
 		}, {
+			metaPath : "/$EntityContainer/T€AMS/Team_Id/$MaxLength/.",
+			warning : "Invalid part: ."
+		}, {
+			metaPath : "/$EntityContainer/T€AMS/Team_Id/$Nullable/.",
+			warning : "Invalid part: ."
+		}, {
 			contextPath : "/$EntityContainer",
 			metaPath : "$kind/Foo",
-//TODO?			warning : "Invalid qualified name 'EntityContainer' at /$EntityContainer/$kind"
-			warning : "Invalid qualified name EntityContainer before Foo"
+			warning : "Unknown qualified name EntityContainer before Foo"
 		}, {
 			metaPath : "/name.space.Broken/Foo", // implicit drill-down into type
-//TODO?			warning : "Invalid qualified name 'not.Found' at /name.space.Broken/$Type"
-			warning : "Invalid qualified name not.Found before Foo"
+			warning : "Unknown qualified name not.Found before Foo"
 		}, {
 			metaPath : "/name.space.Broken/$Type/Foo", // implicit map lookup
-//TODO?			warning : "Invalid qualified name 'not.Found' at /name.space.Broken/$Type"
-			warning : "Invalid qualified name not.Found before Foo"
+			warning : "Unknown qualified name not.Found before Foo"
+		}, {
+			metaPath : "/@sapui.name",
+			warning : "Invalid path before @sapui.name"
+		}, {
+			metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/$kind/@sapui.name",
+			warning : "Invalid path before @sapui.name"
 		}, {
 			metaPath : "/$EntityContainer/T€AMS/@sapui.name/foo",
 			warning : "Invalid path after @sapui.name"
@@ -381,8 +408,9 @@ sap.ui.require([
 				? oFixture.contextPath + "/" + oFixture.metaPath
 				: oFixture.metaPath;
 
-			QUnit.test("fetchObject fails: " + sPath, function (assert) {
-				var oContext = oFixture.contextPath && this.oMetaModel.getContext(oFixture.contextPath),
+			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
+				var oContext = oFixture.contextPath
+						&& this.oMetaModel.getContext(oFixture.contextPath),
 					oSyncPromise;
 
 				this.mock(this.oMetaModel).expects("fetchEntityContainer")
@@ -481,7 +509,7 @@ sap.ui.require([
 			});
 		});
 	});
-	//TODO facet DefaultValue
+	//TODO later: support for facet DefaultValue?
 
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: caching", function (assert) {
@@ -596,15 +624,41 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getProperty", function (assert) {
-		var oContext = {},
-			sPath = "foo",
-			oValue = {};
+	["bar", null, undefined, 42].forEach(function (vValue) {
+		QUnit.test("getProperty: primitive value " + vValue, function (assert) {
+			var oContext = {};
 
-		this.mock(this.oMetaModel).expects("getObject").withExactArgs(sPath, oContext)
-			.returns(oValue);
+			this.mock(this.oMetaModel).expects("getObject").withExactArgs("foo", oContext)
+				.returns(vValue);
 
-		assert.strictEqual(this.oMetaModel.getProperty(sPath, oContext), oValue);
+			assert.strictEqual(this.oMetaModel.getProperty("foo", oContext), vValue,
+				"property access to primitive values only");
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bWarn) {
+		QUnit.test("getProperty: object values, warn = " + bWarn, function (assert) {
+			var oContext = this.oMetaModel.getContext("/$EntityContainer"),
+				sPath = "EMPLOYEES",
+				sResolvedPath = "/$EntityContainer/EMPLOYEES";
+
+			this.mock(this.oMetaModel).expects("getObject").withExactArgs(sPath, oContext)
+				.returns({});
+			this.oLogMock.expects("isLoggable")
+				.withExactArgs(jQuery.sap.log.Level.WARNING)
+				.returns(bWarn);
+			this.mock(this.oMetaModel).expects("resolve").withExactArgs(sPath, oContext)
+				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
+				.returns(sResolvedPath);
+			this.oLogMock.expects("warning")
+				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
+				.withExactArgs("Accessed value is not primitive", sResolvedPath,
+					"sap.ui.model.odata.v4.ODataMetaModel");
+
+			assert.strictEqual(this.oMetaModel.getProperty(sPath, oContext), null,
+				"no property access to objects");
+		});
 	});
 
 	//*********************************************************************************************
@@ -629,35 +683,84 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("bindContext", function (assert) {
-		var oBinding,
-			oContext = this.oMetaModel.getMetaContext("/EMPLOYEES"),
-			done = assert.async(),
-			mParameters = {},
-			sPath = "ENTRYDATE";
+	["ENTRYDATE", "/$EntityContainer/EMPLOYEES/ENTRYDATE"].forEach(function (sPath) {
+		QUnit.test("bindContext: " + sPath, function (assert) {
+			var bAbsolutePath = sPath[0] === "/",
+				oBinding,
+				oBoundContext,
+				iChangeCount = 0,
+				oContext = this.oMetaModel.getMetaContext("/EMPLOYEES"),
+				oContextCopy = this.oMetaModel.getMetaContext("/EMPLOYEES"),
+				oNewContext = this.oMetaModel.getMetaContext("/T€AMS"),
+				mParameters = {};
 
-		oBinding = this.oMetaModel.bindContext(sPath, oContext, mParameters);
+			oBinding = this.oMetaModel.bindContext(sPath, oContextCopy, mParameters);
 
-		assert.ok(oBinding instanceof ContextBinding);
-		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
-		assert.strictEqual(oBinding.getPath(), sPath);
-		assert.strictEqual(oBinding.getContext(), oContext);
-		assert.strictEqual(oBinding.mParameters, mParameters);
+			assert.ok(oBinding instanceof ContextBinding);
+			assert.strictEqual(oBinding.getModel(), this.oMetaModel);
+			assert.strictEqual(oBinding.getPath(), sPath);
+			assert.strictEqual(oBinding.getContext(), oContextCopy);
+			assert.strictEqual(oBinding.mParameters, mParameters);
 
-		assert.strictEqual(oBinding.isInitial(), false);
-		assert.strictEqual(oBinding.getBoundContext().getModel(), this.oMetaModel);
-		assert.strictEqual(oBinding.getBoundContext().getPath(), oContext.getPath() + "/" + sPath);
+			assert.strictEqual(oBinding.isInitial(), true);
+			assert.strictEqual(oBinding.getBoundContext(), null);
 
-		assert.raises(function () {
+			// setContext **********
+			oBinding.attachChange(function (oEvent) {
+				assert.strictEqual(oEvent.getId(), "change");
+				iChangeCount += 1;
+			});
+
+			// code under test
 			oBinding.setContext(oContext);
-		}); //TODO do we need a better error here?
 
-		// ManagedObject relies on "change" event!
-		oBinding.attachChange(function (oEvent) {
-			assert.strictEqual(oEvent.getId(), "change");
-			done();
+			assert.strictEqual(iChangeCount, 0, "still initial");
+			assert.strictEqual(oBinding.isInitial(), true);
+			assert.strictEqual(oBinding.getBoundContext(), null);
+			assert.strictEqual(oBinding.getContext(), oContext);
+
+			// code under test
+			oBinding.initialize();
+
+			assert.strictEqual(iChangeCount, 1, "ManagedObject relies on 'change' event!");
+			assert.strictEqual(oBinding.isInitial(), false);
+			oBoundContext = oBinding.getBoundContext();
+			assert.strictEqual(oBoundContext.getModel(), this.oMetaModel);
+			assert.strictEqual(oBoundContext.getPath(),
+				bAbsolutePath ? sPath : oContext.getPath() + "/" + sPath);
+
+			// code under test
+			oBinding.setContext(oContextCopy);
+
+			assert.strictEqual(iChangeCount, 1, "context unchanged");
+			assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
+
+			// code under test
+			// Note: checks equality on resolved path, not simply object identity of context!
+			oBinding.setContext(oNewContext);
+
+			if (bAbsolutePath) {
+				assert.strictEqual(iChangeCount, 1, "context unchanged");
+				assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
+			} else {
+				assert.strictEqual(iChangeCount, 2, "context changed");
+				oBoundContext = oBinding.getBoundContext();
+				assert.strictEqual(oBoundContext.getModel(), this.oMetaModel);
+				assert.strictEqual(oBoundContext.getPath(), oNewContext.getPath() + "/" + sPath);
+			}
+
+			// code under test
+			oBinding.setContext(null);
+
+			if (bAbsolutePath) {
+				assert.strictEqual(iChangeCount, 1, "context unchanged");
+				assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
+			} else {
+				assert.strictEqual(iChangeCount, 3, "context changed");
+				assert.strictEqual(oBinding.isInitial(), false);
+				assert.strictEqual(oBinding.getBoundContext(), null);
+			}
 		});
-		oBinding.initialize();
 	});
 
 	//*********************************************************************************************
@@ -697,10 +800,7 @@ sap.ui.require([
 
 		assert.raises(function () {
 			oBinding.enableExtendedChangeDetection();
-		}); //TODO do we need a better error here?
-		assert.raises(function () {
-			oBinding.setContext(oContext);
-		}); //TODO do we need a better error here?
+		}, new Error("Unsupported operation"));
 
 		assert.deepEqual(oBinding.getCurrentContexts().map(function (oContext) {
 			assert.strictEqual(oContext.getModel(), oMetaModel);
@@ -728,6 +828,7 @@ sap.ui.require([
 		// <template:repeat list="{entitySet>}" ...>
 		// Iterate all OData path segments, i.e. (navigation) properties.
 		// Implicit drill-down into the entity set's type happens here!
+		//TODO support for $BaseType
 		contextPath : "/$EntityContainer/EMPLOYEES",
 		metaPath : "",
 		result : {
@@ -764,4 +865,9 @@ sap.ui.require([
 			assert.deepEqual(oMetadataUsed, oMetadata, "used meta data unchanged");
 		});
 	});
+	//TODO Avoid copies of objects? Makes sense only after we get rid of JSONListBinding which
+	// makes copies itself. If we get rid of it, we might become smarter in updateIndices and
+	// learn from the path which collection to iterate: sPath = "", "$", or "@", oContext holds
+	// the resolved path. Could we support setContext() then?
 });
+//TODO getContext vs. createBindingContext; map of "singletons" vs. memory leak
