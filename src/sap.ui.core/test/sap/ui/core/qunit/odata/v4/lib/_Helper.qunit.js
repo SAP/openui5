@@ -817,6 +817,25 @@ HTTP/1.1 200 OK\r\n\
 			}
 		);
 	}
+
+	//*********************************************************************************************
+	QUnit.test("isSafeInteger", function (assert) {
+		function test(sNumber, bValue) {
+			assert.strictEqual(Helper.isSafeInteger(sNumber), bValue, sNumber);
+		}
+		test(0, true);
+		test((Math.pow(2, 53) - 1), true);
+		test(Math.pow(2, 53), false);
+		test(1 - Math.pow(2, 53), true);
+		test(-Math.pow(2, 53), false);
+		test("foo", false);
+		test(3.14, false);
+		test(null, false);
+		test(undefined, false);
+		test(NaN, false);
+		test(Infinity, false);
+		test(-Infinity, false);
+	});
 });
 
 // TODO: refactoring about private and real public methods

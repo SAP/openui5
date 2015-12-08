@@ -3,7 +3,7 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._MetadataConverter
-sap.ui.define([], function () {
+sap.ui.define(["./_Helper"], function (Helper) {
 	"use strict";
 
 	var MetadataConverter,
@@ -56,6 +56,12 @@ sap.ui.define([], function () {
 					"Action" : {
 						__processor : processActionOrFunction,
 						__include : oActionOrFunctionConfig
+					},
+					"Annotations" : {
+						__processor : processAnnotations,
+						"Annotation" : {
+							__processor : processAnnotation
+						}
 					},
 					"Function" : {
 						__processor : processActionOrFunction,
@@ -160,6 +166,98 @@ sap.ui.define([], function () {
 		if (oAttributes.Alias) {
 			oAggregate.aliases[oAttributes.Alias] = oAttributes.Namespace;
 		}
+	}
+
+	/**
+	 * Processes an Annotations element.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processAnnotations(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			sTargetName = MetadataConverter.resolveAliasInPath(oAttributes.Target, oAggregate),
+			oTarget = {};
+
+		if (!oAggregate.result.$Annotations) {
+			oAggregate.result.$Annotations = {};
+		}
+		oAggregate.result.$Annotations[sTargetName] = oTarget;
+		oAggregate.annotations =  {
+			target: oTarget,
+			qualifier: oAttributes.Qualifier
+		};
+	}
+
+	/**
+	 * Processes an Annotation element within Annotations.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processAnnotation(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			sTerm = MetadataConverter.resolveAlias(oAttributes.Term, oAggregate),
+			sQualifiedName = "@" + sTerm,
+			sQualifier = oAggregate.annotations.qualifier || oAttributes.Qualifier,
+			vValue = true;
+
+		if (sQualifier) {
+			sQualifiedName += "#" + sQualifier;
+		}
+
+		if (oAttributes.Binary) {
+			vValue = {$Binary: oAttributes.Binary};
+		} else if (oAttributes.Bool) {
+			vValue = oAttributes.Bool === "true";
+		} else if (oAttributes.Date) {
+			vValue = {$Date: oAttributes.Date};
+		} else if (oAttributes.DateTimeOffset) {
+			vValue = {$DateTimeOffset: oAttributes.DateTimeOffset};
+		} else if (oAttributes.Decimal) {
+			vValue = {$Decimal: oAttributes.Decimal};
+		} else if (oAttributes.Duration) {
+			vValue = {$Duration: oAttributes.Duration};
+		} else if (oAttributes.EnumMember) {
+			vValue = parseInt(oAttributes.EnumMember, 10);
+			if (!Helper.isSafeInteger(vValue)) {
+				vValue = oAttributes.EnumMember;
+			}
+			vValue = {$EnumMember: vValue};
+		} else if (oAttributes.Float) {
+			if (oAttributes.Float === "NaN") {
+				vValue = {$Float: "NaN"};
+			} else if (oAttributes.Float === "INF") {
+				vValue = {$Float: "Infinity"};
+			} else if (oAttributes.Float === "-INF") {
+				vValue = {$Float: "-Infinity"};
+			} else {
+				vValue = parseFloat(oAttributes.Float);
+			}
+		} else if (oAttributes.Guid) {
+			vValue = {$Guid: oAttributes.Guid};
+		} else if (oAttributes.Int) {
+			vValue = parseInt(oAttributes.Int, 10);
+			vValue = Helper.isSafeInteger(vValue) ? vValue : {$Int: oAttributes.Int};
+		}  else if (oAttributes.String) {
+			vValue = oAttributes.String;
+		} else if (oAttributes.TimeOfDay) {
+			vValue = {$TimeOfDay: oAttributes.TimeOfDay};
+		} else if (oAttributes.AnnotationPath) {
+			vValue = {$AnnotationPath: MetadataConverter.resolveAliasInPath(
+					oAttributes.AnnotationPath, oAggregate)};
+		} else if (oAttributes.NavigationPropertyPath) {
+			vValue = {$NavigationPropertyPath: MetadataConverter.resolveAliasInPath(
+					oAttributes.NavigationPropertyPath, oAggregate)};
+		} else if (oAttributes.Path) {
+			vValue = {$Path: MetadataConverter.resolveAliasInPath(
+					oAttributes.Path, oAggregate)};
+		} else if (oAttributes.PropertyPath) {
+			vValue = {$PropertyPath: MetadataConverter.resolveAliasInPath(
+					oAttributes.PropertyPath, oAggregate)};
+		} else if (oAttributes.UrlRef) {
+			vValue = {$UrlRef: oAttributes.UrlRef};
+		}
+
+		oAggregate.annotations.target[sQualifiedName] = vValue;
 	}
 
 	/**
@@ -277,13 +375,12 @@ sap.ui.define([], function () {
 	 */
 	function processEnumTypeMember(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement),
-			sValue = oAttributes.Value,
-			vValue;
+			vValue = oAttributes.Value;
 
-		if (sValue) {
-			vValue = parseInt(sValue, 10);
-			if (sValue !== "" + vValue) {
-				vValue = sValue;
+		if (vValue) {
+			vValue = parseInt(vValue, 10);
+			if (!Helper.isSafeInteger(vValue)) {
+				vValue = oAttributes.Value;
 			}
 		} else {
 			vValue = oAggregate.enumTypeMemberCounter;
@@ -572,7 +669,7 @@ sap.ui.define([], function () {
 			return sPath;
 		}
 
-		sPath =  MetadataConverter.resolveAlias(sPath, oAggregate);
+		sPath =  MetadataConverter.resolveAliasInPath(sPath, oAggregate);
 		iSlash = sPath.indexOf("/");
 
 		if (iSlash >= 0 && sPath.indexOf("/", iSlash + 1) < 0) { // if there is exactly one slash
@@ -634,6 +731,8 @@ sap.ui.define([], function () {
 			var oAggregate = {
 					"actionOrFunction" : null, // the current action or function
 					"aliases" : {}, // maps alias -> namespace
+					"annotations" : {}, // target: the object to put annotations to
+										// qualifier: the current Annotations element's qualifier
 					"entityContainer" : null, // the current EntityContainer
 					"entitySet" : null, // the current EntitySet/Singleton
 					"enumType" : null, // the current EnumType
@@ -688,6 +787,30 @@ sap.ui.define([], function () {
 				}
 			}
 			return sName;
+		},
+
+		/**
+		 * Resolves all aliases in the given path.
+		 * @param {string} sPath the path
+		 * @param {object} oAggregate the aggregate containing the aliases
+		 * @returns {string} the path with the alias resolved (if there was one)
+		 */
+		resolveAliasInPath : function (sPath, oAggregate) {
+			var iAt, i, aSegments, sTerm = "";
+
+			if (sPath.indexOf(".") < 0) {
+				return sPath; // no dot -> nothing to do
+			}
+			iAt = sPath.indexOf("@");
+			if (iAt >= 0) {
+				sTerm = "@" + MetadataConverter.resolveAlias(sPath.slice(iAt + 1), oAggregate);
+				sPath = sPath.slice(0, iAt);
+			}
+			aSegments = sPath.split("/");
+			for (i = 0; i < aSegments.length; i++) {
+				aSegments[i] = MetadataConverter.resolveAlias(aSegments[i], oAggregate);
+			}
+			return aSegments.join("/") + sTerm;
 		},
 
 		/**
