@@ -17,7 +17,7 @@ sap.ui.define(["./ObjectPageHeaderRenderer", "./ObjectPageLayout"], function (Ob
 			oHeader = (oParent && bParentLayout) ? oParent.getHeaderTitle() : false,
 			bRenderTitle = (oParent && bParentLayout) ? ((oParent instanceof ObjectPageLayout)
 			&& oParent.getShowTitleInHeaderContent()) : false,
-			bRenderEditBtn = bParentLayout && oParent.getShowEditHeaderButton();
+			bRenderEditBtn = bParentLayout && oParent.getShowEditHeaderButton() && oControl.getContent() && oControl.getContent().length > 0;
 
 		if (bRenderEditBtn) {
 			oRm.write("<div ");
