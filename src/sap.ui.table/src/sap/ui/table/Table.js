@@ -1225,6 +1225,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	};
 
 	/**
+	 * Sets a new tooltip for this object. The tooltip can either be a simple string
+	 * (which in most cases will be rendered as the <code>title</code> attribute of this
+	 * Element) or an instance of {@link sap.ui.core.TooltipBase}.
+	 *
+	 * If a new tooltip is set, any previously set tooltip is deactivated.
+	 *
+	 * Please note that tooltips are not rendered for the table. The tooltip property will be set
+	 * but it won't effect the DOM.
+	 *
+	 * @param {string|sap.ui.core.TooltipBase} vTooltip
+	 * @returns {sap.ui.table.Table} This-reference for chaining
+	 * @public
+	 * @override
+	 */
+	Table.prototype.setTooltip = function(vTooltip) {
+		jQuery.sap.log.warning("The aggregation tooltip is not supported for sap.ui.table.Table");
+		return this.setAggregation("tooltip", vTooltip, true);
+	};
+
+	/**
 	 * refresh rows
 	 * @private
 	 */
