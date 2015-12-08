@@ -7,8 +7,203 @@ sap.ui.require([
 	"sap/ui/thirdparty/URI"
 ], function (Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0, no-multi-str: 0 */
+	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
+
+	var oEmployeesBody = {
+			"@odata.context" : "$metadata#EMPLOYEES",
+			"value" : [{
+				"@odata.etag" : "W/\"19770724000000.0000000\"",
+				"ID" : "1",
+				"Name" : "Walter\"s Win's",
+				"AGE" : 52,
+				"ENTRYDATE" : "1977-07-24",
+				"MANAGER_ID" : "",
+				"ROOM_ID" : "1",
+				"TEAM_ID" : "TEAM_01",
+				"Is_Manager" : false,
+				"LAST_MODIFIED_AT" : "1977-07-24T00:00:00Z",
+				"LOCATION" : {
+					"COUNTRY" : "Germany",
+					"City" : {
+						"POSTALCODE" : "69124",
+						"CITYNAME" : "Heidelberg"
+					}
+				},
+				"SALARY" : {
+					"MONTHLY_BASIC_SALARY_AMOUNT" : 5000.00,
+					"BASIC_SALARY_CURR" : "EUR",
+					"YEARLY_BONUS_AMOUNT" : 5000.000,
+					"BONUS_CURR" : "KWD"
+				}
+			}, {
+				"@odata.etag" : "W/\"20030701000000.0000000\"",
+				"ID" : "2",
+				"Name" : "Frederic Fall",
+				"AGE" : 32,
+				"ENTRYDATE" : "2003-07-01",
+				"MANAGER_ID" : "2",
+				"ROOM_ID" : "2",
+				"TEAM_ID" : "TEAM_03",
+				"Is_Manager" : true,
+				"LAST_MODIFIED_AT" : "2003-07-01T00:00:00Z",
+				"LOCATION" : {
+					"COUNTRY" : "Germany",
+					"City" : {
+						"POSTALCODE" : "69190",
+						"CITYNAME" : "Walldorf"
+					}
+				},
+				"SALARY" : {
+					"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
+					"BASIC_SALARY_CURR" : "EUR",
+					"YEARLY_BONUS_AMOUNT" : 10000.00,
+					"BONUS_CURR" : "EUR"
+				}
+			}, {
+				"@odata.etag" : "W/\"19770724000000.0000000\"",
+				"ID" : "3",
+				"Name" : "Jonathan Smith",
+				"AGE" : 56,
+				"ENTRYDATE" : "1977-07-24",
+				"MANAGER_ID" : "1",
+				"ROOM_ID" : "2",
+				"TEAM_ID" : "TEAM_01",
+				"Is_Manager" : true,
+				"LAST_MODIFIED_AT" : "1977-07-24T00:00:00Z",
+				"LOCATION" : {
+					"COUNTRY" : "Germany",
+					"City" : {
+						"POSTALCODE" : "69190",
+						"CITYNAME" : "Walldorf"
+					}
+				},
+				"SALARY" : {
+					"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
+					"BASIC_SALARY_CURR" : "EUR",
+					"YEARLY_BONUS_AMOUNT" : 10000.00,
+					"BONUS_CURR" : "EUR"
+				}
+			}, {
+				"@odata.etag" : "W/\"20040912000000.0000000\"",
+				"ID" : "4",
+				"Name" : "Peter Burke",
+				"AGE" : 39,
+				"ENTRYDATE" : "2004-09-12",
+				"MANAGER_ID" : "3",
+				"ROOM_ID" : "2",
+				"TEAM_ID" : "TEAM_02",
+				"Is_Manager" : false,
+				"LAST_MODIFIED_AT" : "2004-09-12T00:00:00Z",
+				"LOCATION" : {
+					"COUNTRY" : "Germany",
+					"City" : {
+						"POSTALCODE" : "69190",
+						"CITYNAME" : "Walldorf"
+					}
+				},
+				"SALARY" : {
+					"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
+					"BASIC_SALARY_CURR" : "GBP",
+					"YEARLY_BONUS_AMOUNT" : 15000.00,
+					"BONUS_CURR" : "USD"
+				}
+			}, {
+				"@odata.etag" : "W/\"20010201000000.0000000\"",
+				"ID" : "5",
+				"Name" : "John Field",
+				"AGE" : 42,
+				"ENTRYDATE" : "2001-02-01",
+				"MANAGER_ID" : "3",
+				"ROOM_ID" : "3",
+				"TEAM_ID" : "TEAM_02",
+				"Is_Manager" : true,
+				"LAST_MODIFIED_AT" : "2001-02-01T00:00:00Z",
+				"LOCATION" : {
+					"COUNTRY" : "Germany",
+					"City" : {
+						"POSTALCODE" : "69190",
+						"CITYNAME" : "Walldorf"
+					}
+				},
+				"SALARY" : {
+					"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
+					"BASIC_SALARY_CURR" : "GBP",
+					"YEARLY_BONUS_AMOUNT" : 15000.00,
+					"BONUS_CURR" : "USD"
+				}
+			}, {
+				"@odata.etag" : "W/\"20101201000000.0000000\"",
+				"ID" : "6",
+				"Name" : "Susan Bay",
+				"AGE" : 29,
+				"ENTRYDATE" : "2010-12-01",
+				"MANAGER_ID" : "1",
+				"ROOM_ID" : "2",
+				"TEAM_ID" : "TEAM_03",
+				"Is_Manager" : false,
+				"LAST_MODIFIED_AT" : "2010-12-01T00:00:00Z",
+				"LOCATION" : {
+					"COUNTRY" : "Germany",
+					"City" : {
+						"POSTALCODE" : "69190",
+						"CITYNAME" : "Walldorf"
+					}
+				},
+				"SALARY" : {
+					"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
+					"BASIC_SALARY_CURR" : "GBP",
+					"YEARLY_BONUS_AMOUNT" : 15000.00,
+					"BONUS_CURR" : "USD"
+				}
+			}]
+		},
+		oDepartmentsBody = {
+			"@odata.context" : "$metadata#Departments",
+			"value" : [{
+				"Sector" : "Consulting",
+				"ID" : "1",
+				"Name" : "Business Suite Consulting",
+				"MemberCount" : 100,
+				"ManagerID" : "3"
+			}, {
+				"Sector" : "Consulting",
+				"ID" : "2002",
+				"Name" : "BASIS Consulting",
+				"MemberCount" : 200,
+				"ManagerID" : "4"
+			}, {
+				"Sector" : "Financials",
+				"ID" : "1001",
+				"Name" : "Business Suite",
+				"MemberCount" : 100,
+				"ManagerID" : "5"
+			}]
+		},
+		oNewEmployeeBody = {
+			"@odata.context" : "$metadata#EMPLOYEES",
+			"ID" : "7",
+			"Name" : "Egon",
+			"AGE" : 17,
+			"ENTRYDATE" : "2015-10-01",
+			"MANAGER_ID" : "",
+			"ROOM_ID" : "",
+			"TEAM_ID" : "",
+			"Is_Manager" : false,
+			"LOCATION" : {
+				"COUNTRY" : "",
+				"City" : {
+					"POSTALCODE" : "",
+					"CITYNAME" : ""
+				}
+			},
+			"SALARY" : {
+				"MONTHLY_BASIC_SALARY_AMOUNT" : 0.00,
+				"BASIC_SALARY_CURR" : "",
+				"YEARLY_BONUS_AMOUNT" : 0.00,
+				"BONUS_CURR" : ""
+			}
+		},		sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Helper", {
@@ -197,8 +392,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{
-		message: "query parts without headers",
+	[{// serialization
+		testTitle: "query parts without headers",
 		requests: [
 			{
 				method: "GET",
@@ -226,7 +421,7 @@ sap.ui.require([
 		"Content-Type" : "multipart/mixed; boundary=batch_123456",
 		"MIME-Version" : "1.0"
 	}, {
-		message: "query parts with headers",
+		testTitle: "query parts with headers",
 		requests: [
 			{
 				method: "GET",
@@ -266,7 +461,7 @@ sap.ui.require([
 		"Content-Type" : "multipart/mixed; boundary=batch_123456",
 		"MIME-Version" : "1.0"
 	}].forEach(function (oFixture) {
-		QUnit.test("serializeBatchRequest: " + oFixture.message, function (assert) {
+		QUnit.test("serializeBatchRequest: " + oFixture.testTitle, function (assert) {
 			var oBatchRequest;
 
 			this.oSandbox.mock(jQuery.sap).expects("uid").returns("batch_123456");
@@ -280,63 +475,356 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit[TestUtils.isRealOData() ? "test" : "skip"]("Multipart Integration Test: for query parts",
-		function (assert) {
-			var oBatchRequestBody,
-				done = assert.async(),
-				sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/",
-				sResolvedServiceUrl = TestUtils.proxy(sServiceUrl);
+	// deserialization
+	[{
+		testTitle: "batch parts with preamble and epilogue",
+		contentType: "multipart/mixed; boundary=batch_123456",
+		body: "this is a preamble for the batch request\r\n\
+--batch_123456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 4711\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+Content-Type: application/json;odata.metadata=minimal\r\n\
+Content-Length: 9\r\n\
+odata-version: 4.0\r\n\
+\r\n\
+{\"foo\":\"bar\"}\r\n\
+--batch_123456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 459\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+Content-Type: application/json;odata.metadata=minimal\r\n\
+Content-Length: 11\r\n\
+odata-version: 4.0\r\n\
+header-with-colonValue: http://host:8080/sap/opu/MyService\r\n\
+header-with-space-before-colon : Headername with space before colon\r\n\
+\r\n\
+{\"foo1\":\"bar1\"}\r\n\
+--batch_123456--\r\n\
+this is a batch request epilogue",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {
+				"Content-Type" : "application/json;odata.metadata=minimal",
+				"Content-Length" : "9",
+				"odata-version" : "4.0"
+			},
+			responseText : "{\"foo\":\"bar\"}"
+		}, {
+			status : 200,
+			statusText : "OK",
+			headers : {
+				"Content-Type" : "application/json;odata.metadata=minimal",
+				"Content-Length" : "11",
+				"odata-version" : "4.0",
+				"header-with-colonValue" : "http://host:8080/sap/opu/MyService",
+				"header-with-space-before-colon" : "Headername with space before colon"
+			},
+			responseText : "{\"foo1\":\"bar1\"}"
+		}]
+	}, {
+		testTitle: "batch parts without headers",
+		contentType: 'multipart/mixed; boundary="batch_1 23456"',
+		body: "--batch_1 23456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 4711\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+\r\n\
+{\"foo\":\"bar\"}\r\n\
+--batch_1 23456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 459\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+\r\n\
+{\"foo1\":\"bar1\"}\r\n\
+--batch_1 23456--\r\n",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {},
+			responseText : "{\"foo\":\"bar\"}"
+		}, {
+			status : 200,
+			statusText : "OK",
+			headers : {},
+			responseText : "{\"foo1\":\"bar1\"}"
+		}]
+	}, {
+		testTitle: "batch boundary with special characters",
+		contentType: 'multipart/mixed; boundary="batch_123456\'()+_,-./:=?"',
+		body: "--batch_123456\'()+_,-./:=? \r\n\
+Content-Type: application/http\r\n\
+Content-Length: 4711\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+\r\n\
+{\"foo\":\"bar\"}\r\n\
+--batch_123456\'()+_,-./:=?  \r\n\
+Content-Type: application/http\r\n\
+Content-Length: 459\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+\r\n\
+{\"foo1\":\"bar1\"}\r\n\
+--batch_123456\'()+_,-./:=?-- \r\n",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {},
+			responseText : "{\"foo\":\"bar\"}"
+		}, {
+			status : 200,
+			statusText : "OK",
+			headers : {},
+			responseText : "{\"foo1\":\"bar1\"}"
+		}]
+	}, {
+		testTitle: "multiple Content-Type parameters separated with space",
+		contentType: 'multipart/mixed; boundary=batch_123456 ; foo=bar',
+		body: "--batch_123456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 459\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+\r\n\
+{\"foo1\":\"bar1\"}\r\n\
+--batch_123456--\r\n",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {},
+			responseText : "{\"foo1\":\"bar1\"}"
+		}]
+	}, {
+		testTitle: "multiple Content-Type parameters separated w/o space",
+		contentType: 'multipart/mixed; boundary=batch_123456;foo=bar',
+		body: "--batch_123456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 459\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+\r\n\
+{\"foo1\":\"bar1\"}\r\n\
+--batch_123456--\r\n",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {},
+			responseText : "{\"foo1\":\"bar1\"}"
+		}]
+	}].forEach(function (oFixture) {
+		QUnit.test("deserializeBatchResponse: " + oFixture.testTitle, function (assert) {
+			var aResponses = Helper.deserializeBatchResponse(oFixture.contentType, oFixture.body);
+			assert.deepEqual(aResponses, oFixture.expectedResponses);
+		});
+	});
 
-
-			oBatchRequestBody = Helper.serializeBatchRequest([
-				{
+	//*********************************************************************************************
+	// Integration Tests with real backend
+	if (TestUtils.isRealOData()) {
+		// integration tests serialization/deserialization
+		[{  testTitle: "two get request for employees and departments",
+			batchRequests: [{
 					method : "GET",
 					url : sServiceUrl + "EMPLOYEES",
-					headers : {
-						Accept: "application/json"
-					}
-				},
-				{
+					headers : { "Accept": "application/json" }
+				}, {
 					method : "GET",
 					url : sServiceUrl + "Departments",
-					headers : {
-						Accept: "application/json"
-					}
-				}
-			]);
-
-			jQuery.ajax(sResolvedServiceUrl, {
-				method: "HEAD",
-				headers : {
-					"X-CSRF-Token" : "Fetch"
-				}
-			}).then(function (oData, sTextStatus, jqXHR) {
-				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
-				jQuery.ajax(sResolvedServiceUrl + '$batch', {
-					method: "POST",
-					headers : {
-						"Content-Type" : oBatchRequestBody["Content-Type"],
-						"X-CSRF-Token" : sCsrfToken,
-						// FIX4MASTER: remove sap-rfcswitch
-						"sap-rfcswitch" : "X",
-						"MIME-Version" : oBatchRequestBody["MIME-Version"]
+					headers : {"Accept": "application/json"}
+			}],
+			expectedResponses : [{
+					status: 200,
+					statusText: "OK",
+					headers: {
+						"Content-Type" : "application/json;odata.metadata=minimal",
+						"Content-Length" : "2652",
+						"odata-version" : "4.0"
 					},
-					data : oBatchRequestBody.body
+					responseText : oEmployeesBody
+				}, {
+					status: 200,
+					statusText: "OK",
+					headers: {
+						"Content-Type" : "application/json;odata.metadata=minimal",
+						"Content-Length" : "344",
+						"odata-version" : "4.0"
+					},
+					responseText :  oDepartmentsBody
+			}]
+		},
+		{   testTitle : "get, delete and post request",
+			batchRequests: [{
+					method : "GET",
+					url : sServiceUrl + "EMPLOYEES",
+					headers : { "Accept": "application/json"}
+				}, {
+					method : "DELETE",
+					url : sServiceUrl + "EMPLOYEES('1')",
+					headers : {
+						"Accept": "application/json",
+						"If-Match" : "W/\"19770724000000.0000000\""
+					}
+				}, {
+					method : "POST",
+					url : sServiceUrl + "EMPLOYEES",
+					headers : {
+						"Accept": "application/json",
+						"Content-Type": "application/json;charset=UTF-8"
+					},
+					body : '{"ENTRYDATE":"2015-10-01", "Name":"Egon", "AGE":17}'
+			}],
+			expectedResponses : [{
+					status : 200,
+					statusText : "OK",
+					headers : {
+						"Content-Type" : "application/json;odata.metadata=minimal",
+						"Content-Length" : "2652",
+						"odata-version" : "4.0"
+					},
+					responseText : oEmployeesBody
+				}, {
+					status : 204,
+					statusText : "No Content",
+					headers : {
+						"Content-Length" : "0",
+						"odata-version" : "4.0"
+					},
+					responseText : ""
+				}, {
+					status : 201,
+					statusText : "Created",
+					headers : {
+						"Content-Type" : "application/json;odata.metadata=minimal",
+						"odata-version" : "4.0"
+					},
+					responseText : oNewEmployeeBody
+			}]
+		}].forEach(function (oFixture, i) {
+			QUnit.test("Multipart Integration Test: " + oFixture.testTitle,
+				function (assert) {
+					var oBatchRequestContent,
+						done = assert.async();
+
+					oBatchRequestContent = Helper.serializeBatchRequest(oFixture.batchRequests);
+
+					jQuery.ajax(TestUtils.proxy(sServiceUrl), {
+						method: "HEAD",
+						headers : {
+							"X-CSRF-Token" : "Fetch"
+						}
+					}).then(function (oData, sTextStatus, jqXHR) {
+						var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+						jQuery.ajax(TestUtils.proxy(sServiceUrl) + '$batch', {
+							method: "POST",
+							headers : {
+								"Content-Type" : oBatchRequestContent["Content-Type"],
+								"MIME-Version" : oBatchRequestContent["MIME-Version"],
+								"X-CSRF-Token" : sCsrfToken,
+								// FIX4MASTER: remove sap-rfcswitch
+								"sap-rfcswitch" : "X"
+							},
+							data : oBatchRequestContent.body
+						}).then(function (oData, sTextStatus, jqXHR) {
+							var i,
+								aResponses;
+
+							assert.strictEqual(jqXHR.status, 200);
+							aResponses = Helper.deserializeBatchResponse(
+									jqXHR.getResponseHeader("Content-Type"), oData);
+
+							for (i = 0; i < aResponses.length; i++) {
+								if (aResponses[i].responseText) {
+									aResponses[i].responseText =
+										JSON.parse(aResponses[i].responseText);
+								}
+							}
+
+							TestUtils.deepContains(aResponses, oFixture.expectedResponses);
+							done();
+						});
+					}, function (jqXHR, sTextStatus, sErrorMessage) {
+						assert.ok(false, sErrorMessage);
+						done();
+					});
+				}
+			);
+		});
+
+		// integration tests regarding error handling
+		QUnit.test("Multipart Integration Test: response error handling",
+			function (assert) {
+				var oBatchRequestContent,
+					done = assert.async(),
+					sResolvedServiceUrl = TestUtils.proxy(sServiceUrl),
+					aBatchRequests = [{
+							method : "GET",
+							url : sServiceUrl + "EMPLOYEES('9')",
+							headers : { "Accept": "application/json" }
+					}];
+
+				oBatchRequestContent = Helper.serializeBatchRequest(aBatchRequests);
+
+				jQuery.ajax(sResolvedServiceUrl, {
+					method : "HEAD",
+					headers : {
+						"X-CSRF-Token" : "Fetch"
+					}
 				}).then(function (oData, sTextStatus, jqXHR) {
-					assert.strictEqual(jqXHR.status, 200);
+					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+					jQuery.ajax(sResolvedServiceUrl + '$batch', {
+						method: "POST",
+						headers : {
+							"Content-Type" : oBatchRequestContent["Content-Type"],
+							"MIME-Version" : oBatchRequestContent["MIME-Version"],
+							"X-CSRF-Token" : sCsrfToken,
+							// FIX4MASTER: remove sap-rfcswitch
+							"sap-rfcswitch" : "X"
+						},
+						data : oBatchRequestContent.body
+					}).then(function (oData, sTextStatus, jqXHR) {
+						var aResponses, oResponse;
+
+						assert.strictEqual(jqXHR.status, 200);
+						aResponses = Helper.deserializeBatchResponse(
+							jqXHR.getResponseHeader("Content-Type"), oData);
+
+						assert.strictEqual(aResponses.length, 1);
+						oResponse = aResponses[0];
+
+						assert.strictEqual(oResponse.status, 404);
+						assert.strictEqual(oResponse.statusText, "Not Found");
+						assert.ok(oResponse.headers["content-language"]);
+						done();
+					});
+				}, function (jqXHR, sTextStatus, sErrorMessage) {
+					assert.ok(false, sErrorMessage);
 					done();
 				});
-			}, function (jqXHR, sTextStatus, sErrorMessage) {
-				assert.ok(false, sErrorMessage);
-				done();
-			});
-		}
-	);
+			}
+		);
+	}
 });
 
 // TODO: refactoring about private and real public methods
-// TODO: add tests for error handling?
-// TODO: Gibt es eigentlich irgendein Encoding/Escaping zu beachten?
+// TODO: add tests for error handling in serialization?
+// TODO: add test for error handling in deserialization, e.g. missing "boundary=" etc.
+//     reuse _Helper.createError() for error parsing
+// TODO: Encoding/Escaping
 // TODO: TCH comment 1305194:PS10:"the header fields may encode non-US-ASCII header text as per RFC 2047" [Page 18]
 // TODO: TCH comment 1305194:PS10: Mir ist die Semantik davon nicht klar. Und hier steht nirgendwo was von "UTF-8", aber das verwenden wir wohl implizit mit unseren JS-Strings. Siehe auch meine Frage in serializeHeaders().
 // TODO: TCH comment 1305194:PS10: Brauchen wir hier einen "charset=UTF-8"-Zusatz? "The default character set, which must be assumed in the absence of a charset parameter, is US-ASCII."
+// TODO: Deserialisation    1: Hier gibt es kein Fehlerhandling, keine Prüfung des "Content-Type" etc. Entweder überlassen wir das dem Aufrufer oder machen es richtig. Dann würde ich wieder nach dem XMLHttpRequest schielen:// 	 	response// 	 	responseText// 	 	responseType

@@ -10,6 +10,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		rEquals = /\=/g,
 		rHash = /#/g,
 		rPlus = /\+/g,
+		rQuote = /\"/g,
 		rSemicolon = /;/g,
 		Helper;
 
@@ -116,6 +117,85 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		},
 
 		/**
+		 * Deserializes batch response body using batch boundary from the specified value of the
+		 * 'Content-Type' header.
+		 *
+		 * @param {string} sContentType
+		 *   value of the Content-Type header from the batch response
+		 *   (e.g. "multipart/mixed; boundary=batch_123456")
+		 * @param {string} sResponseBody
+		 *   batch response body
+		 * @returns {object[]} array containing responses from the batch response body. Each of the
+		 * returned responses has the following structure:
+		 *   <ul>
+		 *     <li><code>status</code>: {number} HTTP status code;
+		 *     <li><code>statusText</code>: {string} HTTP status text;
+		 *     <li><code>headers</code>: {object} map of the response headers;
+		 *     <li><code>responseText</code>: {string} response body.
+		 *   </ul>
+		 */
+		deserializeBatchResponse : function (sContentType, sResponseBody) {
+			var aBatchParts = sResponseBody.split(getBoundaryRegExp()),
+				aResponses = [];
+
+			function getBoundaryRegExp() {
+				var sBatchBoundary,
+					iBoundaryIndex = sContentType.indexOf("boundary=") + 9, // "boundary=".length
+					iSemicolonIndex = sContentType.indexOf(";", iBoundaryIndex);
+
+				iSemicolonIndex = iSemicolonIndex > 0 ? iSemicolonIndex : undefined;
+				sBatchBoundary = sContentType.slice(iBoundaryIndex, iSemicolonIndex).trim();
+
+				// remove possible quotes
+				sBatchBoundary = sBatchBoundary.replace(rQuote, "");
+
+				// escape RegExp-related characters
+				sBatchBoundary = jQuery.sap.escapeRegExp(sBatchBoundary);
+				return new RegExp('--' + sBatchBoundary + '-{0,2} *\r\n');
+			}
+
+			// skip preamble and epilogue
+			aBatchParts = aBatchParts.slice(1, -1);
+
+			aBatchParts.forEach(function (sBatchPart) {
+				var i,
+					iColonIndex,
+					sHeader,
+					aHttpHeaders,
+					aHttpStatusInfos,
+					oResponse = {},
+					aResponseParts;
+
+				// aResponseParts will take 3 elements:
+				// 0: general batch part headers
+				// 1: HTTP response headers and status line
+				// 2: HTTP response body
+				aResponseParts = sBatchPart.split('\r\n\r\n');
+				aHttpHeaders = aResponseParts[1].split('\r\n');
+				// e.g. HTTP/1.1 200 OK
+				aHttpStatusInfos = aHttpHeaders[0].split(' ');
+
+				oResponse.status = parseInt(aHttpStatusInfos[1], 10);
+				oResponse.statusText = aHttpStatusInfos.slice(2).join(' ');
+				oResponse.headers = {};
+
+				// start with index 1 to skip status line
+				for (i = 1; i < aHttpHeaders.length; i++) {
+					// e.g. Content-Type: application/json;odata.metadata=minimal
+					sHeader = aHttpHeaders[i];
+					iColonIndex = sHeader.indexOf(':');
+					oResponse.headers[sHeader.slice(0, iColonIndex).trim()] =
+						sHeader.slice(iColonIndex + 1).trim();
+				}
+
+				oResponse.responseText = aResponseParts[2].trim();
+				aResponses.push(oResponse);
+			});
+
+			return aResponses;
+		},
+
+		/**
 		 * Encodes a query part, either a key or a value.
 		 *
 		 * @param {string} sPart
@@ -151,10 +231,11 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			return Helper.encode(sKey, true) + "=" + Helper.encode(sValue, false);
 		},
 
-		/** Serializes an array of requests to an object containing the batch request body and
+		/**
+		 * Serializes an array of requests to an object containing the batch request body and
 		 * mandatory headers for the batch request.
 		 *
-		 * @param {array} aRequests
+		 * @param {object[]} aRequests
 		 *  an array of requests objects <code>oRequest</code>
 		 * @param {string} oRequest.method
 		 *   HTTP method, e.g. "GET"
@@ -162,6 +243,8 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   absolute or relative URL
 		 * @param {object} oRequest.headers
 		 *   map of request headers
+		 * @param {string} oRequest.body
+		 *   request body
 		 * @returns {object} object containing the following properties:
 		 *   <ul>
 		 *     <li><code>body</code>: batch request body;
@@ -196,7 +279,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					"\r\nContent-Type:application/http\r\n",
 					"Content-Transfer-Encoding:binary\r\n\r\n",
 					oRequest.method, " ", oRequest.url, " HTTP/1.1\r\n",
-					serializeHeaders(oRequest.headers), "\r\n");
+					serializeHeaders(oRequest.headers), oRequest.body || "", "\r\n");
 			});
 			aRequestBody = aRequestBody.concat("--", sBatchBoundary, "--\r\n");
 
