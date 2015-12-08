@@ -656,6 +656,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// F6 Handling is done in TableRenderer to make sure the table content gets the focus. The
 		// Toolbar has its own F6 stop.
 		// this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+
+		// determines whether item navigation should be reapplied from scratch
+		this._bItemNavigationInvalidated = false;
 	};
 
 
@@ -734,7 +737,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		this._bOnAfterRendering = false;
 
-		this._initItemNavigation();
+		// invalidate item navigation
+		this._bItemNavigationInvalidated = true;
 
 		if (this._bDetermineVisibleCols === true) {
 			this._determineVisibleCols();
@@ -947,6 +951,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._oItemNavigation.setItemDomRefs(aItemDomRefs);
 		this._oItemNavigation.setFocusedIndex(iInitialIndex);
 
+		// revert invalidation flag
+		this._bItemNavigationInvalidated = false;
 	};
 
 	/**
@@ -957,8 +963,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		// destroy of item navigation for the Table control
 		if (this._oItemNavigation) {
+			this.removeDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
-			this._oItemNavigation = undefined;
+			this._oItemNavigation = null;
 		}
 
 	};
@@ -2754,6 +2761,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.onmousedown = function(oEvent) {
+		// check whether item navigation should be reapplied from scratch
+		if (this._bItemNavigationInvalidated) {
+			this._initItemNavigation();
+		}
+
 		// only move on left click!
 		var bLeftButton = oEvent.button === 0;
 		var bIsTouchMode = this._isTouchMode(oEvent);
@@ -3021,6 +3033,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.onfocusin = function(oEvent) {
+		// check whether item navigation should be reapplied from scratch
+		if (!this._bIgnoreFocusIn && this._bItemNavigationInvalidated) {
+			this._initItemNavigation();
+		}
+
 		var $target = jQuery(oEvent.target);
 		var bNoData = this.$().hasClass("sapUiTableEmpty");
 		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
