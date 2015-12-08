@@ -76,9 +76,15 @@ sap.ui.define([], function () {
 					},
 					"EntityContainer" : {
 						__processor : processEntityContainer,
+						"ActionImport" : {
+							__processor : processImport.bind(null, "Action")
+						},
 						"EntitySet" : {
 							__processor : processEntitySet,
 							__include : oEntitySetConfig
+						},
+						"FunctionImport" : {
+							__processor : processImport.bind(null, "Function")
 						},
 						"Singleton" : {
 							__processor : processSingleton,
@@ -133,9 +139,7 @@ sap.ui.define([], function () {
 		processAttributes(oAttributes, oAction, {
 			"IsBound" : setIfTrue,
 			"EntitySetPath" : setValue,
-			"IsComposable" : function(sValue) {
-				return sKind === "Function" ? setIfTrue(sValue) : undefined;
-			}
+			"IsComposable" : setIfTrue
 		});
 
 		oAggregate.result[sQualifiedName] = aActions.concat(oAction);
@@ -286,6 +290,29 @@ sap.ui.define([], function () {
 	}
 
 	/**
+	 * Processes an ActionImport or FunctionImport element.
+	 * @param {string} sWhat "Action" or "Function"
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processImport(sWhat, oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			oImport = {
+				$kind: sWhat + "Import"
+			};
+
+		oImport["$" + sWhat] = MetadataConverter.resolveAlias(oAttributes[sWhat], oAggregate);
+		processAttributes(oAttributes, oImport, {
+			"EntitySet" : function (sValue) {
+				return resolveTargetPath(sValue, oAggregate);
+			},
+			"IncludeInServiceDocument" : setIfFalse
+		});
+
+		oAggregate.entityContainer[oAttributes.Name] = oImport;
+	}
+
+	/**
 	 * Processes an Include element within a Reference.
 	 * @param {Element} oElement the element
 	 * @param {object} oAggregate the aggregate
@@ -310,7 +337,7 @@ sap.ui.define([], function () {
 			oAggregate.entitySet.$NavigationPropertyBinding = oNavigationPropertyBinding = {};
 		}
 		oNavigationPropertyBinding[oAttributes.Path]
-			= MetadataConverter.resolveAlias(oAttributes.Target, oAggregate);
+			= resolveTargetPath(oAttributes.Target, oAggregate);
 	}
 
 	/**
@@ -506,6 +533,30 @@ sap.ui.define([], function () {
 	}
 
 	/**
+	 * Resolves a target path including resolve aliases.
+	 * @param {string} sPath the target path
+	 * @param {object} oAggregate the aggregate containing the aliases
+	 * @returns {string} the target path with the alias resolved (if there was one)
+	 */
+	function resolveTargetPath(sPath, oAggregate) {
+		var iSlash;
+
+		if (!sPath) {
+			return sPath;
+		}
+
+		sPath =  MetadataConverter.resolveAlias(sPath, oAggregate);
+		iSlash = sPath.indexOf("/");
+
+		if (iSlash >= 0 && sPath.indexOf("/", iSlash + 1) < 0) { // if there is exactly one slash
+			if (sPath.slice(0, iSlash) === oAggregate.result.$EntityContainer) {
+				return sPath.slice(iSlash + 1);
+			}
+		}
+		return sPath;
+	}
+
+	/**
 	 * Helper for processAttributes, returns false if sValue is "false", returns undefined
 	 * otherwise.
 	 * @param {string} sValue the attribute value in the element
@@ -603,7 +654,7 @@ sap.ui.define([], function () {
 			var iDot = sName.indexOf("."),
 				sNamespace;
 
-			if (sName.indexOf(".", iDot + 1) < 0) { // if there is no second dot
+			if (iDot >= 0 && sName.indexOf(".", iDot + 1) < 0) { // if there is exactly one dot
 				sNamespace = oAggregate.aliases[sName.slice(0, iDot)];
 				if (sNamespace) {
 					return sNamespace + "." + sName.slice(iDot + 1);
