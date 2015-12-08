@@ -1,0 +1,12 @@
+/* ======================================================== */
+/* CSS for control sap.ui.analytics/AnalyticalTable.control */
+/* ======================================================== */
+
+// No checkboxes should be shown in group header of Analytical Table
+.sapUiSizeCompact, .sapUiSizeCozy{
+	.sapUiAnalyticalTable .sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableGroupHeader::after,
+	.sapUiAnalyticalTable .sapUiTableRowHdrScr .sapUiTableRowHdr.sapUiTableRowHidden::after,
+	.sapUiAnalyticalTable.sapUiTableSelModeMultiToggle .sapUiTableRowHdr.sapUiAnalyticalTableSum::after {
+		display: none;
+	}
+}
