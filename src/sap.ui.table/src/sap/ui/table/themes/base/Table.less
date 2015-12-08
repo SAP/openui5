@@ -615,11 +615,14 @@ html[dir=rtl] .sapUiTableColRsz {
 	float: left;
 }
 
-.sapUiSizeCompact .sapUiTableTreeIcon {
-	background-image: none;
-	width: 25px;
-	margin-right: 5px;
-	padding: 0;
+.sapUiSizeCompact, .sapUiSizeCozy {
+	// Hide plus/minus
+	.sapUiTableTreeIcon {
+		background-image: none;
+		width: 25px;
+		margin-right: 5px;
+		padding: 0;
+	}
 }
 
 .sapUiTableGroupIcon {
