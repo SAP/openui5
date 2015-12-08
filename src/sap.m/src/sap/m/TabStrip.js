@@ -43,6 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 					/**
 					 * The down arrow button displayed in the TabStrip.
+					 * // ToDo: check if this has to be removed
 					 */
 					downArrowButton : {type : "sap.m.Button", multiple : false, singularName : "downArrowButton"},
 
@@ -177,7 +178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype.onBeforeRendering = function () {
 			var oDownArrowButton = this.getDownArrowButton(),
-				oAddButton = this.getAddButton();
+			    oAddButton = this.getAddButton();
 
 			//Create overflow buttons
 			this._oLeftArrowButton = this._generateButton(TabStrip._ICONBUTTONS.LeftArrowButton);
@@ -197,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		TabStrip.prototype.onAfterRendering = function () {
 			//use ItemNavigation for keyboardHandling
 			var aItems = this.getItems(),
-				aTabDomRefs = [];
+			    aTabDomRefs = [];
 
 			aItems.forEach(function(oTab, iIndex) {
 				var oItemDomRef = oTab.getDomRef();
@@ -268,9 +269,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype._checkScrolling = function() {
 			var bScrolling = false,
-				$This,
-				oTabContainer,
-				oTabs;
+			    $This,
+			    oTabContainer,
+			    oTabs;
 
 			if (this._bDoScroll) {
 				$This = this.$();
@@ -301,7 +302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype._generateButton = function (oButtonType) {
 			var that = this,
-				oButton;
+			    oButton;
 
 			switch (oButtonType) {
 				case TabStrip._ICONBUTTONS.LeftArrowButton:
@@ -387,8 +388,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype._scroll = function(iDelta, iDuration) {
 			var oDomRef = this.getDomRef("tabContainer"),
-				iScrollLeft = oDomRef.scrollLeft,
-				iScrollTarget = iScrollLeft + iDelta;
+			    iScrollLeft = oDomRef.scrollLeft,
+			    iScrollTarget = iScrollLeft + iDelta;
 
 			this._fnBeforeScrollCallback();
 
@@ -477,10 +478,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype.onsapdelete = function(oEvent) {
 			var oItem = jQuery("#" + oEvent.target.id).control(0),
-				iItemsCount,
-				iCurrentFocusedIndex,
-				iNextIndex,
-				fnCallback;
+			    iItemsCount,
+			    iCurrentFocusedIndex,
+			    iNextIndex,
+			    fnCallback;
 
 			if (oItem instanceof sap.m.TabStripItem) {
 				iItemsCount = this.getItems().length;
@@ -678,9 +679,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			handleItemsAggregation: function (aArgs, bIsAdding) {
 				var sAggregationName    = 'items', // name of the aggregation in TabStripSelect
-					sFunctionName       = aArgs[0],
-					oObject             = aArgs[1],
-					aNewArgs            = [sAggregationName];
+				    sFunctionName       = aArgs[0],
+				    oObject             = aArgs[1],
+				    aNewArgs            = [sAggregationName];
 
 				/* remove the function name from the args array */
 				aArgs.forEach(function (iItem, iIndex) {
@@ -709,7 +710,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			handleSelectItemsAggregation: function (aArgs, bIsAdding, sFunctionName, oObject) {
 				var oSelect             = this.getAggregation('_select'),
-					oDerivedObject;     // a new instance, holding a copy of the TabStripItem which is given to the TabStripSelect instance
+				    oDerivedObject;     // a new instance, holding a copy of the TabStripItem which is given to the TabStripSelect instance
 
 				if (sFunctionName === 'destroyAggregation' && !oSelect) {
 					/* ToDo : For some reason aggregation _select may be already deleted (e.g. TabStrip.destroy will destroy all children including _select */
@@ -779,8 +780,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			findTabStripItemFromSelectItem: function (oTabStripSelectItem) {
 				var i,
-					sTabStripItemId = oTabStripSelectItem.getId().replace(TabStrip.SELECT_ITEMS_ID_PREFIX , ''),
-					aTabStripItems = this.getItems();
+				    sTabStripItemId = oTabStripSelectItem.getId().replace(TabStrip.SELECT_ITEMS_ID_PREFIX , ''),
+				    aTabStripItems = this.getItems();
 				for (i = 0; i < aTabStripItems.length; i++) {
 					if (aTabStripItems[i].getId() === sTabStripItemId) {
 						return aTabStripItems[i];
@@ -790,8 +791,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			findSelectItemFromTabStripItem: function (oTabStripItem) {
 				var i,
-					aSelectItems,
-					sSelectItemId = TabStrip.SELECT_ITEMS_ID_PREFIX + oTabStripItem.getId();
+				    aSelectItems,
+				    sSelectItemId = TabStrip.SELECT_ITEMS_ID_PREFIX + oTabStripItem.getId();
 
 				if (this.getHasSelect()) {
 					aSelectItems = this.getAggregation('_select').getItems();

@@ -31,7 +31,9 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeClasses();
 		oRm.write(">");
 
-		oRm.renderControl(oTabStrip);
+		if (oTabStrip) {
+			oRm.renderControl(oTabStrip);
+		}
 
 		// render outer content
 		oRm.write("<div id='" + oControl.getId() + "-containerContent' ");
@@ -64,7 +66,7 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Returns accessability attributes relevant for tab content.
 	 * @param {sap.m.TabContainer} oControl the tab container
-	 * @returns {Object} accessability attributes for the tab content
+	 * @returns {Object} accessibility attributes for the tab content
 	 */
 	TabContainerRenderer.getTabContentAccAttributes = function (oControl) {
 		var sSelectedItemId = oControl.getSelectedItem(),
