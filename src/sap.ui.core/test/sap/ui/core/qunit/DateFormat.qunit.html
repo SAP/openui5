@@ -496,6 +496,12 @@
 		equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern")
 	});
 
+	test("parse relative date with calendarType Islamic in the formatOptions and locale ar", function() {
+		doTestRelative(false, {pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Islamic}, "ar", "yyyy-MM-dd, default range, ar with calendar type Islamic");
+		doTestRelative(false, {relativeRange: [-9, 0], calendarType: sap.ui.core.CalendarType.Islamic}, "ar", "default style, range [-9, 0], ar with calendar type Islamic");
+		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Islamic}, "ar", "style long, range [1, 5], ar with calendar type Islamic");
+	});
+
 	module("Scaling: Relative Time Formater")
 
 	function date(scale, diff) {
@@ -622,7 +628,7 @@
 		equal(oDateTime.parse("in 3 hours").getDate(), date("hour", 3).getDate(), "Today + 3 hours");
 		equal(oDateTime.parse("in 72 hours").getDate(), date("hour", 72).getDate(), "Today + 3 Days");
  	});
-
+	 
 	module("Islamic Date in locale en");
 
 	var oDate = new Date("Wed Jul 4 2001");

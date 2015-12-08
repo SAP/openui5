@@ -723,7 +723,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					} else {
 						sPart = "narrow";
 					}
-					iIndex += (this.oLocaleData.getEra(sPart).length);
+					iIndex += (this.oLocaleData.getEra(sPart, sCalendarType).length);
 					break;
 				case "year":
 				case "weekYear":
