@@ -64,17 +64,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	
 	// Returns the accessibility state of the control.
 	TextAreaRenderer.getAccessibilityState = function(oControl) {
-		var mBaseAccessibilityState = InputBaseRenderer.getAccessibilityState.call(this, oControl);
-		return jQuery.extend(mBaseAccessibilityState, {
-			multiline: true
-		});
+		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.call(this, oControl);
+		mAccessibilityState.multiline = true;
+		return mAccessibilityState;
 	}; 
 	
 	// Add extra attributes to TextArea
 	TextAreaRenderer.writeInnerAttributes = function(oRm, oControl) {
-		if (oControl.getWrapping() && oControl.getWrapping() != "None") {
+		if (oControl.getWrapping() != sap.ui.core.Wrapping.None) {
 			oRm.writeAttribute("wrap", oControl.getWrapping());
 		}
+
 		oRm.writeAttribute("rows", oControl.getRows());
 		oRm.writeAttribute("cols", oControl.getCols());
 	};
