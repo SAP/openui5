@@ -94,21 +94,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 */
-	Float.prototype.validateValue = function(iValue) {
+	Float.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
 				aViolatedConstraints = [],
-				aMessages = [];
+				aMessages = [],
+				fValue = vValue;
+			if (this.oInputFormat) {
+				fValue = this.oInputFormat.parse(vValue);
+			}
 			jQuery.each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":
-						if (iValue < oContent) {
+						if (fValue < oContent) {
 							aViolatedConstraints.push("minimum");
 							aMessages.push(oBundle.getText("Float.Minimum", [oContent]));
 						}
 						break;
 					case "maximum":
-						if (iValue > oContent) {
+						if (fValue > oContent) {
 							aViolatedConstraints.push("maximum");
 							aMessages.push(oBundle.getText("Float.Maximum", [oContent]));
 						}

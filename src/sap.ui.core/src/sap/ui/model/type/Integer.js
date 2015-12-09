@@ -99,11 +99,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 */
-	Integer.prototype.validateValue = function(iValue) {
+	Integer.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
 				aViolatedConstraints = [],
-				aMessages = [];
+				aMessages = [],
+				iValue = vValue;
+			if (this.oInputFormat) {
+				iValue = this.oInputFormat.parse(vValue);
+			}
 			jQuery.each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":
