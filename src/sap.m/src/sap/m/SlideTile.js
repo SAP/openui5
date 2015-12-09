@@ -257,7 +257,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			this._changeSizeTo(this._iCurrentTile);
 			oWrapperTo.css(sDir, "0rem");
 		}
-		this._setAriaDescriptor();
+		if (this.getTiles()[this._iCurrentTile]) {
+			this._setAriaDescriptor();
+		}
 	};
 
 	/**
@@ -277,6 +279,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 */
 	SlideTile.prototype._changeSizeTo = function(tileIndex) {
 		var oTile = this.getTiles()[tileIndex];
+		if (!oTile) {
+			return;
+		}
 		if (this._sFrameType) {
 			this.$().removeClass(this._sFrameType);
 		}
