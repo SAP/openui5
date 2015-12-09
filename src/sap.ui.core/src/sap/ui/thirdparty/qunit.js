@@ -1956,12 +1956,20 @@ if ( typeof exports !== "undefined" && exports ) {
 	exports.QUnit = QUnit;
 }
 
-if ( typeof define === "function" && define.amd ) {
-	define( function() {
-		return QUnit;
-	} );
-	QUnit.config.autostart = false;
-}
+//### BEGIN MODIFIED BY SAP
+// In most of our test cases, QUnit is loaded via a script tag. If requireJS has been loaded before,
+// (e.g. after chart library has been loaded), it rejects to define QUnit without a module name and throws an error.
+// Furthermore, preventing the autorun in that case also causes problems, as tests are not prepared to handle this
+// (they don't call QUnit.start).
+// Drawback of this patch: this module can't be loaded via requireJS (not used within UI5)
+//
+//if ( typeof define === "function" && define.amd ) {
+//	define( function() {
+//		return QUnit;
+//	} );
+//	QUnit.config.autostart = false;
+//}
+//### END MODIFIED BY SAP
 
 // Get a reference to the global object, like window in browsers
 }( (function() {
