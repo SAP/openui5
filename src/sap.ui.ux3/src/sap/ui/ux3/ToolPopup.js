@@ -810,14 +810,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					return;
 				}
 
+                var HCB_THEME_NAME = 'sap_hcb';
 				var sKey = "";
 				var iVal = 0;
 				var iZero = 0; // this is the 0 of the  relative position between ToolPopup and Opener
 				var iHalfArrow = oThis.iArrowHeight / 2;
+                var isHCBTheme = sap.ui.getCore().getConfiguration().getTheme() === HCB_THEME_NAME;
+				var isRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 				oThis._sArrowDir = fnGetArrowDirection(oThis);
 				var sArrowDir = oThis._sArrowDir;
-				if (oThis._bRTL) {
+				if (isRTL) {
 					// in RTL mode arrow must be mirrowed here
 					if (oThis._sArrowDir === "Right") {
 						sArrowDir = "Left";
@@ -840,39 +843,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				}
 
 				// calculate the horizontal/vertical value of the arrow
-				if (oThis._bHorizontalArrow) {
-					// left or right arrow
-					sKey = "top";
+                if (oThis._bHorizontalArrow) {
+                    // left or right arrow
+                    sKey = "top";
 
-					if (oOpenerRect) {
-						iZero = oOpenerRect.top - oPopRect.top;
+                    if (oOpenerRect) {
+                        iZero = parseInt(oOpenerRect.top - oPopRect.top, 10);
 
-						iVal = Math.round(iZero + oOpenerRect.height / 2);
+                        iVal = Math.round(iZero + oOpenerRect.height / 2);
 
-						// if the position would exceed the ToolPopup's height
-						iVal = iVal + iHalfArrow > oPopRect.height ? iVal - oThis.iArrowHeight : iVal;
-					}
+                        // if the position would exceed the ToolPopup's height
+                        iVal = iVal + iHalfArrow > oPopRect.height ? iVal - oThis.iArrowHeight : iVal;
+                    }
+
+                    if (isHCBTheme) {
+                        if (!iZero) {
+                            iVal = 1;
+						} else if (oOpenerRect.height > iZero) {
+                            iVal -= iHalfArrow;
+						} else if (iZero > 0) {
+                            iVal += iHalfArrow;
+						}
+                    }
+
 				} else {
 					// up/down arrow
 					sKey = "left";
 
 					if (oOpenerRect) {
-						iZero = oOpenerRect.left - oPopRect.left;
-						if (iZero < 0) {
-							iZero = oPopRect.width - oThis.iArrowHeight;
+                        if (isRTL) {
+							sKey = "right";
+							iVal = Math.round(oOpenerRect.width / 2);
+						} else {
+							iVal = Math.round(oOpenerRect.width / 2);
 						}
-
-						iVal = Math.round(iZero + oOpenerRect.width / 2);
 						// if the position would exceed the ToolPopup's width
 						iVal = iVal + iHalfArrow > oPopRect.width ? iVal - oThis.iArrowHeight : iVal;
 					}
 				}
 
-				if (oOpenerRect) {
-					iVal -= iHalfArrow;
-				} else {
+				// This is very specific code that applies to HCB theme. This theme has a different logic
+				// for setting the arrow and so we have another logic
+				if (!oOpenerRect) {
 					iVal = oThis.iArrowHeight;
-				}
+				} else if (!isHCBTheme) {
+					iVal -= iHalfArrow;
+                }
 
 
 				// set the corresponding classes
@@ -894,8 +910,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 						iWidth += oThis.iArrowPadding;
 					}
 
-					oThis._bRTL = sap.ui.getCore().getConfiguration().getRTL();
-					if (oThis._bRTL) {
+					if (isHCBTheme) {
+						iWidth -= oThis.iArrowWidth;
+						$Arrow.css("top", 0);
+					}
+
+
+					if (isRTL) {
 						$Arrow.css("right", iWidth + "px");
 					} else {
 						$Arrow.css("left", iWidth + "px");
