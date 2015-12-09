@@ -1637,8 +1637,8 @@ sap.ui.require([
 				);
 				delete oContact["com.sap.vocabularies.Communication.v1.Contact"];
 
-				assert.deepEqual
-					(oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
+				assert.deepEqual(
+					oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
 					{ "Bool" : "true" }, "IsPhoneNumber");
 				delete oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"];
 

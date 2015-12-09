@@ -13,18 +13,17 @@
  */
 
 sap.ui.define([
-	//FIX4MASTER open source approval for Olingo missing
 	"jquery.sap.global",
 	"sap/ui/model/Model",
 	"sap/ui/thirdparty/URI",
+	"./lib/_MetadataRequestor",
 	"./lib/_Requestor",
 	"./ODataContextBinding",
-	"./ODataDocumentModel",
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Model, URI, Requestor, ODataContextBinding, ODataDocumentModel,
-	ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
+], function(jQuery, Model, URI, MetadataRequestor, Requestor, ODataContextBinding,
+		ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -99,7 +98,8 @@ sap.ui.define([
 					this.sServiceUrl = oUri.query("").toString();
 
 					this.oMetaModel = new ODataMetaModel(
-						new ODataDocumentModel(this.sServiceUrl + "$metadata" + this._sQuery));
+						MetadataRequestor.create(null, this.mUriParameters),
+						this.sServiceUrl + "$metadata");
 					this.mParameters = mParameters;
 					this.oRequestor = Requestor.create(this.sServiceUrl, {
 						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
@@ -328,47 +328,6 @@ sap.ui.define([
 			.then(function (sCanonicalUrl) {
 				return sCanonicalUrl.slice(that.sServiceUrl.length - 1);
 			});
-	};
-
-	/**
-	 * Requests the object for the given path relative to the given context.
-	 *
-	 * If the path does not contain a <code>/#</code>, path and context are used to get the object
-	 * from the data model.
-	 * If the path contains <code>/#</code>, it will be split into a data model path and a meta
-	 * model path.
-	 * For example:
-	 * /path/in/data/model/#path/in/metadata/model
-	 * For the given context and data model path, the corresponding meta model context is
-	 * determined. This context is used to retrieve the meta model object following the meta model
-	 * path.
-	 *
-	 * Returns a <code>Promise</code>, which is resolved with the requested object or rejected with
-	 * an error.
-	 *
-	 * @param {string} sPath
-	 *   A relative or absolute path within the model
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context in the data model to be used as a starting point in case of a relative path
-	 * @returns {Promise}
-	 *   A promise which is resolved with the requested object as soon as it is available
-	 * @public
-	 */
-	ODataModel.prototype.requestObject = function (sPath, oContext) {
-		var iMeta = sPath.indexOf("/#"),
-			sMetaModelPath,
-			sModelPath,
-			that = this;
-
-		if (iMeta >= 0) {
-			sModelPath = this.resolve(sPath.slice(0, iMeta), oContext);
-			sMetaModelPath = sPath.slice(iMeta + 2);
-			return this.getMetaModel().fetchMetaContext(sModelPath)
-				.then(function (oMetaContext) {
-					return that.getMetaModel().fetchObject(sMetaModelPath, oMetaContext);
-				});
-		}
-		notImplemented("requestObject", arguments);
 	};
 
 	return ODataModel;

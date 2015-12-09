@@ -48,7 +48,7 @@ sap.ui.define([
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrdersTemplate/data");
 			}
 
-			oMetaModel.requestObject("/EntitySets('SalesOrderList')/EntityType").then(function () {
+			oMetaModel.requestObject("/$EntityContainer/SalesOrderList/$Type").then(function () {
 				oLayout.addItem(sap.ui.view({
 					async : true,
 					models : {
