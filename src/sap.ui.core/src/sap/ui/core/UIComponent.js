@@ -422,8 +422,14 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 				viewName: oRootView,
 				type: sap.ui.core.mvc.ViewType.XML
 			});
-		} else if (oRootView) {
+		} else if (oRootView && typeof oRootView === "object") {
+			// make sure to prefix the ID of the rootView
+			if (oRootView.id) {
+				oRootView.id = this.createId(oRootView.id);
+			}
 			return sap.ui.view(oRootView);
+		} else if (oRootView) {
+			throw new Error("Configuration option 'rootView' of component '" + this.getMetadata().getName() + "' is invalid! 'rootView' must be type of string or object!");
 		}
 		return null;
 	};
