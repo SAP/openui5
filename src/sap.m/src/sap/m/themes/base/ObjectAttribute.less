@@ -1,4 +1,3 @@
-
 /* ============================================= */
 /* CSS for control sap.m/ObjectAttribute.control */
 /* ============================================= */
@@ -9,9 +8,18 @@
 	font-size: .875rem;
 }
 
+.sapMObjectAttributeActive {
+	pointer-events: none;
+}
+
 .sapMObjectAttributeActive .sapMText {
 	color: @sapUiLink;
 	cursor: pointer;
+	pointer-events: auto;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText {
+	pointer-events: auto;
 }
 
 .sapMObjectAttributeActive .sapMText:active,
