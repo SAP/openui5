@@ -287,4 +287,110 @@ sap.ui.require([
 			});
 		});
 	}
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache.refresh - basics", function (assert) {
+		var oCache,
+			oPromise,
+			oRequestor = Requestor.create("/~/"),
+			sUrl = "/~/Employees('1')";
+
+		this.oSandbox.mock(oRequestor).expects("request").withExactArgs("GET", sUrl)
+			.returns(Promise.resolve({}));
+
+		oCache = Cache.createSingle(oRequestor, sUrl);
+		oPromise = oCache.read();
+
+		oPromise.then(function () {
+			assert.strictEqual(oCache.oPromise, oPromise, "Promise is cached");
+
+			oCache.refresh();
+			assert.strictEqual(oCache.oPromise, undefined, "Cached promise is cleared");
+		});
+		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache.refresh - cancel pending requests", function (assert) {
+		var oCache,
+			aPromises = [],
+			oRequestor = Requestor.create("/~/"),
+			sUrl = "/~/Employees('1')";
+
+		this.oSandbox.mock(oRequestor).expects("request").twice()
+			.withExactArgs("GET", sUrl)
+			.onFirstCall().returns(Promise.resolve({}))
+			.onSecondCall().returns(Promise.resolve({}));
+
+		oCache = Cache.createSingle(oRequestor, sUrl);
+
+		aPromises.push(oCache.read().then(function () {
+			assert.ok(false, "Refresh shall cancel this read");
+		})["catch"](function (oError) {
+			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
+			assert.strictEqual(oError.message,
+				"Refresh canceled processing of pending request: /~/Employees('1')");
+		}));
+
+		oCache.refresh();
+		// a read after refresh triggers a second request; if read fails test framework protocols
+		// the failure: Promise rejected during SingleCache.refresh...
+		aPromises.push(oCache.read());
+		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache.refresh - basics", function (assert) {
+		var oCache,
+			oRequestor = Requestor.create("/~/"),
+			sUrl = "/~/Employees";
+
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("GET", sUrl + "?$skip=0&$top=20")
+			.returns(Promise.resolve(createResult(0, 10)));
+
+		oCache = Cache.create(oRequestor, sUrl);
+
+		// read 20 but receive only 10 to simulate a short read to set iMaxElements
+		return oCache.read(0, 20).then(function () {
+			var aElements = oCache.aElements;
+
+			oCache.refresh();
+			assert.strictEqual(oCache.sContext, undefined, "sContext after refresh");
+			assert.strictEqual(oCache.iMaxElements, -1, "iMaxElements after refresh");
+			assert.strictEqual(oCache.aElements.length, 0, "aElements after refresh");
+			assert.notStrictEqual(oCache.aElements, aElements,
+				"different aElements arrays after refresh");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache.refresh - cancel pending requests", function (assert) {
+		var oCache,
+			aPromises = [],
+			oRequestor = Requestor.create("/~/"),
+			sUrl = "/~/Employees";
+
+		this.oSandbox.mock(oRequestor).expects("request").twice()
+			.withExactArgs("GET", sUrl + "?$skip=0&$top=10")
+			.returns(Promise.resolve(createResult(0, 10)));
+
+		oCache = Cache.create(oRequestor, sUrl);
+
+		aPromises.push(oCache.read(0, 10).then(function () {
+			assert.ok(false, "Refresh shall cancel this read");
+		})["catch"](function (oError) {
+			assert.strictEqual(oError.canceled, true, "Canceled error thrown");
+			assert.strictEqual(oError.message,
+				"Refresh canceled processing of pending request: /~/Employees?$skip=0&$top=10");
+			// Elements for read after refresh must not be removed from the elements array
+			assert.strictEqual(oCache.aElements[9], "j", "elements array must not be cleared");
+		}));
+
+		oCache.refresh();
+		// a read after refresh triggers a second request; if read fails test framework protocols
+		// the failure: Promise rejected during Cache.refresh...
+		aPromises.push(oCache.read(0, 10));
+		return Promise.all(aPromises);
+	});
 });

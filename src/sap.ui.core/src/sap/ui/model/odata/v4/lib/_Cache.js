@@ -45,6 +45,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Requests the elements in the given range and places them into the aElements list. While the
 	 * request is running, all indexes in this range contain the Promise.
+	 * A refresh cancels processing of all pending requests by throwing an error that has a
+	 * property <code>canceled</code> which is set to <code>true</code>.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Cache} oCache
 	 *   the cache
@@ -54,14 +56,20 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   the position of the last element to request ($skip + $top)
 	 */
 	function requestElements(oCache, iStart, iEnd) {
-		var iExpectedLength = iEnd - iStart,
-			oPromise;
+		var aElements = oCache.aElements,
+			iExpectedLength = iEnd - iStart,
+			oPromise,
+			sUrl = oCache.sUrl + "$skip=" + iStart + "&$top=" + iExpectedLength;
 
-		oPromise = oCache.oRequestor.request("GET", oCache.sUrl + "$skip=" + iStart + "&$top="
-				+ iExpectedLength)
+		oPromise = oCache.oRequestor.request("GET", sUrl)
 			.then(function (oResult) {
-				var i, iResultLength = oResult.value.length;
+				var i, iResultLength = oResult.value.length, oError;
 
+				if (aElements !== oCache.aElements) {
+					oError = new Error("Refresh canceled processing of pending request: " + sUrl);
+					oError.canceled = true;
+					throw oError;
+				}
 				oCache.sContext = oResult["@odata.context"];
 				if (iResultLength < iExpectedLength) {
 					oCache.iMaxElements = iStart + iResultLength;
@@ -71,7 +79,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					oCache.aElements[iStart + i] = oResult.value[i];
 				}
 			})["catch"](function (oError) {
-				fill(oCache.aElements, undefined, iStart, iEnd);
+				if (aElements === oCache.aElements) {
+					fill(oCache.aElements, undefined, iStart, iEnd);
+				}
 				throw oError;
 			});
 
@@ -93,8 +103,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		this.oRequestor = oRequestor;
 		this.sUrl = sUrl + buildQueryString(mQueryParameters);
 		this.sContext = undefined;  // the "@odata.context" from the responses
-		this.iMaxElements = -1;		// the max. number of elements if known, -1 otherwise
-		this.aElements = [];		// the available elements
+		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
+		this.aElements = [];        // the available elements
 	}
 
 	/**
@@ -109,6 +119,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>). If an HTTP
 	 *   request fails, the error from the _Requestor is returned and the requested range is reset
 	 *   to undefined.
+	 *   A refresh cancels processing of all pending promises by throwing an error that has a
+	 *   property <code>canceled</code> which is set to <code>true</code>.
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
 	Cache.prototype.read = function (iIndex, iLength) {
@@ -151,6 +163,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	};
 
 	/**
+	 * Clears cache and cancels processing of all pending read requests.
+	 */
+	Cache.prototype.refresh = function () {
+		this.sContext = undefined;
+		this.iMaxElements = -1;
+		this.aElements = [];
+	};
+
+	/**
 	 * Creates a cache for a single entity that performs requests using the given requestor.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
@@ -171,12 +192,34 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *
 	 * @returns {Promise}
 	 *   a Promise to be resolved with the element.
+	 *   A refresh cancels processing a pending promise by throwing an error that has a
+	 *   property <code>canceled</code> which is set to <code>true</code>.
 	 */
 	SingleCache.prototype.read = function () {
+		var that = this,
+			oError,
+			oPromise,
+			sUrl = this.sUrl;
+
 		if (!this.oPromise) {
-			this.oPromise = this.oRequestor.request("GET", this.sUrl);
+			oPromise = this.oRequestor.request("GET", sUrl).then(function (oResult) {
+				if (that.oPromise !== oPromise) {
+					oError = new Error("Refresh canceled processing of pending request: " + sUrl);
+					oError.canceled = true;
+					throw oError;
+				}
+				return oResult;
+			});
+			this.oPromise = oPromise;
 		}
 		return this.oPromise;
+	};
+
+	/**
+	 * Clears cache and cancels processing of a pending read request.
+	 */
+	SingleCache.prototype.refresh = function () {
+		this.oPromise = undefined;
 	};
 
 	return {
