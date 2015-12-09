@@ -133,25 +133,60 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *     <li><code>headers</code>: {object} map of the response headers;
 		 *     <li><code>responseText</code>: {string} response body.
 		 *   </ul>
+		 * @throws {Error}
+		 *   if "charset" parameter of "Content-Type" header of a nested response has value other
+		 *   than "utf-8"
 		 */
 		deserializeBatchResponse : function (sContentType, sResponseBody) {
 			var aBatchParts = sResponseBody.split(getBoundaryRegExp()),
 				aResponses = [];
 
 			function getBoundaryRegExp() {
-				var sBatchBoundary,
-					iBoundaryIndex = sContentType.indexOf("boundary=") + 9, // "boundary=".length
-					iSemicolonIndex = sContentType.indexOf(";", iBoundaryIndex);
-
-				iSemicolonIndex = iSemicolonIndex > 0 ? iSemicolonIndex : undefined;
-				sBatchBoundary = sContentType.slice(iBoundaryIndex, iSemicolonIndex).trim();
-
-				// remove possible quotes
-				sBatchBoundary = sBatchBoundary.replace(rQuote, "");
+				var sBatchBoundary = getHeaderParameterValue(sContentType, "boundary");
 
 				// escape RegExp-related characters
 				sBatchBoundary = jQuery.sap.escapeRegExp(sBatchBoundary);
 				return new RegExp('--' + sBatchBoundary + '-{0,2} *\r\n');
+			}
+
+			/**
+			 * Extracts value of the parameter with the specified <code>sParameterName</code> from
+			 * the specified <code>sHeaderValue</code>.
+			 *
+			 * @param {string} sHeaderValue
+			 *   HTTP header value e.g. "application/json;charset=utf-8"
+			 * @param {string} sParameterName
+			 *   name of HTTP header parameter e.g. "charset"
+			 * @returns {string} the HTTP header parameter value
+			 */
+			function getHeaderParameterValue(sHeaderValue, sParameterName) {
+				var iEqualsIndex,
+					iParamIndex,
+					aHeaderParts = sHeaderValue.split(";"),
+					sHeaderPart,
+					sParameter,
+					sParameterValue;
+
+				if (aHeaderParts.length === 1) {
+					//only header value without parameter e.g. "application/json"
+					return undefined;
+				}
+				sParameterName = sParameterName.toLowerCase();
+
+				for (iParamIndex = 1; iParamIndex < aHeaderParts.length; iParamIndex++) {
+					sHeaderPart = aHeaderParts[iParamIndex];
+					iEqualsIndex = sHeaderPart.indexOf("=");
+
+					// take parameter name
+					sParameter = sHeaderPart.slice(0, iEqualsIndex).trim().toLowerCase();
+
+					if (sParameter === sParameterName) {
+						sParameterValue = sHeaderPart.slice(iEqualsIndex + 1);
+						// remove possible quotes
+						// RFC7231: parameter = token "=" ( token / quoted-string )
+						return sParameterValue.trim().replace(rQuote, "");
+					}
+				}
 			}
 
 			// skip preamble and epilogue
@@ -164,7 +199,10 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					aHttpHeaders,
 					aHttpStatusInfos,
 					oResponse = {},
-					aResponseParts;
+					aResponseParts,
+					sHeaderName,
+					sHeaderValue,
+					sCharset;
 
 				// aResponseParts will take 3 elements:
 				// 0: general batch part headers
@@ -184,11 +222,20 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					// e.g. Content-Type: application/json;odata.metadata=minimal
 					sHeader = aHttpHeaders[i];
 					iColonIndex = sHeader.indexOf(':');
-					oResponse.headers[sHeader.slice(0, iColonIndex).trim()] =
-						sHeader.slice(iColonIndex + 1).trim();
+					sHeaderName = sHeader.slice(0, iColonIndex).trim();
+					sHeaderValue = sHeader.slice(iColonIndex + 1).trim();
+					oResponse.headers[sHeaderName] = sHeaderValue;
+
+					if (sHeaderName.toLowerCase() === "content-type") {
+						sCharset = getHeaderParameterValue(sHeaderValue, "charset");
+						if (sCharset && sCharset.toLowerCase() !== "utf-8") {
+							throw new Error('Unsupported "Content-Type" charset: ' + sCharset);
+						}
+					}
 				}
 
-				oResponse.responseText = aResponseParts[2].trim();
+				// remove \r\n sequence from the end of the response body
+				oResponse.responseText = aResponseParts[2].slice(0, -2);
 				aResponses.push(oResponse);
 			});
 
@@ -242,9 +289,11 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {string} oRequest.url
 		 *   absolute or relative URL
 		 * @param {object} oRequest.headers
-		 *   map of request headers
+		 *   map of request headers. RFC-2047 encoding rules are not supported. Nevertheless non
+		 *   US-ASCII values can be used.
 		 * @param {string} oRequest.body
-		 *   request body
+		 *   request body. If specified, oRequest.headers map must contain "Content-Type" header
+		 *   either without "charset" parameter or with "charset" parameter having value "UTF-8".
 		 * @returns {object} object containing the following properties:
 		 *   <ul>
 		 *     <li><code>body</code>: batch request body;

@@ -560,7 +560,7 @@ HTTP/1.1 200 OK\r\n\
 		}]
 	}, {
 		testTitle: "batch boundary with special characters",
-		contentType: 'multipart/mixed; boundary="batch_123456\'()+_,-./:=?"',
+		contentType: 'multipart/mixed; myboundary="invalid"; boundary="batch_123456\'()+_,-./:=?"',
 		body: "--batch_123456\'()+_,-./:=? \r\n\
 Content-Type: application/http\r\n\
 Content-Length: 4711\r\n\
@@ -625,11 +625,90 @@ HTTP/1.1 200 OK\r\n\
 			headers : {},
 			responseText : "{\"foo1\":\"bar1\"}"
 		}]
+	}, {
+		testTitle: "Content-Type with charset parameter lowercase",
+		contentType: 'multipart/mixed; boundary=batch_123456;foo=bar',
+		body: "--batch_123456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 459\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+Content-Type: application/json;odata.metadata=minimal;charset=utf-8\r\n\
+\r\n\
+{\"foo1\":\"bar1\"}\r\n\
+--batch_123456--\r\n",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8"},
+			responseText : "{\"foo1\":\"bar1\"}"
+		}]
+	}, {
+		testTitle: "Content-Type with charset parameter uppercase + space + following parameter",
+		contentType: 'multipart/mixed; boundary=batch_123456;foo=bar',
+		body: "--batch_123456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 459\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+Content-Type: application/json;odata.metadata=minimal;charset=UTF-8 ;foo=bar\r\n\
+\r\n\
+{\"foo1\":\"bar1\"}\r\n\
+--batch_123456--\r\n",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {
+				"Content-Type" : "application/json;odata.metadata=minimal;charset=UTF-8 ;foo=bar"
+			},
+			responseText : "{\"foo1\":\"bar1\"}"
+		}]
+	}, {
+		testTitle: "Content-Type text/plain with only spaces in response body",
+		contentType: 'multipart/mixed; boundary=batch_123456',
+		body: "--batch_123456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 459\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+Content-Type: text/plain\r\n\
+\r\n\
+  \r\n\
+--batch_123456--\r\n",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {
+				"Content-Type" : "text/plain"
+			},
+			responseText : "  "
+		}]
 	}].forEach(function (oFixture) {
 		QUnit.test("deserializeBatchResponse: " + oFixture.testTitle, function (assert) {
 			var aResponses = Helper.deserializeBatchResponse(oFixture.contentType, oFixture.body);
 			assert.deepEqual(aResponses, oFixture.expectedResponses);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deserializeBatchResponse: detect unsupported charset: ", function (assert) {
+		var sBody = "--batch_123456\r\n\
+Content-Type: application/http\r\n\
+Content-Length: 459\r\n\
+content-transfer-encoding: binary\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+Content-Type: application/json;odata.metadata=minimal;charset=UTF-16 ;foo=bar \r\n\
+\r\n\
+{\"foo1\":\"bar1\"}\r\n\
+--batch_123456--\r\n";
+
+		assert.throws(function () {
+			Helper.deserializeBatchResponse("multipart/mixed; boundary=batch_123456", sBody);
+		}, new Error('Unsupported "Content-Type" charset: UTF-16'));
 	});
 
 	//*********************************************************************************************
@@ -823,8 +902,3 @@ HTTP/1.1 200 OK\r\n\
 // TODO: add tests for error handling in serialization?
 // TODO: add test for error handling in deserialization, e.g. missing "boundary=" etc.
 //     reuse _Helper.createError() for error parsing
-// TODO: Encoding/Escaping
-// TODO: TCH comment 1305194:PS10:"the header fields may encode non-US-ASCII header text as per RFC 2047" [Page 18]
-// TODO: TCH comment 1305194:PS10: Mir ist die Semantik davon nicht klar. Und hier steht nirgendwo was von "UTF-8", aber das verwenden wir wohl implizit mit unseren JS-Strings. Siehe auch meine Frage in serializeHeaders().
-// TODO: TCH comment 1305194:PS10: Brauchen wir hier einen "charset=UTF-8"-Zusatz? "The default character set, which must be assumed in the absence of a charset parameter, is US-ASCII."
-// TODO: Deserialisation    1: Hier gibt es kein Fehlerhandling, keine Prüfung des "Content-Type" etc. Entweder überlassen wir das dem Aufrufer oder machen es richtig. Dann würde ich wieder nach dem XMLHttpRequest schielen:// 	 	response// 	 	responseText// 	 	responseType
