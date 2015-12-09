@@ -1868,10 +1868,10 @@
 				if (!window.performance) {
 					return;
 				}
-				if (window.performance.webkitSetResourceTimingBufferSize) {
-					window.performance.webkitSetResourceTimingBufferSize(iSize);
-				} else if (window.performance.setResourceTimingBufferSize){
+				if (window.performance.setResourceTimingBufferSize){
 					window.performance.setResourceTimingBufferSize(iSize);
+				} else if (window.performance.webkitSetResourceTimingBufferSize) {
+					window.performance.webkitSetResourceTimingBufferSize(iSize);
 				}
 			};
 
