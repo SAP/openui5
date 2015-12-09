@@ -49,7 +49,8 @@
 	
 	// load and start the customized application
 	var oComp = sap.ui.component({
-		name: "testdata.customizing.customer"
+		name: "testdata.customizing.customer",
+		id: "theComponent"
 	});
 	var oCompCont = new sap.ui.core.ComponentContainer({
 		component: oComp
@@ -87,15 +88,15 @@
 	// View Replacement
 	
 	test("View Replacement", function() {
-		ok(!jQuery.sap.domById("mainView--sub1View--customTextInCustomSub1"), "Replacement View should not be rendered");
-		ok(jQuery.sap.domById("mainView--sub1View--originalSapTextInSub1"), "Original View should be rendered");
+		ok(!jQuery.sap.domById("theComponent---mainView--sub1View--customTextInCustomSub1"), "Replacement View should not be rendered");
+		ok(jQuery.sap.domById("theComponent---mainView--sub1View--originalSapTextInSub1"), "Original View should be rendered");
 	});
 	
 	
 	// View Extension
 	
 	test("View Extension", function() {
-		ok(!jQuery.sap.domById("mainView--sub2View--customFrag1BtnWithCustAction"), "View Extension should not be rendered");
+		ok(!jQuery.sap.domById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "View Extension should not be rendered");
 	});
 	
 	
@@ -113,12 +114,12 @@
 		strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should not have been called yet");
 		strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should not have been called yet");
 		// trigger standard action
-		qutils.triggerEvent("click", "mainView--sub2View--standardBtnWithStandardAction");
+		qutils.triggerEvent("click", "theComponent---mainView--sub2View--standardBtnWithStandardAction");
 		strictEqual(iStandardSub2ControllerCalled, 1, "Standard Controller should have been called now");
 		strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should still not have been called");
 		
 		// check members
-		var oController = sap.ui.getCore().byId("mainView--sub2View").getController();
+		var oController = sap.ui.getCore().byId("theComponent---mainView--sub2View").getController();
 		ok(oController, "Extended Sub2 View should have a Controller");
 		ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
 		ok(!oController.customerAction, "Extended Sub2 controller should have no customerAction method");
@@ -143,7 +144,7 @@
 	// View/Property Modifications
 	
 	test("Property Modifications", function() {
-		var oControl = sap.ui.getCore().byId("mainView--sub3View--customizableText");
+		var oControl = sap.ui.getCore().byId("theComponent---mainView--sub3View--customizableText");
 		strictEqual(oControl.getVisible(), true, "'visible' property should not be customized");
 		strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customized");
 	});
@@ -152,7 +153,7 @@
 	// ExtensionPoint default content
 	
 	test("ExtensionPoint default content", function() {
-		var oFirstItem = sap.ui.getCore().byId("__item0-mainView--sub2View--lb-0");
+		var oFirstItem = sap.ui.getCore().byId("__item0-theComponent---mainView--sub2View--lb-0");
 		
 		ok(oFirstItem, "First ListItem should exist");
 		ok(oFirstItem.getDomRef(), "First ListItem should be rendered");
