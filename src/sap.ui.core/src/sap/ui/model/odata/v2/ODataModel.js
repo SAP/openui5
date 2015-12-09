@@ -1564,8 +1564,8 @@ sap.ui.define([
 					}
 				}
 				if (vNavData.__list) {
-					for (var i = 0; i < vNavData.__list.length; i++) {
-						oNavEntity = oData[vNavData.__list[i]];
+					for (var j = 0; j < vNavData.__list.length; j++) {
+						oNavEntity = oData[vNavData.__list[j]];
 						if (checkReloadNeeded(oNavEntityType, oNavEntity, aNavSelect, aNavExpand)) {
 							return true;
 						}
