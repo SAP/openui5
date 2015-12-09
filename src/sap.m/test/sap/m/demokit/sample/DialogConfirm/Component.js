@@ -14,11 +14,7 @@ sap.ui.core.UIComponent.extend("sap.m.sample.DialogConfirm.Component", {
 			sample: {
 				files: [
 					"V.view.xml",
-					"C.controller.js",
-					"ApproveDialog.fragment.xml",
-					"RejectDialog.fragment.xml",
-					"SubmitDialog.fragment.xml",
-					"ConfirmDialog.fragment.xml"
+					"C.controller.js"
 				]
 			}
 		}
