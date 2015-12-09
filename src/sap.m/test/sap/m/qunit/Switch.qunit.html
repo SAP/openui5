@@ -336,6 +336,27 @@
 				oSwitch.destroy();
 			});
 
+			test("it should set the value of the invisible element for custom text", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					id: "label1",
+					state: true,
+					customTextOn: "Yes",
+					customTextOff: "No"
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSwitch.getDomRef("invisible").textContent, "Yes");
+
+				// cleanup
+				oSwitch.destroy();
+			});
+
 			/* =========================================================== */
 			/* HTML module                                                 */
 			/* =========================================================== */
