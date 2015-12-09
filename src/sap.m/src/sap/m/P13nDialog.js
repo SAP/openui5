@@ -292,15 +292,14 @@ sap.ui.define([
 	 * 
 	 * @private
 	 */
-	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, aFailedPanelTypes, aValidationResult) {
+	P13nDialog.prototype.showValidationDialog = function(fCallbackIgnore, aFailedPanelTypes, aValidationResult) {
 		var sMessageText = "";
 		aFailedPanelTypes.forEach(function(sPanelType) {
 			switch (sPanelType) {
 				case sap.m.P13nPanelType.filter:
 					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE") + "\n" + sMessageText;
 					break;
-				case sap.m.P13nPanelType.columns:
-				case sap.m.P13nPanelType.dimeasure:
+				case sap.m.P13nPanelType.columns:				
 					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE") + "\n" + sMessageText;
 					break;
 			}
@@ -314,14 +313,14 @@ sap.ui.define([
 			icon: sap.m.MessageBox.Icon.WARNING,
 			title: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
 			actions: [
-				sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_FIX"), sap.m.MessageBox.Action.IGNORE
 			],
 			onClose: function(oAction) {
-				// CANCLE: Stay on the current panel. There is incorrect entry and user decided to correct this.
-				// OK: Go to the chosen panel. Though the current panel has incorrect entry the user decided to
+				// Fix: Stay on the current panel. There is incorrect entry and user decided to correct this.
+				// Ignore: Go to the chosen panel. Though the current panel has incorrect entry the user decided to
 				// leave the current panel. Delete incorrect condition set.
-				if (oAction === sap.m.MessageBox.Action.OK) {
-					fCallbackOK();
+				if (oAction === sap.m.MessageBox.Action.IGNORE) {
+					fCallbackIgnore();
 				}
 			},
 			styleClass: !!this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
@@ -361,7 +360,7 @@ sap.ui.define([
 			// if (oPanelVisible && oPanelVisible.onBeforeNavigationFrom && !oPanelVisible.onBeforeNavigationFrom()) {
 			// oEvent.stopImmediatePropagation(true);
 			// var that = this;
-			// var fCallbackOK = function() {
+			// var fCallbackIgnore = function() {
 			//
 			// oPanelVisible.onAfterNavigationFrom();
 			// if (that._getSegmentedButton()) {
@@ -369,7 +368,7 @@ sap.ui.define([
 			// }
 			// that._switchPanel(oButtonClicked);
 			// };
-			// this._showValidationDialog(fCallbackOK, [
+			// this._showValidationDialog(fCallbackIgnore, [
 			// oPanelVisible.getType()
 			// ]);
 			// }
@@ -660,7 +659,7 @@ sap.ui.define([
 						payload: oPayload
 					});
 				};
-				var fCallbackOK = function() {
+				var fCallbackIgnore = function() {
 					that.getPanels().forEach(function(oPanel) {
 						if (aFailedPanelTypes.indexOf(oPanel.getType()) > -1) {
 							oPanel.onAfterNavigationFrom();
@@ -683,7 +682,7 @@ sap.ui.define([
 				});
 				// In case of invalid panels show the dialog
 				if (aFailedPanelTypes.length || aValidationResult.length) {
-					that.showValidationDialog(fCallbackOK, aFailedPanelTypes, aValidationResult);
+					that.showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
 				} else {
 					fFireOK();
 				}
