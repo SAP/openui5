@@ -320,7 +320,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				(sap.ui.Device.browser.version == 9 || sap.ui.Device.browser.version == 10);
 			var bIsRTLOn = sap.ui.getCore().getConfiguration().getRTL();
 
-			this._calculateMinSize();
+			var _minSize = this.getMinSize();
+			this._minWidth = _minSize.width;
+			this._minHeight = _minSize.height;
 
 			// if content has 100% width, but Dialog has no width, set content width to auto
 			if (!this._isSizeSet(this.getWidth()) && !this._isSizeSet(this.getMaxWidth())) {
@@ -370,27 +372,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					}
 				}
 			}
-
-		};
-
-		/**
-		 * Calcuates the minimum size of the dialog after rendering
-		 */
-		Dialog.prototype._calculateMinSize = function () {
-
-			if (this._sDelayedCall) {
-				jQuery.sap.clearDelayedCall(this._sDelayedCall);
-				return;
-			}
-
-			// Calculate min size and we need to do a delayedCall here because we do not have the size of the header and footer of the Dialog
-			this._sDelayedCall = jQuery.sap.delayedCall(0, this, function () {
-				var _minSize = this.getMinSize();
-				this._minWidth = _minSize.width;
-				this._minHeight = _minSize.height;
-				this._sDelayedCall = null;
-			});
-
 		};
 
 		/**
@@ -685,14 +666,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		Dialog.prototype.getMinSize = function () {
 
+			var ADDITIONAL_HEIGHT_IF_NO_FOOTER = 36;
 			var $oDialog = jQuery.sap.byId(this.sId);
 			var	$oTitle = jQuery.sap.byId(this.sId + "-hdr");
 			var $oFooter = jQuery.sap.byId(this.sId + "-footer");
 			var oFooterBtns = $oFooter.children("DIV").get(0);
 			var widthFooter = oFooterBtns ? oFooterBtns.offsetWidth : 0;
+			var bFooterIsVisible = $oFooter.css('display') !== 'none';
 			var	addValue = 0;
-			var heightTitle,
-				heightFooter;
+			var heightTitle;
+			var	heightFooter;
 
 			// add border and padding of footer...not margin
 			addValue += $oFooter.outerWidth(false) - $oFooter.width();
@@ -715,7 +698,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			return {
 				width: widthFooter,
-				height: heightTitle + heightFooter + 36 /* min. height content */
+				height: heightTitle + heightFooter + (bFooterIsVisible ? ADDITIONAL_HEIGHT_IF_NO_FOOTER : 0) /* min. height content */
 			};
 		};
 
