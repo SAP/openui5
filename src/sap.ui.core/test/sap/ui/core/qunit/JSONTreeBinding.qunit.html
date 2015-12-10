@@ -401,8 +401,7 @@
 		
 		var oBinding = bindings[0];
 		
-		ok(oBinding.hasChildren(), "hasChildren(): root level children are available");
-		ok(oBinding.hasChildren(), "hasChildren(null): root level children are available");
+		ok(!oBinding.hasChildren(), "hasChildren() with no arguments still returns 'false'");
 		
 		var aRootContexts = oBinding.getRootContexts(0, 200);
 		
