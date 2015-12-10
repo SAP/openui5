@@ -347,7 +347,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		};
 
 		NotificationListItem.prototype.close = function () {
+			var parent = this.getParent();
 			this.fireClose();
+			parent && parent.focus();
 			this.destroy();
 		};
 
