@@ -25,15 +25,17 @@
 		sinon.config.useFakeTimers = true;
 
 		function beforeEachQUnitTest () {
+			this.oFirstItem = new sap.m.TabStripItem({
+				key: "0",
+				text: "01234567890123456789012345"
+			});
+
 			this.oMITS = new sap.m.TabStripSelect({
 				type: sap.m.SelectType.IconOnly,
 				autoAdjustWidth: true,
 				icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
 				items: [
-					new sap.m.TabStripItem({
-						key: "0",
-						text: "01234567890123456789012345"
-					}),
+					this.oFirstItem,
 
 					new sap.m.TabStripItem({
 						key: "1",
@@ -71,6 +73,7 @@
 			this.clock.tick(1000);
 			strictEqual(this.oMITS.$().hasClass('sapMTabStripSelect'), true, 'Control style class is present.');
 			strictEqual(this.oMITS.getList().$().hasClass('sapMTabSelectList'), true, 'Control style class is present.');
+			strictEqual(this.oMITS.getList().$().children('.sapMSelectListItemBaseSelected').length, 0, 'Control has no item selected by default.');
 		});
 
 		test("Modified state", function () {
@@ -95,6 +98,7 @@
 
 		test("Close button", function () {
 			var iItemDomHeight = 32; // "base" height that is expected
+			this.oMITS.setSelectedItem(this.oFirstItem);
 			this.oMITS.open();
 			this.clock.tick(1000);
 
@@ -148,6 +152,19 @@
 			this.oMITS.close();
 		});
 
+		module("TabSelect TABLET", {
+			beforeEach: function () {
+				beforeEachQUnitTest.call(this);
+			},
+			afterEach: function () {
+				afterEachQUnitTest.call(this);
+			}
+		});
+
+		test("Close button", function () {
+			assertAllCloseButtonsVisible.call(this, false);
+		});
+
 		module("TabSelect PHONE", {
 			beforeEach: function () {
 				beforeEachQUnitTest.call(this);
@@ -161,11 +178,13 @@
 			assertAllCloseButtonsVisible.call(this, true);
 		});
 
+
+
 		assertAllCloseButtonsVisible = function (bIsPhone) {
 			var oSystem = {
 				desktop : false,
-				phone : bIsPhone ? true : false,
-				tablet : bIsPhone ? false : true
+				phone : bIsPhone,
+				tablet : !bIsPhone
 			};
 			var stub1 = this.stub(sap.ui.Device, "system", oSystem);
 			var stub2 = this.stub(jQuery.device, "is", oSystem);
