@@ -415,7 +415,8 @@ test("Resize", function(){
 
 	sap.ui.getCore().applyChanges();
 
-	equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
+	ok(oTable.getVisibleRowCount() > 14, "Row count is greater than 14. Has: " + oTable.getVisibleRowCount());
+	ok(oTable.getVisibleRowCount() < 17, "Row count is lower than 17. Has: " + oTable.getVisibleRowCount());
 });
 
 module("Keyboard navigation", {
