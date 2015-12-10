@@ -708,15 +708,17 @@ sap.ui.define([
 		var iIdentifierContWidth = this.$("identifierLine").width(),
 			iActionsWidth = this._getActionsWidth(), // the width off all actions without hidden one
 			iActionsContProportion = iActionsWidth / iIdentifierContWidth, // the percentage(proportion) that action buttons take from the available space
-			iAvailableSpaceForActions = this._iAvailablePercentageForActions * iIdentifierContWidth;
+			iAvailableSpaceForActions = this._iAvailablePercentageForActions * iIdentifierContWidth,
+			$overflowButton = this._oOverflowButton.$(),
+			$actionButtons = this.$("actions").find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton");
 
 		if (iActionsContProportion > this._iAvailablePercentageForActions) {
 			this._adaptActions(iAvailableSpaceForActions);
 		} else {
-			this._oOverflowButton.$().hide();
+			$overflowButton.hide();
 		}
 
-		this.$("actions").find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton").css("visibility", "visible");
+		$actionButtons.css("visibility", "visible");
 		this._adaptObjectPageHeaderIndentifierLine();
 	};
 
@@ -727,6 +729,7 @@ sap.ui.define([
 	ObjectPageHeader.prototype._adaptObjectPageHeaderIndentifierLine = function () {
 		var iIdentifierContWidth = this.$("identifierLine").width(),
 			$subtitle = this.$("subtitle"),
+			$identifierLineContainer = this.$("identifierLineContainer"),
 			iSubtitleBottom,
 			iTitleBottom,
 			iActionsAndImageWidth = this.$("actions").width() + this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer").width(),
@@ -745,7 +748,7 @@ sap.ui.define([
 			}
 		}
 
-		this.$("identifierLineContainer").width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
+		$identifierLineContainer.width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
 	};
 
 	/**
