@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global'],
 				CSS_CLASS = SliderRenderer.CSS_CLASS;
 
 			oRm.write("<div");
-			this.addStyleClass(oRm, oSlider);
+			this.addClass(oRm, oSlider);
 
 			if (!bEnabled) {
 				oRm.addClass(CSS_CLASS + "Disabled");
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
 		 * @since 1.36
 		 */
-		SliderRenderer.addStyleClass = function(oRm, oSlider) {
+		SliderRenderer.addClass = function(oRm, oSlider) {
 			oRm.addClass(SliderRenderer.CSS_CLASS);
 		};
 

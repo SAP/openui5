@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 			if (!oSelect.getVisible()) {
 				oRm.addStyleClass(TabStripSelect.CSS_CLASS_INVISIBLE);
 			}
-			this.addStyleClass(oRm, oSelect);
+			this.addClass(oRm, oSelect);
 			oRm.addClass(CSS_CLASS);
 
 
