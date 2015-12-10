@@ -205,7 +205,12 @@ sap.ui.require([
 							<EntitySet Name="SpecialTeams" EntityType="f.Team">\
 							</EntitySet>\
 							<EntitySet Name="Teams" EntityType="f.Team">\
-								<NavigationPropertyBinding Path="Manager" Target="f.Container/Managers"/>\
+								<NavigationPropertyBinding Path="Manager"\
+									Target="f.Container/Managers"/>\
+								<NavigationPropertyBinding Path="Foo"\
+									Target="other.Container/Foo"/>\
+								<NavigationPropertyBinding Path="Bar"\
+									Target="f.Container/Foo/Bar"/>\
 							</EntitySet>\
 						</EntityContainer>\
 					</Schema>\
@@ -221,7 +226,9 @@ sap.ui.require([
 					"Teams": {
 						"$kind": "EntitySet",
 						"$NavigationPropertyBinding" : {
-							"Manager": "foo.Container/Managers"
+							"Manager": "Managers",
+							"Foo": "other.Container/Foo",
+							"Bar": "foo.Container/Foo/Bar"
 						},
 						"$Type": "foo.Team"
 					}
@@ -523,44 +530,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	["Action", "Function"].forEach(function (sRunnable) {
-		var oExpected = {
-				"foo.Baz": [{
-					"$kind": sRunnable,
-					"$EntitySetPath": "Employees",
-					"$Parameter": [{
-						"$kind": "Parameter",
-						"$Name": "p1",
-						"$Type": "foo.Bar",
-						"$Nullable": false
-					},{
-						"$kind": "Parameter",
-						"$Name": "p2",
-						"$isCollection": true,
-						"$Type": "foo.Bar",
-						"$MaxLength": 10,
-						"$Precision": 2,
-						"$Scale": "variable",
-						"$SRID": "42"
-					}],
-					"$ReturnType" : {
-						"$isCollection": true,
-						"$Type": "Edm.String",
-						"$Nullable": false,
-						"$MaxLength": 10,
-						"$Precision": 2,
-						"$Scale": "variable",
-						"$SRID": "42"
-					}
-				},{
-					"$kind": sRunnable,
-					"$IsBound": true,
-					"$Parameter": []
-				}]
-			};
-
-		if (sRunnable === "Function") {
-			oExpected["foo.Baz"][1].$IsComposable = true;
-		}
 		QUnit.test("convertXMLMetadata: " + sRunnable, function (assert) {
 			testConversion(assert, '\
 					<DataServices>\
@@ -574,6 +543,95 @@ sap.ui.require([
 									MaxLength="10" Precision="2" Scale="variable" SRID="42"/>\
 							</' + sRunnable + '>\
 							<' + sRunnable + ' Name="Baz" IsComposable="true" IsBound="true"/>\
+						</Schema>\
+					</DataServices>',
+				{
+					"foo.Baz": [{
+						"$kind": sRunnable,
+						"$EntitySetPath": "Employees",
+						"$Parameter": [{
+							"$kind": "Parameter",
+							"$Name": "p1",
+							"$Type": "foo.Bar",
+							"$Nullable": false
+						},{
+							"$kind": "Parameter",
+							"$Name": "p2",
+							"$isCollection": true,
+							"$Type": "foo.Bar",
+							"$MaxLength": 10,
+							"$Precision": 2,
+							"$Scale": "variable",
+							"$SRID": "42"
+						}],
+						"$ReturnType" : {
+							"$isCollection": true,
+							"$Type": "Edm.String",
+							"$Nullable": false,
+							"$MaxLength": 10,
+							"$Precision": 2,
+							"$Scale": "variable",
+							"$SRID": "42"
+						}
+					},{
+						"$kind": sRunnable,
+						"$IsBound": true,
+						"$IsComposable": true,
+						"$Parameter": []
+					}]
+				});
+		});
+	});
+
+
+	//*********************************************************************************************
+	["Action", "Function"].forEach(function (sWhat) {
+		QUnit.test("convertXMLMetadata: " + sWhat + "Import", function (assert) {
+			var oExpected = {
+					"$EntityContainer": "foo.Container",
+					"foo.Container": {
+						"$kind": "EntityContainer",
+						"Baz1": {
+							"$EntitySet": "Employees",
+							"$IncludeInServiceDocument": false
+						},
+						"Baz2": {
+						},
+						"Baz3": {
+							"$EntitySet": "Employees"
+						},
+						"Baz4": {
+							"$EntitySet": "some.other.Container/Employees"
+						},
+						"Baz5": {
+							"$EntitySet": "foo.Container/Employees/Team"
+						}
+					}
+				},
+				oContainer = oExpected["foo.Container"];
+
+			Object.keys(oContainer).forEach(function (sKey) {
+				var oValue = oContainer[sKey];
+				if (sKey !== "$kind") {
+					oValue.$kind = sWhat + "Import";
+					oValue["$" + sWhat] = "foo.Baz";
+				}
+			});
+			testConversion(assert, '\
+					<DataServices>\
+						<Schema Namespace="foo" Alias="f">\
+							<EntityContainer Name="Container">\
+								<' + sWhat + 'Import Name="Baz1" ' + sWhat + '="foo.Baz"\
+									EntitySet="Employees" IncludeInServiceDocument="false"/>\
+								<' + sWhat + 'Import Name="Baz2" ' + sWhat + '="f.Baz"\
+									IncludeInServiceDocument="true"/>\
+								<' + sWhat + 'Import Name="Baz3" ' + sWhat + '="f.Baz"\
+									EntitySet="f.Container/Employees"/>\
+								<' + sWhat + 'Import Name="Baz4" ' + sWhat + '="f.Baz"\
+									EntitySet="some.other.Container/Employees"/>\
+								<' + sWhat + 'Import Name="Baz5" ' + sWhat + '="f.Baz"\
+									EntitySet="f.Container/Employees/Team"/>\
+							</EntityContainer>\
 						</Schema>\
 					</DataServices>',
 				oExpected);
