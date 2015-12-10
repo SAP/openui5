@@ -53,7 +53,13 @@
 	color: darken(@sapUiGroupContentBackground, 25);
 }
 
-.sapMQuickViewPage .sapUiIcon:focus {
+.sapMQuickViewPage .sapUiIcon:focus,
+.sap-phone .sapMQuickViewPage .sapMLnk:focus,
+.sap-tablet .sapMQuickViewPage .sapMLnk:focus {
+  outline: none;
+}
+
+.sap-desktop .sapMQuickViewPage .sapUiIcon:focus {
 	outline: 1px dotted @sapUiFocus;
 	outline-offset: -1px;
 }
