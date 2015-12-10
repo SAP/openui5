@@ -143,6 +143,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	});
 	
 	/**
+	 * Setter for context
+	 * @param {Object} oContext the new context object
+	 */
+	AnalyticalBinding.prototype.setContext = function (oContext) {
+		if (this.oContext !== oContext) {
+			this.oContext = oContext;
+			this.oDataState = null;
+			
+			if (this.isRelative()) {
+				if (!this.bInitial) {
+					this.refresh();
+				}
+			}
+		}
+	};
+	
+	/**
 	 * Initialize binding. Fires a change if data is already available ($expand) or a refresh.
 	 * If metadata is not yet available, do nothing, method will be called again when
 	 * metadata is loaded.
