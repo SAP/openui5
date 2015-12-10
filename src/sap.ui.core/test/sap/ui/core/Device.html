@@ -2,11 +2,11 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 	
 	<!-- Needed, otherwise iPad does rescaling on orientation change - What's with other devices? see jquery.sap.mobile.js (initMobile -> viewport) -->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<!-- Needed for Windows Phone -->
 	<style>@-ms-viewport{width:device-width;}</style>
@@ -54,7 +54,7 @@
 	
 	//Enable this to activate Fullscreen mode on iOS in combination with the "Add to home screen" feature
 	if (uriParam("ios-fullscreen") == "x" || uriParam("ios-fullscreen") == "X" || uriParam("ios-fullscreen") == "true") {
-		document.write('<meta name="apple-mobile-web-app-capable" content="yes" />');
+		document.write('<meta name="apple-mobile-web-app-capable" content="yes">');
 	}
 	
 	</script>
