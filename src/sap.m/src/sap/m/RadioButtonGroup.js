@@ -282,9 +282,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @public
 			 */
 			RadioButtonGroup.prototype.addButton = function(oButton) {
-				this.addAggregation("buttons", oButton);
-				oButton.attachEvent("_change", this._handleItemChanged, this);
-
 				if (!this._bUpdateButtons && this.getSelectedIndex() === undefined) {
 					// if not defined -> select first one
 					this.setSelectedIndex(0);
@@ -298,6 +295,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				this.aRBs[iIndex] = this._createRadioButton(oButton, iIndex);
 
+				this.addAggregation("buttons",  this.aRBs[iIndex]);
+				this.aRBs[iIndex].attachEvent("_change", this._handleItemChanged, this);
 				return this;
 			};
 
@@ -309,9 +308,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @public
 			 */
 			RadioButtonGroup.prototype.insertButton = function(oButton, iIndex) {
-				this.insertAggregation("buttons", oButton, iIndex);
-				oButton.attachEvent("_change", this._handleItemChanged, this);
-
 				if (!this.aRBs) {
 					this.aRBs = [];
 				}
@@ -340,6 +336,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					}
 				}
 
+				this.insertAggregation("buttons", oButton, iIndex);
+				oButton.attachEvent("_change", this._handleItemChanged, this);
+
 				return this;
 			};
 
@@ -359,26 +358,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this.iIDCount++;
 				}
 
-				var oRadioButton = new sap.m.RadioButton(this.getId() + "-" + this.iIDCount);
-				oRadioButton.setText(oButton.getText());
-				oRadioButton.setTooltip(oButton.getTooltip());
-
 				// Enabled if both the group and the button are enabled
-				oRadioButton.setEnabled(this.getEnabled() && oButton.getEnabled());
-				oRadioButton.setTextDirection(oButton.getTextDirection());
-				oRadioButton.setEditable(this.getEditable() && oButton.getEditable());
-				oRadioButton.setVisible(this.getVisible() && oButton.getVisible());
-				oRadioButton.setValueState(this.getValueState());
-				oRadioButton.setGroupName(this.getId());
-				oRadioButton.setParent(this);
+				oButton.setEnabled(this.getEnabled() && oButton.getEnabled());
+				oButton.setTextDirection(oButton.getTextDirection());
+				oButton.setEditable(this.getEditable() && oButton.getEditable());
+				oButton.setVisible(this.getVisible() && oButton.getVisible());
+				oButton.setValueState(this.getValueState());
+				oButton.setGroupName(this.getId());
 
 				if (iIndex == this.getSelectedIndex()) {
-					oRadioButton.setSelected(true);
+					oButton.setSelected(true);
 				}
 
-				oRadioButton.attachEvent("select", this._handleRBSelect, this);
+				oButton.attachEvent("select", this._handleRBSelect, this);
 
-				return oRadioButton;
+				return oButton;
 			};
 
 			/**
