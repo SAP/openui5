@@ -88,13 +88,13 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 		onPreviousSample: function (oEvent) {
 			this.router.navTo("sample", {
 				id: this._viewModel.getProperty("/previousSampleId")
-			}, false);
+			}, true);
 		},
 
 		onNextSample: function (oEvent) {
 			this.router.navTo("sample", {
 				id: this._viewModel.getProperty("/nextSampleId")
-			}, false);
+			}, true);
 		},
 
 		_createIframe : function (oIframeContent, vIframe) {
