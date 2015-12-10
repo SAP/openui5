@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/core/routing/async/Views', 'sap/ui/core/routing/sync/Views'],
-	function($, EventProvider, UIComponent, View, asyncViews, syncViews) {
+	function(jQuery, EventProvider, UIComponent, View, asyncViews, syncViews) {
 		"use strict";
 
 		/**
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 
 				this._oComponent = oOptions.component;
 				if (this._oComponent) {
-					$.sap.assert(this._oComponent instanceof UIComponent, this + ' - the component passed to the constructor needs to be an instance of UIComponent');
+					jQuery.sap.assert(this._oComponent instanceof UIComponent, this + ' - the component passed to the constructor needs to be an instance of UIComponent');
 				}
 
 				EventProvider.apply(this, arguments);
@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 			 */
 			_getView: function (oOptions) {
 				if (this._oComponent && oOptions.id) {
-					oOptions = $.extend({}, oOptions, { id : this._oComponent.createId(oOptions.id) });
+					oOptions = jQuery.extend({}, oOptions, { id : this._oComponent.createId(oOptions.id) });
 				}
 
 				return this._getViewWithGlobalId(oOptions);
@@ -200,7 +200,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 			_checkViewName : function (sViewName) {
 
 				if (!sViewName) {
-					$.sap.log.error("A name for the view has to be defined", this);
+					jQuery.sap.log.error("A name for the view has to be defined", this);
 				}
 
 			}
