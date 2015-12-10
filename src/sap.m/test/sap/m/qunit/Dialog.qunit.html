@@ -101,8 +101,9 @@
 				beforeClose: function () {
 					equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
 				},
-				afterClose: function () {
-					equal(jQuery.sap.byId("dialog").length, 0, "Dialog content should not be rendered before it's opened");
+				afterClose: function (oEvent) {
+					equal(jQuery.sap.byId("dialog").length, 0, "Dialog content is not rendered anymore");
+					ok(oEvent.getParameter("origin") !== null, "Origin parameter should be set");
 					ok(!oDialog.isOpen(), "Dialog is already closed");
 				}
 			});
@@ -163,11 +164,12 @@
 				ok(oTitleDom, "Title should be rendered");
 			});
 
-			test("Close Dialog", function () {
-				expect(3);
-				oDialog.getBeginButton().firePress();
+			test("Close Dialog. Test set origin parameter value", function () {
+				expect(4);
+				oDialog.getBeginButton().$().trigger("tap");
 				this.clock.tick(500);
 			});
+
 
 			test("Open Message Dialog on phone", function () {
 				var oSystem = {
