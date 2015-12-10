@@ -51,30 +51,42 @@ sap.ui.define([
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=100"
 						: {source : "BusinessPartnerList.json"},
 					// TODO enhance TestUtils to support also regular expressions as URLs
-					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_BP\
-&$skip=0&$top=5"
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList\
+?$expand=SO_2_BP&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=0&$top=5"
 						: {source : "SalesOrderList.json"},
-					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_BP\
-&$skip=6&$top=4"
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList\
+?$expand=SO_2_BP&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=6&$top=4"
 						: {source : "SalesOrderListNoMoreData.json"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500001110')"
-						: {source : "SalesOrderList_0500001110.json"},
+(SalesOrderID='0500000002')?$expand=SO_2_SOITEM(\
+$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
+&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
+						: {source : "SalesOrderList_0.json"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500001111')"
-						: {source : "SalesOrderList_0500001111.json"},
+(SalesOrderID='0500000003')?$expand=SO_2_SOITEM(\
+$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
+&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
+						: {source : "SalesOrderList_1.json"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500001112')"
-						: {source : "SalesOrderList_0500001112.json"},
+(SalesOrderID='0500000004')?$expand=SO_2_SOITEM(\
+$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
+&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
+						: {source : "SalesOrderList_2.json"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500001113')"
-						: {source : "SalesOrderList_0500001113.json"},
+(SalesOrderID='0500000005')?$expand=SO_2_SOITEM(\
+$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
+&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
+						: {source : "SalesOrderList_3.json"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500001114')"
-						: {source : "SalesOrderList_0500001114.json"},
+(SalesOrderID='0500000006')?$expand=SO_2_SOITEM(\
+$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
+&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
+						: {source : "SalesOrderList_4.json"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500001115')"
-						: {source : "SalesOrderList_0500001115.json"}
+(SalesOrderID='0500000007')?$expand=SO_2_SOITEM(\
+$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
+&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
+						: {source : "SalesOrderList_5.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data");
 			}
 

@@ -5,6 +5,7 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Requestor",
@@ -14,7 +15,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (Model, TypeString, ODataUtils, SyncPromise, MetadataRequestor, Requestor,
+], function (Model, TypeString, ODataUtils, Helper, SyncPromise, MetadataRequestor, Requestor,
 		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
 		TestUtils) {
 	/*global QUnit, sinon */
@@ -86,10 +87,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var oMetadataRequestor = {},
+		var oHelperMock = this.mock(Helper),
+			oMetadataRequestor = {},
 			oMetadataRequestorMock = this.mock(MetadataRequestor),
 			oMetaModel,
-			oModel;
+			oModel,
+			mModelOptions = {};
 
 		assert.throws(function () {
 			return new ODataModel();
@@ -102,24 +105,33 @@ sap.ui.require([
 		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo/",
 			"serviceUrl in mParameters");
 
-		oMetadataRequestorMock.expects("create").withExactArgs(null, {"sap-client": "111"})
+		oHelperMock.expects("buildQueryOptions").returns(mModelOptions);
+		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
 			.returns(oMetadataRequestor);
+		//code under test
+		oModel = new ODataModel("/foo/");
+		assert.strictEqual(oModel.mUriParameters, mModelOptions);
+
+		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
+			.returns(mModelOptions);
+		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+			.returns(oMetadataRequestor);
+		//code under test
 		oModel = new ODataModel("/foo/?sap-client=111");
 		assert.strictEqual(oModel.sServiceUrl, "/foo/");
-		assert.deepEqual(oModel.mUriParameters, {"sap-client": "111"});
+		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, "/foo/$metadata");
 
-		oMetadataRequestorMock.expects("create").withExactArgs(null, {})
+		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
+			.returns(mModelOptions);
+		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
 			.returns(oMetadataRequestor);
-		oModel = new ODataModel("/foo/");
-		assert.deepEqual(oModel.mUriParameters, {});
-		oMetaModel = oModel.getMetaModel();
-		assert.ok(oMetaModel instanceof ODataMetaModel);
-		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
-		assert.strictEqual(oMetaModel.sUrl, "/foo/$metadata");
+		//code under test, serviceUrlParams overwrite URL parameters from this.sServiceUrl
+		oModel = new ODataModel("/foo/?sap-client=222",
+			{serviceUrlParams : {"sap-client" : "111"}});
 	});
 
 	//*********************************************************************************************
@@ -196,8 +208,6 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getPath(), "/path");
 		assert.strictEqual(oBinding.iIndex, 0, "list binding unique index");
 		assert.deepEqual(oBinding.mParameters, mParameters, "list binding parameters");
-		assert.strictEqual(oBinding.sExpand, mParameters["$expand"],
-			"list binding stores copy of expand param.");
 
 		assert.strictEqual(oModel.bindList("/path", oContext).iIndex, 1);
 		assert.strictEqual(oModel.aRoots[0], oBinding, "model stores list bindings");

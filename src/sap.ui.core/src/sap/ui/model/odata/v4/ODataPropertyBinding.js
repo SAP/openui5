@@ -29,7 +29,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Constructor for a new ODataPropertyBinding.
+	 * DO NOT CALL this private constructor for a new <code>ODataPropertyBinding</code>,
+	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindProperty bindProperty} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   the OData v4 model
@@ -45,7 +46,6 @@ sap.ui.define([
 	 * @alias sap.ui.model.odata.v4.ODataPropertyBinding
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
-	 * @since 1.31.0
 	 */
 	var ODataPropertyBinding = PropertyBinding.extend(sClassName,
 			/** @lends sap.ui.model.odata.v4.ODataPropertyBinding.prototype */

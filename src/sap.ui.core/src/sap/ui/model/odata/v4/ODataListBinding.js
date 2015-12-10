@@ -23,27 +23,37 @@ sap.ui.define([
 	 *   the index of this list binding in the array of root bindings kept by the model, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}
 	 * @param {object} [mParameters]
-	 *   map of parameters
-	 * @param {string} [mParameters.$expand]
-	 *   the "$expand" system query option used in each data service request for this
-	 *   list binding
-	 *
+	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
+	 *   $select "5.1 System Query Options" (see OData V4 specification part 2) are allowed. All
+	 *   other query options lead to an error. Query options specified for the binding overwrite
+	 *   model query options.
+	 *   Note: Query options may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
+	 * @throws {Error} when disallowed OData query options are provided
 	 * @class List binding for an OData v4 model.
+	 *
+	 * @author SAP SE
+	 * @version ${version}
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
 	 * @public
 	 */
-	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding",
-		/** @lends sap.ui.model.odata.v4.ODataListBinding.prototype */ {
-
+	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 		constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
-			ListBinding.call(this, oModel, sPath, oContext, undefined, undefined, mParameters);
+			var bAbsolute = sPath.charAt(0) === "/";
+
+			if (!bAbsolute && mParameters) {
+				throw new Error("Bindings with a relative path do not support parameters");
+			}
+			ListBinding.call(this, oModel, sPath, oContext, undefined, undefined,
+				bAbsolute && Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
+					["$expand", "$select"]));
+
 			this.oCache = undefined;
 			this.aContexts = [];
 			// upper boundary for server-side list length (based on observations so far)
 			this.iMaxLength = Infinity;
 			this.iIndex = iIndex;
-			this.sExpand = this.mParameters && this.mParameters["$expand"];
 			// this.bLengthFinal = this.aContexts.length === this.iMaxLength
 			this.bLengthFinal = false;
 		}
@@ -78,7 +88,6 @@ sap.ui.define([
 	ODataListBinding.prototype.getContexts = function (iStart, iLength) {
 		var oContext = this.getContext(),
 			oModel = this.getModel(),
-			mParameters,
 			sResolvedPath = oModel.resolve(this.getPath(), oContext),
 			sUrl,
 			that = this;
@@ -165,12 +174,7 @@ sap.ui.define([
 			} else { // absolute path
 				sUrl = oModel.sServiceUrl + sResolvedPath.slice(1);
 				if (!this.oCache) {
-					mParameters = oModel.mUriParameters;
-					if (this.sExpand) {
-						mParameters = jQuery.extend({}, mParameters);
-						mParameters.$expand = this.sExpand;
-					}
-					this.oCache = Cache.create(oModel.oRequestor, sUrl, mParameters);
+					this.oCache = Cache.create(oModel.oRequestor, sUrl, this.mParameters);
 				}
 				this.oCache.read(iStart, iLength)
 					.then(createContexts.bind(undefined, getBasePath), function (oError) {

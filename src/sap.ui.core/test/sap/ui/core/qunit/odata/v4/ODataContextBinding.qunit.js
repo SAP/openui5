@@ -5,9 +5,10 @@ sap.ui.require([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Cache, ODataContextBinding, ODataModel) {
+], function (ManagedObject, ChangeReason, Cache, Helper, ODataContextBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -137,7 +138,6 @@ sap.ui.require([
 				oModel = new ODataModel("/service/?sap-client=111"),
 				oCache = {},
 				oContext = oModel.getContext("/TEAMS('TEAM_01')"),
-				mParameters = {"$expand" : "foo"},
 				oBinding;
 
 			if (bAbsolute) {
@@ -151,16 +151,13 @@ sap.ui.require([
 				this.oSandbox.mock(Cache).expects("createSingle").never();
 			}
 
-			oBinding = oModel.bindContext(sPath, oContext, mParameters);
+			oBinding = oModel.bindContext(sPath, oContext);
 
 			assert.ok(oBinding instanceof ODataContextBinding);
 			assert.strictEqual(oBinding.getModel(), oModel);
 			assert.strictEqual(oBinding.getContext(), oContext);
 			assert.strictEqual(oBinding.getPath(), bAbsolute ? sPath + ";root=0" : sPath);
 			assert.strictEqual(oBinding.oCache, bAbsolute ? oCache : undefined);
-
-			//TODO assert.deepEqual(oBinding.mParameters, mParameters);
-			//TODO assert.strictEqual(oBinding.sExpand, mParameters["$expand"]);
 		});
 	});
 
@@ -262,6 +259,41 @@ sap.ui.require([
 				}
 			)
 		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("bindContext with parameters", function (assert) {
+		var oBinding,
+			oError = new Error("Unsupported ..."),
+			oHelperMock,
+			oModel = new ODataModel("/service/?sap-client=111"),
+			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
+			mQueryOptions = {};
+
+		oHelperMock = this.mock(Helper);
+		oHelperMock.expects("buildQueryOptions")
+			.withExactArgs(oModel.mUriParameters, mParameters, ["$expand", "$select"])
+			.returns(mQueryOptions);
+		this.mock(Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(oModel.oRequestor), "/service/EMPLOYEES(ID='1')",
+				sinon.match.same(mQueryOptions));
+
+		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", null, mParameters);
+
+		assert.strictEqual(oBinding.mParameters, undefined,
+			"do not propagate unchecked query options");
+
+		//error for invalid parameters
+		oHelperMock.expects("buildQueryOptions").throws(oError);
+
+		assert.throws(function () {
+			oModel.bindContext("/EMPLOYEES(ID='1')", null, mParameters);
+		}, oError);
+
+		//error for relative paths
+		assert.throws(function () {
+			oModel.bindContext("EMPLOYEE_2_TEAM(Team_Id='4711')", null, mParameters);
+		}, new Error("Bindings with a relative path do not support parameters"));
 	});
 	// TODO events dataRequested, dataReceived
 	// TODO bSuspended? In v2 it is ignored (check with core)

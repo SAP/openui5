@@ -11,6 +11,39 @@ sap.ui.define([
 
 	Helper = {
 		/**
+		 * Constructs a map of query options from the given options and model options; an option
+		 * overwrites a model option having the same key.
+		 * The following query options are disallowed:
+		 * <ul>
+		 * <li> system query options (key starts with "$") except those specified in
+		 *   <code>aAllowed</code>
+		 * <li> parameter aliases (key starts with "@")
+		 * </ul>
+		 * @param {object} [mModelOptions={}]
+		 *   map of query options specified for the model
+		 * @param {object} [mOptions={}]
+		 *   map of query options
+		 * @param {string[]} [aAllowed=[]]
+		 *   names of allowed system query options
+		 * @throws {Error} when disallowed OData query options are provided
+		 * @returns {object}
+		 *   the map of query options
+		 */
+		buildQueryOptions : function (mModelOptions, mOptions, aAllowed) {
+			var mResult = JSON.parse(JSON.stringify(mModelOptions || {}));
+
+			//FIX4MASTER throw error if $expand contains unsupported query options
+			Object.keys(mOptions || {}).forEach(function (sKey) {
+				if (sKey.charAt(0) === "@"
+					|| sKey.charAt(0) === "$" && (aAllowed || []).indexOf(sKey) === -1) {
+					throw new Error("Parameter " + sKey + " is not supported");
+				}
+				mResult[sKey] = mOptions[sKey];
+			});
+			return mResult;
+		},
+
+		/**
 		 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type meta
 		 * data and entity instance runtime data.
 		 *
