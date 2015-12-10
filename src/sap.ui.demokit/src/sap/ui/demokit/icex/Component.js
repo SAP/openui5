@@ -3,10 +3,14 @@
  */
 
 sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/core/IconPool",
 	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/JSView",
+	"sap/ui/model/json/JSONModel",
 	"./model/FavoriteModel",
 	"./util/Sorter"
-], function (UIComponent, FavoriteModel, Sorter) {
+], function (jQuery, IconPool, UIComponent, JSView, JSONModel, FavoriteModel, Sorter) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demokit.icex.Component", {
@@ -25,7 +29,7 @@ sap.ui.define([
 			var sPath = jQuery.sap.getModulePath("sap.ui.demokit.icex");
 
 			// set img model
-			var imgModel = new sap.ui.model.json.JSONModel(sPath + "/model/img.json");
+			var imgModel = new JSONModel(sPath + "/model/img.json");
 			this.setModel(imgModel, "img");
 
 			// set favorite model
@@ -73,8 +77,7 @@ sap.ui.define([
 
 				// add all icons from icon pool
 				// MUST BE DONE AFTER GROUP SORT AS THIS GROUP IS EXPECTED AT INDEX 0 IN MASTER VIEW
-				jQuery.sap.require("sap.ui.core.IconPool");
-				var iconNames = sap.ui.core.IconPool.getIconNames();
+				var iconNames = IconPool.getIconNames();
 				var icons = [];
 				for (var i = 0 ; i < iconNames.length ; i++) {
 					icons[i] = {
@@ -90,7 +93,7 @@ sap.ui.define([
 				});
 
 				// finally set model
-				var groupsModel = new sap.ui.model.json.JSONModel(data);
+				var groupsModel = new JSONModel(data);
 				groupsModel.setSizeLimit(1000000);
 				this.setModel(groupsModel);
 

@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/InstanceManager",
-	"jquery.sap.history"
-], function (Controller, InstanceManager, jQuery) {
+	"jquery.sap.history",
+	'sap/ui/Device',
+	'sap/ui/core/mvc/View'], function (Controller, InstanceManager, jQuery, Device, View) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.App", {
@@ -100,7 +101,7 @@ sap.ui.define([
 
 				// write browser history
 				if ((writeHistory === undefined || writeHistory) &&
-					(sap.ui.Device.system.phone || master)) {
+					(Device.system.phone || master)) {
 					jQuery.sap.history.addHistory("page", { id: id }, false);
 				}
 
