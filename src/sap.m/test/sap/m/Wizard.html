@@ -350,7 +350,7 @@
 									new sap.m.RadioButton({ text:"CreditCard_Information"})
 								]
 							}),
-							new sap.m.Button({
+							new sap.m.Button('validate-step',{
 								text: "Validate step",
 								press: function () {
 									step3.setValidated(true);
@@ -400,7 +400,7 @@
 				]
 			});
 
-			branchingWizard = new sap.m.Wizard({
+			branchingWizard = new sap.m.Wizard('branch-wiz',{
 				enableBranching: true,
 				width:"100%",
 				showNextButton: true,
@@ -417,25 +417,25 @@
 			content: [
 				new sap.m.List({
 					items: [
-						new sap.m.StandardListItem({
+						new sap.m.StandardListItem('fwd-wiz-sel',{
 							title: "Forward wizard",
 							type: "Active",
 							press: function () {
-								app.toDetail("fwd-wiz");
+								app.toDetail("fwd-wiz-page");
 							}
 						}),
-						new sap.m.StandardListItem({
+						new sap.m.StandardListItem('branch-wiz-sel',{
 							title: "Branching wizard",
 							type: "Active",
 							press: function () {
-								app.toDetail("branch-wiz");
+								app.toDetail("branch-wiz-page");
 							}
 						}),
-						new sap.m.StandardListItem({
+						new sap.m.StandardListItem('bnd-wiz-sel',{
 							title: "Wizard binding",
 							type: "Active",
 							press : function () {
-								app.toDetail("bnd-wiz");
+								app.toDetail("bnd-wiz-page");
 							}
 						})
 					]
@@ -445,7 +445,7 @@
 
 		app.addMasterPage(masterPage);
 
-		app.addDetailPage(new sap.m.Page("fwd-wiz", {
+		app.addDetailPage(new sap.m.Page("fwd-wiz-page", {
 			showNavButton: jQuery.device.is.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
@@ -454,7 +454,7 @@
 			content: [wizard]
 		}));
 
-		app.addDetailPage(new sap.m.Page("bnd-wiz", {
+		app.addDetailPage(new sap.m.Page("bnd-wiz-page", {
 			showNavButton: jQuery.device.is.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
@@ -463,7 +463,7 @@
 			content: [bindableWizard]
 		}));
 
-		app.addDetailPage(new sap.m.Page("branch-wiz", {
+		app.addDetailPage(new sap.m.Page("branch-wiz-page", {
 			showNavButton: jQuery.device.is.phone,
 			navButtonText: "Back",
 			navButtonPress: function() {
