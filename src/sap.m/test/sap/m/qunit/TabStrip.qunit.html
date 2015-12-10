@@ -77,19 +77,26 @@
 
 		module("Keyboard Handling", {
 			beforeEach: function () {
+				this.items = [
+					new sap.m.TabStripItem({
+						text: "Tab 1"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 2"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 3"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 4"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 5"
+					})
+				];
 				this.sut = new sap.m.TabStrip({
 					selectedItem: 0,
-					items: [
-						new sap.m.TabStripItem({
-							text: "Tab 1"
-						}),
-						new sap.m.TabStripItem({
-							text: "Tab 2"
-						}),
-						new sap.m.TabStripItem({
-							text: "Tab 3"
-						})
-					],
+					items: this.items,
 					addButton: new sap.m.Button("addButton", {
 						type: sap.m.ButtonType.Transparent
 					})
@@ -130,6 +137,58 @@
 			//assert
 			strictEqual(oTabs[0].getId(), document.activeElement.id, "First is focused on fifth ARROW_UP");
 
+		});
+
+		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
+		test("Select first item, focus it and remove it", function () {
+			//arrange
+			var oTabStripItemToRemove = this.items[0];
+			var oTabStripItemToBeSelectedAndFocused = this.items[1];
+			this.sut.setSelectedItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			jQuery(oTabStripItemToRemove).focus();
+			this.sut._removeItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			//assert
+			equal(this.sut.getItems().length, 4, "Length check");
+			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
+			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
+			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
+		});
+
+		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
+		test("Select last item, focus it and remove it", function () {
+			//arrange
+			var oTabStripItemToRemove = this.items[4];
+			var oTabStripItemToBeSelectedAndFocused = this.items[3];
+			this.sut.setSelectedItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			jQuery(oTabStripItemToRemove).focus();
+			this.sut._removeItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			//assert
+			equal(this.sut.getItems().length, 4, "Length check");
+			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
+			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
+			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
+		});
+
+		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
+		test("Select random item, focus another and remove it", function () {
+			//arrange
+			var oTabStripItemToRemove = this.items[3];
+			var oTabStripItemToBeSelected = this.items[0];
+			var oTabStripItemToBeFocused = this.items[4];
+			this.sut.setSelectedItem(oTabStripItemToBeSelected);
+			this.clock.tick(1000);
+			jQuery(oTabStripItemToRemove).focus();
+			this.sut._removeItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			//assert
+			equal(this.sut.getItems().length, 4, "Length check");
+			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
+			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelected.getId(), "Selection is applied to the right item");
+			strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
 		module("Scrolling", {

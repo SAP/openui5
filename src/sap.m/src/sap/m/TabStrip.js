@@ -478,22 +478,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype.onsapdelete = function(oEvent) {
 			var oItem = jQuery("#" + oEvent.target.id).control(0),
-			    iItemsCount,
-			    iCurrentFocusedIndex,
-			    iNextIndex,
-			    fnCallback;
+				bShouldChangeSelection = oItem.getId() === this.getSelectedItem(),
+				fnSelectionCallback = function() {
+					this._moveToNextItem(bShouldChangeSelection);
+				};
 
-			if (oItem instanceof sap.m.TabStripItem) {
-				iItemsCount = this.getItems().length;
-				iCurrentFocusedIndex = this._oItemNavigation.getFocusedIndex();
-				iNextIndex = (iItemsCount - 1) === iCurrentFocusedIndex ? --iCurrentFocusedIndex : ++iCurrentFocusedIndex;
+				this._removeItem(oItem, fnSelectionCallback);
+		};
 
-				fnCallback = function() {
+		/**
+		 * Calculates the next item to be focused & selected and applies the focus & selection when an item is removed
+		 *
+		 * @param bSetAsSelected {boolean} Whether the next item to be selected
+		 * @private
+		 */
+		TabStrip.prototype._moveToNextItem = function (bSetAsSelected) {
+			var iItemsCount = this.getItems().length,
+				iCurrentFocusedIndex = this._oItemNavigation.getFocusedIndex(),
+				iNextIndex = iItemsCount === iCurrentFocusedIndex ? --iCurrentFocusedIndex : iCurrentFocusedIndex,
+				oNextItem = this.getItems()[iNextIndex],
+				fnFocusCallback = function () {
 					this._oItemNavigation.focusItem(iNextIndex);
-				}.bind(this);
+				};
 
-				this._removeItem(oItem, fnCallback);
-			}
+
+				//ToDo: Might be reconsidered when TabStrip is released for standalone usage
+				// Selection (causes invalidation)
+				if (bSetAsSelected) {
+					this.setSelectedItem(oNextItem);
+					//Notify the subscriber
+					this.fireSelectionChange({item: oNextItem});
+				}
+				// Focus (force to wait until invalidated)
+				jQuery.sap.delayedCall(0, this, fnFocusCallback);
 		};
 
 		/**
@@ -654,19 +671,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * @private
 		 */
 		TabStrip.prototype._removeItem = function(oItem, fnCallback) {
+			var oTabStripItem;
 			/* this method is handling the close pressed event on all item instances (TabStrip and the
 			 * TabStripSelect copy), so when it's handling the press on the TabStripSelect item, it needs to determine the TabStrip item out of the event and vice-versa */
 			if (oItem.getMetadata().getName() !== 'sap.m.TabStripItem') {
 				jQuery.sap.log.error('Expecting instance of a TabStripSelectItem, given: ', oItem);
 			}
 			if (oItem.getId().indexOf(TabStrip.SELECT_ITEMS_ID_PREFIX) !== -1) {
-				var oTabStripItem = oAggregationsHelper.findTabStripItemFromSelectItem.call(this, oItem);
+				oTabStripItem = oAggregationsHelper.findTabStripItemFromSelectItem.call(this, oItem);
 			} else {
 				oTabStripItem = oItem;
 			}
 
 			if (this.fireItemCloseRequest({item: oTabStripItem})) {
 				this.removeAggregation('items', oTabStripItem); // the select item will also get removed
+				this._moveToNextItem(oItem.getId() === this.getSelectedItem());
 
 				if (fnCallback) {
 					fnCallback.call(this);
