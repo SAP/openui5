@@ -484,7 +484,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return;
 		}
 
-		restoreSelectedChildren(oExpandingNode);
+		var aExpandingParents = [];
+		if (oExpandingNode.getSelectedForNodes().length) {
+			aExpandingParents.push(oExpandingNode);
+		}
+		restoreSelectedChildren(oExpandingNode, aExpandingParents, null);
 
 		//update dom if necessary
 		var $ExpandingNode = oExpandingNode.$();
@@ -492,6 +496,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			$ExpandingNode.removeClass('sapUiTreeNodeSelectedParent');
 		}
 
+		//remove the remaining selectedparent classes from all expanded subnodes
 		var $SelectedChildrenForTheirChildren = oExpandingNode.$('children').find('.sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent');
 		$SelectedChildrenForTheirChildren.removeClass('sapUiTreeNodeSelectedParent');
 	};
@@ -500,18 +505,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Removes the references inside the expanded node of its selected children, because
 	 * they are no longer needed.
 	 * @param {sap.ui.commons.TreeNode} oNode The current node to look at
+	 * @param {object} aExpandingParents Array of parents of the current node that have selectedForNodes references
+	 * @param {sap.ui.commons.TreeNode} oFirstCollapsedParent The topmost collapsed parent node of the current node
 	 */
-	function restoreSelectedChildren(oNode) {
-		//children are still selected (they were never deselected), so just restore the selectedForNodes association
-		if (!oNode.getExpanded()) {
-			return;
+	function restoreSelectedChildren(oNode, aExpandingParents, oFirstCollapsedParent) {
+		var bIsExpanded = oNode.getExpanded(),
+			bNodeReferredInParents = false,
+			bIncludeInExpandingParents = bIsExpanded && !!oNode.getSelectedForNodes().length,
+			oFirstCollapsedParentNode = (oFirstCollapsedParent || bIsExpanded) ? oFirstCollapsedParent : oNode,
+			i;
+
+		//check if any of the expanded parents, that have references, refers the current node
+		//if so - remove the reference
+		for (i = 0; i < aExpandingParents.length; i++) {
+			if (aExpandingParents[i].getSelectedForNodes().indexOf(oNode.getId()) !== -1) {
+				bNodeReferredInParents = true;
+				aExpandingParents[i].removeAssociation("selectedForNodes", oNode, true);
+			}
 		}
 
-		oNode.removeAllAssociation("selectedForNodes", true);
+		//if the node is referred somewhere in its parents and it has a collapsed parent
+		//add a reference to the node in the first collapsed parent (if it is not already there)
+		if (oFirstCollapsedParentNode && bNodeReferredInParents && oFirstCollapsedParentNode !== oNode) {
+			if (oFirstCollapsedParentNode.getSelectedForNodes().indexOf(oNode.getId()) === -1) {
+				oFirstCollapsedParentNode.addAssociation("selectedForNodes", oNode, true);
+			}
+			oFirstCollapsedParentNode.$().addClass('sapUiTreeNodeSelectedParent');
+		}
+
+		//include the node in the expanding parents only if it has references to selected child nodes
+		if (bIncludeInExpandingParents) {
+			aExpandingParents.push(oNode);
+		}
 
 		var aNodes = oNode._getNodes();
-		for (var i = 0; i < aNodes.length; i++) {
-			restoreSelectedChildren(aNodes[i]);
+		for (i = 0; i < aNodes.length; i++) {
+			restoreSelectedChildren(aNodes[i], aExpandingParents, oFirstCollapsedParentNode);
+		}
+
+		//exclude the node from the expanding parents
+		if (bIncludeInExpandingParents) {
+			aExpandingParents.pop(oNode);
 		}
 	}
 
