@@ -596,12 +596,12 @@ sap.ui.require([
 
 		ExpressionParser.parse(function () { assert.ok(false, "unexpected call"); }, "{='foo'}", 2);
 		assert.strictEqual(oAverageSpy.callCount, 1, "parse start measurement");
-		assert.strictEqual(oEndSpy.callCount, 1, "parse end measuerment");
+		assert.strictEqual(oEndSpy.callCount, 1, "parse end measurement");
 
-		assert.throws(function () {
+		this.checkError(assert, function () {
 			BindingParser.complexParser("{=$invalid}}");
-		});
-		assert.strictEqual(oAverageSpy.callCount, 2, "parse start measurment");
+		}, "Expected '{' instead of 'i'", "{=$invalid}}", 4);
+		assert.strictEqual(oAverageSpy.callCount, 2, "parse start measurement");
 		assert.strictEqual(oEndSpy.callCount, 1, "parse end measurement - end not reached");
 	});
 
