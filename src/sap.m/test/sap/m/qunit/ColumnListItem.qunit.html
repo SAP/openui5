@@ -19,6 +19,8 @@
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
 
@@ -107,7 +109,7 @@
 				
 				// make the size bigger than the screen to force to go to popin
 				minScreenWidth : "48000px",
-				demandPopin : true,
+				demandPopin : true
 			}),
 			table = new sap.m.Table({
 				columns : column,
@@ -137,6 +139,29 @@
 		
 		strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
 		strictEqual(sut.$Popin().length, 0, "No popin in the dom");
+
+		//Cleanup
+		table.destroy();
+	});
+
+	test("RenderOulineClassButNotLegacyOutlineClass", function() {
+		this.stub(sap.ui.Device.system, "desktop", true);
+		this.stub(sap.ui.Device, "browser", {"msie": true});
+
+		// SUT
+		var sut = new sap.m.ColumnListItem(),
+			column = new sap.m.Column(),
+			table = new sap.m.Table({
+				columns : column,
+				items : sut
+			});
+
+		table.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		// Assert
+		ok(sut.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		ok(!sut.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
 
 		//Cleanup
 		table.destroy();

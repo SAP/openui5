@@ -8,28 +8,18 @@
 	padding: 0 1rem 0 1rem;
 }
 
-.sap-desktop .sapMLIB:focus {
+.sapMLIBFocusable:focus {
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -0.125rem;
 }
 
-/* IE ignores outline-offset. Use an overlay: */
-.sap-desktop[data-sap-ui-browser^="ie"] {
-	.sapMLIB:not(.sapMListTblRow):focus, {
-		outline: none;
-		position: relative;
-	}
+.sapMLIBLegacyOutline:focus {
+  	outline: none;
+}
 
-	.sapMLIB:not(.sapMListTblRow):focus::before, {
-		content: "";
-		border: 0.125rem dotted @sapHCStandardFG;
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		pointer-events: none;
-	}
+/* IE ignores outline-offset. Use an overlay: */
+.sapMLIBLegacyOutline:focus::before {
+	border: 0.125rem dotted @sapHCStandardFG;
 }
 
 .sapMListModeDelete .sapMLIB,

@@ -8,9 +8,18 @@
 	padding: 0 1rem 0 1rem;
 }
 
-.sap-desktop .sapMLIB:focus {
-	outline: 1px dotted @sapUiFocus;
-	outline-offset: -1px;
+.sapMLIBFocusable:focus {
+	outline: 0.0625rem dotted @sapUiFocus;
+	outline-offset: -0.0625rem;
+}
+
+.sapMLIBLegacyOutline:focus {
+  	outline: none;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+.sapMLIBLegacyOutline:focus::before {
+	border: 0.0625rem dotted @sapUiFocus;
 }
 
 .sapMListModeDelete .sapMLIB,
