@@ -180,7 +180,7 @@ sap.ui.define([
 				 */
 				editHeaderButtonPress: {}
 			},
-			designTime : true
+			designTime: true
 		}
 	});
 
@@ -223,6 +223,7 @@ sap.ui.define([
 		this._bFirstRendering = true;
 		this._bDomReady = false;                    //dom is fully ready to be inspected
 		this._bStickyAnchorBar = false;             //status of the header
+		this._iStoredScrollPosition = 0;
 
 		// anchorbar management
 		this._bInternalAnchorBarVisible = true;
@@ -267,6 +268,8 @@ sap.ui.define([
 
 		this._initializeScroller();
 
+		this._storeScrollLocation();
+
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
 		this._oABHelper._getAnchorBar().setUpperCase(this.getUpperCaseAnchorBar());
 
@@ -302,11 +305,11 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._grepCurrentTabSectionBases = function () {
 		var oFiltered = [],
-		oSectionToLoad = this._oCurrentTabSection || this._oFirstVisibleSection;
+			oSectionToLoad = this._oCurrentTabSection || this._oFirstVisibleSection;
 
 		if (oSectionToLoad) {
 			var sSectionToLoadId = oSectionToLoad.getId();
-			this._aSectionBases.forEach(function(oSection) {
+			this._aSectionBases.forEach(function (oSection) {
 				if (oSection.getParent().getId() === sSectionToLoadId) {
 					oFiltered.push(oSection);
 				}
@@ -334,7 +337,6 @@ sap.ui.define([
 		} else {
 			jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, this._onAfterRenderingDomReady);
 		}
-
 	};
 
 	ObjectPageLayout.prototype._onAfterRenderingDomReady = function () {
@@ -343,13 +345,15 @@ sap.ui.define([
 		this._adjustHeaderHeights();
 
 		if (this.getUseIconTabBar()) {
-			this._setCurrentTabSection(this._oFirstVisibleSection);
+			this._setCurrentTabSection(this._oStoredSection || this._oFirstVisibleSection);
 		}
 
 		this._initAnchorBarScroll();
 		this.getHeaderTitle() && this.getHeaderTitle()._shiftHeaderTitle();
 
 		this._setSectionsFocusValues();
+
+		this._restoreScrollPosition();
 	};
 
 	ObjectPageLayout.prototype.exit = function () {
@@ -386,11 +390,8 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._initializeScroller = function () {
-		//are we re-rendering an existing objectPageLayout?
-		//if so we need to reset the scroller as it gets confused
 		if (this._oScroller) {
-			this._oScroller.scrollTo(0, 0, 0);         //reset the actual scroll position
-			this._oScroller.destroy();
+			return;
 		}
 
 		//Internal Incident: 1482023778: workaround BB10 = use zynga instead of iScroll
@@ -568,7 +569,7 @@ sap.ui.define([
 		}
 
 		// the AnchorBar needs to reflect the dom state
-		 if (bVisibleAnchorBar) {
+		if (bVisibleAnchorBar) {
 			this._oABHelper._buildAnchorBar();
 		}
 
@@ -601,7 +602,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._setCurrentTabSection = function (oSection) {
-
 		if (!oSection) {
 			return;
 		}
@@ -629,7 +629,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._renderSection = function (oSection) {
-
 		var $objectPageContainer = this.$().find(".sapUxAPObjectPageContainer"),
 			oRm;
 
@@ -721,14 +720,14 @@ sap.ui.define([
 		var oSelectedSection = sap.ui.getCore().byId(sSelectedSectionId);
 
 		/* check if the section that was previously selected is still available,
-		   as it might have been deleted, or emptied, or set to hidden in the previous step */
+		 as it might have been deleted, or emptied, or set to hidden in the previous step */
 		if (oSelectedSection && oSelectedSection.getVisible() && oSelectedSection._getInternalVisible()) {
 			this._setSelectedSectionId(sSelectedSectionId); //reselect the current section in the navBar
 			this._adjustLayout(null, false, true /* requires a check on lazy loading */);
 			return;
 		}
 		/* the section that was previously selected is not available anymore, so we cannot reselect it;
-		   in that case we have to select the first visible section instead */
+		 in that case we have to select the first visible section instead */
 		oSelectedSection = this._oFirstVisibleSection;
 		if (oSelectedSection) {
 			this.scrollToSection(oSelectedSection.getId());
@@ -867,10 +866,10 @@ sap.ui.define([
 		iDuration = iDuration >= 0 ? iDuration : this._iScrollToSectionDuration;
 
 		if (this.getUseIconTabBar()
-				&& ((oTargetSection instanceof sap.uxap.ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
-				&& this._bStickyAnchorBar) { // in this case we are only scrolling
-											 // a section from expanded to sticky position,
-											 // so the scrolling animation in not needed, instead it looks unnatural, so set a 0 duration
+			&& ((oTargetSection instanceof sap.uxap.ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
+			&& this._bStickyAnchorBar) { // in this case we are only scrolling
+			// a section from expanded to sticky position,
+			// so the scrolling animation in not needed, instead it looks unnatural, so set a 0 duration
 			iDuration = 0;
 		}
 		return iDuration;
@@ -884,10 +883,10 @@ sap.ui.define([
 		var iScrollTo = this._bMobileScenario || bFirstLevel ? this._oSectionInfo[sId].positionTopMobile : this._oSectionInfo[sId].positionTop;
 
 		if (this.getUseIconTabBar()
-				&& ((oTargetSection instanceof sap.uxap.ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
-				&& !this._bStickyAnchorBar) { // preserve expanded header if no need to stick
+			&& ((oTargetSection instanceof sap.uxap.ObjectPageSection) || this._isFirstVisibleSubSection(oTargetSection))
+			&& !this._bStickyAnchorBar) { // preserve expanded header if no need to stick
 
-				iScrollTo -= this.iHeaderContentHeight; // scroll to the position where the header is still expanded
+			iScrollTo -= this.iHeaderContentHeight; // scroll to the position where the header is still expanded
 		}
 		return iScrollTo;
 	};
@@ -1107,13 +1106,13 @@ sap.ui.define([
 	};
 
 	/*
-	* Determines wheder spacer, after the last subsection, is needed on the screen.
-	* The main reason for spacer to exist is to have enogth space for scrolling to the last section.
-	*/
+	 * Determines wheder spacer, after the last subsection, is needed on the screen.
+	 * The main reason for spacer to exist is to have enogth space for scrolling to the last section.
+	 */
 	ObjectPageLayout.prototype._isSpacerRequired = function (oLastVisibleSubSection, iLastVisibleHeight) {
 		var oSelectedSection = this.getAggregation("_anchorBar").getSelectedSection(),
 			bIconTabBarWithOneSectionAndOneSubsection = this.getUseIconTabBar() && oSelectedSection
-					&& oSelectedSection.getSubSections().length === 1,
+				&& oSelectedSection.getSubSections().length === 1,
 			bOneSectionOneSubsection = this.getSections().length === 1 && this.getSections()[0].getSubSections().length === 1;
 
 		// When there there is only one element the scrolling is not required so the spacer is redundant.
@@ -1152,7 +1151,7 @@ sap.ui.define([
 			return;
 		}
 		var oFirstSubSection;
-		this._aSectionBases.every(function(oSectionBase) {
+		this._aSectionBases.every(function (oSectionBase) {
 			if (oSectionBase.getParent() && (oSectionBase.getParent().getId() === oSection.getId())) {
 				oFirstSubSection = oSectionBase;
 				return false;
@@ -1781,6 +1780,16 @@ sap.ui.define([
 			return true;
 		}
 		return false;
+	};
+
+	ObjectPageLayout.prototype._restoreScrollPosition = function () {
+		this._scrollTo(this._iStoredScrollPosition, 0);
+	};
+
+	ObjectPageLayout.prototype._storeScrollLocation = function () {
+		this._iStoredScrollPosition = this._oScroller.getScrollTop();
+		this._oStoredSection = this._oCurrentTabSubSection || this._oCurrentTabSection;
+		this._oCurrentTabSection = null;
 	};
 
 	ObjectPageLayout.HEADER_CALC_DELAY = 350;   //ms. The higher the safer and the uglier...
