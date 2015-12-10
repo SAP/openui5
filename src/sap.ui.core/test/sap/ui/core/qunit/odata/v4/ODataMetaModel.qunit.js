@@ -18,51 +18,58 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var oMetadata = {
-			"$EntityContainer" : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer",
-			"com.sap.gateway.iwbep.tea_busi.v0001.TEAM" : {
+	var mScope = { // tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
+			"$EntityContainer" : "tea_busi.DefaultContainer",
+			"tea_busi.TEAM" : {
+				"$kind" : "EntityType",
 				"$Key" : ["Team_Id"],
 				"Team_Id" : {
+					"$kind" : "Property",
 					"$Type" : "Edm.String",
 					"$Nullable" : false,
 					"$MaxLength" : 10
 				},
 				"TEAM_2_EMPLOYEES" : {
-					"$isCollection" : true,
 					"$kind" : "NavigationProperty",
-					"$Type" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
+					"$isCollection" : true,
+					"$Type" : "tea_busi.Worker"
 				}
 			},
-			"com.sap.gateway.iwbep.tea_busi.v0001.Worker" : {
+			"tea_busi.Worker" : {
+				"$kind" : "EntityType",
 				"$Key" : ["ID"],
 				"ID" : {
+					"$kind" : "Property",
 					"$Type" : "Edm.String",
 					"$Nullable" : false,
 					"$MaxLength" : 4
 				},
 				"AGE" : {
+					"$kind" : "Property",
 					"$Type" : "Edm.Int16",
 					"$Nullable" : false
 				},
 				"EMPLOYEE_2_TEAM" : {
 					"$kind" : "NavigationProperty",
-					"$Type" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM",
+					"$Type" : "tea_busi.TEAM",
 					"$Nullable" : false
 				}
 			},
-			"com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer" : {
+			"tea_busi.DefaultContainer" : {
 				"$kind" : "EntityContainer",
 				"EMPLOYEES" : {
+					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
 						"EMPLOYEE_2_TEAM" : "T€AMS"
 					},
-					"$Type" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
+					"$Type" : "tea_busi.Worker"
 				},
 				"T€AMS" : {
+					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
 						"TEAM_2_EMPLOYEES" : "EMPLOYEES"
 					},
-					"$Type" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM"
+					"$Type" : "tea_busi.TEAM"
 				}
 			},
 			"name.space.Broken" : {
@@ -71,13 +78,13 @@ sap.ui.require([
 			},
 			"name.space.Term" : { // only case with a qualified name and a $Type
 				"$kind" : "Term",
-				"$Type" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
+				"$Type" : "tea_busi.Worker"
 			},
-			"$Term" : "name.space.Term" // replacement for any reference to the term
+			"$$Term" : "name.space.Term" // replacement for any reference to the term
 		},
-		oContainerData = oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer"],
-//		oTeamData = oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"],
-		oWorkerData = oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.Worker"];
+		oContainerData = mScope["tea_busi.DefaultContainer"],
+		oTeamData = mScope["tea_busi.TEAM"],
+		oWorkerData = mScope["tea_busi.Worker"];
 
 	/**
 	 * Checks the "get*" and "request*" methods corresponding to the named "fetch*" method,
@@ -145,6 +152,36 @@ sap.ui.require([
 		});
 	}
 
+	/**
+	 * Runs the given test for each name/value pair in the given fixture. The name is interpreted
+	 * as a path "[<sContextPath>'|']<sMetaPath>" and cut accordingly. The test is called with
+	 * the resolved sPath (i.e. '|' replaced by '/').
+	 *
+	 * @param {object} mFixture
+	 *   map<string, any>
+	 * @param {function} fnTest
+	 *   function(string sPath, string sContextPath, string sMetaPath, any vResult)
+	 */
+	function forEach(mFixture, fnTest) {
+		var i,
+			sContextPath = "",
+			sMetaPath,
+			sPath,
+			vValue;
+
+		for (sPath in mFixture) {
+			vValue = mFixture[sPath];
+			i = sPath.indexOf("|");
+			sMetaPath = sPath.slice(i + 1);
+			if (i >= 0) {
+				sContextPath = sPath.slice(0, i);
+				sPath = sContextPath + "/" + sMetaPath;
+			}
+
+			fnTest(sPath, sContextPath, sMetaPath, vValue);
+		}
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataMetaModel", {
 		beforeEach : function () {
@@ -184,7 +221,7 @@ sap.ui.require([
 			},
 			sUrl = "/~/$metadata",
 			oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl),
-			oPromise = Promise.resolve({/*oMetadata*/}),
+			oPromise = Promise.resolve({/*mScope*/}),
 			oSyncPromise;
 
 		this.mock(oMetadataRequestor).expects("read").withExactArgs(sUrl).returns(oPromise);
@@ -199,11 +236,11 @@ sap.ui.require([
 		// already caching
 		assert.strictEqual(oMetaModel.fetchEntityContainer(), oSyncPromise);
 
-		return oPromise.then(function (oMetadata) {
+		return oPromise.then(function (mScope) {
 			// fulfilled
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			assert.strictEqual(oSyncPromise.isRejected(), false);
-			assert.strictEqual(oSyncPromise.getResult(), oMetadata);
+			assert.strictEqual(oSyncPromise.getResult(), mScope);
 			// still caching
 			assert.strictEqual(oMetaModel.fetchEntityContainer(), oSyncPromise);
 		});
@@ -212,29 +249,31 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		dataPath: "/Foo",
-		metaPath: "/$EntityContainer/Foo"
+		dataPath : "/Foo",
+		metaPath : "/Foo"
 	}, { // e.g. function call plus key predicate
-		dataPath: "/Foo/name.space.bar_42(key='value')(key='value')",
-		metaPath: "/$EntityContainer/Foo/name.space.bar_42"
+		dataPath : "/Foo/name.space.bar_42(key='value')(key='value')",
+		metaPath : "/Foo/name.space.bar_42"
 	}, {
-		dataPath: "/Foo(key='value')(key='value')/bar",
-		metaPath: "/$EntityContainer/Foo/bar"
+		dataPath : "/Foo(key='value')(key='value')/bar",
+		metaPath : "/Foo/bar"
 	}, { // segment parameter names do not matter
-		dataPath: "/Foo[0];foo=42",
-		metaPath: "/$EntityContainer/Foo"
+		dataPath : "/Foo[0];foo=42",
+		metaPath : "/Foo"
 	}, {
-		dataPath: "/Foo[0];bar=42/bar",
-		metaPath: "/$EntityContainer/Foo/bar"
+		dataPath : "/Foo[0];bar=42/bar",
+		metaPath : "/Foo/bar"
 	}, { // any segment with digits only
-		dataPath: "/Foo/" + Date.now(),
-		metaPath: "/$EntityContainer/Foo"
+		//TODO remove once v4.ODataListBinding|getDependentPath() does not create such segments
+		//     anymore!
+		dataPath : "/Foo/" + Date.now(),
+		metaPath : "/Foo"
 	}, {
-		dataPath: "/Foo/" + Date.now() + "/bar",
-		metaPath: "/$EntityContainer/Foo/bar"
+		dataPath : "/Foo/" + Date.now() + "/bar",
+		metaPath : "/Foo/bar"
 	}, { // global removal needed
-		dataPath: "/Foo(key='value')/" + Date.now() + "/bar(key='value')/"  + Date.now(),
-		metaPath: "/$EntityContainer/Foo/bar"
+		dataPath : "/Foo(key='value')/" + Date.now() + "/bar(key='value')/"  + Date.now(),
+		metaPath : "/Foo/bar"
 	}].forEach(function (oFixture) {
 		QUnit.test("getMetaContext: " + oFixture.dataPath, function (assert) {
 			var oMetaContext = this.oMetaModel.getMetaContext(oFixture.dataPath);
@@ -253,111 +292,72 @@ sap.ui.require([
 	//    set of (non-binding) parameter names" is unique.
 
 	//*********************************************************************************************
-	//TODO extend map lookup from QualifiedName to TargetPath?
-	[{
-		metaPath : "/",
-		result : oMetadata
-	}, {
-		metaPath : "/Foo",
-		result : undefined
-	}, { // "It does not matter whether that name is valid or not."
-		metaPath : "/Foo/@sapui.name",
-		result : "Foo"
-	}, {
-		metaPath : "/$Foo",
-		result : undefined
-	}, {
-		metaPath : "/$EntityContainer",
-		result : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer"
-	}, {
-		metaPath : "/$EntityContainer/$kind",
-		result : "EntityContainer"
-	}, {
-		contextPath : "/$EntityContainer",
-		metaPath : "$kind",
-		result : "EntityContainer"
-	}, {
-		metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/$kind",
-		result : "EntityContainer"
-	}, {
-		metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/Foo",
-		result : undefined
-	}, {
-		metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/$Foo",
-		result : undefined
-	}, {
-		metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/@sapui.name",
-		result : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer"
-	}, {
-		metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/./@sapui.name",
-		result : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer"
-	}, {
-		metaPath : "/$EntityContainer/Foo",
-		result : undefined
-	}, {
-		metaPath : "/$EntityContainer/$Foo",
-		result : undefined
-	}, { // avoid implicit OData drill-down for following $ segments
-		metaPath : "/$EntityContainer/T€AMS/$Key",
-		result : undefined
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/@sapui.name",
-		result : "T€AMS"
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/./@sapui.name",
-		result : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM"
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/Team_Id/@sapui.name",
-		result : "Team_Id"
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/$Type/Team_Id",
-		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"].Team_Id
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/Team_Id",
-		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"].Team_Id
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/TEAM_2_EMPLOYEES/@sapui.name",
-		result : "TEAM_2_EMPLOYEES"
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/TEAM_2_EMPLOYEES",
-		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"].TEAM_2_EMPLOYEES
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/TEAM_2_EMPLOYEES/AGE",
-		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.Worker"].AGE
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/$Type",
-		result : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM"
-	}, { //TODO can we simply use a trailing slash here? resolvePath currently does not support it
-		metaPath : "/$EntityContainer/T€AMS/$Type/.",
-		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"]
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/.",
-		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.TEAM"]
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/Foo",
-		result : undefined
-	}, {
-		metaPath : "/$EntityContainer/T€AMS/$Foo",
-		result : undefined
-	}, {
-		metaPath : "/$Term/AGE", // map lookup, then drill-down into type!
-		result : oMetadata["com.sap.gateway.iwbep.tea_busi.v0001.Worker"].AGE
-	}].forEach(function (oFixture) {
-		var sPath = oFixture.contextPath
-			? oFixture.contextPath + " / "/*make cut more visible*/ + oFixture.metaPath
-			: oFixture.metaPath;
-
+	//TODO remember result of last "17.3 QualifiedName" lookup: EntityContainer vs. Type; this
+	//     is needed to lookup the next "17.2 SimpleIdentifier", isn't it?!
+	//TODO also support SimpleIdentifier which refers to child of "the same entity container as the enclosing element"
+	//TODO also support all variants of "14.5.12 Path"
+	forEach({
+		// "JSON" drill-down ----------------------------------------------------------------------
+		"/" : mScope,
+		"/Foo" : undefined,
+		"/$Foo" : undefined,
+		"/$EntityContainer" : "tea_busi.DefaultContainer",
+		"/tea_busi.DefaultContainer/$kind" : "EntityContainer",
+		"/tea_busi.DefaultContainer/Foo" : undefined,
+		"/tea_busi.DefaultContainer/$Foo" : undefined,
+		"/tea_busi.TEAM/$Key/not.Found" : undefined,
+		// scope lookup ("17.3 QualifiedName") ----------------------------------------------------
+		"/$EntityContainer/$kind" : "EntityContainer",
+		"/$EntityContainer|$kind" : "EntityContainer",
+		"/$EntityContainer/Foo" : undefined,
+		"/$EntityContainer/$Foo" : undefined,
+		"/$EntityContainer/T€AMS/$Type" : "tea_busi.TEAM",
+		"/$EntityContainer/T€AMS/$Type/Team_Id" : oTeamData.Team_Id,
+		// initial "17.2 SimpleIdentifier" --------------------------------------------------------
+		"/T€AMS" : oContainerData["T€AMS"],
+		//TODO later "17.2 SimpleIdentifier" inside non-default container?
+		// "17.3 QualifiedName", e.g. type cast ---------------------------------------------------
+		"/tea_busi.DefaultContainer/EMPLOYEES/tea_busi.Worker/AGE" : oWorkerData.AGE,
+		// implicit $Type insertion ---------------------------------------------------------------
+		"/T€AMS/$Key" : undefined, // avoid for following $ segments
+		"/T€AMS/Foo" : undefined,
+		"/T€AMS/$Foo" : undefined,
+		"/T€AMS/Team_Id" : oTeamData.Team_Id,
+		"/T€AMS/TEAM_2_EMPLOYEES" : oTeamData.TEAM_2_EMPLOYEES,
+		"/T€AMS/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
+		// scope lookup, then implicit $Type insertion!
+		"/$$Term/AGE" : oWorkerData.AGE,
+		// placeholder "." ------------------------------------------------------------------------
+		"/." : oContainerData,
+		"/T€AMS/$Type/." : oTeamData,
+		"/T€AMS/." : oTeamData,
+		// scope lookup "17.2 SimpleIdentifier"
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/." : oWorkerData,
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
+		// @sapui.name ----------------------------------------------------------------------------
+		"/./@sapui.name" : "tea_busi.DefaultContainer",
+		"/Foo/@sapui.name" : "Foo", // "It does not matter whether that name is valid or not."
+		"/tea_busi.DefaultContainer/@sapui.name" : "tea_busi.DefaultContainer",
+		"/tea_busi.DefaultContainer/./@sapui.name" : "tea_busi.DefaultContainer",
+		"/T€AMS/@sapui.name" : "T€AMS",
+		"/T€AMS/./@sapui.name" : "tea_busi.TEAM",
+		"/T€AMS/Team_Id/@sapui.name" : "Team_Id",
+		"/T€AMS/TEAM_2_EMPLOYEES/@sapui.name" : "TEAM_2_EMPLOYEES",
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/./@sapui.name" : "tea_busi.Worker",
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE/@sapui.name" : "AGE"
+	}, function (sPath, sContextPath, sMetaPath, vResult) {
 		QUnit.test("fetchObject: " + sPath, function (assert) {
-			var oContext = oFixture.contextPath && this.oMetaModel.getContext(oFixture.contextPath),
+			var oContext = sContextPath && this.oMetaModel.getContext(sContextPath),
 				oSyncPromise;
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
-				.returns(SyncPromise.resolve(oMetadata));
+				.returns(SyncPromise.resolve(mScope));
 
-			oSyncPromise = this.oMetaModel.fetchObject(oFixture.metaPath, oContext);
+			oSyncPromise = this.oMetaModel.fetchObject(sMetaPath, oContext);
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
-			assert.strictEqual(oSyncPromise.getResult(), oFixture.result);
+			assert.strictEqual(oSyncPromise.getResult(), vResult);
 		});
 	});
 	//TODO special cases from sap.ui.model.odata.ODataMetaModel#_getObject:
@@ -369,61 +369,45 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
-		[{
-			metaPath : "/$Foo/.",
-			warning : "Invalid part: ."
-		}, {
-			metaPath : "/$Foo/$Bar",
-			warning : "Invalid part: $Bar"
-		}, {
-			metaPath : "/$Foo/$Bar/$Baz",
-			warning : "Invalid part: $Bar"
-		}, {
-			metaPath : "/$EntityContainer/T€AMS/Team_Id/$MaxLength/.",
-			warning : "Invalid part: ."
-		}, {
-			metaPath : "/$EntityContainer/T€AMS/Team_Id/$Nullable/.",
-			warning : "Invalid part: ."
-		}, {
-			contextPath : "/$EntityContainer",
-			metaPath : "$kind/Foo",
-			warning : "Unknown qualified name EntityContainer before Foo"
-		}, {
-			metaPath : "/name.space.Broken/Foo", // implicit drill-down into type
-			warning : "Unknown qualified name not.Found before Foo"
-		}, {
-			metaPath : "/name.space.Broken/$Type/Foo", // implicit map lookup
-			warning : "Unknown qualified name not.Found before Foo"
-		}, {
-			metaPath : "/@sapui.name",
-			warning : "Invalid path before @sapui.name"
-		}, {
-			metaPath : "/com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer/$kind/@sapui.name",
-			warning : "Invalid path before @sapui.name"
-		}, {
-			metaPath : "/$EntityContainer/T€AMS/@sapui.name/foo",
-			warning : "Invalid path after @sapui.name"
-		}].forEach(function (oFixture) {
-			var sPath = oFixture.contextPath
-				? oFixture.contextPath + "/" + oFixture.metaPath
-				: oFixture.metaPath;
-
+		forEach({
+			"//." : "Invalid empty part",
+			"/$Foo/." : "Invalid part: .",
+			"/$Foo/$Bar" : "Invalid part: $Bar",
+			"/$Foo/$Bar/$Baz" : "Invalid part: $Bar",
+			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid part: .",
+			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid part: .",
+			//TODO take care not to construct these complicated warning messages in vain?
+			"/$EntityContainer|$kind/Foo" :
+				"Unknown container child 'EntityContainer' at /$EntityContainer/$kind",
+			// implicit $Type insertion
+			"/name.space.Broken/Foo" :
+				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
+			// implicit scope lookup
+			"/name.space.Broken/$Type/Foo" :
+				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
+			// Unsupported path before @sapui.name ------------------------------------------------
+			"/@sapui.name" : "Unsupported path before @sapui.name",
+			"/@sapui.name/foo" : "Unsupported path before @sapui.name", // one warning is enough
+			// no @sapui.name for technical properties or inside "JSON" mode:
+			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unsupported path before @sapui.name",
+			"/tea_busi.TEAM/$Key/not.Found/@sapui.name" : "Unsupported path before @sapui.name",
+			"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/@sapui.name"
+				: "Unsupported path before @sapui.name",
+			// Unsupported path after @sapui.name -------------------------------------------------
+			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name"
+		}, function (sPath, sContextPath, sMetaPath, sWarning) {
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
-				var oContext = oFixture.contextPath
-						&& this.oMetaModel.getContext(oFixture.contextPath),
+				var oContext = sContextPath && this.oMetaModel.getContext(sContextPath),
 					oSyncPromise;
 
 				this.mock(this.oMetaModel).expects("fetchEntityContainer")
-					.returns(SyncPromise.resolve(oMetadata));
+					.returns(SyncPromise.resolve(mScope));
 				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING)
-					.returns(bWarn);
-				this.oLogMock.expects("warning")
-					.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
-					.withExactArgs(oFixture.warning, sPath,
-						"sap.ui.model.odata.v4.ODataMetaModel");
+					.withExactArgs(jQuery.sap.log.Level.WARNING).returns(bWarn);
+				this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+					.withExactArgs(sWarning, sPath, "sap.ui.model.odata.v4.ODataMetaModel");
 
-				oSyncPromise = this.oMetaModel.fetchObject(oFixture.metaPath, oContext);
+				oSyncPromise = this.oMetaModel.fetchObject(sMetaPath, oContext);
 
 				assert.strictEqual(oSyncPromise.isFulfilled(), true);
 				assert.deepEqual(oSyncPromise.getResult(), undefined);
@@ -447,8 +431,8 @@ sap.ui.require([
 //		$Type : "Edm.DateTimeOffset"
 //	},{
 //		$Type : "Edm.DateTimeOffset",
-//		facets: [{Name: "Precision", Value: "7"}]
-//		constraints: {precision: 7} //TODO implement
+//		facets : [{Name : "Precision", Value : "7"}]
+//		constraints : {precision : 7} //TODO implement
 	}, {
 		$Type : "Edm.Decimal"
 	}, {
@@ -555,15 +539,15 @@ sap.ui.require([
 	[{
 		dataPath : "/T€AMS[0];bar=42",
 		canonicalUrl : "/~/T%E2%82%ACAMS(...)",
-		entityType : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM"
+		entityType : "tea_busi.TEAM"
 	}, {
 		dataPath : "/T€AMS[0];bar=42/TEAM_2_EMPLOYEES/1",
 		canonicalUrl : "/~/EMPLOYEES(...)",
-		entityType : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
+		entityType : "tea_busi.Worker"
 	}, {
 		dataPath : "/T€AMS[0];bar=42/TEAM_2_EMPLOYEES/1/EMPLOYEE_2_TEAM",
 		canonicalUrl : "/~/T%E2%82%ACAMS(...)",
-		entityType : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM"
+		entityType : "tea_busi.TEAM"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestCanonicalUrl: " + oFixture.dataPath, function (assert) {
 			var oInstance = {};
@@ -575,9 +559,9 @@ sap.ui.require([
 			}
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
-				.returns(SyncPromise.resolve(oMetadata));
+				.returns(SyncPromise.resolve(mScope));
 			this.oSandbox.stub(Helper, "getKeyPredicate", function (oEntityType0, oInstance0) {
-				assert.strictEqual(oEntityType0, oMetadata[oFixture.entityType]);
+				assert.strictEqual(oEntityType0, mScope[oFixture.entityType]);
 				assert.strictEqual(oInstance0, oInstance);
 				return "(...)";
 			});
@@ -611,7 +595,7 @@ sap.ui.require([
 			}
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
-				.returns(SyncPromise.resolve(oMetadata));
+				.returns(SyncPromise.resolve(mScope));
 			this.oSandbox.mock(Helper).expects("getKeyPredicate").never();
 
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, read)
@@ -639,9 +623,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("getProperty: object values, warn = " + bWarn, function (assert) {
-			var oContext = this.oMetaModel.getContext("/$EntityContainer"),
+			var oContext = this.oMetaModel.getContext("/"),
 				sPath = "EMPLOYEES",
-				sResolvedPath = "/$EntityContainer/EMPLOYEES";
+				sResolvedPath = "/EMPLOYEES";
 
 			this.mock(this.oMetaModel).expects("getObject").withExactArgs(sPath, oContext)
 				.returns({});
@@ -652,7 +636,7 @@ sap.ui.require([
 				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
 				.returns(sResolvedPath);
 			this.oLogMock.expects("warning")
-				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
+				.exactly(bWarn ? 1 : 0)
 				.withExactArgs("Accessed value is not primitive", sResolvedPath,
 					"sap.ui.model.odata.v4.ODataMetaModel");
 
@@ -683,7 +667,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["ENTRYDATE", "/$EntityContainer/EMPLOYEES/ENTRYDATE"].forEach(function (sPath) {
+	["ENTRYDATE", "/EMPLOYEES/ENTRYDATE"].forEach(function (sPath) {
 		QUnit.test("bindContext: " + sPath, function (assert) {
 			var bAbsolutePath = sPath[0] === "/",
 				oBinding,
@@ -806,8 +790,8 @@ sap.ui.require([
 			assert.strictEqual(oContext.getModel(), oMetaModel);
 			return oContext.getPath();
 		}), [ // see aIndices
-			"/$EntityContainer/EMPLOYEES/ID",
-			"/$EntityContainer/EMPLOYEES/AGE"
+			"/EMPLOYEES/ID",
+			"/EMPLOYEES/AGE"
 		]);
 
 		// further tests regarding the getter provided to FilterProcessor.apply()
@@ -827,9 +811,9 @@ sap.ui.require([
 	[{
 		// <template:repeat list="{entitySet>}" ...>
 		// Iterate all OData path segments, i.e. (navigation) properties.
-		// Implicit drill-down into the entity set's type happens here!
+		// Implicit $Type insertion happens here!
 		//TODO support for $BaseType
-		contextPath : "/$EntityContainer/EMPLOYEES",
+		contextPath : "/EMPLOYEES",
 		metaPath : "",
 		result : {
 			"ID" : oWorkerData.ID,
@@ -837,10 +821,20 @@ sap.ui.require([
 			"EMPLOYEE_2_TEAM" : oWorkerData.EMPLOYEE_2_TEAM
 		}
 	}, {
-		// <template:repeat list="{meta>/$EntityContainer}" ...>
+		// <template:repeat list="{meta>EMPLOYEES}" ...>
+		// same as before, but with non-empty path
+		contextPath : "/",
+		metaPath : "EMPLOYEES",
+		result : {
+			"ID" : oWorkerData.ID,
+			"AGE" : oWorkerData.AGE,
+			"EMPLOYEE_2_TEAM" : oWorkerData.EMPLOYEE_2_TEAM
+		}
+	}, {
+		// <template:repeat list="{meta>/}" ...>
 		// Iterate all OData path segments, i.e. entity sets.
-		// Implicit map lookup happens here!
-		metaPath : "/$EntityContainer",
+		// Implicit scope lookup happens here!
+		metaPath : "/",
 		result : {
 			"EMPLOYEES" : oContainerData.EMPLOYEES,
 			"T€AMS" : oContainerData["T€AMS"]
@@ -852,7 +846,7 @@ sap.ui.require([
 
 		QUnit.test("_getObject: " + sResolvedPath, function (assert) {
 			var oContext = oFixture.contextPath && this.oMetaModel.getContext(oFixture.contextPath),
-				oMetadataUsed = JSON.parse(JSON.stringify(oMetadata)),
+				oMetadataUsed = JSON.parse(JSON.stringify(mScope)),
 				oObject;
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
@@ -862,7 +856,7 @@ sap.ui.require([
 			oObject = this.oMetaModel._getObject(oFixture.metaPath, oContext);
 
 			assert.deepEqual(oObject, oFixture.result);
-			assert.deepEqual(oMetadataUsed, oMetadata, "used meta data unchanged");
+			assert.deepEqual(oMetadataUsed, mScope, "used meta data unchanged");
 		});
 	});
 	//TODO Avoid copies of objects? Makes sense only after we get rid of JSONListBinding which
