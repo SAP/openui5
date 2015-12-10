@@ -76,6 +76,10 @@ sap.ui.define(function () {
 		oRm.addClass("sapUxAPBlockContainer");
 		oRm.addClass("sapUiResponsiveMargin");
 		oRm.writeClasses();
+		if (oControl._isHidden){
+			oRm.addStyle("display", "none");
+		}
+		oRm.writeStyles();
 		oRm.write(">");
 
 		oRm.renderControl(oControl._getGrid());

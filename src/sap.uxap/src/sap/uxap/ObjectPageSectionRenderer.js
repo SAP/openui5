@@ -52,6 +52,10 @@ sap.ui.define(function () {
 		oRm.write("<div");
 		oRm.addClass("sapUxAPObjectPageSectionContainer");
 		oRm.writeClasses();
+		if (oControl._isHidden){
+			oRm.addStyle("display", "none");
+		}
+		oRm.writeStyles();
 		oRm.write(">");
 
 		oControl.getSubSections().forEach(oRm.renderControl);
