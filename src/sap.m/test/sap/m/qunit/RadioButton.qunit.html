@@ -174,11 +174,11 @@
 				oRadioButton4 = new sap.m.RadioButton({ selected: true, groupName: "Other" }),
 				oRadioButton5 = new sap.m.RadioButton({ groupName: "Other" });
 			
-			oRadioButton1.placeAt("qunit-fixture");
-			oRadioButton2.placeAt("qunit-fixture");
-			oRadioButton3.placeAt("qunit-fixture");
-			oRadioButton4.placeAt("qunit-fixture");
-			oRadioButton5.placeAt("qunit-fixture");
+			oRadioButton1.placeAt("content");
+			oRadioButton2.placeAt("content");
+			oRadioButton3.placeAt("content");
+			oRadioButton4.placeAt("content");
+			oRadioButton5.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			
 			// act
@@ -188,7 +188,6 @@
 			ok(!oRadioButton1.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
 			ok(!oRadioButton3.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
 			ok(oRadioButton2.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
-
 			ok(oRadioButton4.getSelected(), "RadioButton4 should not be changed because it is in another group");
 			ok(!oRadioButton5.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
 			
@@ -655,8 +654,48 @@
 			oRadioButton1.destroy(); 
 			oRadioButton2.destroy(); 
 		});
-			
-	
+
+		QUnit.test("Keybaord navigation with forward arrows", function(assert) {
+			var oRadioButton1 = new sap.m.RadioButton(),
+			 oRadioButton2 = new sap.m.RadioButton({groupName: "testGroup"}),
+			 oRadioButton3 = new sap.m.RadioButton();
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton2.placeAt("qunit-fixture");
+			oRadioButton3.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			oRadioButton1.applyFocusInfo();
+			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+			assert.strictEqual(oRadioButton3.$().is(":focus"), true, "3rd RadioButton should be focussed");
+
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+			oRadioButton3.destroy();
+		});
+
+		QUnit.test("Keybaord navigation with backward Arrows", function(assert) {
+			var oRadioButton1 = new sap.m.RadioButton(),
+			 oRadioButton2 = new sap.m.RadioButton({groupName: "testGroup"}),
+			 oRadioButton3 = new sap.m.RadioButton();
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton2.placeAt("qunit-fixture");
+			oRadioButton3.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			oRadioButton3.applyFocusInfo();
+			sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
+
+			assert.strictEqual(oRadioButton1.$().is(":focus"), true, "3rd RadioButton should be focussed");
+
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+			oRadioButton3.destroy();
+		});
 		</script>
 	</head>
 	<body>
@@ -667,6 +706,7 @@
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
 		<div id="qunit-fixture"></div>
+		<div id="content"></div>
 
 	</body>
 </html>
