@@ -3,10 +3,19 @@
  */
 
 sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/Device",
+	"sap/ui/core/Component",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/routing/History",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/demokit/EntityInfo",
-	"sap/ui/demokit/util/JSDocUtil"
-], function (Controller, EntityInfo, JSDocUtil) {
+	"sap/ui/demokit/util/JSDocUtil",
+	"../util/ObjectSearch",
+	"../util/ToggleFullScreenHandler",
+	"../data"
+], function (jQuery, Device, Component, UIComponent, History, Controller, JSONModel, EntityInfo, JSDocUtil, ObjectSearch, ToggleFullScreenHandler, data) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.entity", {
@@ -21,9 +30,9 @@ sap.ui.define([
 
 		// ====== event handling ====================================================================
 		onInit: function () {
-			this.router = sap.ui.core.UIComponent.getRouterFor(this);
+			this.router = UIComponent.getRouterFor(this);
 			this.router.attachRoutePatternMatched(this.onRouteMatched, this);
-			this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
+			this._component = Component.getOwnerComponentFor(this.getView());
 			// click handler for @link tags in JSdoc fragments
 			this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 		},
@@ -114,14 +123,14 @@ sap.ui.define([
 			// find entity in index
 			// (can be null if the entity is not in the index, e.g. for base classes and types)
 			var oEntModel = this.getView().getModel("entity");
-			var sPath = sap.ui.demokit.explored.util.ObjectSearch.getEntityPath(oEntModel.getData(), sNewId);
+			var sPath = ObjectSearch.getEntityPath(oEntModel.getData(), sNewId);
 			var oEntity = (sPath) ? oEntModel.getProperty(sPath) : null;
 
 			// set nav button visibility
 			var bEntityIsInIndex = !!sPath;
-			var oHistory = sap.ui.core.routing.History.getInstance();
+			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
-			var bShowNavButton = sap.ui.Device.system.phone || (!bEntityIsInIndex && !!oPrevHash);
+			var bShowNavButton = Device.system.phone || (!bEntityIsInIndex && !!oPrevHash);
 			this.getView().byId("page").setShowNavButton(bShowNavButton);
 
 			// set data model
@@ -141,7 +150,7 @@ sap.ui.define([
 				oData = this._getViewData(sNewId, oDoc, oEntity);
 
 				// set view model
-				var oModel = new sap.ui.model.json.JSONModel(oData);
+				var oModel = new JSONModel(oData);
 				this.getView().setModel(oModel);
 
 				// set also the binding context for entity data
@@ -171,7 +180,7 @@ sap.ui.define([
 		},
 
 		onToggleFullScreen: function (oEvt) {
-			sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateMode(oEvt, this.getView());
+			ToggleFullScreenHandler.updateMode(oEvt, this.getView());
 		},
 
 		// ========= internal ===========================================================================
@@ -497,9 +506,10 @@ sap.ui.define([
 		 * @return {string} sActualControlComponent
 		 */
 		_takeControlComponent: function (controlName) {
-			var oLibComponentModel = sap.ui.demokit.explored.data.libComponentInfos;
+			var oLibComponentModel = data.libComponentInfos;
 			jQuery.sap.require("sap.ui.core.util.LibraryInfo");
-			var oLibInfo = new sap.ui.core.util.LibraryInfo();
+			var LibraryInfo = sap.ui.require("sap/ui/core/util/LibraryInfo");
+			var oLibInfo = new LibraryInfo();
 			var sActualControlComponent = oLibInfo._getActualComponent(oLibComponentModel, controlName);
 			return sActualControlComponent;
 		}

@@ -2,18 +2,27 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/mvc/Controller"
-], function ($, Controller) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
+		'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/HTML', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller', 'sap/ui/core/routing/History',
+		'sap/ui/model/json/JSONModel',
+		'sap/m/library', 'sap/m/Text',
+		'../util/ToggleFullScreenHandler',
+		'../data'
+	],
+	function (jQuery, Device,
+		Component, ComponentContainer, HTML, UIComponent, Controller, History,
+		JSONModel,
+		mobileLibrary, Text,
+		ToggleFullScreenHandler, data) {
+
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.sample", {
 
 		onInit : function () {
-			this.router = sap.ui.core.UIComponent.getRouterFor(this);
+			this.router = UIComponent.getRouterFor(this);
 			this.router.attachRoutePatternMatched(this.onRouteMatched, this);
-			this._viewModel = new sap.ui.model.json.JSONModel({
+			this._viewModel = new JSONModel({
 				showNavButton : true,
 				showNewTab: false
 			});
@@ -30,7 +39,7 @@ sap.ui.define([
 			this._sId = oEvt.getParameter("arguments").id;
 
 			// retrieve sample object
-			var oSample = sap.ui.demokit.explored.data.samples[this._sId];
+			var oSample = data.samples[this._sId];
 			if (!oSample) {
 				this.router.myNavToWithoutHash("sap.ui.demokit.explored.view.notFound", "XML", false, { path: this._sId });
 				return;
@@ -38,9 +47,9 @@ sap.ui.define([
 
 			// set nav button visibility
 			var oPage = this.getView().byId("page");
-			var oHistory = sap.ui.core.routing.History.getInstance();
+			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
-			oModelData.showNavButton = sap.ui.Device.system.phone || !!oPrevHash;
+			oModelData.showNavButton = Device.system.phone || !!oPrevHash;
 			oModelData.previousSampleId = oSample.previousSampleId;
 			oModelData.nextSampleId = oSample.nextSampleId;
 
@@ -51,7 +60,7 @@ sap.ui.define([
 				var oContent = this._createComponent();
 			} catch (ex) {
 				oPage.removeAllContent();
-				oPage.addContent(new sap.m.Text({ text : "Error while loading the sample: " + ex }));
+				oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
 				return;
 			}
 
@@ -85,7 +94,7 @@ sap.ui.define([
 		},
 
 		onNewTab : function () {
-			sap.m.URLHelper.redirect(this.sIFrameUrl, true);
+			mobileLibrary.URLHelper.redirect(this.sIFrameUrl, true);
 		},
 
 		onPreviousSample: function (oEvent) {
@@ -147,7 +156,7 @@ sap.ui.define([
 			}
 
 
-			oHtmlControl = new sap.ui.core.HTML({
+			oHtmlControl = new HTML({
 				id : "sampleFrame",
 				content : '<iframe src="' + this.sIFrameUrl + '" id="sampleFrame" frameBorder="0"></iframe>'
 			}).addEventDelegate({
@@ -158,7 +167,7 @@ sap.ui.define([
 						oSampleFrame.sap.ui.getCore().attachInit(function() {
 							var oSampleFrame = oHtmlControl.$()[0].contentWindow;
 							oSampleFrame.sap.ui.getCore().applyTheme(sap.ui.getCore().getConfiguration().getTheme());
-							oSampleFrame.jQuery('body').toggleClass("sapUiSizeCompact", $("body").hasClass("sapUiSizeCompact")).toggleClass("sapUiSizeCozy", $("body").hasClass("sapUiSizeCozy"));
+							oSampleFrame.jQuery('body').toggleClass("sapUiSizeCompact", jQuery("body").hasClass("sapUiSizeCompact")).toggleClass("sapUiSizeCozy", jQuery("body").hasClass("sapUiSizeCozy"));
 						});
 					});
 				}
@@ -184,7 +193,7 @@ sap.ui.define([
 				name : sCompName
 			});
 			// create component container
-			return new sap.ui.core.ComponentContainer({
+			return new ComponentContainer({
 				component: this._oComp
 			});
 		},
@@ -203,7 +212,7 @@ sap.ui.define([
 		},
 
 		onToggleFullScreen : function (oEvt) {
-			sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateMode(oEvt, this.getView());
+			ToggleFullScreenHandler.updateMode(oEvt, this.getView());
 		}
 	});
 });

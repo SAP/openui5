@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function () {
+sap.ui.define(['jquery.sap.global', 'sap/ui/demokit/library'],
+	function (jQuery, library) {
 		"use strict";
 
 		// function to append custom icon font
@@ -25,9 +25,10 @@ sap.ui.define([],
 			}
 			fnAppendCustomFont("brandico", oDemo.customIcons.file);
 			jQuery.sap.require("sap.ui.core.IconPool");
+			var IconPool = sap.ui.require('sap/ui/core/IconPool');
 			for (var i = 0; i < oDemo.customIcons.icons.length; i++){
 				var icon = oDemo.customIcons.icons[i];
-				sap.ui.core.IconPool.addIcon(icon.name, oDemo.customIcons.namespace, "brandico", icon.id, true);
+				IconPool.addIcon(icon.name, oDemo.customIcons.namespace, "brandico", icon.id, true);
 			}
 		};
 
@@ -97,7 +98,7 @@ sap.ui.define([],
 				}
 
 				// load and process all lib info
-				sap.ui.demokit._loadAllLibInfo(sBaseUrl, "_getDocuIndex", fnHandleLibInfoLoaded);
+				library._loadAllLibInfo(sBaseUrl, "_getDocuIndex", fnHandleLibInfoLoaded);
 			}
 		};
 

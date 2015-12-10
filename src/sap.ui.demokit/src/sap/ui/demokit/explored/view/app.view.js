@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/mvc/JSView"], function (JSView) {
+sap.ui.define(["sap/ui/core/mvc/JSView", "sap/m/SplitApp"], function (JSView, SplitApp) {
 	"use strict";
 
 	sap.ui.jsview("sap.ui.demokit.explored.view.app", {
@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/core/mvc/JSView"], function (JSView) {
 			this.setDisplayBlock(true);
 
 			// create split app
-			return new sap.m.SplitApp("splitApp", {
+			return new SplitApp("splitApp", {
 				afterDetailNavigate: function () {
 					this.hideMaster();
 				}

@@ -3,12 +3,16 @@
  */
 
 // Root component for the 'explored' app.
-sap.ui.define(['jquery.sap.global', './util/MyRouter'],
-	function(jQuery, MyRouter) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
+	'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/core/routing/History',
+	'sap/ui/model/json/JSONModel', 'sap/ui/model/resource/ResourceModel',
+	'sap/m/InstanceManager', 'sap/m/routing/RouteMatchedHandler',
+	'./util/ObjectSearch', './util/MyRouter', './util/ToggleFullScreenHandler', './data'],
+	function(jQuery, Device, UIComponent, View, History, JSONModel, ResourceModel, InstanceManager, RouteMatchedHandler, ObjectSearch, MyRouter, ToggleFullScreenHandler, data) {
 	"use strict";
 
 
-	var Component = sap.ui.core.UIComponent.extend("sap.ui.demokit.explored.Component", {
+	var Component = UIComponent.extend("sap.ui.demokit.explored.Component", {
 
 		metadata : {
 			includes : [
@@ -79,25 +83,18 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 		 */
 		init : function () {
 
-			// 1. some very generic requires
-			jQuery.sap.require("sap.ui.demokit.explored.util.ObjectSearch");
-			jQuery.sap.require("sap.ui.demokit.explored.util.ToggleFullScreenHandler");
-					jQuery.sap.require("sap.ui.core.routing.History");
-			jQuery.sap.require("sap.m.InstanceManager");
-			jQuery.sap.require("sap.m.routing.RouteMatchedHandler");
+			// 1. call overridden init (calls createContent)
+			UIComponent.prototype.init.apply(this, arguments);
 
-			// 2. call overridden init (calls createContent)
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
-
-			// 3. nav to initial pages
+			// 2. nav to initial pages
 			var router = this.getRouter();
-			if (!sap.ui.Device.system.phone) {
+			if (!Device.system.phone) {
 				router.myNavToWithoutHash("sap.ui.demokit.explored.view.master", "XML", true);
 				router.myNavToWithoutHash("sap.ui.demokit.explored.view.welcome", "XML", false);
 			}
 
-			// 4. initialize the router
-			this.routeHandler = new sap.m.routing.RouteMatchedHandler(router);
+			// 3. initialize the router
+			this.routeHandler = new RouteMatchedHandler(router);
 			router.initialize();
 		},
 
@@ -106,10 +103,10 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 			if (this.routeHandler) {
 				this.routeHandler.destroy();
 			}
-			sap.ui.demokit.explored.util.ToggleFullScreenHandler.cleanUp();
+			ToggleFullScreenHandler.cleanUp();
 
 			// call overridden destroy
-			sap.ui.core.UIComponent.prototype.destroy.apply(this, arguments);
+			UIComponent.prototype.destroy.apply(this, arguments);
 		},
 
 		/**
@@ -127,34 +124,34 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 
 			// set i18n model (must be done before data)
 			var sPath = jQuery.sap.getModulePath("sap.ui.demokit.explored");
-			var i18nModel = new sap.ui.model.resource.ResourceModel({
+			var i18nModel = new ResourceModel({
 				bundleUrl : sPath + "/i18n/messageBundle.properties"
 			});
 			oView.setModel(i18nModel, "i18n");
 
 			// set entity model
 			var oEntData = {
-				entityCount : sap.ui.demokit.explored.data.entityCount,
-				entities : sap.ui.demokit.explored.data.entities
+				entityCount : data.entityCount,
+				entities : data.entities
 			};
-			var oEntModel = new sap.ui.model.json.JSONModel(oEntData);
+			var oEntModel = new JSONModel(oEntData);
 			oEntModel.setSizeLimit(100000);
 			oView.setModel(oEntModel, "entity");
 
 			// set filter model
-			var oFilterData = sap.ui.demokit.explored.data.filter;
-			var oFilterModel = new sap.ui.model.json.JSONModel(oFilterData);
+			var oFilterData = data.filter;
+			var oFilterModel = new JSONModel(oFilterData);
 			oFilterModel.setSizeLimit(100000);
 			oView.setModel(oFilterModel, "filter");
 
 			// set device model
-			var deviceModel = new sap.ui.model.json.JSONModel({
-				isTouch : sap.ui.Device.support.touch,
-				isNoTouch : !sap.ui.Device.support.touch,
-				isPhone : sap.ui.Device.system.phone,
-				isNoPhone : !sap.ui.Device.system.phone,
-				listMode : (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
-				listItemType : (sap.ui.Device.system.phone) ? "Active" : "Inactive"
+			var deviceModel = new JSONModel({
+				isTouch : Device.support.touch,
+				isNoTouch : !Device.support.touch,
+				isPhone : Device.system.phone,
+				isNoPhone : !Device.system.phone,
+				listMode : (Device.system.phone) ? "None" : "SingleSelectMaster",
+				listItemType : (Device.system.phone) ? "Active" : "Inactive"
 			});
 			deviceModel.setDefaultBindingMode("OneWay");
 			oView.setModel(deviceModel, "device");
@@ -166,4 +163,4 @@ sap.ui.define(['jquery.sap.global', './util/MyRouter'],
 
 	return Component;
 
-}, /* bExport= */ true);
+});

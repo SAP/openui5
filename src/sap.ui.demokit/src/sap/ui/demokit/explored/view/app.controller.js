@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/Component", "sap/ui/core/mvc/Controller"], function (jQuery, Core, Component, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.app", {
@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 			this._afterRenderingDone = false;
 
 			// subscribe to app events
-			this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
+			this._component = Component.getOwnerComponentFor(this.getView());
 			this._component.getEventBus().subscribe("app", "applyAppConfiguration", this._applyAppConfiguration, this);
 		},
 
