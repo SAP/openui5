@@ -299,6 +299,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		OnMinimumWidth: "OnMinimumWidth"
 	};
 
+	/**
+	 * The position of the side content - End (default) and Begin.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.SideContentPosition = {
+		/**
+		 * The side content is on the right side of the main container in left-to-right mode and on the left side in right-to-left mode.
+		 * @public
+		 */
+		End : "End",
+
+		/**
+		 * The side content is on the left side of the main container in left-to-right mode and on the right side in right-to-left mode.
+		 * @public
+		 */
+		Begin : "Begin"
+	};
+
 	// factory for Form to create labels an buttons to be overwritten by commons and mobile library
 	if (!sap.ui.layout.form.FormHelper) {
 		sap.ui.layout.form.FormHelper = {

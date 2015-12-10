@@ -16,7 +16,8 @@
 				"samples" : [
 					"sap.ui.layout.sample.DynamicSideContent",
 					"sap.ui.layout.sample.DynamicSideContentEqualSplit",
-					"sap.ui.layout.sample.DynamicSideContentProduct"
+					"sap.ui.layout.sample.DynamicSideContentProduct",
+					"sap.ui.layout.sample.DynamicSideContentPosition"
 				]
 			},
 			{
@@ -125,6 +126,11 @@
 				"id": "sap.ui.layout.sample.DynamicSideContentProduct",
 				"name": "Dynamic Side Content - product page",
 				"description": "Product page with comments example."
+			},
+			{
+				"id": "sap.ui.layout.sample.DynamicSideContentPosition",
+				"name": "Dynamic Side Content - position",
+				"description": "The side content is positioned on the left side of the main content in left-to-right mode and on the right side of the main content in right-to-left mode."
 			},
 			{
 				"id": "sap.ui.layout.sample.Form354",
