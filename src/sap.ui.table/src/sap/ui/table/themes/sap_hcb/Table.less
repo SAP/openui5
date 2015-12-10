@@ -203,26 +203,41 @@
 
 /* Table Row Checkbox */
 /* REQUIRES ICON FONTS */
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr.sapUiTableSelAllEnabled::after,
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableRowHdr::after {
-	content: '';
-	display: block;
-	position: absolute;
-	width: 16px;
-	height: 16px;
-	border: 2px @sapHCStandardFG solid;
-	background-color: @sapHCStandardBG;
-	font-family: "SAP-icons";
-	font-size: 11px;
-	line-height: 12px;
-	text-align: center;
-	color: @sapHCStandardFG;
-	box-sizing: border-box;
-	margin: auto;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
+.sapUiSizeCompact, .sapUiSizeCozy {
+	.sapUiTableSelModeMultiToggle {
+		.sapUiTableColRowHdr.sapUiTableSelAllEnabled::after,
+		.sapUiTableRowHdr::after {
+			content: '';
+			display: block;
+			position: absolute;
+			width: 16px;
+			height: 16px;
+			border: 2px @sapHCStandardFG solid;
+			background-color: @sapHCStandardBG;
+			font-family: "SAP-icons";
+			font-size: 11px;
+			line-height: 12px;
+			text-align: center;
+			color: @sapHCStandardFG;
+			box-sizing: border-box;
+			margin: auto;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+		}
+
+		:not(.sapUiTableSelAll).sapUiTableSelAllEnabled.sapUiTableColRowHdr::after,
+		.sapUiTableRowHdr.sapUiTableRowSel::after {
+			content: '\e05b';
+		}
+		
+		.sapUiTableColRowHdr .sapUiTableColRowHdrIco,
+		.sapUiTableColRowHdr:hover .sapUiTableColRowHdrIco {
+			display: none;
+		}
+
+	}
 }
 
 .sapUiSizeCondensed .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr.sapUiTableSelAllEnabled::after {
@@ -251,12 +266,6 @@
 .sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableRowHdr.sapUiTableRowSel::after {
 	content: '\e05b';
 }
-
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr .sapUiTableColRowHdrIco,
-.sapUiSizeCompact .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr:hover .sapUiTableColRowHdrIco {
-	display: none;
-}
-
 
 /*******************************************************************************
 * TABLE ADOPTIONS BY UX
@@ -354,6 +363,15 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 .sapUiTableRSel .sapUiTableCtrlScr,
 .sapUiTableRSel .sapUiTableCtrlScrFixed {
 	margin-left: @sapUiTableRowHdrWidth;
+}
+
+.sapUiSizeCozy .sapUiTableRSel {
+	.sapUiTableColHdrScr,
+	.sapUiTableColHdrFixed,
+	.sapUiTableCtrlScr,
+	.sapUiTableCtrlScrFixed {
+		margin-left: @sapUiTableCozyRowHdrWidth;
+	}
 }
 
 .sapUiSizeCompact .sapUiTableRSel .sapUiTableColHdrScr,
