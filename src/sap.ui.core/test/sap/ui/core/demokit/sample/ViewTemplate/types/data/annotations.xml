@@ -52,6 +52,10 @@
 							<PropertyValue Property="Value" Path="String40"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Label" String="DigitSequence"/>
+							<PropertyValue Property="Value" Path="DigitSequence"/>
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Label" String="Int16"/>
 							<PropertyValue Property="Value" Path="Int16"/>
 						</Record>

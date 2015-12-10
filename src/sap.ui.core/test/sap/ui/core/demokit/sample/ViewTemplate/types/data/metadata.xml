@@ -23,6 +23,8 @@
 					Precision="7" sap:label="Time Stamp" />
 				<Property Name="Decimal" Type="Edm.Decimal" Precision="31"
 					Scale="14" />
+				<Property Name="DigitSequence" Type="Edm.String" MaxLength="7"
+					sap:display-format="NonNegative" />
 				<Property Name="Double" Type="Edm.Double" />
 				<Property Name="Float" Type="Edm.Float" />
 				<Property Name="GlobalUID" Type="Edm.Guid" sap:label="GUID" />

@@ -175,6 +175,10 @@ sap.ui.require([
 	}, {
 		property: {type: "Edm.String", maxLength: "30", nullable: "false"},
 		constraints: {maxLength: "30", nullable: "false"}
+	}, {
+		property: {type: "Edm.String", maxLength: "30",
+			"com.sap.vocabularies.Common.v1.IsDigitSequence": { "Bool" : "true" }},
+		constraints: {maxLength: "30", isDigitSequence: "true"}
 	}].forEach(function (oFixture) {
 		QUnit.test("path: type " + oFixture.property.type, function (assert) {
 			var oExpectedResult = {
@@ -1414,10 +1418,6 @@ sap.ui.require([
 			},
 			oMockExpression = this.mock(Expression),
 			oRawValue = {},
-			oPathValue = {
-				path: "/my/path",
-				value: oRawValue
-			},
 			bWithPath = {};
 
 		oMockExpression.expects("expression").returns({});
