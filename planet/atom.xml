@@ -5,8 +5,28 @@
 	<link rel="self" href="http://openui5.org/atom.xml"/>
 	<link href="http://openui5.org/"/>
 	<id>http://openui5.org/atom.xml</id>
-	<updated>2015-12-10T08:00:08+00:00</updated>
+	<updated>2015-12-10T12:00:10+00:00</updated>
 	<generator uri="http://www.planetplanet.org/">Planet/2.0 +http://www.planetplanet.org</generator>
+
+	<entry>
+		<title type="html">SAPUI5 single file template using XMLViews, Controllers, Fragments and Custom Controls for bug illustrations, support requests or demos</title>
+		<link href="http://openui5picks.tumblr.com/post/134911941785"/>
+		<id>http://openui5picks.tumblr.com/post/134911941785</id>
+		<updated>2015-08-29T21:20:26+00:00</updated>
+		<content type="html">&lt;img src=&quot;http://40.media.tumblr.com/19acd17bb61739ee11aaaeaac970f780/tumblr_inline_nz4yibwTG51sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+
+As the UI5 community is growing every day I have experienced that people new to UI5 find it hard to create simple demos demonstrating their issues. I have seem many questions onStackoverflow and...</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2015-12-10T12:00:10+00:00</updated>
+		</source>
+	</entry>
 
 	<entry>
 		<title type="html">Hybrid apps for Windows Phone</title>
@@ -22,7 +42,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
+			<updated>2015-12-10T12:00:10+00:00</updated>
 		</source>
 	</entry>
 
@@ -40,7 +60,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
+			<updated>2015-12-10T12:00:10+00:00</updated>
 		</source>
 	</entry>
 
@@ -58,7 +78,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
+			<updated>2015-12-10T12:00:10+00:00</updated>
 		</source>
 	</entry>
 
@@ -76,7 +96,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
+			<updated>2015-12-10T12:00:10+00:00</updated>
 		</source>
 	</entry>
 
@@ -94,7 +114,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
+			<updated>2015-12-10T12:00:10+00:00</updated>
 		</source>
 	</entry>
 
@@ -112,7 +132,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
+			<updated>2015-12-10T12:00:10+00:00</updated>
 		</source>
 	</entry>
 
@@ -130,7 +150,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
+			<updated>2015-12-10T12:00:10+00:00</updated>
 		</source>
 	</entry>
 
@@ -148,25 +168,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
-		</source>
-	</entry>
-
-	<entry>
-		<title type="html">Scratching an itch - UI5 Icon Finder</title>
-		<link href="http://openui5picks.tumblr.com/post/98219217490"/>
-		<id>http://openui5picks.tumblr.com/post/98219217490</id>
-		<updated>2014-09-14T11:36:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;http://31.media.tumblr.com/0549702b84bde764562d121235df5a33/tumblr_inline_nccp90D1jy1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;There are a huge number of icons as standard in the UI5 library, both in the SAPUI5 and OpenUI5 flavours. Here’s the Icon Explorer from the SDK. One of the problems I have is that when I’m...</content>
-		<author>
-			<name>Demos</name>
-			<uri>http://openui5picks.tumblr.com/</uri>
-		</author>
-		<source>
-			<title type="html">openui5picks</title>
-			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
-			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
+			<updated>2015-12-10T12:00:10+00:00</updated>
 		</source>
 	</entry>
 
@@ -186,7 +188,7 @@ This blog demonstrates how to load, transform and analyse UK road traffic accide
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-12-10T08:00:08+00:00</updated>
+			<updated>2015-12-10T12:00:10+00:00</updated>
 		</source>
 	</entry>
 

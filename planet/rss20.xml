@@ -8,6 +8,15 @@
 	<description>Planet OpenUI5 - http://openui5.org/</description>
 
 <item>
+	<title>Demos: SAPUI5 single file template using XMLViews, Controllers, Fragments and Custom Controls for bug illustrations, support requests or demos</title>
+	<guid>http://openui5picks.tumblr.com/post/134911941785</guid>
+	<link>http://openui5picks.tumblr.com/post/134911941785</link>
+	<description>&lt;img src=&quot;http://40.media.tumblr.com/19acd17bb61739ee11aaaeaac970f780/tumblr_inline_nz4yibwTG51sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+
+As the UI5 community is growing every day I have experienced that people new to UI5 find it hard to create simple demos demonstrating their issues. I have seem many questions onStackoverflow and...</description>
+	<pubDate>Sat, 29 Aug 2015 21:20:26 +0000</pubDate>
+</item>
+<item>
 	<title>Demos: Hybrid apps for Windows Phone</title>
 	<guid>http://openui5picks.tumblr.com/post/126093935815</guid>
 	<link>http://openui5picks.tumblr.com/post/126093935815</link>
@@ -62,13 +71,6 @@
 	<link>http://openui5picks.tumblr.com/post/98297520315</link>
 	<description>&lt;img src=&quot;http://38.media.tumblr.com/4b0cef96fb5cf4833e07c8df681f9ccf/tumblr_inline_ncg30dJjt91sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Today, Eclipse has grown to quite a robust and widely used Java IDE, however it lacks severely in the Web / Javascript department. For web development  not only SAPUI5 / OpenUI5, but in my...</description>
 	<pubDate>Mon, 22 Sep 2014 11:46:00 +0000</pubDate>
-</item>
-<item>
-	<title>Demos: Scratching an itch - UI5 Icon Finder</title>
-	<guid>http://openui5picks.tumblr.com/post/98219217490</guid>
-	<link>http://openui5picks.tumblr.com/post/98219217490</link>
-	<description>&lt;img src=&quot;http://31.media.tumblr.com/0549702b84bde764562d121235df5a33/tumblr_inline_nccp90D1jy1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;There are a huge number of icons as standard in the UI5 library, both in the SAPUI5 and OpenUI5 flavours. Here’s the Icon Explorer from the SDK. One of the problems I have is that when I’m...</description>
-	<pubDate>Sun, 14 Sep 2014 11:36:00 +0000</pubDate>
 </item>
 <item>
 	<title>Demos: Analysing UK Road Traffic Accident data with HANA and SAPUI5</title>
