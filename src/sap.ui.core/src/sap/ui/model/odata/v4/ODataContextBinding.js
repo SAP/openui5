@@ -48,7 +48,7 @@ sap.ui.define([
 
 				if (bAbsolute) {
 					this.oCache = Cache.createSingle(oModel.oRequestor,
-						oModel.sServiceUrl + oModel.resolve(sPath, oContext).slice(1),
+						oModel.sServiceUrl + sPath.slice(1),
 						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
