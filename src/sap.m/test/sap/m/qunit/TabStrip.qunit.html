@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>qUnit Page for sap.m.TabStrip</title>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.m.TabStrip</title>
 
 	<script id="sap-ui-bootstrap"
 			type="text/javascript"
@@ -23,6 +23,7 @@
 
 	<script>
 		sinon.config.useFakeTimers = true;
+
 		var oCore = sap.ui.getCore();
 
 		module("API", {
@@ -56,8 +57,98 @@
 		test("Control defaults", function () {
 			//assert
 			ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
-			strictEqual(this.sut.$("touchArea").children(".sapMTabSelect").length, 0, "Select is not rendered in DOM");
+			strictEqual(this.sut.$("touchArea").children(".sapMTabStripSelect").length, 0,
+					"Select is not rendered in DOM");
 			strictEqual(this.sut.getSelectedItem(), null, "Correct default selectedItem property value");
+
+			this.sut.setHasSelect(true);
+
+			ok(this.sut.getHasSelect(), "Correct default hasSelect property value");
+
+			strictEqual(this.sut.getFocusDomRef(), null, "When no item is selected there is no focused DomRef");
+
+			this.sut.setSelectedItem(this.sut.getItems()[1]);
+
+			strictEqual(this.sut.getSelectedItem(),this.sut.getItems()[1].getId(),
+					"Correctly set selectedItem property value");
+			this.clock.tick(1000);
+
+			strictEqual(this.sut.$("touchArea").children(".sapMTabStripSelect").length, 1,
+					"Toucharea is rendered in DOM");
+
+			strictEqual(this.sut.getFocusDomRef(), this.sut.getItems()[1].getDomRef(),
+					"When there is a selected item the focus is properly set as focused DOM ref");
+
+			strictEqual(this.sut.getAggregation('_select').getSelectedItem().getId(),
+					sap.m.TabStrip.SELECT_ITEMS_ID_PREFIX+this.sut.getSelectedItem(),
+					"The selected item in the select aggregation is the same as the one in the TabStrip area");
+
+			var fnActivateItemSpy = sinon.spy(this.sut, "_activateItem");
+			var fnFireItemPressSpy = sinon.spy(this.sut, "fireItemPress");
+			var fnFireSelectionChangeSpy = sinon.spy(this.sut, "fireSelectionChange");
+			var fnSetSelectedItemSpy = sinon.spy(this.sut, "setSelectedItem");
+
+			var srcControl = this.sut.getItems()[1];
+			this.sut.ontap({srcControl: srcControl, setMarked: function(){}});
+			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
+
+			strictEqual(fnFireItemPressSpy.calledOnce, true, "On tap fires item press event");
+			strictEqual(fnFireSelectionChangeSpy.calledOnce, false,
+					"On tap does not fire selection change when the same selected tab is pressed");
+			strictEqual(fnSetSelectedItemSpy.calledOnce, false, "On tap does not fire selection change when the same selected tab is pressed");
+
+			var srcControl = this.sut.getItems()[2];
+			this.sut.ontap({srcControl: srcControl, setMarked: function(){}});
+			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
+
+			strictEqual(fnFireItemPressSpy.calledOnce, false, "On tap does not fire an item press event");
+			strictEqual(fnFireSelectionChangeSpy.calledOnce, true,
+					"On tap does not fire selection change when the same selected tab is pressed");
+			strictEqual(fnSetSelectedItemSpy.calledOnce, true,
+					"On tap does not fire selection change when the same selected tab is pressed");
+
+			fnActivateItemSpy.restore();
+			fnFireItemPressSpy.restore();
+			fnFireSelectionChangeSpy.restore();
+			fnSetSelectedItemSpy.restore();
+
+			strictEqual(this.sut.getItems().length, 3,
+					"There are 3 items");
+
+			this.sut.removeAggregation('items', this.sut.getItems()[2]);
+			strictEqual(this.sut.getItems().length, 2,
+					"After removing an item there are 2 left");
+
+			var oItem = this.sut.getItems()[0];
+			sap.ui.test.qunit.triggerTouchEvent("tap", oItem.$().find('.sapMTabSelectListItemCloseBtn')[0]);
+			//TODO: sapMTabSelectListItemCloseButton should be changed to
+			//sapMTabStripItemCloseButton in order to make sense everywhere
+
+			this.clock.tick(1000);
+			strictEqual(this.sut.getItems().length, 1,
+					"Successfuly deleted element when pressing close button");
+
+			this.sut.removeAllAggregation ('items', false);
+			strictEqual(this.sut.getItems().length, 0,
+					"All tabs are removed after remove all aggregation");
+
+			var item1 = new sap.m.TabStripItem({
+				text: "insert item"
+			});
+			this.sut.insertAggregation('items', item1, 1);
+			strictEqual(this.sut.getItems().length, 1,
+					"Insert aggregation inserts successfuly");
+
+			this.sut.destroyAggregation('items');
+			strictEqual(this.sut.getItems().length, 0,
+					"Destroy aggregation destroys successfuly");
+
+			var item2 = new sap.m.TabStripItem({
+				text: "add item"
+			});
+			this.sut.addAggregation('items', item2, 1);
+			strictEqual(this.sut.getItems().length, 1,
+					"Add aggregation adds successfuly");
 		});
 
 		test("Render all tabs", function () {
@@ -69,10 +160,32 @@
 				text: "Button tab 2"
 			}));
 			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Button tab 3"
+				text: "Button tab 3",
+				modified:true
 			}));
 			oCore.applyChanges();
 			strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 6, "All tabs are rendered");
+
+			var itemToBeRemovedId = this.sut.getItems()[2].getId();
+
+			this.sut.removeItem(this.sut.getItems()[2]);
+			this.clock.tick(1000);
+
+			strictEqual(this.sut.$("tabs").children("#"+itemToBeRemovedId).length, 0,
+					"The ID of the item on position 2 is removed");
+
+			strictEqual(this.sut.getItems()[4].getModified(), true,
+					"Modified state is correct");
+
+			var modifiedItem = 'sapMTabContainerItemModified';
+			strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), false,
+					"The correspondent CSS class for the item change state is available ");
+			strictEqual(jQuery(this.sut.getItems()[4].getFocusDomRef()).hasClass(modifiedItem), true,
+					"The correspondent CSS class for the item change state is available ");
+
+			this.sut.changeItemState(this.sut.getItems()[3].getId(), true);
+			strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), true,
+					"The correspondent CSS class for the item change state is available ");
 		});
 
 		// tests for a bug that resulted in destroying the select aggr if it already existed on setHasSelect(true)
@@ -119,29 +232,30 @@
 
 		test("Tabs focus handling", function () {
 			var oTabs = this.sut.getItems();
+
 			//arrage
 			oTabs[0].focus();
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[0].getId(), document.activeElement.id, "First tab is focused");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_RIGHT);
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on ARROW_RIGHT");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_DOWN);
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[2].getId(), document.activeElement.id, "Third tab is focused on ARROW_DOWN");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_LEFT);
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on forth ARROW_LEFT");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_UP);
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[0].getId(), document.activeElement.id, "First is focused on fifth ARROW_UP");
 
@@ -309,10 +423,10 @@
 			ok(!!(this.sut.$('tabs').children().eq(0).attr("aria-selected")), "The initial aria-selected attribute value is correct");
 			this.sut.$('tabs').children().each(function () {
 				var $Tab = jQuery(this),
-					bHasRole = $Tab.is("[role]"),
-					sRoleValue = $Tab.attr("role"),
-					bHasAriaSelected = $Tab.is("[aria-selected]"),
-					bIsSelected = $Tab.attr("aria-selected");
+						bHasRole = $Tab.is("[role]"),
+						sRoleValue = $Tab.attr("role"),
+						bHasAriaSelected = $Tab.is("[aria-selected]"),
+						bIsSelected = $Tab.attr("aria-selected");
 
 				ok(bHasRole, this.id + " has role attribute assigned");
 				strictEqual(sRoleValue, "tab", this.id + " has a correct role value");
@@ -365,6 +479,7 @@
 
 			strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered for phone platform');
 			strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered for phone platform');
+			jQuery('body').removeClass('sap-phone');
 		});
 
 		function preparePhonePlatform() {
