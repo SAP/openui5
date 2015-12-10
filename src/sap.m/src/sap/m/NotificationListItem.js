@@ -346,6 +346,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			}
 		};
 
+		NotificationListItem.prototype.clone = function () {
+			var clonedObject = Control.prototype.clone.apply(this, arguments);
+
+			// "_overflowToolbar" aggregation is hidden and it is not cloned by default
+			var overflowToolbar = this.getAggregation('_overflowToolbar');
+			clonedObject.setAggregation("_overflowToolbar", overflowToolbar.clone(), true);
+
+			return clonedObject;
+		};
+
 		NotificationListItem.prototype.close = function () {
 			this.fireClose();
 			this.destroy();
