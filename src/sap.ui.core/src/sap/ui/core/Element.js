@@ -265,36 +265,41 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	};
 
 	/**
-	 * Handles the given browser event.
+	 * Dispatches the given event, usually a browser event or a UI5 pseudo event.
 	 * @private
 	 */
 	Element.prototype._handleEvent = function (oEvent) {
-		var sHandlerName = "on" + oEvent.type;
-			this._callEventHandles(this.aBeforeDelegates.slice(0), sHandlerName, oEvent, true);
-			this._callEventHandles([this], sHandlerName, oEvent);
-			this._callEventHandles(this.aDelegates.slice(0), sHandlerName, oEvent, true);
-	};
 
-	/**
-	 * Calls event handler of the given event handles with the given browser event.
-	 * @private
-	 */
-	Element.prototype._callEventHandles = function (aHandles, sHandlerName, oEvent, bDelegateHolder) {
-		if (aHandles.length > 0) {
-			for (var i = 0; i < aHandles.length; i++) {
-				if (oEvent.isImmediateHandlerPropagationStopped()) {
-					break;
-				}
-				var oHandle = bDelegateHolder ? aHandles[i].oDelegate : aHandles[i];
-				var oThis = (bDelegateHolder && aHandles[i].vThis) ? aHandles[i].vThis : oHandle;
-				if (oThis === true) { // special case, means the control should be the context
-					oThis = this;
-				}
-				if (oHandle[sHandlerName]) {
-					oHandle[sHandlerName].call(oThis, oEvent);
+		var that = this,
+			sHandlerName = "on" + oEvent.type;
+
+		function each(aDelegates) {
+			var i,l,oDelegate;
+			if ( aDelegates && (l = aDelegates.length) > 0 ) {
+				// To be robust against concurrent modifications of the delegates list, we loop over a copy.
+				// When there is only a single entry, the loop is safe without a copy (length is determined only once!)
+				aDelegates = l === 1 ? aDelegates : aDelegates.slice();
+				for (i = 0; i < l; i++ ) {
+					if (oEvent.isImmediateHandlerPropagationStopped()) {
+						return;
+					}
+					oDelegate = aDelegates[i].oDelegate;
+					if (oDelegate[sHandlerName]) {
+						oDelegate[sHandlerName].call(aDelegates[i].vThis === true ? that : aDelegates[i].vThis || oDelegate, oEvent);
+					}
 				}
 			}
 		}
+
+		each(this.aBeforeDelegates);
+		if ( oEvent.isImmediateHandlerPropagationStopped() ) {
+			return;
+		}
+		if ( this[sHandlerName] ) {
+			this[sHandlerName](oEvent);
+		}
+		each(this.aDelegates);
+
 	};
 
 
@@ -565,17 +570,22 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	Element.prototype.fireEvent = function(sEventId, mParameters) {
+	Element.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
 		if (this.hasListeners(sEventId)) {
 			jQuery.sap.interaction.notifyStepStart(this);
 		}
-		// clone 'arguments' and modify clone to be strict mode compatible
-		var aArgs = Array.prototype.slice.apply(arguments);
-		// TODO 'id' is somewhat redundant to getSource(), but it is commonly used - fade out with next major release?
-		aArgs[1] = mParameters = mParameters || {};
+
+		// get optional parameters right
+		if (typeof mParameters === 'boolean') {
+			bEnableEventBubbling = bAllowPreventDefault;
+			bAllowPreventDefault = mParameters;
+			mParameters = null;
+		}
+
+		mParameters = mParameters || {};
 		mParameters.id = mParameters.id || this.getId();
-		// 'aArgs' is necessary, as the ManagedObject.fireEvent signature has more parameters
-		return ManagedObject.prototype.fireEvent.apply(this, aArgs);
+
+		return ManagedObject.prototype.fireEvent.call(this, sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling);
 	};
 
 
