@@ -267,6 +267,36 @@
 				}
 			});
 
+			test("it should render two handles", function() {
+
+				// system under test
+				sap.m.Slider.extend("sap.m.RangeSlider", {
+					renderer: {
+						renderHandles: function(oRm, oSlider) {
+							this.renderHandle(oRm, oSlider, {
+								id: oSlider.getId() + "-handle1"
+							});
+							this.renderHandle(oRm, oSlider, {
+								id: oSlider.getId() + "-handle2"
+							});
+						}
+					}
+				});
+
+				var oRangeSlider = new sap.m.RangeSlider();
+
+				// arrange
+				oRangeSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(oRangeSlider.getDomRef("handle1"));
+				ok(oRangeSlider.getDomRef("handle2"));
+
+				// cleanup
+				oRangeSlider.destroy();
+			});
+
 			/* =========================================================== */
 			/* API module                                                  */
 			/* =========================================================== */
