@@ -5,337 +5,319 @@
 // Provides control sap.m.TabContainer.
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	function(jQuery, library, Control) {
-	"use strict";
+		"use strict";
 
 
 
-	/**
-	 * Constructor for a new TabContainer.
-	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
-	 *
-	 * @class
-	 * The TabContainer control represents a collection of tabs with associated content.
-	 *
-	 * @extends sap.ui.core.Control
-	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 *
-	 * @constructor
-	 * @public
-     * @since 1.34
-	 * @alias sap.m.TabContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	var TabContainer = Control.extend("sap.m.TabContainer", /** @lends sap.m.TabContainer.prototype */ {
-		metadata : {
-			library : "sap.m",
-			properties : {
+		/**
+		 * Constructor for a new TabContainer.
+		 *
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
+		 *
+		 * @class
+		 * The TabContainer control represents a collection of tabs with associated content.
+		 *
+		 * @extends sap.ui.core.Control
+		 *
+		 * @author SAP SE
+		 * @version ${version}
+		 *
+		 * @constructor
+		 * @public
+		 * @since 1.34
+		 * @alias sap.m.TabContainer
+		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		var TabContainer = Control.extend("sap.m.TabContainer", /** @lends sap.m.TabContainer.prototype */ {
+			metadata : {
+				library : "sap.m",
+				properties : {
 
-				/**
-				 * Defines whether add new button is shown in the tab strip
-				 */
-				showAddNewButton : {type : "boolean", group : "Misc", defaultValue : false}
-			},
-			aggregations : {
-
-				/**
-				 * The items displayed in the TabContainer.
-				 */
-				items : {type : "sap.m.TabContainerItem", multiple : true},
-
-				/**
-				 * The add button displayed in the TabStrip.
-				 */
-				_addNewButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
-
-				/**
-				 * Internal aggregation for managing the tab elements.
-				 */
-			_tabStrip : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
-			},
-			associations : {
-
-				/**
-				 * Sets or retrieves the selected item from the aggregation named items.
-				 */
-				selectedItem : {type : "sap.m.TabContainerItem", multiple : false}
-			},
-			events : {
-
-				/**
-				 * Fired when an item wants to be closed.
-				 */
-				itemClose: {
-					allowPreventDefault: true,
-					parameters: {
-
-						/**
-						 * The item to be closed.
-						 */
-					item: {type: "sap.m.TabContainerItem"}
-					}
+					/**
+					 * Defines whether add new button is shown in the tab strip
+					 */
+					showAddNewButton : {type : "boolean", group : "Misc", defaultValue : false}
 				},
+				aggregations : {
 
-				/**
-				 * Fired when an item is pressed.
-				 */
-				itemSelect: {
-					parameters: {
+					/**
+					 * The items displayed in the TabContainer.
+					 */
+					items : {type : "sap.m.TabContainerItem", multiple : true},
 
-						/**
-						 * The selected item.
-						 */
-						item: { type: "sap.m.TabContainerItem" }
-					}
+					/**
+					 * The add button displayed in the TabStrip.
+					 */
+					_addNewButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
+
+					/**
+					 * Internal aggregation for managing the tab elements.
+					 */
+					_tabStrip : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
 				},
+				associations : {
 
-				/**
-				 * Fired when add new button is pressed.
-				 */
-				addNewButtonPress: { }
-			}
-		}
-	});
+					/**
+					 * Sets or retrieves the selected item from the aggregation named items.
+					 */
+					selectedItem : {type : "sap.m.TabContainerItem", multiple : false}
+				},
+				events : {
 
-	TabContainer.prototype.onBeforeRendering = function() {
+					/**
+					 * Fired when an item wants to be closed.
+					 */
+					itemClose: {
+						allowPreventDefault: true,
+						parameters: {
 
-		if (this.getSelectedItem()) {
-			return;
-		}
+							/**
+							 * The item to be closed.
+							 */
+							item: {type: "sap.m.TabContainerItem"}
+						}
+					},
 
-		// ToDo: remove tab to item everywhere
-		this._setDefaultTab();
-	};
+					/**
+					 * Fired when an item is pressed.
+					 */
+					itemSelect: {
+						parameters: {
 
-	TabContainer.prototype._getAddNewTabButton = function() {
-		var oControl = this.getAggregation("_addNewButton");
+							/**
+							 * The selected item.
+							 */
+							item: { type: "sap.m.TabContainerItem" }
+						}
+					},
 
-		if (!oControl) {
-			oControl = new sap.m.Button({
-				type: sap.m.ButtonType.Transparent,
-				icon: sap.ui.core.IconPool.getIconURI("add"),
-				press: function() {
-					this.getParent().getParent().fireAddNewButtonPress();
+					/**
+					 * Fired when add new button is pressed.
+					 */
+					addNewButtonPress: { }
 				}
-			});
+			}
+		});
 
-			this.setAggregation("_addNewButton", oControl, true);
-		}
+		TabContainer.prototype._getAddNewTabButton = function() {
+			var oControl = this.getAggregation("_addNewButton");
+			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-		return oControl;
-	};
+			if (!oControl) {
+				oControl = new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					tooltip: oRb.getText("TABCONTAINER_ADD_NEW_TAB"),
+					icon: sap.ui.core.IconPool.getIconURI("add"),
+					press: function() {
+						this.getParent().getParent().fireAddNewButtonPress();
+					}
+				});
 
-	/**
-	 * Lazy initializes the tab strip aggregation.
-	 */
-	TabContainer.prototype._getTabStrip = function () {
-		var oControl = this.getAggregation("_tabStrip");
+				this.setAggregation("_addNewButton", oControl, true);
+			}
 
-		if (!oControl) {
-			oControl = new sap.m.TabStrip(this.getId() + "--tabstrip", {
-				hasSelect: true,
-				itemPress: function(oEvent) {
-					var oItem = oEvent.getParameter("item"),
-						oSelectedItem = this._fromTabStripItem(oItem);
+			return oControl;
+		};
 
-					this.fireItemSelect({ item: oSelectedItem });
+		/**
+		 * Lazy initializes the tab strip aggregation.
+		 */
+		TabContainer.prototype._getTabStrip = function () {
+			var oControl = this.getAggregation("_tabStrip");
 
-					this.setSelectedItem(oSelectedItem);
-				}.bind(this),
-				itemCloseRequest: function(oEvent) {
-					var oItem = oEvent.getParameter("item"),
-						oRemovedItem = this._fromTabStripItem(oItem);
+			if (!oControl) {
+				oControl = new sap.m.TabStrip(this.getId() + "--tabstrip", {
+					hasSelect: true,
+					itemPress: function(oEvent) {
+						var oItem = oEvent.getParameter("item"),
+						    oSelectedItem = this._fromTabStripItem(oItem);
 
-					oEvent.preventDefault();
+						this.fireItemSelect({ item: oSelectedItem });
 
-					this.fireItemClose({
-						item: oRemovedItem,
-						confirm: function () {
+						this.setSelectedItem(oSelectedItem);
+					}.bind(this),
+					itemCloseRequest: function(oEvent) {
+						var oItem = oEvent.getParameter("item"),
+						    oRemovedItem = this._fromTabStripItem(oItem);
+
+						// prevent the tabstrip from closing the item by default
+						oEvent.preventDefault();
+						if (this.fireItemClose({item: oRemovedItem})) {
 							this.removeItem(oRemovedItem); // the tabstrip item will also get removed
-						}.bind(this)
-					});
-				}.bind(this)
-			});
+						}
 
-			this.setAggregation("_tabStrip", oControl, true);
-		}
+					}.bind(this)
+				});
 
-		return oControl;
-	};
-
-	TabContainer.prototype._fromTabStripItem = function(oItem) {
-		var aItems = this.getItems() || [],
-			iItemsCount = aItems.length,
-			i = 0;
-
-		for (; i < iItemsCount; i++) {
-			if (aItems[i].getId() === oItem.getKey()) {
-				return aItems[i];
+				this.setAggregation("_tabStrip", oControl, true);
 			}
-		}
 
-		return null;
-	};
+			return oControl;
+		};
 
-	/**
-	 * Returns <code>sap.m.TabStripItem</code> corresponding to given <code>sap.m.TabContainerItem</code>.
-	 * @param {sap.m.TabContainerItem | string} vItem object or id of the TabContainerItem
-	 * @returns {sap.m.TabStripItem} tabstrip item corresponding to given <code>sap.m.TabContainerItem</code>
-	 * @protected
-	 */
-	TabContainer.prototype._toTabStripItem = function(vItem) {
-		var oTabStripItems = this._getTabStrip().getItems(),
-			oTabStripItemsCount = oTabStripItems.length,
-			sKey = vItem,
-			i = 0;
+		TabContainer.prototype._fromTabStripItem = function(oItem) {
+			var aItems = this.getItems() || [],
+			    iItemsCount = aItems.length,
+			    i = 0;
 
-		if (typeof vItem === "object") {
-			sKey = vItem.getId();
-		}
-
-		for (; i < oTabStripItemsCount; i++) {
-			if (oTabStripItems[i].getKey() === sKey) {
-				return oTabStripItems[i];
+			for (; i < iItemsCount; i++) {
+				if (aItems[i].getId() === oItem.getKey()) {
+					return aItems[i];
+				}
 			}
-		}
 
-		return null;
-	};
-
-	TabContainer.prototype._getSelectedItemContent = function() {
-		var sSelectedItem = this.getSelectedItem(),
-			oSelectedItem = sap.ui.getCore().byId(sSelectedItem),
-			oTabStripItem = this._toTabStripItem(oSelectedItem);
-
-		this._getTabStrip().setSelectedItem(oTabStripItem);
-
-		return oSelectedItem ? oSelectedItem.getContent() : null;
-	};
-
-	TabContainer.prototype._setDefaultTab = function() {
-		var oSelectedItem = this.getItems()[0] || null;
-
-		this.setSelectedItem(oSelectedItem);
-
-		return oSelectedItem;
-	};
-
-	/**
-	 * Removes an item from the aggregation named <code>items</code>.
-	 *
-	 * @param {int | string | sap.m.TabContainerItem} vItem The item to remove or its index or id.
-	 * @returns {sap.m.TabContainerItem} The removed item or null.
-	 * @public
-	 */
-	TabContainer.prototype.removeItem = function(vItem) {
-		var oTabStripItem;
-
-		vItem = this.removeAggregation("items", vItem);
-
-		if (!vItem) {
 			return null;
-		}
+		};
 
-		if (vItem.getId() === this.getSelectedItem()) {
-			this._setDefaultTab();
-		}
+		/**
+		 * Returns <code>sap.m.TabStripItem</code> corresponding to given <code>sap.m.TabContainerItem</code>.
+		 * @param {sap.m.TabContainerItem | string} vItem object or id of the TabContainerItem
+		 * @returns {sap.m.TabStripItem} tabstrip item corresponding to given <code>sap.m.TabContainerItem</code>
+		 * @protected
+		 */
+		TabContainer.prototype._toTabStripItem = function(vItem) {
+			var oTabStripItems = this._getTabStrip().getItems(),
+			    oTabStripItemsCount = oTabStripItems.length,
+			    sKey = vItem,
+			    i = 0;
 
-		oTabStripItem = this._toTabStripItem(vItem);
-		this._getTabStrip().removeItem(oTabStripItem);
+			if (typeof vItem === "object") {
+				sKey = vItem.getId();
+			}
 
-		return vItem;
-	};
-
-	/**
-	 * Override the method in order to handle propagation of item property changes to the _tabStrip instance copies.
-	 * @param {string} sAggregationName Name of the added aggregation
-	 * @param {object} oObject Intance that is going to be added
-	 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be supressed
-	 * @returns {object} This instance for chaining
-	 */
-	TabContainer.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-		if (sAggregationName === 'items') {
-			// ToDo: maybe these event listeners have to be also detached?
-			oObject.attachItemPropertyChanged(function (oEvent) {
-				var oTabStripItem = this._toTabStripItem(oEvent.getSource());
-				// ToDo: refactor code to remove inconsistency and avoid this mapping
-				var sPropertyKey = oEvent['mParameters'].propertyKey;
-				if (sPropertyKey === 'name') {
-					sPropertyKey = 'text';
+			for (; i < oTabStripItemsCount; i++) {
+				if (oTabStripItems[i].getKey() === sKey) {
+					return oTabStripItems[i];
 				}
+			}
 
-				if (oTabStripItem) {
-					oTabStripItem.setProperty(sPropertyKey, oEvent['mParameters'].propertyValue);
-				}
-			}.bind(this));
-		}
-		return Control.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
-	};
+			return null;
+		};
 
+		TabContainer.prototype._getSelectedItemContent = function() {
+			var sSelectedItem = this.getSelectedItem(),
+			    oSelectedItem = sap.ui.getCore().byId(sSelectedItem),
+			    oTabStripItem = this._toTabStripItem(oSelectedItem);
 
-	TabContainer.prototype.addItem = function(oItem) {
-		this.addAggregation("items", oItem);
+			this._getTabStrip().setSelectedItem(oTabStripItem);
 
-		this._getTabStrip().addItem(
-			new sap.m.TabStripItem({
-				key: oItem.getId(),
-				text: oItem.getName(),
-				modified: oItem.getModified()
-			})
-		);
+			return oSelectedItem ? oSelectedItem.getContent() : null;
+		};
 
-		return oItem;
-	};
+		/**
+		 * Removes an item from the aggregation named <code>items</code>.
+		 *
+		 * @param {int | string | sap.m.TabContainerItem} vItem The item to remove or its index or id.
+		 * @returns {sap.m.TabContainerItem} The removed item or null.
+		 * @public
+		 */
+		TabContainer.prototype.removeItem = function(vItem) {
+			var oTabStripItem;
 
-	TabContainer.prototype.destroyItems = function() {
-		this._getTabStrip().destroyItems();
+			vItem = this.removeAggregation("items", vItem);
 
-		return this.destroyAggregation("items");
-	};
+			if (!vItem) {
+				return null;
+			}
 
-	TabContainer.prototype.insertItem = function(oItem, iIndex) {
-		this._getTabStrip().insertItem(
-			new sap.m.TabStripItem({
-				key: oItem.getId(),
-				text: oItem.getName(),
-				modified: oItem.getModified()
-			}),
-			iIndex
-		);
+			if (vItem.getId() === this.getSelectedItem()) {
+				//ToDo (by Niki): Apply the removal logic here
+			}
 
-		return this.insertAggregation("items", oItem, iIndex);
-	};
+			oTabStripItem = this._toTabStripItem(vItem);
+			this._getTabStrip().removeItem(oTabStripItem);
 
-	TabContainer.prototype.removeAllItems = function() {
-		this._getTabStrip().removeAllItems();
+			return vItem;
+		};
 
-		this.setSelectedItem(null);
+		/**
+		 * Override the method in order to handle propagation of item property changes to the _tabStrip instance copies.
+		 * @param {string} sAggregationName Name of the added aggregation
+		 * @param {object} oObject Intance that is going to be added
+		 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be supressed
+		 * @returns {object} This instance for chaining
+		 */
+		TabContainer.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+			if (sAggregationName === 'items') {
+				// ToDo: maybe these event listeners have to be also detached?
+				oObject.attachItemPropertyChanged(function (oEvent) {
+					var oTabStripItem = this._toTabStripItem(oEvent.getSource());
+					// ToDo: refactor code to remove inconsistency and avoid this mapping
+					var sPropertyKey = oEvent['mParameters'].propertyKey;
+					if (sPropertyKey === 'name') {
+						sPropertyKey = 'text';
+					}
 
-		return this.removeAllAggregation("items");
-	};
-
-	TabContainer.prototype.setAddButton = function (oButton) {
-		return this._getTabStrip().setAddButton(oButton);
-	};
-
-	TabContainer.prototype.getAddButton = function () {
-		return this._getTabStrip().getAddButton();
-	};
-
-	TabContainer.prototype.setShowAddNewButton = function (bShowButton) {
-		var oTabStrip = this._getTabStrip(),
-			oButton = bShowButton ? this._getAddNewTabButton() : null;
-
-		oTabStrip.setAddButton(oButton);
-
-		this.setAggregation("_tabStrip", oTabStrip, true);
-	};
-
+					if (oTabStripItem) {
+						oTabStripItem.setProperty(sPropertyKey, oEvent['mParameters'].propertyValue);
+					}
+				}.bind(this));
+			}
+			return Control.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		};
 
 
-	return TabContainer;
+		TabContainer.prototype.addItem = function(oItem) {
+			this.addAggregation("items", oItem);
 
-}, /* bExport= */ true);
+			this._getTabStrip().addItem(
+				new sap.m.TabStripItem({
+					key: oItem.getId(),
+					text: oItem.getName(),
+					modified: oItem.getModified()
+				})
+			);
+
+			return oItem;
+		};
+
+		TabContainer.prototype.destroyItems = function() {
+			this._getTabStrip().destroyItems();
+
+			return this.destroyAggregation("items");
+		};
+
+		TabContainer.prototype.insertItem = function(oItem, iIndex) {
+			this._getTabStrip().insertItem(
+				new sap.m.TabStripItem({
+					key: oItem.getId(),
+					text: oItem.getName(),
+					modified: oItem.getModified()
+				}),
+				iIndex
+			);
+
+			return this.insertAggregation("items", oItem, iIndex);
+		};
+
+		TabContainer.prototype.removeAllItems = function() {
+			this._getTabStrip().removeAllItems();
+
+			this.setSelectedItem(null);
+
+			return this.removeAllAggregation("items");
+		};
+
+		TabContainer.prototype.setAddButton = function (oButton) {
+			return this._getTabStrip().setAddButton(oButton);
+		};
+
+		TabContainer.prototype.getAddButton = function () {
+			return this._getTabStrip().getAddButton();
+		};
+
+		TabContainer.prototype.setShowAddNewButton = function (bShowButton) {
+			var oTabStrip = this._getTabStrip(),
+			    oButton = bShowButton ? this._getAddNewTabButton() : null;
+
+			oTabStrip.setAddButton(oButton);
+
+			this.setAggregation("_tabStrip", oTabStrip, true);
+		};
+
+
+
+		return TabContainer;
+
+	}, /* bExport= */ true);

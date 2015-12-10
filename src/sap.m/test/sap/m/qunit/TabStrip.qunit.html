@@ -1,215 +1,367 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>qUnit Page for sap.m.TabStrip</title>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.m.TabStrip</title>
 
-		<script id="sap-ui-bootstrap"
-				type="text/javascript"
-				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-theme="sap_bluecrystal"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-language="en-US"
-				data-sap-ui-libs="sap.m">
-		</script>
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-language="en-US"
+			data-sap-ui-libs="sap.m">
+	</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
-		<script>
-			sinon.config.useFakeTimers = true;
-			var oCore = sap.ui.getCore();
+	<script>
+		sinon.config.useFakeTimers = true;
+		var oCore = sap.ui.getCore();
 
-			module("API", {
-				beforeEach: function () {
-					this.sut = new sap.m.TabStrip();
-					this.sut.placeAt('content');
-					oCore.applyChanges();
-				},
-				afterEach: function () {
-					this.sut.destroy();
-				}
-			});
-
-			test("DOM", function () {
-				//assert
-				ok(this.sut.$().length > 0, "The control was successfully rendered");
-			});
-
-			test("Control defaults", function () {
-				//assert
-				strictEqual(this.sut.getSelectedTab(), 0, "Correct default selected tab index");
-			});
-
-			test("Render all tabs", function () {
-				//arrange
-				this.sut.addTab(new sap.m.Button({
-					text: "Button tab 1"
-				}));
-				this.sut.addTab(new sap.m.Button({
-					text: "Button tab 2"
-				}));
-				this.sut.addTab(new sap.m.Button({
-					text: "Button tab 3"
-				}));
-				oCore.applyChanges();
-				strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 3, "All tabs are rendered");
-			});
-
-			module("Keyboard Handling", {
-				beforeEach: function () {
-					this.sut = new sap.m.TabStrip({
-						selectedTab: 0,
-						tabs: [
-							new sap.m.Button({
-								text: "Tab 1"
-							}),
-							new sap.m.Button({
-								text: "Tab 2"
-							}),
-							new sap.m.Button({
-								text: "Tab 3"
-							})
-						],
-						downArrowButton: new sap.m.Button("downArrowButton", {
-							type: sap.m.ButtonType.Transparent
+		module("API", {
+			beforeEach: function () {
+				this.sut = new sap.m.TabStrip({
+					items: [
+						new sap.m.TabStripItem({
+							text: "Tab 1"
 						}),
-						addButton: new sap.m.Button("addButton", {
-							type: sap.m.ButtonType.Transparent
+						new sap.m.TabStripItem({
+							text: "Tab 2"
+						}),
+						new sap.m.TabStripItem({
+							text: "Tab 3"
 						})
-					});
-					this.sut.placeAt('content');
-					oCore.applyChanges();
-				},
-				afterEach: function () {
-					this.sut.destroy();
+					]
+				});
+				this.sut.placeAt('content');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+			}
+		});
+
+		test("DOM", function () {
+			//assert
+			ok(this.sut.$().length > 0, "The control was successfully rendered");
+		});
+
+		test("Control defaults", function () {
+			//assert
+			ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
+			strictEqual(this.sut.$("touchArea").children(".sapMTabSelect").length, 0, "Select is not rendered in DOM");
+			strictEqual(this.sut.getSelectedItem(), null, "Correct default selectedItem property value");
+		});
+
+		test("Render all tabs", function () {
+			//arrange
+			this.sut.addItem(new sap.m.TabStripItem({
+				text: "Button tab 1"
+			}));
+			this.sut.addItem(new sap.m.TabStripItem({
+				text: "Button tab 2"
+			}));
+			this.sut.addItem(new sap.m.TabStripItem({
+				text: "Button tab 3"
+			}));
+			oCore.applyChanges();
+			strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 6, "All tabs are rendered");
+		});
+
+		module("Keyboard Handling", {
+			beforeEach: function () {
+				this.sut = new sap.m.TabStrip({
+					selectedItem: 0,
+					items: [
+						new sap.m.TabStripItem({
+							text: "Tab 1"
+						}),
+						new sap.m.TabStripItem({
+							text: "Tab 2"
+						}),
+						new sap.m.TabStripItem({
+							text: "Tab 3"
+						})
+					],
+					addButton: new sap.m.Button("addButton", {
+						type: sap.m.ButtonType.Transparent
+					})
+				});
+				this.sut.placeAt('content');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+			}
+		});
+
+		test("Tabs focus handling", function () {
+			var oTabs = this.sut.getItems();
+			//arrage
+			oTabs[0].focus();
+			this.clock.tick(1);
+			//assert
+			strictEqual(oTabs[0].getId(), document.activeElement.id, "First tab is focused");
+			//arrange
+			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			this.clock.tick(1);
+			//assert
+			strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on ARROW_RIGHT");
+			//arrange
+			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_DOWN);
+			this.clock.tick(1);
+			//assert
+			strictEqual(oTabs[2].getId(), document.activeElement.id, "Third tab is focused on ARROW_DOWN");
+			//arrange
+			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_LEFT);
+			this.clock.tick(1);
+			//assert
+			strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on forth ARROW_LEFT");
+			//arrange
+			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_UP);
+			this.clock.tick(1);
+			//assert
+			strictEqual(oTabs[0].getId(), document.activeElement.id, "First is focused on fifth ARROW_UP");
+
+		});
+
+		module("Scrolling", {
+			beforeEach: function () {
+				this.sut = new sap.m.TabStrip({
+					items: [
+						new sap.m.TabStripItem({
+							text: "Tab 1"
+						}),
+						new sap.m.TabStripItem({
+							text: "Tab 2"
+						}),
+						new sap.m.TabStripItem({
+							text: "Tab 3"
+						})
+					]
+				});
+				this.sut.placeAt('content');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+			}
+		});
+
+		test("Is scrolling needed", function () {
+			//assert
+			ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow");
+			//arrange
+			for (var i = 0, l = 15; i < l; i++ ) {
+				this.sut.addItem(new sap.m.TabStripItem({
+					text: "Tab " + i + " long text to overflow"
+				}));
+			}
+			oCore.applyChanges();
+			ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow");
+		});
+
+		test("Overflow Buttons", function () {
+			//arrange
+			var iTestCurrentScrollLeft = null;
+			var fnUpdateTestScrollValue = function () {
+				iTestCurrentScrollLeft = this.sut._iCurrentScrollLeft;
+			}.bind(this);
+			this.sut.addItem(new sap.m.TabStripItem({
+				text: "Tab 4"
+			}));
+			this.sut.addItem(new sap.m.TabStripItem({
+				text: "Tab 5"
+			}));
+			this.sut.addItem(new sap.m.TabStripItem({
+				text: "Tab 6"
+			}));
+			this.sut.addItem(new sap.m.TabStripItem({
+				text: "Tab 7"
+			}));
+			oCore.applyChanges();
+			fnUpdateTestScrollValue();
+			//assert
+			strictEqual(iTestCurrentScrollLeft, 0, "The initial ScrollLeft value is as expected");
+			//arrange
+			this.sut._oRightArrowButton.firePress({});
+			this.clock.tick(600);
+			//assert
+			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on RightScrollButton press");
+			//arrange
+			fnUpdateTestScrollValue();
+			//assert
+			strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
+			//arrange
+			this.sut._oLeftArrowButton.firePress({});
+			this.clock.tick(600);
+			//assert
+			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on LeftScrollButton press");
+			//arrange
+			fnUpdateTestScrollValue();
+			strictEqual(iTestCurrentScrollLeft, 0, "ScrollLeft value is as expected");
+		});
+
+		module("ARIA", {
+			beforeEach: function () {
+				var _aItems = this._aItems = [
+					new sap.m.TabStripItem({
+						text: "Tab 1"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 2"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 3"
+					})
+				];
+				this.sut = new sap.m.TabStrip({
+					selectedItem: _aItems[0],
+					items: _aItems
+				});
+				this.sut.placeAt('content');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+			}
+		});
+
+		test("Initial aria attributes", function () {
+			var that = this;
+			//assert
+			strictEqual(this.sut.$('tabs').attr("role"), 'tablist', "TabStrip container has correct role");
+			ok(!!(this.sut.$('tabs').children().eq(0).attr("aria-selected")), "The initial aria-selected attribute value is correct");
+			this.sut.$('tabs').children().each(function () {
+				var $Tab = jQuery(this),
+					bHasRole = $Tab.is("[role]"),
+					sRoleValue = $Tab.attr("role"),
+					bHasAriaSelected = $Tab.is("[aria-selected]"),
+					bIsSelected = $Tab.attr("aria-selected");
+
+				ok(bHasRole, this.id + " has role attribute assigned");
+				strictEqual(sRoleValue, "tab", this.id + " has a correct role value");
+				ok(bHasAriaSelected, this.id + " has aria-selected attribute");
+				if (that.sut.getSelectedItem() === this.id) {
+					strictEqual(bIsSelected, "true", this.id + " has correct aria-selected value (true)");
+				} else {
+					strictEqual(bIsSelected, "false", this.id + " has correct aria-selected value (false)");
 				}
 			});
+			strictEqual(this.sut.$().find("[aria-selected]").length, this.sut.getItems().length, "All elements with aria-selected attributes are equal to the number of aggregations passed to TabStrip");
+		});
 
-			test("Tabs focus handling", function () {
-				var oTabs = this.sut.getTabs();
-				//arrage
-				oTabs[0].focus();
-				this.clock.tick(1);
-				//assert
-				strictEqual(oTabs[0].getId(), document.activeElement.id, "First tab is focused");
-				//arrange
-				qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_RIGHT);
-				this.clock.tick(1);
-				//assert
-				strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on ARROW_RIGHT");
-				//arrange
-				qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_DOWN);
-				this.clock.tick(1);
-				//assert
-				strictEqual(oTabs[2].getId(), document.activeElement.id, "Third tab is focused on ARROW_DOWN");
-				//arrange
-				qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_LEFT);
-				this.clock.tick(1);
-				//assert
-				strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on forth ARROW_LEFT");
-				//arrange
-				qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_UP);
-				this.clock.tick(1);
-				//assert
-				strictEqual(oTabs[0].getId(), document.activeElement.id, "First is focused on fifth ARROW_UP");
+		test("Select item changes the aria-selected value", function () {
+			//arrange
+			this.sut.setSelectedItem(this._aItems[1]);
+			//assert
+			ok(!!(this.sut.$('tabs').children().eq(1).attr("aria-selected")), "aria-selected was updated successfully");
+			//arrange
+			this.sut.setSelectedItem(this._aItems[2]);
+			//assert
+			ok(!!(this.sut.$('tabs').children().eq(2).attr("aria-selected")), "aria-selected was updated successfully");
+		});
 
+		test("Check for undesired aria attributes", function () {
+			strictEqual(this.sut.$().find("[aria-aria-selected]").length, 0, "the duplicate aria-aria-selected attribute is not present in the DOM");
+		});
+
+
+		module("TabSelect PHONE", {
+			afterEach: function () {
+				this.oTS.destroy();
+				this.oTS = null;
+			}
+		});
+
+		test("Is label rendered", function () {
+			preparePhonePlatform.call(this);
+			this.oTS = new sap.m.TabStrip({
+				hasSelect: true,
+				items: [
+					new sap.m.TabStripItem({key: "0", text: "01234567890123456789012345"}),
+					new sap.m.TabStripItem({key: "1", text: "item 1"}),
+					new sap.m.TabStripItem({key: "2", text: "item 2"})
+				]
 			});
 
-			module("Scrolling", {
-				beforeEach: function () {
-					this.sut = new sap.m.TabStrip({
-						selectedTab: 0,
-						tabs: [
-							new sap.m.Button({
-								text: "Tab 1"
-							}),
-							new sap.m.Button({
-								text: "Tab 2"
-							}),
-							new sap.m.Button({
-								text: "Tab 3"
-							})
-						]
-					});
-					this.sut.placeAt('content');
-					oCore.applyChanges();
-				},
-				afterEach: function () {
-					this.sut.destroy();
-				}
-			});
+			this.oTS.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
-			test("Is scrolling needed", function () {
-				//assert
-				ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow");
-				//arrange
-				this.sut.addTab(new sap.m.Button({
-					text: "Tab 4"
-				}));
-				this.sut.addTab(new sap.m.Button({
-					text: "Tab 5"
-				}));
-				this.sut.addTab(new sap.m.Button({
-					text: "Tab 6"
-				}));
-				oCore.applyChanges();
-				ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow");
-			});
+			strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered for phone platform');
+			strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered for phone platform');
+		});
 
-			test("Overflow Buttons", function () {
-				//arrange
-				var iTestCurrentScrollLeft = null;
-				var fnUpdateTestScrollValue = function () {
-					iTestCurrentScrollLeft = this.sut._iCurrentScrollLeft;
-				}.bind(this);
-				this.sut.addTab(new sap.m.Button({
-					text: "Tab 4"
-				}));
-				this.sut.addTab(new sap.m.Button({
-					text: "Tab 5"
-				}));
-				this.sut.addTab(new sap.m.Button({
-					text: "Tab 6"
-				}));
-				this.sut.addTab(new sap.m.Button({
-					text: "Tab 7"
-				}));
-				oCore.applyChanges();
-				fnUpdateTestScrollValue();
-				//assert
-				strictEqual(iTestCurrentScrollLeft, 0, "The initial ScrollLeft value is as expected");
-				//arrange
-				this.sut._oRightArrowButton.firePress({});
-				this.clock.tick(600);
-				//assert
-				ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on RightScrollButton press");
-				//arrange
-				fnUpdateTestScrollValue();
-				//assert
-				strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
-				//arrange
-				this.sut._oLeftArrowButton.firePress({});
-				this.clock.tick(600);
-				//assert
-				ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on LeftScrollButton press");
-				//arrange
-				fnUpdateTestScrollValue();
-				strictEqual(iTestCurrentScrollLeft, 0, "ScrollLeft value is as expected");
+		function preparePhonePlatform() {
+			var oSystem = {
+				desktop : false,
+				phone : true,
+				tablet : false
+			};
+			this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(jQuery.device, "is", oSystem);
+			jQuery('body').addClass('sap-phone');
+		}
+
+		module("Selection", {
+			beforeEach: function () {
+				this.selectedItem = new sap.m.TabStripItem({
+					text: "Initially selected tab"
+				});
+				this.items = [
+					new sap.m.TabStripItem({
+						text: "Tab 1"
+					}),
+					this.selectedItem,
+					new sap.m.TabStripItem({
+						text: "Tab 3"
+					})
+				];
+				this.selectedItemIndex = this.items.indexOf(this.selectedItem);
+			},
+			afterEach: function () {
+				this.sut.destroy();
+			}
+		});
+
+		test("Initial selection if no selected item is passed", function () {
+			//arragnge
+			this.sut = new sap.m.TabStrip({
+				items: this.items
 			});
-		</script>
-	</head>
-	<body id="body" class="sapUiBody">
-		<h1 id="qunit-header">qUnit Page for sap.m.TabStrip</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
-		<div id="qunit-fixture"></div>
-	</body>
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.sut.$("tabs").children(".selected").length, 0, "The initial selection is not applied");
+			strictEqual(this.sut.getSelectedItem(), null, "Correct value of selectedItem association");
+		});
+
+		test("Initial selection if selected item is applied", function () {
+			//arrange
+			this.sut = new sap.m.TabStrip({
+				selectedItem: this.selectedItem,
+				items: this.items
+			});
+			this.sut.placeAt('content');
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
+			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass("selected"), "The initial selection is applied correctly");
+		});
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<h1 id="qunit-header">qUnit Page for sap.m.TabStrip</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+<div id="qunit-fixture"></div>
+</body>
 </html>
