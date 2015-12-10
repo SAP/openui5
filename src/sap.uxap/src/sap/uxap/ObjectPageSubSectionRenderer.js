@@ -34,6 +34,10 @@ sap.ui.define(function () {
 		if (bHasTitleLine) {
 			oRm.write("<div");
 			oRm.addClass("sapUxAPObjectPageSubSectionHeader");
+
+			if (oControl._onDesktopMediaRange()) {
+				oRm.addClass("titleOnLeftLayout");
+			}
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-header");
 			oRm.writeClasses();
 			oRm.write(">");
