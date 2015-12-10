@@ -407,12 +407,26 @@ sap.ui.define([
 		});
 	};
 
+
+	/**
+	 * if our container has not set a height, we need to enforce it or nothing will get displayed
+	 * the reason is the objectPageLayout has 2 containers with position:absolute, height:100%
+	 * @private
+	 */
 	ObjectPageLayout.prototype._ensureCorrectParentHeight = function () {
-		//if our container has not set a height, we need to enforce it or nothing will get displayed
-		//the reason is the objectPageLayout has 2 containers with position:absolute, height:100%
-		if (this.getParent().getHeight && ["", "auto"].indexOf(this.getParent().getHeight()) !== -1) {
-			this.$().parent().css("height", "100%");
+		var $parent;
+
+		if (this._bCorrectParentHeightIsSet) {
+			return;
 		}
+
+		$parent = this.$().parent();
+
+		if (["", "auto"].indexOf($parent.css("height") !== -1)) {
+			$parent.css("height", "100%");
+		}
+
+		this._bCorrectParentHeightIsSet = true;
 	};
 
 	ObjectPageLayout.prototype._cacheDomElements = function () {
