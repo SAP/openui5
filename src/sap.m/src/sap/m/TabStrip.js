@@ -573,14 +573,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * @param bSuppressInvalidate
 		 */
 		TabStrip.prototype.setProperty = function(sPropertyName, vValue, bSuppressInvalidate) {
-			Control.prototype.setProperty.call(this, sPropertyName, vValue, bSuppressInvalidate);
+			var vRes;
+			vRes = Control.prototype.setProperty.call(this, sPropertyName, vValue, bSuppressInvalidate);
 
 			// handle the _select aggregation instance
 			if (sPropertyName === 'hasSelect') {
-				if (vValue && !this.getAggregation('_select')) {
-					return this.setAggregation('_select', this._createSelect(this.getItems()));
+				if (vValue) {
+					if (!this.getAggregation('_select')) {
+						vRes = this.setAggregation('_select', this._createSelect(this.getItems()));
+					}
 				} else {
-					return this.destroyAggregation('_select');
+					vRes = this.destroyAggregation('_select');
 				}
 			}
 
@@ -591,6 +594,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					this.getAggregation('_select').setSelectedItem(oSelectItem).rerender();
 				}
 			}
+
+			return vRes;
 		};
 
 		var oEventsHelper = {
