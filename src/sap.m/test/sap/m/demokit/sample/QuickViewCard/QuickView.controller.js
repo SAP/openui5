@@ -128,53 +128,13 @@ sap.ui.define([
 			oButton.setEnabled(false);
 		},
 
+		onAfterRendering: function() {
+			this.getView().byId("quickViewCardContainer").$().css("maxWidth", "320px");
+		},
+
 		onButtonBackClick : function() {
 			var oQuickViewCard = this.getView().byId('quickViewCard');
 			oQuickViewCard.navigateBack();
-		},
-
-		onHideScrollClick : function() {
-			var oQuickViewCard = this.getView().byId('quickViewCard');
-			oQuickViewCard.setShowVerticalScrollBar(false);
-		},
-
-		onShowScrollClick : function() {
-			var oQuickViewCard = this.getView().byId('quickViewCard');
-			oQuickViewCard.setShowVerticalScrollBar(true);
-		},
-
-		onHideHeaderClick : function() {
-			this._mData.pages[0].title = "";
-			this._mData.pages[0].icon = "";
-			this._mData.pages[0].description = "";
-			this._oModel.setData(this._mData);
-		},
-
-		onShowHeaderClick : function() {
-			this._mData.pages[0].title = "Adventure Company";
-			this._mData.pages[0].icon = "sap-icon://building";
-			this._mData.pages[0].description = "John Doe";
-			this._oModel.setData(this._mData);
-		},
-
-		onScrollSwitchChange : function(oEvent) {
-			var oQuickViewCard = this.getView().byId('quickViewCard');
-
-			oQuickViewCard.setShowVerticalScrollBar(oEvent.getParameters().state);
-		},
-
-		onHeaderSwitchChange : function(oEvent) {
-			if (oEvent.getParameters().state) {
-				this._mData.pages[0].title = "Adventure Company";
-				this._mData.pages[0].icon = "sap-icon://building";
-				this._mData.pages[0].description = "John Doe";
-			} else {
-				this._mData.pages[0].title = "";
-				this._mData.pages[0].icon = "";
-				this._mData.pages[0].description = "";
-			}
-
-			this._oModel.setData(this._mData);
 		},
 
 		onNavigate : function(oEvent) {
