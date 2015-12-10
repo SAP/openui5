@@ -1664,6 +1664,40 @@
 		oList.destroy();
 	});
 
+	module("ListItemBase");
+
+	test("ListItemBase RenderOulineClass", function() {
+		var oMsieStub = this.stub(sap.ui.Device, "browser", {"msie": true});
+		this.stub(sap.ui.Device.system, "desktop", true);
+
+		// SUT
+		var sut1 = new sap.m.StandardListItem(),
+			sut2 = new sap.m.StandardListItem(),
+			list = new sap.m.List({
+				items : sut1
+			});
+
+		list.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		ok(sut1.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		ok(sut1.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is added");
+
+		// Act
+		oMsieStub.restore();
+		this.stub(sap.ui.Device, "browser", {"msie": false });
+		list.addItem(sut2);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		ok(sut2.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		ok(!sut2.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
+
+		//Cleanup
+		list.destroy();
+	});
+
 </script>
 
 
