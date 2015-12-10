@@ -9,8 +9,9 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class IndexLayout renderer.
-	 * @static
+	 * IndexLayout renderer.
+	 * @namespace
+	 * @alias sap.ui.demokit.IndexLayoutRenderer
 	 */
 	var IndexLayoutRenderer = {};
 

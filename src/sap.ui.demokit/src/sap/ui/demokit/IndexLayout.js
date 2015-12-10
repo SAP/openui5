@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	 * @since 1.17.0
 	 * @experimental Since version 1.17.0.
 	 * API is not yet finished and might change completely
-	 * @name sap.ui.demokit.IndexLayout
+	 * @alias sap.ui.demokit.IndexLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IndexLayout = Control.extend("sap.ui.demokit.IndexLayout", /** @lends sap.ui.demokit.IndexLayout.prototype */ { metadata : {
@@ -258,25 +258,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 		}
 
 		var best = weight(t);
-		var canditates = [t];
+		var candidates = [t];
+		var i;
 
-		for (var i = t - 1; i >= 1; i--) {
+		for (i = t - 1; i >= 1; i--) {
 			var w = weight(i);
 			if (w < best) {
-				canditates = [i];
+				candidates = [i];
 				best = w;
 			} else if (w == best) {
-				canditates.push(i);
+				candidates.push(i);
 			}
 		}
 
-		for (var i = 0; i < canditates.length; i++) {
-			var m = itemCount % canditates[i];
+		for (i = 0; i < candidates.length; i++) {
+			var m = itemCount % candidates[i];
 			if (m == 0) {
-				return canditates[i];
+				return candidates[i];
 			} else if (i == 0 || m > best) {
 				best = m;
-				t = canditates[i];
+				t = candidates[i];
 			}
 		}
 
@@ -376,4 +377,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 
 	return IndexLayout;
 
-}, /* bExport= */ true);
+});

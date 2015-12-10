@@ -3,16 +3,16 @@
  */
 
 // Provides default renderer for control sap.ui.demokit.FileUploadIntrospector
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
 	/**
-	 * @class FileUploadIntrospector renderer.
-	 * @static
+	 * FileUploadIntrospector renderer.
+	 * @namespace
+	 * @alias sap.ui.demokit.FileUploadIntrospectorRenderer
 	 */
-	var FileUploadIntrospectorRenderer = function() {
+	var FileUploadIntrospectorRenderer = {
 	};
 
 

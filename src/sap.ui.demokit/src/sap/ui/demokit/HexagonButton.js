@@ -3,10 +3,9 @@
  */
 
 // Provides control sap.ui.demokit.HexagonButton.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['sap/ui/core/Control', './library'],
+	function(Control, library) {
 	"use strict";
-
 
 
 	/**
@@ -22,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.demokit.HexagonButton
+	 * @alias sap.ui.demokit.HexagonButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HexagonButton = Control.extend("sap.ui.demokit.HexagonButton", /** @lends sap.ui.demokit.HexagonButton.prototype */ { metadata : {
@@ -94,4 +93,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	return HexagonButton;
 
-}, /* bExport= */ true);
+});

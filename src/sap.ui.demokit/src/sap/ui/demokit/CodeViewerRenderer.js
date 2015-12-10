@@ -9,10 +9,11 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class CodeViewer renderer.
-	 * @static
+	 * CodeViewer renderer.
+	 * @namespace
+	 * @alias sap.ui.demokit.CodeViewerRenderer
 	 */
-	var CodeViewerRenderer = function() {
+	var CodeViewerRenderer = {
 	};
 
 
