@@ -44,6 +44,7 @@ sap.ui.define([], function () {
 			}
 		},
 		oFullConfig = {
+			__processor : processEdmx,
 			"Reference" : {
 				__processor : processReference,
 				"Include" : {
@@ -186,6 +187,17 @@ sap.ui.define([], function () {
 	 */
 	function processComplexType(oElement, oAggregate) {
 		processType(oElement, oAggregate, {"$kind" : "ComplexType"});
+	}
+
+	/**
+	 * Processes the Edmx element.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processEdmx(oElement, oAggregate) {
+		processAttributes(getAttributes(oElement), oAggregate.result, {
+			"Version": setValue
+		});
 	}
 
 	/**

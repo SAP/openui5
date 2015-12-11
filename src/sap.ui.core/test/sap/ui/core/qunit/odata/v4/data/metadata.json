@@ -1,4 +1,5 @@
 {
+	"$Version" : "4.0",
 	"$EntityContainer" : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer",
 	"com.sap.gateway.iwbep.tea_busi_product.v0001" : {
 		"$kind" : "Reference",
