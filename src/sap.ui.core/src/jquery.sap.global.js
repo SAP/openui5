@@ -1301,6 +1301,13 @@
 
 				var iTime = jQuery.sap.now(),
 					oMeasurement = new Measurement( sId, sInfo, iTime, 0, aCategories);
+
+				// create timeline entries if available
+				/*eslint-disable no-console */
+				if (console.time) {
+					console.time(sInfo + " - " + sId);
+				}
+				/*eslint-enable no-console */
 	//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
 
 				if (oMeasurement) {
@@ -1397,6 +1404,7 @@
 				}
 
 				var iTime = jQuery.sap.now();
+
 				var oMeasurement = this.mMeasurements[sId];
 	//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
 
@@ -1424,6 +1432,12 @@
 				}
 
 				if (oMeasurement) {
+					// end timeline entry
+					/*eslint-disable no-console */
+					if (console.time && oMeasurement) {
+						console.timeEnd(oMeasurement.info + " - " + sId);
+					}
+					/*eslint-enable no-console */
 					return this.getMeasurement(sId);
 				} else {
 					return false;
