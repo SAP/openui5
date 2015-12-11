@@ -40,9 +40,9 @@
 								var sColor = event.target && jQuery.css(event.target, "background-color").toLowerCase();
 								var bRed = sColor == "#ff0000" || sColor == "rgb(255, 0, 0)";
 								if ( bRed ) {
-									jQuery("<span>red clicked" + new Date() + "</span><br/>").appendTo(jQuery("#log"));
+									jQuery("<span>red clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
 								} else {
-									jQuery("<span>yellow clicked" + new Date() + "</span><br/>").appendTo(jQuery("#log"));
+									jQuery("<span>yellow clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
 								}
 							}
 					);

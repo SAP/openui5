@@ -37,17 +37,17 @@
 			var sId = "setting"+(idCounter++);
 			if(!aValues || aValues.length == 0){
 				if(typeof oDefaultValue == "string"){
-					sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'></input>";
+					sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'>";
 					fHandle = function(oEvent){
 						fHandler(oEvent, jQuery(oEvent.target).val());
 					};
 				}else if(typeof oDefaultValue == "number"){
-					sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'></input>";
+					sDom = "<input id='"+sId+"' value='"+oDefaultValue+"'>";
 					fHandle = function(oEvent){
 						fHandler(oEvent, parseInt(jQuery(oEvent.target).val()));
 					};
 				}else if(typeof oDefaultValue == "boolean"){
-					sDom = "<input type='checkbox' id='"+sId+"'"+(oDefaultValue ? " checked='"+oDefaultValue+"'" : "")+"></input>";
+					sDom = "<input type='checkbox' id='"+sId+"'"+(oDefaultValue ? " checked='"+oDefaultValue+"'" : "")+">";
 					fHandle = function(oEvent){
 						fHandler(oEvent, jQuery(oEvent.target).is(":checked"));
 					}

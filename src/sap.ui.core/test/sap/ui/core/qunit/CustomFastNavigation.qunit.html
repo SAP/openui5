@@ -74,9 +74,9 @@
 				rm.writeAttribute("class", "TestControl");
 				rm.write(">");
 				
-				rm.write("<div><input value='2' id='", id, "-input-2'/><input id='", id, "-input-2a'/></div>");
-				rm.write("<div><input value='1' id='", id, "-input-1'/><input id='", id, "-input-1a'/></div>");
-				rm.write("<div><input value='3' id='", id, "-input-3'/><input id='", id, "-input-3a'/></div>");
+				rm.write("<div><input value='2' id='", id, "-input-2'><input id='", id, "-input-2a'></div>");
+				rm.write("<div><input value='1' id='", id, "-input-1'><input id='", id, "-input-1a'></div>");
+				rm.write("<div><input value='3' id='", id, "-input-3'><input id='", id, "-input-3a'></div>");
 				
 				rm.write("</div>");
 			}
@@ -159,9 +159,9 @@
 	<ol id="qunit-tests"></ol>
 	
 	<div id="scope">
-		<input value='0' id="before"/>
+		<input value='0' id="before">
 		<div id="content" style="padding: 5px;"></div>
-		<input value='4' id="after"/>
+		<input value='4' id="after">
 	</div>
 </body>
 </html>
