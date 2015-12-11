@@ -39,25 +39,29 @@ sap.ui.define([
 	 * @public
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
-		constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
-			var bAbsolute = sPath.charAt(0) === "/";
+			constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
+				var bAbsolute = sPath.charAt(0) === "/";
 
-			if (!bAbsolute && mParameters) {
-				throw new Error("Bindings with a relative path do not support parameters");
+				if (bAbsolute) {
+					this.oCache = Cache.create(oModel.oRequestor,
+						oModel.sServiceUrl + sPath.slice(1),
+						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
+							["$expand", "$select"]));
+				} else if (mParameters) {
+					throw new Error("Bindings with a relative path do not support parameters");
+				} else {
+					this.oCache = undefined;
+				}
+				ListBinding.call(this, oModel, sPath, oContext);
+
+				this.aContexts = [];
+				// upper boundary for server-side list length (based on observations so far)
+				this.iMaxLength = Infinity;
+				this.iIndex = iIndex;
+				// this.bLengthFinal = this.aContexts.length === this.iMaxLength
+				this.bLengthFinal = false;
 			}
-			ListBinding.call(this, oModel, sPath, oContext, undefined, undefined,
-				bAbsolute && Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
-					["$expand", "$select"]));
-
-			this.oCache = undefined;
-			this.aContexts = [];
-			// upper boundary for server-side list length (based on observations so far)
-			this.iMaxLength = Infinity;
-			this.iIndex = iIndex;
-			// this.bLengthFinal = this.aContexts.length === this.iMaxLength
-			this.bLengthFinal = false;
-		}
-	});
+		});
 
 	/**
 	 * Always fires a change event on this list binding.
@@ -89,7 +93,6 @@ sap.ui.define([
 		var oContext = this.getContext(),
 			oModel = this.getModel(),
 			sResolvedPath = oModel.resolve(this.getPath(), oContext),
-			sUrl,
 			that = this;
 
 		function getBasePath(iIndex) {
@@ -172,15 +175,14 @@ sap.ui.define([
 				oModel.read(sResolvedPath, true)
 					.then(createContexts.bind(undefined, getDependentPath));
 			} else { // absolute path
-				sUrl = oModel.sServiceUrl + sResolvedPath.slice(1);
-				if (!this.oCache) {
-					this.oCache = Cache.create(oModel.oRequestor, sUrl, this.mParameters);
-				}
 				this.oCache.read(iStart, iLength)
 					.then(createContexts.bind(undefined, getBasePath), function (oError) {
-						jQuery.sap.log.error("Failed to get contexts for " + sUrl
-							+ " with start index " + iStart + " and length " + iLength, oError,
-							"sap.ui.model.odata.v4.ODataListBinding");
+						if (!oError.canceled) {
+							jQuery.sap.log.error("Failed to get contexts for "
+								+ oModel.sServiceUrl + sResolvedPath.slice(1)
+								+ " with start index " + iStart + " and length " + iLength, oError,
+								"sap.ui.model.odata.v4.ODataListBinding");
+						}
 					});
 			}
 		}
@@ -274,7 +276,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataListBinding.prototype.refresh = function () {
-		this.oCache =  undefined;
+		this.oCache.refresh();
 		this.aContexts = [];
 		this.iMaxLength = Infinity;
 		this.bLengthFinal = false;

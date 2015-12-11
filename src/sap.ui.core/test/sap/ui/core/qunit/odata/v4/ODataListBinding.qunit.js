@@ -82,7 +82,8 @@ sap.ui.require([
 		 */
 		getCacheMock : function () {
 			var oCache = {
-					read: function () {}
+					read: function () {},
+					refresh: function () {}
 				};
 
 			this.oSandbox.mock(Cache).expects("create").returns(oCache);
@@ -91,21 +92,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts creates cache once", function (assert) {
-		var oCache = {
-				read: function () {}
-			};
+	QUnit.test("bindList with parameters", function (assert) {
+		var oBinding,
+			oContext = {},
+			oError = new Error("Unsupported ..."),
+			oHelperMock,
+			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
+			mQueryOptions = {};
 
-		this.oSandbox.mock(Cache).expects("create")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "/service/EMPLOYEES", {
-					"sap-client" : "111"
-				})
-			.returns(oCache);
+		oHelperMock = this.mock(Helper);
+		oHelperMock.expects("buildQueryOptions")
+			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
+			.returns(mQueryOptions);
+		this.mock(Cache).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "/service/EMPLOYEES",
+				sinon.match.same(mQueryOptions));
 
-		this.oSandbox.mock(oCache).expects("read").returns(createResult(0));
+		oBinding = this.oModel.bindList("/EMPLOYEES", oContext, undefined, undefined, mParameters);
 
-		// code under test
-		this.oModel.bindList("/EMPLOYEES").getContexts();
+		assert.ok(oBinding instanceof ODataListBinding);
+		assert.strictEqual(oBinding.getModel(), this.oModel);
+		assert.strictEqual(oBinding.getContext(), oContext);
+		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
+		assert.strictEqual(oBinding.iIndex, 0, "list binding unique index");
+		assert.strictEqual(this.oModel.aRoots[0], oBinding, "model stores list bindings");
+		assert.deepEqual(oBinding.aContexts, []);
+		assert.strictEqual(oBinding.iMaxLength, Infinity);
+		assert.strictEqual(oBinding.isLengthFinal(), false);
+		assert.strictEqual(oBinding.mParameters, undefined);
+
+		//no call to buildQueryOptions for binding with relative path and no parameters
+		oBinding = this.oModel.bindList("EMPLOYEE_2_TEAM");
+		assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache property is set");
+		assert.strictEqual(oBinding.oCache, undefined, "oCache property is undefined");
+
+		//error for invalid parameters
+		oHelperMock.expects("buildQueryOptions").throws(oError);
+
+		assert.throws(function () {
+			this.oModel.bindList("/EMPLOYEES", null, undefined, undefined, mParameters);
+		}, oError);
+
+		//error for relative paths
+		assert.throws(function () {
+			this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS", null, undefined, undefined, mParameters);
+		}, new Error("Bindings with a relative path do not support parameters"));
+
+		//TODO parameter aSorters and aFilters
 	});
 
 	//*********************************************************************************************
@@ -213,9 +246,6 @@ sap.ui.require([
 
 		oControl.setModel(this.oModel);
 
-		// no cache will be created
-		this.oSandbox.mock(Cache).expects("create").never();
-
 		this.oSandbox.mock(this.oModel).expects("read")
 			.withExactArgs(oContext.getPath() + "/" + sPath, true)
 			.returns(createResult(oRange.length));
@@ -244,7 +274,6 @@ sap.ui.require([
 
 		oControl.setModel(this.oModel);
 
-		this.oSandbox.mock(Cache).expects("create").never();
 		this.oSandbox.mock(this.oModel).expects("read").never();
 
 		// code under test
@@ -257,33 +286,6 @@ sap.ui.require([
 		assert.deepEqual(oControl.getBinding("items").getContexts(), [],
 			"list binding contexts not set");
 		setTimeout(done, 10); //TODO Is there a better way to finalize the test after console log?
-	});
-
-	//*********************************************************************************************
-	QUnit.test("listbinding with immutable expand, encoded URLs", function (assert) {
-		var oCache = {
-				read: function () {}
-			},
-			sExpand = "TEAM_2_EMPLOYEES($expand=EMPLOYEES_2_EQUIPMENTS)",
-			mParameters = { "$expand": sExpand },
-			oListBinding = this.oModel.bindList("/TEAMS",  undefined, undefined, undefined,
-					mParameters);
-
-		this.oSandbox.mock(Cache).expects("create")
-			.withExactArgs(sinon.match.any, "/service/TEAMS", {
-					"sap-client" : "111",
-					"$expand" : sExpand
-				})
-			.returns(oCache);
-		this.oSandbox.mock(oCache).expects("read").returns(createResult(0));
-
-		// do not use the given parameters directly
-		mParameters["$expand"] = "bar";
-
-		oListBinding.getContexts();
-
-		// do not change the model
-		assert.strictEqual(this.oModel.mUriParameters.$expand, undefined);
 	});
 
 	//*********************************************************************************************
@@ -512,14 +514,14 @@ sap.ui.require([
 		{start : 20, result: 30, isFinal: false, length: 60, text: "maybe more data"}
 	].forEach(function (oFixture) {
 		QUnit.test("paging: " + oFixture.text, function (assert) {
-			var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			var oListBinding,
 				done = assert.async();
-
-			assert.strictEqual(oListBinding.isLengthFinal(), false, "Length is not yet final");
-			assert.strictEqual(oListBinding.getLength(), 10, "Initial estimated length is 10");
 
 			this.getCacheMock().expects("read").withExactArgs(oFixture.start, 30)
 				.returns(createResult(oFixture.result));
+			oListBinding = this.oModel.bindList("/EMPLOYEES");
+			assert.strictEqual(oListBinding.isLengthFinal(), false, "Length is not yet final");
+			assert.strictEqual(oListBinding.getLength(), 10, "Initial estimated length is 10");
 
 			oListBinding.getContexts(oFixture.start, 30); // creates cache
 
@@ -726,99 +728,66 @@ sap.ui.require([
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			oListBindingMock = this.oSandbox.mock(oListBinding);
 
-		// change event during getContext
+		// change event during getContexts
 		oListBindingMock.expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 		// refresh event during refresh
 		oListBindingMock.expects("_fireRefresh")
 			.withExactArgs({reason : ChangeReason.Refresh});
 		oCacheMock.expects("read").withExactArgs(0, 10).returns(createResult(9));
+		oCacheMock.expects("refresh");
 
-		assert.strictEqual(oListBinding.oCache, undefined);
-		assert.deepEqual(oListBinding.aContexts, []);
-		assert.strictEqual(oListBinding.iMaxLength, Infinity);
-		assert.strictEqual(oListBinding.isLengthFinal(), false);
 		oListBinding.getContexts(0, 10);
 
 		setTimeout(function () {
+			var oCache = oListBinding.oCache;
 			assert.strictEqual(oListBinding.iMaxLength, 9);
 			assert.strictEqual(oListBinding.isLengthFinal(), true);
 
 			//code under test
 			oListBinding.refresh();
 
-			assert.strictEqual(oListBinding.oCache, undefined);
+			assert.strictEqual(oListBinding.oCache, oCache);
 			assert.deepEqual(oListBinding.aContexts, []);
 			assert.strictEqual(oListBinding.iMaxLength, Infinity);
 			assert.strictEqual(oListBinding.isLengthFinal(), false);
 			done();
 		}, 10); //wait until read is finished
-
 	});
-
 
 	//*********************************************************************************************
-	QUnit.test("bindList with parameters", function (assert) {
-		var oBinding,
-			oError = new Error("Unsupported ..."),
-			oHelperMock,
-			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
-			mQueryOptions = {};
+	QUnit.test("refresh cancels pending getContexts", function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			done = assert.async(),
+			oError = new Error(),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oListBindingMock = this.oSandbox.mock(oListBinding);
 
-		oHelperMock = this.mock(Helper);
-		oHelperMock.expects("buildQueryOptions")
-			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
-			.returns(mQueryOptions);
-//TODO (1) add once cache creation is done in constructor
-//		this.mock(Cache).expects("create")
-//			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "/service/EMPLOYEES",
-//				sinon.match.same(mQueryOptions));
+		// change event during getContexts
+		oListBindingMock.expects("_fireChange").never();
+		oError.canceled = true;
+		oCacheMock.expects("read").withExactArgs(0, 10).returns(Promise.reject(oError));
+		oCacheMock.expects("refresh");
 
-		oBinding = this.oModel.bindList("/EMPLOYEES", null, undefined, undefined, mParameters);
+		oListBinding.getContexts(0, 10);
+		oListBinding.refresh();
 
-//TODO remove once cache creation is done in constructor
-		assert.strictEqual(oBinding.mParameters, mQueryOptions,
-			"temporary solution to store parameters for cache creation");
-
-		//no call to buildQueryOptions for binding with relative path and no parameters
-		oBinding = this.oModel.bindList("EMPLOYEE_2_TEAM");
-
-//TODO (2) add once cache creation is done in constructor
-//		assert.strictEqual(oBinding.mParameters, undefined,
-//			"do not propagate unchecked query options");
-
-		//error for invalid parameters
-		oHelperMock.expects("buildQueryOptions").throws(oError);
-
-		assert.throws(function () {
-			this.oModel.bindList("/EMPLOYEES", null, undefined, undefined, mParameters);
-		}, oError);
-
-		//error for relative paths
-		assert.throws(function () {
-			this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS", null, undefined, undefined, mParameters);
-		}, new Error("Bindings with a relative path do not support parameters"));
+		setTimeout(function () {
+			// log mock checks there is no console error from canceling processing of getContexts
+			done();
+		}, 10); //wait until read is finished
 	});
 });
-//TODO delegate the actual refresh to the Cache instead of deleting it to force a new read from
-//the backend
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
 //The implementation of getContexts needs to provide next to the resulting context array a diff
 //array with information which entry has been inserted or deleted (see jQuery.sap.arrayDiff and
 //sap.m.GrowingEnablement)
-//TODO jsdoc: {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} generates no link as
-//  there is no jsdoc for v4.ODataModel
 //TODO lists within lists for deferred navigation or structural properties
-//TODO (how to) get rid of global cache objects when model is garbage collected
-//TODO integration test for cache eviction if size exceeds cacheSize (1MB per default)
-//TODO (how to) set pageSize, prefetchSize, cacheSize of cache?
 
-//TODO move cache creation to constructor (analogous to ODataContextBinding)
 //TODO setContext() must delete this.oCache when it has its own cache (e.g. scenario
 //  where listbinding is not nested but has a context. This is currently not possible but
 //  if you think on a relative binding "TEAMS" which becomes context "/" -> here the relative
 //  binding must create the it's own cache which has to be deleted with setContext()
-//TODO custom headers for read(), e.g. "X-CSRF-Token": "Fetch"
 
 //TODO integration: 2 entity sets with same $expand, but different $select
-//TDOO support suspend/resume
+//TODO support suspend/resume

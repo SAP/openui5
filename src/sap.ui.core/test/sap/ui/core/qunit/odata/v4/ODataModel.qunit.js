@@ -196,26 +196,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("bindList", function (assert) {
-		var oModel = createModel(),
-			oContext = {},
-			mParameters = {"$expand" : "foo"},
-			oBinding = oModel.bindList("/path", oContext, undefined, undefined, mParameters);
-
-		assert.ok(oBinding instanceof ODataListBinding);
-		assert.strictEqual(oBinding.getModel(), oModel);
-		assert.strictEqual(oBinding.getContext(), oContext);
-		assert.strictEqual(oBinding.getPath(), "/path");
-		assert.strictEqual(oBinding.iIndex, 0, "list binding unique index");
-		assert.deepEqual(oBinding.mParameters, mParameters, "list binding parameters");
-
-		assert.strictEqual(oModel.bindList("/path", oContext).iIndex, 1);
-		assert.strictEqual(oModel.aRoots[0], oBinding, "model stores list bindings");
-		//TODO add further tests once exact behavior of bindList is clear
-		//TODO parameter aSorters and aFilters
-	});
-
-	//*********************************************************************************************
 	QUnit.test("read /TEAMS[*];root=0", function (assert) {
 		var i = Math.floor(Math.random() * 50), // some index
 			oModel = createModel(),
