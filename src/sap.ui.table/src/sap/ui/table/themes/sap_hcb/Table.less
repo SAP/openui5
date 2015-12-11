@@ -494,8 +494,11 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 }
 
 // Fixed Bottom Row Indicator
-.sapUiTableFixedPreBottomRow > td, .sapUiTableRowHdr.sapUiTableFixedPreBottomRow {
-	border-bottom: 0.188rem solid @sapHCStandardFG;
+.sapUiSizeCompact, .sapUiSizeCozy {
+	.sapUiTableFixedPreBottomRow > td, 
+	.sapUiTableRowHdr.sapUiTableFixedPreBottomRow {
+		border-bottom: 0.188rem solid @sapHCStandardFG;
+	}
 }
 
 // Hide last row bottom cell border
