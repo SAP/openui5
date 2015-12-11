@@ -245,6 +245,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 			var oContext = new Context(this.oModel, this.sPath);
 			this.filterRecursive(oContext);
 		}
+		this._mLengthsCache = {};
 		this._fireChange({reason: "filter"});
 		// TODO remove this if the filter event is removed
 		this._fireFilter({filters: aFilters});
