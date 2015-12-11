@@ -9,8 +9,8 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	var rAmpersand = /&/g,
 		rEquals = /\=/g,
 		rHash = /#/g,
+		rHeaderParameter = /(\S*?)=(?:"(.+)"|(\S+))/,
 		rPlus = /\+/g,
-		rQuote = /\"/g,
 		rSemicolon = /;/g,
 		Helper;
 
@@ -160,31 +160,17 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			 * @returns {string} the HTTP header parameter value
 			 */
 			function getHeaderParameterValue(sHeaderValue, sParameterName) {
-				var iEqualsIndex,
-					iParamIndex,
+				var iParamIndex,
 					aHeaderParts = sHeaderValue.split(";"),
-					sHeaderPart,
-					sParameter,
-					sParameterValue;
+					aMatches;
 
-				if (aHeaderParts.length === 1) {
-					//only header value without parameter e.g. "application/json"
-					return undefined;
-				}
 				sParameterName = sParameterName.toLowerCase();
-
 				for (iParamIndex = 1; iParamIndex < aHeaderParts.length; iParamIndex++) {
-					sHeaderPart = aHeaderParts[iParamIndex];
-					iEqualsIndex = sHeaderPart.indexOf("=");
-
-					// take parameter name
-					sParameter = sHeaderPart.slice(0, iEqualsIndex).trim().toLowerCase();
-
-					if (sParameter === sParameterName) {
-						sParameterValue = sHeaderPart.slice(iEqualsIndex + 1);
-						// remove possible quotes
-						// RFC7231: parameter = token "=" ( token / quoted-string )
-						return sParameterValue.trim().replace(rQuote, "");
+					// remove possible quotes via reg exp
+					// RFC7231: parameter = token "=" ( token / quoted-string )
+					aMatches = rHeaderParameter.exec(aHeaderParts[iParamIndex]);
+					if (aMatches[1].toLowerCase() === sParameterName) {
+						return aMatches[2] || aMatches[3];
 					}
 				}
 			}
