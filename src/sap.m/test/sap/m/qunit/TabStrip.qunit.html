@@ -75,6 +75,14 @@
 			strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 6, "All tabs are rendered");
 		});
 
+		// tests for a bug that resulted in destroying the select aggr if it already existed on setHasSelect(true)
+		test("setHasSelect(true)", function () {
+			this.sut.setHasSelect(true);
+			strictEqual(this.sut.getHasSelect(), true, "Correct hasSelect property value");
+			this.sut.setHasSelect(true);
+			strictEqual(this.sut.getAggregation('_select') instanceof sap.m.TabStripSelect, true, "The select aggregation should not be destroyed when hasSelect is set to 'true'");
+		});
+
 		module("Keyboard Handling", {
 			beforeEach: function () {
 				this.sut = new sap.m.TabStrip({
