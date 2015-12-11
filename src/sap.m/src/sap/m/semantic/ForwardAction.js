@@ -27,7 +27,9 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 */
 
 	var ForwardAction = SemanticButton.extend("sap.m.semantic.ForwardAction", /** @lends sap.m.semantic.ForwardAction.prototype */ {
-
+		metadata: {
+			library: "sap.m"
+		}
 	});
 
 	return ForwardAction;

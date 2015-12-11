@@ -28,6 +28,7 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 
 	var PositiveAction = SemanticButton.extend("sap.m.semantic.PositiveAction", /** @lends sap.m.semantic.PositiveAction.prototype */ {
 		metadata: {
+			library : "sap.m",
 			properties : {
 
 				/**

@@ -29,6 +29,8 @@ sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semant
 	var ShareMenuPage = SemanticPage.extend("sap.m.semantic.ShareMenuPage", /** @lends sap.m.semantic.ShareMenuPage.prototype */ {
 		metadata: {
 
+			library: "sap.m",
+
 			aggregations: {
 
 				/**

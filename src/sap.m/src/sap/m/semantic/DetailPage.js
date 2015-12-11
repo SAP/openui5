@@ -49,6 +49,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	 */
 	var DetailPage = ShareMenuPage.extend("sap.m.semantic.DetailPage", /** @lends sap.m.semantic.DetailPage.prototype */ {
 		metadata: {
+			library: "sap.m",
 			aggregations: {
 				/**
 				 * Add action

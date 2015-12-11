@@ -29,6 +29,8 @@ sap.ui.define(["sap/m/semantic/SemanticConfiguration", "sap/ui/base/ManagedObjec
 	var SemanticControl = Element.extend("sap.m.semantic.SemanticControl", /** @lends sap.m.semantic.SemanticControl.prototype */ {
 		metadata: {
 
+			library: "sap.m",
+
 			"abstract": true,
 
 			properties: {

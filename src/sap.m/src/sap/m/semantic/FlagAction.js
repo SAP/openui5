@@ -27,7 +27,9 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleBu
 	 */
 
 	var FlagAction = SemanticToggleButton.extend("sap.m.semantic.FlagAction", /** @lends sap.m.semantic.FlagAction.prototype */ {
-
+		metadata: {
+			library: "sap.m"
+		}
 	});
 
 	return FlagAction;

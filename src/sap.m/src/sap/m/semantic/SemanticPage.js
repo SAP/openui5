@@ -44,6 +44,8 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	var SemanticPage = sap.ui.core.Control.extend("sap.m.semantic.SemanticPage", /** @lends sap.m.semantic.SemanticPage.prototype */ {
 		metadata: {
 
+			library: "sap.m",
+
 			properties: {
 
 				/**
