@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global'],
 				this.renderProgressIndicator(oRm, oSlider);
 			}
 
-			this.renderHandle(oRm, oSlider);
+			this.renderHandles(oRm, oSlider);
 			oRm.write("</div>");
 
 			if (oSlider.getName()) {
@@ -94,11 +94,20 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write(' aria-hidden="true"></div>');
 		};
 
-		SliderRenderer.renderHandle = function(oRm, oSlider) {
+		SliderRenderer.renderHandles = function(oRm, oSlider) {
+			this.renderHandle(oRm, oSlider,  {
+				id: oSlider.getId() + "-handle"
+			});
+		};
+
+		SliderRenderer.renderHandle = function(oRm, oSlider, mOptions) {
 			var bEnabled = oSlider.getEnabled();
 
 			oRm.write("<span");
-			oRm.writeAttribute("id", oSlider.getId() + "-handle");
+
+			if (mOptions && (mOptions.id !== undefined)) {
+				oRm.writeAttributeEscaped("id", mOptions.id);
+			}
 
 			if (oSlider.getShowHandleTooltip()) {
 				this.writeHandleTooltip(oRm, oSlider);
