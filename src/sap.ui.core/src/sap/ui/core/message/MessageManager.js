@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/model/m
 	MessageManager.prototype.unregisterMessageProcessor = function(oProcessor) {
 		this.removeMessages(this.mMessages[oProcessor.getId()]);
 		delete this.mProcessors[oProcessor.getId()];
-		oProcessor.detachMessageChange(this.onMessageChange);
+		oProcessor.detachMessageChange(this.onMessageChange, this);
 	};
 	
 	/**
