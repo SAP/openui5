@@ -25,7 +25,6 @@
 	</script>
 
 	<script>
-	var oContext = { pages:[] };
 	jQuery.fn.filterByText = function(textbox) {
 		return this.each(function() {
 			var selectbox = this;
@@ -86,6 +85,7 @@
 
 		function find() {
 			prepareNewRun();
+			var oContext = { pages:[] };
 			var oDeferred = jQuery.Deferred();
 			sap.ui.qunit.TestRunner.checkTestPage(jQuery("#testPage").val()).done(function(aTestPages) {
 				window.aTestPages = aTestPages;
@@ -135,6 +135,7 @@
 		jQuery("#removeall").click(removeAll);
 
 		function run() {
+			jQuery("#open").click();
 			window.oStartTime = new Date();
 			var $this = jQuery("#run");
 			if ($this.val() === "Run") {
@@ -169,7 +170,6 @@
 				alert("Please select at least on test to execute");
 			} else {
 				prepareNewRun();
-				jQuery("#open").click();
 				run();
 			}
 		});
