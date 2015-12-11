@@ -109,19 +109,52 @@ sap.ui.require([
 				}
 			};
 
-		// Types
+		assert.strictEqual(MetadataConverter.resolveAlias("", oAggregate), "");
 		assert.strictEqual(MetadataConverter.resolveAlias("display.Foo", oAggregate),
 			"org.example.vocabularies.display.Foo");
 		assert.strictEqual(MetadataConverter.resolveAlias("display.bar.Foo", oAggregate),
 			"display.bar.Foo");
 		assert.strictEqual(MetadataConverter.resolveAlias("bar.Foo", oAggregate), "bar.Foo");
 		assert.strictEqual(MetadataConverter.resolveAlias("Foo", oAggregate), "Foo");
-
-		// EntitySets etc
-		assert.strictEqual(MetadataConverter.resolveAlias("display.Container/Foo", oAggregate),
-			"org.example.vocabularies.display.Container/Foo");
 	});
-	// TODO paths with type cast (not relevant for walking skeleton)
+
+	//*********************************************************************************************
+	QUnit.test("resolveAliasInPath", function (assert) {
+		var oAggregate = {},
+			oMock = this.mock(MetadataConverter);
+
+			function test(sPath, sExpected) {
+				assert.strictEqual(MetadataConverter.resolveAliasInPath(sPath, oAggregate),
+					sExpected || sPath);
+			}
+
+			oMock.expects("resolveAlias").never();
+
+			test("Employees");
+			test("Employees/Team");
+
+			oMock.expects("resolveAlias")
+				.withExactArgs("f.Some", sinon.match.same(oAggregate)).returns("foo.Some");
+			oMock.expects("resolveAlias")
+				.withExactArgs("f.Random", sinon.match.same(oAggregate)).returns("foo.Random");
+			oMock.expects("resolveAlias")
+				.withExactArgs("f.Path", sinon.match.same(oAggregate)).returns("foo.Path");
+			test("f.Some/f.Random/f.Path", "foo.Some/foo.Random/foo.Path");
+
+			oMock.expects("resolveAlias")
+				.withExactArgs("f.Path", sinon.match.same(oAggregate)).returns("foo.Path");
+			oMock.expects("resolveAlias")
+				.withExactArgs("f.Term", sinon.match.same(oAggregate)).returns("foo.Term");
+			test("f.Path@f.Term", "foo.Path@foo.Term");
+
+			oMock.expects("resolveAlias")
+				.withExactArgs("f.Path", sinon.match.same(oAggregate)).returns("foo.Path");
+			oMock.expects("resolveAlias")
+				.withExactArgs("", sinon.match.same(oAggregate)).returns("");
+			oMock.expects("resolveAlias")
+				.withExactArgs("f.Term", sinon.match.same(oAggregate)).returns("foo.Term");
+			test("f.Path/@f.Term", "foo.Path/@foo.Term");
+	});
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: Singleton", function (assert) {
@@ -211,6 +244,8 @@ sap.ui.require([
 									Target="other.Container/Foo"/>\
 								<NavigationPropertyBinding Path="Bar"\
 									Target="f.Container/Foo/Bar"/>\
+								<NavigationPropertyBinding Path="Baz"\
+									Target="f.Container/Manager/f.Employee"/>\
 							</EntitySet>\
 						</EntityContainer>\
 					</Schema>\
@@ -228,7 +263,8 @@ sap.ui.require([
 						"$NavigationPropertyBinding" : {
 							"Manager": "Managers",
 							"Foo": "other.Container/Foo",
-							"Bar": "foo.Container/Foo/Bar"
+							"Bar": "foo.Container/Foo/Bar",
+							"Baz": "foo.Container/Manager/foo.Employee"
 						},
 						"$Type": "foo.Team"
 					}
@@ -447,7 +483,8 @@ sap.ui.require([
 							<Member Name="_2" />\
 						</EnumType>\
 						<EnumType Name="Baz1"  IsFlags="false" UnderlyingType="Edm.Int64">\
-							<Member Name="_1" Value="123456789123456789" />\
+							<Member Name="_1" Value="9007199254740991" />\
+							<Member Name="_2" Value="9007199254740992" />\
 						</EnumType>\
 						<EnumType Name="Baz2" UnderlyingType="Edm.Int64">\
 							<Member Name="_1" />\
@@ -478,7 +515,8 @@ sap.ui.require([
 				"foo.Baz1": {
 					"$kind": "EnumType",
 					"$UnderlyingType": "Edm.Int64",
-					"_1": "123456789123456789"
+					"_1": 9007199254740991,
+					"_2": "9007199254740992"
 				},
 				"foo.Baz2": {
 					"$kind": "EnumType",
@@ -662,6 +700,87 @@ sap.ui.require([
 					"$kind": "Term",
 					"$Type": "foo.Bar",
 					"$BaseTerm": "foo.Term1"
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: Annotations", function (assert) {
+		testConversion(assert, '\
+				<DataServices>\
+					<Schema Namespace="foo" Alias="f">\
+						<Annotations Target="f.Bar/f.Baz">\
+							<Annotation Term="f.Binary" Binary="T0RhdGE"/>\
+							<Annotation Term="f.Bool" Bool="false"/>\
+							<Annotation Term="f.Date" Date="2015-01-01" />\
+							<Annotation Term="f.DateTimeOffset"\
+								DateTimeOffset="2000-01-01T16:00:00.000-09:00" />\
+							<Annotation Term="f.Decimal" Decimal="3.14" />\
+							<Annotation Term="f.Duration" Duration="P11D23H59M59S" />\
+							<Annotation Term="f.EnumMember1" EnumMember="0" />\
+							<Annotation Term="f.EnumMember2" EnumMember="9007199254740991" />\
+							<Annotation Term="f.EnumMember3" EnumMember="9007199254740992" />\
+							<Annotation Term="f.Float1" Float="2.718" />\
+							<Annotation Term="f.Float2" Float="NaN" />\
+							<Annotation Term="f.Float3" Float="INF" />\
+							<Annotation Term="f.Float4" Float="-INF" />\
+							<Annotation Term="f.Guid"\
+								Guid="21EC2020-3AEA-1069-A2DD-08002B30309D" />\
+							<Annotation Term="f.Int1" Int="42"/>\
+							<Annotation Term="f.Int2" Int="9007199254740991" />\
+							<Annotation Term="f.Int3" Int="9007199254740992" />\
+							<Annotation Term="f.String" String="foobar" />\
+							<Annotation Term="f.TimeOfDay" TimeOfDay="21:45:00" />\
+							<Annotation Term="f.AnnotationPath"\
+								AnnotationPath="Path/f.Bar/f.Baz@f.Term" />\
+							<Annotation Term="f.NavigationPropertyPath"\
+								NavigationPropertyPath="Path/f.Bar/f.Baz" />\
+							<Annotation Term="f.Path" Path="Path/f.Bar/f.Baz" />\
+							<Annotation Term="f.PropertyPath" PropertyPath="Path/f.Bar/f.Baz" />\
+							<Annotation Term="f.UrlRef" UrlRef="http://foo.bar" />\
+							<Annotation Term="f.Baz" Qualifier="Employee"/>\
+						</Annotations>\
+						<Annotations Target="f.Bar/Abc" Qualifier="Employee">\
+							<Annotation Term="f.Baz"/>\
+						</Annotations>\
+					</Schema>\
+				</DataServices>',
+			{
+				"$Annotations": {
+					"foo.Bar/foo.Baz": {
+						"@foo.Binary": {"$Binary": "T0RhdGE"},
+						"@foo.Bool": false,
+						"@foo.Date": {"$Date" : "2015-01-01"},
+						"@foo.DateTimeOffset": {
+							"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"
+						},
+						"@foo.Decimal": {"$Decimal" : "3.14"},
+						"@foo.Duration": {"$Duration" : "P11D23H59M59S"},
+						"@foo.EnumMember1": {"$EnumMember" : 0},
+						"@foo.EnumMember2": {"$EnumMember" : 9007199254740991},
+						"@foo.EnumMember3": {"$EnumMember" : "9007199254740992"},
+						"@foo.Float1": 2.718,
+						"@foo.Float2": {"$Float": "NaN"},
+						"@foo.Float3": {"$Float": "Infinity"},
+						"@foo.Float4": {"$Float": "-Infinity"},
+						"@foo.Guid": {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
+						"@foo.Int1": 42,
+						"@foo.Int2": 9007199254740991,
+						"@foo.Int3": {"$Int" : "9007199254740992"},
+						"@foo.String": "foobar",
+						"@foo.TimeOfDay": {"$TimeOfDay": "21:45:00"},
+						"@foo.AnnotationPath": {
+							"$AnnotationPath": "Path/foo.Bar/foo.Baz@foo.Term"
+						},
+						"@foo.NavigationPropertyPath": {
+							"$NavigationPropertyPath": "Path/foo.Bar/foo.Baz"
+						},
+						"@foo.Path": {"$Path": "Path/foo.Bar/foo.Baz"},
+						"@foo.PropertyPath": {"$PropertyPath": "Path/foo.Bar/foo.Baz"},
+						"@foo.UrlRef": {"$UrlRef": "http://foo.bar"},
+						"@foo.Baz#Employee": true
+					},
+					"foo.Bar/Abc" : {"@foo.Baz#Employee": true}
 				}
 			});
 	});

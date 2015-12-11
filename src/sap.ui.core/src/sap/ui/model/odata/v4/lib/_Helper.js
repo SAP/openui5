@@ -232,6 +232,24 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		},
 
 		/**
+		 * Checks that the value is a safe integer.
+		 *
+		 * @param {number} iNumber the value
+		 * @returns {boolean}
+		 *   true if the value is a safe integer
+		 */
+		isSafeInteger : function (iNumber) {
+			if (typeof iNumber !== "number" || !isFinite(iNumber)) {
+				return false;
+			}
+			iNumber = Math.abs(iNumber);
+			// The safe integers consist of all integers from -(2^53 - 1) inclusive to 2^53 - 1
+			// inclusive.
+			// 2^53 - 1 = 9007199254740991
+			return iNumber <= 9007199254740991 && Math.floor(iNumber) == iNumber;
+		},
+
+		/**
 		 * Serializes an array of requests to an object containing the batch request body and
 		 * mandatory headers for the batch request.
 		 *
