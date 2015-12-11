@@ -53,6 +53,8 @@ sap.ui.define([
 							["$expand", "$select"]));
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
+				} else {
+					this.oCache = undefined;
 				}
 				ContextBinding.call(this, oModel, sBindingPath, oContext);
 			},
@@ -141,6 +143,31 @@ sap.ui.define([
 				fnResolve(oData);
 			}, reject);
 		});
+	};
+
+	/**
+	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
+	 * control, that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * Refresh is supported for absolute bindings.
+	 *
+	 * @param {boolean} bForceUpdate
+	 *   <code>bForceUpdate</code> has to be <code>true</code>
+	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code> or refresh
+	 *   on this binding is not supported
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#refresh
+	 */
+	ODataContextBinding.prototype.refresh = function (bForceUpdate) {
+		if (!bForceUpdate) {
+			throw new Error("Falsy values for bForceUpdate are not supported");
+		}
+		if (!this.oCache) {
+			throw new Error("Refresh on this binding is not supported");
+		}
+		this.oCache.refresh();
+		this._fireChange();
 	};
 
 	/**

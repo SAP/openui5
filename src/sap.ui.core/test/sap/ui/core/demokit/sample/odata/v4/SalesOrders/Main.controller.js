@@ -75,7 +75,14 @@ sap.ui.define([
 		},
 
 		onRefresh : function (oEvent) {
-			this.getView().byId("SalesOrders").getBinding("items").refresh();
+			this.getView().byId("SalesOrders").getBinding("items").refresh(true);
+		},
+
+		onRefreshSalesOrder : function (oEvent) {
+			var oBinding = this.getView().byId("ObjectPage").getElementBinding();
+			if (oBinding) {
+				oBinding.refresh(true);
+			}
 		},
 
 		onSalesOrdersSelect : function (oEvent) {
