@@ -309,7 +309,7 @@ sap.ui.define([
 	MessageManager.prototype.unregisterMessageProcessor = function(oProcessor) {
 		this.removeMessages(this.mMessages[oProcessor.getId()]);
 		delete this.mProcessors[oProcessor.getId()];
-		oProcessor.detachMessageChange(this.onMessageChange);
+		oProcessor.detachMessageChange(this.onMessageChange, this);
 	};
 	
 	/**
