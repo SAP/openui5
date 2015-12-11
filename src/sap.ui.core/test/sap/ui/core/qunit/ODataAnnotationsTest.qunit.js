@@ -21,7 +21,7 @@ function deepContains(oValue, oExpected, sMessage) {
 		
 		
 		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
-			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
+			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches (" + oExpected[sKey].length + ")");
 		}
 		
 		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
@@ -29,7 +29,7 @@ function deepContains(oValue, oExpected, sMessage) {
 			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
 		} else {
 			// Compare directly
-			equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
+			equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match (" + oExpected[sKey] + ")");
 		}
 	}
 }
@@ -327,6 +327,14 @@ function runODataAnnotationTests() {
 			annotations      : [
 				"fakeService://testdata/odata/overwrite-on-term-level-1",
 				"fakeService://testdata/odata/overwrite-on-term-level-2"
+			],
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		"EDMType for NavigationProperties": {
+			service          : "fakeService://testdata/odata/northwind/",
+			annotations      : [
+				"fakeService://testdata/odata/edmtype-for-navigationproperties"
 			],
 			serviceValid     : true,
 			annotationsValid : "all"
@@ -4891,6 +4899,7 @@ function runODataAnnotationTests() {
 					"Correctly overwritten annotations: EntityContainer.ui5.test.NorthwindEntities"
 				);
 				
+				oModel.destroy();
 				start();
 			});
 		});
@@ -4898,7 +4907,6 @@ function runODataAnnotationTests() {
 
 	asyncTest("V1: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 1));
 	asyncTest("V2: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 2));
-
 
 	var fnTestAceptHeader = function(iModelVersion) {
 		expect(12);
@@ -4979,4 +4987,109 @@ function runODataAnnotationTests() {
 
 	asyncTest("V1: Send Accept-Language Header", fnTestAceptHeader.bind(this, 1));
 	asyncTest("V2: Send Accept-Language Header", fnTestAceptHeader.bind(this, 2));
+	
+	
+	
+	var fnTestEdmTypeForNavigationProperties = function(iModelVersion) {
+		
+		cleanOdataCache();
+		var mTest = mAdditionalTestsServices["EDMType for NavigationProperties"];
+		var oModel = fnCreateModel(iModelVersion, mTest.service);
+
+		oModel.attachMetadataLoaded(function() {
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			equals(Object.keys(oAnnotations).length, 0, "No Annotations loaded from service metadata");
+			
+			oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
+				var oAnnotations = oModel.getServiceAnnotations();
+				
+				deepContains(oAnnotations["NorthwindModel.Supplier"], {
+					"com.sap.vocabularies.UI.v1.LineItem": [{
+							"Label": {
+								"String": "Product Supplier ID"
+							},
+							"Value": {
+								"Path": "SupplierID"
+							},
+							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+							"EdmType": "Edm.Int32"
+						}, {
+							"Label": {
+								"String": "Product Supplier Name"
+							},
+							"Value": {
+								"Path": "CompanyName"
+							},
+							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+							"EdmType": "Edm.String"
+						}, {
+							"Label": {
+								"String": "Product Supplier ID"
+							},
+							"Value": {
+								"Path": "Products/ProductID"
+							},
+							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+							"EdmType": "Edm.Int32"
+					}]
+				}, "Product EDM types are correctly set");
+				
+				deepContains(oAnnotations["NorthwindModel.Product"], {
+					 "com.sap.vocabularies.UI.v1.LineItem": [{
+							"Label": {
+								 "String": "Product ID"
+							},
+							"Value": {
+								 "Path": "ProductID"
+							},
+							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+							"EdmType": "Edm.Int32"
+						}, {
+							"Label": {
+								 "String": "Product Name"
+							},
+							"Value": {
+								 "Path": "ProductName"
+							},
+							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+							"EdmType": "Edm.String"
+						}, {
+							"Label": {
+								 "String": "Product Supplier ID"
+							},
+							"Value": {
+								 "Path": "Supplier/SupplierID"
+							},
+							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+							"EdmType": "Edm.Int32"
+						}, {
+							"Label": {
+								 "String": "Product Supplier Name"
+							},
+							"Value": {
+								 "Path": "Supplier/CompanyName"
+							},
+							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+							"EdmType": "Edm.String"
+						}, {
+							"Label": {
+								 "String": "Product Supplier ID"
+							},
+							"Value": {
+								 "Path": "Category/CategoryName"
+							},
+							"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+							"EdmType": "Edm.String"
+					}]
+				}, "Product EDM types are correctly set");
+				
+				oModel.destroy();
+				start();
+			});
+		});
+	};
+		
+	asyncTest("V1: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 1));
+	asyncTest("V2: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 2));
 }
