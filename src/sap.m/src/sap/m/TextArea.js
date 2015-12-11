@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	};
 
 	// Flag for the Fiori Client on Windows Phone
-	var _bMSWebView = sap.ui.Device.os.windows_phone && (/MSAppHost\/2.0/i).test(navigator.appVersion);
+	var _bMSWebView = sap.ui.Device.os.windows_phone && (/MSAppHost/i).test(navigator.appVersion);
 
 	/**
 	 * Special handling for the focusing issue in SAP Fiori Client on Windows Phone.
