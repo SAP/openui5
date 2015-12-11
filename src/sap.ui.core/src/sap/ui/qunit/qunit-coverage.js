@@ -6,6 +6,8 @@
 (function() {
 	"use strict";
 
+	/*global jQuery */
+
 	if (typeof QUnit === "undefined") {
 		throw new Error("qunit-coverage.js: QUnit is not loaded yet!");
 	}

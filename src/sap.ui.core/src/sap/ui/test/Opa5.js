@@ -19,7 +19,7 @@ sap.ui.define([
 		'./pipelines/MatcherPipeline',
 		'./pipelines/ActionPipeline'
 	],
-	function($,
+	function(jQuery,
 			 Opa,
 			 OpaPlugin,
 			 PageObjectFactory,
@@ -36,7 +36,8 @@ sap.ui.define([
 			 ActionPipeline) {
 		"use strict";
 
-		var oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
+		var $ = jQuery,
+			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
