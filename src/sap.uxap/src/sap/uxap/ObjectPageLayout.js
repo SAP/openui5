@@ -806,13 +806,18 @@ sap.ui.define([
 		var oSection = sap.ui.getCore().byId(sId);
 
 		if (this.getUseIconTabBar()) {
-
-			this._setCurrentTabSection(oSection);
-
 			var oToSelect = oSection;
 			if (oToSelect instanceof sap.uxap.ObjectPageSubSection) {
 				oToSelect = oToSelect.getParent();
 			}
+
+			/* exclude the previously selected tab from propagation chain for performance reasons */
+			if (this._oCurrentTabSection) {
+				this._oCurrentTabSection._allowPropagationToLoadedViews(false);
+			}
+			oToSelect._allowPropagationToLoadedViews(true); /* include the newly selected tab back to the propagation chain */
+
+			this._setCurrentTabSection(oSection);
 			this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[oToSelect.getId()].buttonId);
 		}
 
@@ -1187,7 +1192,7 @@ sap.ui.define([
 			oSectionBase = sap.ui.getCore().byId(sSectionId);
 
 			bShouldDisplayParentTitle = oSectionBase && oSectionBase instanceof ObjectPageSubSection &&
-				(oSectionBase.getTitle().trim() === "" || !oSectionBase._getInternalTitleVisible() || oSectionBase.getParent()._getIsHidden());
+			(oSectionBase.getTitle().trim() === "" || !oSectionBase._getInternalTitleVisible() || oSectionBase.getParent()._getIsHidden());
 
 			//the sectionBase title needs to be visible (or the user won't "feel" scrolling that sectionBase but its parent)
 			//see Incident 1570016975 for more details

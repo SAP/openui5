@@ -683,6 +683,15 @@ sap.ui.define([
 			}
 		};
 
+		BlockBase.prototype._allowPropagationToLoadedViews = function (bAllow) {
+
+			if (!this._bConnected) {
+				return; /* only loaded views should be affected */
+			}
+
+			this.mSkipPropagation._views = !bAllow; /* skip if now allowed */
+		};
+
 		/**
 		 * Override of the default model lifecycle method to disable the automatic binding resolution for lazyloading.
 		 * @override
