@@ -120,6 +120,7 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 		ACTIVE_STEP: "data-sap-ui-wpn-step-active",
 		OPEN_STEP: "data-sap-ui-wpn-step-open",
 		OPEN_STEP_PREV: "data-sap-ui-wpn-step-open-prev",
+		OPEN_STEP_NEXT: "data-sap-ui-wpn-step-open-next",
 		ARIA_LABEL: "aria-label",
 		ARIA_DISABLED: "aria-disabled"
 	};
@@ -135,6 +136,7 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 		this._activeStep = 1;
 		this._cachedSteps = null;
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._actionSheet = new sap.m.ActionSheet().addStyleClass("sapUiSizeCompact");
 		this._createAnchorNavigation();
 	};
 
@@ -246,7 +248,16 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 	};
 
 	WizardProgressNavigator.prototype.ontap = function (event) {
-		if (!(this._isIcon(event.target) || this._isAnchor(event.target)) ||
+		if (this._isGroupAtStart(event.target)) {
+			return this._showActionSheet(event.target, true);
+		}
+
+		if (this._isGroupAtEnd(event.target)) {
+			return this._showActionSheet(event.target, false);
+		}
+
+		if (!this._isAnchor(event.target) ||
+			!this._isOpenStep(event.target) ||
 			!this._isActiveStep(this._getStepNumber(event.target))) {
 			return;
 		}
@@ -265,9 +276,14 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 
 	WizardProgressNavigator.prototype.exit = function () {
 		ResizeHandler.deregisterAllForControl(this.getId());
+
 		this.removeDelegate(this._anchorNavigation);
 		this._anchorNavigation.destroy();
 		this._anchorNavigation = null;
+
+		this._actionSheet.destroy();
+		this._actionSheet = null;
+
 		this._currentStep = null;
 		this._activeStep = null;
 		this._cachedSteps = null;
@@ -493,7 +509,12 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 	};
 
 	/**
-	 * Updates the open step attribute for each step in as the DOM structure of the control.
+	 * Updates the open step attribute for each step in the DOM structure of the control.
+	 * The algorithm is as follows:
+	 * 1. A step towards the end is opened
+	 *   1.2. If there are no available steps towards the end a step towards the beginning is opened
+	 * 2. A step towards the beginning is opened
+	 *   2.2. If there are no available steps towards the beginning a step towards the end is opened
 	 * @returns {void}
 	 * @private
 	 */
@@ -510,6 +531,7 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 		[].forEach.call(this._cachedSteps, function (step) {
 			step.setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP, false);
 			step.setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_PREV, false);
+			step.setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_NEXT, false);
 		});
 
 		this._cachedSteps[currStep].setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP, true);
@@ -536,15 +558,89 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 			}
 		}
 
+		// mark the topmost steps of both groups (in the beginning and the end)
 		for (i = 0; i < this._cachedSteps.length; i++) {
 			if (this._cachedSteps[i].getAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP) == "true" &&
 				this._cachedSteps[i - 1] &&
 				this._cachedSteps[i - 1].getAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP) == "false") {
 
 				this._cachedSteps[i - 1].setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_PREV, true);
+			}
+
+			if (this._cachedSteps[i].getAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP) == "false" &&
+				this._cachedSteps[i - 1] &&
+				this._cachedSteps[i - 1].getAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP) == "true") {
+
+				this._cachedSteps[i].setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_NEXT, true);
 				break;
 			}
 		}
+	};
+
+	/**
+	 * Checks whether the argument has data-sap-ui-wpn-step-open-prev attribute set to true.
+	 * This means this is the topmost step of the group at the start of the navigator.
+	 * It is a group if there is more than one step in the group - the step is not the first one.
+	 * @param {HTMLElement} domTarget The target of the click/tap event.
+	 * @returns {boolean} Returns true when data-sap-ui-wpn-step-open-prev=true, false otherwise.
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._isGroupAtStart = function (domTarget) {
+		var step = jQuery(domTarget).closest("." + WizardProgressNavigator.CLASSES.STEP);
+		var stepNumber = this._getStepNumber(step);
+
+		return step.attr(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_PREV) === "true" &&
+				stepNumber > 1;
+	};
+
+	/**
+	 * Checks whether the argument has data-sap-ui-wpn-step-open attribute set to false.
+	 * This means this is the topmost step of the group at the end of the navigator.
+	 * It is a group if there is more than one step in the group - the step is not the last one.
+	 * @param {HTMLElement} domTarget The target of the click/tap event.
+	 * @returns {boolean} Returns true when data-sap-ui-wpn-step-open=false, false otherwise.
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._isGroupAtEnd = function (domTarget) {
+		var step = jQuery(domTarget).closest("." + WizardProgressNavigator.CLASSES.STEP);
+		var stepNumber = this._getStepNumber(step);
+
+		return step.attr(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_NEXT) === "true" &&
+				stepNumber < this._cachedSteps.length;
+	};
+
+	/**
+	 * Opens an ActionSheet control with buttons for each grouped step.
+	 * @param {HTMLElement} domTarget The target of the click/tap event.
+	 * @param {boolean} atStart The position of the group (at the start or at the end).
+	 * @returns {void}
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._showActionSheet = function (domTarget, atStart) {
+		var fromStep = atStart ? 0 : this._getStepNumber(domTarget) - 1;
+		var toStep = atStart ? this._getStepNumber(domTarget) : this._cachedSteps.length;
+		var icon, title;
+
+		this._actionSheet.removeAllButtons();
+		for (var i = fromStep; i < toStep; i++) {
+			icon = this.getStepIcons()[i];
+			title = this._cachedSteps[i].childNodes[0].getAttribute("title");
+
+			// show the step number if there is no icon
+			title = icon ? title : (i + 1) + ". " + title;
+
+			this._actionSheet.addButton(new sap.m.Button({
+				width: "200px",
+				text: title,
+				icon: icon,
+				enabled: this._activeStep >= (i + 1),
+				press: function (stepNumber) {
+					this._moveToStep(stepNumber);
+				}.bind(this, i + 1)
+			}));
+		}
+
+		this._actionSheet.openBy(domTarget);
 	};
 
 	/**
@@ -558,13 +654,20 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 	};
 
 	/**
-	 * Checks whether the argument has sapMWizardProgressNavIcon class present.
+	 * Checks whether the argument has the open step attribute set to true.
+	 * If not it checks whether it is an only step in a group - therefore navigate to it directly.
 	 * @param {HTMLElement} domTarget The target of the click/tap event.
 	 * @returns {boolean} Returns true when sapMWizardProgressNavIcon class is present, false otherwise.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._isIcon = function (domTarget) {
-		return domTarget.className.indexOf(WizardProgressNavigator.CLASSES.ICON) !== -1;
+	WizardProgressNavigator.prototype._isOpenStep = function (domTarget) {
+		var step = jQuery(domTarget).closest("." + WizardProgressNavigator.CLASSES.STEP);
+
+		return step.attr(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP) === "true" ||
+				(step.attr(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP) === "false" &&
+				step.attr(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_PREV) === "true") ||
+				(step.attr(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP) === "false" &&
+				step.attr(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_NEXT) === "true");
 	};
 
 	/**
@@ -580,7 +683,7 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 	/**
 	 * Extracts the step attribute from the argument.
 	 * @param {HTMLElement} domAnchor The dom element which represents the anchor tag in each step.
-	 * @returns {number} Returns parsed step number.
+	 * @returns {number} Returns parsed step number. Non-zero based.
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._getStepNumber = function (domAnchor) {
