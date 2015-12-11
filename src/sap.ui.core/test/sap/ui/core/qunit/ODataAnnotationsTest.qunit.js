@@ -9,29 +9,35 @@
  * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
  * @returns {void}
  */
-function deepContains(oValue, oExpected, sMessage) {
-	for (var sKey in oExpected) {
-		equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+ function deepContains(oValue, oExpected, sMessage) {
+ 	for (var sKey in oExpected) {
+ 		equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+ 
+ 		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
+ 			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+ 		} else {
+ 			ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
+ 		}
+ 
+ 		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
+ 			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
+ 		}
+ 
+ 		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
+ 			// Go deeper
+ 			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
+ 		} else {
+ 			// Compare directly
+ 			equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
+ 		}
+ 	}
+ }
 
-		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
-			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
-		} else {
-			ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
-		}
-
-		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
-			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
-		}
-
-		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
-			// Go deeper
-			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
-		} else {
-			// Compare directly
-			equal(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey + " match");
-		}
-	}
-}
+ jQuery.sap.require("sap.ui.model.odata.ODataModel");
+ function cleanOdataCache() {
+ 	sap.ui.model.odata.ODataModel.mServiceData = {};
+ 	sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+ }
 
 QUnit.config.testTimeout = 6000;
 
@@ -247,6 +253,14 @@ function runODataAnnotationTests() {
 		"Multiple Enums": {
 			service          : "fakeService://testdata/odata/northwind/",
 			annotations      : "fakeService://testdata/odata/multiple-enums.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		"EDMType for NavigationProperties": {
+			service          : "fakeService://testdata/odata/northwind/",
+			annotations      : [
+				"fakeService://testdata/odata/edmtype-for-navigationproperties"
+			],
 			serviceValid     : true,
 			annotationsValid : "all"
 		}
@@ -2229,6 +2243,7 @@ function runODataAnnotationTests() {
 				"Multiple Enums have their aliases correctly replaced"
 			);
 			
+			oModel.destroy();
 			start();
 		});
 		
@@ -2237,5 +2252,123 @@ function runODataAnnotationTests() {
 	
 	asyncTest("V1: Multiple Enums", fnTestEmptyCollection.bind(this, 1));
 	asyncTest("V2: Multiple Enums", fnTestEmptyCollection.bind(this, 2));
+
+	
+	
+	var fnTestEdmTypeForNavigationProperties = function(iModelVersion) {
+		expect(150);
+		
+		var clock = sinon.useFakeTimers();
+
+		cleanOdataCache();
+		var mTest = mAdditionalTestsServices["EDMType for NavigationProperties"];
+		var oModel;
+		if (iModelVersion == 1) {
+			oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+				bAsync: true
+			});
+		} else if (iModelVersion == 2) {
+			oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+			});
+		} else {
+			ok(false, "Unknown ODataModel version requested for test");
+			return;
+		}
+
+			
+		oModel.attachAnnotationsLoaded(function() {
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			deepContains(oAnnotations["NorthwindModel.Supplier"], {
+				"com.sap.vocabularies.UI.v1.LineItem": [{
+						"Label": {
+							"String": "Product Supplier ID"
+						},
+						"Value": {
+							"Path": "SupplierID"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+						"EdmType": "Edm.Int32"
+					}, {
+						"Label": {
+							"String": "Product Supplier Name"
+						},
+						"Value": {
+							"Path": "CompanyName"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+						"EdmType": "Edm.String"
+					}, {
+						"Label": {
+							"String": "Product Supplier ID"
+						},
+						"Value": {
+							"Path": "Products/ProductID"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+						"EdmType": "Edm.Int32"
+				}]
+			}, "Product EDM types are correctly set");
+			
+			deepContains(oAnnotations["NorthwindModel.Product"], {
+				 "com.sap.vocabularies.UI.v1.LineItem": [{
+						"Label": {
+							 "String": "Product ID"
+						},
+						"Value": {
+							 "Path": "ProductID"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+						"EdmType": "Edm.Int32"
+					}, {
+						"Label": {
+							 "String": "Product Name"
+						},
+						"Value": {
+							 "Path": "ProductName"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+						"EdmType": "Edm.String"
+					}, {
+						"Label": {
+							 "String": "Product Supplier ID"
+						},
+						"Value": {
+							 "Path": "Supplier/SupplierID"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+						"EdmType": "Edm.Int32"
+					}, {
+						"Label": {
+							 "String": "Product Supplier Name"
+						},
+						"Value": {
+							 "Path": "Supplier/CompanyName"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+						"EdmType": "Edm.String"
+					}, {
+						"Label": {
+							 "String": "Product Supplier ID"
+						},
+						"Value": {
+							 "Path": "Category/CategoryName"
+						},
+						"RecordType": "com.sap.vocabularies.UI.v1.DataField",
+						"EdmType": "Edm.String"
+				}]
+			}, "Product EDM types are correctly set");
+			
+			oModel.destroy();
+			start();
+		});
+
+		clock.tick(500);
+	};
+		
+	asyncTest("V1: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 1));
+	asyncTest("V2: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 2));
 
 }

@@ -470,7 +470,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 						}
 					}
 					pathValues = path.split('/');
-					if (this.isNavProperty(annotation, pathValues[0], this.oServiceMetadata)) {
+					if (!!this.findNavProperty(annotation, pathValues[0], this.oServiceMetadata)) {
 						if (!mappingList.expand) {
 							mappingList.expand = {};
 						}
@@ -499,7 +499,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 						mappingList.expand[annotation] = {};
 					}
 					pathValues = path.split('/');
-					if (this.isNavProperty(annotation, pathValues[0], this.oServiceMetadata)) {
+					if (!!this.findNavProperty(annotation, pathValues[0], this.oServiceMetadata)) {
 						if (!mappingList.expand) {
 							mappingList.expand = {};
 						}
@@ -897,6 +897,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	ODataAnnotations.prototype.getEdmType = function(sPath, oProperties, sTarget, oSchema) {
+		var iPos = sPath.indexOf("/");
+		if (iPos > -1) {
+			var sPropertyName = sPath.substr(0, iPos);
+			var mNavProperty = this.findNavProperty(sTarget, sPropertyName, this.oServiceMetadata);
+			
+			if (mNavProperty) {
+				var mToEntityType = this.oMetadata._getEntityTypeByNavPropertyObject(mNavProperty);
+
+				if (mToEntityType) {
+					sTarget = mToEntityType.entityType;
+					sPath = sPath.substr(iPos + 1);
+				}
+			}
+		}
+		
 		if ((sPath.charAt(0) === "@") && (sPath.indexOf(oSchema.Alias) === 1)) {
 			sPath = sPath.slice(oSchema.Alias.length + 2);
 		}
@@ -1185,7 +1200,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		apply['Parameters'] = parameters;
 		return apply;
 	};
-	ODataAnnotations.prototype.isNavProperty = function(sEntityType, sPathValue, oMetadata) {
+	
+	
+	/**
+	 * Returns true if the given path combined with the given entity-type is found in the
+	 * given metadata
+	 *
+	 * @param {string} sEntityType - The entity type to look for
+	 * @param {string} sPathValue - The path to look for
+	 * @param {object} oMetadata - The service's metadata object to search in
+	 * @returns {boolean} True if the path/entityType combination is found
+	 */
+	ODataAnnotations.prototype.findNavProperty = function(sEntityType, sPathValue, oMetadata) {
 		var oMetadataSchema, i, namespace, aEntityTypes, j, k;
 		for (i = oMetadata.dataServices.schema.length - 1; i >= 0; i -= 1) {
 			oMetadataSchema = oMetadata.dataServices.schema[i];
@@ -1196,14 +1222,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					if (namespace + aEntityTypes[k].name === sEntityType && aEntityTypes[k].navigationProperty) {
 						for (j = 0; j < aEntityTypes[k].navigationProperty.length; j += 1) {
 							if (aEntityTypes[k].navigationProperty[j].name === sPathValue) {
-								return true;
+								return aEntityTypes[k].navigationProperty[j];
 							}
 						}
 					}
 				}
 			}
 		}
-		return false;
+		return null;
 	};
 
 	ODataAnnotations.prototype.replaceWithAlias = function(sValue, oAlias) {
