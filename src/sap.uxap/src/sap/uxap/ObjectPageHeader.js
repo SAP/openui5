@@ -714,11 +714,15 @@ sap.ui.define([
 
 		if (iActionsContProportion > this._iAvailablePercentageForActions) {
 			this._adaptActions(iAvailableSpaceForActions);
-		} else {
-			$overflowButton.hide();
 		}
 
 		$actionButtons.css("visibility", "visible");
+
+		// verify overflow button visibility
+		if ($actionButtons.filter(":visible").length === $actionButtons.length) {
+			$overflowButton.hide();
+		}
+
 		this._adaptObjectPageHeaderIndentifierLine();
 	};
 
