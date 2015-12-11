@@ -216,6 +216,16 @@ QUnit.test("Test for method setUploadUrl", function(assert) {
 	assert.equal(this.oUploadCollection.getUploadUrl(), sUploadUrl, "UploadUrl property should not be overwritten at runtime if instantUpload is false.");
 });
 
+QUnit.test("Test for MultiSelect in pending upload (not supported)", function(assert) {
+	//Act
+	this.createUploadCollection({
+		instantUpload : false,
+		mode : sap.m.ListMode.MultiSelect
+	});
+	//Assert
+	assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode after setting 'MultiSelect' in pending upload is 'None'");
+});
+
 QUnit.module("Rendering of UploadCollection with instantUpload = false ", {
 
 	setup : function() {
