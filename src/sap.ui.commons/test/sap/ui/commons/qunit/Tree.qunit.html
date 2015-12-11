@@ -894,6 +894,58 @@
 			equal(oJqueryShowSpy.args[0].length, 0, "Node1 hides without animation.");
 			equal(oJqueryShowSpy.args[1].length, 0, "Node11 hides without animation.");
 		});
+
+		test("Store references to the selected hidden children", function() {
+			var oDeepTree = new sap.ui.commons.Tree("tr2tree", {
+				nodes: [
+					new sap.ui.commons.TreeNode("tr2node1", {
+						text: "n1",
+						expanded: true,
+						nodes: [
+							new sap.ui.commons.TreeNode("tr2node11", {
+								text: "n11",
+								expanded: true,
+								nodes: [
+									new sap.ui.commons.TreeNode("tr2node111", {
+										text: "n111",
+										expanded: true,
+										nodes: [
+											new sap.ui.commons.TreeNode("tr2node1111", {
+												text: "n1111",
+												expanded: true
+											})
+										]
+									})
+
+								]
+							})
+						]
+					})
+				]
+			});
+			oDeepTree.setWidth("100%");
+			oDeepTree.setHeight("auto");
+			oDeepTree.placeAt("target4");
+			sap.ui.getCore().applyChanges();
+
+			var oNode1 = sap.ui.getCore().byId("tr2node1");
+			var oNode11 = sap.ui.getCore().byId("tr2node11");
+			var oNode111 = sap.ui.getCore().byId("tr2node111");
+			var oNode1111 = sap.ui.getCore().byId("tr2node1111");
+
+			oNode1111.select();
+			oDeepTree.collapseAll();
+
+			this.stub(sap.ui.commons.TreeNode, "ANIMATION_DURATION", 0);
+			oNode1.expand();
+
+			equal(oNode1.getSelectedForNodes().length, 0, "References of its selected hidden children removed when expanded.");
+			equal(oNode11.getSelectedForNodes().length, 1, "Node references propagated to the first collapsed parent of the selected hidden children.");
+			equal(oNode11.getSelectedForNodes()[0], "tr2node1111", "Node references propagated to the first collapsed parent of the selected hidden children.");
+			equal(oNode111.getSelectedForNodes().length, 0, "Node references not propagated to the other collapsed parents of the selected hidden children.");
+
+			oDeepTree.destroy();
+		});
 		</script>
 	</head>
 	<body>
