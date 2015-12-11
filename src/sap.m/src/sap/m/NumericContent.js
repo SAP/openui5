@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class NumericContent to be used in tile or in other place where need to show numeric values with sematic colors and deviations.
+	 * @class Shows numeric values used for example in tiles colored according to their meaning and displays deviations.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

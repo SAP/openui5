@@ -12,7 +12,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class This control displays the feed content text, subheader, and numeric value in a tile.
+	 * @class Displays a tile containing the text of the feed, a subheader, and a numeric value.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

@@ -1380,7 +1380,7 @@
 		{
 			"id": "sap.m.sample.FeedContent",
 			"name": "Feed Content",
-			"description": "This control is used to display the feed content text, subheader, and numeric value in a tile."
+			"description": "Shows the tile containing the text of the feed, a subheader, and a numeric value."
 		},
 		{
 		  "id": "sap.m.sample.Label",
@@ -1604,18 +1604,18 @@
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifSizes",
-			"name": "Numeric Content Different Sizes",
-			"description": "NumericContent contains numbers, number units, an icon, and state arrows. The numbers can be displayed in semantic colors. You can set up the size of the NumericContent. By default, the size property is set to Auto. It means that the size of the control changes automatically according to the device. You can also set a fixed control size: small (S), medium (M), or large (L)."
+			"name": "Numeric Content of Different Sizes",
+			"description": "Shows NumericContent including numbers, units of measurement and status arrows indicating a trend. The numbers can be colored according to their meaning. The size of the numbers can be fixed or can adapt to the device used."
 		},
 		{
 			"id": "sap.m.sample.NumericContentIcon",
-			"name": "Numeric Content With Icon",
-			"description": "This is an example of the NumericContent that contains an icon."
+			"name": "Numeric Content with Icon",
+			"description": "Shows NumericContent including an icon."
 		},
 		{
 			"id": "sap.m.sample.NumericContentWithoutMargin",
 			"name": "Numeric Content Without Margins",
-			"description": "This is an example of the NumericContent that contains no margins, so the control fits to the whole size."
+			"description": "This is an example of the NumericContent that contains no margins, so the control is aligned to the left and to the top without any margins."
 		},
 		{
 		  "id": "sap.m.sample.Token",
@@ -2140,32 +2140,32 @@
 		{
 		  "id": "sap.m.sample.GenericTile1x1",
 		  "name": "Generic Tile 1x1",
-		  "description": "The GenericTile control with the 1x1 frame type that displays the header and NumericContent control in size S and M."
+		  "description": "Shows the 1x1 frame type containing the title, the description, and the customizable main area."
 		},
 		{
 		  "id": "sap.m.sample.GenericTile2x1SingleCont",
 		  "name": "Generic Tile 2x1 - Single Content",
-		  "description": "The GenericTile control with the 2x1 frame type that displays the header and one content."
+		  "description": "Shows the 2x1 frame type containing the title, the description, and the customizable main area."
 		},
 		{
 		  "id": "sap.m.sample.GenericTile2x1TwoCont",
 		  "name": "Generic Tile 2x1 - Two Contents",
-		  "description": "The GenericTile control with the 2x1 frame type that displays the header and two contents."
+		  "description": "Shows the 2x1 frame type containing the title, the description and two customizable areas."
 		},
 		{
 		  "id": "sap.m.sample.SlideTile",
-		  "name": "Generic Tiles in Slide Tile",
-		  "description": "The GenericTile control with the 2x1 frame type that displays the header and one content in the SlideTile control."
+		  "name": "Generic Tiles Sliding",
+		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileStates",
-		  "name": "Generic Tile States",
-		  "description": "These samples show the GenericTile control in the loading, failed, and disabled states."
+		  "name": "Generic Tile Statuses",
+		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
-		  "description": "This control serves as a universal container for different types of content and footer."
+		  "description": "Shows the universal container for different types of content and context information in the footer area."
 		},
 		{
 		  "id": "sap.m.sample.Breadcrumbs",
