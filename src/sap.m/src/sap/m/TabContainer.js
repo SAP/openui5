@@ -225,6 +225,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		};
 
 		/**
+		 * Calculates the next item to be focused & selected and applies the focus & selection when an item is removed
+		 *
+		 * @param bSetAsSelected {boolean} Whether the next item to be selected
+		 * @private
+		 */
+		TabContainer.prototype._moveToNextItem = function (bSetAsSelected) {
+			var iItemsCount = this.getItems().length,
+					iCurrentFocusedIndex = this._getTabStrip()._oItemNavigation.getFocusedIndex(),
+					iNextIndex = iItemsCount === iCurrentFocusedIndex ? --iCurrentFocusedIndex : iCurrentFocusedIndex,
+					oNextItem = this.getItems()[iNextIndex],
+					fnFocusCallback = function () {
+						this._getTabStrip()._oItemNavigation.focusItem(iNextIndex);
+					};
+
+			// Selection (causes invalidation)
+			if (bSetAsSelected) {
+				this.setSelectedItem(oNextItem);
+				// Notify the subscriber
+				this.fireItemSelect({item: oNextItem});
+			}
+			// Focus (force to wait until invalidated)
+			jQuery.sap.delayedCall(0, this, fnFocusCallback);
+		};
+
+		/**
 		 * Removes an item from the aggregation named <code>items</code>.
 		 *
 		 * @param {int | string | sap.m.TabContainerItem} vItem The item to remove or its index or id.
@@ -232,20 +257,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @public
 		 */
 		TabContainer.prototype.removeItem = function(vItem) {
-			var oTabStripItem;
-
-			vItem = this.removeAggregation("items", vItem);
+			var bIsSelected;
 
 			if (!vItem) {
 				return null;
 			}
 
-			if (vItem.getId() === this.getSelectedItem()) {
-				//ToDo (by Niki): Apply the removal logic here
-			}
+			// The selection flag of the removed item
+			bIsSelected = vItem.getId() === this.getSelectedItem();
+			//Remove the corresponding TabContainerItem
+			vItem = this.removeAggregation("items", vItem);
+			this._getTabStrip().removeItem(this._toTabStripItem(vItem));
+			// Perform selection switch
+			this._moveToNextItem(bIsSelected);
 
-			oTabStripItem = this._toTabStripItem(vItem);
-			this._getTabStrip().removeItem(oTabStripItem);
 
 			return vItem;
 		};
