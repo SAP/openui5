@@ -168,8 +168,16 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		 * @private
 		 */
 		TabStripSelect.prototype.onAfterRenderingPicker = function() {
+			var iPickerOffsetX,
+				bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
+			
 			Select.prototype.onAfterRenderingPicker.call(this);
-			var iPickerOffsetX = this.getPicker().$().width() - this.$().width();
+			if (bPageRTL) {
+				iPickerOffsetX = this.$().width() - this.getPicker().$().width();
+			} else {
+				iPickerOffsetX = this.getPicker().$().width() - this.$().width();
+			}
+
 			this.getPicker().setOffsetX(-iPickerOffsetX);
 			this.getPicker()._calcPlacement(); // needed to apply the new offset after the popup is open
 		};
