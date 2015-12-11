@@ -481,6 +481,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		}
 	};
 
+		NotificationListGroup.prototype.clone = function () {
+		var clonedObject = Control.prototype.clone.apply(this, arguments);
+
+		// "_overflowToolbar" aggregation is hidden and it is not cloned by default
+		var overflowToolbar = this.getAggregation('_overflowToolbar');
+		clonedObject.setAggregation("_overflowToolbar", overflowToolbar.clone(), true);
+
+		return clonedObject;
+	};
+
 	/**
 	 * Compares two priorities and returns the higher one.
 	 * @param {sap.ui.core.Priority} firstPriority First priority string to be compared
