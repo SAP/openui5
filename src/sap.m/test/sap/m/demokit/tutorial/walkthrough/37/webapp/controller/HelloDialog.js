@@ -18,6 +18,9 @@ sap.ui.define([
 
 			var oDialog = this._getDialog();
 
+			// forward compact/cozy style into Dialog
+			jQuery.sap.syncStyleClass(oView.getController().getOwnerComponent().getContentDensityClass(), oView, oDialog);
+
 			// connect dialog to view (models, lifecycle)
 			oView.addDependent(oDialog);
 
