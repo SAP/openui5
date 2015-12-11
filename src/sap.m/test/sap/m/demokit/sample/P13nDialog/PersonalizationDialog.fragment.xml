@@ -5,16 +5,19 @@
 		reset="handleReset" initialVisiblePanelType="sort">
 		<panels>
 			<P13nColumnsPanel title="Columns" visible="true"
-				addColumnsItem="onAddColumnsItem" changeColumnsItems="onChangeColumnsItem" type="columns"
+				addColumnsItem="onAddColumnsItem" changeColumnsItems="onChangeColumnsItem"
+				type="columns"
 				items="{
                     path: '/ColumnCollection'
                 }">
 				<items>
-					<P13nItem columnKey="{path}" text="{text}"
-						visible="{visible}" />
+					<!-- P13nItem columnKey="name" text="{i18n>ColumnName}" visible="true" 
+						/ -->
+					<P13nItem columnKey="{path}" text="{text}" visible="{visible}" />
 				</items>
 			</P13nColumnsPanel>
-			<P13nSortPanel title="Sort" visible="false" type="sort" containerQuery="true" layoutMode="Desktop"
+			<P13nSortPanel title="Sort" visible="false" type="sort"
+				containerQuery="true" layoutMode="Desktop"
 				items="{
                     path: '/ColumnCollection'
                 }"
@@ -23,21 +26,21 @@
                 }">
 				<P13nItem columnKey="{path}" text="{text}" />
 				<sortItems>
-					<P13nSortItem columnKey="{columnKeyModel}"
-						operation="{operationModel}" />
+					<P13nSortItem columnKey="{columnKeyModel}" operation="{operationModel}" />
 				</sortItems>
 			</P13nSortPanel>
 			<P13nFilterPanel title="Filter" visible="true" type="filter"
 				containerQuery="true" layoutMode="Desktop"
 				items="{
                     path: '/ColumnCollection'
-                }" filterItems="{
+                }"
+				filterItems="{
                     path: '/FilterItems'
                 }">
 				<P13nItem columnKey="{path}" text="{text}" />
 				<filterItems>
-					<P13nFilterItem columnKey="{columnKeyModel}" operation="{operationModel}"
-						value1="{value1Model}" />
+					<P13nFilterItem columnKey="{columnKeyModel}"
+						operation="{operationModel}" value1="{value1Model}" />
 				</filterItems>
 			</P13nFilterPanel>
 		</panels>

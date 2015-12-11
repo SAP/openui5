@@ -377,7 +377,7 @@ sap.ui.define([
 		}
 		oPanel.setValidationExecutor(jQuery.proxy(this._callValidationExecutor, this));
 		oPanel.setValidationListener(jQuery.proxy(this._registerValidationListener, this));
-		oNavigationItem.setModel(oPanel.getModel());
+// oNavigationItem.setModel(oPanel.getModel("$sapmP13nPanel")); ---> is not yet needed as P13nDialog sets the model coming from controller
 		return oNavigationItem;
 	};
 
@@ -498,7 +498,7 @@ sap.ui.define([
 			if (bVisible) {
 				oPanel.beforeNavigationTo();
 				if (!this.getModel()) {
-					this.setModel(oPanel.getModel());
+					this.setModel(oPanel.getModel("$sapmP13nPanel"), "$sapmP13nDialog");
 				}
 			}
 			oPanel.setVisible(bVisible);
@@ -509,7 +509,7 @@ sap.ui.define([
 			if (bVisible) {
 				oPanel.beforeNavigationTo();
 				if (!this.getModel()) {
-					this.setModel(oPanel.getModel());
+					this.setModel(oPanel.getModel("$sapmP13nPanel"), "$sapmP13nDialog");
 				}
 			}
 			oPanel.setVisible(bVisible);

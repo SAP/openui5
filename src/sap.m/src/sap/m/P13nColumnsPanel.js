@@ -1177,27 +1177,27 @@ sap.ui.define([
 	 * @returns {sap.m.ColumnListItem} oNewTableItem is the new created table item or null
 	 */
 	P13nColumnsPanel.prototype._createNewTableItemBasedOnP13nItem = function(oItem) {
-		var oNewTableItem = null, sColumnKeys = null;
-
-		if (oItem) {
-			sColumnKeys = oItem.getColumnKey();
-			oNewTableItem = new sap.m.ColumnListItem({
-				cells: [
-					new sap.m.Text({
-						text: oItem.getText()
-					})
-				],
-				visible: true,
-				selected: oItem.getVisible(),
-				tooltip: oItem.getTooltip(),
-				type: sap.m.ListType.Active
-			});
-			
-			oNewTableItem.data('P13nColumnKey', sColumnKeys);
-
-			// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
-			oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
+		if (!oItem) {
+			return null;
 		}
+		var sColumnKeys = oItem.getColumnKey();
+		// Note: for 'i18n' resource model the item text is not set yet. So set the copy of "text" binding info into table item.
+		var oNewTableItem = new sap.m.ColumnListItem({
+			cells: [
+				new sap.m.Text({
+					text: oItem.getText() ? oItem.getText() : jQuery.extend(true, {}, oItem.getBindingInfo("text"))
+				})
+			],
+			visible: true,
+			selected: oItem.getVisible(),
+			tooltip: oItem.getTooltip(),
+			type: sap.m.ListType.Active
+		});
+
+		oNewTableItem.data('P13nColumnKey', sColumnKeys);
+
+		// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
+		oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
 
 		return oNewTableItem;
 	};
@@ -1323,7 +1323,7 @@ sap.ui.define([
 		this._aExistingTableItems = null;
 
 		this.setType(sap.m.P13nPanelType.columns);
-		
+
 		// ---------------------------------------------------------------
 		// Following object _oTableItemsOrdering handles the table behavior for sorting of included items
 		// - _bShallBeOrderedOnlyFirstTime = true means that the table items will ONLY be sorted during the very
@@ -1485,7 +1485,6 @@ sap.ui.define([
 
 		this._oToolbarSpacer = new sap.m.ToolbarSpacer();
 
-
 		this._oToolbar = new sap.m.OverflowToolbar({
 			active: true,
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
@@ -1556,7 +1555,7 @@ sap.ui.define([
 		});
 
 		this.addAggregation("content", this._oScrollContainer);
-		
+
 		this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(this._oScrollContainer, this._fnHandleResize);
 	};
 
@@ -1690,7 +1689,7 @@ sap.ui.define([
 
 		sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
 		this._sContainerResizeListener = null;
-		
+
 		this._oMoveToTopButton.destroy();
 		this._oMoveToTopButton = null;
 
