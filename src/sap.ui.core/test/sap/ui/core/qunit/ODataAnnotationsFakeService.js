@@ -214,6 +214,10 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/overwrite-on-term-level-2":
 				sAnswer = aOverwriteOnTermLevel[1];
 				break;
+				
+			case "fakeService://testdata/odata/edmtype-for-navigationproperties":
+				sAnswer = sEdmtypeForNavigationproperties;
+				break;
 
 			default:
 				// You used the wrong URL, dummy!
@@ -272,7 +276,6 @@ var mXMLHeaders = 	{
 //	"Content-Type": "text/plain;charset=utf-8",
 //	"DataServiceVersion": "2.0;"
 //};
-
 
 
 
@@ -5206,3 +5209,63 @@ var aOverwriteOnTermLevel = ['\
 		</Schema>\
 	</edm:DataServices>\
 </edm:Edm>'];
+
+
+var sEdmtypeForNavigationproperties = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />\
+	</edmx:Reference>	\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="NorthwindModel.Product">\
+				<Annotation Term="UI.LineItem">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product ID" />\
+							<PropertyValue Property="Value" Path="ProductID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Name" />\
+							<PropertyValue Property="Value" Path="ProductName" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="Supplier/SupplierID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier Name" />\
+							<PropertyValue Property="Value" Path="Supplier/CompanyName" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="Category/CategoryName" />\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="NorthwindModel.Supplier">\
+				<Annotation Term="UI.LineItem">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="SupplierID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier Name" />\
+							<PropertyValue Property="Value" Path="CompanyName" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="Products/ProductID" />\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';
