@@ -268,6 +268,16 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 			}
 		};
 
+		/**
+		 * Override the method in order to turn off default selected item.
+		 *
+		 * @returns {null}
+		 */
+		TabStripSelect.prototype.getDefaultSelectedItem = function(aItems) {
+			return null;
+		};
+
+
 		return TabStripSelect;
 
 }, /* bExport= */ false);
