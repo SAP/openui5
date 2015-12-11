@@ -490,3 +490,12 @@
 		z-index: 2;
 	}
 }
+
+//remove transition when animation is off
+html[data-sap-ui-animation='off'] {
+	.sapMDialog,
+	.sapMDialogSliding,
+	.sapMDialogBlockLayerAnimation {
+		transition: none;
+	}
+}
