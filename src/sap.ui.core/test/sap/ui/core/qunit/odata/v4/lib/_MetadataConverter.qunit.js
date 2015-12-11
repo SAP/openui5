@@ -278,8 +278,10 @@ sap.ui.require([
 				<DataServices>\
 					<Schema Namespace="foo">\
 						<EntityContainer Name="Container">\
-							<EntitySet Name="Teams" EntityType="foo.Team" IncludeInServiceDocument="false"/>\
-							<EntitySet Name="Teams2" EntityType="foo.Team" IncludeInServiceDocument="true"/>\
+							<EntitySet Name="Teams" EntityType="foo.Team"\
+								IncludeInServiceDocument="false"/>\
+							<EntitySet Name="Teams2" EntityType="foo.Team"\
+								IncludeInServiceDocument="true"/>\
 							<EntitySet Name="Teams3" EntityType="foo.Team"/>\
 						</EntityContainer>\
 					</Schema>\
@@ -420,7 +422,8 @@ sap.ui.require([
 						},
 						"p4": {
 							"$kind": "Property",
-							"$Type": "Edm.Int32"
+							"$Type": "Edm.Int32",
+							"$DefaultValue" : "42"
 						},
 						"team1": {
 							"$kind": "NavigationProperty",
@@ -447,22 +450,28 @@ sap.ui.require([
 			if (sType === "EntityType") {
 				oExpected["foo.Worker"].$Key = [];
 			}
+
 			testConversion(assert, '\
 					<DataServices>\
 						<Schema Namespace="foo">\
 							<' + sType + ' Name="Worker">\
-								<Property Name="Salary" Type="Edm.Decimal" Precision="8" Scale="2"/>\
+								<Property Name="Salary" Type="Edm.Decimal" Precision="8"\
+									Scale="2"/>\
 								<Property Name="p1" Type="Edm.String" Unicode="false" />\
 								<Property Name="p2" Type="Edm.String" Unicode="true" />\
 								<Property Name="p3" Type="Edm.Geometry" SRID="42" />\
-								<Property Name="p4" Type="Edm.Int32" />\
+								<Property Name="p4" Type="Edm.Int32" DefaultValue="42"/>\
 								<NavigationProperty Name="team1" Type="foo.Team" Partner="worker">\
 									<OnDelete Action="SetDefault"/>\
-									<ReferentialConstraint Property="p1" ReferencedProperty="p1Key" />\
-									<ReferentialConstraint Property="p2" ReferencedProperty="p2Key" />\
+									<ReferentialConstraint Property="p1"\
+										ReferencedProperty="p1Key" />\
+									<ReferentialConstraint Property="p2"\
+										ReferencedProperty="p2Key" />\
 								</NavigationProperty>\
-								<NavigationProperty Name="team2" Type="foo.Team" ContainsTarget="true" />\
-								<NavigationProperty Name="team3" Type="foo.Team" ContainsTarget="false" />\
+								<NavigationProperty Name="team2" Type="foo.Team"\
+									ContainsTarget="true" />\
+								<NavigationProperty Name="team3" Type="foo.Team"\
+									ContainsTarget="false" />\
 							</' + sType + '>\
 						</Schema>\
 					</DataServices>',
