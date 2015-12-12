@@ -580,6 +580,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			}
 			updateAriaSelectedAttributes(this.getItems(), oSelectedItem);
 			updateSelectedItemClasses.call(this, oSelectedItem.getId());
+
+			// propagate the selection change to the select aggregation
+			if (this.getHasSelect()) {
+				var oSelectItem = oAggregationsHelper.findSelectItemFromTabStripItem.call(this, oSelectedItem);
+				this.getAggregation('_select').setSelectedItem(oSelectItem);
+			}
+
 			return TabStrip.prototype.setAssociation.call(this, "selectedItem", oSelectedItem, true); //render manually;
 		};
 
@@ -604,16 +611,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				}
 			}
 
-			// propagate the selection change to the select aggregation
-			if (sPropertyName === 'selectedItem') {
-				if (this.getHasSelect()) {
-					var oSelectItem = oAggregationsHelper.findSelectItemFromTabStripItem.call(this, vValue);
-					this.getAggregation('_select').setSelectedItem(oSelectItem).rerender();
-				}
-			}
-
 			return vRes;
 		};
+
 
 		var oEventsHelper = {
 			/**
