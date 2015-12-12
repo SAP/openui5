@@ -22,12 +22,18 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 			return;
 		}
 		this.beginTabStrip(oRm, oControl);
-		this.renderLeftOverflowButtons(oRm, oControl);
-		this.beginTabContainer(oRm, oControl);
-		this.renderTabs(oRm, oControl);
-		this.endTabContainer(oRm);
-		this.renderRightOverflowButtons(oRm, oControl);
-		this.renderTouchArea(oRm, oControl);
+
+		// for phones show only the select component of the strip
+		if (sap.ui.Device.system.phone === true) {
+			oRm.renderControl(oControl.getAggregation('_select'));
+		} else {
+			this.renderLeftOverflowButtons(oRm, oControl);
+			this.beginTabContainer(oRm, oControl);
+			this.renderTabs(oRm, oControl);
+			this.endTabContainer(oRm);
+			this.renderRightOverflowButtons(oRm, oControl);
+			this.renderTouchArea(oRm, oControl);
+		}
 		this.endTabStrip(oRm);
 	};
 

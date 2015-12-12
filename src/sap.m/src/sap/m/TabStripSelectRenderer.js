@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRenderer', 'sap/ui/core/ValueStateSupport', 'sap/m/TabStripSelect'],
-	function(jQuery, Renderer, SelectRenderer, ValueStateSupport, TabStripSelect) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRenderer', 'sap/ui/core/ValueStateSupport', 'sap/m/TabStripSelect', 'sap/m/TabStripItem'],
+	function(jQuery, Renderer, SelectRenderer, ValueStateSupport, TabStripSelect, TabStripItem) {
 		"use strict";
 
 		var TabStripSelectRenderer = Renderer.extend(SelectRenderer);
@@ -71,6 +71,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 
 			oRm.write("</div>");
 			oRm.write("</button>");
+		};
+
+		/**
+		 * Renders the select's label, using the provided {@link sap.ui.core.RenderManager}.
+		 *
+		 * @override
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.m.TabStripSelect} oTabStripSelect An object representation of the control that should be rendered
+		 * @private
+		 */
+		TabStripSelectRenderer.renderLabel = function(oRm, oSelect) {
+			var oSelectedItem = oSelect.getSelectedItem(),
+			    sTextDir = oSelect.getTextDirection(),
+			    sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir),
+			    sStateClass = ' ';
+
+			oRm.write("<label");
+			oRm.writeAttribute("id", oSelect.getId() + "-label");
+			oRm.writeAttribute("for", oSelect.getId());
+			oRm.addClass(SelectRenderer.CSS_CLASS + "Label");
+
+			if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+				oRm.writeAttribute("dir", sTextDir.toLowerCase());
+			}
+
+			if (sTextAlign) {
+				oRm.addStyle("text-align", sTextAlign);
+			}
+
+			oRm.writeStyles();
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.writeEscaped(oSelectedItem ? oSelectedItem.getText() : "");
+			if (!oSelectedItem.getProperty('modified')) {
+				sStateClass += TabStripItem.CSS_CLASS_STATEINVISIBLE; // ToDo: fix the name of the variable
+			}
+			oRm.write('</label>');
+			oRm.write('<span style="position: absolute" class="sapMTabSelectListItemModified' + sStateClass + '">*</span>');
 		};
 
 		return TabStripSelectRenderer;
