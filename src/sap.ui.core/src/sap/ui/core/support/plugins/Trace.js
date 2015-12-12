@@ -31,8 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				if (this.isToolPlugin()) {
 					this._aLogEntries = [];
 					this._iLogLevel = jQuery.sap.log.Level.ALL;
-					jQuery.sap.require("sap.ui.core.format.DateFormat");
-					this._oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance();
+					this._oDateFormat = sap.ui.requireSync('sap/ui/core/format/DateFormat').getDateTimeInstance();
 				} else {
 					var that = this;
 					this._oldLogLevel = jQuery.sap.log.getLevel();
