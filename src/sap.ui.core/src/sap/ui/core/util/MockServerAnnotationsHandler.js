@@ -5,7 +5,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/util/MockServ
 	"use strict";
 	return {
 		
-		parse : function(oMetadata) {
+		parse : function(oMetadata, sMetadata) {
 			var oMockStub = new MockServer({
 				rootUri: "/annotationhandler/",
 				requests: [{
@@ -14,7 +14,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/util/MockServ
 					response: function(oXhr) {
 						oXhr.respond(200, {
 							"Content-Type": "application/xml;charset=utf-8"
-						}, jQuery.sap.serializeXML(oMetadata));
+						}, sMetadata);
 					}
 								}]
 			});

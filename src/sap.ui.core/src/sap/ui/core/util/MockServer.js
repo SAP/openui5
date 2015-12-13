@@ -178,9 +178,9 @@ sap.ui
 			/**
 			 * Attaches an event handler to be called before the built-in request processing of the mock server
 			 * @param {string} event type according to HTTP Method
-			 * @param {function} fnCallback - the name of the function that will be called at this exit. 
+			 * @param {function} fnCallback - the name of the function that will be called at this exit.
 			 * The callback function exposes an event with parameters, depending on the type of the request.
-			 * oEvent.getParameters() lists the parameters as per the request. Examples are:  
+			 * oEvent.getParameters() lists the parameters as per the request. Examples are:
 			 * oXhr : the request object; sUrlParams : the URL parameters of the request; sKeys : key properties of the requested entry; sNavProp/sNavName : name of navigation
 			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
@@ -195,7 +195,7 @@ sap.ui
 			 * @param {string} event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
 			 * The callback function exposes an event with parameters, depending on the type of the request.
-			 * oEvent.getParameters() lists the parameters as per the request. Examples are:  
+			 * oEvent.getParameters() lists the parameters as per the request. Examples are:
 			 * oXhr : the request object; oFilteredData : the mock data entries that are about to be returned in the response; oEntry : the mock data entry that is about to be returned in the response;
 			 * @param {string} sEntitySet - (optional) the name of the entity set
 			 * @public
@@ -206,7 +206,7 @@ sap.ui
 			};
 
 			/**
-			 * Removes a previously attached event handler 
+			 * Removes a previously attached event handler
 			 * @param {string} event type according to HTTP Method
 			 * @param {function} fnCallback - the name of the function that will be called at this exit
 			 * @param {string} sEntitySet - (optional) the name of the entity set
@@ -875,7 +875,10 @@ sap.ui
 			MockServer.prototype._refreshData = function() {
 
 				// load the metadata
-				this._loadMetadata(this._sMetadataUrl);
+				var oMetadata = this._loadMetadata(this._sMetadataUrl);
+				if (!oMetadata) {
+					return;
+				}
 
 				// here we need to analyse the EDMX and identify the entity sets
 				this._mEntitySets = this._findEntitySets(this._oMetadata);
@@ -915,9 +918,15 @@ sap.ui
 					url: sMetadataUrl,
 					dataType: "text"
 				}).data;
+				if (!sMetadata) {
+					jQuery.sap.log.error("MockServer: The metadata for url \"" + sMetadataUrl + "\" could not be found!");
+				}
 				this._sMetadata = sMetadata;
-				this._oMetadata = jQuery.parseXML(sMetadata);
-				jQuery.sap.assert(this._oMetadata !== undefined, "The metadata for url \"" + sMetadataUrl + "\" could not be found!");
+				try {
+					this._oMetadata = jQuery.parseXML(sMetadata);
+				} catch (oError) {
+					jQuery.sap.log.error("MockServer: Invalid metadata XML! Reason: " + oError);
+				}
 				return this._oMetadata;
 			};
 
@@ -1140,19 +1149,24 @@ sap.ui
 						dataType: "json"
 					});
 					if (oResponse.success) {
-						if (!!oResponse.data.d) {
-							if (!!oResponse.data.d.results) {
+						if (oResponse.data.d) {
+							if (oResponse.data.d.results) {
 								mData[oEntitySet.name] = oResponse.data.d.results;
 							} else {
-								jQuery.sap.log.error("The mockdata format for entity set \"" + oEntitySet.name + "\" invalid");
+								jQuery.sap.log.error("The mock data format for entity set \"" + oEntitySet.name + "\" invalid");
 							}
 						} else {
-							mData[oEntitySet.name] = oResponse.data;
+							if (jQuery.isArray(oResponse.data)) {
+								mData[oEntitySet.name] = oResponse.data;
+							} else {
+								jQuery.sap.log.error("The mock data for entity set \"" + oEntitySet.name + "\" could not be loaded due to wrong format!");
+								return false;
+							}
 						}
 						return true;
 					} else {
 						if (oResponse.status === "parsererror") {
-							jQuery.sap.log.error("The mockdata for entity set \"" + oEntitySet.name + "\" could not be loaded due to a parsing error!");
+							jQuery.sap.log.error("The mock data for entity set \"" + oEntitySet.name + "\" could not be loaded due to a parsing error!");
 						}
 						return false;
 					}
@@ -1167,7 +1181,7 @@ sap.ui
 					if (oResponse.success) {
 						mData = oResponse.data;
 					} else {
-						jQuery.sap.log.warning("The mockdata for all the entity types could not be found at \"" + sBaseUrl + "\"!");
+						jQuery.sap.log.warning("The mock data for all the entity types could not be found at \"" + sBaseUrl + "\"!");
 					}
 				} else {
 					// load the mock data individually
@@ -1177,13 +1191,13 @@ sap.ui
 							// the entity set name
 							var sEntitySetUrl = sBaseUrl + oEntitySet.name + ".json";
 							if (!fnLoadMockData(sEntitySetUrl, oEntitySet)) {
-								jQuery.sap.log.warning("The mockdata for entity set \"" + oEntitySet.name + "\" could not be found at \"" + sBaseUrl + "\"!");
+								jQuery.sap.log.warning("The mock data for entity set \"" + oEntitySet.name + "\" could not be found at \"" + sBaseUrl + "\"!");
 								var sEntityTypeUrl = sBaseUrl + oEntitySet.type + ".json";
 								if (!fnLoadMockData(sEntityTypeUrl, oEntitySet)) {
-									jQuery.sap.log.warning("The mockdata for entity type \"" + oEntitySet.type + "\" could not be found at \"" + sBaseUrl + "\"!");
+									jQuery.sap.log.warning("The mock data for entity type \"" + oEntitySet.type + "\" could not be found at \"" + sBaseUrl + "\"!");
 									// generate random
 									// mock data
-									if (!!that._bGenerateMissingMockData) {
+									if (that._bGenerateMissingMockData) {
 										var mEntitySet = {};
 										mEntitySet[oEntitySet.name] = oEntitySet;
 										mData[oEntitySet.type] = that._generateODataMockdataForEntitySet(mEntitySet, that._oMetadata)[oEntitySet.name];
@@ -1485,7 +1499,7 @@ sap.ui
 					for (var i = 0; i < oEntitySet.keys.length; i++) {
 						var sKey = oEntitySet.keys[i];
 						// if the key has value, just use it
-					if (oKeys[sKey] !== undefined && oKeys[sKey] !== null) {
+						if (oKeys[sKey] !== undefined && oKeys[sKey] !== null) {
 							if (!oEntity[sKey]) {
 								// take over the specified key value
 								switch (oEntitySet.keysType[sKey]) {
@@ -1691,11 +1705,14 @@ sap.ui
 				}
 
 				// load the metadata
-				this._loadMetadata(this._sMetadataUrl);
+				var oMetadata = this._loadMetadata(this._sMetadataUrl);
+				if (!oMetadata) {
+					return;
+				}
 
 				jQuery.sap.require("sap.ui.core.util.MockServerAnnotationsHandler");
 				var MockServerAnnotationsHandler = sap.ui.require("sap/ui/core/util/MockServerAnnotationsHandler");
-				var oAnnotations = MockServerAnnotationsHandler.parse(this._oMetadata);
+				var oAnnotations = MockServerAnnotationsHandler.parse(this._oMetadata, this._sMetadata);
 
 				jQuery.sap.require("sap.ui.core.util.DraftEnabledMockServer");
 				var DraftEnabledMockServer = sap.ui.require("sap/ui/core/util/DraftEnabledMockServer");
