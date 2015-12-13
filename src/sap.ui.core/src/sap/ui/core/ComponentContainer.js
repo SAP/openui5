@@ -3,9 +3,12 @@
  */
 
 // Provides control sap.ui.core.ComponentContainer.
-sap.ui.define(['./Control', './Component', './Core', './library'],
-	function(Control, Component, Core, library) {
+sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core', './library'],
+	function(ManagedObject, Control, Component, Core, library) {
 	"use strict";
+
+
+	var ComponentLifecycle = library.ComponentLifecycle;
 
 
 	/**
@@ -63,7 +66,16 @@ sap.ui.define(['./Control', './Component', './Core', './library'],
 			/**
 			 * Container height in CSS size
 			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * Lifecycle behavior for the Component associated by the ComponentContainer.
+			 * By default the behavior is "Legacy" which means that the ComponentContainer
+			 * takes care to destroy the Component once the ComponentContainer is destroyed
+			 * but not when a new Component is associated.
+			 */
+			lifecycle : {type : "sap.ui.core.ComponentLifecycle", defaultValue : ComponentLifecycle.Legacy}
+
 		},
 		associations : {
 
@@ -74,41 +86,62 @@ sap.ui.define(['./Control', './Component', './Core', './library'],
 		}
 	}});
 
+
+	/*
+	 * Helper function to set the new Component of the container.
+	 */
+	function setContainerComponent(oComponentContainer, vComponent, bSuppressInvalidate, bDestroyOldComponent) {
+		// find the reference to the current component and to the old component
+		var oComponent = typeof vComponent === "string" ? Core.getComponent(vComponent) : vComponent;
+		var oOldComponent = oComponentContainer.getComponentInstance();
+		// if there is no difference between the old and the new component just skip this setter
+		if (oOldComponent !== oComponent) {
+			// unlink the old component from the container
+			if (oOldComponent) {
+				oOldComponent.setContainer(undefined);
+				if (bDestroyOldComponent) {
+					oOldComponent.destroy();
+				} else {
+					// cleanup the propagated properties in case of not destroying the component
+					oComponentContainer._propagateProperties(true, oOldComponent, ManagedObject._oEmptyPropagatedProperties, true);
+				}
+			}
+			// set the new component
+			oComponentContainer.setAssociation("component", oComponent, bSuppressInvalidate);
+			// cross link the new component and propagate the properties (models)
+			oComponent = oComponentContainer.getComponentInstance();
+			if (oComponent) {
+				oComponent.setContainer(oComponentContainer);
+				oComponentContainer.propagateProperties();
+			}
+		}
+	}
+
+
 	/**
 	 * Returns the real component instance which is associated with the container.
 	 * @return {sap.ui.core.UIComponent} the component instance
 	 */
 	ComponentContainer.prototype.getComponentInstance = function () {
 		var sComponentId = this.getComponent();
-		return sap.ui.getCore().getComponent(sComponentId);
+		return sComponentId && Core.getComponent(sComponentId);
 	};
 
 
-	/*
-	 * TODO: make sure once a component is assigned to the container it cannot be
-	 * exchanged later when the container is rendered.
+	/**
+	 * Sets the component of the container. Depending on the ComponentContainer's
+	 * lifecycle this might destroy the old associated Component.
 	 *
-	 * Exchanging the component via setComponent is still required - see existing
-	 * examples in sap/ui/core/ComponentShell.html - but this opens up another
-	 * question which was not answered before - what to do here when exchanging
-	 * the component - destroy or not? Right now we at least unlink the container.
+	 * Once the component is associated with the container the cross connection
+	 * to the component will be set and the models will be propagated if defined.
+	 *
+	 * @param {string|sap.ui.core.UIComponent} vComponent Id of an element which becomes the new target of this component association. Alternatively, an element instance may be given.
+	 * @return {sap.ui.core.ComponentContainer} the reference to <code>this</code> in order to allow method chaining
+	 * @public
 	 */
-	ComponentContainer.prototype.setComponent = function(oComponent, bSupressInvalidate) {
-		// unlink the old component from the container
-		var oOldComponent = this.getComponentInstance();
-		if (oOldComponent) {
-			// TODO: destroy or not destroy
-			oOldComponent.setContainer(undefined);
-		}
-		// set the new component
-		this.setAssociation("component", oComponent, bSupressInvalidate);
-		// cross link the new component and propagate the properties (models)
-		oComponent = this.getComponentInstance();
-		if (oComponent) {
-			oComponent.setContainer(this);
-			this.propagateProperties();
-		}
-
+	ComponentContainer.prototype.setComponent = function(vComponent, bSuppressInvalidate) {
+		setContainerComponent(this, vComponent, bSuppressInvalidate,
+			this.getLifecycle() === ComponentLifecycle.Container);
 		return this;
 	};
 
@@ -116,7 +149,7 @@ sap.ui.define(['./Control', './Component', './Core', './library'],
 	/*
 	 * delegate the onBeforeRendering to the component instance
 	 */
-	ComponentContainer.prototype.onBeforeRendering = function(){
+	ComponentContainer.prototype.onBeforeRendering = function() {
 
 		// check if we have already a valid component instance
 		// in this case we skip the component creation via props
@@ -158,7 +191,7 @@ sap.ui.define(['./Control', './Component', './Core', './library'],
 	/*
 	 * delegate the onAfterRendering to the component instance
 	 */
-	ComponentContainer.prototype.onAfterRendering = function(){
+	ComponentContainer.prototype.onAfterRendering = function() {
 		var oComponent = this.getComponentInstance();
 		if (oComponent && oComponent.onAfterRendering) {
 			oComponent.onAfterRendering();
@@ -167,13 +200,13 @@ sap.ui.define(['./Control', './Component', './Core', './library'],
 
 
 	/*
-	 * once the container is destroyed we also destroy the component
+	 * once the container is destroyed we remove the reference to the container
+	 * in the component and destroy the component unless its lifecycle is managed
+	 * by the application.
 	 */
-	ComponentContainer.prototype.exit = function(){
-		var oComponent = this.getComponentInstance();
-		if (oComponent) {
-			oComponent.destroy();
-		}
+	ComponentContainer.prototype.exit = function() {
+		setContainerComponent(this, undefined, true,
+			this.getLifecycle() !== ComponentLifecycle.Application);
 	};
 
 
