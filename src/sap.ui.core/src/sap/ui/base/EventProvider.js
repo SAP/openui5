@@ -124,6 +124,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 			fnFunction = oData;
 			oData = undefined;
 		}
+		jQuery.sap.assert(typeof (fnFunction) === "function", "EventProvider.attachEventOnce: fnFunction must be a function");
 		function fnOnce() {
 			this.detachEvent(sEventId, fnOnce);  // ‘this’ is always the control, due to the context ‘undefined’ in the attach call below
 			fnFunction.apply(oListener || this, arguments);  // needs to do the same resolution as in fireEvent
