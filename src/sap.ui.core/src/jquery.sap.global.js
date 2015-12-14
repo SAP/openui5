@@ -1259,7 +1259,7 @@
 						options.complete = function() {
 							jQuery.sap.measure.end(sMeasureId);
 							if (fnComplete) {
-								fnComplete.call(this, arguments);
+								fnComplete.apply(this, arguments);
 							}
 						};
 
@@ -1304,7 +1304,7 @@
 
 				// create timeline entries if available
 				/*eslint-disable no-console */
-				if (console.time) {
+				if (window.console && console.time) {
 					console.time(sInfo + " - " + sId);
 				}
 				/*eslint-enable no-console */
@@ -1434,7 +1434,7 @@
 				if (oMeasurement) {
 					// end timeline entry
 					/*eslint-disable no-console */
-					if (console.time && oMeasurement) {
+					if (window.console && console.timeEnd) {
 						console.timeEnd(oMeasurement.info + " - " + sId);
 					}
 					/*eslint-enable no-console */
