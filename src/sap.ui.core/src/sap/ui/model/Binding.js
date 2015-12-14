@@ -422,7 +422,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Suspends the binding update. No change Events will be fired
+	 * Suspends the binding update. No change events will be fired.
+	 * 
+	 * @public
 	 */
 	Binding.prototype.suspend = function() {
 		this.bSuspended = true;
@@ -430,6 +432,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	/**
 	 * Resumes the binding update. Change events will be fired again.
+	 * 
+	 * @public
 	 */
 	Binding.prototype.resume = function() {
 		this.bSuspended = false;
