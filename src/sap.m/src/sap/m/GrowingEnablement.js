@@ -210,14 +210,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				}
 			}, this);
 
-			// growing button as a list item should not be affected from the List Mode
-			this._oTrigger.getMode = function() {
-				return sap.m.ListMode.None;
-			};
-
-			// stop tab forwarding of the ListItemBase
-			this._oTrigger.onsaptabnext = function() {
-			};
+			// stop the eventing between item and the list
+			this._oTrigger.getList = function() {};
 
 			return this._oTrigger;
 		},
