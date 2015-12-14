@@ -575,5 +575,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.9": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "c3b24b1d8a4827954e02b536907d0b2e895a2412",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding: Retrieve all available entries",
+        "references": []
+      },
+      {
+        "id": "7c933252c799f2e0b3a85dc5dfe783314e9d4bf0",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter: Wrong GroupIDs",
+        "references": []
+      },
+      {
+        "id": "0bb79080f1e33845c1a1102f030d2dff33498884",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable - Group Mode - Shows Null values",
+        "references": []
+      }
+    ]
   }
 }

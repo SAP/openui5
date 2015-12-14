@@ -1667,5 +1667,66 @@
         "references": []
       }
     ]
+  },
+  "1.32.9": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "c3b24b1d8a4827954e02b536907d0b2e895a2412",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding: Retrieve all available entries",
+        "references": []
+      },
+      {
+        "id": "7c933252c799f2e0b3a85dc5dfe783314e9d4bf0",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Wrong GroupIDs",
+        "references": []
+      },
+      {
+        "id": "e35c4499ca321b826433e5619177c673c634a93a",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DateFormat: Fix islamic era parsing for custom calendarType",
+        "references": []
+      },
+      {
+        "id": "71075076674be560f82b92582f6eaa98f26f110d",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DateFormat: Parse quarters to first day of quarter",
+        "references": []
+      },
+      {
+        "id": "87b0b918218b0ef77514406b4138086da5c99cb6",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageManager: Deregistration of Processors not working",
+        "references": []
+      },
+      {
+        "id": "a31a770bc08b670aa6ff6bf1310e788f39f417c2",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Find Correct EDM Type for NavProp properties",
+        "references": []
+      },
+      {
+        "id": "0bb79080f1e33845c1a1102f030d2dff33498884",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable - Group Mode - Shows Null values",
+        "references": []
+      },
+      {
+        "id": "8efd5bde89d9ff84ef837c8f7e34c0571f898c3a",
+        "author": "Richard Lindner \u003crlindner81@gmail.com\u003e",
+        "type": "FIX",
+        "text": "Try new api before deprecated one in order to avoid a warning in chrome",
+        "references": []
+      }
+    ]
   }
 }
