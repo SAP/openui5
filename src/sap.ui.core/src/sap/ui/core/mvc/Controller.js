@@ -112,8 +112,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		sap.ui.core.mvc.Controller.extendIfRequired = function(oController, sName, bAsync) {
 			var oCustomControllerDef;
 			
-			if (sap.ui.core.CustomizingConfiguration) {
-				var controllerExtensionConfig = sap.ui.core.CustomizingConfiguration.getControllerExtension(sName, ManagedObject._sOwnerId);
+			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+			if (CustomizingConfiguration) {
+				var controllerExtensionConfig = CustomizingConfiguration.getControllerExtension(sName, ManagedObject._sOwnerId);
 				if (controllerExtensionConfig) {
 					var sExtControllerName = controllerExtensionConfig.controllerName;
 					
