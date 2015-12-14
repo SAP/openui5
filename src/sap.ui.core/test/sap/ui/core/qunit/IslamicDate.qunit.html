@@ -36,16 +36,16 @@
 			"islamicMonthStart": "14360701",
 			"gregDate": "20150419"
 		},
-		{
-			"dateFormat": "A",
-			"islamicMonthStart": "14300301",
-			"gregDate": "20090227"
-		},
-		{
-			"dateFormat": "A",
-			"islamicMonthStart": "14360101",
-			"gregDate": "20141024"
-		}];
+			{
+				"dateFormat": "A",
+				"islamicMonthStart": "14300301",
+				"gregDate": "20090227"
+			},
+			{
+				"dateFormat": "A",
+				"islamicMonthStart": "14360101",
+				"gregDate": "20141024"
+			}];
 
 		// All test data must be related to the months referred in at the top of the page (see variable customizingInfo).
 		// Otherwise, the IslamicDat will fall-back to the default (civil) calendar calculation
@@ -716,6 +716,18 @@
 			this.verifyYear2Date(true, 1436, 7, 1, 1436, 6, 30);
 		});
 
+		test("setUTCFullYear with 100>= value < 100", function () {
+			var id = new sap.ui.core.date.IslamicDate();
+			id.setUTCFullYear(100);
+			equal(id.getUTCFullYear(), 100, "when setUTCFullYear(100) getUTCFullYear should return the same" );
+
+			id.setUTCFullYear(1430);
+			equal(id.getUTCFullYear(), 1430, "when setUTCFullYear(1430) getUTCFullYear should return the same" );
+
+			id.setUTCFullYear(99);
+			equal(id.getUTCFullYear(), 99, "when setUTCFullYear(99) getUTCFullYear should return the same" );
+		});
+
 		test("Set/Get Year", function () {
 			var iYear = 35;
 			var oIslamicDate = new sap.ui.core.date.IslamicDate(1436, 5, 11, 23, 16, 10, 118);
@@ -889,18 +901,18 @@
 
 		test("IslamicDate.UTC will handle correctly the browser issue with Oct 25, 2015, 02:00 being interpreted differently(CET-FF, Safari or CEST-Chrome, IE)", function() {
 			/* The date Oct 25, 2015 02:00:00 is ambiguous without giving a timezone, it does exist twice CET and CEST. When creating a date object using the date constructor
-			new Date(2015, 10, 25, 2, 0, 0).
-			Chrome:
-			new Date(2015,9,25,2,0,0).toString()
-			"Sun Oct 25 2015 02:00:00 GMT+0200 (CEST)"
+			 new Date(2015, 10, 25, 2, 0, 0).
+			 Chrome:
+			 new Date(2015,9,25,2,0,0).toString()
+			 "Sun Oct 25 2015 02:00:00 GMT+0200 (CEST)"
 
-			Safari:
-			> new Date(2015,9,25,2,0,0).toString()
-			< Sun Oct 25 2015 02:00:00 GMT+0100 (CET)
+			 Safari:
+			 > new Date(2015,9,25,2,0,0).toString()
+			 < Sun Oct 25 2015 02:00:00 GMT+0100 (CET)
 
-			Firefox: (Funnily gets it completely wrong, showing GMT+0100 (CEST) )
-			new Date(2015,9,25,2,0,0).toString()
-			"Sun Oct 25 2015 02:00:00 GMT+0100 (CEST)" */
+			 Firefox: (Funnily gets it completely wrong, showing GMT+0100 (CEST) )
+			 new Date(2015,9,25,2,0,0).toString()
+			 "Sun Oct 25 2015 02:00:00 GMT+0100 (CEST)" */
 			equal(sap.ui.core.date.IslamicDate.UTC(1437,0,11), 1445731200000, "The value should correspond to Sun, 25 Oct 2015 00:00:00 GMT expressed as timestamp");
 		});
 

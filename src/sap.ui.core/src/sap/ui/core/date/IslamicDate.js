@@ -512,6 +512,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			//Bare in mind that oDate.setUTCFullYear(y, m, d) is not the same as calling consequently oDate.setUTCFullYear(y), oDate.setUTCMonth(m), oDate.setDate(d)
 			var iMonth = arguments.length >= 2 ? month : this.getUTCMonth();
 			var iDate = arguments.length >= 3 ? date : this.getUTCDate();
+
+			// Since the year parameter is always considered a "fullYear" one, make sure IslamicDate.prototype.setFullYear(BASE_YEAR + year) does not double the result.
+			if (typeof year !== "undefined" && year <= 99) {
+				year -= BASE_YEAR; //This will decrease the year value in a way so setFullYear(BASE_YEAR + year) called in IslamicDate constructor produce the right value.
+			}
 			var oTempIslamicUTC = new IslamicDate(IslamicDate.UTC(year, iMonth, iDate, this.getUTCHours(), this.getUTCMinutes(), this.getUTCSeconds(), this.getUTCMilliseconds()));
 			updateLocalFields.call(this, oTempIslamicUTC);
 			return this.getTime();
@@ -557,13 +562,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 		IslamicDate.UTC = function () {
 			var oIslamicDate = new IslamicDate(
-				arguments[0],
-				arguments[1],
-				arguments[2],
-				arguments[3],
-				arguments[4],
-				arguments[5],
-				arguments[6]
+					arguments[0],
+					arguments[1],
+					arguments[2],
+					arguments[3],
+					arguments[4],
+					arguments[5],
+					arguments[6]
 				),
 				oGregorianDate = oIslamicDate._toGregorian(true);
 
