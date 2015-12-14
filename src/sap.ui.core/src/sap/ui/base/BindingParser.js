@@ -286,7 +286,8 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 	 */
 	BindingParser.complexParser = function(sString, oContext, bUnescape,
 			bTolerateFunctionsNotFound, bStaticContext) {
-		var oBindingInfo = {parts:[]},
+		var b2ndLevelMergedNeeded = false, // whether some 2nd level parts again have parts
+			oBindingInfo = {parts:[]},
 			bMergeNeeded = false, // whether some top-level parts again have parts
 			oEnv = {
 				oContext: oContext,
@@ -313,6 +314,25 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 		function expression(sInput, iStart, oBindingMode) {
 			var oBinding = ExpressionParser.parse(resolveEmbeddedBinding.bind(null, oEnv), sString,
 					iStart);
+
+			/**
+			 * Recursively sets the mode <code>oBindingMode</code> on the given binding (or its
+			 * parts).
+			 *
+			 * @param {object} oBinding
+			 *   a binding which may be composite
+			 * @param {number} [iIndex]
+			 *   index provided by <code>forEach</code>
+			 */
+			function setMode(oBinding, iIndex) {
+				if (oBinding.parts) {
+					oBinding.parts.forEach(setMode);
+					b2ndLevelMergedNeeded = b2ndLevelMergedNeeded || iIndex !== undefined;
+				} else {
+					oBinding.mode = oBindingMode;
+				}
+			}
+
 			if (sInput.charAt(oBinding.at) !== "}") {
 				throw new SyntaxError("Expected '}' and instead saw '"
 					+ sInput.charAt(oBinding.at)
@@ -323,9 +343,7 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 			}
 			oBinding.at += 1;
 			if (oBinding.result) {
-				oBinding.result.parts.forEach(function (oPart) {
-					oPart.mode = oBindingMode;
-				});
+				setMode(oBinding.result);
 			} else {
 				aFragments[aFragments.length - 1] = String(oBinding.constant);
 				bUnescaped = true;
@@ -379,12 +397,13 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 			if ( aFragments.length === 1 /* implies: && typeof aFragments[0] === "number" */ ) {
 				// special case: a single binding only
 				oBindingInfo = oBindingInfo.parts[0];
+				bMergeNeeded = b2ndLevelMergedNeeded;
 			} else {
 				// create the formatter function from the fragments
 				oBindingInfo.formatter = makeFormatter(aFragments);
-				if (bMergeNeeded) {
-					mergeParts(oBindingInfo, sString);
-				}
+			}
+			if (bMergeNeeded) {
+				mergeParts(oBindingInfo, sString);
 			}
 			if (BindingParser._keepBindingStrings) {
 				oBindingInfo.bindingString = sString;
