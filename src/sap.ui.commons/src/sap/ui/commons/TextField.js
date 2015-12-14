@@ -700,28 +700,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	};
 
-	/**
+	/*
 	 * Applies the focus info
-	 * overwrite of the Element method because in IE8 on rerendering focus is lost
+	 * overwrite of the Element method to set the just typed in text again
+	 * and restore the cursor position and selection.
 	 * @param {object} oFocusInfo Focus information
 	 * @return {object} reference to this
 	 * @protected
 	 */
 	TextField.prototype.applyFocusInfo = function (oFocusInfo) {
 
-		if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
-			var oPos = this.getValue().length;
-			var that = this;
-			setTimeout(function(){
-				that.focus();
-				that._restoreUnsavedUserInput(oFocusInfo.userinput);
-				jQuery(that.getFocusDomRef()).cursorPos(oPos);
-			}, 0);
-		} else {
-			this.focus();
-			this._restoreUnsavedUserInput(oFocusInfo.userinput);
-		}
+		this.focus();
+		this._restoreUnsavedUserInput(oFocusInfo.userinput);
 		return this;
+
 	};
 
 	/**
@@ -806,26 +798,43 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	TextField.prototype._getUnsavedUserInputInfo = function() {
+
 		var $tf = this.$();
 		if ($tf.length && $tf.hasClass("sapUiTfFoc") && !$tf.hasClass("sapUiTfPlace") && this.getEnabled() && this.getEditable()){
-			var sVal = jQuery(this.getInputDomRef()).val();
+			var $DomRef = jQuery(this.getInputDomRef());
+			var sVal = $DomRef.val();
 			var sValue = this.getValue();
-			if (sVal != sValue){
-				return {userinput: sVal, value: sValue};
+			var iSelStart = 0;
+			var iSelEnd = 0;
+			if (typeof ($DomRef.get(0).selectionStart) === "number") { // current browsers should know this
+				iSelStart = $DomRef.get(0).selectionStart;
+				iSelEnd = $DomRef.get(0).selectionEnd;
 			}
+
+			return {userinput: sVal, value: sValue, cursorPos: $DomRef.cursorPos(), selStart: iSelStart, selEnd: iSelEnd};
 		}
 		return null;
+
 	};
 
 	TextField.prototype._restoreUnsavedUserInput = function(oUnsavedUserInputInfo) {
+
 		if (oUnsavedUserInputInfo && this.getEnabled() && this.getEditable() && this.getValue() == oUnsavedUserInputInfo.value){
 			var sVal = oUnsavedUserInputInfo.userinput;
 			if ( sVal && sVal.length > this.getMaxLength() && this.getMaxLength() > 0) {
 				sVal = sVal.substring(0,this.getMaxLength());
 			}
 
-			jQuery(this.getInputDomRef()).val(sVal);
+			var $DomRef = jQuery(this.getInputDomRef());
+			if (sVal != oUnsavedUserInputInfo.value) {
+				$DomRef.val(sVal);
+			}
+			$DomRef.cursorPos(oUnsavedUserInputInfo.cursorPos);
+			if (oUnsavedUserInputInfo.selStart != oUnsavedUserInputInfo.selEnd) {
+				$DomRef.selectText(oUnsavedUserInputInfo.selStart, oUnsavedUserInputInfo.selEnd);
+			}
 		}
+
 	};
 
 
