@@ -661,7 +661,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		processTypedCollection(oAttributes.Type, oProperty, oAggregate);
 		processAttributes(oAttributes, oProperty, {
-			"Nullable" : setIfFalse
+			"Nullable" : setIfFalse,
+			"DefaultValue" : setValue
 		});
 		MetadataConverter.processFacetAttributes(oAttributes, oProperty);
 
