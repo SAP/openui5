@@ -12,7 +12,7 @@ sap.ui.define(["sap/m/SelectRenderer", "sap/ui/core/Renderer"
 	 */
 	var HierarchicalSelectRenderer = Renderer.extend(SelectRenderer);
 
-	HierarchicalSelectRenderer.addStyleClass = function (oRm) {
+	HierarchicalSelectRenderer.addClass = function (oRm) {
 		oRm.addClass("sapUxAPHierarchicalSelect");
 	};
 
