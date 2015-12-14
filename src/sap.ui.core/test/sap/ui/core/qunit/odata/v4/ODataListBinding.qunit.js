@@ -756,6 +756,22 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("refresh on relative binding is not supported", function (assert) {
+		var oListBinding = this.oModel.bindList("EMPLOYEES"),
+			oListBindingMock = this.oSandbox.mock(oListBinding);
+
+		this.oSandbox.mock(Cache).expects("create").never();
+		// refresh event during refresh
+		oListBindingMock.expects("_fireRefresh").never();
+
+		//code under test
+		//error for relative paths
+		assert.throws(function () {
+			oListBinding.refresh();
+		}, new Error("Refresh on this binding is not supported"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refresh cancels pending getContexts", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			done = assert.async(),

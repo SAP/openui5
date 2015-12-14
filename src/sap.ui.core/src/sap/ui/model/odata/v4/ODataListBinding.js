@@ -272,10 +272,16 @@ sap.ui.define([
 	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
 	 * control, that new data is available even if the data has not changed. Same behavior as
 	 * <code>bForceUpdate = true</code> in v2.
+	 * Refresh is supported for absolute bindings.
+	 *
+	 * @throws {Error} when refresh on this binding is not supported
 	 *
 	 * @public
 	 */
 	ODataListBinding.prototype.refresh = function () {
+		if (!this.oCache) {
+			throw new Error("Refresh on this binding is not supported");
+		}
 		this.oCache.refresh();
 		this.aContexts = [];
 		this.iMaxLength = Infinity;
