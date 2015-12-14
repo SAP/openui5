@@ -7,7 +7,7 @@
 
 	<Page id="Page" showHeader="false">
 		<content>
-			<Toolbar>
+			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Label
 					text="Layout:">
@@ -19,7 +19,7 @@
 					<core:Item key="All" text="sap.m.ListSeparators.All"/>
 					<core:Item key="None" text="sap.m.ListSeparators.None"/>
 				</Select>
-			</Toolbar>
+			</OverflowToolbar>
 			<Label text="Notes"/>
 			<TextArea
 				id="TextArea"
