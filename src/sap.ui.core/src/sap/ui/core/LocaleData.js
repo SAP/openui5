@@ -1481,7 +1481,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 
 	/**
-	 * A specialized subclass of LocaleData that merges custom settings.
+	 * @classdesc A specialized subclass of LocaleData that merges custom settings.
+	 * @extends sap.ui.core.LocaleData
+	 * @alias sap.ui.core.CustomLocaleData
 	 * @private
 	 */
 	LocaleData.extend("sap.ui.core.CustomLocaleData", {

@@ -19,6 +19,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/model/Filter', 'sap/ui/model/Filter
 	 * @param {boolean} [bAND=true] If true the values from aValues will be ANDed; otherwise ORed
 	 * @public
 	 * @alias sap.ui.model.odata.Filter
+	 * @extends sap.ui.base.Object
 	 * @deprecated Since 1.22. Please use the sap.ui.model.Filter instead (@link: sap.ui.model.Filter).
 	 */
 	var ODataFilter = BaseObject.extend("sap.ui.model.odata.Filter", /** @lends sap.ui.model.odata.Filter.prototype */ {

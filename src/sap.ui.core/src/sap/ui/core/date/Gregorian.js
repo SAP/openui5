@@ -17,8 +17,9 @@ sap.ui.define(['jquery.sap.global', './UniversalDate', 'sap/ui/core/Locale', 'sa
 	 *
 	 * @private
 	 * @alias sap.ui.core.date.Gregorian
+	 * @extends sap.ui.core.date.UniversalDate
 	 */
-	var Gregorian = UniversalDate.extend("sap.ui.core.date.Gregorian", /** @lends sap.ui.core.date.Date.prototype */ {
+	var Gregorian = UniversalDate.extend("sap.ui.core.date.Gregorian", /** @lends sap.ui.core.date.Gregorian.prototype */ {
 		constructor: function() {
 			this.oDate = this.createDate(Date, arguments);
 			this.sCalendarType = sap.ui.core.CalendarType.Gregorian;

@@ -24,6 +24,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.Context
+	 * @extends sap.ui.base.Object
 	 */
 	var Context = BaseObject.extend("sap.ui.model.Context", /** @lends sap.ui.model.Context.prototype */ {
 		

@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 *         If you do NOT specify this parameter: by default all nested objects/arrays will be used to build the trees hierarchy.
 	 * 
 	 * @alias sap.ui.model.json.JSONTreeBinding
-	 * @extends sap.ui.model.TreeBinding
+	 * @extends sap.ui.model.ClientTreeBinding
 	 */
 	var JSONTreeBinding = ClientTreeBinding.extend("sap.ui.model.json.JSONTreeBinding");
 	

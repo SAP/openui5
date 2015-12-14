@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	 * @private
 	 * @alias sap.ui.core.date.UniversalDate
 	 */
-	var UniversalDate = BaseObject.extend("sap.ui.core.date.UniversalDate", /** @lends sap.ui.core.BaseObject.prototype */ {
+	var UniversalDate = BaseObject.extend("sap.ui.core.date.UniversalDate", /** @lends sap.ui.core.date.UniversalDate.prototype */ {
 		constructor: function() {
 			var clDate = UniversalDate.getClass();
 			return this.createDate(clDate, arguments);

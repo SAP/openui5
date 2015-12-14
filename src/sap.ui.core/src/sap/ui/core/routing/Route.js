@@ -46,6 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 		 *
 		 * @public
 		 * @alias sap.ui.core.routing.Route
+		 * @extends sap.ui.base.EventProvider
 		 */
 		var Route = EventProvider.extend("sap.ui.core.routing.Route", /** @lends sap.ui.core.routing.Route.prototype */ {
 

@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 * @param {array} [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object} [mParameters=null] additional model specific parameters (optional)
 	 * @alias sap.ui.model.xml.XMLTreeBinding
-	 * @extends sap.ui.model.TreeBinding
+	 * @extends sap.ui.model.ClientTreeBinding
 	 */
 	var XMLTreeBinding = ClientTreeBinding.extend("sap.ui.model.xml.XMLTreeBinding");
 	

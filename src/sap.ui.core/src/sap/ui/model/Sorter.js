@@ -27,6 +27,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 *        a "key" property an may contain additional properties needed for group visualization.
 	 * @public
 	 * @alias sap.ui.model.Sorter
+	 * @extends sap.ui.base.Object
 	 */
 	var Sorter = BaseObject.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
 		

@@ -47,6 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	 *
 	 * @public
 	 * @alias sap.ui.core.format.FileSizeFormat
+	 * @extends sap.ui.base.Object
 	 */
 	var FileSizeFormat = BaseObject.extend("sap.ui.core.format.FileSizeFormat", /** @lends sap.ui.core.format.FileSizeFormat.prototype */ {
 		constructor : function(oFormatOptions) {

@@ -106,6 +106,7 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 *
 	 * @param {sap.ui.core.Control} oComposite Composite control that this factory is used for.
 	 * @alias sap.ui.core.ComponentFactory
+	 * @extends sap.ui.base.EventProvider
 	 */
 	var ComponentFactory = EventProvider.extend("sap.ui.core.ComponentFactory", /** @lends sap.ui.core.ComponentFactory */ {
 		constructor: function(oComposite) {
