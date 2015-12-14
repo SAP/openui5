@@ -317,11 +317,13 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 				// unfortunately we are not allowed to add the known internal URLs here
 				"https://openui5.hana.ondemand.com/resources/sap-ui-core.js": "OpenUI5 latest stable version", // TODO: would be nice to use versionoverview.html to stay up-to-date...
 				"https://openui5beta.hana.ondemand.com/resources/sap-ui-core.js": "OpenUI5 PREVIEW version",   // But for now people can select one version and then modify the URL manually.
-				"https://openui5.hana.ondemand.com/1.30.10/resources/sap-ui-core.js": "OpenUI5 1.30.10",
-				"https://openui5.hana.ondemand.com/1.28.20/resources/sap-ui-core.js": "OpenUI5 1.28.20",
+				"https://openui5.hana.ondemand.com/1.32.9/resources/sap-ui-core.js": "OpenUI5 1.32.9",
+				"https://openui5.hana.ondemand.com/1.30.11/resources/sap-ui-core.js": "OpenUI5 1.30.11",
+				"https://openui5.hana.ondemand.com/1.28.24/resources/sap-ui-core.js": "OpenUI5 1.28.24",
 				"https://sapui5.hana.ondemand.com/sdk/resources/sap-ui-core.js": "SAPUI5 latest stable version",
-				"https://sapui5.hana.ondemand.com/1.30.8/resources/sap-ui-core.js": "SAPUI5 1.30.8",
-				"https://sapui5.hana.ondemand.com/1.28.18/resources/sap-ui-core.js": "SAPUI5 1.28.18",
+				"https://sapui5.hana.ondemand.com/1.32.8/resources/sap-ui-core.js": "SAPUI5 1.32.8",
+				"https://sapui5.hana.ondemand.com/1.30.10/resources/sap-ui-core.js": "SAPUI5 1.30.10",
+				"https://sapui5.hana.ondemand.com/1.28.23/resources/sap-ui-core.js": "SAPUI5 1.28.23",
 				"http://localhost:8080/testsuite/resources/sap-ui-core.js": "Localhost (port 8080), /testsuite ('grunt serve' URL)",
 				"http://localhost:8080/sapui5/resources/sap-ui-core.js": "Localhost (port 8080), /sapui5 (maven URL)"
 			};
