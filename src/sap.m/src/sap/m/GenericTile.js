@@ -13,6 +13,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class Displays the title, description, and a customizable main area.
+	 * As of release 1.34, the ARIA label and tooltip of sap.m.GenericTile control are handled in a consistent way.
+	 * As a default, all controls embedded into the GenericTile control can contribute with their own tooltips and ARIA label attributes.
+	 * All the tooltips are "merged" into one joint tooltip and then displayed, no matter where the mouse hovers over the tile.
+	 * Like that, also only one ARIA label attribute and one title attribute are provided by the tile. The title attributes of all DOM elements contributing to the tile (all children of the tile) are removed.
+	 * The consuming application can provide a specific tooltip. In this case, the default text created by the control will be overwritten.
+	 * If the tooltip provided by the application is a string of white spaces only, the tooltip of the tile control will be suppressed
+	 * and the ARIA label attribute of the tile control is equal to the text created by the control.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -433,13 +440,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		if (!sAriaText || this._isTooltipSuppressed()) {
 			sAriaText = this._getAriaAndTooltipText(); // ARIA label set by the control
 		}
-		return sAriaText; // ARIA label set by the app, equal to tooltip 
+		return sAriaText; // ARIA label set by the app, equal to tooltip
 	};
 
 	/**
 	 * Returns text for tooltip or null.
 	 * If the the application provides a specific tooltip, the returned string is equal to the tooltip text.
-	 * If the tooltip provided by the application which is a string of only white spaces, the function returns null.
+	 * If the tooltip provided by the application is a string of only white spaces, the function returns null.
 	 * In other cases, the function returns a default text created by the control.
 	 *
 	 * @returns {String} Text for tooltip or null.
