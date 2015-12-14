@@ -64,6 +64,79 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"String" : {__postProcessor : postProcessLeaf},
 			"TimeOfDay" : {__postProcessor : postProcessLeaf}
 		},
+		oAnnotationExpressionConfig = {
+			"And" : {
+				__postProcessor : postProcessOperation,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Apply" : {
+				__postProcessor : postProcessApply,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Cast" : {
+				__postProcessor : postProcessCastOrIsOf,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Collection" : {
+				__postProcessor : postProcessCollection,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Eq" : {
+				__postProcessor : postProcessOperation,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Ge" : {
+				__postProcessor : postProcessOperation,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Gt" : {
+				__postProcessor : postProcessOperation,
+				__include : [oAnnotationLeafConfig]
+			},
+			"If" : {
+				__postProcessor : postProcessOperation,
+				__include : [oAnnotationLeafConfig]
+			},
+			"IsOf" : {
+				__postProcessor : postProcessCastOrIsOf,
+				__include : [oAnnotationLeafConfig]
+			},
+			"LabeledElement" : {
+				__postProcessor : postProcessLabeledElement,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Le" : {
+				__postProcessor : postProcessOperation,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Lt" : {
+				__postProcessor : postProcessOperation,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Ne" : {
+				__postProcessor : postProcessOperation,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Not" : {
+				__postProcessor : postProcessNot,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Or" : {
+				__postProcessor : postProcessOperation,
+				__include : [oAnnotationLeafConfig]
+			},
+			"Record" : {
+				__postProcessor : postProcessRecord,
+				"PropertyValue" : {
+					__postProcessor : postProcessPropertyValue,
+					__include : [oAnnotationLeafConfig]
+				}
+			},
+			"UrlRef" : {
+				__postProcessor : postProcessUrlRef,
+				__include : [oAnnotationLeafConfig]
+			}
+		},
 		oFullConfig = {
 			__processor : processEdmx,
 			"Reference" : {
@@ -80,23 +153,23 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					__processor : processSchema,
 					"Action" : {
 						__processor : processActionOrFunction,
-						__include : oActionOrFunctionConfig
+						__include : [oActionOrFunctionConfig]
 					},
 					"Annotations" : {
 						__processor : processAnnotations,
 						"Annotation" : {
 							__processor : processAnnotation,
 							__postProcessor : postProcessAnnotation,
-							__include : oAnnotationLeafConfig
+							__include : [oAnnotationLeafConfig, oAnnotationExpressionConfig]
 						}
 					},
 					"Function" : {
 						__processor : processActionOrFunction,
-						__include : oActionOrFunctionConfig
+						__include : [oActionOrFunctionConfig]
 					},
 					"EntityType" : {
 						__processor : processEntityType,
-						__include : oStructuredTypeConfig,
+						__include : [oStructuredTypeConfig],
 						"Key" : {
 							"PropertyRef" : {
 								__processor : processEntityTypeKeyPropertyRef
@@ -105,7 +178,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					},
 					"ComplexType" : {
 						__processor : processComplexType,
-						__include : oStructuredTypeConfig
+						__include : [oStructuredTypeConfig]
 					},
 					"EntityContainer" : {
 						__processor : processEntityContainer,
@@ -114,14 +187,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 						},
 						"EntitySet" : {
 							__processor : processEntitySet,
-							__include : oEntitySetConfig
+							__include : [oEntitySetConfig]
 						},
 						"FunctionImport" : {
 							__processor : processImport.bind(null, "Function")
 						},
 						"Singleton" : {
 							__processor : processSingleton,
-							__include : oEntitySetConfig
+							__include : [oEntitySetConfig]
 						}
 					},
 					"EnumType" : {
@@ -253,9 +326,85 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function postProcessAnnotation(oElement, aResult, oAggregate) {
-		if (aResult) {
+		if (aResult.length) {
 			oAggregate.annotations.target[oAggregate.annotations.qualifiedName] = aResult[0];
 		}
+	}
+
+	/**
+	 * Post-processing of an Apply element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {object} the value for the JSON
+	 */
+	function postProcessApply(oElement, aResult, oAggregate) {
+		return {
+			"$Apply" : aResult,
+			"$Function" :
+				MetadataConverter.resolveAlias(oElement.getAttribute("Function"), oAggregate)
+		};
+	}
+
+	/**
+	 * Post-processing of a Cast or IsOf element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {object} the value for the JSON
+	 */
+	function postProcessCastOrIsOf(oElement, aResult, oAggregate) {
+		var sName = oElement.localName,
+			oAttributes = getAttributes(oElement),
+			oResult = {};
+
+		oResult["$" + sName] = aResult[0];
+		processTypedCollection(oAttributes.Type, oResult, oAggregate);
+		MetadataConverter.processFacetAttributes(oAttributes, oResult);
+		return oResult;
+	}
+
+	/**
+	 * Post-processing of a Collection element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {object} the value for the JSON
+	 */
+	function postProcessCollection(oElement, aResult, oAggregate) {
+		return aResult;
+	}
+
+	/**
+	 * Post-processing of a LabeledElement element within an Annotation element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {any} the value for the JSON
+	 */
+	function postProcessLabeledElement(oElement, aResult, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			sKey,
+			vValue = true;
+
+		if (aResult.length) {
+			vValue = aResult[0];
+		} else {
+			for (sKey in oAttributes) {
+				if (sKey !== "Name") {
+					vValue = getAnnotationValue(sKey, oAttributes[sKey], oAggregate);
+					break;
+				}
+			}
+		}
+		return {
+			"$LabeledElement" : vValue,
+			"$Name" : oAttributes.Name
+		};
 	}
 
 	/**
@@ -264,7 +413,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {Element} oElement the element
 	 * @param {any[]} aResult the results from child elements
 	 * @param {object} oAggregate the aggregate
-	 * @returns {any} the constant value for the JSON
+	 * @returns {any} the value for the JSON
 	 */
 	function postProcessLabeledElementReference(oElement, aResult, oAggregate) {
 		return {
@@ -283,6 +432,94 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function postProcessLeaf(oElement, aResult, oAggregate) {
 		return getAnnotationValue(oElement.localName, oElement.textContent, oAggregate);
+	}
+
+	/**
+	 * Post-processing of a Not element within an Annotation element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @returns {object} the value for the JSON
+	 */
+	function postProcessNot(oElement, aResult) {
+		return {"$Not": aResult[0]};
+	}
+
+	/**
+	 * Post-processing of a PropertyValue element within a Record element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {any} the value for the JSON
+	 */
+	function postProcessPropertyValue(oElement, aResult, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			sKey,
+			vValue = true;
+
+		if (aResult.length) {
+			vValue = aResult[0];
+		} else {
+			for (sKey in oAttributes) {
+				if (sKey !== "Property") {
+					vValue = getAnnotationValue(sKey, oAttributes[sKey], oAggregate);
+					break;
+				}
+			}
+		}
+		return {
+			property: oAttributes.Property,
+			value: vValue
+		};
+	}
+
+	/**
+	 * Post-processing of a Record element within an Annotation element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {object} the value for the JSON
+	 */
+	function postProcessRecord(oElement, aResult, oAggregate) {
+		var oResult = {},
+			oType = oElement.getAttribute("Type");
+
+		if (oType) {
+			oResult.$Type = MetadataConverter.resolveAlias(oType, oAggregate);
+		}
+		aResult.forEach(function (oPropertyValue) {
+			oResult[oPropertyValue.property] = oPropertyValue.value;
+		});
+		return oResult;
+	}
+
+	/**
+	 * Post-processing of an operation element (And, Or, Eq etc) within an Annotation element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {object} the value for the JSON
+	 */
+	function postProcessOperation(oElement, aResult, oAggregate) {
+		var oResult = {};
+
+		oResult["$" + oElement.localName] = aResult;
+		return oResult;
+	}
+
+	/**
+	 * Post-processing of a UrlRef element within an Annotation element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @returns {object} the constant value for the JSON
+	 */
+	function postProcessUrlRef(oElement, aResult) {
+		// FIXME if the URL is relative, check xml:base. What if the URL is calculated at runtime?
+		return {$UrlRef: aResult[0]};
 	}
 
 	/**
@@ -490,7 +727,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	}
 
 	/**
-	 * Processes an Member element within a EnumType.
+	 * Processes a Member element within a EnumType.
 	 * @param {Element} oElement the element
 	 * @param {object} oAggregate the aggregate
 	 */
@@ -571,11 +808,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processNavigationPropertyBinding(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement),
-			oNavigationPropertyBinding = oAggregate.entitySet.$NavigationPropertyBinding;
+			oNavigationPropertyBinding =
+				getOrCreateObject(oAggregate.entitySet, "$NavigationPropertyBinding");
 
-		if (!oNavigationPropertyBinding) {
-			oAggregate.entitySet.$NavigationPropertyBinding = oNavigationPropertyBinding = {};
-		}
 		oNavigationPropertyBinding[oAttributes.Path]
 			= resolveTargetPath(oAttributes.Target, oAggregate);
 	}
@@ -608,6 +843,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processReference(oElement, oAggregate) {
 		var oReference = getOrCreateObject(oAggregate.result, "$Reference");
 
+		// FIXME if the URI is relative, check xml:base in the element and its parent(s)
 		oAggregate.reference = oReference[oElement.getAttribute("Uri")] = {};
 	}
 
@@ -717,7 +953,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	}
 
 	/**
-	 * Processes an TypeDefinition element.
+	 * Processes a TypeDefinition element.
 	 * @param {Element} oElement the element
 	 * @param {object} oAggregate the aggregate
 	 */
@@ -770,11 +1006,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processTypeNavigationPropertyReferentialConstraint(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement),
-			oReferentialConstraint = oAggregate.navigationProperty.$ReferentialConstraint;
-
-		if (!oReferentialConstraint) {
-			oAggregate.navigationProperty.$ReferentialConstraint = oReferentialConstraint = {};
-		}
+			oReferentialConstraint =
+				getOrCreateObject(oAggregate.navigationProperty, "$ReferentialConstraint");
 
 		oReferentialConstraint[oAttributes.Property] = oAttributes.ReferencedProperty;
 	}
@@ -968,22 +1201,33 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   an aggregate object that is passed to every processor function
 		 * @param {object} oConfig
 		 *   the configuration for this element with the following properties:
-		 *   * __processor is a function called with this element and oAggregate as parameters
-		 *     before visiting the children.
-		 *   * __postProcessor is called after visiting the children. It gets an array with all
-		 *     return values of the children's __postProcessor functions (or undefined if there
-		 *     were no children).
-		 *   * __include may give another configuration object that is also searched for known
-		 *     children.
+		 *   * __processor is an optional function called with this element and oAggregate as
+		 *     parameters before visiting the children.
+		 *   * __postProcessor is an optional function called after visiting the children. It gets
+		 *     the element, an array with all return values of the children's __postProcessor
+		 *     functions (which is empty if there were no children) and oAggregate as parameters.
+		 *   * __include is an optional array of configuration objects that are also searched for
+		 *     known children.
 		 *   * All other properties are known child elements, the value is the configuration for
 		 *     that child element.
-		 * @returns {any} return value from __postProcessor or undefined if there is none
+		 * @returns {any}
+		 *   the return value from __postProcessor or undefined if there is none
 		 */
 		traverse : function (oElement, oAggregate, oConfig) {
-			var oChildList = oElement.childNodes,
-				oChildNode, i, oChildConfig,
-				vResult, aResult;
+			var oChildConfig,
+				oChildList = oElement.childNodes,
+				oChildNode,
+				i,
+				sName,
+				vResult,
+				aResult = [];
 
+			function tryInclude(oInclude) {
+				if (sName in oInclude) {
+					oChildConfig = oInclude[sName];
+					return true;
+				}
+			}
 
 			if (oConfig.__processor) {
 				oConfig.__processor(oElement, oAggregate);
@@ -991,14 +1235,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			for (i = 0; i < oChildList.length; i++) {
 				oChildNode = oChildList.item(i);
 				if (oChildNode.nodeType === 1) { // Node.ELEMENT_NODE
-					oChildConfig = oConfig[oChildNode.localName];
+					sName = oChildNode.localName;
+					oChildConfig = oConfig[sName];
 					if (!oChildConfig && oConfig.__include) {
-						oChildConfig = oConfig.__include[oChildNode.localName];
+						oConfig.__include.some(tryInclude);
 					}
 					if (oChildConfig) {
 						vResult = MetadataConverter.traverse(oChildNode, oAggregate, oChildConfig);
 						if (oConfig.__postProcessor) {
-							aResult = (aResult || []).concat([vResult]);
+							aResult.push(vResult);
 						}
 					}
 				}

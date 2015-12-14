@@ -88,23 +88,29 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("traverse", function (assert) {
 		var oXML = xml(assert, "<foo><!-- a comment -->text<bar/>more text <ignore/><bar/>"
-				+ "<bar><included/></bar>"
+				+ "<bar><included1/><included2/></bar>"
 				+ "\n<bar><innerBar/><innerBar/><innerBar2/></bar></foo>"),
 			oAggregate = {
 				bar: 0,
 				innerBar: 0,
 				innerBar2: 0,
-				included: 0
+				included1: 0,
+				included2: 0
 			},
-			oIncludeConfig = {
-				"included" : {
-					__processor: processor.bind(null, "included")
+			oInclude1Config = {
+				"included1" : {
+					__processor: processor.bind(null, "included1")
+				}
+			},
+			oInclude2Config = {
+				"included2" : {
+					__processor: processor.bind(null, "included2")
 				}
 			},
 			oSchemaConfig = {
 				"bar": {
 					__processor: processor.bind(null, "bar"),
-					__include: oIncludeConfig,
+					__include: [oInclude1Config, oInclude2Config],
 					"innerBar": {
 						__processor: processor.bind(null, "innerBar")
 					},
@@ -125,7 +131,8 @@ sap.ui.require([
 		assert.strictEqual(oAggregate.bar, 4);
 		assert.strictEqual(oAggregate.innerBar, 2);
 		assert.strictEqual(oAggregate.innerBar2, 1);
-		assert.strictEqual(oAggregate.included, 1);
+		assert.strictEqual(oAggregate.included1, 1);
+		assert.strictEqual(oAggregate.included2, 1);
 	});
 
 	//*********************************************************************************************
@@ -137,7 +144,7 @@ sap.ui.require([
 				},
 				"Bool": {
 					__postProcessor: function(oElement, aResults) {
-						assert.strictEqual(aResults, undefined);
+						assert.deepEqual(aResults, []);
 						return oElement.childNodes[0].nodeValue === "true";
 					}
 				}
@@ -911,7 +918,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("expression: leaf elements", function (assert) {
+	QUnit.test("annotations: leaf elements", function (assert) {
 		testExpression(assert, '<String>foo\nbar</String>', "foo\nbar");
 		testExpression(assert, '<String>foo<!-- bar --></String>', "foo");
 		testExpression(assert, '<String><!-- foo -->bar</String>', "bar");
@@ -949,6 +956,112 @@ sap.ui.require([
 		testExpression(assert,
 			'<LabeledElementReference>f.LabeledElement</LabeledElementReference>',
 			{"$LabeledElementReference": "foo.LabeledElement"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("annotations: operators", function (assert) {
+		testExpression(assert, '<And><Path>IsMale</Path><Path>IsMarried</Path></And>',
+			{"$And": [{"$Path": "IsMale"}, {"$Path": "IsMarried"}]});
+		testExpression(assert, '<Or><Path>IsMale</Path><Path>IsMarried</Path></Or>',
+			{"$Or": [{"$Path": "IsMale"}, {"$Path": "IsMarried"}]});
+		testExpression(assert, '<Not><Path>IsMale</Path></Not>', {"$Not": {"$Path": "IsMale"}});
+		testExpression(assert, '<Eq><Null/><Path>IsMale</Path></Eq>',
+			{"$Eq": [null, {"$Path": "IsMale"}]});
+		testExpression(assert, '<Ne><Null/><Path>IsMale</Path></Ne>',
+			{"$Ne": [null, {"$Path": "IsMale"}]});
+		testExpression(assert, '<Gt><Path>Price</Path><Int>20</Int></Gt>',
+			{"$Gt": [{"$Path": "Price"}, 20]});
+		testExpression(assert, '<Ge><Path>Price</Path><Int>20</Int></Ge>',
+			{"$Ge": [{"$Path": "Price"}, 20]});
+		testExpression(assert, '<Le><Path>Price</Path><Int>20</Int></Le>',
+			{"$Le": [{"$Path": "Price"}, 20]});
+		testExpression(assert, '<Le><Path>Price</Path><Int>20</Int></Le>',
+			{"$Le": [{"$Path": "Price"}, 20]});
+		testExpression(assert,
+			'<If><Path>IsFemale</Path><String>Female</String><String>Male</String></If>',
+			{"$If": [{"$Path": "IsFemale"}, "Female", "Male"]});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("annotations: Apply", function (assert) {
+		testExpression(assert, '<Apply Function="f.Bar"/>',
+			{"$Apply": [], "$Function": "foo.Bar"});
+		testExpression(assert, '<Apply Function="odata.concat"><String>Product: </String>'
+			+ '<Path>ProductName</Path></Apply>',
+			{"$Apply": ["Product: ", {"$Path": "ProductName"}], "$Function": "odata.concat"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("annotations: Cast and IsOf", function (assert) {
+		testExpression(assert, '<Cast Type="Collection(f.Type)"><Path>Average</Path></Cast>', {
+			"$Cast": {"$Path": "Average"},
+			"$Type": "foo.Type",
+			"$isCollection": true
+		});
+		testExpression(assert, '<Cast Type="Edm.Decimal" MaxLength="10" Precision="8" Scale="2"'
+			+ ' SRID="42"><Float>42</Float></Cast>', {
+				"$Cast": 42,
+				"$Type": "Edm.Decimal",
+				"$MaxLength": 10,
+				"$Precision": 8,
+				"$Scale": 2,
+				"$SRID": "42"
+			});
+		testExpression(assert, '<Cast Type="Edm.Decimal"/>',
+			{"$Cast": undefined, "$Type": "Edm.Decimal"});  // do not crash
+		testExpression(assert, '<IsOf Type="Collection(f.Type)"><Path>Average</Path></IsOf>', {
+			"$IsOf": {"$Path": "Average"},
+			"$Type": "foo.Type",
+			"$isCollection": true
+		});
+		testExpression(assert, '<IsOf Type="Edm.Decimal" MaxLength="10" Precision="8" Scale="2"'
+			+ ' SRID="42"><Float>42</Float></IsOf>', {
+				"$IsOf": 42,
+				"$Type": "Edm.Decimal",
+				"$MaxLength": 10,
+				"$Precision": 8,
+				"$Scale": 2,
+				"$SRID": "42"
+			});
+		testExpression(assert, '<IsOf Type="Edm.Decimal"/>',
+			{"$IsOf": undefined, "$Type": "Edm.Decimal"});  // do not crash
+	});
+
+	//*********************************************************************************************
+	QUnit.test("annotations: Collection", function (assert) {
+		testExpression(assert, '<Collection/>', []);
+		testExpression(assert,
+			'<Collection><String>Product</String><String>Supplier</String></Collection>',
+			["Product", "Supplier"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("annotations: LabeledElement", function (assert) {
+		testExpression(assert, '<LabeledElement Name="CustomerFirstName" Path="FirstName" />',
+			{"$LabeledElement": {"$Path": "FirstName"}, "$Name": "CustomerFirstName"});
+		testExpression(assert,
+			'<LabeledElement Name="CustomerFirstName"><Path>FirstName</Path></LabeledElement>',
+			{"$LabeledElement": {"$Path": "FirstName"}, "$Name": "CustomerFirstName"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("annotations: Record", function (assert) {
+		testExpression(assert, '<Record Type="f.Record"/>', {"$Type": "foo.Record"});
+		testExpression(assert, '\
+				<Record>\
+					<PropertyValue Property="GivenName" Path="FirstName"/>\
+					<PropertyValue Property="Surname"><Path>LastName</Path></PropertyValue>\
+				</Record>',
+			{
+				"GivenName": {"$Path": "FirstName"},
+				"Surname": {"$Path": "LastName"}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("annotations: UrlRef", function (assert) {
+		testExpression(assert, '<UrlRef><Path>Url</Path></UrlRef>',
+			{"$UrlRef": {"$Path": "Url"}});
 	});
 
 	//*********************************************************************************************
