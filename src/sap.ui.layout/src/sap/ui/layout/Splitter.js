@@ -522,7 +522,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		// Remove resizing overlay
 		this._move["bar"].css("visibility", "");
 		this._$SplitterOverlay.css("display", ""); // Remove?
-		this._$SplitterOverlay.detach();
+
+		// this._$SplitterOverlay.detach(); TODO move to better position
 
 		// Uses bound handler methods - see init()
 		document.removeEventListener("mouseup",   this._boundBarMoveEnd);

@@ -1,0 +1,25 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.ResponsiveSplitter.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:m="sap.m"
+	height="100%">
+
+	<l:ResponsiveSplitter defaultPane="default">
+		<l:PaneContainer>
+			<l:SplitPane requiredParentWidth="0" id="default">
+				<m:Panel headerText="Minimum parent width 400"/>
+			</l:SplitPane>
+
+			<l:PaneContainer orientation="Vertical">
+				<l:SplitPane  requiredParentWidth="600">
+					<m:Panel headerText="Minimum parent width 600"/>
+				</l:SplitPane>
+				<l:SplitPane  requiredParentWidth="800">
+					<m:Panel headerText="Minimum parent width 800"/>
+				</l:SplitPane>
+			</l:PaneContainer>
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>
+</mvc:View>

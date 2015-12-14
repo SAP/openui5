@@ -110,6 +110,16 @@
 				"samples" : [
 					"sap.ui.layout.sample.BlockLayoutDefault"
 				]
+			},
+			{
+				"id" : "sap.ui.layout.ResponsiveSplitter",
+				"name" : "ResponsiveSplitter ",
+				"category" : "Layout",
+				"since" : "1.38",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.ResponsiveSplitter"
+				]
 			}
 		],
 		"samples" : [
@@ -247,6 +257,11 @@
 				"id": "sap.ui.layout.sample.BlockLayoutDefault",
 				"name": "Block Layout ",
 				"description": "The Block Layout  is intended to be used with rows and cells. The cells have predefined width, the rows have predefined rendering modes - scrollable/vertical/horizontal."
+			},
+			{
+				"id": "sap.ui.layout.sample.ResponsiveSplitter",
+				"name": "Responsive Splitter",
+				"description": "ResponsiveSplitter is used to visually divide the content of its parent. It consists of PaneContainers that further  agregate other PaneContainers and SplitPanes. SplitPanes can be moved to the pagination when a minimum width of their parent is reached."
 			}
 		]
 	}
