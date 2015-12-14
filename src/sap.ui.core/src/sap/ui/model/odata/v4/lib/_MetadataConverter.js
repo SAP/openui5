@@ -43,6 +43,27 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				__processor : processReturnType
 			}
 		},
+		// All Annotations elements that don't have expressions as child (leaf, non-recursive)
+		oAnnotationLeafConfig = {
+			"AnnotationPath" : {__postProcessor : postProcessLeaf},
+			"Binary" : {__postProcessor : postProcessLeaf},
+			"Bool" : {__postProcessor : postProcessLeaf},
+			"Date" : {__postProcessor : postProcessLeaf},
+			"DateTimeOffset" : {__postProcessor : postProcessLeaf},
+			"Decimal" : {__postProcessor : postProcessLeaf},
+			"Duration" : {__postProcessor : postProcessLeaf},
+			"EnumMember" : {__postProcessor : postProcessLeaf},
+			"Float" : {__postProcessor : postProcessLeaf},
+			"Guid" : {__postProcessor : postProcessLeaf},
+			"Int" : {__postProcessor : postProcessLeaf},
+			"LabeledElementReference" : {__postProcessor : postProcessLabeledElementReference},
+			"NavigationPropertyPath" : {__postProcessor : postProcessLeaf},
+			"Null" : {__postProcessor : postProcessLeaf},
+			"Path" : {__postProcessor : postProcessLeaf},
+			"PropertyPath" : {__postProcessor : postProcessLeaf},
+			"String" : {__postProcessor : postProcessLeaf},
+			"TimeOfDay" : {__postProcessor : postProcessLeaf}
+		},
 		oFullConfig = {
 			__processor : processEdmx,
 			"Reference" : {
@@ -61,7 +82,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					"Annotations" : {
 						__processor : processAnnotations,
 						"Annotation" : {
-							__processor : processAnnotation
+							__processor : processAnnotation,
+							__postProcessor : postProcessAnnotation,
+							__include : oAnnotationLeafConfig
 						}
 					},
 					"Function" : {
@@ -117,8 +140,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Returns the attributes of the DOM Element as map.
 	 *
-	 * @param {Element}
-	 *            oElement the element
+	 * @param {Element} oElement the element
 	 * @returns {object} the attributes
 	 */
 	function getAttributes(oElement) {
@@ -129,6 +151,105 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			oResult[oAttribute.name] = oAttribute.value;
 		}
 		return oResult;
+	}
+
+	/**
+	 * Determines the value for an annotation of the given type.
+	 * @param {string} sType
+	 *   the annotation type (either from the attribute name in the Annotation element or from the
+	 *   element name itself)
+	 * @param {string} sValue
+	 *   the value in the XML (either the attribute value or the element's text value)
+	 * @param {object} oAggregate
+	 *   the aggregate
+	 * @returns {any}
+	 *   the value for the JSON
+	 */
+	function getAnnotationValue(sType, sValue, oAggregate) {
+		var vValue, aValues;
+
+		switch (sType) {
+			case "AnnotationPath":
+			case "NavigationPropertyPath":
+			case "Path":
+			case "PropertyPath":
+				sValue = MetadataConverter.resolveAliasInPath(sValue, oAggregate);
+				// falls through
+			case "Binary":
+			case "Date":
+			case "DateTimeOffset":
+			case "Decimal":
+			case "Duration":
+			case "Guid":
+			case "TimeOfDay":
+			case "UrlRef":
+				vValue = {};
+				vValue["$" + sType] = sValue;
+				return vValue;
+			case "Bool":
+				return sValue === "true";
+			case "EnumMember":
+				aValues = sValue.split(" ");
+				aValues.forEach(function (sPath, i) {
+					aValues[i] = MetadataConverter.resolveAliasInPath(sPath, oAggregate);
+				});
+				return {$EnumMember: aValues.join(" ")};
+			case "Float":
+				if (sValue === "NaN" || sValue === "INF" || sValue === "-INF") {
+					return {$Float: sValue};
+				}
+				return parseFloat(sValue);
+			case "Int":
+				vValue = parseInt(sValue, 10);
+				return Helper.isSafeInteger(vValue) ? vValue : {$Int: sValue};
+			case "Null":
+				return null;
+			case "String":
+				return sValue;
+			default:
+				return true;
+		}
+	}
+
+	/**
+	 * Post-processing of an Annotation element. Sets the result of the single child element at the
+	 * annotation if there was a child.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 */
+	function postProcessAnnotation(oElement, aResult, oAggregate) {
+		if (aResult) {
+			oAggregate.annotations.target[oAggregate.annotations.qualifiedName] = aResult[0];
+		}
+	}
+
+	/**
+	 * Post-processing of a LabeledElementReference element within an Annotation element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {any} the constant value for the JSON
+	 */
+	function postProcessLabeledElementReference(oElement, aResult, oAggregate) {
+		return {
+			"$LabeledElementReference" :
+				MetadataConverter.resolveAlias(oElement.textContent, oAggregate)
+		};
+	}
+
+	/**
+	 * Post-processing of a leaf element within an Annotation element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {any} the constant value for the JSON
+	 */
+	function postProcessLeaf(oElement, aResult, oAggregate) {
+		return getAnnotationValue(oElement.localName, oElement.textContent, oAggregate);
 	}
 
 	/**
@@ -196,8 +317,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processAnnotation(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement),
-			sTerm = MetadataConverter.resolveAlias(oAttributes.Term, oAggregate),
-			sQualifiedName = "@" + sTerm,
+			sKey,
+			sQualifiedName = "@" + MetadataConverter.resolveAlias(oAttributes.Term, oAggregate),
 			sQualifier = oAggregate.annotations.qualifier || oAttributes.Qualifier,
 			vValue = true;
 
@@ -205,59 +326,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			sQualifiedName += "#" + sQualifier;
 		}
 
-		if (oAttributes.Binary) {
-			vValue = {$Binary: oAttributes.Binary};
-		} else if (oAttributes.Bool) {
-			vValue = oAttributes.Bool === "true";
-		} else if (oAttributes.Date) {
-			vValue = {$Date: oAttributes.Date};
-		} else if (oAttributes.DateTimeOffset) {
-			vValue = {$DateTimeOffset: oAttributes.DateTimeOffset};
-		} else if (oAttributes.Decimal) {
-			vValue = {$Decimal: oAttributes.Decimal};
-		} else if (oAttributes.Duration) {
-			vValue = {$Duration: oAttributes.Duration};
-		} else if (oAttributes.EnumMember) {
-			vValue = parseInt(oAttributes.EnumMember, 10);
-			if (!Helper.isSafeInteger(vValue)) {
-				vValue = oAttributes.EnumMember;
+		for (sKey in oAttributes) {
+			if (sKey !== "Term" && sKey !== "Qualifier") {
+				vValue = getAnnotationValue(sKey, oAttributes[sKey], oAggregate);
+				break;
 			}
-			vValue = {$EnumMember: vValue};
-		} else if (oAttributes.Float) {
-			if (oAttributes.Float === "NaN") {
-				vValue = {$Float: "NaN"};
-			} else if (oAttributes.Float === "INF") {
-				vValue = {$Float: "Infinity"};
-			} else if (oAttributes.Float === "-INF") {
-				vValue = {$Float: "-Infinity"};
-			} else {
-				vValue = parseFloat(oAttributes.Float);
-			}
-		} else if (oAttributes.Guid) {
-			vValue = {$Guid: oAttributes.Guid};
-		} else if (oAttributes.Int) {
-			vValue = parseInt(oAttributes.Int, 10);
-			vValue = Helper.isSafeInteger(vValue) ? vValue : {$Int: oAttributes.Int};
-		}  else if (oAttributes.String) {
-			vValue = oAttributes.String;
-		} else if (oAttributes.TimeOfDay) {
-			vValue = {$TimeOfDay: oAttributes.TimeOfDay};
-		} else if (oAttributes.AnnotationPath) {
-			vValue = {$AnnotationPath: MetadataConverter.resolveAliasInPath(
-					oAttributes.AnnotationPath, oAggregate)};
-		} else if (oAttributes.NavigationPropertyPath) {
-			vValue = {$NavigationPropertyPath: MetadataConverter.resolveAliasInPath(
-					oAttributes.NavigationPropertyPath, oAggregate)};
-		} else if (oAttributes.Path) {
-			vValue = {$Path: MetadataConverter.resolveAliasInPath(
-					oAttributes.Path, oAggregate)};
-		} else if (oAttributes.PropertyPath) {
-			vValue = {$PropertyPath: MetadataConverter.resolveAliasInPath(
-					oAttributes.PropertyPath, oAggregate)};
-		} else if (oAttributes.UrlRef) {
-			vValue = {$UrlRef: oAttributes.UrlRef};
 		}
 
+		oAggregate.annotations.qualifiedName = sQualifiedName;
 		oAggregate.annotations.target[sQualifiedName] = vValue;
 	}
 
@@ -829,36 +905,52 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		},
 
 		/**
-		 * Recursively traverses the subtree of a given xml element controlled by the given
-		 * schema config.
+		 * Recursively traverses the subtree of a given XML element controlled by the given
+		 * (recursive) configuration.
 		 *
 		 * @param {Element} oElement
 		 *   an XML DOM element
 		 * @param {object} oAggregate
 		 *   an aggregate object that is passed to every processor function
-		 * @param {object} oSchemaConfig
-		 *   the configuration for this element. The property __processor is a function called
-		 *   with this element and oAggregate as parameters; all other properties are known
-		 *   child elements, the value is the configuration for that child element
+		 * @param {object} oConfig
+		 *   the configuration for this element with the following properties:
+		 *   * __processor is a function called with this element and oAggregate as parameters
+		 *     before visiting the children.
+		 *   * __postProcessor is called after visiting the children. It gets an array with all
+		 *     return values of the children's __postProcessor functions (or undefined if there
+		 *     were no children).
+		 *   * __include may give another configuration object that is also searched for known
+		 *     children.
+		 *   * All other properties are known child elements, the value is the configuration for
+		 *     that child element.
+		 * @returns {any} return value from __postProcessor or undefined if there is none
 		 */
-		traverse : function (oElement, oAggregate, oSchemaConfig) {
+		traverse : function (oElement, oAggregate, oConfig) {
 			var oChildList = oElement.childNodes,
-				oChildNode, i, oNodeInfo;
+				oChildNode, i, oChildConfig,
+				vResult, aResult;
 
-			if (oSchemaConfig.__processor) {
-				oSchemaConfig.__processor(oElement, oAggregate);
+
+			if (oConfig.__processor) {
+				oConfig.__processor(oElement, oAggregate);
 			}
 			for (i = 0; i < oChildList.length; i++) {
 				oChildNode = oChildList.item(i);
 				if (oChildNode.nodeType === 1) { // Node.ELEMENT_NODE
-					oNodeInfo = oSchemaConfig[oChildNode.localName];
-					if (!oNodeInfo && oSchemaConfig.__include) {
-						oNodeInfo = oSchemaConfig.__include[oChildNode.localName];
+					oChildConfig = oConfig[oChildNode.localName];
+					if (!oChildConfig && oConfig.__include) {
+						oChildConfig = oConfig.__include[oChildNode.localName];
 					}
-					if (oNodeInfo) {
-						MetadataConverter.traverse(oChildNode, oAggregate, oNodeInfo);
+					if (oChildConfig) {
+						vResult = MetadataConverter.traverse(oChildNode, oAggregate, oChildConfig);
+						if (oConfig.__postProcessor) {
+							aResult = (aResult || []).concat([vResult]);
+						}
 					}
 				}
+			}
+			if (oConfig.__postProcessor) {
+				return oConfig.__postProcessor(oElement, aResult, oAggregate);
 			}
 		}
 	};
