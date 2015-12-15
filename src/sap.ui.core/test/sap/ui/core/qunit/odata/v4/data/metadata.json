@@ -96,8 +96,7 @@
 					"$Name" : "EmployeeID",
 					"$Nullable" : false,
 					"$Precision" : 4,
-					"$Type" : "Edm.String",
-					"$kind" : "Parameter"
+					"$Type" : "Edm.String"
 				}
 			],
 			"$ReturnType" : {
@@ -115,8 +114,7 @@
 					"$Name" : "ManagerID",
 					"$Nullable" : false,
 					"$Precision" : 4,
-					"$Type" : "Edm.String",
-					"$kind" : "Parameter"
+					"$Type" : "Edm.String"
 				}
 			],
 			"$ReturnType" : {
@@ -135,8 +133,7 @@
 					"$Name" : "EmployeeID",
 					"$Nullable" : false,
 					"$Precision" : 4,
-					"$Type" : "Edm.String",
-					"$kind" : "Parameter"
+					"$Type" : "Edm.String"
 				}
 			],
 			"$ReturnType" : {
@@ -368,7 +365,6 @@
 			"$kind" : "Action",
 			"$Parameter" : [
 				{
-					"$kind" : "Parameter",
 					"$Type" : "Edm.String",
 					"$Name" : "TeamID",
 					"$Nullable" : false,
@@ -376,7 +372,6 @@
 					"$Precision" : 10
 				},
 				{
-					"$kind" : "Parameter",
 					"$Type" : "Edm.Decimal",
 					"$Name" : "Budget",
 					"$Nullable" : false,
@@ -394,7 +389,6 @@
 			"$kind" : "Action",
 			"$Parameter" : [
 				{
-					"$kind" : "Parameter",
 					"$Type" : "Edm.String",
 					"$Name" : "EmployeeID",
 					"$Nullable" : false,
@@ -409,7 +403,6 @@
 			"$kind" : "Action",
 			"$Parameter" : [
 				{
-					"$kind" : "Parameter",
 					"$Type" : "Edm.String",
 					"$Name" : "EmployeeID",
 					"$Nullable" : false,
@@ -417,7 +410,6 @@
 					"$Precision" : 4
 				},
 				{
-					"$kind" : "Parameter",
 					"$Type" : "Edm.Int16",
 					"$Name" : "Factor",
 					"$Nullable" : false

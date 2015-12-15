@@ -597,12 +597,10 @@ sap.ui.require([
 						"$kind": sRunnable,
 						"$EntitySetPath": "Employees",
 						"$Parameter": [{
-							"$kind": "Parameter",
 							"$Name": "p1",
 							"$Type": "foo.Bar",
 							"$Nullable": false
 						},{
-							"$kind": "Parameter",
 							"$Name": "p2",
 							"$isCollection": true,
 							"$Type": "foo.Bar",

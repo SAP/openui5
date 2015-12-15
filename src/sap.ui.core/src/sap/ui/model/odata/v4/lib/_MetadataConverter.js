@@ -460,9 +460,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processParameter(oElement, oAggregate) {
 		var oAttributes = getAttributes(oElement),
 			oActionOrFunction = oAggregate.actionOrFunction,
-			oParameter = {
-				$kind: "Parameter"
-			};
+			oParameter = {};
 
 		processTypedCollection(oAttributes.Type, oParameter, oAggregate);
 		processAttributes(oAttributes, oParameter, {
