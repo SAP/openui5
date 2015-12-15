@@ -157,6 +157,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.getModel(), oModel);
 			assert.strictEqual(oBinding.getContext(), oContext);
 			assert.strictEqual(oBinding.getPath(), bAbsolute ? sPath + ";root=0" : sPath);
+			assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache is initialized");
 			assert.strictEqual(oBinding.oCache, bAbsolute ? oCache : undefined);
 		});
 	});
@@ -295,6 +296,49 @@ sap.ui.require([
 			oModel.bindContext("EMPLOYEE_2_TEAM(Team_Id='4711')", null, mParameters);
 		}, new Error("Bindings with a relative path do not support parameters"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh absolute path", function (assert) {
+		var oCache = {
+				refresh: function () {}
+			},
+			oModel = new ODataModel("/service/?sap-client=111"),
+			oContext = oModel.getContext("/TEAMS('TEAM_01')"),
+			oBinding;
+
+		this.oSandbox.mock(Cache).expects("createSingle").returns(oCache);
+
+		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
+		this.oSandbox.mock(oCache).expects("refresh");
+		this.oSandbox.mock(oBinding).expects("_fireChange");
+
+		assert.throws(function () {
+			oBinding.refresh();
+		}, new Error("Falsy values for bForceUpdate are not supported"));
+		assert.throws(function () {
+			oBinding.refresh(false);
+		}, new Error("Falsy values for bForceUpdate are not supported"));
+
+		oBinding.refresh(true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh on relative binding is not supported", function (assert) {
+		var oModel = new ODataModel("/service/?sap-client=111"),
+			oContext = oModel.getContext("/TEAMS('TEAM_01')"),
+			oBinding;
+
+		this.oSandbox.mock(Cache).expects("createSingle").never();
+
+		oBinding = oModel.bindContext("TEAM_2_EMPLOYEES(ID='1')", oContext);
+		this.oSandbox.mock(oBinding).expects("_fireChange").never();
+
+		assert.throws(function () {
+			oBinding.refresh(true);
+		}, new Error("Refresh on this binding is not supported"));
+	});
+
+	// TODO check behavior if request for refresh fails (e.g. if data is already deleted)
 	// TODO events dataRequested, dataReceived
 	// TODO bSuspended? In v2 it is ignored (check with core)
 });

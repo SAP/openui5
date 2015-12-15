@@ -98,6 +98,16 @@
 			</items>
 		</Table>
 		<VBox id="ObjectPage">
+			<Toolbar design="Transparent">
+				<content>
+					<Title level="H2" titleStyle="H2" text="Sales Order Details"/>
+					<Button
+						icon="sap-icon://refresh"
+						press="onRefreshSalesOrder"
+						title="Refresh Sales Order">
+					</Button>
+				</content>
+			</Toolbar>
 			<form:SimpleForm id="SalesOrderForm" layout="ResponsiveGridLayout">
 				<form:content>
 					<Label text="Sales Order ID" />

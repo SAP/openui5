@@ -745,7 +745,13 @@ sap.ui.require([
 			assert.strictEqual(oListBinding.isLengthFinal(), true);
 
 			//code under test
-			oListBinding.refresh();
+			assert.throws(function () {
+				oListBinding.refresh();
+			}, new Error("Falsy values for bForceUpdate are not supported"));
+			assert.throws(function () {
+				oListBinding.refresh(false);
+			}, new Error("Falsy values for bForceUpdate are not supported"));
+			oListBinding.refresh(true);
 
 			assert.strictEqual(oListBinding.oCache, oCache);
 			assert.deepEqual(oListBinding.aContexts, []);
@@ -767,7 +773,7 @@ sap.ui.require([
 		//code under test
 		//error for relative paths
 		assert.throws(function () {
-			oListBinding.refresh();
+			oListBinding.refresh(true);
 		}, new Error("Refresh on this binding is not supported"));
 	});
 
@@ -786,7 +792,7 @@ sap.ui.require([
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
-		oListBinding.refresh();
+		oListBinding.refresh(true);
 
 		setTimeout(function () {
 			// log mock checks there is no console error from canceling processing of getContexts
