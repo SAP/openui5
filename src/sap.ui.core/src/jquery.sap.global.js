@@ -1149,9 +1149,9 @@
 		jQuery.sap.log.getLog = jQuery.sap.log.getLogEntries;
 
 		// *** Performance measure ***
-		function PerfMeasurement(){
+		function PerfMeasurement() {
 
-			function Measurement( sId, sInfo, iStart, iEnd, aCategories){
+			function Measurement(sId, sInfo, iStart, iEnd, aCategories) {
 				this.id = sId;
 				this.info = sInfo;
 				this.start = iStart;
@@ -1208,7 +1208,7 @@
 			 * @function
 			 * @public
 			 */
-			this.getActive = function(){
+			this.getActive = function() {
 				return bActive;
 			};
 
@@ -1224,7 +1224,7 @@
 			 * @function
 			 * @public
 			 */
-			this.setActive = function(bOn, aCategories){
+			this.setActive = function(bOn, aCategories) {
 				//set restricted categories
 				if (!aCategories) {
 					aCategories = null;
@@ -1290,7 +1290,7 @@
 			 * @function
 			 * @public
 			 */
-			this._start = function( sId, sInfo, aCategories){
+			this._start = function(sId, sInfo, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -1328,7 +1328,7 @@
 			 * @function
 			 * @public
 			 */
-			this._pause = function( sId ){
+			this._pause = function(sId) {
 				if (!bActive) {
 					return;
 				}
@@ -1368,7 +1368,7 @@
 			 * @function
 			 * @public
 			 */
-			this._resume = function( sId ){
+			this._resume = function(sId) {
 				if (!bActive) {
 					return;
 				}
@@ -1399,7 +1399,7 @@
 			 * @function
 			 * @public
 			 */
-			this._end = function( sId ){
+			this._end = function(sId) {
 				if (!bActive) {
 					return;
 				}
@@ -1452,7 +1452,7 @@
 			 * @function
 			 * @public
 			 */
-			this._clear = function( ){
+			this._clear = function() {
 				this.mMeasurements = {};
 			};
 
@@ -1464,7 +1464,7 @@
 			 * @function
 			 * @public
 			 */
-			this._remove = function( sId ){
+			this._remove = function(sId) {
 				delete this.mMeasurements[sId];
 			};
 			/**
@@ -1483,7 +1483,7 @@
 			 * @function
 			 * @public
 			 */
-			this._add = function( sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories ){
+			this._add = function(sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -1516,7 +1516,7 @@
 			 * @function
 			 * @public
 			 */
-			this._average = function( sId, sInfo, aCategories){
+			this._average = function(sId, sInfo, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -1551,7 +1551,7 @@
 			 * @function
 			 * @public
 			 */
-			this.getMeasurement = function( sId ){
+			this.getMeasurement = function(sId) {
 
 				var oMeasurement = this.mMeasurements[sId];
 
@@ -1582,7 +1582,7 @@
 			 * @function
 			 * @public
 			 */
-			this.getAllMeasurements = function(bCompleted){
+			this.getAllMeasurements = function(bCompleted) {
 				return this.filterMeasurements(function(oMeasurement) {
 					return oMeasurement;
 				}, bCompleted);
@@ -1789,28 +1789,28 @@
 			 * Start an interaction measurements
 			 *
 			 * @param {string} sType type of the event which triggered the interaction
-			 * @param {object} oSrcControl the control on which the interaction was triggered
+			 * @param {object} oSrcElement the control on which the interaction was triggered
 			 *
 			 * @name jQuery.sap.measure#startInteraction
 			 * @function
 			 * @public
 			 * @since 1.34.0
 			 */
-			this.startInteraction = function(sType, oSrcControl) {
+			this.startInteraction = function(sType, oSrcElement) {
 				// component determination - heuristic
-				function identifyOwnerComponent(oSrcControl) {
-					if (oSrcControl) {
+				function identifyOwnerComponent(oSrcElement) {
+					if (oSrcElement) {
 						var Component, oComponent;
 						Component = sap.ui.require("sap/ui/core/Component");
-						while (Component && oSrcControl && oSrcControl.getParent) {
-							oComponent = Component.getOwnerComponentFor(oSrcControl);
-							if (oComponent || oSrcControl instanceof Component) {
-								oComponent = oComponent || oSrcControl;
+						while (Component && oSrcElement && oSrcElement.getParent) {
+							oComponent = Component.getOwnerComponentFor(oSrcElement);
+							if (oComponent || oSrcElement instanceof Component) {
+								oComponent = oComponent || oSrcElement;
 								var oApp = oComponent.getManifestEntry("sap.app");
 								// get app id or module name for FESR
 								return oApp && oApp.id || oComponent.getMetadata().getName();
 							}
-							oSrcControl = oSrcControl.getParent();
+							oSrcElement = oSrcElement.getParent();
 						}
 					}
 					return "undetermined";
@@ -1828,8 +1828,8 @@
 				// setup new pending interaction
 				oPendingInteraction = {
 					event: sType, // event which triggered interaction
-					trigger: oSrcControl && oSrcControl.getId ? oSrcControl.getId() : "undetermined", // control which triggered interaction
-					component: identifyOwnerComponent(oSrcControl), // component or app identifier
+					trigger: oSrcElement && oSrcElement.getId ? oSrcElement.getId() : "undetermined", // control which triggered interaction
+					component: identifyOwnerComponent(oSrcElement), // component or app identifier
 					start : iTime, // interaction start
 					end: 0, // interaction end
 					navigation: 0, // sum over all navigation times
@@ -1883,7 +1883,7 @@
 				if (!window.performance) {
 					return;
 				}
-				if (window.performance.setResourceTimingBufferSize){
+				if (window.performance.setResourceTimingBufferSize) {
 					window.performance.setResourceTimingBufferSize(iSize);
 				} else if (window.performance.webkitSetResourceTimingBufferSize) {
 					window.performance.webkitSetResourceTimingBufferSize(iSize);
@@ -1918,10 +1918,10 @@
 				if (!window.performance) {
 					return;
 				}
-				if (window.performance.webkitClearResourceTimings) {
-					window.performance.webkitClearResourceTimings();
-				} else if (window.performance.clearResourceTimings){
+				if (window.performance.clearResourceTimings) {
 					window.performance.clearResourceTimings();
+				} else if (window.performance.webkitClearResourceTimings){
+					window.performance.webkitClearResourceTimings();
 				}
 			};
 
