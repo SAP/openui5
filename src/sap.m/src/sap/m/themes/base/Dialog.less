@@ -25,12 +25,15 @@
 	-ms-transform: translate(-50%, -50%) scale(0.9);
 	-webkit-transform: translate(-50%, -50%) scale(0.9);
 	transform: translate(-50%, -50%) scale(0.9);
-	//prevent blurring
-	-webkit-filter: blur(0);
-	-moz-filter: blur(0);
-	-ms-filter: blur(0);
-	filter: blur(0);
 
+	&:not(.sapMDialogHighPixelDensity) {
+		//prevent blurring when the device pixel ration is 1 (not high density screens)
+		//this is done with style and not with media query for wider support
+		-webkit-filter: blur(0);
+		-moz-filter: blur(0);
+		-ms-filter: blur(0);
+		filter: blur(0);
+	}
 }
 
 //the rtl will change the transform-translate from (-50% -50%) to (50% -50%)
