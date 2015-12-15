@@ -741,6 +741,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			this._fireLiveChange(oEvent);
 		}
 
+		this._bFocusByOpen = undefined; // as selection is set by typeahead, so do not select all by focusin
+
 		oEvent.preventDefault();
 	};
 
