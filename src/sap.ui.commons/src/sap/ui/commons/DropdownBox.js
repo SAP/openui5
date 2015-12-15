@@ -735,7 +735,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		} else {
 			this._doTypeAhead(sVal.substr(0, iCursorPos), oNewChar);
 		}
-		this._fireLiveChange(oEvent);
+
+		if (sVal != $Ref.val()) {
+			// only if really something changed
+			this._fireLiveChange(oEvent);
+		}
 
 		oEvent.preventDefault();
 	};
@@ -1278,32 +1282,23 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	//***********************************************************
 
 	/**
-	 * Applies the focus info and ensures the typeAhead feature is re-established again.
+	 * Applies the focus info and ensures the cursor and selection is set again
 	 *
 	 * @param {object} oFocusInfo the focus information belonging to this dropdown
 	 * @returns {sap.ui.commons.DropdownBox} DropdownBox
 	 * @private
 	 */
 	DropdownBox.prototype.applyFocusInfo = function(oFocusInfo){
-		var $Inp = jQuery(this.getInputDomRef());
-		if (jQuery.sap.startsWithIgnoreCase(this.getValue(), oFocusInfo.sTypedChars)) {
-			$Inp.val(oFocusInfo.sTypedChars);
-			this.focus();
-			if (!this.getSelectedItemId() || sap.ui.getCore().byId(this.getSelectedItemId()).getText() != oFocusInfo.sTypedChars) {
-				// text entred before and is not the currently selected item -> just restore type-ahead
-				this._doTypeAhead(oFocusInfo.sTypedChars, "");
-			}
+
+		ComboBox.prototype.applyFocusInfo.apply(this, arguments);
+
 			if (!this._Opening && (!this.oPopup || !this.oPopup.isOpen())) {
 				// as popup is not open restore listbox item like on popup close
 				this._cleanupClose(this._getListBox());
 			}
-		} else {
-			oFocusInfo.sTypedChars = "";
-			//	 $Inp.val(this.getValue()); // enable if really needed
-			this.focus();
-			this._doSelect();
-		}
+
 		return this;
+
 	};
 
 	/*

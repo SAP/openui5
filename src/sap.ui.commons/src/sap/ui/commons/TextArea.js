@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 		oEvent.stopPropagation();
 	};
 
-	/**
+	/*
 	 * Applies the focus info.
 	 * Overwrites the standard function.
 	 * @param {object} oFocusInfo Focusinfo object
@@ -167,9 +167,6 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 	TextArea.prototype.applyFocusInfo = function (oFocusInfo) {
 
 		TextField.prototype.applyFocusInfo.apply(this, arguments);
-
-		var oFocusDomRef = this.getFocusDomRef();
-		jQuery(oFocusDomRef).cursorPos(this.getCursorPos());
 
 		return this;
 
