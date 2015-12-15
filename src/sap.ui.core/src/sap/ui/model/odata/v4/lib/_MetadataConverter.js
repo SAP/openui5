@@ -8,41 +8,6 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	var MetadataConverter,
 		rCollection = /^Collection\((.*)\)$/,
-		oAliasConfig = {
-			"Reference" : {
-				"Include" : {__processor : processAlias}
-			},
-			"DataServices" : {
-				"Schema" : {__processor : processAlias}
-			}
-		},
-		oStructuredTypeConfig = {
-			"Property" : {
-				__processor : processTypeProperty
-			},
-			"NavigationProperty" : {
-				__processor : processTypeNavigationProperty,
-				"OnDelete" : {
-					__processor : processTypeNavigationPropertyOnDelete
-				},
-				"ReferentialConstraint" : {
-					__processor : processTypeNavigationPropertyReferentialConstraint
-				}
-			}
-		},
-		oEntitySetConfig = {
-			"NavigationPropertyBinding" : {
-				__processor : processNavigationPropertyBinding
-			}
-		},
-		oActionOrFunctionConfig = {
-			"Parameter" : {
-				__processor : processParameter
-			},
-			"ReturnType" : {
-				__processor : processReturnType
-			}
-		},
 		// All Annotations elements that don't have expressions as child (leaf, non-recursive)
 		oAnnotationLeafConfig = {
 			"AnnotationPath" : {__postProcessor : postProcessLeaf},
@@ -139,6 +104,54 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				__include : aAnnotationExpressionInclude
 			}
 		},
+		oAnnotationConfig = {
+			"Annotation" : {
+				__processor : processAnnotation,
+				__postProcessor : postProcessAnnotation,
+				__include : aAnnotationExpressionInclude
+			}
+		},
+		oAliasConfig = {
+			"Reference" : {
+				"Include" : {__processor : processAlias}
+			},
+			"DataServices" : {
+				"Schema" : {__processor : processAlias}
+			}
+		},
+		oStructuredTypeConfig = {
+			"Property" : {
+				__processor : processTypeProperty,
+				__include : [oAnnotationConfig]
+			},
+			"NavigationProperty" : {
+				__processor : processTypeNavigationProperty,
+				__include : [oAnnotationConfig],
+				"OnDelete" : {
+					__processor : processTypeNavigationPropertyOnDelete,
+					__include : [oAnnotationConfig]
+				},
+				"ReferentialConstraint" : {
+					__processor : processTypeNavigationPropertyReferentialConstraint,
+					__include : [oAnnotationConfig]
+				}
+			}
+		},
+		oEntitySetConfig = {
+			"NavigationPropertyBinding" : {
+				__processor : processNavigationPropertyBinding
+			}
+		},
+		oActionOrFunctionConfig = {
+			"Parameter" : {
+				__processor : processParameter,
+				__include : [oAnnotationConfig]
+			},
+			"ReturnType" : {
+				__processor : processReturnType,
+				__include : [oAnnotationConfig]
+			}
+		},
 		oFullConfig = {
 			__processor : processEdmx,
 			"Reference" : {
@@ -153,25 +166,22 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"DataServices" : {
 				"Schema" : {
 					__processor : processSchema,
+					__include : [oAnnotationConfig],
 					"Action" : {
 						__processor : processActionOrFunction,
-						__include : [oActionOrFunctionConfig]
+						__include : [oActionOrFunctionConfig, oAnnotationConfig]
 					},
 					"Annotations" : {
 						__processor : processAnnotations,
-						"Annotation" : {
-							__processor : processAnnotation,
-							__postProcessor : postProcessAnnotation,
-							__include : [oAnnotationLeafConfig, oAnnotationExpressionConfig]
-						}
+						__include : [oAnnotationConfig]
 					},
 					"Function" : {
 						__processor : processActionOrFunction,
-						__include : [oActionOrFunctionConfig]
+						__include : [oActionOrFunctionConfig, oAnnotationConfig]
 					},
 					"EntityType" : {
 						__processor : processEntityType,
-						__include : [oStructuredTypeConfig],
+						__include : [oStructuredTypeConfig, oAnnotationConfig],
 						"Key" : {
 							"PropertyRef" : {
 								__processor : processEntityTypeKeyPropertyRef
@@ -180,36 +190,43 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					},
 					"ComplexType" : {
 						__processor : processComplexType,
-						__include : [oStructuredTypeConfig]
+						__include : [oStructuredTypeConfig, oAnnotationConfig]
 					},
 					"EntityContainer" : {
 						__processor : processEntityContainer,
+						__include: [oAnnotationConfig],
 						"ActionImport" : {
-							__processor : processImport.bind(null, "Action")
+							__processor : processImport.bind(null, "Action"),
+							__include : [oAnnotationConfig]
 						},
 						"EntitySet" : {
 							__processor : processEntitySet,
-							__include : [oEntitySetConfig]
+							__include : [oEntitySetConfig, oAnnotationConfig]
 						},
 						"FunctionImport" : {
-							__processor : processImport.bind(null, "Function")
+							__processor : processImport.bind(null, "Function"),
+							__include : [oAnnotationConfig]
 						},
 						"Singleton" : {
 							__processor : processSingleton,
-							__include : [oEntitySetConfig]
+							__include : [oEntitySetConfig, oAnnotationConfig]
 						}
 					},
 					"EnumType" : {
 						__processor : processEnumType,
+						__include : [oAnnotationConfig],
 						"Member" : {
-							__processor : processEnumTypeMember
+							__processor : processEnumTypeMember,
+							__include : [oAnnotationConfig]
 						}
 					},
 					"Term" : {
-						__processor : processTerm
+						__processor : processTerm,
+						__include : [oAnnotationConfig]
 					},
 					"TypeDefinition" : {
-						__processor : processTypeDefinition
+						__processor : processTypeDefinition,
+						__include : [oAnnotationConfig]
 					}
 				}
 			}
@@ -217,6 +234,45 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	// enable the recursion
 	aAnnotationExpressionInclude.push(oAnnotationExpressionConfig);
+
+	/**
+	 * This function is called by each annotatable entity to define a place for the annotations.
+	 * @param {object} oAggregate
+	 *   the aggregate
+	 * @param {object|string} vTarget
+	 *   the target to which the annotations shall be added, may be directly an object or a target
+	 *   name to place it into $Annotations of the current Schema. The path in $Annotations is
+	 *   constructed from the given name and the current annotatable's path (if there is one and
+	 *   it has a path)
+	 * @param {string} [sPrefix=""]
+	 *   the prefix to put before the "@" and the term
+	 * @param {string} [sQualifier]
+	 *   the qualifier for all annotations
+	 */
+	function annotatable(oAggregate, vTarget, sPrefix, sQualifier) {
+		var oAnnotatable,
+			oAnnotations,
+			sPath;
+
+		if (typeof vTarget === "string") {
+			oAnnotatable = oAggregate.annotatable;
+			if (oAnnotatable.path) {
+				vTarget = oAnnotatable.path + "/" + vTarget;
+			}
+			sPath = vTarget;
+			// try to find the target (otherwise processAnnotation will recreate it)
+			oAnnotations = oAggregate.schema.$Annotations;
+			if (oAnnotations && oAnnotations[vTarget]) {
+				vTarget = oAnnotations[vTarget];
+			}
+		}
+		oAggregate.annotatable = {
+			path: sPath,
+			prefix: sPrefix || "",
+			qualifier: sQualifier,
+			target: vTarget
+		};
+	}
 
 	/**
 	 * Returns the attributes of the DOM Element as map.
@@ -331,8 +387,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function postProcessAnnotation(oElement, aResult, oAggregate) {
+		var oAnnotatable = oAggregate.annotatable;
 		if (aResult.length) {
-			oAggregate.annotations.target[oAggregate.annotations.qualifiedName] = aResult[0];
+			oAnnotatable.target[oAnnotatable.qualifiedName] = aResult[0];
 		}
 	}
 
@@ -550,6 +607,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		oAggregate.result[sQualifiedName] = aActions.concat(oAction);
 		oAggregate.actionOrFunction = oAction;
+		annotatable(oAggregate, oAction);
 	}
 
 	/**
@@ -571,18 +629,12 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processAnnotations(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			sTargetName = MetadataConverter.resolveAliasInPath(oAttributes.Target, oAggregate),
-			oTarget = {};
+		var oAttributes = getAttributes(oElement);
 
-		if (!oAggregate.schema.$Annotations) {
-			oAggregate.schema.$Annotations = {};
-		}
-		oAggregate.schema.$Annotations[sTargetName] = oTarget;
-		oAggregate.annotations =  {
-			target: oTarget,
-			qualifier: oAttributes.Qualifier
-		};
+		annotatable(oAggregate,
+			MetadataConverter.resolveAliasInPath(oAttributes.Target, oAggregate),
+			undefined, // no prefix
+			oAttributes.Qualifier);
 	}
 
 	/**
@@ -591,16 +643,25 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processAnnotation(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
+		var oAnnotatable = oAggregate.annotatable,
+			oAnnotations,
+			oAttributes = getAttributes(oElement),
 			sKey,
-			sQualifiedName = "@" + MetadataConverter.resolveAlias(oAttributes.Term, oAggregate),
-			sQualifier = oAggregate.annotations.qualifier || oAttributes.Qualifier,
+			sQualifiedName = oAnnotatable.prefix + "@"
+				+ MetadataConverter.resolveAlias(oAttributes.Term, oAggregate),
+			// oAnnotatable.qualifier can only come from <Annotations>. If such a qualifier is set
+			// <Annotation> itself MUST NOT supply a qualifier. (see spec Part 3, 14.3.2)
+			sQualifier = oAnnotatable.qualifier || oAttributes.Qualifier,
 			vValue = true;
 
 		if (sQualifier) {
 			sQualifiedName += "#" + sQualifier;
 		}
 
+		if (typeof oAnnotatable.target === "string") {
+			oAnnotations = getOrCreateObject(oAggregate.schema, "$Annotations");
+			oAnnotatable.target = oAnnotations[oAnnotatable.target] = {};
+		}
 		for (sKey in oAttributes) {
 			if (sKey !== "Term" && sKey !== "Qualifier") {
 				vValue = getAnnotationValue(sKey, oAttributes[sKey], oAggregate);
@@ -608,8 +669,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			}
 		}
 
-		oAggregate.annotations.qualifiedName = sQualifiedName;
-		oAggregate.annotations.target[sQualifiedName] = vValue;
+		oAnnotatable.qualifiedName = sQualifiedName;
+		oAnnotatable.target[sQualifiedName] = vValue;
 	}
 
 	/**
@@ -660,6 +721,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"$kind" : "EntityContainer"
 		};
 		oAggregate.result.$EntityContainer = sQualifiedName;
+		annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -676,6 +738,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		if (oAttributes.IncludeInServiceDocument === "false") {
 			oAggregate.entitySet.$IncludeInServiceDocument = false;
 		}
+		annotatable(oAggregate, oAttributes.Name);
 	}
 
 	/**
@@ -729,6 +792,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		oAggregate.result[sQualifiedName] = oAggregate.enumType = oEnumType;
 		oAggregate.enumTypeMemberCounter = 0;
+		annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -750,6 +814,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			oAggregate.enumTypeMemberCounter++;
 		}
 		oAggregate.enumType[oAttributes.Name] = vValue;
+		annotatable(oAggregate, oAttributes.Name);
 	}
 
 	/**
@@ -773,6 +838,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		});
 
 		oAggregate.entityContainer[oAttributes.Name] = oImport;
+		annotatable(oAggregate, oImport);
 	}
 
 	/**
@@ -838,6 +904,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		MetadataConverter.processFacetAttributes(oAttributes, oParameter);
 
 		oActionOrFunction.$Parameter.push(oParameter);
+		annotatable(oAggregate, oParameter);
 	}
 
 	/**
@@ -869,6 +936,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		MetadataConverter.processFacetAttributes(oAttributes, oReturnType);
 
 		oActionOrFunction.$ReturnType = oReturnType;
+		annotatable(oAggregate, oReturnType);
 	}
 
 	/**
@@ -881,6 +949,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		oAggregate.result[oAggregate.namespace] = oAggregate.schema = {
 			"$kind": "Schema"
 		};
+		annotatable(oAggregate, oAggregate.schema);
 	}
 
 	/**
@@ -894,6 +963,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			$kind : "Singleton",
 			$Type : MetadataConverter.resolveAlias(oAttributes.Type, oAggregate)
 		};
+		annotatable(oAggregate, oAttributes.Name);
 	}
 
 	/**
@@ -918,6 +988,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		MetadataConverter.processFacetAttributes(oAttributes, oTerm);
 
 		oAggregate.result[sQualifiedName] = oTerm;
+		annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -938,6 +1009,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		});
 
 		oAggregate.result[sQualifiedName] = oAggregate.type = oType;
+		annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -972,6 +1044,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		oAggregate.result[sQualifiedName] = oTypeDefinition;
 		MetadataConverter.processFacetAttributes(oAttributes, oTypeDefinition);
+		annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -993,6 +1066,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		});
 
 		oAggregate.type[oAttributes.Name] = oAggregate.navigationProperty = oProperty;
+		annotatable(oAggregate, oAttributes.Name);
 	}
 
 	/**
@@ -1002,6 +1076,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processTypeNavigationPropertyOnDelete(oElement, oAggregate) {
 		oAggregate.navigationProperty.$OnDelete = oElement.getAttribute("Action");
+		annotatable(oAggregate, oAggregate.navigationProperty, "$OnDelete");
 	}
 
 	/**
@@ -1015,6 +1090,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				getOrCreateObject(oAggregate.navigationProperty, "$ReferentialConstraint");
 
 		oReferentialConstraint[oAttributes.Property] = oAttributes.ReferencedProperty;
+		annotatable(oAggregate, oReferentialConstraint, oAttributes.Property);
 	}
 
 	/**
@@ -1036,6 +1112,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		MetadataConverter.processFacetAttributes(oAttributes, oProperty);
 
 		oAggregate.type[oAttributes.Name] = oProperty;
+		annotatable(oAggregate, oAttributes.Name);
 	}
 
 	/**
@@ -1113,8 +1190,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			var oAggregate = {
 					"actionOrFunction" : null, // the current action or function
 					"aliases" : {}, // maps alias -> namespace
-					"annotations" : {}, // target: the object to put annotations to
-										// qualifier: the current Annotations element's qualifier
+					"annotatable" : null, // the current annotatable, see function annotatable
 					"entityContainer" : null, // the current EntityContainer
 					"entitySet" : null, // the current EntitySet/Singleton
 					"enumType" : null, // the current EnumType
@@ -1219,9 +1295,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   the return value from __postProcessor or undefined if there is none
 		 */
 		traverse : function (oElement, oAggregate, oConfig) {
-			var oChildConfig,
+			var oAnnotatable = oAggregate.annotatable, // "push" oAnnotatable to the recursion stack
+				oChildConfig,
 				oChildList = oElement.childNodes,
 				oChildNode,
+				vChildResult,
 				i,
 				sName,
 				vResult,
@@ -1246,16 +1324,19 @@ sap.ui.define(["./_Helper"], function (Helper) {
 						oConfig.__include.some(tryInclude);
 					}
 					if (oChildConfig) {
-						vResult = MetadataConverter.traverse(oChildNode, oAggregate, oChildConfig);
+						vChildResult =
+							MetadataConverter.traverse(oChildNode, oAggregate, oChildConfig);
 						if (oConfig.__postProcessor) {
-							aResult.push(vResult);
+							aResult.push(vChildResult);
 						}
 					}
 				}
 			}
 			if (oConfig.__postProcessor) {
-				return oConfig.__postProcessor(oElement, aResult, oAggregate);
+				vResult = oConfig.__postProcessor(oElement, aResult, oAggregate);
 			}
+			oAggregate.annotatable = oAnnotatable; // "pop" annotatable from the recursion stack
+			return vResult;
 		}
 	};
 
