@@ -241,7 +241,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * <li>events: map from event names to event names
 	 * </ul>
 	 *
-	 * @see sap.ui.core.Object.defineClass
+	 * @see sap.ui.base.Object.defineClass
 	 *
 	 * @param {string} sClassName name of the class to build the metadata for
 	 * @param {object} oStaticInfo static information used to build the metadata

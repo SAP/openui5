@@ -58,6 +58,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.Popup
+	 * @extends sap.ui.base.ManagedObject
 	 */
 	var Popup = ManagedObject.extend("sap.ui.core.Popup", /** @lends sap.ui.core.Popup.prototype */ {
 		constructor: function (oContent, bModal, bShadow, bAutoClose) {

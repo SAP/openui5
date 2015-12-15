@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * With this plugIn the performance measurements are displayed
 		 *
 		 * @abstract
-		 * @extends sap.ui.base.Object
+		 * @extends sap.ui.core.support.Plugin
 		 * @version ${version}
 		 * @constructor
 		 * @private

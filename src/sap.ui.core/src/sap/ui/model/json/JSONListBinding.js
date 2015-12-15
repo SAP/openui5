@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 * @alias sap.ui.model.json.JSONListBinding
-	 * @extends sap.ui.model.ListBinding
+	 * @extends sap.ui.model.ClientListBinding
 	 */
 	var JSONListBinding = ClientListBinding.extend("sap.ui.model.json.JSONListBinding");
 	

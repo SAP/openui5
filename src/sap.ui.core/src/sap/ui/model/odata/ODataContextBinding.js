@@ -21,6 +21,7 @@ sap.ui.define(['sap/ui/model/ContextBinding'],
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.odata.ODataContextBinding
+	 * @extends sap.ui.model.ContextBinding
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.ODataContextBinding", /** @lends sap.ui.model.odata.ODataContextBinding.prototype */ {
 

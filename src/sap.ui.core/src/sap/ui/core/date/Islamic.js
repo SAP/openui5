@@ -17,8 +17,9 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 *
 	 * @private
 	 * @alias sap.ui.core.date.Islamic
+	 * @extends sap.ui.core.date.UniversalDate
 	 */
-	var Islamic = UniversalDate.extend("sap.ui.core.date.Islamic", /** @lends sap.ui.core.date.Date.prototype */ {
+	var Islamic = UniversalDate.extend("sap.ui.core.date.Islamic", /** @lends sap.ui.core.date.Islamic.prototype */ {
 		constructor: function() {
 			var aArgs = arguments;
 			if (aArgs.length > 1) {

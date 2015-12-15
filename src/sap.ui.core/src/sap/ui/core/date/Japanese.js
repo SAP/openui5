@@ -22,8 +22,9 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 *
 	 * @private
 	 * @alias sap.ui.core.date.Japanese
+	 * @extends sap.ui.core.date.UniversalDate
 	 */
-	var Japanese = UniversalDate.extend("sap.ui.core.date.Japanese", /** @lends sap.ui.core.date.Date.prototype */ {
+	var Japanese = UniversalDate.extend("sap.ui.core.date.Japanese", /** @lends sap.ui.core.date.Japanese.prototype */ {
 		constructor: function() {
 			var aArgs = arguments;
 			if (aArgs.length > 1) {

@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *                                   the "arguments" of the sub-class constructor should be given instead.
 		 * @public
 		 * @alias sap.ui.core.mvc.Controller
+		 * @extends sap.ui.base.EventProvider
 		 */
 		var Controller = EventProvider.extend("sap.ui.core.mvc.Controller", /** @lends sap.ui.core.mvc.Controller.prototype */ {
 
