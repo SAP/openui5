@@ -996,6 +996,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			//This can be removed and the layout change to flex when the support for IE9 is dropped
 			this._resizeListenerId = sap.ui.core.ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
 			sap.ui.Device.resize.attachHandler(this._onResize.bind(this));
+
+			//set the initial size of the content container so when a dialog with large content is open there will be a scroller
+			this._onResize();
 		};
 
 		Dialog.prototype._attachHandler = function(oButton) {
