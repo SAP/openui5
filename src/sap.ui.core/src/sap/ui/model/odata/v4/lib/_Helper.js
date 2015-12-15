@@ -6,7 +6,8 @@
 sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	"use strict";
 
-	var rAmpersand = /&/g,
+	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},
+		rAmpersand = /&/g,
 		rEquals = /\=/g,
 		rHash = /#/g,
 		rHeaderParameter = /(\S*?)=(?:"(.+)"|(\S+))/,
@@ -126,106 +127,199 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {string} sResponseBody
 		 *   batch response body
 		 * @returns {object[]} array containing responses from the batch response body. Each of the
-		 * returned responses has the following structure:
+		 *   returned responses has the following structure:
 		 *   <ul>
 		 *     <li><code>status</code>: {number} HTTP status code;
 		 *     <li><code>statusText</code>: {string} HTTP status text;
 		 *     <li><code>headers</code>: {object} map of the response headers;
 		 *     <li><code>responseText</code>: {string} response body.
 		 *   </ul>
+		 *   If the specified <code>sResponseBody</code> contains responses for change sets, then
+		 *   the corresponding response objects will be returned in a nested array.
 		 * @throws {Error}
-		 *   if "charset" parameter of "Content-Type" header of a nested response has value other
-		 *   than "utf-8"
+		 *   <ul>
+		 *     <li>if <code>sContentType</code> parameter does not represent "multipart/mixed"
+		 *       media type with "boundary" parameter
+		 *     <li>if "charset" parameter of "Content-Type" header of a nested response has value
+		 *       other than "utf-8".
+		 *   </ul>
 		 */
 		deserializeBatchResponse : function (sContentType, sResponseBody) {
-			var aBatchParts = sResponseBody.split(getBoundaryRegExp()),
-				aResponses = [];
-
-			function getBoundaryRegExp() {
-				var sBatchBoundary = getHeaderParameterValue(sContentType, "boundary");
-
-				// escape RegExp-related characters
-				sBatchBoundary = jQuery.sap.escapeRegExp(sBatchBoundary);
-				return new RegExp('--' + sBatchBoundary + '-{0,2} *\r\n');
-			}
-
-			/**
-			 * Extracts value of the parameter with the specified <code>sParameterName</code> from
-			 * the specified <code>sHeaderValue</code>.
-			 *
-			 * @param {string} sHeaderValue
-			 *   HTTP header value e.g. "application/json;charset=utf-8"
-			 * @param {string} sParameterName
-			 *   name of HTTP header parameter e.g. "charset"
-			 * @returns {string} the HTTP header parameter value
+			/*
+			 * See JSDoc for deserializeBatchResponse.
+			 * Additional parameter bIsChangeSet indicates whether sResponseBody represents a
+			 * change set.
 			 */
-			function getHeaderParameterValue(sHeaderValue, sParameterName) {
-				var iParamIndex,
-					aHeaderParts = sHeaderValue.split(";"),
-					aMatches;
+			function _deserializeBatchResponse(sContentType, sResponseBody, bIsChangeSet) {
+				var aBatchParts = sResponseBody.split(getBoundaryRegExp()),
+					aResponses = [];
 
-				sParameterName = sParameterName.toLowerCase();
-				for (iParamIndex = 1; iParamIndex < aHeaderParts.length; iParamIndex++) {
-					// remove possible quotes via reg exp
-					// RFC7231: parameter = token "=" ( token / quoted-string )
-					aMatches = rHeaderParameter.exec(aHeaderParts[iParamIndex]);
-					if (aMatches[1].toLowerCase() === sParameterName) {
-						return aMatches[2] || aMatches[3];
+				function getBoundaryRegExp() {
+					var sBatchBoundary = getHeaderParameterValue(sContentType, "boundary"),
+						iMultiPartTypeIndex = sContentType.trim().indexOf("multipart/mixed");
+
+					if (iMultiPartTypeIndex !== 0 || !sBatchBoundary) {
+						throw new Error('Invalid $batch response header "Content-Type": '
+							+ sContentType);
 					}
+
+					// escape RegExp-related characters
+					sBatchBoundary = jQuery.sap.escapeRegExp(sBatchBoundary);
+					return new RegExp('--' + sBatchBoundary + '-{0,2} *\r\n');
 				}
-			}
 
-			// skip preamble and epilogue
-			aBatchParts = aBatchParts.slice(1, -1);
+				/**
+				 * Extracts value of the parameter with the specified <code>sParameterName</code>
+				 * from the specified <code>sHeaderValue</code>.
+				 *
+				 * @param {string} sHeaderValue
+				 *   HTTP header value e.g. "application/json;charset=utf-8"
+				 * @param {string} sParameterName
+				 *   name of HTTP header parameter e.g. "charset"
+				 * @returns {string} the HTTP header parameter value
+				 */
+				function getHeaderParameterValue(sHeaderValue, sParameterName) {
+					var iParamIndex,
+						aHeaderParts = sHeaderValue.split(";"),
+						aMatches;
 
-			aBatchParts.forEach(function (sBatchPart) {
-				var i,
-					iColonIndex,
-					sHeader,
-					aHttpHeaders,
-					aHttpStatusInfos,
-					oResponse = {},
-					aResponseParts,
-					sHeaderName,
-					sHeaderValue,
-					sCharset;
-
-				// aResponseParts will take 3 elements:
-				// 0: general batch part headers
-				// 1: HTTP response headers and status line
-				// 2: HTTP response body
-				aResponseParts = sBatchPart.split('\r\n\r\n');
-				aHttpHeaders = aResponseParts[1].split('\r\n');
-				// e.g. HTTP/1.1 200 OK
-				aHttpStatusInfos = aHttpHeaders[0].split(' ');
-
-				oResponse.status = parseInt(aHttpStatusInfos[1], 10);
-				oResponse.statusText = aHttpStatusInfos.slice(2).join(' ');
-				oResponse.headers = {};
-
-				// start with index 1 to skip status line
-				for (i = 1; i < aHttpHeaders.length; i++) {
-					// e.g. Content-Type: application/json;odata.metadata=minimal
-					sHeader = aHttpHeaders[i];
-					iColonIndex = sHeader.indexOf(':');
-					sHeaderName = sHeader.slice(0, iColonIndex).trim();
-					sHeaderValue = sHeader.slice(iColonIndex + 1).trim();
-					oResponse.headers[sHeaderName] = sHeaderValue;
-
-					if (sHeaderName.toLowerCase() === "content-type") {
-						sCharset = getHeaderParameterValue(sHeaderValue, "charset");
-						if (sCharset && sCharset.toLowerCase() !== "utf-8") {
-							throw new Error('Unsupported "Content-Type" charset: ' + sCharset);
+					sParameterName = sParameterName.toLowerCase();
+					for (iParamIndex = 1; iParamIndex < aHeaderParts.length; iParamIndex++) {
+						// remove possible quotes via reg exp
+						// RFC7231: parameter = token "=" ( token / quoted-string )
+						aMatches = rHeaderParameter.exec(aHeaderParts[iParamIndex]);
+						if (aMatches[1].toLowerCase() === sParameterName) {
+							return aMatches[2] || aMatches[3];
 						}
 					}
 				}
 
-				// remove \r\n sequence from the end of the response body
-				oResponse.responseText = aResponseParts[2].slice(0, -2);
-				aResponses.push(oResponse);
-			});
+				/**
+				 * Extracts value of Content-Type header from the specified
+				 * <code>sMimeTypeHeaders</code> if it is "multipart/mixed".
+				 *
+				 * @param {string} sMimeTypeHeaders
+				 *   section of MIME part representing HTTP headers
+				 * @returns {string} Content-Type header value e.g.
+				 *   "multipart/mixed; boundary=batch_id-0123456789012-345" or undefined
+				 */
+				function getChangeSetContentType(sMimeTypeHeaders) {
+					var sContentType = getHeaderValue(sMimeTypeHeaders, "content-type");
+					return sContentType.indexOf("multipart/mixed;") === 0
+						? sContentType : undefined;
+				}
 
-			return aResponses;
+				function getChangeSetResponseNumber(sMimeTypeHeaders) {
+					var sContentID = getHeaderValue(sMimeTypeHeaders, "content-id"),
+						iContentID;
+
+					if (!sContentID) {
+						throw new Error(
+							"Content-ID MIME header missing for the change set response.");
+					}
+
+					iContentID = parseInt(sContentID, 10);
+					if (isNaN(iContentID)) {
+						throw new Error("Invalid Content-ID value in change set response.");
+					}
+					return iContentID;
+				}
+
+				/**
+				 * Returns value of the header with the specified <code>sHeaderName</code> from
+				 * the specified <code>sHeaders</code> section of MIME part.
+				 *
+				 * @param {string} sHeaders
+				 *   section of MIME part representing HTTP headers
+				 * @param {string} sHeaderName
+				 *   name of HTTP header in lower case
+				 * @returns {string} the HTTP header value
+				 */
+				function getHeaderValue(sHeaders, sHeaderName) {
+					var i,
+						aHeaderParts,
+						aHeaders = sHeaders.split("\r\n");
+
+					for (i = 0; i < aHeaders.length; i++) {
+						aHeaderParts = aHeaders[i].split(":");
+
+						if (aHeaderParts[0].toLowerCase().trim() === sHeaderName) {
+							return aHeaderParts[1].trim();
+						}
+					}
+				}
+
+				// skip preamble and epilogue
+				aBatchParts = aBatchParts.slice(1, -1);
+
+				aBatchParts.forEach(function (sBatchPart) {
+					var sChangeSetContentType,
+						sCharset,
+						iColonIndex,
+						sHeader,
+						sHeaderName,
+						sHeaderValue,
+						aHttpHeaders,
+						aHttpStatusInfos,
+						i,
+						sMimeHeaders,
+						oResponse = {},
+						iResponseNumber,
+						aResponseParts;
+
+					// aResponseParts will take 3 elements:
+					// 0: general batch part headers
+					// 1: HTTP response headers and status line
+					// 2: HTTP response body
+					aResponseParts = sBatchPart.split("\r\n\r\n");
+
+					sMimeHeaders = aResponseParts[0];
+					sChangeSetContentType = getChangeSetContentType(sMimeHeaders);
+					if (sChangeSetContentType) {
+						aResponses.push(_deserializeBatchResponse(sChangeSetContentType,
+							aResponseParts.slice(1).join("\r\n\r\n"), true));
+						return;
+					}
+
+					aHttpHeaders = aResponseParts[1].split("\r\n");
+					// e.g. HTTP/1.1 200 OK
+					aHttpStatusInfos = aHttpHeaders[0].split(" ");
+
+					oResponse.status = parseInt(aHttpStatusInfos[1], 10);
+					oResponse.statusText = aHttpStatusInfos.slice(2).join(' ');
+					oResponse.headers = {};
+
+					// start with index 1 to skip status line
+					for (i = 1; i < aHttpHeaders.length; i++) {
+						// e.g. Content-Type: application/json;odata.metadata=minimal
+						sHeader = aHttpHeaders[i];
+						iColonIndex = sHeader.indexOf(':');
+						sHeaderName = sHeader.slice(0, iColonIndex).trim();
+						sHeaderValue = sHeader.slice(iColonIndex + 1).trim();
+						oResponse.headers[sHeaderName] = sHeaderValue;
+
+						if (sHeaderName.toLowerCase() === "content-type") {
+							sCharset = getHeaderParameterValue(sHeaderValue, "charset");
+							if (sCharset && sCharset.toLowerCase() !== "utf-8") {
+								throw new Error('Unsupported "Content-Type" charset: ' + sCharset);
+							}
+						}
+					}
+
+					// remove \r\n sequence from the end of the response body
+					oResponse.responseText = aResponseParts[2].slice(0, -2);
+
+					if (bIsChangeSet) {
+						iResponseNumber = getChangeSetResponseNumber(sMimeHeaders);
+						aResponses[iResponseNumber] = oResponse;
+					} else {
+						aResponses.push(oResponse);
+					}
+				});
+
+				return aResponses;
+			}
+			return _deserializeBatchResponse(sContentType, sResponseBody, false);
 		},
 
 		/**
@@ -287,7 +381,9 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * mandatory headers for the batch request.
 		 *
 		 * @param {object[]} aRequests
-		 *  an array of requests objects <code>oRequest</code>
+		 *  an array consisting of request objects <code>oRequest</code> or out of array(s)
+		 *  of request objects <code>oRequest</code>, in case requests need to be sent in scope of
+		 *  a change set. See example below.
 		 * @param {string} oRequest.method
 		 *   HTTP method, e.g. "GET"
 		 * @param {string} oRequest.url
@@ -304,41 +400,116 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *     <li><code>Content-Type</code>: value for the 'Content-Type' header;
 		 *     <li><code>MIME-Version</code>: value for the 'MIME-Version' header.
 		 *   </ul>
+		 * @example
+		 *   var oBatchRequest = Helper.serializeBatchRequest([
+		 *       {
+		 *           method : "GET",
+		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+		 *           headers : {
+		 *               Accept : "application/json"
+		 *           }
+		 *       },
+		 *       [{
+		 *           method : "PATCH",
+		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+		 *           headers : {
+		 *               "Content-Type" : "application/json"
+		 *           },
+		 *           body : '{"TEAM_ID" : "TEAM_03"}'
+		 *       }, {
+		 *           method : "PATCH",
+		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')",
+		 *           headers : {
+		 *               "Content-Type" : "application/json"
+		 *           },
+		 *           body : '{"TEAM_ID" : "TEAM_01"}'
+		 *       }],
+		 *       {
+		 *           method : "PATCH",
+		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('3')",
+		 *           headers : {
+		 *               "Content-Type" : "application/json"
+		 *           },
+		 *           body : '{"TEAM_ID" : "TEAM_01"}'
+		 *       }
+		 *   ]);
 		 */
 		serializeBatchRequest : function (aRequests) {
-			var sBatchBoundary = jQuery.sap.uid(),
-				aRequestBody = [];
+			var sContentTypeBoundary,
+				iBatchRequestNumber = 0;
 
-			/**
-			 * Serializes a map of request headers to be used in a $batch request.
-			 *
-			 * @param {object} mHeaders
-			 *   a map of request headers
-			 * @returns {string} serialized string of the given headers
-			 */
-			function serializeHeaders (mHeaders) {
-				var sHeaderName,
-					aHeaders = [];
+			function serializeBatchRequests(aRequests, bIsChangeSet) {
+				var sBatchBoundary = (bIsChangeSet ? "changeset_" : "batch_") + jQuery.sap.uid(),
+					iChangeSetRequestNumber = 0,
+					aRequestBody = [];
 
-				for (sHeaderName in mHeaders) {
-					aHeaders = aHeaders.concat(sHeaderName, ":", mHeaders[sHeaderName], "\r\n");
+				/**
+				 * Serializes a map of request headers to be used in a $batch request.
+				 *
+				 * @param {object} mHeaders
+				 *   a map of request headers
+				 * @returns {string} serialized string of the given headers
+				 */
+				function serializeHeaders (mHeaders) {
+					var sHeaderName,
+						aHeaders = [];
+
+					for (sHeaderName in mHeaders) {
+						aHeaders = aHeaders.concat(sHeaderName, ":", mHeaders[sHeaderName], "\r\n");
+					}
+
+					return aHeaders;
 				}
 
-				return aHeaders.concat("\r\n");
+				if (bIsChangeSet) {
+					aRequestBody = aRequestBody.concat("Content-Type: multipart/mixed;boundary=",
+							sBatchBoundary, "\r\n\r\n");
+					iChangeSetRequestNumber = 0;
+				}
+
+				aRequests.forEach(function(oRequest) {
+					var sContentIdHeader = "";
+
+					if (bIsChangeSet) {
+						sContentIdHeader = "Content-ID:" + iChangeSetRequestNumber + "."
+							+ iBatchRequestNumber + "\r\n";
+						iChangeSetRequestNumber++;
+						iBatchRequestNumber++;
+					}
+
+					aRequestBody = aRequestBody.concat("--", sBatchBoundary, "\r\n");
+					if (Array.isArray(oRequest)) {
+						if (bIsChangeSet) {
+							throw new Error('Change set must not contain a nested change set.');
+						}
+						aRequestBody = aRequestBody.concat(serializeBatchRequests(oRequest, true));
+					} else {
+						if (bIsChangeSet && !mAllowedChangeSetMethods[oRequest.method]) {
+							throw new Error("Invalid HTTP request method: " + oRequest.method +
+								". Change set must contain only POST, PUT, PATCH or " +
+								"DELETE requests.");
+						}
+
+						aRequestBody = aRequestBody.concat(
+							"Content-Type:application/http\r\n",
+							"Content-Transfer-Encoding:binary\r\n",
+							sContentIdHeader,
+							"\r\n",
+							oRequest.method, " ", oRequest.url, " HTTP/1.1\r\n",
+							serializeHeaders(oRequest.headers),
+							"\r\n",
+							oRequest.body || "", "\r\n");
+					}
+				});
+				aRequestBody = aRequestBody.concat("--", sBatchBoundary, "--\r\n");
+
+				sContentTypeBoundary = sBatchBoundary;
+				return aRequestBody;
 			}
 
-			aRequests.forEach(function(oRequest) {
-				aRequestBody = aRequestBody.concat("--", sBatchBoundary,
-					"\r\nContent-Type:application/http\r\n",
-					"Content-Transfer-Encoding:binary\r\n\r\n",
-					oRequest.method, " ", oRequest.url, " HTTP/1.1\r\n",
-					serializeHeaders(oRequest.headers), oRequest.body || "", "\r\n");
-			});
-			aRequestBody = aRequestBody.concat("--", sBatchBoundary, "--\r\n");
-
 			return {
-				body : aRequestBody.join(""),
-				"Content-Type" : "multipart/mixed; boundary=" + sBatchBoundary,
+				body : serializeBatchRequests(aRequests).join(""),
+				"Content-Type" : "multipart/mixed; boundary=" + sContentTypeBoundary,
 				"MIME-Version" : "1.0"
 			};
 		}
