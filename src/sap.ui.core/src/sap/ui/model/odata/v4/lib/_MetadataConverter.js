@@ -179,10 +179,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			sTargetName = MetadataConverter.resolveAliasInPath(oAttributes.Target, oAggregate),
 			oTarget = {};
 
-		if (!oAggregate.result.$Annotations) {
-			oAggregate.result.$Annotations = {};
+		if (!oAggregate.schema.$Annotations) {
+			oAggregate.schema.$Annotations = {};
 		}
-		oAggregate.result.$Annotations[sTargetName] = oTarget;
+		oAggregate.schema.$Annotations[sTargetName] = oTarget;
 		oAggregate.annotations =  {
 			target: oTarget,
 			qualifier: oAttributes.Qualifier
@@ -507,6 +507,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processSchema(oElement, oAggregate) {
 		oAggregate.namespace = oElement.getAttribute("Namespace");
+		oAggregate.result[oAggregate.namespace] = oAggregate.schema = {
+			"$kind": "Schema"
+		};
 	}
 
 	/**
@@ -751,6 +754,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					"namespace" : null, // the namespace of the current Schema
 					"navigationProperty" : null, // the current NavigationProperty
 					"referenceUri" : null, // the URI of the current Reference
+					"schema" : null, // the current Schema
 					"type" : null, // the current EntityType/ComplexType
 					"result" : {}
 				},

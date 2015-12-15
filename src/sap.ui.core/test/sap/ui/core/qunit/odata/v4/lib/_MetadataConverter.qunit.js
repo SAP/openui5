@@ -170,6 +170,9 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
+				"foo": {
+					"$kind": "Schema"
+				},
 				"foo.Container": {
 					"$kind": "EntityContainer",
 					"Me": {
@@ -205,6 +208,9 @@ sap.ui.require([
 					"$kind": "Reference",
 					"$ref": "qux/$metadata"
 				},
+				"bar": {
+					"$kind": "Schema"
+				},
 				"bar.Worker": {
 					"$kind": "ComplexType",
 					"Something": {
@@ -225,6 +231,9 @@ sap.ui.require([
 						"$isCollection" : true,
 						"$Type": "foo.Address"
 					}
+				},
+				"foo": {
+					"$kind": "Schema"
 				}
 			});
 	});
@@ -252,6 +261,9 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
+				"foo": {
+					"$kind": "Schema"
+				},
 				"foo.Container": {
 					"$kind": "EntityContainer",
 					"SpecialTeams": {
@@ -288,6 +300,9 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
+				"foo": {
+					"$kind": "Schema"
+				},
 				"foo.Container": {
 					"$kind": "EntityContainer",
 					"Teams": {
@@ -322,6 +337,9 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
+				"foo": {
+					"$kind": "Schema"
+				},
 				"foo.Worker": {
 					"$kind": "EntityType",
 					"$Key": [
@@ -354,6 +372,9 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
+				"foo": {
+					"$kind": "Schema"
+				},
 				"foo.Worker": {
 					"$kind": "ComplexType",
 					"$OpenType": true,
@@ -398,6 +419,9 @@ sap.ui.require([
 	["ComplexType", "EntityType"].forEach(function (sType) {
 		QUnit.test("convertXMLMetadata: " + sType + ": (Navigation)Property", function (assert) {
 			var oExpected = {
+					"foo": {
+						"$kind": "Schema"
+					},
 					"foo.Worker": {
 						"$kind": sType,
 						"Salary": {
@@ -511,6 +535,9 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
+				"foo": {
+					"$kind": "Schema"
+				},
 				"foo.Bar1": {
 					"$kind": "EnumType",
 					"$IsFlags": true,
@@ -568,6 +595,9 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
+				"foo": {
+					"$kind": "Schema"
+				},
 				"foo.Bar": {
 					"$kind": "TypeDefinition",
 					"$UnderlyingType": "Edm.String"
@@ -593,6 +623,9 @@ sap.ui.require([
 						</Schema>\
 					</DataServices>',
 				{
+					"foo": {
+						"$kind": "Schema"
+					},
 					"foo.Baz": [{
 						"$kind": sRunnable,
 						"$EntitySetPath": "Employees",
@@ -633,6 +666,9 @@ sap.ui.require([
 		QUnit.test("convertXMLMetadata: " + sWhat + "Import", function (assert) {
 			var oExpected = {
 					"$EntityContainer": "foo.Container",
+					"foo": {
+						"$kind": "Schema"
+					},
 					"foo.Container": {
 						"$kind": "EntityContainer",
 						"Baz1": {
@@ -693,6 +729,9 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
+				"foo": {
+					"$kind": "Schema"
+				},
 				"foo.Term1": {
 					"$kind": "Term",
 					"$isCollection": true,
@@ -753,41 +792,44 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"$Annotations": {
-					"foo.Bar/foo.Baz": {
-						"@foo.Binary": {"$Binary": "T0RhdGE"},
-						"@foo.Bool": false,
-						"@foo.Date": {"$Date" : "2015-01-01"},
-						"@foo.DateTimeOffset": {
-							"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"
+				"foo": {
+					"$kind": "Schema",
+					"$Annotations": {
+						"foo.Bar/foo.Baz": {
+							"@foo.Binary": {"$Binary": "T0RhdGE"},
+							"@foo.Bool": false,
+							"@foo.Date": {"$Date" : "2015-01-01"},
+							"@foo.DateTimeOffset": {
+								"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"
+							},
+							"@foo.Decimal": {"$Decimal" : "3.14"},
+							"@foo.Duration": {"$Duration" : "P11D23H59M59S"},
+							"@foo.EnumMember1": {"$EnumMember" : 0},
+							"@foo.EnumMember2": {"$EnumMember" : 9007199254740991},
+							"@foo.EnumMember3": {"$EnumMember" : "9007199254740992"},
+							"@foo.Float1": 2.718,
+							"@foo.Float2": {"$Float": "NaN"},
+							"@foo.Float3": {"$Float": "Infinity"},
+							"@foo.Float4": {"$Float": "-Infinity"},
+							"@foo.Guid": {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
+							"@foo.Int1": 42,
+							"@foo.Int2": 9007199254740991,
+							"@foo.Int3": {"$Int" : "9007199254740992"},
+							"@foo.String": "foobar",
+							"@foo.TimeOfDay": {"$TimeOfDay": "21:45:00"},
+							"@foo.AnnotationPath": {
+								"$AnnotationPath": "Path/foo.Bar/foo.Baz@foo.Term"
+							},
+							"@foo.NavigationPropertyPath": {
+								"$NavigationPropertyPath": "Path/foo.Bar/foo.Baz"
+							},
+							"@foo.Path": {"$Path": "Path/foo.Bar/foo.Baz"},
+							"@foo.PropertyPath": {"$PropertyPath": "Path/foo.Bar/foo.Baz"},
+							"@foo.UrlRef": {"$UrlRef": "http://foo.bar"},
+							"@foo.Baz#Employee": true
 						},
-						"@foo.Decimal": {"$Decimal" : "3.14"},
-						"@foo.Duration": {"$Duration" : "P11D23H59M59S"},
-						"@foo.EnumMember1": {"$EnumMember" : 0},
-						"@foo.EnumMember2": {"$EnumMember" : 9007199254740991},
-						"@foo.EnumMember3": {"$EnumMember" : "9007199254740992"},
-						"@foo.Float1": 2.718,
-						"@foo.Float2": {"$Float": "NaN"},
-						"@foo.Float3": {"$Float": "Infinity"},
-						"@foo.Float4": {"$Float": "-Infinity"},
-						"@foo.Guid": {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
-						"@foo.Int1": 42,
-						"@foo.Int2": 9007199254740991,
-						"@foo.Int3": {"$Int" : "9007199254740992"},
-						"@foo.String": "foobar",
-						"@foo.TimeOfDay": {"$TimeOfDay": "21:45:00"},
-						"@foo.AnnotationPath": {
-							"$AnnotationPath": "Path/foo.Bar/foo.Baz@foo.Term"
-						},
-						"@foo.NavigationPropertyPath": {
-							"$NavigationPropertyPath": "Path/foo.Bar/foo.Baz"
-						},
-						"@foo.Path": {"$Path": "Path/foo.Bar/foo.Baz"},
-						"@foo.PropertyPath": {"$PropertyPath": "Path/foo.Bar/foo.Baz"},
-						"@foo.UrlRef": {"$UrlRef": "http://foo.bar"},
-						"@foo.Baz#Employee": true
-					},
-					"foo.Bar/Abc" : {"@foo.Baz#Employee": true}
+						"foo.Bar/Abc" : {"@foo.Baz#Employee": true}
+					}
 				}
 			});
 	});
