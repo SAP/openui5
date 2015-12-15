@@ -601,10 +601,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 	};
 
-	/**
-	 * @see sap.ui.model.ListBinding.prototype.isLengthFinal
-	 *
-	 */
 	ODataListBinding.prototype.isLengthFinal = function() {
 		return this.bLengthFinal;
 	};
