@@ -493,37 +493,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				}
 			}
 
-			// Collecting contexts, after the $inlinecount was evaluated, so we do not have to clear it again when
-			// the Auto modes initial threshold <> count check failed.
-			jQuery.each(oData.results, function(i, entry) {
-				that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
-			});
 			
-			// if we got data and the results + startindex is larger than the
-			// length we just apply this value to the length
-			if (that.iLength < iStartIndex + oData.results.length) {
-				that.iLength = iStartIndex + oData.results.length;
-				that.bLengthFinal = false;
-			}
-
-			// if less entries are returned than have been requested
-			// set length accordingly
-			if (!oData.__next && (oData.results.length < iLength || iLength === undefined)) {
-				that.iLength = iStartIndex + oData.results.length;
-				that.bLengthFinal = true;
-			}
-
-			// In fault tolerance mode, if an empty array and next link is returned,
-			// finalize the length accordingly
-			if (that.bFaultTolerant && oData.__next && oData.results.length == 0) {
-				that.iLength = iStartIndex;
-				that.bLengthFinal = true;
-			}
-
-			// check if there are any results at all...
-			if (iStartIndex === 0 && oData.results.length === 0) {
-				that.iLength = 0;
-				that.bLengthFinal = true;
+			if (oData.results.length > 0) {
+				// Collecting contexts, after the $inlinecount was evaluated, so we do not have to clear it again when
+				// the Auto modes initial threshold <> count check failed.
+				jQuery.each(oData.results, function(i, entry) {
+					that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
+				});
+				
+				// if we got data and the results + startindex is larger than the
+				// length we just apply this value to the length
+				if (that.iLength < iStartIndex + oData.results.length) {
+					that.iLength = iStartIndex + oData.results.length;
+					that.bLengthFinal = false;
+				}
+				
+				// if less entries are returned than have been requested
+				// set length accordingly
+				if (!oData.__next && (oData.results.length < iLength || iLength === undefined)) {
+					that.iLength = iStartIndex + oData.results.length;
+					that.bLengthFinal = true;
+				}
+				
+			} else {
+				// In fault tolerance mode, if an empty array and next link is returned,
+				// finalize the length accordingly
+				if (that.bFaultTolerant && oData.__next) {
+					that.iLength = iStartIndex;
+					that.bLengthFinal = true;
+				}
+				
+				// check if there are any results at all...
+				if (iStartIndex === 0) {
+					that.iLength = 0;
+					that.bLengthFinal = true;
+				}
 			}
 
 			// For clientside sorting filtering store all keys separately and set length to final
