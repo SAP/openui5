@@ -360,6 +360,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 		Dialog.prototype.exit = function () {
 			InstanceManager.removeDialogInstance(this);
+			this._deregisterResizeHandler();
 
 			if (this.oPopup) {
 				this.oPopup.detachOpened(this._handleOpened, this);
@@ -404,7 +405,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			var oPopup = this.oPopup;
 			// Set the initial focus to the dialog itself.
 			// The initial focus should be set because otherwise the first focusable element will be focused.
-			// This first element can be input or textarea which will trigger the keyboard to open.
+			// This first element can be input or textarea which will trigger the keyboard to open (mobile device).
 			// The focus will be change after the dialog is opened;
 			oPopup.setInitialFocusId(this.getId());
 
@@ -423,7 +424,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			oPopup.open();
 
+			this._registerResizeHandler();
+
 			InstanceManager.addDialogInstance(this);
+
 			return this;
 		};
 
@@ -437,8 +441,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype.close = function () {
 			this.$().removeClass('sapDialogDisableTransition');
 
-			//clear the resize listener
-			jQuery(window).off('resize.sapMDialogWindowResize');
+			this._deregisterResizeHandler();
 
 			var oPopup = this.oPopup;
 
@@ -651,6 +654,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._onResize = function () {
+			//if there is a manually set height or height by manually resizing return;
+			if (this.getContentHeight() || this._oManuallySetSize) {
+				return;
+			}
+
+			var $dialog = this.$(),
+				$dialogContent = this.$('cont');
+
+			//reset the height so the dialog can grow
+			$dialogContent.css({
+				height: 'auto'
+			});
+
+			//set the newly calculated size by getting it from the browser rendered layout - by the max-height
+			$dialogContent.height(parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10));
 		};
 
 		/**
@@ -959,6 +977,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._deregisterResizeHandler = function () {
+			if (this._resizeListenerId) {
+				sap.ui.core.ResizeHandler.deregister(this._resizeListenerId);
+				this._resizeListenerId = null;
+			}
+
+			sap.ui.Device.resize.detachHandler(this._onResize);
 		};
 
 		/**
@@ -966,6 +990,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._registerResizeHandler = function () {
+			var _$srollSontent = this.$("scroll");
+
+			//The content have to have explicit size so the scroll will work when the user's content is larger then the available space.
+			//This can be removed and the layout change to flex when the support for IE9 is dropped
+			this._resizeListenerId = sap.ui.core.ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
+			sap.ui.Device.resize.attachHandler(this._onResize.bind(this));
 		};
 
 		Dialog.prototype._attachHandler = function(oButton) {
