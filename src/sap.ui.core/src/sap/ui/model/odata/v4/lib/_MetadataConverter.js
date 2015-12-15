@@ -64,77 +64,79 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"String" : {__postProcessor : postProcessLeaf},
 			"TimeOfDay" : {__postProcessor : postProcessLeaf}
 		},
+		// When oAnnotationExpressionConfig is defined, it is added to this array for the recursion
+		aAnnotationExpressionInclude = [oAnnotationLeafConfig],
 		oAnnotationExpressionConfig = {
 			"And" : {
 				__postProcessor : postProcessOperation,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Apply" : {
 				__postProcessor : postProcessApply,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Cast" : {
 				__postProcessor : postProcessCastOrIsOf,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Collection" : {
 				__postProcessor : postProcessCollection,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Eq" : {
 				__postProcessor : postProcessOperation,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Ge" : {
 				__postProcessor : postProcessOperation,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Gt" : {
 				__postProcessor : postProcessOperation,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"If" : {
 				__postProcessor : postProcessOperation,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"IsOf" : {
 				__postProcessor : postProcessCastOrIsOf,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"LabeledElement" : {
 				__postProcessor : postProcessLabeledElement,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Le" : {
 				__postProcessor : postProcessOperation,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Lt" : {
 				__postProcessor : postProcessOperation,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Ne" : {
 				__postProcessor : postProcessOperation,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Not" : {
 				__postProcessor : postProcessNot,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Or" : {
 				__postProcessor : postProcessOperation,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			},
 			"Record" : {
 				__postProcessor : postProcessRecord,
 				"PropertyValue" : {
 					__postProcessor : postProcessPropertyValue,
-					__include : [oAnnotationLeafConfig]
+					__include : aAnnotationExpressionInclude
 				}
 			},
 			"UrlRef" : {
 				__postProcessor : postProcessUrlRef,
-				__include : [oAnnotationLeafConfig]
+				__include : aAnnotationExpressionInclude
 			}
 		},
 		oFullConfig = {
@@ -212,6 +214,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				}
 			}
 		};
+
+	// enable the recursion
+	aAnnotationExpressionInclude.push(oAnnotationExpressionConfig);
 
 	/**
 	 * Returns the attributes of the DOM Element as map.
