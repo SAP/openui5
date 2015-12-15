@@ -46,17 +46,16 @@ sap.ui.define([
 				var bAbsolute = sPath.charAt(0) === "/",
 					sBindingPath = bAbsolute ? sPath + ";root=" + iIndex : sPath;
 
-				if (bAbsolute) {
+				ContextBinding.call(this, oModel, sBindingPath, oContext);
+				this.oCache = undefined;
+				if (!this.isRelative()) {
 					this.oCache = Cache.createSingle(oModel.oRequestor,
 						oModel.sServiceUrl + sPath.slice(1),
 						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
-				} else {
-					this.oCache = undefined;
 				}
-				ContextBinding.call(this, oModel, sBindingPath, oContext);
 			},
 			metadata : {
 				publicMethods : []

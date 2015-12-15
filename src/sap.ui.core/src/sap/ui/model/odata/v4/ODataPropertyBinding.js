@@ -4,8 +4,12 @@
 
 //Provides class sap.ui.model.odata.v4.ODataPropertyBinding
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/model/ChangeReason", "sap/ui/model/PropertyBinding"
-], function (jQuery, ChangeReason, PropertyBinding) {
+	"jquery.sap.global",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/PropertyBinding"
+], function (jQuery, ChangeReason, Cache, Helper, PropertyBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding";
@@ -38,6 +42,13 @@ sap.ui.define([
 	 *   the binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path
+	 * @param {object} [mParameters]
+	 *   map of OData query options where only "5.2 Custom Query Options" (see OData V4
+	 *   specification part 2) are allowed. All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
+	 *   Note: Query options may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
+	 * @throws {Error} when disallowed OData query options are provided
 	 *
 	 * @class Property binding for an OData v4 model.
 	 *
@@ -47,17 +58,23 @@ sap.ui.define([
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
 	 */
-	var ODataPropertyBinding = PropertyBinding.extend(sClassName,
-			/** @lends sap.ui.model.odata.v4.ODataPropertyBinding.prototype */
-			{
-				constructor : function () {
-					PropertyBinding.apply(this, arguments);
-					this.bRequestTypeFailed = false;
-					this.oValue = undefined;
-				},
-				metadata : {
-					publicMethods : []
+	var ODataPropertyBinding = PropertyBinding.extend(sClassName, {
+			constructor : function (oModel, sPath, oContext, mParameters) {
+				PropertyBinding.call(this, oModel, sPath, oContext);
+				this.oCache = undefined;
+				if (!this.isRelative()) {
+					this.oCache = Cache.createSingle(oModel.oRequestor,
+						oModel.sServiceUrl + sPath.slice(1),
+						Helper.buildQueryOptions(oModel.mUriParameters, mParameters));
+				} else if (mParameters) {
+					throw new Error("Bindings with a relative path do not support parameters");
 				}
+				this.bRequestTypeFailed = false;
+				this.oValue = undefined;
+			},
+			metadata : {
+				publicMethods : []
+			}
 		});
 
 	/**
@@ -74,11 +91,12 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   a Promise to be resolved when the check is finished
 	 *
-	 * @protected
+	 * @private
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate) {
 		var bFire = false,
 			aPromises = [],
+			oReadPromise,
 			sResolvedPath = this.getModel().resolve(this.getPath(), this.getContext()),
 			that = this;
 
@@ -96,8 +114,11 @@ sap.ui.define([
 				})
 			);
 		}
-		aPromises.push(this.getModel().read(sResolvedPath).then(function (oData) {
-			if (bForceUpdate || !jQuery.sap.equal(that.oValue, oData.value)) {
+		oReadPromise = this.isRelative() ? this.getModel().read(sResolvedPath) : this.oCache.read();
+		aPromises.push(oReadPromise.then(function (oData) {
+			if (oData.value === undefined || typeof oData.value === "object") {
+				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
+			} else if (bForceUpdate || !jQuery.sap.equal(that.oValue, oData.value)) {
 				that.oValue = oData.value;
 				bFire = true;
 			}

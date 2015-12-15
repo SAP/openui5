@@ -40,20 +40,16 @@ sap.ui.define([
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
-				var bAbsolute = sPath.charAt(0) === "/";
-
-				if (bAbsolute) {
+				ListBinding.call(this, oModel, sPath, oContext);
+				this.oCache = undefined;
+				if (!this.isRelative()) {
 					this.oCache = Cache.create(oModel.oRequestor,
 						oModel.sServiceUrl + sPath.slice(1),
 						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
-				} else {
-					this.oCache = undefined;
 				}
-				ListBinding.call(this, oModel, sPath, oContext);
-
 				this.aContexts = [];
 				// upper boundary for server-side list length (based on observations so far)
 				this.iMaxLength = Infinity;

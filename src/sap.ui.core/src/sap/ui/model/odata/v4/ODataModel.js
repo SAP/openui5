@@ -195,20 +195,19 @@ sap.ui.define([
 	 *   the binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path
-	 * @param {object} [mParameters=null]
-	 *   Not supported; providing parameters leads to an error. Provide OData query options via the
-	 *   {@link #constructor model} or the parent list binding (see {@link bindList}) or context
-	 *   binding (see {@link bindContext}) instead.
+	 * @param {object} [mParameters]
+	 *   map of OData query options where only "5.2 Custom Query Options" (see OData V4
+	 *   specification part 2) are allowed. All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
+	 *   Note: Query options may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   the property binding
 	 * @throws {Error} when parameters are provided
 	 * @public
 	 */
 	ODataModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
-		if (mParameters) {
-			throw new Error("ODataPropertyBinding does not support parameters");
-		}
-		return new ODataPropertyBinding(this, sPath, oContext);
+		return new ODataPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
 	ODataModel.prototype.bindTree = function () {
