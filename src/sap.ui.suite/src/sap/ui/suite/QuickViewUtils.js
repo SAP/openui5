@@ -3,8 +3,8 @@
  */
 
  // Provides 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Element'],
+	function(jQuery, Control, Element) {
 	"use strict";
 
 	/**
@@ -25,9 +25,9 @@ sap.ui.define(['jquery.sap.global'],
 			oQV.setModel(oModel);
 			oQV.bindObject("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
 			
-			var oMQVC = new sap.ui.suite.hcm.QvContent();
+			var oMQVC = new QvContent();
 			oMQVC.bindAggregation("items",{path:"QVAttributes",factory: function(sId, oContext) {
-				var oQVItem = new sap.ui.suite.hcm.QvItem(sId, {label:"{Attribute/label}",link: "{valueLinkURL}",order:"{order}"});
+				var oQVItem = new QvItem(sId, {label:"{Attribute/label}",link: "{valueLinkURL}",order:"{order}"});
 				oQVItem.bindProperty("value","value",mFormatter && mFormatter[oContext.getProperty("Attribute/name")]);
 				return oQVItem;
 			}});
@@ -45,9 +45,9 @@ sap.ui.define(['jquery.sap.global'],
 			oQV.bindProperty("icon", "imageURL");
 			oQV.bindObject("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
 			
-			var oMQVC = new sap.ui.suite.hcm.QvContent();
+			var oMQVC = new QvContent();
 			oMQVC.bindAggregation("items",{path:"QVAttributes",factory: function(sId, oContext) {
-				var oQVItem = new sap.ui.suite.hcm.QvItem(sId, {label:"{Attribute/label}",link: "{valueLinkURL}",order:"{order}"});
+				var oQVItem = new QvItem(sId, {label:"{Attribute/label}",link: "{valueLinkURL}",order:"{order}"});
 				oQVItem.bindProperty("value","value",mFormatter && mFormatter[oContext.getProperty("Attribute/name")]);
 				return oQVItem;
 			}});
@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 	};
 	
-	sap.ui.core.Element.extend("sap.ui.suite.hcm.QvItem", {
+	var QvItem = Element.extend("sap.ui.suite.hcm.QvItem", {
 		metadata : {
 			properties: {
 				label: "string",
@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 	});
 	
-	sap.ui.core.Control.extend("sap.ui.suite.hcm.QvContent", {
+	var QvContent = Control.extend("sap.ui.suite.hcm.QvContent", {
 		metadata : {
 			aggregations: {
 				   "items" : {type : "sap.ui.suite.hcm.QvItem", multiple : true}
@@ -130,9 +130,9 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("</div>");
 		},
 		_createQVContent: function(oControl) {
-				var oML = new sap.ui.commons.layout.MatrixLayout({widths:["75px"]}),
-					aItems = oControl.getItems(),
-					oMLRow, oMLCell, oLabel, oTxtView, oLink;
+			var oML = new sap.ui.commons.layout.MatrixLayout({widths:["75px"]}),
+				aItems = oControl.getItems(),
+				oMLRow, oMLCell, oLabel, oTxtView, oLink;
 			
 			if (this._oML) {
 				this._oML.destroy();

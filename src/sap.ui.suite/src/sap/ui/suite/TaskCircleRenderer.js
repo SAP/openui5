@@ -3,10 +3,13 @@
  */
 
 // provides default renderer for sap.ui.suite.TaskCircle
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', './library'],
+	function(jQuery, Core, library) {
 	"use strict";
 
+
+	// shortcut
+	var TaskCircleColor = library.TaskCircleColor;
 
 	/**
 	 * TaskCircle renderer.
@@ -44,16 +47,16 @@ sap.ui.define(['jquery.sap.global'],
 	    var style = 'sapUiTaskCircleColorGray';
 	
 	    switch (color) {
-	       case sap.ui.suite.TaskCircleColor.Red:
+	       case TaskCircleColor.Red:
 	          style = 'sapUiTaskCircleColorRed';
 	          break;
-	       case sap.ui.suite.TaskCircleColor.Yellow:
+	       case TaskCircleColor.Yellow:
 	          style = 'sapUiTaskCircleColorYellow';
 	          break;
-	       case sap.ui.suite.TaskCircleColor.Green:
+	       case TaskCircleColor.Green:
 	          style = 'sapUiTaskCircleColorGreen';
 	          break;
-	       case sap.ui.suite.TaskCircleColor.Gray:
+	       case TaskCircleColor.Gray:
 	          style = 'sapUiTaskCircleColorGray';
 	          break;
 	    }

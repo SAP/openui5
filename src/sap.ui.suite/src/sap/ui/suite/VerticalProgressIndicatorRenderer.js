@@ -3,8 +3,7 @@
  */
 
 // provides default renderer for sap.ui.suite.VerticalProgressIndicator
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(function() {
 	"use strict";
 
 
