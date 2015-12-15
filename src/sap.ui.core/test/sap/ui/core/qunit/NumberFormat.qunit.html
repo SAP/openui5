@@ -1210,36 +1210,40 @@
 
 	test("Format option 'emptyString'", function() {
 		var aMethods = ["getIntegerInstance", "getFloatInstance", "getPercentInstance", "getCurrencyInstance"],
-			aValues = [undefined, null, 0],
-			aCompareValues = [NaN, null, 0];
+			aValues = [NaN, null, 0],
+			aCompareValues = [["NaN", null, "0"], [NaN, null, 0]],
+			aParseAsString = [true, false];
 
 		aMethods.forEach(function(sMethod, index) {
 			aValues.forEach(function(nValue, index1) {
-				var oFormatOptions = {
-						emptyString: nValue
-					},
-					oFormat = sap.ui.core.format.NumberFormat[sMethod](oFormatOptions),
-					nCompareValue = aCompareValues[index1],
-					nParsed,
-					aParsed;
+				aParseAsString.forEach(function(bParseAsString, index2) {
+					var oFormatOptions = {
+							emptyString: nValue,
+							parseAsString: bParseAsString
+						},
+						oFormat = sap.ui.core.format.NumberFormat[sMethod](oFormatOptions),
+						nCompareValue = aCompareValues[index2][index1],
+						nParsed,
+						aParsed;
 
-				// format
-				strictEqual(oFormat.format(nCompareValue), "", nCompareValue + " is formatted to empty string");
+					// format
+					strictEqual(oFormat.format(nValue), "", nValue + " is formatted to empty string");
 
-				// parse
-				if (sMethod === "getCurrencyInstance") {
-					aParsed = oFormat.parse("");
-					nParsed = aParsed[0];
-					strictEqual(aParsed[1], undefined, "currency code is parse as undefined");
-				} else {
-					nParsed = oFormat.parse("");
-				}
+					// parse
+					if (sMethod === "getCurrencyInstance") {
+						aParsed = oFormat.parse("");
+						nParsed = aParsed[0];
+						strictEqual(aParsed[1], undefined, "currency code is parse as undefined");
+					} else {
+						nParsed = oFormat.parse("");
+					}
 
-				if (nParsed !== nParsed) {
-					ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN");
-				} else {
-					strictEqual(nParsed, nCompareValue, "empty string is parsed as " + aCompareValues[index1]);
-				}
+					if (nParsed !== nParsed) {
+						ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN");
+					} else {
+						strictEqual(nParsed, nCompareValue, "empty string is parsed as " + aCompareValues[index2][index1]);
+					}
+				});
 			});
 		});
 	});

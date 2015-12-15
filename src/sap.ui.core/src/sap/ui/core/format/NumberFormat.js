@@ -753,13 +753,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			sPercentSign = this.oLocaleData.getNumberSymbol("percentSign"),
 			oRegExp, bPercent, sRegExpCurrency, sRegExpCurrencyMeasure, aParsed, sCurrencyMeasure,
 			vResult = 0,
-			oShort;
+			oShort, vEmptyParseValue;
 
 		if (sValue === "") {
+			vEmptyParseValue = oOptions.emptyString;
+			// If the 'emptyString' option is set to 0 or NaN and parseAsString is set to true, the return value should be converted to a string.
+			// Because null is a valid value for string type, therefore null is not converted to a string.
+			if (oOptions.parseAsString && (oOptions.emptyString === 0 || isNaN(oOptions.emptyString))) {
+				vEmptyParseValue = oOptions.emptyString + "";
+			} 
 			if (oOptions.type === mNumberType.CURRENCY) {
-				return [oOptions.emptyString, undefined];
+				return [vEmptyParseValue, undefined];
 			} else {
-				return oOptions.emptyString;
+				return vEmptyParseValue;
 			}
 		}
 
