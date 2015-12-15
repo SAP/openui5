@@ -629,6 +629,7 @@ sap.ui.define([
 		if (!this._iResizeId) {
 			this._iResizeId = ResizeHandler.register(this, this._adaptLayout.bind(this));
 		}
+		this._shiftHeaderTitle();
 
 		this._attachDetachActionButtonsHandler(true);
 	};
