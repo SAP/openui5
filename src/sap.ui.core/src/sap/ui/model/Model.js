@@ -709,7 +709,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	};
 
 	/**
-	 * Set the maximum number of entries which are used for for list bindings.
+	 * Set the maximum number of entries which are used for list bindings.
 	 * @param {int} iSizeLimit collection size limit
 	 * @public
 	 */
