@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				var sCntTooltip = oContent.getTooltip_AsString();
 				var aTooltipEments = thisRef.find("*");
 				aTooltipEments.removeAttr("title");
-				if (sCntTooltip.trim().length !== 0) {
+				if (sCntTooltip && sCntTooltip.trim().length !== 0) {
 					if (this._getFooterText().trim() !== 0) {
 						sCntTooltip = sCntTooltip + "\n" + this._getFooterText();
 					}
