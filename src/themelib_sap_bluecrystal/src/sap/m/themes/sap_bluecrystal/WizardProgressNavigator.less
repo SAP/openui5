@@ -4,15 +4,13 @@
 	border-color: @sapUiGroupContentBorderColor;
 }
 
-.sapMWizardProgressNavAnchor {
-	&:hover .sapMWizardProgressNavAnchorCircle {
-		background: @sapUiButtonHoverBackground;
-	}
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+	background: @sapUiButtonHoverBackground;
+}
 
-	&:focus {
-		outline: 1px dotted @sapUiFocus;
-		outline-offset: 1px;
-	}
+.sapMWizardProgressNavAnchor:focus {
+	outline: 1px dotted @sapUiFocus;
+	outline-offset: 1px;
 }
 
 .sapMWizardProgressNavAnchorCircle {

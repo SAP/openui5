@@ -11,7 +11,7 @@
 	box-sizing: border-box;
 	height: @navHeight;
 	padding: 1rem;
-	border-bottom-width: 1px;
+	border-bottom-width: 2px;
 	border-bottom-style: solid;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -58,11 +58,6 @@
 .sapMWizardProgressNavListVarying .sapMWizardProgressNavStep:last-child::after {
 	display: block;
 	border-bottom-style: dashed;
-}
-
-// when there are no titles the last step should align to the end
-.sapMWizardProgressNavListNoTitles .sapMWizardProgressNavStep:last-child {
-	width: @stepWidth;
 }
 
 // the currently selected step
@@ -115,6 +110,17 @@
 	}
 }
 
+// when there are no titles and the number of steps is know the last step should align to the end
+.sapMWizardProgressNavList.sapMWizardProgressNavListNoTitles .sapMWizardProgressNavStep:last-child {
+	width: @stepWidth;
+}
+
+// override the previous rule when more than one step is grouped because we want the last step to be
+// shrunk and show below the previous step with [data-sap-ui-wpn-step-open="false"]
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] + .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] {
+	width: @stepWidth - @stepOverlapOnPhone;
+}
+
 // select the first grouped step on the right and style it so that it does not collapse
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="true"] + .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] {
 	width: @stepWidth;
@@ -123,7 +129,9 @@
 
 // select the last grouped step on the left and style it so that it does not collapse
 // add the needed padding to the right so that the separator between the steps is visible
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev="true"] {
+// the second selector is needed for a corner case
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev="true"],
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] +  .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev="true"] {
 	width: @stepWidth;
 	padding-right: @stepPadding + @smallSeparator;
 

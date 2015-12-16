@@ -1,17 +1,15 @@
 .sapMWizardProgressNav {
 	background: @sapHCStandardBG;
 	font-size: @sapMFontMediumSize;
-	border-bottom: 0.0625rem solid @sapHCStandardFG;
+	border-color: @sapHCStandardFG;
 }
 
-.sapMWizardProgressNavAnchor {
-	&:hover .sapMWizardProgressNavAnchorCircle {
-		background: @sapHCHighlightBG;
-	}
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+	background: @sapHCHighlightBG;
+}
 
-	&:focus {
-		outline: 2px dotted @sapHCStandardFG;
-	}
+.sapMWizardProgressNavAnchor:focus {
+	outline: 2px dotted @sapHCStandardFG;
 }
 
 .sapMWizardProgressNavAnchorCircle {
@@ -36,9 +34,7 @@
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
 	& .sapMWizardProgressNavAnchor::after {
 		background: @sapHCStandardFG;
-
-		/* in HCB the underline should equal a total ot 0.1875rem (0.125rem + 1px (= 0.0625rem)) */
-		bottom: ((@listHeight - @navHeight) / 2)  + 0.0625rem;
+		height: 0.25rem;
 	}
 
 	& .sapMWizardProgressNavAnchorCircle {
