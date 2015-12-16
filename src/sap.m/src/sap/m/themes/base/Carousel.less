@@ -57,6 +57,11 @@
 	transition-duration: 0.5s;
 }
 
+html[data-sap-ui-animation='off'] .sapMCrslInner {
+  transition-duration: 0.01s;
+ }
+
+
 /* special handling for IE / Edge, as it does not support text-align: end */
 html[data-sap-ui-browser^="ie"] .sapMCrslInner,
 html[data-sap-ui-browser^="ed"] .sapMCrslInner {
