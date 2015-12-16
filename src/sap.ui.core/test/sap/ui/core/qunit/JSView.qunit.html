@@ -61,6 +61,9 @@ sap.ui.core.mvc.Controller</title>
 				oPanel.addContent(oButton);
 				var oButton = new sap.ui.commons.Button(this.createId("Button2"),{text:"Hello"});
 				oPanel.addContent(oButton);
+				var oButtonX = new sap.ui.commons.Button(this.createId("ButtonX"),{text:"Another Hello"});
+				oButtonX.attachPress(oController.sap.doIt,oController);
+				oPanel.addContent(oButtonX);
 				var oView1 = sap.ui.jsonview(this.createId("MyJSONView"),"example.mvc.test2");
 				oPanel.addContent(oView1);
 				var oView2 = sap.ui.jsview(this.createId("MyJSView"),"example.mvc.test2");
@@ -106,6 +109,13 @@ sap.ui.core.mvc.Controller</title>
 				var controller = this;
 				ok(controller instanceof sap.ui.core.mvc.Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
 				if(this.getView().getViewData()) window.dataEventHandler = this.getView().getViewData().test;
+			},
+			
+			sap: {
+				doIt: function(oEvent) {
+					ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
+					ok(this instanceof sap.ui.core.mvc.Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
+				}
 			}
 		
 		});

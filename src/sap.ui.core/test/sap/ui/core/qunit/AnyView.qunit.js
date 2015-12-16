@@ -116,8 +116,9 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		equal(oLabel.getLabelFor(), oXMLView.createId("Button1"), "Association has been adapted");
 	});
 
-	asyncTest("Eventhandling", 2, function() {
+	asyncTest("Eventhandling", 4, function() {
 		qutils.triggerMouseEvent(jQuery.sap.byId(view.createId("Button1")), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(jQuery.sap.byId(view.createId("ButtonX")), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			start();
 		}, 500);
