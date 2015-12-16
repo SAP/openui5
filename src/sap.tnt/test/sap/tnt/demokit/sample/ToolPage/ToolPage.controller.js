@@ -15,6 +15,7 @@ sap.ui.define([
 				title: 'Root Item',
 				icon: 'sap-icon://employee',
 				expanded: true,
+				key: 'root1',
 				items: [{
 					title: 'Child Item 1',
 					key: 'page1'
