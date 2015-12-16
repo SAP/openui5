@@ -7,12 +7,11 @@
 
 	<Page showHeader="false">
 		<content>
-			<Toolbar>
+			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Label
-					text="Layout:">
+					text="Layout: Enable FileUploader">
 				</Label>
-				<Label text="Enable FileUploader"></Label>
 				<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
 				<Label text="Multi-selection mode"></Label>
 				<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
@@ -23,7 +22,7 @@
 					change="onSelectChange" >
 					<core:Item key="{key}" text="{text}"/>
 				</Select>
-			</Toolbar>
+			</OverflowToolbar>
 			<UploadCollection
 				id="UploadCollection"
 				maximumFilenameLength="55"
