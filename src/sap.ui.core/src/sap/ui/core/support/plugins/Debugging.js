@@ -76,16 +76,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			if (this.isToolPlugin()) {
 				var _$ = this.$();
 				_$.off("keyup", '#sapUiSupportDebuggingClassInput');
-				_$.on("blur", '#sapUiSupportDebuggingClassInput');
-				_$.on("change", '#sapUiSupportDebuggingClassSelect');
-				_$.on("click", '#sapUiSupportDebuggingAddClass');
-				_$.on("click", '#sapUiSupportDebuggingClassList li div');
-				_$.on("click", '#sapUiSupportDebuggingClassList li img.remove-class');
-				_$.on("keyup", '#sapUiSupportDebuggingMethodInput');
-				_$.on("blur", '#sapUiSupportDebuggingMethodInput');
-				_$.on("change", '#sapUiSupportDebuggingMethodSelect');
-				_$.on("click", '#sapUiSupportDebuggingAddBreakpoint');
-				_$.on("click", '#sapUiSupportDebuggingBreakpointList li img.remove-breakpoint');
+				_$.off("blur", '#sapUiSupportDebuggingClassInput');
+				_$.off("change", '#sapUiSupportDebuggingClassSelect');
+				_$.off("click", '#sapUiSupportDebuggingAddClass');
+				_$.off("click", '#sapUiSupportDebuggingClassList li div');
+				_$.off("click", '#sapUiSupportDebuggingClassList li img.remove-class');
+				_$.off("keyup", '#sapUiSupportDebuggingMethodInput');
+				_$.off("blur", '#sapUiSupportDebuggingMethodInput');
+				_$.off("change", '#sapUiSupportDebuggingMethodSelect');
+				_$.off("click", '#sapUiSupportDebuggingAddBreakpoint');
+				_$.off("click", '#sapUiSupportDebuggingBreakpointList li img.remove-breakpoint');
 			}
 	
 		};
