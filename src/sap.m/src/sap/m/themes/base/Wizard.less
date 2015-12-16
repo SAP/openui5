@@ -34,13 +34,16 @@
 	.sapMWizardNextButton {
 		bottom: -3rem;
 		opacity: 0;
-		transition: 0.4s linear;
 	}
 
 	.sapMWizardNextButtonVisible {
 		bottom: 0rem;
 		opacity: 1;
 	}
+}
+
+html[data-sap-ui-animation='on'] .sapMWizardNextButton {
+	transition: 0.4s linear;
 }
 
 .sap-desktop .sapMWizard .sapMWizardNextButton {
