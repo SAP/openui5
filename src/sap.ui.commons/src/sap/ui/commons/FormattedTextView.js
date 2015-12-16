@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 */
 		FormattedTextView.prototype.hasControls = function () {
 			var aControls = this.getAggregation("controls");
-			return aControls && aControls.length > 0;
+			return !!(aControls && aControls.length > 0);
 		};
 
 		/**
