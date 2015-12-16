@@ -67,6 +67,11 @@
 	padding-left: 5px;
 	padding-right: 5px;
 	position: relative;
+	cursor: pointer;
+}
+
+.sapUiSupportPnlHdr:hover {
+	background-color: #ddd; /* indicate it is clickable */
 }
 
 .sapUiSupportPnlHdrHdl {
@@ -273,14 +278,14 @@
 }
 
 #sapUiSupportControlTree {
-	height: 400px;
+	height: 480px;
 	overflow: hidden;
 }
 
 .sapUiSupportDottedContainer,
 #sapUiSupportControlTreeArea,
 #sapUiSupportControlPropertiesArea {
-	height: 378px;
+	height: 454px;
 	width: 48%;
 	border: 1px dotted black;
 	background-color: white;
@@ -292,7 +297,7 @@
 
 #sapUiSupportControlPropertiesArea {
 	float: right;
-	height: 347px;
+	height: 423px;
 }
 
 ul.sapUiSupportControlTreeList, ul.sapUiSupportControlTreeList ul {
