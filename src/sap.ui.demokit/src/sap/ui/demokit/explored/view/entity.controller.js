@@ -60,7 +60,7 @@ sap.ui.define([
 			});
 		},
 
-		_TAB_KEYS: ["sampes", "about", "properties", "aggregations", "associations", "events", "methods"],
+		_TAB_KEYS: ["samples", "about", "properties", "aggregations", "associations", "events", "methods"],
 
 		onRouteMatched: function (oEvt) {
 
