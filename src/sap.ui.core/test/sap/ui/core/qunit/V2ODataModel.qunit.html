@@ -1441,7 +1441,65 @@
 		});
 	});
 	
-	
+	asyncTest("test oDataModel read and setProperty deferred and setProperty again with same data", function() {
+		oModel.setDefaultBindingMode("TwoWay");
+		var spy;
+		var mEntities = {
+			categories: { 
+				collection: "/ProductSet", 
+				properties: ["Name"]
+			}
+		}
+		oModel.metadataLoaded().then(function(){
+			oModel.read("/ProductSet('HT-1000')", {
+				urlParameters: {"$select": "Name" },
+				success: function() {
+					oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
+					ok(oModel.hasPendingChanges(), "model has pending changes");
+					oModel.submitChanges({
+						success : function(oData, oResponse) {
+							ok(!oModel.hasPendingChanges(), "model has not any pending changes");
+							equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewName", "property changed successfully");
+							oModel.read("/ProductSet('HT-1000')", {
+								success: function() {
+									ok(!oModel.hasPendingChanges(), "model has not any pending changes");
+									equal(oModel.getProperty("/ProductSet('HT-1000')/Name"), "NewName", "new prop value");
+									equal(oModel.getProperty("/ProductSet('HT-1000')/TypeCode"), "PR", "new prop value");
+									oSpy = sinon.spy(oModel, "_submitBatchRequest");
+									oModel.submitChanges({
+										success : function(oData, oResponse) {
+											// no request should go out
+											ok(false, "no request should go out");
+											debugger;
+										},
+										error : function(oError) {
+											ok(false, "request failed");
+										}
+									});
+									jQuery.sap.delayedCall(0,this, function() {
+										ok(oSpy.callCount == 0, "No request sent");
+										oSpy.restore();
+										start();
+									});
+								},
+								error: function() {
+									ok(false, "request failed");
+								}
+							});
+							oModel.setProperty("/ProductSet('HT-1000')/TypeCode", "PR");
+							ok(oModel.hasPendingChanges(), "model has pending changes");
+						},
+						error : function(oError) {
+							ok(false, "request failed");
+						}
+					});
+				},
+				error: function() {
+					ok(false, "request failed");
+				}
+			});
+		});
+	});
 	
 	asyncTest("test oDataModel setProperty: reset change if property is set back to original value", function() {
 		oModel.read("/ProductSet('AD-1000')", {
