@@ -117,6 +117,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	EnabledPropagator.call(Link.prototype); // inherit "disabled" state from parent controls
 
 	/**
+	 * Required adaptations before rendering.
+	 *
+	 * @private
+	 */
+	Link.prototype.onBeforeRendering = function() {
+		// add/remove self reference for aria-labelledby  to fix reading issues
+		this.removeAriaLabelledBy(this.getId());
+		if (this.getAriaLabelledBy().length > 0) {
+			this.addAriaLabelledBy(this.getId());
+		}
+	};
+
+	/**
 	 * Triggers link activation when space key is pressed on the focused control.
 	 *
 	 * @param {jQuery.Event} oEvent
