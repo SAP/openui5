@@ -24,7 +24,7 @@
 	opacity: 1;
 }
 
-.sapMInputBaseDisabled .sapMInputBaseInner {
+.sapMInputBaseDisabledInner {
 	background: @sapHCReducedBG;
 	border-color: @sapHCReducedAltFG;
 	color: @sapHCReducedFG;
@@ -131,7 +131,7 @@
 	font-weight: bold;
 }
 
-.sapMInputBaseInner.sapMInputBaseReadonlyInner {
+.sapMInputBaseReadonlyInner {
 	border-color: @sapHCReducedAltFG;
 	background: @sapHCReducedBG;
 }
@@ -247,8 +247,8 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 
 /* focus in IE (workaround) */
 html[data-sap-ui-browser^="ie"] {
-	.sapMInputBase > .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus,
-	.sapMInputBase > .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):hover {
+	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus,
+	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):hover {
 		outline: none;
 	}
 
