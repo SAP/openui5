@@ -163,6 +163,8 @@ sap.ui.define([
 		ControlTree.prototype.renderContentAreas = function() {
 			var rm = sap.ui.getCore().createRenderManager();
 
+			rm.write('<div>You can find a control in this tree by clicking it in the application UI while pressing the Ctrl+Alt+Shift keys.</div>');
+
 			rm.write('<div id="sapUiSupportControlTreeArea"><ul class="sapUiSupportControlTreeList"></ul></div>');
 
 			rm.write('<div id="sapUiSupportControlTabs" style="visibility:hidden">');
