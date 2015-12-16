@@ -1012,5 +1012,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.25": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "e03c564f23871db020cc708511b5789eaf8c893f",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Minium size is properly calculated when there is no size constraint",
+        "references": []
+      },
+      {
+        "id": "86739646f41d02068e074cc43c5a7794f0f59e3d",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree: Expand and collapse performance improved",
+        "references": []
+      }
+    ]
   }
 }

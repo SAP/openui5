@@ -4512,5 +4512,52 @@
         "references": []
       }
     ]
+  },
+  "1.28.25": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "df07a77a8b0ff890a597f1e064481bfe48bb80e7",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "SAP Fiori Client for Windows Phone 10: hidden text area",
+        "references": []
+      },
+      {
+        "id": "3bbc336fe6d7d6c886ed18a4751a2d5a45d7afc6",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: CSS focus offset on IE improved",
+        "references": []
+      },
+      {
+        "id": "ae01dd7602ef1b6a39219e676a1e2f79388647ca",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Css class improved",
+        "references": []
+      },
+      {
+        "id": "28f59ad1d5f6c28f4abe71d21905bcf63afd5f02",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Click outside the text does not count as click",
+        "references": []
+      },
+      {
+        "id": "2f4e2c7866a8914f0848b14cc7eb2bc5832eba73",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: ValueStateSupport used to enrich the tooltip",
+        "references": []
+      },
+      {
+        "id": "675019711bfe264c135ec86b992bd50955d9d580",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: escaping in IE10 is fixed.",
+        "references": []
+      }
+    ]
   }
 }

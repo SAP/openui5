@@ -381,5 +381,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.25": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "64063cb0248590a8a431753c79c26ab7d50e5b2c",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Toolpoup: Arrow in HCB theme is positioned properly",
+        "references": []
+      }
+    ]
   }
 }

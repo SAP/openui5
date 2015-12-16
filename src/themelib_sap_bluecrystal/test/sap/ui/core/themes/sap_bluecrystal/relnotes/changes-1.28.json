@@ -818,5 +818,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.25": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "ae01dd7602ef1b6a39219e676a1e2f79388647ca",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedInput: Css class improved",
+        "references": []
+      }
+    ]
   }
 }

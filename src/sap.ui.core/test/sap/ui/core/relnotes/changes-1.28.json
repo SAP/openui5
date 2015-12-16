@@ -2721,5 +2721,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.25": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "7bffab5d39cd3f19c5d0a662528dcd10c25a50c8",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DateFormat: Parse quarters to first day of quarter",
+        "references": []
+      },
+      {
+        "id": "e8cf0abc3e5ba48385a7c49db941b0aa4532c9ef",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageManager:deregistration of Processors not working",
+        "references": []
+      },
+      {
+        "id": "7c88129b8e996716e74f6dd1838990527d75c025",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Find Correct EDM Type for NavProp properties",
+        "references": []
+      },
+      {
+        "id": "aad40ec19066c8a34dd00327de2ddc7bdb786cc4",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Theme Change: custom.css handling",
+        "references": []
+      },
+      {
+        "id": "c3209b6cdb24e74caef9e5aa156263cae8de6315",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.date.IslamicDate - setUTCFullYear respects years less than 100",
+        "references": []
+      }
+    ]
   }
 }
