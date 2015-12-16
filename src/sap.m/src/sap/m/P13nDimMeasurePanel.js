@@ -97,6 +97,7 @@ sap.ui.define([
 		var that = this;
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._bOnAfterRenderingFirstTimeExecuted = false;
+		this._bOnBeforeRenderingFirstTimeExecuted = false;
 
 		var oModel = new JSONModel({
 			availableChartTypes: [],
@@ -275,23 +276,26 @@ sap.ui.define([
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 		var oData = oModel.getData();
 
-		// Synchronize dimMeasureItems and items
-		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
-			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-			if (!oModelItem || this._isDimMeasureItemEqualToModelItem(oDimMeasureItem, oModelItem)) {
-				return;
-			}
+		// Synchronize dimMeasureItems and items when the panel is rendered first time
+		if (!this._bOnBeforeRenderingFirstTimeExecuted) {
+			this._bOnBeforeRenderingFirstTimeExecuted = true;
+			this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
+				var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
+				if (!oModelItem || this._isDimMeasureItemEqualToModelItem(oDimMeasureItem, oModelItem)) {
+					return;
+				}
 
-			// Take over dimMeasureItem data
-			oModelItem.persistentIndex = oDimMeasureItem.getIndex();
-			oModelItem.persistentSelected = oDimMeasureItem.getVisible();
-			oModelItem.role = oDimMeasureItem.getRole();
-			// Sort the table items only by persistentIndex
-			this._sortModelItemsByPersistentIndex(oData.items);
-			// Re-Index only the tableIndex
-			this._reindexModelItemsByTableIndex(oData);
-		}, this);
-		oModel.refresh();
+				// Take over dimMeasureItem data
+				oModelItem.persistentIndex = oDimMeasureItem.getIndex();
+				oModelItem.persistentSelected = oDimMeasureItem.getVisible();
+				oModelItem.role = oDimMeasureItem.getRole();
+				// Sort the table items only by persistentIndex
+				this._sortModelItemsByPersistentIndex(oData.items);
+				// Re-Index only the tableIndex
+				this._reindexModelItemsByTableIndex(oData);
+			}, this);
+			oModel.refresh();
+		}
 
 		// Set marked item initially to the first table item
 		if (!oData.markedTableItem) {
@@ -1160,7 +1164,7 @@ sap.ui.define([
 				priority: sap.m.OverflowToolbarPriority.High
 			})
 		});
-		oShowSelectedButton.setModel(oModel);		
+		oShowSelectedButton.setModel(oModel);
 
 		var iLiveChangeTimer = 0;
 		var oSearchField = new SearchField(this.getId() + "-searchField", {
@@ -1204,7 +1208,7 @@ sap.ui.define([
 			})
 		});
 		oChartTypeComboBox.setModel(oModel);
-		
+
 		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
 			active: true,
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
