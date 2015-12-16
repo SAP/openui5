@@ -142,6 +142,7 @@ sap.ui.define([
 		};
 
 		BlockBase.prototype.onBeforeRendering = function () {
+			this._applyMapping();
 			if (!this.getMode() || this.getMode() === "") {
 				if (this.getMetadata().getView("defaultXML")) {
 					this.setMode("defaultXML");
@@ -184,19 +185,6 @@ sap.ui.define([
 		 * model mapping management
 		 * *******************************************/
 
-
-		/**
-		 * This triggers rerendering of itself and its children.<br/> As <code>sap.ui.base.ManagedObject</code> "bubbles up" the
-		 * invalidate, changes to child-<code>Elements</code> will also result in rerendering of the whole sub tree.
-		 * @protected
-		 * @name sap.ui.base.ManagedObject#invalidate
-		 * @function
-		 * @param {*} oOrigin the name of the origin
-		 */
-		BlockBase.prototype.invalidate = function (oOrigin) {
-			this._applyMapping();
-			Control.prototype.invalidate.call(this, oOrigin);
-		};
 
 		/**
 		 * Intercept direct setModel calls.
