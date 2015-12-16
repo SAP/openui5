@@ -615,6 +615,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			oValue = rounding(oValue, oOptions.maxFractionDigits, oOptions.roundingMode);
 		}
 
+		// No sign on zero values
+		if (oValue == 0) {
+			bNegative = false;
+		}
+		
 		sNumber = this.convertToDecimal(oValue);
 
 		if (sNumber == "NaN") {

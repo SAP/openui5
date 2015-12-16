@@ -499,6 +499,10 @@
 		equal(oFormat.format(2.11), "2.11", "2.11");
 		equal(oFormat.format(-.1234), "-0.123", "-.1234");
 		equal(oFormat.format(-.1236), "-0.124", "-.1236");
+		equal(oFormat.format(.0005), "0.001", ".0005");
+		equal(oFormat.format(.0004), "0", ".0004");
+		equal(oFormat.format(-.0005), "-0.001", "-.0005");
+		equal(oFormat.format(-.0004), "0", "-.0004");
 		
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 2
@@ -510,6 +514,15 @@
 
 		equal(oFormat.format(-35.855), "-35.86", "-35.855");
 		equal(oFormat.format(-1.005), "-1.01", "-1.005");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 2
+		});
+		equal(oFormat.format(.005), "0.01", ".005");
+		equal(oFormat.format(.004), "0.00", ".004");
+		equal(oFormat.format(-.005), "-0.01", "-.005");
+		equal(oFormat.format(-.004), "0.00", "-.004");
+	
 	});
 
 	test("float format with rounding mode: CEILING", function(){
