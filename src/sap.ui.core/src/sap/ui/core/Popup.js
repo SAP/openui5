@@ -792,7 +792,15 @@ sap.ui.define([
 		};
 
 		// and show the popup content
-		$Ref.toggleClass("sapUiShd", this._bShadow).hide().css("visibility", "visible");
+		$Ref.toggleClass("sapUiShd", this._bShadow);
+
+		var oDomRef = $Ref[0];
+
+		if (oDomRef) {
+			oDomRef.style.display = "none";
+			oDomRef.style.visibility = "visible";
+		}
+
 		if (iRealDuration == 0) { // do not animate if there is a duration == 0
 			fnOpened.apply(); // otherwise call after-opening functions directly
 			// fnOpened is called synchronously above, and the Popup could have been already closed after fnOpened (from one of the "opened" event handlers).
