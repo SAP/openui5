@@ -6,7 +6,7 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	"use strict";
 
 	/**
-	 * TabStrip renderer.
+	 * <code>TabStrip</code> renderer.
 	 * @namespace
 	 */
 	var TabStripRenderer = {};
@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.m.TabStrip} oControl An object representation of the <code>TabStrip</code> control that should be rendered.
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.render = function(oRm, oControl) {
 		if (!oControl.getVisible()) {
@@ -38,10 +38,10 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Render all tabs
+	 * Renders all tabs.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered.
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.renderTabs = function (oRm, oControl) {
 		var aTabs = oControl.getItems(),
@@ -54,15 +54,14 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Renders the tab
+	 * Renders the tab.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered.
-	 * @param oTab {sap.m.TabStripItem} TabsStripItem instance which text to be rendered
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
+	 * @param oTab {sap.m.TabStripItem} <code>TabStripItem</code> instance for which text is to be rendered
 	 * @param bSelected {boolean} Flag indicating if this is the currently selected item
-	 *
-	 * ToDo: rename "tab" to "item" everywhere
 	 */
+	//ToDo: rename "tab" to "item" everywhere
 	TabStripRenderer.renderTab = function (oRm, oControl, oTab, bSelected) {
 		var sItemClass = TabStripItem._CSS_CLASS + (bSelected ? " selected" : ""),
 			bIsTabModified = oTab.getModified(),
@@ -94,10 +93,10 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Renders the text of a passed TabStripItem
+	 * Renders the text of a passed <code>TabStripItem</code>.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-	 * @param oTab {sap.m.TabStripItem} TabsStrinItem instance which text to be rendered
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oTab {sap.m.TabStripItem} <code>TabStripItem</code> instance which text to be rendered
 	 */
 	TabStripRenderer.renderTabText = function (oRm, oTab) {
 		var sTabText = oTab.getText();
@@ -111,10 +110,10 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Renders the close button of a passed TabStripItem
+	 * Renders the Close button of a passed <code>TabStripItem</code>.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-	 * @param oTab {sap.m.TabStripItem} TabsStrinItem instance which text to be rendered
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oTab {sap.m.TabStripItem} <code>TabStripItem</code> instance for which text is to be rendered
 	 */
 	TabStripRenderer.renderTabCloseButton = function (oRm, oTab) {
 		oRm.write("<div class='sapMTSTabCloseBtnCnt'>");
@@ -123,10 +122,10 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Begins TabStrip control rendering
+	 * Begins <code>TabStrip</code> control rendering.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered.
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.beginTabStrip = function (oRm, oControl) {
 		oRm.write("<div");
@@ -137,19 +136,19 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Ends TabStrip control rendering
+	 * Ends <code>TabStrip</code> control rendering.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
 	 */
 	TabStripRenderer.endTabStrip = function (oRm) {
 		oRm.write("</div>");
 	};
 
 	/**
-	 * Begins rendering the tabContainer region
+	 * Begins rendering the <code>TabContainer</code> region.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered.
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.beginTabContainer = function (oRm, oControl) {
 		oRm.write("<div id='" + oControl.getId() + "-tabContainer' class='sapMTSTabContainer'>");
@@ -161,9 +160,9 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Ends rendering the tabContainer region
+	 * Ends rendering the <code>TabContainer</code> region.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
 	 */
 	TabStripRenderer.endTabContainer = function (oRm) {
 		oRm.write("</div>");
@@ -171,10 +170,10 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Renders left overflow buttons
+	 * Renders the overflow buttons on the left.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered.
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.renderLeftOverflowButtons = function (oRm, oControl) {
 		oRm.write("<div id='" + oControl.getId() + "-leftOverflowButtons' class='sapMTSLeftOverflowButtons'>");
@@ -185,10 +184,10 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Renders right overflow buttons
+	 * Renders the overflow buttons on the right.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered.
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.renderRightOverflowButtons = function (oRm, oControl) {
 		oRm.write("<div id='" + oControl.getId() + "-rightOverflowButtons'  class='sapMTSRightOverflowButtons'>");
@@ -201,10 +200,10 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Renders touch area
+	 * Renders the touch area.
 	 *
-	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered.
+	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
 	TabStripRenderer.renderTouchArea = function (oRm, oControl) {
 		oRm.write("<div id='" + oControl.getId() + "-touchArea'  class='sapMTSTouchArea'>");
@@ -216,21 +215,23 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Returns the id of the dom element that holds the text for a tab strip item.
-	 * @param oTab
-	 * @returns {string} the id of the dom element that holds the text for a tab strip item.
+	 * Finds the ID of the DOM element that holds the text for a <code>TabStripItem</code>
+	 *
+	 * @param oItem {sap.m.TabStripItem} The <code>TabStripItem</code> to search
+	 * @returns {string} The ID of the DOM element that holds the text for a <code>TabStripItem</code>
 	 * @private
 	 */
-	function getTabTextDomId (oTab) {
-		return oTab.getId() + "-label";
+	function getTabTextDomId (oItem) {
+		return oItem.getId() + "-label";
 	}
 
 	/**
-	 * Returns the accessability attributes for given tab strip item.
-	 * @param {sap.m.TabStripItem} oItem the tab item to prepare accessability attributes for
-	 * @param {sap.ui.Control} oTabStripParent the TabStrip parent control
-	 * @param {sap.m.TabStripItem} the tab item that is currently selected
-	 * @returns {Object} the accessability attributes for given tab strip item.
+	 * Returns the accessibility attributes for a given <code>TabStripItem</code>.
+	 *
+	 * @param oItem {sap.m.TabStripItem} The <code>TabStripItem</code> to prepare accessibility attributes for
+	 * @param oTabStripParent {sap.ui.Control} The <code>TabStrip</code> parent control
+	 * @param oSelectedItem {sap.m.TabStripItem} The <code>TabStripItem</code> that is currently selected
+	 * @returns {Object} The accessibility attributes for given <code>TabStripItem</code>
 	 * @private
 	 */
 	function getTabStripItemAccAttributes(oItem, oTabStripParent, oSelectedItem) {

@@ -6,8 +6,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 	function(jQuery, Renderer, SelectRenderer, ValueStateSupport, TabStripSelect, TabStripItem) {
 		"use strict";
 
+		/**
+		 * <code>TabStripSelect</code> renderer.
+		 * @namespace
+		 */
 		var TabStripSelectRenderer = Renderer.extend(SelectRenderer);
 
+		/**
+		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+		 *
+		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+		 * @param oSelect {sap.m.TabStripSelect} An object representation of the <code>TabStripSelect</code> control that should be rendered
+		 */
 		TabStripSelectRenderer.render = function(oRm, oSelect) {
 			var	sTooltip = ValueStateSupport.enrichTooltip(oSelect, oSelect.getTooltip_AsString()),
 			       bEnabled = oSelect.getEnabled(),
@@ -74,12 +84,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 		};
 
 		/**
-		 * Renders the select's label, using the provided {@link sap.ui.core.RenderManager}.
+		 * Renders the label of the <code>TabStripSelect</code>, using the provided {@link sap.ui.core.RenderManager}.
 		 *
-		 * @override
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.m.TabStripSelect} oTabStripSelect An object representation of the control that should be rendered
 		 * @private
+		 * @override
 		 */
 		TabStripSelectRenderer.renderLabel = function(oRm, oSelect) {
 			var oSelectedItem = oSelect.getSelectedItem(),
