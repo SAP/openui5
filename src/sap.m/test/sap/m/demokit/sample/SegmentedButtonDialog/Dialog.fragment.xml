@@ -5,10 +5,12 @@
 		title="Dialog with Segmented Button"
 		class="sapUiContentPadding" >
 		<content>
-			<SegmentedButton selectedButton="SBApproved">
-				<Button icon="sap-icon://employee-approvals" text="Approved" id="SBApproved" />
-				<Button icon="sap-icon://employee-rejections" text="Rejected" />
-				<Button icon="sap-icon://employee-lookup" text="Lookup" />
+			<SegmentedButton selectedKey="SBApproved">
+				<items>
+					<SegmentedButtonItem icon="sap-icon://employee-approvals" text="Approved" key="SBApproved" />
+					<SegmentedButtonItem icon="sap-icon://employee-rejections" text="Rejected" />
+					<SegmentedButtonItem icon="sap-icon://employee-lookup" text="Lookup" />
+				</items>
 			</SegmentedButton>
 		</content>
 		<beginButton>
