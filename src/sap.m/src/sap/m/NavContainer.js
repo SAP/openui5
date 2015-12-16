@@ -1541,7 +1541,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	NavContainer.prototype.removePage = function(oPage) {
-		oPage = this.removeAggregation("pages", oPage);
+		// when removing a page that's not the currently displayed page, there's no need to invalidate the NavContainer
+		oPage = this.removeAggregation("pages", oPage, oPage !== this.getCurrentPage());
 
 		this._onPageRemoved(oPage);
 
