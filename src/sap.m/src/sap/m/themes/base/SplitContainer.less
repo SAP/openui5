@@ -221,3 +221,35 @@ html[data-sap-ui-browser^="ie9"] .sapMSplitContainerHideMode > .sapMSplitContain
 .sapMSplitContainer > .sapMSplitContainerDetail .sapMSplitContainerHiddenChild {
 	display: none;
 }
+
+//decrease to minimum transition and animation when animation is off
+//there are 1ms and 5ms values, because the js code depend of the end of the animation
+html[data-sap-ui-animation='off'] {
+
+	.sapMSplitContainerPortrait.sapMSplitContainerShowHide > .sapMSplitContainerMaster,
+	.sapMSplitContainerHideMode > .sapMSplitContainerMaster {
+		transition: all 1ms;
+	}
+
+	.sapMSplitContainerPortrait.sapMSplitContainerShowHide > .sapMSplitContainerMasterVisible,
+	.sapMSplitContainerHideMode > .sapMSplitContainerMasterVisible {
+		transition: all 1ms;
+	}
+
+	.sapMSplitContainerPortrait.sapMSplitContainerShowHide > .sapMSplitContainerMasterHidden,
+	.sapMSplitContainerHideMode > .sapMSplitContainerMasterHidden {
+		transition: all 1ms;
+	}
+
+	.sapMSplitContainerPortrait .sapMSplitContainerMasterBtnShow {
+		animation: fadeIn 5ms;
+		-webkit-animation: fadeIn 5ms;
+		-moz-animation: fadeIn 5ms;
+	}
+
+	.sapMSplitContainerPortrait .sapMSplitContainerMasterBtnHide {
+		animation: fadeOut 5ms;
+		-webkit-animation: fadeOut 5ms;
+		-moz-animation: fadeOut 5ms;
+	}
+}
