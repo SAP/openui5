@@ -19,6 +19,12 @@
 				"text":"Hello"
 			},
 			{
+				"Type":"sap.ui.commons.Button",
+				"id":"ButtonX",
+				"text":"Another Hello",
+				"press": ".sap.doIt"
+			},
+			{
 				"Type":"sap.ui.core.mvc.JSONView",
 				"viewName":"example.mvc.test2",
 				"id":"MyJSONView"

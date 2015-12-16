@@ -739,7 +739,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			switch (sName.indexOf('.')) {
 				case 0:
 					// starts with a dot, must be a controller local handler
-					fnHandler = oController && oController[sName.slice(1)];
+					// usage of jQuery.sap.getObject to allow addressing functions in properties
+					fnHandler = oController && jQuery.sap.getObject(sName.slice(1), undefined, oController);
 					break;
 				case -1:
 					// no dot at all: first check for a controller local, then for a global handler
