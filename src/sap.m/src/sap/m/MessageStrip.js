@@ -169,6 +169,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 			this.setVisible(false);
 		}.bind(this);
 
+		if (!sap.ui.getCore().getConfiguration().getAnimation()) {
+			fnClosed();
+			return;
+		}
+
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 			MSUtils.closeTransitionWithJavascript.call(this, fnClosed);
 		} else {
