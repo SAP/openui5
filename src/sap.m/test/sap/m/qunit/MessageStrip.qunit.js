@@ -258,10 +258,11 @@
 	});
 
 	QUnit.test("When link is set it should have aria-labelledby attribute", function (assert) {
-		var linkDom = this.oMessageStrip.getLink().getDomRef(),
+		var link = this.oMessageStrip.getLink(),
+			linkDom = link.getDomRef(),
 			labelledBy = linkDom.getAttribute("aria-labelledby");
 
-		assert.strictEqual(labelledBy, this.oMessageStrip.getId(),
+		assert.strictEqual(labelledBy, this.oMessageStrip.getId() + " " + link.getId(),
 			"link aria-labelledby should point to the MessageStrip id");
 	});
 
