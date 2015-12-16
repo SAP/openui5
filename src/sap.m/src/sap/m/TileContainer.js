@@ -156,7 +156,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						// if we are on the first tile of the current page already, go to the very first tile
 						? iFirstOnPageOrVeryFirstIndex
 						: iRowFirstTileIndex;
-					var oFirstTile = this.getTiles()[iTargetTileIndex];
+
+					var oFirstTile = this._getVisibleTiles()[iTargetTileIndex];
 
 					if (!!oFirstTile) {
 						this._findTile(oFirstTile.$()).focus();
@@ -169,7 +170,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			fnOnEnd = jQuery.proxy(function(oEvent) {
 				if (this._iCurrentFocusIndex >= 0) {
-					var oTiles = this.getTiles();
+					var oTiles = this._getVisibleTiles();
 					var iRowFirstTileIndex = this._iCurrentFocusIndex - this._iCurrentFocusIndex % this._iMaxTilesX;
 					var iRowLastTileIndex = iRowFirstTileIndex + this._iMaxTilesX < oTiles.length ? iRowFirstTileIndex + this._iMaxTilesX - 1 : oTiles.length - 1;
 					var iLastTileIndex = this._iCurrentTileStartIndex + this._iMaxTiles < oTiles.length ? this._iCurrentTileStartIndex + this._iMaxTiles - 1 : oTiles.length - 1;
@@ -188,11 +189,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}, this),
 
 			fnOnPageUp = jQuery.proxy(function(oEvent) {
+				var oTiles = this._getVisibleTiles();
 
-				if (this.getTiles().length > 0) {
+				if (oTiles.length > 0) {
 					var iNextIndex = this._iCurrentFocusIndex - this._iMaxTiles >= 0 ? this._iCurrentFocusIndex - this._iMaxTiles : 0;
 
-					var oNextTile = this.getTiles()[iNextIndex];
+					var oNextTile = oTiles[iNextIndex];
 
 					if (!!oNextTile) {
 						this._findTile(oNextTile.$()).focus();
@@ -204,12 +206,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}, this),
 
 			fnOnPageDown = jQuery.proxy(function(oEvent) {
-				var iTilesCount = this.getTiles().length;
+				var oTiles = this._getVisibleTiles();
+				var iTilesCount = oTiles.length;
 
 				if (iTilesCount > 0) {
 					var iNextIndex = this._iCurrentFocusIndex + this._iMaxTiles < iTilesCount ? this._iCurrentFocusIndex + this._iMaxTiles : iTilesCount - 1;
 
-					var oNextTile = this.getTiles()[iNextIndex];
+					var oNextTile = oTiles[iNextIndex];
 
 					if (!!oNextTile) {
 						this._findTile(oNextTile.$()).focus();
@@ -222,7 +225,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			fnOnRight = jQuery.proxy(function(oEvent) {
 				if (this._iCurrentFocusIndex >= 0) {
-					var oTiles = this.getTiles();
+					var oTiles = this._getVisibleTiles();
 					var iNextIndex = this._iCurrentFocusIndex + 1 < oTiles.length ? this._iCurrentFocusIndex + 1 : this._iCurrentFocusIndex;
 
 					if (!oEvent.ctrlKey) {
@@ -253,7 +256,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			fnOnLeft = jQuery.proxy(function(oEvent) {
 				if (this._iCurrentFocusIndex >= 0) {
-					var oTiles = this.getTiles();
+					var oTiles = this._getVisibleTiles();
 					var iNextIndex = this._iCurrentFocusIndex - 1 >= 0 ? this._iCurrentFocusIndex - 1 : this._iCurrentFocusIndex;
 
 					if (!oEvent.ctrlKey) {
@@ -282,20 +285,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}, this),
 
 			fnOnDown = jQuery.proxy(function(oEvent) {
+				var oTiles = this._getVisibleTiles();
+
 				if (this._iCurrentFocusIndex >= 0) {
 					var iModCurr = this._iCurrentFocusIndex % this._iMaxTiles,
 						iNextIndex = this._iCurrentFocusIndex + this._iMaxTilesX,
 						iModNext = iNextIndex % this._iMaxTiles;
 
 					if (!oEvent.ctrlKey) {
-						var oNextTile = this.getTiles()[iNextIndex];
+						var oNextTile = oTiles[iNextIndex];
 
 						if ((iModNext > iModCurr) && !!oNextTile) {
 							// '(iModNext > iModCurr)' means: still on same page
 							this._findTile(oNextTile.$()).focus();
 						}
 					} else if (this.getEditable()) {
-						var oTile = this.getTiles()[this._iCurrentFocusIndex];
+						var oTile = oTiles[this._iCurrentFocusIndex];
 						this.moveTile(oTile, iNextIndex);
 						oTile.$().focus();
 					}
@@ -306,19 +311,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}, this),
 
 			fnOnUp = jQuery.proxy(function(oEvent) {
+				var oTiles = this._getVisibleTiles();
+
 				if (this._iCurrentFocusIndex >= 0) {
 					var iModCurr = this._iCurrentFocusIndex % this._iMaxTiles,
 						iNextIndex = this._iCurrentFocusIndex - this._iMaxTilesX,
 						iModNext = iNextIndex % this._iMaxTiles;
 
 					if (!oEvent.ctrlKey) {
-						var oNextTile = this.getTiles()[iNextIndex];
+						var oNextTile = oTiles[iNextIndex];
 						if ((iModNext < iModCurr) && !!oNextTile) {
 							// '(iModNext < iModCurr)' means: still on same page
 							this._findTile(oNextTile.$()).focus();
 						}
 					} else if (this.getEditable()) {
-						var oTile = this.getTiles()[this._iCurrentFocusIndex];
+						var oTile = oTiles[this._iCurrentFocusIndex];
 						this.moveTile(oTile, iNextIndex);
 						oTile.$().focus();
 					}
@@ -329,19 +336,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}, this),
 
 			fnOnDelete = jQuery.proxy(function(oEvent) {
+				var oTiles = this._getVisibleTiles();
+
 				if (this._iCurrentFocusIndex >= 0 && this.getEditable()) {
-					var oTile = this.getTiles()[this._iCurrentFocusIndex];
+					var oTile = oTiles[this._iCurrentFocusIndex];
+
 					if (oTile.getRemovable()) {
 						this.deleteTile(oTile);
 
-						if (this._iCurrentFocusIndex === this.getTiles().length) {
-							if (this.getTiles().length !== 0) {
-								this.getTiles()[this._iCurrentFocusIndex - 1].$().focus();
+						if (this._iCurrentFocusIndex === oTiles.length) {
+							if (oTiles.length !== 0) {
+								oTiles[this._iCurrentFocusIndex - 1].$().focus();
 							} else {
 								this._findNextTabbable().focus();
 							}
 						} else {
-							this.getTiles()[this._iCurrentFocusIndex].$().focus();
+							oTiles[this._iCurrentFocusIndex].$().focus();
 						}
 						this._handleAriaActiveDescendant();
 					}
@@ -431,7 +441,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
 			var aTiles = this.getAggregation("tiles");
-			if (aTiles.length > 0 && this._mFocusables) {
+			aTiles = this._getVisibleTiles();
+
+			if (aTiles.length > 0 && this._mFocusables && this._mFocusables[aTiles[0].getId()]) {
 				this._mFocusables[aTiles[0].getId()].eq(0).attr('tabindex', '0');
 			}
 		}
@@ -450,7 +462,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	TileContainer.prototype.setEditable = function(bValue) {
-		var aTiles = this.getTiles();
+		var aTiles = this._getVisibleTiles();
 
 		// set the property
 		this.setProperty("editable", bValue, true);
@@ -608,7 +620,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	TileContainer.prototype.moveTile = function(vTile, iNewIndex) {
 		if (!isNaN(vTile)) {
-			vTile = this.getTiles()[vTile];
+			vTile = this._getVisibleTiles()[vTile];
 		}
 
 		if (!vTile) {
@@ -665,7 +677,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 				var iPreviousTileIndex = that._iCurrentFocusIndex >= 0 ? that._iCurrentFocusIndex : 0;
-				var oPrevTile = that.getTiles()[iPreviousTileIndex];
+				var oPrevTile = that._getVisibleTiles()[iPreviousTileIndex];
 
 				if (oPrevTile) {
 					that._mFocusables[oPrevTile.getId()].attr("tabindex", "-1");
@@ -709,7 +721,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.insertAggregation("tiles",oTile,iIndex);
 		}
 
-		handleAriaPositionInSet.call(this, iIndex, this.getTiles().length);
+		//handleAriaPositionInSet.call(this, iIndex, this.getTiles().length);
+		handleAriaPositionInSet.call(this, iIndex, this._getVisibleTiles().length);
 		handleAriaSize.call(this);
 
 		return this;
@@ -720,7 +733,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	TileContainer.prototype._updateTilesTabIndex = function () {
-		var aTiles = this.getAggregation("tiles");
+		var aTiles = this._getVisibleTiles();
 		if (aTiles.length && aTiles.length > 0) {
 			for (var i = 0; i < aTiles.length; i++) {
 				if (aTiles[i].$().attr("tabindex") === "0") {
@@ -790,7 +803,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.removeAggregation("tiles",oTile,false);
 		}
 
-		handleAriaPositionInSet.call(this, iTileUnderDeletionIndex, this.getTiles().length);
+		handleAriaPositionInSet.call(this, iTileUnderDeletionIndex, this._getVisibleTiles().length);
 		handleAriaSize.call(this);
 		return this;
 	};
@@ -871,7 +884,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iIndex = this.indexOfAggregation("tiles",vTile);
 		}
 
-		if (!this.getTiles()[iIndex]) {
+		if (!this.getTiles()[iIndex] || !this.getTiles()[iIndex].getVisible()) {
 			return;
 		}
 
@@ -901,14 +914,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		if (this.getTiles().length === 0) {	// no tiles
+		if (this._getVisibleTiles().length === 0) {	// no tiles
 			return;
 		}
 
 		this._applyPageStartIndex(this._iCurrentTileStartIndex);
 		this._applyDimension();
 
-		var aTiles = this.getTiles(),
+		var aTiles = this._getVisibleTiles(),
 			oContentDimension = this._getContentDimension();
 
 		this._iPages = Math.ceil(aTiles.length / this._iMaxTiles);
@@ -1062,12 +1075,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	TileContainer.prototype._calculatePositions = function() {
 
-		if (this.getTiles().length === 0) {	// no tiles
+		if (this._getVisibleTiles().length === 0) {	// no tiles
 			return;
 		}
 
 		var oContentDimension = this._getContainerDimension(),
-			iTiles = this.getTiles().length,
+			iTiles = this._getVisibleTiles().length,
 			iPagerHeight = this.$("pager")[0].offsetHeight;
 
 		if (oContentDimension.height === 0) {	// nothing to do because the height of the content is not (yet) available
@@ -1109,13 +1122,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	TileContainer.prototype._getTilesFromPosition = function(iX, iY) {
 
-		if (!this.getTiles().length) {
+		if (!this._getVisibleTiles().length) {
 			return [];
 		}
 
 		iX = iX + this._iScrollLeft;
 
-		var aTiles = this.getTiles(),
+		var aTiles = this._getVisibleTiles(),
 			aResult = [];
 
 		for (var i = 0;i < aTiles.length;i++) {
@@ -1150,7 +1163,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this._calculatePositions();
-		var iLength = this.getTiles().length;
+		var iLength = this._getVisibleTiles().length;
 
 		if (iIndex < 0) {
 			iIndex = 0;
@@ -1621,7 +1634,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else if (this._iCurrentPage == this._iPages - 1) {
 
 			// check whether the dragged tile is at the end of the tile container
-			var aTiles = this.getTiles(),
+			var aTiles = this._getVisibleTiles(),
 				oLastTile = aTiles[aTiles.length - 1];
 
 			if (oLastTile && iCenter > oLastTile._posX - this._iScrollLeft && iMiddle > oLastTile._posY) {
@@ -1712,19 +1725,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @protected
 	 */
 	TileDimensionCalculator.prototype.calc = function() {
-		var oTile;
+		var aVisibleTiles,
+			oTile;
 
 		if (!this._oTileContainer.getDomRef()) {
 			return;
 		}
 
-		if (this._oTileContainer.getTiles().length) {
+		if (this._oTileContainer._getVisibleTiles().length) {
 			//All tiles have fixed with, defined in the corresponding tile css/less file. So use the first.
-			oTile = this._oTileContainer.getTiles()[0];
-			this._oDimension = {
-				width  : Math.round(oTile.$().outerWidth(true)),
-				height : Math.round(oTile.$().outerHeight(true))
-			};
+			aVisibleTiles = this._oTileContainer._getVisibleTiles();
+
+			if (aVisibleTiles.length) {
+				oTile = aVisibleTiles[0];
+				this._oDimension = {
+					width  : Math.round(oTile.$().outerWidth(true)),
+					height : Math.round(oTile.$().outerHeight(true))
+				};
+			}
 		}
 		return this._oDimension;
 	};
@@ -1744,9 +1762,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	function handleAriaSize () {
-		var iTilesCount = this.getTiles().length,
+		var iTilesCount = this._getVisibleTiles().length,
 			oDomRef = null;
-		this.getTiles().forEach(function(oTile) {
+		this._getVisibleTiles().forEach(function(oTile) {
 			oDomRef = oTile.getDomRef();
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-setsize", iTilesCount);
@@ -1760,7 +1778,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	function handleAriaPositionInSet(iStartIndex, iEndIndex) {
-		var aTiles = this.getTiles(),
+		var aTiles = this._getVisibleTiles(),
 			i, oTile = null;
 		for (var i = iStartIndex; i < iEndIndex; i++) {
 			oTile = aTiles[i];
@@ -1769,6 +1787,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}
+
+	TileContainer.prototype._getVisibleTiles = function() {
+		return this.getTiles().filter(function(oTile) {
+					return oTile.getVisible();
+				});
+	};
 
 	return TileContainer;
 

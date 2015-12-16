@@ -285,10 +285,39 @@
 			core.applyChanges();
 			setTimeout(function() {
 				sut.moveTile(sut.getTiles()[0], 3);
-				var aTilesDom = jQuery('.sapMTile');
+				var aTilesDom = jQuery('#testOrder').find('.sapMTile');
 
 				// Assert that the index of the tile in the DOM is the same as the index of aggregation
 				equal(sut.getTiles()[3].getId(), jQuery(aTilesDom[3]).attr('id'), 'first, first; equal success');
+
+				sut.destroy();
+				start();
+			}.bind(this), delay);
+		});
+
+		asyncTest('Test setting first tile to visible false', function () {
+			// SUT
+			var m 	= sap.m,
+				sut 	= new m.TileContainer('testOrderVis', {
+						tiles : [
+							new m.StandardTile({id: 'first', visible: false}),
+							new m.StandardTile({id: 'second'}),
+							new m.StandardTile({id: 'third'})
+						]
+					});
+
+			sut.placeAt("qunit-fixture");
+
+			// Act
+			core.applyChanges();
+			setTimeout(function() {
+				var aTilesDom = jQuery('#testOrderVis').find('.sapMTile');
+
+				// Assert that the second tile in the aggregation is first in the DOM, since the first has visible set to false
+				equal(aTilesDom.eq(0).attr('id'), 'second', 'first tile in the DOM is the second one, since the first is not visible');
+
+				// Assert that the tiles in the DOM are only two not three like in aggregation, when one of the tiles is not visible
+				equal(aTilesDom.length, 2, 'only 2 tiles are rendered inside the DOM');
 
 				sut.destroy();
 				start();
