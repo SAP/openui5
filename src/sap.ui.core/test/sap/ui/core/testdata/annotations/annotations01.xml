@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="/coco/vocabularies/UI.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
+	</edmx:Reference>
+	<edmx:Reference Uri="/coco/vocabularies/Communication.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="vCard" />
+	</edmx:Reference>
+	<edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/cs01/vocabularies/Org.OData.Measures.V1.xml" >
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="CQP" />
+	</edmx:Reference>
+	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<!-- Entity Data Model Conceptual Schemas, as specified in [MC-CSDL]	and annotated as specified in [MS-ODATA] -->
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="NorthwindModelAnnotations">
+			<Annotations Target="NorthwindModel.Product/UnitPrice">
+				<Annotation Term="CQP.ISOCurrency" String="USD" />
+			</Annotations>
+			<Annotations Target="NorthwindModel.Order_Detail/UnitPrice">
+				<Annotation Term="CQP.ISOCurrency" String="USD" />
+			</Annotations>
+			<Annotations Target="NorthwindModel.Product">
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Product" />
+						<PropertyValue Property="TypeNamePlural" String="Products" />
+						<PropertyValue Property="ImageUrl" String="/coco/apps/main/img/Icons/product32.png" />
+						<PropertyValue Property="Title">
+							<Record>
+								<PropertyValue Property="Label" String="Product" />
+								<PropertyValue Property="Value" Path="ProductName" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Product ID" />
+							<PropertyValue Property="Value" Path="ProductID" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Quantity / Unit" />
+							<PropertyValue Property="Value" Path="QuantityPerUnit" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Unit Price" />
+							<PropertyValue Property="Value" Path="UnitPrice" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Category" />
+							<PropertyValue Property="Value" Path="Category/CategoryName" />
+						</Record>
+						<Record Type="UI.DataFieldWithNavigation">
+							<PropertyValue Property="Label" String="Supplier" />
+							<PropertyValue Property="Value" Path="Supplier/CompanyName" />
+							<PropertyValue Property="Target" Path="Supplier" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/product32.png">
+								<Annotation Term="UI.IsImageURL"/>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Product ID" />
+							<PropertyValue Property="Value" Path="ProductID" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Product" />
+							<PropertyValue Property="Value" Path="ProductName" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Quantity / Unit" />
+							<PropertyValue Property="Value" Path="QuantityPerUnit" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Unit Price" />
+							<PropertyValue Property="Value" Path="UnitPrice" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Units In Stock" />
+							<PropertyValue Property="Value" Path="UnitsInStock" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.CollectionFacet">
+							<PropertyValue Property="Label" String="Supplier" />
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="UI.ReferenceFacet">
+										<PropertyValue Property="Label" String="Contact Data" />
+										<PropertyValue Property="Target" AnnotationPath="Supplier/@UI.Identification" />
+									</Record>
+									<Record Type="UI.ReferenceFacet">
+										<Annotation Term="UI.Map"/>
+										<PropertyValue Property="Label" String="Supplier Address on Map" />
+										<PropertyValue Property="Target" AnnotationPath="Supplier/@vCard.Address" />
+									</Record>
+								</Collection>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="NorthwindModel.Category">
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Category" />
+						<PropertyValue Property="TypeNamePlural" String="Categories" />
+						<PropertyValue Property="ImageUrl" String="/coco/apps/main/img/Icons/example_32.png" />
+						<PropertyValue Property="Title">
+							<Record>
+								<PropertyValue Property="Label" String="Category Name" />
+								<PropertyValue Property="Value" Path="CategoryName" />
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record>
+								<PropertyValue Property="Label" String="Description" />
+								<PropertyValue Property="Value" Path="Description" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Category ID" />
+							<PropertyValue Property="Value" Path="CategoryID" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/example_32.png">
+								<Annotation Term="UI.IsImageURL"/>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Category ID" />
+							<PropertyValue Property="Value" Path="CategoryID" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Category Name" />
+							<PropertyValue Property="Value" Path="CategoryName" />
+						</Record>
+						<Record>
+							<PropertyValue Property="Label" String="Description" />
+							<PropertyValue Property="Value" Path="Description" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Products" />
+							<PropertyValue Property="Target" AnnotationPath="Products/@UI.LineItem" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="NorthwindModel.Supplier">
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Supplier" />
+						<PropertyValue Property="TypeNamePlural" String="Suppliers" />
+						<PropertyValue Property="ImageUrl" String="/coco/apps/main/img/Icons/supplier32.png" />
+						<PropertyValue Property="Title">
+							<Record>
+								<PropertyValue Property="Label" String="Supplier" />
+								<PropertyValue Property="Value" Path="CompanyName" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Supplier ID" />
+							<PropertyValue Property="Value" Path="SupplierID" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Contact Name" />
+							<PropertyValue Property="Value">
+								<Apply Function="odata.concat">
+									<Path>ContactTitle</Path>
+									<String>&#160;-&#160;</String>
+									<Path>ContactName</Path>
+								</Apply>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataFieldForAnnotation">
+							<PropertyValue Property="Label" String="Supplier Adress" />
+							<PropertyValue Property="Target" AnnotationPath="@vCard.Address" />
+						</Record>
+						<Record Type="UI.DataFieldWithUrl">
+							<PropertyValue Property="Label" String="Homepage" />
+							<PropertyValue Property="Value" Path="HomePage" />
+							<PropertyValue Property="Url" Path="HomePage" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/supplier_48.png">
+								<Annotation Term="UI.IsImageURL"/>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Supplier ID" />
+							<PropertyValue Property="Value" Path="SupplierID" />
+						</Record>
+						<Record Type="UI.DataField">
+							 <PropertyValue Property="Label" String="Supplier" />
+							 <PropertyValue Property="Value" Path="CompanyName" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="vCard.Address">
+					<Record>
+						<PropertyValue Property="street" Path="Address" />
+						<PropertyValue Property="locality" Path="City" />
+						<PropertyValue Property="postalCode" Path="PostalCode" />
+						<PropertyValue Property="country" Path="Country" />
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Products" />
+							<PropertyValue Property="Target" AnnotationPath="Products/@UI.LineItem" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="NorthwindModel.Order">
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Order" />
+						<PropertyValue Property="TypeNamePlural" String="Orders" />
+						<PropertyValue Property="ImageUrl" String="/coco/apps/main/img/Icons/cart_32.png" />
+						<PropertyValue Property="Title">
+							<Record>
+								<PropertyValue Property="Label" String="Order ID" />
+								<PropertyValue Property="Value" Path="OrderID" />
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record>
+								<PropertyValue Property="Label" String="Description" />
+								<PropertyValue Property="Value" String="No description available" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Order Number" />
+							<PropertyValue Property="Value" Path="OrderID" />
+						</Record>
+						<Record Type="UI.DataFieldWithNavigation">
+							<PropertyValue Property="Label" String="Customer" />
+							<PropertyValue Property="Value" Path="Customer/CompanyName" />
+							<PropertyValue Property="Target" Path="Customer" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Required Date" />
+							<PropertyValue Property="Value" Path="RequiredDate" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Shipped Date" />
+							<PropertyValue Property="Value" Path="ShippedDate" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Ship Via" />
+							<PropertyValue Property="Value" Path="ShipVia" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Ship Name" />
+							<PropertyValue Property="Value" Path="ShipName" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.FieldGroup" Qualifier="Overview">
+					<Record>
+						<PropertyValue Property="Label" String="Overview"/>
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Label" String="Employee" />
+									<PropertyValue Property="Value">
+										<Apply Function="odata.concat">
+											<Path>Employee/FirstName</Path>
+											<String>&#160;</String>
+											<Path>Employee/LastName</Path>
+										</Apply>
+									</PropertyValue>
+								</Record>
+								<Record Type="UI.DataFieldWithNavigation">
+									<PropertyValue Property="Label" String="Customer" />
+									<PropertyValue Property="Value" Path="Customer/CompanyName" />
+									<PropertyValue Property="Target" Path="Customer" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Label" String="Order Date" />
+									<PropertyValue Property="Value" Path="OrderDate" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Label" String="Required Date" />
+									<PropertyValue Property="Value" Path="RequiredDate" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Label" String="Shipped Date" />
+									<PropertyValue Property="Value" Path="ShippedDate" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Label" String="Ship Via" />
+									<PropertyValue Property="Value" Path="ShipVia" />
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Label" String="Ship Name" />
+									<PropertyValue Property="Value" Path="ShipName" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Order Number" />
+							<PropertyValue Property="Value" Path="OrderID" />
+						</Record>
+						<Record Type="UI.DataFieldWithNavigation">
+							<PropertyValue Property="Label" String="Customer" />
+							<PropertyValue Property="Value" Path="Customer/CompanyName" />
+							<PropertyValue Property="Target" Path="Customer" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Order Date" />
+							<PropertyValue Property="Value" Path="OrderDate" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Required Date" />
+							<PropertyValue Property="Value" Path="RequiredDate" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Shipped Date" />
+							<PropertyValue Property="Value" Path="ShippedDate" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Ship Via" />
+							<PropertyValue Property="Value" Path="ShipVia" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Ship Name" />
+							<PropertyValue Property="Value" Path="ShipName" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/cart_48.png">
+								<Annotation Term="UI.IsImageURL"/>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Overview" />
+							<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#Overview" />
+						</Record>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Order Items" />
+							<PropertyValue Property="Target" AnnotationPath="Order_Details/@UI.LineItem" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="NorthwindModel.Customer">
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Customer" />
+						<PropertyValue Property="TypeNamePlural" String="Customers" />
+						<PropertyValue Property="ImageUrl" String="/coco/apps/main/img/Icons/supplier32.png" />
+						<PropertyValue Property="Title">
+							<Record>
+								<PropertyValue Property="Label" String="Customer" />
+								<PropertyValue Property="Value" Path="CustomerID" />
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record>
+								<PropertyValue Property="Label" String="Description" />
+								<PropertyValue Property="Value" String="CompanyName" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Customer ID" />
+							<PropertyValue Property="Value" Path="CustomerID" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Company" />
+							<PropertyValue Property="Value" Path="CompanyName" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Contact Name" />
+							<PropertyValue Property="Value">
+								<Apply Function="odata.concat">
+									<Path>ContactTitle</Path>
+									<String>&#160;-&#160;</String>
+									<Path>ContactName</Path>
+								</Apply>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="NorthwindModel.Order_Detail">
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="OrderItem" />
+						<PropertyValue Property="TypeNamePlural" String="OrderItems" />
+						<PropertyValue Property="ImageUrl" String="/coco/apps/main/img/Icons/product32.png" />
+						<PropertyValue Property="Title">
+							<Record>
+								<PropertyValue Property="Label" String="Product Name" />
+								<PropertyValue Property="Value" Path="Product/ProductName" />
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record>
+								<PropertyValue Property="Label" String="Description" />
+								<PropertyValue Property="Value" String="No description available" />
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Order" />
+							<PropertyValue Property="Value" Path="OrderID" />
+						</Record>
+						<Record Type="UI.DataField">
+								<PropertyValue Property="Label" String="Item" />
+								<PropertyValue Property="Value" Path="Product/ProductName" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Quantity" />
+							<PropertyValue Property="Value" Path="Quantity" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Discount" />
+							<PropertyValue Property="Value" Path="Discount" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Unit Price" />
+							<PropertyValue Property="Value" Path="UnitPrice" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" String="/coco/apps/main/img/Icons/product32.png">
+								<Annotation Term="UI.IsImageURL"/>
+							</PropertyValue>
+						</Record>
+						<Record Type="UI.DataField">
+							 <PropertyValue Property="Label" String="Product Name" />
+							 <PropertyValue Property="Value" Path="Product/ProductName" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Product ID" />
+							<PropertyValue Property="Value" Path="Product/ProductID" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Quantity" />
+							<PropertyValue Property="Value" Path="Quantity" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Unit Price" />
+							<PropertyValue Property="Value" Path="UnitPrice" />
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Label" String="Discount" />
+							<PropertyValue Property="Value" Path="Discount" />
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.ReferenceFacet">
+							<PropertyValue Property="Label" String="Details" />
+							<PropertyValue Property="Target" AnnotationPath="Product/@UI.Identification" />
+						</Record>
+					</Collection>
+				</Annotation>
+			<Annotation Term="Test.FromAnnotations">
+					<Collection>
+						<Record Type="Test.DataField">
+							<PropertyValue Property="Label" String="From" />
+							<PropertyValue Property="Value" Path="Annotations" />
+						</Record>
+					</Collection>
+			</Annotation>
+			</Annotations>
+			<Annotations Target="UnitTest">
+			<Annotation Term="Test.FromAnnotations">
+					<Collection>
+						<Record Type="Test.DataField">
+							<PropertyValue Property="Label" String="From" />
+							<PropertyValue Property="Value" Path="Annotations" />
+						</Record>
+					</Collection>
+			</Annotation>
+			<Annotation Term="Test.Merged">
+					<Collection>
+						<Record Type="Test.DataField">
+							<PropertyValue Property="Label" String="From" />
+							<PropertyValue Property="Value" Path="Annotations" />
+						</Record>
+					</Collection>
+			</Annotation>
+			</Annotations>
+			<Annotations Target="NorthwindModel.Category/CategoryID">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="LabelString" />
+				<Annotation Term="annotationSource" String="Annotations" />
+			</Annotations>
+			<Annotations Target="Test.AnnotationInRecord">
+				<Annotation Term="Test.AnnotationInRecord.Case1">
+					<Record Type="Test.AnnotationInRecord.Case1.Record">
+						<Annotation Term="Test.AnnotationInRecord.Case1.Record.SubAnnotation1" String="SubAnnotation1" />
+						<PropertyValue Property="Label" String="Label1" />
+						<Annotation Term="Label" String="Annotation" />
+						<Annotation Term="Test.AnnotationInRecord.Case1.Record.SubAnnotation2">
+							<If>
+								<Eq>
+									<Path>Condition</Path>
+									<Bool>false</Bool>
+								</Eq>
+								<String>ConditionalValue</String>
+							</If>
+						</Annotation>
+					</Record>
+				</Annotation>
+				<Annotation Term="Test.AnnotationInRecord.Case2">
+					<Record Type="Test.AnnotationInRecord.Case2.Record">
+						<Annotation Term="Test.AnnotationInRecord.Case2.Record.SubAnnotation1" String="SubAnnotation1" />
+						<Annotation Term="Label" String="Annotation" />
+						<Annotation Term="Test.AnnotationInRecord.Case2.Record.SubAnnotation2">
+							<If>
+								<Eq>
+									<Path>Condition</Path>
+									<Bool>false</Bool>
+								</Eq>
+								<String>ConditionalValue</String>
+							</If>
+						</Annotation>
+					</Record>
+				</Annotation>
+				<Annotation Term="Test.AnnotationInRecord.Case3">
+					<Record Type="Test.AnnotationInRecord.Case3.Record">
+						<Null />
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
