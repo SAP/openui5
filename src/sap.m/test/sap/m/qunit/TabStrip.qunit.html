@@ -463,8 +463,8 @@
 			}
 		});
 
-		test("Is label rendered", function () {
-			preparePhonePlatform.call(this);
+		test("Rendering", function () {
+			var stubs = preparePhonePlatform.call(this);
 			this.oTS = new sap.m.TabStrip({
 				hasSelect: true,
 				items: [
@@ -477,10 +477,17 @@
 			this.oTS.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered for phone platform');
-			strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered for phone platform');
+			strictEqual(this.oTS.$("touchArea").length, 0, "Toucharea is not rendered");
+			strictEqual(this.oTS.$("leftOverflowButtons").length, 0, "Left overflow buttons are not rendered");
+			strictEqual(this.oTS.$("rightflowButtons").length, 0, "Right overflow buttons are not rendered");
+			strictEqual(this.oTS.$("tabContainer").length, 0, "Tab container is not rendered");
+
+			strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered');
+			strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered');
 			jQuery('body').removeClass('sap-phone');
+			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
+
 
 		function preparePhonePlatform() {
 			var oSystem = {
@@ -488,9 +495,11 @@
 				phone : true,
 				tablet : false
 			};
-			this.stub(sap.ui.Device, "system", oSystem);
-			this.stub(jQuery.device, "is", oSystem);
+			var stubs = [];
+			stubs.push(this.stub(sap.ui.Device, "system", oSystem));
+			stubs.push(this.stub(jQuery.device, "is", oSystem));
 			jQuery('body').addClass('sap-phone');
+			return stubs;
 		}
 
 		module("Selection", {

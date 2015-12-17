@@ -76,27 +76,17 @@
 			strictEqual(this.oMITS.getList().$().children('.sapMSelectListItemBaseSelected').length, 0, 'Control has no item selected by default.');
 		});
 
-		test("Modified state", function () {
-			strictEqual(this.oMITS.getItems()[0].getProperty('modified'), false, "The first item is not modified by default");
-			this.oMITS.open();
-			this.clock.tick(1000);
 
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM');
-			this.oMITS.close();
-			this.oMITS.getItems()[0].setProperty('modified', true);
-			this.oMITS.open();
-			this.clock.tick(1000);
-			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabSelectListItemModifiedInvisible').length, 0, 'Item marked as modified in the DOM');
-			this.oMITS.close();
-
-			this.oMITS.getItems()[0].setProperty('modified', false);
-			this.oMITS.open();
-			this.clock.tick(1000);
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM after some were marked as modified');
+		module("Close Button", {
+			beforeEach: function () {
+				beforeEachQUnitTest.call(this);
+			},
+			afterEach: function () {
+				afterEachQUnitTest.call(this);
+			}
 		});
 
-
-		test("Close button", function () {
+		test("Desktop", function () {
 			var iItemDomHeight = 32; // "base" height that is expected
 			this.oMITS.setSelectedItem(this.oFirstItem);
 			this.oMITS.open();
@@ -152,48 +142,122 @@
 			this.oMITS.close();
 		});
 
-		module("TabSelect TABLET", {
-			beforeEach: function () {
-				beforeEachQUnitTest.call(this);
-			},
-			afterEach: function () {
-				afterEachQUnitTest.call(this);
-			}
-		});
-
-		test("Close button", function () {
-			assertAllCloseButtonsVisible.call(this, false);
-		});
-
-		module("TabSelect PHONE", {
-			beforeEach: function () {
-				beforeEachQUnitTest.call(this);
-			},
-			afterEach: function () {
-				afterEachQUnitTest.call(this);
-			}
-		});
-
-		test("Close button", function () {
+		test("Phone", function () {
+			var stubs = prepareMobilePlatform.call(this, true);
 			assertAllCloseButtonsVisible.call(this, true);
+			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
 
+		test("Tablet", function () {
+			var stubs = prepareMobilePlatform.call(this);
+			assertAllCloseButtonsVisible.call(this, false);
+			stubs.forEach(function(item){item.restore()}); // restore stubs
+		});
+
+
+		module("Default selected item", {
+			beforeEach: function () {
+				beforeEachQUnitTest.call(this);
+			},
+			afterEach: function () {
+				afterEachQUnitTest.call(this);
+				jQuery('qunit-fixture').removeClass('sap-phone');
+			}
+		});
+
+		test("Phone", function () {
+			var stubs = prepareMobilePlatform.call(this, true);
+			strictEqual(this.oMITS.getDefaultSelectedItem().getId(), this.oMITS.getItems()[0].getId(), 'For phone platform the default selected item is the first item');
+			stubs.forEach(function(item){item.restore()}); // restore stubs
+		});
+
+		test("Other (than phone) platforms", function () {
+			strictEqual(this.oMITS.getDefaultSelectedItem(), null, 'For platforms other than phone there is no selected item');
+		});
+
+
+
+		module("Modified state and title correctness", {
+			beforeEach: function () {
+			},
+			afterEach: function () {
+				afterEachQUnitTest.call(this);
+				jQuery('qunit-fixture').removeClass('sap-phone');
+			}
+		});
+
+		test("Phone", function () {
+			var stubs = prepareMobilePlatform.call(this, true);
+
+			this.oMITS = new sap.m.TabStripSelect({
+				type: sap.m.SelectType.IconOnly,
+				autoAdjustWidth: true,
+				icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
+				items: [
+					new sap.m.TabStripItem({ key: "0", text: "01234567890123456789012345", modified: true }),
+					new sap.m.TabStripItem({key: "1",text: "item 1"}),
+					new sap.m.TabStripItem({key: "2",text: "item 2"})
+				]
+			});
+
+			this.oMITS.placeAt("qunit-fixture");
+			this.oMITS.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+
+			strictEqual(this.oMITS.$().find('.sapMTabSelectListItemModified ').eq(0).hasClass('sapMTabSelectListItemModifiedInvisible'), !this.oMITS.getDefaultSelectedItem().getModified(), 'Item in the label is marked as modified');
+			strictEqual(this.oMITS.$().find('label').eq(0).text(), this.oMITS.getDefaultSelectedItem().getText(), 'Item im the label (first selected by default) is marked as modified');
+
+			this.oMITS.getItems()[1].setProperty('modified', false);
+			this.oMITS.setSelectedItem(this.oMITS.getItems()[1]);
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.oMITS.$().find('.sapMTabSelectListItemModified ').eq(0).hasClass('sapMTabSelectListItemModifiedInvisible'), !this.oMITS.getSelectedItem().getModified(), 'Item in the label is not marked as modified');
+			this.clock.tick(1000);
+			stubs.forEach(function(item){item.restore()}); // restore stubs
+		});
+
+		test("Other (than phone) platforms", function () {
+			beforeEachQUnitTest.call(this);
+			strictEqual(this.oMITS.getItems()[0].getProperty('modified'), false, "The first item is not modified by default");
+			this.oMITS.open();
+			this.clock.tick(1000);
+
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM');
+			this.oMITS.close();
+			this.oMITS.getItems()[0].setProperty('modified', true);
+			this.oMITS.open();
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabSelectListItemModifiedInvisible').length, 0, 'Item marked as modified in the DOM');
+			this.oMITS.close();
+
+			this.oMITS.getItems()[0].setProperty('modified', false);
+			this.oMITS.open();
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM after some were marked as modified');
+		});
+
+		// if not phone it is considered tablet
+		function prepareMobilePlatform(isPhone) {
+			var oSystem = {
+				desktop : false,
+				phone : isPhone,
+				tablet : !isPhone
+			};
+			var stubs = [];
+			stubs.push(this.stub(sap.ui.Device, "system", oSystem));
+			stubs.push(this.stub(jQuery.device, "is", oSystem));
+			jQuery('#qunit-fixture').addClass('sap-phone');
+			jQuery('body').addClass('sap-phone');
+			this.clock.tick(1000);
+			return stubs;
+		}
 
 
 		assertAllCloseButtonsVisible = function (bIsPhone) {
-			var oSystem = {
-				desktop : false,
-				phone : bIsPhone,
-				tablet : !bIsPhone
-			};
-			var stub1 = this.stub(sap.ui.Device, "system", oSystem);
-			var stub2 = this.stub(jQuery.device, "is", oSystem);
 			this.oMITS.open();
 			this.clock.tick(1000);
 			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtn').length, this.oMITS.getList().getItems().length, 'The number of close buttons in the DOM is the same as the number of items in the list instance.');
 			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'The number of invisible close buttons in the DOM is 0.');
-			stub1.restore();
-			stub2.restore();
 		}
 
 	</script>
@@ -205,6 +269,5 @@
 	<ol id="qunit-tests"></ol>
 	<div id="content"></div>
 	<div id="qunit-fixture"></div>
-	<div style="padding-left: 500px" id="visible-content"></div>
 </body>
 </html>
