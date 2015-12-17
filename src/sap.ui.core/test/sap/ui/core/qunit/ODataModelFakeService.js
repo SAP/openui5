@@ -113,6 +113,10 @@ xhr.onCreate = function(request) {
 			[200, oCountHeaders, "3"],
 		"Categories?$skip=0&$top=3&$filter=(CategoryName%20ge%20%27Beverages%27%20and%20CategoryName%20le%20%27D%27)":
 			[200, oXMLHeaders, sCategoriesFilter3XML],
+			"Categories/$count?$filter=CategoryName%20eq%20%27NONEXISTING%27":
+				[200, oCountHeaders, "0"],
+		"Categories?$skip=0&$top=100&$filter=CategoryName%20eq%20%27NONEXISTING%27":
+				[200, oXMLHeaders, sCategoriesFilterZeroXML],
 		"Categories?$skip=0&$top=100&$filter=(CategoryName%20ge%20%27Beverages%27%20and%20CategoryName%20le%20%27D%27)":
 			[200, oXMLHeaders, sCategoriesFilter3XML],
 		"Categories/$count?$filter=startswith(CategoryName,%27C%27)%20and%20endswith(Description,%27ngs%27)":
@@ -7087,3 +7091,14 @@ var sCategories7ExpandXML = "<entry xml:base=\"http://services.odata.org/V3/Nort
 var sZeroTest = "{\n" + 
 		"	\"d\" : 0\n" + 
 		"}"; 
+
+var sCategoriesFilterZeroXML = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\n" + 
+"<feed xml:base=\"http://services.odata.org/V2/Northwind/Northwind.svc/\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns=\"http://www.w3.org/2005/Atom\">\n" + 
+"  <title type=\"text\">Categories</title>\n" + 
+"  <id>http://services.odata.org/V2/Northwind/Northwind.svc/Categories</id>\n" + 
+"  <updated>2015-12-14T15:42:48Z</updated>\n" + 
+"  <author>\n" + 
+"    <name />\n" + 
+"  </author>\n" + 
+"  <link rel=\"self\" title=\"Categories\" href=\"Categories\" />\n" + 
+"</feed>";

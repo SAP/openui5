@@ -930,6 +930,48 @@
 		sUrl = oBinding.getDownloadUrl("xlsx");
 		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
 	});
+	
+	asyncTest("ListBinding filter with empty data", function(){
+		oModel.metadataLoaded().then(function(){
+			var handler = function(oEvent){
+				// contexts should be now loaded
+				var oBinding = oEvent.oSource;
+				ok (oBinding.isLengthFinal(), "Length should be final");
+				var aFilteredContexts = oBinding.getContexts();
+				equal(aFilteredContexts.length, 2, "filtered content length");
+				equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "EQ, Contains, filtered content");
+				equal(oModel.getProperty("CategoryName",aFilteredContexts[1]), "Confections", "EQ, Contains, filtered content");
+
+				oBinding.detachChange(handler);
+				oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "NONEXISTING");
+				oBinding.filter([oFilter]);
+				oBinding.attachChange(handler1);
+			};
+			var handler1 = function(oEvent){
+				var oBinding = oEvent.oSource;
+				ok (oBinding.isLengthFinal(), "Length should be final");
+				var aFilteredContexts = oBinding.getContexts();
+				equal(aFilteredContexts.length, 0, "NE, contains, filtered content length");
+				oBinding.detachChange(handler1);
+				start();
+			};			
+			
+			var oBinding = oModel.bindList("/Categories");
+
+			var fnFilter = function() {
+				oBinding.detachRefresh(fnFilter);
+				oBinding.attachRefresh(function() {oBinding.getContexts();})
+				var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
+				var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
+				oBinding.filter([oFilter, oFilter2]);
+			}
+			oBinding.attachChange(handler);
+			oBinding.attachRefresh(fnFilter);
+			oBinding.initialize();
+		});
+
+	});
+	
 	</script>
 
 </head>
