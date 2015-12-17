@@ -20,6 +20,7 @@
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
 	<script language="javascript">
 		sinon.config.useFakeTimers = true;
@@ -113,7 +114,7 @@
 						template: oTemplate
 					},
 					itemSelect: fnOnItemSelected,
-                    showAddNewButton: true,
+					showAddNewButton: true,
 					addNewButtonPress: fnOnAddButtonClick
 				});
 
@@ -166,35 +167,35 @@
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
 		});
 
-        module("Misc", {
-            beforeEach: function () {
-                this.oTabContainer = new sap.m.TabContainer({
-                    items: {
-                        path: "/ProductCollection",
-                        template: oTemplate
-                    },
-                    itemSelect: fnOnItemSelected,
-                    addNewButtonPress: fnOnAddButtonClick
-                });
+		module("Misc", {
+			beforeEach: function () {
+				this.oTabContainer = new sap.m.TabContainer({
+					items: {
+						path: "/ProductCollection",
+						template: oTemplate
+					},
+					itemSelect: fnOnItemSelected,
+					addNewButtonPress: fnOnAddButtonClick
+				});
 
-                this.oTabContainer.placeAt("qunit-fixture");
-                sap.ui.getCore().applyChanges();
-            },
-            afterEach: function () {
-                this.oTabContainer.destroy();
-                this.oTabContainer = null;
-            }
-        });
+				this.oTabContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oTabContainer.destroy();
+				this.oTabContainer = null;
+			}
+		});
 
-        test("Rerendering", function () {
-            var oItem = this.oTabContainer._getTabStrip().getItems()[0];
-            var sName = oItem.getText();
-            //sapMTabSelect
-            strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 1, 'TabStrip is initially rendered.');
-            this.oTabContainer.destroyAggregation('_tabStrip');
-            this.clock.tick(1000);
-            strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
-        });
+		test("Rerendering", function () {
+			var oItem = this.oTabContainer._getTabStrip().getItems()[0];
+			var sName = oItem.getText();
+			//sapMTabSelect
+			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 1, 'TabStrip is initially rendered.');
+			this.oTabContainer.destroyAggregation('_tabStrip');
+			this.clock.tick(1000);
+			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 0, 'TabStrip is not re-rendered upon TabContainer re-rendering after TabStrip was destroyed.');
+		});
 
 		module("Focus", {
 			beforeEach: function () {
@@ -270,6 +271,45 @@
 			equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelected.getId(), "Selection is applied to the right item");
 			strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
+
+		test("Add button", function () {
+			//arrange
+			var oButton = new sap.m.Button("addButton", {
+				type: sap.m.ButtonType.Transparent
+			});
+			this.oTabContainer.setAddButton(oButton);
+
+			//assert
+			strictEqual( this.oTabContainer._getTabStrip().getAddButton().getId(), oButton.getId(),
+					"The add button is set");
+			strictEqual( this.oTabContainer.getAddButton().getId(), oButton.getId(),
+					"The add button is get");
+		});
+
+		test("Manipulating the items", function () {
+
+			this.oTabContainer.destroyItems();
+			//assert
+			strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
+					"All items are destroyed");
+
+			//arrange
+			this.oTabContainer.insertItem(new sap.m.TabContainerItem({
+						name: "Apple",
+						content: new sap.m.Text({ text: "Apple tab" })
+					}),
+					0);
+
+			strictEqual( this.oTabContainer._getTabStrip().getItems().length, 1,
+					"An item is successfully added");
+
+			this.oTabContainer.removeAllItems();
+			//assert
+			strictEqual( this.oTabContainer._getTabStrip().getItems().length, 0,
+					"All items are removed");
+
+		});
+
 	</script>
 </head>
 <body id="body" class="sapUiBody">
