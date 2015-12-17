@@ -49,6 +49,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				__processor : processReference,
 				"Include" : {
 					__processor: processInclude
+				},
+				"IncludeAnnotations" : {
+					__processor: processIncludeAnnotations
 				}
 			},
 			"DataServices" : {
@@ -127,6 +130,36 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		for (i = 0; i < oAttributeList.length; i++) {
 			oAttribute = oAttributeList.item(i);
 			oResult[oAttribute.name] = oAttribute.value;
+		}
+		return oResult;
+	}
+
+	/**
+	 * Fetches the array at the given property. Ensures that there is at least an empty array.
+	 * @param {object} oParent the parent object
+	 * @param {string} sProperty the property name
+	 * @returns {any[]} the array at the given property
+	 */
+	function getOrCreateArray(oParent, sProperty) {
+		var oResult = oParent[sProperty];
+
+		if (!oResult) {
+			oResult = oParent[sProperty] = [];
+		}
+		return oResult;
+	}
+
+	/**
+	 * Fetches the object at the given property. Ensures that there is at least an empty object.
+	 * @param {object} oParent the parent object
+	 * @param {string} sProperty the property name
+	 * @returns {object} the object at the given property
+	 */
+	function getOrCreateObject(oParent, sProperty) {
+		var oResult = oParent[sProperty];
+
+		if (!oResult) {
+			oResult = oParent[sProperty] = {};
 		}
 		return oResult;
 	}
@@ -430,10 +463,29 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processInclude(oElement, oAggregate) {
-		oAggregate.result[oElement.getAttribute("Namespace")] = {
-			"$kind" : "Reference",
-			"$ref" : oAggregate.referenceUri
-		};
+		var oInclude = getOrCreateArray(oAggregate.reference, "$Include");
+		oInclude.push(oElement.getAttribute("Namespace"));
+	}
+
+	/**
+	 * Processes an IncludeAnnotations element within a Reference.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processIncludeAnnotations(oElement, oAggregate) {
+		var oAttributes = getAttributes(oElement),
+			oReference = oAggregate.reference,
+			oIncludeAnnotation = {
+				"$TermNamespace" : oAttributes.TermNamespace
+			},
+			aIncludeAnnotations = getOrCreateArray(oReference, "$IncludeAnnotations");
+
+		processAttributes(oAttributes, oIncludeAnnotation, {
+			"TargetNamespace" : setValue,
+			"Qualifier" : setValue
+		});
+
+		aIncludeAnnotations.push(oIncludeAnnotation);
 	}
 
 	/**
@@ -478,7 +530,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processReference(oElement, oAggregate) {
-		oAggregate.referenceUri = oElement.getAttribute("Uri");
+		var oReference = getOrCreateObject(oAggregate.result, "$Reference");
+
+		oAggregate.reference = oReference[oElement.getAttribute("Uri")] = {};
 	}
 
 	/**
@@ -753,7 +807,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					"enumTypeMemberCounter" : 0, // the current EnumType member value counter
 					"namespace" : null, // the namespace of the current Schema
 					"navigationProperty" : null, // the current NavigationProperty
-					"referenceUri" : null, // the URI of the current Reference
+					"reference" : null, // the current Reference
 					"schema" : null, // the current Schema
 					"type" : null, // the current EntityType/ComplexType
 					"result" : {}

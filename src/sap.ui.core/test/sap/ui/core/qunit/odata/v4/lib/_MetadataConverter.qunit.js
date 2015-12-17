@@ -187,6 +187,38 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: Reference", function (assert) {
+		testConversion(assert, '\
+				<Reference Uri="qux/$metadata">\
+					<Include Namespace="qux.foo"/>\
+					<Include Namespace="qux.bar"/>\
+					<IncludeAnnotations TermNamespace="qux.foo"/>\
+					<IncludeAnnotations TermNamespace="qux.bar" TargetNamespace="qux.bar"\
+						Qualifier="Tablet"/>\
+				</Reference>\
+				<Reference Uri="bla/$metadata">\
+					<Include Namespace="bla"/>\
+				</Reference>',
+			{
+				"$Reference": {
+					"qux/$metadata": {
+						"$Include": ["qux.foo", "qux.bar"],
+						"$IncludeAnnotations": [{
+							"$TermNamespace": "qux.foo"
+						}, {
+							"$TermNamespace": "qux.bar",
+							"$TargetNamespace": "qux.bar",
+							"$Qualifier": "Tablet"
+						}]
+					},
+					"bla/$metadata": {
+						"$Include": ["bla"]
+					}
+				}
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: aliases in types", function (assert) {
 		testConversion(assert, '\
 				<Reference Uri="qux/$metadata">\
@@ -204,9 +236,10 @@ sap.ui.require([
 					<Schema Namespace="foo" Alias="f"/>\
 				</DataServices>',
 			{
-				"qux": {
-					"$kind": "Reference",
-					"$ref": "qux/$metadata"
+				"$Reference": {
+					"qux/$metadata": {
+						"$Include": ["qux"]
+					}
 				},
 				"bar": {
 					"$kind": "Schema"
