@@ -206,7 +206,7 @@
 	test("integer validateValue", function(){
 		var intType = new sap.ui.model.type.Integer(null, {
 			minimum: 3,
-			maximum : 10
+			maximum: 10
 		});
 		try{
 			equal(intType.validateValue(4), undefined, "validate test");
@@ -249,6 +249,28 @@
 		equal(intType.parseValue("3333", "string"), "3,333", "parse test");
 		equal(intType.parseValue("3,555", "string"), "3,555", "parse test");
 		equal(intType.parseValue("-3,555", "string"), "-3,555", "parse test");
+		
+	});
+
+	test("integer formatOptions.source and validateValue", function(){
+		var intType = new sap.ui.model.type.Integer({
+			source: {
+				decimalSeparator: ",",
+				groupingSeparator: "."
+			}
+		}, {
+			minimum: 3,
+			maximum: 10
+		});
+		
+		try{
+			equal(intType.validateValue("4,0"), undefined, "validate test");
+			equal(intType.validateValue("10"), undefined, "validate test");
+		}catch (e){
+			ok(false, "one of the validation tests failed please check");
+		}
+		raises(function(){intType.validateValue("-1")}, checkValidateException, "validate test");
+		raises(function(){intType.validateValue("3.300")}, checkValidateException, "validate test");
 		
 	});
 	
@@ -300,7 +322,7 @@
 	test("float validateValue", function(){
 		var floatType = new sap.ui.model.type.Float(null, {
 			minimum: 3,
-			maximum : 10
+			maximum: 10
 		});
 		try{
 			equal(floatType.validateValue(3.0), undefined, "validate test");
@@ -357,6 +379,28 @@
 
 	});
 	
+	test("float formatOptions.source and validateValue", function(){
+		var floatType = new sap.ui.model.type.Float({
+			source:{
+				decimalSeparator: ",",
+				groupingSeparator: "."
+			}
+		}, {
+			minimum: 3,
+			maximum: 10
+		});
+		try{
+			equal(floatType.validateValue("3,0"), undefined, "validate test");
+			equal(floatType.validateValue("3,01"), undefined, "validate test");
+			equal(floatType.validateValue("10"), undefined, "validate test");
+		}catch (e){
+			ok(false, "one of the validation tests failed please check");
+		}
+		raises(function(){floatType.validateValue("2,99999")}, checkValidateException, "validate test");
+		raises(function(){floatType.validateValue("10,0000001")}, checkValidateException, "validate test");
+
+	});
+	
 	// currency type tests
 	module("currency type");
 	
@@ -393,7 +437,7 @@
 	test("currency validateValue", function(){
 		var currencyType = new sap.ui.model.type.Currency(null, {
 			minimum: 3,
-			maximum : 10
+			maximum: 10
 		});
 		try{
 			equal(currencyType.validateValue([3.0, "EUR"]), undefined, "validate test");
@@ -447,6 +491,25 @@
 		equal(currencyType.formatValue("EUR22", "string"), "EUR22.00", "format test");
 		equal(currencyType.formatValue("USD-6622.333", "string"), "USD-6,622.33", "format test");
 		equal(currencyType.formatValue("JPY-6622.339", "string"), "JPY-6,622", "format test");
+
+	});
+	
+	test("currency formatOptions.source and validateValue", function(){
+		var currencyType = new sap.ui.model.type.Currency({
+			source:{}
+ 		}, {
+			minimum: 3,
+			maximum: 10
+		});
+		try{
+			equal(currencyType.validateValue("EUR3.00"), undefined, "validate test");
+			equal(currencyType.validateValue("USD3.01"), undefined, "validate test");
+			equal(currencyType.validateValue("JPY10"), undefined, "validate test");
+		}catch (e){
+			ok(false, "one of the validation tests failed please check");
+		}
+		raises(function(){currencyType.validateValue("USD2.99999")}, checkValidateException, "validate test");
+		raises(function(){currencyType.validateValue("EUR10.0000001")}, checkValidateException, "validate test");
 
 	});
 	
