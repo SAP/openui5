@@ -5,7 +5,7 @@ describe("sap.m.Breadcrumbs", function() {
 	});
 
 	it("Should open picker", function() {
-		element(by.css("#breadCrumbWithSelect-select-arrow")).click();
+		element(by.css("#breadCrumbWithSelect-select")).click();
 
 		expect(takeScreenshot()).toLookAs("picker");
 	});
