@@ -493,5 +493,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.24": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "e2de4cca5251b5b7e7e8a5defe8eea03eb83509e",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: fixes navigation to last page with paginator",
+        "references": []
+      },
+      {
+        "id": "b9f068bf29e3ae1e47b0691615770c31d24016bf",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes ScrollBar visibility",
+        "references": []
+      }
+    ]
   }
 }
