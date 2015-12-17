@@ -652,5 +652,171 @@
         "references": []
       }
     ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "ce6b0dd8b897fcd95f0827ca012f2ca4172488d1",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fix left paddings",
+        "references": []
+      }
+    ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "c5371d62daf3677dfb626ed8cc6d3a3f116ac4ba",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: UI Consistency on \"showAll\" filter with horizontal design is fixed",
+        "references": []
+      },
+      {
+        "id": "f09aaa2c7e6a7b20e5aa5f84d329a4a36ad3d6f6",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: No separator between master and detail areas",
+        "references": []
+      },
+      {
+        "id": "c08234d563655c0291012745aa45f46c90eb11b8",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Remove the thin blue line between master and detail when it\u0027s rendered in Launchpad shell",
+        "references": []
+      },
+      {
+        "id": "534a12f6dba204ed4254d60fe3461f34e899cc54",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Switch: Fix border issue at zoom in \u003c 100%",
+        "references": []
+      },
+      {
+        "id": "11b39ef338bfdf16901ace9059d80afdc1ac745d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: Full size labels",
+        "references": []
+      }
+    ]
+  },
+  "1.28.16": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "ce0cd9b0ee8b88f37619a58b26dc0ff9e5e6f441",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements",
+        "references": []
+      }
+    ]
+  },
+  "1.28.17": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "c140439b0ac95c5e7e988dd4fa89305e45eabc07",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: fix custom placeholder alignment issue in IE10",
+        "references": []
+      },
+      {
+        "id": "c0d88868827b24a6b1f88f26c6b5347c5e08d038",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: prevent the change event from firing when an item is pressed (downport)",
+        "references": []
+      }
+    ]
+  },
+  "1.28.21": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "b7633e7bee02f37c05767a72ef989ab0aa2c92ac",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page: SubHeader overlaps the content",
+        "references": []
+      }
+    ]
+  },
+  "1.28.22": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "5bc4625a337ca35d2db4f0c7b506f83771f0b199",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Close valueState message synchronously.",
+        "references": []
+      },
+      {
+        "id": "51daa5c9495c99a6f26a97b963519eea598210bc",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Focus outline is not cut off when used in SimpleForm",
+        "references": []
+      },
+      {
+        "id": "e993e923a8798ba75662b8c665969f323d99360c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Use Label style only for direct labels",
+        "references": []
+      }
+    ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "4884011222586fedccce3ea51ce686e20297543b",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilterList: Set min content width",
+        "references": []
+      },
+      {
+        "id": "18c14f842486dba7cbe3c911278b82a8411ebe8a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Remove focus outline on windows phone",
+        "references": []
+      }
+    ]
+  },
+  "1.28.24": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "7c0bd0cb02377407b8dca9c11309456528bba4ce",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Arrows position in Win8 is correct now",
+        "references": []
+      },
+      {
+        "id": "c710212bc74d845dafa9674149f5a2619ae05e79",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectStatus: Vertical alignment inside forms corrected",
+        "references": []
+      },
+      {
+        "id": "d5d6a61949df2f1302ff7af7c041ef3bc97a4590",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Label not visible on iOS devices",
+        "references": []
+      }
+    ]
   }
 }

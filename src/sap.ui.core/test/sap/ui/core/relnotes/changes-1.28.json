@@ -2514,5 +2514,212 @@
         "references": []
       }
     ]
+  },
+  "1.28.20": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "2d944d54d09e0f9973ea5e0572193fafe6370d11",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentMetadata: customizing lifecycle issue with instance count",
+        "references": []
+      },
+      {
+        "id": "95b8ff5570067c92e6f25b0ce47b545ae09178b5",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Only update metamodel bindings when metamodel is loaded",
+        "references": []
+      },
+      {
+        "id": "7de81e1793a826c305eafb3c106c03cd2dc74350",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.events: Avoid doubled events in Touch-to-Mouse handling",
+        "references": []
+      },
+      {
+        "id": "812fdcd70c4e79e1c70389916e6dacb56aabdb93",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa5 - fixed a timing issue in IE when the sap.ui.Core was loaded but jQuery.sap was not",
+        "references": []
+      },
+      {
+        "id": "ed2f18569618f4b58731efb9cf409e4e5d1fee53",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: createEntry - wrong request method after failing",
+        "references": []
+      }
+    ]
+  },
+  "1.28.21": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "e000514d21eae733001b0e4bff7cf1e396db360e",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Autoclose on Touch Enabled Devices\"",
+        "references": []
+      },
+      {
+        "id": "836bfadafe99e5ac11d2a7ff441adff9d8c919c0",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "NumberFormat: Introduce shortLimit and precision",
+        "references": []
+      },
+      {
+        "id": "76ff17a0a1793bd2ab3bb09a96c3baee0cfc6404",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Missing dataReceived event",
+        "references": []
+      },
+      {
+        "id": "d0a94a721a35fc8b047ad99d8d4f616b23671b0f",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Datajs: fix xhr.send when request body is empty for IE 11",
+        "references": []
+      },
+      {
+        "id": "ba6e6544442fefab7184b1c30a8c0a0e082f3178",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DateFormat: Cache fallback formats per locale and calendarType",
+        "references": []
+      },
+      {
+        "id": "b35b0252a5a634e88b9ef77a6ecf5b24161cd9e9",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: fix 0 as payload result",
+        "references": []
+      },
+      {
+        "id": "e464a4e037758c672a0d3fa9287320ef012adaed",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Autoclose on Touch Enabled Devices",
+        "references": []
+      },
+      {
+        "id": "a2f84bc3c21541242f80c3fbc411bfc84aff1a7f",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "ScrollEnablement: Momentum scrolling for BlackBerry.",
+        "references": []
+      },
+      {
+        "id": "1ee7ae66a621d8a6e1cbd78fd51b41b05e2d33f1",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.registerResourcePath: strip URI params/hash",
+        "references": []
+      },
+      {
+        "id": "13f6fa249bb8799bbc4817f124909281aeb36ba9",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Fragment: \u0027objectBinding\u0027 enabled",
+        "references": []
+      },
+      {
+        "id": "2a050a172998ac8ebd0d0031e360c6b00414d999",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Except Popup Controls from Rendering Optimization",
+        "references": []
+      },
+      {
+        "id": "e31976e327031e930c85a110a13869f4c2a6a7e2",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Restore focus after full UIArea rendering",
+        "references": []
+      },
+      {
+        "id": "446b60af15d1fdaff4c28b7c12cc6e33781eef0d",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: createEntry on Navigation Properties does not work",
+        "references": []
+      }
+    ]
+  },
+  "1.28.22": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "542497c3b22709b5fa1412ed4453a3a64f38c46a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject - bindTree, missing Sorters",
+        "references": []
+      },
+      {
+        "id": "9412cb3cf80384cacdd03cd2e1f2d02fc719ad54",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Remove Double Errors",
+        "references": []
+      },
+      {
+        "id": "a412fe88b669f26251b1b5cc6ea20159c4cd811e",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: check negative date and month in strict mode",
+        "references": []
+      },
+      {
+        "id": "71d4d89e75fc271e3a7e16a3b2f0617f53ced93d",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Throw error when window was blocked (Safari 9)",
+        "references": []
+      }
+    ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "dd56db469ab5193e4a5f6383e7704c08604d027d",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.act: Register touch events only when supported",
+        "references": []
+      },
+      {
+        "id": "75c149e1c8d4f81dcf3af74548f70dfb36b0ef54",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.opaQunit: Timeout was not increased to 90 sec it was 30 sec",
+        "references": []
+      }
+    ]
+  },
+  "1.28.24": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "3c5fadcedc0ddcbd011fdb0de6afb7fcd881e744",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "CompositeBinding: Fixed issue with validation",
+        "references": []
+      },
+      {
+        "id": "46f1a0725768dc5fc898e9024697d0b3a0f4c5e8",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "SupportTool: Escaping issues",
+        "references": []
+      }
+    ]
   }
 }
