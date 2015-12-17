@@ -19,7 +19,7 @@
 			jQuery.sap.measure.setActive(true);
 
 			sap.ui.getCore().attachInit(function () {
-				jQuery.sap.require("sap.ui.table.AnalyticalTable");
+				jQuery.sap.require("sap.ui.table.TreeTable");
 				jQuery.sap.require("sap.ui.table.Table");
 
 				jQuery.sap.measure.registerMethod("Table._createRows", sap.ui.table.Table.prototype, "_createRows", ["JS"]); 
