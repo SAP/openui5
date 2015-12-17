@@ -1311,11 +1311,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 			var iWidth = oList.$("cntnt").height() - 50/*Space for Header Action Buttons - Maybe provide theme parameter in future*/;
 			var $txt = oList.$("head-txt");
 			$txt.css("width", iWidth + "px");
-			if (jQuery("html").attr("data-sap-ui-browser") == "ie8") {
-				//A text with 90px width is correct aligned when bottom:75px is set
-				var iBottom = 75 - (90 - iWidth);
-				$txt.css("bottom", iBottom + "px");
-			}
 		}
 		var aSubLists = oList.getSubLists();
 		for (var i = 0; i < aSubLists.length; i++) {

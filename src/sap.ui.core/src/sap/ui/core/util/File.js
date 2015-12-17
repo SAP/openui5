@@ -93,8 +93,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 						}
 					}
 				}
-			} else if (Device.browser.internet_explorer && Device.browser.version <= 9) {
-				// iframe fallback for IE 8/9
+			} else if (Device.browser.internet_explorer && Device.browser.version === 9) {
+				// iframe fallback for IE9
 				var $body = jQuery(document.body);
 				var $iframe = jQuery('<iframe/>', {
 					style: 'display:none'
