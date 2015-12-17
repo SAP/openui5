@@ -593,6 +593,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 				$Ref.css("display", "block");
 			}
 
+			//when the animations are disabled run the fnOpened() right away
+			if (!sap.ui.getCore().getConfiguration().getAnimation()) {
+				fnOpened();
+				return;
+			}
+
 			var that = this,
 				bOpenedCalled = false,
 				fnEnd;
@@ -629,6 +635,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 		Dialog.prototype._closeAnimation = function ($Ref, iRealDuration, fnClose) {
 			var bClosedCalled = false,
 				fnEnd;
+
+			//when the animations are disabled run the fnClose() right away
+			if (!sap.ui.getCore().getConfiguration().getAnimation()) {
+				fnClose();
+				return;
+			}
 
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 				$Ref.fadeOut(200, fnClose);
