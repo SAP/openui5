@@ -45,6 +45,13 @@ sap.ui.controller("example.mvc.test", {
 	
 	valueFormatter: function(oValue) {
 		return "formatted-" + oValue;
+	},
+	
+	sap: {
+		doIt: function(oEvent) {
+			ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
+			ok(this instanceof sap.ui.core.mvc.Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
+		}
 	}
 
 });
