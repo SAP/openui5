@@ -188,7 +188,7 @@ sap.ui.define([
 
 		vResult = jQuery.extend({}, vResult);
 		for (sKey in vResult) {
-			if (sKey.charAt(0) === "$") {
+			if (sKey[0] === "$") {
 				delete vResult[sKey];
 			}
 		}
@@ -243,9 +243,14 @@ sap.ui.define([
 		var sResolvedPath = this.resolve(sPath, oContext);
 
 		return this.fetchEntityContainer().then(function (mScope) {
-			var oEntityContainer = mScope[mScope.$EntityContainer],
-				bJsonMode = false, // "JSON" drill-down mode triggered by technical property
-				sName, // the object's OData name
+			var bJsonMode, // "JSON" drill-down mode triggered by technical property
+				sName, // the current object's OData name
+				// parent for next "17.2 SimpleIdentifier"
+				// (normally the schema child containing the current object)
+				oSchemaChild,
+				sSchemaChildName,
+				sSchemaName,
+				sTarget, // annotation target pointing to current object
 				vResult = mScope;
 
 			/*
@@ -264,10 +269,10 @@ sap.ui.define([
 			 */
 			function step(sLocation, sSegment, i, aSegments) {
 				if (!sSegment) {
-					return warn("Invalid empty part");
+					return warn("Invalid empty segment");
 				}
 				if (sSegment === "$Annotations") {
-					return warn("Invalid part: $Annotations");
+					return warn("Invalid segment: $Annotations");
 				}
 				// Note: "@sapui.name" refers back to the object's OData name
 				if (sSegment === "@sapui.name") {
@@ -286,36 +291,51 @@ sap.ui.define([
 				}
 				if (!vResult || typeof vResult !== "object") {
 					// Note: even an OData path cannot continue here (e.g. by type cast)
-					return warn("Invalid part: " + sSegment);
+					return warn("Invalid segment: " + sSegment);
 				}
-				bJsonMode = bJsonMode || sSegment.charAt(0) === "$";
+				if (sSegment[0] === "@") {
+					// annotation
+					if (!sTarget) {
+						return warn("Unsupported path before " + sSegment);
+					}
+					sSchemaName = sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
+					vResult = mScope[sSchemaName].$Annotations[sTarget][sSegment];
+					bJsonMode = true;
+					return true;
+				}
+				bJsonMode = bJsonMode || sSegment[0] === "$";
 				if (!bJsonMode) {
 					if (sSegment.indexOf(".") > 0) {
-						// "17.3 QualifiedName": lookup
+						// "17.3 QualifiedName": scope lookup
 						if (!(sSegment in mScope)) {
-							return warn("Unknown qualified name '" + sSegment
-								+ "' at /" + sLocation);
+							return warn("Unknown qualified name '" + sSegment + "'"
+								+ (sLocation ? " at /" + sLocation : ""));
 						}
-						sName = sSegment;
-						vResult = mScope[sSegment];
+						sTarget = sName = sSchemaChildName = sSegment;
+						vResult = oSchemaChild = mScope[sSchemaChildName];
 						return true;
-					} else if (vResult === mScope) {
-						// initial "17.2 SimpleIdentifier": treat as child of default container
-						if (sLocation && !(sSegment in oEntityContainer)) {
-							return warn("Unknown container child '" + sSegment
+					} else if ("$Type" in vResult) {
+						// implicit $Type insertion, e.g. at (navigation) property
+						if (!steps(vResult.$Type, aSegments.slice(0, i).join("/") + "/$Type")) {
+							return false;
+						}
+					} else {
+						// "17.2 SimpleIdentifier" (or placeholder): lookup inside schema child
+						// (which is determined lazily)
+						sSchemaChildName = sSchemaChildName || mScope.$EntityContainer;
+						oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
+						if (sLocation && !(sSegment in oSchemaChild)) {
+							return warn("Unknown child '" + sSegment + "' of '" + sSchemaChildName
 								+ "' at /" + sLocation);
 						}
-						sName = mScope.$EntityContainer;
-						vResult = oEntityContainer;
-					} else if (("$Type" in vResult)
-						// implicit $Type insertion, e.g. at (navigation) property
-						&& !steps(vResult.$Type, aSegments.slice(0, i).join("/") + "/$Type")) {
-						return false;
+						sTarget = sName = sSchemaChildName;
+						vResult = oSchemaChild;
 					}
 				}
 				// Note: "." is useful to force implicit lookup or $Type insertion
 				if (sSegment !== ".") {
 					sName = bJsonMode ? undefined : sSegment;
+					sTarget = bJsonMode ? undefined : sTarget + "/" + sSegment;
 					vResult = vResult[sSegment];
 				}
 				return true;
@@ -579,7 +599,18 @@ sap.ui.define([
 	 *
 	 * In case a path comes across a non-object value and continues (except for scope lookup or
 	 * "@sapui.name"), this leads to an <code>undefined</code> result and a warning
-	 * ("Invalid part") is logged.
+	 * ("Invalid segment") is logged.
+	 *
+	 * Segments starting with an "@" character, e.g. "@com.sap.vocabularies.Common.v1.Label",
+	 * address annotations at the current object. For objects which can only be annotated inline
+	 * (see "14.3 Element edm:Annotation" minus "14.2.1 Attribute Target"), the object already
+	 * contains the annotations as a property. For objects which can (only or also) be annotated
+	 * via external targeting, the object does not contain any annotation as a property. Such
+	 * annotations MUST be accessed via a path. BEWARE of a special case: Actions, functions and
+	 * their parameters can be annotated inline for a single overload or via external targeting for
+	 * all overloads at the same time. In this case, the object contains all annotations for the
+	 * single overload as a property, but annotations MUST nevertheless be accessed via a path in
+	 * order to include also annotations for all overloads at the same time!
 	 *
 	 * @param {string} sPath
 	 *   A relative or absolute path within the meta model

@@ -21,7 +21,27 @@ sap.ui.require([
 	var mScope = { // tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
 			"$EntityContainer" : "tea_busi.DefaultContainer",
 			"tea_busi." : {
-				"$kind" : "Schema"
+				"$kind" : "Schema",
+				"$Annotations" : {
+					"tea_busi.DefaultContainer" : {
+						"@empty" : {}
+					},
+					"tea_busi.DefaultContainer/T€AMS" : {
+						"@empty" : {}
+					},
+					"tea_busi.TEAM" : {
+						"@com.sap.vocabularies.UI.v1.LineItem" : [{
+							"$Type" : "com.sap.vocabularies.UI.v1.LineItem",
+							"Label" : "Team_Id",
+							"Value" : {
+								"$Path" : "Team_Id"
+							}
+						}]
+					},
+					"tea_busi.TEAM/Team_Id" : {
+						"@empty" : {}
+					}
+				}
 			},
 			"tea_busi.TEAM" : {
 				"$kind" : "EntityType",
@@ -87,6 +107,8 @@ sap.ui.require([
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
 		oTeamData = mScope["tea_busi.TEAM"],
+		oTeamLineItem = mScope["tea_busi."].$Annotations["tea_busi.TEAM"]
+			["@com.sap.vocabularies.UI.v1.LineItem"], // at entity type
 		oWorkerData = mScope["tea_busi.Worker"];
 
 	/**
@@ -295,10 +317,6 @@ sap.ui.require([
 	//    set of (non-binding) parameter names" is unique.
 
 	//*********************************************************************************************
-	//TODO remember result of last "17.3 QualifiedName" lookup: EntityContainer vs. Type; this
-	//     is needed to lookup the next "17.2 SimpleIdentifier", isn't it?!
-	//TODO also support SimpleIdentifier which refers to child of "the same entity container as the enclosing element"
-	//TODO also support all variants of "14.5.12 Path"
 	forEach({
 		// "JSON" drill-down ----------------------------------------------------------------------
 		"/" : mScope,
@@ -336,10 +354,12 @@ sap.ui.require([
 		"/." : oContainerData,
 		"/T€AMS/$Type/." : oTeamData,
 		"/T€AMS/." : oTeamData,
-		// scope lookup "17.2 SimpleIdentifier"
+		// "17.2 SimpleIdentifier": lookup inside current schema child ----------------------------
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/." : oWorkerData,
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
+		"/T€AMS/$Type/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/@empty"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@empty"],
 		// @sapui.name ----------------------------------------------------------------------------
 		"/./@sapui.name" : "tea_busi.DefaultContainer",
 		"/Foo/@sapui.name" : "Foo", // "It does not matter whether that name is valid or not."
@@ -350,7 +370,17 @@ sap.ui.require([
 		"/T€AMS/Team_Id/@sapui.name" : "Team_Id",
 		"/T€AMS/TEAM_2_EMPLOYEES/@sapui.name" : "TEAM_2_EMPLOYEES",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/./@sapui.name" : "tea_busi.Worker",
-		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE/@sapui.name" : "AGE"
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE/@sapui.name" : "AGE",
+		// annotations ----------------------------------------------------------------------------
+		"/$EntityContainer/@empty"
+			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@empty"],
+		"/T€AMS/$Type/./@com.sap.vocabularies.UI.v1.LineItem" : oTeamLineItem,
+		"/T€AMS/$Type/@com.sap.vocabularies.UI.v1.LineItem" : oTeamLineItem,
+		"/T€AMS/$Type/@com.sap.vocabularies.UI.v1.LineItem/0/Label" : oTeamLineItem[0].Label,
+		"/T€AMS/@empty"
+			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer/T€AMS"]["@empty"],
+		"/T€AMS/Team_Id/@empty"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@empty"]
 	}, function (sPath, sContextPath, sMetaPath, vResult) {
 		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var oContext = sContextPath && this.oMetaModel.getContext(sContextPath),
@@ -365,6 +395,9 @@ sap.ui.require([
 			assert.strictEqual(oSyncPromise.getResult(), vResult);
 		});
 	});
+	//TODO support also external targeting from a different schema!
+	//TODO inline annotations!
+	//TODO also support all variants of "14.5.12 Path"
 	//TODO special cases from sap.ui.model.odata.ODataMetaModel#_getObject:
 	// - "Invalid relative path w/o context"
 	// - BindingParser.parseExpression() ??? we hardly have any arrays...
@@ -375,16 +408,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
 		forEach({
-			"//." : "Invalid empty part",
-			"/$Foo/." : "Invalid part: .",
-			"/$Foo/$Bar" : "Invalid part: $Bar",
-			"/$Foo/$Bar/$Baz" : "Invalid part: $Bar",
-			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid part: .",
-			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid part: .",
-			"/tea_busi./$Annotations" : "Invalid part: $Annotations", // entrance forbidden!
+			"//." : "Invalid empty segment",
+			"/$Foo/." : "Invalid segment: .",
+			"/$Foo/@bar" : "Invalid segment: @bar",
+			"/$Foo/$Bar" : "Invalid segment: $Bar",
+			"/$Foo/$Bar/$Baz" : "Invalid segment: $Bar",
+			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid segment: .",
+			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: .",
+			"/tea_busi./$Annotations" : "Invalid segment: $Annotations", // entrance forbidden!
+			"/name.space.not.Found" :
+				"Unknown qualified name 'name.space.not.Found'",
 			//TODO take care not to construct these complicated warning messages in vain?
-			"/$EntityContainer|$kind/Foo" :
-				"Unknown container child 'EntityContainer' at /$EntityContainer/$kind",
+			"/$EntityContainer|$kind/Foo" : "Unknown child 'EntityContainer'"
+				+ " of 'tea_busi.DefaultContainer' at /$EntityContainer/$kind",
 			// implicit $Type insertion
 			"/name.space.Broken/Foo" :
 				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
@@ -394,13 +430,16 @@ sap.ui.require([
 			// Unsupported path before @sapui.name ------------------------------------------------
 			"/@sapui.name" : "Unsupported path before @sapui.name",
 			"/@sapui.name/foo" : "Unsupported path before @sapui.name", // one warning is enough
+			"/$Foo/@sapui.name" : "Unsupported path before @sapui.name", // not "Invalid segment: "
 			// no @sapui.name for technical properties or inside "JSON" mode:
 			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unsupported path before @sapui.name",
 			"/tea_busi.TEAM/$Key/not.Found/@sapui.name" : "Unsupported path before @sapui.name",
 			"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/@sapui.name"
 				: "Unsupported path before @sapui.name",
 			// Unsupported path after @sapui.name -------------------------------------------------
-			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name"
+			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name",
+			// Unsupported path before @... -------------------------------------------------------
+			"/@bar" : "Unsupported path before @bar"
 		}, function (sPath, sContextPath, sMetaPath, sWarning) {
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
 				var oContext = sContextPath && this.oMetaModel.getContext(sContextPath),

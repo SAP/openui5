@@ -44,7 +44,9 @@ sap.ui.define([
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
 					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/$metadata"
-						: {source : "metadata.xml"}
+						: {source : "metadata.xml"},
+					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=5"
+						: {source : "BusinessPartnerList.json"},
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrdersTemplate/data");
 			}
 
@@ -52,13 +54,20 @@ sap.ui.define([
 				oLayout.addItem(sap.ui.view({
 					async : true,
 					models : {
+						undefined : oModel,
 						ui : new JSONModel({
 							bRealOData : bRealOData,
 							icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
 							iconTooltip : bRealOData ? "real OData service" : "mock OData service"
 						})
 					},
-					preprocessors: {xml : { models : { meta : oMetaModel }}},
+					preprocessors: {
+						xml : {
+							models : {
+								meta : oMetaModel
+							}
+						}
+					},
 					type : sap.ui.core.mvc.ViewType.XML,
 					viewName : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main"
 				}));
