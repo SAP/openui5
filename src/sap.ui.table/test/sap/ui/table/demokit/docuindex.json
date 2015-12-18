@@ -25,8 +25,18 @@
 					"sap.ui.table.sample.MultiHeader",
 					"sap.ui.table.sample.OData",
 					"sap.ui.table.sample.OData2"
+
 				]
-			}
+			},
+		  	{
+				"id": "sap.ui.table.TreeTable",
+				"name": "Tree Table",
+				"category": "List",
+				"since": "1.36",
+				"samples": [
+			  	    "sap.ui.table.sample.TreeTable.JSONTreeBinding"
+				]
+		  	}
 		],
 		"samples": [
 			{
@@ -61,7 +71,7 @@
 				"id": "sap.ui.table.sample.Resizing",
 				"name": "Resizing",
 				"description": "Example for column resizing and the different row count modes."
-			},{				
+			},{
 				"id": "sap.ui.table.sample.MultiHeader",
 				"name": "Multi Header",
 				"description": "Example for multi-header of table."
@@ -73,6 +83,10 @@
 				"id": "sap.ui.table.sample.OData2",
 				"name": "OData Metadata",
 				"description": "Shows an example how an oData metadata driven table creation can look like"
+			},{
+			  "id": "sap.ui.table.sample.TreeTable.JSONTreeBinding",
+			  "name": "JSONTreeBinding",
+			  "description": "Basic example showing how a TreeTable can be build by using a JSONModel"
 			}
 		]
 	}
