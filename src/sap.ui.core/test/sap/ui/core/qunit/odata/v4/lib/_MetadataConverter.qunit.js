@@ -32,6 +32,33 @@ sap.ui.require([
 	}
 
 	/**
+	 * Tests the conversion of the given XML snippet of a constant/dynamic expression below an
+	 * Annotation element.
+	 * @param {object} assert
+	 *   QUnit's assert
+	 * @param {string} sXmlSnippet
+	 *   the XML snippet; it will be inserted below an Annotation element
+	 * @param {any} vExpected
+	 *   the expected value for the annotation
+	 */
+	function testExpression(assert, sXmlSnippet, vExpected) {
+		var oXML = xml(assert, '\
+				<Edmx>\
+					<DataServices>\
+						<Schema Namespace="foo" Alias="f">\
+							<Annotations Target="foo.Bar">\
+								<Annotation Term="foo.Term">' + sXmlSnippet + '\
+								</Annotation>\
+							</Annotations>\
+						</Schema>\
+					</DataServices>\
+				</Edmx>'),
+			oResult = MetadataConverter.convertXMLMetadata(oXML);
+
+		assert.deepEqual(oResult["foo"].$Annotations["foo.Bar"]["@foo.Term"], vExpected);
+	}
+
+	/**
 	 * Creates a DOM document from the given string.
 	 * @param {object} assert the assertions
 	 * @param {string} sXml the XML as string
@@ -99,6 +126,23 @@ sap.ui.require([
 		assert.strictEqual(oAggregate.innerBar, 2);
 		assert.strictEqual(oAggregate.innerBar2, 1);
 		assert.strictEqual(oAggregate.included, 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("traverse: __postProcessor", function (assert) {
+		var oXML = xml(assert, "<And><Bool>true</Bool><Bool>false</Bool></And>"),
+			oResult = MetadataConverter.traverse(oXML.documentElement, {}, {
+				__postProcessor: function(oElement, aResults) {
+					return {$And: aResults};
+				},
+				"Bool": {
+					__postProcessor: function(oElement, aResults) {
+						assert.strictEqual(aResults, undefined);
+						return oElement.childNodes[0].nodeValue === "true";
+					}
+				}
+			});
+			assert.deepEqual(oResult, {$And: [true, false]});
 	});
 
 	//*********************************************************************************************
@@ -796,9 +840,8 @@ sap.ui.require([
 								DateTimeOffset="2000-01-01T16:00:00.000-09:00" />\
 							<Annotation Term="f.Decimal" Decimal="3.14" />\
 							<Annotation Term="f.Duration" Duration="P11D23H59M59S" />\
-							<Annotation Term="f.EnumMember1" EnumMember="0" />\
-							<Annotation Term="f.EnumMember2" EnumMember="9007199254740991" />\
-							<Annotation Term="f.EnumMember3" EnumMember="9007199254740992" />\
+							<Annotation Term="f.EnumMember"\
+								EnumMember="f.Enum/Member1  f.Enum/Member2"/>\
 							<Annotation Term="f.Float1" Float="2.718" />\
 							<Annotation Term="f.Float2" Float="NaN" />\
 							<Annotation Term="f.Float3" Float="INF" />\
@@ -817,6 +860,7 @@ sap.ui.require([
 							<Annotation Term="f.Path" Path="Path/f.Bar/f.Baz" />\
 							<Annotation Term="f.PropertyPath" PropertyPath="Path/f.Bar/f.Baz" />\
 							<Annotation Term="f.UrlRef" UrlRef="http://foo.bar" />\
+							<Annotation Term="f.Invalid" Invalid="foo" />\
 							<Annotation Term="f.Baz" Qualifier="Employee"/>\
 						</Annotations>\
 						<Annotations Target="f.Bar/Abc" Qualifier="Employee">\
@@ -837,13 +881,11 @@ sap.ui.require([
 							},
 							"@foo.Decimal": {"$Decimal" : "3.14"},
 							"@foo.Duration": {"$Duration" : "P11D23H59M59S"},
-							"@foo.EnumMember1": {"$EnumMember" : 0},
-							"@foo.EnumMember2": {"$EnumMember" : 9007199254740991},
-							"@foo.EnumMember3": {"$EnumMember" : "9007199254740992"},
+							"@foo.EnumMember": {"$EnumMember" : "foo.Enum/Member1  foo.Enum/Member2"},
 							"@foo.Float1": 2.718,
 							"@foo.Float2": {"$Float": "NaN"},
-							"@foo.Float3": {"$Float": "Infinity"},
-							"@foo.Float4": {"$Float": "-Infinity"},
+							"@foo.Float3": {"$Float": "INF"},
+							"@foo.Float4": {"$Float": "-INF"},
 							"@foo.Guid": {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
 							"@foo.Int1": 42,
 							"@foo.Int2": 9007199254740991,
@@ -859,12 +901,54 @@ sap.ui.require([
 							"@foo.Path": {"$Path": "Path/foo.Bar/foo.Baz"},
 							"@foo.PropertyPath": {"$PropertyPath": "Path/foo.Bar/foo.Baz"},
 							"@foo.UrlRef": {"$UrlRef": "http://foo.bar"},
+							"@foo.Invalid": true,
 							"@foo.Baz#Employee": true
 						},
 						"foo.Bar/Abc" : {"@foo.Baz#Employee": true}
 					}
 				}
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("expression: leaf elements", function (assert) {
+		testExpression(assert, '<String>foo\nbar</String>', "foo\nbar");
+		testExpression(assert, '<String>foo<!-- bar --></String>', "foo");
+		testExpression(assert, '<String><!-- foo -->bar</String>', "bar");
+		testExpression(assert, '<String>foo<!-- bar -->baz</String>', "foobaz");
+
+		testExpression(assert, '<Binary>T0RhdGE</Binary>', {"$Binary": "T0RhdGE"});
+		testExpression(assert, '<Bool>false</Bool>', false);
+		testExpression(assert, '<Date>2015-01-01</Date>', {"$Date" : "2015-01-01"});
+		testExpression(assert, '<DateTimeOffset>2000-01-01T16:00:00.000-09:00</DateTimeOffset>',
+			{"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"});
+		testExpression(assert, '<Decimal>3.14</Decimal>', {"$Decimal" : "3.14"});
+		testExpression(assert, '<Duration>P11D23H59M59S</Duration>',
+			{"$Duration" : "P11D23H59M59S"});
+		testExpression(assert, '<EnumMember>foo.Enum/Member1  foo.Enum/Member2</EnumMember>',
+			{"$EnumMember" : "foo.Enum/Member1  foo.Enum/Member2"});
+		testExpression(assert, '<Float>2.718</Float>', 2.718);
+		testExpression(assert, '<Float>NaN</Float>', {"$Float": "NaN"});
+		testExpression(assert, '<Float>-INF</Float>', {"$Float": "-INF"});
+		testExpression(assert, '<Float>INF</Float>', {"$Float": "INF"});
+		testExpression(assert, '<Guid>21EC2020-3AEA-1069-A2DD-08002B30309D</Guid>',
+			{"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"});
+		testExpression(assert, '<Int>42</Int>', 42);
+		testExpression(assert, '<Int>9007199254740991</Int>', 9007199254740991);
+		testExpression(assert, '<Int>9007199254740992</Int>', {"$Int" : "9007199254740992"});
+		testExpression(assert, '<TimeOfDay>21:45:00</TimeOfDay>', {"$TimeOfDay": "21:45:00"});
+		testExpression(assert, '<AnnotationPath>Path/f.Bar@f.Term</AnnotationPath>',
+			{"$AnnotationPath": "Path/foo.Bar@foo.Term"});
+		testExpression(assert,
+			'<NavigationPropertyPath>Path/f.Bar/f.Baz</NavigationPropertyPath>',
+			{"$NavigationPropertyPath": "Path/foo.Bar/foo.Baz"});
+		testExpression(assert, '<Path>Path/f.Bar/f.Baz</Path>', {"$Path": "Path/foo.Bar/foo.Baz"});
+		testExpression(assert, '<PropertyPath>Path/f.Bar/f.Baz</PropertyPath>',
+			{"$PropertyPath": "Path/foo.Bar/foo.Baz"});
+		testExpression(assert, '<Null/>', null);
+		testExpression(assert,
+			'<LabeledElementReference>f.LabeledElement</LabeledElementReference>',
+			{"$LabeledElementReference": "foo.LabeledElement"});
 	});
 
 	//*********************************************************************************************
