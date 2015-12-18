@@ -79,7 +79,8 @@
 											icon="{icon}"
 											enabled="{enabled}"
 											expanded="{expanded}"
-											items="{items}">
+											items="{items}"
+											key="{key}">
 						<tnt:NavigationListItem text="{title}"
 												key="{key}"
 												enabled="{enabled}">
@@ -97,6 +98,7 @@
 		<tnt:mainContents>
 			<NavContainer id="pageContainer">
 				<pages>
+					<Text id="root1" text="This is the root page"></Text>
 					<Text id="page1" text="This is the first page"></Text>
 					<Text id="page2" text="This is the second page"></Text>
 				</pages>
