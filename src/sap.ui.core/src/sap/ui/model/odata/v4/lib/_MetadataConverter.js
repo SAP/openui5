@@ -23,92 +23,83 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"Int" : {__postProcessor : postProcessLeaf},
 			"LabeledElementReference" : {__postProcessor : postProcessLabeledElementReference},
 			"NavigationPropertyPath" : {__postProcessor : postProcessLeaf},
-			"Null" : {__postProcessor : postProcessLeaf},
 			"Path" : {__postProcessor : postProcessLeaf},
 			"PropertyPath" : {__postProcessor : postProcessLeaf},
 			"String" : {__postProcessor : postProcessLeaf},
 			"TimeOfDay" : {__postProcessor : postProcessLeaf}
 		},
 		// When oAnnotationExpressionConfig is defined, it is added to this array for the recursion
-		aAnnotationExpressionInclude = [oAnnotationLeafConfig],
-		oAnnotationExpressionConfig = {
-			"And" : {
-				__postProcessor : postProcessOperation,
-				__include : aAnnotationExpressionInclude
-			},
-			"Apply" : {
-				__postProcessor : postProcessApply,
-				__include : aAnnotationExpressionInclude
-			},
-			"Cast" : {
-				__postProcessor : postProcessCastOrIsOf,
-				__include : aAnnotationExpressionInclude
-			},
-			"Collection" : {
-				__postProcessor : postProcessCollection,
-				__include : aAnnotationExpressionInclude
-			},
-			"Eq" : {
-				__postProcessor : postProcessOperation,
-				__include : aAnnotationExpressionInclude
-			},
-			"Ge" : {
-				__postProcessor : postProcessOperation,
-				__include : aAnnotationExpressionInclude
-			},
-			"Gt" : {
-				__postProcessor : postProcessOperation,
-				__include : aAnnotationExpressionInclude
-			},
-			"If" : {
-				__postProcessor : postProcessOperation,
-				__include : aAnnotationExpressionInclude
-			},
-			"IsOf" : {
-				__postProcessor : postProcessCastOrIsOf,
-				__include : aAnnotationExpressionInclude
-			},
-			"LabeledElement" : {
-				__postProcessor : postProcessLabeledElement,
-				__include : aAnnotationExpressionInclude
-			},
-			"Le" : {
-				__postProcessor : postProcessOperation,
-				__include : aAnnotationExpressionInclude
-			},
-			"Lt" : {
-				__postProcessor : postProcessOperation,
-				__include : aAnnotationExpressionInclude
-			},
-			"Ne" : {
-				__postProcessor : postProcessOperation,
-				__include : aAnnotationExpressionInclude
-			},
-			"Not" : {
-				__postProcessor : postProcessNot,
-				__include : aAnnotationExpressionInclude
-			},
-			"Or" : {
-				__postProcessor : postProcessOperation,
-				__include : aAnnotationExpressionInclude
-			},
-			"Record" : {
-				__postProcessor : postProcessRecord,
-				"PropertyValue" : {
-					__postProcessor : postProcessPropertyValue,
-					__include : aAnnotationExpressionInclude
-				}
-			},
-			"UrlRef" : {
-				__postProcessor : postProcessUrlRef,
-				__include : aAnnotationExpressionInclude
-			}
-		},
+		aExpressionInclude = [oAnnotationLeafConfig],
 		oAnnotationConfig = {
 			"Annotation" : {
 				__processor : processAnnotation,
 				__postProcessor : postProcessAnnotation,
-				__include : aAnnotationExpressionInclude
+				__include : aExpressionInclude
+			}
+		},
+		aAnnotatableExpressionInclude = [oAnnotationLeafConfig, oAnnotationConfig],
+		oOperatorConfig = {
+			__processor : processAnnotatableExpression,
+			__postProcessor : postProcessOperation,
+			__include : aAnnotatableExpressionInclude
+		},
+		oAnnotationExpressionConfig = {
+			"And" : oOperatorConfig,
+			"Apply" : {
+				__processor : processAnnotatableExpression,
+				__postProcessor : postProcessApply,
+				__include : aAnnotatableExpressionInclude
+			},
+			"Cast" : {
+				__processor : processAnnotatableExpression,
+				__postProcessor : postProcessCastOrIsOf,
+				__include : aAnnotatableExpressionInclude
+			},
+			"Collection" : {
+				__postProcessor : postProcessCollection,
+				__include : aExpressionInclude
+			},
+			"Eq" : oOperatorConfig,
+			"Ge" : oOperatorConfig,
+			"Gt" : oOperatorConfig,
+			"If" : oOperatorConfig,
+			"IsOf" : {
+				__processor : processAnnotatableExpression,
+				__postProcessor : postProcessCastOrIsOf,
+				__include : aAnnotatableExpressionInclude
+			},
+			"LabeledElement" : {
+				__processor : processAnnotatableExpression,
+				__postProcessor : postProcessLabeledElement,
+				__include : aAnnotatableExpressionInclude
+			},
+			"Le" : oOperatorConfig,
+			"Lt" : oOperatorConfig,
+			"Ne" : oOperatorConfig,
+			"Null" : {
+				__processor : processAnnotatableExpression,
+				__postProcessor : postProcessNull,
+				__include : [oAnnotationConfig]
+			},
+			"Not" : {
+				__processor : processAnnotatableExpression,
+				__postProcessor : postProcessNot,
+				__include : aAnnotatableExpressionInclude
+			},
+			"Or" : oOperatorConfig,
+			"Record" : {
+				__processor : processAnnotatableExpression,
+				__postProcessor : postProcessRecord,
+				__include : [oAnnotationConfig],
+				"PropertyValue" : {
+					__processor : processPropertyValue,
+					__postProcessor : postProcessPropertyValue,
+					__include : aAnnotatableExpressionInclude
+				}
+			},
+			"UrlRef" : {
+				__postProcessor : postProcessUrlRef,
+				__include : aExpressionInclude
 			}
 		},
 		oAliasConfig = {
@@ -157,10 +148,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"Reference" : {
 				__processor : processReference,
 				"Include" : {
-					__processor: processInclude
+					__processor : processInclude
 				},
 				"IncludeAnnotations" : {
-					__processor: processIncludeAnnotations
+					__processor : processIncludeAnnotations
 				}
 			},
 			"DataServices" : {
@@ -194,7 +185,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					},
 					"EntityContainer" : {
 						__processor : processEntityContainer,
-						__include: [oAnnotationConfig],
+						__include : [oAnnotationConfig],
 						"ActionImport" : {
 							__processor : processImport.bind(null, "Action"),
 							__include : [oAnnotationConfig]
@@ -233,7 +224,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		};
 
 	// enable the recursion
-	aAnnotationExpressionInclude.push(oAnnotationExpressionConfig);
+	aExpressionInclude.push(oAnnotationExpressionConfig);
+	aAnnotatableExpressionInclude.push(oAnnotationExpressionConfig);
+	// yet another recursion: annotated Annotation
+	oAnnotationConfig.Annotation.Annotation = oAnnotationConfig.Annotation;
 
 	/**
 	 * This function is called by each annotatable entity to define a place for the annotations.
@@ -267,6 +261,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			}
 		}
 		oAggregate.annotatable = {
+			parent: oAggregate.annotatable,
 			path: sPath,
 			prefix: sPrefix || "",
 			qualifier: sQualifier,
@@ -369,8 +364,6 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			case "Int":
 				vValue = parseInt(sValue, 10);
 				return Helper.isSafeInteger(vValue) ? vValue : {$Int: sValue};
-			case "Null":
-				return null;
 			case "String":
 				return sValue;
 			default:
@@ -387,7 +380,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function postProcessAnnotation(oElement, aResult, oAggregate) {
-		var oAnnotatable = oAggregate.annotatable;
+		// oAggregate.annotatable is the Annotation itself currently.
+		var oAnnotatable = oAggregate.annotatable.parent;
 		if (aResult.length) {
 			oAnnotatable.target[oAnnotatable.qualifiedName] = aResult[0];
 		}
@@ -402,11 +396,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {object} the value for the JSON
 	 */
 	function postProcessApply(oElement, aResult, oAggregate) {
-		return {
-			"$Apply" : aResult,
-			"$Function" :
-				MetadataConverter.resolveAlias(oElement.getAttribute("Function"), oAggregate)
-		};
+		var oResult = oAggregate.annotatable.target;
+		oResult.$Apply = aResult;
+		oResult.$Function =
+			MetadataConverter.resolveAlias(oElement.getAttribute("Function"), oAggregate);
+		return oResult;
 	}
 
 	/**
@@ -420,7 +414,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function postProcessCastOrIsOf(oElement, aResult, oAggregate) {
 		var sName = oElement.localName,
 			oAttributes = getAttributes(oElement),
-			oResult = {};
+			oResult = oAggregate.annotatable.target;
 
 		oResult["$" + sName] = aResult[0];
 		processTypedCollection(oAttributes.Type, oResult, oAggregate);
@@ -451,6 +445,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function postProcessLabeledElement(oElement, aResult, oAggregate) {
 		var oAttributes = getAttributes(oElement),
 			sKey,
+			oResult = oAggregate.annotatable.target,
 			vValue = true;
 
 		if (aResult.length) {
@@ -463,10 +458,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				}
 			}
 		}
-		return {
-			"$LabeledElement" : vValue,
-			"$Name" : oAttributes.Name
-		};
+		oResult.$LabeledElement = vValue;
+		oResult.$Name = oAttributes.Name;
+		return oResult;
 	}
 
 	/**
@@ -501,10 +495,33 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *
 	 * @param {Element} oElement the element
 	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
 	 * @returns {object} the value for the JSON
 	 */
-	function postProcessNot(oElement, aResult) {
-		return {"$Not": aResult[0]};
+	function postProcessNot(oElement, aResult, oAggregate) {
+		var oResult = oAggregate.annotatable.target;
+
+		oResult.$Not = aResult[0];
+		return oResult;
+	}
+
+	/**
+	 * Post-processing of a Null element within an Annotation element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {any[]} aResult the results from child elements
+	 * @param {object} oAggregate the aggregate
+	 * @returns {object} the value for the JSON
+	 */
+	function postProcessNull(oElement, aResult, oAggregate) {
+		var oAnnotatable = oAggregate.annotatable,
+			vResult = null;
+
+		if (oAnnotatable.qualifiedName) {
+			vResult = oAnnotatable.target;
+			vResult.$Null = null;
+		}
+		return vResult;
 	}
 
 	/**
@@ -545,7 +562,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {object} the value for the JSON
 	 */
 	function postProcessRecord(oElement, aResult, oAggregate) {
-		var oResult = {},
+		var oResult = oAggregate.annotatable.target,
 			oType = oElement.getAttribute("Type");
 
 		if (oType) {
@@ -566,7 +583,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {object} the value for the JSON
 	 */
 	function postProcessOperation(oElement, aResult, oAggregate) {
-		var oResult = {};
+		var oResult = oAggregate.annotatable.target;
 
 		oResult["$" + oElement.localName] = aResult;
 		return oResult;
@@ -624,6 +641,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	}
 
 	/**
+	 * Processes an element of an annotatable expression.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processAnnotatableExpression(oElement, oAggregate) {
+		annotatable(oAggregate, {});
+	}
+
+	/**
 	 * Processes an Annotations element.
 	 * @param {Element} oElement the element
 	 * @param {object} oAggregate the aggregate
@@ -671,6 +697,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		oAnnotatable.qualifiedName = sQualifiedName;
 		oAnnotatable.target[sQualifiedName] = vValue;
+		annotatable(oAggregate, oAnnotatable.target, sQualifiedName);
 	}
 
 	/**
@@ -905,6 +932,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		oActionOrFunction.$Parameter.push(oParameter);
 		annotatable(oAggregate, oParameter);
+	}
+
+	/**
+	 * Processes a PropertyValue element within a Record.
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate the aggregate
+	 */
+	function processPropertyValue(oElement, oAggregate) {
+		annotatable(oAggregate, oAggregate.annotatable.target, oElement.getAttribute("Property"));
 	}
 
 	/**
@@ -1187,27 +1223,32 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   the metadata JSON
 		 */
 		convertXMLMetadata : function (oDocument) {
-			var oAggregate = {
-					"actionOrFunction" : null, // the current action or function
-					"aliases" : {}, // maps alias -> namespace
-					"annotatable" : null, // the current annotatable, see function annotatable
-					"entityContainer" : null, // the current EntityContainer
-					"entitySet" : null, // the current EntitySet/Singleton
-					"enumType" : null, // the current EnumType
-					"enumTypeMemberCounter" : 0, // the current EnumType member value counter
-					"namespace" : null, // the namespace of the current Schema
-					"navigationProperty" : null, // the current NavigationProperty
-					"reference" : null, // the current Reference
-					"schema" : null, // the current Schema
-					"type" : null, // the current EntityType/ComplexType
-					"result" : {}
-				},
-				oElement = oDocument.documentElement;
+			var oAggregate, oElement;
+
+			jQuery.sap.measure.average("convertXMLMetadata", "",
+				"sap.ui.model.odata.v4.lib._MetadataConverter");
+			oAggregate = {
+				"actionOrFunction" : null, // the current action or function
+				"aliases" : {}, // maps alias -> namespace
+				"annotatable" : null, // the current annotatable, see function annotatable
+				"entityContainer" : null, // the current EntityContainer
+				"entitySet" : null, // the current EntitySet/Singleton
+				"enumType" : null, // the current EnumType
+				"enumTypeMemberCounter" : 0, // the current EnumType member value counter
+				"namespace" : null, // the namespace of the current Schema
+				"navigationProperty" : null, // the current NavigationProperty
+				"reference" : null, // the current Reference
+				"schema" : null, // the current Schema
+				"type" : null, // the current EntityType/ComplexType
+				"result" : {}
+			};
+			oElement = oDocument.documentElement;
 
 			// first round: find aliases
 			MetadataConverter.traverse(oElement, oAggregate, oAliasConfig);
 			// second round, full conversion
 			MetadataConverter.traverse(oElement, oAggregate, oFullConfig);
+			jQuery.sap.measure.end("convertXMLMetadata");
 			return oAggregate.result;
 		},
 
@@ -1326,7 +1367,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					if (oChildConfig) {
 						vChildResult =
 							MetadataConverter.traverse(oChildNode, oAggregate, oChildConfig);
-						if (oConfig.__postProcessor) {
+						if (vChildResult !== undefined && oConfig.__postProcessor) {
+							// only push if the element is interested in the results and if the
+							// child element returns anything (it might be another Annotation which
+							// returns undefined)
 							aResult.push(vChildResult);
 						}
 					}

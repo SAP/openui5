@@ -1330,6 +1330,120 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("annotated annotations", function (assert) {
+		testConversion(assert, '\
+				<DataServices>\
+					<Schema Namespace="foo" Alias="f">\
+						<Annotation Term="f.Term1" String="Schema" Qualifier="q1">\
+							<Annotation Term="f.Term2" Qualifier="q2" String="Annotation2">\
+								<Annotation Term="f.Term3" Qualifier="q3" String="Annotation3"/>\
+							</Annotation>\
+						</Annotation>\
+						<ComplexType Name="ComplexType">\
+							<Annotation Term="f.Term1" String="ComplexType">\
+								<Annotation Term="f.Term2" String="Annotation"/>\
+							</Annotation>\
+						</ComplexType>\
+					</Schema>\
+				</DataServices>',
+			{
+				"foo": {
+					"$kind": "Schema",
+					"@foo.Term1#q1": "Schema",
+					"@foo.Term1#q1@foo.Term2#q2": "Annotation2",
+					"@foo.Term1#q1@foo.Term2#q2@foo.Term3#q3": "Annotation3",
+					"$Annotations": {
+						"foo.ComplexType": {
+							"@foo.Term1": "ComplexType",
+							"@foo.Term1@foo.Term2": "Annotation"
+						}
+					}
+				},
+				"foo.ComplexType": {
+					"$kind": "ComplexType"
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("annotated expressions", function (assert) {
+		testExpression(assert, '\
+				<Apply Function="f.Function">\
+					<Annotation Term="f.Term" String="Apply"/>\
+				</Apply>',
+			{
+				"$Apply": [],
+				"$Function": "foo.Function",
+				"@foo.Term": "Apply"
+			});
+		testExpression(assert, '\
+				<Cast Type="Edm.String">\
+					<Annotation Term="f.Term" String="Cast"/>\
+				</Cast>',
+			{
+				"$Cast": undefined,
+				"$Type": "Edm.String",
+				"@foo.Term": "Cast"
+			});
+		["And", "Eq", "Ge", "Gt", "If", "Le", "Lt", "Ne", "Or"].forEach(
+			function (sOperator) {
+				var sXml = '<' + sOperator + '><Annotation Term="f.Term" String="Annotation"/></'
+						+ sOperator + '>',
+					oExpected = {"@foo.Term": "Annotation"};
+
+				oExpected["$" + sOperator] = [];
+				testExpression(assert, sXml, oExpected);
+			});
+		testExpression(assert, '\
+				<IsOf Type="Edm.String">\
+					<Annotation Term="f.Term" String="IsOf"/>\
+				</IsOf>',
+			{
+				"$IsOf": undefined,
+				"$Type": "Edm.String",
+				"@foo.Term": "IsOf"
+			});
+		testExpression(assert, '\
+				<LabeledElement Name="LabeledElement" String="Foo">\
+					<Annotation Term="f.Term" String="LabeledElement"/>\
+				</LabeledElement>',
+			{
+				"$Name": "LabeledElement",
+				"$LabeledElement": "Foo",
+				"@foo.Term": "LabeledElement"
+			});
+		testExpression(assert, '\
+				<Not Type="Edm.String">\
+					<Annotation Term="f.Term" String="Not"/>\
+				</Not>',
+			{
+				"$Not": undefined,
+				"@foo.Term": "Not"
+			});
+		testExpression(assert, '\
+				<Null>\
+					<Annotation Term="f.Term" String="Null"/>\
+				</Null>',
+			{
+				"$Null": null,
+				"@foo.Term": "Null"
+			});
+		testExpression(assert, '\
+				<Record Type="f.Record">\
+					<Annotation Term="f.Term" String="Record"/>\
+					<PropertyValue Property="GivenName" Path="FirstName">\
+						<Annotation Term="f.Term" String="PropertyValue"/>\
+					</PropertyValue>\
+				</Record>',
+			{
+				"$Type": "foo.Record",
+				"GivenName": {"$Path": "FirstName"},
+				"@foo.Term": "Record",
+				"GivenName@foo.Term": "PropertyValue"
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
 		return Promise.all([
 			jQuery.ajax("/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata")
