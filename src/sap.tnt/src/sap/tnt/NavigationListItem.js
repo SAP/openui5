@@ -475,6 +475,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 				rm.writeAttribute("role", 'button');
 				rm.writeAttribute("aria-haspopup", true);
+			} else {
+				rm.write(' role="presentation" ');
 			}
 
 			rm.write(">");
