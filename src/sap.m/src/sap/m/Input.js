@@ -1333,14 +1333,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		function destroySuggestionPopup(oInput) {
-			// if the table is not removed before destroying the popup the table is also destroyed (table needs to stay because we forward the column and row aggregations to the table directly, they would be destroyed as well)
-			if (oInput._oList instanceof Table) {
-				oInput._oSuggestionPopup.removeAllContent();
-				// also remove the button/toolbar aggregation
-				oInput._removeShowMoreButton();
-			}
 
 			if (oInput._oSuggestionPopup) {
+
+				// if the table is not removed before destroying the popup the table is also destroyed (table needs to stay because we forward the column and row aggregations to the table directly, they would be destroyed as well)
+				if (oInput._oList instanceof Table) {
+					oInput._oSuggestionPopup.removeAllContent();
+					// also remove the button/toolbar aggregation
+					oInput._removeShowMoreButton();
+				}
+
 				oInput._oSuggestionPopup.destroy();
 				oInput._oSuggestionPopup = null;
 			}
