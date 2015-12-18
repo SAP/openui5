@@ -289,11 +289,7 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			var sCssTransition = "opacity " + mSettings.animationTimingFunction + " " + mSettings.animationDuration + "ms",
 				sTransitionEnd = "webkitTransitionEnd." + CSSCLASS + " transitionend." + CSSCLASS;
 
-			if (!sap.ui.getCore().getConfiguration().getAnimation()) {
-				sCssTransition = "0ms";
-			}
-
-			if (mSettings.animationDuration > 0) {
+			if (sap.ui.getCore().getConfiguration().getAnimation() && mSettings.animationDuration > 0) {
 				$MessageToastDomRef[0].style.webkitTransition = sCssTransition;
 				$MessageToastDomRef[0].style.transition = sCssTransition;
 				$MessageToastDomRef[0].style.opacity = 0;
