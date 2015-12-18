@@ -222,7 +222,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			case "Bool":
 				return sValue === "true";
 			case "EnumMember":
-				aValues = sValue.split(" ");
+				aValues = sValue.trim().replace(/ +/g, " ").split(" ");
 				aValues.forEach(function (sPath, i) {
 					aValues[i] = MetadataConverter.resolveAliasInPath(sPath, oAggregate);
 				});

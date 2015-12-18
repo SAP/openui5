@@ -841,7 +841,7 @@ sap.ui.require([
 							<Annotation Term="f.Decimal" Decimal="3.14" />\
 							<Annotation Term="f.Duration" Duration="P11D23H59M59S" />\
 							<Annotation Term="f.EnumMember"\
-								EnumMember="f.Enum/Member1  f.Enum/Member2"/>\
+								EnumMember="f.Enum/Member1 f.Enum/Member2"/>\
 							<Annotation Term="f.Float1" Float="2.718" />\
 							<Annotation Term="f.Float2" Float="NaN" />\
 							<Annotation Term="f.Float3" Float="INF" />\
@@ -881,7 +881,9 @@ sap.ui.require([
 							},
 							"@foo.Decimal": {"$Decimal" : "3.14"},
 							"@foo.Duration": {"$Duration" : "P11D23H59M59S"},
-							"@foo.EnumMember": {"$EnumMember" : "foo.Enum/Member1  foo.Enum/Member2"},
+							"@foo.EnumMember": {
+								"$EnumMember" : "foo.Enum/Member1 foo.Enum/Member2"
+							},
 							"@foo.Float1": 2.718,
 							"@foo.Float2": {"$Float": "NaN"},
 							"@foo.Float3": {"$Float": "INF"},
@@ -925,8 +927,8 @@ sap.ui.require([
 		testExpression(assert, '<Decimal>3.14</Decimal>', {"$Decimal" : "3.14"});
 		testExpression(assert, '<Duration>P11D23H59M59S</Duration>',
 			{"$Duration" : "P11D23H59M59S"});
-		testExpression(assert, '<EnumMember>foo.Enum/Member1  foo.Enum/Member2</EnumMember>',
-			{"$EnumMember" : "foo.Enum/Member1  foo.Enum/Member2"});
+		testExpression(assert, '<EnumMember> foo.Enum/Member1  foo.Enum/Member2 </EnumMember>',
+			{"$EnumMember" : "foo.Enum/Member1 foo.Enum/Member2"});
 		testExpression(assert, '<Float>2.718</Float>', 2.718);
 		testExpression(assert, '<Float>NaN</Float>', {"$Float": "NaN"});
 		testExpression(assert, '<Float>-INF</Float>', {"$Float": "-INF"});
