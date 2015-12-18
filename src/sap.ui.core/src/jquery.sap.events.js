@@ -939,8 +939,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 		}
 
 		// Simulate mouse events on touch devices
-		// Except for Windows Phone with touch events support.
-		if (Device.support.touch && !Device.support.pointer) {
+		// Except for Windows Phone (<10): IE supports touch events but fires mouse events based on pointer events without delay.
+		// In Edge on Windows Phone 10 the mouse events are delayed like in other browsers
+		if (Device.support.touch && !(Device.os.windows_phone && Device.os.version < 10)) {
 			var bFingerIsMoved = false,
 				iMoveThreshold = jQuery.vmouse.moveDistanceThreshold,
 				iStartX, iStartY,
