@@ -5,13 +5,11 @@ sap.ui.define(['jquery.sap.global'],
 	function (jQuery) {
 		"use strict";
 
-
 		/**
 		 * Popover renderer.
 		 * @namespace
 		 */
 		var PopoverRenderer = {};
-
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -19,25 +17,25 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 */
-		PopoverRenderer.render = function (rm, oControl) {
+		PopoverRenderer.render = function(rm, oControl) {
 			var aClassNames;
 
-			//container
+			// container
 			rm.write("<div");
 			rm.writeControlData(oControl);
-
 			aClassNames = this.generateRootClasses(oControl);
-			aClassNames.forEach(function (sClassName, index) {
+			aClassNames.forEach(function(sClassName, index) {
 				rm.addClass(sClassName);
 			});
 			rm.writeClasses();
 
 			var sTooltip = oControl.getTooltip_AsString();
+
 			if (sTooltip) {
 				rm.writeAttributeEscaped("title", sTooltip);
 			}
-			rm.writeAttribute("tabindex", "-1");
 
+			rm.writeAttribute("tabindex", "-1");
 			rm.writeAccessibilityState(oControl, {
 				role: "dialog"
 			});
@@ -49,13 +47,11 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			rm.write(">");
-
 			this.renderContent(rm, oControl);
-
-			rm.write("</div>");// container
+			rm.write("</div>");	// container
 		};
 
-		PopoverRenderer.isButtonFooter = function (footer) {
+		PopoverRenderer.isButtonFooter = function(footer) {
 			if (footer instanceof sap.m.Bar) {
 				var aContentLeft = footer.getContentLeft(),
 					aContentRight = footer.getContentRight(),
@@ -76,7 +72,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		};
 
-		PopoverRenderer.renderContent = function (rm, oControl) {
+		PopoverRenderer.renderContent = function(rm, oControl) {
 			var oHeader,
 				sId = oControl.getId(),
 				i = 0,
@@ -92,23 +88,29 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			if (sap.ui.Device.system.desktop) {
-				//Invisible element for cycling keyboard navigation
+
+				// invisible element for cycling keyboard navigation
 				rm.write("<span class='sapMPopoverHiddenFocusable' id='" + oControl.getId() + "-firstfe' tabindex='0'></span>");
 			}
 
-			//header
+			// header
 			if (oHeader) {
+
 				if (oHeader.applyTagAndContextClassFor) {
 					oHeader.applyTagAndContextClassFor("header");
 				}
+
 				oHeader.addStyleClass("sapMPopoverHeader");
 				rm.renderControl(oHeader);
-			}//header
+			}
 
+			// sub header
 			if (oSubHeader) {
+
 				if (oSubHeader.applyTagAndContextClassFor) {
 					oSubHeader.applyTagAndContextClassFor("subheader");
 				}
+
 				oSubHeader.addStyleClass("sapMPopoverSubHeader");
 				rm.renderControl(oSubHeader);
 			}
@@ -116,12 +118,15 @@ sap.ui.define(['jquery.sap.global'],
 			// content container
 			rm.write("<div");
 			rm.writeAttribute("id", sId + "-cont");
+
 			if (sContentWidth) {
 				rm.addStyle("width", sContentWidth);
 			}
+
 			if (sContentHeight) {
 				rm.addStyle("height", sContentHeight);
 			}
+
 			rm.writeStyles();
 			rm.addClass("sapMPopoverCont");
 			rm.writeClasses();
@@ -141,39 +146,44 @@ sap.ui.define(['jquery.sap.global'],
 			for (i = 0; i < contents.length; i++) {
 				rm.renderControl(contents[i]);
 			}
-			rm.write("</div>");//scrollArea
 
-			rm.write("</div>");//content container
+			rm.write("</div>");	// scroll area
+			rm.write("</div>");	// content container
 
-			//footer
+			// footer
 			if (oFooter) {
+
 				if (oFooter.applyTagAndContextClassFor) {
 					oFooter.applyTagAndContextClassFor("footer");
-					//TODO: check if this should also be added to a Bar instance
+
+					// TODO: check if this should also be added to a bar instance
 					oFooter.addStyleClass("sapMTBNoBorders");
 				}
+
 				if (this.isButtonFooter(oFooter)) {
 					sFooterClass += "sapMPopoverSpecialFooter";
 				}
-				rm.renderControl(oFooter.addStyleClass(sFooterClass));
-			}//footer
 
+				rm.renderControl(oFooter.addStyleClass(sFooterClass));
+			}
+
+			// arrow
 			if (oControl.getShowArrow()) {
-				//arrow
 				rm.write("<span");
 				rm.writeAttribute("id", sId + "-arrow");
 				rm.addClass("sapMPopoverArr");
 				rm.writeClasses();
-				rm.write("></span>");//arrow tip
+				rm.write("></span>");	// arrow tip
 			}
 
 			if (sap.ui.Device.system.desktop) {
-				//Invisible element for desktop keyboard navigation
+
+				// invisible element for desktop keyboard navigation
 				rm.write("<span class='sapMPopoverHiddenFocusable' id='" + oControl.getId() + "-lastfe' tabindex='0'></span>");
 			}
 		};
 
-		PopoverRenderer.generateRootClasses = function (oControl) {
+		PopoverRenderer.generateRootClasses = function(oControl) {
 			var aClassNames = ["sapMPopover"],
 				oSubHeader = oControl.getSubHeader(),
 				oFooter = oControl.getFooter(),
@@ -204,6 +214,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (oControl._hasSinglePageContent()) {
 				aClassNames.push("sapMPopoverPage");
 			}
+
 			if (oFooter) {
 				aClassNames.push("sapMPopoverWithFooter");
 			} else {
@@ -213,9 +224,11 @@ sap.ui.define(['jquery.sap.global'],
 			if (oControl.getPlacement() === sap.m.PlacementType.Top) {
 				aClassNames.push("sapMPopoverPlacedTop");
 			}
+
 			if (!bVerScrollable) {
 				aClassNames.push("sapMPopoverVerScrollDisabled");
 			}
+
 			if (!bHorScrollable) {
 				aClassNames.push("sapMPopoverHorScrollDisabled");
 			}
@@ -231,30 +244,28 @@ sap.ui.define(['jquery.sap.global'],
 			return aClassNames.concat(oControl.aCustomStyleClasses);
 		};
 
-		PopoverRenderer.rerenderContentOnly = function (oControl) {
+		PopoverRenderer.rerenderContentOnly = function(oControl) {
 			var $Popover = oControl.$(),
 				oPopoverDomRef = oControl.getDomRef(),
 				aClassNames, oRm;
 
 			if (!oPopoverDomRef) {
-				//popover isn't rendered yet, just return
+
+				// popover isn't rendered yet, just return
 				return;
 			}
 
 			$Popover.removeClass();
 			aClassNames = this.generateRootClasses(oControl);
 			$Popover.addClass(aClassNames.join(" "));
-
 			oRm = sap.ui.getCore().createRenderManager();
 			this.renderContent(oRm, oControl);
-
 			oRm.flush(oPopoverDomRef, true);
 			oRm.destroy();
 
-			//recalculate the size and position of popover
+			// recalculate the size and position of popover
 			oControl._onOrientationChange();
 		};
-
 
 		return PopoverRenderer;
 
