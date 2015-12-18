@@ -416,8 +416,10 @@ sap.ui.require([
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 
 		oMetaModelMock.expects("requestCanonicalUrl").returns(Promise.resolve(""));
-		this.mock(jQuery.sap).expects("assert")
-			.withExactArgs(false, "oEntityContext must belong to this model");
+		if (jQuery.sap.log.getLevel() > jQuery.sap.log.LogLevel.ERROR) { // not for minified code
+			this.mock(jQuery.sap).expects("assert")
+				.withExactArgs(false, "oEntityContext must belong to this model");
+		}
 
 		oModel.requestCanonicalPath(oEntityContext);
 	});
