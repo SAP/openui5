@@ -41,7 +41,7 @@
 						})
 					]
 				});
-				this.sut.placeAt('content');
+				this.sut.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
 			afterEach: function () {
@@ -222,7 +222,7 @@
 						type: sap.m.ButtonType.Transparent
 					})
 				});
-				this.sut.placeAt('content');
+				this.sut.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
 			afterEach: function () {
@@ -328,7 +328,7 @@
 						})
 					]
 				});
-				this.sut.placeAt('content');
+				this.sut.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
 			afterEach: function () {
@@ -408,7 +408,7 @@
 					selectedItem: _aItems[0],
 					items: _aItems
 				});
-				this.sut.placeAt('content');
+				this.sut.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
 			afterEach: function () {
@@ -524,7 +524,7 @@
 		});
 
 		test("Initial selection if no selected item is passed", function () {
-			//arragnge
+			//arrange
 			this.sut = new sap.m.TabStrip({
 				items: this.items
 			});
@@ -540,11 +540,67 @@
 				selectedItem: this.selectedItem,
 				items: this.items
 			});
-			this.sut.placeAt('content');
+			this.sut.placeAt('qunit-fixture');
 			oCore.applyChanges();
 			//assert
 			strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
 			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass("selected"), "The initial selection is applied correctly");
+		});
+
+		module("Tablet platform tests", {
+			beforeEach: function () {
+				this.oOriginalSysInfo = this.getSystemInfo();
+				this.prepareSystem();
+				this.oTS = new sap.m.TabStrip({
+					hasSelect: true,
+					items: [
+						new sap.m.TabStripItem({key: "0", text: "01234567890123456789012345"}),
+						new sap.m.TabStripItem({key: "1", text: "item 1"}),
+						new sap.m.TabStripItem({key: "2", text: "item 2"})
+					]
+				});
+				this.oTS.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.restoreSystemValues();
+				this.oTS.destroy();
+				this.oTS = null;
+			},
+			getSystemInfo: function () {
+				return {
+					desktop: sap.ui.Device.system.desktop,
+					tablet: sap.ui.Device.system.tablet,
+					phone: sap.ui.Device.system.phone
+				}
+			},
+			prepareSystem: function () {
+				sap.ui.Device.system.desktop = false;
+				sap.ui.Device.system.tablet = true;
+				sap.ui.Device.system.phone = false;
+				jQuery("html").removeClass("sap-desktop");
+				jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+				jQuery("html").addClass("sap-tablet");
+				jQuery("html").addClass("sapUiMedia-Std-Tablet");
+			},
+			restoreSystemValues: function () {
+				sap.ui.Device.system.desktop = this.oOriginalSysInfo.desktop;
+				sap.ui.Device.system.tablet = this.oOriginalSysInfo.tablet;
+				sap.ui.Device.system.phone = this.oOriginalSysInfo.phone;
+				jQuery("html").removeClass("sap-tablet");
+				jQuery("html").removeClass("sapUiMedia-Std-Tablet");
+				jQuery("html").addClass("sap-desktop");
+				jQuery("html").addClass("sapUiMedia-Std-Desktop");
+			}
+		});
+
+		test("All close buttons are visible on tablet", function () {
+			//arrange
+			var fnAreAllItemsButtonsVisible = function (oItem) {
+				return oItem.$().find("button").css("visibility") === 'visible';
+			};
+			//assert
+			ok(this.oTS.getItems().every(fnAreAllItemsButtonsVisible), "All buttons on tablet are visible");
 		});
 	</script>
 </head>

@@ -107,9 +107,9 @@
 				}
 				&.selected, &:hover {
 					padding: 0 1.25rem 0 0.25rem;
-						.sapMTSTabCloseBtnCnt {
-							visibility: visible;
-						}
+					.sapMTSTabCloseBtnCnt {
+						visibility: visible;
+					}
 				}
 				&.sapMTabContainerItemModified {
 					.sapMTabContainerItemLabel:after {
@@ -334,35 +334,28 @@
 .sap-phone {
 	.sapMTabStrip {
 		.sapMTSLeftOverflowButtons {
-			.sapMBtn {
-				.sapMBtnInner  {
-					.sapUiIcon {
-					}
-				}
-			}
+			display: none;
 		}
+		.sapMTSTabContainer {
+			display: none;
+		}
+		.sapMTSRightOverflowButtons {
+			display: none;
+		}
+	}
+}
+
+/* ============================================= */
+/* Tablet styles                                  */
+/* ============================================= */
+.sap-tablet {
+	.sapMTabStrip {
 		.sapMTSTabContainer {
 			.sapMTSTabs {
 				.sapMTabContainerItem {
-					.sapMTabContainerItemModified {
-					}
-					.sapMTabContainerItemModifiedInvisible {
-					}
-				}
-			}
-		}
-		.sapMTSRightOverflowButtons {
-			.sapMBtn {
-				.sapMBtnInner  {
-					.sapUiIcon {
-					}
-				}
-			}
-		}
-		.sapMTSTouchArea {
-			.sapMBtn {
-				.sapMBtnInner {
-					.sapMBtnIcon {
+					padding: 0 1.25rem 0 0.25rem;
+					.sapMTSTabCloseBtnCnt {
+						visibility: visible;
 					}
 				}
 			}
