@@ -1074,7 +1074,7 @@
 			"Filtering",
 			"Sorting and Grouping",
 			"Remote OData Service",
-			"Mock Server and Automatic Model Instantiation",
+			"Mock Server Configuration",
 			"Unit Test with QUnit",
 			"Integration Test with OPA",
 			"Debugging Tools",
