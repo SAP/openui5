@@ -95,7 +95,8 @@ sap.ui.define([
 	 */
 
 	ObjectPageSection.prototype.onkeyup = function (oEvent) {
-		if (oEvent.keyCode === jQuery.sap.KeyCodes.TAB && this._getObjectPageLayout()._isFirstSection(this)) {
+		var eventTarget = sap.ui.getCore().byId(jQuery(oEvent.target).attr("id"));
+		if (oEvent.keyCode === jQuery.sap.KeyCodes.TAB && eventTarget instanceof sap.uxap.ObjectPageSection && this._getObjectPageLayout()._isFirstSection(this)) {
 			this._getObjectPageLayout().$("opwrapper").scrollTop(0);
 		}
 	};
