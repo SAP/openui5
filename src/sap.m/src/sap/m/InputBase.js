@@ -1086,10 +1086,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * @see sap.ui.core.Element.refreshDataState
+	 * This method is called in case an AggregatedDataStateChange happens.
 	 */
 	InputBase.prototype.refreshDataState = function(sName, oDataState) {
-		if (sName === "value" && oDataState.getMessages()) {
+		if (oDataState.getChanges().messages) {
 			this.propagateMessages(sName, oDataState.getMessages());
 		}
 	};
