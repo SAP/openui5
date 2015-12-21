@@ -1124,6 +1124,10 @@ sap.ui.define([
 					oEntry[sName] = oProperty;
 				}
 			});
+			// if we got new data we have to update changed entities
+			var oMap = {};
+			oMap[sKey] = oEntry;
+			this._updateChangedEntities(oMap);
 			mChangedEntities[sKey] = true;
 			return sKey;
 		}
@@ -2355,6 +2359,7 @@ sap.ui.define([
 					};
 					this.mChangeHandles[oRequest.key] = oRequestHandle;
 				}
+
 				if (oRequest.method !== "GET") {
 					oChangeRequest.data = oRequest.data;
 					// for POST function imports we also need to replace the URI
@@ -2479,6 +2484,7 @@ sap.ui.define([
 									}
 									oChangeSet.__changeRequests.push(aChangeSet[i].request);
 									aChanges.push(aChangeSet[i]);
+									delete that.mChangeHandles[aChangeSet[i].request.key];
 								}
 							}
 							if (oChangeSet.__changeRequests && oChangeSet.__changeRequests.length > 0) {
@@ -2633,7 +2639,7 @@ sap.ui.define([
 				mLocalChangeEntities[aParts[1]] = oRequest;
 				//cleanup of this.mChangedEntities; use only the actual response key
 				var oMap = {};
-				oMap[aParts[1]] = oRequest;
+				oMap[aParts[1]] = oRequest.data;
 				this._updateChangedEntities(oMap);
 			}
 			//for delete requests delete data in model
@@ -3847,18 +3853,22 @@ sap.ui.define([
 			});
 		}
 		
-		jQuery.each(mChangedEntities, function(sKey, oRequest) {
+		jQuery.each(mChangedEntities, function(sKey, oData) {
 			if (sKey in that.mChangedEntities) {
 				var oEntry = that._getObject('/' + sKey, null, true);
 				var oChangedEntry = that._getObject('/' + sKey);
 				
-				jQuery.sap.extend(true, oEntry, oRequest.data);
+				jQuery.sap.extend(true, oEntry, oData);
 				
 				sRootPath = '/' + sKey;
 				updateChangedEntities(oEntry, oChangedEntry);
 				
 				if (jQuery.isEmptyObject(oChangedEntry)) {
 					delete that.mChangedEntities[sKey];
+					if (that.mChangeHandles[sKey]) {
+						that.mChangeHandles[sKey].abort();
+						delete that.mChangeHandles[sKey];
+					}
 				} else {
 					that.mChangedEntities[sKey] = oChangedEntry;
 					oChangedEntry.__metadata = {};
@@ -3905,6 +3915,7 @@ sap.ui.define([
 					if (jQuery.isEmptyObject(that.mChangedEntities[sKey]) || !oEntityInfo.propertyPath) {
 						that.metadataLoaded().then(function() {
 							that.mChangeHandles[sKey].abort();
+							delete that.mChangeHandles[sKey];
 						});
 						delete that.mChangedEntities[sKey];
 					} else {
@@ -3989,6 +4000,7 @@ sap.ui.define([
 					//setProperty with no change does not create a request the first time so no handle exists
 					if (that.mChangeHandles[sKey]) {
 						that.mChangeHandles[sKey].abort();
+						delete that.mChangeHandles[sKey];
 					}
 				});
 				delete this.mChangedEntities[sKey];
