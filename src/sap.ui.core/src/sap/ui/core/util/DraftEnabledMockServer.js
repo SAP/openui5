@@ -312,10 +312,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 			jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 				jQuery.each(oMockdata[sEntitySetName], function(iIndex, oEntry) {
 					// add the metadata for the entry
-					oEntry.__metadata = {
-						uri: sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")",
-						type: oEntitySet.schema + "." + oEntitySet.type
-					};
+					oEntry.__metadata = oEntry.__metadata || {};
+					oEntry.__metadata.uri = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
+					oEntry.__metadata.type = oEntitySet.schema + "." + oEntitySet.type;
 					// add the navigation properties
 					jQuery.each(oEntitySet.navprops, function(sKey) {
 						oEntry[sKey] = {
@@ -479,11 +478,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 					// add the metadata for the entry
 					var sRootUri = that._getRootUri();
 					var oEntitySet = that._mEntitySets[that._oDraftMetadata.draftRootName];
-					oDraftEntry.__metadata = {
-						uri: sRootUri + that._oDraftMetadata.draftRootName + "(" + that._createKeysString(oEntitySet,
-							oDraftEntry) + ")",
-						type: oEntitySet.schema + "." + oEntitySet.type
-					};
+					oDraftEntry.__metadata = oDraftEntry.__metadata || {};
+					oDraftEntry.__metadata.uri = sRootUri + that._oDraftMetadata.draftRootName + "(" + that._createKeysString(oEntitySet,
+							oDraftEntry) + ")";
+					oDraftEntry.__metadata.type = oEntitySet.schema + "." + oEntitySet.type;
 					// add the navigation properties
 					jQuery.each(oEntitySet.navprops, function(sKey) {
 						oDraftEntry[sKey] = {
