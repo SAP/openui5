@@ -244,7 +244,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Wizard.prototype.goToStep = function (step, focusFirstStepElement) {
-			if (this._scrollLocked) {
+			if (this._scrollLocked || !this.getVisible()) {
 				/**
 				 * Defensive code
 				 * Prevents an endless loop, if the developer calls
