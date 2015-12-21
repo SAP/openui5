@@ -1133,6 +1133,32 @@
 		});
 	});
 	
+	asyncTest("test oDataModel setProperty - hasPendingChanges", function() {
+		oModel.setDefaultBindingMode("TwoWay");
+		var oDateType = new sap.ui.model.type.DateTime(); 
+		var oInput = new sap.m.DateTimeInput({type: "DateTime", value: {path:"/ProductSet('AD-1000')/CreatedAt", type: oDateType, formatOptions: { style: 'medium', strictParsing: true}}});
+		oInput.setModel(oModel);
+		oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				var vDate = oModel.getProperty("/ProductSet('AD-1000')/CreatedAt");
+				oModel.setProperty("/ProductSet('AD-1000')/CreatedAt", new Date());
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				oModel.setProperty("/ProductSet('AD-1000')/CreatedAt", vDate);
+				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+				vDate = oInput.getValue();
+				oInput.setValue("Mar 12, 2015, 4:21:19 PM");
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				oInput.setValue(vDate);
+				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+				oInput.destroy();
+				start();
+			},
+			error: function() {
+				ok(false, "reqauest failed");
+			}
+		});
+	});
+	
 	asyncTest("test oDataModel create", function() {
 		var iCount = 0;
 		var bCreate = false;
