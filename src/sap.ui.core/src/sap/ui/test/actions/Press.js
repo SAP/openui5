@@ -40,29 +40,29 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], func
 					y = $FocusDomRef.offset().y;
 
 				// See file jquery.sap.events.js for some insights to the magic
-				var oEventObject = {
-					targetTouches: [{
-						identifier: 1,
-						// Well offset should be fine here
-						pageX: x,
-						pageY: y,
-						// ignore scrolled down stuff in OPA
-						clientX: x,
-						clientY: y,
-						// Assume stuff is over the whole screen
-						screenX: x,
-						screenY: y,
-						target: oFocusDomRef,
-						radiusX: 1,
-						radiusY: 1,
-						rotationAngle: 0
-					}],
-					touches: []
+				var oMouseEventObject = {
+					identifier: 1,
+					// Well offset should be fine here
+					pageX: x,
+					pageY: y,
+					// ignore scrolled down stuff in OPA
+					clientX: x,
+					clientY: y,
+					// Assume stuff is over the whole screen
+					screenX: x,
+					screenY: y,
+					target: oFocusDomRef,
+					radiusX: 1,
+					radiusY: 1,
+					rotationAngle: 0
 				};
 
-				QUnitUtils.triggerEvent("saptouchstart", oFocusDomRef,oEventObject);
-				$FocusDomRef.trigger("tap");
-				QUnitUtils.triggerEvent("saptouchend", oFocusDomRef, oEventObject);
+
+				// the missing events like saptouchstart and tap will be fired by the event simulation
+				QUnitUtils.triggerEvent("mousedown", oFocusDomRef,oMouseEventObject);
+				QUnitUtils.triggerEvent("selectstart", oFocusDomRef);
+				QUnitUtils.triggerEvent("mouseup", oFocusDomRef,oMouseEventObject);
+				QUnitUtils.triggerEvent("click", oFocusDomRef, oMouseEventObject);
 			} else {
 				$.sap.log.error("Control " + oControl + " has no dom representation", this._sLogPrefix);
 			}
