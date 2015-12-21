@@ -176,10 +176,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 			return;
 		}
 
-		if (jQuery("html").attr("data-sap-ui-browser") != "ie8") {
-			if (oEvent.source != this._oRemoteWindow) {
+		if (oEvent.source != this._oRemoteWindow) {
 				return;
-			}
 		}
 
 		this._oRemoteOrigin = oEvent.origin;
