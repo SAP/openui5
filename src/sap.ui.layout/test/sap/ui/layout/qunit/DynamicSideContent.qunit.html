@@ -679,13 +679,34 @@
 
 				QUnit.test("Side Content has correct aria attributes",function(){
 					var sSideContentTag = sap.ui.Device.browser.firefox ? "div" : "aside",
-						$sideContent = $("#" + this._oDSC.getId() + "-SCGridCell"),
-						//$sideContent = this.oDSC.$().find("> aside"),
-						oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+							$sideContent = $("#" + this._oDSC.getId() + "-SCGridCell"),
+					//$sideContent = this.oDSC.$().find("> aside"),
+							oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 
 					strictEqual($sideContent.length, 1, "Side Content has correct " + sSideContentTag + " tag");
 					strictEqual($sideContent.attr("role"), "complementary", "Side Content has correct role 'complementary'");
 					strictEqual($sideContent.attr("aria-label"), oMessageBundle.getText(SIDE_CONTENT_LABEL), "Side Content has correct 'aria-role' " + oMessageBundle.getText(SIDE_CONTENT_LABEL));
+				});
+
+				QUnit.module("Invalidation", {
+					setup : function () {
+						this._oDSC = new sap.ui.layout.DynamicSideContent({showSideContent: false, containerQuery: true});
+						this._oDSC.placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+					},
+					teardown : function () {
+						this._oDSC = null;
+					}
+				});
+
+				QUnit.test("Side Content invisible after invalidation",function() {
+					var SC_GRID_CELL_SELECTOR = "SCGridCell",
+						HIDDEN_CLASS = "sapUiHidden";
+
+					this._oDSC.invalidate();
+					sap.ui.getCore().applyChanges();
+
+					ok(this._oDSC.$(SC_GRID_CELL_SELECTOR).hasClass(HIDDEN_CLASS), "Side content in invisible");
 				});
 
 			})(jQuery);

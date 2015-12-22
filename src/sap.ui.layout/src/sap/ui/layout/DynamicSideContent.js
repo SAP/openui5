@@ -308,14 +308,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		DynamicSideContent.prototype.onAfterRendering = function () {
 			if (this.getContainerQuery()) {
 				this._attachContainerResizeListener();
-				this._handleMediaChange();
 			} else {
 				var that = this;
 				jQuery(window).resize(function() {
 					that._handleMediaChange();
 				});
-				this._changeGridState();
 			}
+			this._changeGridState();
 			this._initScrolling();
 		};
 
