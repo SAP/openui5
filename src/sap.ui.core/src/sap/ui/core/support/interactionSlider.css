@@ -1,0 +1,68 @@
+#interactionSlider {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    /*left: 250px;*/
+    left: 0px;
+    cursor: pointer;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#interactionSlideHandle,
+#interactionLeftHandle,
+#interactionRightHandle {
+    display: inline-block;
+}
+
+#interactionSlideHandle {
+    position: relative;
+    height: 50px;
+    box-sizing: border-box;
+    border-right: 1px solid #457BAA;
+    border-left: 1px solid #457BAA;
+    top: -1px;
+}
+
+#interactionSlideHandle::before,
+#interactionSlideHandle::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: #D9E6EF;
+    width: 10000px;
+    pointer-events: none;
+}
+
+#interactionSlideHandle::before {
+    margin-right: 100%;
+    right: 1px;
+}
+
+#interactionSlideHandle::after {
+    margin-left: 100%;
+    left: 1px;
+}
+
+#interactionLeftHandle,
+#interactionRightHandle {
+    position: absolute;
+    height: 100%;
+    width: 3px;
+    cursor: ew-resize;
+    overflow: hidden;
+    background: #457BAA;
+}
+
+#interactionLeftHandle {
+    left: 0;
+}
+
+#interactionRightHandle {
+    right: 0;
+}
