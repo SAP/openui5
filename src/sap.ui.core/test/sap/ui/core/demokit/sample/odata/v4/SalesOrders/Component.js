@@ -50,6 +50,8 @@ sap.ui.define([
 						: {source : "metadata.xml"},
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=100"
 						: {source : "BusinessPartnerList.json"},
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/ProductList('HT-1000')/Name"
+						: {source : "Product_Name.json"},
 					// TODO enhance TestUtils to support also regular expressions as URLs
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList\
 ?$expand=SO_2_BP&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=0&$top=5"

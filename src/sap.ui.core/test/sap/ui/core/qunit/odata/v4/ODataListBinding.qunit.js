@@ -76,7 +76,7 @@ sap.ui.require([
 		},
 
 		/**
-		 * Creates a Sinon expectation for the read method of the Cache.
+		 * Creates a sinon mock for a cache object with read and refresh methods.
 		 * @returns {object}
 		 *   a Sinon mock for the created cache object
 		 */
