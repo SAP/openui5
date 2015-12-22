@@ -79,7 +79,7 @@
 			fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
 		};
 
-	var iLoadingDelay = 1000;
+	var iLoadingDelay = 2500;
 	var oConfigModel = new JSONModel("model/OPLazyLoadingWithTabs.json");
 
 	var oView = xmlview("UxAP-27_ObjectPageConfig", {
