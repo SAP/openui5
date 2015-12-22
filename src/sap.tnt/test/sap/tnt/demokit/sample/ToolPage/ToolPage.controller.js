@@ -13,6 +13,7 @@ sap.ui.define([
 		data : {
 			navigation: [{
 				title: 'Root Item',
+				key: 'root1',
 				icon: 'sap-icon://employee',
 				expanded: true,
 				items: [{

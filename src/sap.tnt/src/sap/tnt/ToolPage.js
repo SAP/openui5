@@ -31,7 +31,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 				library: 'sap.tnt',
 				properties: {
 					/**
-					 * Indicates if the side area is expanded.
+					 * Indicates if the side area is expanded. Overrides the expanded property of the sideContent aggregation.
 					 */
 					sideExpanded: {type: 'boolean', group: 'Misc', defaultValue: true}
 				},
