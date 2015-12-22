@@ -74,15 +74,22 @@ sap.ui.define([
 			);
 		},
 
-		onRefresh : function (oEvent) {
-			this.getView().byId("SalesOrders").getBinding("items").refresh(true);
+		onRefreshFavoriteProduct : function (oEvent) {
+			var oBinding = this.getView().byId("FavoriteProduct").getBinding("text");
+			if (oBinding) {
+				oBinding.refresh(true);
+			}
 		},
 
-		onRefreshSalesOrder : function (oEvent) {
+		onRefreshSalesOrderDetails : function (oEvent) {
 			var oBinding = this.getView().byId("ObjectPage").getElementBinding();
 			if (oBinding) {
 				oBinding.refresh(true);
 			}
+		},
+
+		onRefreshSalesOrdersList : function (oEvent) {
+			this.getView().byId("SalesOrders").getBinding("items").refresh(true);
 		},
 
 		onSalesOrdersSelect : function (oEvent) {

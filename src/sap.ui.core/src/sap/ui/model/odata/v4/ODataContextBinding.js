@@ -118,8 +118,10 @@ sap.ui.define([
 			}
 
 			function reject(oError) {
-				jQuery.sap.log.error(message(), oError,
-					"sap.ui.model.odata.v4.ODataContextBinding");
+				if (!oError.canceled) {
+					jQuery.sap.log.error(message(), oError,
+						"sap.ui.model.odata.v4.ODataContextBinding");
+				}
 				fnReject(oError);
 			}
 
