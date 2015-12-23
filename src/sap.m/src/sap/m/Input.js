@@ -1724,6 +1724,33 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		return this._callMethodInManagedObject("getBindingPath", sAggregationName);
 	};
 
+	Input.prototype.clone = function() {
+		var oInputClone = sap.ui.core.Control.prototype.clone.apply(this, arguments),
+			bindingInfo;
+
+		// add suggestion columns
+		bindingInfo = this.getBindingInfo("suggestionColumns");
+		if (bindingInfo) {
+			oInputClone.bindAggregation("suggestionColumns", bindingInfo);
+		} else {
+			this.getSuggestionColumns().forEach(function(oColumn){
+				oInputClone.addSuggestionColumn(oColumn.clone(), true);
+			});
+		}
+
+		// add suggestion rows
+		bindingInfo = this.getBindingInfo("suggestionRows");
+		if (bindingInfo) {
+			oInputClone.bindAggregation("suggestionRows", bindingInfo);
+		} else {
+			this.getSuggestionRows().forEach(function(oRow){
+				oInputClone.addSuggestionRow(oRow.clone(), true);
+			});
+		}
+
+		return oInputClone;
+	};
+
 	/* =========================================================== */
 	/*           end: forward aggregation methods to table         */
 	/* =========================================================== */
