@@ -125,6 +125,9 @@
 			}
 		}
 	
-	}
+	},
+
+	"foo": {},
+	"foo.bar": "string as entry value is not valid!"
 
 }

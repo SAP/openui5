@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	/**
 	 * Utility function which adds SAP-specific search parameters to an URI instance
 	 *
-	 * @param {object} oUriParams See <code>jQuery.sap.getUriParameters()</code>
+	 * @param {object} oUriParams See {@link jQuery.sap.getUriParameters}
 	 * @param {URI} oUri URI.js instance
 	 * @private
 	 */
@@ -247,8 +247,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Returns the configuration of a manifest section with the specified key.
-	 * If no key is specified, the return value is null.
+	 * Returns the configuration of a manifest section or the value for a
+	 * specific path. If no section or key is specified, the return value is null.
 	 *
 	 * Example:
 	 * <code>
@@ -257,7 +257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *       "dependencies": {
 	 *         "libs": {
 	 *           "sap.m": {}
-	 *         },
+	 *         }, 
 	 *         "components": {
 	 *           "my.component.a": {}
 	 *         }
@@ -265,30 +265,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *   });
 	 * </code>
 	 *
-	 * The configuration above can be accessed via <code>oComponent.getManifestEntry("sap.ui5")</code>.
+	 * The configuration above can be accessed in the following ways: 
+	 * <ul>
+	 * <li><b>By section/namespace</b>: <code>oComponent.getManifestEntry("sap.ui5")</code></li>
+	 * <li><b>By path</b>: <code>oComponent.getManifestEntry("/sap.ui5/dependencies/libs")</code></li>
+	 * </ul>
 	 *
-	 * @param {string} sKey Key of the manifest section (must be prefixed with a namespace / separated with dots)
-	 * @return {any|null} the configuration of a manifest section
+	 * By section/namespace returns the configuration for the specified manifest
+	 * section and by path allows to specify a concrete path to a dedicated entry
+	 * inside the manifest. The path syntax always starts with a slash (/).
+	 *
+	 * @param {string} sKey Either the manifest section name (namespace) or a concrete path
+	 * @return {any|null} Value of the manifest section or the key (could be any kind of value)
 	 * @public
 	 * @since 1.33.0
 	 */
 	Component.prototype.getManifestEntry = function(sKey) {
+		return this._getManifestEntry(sKey);
+	};
+
+	/**
+	 * Returns the configuration of a manifest section or the value for a
+	 * specific path. If no section or key is specified, the return value is null.
+	 *
+	 * @param {string} sKey Either the manifest section name (namespace) or a concrete path
+	 * @param {boolean} [bMerged] Indicates whether the manifest entry is merged with the manifest entries of the parent component.
+	 * @return {any|null} Value of the manifest section or the key (could be any kind of value)
+	 * @see {@link #getManifestEntry}
+	 * @private
+	 * @since 1.34.2
+	 */
+	Component.prototype._getManifestEntry = function(sKey, bMerged) {
 		if (!this._oManifest) {
-			return this.getMetadata().getManifestEntry(sKey);
+			return this.getMetadata().getManifestEntry(sKey, bMerged);
 		} else {
-			if (!sKey || sKey.indexOf(".") <= 0) {
-				jQuery.sap.log.warning("Manifest entries with keys without namespace prefix can not be read via getManifestEntry. Key: " + sKey + ", Component: " + this.getId());
-				return null;
-			}
 
 			var oData = this._oManifest.getEntry(sKey);
 
-			if (!jQuery.isPlainObject(oData)) {
-				jQuery.sap.log.warning("Custom Manifest entry with key '" + sKey + "' must be an object. Component: " + this.getId());
-				return null;
+			// merge / extend should only be done for objects or when entry wasn't found
+			if (oData && !jQuery.isPlainObject(oData)) {
+				return oData;
 			}
 
-			return jQuery.extend(true, {}, oData);
+			// merge the configuration of the parent manifest with local manifest
+			// the configuration of the static component metadata will be ignored
+			var oParent, oParentData;
+			if (bMerged && (oParent = this.getMetadata().getParent()) instanceof ComponentMetadata) {
+				oParentData = oParent.getManifestEntry(sKey, bMerged);
+			}
+
+			// only extend / clone if there is data
+			// otherwise "null" will be converted into an empty object
+			if (oParentData || oData) {
+					oData = jQuery.extend(true, {}, oParentData, oData);
+			}
+
+			return oData;
 		}
 	};
 
@@ -447,8 +479,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				CustomizingConfiguration.activateForComponentInstance(this);
 			}
 
-			// TODO: deregister in exit!
-
 		}
 
 		// registry of models from manifest
@@ -528,6 +558,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// unregister for messaging (on MessageManager)
 		sap.ui.getCore().getMessageManager().unregisterObject(this);
 
+		// deactivate the instance specific customizing
+		if (this._oManifest) {
+			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+			if (CustomizingConfiguration) {
+				CustomizingConfiguration.deactivateForComponentInstance(this);
+			}
+		}
+
 		// unregister the component instance
 		this.getMetadata().onExitComponent();
 
@@ -577,12 +615,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 		// retrieve the merged sap.app and sap.ui5 sections of the manifest
 		// to create the models for the component + inherited ones
-		var oParentMetadata = oMetadata.getParent();
-		var oAppManifest = jQuery.extend(true, {}, oParentMetadata.getManifestEntry("sap.app", true), this.getManifestEntry("sap.app"));
-		var oUI5Manifest = jQuery.extend(true, {}, oParentMetadata.getManifestEntry("sap.ui5", true), this.getManifestEntry("sap.ui5"));
+		var oManifestDataSources = this._getManifestEntry("/sap.app/dataSources", true) || {};
+		var oManifestModels = this._getManifestEntry("/sap.ui5/models", true) || {};
 
 		// pass the models and data sources to the internal helper
-		this._initComponentModels(oUI5Manifest["models"], oAppManifest["dataSources"]);
+		this._initComponentModels(oManifestModels, oManifestDataSources);
 
 	};
 
@@ -622,10 +659,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		var oMeta = this.getMetadata();
 		while (oMeta && oMeta instanceof ComponentMetadata) {
 
-			var mCurrentDataSources = oMeta.getManifestEntry("sap.app")["dataSources"];
+			var mCurrentDataSources = oMeta.getManifestEntry("/sap.app/dataSources");
 			mergeDefinitionSource(mConfig.dataSources, mConfig.origin.dataSources, mCurrentDataSources, oMeta);
 
-			var mCurrentModelConfigs = oMeta.getManifestEntry("sap.ui5")["models"];
+			var mCurrentModelConfigs = oMeta.getManifestEntry("/sap.ui5/models");
 			mergeDefinitionSource(mConfig.models, mConfig.origin.models, mCurrentModelConfigs, oMeta);
 
 			oMeta = oMeta.getParent();
@@ -1139,24 +1176,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			bManifestFirst = typeof oConfig.manifestFirst !== "undefined" ? oConfig.manifestFirst : oConfiguration.getManifestFirst(),
 			oManifest;
 
-		// TODO: always use manifest first?!
-		//  - what about legacy components? 
-		//      ==> how to identify in preload that manifest.json is loaded?
-		//      ==> 404 penalty if not preload is available!
-		//      ==> configuration option to disable manifest first for component load
-		//          --> usage of preload info to enable manifest first!
-		//          --> force manifest first force with option?
-		//   ==> Central Configuration option for manifest first enabled in general!
-		//   ==> Configuration Option for Component Factory to disable manifest first!
-		//   --- in FLP case we could use the backend magic to identify if components
-		//       have manifests or not => so only legacy apps / reuse components
-		//       can have a 404 penalty!
-		// ==> we want apps to implement manifest.json (enforcement!)
-		// ==> globally enabled or disabled by default? (innovation stack => enable by default?)
-		//     --> we recommend to enable the feature in general!
-
-		// TODO: in sync case we should preload the component first and then access the manifest
-		//       ==> what happens in lrep case? manifest Url => load first and then preload component
 		// if we find a manifest URL in the configuration
 		// we will load the manifest from the specified URL (sync or async)
 		if (oConfig.manifestUrl) {
