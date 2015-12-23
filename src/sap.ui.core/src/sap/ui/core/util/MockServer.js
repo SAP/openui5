@@ -1254,12 +1254,11 @@ sap.ui
 						sRootUri = this._getRootUri(),
 						sEntitySetName = oEntitySet && oEntitySet.name;
 					jQuery.each(oMockData, function(iIndex, oEntry) {
-						// add the metadata for the entry (type is pointing to the EntityType which is required by datajs to resolve properties)
-						oEntry.__metadata = {
-							id: sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")",
-							type: oEntitySet.schema + "." + oEntitySet.type,
-							uri: sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")"
-						};
+						oEntry.__metadata = oEntry.__metadata || {};
+						// add the metadata for the entry 
+						oEntry.__metadata.id = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
+						oEntry.__metadata.type =  oEntitySet.schema + "." + oEntitySet.type;
+						oEntry.__metadata.uri = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
 						// add the navigation properties
 						jQuery.each(oEntitySet.navprops, function(sKey, oNavProp) {
 							if (oEntry[sKey] && !jQuery.isEmptyObject(oEntry[sKey]) && !oEntry[sKey]["__deferred"]) {
