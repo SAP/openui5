@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	function getObject(oObject, sPath) {
 		// if the incoming sPath is a path we do a nested lookup in the 
 		// manifest object and return the concrete value, e.g. "/sap.ui5/extends"
-		if (oObject && sPath && typeof sPath === "string" && sPath.substring(0, 1) === "/") {
+		if (oObject && sPath && typeof sPath === "string" && sPath[0] === "/") {
 			var aPaths = sPath.substring(1).split("/");
 			for (var i = 0, l = aPaths.length; i < l; i++) {
 				oObject = oObject[aPaths[i]] || null;
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 		// if no path starting with slash is specified we access and 
 		// return the value directly from the manifest
-		return oObject && oObject[sPath];
+		return oObject && oObject[sPath] || null;
 	}
 
 
@@ -253,8 +253,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 * @public
 		 */
 		getEntry: function(sPath) {
+			if (!sPath || sPath.indexOf(".") <= 0) {
+				jQuery.sap.log.warning("Manifest entries with keys without namespace prefix can not be read via getEntry. Key: " + sPath + ", Component: " + this.getComponentName());
+				return null;
+			}
+
 			var oManifest = this.getJson();
-			return getObject(oManifest, sPath);
+			var oEntry = getObject(oManifest, sPath);
+
+			// top-level manifest section must be an object (e.g. sap.ui5)
+			if (sPath && sPath[0] !== "/" && !jQuery.isPlainObject(oEntry)) {
+				jQuery.sap.log.warning("Manifest entry with key '" + sPath + "' must be an object. Component: " + this.getComponentName());
+				return null;
+			}
+
+			return oEntry;
 		},
 
 		/**
