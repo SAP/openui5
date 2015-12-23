@@ -3849,7 +3849,7 @@ sap.ui.define([
 		}
 		
 		//reset clone if oValue equals the original value
-		if (oValue == oOriginalValue && !this.isLaundering('/' + sKey)) {
+		if (jQuery.sap.equal(oValue, oOriginalValue) && !this.isLaundering('/' + sKey)) {
 			delete oChangeObject[sPropertyPath];
 			//delete metadata to check if object has changes
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
