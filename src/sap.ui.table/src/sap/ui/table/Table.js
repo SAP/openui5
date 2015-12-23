@@ -698,62 +698,99 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._collectTableSizes = function() {
-		var oSizes = {};
+		var oSizes = {
+			tableWidth: 0,
+			tableHeight: 0,
+			tableParentHeight: 0,
+			tableCtrlScrollWidth: 0,
+			tableRowHdrScrWidth: 0,
+			tableCtrlRowScrollTop: 0,
+			tableCtrlRowScrollHeight: 0,
+			tableCtrlScrWidth: 0,
+			tableCtrlScrLeft: 0,
+			tableColHdrScrLeft: 0,
+			tableHSbScrollLeft: 0,
+			tableHSbParentWidth: 0,
+			tableCtrlFixedWidth: 0,
+			tableSelectAllWidth: 0,
+			columnHeaderHeight: 0,
+			invisibleColWidth: 0
+		};
+
 		var oDomRef = this.getDomRef();
 		if (!oDomRef) {
 			return oSizes;
 		}
-		
+
 		oSizes["tableWidth"] = oDomRef.clientWidth;
 		oSizes["tableHeight"] = oDomRef.clientHeight;
-		oSizes["tableParentHeight"] = oDomRef.offsetParent.clientHeight;
-		oSizes["tableCtrlScrollWidth"] = oDomRef.querySelector(".sapUiTableCtrlScroll").clientWidth;
-		oSizes["tableRowHdrScrWidth"] = oDomRef.querySelector(".sapUiTableRowHdrScr").clientWidth;
+		if (oDomRef.offsetParent) {
+			oSizes["tableParentHeight"] = oDomRef.offsetParent.clientHeight;
+		}
+
+		var oSapUiTableSelAll = oDomRef.querySelector(".sapUiTableSelAll");
+		if (oSapUiTableSelAll) {
+			// +1 for border
+			oSizes["tableSelectAllWidth"] = oSapUiTableSelAll.clientWidth + 1;
+		}
+
+		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll");
+		if (oSapUiTableCtrlScroll) {
+			oSizes["tableCtrlScrollWidth"] = oSapUiTableCtrlScroll.clientWidth;
+		}
+
+		var oSapUiTableRowHdrScr = oDomRef.querySelector(".sapUiTableRowHdrScr");
+		if (oSapUiTableRowHdrScr) {
+			oSizes["tableRowHdrScrWidth"] = oSapUiTableRowHdrScr.clientWidth;
+		}
 
 		var oSapUiTableCtrlRowScroll = oDomRef.querySelector(".sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll");
-		oSizes["tableCtrlRowScrollTop"] = oSapUiTableCtrlRowScroll.offsetTop;
-		oSizes["tableCtrlRowScrollHeight"]  = oSapUiTableCtrlRowScroll.offsetHeight;
+		if (oSapUiTableCtrlRowScroll) {
+			oSizes["tableCtrlRowScrollTop"] = oSapUiTableCtrlRowScroll.offsetTop;
+			oSizes["tableCtrlRowScrollHeight"] = oSapUiTableCtrlRowScroll.offsetHeight;
+		}
 
 		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr");
-		oSizes["tableCtrlScrWidth"] = oCtrlScrDomRef.clientWidth;
-		oSizes["tableCtrlScrLeft"] = oCtrlScrDomRef.scrollLeft;
+		if (oCtrlScrDomRef) {
+			oSizes["tableCtrlScrWidth"] = oCtrlScrDomRef.clientWidth;
+		}
 
-		var oColHdrScrDomRef = oDomRef.querySelector(".sapUiTableColHdrScr");
-		oSizes["tableColHdrScrLeft"] = oColHdrScrDomRef.scrollLeft;
-
-		oSizes["tableHSbScrollLeft"] = 0;
 		if (this._oHSb) {
 			if (!!sap.ui.Device.browser.webkit && this._bRtlMode) {
-				oSizes["tableHSbScrollLeft"] = oColHdrScrDomRef.scrollWidth - oColHdrScrDomRef.clientWidth - this._oHSb.getScrollPosition();
+				var oColHdrScrDomRef = oDomRef.querySelector(".sapUiTableColHdrScr");
+				if (oColHdrScrDomRef) {
+					oSizes["tableHSbScrollLeft"] = oColHdrScrDomRef.scrollWidth - oColHdrScrDomRef.clientWidth - this._oHSb.getScrollPosition();
+				}
 			} else {
 				oSizes["tableHSbScrollLeft"] = this._oHSb.getNativeScrollPosition();
 			}
 		}
 
-		var oHsbParent = oDomRef.querySelector(".sapUiTableHSb").offsetParent;
-		oSizes["tableHSbParentWidth"] = 0;
-		if (oHsbParent) {
-			oSizes["tableHSbParentWidth"] = oHsbParent.clientWidth;
+		var oSapUiTableHsb = oDomRef.querySelector(".sapUiTableHSb");
+		if (oSapUiTableHsb && oSapUiTableHsb.offsetParent) {
+			oSizes["tableHSbParentWidth"] = oSapUiTableHsb.offsetParent.clientWidth;
 		}
 
 		var oCtrlFixed = oDomRef.querySelector(".sapUiTableCtrlFixed");
 		if (oCtrlFixed) {
 			oSizes["tableCtrlFixedWidth"] = oCtrlFixed.clientWidth;
-		} else {
-			oSizes["tableCtrlFixedWidth"] = 0;
 		}
 
 		var aHeaderWidths = [];
-		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol > th");
-		for (var i = 0; i < aHeaderElements.length; i++) {
-			aHeaderWidths.push(aHeaderElements[i].clientWidth);
-		}
-		
-		oSizes["invisibleColWidth"] = 0;
-		if (this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) {
-			oSizes["invisibleColWidth"] = aHeaderWidths.shift();
+		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
+		if (aHeaderElements) {
+			for (var i = 0; i < aHeaderElements.length; i++) {
+				aHeaderWidths.push(aHeaderElements[i].clientWidth);
+			}
 		}
 		oSizes["headerWidths"] = aHeaderWidths;
+
+		if (this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) {
+			var oFirstInvisibleColumn = oDomRef.querySelector(".sapUiTableCtrlFirstCol > th:first-child");
+			if (oFirstInvisibleColumn) {
+				oSizes["invisibleColWidth"] = oFirstInvisibleColumn.clientWidth;
+			}
+		}
 
 		var oColumnHeaders = oDomRef.querySelectorAll(".sapUiTableColHdrCnt, .sapUiTableColRowHdr");
 		var iColumnHeaderHeight = 0;
@@ -761,15 +798,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			iColumnHeaderHeight = Math.max(oColumnHeaders[i].clientHeight, iColumnHeaderHeight);
 		}
 		var oColumnHeaderContainer = oDomRef.querySelector(".sapUiTableColHdr");
-		iColumnHeaderHeight = Math.max(iColumnHeaderHeight, oColumnHeaderContainer.clientHeight);
+		if (oColumnHeaderContainer) {
+			iColumnHeaderHeight = Math.max(iColumnHeaderHeight, oColumnHeaderContainer.clientHeight);
+		}
 		oSizes["columnHeaderHeight"] = iColumnHeaderHeight;
 
 		var aRowItems = oDomRef.querySelectorAll(".sapUiTableCtrl .sapUiTableTr");
 		var aRowItemHeights = [];
 		for (var i = 0; i < aRowItems.length; i++) {
-			var oRowItem = aRowItems[i];
-			var iRowItemHeight = oRowItem.clientHeight;
-			aRowItemHeights.push(iRowItemHeight);
+			aRowItemHeights.push(aRowItems[i].clientHeight);
 		}
 		oSizes["tableRowHeights"] = aRowItemHeights;
 		return oSizes;
@@ -1553,7 +1590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		$this.find(".sapUiTableColRsz").mousedown(jQuery.proxy(this._onColumnResizeStart, this));
 
 		// attach mousemove listener to update resizer position
-		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr").mousemove(jQuery.proxy(this._onScrPointerMove, this));
+		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").mousemove(jQuery.proxy(this._onScrPointerMove, this));
 
 		this._enableColumnAutoResizing();
 
@@ -1620,12 +1657,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var $this = this.$();
 
 		$this.find(".sapUiTableRowHdrScr").unbind();
-		$this.find(".sapUiTableColHdrScr").unbind();
 
 		$this.find(".sapUiTableCtrl > tbody > tr").unbind();
 		$this.find(".sapUiTableRowHdr").unbind();
-		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr").unbind();
-
+		$this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableColHdrScr, .sapUiTableColHdrFixed").unbind();
 		$this.find(".sapUiTableColRsz").unbind();
 
 		this._oHSb.unbind($this.find(".sapUiTableCtrlScr").get(0));
@@ -2529,6 +2564,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		// Select only table headers (identified by data-sap-ui-headcolindex attribute). Not the row header.
 		var $colHeaderContainer = $this.find(".sapUiTableColHdr");
+		var $colHdrScr = $this.find(".sapUiTableColHdrScr");
 		var $cols = $colHeaderContainer.find(".sapUiTableCol");
 		var $tableHeaders = $this.find(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
 		this._aTableHeaders = $tableHeaders;
@@ -2627,6 +2663,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			$jqo.outerHeight(iColumnHeaderHeight);
 		}
 
+		// Sync width of content scroll area to header scroll area
+		$colHdrScr.width(oTableSizes["tableCtrlScrWidth"]);
+
 		// Make Column Header Container visible after width/height adjustment
 		$colHeaderContainer.removeClass("sapUiTableNoOpacity");
 	};
@@ -2713,15 +2752,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// synchronize the scroll areas
 			var $this = this.$();
 			var iHSbScrollLeft = oTableSizes["tableHSbScrollLeft"];
-
-			var iOldCtrlScrLeft = oTableSizes["tableCtrlScrLeft"];
-			var iOldColHdrScrLeft = oTableSizes["tableColHdrScrLeft"];
-
-			// only update scrollLeft if values are different
-			if (iOldCtrlScrLeft != iHSbScrollLeft && iOldColHdrScrLeft != iHSbScrollLeft) {
-				$this.find(".sapUiTableCtrlScr").scrollLeft(iHSbScrollLeft);
-				$this.find(".sapUiTableColHdrScr").scrollLeft(iHSbScrollLeft);
-			}
+			$this.find(".sapUiTableColHdrScr").scrollLeft(iHSbScrollLeft);
+			$this.find(".sapUiTableCtrlScr").scrollLeft(iHSbScrollLeft);
 			this._bSyncScrollLeft = false;
 		}
 	};
@@ -3698,7 +3730,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._$colResize.addClass("sapUiTableColRszActive");
 		}
 
-		var oColumn = this.getColumns()[this._iLastHoveredColumnIndex];
+		var oColumn = this._getVisibleColumns()[this._iLastHoveredColumnIndex];
 		var iDeltaX = iLocationX - this._iColumnResizeStart;
 		var iColumnWidth = oColumn.$().width();
 
@@ -3780,12 +3812,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		// rerender / ignore if nothing changed!
 		if (bResized) {
-			// Async to avoid Layout Thrashing
-			this._updateRowHeaderTimer = window.requestAnimationFrame(function() {
-				var oTableSizes = this._collectTableSizes();
-				this._updateRowHeader(oTableSizes);
-				this._syncColumnHeaders(oTableSizes);
-			}.bind(this));
+			this.invalidate();
 		}
 	};
 

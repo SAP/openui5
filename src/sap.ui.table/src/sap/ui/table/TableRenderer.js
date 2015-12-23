@@ -347,7 +347,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		var aCols = oTable.getColumns();
 
-		if (oTable.getFixedColumnCount() > 0) {
+		var iFixedColumnCount = oTable.getFixedColumnCount();
+		var iFixedColumnsWidth = oTable._getColumnsWidth(0, iFixedColumnCount);
+
+		if (iFixedColumnCount > 0) {
 			rm.write("<div");
 			rm.addClass("sapUiTableColHdrFixed");
 			rm.writeClasses();
@@ -358,7 +361,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 				rm.addClass("sapUiTableColHdr");
 				rm.addClass("sapUiTableNoOpacity");
 				rm.writeClasses();
-				rm.addStyle("min-width", oTable._getColumnsWidth(0, oTable.getFixedColumnCount()) + "px");
+				rm.addStyle("min-width", iFixedColumnsWidth + "px");
 				rm.writeStyles();
 				rm.write(">");
 
@@ -406,17 +409,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.write(">");
 
 		for (var h = 0; h < oTable._getHeaderRowCount(); h++) {
-
 			rm.write("<div");
 			rm.addClass("sapUiTableColHdr");
 			rm.addClass("sapUiTableNoOpacity");
 			rm.writeClasses();
-			rm.addStyle("min-width", oTable._getColumnsWidth(oTable.getFixedColumnCount(), aCols.length) + "px");
-			rm.writeStyles();
 			rm.write(">");
 
 			var iSpan = 1;
-			for (var i = oTable.getFixedColumnCount(), l = aCols.length; i < l; i++) {
+			for (var i = iFixedColumnCount, l = aCols.length; i < l; i++) {
 				if (aCols[i].shouldRender()) {
 					if (iSpan <= 1) {
 						this.renderCol(rm, oTable, aCols[i], i, h);

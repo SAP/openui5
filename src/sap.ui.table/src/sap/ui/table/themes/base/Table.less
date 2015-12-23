@@ -141,6 +141,9 @@
 .sapUiTableColHdrCnt {
 	display: none;
 	background-color: @sapUiExtraLightBG;
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .sapUiTableColHdrCnt {
@@ -153,20 +156,22 @@
 
 .sapUiTableColHdrScr {
 	height: 100%;
-	width: 0px;
-	overflow: visible;
+	display: inline-block;
+	overflow: hidden;
 	margin: 0;
 	white-space: nowrap;
 }
 
-.sapUiTableRSel .sapUiTableColHdrScr,
-.sapUiTableRSel .sapUiTableColHdrFixed {
-	margin-left: @sapUiTableRowHdrWidth;
+.sapUiTableColHdrFixed {
+	display: inline-block;
+}
+
+.sapUiTableVScr .sapUiTableCtrlScr {
+	margin-right: 16px;
 }
 
 .sapUiTableColHdr {
 	display: table;
-	width: 1000%; /* to prevent wrapping of floating divs, percentage needed for tables without defined width */
 }
 
 .sapUiTableColHdrFixed {
@@ -310,7 +315,9 @@
 	top: 0;
 	width: 100%;
 	height: 100%;
-	visibility: hidden;
+	opacity: 0;
+	z-index: -1000;
+	pointer-events: none;
 }
 
  .sapUiTableNoOpacity {
