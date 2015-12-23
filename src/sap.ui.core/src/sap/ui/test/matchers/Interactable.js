@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './Matcher', './Visible'], function ($, Matc
 	 * </ul>
 	 * @public
 	 * @extends sap.ui.test.matchers.Matcher
-	 * @alias sap.ui.test.matchers.Interactable
+	 * @name sap.ui.test.matchers.Interactable
 	 * @author SAP SE
 	 * @since 1.34
 	 */
