@@ -273,31 +273,14 @@ sap.ui.define([
 	/* Lifecycle methods */
 	/* =========================================================== */
 	P13nDimMeasurePanel.prototype.onBeforeRendering = function() {
-		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
-		var oData = oModel.getData();
-
 		// Synchronize dimMeasureItems and items when the panel is rendered first time
 		if (!this._bOnBeforeRenderingFirstTimeExecuted) {
 			this._bOnBeforeRenderingFirstTimeExecuted = true;
-			this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
-				var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-				if (!oModelItem || this._isDimMeasureItemEqualToModelItem(oDimMeasureItem, oModelItem)) {
-					return;
-				}
-
-				// Take over dimMeasureItem data
-				oModelItem.persistentIndex = oDimMeasureItem.getIndex();
-				oModelItem.persistentSelected = oDimMeasureItem.getVisible();
-				oModelItem.role = oDimMeasureItem.getRole();
-				// Sort the table items only by persistentIndex
-				this._sortModelItemsByPersistentIndex(oData.items);
-				// Re-Index only the tableIndex
-				this._reindexModelItemsByTableIndex(oData);
-			}, this);
-			oModel.refresh();
+			this._syncPanel2Model();
 		}
 
 		// Set marked item initially to the first table item
+		var oData = this.getModel("$sapmP13nDimMeasurePanel").getData();
 		if (!oData.markedTableItem) {
 			var aVisibleTableItems = this._getVisibleTableItems();
 			this._switchMarkedTableItemTo(aVisibleTableItems[0]);
@@ -321,13 +304,12 @@ sap.ui.define([
 	};
 
 	P13nDimMeasurePanel.prototype.getOkPayload = function() {
-		var oChanges = this._syncModel2Panel();
+		this._syncModel2Panel();
 		return {
 			// We have to return dimMeasureItems as of the fact that new created or deleted dimMeasureItems are not updated in the model via list
 			// binding.
 			dimMeasureItems: this.getDimMeasureItems(),
-			chartTypeChanged: oChanges.chartTypeChanged,
-			dimMeasureItemsChanged: oChanges.dimMeasureItemsChanged
+			chartTypeKey: this.getChartTypeKey()
 		};
 	};
 
@@ -335,16 +317,15 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDimMeasurePanel.prototype._syncModel2Panel = function() {
+		if (!this._bOnBeforeRenderingFirstTimeExecuted) {
+			// The renderer has not been executed (the dimeasure tab has not been shown in panel). So there is no need to synchronize model to panel.
+			// Keep panel aggregations as it is.
+			return;
+		}
 		var oData = this.getModel("$sapmP13nDimMeasurePanel").getData();
-		var oChanges = {
-			chartTypeChanged: this.getChartTypeKey() !== oData.selectedChartTypeKey,
-			dimMeasureItemsChanged: false
-		};
 
 		// ChartTypeKey
-		if (oChanges.chartTypeChanged) {
-			this.setChartTypeKey(oData.selectedChartTypeKey);
-		}
+		this.setChartTypeKey(oData.selectedChartTypeKey);
 
 		// DimMeasureItems
 		oData.items.forEach(function(oModelItem) {
@@ -352,7 +333,6 @@ sap.ui.define([
 			if (oDimMeasureItem) {
 				// Update existing dimMeasureItem if some properties have been changed
 				if (!this._isDimMeasureItemEqualToModelItem(oDimMeasureItem, oModelItem)) {
-					oChanges.dimMeasureItemsChanged = true;
 					oDimMeasureItem.setVisible(oModelItem.persistentSelected);
 					oDimMeasureItem.setIndex(oModelItem.persistentIndex);
 					oDimMeasureItem.setRole(oModelItem.role);
@@ -371,9 +351,32 @@ sap.ui.define([
 				role: oModelItem.role
 			});
 			this.addAggregation("dimMeasureItems", oDimMeasureItem, true);
-			oChanges.dimMeasureItemsChanged = true;
 		}, this);
-		return oChanges;
+	};
+
+	/**
+	 * @private
+	 */
+	P13nDimMeasurePanel.prototype._syncPanel2Model = function() {
+		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
+		var oData = oModel.getData();
+
+		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
+			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
+			if (!oModelItem || this._isDimMeasureItemEqualToModelItem(oDimMeasureItem, oModelItem)) {
+				return;
+			}
+
+			// Take over dimMeasureItem data
+			oModelItem.persistentIndex = oDimMeasureItem.getIndex();
+			oModelItem.persistentSelected = oDimMeasureItem.getVisible();
+			oModelItem.role = oDimMeasureItem.getRole();
+			// Sort the table items only by persistentIndex
+			this._sortModelItemsByPersistentIndex(oData.items);
+			// Re-Index only the tableIndex
+			this._reindexModelItemsByTableIndex(oData);
+		}, this);
+		oModel.refresh();
 	};
 
 	P13nDimMeasurePanel.prototype.exit = function() {
@@ -392,7 +395,7 @@ sap.ui.define([
 		}
 	};
 
-	// ----------------------- chartTypeKey -----------------------------
+	// ----------------------- Overwrite Method of chartTypeKey Property --------------------------
 
 	P13nDimMeasurePanel.prototype.setChartTypeKey = function(sChartTypeKey) {
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
@@ -402,7 +405,7 @@ sap.ui.define([
 		return this;
 	};
 
-	// ----------------------- AvailableChartType -----------------------------
+	// ----------------------- Overwrite Methods of AvailableChartType Aggregation -----------------
 
 	P13nDimMeasurePanel.prototype.addAvailableChartType = function(oItem) {
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
@@ -449,12 +452,13 @@ sap.ui.define([
 		return this;
 	};
 
-	// ----------------------- Item -----------------------------------------
+	// ----------------------- Overwrite Methods of Item Aggregation -----------------
 
 	P13nDimMeasurePanel.prototype.addItem = function(oItem) {
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 		var oData = oModel.getData();
-
+		this._bOnBeforeRenderingFirstTimeExecuted = false;
+		
 		this.addAggregation("items", oItem);
 		// Take over item data into model
 		this._includeModelItem(oItem, -1);
@@ -468,6 +472,7 @@ sap.ui.define([
 	P13nDimMeasurePanel.prototype.insertItem = function(oItem, iIndex) {
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 		var oData = oModel.getData();
+		this._bOnBeforeRenderingFirstTimeExecuted = false;
 
 		this.insertAggregation("items", oItem, iIndex);
 		// Take over item data into model
@@ -484,6 +489,7 @@ sap.ui.define([
 		if (iIndex > -1) {
 			var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 			var oData = oModel.getData();
+			this._bOnBeforeRenderingFirstTimeExecuted = false;
 
 			// Remove item data from model
 			oModel.getData().items.splice(iIndex, 1);
@@ -498,6 +504,7 @@ sap.ui.define([
 
 	P13nDimMeasurePanel.prototype.removeAllItems = function() {
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
+		this._bOnBeforeRenderingFirstTimeExecuted = false;
 		var aItems = this.removeAllAggregation("items");
 		// Remove items data from model
 		oModel.getData().items = [];
@@ -506,13 +513,14 @@ sap.ui.define([
 
 	P13nDimMeasurePanel.prototype.destroyItems = function() {
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
+		this._bOnBeforeRenderingFirstTimeExecuted = false;
 		this.destroyAggregation("items");
 		// Remove items data from model
 		oModel.getData().items = [];
 		return this;
 	};
 
-// ----------------------- DimMeasureItem -----------------------------------------
+	// ----------------------- Overwrite Methods of DimMeasureItem Aggregation -----------------
 
 	P13nDimMeasurePanel.prototype.addDimMeasureItem = function(oDimMeasureItem) {
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
