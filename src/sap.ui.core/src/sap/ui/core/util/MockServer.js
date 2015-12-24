@@ -301,13 +301,13 @@ sap.ui
 						oFilteredData.results = oFilteredData.results.slice(sODataQueryValue, oFilteredData.results.length);
 						break;
 					case "$orderby":
-						oFilteredData.results = this._getOdataQueryOrderby(oFilteredData.results, sODataQueryValue);
+						oFilteredData.results = this._getOdataQueryOrderby(oFilteredData.results, sODataQueryValue, sEntitySetName);
 						break;
 					case "$filter":
 						oFilteredData.results = this._recursiveOdataQueryFilter(oFilteredData.results, sODataQueryValue);
 						break;
 					case "$select":
-						oFilteredData.results = this._getOdataQuerySelect(oFilteredData.results, sODataQueryValue);
+						oFilteredData.results = this._getOdataQuerySelect(oFilteredData.results, sODataQueryValue, sEntitySetName);
 						break;
 					case "$inlinecount":
 						var iCount = this._getOdataInlineCount(oFilteredData.results, sODataQueryValue);
@@ -346,7 +346,7 @@ sap.ui
 					case "$filter":
 						return this._recursiveOdataQueryFilter([oEntry], sODataQueryValue)[0];
 					case "$select":
-						return this._getOdataQuerySelect([oEntry], sODataQueryValue)[0];
+						return this._getOdataQuerySelect([oEntry], sODataQueryValue, sEntitySetName)[0];
 					case "$expand":
 						return this._getOdataQueryExpand([oEntry], sODataQueryValue, sEntitySetName)[0];
 					case "$format":
@@ -362,7 +362,7 @@ sap.ui
 			 * @param {string} sODataQueryValue a comma separated list of property navigation paths to sort by, where each property navigation path terminates on a primitive property
 			 * @private
 			 */
-			MockServer.prototype._getOdataQueryOrderby = function(aDataSet, sODataQueryValue) {
+			MockServer.prototype._getOdataQueryOrderby = function(aDataSet, sODataQueryValue, sEntitySetName) {
 				// sort properties lookup
 				var aProperties = sODataQueryValue.split(',');
 				var that = this;
@@ -397,7 +397,21 @@ sap.ui
 							sPropName = aSort[0].substring(iComplexType + 1);
 							sComplexType = aSort[0].substring(0, iComplexType);
 							if (!a[sComplexType].hasOwnProperty(sPropName)) {
-								that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPropName);
+								var bExist = false;
+								var aTypeProperties = [];
+								if (sComplexType) {
+									var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sComplexType].to.entitySet;
+									aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
+									for (var i = 0; i < aTypeProperties.length; i++) {
+										if (aTypeProperties[i].name === sPropName) {
+											bExist = true;
+											break;
+										}
+									}
+								}
+								if (!bExist) {
+									that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPropName);
+								}
 							}
 							if (a[sComplexType][sPropName] < b[sComplexType][sPropName]) {
 								return -1 * iSorter;
@@ -737,13 +751,13 @@ sap.ui
 			 * @param {string} sODataQueryValue a comma separated list of property paths, qualified action names, qualified function names, or the star operator (*)
 			 * @private
 			 */
-			MockServer.prototype._getOdataQuerySelect = function(aDataSet, sODataQueryValue) {
+			MockServer.prototype._getOdataQuerySelect = function(aDataSet, sODataQueryValue, sEntitySetName) {
 				var that = this;
 				var sPropName, sComplexType;
 				var aProperties = sODataQueryValue.split(',');
 				var aSelectedDataSet = [];
 				var oPushedObject;
-				var fnCreatePushedEntry = function(aProperties, oData, oPushedObject) {
+				var fnCreatePushedEntry = function(aProperties, oData, oPushedObject, sParentName) {
 					if (oData["__metadata"]) {
 						oPushedObject["__metadata"] = oData["__metadata"];
 					}
@@ -756,11 +770,25 @@ sap.ui
 							if (!oPushedObject[sComplexType]) {
 								oPushedObject[sComplexType] = {};
 							}
-							oPushedObject[sComplexType] = fnCreatePushedEntry([sPropName], oData[sComplexType], oPushedObject[sComplexType]);
+							oPushedObject[sComplexType] = fnCreatePushedEntry([sPropName], oData[sComplexType], oPushedObject[sComplexType], sComplexType);
 							// this is a simple property
 						} else {
 							if (oData && !oData.hasOwnProperty(sPropertyName)) {
-								that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
+								var bExist = false;
+								var aTypeProperties = [];
+								if (sParentName) {
+									var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sParentName].to.entitySet;
+									aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
+									for (var i = 0; i < aTypeProperties.length; i++) {
+										if (aTypeProperties[i].name === sPropertyName) {
+											bExist = true;
+											break;
+										}
+									}
+								}
+								if (!bExist) {
+									that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
+								}
 							}
 							oPushedObject[sPropertyName] = oData[sPropertyName];
 						}
@@ -882,6 +910,7 @@ sap.ui
 
 				// here we need to analyse the EDMX and identify the entity sets
 				this._mEntitySets = this._findEntitySets(this._oMetadata);
+				this._mEntityTypes = this._findEntityTypes(this._oMetadata);
 
 				if (!this._sMockdataBaseUrl) {
 					// load the mockdata
