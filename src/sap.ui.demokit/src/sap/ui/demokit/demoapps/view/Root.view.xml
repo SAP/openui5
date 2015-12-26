@@ -13,6 +13,7 @@
 							number="{lib}"
 							title="{name}"
 							info="{desc}"
+							type="{type}"
 							press="onTilePress">
 						<customData>
 							<core:CustomData key="ref" value="{ref}"/>

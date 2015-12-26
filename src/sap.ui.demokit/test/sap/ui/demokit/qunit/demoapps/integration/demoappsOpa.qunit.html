@@ -22,9 +22,11 @@
 
 			sap.ui.require([
 						'sap/ui/test/opaQunit',
-						'sap/ui/test/Opa5'
+						'sap/ui/test/Opa5',
+						'sap/ui/test/matchers/Properties',
+						'sap/ui/test/actions/Press'
 					],
-					function (opaTest, Opa5) {
+					function (opaTest, Opa5, Properties, Press) {
 						"use strict";
 
 						Opa5.extendConfig({
@@ -44,6 +46,19 @@
 									Opa5.assert.ok(true, "Displayed more than 3 tiles");
 								}
 							});
+						});
+
+						opaTest("Should see the download tile", function (Given, When, Then) {
+							Then.waitFor({
+								viewName: "Root",
+								controlType: "sap.m.StandardTile",
+								matchers: new Properties({
+									type: "Monitor"
+								}),
+								success: function (aTiles) {
+									Opa5.assert.strictEqual(aTiles.length, 1, "One tile was of the type monitor");
+								}
+							})
 						});
 
 						QUnit.start();
