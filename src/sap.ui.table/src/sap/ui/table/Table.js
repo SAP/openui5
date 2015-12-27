@@ -874,7 +874,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// Async to avoid Layout Thrashing
 		this._iUpdateTableSizeTimerId = window.requestAnimationFrame(this._updateTableSizes.bind(this));
 	};
-	
+
 	Table.prototype.invalidate = function() {
 		Control.prototype.invalidate.apply(this, arguments);
 		// abort column/row sync rendering task when invalidation has happened.
@@ -935,7 +935,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype._updateTableContent = function() {
 		// show or hide the no data container
 		this._updateNoData();
-		
+
 		// update the selection visualization
 		this._updateSelection();
 
@@ -1458,7 +1458,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// requests: by using the mechanism below it will trigger an update each 50ms
 			// except if the reason is coming from the binding with reason "change" then
 			// we do an immediate update instead of a delayed one
-			
+
 			var iDelay = (sReason == ChangeReason.Change ? 0 : 50);
 			this._sBindingTimer = this._sBindingTimer || jQuery.sap.delayedCall(iDelay, this, function() {
 				// update only if control not marked as destroyed (could happen because updateRows is called during destroying the table)
@@ -1623,7 +1623,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (this._bIsColumnResizerMoving) {
 			return;
 		}
-		
+
 		var iPositionX = oEvent.clientX;
 		var iTableRect = this.getDomRef().getBoundingClientRect();
 		var iLastHoveredColumn = 0;
@@ -1708,7 +1708,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			jQuery.sap.clearDelayedCall(this._visibleRowCountTimer);
 			this._visibleRowCountTimer = undefined;
 		}
-		
+
 		if (this._iUpdateTableSizeTimerId) {
 			window.cancelAnimationFrame(this._iUpdateTableSizeTimerId);
 			this._iUpdateTableSizeTimerId = undefined;
@@ -2503,8 +2503,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
-	 * Triggered by the ResizeHandler if width/height changed. 
-	 * Calls updateTableSizes at the next animation frame, 
+	 * Triggered by the ResizeHandler if width/height changed.
+	 * Calls updateTableSizes at the next animation frame,
 	 * and quits unexecuted updating task.
 	 * @private
 	 */
@@ -2512,16 +2512,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (!this.getDomRef()) {
 			return;
 		}
-		
+
 		if (this._iUpdateTableSizeTimerId) {
 			window.cancelAnimationFrame(this._iUpdateTableSizeTimerId);
 			this._iUpdateTableSizeTimerId = undefined;
 		}
-		
+
 		if (this.getBinding("rows")) {
 			this.updateRows();
 		}
-		
+
 		// Async to avoid Layout Thrashing
 		this._iUpdateTableSizeTimerId = window.requestAnimationFrame(this._updateTableSizes.bind(this));
 	};
@@ -3665,12 +3665,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (!oColumn.getAutoResizable()) {
 			return;
 		}
-		
+
 		jQuery.sap.log.debug("doubleclick fired");
 		this._disableTextSelection();
-		
+
 		this.autoResizeColumn(this._iLastHoveredColumnIndex);
-		
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};

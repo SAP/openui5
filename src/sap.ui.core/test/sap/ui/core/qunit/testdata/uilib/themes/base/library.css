@@ -1,5 +1,5 @@
-.sapUiTstBtn {  
-	color: black; 
+.sapUiTstBtn {
+	color: black;
 	background-color: white;
 	height: 21px;
 	vertical-align: top;
@@ -20,7 +20,7 @@
 
 .sapUiTstBtnStd:focus,
 .sapUiTstBtnStd:hover {
-	border-color: black; 
+	border-color: black;
 	background-color: grey;
 }
 

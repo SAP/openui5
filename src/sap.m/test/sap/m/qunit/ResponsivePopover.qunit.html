@@ -147,7 +147,7 @@
 		QUnit.test("Desktop and tablet mode", function(assert) {
 
 			// Act and Arrange
-			
+
 			this.stub(sap.ui.Device, "system", {desktop: true});
 			this.oResponsivePopover = new sap.m.ResponsivePopover(this.oControlProps);
 			this.oResponsivePopover.addContent(this.oList);

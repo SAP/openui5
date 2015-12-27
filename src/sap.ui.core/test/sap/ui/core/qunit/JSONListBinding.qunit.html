@@ -950,8 +950,8 @@
 		aContexts = this.oListBinding.getContexts(0, 10);
 		deepEqual(aContexts.diff, [], "Nothing changed");
 	});
-	
-	
+
+
 	module("Listbinding suspend/resume", {
 		beforeEach: function() {
 			setup();
@@ -1019,9 +1019,9 @@
 		oLB.resume();
 		equal(oLB.getContexts().length, 10, "Binding still has length 10 after calling resume");
 	});
-	
-	
-	
+
+
+
 	</script>
 
 </head>

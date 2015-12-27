@@ -13,9 +13,9 @@
             });
     		this.objectPageView.placeAt('content');
     		sap.ui.getCore().applyChanges();
-            
+
             this.oObjectPage = this.objectPageView.byId("ObjectPageLayout");
-            
+
         },
         afterEach: function() {
         	this.objectPageView.destroy();

@@ -4,15 +4,15 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>Open Source Usage</title>
-		
+
 		<script id="sap-ui-bootstrap"
 				type="text/javascript"
 				src="../../../sap-ui-core.js">
 		</script>
-		
+
 		<script>
 			jQuery.sap.require("sap.ui.core.util.LibraryInfo");
-			
+
 			sap.ui.getCore().attachInit(function(){
 				var libInfo = new sap.ui.core.util.LibraryInfo();
 				libInfo._getThirdPartyInfo("sap.ui.core", function(oData){
@@ -39,39 +39,39 @@
 				margin: 0px;
 				position: relative;
 			}
-			
+
 			.banner, .content {
 				position: absolute;
 				left: 10px;
 				right: 10px;
 			}
-			
+
 			.banner {
 				top: 10px;
 				height: 40px;
 				border-bottom: 5px solid #F0AB00;
 			}
-			
+
 			.banner > * {
 				position: absolute;
 				bottom: 2px;
 			}
-			
+
 			.banner > img {
 				height: 30px;
 			}
-			
+
 			.banner > h1 {
 				font-size: 1.5em;
 				left: 45px;
 				margin: 0;
 			}
-			
+
 			.content {
-				top: 70px; 
+				top: 70px;
 			}
-			
-			
+
+
 		</style>
 	</head>
 	<body>
@@ -83,9 +83,9 @@
 		<div class="content">
 
 			<h2>Third Party Open Source Software</h2>
-			
+
 			This Software includes 3rd party open source software from different sources:
-		
+
 			<div id="thirdparty"></div>
     	</div>
 	</body>

@@ -4,7 +4,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>SearchField - sap.m</title>
 <script src="../../../resources/sap-ui-core.js"
-	type="text/javascript" 
+	type="text/javascript"
 	id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.m"
 	data-sap-ui-theme="sap_bluecrystal">
@@ -13,8 +13,8 @@
 
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 	jQuery.sap.require("sap.ui.core.IconPool");
-	
-	
+
+
 	function getIcon(i) {
 		return sap.ui.core.IconPool.getIconURI(i);
 	}
@@ -82,7 +82,7 @@
 	}
 
 	var barSearchField = new sap.m.SearchField("SFB1", {
-		placeholder: "search for...", 
+		placeholder: "search for...",
 		enableSuggestions: true,
 		search:onSearch,
 		suggest: doSuggest
@@ -93,7 +93,7 @@
 
 	var dialogBarSearchField = barSearchField.clone("dialogBar", {cloneBindings:true});
 	var dialogSearchField = new sap.m.SearchField("SFDialog", {
-			placeholder: "search for...", 
+			placeholder: "search for...",
 			enableSuggestions: true,
 			search:onSearch,
 			suggest: doSuggest
@@ -127,7 +127,7 @@
 	});
 
 	var searchField = new sap.m.SearchField("SF1", {
-			placeholder: "search for...", 
+			placeholder: "search for...",
 			enableSuggestions: true,
 			search:onSearch,
 			liveChange: onLiveChange,

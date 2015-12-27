@@ -25,14 +25,14 @@ sap.ui.define(['jquery.sap.global'],
 	 * @alias sap.ui.base.Interface
 	 */
 	var Interface = function(oObject, aMethods) {
-	
+
 		// if object is null or undefined, return itself
 		if (!oObject) {
 			return oObject;
 		}
-	
+
 		// this function is inline to not appear as a method on the interface
-	
+
 		function fCreateDelegator(oObject, sMethodName) {
 			return function() {
 	//				return oObject[sMethodName].apply(oObject, arguments);
@@ -42,21 +42,21 @@ sap.ui.define(['jquery.sap.global'],
 					return (tmp instanceof sap.ui.base.Object) ? tmp.getInterface() : tmp;
 				};
 		}
-	
+
 		// if there are no methods return
 		if (!aMethods) {
 			return {};
 		}
-	
+
 		var sMethodName;
-	
+
 		// create functions for all delegated methods
 		// PERFOPT: 'cache' length of aMethods to reduce # of resolutions
 		for (var i = 0, ml = aMethods.length; i < ml; i++) {
 			sMethodName = aMethods[i];
 			this[sMethodName] = fCreateDelegator(oObject, sMethodName);
 		}
-	
+
 	};
 
 	return Interface;

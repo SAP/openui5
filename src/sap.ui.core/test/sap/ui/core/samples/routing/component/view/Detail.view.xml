@@ -3,13 +3,13 @@
 	<Page title="Detail" enableScrolling="false">
 		<content>
 		   <SplitContainer id="split">
-			
+
 			        <masterPages>
 						<mvc:XMLView viewName="NavigationWithoutMasterDetailPattern.view.DetailMaster" id="Master"></mvc:XMLView>
 			        </masterPages>
 			        <detailPages>
 			       </detailPages>
-			       
+
 			</SplitContainer>
 		</content>
 	</Page>

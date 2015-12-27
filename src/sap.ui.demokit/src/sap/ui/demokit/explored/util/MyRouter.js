@@ -8,9 +8,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/routing/Router'],
 	"use strict";
 
 
-	
+
 	var MyRouter = Router.extend("sap.ui.demokit.explored.util.MyRouter", {
-	
+
 		/**
 		 * mobile nav back handling
 		 */
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/routing/Router'],
 				this.navTo(sRoute, oData, bReplace);
 			}
 		},
-	
+
 		/**
 		 * a nav to method that does not write hashes but load the views properly
 		 */

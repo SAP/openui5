@@ -5,7 +5,12 @@ root = true
 [*]
 charset = utf-8
 
-[*.js]
+[*.{css,html,java,js,json,less,txt}]
+trim_trailing_whitespace = true
+end_of_line = lf
+
+[pom.xml]
+trim_trailing_whitespace = true
 end_of_line = lf
 
 # npm is using 2 spaces when modifying package.json

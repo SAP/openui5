@@ -169,7 +169,7 @@
         // arrange
         var that = this;
         var buttonsInFooter = 2;
-        
+
         this.NotificationListGroup.addAggregation('buttons',
             new sap.m.Button({
                 text: 'Accept',

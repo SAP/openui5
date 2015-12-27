@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			this._fnSkipAggregations = fnSkipAggregations;
 		}
 	});
-	
+
 	/**
 	 * Serializes the complete control tree.
 	 *
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	Serializer.prototype.serialize = function () {
 		return this._serializeRecursive(this._oRootControl, 0);
 	};
-	
+
 	/**
 	 * Internal method for recursive serializing
 	 *
@@ -54,26 +54,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @returns {string} the serialized control tree.
 	 */
 	Serializer.prototype._serializeRecursive = function (oControl, iLevel, sAggregationName, isDefaultAggregation) {
-	
+
 		jQuery.sap.assert(typeof oControl !== "undefined", "The control must not be undefined");
-	
+
 		var aCode = [];
-	
+
 		var bWriteDelegate = (!this._bSkipRoot || iLevel !== 0);
 		if (bWriteDelegate) {
-	
+
 			// write start and end
 			var start = this._delegate.start(oControl, sAggregationName, isDefaultAggregation);
 			var middle = this._delegate.middle(oControl, sAggregationName, isDefaultAggregation);
 			aCode.push(start + middle);
 		}
-	
+
 		// step down into recursion along the aggregations
 		if (iLevel === 0 || !(this._fnSkipAggregations && this._fnSkipAggregations(oControl))) {
 			var mAggregations = oControl.getMetadata().getAllAggregations();
 			if (mAggregations) {
 				for (var sName in mAggregations) {
-	
+
 					// compute those elements that shall be serialized
 					var mElementsToSerialize = [];
 					var oAggregation = mAggregations[sName];
@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					} else if (oValue instanceof this._oWindow.sap.ui.core.Element) {
 						mElementsToSerialize.push(oValue);
 					}
-	
+
 					// write and step down into recursion for elements
 					if (mElementsToSerialize.length > 0) {
 						if (bWriteDelegate) {
@@ -107,16 +107,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				}
 			}
 		}
-	
+
 		// write end
 		if (bWriteDelegate) {
 			var end = this._delegate.end(oControl, sAggregationName, isDefaultAggregation);
 			aCode.push(end);
 		}
-	
+
 		return aCode.join("");
 	};
-	
+
 	/**
 	 * Checks if a given aggregation is the default aggregation.
 	 *

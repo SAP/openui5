@@ -7,24 +7,24 @@
 		width="100%">
 		<l:content>
 			<ProgressIndicator
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				percentValue="30"
 				displayValue="30%"
 				showValue="true"
 				state="None" />
 			<ProgressIndicator
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				percentValue="50"
 				showValue="false"
 				state="Error" />
 			<ProgressIndicator
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				percentValue="99"
 				displayValue="0.99GB of 1GB"
 				showValue="true"
 				state="Success" />
 			<ProgressIndicator
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				percentValue="25"
 				displayValue="25%"
 				showValue="true"

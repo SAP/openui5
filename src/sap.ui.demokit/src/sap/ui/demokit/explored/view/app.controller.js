@@ -10,7 +10,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 		onInit : function () {
 
 			this._afterRenderingDone = false;
-			
+
 			// subscribe to app events
 			this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
 			this._component.getEventBus().subscribe("app", "applyAppConfiguration", this._applyAppConfiguration, this);
@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 			}
 			this._afterRenderingDone = true;
 		},
-		
+
 		_applyAppConfiguration : function(sChannel, sEvent, oData){
 			if (this._afterRenderingDone){
 				//handle themeChange
@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 				this._themeActive = oData.themeActive;
 				this._compactOn = oData.compactOn;
 			}
-				
+
 		}
 	});
 

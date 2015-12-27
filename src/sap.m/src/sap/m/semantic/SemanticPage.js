@@ -217,7 +217,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 		this.setProperty("showSubHeader", bShowSubHeader, true);
 		return this;
 	};
-	
+
 	SemanticPage.prototype.getShowFooter = function () {
 		return this._getPage().getShowFooter();
 	};

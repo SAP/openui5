@@ -9,9 +9,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 	/**
 	 * Creates an instance of the History.
-	 * 
+	 *
 	 * Attention: The Web Storage API which is used by this class stores the data on the client.
-	 * Therefore do not use this API for confidential information. 
+	 * Therefore do not use this API for confidential information.
 	 *
 	 * @class History handles the history of certain controls (e.g. sap.ui.commons.SearchField).
 	 *
@@ -26,21 +26,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	 * @protected
 	 */
 	var History = BaseObject.extend("sap.ui.core.History", /** @lends sap.ui.core.History.prototype */ {
-	
+
 		constructor : function(sId, mSettings) {
 			BaseObject.apply(this);
 			if (!mSettings) {
 				mSettings = {};
 			}
-	
+
 			var sHistoryPrefix = mSettings.prefix ? mSettings.prefix : document.location.pathname;
-	
+
 			this._iMaxHistory = mSettings.max ? mSettings.max : 100;
 			this._sHistoryId = sHistoryPrefix + sId;
 
 			jQuery.sap.require("jquery.sap.storage");
 			this._oStorage = jQuery.sap.storage(jQuery.sap.storage.Type.local);
-	
+
 			this._fFilter = mSettings.filter ? mSettings.filter : function(sHistoryValue, sValue) {
 				return sHistoryValue && (!sValue || (sValue && jQuery.sap.startsWithIgnoreCase(sHistoryValue, sValue)));
 			};
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				return aHistory;
 			};
 		},
-	
+
 		/**
 		 * Initializes the history if not already done.
 		 *
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			}
 			return this._aHistory;
 		},
-	
+
 		/**
 		 * Returns the history values fitting to the given value (according to the specified filter.
 		 *
@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			}
 			return aResult;
 		},
-	
+
 		/**
 		 * Removes the given value from the history values.
 		 *
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				}
 			}
 		},
-	
+
 		/**
 		 * Adds the given value to the history.
 		 *
@@ -121,10 +121,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			if (aHistory.length > this._iMaxHistory) {
 				aHistory.splice(this._iMaxHistory);
 			}
-	
+
 			this._oStorage.put(this._sHistoryId, aHistory);
 		},
-	
+
 		/**
 		 * Clears the history.
 		 *
@@ -134,9 +134,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			this._oStorage.remove(this._sHistoryId);
 			this._aHistory = null;
 		}
-	
+
 	});
-	
+
 
 	return History;
 

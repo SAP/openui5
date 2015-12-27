@@ -4,7 +4,7 @@
 
 	jQuery.sap.registerModulePath("view", "view");
 
-	
+
 
 	module("API", {
     	beforeEach: function () {
@@ -66,7 +66,7 @@
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(this.contentView.byId("ObjectPageLayout").getHeaderContent().length, 3, "contents length is 5 after removing one item");
-		
+
 		//cleanup needed since we removed that item from its parent aggregation
 		oToRemove.destroy();
 	});
@@ -76,7 +76,7 @@
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(this.contentView.byId("ObjectPageLayout").getHeaderContent().length, 0, "contents length is 0 after removing it all");
-		
+
 		//cleanup needed since we removed those items from their parent aggregation
 		oRemovedContent.forEach(function(oItem) {oItem.destroy();});
 	});

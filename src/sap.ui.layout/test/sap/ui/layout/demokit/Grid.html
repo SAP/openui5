@@ -31,7 +31,7 @@
 				padding-top: 45px;
 				text-align: center;
 			}
-			
+
 			#sample4 .sapUiRespGrid div p {
 				text-align: center;
 				margin-top: 45px;
@@ -41,7 +41,7 @@
 		<script id='sample1'>
 			var oGrid1 = new sap.ui.layout.Grid({
 					hSpacing: 1,
-					vSpacing: 1, 	
+					vSpacing: 1,
 					content: [
 						new sap.ui.commons.TextView({
 							text : 'Text spanned over 4 cols on large, 6 cols on medium, and 12 cols on small screens.',
@@ -66,7 +66,7 @@
 
 				var oGrid2 = new sap.ui.layout.Grid({
 					hSpacing: 0,
-					vSpacing: 0, 	
+					vSpacing: 0,
 					content: [
 						new sap.ui.commons.TextView({
 							text : 'Text spanned over 9 cols on large, 7 cols on medium, and 12 cols on small screens.',
@@ -90,7 +90,7 @@
 			<script id='sample2'>
 			var oGridForm = new sap.ui.layout.Grid({
 				hSpacing: 1,
-				vSpacing: 1, 	
+				vSpacing: 1,
 				content: [
 					new sap.ui.commons.Label({
 						text: 'Firstname',
@@ -150,14 +150,14 @@
 					})
 				]
 			});
-			
+
 			oGridForm.placeAt("sample2");
 			</script>
 
 			<script id="sample3">
 			var oGridIndent = new sap.ui.layout.Grid({
 				hSpacing: 2,
-				vSpacing: 2, 	
+				vSpacing: 2,
 				content: [
 					new sap.ui.commons.TextView({
 						text: 'Indent by 3 columns on large, 2 columns on medium, and 1 column on small screens.',
@@ -178,7 +178,7 @@
 
 			var oGridOrder = new sap.ui.layout.Grid({
 				hSpacing: 2,
-				vSpacing: 2, 	
+				vSpacing: 2,
 				content: [
 					new sap.ui.commons.TextView({
 						text: 'Left on large and medium screens. Right on small screens.',
@@ -196,7 +196,7 @@
 					})
 				]
 			});
-			
+
 			oGridIndent.placeAt("sample3");
 			oGridOrder.placeAt("sample3");
 			</script>
@@ -213,7 +213,7 @@
 
 			var oGridTiles = new sap.ui.layout.Grid({
 				hSpacing: 1,
-				vSpacing: 1, 	
+				vSpacing: 1,
 				content: [
 					new sap.ui.core.HTML({
 						content: '<p>Normal Tile</p>',
@@ -257,9 +257,9 @@
 							span: "L3 M4 S6"
 						})
 					}),
-					
+
 					wideTile,
-					
+
 					new sap.ui.core.HTML({
 						content: '<p>Secondary Tile</p>',
 						width: "100%",
@@ -290,7 +290,7 @@
 					}),
 				]
 			});
-			
+
 			oGridTiles.placeAt("sample4");
 			</script>
 		</head>

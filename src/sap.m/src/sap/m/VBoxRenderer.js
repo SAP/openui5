@@ -13,8 +13,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxRenderer'],
 	 */
 	var VBoxRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxRenderer'],
 	VBoxRenderer.render = function(oRm, oControl){
 		FlexBoxRenderer.render.apply(this, [oRm, oControl]);
 	};
-	
+
 
 	return VBoxRenderer;
 

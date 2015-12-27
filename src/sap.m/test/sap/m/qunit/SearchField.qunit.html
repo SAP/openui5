@@ -173,7 +173,7 @@
 		ok(true, "Test for focused search field started");
 		// touch the search field
 		doTouchEnd("sf3-reset");
-		
+
 		setTimeout(function(){
 			ok(sf3.$().hasClass("sapMFocus"), "Third search field is focused after reset button press");
 			ok(/\uE00D/.test(getIconId(sf3, "search")), "Focused search field icon is magnifier");
@@ -184,7 +184,7 @@
 				start();
 				}, 350)
 			}, 200);
-		
+
 	});
 
 </script>

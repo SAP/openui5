@@ -24,7 +24,7 @@
 			placeholder="Enter Date &amp; Time ..."
 			class="sapUiSmallMarginBottom" />
 	</VBox>
-	
+
 	<VBox class="sapUiSmallMargin">
 		<MessageStrip
 		text="Dedicated sap.m.DatePicker and sap.m.TimePicker usage."

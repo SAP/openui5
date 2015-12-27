@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -45,7 +45,7 @@
 
 	// ------------------------------ //
 	// tests for default values       //
-	// ------------------------------ //    
+	// ------------------------------ //
 	test("constructor - items: []", function() {
 
 		// system under test
@@ -484,7 +484,7 @@
 		oDimMeasurePanel.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		// act		
+		// act
 		oDimMeasurePanel.removeDimMeasureItem(oDimMeasureItemC);
 
 		// assertions
@@ -675,7 +675,7 @@
 		// cleanup
 		oDimMeasurePanel.destroy();
 	});
-	
+
 	test("getOkPayload: â0 -> a1", function() {
 
 		// system under test

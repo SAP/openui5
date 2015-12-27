@@ -4,7 +4,7 @@ jQuery.sap.require("sap.m.MessageStrip");
 sap.ui.controller("sap.m.sample.DynamicMessageStripGenerator.C", {
 	showMsgStrip: function() {
 		var oMs = sap.ui.getCore().byId("msgStrip");
-		
+
 		if (oMs) {
 			oMs.destroy();
 		}

@@ -20,17 +20,17 @@
 						<m:content>
 							<m:Title text="Products" />
 							<m:ToolbarSpacer/>
-							<m:Input 
+							<m:Input
 								id="inputColumn"
 								width="20%"
 								placeholder="fixed column count"
 								tooltip="fixed column count"/>
-							<m:Input 
+							<m:Input
 								id="inputRow"
 								width="20%"
 								placeholder="fixed row count"
 								tooltip="fixed row count"/>
-							<m:Input 
+							<m:Input
 								id="inputButtomRow"
 								width="20%"
 								placeholder="fixed bottom row count"
@@ -39,7 +39,7 @@
 						</m:content>
 					</m:Toolbar>
 				</toolbar>
-				
+
 				<columns>
 					<Column width="11rem">
 						<m:Label text="Product Name" />
@@ -132,7 +132,7 @@
 					</Column>
 				</columns>
 			</Table>
-			
+
 		</m:content>
 	</m:Page>
 </mvc:View>

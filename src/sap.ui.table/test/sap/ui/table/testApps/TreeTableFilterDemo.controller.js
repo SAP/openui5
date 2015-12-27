@@ -16,35 +16,35 @@ sap.ui.define([
 			jQuery.each(aProperties, function(iIndex, sProperty) {
 				oTable.addColumn(new sap.ui.table.Column({
 					label: sProperty,
-					template: sProperty, 
-					sortProperty: sProperty, 
+					template: sProperty,
+					sortProperty: sProperty,
 					filterProperty: sProperty
 				}));
 			});
-			
+
 			//for easier table dbg
 			window.oTable = oTable;
 		},
-		
+
 		onActivateServicePress: function () {
 			var oView = this.getView();
-			
+
 			var sServiceUrl = oView.byId("serviceURL").getValue();
 			sServiceUrl = "../../../../../proxy/" + sServiceUrl.replace("://", "/");
-			
+
 			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, true);
 			oModel.setDefaultCountMode("Inline");
-			
+
 			this.getView().setModel(oModel);
-			
+
 			this.bindTable();
 		},
-		
+
 		bindTable: function (sOperationMode, aFilters, iNumberOfExpandedLevels) {
 			var oView = this.getView();
 			var oTableContainer = oView.byId("tableContainerPanel");
 			var oTable = oTableContainer.getContent()[0];
-			
+
 			// binding the table, based on the given parameters
 			oTable.bindRows({
 				path: "/orgHierarchy",
@@ -52,10 +52,10 @@ sap.ui.define([
 				parameters: {
 					operationMode: sOperationMode || "Server",
 					numberOfExpandedLevels: iNumberOfExpandedLevels || 0,
-					
-					// new flag to indicate, that the application filters shall always be performed serverside 
+
+					// new flag to indicate, that the application filters shall always be performed serverside
 					useServersideApplicationFilters: true,
-					
+
 					// only used for testservices, which do not provide correctly annotated metadata
 					treeAnnotationProperties: {
 						hierarchyLevelFor: "LEVEL",
@@ -63,23 +63,23 @@ sap.ui.define([
 						hierarchyNodeFor: "HIERARCHY_NODE",
 						hierarchyDrillStateFor: "DRILLDOWN_STATE"
 					},
-					
+
 				}
 			});
 		},
-		
+
 		filterButtonPress: function () {
 			var oView = this.getView();
 			var sFilters = oView.byId("filterDescription").getValue() || "";
 			var aFilters = sFilters ? [new sap.ui.model.Filter("DESCRIPTION", "Contains", sFilters)] : [];
 			var that = this;
-			
-			// Peform a selfmade count request, to decide if the Table can be bound in Client Mode 
+
+			// Peform a selfmade count request, to decide if the Table can be bound in Client Mode
 			oView.getModel().read("/orgHierarchy/$count", {
 				filters: aFilters,
 				success: function (oData) {
 					var iThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
-					
+
 					if (oData <= iThreshold) {
 						that.bindTable("Client", aFilters, 3);
 					} else {

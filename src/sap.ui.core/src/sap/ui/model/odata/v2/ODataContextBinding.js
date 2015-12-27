@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @see sap.ui.model.Binding.prototype.initialize
 	 */
 	ODataContextBinding.prototype.initialize = function() {
-		var that = this, 
+		var that = this,
 			sResolvedPath,
 			bReloadNeeded;
 
@@ -72,10 +72,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	};
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
-	 * 
+	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {string} [sGroupId] The group Id for the refresh
-	 * 
+	 *
 	 * @public
 	 */
 	ODataContextBinding.prototype.refresh = function(bForceUpdate, sGroupId) {
@@ -87,23 +87,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 		this._refresh(bForceUpdate);
 		this.sRefreshGroup = undefined;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
-	 * 
+	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {map} [mChangedEntities] Map of changed entities
 	 * @private
 	 */
 	ODataContextBinding.prototype._refresh = function(bForceUpdate, mChangedEntities) {
-		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false, 
+		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false,
 			mParameters = this.mParameters,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
 		if (this.bInitial) {
 			return;
 		}
-		
+
 		if (mChangedEntities) {
 			//get entry from model. If entry exists get key for update bindings
 			oStoredEntry = this.oModel._getObject(this.sPath, this.oContext);
@@ -124,7 +124,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			if (this.sRefreshGroup) {
 				mParameters = jQuery.extend({},this.mParameters);
 				mParameters.groupId = this.sRefreshGroup;
-			} 
+			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
 				if (that.oElementContext === oContext) {
 					if (bForceUpdate) {
@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.setContext
-	 * 
+	 *
 	 * @param {sap.ui.model.Context} oContext The binding context object
 	 * @private
 	 */

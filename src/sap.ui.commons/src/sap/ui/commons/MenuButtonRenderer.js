@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 	 * @namespace
 	 */
 	var MenuButtonRenderer = Renderer.extend(ButtonRenderer);
-	
+
 	/**
 	 * Hint: "renderButtonAttributes" is a reserved/hard-coded Button extending function!
 	 *       It is used to allow extensions to display content after the actual button content.
@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 			rm.writeAttribute("aria-haspopup", "true");
 		}
 	};
-	
+
 	/**
 	 * Hint: "renderButtonContentAfter" is a reserved/hard-coded Button extending function!
 	 *       It is used to allow extensions to display content after the actual button content.

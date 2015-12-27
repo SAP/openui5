@@ -160,10 +160,10 @@
                 }
                 $(document).off(END_EVENT, onBtnEnd);
             },
-            
+
             // ##### BEGIN: MODIFIED BY SAP //
             /*Improving sap.m.DateTimeInput keyboard handling:
-             * 
+             *
              Adding check if [ALT] key is pressed in combination with [ARROW_UP] and [ARROW_DOWN] keys,
              because [ALT]+[ARROW_UP] and [ALT]+[ARROW_DOWN] should close the scroller.
              *
@@ -171,7 +171,7 @@
              	- on page_up press - scroller moves to the first (minimum) value of the column currently on focus.
              	- on page_down press - scroller moves to the last (maximum) value of the column currently on focus.
              */
-            
+
             onKeyDown = function (e) {
                 if (e.which == 38 && !e.altKey) {
                     step(e, $(this), minus); // up
@@ -184,7 +184,7 @@
                 }
             },
             // ##### END: MODIFIED BY SAP
-            
+
             onKeyUp = function (e) {
                 if (click) {
                     clearInterval(timer);
@@ -453,19 +453,19 @@
             var val = pos[index] - 1;
             calc(t, val < min ? max : val, 2, true);
         }
-        
+
         // ##### BEGIN: MODIFIED BY SAP //
-        // Adding functions pageUp and pageDown, 
+        // Adding functions pageUp and pageDown,
         // called when [PAGE_UP] AND [PAGE_DOWN] keys are pressed
         function pageUp(t){
         	calc(t, min, 2, true);
         }
-        
+
         function pageDown(t){
         	calc(t, max, 2, true);
         }
         // ##### END: MODIFIED BY SAP
-        
+
         function setVal(fill, change, time, noscroll, temp, manual) {
             if (visible && !noscroll) {
                 scrollToPos(time, undefined, manual);

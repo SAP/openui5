@@ -17,20 +17,20 @@
 // Create a simple RadioButtonGroup with three items
 var oRBG1 = new sap.ui.commons.RadioButtonGroup({
 	tooltip : "This is a test tooltip for the first RadioButtonGroup",
-	select : function() {alert('RadioButton ' + oRBG1.getSelectedItem().getText());} 
+	select : function() {alert('RadioButton ' + oRBG1.getSelectedItem().getText());}
 	});
 var oItem = new sap.ui.core.Item({
-	text : "Option 1", 
+	text : "Option 1",
 	tooltip : "Tooltip 1",
 	key : "Key1"});
 oRBG1.addItem(oItem);
 oItem = new sap.ui.core.Item({
-	text : "Option 2", 
+	text : "Option 2",
 	tooltip : "Tooltip 2",
 	key : "Key2"});
 oRBG1.addItem(oItem);
 oItem = new sap.ui.core.Item({
-	text : "Option 3", 
+	text : "Option 3",
 	tooltip : "Tooltip 3",
 	key : "Key3"});
 oRBG1.addItem(oItem);

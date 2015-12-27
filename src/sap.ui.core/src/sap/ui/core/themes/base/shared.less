@@ -25,10 +25,10 @@
 	font-size: @sapUiFontSize;
 }
 
-/* 
- * used for static (Core) and hidden (HTML) area 
+/*
+ * used for static (Core) and hidden (HTML) area
  * (TODO: think about renaming static area also to hidden since static is not
- *        required for newer browsers anymore => position: static) 
+ *        required for newer browsers anymore => position: static)
  */
 .sapUiHidden {
 	position: absolute;
@@ -137,18 +137,18 @@
 	right: 0;
 }
 /*
- * Enforces 'auto' width. To be used in combination 
+ * Enforces 'auto' width. To be used in combination
  * with pre-defined margin classes to remove any '100%'
  * width's that might be set.
  */
 .sapUiForceWidthAuto { width: auto !important; }
 
-/* 
+/*
  * Pre-defined margins classes. These contain css margin
  * properties which are flagged 'important' to make sure
  * margins that come with a control are overwritten (an
  * example for a control with a pre defined margin is the
- * sap.m.List). 
+ * sap.m.List).
  *
  * In case your control comes with width '100%', horizontal
  * margins will not work properly. If your control has a
@@ -156,8 +156,8 @@
  * set that property to 'auto'.
  *
  * There are some control's though which do not have a width
- * property but still have a default width of '100%' 
- * (one example would be the SimpleForm). For these cases,  
+ * property but still have a default width of '100%'
+ * (one example would be the SimpleForm). For these cases,
  * please use css class 'sapUiForceWidthAuto' to which replace
  * your control's default width with value 'auto'.
  */
@@ -169,37 +169,37 @@
 .sapUiLargeMargin 	{ margin: @sapUiMarginLarge !important; }
 
 /* Two-sided margins */
-.sapUiTinyMarginBeginEnd { 
-	margin-left: @sapUiMarginTiny !important; 
-	margin-right: @sapUiMarginTiny !important; 
+.sapUiTinyMarginBeginEnd {
+	margin-left: @sapUiMarginTiny !important;
+	margin-right: @sapUiMarginTiny !important;
 }
 .sapUiTinyMarginTopBottom {
-	margin-top: @sapUiMarginTiny !important; 
-	margin-bottom: @sapUiMarginTiny !important; 
+	margin-top: @sapUiMarginTiny !important;
+	margin-bottom: @sapUiMarginTiny !important;
 }
-.sapUiSmallMarginBeginEnd { 
-	margin-left: @sapUiMarginSmall !important; 
-	margin-right: @sapUiMarginSmall !important; 
+.sapUiSmallMarginBeginEnd {
+	margin-left: @sapUiMarginSmall !important;
+	margin-right: @sapUiMarginSmall !important;
 }
 .sapUiSmallMarginTopBottom {
-	margin-top: @sapUiMarginSmall !important; 
-	margin-bottom: @sapUiMarginSmall !important; 
+	margin-top: @sapUiMarginSmall !important;
+	margin-bottom: @sapUiMarginSmall !important;
 }
 .sapUiMediumMarginBeginEnd {
-	margin-left: @sapUiMarginMedium !important; 
-	margin-right: @sapUiMarginMedium !important; 
+	margin-left: @sapUiMarginMedium !important;
+	margin-right: @sapUiMarginMedium !important;
 }
 .sapUiMediumMarginTopBottom {
-	margin-top: @sapUiMarginMedium !important; 
-	margin-bottom: @sapUiMarginMedium !important; 
+	margin-top: @sapUiMarginMedium !important;
+	margin-bottom: @sapUiMarginMedium !important;
 }
 .sapUiLargeMarginBeginEnd {
-	margin-left: @sapUiMarginLarge !important; 
-	margin-right: @sapUiMarginLarge !important; 
+	margin-left: @sapUiMarginLarge !important;
+	margin-right: @sapUiMarginLarge !important;
 }
-.sapUiLargeMarginTopBottom { 
-	margin-top: @sapUiMarginLarge !important; 
-	margin-bottom: @sapUiMarginLarge !important; 
+.sapUiLargeMarginTopBottom {
+	margin-top: @sapUiMarginLarge !important;
+	margin-bottom: @sapUiMarginLarge !important;
 }
 
 /* Single-sided margins */
@@ -224,7 +224,7 @@
 .sapUiLargeMarginEnd    { margin-right: @sapUiMarginLarge !important; }
 
 
-/* 
+/*
  * Class for responsive margins which adapts to the screen size of the currently used device
  */
 @media (max-width:599px) {
@@ -259,7 +259,7 @@
 }
 
 /*
- * Content of SplitContainer Detail 
+ * Content of SplitContainer Detail
  * (Right hand-side of SplitContainer)
  */
 .sapMSplitContainerDetail .sapUiResponsiveMargin{
@@ -273,7 +273,7 @@
  * to make sure that their 'IMPORTANT' statement wins
  */
 .sapUiNoMargin    { margin: 0 !important; } /*Removes ALL margins*/
-/*Use the following to remove a margin on a particular side of your container*/    
+/*Use the following to remove a margin on a particular side of your container*/
 .sapUiNoMarginTop    { margin-top: 0 !important; }
 .sapUiNoMarginBottom { margin-bottom: 0 !important; }
 .sapUiNoMarginBegin  { margin-left: 0 !important; }

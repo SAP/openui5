@@ -71,11 +71,11 @@ sap.ui.define([],
 			this.renderControls(oRm, oSideControl.getMainContent());
 			oRm.write("</div>");
 		};
-		
+
 		DynamicSideContentRenderer._renderSideContent = function(oRm, oSideControl, iSideContentId, bShouldSetHeight) {
 			// on firefox the 'aside' side content is not shown when below the main content; use div instead
 			var sSideContentTag = sap.ui.Device.browser.firefox ? "div" : "aside";
-			
+
 			oRm.write("<" + sSideContentTag + " id='" + iSideContentId + "-SCGridCell'");
 
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
@@ -98,6 +98,6 @@ sap.ui.define([],
 			this.renderControls(oRm, oSideControl.getSideContent());
 			oRm.write("</" + sSideContentTag + ">");
 		};
-		
+
 		return DynamicSideContentRenderer;
 	}, /* bExport= */ true);

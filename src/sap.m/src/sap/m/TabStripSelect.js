@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		TabStripSelect.prototype.onAfterRenderingPicker = function() {
 			var iPickerOffsetX,
 				bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
-			
+
 			Select.prototype.onAfterRenderingPicker.call(this);
 			if (bPageRTL) {
 				iPickerOffsetX = this.$().width() - this.getPicker().$().width();

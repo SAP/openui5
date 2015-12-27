@@ -3,8 +3,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.ui.layout.form"
 	xmlns="sap.m" >
-	<Panel 
-		width="auto" 
+	<Panel
+		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>
 			<Toolbar>

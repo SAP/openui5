@@ -54,7 +54,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 								"annotations": ["originAnnotations", "annotations2"]
 							}
 						},
-						
+
 						"originAnnotations" : {
 							"uri": "/path/to/odata/service/with/trailing/slash/annotations.xml",
 							"type": "ODataAnnotation"

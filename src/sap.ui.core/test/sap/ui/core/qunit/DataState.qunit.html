@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.DataState
   Author: d036800
 -->
 
-<html> 
+<html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <script>
-	//fix IE 1 bug 
+	//fix IE 1 bug
 	window.ActiveXObject = undefined;
 </script>
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.m"
 	xx-handleValidation="true"
 	>
@@ -35,7 +35,7 @@
 <script language="javascript">
 	jQuery.sap.require("sap.ui.model.DataState");
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
-	
+
 	function getSimulatedModel(oData) {
 		//Create a simulated server model for a JSON Model
 		var SimulatedServerModel = sap.ui.model.json.JSONModel.extend("SimulatedServerModel", /** @lends sap.ui.model.json.JSONModel.prototype */ {
@@ -53,14 +53,14 @@
 		SimulatedServerModel.prototype.getDelay = function() {
 			return this.iDelay;
 		}
-		
+
 		//override set property to allow delay
 		SimulatedServerModel.prototype.setProperty = function(sPath, sValue, oContext) {
 			if (this.iDelay) {
 				//store the original value of the model
 				this.setOriginalValue(sPath, this.getProperty(sPath, oContext), oContext);
 			}
-			
+
 			sap.ui.model.json.JSONModel.prototype.setProperty.call(this, sPath, sValue, oContext);
 		}
 		SimulatedServerModel.prototype.submit = function(sPath, oContext) {
@@ -101,7 +101,7 @@
 			}
 			return this.getProperty(sPath, oContext);
 		};
-		
+
 		//simulate the laundering state
 		SimulatedServerModel.prototype.isLaundering = function(sPath, oContext) {
 			var sResolved = this.resolve(sPath, oContext);
@@ -115,7 +115,7 @@
 			var sResolved = this.resolve(sPath, oContext);
 			delete this.mOriginalData[sResolved];
 		};
-		
+
 		//set the original value
 		SimulatedServerModel.prototype.setOriginalValue = function(sPath, oValue, oContext) {
 			var sResolved = this.resolve(sPath, oContext);
@@ -134,19 +134,19 @@
 		};
 		return new SimulatedServerModel(oData);
 	}
-	
-	
+
+
 	module("Basic");
-	
+
 	test("test DataState API",function(){
 		var oDataState = new sap.ui.model.DataState();
 		var mChanges = oDataState.getChanges();
 		var aPropertyChecks = [
 			"Value", "InternalValue" , "OriginalValue", "OriginalInternalValue", "InvalidValue"
 		];
-		
+
 		equal(jQuery.sap.equal(mChanges,{}),true, "Initially the changes are empty");
-		
+
 		for (var i=0;i<aPropertyChecks.length;i++) {
 			var sProp = aPropertyChecks[i];
 			var sOldValue = oDataState["get" + sProp]();
@@ -160,7 +160,7 @@
 			var mChanges = oDataState.getChanges();
 			equal(jQuery.sap.equal(mChanges,{}),true, "Changes empty after apply of old value for " + sProp);
 		}
-		
+
 		//checking dirty state
 		oDataState.setOriginalValue("OriginalValue");
 		oDataState.setValue("OriginalValue");
@@ -175,13 +175,13 @@
 		oDataState.setInvalidValue(null);
 		equal(oDataState.isDirty(),false, "Control Value reset  and not dirty");
 		equal(oDataState.isControlDirty(),false, "Control Value reset and not controlDirty");
-		
+
 		//laundering
 		oDataState.setLaundering(true);
 		equal(oDataState.isLaundering(),true, "Laundering set");
 		oDataState.setLaundering(false);
 		equal(oDataState.isLaundering(),false, "Laundering reset");
-		
+
 		//messages
 		oDataState.setModelMessages(["ModelMessage"]);
 		equal(oDataState.getModelMessages()[0],"ModelMessage", "Model Message set");
@@ -194,9 +194,9 @@
 		oDataState.setModelMessages(null);
 		equal(oDataState.getMessages().length, 0, "All Messages length 1");
 		equal(oDataState.getModelMessages().length, 0, "Control Message reset");
-		
+
 	});
-	
+
 </script>
 
 </head>

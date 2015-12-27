@@ -3,7 +3,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:form="sap.ui.layout.form"
 	xmlns="sap.m">
-	
+
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"

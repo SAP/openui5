@@ -12,7 +12,7 @@
 			<Button id="onResetID" text="Reset" press="onReset" visible="{ui>/realOData}" />
 			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
 		</HBox>
-		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code" 
+		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
 			width="auto" class="sapUiResponsiveMargin">
 			<content>
 				<core:HTML content="{ui>/code}" preferDOM="false"/>

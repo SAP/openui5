@@ -3,13 +3,13 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.core.sample.DataStateOData.Page", {
-	
+
 		onInit: function (oEvent) {
 			var that = this;
 			this.addHighlightStyle();
 			this.sMockServerBaseUri = "test-resources/sap/ui/core/demokit/sample/DataStateOData/mockdata/";
 			this.sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
-			
+
 			jQuery.sap.require("sap.ui.core.util.MockServer");
 
 			this.oMockServer = new MockServer({rootUri : this.sServiceUri});
@@ -23,19 +23,19 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 				bGenerateMissingMockData : true
 			});
 			this.oMockServer.start();
-				
+
 			this.oModel = new ODataModel(this.sServiceUri, {defaultBindingMode:"TwoWay", refreshAfterChange:false});
 			this.oModel.setChangeBatchGroups({});
-			
+
 			this.getView().setModel(this.oModel);
 			this.oDataStateModel = new JSONModel({});
-			
+
 			this.getView().setModel(this.oDataStateModel,"DataState");
 			this.getView().bindElement("/ProductSet('HT-1000')");
-			
+
 			var oNameType = new sap.ui.model.type.String();
 			oNameType.setConstraints({maxlength:15});
-			
+
 			this.getView().byId("Name").bindProperty("value",{path:"Name",type:oNameType});
 			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
 			this.getView().byId("Name").getBinding("value").attachDataStateChange(function(oEvent) {
@@ -86,7 +86,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 						that.oDataStateModel.setProperty("/" + sProperty + "/" + n, aJSONMessages);
 					}
 					return true;
-				} 
+				}
 			};
 			for (var n in oDataState.mProperties) {
 					if (n in oChanges) {
@@ -100,7 +100,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 			if (oChanges['dirty']) {
 				this.oDataStateModel.setProperty("/dirty",jQuery.extend({},oChanges['dirty']));
 			}
-			
+
 			this.applyPropertyHighlight(aChangedProperties);
 		},
 		addHighlightStyle: function() {
@@ -110,7 +110,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 			document.getElementsByTagName("HEAD")[0].appendChild(oStyle);
 		}
 	});
-	
+
 return PageController;
 
 });

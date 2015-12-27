@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		if (tooltip) {
 			// render title always on INPUT tag (even it's in outer DIV too)
-			// because screenreader ignores it on outer DIV 
+			// because screenreader ignores it on outer DIV
 			rm.writeAttributeEscaped('title', tooltip);
 		}
 

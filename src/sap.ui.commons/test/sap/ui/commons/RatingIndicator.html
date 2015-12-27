@@ -65,7 +65,7 @@
     oButton.attachPress(
     		function (oControlEvent) {
 					var maxValue = parseInt(oInputSymbols.getValue());
-					oStarRating.setMaxValue(maxValue); 
+					oStarRating.setMaxValue(maxValue);
 					oStarRating.setValue(parseFloat(oInputValue.getValue()));
 					oStarRating.setVisualMode(oInputHalfSymbols.getSelectedItem().getText());
 					oStarRating.setEditable(!oInputReadOnly.getChecked());

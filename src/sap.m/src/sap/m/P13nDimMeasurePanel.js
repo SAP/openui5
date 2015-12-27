@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new P13nDimMeasurePanel.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nDimMeasurePanel control is used to define chart-specific settings like chart type, the visibility, the order and roles of
@@ -32,7 +32,7 @@ sap.ui.define([
 
 				/**
 				 * Specifies a chart type key.
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				chartTypeKey: {
@@ -43,7 +43,7 @@ sap.ui.define([
 			aggregations: {
 				/**
 				 * List of columns that has been changed.
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				dimMeasureItems: {
@@ -65,7 +65,7 @@ sap.ui.define([
 
 				/**
 				 * Specifies available chart types.
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				availableChartTypes: {
@@ -205,7 +205,7 @@ sap.ui.define([
 
 	/**
 	 * *
-	 * 
+	 *
 	 * @param {string} sSearchText Table items are filtered by this text. <b>Note:</b> " " is a valid value. The table will be set back if
 	 *        sSearchText="".
 	 * @private
@@ -458,7 +458,7 @@ sap.ui.define([
 		var oModel = this.getModel("$sapmP13nDimMeasurePanel");
 		var oData = oModel.getData();
 		this._bOnBeforeRenderingFirstTimeExecuted = false;
-		
+
 		this.addAggregation("items", oItem);
 		// Take over item data into model
 		this._includeModelItem(oItem, -1);
@@ -708,7 +708,7 @@ sap.ui.define([
 
 	/**
 	 * Switches 'Show Selected' button to 'Show All' and back.
-	 * 
+	 *
 	 * @private
 	 */
 	P13nDimMeasurePanel.prototype._onSwitchButtonShowSelected = function() {
@@ -729,7 +729,7 @@ sap.ui.define([
 
 	/**
 	 * Execute search by filtering columns list based on the given sValue
-	 * 
+	 *
 	 * @private
 	 */
 	P13nDimMeasurePanel.prototype._onExecuteSearch = function() {
@@ -785,7 +785,7 @@ sap.ui.define([
 
 	/**
 	 * Moves model item from <code>iIndexFrom</code> to <code>iIndexTo</code>.
-	 * 
+	 *
 	 * @param {int} iIndexFrom Model item at this index will be removed. Range: {0, length-1}
 	 * @param {int} iIndexTo Model item at this index will be inserted. Range: {0, length-1}
 	 * @return {boolean} <code>true</code> if table item has been moved, else <code>false</code>

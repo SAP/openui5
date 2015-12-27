@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 	 * @namespace
 	 */
 	var DropdownBoxRenderer = sap.ui.core.Renderer.extend(ComboBoxRenderer);
-	
+
 	/**
 	 * Renders additional HTML for the DropdownBox to the TextField before the INPUT element (sets the icon)
 	 *
@@ -21,11 +21,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 	 * @param {sap.ui.fw.Control} oDdb an object representation of the control that should be rendered
 	 */
 	DropdownBoxRenderer.renderOuterContentBefore = function(rm, oDdb){
-	
+
 		this.renderExpander(rm, oDdb);
-	
+
 	};
-	
+
 	/**
 	 * Renders additional HTML for the DropdownBox to the TextField after the INPUT element (sets the select box)
 	 *
@@ -33,11 +33,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 	 * @param {sap.ui.fw.Control} oDdb an object representation of the control that should be rendered
 	 */
 	DropdownBoxRenderer.renderOuterContent = function(rm, oDdb){
-	
+
 		this.renderSelectBox(rm, oDdb, '0');
-	
+
 	};
-	
+
 	/**
 	 * Used to set the tabindex of the dropdownbox to -1
 	 *
@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 	 * @param {sap.ui.fw.Control} oDdb an object representation of the control that should be rendered
 	 */
 	DropdownBoxRenderer.renderTextFieldEnabled = function(rm, oDdb) {
-	
+
 		if (oDdb.mobile) {
 			rm.writeAttribute('tabindex', '-1');
 		} else if (!oDdb.getEnabled()) {
@@ -56,9 +56,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 		} else {
 			rm.writeAttribute('tabindex', '0');
 		}
-	
+
 	};
-	
+
 	/*
 	 * Renders ARIA information for the dropdownbox (outer &lt;div&gt;)
 	 * @param {sap.ui.fw.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 	 * @private
 	 */
 	DropdownBoxRenderer.renderARIAInfo = function(rm, oDdb) {
-	
+
 		var iPosInSet = -1;
 		if (oDdb.getSelectedItemId()) {
 			for ( var i = 0; i < oDdb.getItems().length; i++) {
@@ -77,20 +77,20 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer'],
 				}
 			}
 		}
-	
+
 		var mProps = {
 				autocomplete: "list",
 				live: "polite",
 				setsize: oDdb.getItems().length,
 				posinset: (iPosInSet >= 0) ? iPosInSet : undefined
 			};
-	
+
 		if (oDdb.getValueState() == sap.ui.core.ValueState.Error) {
 			mProps["invalid"] = true;
 		}
-	
+
 		rm.writeAccessibilityState(oDdb, mProps);
-	
+
 	};
 
 	return DropdownBoxRenderer;

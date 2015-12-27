@@ -6,7 +6,7 @@
 
 		<title>MVC-based Mobile App</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.m"
@@ -34,7 +34,7 @@
 					'precomposed': false
 				}
 			}).placeAt("content");
-			
+
 			// subscribe to event bus
 			var bus = sap.ui.getCore().getEventBus();
 			bus.subscribe("nav", "to", function(channelId, eventId, data) {
@@ -61,7 +61,7 @@
 					app.setModel(oModel);
 				}
 			});
-			
+
 		</script>
 	</head>
 

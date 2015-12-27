@@ -10,7 +10,7 @@ sap.ui.define(['./ExportType'],
 	/**
 	 * Constructor for a new ExportTypeCSV.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -35,10 +35,10 @@ sap.ui.define(['./ExportType'],
 		metadata: {
 			library: "sap.ui.core",
 			properties: {
-				
+
 				/**
 				 * Separator char.
-				 * 
+				 *
 				 * Value needs to be exactly one character or empty for default.
 				 */
 				separatorChar: {

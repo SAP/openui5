@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Controller, JSONModel) {
 	"use strict";
 	return Controller.extend("sap.ui.table.testApps.AnalyticalTableOData", {
-		
+
 		onInit: function () {
 			var oFormData = {
 				serviceURL: "",
@@ -18,31 +18,31 @@ sap.ui.define([
 			var oModel = new JSONModel(oFormData);
 			this.getView().setModel(oModel);
 		},
-		
+
 		onCreateTableClick: function (){
-			
+
 			var oView = this.getView();
-			
+
 			var sServiceUrl = oView.byId("serviceURL").getValue();
 			sServiceUrl = "../../../../../proxy/" + sServiceUrl.replace("://", "/");
-			
+
 			var sCollection = oView.byId("collection").getValue();
 			var sSelectProperties = oView.byId("selectProperties").getValue();
-			
+
 			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue(), 10);
 			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
-			
+
 			//dimensions and measures of Analytical Table
 			var aDimensions = oView.byId("dimensions").getValue().split(",");
 			var aMeasures = oView.byId("measures").getValue().split(",");
-			
+
 			/**
-			 * Clear the Table and rebind it 
+			 * Clear the Table and rebind it
 			 */
 			var oTableContainer = oView.byId("tableContainerPanel");
-			
+
 			var oTable = oTableContainer.getContent()[0];
-			
+
 			//clean up
 			if (oTable) {
 				oTableContainer.removeContent(oTable);
@@ -50,11 +50,11 @@ sap.ui.define([
 				oTable.destroyColumns();
 				oTable.destroy();
 			}
-			
+
 			jQuery.sap.measure.start("createTable");
 			oTable = new sap.ui.table.AnalyticalTable({});
 			oTableContainer.addContent(oTable);
-			
+
 			oTable.addDelegate({
 				onBeforeRendering: function () {
 					jQuery.sap.measure.start("onBeforeRendering","",["Render"]);
@@ -74,7 +74,7 @@ sap.ui.define([
 					jQuery.sap.measure.end("rendering");
 				}
 			}, false);
-			
+
 			var fnRowsUpdated = function() {
 				oTable.detachEvent("_rowsUpdated", fnRowsUpdated);
 				console.timeStamp("RowsUpdated");
@@ -94,23 +94,23 @@ sap.ui.define([
 				oView.byId("tableCreate").setText(iTableCreate);
 				oView.byId("factor").setText(iFactor);
 			};
-			
+
 			oTable.attachEvent("_rowsUpdated", fnRowsUpdated);
 
 			// recreate the columns
 			var aProperties = sSelectProperties.split(",");
-			
+
 			jQuery.each(aProperties, function(iIndex, sProperty) {
-				
+
 				var oColumn = new sap.ui.table.AnalyticalColumn({
 					label: sProperty,
-					template: sProperty, 
-					sortProperty: sProperty, 
+					template: sProperty,
+					sortProperty: sProperty,
 					filterProperty: sProperty,
 					leadingProperty: sProperty
 				});
 				oTable.addColumn(oColumn);
-				
+
 				// add flag to column
 				if (jQuery.inArray(sProperty, aDimensions) !== -1 && jQuery.inArray(sProperty, aMeasures) === -1) {
 					oColumn.setGrouped(true);
@@ -124,33 +124,33 @@ sap.ui.define([
 
 			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, true);
 			oModel.setDefaultCountMode("Inline");
-			
+
 			oTable.setModel(oModel);
-			
+
 			oTable.setThreshold(iTableThreshold);
-			
+
 			oTable.bindRows({
 				path: "/" + sCollection,
 				parameters: {
 					threshold: iBindingThreshold
 				}
 			});
-			
-			
+
+
 			window.oTable = oTable;
 
 			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 				return oMeasurement.categories.indexOf("JS") > -1? oMeasurement : null;
 			});
 			console.table(aJSMeasure);
-			
-			
+
+
 			var aRenderMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 				return oMeasurement.categories.indexOf("Render") > -1? oMeasurement : null;
 			});
-			
+
 			console.table(aRenderMeasure);
-			
+
 			//set test result
 			this.getView().byId("_createRows").setText(aJSMeasure[0].duration);
 			this.getView().byId("_updateTableContent").setText(aJSMeasure[1].duration);

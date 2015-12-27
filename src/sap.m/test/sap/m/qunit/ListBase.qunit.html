@@ -142,11 +142,11 @@
 			// bind Aggregation
 			oList.bindAggregation("items", sPath, oItemTemplate);
 		}
-		
+
 		var createListWithBinding = function () {
-			
+
 		};
-		
+
 		function testRemeberSelections(oList, oRenderSpy) {
 			var oSelectionItem,
 			bIncludeItemInSelection,
@@ -164,7 +164,7 @@
 			// add item to page & render
 			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
-		
+
 			vSelectionMode = oList.getMode();
 			// call method & do tests
 			if (vSelectionMode == "SingleSelect") {
@@ -177,14 +177,14 @@
 				oList.getItems()[5].setSelected(true);
 				vSelectedItemsNumber = 3;
 			}
-		
+
 			oList.setRememberSelections(true);
 			strictEqual(oList.getRememberSelections(), true, 'The property "rememberSelections" is "true" on ' + oList);
 
 			// TODO: decide if check on internal variables is needed (Cahit)
 			strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of ' + vSelectedItemsNumber + ' on ' + oList);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + ' item ' + oList);
-		
+
 			// filter 2 items ("Title1" and "Title10")
 			oList.getBinding("items").filter([new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title1")]);
 			strictEqual(oList.getSelectedItems().length, 1, 'The selection contains 1 item ' + oList);
@@ -192,7 +192,7 @@
 			// reset filter
 			oList.getBinding("items").filter([]);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + 'item ' + oList);
-		
+
 			oList.setRememberSelections(false).removeSelections(true);
 			strictEqual(oList.getRememberSelections(), false, 'The property "rememberSelections" is "false" on ' + oList);
 
@@ -210,12 +210,12 @@
 			// standard setter tests
 			strictEqual(oList.setRememberSelections(), oList, 'Method returns this pointer on ' + oList);
 			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
-		
+
 			oList.setGrowing(true);
 			strictEqual(oList.getGrowing(), true, 'The property "growing" is "true" on ' + oList);
-			
+
 			oList.setRememberSelections(true);
-			
+
 			bindListData(oList, data4, "/items", createTemplateListItem());
 			// remember the selected items in oListSelected
 			if (vSelectionMode == "SingleSelect") {
@@ -232,18 +232,18 @@
 				oListSelected[2] = oList.getItems()[5].getTitle();
 				oListSelected.sort();
 			}
-			
+
 			var aSelectedContextPaths = oList.getSelectedContextPaths();
-			
+
 			strictEqual(aSelectedContextPaths.length, vSelectedItemsNumber, 'The internal selection array has length of' +vSelectedItemsNumber +' on ' + oList);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' +vSelectedItemsNumber+ ' items ' + oList);
-		
+
 			oList.setGrowing(false);
 			strictEqual(oList.getGrowing(), false, 'The property "growing" is "false" on ' + oList);
-		
+
 			// sort ascending
 			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", false, oSorterAsc) ] );
-		
+
 			if (vSelectionMode == "SingleSelect") {
 				oListSelectedAfterSorting = oList.getSelectedItems()[0].getTitle();
 				strictEqual(oListSelected, oListSelectedAfterSorting, "the same item should be selected after sorting" );
@@ -256,29 +256,29 @@
 				oListSelectedAfterSorting.sort();
 				strictEqual(oListSelected.toString(), oListSelectedAfterSorting.toString(), "the same items should be selected after sorting" );
 			}
-		
+
 			strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber +' on ' + oList);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
-		
+
 			oList.setRememberSelections(false).removeSelections(true);
 			strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
-		
+
 			// sort descending
-			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", true, oSorterDesc) ] );	
+			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", true, oSorterDesc) ] );
 			strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array has length of 0 on ' + oList);
 			strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
-		
+
 			//rebinding
 			bindListData(oList, data4, "/items", createTemplateListItem());
 			strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
-			
+
 			// retain selection after binding
 			oList.setRememberSelections(true);
 			oList.setSelectedContextPaths(aSelectedContextPaths);
-			
+
 			// sort ascending
 			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", false, oSorterAsc) ] );
-			
+
 			// retest after sorting
 			if (vSelectionMode == "SingleSelect") {
 				oListSelectedAfterSorting = oList.getSelectedItems()[0].getTitle();
@@ -292,12 +292,12 @@
 				oListSelectedAfterSorting.sort();
 				strictEqual(oListSelected.toString(), oListSelectedAfterSorting.toString(), "the same items should be selected after sorting" );
 			}
-		
+
 			// cleanup
 			oPage.removeAllContent();
 			oList.destroy();
 		};
-		
+
 		// app
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			oApp = new sap.m.App("myApp", { initialPage: "myFirstPage" }),
@@ -312,8 +312,8 @@
 		module("Basic Control API checks");
 		/********************************************************************************/
 
-		
-		
+
+
 		test("Properties", function() {
 			var oList = new sap.m.List({}),
 				oProperties = oList.getMetadata().getAllProperties();
@@ -566,7 +566,7 @@
 			var oListItem = createListItem().setSelected(true),
 				oList = new sap.m.List({
 					mode: sap.m.ListMode.None,
-					
+
 					items: [
 						oListItem
 					]
@@ -769,7 +769,7 @@
 			// TODO: decide if check on internal variables is needed (Cahit)
 			strictEqual(oList._oGrowingDelegate instanceof sap.m.GrowingEnablement, true, 'The growing delegate is initialized');
 			strictEqual(oRenderSpy.callCount, 2, 'The list should be rerendered after setting growing to "true"');
-			
+
 			// TODO: this should fire an exception because type is boolean
 			//throws(function () {
 				oList.setGrowing("WrongType");
@@ -841,7 +841,7 @@
 			// add item to page & render
 			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
-			
+
 			// call method & do tests
 			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
 			strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
@@ -872,7 +872,7 @@
 			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			oRenderSpy = this.spy(oList.getRenderer(), "render");
-			
+
 			oList.setEnableBusyIndicator(false);
 			oList.setEnableBusyIndicator(true);
 			sap.ui.getCore().applyChanges();
@@ -892,7 +892,7 @@
 				}),
 				$list,
 				oRenderSpy = this.spy(oList.getRenderer(), "render");
-			
+
 			// add item to page & render
 			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
@@ -1014,7 +1014,7 @@
 			oSelectionItem.ontap({ srcControl: oSelectionItem });
 			strictEqual(oList.getSelectedItem(), oSelectionItem, 'Item "' + oSelectionItem + '" should be selected');
 			oSelectionItem.setSelected(false);
-			
+
 			bIncludeItemInSelection = false;
 			strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
 			sap.ui.getCore().applyChanges();
@@ -1042,8 +1042,8 @@
 			oList.destroy();
 		});
 
-		
-		
+
+
 		test("setRememberSelectionsForMultiSelect", function() {
 			var oListItemTemplate = createListItem().setSelected(true),
 				oList = new sap.m.List({
@@ -1054,7 +1054,7 @@
 					]
 				}),
 				oRenderSpy = this.spy(oList.getRenderer(), "render");
-			
+
 			testRemeberSelections(oList, oRenderSpy);
 		});
 
@@ -1068,12 +1068,12 @@
 					]
 				}),
 				oRenderSpy = this.spy(oList.getRenderer(), "render");
-			
+
 			testRemeberSelections(oList, oRenderSpy);
-				
+
 		});
 
-		
+
 		/* getter */
 
 		test("getId", function() {
@@ -1131,7 +1131,7 @@
 			// no binding
 			iCounter = 0;
 			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
-	
+
 			oList.addItem(createListItem());
 			iCounter++;
 			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
@@ -1147,11 +1147,11 @@
 			bindListData(oList, data1, "/items", createTemplateListItem());
 			iCounter = data1.items.length;
 			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
-	
+
 			bindListData(oList, data2, "/items", createTemplateListItem());
 			iCounter = data2.items.length;
 			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
-	
+
 			bindListData(oList, data3, "/items", createTemplateListItem());
 			iCounter = data3.items.length;
 			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
@@ -1168,11 +1168,11 @@
 		/********************************************************************************/
 		module("Other API methods");
 		/********************************************************************************/
-		
+
 		/********************************************************************************/
 		module("Internal methods");
 		/********************************************************************************/
-		
+
 		test("_isColumnsIncompatible", function() {
 			var oList = new sap.m.List();
 
@@ -1187,9 +1187,9 @@
 			oPage.removeAllContent();
 			oList.destroy();
 		});
-		
+
 		module("KeyboardHandling");
-		
+
 		test("Test Tab/ShiftTab/F6/ShiftF6 handling", function() {
 			var fnSpy = this.spy();
 			var oPage = new sap.m.Page();
@@ -1205,40 +1205,40 @@
 				mode: "MultiSelect",
 				items : [oListItem]
 			});
-			
+
 			oPage.addContent(oBeforeList);
 			oPage.addContent(oList);
 			oPage.addContent(oAfterList);
 			oPage.placeAt("content");
  			sap.ui.getCore().applyChanges();
  			oList.forwardTab = fnSpy;
-			
+
  			// tab key
 			sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "TAB", false, false, false);
 			strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on last tabbable item");
 			strictEqual(fnSpy.args[0][0], true, "Tab Forward is informed");
 			fnSpy.reset();
-			
+
 			// shift-tab key
 			sap.ui.test.qunit.triggerKeyboardEvent(oListItem.getFocusDomRef(), "TAB", true, false, false);
 			strictEqual(fnSpy.callCount, 1, "List is informed to forward tab backwards when tab is pressed while focus is on the row");
 			strictEqual(fnSpy.args[0][0], false, "Backwards tab is informed");
 			fnSpy.reset();
-			
+
 			// shift-F6 key
 			oInput.getFocusDomRef().focus();
 			sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", true, false, false);
 			strictEqual(document.activeElement.id, oBeforeList.getFocusDomRef().id, "Focus is moved correctly after Shift-F6");
-			
+
 			// F6
 			oInput.getFocusDomRef().focus();
 			sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", false, false, false);
 			strictEqual(document.activeElement.id, oAfterList.getFocusDomRef().id, "Focus is moved correctly after F6");
-			
+
 			// cleanup
 			oPage.destroy();
 		});
-		
+
 		// in case of testrunner does not put the focus to the document it is not neccessary to make this test
 		document.hasFocus() && test("Focusing an item in the ListItemBase should change the focus index of item navigation", function() {
 			var oInput = new sap.m.Input();
@@ -1252,10 +1252,10 @@
 			var oList = new sap.m.List({
 				items : [oListItem0, oListItem1, oListItem2]
 			});
-			
+
 			oList.placeAt("content");
 			sap.ui.getCore().applyChanges();
-			
+
 			var oFocusedInput = oListItem1.getTabbables()[0];
 			oFocusedInput.focus();
 			this.clock.tick(1);
@@ -1264,7 +1264,7 @@
 			// cleanup
 			oList.destroy();
 		});
-		
+
 		test("Item visible changes should inform the List", function() {
 			var fnSpy = this.spy();
 			var oListItem = new sap.m.StandardListItem({
@@ -1273,39 +1273,39 @@
 			var oList = new sap.m.List({
 				items : oListItem
 			});
-			
+
 			oPage.addContent(oList);
 			sap.ui.getCore().applyChanges();
-			
+
 			// act
 			oList.onItemDOMUpdate = fnSpy;
-			
+
 			oListItem.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			
+
 			strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from visible to invisible");
 			strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
 			fnSpy.reset();
-			
+
 			oListItem.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			
+
 			strictEqual(fnSpy.callCount, 0, "Visibility did not changed and list is not informed");
 			fnSpy.reset();
-			
+
 			oListItem.setVisible(true);
 			sap.ui.getCore().applyChanges();
-			
+
 			strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from invisible to visible");
 			strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
 			strictEqual(fnSpy.args[0][1], true, "Correct visible parameter item is informed");
 			fnSpy.reset();
-			
+
 			// cleanup
 			oPage.removeAllContent();
 			oList.destroy();
 		});
-		
+
 		test("ListItem visibility change should not rerender the list", function() {
 			var oListItem1 = new sap.m.StandardListItem({
 					title: "Title1"
@@ -1316,42 +1316,42 @@
 				oList = new sap.m.List({
 					items : [oListItem1, oListItem2]
 				});
-			
+
 			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			
+
 			var fnRenderSpy = this.spy(oList.getRenderer(), "render");
-			
+
 			oListItem1.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			
+
 			oListItem2.focus();
 			this.clock.tick(1);
-			
+
 			/* make it sure document has focus in case of testrunner */
 			if (document.hasFocus()) {
 				strictEqual(oList.getItemNavigation().getItemDomRefs().length, 1, "Invisible items are not in the item navigation.");
 			}
-			
+
 			oListItem1.setVisible(true);
 			sap.ui.getCore().applyChanges();
-			
+
 			oListItem1.focus();
 			this.clock.tick(1);
-			
+
 			/* make it sure document has focus in case of testrunner */
 			if (document.hasFocus()) {
 				strictEqual(oList.getItemNavigation().getItemDomRefs().length, 2, "Only visible items are in the item navigation.");
 			}
-			
+
 			oListItem1.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			
+
 			strictEqual(fnRenderSpy.callCount, 0, "The list should not be rerendered with item visibility changes");
-			
+
 			oList.destroy();
 		});
-		
+
 		test("Container Padding Classes", function () {
 			// System under Test + Act
 			var oContainer = new sap.m.List(),

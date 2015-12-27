@@ -35,7 +35,7 @@ sap.ui.define([
 			 MatcherPipeline,
 			 ActionPipeline) {
 		"use strict";
-		
+
 		var oPlugin = new OpaPlugin(),
 			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),

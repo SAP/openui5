@@ -21,7 +21,7 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
-		
+
 		//
 		// Test for the suggestion functionality of the sap.m.SearchField control.
 		// Other functional tests see SearchField.qunit.html.
@@ -44,7 +44,7 @@
 		}
 
 		var oSF;
-		
+
 		test("static values", function() {
 			var aItems = ["001", "002", "003", "004", "005"];
 
@@ -70,7 +70,7 @@
 		});
 
 		module("Test the suggest function");
-		
+
 		test("call the suggest() function", function() {
 			// action
 			oSF.suggest();
@@ -125,7 +125,7 @@
 			this.clock.tick(1000);
 			strictEqual(oSF.getSuggestionItems().length, count, "The suggestion item has been deleted");
 			strictEqual(fnUpdateSpy.callCount, 2, "Suggest update() called two times");
-			
+
 			oSF.suggest(false);
 			this.clock.tick(1000);
 		});

@@ -110,7 +110,7 @@
 
 		test("getClass", function() {
 			var oClass;
-			
+
 			oClass = sap.ui.core.date.UniversalDate.getClass(sap.ui.core.CalendarType.Gregorian);
 			equal(oClass, sap.ui.core.date.Gregorian, "getClass returns correct class object");
 
@@ -120,10 +120,10 @@
 			oClass = sap.ui.core.date.UniversalDate.getClass(sap.ui.core.CalendarType.Japanese);
 			equal(oClass, sap.ui.core.date.Japanese, "getClass returns correct class object");
 		});
-		
+
 		test("getInstance", function() {
 			var oDate, oGregorian, oJSDate = new Date();
-			
+
 			// Explicit calendar type
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Gregorian);
 			ok(oDate instanceof sap.ui.core.date.Gregorian, "getInstance returns expected object");
@@ -136,24 +136,24 @@
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate, sap.ui.core.CalendarType.Japanese);
 			ok(oDate instanceof sap.ui.core.date.Japanese, "getInstance returns expected object");
 			equal(oDate.getCalendarType(), "Japanese", "Calendar type is set correctly");
-			
+
 			// Default calendar type
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oJSDate);
 			ok(oDate instanceof sap.ui.core.date.Gregorian, "getInstance returns expected object");
 			equal(oDate.getCalendarType(), "Gregorian", "Calendar type is set correctly");
-			
+
 			// getInstance with other UniversalDate
 			oGregorian = new sap.ui.core.date.Gregorian();
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oGregorian, sap.ui.core.CalendarType.Islamic);
 			ok(oDate instanceof sap.ui.core.date.Islamic, "getInstance returns expected object");
 			equal(oDate.getCalendarType(), "Islamic", "Calendar type is set correctly");
-		
+
 			oDate = sap.ui.core.date.UniversalDate.getInstance(oGregorian, sap.ui.core.CalendarType.Japanese);
 			ok(oDate instanceof sap.ui.core.date.Japanese, "getInstance returns expected object");
 			equal(oDate.getCalendarType(), "Japanese", "Calendar type is set correctly");
-			
+
 		});
-		
+
 		test("determineType with Gregorian calendar", function () {
 			this.oStubCalendarType.returns(sap.ui.core.CalendarType.Gregorian);
 			var spy = this.sandbox.spy(sap.ui.core.date, 'Gregorian');
@@ -194,10 +194,10 @@
 					aMethodCallArg = [10, 11];
 
 			var aMethods = [
-			    {name: "getFullYear"}, {name: "getYear"}, {name: "getMonth"}, {name: "getDate"}, 
-			    {name: "getDay"}, {name: "getHours"}, {name: "getMinutes"}, {name: "getSeconds"}, {name: "getMilliseconds"}, 
-				{name: "getUTCFullYear"}, {name: "getUTCMonth"}, {name: "getUTCDate"}, {name: "getUTCDay"}, 
-				{name: "getUTCHours"}, {name: "getUTCMinutes"}, {name: "getUTCSeconds"}, {name: "getUTCMilliseconds"}, 
+			    {name: "getFullYear"}, {name: "getYear"}, {name: "getMonth"}, {name: "getDate"},
+			    {name: "getDay"}, {name: "getHours"}, {name: "getMinutes"}, {name: "getSeconds"}, {name: "getMilliseconds"},
+				{name: "getUTCFullYear"}, {name: "getUTCMonth"}, {name: "getUTCDate"}, {name: "getUTCDay"},
+				{name: "getUTCHours"}, {name: "getUTCMinutes"}, {name: "getUTCSeconds"}, {name: "getUTCMilliseconds"},
 				{name: "setFullYear", hasArgs: true}, {name: "setYear", hasArgs: true}, {name: "setDate", hasArgs: true},
 				{name: "setMonth", hasArgs: true}, {name: "setHours", hasArgs: true}, {name: "setMinutes", hasArgs: true},
 				{name: "setSeconds", hasArgs: true}, {name: "setMilliseconds", hasArgs: true}, {name: "setUTCFullYear", hasArgs: true},

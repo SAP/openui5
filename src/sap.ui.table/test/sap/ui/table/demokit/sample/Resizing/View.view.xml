@@ -64,7 +64,7 @@
 							}" />
 						</template>
 					</Column>
-					<Column 
+					<Column
 						id="deliverydate"
 						width="{ui>/widths/date}">
 						<m:Label text="Delivery Date" />

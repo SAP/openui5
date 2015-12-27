@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new CutPaste.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 * @class The CutPaste enables Cut & Paste functionality for the overlays based on aggregation types

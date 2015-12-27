@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns whether the class of this metadata is a component base class 
+	 * Returns whether the class of this metadata is a component base class
 	 * or not.
 	 * @return {boolean} true if it is sap.ui.core.Component or sap.ui.core.UIComponent
 	 * @protected
@@ -317,7 +317,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 *       "dependencies": {
 	 *         "libs": {
 	 *           "sap.m": {}
-	 *         }, 
+	 *         },
 	 *         "components": {
 	 *           "my.component.a": {}
 	 *         }
@@ -325,7 +325,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 *   });
 	 * </code>
 	 *
-	 * The configuration above can be accessed in the following ways: 
+	 * The configuration above can be accessed in the following ways:
 	 * <ul>
 	 * <li><b>By section/namespace</b>: <code>oComponent.getMetadata().getManifestEntry("sap.ui5")</code></li>
 	 * <li><b>By path</b>: <code>oComponent.getMetadata().getManifestEntry("/sap.ui5/dependencies/libs")</code></li>
@@ -424,8 +424,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * Returns the dependencies defined in the metadata of the Component. If not specified, the return value is null.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -463,8 +463,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * value is null.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -500,8 +500,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * required.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -519,8 +519,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * If not specified or the array is empty, the return value is null.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -539,8 +539,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * If not specified or the array is empty, the return value is null.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -558,8 +558,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * is null.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -593,8 +593,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * Returns a copy of the Customizing property
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -616,8 +616,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * Component.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -657,8 +657,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * Returns messaging flag
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -677,8 +677,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * of the component.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *

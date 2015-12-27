@@ -13,8 +13,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var HorizontalLayoutRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 		var bNoWrap = !oControl.getAllowWrapping();
-	
+
 		// write the HTML into the render manager
 		rm.write("<div");
 		rm.writeControlData(oControl);
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.writeClasses();
 		rm.write(">"); // div element
-	
+
 		var aChildren = oControl.getContent();
 		for (var i = 0; i < aChildren.length; i++) {
 			if (bNoWrap) {
@@ -46,10 +46,10 @@ sap.ui.define(['jquery.sap.global'],
 				rm.write("</div>");
 			}
 		}
-	
+
 		rm.write("</div>");
 	};
-	
+
 
 	return HorizontalLayoutRenderer;
 

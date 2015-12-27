@@ -24,7 +24,7 @@ sap.ui.define(['./ContextBinding'],
 	 * @extends sap.ui.model.ContextBinding
 	 */
 	var ClientContextBinding = ContextBinding.extend("sap.ui.model.ClientContextBinding", /** @lends sap.ui.model.ClientContextBinding.prototype */ {
-	
+
 		constructor : function(oModel, sPath, oContext, mParameters, oEvents){
 			ContextBinding.call(this, oModel, sPath, oContext, mParameters, oEvents);
 			var that = this;
@@ -33,9 +33,9 @@ sap.ui.define(['./ContextBinding'],
 				that.oElementContext = oContext;
 			});
 		}
-	
+
 	});
-	
+
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
 	 */
@@ -51,7 +51,7 @@ sap.ui.define(['./ContextBinding'],
 			}
 		}, true);
 	};
-	
+
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
 	 */
@@ -63,7 +63,7 @@ sap.ui.define(['./ContextBinding'],
 			that._fireChange();
 		}, true);
 	};
-	
+
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.setContext
 	 */

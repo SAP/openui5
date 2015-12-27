@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 		onInit : function () {
 			jQuery.sap.log.info("testdata.customizing.sap.Main - onInit");
 		}
-	
+
 	});
 
 	return MainController;

@@ -1030,7 +1030,7 @@ sap.ui.define([
 			scrollLeft: this._iMaxPosition,
 			width: iWidth
 		};
-		
+
 		this._iMaxPosition += iWidth;
 	};
 
@@ -1051,8 +1051,8 @@ sap.ui.define([
 			 // Reverse all positions as the scroll 0 is at the far end (first item = maxPosition, last item = 0)
 			oSectionInfo.scrollLeft = this._iMaxPosition - oSectionInfo.scrollLeft - oSectionInfo.width;
 		}
-	
-		
+
+
 	};
 
 	/**

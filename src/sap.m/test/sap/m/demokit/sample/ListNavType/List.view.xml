@@ -9,7 +9,7 @@
 		<StandardListItem
 			title="{0/Name}"
 			description="{0/ProductId}"
-			icon="{0/ProductPicUrl}" 
+			icon="{0/ProductPicUrl}"
 			iconDensityAware="false"
 			iconInset="false"
 			type="Navigation" />

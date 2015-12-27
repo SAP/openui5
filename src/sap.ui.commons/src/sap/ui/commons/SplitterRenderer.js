@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @namespace
 	 */
 	var SplitterRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the Splitter, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -37,18 +37,18 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		position = position.substring(0, position.length - 1);
 		dimensionSecPane = 100 - position;
-	
+
 		/* Opening Splitter Wrapper DIV*/
 		rm.write("<div ");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiSplitter");
-	
+
 		rm.addStyle("width",  oControl.getWidth());
 		rm.addStyle("height",  oControl.getHeight());
 		rm.writeStyles();
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		/*rendering the first pane*/
 		rm.write("<div id=\"" + oControl.getId() + "_firstPane\" ");
 		if (oControl.getShowScrollBars()) {
@@ -63,11 +63,11 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addClass("sapUiHSplitterFirstPane");
 			rm.addStyle("height", position + "%");
 		}
-	
+
 		rm.writeClasses();
 		rm.writeStyles();
 		rm.write(">");
-	
+
 		/*First content (child controls)*/
 		oControls = oControl.getFirstPaneContent();
 		iLength = oControls.length;
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.renderControl(oControls[i]);
 		}
 		rm.write("</div>");
-	
+
 		/*rendering the splitter bar*/
 		rm.write("<div  id=\"" + oControl.getId() + "_SB\" tabIndex=\"0\" role=\"separator\" title=\"" + oControl.getText("SPLITTER_MOVE") + "\"");
 		if (orientation == sap.ui.core.Orientation.Vertical) {
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeStyles();
 		rm.write(">");
 		rm.write("</div>");
-	
+
 		/*rendering the second pane*/
 		rm.write("<div id=\"" + oControl.getId() + "_secondPane\" ");
 		if (oControl.getShowScrollBars()) {
@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeClasses();
 		rm.writeStyles();
 		rm.write(">");
-	
+
 		/*Second content (child controls)*/
 		oControls = oControl.getSecondPaneContent();
 		iLength = oControls.length;
@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.renderControl(oControls[i]);
 		}
 		rm.write("</div>");
-	
+
 		/* Closing the Splitter Wrapper DIV*/
 		rm.write("</div>");
 	};

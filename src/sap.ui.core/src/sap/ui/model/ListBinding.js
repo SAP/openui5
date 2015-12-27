@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 
 	/**
 	 * Gets the group for the given context.
-	 * Must only be called if isGrouped() returns that grouping is enabled for this binding. The grouping will be 
+	 * Must only be called if isGrouped() returns that grouping is enabled for this binding. The grouping will be
 	 * performed using the first sorter (in case multiple sorters are defined).
 	 * @param {sap.ui.model.Context} oContext the binding context
 	 * @public
