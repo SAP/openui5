@@ -2,7 +2,8 @@
 		xmlns="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:core="sap.ui.core"
-		controllerName="sap.ui.demokit.demoapps.controller.Root">
+		controllerName="sap.ui.demokit.demoapps.controller.Root"
+		displayBlock="true">
 	<App>
 		<Page showHeader="false" enableScrolling="false">
 				<TileContainer
