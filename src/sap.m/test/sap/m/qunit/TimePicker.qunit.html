@@ -1236,7 +1236,7 @@
 			strictEqual(jQuery(".sapMTPInputActive").is(":visible"), false, "the picker is closed and not focussed");
 
 			qutils.triggerEvent("focusout", tp.getDomRef());
-			ok(!tp.$().hasClass(".sapMTPInputActive"), "the picker is closed and not focussed");
+			ok(!tp.$().hasClass("sapMTPInputActive"), "the picker is closed and not focussed");
 
 
 			tp.destroy();
@@ -1298,6 +1298,39 @@
 			oDateValue.setMonth(expDateValue.getMonth());
 			oDateValue.setDate(expDateValue.getDate());
 			equals(oDateValue.toString(), expDateValue.toString(), "getDateValue ok");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		module("Time picker has same behaviour on mobile like on desktop", {
+			setup: function () {
+				jQuery("html").removeClass("sap-desktop");
+				jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+				jQuery("html").addClass("sap-phone");
+				jQuery("html").addClass("sapUiMedia-Std-Phone");
+			},
+			teardown: function () {
+				jQuery("html").removeClass("sap-phone");
+				jQuery("html").removeClass("sapUiMedia-Std-Phone");
+				jQuery("html").addClass("sap-desktop");
+				jQuery("html").addClass("sapUiMedia-Std-Desktop");
+			}
+		});
+
+		test("focus on the input does not open the picker on mobile", function() {
+			//system under test
+			var tp = new sap.m.TimePicker('tp');
+
+			// arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			qutils.triggerEvent("focusin", tp.getDomRef());
+
+			strictEqual(tp.$().hasClass("sapMFocus"), true, "the input is focused");
+			strictEqual(tp._getPicker(), null, "the picker is not opened");
 
 			//cleanup
 			tp.destroy();

@@ -88,21 +88,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		};
 
 		/**
-		 * Adds extra attributes for the input element.
-		 *
-		 * See {@link sap.m.InputBaseRenderer#writeInnerAttributes}.
-		 * @override
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
-		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered
-		 */
-		TimePickerRenderer.writeInnerAttributes = function(oRm, oControl) {
-			if (sap.ui.Device.browser.mobile) {
-				// prevent keyboard in mobile devices
-				oRm.writeAttribute("readonly", "readonly");
-			}
-		};
-
-		/**
 		 * Writes the accessibility properties for the control.
 		 *
 		 * See {@link sap.m.InputBase#writeAccessibilityState}.
