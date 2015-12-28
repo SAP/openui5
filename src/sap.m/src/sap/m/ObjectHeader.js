@@ -370,15 +370,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ObjectHeader.prototype.removeAllAttributes = function () {
-		this.getAggregation("attributes").forEach(this._deregisterControlListener, this);
-		return this.removeAllAggregation("attributes");
+		var aAttributes = this.removeAllAggregation("attributes");
+		aAttributes.forEach(this._deregisterControlListener, this);
+		return aAttributes;
 	};
 
 	ObjectHeader.prototype.destroyAttributes = function () {
 		this.getAggregation("attributes").forEach(this._deregisterControlListener, this);
 		return this.destroyAggregation("attributes");
 	};
-
 
 	ObjectHeader.prototype.insertStatus = function (oStatus, iIndex) {
 		var vResult = this.insertAggregation("attributes", oStatus, iIndex);
@@ -398,8 +398,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ObjectHeader.prototype.removeAllStatuses = function () {
-		this.getAggregation("statuses").forEach(this._deregisterControlListener, this);
-		return this.removeAllAggregation("statuses");
+		var aStatuses = this.removeAllAggregation("statuses");
+		aStatuses.forEach(this._deregisterControlListener, this);
+		return aStatuses;
 	};
 
 	ObjectHeader.prototype.destroyStatuses = function () {
