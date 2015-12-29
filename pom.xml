@@ -110,7 +110,7 @@
 					<useDefaultDelimiters>false</useDefaultDelimiters>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 
 	</build>
@@ -124,17 +124,17 @@
 
 		<!-- attach the LICENSE.txt file -->
 		<profile>
-		
+
 			<activation>
 				<file>
 					<exists>${basedir}/LICENSE.txt</exists>
 				</file>
 			</activation>
-		
+
 			<build>
-		
+
 				<plugins>
-		
+
 					<!-- attach the LICENSE.txt as separate artifact -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -159,11 +159,11 @@
 							</execution>
 						</executions>
 					</plugin>
-		
+
 				</plugins>
-		
+
 			</build>
-			
+
 		</profile>
 
 		<!-- internal build related plugins & configuration -->
@@ -180,7 +180,7 @@
 			</properties>
 
 			<build>
-			
+
 				<pluginManagement>
 					<plugins>
 
@@ -214,9 +214,9 @@
 
 					</plugins>
 				</pluginManagement>
-				
+
 				<plugins>
-				
+
 					<!-- translation support (specify non-existent path to ignore it) -->
 					<plugin>
 						<groupId>com.sap.ldi</groupId>
@@ -228,9 +228,9 @@
 							</translationResources>
 						</configuration>
 					</plugin>
-					
+
 				</plugins>
-				
+
 			</build>
 
 		</profile>
@@ -243,10 +243,10 @@
 
 				<!-- skip eslint validation -->
 				<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
-				
+
 				<!-- fail on eslint error -->
 				<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
-				
+
 				<!-- only validate the changed files -->
 				<sap.ui5.eslint.onlyChangedFiles>true</sap.ui5.eslint.onlyChangedFiles>
 

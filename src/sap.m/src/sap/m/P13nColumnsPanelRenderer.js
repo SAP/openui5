@@ -12,10 +12,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @namespace
 	 */
 	var P13nColumnsPanelRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control}
@@ -27,13 +27,13 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapMP13nColumnsPanel");
 		oRm.writeClasses();
 		oRm.write(">"); // div element
-	
+
 		oRm.renderControl(oControl._oToolbar);
 		oRm.renderControl(oControl._oScrollContainer);
-	
+
 		oRm.write("</div>");
 	};
-	
+
 
 	return P13nColumnsPanelRenderer;
 

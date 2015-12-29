@@ -22,7 +22,7 @@ sap.ui.controller("view.Order", {
 			}
 		);
 	},
-	
+
 	_checkInput : function () {
 		var oView = this.getView();
 		var aInputs = [
@@ -31,8 +31,8 @@ sap.ui.controller("view.Order", {
 			oView.byId("inputMail"),
 			oView.byId("inputNumber")
 		];
-		
-		// make sure all fields are not empty 
+
+		// make sure all fields are not empty
 		// (this is not done by data binding validation
 		//  as data binding only runs on changing values)
 		jQuery.each(aInputs, function (i, oInput) {

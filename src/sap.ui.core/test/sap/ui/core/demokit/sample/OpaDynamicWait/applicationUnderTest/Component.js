@@ -4,7 +4,7 @@ sap.ui.core.UIComponent.extend("appUnderTest.Component", {
 
 	init : function() {
 		sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
-		
+
 		var oData = {
 	    		root:{
 	    			name: "root",
@@ -25,7 +25,7 @@ sap.ui.core.UIComponent.extend("appUnderTest.Component", {
 	    						name: "subsubitem3"
 	    					}
 	    				}
-	    				
+
 	    			},
 	    			1:{
 	    				name: "item2",
@@ -33,13 +33,13 @@ sap.ui.core.UIComponent.extend("appUnderTest.Component", {
 	    					name: "subitem3"
 	    				}
 	    			}
-	    			
+
 	    		}
 	    };
 		var oModel = new sap.ui.model.json.JSONModel(oData);
 		this.setModel(oModel);
 	},
-	
+
 	createContent : function () {
 		return sap.ui.view({
 			viewName : "view.Main",

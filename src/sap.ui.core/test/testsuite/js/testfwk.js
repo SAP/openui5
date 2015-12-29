@@ -101,7 +101,7 @@ sap.ui.testfwk.TestFWK.init = function(oContentWindow) {
 sap.ui.testfwk.TestFWK.getAllowedThemes = function() {
 	if (!this.oThemeConstraints) {
 		return this.THEMES;
-		
+
 	} else {
 		var result = {};
 		var aThemeNames = this.oThemeConstraints.supports, l = aThemeNames.length;
@@ -119,9 +119,9 @@ sap.ui.testfwk.TestFWK.getContentURL = function() {
 /**
  * Sets a new URL as content, using the current settings, but considering the given constraints for the theme.
  * If this causes a theme change, the themeConfigurationChanged event will be fired.
- * 
+ *
  * @private
- * 
+ *
  * @param sURL
  * @param oThemeConstraints optional
  * @param sLibName optional
@@ -129,33 +129,33 @@ sap.ui.testfwk.TestFWK.getContentURL = function() {
  */
 sap.ui.testfwk.TestFWK.setContentURL = function(sURL, oThemeConstraints, sLibName) {
 	this.sContentURL = sURL;
-	
+
 	var newTheme = this.getEffectiveTheme(this.sTheme, oThemeConstraints);
 	var bSomethingChanged = false;
-	
+
 	if (this.sTheme !== newTheme) {
 		this.sTheme = newTheme;
 		bSomethingChanged = true;
 	}
-	
+
 	if (!jQuery.sap.equal(oThemeConstraints, this.oThemeConstraints)) {
 		this.oThemeConstraints = oThemeConstraints;
 		bSomethingChanged = true;
 	}
-	
+
 	// update settings ComboBox and selection in this ComboBox
 	if (bSomethingChanged) {
 		this.fireThemeConfigurationChanged();
 	}
-	
-	this.updateContent(sLibName); 
+
+	this.updateContent(sLibName);
 };
 
 /**
  * Updates the content according to the current settings
- * 
+ *
  * @private
- * 
+ *
  * @param sLibName optional
  */
 sap.ui.testfwk.TestFWK.updateContent = function(sLibName) {
@@ -244,7 +244,7 @@ sap.ui.testfwk.TestFWK.setJQueryVersion = function(sJQueryVersion) {
  * Returns the appropriate theme, considering the requested theme and the configuration of allowed themes.
  * If allowed, the requested theme will be returned, otherwise the default theme will be returned.
  * If either parameter is null, the other will be returned; if both are null, null will be returned.
- * 
+ *
  * @private
  * @param sRequestedTheme
  * @param oThemeConstraints
@@ -259,11 +259,11 @@ sap.ui.testfwk.TestFWK.getEffectiveTheme = function(sRequestedTheme, oThemeConst
 				}
 			}
 			return oThemeConstraints["default"]; // requested theme is not allowed, return the default one
-			
+
 		} else {
 			return sRequestedTheme; // no constraints configuration given, so it's okay to use the requested theme
 		}
-		
+
 	} else { // no theme requested: return the default from the configuration, if available
 		return oThemeConstraints ? oThemeConstraints["default"] : null;
 	}
@@ -289,7 +289,7 @@ sap.ui.testfwk.TestFWK.addSettingsToURL = function(sURL, oThemeConstraints) {
 		}
 		sURL += sParam + "=" + vValue;
 	}
-	
+
 	add("sap-ui-debug", true);
 	if ( this.sLanguage ) {
 		add("sap-ui-language", this.sLanguage);

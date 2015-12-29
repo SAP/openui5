@@ -1,6 +1,6 @@
 sap.ui.controller("sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend", {
 
-	handleShowSpecialDays: function(oEvent) {	
+	handleShowSpecialDays: function(oEvent) {
 		var oCal1 = this.getView().byId("calendar1");
 		var oLeg1 = this.getView().byId("legend1");
 		var oCal2 = this.getView().byId("calendar2");

@@ -17,12 +17,12 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 	 * @param {string} sPath the path pointing to the tree / array that should be bound
 	 * @param {object} [oContext=null] the context object for this databinding (optional)
 	 * @param {array} [aFilters=null] predefined filter/s contained in an array (optional)
-	 * @param {object} [mParameters=null] additional model specific parameters (optional) 
+	 * @param {object} [mParameters=null] additional model specific parameters (optional)
 	 * @alias sap.ui.model.ClientTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
 	var ClientTreeBinding = TreeBinding.extend("sap.ui.model.ClientTreeBinding", /** @lends sap.ui.model.ClientTreeBinding.prototype */ {
-	
+
 		constructor : function(oModel, sPath, oContext, aFilters, mParameters){
 			TreeBinding.apply(this, arguments);
 			if (!this.oContext) {
@@ -31,16 +31,16 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 			this.filterInfo = {};
 			this.filterInfo.aFilteredContexts = [];
 			this.filterInfo.oParentContext = {};
-			
+
 			if (this.aFilters) {
 				if (this.oModel._getObject(this.sPath, this.oContext)) {
 					this.filter(aFilters);
 				}
 			}
 		}
-		
+
 	});
-	
+
 	/**
 	 * Return root contexts for the tree
 	 *
@@ -71,10 +71,10 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 				that._saveSubContext(oObject, aContexts, that.sPath + (jQuery.sap.endsWith(that.sPath, "/") ? "" : "/"), iIndex);
 			});
 		}
-		
+
 		return aContexts.slice(iStartIndex, iStartIndex + iLength);
 	};
-	
+
 	/**
 	 * Return node contexts for the tree
 	 * @param {object} oContext to use for retrieving the node contexts
@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 		if (!iLength) {
 			iLength = this.oModel.iSizeLimit;
 		}
-		
+
 		var sContextPath = oContext.getPath();
 		if (!jQuery.sap.endsWith(sContextPath,"/")) {
 			sContextPath = sContextPath + "/";
@@ -98,15 +98,15 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 		if (!jQuery.sap.startsWith(sContextPath,"/")) {
 			sContextPath = "/" + sContextPath;
 		}
-	
+
 		var aContexts = [],
 		that = this,
 		oNode = this.oModel._getObject(sContextPath),
 		aArrayNames = this.mParameters && this.mParameters.arrayNames,
 		aChildArray;
-		
+
 		if (aArrayNames && jQuery.isArray(aArrayNames)) {
-			
+
 			jQuery.each(aArrayNames, function(iIndex, sArrayName){
 				aChildArray = oNode[sArrayName];
 				if (aChildArray) {
@@ -130,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 		}
 		return aContexts.slice(iStartIndex, iStartIndex + iLength);
 	};
-	
+
 	/**
 	 * Returns if the node has child nodes
 	 *
@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 	ClientTreeBinding.prototype.hasChildren = function(oContext) {
 		return oContext ? this.getNodeContexts(oContext).length > 0 : false;
 	};
-	
+
 	ClientTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
 		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
@@ -156,28 +156,28 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Filters the tree according to the filter definitions.
-	 * 
+	 *
 	 * The filtering is applied recursively through the tree.
 	 * The parent nodes of filtered child nodes will also be displayed if they don't match the filter conditions.
 	 * All filters belonging to a group (=have the same path) are ORed and after that the
 	 * results of all groups are ANDed.
-	 * 
+	 *
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
 	 * @public
 	 */
 	ClientTreeBinding.prototype.filter = function(aFilters){
 		// The filtering is applied recursively through the tree and stores all filtered contexts and its parent contexts in an array.
-	
+
 		// wrap single filters in an array
 		if (aFilters && !jQuery.isArray(aFilters)) {
 			aFilters = [aFilters];
 		}
-		
+
 		// reset previous stored filter contexts
 		this.filterInfo.aFilteredContexts = [];
 		this.filterInfo.oParentContext = {};
@@ -193,18 +193,18 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 		// TODO remove this if the filter event is removed
 		this._fireFilter({filters: aFilters});
 	};
-	
+
 	/**
 	 * filters the tree recursively.
 	 * @param {object} oParentContext the context where to start. The children of this node context are then filtered recursively.
 	 * @private
 	 */
 	ClientTreeBinding.prototype.filterRecursive = function(oParentContext){
-	
+
 		this.bIsFiltering = true;
 		var aChildren = this.getNodeContexts(oParentContext);
 		this.bIsFiltering = false;
-	
+
 		if (aChildren.length > 0) {
 			var that = this;
 			jQuery.each(aChildren, function(i, oChildContext){
@@ -213,8 +213,8 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 			this.applyFilter(oParentContext);
 		}
 	};
-	
-	
+
+
 	/**
 	 * Performs the real filtering and stores all filtered contexts and its parent context into an array.
 	 * @param {object} oParentContext the context where to start. The children of this node context are filtered.
@@ -226,11 +226,11 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 		}
 		var that = this,
 			aFiltered = [];
-		
+
 		this.bIsFiltering = true;
 		var aUnfilteredContexts = this.getNodeContexts(oParentContext);
 		this.bIsFiltering = false;
-		
+
 		aFiltered = FilterProcessor.apply(aUnfilteredContexts, this.aFilters, function (oContext, sPath) {
 			return that.oModel.getProperty(sPath, oContext);
 		});
@@ -245,20 +245,20 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 			// set the parent context which was added to be the new parent context
 			this.filterInfo.oParentContext = oParentContext;
 		}
-	
+
 	};
-	
+
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
-	 * 
+	 *
 	 * @param {boolean} bForceupdate
-	 * 
+	 *
 	 */
 	ClientTreeBinding.prototype.checkUpdate = function(bForceupdate){
 		this._fireChange();
 	};
-	
+
 
 	return ClientTreeBinding;
 

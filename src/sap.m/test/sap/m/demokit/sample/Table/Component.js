@@ -22,7 +22,7 @@ sap.ui.core.UIComponent.extend("sap.m.sample.Table.Component", {
 			}
 		}
 	},
-	
+
 	getTable : function () {
 		return this._rootView.getContent()[0];
 	}

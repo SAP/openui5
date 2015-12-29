@@ -12,7 +12,7 @@ sap.ui.controller("samples.components.products.supplier.view.Supplier", {
 	onExit: function() {} ,
 
 	onContextChanged: function(oContext, oView) {
-		oView.setBindingContext(oContext);  
-	} 
+		oView.setBindingContext(oContext);
+	}
 
 });

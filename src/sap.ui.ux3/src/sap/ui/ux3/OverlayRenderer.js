@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var OverlayRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -25,26 +25,26 @@ sap.ui.define(['jquery.sap.global'],
 	OverlayRenderer.render = function(oRenderManager, oControl){
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		// write the HTML into the render manager
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUx3Overlay");
-	
+
 		if (this.addRootClasses) {
 			this.addRootClasses(rm, oControl);
 		}
-	
+
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		rm.write("<div role='presentation'");
 		rm.addClass("sapUiUx3OverlayOverlay");
-	
+
 		if (this.addOverlayClasses) {
 			this.addOverlayClasses(rm, oControl);
 		}
-	
+
 		rm.writeClasses();
 		rm.write(">");
 		rm.write("</div>");
@@ -64,9 +64,9 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write("<span class='sapUiUx3OverlayFocusDummyPane' id='" + oControl.getId() + "-LastFocusDummyPane'></span>");
 		rm.write("</div>");
-	
+
 	};
-	
+
 
 	return OverlayRenderer;
 

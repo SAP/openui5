@@ -13,7 +13,7 @@ jQuery(function() {
 		styles = {};
 		for (i = 0; i < qterms.length; ) {
 			t = qterms[i].toLowerCase();
-			if ( t && !styles.hasOwnProperty(t) ) { // avoid duplicates 
+			if ( t && !styles.hasOwnProperty(t) ) { // avoid duplicates
 				styles[t] = 'queryterm' + (1 + i % 3);
 				qterms[i] = t.replace(rquote, "\\$&"); // quote special regex chars;
 				i++;
@@ -22,14 +22,14 @@ jQuery(function() {
 				qterms.splice(i, 1);
 			}
 		}
-		
+
 		// and highlight all occurrences in the body
 		if ( qterms.length > 0 ) {
 			markText(document.body, new RegExp(qterms.join("|"), 'gi'), function(match) {
 				this.className = styles[match.toLowerCase()];
 			});
 		}
-		
+
 		//var t1 = new Date().getTime();
 		//jQuery("body").append("<span style='display:none;'>query terms marked in " + (t1-t0) + " ms</span>");
 
@@ -60,7 +60,7 @@ jQuery(function() {
 				if ( start <= expr.lastindex ) {
 					break;
 				}
-				
+
 				// continue search after current match
 				start = expr.lastIndex;
 			}

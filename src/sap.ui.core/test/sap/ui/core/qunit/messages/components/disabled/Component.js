@@ -39,7 +39,7 @@ components.disabled.Component.prototype.createContent = function(){
 		}
 	}
 	oModel.setData(oData);
-	
+
 	var oLayout = new sap.ui.layout.form.ResponsiveGridLayout();
 	var oForm = new sap.ui.layout.form.Form({
 		models: oModel,
@@ -86,7 +86,7 @@ components.disabled.Component.prototype.createContent = function(){
 						label: new sap.m.Label({text:"Street"}),
 						fields: [
 							new sap.m.Input({value: "{street}"}),
-							new sap.m.Input({ 
+							new sap.m.Input({
 								id:"nr_disabled",
 								value: {path: "nr", type: oInteger},
 								layoutData: new sap.ui.layout.GridData({span: "L2 M2 S2"})
@@ -178,13 +178,13 @@ components.disabled.Component.prototype.createContent = function(){
 			)
 		}
 	});
-	
+
 	var oButton4 = new sap.m.Button({
 		text: "clear Messages",
 		press: function() {
 			sap.ui.getCore().getMessageManager().removeAllMessages();
 		}
 	});
-	
+
 	return oForm;
 };

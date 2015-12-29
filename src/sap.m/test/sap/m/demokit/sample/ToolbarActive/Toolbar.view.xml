@@ -4,7 +4,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<CheckBox text="Toolbar Active" selected="true" select="onCheckBoxSelect"/>
-	
+
 	<Toolbar id="toolbar" active="true" design="Info" height="2rem" press="onToolbarPress">
 		<Text text="You press here when toolbar is active"/>
 		<ToolbarSpacer/>

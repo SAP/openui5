@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new mvc/JSView.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -26,15 +26,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var JSView = View.extend("sap.ui.core.mvc.JSView", /** @lends sap.ui.core.mvc.JSView.prototype */ { metadata : {
-	
+
 		library : "sap.ui.core"
 	}});
-	
+
 	(function(){
 		var mRegistry = {};
-		
-		
-		
+
+
+
 		/**
 		 * Defines or creates an instance of a JavaScript view.
 		 *
@@ -61,18 +61,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 		 */
 		sap.ui.jsview = function(sId, vView) {
 			var mSettings = {}, oView;
-	
+
 			if (vView && typeof (vView) == "string") { // instantiation sap.ui.jsview("id","name")
 				mSettings.viewName = vView;
 				mSettings.controller = arguments[2];
 				oView = new JSView(sId, mSettings);
 				return oView;
-	
+
 			} else if (vView && typeof (vView) == "object") { // definition sap.ui.jsview("name",definitionObject)
 				// sId is not given, but contains the desired value of sViewName
 				mRegistry[sId] = vView;
 				jQuery.sap.declare({modName:sId,type:"view"}, false);
-	
+
 			} else if (arguments.length == 1 && typeof (arguments[0]) == "string") { // instantiation sap.ui.jsview("name")
 				mSettings.viewName = sId;
 				/*** STEP 1: create View ***/
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 				throw new Error("Wrong arguments ('" + sId + "', '" + vView + "')! Either call sap.ui.jsview([sId,] sViewName) to instantiate a View or sap.ui.jsview(sViewName, oViewImpl) to define a View type.");
 			}
 		};
-	
+
 		JSView.prototype.initViewSettings = function (mSettings) {
 			/*** require view definition if not yet done... ***/
 			if (!mRegistry[mSettings.viewName]) {
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 			/*** Step 2: extend() ***/
 			jQuery.extend(this, mRegistry[mSettings.viewName]);
 		};
-	
+
 		JSView.prototype.onControllerConnected = function(oController) {
 			var that = this;
 			var oPreprocessors = {};
@@ -108,16 +108,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 				that.applySettings({ content : that.createContent(oController) });
 			}, oPreprocessors);
 		};
-	
+
 		/**
-		 * A method to be implemented by JSViews, returning the flag whether to prefix 
+		 * A method to be implemented by JSViews, returning the flag whether to prefix
 		 * the IDs of controls automatically or not if the controls are created inside
-		 * the {@link sap.ui.core.mvc.JSView#createContent} function. By default this 
-		 * feature is not activated. 
-		 * 
+		 * the {@link sap.ui.core.mvc.JSView#createContent} function. By default this
+		 * feature is not activated.
+		 *
 		 * You can overwrite this function and return true to activate the automatic
 		 * prefixing.
-		 * 
+		 *
 		 * @since 1.15.1
 		 * @experimental Since 1.15.1. This feature might be changed in future.
 		 * @return {boolean} true, if the controls IDs should be prefixed automatically
@@ -126,21 +126,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 		JSView.prototype.getAutoPrefixId = function() {
 			return false;
 		};
-	
+
 		/**
 		 * A method to be implemented by JSViews, returning the View UI.
 		 * While for declarative View types like XMLView or JSONView the user interface definition is declared in a separate file,
 		 * JSViews programmatically construct the UI. This happens in the createContent method which every JSView needs to implement.
 		 * The View implementation can construct the complete UI in this method - or only return the root control and create the rest of the UI lazily later on.
-		 * 
+		 *
 		 * @return {sap.ui.core.Control} a control or (typically) tree of controls representing the View user interface
 		 * @public
 		 * @name sap.ui.core.mvc.JSView#createContent
 		 * @function
 		 */
-	
+
 	}());
-	
+
 
 	return JSView;
 

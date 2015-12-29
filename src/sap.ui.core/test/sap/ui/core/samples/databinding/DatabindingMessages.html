@@ -17,7 +17,7 @@
         data-sap-ui-libs="sap.ui.layout,sap.m"
         data-sap-ui-messaging="false">
     </script>
-	
+
 	<script>
 		sap.ui.localResources("messages");
 		// Model
@@ -85,7 +85,7 @@
 				)
 			}
 		});
-		
+
 		var oButton4 = new sap.m.Button({
 			text: "clear Messages",
 			press: function() {
@@ -93,7 +93,7 @@
 			}
 		});
 
-		
+
 		var oMessagePopoverButton = new sap.m.Button({
 			text: 'Show MessagePopover',
 			type: 'Accept',
@@ -104,13 +104,13 @@
 
 		var oMP = new sap.m.MessagePopover({
 			items: {
-					path:"message>/", 
+					path:"message>/",
 					template: new sap.m.MessagePopoverItem({description: "{message>description}", type: "{message>type}", title:"{message>message}"})
 			}
 		});
-		
+
 		oMP.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),"message");
-		
+
 		var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
 			name: "messages",
 			id: "myMessageTest1",
@@ -130,7 +130,7 @@
 			id: "myMessageTest4",
 			handleValidation: true
 		});
-		
+
 		var oPage = new sap.m.Page({
 			title: 'DataBinding Messages',
 			content: [ oCompCont , oCompCont2, oCompCont3, oCompCont4, oButton1, oButton2, oButton3, oButton4, oButton5],
@@ -153,7 +153,7 @@
 		var app = new sap.m.App("myApp", { initialPage: oPage });
 
 		app.addPage(oPage).placeAt('content');
-		
+
 		sap.ui.getCore().attachValidationError(function(oEvent) {
 			alert('sap.ui.core: Validation Error');
 		});

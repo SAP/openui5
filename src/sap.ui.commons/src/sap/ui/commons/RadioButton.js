@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new RadioButton.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -30,81 +30,81 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RadioButton = Control.extend("sap.ui.commons.RadioButton", /** @lends sap.ui.commons.RadioButton.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Defines the text displayed next to the radio button.
 			 */
 			text : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
-			 * 
+			 *
 			 * Disabled controls are displayed in another color, depending on the customer settings.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Specifies whether the user can select the radio button
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Specifies the select state of the radio button
 			 */
 			selected : {type : "boolean", group : "Data", defaultValue : false},
-	
+
 			/**
-			 * 
+			 *
 			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning, None
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
-	
+
 			/**
 			 * The control width depends on the text length. Alternatively, CSS-sizes in % or px can be set.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
-			 * 
+			 *
 			 * Available options are LTR and RTL. Alternatively, the control can inherit the text direction from its parent container.
 			 */
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
-	
+
 			/**
 			 * Name of the radio button group the current radio button belongs to. You can define a new name for the group.
 			 * If no new name is specified, this radio button belongs to the sapUiRbDefaultGroup per default. Default behavior of a radio button
 			 * in a group is that when one of the radio buttons in a group is selected, all others are unselected.
 			 */
 			groupName : {type : "string", group : "Behavior", defaultValue : 'sapUiRbDefaultGroup'},
-	
+
 			/**
 			 * Can be used for subsequent actions
 			 */
 			key : {type : "string", group : "Data", defaultValue : null}
 		},
 		associations : {
-	
+
 			/**
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
-	
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
 			/**
 			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
-	
+
 			/**
 			 * Event is triggered when the user makes a change on the radio button.
 			 */
 			select : {}
 		}
 	}});
-	
+
 	/**
 	 * Event handler called when the radio button is clicked.
 	 *
@@ -112,22 +112,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	RadioButton.prototype.onclick = function(oEvent) {
-	
+
 		if (this.getEnabled() && oEvent.target.id == (this.getId() + "-RB")) {
 			this.focus();
 		}
-	
-		if (!!sap.ui.Device.browser.internet_explorer && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain 
+
+		if (!!sap.ui.Device.browser.internet_explorer && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain
 			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0
 			// as long as RadioButton is clicked on
 			this.$().attr("tabindex", 0).toggleClass("sapUiRbFoc");
 		}
-	
+
 		this.userSelect(oEvent);
 	};
 
 	RadioButton.prototype._groupNames = {};
-	
+
 	/**
 	 * Event handler called when the space key is pressed.
 	 *
@@ -135,13 +135,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	RadioButton.prototype.onsapspace = function(oEvent) {
-	
+
 		if (this.getEnabled() && oEvent.target.id == (this.getId() + "-RB")) {
 			this.focus();
 		}
 		this.userSelect(oEvent);
 	};
-	
+
 	/**
 	 * Event handler called focus is set on Radio button
 	 * Problem in HCB: Focus is set in IE8 to bullet, not to whole control
@@ -150,14 +150,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	RadioButton.prototype.onsaptabnext = function(oEvent) {
-	
+
 		if (!!sap.ui.Device.browser.internet_explorer) {
 			this.bTabPressed = true;
 			var that = this;
 			window.setTimeout(function(){that.bTabPressed = false;}, 100);
 		}
 	};
-	
+
 	/**
 	 * Event handler called when the radio button is focused
 	 * Problem in HCB: Focus is sometimes set in IE8 to bullet, not to whole control
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	RadioButton.prototype.onfocusin = function(oEvent) {
-	
+
 		if (this.getEnabled() && oEvent.target.id == (this.getId() + "-RB")) {
 			if (this.bTabPressed) {
 				// this only occurs in IE in HCB mode
@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	};
-	
+
 	/**
 	 * Event handler called when the radio button is left
 	 * Problem in IE: Tabindex must be set back to -1
@@ -196,13 +196,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	RadioButton.prototype.onfocusout = function(oEvent) {
-	
-		if (!!sap.ui.Device.browser.internet_explorer && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain 
+
+		if (!!sap.ui.Device.browser.internet_explorer && (/*!this.getEditable() ||*/ !this.getEnabled())) { //According to CSN2581852 2012 a readonly CB should be in the tabchain
 			// in IE tabindex = -1 hides focus, so in readOnly case tabindex must be set to 0
 			// as long as RadioButton is clicked on
 			this.$().attr("tabindex", -1).toggleClass("sapUiRbFoc");
 		}
-	
+
 	};
 	/**
 	 * This method is used internally only, whenever the user somehow selects the RadioButton.
@@ -216,7 +216,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// the control should not stop browser event propagation
 		// Example: table control needs to catch and handle the event as well
 		//oEvent.stopPropagation();
-	
+
 		if (this.getEnabled() && this.getEditable()) {
 			var selected = this.getSelected();
 			if (!selected) {
@@ -228,11 +228,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			oEvent.preventDefault();
 		}
 	};
-	
+
 	// #############################################################################
 	// Overwritten methods that are also generated in RadioButton.API.js
 	// #############################################################################
-	
+
 	/*
 	 * Overwrite the definition from RadioButton.API.js
 	 */
@@ -242,7 +242,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			sGroupName = this.getGroupName(),
 			aControlsInGroup = this._groupNames[sGroupName],
 			iLength = aControlsInGroup && aControlsInGroup.length;
-			
+
 		this.setProperty("selected", bSelected, true); // No re-rendering
 		this._changeGroupName(this.getGroupName());
 
@@ -268,7 +268,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		return this.setProperty("groupName", sGroupName, false);
 	};
-	
+
 	RadioButton.prototype.getTooltipDomRefs = function() {
 		return this.$().children();
 	};

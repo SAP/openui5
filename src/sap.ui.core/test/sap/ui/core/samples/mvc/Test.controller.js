@@ -1,5 +1,5 @@
 sap.ui.controller("sap.ui.core.mvctest.Test", {
-	
+
 	onInit: function(oEvent) {
 		alert(oEvent.getSource().getId() + ": Test controller init");
 		function onPress(oEvent) {

@@ -80,7 +80,7 @@ sap.ui.demo.tdg.util.Controller.extend("sap.ui.demo.tdg.view.Detail", {
 	},
 
 	showEmptyView : function () {
-		this.getRouter().myNavToWithoutHash({ 
+		this.getRouter().myNavToWithoutHash({
 			currentView : this.getView(),
 			targetViewName : "sap.ui.demo.tdg.view.NotFound",
 			targetViewType : "XML"

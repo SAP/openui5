@@ -32,34 +32,34 @@
 		{lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-15", currency: "EUR", type: "Inactive"},
 		{lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "female", rating: 3, money: 5.67, birthday: "1968-03-01", currency: "EUR", type: "Inactive"}
 	];
-	
+
 	var oApp = new sap.m.App;
-	
+
 	jQuery.sap.require("sap.m.MessageBox");
 	jQuery.sap.require("sap.m.MessageToast");
-	
+
 	function openViewSettingsDialog() {
 		sap.m.MessageToast.show("View Settings Dialog");
 	}
-	
+
 	function openPersonalizationDialog() {
 		sap.m.MessageToast.show("Personalization Dialog");
 	}
-	
+
 	var oSalaryFooter = new sap.m.Label({
 		text : "9.470.095 EUR"
 	});
 
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({modelData: aData});
-	
+
 	var aModes = Object.keys(sap.m.ListMode).map(function(sMode) {
 		return new sap.ui.core.Item({
 			key: sMode,
 			text: sMode
 		});
 	});
-	
+
 	var oModes = new sap.m.Select({
 		tooltip: "Mode",
 		items: aModes,
@@ -68,14 +68,14 @@
 			oTable.setMode(sMode);
 		}
 	});
-	
+
 	var aTypes = Object.keys(sap.m.ListType).map(function(sType) {
 		return new sap.ui.core.Item({
 			key: sType,
 			text: sType
 		});
 	});
-	
+
 	var oTypes = new sap.m.Select({
 		tooltip: "Item Type",
 		items: aTypes,
@@ -87,16 +87,16 @@
 			oTable.rerender();
 		}
 	});
-	
+
 	var oGrowing = new sap.m.ToggleButton({
 		text : "Growing",
 		press : function() {
 			oTable.setGrowing(oGrowing.getPressed());
-			oModel.setDefaultBindingMode(oGrowing.getPressed() ? "OneWay" : "TwoWay"); 
+			oModel.setDefaultBindingMode(oGrowing.getPressed() ? "OneWay" : "TwoWay");
 			oTable.bindItems("/modelData", oTemplate);
 		}
 	});
-	
+
 	var oMerging = new sap.m.ToggleButton({
 		text : "Merging",
 		press : function() {
@@ -105,7 +105,7 @@
 			oAvailableColumn.setMergeDuplicates(oMerging.getPressed());
 		}
 	});
-	
+
 	var oGrouping = new sap.m.ToggleButton({
 		text : "Grouping",
 		press : function() {
@@ -126,7 +126,7 @@
 			}
 		}
 	});
-	
+
 	var oNoData = new sap.m.ToggleButton({
 		text : "No Data",
 		press : function() {
@@ -145,10 +145,10 @@
 	var oTableActions = new sap.m.Toolbar({
 		content : [
 			oModes, oTypes, new sap.m.ToolbarSpacer(), oNoData, new sap.m.ToolbarSpacer(), oGrowing, oGrouping, oMerging
-			
+
 		]
 	});
-	
+
 	var oTableInfo = new sap.m.Toolbar({
 		active : true,
 		content : [
@@ -162,7 +162,7 @@
 			})
 		]
 	});
-	
+
 	var oTableHeader = new sap.m.Toolbar({
 		content : [
 			new sap.m.Title({
@@ -179,7 +179,7 @@
 			})
 		]
 	});
-	
+
 	var aColumns = [
 		new sap.m.Column({
 			header : new sap.m.Label({
@@ -237,7 +237,7 @@
 			demandPopin : true
 		}),
 	];
-		
+
 	var oTemplate = new sap.m.ColumnListItem({
 		vAlign: "Middle",
 		type : "{type}",
@@ -257,7 +257,7 @@
 			}),
 			new sap.m.CheckBox({
 				selected: "{checked}"
-			}), 
+			}),
 			new sap.m.Link({
 				text: "{linkText}"
 			}),
@@ -277,7 +277,7 @@
 			}),
 		]
 	});
-	
+
 	var oSwipe = new sap.m.Button({
 		text : "Swipe Button",
 		type : "Accept",
@@ -285,7 +285,7 @@
 			oTable.swipeOut();
 		}
 	});
-	
+
 	var oTable = new sap.m.Table({
 		growingThreshold: 5,
 		growingScrollToLoad : false,
@@ -299,13 +299,13 @@
 		},
 		"delete" : function(oEvent) {
 			var oItem = oEvent.getParameter("listItem");
-			
+
 			sap.m.MessageBox.confirm("Are you sure to delete this record?", {
 				onClose: function(sResult){
 					if (sResult == sap.m.MessageBox.Action.CANCEL) {
 						return;
 					}
-					
+
 					oTable.removeItem(oItem);
 					setTimeout(function() {
 						oTable.focus();
@@ -317,10 +317,10 @@
 			sap.m.MessageToast.show("item is pressed");
 		}
 	});
-	
+
 	oTable.setModel(oModel);
 	oTable.bindItems("/modelData", oTemplate);
-	
+
 	var oPage = new sap.m.Page({
 		title : "Table Test Page",
 		enableScrolling : true,

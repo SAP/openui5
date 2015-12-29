@@ -17,14 +17,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	/**
 	 * Constructor for a new View.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class A base class for Views. 
-	 * 
-	 * Introduces the relationship to a Controller, some basic visual appearance settings like width and height 
-	 * and provides lifecycle events. 
-	 *  
+	 * @class A base class for Views.
+	 *
+	 * Introduces the relationship to a Controller, some basic visual appearance settings like width and height
+	 * and provides lifecycle events.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -34,25 +34,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var View = Control.extend("sap.ui.core.mvc.View", /** @lends sap.ui.core.mvc.View.prototype */ { metadata : {
-	
+
 		library : "sap.ui.core",
 		properties : {
-	
+
 			/**
 			 * The width
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
-	
+
 			/**
 			 * The height
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
 			 * Name of the View
 			 */
 			viewName : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Whether the CSS display should be set to "block".
 			 * Set this to "true" if the default display "inline-block" causes a vertical scrollbar with Views that are set to 100% height.
@@ -61,95 +61,95 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			displayBlock : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Child Controls of the view
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		},
 		events : {
-	
+
 			/**
 			 * Fired when the View has parsed the UI description and instantiated the contained controls (/control tree).
 			 */
 			afterInit : {},
-	
+
 			/**
 			 * Fired when the view has received the request to destroy itself, but before it has destroyed anything.
 			 */
 			beforeExit : {},
-	
+
 			/**
 			 * Fired when the View has been (re-)rendered and its HTML is present in the DOM.
 			 */
 			afterRendering : {},
-	
+
 			/**
 			 * Fired before this View is re-rendered. Use to unbind event handlers from HTML elements etc.
 			 */
 			beforeRendering : {}
 		},
-		specialSettings : { 
-			
+		specialSettings : {
+
 			/**
-			 * Controller instance to use for this view. 
+			 * Controller instance to use for this view.
 			 */
 			controller : true,
-			
+
 			/**
-			 * Name of the controller class to use for this view. 
+			 * Name of the controller class to use for this view.
 			 * If given, it overrides the same information in the view definition (XML, HTML).
 			 */
 			controllerName : true,
-			
+
 			/**
-			 * Preprocessors that the view can use before constructing the view. 
+			 * Preprocessors that the view can use before constructing the view.
 			 * @private
 			 */
 			preprocessors : true,
-			
+
 			/**
-			 * (module) Name of a resource bundle that should be loaded for this view  
+			 * (module) Name of a resource bundle that should be loaded for this view
 			 */
 			resourceBundleName : true,
-			
+
 			/**
-			 * URL of a resource bundle that should be loaded for this view 
+			 * URL of a resource bundle that should be loaded for this view
 			 */
 			resourceBundleUrl : true,
-			
+
 			/**
-			 * Locale that should be used to load a resourcebundle for thisview 
+			 * Locale that should be used to load a resourcebundle for thisview
 			 */
 			resourceBundleLocale : true,
-			
+
 			/**
 			 * Model name under which the resource bundle should be stored.
 			 */
 			resourceBundleAlias : true,
-			
+
 			/**
 			 * Type of the view
 			 */
 			type : true,
-			
+
 			/**
 			 * A view definition
-			 */ 
+			 */
 			viewContent : true,
 
 			/**
-			 * Additional configuration data that should be given to the view at construction time 
-			 * and which will be available early, even before model data or other constructor settings are applied.  
-			 */ 
+			 * Additional configuration data that should be given to the view at construction time
+			 * and which will be available early, even before model data or other constructor settings are applied.
+			 */
 			viewData : true
 
-		} 
+		}
 	}});
-	
+
 	/**
 	 * preprocess view content
-	 * 
+	 *
 	 * @private
 	 */
 	View.prototype._preprocessViewContent = function(){
@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			}
 		}
 	};
-	
+
 	/**
 	 * initialize the View and connect (create if no instance is given) the Controller
 	 *
@@ -206,7 +206,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		if (this.onControllerConnected) {
 			this.onControllerConnected(this.oController);
 		}
-		
+
 		this._preprocessViewContent();
 
 		// notifies the listeners that the View is initialized
@@ -229,7 +229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * Returns an Element by its id in the context of the View.
 	 *
 	 * @param {string} sId view local Id of the Element
-	 * @return {sap.ui.core.Element} Element by its id or undefined 
+	 * @return {sap.ui.core.Element} Element by its id or undefined
 	 * @public
 	 */
 	View.prototype.byId = function(sId) {
@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	};
 
 	/**
-	 * Convert the given view local Element id to a globally unique id 
+	 * Convert the given view local Element id to a globally unique id
 	 * by prefixing it with the view Id.
 	 *
 	 * @param {string} sId view local Id of the Element
@@ -251,7 +251,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 		return sId;
 	};
-	
+
 	/**
 	 * Checks whether the given ID is already prefixed with this View's ID
 	 *
@@ -330,12 +330,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		this.fireBeforeRendering();
 	};
 
-	/**	
+	/**
 	 * Override clone method to avoid conflict between generic cloning of content
 	 * and content creation as defined by the UI5 Model View Controller lifecycle.
-	 * 
+	 *
 	 * For more details see the development guide section about Model View Controller in UI5.
-	 * 
+	 *
 	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned element id
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
 	 * @return {sap.ui.core.Element} reference to the newly created clone
@@ -386,7 +386,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 * An (optional) method to be implemented by Views.
 	 * When no controller instance is given at View instantiation time AND this method exists and returns the (package and class) name of a controller,
 	 * the View tries to load and instantiate the controller and to connect it to itself.
-	 * 
+	 *
 	 * @return {string} the name of the controller
 	 * @public
 	 * @name sap.ui.core.mvc.View#getControllerName
@@ -420,7 +420,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	 */
 	sap.ui.view = function(sId, vView, sType /* used by factory functions */) {
 		var view = null, oView = {};
-		
+
 		// if the id is a configuration object or a string
 		// and the vView is not defined we shift the parameters
 		if (typeof sId === "object" ||
@@ -428,7 +428,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			vView = sId;
 			sId = undefined;
 		}
-		
+
 		// prepare the parameters
 		if (vView) {
 			if (typeof vView === "string") {
@@ -437,17 +437,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				oView = vView;
 			}
 		}
-		
+
 		// apply the id if defined
 		if (sId) {
 			oView.id = sId;
 		}
-		
+
 		// apply the type defined in specialized factory functions
 		if (sType) {
 			oView.type = sType;
 		}
-		
+
 		// view replacement
 		if (sap.ui.core.CustomizingConfiguration) {
 			var customViewConfig = sap.ui.core.CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
@@ -482,27 +482,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 	/**
 	 * Helper method to resolve an event handler either locally (from a controller) or globally.
-	 * 
-	 * Which contexts are checked for the event handler depends on the syntax of the name: 
+	 *
+	 * Which contexts are checked for the event handler depends on the syntax of the name:
 	 * <ul>
-	 * <li><i>relative</i>: names starting with a dot ('.') must specify a handler in 
+	 * <li><i>relative</i>: names starting with a dot ('.') must specify a handler in
 	 *     the controller (example: <code>".myLocalHandler"</code>)</li>
-	 * <li><i>absolute</i>: names that contain, but do not start with a dot ('.') are 
+	 * <li><i>absolute</i>: names that contain, but do not start with a dot ('.') are
 	 *     always assumed to mean a global handler function. {@link jQuery.sap.getObject}
 	 *     will be used to retrieve the function (example: <code>"some.global.handler"</code> )</li>
-	 * <li><i>legacy</i>: Names that contain no dot at all are first interpreted as a relative name 
-	 *     and then - if nothing is found - as an absolute name. This variant is only supported 
+	 * <li><i>legacy</i>: Names that contain no dot at all are first interpreted as a relative name
+	 *     and then - if nothing is found - as an absolute name. This variant is only supported
 	 *     for backward compatibility (example: <code>"myHandler"</code>)</li>
 	 * </ul>
 	 *
 	 * The returned settings will always use the given <code>oController</code> as context object ('this')
-	 * This should allow the implementation of generic global handlers that might need an easy back link 
-	 * to the controller/view in which they are currently used (e.g. to call createId/byId). It also makes 
+	 * This should allow the implementation of generic global handlers that might need an easy back link
+	 * to the controller/view in which they are currently used (e.g. to call createId/byId). It also makes
 	 * the development of global event handlers more consistent with controller local event handlers.
-	 * 
-	 * <strong>Note</strong>: It is not mandatory but improves readability of declarative views when 
+	 *
+	 * <strong>Note</strong>: It is not mandatory but improves readability of declarative views when
 	 * legacy names are converted to relative names where appropriate.
-	 * 
+	 *
 	 * @param {string} sName the name to resolve
 	 * @param {sap.ui.core.mvc.Controller} oController the controller to use as context
 	 * @return {any[]} an array with function and context object, suitable for applySettings.
@@ -522,10 +522,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 					// no dot at all: first check for a controller local, then for a global handler
 					fnHandler = oController && oController[sName];
 					if ( fnHandler != null ) {
-						// if the name can be resolved, don't try to find a global handler (even if it is not a function) 
+						// if the name can be resolved, don't try to find a global handler (even if it is not a function)
 						break;
 					}
-					// falls through 
+					// falls through
 				default:
 					fnHandler = jQuery.sap.getObject(sName);
 			}

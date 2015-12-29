@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './TextFieldRenderer'],
 	 * just like the ComboBox does.
 	 */
 	var DatePickerRenderer = sap.ui.core.Renderer.extend(TextFieldRenderer);
-	
+
 	/**
 	 * Hint: "renderOuterAttributes" is a reserved/hard-coded TextField extending function!
 	 *       It is used to allow extensions to display help icons.

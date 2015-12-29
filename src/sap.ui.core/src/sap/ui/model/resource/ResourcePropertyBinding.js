@@ -19,22 +19,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/PropertyBinding', 'sap/ui/mode
 	 * @alias sap.ui.model.resource.ResourcePropertyBinding
 	 */
 	var ResourcePropertyBinding = PropertyBinding.extend("sap.ui.model.resource.ResourcePropertyBinding", /** @lends sap.ui.model.resource.ResourcePropertyBinding.prototype */ {
-		
+
 		constructor : function(oModel, sPath){
 			PropertyBinding.apply(this, arguments);
-		
+
 			this.oValue = this.oModel.getProperty(sPath);
 		}
-		
+
 	});
-	
+
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.getValue
 	 */
 	ResourcePropertyBinding.prototype.getValue = function(){
 		return this.oValue;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.checkUpdate
 	 */

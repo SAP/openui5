@@ -893,7 +893,7 @@ var __module9__ = (function() {
 
   var $0 = $$.length - 1;
   switch (yystate) {
-  case 1: yy.prepareProgram($$[$0-1].statements, true); return $$[$0-1]; 
+  case 1: yy.prepareProgram($$[$0-1].statements, true); return $$[$0-1];
   break;
   case 2:this.$ = new yy.ProgramNode(yy.prepareProgram($$[$0]), {}, this._$);
   break;
@@ -963,7 +963,7 @@ var __module9__ = (function() {
   break;
   case 35:this.$ = new yy.IdNode($$[$0], this._$);
   break;
-  case 36: $$[$0-2].push({part: $$[$0], separator: $$[$0-1]}); this.$ = $$[$0-2]; 
+  case 36: $$[$0-2].push({part: $$[$0], separator: $$[$0-1]}); this.$ = $$[$0-2];
   break;
   case 37:this.$ = [{part: $$[$0]}];
   break;
@@ -1280,22 +1280,22 @@ var __module9__ = (function() {
                                        this.begin("mu");
                                      }
                                      if(yy_.yytext) return 12;
-                                   
+
   break;
   case 1:return 12;
   break;
   case 2:
                                      this.popState();
                                      return 12;
-                                   
+
   break;
   case 3:
                                     yy_.yytext = yy_.yytext.substr(5, yy_.yyleng-9);
                                     this.popState();
                                     return 15;
-                                   
+
   break;
-  case 4: return 12; 
+  case 4: return 12;
   break;
   case 5:strip(0,4); this.popState(); return 13;
   break;
@@ -1303,13 +1303,13 @@ var __module9__ = (function() {
   break;
   case 7:return 46;
   break;
-  case 8: return 16; 
+  case 8: return 16;
   break;
   case 9:
                                     this.popState();
                                     this.begin('raw');
                                     return 18;
-                                   
+
   break;
   case 10:return 34;
   break;

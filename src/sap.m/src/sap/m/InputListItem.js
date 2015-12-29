@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new InputListItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -28,10 +28,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var InputListItem = ListItemBase.extend("sap.m.InputListItem", /** @lends sap.m.InputListItem.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * Label of the list item
 			 */
@@ -39,15 +39,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		},
 		defaultAggregation : "content",
 		aggregations : {
-	
+
 			/**
 			 * Content controls can be added
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
 		}
 	}});
-	
-	
+
+
 
 	return InputListItem;
 

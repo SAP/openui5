@@ -106,15 +106,15 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/DynamicExpressions.xml":
 				sAnswer = sDynamicExpressionsTest;
 				break;
-				
+
 			case "fakeService://testdata/odata/DynamicExpressions2.xml":
 				sAnswer = sDynamicExpressionsTest2;
 				break;
-				
+
 			case "fakeService://testdata/odata/collections-with-simple-values.xml":
 				sAnswer= sCollectionsWithSimpleValuesTest;
-				break;			
-				
+				break;
+
 			case "fakeService://testdata/odata/simple-values-2.xml":
 				sAnswer = sSimpleValuesTest2	;
 				break;
@@ -122,11 +122,11 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/if-in-apply.xml":
 				sAnswer = sIfInApply;
 				break;
-				
+
 			case "fakeService://testdata/odata/labeledelement-other-values.xml":
 				sAnswer = sLabeledElementOtherValues;
 				break;
-				
+
 			case "fakeService://testdata/odata/apply-parameters.xml":
 				sAnswer = sApplyParameters;
 				break;
@@ -142,7 +142,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/edmtype-for-navigationproperties":
 				sAnswer = sEdmtypeForNavigationproperties;
 				break;
-	
+
 			default:
 				// You used the wrong URL, dummy!
 				debugger;

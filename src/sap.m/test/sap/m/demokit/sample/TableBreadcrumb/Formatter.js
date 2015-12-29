@@ -1,9 +1,9 @@
 jQuery.sap.declare("sap.m.sample.TableBreadcrumb.Formatter");
 
 sap.m.sample.TableBreadcrumb.Formatter = {
-	
+
 	weightState :  function (fValue) {
-		
+
 		try {
 			fValue = parseFloat(fValue);
 			if (fValue < 0) {

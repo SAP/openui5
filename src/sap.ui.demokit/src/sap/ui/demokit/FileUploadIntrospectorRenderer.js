@@ -9,24 +9,24 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FileUploadIntrospector renderer. 
+	 * @class FileUploadIntrospector renderer.
 	 * @static
 	 */
 	var FileUploadIntrospectorRenderer = function() {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	FileUploadIntrospectorRenderer.render = function(oRenderManager, oControl) {
-	
+
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		function format(iDate) {
 		  var oDate = new Date(iDate),
 			sMonth = (oDate.getMonth() + 1) < 10 ? "0" + (oDate.getMonth() + 1) : "" + (oDate.getMonth() + 1),
@@ -37,8 +37,8 @@ sap.ui.define(['jquery.sap.global'],
 			sSeconds = oDate.getSeconds() < 10 ? "0" + oDate.getSeconds() : "" + oDate.getSeconds();
 			return sYear + "-" + sMonth + "-" + sDate + " " + sHours + ":" + sMinutes + ":" + sSeconds;
 		}
-	
-		// write the HTML into the render manager  
+
+		// write the HTML into the render manager
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.write(" class='sapUiDkitFileList'");
@@ -73,11 +73,11 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("<div class='sapUiDkitBottomLine'>");
 		rm.write("Last Refresh: " + (format(new Date().getTime())));
 		rm.write("</div>");
-		
+
 		rm.write("</div>");
-	
+
 	};
-	
+
 
 	return FileUploadIntrospectorRenderer;
 

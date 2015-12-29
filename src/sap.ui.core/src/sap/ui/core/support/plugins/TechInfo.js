@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 				"originInfo": "" + oCfg.getOriginInfo(),
 				"noDuplicateIds": "" + oCfg.getNoDuplicateIds()
 			};
-	
+
 			var oLibs = {};
 			var oRequest = jQuery.sap.syncGetJSON(sap.ui.resource("", "sap-ui-version.json"));
 			if (oRequest.success) {

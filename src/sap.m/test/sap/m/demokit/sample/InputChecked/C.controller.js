@@ -55,7 +55,7 @@ sap.ui.controller("sap.m.sample.InputChecked.C", {
 			sap.m.MessageBox.alert("Complete your input first.");
 		}
 	},
-	
+
 	/**
 	 * This is a custom model type for validating email
 	 */

@@ -164,7 +164,7 @@ messages.enabled.Component.prototype.createContent = function(){
 			)
 		}
 	});
-	
+
 	var oButton4 = new sap.m.Button({
 		text: "clear Messages",
 		press: function() {

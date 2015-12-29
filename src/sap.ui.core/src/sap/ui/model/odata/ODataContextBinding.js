@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
-	 * 
+	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {map} [mChangedEntities] Map of changed entities
 	 * @private
@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.setContext
-	 * 
+	 *
 	 * @param {sap.ui.model.Context} oContext The binding context object
 	 * @private
 	 */

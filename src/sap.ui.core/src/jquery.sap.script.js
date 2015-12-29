@@ -227,7 +227,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {any} b A value of any type
 	 * @param {int} [maxDepth=10] Maximum recursion depth
 	 * @param {boolean} [contains] Whether all existing properties in a are equal as in b
-	 * 
+	 *
 	 * @return {boolean} Whether a and b are equal
 	 * @public
 	 */
@@ -295,20 +295,20 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return false;
 	};
-	
+
 	/**
-	 * Iterates over elements of the given object or array. 
-	 * 
-	 * Works similar to <code>jQuery.each</code>, but a numeric index is only used for 
-	 * instances of <code>Array</code>. For all other objects, including those with a numeric 
-	 * <code>length</code> property, the properties are iterated by name. 
-	 * 
+	 * Iterates over elements of the given object or array.
+	 *
+	 * Works similar to <code>jQuery.each</code>, but a numeric index is only used for
+	 * instances of <code>Array</code>. For all other objects, including those with a numeric
+	 * <code>length</code> property, the properties are iterated by name.
+	 *
 	 * The contract for the <code>fnCallback</code> is the same as for <code>jQuery.each</code>,
 	 * when it returns <code>false</code>, then the iteration stops (break).
-	 * 
+	 *
 	 * @param {object|any[]} oObject object or array to enumerate the properties of
 	 * @param {function} fnCallback function to call for each property name
-	 * @return {object|any[]} the given <code>oObject</code> 
+	 * @return {object|any[]} the given <code>oObject</code>
 	 * @since 1.11
 	 */
 	jQuery.sap.each = function(oObject, fnCallback) {
@@ -331,27 +331,27 @@ sap.ui.define(['jquery.sap.global'],
 
 		return oObject;
 	};
-	
+
 	/**
 	 * Substitute for <code>for(n in o)</code> loops which fixes the 'Don'tEnum' bug of IE8.
-	 * 
+	 *
 	 * Iterates over all enumerable properties of the given object and calls the
-	 * given callback function for each of them. The assumed signature of the 
-	 * callback function is 
-	 * 
+	 * given callback function for each of them. The assumed signature of the
+	 * callback function is
+	 *
 	 *	 fnCallback(name, value)
-	 *	 
+	 *
 	 * where name is the name of the property and value is its value.
-	 * 
+	 *
 	 * When an object in IE8 overrides a property of Object.prototype
-	 * that has been marked as 'don't enum', then IE8 by mistake also 
-	 * doesn't enumerate the overriding property. 
-	 * 
-	 * A 100% complete substitute is hard to achieve. The current implementation 
-	 * enumerates an overridden property when it either is an 'own' property 
-	 * (hasOwnProperty(name) is true) or when the property value is different 
+	 * that has been marked as 'don't enum', then IE8 by mistake also
+	 * doesn't enumerate the overriding property.
+	 *
+	 * A 100% complete substitute is hard to achieve. The current implementation
+	 * enumerates an overridden property when it either is an 'own' property
+	 * (hasOwnProperty(name) is true) or when the property value is different
 	 * from the value in the Object.prototype object.
-	 * 
+	 *
 	 * @param {object} oObject object to enumerate the properties of
 	 * @param {function} fnCallback function to call for each property name
 	 * @function
@@ -366,16 +366,16 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			}
 		} :
-		// use a special implementation for IE8 
+		// use a special implementation for IE8
 		(function() {
 			var DONT_ENUM_KEYS = ["toString","valueOf","toLocaleString", "hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],
 					DONT_ENUM_KEYS_LENGTH = DONT_ENUM_KEYS.length,
 					oObjectPrototype = Object.prototype,
 					fnHasOwnProperty = oObjectPrototype.hasOwnProperty;
-					
+
 			return function(oObject, fnCallback) {
 				var n,i;
-				
+
 				// standard for(in) loop
 				for (n in oObject) {
 					if ( fnCallback(n, oObject[n]) === false ) {
@@ -395,13 +395,13 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				// Note: this substitute implementation still fails in several regards
 				// - it fails when oObject is identical to Object.prototype (iterates non-enumerable properties)
-				// - it fails when one of the don't enum properties by intention has been overridden in the 
+				// - it fails when one of the don't enum properties by intention has been overridden in the
 				//	 prototype chain with a value identical to the value in Object.prototype
 				// - the don't enum properties are handled out of order. This is okay with the ECMAScript
 				//	 spec but might be unexpected for some callers
 			};
 		}());
-		
+
 
 	/**
 	 * Calculate delta of old list and new list
@@ -841,7 +841,7 @@ sap.ui.define(['jquery.sap.global'],
 			at = start || 0;
 			ch = ' ';
 			result = value();
-			
+
 			if ( isNaN(start) ) {
 				white();
 				if (ch) {
@@ -899,26 +899,26 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Parse simple JS objects.
-	 * 
+	 *
 	 * A parser for JS object literals. This is different from a JSON parser, as it does not have
 	 * the JSON specification as a format description, but a subset of the JavaScript language.
 	 * The main difference is, that keys in objects do not need to be quoted and strings can also
 	 * be defined using apostrophes instead of quotation marks.
-	 * 
+	 *
 	 * The parser does not support functions, but only boolean, number, string, object and array.
-	 * 
+	 *
 	 * @param {string} The string containing the JS objects
 	 * @throws an error, if the string does not contain a valid JS object
 	 * @returns {object} the JS object
-	 * 
+	 *
 	 * @since 1.11
 	 */
 	jQuery.sap.parseJS = jQuery.sap._createJSTokenizer().parseJS;
-	
+
 	/**
 	 * Merge the contents of two or more objects together into the first object.
 	 * Usage is the same as jQuery.extend, but Arguments that are null or undefined are NOT ignored.
-	 * 
+	 *
 	 * @since 1.26
 	 */
 	jQuery.sap.extend = function() {
@@ -941,11 +941,11 @@ sap.ui.define(['jquery.sap.global'],
 		if ( typeof target !== "object" && !jQuery.isFunction(target) ) {
 			target = {};
 		}
-		
+
 		for ( ; i < length; i++ ) {
-			
+
 			options = arguments[ i ];
-			
+
 			// Extend the base object
 			for ( name in options ) {
 				src = target[ name ];
@@ -978,7 +978,7 @@ sap.ui.define(['jquery.sap.global'],
 		// Return the modified object
 		return target;
 	};
-	
+
 	return jQuery;
 
 }, /* bExport= */ false);

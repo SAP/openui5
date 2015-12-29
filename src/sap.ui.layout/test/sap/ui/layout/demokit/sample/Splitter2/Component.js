@@ -19,7 +19,7 @@ sap.ui.core.UIComponent.extend("sap.ui.layout.sample.Splitter2.Component", {
 			}
 		}
 	},
-	
+
 	onAfterRendering : function() {
 	}
 });

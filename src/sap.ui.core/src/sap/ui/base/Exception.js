@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global'],
 		this.name = "Exception";
 		this.message = message;
 	};
-	
+
 
 	return Exception;
 

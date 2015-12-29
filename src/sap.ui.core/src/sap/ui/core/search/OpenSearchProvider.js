@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new search/OpenSearchProvider.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -26,23 +26,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var OpenSearchProvider = SearchProvider.extend("sap.ui.core.search.OpenSearchProvider", /** @lends sap.ui.core.search.OpenSearchProvider.prototype */ { metadata : {
-	
+
 		library : "sap.ui.core",
 		properties : {
-	
+
 			/**
 			 * The URL for suggestions of the search provider. As placeholder for the concrete search queries '{searchTerms}' must be used. For cross domain requests maybe a proxy must be used.
 			 */
 			suggestUrl : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * The type of data which is provided by the given suggestUrl: either 'json' or 'xml'.
 			 */
 			suggestType : {type : "string", group : "Misc", defaultValue : 'json'}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * Call this function to get suggest values from the search provider.
 	 * The given callback function is called with the suggest value (type 'string', 1st parameter)
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 			return;
 		}
 		sUrl = sUrl.replace("{searchTerms}", jQuery.sap.encodeURL(sValue));
-	
+
 		var sType = this.getSuggestType();
 		var fSuccess;
 		if (sType && sType.toLowerCase() === "xml") {
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 				fCallback(sValue, data[1]);
 			};
 		}
-	
+
 		jQuery.ajax({
 			url: sUrl,
 			dataType: sType,
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './SearchProvider', '
 			}
 		});
 	};
-	
+
 
 	return OpenSearchProvider;
 

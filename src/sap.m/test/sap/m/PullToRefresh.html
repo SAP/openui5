@@ -6,7 +6,7 @@
 <title>sap.m.PullToRefresh Test</title>
 
 <script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
-	
+
 </script>
 
 <script type="text/javascript">
@@ -162,7 +162,7 @@ function createSelect(oPullDown, iSelectedItem){
 		}
 	}
 
-/* 
+/*
  * Hide immediately example
  */
 
@@ -202,14 +202,14 @@ function createSelect(oPullDown, iSelectedItem){
 	simplePage.addContent(pullToHide);
 	simplePage.addContent(simpleList);
 
-	/* 
+	/*
 	 * Busy dialog example
 	 */
 
 	var sOldDescription;
 
 	var busyDialog = new sap.m.BusyDialog({
-			text:"Please wait, data is loading..", 
+			text:"Please wait, data is loading..",
 			title: "Loading..",
 			showCancelButton: true,
 			close: function(oEvent){
@@ -222,7 +222,7 @@ function createSelect(oPullDown, iSelectedItem){
 				}
 			}
 		});
-	
+
 	var oTimeout = null;
 
 	var pullToBusy = new sap.m.PullToRefresh({

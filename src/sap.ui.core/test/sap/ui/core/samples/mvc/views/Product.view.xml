@@ -1,15 +1,15 @@
 <mvc:View controllerName="sap.ui.core.mvctest.controller.Product"
 	xmlns="sap.ui.commons" xmlns:layout="sap.ui.commons.layout" xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
-	
+
 	<html:style type="text/css">
 		.myMatrixLayout {
 			display:inline-table;
 		}
 	</html:style>
-	
+
 	<Image width="150px" height="110px" src="./images/screw.jpg"></Image>
-			
+
 	<layout:MatrixLayout id="Layout" width="250px" class="myMatrixLayout">
 		<layout:MatrixLayoutRow>
 			<layout:MatrixLayoutCell>

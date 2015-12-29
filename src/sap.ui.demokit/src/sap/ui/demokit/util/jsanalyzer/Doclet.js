@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides implementation of sap.ui.demokit.util.jsanalyzer.Doclet 
+// Provides implementation of sap.ui.demokit.util.jsanalyzer.Doclet
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery, esprima_) {
 
@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *
 	 * @param {string} comment Comment to unwrap
 	 * @return {string} Unwrapped comment
-	 * @private 
+	 * @private
 	 */
 	function unwrap(comment) {
 
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global'],
 	Doclet.prototype.isPublic = function() {
 		return this.visibility === 'public';
 	};
-	
+
 	Doclet.get = function(node) {
 		var comment = null;
 		var leadingComments = node.leadingComments;
@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		return comment ? new Doclet(comment) : null;
 	};
-	
+
 	return Doclet;
-	
+
 }, true);

@@ -2,20 +2,20 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+
 		<title>BusyIndicator - sap.m</title>
-			
+
 		<!-- Mobile viewport -->
 		<meta name="viewport"	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	
+
 		<!-- Enable fullscreen when possible -->
 		<meta name="apple-mobile-web-app-capable" content="yes">
-		
+
 		<!-- Set the status bar style on Apple devices -->
 		<meta name="apple-mobile-web-app-status-bar-style" content="default">
-		
+
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
@@ -39,7 +39,7 @@
 				customIcon:'images/synchronise_48.png',
 				customIconRotationSpeed: 5000
 			});
-			
+
 			var busyCSSText = new sap.m.BusyIndicator({
 				text:'this is a css busy indicator ...',
 			});
@@ -75,7 +75,7 @@
 			}, 2000)
 			var busyDialog1 = (busyDialog3) ? busyDialog3 : new sap.m.BusyDialog('busy1',{customIcon: 'images/synchronise_48.png'})
 			var busyDialog2 = (busyDialog2) ? busyDialog2 : new sap.m.BusyDialog('busy2',{text:'i am soo busy doing stuff', title: 'Busy'})
-			var busyDialog3 = busyDialog3 ? busyDialog3 : new sap.m.BusyDialog('busy3',{text:'i am a busy screen with a loooooooong long long long text and a cancel button', 
+			var busyDialog3 = busyDialog3 ? busyDialog3 : new sap.m.BusyDialog('busy3',{text:'i am a busy screen with a loooooooong long long long text and a cancel button',
 				title: 'LOADING',
 				showCancelButton: true, // IMPORTANT: the "Cancel" button text of this dialog may not be set, it should be the default text (tested in translation tests)
 				close: function(oEvent){console.log(oEvent, 'closed')}
@@ -97,8 +97,8 @@
 						busyDialog4.close()
 					}
 				})
-			} 
-			
+			}
+
 			var openBusyScreenBtn1 = new sap.m.Button({
 				text: 'open BusyDialog',
 				press: function() {
@@ -128,9 +128,9 @@
 				press: function() {
 					syncLoad();
 				}
-			}).addStyleClass('BusyButton');			
+			}).addStyleClass('BusyButton');
 			var page1 = new sap.m.Page("page1", {
-				title:"Mobile Busy Indicator Controls", 
+				title:"Mobile Busy Indicator Controls",
 				headerContent: [busyCSS],
 				content:[
 					openBusyScreenBtn1,

@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ThingViewer.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -28,40 +28,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ThingViewer = Control.extend("sap.ui.ux3.ThingViewer", /** @lends sap.ui.ux3.ThingViewer.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * Title of the Thing Inspector
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Thing type
 			 */
 			type : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Thing Icon Url
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Subtitle of the Thing Inspector
 			 */
 			subtitle : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Width of the ThingViewer
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : '100%'},
-	
+
 			/**
 			 * Height of the ThingViewer
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : '100%'},
-	
+
 			/**
 			 * Defines which header type should be used.
 			 * @since 1.16.3
@@ -69,57 +69,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			headerType : {type : "sap.ui.ux3.ThingViewerHeaderType", group : "Misc", defaultValue : sap.ui.ux3.ThingViewerHeaderType.Standard}
 		},
 		aggregations : {
-	
+
 			/**
 			 * ThingGroups for the header content
 			 */
-			headerContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "headerContent"}, 
-	
+			headerContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "headerContent"},
+
 			/**
 			 * Thing Inspector facets
 			 */
-			facets : {type : "sap.ui.ux3.NavigationItem", multiple : true, singularName : "facet"}, 
-	
+			facets : {type : "sap.ui.ux3.NavigationItem", multiple : true, singularName : "facet"},
+
 			/**
 			 * ThingGroups for content of the selected facet
 			 */
-			facetContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "facetContent"}, 
-	
+			facetContent : {type : "sap.ui.ux3.ThingGroup", multiple : true, singularName : "facetContent"},
+
 			/**
 			 * An ActionBar can be given
 			 */
-			actionBar : {type : "sap.ui.ux3.ActionBar", multiple : false}, 
-	
+			actionBar : {type : "sap.ui.ux3.ActionBar", multiple : false},
+
 			/**
 			 * NavigationBar that is managed by this ThingViewer
 			 */
 			navBar : {type : "sap.ui.ux3.NavigationBar", multiple : false, visibility : "hidden"}
 		},
 		associations : {
-	
+
 			/**
 			 * The Facet that is currently selected.
 			 */
 			selectedFacet : {type : "sap.ui.ux3.NavigationItem", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * Event for facet selection. The application is responsible for displaying the correct content for the selected one. The ThingInspector will currently always mark the first facet as selected.
 			 */
 			facetSelected : {allowPreventDefault : true,
 				parameters : {
-	
+
 					/**
 					 * Id of selected NavigationItem
 					 */
-					id : {type : "string"}, 
-	
+					id : {type : "string"},
+
 					/**
 					 * The selected NavigationItem
 					 */
-					item : {type : "sap.ui.ux3.NavigationItem"}, 
-	
+					item : {type : "sap.ui.ux3.NavigationItem"},
+
 					/**
 					 * Key of selected NavigationItem
 					 */
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 		}
 	}});
-	
+
 	(function() {
 		/**
 		 * Initialization hook for the ThingViewer. It creates the instance of the
@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				}
 			});
 		};
-		
+
 		/*
 		 * Set size of TI after rendering: If running in Shell we sync with shell
 		 * canvas. The size will then be set by the shell.
@@ -166,20 +166,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				return;
 			}
 			this._resizeListenerId = sap.ui.core.ResizeHandler.register(this.$().find(".sapUiUx3TVFacetContent")[0], jQuery.proxy(this._onresize, this));
-			
+
 			// initial resize handling
 			this._setTriggerValue();
 			this._setHeaderPosition();
 			this._onresize();
 		};
-		
+
 		ThingViewer.prototype.onBeforeRendering = function() {
 			if (this._resizeListenerId) {
 				sap.ui.core.ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
 		};
-		
+
 		ThingViewer.prototype._setHeaderPosition = function() {
 			if (this.getHeaderType() === sap.ui.ux3.ThingViewerHeaderType.Standard) {
 				var $typeContainer = this.$().find(".sapUiUx3TVHeaderContainerIdentifier");
@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				$scrollContainer.css("top", $typeContainer.outerHeight());
 			}
 		};
-		
+
 		/**
 		 * Resize handler listening to the facet content area. If the area will be
 		 * resized and the blocks will be rearranged to one column the width will be set
@@ -232,7 +232,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this.$().find(".sapUiUx3TVContent").css("min-width",minWidth + "px");
 			}
 		};
-		
+
 		/**
 		 * Destroys this instance of ThingViewer, called by Element#destroy()
 		 *
@@ -245,7 +245,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this._resizeListenerId = null;
 			}
 		};
-		
+
 		/**
 		 * get Navigation Bar control
 		 *
@@ -254,7 +254,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		ThingViewer.prototype._getNavBar = function() {
 			return this._oNavBar;
 		};
-		
+
 		/**
 		 * setDefault NavBar selection and fire SelectedItem Event
 		 *
@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				});
 			}
 		};
-		
+
 		/**
 		 * equal Columns
 		 *
@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			facetsColumn.height(scrollContainer.get(0).scrollHeight);
 			headerColumn.height(scrollContainer.get(0).scrollHeight);
 		};
-		
+
 		/**
 		 * Rerender Header
 		 *
@@ -303,7 +303,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				rm.destroy();
 			}
 		};
-		
+
 		/**
 		 * Rerender Header Content
 		 *
@@ -318,7 +318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				rm.destroy();
 			}
 		};
-		
+
 		/**
 		 * Rerender Toolbar
 		 *
@@ -333,7 +333,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				rm.destroy();
 			}
 		};
-		
+
 		/**
 		 * Rerender Facet Content
 		 *
@@ -351,16 +351,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this._onresize();
 			}
 		};
-		
+
 		/**
 		 * set trigger value for resize handler
-		 * 
+		 *
 		 * @private
 		 */
 		ThingViewer.prototype._setTriggerValue = function() {
 			var facetGroups, minWidth,
 				$content = this.$("facetContent");
-			
+
 			// get triggerValue for facet content resize handler
 			if ($content.length > 0) {
 				facetGroups = this.$().find(".sapUiUx3TVFacetThingGroup");
@@ -368,42 +368,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				this._triggerValue = parseInt(minWidth, 10) * 2;
 			}
 		};
-		
+
 		/* Redefinition of generated API methods */
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.getFacets = function() {
 			return this._oNavBar.getItems();
 		};
-		
+
 		// Implementation of API method insertFacet
 		ThingViewer.prototype.insertFacet = function(oFacet, iIndex) {
 			this._oNavBar.insertItem(oFacet, iIndex);
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.addFacet = function(oFacet) {
 			this._oNavBar.addItem(oFacet);
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.removeFacet = function(vElement) {
 			return this._oNavBar.removeItem(vElement);
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.removeAllFacets = function() {
 			return this._oNavBar.removeAllItems();
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.destroyFacets = function() {
 			this._oNavBar.destroyItems();
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.setIcon = function(oIcon) {
 			this.setProperty("icon", oIcon);
@@ -413,7 +413,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			this._rerenderHeader();
 			return this;
 		};
-		
+
 		// Implementation of API method
 		ThingViewer.prototype.insertFacetContent = function(oFacetContent, iIndex) {
 			this.insertAggregation("facetContent", oFacetContent, iIndex, true);
@@ -479,7 +479,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			var oldSelectedFacet = this.getSelectedFacet();
 			this.setAssociation("selectedFacet", selectedFacet, true);
 			var newSelectedFacet = this.getSelectedFacet();
-		
+
 			if (oldSelectedFacet != newSelectedFacet) {
 				this._oNavBar.setSelectedItem(newSelectedFacet);
 			}

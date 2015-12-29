@@ -417,7 +417,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
 		// only if there is no text and tokenizer has some tokens
 		if (this.getValue().length === 0 && (oEvent.ctrlKey || oEvent.metaKey) && (oEvent.which === jQuery.sap.KeyCodes.A)
 				&& this._hasTokens()) {
@@ -442,7 +442,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-	
+
 		var aItems = this._getItemsStartingText(sValue);
 		var bVisibleItemFound = !!aItems.length;
 
@@ -699,22 +699,22 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 		return oDialog;
 	};
-	
+
 	/**
 	 * Required adaptations after rendering of the Popover.
-	 * 
+	 *
 	 * @private
 	 */
 	MultiComboBox.prototype._onAfterRenderingPopover = function() {
 		var oPopover = this.getPicker();
-	
+
 		// remove the Popover arrow
 		oPopover._removeArrow();
-	
+
 		// position adaptations
 		oPopover._setPosition();
 	};
-	
+
 	/**
 	 * Decorate a Popover instance by adding some private methods.
 	 *
@@ -723,7 +723,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 */
 	MultiComboBox.prototype._decoratePopover = function(oPopover) {
 		var that = this;
-	
+
 		// adding additional capabilities to the Popover
 		oPopover._removeArrow = function() {
 			this._marginTop = 0;
@@ -733,15 +733,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			this._arrowOffset = 0;
 			this._offsets = ["0 0", "0 0", "0 0", "0 0"];
 		};
-	
+
 		oPopover._setPosition = function() {
 			this._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
 			this._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
 		};
-	
+
 		oPopover._setArrowPosition = function() {
 		};
-	
+
 		oPopover.open = function() {
 			var oDomRef = jQuery(that.getDomRef());
 			var oBorder = oDomRef.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "Border");
@@ -983,21 +983,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 			var $ShadowDiv = $MultiComboBox.children(MultiComboBoxRenderer.DOT_CSS_CLASS + "ShadowDiv");
 			$ShadowDiv.text(this.getValue());
-			
+
 			var iInputWidthMinimalNeeded = $ShadowDiv.outerWidth() + iIconWidth;
 			var $InputContainer = $MultiComboBox.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "InputContainer");
 
 			// Set Tokenizer width
 			var iAvailableInnerSpace = iAvailableWidth - iInputWidthMinimalNeeded;
 			var sInputWidth;
-			
+
 			if (this._oTokenizer.getScrollWidth() > iAvailableInnerSpace) {
 				this._oTokenizer.setPixelWidth(iAvailableInnerSpace);
 				sInputWidth = (iInputWidthMinimalNeeded / parseFloat(sap.m.BaseFontSize)) + "rem";
 			} else {
 				sInputWidth = ((iAvailableWidth - this._oTokenizer.getScrollWidth()) / parseFloat(sap.m.BaseFontSize)) + "rem";
 			}
-			
+
 			$InputContainer.find(".sapMInputBaseInner").css("width", sInputWidth);
 		}
 	};
@@ -1459,7 +1459,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
 	};
-	
+
 	/**
 	 * Function is called on keyboard backspace, if cursor is in front of an token, token gets selected and deleted
 	 *
@@ -1567,7 +1567,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}, this);
 		return aItems;
 	};
-	
+
 	/**
 	 * Functions returns the current input field's cursor position
 	 *

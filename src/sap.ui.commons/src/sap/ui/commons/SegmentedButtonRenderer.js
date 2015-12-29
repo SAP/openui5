@@ -13,11 +13,11 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var SegmentedButtonRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global'],
 			// ResourceBundle always returns the key if the text is not found
 			sText = rb.getText("SEGMENTEDBUTTON_ARIA_SELECT");
 
-		// write the HTML into the render manager  
+		// write the HTML into the render manager
 	    rm.write("<span");
 	    rm.writeControlData(oControl);
 	    rm.addClass("sapUiSegmentedButton");
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('</span>');
 	    rm.write("</span>");
 	};
-	
+
 	SegmentedButtonRenderer.renderButtons = function(oRenderManager, oControl) {
 		// convenience variable
 		var rm = oRenderManager,

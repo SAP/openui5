@@ -73,7 +73,7 @@ function runODataAnnotationTests() {
 	},{
 		name             : "Northwind with annotated metadata + annotations",
 		service          : "fakeService://testdata/odata/northwind-annotated/",
-		annotations      : [ 
+		annotations      : [
 			"fakeService://testdata/odata/northwind-annotated/$metadata",
 			"fakeService://testdata/odata/northwind-annotations-normal.xml"
 		],
@@ -83,7 +83,7 @@ function runODataAnnotationTests() {
 	},{
 		name             : "Northwind with annotated metadata + annotations",
 		service          : "fakeService://testdata/odata/northwind-annotated/",
-		annotations      : [ 
+		annotations      : [
 			"fakeService://testdata/odata/northwind-annotated/$metadata",
 			"fakeService://testdata/odata/northwind-annotations-malformed.xml"
 		],
@@ -153,7 +153,7 @@ function runODataAnnotationTests() {
 		aServices.push(mTest);
 	}
 
-	var 
+	var
 		sTestName, sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid, bSharedMetadata,
 		sTestType, fnTest, mService, i;
 
@@ -190,7 +190,7 @@ function runODataAnnotationTests() {
 						start();
 					break;
 
-					case "MetadataFailed": 
+					case "MetadataFailed":
 						// Nothing should be loaded
 						ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
@@ -242,7 +242,7 @@ function runODataAnnotationTests() {
 					}).fail(function(e){
 						jQuery.sap.log.debug("metadata promise failed");
 						ok(false, 'Metadata promise rejected');
-					}); 
+					});
 			} else if (bServiceValid && !bAnnotationsValid){
 				jQuery.when(metadataDfd).done(function(e){
 					jQuery.sap.log.debug("metadata promise fulfilled");
@@ -278,12 +278,12 @@ function runODataAnnotationTests() {
 		// Check asynchronous loading
 		mModelOptions.loadAnnotationsJoined = false;
 		mModelOptions.loadMetadataAsync = true;
-	
-		sTestType = 
-			sTestName + " (" + 
-			(bServiceValid ? "Valid Service" : "Broken Service") + "/" + 
+
+		sTestType =
+			sTestName + " (" +
+			(bServiceValid ? "Valid Service" : "Broken Service") + "/" +
 			(bAnnotationsValid ? "Valid Annotations" : "Broken Annotations") +
-			(bSharedMetadata ?  "/Shared Metadata" : "") + 
+			(bSharedMetadata ?  "/Shared Metadata" : "") +
 			")";
 
 		jQuery.sap.log.debug("testtype: " + sTestType);
@@ -327,7 +327,7 @@ function runODataAnnotationTests() {
 						start();
 					break;
 
-					case "MetadataFailed": 
+					case "MetadataFailed":
 						// Nothing should be loaded
 						ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
@@ -343,7 +343,7 @@ function runODataAnnotationTests() {
 
 					default:
 						throw "This is unexpected and should never happen...";
-				} 
+				}
 
 			};
 
@@ -390,7 +390,7 @@ function runODataAnnotationTests() {
 				}).fail(function(e){
 				jQuery.sap.log.debug("metadata promise failed");
 				ok(false, 'Metadata promise rejected');
-			}); 
+			});
 			} else if (bServiceValid && !bAnnotationsValid){
 				//internal metadata needs to be sucessful prior to the failed annotations
 				jQuery.when(internalMetadataDfd).done(function(){
@@ -419,13 +419,13 @@ function runODataAnnotationTests() {
 		bAnnotationsValid = mService.annotationsValid;
 		bSharedMetadata = mService.sharedMetadata;
 		sTestName = aServices[i].name ? aServices[i].name : "";
-	
+
 		// Check asynchronous loading
 		mModelOptions.loadAnnotationsJoined = true;
 		mModelOptions.loadMetadataAsync = true;
 
 
-		sTestType = 
+		sTestType =
 			sTestName + " (" +
 			(bServiceValid ? "Valid Service" : "Broken Service") + "/" +
 			(bAnnotationsValid ? "Valid Annotations" : "Broken Annotations") +
@@ -435,7 +435,7 @@ function runODataAnnotationTests() {
 		asyncTest(
 			"Asynchronous loading (joined events) - " + sTestType,
 			fnTest(sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid)
-		); 
+		);
 	}
 
 
@@ -446,7 +446,7 @@ function runODataAnnotationTests() {
 		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
 		var oModel3 = new sap.ui.model.odata.v2.ODataModel(
-			"fakeService://testdata/odata/northwind-annotated/", 
+			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
 					"fakeService://testdata/odata/northwind-annotations-normal.xml",
@@ -466,7 +466,7 @@ function runODataAnnotationTests() {
 		});
 
 		var oModel4 = new sap.ui.model.odata.v2.ODataModel(
-			"fakeService://testdata/odata/northwind-annotated/", 
+			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
 					"fakeService://testdata/odata/northwind-annotated/$metadata",
@@ -498,7 +498,7 @@ function runODataAnnotationTests() {
 				start();
 			}
 		}
-	
+
 	});
 
 
@@ -521,10 +521,10 @@ function runODataAnnotationTests() {
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-	
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-	
+
 			ok(
 				!!oAnnotations
 					["Test.2014-12-08"],
@@ -543,10 +543,10 @@ function runODataAnnotationTests() {
 					[0],
 				"Namespace has content"
 			);
-	
-	
+
+
 			var mNamespace = oAnnotations["Test.2014-12-08"]["com.sap.vocabularies.UI.v1.Identification"][0];
-	
+
 			ok(
 				!!mNamespace
 					["com.sap.vocabularies.UI.v1.Importance"],
@@ -565,16 +565,16 @@ function runODataAnnotationTests() {
 				"com.sap.vocabularies.UI.v1.Priority/High",
 				"EnumMember has correct value"
 			);
-	
+
 			ok(!!mNamespace["RecordType"], "RecordType exists");
 			equal(
 				mNamespace["RecordType"],
 				"com.sap.vocabularies.UI.v1.DataField",
 				"RecordType has correct value"
 			);
-	
+
 			ok(!!mNamespace["Value"], "Value exists");
-	
+
 			var mCorrectValue = {
 				"Apply": {
 					"Name" : "odata.concat",
@@ -593,7 +593,7 @@ function runODataAnnotationTests() {
 					}]
 				}
 			};
-	
+
 			deepEqual(mNamespace["Value"], mCorrectValue, "Value has correct value");
 			start();
 		});
@@ -616,22 +616,22 @@ function runODataAnnotationTests() {
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-	
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-	
+
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
-	
+
 			ok(
 				!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
-	
+
 			ok(
 				!!oAnnotations["propertyAnnotations"]["MultiplePropertyAnnotations.Product"]["Price/Amount"],
 				"Target values exist"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -640,7 +640,7 @@ function runODataAnnotationTests() {
 					["CQP.ISOCurrency"],
 				"Target value 1 exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -649,7 +649,7 @@ function runODataAnnotationTests() {
 					["Common.Label"],
 				"Target value 2 exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -659,7 +659,7 @@ function runODataAnnotationTests() {
 					["Path"],
 				"Target value 1 property exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -669,7 +669,7 @@ function runODataAnnotationTests() {
 					["String"],
 				"Target value 2 property exists"
 			);
-	
+
 			equal(
 				oAnnotations
 					["propertyAnnotations"]
@@ -680,7 +680,7 @@ function runODataAnnotationTests() {
 				"Price/CurrencyCode",
 				"Target value 1 property exists"
 			);
-	
+
 			equal(
 				oAnnotations
 					["propertyAnnotations"]
@@ -712,23 +712,23 @@ function runODataAnnotationTests() {
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-	
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-	
+
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
-	
+
 			ok(
 				!!oAnnotations["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]["PropertyAnnotationQualifiers.Product"]["Price/Amount"],
 				"Target value exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -737,7 +737,7 @@ function runODataAnnotationTests() {
 					["CQP.ISOCurrency#Amount1"],
 				"Target value with Qualifier exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -747,7 +747,7 @@ function runODataAnnotationTests() {
 					["Path"],
 				"Target value with Qualifier value exists"
 			);
-	
+
 			equal(
 				oAnnotations
 					["propertyAnnotations"]
@@ -779,23 +779,23 @@ function runODataAnnotationTests() {
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-	
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-	
+
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
-	
+
 			ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValues.Product"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]["OtherPropertyValues.Product"]["Price/Amount"],
 				"Target value exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -804,7 +804,7 @@ function runODataAnnotationTests() {
 					["CQP.ISOCurrency#Amount2"],
 				"Target value with Qualifier exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -814,7 +814,7 @@ function runODataAnnotationTests() {
 					["String"],
 				"Target value with Qualifier value exists"
 			);
-	
+
 			equal(
 				oAnnotations
 					["propertyAnnotations"]
@@ -845,23 +845,23 @@ function runODataAnnotationTests() {
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-	
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-	
+
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
-	
+
 			ok(
 				!!oAnnotations["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"],
 				"Target namespace inside PropertyAnnotations exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]["NamespaceAliases.PurchaseOrder"]["GrossAmount"],
 				"Target value exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -870,7 +870,7 @@ function runODataAnnotationTests() {
 					["com.sap.vocabularies.Common.v1.Label"],
 				"Target value with correct alias replacement (none!) exists"
 			);
-	
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -880,7 +880,7 @@ function runODataAnnotationTests() {
 					["String"],
 				"Target value with String value exists"
 			);
-	
+
 			equal(
 				oAnnotations
 					["propertyAnnotations"]
@@ -894,7 +894,7 @@ function runODataAnnotationTests() {
 			start();
 		});
 	});
-	
+
 	asyncTest("Namespaces in Other Property Values", function() {
 		expect(22);
 
@@ -911,19 +911,19 @@ function runODataAnnotationTests() {
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-	
+
 			ok(!!oMetadata, "Metadata is available.");
-	
+
 			ok(!!oAnnotations, "Annotations are available.");
-	
+
 			ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations namespace exists");
-	
+
 			ok(
 				!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 				"Target value exists"
 			);
-	
-	
+
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -951,8 +951,8 @@ function runODataAnnotationTests() {
 				"com.sap.vocabularies.UI.v1.Value",
 				"Target value's namespace has been correctly replaced"
 			);
-	
-	
+
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -980,8 +980,8 @@ function runODataAnnotationTests() {
 				"com.sap.vocabularies.Communication.v1.Value",
 				"Target value's namespace has been correctly replaced"
 			);
-	
-	
+
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -1009,8 +1009,8 @@ function runODataAnnotationTests() {
 				"Org.OData.Measures.V1.Value",
 				"Target value's namespace has been correctly replaced"
 			);
-	
-	
+
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -1038,8 +1038,8 @@ function runODataAnnotationTests() {
 				"Org.OData.Measures.V1.Value",
 				"Target value's namespace has been correctly replaced"
 			);
-	
-	
+
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -1067,8 +1067,8 @@ function runODataAnnotationTests() {
 				"com.sap.vocabularies.Common.v1.Value",
 				"Target value's namespace has been correctly replaced"
 			);
-	
-	
+
+
 			ok(
 				!!oAnnotations
 					["propertyAnnotations"]
@@ -1121,17 +1121,17 @@ function runODataAnnotationTests() {
 		ok(!!oAnnotations, "Annotations are available.");
 
 		ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations group exists");
-		
+
 		ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"],
 			"PropertyAnnotation definition exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 			"PropertyAnnotation definition value exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"],
 			"Name1 with replaced alias exists"
@@ -1144,7 +1144,7 @@ function runODataAnnotationTests() {
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"],
 			"Name3 with replaced alias exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 			"Name1 with replaced alias exists and has EnumMember child node"
@@ -1157,7 +1157,7 @@ function runODataAnnotationTests() {
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 			"Name3 with replaced alias exists and has Invalid child node"
 		);
-		
+
 		equals(
 			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 			"com.sap.vocabularies.UI.v1.Value",
@@ -1173,10 +1173,10 @@ function runODataAnnotationTests() {
 			{},
 			"Name3 with replaced alias exists and has Invalid child node that only contains an empy object"
 		);
-		
+
 
 	});
-	
+
 	test("Entity Containers", function() {
 		expect(30);
 
@@ -1197,11 +1197,11 @@ function runODataAnnotationTests() {
 
 		ok(!!oAnnotations, "Annotations are available.");
 
-		
+
 		ok(!!oAnnotations["EntityContainer"], "Entity container entry exists");
-		
+
 		ok(!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"], "Entity container exists");
-		
+
 		ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"],
@@ -1239,7 +1239,7 @@ function runODataAnnotationTests() {
 			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Activate",
 			"Sub Entity value in container exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
@@ -1264,7 +1264,7 @@ function runODataAnnotationTests() {
 			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Edit",
 			"Sub Entity value in container exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
@@ -1289,7 +1289,7 @@ function runODataAnnotationTests() {
 			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Validate",
 			"Sub Entity value in container exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
@@ -1314,7 +1314,7 @@ function runODataAnnotationTests() {
 			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Prepare",
 			"Sub Entity value in container exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"],
 			"Entity in namespace exists"
@@ -1345,7 +1345,7 @@ function runODataAnnotationTests() {
 			"SalesOrderID",
 			"Entity in namespace exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"],
 			"Entity in namespace exists"

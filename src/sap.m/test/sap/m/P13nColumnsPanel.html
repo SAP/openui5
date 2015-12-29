@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-compatVersion="1.20">
-	
+
 </script>
 <script>
 	jQuery.sap.require("jquery.sap.xml");
@@ -22,7 +22,7 @@
 	this._oModel = new sap.ui.model.json.JSONModel();
 
 	var _oData = {
-			transientData: {	
+			transientData: {
 				columns: {
 					title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.comp").getText("PERSODIALOG_TAB_COLUMNS"),
 					items: [ {
@@ -121,7 +121,7 @@
 			})
 		}
 	});
-	
+
 	this._oColumnsPanel.attachAddColumnsItem(function(oEvent) {
 		var oData = this._oModel.getData();
 		var oParams = oEvent.getParameters();
@@ -137,7 +137,7 @@
 
 
 	this._oColumnsPanel.setModel(this._oModel)
-	
+
 	var oPage = new sap.m.Page("page1", {
 		content: [ this._oColumnsPanel ]
 	});

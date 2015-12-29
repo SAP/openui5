@@ -1,16 +1,16 @@
 {
 
 	"name": "sap.ui.test.mixed.Component",
-	
+
 	"sap.app": {
 		"id": "sap.ui.test.mixed",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
-	
+
 	"sap.ui5": {
-		
+
 		"resources": {
 			"js": [
 				{
@@ -26,14 +26,14 @@
 				{}
 			]
 		},
-		
+
 		"dependencies": {
 			"minUI5Version": "1.22.5",
 			"libs": {
 				"sap.ui.commons": {
 					"minVersion": "1.22.0"
 				}
-			}, 
+			},
 			"components": {
 				"sap.ui.test.other": {
 					"optional": true,
@@ -41,7 +41,7 @@
 				}
 			}
 		},
-		
+
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -56,9 +56,9 @@
 				}
 			}
 		},
-		
+
 		"rootView": "sap.ui.test.view.Main",
-		
+
 		"config": {
 			"any1": {
 				"entry": "configuration"
@@ -72,7 +72,7 @@
 				"anyarray": [1, 2, 3]
 			}
 		},
-		
+
 		"routing": {
 			"config": {
 				"viewType" : "XML",
@@ -90,7 +90,7 @@
 				}
 			]
 		},
-		
+
 		"extends": {
 			"extensions": {
 				"sap.ui.viewReplacements": {
@@ -119,7 +119,7 @@
 				}
 			}
 		}
-	
+
 	}
 
 }

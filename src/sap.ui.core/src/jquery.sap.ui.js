@@ -8,12 +8,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global'],
 	"use strict";
 
 //jQuery.sap.require("sap.ui.core.Core"); // cyclic
-	
+
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!
 	// !!     EXPERIMENTAL     !!
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!
-	
-	
+
+
 	// FIXME Too tough or just right?
 	if (!jQuery.sap) {
 		throw "Initialisation of jQuery.sap.ui failed. jQuery.sap plugin required!";

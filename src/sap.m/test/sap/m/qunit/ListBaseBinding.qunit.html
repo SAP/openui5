@@ -23,35 +23,35 @@
 <script>
 
 	// global service URL keep the path relative not to have cross domain issue.
-	var sServiceURI = "/service/" 
+	var sServiceURI = "/service/"
 
 	// keep the filter operator as a global
 	var mFilterOperator = sap.ui.model.FilterOperator;
-	
+
 	// fakeTimers causing issue with MockServer
 	sinon.config.useFakeTimers = false;
 
 	function createODataModel(sURL, mSettings) {
 		sURL = sURL || sServiceURI;
 		var oModel = new sap.ui.model.odata.ODataModel(sURL, true);
-		
+
 		mSettings = mSettings || {};
 		jQuery.each(mSettings, function(sProperty, vValue) {
 			sProperty = jQuery.sap.charToUpperCase(sProperty);
 			oModel["set" + sProperty](vValue);
 		});
-		
+
 		return oModel;
 	}
-	
+
 	function createJSONModel(oData) {
 		oData = oData || {
 			Products : jQuery.sap.sjax({
-				url : "data/Product.json", 
+				url : "data/Product.json",
 				dataType:"json"
 			}).data
 		};
-		
+
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(oData);
 		return oModel;
@@ -152,7 +152,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("List should show busy indicator when there is no data found", function() {
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -196,7 +196,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("List should respect enableBusyIndicator property to show busy indicator.", function() {
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -233,7 +233,7 @@
 			}, {
 				path :"/ThereIsNoSuchPath"
 			});
-	
+
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();
@@ -241,7 +241,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("Growing List should clear busy state and all data when binding error has occured", function() {
 		var oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
@@ -250,7 +250,7 @@
 				growingThreshold : 10,
 				busyIndicatorDelay : 0
 			});
-		
+
 		// when initial binding is completed
 		oList.done(function () {
 			// attach to the update binding events
@@ -266,11 +266,11 @@
 				strictEqual(this.$().find(".sapMListNoData").length, 1, "No Data indication is shown after error");
 				oDeferred.resolve();
 			});
-			
+
 			// create http error with unkown sorter field
 			oList.getBinding("items").sort(new sap.ui.model.Sorter("NoSuchField"));
 		});
-	
+
 		// when test is completed
 		jQuery.when(oDeferred).done(function () {
 			oMockServer.stop();
@@ -288,10 +288,10 @@
 				updateStarted : fnUpdateStartedSpy,
 				updateFinished : fnUpdateFinishedSpy
 			}, {}, oModel);
-		
+
 		strictEqual(fnUpdateStartedSpy.callCount, 0, "updateStarted is not fired because metadata is not loaded");
 		strictEqual(fnUpdateFinishedSpy.callCount, 0, "updateFinished is not fired because metadata is not loaded");
-		
+
 		// cleanup
 		oMockServer.stop();
 		oModel.destroy();
@@ -326,28 +326,28 @@
 
 	module("Abort");
 	asyncTest("List should abort multiple requests and runs only the last one", function() {
-		
+
 		// arrange
 		var fnUpdateStartedSpy = this.spy(),
 			fnUpdateFinishedSpy = this.spy(),
 			oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
 			oList = createList();
-		
+
 		// when initial binding is completed
 		oList.done(function () {
 			// attach to the update binding events
 			oList.attachUpdateStarted(fnUpdateStartedSpy);
 			oList.attachUpdateFinished(fnUpdateFinishedSpy);
 			oList.attachUpdateFinished(oDeferred.resolve);
-			
+
 			// sort and immediately filter then sort request should be aborted
 			// but even though sort stays in the model and next filter should have sort info
 			this.getBinding("items").sort(new sap.ui.model.Sorter("ProductId", true));
 			this.getBinding("items").filter(new sap.ui.model.Filter("SupplierName", mFilterOperator.Contains, "Very Best Screens"));
 
 		});
-	
+
 		// when all requests are completed
 		jQuery.when(oDeferred).done(function () {
 			// assert
@@ -355,21 +355,21 @@
 			strictEqual(fnUpdateFinishedSpy.callCount, 1, "update finished event is called once");
 			strictEqual(fnUpdateFinishedSpy.args[0][0].getParameter("total"), 3, "Event reported there are 3 records are found: Very Best Screens");
 			strictEqual(oList.getItems().length, 3, "List has 3 records: Very Best Screens");
-			
+
 			// find all product ids
 			var sProductIds = oList.getItems().map(function(oItem) {
 				return oItem.getBindingContext().getProperty("ProductId");
 			}).join(" > ");
-			
+
 			strictEqual(sProductIds, "id_13 > id_12 > id_11", "Aborted descending sort information is applied to the filter");
-			
+
 			// clean up
 			oMockServer.stop();
 			oList.destroy();
 			start();
 		});
 	});
-	
+
 	module("CountMode");
 	asyncTest("CountMode.None should show growing indicator when list is not complete yet", function() {
 		var iThreshold = 10,
@@ -386,7 +386,7 @@
 					countMode: "None"
 				}
 			});
-	
+
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();
@@ -411,7 +411,7 @@
 					countMode: "None"
 				}
 			});
-	
+
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();
@@ -427,17 +427,17 @@
 				updateStarted : function () {
 					ok(false, "Started an update! Why should we? There should no request fired.");
 				}
-			}, { 
+			}, {
 				path : "nonAbsoluteAndUnresolveable"
 			});
 
 		ok(!oList.getBusy(), "Why should the list be busy? There should not be any request");
-		
+
 		// clean up
 		oMockServer.stop();
 		oList.destroy();
 	});
-	
+
 	module("FocusAfterBindingUpdate");
 	asyncTest("Focus should be retained after binding update", function() {
 		var sFocusedControlId,
@@ -453,32 +453,32 @@
 					})
 				})
 			});
-		
+
 		// when initial binding is completed
 		oList.done(function () {
-			
+
 			// focus to the input field
 			sFocusedControlId = oList.$().find("input").eq(5).focus().attr("id");
-			
+
 			// rerender list
 			oList.rerender();
-			
+
 			setTimeout(function() {
 				// check focus after rerender
 				strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after list rerender");
-				
+
 				// recheck focus after binding update
 				oList.attachUpdateFinished(function(oEvent) {
 					strictEqual(document.activeElement.id, sFocusedControlId, "Focus is retained after binding update");
 					oDeferred.resolve();
 				});
-				
+
 				// update the list binding
 				oList.updateItems();
 			}, 0);
-			
+
 		});
-	
+
 		// when test is completed
 		jQuery.when(oDeferred).done(function () {
 			oMockServer.stop();
@@ -486,8 +486,8 @@
 			start();
 		});
 	});
-	
-	
+
+
 	asyncTest("Last setGrowingThreshold should be respected before data fetching", function() {
 		var iInitThreshold = 5,
 			iLastThreshold = 10,
@@ -499,9 +499,9 @@
 					strictEqual(oEvent.getParameter("actual"), iLastThreshold, "Last growing threshold is respected");
 				}
 			});
-		
+
 		oList.setGrowingThreshold(iLastThreshold);
-	
+
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();

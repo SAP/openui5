@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', './FilterOperator', 'sap/ui/core/util/Unicod
 	/**
 	 * Constructor for Filter
 	 * You can either pass an object with the filter parameters or use the function arguments
-	 * 
+	 *
 	 * Using object:
 	 * new sap.ui.model.Filter({
 	 *   path: "...",
@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './FilterOperator', 'sap/ui/core/util/Unicod
 	 *   value1: "...",
 	 *   value2: "..."
 	 * })
-	 * 
+	 *
 	 * OR:
 	 * new sap.ui.model.Filter({
 	 *   path: "...",
@@ -32,16 +32,16 @@ sap.ui.define(['jquery.sap.global', './FilterOperator', 'sap/ui/core/util/Unicod
 	 *   filters: [...],
 	 *   and: true|false
 	 * })
-	 * 
+	 *
 	 * You can only pass sPath, sOperator and their values OR sPath, fnTest OR aFilters and bAnd. You will get an error if you define an invalid combination of filters parameters.
-	 * 
+	 *
 	 * Using arguments:
 	 * new sap.ui.model.Filter(sPath, sOperator, oValue1, oValue2);
 	 * OR
 	 * new sap.ui.model.Filter(sPath, fnTest);
 	 * OR
 	 * new sap.ui.model.Filter(aFilters, bAnd);
-	 * 
+	 *
 	 * aFilters is an array of other instances of sap.ui.model.Filter. If bAnd is set all filters within the filter will be ANDed else they will be ORed.
 	 *
 	 * @class
@@ -103,9 +103,9 @@ sap.ui.define(['jquery.sap.global', './FilterOperator', 'sap/ui/core/util/Unicod
 				jQuery.sap.log.error("Wrong parameters defined for filter.");
 			}
 		}
-	
+
 	});
-	
+
 	/**
 	 * Normalizes the filtered value if it is a String and the function is defined.
 	 *

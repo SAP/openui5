@@ -21,7 +21,7 @@
 
 <!-- Test functions -->
 <script language="javascript">
-	
+
 	var sServiceUri = "/MockSrv/";
 	var sServiceUri2 = "/MockSrv2/";
 	var sServiceUri3 = "/DOESNOTEXIST/";
@@ -29,7 +29,7 @@
 	var sDataRootPath =  "model/";
 	var oServer;
 	jQuery.sap.require("sap.ui.core.util.MockServer");
-	
+
 	function initServer(sUrl, sMetaPath, sDataRoot) {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri: sServiceUri
@@ -38,20 +38,20 @@
 		oMockServer.start();
 		return oMockServer;
 	}
-	
+
 	function initModel(sUri) {
-		return oModel = new sap.ui.model.odata.ODataModel(sUri, true);	
+		return oModel = new sap.ui.model.odata.ODataModel(sUri, true);
 	}
 
 	function initModelV2(sUri, mOptions){
 		return oModel = new sap.ui.model.odata.v2.ODataModel(sUri, mOptions);
 	}
-	
+
 	test("init MockServer Flight", function() {
 		oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
 		ok(oServer,"Server initialized");
 	});
-	
+
 	test("init Model", function() {
 		var oModel = initModel(sServiceUri);
 		ok(oModel,"Model initialized");
@@ -64,7 +64,7 @@
  		var oModel2 = {};
  		var handleFailed1 = function(){
 			ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
-			oModel2.detachMetadataFailed(handleFailed1); 
+			oModel2.detachMetadataFailed(handleFailed1);
 		};
  		var handleFailed2 = function(){
 			ok(!oModel.getServiceMetadata(), "Metadata failed correctly");

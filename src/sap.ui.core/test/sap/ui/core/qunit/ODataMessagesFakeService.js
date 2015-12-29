@@ -39,7 +39,7 @@ var mServiceData = {
 			}]
 		},
 	},
-	
+
 	metadata: sNorthwindMetadata
 };
 
@@ -63,8 +63,8 @@ xhr.onCreate = function(request) {
 		if (sUrl.startsWith(sServiceUrl)) {
 			// This one's for us...
 			sSubUrl = sUrl.substr(iStart);
-			oRandomService.serveUrl({ 
-				url: sSubUrl, 
+			oRandomService.serveUrl({
+				url: sSubUrl,
 				request: request,
 				json: bJson
 			});
@@ -195,14 +195,14 @@ ODataRandomService.prototype._createXmlAnswer = function(mAnswer, sType) {
 		sAnswer += "<service xmlns=\"http://www.w3.org/2007/app\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xml:base=\"http://services.odata.org/V3/Northwind/Northwind.svc/\">";
 		sAnswer += "<workspace>";
 		sAnswer += "<atom:title>Default</atom:title>";
-		
+
 		for (var i = 0; i < mAnswer.d.EntitySets.length; ++i) {
 			var sName = mAnswer.d.EntitySets[i];
 			sAnswer += "<collection href=\"" + sName + "\">";
 			sAnswer += "<atom:title>" + sName + "</atom:title>";
 			sAnswer += "</collection>";
 		}
-		
+
 		sAnswer += "</workspace>";
 		sAnswer += "</service>";
 	} else if (sType === "collection") {
@@ -211,15 +211,15 @@ ODataRandomService.prototype._createXmlAnswer = function(mAnswer, sType) {
 		// sAnswer += "<title>" + NOTINJSON. + "</title>";
 		// sAnswer += "<updated>" + NOTINJSON. + "</updated>";
 		// sAnswer += "<link rel=\"self\" title=\"" + NOTINJSON. + "\" href=\"" + NOTINJSON + "\" />";
-		
+
 		for (var i = 0; i < mAnswer.d.results.length; ++i) {
 			var mEntry = mAnswer.d.results[i];
 			sAnswer += "<entry>";
-			
+
 			sAnswer += "<id>" + mEntry.__metadata.id + "</id>";
 			sAnswer += "<content type=\"application/xml\">";
 			sAnswer += "<m:properties>";
-			
+
 			for (var sProp in mEntry) {
 				if (sProp === "__metadata") {
 					continue;
@@ -229,20 +229,20 @@ ODataRandomService.prototype._createXmlAnswer = function(mAnswer, sType) {
 				sAnswer += mEntry[sProp];
 				sAnswer += "</d:" + sProp + ">";
 			}
-			
+
 			sAnswer += "</m:properties>";
 			sAnswer += "</content>";
-			
+
 			sAnswer += "</entry>";
 		}
-		
+
 		sAnswer += "</feed>";
-		
-		
+
+
 	} else if (sType === "entity") {
 		throw "nö";
 	}
-	
+
 	return sAnswer;
 };
 
@@ -270,10 +270,10 @@ ODataRandomService.prototype._answerCollectionCount = function(oColData) {
 ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 	var aItems = [];
 	var aMessages = [];
-	
+
 	for (var i = 0; i < oColData.count; ++i) {
 		var sItemUrl = sServiceUrl + sColName + "(" + (i + 1) + ")";
-		
+
 		var mItem = {
 			"__metadata": {
 				"id": sItemUrl,
@@ -281,13 +281,13 @@ ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 				"type": oColData.type
 			},
 		};
-		
+
 		for (var sName in oColData.properties) {
 			mItem[sName] = this._createData(oColData.properties[sName], i + 1);
 		}
-		
+
 		aItems.push(mItem);
-		
+
 		if (oColData.itemMessages) {
 			for (var n = 0; n < oColData.itemMessages.length; ++n) {
 				var mMessage = jQuery.extend({}, oColData.itemMessages[n]);
@@ -296,14 +296,14 @@ ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 			}
 		}
 	}
-	
-	
+
+
 	var mAnswer = {
 		d: {
 			results: aItems
 		}
 	}
-	
+
 	if (oColData.message) {
 		aMessages.push(oColData.message);
 	}
@@ -315,13 +315,13 @@ ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 			aMessages.push(mMessage);
 		}
 	}
-	
+
 	var sType = this._useJson ? "json" : "atom";
 	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
 
 	var mHead = jQuery.extend({}, mHeaders[sType]);
 	mHead["sap-message"] = this._createMessageHeader(aMessages);
-	
+
 	this._answer(200, mHead, sAnswer);
 }
 
@@ -333,7 +333,7 @@ ODataRandomService.prototype._createMessageHeader = function(aMessages) {
 		"target": aMessages[0].target,
 		"details": []
 	}
-	
+
 	for (var i = 1 /* skip first */; i < aMessages.length; ++i) {
 		mMessage.details.push({
 			"code": aMessages[i].code,
@@ -342,7 +342,7 @@ ODataRandomService.prototype._createMessageHeader = function(aMessages) {
 			"target": aMessages[i].target,
 		});
 	}
-	
+
 	return JSON.stringify(mMessage);
 }
 

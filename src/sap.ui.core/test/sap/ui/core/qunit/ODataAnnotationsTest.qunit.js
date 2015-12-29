@@ -3,7 +3,7 @@
 /**
  * Test-Function to be used in place of deepEquals which only tests for the existence of the given
  * values, not the absence of others.
- * 
+ *
  * @param {object} oValue - The value to be tested
  * @param {object} oExpected - The value that is tested against, containing the structure expected inside oValue
  * @param {string} sMessage - Message prefix for every sub-test. The property names of the structure will be prepended to this string
@@ -12,17 +12,17 @@
  function deepContains(oValue, oExpected, sMessage) {
  	for (var sKey in oExpected) {
  		equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
- 
+
  		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
  			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
  		} else {
  			ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
  		}
- 
+
  		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
  			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
  		}
- 
+
  		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
  			// Go deeper
  			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
@@ -114,7 +114,7 @@ function runODataAnnotationTests() {
 	},{
 		name             : "Northwind with annotated metadata + annotations",
 		service          : "fakeService://testdata/odata/northwind-annotated/",
-		annotations      : [ 
+		annotations      : [
 			"fakeService://testdata/odata/northwind-annotated/$metadata",
 			"fakeService://testdata/odata/northwind-annotations-normal.xml"
 		],
@@ -124,7 +124,7 @@ function runODataAnnotationTests() {
 	},{
 		name             : "Northwind with annotated metadata + annotations",
 		service          : "fakeService://testdata/odata/northwind-annotated/",
-		annotations      : [ 
+		annotations      : [
 			"fakeService://testdata/odata/northwind-annotated/$metadata",
 			"fakeService://testdata/odata/northwind-annotations-malformed.xml"
 		],
@@ -201,7 +201,7 @@ function runODataAnnotationTests() {
 			annotations      : "fakeService://testdata/odata/Aliases.xml",
 			serviceValid     : true,
 			annotationsValid : "all"
-		},		
+		},
 		"DynamicExpressions": {
 			service          : "fakeService://testdata/odata/sapdata01/",
 			annotations      : "fakeService://testdata/odata/DynamicExpressions.xml",
@@ -274,7 +274,7 @@ function runODataAnnotationTests() {
 		aServices.push(mTest);
 	}
 
-	var 
+	var
 		sTestName, sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid, bSharedMetadata,
 		sTestType, fnTest, mService, oAnnotations, i;
 
@@ -318,11 +318,11 @@ function runODataAnnotationTests() {
 		bSharedMetadata = aServices[i].sharedMetadata;
 		sTestName = aServices[i].name ? aServices[i].name : "";
 
-		sTestType = 
-			sTestName + " (" + 
-			(bServiceValid ? "Valid Service" : "Broken Service") + "/" + 
+		sTestType =
+			sTestName + " (" +
+			(bServiceValid ? "Valid Service" : "Broken Service") + "/" +
 			(bAnnotationsValid ? "Valid Annotations" : "Broken Annotations") +
-			(bSharedMetadata ?  "/Shared Metadata" : "") + 
+			(bSharedMetadata ?  "/Shared Metadata" : "") +
 			")";
 
 		// Check synchronous loading
@@ -363,7 +363,7 @@ function runODataAnnotationTests() {
 						start();
 					break;
 
-					case "MetadataFailed": 
+					case "MetadataFailed":
 						// Nothing should be loaded
 						ok(!bServiceValid && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
@@ -415,7 +415,7 @@ function runODataAnnotationTests() {
 					}).fail(function(e){
 						jQuery.sap.log.debug("metadata promise failed");
 						ok(false, 'Metadata promise rejected');
-					}); 
+					});
 			} else if (bServiceValid && !bAnnotationsValid){
 				jQuery.when(metadataDfd).done(function(e){
 					jQuery.sap.log.debug("metadata promise fulfilled");
@@ -451,12 +451,12 @@ function runODataAnnotationTests() {
 		// Check asynchronous loading
 		mModelOptions.loadAnnotationsJoined = false;
 		mModelOptions.loadMetadataAsync = true;
-	
-		sTestType = 
-			sTestName + " (" + 
-			(bServiceValid ? "Valid Service" : "Broken Service") + "/" + 
+
+		sTestType =
+			sTestName + " (" +
+			(bServiceValid ? "Valid Service" : "Broken Service") + "/" +
 			(bAnnotationsValid ? "Valid Annotations" : "Broken Annotations") +
-			(bSharedMetadata ?  "/Shared Metadata" : "") + 
+			(bSharedMetadata ?  "/Shared Metadata" : "") +
 			")";
 
 		jQuery.sap.log.debug("testtype: " + sTestType);
@@ -500,7 +500,7 @@ function runODataAnnotationTests() {
 						start();
 					break;
 
-					case "MetadataFailed": 
+					case "MetadataFailed":
 						// Nothing should be loaded
 						ok(!bInternalMetadataLoaded && !bAnnotationsLoaded, "Check: Invalid Service - Annotations and Metadata NOT loaded");
 						jQuery.sap.log.debug("check for none");
@@ -516,7 +516,7 @@ function runODataAnnotationTests() {
 
 					default:
 						throw "This is unexpected and should never happen...";
-				} 
+				}
 
 			};
 
@@ -563,7 +563,7 @@ function runODataAnnotationTests() {
 				}).fail(function(e){
 				jQuery.sap.log.debug("metadata promise failed");
 				ok(false, 'Metadata promise rejected');
-			}); 
+			});
 			} else if (bServiceValid && !bAnnotationsValid){
 				//internal metadata needs to be sucessful prior to the failed annotations
 				jQuery.when(internalMetadataDfd).done(function(){
@@ -592,13 +592,13 @@ function runODataAnnotationTests() {
 		bAnnotationsValid = mService.annotationsValid;
 		bSharedMetadata = mService.sharedMetadata;
 		sTestName = aServices[i].name ? aServices[i].name : "";
-	
+
 		// Check asynchronous loading
 		mModelOptions.loadAnnotationsJoined = true;
 		mModelOptions.loadMetadataAsync = true;
 
 
-		sTestType = 
+		sTestType =
 			sTestName + " (" +
 			(bServiceValid ? "Valid Service" : "Broken Service") + "/" +
 			(bAnnotationsValid ? "Valid Annotations" : "Broken Annotations") +
@@ -608,7 +608,7 @@ function runODataAnnotationTests() {
 		asyncTest(
 			"Asynchronous loading (joined events) - " + sTestType,
 			fnTest(sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid)
-		); 
+		);
 	}
 
 
@@ -619,7 +619,7 @@ function runODataAnnotationTests() {
 		var asyncStartsExpected = 2; // The number of asynchronous starts expected before the real start is triggered
 
 		var oModel1 = new sap.ui.model.odata.ODataModel(
-			"fakeService://testdata/odata/northwind-annotated/", 
+			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
 					"fakeService://testdata/odata/northwind-annotated/$metadata",
@@ -638,7 +638,7 @@ function runODataAnnotationTests() {
 		ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
 
 		var oModel2 = new sap.ui.model.odata.ODataModel(
-			"fakeService://testdata/odata/northwind-annotated/", 
+			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
 					"fakeService://testdata/odata/northwind-annotations-normal.xml",
@@ -657,7 +657,7 @@ function runODataAnnotationTests() {
 		ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
 
 		var oModel3 = new sap.ui.model.odata.ODataModel(
-			"fakeService://testdata/odata/northwind-annotated/", 
+			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
 					"fakeService://testdata/odata/northwind-annotations-normal.xml",
@@ -677,7 +677,7 @@ function runODataAnnotationTests() {
 		});
 
 		var oModel4 = new sap.ui.model.odata.ODataModel(
-			"fakeService://testdata/odata/northwind-annotated/", 
+			"fakeService://testdata/odata/northwind-annotated/",
 			{
 				annotationURI : [
 					"fakeService://testdata/odata/northwind-annotated/$metadata",
@@ -711,7 +711,7 @@ function runODataAnnotationTests() {
 				start();
 			}
 		}
-	
+
 	});
 
 
@@ -1095,7 +1095,7 @@ function runODataAnnotationTests() {
 		);
 
 	});
-	
+
 	test("Namespaces in Other Property Values", function() {
 		expect(22);
 
@@ -1298,8 +1298,8 @@ function runODataAnnotationTests() {
 		);
 
 	});
-	
-	
+
+
 	test("Text Properties", function() {
 		expect(14);
 
@@ -1321,17 +1321,17 @@ function runODataAnnotationTests() {
 		ok(!!oAnnotations, "Annotations are available.");
 
 		ok(!!oAnnotations["propertyAnnotations"], "PropertyAnnotations group exists");
-		
+
 		ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"],
 			"PropertyAnnotation definition exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"],
 			"PropertyAnnotation definition value exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"],
 			"Name1 with replaced alias exists"
@@ -1344,7 +1344,7 @@ function runODataAnnotationTests() {
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"],
 			"Name3 with replaced alias exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 			"Name1 with replaced alias exists and has EnumMember child node"
@@ -1357,7 +1357,7 @@ function runODataAnnotationTests() {
 			!!oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name3"]["Invalid"],
 			"Name3 with replaced alias exists and has Invalid child node"
 		);
-		
+
 		equals(
 			oAnnotations["propertyAnnotations"]["OtherPropertyValueAliases.Test"]["Value"]["com.sap.vocabularies.UI.v1.Name1"]["EnumMember"],
 			"com.sap.vocabularies.UI.v1.Value",
@@ -1373,10 +1373,10 @@ function runODataAnnotationTests() {
 			{},
 			"Name3 with replaced alias exists and has Invalid child node that only contains an empy object"
 		);
-		
+
 
 	});
-	
+
 	test("Entity Containers", function() {
 		expect(30);
 
@@ -1397,11 +1397,11 @@ function runODataAnnotationTests() {
 
 		ok(!!oAnnotations, "Annotations are available.");
 
-		
+
 		ok(!!oAnnotations["EntityContainer"], "Entity container entry exists");
-		
+
 		ok(!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"], "Entity container exists");
-		
+
 		ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"],
@@ -1439,7 +1439,7 @@ function runODataAnnotationTests() {
 			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Activate",
 			"Sub Entity value in container exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
@@ -1464,7 +1464,7 @@ function runODataAnnotationTests() {
 			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Edit",
 			"Sub Entity value in container exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
@@ -1489,7 +1489,7 @@ function runODataAnnotationTests() {
 			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Validate",
 			"Sub Entity value in container exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["EntityContainer"]["AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities"]
 			["SalesOrder"]
@@ -1514,7 +1514,7 @@ function runODataAnnotationTests() {
 			"AIVS_NEW_BO_SRV.AIVS_NEW_BO_SRV_Entities/Prepare",
 			"Sub Entity value in container exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderType"],
 			"Entity in namespace exists"
@@ -1545,7 +1545,7 @@ function runODataAnnotationTests() {
 			"SalesOrderID",
 			"Entity in namespace exists"
 		);
-		
+
 		ok(
 			!!oAnnotations["AIVS_NEW_BO_SRV.SalesOrderItemType"],
 			"Entity in namespace exists"
@@ -1592,8 +1592,8 @@ function runODataAnnotationTests() {
 			"Entity in namespace exists"
 		);
 	});
-	
-	
+
+
 	test("Simple Values", function() {
 		expect(3);
 
@@ -1613,16 +1613,16 @@ function runODataAnnotationTests() {
 		ok(!!oMetadata, "Metadata is available.");
 
 		ok(!!oAnnotations, "Annotations are available.");
-		
+
 		deepEqual(
 			oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name1"],
 			oAnnotations["SimpleValues.Test"]["com.sap.vocabularies.UI.v1.Name2"],
 			"Simple value attributes have the meaning as child elements"
 		);
-		
+
 	});
 
-	
+
 	test("Alias Replacement", function() {
 		expect(11);
 
@@ -1643,17 +1643,17 @@ function runODataAnnotationTests() {
 
 		ok(!!oAnnotations, "Annotations are available.");
 
-		
-		
+
+
 		ok(!!oAnnotations["Test.AliasReplacement"], "Namespace is available.");
 		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"], "Annotation is available.");
-		
-		
+
+
 		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"], "First Entry is available.");
 		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0], "First Entry array is available.");
 		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "First Entry value is available.");
 		equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["NotReplaced"][0]["AnnotationPath"], "@internal.ui5.test.Value", "First Entry value is correct.");
-		
+
 		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"], "Second Entry is available.");
 		ok(!!oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "Second Entry value is available.");
 		equal(oAnnotations["Test.AliasReplacement"]["TestAnnotation"]["Replaced"]["AnnotationPath"], "@internal.ui5.test.Value", "Second Entry value is correct.");
@@ -1677,10 +1677,10 @@ function runODataAnnotationTests() {
 
 		ok(!!oMetadata, "Metadata is available.");
 		ok(!!oAnnotations, "Annotations are available.");
-		
+
 		ok(!!oAnnotations["DynamicExpressions"], "Annotation target is available");
 		ok(!!oAnnotations["DynamicExpressions"]["org.example.person.Gender"], "Annotation term is available");
-		
+
 		var mValue = oAnnotations["DynamicExpressions"]["org.example.person.Gender"];
 		var mExpected = {
 			"If" : [
@@ -1710,11 +1710,11 @@ function runODataAnnotationTests() {
 
 		ok(!!oMetadata, "Metadata is available.");
 		ok(!!oAnnotations, "Annotations are available.");
-		
+
 		ok(!!oAnnotations["DynamicExpressions2"], "Annotation target is available");
 		ok(!!oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"], "Annotation term is available");
 		ok(!!oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"]["Value"], "Annotation value is available");
-		
+
 		var mValue = oAnnotations["DynamicExpressions2"]["com.sap.vocabularies.Test.v1.Data"]["Value"];
 		var mExpected = {
 			"And": [{
@@ -1753,11 +1753,11 @@ function runODataAnnotationTests() {
 				}]
 			}]
 		};
-		
+
 		deepContains(mValue, mExpected, "Value is correct: DynamicExpressions2/com.sap.vocabularies.Test.v1.Data/Value");
-		
-		
-		
+
+
+
 	});
 
 	test("CollectionsWithSimpleValues", function() {
@@ -1778,7 +1778,7 @@ function runODataAnnotationTests() {
 
 		ok(!!oMetadata, "Metadata is available.");
 		ok(!!oAnnotations, "Annotations are available.");
-		
+
 		ok(!!oAnnotations["CollectionsWithSimpleValues"], "Annotation target is available");
 		ok(!!oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"], "Annotation term is available");
 
@@ -1790,10 +1790,10 @@ function runODataAnnotationTests() {
 		];
 		deepContains(mValue, mExpected, "Value is correct: CollectionsWithSimpleValues/com.sap.vocabularies.Test.v1.Data");
 	});
-	
+
 	test("Multiple Simple Values", function() {
 		expect(13);
-		
+
 		var mTest = mAdditionalTestsServices["Simple Values 2"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
@@ -1809,7 +1809,7 @@ function runODataAnnotationTests() {
 
 		ok(!!oMetadata, "Metadata is available.");
 		ok(!!oAnnotations, "Annotations are available.");
-		
+
 		deepContains(
 			oAnnotations["SimpleValues"],
 			{
@@ -1822,8 +1822,8 @@ function runODataAnnotationTests() {
 			"Multiple String values as array: SimpleValues"
 		);
 	});
-	
-	
+
+
 	asyncTest("If in Apply", function() {
 		expect(93);
 		var mTest = mAdditionalTestsServices["If in Apply"];
@@ -1834,17 +1834,17 @@ function runODataAnnotationTests() {
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
-		
+
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-	
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-			
+
 			deepContains(
 				oAnnotations["IfInApply"],
-				
+
 				{
 					"com.sap.vocabularies.Test.v1.Data": {
 						"Value": {
@@ -1887,12 +1887,12 @@ function runODataAnnotationTests() {
 				},
 				"IfInApply"
 			);
-			
+
 			start();
 		});
 	});
-	
-	
+
+
 	asyncTest("Other Elements in LabeledElement", function() {
 		expect(157);
 		var mTest = mAdditionalTestsServices["Other Elements in LabeledElement"];
@@ -1903,16 +1903,16 @@ function runODataAnnotationTests() {
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
-		
+
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-	
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-			
+
 			deepContains(
-				oAnnotations["LabeledElement"], 
+				oAnnotations["LabeledElement"],
 				{
 					"com.sap.vocabularies.Test.v1.Data": {
 						"Url": {
@@ -1995,8 +1995,8 @@ function runODataAnnotationTests() {
 			start();
 		});
 	});
-	
-	
+
+
 	asyncTest("Apply Parameters", function() {
 		expect(51);
 		var mTest = mAdditionalTestsServices["Apply Parameters"];
@@ -2007,14 +2007,14 @@ function runODataAnnotationTests() {
 		};
 
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, mModelOptions);
-		
+
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-	
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-			
+
 			deepContains(
 				oAnnotations["CatalogService.Annotation"],
 				{
@@ -2045,17 +2045,17 @@ function runODataAnnotationTests() {
 				},
 				"Apply in Dynamic expression is parsed correctly: CatalogService.Annotation"
 			);
-			
+
 			start();
 		});
 	});
 
-	
+
 	var fnTestAnnotationInRecord = function(iModelVersion) {
 		expect(85);
 
 		var mTest = mAdditionalTestsServices["Default Annotated Service"];
-		
+
 		var oModel;
 		if (iModelVersion == 1) {
 			oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
@@ -2074,16 +2074,16 @@ function runODataAnnotationTests() {
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-			
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-			
-			
+
+
 			ok(!!oAnnotations["Test.AnnotationInRecord"], "Outer Annotations container exists");
 			ok(!!oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case1"], "Outer Annotation exists");
-			
+
 			var mTestCase1 = oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case1"];
-			
+
 			deepContains(mTestCase1, {
 				"Test.AnnotationInRecord.Case1.Record.SubAnnotation1": {
 					"String": "SubAnnotation1"
@@ -2094,7 +2094,7 @@ function runODataAnnotationTests() {
 				"Test.AnnotationInRecord.Case1.Record.SubAnnotation2": {
 					"If" : [{
 						"Eq": [{
-							"Path": "Condition" 
+							"Path": "Condition"
 						}, {
 							"Bool": "false"
 						}]
@@ -2106,7 +2106,7 @@ function runODataAnnotationTests() {
 			}, "Case 1 Annotation has correct values");
 
 			var mTestCase2 = oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case2"];
-			
+
 			deepContains(mTestCase2, {
 				"Test.AnnotationInRecord.Case2.Record.SubAnnotation1": {
 					"String": "SubAnnotation1"
@@ -2117,7 +2117,7 @@ function runODataAnnotationTests() {
 				"Test.AnnotationInRecord.Case2.Record.SubAnnotation2": {
 					"If" : [{
 						"Eq": [{
-							"Path": "Condition" 
+							"Path": "Condition"
 						}, {
 							"Bool": "false"
 						}]
@@ -2127,7 +2127,7 @@ function runODataAnnotationTests() {
 				},
 				"RecordType": "Test.AnnotationInRecord.Case2.Record"
 			}, "Case 2 Annotation has correct values");
-			
+
 			var mTestCase3 = oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case3"];
 
 			deepContains(mTestCase3, {
@@ -2139,7 +2139,7 @@ function runODataAnnotationTests() {
 			start();
 		});
 	}
-	
+
 	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 1));
 	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
 
@@ -2149,9 +2149,9 @@ function runODataAnnotationTests() {
 		expect(23);
 
 		var clock = sinon.useFakeTimers();
-		
+
 		var mTest = mAdditionalTestsServices["Empty collection"];
-		
+
 		var oModel;
 		if (iModelVersion == 1) {
 			oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
@@ -2170,10 +2170,10 @@ function runODataAnnotationTests() {
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-			
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-			
+
 			deepContains(
 				oAnnotations["ui5.test.Annotation"],
 				{
@@ -2186,13 +2186,13 @@ function runODataAnnotationTests() {
 				},
 				"Collections are correctly parsed as arrays"
 			);
-			
+
 			start();
 		});
-		
+
 		clock.tick(500);
 	};
-	
+
 	asyncTest("V1: Empty collection", fnTestEmptyCollection.bind(this, 1));
 	asyncTest("V2: Empty collection", fnTestEmptyCollection.bind(this, 2));
 
@@ -2203,7 +2203,7 @@ function runODataAnnotationTests() {
 
 		var clock = sinon.useFakeTimers();
 		var mTest = mAdditionalTestsServices["Multiple Enums"];
-		
+
 		var oModel;
 		if (iModelVersion == 1) {
 			oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
@@ -2222,10 +2222,10 @@ function runODataAnnotationTests() {
 		oModel.attachAnnotationsLoaded(function() {
 			var oMetadata = oModel.getServiceMetadata();
 			var oAnnotations = oModel.getServiceAnnotations();
-			
+
 			ok(!!oMetadata, "Metadata is available.");
 			ok(!!oAnnotations, "Annotations are available.");
-			
+
 			deepContains(
 				oAnnotations["ui5.test.Annotation"],
 				{
@@ -2242,22 +2242,22 @@ function runODataAnnotationTests() {
 				},
 				"Multiple Enums have their aliases correctly replaced"
 			);
-			
+
 			oModel.destroy();
 			start();
 		});
-		
+
 		clock.tick(500);
 	};
-	
+
 	asyncTest("V1: Multiple Enums", fnTestEmptyCollection.bind(this, 1));
 	asyncTest("V2: Multiple Enums", fnTestEmptyCollection.bind(this, 2));
 
-	
-	
+
+
 	var fnTestEdmTypeForNavigationProperties = function(iModelVersion) {
 		expect(150);
-		
+
 		var clock = sinon.useFakeTimers();
 
 		cleanOdataCache();
@@ -2277,10 +2277,10 @@ function runODataAnnotationTests() {
 			return;
 		}
 
-			
+
 		oModel.attachAnnotationsLoaded(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
-			
+
 			deepContains(oAnnotations["NorthwindModel.Supplier"], {
 				"com.sap.vocabularies.UI.v1.LineItem": [{
 						"Label": {
@@ -2311,7 +2311,7 @@ function runODataAnnotationTests() {
 						"EdmType": "Edm.Int32"
 				}]
 			}, "Product EDM types are correctly set");
-			
+
 			deepContains(oAnnotations["NorthwindModel.Product"], {
 				 "com.sap.vocabularies.UI.v1.LineItem": [{
 						"Label": {
@@ -2360,14 +2360,14 @@ function runODataAnnotationTests() {
 						"EdmType": "Edm.String"
 				}]
 			}, "Product EDM types are correctly set");
-			
+
 			oModel.destroy();
 			start();
 		});
 
 		clock.tick(500);
 	};
-		
+
 	asyncTest("V1: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 1));
 	asyncTest("V2: EDMType for NavigationProperties", fnTestEdmTypeForNavigationProperties.bind(this, 2));
 

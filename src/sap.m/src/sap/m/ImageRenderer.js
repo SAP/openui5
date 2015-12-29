@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
- 
+
 // Provides default renderer for control sap.m.Image
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
@@ -9,44 +9,44 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * Image renderer. 
+	 * Image renderer.
 	 * @author D051016
 	 * @namespace
 	 */
 	var ImageRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ImageRenderer.render = function(rm, oImage){
 		// Open the <img> tag
 		rm.write("<img");
-	
+
 		rm.writeAttributeEscaped("src", oImage._getDensityAwareSrc());
 		rm.writeControlData(oImage);
-		
+
 		rm.addClass("sapMImg");
 		if (oImage.hasListeners("press") || oImage.hasListeners("tap")) {
 			rm.addClass("sapMPointer");
 		}
-		
+
 		if (oImage.getUseMap() || !oImage.getDecorative()) {
 			rm.addClass("sapMImgFocusable");
 		}
-		
+
 		rm.writeClasses();
-		
+
 		//TODO need further discussion to decide if tooltip is still needed for mobile
 		var tooltip = oImage.getTooltip_AsString();
 		if (tooltip) {
 			rm.writeAttributeEscaped("title", tooltip);
 		}
-	
+
 		//TODO implement the ImageMap control
 		var sUseMap = oImage.getUseMap();
 		if (sUseMap) {
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			rm.writeAttributeEscaped("useMap", sUseMap);
 		}
-		
+
 		// determine tab index and write alt attribute - both depending on "decorative" state (which is overridden by the "useMap" property
 		var myTabIndex = 0;
 		if ((oImage.getDecorative() && (!sUseMap))) {
@@ -70,9 +70,9 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 		rm.writeAttribute("tabIndex", myTabIndex);
-		
+
 		// Dimensions
-	
+
 		if (oImage.getWidth() && oImage.getWidth() != '') {
 			rm.addStyle("width", oImage.getWidth());
 		}
@@ -80,15 +80,15 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addStyle("height", oImage.getHeight());
 		}
 		rm.writeStyles();
-		
+
 		var sTooltip = oImage.getTooltip_AsString();
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
-		
+
 		rm.write(" />"); // close the <img> element
 	};
-	
+
 
 	return ImageRenderer;
 

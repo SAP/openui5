@@ -15,20 +15,20 @@ samples.components.ext.sap.Component.extend("samples.components.ext.customer.Com
 				}
 			}
 		},
-		
+
 		customizing: {
-			
+
 			"sap.ui.viewReplacements": {
 				"samples.components.ext.sap.Sub1": {
 					viewName: "samples.components.ext.customer.CustomSub1",
 					type: "XML"
 				}
 			},
-			
+
 			"sap.ui.controllerReplacements": {
 				"samples.components.ext.sap.Main": "samples.components.ext.customer.Main"
 			},
-			
+
 			"sap.ui.viewExtensions": {
 				"samples.components.ext.sap.Sub2": {
 					"extension2": {
@@ -83,7 +83,7 @@ samples.components.ext.sap.Component.extend("samples.components.ext.customer.Com
 						type: "JS"
 					}
 				},
-				
+
 				"samples.components.ext.sap.Frag1": {
 					"extensionPointInFragment": {
 						className: "sap.ui.core.Fragment",

@@ -11,14 +11,14 @@
 <!-- SAPUI5 Bootstrap:												     -->
 <!-- Extend the "libs" property if you like to import additional libraries  -->
 <!-- ********************************************************************** -->
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	type="text/javascript"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table"
 	data-sap-ui-theme="sap_goldreflection"
 	src="../../../../resources/sap-ui-core.js"></script>
 
-<script type="text/javascript">	
-	
+<script type="text/javascript">
+
 var oData = {
 	root:{
 		name: "root",
@@ -44,7 +44,7 @@ var oData = {
 						checked: true
 					}
 				],
-				"flup": { // mixed with arrays and objects 
+				"flup": { // mixed with arrays and objects
 						name: "Keith Richards",
 						description: "*1943",
 						checked: true
@@ -221,13 +221,13 @@ var oTable = new sap.ui.table.TreeTable({
 });
 
 oTable.attachToggleOpenState(function(oEvent) {
-	jQuery.sap.log.info("ToggleOpenState: rowIndex: " + oEvent.getParameter("rowIndex") + 
-			" - rowContext: " + oEvent.getParameter("rowContext") + 
+	jQuery.sap.log.info("ToggleOpenState: rowIndex: " + oEvent.getParameter("rowIndex") +
+			" - rowContext: " + oEvent.getParameter("rowContext") +
 			" - expanded? " + oEvent.getParameter("expanded"));
 });
 
 oTable.attachRowSelectionChange(function(oEvent) {
-	jQuery.sap.log.info("RowSelectionChange: rowIndex: " + oEvent.getParameter("rowIndex") + 
+	jQuery.sap.log.info("RowSelectionChange: rowIndex: " + oEvent.getParameter("rowIndex") +
 			" - rowContext: " + oEvent.getParameter("rowContext"));
 });
 

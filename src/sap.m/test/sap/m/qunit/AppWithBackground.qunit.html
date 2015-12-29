@@ -4,10 +4,10 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		
+
 		<title>qUnit Page for sap.m.App with Background Images</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -24,7 +24,7 @@
 
 		var app = new sap.m.App("myFirstApp", {
 			initialPage: "page1",
-			pages: [ 
+			pages: [
 				new sap.m.Page("page1", {
 					title: "Page 1"
 				})
@@ -47,7 +47,7 @@
 			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
 		});
 
-		
+
 		test("Background Image", function() {
 			if (window.getComputedStyle) {
 				var appStyle = window.getComputedStyle(jQuery.sap.domById("myFirstApp"));
@@ -61,7 +61,7 @@
 				ok(true, "older browsers don't matter");
 			}
 		});
-		
+
 
 	</script>
 

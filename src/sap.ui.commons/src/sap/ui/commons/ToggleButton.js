@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './Button', './library'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ToggleButton.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -28,17 +28,17 @@ sap.ui.define(['jquery.sap.global', './Button', './library'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToggleButton = Button.extend("sap.ui.commons.ToggleButton", /** @lends sap.ui.commons.ToggleButton.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * The property is “true” when the control is toggled. The default state of this property is "false".
 			 */
 			pressed : {type : "boolean", group : "Data", defaultValue : false}
 		}
 	}});
-	
+
 	/**
 	 * Function is called when ToggleButton is clicked.
 	 *
@@ -55,8 +55,8 @@ sap.ui.define(['jquery.sap.global', './Button', './library'],
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
-	
+
+
 	ToggleButton.prototype.setPressed = function(bPressed) {
 		if (bPressed != this.getProperty("pressed")) {
 			this.setProperty("pressed", bPressed, true);
@@ -69,8 +69,8 @@ sap.ui.define(['jquery.sap.global', './Button', './library'],
 		}
 		return this;
 	};
-	
-	
+
+
 	ToggleButton.prototype.onAfterRendering = function() {
 		if (!this.getPressed()) {
 			this.getRenderer().ondeactivePressed(this);
@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library'],
 			this.getRenderer().onactivePressed(this);
 		}
 	};
-	
+
 
 	return ToggleButton;
 

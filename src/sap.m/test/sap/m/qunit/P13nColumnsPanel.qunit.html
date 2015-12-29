@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -287,7 +287,7 @@
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.called, true, "Method: setIndex of first columnsItem was not called, although it should be done");
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.calledWith(0), true, "setIndex of first columnsItem has been called with wrong property value");
 
-			// Second columnsItem with key = 4712 shall not be changed as this is the instance of oSelectedItem; that shall be 
+			// Second columnsItem with key = 4712 shall not be changed as this is the instance of oSelectedItem; that shall be
 			// excluded as this has already the right index value
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].getColumnKey.called, true, "Method: getColumnKey of second columnsItem was not called, although it should be done to identify the current columnsItem");
 			strictEqual(oP13nColumnsPanel.getColumnsItems()[1].getIndex.notCalled, true, "Method: getIndex of first columnsItem was called, although it should not be done");
@@ -306,7 +306,7 @@
 			oP13nColumnsPanel._filterItems = sinon.stub();
 			oP13nColumnsPanel._fnHandleResize = sinon.stub();
 
-			//CUT		
+			//CUT
 			oP13nColumnsPanel._swopShowSelectedButton();
 			bShowSelected_After = oP13nColumnsPanel._bShowSelected;
 
@@ -320,7 +320,7 @@
 			oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
 			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
 
-			//CUT		
+			//CUT
 			oP13nColumnsPanel._afterMoveItem();
 			strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "Method _scrollToSelectedItem wasn't called");
 			strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Method _calculateMoveButtonAppearance wasn't called");
@@ -465,7 +465,7 @@
 			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
 			oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
 
-			//CUT -> execute method -> _oSelectedItem is undefined 
+			//CUT -> execute method -> _oSelectedItem is undefined
 			oP13nColumnsPanel._executeSearch();
 			strictEqual(oP13nColumnsPanel._bSearchFilterActive, true, "Search filter shall be actived");
 			strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
@@ -543,7 +543,7 @@
 			oP13nColumnsPanel._setHighLightingToItem = sinon.stub();
 			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
 
-			//CUT (no table item was selected up to here) 
+			//CUT (no table item was selected up to here)
 			oP13nColumnsPanel._oSelectedItem = null;
 			oP13nColumnsPanel._itemPressed(oEvent);
 
@@ -576,7 +576,7 @@
 		test("Shall check _calculateMoveButtonAppearance", function() {
 			ok(oP13nColumnsPanel._calculateMoveButtonAppearance, "Method does not exist");
 
-			//CUT (no table item was selected up to here) 
+			//CUT (no table item was selected up to here)
 			oP13nColumnsPanel._oSelectedItem = null;
 			oP13nColumnsPanel._calculateMoveButtonAppearance();
 
@@ -788,8 +788,8 @@
 			oP13nColumnsPanel._oTable.getModel().getJSON = sinon.stub().returns(oInitialModel);
 			sap.ui.Device.resize.attachHandler = sinon.stub();
 
-			// following lines are important for stable unit test run in firefox (version > 34) 
-			// if window timer function are stubed it has to be reset to the original functions as otherwise the unit test fill end up in errors   
+			// following lines are important for stable unit test run in firefox (version > 34)
+			// if window timer function are stubed it has to be reset to the original functions as otherwise the unit test fill end up in errors
 			var fClearTimeOut = window.clearTimeout;
 			var fSetTimeOut = window.setTimeout;
 			window.clearTimeout = sinon.stub();
@@ -1081,7 +1081,7 @@
 			strictEqual(oNewColumnsItem.setVisible.called, true, "Method shall be executed");
 			strictEqual(oItem.getSelected.called, true, "Method shall be executed");
 
-			//CUT -> check that the method is executed -> columnsItem with this key already exist -> just 
+			//CUT -> check that the method is executed -> columnsItem with this key already exist -> just
 			//change the visible property and reorder the existing table items
 			oP13nColumnsPanel.getColumnsItems.reset();
 			oP13nColumnsPanel._getArrayIndexByItemKey.reset();
@@ -1219,7 +1219,7 @@
 				}
 			]);
 
-			// CUT -> method shall not be executed, as the one needed input parameter is missing 
+			// CUT -> method shall not be executed, as the one needed input parameter is missing
 			oP13nColumnsPanel._addTableItem();
 			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
 			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.addItem shall not be executed");
@@ -1302,7 +1302,7 @@
 				}
 			]);
 
-			// CUT -> method shall not be executed, as the one needed input parameter is missing 
+			// CUT -> method shall not be executed, as the one needed input parameter is missing
 			oP13nColumnsPanel._insertTableItem();
 			strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
 			strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.addItem shall not be executed");
@@ -1344,7 +1344,7 @@
 
 			var oNewCreatedTableItem = null, oItem = null;
 
-			// CUT -> method shall not be executed, as the one needed input parameter is missing 
+			// CUT -> method shall not be executed, as the one needed input parameter is missing
 			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem();
 			strictEqual(oNewCreatedTableItem, null, "No new table item instance shall be created");
 
@@ -1482,7 +1482,7 @@
 		test("Shall check onBeforeNavigationFrom", function() {
 			ok(oP13nColumnsPanel.onBeforeNavigationFrom, "Method does not exist");
 
-			// CUT -> method shall be executed -> threshold is not defined -> BeforeNavigationFrom shall result in true 
+			// CUT -> method shall be executed -> threshold is not defined -> BeforeNavigationFrom shall result in true
 			var bValidationResult = oP13nColumnsPanel.onBeforeNavigationFrom();
 			strictEqual(bValidationResult, true, "navigation validation shall not be influenced");
 			strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), -1, "Getter for visible items threshold shall return -1 = default value, which was not overwritten)");
@@ -1510,12 +1510,12 @@
 		test("Shall check _extractExistingColumnsItems", function() {
 			ok(oP13nColumnsPanel._extractExistingColumnsItems, "Method does not exist");
 
-			// CUT -> method shall not be executed -> as no valid input parameter is passed in 
+			// CUT -> method shall not be executed -> as no valid input parameter is passed in
 			var aExtractionResultExpected = null;
 			var aExtractionResult = oP13nColumnsPanel._extractExistingColumnsItems();
 			deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
 
-			// CUT -> method shall be executed and a valid extraction result shall be passed back 
+			// CUT -> method shall be executed and a valid extraction result shall be passed back
 			var aColumnsItems = [
 				{
 					"getColumnKey": sinon.stub().returns("4711"),
@@ -1556,7 +1556,7 @@
 			aExtractionResult = oP13nColumnsPanel._extractExistingTableItems();
 			deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
 
-			// CUT -> method shall be executed and a valid extraction result shall be passed back 
+			// CUT -> method shall be executed and a valid extraction result shall be passed back
 			var oTableItem1 = new sap.m.ColumnListItem();
 			oTableItem1.data('P13nColumnKey', '4711');
 			oTableItem1.data('P13nColumnWidth', '100px');
@@ -1686,7 +1686,7 @@
 			];
 			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
 			strictEqual(bTableItemsChangeStatusResult, true, "Changes deteced: Order is equal, but property index is different");
-			
+
 		});
 	}());
 </script>

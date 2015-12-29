@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Column.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -29,64 +29,64 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Column = Element.extend("sap.m.Column", /** @lends sap.m.Column.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * Defines the width of the column. If you leave it empty then this column covers the remaining space.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
 			 * Horizontal alignment of the column content. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
-			 * 
+			 *
 			 * NOTE: Control with a "textAlign" property inherits the horizontal alignment.
 			 */
 			hAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
-	
+
 			/**
 			 * Vertical alignment of the cells in a column. Possible values are "Inherit", "Top", "Middle", "Bottom"
 			 * This property does not affect the vertical alignment of header and footer.
 			 */
 			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : sap.ui.core.VerticalAlign.Inherit},
-	
+
 			/**
 			 * CSS class name for column contents(header, cells and footer of column). This property can be used for different column styling. If column is shown as pop-in then this class name is applied to related pop-in row.
 			 */
 			styleClass : {type : "string", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Specifies whether or not the column is visible. Invisible columns are not rendered.
 			 */
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * By default column is always shown. If you set this property, control checks the minimum width of the screen to show or hide this column.
 			 * As you can give specific CSS sizes(e.g: "480px" or "40em"), you can also use sap.m.ScreenSize enumeration(e.g: "Phone", "Tablet", "Desktop", "Small", "Medium", "Large", ....).
-			 * 
+			 *
 			 * sap.m.Column.MediaQuery1->Range1 = 199
-			 * 
+			 *
 			 * This property can be used for responsive design. e.g: "40em"(or "640px" or "Tablet") setting shows this column in iPad(and Desktop) but hides in iPhone.
 			 * Please also see "demandPopin" property
 			 */
 			minScreenWidth : {type : "string", group : "Behavior", defaultValue : null},
-	
+
 			/**
 			 * According to your minScreenWidth settings, the column can be hidden in different screen sizes.
 			 * Setting this property to true, shows this column as pop-in instead of hiding it.
 			 */
 			demandPopin : {type : "boolean", group : "Behavior", defaultValue : false},
-	
+
 			/**
 			 * Horizontal alignment of the pop-in content. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
-			 * 
+			 *
 			 * NOTE: Controls with a text align do not inherit the horizontal alignment.
-			 * @deprecated Since version 1.14. 
+			 * @deprecated Since version 1.14.
 			 * Use popinDisplay property instead.
 			 */
 			popinHAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin, deprecated: true},
-	
+
 			/**
 			 * Defines the display options of pop-in.
 			 * Possible values are
@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			 * @since 1.13.2
 			 */
 			popinDisplay : {type : "sap.m.PopinDisplay", group : "Appearance", defaultValue : sap.m.PopinDisplay.Block},
-	
+
 			/**
 			 * Set "true" to merge repeating cells(duplicates) into one.
 			 * Also see "mergeFunctionName" property to customize.
@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			 * @since 1.16
 			 */
 			mergeDuplicates : {type : "boolean", group : "Behavior", defaultValue : false},
-	
+
 			/**
 			 * Defines the value getter(serialization) function if "mergeDuplicates" property is set "true"
 			 * Control itself uses this function to compare values of two repeating cells.
@@ -116,36 +116,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		},
 		defaultAggregation : "header",
 		aggregations : {
-	
+
 			/**
 			 * Control to be displayed in the column header.
 			 */
-			header : {type : "sap.ui.core.Control", multiple : false}, 
-	
+			header : {type : "sap.ui.core.Control", multiple : false},
+
 			/**
 			 * Control to be displayed in the column footer.
 			 */
 			footer : {type : "sap.ui.core.Control", multiple : false}
 		}
 	}});
-	
-	
+
+
 	// default index
 	Column.prototype._index = -1;
-	
+
 	// predefined screen size
 	Column.prototype._screen = "";
-	
+
 	// default media value
 	Column.prototype._media = null;
-	
+
 	Column.prototype._clearMedia = function() {
 		if (this._media && this._minWidth) {
 			sap.ui.Device.media.removeRangeSet(this.getId());
 			this._media = null;
 		}
 	};
-	
+
 	Column.prototype._addMedia = function() {
 		if (this._minWidth) {
 			sap.ui.Device.media.initRangeSet(this.getId(), [parseFloat(this._minWidth)]);
@@ -157,7 +157,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * Notify parent to re-render
 	 * Also fire media event for listeners
@@ -170,12 +170,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			this._media.triggered = true;
 			return;
 		}
-	
+
 		// keep media info
 		this._media = oMedia;
 		this._media.triggered = true;
 		this._media.matches = !!oMedia.from;
-	
+
 		// wait all events to come
 		jQuery.sap.delayedCall(0, this, function() {
 			var parent = this.getParent();
@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			}
 		});
 	};
-	
+
 	Column.prototype._validateMinWidth = function(sWidth) {
 		if (!sWidth) {
 			return;
@@ -200,14 +200,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			throw new Error('invalid CSS size("px", "em", "rem" required) or sap.m.ScreenSize enumeration for property "minScreenWidth" of ' + this);
 		}
 	};
-	
-	
+
+
 	// Checks the given width(px or em), if it is a predefined screen value
 	Column.prototype._isWidthPredefined = function(sWidth) {
 		var that = this,
 			unit = sWidth.replace(/[^a-z]/ig, ""),
 			baseFontSize = parseFloat(sap.m.BaseFontSize) || 16;
-	
+
 		jQuery.each(sap.m.ScreenSizes, function(screen, size) {
 			if (unit != "px") {
 				size /= baseFontSize;
@@ -218,18 +218,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 				return false;
 			}
 		});
-		
+
 		if (this._minWidth) {
 			return true;
 		}
-		
+
 		if (unit == "px") {
 			this._minWidth = sWidth;
 		} else {
 			this._minWidth = parseFloat(sWidth) * baseFontSize + "px";
 		}
 	};
-	
+
 	/**
 	 * Apply text alignment of the Column to Text/Label/Link...
 	 *
@@ -254,15 +254,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		oControl.setProperty("textAlign", sAlign, true);
 		var oDomRef = oControl.getDomRef();
 		sAlign = this.getCssAlign(sAlign);
-		
+
 		if (oDomRef && sAlign) {
 			oDomRef.style.textAlign = sAlign;
 		}
 
 		return oControl;
 	};
-	
-	
+
+
 	/**
 	 * Returns CSS alignment according to column hAlign setting or given parameter
 	 * for Begin/End values checks the locale settings
@@ -273,16 +273,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 */
 	Column.prototype.getCssAlign = function(sAlign) {
 		sAlign = sAlign || this.getHAlign();
-		
+
 		var mTextAlign = sap.ui.core.TextAlign;
 		if (sAlign === mTextAlign.Begin || sAlign === mTextAlign.End || sAlign === mTextAlign.Initial) {
 			sAlign = Renderer.getTextAlign(sAlign);
 		}
-	
+
 		return sAlign.toLowerCase();
 	};
-	
-	
+
+
 	// Returns styleClass property with extra responsive class if second parameter is set true
 	Column.prototype.getStyleClass = function(bResponsive) {
 		var cls = this.getProperty("styleClass");
@@ -296,8 +296,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		}
 		return cls;
 	};
-	
-	
+
+
 	/**
 	 * Returns visible probability of the column
 	 *
@@ -309,25 +309,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		if (bReturnCache) {
 			return this._isNeverVisible;
 		}
-	
+
 		if (!this._minWidth) {
 			this._isNeverVisible = false;
 			return this._isNeverVisible;
 		}
-	
+
 		var width = parseFloat(this._minWidth),
 			unit = this._minWidth.replace(/[^a-z]/g, ""),
 			baseFontSize = parseFloat(sap.m.BaseFontSize) || 16;
-	
+
 		if (unit != "px") {
 			width *= baseFontSize;
 		}
-	
+
 		this._isNeverVisible = (width > Math.max(window.screen.width, window.screen.height));
 		return this._isNeverVisible;
 	};
-	
-	
+
+
 	/**
 	 * Sets the visible column index
 	 * Negative index values can be used to clear
@@ -338,8 +338,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.setIndex = function(nIndex) {
 		this._index = +nIndex;
 	};
-	
-	
+
+
 	/**
 	 * Sets the order of the column
 	 * Does not do the visual effect
@@ -351,7 +351,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.setOrder = function(nOrder) {
 		this._order = +nOrder;
 	};
-	
+
 	/**
 	 * Gets the order of the column
 	 *
@@ -361,7 +361,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.getOrder = function() {
 		return this.hasOwnProperty("_order") ? this._order : this.getInitialOrder();
 	};
-	
+
 	/**
 	 * Sets the initial order of the column
 	 *
@@ -371,7 +371,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.setInitialOrder = function(nOrder) {
 		this._initialOrder = +nOrder;
 	};
-	
+
 	/**
 	 * Gets the initial order of the column
 	 *
@@ -382,15 +382,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		if (this.hasOwnProperty("_initialOrder")) {
 			return this._initialOrder;
 		}
-	
+
 		var oParent = this.getParent();
 		if (oParent && oParent.indexOfColumn) {
 			return oParent.indexOfColumn(this);
 		}
-	
+
 		return -1;
 	};
-	
+
 	/**
 	 * Display or hide the column from given table
 	 * This does not set the visibility property of the column
@@ -403,7 +403,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		if (!oTableDomRef || this._index < 0) {
 			return;
 		}
-	
+
 		// go with native we need speed
 		var i = this._index + 1,
 			parent =  this.getParent(),
@@ -411,7 +411,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			header = oTableDomRef.querySelector("tr > th:nth-child(" + i + ")"),
 			cells = oTableDomRef.querySelectorAll("tr > td:nth-child(" + i + ")"),
 			length = cells.length;
-	
+
 		// set display and aria
 		header.style.display = display;
 		header.setAttribute("aria-hidden", !bDisplay);
@@ -419,7 +419,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			cells[i].style.display = display;
 			cells[i].setAttribute("aria-hidden", !bDisplay);
 		}
-	
+
 		// let the parent know the visibility change
 		if (parent && parent.setTableHeaderVisibility) {
 			// make it sure rendering phase is done with timeout
@@ -428,7 +428,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			}, 0);
 		}
 	};
-	
+
 	/**
 	 * Display or hide the column from given table via checking media query changes
 	 *
@@ -438,7 +438,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.setDisplayViaMedia = function(oTableDomRef) {
 		var oParent = this.getParent(),
 			bDisplay = this._media && this._media.matches;
-	
+
 		if (!this.getDemandPopin() && this._screen && oParent && oParent.setTableHeaderVisibility) {
 			// this means CSS media queries already change the column visibility
 			// let the parent know the visibility change
@@ -450,24 +450,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			this.setDisplay(oTableDomRef, bDisplay);
 		}
 	};
-	
+
 	Column.prototype.setVisible = function(bVisible) {
 		if (bVisible == this.getVisible()) {
 			return this;
 		}
-		
+
 		var oParent = this.getParent(),
 			oTableDomRef = oParent && oParent.getTableDomRef && oParent.getTableDomRef(),
 			bSupressInvalidate = oTableDomRef && this._index >= 0;
-	
+
 		this.setProperty("visible", bVisible, bSupressInvalidate);
 		if (bSupressInvalidate) {
 			this.setDisplay(oTableDomRef, bVisible);
 		}
-	
+
 		return this;
 	};
-	
+
 	/*
 	 * Decides if we need media query or not according to given settings
 	 * Checks the given width is known screen size
@@ -477,15 +477,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		if (sWidth == this.getMinScreenWidth()) {
 			return this;
 		}
-	
+
 		// first validate the value
 		this._validateMinWidth(sWidth);
-	
+
 		// initialize
 		this._clearMedia();
 		this._minWidth = 0;
 		this._screen = "";
-	
+
 		if (sWidth) {
 			// check given width is known screen-size
 			sWidth = sWidth.toLowerCase();
@@ -499,10 +499,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 
 			this._addMedia();
 		}
-	
+
 		return this.setProperty("minScreenWidth", sWidth);
 	};
-	
+
 	/*
 	 * Decides if we need media query or not according to given settings
 	 * if pop-in is demanded then we always need JS media queries
@@ -513,16 +513,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		if (bValue == this.getDemandPopin()) {
 			return this;
 		}
-	
+
 		// minimum width should have been set
 		if (!this.getMinScreenWidth()) {
 			return this.setProperty("demandPopin", bValue, true);
 		}
-	
+
 		return this.setProperty("demandPopin", bValue);
 	};
-	
-	
+
+
 	/**
 	 * Checks the column will be shown as pop-in
 	 *
@@ -537,7 +537,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		}
 		return false;
 	};
-	
+
 	/**
 	 * Checks the column will be hidden
 	 *
@@ -547,13 +547,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		if (this._media) {
 			return !this._media.matches;
 		}
-	
+
 		if (this._screen && this._minWidth) {
 			return parseFloat(this._minWidth) > window.innerWidth;
 		}
 		return false;
 	};
-	
+
 	/**
 	 * Sets the last value of the column if mergeDuplicates property is true
 	 *
@@ -568,7 +568,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Clears the last value of the column if mergeDuplicates property is true
 	 *
@@ -579,7 +579,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.clearLastValue = function() {
 		return this.setLastValue(NaN);
 	};
-	
+
 	/**
 	 * Gets the last value of the column
 	 *
@@ -589,7 +589,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.getLastValue = function() {
 		return this._lastValue;
 	};
-	
+
 	/**
 	 * Gets called from the Table when the all items are removed
 	 *
@@ -599,7 +599,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.onItemsRemoved = function() {
 		this.clearLastValue();
 	};
-	
+
 	/**
 	 * Determines whether the given width is relative or not
 	 *
@@ -609,12 +609,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.isRelativeWidth = function() {
 		return /^(|auto|[-+]?\d+\.?\d*%|inherit)$/i.test(this.getWidth());
 	};
-	
+
 	/**
 	 * Determines whether box-sizing content-box works for columns or not
 	 * Native android browsers does not honour content-box for fixed table layout
 	 * https://bugs.webkit.org/show_bug.cgi?id=18565
-	 * 
+	 *
 	 * @protected
 	 * @readonly
 	 * @static
@@ -632,7 +632,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 
 		return (iContentWidth == iWidth);
 	})();
-	
+
 	/**
 	 * Gets called from the parent after all cells in column are rendered
 	 *

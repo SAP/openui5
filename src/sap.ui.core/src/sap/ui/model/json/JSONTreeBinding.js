@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 *
 	 * @class
 	 * Tree binding implementation for JSON format.
-	 * 
-	 * The tree data structure may contain JSON objects and also arrays. If using arrays and don't want to bind every array data in the data structure you can 
+	 *
+	 * The tree data structure may contain JSON objects and also arrays. If using arrays and don't want to bind every array data in the data structure you can
 	 * specify a parameter <code>arrayNames</code> in the mParameters which contains the names of the arrays in a string array which should be bound for the tree.
 	 * An array not included there won't be bound. If an array is included but it is nested in another parent array which isn't included in the names list it won't be bound.
-	 * So make sure that the parent array name is also included. If the tree data structure doesn't include any arrays you don't have to specify this parameter at all. 
+	 * So make sure that the parent array name is also included. If the tree data structure doesn't include any arrays you don't have to specify this parameter at all.
 	 *
 	 * @param {sap.ui.model.json.JSONModel} [oModel]
 	 * @param {string}
@@ -30,13 +30,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 *         If the mParameter <code>arrayNames</code> is specified with an array of string names this names will be checked against the tree data structure
 	 *         and the found data in this array is included in the tree but only if also the parent array is included.
 	 *         If this parameter is not specified then all found arrays in the data structure are bound.
-	 *         If the tree data structure doesn't contain an array you don't have to specify this parameter. 
-	 * 
+	 *         If the tree data structure doesn't contain an array you don't have to specify this parameter.
+	 *
 	 * @alias sap.ui.model.json.JSONTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
 	var JSONTreeBinding = ClientTreeBinding.extend("sap.ui.model.json.JSONTreeBinding");
-	
+
 	/**
 	 * Return node contexts for the tree
 	 * @param {object} oContext to use for retrieving the node contexts
@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 		if (!iLength) {
 			iLength = this.oModel.iSizeLimit;
 		}
-	
+
 		var sContextPath = oContext.getPath();
 		if (!jQuery.sap.endsWith(sContextPath,"/")) {
 			sContextPath = sContextPath + "/";
@@ -60,13 +60,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 		if (!jQuery.sap.startsWith(sContextPath,"/")) {
 			sContextPath = "/" + sContextPath;
 		}
-	
+
 		var aContexts = [],
 			that = this,
 			oNode = this.oModel._getObject(sContextPath),
 			aArrayNames = this.mParameters && this.mParameters.arrayNames,
 			aChildArray;
-		
+
 		if (oNode) {
 			if (aArrayNames && jQuery.isArray(aArrayNames)) {
 				jQuery.each(aArrayNames, function(iIndex, sArrayName){
@@ -91,8 +91,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 		}
 		return aContexts.slice(iStartIndex, iStartIndex + iLength);
 	};
-	
-	
+
+
 	JSONTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
 		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);

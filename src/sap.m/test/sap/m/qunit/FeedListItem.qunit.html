@@ -15,13 +15,13 @@
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		
+
 		<script language="javascript">
-		
+
 			var oList2 = new sap.m.List({
 				inset : true
 			});
-			
+
 			var data = {
 				navigation : [ {
 					title : "Travel Expend",
@@ -60,7 +60,7 @@
 					press : 'detailPage'
 				} ]
 			};
-			
+
 			var oItemTemplate1 = new sap.m.StandardListItem({
 				title : "{title}",
 				description : "{description}",
@@ -68,7 +68,7 @@
 				iconInset : "{iconInset}",
 				type : "{type}"
 			});
-			
+
 			function bindListData(data, itemTemplate, list)
 			{
 				var oModel = new sap.ui.model.json.JSONModel();
@@ -76,13 +76,13 @@
 				oModel.setData(data);
 				// set the model to the list
 				list.setModel(oModel);
-	
+
 				// bind Aggregation
 				list.bindAggregation("items", "/navigation", itemTemplate);
 			}
-			
+
 			bindListData(data, oItemTemplate1, oList2);
-			
+
 			var oLeftButton = new sap.m.Button({
 				text: "Modal",
 				type: sap.m.ButtonType.Reject,
@@ -90,7 +90,7 @@
 					oPopover.setModal(!oPopover.getModal());
 				}
 			});
-			
+
 			var oRightButton = new sap.m.Button({
 				text: "Close",
 				type: sap.m.ButtonType.Accept,
@@ -98,7 +98,7 @@
 					oPopover.close();
 				}
 			});
-			
+
 			var footer = new sap.m.Bar({
 				contentLeft: [],
 				contentMiddle: [new sap.m.Button({icon: "../images/favorite@2x.png"}),
@@ -106,8 +106,8 @@
 								new sap.m.Button({icon: "../images/flag@2x.png"})],
 				contentRight: []
 			});
-			
-			
+
+
 			var oPopover = new sap.m.Popover({
 				placement: sap.m.PlacementType.Auto,
 				title: "Popover",
@@ -131,18 +131,18 @@
 					oList2
 				]
 			});
-			
-			
-			
-			
+
+
+
+
 			var oFeedList = new sap.m.List("oFeedItemList", {
 			    mode: "SingleSelectMaster"
 			});
-			
-			
+
+
 			var fnOpenPopup = function(oControlEvent) {
 				if (oControlEvent.getSource().getSender() == "Jack Jones") {
-					if (window.console) { // console object is only exposed when Developer Tools are open for the particular tab (which is usually not the case when unit test is run)	
+					if (window.console) { // console object is only exposed when Developer Tools are open for the particular tab (which is usually not the case when unit test is run)
 						console.log("senderPress called");
 					}
 					oControlEvent.getSource().setSender("Event was fired");
@@ -151,8 +151,8 @@
 					oPopover.openBy(oControlEvent.getParameters().domRef);
 				}
 			};
-			
-			
+
+
 			var oFeedListItemTemplate = new sap.m.FeedListItem({
 				type: sap.m.ListType.Active,
 				icon : "{icon}",
@@ -180,7 +180,7 @@
 				// bind Aggregation
 				list.bindAggregation("items", "/chunks", itemTemplate);
 			}
-			
+
 			jQuery.sap.require("sap.ui.core.IconPool");
 			var sURI = sap.ui.core.IconPool.getIconURI("personnel-view");
 
@@ -372,25 +372,25 @@
 					oPopover.close();
 				}
 			});
-			
+
 			test("Press SPACE Key on Sender", function() {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkControl.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
 				equal(oFeedList.getItems()[9].getSender(), "Event was fired", "Sender Press event was fired");
 				oFeedList.getItems()[9].setSender("Jack Jones");
 			});
-			
+
 			test("Press X Key on Sender", function() {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkControl.getId(), jQuery.sap.KeyCodes.X, false, false, false);
 				notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 			});
-			
+
 			test("Press SPACE Key on MORE", function() {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
 				ok(oFeedList.getItems()[9].$("realtext").text() === oFeedList.getItems()[9]._sFullText, "the expanded text displayed ");
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.SPACE, false, false, false);
 				ok(oFeedList.getItems()[9].$("realtext").text() === oFeedList.getItems()[9]._sShortText, "the collapsed text displayed ");
 			});
-			
+
 			test("Press X Key on MORE", function() {
 				qutils.triggerKeyboardEvent(oFeedList.getItems()[9]._oLinkExpandCollapse.getId(), jQuery.sap.KeyCodes.X, false, false, false);
 				assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");

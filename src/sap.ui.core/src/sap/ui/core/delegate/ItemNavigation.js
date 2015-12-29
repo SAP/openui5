@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * focused item. So if the control containing the items gets the focus (e.g. via tab navigation),
 	 * it is always the focused items which will be focused.
 	 *
-	 * <b>Note:</b> If the <code>ItemNavigation</code> is nested in another <code>ItemNavigation</code> 
+	 * <b>Note:</b> If the <code>ItemNavigation</code> is nested in another <code>ItemNavigation</code>
 	 * (e.g. <code>SegmentedButton</code> in <code>Toolbar</code>), the <code>RootDomRef</code> will always have <code>tabindex</code> -1.
 	 *
 	 * Per default the <code>ItemNavigation</code> cycles over the items.

@@ -19,7 +19,7 @@ sap.ui.core.UIComponent.extend("sap.ui.layout.sample.Splitter3.Component", {
 			}
 		}
 	},
-	
+
 	onAfterRendering : function() {
 		this.oContainer.setHeight("100%");
 	}

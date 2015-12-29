@@ -18,8 +18,8 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		var ValueStateSupport = {};
 		var mTexts = null;
-	
-	
+
+
 		var ensureTexts = function() {
 			if (!mTexts) { // initialize texts if required
 				mTexts = {};
@@ -29,8 +29,8 @@ sap.ui.define(['jquery.sap.global'],
 				mTexts[sap.ui.core.ValueState.Success] = rb.getText("VALUE_STATE_SUCCESS");
 			}
 		};
-	
-	
+
+
 		/**
 		 * Appends a generic success, warning or error message to the given tooltip text if the given Element
 		 * has a property "valueState" with one of these three states.
@@ -45,20 +45,20 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		ValueStateSupport.enrichTooltip = function(oElement, sTooltipText) {
 			jQuery.sap.assert(oElement instanceof sap.ui.core.Element, "oElement must be an Element");
-	
+
 			if (!sTooltipText && oElement.getTooltip()) {
 				return undefined; // this means there is no tooltip text configured, but a tooltip object like a RichTooltip
 			}
-	
+
 			var sText = sap.ui.core.ValueStateSupport.getAdditionalText(oElement);
 			if (sText) {
 				return (sTooltipText ? sTooltipText + " - " : "") + sText;
 			}
-	
+
 			return sTooltipText; // when there is no value state
 		};
-	
-	
+
+
 		/**
 		 * Returns a generic success, warning or error message if the given Element
 		 * has a property "valueState" with one of these three states or the given ValueState
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		ValueStateSupport.getAdditionalText = function(vValue) {
 			var sState = null;
-			
+
 			if (vValue.getValueState) {
 				sState = vValue.getValueState();
 			} else if (sap.ui.core.ValueState[vValue]) {
@@ -84,13 +84,13 @@ sap.ui.define(['jquery.sap.global'],
 				ensureTexts();
 				return mTexts[sState];
 			}
-			
+
 			return null;
 		};
-	
+
 		/**
 		 * Returns a ValueState object based on the given integer value
-		 * 
+		 *
 		 *  0 : ValueState.None
 		 *  1 : ValueState.Warning
 		 *  2 : ValueState.Success
@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global'],
 					return sap.ui.core.ValueState.None;
 			}
 		};
-	
+
 
 	return ValueStateSupport;
 

@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new tmpl/DOMElement.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -22,52 +22,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since version 1.15. 
+	 * @experimental Since version 1.15.
 	 * The templating might be changed in future versions.
 	 * @alias sap.ui.core.tmpl.DOMElement
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DOMElement = Control.extend("sap.ui.core.tmpl.DOMElement", /** @lends sap.ui.core.tmpl.DOMElement.prototype */ { metadata : {
-	
+
 		library : "sap.ui.core",
 		properties : {
-	
+
 			/**
 			 * The text content of the DOM element
 			 */
 			text : {type : "string", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * The HTML-tag of the DOM element which contains the text
 			 */
 			tag : {type : "string", group : "Behavior", defaultValue : 'span'}
 		},
 		aggregations : {
-	
+
 			/**
 			 * DOM attributes which are rendered as part of the DOM element and bindable
 			 */
 			attributes : {type : "sap.ui.core.tmpl.DOMAttribute", multiple : true, singularName : "attribute"},
-	
+
 			/**
 			 * Nested DOM elements to support nested bindable structures
 			 */
 			elements : {type : "sap.ui.core.tmpl.DOMElement", multiple : true, singularName : "element"}
 		}
 	}});
-	
-	
+
+
 	// TODO: maybe this is something for the sap.ui.core itself - something more general for UI5!!
-	
+
 	/*
 	 * cleanup of event handlers of input elements
 	 */
 	DOMElement.prototype.applySettings = function(mSettings) {
-	
+
 		// apply the settings
 		Control.prototype.applySettings.apply(this, arguments);
-	
-		// all unknown keys whose value is a string will be added 
+
+		// all unknown keys whose value is a string will be added
 		// as attribute to the DOM element
 		var that = this,
 			oMetadata = this.getMetadata(),
@@ -77,9 +77,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 				that.attr(sKey, oValue);
 			}
 		});
-		
+
 	};
-	
+
 	/*
 	 * cleanup of event handlers of input elements
 	 */
@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			this.$().off("change");
 		}
 	};
-	
+
 	/*
 	 * registers the event handlers for input elements
 	 */
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			this.$().on("change", jQuery.proxy(this.oninputchange, this));
 		}
 	};
-	
+
 	/**
 	 * Listens to the change event of the input elements and updates the properties.
 	 * @param {Event} oEvent the event object
@@ -127,11 +127,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 		this.setText(sText);
 		}
 	};
-	
-	
+
+
 	/**
-	 * Returns the value of a DOM attribute if available or undefined if the DOM attribute is not available when using this method with the parameter name only. 
-	 * When using the method with the parameter name and value the method acts as a setter and sets the value of a DOM attribute. 
+	 * Returns the value of a DOM attribute if available or undefined if the DOM attribute is not available when using this method with the parameter name only.
+	 * When using the method with the parameter name and value the method acts as a setter and sets the value of a DOM attribute.
 	 * In this case the return value is the reference to this DOM element to support method chaining. If you pass null as value of the attribute the attribute will be removed.
 	 *
 	 * @param {string} sName
@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DOMElement.prototype.attr = function(sKey, sValue) {
-	
+
 		// lookup the attribute (required for the setter and the getter)
 		var aAttributes = this.getAttributes(),
 			oAttribute;
@@ -154,14 +154,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 				return false;
 			}
 		});
-		
+
 		if (sValue === undefined) {
-		
+
 			// returns the found attribute
 			return oAttribute && oAttribute.getValue();
-			
+
 		} else {
-		
+
 			// if we found the attribute in case of a null value, we remove it
 			// and in case of a value we set the value
 			if (oAttribute) {
@@ -180,14 +180,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 					}));
 				}
 			}
-			
+
 			// method chaining
 			return this;
-		
+
 		}
-		
+
 	};
-	
+
 	/**
 	 * Removes the DOM attribute for the given name and returns the reference to this DOM element to support method chaining.
 	 *
@@ -197,14 +197,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	
+
 	DOMElement.prototype.removeAttr = function(sKey) {
 		// remove the attribute
 		this.attr(sKey, null);
 		return this;
 	};
-	
-	
+
+
 	DOMElement.prototype.setText = function(sText) {
 		this.setProperty("text", sText, true); // no re-rendering!
 		// do DOM modification to avoid re-rendering
@@ -218,7 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			}
 		}
 	};
-	
+
 
 	return DOMElement;
 

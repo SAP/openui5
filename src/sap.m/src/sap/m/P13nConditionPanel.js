@@ -765,9 +765,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {object}
-	 *            	oConditionGrid  
-	 * @returns {string} 
-	 * 				the new or existing key 
+	 *            	oConditionGrid
+	 * @returns {string}
+	 * 				the new or existing key
 	 */
 	P13nConditionPanel.prototype._getKeyFromConditionGrid = function(oConditionGrid) {
 		var sKey = oConditionGrid.data("_key");
@@ -778,11 +778,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * creates a new key for the condition grids 
+	 * creates a new key for the condition grids
 	 *
 	 * @private
-	 * @returns {string} 
-	 * 				the new key 
+	 * @returns {string}
+	 * 				the new key
 	 */
 	P13nConditionPanel.prototype._createConditionKey = function() {
 		var i = 0;
@@ -795,7 +795,7 @@ sap.ui.define([
 			i++;
 		}
 		while (this._oConditionsMap[sKey]);
-		
+
 		return sKey;
 	};
 
@@ -1014,7 +1014,7 @@ sap.ui.define([
 									oValue = new Date(sValue);
 									sValue = oConditionGrid.oFormatter.format(oValue);
 									oControl.setValue(sValue);
-								} else {									
+								} else {
 									oControl.setValue(oValue);
 									// oCtrl.setValueState(sap.ui.core.ValueState.Warning);
 									// oCtrl.setValueStateText(this._sValidationDialogFieldMessage);
@@ -1266,10 +1266,10 @@ sap.ui.define([
 	P13nConditionPanel.prototype._fillOperationItems = function(oSelect, aOperations, sType) {
 		oSelect.destroyItems();
 		if (sType === "_STRING_") {
-			// ignore the "String" Type when accessing the resource text 
+			// ignore the "String" Type when accessing the resource text
 			sType = "";
 		}
-		
+
 		for ( var iOperation in aOperations) {
 			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
 			oSelect.addItem(new sap.ui.core.ListItem({
@@ -1366,7 +1366,7 @@ sap.ui.define([
 			var oConditionGrid = oCtrl.getParent();
 			var sOldValue = oCtrl.getValue();
 
-			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);			
+			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);
 			oConditionGrid.removeContent(oCtrl);
 			//delete oConditionGrid.value1;
 			var fieldInfo = this._aConditionsFields[index];
@@ -1487,7 +1487,7 @@ sap.ui.define([
 					// clean the items
 					oKeyField.destroyItems();
 				}
-	
+
 				// fill all or only the not used items
 				for (j; j < aItems.length; j++) {
 					var oItem = aItems[j];
@@ -1500,7 +1500,7 @@ sap.ui.define([
 					}
 				}
 			}
-			
+
 			if (sOldKey) {
 				oKeyField.setSelectedKey(sOldKey);
 			} else if (oKeyField.getItems().length > 0) {
@@ -1671,13 +1671,13 @@ sap.ui.define([
 			sKey = this._getKeyFromConditionGrid(oConditionGrid);
 			if (this._oConditionsMap[sKey] !== undefined) {
 				delete this._oConditionsMap[sKey];
-	
+
 				this._enableCondition(oConditionGrid, false);
 				var iIndex = this._getIndexOfCondition(oConditionGrid);
-				
+
 				oSelectCheckbox.setSelected(false);
 				oSelectCheckbox.setEnabled(false);
-	
+
 				this._bIgnoreSetConditions = true;
 				this.fireDataChange({
 					key: sKey,
@@ -1726,7 +1726,7 @@ sap.ui.define([
 			delete this._oConditionsMap[sKey];
 			oConditionGrid.data("_key", null);
 			var iIndex = this._getIndexOfCondition(oConditionGrid);
-			
+
 			oSelectCheckbox.setSelected(false);
 			oSelectCheckbox.setEnabled(false);
 
@@ -1774,7 +1774,7 @@ sap.ui.define([
 		if (oConditionGrid.select.getSelected()) {
 			iIndex = this._getIndexOfCondition(oConditionGrid);
 		}
-		
+
 		delete this._oConditionsMap[sKey];
 		oConditionGrid.destroy();
 
@@ -1793,18 +1793,18 @@ sap.ui.define([
 	};
 
 	P13nConditionPanel.prototype._getIndexOfCondition = function(oConditionGrid) {
-		var iIndex = -1; 
-		
+		var iIndex = -1;
+
 		oConditionGrid.getParent().getContent().some(function(oGrid){
 			if (oGrid.select.getSelected()) {
 				iIndex++;
 			}
 			return (oGrid === oConditionGrid);
 		}, this);
-		
+
 		return iIndex;
 	};
-	
+
 	/**
 	 * update the condition add/remove buttons visibility
 	 *

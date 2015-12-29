@@ -70,7 +70,7 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 				});
 
 			},
-			
+
 			iFillTheForm : function () {
 				return this.waitFor({
 					viewName : "Order",

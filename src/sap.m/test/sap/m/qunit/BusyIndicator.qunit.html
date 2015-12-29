@@ -19,7 +19,7 @@
 		<script>
 
 		jQuery.sap.require("sap.ui.thirdparty.jquery-mobile-custom");
-		
+
 		var sSrc = "../images/settings_64.png";
 		var	busyImage = new sap.m.BusyIndicator('b1', {
 			text:'this is an image busy indicator ...',
@@ -80,16 +80,16 @@
 
 		test("Busy Indicator Image Properties", function(){
 			equal(jQuery("#b1").children('img').width(), 60, "Image width should be 60px");
-			equal(jQuery("#b1").children('img').height(), 50, "Image height should be the default 50px");	
+			equal(jQuery("#b1").children('img').height(), 50, "Image height should be the default 50px");
 			equal(document.getElementById('b1-icon').style.webkitAnimation, '5000ms', "Image rotation speed should be 5000ms");
 		});
 		test("Busy Indicator CSS", function(){
 			equal(jQuery("#b2").children('.sapMSpinner').width(), 10, "BusyIcon width should be 10px");
-			equal(jQuery("#b2").children('.sapMSpinner').height(), 10, "BusyIcon height should be 10px");	
+			equal(jQuery("#b2").children('.sapMSpinner').height(), 10, "BusyIcon height should be 10px");
 			if(sap.ui.Device.os.ios) {
 				equal(jQuery("#b2").children('.sapMSpinner').children().length, 12, "iOS should have 12 div elements");
 			} else {
-				equal(jQuery("#b2").children('.sapMSpinner').children().length, 3, "Android should have 3 div elements");	
+				equal(jQuery("#b2").children('.sapMSpinner').children().length, 3, "Android should have 3 div elements");
 			}
 		});
 		asyncTest("Busy Indicator Image live changes", function(){
@@ -100,8 +100,8 @@
 			setTimeout(function() {
 				start();
 				equal(jQuery("#b1").children('img').width(), 30, "Image width should be 50px");
-				equal(jQuery("#b1").children('img').height(), 30, "Image height should be the default 50px");	
-				equal(jQuery("#b1").children('label').text(), "Test", "Label text should be 'Test'");	
+				equal(jQuery("#b1").children('img').height(), 30, "Image height should be the default 50px");
+				equal(jQuery("#b1").children('label').text(), "Test", "Label text should be 'Test'");
 				equal(document.getElementById('b1-icon').style.webkitAnimation, '1000ms', "Image rotation speed should be 2000ms");
 			},100)
 		});

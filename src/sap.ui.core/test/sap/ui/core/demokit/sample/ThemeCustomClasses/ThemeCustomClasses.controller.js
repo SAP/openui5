@@ -1,23 +1,23 @@
 sap.ui.controller("sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses", {
-	
+
 	// ###############################################
-	// 
+	//
 	// whole code in controller is irrelevant for sapTheme prefixed classes!
 	// only for sample display
-	// 
+	//
 	// ###############################################
 	onInit: function () {
-		
+
 		var it = this;
 		// subscribe to theme change event
 		sap.ui.getCore().attachThemeChanged(this._reloadSample, it);
-		
+
 		var oThemeClasses = this._fetchClasses();
-		
+
 		var oModel = new sap.ui.model.json.JSONModel(oThemeClasses);
 		this.getView().setModel(oModel);
 	},
-	
+
 	onAfterRendering : function(){
 		// special treatment for border styles
 		var aData = this.oView.getModel().oData.Styles;
@@ -29,7 +29,7 @@ sap.ui.controller("sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses", {
 			}
 		})
 	},
-	
+
 	_fetchClasses : function(){
 		var sheets = document.styleSheets;
 		var themeClasses = {"Styles" : []};
@@ -45,7 +45,7 @@ sap.ui.controller("sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses", {
 							var aStyles = x[j].selectorText.split(',');
 							for(var k in aStyles){
 								sStyles = aStyles[k].split('.')[1];
-								themeClasses.Styles.push({"stylingString" : sCssRule, "styleClass" : sStyles, "style" : x[j].style, 'border' : bBorder });		
+								themeClasses.Styles.push({"stylingString" : sCssRule, "styleClass" : sStyles, "style" : x[j].style, 'border' : bBorder });
 							}
 						} else if (x[j].selectorText.split('.').length > 2){
 							var aStyles = x[j].selectorText.split('.');
@@ -64,14 +64,14 @@ sap.ui.controller("sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses", {
 		}
 		return themeClasses;
 	},
-	
+
 	_reloadSample : function(context){
 		// wait until theme is changed
 		jQuery.sap.delayedCall(500,this, function(){
-			
-			// load sapTheme classes 
+
+			// load sapTheme classes
 			var oThemeClasses = this._fetchClasses();
-			
+
 			// reload the view
 			this.oView.setModel(new sap.ui.model.json.JSONModel(oThemeClasses));
 			this.oView.invalidate();

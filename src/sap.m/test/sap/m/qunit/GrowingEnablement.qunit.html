@@ -80,7 +80,7 @@
 			test("Should determine if the list is scrollable", function() {
 				//Arrange
 				var data = { items: [ {},{}] };
-			
+
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(data);
 
@@ -88,7 +88,7 @@
 					growing : true,
 					growingScrollToLoad : true,
 					items : {
-					path : "/items", 
+					path : "/items",
 					template : new sap.m.CustomListItem({
 							content : new sap.ui.core.HTML({content:'<div style="height: 1000px"></div>'}),
 						})

@@ -8,9 +8,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 	"use strict";
 
 
-	
-	
-	
+
+
+
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.Performance.
 		 * @class This class represents the plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
@@ -27,29 +27,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		var Performance = Plugin.extend("sap.ui.core.support.plugins.Performance", {
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportPerf", "Performance", oSupportStub]);
-	
+
 				this._oStub = oSupportStub;
-	
+
 				if (this.isToolPlugin()) {
-	
+
 					this._aEventIds = [this.getId() + "SetMeasurements",
 									   this.getId() + "SetActive"];
 					jQuery.sap.require("sap.ui.core.format.DateFormat");
 					this._oDateFormat = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "HH:mm:ss '+' SSS"});
-	
+
 				} else {
-	
+
 					this._aEventIds = [this.getId() + "Refresh",
 									   this.getId() + "Clear",
 									   this.getId() + "Start",
 									   this.getId() + "Stop",
 									   this.getId() + "Activate"];
-	
+
 				}
-	
+
 			}
 		});
-	
+
 		Performance.prototype.init = function(oSupportStub){
 			Plugin.prototype.init.apply(this, arguments);
 			if (this.isToolPlugin()) {
@@ -58,14 +58,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				initInApps.call(this, oSupportStub);
 			}
 		};
-	
+
 		Performance.prototype.exit = function(oSupportStub){
 			Plugin.prototype.exit.apply(this, arguments);
 		};
-	
-	
+
+
 		function initInTools(oSupportStub) {
-	
+
 			var rm = sap.ui.getCore().createRenderManager();
 			rm.write("<div class=\"sapUiSupportToolbar\">");
 			rm.write("<button id=\"" + this.getId() + "-refresh\" class=\"sapUiSupportBtn\">Refresh</button>");
@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			rm.write("</table></div>");
 			rm.flush(this.$().get(0));
 			rm.destroy();
-	
+
 			this.$("refresh").click(jQuery.proxy(function(oEvent) {
 				this._oStub.sendEvent(this.getId() + "Refresh");
 			}, this));
@@ -110,24 +110,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				}
 				this._oStub.sendEvent(this.getId() + "Activate", {"active": bActive});
 			}, this));
-	
+
 		}
-	
+
 		function initInApps(oSupportStub) {
 			getPerformanceData.call(this);
 		}
-	
+
 		function getPerformanceData(oSupportStub) {
 			var bActive = jQuery.sap.measure.getActive();
 			var aMeasurements = [];
-	
+
 			if (bActive) {
 				aMeasurements = jQuery.sap.measure.getAllMeasurements();
 			}
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", {"measurements": aMeasurements});
 			this._oStub.sendEvent(this.getId() + "SetActive", {"active": bActive});
 		}
-	
+
 		/**
 		 * Handler for sapUiSupportPerfSetMeasurements event
 		 *
@@ -135,11 +135,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfSetMeasurements = function(oEvent) {
-	
+
 			var aMeasurements = oEvent.getParameter("measurements");
 			var oTableBody = this.$("tabBody");
 			var rm = sap.ui.getCore().createRenderManager();
-	
+
 			for ( var i = 0; i < aMeasurements.length; i++) {
 				var oMeasurement = aMeasurements[i];
 				rm.write("<tr>");
@@ -153,9 +153,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			}
 			rm.flush(oTableBody[0]);
 			rm.destroy();
-	
+
 		};
-	
+
 		/**
 		 * Handler for sapUiSupportPerfSetActive event
 		 *
@@ -163,18 +163,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfSetActive = function(oEvent) {
-	
+
 			var bActive = oEvent.getParameter("active");
 			var oCheckBox = this.$("active");
-	
+
 			if (bActive) {
 				oCheckBox.attr("checked", "checked");
 			} else {
 				oCheckBox.removeAttr("checked");
 			}
-	
+
 		};
-	
+
 		/**
 		 * Handler for sapUiSupportPerfRefresh event
 		 *
@@ -182,11 +182,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfRefresh = function(oEvent) {
-	
+
 			getPerformanceData.call(this);
-	
+
 		};
-	
+
 		/**
 		 * Handler for sapUiSupportPerfClear event
 		 *
@@ -194,12 +194,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfClear = function(oEvent) {
-	
+
 			jQuery.sap.measure.clear();
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", {"measurements":[]});
-	
+
 		};
-	
+
 		/**
 		 * Handler for sapUiSupportPerfStart event
 		 *
@@ -207,11 +207,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfStart = function(oEvent) {
-	
+
 			jQuery.sap.measure.start(this.getId() + "-perf","Measurement by support tool");
-	
+
 		};
-	
+
 		/**
 		 * Handler for sapUiSupportPerfEnd event
 		 *
@@ -219,11 +219,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfEnd = function(oEvent) {
-	
+
 			jQuery.sap.measure.end(this.getId() + "-perf");
-	
+
 		};
-	
+
 		/**
 		 * Handler for sapUiSupportPerfActivate event
 		 *
@@ -231,16 +231,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @private
 		 */
 		Performance.prototype.onsapUiSupportPerfActivate = function(oEvent) {
-	
+
 			var bActive = oEvent.getParameter("active");
-	
+
 			if (jQuery.sap.measure.getActive() != bActive) {
 				jQuery.sap.measure.setActive(bActive);
 			}
-	
+
 		};
-	
-	
+
+
 
 	return Performance;
 

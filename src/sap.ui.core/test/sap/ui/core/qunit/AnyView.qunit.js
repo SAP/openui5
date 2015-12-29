@@ -1,5 +1,5 @@
 /*
- * an initial check to be executed before other MVC tests start 
+ * an initial check to be executed before other MVC tests start
  */
 test("InitialCheck", 6, function() {
 	jQuery.sap.require("sap.ui.core.mvc.Controller");
@@ -20,7 +20,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 	var view;
 
 	module(sCaption);
-	
+
 	test("View Instantiation: default controller instantiation", 7, function() {
 		// define View and place it onto the page
 		window.onInitCalled = false;
@@ -29,7 +29,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		var fnClass = jQuery.sap.getObject(oConfig.viewClassName);
 		ok(view instanceof fnClass, "view must be instance of " + oConfig.viewClassName);
 	});
-	
+
 	test("Controller Instantiation", 2, function() {
 		var controller = view.getController();
 		ok(controller, "controller must exist after creation");
@@ -40,17 +40,17 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		ok(window.onInitCalled, "controller.onInit should be called by now");
 		window.onInitCalled = false;
 	});
-	
+
 	test("Lifecycle: onAfterRendering", 6, function() {
 		window.onAfterRenderingCalled = false;
 		view.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		
+
 		function doCheck() {
 			ok(window.onAfterRenderingCalled, "controller.onAfterRendering should be called by now");
 			window.onAfterRenderingCalled = false;
 		}
-		
+
 		if (!!sap.ui.Device.browser.safari) {
 			stop();
 			setTimeout(function() {
@@ -61,20 +61,20 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 			doCheck();
 		}
 	});
-	
+
 	test("SAPUI5 Rendering", oConfig.idsToBeChecked.length, function() {
 		for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
 			var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
 			equal($.length, 1,  "Element " + oConfig.idsToBeChecked[i] + " rendered");
 		}
 	});
-	
+
 	test("Aggregation", 1, function() {
 		expect(1);
 		$button = jQuery.sap.byId(view.createId("Button2"));
 		equal($button.length, 1,  "SAPUI5 Button rendered in aggregation");
 	});
-	
+
 	test("Child Views exists", 3, function() {
 		$JSONView = jQuery.sap.byId(view.createId("MyJSONView"));
 		equal($JSONView.length, 1, "Child View (JSONView) should be rendered");
@@ -83,7 +83,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		$XMLView = jQuery.sap.byId(view.createId("MyXMLView"));
 		equal($XMLView.length, 1, "Child View (XMLView) should be rendered");
 	});
-	
+
 	test("Child Views content rendered", 9, function() {
 		var oJSONView = view.byId("MyJSONView");
 		$button = jQuery.sap.byId(oJSONView.createId("Button1"));
@@ -114,20 +114,20 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		}, 500);
 
 	});
-	
+
 	test("Re-Rendering", 5+oConfig.idsToBeChecked.length, function() {
 		window.onBeforeRenderingCalled = false;
 		window.onAfterRenderingCalled = false;
 		view.invalidate();
 		sap.ui.getCore().applyChanges();
-		
+
 		function doCheck() {
 			for(var i=0; i<oConfig.idsToBeChecked.length; i++) {
 				var $ = jQuery.sap.byId(view.createId(oConfig.idsToBeChecked[i]));
 				equal($.length, 1,  "Element " + oConfig.idsToBeChecked[i] + " rendered again");
 			}
 		}
-		
+
 		if (!!sap.ui.Device.browser.safari) {
 			stop();
 			setTimeout(function() {
@@ -138,7 +138,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 			doCheck();
 		}
 	});
-	
+
 	test("Lifecycle: onBeforeRendering", 1, function() {
 		ok(window.onBeforeRenderingCalled, "controller.onBeforeRendering should be called by now");
 		window.onBeforeRenderingCalled = false;
@@ -162,7 +162,7 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 			window.dataEventHandler = null;
 		});
 	}
-	
+
 	test("Lifecycle: onExit", 1, function() {
 		window.onExitCalled = false;
 		view.destroy();
@@ -186,6 +186,6 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 			equal($.length, 0, "Content " + oConfig.idsToBeChecked[i] + " should no longer be there");
 		}
 	});
-	
+
 }
 

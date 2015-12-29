@@ -70,7 +70,7 @@
 					MaxLength="255" sap:label="Product Image URL" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
 			</EntityType>
-			
+
 			<EntityType Name="ProductCategory" sap:content-version="1"
 				xmlns:sap="http://www.sap.com/Protocols/SAPData">
 				<Key>
@@ -92,7 +92,7 @@
 					Nullable="false" sap:creatable="false" sap:updatable="false"
 					sap:sortable="false" sap:filterable="false" />
 			</EntityType>
-			
+
 			<EntityContainer Name="EPM_DEVELOPER_SCENARIO_SRV"
 				m:IsDefaultEntityContainer="true">
 				<EntitySet Name="Products" EntityType="EPM_DEVELOPER_SCENARIO_SRV.Product"

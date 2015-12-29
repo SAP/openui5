@@ -7,7 +7,7 @@ sap.ui.jsview("sap.ui.demokit.explored.view.app", {
 	getControllerName : function () {
 		return "sap.ui.demokit.explored.view.app";
 	},
-	
+
 	createContent : function (oController) {
 
 		// to avoid scrollbars on desktop the root view must be set to block display

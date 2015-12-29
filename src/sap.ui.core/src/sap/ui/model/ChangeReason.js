@@ -17,25 +17,25 @@ sap.ui.define(['jquery.sap.global'],
 	* @alias sap.ui.model.ChangeReason
 	*/
 	var ChangeReason = {
-	
+
 			/**
 			 * The list was sorted
 			 * @public
 			 */
 			Sort: "sort",
-	
+
 			/**
 			 * The List was filtered
 			 * @public
 			 */
 			Filter: "filter",
-	
+
 			/**
 			 * The list has changed
 			 * @public
 			 */
 			Change: "change",
-	
+
 			/**
 			 * The list context has changed
 			 * @public

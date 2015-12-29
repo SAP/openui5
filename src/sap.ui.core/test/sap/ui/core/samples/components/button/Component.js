@@ -19,7 +19,7 @@ sap.ui.core.UIComponent.extend("samples.components.button.Component", {
 
 samples.components.button.Component.prototype.createContent = function() {
 	this.oButton = new sap.ui.commons.Button(this.createId("mybutn"));
-	return this.oButton; 
+	return this.oButton;
 };
 
 

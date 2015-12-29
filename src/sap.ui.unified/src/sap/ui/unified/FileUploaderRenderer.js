@@ -13,8 +13,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var FileUploaderRenderer = function() {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	FileUploaderRenderer.render = function(oRenderManager, oFileUploader) {
-	
+
 		var rm = oRenderManager;
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 
@@ -37,14 +37,14 @@ sap.ui.define(['jquery.sap.global'],
 
 		rm.writeClasses();
 		rm.write('>');
-	
+
 		// form
 		rm.write('<form style="display:inline-block" encType="multipart/form-data" method="post"');
 		rm.writeAttribute('id', oFileUploader.getId() + '-fu_form');
 		rm.writeAttributeEscaped('action', oFileUploader.getUploadUrl());
 		rm.writeAttribute('target', oFileUploader.getId() + '-frame');
 		rm.write('>');
-	
+
 		// the SAPUI5 TextField and Button
 		rm.write('<div ');
 		if (!oFileUploader.bMobileLib) {
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeAttribute("aria-readonly", "true");
 		}
 		rm.write('>');
-	
+
 		if (!oFileUploader.getButtonOnly()) {
 			rm.write('<div class="sapUiFupGroup" border="0" cellPadding="0" cellSpacing="0"><div><div>');
 		} else {
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('</div><div>');  //-> per style margin
 		rm.renderControl(oFileUploader.oBrowse);
 		rm.write('</div></div></div>');
-	
+
 		// hidden pure input type file (surrounded by a div which is responsible for giving the input the correct size)
 		var sName = oFileUploader.getName() || oFileUploader.getId();
 		rm.write('<div class="sapUiFupInputMask">');
@@ -81,8 +81,8 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write('>');
 		});
 		rm.write('</div>');
-	
-	
+
+
 		rm.write('</div>');
 		rm.write('</form>');
 		rm.write('</div>');

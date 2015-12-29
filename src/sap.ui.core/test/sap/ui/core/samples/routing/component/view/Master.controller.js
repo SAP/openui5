@@ -6,7 +6,7 @@ sap.ui.controller("NavigationWithoutMasterDetailPattern.view.Master", {
 * @memberOf view.Detail
 */
 	onInit: function() {
-		
+
 		this.getRouter().attachRouteMatched(function(oEvent) {
 			if (oEvent.getParameter("name") === "detail") {
 				var text = this.getView().byId("text");
@@ -15,8 +15,8 @@ sap.ui.controller("NavigationWithoutMasterDetailPattern.view.Master", {
 		}, this);
 
 	},
-	
-	
+
+
 	getRouter: function() {
 		return sap.ui.core.UIComponent.getRouterFor(this);
 	},

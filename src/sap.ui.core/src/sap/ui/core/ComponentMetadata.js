@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			oManifest = {};
 
 		}
-		
+
 		// ensure the general property name, the namespace sap.app with the id,
 		// the namespace sap.ui5 and eventually the extends property
 		oManifest["name"] = oManifest["name"] || sName;
@@ -468,7 +468,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getConfig is deprecated!");
 		var oUI5Manifest = this.getManifestEntry("sap.ui5", !bDoNotMerge),
 		    mConfig = oUI5Manifest && oUI5Manifest.config;
-		
+
 		// return the configuration
 		return jQuery.extend(true, {}, mConfig && sKey ? mConfig[sKey] : mConfig);
 	};
@@ -487,7 +487,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getCustomizing is deprecated!");
 		var  oUI5Manifest = this.getManifestEntry("sap.ui5", !bDoNotMerge),
 		    mExtensions = jQuery.extend(true, {}, oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions);
-		
+
 		// return the exensions object
 		return mExtensions;
 	};
@@ -515,15 +515,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 				this._oLegacyModels[sDataSource].type = oDataSource.type;
 			}
 		}
-		
+
 		// deep copy of the legacy models object
-		var oParent, 
+		var oParent,
 		    mModels = jQuery.extend(true, {}, this._oLegacyModels);
 		// merge the models object if defined via parameter
 		if (!bDoNotMerge && (oParent = this.getParent()) instanceof ComponentMetadata) {
 			mModels = jQuery.extend(true, {}, oParent.getModels(), mModels);
 		}
-		
+
 		// return a clone of the models
 		return mModels;
 	};
@@ -650,11 +650,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 
 	/**
 	 * Converts the legacy metadata into the new manifest format
-	 * 
+	 *
 	 * @private
 	 */
 	ComponentMetadata.prototype._convertLegacyMetadata = function(oStaticInfo, oManifest) {
-		
+
 		// this function can be outsourced in future when the ComponentMetadata
 		// is not used anymore and the new Application manifest is used -
 		// but for now we keep it as it will be one of the common use cases
@@ -678,8 +678,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		// add the old information on component metadata to the manifest info
 		var oAppManifest = oManifest["sap.app"];
 		var oUI5Manifest = oManifest["sap.ui5"];
-		
-		// we do not merge the manifest and the metadata - once a manifest 
+
+		// we do not merge the manifest and the metadata - once a manifest
 		// entry exists, the metadata entries will be ignored and the specific
 		// metadata entry needs to be migrated into the manifest.
 		for (var sName in oStaticInfo) {
@@ -762,9 +762,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 				}
 			}
 		}
-		
+
 	};
-	
+
 	return ComponentMetadata;
 
 }, /* bExport= */ true);

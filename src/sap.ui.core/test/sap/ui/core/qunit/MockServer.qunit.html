@@ -9,7 +9,7 @@
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -627,7 +627,7 @@
 		oMockServer.destroy();
 
 	});
-	
+
 	test("Test URL parameters with ampersand in value", 2, function() {
 
         var oMockServer = new sap.ui.core.util.MockServer({
@@ -644,7 +644,7 @@
 		});
 		ok(oResponse.success, "Mock server responded well");
 		oMockServer.destroy();
-	});	
+	});
 
 	test("test undefined key", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
@@ -850,7 +850,7 @@
 		});
 		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl);
-		
+
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
 
@@ -864,14 +864,14 @@
 		oMockServer.destroy();
 
 	});
-	
+
 	test("test get/set entity set data", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
 		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl, "testdata/rmtsampleflight/");
-		
+
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
 
@@ -880,21 +880,21 @@
 			dataType : "json"
 		});
 		equal(oResponse.data.d.results.length, 3);
-		
+
 		var aFlights = oMockServer.getEntitySetData("FlightCollection");
-		
+
 		aFlights = [];
-		
+
 		oMockServer.setEntitySetData("FlightCollection", aFlights);
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
 			dataType : "json"
 		});
 		equal(oResponse.data.d.results.length, 0);
-		
+
 		oMockServer.destroy();
-		
+
 		oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
@@ -902,19 +902,19 @@
 		aFlights = oMockServer.getEntitySetData("FlightCollection");
 		equal(aFlights, undefined);
 		oMockServer.destroy();
-		
+
 	});
-	
+
 	test("test deep insert!", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
 		});
 		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
 		oMockServer.simulate(sMetadataUrl, "testdata/rmtsampleflight/");
-		
+
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
-		
+
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
@@ -926,11 +926,11 @@
 			dataType : "json"
 		});
 		equal(oResponse.data.d.results.length, 1);
-		
+
 		var oDeepCreate = oResponse.data.d.results[0];
-		
+
 		oDeepCreate["FlightCarrier"].CARRNAME = "Deeply Created";
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
 			type : 'POST',
@@ -938,15 +938,15 @@
 		});
 		ok(oResponse.success, "Mock server responded the POST resquest");
 		equal(oResponse.statusCode, 201, "resource successfully created");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
 		});
 		equal(oResponse.data.d.results.length, 19);
-		
+
 		oMockServer.setEntitySetData("CarrierCollection", []);
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection",
 			type : 'POST',
@@ -954,18 +954,18 @@
 		});
 		ok(oResponse.success, "Mock server responded the POST resquest");
 		equal(oResponse.statusCode, 201, "resource successfully created");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection",
 			dataType : "json"
 		});
 		equal(oResponse.data.d.results.length, 1);
-		
-		
+
+
 		oMockServer.destroy();
-		
+
 	});
-	
+
 	test("test mockdata linkage to entityset", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -1661,19 +1661,19 @@
 					dataType : "json"
 				});
 				ok(oResponse.data.d.CategoryName, "Products(5)/Category");
-				
+
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products?$filter=UnitsInStock eq (120)",
 					dataType : "json"
 				});
 				equal(oResponse.data.d.results.length, 1, "$filter=UnitsInStock eq (120)");
-				
+
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Order_Details?$filter=UnitPrice le 100M",
 					dataType : "json"
 				});
 				ok(oResponse);
-				
+
 
 				oMockServer.destroy();
 			});
@@ -2236,7 +2236,7 @@
 
 				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
 // 				var oModel = new sap.ui.model.odata.v2.ODataModel(sUri, true);
-				
+
 				oModel.setUseBatch(true);
 
 				var aBatchReadOperations = [];
@@ -2566,7 +2566,7 @@
 							"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
 				};
 
-				//                oModel.addBatchReadOperations(aBatchReadOperations);       
+				//                oModel.addBatchReadOperations(aBatchReadOperations);
 				oModel.addBatchChangeOperations(aBatchFirstChangeOperations);
 
 				oModel.submitBatch(fnSuccess, fnError, false);
@@ -2607,14 +2607,14 @@
 					"Get in Changeset - Respond 400 - The Data Services Request could not be understood due to malformed syntax");
 		};
 
-		//                oModel.addBatchReadOperations(aBatchReadOperations);       
+		//                oModel.addBatchReadOperations(aBatchReadOperations);
 		oModel.addBatchReadOperations(aBatchReadOperations);
 
 		oModel.submitBatch(fnSuccess, fnError, false);
 
 		oMockServer.destroy();
 	});
-		
+
 	asyncTest("test mock data in one file", 10, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -2690,7 +2690,7 @@
 		oMockServer.destroy();
 	});
 
-	
+
 	asyncTest("test $metadata xml", 10, function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -2785,7 +2785,7 @@
 		var sMockdataBaseUrl = "testdata/";
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
-		
+
 		var oModel = initModel(sURI, true);
 
 		//Query negative tests
@@ -2794,158 +2794,158 @@
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, "'$ski' is not a valid system query option");
-		});	
-		
+		});
+
 		oModel.read('LeaveHeaderCollection?$select=type, availablebalance,', null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
-		});	
-		
+		});
+
 		oModel.read('LeaveHeaderCollection?$skip=5,', null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "skip invalid value [ends with ,]");
-		});	
-		
+		});
+
 		//skip & top
 		oModel.read('LeaveHeaderCollection?$skip=1&$top=sdlfksdf', null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value , oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE , "top invalid value");
-		});	
-		
+		});
+
 		oModel.read('LeaveHeaderCollection?$skip=1.5', null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "skip invalid value [not an integer]");
-		});	
-		
+		});
+
 		oModel.read('LeaveHeaderCollection?$top=x', null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "top invalid value [not an integer]");
-		});	
-		
+		});
+
 		//orderby
 		oModel.read("LeaveHeaderCollection?$orderby=entitlement descjkh", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Invalid sortorder 'descjkh' detected", "Invalid sortorder 'descjkh' detected");
-		});	
+		});
 		oModel.read("LeaveHeaderCollection?$orderby=entitlementFood", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Property 'entitlementFood' not found", "Property 'entitlementFood' not found");
-		});	
-		
+		});
+
 		//filter
 		oModel.read("LeaveHeaderCollection?$filter=(((type eq 'Vacation' or type eq 'Sick Leave')", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Property '((type' not found", "Property '((type' not found");
-		});	
+		});
 		oModel.read("LeaveHeaderCollection?$filter=type eq 'Vacation' or ", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement");
-		});	
+		});
 		oModel.read("LeaveItemCollection?$filter=itemid lfde 6", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_FILTER_QUERY_STATEMENT, "Invalid filter query statement ((filter option 'lfde' doesn't exist))");
-		});	
+		});
 		oModel.read("LeaveItemCollection?$filter=itemidFood le 6", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Property 'itemidFood' not found", "Property 'itemidFood' not found");
-		});	
-		
+		});
+
 		//select
 		oModel.read("LeaveHeaderCollection?$select=sdfsdf", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 404, "status code = 404");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'sdfsdf'", "Resource not found for the segment 'sdfsdf'");
-		});	
-		
+		});
+
 		//inlinecount
 		oModel.read("LeaveHeaderCollection?$inlinecount=sfg", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE, "InlineCount: " + oMockServer._oErrorMessages.INVALID_SYSTEM_QUERY_OPTION_VALUE);
-		});	
-		
+		});
+
 		//format
 		oModel.read("LeaveHeaderCollection?$format=xml", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE, "Format: " + oMockServer._oErrorMessages.UNSUPPORTED_FORMAT_VALUE);
-		});	
-		
+		});
+
 		//Single entry negative tests
 		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$select=type,", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.URI_VIOLATING_CONSTRUCTION_RULES, "The URI is violating the construction rules defined in the Data Services specification [, at the end of string]");
-		});	
-		
+		});
+
 		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$blabla=type", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, "'$blabla' is not a valid system query option", "'$blabla' is not a valid system query option (single)");
-		});	
+		});
 
 		oModel.read("LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/?$top=1", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, "'$top' is not a valid system query option", "'$top' is not a valid system query option (single)");
-		});	
-		
+		});
+
 		//key
-		oModel.read("LeaveItemCollection(itemid='dummy', employeeid='JSMITH',type='Vacation')", null, null, false, function() {		
+		oModel.read("LeaveItemCollection(itemid='dummy', employeeid='JSMITH',type='Vacation')", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 404, "status code = 404");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND, oMockServer._oErrorMessages.RESOURCE_NOT_FOUND);
-		});	
-		
-		oModel.read("LeaveItemCollection(dummy='1', employeeid='JSMITH',type='Vacation')", null, null, false, function() {		
+		});
+
+		oModel.read("LeaveItemCollection(dummy='1', employeeid='JSMITH',type='Vacation')", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'", "Invalid key name in key predicate. Expected name is 'employeeid,itemid,type'");
 		});
-		oModel.read("LeaveItemCollection(employeeid='JSMITH',type='Vacation')", null, null, false, function() {		
+		oModel.read("LeaveItemCollection(employeeid='JSMITH',type='Vacation')", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY, oMockServer._oErrorMessages.INVALID_KEY_PREDICATE_QUANTITY);
-		});	
-		oModel.read("LeaveItemCollection(itemid='1, employeeid='JSMITH',type='Vacation')", null, null, false, function() {		
+		});
+		oModel.read("LeaveItemCollection(itemid='1, employeeid='JSMITH',type='Vacation')", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 400, "status code = 400");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Malformed URI literal syntax in key 'itemid'", "Malformed URI literal syntax in key 'itemid'");
-		});	
+		});
 		oMockServer.destroy();
-		
+
 		//Expand
 		sURI = "/myservice/";
 		var oMockServer = new sap.ui.core.util.MockServer({
@@ -2961,17 +2961,17 @@
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 404, "status code = 404");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'FlightFood'", "Resource not found for the segment 'FlightFood'");
-		});	
-		
+		});
+
 		oModel.read("CarrierCollection('carrid 1')/carrierFlights?$expand=flightbooking1", null, null, false, function() {
 		}, function(oResult) {
 			equal(oResult.message, "HTTP request failed", "HTTP request failed");
 			equal(oResult.response.statusCode, 404, "status code = 404");
 			equal(JSON.parse(oResult.response.body).error.message.value, "Resource not found for the segment 'flightbooking1'", "Resource not found for the segment 'flightbooking1'");
-		});	
-		oMockServer.destroy();		
+		});
+		oMockServer.destroy();
 });
-	
+
 asyncTest("test ODataModel update", function() {
 	sURI = "/myservice/";
 	var oMockServer = new sap.ui.core.util.MockServer({
@@ -3001,8 +3001,8 @@ asyncTest("test ODataModel update", function() {
 		ok(false, "Read failed");
 	});
 
-});		
-			
+});
+
 	asyncTest("test oDataModel _loadData JSON", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -3012,7 +3012,7 @@ asyncTest("test ODataModel update", function() {
 		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
-		
+
 		var oModel = initModel(sURI, true);
 		oModel._loadData("LeaveHeaderCollection", null, function() {
 			equal(oModel.getProperty("/LeaveHeaderCollection(employeeid='JSMITH',type='Vacation')/type"), "Vacation",
@@ -3028,7 +3028,7 @@ asyncTest("test ODataModel update", function() {
 					iKeys++;
 				});
 				equal(iKeys, 3);
-				start(); // resume normal testing			
+				start(); // resume normal testing
 			});
 		});
 	});
@@ -3106,8 +3106,8 @@ asyncTest("test ODataModel update", function() {
 		oBinding.getContexts();
 	});
 
-	
-	
+
+
 	function countProperties(obj) {
 		return jQuery.map(obj, function(i, o) {
 			return o;

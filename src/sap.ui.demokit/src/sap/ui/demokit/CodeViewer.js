@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new CodeViewer.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -26,60 +26,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CodeViewer = Control.extend("sap.ui.demokit.CodeViewer", /** @lends sap.ui.demokit.CodeViewer.prototype */ { metadata : {
-	
+
 		library : "sap.ui.demokit",
 		properties : {
-	
+
 			/**
 			 * The source code to display.
 			 */
 			source : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * The CSS width property
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * The CSS height property
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Whether the code can be edited or not
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : false},
-	
+
 			/**
 			 * Whether the code viewer should be visible
 			 */
 			visible : {type : "boolean", group : "Misc", defaultValue : true}
 		},
 		events : {
-	
+
 			/**
 			 * Called when the mouse button is clicked over the non-editable(!) control
 			 */
 			press : {},
-	
+
 			/**
 			 * Called when the editor is active and should be saved
 			 */
 			save : {}
 		}
 	}});
-	
+
 	/*global prettyPrint *///declare unusual global vars for JSLint/SAPUI5 validation
-	
+
 	CodeViewer.load = function() {
 		if ( !window.prettyPrint ) {
 			jQuery.sap.require("sap.ui.demokit.js.google-code-prettify.prettify");
 		}
 	};
-	
+
 	CodeViewer.load();
-	
-	/**  
+
+	/**
 	 * Adapts size settings of the rendered HTML in special situations
 	 */
 	CodeViewer.prototype.onAfterRendering = function () {
@@ -90,10 +90,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 			oDomRef.className = "sapUiCodeViewer";
 		}
 	};
-	
+
 	/**
 	 * Function is called when code viewer is clicked.
-	 * 
+	 *
 	 * @param oBrowserEvent the forwarded sap.ui.core.BrowserEvent
 	 * @private
 	 */
@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 			e.stopPropagation();
 		}
 	};
-	
+
 	/**
 	 * Handles the sapescape event... triggers return to non-editable mode (revert)
 	 * @param {sap.ui.core.BroserEvent} oBrowserEvent the forwarded browser event
@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 			this.setEditable(false);
 		}
 	};
-	
+
 	CodeViewer.prototype.onkeydown = function(e) {
 		if ( this.getEditable() &&
 			 ((e.keyCode == jQuery.sap.KeyCodes.S && e.ctrlKey && !e.shiftKey && !e.altKey) ||
@@ -126,9 +126,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 			this.fireSave();
 		}
 	};
-	
+
 	CodeViewer.prototype.getCurrentSource = (function() {
-	
+
 		var SIMPLE_HTML_REGEXP = /<(\/?[^ >]+)[^>]*>|(&[^;]+;)/g,
 			TAG_REPLACEMENTS = {
 				"/p" : "\n",
@@ -141,20 +141,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 				"&gt;" : ">",
 				"&amp;" : "&"
 			};
-		
+
 		return function() {
 			var code = '',
 				oDomRef = this.getDomRef();
-			
+
 			if ( oDomRef ) {
-				// retrieve the edited source via innerHTML as this seems to be the only way to detect line breaks 
+				// retrieve the edited source via innerHTML as this seems to be the only way to detect line breaks
 				code = oDomRef.innerHTML;
 				//var code = oDomRef.textContent;
 				//if (!code) {
 				//	// IE version
 				//	code = oDomRef.innerText;
 				//}
-	
+
 				// convert some well known tags and entities, remove all others
 				code = code.replace(SIMPLE_HTML_REGEXP, function(m,m1,m2) {
 					if ( m1 ) {
@@ -174,17 +174,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 			return code;
 		};
 	})();
-	
-	
-	
+
+
+
 	CodeViewer.showScript = function(sId) {
 		var oDomRef = document.getElementById(sId);
 		var sSource = oDomRef.innerHTML;
-	
+
 		if ( !oDomRef || !sSource ) {
 			return;
 		}
-		
+
 		var oClose = new Button({text:"Close", press: function() { oDialog.close();}});
 		var oDialog = new Dialog({
 			applyContentPadding : false,
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 		oDialog.center();
 		oDialog.open();
 	};
-	
+
 
 	return CodeViewer;
 

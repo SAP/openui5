@@ -30,6 +30,7 @@
 		"no-obj-calls": 2,
 		"no-regex-spaces": 2,
 		"no-sparse-arrays": 2,
+		"no-trailing-spaces": 2,
 		"no-unreachable": 2,
 		"use-isnan": 2,
 		"valid-jsdoc": [1, {

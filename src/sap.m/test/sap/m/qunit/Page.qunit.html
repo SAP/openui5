@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested class: sap.m.Page
   Author: d046011
 -->
@@ -10,7 +10,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.Page</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -28,7 +28,7 @@
 				height: 2000px;
 			}
 		</style>
-		
+
 		<script>
 
 			var oHtml = new sap.ui.core.HTML({
@@ -50,7 +50,7 @@
 			}).placeAt("content");
 			page.setSubHeader(new sap.m.Bar("mySubHeader",{contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "search for...", width: "100%"})]}));
 			page.setFooter(new sap.m.Bar("myFooter", { contentMiddle: [ new sap.m.Button('FooterBtn', {text: "Footer Btn"})]}));
-			
+
 			var page2 = new sap.m.Page("mySecondPage", {
 				title : "Test 2",
 				showNavButton : false,
@@ -99,7 +99,7 @@
 				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgSolid"), "page content should have a solid background color");
 				page.setBackgroundDesign("Transparent");
 				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgTransparent"), "page content should be transparent");
-				
+
 				var transparentCssString = (sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer) ? "transparent" : "rgba(0, 0, 0, 0)"
 				equal(jQuery.sap.byId("myFirstPage-cont").css("background-color"), transparentCssString, "page content should be transparent");
 			});
@@ -125,7 +125,7 @@
 				equal($p3c.height(), jQuery(window).height(), "page 3 content height should cover the whole screen");
 				equal($p3c.width(), jQuery(window).width(), "page 3 content width should cover the whole screen");
 			});
-			
+
 			test("render once only", function() { // regression test for issue 1570014242
 				var iRenderCounter = 0;
 				var oDelegate = {
@@ -137,17 +137,17 @@
 				var oRenderOncePage = new sap.m.Page();
 				oRenderOncePage.addDelegate(oDelegate);
 				equal(iRenderCounter, 0, "page should not be rendered directly after instantiation");
-				
+
 				oRenderOncePage.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				equal(iRenderCounter, 1, "page should be rendered only once");
-				
+
 				oRenderOncePage.rerender();
 				equal(iRenderCounter, 2, "page should be rendered twice after another forced rerendering");
-				
+
 				oRenderOncePage.destroy();
 			});
-			
+
 			test("render once only with combinatorics", function() { // regression test for issue 1570014242
 				// the mechanism that avoids double rendering is different depending on whether there is a title/navbutton or not, hence this test
 				var iRenderCounter = 0;
@@ -160,14 +160,14 @@
 				var oRenderOncePage = new sap.m.Page({showNavButton: true, title: "Test Page"});
 				oRenderOncePage.addDelegate(oDelegate);
 				equal(iRenderCounter, 0, "page should not be rendered directly after instantiation");
-				
+
 				oRenderOncePage.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				equal(iRenderCounter, 1, "page should be rendered only once");
-				
+
 				oRenderOncePage.rerender();
 				equal(iRenderCounter, 2, "page should be rendered twice after another forced rerendering");
-				
+
 				oRenderOncePage.destroy();
 			});
 
@@ -363,16 +363,16 @@
 		width: 2000px;
 		height: 2000px;
 	}
-	
+
 	html,
 	#content,
 	#p3content {
 		width: 100%;
 		height: 100%;
 	}
-	
+
 	</style>
-	
+
 	</head>
 	<body id="body" class="sapUiBody">
 	<h1 id="qunit-header">qUnit Page for sap.m.Page</h1>

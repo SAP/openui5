@@ -6,8 +6,8 @@ sap.ui.core.UIComponent.extend("sap.ui.unified.sample.CalendarSpecialDaysLegend.
 		rootView : "sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend",
 		dependencies : {
 			libs : [
-				"sap.ui.unified", 
-				"sap.ui.layout", 
+				"sap.ui.unified",
+				"sap.ui.layout",
 				"sap.m"
 			]
 		},

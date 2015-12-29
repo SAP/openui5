@@ -8,14 +8,14 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 		"manifest": {
 
 			"name": "sap.ui.test.v2inline.Component",
-			
+
 			"sap.app": {
 				"id": "sap.ui.test.v2inline",
 				"applicationVersion": {
 					"version": "1.0.0"
 				}
 			},
-			
+
 			"sap.ui5": {
 
 				"resources": {
@@ -40,7 +40,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 						"sap.ui.commons": {
 							"minVersion": "1.22.0"
 						}
-					}, 
+					},
 					"components": {
 						"sap.ui.test.other": {
 							"optional": true,
@@ -48,7 +48,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 						}
 					}
 				},
-				
+
 				"models": {
 					"i18n": {
 						"type": "sap.ui.model.resource.ResourceModel",
@@ -63,9 +63,9 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 						}
 					}
 				},
-				
+
 				"rootView": "sap.ui.test.view.Main",
-				
+
 				"config": {
 					"any1": {
 						"entry": "configuration"
@@ -79,7 +79,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 						"anyarray": [1, 2, 3]
 					}
 				},
-				
+
 				"routing": {
 					"config": {
 						"viewType" : "XML",
@@ -97,7 +97,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 						}
 					]
 				},
-				
+
 				"extends": {
 					"extensions": {
 						"sap.ui.viewReplacements": {
@@ -126,11 +126,11 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2inline.Component", {
 						}
 					}
 				}
-			
+
 			}
 
 		},
-		
+
 		"custom.entry": {
 			"key1": "value1",
 			"key2": "value2",

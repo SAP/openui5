@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.core.LocaleData
   Author: d040216
 -->
@@ -64,7 +64,7 @@
 					"de_XX",
 					"xx_XX"
 	];
-	
+
 	var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$ US", "$US", "$", "US$", "US$", "$",
 		"US$", "US$", "$", "$", "$", "US$", "US$", "USD", "US$", "US$", "$", "US$", "$", "USD"];
 
@@ -80,7 +80,7 @@
 	});
 
 	/*
-	"getOrientation", "getLanguages", "getScripts", "getTerritories", "getMonths", "getDays", "getQuarters", "getDayPeriods", 
+	"getOrientation", "getLanguages", "getScripts", "getTerritories", "getMonths", "getDays", "getQuarters", "getDayPeriods",
 	"getDatePattern", "getTimePattern", "getDateTimePattern", "getNumberSymbol"
 	*/
 	function genericTests(oLocaleData, sLocale) {
@@ -210,13 +210,13 @@
 		equal(oLocaleData.getEra("abbreviated"), "AD", "Abbreviated Era Name");
 		equal(oLocaleData.getEra("abbreviated", 0), "BC", "Abbreviated Era Name");
 	}
-	
+
 	function customTests_en_ZA(oLocaleData) {
 		equal(oLocaleData.getDatePattern("medium"), "dd MMM y", "date pattern \"medium\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
 	}
-	
+
 	function customTests_en_US(oLocaleData) {
 		equal(oLocaleData.getDayPeriods("abbreviated")[0], "AM", "day periods \"abbreviated\"");
 	}
@@ -282,13 +282,13 @@
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
 	}
-	
+
 	function customTests_pt_BR(oLocaleData) {
 		equal(oLocaleData.getFirstDayOfWeek(), 0, "first day of week");
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
-	
+
 	function customTests_pt_PT(oLocaleData) {
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
 		equal(oLocaleData.getWeekendStart(), 6, "weekend start");

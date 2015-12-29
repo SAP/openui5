@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested classes: sap.ui.core.mvc.XMLView + sap.ui.core.mvc.Controller
   Author: d046011,d049080
 -->
@@ -13,7 +13,7 @@ sap.ui.core.mvc.Controller</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons"
 	data-sap-ui-xx-bindingSyntax="complex"
@@ -41,41 +41,41 @@ sap.ui.core.mvc.Controller</title>
 		viewClassName : "sap.ui.core.mvc.XMLView",
 		idsToBeChecked : ["myPanel", "Button1", "localTableId"]
 	};
-	
+
 	// run the full testset for a view loaded from a file
-	testsuite(oConfig, "XMLView creation loading from file:", function() { 
-		return sap.ui.xmlview("example.mvc.test"); 
+	testsuite(oConfig, "XMLView creation loading from file:", function() {
+		return sap.ui.xmlview("example.mvc.test");
 	});
-  
+
 	// run the full testset for a view created from a string
 	testsuite(oConfig, "XMLView creation via XML string:", function() {
 		// load the XML without parsing
 		var xml = jQuery.sap.syncGetText(jQuery.sap.getModulePath("example.mvc.test", ".view.xml"), null, undefined); // '<core:View controllerName="example.mvc.test" xmlns:phx="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">	<table id="localTableId" border="5">		<tr><td>Hello</td><td>Hello</td><td>Hello</td></tr>		<tr><td>Hello</td><td>Hello</td><td><phx:Button id="Button1" text="HEY!" press="doIt"></phx:Button></td></tr>	</table>	plain text node as direct child of view	<phx:Panel>		<phx:Button id="Button2" text="HEY default aggregation!" tooltip="hello tooltip" press="doIt"></phx:Button>		<div style="border:1px solid red;background-color:yellow;width:200px;height:10px;">text node in nested HTML in default aggregation</div>		<phx:content>			<div style="border:1px solid red;background-color:blue;width:200px;height:10px;">text node in HTML in named aggregation</div>			<phx:Button id="Button3" text="HEY named aggregation!" press="doIt"></phx:Button>			<mvc:JSONView id="MyJSONView" viewName="example.mvc.test2"></mvc:JSONView>			<mvc:JSView id="MyJSView" viewName="example.mvc.test2"></mvc:JSView>		</phx:content>	</phx:Panel></core:View>';
-		// let the XMLView parse it 			
+		// let the XMLView parse it
 		return sap.ui.xmlview({viewContent:xml});
 	});
-	
+
 	// run the full testset for a view created via the generic factory method
 	testsuite(oConfig, "XMLView creation using generic view factory:", function() {
 		return sap.ui.view({type:sap.ui.core.mvc.ViewType.XML,viewName:"example.mvc.test",viewData:{test:"testdata"}});
 	}, true);
 
 	module("Additional tests:");
-	
+
 	// encoding
 	test("Encoding", function() {
-		
+
 		var xmlWithHTMLFragment = [
 		    '<core:View xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">',
    			'  <div title="&quot;&gt;&lt;span id=&quot;broken1&quot;&gt;broken1&lt;/span&gt;&lt;x y=&quot;">',
    			'    <span id="valid1"></span>',
    			'    <span id="valid2">',
-   			'      &lt;span id=&quot;broken2&quot;&gt;broken2&lt;/span&gt;', 
+   			'      &lt;span id=&quot;broken2&quot;&gt;broken2&lt;/span&gt;',
  			'    </span>',
    			'  </div>',
    			'</core:View>'
    		].join('');
-		
+
 		var view = sap.ui.xmlview("view", {viewContent:xmlWithHTMLFragment});
 		view.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -86,9 +86,9 @@ sap.ui.core.mvc.Controller</title>
 		ok(jQuery("#broken2").length == 0, "DOM must not contain broken2 element.");
 
 	});
-	
+
 	test("DataBinding", function() {
-		
+
 		var oModel1 = new sap.ui.model.json.JSONModel({
 			booleanValue : true,
 			integerValue: 8015,
@@ -104,13 +104,13 @@ sap.ui.core.mvc.Controller</title>
 			integerValue: 4711,
 			stringValue : '1txeT'
 		});
-		
+
 		var xmlWithBindings = [
       		'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
       		'  <test:TestButton id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
       		'</core:View>'
       	].join('');
-		
+
 		var xmlWithNamedBindings = [
    			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
    			'  <test:TestButton id="btn" enabled="{model2>/booleanValue}" text="{model1>/stringValue}" width="{/integerValue}" />',
@@ -143,14 +143,14 @@ sap.ui.core.mvc.Controller</title>
 		equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
 		equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
 		equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
-		
+
 		var oViewWithNamedBindings = sap.ui.xmlview({viewContent:xmlWithNamedBindings});
 		oViewWithNamedBindings.setModel(oModel1, "model1");
 		oViewWithNamedBindings.setModel(oModel2, "model2");
 		equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
 		equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
 		equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
-		
+
 		var oViewWithElementBinding = sap.ui.xmlview({viewContent:xmlWithElementBinding});
 		oViewWithBindings1.setModel(oModel1);
 		equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
@@ -168,17 +168,17 @@ sap.ui.core.mvc.Controller</title>
 	});
 
 	test("Custom Data", function() {
-		
+
 		var oModel = new sap.ui.model.json.JSONModel({
 			value : 'myValue'
 		});
-		
+
 		var xmlWithBindings = [
       		'<core:View controllerName="example.mvc.test" xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">',
       		'  <test:TestButton id="btn" app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}" />',
       		'</core:View>'
       	].join('');
-		
+
 		var oView = sap.ui.xmlview({viewContent:xmlWithBindings});
 		oView.setModel(oModel);
 		equal(oView.byId("btn").data("myKey1"), "myValue1", "Check CustomData 'myKey1' of button 'btn'");

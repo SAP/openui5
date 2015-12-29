@@ -16,39 +16,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 
 	/**
 	 * Name of the package in which the currently analyzed entity resides.
-	 * 
+	 *
 	 * Used to resolve relative dependencies in sap.ui.define calls.
-	 * 
+	 *
 	 * @type {string}
 	 * @private
 	 */
 	var currentPackage;
-	
+
 	/**
 	 * List of collected info objects. A JS file might contain multiple class and/or type definitions.
-	 * 
+	 *
 	 * @type {object[]}
 	 * @private
 	 */
 	var aInfos;
-	
+
 	/**
 	 * Cumulated scope information for the currently analyzed module.
-	 * 
+	 *
 	 * This is not the same as the Javascript scope of any of the functions in the module but it is a projection
 	 * of all scopes. It is only maintained to properly recognize sa.ui.base.DataType and some other core classes
 	 * with a specific meaning for the class / type analysis (e.g. jQuery).
 	 *
 	 * Keys in the map are names of local variables, values are their corresponding global name (if known).
-	 *  
+	 *
 	 * For a full fledged scope analysis, either the StaticAnalyzer needs to be migrated or an opensource
 	 * component like 'escope' could be integrated.
-	 * 
+	 *
 	 * @type {Map<string,string>}
 	 * @private
 	 */
 	var scope; // TODO implement scope properly using escope
-	
+
 	function getObjectName(node) {
 		if ( node.type === Syntax.MemberExpression ) {
 			var prefix = getObjectName(node.object);
@@ -61,15 +61,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 	}
 
 	function isSapUiDefineCall(node) {
-		return ( 
+		return (
 			node.type == Syntax.CallExpression
 			 && node.callee.type == Syntax.MemberExpression
 			 && /* TODO currentScope.getContext(). */ getObjectName(node.callee) == "sap.ui.define"
 		);
 	}
-	
+
 	function isExtendCall(node) {
-		return ( 
+		return (
 			node.type == Syntax.CallExpression
 			 && node.callee.type == Syntax.MemberExpression
 			 && node.callee.property.type == Syntax.Identifier
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			 && ASTUtils.unlend(node.arguments[1]).type == Syntax.ObjectExpression
 		);
 	}
-	
+
 	function resolveRelativeDependency(dep) {
 		return /^\.\//.test(dep) ? currentPackage + dep.slice(1) : dep;
 	}
@@ -93,11 +93,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 	var error = jQuery.sap.log.error;
 	var warning = jQuery.sap.log.warning;
 	var verbose = jQuery.sap.log.debug;
-	
+
 	function collectClassInfo(extendCall, classDoclet) {
 
 		var baseType = getObjectName(extendCall.callee.object);
-		
+
 		var oClassInfo = {
 			metatype : 'control',
 			name : extendCall.arguments[0].value,
@@ -111,11 +111,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			associations : {},
 			events : {},
 			methods : {}
-		};		
-		
+		};
+
 		function each(node, defaultKey, callback) {
 			var map,n,settings,doclet;
-			
+
 			map = node && createPropertyMap(node.value);
 			if ( map ) {
 				for (n in map ) {
@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 							error("no valid metadata for " + n + " (AST type '" + map[n].value.type + "')");
 							continue;
 						}
-						
+
 						callback(n, settings, doclet, map[n]);
 					}
 				}
@@ -139,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			warning("class metadata exists but can't be analyzed. It is not of type 'ObjectExpression', but a '" + classInfoMap.metadata.value.type + "'.");
 			return null;
 		}
-		
+
 		var metadata = classInfoMap && classInfoMap.metadata && createPropertyMap(classInfoMap.metadata.value);
 		if ( metadata ) {
 
@@ -165,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			oClassInfo.defaultAggregation = (metadata.defaultAggregation && metadata.defaultAggregation.value.value) || undefined;
 
 			each(metadata.aggregations, "type", function(n, settings, doclet) {
-				
+
 				oClassInfo.aggregations[n] = {
 					name: n,
 					doc : doclet && doclet.description,
@@ -219,12 +219,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			//FIXME: add methods information as well; this seems not to be parsed;
 
 		}
-		
+
 		return oClassInfo;
 	}
-	
+
 	function collectEnumInfo(node) {
-		
+
 		var doclet = Doclet.get(node);
 		var name = /* TODO currentScope.getContext(). */ getObjectName(node.expression.left);
 
@@ -236,7 +236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				deprecation : false,
 				visibility : 'public'
 			};
-			
+
 			oTypeDoc.name = name;
 			if ( doclet ) {
 				oTypeDoc.doc = doclet.description;
@@ -246,7 +246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				// TODO oTypeDoc["final"] = doclet.hasTatypeDocumentation.hasTag("final") ? new SimpleType.Final() : null);
 				// TODO simpleType.setDefaultValue(typeDocumentation.getTagContent("defaultvalue"));
 			}
-			
+
 			var properties = node.expression.right.properties || [];
 			oTypeDoc.values = {};
 			for (var i = 0; i < properties.length; i++) {
@@ -281,17 +281,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				}
 
 				oTypeDoc.values[valueInfo.name] = valueInfo;
-				
+
 			}
-			
+
 			aInfos.push(oTypeDoc);
 
 		}
-		
+
 	}
 
 	function collectRegExTypeInfo(node) {
-		
+
 		var doclet = Doclet.get(node);
 		var name = node.expression.right.arguments[0].value;
 		var settings = ASTUtils.createPropertyMap(node.expression.right.arguments[1]);
@@ -300,7 +300,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			 && node.expression.right.arguments[2].type == Syntax.CallExpression
 			 && node.expression.right.arguments[2].callee.type == Syntax.MemberExpression
 			 && /* TODO currentScope.getContext().*/ getObjectName(node.expression.right.arguments[2].callee) == "sap.ui.base.DataType.getType"
-			 && node.expression.right.arguments[2].arguments.length > 0 
+			 && node.expression.right.arguments[2].arguments.length > 0
 			 && node.expression.right.arguments[2].arguments[0].type == Syntax.Literal ) {
 			baseType = node.expression.right.arguments[2].arguments[0].value;
 		}
@@ -328,18 +328,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			if ( defaultValue ) {
 			  oTypeDoc.defaultValue = defaultValue.value.value; /* TODO (convertValue(defaultValue, null, currentScope)); */
 			}
-			
+
 			var isValid = settings.isValid;
-			if ( isValid 
-				 && isValid.value.type == Syntax.FunctionExpression 
-				 && isValid.value.body 
-				 && isValid.value.body.body.length > 0 
+			if ( isValid
+				 && isValid.value.type == Syntax.FunctionExpression
+				 && isValid.value.body
+				 && isValid.value.body.body.length > 0
 				 && isValid.value.body.body[0].type == Syntax.ReturnStatement
 				 && isValid.value.body.body[0].argument.type == Syntax.CallExpression
 				 && isValid.value.body.body[0].argument.callee.type == Syntax.MemberExpression
-				 && isValid.value.body.body[0].argument.callee.object.type == Syntax.Literal 
+				 && isValid.value.body.body[0].argument.callee.object.type == Syntax.Literal
 				 && isValid.value.body.body[0].argument.callee.object.value instanceof RegExp ) {
-			
+
 				var pattern = isValid.value.body.body[0].argument.callee.object.value.source;
 				if ( /^\^\(.*\)\$$/.test(pattern) ) {
 					pattern = pattern.slice(2, -2);
@@ -351,15 +351,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 
 			aInfos.push(oTypeDoc);
 		}
-		
+
 	}
 
 	var delegate = {
 
 		"ExpressionStatement": function(node) {
-			
+
 			if ( isSapUiDefineCall(node.expression) ) {
-	
+
 				var i = 0;
 				var dependencies,factory;
 				if ( i < node.expression.arguments.length && node.expression.arguments[i].type === Syntax.Literal ) {
@@ -375,7 +375,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 	//			if ( i < node.expression.arguments.length && node.expression.arguments[i].type === Syntax.FunctionExpression ) {
 	//				export_ = node.expression.arguments[i++];
 	//			}
-	
+
 				if ( dependencies && factory && factory.params ) {
 					for (var j = 0; j < dependencies.length; j++) {
 						var dep = dependencies[j].type === Syntax.Literal ? resolveRelativeDependency(dependencies[j].value) : null;
@@ -388,18 +388,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 					}
 				}
 			}
-			
+
 			// ---- Something = { ... } ----
 			if ( node.expression.type == Syntax.AssignmentExpression
 				 && node.expression.right.type == Syntax.ObjectExpression
 				 && node.expression.left.type == Syntax.MemberExpression ) {
-	
+
 				collectEnumInfo(node);
-				
+
 			}
-	
+
 			// ---- sap.ui.base.DataType.createType ----
-	
+
 			if ( node.expression.type === Syntax.AssignmentExpression
 				 && node.expression.right.type === Syntax.CallExpression
 				 && node.expression.right.callee.type === Syntax.MemberExpression
@@ -412,21 +412,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 
 				collectRegExTypeInfo(node);
 			}
-	
+
 			// ---- Something.extend() ----
-	
+
 			if ( isExtendCall(node.expression) ) {
-	
+
 				var doclet = Doclet.get(node) || Doclet.get(node.expression);
 				var oClassInfo = collectClassInfo(node.expression, doclet);
 				if ( oClassInfo ) {
 					aInfos.push(oClassInfo);
 				}
-				
+
 			}
 
 		},
-		
+
 		"VariableDeclaration" : function(node) {
 
 			if ( node.declarations.length == 1
@@ -440,11 +440,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				}
 
 			}
-			
+
 		}
 
 	};
-	
+
 	function analyze(oData, sEntityName, sModuleName) {
 
 		currentPackage = sModuleName.split('/').slice(0,-1).join('/');
@@ -453,7 +453,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 
 		var ast = esprima.parse(oData, {comment:true, attachComment: true});
 		ASTUtils.visit(ast, delegate);
-		
+
 		for (var i = 0; i < aInfos.length; i++) {
 			if ( aInfos[i].name === sEntityName ) {
 				return aInfos[i];

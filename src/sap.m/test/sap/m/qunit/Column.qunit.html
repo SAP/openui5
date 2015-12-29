@@ -179,7 +179,7 @@
 		throws(function(){ fnTestCase("5pxa")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
 		throws(function(){ fnTestCase("-5px")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
 		throws(function(){ fnTestCase("5%")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
-		
+
 		//valid ones
 		fnTestCase("8px");
 		fnTestCase("100000em");
@@ -351,7 +351,7 @@
 				//Assert
 				strictEqual(args.sId, "media", "the event type is media");
 				strictEqual(sut, this, "the control who fires is column");
-			}, 
+			},
 			sut
 		);
 
@@ -430,7 +430,7 @@
 		//Cleanup
 		label.destroy();
 	});
-	
+
 	test("Should convert units correctly", function() {
 
 		var fnTestCase = function(width, px, screen) {
@@ -449,12 +449,12 @@
 		fnTestCase("64em", "1024px", "desktop");
 		fnTestCase("desktop", "1024px", "desktop");
 		fnTestCase("Desktop", "1024px", "desktop");
-		
+
 		fnTestCase("63rem", 63 * 16 + "px", "");
 		fnTestCase("63em", 63 * 16 + "px", "");
-		
+
 		fnTestCase("63px", "63px", "");
-		
+
 	});
 
 </script>

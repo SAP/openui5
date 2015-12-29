@@ -6,15 +6,15 @@ sap.ui.controller("NavigationWithoutMasterDetailPattern.view.View2", {
 * @memberOf view.Detail
 */
 	onInit: function() {
-		
+
 		this.getRouter().attachRouteMatched(function(oEvent) {
 			if (oEvent.getParameter("name") === "view2") {
 				var text = this.getView().byId("text"),
 				queryAsString = "",
 				oArguments = oEvent.getParameter("arguments"),
 				query = oArguments.query;
-			
-				
+
+
 			if(query) {
 				queryAsString += ". Retrieved additional query data:";
 				for ( var key in query) {
@@ -23,7 +23,7 @@ sap.ui.controller("NavigationWithoutMasterDetailPattern.view.View2", {
 					}
 				}
 			}
-			
+
 			text.setText("view2 coming from " + oArguments.from + queryAsString);
 			}
 		}, this);

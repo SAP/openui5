@@ -6,7 +6,7 @@ sap.ui.core.UIComponent.extend("sap.m.sample.SegmentedButtonLI.Component", {
 		rootView : "sap.m.sample.SegmentedButtonLI.List",
 		dependencies : {
 			libs : [
-				"sap.m"				
+				"sap.m"
 			]
 		},
 		config : {

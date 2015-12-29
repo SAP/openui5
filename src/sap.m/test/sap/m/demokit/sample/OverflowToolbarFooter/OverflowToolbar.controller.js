@@ -3,7 +3,7 @@ sap.ui.controller("sap.m.sample.OverflowToolbarFooter.OverflowToolbar", {
 	onInit : function (evt) {
 		var oModel = new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 		this.getView().setModel(oModel);
-		
+
 		this.bGrouped = false;
 		this.bDescending = false;
 		this.sSearchQuery = 0;
@@ -29,10 +29,10 @@ sap.ui.controller("sap.m.sample.OverflowToolbarFooter.OverflowToolbar", {
 		this.bDescending = false;
 		this.sSearchQuery = 0;
 		this.byId("maxPrice").setValue("");
-		
+
 		this.fnApplyFiltersAndOrdering();
 	},
-	
+
 	onGroup: function (oEvent){
 		this.bGrouped = !this.bGrouped;
 		this.fnApplyFiltersAndOrdering();
@@ -42,7 +42,7 @@ sap.ui.controller("sap.m.sample.OverflowToolbarFooter.OverflowToolbar", {
 		this.bDescending = !this.bDescending;
 		this.fnApplyFiltersAndOrdering();
 	},
-	
+
 	onFilter: function (oEvent) {
 		this.sSearchQuery = oEvent.getSource().getValue();
 		this.fnApplyFiltersAndOrdering();
@@ -51,7 +51,7 @@ sap.ui.controller("sap.m.sample.OverflowToolbarFooter.OverflowToolbar", {
 	fnApplyFiltersAndOrdering: function (oEvent){
 		var aFilters = [],
 			aSorters = [];
-		
+
 		if (this.bGrouped) {
 			aSorters.push(new sap.ui.model.Sorter("SupplierName", this.bDescending, this._fnGroup));
 		} else {

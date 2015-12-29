@@ -911,14 +911,14 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeClasses();
 			rm.write("><div");
 			rm.addClass("sapUiTableCell");
-			
+
 			rm.writeClasses();
-			
+
 			if (oTable.getRowHeight() && oTable.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
 				rm.addStyle("max-height", oTable.getRowHeight() + "px");
 			}
 			rm.writeStyles();
-			
+
 			rm.write(">");
 			this.renderTableCellControl(rm, oTable, oCell, iCellIndex);
 			rm.write("</div></td>");

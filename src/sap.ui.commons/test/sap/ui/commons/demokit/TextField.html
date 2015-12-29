@@ -32,7 +32,7 @@ var oInput2 = new sap.ui.commons.TextField({
 	tooltip : 'Change the Text',
 	width : '10em',
 	change : function(){
-		oInput2.setValueState( 
+		oInput2.setValueState(
 			oInput2.getValue() != 'Hello World!' ? sap.ui.core.ValueState.Error : sap.ui.core.ValueState.None
 		);
 	}
@@ -83,7 +83,7 @@ var oTextView = new sap.ui.commons.TextView("TextView",{ text: oInput3.getValue(
 		<p>
 		The second example shows how to set a TextField to state <code>error</code> if the text is not equal "Hello World!".
 		Therefore, the text is checked on the <code>change</code> event, and the <code>valueState</code> property is set accordingly.
-		Note that the visualization of the different states depends on the used theme.  
+		Note that the visualization of the different states depends on the used theme.
 		</p>
 		<br>
 		<div code-sample="sample2" script="HelloWorld"></div>
@@ -100,6 +100,6 @@ var oTextView = new sap.ui.commons.TextView("TextView",{ text: oInput3.getValue(
 		<p>
 		<h2>API Documentation</h2>
 		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.TextField.html" >API documentation</a>
-		</p>  
+		</p>
 	</body>
 </html>

@@ -28,7 +28,7 @@ sap.ui.demo.tdg.util.Controller.extend("sap.ui.demo.tdg.view.Master", {
 	onRouteMatched : function(oEvent) {
 
 		//Load the detail view in desktop
-		this.getRouter().myNavToWithoutHash({ 
+		this.getRouter().myNavToWithoutHash({
 			currentView : this.getView(),
 			targetViewName : "sap.ui.demo.tdg.view.Detail",
 			targetViewType : "XML"
@@ -129,7 +129,7 @@ sap.ui.demo.tdg.util.Controller.extend("sap.ui.demo.tdg.view.Master", {
 	},
 
 	onAddProduct : function() {
-		this.getRouter().myNavToWithoutHash({ 
+		this.getRouter().myNavToWithoutHash({
 			currentView : this.getView(),
 			targetViewName : "sap.ui.demo.tdg.view.AddProduct",
 			targetViewType : "XML",

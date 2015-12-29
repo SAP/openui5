@@ -14,7 +14,7 @@ sap.ui.core.UIComponent.extend("samples.components.shell.Component", {
 		includes : [ "css/shell.css" ],  // css, javascript files that should be used in the component
 		dependencies : { // external dependencies
 			libs : [ ],
-			components : ["samples.components.products.overview", "samples.components.products.details", "samples.components.products.supplier"], 
+			components : ["samples.components.products.overview", "samples.components.products.details", "samples.components.products.supplier"],
 			ui5version : "1.13.0"
 		},
 		publicMethods: [ "render" ],
@@ -33,16 +33,16 @@ sap.ui.core.UIComponent.extend("samples.components.shell.Component", {
 samples.components.shell.Component.prototype.createContent = function() {
 	this.firstTime = true;
 	// model to share beetween the child components
-	
+
 	var sServiceUrl = "http://epmdemo.corp/sap/bc/sepm_odata_srv/purchase";
-	
+
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 	var oMockServer = new sap.ui.core.util.MockServer({
 		rootUri: sServiceUrl+"/"
 	});
-	
+
 	var path = jQuery.sap.getModulePath("samples.components.shell") + "/../../epmdata/";
-	
+
 	oMockServer.simulate(path+"metadata.xml", path);
 	oMockServer.start();
 
@@ -70,7 +70,7 @@ samples.components.shell.Component.prototype.createContent = function() {
 		var sCompName = oContext.getProperty("component");
 		that.getShellContent(sKey, sCompName);
 	});
-	
+
 	return this.oShell;
 };
 
@@ -84,7 +84,7 @@ sap.ui.core.UIComponent.prototype.onBeforeRendering = function() {
 		this.masterComponent = sap.ui.component({
 			name : sCompName,
 			id : this.createId("comp_" + sKey),
-			settings: { 
+			settings: {
 				model: this.oModel
 			}
 		});
@@ -125,9 +125,9 @@ samples.components.shell.Component.prototype.getShellContent = function(sKey, sC
 			oComp.setEventBusSubscription(this.oEventBusPub);
 			// Pass the selection from master to the other
 			var bus = sap.ui.getCore().getEventBus();
-			/* the publishing is also done in the rowSelect method of the table within the master component. It needs to be 
+			/* the publishing is also done in the rowSelect method of the table within the master component. It needs to be
 			 done here, initially, despite of this. The reason lies in the order of events within this application.
-			 The first time a row in the products table is selected, the other child components have most probably not been instantiated, yet, 
+			 The first time a row in the products table is selected, the other child components have most probably not been instantiated, yet,
 			 and could hence not have registered to the event bus channel, either. */
 			bus.publish(this.oEventBusPub.channel, this.oEventBusPub.event, {context: this.masterComponent.getSelection()});
 		}

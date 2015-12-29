@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new MessageBar.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -23,37 +23,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.4.0. 
+	 * @deprecated Since version 1.4.0.
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
 	 * @alias sap.ui.commons.MessageBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MessageBar = Control.extend("sap.ui.commons.MessageBar", /** @lends sap.ui.commons.MessageBar.prototype */ { metadata : {
-	
+
 		deprecated : true,
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Element ID upon which the 'message bar' is to be initially positioned.
 			 */
 			anchorID : {type : "string", group : "Appearance", defaultValue : ''},
-	
+
 			/**
 			 * Invisible controls are not rendered.
 			 */
 			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Maximum number of simultaneous messages being toasting-up in a row. Value '0' means this dynamic part of the feature is switched off.
 			 */
 			maxToasted : {type : "int", group : "Misc", defaultValue : 3},
-	
+
 			/**
 			 * Maximum number of messages being display in the List before a scrollbar appears. Value '0' means no limit.
 			 */
 			maxListed : {type : "int", group : "Misc", defaultValue : 7},
-	
+
 			/**
 			 * Type: sap.ui.core.Popup.Dock
 			 * SnapPoint of MessageBar over anchorId.
@@ -63,11 +63,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			anchorSnapPoint : {type : "string", group : "Misc", defaultValue : "begin top"}
 		}
 	}});
-	
-	
+
+
 	MessageBar.prototype.init = function(){
 		// Defining some private data...
-	
+
 		// Message queues, in priority order:
 		this.aErrors    = []; // Error queue.
 		this.aWarnings  = []; // Warning queue.
@@ -75,11 +75,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Toasting queue:
 		this.aToasts    = [];
 		this.maxToastsReached = false; // Disables Toast queue.
-	
+
 		// Popup(oContent, bModal, bShadow, bAutoClose) container initialization:
 		// - oModal: "true/false" : For blocking the background window.
 		this.oPopup   = new Popup(this, false, true, false);
-	
+
 		// The different related Controls.
 		this.oList    = null; // Created only if opened by user.
 		// MessageBar does not come without Toasts:
@@ -87,14 +87,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oToast   = new sap.ui.commons.MessageToast(id + "__Toast", {anchorId:id + "__sums"});
 		var that      = this; // For closure
 		this.oToast.attachNext(function(){that.checkForToast();});
-	
+
 		// Drag&Drop data. Only evaluated if needed:
 		this.snapPoint = null;
 		this.oHomePosition = null;
 		this.oDropPosition = null;
 		this.bToggleListBackAfterDrag = null;
 	};
-	
+
 	/**
 	 * Destroys this Control instance, called by Element#destroy()
 	 * @private
@@ -103,22 +103,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// If this happens during a Drag, forcing a Drop
 		// in order to remove any bound handlers:
 		this.onmouseup();
-	
+
 		// Closing and destroying everything:
 		this.close();
-	
+
 		this.oPopup.destroy();
 		this.oPopup = null;
-	
+
 		this.oToast.destroy();
 		this.oToast = null;
-	
+
 		if (this.oList) {
 			this.oList.destroy();
 			this.oList = null;
 		}
 	};
-	
+
 	// **************************************************
 	// * Drag&Drop // Copied from Dialog and ColumnDnDManager...
 	// **************************************************
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	/**
 	 * Initializes drag and drop capabilities.
 	 *
@@ -142,39 +142,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	//jQuery.sap.log.debug("MESSAGEBAR: ONMOUSEDOWN");
 		var oSource  = oEvent.target;
 		var jSource = jQuery(oSource);
-	
+
 		// If cursor does not say move, then do not bother.
 		if (jSource.css('cursor') != "move") {
 			return;
 		}
-	
+
 		this.sDragMode = "move";
-	
-	
+
+
 	  // MessageBar start position:
 		this.oMsgBarDragStartPosition       = this.$().rect();
 		this.oMsgBarDragStartPosition.right = Number(this.$().css('right').replace("px", ""));
-	
+
 		// Recording our home position, in order to return to it on demand:
 		if (!this.oHomePosition) {
 			this.oHomePosition = this.oMsgBarDragStartPosition;
 		}
-	
+
 		// To evaluate the extend of the drag:
 		this.mouseDragStartPositionX = oEvent.screenX;
 		this.mouseDragStartPositionY = oEvent.screenY;
-	
+
 		// Activating our move handler:
 		var jDocument = jQuery(window.document);
 		jDocument.bind("mousemove", jQuery.proxy(this.handleMove, this));
 		if (window.parent) {
 			jQuery(window.parent.document).bind("mousemove", jQuery.proxy(this.handleMove, this), true);
 		}
-	
+
 		// Fix for IE blue text selection while dragging:
 		jDocument.bind("selectstart",jQuery.proxy(this.ondragstart,this), true);
 	};
-	
+
 	/**
 	 * Handles the move event.
 	 * @param {DOMEvent} event The event raised by the browser.
@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this.sDragMode) {
 			return;
 		}
-	
+
 	  // First closing the MessageList, if visible.
 	  // That will allow the user to better see where he moves the MessageBar.
 	  // We will reopen it after the Drop.
@@ -196,13 +196,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.toggleList();
 		}
 	  }
-	
+
 	  // Moving our Control by the extent of the mouse-drag:
 		event = event || window.event;
 		var iTop   = this.oMsgBarDragStartPosition.top   + event.screenY - this.mouseDragStartPositionY;
 		var iLeft  = this.oMsgBarDragStartPosition.left  + event.screenX - this.mouseDragStartPositionX;
 		var iRight = this.oMsgBarDragStartPosition.right - event.screenX + this.mouseDragStartPositionX;
-	
+
 	  this.oPopup._$().css('top', iTop);
 		// Is the Bar to be positioned and dragged from its right-hand side???
 		if (this.snapPoint.indexOf("right") != -1) {
@@ -210,14 +210,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else {
 			this.oPopup._$().css('left', iLeft);
 		}
-	
+
 		// Saving the drop position for the next MessageList "open" event:
 		this.oDropPosition = {top: iTop, left: iLeft, right: iRight};
-	
+
 		event.cancelBubble = true;
 		return false;
 	};
-	
+
 	/**
 	 * Handle onmouseup event.
 	 * This does the cleanup after drag and move handling.
@@ -229,18 +229,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this.sDragMode) {
 			return;
 		}
-	
+
 		// If we have indeed moved, then rendering our "back-home" icon:
 	  if (this.oDropPosition) {
 		  this.addStyleClass("sapUiMsgBarMoved");
 	  }
-	
+
 	  // Reopening the List if was open before the move:
 	  if (this.bToggleListBackAfterDrag) {
 		this.toggleList();
 	  }
 	  this.bToggleListBackAfterDrag = null; // Re-initialized for the next D&D.
-	
+
 		// Removing our move handler:
 		var jDocument = jQuery(window.document);
 		jDocument.unbind("mousemove", jQuery.proxy(this.handleMove, this));
@@ -248,13 +248,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery(window.parent.document).unbind("mousemove", jQuery.proxy(this.handleMove, this));
 		}
 		jDocument.unbind("selectstart",jQuery.proxy(this.ondragstart,this));
-	
+
 		this.sDragMode = null;
-	
+
 		// Resume the toasting:
 		this.checkForToast();
 	};
-	
+
 	// **************************************************
 	// * Clicking
 	// **************************************************
@@ -269,12 +269,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	MessageBar.prototype.onclick = function (oEvent) {
 		var oSource = oEvent.target;
 		var jSource = jQuery(oSource);
-	
+
 		// If cursor does not say click, then do not bother.
 		if (jSource.css('cursor') != "pointer") {
 			return;
 		}
-	
+
 	  // Now, checking were the click came from:
 	  if (jSource.hasClass("sapUiMsgBarToggle")) {
 			this.toggleList();
@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		jQuery.sap.log.debug("Warning: MessageBar unsupported click on " + jSource.attr('className'));
 	  }
 	}
-	
+
 	// #############################################################################
 	// Internal Utilities
 	// #############################################################################
@@ -297,23 +297,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (this.maxToastsReached) {
 		return;
 	  }
-	
+
 	  // Making sure there is some queued messages:
 	  if (this.aToasts == null || this.aToasts.length == 0) {
 		return;
 	  }
-	
+
 	  // Making sure the feature is active:
 	  var maxToasted = this.getMaxToasted();
 	  if (maxToasted == 0) {
 		return;
 	  }
-	
+
 	  // Do not toast during Drag&Drop. Do not distract the user!
 	  if (this.sDragMode) {
 		return;
 	  }
-	
+
 	  var nextToast = null;
 	  var anchorId = "";
 	  if (this.aToasts.length > this.getMaxToasted()) {
@@ -335,11 +335,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// The Toast has to point towards the icon of the same priority, e.g. "id_ErrorImg":
 		anchorId = this.getId() + "__" + nextToast.getType() + "Img";
 	  }
-	
+
 	  // Triggering a Toast:
 	  this.oToast.toast(nextToast, anchorId);
 	};
-	
+
 	/**
 	 * This utility adds Toasts to the Toast Array, if not already
 	 * included within this Array.
@@ -364,7 +364,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		  }
 	  } // end supplied messages for-loop
 	};
-	
+
 	/**
 	 * This utility removes a Toast from the Array of messages still
 	 * to be toasted.
@@ -374,7 +374,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (!this.aToasts) {
 		return;
 	  }
-	
+
 	  // Checking if within the Toast queue:
 		for (var j = 0, len = this.aToasts.length; j < len; j++) {
 			if (this.aToasts[j].getId() == sId) {
@@ -383,7 +383,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * This utility removes one message, given its ID, from the possible
 	 * message queues (Error, Warning, Success...).
@@ -394,7 +394,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (!sId) {
 		return;
 	  }
-	
+
 	  // Checking if within the Error queue:
 		for (var j = 0, len = this.aErrors.length; j < len; j++) {
 			if (this.aErrors[j].getId() == sId) {
@@ -403,7 +403,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				return;
 			}
 		}
-	
+
 	  // Checking if within the Warning queue:
 		for (var j = 0, len = this.aWarnings.length; j < len; j++) {
 			if (this.aWarnings[j].getId() == sId) {
@@ -412,7 +412,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				return;
 			}
 		}
-	
+
 	  // Checking if within the Success queue:
 		for (var j = 0, len = this.aSuccesses.length; j < len; j++) {
 			if (this.aSuccesses[j].getId() == sId) {
@@ -422,7 +422,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * This utility converts "Begin"/"End" into "Right"/"Left" coordinates,
 	 * for RTL support.
@@ -439,7 +439,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  }
 	  return this.snapPoint;
 	};
-	
+
 	/**
 	 * This utility opens the MessageBar Popup.
 	 * @private
@@ -448,7 +448,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Defining or fetching the Popup attributes:
 	  var animationDuration = 0;
 	  var snapPoint = this.getSnapPoint();
-	
+
 		// Opening the MessageBar:
 	  var anchor = null;
 	  var anchorId = this.getAnchorID();
@@ -460,7 +460,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  }
 	  // Invoking the MsgBar Popup open function(iDuration, my, at, of, offset):
 		this.oPopup.open(animationDuration, snapPoint, snapPoint, anchor, "0 0");
-	
+
 	  // Repositioning as per the Drop position:
 	  if (this.oDropPosition) {
 		  this.oPopup._$().css('top', this.oDropPosition.top);
@@ -471,13 +471,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.oPopup._$().css('left', this.oDropPosition.left);
 			}
 	  }
-	
+
 	  // If closed with a list present, then we should still display it:
 	  if (this.hasStyleClass("sapUiMsgBarOpen")) {
 		this.oList.setVisible(true);
 	  }
 	};
-	
+
 	/**
 	 * This utility closes the MessageBar Popup.
 	 * @private
@@ -487,15 +487,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (this.oList && this.oList.getVisible()) {
 		this.oList.setVisible(false);
 	  }
-	
+
 	  // Invoking the MsgBar Popup close = function(iDuration):
 	  var animationDuration = 0;
 		this.oPopup.close(animationDuration);
-	
+
 	  // Re-initializing flag along with the turning-off of the MessageBar:
 	  this.maxToastsReached = false;
 	};
-	
+
 	/**
 	 * This utility updates the messageBar counters, and visibility.
 	 * @private
@@ -505,10 +505,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this.getProperty("visible")) {
 			return;
 		}
-	
+
 	  // Convenience variable
 		var id = this.getId();
-	
+
 	  // Updating the Error Count and Visibility:
 	  var oCount = jQuery.sap.domById(id + "__ErrorCount");
 	  if (!oCount) {
@@ -525,7 +525,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (newText != oldText) {
 		// Have to directly update the DOM element:
 		oCount.innerHTML = newText;
-	
+
 		if (newText == "(0)") {
 		  // Allowing empty queues not to be displayed:
 		  jIcon  = jQuery.sap.byId(id + "__ErrorImg");
@@ -540,8 +540,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		  jCount.removeClass("sapUiMsgBarZeroCount");
 		}
 	  }
-	
-	
+
+
 	  // Updating the Warning Count and Visibility:
 	  oCount  = jQuery.sap.domById(id + "__WarningCount");
 	  count   = this.aWarnings.length;
@@ -552,7 +552,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (newText != oldText) {
 		// Have to directly update the DOM element:
 		oCount.innerHTML = newText;
-	
+
 		if (newText == "(0)") {
 		  // Allowing empty queues not to be displayed:
 		  jIcon  = jQuery.sap.byId(id + "__WarningImg");
@@ -567,8 +567,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		  jCount.removeClass("sapUiMsgBarZeroCount");
 		}
 	  }
-	
-	
+
+
 	  // Updating the Success Count and Visibility:
 	  oCount  = jQuery.sap.domById(id + "__SuccessCount");
 	  count   = this.aSuccesses.length;
@@ -579,7 +579,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (newText != oldText) {
 		// Have to directly update the DOM element:
 		oCount.innerHTML = newText;
-	
+
 		if (newText == "(0)") {
 		  // Allowing empty queues not to be displayed:
 		  jIcon  = jQuery.sap.byId(id + "__SuccessImg");
@@ -594,8 +594,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		  jCount.removeClass("sapUiMsgBarZeroCount");
 		}
 	  }
-	
-	
+
+
 		// If the MessageBar is now empty, then it should become invisible:
 		if (this.aErrors.length == 0 &&
 			this.aWarnings.length == 0 &&
@@ -607,16 +607,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		  // Showing the MessageBar:
 		  this.open();
 		}
-	
+
 		// If the MessageList is already open, updating it:
 		if (this.oList && this.oList.getVisible()) {
 			this.oList.setMessages(this.aSuccesses.concat(this.aWarnings).concat(this.aErrors));
 		}
-	
+
 	  // Checking for the next Toaster action:
 		this.checkForToast();
 	};
-	
+
 	/**
 	 * This utility toggles the MessageList Popup.
 	 * This function is invoked by clicking the front MessageBar Arrow.
@@ -628,10 +628,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var listId = this.getId() + "__List";
 		  this.oList = new sap.ui.commons.MessageList(listId, {anchorId:this.getId(), maxListed:this.getMaxListed()});
 	  }
-	
+
 	  // Retrieving the List current Open/Close information:
 	  var visible  = this.oList.getVisible();
-	
+
 	  // Toggling the List, and adapting our styling:
 	  if (!visible) {
 		this.oList.setMessages(this.aSuccesses.concat(this.aWarnings).concat(this.aErrors));
@@ -641,7 +641,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  }
 	  this.oList.setVisible(!visible);
 	};
-	
+
 	/**
 	 * This utility restores the initial position of the MessageBar.
 	 * @private
@@ -669,20 +669,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				jPopup.animate({left:this.oHomePosition.left + "px", top:this.oHomePosition.top + "px"}, 200);
 			}
 	  }
-	
+
 	  // MessageBar is back home:
 	  this.oDropPosition = null;
 	  // Hiding our "back-home" icon:
 	  this.removeStyleClass("sapUiMsgBarMoved");
 	};
-	
+
 	// #############################################################################
 	// Public APIs
 	// #############################################################################
 	/**
 	 * This public API adds/updates a supplied list of messages.
 	 * The messageBar is to appear should at least one message exists.
-	 * 
+	 *
 	 * @param {sap.ui.commons.Message[]} aAMessages Array of messages.
 	 * @type void
 	 * @public
@@ -692,7 +692,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (!aMessages) {
 		return;
 	  }
-	
+
 	  // Looping through the supplied messages:
 		for (var i = 0, len = aMessages.length; i < len; i++) {
 		// First have to removing each message from the message queues,
@@ -702,42 +702,42 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// the most recent ones are displayed first (on a given priority
 		// level).
 		this.deleteOneMessage(aMessages[i].getId());
-	
+
 		// Now, inserting each message into its proper queue:
 		  switch (aMessages[i].getType()) {
 			case sap.ui.commons.MessageType.Error:
 			  // Adding the "new" Error message:
 			this.aErrors.push(aMessages[i]);
 			  break;
-	
+
 			case sap.ui.commons.MessageType.Warning:
 			  // Adding the "new" Warning message:
 			this.aWarnings.push(aMessages[i]);
 			  break;
-	
+
 			case sap.ui.commons.MessageType.Success:
 			  // Adding the "new" Success message:
 			this.aSuccesses.push(aMessages[i]);
 			  break;
-	
+
 			default:
 			  jQuery.sap.log.debug("ERROR: MessageBar supplied messageType=" + aMessages[i].getType());
 		  } // end switch
 		} // end for
-	
+
 		// Adding the new messages to the toasting queue:
 	  this.addToasts(aMessages);
-	
+
 		// Updating the messageBar:
 		this.updateCountersAndVisibility();
-	
+
 		return this;
 	};
-	
+
 	/**
 	 * This public API deletes a supplied list of messages.
 	 * The messageBar is to disappear should no message remains.
-	 * 
+	 *
 	 * @param {string[]} aIds Messages IDs to be deleted.
 	 * @type void
 	 * @public
@@ -747,24 +747,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	  if (!aIds) {
 		return;
 	  }
-	
+
 	  // Removing each message from their message queues, and toast queue:
 		for (var i = 0, len = aIds.length; i < len; i++) {
 		this.deleteOneMessage(aIds[i]);
 		this.deleteToast(aIds[i]);
 		} // end for
-	
+
 		// Updating the messageBar:
 		this.updateCountersAndVisibility();
-	
+
 		return this;
 	};
-	
+
 	/**
 	 * Deletes all messages.
-	 * 
+	 *
 	 * @returns {sap.ui.commons.MessageBar} <code>this</code> to allow method chaining
-	 * 
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -779,41 +779,41 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		for (var j = this.aSuccesses.length - 1; j >= 0; j--) {
 			this.aSuccesses[j].closeDetails();
 		}
-	
+
 		// Empty all error queues:
 	  this.aErrors    = [];
 	  this.aWarnings  = [];
 	  this.aSuccesses = [];
 	  // Empty the Toasting queue:
 	  this.aToasts    = [];
-	
+
 		// Updating the messageBar:
 		this.updateCountersAndVisibility();
-	
+
 		return this;
 	};
-	
-	
-	
+
+
+
 	// #############################################################################
 	// Overwriting auto-generated methods of MessageBar.API.js
 	// #############################################################################
-	
+
 	/**
 	 * Setter for property <code>visible</code>.
 	 *
 	 * Default value is <code>true</code>
 	 *
-	 * The default implementation of function "setVisible()" is enhanced 
+	 * The default implementation of function "setVisible()" is enhanced
 	 * in order to toggle the "visibility:hidden;" attribute over the control.
-	 * 
+	 *
 	 * @param {boolean} bVisible  new value for property <code>visible</code>
 	 * @return {sap.ui.commons.MessageBar} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	MessageBar.prototype.setVisible = function(bVisible) {
 		this.setProperty("visible", bVisible);
-	
+
 	  if (bVisible) {
 			// Updating and rendering the MessageBar:
 			this.updateCountersAndVisibility();
@@ -821,7 +821,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Just closing the MessageBar:
 		  this.close();
 	  }
-	
+
 		return this;
 	};
 

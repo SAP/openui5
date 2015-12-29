@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global'],
 			 * @public
 			 */
 			Application: "Application",
-	
+
 			/**
 			 * Filters which are set by the different controls
 			 * @public

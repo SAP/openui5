@@ -4,11 +4,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 <title>Test Page for sap.m.P13nSortPanel</title>
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" 
+	type="text/javascript"
 	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" 
+	data-sap-ui-libs="sap.m"
 	src="../../../../resources/sap-ui-core.js">
 </script>
 
@@ -55,10 +55,10 @@
 				"columnKey" : "c0",
 				"operation" : "Descending"
 			} ]
-		};		
+		};
 
 		var oModel = new sap.ui.model.json.JSONModel(oData);
-		
+
 		oP13nSortPanel.setModel(oModel);
 		oP13nSortPanel.bindItems("/items", new sap.m.P13nItem({
 			columnKey : "{key}",
@@ -70,11 +70,11 @@
 			operation : "{operation}",
 			columnKey : "{columnKey}"
 		}));
-				
+
 	};
-	
+
 	test("Default Values", function(){
-		
+
 		// system under test
 		var oP13nSortPanel = new sap.m.P13nSortPanel({
 			layoutMode : "Desktop"
@@ -92,7 +92,7 @@
 	});
 
 	test("bind Items test", function(){
-		
+
 		// system under test
 		var oP13nSortPanel = new sap.m.P13nSortPanel();
 
@@ -109,9 +109,9 @@
 		// cleanup
 		oP13nSortPanel.destroy();
 	});
-	
+
 	test("bind SortItems test", function(){
-		
+
 		// system under test
 		var oP13nSortPanel = new sap.m.P13nSortPanel();
 
@@ -128,14 +128,14 @@
 		// cleanup
 		oP13nSortPanel.destroy();
 	});
-	
+
 	test("test model update events", function(){
-		
+
 		// system under test
 		var oP13nSortPanel = new sap.m.P13nSortPanel({
 			removeSortItem: function(oEvent) {
 				var params = oEvent.getParameters();
-				var oModel = oP13nSortPanel.getModel(); 
+				var oModel = oP13nSortPanel.getModel();
 				var oData = oModel.getData();
 				oData.sortItems.forEach(function(oItem, iIndex) {
 					if (oItem.key === params.key) {
@@ -143,11 +143,11 @@
 						oModel.setData(oData, true);
 						return;
 					}
-				});					
+				});
 			},
 			addSortItem: function(oEvent) {
 				var params = oEvent.getParameters();
-				var oModel = oP13nSortPanel.getModel(); 
+				var oModel = oP13nSortPanel.getModel();
 				var oData = oModel.getData();
 				var oSortItem = {
 					key : params.key,
@@ -175,16 +175,16 @@
 		var oConditionPanel= oP13nSortPanel._oSortPanel;
 		oConditionPanel._triggerRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
 		strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
-		
+
 		// Add item
 		nItems= 2;
  		oConditionPanel._triggerAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		
+
  		// Change item
 		var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
 		oConditionGrid.keyField.setSelectedKey("c0");
-		oConditionPanel._changeField(oConditionGrid);		
-		
+		oConditionPanel._changeField(oConditionGrid);
+
 		strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
 
 		// cleanup
@@ -203,7 +203,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-				
+
 		<div id="content"></div>
 	</body>
 </html>

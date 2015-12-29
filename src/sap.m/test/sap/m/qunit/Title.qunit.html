@@ -20,7 +20,7 @@
 
 		<script type="text/javascript">
 
-		module("Basics", {		 
+		module("Basics", {
 			setup : function() {
 				this.title1 = new sap.m.Title();
 				this.title2 = new sap.m.Title({
@@ -44,22 +44,22 @@
 		test("API Properties", function() {
 			ok(!this.title1.getText(), "Default property 'text'");
 			strictEqual(this.title2.getText(), "Hello", "Custom property 'text'");
-			
+
 			ok(!this.title1.getTooltip(), "Default property 'tooltip'");
 			strictEqual(this.title2.getTooltip(), "Tooltip", "Custom property 'tooltip'");
-			
+
 			ok(!this.title1.getWidth(), "Default property 'width'");
 			strictEqual(this.title2.getWidth(), "50%", "Custom property 'width'");
-			
+
 			strictEqual(this.title1.getLevel(), sap.ui.core.TitleLevel.Auto,"Default property 'level'");
 			strictEqual(this.title2.getLevel(), sap.ui.core.TitleLevel.H1, "Custom property 'level'");
-			
+
 			strictEqual(this.title1.getTitleStyle(), sap.ui.core.TitleLevel.Auto,"Default property 'titleStyle'");
 			strictEqual(this.title2.getTitleStyle(), sap.ui.core.TitleLevel.H2, "Custom property 'titleStyle'");
-			
+
 			strictEqual(this.title1.getTextAlign(), sap.ui.core.TextAlign.Initial, "Default property 'textAlign'");
 			strictEqual(this.title2.getTextAlign(), sap.ui.core.TextAlign.Begin, "Custom property 'textAlign'");
-			
+
 			ok(this.title1.getVisible(), "Default property 'visible'");
 			ok(!this.title2.getVisible(), "Custom property 'visible'");
 		});
@@ -67,9 +67,9 @@
 		test("Title should be shrinkable", function() {
 			ok(this.title1.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Title control implements IShrinkable interface");
 		});
-		
-		
-		module("Rendering", {		 
+
+
+		module("Rendering", {
 			setup : function() {
 				this.title = new sap.m.Title({
 					text : "Hello",
@@ -83,19 +83,19 @@
 				this.title = null;
 			}
 		});
-		
-		
-		test("When width is not set max-width should apply to control", function() {	
+
+
+		test("When width is not set max-width should apply to control", function() {
 			ok(this.title.$().hasClass("sapMTitleMaxWidth"), "Title has max width restriction for the trunctation.");
 			this.title.setWidth("100%");
 			sap.ui.getCore().applyChanges();
 			ok(!this.title.$().hasClass("sapMTitleMaxWidth"), "Title has width and does not have max width restriction.");
 		});
-		
+
 		test("Should render a text", function() {
 			strictEqual(this.title.$().text(), "Hello", "Text got rendered");
 		});
-		
+
 		test("Should render a tooltip", function() {
 			strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 		});
@@ -103,11 +103,11 @@
 		test("Should be selectable", function() {
 			ok(this.title.$().hasClass("sapUiSelectable"), "Title has class sapUiSelectable.");
 		});
-		
+
 		test("Should not be wrapable", function() {
 			ok(this.title.$().hasClass("sapMTitleNoWrap"), "Title has class sapMTitleNoWrap.");
 		});
-		
+
 		test("TitleStyle correct", function() {
 			for (var level in sap.ui.core.TitleLevel) {
 				this.title.setTitleStyle(level);
@@ -115,7 +115,7 @@
 				ok(this.title.$().hasClass("sapMTitleStyle" + level), "Title has correct class for style level " + level);
 			}
 		});
-		
+
 		test("Alignment correct", function() {
 			for (var align in sap.ui.core.TextAlign) {
 				this.title.setTextAlign(align);
@@ -127,14 +127,14 @@
 				}
 			}
 		});
-		
+
 		test("Semantic level correct", function() {
 			var sExpectedTag;
-			
+
 			for (var level in sap.ui.core.TitleLevel) {
 				this.title.setLevel(level);
 				sap.ui.getCore().applyChanges();
-				
+
 				if (level === sap.ui.core.TitleLevel.Auto) {
 					sExpectedTag = "DIV";
 					strictEqual(this.title.$().attr("role"), "heading", "Role attribute correctly set for level Auto");
@@ -142,12 +142,12 @@
 					sExpectedTag = level.toUpperCase();
 					ok(!this.title.$().attr("role"), "No role attribute set for level " + level);
 				}
-				
+
 				strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level " + level);
 			}
 		});
-		
-		module("Title Association", {		 
+
+		module("Title Association", {
 			setup : function() {
 				this.coreTitle = new sap.ui.core.Title({
 					text: "Hello2",
@@ -170,7 +170,7 @@
 				}
 			}
 		});
-		
+
 		test("Should render a text", function() {
 			strictEqual(this.title.$().text(), "Hello2", "Text got rendered");
 			this.coreTitle.setText("Hello3");
@@ -181,7 +181,7 @@
 			sap.ui.getCore().applyChanges();
 			strictEqual(this.title.$().text(), "Hello", "Text got rendered");
 		});
-		
+
 		test("Should render a tooltip", function() {
 			strictEqual(this.title.$().attr("title"), "Tooltip2", "Tooltip got rendered");
 			this.coreTitle.setTooltip("Tooltip3");
@@ -192,14 +192,14 @@
 			sap.ui.getCore().applyChanges();
 			strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 		});
-		
+
 		test("Semantic level correct", function() {
 			var sExpectedTag;
-			
+
 			for (var level in sap.ui.core.TitleLevel) {
 				this.coreTitle.setLevel(level);
 				sap.ui.getCore().applyChanges();
-				
+
 				if (level === sap.ui.core.TitleLevel.Auto) {
 					sExpectedTag = "DIV";
 					strictEqual(this.title.$().attr("role"), "heading", "Role attribute correctly set for level Auto");
@@ -207,7 +207,7 @@
 					sExpectedTag = level.toUpperCase();
 					ok(!this.title.$().attr("role"), "No role attribute set for level " + level);
 				}
-				
+
 				strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level " + level);
 			}
 		});
@@ -221,7 +221,7 @@
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<div id="qunit-fixture"></div>
-		<ol id="qunit-tests"></ol>	
+		<ol id="qunit-tests"></ol>
 		<div id="uiArea"></div>
 	</body>
 </html>

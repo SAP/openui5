@@ -18,9 +18,9 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	 * @public
 	 * @alias sap.ui.model.CompositeBinding
 	 */
-	
+
 	var CompositeBinding = PropertyBinding.extend("sap.ui.model.CompositeBinding", /** @lends sap.ui.model.CompositeBinding.prototype */ {
-	
+
 		constructor : function (aBindings, bRawValues) {
 			PropertyBinding.apply(this, [null,""]);
 			this.aBindings = aBindings;
@@ -28,24 +28,24 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 			this.bRawValues = bRawValues;
 		},
 		metadata : {
-			
+
 		  publicMethods : [
 				  "getBindings", "attachChange", "detachChange"
 		  ]
 		}
-	
+
 	});
-	
+
 	CompositeBinding.prototype.getPath = function() {
 		jQuery.sap.assert(null, "Composite Binding has no path!");
 		return null;
 	};
-	
+
 	CompositeBinding.prototype.getModel = function() {
 		jQuery.sap.assert(null, "Composite Binding has no model!");
 		return null;
 	};
-	
+
 	CompositeBinding.prototype.getContext = function() {
 		jQuery.sap.assert(null, "Composite Binding has no context!");
 		return null;
@@ -53,11 +53,11 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 
 	/**
 	 * Sets the optional type and internal type for the binding. The type and internal type are used to do the parsing/formatting correctly.
-	 * The internal type is the property type of the element which the value is formatted to.  
+	 * The internal type is the property type of the element which the value is formatted to.
 	 *
 	 * @param {sap.ui.model.CompositeType} oType the type for the binding
 	 * @param {String} sInternalType the internal type of the element property which this binding is bound against.
-	 * 
+	 *
 	 * @public
 	 */
 	CompositeBinding.prototype.setType = function(oType, sInternalType) {
@@ -65,13 +65,13 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 			throw new Error("Only CompositeType can be used as type for composite bindings!");
 		}
 		PropertyBinding.prototype.setType.apply(this, arguments);
-		
+
 		// If a composite type is used, the type decides whether to use raw values or not
 		if (this.oType) {
 			this.bRawValues = this.oType.getUseRawValues();
 		}
 	};
-	
+
 	/**
 	 * sets the context for each property binding in this composite binding
 	 * @param {object} oContext the new context for the bindings
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 			}
 		});
 	};
-	
+
 	/**
 	 * Sets the values. This will cause the setValue to be called for each nested binding, except
 	 * for undefined values in the array.
@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 			}
 		});
 	};
-	
+
 	/**
 	 * Returns the raw values of the property bindings in an array.
 	 *
@@ -113,18 +113,18 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	CompositeBinding.prototype.getValue = function() {
 		var aValues = [],
 		oValue;
-	
+
 		jQuery.each(this.aBindings, function(i, oBinding) {
 			oValue = oBinding.getValue();
 			aValues.push(oValue);
 		});
-	
+
 		return aValues;
 	};
 
 	/**
-	 * Sets the external value of a composite binding. If no CompositeType is assigned to the binding, the default 
-	 * implementation assumes a space separated list of values. This will cause the setValue to be called for each 
+	 * Sets the external value of a composite binding. If no CompositeType is assigned to the binding, the default
+	 * implementation assumes a space separated list of values. This will cause the setValue to be called for each
 	 * nested binding, except for undefined values in the array.
 	 *
 	 * @param {object} oValue the value to set for this binding
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	 */
 	CompositeBinding.prototype.setExternalValue = function(oValue) {
 		var aValues, aCurrentValues;
-	
+
 		// No twoway binding when using formatters
 		if (this.fnFormatter) {
 			jQuery.sap.log.warning("Tried to use twoway binding, but a formatter function is used");
@@ -171,9 +171,9 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 			});
 		}
 	};
-	
+
 	/**
-	 * Returns the current external value of the bound target which is formatted via a type or formatter function. 
+	 * Returns the current external value of the bound target which is formatted via a type or formatter function.
 	 *
 	 * @return {object} the current value of the bound target
 	 *
@@ -184,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	CompositeBinding.prototype.getExternalValue = function() {
 		var aValues = [],
 			oValue;
-		
+
 		if (this.bRawValues) {
 			aValues = this.getValue();
 		} else {
@@ -192,7 +192,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 				aValues.push(oBinding.getExternalValue());
 			});
 		}
-		
+
 		if (this.fnFormatter) {
 			oValue = this.fnFormatter.apply(this, aValues);
 		} else if (this.oType) {
@@ -205,11 +205,11 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 				oValue = aValues[0];
 			}
 		}
-		
+
 		return oValue;
 	};
-	
-	
+
+
 	/**
 	 * Returns the property bindings contained in this composite binding.
 	 *
@@ -220,7 +220,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	CompositeBinding.prototype.getBindings = function() {
 		return this.aBindings;
 	};
-	
+
 	//Eventing and related
 	/**
 	* Attach event-handler <code>fnFunction</code> to the '_change' event of this <code>sap.ui.model.Model</code>.<br/>
@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 			});
 		}
 	};
-	
+
 	/**
 	* Detach event-handler <code>fnFunction</code> from the '_change' event of this <code>sap.ui.model.Model</code>.<br/>
 	* @param {function} fnFunction The function to call, when the event occurs.
@@ -253,7 +253,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 			});
 		}
 	};
-	
+
 	/**
 	 * Determines if the property bindings in the composite binding should be updated by calling updateRequired on all property bindings with the specified model.
 	 * @param {object} oModel The model instance to compare against
@@ -270,9 +270,9 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
-	 * 
+	 *
 	 * @param {boolean} bForceupdate
-	 * 
+	 *
 	 */
 	CompositeBinding.prototype.checkUpdate = function(bForceupdate){
 		var aValues = this.getValue();

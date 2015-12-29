@@ -83,7 +83,7 @@
 		enabled : true
 	});
 
-	//test popover title    
+	//test popover title
 	var oTitleArrowDomRef = null;
 	var oTitleArrowEventHandler = function(oEvent) {
 
@@ -226,7 +226,7 @@
 		notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
 		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
 	});
-	
+
 	test("Attribute rerendered after being empty", function() {
 		var oOA = new sap.m.ObjectAttribute({text: "Test"});
 		var oOH = new sap.m.ObjectHeader({attributes: [oOA]});
@@ -349,7 +349,7 @@
 				state : sap.ui.core.ValueState.Success,
 				visible : true
 			}) ],
-			attributes : [ 
+			attributes : [
 				new sap.m.ObjectAttribute({
 					text : "First invisible attribute",
 					visible : false
@@ -386,7 +386,7 @@
 					state : sap.ui.core.ValueState.Error,
 					visible : true
 				})],
-			attributes : [ 
+			attributes : [
 				new sap.m.ObjectAttribute({
 					text : "Visible attribute",
 					visible : true
@@ -448,7 +448,7 @@
 	});
 
 	test("Background is transparent", function() {
-		
+
 		var transparentCssString = sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer ? "transparent" : "rgba(0, 0, 0, 0)";
 
 		equal(jQuery("#ohc1.sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
@@ -460,7 +460,7 @@
 		equal(jQuery("#ohc2.sapMOHBgSolid").length, 1, "Solid background style should be set.");
 		equal(jQuery.sap.byId("ohc2").css("background-color"), "rgb(255, 255, 255)", "Background color is solid");
 	});
-	
+
 	/******************************************************************/
 
 	module("Internal API");
@@ -707,7 +707,7 @@
 		ok(domRef, "domRef is set");
 		equal(domRef.id, oheId + "-title", "Title should be clickable");
 		domRef = null;
-		
+
 		qutils.triggerEvent("tap", oheId + "-titleText-inner");
 		ok(domRef, "domRef is set");
 		equal(domRef.id, oheId + "-title", "When clicking inner text div event should return outer div as source");
@@ -774,34 +774,34 @@
 		}, 100);
 
 	});
-	
+
 	/******************************************************************/
 	module("OH Screen Reader support");
-	
+
 	test("OH has aria-labelledby", function(){
 		ok(jQuery("#" + ohBasicId).attr("aria-labelledby"), "OH has attribute aria-labelledby");
 	});
-	
+
 	test("OH has attribute role=region", function(){
 		ok(jQuery("#" + ohBasicId).attr("role"), "OH has attribute role");
 		equal(jQuery("#" + ohBasicId).attr("role"), "region", "role is region");
 	});
-	
+
 	test("OH Condensed has aria-labelledby", function(){
 		ok(jQuery("#" + ohCondensedId).attr("aria-labelledby"), "OH condensed has attribute aria-labelledby");
 	});
-	
+
 	test("OH Condensed has attribute role=region", function(){
 		ok(jQuery("#" + ohCondensedId).attr("role"), "OH condensed has attribute role");
 		equal(jQuery("#" + ohCondensedId).attr("role"), "region", "role is region");
 	});
-	
+
 	test("Active title has aria attributes", function(){
 		ok(jQuery("#" + oheId+"-title").attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
 		equal(jQuery("#" + oheId+"-title").attr("role"), "link", "ActiveTitle has role=link");
 	});
-	
-	test("Active icon has aria attributes", function(){ 
+
+	test("Active icon has aria attributes", function(){
 		ok(jQuery(".sapMOHIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
 		equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 	});
@@ -875,9 +875,9 @@
 		// cleanup
 		oObjectHeader.destroy();
 	});
-	
-	
-	
+
+
+
 </script>
 </head>
 

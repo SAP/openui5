@@ -13,11 +13,11 @@ sap.ui.define(['jquery.sap.global'],
 	 * @namespace
 	 */
 	var GridRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm the RenderManager that can be used for writing to the render
 	 *            output buffer
@@ -28,15 +28,15 @@ sap.ui.define(['jquery.sap.global'],
 	GridRenderer.render = function(oRm, oControl) {
 		var INDENTPATTERN = /^([L](?:[0-9]|1[0-1]))? ?([M](?:[0-9]|1[0-1]))? ?([S](?:[0-9]|1[0-1]))?$/i;
 		var SPANPATTERN = /^([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
-		
+
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapUiRespGrid");
-		
+
 		var  sMedia = sap.ui.Device.media.getCurrentRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD).name;
 		oRm.addClass("sapUiRespGridMedia-Std-" + sMedia);
-		
+
 		var fHSpacing = oControl.getHSpacing();
 		// Check for allowed values, if not matching, set to to default 1 rem.
 		if (fHSpacing == 0.5) {
@@ -44,19 +44,19 @@ sap.ui.define(['jquery.sap.global'],
 		} else if ((fHSpacing !== 0) && (fHSpacing !== 1) && (fHSpacing !== 2)) {
 			fHSpacing = 1;
 		}
-		
+
 		oRm.addClass("sapUiRespGridHSpace" + fHSpacing);
-	
+
 		var fVSpacing = oControl.getVSpacing();
 		// Check for allowed values, if not matching, set to to default 1 rem.
 		if (fVSpacing == 0.5) {
 			fVSpacing = "05";
 		} else if ((fVSpacing !== 0) && (fVSpacing !== 1) && (fVSpacing !== 2)) {
 			fVSpacing = 1;
-		} 
-		
+		}
+
 		oRm.addClass("sapUiRespGridVSpace" + fVSpacing);
-	
+
 		var sPosition = oControl.getPosition();
 		if (sPosition) {
 			sPosition = sPosition.toUpperCase();
@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.addClass("sapUiRespGridPosRight");
 			}
 		}
-	
+
 		oRm.writeClasses();
 		var sWidth = oControl.getWidth();
 		if (sWidth !== "100%" && sWidth !== "auto" && sWidth !== "inherit") {
@@ -87,27 +87,27 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeAccessibilityState(oControl, mAriaProps);
 
 		oRm.write(">");
-	
+
 		var aItems = oControl.getContent();
-	
+
 		var defaultSpan = oControl.getDefaultSpan();
 		var defaultIndent = oControl.getDefaultIndent();
 		var aDIndent = INDENTPATTERN.exec(defaultIndent);
-	
+
 		// Default Span if nothing is specified at all, not on Grid , not on the
 		// cell.
 		var aDefColSpan = [ "", "L3", "M6", "S12" ];
-	
+
 		// Default Span values defined on the whole Grid, that is used if there is
 		// no individual span defined for the cell.
 		var aDSpan = SPANPATTERN.exec(defaultSpan);
-	
+
 		for ( var i = 0; i < aItems.length; i++) { // loop over all child controls
 			oRm.write("<div");
 			var oLay = oControl._getLayoutDataForControl(aItems[i]);
-	
+
 			if (oLay) {
-	
+
 				// Line break
 				if (oLay.getLinebreak() === true) {
 					oRm.addClass("sapUiRespGridBreak");
@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global'],
 						oRm.addClass("sapUiRespGridBreakS");
 					}
 				}
-	
+
 				// Span
 				var aSpan;
 				var sSpan = oLay.getSpan();
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global'],
 				} else {
 					aSpan = SPANPATTERN.exec(sSpan);
 				}
-	
+
 				if (aSpan) {
 					for ( var j = 1; j < aSpan.length; j++) {
 						var span = aSpan[j];
@@ -141,12 +141,12 @@ sap.ui.define(['jquery.sap.global'],
 								span = aDefColSpan[j];
 							}
 						}
-	
+
 						// Catch the Individual Spans
 						var iSpanLarge = oLay.getSpanL();
 						var iSpanMedium = oLay.getSpanM();
 						var iSpanSmall = oLay.getSpanS();
-	
+
 						span = span.toUpperCase();
 						if ((span.substr(0, 1) === "L") && (iSpanLarge > 0)	&& (iSpanLarge < 13)) {
 							oRm.addClass("sapUiRespGridSpanL" + iSpanLarge);
@@ -159,24 +159,24 @@ sap.ui.define(['jquery.sap.global'],
 						}
 					}
 				}
-	
+
 				// Indent
 				var aIndent;
-	
+
 				var sIndent = oLay.getIndent();
 				if (!sIndent || sIndent.length == 0) {
 					aIndent = aDIndent;
 				} else {
 					aIndent = INDENTPATTERN.exec(sIndent);
 				}
-	
+
 				if (!aIndent) {
 					aIndent = aDIndent;
 					if (!aIndent) {
 						aIndent = undefined; // no indent
 					}
 				}
-	
+
 				if (aIndent) {
 					for ( var j = 1; j < aIndent.length; j++) {
 						var indent = aIndent[j];
@@ -187,12 +187,12 @@ sap.ui.define(['jquery.sap.global'],
 						}
 						if (indent) {
 							indent = indent.toUpperCase();
-	
+
 							// Catch the Individual Indents
 							var iIndentLarge = oLay.getIndentL();
 							var iIndentMedium = oLay.getIndentM();
 							var iIndentSmall = oLay.getIndentS();
-	
+
 							if ((indent.substr(0, 1) === "L") && (iIndentLarge > 0)
 									&& (iIndentLarge < 12)) {
 								oRm.addClass("sapUiRespGridIndentL" + iIndentLarge);
@@ -210,15 +210,15 @@ sap.ui.define(['jquery.sap.global'],
 						}
 					}
 				}
-				
-				
-				
-				
+
+
+
+
 				// Visibility
 				var l = oLay.getVisibleL(),
 				m = oLay.getVisibleM(),
 				s = oLay.getVisibleS();
-	
+
 				if (!l && m && s) {
 					oRm.addClass("sapUiRespGridHiddenL");
 				} else if (!l && !m && s) {
@@ -232,12 +232,12 @@ sap.ui.define(['jquery.sap.global'],
 				} else if (l && m && !s) {
 					oRm.addClass("sapUiRespGridHiddenS");
 				}
-	
+
 				// Move - moveBwd shifts a grid element to the left in LTR mode and
 				// opposite in RTL mode
-	
+
 				var sMoveB = oLay.getMoveBackwards();
-	
+
 				if (sMoveB && sMoveB.length > 0) {
 					var aMoveB = INDENTPATTERN.exec(sMoveB);
 					if (aMoveB) {
@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global'],
 				// ... while moveFwd shifts it to the right in LTR mode and opposite
 				// in RTL
 				var sMoveF = oLay.getMoveForward();
-	
+
 				if (sMoveF && sMoveF.length > 0) {
 					var aMoveF = INDENTPATTERN.exec(sMoveF);
 					if (aMoveF) {
@@ -264,13 +264,13 @@ sap.ui.define(['jquery.sap.global'],
 						}
 					}
 				}
-				
+
 				// Internal additional classes
 				if (oLay._sStylesInternal) {
 					oRm.addClass(oLay._sStylesInternal);
 				}
 			}
-	
+
 			// No layoutData - just apply defaults
 			if (!oLay) {
 				var span = "";
@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global'],
 						oRm.addClass("sapUiRespGridSpan" + span.toUpperCase());
 					}
 				}
-				
+
 				var indent = "";
 				if (aDIndent) {
 					for ( var j = 1; j < aDIndent.length; j++) {
@@ -299,17 +299,17 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				}
 			}
-	
+
 			oRm.writeClasses();
 			oRm.write(">");
-	
+
 			oRm.renderControl(aItems[i]); // render the child control (could even
 											// be a big control tree, but you don't
 											// need to care)
-	
+
 			oRm.write("</div>"); // end of the box around the respective child
 		}
-	
+
 		oRm.write("</div>"); // end of the complete grid  control
 	};
 

@@ -117,7 +117,7 @@
 		//Cleanup
 		sut.destroy();
 	});
-	
+
 	test("Should not clone headers for popinDisplay:WithoutHeader", function() {
 		// SUT
 		var result,
@@ -132,7 +132,7 @@
 				header : new sap.m.Text({
 					text : "Header"
 				}),
-				
+
 				// make the size bigger than the screen to force to go to popin
 				minScreenWidth : "48000px",
 				demandPopin : true,
@@ -151,10 +151,10 @@
 		strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 1, "Popin header is found in the dom");
 		strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 1, "Popin separator is found in the dom");
 		strictEqual(sut.$Popin().find(".sapMListTblSubCntVal").length, 1, "Popin cell content found in the dom");
-		
+
 		column.setPopinDisplay("WithoutHeader");
 		core.applyChanges();
-		
+
 		strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
 		strictEqual(sut.$Popin().find(".sapMListTblSubCntHdr").length, 0, "Popin header is not found in the dom");
 		strictEqual(sut.$Popin().find(".sapMListTblSubCntSpr").length, 0, "Popin separator is not found in the dom");
@@ -162,7 +162,7 @@
 
 		column.destroy();
 		core.applyChanges();
-		
+
 		strictEqual(sut._aClonedHeaders.length, 0, "Does not have any cloned headers");
 		strictEqual(sut.$Popin().length, 0, "No popin in the dom");
 

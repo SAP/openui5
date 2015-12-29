@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested jquery.sap.escaping.js
-  Author: i040589, d040216 
+  Author: i040589, d040216
 -->
 
 <html>
@@ -53,7 +53,7 @@ test("should replaced with 0xfffd", function(){
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(13)), "&#xd;", "Carriage return");
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(14)), "&#xfffd;", "Shift out");
 	equal(jQuery.sap.encodeHTML(String.fromCharCode(15)), "&#xfffd;", "Shift in");
-	equal(jQuery.sap.encodeHTML(String.fromCharCode(16)), "&#xfffd;", "Data link escape");	
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(16)), "&#xfffd;", "Data link escape");
 
 });
 
@@ -123,7 +123,7 @@ test("encode CSS", function(){
 
 test("should not encode", function(){
 	equal(jQuery.sap.encodeCSS("nothingtoencode123"), "nothingtoencode123", "nothingtoencode123");
-	
+
 });
 
 test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){

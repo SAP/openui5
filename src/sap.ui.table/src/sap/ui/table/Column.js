@@ -164,10 +164,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	}});
 
 
-	
 
 
-	
+
+
 
 
 	/** default filter type for the columns */

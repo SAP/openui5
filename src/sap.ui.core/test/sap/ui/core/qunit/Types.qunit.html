@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested types in sap.ui.model.type
   Author: d050084
 -->
@@ -56,7 +56,7 @@
 		raises(function(){boolType.formatValue(true, "float")}, "format test");
 		raises(function(){boolType.formatValue(false, "float")}, "format test");
 	});
-	
+
 	test("boolean parseValue", function(){
 		var boolType = new sap.ui.model.type.Boolean();
 		equal(boolType.parseValue(true, "boolean"), true, "parse test");
@@ -64,19 +64,19 @@
 		equal(boolType.parseValue("true", "string"), true, "parse test");
 		equal(boolType.parseValue("false", "string"), false, "parse test");
 		equal(boolType.parseValue("X", "string"), true, "parse test");
-		equal(boolType.parseValue("", "string"), false, "parse test");		
-		equal(boolType.parseValue(" ", "string"), false, "parse test");		
-		
+		equal(boolType.parseValue("", "string"), false, "parse test");
+		equal(boolType.parseValue(" ", "string"), false, "parse test");
+
 		raises(function(){boolType.parseValue(true, "int")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){boolType.parseValue(false, "int")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){boolType.parseValue(true, "float")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){boolType.parseValue(false, "float")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){boolType.parseValue("xxx", "string")}, checkParseException, "parse test");
 	});
-	
+
 	// string type tests
 		module("string type");
-	
+
 		test("string formatValue", function(){
 		var stringType = new sap.ui.model.type.String();
 		equal(stringType.formatValue("true", "boolean"), true, "format test");
@@ -91,14 +91,14 @@
 		equal(stringType.formatValue("34", "int"), 34, "format test");
 		equal(stringType.formatValue("1.34", "float"), 1.34, "format test");
 		equal(stringType.formatValue("33.456", "float"), 33.456, "format test");
-		
+
 		raises(function(){stringType.formatValue("33.456", "untype")}, "format test");
 		raises(function(){stringType.formatValue("notfalse", "boolean")}, sap.ui.model.FormatException, "format test");
 		raises(function(){stringType.formatValue("NaN", "int")}, sap.ui.model.FormatException, "format test");
 		raises(function(){stringType.formatValue("d3f.442fs", "float")}, sap.ui.model.FormatException, "format test");
-		
+
 	});
-	
+
 	test("string parseValue", function(){
 		var stringType = new sap.ui.model.type.String();
 		equal(stringType.parseValue(true, "boolean"), "true", "parse test");
@@ -109,12 +109,12 @@
 		equal(stringType.parseValue("", "string"), "", "parse test");
 		equal(stringType.parseValue(-222, "int"), "-222", "parse test");
 		equal(stringType.parseValue(-4.3657, "float"), "-4.3657", "parse test");
-		
+
 		raises(function(){stringType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
 	});
-	
+
 	test("string validateValue", function(){
-		
+
 		var stringType = new sap.ui.model.type.String(null, {
 			minLength : 3,
 			maxLength : 10
@@ -127,7 +127,7 @@
 		}
 		raises(function(){stringType.validateValue("dd")}, checkValidateException, "validate test");
 		raises(function(){stringType.validateValue("ddggggggggggg")}, checkValidateException, "validate test");
-		
+
 		var stringType = new sap.ui.model.type.String(null, {
 			startsWith : "ab",
 			contains : "cd"
@@ -140,7 +140,7 @@
 		}
 		raises(function(){stringType.validateValue("cdab")}, checkValidateException, "validate test");
 		raises(function(){stringType.validateValue("abdccsbaab")}, checkValidateException, "validate test");
-		
+
 		var stringType = new sap.ui.model.type.String(null, {
 			equals : "ab"
 		});
@@ -162,12 +162,12 @@
 		}
 		raises(function(){stringType.validateValue("cdb")}, checkValidateException, "validate test");
 		raises(function(){stringType.validateValue("adccsbba")}, checkValidateException, "validate test");
-		
+
 	});
-	
+
 	// integer type tests
 	module("integer type");
-	
+
 	test("integer formatValue", function(){
 		var intType = new sap.ui.model.type.Integer();
 		equal(intType.formatValue(22, "string"), "22", "format test");
@@ -180,15 +180,15 @@
 		equal(intType.formatValue(34, "int"), 34, "format test");
 		equal(intType.formatValue(134, "float"), 134, "format test");
 		equal(intType.formatValue(344456, "float"), 344456, "format test");
-		
+
 		raises(function(){intType.formatValue(33456, "boolean")}, "format test");
 		raises(function(){intType.formatValue(22, "untype")}, sap.ui.model.FormatException, "format test");
-	
+
 	});
-	
+
 	test("integer parseValue", function(){
 		var intType = new sap.ui.model.type.Integer();
-	
+
 		equal(intType.parseValue("3333", "string"), 3333, "parse test");
 		equal(intType.parseValue("3,555", "string"), 3555, "parse test");
 		equal(intType.parseValue("-3,555", "string"), -3555, "parse test");
@@ -196,13 +196,13 @@
 		raises(function(){intType.parseValue("-3.444", "float")}, sap.ui.model.ParseException, "parse test");
 		equal(intType.parseValue(-222, "int"), -222, "parse test");
 		equal(intType.parseValue(4444, "float"), 4444, "parse test");
-		
+
 		raises(function(){intType.parseValue("3333.555", "string")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){intType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){intType.parseValue(true, "boolean")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){intType.parseValue("test", "string")}, checkParseException, "parse test");
 	});
-	
+
 	test("integer validateValue", function(){
 		var intType = new sap.ui.model.type.Integer(null, {
 			minimum: 3,
@@ -216,15 +216,15 @@
 		}
 		raises(function(){intType.validateValue(-1)}, checkValidateException, "validate test");
 		raises(function(){intType.validateValue(33)}, checkValidateException, "validate test");
-		
+
 	});
-	
+
 	test("integer formatOptions", function(){
 		var intType = new sap.ui.model.type.Integer({
 			minIntegerDigits: 2,
 			maxIntegerDigits: 4
 		});
-		
+
 		equal(intType.formatValue(22, "string"), "22", "format test");
 		equal(intType.formatValue(333, "string"), "333", "format test");
 		equal(intType.formatValue(6666, "string"), "6666", "format test");
@@ -232,7 +232,7 @@
 		equal(intType.formatValue(662244, "string"), "????", "format test");
 		equal(intType.formatValue(1, "string"), "01", "format test");
 		// see NumberFormat.qunit for further formatting tests...
-		
+
 	});
 
 	test("integer formatOptions.source", function(){
@@ -241,7 +241,7 @@
 				groupingEnabled: true
 			}
 		});
-		
+
 		equal(intType.formatValue("22", "string"), "22", "format test");
 		equal(intType.formatValue("333", "string"), "333", "format test");
 		equal(intType.formatValue("6,666", "string"), "6666", "format test");
@@ -249,13 +249,13 @@
 		equal(intType.parseValue("3333", "string"), "3,333", "parse test");
 		equal(intType.parseValue("3,555", "string"), "3,555", "parse test");
 		equal(intType.parseValue("-3,555", "string"), "-3,555", "parse test");
-		
+
 	});
-	
-	
+
+
 	// float type tests
 	module("float type");
-	
+
 	test("float formatValue", function(){
 		var floatType = new sap.ui.model.type.Float();
 		equal(floatType.formatValue(22, "string"), "22", "format test");
@@ -275,14 +275,14 @@
 		equal(floatType.formatValue(-344456.5667, "float"), -344456.5667, "format test");
 		equal(floatType.formatValue(134.00, "float"), 134, "format test");
 		equal(floatType.formatValue(134.000, "float"), 134, "format test");
-		
+
 		raises(function(){floatType.formatValue(22.0, "untype")}, sap.ui.model.FormatException, "format test");
-	
+
 	});
-	
+
 	test("float parseValue", function(){
 		var floatType = new sap.ui.model.type.Float();
-	
+
 		equal(floatType.parseValue("3333", "string"), 3333, "parse test");
 		equal(floatType.parseValue("3333.555", "string"), 3333.555, "parse test");
 		equal(floatType.parseValue("3.555", "string"), 3.555, "parse test");
@@ -291,12 +291,12 @@
 		equal(floatType.parseValue(-222, "int"), -222, "parse test");
 		equal(floatType.parseValue(-4.3657, "float"), -4.3657, "parse test");
 		equal(floatType.parseValue(4.657, "float"), 4.657, "parse test");
-		
+
 		raises(function(){floatType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){floatType.parseValue(true, "boolean")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){floatType.parseValue("test", "string")}, sap.ui.model.ParseException, "parse test");
 	});
-	
+
 	test("float validateValue", function(){
 		var floatType = new sap.ui.model.type.Float(null, {
 			minimum: 3,
@@ -311,15 +311,15 @@
 		}
 		raises(function(){floatType.validateValue(2.99999)}, checkValidateException, "validate test");
 		raises(function(){floatType.validateValue(10.0000001)}, checkValidateException, "validate test");
-		
+
 	});
-	
+
 	test("float formatOptions", function(){
 		var floatType = new sap.ui.model.type.Float({
 			minFractionDigits: 2,
-    		maxFractionDigits: 2 
+    		maxFractionDigits: 2
 		});
-		
+
 		equal(floatType.formatValue(22, "string"), "22.00", "format test");
 		equal(floatType.formatValue(-6622.333, "string"), "-6,622.33", "format test");
 		equal(floatType.formatValue(-6622.339, "string"), "-6,622.34", "format test");
@@ -327,8 +327,8 @@
 		equal(floatType.formatValue(1.0000, "string"), "1.00", "format test");
 		equal(floatType.formatValue(1.009, "string"), "1.01", "format test");
 		equal(floatType.formatValue(1.00001, "string"), "1.00", "format test");
-		
-		
+
+
 		// TODO is this right?! no formatting for floats?
 		// see numberformat.qunit for more formatting tests
 		equal(floatType.formatValue(134.12, "float"), 134.12, "format test");
@@ -336,14 +336,14 @@
 		equal(floatType.formatValue(-344456.5667, "float"), -344456.5667, "format test");
 		equal(floatType.formatValue(134.00, "float"), 134, "format test");
 		equal(floatType.formatValue(134.000, "float"), 134, "format test");
-		
+
 	});
 
 	test("float formatOptions.source", function(){
 		var floatType = new sap.ui.model.type.Float({
 			source:{}
  		});
-		
+
 		equal(floatType.parseValue("3333", "string"), "3333", "parse test");
 		equal(floatType.parseValue("3333.555", "string"), "3333.555", "parse test");
 		equal(floatType.parseValue("3.555", "string"), "3.555", "parse test");
@@ -356,10 +356,10 @@
 		equal(floatType.formatValue("-6622.339", "string"), "-6,622.339", "format test");
 
 	});
-	
+
 	// currency type tests
 	module("currency type");
-	
+
 	test("currency formatValue", function(){
 		var currencyType = new sap.ui.model.type.Currency();
 		equal(currencyType.formatValue([22, "EUR"], "string"), "EUR22.00", "format test");
@@ -371,25 +371,25 @@
 		equal(currencyType.formatValue(null, "string"), null, "format test");
 		equal(currencyType.formatValue([null, "EUR"], "string"), null, "format test");
 		equal(currencyType.formatValue([1, null], "string"), "1.00", "format test");
-		
+
 		raises(function(){currencyType.formatValue(22.0, "int")}, sap.ui.model.FormatException, "format test");
 		raises(function(){currencyType.formatValue(22.0, "float")}, sap.ui.model.FormatException, "format test");
 		raises(function(){currencyType.formatValue(22.0, "untype")}, sap.ui.model.FormatException, "format test");
 	});
-	
+
 	test("currency parseValue", function(){
 		var currencyType = new sap.ui.model.type.Currency();
-	
+
 		deepEqual(currencyType.parseValue("3333", "string"), [3333, undefined], "parse test");
 		deepEqual(currencyType.parseValue("USD3333.555", "string"), [3333.555, "USD"], "parse test");
 		deepEqual(currencyType.parseValue("EUR3.555", "string"), [3.555, "EUR"], "parse test");
 		deepEqual(currencyType.parseValue("¥-3.555", "string"), [-3.555, "JPY"], "parse test");
-		
+
 		raises(function(){currencyType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){currencyType.parseValue(true, "boolean")}, sap.ui.model.ParseException, "parse test");
 		raises(function(){currencyType.parseValue("test", "string")}, checkParseException, "parse test");
 	});
-	
+
 	test("currency validateValue", function(){
 		var currencyType = new sap.ui.model.type.Currency(null, {
 			minimum: 3,
@@ -404,14 +404,14 @@
 		}
 		raises(function(){currencyType.validateValue([2.99999, "USD"])}, checkValidateException, "validate test");
 		raises(function(){currencyType.validateValue([10.0000001, "EUR"])}, checkValidateException, "validate test");
-		
+
 	});
-	
+
 	test("currency formatOptions", function(){
 		var currencyType = new sap.ui.model.type.Currency({
 			showMeasure: false
 		});
-		
+
 		equal(currencyType.formatValue([22, "USD"], "string"), "22.00", "format test");
 		equal(currencyType.formatValue([-6622.333, "USD"], "string"), "-6,622.33", "format test");
 		equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "-6,622.34", "format test");
@@ -423,7 +423,7 @@
 		var currencyType = new sap.ui.model.type.Currency({
 			currencyCode: false
 		});
-		
+
 		equal(currencyType.formatValue([22, "USD"], "string"), "$22.00", "format test");
 		equal(currencyType.formatValue([-6622.333, "USD"], "string"), "$-6,622.33", "format test");
 		equal(currencyType.formatValue([-6622.339, "EUR"], "string"), "€-6,622.34", "format test");
@@ -431,14 +431,14 @@
 		equal(currencyType.formatValue([1.0000, "JPY"], "string"), "¥1", "format test");
 		equal(currencyType.formatValue([1.009, "EUR"], "string"), "€1.01", "format test");
 		equal(currencyType.formatValue([1.00001, "USD"], "string"), "$1.00", "format test");
-				
+
 	});
 
 	test("currency formatOptions.source", function(){
 		var currencyType = new sap.ui.model.type.Currency({
 			source:{}
  		});
-		
+
 		equal(currencyType.parseValue("EUR3333", "string"), "EUR3333.00", "parse test");
 		equal(currencyType.parseValue("USD3333.555", "string"), "USD3333.56", "parse test");
 		equal(currencyType.parseValue("$3.555", "string"), "USD3.56", "parse test");
@@ -449,10 +449,10 @@
 		equal(currencyType.formatValue("JPY-6622.339", "string"), "JPY-6,622", "format test");
 
 	});
-	
+
 	// date type tests
 		module("date type");
-	
+
 		test("date formatValue", function(){
 			// as date object is locale dependend fill it manually
 			var dateValue = new Date();
@@ -466,16 +466,16 @@
 
 			dateType =  new sap.ui.model.type.Date({pattern: "yy-MM-dd"});
 			equal(dateType.formatValue(dateValue, "string"), "03-02-01", "format test with pattern");
-	
+
 			dateType = new sap.ui.model.type.Date({source: {pattern: "yyyy/MM/dd"}, pattern: "dd.MM.yyyy"});
 			equal(dateType.formatValue("2012/01/23", "string"), "23.01.2012", "format test with source pattern");
-		
+
 			dateType = new sap.ui.model.type.Date({source: {pattern: "timestamp"}, pattern: "dd.MM.yy"});
 			equal(dateType.formatValue(dateValue.getTime(), "string"), "01.02.03", "format test with timestamp");
 			equal(dateType.formatValue(null, "string"), "", "format test");
 			equal(dateType.formatValue(undefined, "string"), "", "format test");
 			raises(function(){dateType.formatValue(1044068706007, "untype")}, sap.ui.model.FormatException, "format test");
-		
+
 		});
 
 		test("date parseValue", function(){
@@ -495,7 +495,7 @@
 
 			dateType =  new sap.ui.model.type.Date({pattern: "yy-MM-dd"});
 			equal(dateType.parseValue("03-02-01", "string").getTime(), dateValue.getTime(), "parse test with pattern");
-			
+
 			dateType = new sap.ui.model.type.Date({source: {pattern: "yyyy/MM/dd"}, pattern: "dd.MM.yyyy"});
 			equal(dateType.parseValue("01.02.2003", "string"), "2003/02/01", "parse test with source pattern");
 
@@ -526,7 +526,7 @@
 			dateValueMax.setHours(0);
 			dateValueMax.setSeconds(0);
 			dateValueMax.setMilliseconds(0);
-			
+
 			var dateType = new sap.ui.model.type.Date(null, {
 				minimum: dateValueMin, //01.01.2000
 				maximum: dateValueMax //31.12.2000
@@ -540,7 +540,7 @@
 			dateValue.setHours(0);
 			dateValue.setSeconds(0);
 			dateValue.setMilliseconds(0);
-			
+
 			try{
 				equal(dateType.validateValue(dateValue), undefined, "validate test");
 			}catch (e){
@@ -572,12 +572,12 @@
 			}
 			raises(function(){dateType.validateValue("10.10.1999")}, checkValidateException, "validate test");
 			raises(function(){dateType.validateValue("10.10.2001")}, checkValidateException, "validate test");
-			
+
 		});
-		
+
 		// time type tests
 		module("time type");
-	
+
 		test("time formatValue", function(){
 			var timeType  = new sap.ui.model.type.Time();
 			// as date object is locale dependend fill it manually
@@ -589,23 +589,23 @@
 			timeValue.setHours(16);
 			timeValue.setSeconds(49);
 			timeValue.setMilliseconds(0);
-		
+
 			equal(timeType.formatValue(timeValue, "string"), "4:58:49 PM", "format test");
-	
+
 			timeType =  new sap.ui.model.type.Time({pattern: "HH:mm:ss"});
 			equal(timeType.formatValue(timeValue, "string"), "16:58:49", "format test with pattern");
-	
+
 			timeType = new sap.ui.model.type.Time({source: {pattern: "HH:mm:ss"}, pattern: "hh-mm"});
 			equal(timeType.formatValue("17:01:02", "string"), "05-01", "format test with source pattern");
-		
+
 			timeType = new sap.ui.model.type.Time({source: {pattern: "timestamp"}, pattern: "hh-mm-ss"});
 			equal(timeType.formatValue(timeValue.getTime(), "string"), "04-58-49", "format test with timestamp");
-			
+
 			equal(timeType.formatValue(null, "string"), "", "format test");
 			equal(timeType.formatValue(undefined, "string"), "", "format test");
-	
+
 			raises(function(){timeType.formatValue(timeValue.getTime(), "untype")}, sap.ui.model.FormatException, "format test");
-		
+
 		});
 
 		test("time parseValue", function(){
@@ -624,13 +624,13 @@
 
 			timeType =  new sap.ui.model.type.Time({pattern: "HH:mm:ss"});
 			equal(timeType.parseValue("16:58:49", "string").getTime(), timeValue.getTime(), "parse test with pattern");
-			
+
 			timeType = new sap.ui.model.type.Time({source: {pattern: "HH:mm_ss"}, pattern: "hh-mm-ss"});
 			equal(timeType.parseValue("10-05-15", "string"), "10:05_15", "parse test with source pattern");
 
 			timeType = new sap.ui.model.type.Time({source: {pattern: "timestamp"}, pattern: "HH:mm:ss"});
 			equal(timeType.parseValue("16:58:49", "string"), timeValue.getTime(), "parse test with timestamp");
-			
+
 			raises(function(){timeType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
 			raises(function(){timeType.parseValue(true, "boolean")}, sap.ui.model.ParseException, "parse test");
 			raises(function(){timeType.parseValue("test", "string")}, checkParseException, "parse test");
@@ -650,12 +650,12 @@
 			}
 			raises(function(){timeType.validateValue("09:30:00")}, checkValidateException, "validate test");
 			raises(function(){timeType.validateValue("11:30:00")}, checkValidateException, "validate test");
-			
+
 		});
 
 		// dateTime type tests
 		module("dateTime type");
-	
+
 		test("dateTime formatValue", function(){
 			// as date object is locale dependend fill it manually
 			var dateValue = new Date();
@@ -668,23 +668,23 @@
 			dateValue.setMilliseconds(7);
 
 			var dateType  = new sap.ui.model.type.DateTime();
-		
+
 			equal(dateType.formatValue(dateValue, "string"), "Feb 1, 2003, 4:05:06 AM", "format test");
-	
+
 			dateType =  new sap.ui.model.type.DateTime({pattern: "yy-MM-dd '/' hh:mm"});
 			equal(dateType.formatValue(dateValue, "string"), "03-02-01 / 04:05", "format test with pattern");
-	
+
 			dateType = new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HH/mm/ss/SSS"}, pattern: "dd.MM.yyyy HH:mm:ss '+' SSS'"});
 			equal(dateType.formatValue("2012/01/23 18/30/05/123", "string"), "23.01.2012 18:30:05 + 123", "format test with source pattern");
-		
+
 			dateType = new sap.ui.model.type.DateTime({source: {pattern: "timestamp"}, pattern: "dd.MM.yy hh:mm:ss'+'SSS"});
 			equal(dateType.formatValue(dateValue.getTime(), "string"), "01.02.03 04:05:06+007", "format test with timestamp");
-			
+
 			equal(dateType.formatValue(null, "string"), "", "format test");
 			equal(dateType.formatValue(undefined, "string"), "", "format test");
-	
+
 			raises(function(){dateType.formatValue(dateValue.getTime(), "untype")}, sap.ui.model.FormatException, "format test");
-		
+
 		});
 
 		test("dateTime parseValue", function(){
@@ -702,7 +702,7 @@
 
 			dateType =  new sap.ui.model.type.DateTime({pattern: "yy-MM-dd HH:mm:ss'+'SSS'"});
 			equal(dateType.parseValue("03-02-01 04:05:06+007", "string").getTime(), dateValue.getTime(), "parse test with pattern");
-			
+
 			dateType = new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HHmmssSSS"}, pattern: "dd.MM.yyyy HH-mm-ss.SSS"});
 			equal(dateType.parseValue("01.02.2003 04-05-06.007", "string"), "2003/02/01 040506007", "parse test with source pattern");
 
@@ -715,7 +715,7 @@
 			dateValue.setMilliseconds(0);
 			dateType = new sap.ui.model.type.DateTime({source: {pattern: "timestamp"}, pattern: "dd.MM.yyyy HH:mm"});
 			equal(dateType.parseValue("24.01.2012 14:33", "string"), dateValue.getTime(), "parse test with timestamp");
-			
+
 			raises(function(){dateType.parseValue(true, "untype")}, sap.ui.model.ParseException, "parse test");
 			raises(function(){dateType.parseValue(true, "boolean")}, sap.ui.model.ParseException, "parse test");
 			raises(function(){dateType.parseValue("test", "string")}, checkParseException, "parse test");
@@ -735,48 +735,48 @@
 			}
 			raises(function(){dateType.validateValue("24.01.2012 09:30:00")}, checkValidateException, "validate test");
 			raises(function(){dateType.validateValue("25.01.2012 10:30:00")}, checkValidateException, "validate test");
-			
+
 		});
-		
-		
+
+
 		// filesize type tests
 		module("filesize type");
-		
+
 		test("filesize formatValue", function(){
 			var filesizeType = new sap.ui.model.type.FileSize();
-			
+
 			equal(filesizeType.formatValue(null, "string"), null, "format test: null-string");
 			equal(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string");
 			equal(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string");
 			raises(function(){filesizeType.formatValue("Hello", "string")}, sap.ui.model.FormatException, "format test: Hello-string");
 			raises(function(){filesizeType.formatValue("1 kB", "string")}, sap.ui.model.FormatException, "format test: 1 kB-string");
-			
+
 			equal(filesizeType.formatValue(null, "int"), null, "format test: null-int");
 			equal(filesizeType.formatValue(1000, "int"), 1000, "format test: 1000-int");
 			equal(filesizeType.formatValue(1000.5, "int"), 1000, "format test: 1000.5-int");
 			raises(function(){filesizeType.formatValue("Hello", "int")}, sap.ui.model.FormatException, "format test: Hello-int");
 			raises(function(){filesizeType.formatValue("1 kB", "int")}, sap.ui.model.FormatException, "format test: 1 kB-int");
-			
+
 			equal(filesizeType.formatValue(null, "float"), null, "format test: null-float");
 			equal(filesizeType.formatValue(1000, "float"), 1000, "format test: 1000-float");
 			equal(filesizeType.formatValue(1000.5, "float"), 1000.5, "format test: 1000.5-float");
 			raises(function(){filesizeType.formatValue("Hello", "float")}, sap.ui.model.FormatException, "format test: Hello-float");
 			raises(function(){filesizeType.formatValue("1 kB", "float")}, sap.ui.model.FormatException, "format test: 1 kB-float");
-			
+
 			equal(filesizeType.formatValue(null, "untype"), null, "format test: null-untype");
 			raises(function(){filesizeType.formatValue(1000, "untype")}, sap.ui.model.FormatException, "format test: 1000-untype");
 			raises(function(){filesizeType.formatValue(1000.5, "untype")}, sap.ui.model.FormatException, "format test: 1000.5-untype");
 			raises(function(){filesizeType.formatValue("Hello", "untype")}, sap.ui.model.FormatException, "format test: Hello-untype");
 			raises(function(){filesizeType.formatValue("1 kB", "untype")}, sap.ui.model.FormatException, "format test: 1 kB-untype");
-			
+
 			filesizeType.setFormatOptions({source: {}});
-			
+
 			equal(filesizeType.formatValue(null, "string"), null, "format test: null-string-inputformat");
 			equal(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string-inputformat");
 			equal(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string-inputformat");
 			raises(function(){filesizeType.formatValue("Hello", "string")}, sap.ui.model.FormatException, "format test: Hello-string-inputformat");
 			equal(filesizeType.formatValue("1 kB", "string").toUpperCase(), "1 KB", "format test: 1kB-string-inputformat");
-			
+
 			equal(filesizeType.formatValue(null, "int"), null, "format test: null-int-inputformat");
 			equal(filesizeType.formatValue(1000, "int"), 1000, "format test: 1000-int-inputformat");
 			equal(filesizeType.formatValue(1000.5, "int"), 1000, "format test: 1000.5-int-inputformat");
@@ -795,45 +795,45 @@
 			raises(function(){filesizeType.formatValue("Hello", "untype")}, sap.ui.model.FormatException, "format test: Hello-untype-inputformat");
 			raises(function(){filesizeType.formatValue("1 kB", "untype")}, sap.ui.model.FormatException, "format test: 1kB-untype-inputformat");
 		});
-		
+
 		test("filesize parseValue", function(){
 			var filesizeType = new sap.ui.model.type.FileSize();
-			
+
 			equal(filesizeType.parseValue(null, "string"), null, "parse test: null-string");
 			raises(function(){filesizeType.parseValue("Hello", "string")}, sap.ui.model.ParseException, "parse test: Hello-string");
 			equal(filesizeType.parseValue("1 kB", "string"), 1000, "parse test: 1 kB-string");
 			equal(filesizeType.parseValue("1.0005 kB", "string"), 1000.5, "parse test: 1.0005 kB-string");
-			
+
 			equal(filesizeType.parseValue(null, "int"), null, "parse test: null-int");
 			equal(filesizeType.parseValue(1000, "int"), 1000, "parse test: 1000-int");
 			equal(filesizeType.parseValue(1000.5, "int"), 1000.5, "parse test: 1000.5 kB-int");
-			
+
 			equal(filesizeType.parseValue(null, "float"), null, "parse test: null-float");
 			equal(filesizeType.parseValue(1000, "float"), 1000, "parse test: 1000-float");
 			equal(filesizeType.parseValue(1000.5, "float"), 1000.5, "parse test: 1000.5 kB-float");
-			
+
 			equal(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
 			raises(function(){filesizeType.parseValue("Hello", "untype")}, sap.ui.model.ParseException, "parse test: Hello-untype");
 			raises(function(){filesizeType.parseValue("1 kB", "untype")}, sap.ui.model.ParseException, "parse test: 1 kB-untype");
 			raises(function(){filesizeType.parseValue("1.0005 kB", "untype")}, sap.ui.model.ParseException, "parse test: 1.0005 kB-untype");
 			raises(function(){filesizeType.parseValue(1000, "untype")}, sap.ui.model.ParseException, "parse test: 1000-untype");
 			raises(function(){filesizeType.parseValue(1000.5, "untype")}, sap.ui.model.ParseException, "parse test: 1000.5 kB-untype");
-			
+
 			filesizeType.setFormatOptions({source: {}});
-			
+
 			equal(filesizeType.parseValue(null, "string"), null, "parse test: null-string-inputformat");
 			raises(function(){filesizeType.parseValue("Hello", "string")}, checkParseException, "parse test: Hello-string-inputformat");
 			equal(filesizeType.parseValue("1 kB", "string").toUpperCase(), "1 KB", "parse test: 1 kB-string-inputformat");
 			equal(filesizeType.parseValue("1.0005 kB", "string").toUpperCase(), "1.0005 KB", "parse test: 1.0005 kB-string-inputformat");
-			
+
 			equal(filesizeType.parseValue(null, "int"), null, "parse test: null-int-inputformat");
 			equal(filesizeType.parseValue(1000, "int").toUpperCase(), "1 KB", "parse test: 1000-int-inputformat");
 			equal(filesizeType.parseValue(1000.5, "int").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-int-inputformat");
-			
+
 			equal(filesizeType.parseValue(null, "float"), null, "parse test: null-float-inputformat");
 			equal(filesizeType.parseValue(1000, "float").toUpperCase(), "1 KB", "parse test: 1000-float-inputformat");
 			equal(filesizeType.parseValue(1000.5, "float").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-float-inputformat");
-			
+
 			equal(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
 			raises(function(){filesizeType.parseValue("Hello", "untype")}, sap.ui.model.ParseException, "parse test: Hello-untype-inputformat");
 			raises(function(){filesizeType.parseValue("1 kB", "untype")}, sap.ui.model.ParseException, "parse test: 1 kB-untype-inputformat");
@@ -841,18 +841,18 @@
 			raises(function(){filesizeType.parseValue(1000, "untype")}, sap.ui.model.ParseException, "parse test: 1000-untype-inputformat");
 			raises(function(){filesizeType.parseValue(1000.5, "untype")}, sap.ui.model.ParseException, "parse test: 1000.5 kB-untype-inputformat");
 		});
-		
+
 		test("filesize validateValue", function(){
 			var filesizeType = new sap.ui.model.type.FileSize(null, {
 				minimum: 1000,
 				maximum : 2000
 			});
-			
+
 			var filesizeType2 = new sap.ui.model.type.FileSize(null, {
 				minimum: "1 kB",
 				maximum : "2 kB"
 			});
-			
+
 			try{
 				equal(filesizeType.validateValue(1000.0), undefined, "validate test: 1000.0-floatcompare");
 				equal(filesizeType.validateValue(1000), undefined, "validate test: 1000-floatcompare");
@@ -860,14 +860,14 @@
 			}catch (e){
 				ok(false, "one of the validation tests failed please check");
 			}
-			
+
 			raises(function(){filesizeType.validateValue(2000.1)}, checkValidateException, "validate test: 2000.1-floatcompare");
 			raises(function(){filesizeType.validateValue(3000)}, checkValidateException, "validate test: 3000-floatcompare");
 			raises(function(){filesizeType.validateValue(500)}, checkValidateException, "validate test: 500-floatcompare");
 			raises(function(){filesizeType.validateValue("5 kB")}, Error, "validate test: 5 kB-floatcompare");
 			raises(function(){filesizeType2.validateValue("1.5 kB")}, Error, "validate test: 1.5 kB-floatcompare");
-			
-			
+
+
 			raises(function(){filesizeType2.validateValue(1000.0)}, Error, "validate test: 1000.0-stringcompare");
 			raises(function(){filesizeType2.validateValue(1000)}, Error, "validate test: 1000-stringcompare");
 			raises(function(){filesizeType2.validateValue(1500)}, Error, "validate test: 1500-stringcompare");
@@ -876,12 +876,12 @@
 			raises(function(){filesizeType2.validateValue(500)}, Error, "validate test: 500-stringcompare");
 			raises(function(){filesizeType2.validateValue("5 kB")}, Error, "validate test: 5 kB-stringcompare");
 			raises(function(){filesizeType2.validateValue("1.5 kB")}, Error, "validate test: 1.5 kB-stringcompare");
-			
-			
+
+
 			filesizeType.setFormatOptions({source: {}});
 			filesizeType2.setFormatOptions({source: {}});
-			
-			
+
+
 			try{
 				equal(filesizeType.validateValue(1000.0), undefined, "validate test: 1000.0-floatcompare-inputformat");
 				equal(filesizeType.validateValue(1000), undefined, "validate test: 1000-floatcompare-inputformat");
@@ -890,13 +890,13 @@
 			}catch (e){
 				ok(false, "one of the validation tests failed please check");
 			}
-			
+
 			raises(function(){filesizeType.validateValue(2000.1)}, checkValidateException, "validate test: 2000.1-floatcompare-inputformat");
 			raises(function(){filesizeType.validateValue(3000)}, checkValidateException, "validate test: 3000-floatcompare-inputformat");
 			raises(function(){filesizeType.validateValue(500)}, checkValidateException, "validate test: 500-floatcompare-inputformat");
 			raises(function(){filesizeType.validateValue("5 kB")}, checkValidateException, "validate test: 5 kB-floatcompare-inputformat");
-			
-			
+
+
 			try{
 				equal(filesizeType2.validateValue(1000.0), undefined, "validate test: 1000.0-stringcompare-inputformat");
 				equal(filesizeType2.validateValue(1000), undefined, "validate test: 1000-stringcompare-inputformat");
@@ -905,16 +905,16 @@
 			}catch (e){
 				ok(false, "one of the validation tests failed please check");
 			}
-			
-			
+
+
 			raises(function(){filesizeType2.validateValue(2000.1)}, checkValidateException, "validate test: 2000.1-stringcompare-inputformat");
 			raises(function(){filesizeType2.validateValue(3000)}, checkValidateException, "validate test: 3000-stringcompare-inputformat");
 			raises(function(){filesizeType2.validateValue(500)}, checkValidateException, "validate test: 500-stringcompare-inputformat");
 			raises(function(){filesizeType2.validateValue("5 kB")}, checkValidateException, "validate test: 5 kB-stringcompare-inputformat");
-			
+
 		});
-		
-		
+
+
 	</script>
 
 </head>

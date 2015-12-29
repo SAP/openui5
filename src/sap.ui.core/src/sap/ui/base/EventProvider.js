@@ -22,34 +22,34 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * @alias sap.ui.base.EventProvider
 	 */
 	var EventProvider = BaseObject.extend("sap.ui.base.EventProvider", /* @lends sap.ui.base.EventProvider */ {
-	
+
 		constructor : function() {
-	
+
 			BaseObject.call(this);
-	
+
 			/**
 			 * A map of arrays of event registrations keyed by the event names
 			 * @private
 			 */
 			this.mEventRegistry = {};
-	
+
 		}
-	
+
 	});
-	
+
 	/**
 	 * Map of event names and ids, that are provided by this class
 	 * @private
 	 * @static
 	 */
 	EventProvider.M_EVENTS = {EventHandlerChange:"EventHandlerChange"};
-	
+
 	/**
 	 * Pool is defined on the prototype to be shared among all EventProviders
 	 * @private
 	 */
 	EventProvider.prototype.oEventPool = new ObjectPool(Event);
-	
+
 	/**
 	 * Adds an event registration for the given object and given event name
 	 *
@@ -76,18 +76,18 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 		}
 		jQuery.sap.assert(typeof (fnFunction) === "function", "EventProvider.attachEvent: fnFunction must be a function");
 		jQuery.sap.assert(!oListener || typeof (oListener) === "object", "EventProvider.attachEvent: oListener must be empty or an object");
-	
+
 		if (!this.mEventRegistry[sEventId]) {
 			this.mEventRegistry[sEventId] = [];
 		}
 		this.mEventRegistry[sEventId].push({oListener:oListener, fFunction:fnFunction, oData: oData});
-	
+
 		// Inform interested parties about changed EventHandlers
 		this.fireEvent(EventProvider.M_EVENTS.EventHandlerChange, {EventId: sEventId, type: 'listenerAttached'});
-	
+
 		return this;
 	};
-	
+
 	/**
 	 * Adds a one time event registration for the given object and given event name. When the event occurs, the handler function is called and removed
 	 * from registration.
@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 		this.attachEvent(sEventId, oData, fnOnce, undefined);  // a listener of ‘undefined’ enforce a context of ‘this’ even after clone
 		return this;
 	};
-	
+
 	/**
 	 * Removes an event registration for the given object and given event name.
 	 *
@@ -136,14 +136,14 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 		jQuery.sap.assert(typeof (sEventId) === "string" && sEventId, "EventProvider.detachEvent: sEventId must be a non-empty string" );
 		jQuery.sap.assert(typeof (fnFunction) === "function", "EventProvider.detachEvent: fnFunction must be a function");
 		jQuery.sap.assert(!oListener || typeof (oListener) === "object", "EventProvider.detachEvent: oListener must be empty or an object");
-	
+
 		var aEventListeners = this.mEventRegistry[sEventId];
 		if (!aEventListeners) {
 			return this;
 		}
-		
+
 		var bListenerDetached = false;
-		
+
 		//PERFOPT use array. remember length to not re-calculate over and over again
 		for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
 			//PERFOPT check for identity instead of equality... avoid type conversion
@@ -158,15 +158,15 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 		if (aEventListeners.length == 0) {
 			delete this.mEventRegistry[sEventId];
 		}
-	
+
 		if (bListenerDetached) {
 			// Inform interested parties about changed EventHandlers
 			this.fireEvent(EventProvider.M_EVENTS.EventHandlerChange, {EventId: sEventId, type: 'listenerDetached' });
 		}
-	
+
 		return this;
 	};
-	
+
 	/**
 	 * Fires the given event and notifies all listeners. Listeners must not change
 	 * the content of the event.
@@ -182,30 +182,30 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	EventProvider.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
 		// at least in BrowserEventManager when firing events of its E_EVENTS enumeration, the type will be an integer... thus avoid this check
 		//	jQuery.sap.assert(typeof (sEventId) == "string");
-	
+
 		// get optional parameters right
 		if (typeof mParameters == "boolean") {
 			bEnableEventBubbling = bAllowPreventDefault;
 			bAllowPreventDefault = mParameters;
 		}
-	
+
 		var aEventListeners = this.mEventRegistry[sEventId],
 			bPreventDefault = false,
 			oEvent, oParent, oInfo;
-	
+
 		if (bEnableEventBubbling || (aEventListeners && jQuery.isArray(aEventListeners))) {
-	
+
 			// this ensures no 'concurrent modification exception' occurs (e.g. an event listener deregisters itself).
 			aEventListeners = aEventListeners ? aEventListeners.slice() : [];
-	
+
 			oEvent = this.oEventPool.borrowObject(sEventId, this, mParameters);
-	
+
 			//PERFOPT use array. remember length to not re-calculate over and over again
 			for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
 				oInfo = aEventListeners[i];
 				oInfo.fFunction.call(oInfo.oListener || this, oEvent, oInfo.oData);
 			}
-	
+
 			// In case this is a bubbling event and object has a getParent method, also fire on parents
 			if (bEnableEventBubbling) {
 				oParent = this.getEventingParent();
@@ -221,13 +221,13 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 					oParent = oParent.getEventingParent();
 				}
 			}
-	
+
 			// Store prevent default state, before returning event to the pool
 			bPreventDefault = oEvent.bPreventDefault;
-	
+
 			this.oEventPool.returnObject(oEvent);
 		}
-	
+
 		// Only return prevent default result in case it has been enabled, for compatibility
 		if (bAllowPreventDefault) {
 			return !bPreventDefault;
@@ -235,7 +235,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 			return this;
 		}
 	};
-	
+
 	/**
 	 * Returns whether there are any listeners for the given event ID.
 	 *
@@ -246,7 +246,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	EventProvider.prototype.hasListeners = function(sEventId) {
 		return !!this.mEventRegistry[sEventId];
 	};
-	
+
 	/**
 	 * Returns the list of events currently having listeners attached.
 	 *
@@ -263,7 +263,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	EventProvider.getEventList = function(oEventProvider) {
 		return oEventProvider.mEventRegistry;
 	};
-	
+
 	/**
 	 * Returns the parent in the eventing hierarchy of this object.
 	 *
@@ -277,7 +277,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	EventProvider.prototype.getEventingParent = function() {
 		return null;
 	};
-	
+
 	/**
 	 * Returns a string representation of this object.
 	 *
@@ -294,8 +294,8 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 			return "EventProvider";
 		}
 	};
-	
-	
+
+
 	/**
 	 * @see sap.ui.base.Object.prototype.destroy
 	 * @public
@@ -304,7 +304,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 		this.mEventRegistry = {};
 		BaseObject.prototype.destroy.apply(this, arguments);
 	};
-	
+
 
 	return EventProvider;
 

@@ -8,7 +8,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructs the class <code>sap.ui.debug.ControlTree</code> and registers
 	 * to the <code>sap.ui.core.Core</code> for UI change events.
@@ -60,12 +60,12 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			this.sLinkUrl = this.sResourcePath + "sap/ui/debug/images/link.gif";
 		}
 	});
-	
+
 	/** events of the ControlTree */
 	ControlTree.M_EVENTS = {
 		SELECT : "SELECT"
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -74,7 +74,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 		jQuery(document).unbind();
 		jQuery(this.oParentDomRef).unbind();
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -85,7 +85,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 		}
 		this.oTimer = this.oWindow.jQuery.sap.delayedCall(0,this,"render");
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -99,14 +99,14 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			var oUIArea = oUIAreas[i],
 				oDomNode = this.createTreeNodeDomRef(oUIArea.getId(),0,"UIArea", this.sTestResourcePath + "sap/ui/core/images/controls/sap.ui.core.UIArea.gif");
 			oDomRef.appendChild(oDomNode);
-	
+
 			var aRootControls = oUIArea.getContent();
 			for (var i = 0, l = aRootControls.length; i < l; i++) {
 				this.renderNode(oDomRef,aRootControls[i],1);
 			}
 		}
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -129,7 +129,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 		oDomNode.title = sType + " - " + sId;
 		return oDomNode;
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -153,7 +153,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 		oParentRef.appendChild(oDomNode);
 		return oDomNode;
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -162,7 +162,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 		if (!oControl) {
 			return;
 		}
-	
+
 		var oMetadata = oControl.getMetadata();
 		var sIcon = this.sTestResourcePath + oMetadata.getLibraryName().replace(/\./g, "/") + "/images/controls/" + oMetadata.getName() + ".gif";
 		var oDomNode = this.createTreeNodeDomRef(oControl.getId(),iLevel,oMetadata.getName(),sIcon);
@@ -205,9 +205,9 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			oExpandImage.src = this.sMinusUrl;
 			oExpandImage.style.display = "";
 		}
-	
+
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -251,9 +251,9 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 				oSource.src = this.sMinusUrl;
 				oParent.setAttribute("sap-expanded","true");
 			}
-	
+
 		//} else if (oSource.getAttribute("sap-type") == "UIArea") {
-	
+
 		} else {
 			if (oSource.tagName != "SPAN") {
 				oSource = oSource.getElementsByTagName("SPAN")[0];
@@ -271,7 +271,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			this.selectNode(sNodeId);
 		}
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -282,7 +282,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			this.oHoverHighlighter.highlight(this.getTargetDomRef(oSource.parentNode));
 		}
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -295,7 +295,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			}
 		}
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -314,10 +314,10 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 		oSpan.style.backgroundColor = "#000066";
 		oSpan.style.color = "#FFFFFF";
 		this.sSelectedNodeId = sId;
-	
+
 		this.fireEvent(ControlTree.M_EVENTS.SELECT,{id:sId, controlId: sControlId});
 	};
-	
+
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
@@ -332,7 +332,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 		oSpan.style.color = "#000000";
 		this.sSelectedNodeId = sId;
 	};
-	
+
 	/**
 	 * Tries to find the innermost DOM node in the source window that contains the
 	 * SAPUI5 element/UIArea identified by the given tree node.
@@ -349,7 +349,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 		var sType = oTreeNodeDomRef.getAttribute("sap-type"),
 			sId = oTreeNodeDomRef.getAttribute("sap-id"),
 			oSomething = sType === "UIArea" ? this.oCore.getUIArea(sId) : this.oCore.byId(sId);
-	
+
 		while (oSomething && oSomething instanceof sap.ui.core.Element) {
 			var oDomRef = oSomething.getDomRef();
 			if ( oDomRef ) {
@@ -357,12 +357,12 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			}
 			oSomething = oSomething.getParent();
 		}
-	
+
 		if ( oSomething instanceof sap.ui.core.UIArea ) {
 			return oSomething.getRootNode();
 		}
 	};
-	
+
 	/**
 	 * Enables an 'onhover' handler in the content window that allows to see control borders.
 	 * @private
@@ -373,7 +373,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			that.selectControlInTree(oEvt);
 		});
 	};
-	
+
 	ControlTree.prototype.selectControlInTree = function( oEvt ) {
 		if ( oEvt ) {
 		  if ( oEvt.ctrlKey && oEvt.shiftKey && !oEvt.altKey ) {
@@ -387,7 +387,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			// this.selectControlInTreeByCtrlId(sId);
 				  this.oHoverHighlighter.hide();
 			 }
-	
+
 		  } else {
 			  this.oHoverHighlighter.hide();
 		  }

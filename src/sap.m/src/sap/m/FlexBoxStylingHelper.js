@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 * @namespace
 	 */
 	var FlexBoxStylingHelper = {};
-	
+
 	/**
 	 * Goes through applicable styles and calls function to sets them on the given control.
 	 *
@@ -24,41 +24,41 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 */
 	FlexBoxStylingHelper.setFlexBoxStyles = function(oRm, oControl) {
 		var sDisplay;
-	
+
 		// Prepare values by converting camel-case to dash and lower-casing
 		var bInline = oControl.getDisplayInline();
 		var sDirection = oControl.getDirection().replace(/\W+/g, "-").replace(/([a-z\d])([A-Z])/g, "$1-$2").toLowerCase();
 		var bFitContainer = oControl.getFitContainer();
 		var sJustifyContent = oControl.getJustifyContent().replace(/\W+/g, "-").replace(/([a-z\d])([A-Z])/g, "$1-$2").toLowerCase();
 		var sAlignItems = oControl.getAlignItems().replace(/\W+/g, "-").replace(/([a-z\d])([A-Z])/g, "$1-$2").toLowerCase();
-	
+
 		if (bInline) {
 			sDisplay = "inline-flex";
 		} else {
 			sDisplay = "flex";
 		}
-	
+
 		// Set width and height for outermost FlexBox only if FitContainer is set
 		if (bFitContainer && !(oControl.getParent() instanceof sap.m.FlexBox)) {
 			oRm.addStyle("width", "auto");
 			oRm.addStyle("height", "100%");
 		}
-	
+
 		// Add flex prefix to start and end values
 		if (sJustifyContent === "start" || sJustifyContent === "end") {
 			sJustifyContent = "flex-" + sJustifyContent;
 		}
-	
+
 		if (sAlignItems === "start" || sAlignItems === "end") {
 			sAlignItems = "flex-" + sAlignItems;
 		}
-	
+
 		// Set values (if different from default)
 		FlexBoxStylingHelper.setStyle(oRm, oControl, "display", sDisplay);
 		if (sDirection !== "row") {
 			FlexBoxStylingHelper.setStyle(oRm, oControl, "flex-direction", sDirection);
 		}
-	
+
 		if (sJustifyContent !== "flex-start") {
 			FlexBoxStylingHelper.setStyle(oRm, oControl, "justify-content", sJustifyContent);
 		}
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	//		}
 	//	}
 	};
-	
+
 	/**
 	 * Goes through applicable item styles and sets them on the given control.
 	 *
@@ -93,36 +93,36 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		if (order) {
 			FlexBoxStylingHelper.setStyle(oRm, null, "order", order);
 		}
-	
+
 		var growFactor = oLayoutData.getGrowFactor();
 		if (growFactor !== undefined) {
 			FlexBoxStylingHelper.setStyle(oRm, null, "flex-grow", growFactor);
 		}
-	
+
 		var alignSelf = oLayoutData.getAlignSelf().toLowerCase();
-	
+
 		// Add flex prefix to start and end values to create CSS value
 		if (alignSelf === "start" || alignSelf === "end") {
 			alignSelf = "flex-" + alignSelf;
 		}
-	
+
 		if (alignSelf && alignSelf !== "auto") {
 			FlexBoxStylingHelper.setStyle(oRm, null, "align-self", alignSelf);
 		}
-	
+
 		if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
 			var shrinkFactor = oLayoutData.getShrinkFactor();
 			if (shrinkFactor !== 1) {
 				FlexBoxStylingHelper.setStyle(oRm, null, "flex-shrink", shrinkFactor);
 			}
-	
+
 	//		var baseSize = oLayoutData.getBaseSize().toLowerCase();
 	//		if(baseSize !== undefined) {
 	//			sap.m.FlexBoxStylingHelper.setStyle(oRm, null, "flex-basis", baseSize);
 	//		}
 		}
 	};
-	
+
 	/**
 	 * Sets style (including fall-back styles) to the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * This method does NOT apply a polyfill in browsers that don't support flex box natively.
@@ -136,10 +136,10 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		if (typeof (sValue) === "string") {
 			sValue = sValue.toLowerCase();
 		}
-	
+
 		// Determine vendor prefix
 		var sVendorPrefix = "";
-	
+
 		if (jQuery.support.flexBoxPrefixed) {
 			if (sap.ui.Device.browser.webkit) {
 				sVendorPrefix = "-webkit-";
@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 				sVendorPrefix = "-ms-";
 			}
 		}
-	
+
 		// Choose flex box styling method
 		if (jQuery.support.newFlexBoxLayout) {
 			// New spec
@@ -159,7 +159,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			FlexBoxStylingHelper.setOldSpecStyle(oRm, oControl, sProperty, sValue, sVendorPrefix);
 		}
 	};
-	
+
 	/**
 	 * Sets style for the FINAL flex box spec to the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -174,11 +174,11 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			// With vendor prefix
 			FlexBoxStylingHelper.writeStyle(oRm, oControl, sProperty, sValue, sVendorPrefix);
 		}
-	
+
 		// Pure standard
 		FlexBoxStylingHelper.writeStyle(oRm, oControl, sProperty, sValue);
 	};
-	
+
 	/**
 	 * Sets style for the OLD or the IE10 flex box spec to the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		} else {
 			sSpec = "spec0907";	// old specification
 		}
-	
+
 		// Nothing to do if final standard is supported or property doesn't exist in this spec or is the same as standard
 		// Else map to old property
 		if (FlexBoxCssPropertyMap[sSpec][sProperty] !== null && FlexBoxCssPropertyMap[sSpec][sProperty] !== "<idem>") {
@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			} else {
 				mLegacyMap = FlexBoxCssPropertyMap[sSpec][sProperty][sValue];
 			}
-	
+
 			// Nothing to do if value doesn't exist or is the same as standard
 			if (mLegacyMap !== null && mLegacyMap !== "<idem>") {
 				if (typeof (mLegacyMap) === "object") {
@@ -231,7 +231,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			}
 		}
 	};
-	
+
 	/**
 	 * Writes the style to the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -245,7 +245,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		var sPropertyPrefix = "";
 		var sValuePrefix = "";
 		sVendorPrefix = typeof sVendorPrefix !== "undefined" ? sVendorPrefix : "";	// default: empty string
-	
+
 		// Set prefix to value for display property
 		// As display is a long-standing standard property the values are vendor-prefixed instead of the property name
 		if (sProperty !== "display") {
@@ -253,7 +253,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		} else {
 			sValuePrefix = sVendorPrefix;
 		}
-	
+
 		// Finally write property value to control using either renderer or element directly
 		if (oRm) {
 			oRm.addStyle(sPropertyPrefix + sProperty, sValuePrefix + sValue);
@@ -261,7 +261,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			jQuery(oControl).css(sPropertyPrefix + sProperty, sValuePrefix + sValue);
 		}
 	};
-	
+
 	/**
 	 * Applies flex box polyfill styling to the given DOM element and its children (if polyfill is being used at all)
 	 *
@@ -286,10 +286,10 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			End: "end",
 			Stretch : "stretch"
 		};
-		
+
 		var orient = "";
 		var direction = "";
-		
+
 		switch (oSettings.direction) {
 			case "Column" :
 				orient = "vertical";
@@ -308,7 +308,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 				orient = "horizontal";
 				direction = "normal";
 		}
-	
+
 		var box = new window.Flexie.box({
 			target : document.getElementById(sId),
 			orient : orient,
@@ -319,7 +319,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			ordinalMatrix : oSettings.ordinalMatrix,
 		    dynamic: true
 		});
-		
+
 		return box;
 	};
 

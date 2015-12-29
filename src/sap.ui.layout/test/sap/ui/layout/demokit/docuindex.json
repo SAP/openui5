@@ -78,7 +78,7 @@
 				"category" : "Layout",
 				"formFactors" : "-",
 				"since" : "1.22",
-				"samples" : [ 
+				"samples" : [
 					"sap.ui.layout.sample.Splitter",
 					"sap.ui.layout.sample.Splitter2",
 					"sap.ui.layout.sample.Splitter3",

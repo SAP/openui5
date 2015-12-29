@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 	 * @namespace
 	 */
 	var OverlayContainerRenderer = Renderer.extend(OverlayRenderer);
-	
+
 	/**
 	 * Renders the Overlay content
 	 *
@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 		}
 		rm.write("</div>");
 	};
-	
+
 	/**
 	 * Add root class to Overlay
 	 *
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 		var rm = oRenderManager;
 		rm.addClass("sapUiUx3OC");
 	};
-	
+
 	/**
 	 * Add class to Overlay
 	 *
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './OverlayRenderer']
 		var rm = oRenderManager;
 		rm.addClass("sapUiUx3OCOverlay");
 	};
-	
+
 
 	return OverlayContainerRenderer;
 

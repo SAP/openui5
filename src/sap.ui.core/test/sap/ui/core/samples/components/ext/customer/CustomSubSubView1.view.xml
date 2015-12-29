@@ -3,7 +3,7 @@
 	<core:ExtensionPoint name="extension1" />
 
 	<TextView text="Customer View 'SubSubView1' - this one extends the original SAP View 'Sub2' - and even custom Views can be extended:"></TextView>
-	
+
 	<core:ExtensionPoint name="extension2" />
-	
+
 </mvc:View>

@@ -15,13 +15,13 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
+
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script>
 
 		jQuery.sap.require("sap.ui.thirdparty.jquery-mobile-custom");
-		
+
 		var sSrc = "../images/settings_64.png";
 		var	busyImage = new sap.m.BusyIndicator('b1', {
 			text:'this is an image busy indicator ...',
@@ -82,12 +82,12 @@
 
 		test("Busy Indicator Image Properties", function(){
 			equal(jQuery("#b1").children('img').width(), 60, "Image width should be 60px");
-			equal(jQuery("#b1").children('img').height(), 50, "Image height should be the default 50px");	
+			equal(jQuery("#b1").children('img').height(), 50, "Image height should be the default 50px");
 		});
 		test("Busy Indicator Spinner", function(){
 			var spinner = jQuery("#b2").children('svg,canvas');
 			equal(spinner.width(), 10, "Spinner width should be 10px");
-			equal(spinner.height(), 10, "Spinner height should be 10px");	
+			equal(spinner.height(), 10, "Spinner height should be 10px");
 		});
 		test("Busy Indicator Aria support", function(){
 			equal(jQuery("#b1").attr("role"), "progressbar", "Busy Indicator has a progressbar role");
@@ -103,8 +103,8 @@
 			setTimeout(function() {
 				start();
 				equal(jQuery("#b1").children('img').width(), 30, "Image width should be 50px");
-				equal(jQuery("#b1").children('img').height(), 30, "Image height should be the default 50px");	
-				equal(jQuery("#b1").children('label').text(), "Test", "Label text should be 'Test'");	
+				equal(jQuery("#b1").children('img').height(), 30, "Image height should be the default 50px");
+				equal(jQuery("#b1").children('label').text(), "Test", "Label text should be 'Test'");
 			},100)
 		});
 		</script>

@@ -43,7 +43,7 @@ sap.ui.controller("view.Home", {
 		var bShowSearch = oSearchField.getValue().length !== 0;
 		oProductList.toggleStyleClass("invisible", !bShowSearch);
 		oCategoryList.toggleStyleClass("invisible", bShowSearch);
-		
+
 		if (bShowSearch) {
 			this._changeNoDataTextToIndicateLoading(oProductList);
 		}
@@ -59,7 +59,7 @@ sap.ui.controller("view.Home", {
 			}
 		}
 	},
-	
+
 	_changeNoDataTextToIndicateLoading: function (oList) {
 		var sOldNoDataText = oList.getNoDataText();
 		oList.setNoDataText("Loading...");
@@ -72,24 +72,24 @@ sap.ui.controller("view.Home", {
 		var sCategoryId = oModel.getData(oBindContext.getPath()).Category;
 		this._router.navTo("category", {id: sCategoryId});
 	},
-	
+
 	handleProductListSelect: function (oEvent) {
 		var oItem = oEvent.getParameter("listItem");
 		this._showProduct(oItem);
 	},
-	
+
 	handleProductListItemPress: function (oEvent) {
 		var oItem = oEvent.getSource();
 		this._showProduct(oItem);
 	},
-	
+
 	_showProduct: function (oItem) {
 		var oBindContext = oItem.getBindingContext();
 		var oModel = oBindContext.getModel();
 		var sId = oModel.getData(oBindContext.getPath()).ProductId;
 		this._router.navTo("cartProduct", {productId: sId}, !sap.ui.Device.system.phone);
 	},
-	
+
 	handleCartButtonPress :  function (oEvent) {
 		this._router.navTo("cart");
 	}

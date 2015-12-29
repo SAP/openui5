@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 	/**
 	 * Constructor for a new InPlaceEdit.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -610,7 +610,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 
 		/**
 		 * Delegate object for listening to the child elements' events.
-		 * WARNING: this is set to the InPlaceEdit-instance. This is done by setting it as the second 
+		 * WARNING: this is set to the InPlaceEdit-instance. This is done by setting it as the second
 		 *          parameter of the addDelegate call. (See updateControls())
 		 * @private
 		 */

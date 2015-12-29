@@ -1035,7 +1035,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	/**
 	 * Helper function to check if the given filename is longer than the specified 'maximumFilenameLength'.
 	 * @param {string} [sFilename] the filename which should be tested
-	 * @param {boolean} [bFireEvent] if necessary, this flag triggers that a filenameLengthExceed event is fired 
+	 * @param {boolean} [bFireEvent] if necessary, this flag triggers that a filenameLengthExceed event is fired
 	 * @returns {boolean} whether the filename is too long or not
 	 * @private
 	 */

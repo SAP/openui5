@@ -1,6 +1,6 @@
 {
 	"groups" : [
-	
+
 		{
 			"name" : "charts",
 			"text" : "Charts",
@@ -41,7 +41,7 @@
 				{ "name" : "legend" }
 			]
 		},
-		
+
 		{
 			"name" : "people",
 			"text" : "People",
@@ -78,7 +78,7 @@
 				{ "name" : "employee-pane" }
 			]
 		},
-		
+
 		{
 			"name" : "time",
 			"text" : "Time",
@@ -98,7 +98,7 @@
 				{ "name" : "lateness" }
 			]
 		},
-		
+
 		{
 			"name" : "devices",
 			"text" : "Devices",
@@ -125,7 +125,7 @@
 				{ "name" : "sys-monitor" }
 			]
 		},
-		
+
 		{
 			"name" : "med",
 			"text" : "Medical",
@@ -144,7 +144,7 @@
 				{ "name" : "nurse" }
 			]
 		},
-		
+
 		{
 			"name" : "money",
 			"text" : "Money",
@@ -173,7 +173,7 @@
 				{ "name" : "sales-notification" }
 			]
 		},
-		
+
 		{
 			"name" : "doc",
 			"text" : "Documents",
@@ -218,7 +218,7 @@
 				{ "name" : "sys-last-page" }
 			]
 		},
-		
+
 		{
 			"name" : "folder",
 			"text" : "Folder",
@@ -232,7 +232,7 @@
 				{ "name" : "folder" }
 			]
 		},
-		
+
 		{
 			"name" : "arrow",
 			"text" : "Arrows",
@@ -292,7 +292,7 @@
 				{ "name" : "arrow-down" }
 			]
 		},
-		
+
 		{
 			"name" : "action",
 			"text" : "Actions",
@@ -380,7 +380,7 @@
 				{ "name" : "back-to-top" }
 			]
 		},
-		
+
 		{
 			"name" : "shop",
 			"text" : "Shopping",
@@ -397,7 +397,7 @@
 				{ "name" : "cart-full" }
 			]
 		},
-		
+
 		{
 			"name" : "travel",
 			"text" : "Travel",
@@ -421,7 +421,7 @@
 				{ "name" : "doctor" }
 			]
 		},
-	
+
 		{
 			"name" : "status",
 			"text" : "Status",
@@ -470,7 +470,7 @@
 				{ "name" : "disconnected" }
 			]
 		},
-		
+
 		{
 			"name" : "clipboard",
 			"text" : "Clipboards",
@@ -486,7 +486,7 @@
 				{ "name" : "activity-assigned-to-goal" }
 			]
 		},
-		
+
 		{
 			"name" : "calendar",
 			"text" : "Calendars",
@@ -500,7 +500,7 @@
 				{ "name" : "measurement-document" }
 			]
 		},
-		
+
 		{
 			"name" : "callout",
 			"text" : "Callout",
@@ -516,7 +516,7 @@
 				{ "name" : "hello-world" }
 			]
 		},
-		
+
 		{
 			"name" : "thing",
 			"text" : "Things",
@@ -576,7 +576,7 @@
 				{ "name" : "key" }
 			]
 		},
-		
+
 		{
 			"name" : "place",
 			"text" : "Places",

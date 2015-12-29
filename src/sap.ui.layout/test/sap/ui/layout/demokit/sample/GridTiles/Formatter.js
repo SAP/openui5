@@ -1,7 +1,7 @@
 jQuery.sap.declare("sap.ui.layout.sample.GridTiles.Formatter");
 
 sap.ui.layout.sample.GridTiles.Formatter = {
-	
+
 	categoryIcon : function (sValue) {
 		var sIcon;
 		switch (sValue) {

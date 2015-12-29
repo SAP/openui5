@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Constructor for Context class.
 	 *
 	 * @class
-	 * The Context is a pointer to an object in the model data, which is used to 
+	 * The Context is a pointer to an object in the model data, which is used to
 	 * allow definition of relative bindings, which are resolved relative to the
 	 * defined object.
 	 * Context elements are created either by the ListBinding for each list entry
@@ -26,25 +26,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @alias sap.ui.model.Context
 	 */
 	var Context = sap.ui.base.Object.extend("sap.ui.model.Context", /** @lends sap.ui.model.Context.prototype */ {
-		
+
 		constructor : function(oModel, sPath){
-	
+
 			sap.ui.base.Object.apply(this);
-		
+
 			this.oModel = oModel;
 			this.sPath = sPath;
-		
+
 		},
-		
+
 		metadata : {
 			"abstract" : true,
 		  publicMethods : [
 				"getModel", "getPath", "getProperty", "getObject"
 			]
 		}
-	
+
 	});
-	
+
 	// Getter
 	/**
 	 * Getter for model
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	Context.prototype.getModel = function() {
 		return this.oModel;
 	};
-	
+
 	/**
 	 * Getter for path of the context itself or a subpath
 	 * @public
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	Context.prototype.getPath = function(sPath) {
 		return this.sPath + (sPath ? "/" + sPath : "");
 	};
-	
+
 	/**
 	 * Gets the property with the given relative binding path
 	 * @public
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	Context.prototype.getProperty = function(sPath) {
 		return this.oModel.getProperty(sPath, this);
 	};
-	
+
 	/**
 	 * Gets the (model dependent) object the context points to or the object with the given relative binding path
 	 * @public
@@ -84,14 +84,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	Context.prototype.getObject = function(sPath) {
 		return this.oModel.getObject(sPath, this);
 	};
-	
-	/** 
+
+	/**
 	 * toString method returns path for compatbility
 	 */
 	Context.prototype.toString = function() {
 		return this.sPath;
 	};
-	
+
 
 	return Context;
 

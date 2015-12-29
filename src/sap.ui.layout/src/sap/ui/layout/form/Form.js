@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 	/**
 	 * Constructor for a new sap.ui.layout.form.Form.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 			/**
 			 * Containers with the content of the form. A <code>FormContainer</code> represents a group inside the <code>Form</code>.
 			 */
-			formContainers : {type : "sap.ui.layout.form.FormContainer", multiple : true, singularName : "formContainer"}, 
+			formContainers : {type : "sap.ui.layout.form.FormContainer", multiple : true, singularName : "formContainer"},
 
 			/**
 			 * Title of the <code>Form</code>. Can either be a <code>Title</code> object, or a string.
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 	//	sap.ui.commons.Form.prototype.init = function(){
 	//	// do something for initialization...
 	//	};
-	
+
 		Form.prototype.toggleContainerExpanded = function(oContainer){
 
 			var oLayout = this.getLayout();

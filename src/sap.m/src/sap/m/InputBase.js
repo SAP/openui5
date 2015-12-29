@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._bIgnoreNextInput = !this.bShowLabelAsPlaceholder &&
 									sap.ui.Device.browser.msie &&
 									sap.ui.Device.browser.version > 9 &&
-									!!this.getPlaceholder() && 
+									!!this.getPlaceholder() &&
 									!this._getInputValue();
 
 		this.$().toggleClass("sapMFocus", true);

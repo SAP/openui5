@@ -10,16 +10,16 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new P13nFilterPanel.
-	 * 
+	 *
 	 * @param {string}
 	 *            [sId] id for the new control, generated automatically if no id is given
 	 * @param {object}
 	 *            [mSettings] initial settings for the new control
-	 * 
+	 *
 	 * @class The FilterPanel Control can be used to...
 	 * @extends sap.m.P13nPanel
 	 * @version ${version}
-	 * 
+	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.m.P13nFilterPanel
@@ -112,7 +112,7 @@ sap.ui.define([
 				 */
 				removeFilterItem: {},
 
-				/**								 
+				/**
 				 * update a filter item
 				 * @since 1.26
 				 */
@@ -125,7 +125,7 @@ sap.ui.define([
 
 	/**
 	 * sets the array of conditions.
-	 * 
+	 *
 	 * @public
 	 * @since 1.26
 	 * @param {object[]}
@@ -154,8 +154,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * add a new condition object 
-	 * 
+	 * add a new condition object
+	 *
 	 * @private
 	 * @param {object}
 	 *            oCondition the new condition
@@ -174,7 +174,7 @@ sap.ui.define([
 
 	/**
 	 * returns the array of conditions.
-	 * 
+	 *
 	 * @public
 	 * @since 1.26
 	 */
@@ -201,19 +201,19 @@ sap.ui.define([
 
 	/**
 	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state)
-	 * 
+	 *
 	 * @public
 	 * @since 1.26
 	 * @returns {boolean}
-	 * 			false, if there is an invalid condition 
+	 * 			false, if there is an invalid condition
 	 */
 	P13nFilterPanel.prototype.validateConditions = function() {
 		return this._oIncludeFilterPanel.validateConditions() && this._oExcludeFilterPanel.validateConditions();
 	};
 
 	/**
-	 * removes all invalid conditions.					 
-	 *  
+	 * removes all invalid conditions.
+	 *
 	 * @public
 	 * @since 1.28
 	 */
@@ -224,7 +224,7 @@ sap.ui.define([
 
 	/**
 	 * removes all errors/warning states from of all filter conditions.
-	 * 
+	 *
 	 * @public
 	 * @since 1.28
 	 */
@@ -243,7 +243,7 @@ sap.ui.define([
 
 	/**
 	 * setter for the supported Include operations array
-	 * 
+	 *
 	 * @public
 	 * @since 1.26
 	 * @param {array}
@@ -258,8 +258,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * getter for the Include operations 
-	 * 
+	 * getter for the Include operations
+	 *
 	 * @public
 	 * @since 1.26
 	 * @returns {array}
@@ -273,7 +273,7 @@ sap.ui.define([
 
 	/**
 	 * setter for the supported Exclude operations array
-	 * 
+	 *
 	 * @public
 	 * @since 1.26
 	 * @param {array}
@@ -288,8 +288,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * getter for the Exclude operations 
-	 * 
+	 * getter for the Exclude operations
+	 *
 	 * @public
 	 * @since 1.26
 	 * @returns {array}
@@ -303,7 +303,7 @@ sap.ui.define([
 
 	/**
 	 * setter for a KeyFields array
-	 * 
+	 *
 	 * @public
 	 * @since 1.26
 	 * @param {array}
@@ -366,7 +366,7 @@ sap.ui.define([
 
 	/**
 	 * Initialize the control
-	 * 
+	 *
 	 * @private
 	 */
 	P13nFilterPanel.prototype.init = function() {
@@ -508,7 +508,7 @@ sap.ui.define([
 				operation: oFilterItem.getOperation(),
 				value1: oFilterItem.getValue1(),
 				value2: oFilterItem.getValue2()
-			}; 
+			};
 
 			this._addCondition(oCondition);
 		}
@@ -532,7 +532,7 @@ sap.ui.define([
 		if (!this._bIgnoreBindCalls) {
 			this.setConditions([]);
 		}
-		
+
 		return aFilterItems;
 	};
 

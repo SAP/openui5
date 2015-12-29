@@ -26,7 +26,7 @@
 		// reset bindings
 		bindings = new Array();
 		testData = "<root>"+
-				"<teamMembers>" + 
+				"<teamMembers>" +
 					"<member firstName=\"Andreas\" lastName=\"Klark\" gender=\"male\">1</member>" +
 					"<member firstName=\"Peter\" lastName=\"Miller\" gender=\"male\">2</member>" +
 					"<member firstName=\"Gina\" lastName=\"Rush\" gender=\"female\">3</member>" +
@@ -54,7 +54,7 @@
 		};
 
 	};
-	
+
 	var attach = false;
 	var detach = true;
 
@@ -122,11 +122,11 @@
 			ok(detach, "call back method was detached");
 			attach = false;
 			detach = true;
-			
+
 			equal(oModel.aBindings.length, 0, "model bindings")
 		});
 	});
-	
+
 
 </script>
 

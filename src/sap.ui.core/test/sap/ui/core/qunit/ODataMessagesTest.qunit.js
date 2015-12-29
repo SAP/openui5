@@ -12,12 +12,12 @@ function runODataMessagesTests() {
 
 	var oInput = new sap.m.Input({value:"{json>/Products(1)/ProductName}"});
 	oInput.placeAt("content");
-	
+
 	var oInput2 = new sap.m.Input({value:"{xml>/Products(1)/ProductName}"});
 	oInput2.placeAt("content");
-	
-	
-	
+
+
+
 	var sServiceURI = "fakeService://testdata/odata/northwind/";
 	// var sServiceURI = "/testsuite/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/";
 	var mModelOptions = {
@@ -26,10 +26,10 @@ function runODataMessagesTests() {
 	};
 
 	var oModelJson, oModelXml;
-	
+
 	// Create MessageManager instance and set Message Model in TimeOut...
 	sap.ui.getCore().getMessageManager();
-	
+
 	// Start delayed so the message model is available
 	setTimeout(function() {
 		start();
@@ -39,8 +39,8 @@ function runODataMessagesTests() {
 
 
 	var oJsonLayout = new sap.ui.layout.VerticalLayout({
-		content: { 
-			path: "json>/Products", 
+		content: {
+			path: "json>/Products",
 			template: new sap.ui.commons.Button({
 				text: { path: "json>ProductName" }
 			})
@@ -48,14 +48,14 @@ function runODataMessagesTests() {
 	});
 
 	var oXmlLayout = new sap.ui.layout.VerticalLayout({
-		content: { 
-			path: "xml>/Products", 
+		content: {
+			path: "xml>/Products",
 			template: new sap.ui.commons.Button({
 				text: { path: "xml>ProductName" }
 			})
 		}
 	});
-	
+
 	var oMainLayout = sap.ui.layout.HorizontalLayout({
 		content: [ oJsonLayout, oXmlLayout ]
 	});
@@ -84,7 +84,7 @@ function runODataMessagesTests() {
 
 					var iMessages = oMessageModel.getProperty("/").length;
 					equals(iMessages, iOriginalMessages + 21, "One message has been added for every Item and one for the Collection");
-					
+
 					oModelJson.destroy();
 					start();
 				}, 0);
@@ -104,7 +104,7 @@ function runODataMessagesTests() {
 		ok(oInput2.getValueState() === "None", "ValueState has not been set");
 
 		var iRequests = 0;
-		
+
 		oModelXml.attachRequestCompleted(function(oRequest) {
 			iRequests++;
 			if (oRequest.getParameter("url").indexOf("$count") == -1) {
@@ -120,9 +120,9 @@ function runODataMessagesTests() {
 				}, 0);
 			}
 		});
-		
+
 	});
-	
-	
-	
+
+
+
 }

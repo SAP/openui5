@@ -19,7 +19,7 @@ var mSeverityMap = {
 };
 
 /**
- * 
+ *
  * @namespace
  * @name sap.ui.model.odata
  * @public
@@ -27,9 +27,9 @@ var mSeverityMap = {
 
 /**
  * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
- * 
+ *
  * @class
- * @classdesc 
+ * @classdesc
  *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
  * @extends sap.ui.core.message.MessageParser
  *
@@ -139,13 +139,13 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
 		// This is an absolute URL, remove the service part at the front
 		sRequestTarget = sRequestTarget.substr(this._serviceUrl.length + 1);
 	}
-	
+
 	var mEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
 	if (mEntitySet) {
 		mAffectedTargets[mEntitySet.name] = true;
 	}
-	
-	
+
+
 	// Get the EntitySet for every single target
 	for (var i = 0; i < aMessages.length; ++i) {
 		var sTarget = aMessages[i].getTarget();
@@ -157,7 +157,7 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
 			}
 		}
 	}
-	
+
 	return mAffectedTargets;
 };
 
@@ -175,7 +175,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, sRequestUr
 	var i, sTarget;
 
 	var mAffectedTargets = this._getAffectedTargets(aMessages, sRequestUri, mGetEntities, mChangeEntities);
-	
+
 	// All messages with targets are part of the changed targets by definition. All Messages that
 	// come back from the server belong to affected entities/sets
 	// TODO: Check if this is necessary, since only messages for requested entities/sets should be returned from the service...
@@ -356,7 +356,7 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 		// JSON response
 		this._parseBodyJSON(/* ref: */ aMessages, oResponse, sRequestUri);
 	}
-	
+
 	// Messages from an error response should contain duplicate messages - the main error should be the
 	// same as the first errordetail error. If this is the case, remove the first one.
 	// TODO: Check if this is actually correct, and if so, check if the below check can be improved
@@ -552,24 +552,24 @@ function stripURI(sURI) {
 
 function getAllElements(oDocument, aElementNames) {
 	var aElements = [];
-	
+
 	var mElementNames = {};
 	for (var i = 0; i < aElementNames.length; ++i) {
 		mElementNames[aElementNames[i]] = true;
 	}
-	
+
 	var oElement = oDocument;
 	while (oElement) {
 		if (mElementNames[oElement.tagName]) {
 			aElements.push(oElement);
 		}
-		
+
 		if (oElement.hasChildNodes()) {
 			oElement = oElement.firstChild;
 		} else {
 			while (!oElement.nextSibling) {
 				oElement = oElement.parentNode;
-				
+
 				if (!oElement || oElement === oDocument) {
 					oElement = null;
 					break;
@@ -580,7 +580,7 @@ function getAllElements(oDocument, aElementNames) {
 			}
 		}
 	}
-	
+
 	return aElements;
 }
 

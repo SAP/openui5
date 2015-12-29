@@ -45,7 +45,7 @@
 					<ObjectIdentifier
 						title="{Name}"
 						text="{ProductId}" />
-					
+
 					<Input value="{Quantity}" type="{Text}" description="{UoM}" fieldWidth="{60%}"/>
 
 					<ObjectNumber

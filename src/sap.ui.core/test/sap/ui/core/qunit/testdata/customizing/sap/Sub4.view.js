@@ -38,8 +38,8 @@ sap.ui.jsview("testdata.customizing.sap.Sub4", {
 			content: [
 			           new sap.ui.commons.TextView({text: "SAP View 'Sub4' - the text after this one is hidden by customizing: "}),
 			           new sap.ui.commons.TextView("customizableText1", {text: "This text is made invisible by customization"}),
-			           ext1, 
-			           ext2, 
+			           ext1,
+			           ext2,
 			           ext3,
 			           ext4,
 			           ext5

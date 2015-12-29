@@ -7,7 +7,7 @@
 	<FeedInput
 		post="onPostFeedItem"
 		icon="images/Woman_04.png" />
-		
+
 	<Label class="caption" text="FeedInput with an Image Placeholder (showIcon = true, no icon provided)" />
 	<FeedInput
 		post="onPostFeedItem" />

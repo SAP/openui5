@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 * @namespace
 	 */
 	var ActionListItemRenderer = Renderer.extend(ListItemBaseRenderer);
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *          oRenderManager the RenderManager that can be used for writing to the
 	 *          Render-Output-Buffer
@@ -27,11 +27,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	ActionListItemRenderer.renderLIAttributes = function(rm, oLI) {
 		rm.addClass("sapMALI");
 	};
-	
+
 	ActionListItemRenderer.renderLIContent = function(rm, oLI) {
-	
+
 		var isText = oLI.getText();
-	
+
 		// List item label
 		if (isText) {
 			rm.write("<div class='sapMALIText'>");

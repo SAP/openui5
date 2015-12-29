@@ -21,8 +21,8 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 	 * @version ${version}
 	 * @public
 	 */
-	
-	
+
+
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.demokit",
@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 			"sap.ui.demokit.UIAreaSubstitute"
 		]
 	});
-	
+
 	/**
 	 * different styles for an entity cue card.
 	 *
@@ -56,29 +56,29 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.demokit.UI5EntityCueCardStyle = {
-	
+
 		/**
 		 * default style (no special styling).
 		 * @public
 		 */
 		Standard : "Standard",
-	
+
 		/**
 		 * Demokit style
 		 * @public
 		 */
 		Demokit : "Demokit"
-	
+
 	};
-	
+
 	sap.ui.lazyRequire("sap.ui.demokit.UI5EntityCueCard", "attachToContextMenu detachFromContextMenu");
 	sap.ui.lazyRequire("sap.ui.demokit.DemokitApp", "new getInstance");
 	sap.ui.lazyRequire("sap.ui.demokit.IndexPage");
-	
+
 	sap.ui.getCore().attachInit( function () {
-	
+
 		if ( jQuery("body").hasClass("sapUiDemokitBody") ) {
-		
+
 			// replace h1 headers with our title
 			jQuery("h1").each(function() {
 				var $ = jQuery(this),
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 				sIcon  = $.attr('icon'),
 				sIconPos = $.attr('iconPos') || 'left:40px;top:20px;',
 				$title = jQuery("<div class='sapUiDemokitTitle'><span>" + sTitle + "</span></div>");
-		
+
 				// first attach new content to DOM
 				$.replaceWith($title);
 				// only then enrich it with a HexButton (otherwise placeAt() will not find the UIArea)
@@ -95,9 +95,9 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 					$title.prepend("<div id='sap-demokit-icon'></div>");
 					new sap.ui.demokit.HexagonButton({color:sColor, imagePosition:'position: relative;' + sIconPos, icon:sIcon}).placeAt("sap-demokit-icon");
 				}
-		
+
 			});
-		
+
 			var $h2 = jQuery("h2");
 			var $settings = jQuery('h2[id="settings"]');
 			var sControls = jQuery("html").attr('data-sap-ui-dk-controls');
@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 			if ( $h2.size() > 0 && $tln.size() == 0 ) {
 				$h2.first().before($tln = jQuery("<ul class='sapDkTLN'></ul>"));
 			}
-			
+
 			$h2.each(function(idx) {
 				var $ = jQuery(this);
 				// Skip hidden sections. Can be used to suppress sections (e.g. settings) in a page
@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 				var li = jQuery("<li></li>").append(a);
 				$tln.append(li);
 			});
-			
+
 			// create CodeSampleContainers
 			jQuery("[code-sample]").each(function() {
 				var $ = jQuery(this),
@@ -132,12 +132,12 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 				$.addClass("sapUiDemokitSampleCont");
 				new sap.ui.demokit.CodeSampleContainer("code-sample-" + sUiAreaId, { scriptElementId : sScriptId, uiAreaId : sUiAreaId}).placeAt(this);
 			});
-		
+
 			// create CueCards
 			jQuery("[cue-card]").each(function() {
 				var $ = jQuery(this),
 					sEntityName = $.attr('cue-card');
-				
+
 				new sap.ui.demokit.UI5EntityCueCard({
 					entityName : sEntityName,
 					collapsible : false,
@@ -151,14 +151,14 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 					title: 'Settings (Overview)'
 				}).placeAt(this);
 			});
-		
+
 		}
-		
+
 	});
-	
+
 	sap.ui.demokit._getAppInfo = function(fnCallback) {
 		var sUrl = sap.ui.resource("", "sap-ui-version.json");
-		
+
 		jQuery.ajax({
 			url: sUrl,
 			dataType: "json",
@@ -172,37 +172,37 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 					fnCallback(null);
 					return;
 				}
-				
+
 				fnCallback(oAppInfo);
 			}
 		});
 	};
-	
+
 	sap.ui.demokit._loadAllLibInfo = function(sAppRoot, sInfoType /*"_getDocuIndex", "_getThirdPartyInfo", "_getLibraryInfo", "_getReleaseNotes", "_getLibraryInfoAndReleaseNotes"*/, sReqVersion, fnCallback) {
-		
+
 		// parameter fallback for compatibility: if the version is a function
 		// then it is the old signature: (sAppRoot, sInfoType, fnCallback)
 		if (typeof sReqVersion === "function") {
 			fnCallback = sReqVersion;
 			sReqVersion = undefined;
 		}
-		
+
 		jQuery.sap.require("sap.ui.core.util.LibraryInfo");
 		var libInfo = new sap.ui.core.util.LibraryInfo();
-		
+
 		// special case: fetching library info and release notes in one cycle
-		// this will use the _getLibraryInfo functionality and 
+		// this will use the _getLibraryInfo functionality and
 		var bFetchReleaseNotes = sInfoType == "_getLibraryInfoAndReleaseNotes";
 		if (bFetchReleaseNotes) {
 			sInfoType = "_getLibraryInfo";
 		}
-		
+
 		sap.ui.demokit._getAppInfo(function(oAppInfo) {
 			if (!(oAppInfo && oAppInfo.libraries)) {
 				fnCallback(null, null);
 				return;
 			}
-			
+
 			var count = 0,
 				aLibraries = oAppInfo.libraries,
 				len = aLibraries.length,
@@ -216,7 +216,7 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 				libVersion = aLibraries[i].version;
 				aLibs.push(libName);
 				oLibVersions[libName] = libVersion;
-				
+
 				/*eslint-disable no-loop-func */
 				libInfo[sInfoType](libName, function(oExtensionData){
 					var fnDone = function() {
@@ -249,7 +249,7 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 			}
 		});
 	};
-	
+
 	return sap.ui.demokit;
-	
+
 });

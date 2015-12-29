@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new UploadCollectionItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * Specifies the date on which the file was uploaded. 
+				 * Specifies the date on which the file was uploaded.
 				 * The application has to define the date format.
 				 */
 				uploadedDate : {

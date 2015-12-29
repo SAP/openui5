@@ -55,8 +55,8 @@
 			"root":[
 				{
 					"name": "item1",
-					"nodes": [ 
-						{ 
+					"nodes": [
+						{
 							"name": "subitem1",
 							"nodes": [
 								{ "name": "subsubitem1" },
@@ -100,7 +100,7 @@
 			bindings[0] = oModel.bindList(sPath, oContext);
 		}
 	};
-	
+
 	function callBackOnChange(){
 		ok(true,"ChangeEvent fired");
 	};
@@ -179,7 +179,7 @@
 		testData.teamMembers[6].firstName = "Jonas";
 		oBinding.refresh();
 	});
-	
+
 	test("ListBinding refresh with getContexts und length change", 3, function() {
 		setup();
 		var oBinding = oModel.bindList("/teamMembers");
@@ -193,7 +193,7 @@
 		oBinding.refresh();
 		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
-	
+
 	test("ListBinding refresh with extended change detection, getContexts und length change", 3, function() {
 		setup();
 		var oBinding = oModel.bindList("/teamMembers");
@@ -208,7 +208,7 @@
 		oBinding.refresh();
 		equal(oBinding.getLength(), 8, "ListBinding returns changed length");
 	});
-	
+
 	test("ListBinding getContexts with wrong path", function(){
 		setup();
 		createListBinding("/xyz", "");
@@ -288,7 +288,7 @@
 		equal(listBinding.oList[0].firstName, "Andreas", "ListBinding before sort");
 		equal(listBinding.oList[1].firstName, "Peter", "ListBinding before sort");
 		equal(listBinding.oList[2].firstName, "Gina", "ListBinding before sort");
-		equal(listBinding.oList[3].firstName, "Steave", "ListBinding before sort");	
+		equal(listBinding.oList[3].firstName, "Steave", "ListBinding before sort");
 		equal(listBinding.oList[4].firstName, "Michael", "ListBinding before sort");
 		equal(listBinding.oList[5].firstName, "Marc", "ListBinding before sort");
 		equal(listBinding.oList[6].firstName, "Frank", "ListBinding before sort");
@@ -326,7 +326,7 @@
 		equal(sorted[4], "Gina", "ListBinding after sort");
 		equal(sorted[5], "Frank", "ListBinding after sort");
 		equal(sorted[6], "Andreas", "ListBinding after sort");
-		
+
 	});
 
 	test("ListBinding sort invalid binding", function(){
@@ -337,7 +337,7 @@
 		listBinding.sort();
 		expect(0);
 	});
-	
+
 	// should also work with other ListBinding implementations
 	test("ListBinding locale sort", function(){
 		setup();
@@ -348,7 +348,7 @@
 		var oSorter = new sap.ui.model.Sorter("word", false);
 		listBinding.sort(oSorter);
 
-		var sortedContexts = listBinding.getContexts();		
+		var sortedContexts = listBinding.getContexts();
 		var sorted = [];
 		jQuery(sortedContexts).each(function(i, context){
 			sorted[i] = oModel.getProperty("word", context);
@@ -373,7 +373,7 @@
 	test("ListBinding multi sort", function(){
 		setup();
 		createListBinding("/teamMembersNew");
-		
+
 		var listBinding = bindings[0];
 
 		var oSorter = [
@@ -510,11 +510,11 @@
 			if (a > b) {
 				return 1;
 			}
-			return 0;	
+			return 0;
 		};
 		listBinding.sort(oSorter);
 
-		var sortedContexts = listBinding.getContexts();		
+		var sortedContexts = listBinding.getContexts();
 		var sorted = [];
 		jQuery(sortedContexts).each(function(i, context){
 			sorted[i] = oModel.getProperty("firstName",context);
@@ -652,9 +652,9 @@
 	test("ListBinding complex filters", function(){
 		setup();
 		createListBinding("/teamMembers");
-		
-		var listBinding = bindings[0];		
-		
+
+		var listBinding = bindings[0];
+
 		//check OR
 		var oFilter1 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
 		var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Frank");
@@ -667,7 +667,7 @@
 		equal(filtered.length, 2, "ListBinding filtered length");
 		equal(filtered[0].firstName, "Peter", "ListBinding filter value");
 		equal(filtered[1].firstName, "Frank", "ListBinding filter value");
-			
+
 		//check OR & AND
 		var oFilter3 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Wallace");
 		var oFilter4 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.EQ, "Rush");
@@ -685,9 +685,9 @@
 	test("ListBinding multi filters", function(){
 		setup();
 		createListBinding("/teamMembers");
-		
-		var listBinding = bindings[0];		
-		
+
+		var listBinding = bindings[0];
+
 		//check (gender=male AND (lastName = Green OR (firstName = Peter OR firstName = Frank OR firstName = Gina)))
 		var oFilter1 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Peter");
 		var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Frank");
@@ -717,7 +717,7 @@
 		var listBinding = bindings[0];
 
 		var oFilter = new sap.ui.model.Filter("firstName", function(sValue) {
-			return (sValue.indexOf("A") !== -1 && sValue.indexOf("G") === 0); 
+			return (sValue.indexOf("A") !== -1 && sValue.indexOf("G") === 0);
 		});
 
 		listBinding.filter(oFilter);
@@ -767,7 +767,7 @@
 		ok(oModel.getProperty("/root/0/nodes/1").collapsed);
 		equal(oModel.getProperty("name",contexts[1]), "item2");
 		equal(oModel.getProperty("nodes",contexts[1]).length, 1);
-		equal(oModel.getProperty("nodes/0",contexts[1]).name, "subitem3");		
+		equal(oModel.getProperty("nodes/0",contexts[1]).name, "subitem3");
 	});
 
 	test("ListBinding nested array structure", function(){
@@ -775,7 +775,7 @@
 		bindings[0] = oModel.bindList("/root");
 		bindings[1] = oModel.bindList("/root/0/nodes");
 		bindings[2] = oModel.bindList("/root/1/nodes");
-		
+
 		var binding = bindings[1];
 		var contexts = binding.getContexts();
 		ok(jQuery.isArray(contexts));
@@ -784,7 +784,7 @@
 		equal(oModel.getProperty("name",contexts[1]), "subitem2");
 
 		binding = bindings[2];
-		contexts = binding.getContexts();		
+		contexts = binding.getContexts();
 		equal(contexts.length, 1);
 		equal(oModel.getProperty("name", contexts[0]), "subitem3");
 

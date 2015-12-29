@@ -4,11 +4,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 <title>Test Page for sap.m.P13nFilterPanel</title>
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" 
+	type="text/javascript"
 	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" 
+	data-sap-ui-libs="sap.m"
 	src="../../../../resources/sap-ui-core.js">
 </script>
 
@@ -38,12 +38,12 @@
 			}, {
 				"key" : "c1",
 				"text" : "Date",
-				"type" : "date" 
+				"type" : "date"
 			}, {
 				"key" : "c2",
 				"text" : "Number",
 				"tooltip" : "My Tooltip",
-				"maxlength" : "10", 
+				"maxlength" : "10",
 				"type" : "numeric"
 			}],
 			"filterItems" : [{
@@ -69,7 +69,7 @@
 		};
 
 		var oModel = new sap.ui.model.json.JSONModel(oData);
-		
+
 		oP13nFilterPanel.setModel(oModel);
 		oP13nFilterPanel.bindItems("/items", new sap.m.P13nItem({
 			columnKey : "{key}",
@@ -86,11 +86,11 @@
 			value1 : "{value1}",
 			value2 : "{value2}"
 		}));
-		
+
 	};
-	
+
 	test("Default Values", function(){
-		
+
 		// system under test
 		var oP13nFilterPanel = new sap.m.P13nFilterPanel({
 			maxIncludes : -1,
@@ -115,7 +115,7 @@
 	});
 
 	test("bind Items test", function(){
-		
+
 		// system under test
 		var oP13nFilterPanel = new sap.m.P13nFilterPanel();
 
@@ -132,9 +132,9 @@
 		// cleanup
 		oP13nFilterPanel.destroy();
 	});
-	
+
 	test("bind FilterItems test", function(){
-		
+
 		// system under test
 		var oP13nFilterPanel = new sap.m.P13nFilterPanel();
 
@@ -151,22 +151,22 @@
 		// cleanup
 		oP13nFilterPanel.destroy();
 	});
-	
+
 	test("test operations", function(){
-		
+
 		// system under test
 		var oP13nFilterPanel = new sap.m.P13nFilterPanel();
 
-		oP13nFilterPanel.setIncludeOperations([ sap.m.P13nConditionOperation.BT, 
-			               						sap.m.P13nConditionOperation.EQ, 
-	                       						sap.m.P13nConditionOperation.Contains, 
+		oP13nFilterPanel.setIncludeOperations([ sap.m.P13nConditionOperation.BT,
+			               						sap.m.P13nConditionOperation.EQ,
+	                       						sap.m.P13nConditionOperation.Contains,
 	                       						sap.m.P13nConditionOperation.StartsWith,
-	                       						sap.m.P13nConditionOperation.EndsWith, 
-	                       						sap.m.P13nConditionOperation.LT, 
-	                       						sap.m.P13nConditionOperation.LE, 
+	                       						sap.m.P13nConditionOperation.EndsWith,
+	                       						sap.m.P13nConditionOperation.LT,
+	                       						sap.m.P13nConditionOperation.LE,
 	                       						sap.m.P13nConditionOperation.GT ]);
 
-		oP13nFilterPanel.setExcludeOperations([sap.m.P13nConditionOperation.EQ, 
+		oP13nFilterPanel.setExcludeOperations([sap.m.P13nConditionOperation.EQ,
 		             	                       sap.m.P13nConditionOperation.StartsWith,
 		             	                       sap.m.P13nConditionOperation.GT ]);
 
@@ -182,10 +182,10 @@
 
 		// cleanup
 		oP13nFilterPanel.destroy();
-	});	
-	
+	});
+
 	test("test model update events", function(){
-		
+
 		// system under test
 		var oP13nFilterPanel = new sap.m.P13nFilterPanel({
 			removeFilterItem: function(oEvent) {
@@ -198,7 +198,7 @@
 						oModel.setData(oData, true);
 						return;
 					}
-				});							
+				});
 			},
 			updateFilterItem : function(oEvent) {
 				var params = oEvent.getParameters();
@@ -219,7 +219,7 @@
 					oData.filterItems.push(oFilterItemData);
 				}
 				oModel.setData(oData, true);
-			}				
+			}
 		});
 
 		bindFilterPanel(oP13nFilterPanel);
@@ -229,13 +229,13 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		
+
 		var oConditionPanel = oP13nFilterPanel._oIncludeFilterPanel;
 
 		// Change item
 		var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
 		oConditionGrid.value1.setValue("foo");
-		oConditionPanel._changeField(oConditionGrid);		
+		oConditionPanel._changeField(oConditionGrid);
 		var sValue1 = "foo";
 		strictEqual(oP13nFilterPanel.getFilterItems()[1].getValue1(), sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
 
@@ -243,13 +243,13 @@
  		var nItems= 2;
 		oConditionPanel._triggerRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
 		strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
-		
+
 		// Add item
 		nItems= 3;
  		oConditionPanel._triggerAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
 		oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
 		oConditionGrid.value1.setValue("new");
-		oConditionPanel._changeField(oConditionGrid);		
+		oConditionPanel._changeField(oConditionGrid);
 		strictEqual(oP13nFilterPanel.getFilterItems().length, nItems, "length of getFilterItems should be '" + nItems + "'");
 
 		// cleanup
@@ -268,7 +268,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-				
+
 		<div id="content"></div>
 	</body>
 </html>

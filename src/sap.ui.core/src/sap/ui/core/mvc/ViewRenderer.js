@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var ViewRenderer = {
 	};
-	
+
 	ViewRenderer.addDisplayClass = function(rm, oControl) {
 		if (oControl.getDisplayBlock() || (oControl.getWidth() === "100%" && oControl.getHeight() === "100%")) {
 			rm.addClass("sapUiViewDisplayBlock");

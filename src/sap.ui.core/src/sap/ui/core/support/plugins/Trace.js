@@ -8,9 +8,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 	"use strict";
 
 
-	
-	
-	
+
+
+
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.Trace.
 		 * @class This class represents the trace plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
@@ -25,9 +25,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		var Trace = Plugin.extend("sap.ui.core.support.plugins.Trace", {
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportTrace", "JavaScript Trace", oSupportStub]);
-		
+
 				this._aEventIds = this.isToolPlugin() ? [this.getId() + "Entry"] : [];
-				
+
 				if (this.isToolPlugin()) {
 					this._aLogEntries = [];
 					this._iLogLevel = jQuery.sap.log.Level.ALL;
@@ -47,27 +47,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				}
 			}
 		});
-		
-		
+
+
 		/**
 		 * Handler for sapUiSupportTraceEntry event
-		 * 
+		 *
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
 		 */
 		Trace.prototype.onsapUiSupportTraceEntry = function(oEvent){
 			log(this, oEvent.getParameter("entry"));
 		};
-		
-		
+
+
 		Trace.prototype.init = function(oSupportStub){
 			Plugin.prototype.init.apply(this, arguments);
 			if (!this.isToolPlugin()) {
 				return;
 			}
-			
+
 			var that = this;
-			
+
 			var rm = sap.ui.getCore().createRenderManager();
 			rm.write("<div class='sapUiSupportToolbar'>");
 			rm.write("<button id='" + this.getId() + "-clear' class='sapUiSupportBtn'>Clear</button>");
@@ -84,11 +84,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			rm.write("</div><div class='sapUiSupportTraceCntnt'></div>");
 			rm.flush(this.$().get(0));
 			rm.destroy();
-			
+
 			this._fClearHandler = function(){
 				log(that);
 			};
-			
+
 			this._fLogLevelHandler = function(){
 				that._iLogLevel = that.$("loglevel").val();
 				var aResult = [];
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				}
 				log(that, aResult.join(""));
 			};
-			
+
 			this._fFilterHandler = function(){
 				that._filter = that.$("filter").val();
 				that._filter = that._filter ? that._filter.toLowerCase() : "";
@@ -111,13 +111,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				}
 				log(that, aResult.join(""));
 			};
-			
+
 			this.$("clear").bind("click", this._fClearHandler);
 			this.$("filter").bind("change", this._fFilterHandler);
 			this.$("loglevel").bind("change", this._fLogLevelHandler);
 		};
-		
-		
+
+
 		Trace.prototype.exit = function(oSupportStub){
 			if (this.isToolPlugin()) {
 				if (this._fClearHandler) {
@@ -138,8 +138,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			}
 			Plugin.prototype.exit.apply(this, arguments);
 		};
-		
-		
+
+
 		function log(oPlugin, oEntry){
 			var jContentRef = jQuery(".sapUiSupportTraceCntnt", oPlugin.$());
 			if (!oEntry) {
@@ -157,8 +157,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				oPlugin._aLogEntries.push(oEntry);
 			}
 		}
-		
-		
+
+
 		function getEntryHTML(oPlugin, oEntry){
 			var aLevelInfo = oEntry._levelInfo;
 			var sStyle = " style='color:" + aLevelInfo[1] + ";'";
@@ -167,8 +167,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 					"</span><span class='sapUiSupportTraceEntryMessage'>" + jQuery.sap.escapeHTML(oEntry.message || "") + "</div>";
 			return sResult;
 		}
-		
-		
+
+
 		function applyFilter(sFilterValue, iLogLevel, oEntry){
 			var aLevelInfo = oEntry._levelInfo;
 			if (oEntry._levelInfo[2] <= iLogLevel) {
@@ -184,8 +184,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			}
 			return false;
 		}
-		
-		
+
+
 		function getLevel(iLogLevel){
 			switch (iLogLevel) {
 				case jQuery.sap.log.Level.FATAL:
@@ -203,8 +203,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			}
 			return ["unknown", "#000000", iLogLevel];
 		}
-	
-	
+
+
 
 	return Trace;
 

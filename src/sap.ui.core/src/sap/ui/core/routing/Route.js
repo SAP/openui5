@@ -56,11 +56,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				if (!oConfig.name) {
 					$.sap.log.error("A name has to be specified for every route", this);
 				}
-				
+
 				var that = this,
 					vRoute = oConfig.pattern,
 					aSubRoutes;
-				
+
 				if (!$.isArray(vRoute)) {
 					vRoute = [vRoute];
 				}
@@ -94,16 +94,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 						oRouter.addRoute(oSubRouteConfig, that);
 					});
 				}
-				
+
 				if (oConfig.pattern === undefined) {
 					//this route has no pattern - it will not get a matched handler. Or a crossroads route
 					return;
 				}
-				
+
 				$.each(vRoute, function(iIndex, sRoute) {
-	
+
 					that._aPattern[iIndex] = sRoute;
-	
+
 					that._aRoutes[iIndex] = oRouter._oRouter.addRoute(sRoute);
 					that._aRoutes[iIndex].greedy = oConfig.greedy;
 

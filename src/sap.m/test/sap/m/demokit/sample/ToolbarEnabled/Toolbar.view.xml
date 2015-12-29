@@ -4,7 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<CheckBox text="Toolbar Enabled" selected="true" select="onCheckBoxSelect"/>
-	
+
 	<Toolbar id="toolbar">
 		<Button text="Accept" type="Accept"/>
 		<ToolbarSpacer/>
@@ -16,5 +16,5 @@
 		<ToolbarSpacer/>
 		<Button text="Reject" type="Reject"/>
 	</Toolbar>
-	
+
 </mvc:View>

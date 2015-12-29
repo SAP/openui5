@@ -7,9 +7,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 	"use strict";
 
 
-	
+
 	/*global vkbeautify *///declare unusual global vars for JSLint/SAPUI5 validation
-	
+
 	/**
 	 * HTML view serializer class. Serializes a given view.
 	 *
@@ -36,20 +36,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 			this._fnGetEventHandlerName = fnGetEventHandlerName;
 		}
 	});
-	
-	
+
+
 	/**
 	 * Serializes the given HTML view.
-	 * 
+	 *
 	 * @returns {string} the serialized HTML view.
 	 */
 	HTMLViewSerializer.prototype.serialize = function () {
-	
+
 		// a function to understand if to skip aggregations
 		var fnSkipAggregations = function (oControl) {
 			return (oControl instanceof this._oWindow.sap.ui.core.mvc.View);
 		};
-	
+
 		// create serializer
 		var oControlSerializer = new sap.ui.core.util.serializer.Serializer(
 			this._oView,
@@ -59,10 +59,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 			true,
 			this._oWindow,
 			fnSkipAggregations);
-		
+
 		// run serializer
 		var sResult = oControlSerializer.serialize();
-		
+
 		// wrap result with the template tag
 		var sView = [];
 		sView.push('<template');
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './delegate/HTM
 		sView.push(" >");
 		sView.push(sResult);
 		sView.push("</template>");
-		
+
 		// done
 		return vkbeautify.xml(sView.join(""));
 	};

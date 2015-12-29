@@ -210,11 +210,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 */
 		_getLoading : function(sId) {
 			var that = this;
-			
+
 			if (this._oLoading) {
 				return this._oLoading;
 			}
-			
+
 			this._oLoading = new sap.m.CustomListItem({
 				id : sId,
 				content : new sap.ui.core.HTML({
@@ -229,12 +229,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					}
 				})
 			}).setParent(this._oControl, null, true);
-			
+
 			// growing loading indicator as a list item should not be affected from the List Mode
 			this._oLoading.getMode = function() {
 				return sap.m.ListMode.None;
 			};
-			
+
 			return this._oLoading;
 		},
 
@@ -250,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			}
 
 			this._oControl.addNavSection(sId);
-			
+
 			if (this._oTrigger) {
 				return this._oTrigger;
 			}
@@ -288,12 +288,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					this._oTrigger.$().prop("tabindex", 0);
 				}
 			}, this);
-			
+
 			// growing button as a list item should not be affected from the List Mode
 			this._oTrigger.getMode = function() {
 				return sap.m.ListMode.None;
 			};
-			
+
 			return this._oTrigger;
 		},
 
@@ -476,7 +476,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				this._bDataRequested = true;
 				this._onBeforePageLoaded(sChangeReason);
 			}
-			
+
 			// set iItemCount to initial value if not set or no items at the control yet
 			if (!this._iItemCount || this.shouldReset(sChangeReason) || !this._oControl.getItems(true).length) {
 				this._iItemCount = this._oControl.getGrowingThreshold();
@@ -528,8 +528,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			// check control based logic to handle from scratch is required or not
 			var bCheckGrowingFromScratch = this._oControl.checkGrowingFromScratch && this._oControl.checkGrowingFromScratch();
-			
-			// rebuild list from scratch if there were no items and new items needs to be added 
+
+			// rebuild list from scratch if there were no items and new items needs to be added
 			if (!this._oControl.getItems().length && aContexts.diff && aContexts.diff.length) {
 				aContexts.diff = undefined;
 			}

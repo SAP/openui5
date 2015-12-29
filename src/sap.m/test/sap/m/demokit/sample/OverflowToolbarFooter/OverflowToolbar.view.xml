@@ -9,7 +9,7 @@
         showHeader="false"
 		class="sapUiContentPadding"
 		showNavButton="false" >
-        
+
 		<content>
 			<VBox>
 				<Label text="Use this slider to shrink the toolbars and observe their behavior."/>
@@ -64,7 +64,7 @@
                 <OverflowToolbarButton text="Delete" icon="sap-icon://delete"/>
                 <OverflowToolbarButton text="Edit" icon="sap-icon://edit"/>
                 <OverflowToolbarButton text="Add" icon="sap-icon://add"/>
-                <OverflowToolbarButton text="Favorite" icon="sap-icon://favorite"/>                
+                <OverflowToolbarButton text="Favorite" icon="sap-icon://favorite"/>
                 <OverflowToolbarButton text="Flag" icon="sap-icon://flag"/>
 
             </OverflowToolbar>

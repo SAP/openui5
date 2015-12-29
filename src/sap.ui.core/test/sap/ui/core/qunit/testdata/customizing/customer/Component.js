@@ -5,9 +5,9 @@ testdata.customizing.sap.Component.extend("testdata.customizing.customer.Compone
 
 	metadata : {
 		version : "1.0",
-		
+
 		customizing: {
-			
+
 			"sap.ui.viewReplacements": {
 				"testdata.customizing.sap.Sub1": {
 					viewName: "testdata.customizing.customer.CustomSub1",
@@ -18,11 +18,11 @@ testdata.customizing.sap.Component.extend("testdata.customizing.customer.Compone
 					type: "JS"
 				}
 			},
-			
+
 			"sap.ui.controllerReplacements": {
 				"testdata.customizing.sap.Main": "testdata.customizing.customer.Main"
 			},
-			
+
 			"sap.ui.viewExtensions": {
 				"testdata.customizing.sap.Sub2": {
 					"extension2": {
@@ -70,7 +70,7 @@ testdata.customizing.sap.Component.extend("testdata.customizing.customer.Compone
 						type: "XML"
 					}
 				},
-				
+
 				"testdata.customizing.sap.Frag1": {
 					"extensionPointInFragment": {
 						className: "sap.ui.core.Fragment",
@@ -86,7 +86,7 @@ testdata.customizing.sap.Component.extend("testdata.customizing.customer.Compone
 					}
 				},
 			},
-			
+
 			"sap.ui.viewModifications": {
 				"testdata.customizing.sap.Sub3": {
 					"customizableText": {
@@ -105,7 +105,7 @@ testdata.customizing.sap.Component.extend("testdata.customizing.customer.Compone
 					}
 				}
 			},
-			
+
 			"sap.ui.controllerExtensions": {
 				"testdata.customizing.sap.Sub2": {
 					"controllerName": "testdata.customizing.customer.Sub2ControllerExtension"

@@ -6,14 +6,14 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v1inline.Component", {
 	metadata : {
 
 		"name": "sap.ui.test.v1inline.Component",
-		
+
 		"version": "1.0.0",
 
 		"includes" : [
 			"style.css",
 			"script.js"
 		],
-		
+
 		"dependencies" : {
 			"libs" : [
 				"sap.ui.commons"
@@ -23,7 +23,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v1inline.Component", {
 			],
 			"ui5version" : "1.22.5"
 		},
-		
+
 		"config": {
 			"any1": {
 				"entry": "configuration"
@@ -37,7 +37,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v1inline.Component", {
 				"anyarray": [1, 2, 3]
 			}
 		},
-		
+
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -48,9 +48,9 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v1inline.Component", {
 				"uri": "/sap/opu/odata/snce/PO_S_SRV/"
 			}
 		},
-				
+
 		"rootView": "sap.ui.test.view.Main",
-		
+
 		"customizing": {
 			"sap.ui.viewReplacements": {
 				"sap.ui.test.view.Main": {
@@ -95,7 +95,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v1inline.Component", {
 				}
 			]
 		},
-		
+
 		"sap.fiori": {
 			"key1": "value1",
 			"key2": "value2",
@@ -105,7 +105,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v1inline.Component", {
 			},
 			"key4": ["value1", "value2"]
 		},
-		
+
 		"custom.entry": {
 			"key1": "value1",
 			"key2": "value2",
@@ -115,7 +115,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v1inline.Component", {
 			},
 			"key4": ["value1", "value2"]
 		}
-		
+
 	}
 
 });

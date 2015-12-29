@@ -503,7 +503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 
 	/**
 	 * Getter for the protocol selected by the server once the connection is open.
-	 * 
+	 *
 	 * @returns {string} protocol
 	 * @public
 	 */

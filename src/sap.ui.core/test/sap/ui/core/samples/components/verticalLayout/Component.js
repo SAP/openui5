@@ -19,7 +19,7 @@ sap.ui.core.UIComponent.extend("samples.components.verticalLayout.Component", {
 		            "/js/includeme.js"
 		           ],//array of css and/or javascript files that should be used in the component
 		dependencies : { // external dependencies
-			libs : ['sap.ui.ux3'],// array of required libraries, e.g. UX3 if your component depends on them 
+			libs : ['sap.ui.ux3'],// array of required libraries, e.g. UX3 if your component depends on them
 			components : ["samples.components.styledbutton"],
 			ui5version : "1.13.0"
 		},
@@ -52,7 +52,7 @@ samples.components.verticalLayout.Component.prototype.createContent = function()
 	var oCompCont = new sap.ui.core.ComponentContainer(this.createId("ContButton"), {
 		component : oComp
 	});
-	
+
 	this.oVLayout = new sap.ui.layout.VerticalLayout(this.createId("myLayout"), {
 		content: [
 		          oNavBar,

@@ -564,9 +564,9 @@
 			strictEqual(actual, expected, 'The focus should be on the first list item.');
 			oTPC.destroy();
 			oTable.destroy();
-				
+
 		});
-		
+
 		test("Test Initial focus with grouping", function () {
 			// arrange
 			var oTable = new sap.m.Table("testInitialFocusTable", {
@@ -605,7 +605,7 @@
 					oDeferred.resolve();
 					return oDeferred.promise();
 				},
-				
+
 				getGroup : function(oColumn) {
 					if(oColumn.getHeader() && oColumn.getHeader().getText) {
 						if( oColumn.getHeader().getText() == "Column 0") {
@@ -636,9 +636,9 @@
 			oTPC.destroy();
 			oTable.destroy();
 		});
-		
-		
-		
+
+
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

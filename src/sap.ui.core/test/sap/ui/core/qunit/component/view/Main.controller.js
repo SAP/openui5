@@ -1,5 +1,5 @@
 sap.ui.controller("sap.ui.test.view.Main", {
-	
+
 
 	onInit: function() {
 		ok(true, "onInit is called now");
@@ -12,15 +12,15 @@ sap.ui.controller("sap.ui.test.view.Main", {
 		}));
 	},
 
-	
+
 	onBeforeRendering: function() {
 		window.onBeforeRenderingCalled = true;
 		if(this.getView().getViewData()) {
 			window.dataBeforeRendering = this.getView().getViewData().test;
 		}
 	},
-	
-	
+
+
 	onAfterRendering: function() {
 		ok(true, "onAfterRendering is called now");
 		window.onAfterRenderingCalled = true;
@@ -28,12 +28,12 @@ sap.ui.controller("sap.ui.test.view.Main", {
 			window.dataAfterRendering = this.getView().getViewData().test;
 		}
 	},
-	
-	
+
+
 	onExit: function() {
 		window.onExitCalled = true;
 	},
-	
+
 	doIt: function(oEvent) {
 		ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
 		controller = this;
@@ -42,7 +42,7 @@ sap.ui.controller("sap.ui.test.view.Main", {
 			window.dataEventHandler = this.getView().getViewData().test;
 		}
 	},
-	
+
 	valueFormatter: function(oValue) {
 		return "formatted-" + oValue;
 	}

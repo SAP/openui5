@@ -4,11 +4,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 <title>Test Page for sap.m.P13nGroupPanel</title>
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" 
+	type="text/javascript"
 	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" 
+	data-sap-ui-libs="sap.m"
 	src="../../../../resources/sap-ui-core.js">
 </script>
 
@@ -51,17 +51,17 @@
 				"key" : "s0",
 				"columnKey" : "c1",
 				"operation" : "Ascending",
-				"showIfGrouped" : true 
+				"showIfGrouped" : true
 			}, {
 				"key" : "s1",
 				"columnKey" : "c0",
 				"operation" : "Descending",
-				"showIfGrouped" : false 
+				"showIfGrouped" : false
 			} ]
-		};		
+		};
 
 		var oModel = new sap.ui.model.json.JSONModel(oData);
-		
+
 		oP13nGroupPanel.setModel(oModel);
 		oP13nGroupPanel.bindItems("/items", new sap.m.P13nItem({
 			columnKey : "{key}",
@@ -74,11 +74,11 @@
 			columnKey : "{columnKey}",
 			showIfGrouped : "{showIfGrouped}"
 		}));
-				
+
 	};
-	
+
 	test("Default Values", function(){
-		
+
 		// system under test
 		var oP13nGroupPanel = new sap.m.P13nGroupPanel({
 			layoutMode : "Desktop"
@@ -102,7 +102,7 @@
 	});
 
 	test("Validation Tests", function(){
-		
+
 		// system under test
 		var oP13nGroupPanel = new sap.m.P13nGroupPanel({
 			layoutMode : "Desktop"
@@ -123,7 +123,7 @@
 	});
 
 	test("bind Items test", function(){
-		
+
 		// system under test
 		var oP13nGroupPanel = new sap.m.P13nGroupPanel();
 
@@ -140,9 +140,9 @@
 		// cleanup
 		oP13nGroupPanel.destroy();
 	});
-	
+
 	test("bind GroupItems test", function(){
-		
+
 		// system under test
 		var oP13nGroupPanel = new sap.m.P13nGroupPanel();
 
@@ -159,9 +159,9 @@
 		// cleanup
 		oP13nGroupPanel.destroy();
 	});
-	
+
 	test("Insert Remove GroupItems test", function(){
-		
+
 		// system under test
 		var oP13nGroupPanel = new sap.m.P13nGroupPanel();
 
@@ -170,13 +170,13 @@
 		// arrange
 		oP13nGroupPanel.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		
+
 		oP13nGroupPanel.insertGroupItem( new sap.m.P13nGroupItem({
 			columnKey : "c1",
 			operation : "Ascending",
-			showIfGrouped : true 
+			showIfGrouped : true
 		}));
-		
+
 		// assertions
 		var nItems= 3;
 		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
@@ -188,14 +188,14 @@
 		// cleanup
 		oP13nGroupPanel.destroy();
 	});
-	
+
 	test("test model update events", function(){
-		
+
 		// system under test
 		var oP13nGroupPanel = new sap.m.P13nGroupPanel({
 			removeGroupItem: function(oEvent) {
 				var params = oEvent.getParameters();
-				var oModel = oP13nGroupPanel.getModel(); 
+				var oModel = oP13nGroupPanel.getModel();
 				var oData = oModel.getData();
 				oData.groupItems.forEach(function(oItem, iIndex) {
 					if (oItem.key === params.key) {
@@ -203,11 +203,11 @@
 						oModel.setData(oData, true);
 						return;
 					}
-				});					
+				});
 			},
 			addGroupItem: function(oEvent) {
 				var params = oEvent.getParameters();
-				var oModel = oP13nGroupPanel.getModel(); 
+				var oModel = oP13nGroupPanel.getModel();
 				var oData = oModel.getData();
 				var oGroupItem = {
 					key : params.key,
@@ -236,16 +236,16 @@
 		var oConditionPanel= oP13nGroupPanel._oGroupPanel;
 		oConditionPanel._triggerRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
 		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
-		
+
 		// Add item
 		nItems= 2;
  		oConditionPanel._triggerAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		
+
  		// Change item
 		var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
 		oConditionGrid.keyField.setSelectedKey("c0");
-		oConditionPanel._changeField(oConditionGrid);		
-		
+		oConditionPanel._changeField(oConditionGrid);
+
 		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
 
 		// cleanup
@@ -264,7 +264,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-				
+
 		<div id="content"></div>
 	</body>
 </html>

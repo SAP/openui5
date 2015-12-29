@@ -82,7 +82,7 @@
 			testprops = function (props) {
 				var $outer = sut.$();
 				var $textarea = $("textarea");
-				
+
 				equal($textarea.attr("rows"), props.rows, "TextArea has correct max rows : " + props.rows);
 				equal($textarea.attr("cols"), props.cols, "TextArea has correct max cols : " + props.cols);
 				equal($textarea.attr("maxLength"), props.maxLength, "TextArea has correct max length : " + props.maxLength);
@@ -95,7 +95,7 @@
 					sut["set" + $.sap.charToUpperCase(key)](setters[key]);
 					core.applyChanges();
 				});
-				
+
 				ok(true, "Setters called corretly");
 			},
 			sut = new sap.m.TextArea(config);
@@ -178,21 +178,21 @@
 		core.applyChanges();
 		var $textarea = $("textarea");
 
-		// check touchstart 
+		// check touchstart
 		sut._onTouchStart(tsEvent);
 		ok(tsEvent.isMarked("swipestartHandled"), "Touch start event is marked for swipe handling in case of scrolling");
-		
+
 		// scroll down in text area
 		$textarea[0].scrollTop = 1;
-		
-		// vertical scrolling : move finger up (scroll down) 
+
+		// vertical scrolling : move finger up (scroll down)
 		tmEvent.touches[0].pageY -= 1;
 		sut._onTouchMove(tmEvent);
 		ok(tmEvent.isMarked(), "Touch move event is marked for vertical scrolling");
-		
+
 		// scroll to inital position
 		$textarea[0].scrollTop = 0;
-		
+
 		// horizontal scrolling : move finger left (scroll right)
 		tmEvent = $.Event("touchmove", {
 			touches : [{
@@ -276,8 +276,8 @@
 		//Cleanup
 		sut.destroy();
 	});
-	
-	
+
+
 	test("change event should be fired when last known and dom value are not same", function() {
 
 		// system under test
@@ -295,33 +295,33 @@
 		// act
 		oTADomRef.focus();
 		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ENTER");
-		
+
 		// assertion
 		strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because initial value and dom value are same.");
-		
+
 		// change dom and cursor pos
 		sap.ui.test.qunit.triggerCharacterInput(oTADomRef, "a");
-		
+
 		// act
 		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ENTER");
-		
+
 		// assertion
-		strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because enter is not a valid event to fire change event for textarea") 
-	
+		strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because enter is not a valid event to fire change event for textarea")
+
 		// reset spy
 		fnFireChangeSpy.reset();
-		
+
 		// retest after change event is fired
 		oTADomRef.blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
-		
+
 		// assertion
 		strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired  because last known value and dom value are different");
-		
+
 		// cleanup
 		oTA.destroy();
 	});
-	
+
 	test("Live change event should be fired in case of value is reverted with escape", function() {
 		// system under test
 		var sInitValue = "Test";
@@ -333,20 +333,20 @@
 		oTA.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		var oTADomRef = oTA.getFocusDomRef();
-		
+
 		// act
 		oTADomRef.focus();
 		oTA.updateDomValue("Something that is not initial value");
 		sap.ui.test.qunit.triggerEvent("input", oTADomRef);
-		
+
 		var fnLiveChangeSpy = this.spy(oTA, "fireLiveChange");
 		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ESCAPE");
-		
+
 		strictEqual(fnLiveChangeSpy.callCount, 1, "LiveChange event is fired");
 		strictEqual(fnLiveChangeSpy.args[0][0].value, sInitValue, "Event is fired with correct parameter value");
 		strictEqual(fnLiveChangeSpy.args[0][0].newValue, sInitValue, "Event is fired with correct compatible parameter");
 		strictEqual(oTA.getValue(), sInitValue, "Value is reverted to initial");
-		
+
 		// cleanup
 		oTA.destroy();
 	});
@@ -362,7 +362,7 @@
 
 		oTA.destroy();
 	});
-	
+
 	module("Encoding");
 	test("carriage return should be converted correctly during rendering", function() {
 		var sValue = " \ntest\ntest\n\n";
@@ -370,7 +370,7 @@
 			value : sValue
 		}).placeAt("content");
 		sap.ui.getCore().applyChanges();
-	
+
 		oTA.focus();
 		strictEqual(oTA.getValue(), sValue, "API value is correct");
 		oTA.destroy();

@@ -194,7 +194,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			Element.prototype.deregister = function() {
 				that.deregisterElement(this);
 			};
-			
+
 			// grant Element "friend" access to Core / FocusHandler to update the given elements focus info
 			Element._updateFocusInfo = function(oElement) {
 				if (that.oFocusHandler) {
@@ -1938,10 +1938,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		// if library has not been loaded yet, create empty 'adhoc' library
 		// don't set 'loaded' marker, so it might be loaded later
 		if ( !oLibrary ) {
-			
+
 			// ensure namespace
 			jQuery.sap.getObject(sLibraryName, 0);
-			
+
 			oLibrary = this.mLibraries[sLibraryName] = {
 				name: sLibraryName,
 				dependencies : [],

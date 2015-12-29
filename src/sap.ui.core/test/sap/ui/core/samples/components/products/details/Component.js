@@ -35,7 +35,7 @@ samples.components.products.details.Component.prototype.createContent = function
 	this.view.setModel(new sap.ui.model.resource.ResourceModel({bundleName: this.getProperty("i18nBundle")}), "texts");
 	var oSubscription= this.getEventBusSubscription();
 	oSubscription.fn = this.onContextChanged;
-	sap.ui.getCore().getEventBus().subscribe(oSubscription.channel, oSubscription.event, oSubscription.fn, this); 
+	sap.ui.getCore().getEventBus().subscribe(oSubscription.channel, oSubscription.event, oSubscription.fn, this);
 	return this.view;
 };
 

@@ -15,8 +15,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var ScrollBarRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -24,29 +24,29 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl Object representation of the control that should be rendered
 	 */
 	ScrollBarRenderer.render = function(oRenderManager, oScrollBar){
-	
+
 		// convenience variable
 		var rm = oRenderManager;
 		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
-	
-	
+
+
 		rm.addClass("sapUiScrollBar");
-		
+
 		var sScrollBarTouchClass;
 		if (sap.ui.Device.support.touch) {
 			sScrollBarTouchClass = "sapUiScrollBarTouch";
 			rm.addClass(sScrollBarTouchClass);
 		}
-	
+
 		// Get Properties
 		var bVertical = oScrollBar.getVertical();
 		var sSize = oScrollBar.getSize();
 		var sContentSize = oScrollBar.getContentSize();
-		
+
 		var oBSS = jQuery.sap.scrollbarSize(sScrollBarTouchClass);
 		var sWidth = oBSS.width;
 		var sHeight = oBSS.height;
-	
+
 		if (bVertical) {
 			// First div. <div style="overflow:hidden;width:16px;height:200px">
 			rm.write("<div");
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("\"");
 			rm.writeClasses();
 			rm.write(">");
-	
+
 			// Middle div - ScrollBar itself.
 			rm.write("<div ");
 			rm.writeAttribute( "id", oScrollBar.getId() + "-sb");
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global'],
 				rm.write(";margin-left:-" + sWidth + "px;");
 			}
 			rm.write("\">");
-	
+
 			//Last div - The content div <div style="height:1000px;width:16px"></div>
 			rm.write("<div");
 			rm.writeAttribute( "id", oScrollBar.getId() + "-sbcnt");
@@ -84,12 +84,12 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write(">");
 			rm.write("</div>");
 			rm.write("</div>");
-	
+
 			rm.write("<div> <span id=" + oScrollBar.getId() + "-ffsize" + " style='position: absolute; top: -9000px; left: -9000px; visibility: hidden; line-height: normal;'> FF Size</span></div>");
 			rm.write("</div>");
-	
+
 		} else {
-	
+
 			// Horizontal Scrollbar
 			// First div.    <div style="width:200px;height:16px;overflow:hidden">
 			rm.write("<div");
@@ -101,12 +101,12 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("\"");
 			rm.writeClasses();
 			rm.write(">");
-	
+
 			// Middle div - ScrollBar itself.
 			rm.write("<div ");
 			rm.writeAttribute( "id", oScrollBar.getId() + "-sb");
 			rm.write(" style=\"height:" + sHeight * 2 + "px;margin-top:-" + sHeight + "px;overflow-x:scroll;overflow-y:hidden\">");
-	
+
 			//Last div - The content div   <div style="width:1000px;height:16px;"></div>
 			rm.write("<div");
 			rm.writeAttribute( "id", oScrollBar.getId() + "-sbcnt");
@@ -121,8 +121,8 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("</div>");
 		}
 	};
-	
-	
+
+
 	/* PURE HTML EXAMPLE, FOR TESTING, FOR EXAMPLE IE9 SCROLLING PROBLEM:
 	<h1>vertical</h1>
 	<div style="width:16px;height:200px;overflow:hidden">
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global'],
 	</div>
 	</div>
 	<div id="v"></div>
-	
+
 	<h1>horizontal</h1>
 	<div style="width:200px;height:16px;overflow:hidden">
 	<div style="width:100%;height:32px;margin-top:-16px;overflow-x:scroll;overflow-y:hidden" onscroll="document.getElementById('h').innerHTML = this.scrollLeft">
@@ -139,7 +139,7 @@ sap.ui.define(['jquery.sap.global'],
 	</div>
 	</div>
 	<div id="h"></div>
-	
+
 	*/
 
 	return ScrollBarRenderer;

@@ -6,7 +6,7 @@
  * Initialization Code and shared classes of library sap.ui.dt.
  */
 sap.ui.define([
-    'jquery.sap.global', 
+    'jquery.sap.global',
 	'sap/ui/core/library'
 ], // library dependency
 function(jQuery) {
@@ -22,7 +22,7 @@ function(jQuery) {
 	 * @version ${version}
 	 * @public
 	 */
-	
+
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.dt",

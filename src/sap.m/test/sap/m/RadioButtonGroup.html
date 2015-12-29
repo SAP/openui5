@@ -15,7 +15,7 @@
 		<script src="../../../resources/sap-ui-debug.js"></script>
 
 		<script type="text/javascript">
-			var oCore = sap.ui.getCore(); 
+			var oCore = sap.ui.getCore();
 			var iIndex = 100;
 
 			function toggleReadonly() {
@@ -66,7 +66,7 @@
 				var oRBGroup = oCore.getControl("RBG5");
 
 				oRBGroup.getSelectedButton().setText(oText.getValue());
-			
+
 				updateInfo();
 			}
 
@@ -79,8 +79,8 @@
 				var oRBGroup = oCore.getControl("RBG5");
 
 				iIndex++;
-				var oButton = new sap.m.RadioButton("RB5-" + iIndex); 
-				oButton.setText("Option " + iIndex); 
+				var oButton = new sap.m.RadioButton("RB5-" + iIndex);
+				oButton.setText("Option " + iIndex);
 				oRBGroup.addButton(oButton);
 
 				updateInfo();
@@ -91,8 +91,8 @@
 				var oRBGroup = oCore.getControl("RBG5");
 
 				iIndex++;
-				var oButton = new sap.m.RadioButton("RB5-" + iIndex); 
-				oButton.setText("Option " + iIndex); 
+				var oButton = new sap.m.RadioButton("RB5-" + iIndex);
+				oButton.setText("Option " + iIndex);
 				if(iIndex > 1){
 					var iIndexIns = oRBGroup.getSelectedIndex();
 				}else{
@@ -108,8 +108,8 @@
 				var oRBGroup = oCore.getControl("RBG5");
 
 				iIndex++;
-				var oButton = new sap.m.RadioButton("RB5-" + iIndex); 
-				oButton.setText("Option " + iIndex); 
+				var oButton = new sap.m.RadioButton("RB5-" + iIndex);
+				oButton.setText("Option " + iIndex);
 				if(iIndex > 1){
 					var iIndexIns = oRBGroup.getSelectedIndex() + 1;
 				}else{
@@ -173,7 +173,7 @@
 				}else{
 					oButton.setText("Enable");
 				}
-			
+
 				updateInfo();
 			}
 
@@ -182,7 +182,7 @@
 				var oRBGroup = oCore.getControl("RBG5");
 
 				oRBGroup.getSelectedButton().setEnabled(oCB.getSelected());
-	
+
 				updateInfo();
 			}
 
@@ -207,30 +207,30 @@
 
 			oCore.attachInitEvent(function () {
 				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
-	
+
 				// Simple RadioButtonGroup
-				var oRBGroup = new sap.m.RadioButtonGroup("RBG1"); 
+				var oRBGroup = new sap.m.RadioButtonGroup("RBG1");
 				oRBGroup.setTooltip("Group 1");
-				
-				var oButton = new sap.m.RadioButton("RB1-1"); 
-				oButton.setText("Option 1"); 
+
+				var oButton = new sap.m.RadioButton("RB1-1");
+				oButton.setText("Option 1");
 				oButton.setEditable(false);
 				oButton.setTooltip("Tooltip 1");
 				oRBGroup.addButton(oButton);
-				
+
 				oButton = new sap.m.RadioButton("RB1-2");
 				oButton.setText("Option 2");
 				oButton.setTooltip("Tooltip 2");
 				oButton.setEditable(false);
 				oRBGroup.addButton(oButton);
 
-				oButton = new sap.m.RadioButton("RB1-3"); 
-				oButton.setText("Option 3"); 
+				oButton = new sap.m.RadioButton("RB1-3");
+				oButton.setText("Option 3");
 				oButton.setTooltip("Tooltip 3");
 				oRBGroup.addButton(oButton);
 
 				oRBGroup.placeAt("target1");
-				
+
 				var oLabel = new sap.m.Label({ text: "Simple group: ", labelFor: oRBGroup});
 				oLabel.placeAt("label1");
 
@@ -258,9 +258,9 @@
 				oRBGroup.setWidth("100%");
 
 				var oButton = new sap.m.RadioButton("RB3-1");
-				oButton.setText("Long Option Number 1"); 
+				oButton.setText("Long Option Number 1");
 				oRBGroup.addButton(oButton);
-				oButton = new sap.m.RadioButton("RB3-2"); 
+				oButton = new sap.m.RadioButton("RB3-2");
 				oButton.setText("Option 2");
 				oButton.setEnabled(false);
 				oRBGroup.addButton(oButton);

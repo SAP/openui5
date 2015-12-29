@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ObjectListItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -27,65 +27,65 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectListItem = ListItemBase.extend("sap.m.ObjectListItem", /** @lends sap.m.ObjectListItem.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * Object list item title
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Object list item number
 			 */
 			number : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * The number units qualifier of the object list item
 			 */
 			numberUnit : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Introductory text for the object list item.
 			 */
 			intro : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Object list item icon displayed to the left of the title.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Icon displayed when the object list item is active.
 			 */
 			activeIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-			 * 
+			 *
 			 * If bandwidth is the key for the application, set this value to false.
 			 */
 			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
-	
+
 			/**
 			 * Set the favorite state for the object list item
 			 * @since 1.16.0
 			 */
 			markFavorite : {type : "boolean", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Set the flagged state for the object list item
 			 * @since 1.16.0
 			 */
 			markFlagged : {type : "boolean", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Set to true if the object list item can be marked with icons such as favorite and flag.
 			 * @since 1.16.0
 			 */
 			showMarkers : {type : "boolean", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Object list item number and numberUnit value state.
 			 * @since 1.16.0
@@ -117,33 +117,33 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			 * Set the locked state of the object list item.
 			 * @since 1.28
 			 */
-			markLocked : {type : "boolean", group : "Misc", defaultValue : false}			
+			markLocked : {type : "boolean", group : "Misc", defaultValue : false}
 		},
 		defaultAggregation : "attributes",
 		aggregations : {
-	
+
 			/**
 			 * List of attributes displayed below the title to the left of the status fields.
 			 */
-			attributes : {type : "sap.m.ObjectAttribute", multiple : true, singularName : "attribute"}, 
-	
+			attributes : {type : "sap.m.ObjectAttribute", multiple : true, singularName : "attribute"},
+
 			/**
 			 * First status text field shown on the right side of the attributes.
 			 */
-			firstStatus : {type : "sap.m.ObjectStatus", multiple : false}, 
-	
+			firstStatus : {type : "sap.m.ObjectStatus", multiple : false},
+
 			/**
 			 * Second status text field shown on the right side of the attributes.
 			 */
 			secondStatus : {type : "sap.m.ObjectStatus", multiple : false}
 		}
 	}});
-	
+
 	///**
 	// * This file defines behavior for the control,
 	// */
-	
-	
+
+
 	/**
 	 * @private
 	 */
@@ -152,17 +152,17 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		if (this._oImageControl) {
 			this._oImageControl.destroy();
 		}
-		
+
 		if (this._oPlaceholderIcon) {
 			this._oPlaceholderIcon.destroy();
 			this._oPlaceholderIcon = undefined;
 		}
-	
+
 		if (this._oFavIcon) {
 			this._oFavIcon.destroy();
 			this._oFavIcon = undefined;
 		}
-		
+
 		if (this._oFlagIcon) {
 			this._oFlagIcon.destroy();
 			this._oFlagIcon = undefined;
@@ -172,15 +172,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			this._oLockIcon.destroy();
 			this._oLockIcon = undefined;
 		}
-		
+
 		if (this._oTitleText) {
 			this._oTitleText.destroy();
 			this._oTitleText = undefined;
 		}
-		
+
 		ListItemBase.prototype.exit.apply(this);
 	};
-	
+
 	/**
 	 * @private
 	 * @returns {boolean}
@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		}
 		return false;
 	};
-	
+
 	/**
 	 * @private
 	 * @returns {boolean}
@@ -205,31 +205,31 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		return ((this.getFirstStatus() && !this.getFirstStatus()._isEmpty())
 				|| (this.getSecondStatus() && !this.getSecondStatus()._isEmpty() ));
 	};
-	
+
 	/**
 	 * @private
 	 * @returns {boolean}
 	 */
 	ObjectListItem.prototype._hasBottomContent = function() {
-		
+
 		return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers() || this.getMarkLocked());
 	};
-	
+
 	/**
 	 * @private
 	 * @returns {Array}
 	 */
 	ObjectListItem.prototype._getVisibleAttributes = function() {
-	
+
 		var aAllAttributes = this.getAttributes();
 		var aVisibleAttributes = [];
-	
+
 		for (var i = 0; i < aAllAttributes.length; i++) {
 			if (aAllAttributes[i].getVisible()) {
 				aVisibleAttributes.push(aAllAttributes[i]);
 			}
 		}
-	
+
 		return aVisibleAttributes;
 	};
 
@@ -239,7 +239,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 * @private
 	 */
 	ObjectListItem.prototype._getImageControl = function() {
-	
+
 		var sImgId = this.getId() + '-img';
 		var sSize = "2.5rem";
 		var mProperties = {
@@ -250,28 +250,28 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			densityAware : this.getIconDensityAware()
 		};
 		var aCssClasses = ['sapMObjLIcon'];
-		
+
 		this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
-		
+
 		return this._oImageControl;
 	};
-	
+
 	/**
 	 * Overwrite base method to hook into list item's active handling
-	 * 
+	 *
 	 * @private
 	 */
 	ObjectListItem.prototype._activeHandlingInheritor = function() {
 		var sActiveSrc = this.getActiveIcon();
-		
+
 		if (!!this._oImageControl  && !!sActiveSrc) {
 			this._oImageControl.setSrc(sActiveSrc);
 		}
 	};
-	
+
 	/**
 	 * Overwrite base method to hook into list item's inactive handling
-	 * 
+	 *
 	 * @private
 	 */
 	ObjectListItem.prototype._inactiveHandlingInheritor = function() {
@@ -280,35 +280,35 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			this._oImageControl.setSrc(sSrc);
 		}
 	};
-	
+
 	/**
 	 * @private
 	 * @returns Flag icon control
 	 */
 	//TODO Remove placeholder when Safari iconFont issue is addressed.
 	ObjectListItem.prototype._getPlaceholderIcon = function() {
-		
+
 		if (!this._oPlaceholderIcon) {
-	
+
 			var oPlaceholderIconUri = IconPool.getIconURI("fridge");
 			this._oPlaceholderIcon = IconPool.createControlByURI({
 				id: this.getId() + "-placeholder",
 				src: oPlaceholderIconUri
 			});
-			
+
 			this._oPlaceholderIcon.addStyleClass("sapMObjStatusMarkerInvisible");
 		}
 		return this._oPlaceholderIcon;
 	};
-	
+
 	/**
 	 * @private
 	 * @returns Flag icon control
 	 */
 	ObjectListItem.prototype._getFlagIcon = function() {
-		
+
 		if (!this._oFlagIcon) {
-	
+
 			var oFlagIconUri = IconPool.getIconURI("flag");
 			this._oFlagIcon = IconPool.createControlByURI({
 				id: this.getId() + "-flag",
@@ -333,15 +333,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		}
 		return this._oLockIcon;
 	};
-	
+
 	/**
 	 * @private
 	 * @returns Favorite icon control
 	 */
 	ObjectListItem.prototype._getFavoriteIcon = function() {
-		
+
 		if (!this._oFavIcon) {
-	
+
 		    var oFavIconUri = IconPool.getIconURI("favorite");
 		    this._oFavIcon = IconPool.createControlByURI({
 		           id: this.getId() + "-favorite",
@@ -350,13 +350,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		}
 		return this._oFavIcon;
 	};
-	
+
 	/**
 	 * @private
 	 * @returns title text control
 	 */
 	ObjectListItem.prototype._getTitleText = function() {
-		
+
 		if (!this._oTitleText) {
 			this._oTitleText = new sap.m.Text(this.getId() + "-titleText", {
 				maxLines: 2

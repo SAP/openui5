@@ -27,7 +27,7 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script >
 			sinon.config.useFakeTimers = false;
-			
+
 			/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */
 			jQuery.sap.includeScript("testdata/sapjsunittestvalueincrementor.js", "jsunitIncludeScriptTestScript");
 			jQuery.sap.includeStyleSheet("testdata/testA.css", "jsunitIncludeStyleSheetTest");
@@ -274,9 +274,9 @@
 				oLogListener.onLogEntry.withArgs(match1);
 				oLogListener.onLogEntry.withArgs(match2);
 				jQuery.sap.log.addLogListener(oLogListener);
-				
+
 				var calledBack = false;
-				
+
 				sap.ui.require(["my/first/module", "my/second/module", "my/third/module", "./my/first/module", "../my/first/module"], function (firstModule, secondModule, thirdModule) {
 					strictEqual(firstModule.my, "firstmodule");
 					strictEqual(secondModule.my, "secondmodule");
@@ -288,7 +288,7 @@
 					server.restore();
 					start();
 				});
-				
+
 				equal(calledBack, false, "callback must not have been called synchronously");
 
 			});

@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 		jQuery.sap.require("sap.ui.core.IconPool");
 		sap.ui.core.IconPool.insertFontFaceStyle();
 	};
-	
+
 	CheckBox.prototype.onAfterRendering = function() {
 		if (!this.getText() && !this.$().attr("aria-labelledby")) {
 			this.$().attr("aria-label", " ");

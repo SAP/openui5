@@ -1,11 +1,11 @@
 sap.ui.jsview("sap.ui.core.mvctest.Dev2", {
-	
+
 	getControllerName: function() {
 		return "sap.ui.core.mvctest.Dev";
 	},
-	
+
 	/**
-	 * 
+	 *
 	 * @param oController may be null
 	 * @returns {sap.ui.cre.Control}
 	 */

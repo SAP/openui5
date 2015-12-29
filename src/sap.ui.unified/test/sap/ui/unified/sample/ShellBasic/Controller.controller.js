@@ -22,7 +22,7 @@ sap.ui.controller("sap.ui.unified.sample.ShellBasic.Controller", {
 	handleUserItemPressed: function(oEvent) {
 		sap.m.MessageToast.show("User Button Pressed");
 	},
-	
+
 	handleSearchItemSelect: function(oEvent) {
 		sap.m.MessageToast.show("Search Entry Selected: " + oEvent.getSource().getTitle());
 	},

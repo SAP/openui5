@@ -1,11 +1,11 @@
 sap.ui.jsview("testdata.complexsyntax", {
-	
+
 	getControllerName: function() {
 		return "testdata.complexsyntax";
 	},
 
 	/**
-	 * 
+	 *
 	 * @param oController may be null
 	 * @returns {sap.ui.cre.Control}
 	 */
@@ -14,7 +14,7 @@ sap.ui.jsview("testdata.complexsyntax", {
 		var aControls = [];
 		var oLabel = new c.Label({text:"Hello Mr. {path:'/singleEntry/firstName', formatter:'.myFormatter'}, {/singleEntry/lastName}"}, oController);
 		aControls.push(oLabel);
-		
+
 		var oTable = new sap.ui.table.Table({rows:"{/table}"});
 		var oColumn = new sap.ui.table.Column();
 		var oLabel2 = new c.Label({text:"Name"});

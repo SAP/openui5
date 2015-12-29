@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested class: sap.ui.ux3.ThingInspector
   Author: d026828, d049080
 -->
@@ -14,7 +14,7 @@
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -77,7 +77,7 @@
 	}
 	function feedSubmitEventHandler(oEvent) {
 		ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
-		var text = oEvent.getParameter("text"); 
+		var text = oEvent.getParameter("text");
 		equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 	}
 </script>
@@ -95,7 +95,7 @@
 			text : "Duplicate"
 		}) ],
 		actionSelected : actionSelectedEventHandler,
-		feedSubmit : feedSubmitEventHandler,} 
+		feedSubmit : feedSubmitEventHandler,}
 	);
 	oThingViewer = new sap.ui.ux3.ThingViewer("myThingViewer", {
 		icon : "../images/Account_48.png", // put the Account icon
@@ -139,8 +139,8 @@
 	oThingViewer.addHeaderContent(oTC2);
 
 	//oThingViewer.placeAt("uiArea1");
-	
-	
+
+
 </script>
 
 <!-- Test functions -->
@@ -156,7 +156,7 @@
 		ok(oDomRef, "Rendered ThingViewer should exist in the page");
 		equal(oDomRef.className, "sapUiUx3TV", "Rendered ThingViewer should have the class 'sapUiUx3TV'");
 	});
-	
+
 	test("Swatch", function() {
 		var oSwatch = jQuery.sap.domById(oThingViewer.getId() + "-swatch");
 		ok(oSwatch, "Rendered Swatch should exist in the page");
@@ -183,7 +183,7 @@
 	});
 
 	module("Behaviour");
-	
+
 	asyncTest("FacetSelected Event", function() {
 		expect(3);
 		facet = "activities";
@@ -203,7 +203,7 @@
 		var oDomRef = jQuery.sap.domById(oThingViewer.getId());
 		ok(!oDomRef, "Rendered ThingViewer should not exist in the page after destruction");
 	});
-	
+
 </script>
 </head>
 <body>

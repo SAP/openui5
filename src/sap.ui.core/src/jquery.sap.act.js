@@ -10,18 +10,18 @@ sap.ui.define(['jquery.sap.global'],
 	if (typeof window.jQuery.sap.act === "object" || typeof window.jQuery.sap.act === "function" ) {
 		return;
 	}
-	
+
 //	Date.now = Date.now || function() {
 //		return new Date().getTime();
 //	};
-	
+
 	/**
 	 * @public
 	 * @name jQuery.sap.act
 	 * @namespace
 	 * @static
 	 */
-	
+
 	var _act = {},
 		_active = true,
 		_deactivatetimer = null,
@@ -33,24 +33,24 @@ sap.ui.define(['jquery.sap.global'],
 
 	function _onDeactivate(){
 		_deactivatetimer = null;
-		
+
 		if (_activityDetected) {
 			_onActivate();
 			return;
 		}
-		
+
 		_active = false;
 		//_triggerEvent(_aDeactivateListeners); //Maybe provide later
 		_domChangeObserver.observe(document.documentElement, {childList: true, attributes: true, subtree: true, characterData: true});
 	}
-	
+
 	function _onActivate(){
 		// Never activate when document is not visible to the user
 		if (document.hidden === true) {
 			// In case of IE<10 document.visible is undefined, else it is either true or false
 			return;
 		}
-		
+
 		if (!_active) {
 			_active = true;
 			_triggerEvent(_aActivateListeners);
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global'],
 			_activityDetected = false;
 		}
 	}
-	
+
 	function _triggerEvent(aListeners){
 		if (aListeners.length == 0) {
 			return;
@@ -77,31 +77,31 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}, 0);
 	}
-	
-	
+
+
 	/**
 	 * Registers the given handler to the activity event, which is fired when an activity was detected after a certain period of inactivity.
-	 * 
+	 *
 	 * The Event is not fired for Internet Explorer 8.
-	 * 
+	 *
 	 * @param {Function} fnFunction The function to call, when an activity event occurs.
 	 * @param {Object} [oListener] The 'this' context of the handler function.
 	 * @protected
-	 * 
+	 *
 	 * @function
 	 * @name jQuery.sap.act#attachActivate
 	 */
 	_act.attachActivate = function(fnFunction, oListener){
 		_aActivateListeners.push({oListener: oListener, fFunction:fnFunction});
 	};
-	
+
 	/**
 	 * Deregisters a previously registered handler from the activity event.
-	 * 
+	 *
 	 * @param {Function} fnFunction The function to call, when an activity event occurs.
 	 * @param {Object} [oListener] The 'this' context of the handler function.
 	 * @protected
-	 * 
+	 *
 	 * @function
 	 * @name jQuery.sap.act#detachActivate
 	 */
@@ -113,45 +113,45 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 	};
-	
+
 	/**
 	 * Checks whether recently an activity was detected.
-	 * 
+	 *
 	 * Not supported for Internet Explorer 8.
-	 * 
+	 *
 	 * @return true if recently an activity was detected, false otherwise
 	 * @protected
-	 * 
+	 *
 	 * @function
 	 * @name jQuery.sap.act#isActive
 	 */
 	_act.isActive = !_deactivateSupported ? function(){ return true; } : function(){ return _active; };
-	
+
 	/**
 	 * Reports an activity.
-	 * 
+	 *
 	 * @public
-	 * 
+	 *
 	 * @function
 	 * @name jQuery.sap.act#refresh
 	 */
 	_act.refresh = !_deactivateSupported ? function(){} : _onActivate;
-	
-	
+
+
 	// Setup and registering handlers
-	
+
 	if (_deactivateSupported) {
 		var aEvents = ["resize", "orientationchange", "mousemove", "mousedown", "mouseup", //"mouseout", "mouseover",
 					   "paste", "cut", "keydown", "keyup", "DOMMouseScroll", "mousewheel"];
-		
+
 		if (!!('ontouchstart' in window)) { //touch events supported
 			aEvents.push("touchstart", "touchmove", "touchend", "touchcancel");
 		}
-		
+
 		for (var i = 0; i < aEvents.length; i++) {
 			window.addEventListener(aEvents[i], _act.refresh, true);
 		}
-		
+
 		if (window.MutationObserver) {
 			_domChangeObserver = new window.MutationObserver(_act.refresh);
 			} else if (window.WebKitMutationObserver) {
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				};
 			}
-		
+
 		if (typeof (document.hidden) === "boolean") {
 			document.addEventListener("visibilitychange", function() {
 				// Only trigger refresh if document has changed to visible
@@ -175,12 +175,12 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			}, false);
 		}
-		
+
 		_onActivate();
 	}
-	
+
 	jQuery.sap.act = _act;
 
 	return jQuery;
-	
+
 }, /* bExport= */ false);

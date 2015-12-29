@@ -19,7 +19,7 @@ sap.ui.jsview("samples.components.ext.sap.Sub4", {
 		});
 		var ext3 = new sap.ui.layout.VerticalLayout();
 		sap.ui.extensionpoint(this, "extension43", null,  ext3, "content");
-		
+
 		var fnCreateDefaultContent2 = function(){
 			return [
 			        new sap.ui.commons.TextView(that.createId("iShouldBeDestroyed1"), {text: "Extension point 44: Default Content"}),
@@ -39,8 +39,8 @@ sap.ui.jsview("samples.components.ext.sap.Sub4", {
 			content: [
 			           new sap.ui.commons.TextView({text: "SAP View 'Sub4' - the text after this one is hidden by customizing: "}),
 			           new sap.ui.commons.TextView("customizableText1", {text: "This text is made invisible by customization"}),
-			           ext1, 
-			           ext2, 
+			           ext1,
+			           ext2,
 			           ext3,
 			           ext4,
 			           ext5

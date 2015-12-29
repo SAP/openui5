@@ -6,7 +6,7 @@
 <script src="../../../resources/sap-ui-core.js" type="text/javascript"
 	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.commons"
 	data-sap-ui-theme="sap_bluecrystal">
-	
+
 </script>
 <script type="text/javascript">
 	//create first detail page
@@ -204,7 +204,7 @@
 							oSplitApp.toDetail("detail");
 						}
 					},
-					items : [ 
+					items : [
 						new sap.m.StandardListItem("listDetail",{
 							title : "To Detail 1",
 							type: sap.m.ListType.Active,
@@ -242,8 +242,8 @@
 											}) ]
 						})
 			});
-	
-	
+
+
 	//create SplitApp()
 	var oSplitApp = new sap.m.SplitApp({
 		detailPages: [oDetailPage, oDetailDetailPage, oDetailPage2],
@@ -259,7 +259,7 @@
 	});
 
 	if(jQuery.device.is.tablet || jQuery.device.is.desktop){
-		oSplitApp.setDefaultTransitionNameDetail("fade");	
+		oSplitApp.setDefaultTransitionNameDetail("fade");
 	}
 
 	oSplitApp.placeAt("body");

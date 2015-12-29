@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.TableSelectDialog</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -35,17 +35,17 @@
 			var filter = [];
 			//Get the value that been entered in the Dialog Search
 			var sVal = oEvent.getParameter("value");
-		
+
 			//Get the binded items
 			var itemsBinding = oEvent.getParameter("itemsBinding");
 
 			aSearchEvents = [];
 			aSearchEvents.push(itemsBinding.iLength);
-						
+
 			if(sVal !== undefined) {
 				// create the local filter to apply
 				var  selectFilter = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains , sVal);
-				filter.push(selectFilter);		  
+				filter.push(selectFilter);
 
 				// and apply the filter to the bound items, and the Table Select Dialog will update
 				itemsBinding.filter(filter);
@@ -65,22 +65,22 @@
 
 			aLiveChangeEvents = [];
 			aLiveChangeEvents.push(itemsBinding.iLength);
-						
+
 			if(sVal !== undefined) {
 				// create the local filter to apply
 				var  selectFilter = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains , sVal);
-				filter.push(selectFilter);		  
-		
+				filter.push(selectFilter);
+
 				// and apply the filter to the bound items, and the Table Select Dialog will update
 				itemsBinding.filter(filter);
-				
+
 				aLiveChangeEvents.push(itemsBinding.iLength);
 			}
 		};
 
 		var oModelDialog = new sap.ui.model.json.JSONModel();
-		oModelDialog.setData(dialogData);	
-		
+		oModelDialog.setData(dialogData);
+
 		// create the data to be shown in the table
 		var data = {
 		navigation : [{
@@ -110,11 +110,11 @@
 				price : "55.00 EUR"
 			}]
 		};
-		
+
 		// create the model to hold the data
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(data);
-		
+
 		// create the template for the items binding
 		var template = new sap.m.ColumnListItem({
 			type : "Navigation",
@@ -132,7 +132,7 @@
 				})
 			]
 		});
-		
+
 		var oTableSelectDialog = new sap.m.TableSelectDialog("oTableSelectDialog", {
 			title: "{dialog>/title}",
 			noDataText: "{dialog>/noDataMessage}",
@@ -178,12 +178,12 @@
 				})
 			]
 		});
-		
+
 		// then set model & bind Aggregation
 		oTableSelectDialog.setModel(oModel);
-		oTableSelectDialog.bindAggregation("items", "/navigation", template);		
+		oTableSelectDialog.bindAggregation("items", "/navigation", template);
 		oTableSelectDialog.setModel(oModelDialog,"dialog");
-		
+
 		var oTableSelectDialog1 = new sap.m.TableSelectDialog("oTableSelectDialog1", {
 			title: "Title",
 			noDataText: "No Data",
@@ -230,11 +230,11 @@
 				})
 			]
 		});
-		
+
 		// then set model & bind Aggregation
 		oTableSelectDialog1.setModel(oModel);
 		oTableSelectDialog1.bindAggregation("items", "/navigation", template);
-		
+
 		// attach confirm listener
 		oTableSelectDialog1.attachConfirm(function(evt) {
 			if (oTableSelectDialog1.getMultiSelect()) {
@@ -263,44 +263,44 @@
 				}
 			}
 		});
-		
+
 		// attach Cancel listener
 		oTableSelectDialog1.attachCancel(function(evt) {
 			oInput1.setValue("Cancel selected");
-		});	 
-		
+		});
+
 		var oInput1 = new sap.m.Input("oInput1" , {
 			type: "Text",
 			placeholder: "TableSelectDialog1 Selected Item",
 		});
-		
+
 		var oButton = new sap.m.Button({
 			text : "Open TableSelectDialog",
 			press : function() {
 				strictEqual(oTableSelectDialog.open() , oTableSelectDialog , "TableSelectDialog should be chaninable");
 			}
 		});
-		
+
 		var oButton1 = new sap.m.Button({
 			text : "Open TableSelectDialog1",
 			press : function() {
 				strictEqual(oTableSelectDialog1.open() , oTableSelectDialog1 , "TableSelectDialog1 should be chaninable");
 			}
 		});
-		
+
 		var page = new sap.m.Page("myFirstPage", {
 			title : "TableSelectDialog Test",
 			content: [oButton, oButton1, oInput1]
 		});
-		
+
 		var app = new sap.m.App("myApp", {
 			initPage: "myFirstPage"
 		});
-		
+
 		app.addPage(page).placeAt("content");
-		
+
 		module("Initial Check");
-		
+
 		test("Initialization", function() {
 			ok(!jQuery.sap.domById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
 			strictEqual(oTableSelectDialog.getTitle(), "Choose your tech..", 'The title should be "Choose your tech.."');
@@ -316,16 +316,16 @@
 			strictEqual(oTableSelectDialog1.getMultiSelect(), true, 'Multi Select should now be updated to  "true"');
 
 		});
-		
+
 		module("Bindings Check");
-		
+
 		test("Bindings", function() {
 			strictEqual(oTableSelectDialog.getBinding("items").iLength, 5 , 'TableSelectDialog should have 5 items bound');
 			strictEqual(oTableSelectDialog1.getBinding("items").iLength, 5 , 'TableSelectDialog1 should have 5 items bound');
 		});
-		
+
 		module("Open and Close");
-		
+
 		test("Open TableSelectDialog", function(){
 			oButton.firePress();
 			ok(jQuery.sap.domById("oTableSelectDialog-dialog"), "TableSelectDialog is opened");
@@ -334,7 +334,7 @@
 			ok(jQuery.sap.domById("oTableSelectDialog-cancel"), "TableSelectDialog should have a cancel button");
 			ok(!jQuery.sap.domById("oTableSelectDialog-ok"), "TableSelectDialog should not have an ok button");
 		});
-		
+
 		asyncTest("Destroy TableSelectDialog", function(){
 			expect(1);
 			// simulate close
@@ -345,7 +345,7 @@
 			})
 			oTableSelectDialog._dialog.close();
 		});
-		
+
 		asyncTest("Open TableSelectDialog1", function(){
 			//Expect 6 as one comes from the button press for chainabe test
 			expect(6);
@@ -355,13 +355,13 @@
 				ok(jQuery.sap.domById("oTableSelectDialog1-dialog-title"), "TableSelectDialog1 title should be rendered");
 				ok(jQuery.sap.domById("oTableSelectDialog1-searchField"), "TableSelectDialog1 should have a searchfield");
 				ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
-				ok(jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should have an ok button");				
+				ok(jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should have an ok button");
 			start();
 			}, 10);
 		});
-		
+
 		module("Test Dialog Search");
-		
+
 		asyncTest("TableSelectDialog1 SearchField Set Value 'Mo'", function(){
 			expect(0);
 			sap.ui.getCore().applyChanges();
@@ -369,20 +369,20 @@
 			searchField.setValue("Mo");
 			start();
 		});
-		
+
 		asyncTest("TableSelectDialog1 SearchField Equals 'Mo'", function(){
 			expect(1);
 			strictEqual(jQuery.sap.domById("oTableSelectDialog1-searchField-I").value, "Mo", "Search Field should Contain 'Mo'");
 			start();
 		});
-		
+
 		asyncTest("TableSelectDialog1 SearchField Fire Search Event", function(){
 			expect(0);
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.fireSearch({query: "Mo"});
 			start();
 		});
-		
+
 		asyncTest("TableSelectDialog1 SearchField Fire Search Results", function(){
 			expect(3);
 			setTimeout(function() {
@@ -392,14 +392,14 @@
 			start();
 			}, 10);
 		});
-		
+
 		asyncTest("TableSelectDialog1 SearchField Fire Search Event Again with same data", function(){
 			expect(0);
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
 			searchField.fireSearch({query: "Mo"});
 			start();
 		});
-		
+
 		asyncTest("TableSelectDialog1 SearchField Fire Search Results", function(){
 			expect(3);
 			setTimeout(function() {
@@ -409,9 +409,9 @@
 			start();
 			}, 10);
 		});
-		
+
 		module("Test Dialog Live Change");
-		
+
 		asyncTest("TableSelectDialog1 SearchField Simulate Live Chnage Clear Text", function(){
 			expect(0);
 			var searchField = sap.ui.getCore().byId("oTableSelectDialog1-searchField");
@@ -419,7 +419,7 @@
 			searchField.fireLiveChange({newValue: ""});
 			start();
 		});
-		
+
 		asyncTest("TableSelectDialog1 SearchField Live Change Results Clear Text", function(){
 			expect(3);
 			setTimeout(function() {
@@ -429,26 +429,26 @@
 			start();
 			}, 10);
 		});
-		
+
 		module("Test Dialog Change to Single Select");
-		
+
 		test("TableSelectDialog1 Change to Single Select", function() {
 			oTableSelectDialog1.setMultiSelect(false);
 			sap.ui.getCore().applyChanges();
 			strictEqual(oTableSelectDialog1.getMultiSelect(), false, 'Multi Select should now be updated to  "false"');
 		});
-		
+
 		asyncTest("TableSelectDialog1 Single Select Checks", function(){
 			expect(2);
 			setTimeout(function() {
 				ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
-				ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");			
+				ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
 			start();
 			}, 50);
 		});
-		
+
 		module("Test Dialog Single Select Item");
-		
+
 		test("TableSelectDialog1 singleSelection Item 2", function() {
 			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
 			var aItems = oTable.getItems();
@@ -458,22 +458,22 @@
 			equals(aItems[2].getModeControl().getSelected(), true, "SingleSelection: Item 2 should be selected");
 			equals(aItems[3].getModeControl().getSelected(), false, "SingleSelection: Item 3 should not be selected");
 			equals(aItems[4].getModeControl().getSelected(), false, "SingleSelection: Item 4 should not be selected");
-			oTable.fireSelect({ listItem : aItems[2] });		  
+			oTable.fireSelect({ listItem : aItems[2] });
 		});
-		
+
 		asyncTest("TableSelectDialog1 Single Select Check Cancel", function(){
 			expect(3);
 			oInput1.setValue("");
 			oButton1.firePress();
 			ok(jQuery.sap.domById("oTableSelectDialog1-cancel"), "TableSelectDialog1 should have a cancel button");
-			ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");			
+			ok(!jQuery.sap.domById("oTableSelectDialog1-ok"), "TableSelectDialog1 should not have an ok button");
 			var oCancel = sap.ui.getCore().byId("oTableSelectDialog1-cancel");
 			oCancel.firePress();
 			start();
 		});
 
 		asyncTest("Check add/remove/toggle/hasStyleClass methods", function () {
-			var oTableSelectDialog = new sap.m.TableSelectDialog("TableSelectDialog"),	
+			var oTableSelectDialog = new sap.m.TableSelectDialog("TableSelectDialog"),
 				sCustomStyleClass = "myStyleClass";
 
 			// add + has
@@ -547,7 +547,7 @@
 
 			}, 500);
 
-		});	
+		});
 
 		asyncTest("InitialFocus when there are rows in the tableSelectDialog's table", function(){
 			expect(1);
@@ -597,7 +597,7 @@
 			});
 
 			oTableSelectDialog15.setModel(oModel);
-			oTableSelectDialog15.bindAggregation("items", "/navigation", template);		
+			oTableSelectDialog15.bindAggregation("items", "/navigation", template);
 			oTableSelectDialog15.setModel(oModelDialog,"dialog");
 
 			oTableSelectDialog15.open();

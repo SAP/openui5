@@ -9,7 +9,7 @@
 	src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_goldreflection"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table">
-	
+
 </script>
 
 <script>
@@ -39,11 +39,11 @@
 			oMyListBox.setBusy(bBusy);
 		}
 	}).placeAt("button1");
-	
+
 	var oMyTable = new sap.ui.table.Table({
 	}).placeAt("uiArea2");
 	oMyTable.setBusyIndicatorDelay(0);
-	
+
 	// define the Table columns
 	var oControl = new sap.ui.commons.TextView({text:"{lastName}"}); // short binding notation
 	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Last Name"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "100px"}));
@@ -55,21 +55,21 @@
 	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Web Site"}), template: oControl, sortProperty: "linkText", filterProperty: "linkText"}));
 	oControl = new sap.ui.commons.RatingIndicator({value:"{rating}"});
 	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Rating"}), template: oControl, sortProperty: "rating", filterProperty: "rating"}));
-	
-	
+
+
 	// create some local data
 	var aData = [
 		{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", rating: 4},
 		{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", rating: 2},
 		{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", rating: 3}
 	];
-	
+
 	// create a JSONModel, fill in the data and bind the Table to this model
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({modelData: aData});
 	oMyTable.setModel(oModel);
 	oMyTable.bindRows("/modelData");
-	
+
 	var oBtn2 = new sap.ui.commons.Button({
 		text : "set loading-mode: on",
 		press : function() {

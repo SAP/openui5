@@ -42,7 +42,7 @@
 					minIntegerDigits: 3
 				}
 			}" />
-			
+
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/number',
@@ -53,7 +53,7 @@
 			}" />
 		</form:content>
 	</form:SimpleForm>
-	
+
 	<form:SimpleForm
 		width="auto"
 		class="sapUiResponsiveMargin"
@@ -74,7 +74,7 @@
 					maxIntegerDigits: 2
 				}
 			}" />
-			
+
 			<Label text="5 digits" />
 			<Text text="{
 				path: '/number',

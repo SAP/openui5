@@ -25,10 +25,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * @alias sap.ui.base.Metadata
 	 */
 	var Metadata = function(sClassName, oClassInfo) {
-	
+
 		jQuery.sap.assert(typeof sClassName === "string" && sClassName, "Metadata: sClassName must be a non-empty string");
 		jQuery.sap.assert(typeof oClassInfo === "object", "Metadata: oClassInfo must be empty or an object");
-	
+
 		// support for old usage of Metadata
 		if ( !oClassInfo || typeof oClassInfo.metadata !== "object" ) {
 			oClassInfo = {
@@ -42,13 +42,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		if ( typeof oClassInfo.constructor !== "function" ) {
 			throw Error("constructor for class " + sClassName + " must have been declared before creating metadata for it");
 		}
-	
+
 		// invariant: oClassInfo exists, oClassInfo.metadata exists, oClassInfo.constructor exists
 		this._sClassName = sClassName;
 		this._oClass = oClassInfo.constructor;
 		this.extend(oClassInfo);
 	};
-	
+
 	/**
 	 * @private
 	 * @final
@@ -57,17 +57,17 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		this.applySettings(oClassInfo);
 		this.afterApplySettings();
 	};
-	
+
 	/**
 	 * @private
 	 * @since 1.3.1
 	 */
 	Metadata.prototype.applySettings = function(oClassInfo) {
-	
+
 		var that = this,
 		  oStaticInfo = oClassInfo.metadata,
 			oPrototype;
-	
+
 		if ( oStaticInfo.baseType ) {
 			// lookup base class by its name - same reasoning as above
 			var oParentClass = jQuery.sap.getObject(oStaticInfo.baseType);
@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		} else {
 			this._oParent = undefined;
 		}
-	
+
 		this._bAbstract = !!oStaticInfo["abstract"];
 		this._bFinal = !!oStaticInfo["final"];
 		this._sStereotype = oStaticInfo.stereotype || (this._oParent ? this._oParent._sStereotype : "object");
@@ -93,10 +93,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 
 		// handle interfaces
 		this._aInterfaces = jQuery.sap.unique(oStaticInfo.interfaces || []);
-	
+
 		// take over metadata from static info
 		this._aPublicMethods = jQuery.sap.unique(oStaticInfo.publicMethods || []);
-	
+
 		// enrich prototype
 		oPrototype = this._oClass.prototype;
 		jQuery.sap.forIn(oClassInfo, function(n, v) {
@@ -108,9 +108,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 				}
 			}
 		});
-		
+
 	};
-	
+
 	/**
 	 * Called after new settings have been applied.
 	 *
@@ -128,17 +128,17 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 			//this._aAllInterfaces = this._aInterfaces;
 			this._aAllPublicMethods = this._aPublicMethods;
 		}
-	
+
 	};
-	
+
 	/**
-	 * Stereotype of the described class. 
+	 * Stereotype of the described class.
 	 * @experimental might be enhanced to a set of stereotypes
 	 */
 	Metadata.prototype.getStereotype = function() {
 		return this._sStereotype;
 	};
-	
+
 	/**
 	 * Returns the fully qualified name of the described class
 	 * @return {string} name of the described class
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	Metadata.prototype.getName = function() {
 		return this._sClassName;
 	};
-	
+
 	/**
 	 * Returns the (constructor of the) described class
 	 * @return {function} class described by this metadata
@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	Metadata.prototype.getClass = function() {
 		return this._oClass;
 	};
-	
+
 	/**
 	 * Returns the metadata object of the base class of the described class
 	 * or null if the class has no (documented) base class.
@@ -167,7 +167,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	Metadata.prototype.getParent = function() {
 		return this._oParent;
 	};
-	
+
 	/**
 	 * Returns an array with the names of the public methods declared by the described class.
 	 *
@@ -177,7 +177,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	Metadata.prototype.getPublicMethods = function() {
 		return this._aPublicMethods;
 	};
-	
+
 	/**
 	 * Returns an array with the names of all public methods declared by the described class
 	 * and its ancestors.
@@ -188,7 +188,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	Metadata.prototype.getAllPublicMethods = function() {
 		return this._aAllPublicMethods;
 	};
-	
+
 	/**
 	 * Returns the names of interfaces implemented by the described class.
 	 * As the representation of interfaces is not clear yet, this method is still private.
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	Metadata.prototype.getInterfaces = function() {
 		return this._aInterfaces;
 	};
-	
+
 	/**
 	 * Checks whether the described class or one of its ancestor classes implements the given interface.
 	 *
@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 				return true;
 			}
 		}
-	
+
 		var a = this._aInterfaces;
 		for (var i = 0,l = a.length; i < l; i++) {
 			// FIXME doesn't handle interface inheritance (requires object representation for interfaces)
@@ -221,11 +221,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 				return true;
 			}
 		}
-	
+
 		return false;
 	};
-	
-	
+
+
 	/**
 	 * Returns whether the described class is abstract
 	 * @return {boolean} whether the class is abstract
@@ -234,7 +234,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	Metadata.prototype.isAbstract = function() {
 		return this._bAbstract;
 	};
-	
+
 	/**
 	 * Returns whether the described class is final
 	 * @return {boolean} whether the class is final
@@ -243,10 +243,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	Metadata.prototype.isFinal = function() {
 		return this._bFinal;
 	};
-	
+
 	/**
-	 * Whether the described class is deprecated and should not be used any more 
-	 * 
+	 * Whether the described class is deprecated and should not be used any more
+	 *
 	 * @return {boolean} whether the class is considered deprecated
 	 * @public
 	 * @since 1.26.4
@@ -254,7 +254,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	Metadata.prototype.isDeprecated = function() {
 		return this._bDeprecated;
 	};
-	
+
 	/**
 	 * Adds one or more new methods to the list of API methods.
 	 *
@@ -275,26 +275,26 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		upush(this._aPublicMethods, aNames);
 		upush(this._aAllPublicMethods, aNames);
 	};
-	
+
 	/**
 	 * @since 1.3.1
 	 * @private
 	 */
 	Metadata.createClass = function (fnBaseClass, sClassName, oClassInfo, FNMetaImpl) {
-	
+
 		if ( typeof fnBaseClass === "string" ) {
 			FNMetaImpl = oClassInfo;
 			oClassInfo = sClassName;
 			sClassName = fnBaseClass;
 			fnBaseClass = null;
 		}
-	
+
 		jQuery.sap.assert(!fnBaseClass || typeof fnBaseClass === "function");
 		jQuery.sap.assert(typeof sClassName === "string" && !!sClassName);
 		jQuery.sap.assert(!oClassInfo || typeof oClassInfo === "object");
 		jQuery.sap.assert(!FNMetaImpl || typeof FNMetaImpl === "function");
-	
-		// allow metadata class to preprocess 
+
+		// allow metadata class to preprocess
 		FNMetaImpl = FNMetaImpl || Metadata;
 		if ( typeof FNMetaImpl.preprocessClassInfo === "function" ) {
 			oClassInfo = FNMetaImpl.preprocessClassInfo(oClassInfo);
@@ -306,10 +306,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		if ( !oClassInfo.hasOwnProperty('constructor') ) {
 			oClassInfo.constructor = undefined;
 		}
-	
+
 		var fnClass = oClassInfo.constructor;
 		jQuery.sap.assert(!fnClass || typeof fnClass === "function");
-	
+
 		// ensure defaults
 		if ( fnBaseClass ) {
 			// default constructor just delegates to base class
@@ -321,7 +321,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 						fnBaseClass.apply(this, arguments);
 					};
 				} else {
-					// create default factory 
+					// create default factory
 					fnClass = function() {
 						fnBaseClass.apply(this, arguments);
 					};
@@ -339,25 +339,25 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 			delete oClassInfo.metadata.baseType;
 		}
 		oClassInfo.constructor = fnClass;
-	
+
 		// make the class visible as JS Object
 		jQuery.sap.setObject(sClassName, fnClass);
-	
+
 		// add metadata
 		var oMetadata = new FNMetaImpl(sClassName, oClassInfo);
 		fnClass.getMetadata = fnClass.prototype.getMetadata = jQuery.sap.getter(oMetadata);
-	
+
 		// enrich function
 		if ( !fnClass.getMetadata().isFinal() ) {
 			fnClass.extend = function(sSCName, oSCClassInfo, fnSCMetaImpl) {
 				return Metadata.createClass(fnClass, sSCName, oSCClassInfo, fnSCMetaImpl || FNMetaImpl);
 			};
 		}
-	
+
 		return fnClass;
 	};
-	
-	
+
+
 
 	return Metadata;
 

@@ -48,7 +48,7 @@ sap.ui.define([
 
 		/**
 		 * Getter for property <code>aggregationName</code>.
-		 * 
+		 *
 		 * The Name of the aggregation that is used for matching
 		 *
 		 * @return {string} the value of property <code>aggregationName</code>
@@ -59,7 +59,7 @@ sap.ui.define([
 
 		/**
 		 * Setter for property <code>aggregationName</code>.
-		 * 
+		 *
 		 * @param {string} sName the name of the aggregation <code>aggregationName</code>
 		 * @return {sap.ui.test.matchers.AggregationContainsPropertyEqual} <code>this</code> to allow method chaining
 		 * @public
@@ -69,7 +69,7 @@ sap.ui.define([
 
 		/**
 		 * Getter for property <code>propertyName</code>.
-		 * 
+		 *
 		 * The Name of the property that is used for matching
 		 *
 		 * @return {string} the value of property <code>propertyName</code>
@@ -80,7 +80,7 @@ sap.ui.define([
 
 		/**
 		 * Setter for property <code>propertyName</code>.
-		 * 
+		 *
 		 * @param {string} sName the value of the property <code>propertyName</code>
 		 * @return {sap.ui.test.matchers.AggregationContainsPropertyEqual} <code>this</code> to allow method chaining
 		 * @public
@@ -90,7 +90,7 @@ sap.ui.define([
 
 		/**
 		 * Getter for property <code>propertyValue</code>.
-		 * 
+		 *
 		 * The value of the Property that is used for matching
 		 *
 		 * @return {string} the value of property <code>propertyValue</code>
@@ -101,7 +101,7 @@ sap.ui.define([
 
 		/**
 		 * Setter for property <code>propertyValue</code>.
-		 * 
+		 *
 		 * @param {string} sPropertyValue the value for the property <code>propertyValue</code>
 		 * @return {sap.ui.test.matchers.AggregationContainsPropertyEqual} <code>this</code> to allow method chaining
 		 * @public
@@ -111,7 +111,7 @@ sap.ui.define([
 
 		/**
 		 * Checks if the control has a filled aggregation with at least one control that have a property equaling propertyName/Value
-		 * 
+		 *
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
 		 * @return {boolean} true if the Aggregation set in the property aggregationName is filled, false if it is not.
 		 * @public

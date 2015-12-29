@@ -29,8 +29,8 @@
 	visibility: hidden;
 }
 
-.sapMFeedListItem .sapMFeedListItemTextText a, 
-.sapMFeedListItem .sapMFeedListItemTextText span, 
+.sapMFeedListItem .sapMFeedListItemTextText a,
+.sapMFeedListItem .sapMFeedListItemTextText span,
 .sapMFeedListItem .sapMFeedListItemTextName a{
 	font-family: @sapUiFontFamily;
 	font-weight: bold;
@@ -38,7 +38,7 @@
 }
 
 /*
- The following is necessary to make sure that image links 
+ The following is necessary to make sure that image links
  do not show a border when run in IE.
  */
 .sapMFeedListItemFigure a img {
@@ -75,7 +75,7 @@
 
 .sapMFeedListItemImage{
 	width: 3rem;
-	height: 3rem;	
+	height: 3rem;
 	line-height: 3rem;
 	font-size: 3rem;
 	margin-left: 0rem;
@@ -96,12 +96,12 @@
 
 .sapMFeedListItemTextName{
 	line-height: 1.4;
-	font-family: @sapUiFontFamily;  
+	font-family: @sapUiFontFamily;
 	font-weight: bold;
 }
 
 html[dir=rtl] .sapMFeedListItemTextName{
-	/* 	In rtl mode, this will be converted to 'float: right;' which 
+	/* 	In rtl mode, this will be converted to 'float: right;' which
 		is the correct value
 	*/
 	float: left;
@@ -109,7 +109,7 @@ html[dir=rtl] .sapMFeedListItemTextName{
 }
 
 html[dir=rtl].sap-phone .sapMFeedListItemTextName{
-	/* 	Overwrite rtl values for phones 
+	/* 	Overwrite rtl values for phones
 	*/
 	float: none;
 	margin-right: 0;
@@ -121,7 +121,7 @@ html[dir=rtl].sap-phone .sapMFeedListItemTextName{
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	font-family: @sapUiFontFamily;  
+	font-family: @sapUiFontFamily;
 }
 
 .sapMFeedListItemTitleDiv.sapMLIB {
@@ -172,8 +172,8 @@ html[data-sap-ui-browser="ie9"] .sapMFeedListItemTitleDiv {
 }
 
 .sap-phone .sapMFeedListItemTextName a {
-	font-family: @sapUiFontFamily;  
-	font-weight: normal; 
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
 	width: 100%;
 }
 

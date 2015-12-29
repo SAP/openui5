@@ -13,5 +13,5 @@
 			<Label text="MultiInput using asynchronous validator"/>
 			<MultiInput id="multiInput2" width="500px"/>
 		</items>
-	</VBox>	
+	</VBox>
 </mvc:View>

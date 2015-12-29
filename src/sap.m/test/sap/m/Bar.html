@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Bar - sap.m</title>
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
@@ -17,18 +17,18 @@
 		</style>
 		<script type="text/javascript">
 			jQuery.sap.initMobile();
-			
+
 			var page = new sap.m.Page("page");
-			
+
 			if (sap.ui.Device.os.ios){
-				var Bar = new sap.m.Bar({ 
-					contentLeft: [new sap.m.Button('Button', {text: "Back", type:sap.m.ButtonType.Back})],	
+				var Bar = new sap.m.Bar({
+					contentLeft: [new sap.m.Button('Button', {text: "Back", type:sap.m.ButtonType.Back})],
 					contentMiddle: [new sap.m.Label("myLabel2", {text: "this is the title of header with a very very very very very very very very long text to test the ellipsis effect in the middle"})],
 					contentRight: [new sap.m.Button('Button1', {text: "Edit"})]
 				});
 				page.setCustomHeader(Bar);
 			} else {
-				var Bar1 = new sap.m.Bar({ 
+				var Bar1 = new sap.m.Bar({
 					contentLeft: [new sap.m.Button('ButtonDefault', {icon:"images/favorite@2x.png", type:sap.m.ButtonType.Up})],
 					contentMiddle: [new sap.m.Label("myLabelDefault", {text: "this is the title of header with a very long text to test the ellipsis effect"})],
 					contentRight: [new sap.m.Label({text:"123"}), new sap.m.Button('headerButtonDefault', {text: "Edit"})]
@@ -36,51 +36,51 @@
 				page.setCustomHeader(Bar1);
 			}
 
-			var oSubheaderBar = new sap.m.Bar({ 
-				contentLeft: [new sap.m.Button({icon:"images/favorite@2x.png", type:sap.m.ButtonType.Up}), 
+			var oSubheaderBar = new sap.m.Bar({
+				contentLeft: [new sap.m.Button({icon:"images/favorite@2x.png", type:sap.m.ButtonType.Up}),
 								new sap.m.Image({src: "images/favorite_grey_24.png"}),
-								new sap.m.Label({text: "left content area"})],	
+								new sap.m.Label({text: "left content area"})],
 				contentMiddle: [new sap.m.Label({text: "mid content area"})],
 				contentRight: [new sap.m.Label({text: "right content area"})]
 			});
 			page.setSubHeader(oSubheaderBar);
-			
-			var Bar2 = new sap.m.Bar({ 
+
+			var Bar2 = new sap.m.Bar({
 				contentLeft: [new sap.m.Image('myAppIcon', {src: "images/favorite_grey_24.png"}),
 							  new sap.m.Label("leftContentLabel", {text: "left content area with with a very very very very very very very very long text to test the ellipsis effect"})],
 				contentMiddle: [],
 				contentRight: []
 			});
 			page.addContent(Bar2);
-			
-			var Bar3 = new sap.m.Bar({ 
-				contentLeft: [],	
+
+			var Bar3 = new sap.m.Bar({
+				contentLeft: [],
 				contentMiddle: [new sap.m.Text("middleContentText", {text: "middle content area with with a very very very very very very very very long text to test the ellipsis effect"})],
 				contentRight: []
 			});
 			page.addContent(Bar3);
-			
-			var Bar4 = new sap.m.Bar({ 
-				contentLeft: [],	
+
+			var Bar4 = new sap.m.Bar({
+				contentLeft: [],
 				contentMiddle: [],
 				contentRight: [new sap.m.Label("rightContentLabel", {text: "right content area with with a very very very very very very very very long text to test the ellipsis effect"})]
 			});
 			page.addContent(Bar4);
-			
-			var Bar5 = new sap.m.Bar({ 
-				contentLeft: [new sap.m.Label({text: "label with a long text"})],	
+
+			var Bar5 = new sap.m.Bar({
+				contentLeft: [new sap.m.Label({text: "label with a long text"})],
 				contentMiddle: [new sap.m.Label({text: "label with a long text"})],
 				contentRight: [new sap.m.Label({text: "label with a long text"})]
 			});
 			page.addContent(Bar5);
-			
-			var Bar6 = new sap.m.Bar({ 
-				contentLeft: [new sap.m.Button({icon: "images/favorite_grey_24.png"})],	
+
+			var Bar6 = new sap.m.Bar({
+				contentLeft: [new sap.m.Button({icon: "images/favorite_grey_24.png"})],
 				contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "search for..."})],
 				contentRight: [new sap.m.Button({icon: "images/favorite_grey_24.png"})]
 			});
 			page.addContent(Bar6);
-			
+
 			var button1 = new sap.m.Button('button1', {
 				type: sap.m.ButtonType.Default,
 				text: "Label",
@@ -111,52 +111,52 @@
 				text: "Label",
 				enabled: true,
 			});
-			
-			var Bar7 = new sap.m.Bar({ 
-				contentLeft: [new sap.m.Button({icon: "images/favorite_grey_24.png"})],	
+
+			var Bar7 = new sap.m.Bar({
+				contentLeft: [new sap.m.Button({icon: "images/favorite_grey_24.png"})],
 				contentMiddle: [button1, button2],
 				contentRight: [new sap.m.Button({icon: "images/favorite_grey_24.png"})]
 			});
 			page.addContent(Bar7);
-			
+
 			Bar7.addContentMiddle(button3);
 
-			var Bar8 = new sap.m.Bar({ 
-				contentLeft: [new sap.m.Button({icon: "images/favorite_grey_24.png"})],	
+			var Bar8 = new sap.m.Bar({
+				contentLeft: [new sap.m.Button({icon: "images/favorite_grey_24.png"})],
 				contentMiddle: [new sap.m.SegmentedButton('SegmentedBar', {
-									buttons: [button4, button5, button6], 
+									buttons: [button4, button5, button6],
 									selectedButton: button5
 								})],
 				contentRight: [new sap.m.Button({icon: "images/favorite_grey_24.png"})]
 			});
 			page.addContent(Bar8);
 
-			var Bar9 = new sap.m.Bar({ 
+			var Bar9 = new sap.m.Bar({
 				contentLeft: new sap.m.Label({text: "left content area with with a very very very very very very very very long text to test the ellipsis effect"}),
 				contentRight: new sap.m.Label({text: "right content area with with a very very very very very very very very long text to test the ellipsis effect"})
 			});
 			page.addContent(Bar9);
 
-			var Bar10 = new sap.m.Bar({ 
+			var Bar10 = new sap.m.Bar({
 				contentMiddle: new sap.m.Label({text: "Middle should be pushed"}),
 				contentRight: new sap.m.Label({text: "right content area with with a very very very very very very very very long text to test the ellipsis effect"})
 			});
 			page.addContent(Bar10);
 
-			var Bar11 = new sap.m.Bar({ 
+			var Bar11 = new sap.m.Bar({
 				contentLeft: new sap.m.Label({text: "left content area with with a very very very very very very very very long text to test the ellipsis effect"}),
 				contentMiddle: new sap.m.Label({text: "Middle should be pushed"})
 			});
 			page.addContent(Bar11);
 
-			var Bar12 = new sap.m.Bar({ 
+			var Bar12 = new sap.m.Bar({
 				contentLeft: new sap.m.Label({text: "left content area with with a very very very very very very very very long text to test the ellipsis effect"}),
 				contentMiddle: new sap.m.Label({text: "Middle should be pushed"}),
 				contentRight: new sap.m.Label({text: "Smaller right"})
 			});
 			page.addContent(Bar12);
 
-			var Bar12 = new sap.m.Bar({ 
+			var Bar12 = new sap.m.Bar({
 				contentLeft: new sap.m.Label({text: "smaller Left"}),
 				contentMiddle: new sap.m.Label({text: "Middle should be pushed"}),
 				contentRight: new sap.m.Label({text: "right content area with with a very very very very very very very very long text to test the ellipsis effect"})
@@ -199,7 +199,7 @@
 					new sap.m.Button({
 						icon: "sap-icon://drop-down-list"
 					}),
-					new sap.m.Select({ 
+					new sap.m.Select({
 						type: sap.m.SelectType.IconOnly,
 						icon: sap.ui.core.IconPool.getIconURI("filter"),
 						autoAdjustWidth: true,
@@ -252,24 +252,24 @@
 			page.addContent(Bar19);
 
 			var pageInPage = new sap.m.Page({
-				customHeader : new sap.m.Bar({ 
-					design : "SubHeader", 
+				customHeader : new sap.m.Bar({
+					design : "SubHeader",
 					contentMiddle : [new sap.m.Label({ text : "Page in page: This is a Header with SubHeader design"})]
 				}),
-				subHeader : new sap.m.Bar({ 
-					design : "Footer", 
+				subHeader : new sap.m.Bar({
+					design : "Footer",
 					contentMiddle : [new sap.m.Label({ text : "This is a SubHeader with footer design"})]
 				}),
-				footer : new sap.m.Bar({ 
-					design : "Header", 
+				footer : new sap.m.Bar({
+					design : "Header",
 					contentMiddle : [new sap.m.Label({ text : "This is a footer with header design"})]
 				})
 			}).addStyleClass("pageInPage");
-			
+
 			page.addContent(pageInPage);
 
-			var footer = new sap.m.Bar({ 
-				contentLeft: [new sap.m.SearchField({placeholder: "search..."})],	
+			var footer = new sap.m.Bar({
+				contentLeft: [new sap.m.SearchField({placeholder: "search..."})],
 				contentMiddle: [new sap.m.Button({icon: "images/feed@2x.png"}),
 								new sap.m.Button({icon: "images/favorite@2x.png"}),
 								new sap.m.Button({icon: "images/flag@2x.png"})],
@@ -278,9 +278,9 @@
 
 			page.setFooter(footer);
 			page.placeAt("body");
-			
+
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

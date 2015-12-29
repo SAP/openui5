@@ -11,10 +11,10 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 	 * Regular expression to check for a (new) object literal
 	 */
 	var rObject = /^\{\s*[a-zA-Z_][a-zA-Z0-9_]*\s*:/;
-	
+
 	/**
 	 * Regular expression to split the binding string into hard coded string fragments and embedded bindings.
-	 * 
+	 *
 	 * Also handles escaping of '{' and '}'.
 	 */
 	var rFragments = /(\\[\\\{\}])|(\{)/g;
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 	 * Regular expression to escape potential binding chars
 	 */
 	var rBindingChars = /([\\\{\}])/g;
-	
+
 	/**
 	 * Helper to create a formatter function. Only used to reduce the closure size of the formatter
 	 */
@@ -32,13 +32,13 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 			var aResult = [],
 				l = aFragments.length,
 				i;
-			
+
 			for (i = 0; i < l; i++) {
 				if ( typeof aFragments[i] === "number" ) {
-					// a numerical fragment references the part with the same number 
+					// a numerical fragment references the part with the same number
 					aResult.push(arguments[aFragments[i]]);
 				} else {
-					// anything else is a string fragment 
+					// anything else is a string fragment
 					aResult.push(aFragments[i]);
 				}
 			}
@@ -49,46 +49,46 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 	}
 
 	/**
-	 * Creates a binding info object with the given path. 
-	 * 
+	 * Creates a binding info object with the given path.
+	 *
 	 * If the path contains a model specifier (prefix separated with a '>'),
-	 * the <code>model</code> property is set as well and the prefix is 
-	 * removed from the path. 
+	 * the <code>model</code> property is set as well and the prefix is
+	 * removed from the path.
 	 */
 	function makeSimpleBindingInfo(sPath) {
 		var iPos = sPath.indexOf(">"),
 			oBindingInfo = { path : sPath };
-		
+
 		if ( iPos > 0 ) {
 			oBindingInfo.model = sPath.slice(0,iPos);
 			oBindingInfo.path = sPath.slice(iPos + 1);
 		}
-		
+
 		return oBindingInfo;
 	}
-	
+
 	/**
 	 * @static
 	 * @namespace
 	 * @alias sap.ui.base.BindingParser
 	 */
 	var BindingParser = {};
-	
+
 	BindingParser._keepBindingStrings = false;
-	
+
 	BindingParser.simpleParser = function(sString, oContext) {
 
 		if ( jQuery.sap.startsWith(sString, "{") && jQuery.sap.endsWith(sString, "}") ) {
 			return makeSimpleBindingInfo(sString.slice(1, -1));
 		}
-	
+
 	};
-	
+
 	BindingParser.simpleParser.escape = function(sValue) {
 		// there was no escaping defined for the simple parser
 		return sValue;
 	};
-	
+
 	BindingParser.complexParser = function(sString, oContext, bUnescape) {
 		var parseObject = jQuery.sap.parseJS,
 			oBindingInfo = {parts:[]},
@@ -203,19 +203,19 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 
 		rFragments.lastIndex = 0; //previous parse call may have thrown an Error: reset lastIndex
 		while ( (m = rFragments.exec(sString)) !== null ) {
-			
-			// check for a skipped literal string fragment  
+
+			// check for a skipped literal string fragment
 			if ( p < m.index ) {
 				aFragments.push(sString.slice(p, m.index));
 			}
-			
+
 			// handle the different kinds of matches
 			if ( m[1] ) {
-				
+
 				// an escaped opening bracket, closing bracket or backslash
 				aFragments.push(m[1].slice(1));
 				bUnescaped = true;
-				
+
 			} else {
 				aFragments.push(oBindingInfo.parts.length);
 				if (sString.charAt(m.index + 1) === "=") { //expression
@@ -244,12 +244,12 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 				}
 				rFragments.lastIndex = oEmbeddedBinding.at;
 			}
-			
+
 			// remember where we are
 			p = rFragments.lastIndex;
 		}
-		
-		// check for a trailing literal string fragment  
+
+		// check for a trailing literal string fragment
 		if ( p < sString.length ) {
 			aFragments.push(sString.slice(p));
 		}
@@ -274,13 +274,13 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'jquery.sap.script'],
 		} else if ( bUnescape && bUnescaped ) {
 			return aFragments.join('');
 		}
-		
+
 	};
 
 	BindingParser.complexParser.escape = function(sValue) {
 		return sValue.replace(rBindingChars, "\\$1");
 	};
-	
+
 	return BindingParser;
 
 }, /* bExport= */ true);

@@ -298,14 +298,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 
 		setItemToggleState(this, true);
 
-		
+
 		this.oOpenerRef = oOpenerRef;
 		this.bIgnoreOpenerDOMRef = false;
 
 		// Open the sap.ui.core.Popup
 		this.getPopup().open(0, my, at, of, offset || "0 0", collision || "_sapUiCommonsMenuFlip _sapUiCommonsMenuFlip", true);
 		this.bOpen = true;
-		
+
 		// Set the tab index of the menu and focus
 		var oDomRef = this.getDomRef();
 		jQuery(oDomRef).attr("tabIndex", 0).focus();
@@ -737,10 +737,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 
 	/**
 	 * Opens the submenu of the given item (if any).
-	 * 
-	 * @param {boolean} bWithKeyboard Whether the submenu is opened via keyboard 
+	 *
+	 * @param {boolean} bWithKeyboard Whether the submenu is opened via keyboard
 	 * @param {boolean} bWithHover Whether the submenu is opened on hover or not (click)
-	 * 
+	 *
 	 * @private
 	 */
 	Menu.prototype.openSubmenu = function(oItem, bWithKeyboard, bWithHover){
@@ -770,13 +770,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 			oSubMenu.open(bWithKeyboard, this, eDock.BeginTop, eDock.EndTop, oItem, "0 0");
 		}
 	};
-	
+
 	/**
 	 * Closes an open submenu (if any) of this menu.
-	 * 
+	 *
 	 * @param {boolean} bIfNotFixedOnly If true, the submenu is only close if it is not fixed (opened via hover and not via click)
 	 * @param {boolean} bIgnoreOpenerDOMRef If true, the focus is not set back to the opener dom ref (item) of the submenu
-	 * 
+	 *
 	 * @private
 	 */
 	Menu.prototype.closeSubmenu = function(bIfNotFixedOnly, bIgnoreOpenerDOMRef){

@@ -6,7 +6,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 <link rel="stylesheet"
 	href="../../../../resources/sap/ui/thirdparty/qunit.css"
@@ -117,7 +117,7 @@
 	});
 
 
-	
+
 	/* --------------------------------------- */
 	/* Test methods                            */
 	/* --------------------------------------- */
@@ -469,15 +469,15 @@
 			this.oUploadCollection.destroy();
 		}
 	});
-	
+
 	test("Edit", function() {
-		//trigger edit button of line 2 and check the status of the line 
+		//trigger edit button of line 2 and check the status of the line
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
 		equal(this.oUploadCollection.aItems[1]._status, "Edit", "'Edit'-status as expected in Line 2");
 		equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
-		
+
 		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
 		sap.ui.getCore().applyChanges();
@@ -494,7 +494,7 @@
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		sap.ui.getCore().applyChanges();
 		equal(this.oUploadCollection.aItems[1]._status, "display", "'display'-status after 'cancel' as expected in Line 2");
-		
+
 		//check file name after cancel
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
 		equal("Notes.txt", sFileNameField, "Filename is correct after 'cancel'");

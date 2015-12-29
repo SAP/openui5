@@ -12,7 +12,7 @@ sap.ui.core.UIComponent.extend("sap.ui.test.v2.Component", {
 		"publicMethods": [],
 
 		"manifest": "json",
-		
+
 		"custom.entry": {
 			"key1": "value1",
 			"key2": "value2",

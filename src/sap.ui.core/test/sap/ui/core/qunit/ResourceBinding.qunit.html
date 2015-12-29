@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.resource.ResourceBinding
   Author: d049080
 -->
@@ -29,7 +29,7 @@
 
 	var oModel;
 	var oBinding;
-	
+
 	function setup(){
 		// reset bindings
 		sap.ui.localResources("testdata");
@@ -43,30 +43,30 @@
 		// model stores the binding first when attach change was called
 		ok(oBinding, "binding instantiated");
 		equal(oBinding.getPath(),"TEST_TEXT","Binding Path set properly");
-	}); 
-	
+	});
+
 	test("Binding getModel", 1, function(){
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 		// check model of each binding...should be the same
 		equal(oBinding.getModel(), oModel, "Binding model");
 	});
-		
+
 	test("Binding changeEvent", function(){
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
 
 		// check model of each binding...should be the same
 	    oBinding.attachChange(callBackOnChange);
-			
+
 		// model stores the binding first when attach change was called
 		equal(oModel.aBindings.length, 1, "model bindings")
-			
+
 		// fire change event
-		oBinding._fireChange();			
+		oBinding._fireChange();
 		ok(attach, "call back method was attached");
 		ok(!detach, "call back method was not detached");
-			
+
 		oBinding.detachChange(callBackOnChange);
 		attach = false;
 		detach = true;
@@ -76,25 +76,25 @@
 		ok(detach, "call back method was detached");
 		attach = false;
 		detach = true;
-			
+
 		equal(oModel.aBindings.length, 0, "model bindings")
 	});
-	
+
 	var attach = false;
 	var detach = true;
-	
+
 	function callBackOnChange(){
 		attach = true;
 		detach = false;
 	};
-	
+
 	test("PropertyBinding getValue", function(){
 		setup();
 		oBinding = oModel.bindProperty("TEST_TEXT");
-	
+
 		equal(oBinding.getValue(), "A text en", "Property binding value");
 	});
-		
+
 	</script>
 
 </head>

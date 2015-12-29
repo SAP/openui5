@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+
 		<title>Input - sap.m</title>
 
 		<script src="../../../resources/sap-ui-core.js"
@@ -19,7 +19,7 @@
 		<script type="text/javascript">
 
 		jQuery.sap.require("sap.m.MessageBox");
-		
+
 		//*******************************
 		var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
 			suggestUrl: "../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
@@ -66,7 +66,7 @@
 				});
 			}
 		});
-		
+
 		var aData = [
 					{name: "Dente, Al", userid: "U01"},
 					{name: "Friese, Andy", userid: "U02"},
@@ -89,12 +89,12 @@
 					{name: "Tress, Matt", userid: "U19"},
 					{name: "Turner, Paige", userid: "U20"}
 				];
-		
+
 		//*******************************
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(aData);
-		
+
 		var oSuggestInput2 = new sap.m.Input("suginput2", {
 			placeholder: "Suggest with JSONModel",
 			showSuggestion: true,
@@ -112,7 +112,7 @@
 			showSuggestion: true
 			});
 		oSuggestInput6.setModel(oModel);
-		oSuggestInput6.bindAggregation("suggestionItems", "/", new sap.ui.core.ListItem({text: "{name}", additionalText:"{userid}"})); 
+		oSuggestInput6.bindAggregation("suggestionItems", "/", new sap.ui.core.ListItem({text: "{name}", additionalText:"{userid}"}));
 
 		//*******************************
 		jQuery.sap.require("jquery.sap.strings");
@@ -130,11 +130,11 @@
 				}
 			}
 		});
-		
+
 		//*******************************
 		var oModel2 = new sap.ui.model.json.JSONModel();
 		oModel2.setData(aData);
-		
+
 		var oSuggestInput4 = new sap.m.Input("suginput4", {
 			placeholder: "Type first letter in uppercase",
 			showSuggestion: true
@@ -144,7 +144,7 @@
 		oSuggestInput4.setFilterFunction(function(sValue, oItem){
 			return oItem.getText().indexOf(sValue) === 0;
 		});
-		
+
 		//*******************************
 
 		// data for tabular suggestions
@@ -685,7 +685,7 @@
 					oSuggestionRow;
 
 				// imitate AJAX call (1s delay)
-				
+
 				setTimeout(function () {
 					// remove old columns
 					oSuggestTableInput7.removeAllSuggestionColumns();
@@ -727,7 +727,7 @@
 						minScreenWidth : "400px",
 						demandPopin : true
 					}));
-					
+
 					for(var i=0; i<oSuggestionData.tabularSuggestionItems.length; i++){
 						if(jQuery.inArray(oSuggestionData.tabularSuggestionItems[i].name, aAlreadyAddedProducts7) < 0 && jQuery.sap.startsWithIgnoreCase(oSuggestionData.tabularSuggestionItems[i].name, sValue)){
 							oSuggestionRow = oTableItemTemplate.clone();
@@ -804,7 +804,7 @@
 				})]
 			});
 		}
-		
+
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile Input Control",
 			content : [
@@ -821,17 +821,17 @@
 						value: "ValueHelpOnly",
 						showValueHelp: true,
 						valueHelpOnly: true,
-						valueHelpRequest: function(evt) { 
-							sap.m.MessageBox.alert("Value help requested"); 
+						valueHelpRequest: function(evt) {
+							sap.m.MessageBox.alert("Value help requested");
 						}
 					}),
 					new sap.m.Input({
-						value: "ValueHelpOnly + Status", 
-						showValueHelp: true, 
-						valueHelpOnly: true, 
-						valueState : "Warning", 
-						valueHelpRequest: function(evt) { 
-							sap.m.MessageBox.alert("Value help requested"); 
+						value: "ValueHelpOnly + Status",
+						showValueHelp: true,
+						valueHelpOnly: true,
+						valueState : "Warning",
+						valueHelpRequest: function(evt) {
+							sap.m.MessageBox.alert("Value help requested");
 						}
 					}),
 					oSuggestInput1,
@@ -864,7 +864,7 @@
 					}),
 					new sap.m.Input({
 						value: "long input long input long input long input",
-						description: "long description long description long description long description long description long description long description long description long description long description long description long description "		
+						description: "long description long description long description long description long description long description long description long description long description long description long description long description "
 					}),
 					new sap.m.Input({
 						value: "220",
@@ -947,11 +947,11 @@
 		list.addItem(new sap.m.InputListItem({label: 'Read-Only', content: [
 			new sap.m.Input({value: "Read-Only", editable: false}),
 		]}));
-		
+
 		list.addItem(new sap.m.InputListItem({label: 'Warning', content: [
 			new sap.m.Input({value: "Warning", valueState : "Warning"}),
 		]}));
-			
+
 		list.addItem(new sap.m.InputListItem({label: 'Error', content: [
 			new sap.m.Input({value: "Error", valueState : "Error", valueStateText: "My Custom error message"}),
 		]}));
@@ -971,13 +971,13 @@
 			new sap.m.Input({value: "ValueHelpOnly", showValueHelp: true, valueHelpOnly: true, valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}),
 		]}));
 		page3.addContent(list);
-		
+
 		var page4 = new sap.m.Page("page4",{
 			title: "Input Data Update",
 			footer: createFooter()
 		});
 
-		var p4i1 = new sap.m.Input();		
+		var p4i1 = new sap.m.Input();
 		p4i1.setModel(oModel2);
 		p4i1.bindValue("/0/name");
 
@@ -988,7 +988,7 @@
 		}}));
 		app.addPage(page1).addPage(page2).addPage(page3).addPage(page4);
 		app.placeAt("body");
-		
+
 </script>
 	<style>
 	body {

@@ -24,10 +24,10 @@
 
 <!-- Test functions -->
 <script language="javascript" charset="utf-8"> // IE needs this :-/
-	
+
 	var oModel;
-	
-	//create some components for testing 
+
+	//create some components for testing
 	sap.ui.localResources("components");
 	var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
 		name: "components",
@@ -43,11 +43,11 @@
 		id: "myMessageTest3",
 		handleValidation: true
 	});
-	
+
 	oCompCont.placeAt("content");
 	oCompCont2.placeAt("content");
 	oCompCont3.placeAt("content");
-	
+
 	var initModel = function(sType) {
 		if (sType === "json") {
 			oModel = new sap.ui.model.json.JSONModel();
@@ -66,9 +66,9 @@
 	}
 	module("MessageManager components", {
 		setup : function() {
-			initModel("json");	
+			initModel("json");
 		},
-		
+
 		teardown : function() {
 			oModel.destroy();
 		}
@@ -78,7 +78,7 @@
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip_enabled");
-		
+
 		var oChangeHandler = function(oEvent) {
 			ok(oEvent.getParameters('messages').messages.length == 1, 'Format Message created');
 			ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
@@ -101,12 +101,12 @@
 		oCompZip.setValue('12345');
 		sap.ui.getCore().detachValidationError(oCoreValHandler);
 	});
-	
+
 	test("componentDisabled", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip_disabled");
-		
+
 		var oValHandler = function(oEvent) {
 			ok(false,"should never be called");
 		};
@@ -116,7 +116,7 @@
 		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 		sap.ui.getCore().detachValidationError(oValHandler);
 	});
-	
+
 	test("component handle validation undefined", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();

@@ -51,7 +51,7 @@
 		Qty : "Quantity",
 	});
 	sap.ui.getCore().setModel(o18n, "i18n");
-	
+
 	var oFooterToolbar = new sap.m.Toolbar({
 		content : [
 			new sap.m.Text({
@@ -73,7 +73,7 @@
 			})
 		]
 	});
-	
+
 	var oHeaderToolbar = new sap.m.Toolbar({
 		content : [
 			new sap.m.Text({
@@ -95,7 +95,7 @@
 			})
 		]
 	});
-	
+
 	var oInfoToolbar = new sap.m.Toolbar({
 		active : true,
 		content : [
@@ -111,7 +111,7 @@
 	}).attachPress(function() {
 		sap.m.MessageToast.show("InfoBar Pressed!");
 	});
-	
+
 	var oSwipeContent = new sap.m.Button({
 		text : "Swipe Button",
 		type : "Accept",
@@ -119,7 +119,7 @@
 			oTable.swipeOut();
 		}
 	});
-	
+
 	var aColumns = [
 		new sap.m.Column({
 			styleClass : "name",
@@ -163,7 +163,7 @@
 			demandPopin : true
 		})
 	];
-	
+
 	var oTemplate = new sap.m.ColumnListItem({
 		type : "Navigation",
 		unread : false,
@@ -180,14 +180,14 @@
 			new sap.m.Text({
 				text: "{limit}",
 				wrapping : false
-			}), 
+			}),
 			new sap.m.Text({
 				text: "{price}",
 				wrapping : false
 			})
 		]
 	});
-	
+
 	var oTable = new sap.m.Table("items", {
 		growing : false,
 		growingThreshold: 2,
@@ -225,7 +225,7 @@
 	oModel.setData(data);
 	oTable.setModel(oModel);
 	oTable.bindAggregation("items", "/navigation", oTemplate);
-	
+
 	oApp.addPage(oPage).placeAt("body");
 </script>
 </head>

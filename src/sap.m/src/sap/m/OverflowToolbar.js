@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 		 * @class
 		 * The OverflowToolbar control is a container based on sap.m.Toolbar, that provides overflow when its content does not fit in the visible area.
 		 *
-		 * Note: Currently only controls of type sap.m.Button can move to the overflow area, but in future versions other controls will be able to as well. 
+		 * Note: Currently only controls of type sap.m.Button can move to the overflow area, but in future versions other controls will be able to as well.
 		 * For this reason it is advisable to always set layoutData with property "moveToOverflow" to "false" for all controls that are never intended to overflow, regardless of their type.
 		 * @extends sap.ui.core.Toolbar
 		 *
@@ -84,13 +84,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 		 * Called after the control is rendered
 		 */
 		OverflowToolbar.prototype.onAfterRendering = function() {
-			
+
 			// If a control of the toolbar was focused, and we're here, then the focused control overflowed, so set the focus to the overflow button
 			if (this._bControlWasFocused) {
 				this._getOverflowButton().focus();
 				this._bControlWasFocused = false;
 			}
-			
+
 			// If before invalidation the overflow button was focused, and it's not visible any more, focus the last focusable control
 			if (this._bOverflowButtonWasFocused && !this._getOverflowButtonNeeded()) {
 				this.$().lastFocusableDomRef().focus();
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 			// TODO: refactor with addEventDelegate for onAfterRendering for both overflow button and its label
 			this._getOverflowButton().$().attr("aria-haspopup", "true");
 			this._getOverflowButtonLabel().$().attr("aria-hidden", "true");
-			
+
 			// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
 			this._doLayout();
 		};
@@ -236,7 +236,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 				fnInvalidateIfHashChanged = function(sHash) { // helper: invalidate the toolbar if the signature of the action sheet changed (i.e. buttons moved)
 					if (typeof sHash === "undefined" || this._getActionSheet()._getButtonsIdsHash() !== sHash) {
 						this.invalidate();
-						
+
 						// Preserve focus info
 						if (this._getControlsIds().indexOf(sap.ui.getCore().getCurrentFocusedControlId()) !== -1) {
 							this._bControlWasFocused = true;
@@ -255,7 +255,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 				};
 
 
-			
+
 			// If _bSkipOptimization is set to true, this means that no controls moved from/to the overflow, but they rather changed internally
 			// In this case we can't rely on the action sheet hash to determine whether to skip one invalidation
 			if (this._bSkipOptimization) {
@@ -272,7 +272,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 				for (i = this._aActionSheetOnlyControls.length - 1; i >= 0; i--) {
 					aButtonsToMoveToActionSheet.unshift(this._aActionSheetOnlyControls[i]);
 				}
-				
+
 				// At least one control will be in the action sheet, so the overflow button is needed
 				iContentSize = fnAddOverflowButton.call(this, iContentSize);
 			}
@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 					}
 				}
 			}
-			
+
 			// At this point all that could be moved to the action sheet, was moved (action sheet only buttons, some/all movable buttons)
 			fnFlushButtonsToActionSheet.call(this, aButtonsToMoveToActionSheet);
 
@@ -324,11 +324,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 
 			// 1. Close the action sheet and remove everything from it (reset overflow behavior)
 			// Note: when the action sheet is closed because of toolbar invalidation, we don't want the animation in order to avoid flickering
-			this._getActionSheet()._closeWithoutAnimation(); 
+			this._getActionSheet()._closeWithoutAnimation();
 			this._getActionSheet()._getAllButtons().forEach(function (oButton) {
 				this._restoreButtonInToolbar(oButton);
 			}, this);
-			
+
 			// 2. Hide the overflow button
 			this._setOverflowButtonNeeded(false);
 
@@ -365,15 +365,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 		 * @private
 		 */
 		OverflowToolbar.prototype._resetAndInvalidateToolbar = function (bHardReset) {
-			
+
 			this._resetToolbar();
-			
+
 			this._bControlsInfoCached = false;
 			this._iPreviousToolbarWidth = null;
 			if (bHardReset) {
 				this._bSkipOptimization = true;
 			}
-			
+
 			this.invalidate();
 		};
 
@@ -425,7 +425,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 			var oOverflowButtonLabel;
 
 			if (!this.getAggregation("_overflowButtonLabel")) {
-				
+
 				oOverflowButtonLabel = new Label({
 					text: this._oResourceBundle.getText("LOAD_MORE_DATA"),
 					width: "0px"
@@ -614,7 +614,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 		OverflowToolbar.prototype._getOverflowButtonSize = function() {
 			var iBaseFontSize = parseInt(sap.m.BaseFontSize, 10),
 				fCoefficient = this.$().parents().hasClass('sapUiSizeCompact') ? 2.5 : 3;
-			
+
 			return parseInt(iBaseFontSize * fCoefficient, 10);
 		};
 
@@ -647,7 +647,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/Button', 'sap/m/Label', 
 		OverflowToolbar.prototype._getControlsIds = function() {
 			return this.getContent().map(function(item) {
 				return item.getId();
-			});	
+			});
 		};
 
 		/************************************************** STATIC ***************************************************/

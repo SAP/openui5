@@ -57,10 +57,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 		//ARIA attributes
 		oRm.writeAccessibilityState(oCheckBox, {
-			role: 'checkbox',		
+			role: 'checkbox',
 			selected: null,
 			checked: oCheckBox.getSelected()
-		});		
+		});
 
 		oRm.write(">");		// DIV element
 

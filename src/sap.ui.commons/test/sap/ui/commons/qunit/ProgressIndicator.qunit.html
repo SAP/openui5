@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.ProgressIndicator
   Author: D037899
 -->
@@ -8,7 +8,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -24,8 +24,8 @@
 	<script language="javascript">
 
 		var oProgInds = {};
-		
-		var initProgInd = function(idx, bVisible, bEnabled, xBarColor, sDispVal, iPercentVal, bShowVal, iWidth){			
+
+		var initProgInd = function(idx, bVisible, bEnabled, xBarColor, sDispVal, iPercentVal, bShowVal, iWidth){
 			var sId = "oProgInd"+idx;
 			var oProgInd = new sap.ui.commons.ProgressIndicator(sId);
 			if(bVisible != -1) oProgInd.setVisible(bVisible);
@@ -35,7 +35,7 @@
 			if(iPercentVal != -1) oProgInd.setPercentValue(iPercentVal);
 			if(bShowVal != -1) oProgInd.setShowValue(bShowVal);
 			if(iWidth != -1) oProgInd.setWidth(iWidth);
-			
+
 			sap.ui.setRoot("uiArea"+idx, oProgInd);
 			oProgInds[sId] = oProgInd;
 		};
@@ -47,14 +47,14 @@
 		initProgInd(5, true, true, "NEGATIVE", "50%", 50, true, "300px"); // ProgressIndicator with 50% NEGATIVE
 		initProgInd(6, true, true, -1, "50%", 50, true, "100%"); // ProgressIndicator with 50% NEUTRAL width=100%
 		initProgInd(7, true, true, -1, "200%", 200, false, "10%"); // ProgressIndicator with 200% NEUTRAL width=10% and no value displayed
-		
+
 	</script>
 
 	<!-- Test functions -->
 	<script language="javascript">
 
 	qutils.delayTestStart();
-	
+
 	module("Properties");
 
 	test("Default Values", function() {
@@ -88,8 +88,8 @@
 		equals(oProgInd.getPercentValue(), 110, "Custom 'percent value':");
 		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
-	});	
-	
+	});
+
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd4"];
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -100,7 +100,7 @@
 		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
 	});
-	
+
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd5"];
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -111,7 +111,7 @@
 		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
 	});
-	
+
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd6"];
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -122,7 +122,7 @@
 		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "100%", "Custom 'width:");
 	});
-	
+
 	test("Properties", function() {
 		var oProgInd = oProgInds["oProgInd7"];
 		equals(oProgInd.getVisible(), true, "Custom 'visible':");
@@ -133,7 +133,7 @@
 		equals(oProgInd.getShowValue(), false, "Custom 'show value':");
 		equals(oProgInd.getWidth(), "10%", "Custom 'width:");
 	});
-	
+
 	</script>
 
 	<title>qunit Test for ProgressIndicator</title>

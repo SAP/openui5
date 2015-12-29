@@ -9,7 +9,7 @@ sap.ui.core.UIComponent.extend("sap.ui.unified.sample.MenuMenuEventing.Component
 				"sap.ui.unified"
 			]
 		},
-		
+
 		config : {
 			sample : {
 				files : [

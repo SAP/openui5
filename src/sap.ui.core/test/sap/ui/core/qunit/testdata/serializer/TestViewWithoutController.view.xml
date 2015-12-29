@@ -4,7 +4,7 @@
 	xmlns:commons="sap.ui.commons"
 	xmlns:layout="sap.ui.commons.layout"
 	xmlns:mvc="sap.ui.core.mvc" >
-	<layout:VerticalLayout 
+	<layout:VerticalLayout
 		id="thaPage"
 		layoutFixed="false">
 		<Image
