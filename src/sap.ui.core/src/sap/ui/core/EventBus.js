@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 	/**
 	 * Creates an instance of EventBus.
-	 * 
+	 *
 	 * @class Provides eventing capabilities for applications like firing events and attaching or detaching event
 	 *        handlers for events which are notified when events are fired.
 	 *
@@ -23,15 +23,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	 * @alias sap.ui.core.EventBus
 	 */
 	var EventBus = BaseObject.extend("sap.ui.core.EventBus", {
-		
+
 		constructor : function() {
 			BaseObject.apply(this);
 			this._mChannels = {};
 			this._defaultChannel = new EventProvider();
 		}
-	
+
 	});
-	
+
 	/**
 	 * Attaches an event handler to the event with the given identifier on the given event channel.
 	 *
@@ -59,12 +59,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			sEventId = sChannelId;
 			sChannelId = null;
 		}
-		
+
 		jQuery.sap.assert(!sChannelId || typeof (sChannelId) === "string", "EventBus.subscribe: sChannelId must be empty or a non-empty string");
 		jQuery.sap.assert(typeof (sEventId) === "string" && sEventId, "EventBus.subscribe: sEventId must be a non-empty string");
 		jQuery.sap.assert(typeof (fnFunction) === "function", "EventBus.subscribe: fnFunction must be a function");
 		jQuery.sap.assert(!oListener || typeof (oListener) === "object", "EventBus.subscribe: oListener must be empty or an object");
-		
+
 		var oChannel = getOrCreateChannel(this, sChannelId);
 		oChannel.attachEvent(sEventId, fnFunction, oListener);
 		return this;
@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 	/**
 	 * Attaches an event handler, called one time only, to the event with the given identifier on the given event channel.
-	 * 
+	 *
 	 * When the event occurs, the handler function is called and the handler registration is automatically removed afterwards.
 	 *
 	 * @param {string}
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			sEventId = sChannelId;
 			sChannelId = null;
 		}
-		
+
 		function fnOnce() {
 			this.unsubscribe(sChannelId, sEventId, fnOnce, undefined); // 'this' is always the control, due to the context 'undefined' in the attach call below
 			fnFunction.apply(oListener || this, arguments);
@@ -131,17 +131,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			sEventId = sChannelId;
 			sChannelId = null;
 		}
-		
+
 		jQuery.sap.assert(!sChannelId || typeof (sChannelId) === "string", "EventBus.unsubscribe: sChannelId must be empty or a non-empty string");
 		jQuery.sap.assert(typeof (sEventId) === "string" && sEventId, "EventBus.unsubscribe: sEventId must be a non-empty string");
 		jQuery.sap.assert(typeof (fnFunction) === "function", "EventBus.unsubscribe: fnFunction must be a function");
 		jQuery.sap.assert(!oListener || typeof (oListener) === "object", "EventBus.unsubscribe: oListener must be empty or an object");
-		
+
 		var oChannel = getChannel(this, sChannelId);
 		if (!oChannel) {
 			return this;
 		}
-		
+
 		oChannel.detachEvent(sEventId, fnFunction, oListener);
 		if (oChannel != this._defaultChannel) { // Check whether Channel is unused
 			var mEvents = EventProvider.getEventList(oChannel);
@@ -156,13 +156,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 				delete this._mChannels[sChannelId];
 			}
 		}
-		
+
 		return this;
 	};
-	
+
 	/**
 	 * Fires an event using the specified settings and notifies all attached event handlers.
-	 * 
+	 *
 	 * @param {string}
 	 *            [sChannelId] The channel of the event to fire. If not given, the default channel is used. The channel <code>"sap.ui"</code> is
 	 *                         reserved by the UI5 framework. An application might listen to events on this channel but is not allowed
@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	 * @public
 	 */
 	EventBus.prototype.publish = function(sChannelId, sEventId, oData) {
-		
+
 		if (arguments.length == 1) { //sEventId
 			oData = null;
 			sEventId = sChannelId;
@@ -186,18 +186,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 				sChannelId = null;
 			}
 		}
-		
+
 		oData = oData ? oData : {};
-		
+
 		jQuery.sap.assert(!sChannelId || typeof (sChannelId) === "string", "EventBus.publish: sChannelId must be empty or a non-empty string");
 		jQuery.sap.assert(typeof (sEventId) === "string" && sEventId, "EventBus.publish: sEventId must be a non-empty string");
 		jQuery.sap.assert(typeof (oData) === "object", "EventBus.publish: oData must be an object");
-		
+
 		var oChannel = getChannel(this, sChannelId);
 		if (!oChannel) {
 			return;
 		}
-		
+
 		//see sap.ui.base.EventProvider.prototype.fireEvent
 		var aEventListeners = EventProvider.getEventList(oChannel)[sEventId];
 		if (aEventListeners && jQuery.isArray(aEventListeners)) {
@@ -210,16 +210,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			}
 		}
 	};
-	
+
 	EventBus.prototype.getInterface = function() {
 		return this;
 	};
-	
+
 	/**
 	 * Cleans up the internal structures and removes all event handlers.
-	 * 
+	 *
 	 * The object must not be used anymore after destroy was called.
-	 * 
+	 *
 	 * @see sap.ui.base.Object#destroy
 	 * @public
 	 */
@@ -231,15 +231,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		this._mChannels = {};
 		BaseObject.prototype.destroy.apply(this, arguments);
 	};
-	
-	
+
+
 	function getChannel(oEventBus, sChannelId){
 		if (!sChannelId) {
 			return oEventBus._defaultChannel;
 		}
 		return oEventBus._mChannels[sChannelId];
 	}
-	
+
 	function getOrCreateChannel(oEventBus, sChannelId){
 		var oChannel = getChannel(oEventBus, sChannelId);
 		if (!oChannel && sChannelId) {

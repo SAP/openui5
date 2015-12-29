@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var HorizontalDividerRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.fw.RenderManager}.
 	 *
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeClasses();
 		rm.write("/>");
 	};
-	
+
 
 	return HorizontalDividerRenderer;
 

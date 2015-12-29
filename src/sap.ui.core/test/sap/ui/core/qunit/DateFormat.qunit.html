@@ -265,7 +265,7 @@
 			"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2001-07-04T12:08:56.235Z", 994248536235],
 			"yyyy-MM-dd GGG 'T'HH:mm:ss.SSSX": ["2001-07-04 AD T12:08:56.235Z", 994248536235],
 			"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2000-01-01T16:00:00.000-09:00", 946774800000],
-			
+
 			"M/yyyy": ["3/2001", inclTimezoneOffset(983404800000)],
 			"QQQ yyyy": ["Q2 2001", inclTimezoneOffset(986083200000)],
 			"QQQQ yyyy": ["4th quarter 2001", inclTimezoneOffset(1001894400000)]
@@ -360,13 +360,13 @@
 		equal(oQuarterCombined.format(oDate), "Wed, Jul 4 2001, Q3", "Wed, Jul 4 2001, Q3");
 		equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
 	});
-	
+
 	test("parse with fallback patterns", function(){
 		var oLocaleEN = new sap.ui.core.Locale("en_US"),
 			oLocaleDE = new sap.ui.core.Locale("de_DE"),
 			oFormat,
 			iCompare = new Date(1975, 3, 16).getTime();
-		
+
 		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long"}, oLocaleEN);
 		equal(oFormat.parse("April 16, 1975").getTime(), iCompare, "Parse long style");
 		equal(oFormat.parse("Apr 16, 1975").getTime(), iCompare, "Parse fallback medium style");
@@ -395,7 +395,7 @@
 		equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
 
 	});
-	
+
 
 	test("DateFormat.calculateWeekNumber", function() {
 		var DateFormat = sap.ui.core.format.DateFormat;
@@ -632,7 +632,7 @@
 		equal(oDateTime.parse("in 3 hours").getDate(), date("hour", 3).getDate(), "Today + 3 hours");
 		equal(oDateTime.parse("in 72 hours").getDate(), date("hour", 72).getDate(), "Today + 3 Days");
  	});
-	 
+
 	module("Islamic Date in locale en");
 
 	var oDate = new Date("Wed Jul 4 2001");

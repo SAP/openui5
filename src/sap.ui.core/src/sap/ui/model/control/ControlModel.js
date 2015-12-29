@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 	"use strict";
 
 //jQuery.sap.require("sap.ui.model.control.ControlListBinding");
-	
+
 	/**
 	 * Constructor for a new ControlModel.
 	 *
@@ -32,21 +32,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 	 * @alias sap.ui.model.control.ControlModel
 	 */
 	var ControlModel = Model.extend("sap.ui.model.control.ControlModel", /** @lends sap.ui.model.control.ControlModel.prototype */ {
-		
+
 		constructor : function (oControl) {
 			Model.apply(this, arguments);
 			this.oControl = oControl;
 			this.oControl.attachEvent("_change", this.checkUpdate, this);
 			this.oElements = [];
 		}
-	
+
 	});
-	
+
 	/**	 */
 	ControlModel.prototype.destroy = function() {
 		this.oControl.detachEvent("_change", this.checkUpdate, this);
 	};
-	
+
 	/**	 */
 	ControlModel.prototype.addFacadeComponent = function(oElement) {
 		var i = jQuery.inArray(oElement, this.oElements);
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 			oElement.attachEvent("_change", this.checkUpdate, this);
 		}
 	};
-	
+
 	/**	 */
 	ControlModel.prototype.removeFacadeComponent = function(oElement) {
 		var i = jQuery.inArray(oElement, this.oElements);
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 			oElement.detachEvent("_change", this.checkUpdate, this);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 */
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ControlPropertyBind
 		}
 		return new ControlPropertyBinding(this, sPath, oContext);
 	};
-	
+
 	/**	 */
 	ControlModel.prototype.checkUpdate = function(oEvent) {
 		if ( this._onchange ) {

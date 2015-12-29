@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 * @namespace
 	 */
 	var InputListItemRenderer = Renderer.extend(ListItemBaseRenderer);
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *          oRenderManager the RenderManager that can be used for writing to the
 	 *          Render-Output-Buffer
@@ -38,11 +38,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				sLabelDir = oLI.getLabelTextDirection();
 
 			rm.write('<label id="' + sLabelId + '" class="sapMILILabel"');
-			
+
 			if (sLabelDir !== sap.ui.core.TextDirection.Inherit) {
 				rm.writeAttribute("dir", sLabelDir.toLowerCase());
 			}
-			
+
 			rm.write('>');
 			rm.writeEscaped(sLabel);
 			rm.write('</label>');
@@ -54,8 +54,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		oLI.getContent().forEach(function(oContent) {
 
 			// if not already exists add the label as an labelledby association whenever possible
-			if (sLabelId && 
-				oContent.addAriaLabelledBy && 
+			if (sLabelId &&
+				oContent.addAriaLabelledBy &&
 				oContent.getAriaLabelledBy().indexOf(sLabelId) == -1) {
 				oContent.addAriaLabelledBy(sLabelId);
 			}

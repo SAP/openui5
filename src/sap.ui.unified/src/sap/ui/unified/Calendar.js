@@ -365,7 +365,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this._bPoupupMode = bPoupupMode;
 
-			return this; 
+			return this;
 
 		};
 
@@ -1093,7 +1093,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		function _setHeaderText (oThis, oDate){
 
-			// sets the text for the month and the year button to the header 
+			// sets the text for the month and the year button to the header
 
 			var oLocaleData = oThis._getLocaleData();
 			var aMonthNames = [];

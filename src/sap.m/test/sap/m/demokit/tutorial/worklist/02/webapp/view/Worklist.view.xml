@@ -2,15 +2,15 @@
 	xmlns:semantic="sap.m.semantic" xmlns="sap.m">
 	<semantic:FullscreenPage id="page" navButtonPress="onNavBack" showNavButton="true" title="{i18n>worklistViewTitle}">
 		<semantic:content>
-			<Table 
+			<Table
 				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
 				class="sapUiResponsiveMargin"
 				growing="true"
 				growingScrollToLoad="true"
 				id="table"
-				items="{ 
+				items="{
 						path: '/Products',
-						sorter: { 
+						sorter: {
 								path: 'ProductName',
 								descending: false
 						},

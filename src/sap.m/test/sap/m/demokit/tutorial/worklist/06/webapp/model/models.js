@@ -11,7 +11,7 @@ sap.ui.define([
 			oModel.setDefaultBindingMode("OneWay");
 			return oModel;
 		},
-		
+
 		createCommentsModel: function() {
 			return new JSONModel({ ProductComments : [] });
 		}

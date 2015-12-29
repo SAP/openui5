@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.Configuration
   Author: d020684
 -->
@@ -9,13 +9,13 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<!-- Initialization -->
-	<script id="sap-ui-bootstrap" 
-			type="text/javascript" 
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
 			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-config="theme:'fantasy',language:'klingon',accessibility:true,animation:false,rtl:true,debug:true,noConflict:true,trace:true,libs:'sap.ui.commons',modules:'sap.ui.commons.Button',areas:'area-51,no-go',onInit:'window[\'I was here\']=\'u.g.a.d.m.k.\';',ignoreUrlParams:true" 
+			data-sap-ui-config="theme:'fantasy',language:'klingon',accessibility:true,animation:false,rtl:true,debug:true,noConflict:true,trace:true,libs:'sap.ui.commons',modules:'sap.ui.commons.Button',areas:'area-51,no-go',onInit:'window[\'I was here\']=\'u.g.a.d.m.k.\';',ignoreUrlParams:true"
 			>
 	</script>
-	
+
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -29,7 +29,7 @@
 		test("Settings", function() {
 			var oCfg = new sap.ui.core.Configuration();
 
-			// compare values where possible 
+			// compare values where possible
 			equal(oCfg.theme, "fantasy", "theme");
 			equal(oCfg.language, "klingon", "language");
 			equal(oCfg.accessibility, true, "accessibility");
@@ -38,7 +38,7 @@
 			equal(oCfg.debug, true, "debug");
 			equal(oCfg.noConflict, true, "noConflict");
 			equal(oCfg.trace, true, "trace");
-			// Note: libs and modules can not be checked in that simple way, see below   
+			// Note: libs and modules can not be checked in that simple way, see below
 			deepEqual(oCfg.areas, ["area-51", "no-go"], "areas");
 			equal(typeof oCfg.onInit, "string", "onInit");
 			equal(oCfg.ignoreUrlParams, true, "ignoreUrlParams");
@@ -49,7 +49,7 @@
 			// init function must have been called
 			strictEqual(window["I was here"], "u.g.a.d.m.k.", "onInit hook has not been called");
 		});
-		
+
 		test("jQuery and $", function() {
 			// we configured noConflict=true, so $ shouldn'T be the same as jQuery
 			ok(window.jQuery, "window.jQuery is available");
@@ -57,7 +57,7 @@
 		});
 
 	</script>
-  
+
 </head>
 <body>
 	<h1 id="qunit-header">QUnit tests: SAPUI5 Configuration (from data-sap-ui-config attribute)</h1>

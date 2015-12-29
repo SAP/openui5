@@ -271,7 +271,7 @@
 			font-size: 1rem;
 		}
 	}
-	
+
 	.sapUiTableColRowHdr.sapUiTableSelAllEnabled,
 	.sapUiTableRowHdr {
 			width: @sapUiTableCozyRowHdrWidth;
@@ -297,21 +297,21 @@
 			bottom: 0;
 			right: 0;
 		}
-		
+
 		/* only display if data is available */
 		 .sapUiTableRowHidden.sapUiTableRowHdr::after {
 			display: none;
 		}
-		
+
 		.sapUiTableRowHdr:hover:after {
 			border-color: @sapUiFieldHoverBorderColor;
 		}
-		
+
 		:not(.sapUiTableSelAll).sapUiTableSelAllEnabled.sapUiTableColRowHdr::after,
 		.sapUiTableRowHdr.sapUiTableRowSel::after {
 			content: '\e05b';
 		}
-		
+
 		.sapUiTableColRowHdr .sapUiTableColRowHdrIco,
 		.sapUiTableColRowHdr:hover .sapUiTableColRowHdrIco {
 			display: none;

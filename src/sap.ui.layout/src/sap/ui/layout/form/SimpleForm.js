@@ -172,12 +172,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			 * layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({weight:1})}),
 			 * </pre>
 			 */
-			content : {type : "sap.ui.core.Element", multiple : true, singularName : "content"}, 
+			content : {type : "sap.ui.core.Element", multiple : true, singularName : "content"},
 
 			/**
 			 * Hidden, for internal use only.
 			 */
-			form : {type : "sap.ui.layout.form.Form", multiple : false, visibility : "hidden"}, 
+			form : {type : "sap.ui.layout.form.Form", multiple : false, visibility : "hidden"},
 
 			/**
 			 * Title element of the <code>SimpleForm</code>. Can either be a <code>Title</code> control, or a string.

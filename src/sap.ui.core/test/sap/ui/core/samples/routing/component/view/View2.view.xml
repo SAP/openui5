@@ -4,7 +4,7 @@
 		<content>
 		     <Label text="on View 2" id="text"></Label>
 	       <Button text="toView1" press="handleBtn1Press"></Button>
-         <Button text="toDetail" press="handleBtn2Press"></Button>  	       	       
+         <Button text="toDetail" press="handleBtn2Press"></Button>
 		</content>
 	</Page>
 </mvc:View>

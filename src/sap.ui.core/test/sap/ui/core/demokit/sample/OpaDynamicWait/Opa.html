@@ -21,14 +21,14 @@
 
 						Opa5.extendConfig({
 							viewName : "view.Main",
-	
+
 							actions : new Opa5({
 
 								iExpandRecursively : function() {
 									return this.waitFor({
 										controlType : "sap.ui.commons.TreeNode",
 										matchers : new sap.ui.test.matchers.PropertyStrictEquals({
-											name : "expanded", 
+											name : "expanded",
 											value : false
 										}),
 										success : function (aTreeNodes) {
@@ -50,7 +50,7 @@
 									return this.waitFor({
 										controlType : "sap.ui.commons.TreeNode",
 										matchers : new sap.ui.test.matchers.PropertyStrictEquals({
-											name : "expanded", 
+											name : "expanded",
 											value : true
 										}),
 										success : function (aTreeNodes) {

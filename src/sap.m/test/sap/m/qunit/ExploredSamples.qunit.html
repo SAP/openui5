@@ -26,7 +26,7 @@
 	<link rel="stylesheet" href="resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 	<script>
 		// ignore "error" event fired via jQuery.trigger() (e.g. from sap.m.Image control in FF or PhantomJS)
-		// FF adds a prefix "uncaught exception: ", PhantomJS simply calls toString(). 
+		// FF adds a prefix "uncaught exception: ", PhantomJS simply calls toString().
 		// therefore we test with a regular expression
 		window.onerror = function(e) {
 			return /\[object Object\]/.test(e);
@@ -38,12 +38,12 @@
 
 		// prevent QUnit from atarting
 		QUnit.config.autostart = false;
-		
+
 		var aExcludes = [
 			"sap.m.sample.PageListReportIconTabBar",
 			"sap.m.sample.PageListReportToolbar"
 		];
-		
+
 		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
 			aExcludes = aExcludes.concat([
 				//Flexbox not supported for IE 9

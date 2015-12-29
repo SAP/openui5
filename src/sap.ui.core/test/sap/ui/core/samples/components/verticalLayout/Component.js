@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/TextView', 'sap/ui/core/Comp
 			            "/js/includeme.js"
 			           ],//array of css and/or javascript files that should be used in the component
 			dependencies : { // external dependencies
-				libs : ['sap.ui.ux3'],// array of required libraries, e.g. UX3 if your component depends on them 
+				libs : ['sap.ui.ux3'],// array of required libraries, e.g. UX3 if your component depends on them
 				components : ["samples.components.styledbutton"],
 				ui5version : "1.13.0"
 			},
@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/TextView', 'sap/ui/core/Comp
 		var oCompCont = new ComponentContainer(this.createId("ContButton"), {
 			component : oComp
 		});
-	
+
 		this.oVLayout = new VerticalLayout(this.createId("myLayout"), {
 			content: [
 			          oNavBar,

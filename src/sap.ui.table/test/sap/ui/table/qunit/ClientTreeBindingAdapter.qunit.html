@@ -251,7 +251,7 @@
 
 			oBinding.expand(1);
 		});
-		
+
 		test("getRootContexts getNodeContexts - binding path is '/'", function(){
 			createTreeBindingAdapter("/", null, [], {
 				displayRootNode: false
@@ -269,7 +269,7 @@
 
 			function fnChangeHandler () {
 				oBinding.detachChange(fnChangeHandler);
-				
+
 				// contexts should be now loaded flattened
 				var aContexts = oBinding.getContexts(0, 10);
 				equal(aContexts.length, 2);
@@ -277,39 +277,39 @@
 				var oContext = oBinding.getContextByIndex(0);
 				equal(oModel.getProperty("name", oContext), "chandler", "root node is 'chandler'");
 				equal(oBinding.getChildCount(oContext), 1, "childcount for 'chandler' is 1");
-				
+
 				var oContext = oBinding.getContextByIndex(1);
 				equal(oModel.getProperty("name", oContext), "root", "index 2 node is 'root'");
 				equal(oBinding.getChildCount(oContext), 4, "childcount for 'root' is 4");
-				
+
 				oBinding.attachChange(fnChangeHandler2);
 				oBinding.expand(1);
 			}
 			oBinding.attachChange(fnChangeHandler);
 			oBinding.expand(0);
-			
+
 			function fnChangeHandler2 () {
 				oBinding.detachChange(fnChangeHandler2);
-				
+
 				// contexts should be now loaded flattened
 				var aContexts = oBinding.getContexts(0, 10);
 				equal(aContexts.length, 6);
-				
+
 				var oContext = oBinding.getContextByIndex(2);
 				equal(oModel.getProperty("name", oContext), "Rock", "node at index 2 is 'Rock'");
 				equal(oBinding.getChildCount(oContext), 3, "childcount for 'Rock' is 3");
-				
+
 				var oContext = oBinding.getContextByIndex(3);
 				equal(oModel.getProperty("name", oContext), "Hip-Hop", "node at index 3 is 'Hip-Hop'");
 				equal(oBinding.getChildCount(oContext), 3, "childcount for 'Hip-Hop' is 1");
-				
+
 				oBinding.attachChange(fnChangeHandler3);
 				oBinding.expand(2);
 			}
-			
+
 			function fnChangeHandler3 () {
 				oBinding.detachChange(fnChangeHandler3);
-				
+
 				// There should be only 9 contexts in the flat array.
 				// If there are more, than the group ID was not unique
 				var aContexts = oBinding.getContexts(0, 20);

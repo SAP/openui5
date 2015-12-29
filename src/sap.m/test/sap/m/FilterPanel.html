@@ -10,7 +10,7 @@
 <!-- SAPUI5 Bootstrap:                                                     -->
 <!-- Extend the "libs" property if you like to import additional libraries  -->
 <!-- ********************************************************************** -->
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	type="text/javascript"
 	data-sap-ui-libs="sap.m"
 	data-sap-ui-theme="sap_bluecrystal"
@@ -18,40 +18,40 @@
 	data-sap-ui-compatVersion="edge">
 </script>
 
-<script type="text/javascript">	
+<script type="text/javascript">
 	jQuery.sap.require("sap.m.P13nConditionPanel");
 	jQuery.sap.require("sap.m.P13nFilterPanel");
 	jQuery.sap.require("sap.ui.core.format.DateFormat");
-	jQuery.sap.require("sap.ui.layout.Grid");	
-	
- 	var	aConditions= [];   
+	jQuery.sap.require("sap.ui.layout.Grid");
+
+ 	var	aConditions= [];
 	var oFilterPanel;
 	var oModel;
 	var iCount= 100;
-	
+
 	show= function(oPanel, sTitle) {
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
 			//oPanel.setLayoutMode("Desktop");
 			//oPanel.setLayoutMode("Tablet");
-			
+
 			var oDialog = new sap.m.Dialog({title: sTitle, draggable: true, resizable: true, content: [oPanel]});
 			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
 				oDialog.addStyleClass("sapUiSizeCompact");
-			}			
+			}
 			oDialog.setBeginButton(new sap.m.Button({
 				text: "Close",
 				press: function() {
 					oDialog.close();
 				}
 			}));
-			
+
 			oDialog.open();
 		} else {
 			oPanel.placeAt("contentPanel", "only");
-		}		
-	};	
-	
+		}
+	};
+
 
 	var btnShow = new sap.m.Button({
 		text: "show bound FilterPanel",
@@ -61,7 +61,7 @@
 					"key" : "c0",
 					"text" : "Name",
 					"type" : "string",
-					"maxLength" : "10" 
+					"maxLength" : "10"
 				}, {
 					"key" : "c1",
 					"text" : "Date",
@@ -72,7 +72,7 @@
 					"text" : "Number",
 					"tooltip" : "My Tooltip",
 					"type" : "numeric",
-					"precision" : "5", 
+					"precision" : "5",
 					"scale": "2"
 				}, {
 					"key" : "c3",
@@ -107,9 +107,9 @@
 					"value2" : sap.ui.core.format.DateFormat.getDateInstance().format(new Date())
 				}]
 			};
-	
+
 			oModel = new sap.ui.model.json.JSONModel(oData);
-	
+
 			oFilterPanel = new sap.m.P13nFilterPanel({
 				maxIncludes : -1,
 				maxExcludes : -1,
@@ -124,7 +124,7 @@
 							sap.m.MessageToast.show("removeFilterItem ---> " + params.key + " #" + oModel.getData().filterItems.length);
 							return;
 						}
-					});							
+					});
 				},
 				addFilterItem: function(oEvent) {
 					var params = oEvent.getParameters();
@@ -145,11 +145,11 @@
 					oModel.setData(oData, true);
 
 					sap.m.MessageToast.show("addFilterItem ---> " + params.key + " #" + oModel.getData().filterItems.length);
-				}				
+				}
 			});
 			oFilterPanel.setIncludeOperations([
 			                           sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty, sap.m.P13nConditionOperation.NotEmpty
-			                           ], "boolean");			
+			                           ], "boolean");
 			oFilterPanel.setModel(oModel);
 			oFilterPanel.bindItems("/items", new sap.m.P13nItem({
 				columnKey : "{key}",
@@ -157,8 +157,8 @@
 				tooltip : "{tooltip}",
 				type : "{type}",
 				maxLength : "{maxLength}",
-				precision: "{precision}", 
-				scale: "{scale}",				
+				precision: "{precision}",
+				scale: "{scale}",
 				isDefault : "{isDefault}"
 			}));
 			oFilterPanel.bindFilterItems("/filterItems", new sap.m.P13nFilterItem({
@@ -169,9 +169,9 @@
 				value1 : "{value1}",
 				value2 : "{value2}"
 			}));
-			
+
 			show(oFilterPanel, "Filter");
-			
+
 			oFieldKey.setModel(oModel);
 			oFieldKey.bindValue("/filterItems/0/key");
 			oFieldKeyField.setModel(oModel);
@@ -184,40 +184,40 @@
 			oField2.bindValue("/filterItems/0/value2");
 		}
 	});
-	
+
 	var btnValidate = new sap.m.Button({
 		text: "validate",
 		press: function() {
 			sap.m.MessageToast.show("validate= "+oFilterPanel.validateConditions());
 		}
 	});
-	
+
 	var btnClearErrors = new sap.m.Button({
 		text: "Clear Errors",
 		press: function() {
 			oFilterPanel.removeValidationErrors();
 		}
 	});
-	
-	
+
+
 	var btnRemoveInvalidConditions = new sap.m.Button({
 		text: "Remove Invalid Conditions",
 		press: function() {
 			oFilterPanel.removeInvalidConditions();
 		}
 	});
-	
+
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
 			aConditions = oFilterPanel.getConditions();
-	
-			var sConditions= ""; 
+
+			var sConditions= "";
 			for (i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
 				sConditions+= "'"+oCondition.text + "' ";
-			}					
-	
+			}
+
 			sap.m.MessageToast.show("Conditions= "+sConditions);
 		}
 	});
@@ -235,7 +235,7 @@
 					"value2" : ""
 			});
 			oModel.setData(oData, true);
-			
+
 			sap.m.MessageToast.show("add FilterItem into Model" + " #" + oModel.getData().filterItems.length);
 		}
 	});
@@ -299,8 +299,8 @@
 		select : function() {
 		}
 	});
-	
-	
+
+
 	btnShow.placeAt("content");
 	btnValidate.placeAt("content");
 	btnClearErrors.placeAt("content");
@@ -316,7 +316,7 @@
 	btnRemoveCondition.placeAt("content2");
 	theCompactMode.placeAt("content");
 	theDialogMode.placeAt("content");
-		 	
+
 </script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" role="application">

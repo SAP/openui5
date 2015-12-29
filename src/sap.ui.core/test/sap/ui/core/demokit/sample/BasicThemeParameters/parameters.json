@@ -139,22 +139,22 @@
 		"name": "sapUiLightBorder",
 		"usage": "Border Grayscale",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiLightestBorder",
 		"usage": "Border Grayscale",
 		"since": "1.16",
-		"type": "static"		
+		"type": "static"
 	},{
 		"name": "sapUiMediumBorder",
 		"usage": "Border Grayscale",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiDarkBorder",
 		"usage": "Border Grayscale",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiDarkestBorder",
 		"usage": "Border Grayscale",
@@ -164,27 +164,27 @@
 		"name": "sapUiExtraLightBorder",
 		"usage": "Border Grayscale",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiExtraDarkBorder",
 		"usage": "Border Grayscale",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiWarningBorder",
 		"usage": "Border Semantic",
 		"since": "1.16",
-		"type": "semantic"	
+		"type": "semantic"
 	},{
 		"name": "sapUiSuccessBorder",
 		"usage": "Border Semantic",
 		"since": "1.16",
-		"type": "semantic"	
+		"type": "semantic"
 	},{
 		"name": "sapUiErrorBorder",
 		"usage": "Border Semantic",
 		"since": "1.16",
-		"type": "semantic"	
+		"type": "semantic"
 	},{
 		"name": "sapUiButtonEmphasizedBG",
 		"usage": "Background Button",
@@ -204,7 +204,7 @@
 		"name": "sapUiErrorBG",
 		"usage": "Background Semantic",
 		"since": "1.16",
-		"type": "semantic"	
+		"type": "semantic"
 	},{
 		"name": "sapUiWarningBG",
 		"usage": "Background Semantic",
@@ -214,7 +214,7 @@
 		"name": "sapUiNeutralBG",
 		"usage": "Background Semantic",
 		"since": "1.16",
-		"type": "semantic"	
+		"type": "semantic"
 	},{
 		"name": "sapUiSuccessBG",
 		"usage": "Background Semantic",
@@ -224,17 +224,17 @@
 		"name": "sapUiFooterBG",
 		"usage": "Background Header/Footer",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiHeaderBG",
 		"usage": "Background Header/Footer",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiHighlight",
 		"usage": "Background State",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiActiveBG",
 		"usage": "Background State",
@@ -244,17 +244,17 @@
 		"name": "sapUiLightBG",
 		"usage": "Background Grayscale",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiLightestBG",
 		"usage": "Background Grayscale",
 		"since": "1.16",
-		"type": "static"		
+		"type": "static"
 	},{
 		"name": "sapUiExtraLightBG",
 		"usage": "Background Grayscale",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiDarkBG",
 		"usage": "Background Grayscale",
@@ -274,22 +274,22 @@
 		"name": "sapUiMediumBG",
 		"usage": "Background Grayscale",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiLightShadowTint",
 		"usage": "Effect Shadow",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiDarkShadowTint",
 		"usage": "Effect Shadow",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiLightText",
 		"usage": "Font Grayscale",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiMediumText",
 		"usage": "Font Grayscale",
@@ -319,22 +319,22 @@
 		"name": "sapUiCriticalText",
 		"usage": "Font Semantic",
 		"since": "1.16",
-		"type": "semantic"	
+		"type": "semantic"
 	},{
 		"name": "sapUiNegativeElement",
 		"usage": "Foreground Semantic",
 		"since": "1.16",
-		"type": "semantic"	
+		"type": "semantic"
 	},{
 		"name": "sapUiNeutralElement",
 		"usage": "Foreground Semantic",
 		"since": "1.16",
-		"type": "semantic"	
+		"type": "semantic"
 	},{
 		"name": "sapUiPositiveElement",
 		"usage": "Foreground Semantic",
 		"since": "1.16",
-		"type": "semantic"	
+		"type": "semantic"
 	},{
 		"name": "sapUiCriticalElement",
 		"usage": "Foreground Semantic",
@@ -344,7 +344,7 @@
 		"name": "sapUiSearchHighlight",
 		"usage": "Special",
 		"since": "1.16",
-		"type": "static"	
+		"type": "static"
 	},{
 		"name": "sapUiFocus",
 		"usage": "Special",

@@ -16,7 +16,7 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <style>
 .sapMRI { /* formatter to display each rating in a single line */
-	display: block; 
+	display: block;
 	margin-bottom: 1rem;
 }
 </style>
@@ -27,7 +27,7 @@
 	// default rating with no properties
 	var oRating0 = new sap.m.RatingIndicator({
 	});
-	
+
 	// default rating with value 1
 	var oRating1 = new sap.m.RatingIndicator({
 		value: 1,
@@ -78,7 +78,7 @@
 		maxValue: 5,
 		iconSize: "3rem"
 	});
-	
+
 	// invisible rating
 	var oRating8 = new sap.m.RatingIndicator({
 		visible: false
@@ -95,11 +95,11 @@
 		enabled: false,
 		value: 1
 	});
-	
+
 	// default rating for icon test
 	var oRatingTemp = new sap.m.RatingIndicator({
 	});
-	
+
 	var	aRatings = [oRating0, oRating1, oRating2, oRating3, oRating4, oRating5, oRating6, oRating7, oRating8, oRating9, oRating10, oRatingTemp];
 
 	var oPage1 = new sap.m.Page("page1", {
@@ -123,7 +123,7 @@
 			return;
 		}
 		$RatingContainer = oRating.$();
-				
+
 		// save a global reference on all needed DOM elements
 		$SelectedDiv = oRating.$("sel");
 		$UnselectedDiv = oRating.$("unsel");
@@ -156,7 +156,7 @@
 		// check HTML divs
 		for (; i < aRatings.length; i++) {
 			init(aRatings[i].getId());
-			if (oRating.getVisible()) {			
+			if (oRating.getVisible()) {
 				ok($SelectedDiv.length, "The selected HTML DIV element exist on " + oRating);
 				ok($UnselectedDiv.length, "The unselected HTML DIV element exist on " + oRating);
 				ok($UnselectedContainerDiv.length, "The unselected container HTML DIV element exist on " + oRating);
@@ -167,7 +167,7 @@
 			}
 		}
 	});
-	
+
 	// check if the ARIA attributes are rendered
 	test("aria attributes", function() {
 		var i = 0;
@@ -207,7 +207,7 @@
 		strictEqual(oRating0.$().children(".sapMRISel").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "0%" on ' + oRating0);
 		strictEqual(oRating1.$().children(".sapMRISel").css("width"), "22px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "20%" on ' + oRating1);
 		strictEqual(oRating2.$().children(".sapMRISel").css("width"), "256px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "100%" on ' + oRating2);
-		
+
 		// check unselected width
 		strictEqual(oRating0.$().children(".sapMRIUnselWrapper").css("width"), "126px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "100%" on ' + oRating0);
 		strictEqual(oRating1.$().children(".sapMRIUnselWrapper").css("width"), "104px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "80%" on ' + oRating1);
@@ -247,7 +247,7 @@
 		strictEqual(oRating9.getValue(), 3.5, "The rating value must be 3.5 on " + oRating9);
 		strictEqual(oRating9._roundValueToVisualMode(oRating9.getValue()), 4, "The rounded rating value must be 4 on " + oRating9);
 
-		// check exceeding value change 
+		// check exceeding value change
 		oRating0.setValue(-99); // too small
 		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
 		oRating0.setValue(99); // too large
@@ -274,7 +274,7 @@
 		oRating0.setIconSize("10%");
 		strictEqual(oRating0.getIconSize(), "10%", 'Check if the icon size is 10% on ' + oRating0);
 	});
-	
+
 	test("value setter defaults", function() {
 		var oRating = new sap.m.RatingIndicator({
 			value: 5
@@ -357,7 +357,7 @@
 			} else if (fValue < 4.75) {
 				fValue += 0.25;
 			}
-			return Math.round(fValue); 
+			return Math.round(fValue);
 		};
 
 		var calculateRatingValue = function() {
@@ -406,14 +406,14 @@
 		oRating4._ontouchend(oEventTouchEnd);
 
 		var tempValue = oRating4.getValue();
-		
+
 		// change event with invalid values
 		setEventValue(9999);
 		oRating4.ontouchstart(oEventTouchStart);
 		oRating4._ontouchmove(oEventTouchStart);
 		oRating4._ontouchend(oEventTouchEnd);
 		strictEqual(oRating4.getValue(), oRating4.getMaxValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is the maximum on control " + oRating4);
-		
+
 		// change event with invalid values
 		setEventValue(-9999);
 		oRating4.ontouchstart(oEventTouchStart);
@@ -486,7 +486,7 @@
 		oRating.onsapdecrease();
 	});
 
-	
+
 	test("NUMBER keys", function() {
 
 		//Arrange
@@ -516,7 +516,7 @@
 		// Clean up
 		oRating.destroy();
 	});
-	
+
 	test("Icon Handling & Destroying", function() {
 		var destroyTest = function(oControl) {
 			var oFirstSelectedIcon = oControl.getAggregation("_iconsSelected")[0],

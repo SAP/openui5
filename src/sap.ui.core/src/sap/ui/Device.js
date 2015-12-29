@@ -361,7 +361,7 @@ if (typeof window.sap.ui !== "object") {
 				return ({"name": OS.BLACKBERRY, "versionStr": result[4]});
 			}
 		}
-		
+
 		//Firefox on Android
 		platform = /\((Android)[\s]?([\d][.\d]*)?;.*Firefox\/[\d][.\d]*/;
 		result = userAgent.match(platform);

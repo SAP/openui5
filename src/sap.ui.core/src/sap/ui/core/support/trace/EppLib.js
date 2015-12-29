@@ -8,7 +8,7 @@ sap.ui.define(function() {
 
 	var EppLib1 = (function() {
 		var EppLib = {};
-	
+
 		EppLib.getBytesFromString = function(s) {
 			var bytes = [];
 			for (var i = 0; i < s.length; ++i) {
@@ -16,19 +16,19 @@ sap.ui.define(function() {
 			}
 			return bytes;
 		};
-	
+
 		EppLib.createHexString = function(arr) {
 			var result = "";
-	
+
 			for (var i = 0; i < arr.length; i++) {
 				var str = arr[i].toString(16);
 				str = Array(2 - str.length + 1).join("0") + str;
 				result += str;
 			}
-	
+
 			return result;
 		};
-	
+
 		EppLib.passportHeader = function(trcLvl, RootID, TransID) {
 			var SAPEPPTemplateLow = [
 				0x2A, 0x54, 0x48, 0x2A, 0x03, 0x01, 0x30, 0x00, 0x00, 0x53, 0x41, 0x50, 0x5F, 0x45, 0x32, 0x45, 0x5F, 0x54, 0x41, 0x5F, 0x50, 0x6C, 0x75, 0x67,
@@ -45,40 +45,40 @@ sap.ui.define(function() {
 				0x00, 0x2A, 0x54, 0x48, 0x2A, 0x01, 0x00, 0x23, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x03, 0x00, 0x17, 0x00, 0xAB, 0xCD, 0xEF,
 				0xAB, 0xCD, 0xEF, 0xAB, 0xCD, 0xEF, 0xAB, 0xCD, 0xEF, 0xAB, 0xCD, 0xEF, 0x2A, 0x54, 0x48, 0x2A
 			];
-	
+
 			var RootIDPosLen = [
 				372, 32
 			];
-	
+
 			var TransIDPosLen = [
 				149, 32
 			];
-	
+
 			var CompNamePosLEn = [
 				9, 32
 			];
-	
+
 			var PreCompNamePosLEn = [
 				117, 32
 			];
-	
+
 			var traceFlgsOffset = [
 				7, 2
 			];
-	
+
 			var prefix = EppLib.getBytesFromString("SAP_E2E_TA_UI5LIB");
 			prefix = prefix.concat(EppLib.getBytesFromString(new Array(32 + 1 - prefix.length).join(' ')));
-	
+
 			SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, CompNamePosLEn.concat(prefix));
 			SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, PreCompNamePosLEn.concat(prefix));
 			SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, TransIDPosLen.concat(EppLib.getBytesFromString(TransID)));
 			SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, traceFlgsOffset.concat(trcLvl));
-	
+
 			var retVal = EppLib.createHexString(SAPEPPTemplateLow).toUpperCase();
-	
+
 			return retVal.substring(0, RootIDPosLen[0]).concat(RootID) + retVal.substring(RootIDPosLen[0] + RootIDPosLen[1]);
 		};
-	
+
 		EppLib.traceFlags = function(lvl) {
 			switch (lvl) {
 			case 'low' :
@@ -94,32 +94,32 @@ sap.ui.define(function() {
 				return rta;
 			}
 		};
-	
+
 		EppLib.createGUID = function() {
 			var S4 = function() {
 				var temp = Math.floor(Math.random() * 0x10000 /* 65536 */);
 				return (new Array(4 + 1 - temp.toString(16).length)).join('0') + temp.toString(16);
 			};
-	
+
 			var S5 = function() {
 				var temp = (Math.floor(Math.random() * 0x10000 /* 65536 */) & 0x0fff) + 0x4000;
 				return (new Array(4 + 1 - temp.toString(16).length)).join('0') + temp.toString(16);
 			};
-	
+
 			var S6 = function() {
 				var temp = (Math.floor(Math.random() * 0x10000 /* 65536 */) & 0x3fff) + 0x8000;
 				return (new Array(4 + 1 - temp.toString(16).length)).join('0') + temp.toString(16);
 			};
-	
+
 			var retVal = (S4() + S4() + //"-" +
 				S4() + //"-" +
 				S5() + //"-" +
 				S6() + //"-" +
 				S4() + S4() + S4());
-	
+
 			return retVal.toUpperCase();
 		};
-	
+
 		return EppLib;
 	})();
 

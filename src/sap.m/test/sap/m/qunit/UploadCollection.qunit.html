@@ -620,7 +620,7 @@
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "Edit", "Item 2 has status 'Edit'");
 		assert.equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
-		
+
 		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
 		sap.ui.getCore().applyChanges();

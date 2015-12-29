@@ -14,7 +14,7 @@ function(DragDrop, ElementUtil, DOMUtil) {
 	/**
 	 * Constructor for a new ControlDragDrop.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
@@ -30,7 +30,7 @@ function(DragDrop, ElementUtil, DOMUtil) {
 	 * @alias sap.ui.dt.plugin.ControlDragDrop
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var ControlDragDrop = DragDrop.extend("sap.ui.dt.plugin.ControlDragDrop", /** @lends sap.ui.dt.plugin.ControlDragDrop.prototype */ {		
+	var ControlDragDrop = DragDrop.extend("sap.ui.dt.plugin.ControlDragDrop", /** @lends sap.ui.dt.plugin.ControlDragDrop.prototype */ {
 		metadata : {
 			// ---- object ----
 
@@ -63,7 +63,7 @@ function(DragDrop, ElementUtil, DOMUtil) {
 			this._activateValidDroppablesFor(oOverlay);
 		}
 	};
-	
+
 	/**
 	 * @private
 	 */
@@ -206,11 +206,11 @@ function(DragDrop, ElementUtil, DOMUtil) {
 				oAggregationOverlay.setDroppable(false);
 		});
 	};
-	
+
 	/**
 	 * @private
 	 */
-	ControlDragDrop.prototype._iterateAllAggregations = function(fnStep) {	
+	ControlDragDrop.prototype._iterateAllAggregations = function(fnStep) {
 		var that = this;
 
 		var oDesignTime = ElementUtil.getElementInstance(this.getDesignTime());
@@ -219,11 +219,11 @@ function(DragDrop, ElementUtil, DOMUtil) {
 			that._iterateOverlayAggregations(oOverlay, fnStep);
 		});
 	};
-	
+
 	/**
 	 * @private
 	 */
-	ControlDragDrop.prototype._iterateOverlayAggregations = function(oOverlay, fnStep) {	
+	ControlDragDrop.prototype._iterateOverlayAggregations = function(oOverlay, fnStep) {
 		var aAggregationOverlays = oOverlay.getAggregationOverlays();
 		aAggregationOverlays.forEach(function(oAggregationOverlay) {
 			fnStep(oAggregationOverlay);

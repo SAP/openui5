@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 			}
 		}
 	}
-	
+
 	function getVersionWithoutSuffix(sVersion) {
 		var oVersion = jQuery.sap.Version(sVersion);
 		return oVersion.getSuffix() ? jQuery.sap.Version(oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch()) : oVersion;
@@ -203,13 +203,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 				oParent.init();
 			}
 
-			// version check => only if minVersion is available a warning 
-			// will be logged and the debug mode is turned on 
+			// version check => only if minVersion is available a warning
+			// will be logged and the debug mode is turned on
 			// TODO: enhance version check also for libraries and components
 			var oManifestUI5 = this.getManifestEntry("sap.ui5");
 			var sMinUI5Version = oManifestUI5["dependencies"] && oManifestUI5["dependencies"]["minUI5Version"];
-			if (sMinUI5Version && 
-				jQuery.sap.log.isLoggable(jQuery.sap.log.LogLevel.WARNING) && 
+			if (sMinUI5Version &&
+				jQuery.sap.log.isLoggable(jQuery.sap.log.LogLevel.WARNING) &&
 				sap.ui.getCore().getConfiguration().getDebug()) {
 				// try catch to avoid that getVersionInfo breaks the execution
 				try {
@@ -225,7 +225,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 			}
 
 			// define the resource roots
-			// => if not loaded via manifest first approach the resource roots 
+			// => if not loaded via manifest first approach the resource roots
 			//    will be registered too late for the AMD modules of the Component
 			//    controller. This is a constraint for the resource roots config
 			//    in the manifest!
@@ -961,7 +961,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 * Define the resource roots in the manifest
 	 *
 	 * <p>
-	 * 
+	 *
 	 * TODO: Once enabling manifest first for Components we need to consider
 	 *       to move the registration of the resource roots before loading
 	 *       the component controller in order to allow to use the resource

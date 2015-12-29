@@ -157,7 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 */
 
 	/**
-	 * Returns the metadata for the specific class of the current instance. 
+	 * Returns the metadata for the specific class of the current instance.
 	 *
 	 * @return {sap.ui.core.ComponentMetadata} Metadata for the specific class of the current instance.
 	 * @public
@@ -610,7 +610,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						// default 'undefined' is already set in this case
 				}
 			}
-			
+
 			// Origin: if sap-system paramter is given -> add this alias to the service url(s) of ODataModels
 			var oComponentData = this.getComponentData();
 			var sSystemParameter = oComponentData && oComponentData.startupParameters && oComponentData.startupParameters["sap-system"];
@@ -618,7 +618,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 			if (!sSystemParameter) {
 				sSystemParameter = oUriParams.get("sap-system");
 			}
-			
+
 			// lazy load the ODataUtils if systemParameter is given
 			var bAddOrigin = false;
 			var ODataUtils;
@@ -627,10 +627,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 				jQuery.sap.require("sap.ui.model.odata.ODataUtils");
 				ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
 			}
-			
+
 			// include "uri" property in "settings" object, depending on "uriSettingName"
 			if (oModelConfig.uri) {
-				
+
 				if (bAddOrigin) {
 					// Origin segment: pre- and postOriginBaseUris do not include uri params, they will be used for annotation uri adaption
 					oModelConfig.preOriginBaseUri = oModelConfig.uri.split("?")[0];
@@ -639,7 +639,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 					});
 					oModelConfig.postOriginBaseUri = oModelConfig.uri.split("?")[0];
 				}
-				
+
 				if (oModelConfig.uriSettingName !== undefined) {
 					oModelConfig.settings = oModelConfig.settings || {};
 
@@ -665,7 +665,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 					oModelConfig.postOriginUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
 				}
 			}
-			
+
 			// Origin segment: Adapt annotation uris here, based on the base part of the service uri.
 			// Replaces the base uri prefix with the one after adding the origin
 			if (bAddOrigin && oModelConfig.settings && oModelConfig.settings.annotationURI) {
@@ -676,12 +676,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 				}
 				oModelConfig.settings.annotationURI = aOriginAnnotations;
 			}
-			
+
 			// normalize settings object to array
 			if (oModelConfig.settings && !jQuery.isArray(oModelConfig.settings)) {
 				oModelConfig.settings = [ oModelConfig.settings ];
 			}
-			
+
 			// create arguments array with leading "null" value so that it can be passed to the apply function
 			var aArgs = [null].concat(oModelConfig.settings || []);
 

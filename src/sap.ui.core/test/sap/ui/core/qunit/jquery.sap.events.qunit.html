@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested code: jquery.sap.events.js, Core Event Handling
 -->
 
@@ -13,7 +13,7 @@
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
-		data-sap-ui-noConflict="true"> 
+		data-sap-ui-noConflict="true">
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -26,7 +26,7 @@
 			border: 1px solid black;
 			padding: 3px;
 		}
-	 
+
 		.testCtrl {
 			display: inline-block;
 			background-color: blue;
@@ -36,7 +36,7 @@
 			border: 2px solid green;
 			margin: 3px;
 		}
-		
+
 		.testCtrlInner {
 			display: inline-block;
 			background-color: red;
@@ -47,20 +47,20 @@
 			bottom: 20px;
 		}
 	</style>
-	
+
 	<!-- Initialization -->
 	<script type="text/javascript">
-	
+
 	(function(sName){
 		jQuery.sap.declare("test."+sName);
 		jQuery.sap.require("sap.ui.core.Control");
-		
+
 		window["test"][sName] = function (sId, mSettings) {
 			sap.ui.core.Control.apply(this, arguments);
 		};
-		
+
 		window["test"][sName].prototype = jQuery.sap.newObject(sap.ui.core.Control.prototype);
-		
+
 		sap.ui.core.Element.defineClass("test."+sName, {
 			baseType : "sap.ui.core.Control",
 			publicMethods : ["getChild", "setChild", "destroyChild"],
@@ -70,7 +70,7 @@
 			associations : {},
 			events : {}
 		});
-		
+
 		window["test"][sName].prototype.getChild = function() {
 			return this.getAggregation("child", null);
 		};
@@ -79,12 +79,12 @@
 			this.setAggregation("child", oSearchProvider);
 			return this;
 		};
-			
+
 		window["test"][sName].prototype.destroyChild = function() {
 			this.destroyAggregation("child");
 			return this;
 		};
-		
+
 		window["test"][sName+"Renderer"] = {
 			render: function(rm, ctrl){
 				rm.write("<div");
@@ -99,25 +99,25 @@
 			}
 		};
 	}("MobileEventTest"));
-	
+
 	var oTestControl1 = new test.MobileEventTest("test1");
 	var oTestControl2 = new test.MobileEventTest("test2");
 	oTestControl1.setChild(oTestControl2);
 	oTestControl1.placeAt("uiArea");
-	
+
 	var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 	//see jQuery.sap.ControlEvents
 	var aBasicBrowserEvents = ["click", "dblclick", "contextmenu", "focusin", "focusout", "keydown", "keypress", "keyup", "mousedown", "mouseout", "mouseover",
 								"mouseup", "select", "selectstart", "dragstart", "dragenter", "dragover", "dragleave", "dragend", "drop", "paste", "cut", "input",
 								"saptouchstart", "saptouchmove", "saptouchend"];
-	
+
 	var aMobileBrowserEvents = ["touchstart", "touchend", "touchmove", "touchcancel", "swipe", "tap", "swipeleft", "swiperight", "scrollstart", "scrollstop"];
-	
+
 	function keyEvent(sName, sAddText, iTrigger, sKeyCode, bShift, bAlt, bCtrl){
 		return {sName: sName, sAddTxt: sAddText, iTrigger: iTrigger, oParams: {keyCode : jQuery.sap.KeyCodes[sKeyCode], shiftKey : bShift || false, altKey : bAlt || false, metaKey : bCtrl || false, ctrlKey : bCtrl || false}};
 	};
-	
+
 	//see jQuery.sap.PseudoEvents
 	var aPseudoKeyEvents = [
 		keyEvent("sapdown", null, 2, "ARROW_DOWN"),
@@ -167,9 +167,9 @@
 		keyEvent("sapnextmodifiers", "- Option 1", 1, bRtl ? "ARROW_LEFT" : "ARROW_RIGHT", false, false, true),
 		keyEvent("sapnextmodifiers", "- Option 2", 1, "ARROW_DOWN", false, false, true)
 	];
-	                	
+
 	</script>
-	
+
 	<!-- Test help functions -->
 	<script type="text/javascript">
 
@@ -189,12 +189,12 @@
 				fHandlerChecks(oEvent, oTestControl);
 			}
 		};
-		
+
 		oTestControl1["on"+sEventName] = function(oEvent){fCheck(oEvent, true);};
 		oTestControl2["on"+sEventName] = function(oEvent){fCheck(oEvent, false);};
-		
+
 		sap.ui.test.qunit.triggerEvent(sOrigEventName ? sOrigEventName : sEventName, "test2-Inner", oEventParams);
-		
+
 		if(!bExpectHandlersNotCalled){
 			if(bStopPropagation){
 				ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
@@ -206,32 +206,32 @@
 			ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
 			ok(!oTestControl2._bEventHandlerCalled, "Event Handler not called on control 2");
 		}
-		
+
 		oTestControl1._bEventHandlerCalled = undefined;
 		oTestControl2._bEventHandlerCalled = undefined;
 		oTestControl1["on"+sEventName] = undefined;
 		oTestControl2["on"+sEventName] = undefined;
 	};
-	
-	
+
+
 	function doTestCtrlEvent(sEventName, sOrigEventName, oEventParams, fHandlerChecks, bExpectHandlersNotCalled){
 		test(sEventName + " Event", function() {
 			_testCtrlEvent(sEventName, sOrigEventName, oEventParams, false, fHandlerChecks, bExpectHandlersNotCalled);
 		});
-		
+
 		test(sEventName + " Event (bubbling cancelled)", function() {
 			_testCtrlEvent(sEventName, sOrigEventName, oEventParams, true, fHandlerChecks, bExpectHandlersNotCalled);
 		});
 	};
-	
-	
+
+
 	function _testPseudoEvent(sOriginalEventName, sEventName, iTriggerCount, oEventParams){
 		var iCount = 0;
 		var fCheck = function(oEvent) {
 			iCount++;
 			ok(oEvent.isPseudoType(oEvent._sExpectedPseudoType), "Event has expected pseudo type "+oEvent._sExpectedPseudoType);
 		};
-		
+
 		jQuery("#outer").bind(sOriginalEventName, fCheck);
 
 		var oEvent = jQuery.Event(sOriginalEventName);
@@ -241,23 +241,23 @@
 		for(var i=0; i<iTriggerCount; i++){
 			jQuery("#inner").trigger(oEvent);
 		}
-		
+
 		equal(iCount, iTriggerCount, "Event handler called "+iTriggerCount+" times");
-		
+
 		jQuery("#inner").unbind();
 		jQuery("#outer").unbind();
 	};
 
-	
+
 	function doTestPseudoEvent(sOriginalEventName, sEventName, iTriggerCount, oEventParams) {
 		test(sEventName + " Event - Basic", function() {
 			_testPseudoEvent(sOriginalEventName, sEventName, iTriggerCount, oEventParams);
 		});
-		
+
 		doTestCtrlEvent(sEventName, sOriginalEventName, oEventParams);
 	};
-	
-	
+
+
 	function triggerDelayedDoubleClick(sTargetId, fDoAfter) {
 		jQuery("#"+sTargetId).trigger("click");
 		// at least 500 ms should have passed trigger again to simulate dblclick
@@ -269,28 +269,28 @@
 			}
 		},500);
 	};
-	
+
 	</script>
-	
+
 	<!-- Test functions -->
 	<script type="text/javascript">
-	
+
 	//***************************************
 	module("Initialization");
-	
+
 	test("Control Events", function() {
 		var aBrowserEvents = [].concat(aBasicBrowserEvents);
-		
+
 		if(jQuery.support.touch){
 			aBrowserEvents = aBrowserEvents.concat(aMobileBrowserEvents);
 		}
-		
+
 		equal(jQuery.sap.ControlEvents.length, aBrowserEvents.length, "Number of basic browser events correct");
 		for(var i=0; i<aBrowserEvents.length; i++){
 			ok(jQuery.inArray(aBrowserEvents[i], jQuery.sap.ControlEvents) >= 0, "Event "+aBrowserEvents[i]+" contained in jQuery.sap.ControlEvents");
 		}
 	});
-	
+
 	test("Pseudo Events", function() {
 		function fCheck(sEventName, sOrigEventName){
 			var evt = jQuery.sap.PseudoEvents[sEventName];
@@ -307,44 +307,44 @@
 		for(var i=0; i<aPseudoKeyEvents.length; i++){
 			fCheck(aPseudoKeyEvents[i].sName, "keydown");
 		}
-		
+
 		fCheck("sapdelayeddoubleclick", "click");
-		
+
 		if(jQuery.support.touch){
 			//With mobile events
 			fCheck("swipebegin", bRtl ? "swiperight" : "swipeleft");
 			fCheck("swipeend", !bRtl ? "swiperight" : "swipeleft");
 		}
 	});
-	
-	
-	
-	
+
+
+
+
 	//***************************************
 	module("Basic Browser Events");
-	
+
 	for(var i=0; i<aBasicBrowserEvents.length; i++){
 		doTestCtrlEvent(aBasicBrowserEvents[i]);
 	}
-	
-	
+
+
 	//***************************************
 	module("Basic Browser Events - Negative check");
-	
+
 	doTestCtrlEvent("hurlipuu", null, null, null, true);
-	
-	
+
+
 	//***************************************
 	module("Basic Pseudo Events");
-	
+
 	for(var i=0; i<aPseudoKeyEvents.length; i++){
 		doTestPseudoEvent("keydown", aPseudoKeyEvents[i].sName, aPseudoKeyEvents[i].iTrigger, aPseudoKeyEvents[i].oParams);
 	}
-	
+
 	asyncTest("sapdelayeddoubleclick Event - Basic", function(){
 		var iCount = 0;
 		var bFirst = true;
-		
+
 		var fCheck = function(oEvent) {
 			iCount++;
 			if(!bFirst){
@@ -355,15 +355,15 @@
 		};
 
 		jQuery("#outer").bind("click", fCheck);
-		
+
 		triggerDelayedDoubleClick("inner", function(){
 			equal(iCount, 2, "Event handler called 2 times");
 			jQuery("#inner").unbind();
 			jQuery("#outer").unbind();
 		});
-		
+
 	});
-	
+
 	asyncTest("sapdelayeddoubleclick Event", function(){
 		var fCheck = function(oEvent, bTestOuter) {
 			var oTestControl = bTestOuter ? oTestControl1 : oTestControl2;
@@ -374,21 +374,21 @@
 				equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
 		};
-		
+
 		oTestControl1["onsapdelayeddoubleclick"] = function(oEvent){fCheck(oEvent, true);};
 		oTestControl2["onsapdelayeddoubleclick"] = function(oEvent){fCheck(oEvent, false);};
-		
+
 		triggerDelayedDoubleClick("test2-Inner", function(){
 			ok(oTestControl1._bEventHandlerCalled, "Event Handler called on control 1");
 			ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
-			
+
 			oTestControl1._bEventHandlerCalled = undefined;
 			oTestControl2._bEventHandlerCalled = undefined;
 			oTestControl1["onsapdelayeddoubleclick"] = undefined;
 			oTestControl2["onsapdelayeddoubleclick"] = undefined;
 		});
 	});
-	
+
 	asyncTest("sapdelayeddoubleclick Event (bubbling cancelled)", function(){
 		var fCheck = function(oEvent, bTestOuter) {
 			if(!bTestOuter){
@@ -402,33 +402,33 @@
 				equal(oEvent.srcControl.getId(), "test2", "Event attribute 'srcControl' correct");
 			}
 		};
-		
+
 		oTestControl1["onsapdelayeddoubleclick"] = function(oEvent){fCheck(oEvent, true);};
 		oTestControl2["onsapdelayeddoubleclick"] = function(oEvent){fCheck(oEvent, false);};
-		
+
 		triggerDelayedDoubleClick("test2-Inner", function(){
 			ok(!oTestControl1._bEventHandlerCalled, "Event Handler not called on control 1");
 			ok(oTestControl2._bEventHandlerCalled, "Event Handler called on control 2");
-			
+
 			oTestControl1._bEventHandlerCalled = undefined;
 			oTestControl2._bEventHandlerCalled = undefined;
 			oTestControl1["onsapdelayeddoubleclick"] = undefined;
 			oTestControl2["onsapdelayeddoubleclick"] = undefined;
 		});
 	});
-	
-	
+
+
 	//***************************************
-	
+
 	if(jQuery.support.touch){
 		//***************************************
 		module("Mobile Browser Events");
-		
+
 		for(var i=0; i<aMobileBrowserEvents.length; i++){
 			doTestCtrlEvent(aMobileBrowserEvents[i], null, /*Satisfy jQuery Mobile*/{originalEvent: {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]}});
 		}
-		
-		
+
+
 		//***************************************
 		module("Mobile Pseudo Events");
 

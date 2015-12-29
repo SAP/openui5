@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					"sap.ui.unified"
 				]
 			},
-		
+
 			config : {
 				sample : {
 					files : [

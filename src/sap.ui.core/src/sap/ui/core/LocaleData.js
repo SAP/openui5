@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	function(jQuery, BaseObject, Configuration, Locale) {
 	"use strict";
 
-	/** 
+	/**
 	 * Creates an instance of the Data.
 	 *
 	 * @class Data provides access to locale-specific data, like date formats, number formats, currencies, etc.
@@ -221,7 +221,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			jQuery.sap.assert(sType == "decimal" || sType == "group" || sType == "plusSign" || sType == "minusSign" || sType == "percentSign", "sType must be decimal, group, plusSign, minusSign or percentSign");
 			return this._get("symbols-latn-" + sType);
 		},
-		
+
 		/**
 		 * Get decimal format pattern
 		 *
@@ -231,7 +231,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		getDecimalPattern : function() {
 			return this._get("decimalFormat").standard;
 		},
-		
+
 		/**
 		 * Get currency format pattern
 		 *
@@ -242,7 +242,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		getCurrencyPattern : function(sContext) {
 			return this._get("currencyFormat")[sContext] || this._get("currencyFormat").standard;
 		},
-		
+
 		/**
 		 * Get percent format pattern
 		 *
@@ -254,16 +254,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
-		 * Returns the day that usually is regarded as the first day 
+		 * Returns the day that usually is regarded as the first day
 		 * of a week in the current locale. Days are encoded as integer
 		 * where sunday=0, monday=1 etc.
 		 *
-		 * 
+		 *
 		 * All week data information in the CLDR is provides for territories (countries).
-		 * If the locale of this LocaleData doesn't contain country information (e.g. if it 
-		 * contains only a language), then the "likelySubtag" information of the CLDR  
-		 * is taken into account to guess the "most likely" territory for the locale. 
-		 * 
+		 * If the locale of this LocaleData doesn't contain country information (e.g. if it
+		 * contains only a language), then the "likelySubtag" information of the CLDR
+		 * is taken into account to guess the "most likely" territory for the locale.
+		 *
 		 * @returns {int} first day of week
 		 * @public
 		 */
@@ -272,15 +272,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
-		 * Returns the first day of a weekend for the given locale. 
-		 * 
+		 * Returns the first day of a weekend for the given locale.
+		 *
 		 * Days are encoded in the same way as for {@link #getFirstDayOfWeek}.
-		 * 
+		 *
 		 * All week data information in the CLDR is provides for territories (countries).
-		 * If the locale of this LocaleData doesn't contain country information (e.g. if it 
-		 * contains only a language), then the "likelySubtag" information of the CLDR  
-		 * is taken into account to guess the "most likely" territory for the locale. 
-		 * 
+		 * If the locale of this LocaleData doesn't contain country information (e.g. if it
+		 * contains only a language), then the "likelySubtag" information of the CLDR
+		 * is taken into account to guess the "most likely" territory for the locale.
+		 *
 		 * @returns {int} first day of weekend
 		 * @public
 		 */
@@ -289,15 +289,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
-		 * Returns the last day of a weekend for the given locale. 
-		 * 
+		 * Returns the last day of a weekend for the given locale.
+		 *
 		 * Days are encoded in the same way as for {@link #getFirstDayOfWeek}.
-		 * 
+		 *
 		 * All week data information in the CLDR is provides for territories (countries).
-		 * If the locale of this LocaleData doesn't contain country information (e.g. if it 
-		 * contains only a language), then the "likelySubtag" information of the CLDR  
-		 * is taken into account to guess the "most likely" territory for the locale. 
-		 * 
+		 * If the locale of this LocaleData doesn't contain country information (e.g. if it
+		 * contains only a language), then the "likelySubtag" information of the CLDR
+		 * is taken into account to guess the "most likely" territory for the locale.
+		 *
 		 * @returns {int} last day of weekend
 		 * @public
 		 */
@@ -308,19 +308,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		/**
 		 * Returns the interval format with the given Id (see CLDR documentation for valid Ids)
 		 * or the fallback format if no interval format with that Id is known.
-		 * 
-		 * The empty Id ("") might be used to retrieve the interval format fallback. 
+		 *
+		 * The empty Id ("") might be used to retrieve the interval format fallback.
 		 *
 		 * @param {string} sId Id of the interval format, e.g. "d-d"
 		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} interval format string with placeholders {0} and {1}
 		 * @public
-		 * @since 1.17.0 
+		 * @since 1.17.0
 		 */
 		getIntervalPattern : function(sId, sCalendarType) {
 			return (sId && this._getCalendarData("intervalFormat-" + sId, sCalendarType)) || this._getCalendarData("intervalFormatFallback", sCalendarType);
 		},
-		
+
 		/**
 		 * Returns the number of digits of the specified currency
 		 *
@@ -346,7 +346,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			}
 			return iDigits;
 		},
-		
+
 		/**
 		 * Returns the currency symbol for the specified currency, if no symbol is found the ISO 4217 currency code is returned
 		 *
@@ -730,17 +730,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	};
 
 	/**
-	 * A set of locales for which the UI5 runtime contains a CLDR JSON file. 
-	 * 
+	 * A set of locales for which the UI5 runtime contains a CLDR JSON file.
+	 *
 	 * Helps to avoid unsatisfiable backend calls.
-	 * 
+	 *
 	 * @private
 	 */
 	var M_SUPPORTED_LOCALES = (function() {
 		var LOCALES = Locale._cldrLocales,
 			result = {},
 			i;
-		
+
 		if ( LOCALES ) {
 			for (i = 0; i < LOCALES.length; i++) {
 				result[LOCALES[i]] = true;
@@ -749,7 +749,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 		return result;
 	}());
-	
+
 	/**
 	 * Locale data cache
 	 *
@@ -779,8 +779,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 		/*
 		 * Merge a CLDR delta file and a CLDR fallback file.
-		 *  
-		 * Note: the contract of this method reg. null values differs from both, 
+		 *
+		 * Note: the contract of this method reg. null values differs from both,
 		 * jQuery.extend as well as jQuery.sap.extend.
 		 */
 		function merge(obj, fallbackObj) {
@@ -789,16 +789,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			if ( !fallbackObj ) {
 				return;
 			}
-			
+
 			for ( name in fallbackObj ) {
 
 				if ( fallbackObj.hasOwnProperty(name) ) {
-					
+
 					value = obj[ name ];
 					fallbackValue = fallbackObj[ name ];
 
 					if ( value === undefined ) {
-						// 'undefined': value doesn't exist in delta, so take it from the fallback object 
+						// 'undefined': value doesn't exist in delta, so take it from the fallback object
 						// Note: undefined is not a valid value in JSON, so we can't misunderstand an existing undefined
 						obj[name] = fallbackValue;
 					} else if ( value === null ) {
@@ -821,15 +821,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					dataType: "json",
 					failOnError : false
 				});
-				
-				// check if the data is a minified delta file. 
+
+				// check if the data is a minified delta file.
 				// If so, load the corresponding fallback data as well, merge it and remove the fallback marker
 				if ( data && data.__fallbackLocale ) {
 					merge(data, getOrLoad(data.__fallbackLocale));
 					delete data.__fallbackLocale;
 				}
-				
-				// if load fails, null is returned 
+
+				// if load fails, null is returned
 				// -> caller will process the fallback chain, in the end a result is identified and stored in mDatas under the originally requested ID
 			}
 			return mLocaleDatas[sId];
@@ -837,11 +837,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 		// normalize language and handle special cases
 		sLanguage = (sLanguage && M_ISO639_OLD_TO_NEW[sLanguage]) || sLanguage;
-		// Special case 1: in a SAP context, the inclusive language code "no" always means Norwegian Bokmal ("nb") 
+		// Special case 1: in a SAP context, the inclusive language code "no" always means Norwegian Bokmal ("nb")
 		if ( sLanguage === "no" ) {
 			sLanguage = "nb";
 		}
-		// Special case 2: for Chinese, derive a default region from the script (this behavior is inherited from Java) 
+		// Special case 2: for Chinese, derive a default region from the script (this behavior is inherited from Java)
 		if ( sLanguage === "zh" && !sRegion ) {
 			if ( sScript === "Hans" ) {
 				sRegion = "CN";
@@ -850,8 +850,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			}
 		}
 
-		var sId = sLanguage + "_" + sRegion; // the originally requested locale; this is the key under which the result (even a fallback one) will be stored in the end 
-		// first try: load CLDR data for specific language / region combination 
+		var sId = sLanguage + "_" + sRegion; // the originally requested locale; this is the key under which the result (even a fallback one) will be stored in the end
+		// first try: load CLDR data for specific language / region combination
 		if ( sLanguage && sRegion ) {
 			mData = getOrLoad(sId);
 		}
@@ -861,7 +861,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		}
 		// last try: use fallback data
 		mLocaleDatas[sId] = mData || M_DEFAULT_DATA;
-		
+
 		return mLocaleDatas[sId];
 	}
 
@@ -895,7 +895,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	});
 
 	/**
-	 * 
+	 *
 	 */
 	LocaleData.getInstance = function(oLocale) {
 		return oLocale.hasPrivateUseSubtag("sapufmt") ? new sap.ui.core.CustomLocaleData(oLocale) : new LocaleData(oLocale);

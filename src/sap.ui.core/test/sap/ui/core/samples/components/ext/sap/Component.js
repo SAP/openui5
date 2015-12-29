@@ -2,7 +2,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 	function(jQuery, UIComponent) {
 	"use strict";
 
-	
+
 	var Component = UIComponent.extend("samples.components.ext.sap.Component", {
 
 		metadata : {

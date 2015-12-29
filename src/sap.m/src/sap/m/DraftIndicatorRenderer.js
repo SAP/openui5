@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @namespace
 	 */
 	var DraftIndicatorRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	DraftIndicatorRenderer.render = function(oRm, oControl) {
-		
+
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMDraftIndicator");

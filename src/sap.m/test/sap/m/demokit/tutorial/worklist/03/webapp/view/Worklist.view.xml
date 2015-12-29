@@ -2,7 +2,7 @@
 	xmlns:semantic="sap.m.semantic" xmlns="sap.m">
 	<semantic:FullscreenPage id="page" navButtonPress="onNavBack" showNavButton="true" title="{i18n>worklistViewTitle}">
 		<semantic:content>
-			<IconTabBar 
+			<IconTabBar
 				id="iconTabBar"
 				select="onQuickFilter"
 				expandable="false"
@@ -35,15 +35,15 @@
 						text="{i18n>WorklistFilterInStock}"/>
 				</items>
 			</IconTabBar>
-			<Table 
+			<Table
 				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
 				class="sapUiResponsiveMargin sapUiNoMarginTop"
 				growing="true"
 				growingScrollToLoad="true"
 				id="table"
-				items="{ 
+				items="{
 						path: '/Products',
-						sorter: { 
+						sorter: {
 								path: 'ProductName',
 								descending: false
 						},

@@ -4,14 +4,14 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Tree - sap.ui.commons</title>
 
-    <script id="sap-ui-bootstrap" 
+    <script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.commons,sap.ui.table" >
 		</script>
-    
+
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -20,78 +20,78 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script language="javascript">
-		
+
 		var sStandardTreeId 	= "tree1";
 		var sTransparentTreeId 	= "tree2";
-		
+
 		function createStandardTree () {
-			var oTree1 = new sap.ui.commons.Tree(sStandardTreeId, {title:"Tree with Header", width:"90%",height:"300px",showHeader:true, showHorizontalScrollbar:false});		
-			
+			var oTree1 = new sap.ui.commons.Tree(sStandardTreeId, {title:"Tree with Header", width:"90%",height:"300px",showHeader:true, showHorizontalScrollbar:false});
+
 			var oNode11 = new sap.ui.commons.TreeNode("node11", {text:"Root 1",icon:"../images/tree/library.gif"});
-			
+
 			var oNode13 = new sap.ui.commons.TreeNode("node13", {text:"Node 1.1", expanded:false, isSelected: true});
-			
+
 			var oNode15 = new sap.ui.commons.TreeNode("node15", {text:"Node 1.1.1", hasExpander:true});
 			oNode15.attachToggleOpenState(function addSubNodes(oEvent){
-				
+
 				var oNode15Child = new sap.ui.commons.TreeNode({text:"Dyna Node"});
 				oNode15.addNode(oNode15Child);
-				
+
 			});
 			oNode13.addNode(oNode15);
-			
+
 			oNode11.addNode(oNode13);
-			
+
 			var oNode14 = new sap.ui.commons.TreeNode("node14", {text:"Node 1.2",icon:"../images/tree/Image.gif"});
-			
+
 			var oNode16 = new sap.ui.commons.TreeNode("node16", {text:"Node 1.2.1"});
-			
+
 			var oNode17 = new sap.ui.commons.TreeNode("node17", {text:"Really long text for Node 1.2.1.1"});
 			oNode16.addNode(oNode17);
-			
+
 			oNode14.addNode(oNode16);
-			
+
 			oNode11.addNode(oNode14);
-			
+
 			oTree1.addNode(oNode11);
-			
+
 			var oNode12 = new sap.ui.commons.TreeNode("node12", {text:"Root 2"});
 			oTree1.addNode(oNode12);
-		
+
 		return oTree1;
 		}
-		
+
 		function createTransparentTree () {
-			var oTree2 = new sap.ui.commons.Tree("tree2", {title:"Tree with Header", width:"200px",height:"300px", showHorizontalScrollbar:false, showHeader:false});		
-			
+			var oTree2 = new sap.ui.commons.Tree("tree2", {title:"Tree with Header", width:"200px",height:"300px", showHorizontalScrollbar:false, showHeader:false});
+
 			var oNode21 = new sap.ui.commons.TreeNode("node21", {text:"Root 1"});
-			
+
 			var oNode23 = new sap.ui.commons.TreeNode("node23", {text:"Node 1.1", expanded:false});
-			
+
 			var oNode25 = new sap.ui.commons.TreeNode("node25", {text:"Node 1.1.1"});
 			oNode23.addNode(oNode25);
-			
+
 			oNode21.addNode(oNode23);
-			
+
 			var oNode24 = new sap.ui.commons.TreeNode("node24", {text:"Node 1.2"});
-			
+
 			var oNode26 = new sap.ui.commons.TreeNode("node26", {text:"Node 1.2.1"});
-			
+
 			var oNode27 = new sap.ui.commons.TreeNode("node27", {text:"Really long text for Node 1.2.1.1"});
 			oNode26.addNode(oNode27);
-			
+
 			oNode24.addNode(oNode26);
-			
+
 			oNode21.addNode(oNode24);
-			
+
 			oTree2.addNode(oNode21);
-			
+
 			var oNode22 = new sap.ui.commons.TreeNode("node22", {text:"Root 2"});
 			oTree2.addNode(oNode22);
-		
+
 		return oTree2;
 		}
-		
+
 		function createBoundTree () {
 			var oModel = new sap.ui.model.json.JSONModel({
 				tree: {
@@ -121,10 +121,10 @@
 				}
 			})
 			var oTree = new sap.ui.commons.Tree("tree3", {
-				title:"Tree with data binding", 
+				title:"Tree with data binding",
 				width:"200px",
-				height:"300px", 
-				showHorizontalScrollbar:false, 
+				height:"300px",
+				showHorizontalScrollbar:false,
 				showHeader:false,
 				nodes: {
 					path: "/tree",
@@ -136,7 +136,7 @@
 					}
 				},
 				models: oModel
-			});		
+			});
 			return oTree;
 		}
 
@@ -169,10 +169,10 @@
 				}
 			})
 			var oTree = new sap.ui.commons.Tree("tree4", {
-				title:"Tree with data binding", 
+				title:"Tree with data binding",
 				width:"200px",
-				height:"300px", 
-				showHorizontalScrollbar:false, 
+				height:"300px",
+				showHorizontalScrollbar:false,
 				showHeader:false,
 				nodes: {
 					path: "model>/tree",
@@ -186,23 +186,23 @@
 				models: {
 					model: oModel
 				}
-			});		
+			});
 			return oTree;
 		}
-		
-		
+
+
 		var oStandardTree = createStandardTree();
 		oStandardTree.placeAt("target1");
-		
+
 		var oTransparentTree = createTransparentTree();
 		oTransparentTree.placeAt("target2");
-		
+
 		var oBoundTree = createBoundTree();
 		oBoundTree.placeAt("target3");
-		
+
 		var oBoundTreeNamedModel = createBoundTreeNamedModel();
 		oBoundTreeNamedModel.placeAt("target4");
-		
+
 		function checkSelectedNodes(aNodes, aExpectedIds) {
 			var iIndex;
 			if (aNodes.length != aExpectedIds.length) {
@@ -218,7 +218,7 @@
 			}
 			return true;
 		}
-		
+
 		/******* qUnit Tests *******/
 		module("Tree", {
 		  setup: function() {
@@ -230,60 +230,60 @@
 		  	//this.oStandardTree = null;
 		  }
 		});
-		
+
 		qutils.delayTestStart();
-		
+
 		module("Rendering");
-		
+
 		test("Rendering of Standard tree", function() {
-			
+
 			notEqual(jQuery.sap.domById(sStandardTreeId), null, "Tree is rendered.");
-			
+
 			notEqual(jQuery.sap.domById(sStandardTreeId+ "-Header"), null, "Tree header is there.");
-			
+
 			notEqual(jQuery.sap.domById(sStandardTreeId+ "-TreeCont"), null, "Tree content is there");
-			
+
 		});
-		
+
 		test("Rendering of transparent tree", function() {
-			
+
 			notEqual(jQuery.sap.domById(sTransparentTreeId), null, "Tree is rendered.");
-			
+
 			equal(jQuery.sap.domById(sTransparentTreeId+ "-Header"), null, "Tree header is not there.");
-			
+
 			notEqual(jQuery.sap.domById(sTransparentTreeId+ "-TreeCont"), null, "Tree content is there");
 		});
-		
+
 		module("Nodes public methods");
-		
+
 		test("Single Collapse and Expand", function() {
-			
-			
+
+
 			//Collapse
 			var root1 = sap.ui.getCore().getControl("node11");
 			var tmp1 = oStandardTree.getNodes()[0];
-			
+
 			ok( root1.getExpanded(), "Root 1 is expanded at first");
 			root1.collapse();
 			ok( !root1.getExpanded(), "Root 1 is now collapsed");
-			
+
 			//Expand
 			var node13 = sap.ui.getCore().getControl("node13");
 			ok( !node13.getExpanded(), "Node 1.1 is collapsed at first");
 			node13.expand();
 			ok( node13.getExpanded(), "Node 1.1 is now expanded");
 		});
-		
+
 		test("Node selection legacy", function() {
 			oStandardTree.expandAll();
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
-			
+
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
@@ -292,52 +292,52 @@
 		test("Node selection single", function() {
 			oStandardTree.expandAll();
 			oStandardTree.setSelectionMode("Single");
-			
+
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			initialSelection.select();
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
-			
+
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( !newSelection.getIsSelected(), "Node 1.3 is not selected anymore");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected again");
 		});
-		
+
 		test("Node selection multi", function() {
 			oStandardTree.expandAll();
 			oStandardTree.setSelectionMode("Multi");
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			initialSelection.select();
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
-			
+
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
 		});
-		
+
 		test("Node selection legacy with context", function() {
 			var oModel = new sap.ui.model.json.JSONModel({}),
 				oContext = oModel.createBindingContext("/");
-		
+
 			oStandardTree.setBindingContext(oContext);
 			oStandardTree.expandAll();
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
-			
+
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
@@ -347,65 +347,65 @@
 		test("Node selection single with context", function() {
 			var oModel = new sap.ui.model.json.JSONModel({}),
 				oContext = oModel.createBindingContext("/");
-	
+
 			oStandardTree.setBindingContext(oContext);
 			oStandardTree.expandAll();
 			oStandardTree.setSelectionMode("Single");
-			
+
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			initialSelection.select();
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
-			
+
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( !newSelection.getIsSelected(), "Node 1.3 is not selected anymore");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected again");
 			oStandardTree.setBindingContext(null);
 		});
-		
+
 		test("Node selection multi with context", function() {
 			var oModel = new sap.ui.model.json.JSONModel({}),
 				oContext = oModel.createBindingContext("/");
-	
+
 			oStandardTree.setBindingContext(oContext);
 			oStandardTree.expandAll();
 			oStandardTree.setSelectionMode("Multi");
 			var initialSelection = sap.ui.getCore().getControl("node13");
 			initialSelection.select();
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
-			
+
 			var newSelection = sap.ui.getCore().getControl("node14");
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
 			ok( initialSelection.getIsSelected(), "Node 1.1 is selected as well");
 			oStandardTree.setBindingContext(null);
 		});
-		
+
 		test("Node selection single databinding", function() {
 			oBoundTree.expandAll();
 			oBoundTree.setSelectionMode("Single");
-			
+
 			var initialSelection = oBoundTree.getNodes()[0];
 			initialSelection.select();
 			ok( initialSelection.getIsSelected(), "Node 1 is selected");
-			
+
 			var newSelection = oBoundTree.getNodes()[1];
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 2 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( !newSelection.getIsSelected(), "Node 2 is not selected anymore");
 			ok( initialSelection.getIsSelected(), "Node 1 is selected again");
-			
+
 			oBoundTree.getBinding("nodes").refresh();
 			initialSelection = oBoundTree.getNodes()[0];
 			newSelection = oBoundTree.getNodes()[1];
@@ -418,19 +418,19 @@
 			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
 			ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
 		});
-		
+
 		test("Node selection multi databinding", function() {
 			oBoundTree.expandAll();
 			oBoundTree.setSelectionMode("Multi");
 			var initialSelection = oBoundTree.getNodes()[0];
 			initialSelection.select();
 			ok( initialSelection.getIsSelected(), "Node 1 is selected");
-			
+
 			var newSelection = oBoundTree.getNodes()[1];
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 2 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( newSelection.getIsSelected(), "Node 1 is now selected");
 			ok( initialSelection.getIsSelected(), "Node 2 is selected as well");
@@ -446,26 +446,26 @@
 			newSelection = oBoundTree.getNodes()[1];
 			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
 			ok( newSelection.getIsSelected(), "Node 2 is selected after second refresh");
-		
+
 		});
-		
+
 		test("Node selection single databinding with named model", function() {
 			oBoundTreeNamedModel.expandAll();
 			oBoundTreeNamedModel.setSelectionMode("Single");
-			
+
 			var initialSelection = oBoundTreeNamedModel.getNodes()[0];
 			initialSelection.select();
 			ok( initialSelection.getIsSelected(), "Node 1 is selected");
-			
+
 			var newSelection = oBoundTreeNamedModel.getNodes()[1];
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 2 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( !newSelection.getIsSelected(), "Node 2 is not selected anymore");
 			ok( initialSelection.getIsSelected(), "Node 1 is selected again");
-			
+
 			oBoundTreeNamedModel.getBinding("nodes").refresh();
 			initialSelection = oBoundTreeNamedModel.getNodes()[0];
 			newSelection = oBoundTreeNamedModel.getNodes()[1];
@@ -478,19 +478,19 @@
 			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
 			ok( !newSelection.getIsSelected(), "Node 2 is not selected after second refresh");
 		});
-		
+
 		test("Node selection multi databinding with named model", function() {
 			oBoundTreeNamedModel.expandAll();
 			oBoundTreeNamedModel.setSelectionMode("Multi");
 			var initialSelection = oBoundTreeNamedModel.getNodes()[0];
 			initialSelection.select();
 			ok( initialSelection.getIsSelected(), "Node 1 is selected");
-			
+
 			var newSelection = oBoundTreeNamedModel.getNodes()[1];
 			newSelection.select();
 			ok( newSelection.getIsSelected(), "Node 2 is now selected");
 			ok( !initialSelection.getIsSelected(), "Node 1 is not selected anymore");
-			
+
 			initialSelection.setIsSelected(true);
 			ok( newSelection.getIsSelected(), "Node 1 is now selected");
 			ok( initialSelection.getIsSelected(), "Node 2 is selected as well");
@@ -506,9 +506,9 @@
 			newSelection = oBoundTreeNamedModel.getNodes()[1];
 			ok( initialSelection.getIsSelected(), "Node 1 is selected after second refresh");
 			ok( newSelection.getIsSelected(), "Node 2 is selected after second refresh");
-		
+
 		});
-		
+
 		test("Node selection events single", function() {
 			var handler,
 				node12 = sap.ui.getCore().getControl("node12"),
@@ -537,14 +537,14 @@
 			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
 			ok( node12.getIsSelected(), "Root 2 is not selected");
 		});
-		
+
 		test("Node selection events multi", function() {
 			var handler,
 				node12 = sap.ui.getCore().getControl("node12"),
 				node16 = sap.ui.getCore().getControl("node16"),
 				node17 = sap.ui.getCore().getControl("node17");
 			oStandardTree.setSelectionMode("Multi");
-			
+
 			// Selection without modifiers
 			node12.select();
 
@@ -567,7 +567,7 @@
 			ok( !node16.getIsSelected(), "Node 1.2.1 is selected");
 			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
 			ok( node12.getIsSelected(), "Root 2 is not selected");
-			
+
 			// Selection with Ctrl-Key
 			node12.select();
 
@@ -600,7 +600,7 @@
 			ok( node16.getIsSelected(), "Node 1.2.1 is selected");
 			ok( !node17.getIsSelected(), "Node 1.2.1.1 is not selected");
 			ok( node12.getIsSelected(), "Root 2 is selected");
-			
+
 			// Selection with Shift-Key
 			node16.select();
 
@@ -626,26 +626,26 @@
 
 			handler = function(oEvent) {
 				ok(checkSelectedNodes(oEvent.getParameter("nodes"), ["node12","node16","node17"]), "Selected nodes as expected");
-			}; 
+			};
 			oStandardTree.attachSelectionChange(handler);
 			qutils.triggerEvent("click", node16.getDomRef().firstChild, {button: 0, shiftKey: true});
 			oStandardTree.detachSelectionChange(handler);
 			ok( node16.getIsSelected(), "Node 1.2.1 is selected");
 			ok( node17.getIsSelected(), "Node 1.2.1.1 is selected");
 			ok( node12.getIsSelected(), "Root 2 is selected");
-			
+
 		});
-		
+
 
 		module("Tree public methods");
-		
+
 		test("Collapse all", function() {
-			
+
 			oStandardTree.collapseAll();
-			
+
 			var foundNodeExpanded = false;
 			var aNodes = oStandardTree.getNodes();
-			
+
 			//TODO: check only 1st level
 			for(var i=0;i<aNodes.length;i++){
 				if(aNodes[i].getExpanded()){
@@ -654,14 +654,14 @@
 			}
 			ok( !foundNodeExpanded, "All nodes are now collapsed");
 		});
-		
+
 		test("Expand all", function() {
-			
+
 			oStandardTree.expandAll();
-			
+
 			var foundNodeCollapsed = false;
 			var aNodes = oStandardTree.getNodes();
-			
+
 			//TODO: check only 1st level!
 			for(var i=0;i<aNodes.length;i++){
 				if(!aNodes[i].getExpanded()){
@@ -670,23 +670,23 @@
 			}
 			ok( !foundNodeCollapsed, "All nodes are now expanded");
 		});
-		
+
 		module("Keyboard support");
-		
+
 		test("Space/Enter", function() {
 			oStandardTree.expandAll();
-			
+
 			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ENTER, false, false, false);
-			
+
 			equal( oStandardTree.getSelection().getId(), "node11",  "New selection is set");
-			
+
 		});
-		
+
 		// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 		if (!sap.ui.Device.browser.phantomJS) {
 			asyncTest("Arrow keys", function() {
 				sap.ui.getCore().getControl("node11").focus();
-				
+
 				setTimeout(function(){
 					qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
 					setTimeout(function(){
@@ -708,26 +708,26 @@
 				}, 100);
 			});
 		}
-		
+
 		test("Plus/Minus", function() {
-			
+
 			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
-			
+
 			ok( !sap.ui.getCore().getControl("node11").getExpanded(), "Root is collapsed");
-			
+
 			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.NUMPAD_PLUS, false, false, false);
-			
+
 			ok( sap.ui.getCore().getControl("node11").getExpanded(), "Root is expanded");
-			
+
 		});
-		
+
 		test("Asterisk", function() {
-			
+
 			qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.NUMPAD_ASTERISK, false, false, false);
-			
+
 			var foundNodeExpanded = false;
 			var aNodes = oStandardTree.getNodes();
-			
+
 			//TODO: check only 1st level
 			for(var i=0;i<aNodes.length;i++){
 				if(aNodes[i].getExpanded()){
@@ -735,12 +735,12 @@
 				}
 			}
 			ok( !foundNodeExpanded, "All nodes are now collapsed");
-			
+
 			qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.NUMPAD_ASTERISK, false, false, false);
-			
+
 			var foundNodeCollapsed = false;
 			var aNodes = oStandardTree.getNodes();
-			
+
 			//TODO: check only 1st level!
 			for(var i=0;i<aNodes.length;i++){
 				if(!aNodes[i].getExpanded()){
@@ -748,39 +748,39 @@
 				}
 			}
 			ok( !foundNodeCollapsed, "All nodes are now expanded");
-			
+
 		});
-		
+
 		test("Home/End", function() {
-			
+
 			sap.ui.getCore().getControl("node13").focus();
-			
+
 			qutils.triggerKeyboardEvent("node13", jQuery.sap.KeyCodes.END, false, false, false);
-			
+
 			equal( jQuery(document.activeElement).first().attr("id"), "node14",  "Focus moved to last sibling");
-			
+
 			qutils.triggerKeyboardEvent("node14", jQuery.sap.KeyCodes.HOME, false, false, false);
-			
+
 			equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus moved to first sibling");
-			
-	
-			
+
+
+
 		});
-		
+
 		test("Ctrl+Home/Ctrl+End", function() {
-			
+
 			sap.ui.getCore().getControl("node13").focus();
-			
+
 			qutils.triggerKeyboardEvent("node13", jQuery.sap.KeyCodes.END, false, false, true);
-			
+
 			equal( jQuery(document.activeElement).first().attr("id"), "node12",  "Focus moved to last node");
-			
+
 			qutils.triggerKeyboardEvent("node12", jQuery.sap.KeyCodes.HOME, false, false, true);
-			
+
 			equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus moved to first node");
-			
-	
-			
+
+
+
 		});
 
 		module("Nodes expand and collapse", {

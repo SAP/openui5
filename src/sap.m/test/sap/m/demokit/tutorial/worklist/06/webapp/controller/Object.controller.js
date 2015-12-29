@@ -133,13 +133,13 @@ sap.ui.define([
 				oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
 			oViewModel.setProperty("/shareSendEmailMessage",
 				oResourceBundle.getText("shareSendEmailObjectMessage", [sObjectName, sObjectId, location.href]));
-				
+
 			// Update the comments in the list
 			var oList = this.byId("idCommentsList");
 			var oBinding = oList.getBinding("items");
 			oBinding.filter(new Filter("productID", FilterOperator.EQ, sObjectId));
 		},
-		
+
 		/**
 		* Updates the model with the user comments on Products.
 		* @function
@@ -156,7 +156,7 @@ sap.ui.define([
 			    date: sDate,
 			    comment: sValue
 			};
-			
+
 			// update model
 			var oFeedbackModel = this.getModel("ProductFeedback");
 			var aEntries = oFeedbackModel.getData().ProductComments;

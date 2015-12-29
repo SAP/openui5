@@ -5,9 +5,9 @@
   <vendor>SAP SE</vendor>
   <copyright>${copyright}</copyright>
   <version>${version}</version>
-  
+
   <documentation>Table-like controls, mainly for desktop scenarios.</documentation>
-  
+
   <dependencies>
     <dependency>
       <libraryName>sap.ui.core</libraryName>
@@ -16,7 +16,7 @@
       <libraryName>sap.ui.unified</libraryName>
     </dependency>
   </dependencies>
-  
+
   <appData>
     <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.table" />
     <!-- excludes for the JSCoverage -->
@@ -33,5 +33,5 @@
         <component>CA-UI5-CTR-WDF</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
     </ownership>
   </appData>
-  
+
 </library>

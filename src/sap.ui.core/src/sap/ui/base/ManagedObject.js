@@ -2171,7 +2171,7 @@ sap.ui.define([
 				that.unbindProperty(sName, true);
 			}
 		});
-		
+
 		jQuery.each(this.mBoundObjects, function(sName, oBoundObject) {
 			that.unbindObject(sName, /* _bSkipUpdateBindingContext */ true);
 		});
@@ -2580,7 +2580,7 @@ sap.ui.define([
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
-					// TODO remove the binding from the binding info or mark it somehow as "deactivated"? 
+					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
 				}
 			},
 			fDataStateChangeHandler = function(){
@@ -2643,7 +2643,7 @@ sap.ui.define([
 		if (this.refreshDataState) {
 			oBinding.attachAggregatedDataStateChange(fDataStateChangeHandler);
 		}
-	
+
 		// set only one formatter function if any
 		// because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility
 		// for formatter function which is now called by the property binding

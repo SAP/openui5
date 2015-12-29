@@ -190,12 +190,12 @@
 
 @sapUiUx3ShellBackgroundColor: @sapUiExtraLightBG;
 @sapUiUx3ShellHoverColor: @sapUiBaseText;
-/** 
+/**
   * This parameter is used in the Shell control to calculate the size when it grows.
-  * !!! ONLY PX-VALUES ARE ALLOWED HERE. 
+  * !!! ONLY PX-VALUES ARE ALLOWED HERE.
   */
 @sapUiUx3ShellSideBarBaseWidth:       40px;
-/** 
+/**
   * This parameter is used in the Shell control to calculate the size of the margin when showing
   * an overflow button in the right pane. As of 1.18.0 this value contains the _maximum_ height
   * of the overflow button, if the text inside the button is smaller, the button shrinks with it.
@@ -277,7 +277,7 @@
 // semantic colors
 @sapUiPositiveBG: @sapUiPositiveText; // no positive background defined by UX, but using text color as background may be confusing
 
-// default shadow for popups 
+// default shadow for popups
 @sapUiShadowTint: #000;
 @sapUiShadow: 5px 5px 10px fade(@sapUiShadowTint,50%);
 
@@ -290,21 +290,21 @@
 @sapUiMarginMedium : 2rem; /*make medium margin themable*/
 @sapUiMarginLarge  : 3rem; /*make large margin themable*/
 
-/* 
+/*
  * This is a mixin for creating the predefined container content padding
  * classes:
  * sapUiNoContainerContentPadding
  * sapUiContainerContentPadding
  * sapUiResponsiveContainerContentPadding
- * These classes can be set on many UI5 containers and will 
- * add padding inside the container's content padding based 
+ * These classes can be set on many UI5 containers and will
+ * add padding inside the container's content padding based
  * on the selectors that are arguments for this mixin.
  *
  * Arguments to this function-like mixin are the rootClass selector and
  * the content selector where the padding should be applied.
  */
- 
- /* 
+
+ /*
   * the sapLess-parser has problems with an escaped string as default value for the parameterized mixin
   * therefore we need to temporarily use a parameter assigning the default value
   */
@@ -344,7 +344,7 @@
 	.sapMSplitContainerMaster @{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
 		padding: 0;
 	}
-	
+
 	/* overrides the responsive settings for the split app detail page */
 	.sapMSplitContainerDetail @{rootClass}.sapUiResponsiveContentPadding @{contentSelector} {
 		padding: 1rem;

@@ -71,7 +71,7 @@
 
 		oControl.attachEvent("_rowsUpdated", fnEventHandler);
 	}
-	
+
 	function attachRowsUpdatedOnce(oControl, fnHandler, that) {
 		var fnEventHandler = function() {
 			jQuery.sap.delayedCall(iDelay, that, fnHandler);
@@ -79,7 +79,7 @@
 
 		oControl.attachEventOnce("_rowsUpdated", fnEventHandler, that);
 	}
-	
+
 	function attachRowsUpdated(oControl, fnHandler, that) {
 		var fnEventHandler = function() {
 			jQuery.sap.delayedCall(iDelay, that, fnHandler);
@@ -181,7 +181,7 @@
 				// expand first node, 2 change events, 1 for expand, 1 when data is loaded
 				attachEventHandler(this.oTable, 1, fnHandler2, this);
 				this.oTable.expand(0);
-				
+
 			};
 
 			// test expand next level

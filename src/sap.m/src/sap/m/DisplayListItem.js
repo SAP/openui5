@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	/**
 	 * Constructor for a new DisplayListItem.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
@@ -27,15 +27,15 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DisplayListItem = ListItemBase.extend("sap.m.DisplayListItem", /** @lends sap.m.DisplayListItem.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * Defines the label of the list item.
 			 */
 			label : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Defines the value of the list item.
 			 */

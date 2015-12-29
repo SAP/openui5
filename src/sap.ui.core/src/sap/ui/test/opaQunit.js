@@ -64,11 +64,11 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 		var testBody = function(assert) {
 			var fnStart = assert.async();
 			config.testName = testName;
-			
+
 			// provide current "assert" object to the tests
 			Opa.assert = assert;
 			Opa5.assert = assert;
-			
+
 			callback.call(this, config.arrangements, config.actions, config.assertions);
 
 			var promise = Opa.emptyQueue();

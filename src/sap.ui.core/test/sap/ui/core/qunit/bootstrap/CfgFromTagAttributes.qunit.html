@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.Configuration
   Author: d020684
 -->
@@ -9,8 +9,8 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<!-- Initialization -->
-	<script id="sap-ui-bootstrap" 
-			type="text/javascript" 
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="fantasy"
 			data-sap-ui-language="klingon"
@@ -20,14 +20,14 @@
 			data-sap-ui-debug="true"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-trace="true"
-			data-sap-ui-libs="sap.ui.commons" 
+			data-sap-ui-libs="sap.ui.commons"
 			data-sap-ui-modules="sap.ui.commons.Button"
 			data-sap-ui-areas="area-51"
 			data-sap-ui-onInit="window['I was here'] = 'u.g.a.d.m.k.';"
 			data-sap-ui-ignoreUrlParams="true"
 			>
 	</script>
-	
+
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -41,7 +41,7 @@
 		test("Settings", function() {
 			var oCfg = new sap.ui.core.Configuration();
 
-			// compare values where possible 
+			// compare values where possible
 			equal(oCfg.theme, "fantasy", "theme");
 			equal(oCfg.language, "klingon", "language");
 			equal(oCfg.accessibility, true, "accessibility");
@@ -50,7 +50,7 @@
 			equal(oCfg.debug, true, "debug");
 			equal(oCfg.noConflict, true, "noConflict");
 			equal(oCfg.trace, true, "trace");
-			// Note: libs and modules can not be checked in that simple way, see below   
+			// Note: libs and modules can not be checked in that simple way, see below
 			equal(oCfg.areas, "area-51", "areas");
 			equal(typeof oCfg.onInit, "string", "onInit");
 			equal(oCfg.ignoreUrlParams, true, "ignoreUrlParams");
@@ -67,9 +67,9 @@
 			ok(window.jQuery, "window.jQuery is available");
 			ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
 		});
-		
+
 	</script>
-  
+
 </head>
 <body>
 	<h1 id="qunit-header">QUnit tests: SAPUI5 Configuration (from data-sap-ui-<i>xyz</i> attributes)</h1>

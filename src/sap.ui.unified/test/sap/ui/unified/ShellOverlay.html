@@ -5,9 +5,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 	<title>Shell - sap.ui.unified</title>
-	<script src="../../../../resources/sap-ui-core.js" 
-	        type="text/javascript" 
-	        id="sap-ui-bootstrap"            
+	<script src="../../../../resources/sap-ui-core.js"
+	        type="text/javascript"
+	        id="sap-ui-bootstrap"
 	        data-sap-ui-libs="sap.ui.unified"
 	        data-sap-ui-theme="sap_bluecrystal">
 	</script>
@@ -35,14 +35,14 @@
 				icon: sap.ui.core.IconPool.getIconURI("log")
 			})]
 		});
-		oShell.placeAt("content");	
-		
+		oShell.placeAt("content");
+
 		oShell.setUser(new sap.ui.unified.ShellHeadUserItem({
 			image: "images/person.jpg",
 			username: "Karl Mustermann",
 			press: function(){alert("User Item pressed");}
 		}));
-		
+
 		function sizeChanged(mParams){
 			var bSmallSize = mParams.name === "Phone";
 			oShell.getHeadEndItems()[0].setVisible(bSmallSize);
@@ -50,7 +50,7 @@
 		};
 		sap.ui.Device.media.attachHandler(sizeChanged, null, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 		sizeChanged(sap.ui.Device.media.getCurrentRange(sap.ui.Device.media.RANGESETS.SAP_STANDARD));
-		
+
 		var oOverlay = new sap.ui.unified.ShellOverlay({
 			search: createTestSearchField("sf2"),
 			content: [new sap.ui.commons.Button({text: "Some Button"}), new sap.ui.commons.TextView({text: window.sLorem})],
@@ -60,7 +60,7 @@
 			shell: oShell,
 			ariaLabelledBy: ["OverlyTitle"]
 		});
-		
+
 		(new sap.ui.core.InvisibleText("OverlyTitle", {text: "Search Dialog"})).toStatic();
 	</script>
 </head>

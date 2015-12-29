@@ -12,14 +12,14 @@
 		<m:content>
 			<m:Label text="Selection Mode" labelFor="select1"/>
 			<m:Select id="select1" width="100%" items="{selectionmodel>/selectionitems}" selectedKey="MultiToggle" change="onSelectionModeChange">
-				<c:Item key="{selectionmodel>key}" text="{selectionmodel>text}"/>	
+				<c:Item key="{selectionmodel>key}" text="{selectionmodel>text}"/>
 			</m:Select>
-			
+
 			<m:Label text="Selection Behavior" labelFor="select2"/>
 			<m:Select id="select2" width="100%" items="{selectionmodel>/behavioritems}" selectedKey="RowSelector" change="onBehaviourModeChange">
-				<c:Item key="{selectionmodel>key}" text="{selectionmodel>text}"/>	
+				<c:Item key="{selectionmodel>key}" text="{selectionmodel>text}"/>
 			</m:Select>
-			
+
 			<Table id="table1"
 				rows="{/ProductCollection}"
 				selectionMode="MultiToggle"
@@ -42,15 +42,15 @@
 								tooltip="clear selection"
 								press="clearSelection"/>
 							<m:Switch
-								state="true" 
-								customTextOn="on" 
+								state="true"
+								customTextOn="on"
 								customTextOff="off"
 								tooltip="enable select all items"
 								change="onSwitchChange"/>
 						</m:content>
 					</m:Toolbar>
 				</toolbar>
-				
+
 				<columns>
 					<Column width="11rem">
 						<m:Label text="Product Name" />
@@ -143,7 +143,7 @@
 					</Column>
 				</columns>
 			</Table>
-			
+
 		</m:content>
 	</m:Page>
 </mvc:View>

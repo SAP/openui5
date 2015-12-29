@@ -2,18 +2,18 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+
 		<title>ActionSheet - sap.m</title>
 		<style type="text/css">
  			body{
  				overflow: hidden;
  			}
- 			
+
  			.newButton.sapMBtn{
  				margin-right: 1em;
  			}
 		</style>
-		
+
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
@@ -21,13 +21,13 @@
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
 		<script type="text/javascript">
-		
+
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
-			
+
 			var oList2 = new sap.m.List({
 				inset : true
 			});
-			
+
 			var data = {
 				navigation : [ {
 					title : "Travel Expend",
@@ -66,7 +66,7 @@
 					press : 'detailPage'
 				} ]
 			};
-			
+
 			var oItemTemplate1 = new sap.m.StandardListItem({
 				title : "{title}",
 				description : "{description}",
@@ -74,7 +74,7 @@
 				iconInset : "{iconInset}",
 				type : "{type}"
 			});
-			
+
 			function bindListData(data, itemTemplate, list)
 			{
 				var oModel = new sap.ui.model.json.JSONModel();
@@ -86,9 +86,9 @@
 				// bind Aggregation
 				list.bindAggregation("items", "/navigation", itemTemplate);
 			}
-			
+
 			bindListData(data, oItemTemplate1, oList2)
-			
+
 			var oActionSheet = new sap.m.ActionSheet("actionSheet1", {
 				showCancelButton: false,
 				buttons: [
@@ -151,7 +151,7 @@
 					})
 				})
 			});
-			
+
 			app.addPage(page1).placeAt("content");
 		</script>
 

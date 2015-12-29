@@ -18,10 +18,10 @@
 <script type="text/javascript">
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 	jQuery.sap.require("sap.ui.model.odata.ODataModel");
-	
+
 	var sServiceURI = "/service/" ;
 	var sMetaDataURI = "qunit/data/";
-	
+
 	// configure respond to requests delay
 	sap.ui.core.util.MockServer.config({
 		autoRespond : true,
@@ -37,7 +37,7 @@
 	oMockServer.simulate(sMetaDataURI + "metadata.xml", sMetaDataURI);
 	oMockServer.start();
 
-	// controls 
+	// controls
 	var oTemplate = new sap.m.StandardListItem({
 		title : "{product>Name}",
 		description : "{product>ShortDescription}",
@@ -81,18 +81,18 @@
 		mode: sap.m.ListMode.MultiSelect,
 		showNoData: true
 	});
-	
+
 	var oPage = new sap.m.Page({
 		title : "Growing List Testpage",
 		footer : new sap.m.Bar({})
 	});
-	
+
 	// list properties
 	var oGrowingModel = new sap.ui.model.json.JSONModel();
 	oGrowingModel.setData({ threshold : 2, scrollToLoad : true });
 	oList.setModel(oGrowingModel, "growing");
 	oPage.setModel(oGrowingModel, "growing");
-	
+
 	// odata model
 	var oModel = new sap.ui.model.odata.ODataModel(sServiceURI, true);
 	oList.setModel(oModel, "product");
@@ -102,7 +102,7 @@
 		path : "product>/Products",
 		template : oTemplate
 	});
-	
+
 	var oToolbar = new sap.m.Toolbar({
 		design: "Solid",
 		content : [
@@ -138,10 +138,10 @@
 			})
 		]
 	});
-	
+
 	oPage.addContent(oToolbar);
 	oPage.addContent(oList);
-	
+
 	var oApp = new sap.m.App({
 		pages : [oPage]
 	}).placeAt("body");

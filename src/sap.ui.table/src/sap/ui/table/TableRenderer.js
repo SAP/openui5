@@ -545,7 +545,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oTable.getFixedColumnCount() === iIndex + 1) {
 			rm.addClass("sapUiTableColLastFixed");
 		}
-		
+
 		rm.writeClasses();
 		rm.addStyle("width", oColumn.getWidth());
 		if (oTable.getColumnHeaderHeight() > 0) {
@@ -868,7 +868,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		var aVisibleColumns = oTable._getVisibleColumns();
 		var bHasOnlyFixedColumns = oTable._hasOnlyFixColumnWidths();
-		
+
 		// render the table rows
 		var aRows = oTable.getRows();
 		// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
@@ -967,7 +967,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			}
 			rm.write("</td>");
 		}
-		
+
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {
 			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns);
 		}
@@ -1077,14 +1077,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.writeClasses();
 			rm.write("><div");
 			rm.addClass("sapUiTableCell");
-			
+
 			rm.writeClasses();
-			
+
 			if (oTable.getRowHeight() && oTable.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
 				rm.addStyle("max-height", oTable.getRowHeight() + "px");
 			}
 			rm.writeStyles();
-			
+
 			rm.write(">");
 			this.renderTableCellControl(rm, oTable, oCell, iCellIndex);
 			rm.write("</div></td>");

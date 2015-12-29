@@ -66,7 +66,7 @@ sap.ui.define([
 				MessageBox.alert("Complete your input first.");
 			}
 		},
-	
+
 		/**
 		 * This is a custom model type for validating email
 		 */

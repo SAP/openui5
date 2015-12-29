@@ -104,7 +104,7 @@
 			<Association Name="CarrierToFlight">
 				<End Type="RMTSAMPLEFLIGHT_2.Carrier" Role="FromRole_CarrierToFlight" Multiplicity="1" />
 				<End Type="RMTSAMPLEFLIGHT_2.Flight" Role="ToRole_CarrierToFlight" Multiplicity="*" />
-			</Association>			
+			</Association>
 			<EntityContainer Name="RMTSAMPLEFLIGHT_2_Entities"
 				m:IsDefaultEntityContainer="true">
 				<EntitySet Name="FlightCollection" EntityType="RMTSAMPLEFLIGHT_2.Flight"
@@ -137,8 +137,8 @@
 					<String>AirLineID Annotation</String>
 				</Annotation>
 			</Annotations>
-			
-			
+
+
 		</Schema>
 	</edmx:DataServices>
 </edmx:Edmx>

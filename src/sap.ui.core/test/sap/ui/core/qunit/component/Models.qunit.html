@@ -293,17 +293,17 @@
 				useBatch: true,
 				refreshAfterChange: true,
 			});
-			
+
 			//JSON Model, should not have an origin
 			// model: json
 			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
-			
+
 			//ResourceModel should also not have an origin attached
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
 				bundleName: "sap.ui.test.v2models.parent.i18n"
 			});
-			
+
 			// destroy the component
 			this.oComponent.destroy();
 
@@ -314,7 +314,7 @@
 			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
 
 		});
-		
+
 		QUnit.test("metadata v2 with sap-system startup parameter", function(assert) {
 			this.mockGetUriParameters();
 			this.mockModels();
@@ -353,17 +353,17 @@
 				useBatch: true,
 				refreshAfterChange: true,
 			});
-			
+
 			//JSON Model, should not have an origin
 			// model: json
 			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
-			
+
 			//ResourceModel should also not have an origin attached
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
 				bundleName: "sap.ui.test.v2models.parent.i18n"
 			});
-			
+
 			// destroy the component
 			this.oComponent.destroy();
 
@@ -374,7 +374,7 @@
 			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
 
 		});
-		
+
 		QUnit.test("metadata v2 with dataSources (empty inheritance)", function(assert) {
 			this.mockGetUriParameters();
 			this.mockModels();

@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	Binding.prototype.getMessages = function() {
 		return this.vMessages;
 	};
-	
+
 	/**
 	 * Returns the data state for this binding
 	 * @return {sap.ui.model.DataState} the data state
@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		}
 		return this.oDataState;
 	};
-	
+
 	/**
 	 * Getter for model
 	 * @return {sap.ui.core.Model} the model
@@ -137,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			this.oModel.removeBinding(this);
 		}
 	};
-	
+
 	/**
 	 * Fire event dataStateChange to attached listeners.
 
@@ -319,10 +319,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			}
 		}
 	};
-	
+
 	/**
 	 * Updates the data state and returns it.
-	 * 
+	 *
 	 * @returns {sap.ui.model.DataStata} The data state
 	 * @private
 	 */
@@ -331,13 +331,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		if (this.oModel && this.sPath) {
 			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath)); 
+				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
 				oDataState.setLaundering(this.oModel.isLaundering(this.sPath, this.oContext));
 			}
 		}
 		return oDataState;
 	};
-	
+
 	/**
 	 * Refreshes the binding, check whether the model data has been changed and fire change event
 	 * if this is the case. For server side models this should refetch the data from the server.
@@ -465,7 +465,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	/**
 	 * Suspends the binding update. No change events will be fired.
-	 * 
+	 *
 	 * @public
 	 */
 	Binding.prototype.suspend = function() {
@@ -474,7 +474,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	/**
 	 * Resumes the binding update. Change events will be fired again.
-	 * 
+	 *
 	 * @public
 	 */
 	Binding.prototype.resume = function() {

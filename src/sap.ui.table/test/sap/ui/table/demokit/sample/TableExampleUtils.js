@@ -6,15 +6,15 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	"sap/ui/core/format/DateFormat"
 ], function (JSONModel, Popover, List, FeedListItem, DateFormat) {
 	"use strict";
-	
+
 	var Utils = {};
-	
+
 	// Access explored demo data, enrich it and return a JSONModel containing the data
 	Utils.initSampleDataModel = function() {
 		var oModel = new JSONModel();
-		
+
 		var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
-		
+
 		jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
 			dataType: "json",
 			success: function (oData) {
@@ -37,28 +37,28 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 					oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
 					oProduct.Available = oProduct.Status == "Available" ? true : false;
 				}
-				
+
 				oData.Suppliers = aSuppliersData;
 				oData.Categories = aCategoryData;
-				
+
 				oModel.setData(oData);
 			}.bind(this),
 			error: function () {
 				jQuery.sap.log.error("failed to load json");
 			}
 		});
-		
+
 		return oModel;
 	};
-	
+
 	Utils.formatAvailableToObjectState = function (bAvailable) {
 		return bAvailable ? "Success" : "Error";
 	};
-	
+
 	Utils.formatAvailableToIcon = function(bAvailable) {
 		return bAvailable ? "sap-icon://accept" : "sap-icon://decline";
 	};
-	
+
 	Utils.showInfo = function(aItems, oBy) {
 		if (typeof(aItems) == "string") {
 			jQuery.ajax(aItems, {
@@ -70,7 +70,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 			});
 			return;
 		}
-		
+
 		var oPopover = new Popover({
 			showHeader: false,
 			placement: "Auto",
@@ -91,14 +91,14 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 				})
 			]
 		});
-		
+
 		jQuery.sap.syncStyleClass("sapUiSizeCompact", oBy, oPopover);
 		jQuery.sap.syncStyleClass("sapUiSizeCozy", oBy, oPopover);
 		oPopover.setModel(new JSONModel({items: aItems}));
 		oPopover.openBy(oBy, true);
 	};
-	
+
 
 	return Utils;
-	
+
 }, true /* bExport */);

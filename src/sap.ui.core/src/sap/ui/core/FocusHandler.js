@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 			if (!sControlId) {
 				return null;
 			}
-			
+
 			var oControl = this.oCore.byId(sControlId);
 			if (oControl) {
 				return {

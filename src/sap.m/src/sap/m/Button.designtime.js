@@ -6,7 +6,7 @@
 sap.ui.define([],
 	function() {
 	"use strict";
-	
+
 	return {
 		defaultSettings : {
 			"text" : "Button",
@@ -26,5 +26,5 @@ sap.ui.define([],
 		name: "{name}",
 		description: "{description}"
 	};
-	
+
 }, /* bExport= */ false);

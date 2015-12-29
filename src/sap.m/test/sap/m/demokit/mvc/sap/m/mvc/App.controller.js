@@ -6,7 +6,7 @@ sap.ui.controller("sap.m.mvc.App", {
 
 		// to avoid scrollbars on desktop the root view must be set to block display
 		view.setDisplayBlock(true);
-		
+
 		// Data is fetched here
 		jQuery.ajax("Data.json", {   // load the data from a relative URL (the Data.json file in the same directory)
 			dataType: "json",
@@ -18,7 +18,7 @@ sap.ui.controller("sap.m.mvc.App", {
 
 		// remember the App Control
 		this.app = view.byId("theApp");
-		
+
 		this.app.setHomeIcon({
 			'phone' : 'img/57_iPhone_Desktop_Launch.png',
 			'phone@2' : 'img/114_iPhone-Retina_Web_Clip.png',
@@ -27,7 +27,7 @@ sap.ui.controller("sap.m.mvc.App", {
 			'favicon' : 'img/favicon.ico',
 			'precomposed': false
 		});
-		
+
 		// subscribe to event bus
 		var bus = sap.ui.getCore().getEventBus();
 		bus.subscribe("nav", "to", this.navToHandler, this);

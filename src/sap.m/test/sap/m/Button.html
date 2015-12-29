@@ -12,7 +12,7 @@
 </script>
 
 <style type="text/css">
-.ButtonSpace { 
+.ButtonSpace {
 	display: inline;
 	position: relative;
 }
@@ -140,7 +140,7 @@
 	var oPage1 = new sap.m.Page("myPage1", {
 		title: "Mobile Button Control",
 		customHeader : new sap.m.Bar({
-			contentLeft: [ oButtonBarButtonSample = new sap.m.Button('myBarButtonSample', {text:"Test Button To Show Changes", tooltip:"Tooltip Test", type:sap.m.ButtonType.Default, press: function() {oHelper.alert("event: 'press' on " + oButtonBarButtonSample)} }) ],	
+			contentLeft: [ oButtonBarButtonSample = new sap.m.Button('myBarButtonSample', {text:"Test Button To Show Changes", tooltip:"Tooltip Test", type:sap.m.ButtonType.Default, press: function() {oHelper.alert("event: 'press' on " + oButtonBarButtonSample)} }) ],
 			contentMiddle: [ new sap.m.Label("myBarLabel", {text: "Button Testpage"}) ],
 			contentRight: [ oButtonBarButtonIcon1 = new sap.m.Button('myBarButtonIcon1', {icon: sStoreIconURI}),
 							oButtonBarButtonIcon2 = new sap.m.Button('myBarButtonIcon2', {icon: sNotesIconURI, enabled: false}) ]
@@ -161,13 +161,13 @@
 			contentMiddle:[ new sap.m.Button({text:"Back", type:sap.m.ButtonType.Back}),
 							new sap.m.Button({text:"Up", type:sap.m.ButtonType.Up}),
 							new sap.m.Button({text:"Yes", type:sap.m.ButtonType.Accept}),
-							new sap.m.Button({text:"No", type:sap.m.ButtonType.Reject, icon: "./images/action.png", enabled:false}), 	
-							new sap.m.Button({text:"Trans", type:sap.m.ButtonType.Transparent}), 
+							new sap.m.Button({text:"No", type:sap.m.ButtonType.Reject, icon: "./images/action.png", enabled:false}),
+							new sap.m.Button({text:"Trans", type:sap.m.ButtonType.Transparent}),
 							new sap.m.Button({text:"Off", type:sap.m.ButtonType.Default,  icon: "sap-icon://favorite", enabled:false}) ],
 			contentRight: [	new sap.m.Button({icon: sStoreIconURI}),
 							new sap.m.Button({text:"", type:sap.m.ButtonType.Default, icon: sNotesIconURI, enabled: false}) ]
-		}) 
-	});	
+		})
+	});
 
 	var oBar2 = new sap.m.Bar({
 		contentLeft: [ new sap.m.Button({text:"Default", type:sap.m.ButtonType.Default, enabled:false}) ],
@@ -277,7 +277,7 @@
 		press : function() {
 			oHelper.width100Percent(oButtonBarButtonSample)
 		}
-	});	
+	});
 
 	var oButtonBarWidthReset = new sap.m.Button("myButtonBarWidthReset", {
 		type: sap.m.ButtonType.Default,
@@ -286,7 +286,7 @@
 		press : function() {
 			oHelper.widthReset(oButtonBarButtonSample)
 		}
-	});	
+	});
 
 	var oButtonBarAddImage = new sap.m.Button("myButtonBarAddImage", {
 		type: sap.m.ButtonType.Default,
@@ -520,7 +520,7 @@
 		press : function() {
 			oHelper.width100Percent(oButtonSample)
 		}
-	});	
+	});
 
 	var oButtonWidth50Percent = new sap.m.Button("myButtonWidth50Percent", {
 		type: sap.m.ButtonType.Default,
@@ -529,7 +529,7 @@
 		press : function() {
 			oHelper.width50Percent(oButtonSample)
 		}
-	});	
+	});
 
 	var oButtonWidthReset = new sap.m.Button("myButtonWidthReset", {
 		type: sap.m.ButtonType.Default,
@@ -538,7 +538,7 @@
 		press : function() {
 			oHelper.widthReset(oButtonSample)
 		}
-	});	
+	});
 
 	var oButtonAddImage = new sap.m.Button("myButtonAddImage", {
 		type: sap.m.ButtonType.Default,

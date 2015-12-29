@@ -22,7 +22,7 @@
 						text="Clear Draft state"
 						width="200px"
 						press="handleClearDraftStatePress" />
-				
+
 				<DraftIndicator id="draftIndi"></DraftIndicator>
 			</l:content>
 		</l:VerticalLayout>

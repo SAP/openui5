@@ -253,7 +253,7 @@
 			notEqual(oParentWithAttribute, null, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test') is null)");
 
 			equal(oParentWithAttribute.getAttribute('data-sap-ui-test'), "true", "jQuery(oDomRef).parentByAttribute('data-sap-ui-test').getAttribute('data-sap-ui-test') should be 'true'");
-			
+
 			var oParentWithAttributeFalse = jQuery(oDomRef).parentByAttribute("data-sap-ui-test", "false");
 			ok(!oParentWithAttributeFalse, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'false') should be undefined");
 
@@ -331,7 +331,7 @@
 			// cleanup
 			document.body.removeChild(oDomRef);
 		});
-		
+
 		test("jQuery aria extensions", function() {
 			var $El = jQuery("<div>Aria Test</div>");
 			jQuery(document.body).append($El);
@@ -373,7 +373,7 @@
 
 			$El.remove();
 		});
-		
+
 		test("DOMPatching", function() {
 			var $Ref = jQuery('' +
 			'<div id="id" title="Ref" style="color:black" class="x" tabindex="-1">' +
@@ -405,8 +405,8 @@
 
 			$Ref.remove();
 		});
-		
-		
+
+
 		</script>
 	</head>
 	<body>

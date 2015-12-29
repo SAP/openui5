@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			fnOnDown = jQuery.proxy(function(oEvent) {
 				var oTiles = this._getVisibleTiles();
-				
+
 				if (this._iCurrentFocusIndex >= 0) {
 					var iModCurr = this._iCurrentFocusIndex % this._iMaxTiles,
 						iNextIndex = this._iCurrentFocusIndex + this._iMaxTilesX,
@@ -312,7 +312,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			fnOnUp = jQuery.proxy(function(oEvent) {
 				var oTiles = this._getVisibleTiles();
-				
+
 				if (this._iCurrentFocusIndex >= 0) {
 					var iModCurr = this._iCurrentFocusIndex % this._iMaxTiles,
 						iNextIndex = this._iCurrentFocusIndex - this._iMaxTilesX,
@@ -337,7 +337,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			fnOnDelete = jQuery.proxy(function(oEvent) {
 				var oTiles = this._getVisibleTiles();
-				
+
 				if (this._iCurrentFocusIndex >= 0 && this.getEditable()) {
 					var oTile = oTiles[this._iCurrentFocusIndex];
 
@@ -1729,7 +1729,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @protected
 	 */
 	TileDimensionCalculator.prototype.calc = function() {
-		var aVisibleTiles, 
+		var aVisibleTiles,
 			oTile;
 
 		if (!this._oTileContainer.getDomRef()) {
@@ -1739,7 +1739,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._oTileContainer._getVisibleTiles().length) {
 			//All tiles have fixed with, defined in the corresponding tile css/less file. So use the first.
 			aVisibleTiles = this._oTileContainer._getVisibleTiles();
-			
+
 			if (aVisibleTiles.length) {
 				oTile = aVisibleTiles[0];
 				this._oDimension = {
@@ -1797,7 +1797,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					return oTile.getVisible();
 				});
 	};
-	
+
 	return TileContainer;
 
 }, /* bExport= */ true);

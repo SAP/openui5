@@ -14,7 +14,7 @@ function(jQuery, ManagedObject) {
 	/**
 	 * Constructor for a new DesignTimeMetadata.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
@@ -98,7 +98,7 @@ function(jQuery, ManagedObject) {
 			visible : true,
 			needDelegateFromParent : false
 		}, oData);
-	};	
+	};
 
 	/**
 	 * Returns a name defined in the DT metadata
@@ -165,7 +165,7 @@ function(jQuery, ManagedObject) {
 	 */
 	DesignTimeMetadata.prototype.getAggregationDomRef = function(sAggregationName) {
 		return this.getAggregation(sAggregationName).domRef;
-	};	
+	};
 
 	return DesignTimeMetadata;
 }, /* bExport= */ true);

@@ -6,7 +6,7 @@ sap.ui.jsview("sap.m.mvc.DetailPage", {
 
 	/**
 	 * Creates the UI of this View
-	 * 
+	 *
 	 * @returns {sap.ui.core.Control}
 	 */
 	createContent: function(oController) {
@@ -25,32 +25,32 @@ sap.ui.jsview("sap.m.mvc.DetailPage", {
 			 	new sap.m.DisplayListItem({label:"Capital:",value:"{detailInfo/capital}"}),
 			 	new sap.m.DisplayListItem({label:"Population:",value:{
 			 		path:"detailInfo/population",
-			 		formatter:function(iValue){ 
+			 		formatter:function(iValue){
 			 			var oFormatter = sap.ui.core.format.NumberFormat.getIntegerInstance({  // format the population count
 			 				groupingEnabled: true,
 			 				groupingSeparator: "."
-			 			}); 
+			 			});
 			 			return oFormatter.format(iValue);
 			 		}
 			 	}}),
 			 	new sap.m.DisplayListItem({label:"Currency:",value:"{detailInfo/currency}"}),
 			 	new sap.m.DisplayListItem({label:"Area:",value:{
 			 		path:"detailInfo/area",
-			 		formatter:function(iValue){ 
+			 		formatter:function(iValue){
 			 			var oFormatter = sap.ui.core.format.NumberFormat.getIntegerInstance({  // format the population count
 			 				groupingEnabled: true,
 			 				groupingSeparator: "."
-			 			}); 
+			 			});
 			 			var formattedNumber = oFormatter.format(iValue);
 			 			return formattedNumber + " sq km";
 			 		}
 			 	}})
 			 ]});
 		oPage.addContent(oList);
-		
+
 		var oFlagArea = new sap.m.VBox({
 			alignItems: sap.m.FlexAlignItems.Center,
-			items: 
+			items:
 				[
 					new sap.m.Label({text:"Flag:"}),
 					new sap.m.Image({src:"{detailInfo/flagUrl}",decorative:true,densityAware:false})

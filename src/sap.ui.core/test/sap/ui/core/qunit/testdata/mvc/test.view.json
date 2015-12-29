@@ -21,12 +21,12 @@
 			"Type":"sap.ui.core.mvc.JSONView",
 			"viewName":"example.mvc.test2",
 			"id":"MyJSONView"
-		},		
+		},
 		{
 			"Type":"sap.ui.core.mvc.JSView",
 			"viewName":"example.mvc.test2",
 			"id":"MyJSView"
-		},		
+		},
 		{
 			"Type":"sap.ui.core.mvc.XMLView",
 			"viewName":"example.mvc.test2",

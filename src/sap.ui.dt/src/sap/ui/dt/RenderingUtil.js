@@ -11,7 +11,7 @@ function(jQuery) {
 
 	/**
 	 * Class for RenderingUtil.
-	 * 
+	 *
 	 * @class
 	 * Utility functionality to work with élements, e.g. iterate through aggregations, find parents, ...
 	 *
@@ -28,7 +28,7 @@ function(jQuery) {
 	var RenderingUtil = {};
 
 	/**
-	 * 
+	 *
 	 */
 	RenderingUtil.renderOverlay = function(oRm, oOverlay, sClassName) {
 		if (oOverlay.getDomRef()) {
@@ -55,7 +55,7 @@ function(jQuery) {
 		this._renderChildren(oRm, oOverlay);
 
 		oRm.write("</div>");
-	};		
+	};
 
 	/**
 	 */
@@ -63,9 +63,9 @@ function(jQuery) {
 		var aChildrenOverlays = oOverlay.getChildren();
 		aChildrenOverlays.forEach(function(oChildOverlay) {
 			oRm.renderControl(oChildOverlay);
-		});	
+		});
 	};
-	
+
 	/**
 	 */
 	RenderingUtil._triggerOnAfterRenderingWithoutRendering = function(oRm, oOverlay) {

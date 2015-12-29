@@ -156,7 +156,7 @@
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 			}
 		});
-		
+
 		var oSavingDraftButton = new sap.m.Button({
 			text: "show Saving Draft",
 			press: function () {
@@ -177,7 +177,7 @@
 				draftInd.clearDraftState();
 			}
 		});
-		
+
 		function createPageSelect() {
 			return new sap.m.Select({
 				selectedKey: "{status>/selectedPageId}",
@@ -1096,7 +1096,7 @@
 				oClearWarningsButton
 			]
 		});
-		
+
 		var oModifyDraftBox = new sap.m.HBox({
 			items: [
 				oSavingDraftButton,

@@ -60,7 +60,7 @@ sap.ui.define([
 
 	/**
 	 * Called when the ManagedObjectObserver is created
-	 * 
+	 *
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.init = function() {
@@ -68,7 +68,7 @@ sap.ui.define([
 
 	/**
 	 * Called when the ManagedObjectObserver is destroyed
-	 * 
+	 *
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.exit = function() {
@@ -80,7 +80,7 @@ sap.ui.define([
 
 	/**
 	 * Sets a target ManagedObject to observe
-	 * 
+	 *
 	 * @param {string|sap.ui.base.ManagedObject} vTarget id or managed object to set
 	 * @return {sap.ui.dt.ManagedObjectObserver} returns this
 	 */
@@ -102,7 +102,7 @@ sap.ui.define([
 
 	/**
 	 * Starts observing the target object. Override this method in classes wich extend ManagedObjectObserver.
-	 * 
+	 *
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to observe
 	 * @protected
 	 */
@@ -280,7 +280,7 @@ sap.ui.define([
 			that._aOriginalAddMutators[oAggregation.name] = _fnOriginalAddMutator;
 			oTarget[oAggregation._sMutator] = function(oObject) {
 				that._bAddOrSetAggregationCall = false;
-				
+
 				var vOriginalReturn;
 				// if the mutator is overwritten and inside of the mutator control is temporary detached from root control tree,
 				// overlay destruction should be prevented. For instance, if the label is inserted to SimpleForm content,
@@ -392,7 +392,7 @@ sap.ui.define([
 
 	/**
 	 * Stops observing the target object. Override this method in classes wich extend ManagedObjectObserver.
-	 * 
+	 *
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to unobserve
 	 * @protected
 	 */

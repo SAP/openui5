@@ -210,7 +210,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 		if (!sResolvedPath) {
 			return false;
 		}
-		
+
 		// If data is set on root, call setData instead
 		if (sResolvedPath == "/") {
 			this.setData(oValue);

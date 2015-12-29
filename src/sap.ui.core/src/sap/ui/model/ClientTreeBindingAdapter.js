@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
- 
+
 // Provides class sap.ui.model.odata.ODataAnnotations
 sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ClientTreeBinding', './TreeBindingAdapter', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason'],
 	function(jQuery, TreeBinding, ClientTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason) {
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				return ClientTreeBinding.prototype.hasChildren.call(this, oNode.context);
 			}
 		};
-		
+
 		ClientTreeBindingAdapter.prototype.resetData = function(oContext, mParameters) {
 			var vReturn = ClientTreeBinding.prototype.resetData.call(this, oContext, mParameters);
 

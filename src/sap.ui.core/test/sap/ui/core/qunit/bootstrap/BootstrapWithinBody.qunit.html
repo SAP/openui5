@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <!--
   Tests the bootstrap variant where the bootstrap tag is part of the body.
-  
-  @author Frank Weigel    
+
+  @author Frank Weigel
   -->
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>...</title>
-    		
+
 		<!-- Initialization -->
 		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -28,7 +28,7 @@
 			});
 
 			test("Check boot() has run", function() {
-				
+
 				var id = jQuery("html").attr("data-sap-ui-browser");
 				ok(typeof id === "string", "id exists");
 				ok(id !== "", "id not empty");
@@ -38,12 +38,12 @@
             	ok(!sap.ui.commons.Button.prototype.attachPress, "control not initialized");
             	new sap.ui.commons.Button();
             	ok(typeof sap.ui.commons.Button.prototype.attachPress === "function", "control lazily loaded initialized");
-			}); 
+			});
 
 		</script>
-		
+
 	</head>
-	
+
     <body class="sapUiBody" role="application">
 		<h1 id="qunit-header">Bootstrap Variant 'within Body'</h1>
 		<h2 id="qunit-banner"></h2>
@@ -52,14 +52,14 @@
 		<ol id="qunit-tests"></ol>
 		<br>
 	    <div id="uiArea"></div>
-	    
-		<script id="sap-ui-bootstrap" 
-				type="text/javascript" 
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
 				src="../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.ui.commons" 
+				data-sap-ui-libs="sap.ui.commons"
 				>
-		</script>    
+		</script>
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	    
+
     </body>
 </html>

@@ -16,5 +16,5 @@
 	      	<Text text="Since we do apply horizontal margins in this case, we have to set the panel's width to 'auto'." />
 	    </content>
 	</Panel>
-	
+
 </mvc:View>

@@ -25,9 +25,9 @@
 
 <!-- Test functions -->
 <script language="javascript" charset="utf-8"> // IE needs this :-/
-	
+
 	var oModel;
-	
+
 	function spyDataState(oControl, fnTest) {
 		if (oControl.refreshDataState) {
 			var fnRefresh = oControl.refreshDataState;
@@ -38,7 +38,7 @@
 			}
 		}
 	};
-	//create some components for testing 
+	//create some components for testing
 	sap.ui.localResources("components");
 	var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
 		name: "components",
@@ -54,11 +54,11 @@
 		id: "myMessageTest3",
 		handleValidation: true
 	});
-	
+
 	oCompCont.placeAt("content");
 	oCompCont2.placeAt("content");
 	oCompCont3.placeAt("content");
-	
+
 	var initModel = function(sType) {
 		if (sType === "json") {
 			oModel = new sap.ui.model.json.JSONModel();
@@ -77,9 +77,9 @@
 	}
 	module("MessageManager components", {
 		setup : function() {
-			initModel("json");	
+			initModel("json");
 		},
-		
+
 		teardown : function() {
 			oModel.destroy();
 		}
@@ -89,7 +89,7 @@
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip_enabled");
-		
+
 		spyDataState(oCompZip, function(sName, oDataState) {
 			ok(oDataState.getMessages().length == 1, 'Format Message created');
 			ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
@@ -100,7 +100,7 @@
 		};
 		sap.ui.getCore().attachValidationError(oCoreValHandler);
 		oCompZip.setValue('123456');
-		
+
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oCompZip, function(sName, oDataState) {
 				ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
@@ -111,14 +111,14 @@
 			oCompZip.setValue('12345');
 			sap.ui.getCore().detachValidationError(oCoreValHandler);
 		});
-				
+
 	});
-	
+
 	test("componentDisabled", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip_disabled");
-		
+
 		var oValHandler = function(oEvent) {
 			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
 				ok(false,"should never be called");
@@ -130,7 +130,7 @@
 		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 		sap.ui.getCore().detachValidationError(oValHandler);
 	});
-	
+
 	test("component handle validation undefined", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();

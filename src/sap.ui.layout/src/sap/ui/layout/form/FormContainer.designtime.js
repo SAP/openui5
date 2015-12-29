@@ -6,7 +6,7 @@
 sap.ui.define([],
 	function() {
 	"use strict";
-	
+
 	return {
 		aggregations : {
 			formElements : {
@@ -16,5 +16,5 @@ sap.ui.define([],
 		name: "{name}",
 		description: "{description}"
 	};
-	
+
 }, /* bExport= */ true);

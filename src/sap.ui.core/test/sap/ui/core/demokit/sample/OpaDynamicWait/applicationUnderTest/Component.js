@@ -30,7 +30,7 @@ sap.ui.define([
 									name: "subsubitem3"
 								}
 							}
-						
+
 						},
 						1:{
 							name: "item2",
@@ -38,7 +38,7 @@ sap.ui.define([
 								name: "subitem3"
 							}
 						}
-					
+
 					}
 			};
 			var oModel = new JSONModel(oData);

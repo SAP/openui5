@@ -164,10 +164,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	}});
 
 
-	
 
 
-	
+
+
 
 
 	/** default filter type for the columns */
@@ -570,18 +570,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 				// reset the sorting status of all columns
 				var aSorters = [];
 				var aSortedCols = oTable._aSortedColumns;
-				
+
 				var aCols = oTable.getColumns();
-				
+
 				for (var i = 0, l = aCols.length; i < l; i++) {
-					
+
 					aCols[i].setProperty("sorted", false, true);
 					aCols[i].setProperty("sortOrder", sap.ui.table.SortOrder.Ascending, true);
 					aCols[i]._renderSortIcon();
 					if (jQuery.inArray(aCols[i], aSortedCols) < 0) {
 						delete aCols[i]._oSorter;
 					}
-						
+
 				}
 
 				for (var i = 0, l = aSortedCols.length; i < l; i++) {

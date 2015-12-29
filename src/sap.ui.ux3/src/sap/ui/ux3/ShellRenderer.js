@@ -8,15 +8,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	"use strict";
 
 
-	
+
 	/**
 	 * GoldReflectionPageLayout renderer.
 	 * @namespace
 	 */
 	var ShellRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -30,22 +30,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var iPaneWidthPlus = oControl.getPaneWidth() + sap.ui.ux3.Shell.SIDE_BAR_BASE_WIDTH; // width of pane plus how far it is from the edge
 		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		var sId = oControl.getId();
-	
+
 		if (sap.ui.ux3.Shell.FIRST_RENDERING) {
 			document.body.style.margin = "0"; // does not seem to work in initial onBeforeRendering
 		}
-	
+
 		// write the root HTML element  TODO: this should use the existing <body>! But where is the staticarea, then?
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUx3Shell");
 		rm.addClass("sapUiUx3ShellHead" + oControl.getHeaderType());
 		rm.addClass("sapUiUx3ShellDesign" + oControl.getDesignType());
-		
+
 		if (!oControl._hasDarkDesign()) {
 			rm.addClass("sapUiUx3ShellDesignLight");
 		}
-		
+
 		if (oControl.getFullHeightContent()) {
 			rm.addClass("sapUiUx3ShellFullHeightContent");
 		}
@@ -63,8 +63,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		rm.writeClasses();
 		rm.write(">");
-	
-	
+
+
 		// write header
 		rm.write("<img id='" + sId + "-hdrImg' class='sapUiUx3ShellHeaderImg' src='");
 		var sImage = sap.ui.core.theming.Parameters._getThemeImage('sapUiUx3ShellHeaderImageURL', true);
@@ -76,48 +76,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		ShellRenderer.renderHeader(rm, oControl);
 		rm.write("<span class='sapUiUx3ShellFocusDummy' id='" + sId + "-focusDummyHdrEnd'" + tabIndex + "></span>");
 		rm.write("</header>   <!-- end of sapUiUx3ShellHeader -->");
-	
-	
-	
+
+
+
 		// write page background
 		rm.write("<div id='", sId, "-bg' class='sapUiUx3ShellBg'></div>");
 		rm.write("<img id='", sId, "-bgImg' class='sapUiUx3ShellBgImg' src='");
 		sImage = sap.ui.core.theming.Parameters._getThemeImage('sapUiUx3ShellBackgroundImageURL', true);
 		rm.writeEscaped(sImage);
 		rm.write("'/>");
-	
-	
+
+
 		// write workset items
 		var wsMargin = bPaneOpen ? " style='margin-" + (bRtl ? "left" : "right") + ":" + (iPaneWidthPlus + 22) + "px'" : "";
 		rm.write("<div id='", sId, "-wBar'" + wsMargin + " class='sapUiUx3ShellWorksetBar'>");
 		ShellRenderer.renderWorksetItems(rm, oControl);
 		rm.write("</div>   <!--  end of worksetBar -->");
-	
-	
-	
+
+
+
 		// write tool palette area
 		rm.write("<section id='" + sId + "-tp' class='sapUiUx3ShellToolPaletteArea' role='complementary' data-sap-ui-fastnavgroup='true'>");
 		ShellRenderer.renderToolPalette(rm, oControl);
 		rm.write("</section> <!-- end of toolPaletteArea -->");
-	
-	
-	
+
+
+
 		// write page canvas and content
-		
+
 		var paneExtraStyle = bPaneOpen ? " style='" + (bRtl ? "left" : "right") + ":" + iPaneWidthPlus + "px'" : "";
 		rm.write("<div class='sapUiUx3ShellCanvas'" + paneExtraStyle + " id='" + sId + "-canvas'>");
-	
+
 		ShellRenderer.renderFacetBar(rm, oControl);
-	
+
 		rm.write("<article class='sapUiUx3ShellContent' id='" + sId + "-content' role='main' data-sap-ui-fastnavgroup='true'>");
 		var aContent = oControl.getContent();
 		for (var i = 0; i < aContent.length; i++) {
 			rm.renderControl(aContent[i]);
 		}
 		rm.write("</article><div class='sapUiUx3ShellNotifySpace'></div></div>");
-	
-	
-	
+
+
+
 		// write pane bar
 		var tabIndex = oControl._topSyncRefId ? " tabindex='0'" : "";
 		rm.write("<span class='sapUiUx3ShellFocusDummy' id='" + sId + "-focusDummyPane'" + tabIndex + "></span>");
@@ -128,12 +128,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			rm.renderControl(aPaneContent[i]);
 		}
 		rm.write("</section>");
-	
+
 		rm.write("<div id='" + sId + "-paneBarRight' class='sapUiUx3ShellPaneBarRight' data-sap-ui-fastnavgroup='true'>");
 		rm.write("<ul id='" + sId + "-paneBarEntries' class='sapUiUx3ShellPaneEntries' role='tablist'>");
 		ShellRenderer.renderPaneBarItems(rm, oControl);
 		rm.write("</ul>");
-	
+
 		// Render overflow button
 		rm.write("<div id='" + sId + "-paneBarOverflowButton' class='sapUiUx3ShellPaneOverflowButton'");
 		rm.addStyle("display", "none;"); // So it does not depend on theme being loaded
@@ -145,34 +145,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		rm.write("</span>"); // sapUiUx3ShellPaneOverflowText
 		rm.write("</div>"); // overflow-wrapper
 		rm.write("</div>"); // sapUiUx3ShellPaneOverflowButton
-		
-		
+
+
 		rm.write("</div>");
-		
-		
+
+
 		rm.write("</aside>   <!-- end of paneBar -->");
-	
-	
-	
+
+
+
 		// write the purely visual background
 		rm.write("<div class='sapUiUx3ShellCanvasBackground " + (bPaneOpen ? "sapUiUx3ShellCanvasBackgroundOpen" : "sapUiUx3ShellCanvasBackgroundClosed")
 				+ "' id='" + sId + "-canvasBackground'" + paneExtraStyle + ">");
 		rm.write("<div class='sapUiUx3ShellCanvasBackgroundRight'></div>");
 		rm.write("</div>");
-	
+
 		rm.write("<div id='" + sId + "-notify' class='sapUiUx3ShellNotify'>");
 		ShellRenderer.renderNotificationArea(rm, oControl);
 		rm.write("</div>");
-	
+
 		// render closing tag for root element
 		rm.write("</div>");
 	};
-	
-	
-	
+
+
+
 	ShellRenderer.renderHeader = function(rm, oControl) {
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
-	
+
 		var appIcon = oControl.getAppIcon();
 		rm.write("<hr id='" + oControl.getId() + "-hdrLine'/><img id='" + oControl.getId() + "-logoImg' src='");
 		if (appIcon) {
@@ -182,18 +182,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			rm.writeEscaped(sImage);
 		}
 		rm.write("'");
-	
+
 		var iconTooltip = oControl.getAppIconTooltip() || rb.getText("SHELL_LOGO");
 		rm.writeAttributeEscaped("alt", iconTooltip);
 		rm.writeAttributeEscaped("title", iconTooltip);
-	
+
 		rm.write("><h1");
 		rm.writeAttributeEscaped("title", oControl.getAppTitle());
 		rm.write(">");
 		rm.writeEscaped(oControl.getAppTitle());
-	
+
 		rm.write("</h1><span id='" + oControl.getId() + "-hdr-items' class='sapUiUx3ShellHeaderTitleRight'>");
-	
+
 		// header-right-items
 		var aHeaderItems = oControl.getHeaderItems();
 		for (var i = 0; i < aHeaderItems.length; i++) {
@@ -203,15 +203,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					aHeaderItems[i].getMenu().addStyleClass("sapUiMnuTop", true); // multiple calls are ignored, so there is no check whether the class is already there
 				}
 			}
-	
+
 			// render the header item
 			rm.renderControl(aHeaderItems[i]);
-	
+
 			if ((i < (aHeaderItems.length - 1)) || (oControl.getShowLogoutButton())) {
 				rm.write("<span class='sapUiUx3ShellHeaderSep'></span>");
 			}
 		}
-	
+
 		// logout button
 		if (oControl.getShowLogoutButton()) {
 			rm.write("<a id='" + oControl.getId() + "-logout' title='");
@@ -220,10 +220,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		rm.write("</span>");
 	};
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Renders the inner HTML of the left-side tool palette.
 	 *
@@ -233,10 +233,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	ShellRenderer.renderToolPalette = function(rm, oControl) {
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
 		var sId = oControl.getId();
-		
+
 		var tabIndex = oControl._topSyncRefId ? " tabindex='0'" : "";
 		rm.write("<span class='sapUiUx3ShellFocusDummy' id='" + oControl.getId() + "-focusDummyTPStart'" + tabIndex + "></span>");
-	
+
 		// write standard tools
 		var sAccDescr = rb.getText("SHELL_TOOLPANE_GENERIC"),
 			bStandardToolPresent = false,
@@ -262,20 +262,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 			sAccDescr += " " + rb.getText("SHELL_FEEDER");
 		}
-	
+
 		if (bStandardToolPresent) {
 			rm.write("<div role='toolbar'aria-describedby='" + sId + "-genericToolsDescr'>");
 			rm.write("<span id='" + sId + "-genericToolsDescr' style='display:none;'>" + sAccDescr + "</span>");
 			rm.write(sStandardToolsHtml + "</div>");
 		}
-	
+
 		var aToolItems = oControl.getToolPopups();
-	
+
 		// write separator between standard tools and app tools, if required
 		if (bStandardToolPresent && (aToolItems.length > 0)) {
 			rm.write("<hr id='" + sId + "-tp-separator' class='sapUiUx3ShellToolSep'></hr>");
 		}
-	
+
 		// write app tools
 		if (aToolItems.length > 0) {
 			rm.write("<div role='toolbar' aria-describedby='" + sId + "-appToolsDescr'>");
@@ -317,7 +317,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		rm.write("<span class='sapUiUx3ShellFocusDummy' id='" + oControl.getId() + "-focusDummyTPEnd'" + tabIndex + "></span>");
 	};
-	
+
 	ShellRenderer.renderPaneBarItems = function(rm, oControl) {
 		var sId = oControl.getId();
 		var aPaneBarItems = oControl.getPaneBarItems();
@@ -340,14 +340,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			rm.write("</li>");
 		}
 	};
-	
+
 	ShellRenderer.renderNotificationArea = function(rm, oControl) {
 		rm.write("<div class='sapUiUx3ShellNotifyBG'></div>");
 		if (oControl.getNotificationBar()) {
 			rm.renderControl(oControl.getNotificationBar());
 		}
 	};
-	
+
 	ShellRenderer.renderWorksetItems = function(rm, oControl) {
 		var aItems = oControl.getWorksetItems();
 		oControl._oWorksetBar.setAssociatedItems(aItems);
@@ -359,7 +359,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			rm.renderControl(oControl._oWorksetBar);
 		}
 	};
-	
+
 	ShellRenderer.renderFacetBar = function(rm, oControl) {
 		var oSelectedWsi = sap.ui.getCore().byId(oControl.getSelectedWorksetItem()); // by now it is guaranteed that the association is properly initialized
 		if (oSelectedWsi) {
@@ -368,7 +368,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			if (parent && parent instanceof sap.ui.ux3.NavigationItem) {
 				oSelectedWsi = parent;
 			}
-		
+
 			var aSubItems = oSelectedWsi.getSubItems();
 			oControl._oFacetBar.setAssociatedItems(aSubItems);
 			if (!oControl._oFacetBar.isSelectedItemValid() && (aSubItems.length > 0)) {
@@ -379,7 +379,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			rm.renderControl(oControl._oFacetBar);
 		}
 	};
-	
+
 
 	return ShellRenderer;
 

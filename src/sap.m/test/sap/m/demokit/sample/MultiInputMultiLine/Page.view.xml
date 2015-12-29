@@ -60,7 +60,7 @@
 					</ColumnListItem>
 				</suggestionRows>
 			</MultiInput>
-			
+
 			<Label text="MultiInput  with suggestion list items in MultiLine Mode Display"/>
 			<MultiInput id="multiInput4"
 				width="100%"
@@ -71,7 +71,7 @@
 				}">
 				<core:Item key="{ProductId}" text="{Name}" />
 			</MultiInput>
-			
+
 		</items>
 	</VBox>
 </mvc:View>

@@ -11,7 +11,7 @@ function(Element) {
 
 	/**
 	 * Class for OverlayRegistry.
-	 * 
+	 *
 	 * @class
 	 * Static registry for Overlays
 	 *

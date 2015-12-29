@@ -27,7 +27,7 @@
 		bindings = new Array();
 		testData = "<root>"+
 				"<name>Peter</name>" +
-				"<teamMembers>" + 
+				"<teamMembers>" +
 					"<member firstName=\"Andreas\" lastName=\"Klark\" gender=\"male\">1</member>" +
 					"<member firstName=\"Peter\" lastName=\"Miller\" gender=\"male\">2</member>" +
 					"<member firstName=\"Gina\" lastName=\"Rush\" gender=\"female\">3</member>" +
@@ -59,15 +59,15 @@
 			//oModel.bindProperty(".teamMembers.lastName", entry.lastName);
 		};
 	};
-	
+
 	var attach = false;
 	var detach = true;
-	
+
 	function callBackOnChange(){
 		attach = true;
 		detach = false;
 	};
-	
+
 	test("PropertyBinding getValue", function(){
 		setup();
 		createPropertyBindings("/teamMembers/member", "@lastName");
@@ -119,7 +119,7 @@
 		equal(bindings[3].getExternalValue(), "44" , "Property binding value");
 		equal(bindings[4].getExternalValue(), "23" , "Property binding value");
 		equal(bindings[5].getExternalValue(), "22" , "Property binding value");
-		equal(bindings[6].getExternalValue(), "32" , "Property binding value");	
+		equal(bindings[6].getExternalValue(), "32" , "Property binding value");
 
 		bindings[0].setType(new sap.ui.model.type.Float(),"string");
 		equal(bindings[0].getExternalValue(), "3.55" , "Property binding value");
@@ -135,7 +135,7 @@
 		bindings[0].setValue(55.555);
 		equal(bindings[0].getValue(), "55.555" , "Property binding value");
 		equal(bindings[0].getExternalValue(), "55.555" , "Property binding value");
-		bindings[0].setExternalValue("2.13543");	
+		bindings[0].setExternalValue("2.13543");
 		equal(bindings[0].getValue(), "2.13543" , "Property binding value");
 		equal(bindings[0].getExternalValue(), "2.13543" , "Property binding value");
 

@@ -115,12 +115,12 @@ test("composite type", function() {
 	equal(this.composite.getExternalValue(), "1,2,3");
 	this.composite.setExternalValue("3,2,1");
 	equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model value for contained bindings");
-	raises(function(){this.composite.setExternalValue("0,0,0")}.bind(this), 
+	raises(function(){this.composite.setExternalValue("0,0,0")}.bind(this),
 		sap.ui.model.ValidateException, "validation throws ValidateExpception for invalid values")
 });
 
 test("simple type", function() {
-	raises(function(){this.composite.setType(new sap.ui.model.type.Float());}.bind(this), 
+	raises(function(){this.composite.setType(new sap.ui.model.type.Float());}.bind(this),
 		Error, "setting a simple type on a composite binding throws")
 });
 
@@ -173,7 +173,7 @@ test("with composite type", function() {
 	this.composite.setExternalValue("-3-,2.00,1");
 	equal(this.model.getProperty("/a"), 1, "setExternalValue() cannot change binding with formatter");
 	equal(this.model.getProperty("/c"), 1, "setExternalValue() does change model values for contained binding");
-	raises(function(){this.composite.setExternalValue("-3-,abc,1")}.bind(this), 
+	raises(function(){this.composite.setExternalValue("-3-,abc,1")}.bind(this),
 			sap.ui.model.ParseException, "throws ParseException for invalid inner value")
 });
 

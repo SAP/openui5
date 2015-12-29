@@ -37,7 +37,7 @@
 				}
 			});
 
-			QUnit.test("when a class is preloaded...", function(assert) {	
+			QUnit.test("when a class is preloaded...", function(assert) {
 				var done = assert.async();
 				this.oPreloader.load(["sap.m.Button"]).then(function() {
 					ok(jQuery.sap.getObject("sap.m.Button").getMetadata().getDesignTime(), "the preloaded DT is also available synchrone");
@@ -45,7 +45,7 @@
 				});
 			});
 
-			QUnit.test("when a lib is preloaded...", function(assert) {	
+			QUnit.test("when a lib is preloaded...", function(assert) {
 				var done = assert.async();
 				this.oPreloader.loadLibraries(["sap.m"]).then(function() {
 					ok(jQuery.sap.getObject("sap.m.Page").getMetadata().getDesignTime(), "the preloaded dt is available synchrone");

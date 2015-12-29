@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.m.DatePicker
 -->
 
@@ -45,7 +45,7 @@
 				value: "2014-04-01",
 				valueFormat: "yyyy-MM-dd",
 				displayFormat: "dd+MM+yyyy",
-				change: handleChange 
+				change: handleChange
 				}).placeAt("uiArea2");
 
 			var oDP3 = new sap.m.DatePicker("DP3", {
@@ -215,7 +215,7 @@
 				var $LabelledByReference = jQuery.sap.byId($Input.attr("aria-labelledby"));
 				var $DescribedByReference = jQuery.sap.byId($Input.attr("aria-describedby"));
 				var sDateAnnouncement = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("DATEPICKER_DATE_TYPE");
-				
+
 				strictEqual($DescribedByReference.text(), sDateAnnouncement, "Date announcement added into aria-describedby");
 				strictEqual($LabelledByReference.text(), sPlaceholder, "Placholder announcement added into aria-labelledby");
 

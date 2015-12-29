@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var VerticalLayoutRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -30,26 +30,26 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeControlData(oVerticalLayout);
 		rm.addClass("sapUiVlt");
 		rm.addClass("sapuiVlt"); // for compatibility keep the old, wrong class name
-	
+
 		if (oVerticalLayout.getWidth() && oVerticalLayout.getWidth() != '') {
 			rm.addStyle("width", oVerticalLayout.getWidth());
 		}
 		rm.writeStyles();
 		rm.writeClasses();
 		rm.write(">"); // DIV element
-	
+
 		// render content
 		var aContent = oVerticalLayout.getContent();
-	
+
 		for ( var i = 0; i < aContent.length; i++) {
 			rm.write("<DIV class=\"sapUiVltCell sapuiVltCell\">"); // for compatibility keep the old, wrong class name
 			rm.renderControl(aContent[i]);
 			rm.write("</DIV>");
 		}
-	
+
 		rm.write("</DIV>");
 	};
-	
+
 
 	return VerticalLayoutRenderer;
 

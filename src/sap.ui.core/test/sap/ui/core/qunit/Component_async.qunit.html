@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.Component (asynchronous preloading)
 -->
 
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -42,7 +42,7 @@
 			jQuery("SCRIPT[data-sap-ui-module^='sap/test/']").remove();
 		}
 	});
-	
+
 	QUnit.test("dependencies as simple strings", function (assert) {
 
 		var done = assert.async();
@@ -77,11 +77,11 @@
 			name: "sap.test.mycomp",
 			async: true,
 			asyncHints: {
-				libs: [ 
+				libs: [
 					{
 						name: 'sap.test.lib2'
 					},
-					'sap.test.lib3' 
+					'sap.test.lib3'
 				],
 				components: [ {
 					name: 'sap.test.mysubcomp'
@@ -99,7 +99,7 @@
 
 		// TODO spy on requireModule, check that expected modules have been loaded
 	});
-	
+
 	QUnit.test("dependencies with names and some URLs", function (assert) {
 
 		var done = assert.async();
@@ -108,17 +108,17 @@
 		jQuery.sap.registerModulePath("sap.test.lib3", "./testdata/components/async/lib3");
 		jQuery.sap.registerModulePath("sap.test.lib4", "./testdata/components/async/lib4");
 		jQuery.sap.registerModulePath("sap.test.mycomp", "./testdata/components/async/mycomp");
-		
+
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
 			async: true,
 			asyncHints: {
-				libs: [ 
+				libs: [
 					{
 						name: 'sap.test.lib2',
 						url: './testdata/components/async/lib2'
 					},
-					'sap.test.lib3' 
+					'sap.test.lib3'
 				],
 				components: [ {
 					name: 'sap.test.mysubcomp',
@@ -126,7 +126,7 @@
 				}]
 			}
 		});
-		
+
 		assert.ok(oResult instanceof Promise, "load should return a promise");
 		oResult.then(function() {
 			sap.ui.component({name: "sap.test.mycomp"});
@@ -138,7 +138,7 @@
 
 		// TODO spy on requireModule, check that expected modules have been loaded
 	});
-	
+
 	</script>
 	</head>
 	<body><h1 id="qunit-header">QUnit tests: Components (async)</h1>
