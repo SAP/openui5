@@ -585,7 +585,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	ComponentMetadata.prototype.getConfig = function(sKey, bDoNotMerge) {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getConfig is deprecated!");
 		var mConfig = this.getManifestEntry("/sap.ui5/config", !bDoNotMerge);
-		return mConfig && sKey ? mConfig[sKey] : mConfig;
+
+		if (!mConfig) {
+			return {};
+		}
+
+		if (!sKey) {
+			return mConfig;
+		}
+
+		return mConfig.hasOwnProperty(sKey) ? mConfig[sKey] : {};
 	};
 
 

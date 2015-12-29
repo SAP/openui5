@@ -37,7 +37,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 				},
 				"any3": {
 					"anyarray": [1, 2, 3]
-				}
+				},
+				"zero": 0
 			},
 
 			"models": {
