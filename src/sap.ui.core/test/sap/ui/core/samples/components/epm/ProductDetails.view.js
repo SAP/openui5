@@ -3,13 +3,13 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/commons/Label', 'sap/ui/commons/
 	"use strict";
 
 	sap.ui.jsview("sap.ui.epm.ProductDetails", {
-	
+
 		getControllerName: function() {
 			return "sap.ui.epm.ProductDetails";
 		},
-	
+
 		/**
-		 * 
+		 *
 		 * @param oController may be null
 		 * @returns {sap.ui.cre.Control}
 		 */
@@ -20,7 +20,7 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/commons/Label', 'sap/ui/commons/
 
 			var oProductForm = new MatrixLayout();
 			oProductForm.setLayoutFixed(false);
-			oProductForm.setWidths("1%", "99%"); 
+			oProductForm.setWidths("1%", "99%");
 
 			var oToolbar = new Toolbar({standalone: true});
 			var oBack = new Button(this.createId("btnBack"), {text:"{texts>EPM_PROD_BUT_BACK}"});
@@ -43,11 +43,11 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/commons/Label', 'sap/ui/commons/
 			);
 			oProductForm.createRow(
 				new MatrixLayoutCell({content: new Label({text:"{texts>EPM_PROD_LBL_DESC}", width:"100%"})}).setVAlign("Top"),
-				new TextArea({editable:false, width:"100%", rows: 5, value:"{Description}"}) 
+				new TextArea({editable:false, width:"100%", rows: 5, value:"{Description}"})
 			);
 			oProductForm.createRow(
 				new Label({text:"{texts>EPM_PROD_SUPP_LBL_SUPP}", width:"100%"}),
-				new TextField(this.createId("ProductFormSupplier"), {editable:false, width:"100%", value:"{Supplier/Name}"}) 
+				new TextField(this.createId("ProductFormSupplier"), {editable:false, width:"100%", value:"{Supplier/Name}"})
 			);
 
 			return oProductForm;

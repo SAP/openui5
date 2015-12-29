@@ -24,11 +24,11 @@ sap.ui.define(['jquery.sap.global', './UniversalDate', 'sap/ui/core/Locale', 'sa
 			this.sCalendarType = sap.ui.core.CalendarType.Gregorian;
 		}
 	});
-	
+
 	Gregorian.UTC = function() {
 		return Date.UTC.apply(Date, arguments);
 	};
-	
+
 	Gregorian.now = function() {
 		return Date.now();
 	};
@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate', 'sap/ui/core/Locale', 'sa
 	Gregorian.prototype.getUTCWeek = function() {
 		return this._calculateWeekNumber(this.oDate, {UTC: true});
 	};
-	
+
 	/**
 	 * Calculates the week number in year of the given date.
 	 *
@@ -132,7 +132,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate', 'sap/ui/core/Locale', 'sa
 
 		return iWeekNum;
 	};
-	
+
 	return Gregorian;
 
 });

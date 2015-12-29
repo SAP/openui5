@@ -20,7 +20,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 */
 	var DebugEnv = function() {
 	};
-	
+
 	/**
 	 * Will be invoked by <code>sap.ui.core.Core</code> to notify the plugin to start.
 	 *
@@ -29,19 +29,19 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	 * @public
 	 */
 	DebugEnv.prototype.startPlugin = function(oCore, bOnInit) {
-	
+
 		this.oCore = oCore;
 		this.oWindow = window;
-	
+
 		/**
 		 * Whether the debugenv should run embedded in application page (true) or in testsuite (false).
 		 * @private
 		 */
 		try {
 			this.bRunsEmbedded = typeof window.top.testfwk == "undefined"; // window || !top.frames["sap-ui-TraceWindow"]; // check only with ==, not === as the test otherwise fails on IE8
-	
+
 			jQuery.sap.log.info("Starting DebugEnv plugin (" + (this.bRunsEmbedded ? "embedded" : "testsuite") + ")");
-	
+
 			// initialize only if running in testsuite or when debug views are not disabled via URL parameter
 			if (!this.bRunsEmbedded || oCore.getConfiguration().getInspect()) {
 				this.init(bOnInit);
@@ -53,7 +53,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			jQuery.sap.log.warning("DebugEnv plugin can not be started outside the Testsuite.");
 		}
 	};
-	
+
 	/**
 	 * Will be invoked by <code>sap.ui.core.Core</code> to notify the plugin to start
 	 * @param {sap.ui.core.Core} oCore reference to the Core
@@ -63,7 +63,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		jQuery.sap.log.info("Stopping DebugEnv plugin.");
 		this.oCore = null;
 	};
-	
+
 	/**
 	 * Initializes the ControlTreeView and PropertyListView of the <code>sap.ui.debug.DebugEnv</code>
 	 * @private
@@ -71,9 +71,9 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 	DebugEnv.prototype.init = function(bOnInit) {
 		this.oControlTreeWindow = this.bRunsEmbedded ? this.oWindow : (top.frames["sap-ui-ControlTreeWindow"] || top);
 		this.oPropertyListWindow = this.bRunsEmbedded ? this.oWindow : (top.frames["sap-ui-PropertyListWindow"] || top);
-	
+
 		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		/* TODO enable switch to testsuite
 		if ( this.bRunsEmbedded ) {
 			var div = this.oWindow.document.createElement("DIV");
@@ -101,10 +101,10 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			this.oWindow.document.body.appendChild(div);
 		}
 		*/
-	
+
 		var oControlTreeRoot = this.oControlTreeWindow.document.getElementById("sap-ui-ControlTreeRoot"),
 			oPropertyWindowRoot = this.oPropertyListWindow.document.getElementById("sap-ui-PropertyWindowRoot");
-	
+
 		if ( !oControlTreeRoot ) {
 			oControlTreeRoot = this.oControlTreeWindow.document.createElement("DIV");
 			oControlTreeRoot.setAttribute("id", "sap-ui-ControlTreeRoot");
@@ -130,7 +130,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			oControlTreeRoot.innerHTML = "";
 		}
 		this.oControlTreeRoot = oControlTreeRoot;
-	
+
 		if ( !oPropertyWindowRoot ) {
 			oPropertyWindowRoot = this.oPropertyListWindow.document.createElement("DIV");
 			oPropertyWindowRoot.setAttribute("id", "sap-ui-PropertyWindowRoot");
@@ -156,7 +156,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			oPropertyWindowRoot.innerHTML = "";
 		}
 		this.oPropertyWindowRoot = oPropertyWindowRoot;
-	
+
 		this.oControlTree = new ControlTree(this.oCore, this.oWindow, oControlTreeRoot, this.bRunsEmbedded);
 		this.oPropertyList = new PropertyList(this.oCore, this.oWindow, oPropertyWindowRoot);
 		this.oControlTree.attachEvent(ControlTree.M_EVENTS.SELECT, this.oPropertyList.update,
@@ -164,14 +164,14 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		if ( !bOnInit ) {
 			this.oControlTree.renderDelayed();
 		}
-	
+
 		jQuery(window).unload(jQuery.proxy(function(oEvent) {
 			this.oControlTree.exit();
 			this.oPropertyList.exit();
 		}, this));
-	
+
 	};
-	
+
 	/**
 	 * Initializes the LogViewer of the <code>sap.ui.debug.DebugEnv</code>
 	 * @private
@@ -190,7 +190,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			this.oTraceViewer = new LogViewer(this.oTraceWindow, 'sap-ui-TraceWindowRoot');
 		}
 		this.oLogger.addLogListener(this.oTraceViewer);
-	
+
 		// When debug.js is injected (testsuite), it is not initialized during Core.init() but later.
 		// In IE the startPlugin happens before rendering, in Chrome and others after rendering
 		// Therefore the first 'UIUpdated' is missed in browsers other than IE.
@@ -205,7 +205,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			}, 0);
 		}
 	};
-	
+
 	DebugEnv.prototype.enableLogViewer = function() {
 		// clear timeout (necessary in case we have been notified via attachUIUpdated)
 		if ( this.oTimer ) {
@@ -214,27 +214,27 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		}
 		// clear listener (necessary to avoid multiple calls and in case we are called via timer)
 		this.oCore.detachUIUpdated(this.enableLogViewer, this);
-	
+
 		// real action: enable the LogViewer
 		if ( this.oTraceViewer) {
 			this.oTraceViewer.unlock();
 		}
 	};
-	
+
 	/**
 	 * Whether the DebugEnv is running embedded in app page or not (which then means running in a test suite)
 	 */
 	DebugEnv.prototype.isRunningEmbedded = function() {
 		return this.bRunsEmbedded;
 	};
-	
+
 	/**
 	 * Whether the ControlTree is visible
 	 */
 	DebugEnv.prototype.isControlTreeShown = function() {
 		return jQuery(this.oControlTreeRoot).css("visibility") === "visible" || jQuery(this.oControlTreeRoot).css("visibility") === "inherit";
 	};
-	
+
 	/**
 	 * Will be called to show the ControlTree
 	 */
@@ -244,14 +244,14 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		}
 		jQuery(this.oControlTreeRoot).css("visibility", "visible");
 	};
-	
+
 	/**
 	 * Will be called to hide the ControlTree
 	 */
 	DebugEnv.prototype.hideControlTree = function() {
 		jQuery(this.oControlTreeRoot).css("visibility", "hidden");
 	};
-	
+
 	/**
 	 * Whether the LogViewer is shown
 	 */
@@ -259,7 +259,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		var oLogViewer = this.oTraceWindow && this.oTraceWindow.document.getElementById('sap-ui-TraceWindowRoot');
 		return oLogViewer && (jQuery(oLogViewer).css("visibility") === "visible" || jQuery(oLogViewer).css("visibility") === "inherit");
 	};
-	
+
 	/**
 	 * Will be called to show the TraceWindow
 	 */
@@ -272,7 +272,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			jQuery(oLogViewer).css("visibility", "visible");
 		}
 	};
-	
+
 	/**
 	 * Will be called to hide the TraceWindow
 	 */
@@ -282,14 +282,14 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 			jQuery(oLogViewer).css("visibility", "hidden");
 		}
 	};
-	
+
 	/**
 	 * Will be called to show the PropertyList
 	 */
 	DebugEnv.prototype.isPropertyListShown = function() {
 		return jQuery(this.oPropertyWindowRoot).css("visibility") === "visible" || jQuery(this.oPropertyWindowRoot).css("visibility") === "inherit";
 	};
-	
+
 	/**
 	 * Will be called to show the PropertyList
 	 */
@@ -299,14 +299,14 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Interf
 		}
 		jQuery(this.oPropertyWindowRoot).css("visibility", "visible");
 	};
-	
+
 	/**
 	 * Will be called to hide the PropertyList
 	 */
 	DebugEnv.prototype.hidePropertyList = function() {
 		jQuery(this.oPropertyWindowRoot).css("visibility", "hidden");
 	};
-	
+
 	/**
 	 * Create the <code>sap.ui.debug.DebugEnv</code> plugin and register
 	 * it within the <code>sap.ui.core.Core</code>.

@@ -14,11 +14,11 @@ sap.ui.define(['jquery.sap.global'],
 	 * @alias sap.ui.core.tmpl.DOMElementRenderer
 	 */
 	var DOMElementRenderer = {};
-	
+
 	/**
 	 * Renders the DOM element for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRM RenderManager that can be used for writing to the
 	 *            Render-Output-Buffer
@@ -27,12 +27,12 @@ sap.ui.define(['jquery.sap.global'],
 	 *            rendered
 	 */
 	DOMElementRenderer.render = function(oRM, oElement) {
-			
+
 		// opening tag incl. control data
 		oRM.write("<");
 		oRM.write(oElement.getTag());
 		oRM.writeControlData(oElement);
-		
+
 		// add the attributes of the DOM element
 		jQuery.each(oElement.getAttributes(), function(iIndex, oAttribute) {
 			var sName = oAttribute.getName().toLowerCase();
@@ -60,30 +60,30 @@ sap.ui.define(['jquery.sap.global'],
 				oRM.writeAttributeEscaped(oAttribute.getName(), oAttribute.getValue());
 			}
 		});
-		
+
 		// support for custom classes and styles
 		oRM.writeClasses();
 		oRM.writeStyles();
-		
+
 		// create the nested structure (if required)
 		var aElements = oElement.getElements(),
 			bHasChildren = !!oElement.getText() || aElements.length > 0;
-		
+
 		if (!bHasChildren) {
 			oRM.write("/>");
 		} else {
 			oRM.write(">");
-			
+
 			// append the text (do escaping)
 			if (oElement.getText()) {
 				oRM.writeEscaped(oElement.getText());
 			}
-			
+
 			// append the nested DOM elements
 			jQuery.each(aElements, function(iIndex, oChildElement) {
 				oRM.renderControl(oChildElement);
 			});
-	
+
 			// closing tag
 			oRM.write("</");
 			oRM.write(oElement.getTag());

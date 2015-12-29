@@ -18,7 +18,7 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <style type="text/css">
-.ButtonSpace { 
+.ButtonSpace {
 	margin-top: 10px;
 }
 </style>
@@ -26,17 +26,17 @@
 <script type="text/javascript">
 
 	var b1, b2, b4, b5, b6, b7, b8, b9, b10, msg;
-	
-	var sText = "Button Text", 
-		sButtonTypeDefault = sap.m.ButtonType.Default, 
-		sButtonTypeBack = sap.m.ButtonType.Back, 
-		sButtonTypeAccept = sap.m.ButtonType.Accept, 
-		sButtonTypeReject = sap.m.ButtonType.Reject, 
-		sButtonTypeTransparent = sap.m.ButtonType.Transparent, 
-		sButtonTypeUp = sap.m.ButtonType.Up, 
-		sButtonTypeUnstyled = sap.m.ButtonType.Unstyled, 
+
+	var sText = "Button Text",
+		sButtonTypeDefault = sap.m.ButtonType.Default,
+		sButtonTypeBack = sap.m.ButtonType.Back,
+		sButtonTypeAccept = sap.m.ButtonType.Accept,
+		sButtonTypeReject = sap.m.ButtonType.Reject,
+		sButtonTypeTransparent = sap.m.ButtonType.Transparent,
+		sButtonTypeUp = sap.m.ButtonType.Up,
+		sButtonTypeUnstyled = sap.m.ButtonType.Unstyled,
 		sWidth = "200px",
-		bEnabled = true, 
+		bEnabled = true,
 		bDisabled = false,
 		sIcon = "../images/analytics_64.png",
 		sPressMessage = "Button Tapped Event!";
@@ -94,7 +94,7 @@
 	oBtnWidth.setText("Button with 200 pixel");
 	oBtnWidth.setType(sButtonTypeDefault);
 	oBtnWidth.setEnabled(bEnabled);
-	oBtnWidth.setWidth(sWidth);		
+	oBtnWidth.setWidth(sWidth);
 	oBtnWidth.attachPress(tabEventHandler2);
 	oBtnWidth.placeAt("contentBtnWidth");
 
@@ -103,7 +103,7 @@
 	oBtnDisabled.setText("Disabled Button");
 	oBtnDisabled.setType(sButtonTypeDefault);
 	oBtnDisabled.setEnabled(bDisabled);
-	oBtnDisabled.setWidth(sWidth);		
+	oBtnDisabled.setWidth(sWidth);
 	oBtnDisabled.attachPress(tabEventHandler2);
 	oBtnDisabled.placeAt("contentBtnDisabled");
 
@@ -213,11 +213,11 @@
 		equals(b8.getEnabled(), bDisabled, "Button is disabled - button8 is correct using 'equals()'!");
 		equals(b9.getEnabled(), bEnabled, "Button is enabled - button9 is correct using 'equals()'!");
 		equals(b10.getEnabled(), bEnabled, "Button is enabled - button10 is correct using 'equals()'!");
-	});	
+	});
 
 	test("ButtonWidthOk", function() {
 		equals(b7.getWidth(), sWidth, "Button width - button7 is correct using 'equals()'!");
-	});	
+	});
 
 	test("IconOk", function() {
 		equals(b9.getIcon(), sIcon, "Icon for button9 is correct using 'equals()'!");
@@ -256,7 +256,7 @@
 		b7.firePress();
 		ok(msg == sPressMessage, "Button7 - Event was fired correctly!");
 		equals(msg, sPressMessage, "Button7 - Event was fired correctly!!")
-	});	
+	});
 
 	test("Visibility", function(){
 		ok(!jQuery.sap.domById("b12"), "Button12 should not be rendered");

@@ -4,7 +4,7 @@
 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta charset="utf-8" />
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
     <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-    
+
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
     <script  language="javascript">
@@ -44,7 +44,7 @@
 		        		description: "subsubitem1-2-1 description"
    					}
    				}
-   				
+
    			},
    			1: {
    				name: "item2",
@@ -60,10 +60,10 @@
    			}
    		}
     };
-    
+
     var oModel = new sap.ui.model.json.JSONModel();
     oModel.setData(oData);
-    
+
 	var oTable = new sap.ui.table.TreeTable({
 		columns: [
 			new sap.ui.table.Column({label: "Name", template: "name", filterProperty: "name"}),
@@ -72,7 +72,7 @@
 	});
 	oTable.bindRows("/root");
 	oTable.setModel(oModel);
-	
+
 	oTable.placeAt("target1");
 
 
@@ -97,20 +97,20 @@
 		oTable.unbindRows().bindRows("/root");
 		equal(oTable.getBinding("rows").getLength(), 3,	"Row count is correct!");
 	});
-	
+
 	test("ExpandRow", 2, function() {
 		oTable.unbindRows().bindRows("/root");
 		oTable.expand(0);
 		equal(oTable.getBinding("rows").getLength(), 5, "Row count is correct!");
 		equal(oTable.isExpanded(0), true, "Expanded state is correct!");
 	});
-	
+
 	test("CollapseRow", 2, function() {
 		oTable.collapse(0);
 		equal(oTable.getBinding("rows").getLength(), 3, "Row count is correct!");
 		equal(oTable.isExpanded(0), false, "Expanded state is correct!");
 	});
-	
+
 	test("InsertRow", 1, function() {
 		jQuery.extend(oData.root, {
 			3: {
@@ -121,13 +121,13 @@
 		oTable.getModel().setData(oData);
 		equal(oTable.getBinding("rows").getLength(), 4, "Row count is correct!");
 	});
-	
+
 	test("RemoveRow", 1, function() {
 		delete oData.root[3];
 		oTable.getModel().setData(oData);
 		equal(oTable.getBinding("rows").getLength(), 3, "Row count is correct!");
 	});
-	
+
 	test("InsertChildRow", 3, function() {
 		jQuery.extend(oData.root[2], {
 			0: {
@@ -141,17 +141,17 @@
 		equal(oTable.getBinding("rows").getLength(), 4, "Row count is correct!");
 		equal(oTable.isExpanded(2), true, "Expanded state is correct!");
 	});
-	
+
 	test("ApplyFilter", 1, function() {
 		oTable.filter(oTable.getColumns()[0], "new");
 		equal(oTable.getBinding("rows").getLength(), 2, "Row count is correct!");
 	});
-	
+
 	test("RemoveFilter", 1, function() {
 		oTable.filter(oTable.getColumns()[0], "");
 		equal(oTable.getBinding("rows").getLength(), 4, "Row count is correct!");
 	});
-	
+
 	test("FilterSaveExpandedState", 3, function() {
 		oTable.expand(0);
 		equal(oTable.getBinding("rows").getLength(), 6, "Row count is correct!");
@@ -172,7 +172,7 @@
 		equal(oTable.getFirstVisibleRow(), 4, "Navigation to last page OK");
 	});
 
-	
+
 	</script>
   </head>
   <body class="sapUiBody">

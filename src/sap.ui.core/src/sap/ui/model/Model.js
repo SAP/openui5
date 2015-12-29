@@ -832,7 +832,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	/**
 	 * Returns the original value for the property with the given path and context.
 	 * The original value is the value that was last responded by a server if using a server model implementation.
-	 * 
+	 *
 	 * @param {string} sPath the path/name of the property
 	 * @param {object} [oContext] the context if available to access the property value
 	 * @returns {any} vValue the value of the property
@@ -844,9 +844,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 
 	/**
 	 * Returns whether a given path relative to the given contexts is in laundering state.
-	 * If data is send to the server the data state becomes laundering until the 
+	 * If data is send to the server the data state becomes laundering until the
 	 * data was accepted or rejected
-	 * 
+	 *
 	 * @param {string} sPath path to resolve
 	 * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
 	 * @returns {boolean} true if the data in this path is laundering

@@ -12,21 +12,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/TextView', 'sap/ui/commons/T
 		metadata : {
 			version : "1.0",
 			config: {
-			
+
 				"samples.components.config.Component.config1": {
-				
+
 					"Key1-1": "Value1-1",
 					"Key1-2": "value1-2"
-				
+
 				},
-			
+
 				"samples.components.config.Component.config2": {
-				
+
 					"Key3-1": "Value3-1",
 					"Key3-2": "Value3-2"
-				
+
 				}
-			
+
 			}
 		}
 	});
@@ -44,11 +44,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/TextView', 'sap/ui/commons/T
 		}));
 		this.createTreeNodes();
 		return oLayout;
-	
+
 	};
 
 	Component.prototype.createTreeNodes = function() {
-	
+
 		function createChildren(oParentNode, oConfig) {
 			jQuery.each(oConfig, function(sKey, oValue) {
 				var bIsObject = typeof oValue === "object";
@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/TextView', 'sap/ui/commons/T
 				oParentNode.addNode(oNode);
 			});
 		}
-	
+
 		var oTree = this.byId("tree");
 		oTree.destroyNodes();
 		createChildren(oTree, this.getMetadata().getConfig());

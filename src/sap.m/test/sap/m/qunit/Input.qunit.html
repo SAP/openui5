@@ -21,7 +21,7 @@
 <!-- use the sinon faketimers for this test -->
 <script type="text/javascript">
 	sinon.config.useFakeTimers = true;
-	
+
 	// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
 	//  ==> PhantomJS fails with strange errors when evaluating setTimeout
 	//      e.g.: null is not a constructor (evaluating setTimeout) as a follow
@@ -82,7 +82,7 @@
 
 	var oInput8 = new sap.m.Input("i8");
 	oInput8.placeAt("content");
-	
+
 	qutils.delayTestStart();
 
 	module("Basic", {
@@ -123,7 +123,7 @@
 		i1.setEnabled(enabled);
 		equals(i1.getEnabled(), enabled, "Input is enabled");
 	});
-	
+
 	test("ValueHelpOnly", function() {
 		equals(i1.getValueHelpOnly(), false, "ValueHelpOnly Default: false");
 		var helponly = true;
@@ -190,7 +190,7 @@
 			bChangeEventCalled = true;
 		});
 
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(300);
 		oPopup = oInput._oSuggestionPopup;
@@ -284,7 +284,7 @@
 		oInput.setShowValueHelp(true);
 		sap.ui.getCore().applyChanges();
 
-		// then check if value help indicator classes are set 
+		// then check if value help indicator classes are set
 		ok(oInput.$().children(".sapMInputValHelp").length === 1, "Has an outer value help indicator element");
 		ok(oInput.$().children(".sapMInputValHelp").children(".sapMInputValHelpInner").length === 1, "Has an inner value help indicator element");
 		ok(oInput.$().hasClass("sapMInputVH") === true, "Outer div has additional CSS class\"sapMInputVH\"");
@@ -322,9 +322,9 @@
 		oInput.onsapshow(evt);
 		strictEqual(spy.callCount, 1, "The value help was requested by pressing F4");
 	});
-	
+
 	test("Submit Event", function() {
-		
+
 		var sEvents = "";
 		var sValue = "";
 		var oInput = new sap.m.Input("hello", {
@@ -337,7 +337,7 @@
 			}
 		});
 		oInput.placeAt("content");
-		
+
 		function checkSubmit(sText, bSubmitExpected, bChangeExpected, sExpectedValue) {
 			var e = "";
 			if (bChangeExpected) {
@@ -346,7 +346,7 @@
 			if (bSubmitExpected) {
 				e += "E";
 			}
-			
+
 			sEvents = "";
 			sValue = "";
 			sap.ui.getCore().applyChanges();
@@ -360,7 +360,7 @@
 				}
 			}
 		}
-		
+
 		checkSubmit("Enter pressed without change", true, false, "");
 		oInput.$("inner").val("hello");
 		checkSubmit("Enter pressed after change", true, true, "hello");
@@ -376,7 +376,7 @@
 		checkSubmit("Enter pressed on field with value help only", false, false);
 		oInput.setShowValueHelp(false);
 		oInput.setValueHelpOnly(false);
-		
+
 		// Enter on Suggestions
 		if (sap.ui.Device.system.desktop) {
 			oInput.setShowSuggestion(true);
@@ -391,17 +391,17 @@
 				}
 			});
 			sap.ui.getCore().applyChanges();
-			
+
 			oInput.onfocusin();
 			oInput._$input.focus().val("abc").trigger("input");
 			this.clock.tick(300);
-	
+
 			ok(oInput._oSuggestionPopup && oInput._oSuggestionPopup.isOpen && oInput._oSuggestionPopup.isOpen(), "Suggestion Popup is open now");
 			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
 			checkSubmit("Enter pressed on open Suggestions", true, true, "abcTom");
 			ok(oInput._oSuggestionPopup && oInput._oSuggestionPopup.isOpen && !oInput._oSuggestionPopup.isOpen(), "Suggestion Popup should be closed");
 		}
-		
+
 		oInput.destroy();
 	});
 
@@ -418,7 +418,7 @@
 		oInputVHO.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		// check if valueHelpOnly class is set in addition to ValueHelp class 
+		// check if valueHelpOnly class is set in addition to ValueHelp class
 		ok(oInputVHO.$().hasClass("sapMInputVH") === true, "Outer div has additional CSS class\"sapMInputVH\"");
 		ok(oInputVHO.$().hasClass("sapMInputVHO") === true, "Outer div has additional CSS class\"sapMInputVHO\"");
 
@@ -427,9 +427,9 @@
 		this.clock.tick(500);
         strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
 	});
-	
+
 	test("Conditions for Value Help Only not valid", function() {
-	// case1: showValueHelp is false 
+	// case1: showValueHelp is false
 		var spy = this.spy(),
 			oInputVHO = new sap.m.Input( {
 				showValueHelp: false,
@@ -439,21 +439,21 @@
 				valueHelpRequest: spy
 				}),
 			oInputIdVHO = oInputVHO.getId();
-	
+
 		// place control
 		oInputVHO.placeAt("content");
 		sap.ui.getCore().applyChanges();
-	
-		// check if valueHelpOnly class is set in addition to ValueHelp class 
+
+		// check if valueHelpOnly class is set in addition to ValueHelp class
 		ok(oInputVHO.$().hasClass("sapMInputVH") === false, "showValueHelp = false: Outer div has no additional CSS class\"sapMInputVH\"");
 		ok(oInputVHO.$().hasClass("sapMInputVHO") === false, "showValueHelp = false: Outer div has no additional CSS class\"sapMInputVHO\"");
-	
+
 		// Value help event check
 		oInputVHO._$input.focus().trigger("tap");
 		this.clock.tick(500);
 		strictEqual(spy.callCount, 0, "showValueHelp = false: Tap has been fired and no Value Help Request is submitted");
 
-		// case2 ValueHelpOnly is false 
+		// case2 ValueHelpOnly is false
 		var spy1 = this.spy(),
 			oInputVHO1 = new sap.m.Input( {
 				showValueHelp: true,
@@ -468,7 +468,7 @@
 		oInputVHO1.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		// check if valueHelpOnly class is set in addition to ValueHelp class 
+		// check if valueHelpOnly class is set in addition to ValueHelp class
 		ok(oInputVHO1.$().hasClass("sapMInputVHO") === false, "valueHelponly = false: Outer div has no additional CSS class\"sapMInputVHO\"");
 
 		// Value help event check
@@ -491,7 +491,7 @@
 		oInputVHO2.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		// check if valueHelpOnly class is set in addition to ValueHelp class 
+		// check if valueHelpOnly class is set in addition to ValueHelp class
 		ok(oInputVHO2.$().hasClass("sapMInputVHO") === false, "editable = false: Outer div has no additional CSS class\"sapMInputVHO\"");
 
 		// Value help event check
@@ -499,7 +499,7 @@
 		this.clock.tick(500);
 		strictEqual(spy2.callCount, 0, "editable = false: Tap has been fired and no Value Help Request is submitted");
 
-		// case4: Enabled is false 
+		// case4: Enabled is false
 		var spy3 = this.spy(),
 			oInputVHO3 = new sap.m.Input( {
 				showValueHelp: true,
@@ -514,7 +514,7 @@
 		oInputVHO3.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		// check if valueHelpOnly class is set in addition to ValueHelp class 
+		// check if valueHelpOnly class is set in addition to ValueHelp class
 		ok(oInputVHO3.$().hasClass("sapMInputVHO") === false, "enabled = false: Outer div has no additional CSS class\"sapMInputVHO\"");
 
 		// Value help event check
@@ -612,7 +612,7 @@
 		sap.ui.getCore().applyChanges();
 		$Input = oInput.$();
 
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("De").trigger("input");
 		this.clock.tick(300);
 
@@ -635,7 +635,7 @@
 		sap.ui.getCore().applyChanges();
 		$Input = oInput.$();
 
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(300);
 
@@ -662,7 +662,7 @@
 			}
 		});
 
-		oInput6.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput6.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput6._$input.focus().val("abc").trigger("input");
 
 		this.clock.tick(300);
@@ -697,14 +697,14 @@
 			aItemAdded = [],
 			i,
 			oSpy = this.spy();
-		
+
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		$Input = oInput.$();
 
 		oInput.attachSuggest(oSpy);
 
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("abc").trigger("input");
 		// Enter key is pressed directly after typing "abc"
 		sap.ui.test.qunit.triggerKeyboardEvent(oInput._$input[0], jQuery.sap.KeyCodes.ENTER);
@@ -745,7 +745,7 @@
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("abc").trigger("input");
 
 		this.clock.tick(300);
@@ -786,7 +786,7 @@
 			}
 		});
 
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("abc").trigger("input");
 
 		this.clock.tick(300);
@@ -819,7 +819,7 @@
 			showSuggestion: true,
 			change: fnCallback
 		});
-		
+
 		var oNextInput = new sap.m.Input();
 
 		// stub the returnObject function from ObjectPool.prototype in order to trace the event parameter
@@ -838,7 +838,7 @@
 			}
 		});
 
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("abc").trigger("input");
 
 		this.clock.tick(300);
@@ -873,7 +873,7 @@
 			}
 		});
 
-		oInput7.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput7.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput7._$input.focus().val("abc").trigger("input");
 
 		this.clock.tick(300);
@@ -883,22 +883,22 @@
 		ok(oPopup1.isOpen(), "Two Value Suggestion Popup is open now");
 		equal(oPopup1.getContent()[0].getItems().length, aNames.length, "Suggestions are inserted");
 		ok(oPopup1.getContent()[0].getItems()[0] instanceof sap.m.DisplayListItem, "Suggestion item is a DisplayListItem");
-		
+
 		oInput7._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 		ok(oPopup1.isOpen(), "Two Value Suggestion Popup is still open now");
 		equal(oPopup1.getContent()[0].getItems().length, 1, "Suggestions are filtered");
-		
+
 		//trigger selection
 		var oList = oPopup1.getContent()[0];
 		var oListItem = oList.getItems()[0];
 		oList.fireItemPress({
 			listItem : oListItem
 		});
-		
+
 		ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
 		equal(oInput7.getValue(), aNames[0], "Input value is set to first value of selected suggestion item");
-		
+
 		//close the popoup when nothing is typed in input
 		oInput7._$input.focus().val("").trigger("input");
 		this.clock.tick(300);
@@ -933,7 +933,7 @@
 			}
 		});
 
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("abc").trigger("input");
 
 		this.clock.tick(300);
@@ -1086,7 +1086,7 @@
 
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 		ok(oInput._oList.getItems()[1].$().hasClass("sapMLIBSelected"), "The second item is selected after pressing keyDown twice");
-		
+
 		sap.ui.test.qunit.triggerKeydown(oInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 		ok(oInput._oList.getItems()[2].$().hasClass("sapMLIBSelected"), "The third item is selected after pressing keyDown three times");
 
@@ -1130,7 +1130,7 @@
 		oInput.attachSuggest(function(){
 			for(i = 0 ; i < aNames.length ; i++){
 				if(jQuery.inArray(aNames[i], aItemAdded) === -1){
-					oInput.addSuggestionItem(new sap.ui.core.Item({text: aNames[i]}));	
+					oInput.addSuggestionItem(new sap.ui.core.Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
 				}
 			}
@@ -1201,7 +1201,7 @@
 		oInput.attachSuggest(function(){
 			for(i = 0 ; i < aNames.length ; i++){
 				if(jQuery.inArray(aNames[i], aItemAdded) === -1){
-					oInput.addSuggestionItem(new sap.ui.core.Item({text: aNames[i]}));	
+					oInput.addSuggestionItem(new sap.ui.core.Item({text: aNames[i]}));
 					aItemAdded.push(aNames[i]);
 				}
 			}
@@ -1216,7 +1216,7 @@
 
 		oPopup = oInput._oSuggestionPopup;
 
-		oInput._oPopupInput._$input.focus().val("abc").trigger("input"); 
+		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
 		this.clock.tick(500);
@@ -1264,7 +1264,7 @@
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(500);
 		oPopup = oInput._oSuggestionPopup;
-		
+
 		ok(oPopup instanceof sap.m.Dialog, "Two value Suggestion Popup is created and is a Dialog instance");
 		ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
@@ -2059,7 +2059,7 @@
 
 		oInput.destroy();
 	});
-	
+
 	test("Property startSuggestion on Desktop (Zero)",  function() {
 		var oSystem = {
 				desktop: true,
@@ -2203,7 +2203,7 @@
 
 		oInput.destroy();
 	});
-	
+
 	test("The order of setting properties: showValueHelp, showSuggestion after bindAggregation", function(){
 		var oInput = new sap.m.Input({
 			width: "100px",
@@ -2310,7 +2310,7 @@
 	});
 
 	module("Input Description");
-	
+
 	test("Input description", function() {
 		var oInputWithDes = new sap.m.Input({
 			value: "220"
@@ -2320,15 +2320,15 @@
 		sap.ui.getCore().applyChanges();
 		equals(oInputWithDes.$().find("span").text(), "EUR", "Input description is EUR");
  		equals(oInputWithDes.$().find("input").outerWidth(), Math.round(oInputWithDes.$().width()*0.5), "input field has default width");
-		
+
   		oInputWithDes.setFieldWidth("30%");
   		sap.ui.getCore().applyChanges();
   		ok(Math.abs(oInputWithDes.$().find("input").outerWidth()-(oInputWithDes.$().width()*0.3)) <= 2, "input field has 30% width");
-  		
+
   		oInputWithDes.setFieldWidth("100px");
   		sap.ui.getCore().applyChanges();
   		equals(oInputWithDes.$().find("input").outerWidth(), "100", "input field has 100px width");
-  		
+
   		oInputWithDes.destroy();
 	});
 </script>

@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		}
 
 	});
-	
+
 	/**
 	 * The 'dataRequested' event is fired, when data was requested from a backend.
 	 *
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	 * @public
 	 */
-	
+
 	/**
 	 * The 'dataReceived' event is fired, when data was received from a backend. This event may also be fired when an error occured.
 	 *
@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	Binding.prototype.getMessages = function() {
 		return this.vMessages;
 	};
-	
+
 	/**
 	 * Returns the data state for this binding
 	 * @return {sap.ui.model.DataState} the data state
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		}
 		return this.oDataState;
 	};
-	
+
 	/**
 	 * Getter for model
 	 * @return {sap.ui.core.Model} the model
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			this.oModel.removeBinding(this);
 		}
 	};
-	
+
 	/**
 	 * Fire event dataStateChange to attached listeners.
 
@@ -349,10 +349,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			}
 		}
 	};
-	
+
 	/**
 	 * Updates the data state and returns it.
-	 * 
+	 *
 	 * @returns {sap.ui.model.DataStata} The data state
 	 * @private
 	 */
@@ -361,13 +361,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		if (this.oModel && this.sPath) {
 			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath)); 
+				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
 				oDataState.setLaundering(this.oModel.isLaundering(this.sPath, this.oContext));
 			}
 		}
 		return oDataState;
 	};
-	
+
 	/**
 	 * Refreshes the binding, check whether the model data has been changed and fire change event
 	 * if this is the case. For server side models this should refetch the data from the server.
@@ -405,7 +405,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Check if the binding can be resolved. This is true if the path is absolute or the path is relative and a context is specified. 
+	 * Check if the binding can be resolved. This is true if the path is absolute or the path is relative and a context is specified.
 	 * @private
 	 */
 	Binding.prototype.isResolved = function() {
@@ -508,9 +508,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	/**
 	 * Suspends the binding update. No change events will be fired.
-	 * 
+	 *
 	 * A refresh call with bForceUpdate set to true will also update the binding and fire a change in suspended mode.
-	 * Special operations on bindings, which require updates to work properly (as paging or filtering in list bindings) 
+	 * Special operations on bindings, which require updates to work properly (as paging or filtering in list bindings)
 	 * will also update and cause a change event although the binding is suspended.
 	 * @public
 	 */
@@ -520,7 +520,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	/**
 	 * Resumes the binding update. Change events will be fired again.
-	 * 
+	 *
 	 * When the binding is resumed, a change event will be fired immediately, if the data has changed while the binding
 	 * was suspended. For serverside models, a request to the server will be triggered, if a refresh was requested
 	 * while the binding was suspended.

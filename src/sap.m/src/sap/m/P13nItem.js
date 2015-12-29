@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new P13nItem.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Base type for <code>items</code> aggregation in P13nPanel control.
@@ -30,7 +30,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Can be used as input for subsequent actions.
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				columnKey: {
@@ -40,7 +40,7 @@ sap.ui.define([
 				},
 				/**
 				 * The text to be displayed for the item.
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				text: {
@@ -51,7 +51,7 @@ sap.ui.define([
 
 				/**
 				 * Defines visibility of column
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				visible: {
@@ -62,7 +62,7 @@ sap.ui.define([
 
 				/**
 				 * data type of the column (text, numeric or date is supported)
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				type: {
@@ -73,7 +73,7 @@ sap.ui.define([
 
 				/**
 				 * if type==numeric the precision will be used to format the entered value (maxIntegerDigits of the used Formatter)
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				precision: {
@@ -84,7 +84,7 @@ sap.ui.define([
 
 				/**
 				 * if type==numeric the scale will be used to format the entered value (maxFractionDigits of the used Formatter)
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				scale: {
@@ -95,7 +95,7 @@ sap.ui.define([
 
 				/**
 				 * specifies the number of characters which can be entered in the value fields of the condition panel
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				maxLength: {
@@ -106,7 +106,7 @@ sap.ui.define([
 
 				/**
 				 * Defines column width
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				width: {
@@ -117,7 +117,7 @@ sap.ui.define([
 
 				/**
 				 * the column with isDefault==true will be used as the selected column item on the conditionPanel
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				isDefault: {
@@ -129,7 +129,7 @@ sap.ui.define([
 				/**
 				 * the array of values for type bool. e.g. ["", "Off", "On"]. The first entry can be empty (used to blank the value field). Next value
 				 * represent the false value, last entry the true value.
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				values: {
@@ -140,7 +140,7 @@ sap.ui.define([
 
 				/**
 				 * Defines role. The role is reflected in the manner how the dimension will influence the chart layout.
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				role: {
@@ -150,7 +150,7 @@ sap.ui.define([
 
 				/**
 				 * Defines aggregation role
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				aggregationRole: {

@@ -117,7 +117,7 @@
 			text: "Start",
 			press: function() {
 				var i = sap.ui.getCore().byId("iterations").getSelectedKey();
-				new sap.m.Text({ text: "[TEST] ********** " + i + " iteration" + ( i > 1 ? "s" : "") + " *********"}).placeAt("results"); 
+				new sap.m.Text({ text: "[TEST] ********** " + i + " iteration" + ( i > 1 ? "s" : "") + " *********"}).placeAt("results");
 				runPerfTest(fnUnorm, i);
 				runPerfTest(fnUi5Norm, i);
 				runPerfTest(fnBrowser, i);

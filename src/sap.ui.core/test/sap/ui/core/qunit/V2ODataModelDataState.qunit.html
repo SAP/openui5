@@ -1,22 +1,22 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.DataState
   Author: d036800
 -->
 
-<html> 
+<html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>QUnit page for V2ODataModelDataState - sap.ui.core</title>
 <script>
-	//fix IE 11 bug 
+	//fix IE 11 bug
 	window.ActiveXObject = undefined;
 </script>
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m, sap.ui.layout"
 	xx-handleValidation="true"
 	>
@@ -34,32 +34,32 @@
 
 <!-- Test functions -->
 <script language="javascript">
-	
+
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 	jQuery.sap.require("sap.ui.model.CompositeBinding");
-	
+
 	var sServiceUri = "/SalesOrderSrv/";
 	var sDataRootPath =  "testdata/SalesOrder/";
 	var oModel, spy;
-	
+
 	var oMockServer = new sap.ui.core.util.MockServer({
 		rootUri: sServiceUri
 	});
-	
+
 	function initServer() {
 		sap.ui.core.util.MockServer.config({
 			autoRespond: true,
 			autoRespondAfter: 250
 		});
-			
+
 		oMockServer.simulate("testdata/SalesOrder/metadata.xml", sDataRootPath);
 		oMockServer.start();
 	}
-	
+
 	function stopServer() {
 		oMockServer.stop();
 	}
-	
+
 	function initModel(mParameters) {
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, mParameters);
 	}
@@ -72,7 +72,7 @@
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
-			
+
 		},
 		teardown : function() {
 			oModel.destroy();
@@ -81,11 +81,11 @@
 			stopServer();
 		}
 	});
-	
+
 	function testDataState(oBinding, fnFunc, oDataStateObject, sComment, fnContinue) {
 		return new Promise(function(fnResolve, fnReject) {
 			oDataStateObject = createDataState(oDataStateObject);
-			
+
 			var fCompare = function(oEvent) {
 				checkDataState(oEvent.getParameter("dataState"), oDataStateObject, sComment);
 				oBinding.detachAggregatedDataStateChange(fCompare);
@@ -97,9 +97,9 @@
 			oBinding.attachAggregatedDataStateChange(fCompare);
 			fnFunc();
 		});
-		
+
 	};
-	
+
 	function createDataState(mDataStateObject) {
 		var oDataState = new sap.ui.model.DataState();
 		oDataState.setOriginalValue(mDataStateObject.originalValue);
@@ -111,28 +111,28 @@
 			} else {
 				oDataState.setModelMessages(mDataStateObject.messages);
 		}
-		
+
 		// Ugly: Keep comment so it will be added to every test
 		oDataState._comment = mDataStateObject.comment;
-		
+
 		return oDataState;
 	}
-	
+
 	function checkDataStatesInOrder(oBinding, aDataStateObjects) {
 		return new Promise(function(fnResolve, fnReject) {
 			var aDataStates = aDataStateObjects.map(createDataState);
-			
+
 			function fnCheckNextDataStateChange(oEvent) {
 				var mNextDataState = aDataStates.shift();
-				
+
 				checkDataState(oEvent.getParameter("dataState"), mNextDataState, mNextDataState._comment || "");
-				
+
 				if (aDataStates.length === 0) {
 					oBinding.detachAggregatedDataStateChange(fnCheckNextDataStateChange);
 					fnResolve();
 				}
 			}
-			
+
 			oBinding.attachAggregatedDataStateChange(fnCheckNextDataStateChange);
 		});
 	}
@@ -141,9 +141,9 @@
 		var aCompareMethods = [
 			"isDirty", "isControlDirty", "isLaundering", "getOriginalValue", "getValue", "getInvalidValue","getMessages"
 		]
-		
+
 		ok(true, "Starting Test: " + sComment);
-		
+
 		for (var i=0;i<aCompareMethods.length;i++) {
 			if (!jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]())) {
 				//debugger;
@@ -166,7 +166,7 @@
 							if (aMessages1[j] instanceof sap.ui.core.message.Message && aMessages2[j] instanceof sap.ui.core.message.Message) {
 								equal(aMessages1[j] === aMessages2[j],true,"Compared Message "+ j + " message:'" +aMessages1[j].getMessage() +"': "+ sComment);
 							}
-						
+
 						}
 					}
 				} else {
@@ -179,17 +179,17 @@
 
 		ok(true, "Ending Test: " + sComment);
 	};
-	
+
 	asyncTest("test DataState batch deferred",function(){
 		// create dummy testdata
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name"),
 					oFloatBinding = oModel.bindProperty("/ProductSet('AD-1000')/TaxTarifCode");
-				oFloatBinding.setType(new sap.ui.model.type.Float(), "string"); 
+				oFloatBinding.setType(new sap.ui.model.type.Float(), "string");
 				oModel.addBinding(oNameBinding);
 				oModel.addBinding(oFloatBinding);
-				
+
 				testDataState (oNameBinding,
 						function() {
 							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
@@ -232,8 +232,8 @@
 				})
 				.then(function() {
 					var pOthersDone;
-					
-					oModel.submitChanges({ 
+
+					oModel.submitChanges({
 						success: function() {
 							equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
 							equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
@@ -254,7 +254,7 @@
 							});
 						}
 					});
-					
+
 					oModel.attachBatchRequestSent(function() {
 						pOthersDone = testDataState (oNameBinding,
 								function() {
@@ -290,7 +290,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test DataState single deferred",function(){
 		var sRequestId;
 		oModel.setUseBatch(false);
@@ -299,10 +299,10 @@
 			success: function() {
 				var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name"),
 					oFloatBinding = oModel.bindProperty("/ProductSet('AD-1000')/TaxTarifCode");
-				oFloatBinding.setType(new sap.ui.model.type.Float(), "string"); 
+				oFloatBinding.setType(new sap.ui.model.type.Float(), "string");
 				oModel.addBinding(oNameBinding);
 				oModel.addBinding(oFloatBinding);
-				
+
 				testDataState (oNameBinding,
 						function() {
 							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
@@ -345,7 +345,7 @@
 					})
 					.then(function() {
 						var pOthers;
-						
+
 						oModel.submitChanges();
 						oModel.attachRequestSent(function(oInfo) {
 							sRequestId = oInfo.mParameters["ID"];
@@ -375,7 +375,7 @@
 											"Waiting for expected submit change handler."
 										);
 								});
-							
+
 						});
 						oModel.attachRequestCompleted(
 							function(oInfo) {
@@ -409,7 +409,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test DataState single not deferred",function(){
 		var sRequestId;
 		oModel.setUseBatch(false);
@@ -417,15 +417,15 @@
 		// create dummy testdata
 		oModel.read("/ProductSet('AD-1000')");
 		oModel.attachRequestCompleted(fnOnRead);
-		
+
 		function fnOnRead() {
 			oModel.detachRequestCompleted(fnOnRead);
 			var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name"),
 				oFloatBinding = oModel.bindProperty("/ProductSet('AD-1000')/TaxTarifCode");
-			oFloatBinding.setType(new sap.ui.model.type.Float(), "string"); 
+			oFloatBinding.setType(new sap.ui.model.type.Float(), "string");
 			oModel.addBinding(oNameBinding);
 			oModel.addBinding(oFloatBinding);
-			
+
 			testDataState(oNameBinding,
 				function() {
 					oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
@@ -438,10 +438,10 @@
 				},
 				"Setting a string to a string type binding"
 			);
-			
-			
+
+
 			var pOthers;
-			
+
 			var fn1 = function(oInfo) {
 				oModel.detachRequestSent(fn1);
 				sRequestId = oInfo.mParameters["ID"];
@@ -486,14 +486,14 @@
 			);
 		};
 	});
-	
-	
+
+
 	module("New DataState Tests", {
 		setup : function() {
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
-			
+
 		},
 		teardown : function() {
 			oModel.destroy();
@@ -502,7 +502,7 @@
 			stopServer();
 		}
 	});
-	
+
 	function promiseRead(oModel, sPath) {
 		return new Promise(function(fnResolve, fnReject) {
 			oModel.read(sPath, {
@@ -511,13 +511,13 @@
 			});
 		});
 	}
-	
+
 	function promiseBatchSent(oModel) {
 		return new Promise(function(fnResolve, fnReject) {
 			oModel.attachBatchRequestSent(fnResolve);
 		});
 	}
-	
+
 	function promiseSubmit(oModel) {
 		return new Promise(function(fnResolve, fnReject) {
 			oModel.submitChanges({
@@ -526,8 +526,8 @@
 			});
 		});
 	}
-	
-	
+
+
 	/**
 	 * Returns a promise that resolves AFTER a setTimeout()
 	 */
@@ -540,18 +540,18 @@
 			});
 		});
 	}
-	
+
 	asyncTest("test DataState multiple submits", function() {
 		var oNameBinding;
-		
+
 		var pSubmit1, pSubmit2, pSubmit3;
-		
+
 		/*
 		  Description of what this test is supposed to do.
-		  
+
 		  1. Get the information of a single entity (read)
 		  2. Create a Binding to the Name property of that entity - it contains the value "Flyer".
-		  3. Check the initial data state, which should be clean and value should be the same as originalValue, there 
+		  3. Check the initial data state, which should be clean and value should be the same as originalValue, there
 		     should be no invalidValue and the binding should not be currently laundering.
 		  4. Set the Name property to "ChangedOnce" and request notification of the next DataStateChange, which should
 		     then have its value set to "ChangedOnce" and the originalValue should remain as "Flyer".
@@ -573,8 +573,8 @@
 
 		oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name");
 		oModel.addBinding(oNameBinding);
-		
-		
+
+
 		// The DataStateChanges should come in in the following order:
 		checkDataStatesInOrder(oNameBinding, [{
 			comment: "Change after initial read finishes",
@@ -610,8 +610,8 @@
 			// Exit after all DataStates have been checked
 			start();
 		});
-		
-		
+
+
 		timeoutPromise(promiseRead(oModel, "/ProductSet('AD-1000')"))
 			.then(function() {
 				oModel.setProperty("/ProductSet('AD-1000')/Name","ChangedOnce");
@@ -628,12 +628,12 @@
 				oModel.submitChanges();
 				return timeoutPromise(promiseBatchSent(oModel));
 			});
-	
+
 	});
 
 
 	asyncTest("Simulated DataState Changes", function() {
-			
+
 		oNameBinding = oModel.bindProperty("/test");
 
 		// The DataStateChanges should come in in the following order:
@@ -686,7 +686,7 @@
 
 
 		var oDataState = new sap.ui.model.DataState();
-		
+
 		var sTimeoutId;
 		function changeDataState(sProperty, vValue) {
 			oDataState.setProperty(sProperty, vValue);
@@ -701,47 +701,47 @@
 				}
 			}
 		}
-		
+
 		setTimeout(function() {
-			
+
 			changeDataState("originalValue", "Flyer");
 			changeDataState("value", "Flyer");
 			changeDataState("laundering", false);
 			changeDataState("modelMessages", []);
 			changeDataState("controlMessages", []);
-			
+
 			setTimeout(function() {
 				changeDataState("value", "Value 1");
 				changeDataState("laundering", true);
-				
+
 				setTimeout(function() {
 					changeDataState("value", "Value 2");
 					changeDataState("laundering", true);
-					
+
 					setTimeout(function() {
 						changeDataState("value", "Value 1");
 						changeDataState("laundering", true);
-						
-						
-						
+
+
+
 						setTimeout(function() {
 							changeDataState("originalValue", "Value 1");
 							changeDataState("laundering", true);
 							changeDataState("modelMessages", []);
 							changeDataState("controlMessages", []);
-						
+
 							setTimeout(function() {
 								changeDataState("originalValue", "Value 2");
 								changeDataState("laundering", true);
 								changeDataState("modelMessages", []);
 								changeDataState("controlMessages", []);
-								
+
 								setTimeout(function() {
 									changeDataState("originalValue", "Value 1");
 									changeDataState("laundering", false);
 									changeDataState("modelMessages", []);
 									changeDataState("controlMessages", []);
-									
+
 								}, 50);
 							}, 50);
 						}, 50);
@@ -749,17 +749,17 @@
 				}, 50);
 			}, 50);
 		}, 0);
-		
-		
+
+
 	});
-	
-	
+
+
 	module("Other Old DataState Tests", {
 		setup : function() {
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
-			
+
 		},
 		teardown : function() {
 			oModel.destroy();
@@ -768,8 +768,8 @@
 			stopServer();
 		}
 	});
-	
-	
+
+
 	asyncTest("test DataState submitChanges with expanded nav props",function(){
 		// create dummy testdata
 		oModel.read("/ProductSet('HT-1000')", {
@@ -791,7 +791,7 @@
 				);
 				ok(oModel.hasPendingChanges(), "model should have pending changes");
 				oModel.submitChanges(
-					{ 
+					{
 						success: function() {
 							ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 							var oOrigData = oModel.getOriginalProperty("/ProductSet('HT-1000')");
@@ -820,11 +820,11 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test DataState multiple submits with complext type",function(){
 		oCityBinding = oModel.bindProperty("/BusinessPartnerSet('0100000015')/Address/City");
 		oModel.addBinding(oCityBinding);
-		
+
 		// The DataStateChanges should come in in the following order:
 		checkDataStatesInOrder(oCityBinding, [{
 			comment: "Change after initial read finishes",
@@ -860,8 +860,8 @@
 			// Exit after all DataStates have been checked
 			start();
 		});
-		
-		
+
+
 		timeoutPromise(promiseRead(oModel, "/ProductSet('AD-1000')"))
 			.then(function() {
 				return timeoutPromise(promiseRead(oModel, "/ProductSet('AD-1000')/ToSupplier"))
@@ -881,7 +881,7 @@
 				oModel.submitChanges();
 				// return timeoutPromise(promiseBatchSent(oModel));
 			});
-		
+
 	});
 
 	asyncTest("test DataState Context Change",function(){
@@ -903,7 +903,7 @@
 						"Setting a 'blabla2' to a string type binding on AD-1000"
 				);
 				oModel.submitChanges(
-					{ 
+					{
 						success: function() {
 							oModel.read("/ProductSet('HT-1000')", {
 								success: function() {
@@ -978,21 +978,21 @@
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				var oInputField = new sap.m.Input("ValidationInput", {
-					value: { 
+					value: {
 						path: "TaxTarifCode",
 						type: new sap.ui.model.type.Float()
 					}
 				});
 				oInputField.setModel(oModel);
 				oFloatBinding = oInputField.getBinding("value");
-				
+
 				var oContext = oModel.createBindingContext("/ProductSet('AD-1000')");
 				oInputField.setBindingContext(oContext);
-				
+
 				sap.ui.getCore().getMessageManager().registerObject(oInputField, true);
-				
+
 				var oNameBinding = oModel.bindProperty("Name", oContext);
-					
+
 				var oComositeBinding = new sap.ui.model.CompositeBinding([oNameBinding, oFloatBinding]);
 				oModel.addBinding(oNameBinding);
 				oModel.addBinding(oFloatBinding);
@@ -1028,8 +1028,8 @@
 					);
 				})
 				.then(function() {
-					
-					
+
+
 
 					return testDataState(oComositeBinding,
 							function() {
@@ -1047,7 +1047,7 @@
 					);
 				})
 				.then(function() {
-					
+
 					return testDataState (oComositeBinding,
 							function() {
 								oInputField.setValue("StringToFloatType");
@@ -1084,7 +1084,7 @@
 				});
 		//let the message manager control the vertical layout for messages
 		sap.ui.getCore().getMessageManager().registerObject(oVerticalLayout, true);
-		
+
 		oVerticalLayout.addContent(oFloatInput);
 		oVerticalLayout.addContent(oNameInput);
 		oVerticalLayout.addContent(oCompositeInput);
@@ -1198,14 +1198,14 @@
 																	);
 															}
 														);
-													
+
 												}
 											);
 										}
 									);
 								}
 							);
-						}	
+						}
 					);
 			},
 			error: function() {
@@ -1213,7 +1213,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test DataState and Messages on Composite Binding",function(){
 		var oVerticalLayout = new sap.ui.layout.VerticalLayout();
 		var oFloatInput = new sap.m.Input({value:{path:'TaxTarifCode', type:'sap.ui.model.type.Float'}});
@@ -1225,7 +1225,7 @@
 				});
 		//let the message manager control the vertical layout for messages
 		sap.ui.getCore().getMessageManager().registerObject(oVerticalLayout, true);
-		
+
 		oVerticalLayout.addContent(oFloatInput);
 		oVerticalLayout.addContent(oNameInput);
 		oVerticalLayout.addContent(oCompositeInput);
@@ -1293,8 +1293,8 @@
 			}
 		});
 	});
-	
-	
+
+
 	asyncTest("test DataState and Messages on Composite Binding 2",function(){
 		var oInput = new sap.m.Input("compositeInput", {
 			value: {
@@ -1308,9 +1308,9 @@
 		sap.ui.getCore().getMessageManager().registerObject(oInput, true);
 		var oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
 		var oMessageManager  = sap.ui.getCore().getMessageManager();
-		
+
 		oMessageManager.registerMessageProcessor(oMessageProcessor);
-		
+
 		oInput.placeAt("content");
 		oInput.setModel(oModel);
 		// create dummy testdata
@@ -1318,16 +1318,16 @@
 		oModel.attachBatchRequestCompleted(function() {
 			var oBinding = oInput.getBinding("value");
 			var oDataState = oBinding.getDataState();
-			
+
 			var oMessage1 = new sap.ui.core.message.Message({
 				processor: oMessageProcessor,
 				type: sap.ui.core.MessageType.Error,
 				message: "All is lost",
 				target: "compositeInput/value"
 			});
-			
+
 			equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
-			
+
 
 			Promise.resolve()
 			.then(function() {
@@ -1353,7 +1353,7 @@
 			})
 			.then(function() {
 				oInput.setValue("NewName 2");
-				
+
 				return testDataState(oBinding, function() {}, {
 						originalValue : "Flyer 1",
 						value : "NewName 2",
@@ -1365,7 +1365,7 @@
 			})
 			.then(function() {
 				oInput.setValue("NewName Unfug");
-				
+
 				return testDataState(oBinding, function() {}, {
 						originalValue : "Flyer 1",
 						value : "NewName 2",
@@ -1377,7 +1377,7 @@
 			})
 			.then(function() {
 				oInput.setValue("NewName 1");
-				
+
 				return testDataState(oBinding, function() {}, {
 						originalValue : "Flyer 1",
 						value : "NewName 1",
@@ -1419,9 +1419,9 @@
 		sap.ui.getCore().getMessageManager().registerObject(oInput, true);
 		var oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
 		var oMessageManager  = sap.ui.getCore().getMessageManager();
-		
+
 		oMessageManager.registerMessageProcessor(oMessageProcessor);
-		
+
 		oInput.placeAt("content");
 		oInput.setModel(oModel);
 		// create dummy testdata
@@ -1429,16 +1429,16 @@
 		oModel.attachBatchRequestCompleted(function() {
 			var oBinding = oInput.getBinding("value");
 			var oDataState = oBinding.getDataState();
-			
+
 			var oMessage1 = new sap.ui.core.message.Message({
 				processor: oMessageProcessor,
 				type: sap.ui.core.MessageType.Error,
 				message: "All is lost",
 				target: "compositeInput/value"
 			});
-			
+
 			equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
-			
+
 
 			Promise.resolve()
 			.then(function() {

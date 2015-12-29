@@ -103,7 +103,7 @@
 									showIcon="true" showCloseButton="false" close="onMsgStripClose">
 								</MessageStrip>
 							</l:VerticalLayout>
-							
+
 						</cells>
 					</ColumnListItem>
 					<ColumnListItem>
@@ -116,7 +116,7 @@
 									showIcon="true" showCloseButton="false" close="onMsgStripClose">
 								</MessageStrip>
 							</l:VerticalLayout>
-							
+
 						</cells>
 					</ColumnListItem>
 					<ColumnListItem>
@@ -129,7 +129,7 @@
 									showIcon="true" showCloseButton="false" close="onMsgStripClose">
 								</MessageStrip>
 							</l:VerticalLayout>
-							
+
 						</cells>
 					</ColumnListItem>
 				</items>

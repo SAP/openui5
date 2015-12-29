@@ -55,10 +55,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 		// Render into invisible area, so the size settings from CSS are applied
 		var oInvisible = sap.ui.getCore().getStaticAreaRef();
 		oInvisible.appendChild($root[0]);
-		
+
 		jQuery($root.children()[0]).addClass("sapUiBusy").attr("tabindex", 0).attr("role", "progressbar").attr("alt", "").attr("title", sTitle);
 		jQuery($root.children()[1]).addClass("sapUiLocalBusyIndicatorSizeBig").attr("title", sTitle);
-		
+
 		this.oDomRef = oRootDomRef;
 
 		this.oPopup = new Popup(oRootDomRef);

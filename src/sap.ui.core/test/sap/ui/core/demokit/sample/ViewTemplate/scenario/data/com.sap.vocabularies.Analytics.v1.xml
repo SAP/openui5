@@ -49,8 +49,8 @@
       <Term Name="DrillURL" Type="Edm.String" AppliesTo="EntityType"> <!-- metadata annotation that can also appear as instance annotation -->
         <Annotation Term="Core.Description">
           <String>
-            URL to retrieve more detailed data related to a node of a recursive hierarchy. 
-            Annotations with this term MUST include a qualifier to select the hierarchy for which the drill URL is provided.  
+            URL to retrieve more detailed data related to a node of a recursive hierarchy.
+            Annotations with this term MUST include a qualifier to select the hierarchy for which the drill URL is provided.
           </String>
         </Annotation>
         <Annotation Term="Core.IsURL" />

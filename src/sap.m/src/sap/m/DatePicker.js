@@ -755,7 +755,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
 			if (!jQuery.sap.equal(oDate, oDateOld)) {
 				this.setDateValue(oDate);
-				// compare Dates because value can be the same if only 2 digits for year 
+				// compare Dates because value can be the same if only 2 digits for year
 				sValue = this.getValue();
 				this.fireChangeEvent(sValue, {valid: true});
 				if (this.getDomRef()) { // as control could be destroyed during update binding

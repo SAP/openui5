@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new SearchField.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -28,59 +28,59 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SearchField = Control.extend("sap.m.SearchField", /** @lends sap.m.SearchField.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * Input Value.
 			 */
 			value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"},
-	
+
 			/**
 			 * Defines the CSS width of the input. If not set, width is 100%.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Boolean property to enable the control (default is true).
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Invisible inputs are not rendered.
 			 */
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * Maximum number of characters. Value '0' means the feature is switched off.
 			 */
 			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
-	
+
 			/**
 			 * Text shown when no value available. Default placeholder text is the word "Search" in the current local language (if supported) or in English.
 			 */
 			placeholder : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Set to false to hide the magnifier icon.
-			 * @deprecated Since version 1.16.0. 
+			 * @deprecated Since version 1.16.0.
 			 * This parameter is deprecated. Use "showSearchButton" instead.
 			 */
 			showMagnifier : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
-	
+
 			/**
 			 * Set to true to display a refresh button in place of the search icon. By pressing the refresh button or F5 key on keyboard, the user can reload the results list without changing the search string.
 			 * @since 1.16
 			 */
 			showRefreshButton : {type : "boolean", group : "Behavior", defaultValue : false},
-	
+
 			/**
 			 * Tooltip text of the refresh button. If it is not set, the tooltip of the SearchField (if any) is displayed. Tooltips are not displayed on touch devices.
 			 * @since 1.16
 			 */
 			refreshButtonTooltip : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Set to true to show the search button with the magnifier icon.
 			 * If false, both the search and refresh buttons are not displayed even if the "showRefreshButton" property is true.
@@ -125,19 +125,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * <li><code>icon</code></li>
 			 * <li><code>description</code> - additional text may be used to visually display search item type or category</li>
 			 * </ul>
-			 * 
+			 *
 			 * @since 1.34
 			 */
 			suggestionItems : {type : "sap.m.SuggestionItem", multiple : true, singularName : "suggestionItem"}
 		},
 		events : {
-	
+
 			/**
 			 * Event which is fired when the user triggers a search.
 			 */
 			search : {
 				parameters : {
-	
+
 					/**
 					 * The search query string.
 					 */
@@ -160,15 +160,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 */
 					clearButtonPressed : {type : "boolean"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * This event is fired when the value of the search field is changed by a user - e.g. at each key press. Do not invalidate or re-render a focused search field, especially during the liveChange event.
 			 * @since 1.9.1
 			 */
 			liveChange : {
 				parameters : {
-	
+
 					/**
 					 * Current search string.
 					 */
@@ -192,11 +192,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}});
-	
+
 	EnabledPropagator.call(SearchField.prototype);
-	
+
 	IconPool.insertFontFaceStyle();
-	
+
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	// create an F5 ARIA announcement and remember its ID for later use in the renderer:
@@ -205,27 +205,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}).toStatic().getId();
 
 	SearchField.prototype.init = function() {
-	
+
 		// IE9 does not fire input event when characters are deleted in an input field, use keyup instead
 		this._inputEvent = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10 ? "keyup" : "input";
 
 		// Default placeholder: "Search"
 		this.setProperty("placeholder", oRb.getText("FACETFILTER_SEARCH"),true);
 	};
-	
+
 	SearchField.prototype.getFocusDomRef = function() {
 		return this._inputElement;
 	};
-	
+
 	// returns correct the width that applied by design
 	SearchField.prototype.getWidth = function() {
 		return this.getProperty("width") || "100%";
 	};
-	
+
 	SearchField.prototype._hasPlacehoder = (function () {
 		return "placeholder" in document.createElement("input");
 	}());
-	
+
 	SearchField.prototype.onBeforeRendering = function() {
 		if (this._inputElement) {
 			this.$().find(".sapMSFB").off();
@@ -234,9 +234,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._inputElement = null;
 		}
 	};
-	
+
 	SearchField.prototype.onAfterRendering = function() {
-	
+
 		// DOM element for the embedded HTML input:
 		this._inputElement = this.getDomRef("I");
 		// DOM element for the reset button:
@@ -257,7 +257,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.$().on("touchstart mousedown", this.onButtonPress.bind(this));
 
 			// FF does not set :active by preventDefault, use class:
-			if (sap.ui.Device.browser.firefox) { 
+			if (sap.ui.Device.browser.firefox) {
 				this.$().find(".sapMSFB").on("mouseup mouseout", function(oEvent){
 					jQuery(oEvent.target).removeClass("sapMSFBA");
 				});
@@ -269,12 +269,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}.bind(this));
 		}
 	};
-	
+
 	SearchField.prototype.clear = function(oOptions) {
 		if (!this._inputElement || this.getValue() === "") {
 			return;
 		}
-	
+
 		this.setValue("");
 		updateSuggestions(this);
 		this.fireLiveChange({newValue: ""});
@@ -284,9 +284,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			clearButtonPressed: !!(oOptions && oOptions.clearButton)
 		});
 	};
-	
+
 	SearchField.prototype.onButtonPress = function(oEvent) {
-	
+
 		if (oEvent.originalEvent.button === 2) {
 			return; // no action on the right mouse button
 		}
@@ -303,17 +303,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	SearchField.prototype.ontouchend = function(oEvent) {
-	
+
 		if (oEvent.originalEvent.button === 2) {
 			return; // no action on the right mouse button
 		}
-	
+
 		var oSrc = oEvent.target;
-	
+
 		if (oSrc.id == this.getId() + "-reset") {
-	
+
 			closeSuggestions(this);
 			this._bSuggestionSuppressed = true; // never open suggestions after reset
 
@@ -351,15 +351,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.onmouseup(oEvent);
 		}
 	};
-	
+
 	SearchField.prototype.onmouseup = function(oEvent) {
-	
+
 		// focus if mouse-clicked on the form outside of the input
 		if (this.getEnabled() && oEvent.target.tagName == "FORM") {
 			this._inputElement.focus();
 		}
 	};
-	
+
 	/**
 	 * Process the search event
 	 *
@@ -377,14 +377,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			refreshButtonPressed: false,
 			clearButtonPressed: false
 		});
-	
+
 		// If the user has pressed the search button on the soft keyboard - close it,
 		// but only in case of soft keyboard:
 		if (!sap.ui.Device.system.desktop) {
 			this._blur();
 		}
 	};
-	
+
 	/**
 	 * Blur the input field
 	 *
@@ -398,7 +398,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}, 13);
 	};
-	
+
 	/**
 	 * Process the change event. Update value and do not fire any control events
 	 * because the user has focused another control on the page without intention to do a search.
@@ -407,14 +407,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SearchField.prototype.onChange = function(event) {
 		this.setValue(this._inputElement.value);
 	};
-	
+
 	/**
 	 * Process the input event (key press or paste). Update value and fire the liveChange event.
 	 * @private
 	 */
 	SearchField.prototype.onInput = function(event) {
 		var value = this._inputElement.value;
-	
+
 		// IE fires an input event when an empty input with a placeholder is focused or loses focus.
 		// Check if the value has changed, before firing the liveChange event.
 		if (value != this.getValue()) {
@@ -427,7 +427,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * Handle the key down event for F5 on all browsers.
 	 *
@@ -437,7 +437,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	SearchField.prototype.onkeydown = function(event) {
 		if (event.which === jQuery.sap.KeyCodes.F5 || event.which === jQuery.sap.KeyCodes.ENTER) {
-	
+
 			// show search button active state
 			this.$("search").toggleClass("sapMSFBA", true);
 
@@ -448,13 +448,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (event.which === jQuery.sap.KeyCodes.ESCAPE && suggestionsOn(this)) {
 			// close picker
 			closeSuggestions(this);
-	
+
 			// do not reset the search field value
 			event.stopPropagation();
 			event.preventDefault();
 		}
 	};
-	
+
 	/**
 	 * Handle the key up event for F5 on all browsers.
 	 *
@@ -467,7 +467,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var suggestionItem;
 
 		if (event.which === jQuery.sap.KeyCodes.F5 || event.which === jQuery.sap.KeyCodes.ENTER) {
-	
+
 			// hide search button active state
 			this.$("search").toggleClass("sapMSFBA", false);
 
@@ -490,7 +490,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			});
 		}
 	};
-	
+
 	/**
 	 * highlight the background on focus.
 	 *
@@ -508,7 +508,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// clear tooltip of the refresh button
 		if (this.getShowRefreshButton()) {
 			this.$("search").removeAttr("title");
-		} 
+		}
 		// Some applications do re-render during the liveSearch event.
 		// The input is focused and most browsers select the input text for copy.
 		// Any following key press deletes the whole selection.
@@ -535,32 +535,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	SearchField.prototype.onBlur = function(oEvent) {
 		var tooltip;
-		
+
 		this.$().toggleClass("sapMFocus", false);
-		
+
 		// restore toltip of the refresh button
 		if (this.getShowRefreshButton()) {
 			tooltip = this.getRefreshButtonTooltip();
 			if (tooltip) {
 				this.$("search").attr("title", tooltip);
 			}
-		} 
+		}
 	};
-	
+
 	SearchField.prototype.setValue = function(value) {
 		value = value || "";
 		if (this._inputElement) {
-	
+
 			if (this._inputElement.value !== value) {
 				this._inputElement.value = value;
 			}
-	
+
 			var $this = this.$();
 			if ($this.hasClass("sapMSFVal") == !value) {
 				$this.toggleClass("sapMSFVal", !!value);
 			}
 		}
-	
+
 		this.setProperty("value", value, true);
 		return this;
 	};
@@ -606,7 +606,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.preventDefault();
 		}
 	}
-	
+
 	/**
 	 * Handles the <code>sapdown</code> pseudo event when keyboard DOWN arrow key is pressed.
 	 *
@@ -675,7 +675,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Function returns DOM element which acts as reference point for the opening suggestion menu
-	 * 
+	 *
 	 * @protected
 	 * @since 1.34
 	 * @returns {domRef} the DOM element at which to open the suggestion list
@@ -686,7 +686,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Close the suggestions list.
-	 * 
+	 *
 	 * @param {sap.m.SearchField} oSF a SearchField instance
 	 */
 	function closeSuggestions(oSF) {
@@ -695,7 +695,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Close the suggestions list.
-	 * 
+	 *
 	 * @param {sap.m.SearchField} oSF a SearchField instance
 	 */
 	function openSuggestions(oSF) {
@@ -709,7 +709,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Check if the suggestions list is opened.
-	 * 
+	 *
 	 * @param {sap.m.SearchField} oSF a SearchField instance
 	 */
 	function suggestionsOn(oSF) {
@@ -718,13 +718,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Toggle visibility of the suggestion list.
-	 * 
+	 *
 	 * @param {boolean | undefined} bShow set to <code>true</code> to display suggestions and <code>false</code> to hide them. Default value is <code>true</code>.
 	 * An empty suggestion list is not shown on desktop and tablet devices.<br>
-	 * 
+	 *
 	 * This method may be called only as a response to the <code>suggest</code> event to ensure that the suggestion list is shown
 	 * at the moment when the user expects it.
-	 * 
+	 *
 	 * @returns {sap.m.SearchField} <code>this</code> to allow method chaining
 	 * @public
 	 * @since 1.34

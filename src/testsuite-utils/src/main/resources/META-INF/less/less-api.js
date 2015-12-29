@@ -27,7 +27,7 @@ var __lessTreeRuleEval = window.less.tree.Rule.prototype.eval;
 var __env = context.__env = {};
 
 /**
- * Convenience function to parse string 
+ * Convenience function to parse string
  */
 var parse = context.parse = function(sData, sPath, bCompress, bCompressJSON, sLibraryName) {
 	var oResult = {},
@@ -150,7 +150,7 @@ var parse = context.parse = function(sData, sPath, bCompress, bCompressJSON, sLi
 		sMsg += createErrorMessage(oImportError);
 		throw sMsg;
 	}
-	
+
 	// convert the resources into a semicolon separated string
 	oResult.resources = aResources.join(";");
 

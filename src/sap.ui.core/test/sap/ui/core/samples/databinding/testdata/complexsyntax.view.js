@@ -3,13 +3,13 @@ sap.ui.define(['sap/ui/commons/Label', 'sap/ui/commons/TextField', 'sap/ui/core/
 	"use strict";
 
 	sap.ui.jsview("testdata.complexsyntax", {
-	
+
 		getControllerName: function() {
 			return "testdata.complexsyntax";
 		},
 
 		/**
-		 * 
+		 *
 		 * @param oController may be null
 		 * @returns {sap.ui.cre.Control}
 		 */
@@ -18,7 +18,7 @@ sap.ui.define(['sap/ui/commons/Label', 'sap/ui/commons/TextField', 'sap/ui/core/
 			var aControls = [];
 			var oLabel = new Label({text:"Hello Mr. {path:'/singleEntry/firstName', formatter:'.myFormatter'}, {/singleEntry/lastName}"}, oController);
 			aControls.push(oLabel);
-		
+
 			var oTable = new Table({rows:"{/table}"});
 			var oColumn = new Column();
 			var oLabel2 = new Label({text:"Name"});

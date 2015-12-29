@@ -10,10 +10,10 @@ sap.ui.define([
 		onInit: function () {
 			this.oProductModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 			this.oProductModel.setSizeLimit(3);
-			
+
 			this.oColumnModel = new JSONModel();
 			this.oColumnModel.setData(this.oData);
-			
+
 			var oCloneData = jQuery.extend(true, [], this.oData);
 			oCloneData[0].width = "auto";
 			this.oColumnModelClone = new JSONModel();
@@ -27,7 +27,7 @@ sap.ui.define([
 		onReset: function (oEvent) {
 			this.oColumnModel.setData(this.oData);
 		},
-		
+
 		oData : [{
 				width: "30%",
 				header: "Product Name",

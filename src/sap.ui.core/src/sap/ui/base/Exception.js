@@ -35,7 +35,7 @@ sap.ui.define(function() {
 		this.name = "Exception";
 		this.message = message;
 	};
-	
+
 
 	return Exception;
 

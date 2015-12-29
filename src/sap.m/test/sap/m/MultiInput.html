@@ -959,9 +959,9 @@
 		var oMultiInput6 = new sap.m.MultiInput("multiInput6", {
 			 width: "500px",
 			 enableMultiLineMode: true
-			 
+
 		});
-	   
+
 		oMultiInput6.setTokens([
 		                        new sap.m.Token({text: "Token 1", key: "0001"}),
 				   			    new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -970,20 +970,20 @@
 				   			    new sap.m.Token({text: "Token 5", key: "0005"}),
 				   			    new sap.m.Token({text: "Token 6", key: "0006"})
 				   			    ]);
-			
+
 		//*** add checkbox validator
 		oMultiInput6.addValidator(function(args){
 				var text = args.text;
 				return new sap.m.Token({key: text, text: text});
 		});
-		
+
 	   //******************************************
 	   var oMultiInput7 = new sap.m.MultiInput("multiInput7", {
 			 width: "500px",
 			 enableMultiLineMode: true
-			 
+
 		});
-	   
+
 		oMultiInput7.setTokens([
 		                        new sap.m.Token({text: "Token 1", key: "0001"}),
 				   			    new sap.m.Token({text: "Token 2", key: "0002"}),
@@ -992,17 +992,17 @@
 				   			    new sap.m.Token({text: "Token 5", key: "0005"}),
 				   			    new sap.m.Token({text: "Token 6", key: "0006"})
 				   			    ]);
-			
+
 		//*** add checkbox validator
 		oMultiInput7.addValidator(function(args){
 				var text = args.text;
 				return new sap.m.Token({key: text, text: text});
 		});
-		
+
 		var oLayout = new sap.ui.layout.VerticalLayout({
 			content: [ oMultiInput7 ]
 		});
-		
+
 	   //******************************************
 	   			var oSimpleForm = new sap.ui.layout.form.SimpleForm("mySimpleForm", {
 				title: "Personal Information",

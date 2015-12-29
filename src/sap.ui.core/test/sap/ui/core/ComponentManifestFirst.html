@@ -4,11 +4,11 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>Component Manifest First - sap.ui.core</title>
-	<script id="sap-ui-bootstrap" 
-	type="text/javascript" src="../../../../resources/sap-ui-core.js" 
-	data-sap-ui-theme="sap_bluecrystal" 
-	data-sap-ui-bindingSyntax="complex" 
-	data-sap-ui-libs="sap.ui.commons,sap.m" 
+	<script id="sap-ui-bootstrap"
+	type="text/javascript" src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-bindingSyntax="complex"
+	data-sap-ui-libs="sap.ui.commons,sap.m"
 	data-sap-ui-xx-componentPreload="async"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
@@ -29,11 +29,11 @@
 								<RadioButton selected="{path: '/mode/maniFirstDynamic'}" text="Redirect Request for manifest.json to Dynamic Codeing Box below"></RadioButton>
 								<RadioButton selected="{path: '/mode/maniUrl'}" text="Load manifest.json from server via parameter manifestUrl=..."></RadioButton>
 							</buttons>
-							</RadioButtonGroup>	
+							</RadioButtonGroup>
 							<Label text="Predefined Manifest"></Label>
 							<ComboBox width="100%" id="ManiSelector" items="{path: '/manifests'}" selectionChange="selectChange" selectedKey="{/selectedManifestKey}">
 								<core:Item key="{key}" text="{name}" />
-							</ComboBox>						
+							</ComboBox>
 							<TextArea id="ManifestArea" width="100%" rows="15"></TextArea>
 							<Label text="Load async?"></Label>
 							<CheckBox id="AsyncCheckBox" selected="{/async}"> </CheckBox>
@@ -81,7 +81,7 @@
 						}
 					}
 				}
-			}, 
+			},
 			"m2":{
 				"key": "m2",
 				"name": "Manifest (Extensibility)",
@@ -113,7 +113,7 @@
 			},
 			"m3":{
 				"key": "m3",
-				"name": "Default Manifest for Manifest First", 
+				"name": "Default Manifest for Manifest First",
 				"content": {
 					"name": "samples.manifestfirst.customer.Component",
 					"sap.app": {
@@ -175,34 +175,34 @@
 		oServer = sinon.fakeServer.create();
 
 		oServer.xhr.useFilters = sUrl == undefined ? false : true;
-		
+
 		if (sUrl == undefined) {
 			oServer.xhr.restore();
 		}
-		
+
 		oUrls[sUrl] = true;
 		oServer.xhr.addFilter(function(method, url) {
-			return oUrls[url] == true ? false : true; 
+			return oUrls[url] == true ? false : true;
 		});
-		
+
 		oServer.autoRespond = sUrl == undefined ? false : true;
-		
-		
+
+
 		oServer.respondWith("GET", sUrl, //./samples/manifestfirst/customer/manifest.json
-			[ 
-				200, 
+			[
+				200,
 				{
 					"Content-Type": "application/json"
 				},
 				oMainView.byId("ManifestArea").getValue()
 			]
 		);
-	} 
+	}
 
 	function initComponents() {
-		
+
 		var manifirst = true;
-		
+
 		if (sap.ui.getCore().byId("__group0-0").getSelected()){
 			initFakeServer();
 			manifirst = true;
@@ -222,7 +222,7 @@
 			manifestFirst: manifirst ? true : undefined,
 			name: manifirst ? "samples.manifestfirst.customer" : undefined
 		};
-		
+
 		// Show component config on UI
 		oMainView.byId("CodeArea").setValue(JSON.stringify(jQuery.extend(true, {}, oConfig), null, 2));
 

@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 * @namespace
 	 */
 	var RichTooltipRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the RichTooltip, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 */
 	RichTooltipRenderer.render = function(rm, oRichTooltip){
 		var sId = oRichTooltip.getId();
-	
+
 		// Header
 		rm.write("<div ");
 		rm.writeControlData(oRichTooltip);
@@ -32,9 +32,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		rm.write("<div class='sapUiRttTopL'></div><div class='sapUiRttTopR'></div>");
 		rm.write("<div class='sapUiRttCL'>");
 		rm.write("<div class='sapUiRttCR'>");
-		
+
 		rm.write("<div class='sapUiRttContent'>");
-	
+
 		// Title
 		var sTitle = oRichTooltip.getTitle();
 		if (sTitle) {
@@ -44,22 +44,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			// render a separator between title and rest of the RichTooltip
 			rm.write("<div class='sapUiRttSep'></div>");
 		}
-	
+
 		// if the parent element has a set ValueState render the corresponding text and image
 		var sValueStateText = ValueStateSupport.getAdditionalText(oRichTooltip.getParent());
-		
+
 		// render the individual ValueState text (if available) otherwise use the default text
 		var sIndividualText = oRichTooltip.getAggregation("individualStateText");
-		
+
 		// if there is any (from parent control or from RTT itself) value state text set
 		if (sValueStateText || sIndividualText) {
 			rm.write('<div class="sapUiRttValueStateContainer">');
-			
+
 			// only if the owner of the RTT has a value state - render state and image
 			if (sValueStateText) {
 				var sValueState = oRichTooltip.getParent().getValueState();
 				var sValueStateImage = sValueState !== sap.ui.core.ValueState.None ? "ValueState_" + sValueState + ".png" : "";
-	
+
 				// if there is a proper value state -> render corresponding image
 				if (sValueStateImage !== "") {
 					sValueStateImage = jQuery.sap.getModulePath("sap.ui.commons.themes."
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 					rm.write('"/>');
 				}
 			}
-		
+
 			if (sIndividualText) {
 				rm.renderControl(sIndividualText);
 			} else {
@@ -78,14 +78,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 				rm.writeEscaped(sValueStateText);
 				rm.write('</div>');
 			}
-			
+
 			rm.write('</div>');
-			
+
 			// render a separator between ValueState stuff and text of the RichTooltip
 			rm.write("<div class='sapUiRttSep'></div>");
 		}
-		
-		
+
+
 		rm.write('<div class="sapUiRttContentContainer">');
 		// render image that might be set
 		var sImage = oRichTooltip.getImageSrc();
@@ -96,14 +96,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			rm.writeAttributeEscaped('src', sImage);
 			rm.write('"/>');
 		}
-		
+
 		// render RichTooltip's text
 		var oText = oRichTooltip.getAggregation("formattedText");
 		if (oText) {
 			rm.renderControl(oText);
 		}
 		rm.write('</div>');
-	
+
 		// render footer
 		rm.write("</div></div></div>");
 		rm.write("<div class='sapUiRttBotL'></div>");

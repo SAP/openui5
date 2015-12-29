@@ -34,7 +34,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 				 */
 				state : {
 					type: "sap.m.DraftIndicatorState",
-					group : "Behavior", 
+					group : "Behavior",
 					defaultValue : sap.m.DraftIndicatorState.Clear
 				},
 				/**
@@ -55,18 +55,18 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 			}
 		}
 	});
-	
+
 	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	DraftIndicator._oTEXTS = {};
 	DraftIndicator._oTEXTS[sap.m.DraftIndicatorState.Saving] = oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT");
 	DraftIndicator._oTEXTS[sap.m.DraftIndicatorState.Saved] = oBundle.getText("DRAFT_INDICATOR_DRAFT_SAVED");
 	DraftIndicator._oTEXTS[sap.m.DraftIndicatorState.Clear] = "";
-	
+
 	DraftIndicator.prototype.init = function() {
 		this.aQueue = [];
 		this.iDelayedCallId = null;
 	};
-	
+
 
 	/**
 	 * @Overwrites
@@ -100,7 +100,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 		this._addToQueue(sap.m.DraftIndicatorState.Saving);
 		this._addToQueue(sap.m.DraftIndicatorState.Clear);
 	};
-	
+
 	/**
 	 * Sets the indicator in "Saved" state
 	 *
@@ -109,7 +109,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 	DraftIndicator.prototype.showDraftSaved = function() {
 		this._addToQueue(sap.m.DraftIndicatorState.Saved);
 	};
-	
+
 	/**
 	 * Clears the indicator state
 	 *
@@ -118,8 +118,8 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 	DraftIndicator.prototype.clearDraftState = function() {
 		this._addToQueue(sap.m.DraftIndicatorState.Clear);
 	};
-	
-	
+
+
 	/**
 	 * Adds states to the queue
 	 *
@@ -129,7 +129,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 		this.aQueue.push(sState);
 		this._processQueue();
 	};
-	
+
 	/**
 	 * Process the states in the aQueue array
 	 *
@@ -139,23 +139,23 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 		if (this.iDelayedCallId) {
 			return;
 		}
-		
+
 		var sNextState = this.aQueue.shift();
 		var iTimeOut = this.getMinDisplayTime();
-		
+
 		if (!sNextState) {
 			return;
 		}
-		
+
 		this._applyState(sNextState);
-		
+
 		if (sNextState === sap.m.DraftIndicatorState.Clear) {
 			this._proceed();
 			return;
 		}
 		this.iDelayedCallId = jQuery.sap.delayedCall(iTimeOut, this, this._proceed);
 	};
-	
+
 	/**
 	 * Resets the timer and starts processing of the queue again
 	 *
@@ -165,7 +165,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 		this._resetDraftTimer();
 		this._processQueue();
 	};
-	
+
 	/**
 	 * Sets the text of the indicator depending of the state
 	 *
@@ -174,7 +174,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 	DraftIndicator.prototype._applyState = function(sState) {
 		this._getLabel().setText(DraftIndicator._oTEXTS[sState]);
 	};
-	
+
 	/**
 	 * Resets the timer
 	 *

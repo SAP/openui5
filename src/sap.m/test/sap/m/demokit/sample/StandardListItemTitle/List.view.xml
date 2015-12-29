@@ -10,7 +10,7 @@
 			<StandardListItem
 				title="{0/Name}"
 				description="{0/ProductId}"
-				icon="{0/ProductPicUrl}" 
+				icon="{0/ProductPicUrl}"
 				iconDensityAware="false"
 				iconInset="false"
 				adaptTitleSize="false" />
@@ -18,7 +18,7 @@
 			<StandardListItem
 				title="{1/Name}"
 				description=""
-				icon="{1/ProductPicUrl}" 
+				icon="{1/ProductPicUrl}"
 				iconDensityAware="false"
 				iconInset="false"
 				adaptTitleSize="false" />

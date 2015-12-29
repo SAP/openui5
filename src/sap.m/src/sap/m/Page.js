@@ -159,7 +159,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 					/**
 					 * Accessible landmark settings to be applied on the containers of the <code>sap.m.Page</code> control.
-					 * 
+					 *
 					 * If not set, no landmarks will be written.
 					 */
 					landmarkInfo : {type : "sap.m.PageAccessibleLandmarkInfo", multiple : false},

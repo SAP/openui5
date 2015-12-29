@@ -3,7 +3,7 @@
 	controllerName="sap.m.sample.StandardMarginsCollapse.Page"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	
+
 	<Panel class="sapUiSmallMarginBottom">
 	    <content>
 	      	<Text text="This panel has a 16px (1rem) bottom margin."/>

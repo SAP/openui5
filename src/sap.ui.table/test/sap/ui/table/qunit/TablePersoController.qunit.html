@@ -369,7 +369,7 @@
 							{ id: "table-Number", order: 0, visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
 							{ id: "table-Name", order: 1,  visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
 							{ id: "table-Color", order: 2,  visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false }
-							
+
 						]
 					}, "setPersData should receive the correct data");
 
@@ -425,7 +425,7 @@
 	});
 
 	test("CustomDataKey", 11, function() {
-		
+
 		var getPersDataCalls = 0;
 		createController({
 			persoService: {
@@ -442,7 +442,7 @@
 							{ id: "P13N_table-P13N_Number", order: 0, visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
 							{ id: "P13N_table-P13N_Name", order: 1,  visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false },
 							{ id: "P13N_table-P13N_Color", order: 2,  visible: true, width: "", sorted: false, sortOrder: "Ascending", /*filtered: false, filterValue: "",*/ grouped: false }
-							
+
 						]
 					}, "setPersData should receive the correct data");
 
@@ -464,7 +464,7 @@
 		for (var i = 0, l = aColumns.length; i < l; i++) {
 			aColumns[i].data("persoKey", "P13N_" + aColumns[i].getId())
 		}
-		
+
 		equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
 		var oNumberColumn = sap.ui.getCore().byId("Number"),

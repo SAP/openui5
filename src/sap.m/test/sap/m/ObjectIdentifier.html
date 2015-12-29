@@ -6,7 +6,7 @@
 <script src="../../../resources/sap-ui-core.js" type="text/javascript"
 	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
 	data-sap-ui-theme="sap_bluecrystal">
-	
+
 </script>
 <script type="text/javascript">
 	var bCheckBoxSet = true;
@@ -22,7 +22,7 @@
 	                                			"description3" : "Formatter sets true",
 	                                			"description4" : ""
 	                                		});
-	
+
 	var oProductModel = new sap.ui.model.json.JSONModel({
 					"ProductCollection": [
 	                	              		{
@@ -31,7 +31,7 @@
 	                	              			"Name": "Power Projector 4713",
 	                	              			"Category": "Projector",
 	                	              			"SupplierName": "Titanium",
-	                	              			"Description": "A very powerful projector with special features for Internet usability, USB",       	              		
+	                	              			"Description": "A very powerful projector with special features for Internet usability, USB",
 	                	              			"Price": 856.49,
 	                	              			"CurrencyCode": "EUR"
 	                	              		},
@@ -80,7 +80,7 @@
 	                	              		}
 	                	              	]
 	                	              });
-	
+
 	var oi1 = new sap.m.ObjectIdentifier("oi1", {
 		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1",
 		text : "Gummib\u00E4" + "r\u00E7" + "he\u00D1 bla bla bla bla bla bla bla bla bla silly table",
@@ -99,7 +99,7 @@
 			on1.setVisible(bCheckBoxSet);
 		}
 	});
-	
+
 	var oi2 = new sap.m.ObjectIdentifier("oi2", {
 		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1" + "are what I need most of all",
 		text : "Tiny Text",
@@ -108,7 +108,7 @@
 		badgeAttachments : true,
 		visible : true
 	});
-	
+
 	var oi3 = new sap.m.ObjectIdentifier("oi3", {
 		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
 		text : "Tiny Text",
@@ -117,7 +117,7 @@
 		badgeAttachments : true,
 		visible : true
 	});
-	
+
 	var oi4 = new sap.m.ObjectIdentifier("oi4", {
 		title : "{/TextTrue}",
 		text : "{/description1}",
@@ -126,13 +126,13 @@
 		},
 		titleActive : "{/true}"
 	});
-	
+
 	var oi5 = new sap.m.ObjectIdentifier("oi5", {
 		title : "{/TextFalse}",
 		text : "{/description2}",
 		titleActive : "{/false}"
 	});
-	
+
 	var oi6 = new sap.m.ObjectIdentifier("oi6", {
 		title: "{/TextTrue}",
 		text: "{/description3}",
@@ -146,7 +146,7 @@
 			}
 		}
 	});
-	
+
 	var oi7 = new sap.m.ObjectIdentifier("oi7", {
 		title : "Model sets empty text",
 		text : "{/description4}",
@@ -161,7 +161,7 @@
 		textDirection: sap.ui.core.TextDirection.LTR
 	});
 
-	
+
 	var oTableHeader = new sap.m.Toolbar({
 		content : [
 			new sap.m.Label({
@@ -169,7 +169,7 @@
 			})
 		]
 	});
-	
+
 	var aColumns = [
    		new sap.m.Column({
    			header : new sap.m.Label({
@@ -187,7 +187,7 @@
    			})
    		})
    	];
-	
+
 	var oTemplate = new sap.m.ColumnListItem({
 		cells : [
 			new sap.m.ObjectIdentifier({
@@ -204,7 +204,7 @@
 			})
 		]
 	});
-	
+
 	var oTable = new sap.m.Table({
 		headerToolbar : oTableHeader,
 		columns : aColumns

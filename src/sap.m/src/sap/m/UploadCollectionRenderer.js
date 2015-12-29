@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global'],
 	* @namespace
 	*/
 	var UploadCollectionRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	UploadCollectionRenderer.render = function(oRm, oControl) {
-	
+
 		// write the HTML into the render manager
 		oRm.write("<div");
 		oRm.writeControlData(oControl);

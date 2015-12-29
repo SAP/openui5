@@ -15,7 +15,7 @@
 	</script>
 
 	<script>
-	
+
 	var oVerticalLayout = new sap.ui.commons.layout.VerticalLayout();
 	oVerticalLayout.attachValidateFieldGroup(function(oEvent) {
 		jQuery.sap.log.info("Validate " + oEvent.mParameters.fieldGroupIds[0]);
@@ -32,7 +32,7 @@
 			new sap.ui.commons.TextField({id:"field12",width:"200px",fieldGroupIds:["group1"]})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "Field 3 of group1",labelFor:"field13"}), 
+			new sap.ui.commons.Label({text: "Field 3 of group1",labelFor:"field13"}),
 			new sap.ui.commons.TextField({id:"field13",width:"200px",fieldGroupIds:["group1"]})
 	);
 	oMatrixLayout.createRow(
@@ -40,7 +40,7 @@
 			new sap.ui.commons.CheckBox({id:"field21",width:"200px",fieldGroupIds:["group2"]})
 	);
 	oVerticalLayout.addContent(oMatrixLayout);
-	
+
 	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
 	oMatrixLayout.setLayoutFixed(false);
 	oMatrixLayout.createRow(

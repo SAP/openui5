@@ -23,7 +23,7 @@ var mHeaderTypes = {
 		"Content-Type" : "application/json;charset=utf-8",
 		"DataServiceVersion" : "2.0;"
 	},
-	text: {	
+	text: {
 		"Content-Type" : "text/plain;charset=utf-8",
 		"DataServiceVersion" : "2.0;"
 	}
@@ -36,7 +36,7 @@ var mPredefinedServiceResponses = {
 
 (function(sinon) {
 	"use strict";
-	
+
 	var mServiceData = {
 		serviceUrl: "fakeservice://testdata/odata/northwind/",
 		collections: {
@@ -90,10 +90,10 @@ var mPredefinedServiceResponses = {
 				}]
 			}
 		},
-		
+
 		metadata: mPredefinedServiceResponses.northwindMetadata
 	};
-		
+
 	var oRandomService = new ODataRandomService(mServiceData);
 
 	var xhr = sinon.useFakeXMLHttpRequest(), responseDelay = 50, _setTimeout = window.setTimeout;
@@ -105,16 +105,16 @@ var mPredefinedServiceResponses = {
 	xhr.onCreate = function(request) {
 		request.onSend = function() {
 			// Default request answer values:
-			
+
 			var sUrl = request.url;
 			var bJson = request.url.indexOf("$format=json") > -1 || request.requestHeaders["Accept"].indexOf("application/json") > -1;
-			
+
 			var sRandomServiceUrl = null;
 			var iResponseDelay = 200;
 			var iStatus = 404;
 			var mResponseHeaders = [];
 			var sAnswer = "Not found";
-			
+
 			switch (sUrl) {
 				case "fakeservice://testdata/odata/function-imports/":
 					iStatus = 200;
@@ -128,7 +128,7 @@ var mPredefinedServiceResponses = {
 					});
 					sAnswer = mPredefinedServiceResponses.functionImportMain;
 					break;
-				
+
 				case "fakeservice://testdata/odata/function-imports/$metadata":
 					iStatus = 200;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
@@ -148,7 +148,7 @@ var mPredefinedServiceResponses = {
 					mResponseHeaders["location"] = "fakeservice://testdata/odata/function-imports/Products(guid'10000000-0000-0000-0000-000000000000')";
 					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
 					break;
-				
+
 				case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000002'":
 					iStatus = 200;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
@@ -161,7 +161,7 @@ var mPredefinedServiceResponses = {
 					});
 					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
 					break;
-					
+
 				case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'30000000-0000-0000-0000-000000000003'":
 					iStatus = 200;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
@@ -173,19 +173,19 @@ var mPredefinedServiceResponses = {
 					});
 					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
 					break;
-				
+
 				case "fakeservice://testdata/odata/technical-errors/Error(400)":
 					iStatus = 400;
 					sAnswer = bJson ? mPredefinedServiceResponses.technicalError400Json : mPredefinedServiceResponses.technicalError400Xml;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
 					break;
-				
+
 				case "fakeservice://testdata/odata/technical-errors/Error(500)":
 					iStatus = 500;
 					sAnswer = bJson ? mPredefinedServiceResponses.technicalError500Json : mPredefinedServiceResponses.technicalError500Xml;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
 					break;
-					
+
 				case "fakeservice://testdata/odata/technical-errors/Error(900)":
 					iStatus = 900;
 					sAnswer = bJson ? mPredefinedServiceResponses.technicalError900Json : mPredefinedServiceResponses.technicalError900Xml;
@@ -197,13 +197,13 @@ var mPredefinedServiceResponses = {
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
 					sAnswer = mPredefinedServiceResponses.functionImportMetadata;
 					break;
-				
+
 				case "fakeservice://testdata/odata/technical-errors/Error2(400)":
 					iStatus = 400;
 					sAnswer = bJson ? mPredefinedServiceResponses.technicalError400Json2 : mPredefinedServiceResponses.technicalError400Xml2;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
 					break;
-					
+
 				case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000001'":
 					iStatus = 200;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
@@ -216,7 +216,7 @@ var mPredefinedServiceResponses = {
 					});
 					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
 					break;
-					
+
 				case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000002'":
 					iStatus = 200;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
@@ -229,8 +229,8 @@ var mPredefinedServiceResponses = {
 					});
 					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
 					break;
-					
-				// Special function import for showing use of invalid targets 
+
+				// Special function import for showing use of invalid targets
 				case "fakeservice://testdata/odata/northwind/functionWithInvalidTarget":
 					iStatus = 204;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
@@ -260,13 +260,13 @@ var mPredefinedServiceResponses = {
 						/* eslint-enable no-debugger */
 						throw new Error("Unknown Fakeservice URL");
 					}
-				
+
 			}
-			
+
 			if (sRandomServiceUrl !== null) {
 				// Use RandomService
-				oRandomService.serveUrl({ 
-					url: sRandomServiceUrl, 
+				oRandomService.serveUrl({
+					url: sRandomServiceUrl,
 					request: request,
 					json: bJson
 				});
@@ -309,7 +309,7 @@ var mPredefinedServiceResponses = {
 	ODataRandomService.prototype._createResponse = function(mUrlInfo, mOptions) {
 		var mResponse;
 		var mCollection = mServiceData.collections[mUrlInfo.collection];
-		
+
 		if (mUrlInfo.path == "") {
 			// Main service document
 			mResponse = this._answerService(mServiceData);
@@ -334,7 +334,7 @@ var mPredefinedServiceResponses = {
 		} else {
 			mResponse = this._answerError();
 		}
-		
+
 		return mResponse;
 	};
 
@@ -349,15 +349,15 @@ var mPredefinedServiceResponses = {
 	ODataRandomService.prototype.handleBatchRequest = function(mOptions) {
 		var mBatchResponse = {};
 		var aSubRequests = this.parseBatchRequest(mOptions.request.requestBody);
-		
+
 
 		// TODO: boundary is from odata example http://www.odata.org/documentation/odata-version-2-0/batch-processing/
 		var sBatchSeparator = "batch_36522ad7-fc75-4b56-8c71-56071383e77b";
-		
+
 		mBatchResponse.status = 202;
 		mBatchResponse.headers = {
 			"DataServiceVersion": "2.0",
-			"Content-Type": "multipart/mixed; boundary=" + sBatchSeparator 
+			"Content-Type": "multipart/mixed; boundary=" + sBatchSeparator
 		};
 		mBatchResponse.body = "";
 
@@ -367,24 +367,24 @@ var mPredefinedServiceResponses = {
 				return sKey + ": " + mHeaders[sKey];
 			}).join("\r\n");
 		}
-		
-		
+
+
 		var bInChangeset = false;
 		for (var i = 0; i < aSubRequests.length; ++i) {
-			
+
 			var mRequest = aSubRequests[i];
-			
+
 			var mResponse = this._createResponse(this._parseUrl(mRequest.url), mOptions);
-			
+
 			var sBatchContentType = "Content-Type: application/http\r\n";
-			
+
 			if (mRequest.method == "GET") {
 				// All is good
 				bInChangeset = false;
-				
+
 			} else if (mRequest.method === "HEAD") {
 				bInChangeset = false;
-				
+
 				mResponse.status = 204;
 				mResponse.body = "";
 			} else {
@@ -395,32 +395,32 @@ var mPredefinedServiceResponses = {
 					// TODO: Content-Length: ###
 				}
 				bInChangeset = true;
-				
+
 				mResponse.status = 204;
 				mResponse.body = "";
 				delete mResponse.headers["Content-Type"];
 			}
-				
+
 			// Start new sub request
 			mBatchResponse.body += "\r\n--" + (bInChangeset ? "changeset_" : "") + sBatchSeparator + "\r\n";
 			// Add batch headers
-			
+
 			mBatchResponse.body += sBatchContentType;
 			mBatchResponse.body += "Content-Transfer-Encoding:binary\r\n";
 			mBatchResponse.body += "\r\n";
-			
+
 			mBatchResponse.body += "HTTP/1.1 " + mResponse.status + " Ok\r\n";
-			
+
 			mBatchResponse.body += createHeaderString(mResponse.headers) + "\r\n\r\n";
 			mBatchResponse.body += mResponse.body + "\r\n\r\n";
 		}
-		
+
 		if (bInChangeset) {
 			mBatchResponse.body += "--changeset_" + sBatchSeparator + "--\r\n";
 		}
-		
+
 		mBatchResponse.body += "--" + sBatchSeparator + "--";
-		
+
 		return mBatchResponse;
 	};
 
@@ -428,29 +428,29 @@ var mPredefinedServiceResponses = {
 	ODataRandomService.prototype.parseBatchRequest = function(sBatchContent) {
 		function parseHeaders(vHeaders) {
 			var mHeaders = {};
-			
+
 			var aHeaders = Array.isArray(vHeaders) ? vHeaders : vHeaders.split("\n");
 			for (var i = 0; i < aHeaders.length; ++i) {
 				var aSingleHeader = aHeaders[i].toLowerCase().split(":");
 				mHeaders[aSingleHeader[0].trim()] = aSingleHeader[1].trim();
 			}
-			
-			
+
+
 			return mHeaders;
 		}
-		
+
 		// TODO: The following replaces all instances of \r\n - even in the payload... not sure this is ok even for our tests...
 		// The separator is the first line of the body (or second if only return in first one)
 		var aMatches = sBatchContent.match(/^[\r\n]*([^\n]*)/m);
-		
+
 		if (!aMatches || !aMatches[1]) {
 			throw new Error("Batch request did not contain separator");
 		}
-		
+
 		var sSeparator = aMatches[1].trim();
-		
+
 		var aContentParts = sBatchContent.replace(sSeparator + "--", "").trim().split(sSeparator).slice(1);
-		
+
 		// TODO: Handle changesets correctly
 		if (aContentParts.length == 1) {
 			sBatchContent = aContentParts[0];
@@ -460,46 +460,46 @@ var mPredefinedServiceResponses = {
 				throw new Error("Changeset did not contain separator");
 			}
 
-			sSeparator = aMatches[1].trim();		
-			
+			sSeparator = aMatches[1].trim();
+
 			aContentParts = aContentParts[0].replace(sSeparator + "--", "").trim().split(sSeparator).slice(2);
 		}
-		
-		
+
+
 		var aRequests = aContentParts.map(function(sSingleRequest) {
 			var mRequest = {};
-			
+
 			// Replace \r\n and \r with just \n so we can split easier
 			sSingleRequest = sSingleRequest.replace(/\r\n|\r/g, "\n").trim();
 			if (sSingleRequest.length === 0) {
 				return {};
 			}
-			
+
 			var aSplitted = sSingleRequest.trim().split("\n\n");
-			
+
 			mRequest.batchHeaders = parseHeaders(aSplitted[0]);
-			
+
 			var aLines = aSplitted[1].trim().split("\n");
 
 			var sRequestLine = aLines.shift();
 			var aMatches = /([^ ]*) (.*) (HTTP.*)/.exec(sRequestLine);
-			
+
 			mRequest.method = aMatches[1];
 			mRequest.url = aMatches[2];
 			mRequest.headers = parseHeaders(aLines);
 			mRequest.body = aSplitted[2] ? aSplitted[2] : "";
-			
+
 			return mRequest;
 		});
-		
+
 		return aRequests;
 	};
 
 	ODataRandomService.prototype._answer = function(mResponse) {
 		function fnRespond(oRequest, mResponse) {
 			oRequest.respond(mResponse.status, mResponse.headers, mResponse.body);
-		} 
-		
+		}
+
 		if (this._request.async === true) {
 			_setTimeout(fnRespond.bind(this, this._request, mResponse), responseDelay);
 		} else {
@@ -508,12 +508,12 @@ var mPredefinedServiceResponses = {
 	};
 
 	ODataRandomService.prototype._parseUrl = function(sUrl) {
-		var sPath = "", 
+		var sPath = "",
 			sCollection = "",
 			sItem = "",
 			sPostfix = "",
 			sParams = "";
-		
+
 		var aMatches = sUrl.match(/^(.*)\?(.*)$/);
 		if (aMatches) {
 			sPath   = aMatches[1];
@@ -534,7 +534,7 @@ var mPredefinedServiceResponses = {
 		} else {
 			sCollection = sPath;
 		}
-		
+
 		return {
 			path: sPath,
 			collection: sCollection,
@@ -547,11 +547,11 @@ var mPredefinedServiceResponses = {
 
 	ODataRandomService.prototype._answerCollectionItem = function(sItem, sCollection, mCollection, mOptions) {
 		var mMessage, aMessages = [];
-		
+
 		var sTargetPrefix = mOptions.useAboluteMessagePath ? "/" + sCollection + "(" + sItem + ")/" : "";
-		
+
 		var sItemUrl = this._serviceUrl + sCollection + "(" + sItem + ")";
-			
+
 		var mItem = {
 			"__metadata": {
 				"id": sItemUrl,
@@ -559,12 +559,12 @@ var mPredefinedServiceResponses = {
 				"type": mCollection.type
 			}
 		};
-		
+
 		for (var sName in mCollection.properties) {
 			mItem[sName] = this._createData(mCollection.properties[sName], sItem);
 		}
-		
-			
+
+
 		if (mCollection.itemMessages) {
 			for (var n = 0; n < mCollection.itemMessages.length; ++n) {
 				mMessage = jQuery.extend({}, mCollection.itemMessages[n]);
@@ -572,14 +572,14 @@ var mPredefinedServiceResponses = {
 				aMessages.push(mMessage);
 			}
 		}
-		
-		
+
+
 		var mAnswer = {
 			d: {
 				results: [ mItem ]
 			}
 		};
-		
+
 		if (mCollection.message) {
 			aMessages.push(mCollection.message);
 		}
@@ -591,13 +591,13 @@ var mPredefinedServiceResponses = {
 				aMessages.push(mMessage);
 			}
 		}
-		
+
 		var sType = this._useJson ? "json" : "atom";
 		var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
 
 		var mHead = jQuery.extend({}, mHeaderTypes[sType]);
 		mHead["sap-message"] = this._createMessageHeader(aMessages);
-		
+
 		return {
 			status: 200,
 			headers: mHead,
@@ -640,14 +640,14 @@ var mPredefinedServiceResponses = {
 			sAnswer += "<service xmlns=\"http://www.w3.org/2007/app\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xml:base=\"http://services.odata.org/V3/Northwind/Northwind.svc/\">";
 			sAnswer += "<workspace>";
 			sAnswer += "<atom:title>Default</atom:title>";
-			
+
 			for (i = 0; i < mAnswer.d.EntitySets.length; ++i) {
 				var sName = mAnswer.d.EntitySets[i];
 				sAnswer += "<collection href=\"" + sName + "\">";
 				sAnswer += "<atom:title>" + sName + "</atom:title>";
 				sAnswer += "</collection>";
 			}
-			
+
 			sAnswer += "</workspace>";
 			sAnswer += "</service>";
 		} else if (sType === "collection") {
@@ -656,15 +656,15 @@ var mPredefinedServiceResponses = {
 			// sAnswer += "<title>" + NOTINJSON. + "</title>";
 			// sAnswer += "<updated>" + NOTINJSON. + "</updated>";
 			// sAnswer += "<link rel=\"self\" title=\"" + NOTINJSON. + "\" href=\"" + NOTINJSON + "\" />";
-			
+
 			for (i = 0; i < mAnswer.d.results.length; ++i) {
 				var mEntry = mAnswer.d.results[i];
 				sAnswer += "<entry>";
-				
+
 				sAnswer += "<id>" + mEntry.__metadata.id + "</id>";
 				sAnswer += "<content type=\"application/xml\">";
 				sAnswer += "<m:properties>";
-				
+
 				for (var sProp in mEntry) {
 					if (sProp === "__metadata") {
 						continue;
@@ -674,20 +674,20 @@ var mPredefinedServiceResponses = {
 					sAnswer += mEntry[sProp];
 					sAnswer += "</d:" + sProp + ">";
 				}
-				
+
 				sAnswer += "</m:properties>";
 				sAnswer += "</content>";
-				
+
 				sAnswer += "</entry>";
 			}
-			
+
 			sAnswer += "</feed>";
-			
-			
+
+
 		} else if (sType === "entity") {
 			throw "nö";
 		}
-		
+
 		return sAnswer;
 	};
 
@@ -728,10 +728,10 @@ var mPredefinedServiceResponses = {
 		var aItems = [];
 		var aMessages = [];
 		var mMessage, i;
-		
+
 		for (i = 0; i < oColData.count; ++i) {
 			var sItemUrl = this._serviceUrl + sColName + "(" + (i + 1) + ")";
-			
+
 			var mItem = {
 				"__metadata": {
 					"id": sItemUrl,
@@ -739,13 +739,13 @@ var mPredefinedServiceResponses = {
 					"type": oColData.type
 				}
 			};
-			
+
 			for (var sName in oColData.properties) {
 				mItem[sName] = this._createData(oColData.properties[sName], i + 1);
 			}
-			
+
 			aItems.push(mItem);
-			
+
 			if (oColData.itemMessages) {
 				for (var n = 0; n < oColData.itemMessages.length; ++n) {
 					mMessage = jQuery.extend({}, oColData.itemMessages[n]);
@@ -754,14 +754,14 @@ var mPredefinedServiceResponses = {
 				}
 			}
 		}
-		
-		
+
+
 		var mAnswer = {
 			d: {
 				results: aItems
 			}
 		};
-		
+
 		if (oColData.message) {
 			aMessages.push(oColData.message);
 		}
@@ -773,13 +773,13 @@ var mPredefinedServiceResponses = {
 				aMessages.push(mMessage);
 			}
 		}
-		
+
 		var sType = this._useJson ? "json" : "atom";
 		var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
 
 		var mHead = jQuery.extend({}, mHeaderTypes[sType]);
 		mHead["sap-message"] = this._createMessageHeader(aMessages);
-		
+
 		return {
 			status: 200,
 			headers: mHead,
@@ -795,7 +795,7 @@ var mPredefinedServiceResponses = {
 			"target": aMessages[0].target,
 			"details": []
 		};
-		
+
 		for (var i = 1; i < aMessages.length; ++i) { // i = 1 => skip first
 			mMessage.details.push({
 				"code": aMessages[i].code,
@@ -804,13 +804,13 @@ var mPredefinedServiceResponses = {
 				"target": aMessages[i].target
 			});
 		}
-		
+
 		return JSON.stringify(mMessage);
 	};
 
 	ODataRandomService.prototype._createData = function(mOptions, sId) {
 		var sResult, iMax;
-		
+
 		switch (mOptions.type) {
 			case "string":
 				if (mOptions.choices) {
@@ -842,7 +842,7 @@ var mPredefinedServiceResponses = {
 				sResult = "INVALID DATA TYPE!!!";
 			break;
 		}
-		
+
 		return sResult;
 	};
 

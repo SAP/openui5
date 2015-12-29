@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Indicates the editable status of the token. If it is set to <code>true</code>, token displays a delete icon.
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : true},
-			
+
 			/**
 			 * This property specifies the text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Token.prototype._sAriaTokenDeletableId = new sap.ui.core.InvisibleText({
 		text: oRb.getText("TOKEN_ARIA_DELETABLE")
 	}).toStatic().getId();
-	
+
 	///**
 	// * This file defines behavior for the control,
 	// */
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		} else {
 			this.addStyleClass("sapMTokenReadOnly");
 			this.$().attr("aria-readonly", "false");
-			
+
 		}
 	};
 
@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.$().toggleClass("sapMTokenActive", true);
 		if (sap.ui.Device.system.desktop && oEvent.originalEvent.button) {
 			/* there are two cases that should fire touch start event:
-				left button click in desktop, where value of button event is 0; 
+				left button click in desktop, where value of button event is 0;
 				touch event in combi device, where value of button event is undefined.*/
 			return;
 		}
@@ -338,9 +338,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Token.prototype.onkeydown = function(oEvent) {
-		
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.SPACE) { 
-			//metaKey for MAC command		
+
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+			//metaKey for MAC command
 			this.onsapspace(oEvent);
 			oEvent.preventDefault();
 		}

@@ -7,25 +7,25 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Resizing.Controller", {
-		
+
 		onInit : function () {
 			// set explored app's demo model on this sample
 			var oJSONModel = TableExampleUtils.initSampleDataModel();
 			var oView = this.getView();
 			oView.setModel(oJSONModel);
-			
+
 			oView.setModel(new JSONModel({
 				visibleRowCountMode: "Fixed"
 			}), "ui");
 			this.onColumnWidthsChange();
-			
+
 			this._messageBuffer = [];
 		},
-		
+
 		onColumnWidthsChange : function(oEvent) {
 			var sColumnWidthMode = oEvent ? oEvent.getParameter("key") : "Static";
 			var oWidthData;
-			
+
 			if (sColumnWidthMode == "Flexible") {
 				oWidthData = {
 					name: "25%",
@@ -43,13 +43,13 @@ sap.ui.define([
 					date: "9rem"
 				};
 			}
-			
+
 			this.getView().getModel("ui").setProperty("/widths", oWidthData);
 		},
-		
+
 		onColumnResize : function(oEvent) {
 			var oColumn = oEvent.getParameter("column");
-			
+
 			if (this.getView().byId("deliverydate") == oColumn) {
 				oEvent.preventDefault();
 			} else {
@@ -64,11 +64,11 @@ sap.ui.define([
 				});
 			}
 		},
-		
+
 		showInfo : function(oEvent) {
 			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Resizing", "/info.json"), oEvent.getSource());
 		}
-		
+
 	});
 
 });

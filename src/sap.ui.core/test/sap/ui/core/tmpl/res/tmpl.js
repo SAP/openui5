@@ -1,7 +1,7 @@
 (function() {
 
 	jQuery(function() {
-		
+
 		// visualize the onAfterRendering of controls
 		var fnOld = sap.ui.core.Element.prototype.applySettings;
 		sap.ui.core.Element.prototype.applySettings = function() {
@@ -18,7 +18,7 @@
 				}
 			}, this);
 		};
-		
+
 		// find all templates and create <pre> elements
 		jQuery("div[data-type]").each(function(iIndex, oDiv) {
 			var sTemplate = jQuery(oDiv).html();
@@ -31,7 +31,7 @@
 				$pre.toggle();
 			});
 		});
-		
+
 	});
-	
+
 }())

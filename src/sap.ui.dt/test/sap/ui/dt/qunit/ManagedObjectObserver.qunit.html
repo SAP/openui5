@@ -9,7 +9,7 @@
 	data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
 	data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
 	src="../../../../../resources/sap-ui-core.js">
-	
+
 </script>
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
@@ -51,18 +51,18 @@
 			}
 		}
 	});
-	
+
 	TestObject.prototype.addMyOverwrittenAggregation = function(){
 		//don't call the generic method as we would do something special...
 	};
-	
+
 	TestObject.prototype.insertMyOverwrittenAggregation = function(){
 		//don't call the generic method as we would do something special...
 	};
 	TestObject.prototype.removeMyOverwrittenAggregation = function(){
 		//don't call the generic method as we would do something special...
 	};
-	
+
 	TestObject.prototype.removeAllMyOverwrittenAggregation = function(){
 		//don't call the generic method as we would do something special...
 	};
@@ -112,23 +112,23 @@
 	whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple aggregation is removed via removeAggregation", function() {
 		this.oManagedObject.removeAggregation("myAggregation", this.oOtherObject);
 	});
-	
+
 	whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple aggregation is removed via removeAggregation", function() {
 		this.oManagedObject.removeMyAggregation(this.oOtherObject);
 	});
-	
+
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is destroyed via destroyAggregation", function() {
 		this.oManagedObject.destroyAggregation("myAggregation");
 	});
-	
+
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is destroyed via destructor", function() {
 		this.oManagedObject.destroyMyAggregation();
 	});
-	
+
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is emptied via mutator", function() {
 		this.oManagedObject.removeAllMyAggregation();
 	});
-	
+
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is accessed via add mutator", function() {
 		this.oManagedObject.addMyOverwrittenAggregation(this.oOtherObject);
 	});
@@ -136,7 +136,7 @@
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is accessed via insert mutator", function() {
 		this.oManagedObject.insertMyOverwrittenAggregation(this.oOtherObject);
 	});
-	
+
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is accessed via remove mutator", function() {
 		this.oManagedObject.removeMyOverwrittenAggregation(this.oOtherObject);
 	});
@@ -144,15 +144,15 @@
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is emptied via removeAll mutator", function() {
 		this.oManagedObject.removeAllMyOverwrittenAggregation(this.oOtherObject);
 	});
-	
+
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is destroyed via destructor", function() {
 		this.oManagedObject.destroyMyOverwrittenAggregation();
 	})
-	
+
 	whenThisHappensThenOneModifiedEventShouldBeFired("when the parent is set", function() {
 		this.oManagedObject.setParent(this.oOtherObject);
 	})
-	
+
 	function whenThisHappensThenOneModifiedEventShouldBeFired(sTestDescription, fnWhen) {
 		QUnit.test(sTestDescription, function(assert) {
 			assert.expect(1);
@@ -170,7 +170,7 @@
 		});
 		this.oManagedObject.destroy();
 	});
-	
+
 	//TODO binding tests
 </script>
 </head>

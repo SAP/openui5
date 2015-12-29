@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 
 
 	/**
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.core.message
 	 * @public
@@ -44,10 +44,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 		metadata : {
 		}
 	});
-	
-	
+
+
 	ControlMessageProcessor._instance = null;
-	
+
 	/**
 	 * Set Messages to check
 	 * @param {map}
@@ -60,7 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 		this.checkMessages();
 		delete this.mOldMessages;
 	};
-	
+
 	/**
 	 * Check Messages and update controls with messages
 	 * @protected
@@ -69,25 +69,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 		var aMessages,
 			that = this,
 			mMessages = jQuery.extend(this.mMessages, {});
-		
+
 		//add targets to clear from mOldMessages to the mMessages to check
 		jQuery.each(this.mOldMessages, function(sTarget) {
 			if (!(sTarget in mMessages)) {
 				mMessages[sTarget] = [];
 			}
 		});
-		
+
 		//check messages
 		jQuery.each(mMessages, function(sTarget) {
 			var oBinding,
 				aParts = sTarget.split('/'),
 				oControl = sap.ui.getCore().byId(aParts[0]);
-			
+
 			//if control does not exist: nothing to do
 			if  (!oControl) {
 				return;
 			}
-			
+
 			oBinding = oControl.getBinding(aParts[1]);
 			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
 			if (oBinding) {
@@ -97,10 +97,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			} else {
 				oControl.propagateMessages(aParts[1], aMessages);
 			}
-			
+
 		});
 	};
-	
+
 	return ControlMessageProcessor;
 
 });

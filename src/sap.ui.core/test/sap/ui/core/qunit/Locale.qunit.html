@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.core.Locale
   Author: d040216
 -->
@@ -11,7 +11,7 @@
 <meta charset="UTF-8" />
 
 <!-- Initialization -->
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"
 	data-sap-ui-language="en-US">
@@ -43,7 +43,7 @@
 		["de-DE-u-co-phonebk",		"de",		null,	"DE",	null,			"u-co-phonebk",	null,		"DE"], // multiple extensions after same singleton
 		["de-DE-u-co-i-kl",			"de",		null,	"DE",	null,			"u-co-i-kl",	null,		"DE"], // multiple extensions with different singletons
 		["en-US-x-twain",			"en",		null,	"US",	null,			null,			"x-twain",	"EN"],
-		
+
 		// additonal tests for normalization
 		["en_US",					"en",		null,	"US",	null,			null,			null,		"EN"],
 		["EN-US",					"en",		null,	"US",	null,			null,			null,		"EN"],
@@ -74,7 +74,7 @@
 	for (var i = 0; i < aLocales.length; i++) {
 		localeTest.apply(this, aLocales[i]);
 	}
-	
+
 	QUnit.test("hasPrivateUseSubtag", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de_DE-x-sapufmt");
 		assert.equal(oLocale.getPrivateUse(), "x-sapufmt", "PrivateUse must be set");

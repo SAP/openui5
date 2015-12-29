@@ -10,14 +10,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	/*           temporary flags for jslint syntax check           */
 	/* =========================================================== */
 	/*jslint nomen: false */
-	
+
 	/**
 	 * RatingIndicator renderer.
 	 * @namespace
 	 */
 	var RatingIndicatorRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	RatingIndicatorRenderer.render = function (oRm, oControl) {
-	
+
 		var fRatingValue = oControl._roundValueToVisualMode(oControl.getValue()),
 			iSymbolCount = oControl.getMaxValue(),
 			fIconSize = oControl._iPxIconSize,
@@ -41,11 +41,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			// gradients in combination with background-clip: text are not supported by ie, android < 4.2 or blackberry
 			bUseGradient = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari,
 			sLabelID;
-	
+
 		if (iSelectedWidth < 0) { //width should not be negative
 			iSelectedWidth = 0;
 		}
-	
+
 		// render the control container div
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -106,12 +106,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			// always set width and height because icon fonts can have different dimensions
 			oIconSel.setWidth(fIconSize + sIconSizeMeasure);
 			oIconSel.setHeight(fIconSize + sIconSizeMeasure);
-	
+
 			oIconSel.addStyleClass("sapMRIIconSel");
 			oRm.renderControl(oIconSel);
 		}
 		oRm.write("</div>");
-	
+
 		// render unselected items div (container and relative child)
 		oRm.write("<div class='sapMRIUnselWrapper'");
 		oRm.writeAttribute("id", oControl.getId() + "-unsel-wrapper");
@@ -132,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			// always set width and height because icon fonts can have different dimensions
 			oIconUnsel.setWidth(fIconSize + sIconSizeMeasure);
 			oIconUnsel.setHeight(fIconSize + sIconSizeMeasure);
-	
+
 			oIconUnsel.addStyleClass("sapMRIIconUnsel");
 			if (fIconSize <= 1) {
 				oIconUnsel.addStyleClass("sapMRIIconUnselSmall");
@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 		oRm.write("</div>");
 		oRm.write("</div>");
-	
+
 		// render hovered item div
 		if (oControl.getEnabled()) {
 			oRm.write("<div class='sapMRIHov' id='" + oControl.getId() + "-hov'>");
@@ -155,17 +155,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 				// always set width and height because icon fonts can have different dimensions
 				oIconHov.setWidth(fIconSize + sIconSizeMeasure);
 				oIconHov.setHeight(fIconSize + sIconSizeMeasure);
-	
+
 				oIconHov.addStyleClass("sapMRIIconHov");
 				oRm.renderControl(oIconHov);
 			}
 			oRm.write("</div>");
-	
+
 			// render selector items div
 			oRm.write("<div class='sapMRISelector' id='" + oControl.getId() + "-selector'>");
 			oRm.write("</div>");
 		}
-	
+
 		// close control div
 		oRm.write("</div>");
 	};

@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.ui.suite.
  */
-sap.ui.define(['jquery.sap.global', 
+sap.ui.define(['jquery.sap.global',
 	'sap/ui/core/library'], // library dependency
 	function(jQuery) {
 
@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @version ${version}
 	 * @public
 	 */
-	
+
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.suite",
@@ -36,8 +36,8 @@ sap.ui.define(['jquery.sap.global',
 		],
 		elements: []
 	});
-	
-	
+
+
 	/**
 	 * Defined color values for the Task Circle Control
 	 *
@@ -47,31 +47,31 @@ sap.ui.define(['jquery.sap.global',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.suite.TaskCircleColor = {
-	
+
 		/**
 		 * Red
 		 * @public
 		 */
 		Red : "Red",
-	
+
 		/**
 		 * Yellow
 		 * @public
 		 */
 		Yellow : "Yellow",
-	
+
 		/**
 		 * Green
 		 * @public
 		 */
 		Green : "Green",
-	
+
 		/**
 		 * Default value
 		 * @public
 		 */
 		Gray : "Gray"
-	
+
 	};
 
 	return sap.ui.suite;

@@ -106,8 +106,8 @@
 
 		dti2.focus();
 		dti2._$input.scroller("hide");
-		
-		this.clock.tick(500); 
+
+		this.clock.tick(500);
 
 		ok(jQuery.scroller instanceof Object, "Custom picker is loaded");
 		strictEqual(typeof jQuery.scroller.presets.date, "function", "Custom date picker is loaded");
@@ -154,7 +154,7 @@
 		dti4.focus();
 		ok(dti4._popup.isOpen(), "error message is open");
 		this.clock.tick(500);
-		
+
 		document.activeElement.blur();
 		ok(!dti4._popup.isOpen(), "error message is closed");
 	});
@@ -187,10 +187,10 @@
 		// Close the scroller
 		dti4._$input.scroller("hide");
 		this.clock.tick(500);
-	
+
 		//Clean up
-		dti4.destroy(); 
-	}); 
+		dti4.destroy();
+	});
 
 	test("Scroller [PAGE_UP] key handling", function() {
 		var dti4 = new sap.m.DateTimeInput({
@@ -221,8 +221,8 @@
 		this.clock.tick(500);
 
 		//Clean up
-		dti4.destroy(); 
-	}); 
+		dti4.destroy();
+	});
 
 	test("Scroller opening with [F4]", function() {
 		var dti4 = new sap.m.DateTimeInput({
@@ -245,7 +245,7 @@
 
 		//Clean up
 		dti4.destroy();
-	}); 
+	});
 
 	test("Scroller opening with [ARROW_UP]", function() {
 		var dti4 = new sap.m.DateTimeInput({
@@ -268,7 +268,7 @@
 
 		// Clean up
 		dti4.destroy();
-	});  
+	});
 
 	test("Scroller opening with [ARROW_DOWN]", function() {
 		var dti4 = new sap.m.DateTimeInput({
@@ -291,7 +291,7 @@
 
 		// Clean up
 		dti4.destroy();
-	}); 
+	});
 
 	test("Scroller closing with [F4]", function() {
 		var dti5 = new sap.m.DateTimeInput({
@@ -300,7 +300,7 @@
 		}).placeAt("content");
 
 		sap.ui.getCore().applyChanges();
-  
+
 		// Open the scroller and scroll to [2012-05-05]
 		var oNewDate = new Date(2014, 4, 5);
 		dti5._$input.scroller("show");
@@ -308,12 +308,12 @@
 
 		// Get scroller day column
 		var oDayColumn = jQuery(".dwww")[0];
-	
+
 		// Trigger [F4] and close the scroller
 		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.F4);
 		this.clock.tick(500);
 		var oSelectedDate = dti5._$input.mobiscroll("getDate");
-	
+
 		// Assert scroller is closed
 		ok(!dti5.$("inner").hasClass("dwtd"), "Scroller is closed");
 
@@ -322,7 +322,7 @@
 		this.clock.tick(500);
 
 		//Clean up
-		dti5.destroy(); 
+		dti5.destroy();
 	});
 
 	test("Scroller closing with [ALT] + [ARROW_UP]", function() {
@@ -340,12 +340,12 @@
 
 		// Get scroller day column
 		var oDayColumn = jQuery(".dwww")[0];
-	
+
 		// Trigger [ARROW_UP] and close the scroller
 		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
 		this.clock.tick(500);
 		var oSelectedDate = dti6._$input.mobiscroll("getDate");
-	
+
 		// Refreshing the DOM due timing issues with closing and opening animations
 		dti6.invalidate();
 		sap.ui.getCore().applyChanges();
@@ -358,9 +358,9 @@
 		this.clock.tick(500);
 
 		//Clean up
-		dti6.destroy(); 
+		dti6.destroy();
 	});
-	
+
 	test("Scroller closing with [ALT] + [ARROW_DOWN]", function() {
 		var dti7 = new sap.m.DateTimeInput({
 			displayFormat : "dd MMMM, yyyy",
@@ -394,8 +394,8 @@
 		this.clock.tick(5000);
 
 		//Clean up
-		dti7.destroy(); 
-	}); 
+		dti7.destroy();
+	});
 </script>
 
 </head>

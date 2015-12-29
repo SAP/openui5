@@ -7,8 +7,8 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<Button text="Show Busy Dialog" 
-			  	press="onOpenDialog" 
+			<Button text="Show Busy Dialog"
+			  	press="onOpenDialog"
 			    class="sapUiSmallMarginBottom" />
 		</l:content>
 	</l:VerticalLayout>

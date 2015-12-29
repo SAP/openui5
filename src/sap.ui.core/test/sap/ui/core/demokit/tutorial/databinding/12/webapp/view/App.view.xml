@@ -14,9 +14,9 @@
 			<l:VerticalLayout>
 				<Label class="sapUiSmallMargin" text="{i18n>address}:" />
 				<Text class="sapUiSmallMargin" text="{/address/street}\n{/address/zip} {/address/city}\n{/address/country}" width="200px" />
-								<Image 	class="sapUiSmallMargin" width="500px" height="300px" 
-						src="{ 
-								parts: [ 
+								<Image 	class="sapUiSmallMargin" width="500px" height="300px"
+						src="{
+								parts: [
 										'/address/street',
 										'/address/zip',
 										'/address/city',
@@ -37,11 +37,11 @@
 			<List headerText="{i18n>productListTitle}" items="{products>/Products}">
 				<items>
 					<ObjectListItem title="{products>ProductName}"
-									number="{	parts: 
+									number="{	parts:
 													[
 														{path: 'products>UnitPrice'},
 														{path: '/currencyCode'}
-													], 
+													],
 												type: 'sap.ui.model.type.Currency',
 												formatOptions: { showMeasure: false }
 											}"
@@ -54,7 +54,7 @@
 											 					{path: 'products>UnitsInStock'},
 											 					{path: '/currencyCode'}
 											 					],
-														formatter: '.formatStockValue' 
+														formatter: '.formatStockValue'
 													}" />
 						</attributes>
 					</ObjectListItem>

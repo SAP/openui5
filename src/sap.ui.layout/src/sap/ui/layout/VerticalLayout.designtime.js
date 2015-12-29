@@ -6,7 +6,7 @@
 sap.ui.define([],
 	function() {
 	"use strict";
-	
+
 	return {
 		aggregations : {
 			content : {
@@ -14,5 +14,5 @@ sap.ui.define([],
 			}
 		}
 	};
-	
+
 }, /* bExport= */ false);

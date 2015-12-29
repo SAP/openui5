@@ -53,7 +53,7 @@
 		};
 
 	};
-	
+
 	var attach = false;
 	var detach = true;
 
@@ -101,7 +101,7 @@
 	test("Binding isResolved", function(){
 		setup();
 		var oNewContext = oModel.getContext("/");
-		
+
 		var oBinding = oModel.bindProperty("lastName");
 		ok(!oBinding.isResolved(), "Binding should not be resolved yet!");
 		oBinding.setContext(oNewContext);
@@ -109,11 +109,11 @@
 
 		oBinding = oModel.bindProperty("/lastName");
 		ok(oBinding.isResolved(), "Binding should be resolved!");
-		
+
 		oBinding = oModel.bindProperty("lastName", oNewContext);
 		ok(oBinding.isResolved(), "Binding should be resolved!");
 	});
-	
+
 	test("Binding changeEvent", function(){
 		setup();
 		createPropertyBindings("/teamMembers", "firstName");

@@ -6,13 +6,13 @@ sap.ui.define([
 	"use strict";
 
 	var MenuMenuEventingController = Controller.extend("sap.ui.unified.sample.MenuMenuEventing.MenuMenuEventing", {
-	
+
 		onInit: function(){
 			this.byId("openMenu").attachBrowserEvent("tab keyup", function(oEvent){
 				this._bKeyboard = oEvent.type == "keyup";
 			}, this);
 		},
-	
+
 		handlePressOpenMenu: function(oEvent) {
 			var oButton = oEvent.getSource();
 
@@ -28,12 +28,12 @@ sap.ui.define([
 			var eDock = sap.ui.core.Popup.Dock;
 			this._menu.open(this._bKeyboard, oButton, eDock.BeginTop, eDock.BeginBottom, oButton);
 		},
-	
+
 		handleMenuItemPress: function(oEvent) {
 			if(oEvent.getParameter("item").getSubmenu()) {
 				return;
 			}
-		
+
 			var msg = "";
 			if(oEvent.getParameter("item").getMetadata().getName() == "sap.ui.unified.MenuTextFieldItem") {
 				msg = "'" + oEvent.getParameter("item").getValue() + "' entered";
@@ -41,7 +41,7 @@ sap.ui.define([
 			else {
 				msg = "'" + oEvent.getParameter("item").getText() + "' pressed";
 			}
-		
+
 			MessageToast.show(msg);
 		}
 	});

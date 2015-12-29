@@ -10,11 +10,11 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.icex.view.App", {
-	
+
 		getDefaultPage : function () {
 			return "Master";
 		},
-		
+
 		onInit : function () {
 			var historyDefaultHandler = function (navType) {
 				if (navType === jQuery.sap.history.NavType.Back) {
@@ -23,7 +23,7 @@ sap.ui.define([
 					this.navTo(this.getDefaultPage(), null, false);
 				}
 			};
-			
+
 			var historyPageHandler = function (params, navType) {
 				if (!params || !params.id) {
 					jQuery.sap.log.error("invalid parameter: " + params);
@@ -35,7 +35,7 @@ sap.ui.define([
 					}
 				}
 			};
-			
+
 			jQuery.sap.history({
 				routes: [{
 					// This handler is executed when you navigate back to the history state on the path "page"
@@ -45,14 +45,14 @@ sap.ui.define([
 				// The default handler is executed when you navigate back to the history state with an empty hash
 				defaultHandler: jQuery.proxy(historyDefaultHandler, this)
 			});
-			
+
 			// subscribe to event bus
 			var bus = this.getOwnerComponent().getEventBus();
 			bus.subscribe("nav", "to", this.navHandler, this);
 			bus.subscribe("nav", "back", this.navHandler, this);
 			bus.subscribe("nav", "virtual", this.navHandler, this);
 		},
-		
+
 		navHandler: function (channelId, eventId, data) {
 			if (eventId === "to") {
 				this.navTo(data.id, data.data, true);
@@ -64,18 +64,18 @@ sap.ui.define([
 				jQuery.sap.log.error("'nav' event cannot be processed. There's no handler registered for event with id: " + eventId);
 			}
 		},
-		
+
 		navTo : function (id, data, writeHistory) {
 			var page = null;
 			if (id === undefined) {
-				
+
 				// invalid parameter
 				jQuery.sap.log.error("navTo failed due to missing id");
-			
+
 			} else {
-				
+
 				var master = (id !== "Detail");
-				
+
 				// load view on demand
 				var app = this.getView().app;
 				if (app.getPage(id, master) === null) {
@@ -85,7 +85,7 @@ sap.ui.define([
 							viewName : "sap.ui.demokit.icex.view." + id,
 							type : "XML"
 						});
-						
+
 					});
 					if (master) {
 						app.addMasterPage(page);
@@ -94,41 +94,41 @@ sap.ui.define([
 					}
 					jQuery.sap.log.info("app controller > loaded page: " + id);
 				}
-				
+
 				// navigate in the app control
 				app.to(id, "slide", data);
-				
+
 				// write browser history
 				if ((writeHistory === undefined || writeHistory) &&
 					(sap.ui.Device.system.phone || master)) {
 					jQuery.sap.history.addHistory("page", { id: id }, false);
 				}
-				
+
 				// log
 				jQuery.sap.log.info("navTo - to page: " + id + " [" + writeHistory + "]");
 			}
 		},
-		
+
 		navBack : function (id) {
-			
+
 			if (!id) {
-				
+
 				// invalid parameter
 				jQuery.sap.log.error("navBack - parameters id must be given");
-			
+
 			} else {
-				
+
 				// close open popovers
 				if (InstanceManager.hasOpenPopover()) {
 					InstanceManager.closeAllPopovers();
 				}
-				
+
 				// close open dialogs
 				if (InstanceManager.hasOpenDialog()) {
 					InstanceManager.closeAllDialogs();
 					jQuery.sap.log.info("navBack - closed dialog(s)");
 				}
-				
+
 				// ... and navigate back
 				var app = this.getView().app;
 				var currentId = (app.getCurrentPage()) ? app.getCurrentPage().getId() : null;

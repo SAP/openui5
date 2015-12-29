@@ -9,18 +9,18 @@
 				data-sap-ui-libs="sap.ui.unified"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		
+
 		<style>
 			.SettingHidden {
 				display: none !important;
 			}
 		</style>
-		
+
 		<script>
 			var idCounter = 0;
 			var aMenus = [];
 			var bMenuEventingEnabled = false;
-		
+
 			function createSetting(sLabel, oDefaultValue, aValues, fHandler){
 				var sDom, fHandle;
 				var sId = "setting"+(idCounter++);
@@ -51,18 +51,18 @@
 						fHandler(oEvent, jQuery(oEvent.target).find(":selected").attr("value"));
 					}
 				}
-				
+
 				if(!sDom){
 					return null;
 				}
-				
+
 				jQuery.sap.byId("settings").append("<div id='"+sId+"-frame' style='margin-top:5px;'><div style='display:inline-block;width:200px;'>" + sLabel + ":</div>" + sDom + "</div>");
-				
+
 				jQuery.sap.byId(sId).change(fHandle);
-				
+
 				return sId;
 			}
-		
+
 			jQuery(function() {
 				//Cozy Mode
 				createSetting("Cozy Mode", false, null, function(oEvent, val){
@@ -72,7 +72,7 @@
 						}
 					}
 				});
-				
+
 				//Dark Design
 				function setDarkDesign(bEnable) {
 					for (var i=0; i<aMenus.length; i++) {
@@ -85,7 +85,7 @@
 					setDarkDesign(val);
 				});
 				jQuery.sap.byId(sDarkDesign + "-frame").toggleClass("SettingHidden", sap.ui.getCore().getConfiguration().getTheme() != "sap_goldreflection");
-				
+
 				sap.ui.getCore().attachThemeChanged(function(){
 					var bDarkDesignSupported = sap.ui.getCore().getConfiguration().getTheme() == "sap_goldreflection";
 					jQuery.sap.byId(sDarkDesign + "-frame").toggleClass("SettingHidden", !bDarkDesignSupported);
@@ -93,7 +93,7 @@
 						setDarkDesign(false);
 					}
 				});
-				
+
 				//No Icons
 				createSetting("No Icons", false, null, function(oEvent, val){
 					for (var i=0; i<aMenus.length; i++) {
@@ -106,27 +106,27 @@
 						}
 					}
 				});
-				
+
 				//Menu Eventing
 				createSetting("Menu Eventing", false, null, function(oEvent, val){
 					bMenuEventingEnabled = val;
 				});
-				
+
 				//Debug: Avoid Menu Closing
 				var sAvoidClosing = createSetting("Debug - Avoid Closing", false, null, function(oEvent, val){
 					sap.ui.unified.Menu._dbg = !!val;
 				});
 				jQuery.sap.byId(sAvoidClosing + "-frame").toggleClass("SettingHidden");
-				
+
 				//Debug: Rerendering: Add/Remove items when menu is open
 				var sRerendering = createSetting("Debug - Rerendering", false, null, function(oEvent, val){
 					oRerenderingButton.toggleStyleClass("SettingHidden", !val);
-					
+
 					function customize(oMenu, bCreate, iLevel) {
 						if (!oMenu) {
 							return;
 						}
-						
+
 						iLevel = iLevel ? iLevel : 1;
 						var aItems = oMenu.getItems();
 						for (var i=0; i<aItems.length; i++) {
@@ -137,7 +137,7 @@
 								}
 							}
 						}
-						
+
 						if (bCreate) {
 							setTimeout(function(){
 								for(var i = 0; i < 5; i++){
@@ -148,11 +148,11 @@
 							}, iLevel * 5000);
 						}
 					}
-					
+
 					customize(oRerenderingButton.getMenu(), val);
 				});
 				jQuery.sap.byId(sRerendering + "-frame").toggleClass("SettingHidden");
-				
+
 				jQuery(document.body).keydown(function(e) {
 					if ( e.keyCode == 68 /*D*/ && e.shiftKey && e.altKey && e.ctrlKey ) {
 						jQuery.sap.byId(sAvoidClosing + "-frame").toggleClass("SettingHidden");
@@ -160,7 +160,7 @@
 					}
 				});
 			});
-			
+
 			try{
 				sap.ui.getCore().loadLibrary("sap.ui.commons");
 			}catch(e){
@@ -173,12 +173,12 @@
 
 			function createTest(sText, oMenuConfig) {
 				var iMessageClearTime = 3000;
-				
+
 				function onSelectFired(oEvent, bOnItem) {
 					if (bMenuEventingEnabled && !bOnItem || !bMenuEventingEnabled && bOnItem) {
 						var oItem = oEvent.getParameter("item");
 						var sText;
-						
+
 						if (oItem instanceof sap.ui.unified.MenuTextFieldItem) {
 							sText = "You entered value '" + oItem.getValue() + "' to menu item '" + oItem.getLabel() + "'";
 						} else {
@@ -186,7 +186,7 @@
 						}
 
 						jQuery("#output").html(sText +" (" + (bOnItem ? "Item" : "Menu") + " Eventing).");
-						
+
 						if (iMessageClearTime > 0) {
 							setTimeout(function(){
 								jQuery("#output").html("");
@@ -194,7 +194,7 @@
 						}
 					}
 				}
-				
+
 				function createMenuStructure(oConfig) {
 					var oMenu = new sap.ui.unified.Menu(oConfig.config || {});
 					oMenu.attachItemSelect(function(oEvent){
@@ -205,7 +205,7 @@
 					for(var i=0; i<aItems.length; i++){
 						var oMenuItem,
 							oItemConfig = aItems[i].config || {};
-							
+
 						if (aItems[i].type == "text") {
 							oMenuItem = new sap.ui.unified.MenuTextFieldItem(oItemConfig);
 							oMenuItem.attachSelect(function(oEvent){
@@ -221,18 +221,18 @@
 								});
 							}
 						}
-						
+
 						oMenuItem.__appicon = oMenuItem.getIcon();
 						oMenu.addItem(oMenuItem);
 					}
 					return oMenu;
 				}
-				
+
 				var aButton = new sap.ui.commons.MenuButton({text: sText, menu: createMenuStructure(oMenuConfig)});
 				aButton.placeAt("target");
 				return aButton;
 			}
-			
+
 			//***************************************************
 
 			var oMenuStructure1 = {
@@ -288,7 +288,7 @@
 					}
 				]
 			};
-			
+
 			var oMenuStructure2 = {
      			config: {ariaDescription: "Demo Menu"},
      			items: [
@@ -348,14 +348,14 @@
      				}
      			]
      		};
-			
+
 			function createRichTooltip(sTitle) {
 				return new sap.ui.commons.RichTooltip({
 	                text : "some tooltip text",
 	                title: sTitle
 				});
 			};
-			
+
 			function createManyItems(bWithSubMenu, sPrefix) {
 				var aItems = [];
 				for(var i=0; i<100; i++){
@@ -373,7 +373,7 @@
 				}
 				return aItems;
 			}
-			
+
 			createTest("Open Menu 1 (Basic)", oMenuStructure1);
 			createTest("Open Menu 2 (TextField)", oMenuStructure2);
 			createTest("Open Menu 3 (RichTooltip)", {
@@ -405,7 +405,7 @@
       			config: {},
       			items: createManyItems(true)
       		});
-			
+
 			var oRerenderingButton = createTest("Open Menu (Debug: Rerendering)", {
             	config: {},
 				items: [

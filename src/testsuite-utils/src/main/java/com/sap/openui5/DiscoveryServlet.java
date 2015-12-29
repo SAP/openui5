@@ -29,13 +29,13 @@ import com.google.gson.Gson;
 
 
 /**
- * The <class>DiscoveryServlet</code> is used to inspect the resources of the 
- * web application and in the JARs in the classpath. It can return the information 
+ * The <class>DiscoveryServlet</code> is used to inspect the resources of the
+ * web application and in the JARs in the classpath. It can return the information
  * what kind of web application pages, test pages or libararies are part of the
  * current web application.
  * <p>
  * <i>This class must not be used in productive systems.</i>
- * 
+ *
  * @author Peter Muessig
  */
 public class DiscoveryServlet extends HttpServlet {
@@ -43,20 +43,20 @@ public class DiscoveryServlet extends HttpServlet {
 
   /** serial version UID */
   private static final long serialVersionUID = -2150070019181955209L;
-  
-  
+
+
   /** default prefix for the classpath */
   private static final String CLASSPATH_PREFIX = "META-INF";
-  
+
   /** regex to find the resources to include in the resources list (contains a placeholder for the path prefix) */
   private static final String REGEX_JAR_INCLUDE = "(?:" + CLASSPATH_PREFIX + "({0}([^/]+/?)))";
-  
+
   /** regex to exclude dedicated resources from the WAR (META-INF, WEB-INF and OSGI-INF) */
   private static final String REGEX_WAR_EXCLUDE = "/(?:META|WEB|OSGI)-INF/";
-  
+
   /** regex to identify the test pages (with a placeholder for the libraries) */
   private static final String REGEX_TESTPAGES = "(/({0})/(([A-Z0-9._%+-]+/)*([A-Z_0-9-\\.]+)\\.html))";
-  
+
   /** pattern to identify the application pages */
   private static final Pattern PATTERN_APP_PAGES = Pattern.compile(
     ".+\\.html",
@@ -67,38 +67,38 @@ public class DiscoveryServlet extends HttpServlet {
     "/([A-Z0-9._%+-/]+)/[A-Z0-9._]*\\.library",
     Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
-  
+
   /** list of application resources */
   private Set<String> appResources = new TreeSet<String>();
-  
+
   /** list of resources */
   private Set<String> resources = new TreeSet<String>();
-  
+
   /** list of test-resources */
   private Set<String> testResources = new TreeSet<String>();
-  
-  
+
+
   /* (non-Javadoc)
    * @see javax.servlet.GenericServlet#init()
    */
   @Override
   public void init() throws ServletException {
-    
+
     long millis = System.currentTimeMillis();
-    
+
     // lookup for the resources in the context path
     this.listContextResources("/", this.appResources);
-    
-    // lookup for the resources in the classpath 
+
+    // lookup for the resources in the classpath
     try {
       this.listClasspathResources("/resources/", this.resources);
       this.listClasspathResources("/test-resources/", this.testResources);
     } catch (IOException ex) {
       throw new ServletException("Scan for classpath resources failed!", ex);
     }
-    
+
     this.log("Resource lookup took: " + (System.currentTimeMillis() - millis) + "ms");
-    
+
   } // method: init
 
 
@@ -107,14 +107,14 @@ public class DiscoveryServlet extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    
+
     String path = request.getPathInfo();
-    
+
     Map<String, Object> content = new HashMap<String, Object>();
     String contentType = "application/json";
-    
+
     if ("/app_pages".equals(path)) {
-      
+
       List<Entry> appPages = new ArrayList<Entry>();
       for (String resource : this.appResources) {
         if (PATTERN_APP_PAGES.matcher(resource).matches()) {
@@ -122,14 +122,14 @@ public class DiscoveryServlet extends HttpServlet {
         }
       }
       content.put(path.substring(1), appPages);
-      
+
     } else if ("/all_libs".equals(path)) {
-      
+
       List<Entry> libs = this.getAllLibraries();
       content.put(path.substring(1), libs);
-      
+
     } else if ("/all_tests".equals(path)) {
-      
+
       List<Entry> libs = this.getAllLibraries();
       StringBuffer regexLibs = new StringBuffer();
       for (Entry lib : libs) {
@@ -139,7 +139,7 @@ public class DiscoveryServlet extends HttpServlet {
         regexLibs.append(lib.entry);
       }
       Pattern p = Pattern.compile(MessageFormat.format("/test-resources" + REGEX_TESTPAGES, regexLibs.toString()), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-      
+
       List<TestPage> pages = new ArrayList<TestPage>();
       for (String resource : this.testResources) {
         Matcher m = p.matcher(resource);
@@ -151,22 +151,22 @@ public class DiscoveryServlet extends HttpServlet {
         }
       }
       content.put(path.substring(1), pages);
-      
+
     } else {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return;
     }
-    
+
     response.setCharacterEncoding("UTF-8");
     response.setContentType(contentType);
     response.setStatus(HttpServletResponse.SC_OK);
-    
+
     PrintWriter writer = response.getWriter();
     Gson gson = new Gson();
     writer.write(gson.toJson(content));
     writer.flush();
     writer.close();
-    
+
   } // method: doGet
 
   private List<Entry> getAllLibraries() {
@@ -180,7 +180,7 @@ public class DiscoveryServlet extends HttpServlet {
     }
     return libs;
   } // method: getAllLibraries
-  
+
   /**
    * lists the resourcs in the web context (part of the WAR file)
    * @param path path to lookup
@@ -201,8 +201,8 @@ public class DiscoveryServlet extends HttpServlet {
       }
     }
   } // method: listContextResources
-  
-  
+
+
   /**
    * lists the resourcs in the classpath (part of the JAR files)
    * @param path path to lookup
@@ -210,13 +210,13 @@ public class DiscoveryServlet extends HttpServlet {
    * @throws IOException
    */
   private void listClasspathResources(String path, Set<String> resources) throws IOException {
-    
+
     // define the resource path to lookup
     String resourcePath = CLASSPATH_PREFIX + path;
     Pattern p = Pattern.compile(MessageFormat.format(REGEX_JAR_INCLUDE, path), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
     Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(resourcePath);
     Set<String> dirs = new TreeSet<String>();
-    
+
     while (urls.hasMoreElements()) {
       URL url = urls.nextElement();
       URLConnection connection = url.openConnection();
@@ -260,15 +260,15 @@ public class DiscoveryServlet extends HttpServlet {
         }
       }
     }
-    
+
     // find the resources of the nested paths
     for (String dir : dirs) {
       this.listClasspathResources(path + dir, resources);
     }
-    
+
   } // method: listClasspathResources
-  
-  
+
+
   /**
    * helper to access the value of declared fields which are normally not
    * accessible via public getter or setter functions
@@ -290,43 +290,43 @@ public class DiscoveryServlet extends HttpServlet {
       return null;
     }
   } // method: getDeclaredFieldValue
-  
-  
+
+
   /**
    * The class <code>Entry</code> is used to create a proper JSON
    * response with an array of entries for the app_pages and all_libs
    * requests.
    */
   static class Entry {
-    
+
     String entry;
-    
+
     Entry(String entry) {
       this.entry = entry;
     } // constructor
-    
+
   } // class: Entry
-  
-  
+
+
   /**
    * The class <code>TestPage</code> is used to create a proper JSON
    * response with an array of test pages.
    */
   static class TestPage {
-    
+
     String lib;
-    
+
     String name;
-    
+
     String url;
-    
+
     TestPage(String lib, String name, String url) {
       this.lib = lib;
       this.name = name;
       this.url = url;
     } // constructor
-    
+
   } // class: TestPage
-  
-  
+
+
 } // class: DiscoveryServlet

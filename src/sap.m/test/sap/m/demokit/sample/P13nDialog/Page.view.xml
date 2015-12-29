@@ -7,7 +7,7 @@
 		<l:content>
 			<Button
 				text="Show Personalization Dialog"
-				press="onPersonalizationDialogPress" />			
+				press="onPersonalizationDialogPress" />
 		</l:content>
-	</l:VerticalLayout>	
+	</l:VerticalLayout>
 </mvc:View>

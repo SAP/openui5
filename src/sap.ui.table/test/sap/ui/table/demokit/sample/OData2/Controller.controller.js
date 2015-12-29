@@ -9,33 +9,33 @@ sap.ui.define([
 	"sap/ui/model/type/String"
 ], function(Controller, MockServer, ODataModel, JSONModel, Column, Currency, Text, String) {
 	"use strict";
-	
+
 	var sServiceUrl = "http://my.test.service.com/";
 
 	return Controller.extend("sap.ui.table.sample.OData2.Controller", {
-		
+
 		onInit : function () {
 			this.oMockServer = new MockServer({
 				rootUri : sServiceUrl
 			});
-			
+
 			MockServer.config({autoRespondAfter: 2000});
-			
+
 			this.oMockServer.simulate(jQuery.sap.getModulePath("sap.ui.table.sample.OData2") + "/metadata.xml", {
 				sMockdataBaseUrl : jQuery.sap.getModulePath("sap.ui.table.sample.OData"),
 				bGenerateMissingMockData : true
 			});
-			
+
 			this.oMockServer.start();
-			
+
 			var oView = this.getView();
 			var oDataModel = new ODataModel(sServiceUrl);
-			
+
 			oDataModel.getMetaModel().loaded().then(function(){
 				oView.setModel(oDataModel.getMetaModel(), "meta");
 			});
 			oView.setModel(oDataModel);
-			
+
 			var oTable = oView.byId("table");
 			var oBinding = oTable.getBinding("rows");
 			var oBusyIndicator = oTable.getNoData();
@@ -46,13 +46,13 @@ sap.ui.define([
 				oTable.setNoData(null); //Use default again ("No Data" in case no data is available)
 			});
 		},
-		
+
 		onExit : function () {
 			this.oMockServer.destroy();
 			this.oMockServer = null;
 			MockServer.config({autoRespondAfter: 0});
 		},
-		
+
 		columnFactory : function(sId, oContext) {
 			var oModel = this.getView().getModel();
 			var sName = oContext.getProperty("name");
@@ -61,7 +61,7 @@ sap.ui.define([
 			var bVisible = oContext.getProperty("sap:visible") != "false";
 			var iLen = oContext.getProperty("maxLength");
 			iLen = iLen ? parseInt(iLen, 10) : 10;
-			
+
 			function specialTemplate() {
 				var sUnit = oContext.getProperty("sap:unit");
 				if (sUnit) {
@@ -72,7 +72,7 @@ sap.ui.define([
 				}
 				return null;
 			}
-			
+
 			return new Column(sId, {
 				visible: bVisible && sSemantics != "unit-of-measure" && sSemantics != "currency-code",
 				sortProperty: oContext.getProperty("sap:sortable") == "true" ? sName : null,
@@ -83,7 +83,7 @@ sap.ui.define([
 				template: specialTemplate() || new Text({text: {path: sName}})
 			});
 		}
-		
+
 	});
 
 });

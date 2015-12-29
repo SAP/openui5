@@ -8,8 +8,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			rootView : "sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend",
 			dependencies : {
 				libs : [
-					"sap.ui.unified", 
-					"sap.ui.layout", 
+					"sap.ui.unified",
+					"sap.ui.layout",
 					"sap.m"
 				]
 			},

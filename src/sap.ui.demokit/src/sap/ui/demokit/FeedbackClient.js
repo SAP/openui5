@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global'],
 			this._oFeedbackContextText;
 			this._oIncludeFeedbackContextCB;
 		};
-		
+
 		FeedbackClient.prototype.updateFeedbackContextText = function () {
 			if (this._oIncludeFeedbackContextCB.getChecked()) {
 			   updateFeedbackContextTextWithLink.call(this);
@@ -183,21 +183,21 @@ sap.ui.define(['jquery.sap.global'],
 
 			function createLicenseLinks() {
 				var oLicenseLinkPrivacy = new sap.ui.commons.Link({
-					text: "Privacy", 
+					text: "Privacy",
 					tooltip: "Privacy",
 					target: "_blank",
 					href: "https://help.hana.ondemand.com/privacy.htm"
 				});
 
 				var oLicenseLinkTerms = new sap.ui.commons.Link({
-					text: "Terms of Use", 
+					text: "Terms of Use",
 					tooltip: "Terms of Use",
 					target: "_blank",
 					href: "https://help.hana.ondemand.com/terms_of_use.html"
 				});
 
 				var oLegalAgreement = new sap.ui.commons.Link({
-					text: "Legal Agreement", 
+					text: "Legal Agreement",
 					tooltip: "Legal Agreement",
 					target: "_blank",
 					href: "./legal_agreement_with_privacy.html"
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global'],
 				editable: true,
 				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 				content: [
-					new sap.ui.commons.Label({text: 'Send us your feedback!'}),		
+					new sap.ui.commons.Label({text: 'Send us your feedback!'}),
 					createFeedbackRatingHeader(),
 					createFeedbackRatingSegmentedButton(),
 					createFeedbackInput(),

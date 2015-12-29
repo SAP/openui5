@@ -33,7 +33,7 @@
 		<content>
 			<PullToRefresh
 				id="pullToRefresh"
-				visible="{device>/isTouch}" 
+				visible="{device>/isTouch}"
 				refresh="handleRefresh" />
 			<!-- This list shows the search results -->
 			<List
@@ -66,7 +66,7 @@
 						<firstStatus>
 							<ObjectStatus
 								text="{
-									path : 'status', 
+									path : 'status',
 									formatter : '.formatter.statusText'
 								}"
 								state="{

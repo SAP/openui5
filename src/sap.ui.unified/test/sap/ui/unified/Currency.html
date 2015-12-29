@@ -4,14 +4,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>Currency - sap.ui.unified</title>
-	<script src="../../../../resources/sap-ui-core.js" 
+	<script src="../../../../resources/sap-ui-core.js"
 	        type="text/javascript"
 	        id="sap-ui-bootstrap"
 	        data-sap-ui-libs="sap.ui.unified, sap.ui.layout"
 	        data-sap-ui-theme="sap_bluecrystal">
 	</script>
 	<script>
-	
+
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData({
 			modelData: [
@@ -33,9 +33,9 @@
 				}
 			]
 		});
-		
+
 		sap.ui.getCore().setModel(oModel);
-		
+
 		var oTemplate = new sap.ui.unified.Currency({
 			value: {
 				path: 'value',
@@ -43,7 +43,7 @@
 			},
 			currency: '{currency}'
 		});
-		
+
 		var oLayout = new sap.ui.layout.VerticalLayout({
 			content: {
 				path: "/modelData",

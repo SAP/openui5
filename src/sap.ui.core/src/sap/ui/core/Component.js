@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				// provide internal access to the static metadata object
 				this._oMetadataProxy._oMetadata = oMetadata;
 
-				// copy all functions from the metadata object except of the 
+				// copy all functions from the metadata object except of the
 				// manifest related functions which will be instance specific now
 				for (var m in oMetadata) {
 					if (!/^(getManifest|getManifestEntry)$/.test(m) && typeof oMetadata[m] === "function") {
@@ -222,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 */
 
 	/**
-	 * Returns the metadata for the specific class of the current instance. 
+	 * Returns the metadata for the specific class of the current instance.
 	 *
 	 * @return {sap.ui.core.ComponentMetadata} Metadata for the specific class of the current instance.
 	 * @public
@@ -257,7 +257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *       "dependencies": {
 	 *         "libs": {
 	 *           "sap.m": {}
-	 *         }, 
+	 *         },
 	 *         "components": {
 	 *           "my.component.a": {}
 	 *         }
@@ -265,7 +265,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *   });
 	 * </code>
 	 *
-	 * The configuration above can be accessed in the following ways: 
+	 * The configuration above can be accessed in the following ways:
 	 * <ul>
 	 * <li><b>By section/namespace</b>: <code>oComponent.getManifestEntry("sap.ui5")</code></li>
 	 * <li><b>By path</b>: <code>oComponent.getManifestEntry("/sap.ui5/dependencies/libs")</code></li>
@@ -605,7 +605,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @private
 	 */
 	Component.prototype.initComponentModels = function() {
-		
+
 		// in case of having no parent metadata we simply skip that function
 		// since this would mean to init the models on the Component base class
 		var oMetadata = this.getMetadata();
@@ -624,7 +624,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Initializes the component models and services which are passed as 
+	 * Initializes the component models and services which are passed as
 	 * parameters to this function.
 	 *
 	 * @param {object} mModels models configuration from manifest.json
@@ -655,7 +655,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 		};
 
-		// identify the configuration 
+		// identify the configuration
 		var oMeta = this.getMetadata();
 		while (oMeta && oMeta instanceof ComponentMetadata) {
 
@@ -834,7 +834,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						// default 'undefined' is already set in this case
 				}
 			}
-			
+
 			// Origin: if sap-system paramter is given -> add this alias to the service url(s) of ODataModels
 			var oComponentData = this.getComponentData();
 			var sSystemParameter = oComponentData && oComponentData.startupParameters && oComponentData.startupParameters["sap-system"];
@@ -842,7 +842,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			if (!sSystemParameter) {
 				sSystemParameter = oUriParams.get("sap-system");
 			}
-			
+
 			// lazy load the ODataUtils if systemParameter is given
 			var bAddOrigin = false;
 			var ODataUtils;
@@ -851,10 +851,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				jQuery.sap.require("sap.ui.model.odata.ODataUtils");
 				ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
 			}
-			
+
 			// include "uri" property in "settings" object, depending on "uriSettingName"
 			if (oModelConfig.uri) {
-				
+
 				if (bAddOrigin) {
 					// Origin segment: pre- and postOriginBaseUris do not include uri params, they will be used for annotation uri adaption
 					oModelConfig.preOriginBaseUri = oModelConfig.uri.split("?")[0];
@@ -863,7 +863,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					});
 					oModelConfig.postOriginBaseUri = oModelConfig.uri.split("?")[0];
 				}
-				
+
 				if (oModelConfig.uriSettingName !== undefined) {
 					oModelConfig.settings = oModelConfig.settings || {};
 
@@ -889,7 +889,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					oModelConfig.postOriginUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
 				}
 			}
-			
+
 			// Origin segment: Adapt annotation uris here, based on the base part of the service uri.
 			// Replaces the base uri prefix with the one after adding the origin
 			if (bAddOrigin && oModelConfig.settings && oModelConfig.settings.annotationURI) {
@@ -900,12 +900,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				}
 				oModelConfig.settings.annotationURI = aOriginAnnotations;
 			}
-			
+
 			// normalize settings object to array
 			if (oModelConfig.settings && !jQuery.isArray(oModelConfig.settings)) {
 				oModelConfig.settings = [ oModelConfig.settings ];
 			}
-			
+
 			// create arguments array with leading "null" value so that it can be passed to the apply function
 			var aArgs = [null].concat(oModelConfig.settings || []);
 
@@ -1091,7 +1091,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			jQuery.sap.log.info("Component instance Id = " + oInstance.getId());
 
 			/*
-			 * register for messaging: register if either handleValidation is set in metadata 
+			 * register for messaging: register if either handleValidation is set in metadata
 			 * or if not set in metadata and set on instance
 			 */
 			var bHandleValidation = oInstance.getMetadata().handleValidation() !== undefined || vConfig.handleValidation;
@@ -1131,7 +1131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * synchronous requests. The contract for <code>async = true</code> just allows to use
 	 * async calls.
 	 *
-	 * When a manifest.json is referenced in oConfig this manifest is not used for the derived instances of the Component class. 
+	 * When a manifest.json is referenced in oConfig this manifest is not used for the derived instances of the Component class.
 	 * The manifest/manifest url must be provided for every instance explicitly.
 	 *
 	 * When asynchronous loading is used, additional <code>hints</code> can be provided :
@@ -1214,7 +1214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 		}
 
-		// in case of loading the manifest first by configuration we need to 
+		// in case of loading the manifest first by configuration we need to
 		// wait until the registration of the module path is done if needed and
 		// then we can use the standard capabilities of the framework to resolve
 		// the Components' modules namespace
@@ -1370,7 +1370,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				collect(oManifest.then(function(oManifest) {
 					// once the manifest is loaded we update the config object
 					// since the sap.ui.component call is using this config
-					// to read the manifest from when creating the controller 
+					// to read the manifest from when creating the controller
 					oConfig._manifest = oManifest;
 					// preload the component
 					return preload(oManifest.getComponentName(), true);

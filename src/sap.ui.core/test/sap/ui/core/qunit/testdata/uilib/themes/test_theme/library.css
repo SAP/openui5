@@ -1,5 +1,5 @@
-.sapUiTstBtn {  
-	color: black; 
+.sapUiTstBtn {
+	color: black;
 	background-color: white;
 	height: 21px;
 	vertical-align: top;
@@ -20,17 +20,17 @@
 
 .sapUiTstBtnStd:focus,
 .sapUiTstBtnStd:hover {
-	border-color: black; 
+	border-color: black;
 	background-color: grey;
 }
 
 .sapUiTstBtnStd {
-	border-color: #A4B8D6 #A4B8D6 #95A7C2 #A4B8D6; 
+	border-color: #A4B8D6 #A4B8D6 #95A7C2 #A4B8D6;
 }
 
 .sapUiTstBtnDsbl,
 .sapUiTstBtnDsbl:focus {
-	border-color: #BFCDE2 #BFCDE2 #B5C1D4 #BFCDE2; 
+	border-color: #BFCDE2 #BFCDE2 #B5C1D4 #BFCDE2;
 }
 
 .sapUiTstBtnStd:focus {

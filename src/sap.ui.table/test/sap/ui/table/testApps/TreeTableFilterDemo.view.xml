@@ -6,11 +6,11 @@
 	xmlns:table="sap.ui.table"
 	controllerName="sap.ui.table.testApps.TreeTableFilterDemo"
 	>
-	
-	<Panel 
+
+	<Panel
 		expandable="true"
 		expanded="true"
-		width="auto" 
+		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>
 			<Toolbar>
@@ -50,10 +50,10 @@
 			</f:Form>
 		</content>
 	</Panel>
-	<Panel 
+	<Panel
 		expandable="true"
 		expanded="true"
-		width="auto" 
+		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>
 			<Toolbar>
@@ -87,10 +87,10 @@
 			</f:Form>
 		</content>
 	</Panel>
-	<Panel 
+	<Panel
 		expandable="true"
 		expanded="true"
-		width="auto" 
+		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding"
 		id="tableContainerPanel">
 		<headerToolbar>

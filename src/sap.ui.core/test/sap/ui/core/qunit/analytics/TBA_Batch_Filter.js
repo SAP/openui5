@@ -86,7 +86,7 @@ o4aFakeService.addResponse({
 			"content-language: en-US\r\n" +
 			"Content-Length: 290\r\n" +
 			"\r\n" +
-			"{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults(\'28726460038923281\')\",\"type\":\"fake.ActualPlannedCostsResultsType\"},\"CostCenter\":\"100-1000\",\"CostElement\":\"400020\",\"Currency\":\"USD\"}],\"__count\":\"24\"}}\r\n" + 
+			"{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults(\'28726460038923281\')\",\"type\":\"fake.ActualPlannedCostsResultsType\"},\"CostCenter\":\"100-1000\",\"CostElement\":\"400020\",\"Currency\":\"USD\"}],\"__count\":\"24\"}}\r\n" +
 			"--AAD136757C5CF75E21C04F59B8682CEA0--\r\n" +
 			""
 });

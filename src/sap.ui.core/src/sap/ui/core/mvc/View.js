@@ -367,7 +367,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 					oController.connectToView(oThis);
 				}
 			}
-			
+
 		} else {
 			oThis.oController = {};
 		}

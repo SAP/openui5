@@ -61,7 +61,7 @@
 				"id": "sap.ui.table.sample.Resizing",
 				"name": "Resizing",
 				"description": "Example for column resizing and the different row count modes."
-			},{				
+			},{
 				"id": "sap.ui.table.sample.MultiHeader",
 				"name": "Multi Header",
 				"description": "Example for multi-header of table."

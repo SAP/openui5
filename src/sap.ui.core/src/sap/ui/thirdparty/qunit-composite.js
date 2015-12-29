@@ -57,7 +57,7 @@ function runSuite( suite ) {
 	} else {
 		path = suite;
 	}
-	
+
 
 	QUnit.asyncTest( suite, function() {
 		iframe.setAttribute( "src", path );

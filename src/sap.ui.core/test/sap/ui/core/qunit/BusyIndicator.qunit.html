@@ -27,7 +27,7 @@
 				}
 			}
 		});
-		
+
 		// make sure the BusyIndicator is not rendered initially
 		test("InitialCheck", function() {
 			equal(jQuery(".sapUiBusy").length, 0, "BusyIndicator should not exist initially");
@@ -56,7 +56,7 @@
 				var bVisible = $Busy.is(":visible") && ($Busy.css("visibility") == "visible");
 				ok(bVisible, "BusyIndicator should be visible after opening");
 				ok($Busy.css("top") === "0px", "BusyIndicator is positioned at the top of the window");
-				
+
 				sap.ui.core.BusyIndicator.hide();
 				start();
 			}, iPopupDelay);
