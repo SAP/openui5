@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		TreeBindingAdapter.prototype._createTreeState = function (bReset) {
 			if (!this._mTreeState || bReset) {
-				//general tree status information, the nodes are referenced by their groupID 
+				//general tree status information, the nodes are referenced by their groupID
 				this._mTreeState = {
 					expanded: {}, // a map of all expanded nodes
 					collapsed: {}, // a map of all collapsed nodes
@@ -1147,7 +1147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 								aChangedIndices.push(iNodeCounter);
 							}
 
-							// remember the old lead selection index if we encounter it 
+							// remember the old lead selection index if we encounter it
 							// (might not happen if the lead selection is outside the newly set range)
 							if (oNode.groupID === this._sLeadSelectionGroupID) {
 								iOldLeadIndex = iNodeCounter;

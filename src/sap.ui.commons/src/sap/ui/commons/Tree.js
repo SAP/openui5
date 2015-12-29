@@ -561,11 +561,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		});
 	};
-	
+
 	/**
 	 * Determine the binding context of the given node (dependent on the model name used
 	 * for the nodes binding)
-	 * 
+	 *
 	 * @param {sap.ui.commons.TreeNode} oNode
 	 * @private
 	 */
@@ -745,7 +745,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	Tree.prototype._setSelectedNode = function(oNode, bSuppressEvent) {
-		var that = this, 
+		var that = this,
 			oContext = this.getNodeContext(oNode);
 
 		jQuery.each(this.mSelectedNodes, function(sId, oNode){

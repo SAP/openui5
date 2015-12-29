@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested class: sap.ui.ux3.ThingInspector
   Author: d026828, d049080
 -->
@@ -14,7 +14,7 @@
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -77,7 +77,7 @@
 	}
 	function feedSubmitEventHandler(oEvent) {
 		ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
-		var text = oEvent.getParameter("text"); 
+		var text = oEvent.getParameter("text");
 		equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 	}
 	function closeEventHandler(oEvent) {
@@ -167,7 +167,7 @@
 	oLayout2.addRow(createLMatrixLayoutRowRow("Email", "hugo.m@web.de"));
 	oTC2.addContent(oLayout2);
 	oThingInspector.addHeaderContent(oTC2);
-	
+
 	//TI must be opened after the shell is rendered. Otherwise the sync will not work correctly
 	oShell.addDelegate({onAfterRendering:function() {
 		oThingInspector.open();
@@ -189,7 +189,7 @@
 		ok(oDomRef, "Rendered ThingInspector should exist in the page");
 		equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");
 	});
-	
+
 	test("Swatch", function() {
 		var oSwatch = jQuery.sap.domById(oThingInspector.getId() + "-thingViewer-swatch");
 		ok(oSwatch, "Rendered Swatch should exist in the page");
@@ -221,7 +221,7 @@
 		expect(1);
 		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-openNew"), "click", 1, 1, 1, 1);
 	});
-	
+
 	test("OpenNew via Keyboard Event", function() {
 		expect(2);
 		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -249,7 +249,7 @@
 		oThingInspector.setFavoriteActionEnabled(false);
 		ok(!oThingInspector.getFavoriteActionEnabled(), "Favorite Action enabled is false");
 	});
-	
+
 	asyncTest("Favorite Action disabled: no event anymore", function() {
 		expect(1);
 		action = "favorite";
@@ -259,7 +259,7 @@
 			start();
 		},500);
 	});
-	
+
 	test("FlagSelected Event", function() {
 		expect(7);
 		ok(!oThingInspector.getFlagState(), "Flag State is false");
@@ -269,7 +269,7 @@
 		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
 		ok(!oThingInspector.getFlagState(), "Flag State is false");
 	});
-	
+
 	test("FlagSelected via Keyboard Event", function() {
 		expect(7);
 		ok(!oThingInspector.getFlagState(), "Flag State is false");
@@ -280,13 +280,13 @@
 		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", jQuery.sap.KeyCodes.SPACE, false, false, false);
 		ok(!oThingInspector.getFlagState(), "Flag State is false");
 	});
-	
+
 	test("Disable Flag Action", function() {
 		expect(1);
 		oThingInspector.setFlagActionEnabled(false);
 		ok(!oThingInspector.getFlagActionEnabled(), "Flag Action enabled is false");
 	});
-	
+
 	asyncTest("Flag Action disabled: no event anymore", function() {
 		expect(1);
 		action = "flag";
@@ -296,7 +296,7 @@
 			start();
 		},500);
 	});
-	
+
 	asyncTest("UpdateSelected Event", function() {
 		expect(2);
 		action = "update";
@@ -337,13 +337,13 @@
 				}, 500);
 			}, 500);
 		}, 500);
-	});	
+	});
 	test("Disable Update Action", function() {
 		expect(1);
 		oThingInspector.setUpdateActionEnabled(false);
 		ok(!oThingInspector.getUpdateActionEnabled(), "Flag Action enabled is false");
 	});
-	
+
 	asyncTest("Update Action disabled: no event anymore", function() {
 		expect(1);
 		action = "update";
@@ -405,7 +405,7 @@
 				// menu must exist after click
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
 				ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
-	
+
 				setTimeout(
 						function() {
 							// menu entries with unhold and unfollow must exist
@@ -416,9 +416,9 @@
 							// trigger unfollow
 							qutils.triggerMouseEvent(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"), "click", 1, 1, 1, 1);
 							equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
-	
+
 							setTimeout(function() {
-								
+
 								// menu entries with hold, unhold and unfollow must not exist only follow
 								ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-holdState"),
 										"Rendered Follow Action menu with holdState should not exists in the page");
@@ -429,17 +429,17 @@
 								start();
 							}, 500);
 						}, 500);
-			}, 500);			
+			}, 500);
 		}, 500);
 
 	});
-	
+
 	test("Disable Follow Action", function() {
 		expect(1);
 		oThingInspector.setFollowActionEnabled(false);
 		ok(!oThingInspector.getFollowActionEnabled(), "Follow Action enabled is false");
 	});
-	
+
 	asyncTest("Follow Action disabled: no event anymore", function() {
 		expect(1);
 		action = "follow";
@@ -449,19 +449,19 @@
 			start();
 		},500);
 	});
-	
+
 	// at the end close
 	asyncTest("Close Event", function() {
 		expect(3);
 		ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
-		
+
 		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-close"), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			start();
 			ok(!oThingInspector.isOpen(), "Rendered ThingInspector is not open");
 		}, 500);
 	});
-	
+
 	test("Destroy and remove control", function() {
 		oThingInspector.destroy();
 		sap.ui.getCore().applyChanges();
@@ -469,7 +469,7 @@
 		ok(!oDomRef, "Rendered ThingInspector should not exist in the page after destruction");
 		oShell.destroy();
 	});
-	
+
 </script>
 </head>
 <body>

@@ -48,7 +48,7 @@
 							})
 						]
 					});
-					
+
 					this.oFormContainer2 = new sap.ui.layout.form.FormContainer({
 						title: "Container2",
 						formElements: [
@@ -181,9 +181,9 @@
 				if ($child.parent().get(0) === $parent.get(0)) {
 					var oChildOffset =  $child.offset();
 					var oParentOffset = $parent.offset();
-					return (oParentOffset.left <= oChildOffset.left && 
-							oParentOffset.top <= oChildOffset.top && 
-							Math.floor(oParentOffset.left + $parent.width()) >= Math.floor(oChildOffset.left + $child.width()) && 
+					return (oParentOffset.left <= oChildOffset.left &&
+							oParentOffset.top <= oChildOffset.top &&
+							Math.floor(oParentOffset.left + $parent.width()) >= Math.floor(oChildOffset.left + $child.width()) &&
 							Math.floor(oParentOffset.top + $parent.height()) >= Math.floor(oChildOffset.top + $child.height()) );
 				} else {
 					return false;

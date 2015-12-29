@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.core.Locale
   Author: d040216
 -->
@@ -44,7 +44,7 @@
 		["sl-IT-var0815",			"sl",		null,	"IT",	"var0815",	null,			null,		"SL"],
 		["de-DE-u-co-phonebk",		"de",		null,	"DE",	null,		"u-co-phonebk",	null,		"DE"],
 		["en-US-x-twain",			"en",		null,	"US",	null,		null,			"x-twain",	"EN"],
-		
+
 		// additonal tests for normalization
 		["en_US",					"en",		null,	"US",	null,		null,			null,		"EN"],
 		["EN-US",					"en",		null,	"US",	null,		null,			null,		"EN"],
@@ -75,7 +75,7 @@
 	for (var i = 0; i < aLocales.length; i++) {
 		localeTest.apply(this, aLocales[i]);
 	}
-	
+
 	test("hasPrivateUseSubtag", function() {
 		var oLocale = new sap.ui.core.Locale("de_DE-x-sapufmt");
 		equal(oLocale.getPrivateUse(), "x-sapufmt", "PrivateUse must be set");

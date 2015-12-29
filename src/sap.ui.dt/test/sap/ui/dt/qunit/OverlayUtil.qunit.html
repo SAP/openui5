@@ -47,7 +47,7 @@
 					this.oLayout0 = new sap.ui.layout.VerticalLayout({content : [this.oButton01, this.oButton02]});
 
 					this.oLayout1 = new sap.ui.layout.VerticalLayout({content : [this.oLayout0]});
-					
+
 					this.oButton21 = new sap.m.Button({
 						text : "Button21"
 					});
@@ -117,7 +117,7 @@
 
 				oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oLayoutOverlay0);
 				assert.strictEqual(oPreviousOverlay, this.oLayoutOverlay1, "oLayoutOverlay0 -> layoutOverlay1");
-				
+
 				oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oLayoutOverlay1);
 				assert.strictEqual(oPreviousOverlay, this.oLayoutOverlay2, "oLayoutOverlay1 -> oLayoutOverlay2");
 

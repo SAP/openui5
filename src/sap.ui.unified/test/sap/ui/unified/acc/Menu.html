@@ -10,14 +10,14 @@
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
 
-		<script type="text/javascript">	
+		<script type="text/javascript">
 			try{
 				sap.ui.getCore().loadLibrary("sap.ui.commons");
 			}catch(e){
 				alert("This test page requires the library 'sap.ui.commons' which is not available.");
 				throw(e);
 			}
-			
+
 			function fillMenuButtonMenu(oMenuButton, bIcon) {
 				var aItems = [
 					{text: "View Settings", items: [], tooltip: "View settings details"},
@@ -35,7 +35,7 @@
 						var oMenuItem = new sap.ui.unified.MenuItem({text: aItems[i].text, tooltip: aItems[i].tooltip, startsSection: !!aItems[i].divider, icon: aItems[i].icon, enabled: !aItems[i].disabled});
 						oMenu.addItem(oMenuItem);
 						if(aItems[i].items.length > 0){
-							var oSubMenu = new sap.ui.unified.Menu(); 
+							var oSubMenu = new sap.ui.unified.Menu();
 							oMenuItem.setSubmenu(oSubMenu);
 							fillMenu(aItems[i].items, oSubMenu);
 						}else{
@@ -46,7 +46,7 @@
 						}
 					}
 				};
-	
+
 				var oMenu = new sap.ui.unified.Menu({ariaDescription: "Settings Menu"});
 				fillMenu(aItems, oMenu);
 				oMenu.addItem(new sap.ui.unified.MenuTextFieldItem({label: "Filter:", enabled: true, startsSection: true, icon: "sap-icon://filter", select: function(oEvent){
@@ -60,7 +60,7 @@
 				}}));
 				oMenuButton.setMenu(oMenu);
 			}
-			
+
 			var oMenuButton = new sap.ui.commons.MenuButton("demoButton", {text: "Settings", tooltip: "Press the button to show the Menu"});
 			fillMenuButtonMenu(oMenuButton);
 			oMenuButton.placeAt("content");

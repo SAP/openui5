@@ -5,7 +5,7 @@
 jQuery.sap.declare("sap.ui.demokit.icex.util.Sorter");
 
 sap.ui.demokit.icex.util.Sorter = {
-	
+
 	sortByName : function(a, b) {
 		if (!a || !a.name) {
 			return -1;
@@ -14,7 +14,7 @@ sap.ui.demokit.icex.util.Sorter = {
 		} else {
 			var aName = a.name.toLowerCase();
 			var bName = b.name.toLowerCase();
-			
+
 			if (aName < bName) {
 				return -1;
 			} else {

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+
 		<title>sap.m.TablePersoDialog Test</title>
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
@@ -11,7 +11,7 @@
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-compatVersion="1.16">
 		</script>
-		
+
 		<script type="text/javascript">
 		jQuery.sap.require("sap.m.TablePersoController");
 		jQuery.sap.require("sap.m.TablePersoDialog");
@@ -110,7 +110,7 @@
 				}
 				return null;
 			},
-			
+
 			getGroup : function(oColumn) {
 				if(oColumn.getHeader() && oColumn.getHeader().getText) {
 					if( oColumn.getHeader().getText() == "Color") {
@@ -136,7 +136,7 @@
 
 			var app = new sap.m.App("myApp", {
 					initialPage : "page"
-				}), 
+				}),
 				page = new sap.m.Page("page", {
 					title : "TablePersoDialog Testpage",
 					content : [oTable]
@@ -145,7 +145,7 @@
 			app.addPage(page);
 			app.placeAt("body");
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

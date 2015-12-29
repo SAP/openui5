@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new P13nColumnsPanel.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nColumnsPanel control is used to define column-specific settings for table personalization.
@@ -30,7 +30,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Used to specify a threshold of visible items.
-				 * 
+				 *
 				 * @since 1.26.7
 				 */
 				visibleItemsThreshold: {
@@ -42,7 +42,7 @@ sap.ui.define([
 			aggregations: {
 				/**
 				 * List of columns that has been changed.
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				columnsItems: {
@@ -66,7 +66,7 @@ sap.ui.define([
 
 				/**
 				 * Event raised when a <code>columnsItem</code> is added.
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				addColumnsItem: {
@@ -81,7 +81,7 @@ sap.ui.define([
 				},
 				/**
 				 * Event raised if <code>columnsItems</code> is changed or new one needs to be created in the model.
-				 * 
+				 *
 				 * @since 1.26.7
 				 */
 				changeColumnsItems: {
@@ -103,7 +103,7 @@ sap.ui.define([
 				/**
 				 * Event raised if <code>setData</code> is called in model. The event serves the purpose of minimizing such calls since they can
 				 * take up a lot of performance.
-				 * 
+				 *
 				 * @since 1.26.7
 				 */
 				setData: {}
@@ -117,7 +117,7 @@ sap.ui.define([
 
 	/**
 	 * Move selected item to begin of the item list
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveToTop = function() {
@@ -147,7 +147,7 @@ sap.ui.define([
 
 	/**
 	 * Move selected item one position up
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveUp = function() {
@@ -177,7 +177,7 @@ sap.ui.define([
 
 	/**
 	 * Move selected item one position down
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveDown = function() {
@@ -209,7 +209,7 @@ sap.ui.define([
 
 	/**
 	 * Move selected item to end of the item list
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._ItemMoveToBottom = function() {
@@ -242,7 +242,7 @@ sap.ui.define([
 	/**
 	 * This method determines all columnsItems that have an index property, which are not undefined and fit into index range of iOldIndex & iNewIndex.
 	 * If such columnsItems are found take the index property and change it to a value according to the move direction.
-	 * 
+	 *
 	 * @private
 	 * @param {int} iOldIndex is the index from where the correction shall start in columnsItems
 	 * @param {int} iNewIndex is the index to where the correction shall run in columnsItems
@@ -292,7 +292,7 @@ sap.ui.define([
 
 	/**
 	 * After an items was moved renewal selected items instance and it's selection
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._afterMoveItem = function() {
@@ -302,7 +302,7 @@ sap.ui.define([
 
 	/**
 	 * Swop "Show Selected" button to "Show All"
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._swopShowSelectedButton = function() {
@@ -330,7 +330,7 @@ sap.ui.define([
 
 	/**
 	 * Escapes special characters
-	 * 
+	 *
 	 * @private
 	 * @param {string} sToEscape contains the content that shall be escaped
 	 */
@@ -342,7 +342,7 @@ sap.ui.define([
 
 	/**
 	 * Filters items by its selection status
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._filterItems = function() {
@@ -417,7 +417,7 @@ sap.ui.define([
 
 	/**
 	 * Execute search by filtering columns list based on the given sValue
-	 * 
+	 *
 	 * @private
 	 * @param {boolean} bStatus is OPTIONAL and determines whether the SelectAll check-box is enabled = true||false
 	 */
@@ -431,7 +431,7 @@ sap.ui.define([
 
 	/**
 	 * Execute search by filtering columns list based on the given sValue
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._executeSearch = function() {
@@ -463,7 +463,7 @@ sap.ui.define([
 
 	/**
 	 * Determine the previous table item index starting from position, which comes via iStartIndex
-	 * 
+	 *
 	 * @private
 	 * @param {inteter} iStartIndex is the table index from where the search start
 	 * @returns {integer} is the index of a previous items; if no item is found it will be returned -1
@@ -494,7 +494,7 @@ sap.ui.define([
 
 	/**
 	 * Determine the next table item index to that position, which comes via iStartIndex
-	 * 
+	 *
 	 * @private
 	 * @param {inteter} iStartIndex is the table index from where the search start
 	 * @returns {integer} is the index of the next item; if no item is found it will be returned -1
@@ -529,7 +529,7 @@ sap.ui.define([
 
 	/**
 	 * Update Select All column count information
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._updateSelectAllDescription = function(oEvent) {
@@ -556,7 +556,7 @@ sap.ui.define([
 
 	/**
 	 * Change the selected item instance to the new given one
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._changeSelectedItem = function(oItem) {
@@ -582,7 +582,7 @@ sap.ui.define([
 
 	/**
 	 * Item press behavior is called as soon as a table item is selected
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._itemPressed = function(oEvent) {
@@ -594,7 +594,7 @@ sap.ui.define([
 
 	/**
 	 * Calculates the Appearance of the move button depending of selected item instance
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._calculateMoveButtonAppearance = function() {
@@ -659,7 +659,7 @@ sap.ui.define([
 
 	/**
 	 * Set highlighting to an item
-	 * 
+	 *
 	 * @private
 	 * @param {object} oItem is that item that shall be highlighted
 	 */
@@ -671,7 +671,7 @@ sap.ui.define([
 
 	/**
 	 * Remove highlighting from an item
-	 * 
+	 *
 	 * @private
 	 * @param {object} oItem is that item that where highlighting shall be removed from
 	 */
@@ -683,7 +683,7 @@ sap.ui.define([
 
 	/**
 	 * Deactivate selected items for any movements & all move buttons
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._deactivateSelectedItem = function() {
@@ -696,7 +696,7 @@ sap.ui.define([
 
 	/**
 	 * Delivers the index of an item in the given array identified by its key
-	 * 
+	 *
 	 * @private
 	 * @param {string} sItemKey is the key for that item for that the index shall be found in the array
 	 * @param {array} aItems is the array in that the item will be searched
@@ -739,7 +739,7 @@ sap.ui.define([
 
 	/**
 	 * Scroll table content to given item
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._scrollToSelectedItem = function(oItem) {
@@ -764,7 +764,7 @@ sap.ui.define([
 
 	/**
 	 * This method extracts all information from given columnsItems array into a JSON based list
-	 * 
+	 *
 	 * @private
 	 * @param {array} aColumnsItems list of columnsItems
 	 * @returns {array} aExtractionResult is a JSON based array with main information about the given columnsItems array
@@ -790,7 +790,7 @@ sap.ui.define([
 
 	/**
 	 * This method extracts all information from existing table items into a JSON based list
-	 * 
+	 *
 	 * @private
 	 * @returns {array} aExtractionResult is a JSON based array with main information about table items
 	 */
@@ -816,7 +816,7 @@ sap.ui.define([
 
 	/**
 	 * react on item visibility changes
-	 * 
+	 *
 	 * @private
 	 * @param {sap.m.ColumnListItem} oItem is the table item for that the index was changed
 	 * @param {int} iNewIndex is the item index where the item shall be inserted
@@ -876,7 +876,7 @@ sap.ui.define([
 
 	/**
 	 * react on item visibility changes
-	 * 
+	 *
 	 * @private
 	 * @param {array} aItems is an array of JSON objects that represents content of involved sap.m.ColumnListItem
 	 */
@@ -944,7 +944,7 @@ sap.ui.define([
 
 	/**
 	 * get ColumnsItem by a given ColumnsKey
-	 * 
+	 *
 	 * @private
 	 * @param {string} sItemKey is the columns key with that a ColumnsItem can be identified
 	 * @param {boolean} bCreateIfNotFound determines whether a ColumnsItems will be created if no ColumnsItem was found by the given key
@@ -959,7 +959,7 @@ sap.ui.define([
 
 	/**
 	 * get ColumnsItem by a given ColumnsKey
-	 * 
+	 *
 	 * @private
 	 * @param {string} sItemKey is the columns key with that a ColumnsItem can be identified
 	 * @returns {object} ColumnsItem that was found by the key or created if required
@@ -982,7 +982,7 @@ sap.ui.define([
 
 	/**
 	 * Updates table items based on content of ColumnsItem(s)
-	 * 
+	 *
 	 * @private
 	 * @param {object} oColumnsItem is an item from columnsItems aggregation
 	 */
@@ -1017,7 +1017,7 @@ sap.ui.define([
 
 	/**
 	 * This method shall reorder all existing table items. First all selected, and then the unselected items in a alphabetical order
-	 * 
+	 *
 	 * @private
 	 * @param {object} oColumnsItem is an item from columnsItems aggregation
 	 */
@@ -1074,7 +1074,7 @@ sap.ui.define([
 
 	/**
 	 * Add a new table item based on the given P13nItem content
-	 * 
+	 *
 	 * @private
 	 * @param {sap.m.P13nItem} oItem is used to create and added a new table item
 	 */
@@ -1114,7 +1114,7 @@ sap.ui.define([
 
 	/**
 	 * Inserts a new table item based on the given P13nItem content
-	 * 
+	 *
 	 * @private
 	 * @param {int} iIndex is the index where the new item shall be inserted
 	 * @param {sap.m.P13nItem} oItem is used to create and insert a new table item
@@ -1154,7 +1154,7 @@ sap.ui.define([
 
 	/**
 	 * Inserts a new table item based on the given P13nItem content
-	 * 
+	 *
 	 * @private
 	 * @param {sap.m.P13nItem} oItem is the information template to create a new table item
 	 * @returns {sap.m.ColumnListItem} oNewTableItem is the new created table item or null
@@ -1186,7 +1186,7 @@ sap.ui.define([
 
 	/**
 	 * Apply all ColumnsItem changes (that are stored in its properties) to the proper table item (if it already exist)
-	 * 
+	 *
 	 * @private
 	 * @param {object} oColumnsItem is an item from columnsItems aggregation
 	 * @param {object} oTableItem is that item (in this._oTable) where all ColumnsItem changes will be applied to
@@ -1238,7 +1238,7 @@ sap.ui.define([
 
 	/**
 	 * This method returns a boolean based status, whether the panel has been changed
-	 * 
+	 *
 	 * @private
 	 * @returns {Boolean} bTableItemsChangeStatus that returns true if something was changed and otherwise false
 	 */
@@ -1293,7 +1293,7 @@ sap.ui.define([
 
 	/**
 	 * Initialization hook.
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype.init = function() {
@@ -1542,7 +1542,7 @@ sap.ui.define([
 
 	/**
 	 * This method does a re-initialization of the panel
-	 * 
+	 *
 	 * @public
 	 * @since 1.28
 	 */
@@ -1555,7 +1555,7 @@ sap.ui.define([
 
 	/**
 	 * Required adaptations before rendering
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype.onBeforeRendering = function() {
@@ -1593,7 +1593,7 @@ sap.ui.define([
 
 	/**
 	 * Required adaptations after rendering
-	 * 
+	 *
 	 * @private
 	 */
 	P13nColumnsPanel.prototype.onAfterRendering = function() {
@@ -1614,7 +1614,7 @@ sap.ui.define([
 
 	/**
 	 * Delivers a payload for columnsPanel that can be used at consumer side
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.7
 	 * @returns {object} oPayload, which contains useful information
@@ -1648,7 +1648,7 @@ sap.ui.define([
 
 	/**
 	 * Delivers a payload for columnsPanel that can be used at consumer side
-	 * 
+	 *
 	 * @public
 	 * @since 1.28
 	 * @returns {object} oPayload, which contains useful information
@@ -1665,7 +1665,7 @@ sap.ui.define([
 
 	/**
 	 * Cleans up before destruction.
-	 * 
+	 *
 	 * @public
 	 */
 	P13nColumnsPanel.prototype.exit = function() {
@@ -1696,7 +1696,7 @@ sap.ui.define([
 
 	/**
 	 * Add item to items aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
@@ -1711,7 +1711,7 @@ sap.ui.define([
 
 	/**
 	 * Add item to items aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
@@ -1727,7 +1727,7 @@ sap.ui.define([
 
 	/**
 	 * Remove item from items aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nItem} The removed item or null.
@@ -1759,7 +1759,7 @@ sap.ui.define([
 
 	/**
 	 * Remove all item from items aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nItem[]} An array of the removed items (might be empty).
@@ -1774,7 +1774,7 @@ sap.ui.define([
 
 	/**
 	 * Destroy all items from items aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
@@ -1790,7 +1790,7 @@ sap.ui.define([
 
 	/**
 	 * Add ColumnsItem to columnsItems aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
@@ -1807,7 +1807,7 @@ sap.ui.define([
 
 	/**
 	 * Insert ColumnsItem to columnsItems aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
@@ -1825,7 +1825,7 @@ sap.ui.define([
 
 	/**
 	 * Remove ColumnsItem from columnsItems aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsItem} The removed item or null.
@@ -1842,7 +1842,7 @@ sap.ui.define([
 
 	/**
 	 * Remove all ColumnsItems from columnsItems aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsItem[]} An array of the removed items (might be empty).
@@ -1857,7 +1857,7 @@ sap.ui.define([
 
 	/**
 	 * Destroy all instances from columnsItems aggregation
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.0
 	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
@@ -1872,7 +1872,7 @@ sap.ui.define([
 
 	/**
 	 * This method is executed before navigation, to provide validation result(s) for columnsPanel
-	 * 
+	 *
 	 * @returns {boolean} true if it is allowed to navigate away from this panel, false if it is not allowed
 	 * @public
 	 * @since 1.26.7

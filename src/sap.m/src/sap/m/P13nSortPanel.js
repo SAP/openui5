@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new P13nSortPanel.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The P13nSortPanel control is used to define settings for sorting in table personalization.
@@ -31,7 +31,7 @@ sap.ui.define([
 				/**
 				 * defines if the mediaQuery or a ContainerResize will be used for layout update. When the ConditionPanel is used on a dialog the
 				 * property should be set to true!
-				 * 
+				 *
 				 * @since 1.26
 				 */
 				containerQuery: {
@@ -43,7 +43,7 @@ sap.ui.define([
 				/**
 				 * can be used to control the layout behavior. Default is "" which will automatically change the layout. With "Desktop", "Table"
 				 * or"Phone" you can set a fixed layout.
-				 * 
+				 *
 				 * @since 1.26
 				 */
 				layoutMode: {
@@ -66,7 +66,7 @@ sap.ui.define([
 
 				/**
 				 * defined Sort Items
-				 * 
+				 *
 				 * @since 1.26
 				 */
 				sortItems: {
@@ -80,21 +80,21 @@ sap.ui.define([
 
 				/**
 				 * event raised when a SortItem was added
-				 * 
+				 *
 				 * @since 1.26
 				 */
 				addSortItem: {},
 
 				/**
 				 * remove a sort item
-				 * 
+				 *
 				 * @since 1.26
 				 */
 				removeSortItem: {},
 
 				/**
 				 * update a sort item
-				 * 
+				 *
 				 * @since 1.26
 				 */
 				updateSortItem: {}
@@ -104,7 +104,7 @@ sap.ui.define([
 
 	/**
 	 * returns the array of conditions.
-	 * 
+	 *
 	 * @private
 	 */
 	P13nSortPanel.prototype._getConditions = function() {
@@ -126,7 +126,7 @@ sap.ui.define([
 	/**
 	 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state) and opens a popup message dialog to give the
 	 * user the feedback that some values are wrong or missing.
-	 * 
+	 *
 	 * @public
 	 * @since 1.26
 	 */
@@ -136,7 +136,7 @@ sap.ui.define([
 
 	/**
 	 * removes all invalid sort conditions.
-	 * 
+	 *
 	 * @public
 	 * @since 1.28
 	 */
@@ -146,7 +146,7 @@ sap.ui.define([
 
 	/**
 	 * removes all errors/warning states from of all sort conditions.
-	 * 
+	 *
 	 * @public
 	 * @since 1.28
 	 */
@@ -164,7 +164,7 @@ sap.ui.define([
 
 	/**
 	 * setter for the supported operations array
-	 * 
+	 *
 	 * @public
 	 * @since 1.26
 	 * @param {array} array of operations [sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]
@@ -179,7 +179,7 @@ sap.ui.define([
 
 	/**
 	 * Initialize the control
-	 * 
+	 *
 	 * @private
 	 */
 	P13nSortPanel.prototype.init = function() {

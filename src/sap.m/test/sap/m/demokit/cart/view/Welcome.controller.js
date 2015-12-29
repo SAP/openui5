@@ -13,7 +13,7 @@ sap.ui.controller("view.Welcome", {
 	_animate : function (iLevel, bForward) {
 
 		if (iLevel === this.ICON_NUMBER + 1) {
-			
+
 			// end of recursion: fade them all
 			for (var i = 0 ; i < this.ICON_NUMBER ; i++) {
 				var oIcon = this.getView().byId("icon" + (i + 1));
@@ -21,7 +21,7 @@ sap.ui.controller("view.Welcome", {
 			}
 
 		} else {
-			
+
 			// wait, animate and step down into recursion
 			var iDelay = (iLevel === 1) ? this.INITIAL_DELAY : this.DELAY;
 			setTimeout(jQuery.proxy(function () {

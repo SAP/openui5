@@ -25,7 +25,7 @@ sap.ui.define([
 		createContent: function () {
 			var sUri = "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
 				oLayout = new HBox(),
-				sMockServerBaseUri = 
+				sMockServerBaseUri =
 					jQuery.sap.getModulePath("sap.ui.core.sample.ViewTemplate.types.data", "/"),
 				oMockServer,
 				oModel,

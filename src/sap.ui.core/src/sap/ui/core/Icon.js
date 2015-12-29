@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 			 * If it's set to true, Icon control never has tab stop no matter whether press event handler exists or not.
 			 * @since 1.30.1
 			 */
-			noTabStop : {type : "boolean", group : "Accessibility", defaultValue : false} 
+			noTabStop : {type : "boolean", group : "Accessibility", defaultValue : false}
 		},
 		associations : {
 

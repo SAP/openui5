@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/UIComponent'],
 		* @memberOf view.Detail
 		*/
 		onInit: function() {
-		
+
 			this.getRouter().attachRouteMatched(function(oEvent) {
 				if (oEvent.getParameter("name") === "detail") {
 					var text = this.getView().byId("text");

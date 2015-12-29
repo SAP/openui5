@@ -14,8 +14,8 @@ sap.ui.define(function() {
 	 */
 	var ComponentContainerRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -23,13 +23,13 @@ sap.ui.define(function() {
 	 * @param {sap.ui.core.Control} oControl Object representation of the control that should be rendered
 	 */
 	ComponentContainerRenderer.render = function(oRenderManager, oComponentContainer){
-	
+
 		// convenience variable
 		var oRM = oRenderManager;
 		var oComponent = oComponentContainer.getComponentInstance();
 		var sWidth = oComponentContainer.getWidth();
 		var sHeight = oComponentContainer.getHeight();
-		
+
 		oRM.write("<div");
 		oRM.writeControlData(oComponentContainer);
 		if (sWidth) {
@@ -56,8 +56,8 @@ sap.ui.define(function() {
 		}
 		oRM.write("</div></div>");
 	};
-	
-	
+
+
 
 	return ComponentContainerRenderer;
 

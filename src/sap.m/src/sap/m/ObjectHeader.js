@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * This property is used to set the background color of the ObjectHeader. Possible values are "Solid", "Translucent" and "Transparent".
-			 * NOTE: The different types of ObjectHeader come with different default background. 
+			 * NOTE: The different types of ObjectHeader come with different default background.
 			 * - non responsive ObjectHeader: Transparent
 			 * - responsive ObjectHeader: Translucent
 			 * - condensed ObjectHeder: Solid
@@ -362,7 +362,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else {
 			this._oTitleArrowIcon.setSize("1.375rem");
 		}
-		
+
 		return this;
 	};
 
@@ -480,7 +480,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._handleSpaceOrEnter = function(oEvent) {
 		var sSourceId = oEvent.target.id;
 
-		if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" || 
+		if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" ||
 				jQuery(oEvent.target).parent().attr('id') === this.getId() + "-title" || // check if the parent of the "h" tag is the "title"
 				sSourceId === this.getId() + "-titleText-inner" )) {
 			if (oEvent.type === "sapspace") {
@@ -704,7 +704,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				useIconTooltip : false,
 				densityAware : this.getIconDensityAware()
 			},
-				IconPool.isIconURI(this.getIcon()) ? 
+				IconPool.isIconURI(this.getIcon()) ?
 					{ size : sSize } : {height : sHeight, width : sWidth }
 		);
 
@@ -746,7 +746,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			// adjust number div after initial alignment
 			this._adjustNumberDiv();
-			
+
 			// watch for orientation change only on tablet and phone
 			if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
 				sap.ui.Device.orientation.attachHandler(this._onOrientationChange, this);
@@ -906,9 +906,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				return sap.m.BackgroundDesign.Transparent;
 			}
 		}
-		
+
 	};
-	
+
 
 	/**
 	 * Returns either the default background or the one that is set by the user
@@ -916,13 +916,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ObjectHeader.prototype._getBackground = function() {
-		
+
 		if (this.getBackgroundDesign() === undefined) {
 			return this._getDefaultBackgroundDesign();
 		} else {
 			return this.getBackgroundDesign();
 		}
-		
+
 	};
 
 	return ObjectHeader;

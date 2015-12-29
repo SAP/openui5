@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					 */
 					status : {type : "string"},
 					/**
-					 * A list of uploaded files. Each entry contains the following members. 
+					 * A list of uploaded files. Each entry contains the following members.
 					 * fileName	: The name of a file to be uploaded.
 					 * response	: Response message which comes from the server. On the server side, this response has to be put within the 'body' tags of the response document of the iFrame. It can consist of a return code and an optional message. This does not work in cross-domain scenarios.
 					 * responseRaw : HTTP-Response which comes from the server. This property is not supported by Internet Explorer Versions lower than 9.
@@ -1367,7 +1367,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				oDialog.destroy();
 			}
 		}).open();
-		
+
 		function onPressOk () {
 			var bAbort = false;
 			// if the file is already loaded send a delete request to the application
@@ -1405,7 +1405,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection.prototype._handleEdit = function(oEvent, oItem) {
 		var i,
 			sItemId = oItem.getId(),
-			cItems = this.aItems.length;			
+			cItems = this.aItems.length;
 			if (this.editModeItem) {
 				sap.m.UploadCollection.prototype._handleOk(oEvent, this, this.editModeItem, false);
 			}
@@ -1429,14 +1429,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {string} sSourceId List item id/identifier were the click was triggered
 	 * @private
 	 */
-	UploadCollection.prototype._handleClick = function(oEvent, oContext, sSourceId) {        
+	UploadCollection.prototype._handleClick = function(oEvent, oContext, sSourceId) {
 		// if the target of the click event is an editButton, than this case has already been processed
 		// in the _handleEdit (in particular, by executing the _handleOk function).
 		// Therefore only the remaining cases of click event targets are handled.
 		if (oEvent.target.id.lastIndexOf("editButton") < 0) {
 			if (oEvent.target.id.lastIndexOf("cancelButton") > 0) {
 				sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, sSourceId);
-			} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0 
+			} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0
 					   && oEvent.target.id.lastIndexOf("ia_iconHL") < 0
 					   && oEvent.target.id.lastIndexOf("deleteButton") < 0
 					   && oEvent.target.id.lastIndexOf("ta_editFileName-inner") < 0) {

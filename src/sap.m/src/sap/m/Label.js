@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new Label.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			labelFor : {type : "sap.ui.core.Control", multiple : false}
 		}
 	}});
-	
+
 
 	Label.prototype.setText = function(sText) {
 		var sValue = this.getText();
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		return this;
 	};
-	
+
 	//Enrich Label functionality
 	LabelEnablement.enrich(Label.prototype);
 

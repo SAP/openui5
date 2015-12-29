@@ -73,7 +73,7 @@
 	var oLabel = new sap.ui.commons.Label("myLabel");
 	oLabel.setText("testText");
 	oLabel.placeAt("target1");
-	
+
 	test("test model setData", function(){
 		var obj1 = {a:true, b:false, c:false},
 			obj2 = {c:true, d:false},
@@ -95,7 +95,7 @@
 		oModel.setData(arr2, true);
 		deepEqual(oModel.getData(), arrMerged, "setData array with merge");
 	});
-	
+
 	test("test model getProperty", function(){
 		var value = oModel.getProperty("/teamMembers/6/lastName");
 		equal(value, "Wallace", "model value");
@@ -481,7 +481,7 @@
 		equal(spy.callCount, 1, "number of requests should be still 1");
 		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
 	});
-	
+
 	test("bind Element", function() {
 		var oContext;
 		oModel.createBindingContext("/additionalData", null, function(context){
@@ -501,7 +501,7 @@
 		equal(oLabel.getText(), "", "text value from model");
 		oLabel.destroy();
 	});
-	
+
 	test("bind Element", function() {
 		var oContext;
 		oModel.createBindingContext("/additionalData", null, function(context){

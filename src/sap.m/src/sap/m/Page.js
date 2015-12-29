@@ -232,7 +232,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	Page.prototype._ensureNavButton = function() {
 		if (!this._navBtn) {
-			var sNavButtonType = this.getNavButtonType(), 
+			var sNavButtonType = this.getNavButtonType(),
 			    sBackText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"); // any other types than "Back" do not make sense anymore in Blue Crystal
 
 			this._navBtn = new sap.m.Button(this.getId() + "-navButton", {tooltip: sBackText,press: jQuery.proxy(function(){this.fireNavButtonPress(); this.fireNavButtonTap();},this)});

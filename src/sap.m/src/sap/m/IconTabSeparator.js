@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new IconTabSeparator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -29,27 +29,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IconTabSeparator = Element.extend("sap.m.IconTabSeparator", /** @lends sap.m.IconTabSeparator.prototype */ { metadata : {
-	
+
 		interfaces : [
 			"sap.m.IconTab"
 		],
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * The icon to display for this separator. If no icon is given, a separator line will be used instead.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : ''},
-	
+
 			/**
 			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-			 * 
+			 *
 			 * If bandwidth is the key for the application, set this value to false.
 			 */
 			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
 		}
 	}});
-	
+
 	/**
 	 * Lazy load feed icon image.
 	 *
@@ -63,28 +63,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			densityAware : this.getIconDensityAware(),
 			useIconTooltip : false
 		};
-		
+
 		this._oImageControl = sap.m.ImageHelper.getImageControl(this.getId() + "-icon", this._oImageControl, oParent, mProperties, aCssClasses);
-		
+
 		return this._oImageControl;
 	};
-	
+
 	/**
 	 * Function is called when exiting the element.
-	 * 
+	 *
 	 * @private
 	 */
 	IconTabSeparator.prototype.exit = function(oEvent) {
-		
+
 		if (this._oImageControl) {
 			this._oImageControl.destroy();
 		}
-		
+
 		if (sap.ui.core.Item.prototype.exit) {
 			sap.ui.core.Item.prototype.exit.call(this, oEvent);
 		}
 	};
-	
+
 	return IconTabSeparator;
 
 }, /* bExport= */ true);

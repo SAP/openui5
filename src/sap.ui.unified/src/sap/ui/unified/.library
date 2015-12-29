@@ -5,15 +5,15 @@
   <vendor>SAP SE</vendor>
   <copyright>${copyright}</copyright>
   <version>${version}</version>
-  
+
   <documentation>Unified controls intended for both, mobile and desktop scenarios</documentation>
-  
+
   <dependencies>
     <dependency>
       <libraryName>sap.ui.core</libraryName>
     </dependency>
   </dependencies>
-  
+
   <appData>
     <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.unified" />
     <!-- excludes for the JSCoverage -->

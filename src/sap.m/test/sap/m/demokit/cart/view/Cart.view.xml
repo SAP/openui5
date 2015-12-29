@@ -1,7 +1,7 @@
 <mvc:View controllerName="view.Cart"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:control="control"
 	xmlns:h="http://www.w3.org/1999/xhtml">
 	<Page

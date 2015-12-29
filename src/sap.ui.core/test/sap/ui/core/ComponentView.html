@@ -12,14 +12,14 @@
 
 <script>
 	sap.ui.localResources("samples");
-	
+
 	var sServiceUrl = "http://epmdemo.corp/sap/bc/sepm_odata_srv/purchase";
-	
+
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 	var oMockServer = new sap.ui.core.util.MockServer({
 		rootUri: sServiceUrl+"/"
 	});
-	
+
 	oMockServer.simulate("samples/epmdata/metadata.xml", "samples/epmdata/");
 	oMockServer.start();
 
@@ -30,7 +30,7 @@
 		name: "samples.components.productlist",
 		propagateModel: true
 	}).placeAt("content");
-	
+
 </script>
 
 </head>

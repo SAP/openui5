@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 * tried (fr). If that also can't be found or doesn't contain the requested text, the english file
 	 * is used (en - assuming that most development projects contain at least english texts).
 	 * If that also fails, the file without locale (base URL of the bundle) is tried.
-	 * 
+	 *
 	 * If none of the requested files can be found or none of them contains a text for the given key,
 	 * then the key itself is returned as text.
 	 *
@@ -47,18 +47,18 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
 	 */
-	
+
 	/**
 	 * Returns a locale-specific string value for the given key sKey.
-	 * 
+	 *
 	 * The text is searched in this resource bundle according to the fallback chain described in
 	 * {@link jQuery.sap.util.ResourceBundle}. If no text could be found, the key itself is used as text.
-	 * 
+	 *
 	 * If text parameters are given, then any occurrences of the pattern "{<i>n</i>}" with <i>n</i> being an integer
 	 * are replaced by the parameter value with index <i>n</i>.  Note: This replacement is also applied if no text had been found (key).
 	 * For more details on this replacement mechanism refer also:
 	 * @see jQuery.sap#formatMessage
-	 * 
+	 *
 	 * @param {string} sKey
 	 * @param {string[]} [aArgs] List of parameters which should replace the place holders "{n}" (n is the index) in the found locale-specific string value.
 	 * @return {string} The value belonging to the key, if found; otherwise the key itself.
@@ -77,11 +77,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 * @param {jQuery.sap.util.ResourceBundle} oBundle an instance of a <code>jQuery.sap.util.ResourceBundle</code>
 	 * @since 1.16.5
 	 * @private
-	 * 
+	 *
 	 * @function
 	 * @name jQuery.sap.util.ResourceBundle.prototype._enhance
 	 */
-	
+
 	/**
 	 * A regular expression that describes language tags according to BCP-47.
 	 * @see BCP47 "Tags for Identifying Languages" (http://www.ietf.org/rfc/bcp/bcp47.txt)
@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 *  4=variants (separated by '-', Note: capturing group contains leading '-' to shorten the regex!)
 	 *  5=extensions (including leading singleton, multiple extensions separated by '-')
 	 *  6=private use section (including leading 'x', multiple sections separated by '-')
-	 *  
+	 *
 	 *            [-------------------- language ----------------------][--- script ---][------- region --------][------------ variants --------------][--------- extensions --------------][------ private use -------]
 	 */
 	var rlocale = /^((?:[A-Z]{2,3}(?:-[A-Z]{3}){0,3})|[A-Z]{4}|[A-Z]{5,8})(?:-([A-Z]{4}))?(?:-([A-Z]{2}|[0-9]{3}))?(-[0-9A-Z]{5,8}|(?:[0-9][0-9A-Z]{3}))*(?:-([0-9A-WYZ](?:-[0-9A-Z]{2,8})+))*(?:-(X(?:-[0-9A-Z]{1,8})+))?$/i;
@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 
 	/**
 	 * HANA XS Engine can't handle private extensions in BCP47 language tags.
-	 * Therefore, the agreed BCP47 codes for the technical languages 1Q and 2Q 
+	 * Therefore, the agreed BCP47 codes for the technical languages 1Q and 2Q
 	 * don't work as Accept-Header and need to be send as URL parameters as well.
 	 * @private
 	 */
@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 			return sLanguage + (sRegion ? "_" + sRegion + (sVariants ? "_" + sVariants.slice(1).replace("-","_") : "") : "");
 		}
 	}
-	
+
 	/**
 	 * Returns the default locale (the locale defined in UI5 configuration if available, else "en")
 	 * @return {string} The default locale
@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 		}
 		return sLocale || "en";
 	}
-	
+
 	/**
 	 * Helper to normalize the given locale (java.util.Locale format) to the BCP-47 syntax.
 	 * @param {string} sLocale locale to convert
@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 * <li>the file extension itself
 	 * <li>any remaining part after the file extension (query, hash - optional)
 	 * </ol>.
-	 * 
+	 *
 	 * Won't match for URLs without a file extension.
 	 *
 	 *           [------- prefix ------][----ext----][-------suffix--------]
@@ -260,14 +260,14 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 			jQuery.sap.log.error("Custom ResourceBundle is either undefined or not an instanceof jQuery.sap.util.ResourceBundle. Therefore this custom ResourceBundle will be ignored!");
 		}
 	};
-	
+
 	/*
 	 * Implements jQuery.sap.util.ResourceBundle.prototype.getText
 	 */
 	Bundle.prototype.getText = function(sKey, aArgs, bCustomBundle){
-		var sValue = null, 
+		var sValue = null,
 			i;
-		
+
 		// loop over the custom bundles before resolving this one
 		// lookup the custom resource bundles (last one first!)
 		for (i = this.aCustomBundles.length - 1; i >= 0; i--) {
@@ -277,7 +277,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 				return sValue; // found!
 			}
 		}
-		
+
 		//loop over all loaded property files and return the value for the key if any
 		for (i = 0; i < this.aPropertyFiles.length; i++) {
 			sValue = this.aPropertyFiles[i].getProperty(sKey);
@@ -389,7 +389,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 						};
 						break;
 				}
-				
+
 				if (bAsync) {
 					oRequest.async = true;
 					oPromise = Promise.resolve(jQuery.sap.properties(oRequest));
@@ -407,7 +407,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 					oPromise = Promise.resolve(oProperties);
 				}
 			}
-			
+
 			// remember result and locales that have been loaded so far (to avoid repeated roundtrips)
 			if (bAsync) {
 				oPromise.then(function(oProps){
@@ -421,7 +421,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 				return oProperties;
 			}
 		}
-		
+
 		return bAsync ? Promise.resolve(null) : null;
 	}
 
@@ -432,7 +432,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Creates and returns a new instance of {@link jQuery.sap.util.ResourceBundle}
 	 * using the given URL and locale to determine what to load.
@@ -462,10 +462,10 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 			return oBundle;
 		}
 	};
-	
+
 	/**
 	 * Checks if the given object is an instance of {@link jQuery.sap.util.ResourceBundle}
-	 * 
+	 *
 	 * @param {jQuery.sap.util.ResourceBundle} oBundle object to check
 	 * @return {boolean} true, if the object is a {@link jQuery.sap.util.ResourceBundle}
 	 * @public
@@ -481,7 +481,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 		function supported(sLocale) {
 			return !aSupportedLocales || aSupportedLocales.length === 0 || jQuery.inArray(sLocale, aSupportedLocales) >= 0;
 		}
-		
+
 		while (sTempLocale) {
 			if ( supported(sTempLocale) ) {
 				aLocales.push(sTempLocale);

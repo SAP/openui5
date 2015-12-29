@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested module: jquery.sap.script
   Author: d046011, d020684
 -->
@@ -10,13 +10,13 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for jquery.sap.script</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true">
 		</script>
-	
+
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -54,7 +54,7 @@
 			asyncTest("with function name", function() {
 				expect(2);
 				jQuery.sap.delayedCall(DELAY, myObject, "myFunction", ["myParam1"]);
-				
+
 				setTimeout(function() {
 					start();
 				}, DELAY * 2);
@@ -63,7 +63,7 @@
 			asyncTest("with function pointer", function() {
 				expect(2);
 				jQuery.sap.delayedCall(DELAY, myObject, myObject.myFunction, ["myParam1"]);
-				
+
 				setTimeout(function() {
 					start();
 				}, DELAY * 2);
@@ -72,7 +72,7 @@
 			asyncTest("with function name for global function", function() {
 				expect(2);
 				jQuery.sap.delayedCall(DELAY, window, "globalFunction", ["myParam1"]);
-				
+
 				setTimeout(function() {
 				start();
 				}, DELAY * 2);
@@ -81,7 +81,7 @@
 			asyncTest("with function pointer for global function", function() {
 				expect(2);
 				jQuery.sap.delayedCall(DELAY, window, globalFunction, ["myParam1"]);
-				
+
 				setTimeout(function() {
 					start();
 				}, DELAY * 2);
@@ -90,13 +90,13 @@
 			// -------------------------------------------------------------------------------
 			// clearDelayedCall
 			// -------------------------------------------------------------------------------
-			
+
 			module("jQuery.sap.clearDelayedCall");
-			
+
 			asyncTest("with function name", function() {
 				expect(1); // delayed function may not be called, only the ok check here
 				var callId = jQuery.sap.delayedCall(DELAY, myObject, "myFunction", ["myParam1"]);
-				
+
 				setTimeout(function() {
 					jQuery.sap.clearDelayedCall(callId);
 					setTimeout(function() {
@@ -105,11 +105,11 @@
 					}, DELAY * 2);
 				}, Math.floor(DELAY / 2));
 			});
-			
+
 			asyncTest("with function pointer", function() {
 				expect(1); // delayed function may not be called, only the ok check here
 				var callId = jQuery.sap.delayedCall(DELAY, myObject, myObject.myFunction, ["myParam1"]);
-				
+
 				setTimeout(function() {
 					jQuery.sap.clearDelayedCall(callId);
 					setTimeout(function() {
@@ -118,18 +118,18 @@
 					}, DELAY * 2);
 				}, Math.floor(DELAY / 2));
 			});
-			
-			
+
+
 			// -------------------------------------------------------------------------------
 	  		// intervalCall
 			// -------------------------------------------------------------------------------
-			
+
 			module("jQuery.sap.intervalCall");
-			
+
 			asyncTest("with function name, one iteration", function() {
 				expect(2);
 				var callId = jQuery.sap.intervalCall(DELAY, myObject, "myFunction", ["myParam1"]);
-				
+
 				setTimeout(function() {
 					jQuery.sap.clearIntervalCall(callId);
 					setTimeout(function() {
@@ -141,7 +141,7 @@
 			asyncTest("with function name, two iterations", function() {
 				expect(4);
 				var callId = jQuery.sap.intervalCall(DELAY, myObject, "myFunction", ["myParam1"]);
-				
+
 				setTimeout(function() {
 					jQuery.sap.clearIntervalCall(callId);
 					setTimeout(function() {
@@ -149,11 +149,11 @@
 					}, DELAY * 2);
 				}, Math.round(DELAY * 2.5));
 			});
-			
+
 			asyncTest("with function name, six iterations", function() {
 				expect(12);
 				var callId = jQuery.sap.intervalCall(DELAY, myObject, "myFunction", ["myParam1"]);
-				
+
 				setTimeout(function() {
 					jQuery.sap.clearIntervalCall(callId);
 					setTimeout(function() {
@@ -166,7 +166,7 @@
 			asyncTest("with function pointer, two iterations", function() {
 				expect(4);
 				var callId = jQuery.sap.intervalCall(DELAY, myObject, myObject.myFunction, ["myParam1"]);
-				
+
 				setTimeout(function() {
 					jQuery.sap.clearIntervalCall(callId);
 					setTimeout(function() {
@@ -174,24 +174,24 @@
 					}, DELAY * 2);
 				}, Math.round(DELAY * 2.5));
 			});
-	
-	
+
+
 			// -------------------------------------------------------------------------------
 			// URIParams
 			// -------------------------------------------------------------------------------
-	
+
 			module("jQuery.sap.getUriParameters");
-			
+
 			test("empty query string", 0, function() {
 				var oParams = jQuery.sap.getUriParameters("/service");
 				// TODO how to check ? ok(jQuery.isEmptyObject(oParams));
 			});
-			
+
 			test("a single parameter", function() {
 				var oParams = jQuery.sap.getUriParameters("/service?x=1");
 				deepEqual(oParams.get('x',true), ['1']);
 			});
-			
+
 			test("multiple different parameters with different types", function() {
 				var oParams = jQuery.sap.getUriParameters("/service?x=1&y=2&z=true&@=test");
 				deepEqual(oParams.get('x',true), ['1']);
@@ -199,25 +199,25 @@
 				deepEqual(oParams.get('z',true), ['true']);
 				deepEqual(oParams.get('@',true), ['test']);
 			});
-		
+
 			test("URL with a hash", function() {
 				var oParams = jQuery.sap.getUriParameters("/service?x=1&y=#&z=test");
 				deepEqual(oParams.get('x',true), ['1'], "parameter before hash");
 				deepEqual(oParams.get('y',true), [""], "parameter without value, before hash");
 				deepEqual(oParams.get('z',true), [], "parameter after hash");
 			});
-			
+
 			test("URL with multiple values for a single name", function() {
 				var oParams = jQuery.sap.getUriParameters("/service?addin=1&addin=2&addin=3");
 				deepEqual(oParams.get('addin',true), ['1','2','3'], "param with multiple values");
 			});
-			
+
 			test("URL with param names from Object.prototype", function() {
 				var oParams = jQuery.sap.getUriParameters("/service?constructor=1&hasOwnProperty=2");
 				deepEqual(oParams.get('constructor',true), ['1'], "param with Object.prototype name");
 				deepEqual(oParams.get('hasOwnProperty',true), ['2'], "param with Object.prototype name");
 			});
-			
+
 			test("URL with encoded values or spaces", function() {
 				var oParams = jQuery.sap.getUriParameters("/service?key1=&key2&search=Rock+%26+Roll&rock%26roll=here+to+stay&weird=%26%CE%A8%E2%88%88");
 				deepEqual(oParams.get('key1',true), [''], "empty value with equals sign");
@@ -227,18 +227,18 @@
 				deepEqual(oParams.get('weird',true), ['&\u03A8\u2208'], "hex encoded value");
 				//alert('&\u03A8\u2208');
 			});
-			
+
 			// -------------------------------------------------------------------------------
 			// getUID
 			// -------------------------------------------------------------------------------
-	
+
 			module("jQuery.sap.uid");
-			
+
 			test("basic test", function() {
 				var myid = jQuery.sap.uid();
 				ok(myid);
 			});
-		
+
 			// -------------------------------------------------------------------------------
 			// jQuery.sap.unique
 			// -------------------------------------------------------------------------------
@@ -255,7 +255,7 @@
 	 			var a = ['a', 'b', 'c'];
 	 			deepEqual(jQuery.sap.unique(a), a, "inplace");
 			});
-			
+
 			// -------------------------------------------------------------------------------
 			// jQuery.sap.equal
 			// -------------------------------------------------------------------------------
@@ -279,7 +279,7 @@
 		   		equal(jQuery.sap.equal(undefined, null), false, "undefined");
 		   		equal(jQuery.sap.equal(new Date(234), new Date(234)), true, "Date");
 		   		equal(jQuery.sap.equal(new Date(234), new Date(2345)), false, "Date");
-		 	 
+
 			});
 
 			test("contains test", function() {
@@ -293,7 +293,7 @@
 				equal(jQuery.sap.equal({a:1, b:2}, {a:1, b:2, c:3}, true), true, "contained object");
 				equal(jQuery.sap.equal({a:1, b:2, c:3, d:4}, {a:1, b:2, c:3}, true), false, "not contained object");
 			});
-			
+
 			test("boolean test", function() {
 				equal(jQuery.sap.equal(true, true), true, "true, true");
 				equal(jQuery.sap.equal(true, false), false, "true, false");
@@ -304,7 +304,7 @@
 				equal(jQuery.sap.equal(false, "false"), false, "false, \"false\"");
 				equal(jQuery.sap.equal(false, []), false, "false, []");
 			});
-	
+
 			test("number test", function() {
 				equal(jQuery.sap.equal(0, 0), true, "0, 0");
 				equal(jQuery.sap.equal(1, 0), false, "1, 0");
@@ -315,7 +315,7 @@
 				equal(jQuery.sap.equal(0, null), false, "0, null");
 				equal(jQuery.sap.equal(1, []), false, "1, []");
 			});
-			
+
 			test("string test", function() {
 				equal(jQuery.sap.equal("test", "test"), true, "\"test\", \"test\"");
 				equal(jQuery.sap.equal("foo", "bar"), false, "\"foo\", \"bar\"");
@@ -325,7 +325,7 @@
 				equal(jQuery.sap.equal("0", 0), false, "\"0\", 0");
 				equal(jQuery.sap.equal("{}", {}), false, "\"{}\", {}");
 			});
-	
+
 			test("array", function() {
 				equal(jQuery.sap.equal([1, 2], [1, 2]), true, "[1, 2], [1, 2]");
 				equal(jQuery.sap.equal([1, 2], [2, 1]), false, "[1, 2], [2, 1]");
@@ -335,7 +335,7 @@
 				equal(jQuery.sap.equal([], []), true, "[], []");
 				equal(jQuery.sap.equal([1, 2], {1:1, 2:2, length:2}), false, "[1, 2], {1:1, 2:2, length:2}");
 			});
-	
+
 			test("object", function() {
 				equal(jQuery.sap.equal({a:1, b:2}, {a:1, b:2}), true, "{a:1, b:2}, {a:1, b:2}");
 				equal(jQuery.sap.equal({a:1, b:2}, {b:2, a:1}), true, "{a:1, b:2}, {b:2, a:1}");
@@ -347,9 +347,9 @@
 				equal(jQuery.sap.equal({1:1}, [1]), false, "{1:1}, [1]");
 				equal(jQuery.sap.equal({}, null), false, "{}, null");
 			});
-	 
+
 			test("recursion", function() {
-				var a, b; 
+				var a, b;
 				a = [], b = [];
 				a[0] = a; b[0] = b;
 				equal(jQuery.sap.equal(a, b), false, "recursive array");
@@ -365,18 +365,18 @@
 				equal(jQuery.sap.equal(a, b), false, "deep object");
 				equal(jQuery.sap.equal(a, b, 100), true, "deep object");
 			});
-			
+
 			// -------------------------------------------------------------------------------
 			// jQuery.sap.each
 			// -------------------------------------------------------------------------------
-			
+
 			module("jQuery.sap.each");
-	
+
 			function testEach(obj) {
-				
+
 				var	keys = [],
 					values = [],
-					result; 
+					result;
 
 				function callback(i,v) {
 					ok(v == null || this == v, "context in the callback should be equal to the current item"); // simple equal, not strict equal due to object wrapping!
@@ -387,18 +387,18 @@
 				result = jQuery.sap.each(obj, callback);
 
 				equal(result, obj, "return value should be the same as the given obj");
-				
+
 				return { keys : keys, values : values };
-				
+
 			}
-			
+
 			test("dense array", function() {
 				var obj=["a", "b", "c"];
 				var result = testEach(obj);
 				deepEqual(result.keys, [0,1,2], "keys should be the numeric indices");
 				deepEqual(result.values, ["a", "b", "c"], "values should match the array content");
 			});
-			
+
 			test("sparse array", function() {
 				var obj=[];
 				obj.push("a");
@@ -407,7 +407,7 @@
 				var result = testEach(obj);
 				deepEqual(result.keys, [0, 1, 2, 3, 4, 5], "for sparse arrays, the keys should match the array length");
 				deepEqual(result.values, ["a", undefined, undefined, "b", undefined, "c"], "for sparse arrays, missing entries should be undefined");
-			  
+
 			});
 
 			test("object with identifier properties", function() {
@@ -416,28 +416,28 @@
 				deepEqual(result.keys, ["a","b","c"], "for objects, the keys should be the property names");
 				deepEqual(result.values, ["a", "b", "c"], "for objects, the iterated values should match the property values");
 			});
-			
+
 			test("object with out of order identifier properties", function() {
 				var obj={z:"a", c:"b", m:"c"};
 				var result = testEach(obj);
 				deepEqual(result.keys, ["z","c","m"], "for objects, the keys should be the property names");
 				deepEqual(result.values, ["a", "b", "c"], "for objects, the iterated values should match the property values, order should match the order of creation");
 			});
-			
+
 			test("object with string literal properties", function() {
 				var obj={"a a":"a", "b b":"b", "c c":"c"};
 				var result = testEach(obj);
 				deepEqual(result.keys, ["a a","b b","c c"], "for objects, the keys should be the property names");
 				deepEqual(result.values, ["a", "b", "c"], "for objects, the iterated values should match the property values");
 			});
-			
+
 			test("object with ordered num properties but w/o length", function() {
 				var obj={1:"a", 2:"b", 3:"c"};
 				var result = testEach(obj);
 				deepEqual(result.keys, ["1","2","3"], "for objects, the keys should be the property names");
 				deepEqual(result.values, ["a", "b", "c"], "for objects, the iterated values should match the property values");
 			});
-			
+
 			test("object with out of order num properties and w/o length", function() {
 				var obj={};
 				obj[0] = "a";
@@ -447,47 +447,47 @@
 				equalSets(result.keys, ["0", "5", "3"], "for objects, the keys should match the property names");
 				equalSets(result.values, ["a", "c", "b"], "for objects, the values should match the property values");
 			});
-			
+
 			test("object with num properties and with matching length", function() {
 				var obj={ length:3, 2:"c", 1:"b", 0:"a" };
 				var result = testEach(obj);
 				equalSets(result.keys, ["length", "2", "1", "0" ], "for objects, the keys should match the property names");
 				equalSets(result.values, [3, "c", "b", "a"], "for objects, the order of values should match the order of entries");
 			});
-			
+
 			test("object with num properties and with non-matching length", function() {
 				var obj={ length:5, 2:"c", 1:"b", 0:"a" };
 				var result = testEach(obj);
 				equalSets(result.keys, ["length", "2", "1", "0" ], "for objects, the keys should match the property names");
 				equalSets(result.values, [5, "c", "b", "a"], "for objects, the order of values should match the order of entries");
 			});
-			
+
 			// -------------------------------------------------------------------------------
 			// jQuery.sap.forIn
 			// -------------------------------------------------------------------------------
-			
+
 			module("jQuery.sap.forIn");
-	
+
 			test("simple", function() {
-	
+
 				function forInKeys(o) {
 					var keys=[];
 					jQuery.sap.forIn(o, function(n,v) { keys.push(n); });
 					return keys;
 				}
-			
+
 				equalSets(forInKeys({ a:0, b:1, c:3 }), ["a", "b", "c"], "key sets for simple objects should match");
 				equalSets(forInKeys({ a:0, b:1, toString:function(){return "aa"} }), ["a", "b", "toString"], "key sets for simple objects should match");
 
 			});
-		
-			
+
+
 			// -------------------------------------------------------------------------------
 			// jQuery.sap.arrayDiff
 			// -------------------------------------------------------------------------------
 
 			module("jQuery.sap.arrayDiff");
-			
+
 			test("arrayDiff", function() {
 				var aData1 = [1,2,3,4,5];
 				var aData2 = [1,4,5,6,7];
@@ -514,7 +514,7 @@
 				var aData23 = [1,9,7,1,5,9,1,9,9,6];
 				var aData24 = [1,2,3,4,2,6,2];
 				var aDiff;
-				
+
 				aDiff = [
 							{ index: 1, type: 'insert' },
 							{ index: 2, type: 'insert' },
@@ -533,7 +533,7 @@
 							{ index: 4, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData1, aData2), aDiff, "diff between data 1 and 2");
-				
+
 				aDiff = [
 							{ index: 1, type: 'delete' },
 							{ index: 1, type: 'delete' },
@@ -541,7 +541,7 @@
 							{ index: 2, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData1, aData3), aDiff, "diff between data 1 and 3");
-				
+
 				aDiff = [
 							{ index: 1, type: 'insert' },
 							{ index: 2, type: 'insert' },
@@ -549,7 +549,7 @@
 							{ index: 5, type: 'delete' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData1, aData4), aDiff, "diff between data 1 and 4");
-				
+
 				aDiff = [
 							{ index: 1, type: 'insert' },
 							{ index: 2, type: 'insert' },
@@ -557,7 +557,7 @@
 							{ index: 5, type: 'delete' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData2, aData3), aDiff, "diff between data 2 and 3");
-				
+
 				aDiff = [
 							{ index: 1, type: 'delete' },
 							{ index: 1, type: 'delete' },
@@ -565,7 +565,7 @@
 							{ index: 4, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData2, aData4), aDiff, "diff between data 2 and 4");
-				
+
 				aDiff = [
 							{ index: 3, type: 'delete' },
 							{ index: 3, type: 'delete' },
@@ -573,7 +573,7 @@
 							{ index: 4, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData3, aData4), aDiff, "diff between data 3 and 4");
-				
+
 				aDiff = [
 							{ index: 0, type: 'delete' },
 							{ index: 0, type: 'delete' },
@@ -581,7 +581,7 @@
 							{ index: 4, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData1, aData5), aDiff, "diff between data 1 and 5");
-				
+
 				aDiff = [
 							{ index: 0, type: 'insert' },
 							{ index: 1, type: 'insert' },
@@ -589,7 +589,7 @@
 							{ index: 5, type: 'delete' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData5, aData1), aDiff, "diff between data 5 and 1");
-				
+
 				aDiff = [
 							{ index: 0, type: 'insert' },
 							{ index: 1, type: 'insert' },
@@ -601,7 +601,7 @@
 							{ index: 5, type: 'delete' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData1, aData10), aDiff, "diff between data 1 and 10");
-				
+
 				aDiff = [
 							{ index: 0, type: 'insert' },
 							{ index: 1, type: 'insert' },
@@ -610,7 +610,7 @@
 							{ index: 4, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData11, aData1), aDiff, "diff between data 1 and 11");
-				
+
 				aDiff = [
 							{ index: 0, type: 'delete' },
 							{ index: 0, type: 'delete' },
@@ -619,7 +619,7 @@
 							{ index: 0, type: 'delete' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData1, aData11), aDiff, "diff between data 11 and 1");
-				
+
 				aDiff = [
 							{ index: 1, type: 'insert' },
 							{ index: 3, type: 'delete' },
@@ -627,7 +627,7 @@
 							{ index: 5, type: 'delete' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData1, aData12), aDiff, "diff between data 1 and 12");
-				
+
 				aDiff = [
 							{ index: 0, type: 'insert' },
 							{ index: 1, type: 'insert' },
@@ -638,7 +638,7 @@
 							{ index: 8, type: 'delete' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData6, aData9), aDiff, "diff between data 6 and 9");
-				
+
 				aDiff = [
 							{ index: 0, type: 'insert' },
 							{ index: 1, type: 'insert' },
@@ -648,7 +648,7 @@
 							{ index: 4, type: 'delete' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData13, aData14), aDiff, "diff between data 13 and 14");
-				
+
 				aDiff = [
 							{ index: 0, type: 'delete' },
 							{ index: 0, type: 'delete' },
@@ -687,7 +687,7 @@
 							{ index: 10, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData15, aData16), aDiff, "diff between data 15 and 16");
-				
+
 				aDiff = [
 							{ index: 0, type: 'delete' },
 							{ index: 0, type: 'delete' },
@@ -701,18 +701,18 @@
 							{ index: 4, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData17, aData18), aDiff, "diff between data 17 and 18");
-				
+
 				aDiff = [
 							{ index: 4, type: 'delete' },
 							{ index: 4, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData19, aData20), aDiff, "diff between data 19 and 20");
-				
+
 				aDiff = [
 							{ index: 5, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData1, aData21), aDiff, "diff between data 1 and 21");
-				
+
 				aDiff = [
 							{ index: 0, type: 'delete' },
 							{ index: 0, type: 'delete' },
@@ -734,14 +734,14 @@
 							{ index: 9, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData22, aData23), aDiff, "diff between data 22 and 23");
-				
+
 				aDiff = [
 							{ index: 4, type: 'delete' },
 							{ index: 4, type: 'insert' },
 							{ index: 6, type: 'insert' }
 						];
 				deepEqual(jQuery.sap.arrayDiff(aData19, aData24), aDiff, "diff between data 19 and 24");
-				
+
 				var aContexts1 = [
 					"/navigation/0",
 					"/navigation/1",
@@ -854,7 +854,7 @@
 						listACount = Math.floor(Math.random() * 101),
 						listBCount = Math.floor(Math.random() * 101),
 						aDiff;
-					
+
 					for (var a = 0; a < listACount; a++) {
 						listA[a] = Math.floor(Math.random() * 101);
 					}
@@ -873,13 +873,13 @@
 					deepEqual(listA, listB, "random arrayDiff " + (t+1));
 				}
 			});
-			
+
 			// -------------------------------------------------------------------------------
 			// jQuery.sap.parseJS
 			// -------------------------------------------------------------------------------
-			
+
 			module("jQuery.sap.parseJS");
-			
+
 			test("valid expressions", function() {
 				var list = [
 						"{}",
@@ -897,9 +897,9 @@
 					];
 				for (var i = 0; i < list.length; i++) {
 					deepEqual(jQuery.sap.parseJS(list[i]), eval("x=" + list[i]), "Parse " + list[i]);
-				}	
+				}
 			});
-			
+
 			test("invalid expressions", function() {
 				var list = [
 						"{[}",
@@ -917,9 +917,9 @@
 					];
 				for (var i = 0; i < list.length; i++) {
 					raises(function() {jQuery.sap.parseJS(list[i])}, "Invalid " + list[i]);
-				}	
+				}
 			});
-			
+
 			test("tokenizer with enhancements getCh, getIndex, init, setIndex", function () {
 				var oTokenizer = jQuery.sap._createJSTokenizer(),
 					oTokenizer2 = jQuery.sap._createJSTokenizer();
@@ -949,19 +949,19 @@
 				oTokenizer2.init("{='other foo'}");
 				ok(oTokenizer2.getIndex() !== oTokenizer.getIndex(), "different instances");
 			});
-			
+
 			module("jQuery.sap.extend", {
 				setup : function() {
 					myObject = {
-						prop1: "test", 
-						prop2: [0,1,2], 
-						prop3: 2, 
-						prop4: null, 
-						prop5: undefined, 
+						prop1: "test",
+						prop2: [0,1,2],
+						prop3: 2,
+						prop4: null,
+						prop5: undefined,
 						prop6: {
-							prop61:"test", 
-							prop62:[0,2,3], 
-							prop63: undefined, 
+							prop61:"test",
+							prop62:[0,2,3],
+							prop63: undefined,
 							prop64: null,
 							prop65: 2
 						}
@@ -971,7 +971,7 @@
 					delete myObject;
 				}
 			});
-			
+
 			test("extend first level", function() {
 				var oClone = jQuery.sap.extend({}, myObject);
 				ok(typeof(oClone) == "object", "object clone created");
@@ -984,9 +984,9 @@
 				equal(myObject.prop3, oClone.prop3, "property cloned successfully");
 				equal(myObject.prop4, oClone.prop4, "property cloned successfully");
 				equal(myObject.prop5, oClone.prop5, "property cloned successfully");
-				
+
 			});
-			
+
 			test("extend deep", function() {
 				var oClone = jQuery.sap.extend(true, {}, myObject);
 				ok(typeof(oClone) == "object", "object clone created");
@@ -1000,7 +1000,7 @@
 				equal(myObject.prop4, oClone.prop4, "property cloned successfully");
 				equal(myObject.prop5, oClone.prop5, "property cloned successfully");
 			});
-			
+
 			test("extend: undefined/null properties", function() {
 				var oClone = jQuery.sap.extend({}, myObject);
 				equal(oClone.prop4, null, "null property cloned successfully");
@@ -1008,7 +1008,7 @@
 				equal(oClone.prop6.prop64, null, "null property cloned successfully");
 				equal(oClone.prop6.prop63, undefined, "undefined property cloned successfully");
 			});
-		
+
 		</script>
 	</head>
 	<body>

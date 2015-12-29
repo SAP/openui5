@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Shell.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -28,35 +28,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Shell = Control.extend("sap.m.Shell", /** @lends sap.m.Shell.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * The application title which may or may not be displayed outside the actual application, depending on the available screen size.
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * A logo to be displayed next to the app when the screen is sufficiently large.
 			 */
 			logo : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Whether the Logout button should be displayed. This currently only happens on very tall screens (1568px height), otherwise it is always hidden.
 			 */
 			showLogout : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * A text, like the name of the logged-in user, which should be displayed on the right side of the header (if there is enough space to display the header at all - this only happens on very tall screens (1568px height), otherwise it is always hidden.).
 			 */
 			headerRightText : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * Whether the width of the content (the aggregated app) should be limited or extend to the full screen width.
 			 */
 			appWidthLimited : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * Background color of the Shell. If set, this color will override the default background defined by the theme. So this should only be set when really required.
 			 * Any configured background image will be placed above this colored background.
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.11.2
 			 */
 			backgroundColor : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Background image of the Shell. If set, this image will override the default background defined by the theme. So this should only be set when really required.
 			 * This background image will be placed above any color set for the background.
@@ -72,25 +72,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.11.2
 			 */
 			backgroundImage : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Whether the background image (if configured) should be proportionally stretched to cover the whole Shell (false, default) or whether it should be tiled (true).
 			 * @since 1.11.2
 			 */
 			backgroundRepeat : {type : "boolean", group : "Appearance", defaultValue : false},
-	
+
 			/**
 			 * Opacity of the background image. The opacity can be set between 0 (fully transparent) and 1 fully opaque).
 			 * This can be used to improve readability of the shell content by making the background image partly transparent.
 			 * @since 1.11.2
 			 */
 			backgroundOpacity : {type : "float", group : "Appearance", defaultValue : 1},
-	
+
 			/**
 			 * Sets the icon used for the mobile device home screen and the icon to be used for bookmarks by desktop browsers.
-			 * 
+			 *
 			 * This property should be only set once and as early as possible. Subsequent calls replace the previous icon settings and may lead to different behavior depending on the browser.
-			 * 
+			 *
 			 * Different image sizes for device home screen need to be given as PNG images, an ICO file needs to be given as desktop browser bookmark icon (other file formats may not work in all browsers).
 			 * The "precomposed" flag defines whether there is already a glow effect contained in the home screen images (or whether iOS should add such an effect). The given structure could look like this:
 			 * {
@@ -101,30 +101,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * 'precomposed':true,
 			 * 'favicon':'favicon.ico'
 			 * }
-			 * 
+			 *
 			 * See jQuery.sap.setIcons() for full documentation.
-			 * 
+			 *
 			 */
 			homeIcon : {type : "object", group : "Misc", defaultValue : null}
 		},
 		defaultAggregation : "app",
 		aggregations : {
-	
+
 			/**
 			 * A Shell contains an App or a SplitApp (they may be wrapped in a View). Other control types are not allowed.
 			 */
 			app : {type : "sap.ui.core.Control", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * Fired when the user presses the logout button/link.
 			 */
 			logout : {}
 		}
 	}});
-	
-	
+
+
 	Shell.prototype.init = function() {
 		// theme change might change the logo
 		sap.ui.getCore().attachThemeChanged(jQuery.proxy(function(){
@@ -135,14 +135,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				$hdr.prepend(jQuery(html)); // insert new logo
 			}
 		}, this));
-		
-	
+
+
 		jQuery.sap.initMobile({
 			statusBar: "default",
 			hideBrowser: true
 		});
 	};
-	
+
 	Shell.prototype.onAfterRendering = function () {
 		var ref = this.getDomRef().parentNode,
 			$ref;
@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		this.$("content").css("height", "");
 	};
-	
+
 	Shell.prototype.ontap = function(oEvent) {
 		if (oEvent.target.className
 				&& oEvent.target.className.indexOf /* not available for SVG elements */
@@ -170,16 +170,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.fireLogout();
 		}
 	};
-	
-	
+
+
 	// API methods
-	
+
 	Shell.prototype.setTitle = function(sTitle) {
 		this.$("hdrTxt").text(sTitle);
 		this.setProperty("title", sTitle, true); // no rerendering
 		return this;
 	};
-	
+
 	Shell.prototype.setHeaderRightText = function(sText) {
 		this.setProperty("headerRightText", sText, true); // no rerendering
 		if (!sText) {
@@ -188,13 +188,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.$("hdrRightTxt").text(sText).css("display", (!!sText ? "inline" : "none"));
 		return this;
 	};
-	
+
 	Shell.prototype.setAppWidthLimited = function(bLimit) {
 		this.$().toggleClass("sapMShellAppWidthLimited", bLimit);
-		this.setProperty("appWidthLimited", bLimit, true); // no rerendering 
+		this.setProperty("appWidthLimited", bLimit, true); // no rerendering
 		return this;
 	};
-	
+
 	Shell.prototype.setBackgroundOpacity = function(fOpacity) {
 		if (fOpacity > 1 || fOpacity < 0) {
 			jQuery.sap.log.warning("Invalid value " + fOpacity + " for Shell.setBackgroundOpacity() ignored. Valid values are: floats between 0 and 1.");
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.$("BG").css("opacity", fOpacity);
 		return this.setProperty("backgroundOpacity", fOpacity, true); // no rerendering - live opacity change looks cooler
 	};
-	
+
 	Shell.prototype.setHomeIcon = function(oIcons) {
 		this.setProperty("homeIcon", oIcons, true); // no rerendering
 		jQuery.sap.setIcons(oIcons);

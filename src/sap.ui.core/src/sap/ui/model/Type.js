@@ -25,12 +25,12 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @alias sap.ui.model.Type
 	 */
 	var Type = BaseObject.extend("sap.ui.model.Type", /** @lends sap.ui.model.Type.prototype */ {
-		
+
 		constructor : function () {
 			BaseObject.apply(this, arguments);
 			this.sName = "Type";
 		},
-	
+
 		metadata : {
 			"abstract" : true,
 			publicMethods : [
@@ -38,10 +38,10 @@ sap.ui.define(['sap/ui/base/Object'],
 			"getName"
 		  ]
 		}
-		
+
 	});
-	
-	
+
+
 	/**
 	 * Returns the name of this type.
 	 *

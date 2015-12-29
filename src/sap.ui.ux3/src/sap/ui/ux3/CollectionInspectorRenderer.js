@@ -13,10 +13,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @namespace
 	 */
 	var CollectionInspectorRenderer = {};
-	
+
 	/**
 	 * Renders the Collection
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRenderManager the RenderManager that can be used for writing to
 	 *            the Render-Output-Buffer
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global'],
 			oControl) {
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		rm.write("<div");
 		rm.addClass("sapUiUx3CI");
 		if (oControl.getSidebarVisible()) {
@@ -42,17 +42,17 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeClasses();
 		rm.writeControlData(oControl);
 		rm.write(">");
-	
+
 		rm.write("<div");
 		rm.addClass("sapUiUx3CIToolBar");
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		this.renderToggleButton(rm, oControl);
 		this.renderCollectionSelector(rm, oControl);
-	
+
 		rm.write("</div>");
-		
+
 		rm.write('<div');
 		rm.addClass("sapUiUx3CISidebar");
 		rm.writeClasses();
@@ -60,7 +60,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");
 		this.renderSidebar(rm, oControl);
 		rm.write("</div>");
-	
+
 		rm.write("<div");
 		rm.addClass("sapUiUx3CIContent");
 		rm.writeAttribute("id", oControl.getId() + "-content");
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("</div>");
 		rm.write("</div>");
 	};
-	
+
 	/**
 	 * Renders the ToggleButton to open and close the sidebar
 	 *
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("</div>");
 		}
 	};
-	
+
 	/**
 	 * Renders the collection selector which selects the current collection
 	 *
@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("</div>");
 		}
 	};
-	
+
 	/**
 	 * Renders the Sidebar which displays all collections
 	 *
@@ -140,7 +140,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.addClass("sapUiUx3CICollectionList");
 		rm.writeClasses();
 		var oCollection = sap.ui.getCore().byId(oControl.getSelectedCollection());
-	
+
 		//ARIA
 		if (oControl.getSelectedCollection()) {
 			rm.writeAccessibilityState(oCollection, {
@@ -157,7 +157,7 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeAttributeEscaped("title",oCollectionItem.getText());
 				rm.addClass("sapUiUx3CICollectionListItem");
 				rm.writeClasses();
-	
+
 				// ARIA
 				rm.writeAccessibilityState(oCollectionItem, {
 					role: "option",
@@ -165,7 +165,7 @@ sap.ui.define(['jquery.sap.global'],
 					setsize: iItemCount,
 					posinset: iIndex
 				});
-	
+
 				rm.write(">");
 				rm.writeEscaped(oCollectionItem.getText());
 				rm.write("</li>");
@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("</ul></div>");
 		rm.renderControl(oControl.getEditButton());
 	};
-	
+
 	/**
 	 * Renders the Content that is displayed
 	 *

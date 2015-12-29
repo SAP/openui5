@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.Configuration
   Author: d020684
 -->
@@ -10,7 +10,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<!-- Initialization -->
 	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../../../resources/sap-ui-core.js" ></script>
-	
+
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -24,7 +24,7 @@
 		test("Settings", function() {
 			var oCfg = new sap.ui.core.Configuration();
 
-			// compare values where possible 
+			// compare values where possible
 			equal(oCfg.theme, "base", "theme");
 			equal(oCfg.language, (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage || navigator.browserLanguage, "language");
 			equal(oCfg.accessibility, true, "accessibility");
@@ -33,7 +33,7 @@
 			equal(oCfg.debug, false, "debug");
 			equal(oCfg.noConflict, false, "noConflict");
 			equal(oCfg.trace, false, "trace");
-			deepEqual(oCfg.modules, [], "modules");   
+			deepEqual(oCfg.modules, [], "modules");
 			deepEqual(oCfg.areas, null, "areas");
 			equal(oCfg.onInit, undefined, "onInit");
 			equal(oCfg.ignoreUrlParams, false, "ignoreUrlParams");
@@ -45,9 +45,9 @@
 			ok(window.$, "window.$ is available");
 			equal(jQuery, $, "$ is a synonym for jQuery");
 		});
-		
+
 	</script>
-  
+
 </head>
 <body>
 	<h1 id="qunit-header">QUnit tests: SAPUI5 Configuration (using defaults only)</h1>

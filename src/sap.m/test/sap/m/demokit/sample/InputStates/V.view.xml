@@ -17,7 +17,7 @@
 				enabled="true"
 				editable="false"
 			/>
-			
+
 			<Label text="Product not enabled" />
 			<Input
 				id="InputDisabled"
@@ -26,7 +26,7 @@
 				placeholder="Product ..."
 				enabled="false"
 			/>
-			
+
 			<Label text="Product editable" />
 			<Input
 				id="InputEdit"
@@ -36,7 +36,7 @@
 				enabled="true"
 				editable="true"
 			/>
-			
+
 			<Label text="Product with Value Help" />
 			<Input
 				id="InputValueHelp"
@@ -48,7 +48,7 @@
 				showValueHelp="true"
 				valueHelpRequest="handleValueHelp"
 			/>
-			
+
 			<Label text="Product with Value Help Only" />
 			<Input
 				id="productInputVHO"

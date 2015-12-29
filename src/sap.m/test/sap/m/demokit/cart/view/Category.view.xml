@@ -57,8 +57,8 @@
 							<ObjectStatus
 								text="{
 									path : 'status',
-									formatter : 'util.Formatter.statusText' 
-								}" 
+									formatter : 'util.Formatter.statusText'
+								}"
 								state="{
 									path : 'status',
 									formatter : 'util.Formatter.statusState'

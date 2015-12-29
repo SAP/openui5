@@ -1664,7 +1664,7 @@ oPopover.setContentWidth("30%");
 
 	/**
 	 * Add the reset button to the given summary bar, positioned to the end of the bar.
-	 * 
+	 *
 	 * @param oSummaryBar
 	 * @private
 	 */

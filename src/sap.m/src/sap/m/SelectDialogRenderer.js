@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var SelectDialogRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *

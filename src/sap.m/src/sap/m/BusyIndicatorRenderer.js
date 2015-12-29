@@ -12,8 +12,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var BusyIndicatorRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	BusyIndicatorRenderer.render = function(oRm, oControl){
-	
+
 		var sSize = oControl.getSize();
 		var iDesignClass = "";
 
@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global'],
 		} else {
 			iDesignClass = oControl.getDesign() == "dark" ? "sapMBusyIndicatorDark" : "sapMBusyIndicatorLight";
 		}
-	
+
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass(iDesignClass);
@@ -48,10 +48,10 @@ sap.ui.define(['jquery.sap.global'],
 			role : "progressbar",
 			valuemin: "0", // required by the ARIA specification
 			valuemax: "100" // required by the ARIA specification
-			
+
 		});
 		oRm.write(">");
-	
+
 		if (oControl.getCustomIcon()) {
 			oRm.renderControl(oControl._iconImage);
 		} else if (oControl._bUseSvg) {
@@ -59,14 +59,14 @@ sap.ui.define(['jquery.sap.global'],
 		} else {
 			this._renderCanvas(oRm, oControl, sSize);
 		}
-	
+
 		if (oControl.getText()) {
 			oRm.renderControl(oControl._oLabel);
 		}
-	
+
 		oRm.write("</div>");
 	};
-	
+
 	// SVG based loading indicator
 	BusyIndicatorRenderer._renderSvg = function(oRm, oControl, sSize){
 		oRm.write('<svg');
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write('from="0" to="360" dur="1.1s" repeatCount="indefinite" />');
 		oRm.write('</path></g></svg>');
 	};
-	
+
 	// Canvas based loading indicator
 	BusyIndicatorRenderer._renderCanvas = function(oRm, oControl, sSize){
 		oRm.write('<canvas');
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		oRm.write('></canvas>');
 	};
-	
+
 
 	return BusyIndicatorRenderer;
 

@@ -566,7 +566,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		},
 
 		/**
-		 * Sets the new calendar type to be used from now on in locale dependent functionalities (for example, 
+		 * Sets the new calendar type to be used from now on in locale dependent functionalities (for example,
 		 * formatting, translation texts, etc.).
 		 *
 		 * @param {sap.ui.core.CalendarType|null} sCalendarType the new calendar type. Set it with null to clear the calendar type
@@ -653,11 +653,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		getAccessibility : function () {
 			return this.accessibility;
 		},
-		
+
 		/**
 		 * Returns whether the framework automatically adds automatically
 		 * the ARIA role 'application' to the html body or not.
-		 * @return {boolean} 
+		 * @return {boolean}
 		 * @since 1.27.0
 		 * @public
 		 */
@@ -800,7 +800,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		},
 
 		/**
-		 * Return whether the controller code is deactivated. During design mode the 
+		 * Return whether the controller code is deactivated. During design mode the
 		 *
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.26.4
@@ -997,7 +997,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 		getNoNativeScroll : function() {
 			return false;
 		},
-		
+
 		/**
 		 * Return whether type validation is handled by core
 		 *

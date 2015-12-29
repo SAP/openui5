@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/test/Opa5"], function(Opa5){
 	};
 
 	Opa5.createPageObjects({
-		
+
 		onTheOverview : {
 			actions : {
 				iPressOnGoToPage1 : function () {
@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/test/Opa5"], function(Opa5){
 				}
 			}
 		}
-		
+
 	});
 
 });

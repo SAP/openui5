@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-noConflict="true" data-sap-ui-libs="sap.m"
 	src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 <link rel="stylesheet"
 	href="../../../../resources/sap/ui/thirdparty/qunit.css"
@@ -40,7 +40,7 @@
 
 	// ------------------------------ //
 	// tests for default values       //
-	// ------------------------------ //    
+	// ------------------------------ //
 	test("constructor - items : []", function() {
 
 		// system under test
@@ -249,7 +249,7 @@
 				var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 				var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
-				// act				
+				// act
 				oMultiComboBox.removeSelectedKeys(["0"]);
 
 				// assertions
@@ -328,7 +328,7 @@
 				key : "2",
 				text : "item 2"
 			}),
-			
+
 			oItem3 = new sap.ui.core.Item({
 				key : "",
 				text : "item 3"
@@ -468,7 +468,7 @@
 
 	test("method: xxxMaxWidth() - maxWidth", function() {
 
-		// system under test              
+		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
 			items : [new sap.ui.core.Item({
 				key : "0",
@@ -491,14 +491,14 @@
 
 	test("method: xxxMaxWidth() - maxWidth", function() {
 
-		// system under test              
+		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox();
 
 		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
-		// act 
+		// act
 		oMultiComboBox.setMaxWidth("30%");
 		sap.ui.getCore().applyChanges();
 
@@ -1242,7 +1242,7 @@
 		// cleanup
 		oMultiComboBox.destroy();
 	});
-	
+
 	// ------------------------------ //
 	// insertItem                     //
 	// ------------------------------ //
@@ -1428,7 +1428,7 @@
 		strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
 		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-		//strictEqual(oMultiComboBox.getSelectedItemId(), "");                           
+		//strictEqual(oMultiComboBox.getSelectedItemId(), "");
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		ok(fnSetSelectedItemsSpy.returned(oMultiComboBox),
@@ -1491,7 +1491,7 @@
 		strictEqual(fnSetAssociationSpy.callCount, 0,
 				"sap.m.MultiComboBox.prototype.setAssociation() method was not called");
 		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
-		//strictEqual(oMultiComboBox.getSelectedItemId(), "");                           
+		//strictEqual(oMultiComboBox.getSelectedItemId(), "");
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		ok(fnSetSelectedKeysSpy.returned(oMultiComboBox),
@@ -1760,7 +1760,7 @@
 			selectedItems : null
 		});
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 
@@ -1776,7 +1776,7 @@
 		});
 		oMultiComboBox.setSelectedKeys(["01"]);
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["01"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 
@@ -1806,11 +1806,11 @@
 		}));
 		sap.ui.getCore().applyChanges();
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["01"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 
-		// cleanup 
+		// cleanup
 		oMultiComboBox.destroy();
 	});
 
@@ -1837,7 +1837,7 @@
 		}));
 		sap.ui.getCore().applyChanges();
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["01", "02"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem1, oItem2]);
 
@@ -1899,7 +1899,7 @@
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "Algeria");
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
 
-		// assertions        
+		// assertions
 		deepEqual(oModel.getData().selected, ["AR", "BH", "AL"]);
 
 		// cleanup
@@ -1944,7 +1944,7 @@
 		// act
 		oMultiComboBox.destroyItems();
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 
 		// cleanup
@@ -2027,7 +2027,7 @@
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem1), oItem2);
 		deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem2), oItem3);
 		deepEqual(oMultiComboBox._getNextVisibleItemOf(oItem3), null);
@@ -2062,7 +2062,7 @@
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem1), null);
 		deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem2), oItem1);
 		deepEqual(oMultiComboBox._getPreviousVisibleItemOf(oItem3), oItem2);
@@ -2157,7 +2157,7 @@
 		oMultiComboBox.destroy();
 		this.clock.reset();
 	});
-	
+
 	test("DisabledListItem 'LIST_ITEM_VISUALISATION' - set disabled via API", function() {
 
 		var oSystem = {
@@ -2563,7 +2563,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2606,7 +2606,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.selectText(1, 2);
@@ -2653,7 +2653,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2673,7 +2673,7 @@
 		strictEqual(aTokens[1].getKey(), oItem2.getKey());
 		strictEqual(aTokens[2].getKey(), oItem3.getKey());
 
-		// arrange   
+		// arrange
 		oMultiComboBox.clearSelection();
 
 		// act
@@ -2711,7 +2711,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2723,7 +2723,7 @@
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
@@ -2744,7 +2744,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2756,7 +2756,7 @@
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), 'dummy');
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
@@ -2780,7 +2780,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2799,7 +2799,7 @@
 		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER);
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
@@ -2810,9 +2810,9 @@
 	});
 
 	test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", function() {
-		// IE has security settings 
+		// IE has security settings
 		// which prompt the user if he wants to let the page access the clipboard.
-		if (!sap.ui.Device.browser.internet_explorer) { 
+		if (!sap.ui.Device.browser.internet_explorer) {
 			// system under test
 			var oItem;
 			var oMultiComboBox = new sap.m.MultiComboBox({
@@ -2822,7 +2822,7 @@
 				})]
 			});
 
-			// arrange          
+			// arrange
 			oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
 
@@ -2839,22 +2839,22 @@
 					}
 				}
 			});
-			
+
 			// assertions
 			strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
 			strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
-			
+
 			deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
-			
+
 			// cleanup
 			oMultiComboBox.destroy();
 		} else {
 			expect(0);
 		}
 	});
-	
+
 	test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function() {
-		// IE has security settings 
+		// IE has security settings
 		// which prompt the user if he wants to let the page access the clipboard.
 		if (!sap.ui.Device.browser.internet_explorer) {
 			// system under test
@@ -2870,7 +2870,7 @@
 				})]
 			});
 
-			// arrange          
+			// arrange
 			oMultiComboBox.placeAt("MultiComboBox-content");
 			sap.ui.getCore().applyChanges();
 
@@ -2887,18 +2887,18 @@
 					}
 				}
 			});
-			
+
 			// assertions
 			strictEqual(fnFireSelectionChangeSpy.callCount, 2, "The selection change event was fired");
 			strictEqual(fnFireSelectionFinishSpy.callCount, 2, "The selection finish event was fired");
-			
+
 			var selectedItems = oMultiComboBox.getSelectedItems();
 			strictEqual(selectedItems[0].getKey(), oItem1.getKey(), "The first key should be 'key1'");
 			strictEqual(selectedItems[1].getKey(), oItem2.getKey(), "The second key should be 'key2'");
-			
+
 			strictEqual(selectedItems[0].getText(), oItem1.getText(), "The first item text should be 'item1'");
 			strictEqual(selectedItems[1].getText(), oItem2.getText(), "The second item text should be 'item2'");
-			
+
 			// cleanup
 			oMultiComboBox.destroy();
 		} else {
@@ -2917,7 +2917,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2929,11 +2929,11 @@
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
 		sap.ui.test.qunit.triggerEvent("focusout", oMultiComboBox.getDomRef());
 
-		// assertions     
+		// assertions
 		var aSelectedItems = oMultiComboBox.getSelectedItems();
 		strictEqual(aSelectedItems.length, 1, "One token was selected on Focus Out");
 		strictEqual(aSelectedItems[0].getText(), "Algeria", "Algeria was selected");
-		
+
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was not fired");
 		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was not fired");
@@ -2954,7 +2954,7 @@
 			selectedItems : [oItem]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -2966,7 +2966,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE); // select last token
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE); // delete selected token
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
@@ -2988,7 +2988,7 @@
 			selectedItems : [oItem]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3000,7 +3000,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE); // select last token
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.DELETE); // delete selected token
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
@@ -3028,7 +3028,7 @@
 			selectedItems : [oItem1, oItem2, oItem3]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3040,7 +3040,7 @@
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.A, false, false, true); // select all tokens
 		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.DELETE); // delete selected tokens
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		strictEqual(fnFireChangeSpy.callCount, 3, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 3, "The selection change event was fired");
@@ -3062,7 +3062,7 @@
 			selectedItems : [oItem]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3082,7 +3082,7 @@
 			button : 0
 		});
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
@@ -3104,7 +3104,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3119,7 +3119,7 @@
 		// act
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 
 		strictEqual(oMultiComboBox.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
@@ -3154,7 +3154,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -3171,7 +3171,7 @@
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(500);
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
@@ -3200,7 +3200,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -3219,7 +3219,7 @@
 			srcControl : oListItem
 		});
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
@@ -3257,7 +3257,7 @@
 			selectedItems : [oItem]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -3276,7 +3276,7 @@
 			srcControl : oListItem
 		});
 
-		// assertions        
+		// assertions
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
 		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
@@ -3304,7 +3304,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		var fnTapSpy = this.spy(oMultiComboBox, "ontap");
@@ -3331,7 +3331,7 @@
 
 	// --------------------------------- //
 	// Scenarios - opening dropdown list //
-	// --------------------------------- // 
+	// --------------------------------- //
 
 	test("Scenario OPEN_ALTDOWN", function() {
 
@@ -3351,7 +3351,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3363,7 +3363,7 @@
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
 
-		// assertions                     
+		// assertions
 		strictEqual(fnShowSpy.callCount, 1, "onsapshow was called exactly once");
 		strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
@@ -3395,7 +3395,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3406,7 +3406,7 @@
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(500);
 
-		// assertions                     
+		// assertions
 		strictEqual(fnHideSpy.callCount, 1, "onsaphide was called exactly once");
 		strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
@@ -3438,7 +3438,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
@@ -3449,7 +3449,7 @@
 		sap.ui.test.qunit.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.F4);
 		this.clock.tick(500);
 
-		// assertions                     
+		// assertions
 		strictEqual(fnShowSpy.callCount, 1, "onsapshow was called exactly once");
 		strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
@@ -3481,7 +3481,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		var fnTapSpy = this.spy(oMultiComboBox, "ontap");
@@ -3529,7 +3529,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3561,7 +3561,7 @@
 		this.stub(sap.ui.Device, "system", oSystem);
 		this.stub(jQuery.device, "is", oSystem);
 
-		// system under test              
+		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
 			value : "a",
 			items : [new sap.ui.core.Item({
@@ -3573,7 +3573,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
@@ -3582,7 +3582,7 @@
 		// assertions
 		ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
-		// act				
+		// act
 		oMultiComboBox.setValue("");
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
 		this.clock.tick(500);
@@ -3607,7 +3607,7 @@
 				this.stub(sap.ui.Device, "system", oSystem);
 				this.stub(jQuery.device, "is", oSystem);
 
-				// system under test              
+				// system under test
 				var oMultiComboBox = new sap.m.MultiComboBox({
 					value : "al",
 					items : [new sap.ui.core.Item({
@@ -3619,7 +3619,7 @@
 					})]
 				});
 
-				// arrange          
+				// arrange
 				oMultiComboBox.placeAt("MultiComboBox-content");
 				sap.ui.getCore().applyChanges();
 				var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
@@ -3660,7 +3660,7 @@
 				this.stub(sap.ui.Device, "system", oSystem);
 				this.stub(jQuery.device, "is", oSystem);
 
-				// system under test              
+				// system under test
 				var oMultiComboBox = new sap.m.MultiComboBox({
 					value : "al",
 					items : [new sap.ui.core.Item({
@@ -3672,7 +3672,7 @@
 					})]
 				});
 
-				// arrange          
+				// arrange
 				oMultiComboBox.placeAt("MultiComboBox-content");
 				sap.ui.getCore().applyChanges();
 				oMultiComboBox.focus();
@@ -3716,7 +3716,7 @@
 		this.stub(sap.ui.Device, "system", oSystem);
 		this.stub(jQuery.device, "is", oSystem);
 
-		// system under test              
+		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
 			items : [new sap.ui.core.Item({
 				text : "Algeria"
@@ -3725,7 +3725,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.getFocusDomRef().focus();
@@ -3740,7 +3740,7 @@
 		});
 		this.clock.tick(500);
 
-		// assertions		
+		// assertions
 		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		equals(oMultiComboBox.getFocusDomRef().id, document.activeElement.id, "Input field has focus");
 
@@ -3751,7 +3751,7 @@
 
 	// --------------------------------- //
 	// Scenarios - closing dropdown list //
-	// --------------------------------- // 
+	// --------------------------------- //
 
 	/*test("Scenario CLOSE_FOCUSLEAVE", function() {
 
@@ -3763,7 +3763,7 @@
 	             }) ]
 	      });
 
-	      // arrange          
+	      // arrange
 	      oMultiComboBox.placeAt("MultiComboBox-content");
 	      sap.ui.getCore().applyChanges();
 	      oMultiComboBox.focus();
@@ -3771,13 +3771,13 @@
 	      var fnOpenSpy = this.spy(oMultiComboBox.getPicker(), "open");
 	      var fnCloseSpy = this.spy(oMultiComboBox.getPicker(), "close");
 
-	      // act       
+	      // act
 	      oMultiComboBox.open();
 	      this.clock.tick(1000);
 	      sap.ui.test.qunit.triggerEvent("focusout", oMultiComboBox.getFocusDomRef());
 	      this.clock.tick(1000);
 
-	      // assertions                                  
+	      // assertions
 	      strictEqual(fnCloseSpy.callCount, 1, "close was called exactly once");
 	      strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
 	      ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
@@ -3791,7 +3791,7 @@
 
 	// --------------------------------- //
 	// Arrow - pressed state             //
-	// --------------------------------- // 
+	// --------------------------------- //
 	test("Arrow - pressed on arrow", function() {
 
 		// system under test
@@ -3802,7 +3802,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -3813,7 +3813,7 @@
 			target : oDomRefArrow
 		});
 
-		// assertions                                  
+		// assertions
 		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
 				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
@@ -3832,7 +3832,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -3843,7 +3843,7 @@
 			target : oDomRef
 		});
 
-		// assertions                                  
+		// assertions
 		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
 				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
@@ -3862,7 +3862,7 @@
 		this.stub(sap.ui.Device, "system", oSystem);
 		this.stub(jQuery.device, "is", oSystem);
 
-		// system under test              
+		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
 			value : "a",
 			items : [new sap.ui.core.Item({
@@ -3874,7 +3874,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
@@ -3900,7 +3900,7 @@
 	});
 	// --------------------------------- //
 	// Focus - border                    //
-	// --------------------------------- // 
+	// --------------------------------- //
 	test("FocusBorder - pressed on control", function() {
 
 		// system under test
@@ -3911,7 +3911,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -3922,7 +3922,7 @@
 			target : oDomRef
 		});
 
-		// assertions                                  
+		// assertions
 		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
 				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
 
@@ -3940,7 +3940,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -3951,7 +3951,7 @@
 			target : oDomRefArrow
 		});
 
-		// assertions                                  
+		// assertions
 		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
 				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
 
@@ -3969,7 +3969,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -3984,7 +3984,7 @@
 			srcControl : oListItem
 		});
 
-		// assertions                                  
+		// assertions
 		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
 				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
 
@@ -4003,7 +4003,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -4015,7 +4015,7 @@
 		});
 		sap.ui.test.qunit.triggerEvent("focusout", oMultiComboBox.getDomRef());
 
-		// assertions                                  
+		// assertions
 		ok(!oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
 				'The MultiComboBox must not have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
 
@@ -4033,7 +4033,7 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.focus();
@@ -4045,14 +4045,14 @@
 		});
 		sap.ui.test.qunit.triggerEvent("focusout", oDomRef);
 
-		// assertions                                  
+		// assertions
 		ok(!oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
 				'The MultiComboBox must not have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
 
 		// cleanup
 		oMultiComboBox.destroy();
 	});
-	
+
 	test("Input Value - reset on focus out", function() {
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
@@ -4061,7 +4061,7 @@
 				text : "Algeria"
 			})]
 		});
-		
+
 		var oMultiComboBoxNext = new sap.m.MultiComboBox({
 			items : [new sap.ui.core.Item({
 				key : "DZ",
@@ -4069,21 +4069,21 @@
 			})]
 		});
 
-		// arrange          
+		// arrange
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		oMultiComboBoxNext.placeAt("MultiComboBox-content");
-		
+
 		sap.ui.getCore().applyChanges();
 		oMultiComboBox.setValue("Foo")
 
 		// act
 		oMultiComboBox.focus();
 		oMultiComboBoxNext.focus();
-		
+
 		this.clock.tick(500);
 		var sInputValue = oMultiComboBox.getValue();
-		
-		// assertions                                  
+
+		// assertions
 		strictEqual(sInputValue, "",
 				'The InputValue of the MultiComboBox must be resetted (empty) when it loses the focus.');
 		strictEqual(oMultiComboBox.getValueState(), "Error",

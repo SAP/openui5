@@ -23,7 +23,7 @@ sap.ui.define([
 	 * Constructor for a new MessageManager.
 	 *
 	 * @class
-	 * 
+	 *
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
@@ -37,13 +37,13 @@ sap.ui.define([
 
 		constructor : function () {
 			EventProvider.apply(this, arguments);
-			
+
 			this.mProcessors = {};
 			this.mObjects = {};
 			this.mMessages = {};
-			
-			var bHandleValidation = sap.ui.getCore().getConfiguration().getHandleValidation(); 
-			if (bHandleValidation) { 
+
+			var bHandleValidation = sap.ui.getCore().getConfiguration().getHandleValidation();
+			if (bHandleValidation) {
 				sap.ui.getCore().attachValidationSuccess(bHandleValidation, this._handleSuccess, this);
 				sap.ui.getCore().attachValidationError(bHandleValidation, this._handleError, this);
 				sap.ui.getCore().attachParseError(bHandleValidation, this._handleError, this);
@@ -58,10 +58,10 @@ sap.ui.define([
 			]
 		}
 	});
-	
+
 	/**
 	 * handle validation/parse/format error
-	 * 
+	 *
 	 * @param {object} oEvent The Event object
 	 * @private
 	 */
@@ -80,7 +80,7 @@ sap.ui.define([
 			}
 			var oMessage = new Message({
 					type: sap.ui.core.MessageType.Error,
-					message: oEvent.getParameter("message"), 
+					message: oEvent.getParameter("message"),
 					target: sTarget,
 					processor: this.oControlMessageProcessor,
 					technical: bTechnical
@@ -89,10 +89,10 @@ sap.ui.define([
 		}
 		oEvent.cancelBubble();
 	};
-	
+
 	/**
 	 * handle validation success
-	 * 
+	 *
 	 * @param {object} oEvent The Event object
 	 * @private
 	 */
@@ -105,17 +105,17 @@ sap.ui.define([
 			var sProperty = oEvent.getParameter("property");
 			var sTarget = oElement.getId() + '/' + sProperty;
 			var sProcessorId = this.oControlMessageProcessor.getId();
-			
+
 			if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
 				this.removeMessages(this.mMessages[sProcessorId][sTarget]);
 			}
 		}
 		oEvent.cancelBubble();
 	};
-	
+
 	/**
 	 * Add messages to MessageManager
-	 * 
+	 *
 	 * @param {sap.ui.core.Message|array} vMessages Array of sap.ui.core.Message or single sap.ui.core.Message
 	 * @public
 	 */
@@ -133,7 +133,7 @@ sap.ui.define([
 		}
 		this._updateMessageModel();
 	};
-	
+
 	/**
 	 * import message to internal map of messages
 	 * @private
@@ -141,7 +141,7 @@ sap.ui.define([
 	MessageManager.prototype._importMessage = function(oMessage) {
 		var sMessageKey = oMessage.getTarget();
 		var sProcessorId = oMessage.getMessageProcessor().getId();
-		
+
 		if (!this.mMessages[sProcessorId]) {
 			this.mMessages[sProcessorId] = {};
 		}
@@ -149,7 +149,7 @@ sap.ui.define([
 		aMessages.push(oMessage);
 		this.mMessages[sProcessorId][sMessageKey] = aMessages;
 	};
-	
+
 	/**
 	 * push messages to registered MessageProcessors
 	 * @private
@@ -157,16 +157,16 @@ sap.ui.define([
 	MessageManager.prototype._pushMessages = function() {
 		var that = this;
 		jQuery.each(this.mProcessors, function(sId, oProcessor) {
-			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {}; 
+			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {};
 			that._sortMessages(vMessages);
 			//push a copy
 			oProcessor.setMessages(vMessages);
 		});
 	};
-	
+
 	/**
 	 * sort messages by type 'Error', 'Warning', 'Success', 'Info'
-	 * 
+	 *
 	 * @param {map} mMessages Map of Messages: {'target':[array of Messages]}
 	 * @private
 	 */
@@ -178,16 +178,16 @@ sap.ui.define([
 			});
 		});
 	};
-	
+
 	/**
 	 * update MessageModel
 	 * @private
 	 */
 	MessageManager.prototype._updateMessageModel = function() {
 		var aMessages = [];
-		
+
 		var oMessageModel = this.getMessageModel();
-		
+
 		jQuery.each(this.mMessages, function(sProcessorId, mMessages) {
 			jQuery.each(mMessages, function(sKey, vMessages){
 				aMessages = jQuery.merge(aMessages, vMessages);
@@ -196,7 +196,7 @@ sap.ui.define([
 		oMessageModel.setData(aMessages);
 		this._pushMessages();
 	};
-	
+
 	/**
 	 * Remove all messages
 	 * @public
@@ -206,14 +206,14 @@ sap.ui.define([
 		this.mMessages = {};
 		this._updateMessageModel();
 	};
-	
+
 	/**
 	 * Remove given Messages
-	 * 
-	 * @param {array} 
-	 * vMessages Either an Array of sap.ui.core.message.Message, 
+	 *
+	 * @param {array}
+	 * vMessages Either an Array of sap.ui.core.message.Message,
 	 * a single sap.ui.core.message.Message
-	 * 
+	 *
 	 * @public
 	 */
 	MessageManager.prototype.removeMessages = function(vMessages) {
@@ -239,18 +239,18 @@ sap.ui.define([
 
 	/**
 	 * remove Message
-	 * 
+	 *
 	 * @param {sap.ui.core.message.Message} oMessage The Message to remove
 	 * @private
 	 */
 	MessageManager.prototype._removeMessage = function(oMessage) {
-	
+
 		var mMessages = this.mMessages[oMessage.getMessageProcessor().getId()];
 		if (!mMessages) {
 			return;
 		}
 		var aMessages = mMessages[oMessage.getTarget()];
-		
+
 		if (aMessages) {
 			for (var i = 0; i < aMessages.length; i++) {
 				var oMsg = aMessages[i];
@@ -261,7 +261,7 @@ sap.ui.define([
 			}
 		}
 	};
-	
+
 	/**
 	 * message change handler
 	 * @private
@@ -272,10 +272,10 @@ sap.ui.define([
 		this.removeMessages(aOldMessages);
 		this.addMessages(aNewMessages);
 	};
-	
+
 	/**
 	 * Register MessageProcessor
-	 * 
+	 *
 	 * @param {sap.ui.core.message.MessageProcessor} oProcessor The MessageProcessor
 	 * @public
 	 */
@@ -285,7 +285,7 @@ sap.ui.define([
 			oProcessor.attachMessageChange(this.onMessageChange, this);
 		}
 	};
-	
+
 	/**
 	 * Deregister MessageProcessor
 	 * @param {sap.ui.core.message.MessageProcessor} oProcessor The MessageProcessor
@@ -296,12 +296,12 @@ sap.ui.define([
 		delete this.mProcessors[oProcessor.getId()];
 		oProcessor.detachMessageChange(this.onMessageChange, this);
 	};
-	
+
 	/**
 	 * Register ManagedObject: Validation and Parse errors are handled by the MessageManager for this object
-	 * 
+	 *
 	 * @param {sap.ui.base.ManageObject} oObject The sap.ui.base.ManageObject
-	 * @param {boolean} bHandleValidation Handle validation for this object. If set to true validation/parse events creates Messages and cancel event. 
+	 * @param {boolean} bHandleValidation Handle validation for this object. If set to true validation/parse events creates Messages and cancel event.
 	 * 					If set to false only the event will be canceled, but no messages will be created
 	 * @public
 	 */
@@ -315,10 +315,10 @@ sap.ui.define([
 		oObject.attachParseError(bHandleValidation, this._handleError, this);
 		oObject.attachFormatError(bHandleValidation, this._handleError, this);
 	};
-	
+
 	/**
 	 * Unregister ManagedObject
-	 * 
+	 *
 	 * @param {sap.ui.base.ManageObject} oObject The sap.ui.base.ManageObject
 	 * @public
 	 */
@@ -333,9 +333,9 @@ sap.ui.define([
 		oObject.detachParseError(this._handleError);
 		oObject.detachFormatError(this._handleError);
 	};
-	
+
 	/**
-	 * destroy MessageManager 
+	 * destroy MessageManager
 	 * @public
 	 */
 	MessageManager.prototype.destroy = function() {
@@ -351,7 +351,7 @@ sap.ui.define([
 			oObject.detachFormatError(that._handleError);
 			//TODO: delete Messages for Objects
 		});
-		if (sap.ui.getCore().getConfiguration().getHandleValidation()) { 
+		if (sap.ui.getCore().getConfiguration().getHandleValidation()) {
 			sap.ui.getCore().detachValidationSuccess(this._handleSuccess);
 			sap.ui.getCore().detachValidationError(this._handleError);
 			sap.ui.getCore().detachParseError(this._handleError);
@@ -362,10 +362,10 @@ sap.ui.define([
 		this.mObjects = undefined;
 		this.oMessageModel.destroy();
 	};
-	
+
 	/**
 	 * Get the MessageModel
-	 * @return {sap.ui.core.message.MessageModel} oMessageModel The Message Model 
+	 * @return {sap.ui.core.message.MessageModel} oMessageModel The Message Model
 	 * @public
 	 */
 	MessageManager.prototype.getMessageModel = function() {
@@ -375,7 +375,7 @@ sap.ui.define([
 		}
 		return this.oMessageModel;
 	};
-	
+
 	return MessageManager;
 
 });

@@ -6,7 +6,7 @@
 	<FeedInput
 		post="onPost"
 		showIcon="false" />
-		
+
 	<Label text="With Icon Placeholder" class="sapUiSmallMarginTop sapUiTinyMarginBottom" />
 	<FeedInput
 		post="onPost"

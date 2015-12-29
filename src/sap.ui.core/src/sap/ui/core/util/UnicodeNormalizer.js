@@ -5,7 +5,7 @@
 // Provides a polyfill for the String.prototype.normalize function for older browsers
 sap.ui.define(['sap/ui/Device'], function(Device) {
 	"use strict";
-	
+
 	/*global UNorm *///declare unusual global vars for JSLint/SAPUI5 validation
 
 	// apply polyfill if needed and when not in a mobile browser

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.RadioButtonGroup
   Author: SAP
 -->
@@ -7,7 +7,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -32,9 +32,9 @@
 		oRBGroup1.addItem(oItem);
 
 		oItem = new sap.ui.core.Item("RB1-2");
-		oItem.setText("Option 2"); 
+		oItem.setText("Option 2");
 		oItem.setTooltip("Tooltip 2");
-		oItem.setKey("Key2"); 
+		oItem.setKey("Key2");
 		oRBGroup1.addItem(oItem);
 
 		oItem = new sap.ui.core.Item("RB1-3");
@@ -125,23 +125,23 @@
 		oRBGroup4.setEditable(false);
 		oRBGroup4.setValueState(sap.ui.core.ValueState.Error);
 
-		oItem = new sap.ui.core.Item("RB4-1"); 
+		oItem = new sap.ui.core.Item("RB4-1");
 		oItem.setText("Option 1");
 		oItem.setTooltip("Tooltip 1");
-		oItem.setKey("Key1"); 
+		oItem.setKey("Key1");
 		oRBGroup4.addItem(oItem);
 
 		oItem = new sap.ui.core.Item("RB4-2");
-		oItem.setText("Option 2"); 
+		oItem.setText("Option 2");
 		oItem.setTooltip("Tooltip 2");
-		oItem.setKey("Key2"); 
+		oItem.setKey("Key2");
 		oItem.setEnabled(false);
 		oRBGroup4.addItem(oItem);
 
 		oItem = new sap.ui.core.Item("RB4-3");
-		oItem.setText("Option 3"); 
+		oItem.setText("Option 3");
 		oItem.setTooltip("Tooltip 3");
-		oItem.setKey("Key3"); 
+		oItem.setKey("Key3");
 		oRBGroup4.addItem(oItem);
 
 		sap.ui.setRoot("uiArea4", oRBGroup4);
@@ -218,7 +218,7 @@
 		test("Visibility", function() {
 			// Visible
 			ok(jQuery("#RBG1").get(0), "Visible, expected defined");
-			equal(jQuery("#RBG2").get(0), undefined, "Invisible");		
+			equal(jQuery("#RBG2").get(0), undefined, "Invisible");
 		});
 
 		test("Output of RadioButtons", function() {
@@ -237,33 +237,33 @@
 			if(iOffsetLeft0 == iOffsetLeft1){
 				var bResult = true;
 			}else{
-				var bResult = false; 
+				var bResult = false;
 			}
 			equal(bResult,true,"Group 1: Left Position Radiobutton 0 and 1 equal");
-			bResult = undefined; 
+			bResult = undefined;
 
 			if(iOffsetTop0 < iOffsetTop1){
 				var bResult = true;
 			}else{
-				var bResult = false; 
+				var bResult = false;
 			}
 			equal(bResult,true,"Group 1: Top Position Radiobutton 0 less than 1");
-			bResult = undefined; 
+			bResult = undefined;
 
 			if(iOffsetLeft0 == iOffsetLeft3){
 				var bResult = true;
 			}else{
-				var bResult = false; 
+				var bResult = false;
 			}
 			equal(bResult,true,"Group 1: Left Position Radiobutton 0 and 3 equal");
 
 			if(iOffsetTop1 < iOffsetTop3){
 				var bResult = true;
 			}else{
-				var bResult = false; 
+				var bResult = false;
 			}
 			equal(bResult,true,"Group 1: Top Position Radiobutton 1 less than 3");
-			bResult = undefined; 
+			bResult = undefined;
 
 			iOffsetLeft0 = jQuery("#RBG3-0").position().left;
 			iOffsetTop0 = jQuery("#RBG3-0").position().top;
@@ -277,7 +277,7 @@
 				var bResult = false;
 			}
 			equal(bResult,true,"Group 3: Left Position Radiobutton 0 less than 1");
-			bResult = undefined; 
+			bResult = undefined;
 
 			if(iOffsetTop0 == iOffsetTop1){
 				var bResult = true;
@@ -285,7 +285,7 @@
 				var bResult = false;
 			}
 			equal(bResult,true,"Group 3: Top Position Radiobutton 0 equal 1");
-			bResult = undefined; 
+			bResult = undefined;
 
 			if(iOffsetLeft0 == iOffsetLeft3){
 				var bResult = true;
@@ -300,7 +300,7 @@
 				var bResult = false;
 			}
 			equal(bResult,true,"Group 3: Top Position Radiobutton 0 less than 3");
-			bResult = undefined; 
+			bResult = undefined;
 
 			iOffsetLeft0 = jQuery("#RBG4-0").position().left;
 			iOffsetTop0 = jQuery("#RBG4-0").position().top;
@@ -313,7 +313,7 @@
 				var bResult = false;
 			}
 			equal(bResult,true,"Group 4: Left Position Radiobutton 0 less than 1");
-			bResult = undefined; 
+			bResult = undefined;
 
 			if(iOffsetTop0 == iOffsetTop1){
 				var bResult = true;
@@ -375,8 +375,8 @@
 			sap.ui.getCore().applyChanges();
 			equal(oRBGroup3.getSelectedIndex(), 0, "Key-ARROW_RIGHT: SelectedIndex");
 			equal(oRBGroup3.getSelectedItem().getId(), "RB3-1", "Key-ARROW_RIGHT: SelectedItem(ID)");
-			equal(sap.ui.getCore().getElementById("RBG3-0").getSelected(), true, "Key-ARROW_RIGHT: RadioButton 0 - Selected");		
-			equal(sap.ui.getCore().getElementById("RBG3-1").getSelected(), false, "Key-ARROW_RIGHT: RadioButton 1 - Selected");		
+			equal(sap.ui.getCore().getElementById("RBG3-0").getSelected(), true, "Key-ARROW_RIGHT: RadioButton 0 - Selected");
+			equal(sap.ui.getCore().getElementById("RBG3-1").getSelected(), false, "Key-ARROW_RIGHT: RadioButton 1 - Selected");
 			equal(jQuery('#RBG3-0').attr("tabindex"),"-1","Key-ARROW_RIGHT: RadioButton 0 - tabindex");
 			equal(jQuery('#RBG3-1').attr("tabindex"),"0","Key-ARROW_RIGHT: RadioButton 0 - tabindex");
 

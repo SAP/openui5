@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var ResponsiveContainerRenderer = function() {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *

@@ -21,11 +21,11 @@ import org.apache.commons.io.IOUtils;
 
 
 /**
- * The class <code>ConcatFilter</code> is used to concatenate files like 
+ * The class <code>ConcatFilter</code> is used to concatenate files like
  * sap-ui-core.js, sap-ui-core-nojQuery.js and sap-ui-debug.js.
  * <p>
  * <i>This class must not be used in productive systems.</i>
- * 
+ *
  * @author Peter Muessig
  */
 public class ConcatFilter implements Filter {
@@ -44,10 +44,10 @@ public class ConcatFilter implements Filter {
    */
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
-    
+
     // keep the filter configuration
     this.config = filterConfig;
-    
+
   } // method: init
 
 
@@ -65,27 +65,27 @@ public class ConcatFilter implements Filter {
    */
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-    
+
     // make sure that the request/response are http request/response
     if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
-      
+
       // determine the path of the request
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       HttpServletResponse httpResponse = (HttpServletResponse) response;
       String method = httpRequest.getMethod().toUpperCase(); // NOSONAR
       String path = httpRequest.getServletPath() + httpRequest.getPathInfo();
-      
+
       // only process GET or HEAD requests
       if (method.matches("GET|HEAD")) {
-        
+
         // check for sap-ui-core.js
         if ("/resources/sap-ui-core.js".equals(path)) {
-          
+
           this.log("Merging module: sap-ui-core.js");
-          
+
           response.setContentType(this.config.getServletContext().getMimeType(path));
           httpResponse.addDateHeader("Last-Modified", System.currentTimeMillis());
-          
+
           if ("GET".equals(method)) {
             OutputStream os = response.getOutputStream();
             IOUtils.write(this.loadResource("/resources/sap/ui/thirdparty/jquery.js"), os, "UTF-8");
@@ -96,20 +96,20 @@ public class ConcatFilter implements Filter {
             IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
             IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
             IOUtils.closeQuietly(os);
-            
+
             os.flush();
             os.close();
           }
-          
+
           return;
-          
+
         } else if ("/resources/sap-ui-core-nojQuery.js".equals(path)) {
-          
+
           this.log("Merging module: sap-ui-core-nojQuery.js");
-          
+
           response.setContentType(this.config.getServletContext().getMimeType(path));
           httpResponse.addDateHeader("Last-Modified", System.currentTimeMillis());
-          
+
           if ("GET".equals(method)) {
             OutputStream os = response.getOutputStream();
             IOUtils.write(this.loadResource("/resources/sap/ui/Device.js"), os, "UTF-8");
@@ -118,20 +118,20 @@ public class ConcatFilter implements Filter {
             IOUtils.write(this.loadResource("/resources/jquery.sap.global.js"), os, "UTF-8");
             IOUtils.write("jQuery.sap.require(\"sap.ui.core.Core\"); sap.ui.getCore().boot && sap.ui.getCore().boot();", os, "UTF-8");
             IOUtils.closeQuietly(os);
-            
+
             os.flush();
             os.close();
           }
-          
+
           return;
-          
+
         } else if ("/resources/sap-ui-debug.js".equals(path)) {
-          
+
           this.log("Merging module: sap-ui-core-nojQuery.js");
-          
+
           response.setContentType(this.config.getServletContext().getMimeType(path));
           httpResponse.addDateHeader("Last-Modified", System.currentTimeMillis());
-          
+
           if ("GET".equals(method)) {
             OutputStream os = response.getOutputStream();
             IOUtils.write(this.loadResource("/resources/sap/ui/debug/ControlTree.js"), os, "UTF-8");
@@ -140,22 +140,22 @@ public class ConcatFilter implements Filter {
             IOUtils.write(this.loadResource("/resources/sap/ui/debug/PropertyList.js"), os, "UTF-8");
             IOUtils.write(this.loadResource("/resources/sap/ui/debug/DebugEnv.js"), os, "UTF-8");
             IOUtils.closeQuietly(os);
-            
+
             os.flush();
             os.close();
           }
-          
+
           return;
-          
+
         }
-        
+
       }
-      
+
     }
-    
+
     // proceed in the filter chain
     chain.doFilter(request, response);
-    
+
   } // method: doFilter
 
 
@@ -166,7 +166,7 @@ public class ConcatFilter implements Filter {
   private void log(String msg) {
     this.config.getServletContext().log(this.config.getFilterName() + ": "+ msg);
   } // method: log
-  
+
   /**
    * logs the message and <code>Throwable</code> prepended by the filter name (copy of {@link GenericServlet#log(String, Throwable)})
    * @param msg the message
@@ -176,8 +176,8 @@ public class ConcatFilter implements Filter {
   private void log(String msg, Throwable t) {
     this.config.getServletContext().log(this.config.getFilterName() + ": "+ msg, t);
   } // method: log
-  
-  
+
+
   /**
    * loads a resource for the specified path
    * @param path path of the resource
@@ -192,8 +192,8 @@ public class ConcatFilter implements Filter {
     }
     return content;
   } // method: loadResource
-  
-  
+
+
   /**
    * finds the resource for the given path
    * @param path path of the resource
@@ -201,13 +201,13 @@ public class ConcatFilter implements Filter {
    * @throws MalformedURLException
    */
   private URL findResource(String path) throws MalformedURLException {
-    
+
     // normalize the path (JarURLConnection cannot resolve non-normalized paths)
     String normalizedPath = URI.create(path).normalize().toString();
-    
+
     // define the classpath for the classloader lookup
     String classPath = CLASSPATH_PREFIX + normalizedPath;
-    
+
     // first lookup the resource in the web context path
     URL url = this.config.getServletContext().getResource(normalizedPath);
 
@@ -222,7 +222,7 @@ public class ConcatFilter implements Filter {
     }
 
     return url;
-    
+
   } // method: findResource
 
 } // class: ConcatFilter

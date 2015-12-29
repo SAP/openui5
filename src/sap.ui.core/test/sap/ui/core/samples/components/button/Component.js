@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/UIComp
 
 	Component.prototype.createContent = function() {
 		this.oButton = new Button(this.createId("mybutn"));
-		return this.oButton; 
+		return this.oButton;
 	};
 
 

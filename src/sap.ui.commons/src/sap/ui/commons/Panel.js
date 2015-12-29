@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Panel.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -28,60 +28,60 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Panel = Control.extend("sap.ui.commons.Panel", /** @lends sap.ui.commons.Panel.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Panel width in CSS size
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
-	
+
 			/**
 			 * Per default, the height for the Panel is automatically adjusted to the content. Dimension allows to explicitly specify the height.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
+
 			/**
 			 * Represents the state of the of the Panel (enabled or disabled)
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Specifies the scroll position from left to right. Value "0" means leftmost position.
 			 */
 			scrollLeft : {type : "int", group : "Behavior", defaultValue : 0},
-	
+
 			/**
 			 * Specifies the scroll position from top to bottom. Value "0" means topmost position.
 			 */
 			scrollTop : {type : "int", group : "Behavior", defaultValue : 0},
-	
+
 			/**
 			 * Padding is theme-dependent.
 			 */
 			applyContentPadding : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * A collapsed Panel consumes less space than a not collapsed one. When it is initially collapsed, the contents are not rendered.
 			 */
 			collapsed : {type : "boolean", group : "Behavior", defaultValue : false},
-	
+
 			/**
 			 * Defines the background color. Note that color settings are theme-dependent.
 			 */
 			areaDesign : {type : "sap.ui.commons.enums.AreaDesign", group : "Appearance", defaultValue : sap.ui.commons.enums.AreaDesign.Fill},
-	
+
 			/**
 			 * The Panel can have a box as border. Note that displaying borders is theme-dependent.
 			 */
 			borderDesign : {type : "sap.ui.commons.enums.BorderDesign", group : "Appearance", defaultValue : sap.ui.commons.enums.BorderDesign.Box},
-	
+
 			/**
 			 * Specifies whether the Panel shall have an icon for collapsing/expanding, or not.
 			 */
 			showCollapseIcon : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Can be used to create a simple title text for Panels that do not require an icon in the header.
 			 */
@@ -89,27 +89,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		},
 		defaultAggregation : "content",
 		aggregations : {
-	
+
 			/**
 			 * Aggregates the controls that are contained in the Panel. It is recommended to use a layout control as single direct child.
 			 * When the Panel dimensions are set, the child control may have width and height of 100%. When the dimensions are not set, the child defines
 			 * the Panel size.
 			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}, 
-	
+			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+
 			/**
 			 * Aggregates the title element of the Panel. For text titles only, you alternatively could use setText() which also creates a title in the background.
 			 */
-			title : {type : "sap.ui.core.Title", multiple : false}, 
-	
+			title : {type : "sap.ui.core.Title", multiple : false},
+
 			/**
 			 * The buttons that shall be displayed in the Panel header
 			 */
 			buttons : {type : "sap.ui.commons.Button", multiple : true, singularName : "button"}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * Initialization
 	 * @private
@@ -124,28 +124,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._bFocusCollapseIcon = false; // indicates whether the collapse icon should be focused after the next rendering
 		this._resizeDelayTimer = null;    // the timer for delayed reaction to resize events in browsers not supporting FlexBox layout
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
-		
+
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
-	
+
 	Panel.prototype.exit = function() {
 		this._rb = undefined;
 	};
-	
+
 	/**
 	 * Called after the theme has been switched: adjust sizes
 	 * @private
 	 */
 	Panel.prototype.onThemeChanged = function () {
 		if (this.getDomRef() && this._oTitleDomRef) { // only if already rendered and if a real Panel (no subclass like Tab)
-	
+
 			// reset size settings done for previous theme, so elements take their optimum space
 			this.getDomRef().style.minWidth = "auto";
 			if (this._oToolbarDomRef) {
 				this._oToolbarDomRef.style.width = "auto";
 			}
 			this._oTitleDomRef.style.width = "auto";
-	
+
 			// adapt sizes
 			this._initializeSizes(); // TODO: delay this for Safari?
 			if (!jQuery.support.flexBoxLayout ||
@@ -154,8 +154,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Event unbinding
 	 * @private
@@ -167,8 +167,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.sResizeListenerId = null;
 		}
 	};
-	
-	
+
+
 	/**
 	 * Adapts size settings of the rendered HTML
 	 * @private
@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._oHeaderDomRef = jQuery.sap.domById(id + "-hdr");
 		this._oTitleDomRef = jQuery.sap.domById(id + "-title");
 		this._oToolbarDomRef = jQuery.sap.domById(id + "-tb");
-	
+
 		// restore focus if required
 		if (this._bFocusCollapseIcon) {
 			this._bFocusCollapseIcon = false;
@@ -196,9 +196,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				}
 			}
 		}
-	
+
 		this._initializeSizes(); // TODO: delay this for Safari?
-	
+
 		// in browsers not supporting the FlexBoxLayout we need to listen to resizing
 		if (!jQuery.support.flexBoxLayout ||
 				(Panel._isSizeSet(this.getHeight()) && (this._hasIcon() || (this.getButtons().length > 0)))) {
@@ -206,8 +206,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._handleResizeSoon, this));
 		}
 	};
-	
-	
+
+
 	/**
 	 *
 	 * @protected
@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Panel.prototype.getFocusInfo = function () {
 		var collId = null;
 		var id = this.getId();
-	
+
 		// if collapse icon needs to be focused, find out which one - if any - is currently visible
 		if (this._bFocusCollapseIcon) {
 			var $collArrow = jQuery.sap.byId(id + "-collArrow");
@@ -227,14 +227,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					collId = $collIco[0].id;
 				}
 			}
-	
+
 		}
-	
+
 		// if a collapse icon is visible and to be focused, return its ID, otherwise just the control ID
 		return {id:(collId ? collId : id)};
 	};
-	
-	
+
+
 	/**
 	 *
 	 * @private
@@ -248,15 +248,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Measures and calculates/sets sizes as soon as the CSS has been applied after rendering or a theme switch
 	 * @private
 	 */
 	Panel.prototype._initializeSizes = function() {
 		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		// maximum width of a toolbar item -> min toolbar width
 		var aButtons = this.getButtons();
 		if (aButtons && aButtons.length > 0) {
@@ -268,16 +268,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				}
 			});
 			this._iMaxTbBtnWidth = maxWidth;
-	
+
 			if (this._oToolbarDomRef) {
 				this._oToolbarDomRef.style.minWidth = maxWidth + "px";
-	
+
 				// calculate the toolbar borders and margins
 				var $tb = jQuery(this._oToolbarDomRef);
 				this._iTbMarginsAndBorders = $tb.outerWidth(true) - $tb.width();
 			}
 		}
-	
+
 		// calculate available space between left- and right-aligned items with static width
 		var beginBorderOfTitle = this._oTitleDomRef.offsetLeft; // displacement of the beginning of the title from the Panel border
 		var totalWidth = this.getDomRef().offsetWidth;
@@ -297,16 +297,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				beginBorderOfRightItems = begin;
 			}
 		});
-	
-	
+
+
 		// set minimum Panel width as sum of minimum sizes
 		var minWidth = beginBorderOfTitle;
 		minWidth += this._iMinTitleWidth; // 30px is ok even if there is no title
 		minWidth += this._iMaxTbBtnWidth + 1; // -1 if there is no toolbar... 1px more or less is no problem here
 		minWidth += (beginBorderOfRightItems == 10000) ? 10 : (totalWidth - beginBorderOfRightItems); // use 10 as hardcoded right border
 		this.getDomRef().style.minWidth = minWidth + 10 + "px";
-	
-	
+
+
 		// restore scroll positions
 		if (this._oScrollDomRef) {
 			var scrollTop = this.getProperty("scrollTop");
@@ -317,12 +317,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			if (scrollLeft > 0) {
 				this._oScrollDomRef.scrollLeft = scrollLeft;
 			}
-	
+
 		}
-	
+
 	};
-	
-	
+
+
 	/**
 	 * Adapts the absolute position of the content when height is set.
 	 * @private
@@ -336,8 +336,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called in browsers not supporting the FlexBox layout whenever the Panel size is changing. This method registers a delayed reaction to the size changes.
 	 * When there are further size changes during this delay, the delay starts from zero. So the Panel is not adapted during the resize, but only after resizing has
@@ -348,14 +348,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (this._resizeDelayTimer) {
 			jQuery.sap.clearDelayedCall(this._resizeDelayTimer);
 		}
-	
+
 		this._resizeDelayTimer = jQuery.sap.delayedCall(200, this, function() {
 			this._handleResizeNow();
 			this._resizeDelayTimer = null;
 		});
 	};
-	
-	
+
+
 	/**
 	 * Called in browsers not supporting the FlexBox layout whenever the Panel size has changed and the header layout finally needs to be adapted.
 	 * Basically this method imitates that layout's behavior.
@@ -366,21 +366,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		// whenever the Panel width changes
 		if (!jQuery.support.flexBoxLayout && this.getDomRef()) {
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 			/* Algorithm:
 			 * 1. calculate space available for the two elements
 			 * 2. if no toolbar is present, apply this width to the title, else:
 			 * 3.   reduce toolbar width until maxBtnSize is reached, then reduce title width until minimum (do not make either any smaller; the Panel has a min-width anyway)
 			 * 4.   apply these widths
 			 */
-	
+
 			// begin of Panel to begin of Title
 			var beginBorderOfTitle = this._oTitleDomRef.offsetLeft; // displacement of the beginning of the title from the Panel border
 			var totalWidth = this.getDomRef().offsetWidth;
 			if (bRtl) {
 				beginBorderOfTitle = totalWidth - (beginBorderOfTitle + this._oTitleDomRef.offsetWidth); // RTL case
 			}
-	
+
 			// begin of Panel to begin if "RightItems"
 			var beginBorderOfRightItems = 10000;
 			jQuery(this._oHeaderDomRef).children(".sapUiPanelHdrRightItem").each(function(){
@@ -392,11 +392,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					beginBorderOfRightItems = begin;
 				}
 			});
-	
+
 			var availableSpace = (beginBorderOfRightItems == 10000) ?
 						this.$().width() - beginBorderOfTitle - 20
 					: beginBorderOfRightItems - beginBorderOfTitle - 10;
-	
+
 			var aButtons = this.getButtons();
 			if (aButtons && aButtons.length > 0) { // there are title and toolbar; calculate and set both sizes
 				// differentiate between two cases: 1. there is enough space for title plus minimum toolbar width
@@ -411,18 +411,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					this._oToolbarDomRef.style.width = this._iMaxTbBtnWidth + "px";
 					this._oTitleDomRef.style.width = Math.max((availableSpace - this._iMaxTbBtnWidth - this._iTbMarginsAndBorders), this._iMinTitleWidth) + "px";
 				}
-	
+
 			} else {
 				// no toolbar
 				this._oTitleDomRef.style.width = Math.max(availableSpace, this._iMinTitleWidth) + "px";
 			}
 		}
-	
+
 		// in case the resizing caused button wrapping, adapt content height -- FOR ALL BROWSERS!
 		this._fixContentHeight();
 	};
-	
-	
+
+
 	/**
 	 * Helper method to find out whether the Panel has an icon.
 	 * @private
@@ -430,9 +430,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Panel.prototype._hasIcon = function() {
 		return (this.getTitle() && this.getTitle().getIcon());
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Property setter for the "enabled" state
 	 *
@@ -446,8 +446,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		jQuery(this.getDomRef()).toggleClass("sapUiPanelDis", !bEnabled);
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Property setter for the padding
 	 *
@@ -460,8 +460,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		jQuery(this.getDomRef()).toggleClass("sapUiPanelWithPadding", bPadding);
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Property setter for the "collapsed" state
 	 *
@@ -474,8 +474,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._setCollapsedState(bCollapsed); // adapt rendered control without complete re-rendering
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Internal method for applying a (non-)"collapsed" state to the rendered HTML
 	 *
@@ -504,7 +504,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				var sExpandTooltip = this._rb.getText("PANEL_EXPAND");
 				this.$("collArrow").attr("title", sExpandTooltip);
 				this.$("collIco").attr("title", sExpandTooltip);
-	
+
 			} else {
 				// expanding
 				if (!this.getDomRef("cont")) {
@@ -531,8 +531,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Static method that finds out whether the given CSS size is actually set.
 	 * Returns "true" for absolute and relative sizes, returns "false" if "null", "inherit" or "auto" is given.
@@ -544,7 +544,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Panel._isSizeSet = function(sCssSize) {
 		return (sCssSize && !(sCssSize == "auto") && !(sCssSize == "inherit"));
 	};
-	
+
 	// API method
 	Panel.prototype.setTitle = function(oTitle) {
 		var oOldTitle = this.getTitle();
@@ -556,7 +556,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
+
 	// API method
 	Panel.prototype.setText = function(sText) {
 		if (!this.getTitle()) {
@@ -566,7 +566,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
+
 	// API method
 	Panel.prototype.getText = function () {
 		if (!this.getTitle()) {
@@ -575,8 +575,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return this.getTitle().getText();
 		}
 	};
-	
-	
+
+
 	/**
 	 * Returns the scroll position of the panel in pixels from the left. Returns 0 if not rendered yet.
 	 * Also internally updates the control property.
@@ -595,11 +595,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			jQuery.sap.assert(typeof scrollLeft == "number", "scrollLeft read from DOM should be a number");
 			this.setProperty("scrollLeft", scrollLeft, true);
 		}
-	
+
 		return scrollLeft;
 	};
-	
-	
+
+
 	/**
 	 * Sets the scroll position of the panel in pixels from the left.
 	 *
@@ -618,8 +618,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Returns the scroll position of the panel in pixels from the top. Returns 0 if not rendered yet.
 	 * Also internally updates the control property.
@@ -633,11 +633,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			scrollTop = this._oScrollDomRef.scrollTop;
 			this.setProperty("scrollTop", scrollTop, true);
 		}
-	
+
 		return scrollTop;
 	};
-	
-	
+
+
 	/**
 	 * Sets the scrolls position of the panel in pixels from the top.
 	 *
@@ -652,8 +652,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Sets the dimensions of the panel.
 	 *
@@ -669,8 +669,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.setHeight(sHeight);
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Sets the width of the panel.
 	 *
@@ -686,8 +686,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Sets the height of the panel.
 	 *
@@ -703,11 +703,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
-	
-	
+
+
+
 	/*   Event Handling   */
-	
+
 	/**
 	 * Handles mouse clicks
 	 *
@@ -717,7 +717,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Panel.prototype.onclick = function(oEvent) {
 		this._handleTrigger(oEvent);
 	};
-	
+
 	/**
 	 * Handles "space" presses
 	 *
@@ -727,7 +727,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Panel.prototype.onsapspace = function(oEvent) {
 		this._handleTrigger(oEvent);
 	};
-	
+
 	/**
 	 * Handles any "triggering" actions like click and space
 	 *
@@ -747,7 +747,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.fireEvent("collapsedToggled"); //private event used in ResponsiveLayout
 		}
 	};
-	
+
 
 	return Panel;
 

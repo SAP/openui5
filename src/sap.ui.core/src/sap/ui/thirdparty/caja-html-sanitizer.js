@@ -794,7 +794,7 @@ if (typeof window !== 'undefined') {
 
 /**
  * A lexical scannar for CSS3 as defined at http://www.w3.org/TR/css3-syntax .
- * 
+ *
  * @author Mike Samuel <mikesamuel@gmail.com>
  * \@provides lexCss, decodeCss
  * \@overrides window
@@ -831,7 +831,7 @@ var decodeCss;
       return s[1];
     }
   }
-   
+
   /**
    * Returns an equivalent CSS string literal given plain text: foo -> "foo".
    * @private
@@ -1231,7 +1231,7 @@ var sanitizeCssProperty = (function () {
         ? ((propBits & CSS_PROP_BIT_QUANTITY)
           ? ((propBits & CSS_PROP_BIT_Z_INDEX)
             ? (token.match(/^\d{1,7}$/) ? token : '')
-            : token) 
+            : token)
           : '')
         // Normalize quantities so they don't start with a '.' or '+' sign and
         // make sure they all have an integer component so can't be confused
@@ -1555,7 +1555,7 @@ var sanitizeStylesheet = (function () {
               atIdent = null;  // Elide the block.
             }
             elide = !atIdent;
-            blockStack.push(atIdent);              
+            blockStack.push(atIdent);
           },
           endAtrule: function () {
             var atIdent = blockStack.pop();
@@ -1593,7 +1593,7 @@ var sanitizeStylesheet = (function () {
                 if (!selector) {
                   // If we have only history sensitive selectors,
                   // use an impossible rule so that we can capture the content
-                  // for later processing by 
+                  // for later processing by
                   // history insenstive content for use below.
                   selector = 'head > html';
                   removeHistoryInsensitiveSelectors = true;
@@ -1654,7 +1654,7 @@ var sanitizeStylesheet = (function () {
           }
         });
     function checkElide() {
-      elide = blockStack.length !== 0 
+      elide = blockStack.length !== 0
           && blockStack[blockStack.length-1] !== null;
     }
     return safeCss.join('');
@@ -1708,7 +1708,7 @@ if (typeof window !== 'undefined') {
  * // Calls to contents elided.  Probably selectors and declarations as below.
  * handler.endBlock();
  * handler.endAtrule();
- * 
+ *
  * // For a ruleset: p.clazz q, s { color: blue; }
  * handler.startRuleset(['p', '.', 'clazz', ' ', 'q', ',', ' ', 's']);
  * handler.declaration('color', ['blue']);
@@ -1738,7 +1738,7 @@ var parseCssStylesheet;
 /**
  * parseCssDeclarations parses a run of declaration productions as seen in the
  * body of the HTML5 {@code style} attribute.
- * 
+ *
  * @param {string} cssText CSS3 content to parse as a run of declarations.
  * @param {Object} handler An object like <pre>{
  *   declaration: function (property, valueArray) { ... },
@@ -1763,7 +1763,7 @@ var parseCssDeclarations;
     if (i < n) {
       var tok = toks[i];
       if (tok.charAt(0) === '@') {
-        return atrule(toks, i, n, handler, true);  
+        return atrule(toks, i, n, handler, true);
       } else {
         return ruleset(toks, i, n, handler);
       }
@@ -1792,7 +1792,7 @@ var parseCssDeclarations;
         handler.endAtrule();
       }
     }
-    // Else we reached end of input or are missing a semicolon. 
+    // Else we reached end of input or are missing a semicolon.
     // Drop the rule on the floor.
     return i;
   }
@@ -1915,7 +1915,7 @@ var parseCssDeclarations;
   // value       : [ any | block | ATKEYWORD S* ]+;
   function declaration(toks, i, n, handler) {
     var property = toks[i++];
-    if (!ident.test(property)) { 
+    if (!ident.test(property)) {
       return i+1;  // skip one token.
     }
     var tok;
@@ -2177,7 +2177,7 @@ html4.ATTRIBS = {
 	'command::disabled': 0, //NONE new
 	'command::icon': 1, //URI new
 	'command::label': 0, //NONE new
-	'command::radiogroup': 0, //NONE new		
+	'command::radiogroup': 0, //NONE new
 	'command::type': 0, //NONE new
 	'del::cite': 1, //URI
 	'del::datetime': 0, //NONE
@@ -2605,7 +2605,7 @@ html4.URIEFFECTS = {
 //---------------------	 'body::background': 1,
 	'button::formaction': 2, //NEW_DOCUMENT new
 	'command::icon': 1, //SAME_DOCUMENT new
-	'del::cite': 0, //NOT_LOADED	
+	'del::cite': 0, //NOT_LOADED
 	'embed::src': 1, //SAME_DOCUMENT new
 	'form::action': 2, //NEW_DOCUMENT
 	'html:: manifest': 1, //SAME_DOCUMENT new
@@ -2616,7 +2616,7 @@ html4.URIEFFECTS = {
 	'ins::cite': 0, //NOT_LOADED
 	'link::href': 2, //NEW_DOCUMENT new
 	'object::data': 1, //SAME_DOCUMENT new
-	'q::cite': 0, //NOT_LOADED	
+	'q::cite': 0, //NOT_LOADED
 	'script::src': 1, //SAME_DOCUMENT new
 	'source::src': 1, //SAME_DOCUMENT new
 	'track::src': 1, //SAME_DOCUMENT new
@@ -2677,7 +2677,7 @@ html4.LOADERTYPES = {
  * <p>
  * The HTML sanitizer is built around a SAX parser and HTML element and
  * attributes schemas.
- * 
+ *
  * If the cssparser is loaded, inline styles are sanitized using the
  * css property and value schemas.  Else they are remove during
  * sanitization.
@@ -2988,7 +2988,7 @@ var html = (function(html4) {
         switch (current) {
         case '&':
           if (ENTITY_RE.test(next)) {
-            if (h.pcdata) { 
+            if (h.pcdata) {
               h.pcdata('&' + next, param, continuationMarker,
                 continuationMaker(h, parts, pos, state, param));
             }
@@ -3121,22 +3121,22 @@ var html = (function(html4) {
           if (state.noMoreGT) {
             if (h.pcdata) {
               h.pcdata('&lt;?', param, continuationMarker,
-                continuationMaker(h, parts, pos, state, param)); 
+                continuationMaker(h, parts, pos, state, param));
             }
           }
           break;
         case '>':
           if (h.pcdata) {
             h.pcdata("&gt;", param, continuationMarker,
-              continuationMaker(h, parts, pos, state, param)); 
+              continuationMaker(h, parts, pos, state, param));
           }
           break;
         case '':
           break;
         default:
           if (h.pcdata) {
-            h.pcdata(current, param, continuationMarker, 
-              continuationMaker(h, parts, pos, state, param)); 
+            h.pcdata(current, param, continuationMarker,
+              continuationMaker(h, parts, pos, state, param));
           }
           break;
         }
@@ -3175,7 +3175,7 @@ var html = (function(html4) {
     if (tag.eflags !== void 0) {
       if (h.endTag) {
         h.endTag(tag.name, param, continuationMarker,
-          continuationMaker(h, parts, pos, state, param)); 
+          continuationMaker(h, parts, pos, state, param));
       }
     }
     return tag.next;
@@ -3186,9 +3186,9 @@ var html = (function(html4) {
     // drop unclosed tags
     if (!tag) { return parts.length; }
     if (tag.eflags !== void 0) {
-      if (h.startTag) { 
+      if (h.startTag) {
         h.startTag(tag.name, tag.attrs, param, continuationMarker,
-          continuationMaker(h, parts, tag.next, state, param)); 
+          continuationMaker(h, parts, tag.next, state, param));
       }
       // tags like <script> and <textarea> have special parsing
       if (tag.eflags & EFLAGS_TEXT) {
@@ -3216,14 +3216,14 @@ var html = (function(html4) {
     if (p < end) { p -= 1; }
     var buf = parts.slice(first, p).join('');
     if (tag.eflags & html4.eflags.CDATA) {
-      if (h.cdata) { 
+      if (h.cdata) {
         h.cdata(buf, param, continuationMarker,
-          continuationMaker(h, parts, p, state, param)); 
+          continuationMaker(h, parts, p, state, param));
       }
     } else if (tag.eflags & html4.eflags.RCDATA) {
       if (h.rcdata) {
-        h.rcdata(normalizeRCData(buf), param, continuationMarker, 
-          continuationMaker(h, parts, p, state, param)); 
+        h.rcdata(normalizeRCData(buf), param, continuationMarker,
+          continuationMaker(h, parts, p, state, param));
       }
     } else {
       throw new Error('bug');

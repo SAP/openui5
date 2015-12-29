@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 		return sXMLString;
 	};
-	
+
 	jQuery.sap.isEqualNode = function(oNode1, oNode2) {
 		if (oNode1 === oNode2) {
 			return true;

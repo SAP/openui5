@@ -11,7 +11,7 @@
 		icon="{img>/icon/ui5}">
 		<headerContent>
 			<Button
-				icon="sap-icon://favorite-list" 
+				icon="sap-icon://favorite-list"
 				tooltip="Show Favorites"
 				press="toFavorite">
 			</Button>

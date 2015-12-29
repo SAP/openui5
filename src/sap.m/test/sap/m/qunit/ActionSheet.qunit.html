@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.ActionSheet</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -15,7 +15,7 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
+
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -93,7 +93,7 @@
 
 			test("Initialization", function() {
 				ok(!jQuery.sap.domById("actionsheet"), "ActionSheet is not rendered before it's ever opened.");
-			});	
+			});
 
 			module("Open and Close - with Title and Cancel Button");
 
@@ -120,7 +120,7 @@
 					}else{
 						ok($cancelButton[0], "Cancel button is rendered");
 					}
-					
+
 				}, 50);
 			});
 
@@ -144,7 +144,7 @@
 					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
 					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
-					
+
 					if(!sap.ui.Device.system.phone){
 						ok(!($header[0]), "Title is always ignored in iPad");
 					}else{
@@ -156,7 +156,7 @@
 
 			asyncTest("Close ActionSheet", function(){
 				expect(3);
-				
+
 				oActionSheet.close();
 			});
 
@@ -176,9 +176,9 @@
 					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
 					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
-					
+
 					ok(!($header[0]), "There is no title because title property is set to null");
-					
+
 					if(!sap.ui.Device.system.phone){
 						ok(!($cancelButton[0]), "Cancel button is never rendered in iPad");
 					}else{
@@ -208,7 +208,7 @@
 					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
 					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
 					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
-					
+
 					ok(!($header[0]), "There is no title because title property is set to null");
 					ok(!($cancelButton[0]), "showCancelButton is set to false, there is no cancel button");
 				}, 50);
@@ -304,7 +304,7 @@
 				equal(oAC._parent.getParent(), page, "Popup of ActionSheet should be aggregated by the former parent of ActionSheet");
 
 			});
-			
+
 			module("keyboard handling")
 
 			asyncTest('PageDown keyboard handling mobile phone', function(){
@@ -314,7 +314,7 @@
 						start();
 						return;
 				}
-				
+
 				var oSystem = {
 						desktop: false,
 						phone: true,
@@ -329,7 +329,7 @@
 						oActionSheet.openBy(this);
 					}
 				});
-				
+
 				var oActionSheet = new sap.m.ActionSheet({
 					showCancelButton: true,
 					buttons: [
@@ -366,34 +366,34 @@
 						})
 					]
 				});
-				
+
 				page.addContent(oButton);
 				sap.ui.getCore().applyChanges();
 				oButton.firePress();
-				
+
 				setTimeout(function(){
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 
 					ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
-					
+
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
 					start();
 					oActionSheet.close();
-					
+
 					oButton.destroy();
 					oActionSheet.destroy();
 				}, 500)
-			}); 
-			
+			});
+
 			asyncTest('PageDown keyboard handling desktop', function(){
 				var oSystem = {
 						desktop: true,
 						phone: false
 				};
-				
+
 				this.stub(sap.ui.Device, "system", oSystem);
 				expect(2);
 				var oButton = new sap.m.Button({
@@ -402,7 +402,7 @@
 						oActionSheet.openBy(this);
 					}
 				});
-				
+
 				var oActionSheet = new sap.m.ActionSheet({
 					showCancelButton: true,
 					buttons: [
@@ -439,30 +439,30 @@
 						})
 					]
 				});
-				
+
 				page.addContent(oButton);
 				sap.ui.getCore().applyChanges();
 				oButton.firePress();
-				
+
 				setTimeout(function(){
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 
 					ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
-					
+
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
-					
+
 					ok(jQuery.sap.byId('oButton7').is(":focus"), 'The 7th button should be focused');
-					
+
 					start();
 					oActionSheet.close();
-					
+
 					oButton.destroy();
 					oActionSheet.destroy();
 				}, 500)
 			});
-			
+
 			asyncTest('PageUp keyboard handling', function(){
 				expect(2);
 				var oButton = new sap.m.Button({
@@ -471,7 +471,7 @@
 						oActionSheet.openBy(this);
 					}
 				});
-				
+
 				var oActionSheet = new sap.m.ActionSheet({
 					showCancelButton: true,
 					buttons: [
@@ -509,32 +509,32 @@
 						})
 					]
 				});
-				
+
 				page.addContent(oButton);
 				sap.ui.getCore().applyChanges();
 				oButton.firePress();
-				
+
 				setTimeout(function(){
 					jQuery.sap.byId('oButton7').focus();
-					
+
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
 
 					ok(jQuery.sap.byId('oButton2').is(":focus"), 'The 2nd button should be focused');
-					
+
 					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
 					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
 
 					ok(jQuery.sap.byId('oButton1').is(":focus"), 'The first button should be focused');
 					start();
 					oActionSheet.close();
-					
+
 					oButton.destroy();
 					oActionSheet.destroy();
 				}, 500)
-		
+
 			});
-			
+
 			QUnit.done(function() {
 				// hide the content so that the QUnit results can be seen
 				jQuery("#content").css('height', '0');

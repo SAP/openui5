@@ -289,12 +289,12 @@
 		var oJQV = Version(jQuery.fn.jquery);
 		// the fix will only be applied to jQuery >= 1.11.0 (only for jQuery 1.x)
 		if (window.ActiveXObject !== undefined && oJQV.getMajor() == 1 && oJQV.getMinor() >= 11) {
-			var fnCreateStandardXHR = function() { 
+			var fnCreateStandardXHR = function() {
 				try {
 					return new window.XMLHttpRequest();
 				} catch (e) { /* ignore */ }
 			};
-			var fnCreateActiveXHR = function() { 
+			var fnCreateActiveXHR = function() {
 				try {
 					return new window.ActiveXObject("Microsoft.XMLHTTP");
 				} catch (e) { /* ignore */ }
@@ -361,7 +361,7 @@
 			/*eslint-disable no-debugger */
 			debugger;
 		}
-		
+
 		// Check local storage for booting a different core
 		var sRebootUrl;
 		try { // Necessary for FF when Cookies are disabled
@@ -385,13 +385,13 @@
 				});
 				sScript += "></script>";
 				oScript.parentNode.removeChild(oScript);
-	
+
 				// clean up cachebuster stuff
 				jQuery("#sap-ui-bootstrap-cachebusted").remove();
 				window["sap-ui-config"] && window["sap-ui-config"].resourceRoots && (window["sap-ui-config"].resourceRoots[""] = undefined);
-	
+
 				document.write(sScript);
-				
+
 				// now this core commits suicide to enable clean loading of the other core
 				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and rebooting from: " + sRebootUrl);
 				oRestart.name = "Restart";
@@ -572,10 +572,10 @@
 	/**
 	 * Sets the URL to reboot this app from, the next time it is started. Only works with localStorage API available
 	 * (and depending on the browser, if cookies are enabled, even though cookies are not used).
-	 * 
+	 *
 	 * @param sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
-	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared 
-	 * 
+	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared
+	 *
 	 * @private
 	 */
 	jQuery.sap.setReboot = function(sRebootUrl) { // null-ish clears the reboot request
@@ -587,11 +587,11 @@
 		try {
 			if (sRebootUrl) {
 				window.localStorage.setItem("sap-ui-reboot-URL", sRebootUrl); // remember URL to reboot from
-				
+
 				/*eslint-disable no-alert */
 				alert("Next time this app is launched (only once), it will load UI5 from:\n" + sRebootUrl + ".\nPlease reload the application page now.");
 				/*eslint-enable no-alert */
-				
+
 			} else {
 				window.localStorage.removeItem("sap-ui-reboot-URL"); // clear reboot URL, so app will start normally
 			}
@@ -1472,13 +1472,13 @@
 
 			mPreloadModules = {},
 
-		/* for future use 
+		/* for future use
 		/**
 		 * Mapping from default AMD names to UI5 AMD names.
-		 * 
-		 * For simpler usage in requireModule, the names are already converted to 
+		 *
+		 * For simpler usage in requireModule, the names are already converted to
 		 * normalized resource names.
-		 *     
+		 *
 		 * /
 			mAMDAliases = {
 				'blanket.js': 'sap/ui/thirdparty/blanket.js',
@@ -1503,14 +1503,14 @@
 
 		/**
 		 * Information about third party modules that are delivered with the sap.ui.core library.
-		 * 
-		 * The information maps the name of the module (including extension '.js') to an info object with the 
-		 * following properties: 
-		 * 
+		 *
+		 * The information maps the name of the module (including extension '.js') to an info object with the
+		 * following properties:
+		 *
 		 * <ul>
-		 * <li>amd:boolean : whether the module uses an AMD loader if present. UI5 will disable the AMD loader while loading 
+		 * <li>amd:boolean : whether the module uses an AMD loader if present. UI5 will disable the AMD loader while loading
 		 *              such modules to force the modules to expose their content via global names.</li>
-		 * <li>exports:string[]|string : global name (or names) that are exported by the module. If one ore multiple names are defined, 
+		 * <li>exports:string[]|string : global name (or names) that are exported by the module. If one ore multiple names are defined,
 		 *              the first one will be read from the global object and will be used as value of the module.</li>
 		 * <li>deps:string[] : list of modules that the module depends on. The modules will be loaded first before loading the module itself.</li>
 		 * </ul>
@@ -1542,7 +1542,7 @@
 					amd: true,
 					exports: 'OData' // 'datajs'
 				},
-				'sap/ui/thirdparty/es6-promise.js' : { 
+				'sap/ui/thirdparty/es6-promise.js' : {
 					amd: true,
 					exports: 'ES6Promise'
 				},
@@ -1631,7 +1631,7 @@
 					exports: 'UNorm', // really 'UNorm'! module extends UNorm
 					deps: ['sap/ui/thirdparty/unorm.js']
 				},
-				'sap/ui/thirdparty/URI.js' : { 
+				'sap/ui/thirdparty/URI.js' : {
 					amd: true,
 					exports: 'URI'
 				},
@@ -1647,7 +1647,7 @@
 					exports: 'Scroller' // 'requestAnimationFrame', 'cancelRequestAnimationFrame', 'core'
 				},
 				'sap/ui/demokit/js/esprima.js' : {
-					amd: true, 
+					amd: true,
 					exports: 'esprima'
 				}
 			},
@@ -1810,10 +1810,10 @@
 		 * Resolves relative module names that contain <code>./</code> or <code>../</code> segments to absolute names.
 		 * E.g.: A name <code>../common/validation.js</code> defined in <code>sap/myapp/controller/mycontroller.controller.js</code>
 		 * may resolve to <code>sap/myapp/common/validation.js</code>.
-		 * 
-		 * When sBaseName is <code>null</code>, relative names are not allowed (e.g. for a <code>sap.ui.require</code> call) 
+		 *
+		 * When sBaseName is <code>null</code>, relative names are not allowed (e.g. for a <code>sap.ui.require</code> call)
 		 * and their usage results in an error being thrown.
-		 * 
+		 *
 		 * @param {string|null} sBaseName name of a reference module
 		 * @param {string} sModuleName the name to resolve
 		 * @returns {string} resolved name
@@ -1825,23 +1825,23 @@
 				aSegments,
 				sSegment,
 				i,j,l;
-			
+
 			// check whether the name needs to be resolved at all - if not, just return the sModuleName as it is.
 			if ( !m ) {
 				return sModuleName;
 			}
-			
+
 			// if the name starts with a relative segments then there must be a base name (a global sap.ui.require doesn't support relative names)
 			if ( m.index === 0 && sBaseName == null ) {
 				throw new Error("relative name not supported ('" + sModuleName + "'");
 			}
-			
+
 			// if relative name starts with a dot segment, then prefix it with the base path
 			aSegments = (m.index === 0 ? sBaseName + sModuleName : sModuleName).split('/');
-			
+
 			// process path segments
 			for (i = 0, j = 0, l = aSegments.length; i < l; i++) {
-				
+
 				var sSegment = aSegments[i];
 
 				if ( rDotSegment.test(sSegment) ) {
@@ -1901,10 +1901,10 @@
 		}
 
 		function requireModule(sModuleName) {
-			
+
 			// TODO enable when preload has been adapted:
 			// sModuleName = mAMDAliases[sModuleName] || sModuleName;
-			
+
 			var m = rJSSubtypes.exec(sModuleName),
 				oShim = mAMDShim[sModuleName],
 				sBaseName, sType, oModule, aExtensions, i;
@@ -1926,7 +1926,7 @@
 					requireModule(oShim.deps[i]);
 				}
 			}
-			
+
 			// in case of having a type specified ignore the type for the module path creation and add it as file extension
 			sBaseName = sModuleName.slice(0, m.index);
 			sType = m[0]; // must be a normalized resource name of type .js sType can be empty or one of view|controller|fragment
@@ -2513,16 +2513,16 @@
 		 *
 		 *   });
 		 * </pre>
-		 * 
+		 *
 		 * In another module or in an application HTML page, the {@link sap.ui.require} API can be used
 		 * to load the Something module and to work with it:
-		 * 
+		 *
 		 * <pre>
 		 * sap.ui.require(['sap/mylib/Something'], function(Something) {
-		 * 
-		 *   // instantiate a Something and call foo() on it 
+		 *
+		 *   // instantiate a Something and call foo() on it
 		 *   new Something().foo();
-		 *   
+		 *
 		 * });
 		 * </pre>
 		 *
@@ -2683,7 +2683,7 @@
 		 *     The exact details of how this works might be changed in future implementations and are not
 		 *     yet part of the API contract</li>
 		 * </ul>
-		 * @param {string} [sModuleName] name of the module in simplified resource name syntax. 
+		 * @param {string} [sModuleName] name of the module in simplified resource name syntax.
 		 *        When omitted, the loader determines the name from the request.
 		 * @param {string[]} [aDependencies] list of dependencies of the module
 		 * @param {function|any} vFactory the module value or a function that calculates the value
@@ -2707,13 +2707,13 @@
 				aDependencies = sModuleName;
 				sResourceName = _execStack[_execStack.length - 1];
 			}
-			
+
 			// convert module name to UI5 module name syntax (might fail!)
 			sModuleName = urnToUI5(sResourceName);
-			
-			// calculate the base name for relative module names 
+
+			// calculate the base name for relative module names
 			sBaseName = sResourceName.slice(0, sResourceName.lastIndexOf('/') + 1);
-			
+
 			// optional array of dependencies
 			if ( !jQuery.isArray(aDependencies) ) {
 				// shift parameters
@@ -2738,7 +2738,7 @@
 
 				if ( bExport ) {
 					// ensure parent namespace
-					var sPackage = sResourceName.split('/').slice(0,-1).join('.'); 
+					var sPackage = sResourceName.split('/').slice(0,-1).join('.');
 					if ( sPackage ) {
 						jQuery.sap.getObject(sPackage, 0);
 					}
@@ -3128,11 +3128,11 @@
 			if ( mOptions.async ) {
 				return Promise.resolve(oDeferred);
 			}
-			
+
 			if ( oError != null && mOptions.failOnError ) {
 				throw oError;
 			}
-			
+
 			return oData;
 		};
 

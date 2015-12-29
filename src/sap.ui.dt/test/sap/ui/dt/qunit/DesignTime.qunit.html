@@ -29,7 +29,7 @@
 		<script type="text/javascript">
 
 			jQuery.sap.require("sap.ui.dt.Overlay");
-			jQuery.sap.require("sap.ui.dt.OverlayRegistry");			
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			jQuery.sap.require("sap.ui.dt.DesignTime");
 
 			QUnit.module("Given that an DesignTime is created for a root control", {
@@ -134,7 +134,7 @@
 
 				oOverlay.setSelectable(true);
 				oOverlay.setSelected(true);
-			});			
+			});
 
 			QUnit.module("Given that an DesignTime is created for two root controls", {
 				beforeEach : function() {
@@ -206,7 +206,7 @@
 							},
 							rootElements : [that.oButton]
 						});
-						
+
 						done();
 					});
 
@@ -245,7 +245,7 @@
 					rootElements : [this.oOuterLayout]
 				});
 				sap.ui.getCore().applyChanges();
-			};		
+			};
 
 			var isOverlayForElementInDesignTime = function(oElement, oDesignTime) {
 				var bResult = false;

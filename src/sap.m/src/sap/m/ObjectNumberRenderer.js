@@ -8,13 +8,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * ObjectNumber renderer. 
+	 * ObjectNumber renderer.
 	 * @namespace
 	 */
 	var ObjectNumberRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -111,17 +111,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 					sARIAStateText = oRB.getText("OBJECTNUMBER_ARIA_VALUE_STATE_SUCCESS");
 					break;
 			}
-			
+
 			oRm.write(sARIAStateText);
 			oRm.write("</span>"); // Hidden state ends
 		}
 
 		oRm.write("</div>"); // Number ends
 	};
-	
+
 	/**
 	 * Gets text alignment by calling the Renderer function getTextAlign
-	 * 
+	 *
 	 * @param {sap.ui.core.TextAlign}
 	 *            sTextAlign text align
 	 * @param {sap.ui.core.TextDirection}
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		return sTextAlign;
 	};
-	
+
 	return ObjectNumberRenderer;
 
 }, /* bExport= */ true);

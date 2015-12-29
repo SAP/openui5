@@ -1022,7 +1022,7 @@ sap.ui.define([
 		this.write(sPlaceholderHtml);
 		return this;
 	};
-	
+
 	/**
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of a element

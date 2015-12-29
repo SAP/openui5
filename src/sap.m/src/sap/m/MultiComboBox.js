@@ -708,22 +708,22 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 		return oDialog;
 	};
-	
+
 	/**
 	 * Required adaptations after rendering of the Popover.
-	 * 
+	 *
 	 * @private
 	 */
 	MultiComboBox.prototype._onAfterRenderingPopover = function() {
 		var oPopover = this.getPicker();
-	
+
 		// remove the Popover arrow
 		oPopover._removeArrow();
-	
+
 		// position adaptations
 		oPopover._setPosition();
 	};
-	
+
 	/**
 	 * Decorate a Popover instance by adding some private methods.
 	 *
@@ -732,7 +732,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 */
 	MultiComboBox.prototype._decoratePopover = function(oPopover) {
 		var that = this;
-	
+
 		// adding additional capabilities to the Popover
 		oPopover._removeArrow = function() {
 			this._marginTop = 0;
@@ -742,15 +742,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			this._arrowOffset = 0;
 			this._offsets = ["0 0", "0 0", "0 0", "0 0"];
 		};
-	
+
 		oPopover._setPosition = function() {
 			this._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
 			this._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
 		};
-	
+
 		oPopover._setArrowPosition = function() {
 		};
-	
+
 		oPopover.open = function() {
 			var oDomRef = jQuery(that.getDomRef());
 			var oBorder = oDomRef.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "Border");

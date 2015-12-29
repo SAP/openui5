@@ -197,7 +197,7 @@
 		this.oUploadCollectionItem.removeAllAggregation(dummyName);
 		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation.length, 2, "2 attributes still available");
-		
+
 		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation.length, 3, "3 deprecated attributes still available");
 	});
@@ -222,7 +222,7 @@
 		this.oUploadCollectionItem.setContributor("deprecatedContributor");
 		this.oUploadCollectionItem.setUploadedDate("deprecatedDate");
 		this.oUploadCollectionItem.setFileSize(555);
-		
+
 		this.oUploadCollectionItem.addAggregation("attributes", new sap.m.ObjectAttribute({
 			active : false,
 			text : "someAttribute"

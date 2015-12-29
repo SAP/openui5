@@ -28,7 +28,7 @@
 			<Column>
 				<Text text="Description" />
 			</Column>
-			
+
 		</columns>
 		<items>
 			<ColumnListItem vAlign="Middle" type="Navigation">

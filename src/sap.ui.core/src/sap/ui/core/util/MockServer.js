@@ -3291,7 +3291,7 @@ sap.ui
 
 			window.sinon.FakeXMLHttpRequest.useFilters = true;
 
-			// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage 
+			// In case of <=IE9 UI5 enables the CORS support in jQuery to allow the usage
 			// of jQuery.ajax function / sinon also needs to be synchronized with this
 			// adoption by applying the CORS support flag from jQuery to sinon!
 			window.sinon.xhr.supportsCORS = jQuery.support.cors;

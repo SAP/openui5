@@ -2495,7 +2495,7 @@ function appendToolbar() {
 	}
 }
 
-// ### BEGIN MODIFIED BY SAP 
+// ### BEGIN MODIFIED BY SAP
 // implements fix in pull request 732
 function appendHeader() {
 	var header = id( "qunit-header" );

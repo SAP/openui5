@@ -3,14 +3,14 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 
-		'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object', 
-		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', 
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
+		'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object',
+		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager',
 		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
-	function(jQuery, Device, Global, 
-		DataType, EventProvider, BaseObject, 
-		Component, Configuration, Control, Element, ElementMetadata, FocusHandler, 
+	function(jQuery, Device, Global,
+		DataType, EventProvider, BaseObject,
+		Component, Configuration, Control, Element, ElementMetadata, FocusHandler,
 		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
 		/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
 
@@ -893,7 +893,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		log.info("Plugins started",null,METHOD);
 
 		this._createUIAreas();
-		
+
 		this.oThemeCheck.fireThemeChangedEvent(true);
 
 		this._executeOnInit();
@@ -2254,7 +2254,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the template for the given id
 	 * @public
-	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead. 
+	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead.
 	 */
 	Core.prototype.getTemplate = function(sId) {
 		jQuery.sap.require("sap.ui.core.tmpl.Template");

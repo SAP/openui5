@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.FormattedTextView
   Author: D034262
 -->
@@ -43,7 +43,7 @@
 		href: "mailto:test.me@sap.com"
 	});
 	oFTV.addControl(oLink);
-	
+
 	var oLink2 = new sap.ui.commons.Link("l2", {
 		text: "Test me too",
 		tooltip: "This will send a mail to test.me@sap.com",
@@ -77,21 +77,21 @@
 	oFTV3.placeAt("uiArea3");
 
 	module("Appearance");
-	
+
 	test("Visibility", function() {
 		// Visible
 		ok(jQuery("#textView1").get(0), "Visible, expected defined");
 		equals(jQuery("#textView1-__clone0").get(0), undefined, "Invisible");
 	});
-	
+
 	test("Placeholders", function(){
 		var placeHolderPattern = new RegExp("\<embed data-index=\"([0-9]*[0-9])\">", "gim");
 		var oTVDom = jQuery.sap.domById('textView1');
 		var renderedText = jQuery(oTVDom).text();
 		ok((placeHolderPattern.exec(renderedText) == null), "All placeholders correctly replaced");
-		
+
 	});
-	
+
 	test("Sanitizing", function(){
 		var goodText = 'Within this formatted text view, sanitizing is tested. You should not see anything but empty space between START and END below this sentence.<br>';
 		var evilText = goodText + 'START ' + '<img src="http://www.sap.com/global/images/SAPLogo.gif">'; // <p> is now alloed in FTV + '&lt;p&gt;Here is an XSS attack that alerts "XSS attack"&lt;/p&gt;';
@@ -106,7 +106,7 @@
 		var deliveredText = jQuery(jQuery.sap.domById('textView3')).html().toLowerCase();
 		equal(deliveredText, goodText, "Text has been sanitized");
 	});
-	
+
 
 	test("Invalid Controls", function(){
 		var controlAdded = true;

@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	/**
 	 * Constructor for a new Input.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 * Only used if type=date and no datepicker is available.
 			 * The data is displayed and the user input is parsed according to this format.
 			 * NOTE: The value property is always of the form RFC 3339 (YYYY-MM-dd).
-			 * @deprecated Since version 1.9.1. 
+			 * @deprecated Since version 1.9.1.
 			 * sap.m.DateTimeInput should be used for date/time inputs and formating.
 			 */
 			dateFormat : {type : "string", group : "Misc", defaultValue : 'YYYY-MM-dd', deprecated: true},
@@ -93,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 			/**
 			 * For tabular suggestions, this flag will show/hide the button at the end of the suggestion table that triggers the event "valueHelpRequest" when pressed. The default value is true.
-			 * 
+			 *
 			 * NOTE: If suggestions are not tabular or no suggestions are used, the button will not be displayed and this flag is without effect.
 			 * @since 1.22.1
 			 */
@@ -122,13 +122,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			 * SuggestItems are the items which will be shown in the suggestion popup. Changing this aggregation (by calling addSuggestionItem, insertSuggestionItem, removeSuggestionItem, removeAllSuggestionItems, destroySuggestionItems) after input is rendered will open/close the suggestion popup. o display suggestions with two text values, it is also possible to add sap.ui.core/ListItems as SuggestionItems (since 1.21.1). For the selected ListItem, only the first value is returned to the input field.
 			 * @since 1.16.1
 			 */
-			suggestionItems : {type : "sap.ui.core.Item", multiple : true, singularName : "suggestionItem"}, 
+			suggestionItems : {type : "sap.ui.core.Item", multiple : true, singularName : "suggestionItem"},
 
 			/**
 			 * The suggestionColumns and suggestionRows are for tabular input suggestions. This aggregation allows for binding the table columns; for more details see the aggregation "suggestionRows".
 			 * @since 1.21.1
 			 */
-			suggestionColumns : {type : "sap.m.Column", multiple : true, singularName : "suggestionColumn", bindable : "bindable"}, 
+			suggestionColumns : {type : "sap.m.Column", multiple : true, singularName : "suggestionColumn", bindable : "bindable"},
 
 			/**
 			 * The suggestionColumns and suggestionRows are for tabular input suggestions. This aggregation allows for binding the table cells.
@@ -196,11 +196,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					/**
 					 * This is the item selected in the suggestion popup for one and two-value suggestions. For tabular suggestions, this value will not be set.
 					 */
-					selectedItem : {type : "sap.ui.core.Item"}, 
+					selectedItem : {type : "sap.ui.core.Item"},
 
 					/**
 					 * This is the row selected in the tabular suggestion popup represented as a ColumnListItem. For one and two-value suggestions, this value will not be set.
-					 * 
+					 *
 					 * Note: The row result function to select a result value for the string is already executed at this time. To pick different value for the input field or to do follow up steps after the item has been selected.
 					 * @since 1.21.1
 					 */
@@ -1724,7 +1724,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	/**
 	 * Setter for property <code>valueStateText</code>.
 	 *
-	 * Default value is empty/<code>undefined</code> 
+	 * Default value is empty/<code>undefined</code>
 	 *
 	 * @param {string} sValueStateText  new value for property <code>valueStateText</code>
 	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining
@@ -1750,7 +1750,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	/**
 	 * Setter for property <code>showValueStateMessage</code>.
 	 *
-	 * Default value is <code>true</code> 
+	 * Default value is <code>true</code>
 	 *
 	 * @param {boolean} bShowValueStateMessage  new value for property <code>showValueStateMessage</code>
 	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining

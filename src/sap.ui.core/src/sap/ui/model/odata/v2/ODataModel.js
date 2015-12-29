@@ -12,14 +12,14 @@
 
 //Provides class sap.ui.model.odata.v2.ODataModel
 sap.ui.define([
-		'jquery.sap.global', 
-		'sap/ui/model/BindingMode', 'sap/ui/model/Context', 'sap/ui/model/Model', 
-		'sap/ui/model/odata/ODataAnnotations', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/UpdateMethod', 'sap/ui/model/odata/OperationMode', 
+		'jquery.sap.global',
+		'sap/ui/model/BindingMode', 'sap/ui/model/Context', 'sap/ui/model/Model',
+		'sap/ui/model/odata/ODataAnnotations', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/UpdateMethod', 'sap/ui/model/odata/OperationMode',
 		'./ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', './ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/core/message/MessageParser', 'sap/ui/model/odata/ODataMessageParser', 'sap/ui/thirdparty/datajs'
 	], function(
-		jQuery, 
-		BindingMode, Context, Model, 
-		ODataAnnotations, ODataUtils, CountMode, UpdateMethod, OperationMode, 
+		jQuery,
+		BindingMode, Context, Model,
+		ODataAnnotations, ODataUtils, CountMode, UpdateMethod, OperationMode,
 		ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, MessageParser, ODataMessageParser, OData) {
 
 	"use strict";
@@ -197,13 +197,13 @@ sap.ui.define([
 			} else {
 				this.oMetadata = this.oServiceData.oMetadata;
 			}
-			
+
 			this.pAnnotationsLoaded = this.oMetadata.loaded();
 
 			if (this.sAnnotationURI || !this.bSkipMetadataAnnotationParsing) {
 				// Make sure the annotation parser object is already created and can be used by the MetaModel
 				var oAnnotations = this._getAnnotationParser();
-				
+
 				if (!this.bSkipMetadataAnnotationParsing) {
 					this.pAnnotationsLoaded = this.oMetadata.loaded().then(function(bSuppressEvents, mParams) {
 						// Only fire annotationsLoaded event if no further annotation URLs will be loaded
@@ -213,7 +213,7 @@ sap.ui.define([
 						return this.addAnnotationXML(mParams["metadataString"], bSuppressEvents);
 					}.bind(this, !!this.sAnnotationURI));
 				}
-				
+
 				if (this.sAnnotationURI) {
 					this.pAnnotationsLoaded = this.pAnnotationsLoaded
 						.then(oAnnotations.addUrl.bind(oAnnotations, this.sAnnotationURI));
@@ -691,7 +691,7 @@ sap.ui.define([
 
 
 	/**
-	 * Refreshes the metadata for model, e.g. in case the request for metadata has failed. 
+	 * Refreshes the metadata for model, e.g. in case the request for metadata has failed.
 	 * Returns a new promise which can be resolved or rejected depending on the metadata loading state.
 	 *
 	 * @returns {Promise} returns a promise on metadata loaded state or null if metadata is not initialized or currently refreshed.
@@ -1229,7 +1229,7 @@ sap.ui.define([
 			bForceUpdate = false;
 			bRemoveData = false;
 		}
-		
+
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
 		if (bRemoveData) {
 			this.removeData();
@@ -1788,7 +1788,7 @@ sap.ui.define([
 					oNode = this.oData;
 				}
 			}
-			
+
 			while (oNode && aParts[iIndex]) {
 				oNode = oNode[aParts[iIndex]];
 				if (oNode) {
@@ -1941,7 +1941,7 @@ sap.ui.define([
 				fnError(oError);
 			}
 		}
-		
+
 		var fireEvent = function(sType, oRequest, oError) {
 			var oEventInfo,
 				aRequests = oRequest.eventInfo.requests;
@@ -1957,7 +1957,7 @@ sap.ui.define([
 						that["fireRequest" + sType](oEventInfo);
 					}
 				});
-				
+
 				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
 				that["fireBatchRequest" + sType](oEventInfo);
 			} else {
@@ -1965,7 +1965,7 @@ sap.ui.define([
 				that["fireRequest" + sType](oEventInfo);
 			}
 		};
-		
+
 		function _submit() {
 			// request token only if we have change operations or batch requests
 			// token needs to be set directly on request headers, as request is already created
@@ -1980,14 +1980,14 @@ sap.ui.define([
 			oHandler = that._getODataHandler(oRequest.requestUri);
 
 			oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
-			
+
 			if (oRequest.eventInfo) {
 				fireEvent("Sent", oRequest, null);
 				delete oRequest.eventInfo;
 			}
-			
+
 			return oRequestHandle;
-			
+
 		}
 
 		return _submit();
@@ -2031,10 +2031,10 @@ sap.ui.define([
 				that._processError(oRequest, oError, fnError);
 			}
 		};
-		
+
 		oRequest.eventInfo = {};
 		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
-		
+
 		return oRequestHandle;
 	};
 
@@ -2146,12 +2146,12 @@ sap.ui.define([
 				that.fireBatchRequestFailed(oEventInfo);
 			}
 		};
-		
+
 		oBatchRequest.eventInfo = {
 				requests: aRequests,
 				batch: true
 		};
-		
+
 		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
 
 		return oRequestHandle;
@@ -2643,14 +2643,14 @@ sap.ui.define([
 
 		// remove any yet existing references which should already have been deleted
 		oPayload = this._removeReferences(oPayload);
-		
-		//get additional request info for created entries 
+
+		//get additional request info for created entries
 		aUrlParams = mParams && mParams.urlParameters ? ODataUtils._createUrlParamsArray(mParams.urlParameters) : undefined;
 		mHeaders = mParams && mParams.headers ? this._getHeaders(mParams.headers) : this._getHeaders();
 		sETag = mParams && mParams.eTag ? mParams.eTag : this.getETag(oPayload);
-		
+
 		sUrl = this._createRequestUrl('/' + sKey, null, aUrlParams, this.bUseBatch);
-	
+
 		oRequest = this._createRequest(sUrl, sMethod, mHeaders, oPayload, sETag);
 
 		if (this.bUseBatch) {
@@ -2801,7 +2801,7 @@ sap.ui.define([
 		}
 		return this._getETag(sPath, oContext, oEntity);
 	};
-	
+
 	/**
 	 * Returns the ETag for a given url, binding path/context or data object
 	 *
@@ -3312,7 +3312,7 @@ sap.ui.define([
 			if (iIndex !== -1) {
 				sTempPath = sPath.substring(0, iIndex - 1);
 			}
-			
+
 			sNormalizedPath = that._normalizePath(sTempPath, oContext);
 			oEntityType = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			sFilterParams = ODataUtils.createFilterParams(aFilters, that.oMetadata, oEntityType);
@@ -3407,7 +3407,7 @@ sap.ui.define([
 				async: this.bLoadMetadataAsync,
 				headers: this.mCustomHeaders
 			});
-			
+
 			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
 			this.oAnnotations.attachLoaded(this.onAnnotationsLoaded, this);
 		}
@@ -3418,24 +3418,24 @@ sap.ui.define([
 	ODataModel.prototype.onAnnotationsFailed = function(oEvent) {
 		this.fireAnnotationsFailed(oEvent.getParameters());
 	};
-	
+
 	ODataModel.prototype.onAnnotationsLoaded = function(oEvent) {
 		this.fireAnnotationsLoaded(oEvent.getParameters());
 	};
 
 	/**
 	 * Adds (a) new URL(s) to the be parsed for OData annotations, which are then merged into the annotations object
-	 * which can be retrieved by calling the getServiceAnnotations()-method. If a $metadata url is passed the data will 
+	 * which can be retrieved by calling the getServiceAnnotations()-method. If a $metadata url is passed the data will
 	 * also be merged into the metadata object, which can be reached by calling the getServiceMetadata() method.
 	 *
 	 * @param {string|sting[]} vUrl - Either one URL as string or an array or URL strings
-	 * @return {Promise} The Promise to load the given URL(s), resolved if all URLs have been loaded, rejected if at least one fails to load. 
+	 * @return {Promise} The Promise to load the given URL(s), resolved if all URLs have been loaded, rejected if at least one fails to load.
 	 * 					 If this promise resolves it returns the following parameters:
 	 * 					 annotations: The annotation object
-	 * 					 entitySets: An array of EntitySet objects containing the newly merged EntitySets from a $metadata requests. 
+	 * 					 entitySets: An array of EntitySet objects containing the newly merged EntitySets from a $metadata requests.
 	 * 								 the structure is the same as in the metadata object reached by the getServiceMetadata() method.
 	 * 								 For non $metadata requests the array will be empty.
-	 * 					
+	 *
 	 * @protected
 	 */
 	ODataModel.prototype.addAnnotationUrl = function(vUrl) {
@@ -3691,7 +3691,7 @@ sap.ui.define([
 			oChangeObject = oChangeObject[aParts[i]];
 		}
 		oChangeObject[sProperty] = oValue;
-		
+
 
 		if (jQuery.sap.equal(oEntry, this.oData[sKey])) {
 			delete this.mChangedEntities[sKey];
@@ -3702,7 +3702,7 @@ sap.ui.define([
 			this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
 			return true;
 		}
-		
+
 		oGroupInfo = this._resolveGroup(sKey);
 
 		mRequests = this.mRequests;
@@ -3714,10 +3714,10 @@ sap.ui.define([
 		} else {
 			oRequest = this._processChange(sKey, oEntry);
 		}
-		
+
 		//get params for created entries: could contain success/error handler
 		mParams = oChangeObject.__metadata && oChangeObject.__metadata.created ? oChangeObject.__metadata.created : {};
-		
+
 		if (!this.mChangeHandles[sKey]) {
 			oRequestHandle = {
 					abort: function() {
@@ -4003,14 +4003,14 @@ sap.ui.define([
 			oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: that.sServiceUrl + '/' + sKey, created: {
 				//store path for later POST
 				key: sPath.substring(1),
-				success: fnSuccess, 
-				error: fnError, 
-				headers: mHeaders, 
-				urlParameters: mUrlParams, 
+				success: fnSuccess,
+				error: fnError,
+				headers: mHeaders,
+				urlParameters: mUrlParams,
 				batchGroupId: sBatchGroupId,
 				changeSetId: sChangeSetId,
 				eTag: sETag}};
-			
+
 			that.oData[sKey] = jQuery.sap.extend(true, {}, oEntity);
 			that.mChangedEntities[sKey] = oEntity;
 
@@ -4207,7 +4207,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.destroy = function() {
 		this.bDestroyed = true;
-		
+
 		Model.prototype.destroy.apply(this, arguments);
 
 		// Abort pending requests

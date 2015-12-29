@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 		var sTextDir = oLI.getTitleTextDirection(),
 			sInfoDir = oLI.getInfoTextDirection();
-		
+
 		// image
 		if (oLI.getIcon()) {
 			if (oLI.getIconInset()) {
@@ -99,11 +99,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			rm.addClass("sapMSLITitleOnly");
 		}
 		rm.writeClasses();
-		
+
 		if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
 			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
-		
+
 		rm.write(">");
 		rm.writeEscaped(oLI.getTitle());
 		rm.write("</div>");
@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		}
 
 	};
-	
+
 	// Returns the inner aria describedby ids for the accessibility
 	StandardListItemRenderer.getAriaDescribedBy = function(oLI) {
 		var sBaseDescribedBy = ListItemBaseRenderer.getAriaDescribedBy.call(this, oLI) || "",
@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		if (sInfoState == sap.ui.core.ValueState.None || !oLI.getInfo()) {
 			return sBaseDescribedBy;
 		}
-		
+
 		var sDescribedBy = this.getAriaAnnouncement("STATE_" + sInfoState.toUpperCase());
 		return sDescribedBy + " " + sBaseDescribedBy;
 	};

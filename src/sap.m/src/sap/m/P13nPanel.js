@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new P13nPanel.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Base type for <code>panels</code> aggregation in P13nDialog control.
@@ -29,7 +29,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Title text appears in the panel.
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				title: {
@@ -40,7 +40,7 @@ sap.ui.define([
 
 				/**
 				 * Large title text appears e.g. in dialog header in case that only one panel is shown.
-				 * 
+				 *
 				 * @since 1.30.0
 				 */
 				titleLarge: {
@@ -52,7 +52,7 @@ sap.ui.define([
 				/**
 				 * Panel type for generic use. Due to extensibility reason the type of <code>type</code> property should be <code>string</code>. So it is feasible to add a
 				 * custom panel without expanding the type.
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				type: {
@@ -63,7 +63,7 @@ sap.ui.define([
 
 				/**
 				 * Enables the vertical Scrolling on the P13nDialog when the panel is shown.
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				verticalScrolling: {
@@ -93,7 +93,7 @@ sap.ui.define([
 
 				/**
 				 * Aggregation of items
-				 * 
+				 *
 				 * @since 1.26.0
 				 */
 				items: {
@@ -106,7 +106,7 @@ sap.ui.define([
 			events: {
 				/**
 				 * Due to performance the data of the panel can be requested in lazy mode e.g. when the panel is displayed
-				 * 
+				 *
 				 * @since 1.28.0
 				 */
 				beforeNavigationTo: {}
@@ -116,7 +116,7 @@ sap.ui.define([
 
 	/**
 	 * This method can be overwritten by subclass in order to return a payload for Ok action
-	 * 
+	 *
 	 * @public
 	 * @since 1.26.7
 	 */
@@ -126,7 +126,7 @@ sap.ui.define([
 
 	/**
 	 * This method can be overwritten by subclass in order to return a payload for Reset action
-	 * 
+	 *
 	 * @public
 	 * @since 1.28.0
 	 */
@@ -145,7 +145,7 @@ sap.ui.define([
 	/**
 	 * This method can be overwritten by subclass in order to prevent navigation to another panel. This could be the case if some content on the panel
 	 * is considered 'invalid'.
-	 * 
+	 *
 	 * @returns {boolean} true if it is allowed to navigate away from this panel, false if it is not allowed
 	 * @public
 	 * @since 1.28.0
@@ -156,7 +156,7 @@ sap.ui.define([
 
 	/**
 	 * This method can be overwritten by subclass in order to cleanup after navigation, e.g. to remove invalid content on the panel.
-	 * 
+	 *
 	 * @public
 	 * @since 1.28.0
 	 */

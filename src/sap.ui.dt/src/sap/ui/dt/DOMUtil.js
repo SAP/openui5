@@ -12,7 +12,7 @@ function(jQuery, ElementUtil) {
 
 	/**
 	 * Class for DOM Utils.
-	 * 
+	 *
 	 * @class
 	 * Utility functionality for DOM
 	 *
@@ -29,7 +29,7 @@ function(jQuery, ElementUtil) {
 	var DOMUtil = {};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.getSize = function(oDomRef) {
 		return {
@@ -39,14 +39,14 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.getOffsetFromParent = function(oPosition, mParentOffset, scrollTop, scrollLeft) {
 		var mOffset = {
 			left : oPosition.left,
 			top : oPosition.top
 		};
-		
+
 		if (mParentOffset) {
 			mOffset.left -= (mParentOffset.left - (scrollLeft ? scrollLeft : 0));
 			mOffset.top -= (mParentOffset.top - (scrollTop ? scrollTop : 0));
@@ -55,7 +55,7 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.getZIndex = function(oDomRef) {
 		var zIndex;
@@ -67,7 +67,7 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.getOverflows = function(oDomRef) {
 		var oOverflows;
@@ -81,7 +81,7 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.getGeometry = function(oDomRef) {
 		if (oDomRef) {
@@ -94,13 +94,13 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.syncScroll = function(oSourceDom, oTargetDom) {
 		var $target = jQuery(oTargetDom);
 		var oTargetScrollTop = $target.scrollTop();
 		var oTargetScrollLeft = $target.scrollLeft();
-		
+
 		var $source = jQuery(oSourceDom);
 		var oSourceScrollTop = $source.scrollTop();
 		var oSourceScrollLeft = $source.scrollLeft();
@@ -114,7 +114,7 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.getDomRefForCSSSelector = function(oDomRef, sCSSSelector) {
 		if (!sCSSSelector) {
@@ -132,21 +132,21 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.getEscapedString = function(sString) {
 		return sString.replace(/([;&,\.\+\*\~':"\!\^#$%@\[\]\(\)=>\|])/g, '\\$1');
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.setDraggable = function($element, bValue) {
 		$element.attr("draggable", bValue);
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.getComputedStyles = function(oElem) {
 		var mComputedStyle;
@@ -161,7 +161,7 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.copyComputedStyle = function(oSrc, oDest) {
 		var mStyles = this.getComputedStyles(oSrc);
@@ -186,7 +186,7 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.copyComputedStylesForDOM = function(oSrc, oDest) {
 		this.copyComputedStyle(oSrc, oDest);
@@ -196,7 +196,7 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	DOMUtil.cloneDOMAndStyles = function(oNode, oTarget) {
 		var oCopy = oNode.cloneNode(true);

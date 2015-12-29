@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.table.Table
   Author: d029506, d053398
 -->
@@ -9,7 +9,7 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>qUnit Page for sap.ui.table.Table</title>
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -102,7 +102,7 @@
 		oTable.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
-	
+
 	function destroyTable() {
 		oTable.destroy();
 	}
@@ -192,7 +192,7 @@
 		equals(oColFirstName.getFiltered() && oColMoney.getFiltered(), false, "Column FirstName and Money are not filtered anymore");
 		equals(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
 	});
-	
+
 	test("SelectionMode", function() {
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
 		equals(oTable.getSelectionMode(), "Multi", "Selection mode is Multi!");
@@ -350,7 +350,7 @@
 		oColumn.setMenu(oCustomMenu);
 		ok(oColumn.getMenu() === oCustomMenu, "Custom menu equals set column menu");
 	});
-	
+
 	test("Resize column", function() {
 		var oColumn = oTable.getColumns()[1],
 			sResizeHandlerId = oColumn.getId() + '-rsz';
@@ -375,7 +375,7 @@
 		var newSize = oTable._calculateAutomaticColumnWidth(1);
 		equals(oColumn.getWidth(), newSize + "px", "check column width after resize");
 	});
-	
+
 	module("Column filtering", {
 		setup: function() {
 			createTable({
@@ -387,7 +387,7 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	test("Menu & initial filter: references", 4, function() {
 		var oColumn = oTable.getColumns()[0];
 		var oMenu = oColumn.getMenu();
@@ -428,13 +428,13 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	test("After initialization", function(){
 		var $table = oTable.$();
 		$button = $table.find('.sapUiTableExt').find('#extensionButton');
 		equals($table.find('.sapUiTableSplitterBar').length, 1, "The handle to resize the table is visible");
 	});
-	
+
 	test("Resize", function(){
 		oTable._bTouchMode = false;
 		equals(oTable.getVisibleRowCount(), 10, "Row count of 10");
@@ -444,7 +444,7 @@
 		qutils.triggerMouseEvent(barId, "mousedown", 1, 1, -9950, -10000, 0 );
 		qutils.triggerMouseEvent(barId, "mousemove", 1, 1, -9950, -9500, 0 );
 		qutils.triggerMouseEvent(barId, "mouseup", 1, 1, -9950, -9500, 0 );
-		
+
 		sap.ui.getCore().applyChanges();
 
 		equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
@@ -456,14 +456,14 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	test("Arrow keys", function() {
 		var sCellId = oTable.getId() + "-rows-row0-col0",
 			oRow = oTable.getRows()[9],
 			$focused;
 
 		jQuery.sap.byId(sCellId).focus();
-		
+
 		$focused = jQuery(document.activeElement);
 		equal($focused.attr('id'), sCellId, "The correct cell has the focus");
 
@@ -502,7 +502,7 @@
 
 		$focused = jQuery(document.activeElement);
 		equal($focused.attr('id'), oTable.getId() + "-rows-row1-col1", "The correct cell has the focus");
-		
+
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
 		$focused = jQuery(document.activeElement);
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
@@ -534,7 +534,7 @@
 		var sCellId = oTable.getId() + "-rows-row0-col0",
 			oRow = oTable.getRows()[9],
 			$focused;
-	
+
 		jQuery.sap.byId(sCellId).focus();
 
 		$focused = jQuery(document.activeElement);
@@ -552,7 +552,7 @@
 
 		equal(oRow.getIndex(), 9, "The correct cell has the focus");
 	});
-	
+
 	/*test("Page keys", function() {
 		var $table = oTable.$();
 		//qutils.triggerKeyboardEvent("oSli6", "ARROW_UP", false, false, true);
@@ -679,7 +679,7 @@
 	test("Grouping using table API", 1, function() {
 		var oColumn = oTable.getColumns()[3],
 			oBinding;
-		
+
 		oTable.setGroupBy(oColumn);
 		oBinding = oTable.getBinding("rows");
 		equal(oBinding.getLength(), 203, "Row count is correct!");
@@ -751,7 +751,7 @@
 	test("Headers", 1, function() {
 		equal(jQuery.sap.byId("table").find(".sapUiTableColHdr .sapUiTableCol").length, 6, "Total count of headers");
 	});
-	
+
 	test("Equal widths", 3, function() {
 		var $Table = jQuery.sap.byId("table");
 		var $Head1 = $Table.find(".sapUiTableColHdr:eq(0)");
@@ -840,7 +840,7 @@
 			start();
 		});
 	});
-	
+
 	module("Toolbar");
 	test("Table toolbar should have the transparent design by default without changing the design property", function() {
 		var oTB = new sap.m.Toolbar(),

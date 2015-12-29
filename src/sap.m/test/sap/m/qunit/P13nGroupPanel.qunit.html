@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -329,7 +329,7 @@
 			oP13nGroupPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			// assertions			
+			// assertions
 			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
 			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
 
@@ -377,8 +377,8 @@
 				showIfGrouped: false
 			}));
 			sap.ui.getCore().applyChanges();
-			
-			// assertions			
+
+			// assertions
 			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
 			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
 

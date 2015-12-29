@@ -5,13 +5,13 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 	"sap/m/FeedListItem"
 ], function (JSONModel, Popover, List, FeedListItem) {
 	"use strict";
-	
+
 	var Utils = {};
-	
+
 	// Access explored demo data, enrich it and return a JSONModel containing the data
 	Utils.initSampleDataModel = function() {
 		var oModel = new JSONModel();
-		
+
 		jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
 			dataType: "json",
 			success: function (oData) {
@@ -33,28 +33,28 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 					oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
 					oProduct.Available = oProduct.Status == "Available" ? true : false;
 				}
-				
+
 				oData.Suppliers = aSuppliersData;
 				oData.Categories = aCategoryData;
-				
+
 				oModel.setData(oData);
 			}.bind(this),
 			error: function () {
 				jQuery.sap.log.error("failed to load json");
 			}
 		});
-		
+
 		return oModel;
 	};
-	
+
 	Utils.formatAvailableToObjectState = function (bAvailable) {
 		return bAvailable ? "Success" : "Error";
 	};
-	
+
 	Utils.formatAvailableToIcon = function(bAvailable) {
 		return bAvailable ? "sap-icon://message-success" : "sap-icon://error";
 	};
-	
+
 	Utils.showInfo = function(aItems, oBy){
 		var oPopover = new Popover({
 			showHeader: false,
@@ -76,14 +76,14 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 				})
 			]
 		});
-		
+
 		jQuery.sap.syncStyleClass("sapUiSizeCompact", oBy, oPopover);
 		jQuery.sap.syncStyleClass("sapUiSizeCozy", oBy, oPopover);
 		oPopover.setModel(new JSONModel({items: aItems}));
 		oPopover.openBy(oBy, true);
 	};
-	
+
 
 	return Utils;
-	
+
 }, true /* bExport */);

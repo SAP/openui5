@@ -32,9 +32,9 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SemanticPageSegment', 'sap/u
 			}
 
 			this._oContainer = oContainer;
-			
+
 			sContainerAggregationName || (sContainerAggregationName = "content");
-			
+
 			this._sContainerAggregationName = sContainerAggregationName;
 
 			this._aSegments = [];

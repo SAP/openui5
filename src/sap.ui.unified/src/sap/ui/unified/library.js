@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.ui.unified.
  */
-sap.ui.define(['jquery.sap.global', 
+sap.ui.define(['jquery.sap.global',
 	'sap/ui/core/library'], // library dependency
 	function(jQuery) {
 
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @enum {string}
 	 * @public
 	 * @since 1.16.0
-	 * @experimental Since version 1.16.0. 
+	 * @experimental Since version 1.16.0.
 	 * API is not yet finished and might change completely
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */

@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 	};
-	
+
 	/**
 	 * Gather all controls that should be rendered inside Object Header.
 	 *
@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oOH.__controlsToBeRendered[oChild.getId()] = oChild;
 		}
 	};
-	
+
 	/**
 	 * Delete all controls that were empty and were not rendered inside Object Header.
 	 *
@@ -137,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		delete oOH.__controlsToBeRendered;
 	};
-	
+
 	/**
 	 * Renders hidden div with ARIA descriptions of the favorite and flag icons.
 	 *
@@ -152,34 +152,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	ObjectHeaderRenderer._renderMarkersAria = function(oRM, oControl) {
 		var sAriaDescription = "", // ARIA description message
 			oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
-		
+
 			// check if flag mark is set
 			if (oControl.getMarkFlagged()) {
 				sAriaDescription += (oLibraryResourceBundle.getText("ARIA_FLAG_MARK_VALUE") + " ");
 			}
-		
+
 			// check if favorite mark is set
 			if (oControl.getMarkFavorite()) {
 				sAriaDescription += (oLibraryResourceBundle.getText("ARIA_FAVORITE_MARK_VALUE") + " ");
 			}
-		
+
 			// if there is a description render ARIA node
-			if (sAriaDescription !== "") {	
+			if (sAriaDescription !== "") {
 				// BEGIN ARIA hidden node
 				oRM.write("<div");
-		
+
 				oRM.writeAttribute("id", oControl.getId() + "-markers-aria");
 				oRM.writeAttribute("aria-hidden", "false");
 				oRM.addClass("sapUiHidden");
 				oRM.writeClasses();
 				oRM.write(">");
 				oRM.writeEscaped(sAriaDescription);
-		
+
 				oRM.write("</div>");
 				// END ARIA hidden node
 			}
 	};
-	
+
 	/**
 	 * Returns the array of icons from ObjectHeader.
 	 *
@@ -477,7 +477,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderTitle = function(oRM, oOH) {
-	
+
 		// Start title text and title arrow container
 		oOH._oTitleArrowIcon.setVisible(oOH.getShowTitleSelector());
 		if (oOH.getShowTitleSelector() && oOH._oTitleArrowIcon.getVisible()) {
@@ -688,11 +688,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			this._renderResponsive(oRM, oOH);
 			return;
 		}
-		
+
 		// === old renderer, no changes here for downwards compatibility
 
 		this._computeChildControlsToBeRendered(oOH);
-		
+
 		var bCondensed = oOH.getCondensed();
 
 		oRM.write("<div"); // Start Main container
@@ -702,7 +702,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.addClass("sapMOHC");
 		}
 		oRM.addClass("sapMOHBg" + oOH._getBackground());
-		
+
 		oRM.writeClasses();
 		var sTooltip = oOH.getTooltip_AsString();
 		if (sTooltip) {
@@ -728,7 +728,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.write("<div class=\"sapMOHLastDivider\"/>");
 
 		oRM.write("</div>"); // End Main container\
-		
+
 		this._cleanupNotRenderedChildControls(oRM, oOH);
 
 	};
@@ -838,7 +838,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 **/
 	ObjectHeaderRenderer._renderResponsiveTitleBlock = function(oRM, oControl) {
 		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
-		
+
 		// Title container displayed to the left of the number and number units container.
 		oRM.write("<div"); // Start Title and Number container (block1 and block2)
 		oRM.writeAttribute("id", oControl.getId() + "-titlenumdiv");
@@ -986,7 +986,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			iRenderCols = 1; // render one column
 			sClassColCount = 'sapMOHROneCols';
 		}
-		
+
 		this._renderResponsiveStatesColumn(oRM, oOH, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount);
 	};
 
@@ -1020,7 +1020,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				oRM.writeClasses();
 				oRM.write(">");
 			}
-		
+
 			if (i < iCountVisibleAttr) {
 				this._renderResponsiveAttribute(oRM, oOH, aVisibleAttrAndStat[i]);
 			} else {
@@ -1304,7 +1304,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	ObjectHeaderRenderer._renderResponsiveTitleAndArrow = function(oRM, oOH, nCutLen) {
 		var sOHTitle, sEllipsis = '', sTextDir = oOH.getTitleTextDirection();
 		var bMarkers = (oOH.getShowMarkers() && (oOH.getMarkFavorite() || oOH.getMarkFlagged()));
-		
+
 		oRM.write("<h1>");
 		oRM.write("<span");
 		oRM.addClass("sapMOHRTitleTextContainer");

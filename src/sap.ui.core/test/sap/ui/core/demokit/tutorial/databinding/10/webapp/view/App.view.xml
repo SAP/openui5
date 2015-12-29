@@ -14,9 +14,9 @@
 			<l:VerticalLayout>
 				<Label class="sapUiSmallMargin" text="{i18n>address}:" />
 				<Text class="sapUiSmallMargin" text="{/address/street}\n{/address/zip} {/address/city}\n{/address/country}" width="200px" />
-								<Image 	class="sapUiSmallMargin" width="500px" height="300px" 
-						src="{ 
-								parts: [ 
+								<Image 	class="sapUiSmallMargin" width="500px" height="300px"
+						src="{
+								parts: [
 										'/address/street',
 										'/address/zip',
 										'/address/city',

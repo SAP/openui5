@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 
 
 	/**
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.core.message
 	 * @public
@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 		metadata : {
 		}
 	});
-	
+
 	/**
 	 * Set Messages to check
 	 * @param {map}
@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 		this.checkMessages();
 		delete this.mOldMessages;
 	};
-	
+
 	/**
 	 * Check Messages and update controls with messages
 	 * @protected
@@ -60,21 +60,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	ControlMessageProcessor.prototype.checkMessages = function() {
 		var aMessages,
 			that = this;
-		
+
 		jQuery.each(this.mOldMessages, function(sTarget, aOldMessages) {
 			var oBinding;
 			var aParts = sTarget.split('/');
 			var oControl = sap.ui.getCore().byId(aParts[0]);
-			
+
 			//if control does not exist: nothing to do
 			if  (!oControl) {
 				return;
 			}
-			
+
 			oBinding = oControl.getBinding(aParts[1]);
-			
+
 			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
-			
+
 			if (oBinding) {
 				oBinding._fireMessageChange({messageSource: 'control', messages:aMessages});
 			} else {
@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			}
 		});
 	};
-	
+
 	return ControlMessageProcessor;
 
 });

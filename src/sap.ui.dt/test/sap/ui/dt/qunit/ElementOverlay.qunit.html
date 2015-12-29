@@ -74,7 +74,7 @@
 				assert.strictEqual(this.oOverlay, sap.ui.dt.OverlayRegistry.getOverlay(this.oButton.getId()), "overlay is registered in OverlayRegistery");
 			});
 
-			QUnit.test("when the control is rendered", function(assert) {				
+			QUnit.test("when the control is rendered", function(assert) {
 				var oDomRef = this.oOverlay.getDomRef();
 				var oElementDomRef = this.oOverlay.getElementInstance().getDomRef();
 				var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
@@ -174,7 +174,7 @@
 					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
-					
+
 					this.oButton1.destroy();
 					this.oButton2.destroy();
 					this.oVerticalLayout1.destroy();
@@ -183,7 +183,7 @@
 					this.oOverlayLayout2.destroy();
 					this.oOverlayButton1.destroy();
 					this.oOverlayButton2.destroy();
-					
+
 				}
 			});
 

@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	/**
 	 * Constructor for a new FeedListItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -77,7 +77,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 
 			/**
 			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-			 * 
+			 *
 			 * If bandwidth is the key for the application, set this value to false.
 			 */
 			iconDensityAware : {type : "boolean", defaultValue : true},
@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 					 */
 					domRef : {type : "string"}
 				}
-			}, 
+			},
 
 			/**
 			 * Event is fired when the icon is pressed.

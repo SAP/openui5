@@ -1,6 +1,6 @@
-<mvc:View controllerName="sap.m.mvc.HomePage" 
+<mvc:View controllerName="sap.m.mvc.HomePage"
     xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
-	
+
     <Page id="homePage" title="Countries">
         <List items="{/countries}">
             <StandardListItem title="{name}" description="{short}" type="Active" press="listItemTriggered">

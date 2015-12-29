@@ -11,31 +11,31 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 		var mIconI18nKey = {"activate": true, "add": true, "add-contact": true, "add-filter": true, "add-photo": true, "back-to-top": true, "collapse": true, "collapse-group": true, "crop": true, "decline": true, "delete": true, "display": true, "download": true, "drill-down": true, "drill-up": true, "error": true, "exit-full-screen": true, "expand": true, "expand-group": true, "filter": true, "flag": true, "forward": true, "full-screen": true, "generate-shortcut": true, "hide": true, "ipad": true, "ipad-2": true, "iphone": true, "iphone-2": true, "laptop": true, "message-error": true, "message-information": true, "message-success": true, "message-warning": true, "move": true, "multi-select": true, "nav-back": true, "redo": true, "refresh": true, "resize": true, "resize-horizontal": true, "resize-vertical": true, "response": true, "save": true, "search": true, "settings": true, "show": true, "sort": true, "sort-ascending": true, "sort-descending": true, "synchronize": true, "undo": true, "upload": true, "zoom-in": true, "zoom-out": true};
 		var sapIconFamily = "SAP-icons";
 		var sProtocolName = "sap-icon";
-		
+
 		var mRegistry = {};
-		
+
 		var bFontFaceInserted = false;
-		
+
 		var oCoreMessageBundle = null;
-		
+
 		/**
-		 * Constructor for IconPool - must not be used: all of the methods that are under 
+		 * Constructor for IconPool - must not be used: all of the methods that are under
 		 * IconPool are static methods.
 		 *
 		 * @class
 		 * The IconPool is a static class for retrieving or registering icons.
 		 * It also provides helping methods for easier consumption of icons.
-		 * There are already icons registered in IconPool, please use the Demo App named 
+		 * There are already icons registered in IconPool, please use the Demo App named
 		 * "Icon Explorer" to find the name of the icon.
-		 * 
-		 * In order to use the icon inside an existing control, please call 
+		 *
+		 * In order to use the icon inside an existing control, please call
 		 * sap.ui.core.IconPool.getIconURI and assign the URI to the control's property
 		 * which supports icons.
 		 * If you want to support icons and standard images in your own control, please use
 		 * the static method sap.ui.core.IconPool.createControlByURI to create an Icon in
-		 * case the first argument is an icon-URL or another control which you define by 
+		 * case the first argument is an icon-URL or another control which you define by
 		 * providing it as the second argument.
-		 * 
+		 *
 		 * @public
 		 * @alias sap.ui.core.IconPool
 		 */
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			// Do not use the constructor
 			throw new Error();
 		};
-		
+
 		/**
 		 * Creates an instance of sap.ui.core.Icon if the given URI is an icon URI, otherwise the given constructor is called.
 		 * The given URI is set to the src property of the control.
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			if (typeof setting === "string") {
 				setting = {src: setting};
 			}
-			
+
 			if (setting && setting.src) {
 				var sSrc = setting.src,
 					fnConstructor = constructor;
@@ -80,18 +80,18 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				}
 			}
 		};
-		
+
 		/**
 		 * Register an additional icon to the sap.ui.core.IconPool.
 		 *
 		 * @param {string} iconName the name of the icon.
-		 * @param {string} collectionName the name of icon collection. The built in icons are with empty collectionName, so if additional icons need to be registered in IconPool, the collectionName can't be empty.  
+		 * @param {string} collectionName the name of icon collection. The built in icons are with empty collectionName, so if additional icons need to be registered in IconPool, the collectionName can't be empty.
 		 * @param {object} iconInfo the icon info which contains the following properties:
 		 * @param {string} iconInfo.fontFamily is the name of the font when importing the font using @font-face in CSS
 		 * @param {string|string[]} iconInfo.content is the special hexadecimal code without the prefix, for example "e000" or several of them
 		 * @param {boolean} [iconInfo.overWrite=false] indicates if already registered icons should be overwritten when the same name and collection are given. The built in icons can never be overwritten.
 		 * @param {boolean} [iconInfo.suppressMirroring=false] indicates whether this icon should NOT be mirrored in RTL (right to left) mode.
-		 * 
+		 *
 		 * @return {object} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
 		 * @static
 		 * @public
@@ -106,26 +106,26 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 					suppressMirroring: !!arguments[5]
 				};
 			}
-			
+
 			if (!mRegistry[collectionName]) {
 				mRegistry[collectionName] = {};
 			}
-			
+
 			var collection = mRegistry[collectionName],
 				icon, oldIcon = collection[iconName],
 				parts;
-			
+
 			if (oldIcon && (collectionName === undefined || !iconInfo.overWrite)) {
 				jQuery.sap.log.warning("icon with the same iconName in the collection already exists, specify the last parameter to true in order to overwrite");
 				return;
 			}
-			
+
 			parts = {
 				protocol: sProtocolName,
 				hostname: collectionName || iconName,
 				path: collectionName ? iconName : undefined
 			};
-			
+
 			if (!Array.isArray(iconInfo.content)) {
 				iconInfo.content = [ iconInfo.content ];
 			}
@@ -160,48 +160,48 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				//keep compatibility with old name
 				skipMirroring: iconInfo.suppressMirroring
 			};
-			
+
 			collection[iconName] = icon;
 			return icon;
 		};
-		
+
 		/**
 		 * Returns the URI of the icon which has the same given iconName and collectionName.
 		 *
 		 * @param {string} iconName the name of the icon.
 		 * @param {string} collectionName the name of icon collection. The built in icons are with undefined collectionName, so if the built in icons need to be used, just ignore this parameter.
-		 * @return {string} the URI of the icon. if the icon can't be found in IconPool, undefined is returned. 
+		 * @return {string} the URI of the icon. if the icon can't be found in IconPool, undefined is returned.
 		 * @static
 		 * @public
 		 */
 		IconPool.getIconURI = function(iconName, collectionName){
 			var collection = mRegistry[collectionName];
-			
+
 			if (collection && collection[iconName]) {
 				return collection[iconName].uri;
 			}
 		};
-		
+
 		/**
 		 * Returns the info object of the icon which has the same given iconName and collectionName.
 		 *
 		 * @param {string} iconName the name of the icon.
 		 * @param {string} collectionName the name of icon collection. The built in icons are with undefined collectionName, so if the built in icons need to be used, just ignore this parameter.
-		 * @return {object} the info object of the registered icon which has the uri, fontFamily and content properties. 
+		 * @return {object} the info object of the registered icon which has the uri, fontFamily and content properties.
 		 * @static
 		 * @public
 		 */
 		IconPool.getIconInfo = function(iconName, collectionName){
 			IconPool.insertFontFaceStyle();
-			
+
 			var sParsedIconName = iconName,
 				sParsedCollectionName = collectionName,
 				parts,
 				collection;
-			
+
 			if (this.isIconURI(iconName)) {
 				parts = window.URI.parse(iconName);
-				
+
 				if (parts.path.length === 1) {
 					sParsedIconName = parts.hostname;
 					sParsedCollectionName = undefined;
@@ -210,17 +210,17 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 					sParsedIconName = parts.path.substr(1, parts.path.length);
 				}
 			}
-			
+
 			collection = mRegistry[sParsedCollectionName];
-			
+
 			return collection && collection[sParsedIconName];
 		};
-		
+
 		/**
 		 * Returns If the given uri is an icon URI.
 		 *
 		 * @param {string} uri the icon uri which is in the format "sap-icon://collectionName/iconName"
-		 * @return {boolean} if the uri follows the icon uri format. 
+		 * @return {boolean} if the uri follows the icon uri format.
 		 * @static
 		 * @public
 		 */
@@ -229,14 +229,14 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				return false;
 			}
 			var parts = window.URI.parse(uri);
-			
+
 			return (parts.protocol === sProtocolName) && !!parts.hostname;
 		};
-		
+
 		/**
 		 * Returns all names of registered collections in IconPool
 		 *
-		 * @return {array} An array contains all of the registered collections' names. 
+		 * @return {array} An array contains all of the registered collections' names.
 		 * @static
 		 * @public
 		 */
@@ -247,11 +247,11 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			});
 			return aNames;
 		};
-		
+
 		/**
 		 * Returns all name of icons that are registerd under the given collection.
 		 * @param {string} collectionName the name of collection where icon names are retrieved.
-		 * @return {array} An array contains all of the registered icon names under the given collection. 
+		 * @return {array} An array contains all of the registered icon names under the given collection.
 		 * @static
 		 * @public
 		 */
@@ -261,26 +261,26 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			jQuery.map(collection, function(value, key){
 				aNames.push(key);
 			});
-			
+
 			return aNames;
 		};
-		
-		
+
+
 		IconPool.insertFontFaceStyle = function(){
 			if (bFontFaceInserted) {
 				return;
 			}
-			
+
 			var sFontPath = jQuery.sap.getModulePath("sap.ui.core", '/') + "themes/base/fonts/", sFontFace;
-			
-			//In IE9 the relative paths in dynamically inserted styles in iframe are relative to the html page 
+
+			//In IE9 the relative paths in dynamically inserted styles in iframe are relative to the html page
 			//which contains the iframe, not the iframe itself.
 			//http://support.microsoft.com/kb/937266
 			//A conversion from relative path to absolute path is needed.
 			if (!!Device.browser.internet_explorer && Device.browser.version < 10 && /*check if it's in a iFrame*/window.self !== window.top) {
 				sFontPath = IconPool._calcAbsPath(sFontPath, window.location.href);
 			}
-			
+
 			/* This is the font used in sap.ui.core.Icon */
 			sFontFace = "@font-face {" +
 							"font-family: 'SAP-icons';" +
@@ -290,28 +290,28 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 							"font-weight: normal;" +
 							"font-style: normal;" +
 						"}";
-			
+
 			jQuery('head').append('<style type="text/css">' + sFontFace + '</style>');
-			
+
 			bFontFaceInserted = true;
 		};
-		
+
 		IconPool._calcAbsPath = function(sRelative, sBase){
 			// remove the URL parameters for base URL
 			sBase = sBase && sBase.replace(/\?.*|#.*/g, "");
-			
+
 			// make the URL absolute
 			var oUri = new window.URI(sRelative),
 				oAbsUri = oUri.absoluteTo(sBase);
-			
+
 			// return the absolute URL (without URL parameters!!!)
 			return oAbsUri.href();
 		};
-		
+
 		IconPool._isMirroringSkipped = function(iconName){
 			return !!mIconSuppressMirroring[iconName];
 		};
-		
+
 		//register the built in icons
 		jQuery.each(aIconNames, function(index, name){
 			IconPool.addIcon(name, undefined, {
@@ -320,8 +320,8 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 				suppressMirroring: IconPool._isMirroringSkipped(name)
 			});
 		});
-		
-		
+
+
 		var mIconForMimeType = {
 			"application/msword": "sap-icon://doc-attachment",
 			"application/vnd.openxmlformats-officedocument.wordprocessingml.document": "sap-icon://doc-attachment",
@@ -368,7 +368,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 			"video/x-msvideo": "sap-icon://attachment-video",
 			"application/x-shockwave-flash": "sap-icon://attachment-video"
 		};
-		
+
 		/**
 		 * Returns the icon url based on the given mime type
 		 *
@@ -381,7 +381,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 		IconPool.getIconForMimeType = function(sMimeType) {
 			return mIconForMimeType[sMimeType] || "sap-icon://document";
 		};
-	
+
 
 	return IconPool;
 

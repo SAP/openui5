@@ -31,29 +31,29 @@ sap.ui.define(['jquery.sap.global', './Element'],
 	 */
 	var CustomStyleClassSupport = function () {
 		// "this" is the prototype now when called with apply()
-	
+
 		// Ensure only Elements are enhanced
 		if (!(this instanceof Element)) {
 			return;
 		}
-	
+
 		// enrich original clone function
 		var fOriginalClone = this.clone;
 		this.clone = function() {
 			// call original clone function
 			var oClone = fOriginalClone.apply(this, arguments);
-	
+
 			// add the style classes of "this" to the clone
 			if (this.aCustomStyleClasses) {
 				oClone.aCustomStyleClasses = this.aCustomStyleClasses.slice();
 			}
 			return oClone;
 		};
-	
-	
+
+
 		this.addStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
 			jQuery.sap.assert(sStyleClass && typeof sStyleClass === "string", "sStyleClass must be a string");
-	
+
 			if (!this.aCustomStyleClasses) {
 				this.aCustomStyleClasses = [];
 			}
@@ -65,14 +65,14 @@ sap.ui.define(['jquery.sap.global', './Element'],
 				if (sStyleClass.indexOf("'") > -1) {
 					return this;
 				} // TODO: maybe check for quotes in different charsets or encodings
-	
+
 				// multiple calls should not add the class multiple times
 				for (var i = this.aCustomStyleClasses.length - 1; i >= 0; i--) {
 					if (this.aCustomStyleClasses[i] == sStyleClass) {
 						return this;
 					}
 				}
-	
+
 				this.aCustomStyleClasses.push(sStyleClass);
 				var oRoot = this.getDomRef();
 				if (oRoot) { // non-rerendering shortcut
@@ -81,14 +81,14 @@ sap.ui.define(['jquery.sap.global', './Element'],
 					this.invalidate();
 				}
 			}
-	
+
 			return this;
 		};
-	
-	
+
+
 		this.removeStyleClass = function(sStyleClass, bSuppressRerendering) { // bSuppressRerendering is experimental and hence undocumented
 			jQuery.sap.assert(sStyleClass && typeof sStyleClass === "string", "sStyleClass must be a string");
-	
+
 			if (sStyleClass && this.aCustomStyleClasses) {
 				for (var i = this.aCustomStyleClasses.length - 1; i >= 0; i--) {
 					if (this.aCustomStyleClasses[i] == sStyleClass) {
@@ -102,14 +102,14 @@ sap.ui.define(['jquery.sap.global', './Element'],
 					}
 				}
 			}
-	
+
 			return this;
 		};
-	
-	
+
+
 		this.toggleStyleClass = function(sStyleClass, bAdd) {
 			jQuery.sap.assert(sStyleClass && typeof sStyleClass === "string", "sStyleClass must be a string");
-			
+
 			if (sStyleClass && typeof sStyleClass === "string") {
 				if (bAdd === true) {
 					this.addStyleClass(sStyleClass);
@@ -121,14 +121,14 @@ sap.ui.define(['jquery.sap.global', './Element'],
 					jQuery.sap.log.warning(this.toString() + "- toggleStyleClass(): bAdd should be a boolean or undefined, but is '" + bAdd + "'");
 				}
 			}
-			
+
 			return this; // we could (depending on bAdd) return either this or the boolean result of removeStyleClass, but at least in the bAdd===undefined case the caller wouldn't even know which return type to expect...
 		};
-	
-	
+
+
 		this.hasStyleClass = function(sStyleClass) {
 			jQuery.sap.assert(sStyleClass && typeof sStyleClass === "string", "sStyleClass must be a string");
-	
+
 			if (sStyleClass && this.aCustomStyleClasses) {
 				for (var i = this.aCustomStyleClasses.length - 1; i >= 0; i--) {
 					if (this.aCustomStyleClasses[i] == sStyleClass) {
@@ -138,13 +138,13 @@ sap.ui.define(['jquery.sap.global', './Element'],
 			}
 			return false;
 		};
-	
+
 		this.getMetadata().addPublicMethods(["addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass"]);
-	
+
 	};
-	
+
 	// moved here to fix the cyclic dependency CustomStyleClassSupport, Element, Core, Control
-	
+
 
 	return CustomStyleClassSupport;
 

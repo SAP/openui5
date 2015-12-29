@@ -9,7 +9,7 @@ li.sapMLIB.sapMLIBNoFlex{
 }
 
 li.sapMLIB.sapMLIBNoFlex{
-	
+
 	&>div{ /* all direct DIV child elements are table cells */
 		display: table-cell;
 		vertical-align: middle;
@@ -24,14 +24,14 @@ li.sapMLIB.sapMLIBNoFlex{
 	&>.sapMLIBSelectSM + .sapMLIBContent,
 	&>.sapMLIBContent:first-child{
 		padding-left: 1rem; /* padding for all leftmost content cells */
-	}	
+	}
 	&>.sapMLIBContent:last-child{
 		padding-right: 1rem;
 	}
 	&.sapMCLI>.sapMLIBContent{
 		padding: 0; /* custom list item, however, has no padding at all */
 	}
-	
+
 	/* internal table of the content cell */
 	&:not(.sapMCLI)>.sapMLIBContent>div.sapMLIBContentNF{
 		display: table;
@@ -43,14 +43,14 @@ li.sapMLIB.sapMLIBNoFlex{
 	&.sapMILI>.sapMLIBContent>.sapMLIBContentNF{
 		table-layout:fixed;
 	}
-	
+
 	/* special case: mimic white space collapse in case of the small icon */
 	&.sapMSLI.sapMSLIIcon:not(.sapMSLIIconThumb)>div:not(.sapMLIBSelectSM)+.sapMLIBContent>.sapMLIBContentNF>.sapUiIcon{
 		min-width: 2rem;
 		width: 2rem;
 		text-align: left;
 	}
-	
+
 	/* for custom list item we should not overwrite the display property */
 	&:not(.sapMCLI)>.sapMLIBContent>.sapMLIBContentNF{
 		&>div, &>span, &>label, &>button{
@@ -64,7 +64,7 @@ li.sapMLIB.sapMLIBNoFlex{
     		white-space: nowrap;
 		}
 	}
-	
+
 	&>.sapMLIBContent>.sapMLIBContentNF{
 		&>div.sapMSLIDescriptionDiv{
 			min-width: 0;
@@ -76,7 +76,7 @@ li.sapMLIB.sapMLIBNoFlex{
 		}
 		&>span.sapMSLIImgThumbIcon{
 			padding-right: 0.75rem; /* right margin has no effect in a table cell */
-		} 
+		}
 		&>.sapMSLIDiv{
 			width: 100%;
 		}
@@ -156,7 +156,7 @@ li.sapMLIB.sapMLIBNoFlex{
 
 } /* li.sapMLIB.sapMLIBNoFlex */
 
-/* "no data" is rendered without .sapMLIBNoFlex */ 
+/* "no data" is rendered without .sapMLIBNoFlex */
 html[data-sap-ui-browser*='ie9'] .sapMListNoData {
 	text-align: center;
 	line-height: 3rem;

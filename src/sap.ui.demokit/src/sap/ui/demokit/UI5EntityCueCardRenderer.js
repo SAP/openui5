@@ -9,24 +9,24 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class UI5EntityCueCard renderer. 
+	 * @class UI5EntityCueCard renderer.
 	 * @static
 	 */
 	var UI5EntityCueCardRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	UI5EntityCueCardRenderer.render = function(rm, oControl){
-	
+
 		var bNavigable = oControl.getNavigable();
 		var bDemokit = oControl.getStyle() == sap.ui.demokit.UI5EntityCueCardStyle.Demokit;
-	
+
 		function isPrimitive(sType) {
 			while ( sType.slice(-2) == "[]" ) {
 				sType = sType.slice(0, -2);
@@ -36,14 +36,14 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			return /^(any|boolean|float|int|object|string|void)$/.test(sType);
 		}
-		
+
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.writeAttribute("class","sapDkCueCd");
 		rm.write(">");
-	
+
 		var child = 0;
-		
+
 		function names(o) {
 			var r = [];
 			for (var s in o) {
@@ -60,11 +60,11 @@ sap.ui.define(['jquery.sap.global'],
 			});
 			return r;
 		}
-		
+
 		function alternate(i) {
 			return " class='" + ((i % 2) ? "sapDkCueCdOdd" : "sapDkCueCdEven") + "'";
 		}
-		
+
 		function kind(k) {
 			if ( k === 0 ) {
 				return "Property of type ";
@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global'],
 				return "";
 			}
 		}
-		
+
 		function crossref(p, t, card) {
 			if ( t ) {
 				if ( card === "0..n" ) {
@@ -103,23 +103,23 @@ sap.ui.define(['jquery.sap.global'],
 		function deprClass(o) {
 			return o.deprecation ? " sapDkCueCdDeprct" : "";
 		}
-		
+
 		function deprDoc(o) {
 			return o.deprecation ? "<br><i><b>Deprecated</b>: " + o.deprecation + "</i>" : "";
 		}
-		
+
 		function defaultAggrClass(bIsDefault) {
 			return bIsDefault ? " sapDkCueCdDfltAggr" : "";
 		}
-		
+
 		function defaultAggrDoc(bIsDefault) {
 			return bIsDefault ? "<br><b>Note</b>: This is the default aggregation." : "";
 		}
-		
+
 		if ( !oControl.getCollapsible() || oControl.getExpanded() ) {
-			
+
 			var oDoc = oControl._getDoc();
-			
+
 			if ( oDoc ) {
 				rm.write("<table>");
 				if ( !bDemokit ) {
@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global'],
 					rm.write("<tr><td colspan='3' class='sapDkCueCdDoc'>", oDoc.doc || '', deprDoc(oDoc), "</td></tr>");
 				}
 				if ( oDoc.metatype === ".control" ) {
-	
+
 					var settings = jQuery.extend({}, oDoc.properties, oDoc.aggregations, oDoc.associations);
 					var n = names(settings);
 					if ( n.length > 0 ) {
@@ -137,7 +137,7 @@ sap.ui.define(['jquery.sap.global'],
 							rm.write("<tr", alternate(i), "><td class='sapDkCueCdName", deprClass(oProp), defaultAggrClass(n[i] === oDoc.defaultAggregation), "'>", n[i], "</td>", "<td class='sapDkCueCdType'>", crossref(oProp, oProp.type, oProp.cardinality), "</td>", "<td class='sapDkCueCdDoc'>", oProp.doc, deprDoc(oProp), defaultAggrDoc(n[i] === oDoc.defaultAggregation), "</td></tr>");
 						}
 					}
-					
+
 					var n = names(oDoc.events);
 					if ( n.length > 0 ) {
 						rm.write("<tr><td colspan='3' class='sapDkCueCdHd'>", "Events", "</td></tr>");
@@ -152,7 +152,7 @@ sap.ui.define(['jquery.sap.global'],
 							}
 						}
 					}
-					
+
 					var n = names(oDoc.methods);
 					if ( n.length > 0 ) {
 						rm.write("<tr><td colspan='3' class='sapDkCueCdHd'>", "Methods", "</td></tr>");
@@ -200,8 +200,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write("</div>");
 	};
-	
-	
+
+
 
 	return UI5EntityCueCardRenderer;
 

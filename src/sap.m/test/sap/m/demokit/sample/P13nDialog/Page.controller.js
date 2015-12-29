@@ -36,17 +36,17 @@ sap.ui.define([
 			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.oPersonalizationDialog);
 			this.oPersonalizationDialog.open();
 		},
-	
+
 		onPersonalizationDialogPress : function(oEvent) {
 			this.openDialog();
 		},
-	
+
 		onAddColumnsItem : function(oEvent){
 			MessageToast.show("Event 'addColumnsItem' fired in order to move the selected column item", {
 				width : "auto"
 			});
 		}
-	
+
 	});
 
 	return PageController;

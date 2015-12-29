@@ -22,7 +22,7 @@ sap.ui.define(function() {
 			 * @public
 			 */
 			Server: "Server",
-	
+
 			/**
 			 * Operations are executed on the client, all entries must be avilable to be able to do so.
 			 * The initial request fetches the complete collection, filtering and sorting does not trigger further requests
