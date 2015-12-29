@@ -43,6 +43,7 @@ sap.ui.define([],
 						icon : oDemo.links[i].icon,
 						desc : oDemo.links[i].desc,
 						config : oDemo.links[i].config,
+						type : "None",
 						ref : sBaseUrl + (oDemo.links[i].resolve === "lib" ? sLibUrl : "") + oDemo.links[i].ref
 					};
 					aApps.push(oApp);
@@ -77,6 +78,7 @@ sap.ui.define([],
 				name : "Downloads",
 				icon : "download",
 				desc : "Download our demoapps",
+				type : "Monitor",
 				ref : "DOWNLOAD"
 			});
 			return oData;
