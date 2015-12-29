@@ -5,7 +5,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.MultiHeader.Controller", {
-		
+
 		onInit : function () {
 
 			// create JSON model instance
@@ -20,15 +20,15 @@ sap.ui.define([
 					{supplier:"Technocom", street:"40 21st St", city:"Bethesda", phone:"5512-125-643"},
 					{supplier:"Very Best Screens", street:"123 72nd St", city:"McLean", phone:"5412-543-765"}
 				]};
-			
+
 			// set the data for the model
 			oModel.setData(oData);
 			var oView = this.getView();
 			// set the model to the core
 			oView.setModel(oModel);
-			
+
 			var oTable = oView.byId("table1");
-			
+
 			oView.byId("multiheader").setHeaderSpan([3,2,1]);
 		}
 	});

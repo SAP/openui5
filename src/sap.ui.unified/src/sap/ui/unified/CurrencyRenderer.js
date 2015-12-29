@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Currency renderer.
 	 *
@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var CurrencyRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided
 	 * {@link sap.ui.core.RenderManager}.

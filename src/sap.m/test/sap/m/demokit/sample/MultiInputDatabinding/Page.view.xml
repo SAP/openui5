@@ -3,25 +3,25 @@
 	xmlns="sap.m">
 
 <Label text="token databinding in single-line multiinput" />
-<MultiInput id="multiinput1" 
+<MultiInput id="multiinput1"
 	tokens="{
 				path: '/ProductCollection',
                 sorter: { path: 'Name' }
             }">
     <tokens>
     	<Token key="{ProductId}" text="{Name}" />
-    </tokens>    
+    </tokens>
 </MultiInput>
 
 <Label text="toekn databinding in multi-line multiinput" />
-<MultiInput enableMultiLineMode="true" id="multiinput2" 
+<MultiInput enableMultiLineMode="true" id="multiinput2"
 	tokens="{
 				path: '/ProductCollection',
                 sorter: { path: 'Name' }
             }">
-	<tokens>            
+	<tokens>
     	<Token key="{ProductId}" text="{Name}" />
-    </tokens>    
+    </tokens>
 </MultiInput>
 
 </mvc:View>

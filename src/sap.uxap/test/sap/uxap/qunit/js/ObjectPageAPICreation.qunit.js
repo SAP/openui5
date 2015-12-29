@@ -90,10 +90,10 @@
             assert.ok(this.oObjectPage.getUseIconTabBar(), true);
         });
 
-        /* 
+        /*
          * The following tests will be refactored in accord with the new IconTabBar behavior
-         * 
-         * 
+         *
+         *
         module("Use IconTabBar with no sections", {
         	beforeEach: function () {
                 this.oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar();
@@ -200,7 +200,7 @@
 
             assert.ok(!aIconTabFilters, 'The IconTabBar has no filters');
         }); */
-        
+
 		module("ObjectPage API: AnchorBar", {
 	    	beforeEach: function () {
 	            this.appControl = new sap.m.App();
@@ -236,7 +236,7 @@
             assert.equal(checkObjectExists(".sapUxAPAnchorBar"), true);
         });
 
-        
+
        module("ObjectPage API: ObjectPageHeader", {
 	    	beforeEach: function () {
 	            this.appControl = new sap.m.App();
@@ -268,11 +268,11 @@
             oObjectPage.setHeaderTitle(oNewHeader);
             assert.ok(oObjectPage.getHeaderTitle());
             assert.equal(oObjectPage.getHeaderContent()[0].getText(), "test");
-			
+
             sap.ui.getCore().applyChanges();
 
             assert.strictEqual(checkObjectExists("#objectPageViewSample--newHeader"), true);
-        });  
+        });
 
 
 		module("ObjectPage API", {
@@ -388,7 +388,7 @@
            QUnit.test("test Section for ObjectPageLayout defined into XMLView", function (assert) {
         	    this.appControl.removeAllPages();
 	            this.appControl.addPage(this.oSampleView);
-	            
+
                 var oObjectPage = this.oSampleView.byId("objectPage13");
                 assert.equal(oObjectPage.getSections().length, 3);
                 assert.equal(oObjectPage.getSections()[0].getTitle(), "Payroll");

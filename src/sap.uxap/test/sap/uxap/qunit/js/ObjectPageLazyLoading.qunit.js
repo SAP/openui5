@@ -84,21 +84,21 @@
 
 			oConfigModel.setData(oData);
 			sap.ui.getCore().applyChanges();
-			
+
 			var done = assert.async();
 			setTimeout(function() {
 				var oFirstSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
 				assert.strictEqual(oFirstSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
-				
+
 				var oSecondSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
 				assert.strictEqual(oSecondSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
-				
+
 				var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
 				assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded");
 				done();
 			}, iLoadingDelay);
 	});
-	
+
 	QUnit
 	.test(
 	"load scrolled sections",
@@ -111,19 +111,19 @@
 
 		oObjectPageLayout.scrollToSection(oObjectPageLayout.getSections()[5].getId());
 		sap.ui.getCore().applyChanges();
-		
+
 		var done = assert.async();
 		setTimeout(function() {
-			
+
 			var oThirdSubSection = oObjectPageLayout.getSections()[3].getSubSections()[0];
 			assert.strictEqual(oThirdSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded");
-			
+
 			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
 			assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, true, "block data if target section loaded");
 			done();
 		}, iLoadingDelay);
 });
-	
+
 	QUnit
 	.test(
 	"model mapping for scrolled sections",
@@ -133,18 +133,18 @@
 			.byId("objectPageContainer");
 		var oObjectPageLayout = oComponentContainer
 			.getObjectPageLayoutInstance();
-		
+
 		var oDataModel = new sap.ui.model.json.JSONModel("model/HRData.json");
 		oView.setModel(oDataModel, "objectPageData");
 
 		sap.ui.getCore().applyChanges();
-		
+
 		var done = assert.async();
 		setTimeout(function() {
-			
+
 			var oThirdSubSection = oObjectPageLayout.getSections()[3].getSubSections()[0];
 			assert.strictEqual(oThirdSubSection.$().find(".sapUxAPBlockBase .sapMImg").length > 0, false, "data of disconnected blocks is not loaded");
-			
+
 			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
 			assert.strictEqual(oLastSubSection.$().find(".sapUxAPBlockBase .sapMImg").length > 0, true, "data of last connected blocks is loaded");
 			done();

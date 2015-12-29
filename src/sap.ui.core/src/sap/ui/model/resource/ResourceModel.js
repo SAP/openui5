@@ -38,36 +38,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	 * @alias sap.ui.model.resource.ResourceModel
 	 */
 	var ResourceModel = Model.extend("sap.ui.model.resource.ResourceModel", /** @lends sap.ui.model.resource.ResourceModel.prototype */ {
-	
+
 		constructor : function(oData) {
 			Model.apply(this, arguments);
-			
+
 			this.bAsync = !!(oData && oData.async);
-		
+
 			this.sDefaultBindingMode = oData.defaultBindingMode || BindingMode.OneWay;
-			
+
 			this.mSupportedBindingModes = {
 				"OneWay" : true,
 				"TwoWay" : false,
 				"OneTime" : !this.bAsync
 			};
-			
+
 			if (this.bAsync && this.sDefaultBindingMode == BindingMode.OneTime) {
 				jQuery.sap.log.warning("Using binding mode OneTime for asynchronous ResourceModel is not supported!");
 			}
-	
+
 			this.oData = oData;
-			
+
 			// load resource bundle
 			_load(this, true);
 		},
-	
+
 		metadata : {
 			publicMethods : [ "getResourceBundle" ]
 		}
-	
+
 	});
-	
+
 	/**
 	 * Returns the resource bundle
 	 *
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		oRb = jQuery.sap.resources({url: sUrl, locale: sLocale, includeInfo: bIncludeInfo, async: !!oData.async});
 		return oRb;
 	};
-	
+
 	/**
 	 * Enhances the resource model with a custom resource bundle. The resource model
 	 * can be enhanced with multiple resource bundles. The last enhanced resource
@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 			oPromise = this.bAsync ? new Promise(function(resolve){
 				fResolve = resolve;
 			}) : null;
-		
+
 		function doEnhance(){
 			if (jQuery.sap.resources.isBundle(oData)) {
 				that._oResourceBundle._enhance(oData);
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 				}
 			}
 		}
-		
+
 		if (this._oPromise) {
 			Promise.resolve(this._oPromise).then(doEnhance);
 		} else {
@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		}
 		return oPromise;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 *
@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		var oBinding = new ResourcePropertyBinding(this, sPath);
 		return oBinding;
 	};
-	
+
 	/**
 	 * Returns the value for the property with the given <code>sPropertyName</code>
 	 *
@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	ResourceModel.prototype.getProperty = function(sPath) {
 		return this._oResourceBundle ? this._oResourceBundle.getText(sPath) : null;
 	};
-	
+
 	/**
 	 * Returns the resource bundle of this model
 	 *
@@ -186,15 +186,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 			}
 		}
 	};
-	
+
 	ResourceModel.prototype._handleLocalizationChange = function() {
 		_load(this, false);
 	};
-	
-	
+
+
 	function _load(oModel, bThrowError){
 		var oData = oModel.oData;
-		
+
 		if (oData && (oData.bundleUrl || oData.bundleName)) {
 			var res = oModel.loadResourceBundle(oData);
 			if (res instanceof Promise) {
@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 			throw new Error("Neither bundleUrl nor bundleName are given. One of these is mandatory.");
 		}
 	}
-	
+
 	function _getUrl(bundleUrl, bundleName){
 		var sUrl = bundleUrl;
 		if (bundleName) {
@@ -223,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		}
 		return sUrl;
 	}
-	
+
 
 	return ResourceModel;
 

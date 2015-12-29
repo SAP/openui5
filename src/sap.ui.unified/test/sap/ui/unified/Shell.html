@@ -5,18 +5,18 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 	<title>Shell - sap.ui.unified</title>
-	<script src="../../../../resources/sap-ui-core.js" 
-	        type="text/javascript" 
-	        id="sap-ui-bootstrap"            
+	<script src="../../../../resources/sap-ui-core.js"
+	        type="text/javascript"
+	        id="sap-ui-bootstrap"
 	        data-sap-ui-libs="sap.ui.unified"
 	        data-sap-ui-theme="sap_bluecrystal">
 	</script>
 	<script src="resources/ShellTestPage.js" type="text/javascript"></script>
 	<script>
-	
+
 	var state, oldState = null;
-	
-	
+
+
 	var configItm = new sap.ui.unified.ShellHeadItem({
 		tooltip: "Configuration",
 		icon: sap.ui.core.IconPool.getIconURI("menu2"),
@@ -25,7 +25,7 @@
 			configItm.setSelected(!configItm.getSelected());
 		}
 	});
-	
+
 	var curtainConfigItm = new sap.ui.unified.ShellHeadItem({
 		tooltip: "Configuration",
 		icon: sap.ui.core.IconPool.getIconURI("menu2"),
@@ -37,16 +37,16 @@
 			sap.ui.getCore().byId("CurtainContent").setHeaderHidden(oShell.getShowCurtainPane());
 		}
 	});
-	
+
 	(new sap.ui.core.InvisibleText("homeItm-txt", {text: "Home Screen"})).toStatic();
-	
+
 	var homeItm = new sap.ui.unified.ShellHeadItem({
 		tooltip: "Home",
 		icon: sap.ui.core.IconPool.getIconURI("home"),
 		press: function(){setState("HOME");},
 		ariaLabelledBy: ["homeItm-txt"]
 	});
-	
+
 	var filterItm = new sap.ui.unified.ShellHeadItem({
 		tooltip: "Filter",
 		icon: sap.ui.core.IconPool.getIconURI("filter"),
@@ -54,7 +54,7 @@
 			filterItm.setSelected(!filterItm.getSelected());
 		}
 	});
-	
+
 	var closeItm = new sap.ui.unified.ShellHeadItem({
 		tooltip: "Close",
 		icon: sap.ui.core.IconPool.getIconURI("decline"),
@@ -63,7 +63,7 @@
 			setState(oldState);
 		}
 	});
-	
+
 	var logoffItm = new sap.ui.unified.ShellHeadItem({
 		tooltip: "Logoff",
 		icon: sap.ui.core.IconPool.getIconURI("log"),
@@ -71,13 +71,13 @@
 		}
 	});
 
-	
+
 	var oDialog = new sap.ui.commons.Dialog({
 		width: "200px",
 		height: "200px",
 		title: "Dialog"
 	});
-	
+
 	var oCntnt = {
 		"SEARCH" : {
 			curt: [
@@ -107,7 +107,7 @@
  				new sap.ui.commons.Button({
 		        	text: "Focussable Button #2",
 		        	press: function() { alert("Yay, you pressed a button..."); }
-		        }),			       
+		        }),
 			   new sap.ui.commons.TextView({text: "Configure the home screen ...\n\n"+sLorem})
  			],
 			cntnt: [new sap.ui.commons.Button({
@@ -139,10 +139,10 @@
 			rightItems: [logoffItm]
 		}
 	};
-	
+
 	function applyContent(){
 		var cntnt = oCntnt[state];
-		
+
 		if(cntnt.pane){
 			oShell.removeAllPaneContent();
 			for(var i=0; i<cntnt.pane.length; i++){
@@ -180,7 +180,7 @@
 			}
 		}
 	};
-	
+
 	function setState(sState){
 		switch(sState){
 			case "SEARCH":
@@ -202,11 +202,11 @@
 		}
 		configItm.setSelected(false);
 		filterItm.setSelected(false);
-		
+
 		state = sState;
 		applyContent();
 	};
-	
+
 	var oShell = new sap.ui.unified.Shell({
 		icon: sLogo,
 		search: new SearchFieldPlaceHolder("sf", {
@@ -218,13 +218,13 @@
 		})
 	});
 	oShell.placeAt("content");
-	
+
 	oShell.setUser(new sap.ui.unified.ShellHeadUserItem({
 		image: "images/person.jpg",
 		username: "Karl Mustermann",
 		press: function(){alert("User Item pressed");}
 	}));
-	
+
 	setState("HOME");
 
 	</script>

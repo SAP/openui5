@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.table.Table
   Author: d029506, d053398
 -->
@@ -11,7 +11,7 @@
 	<meta charset="utf-8" />
 
 	<title>qUnit Page for sap.ui.table.Table</title>
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -104,7 +104,7 @@
 		oTable.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
-	
+
 	function destroyTable() {
 		oTable.destroy();
 	}
@@ -124,14 +124,14 @@
 		 oModel.setData({modelData: aData});
 		 oTable.setModel(oModel);
 	}
-	
+
 	function sortTable() {
 		var aColumns = oTable.getColumns(),
 			fSorting = sap.ui.table.SortOrder;
 		oTable.sort(aColumns[1],fSorting.Ascending, false);
 		oTable.sort(aColumns[0],fSorting.Ascending, true);
 	}
-	
+
 	//********** Tests start********************************************
 	qutils.delayTestStart();
 
@@ -217,7 +217,7 @@
 		equals(oColFirstName.getFiltered() && oColMoney.getFiltered(), false, "Column FirstName and Money are not filtered anymore");
 		equals(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
 	});
-	
+
 	test("SelectionMode", function() {
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
 		equals(oTable.getSelectionMode(), "Multi", "Selection mode is Multi!");
@@ -399,7 +399,7 @@
 		oColumn.setMenu(oCustomMenu);
 		ok(oColumn.getMenu() === oCustomMenu, "Custom menu equals set column menu");
 	});
-	
+
 	test("Resize column", function() {
 		var oColumn = oTable.getColumns()[1],
 			sResizeHandlerId = oColumn.getId() + '-rsz';
@@ -424,7 +424,7 @@
 		var newSize = oTable._calculateAutomaticColumnWidth(1);
 		equals(oColumn.getWidth(), newSize + "px", "check column width after resize");
 	});
-	
+
 	module("Column filtering", {
 		setup: function() {
 			createTable({
@@ -436,7 +436,7 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	test("Menu & initial filter: references", 4, function() {
 		var oColumn = oTable.getColumns()[0];
 		var oMenu = oColumn.getMenu();
@@ -480,13 +480,13 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	test("After initialization", function(){
 		var $table = oTable.$();
 		$button = $table.find('.sapUiTableExt').find('#extensionButton');
 		equals($table.find('.sapUiTableSplitterBar').length, 1, "The handle to resize the table is visible");
 	});
-	
+
 	test("Resize", function(){
 		oTable._bTouchMode = false;
 		equals(oTable.getVisibleRowCount(), 10, "Row count of 10");
@@ -496,7 +496,7 @@
 		qutils.triggerMouseEvent(barId, "mousedown", 1, 1, -9950, -10000, 0 );
 		qutils.triggerMouseEvent(barId, "mousemove", 1, 1, -9950, -9500, 0 );
 		qutils.triggerMouseEvent(barId, "mouseup", 1, 1, -9950, -9500, 0 );
-		
+
 		sap.ui.getCore().applyChanges();
 
 		equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
@@ -508,14 +508,14 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	test("Arrow keys", function() {
 		var sCellId = oTable.getId() + "-rows-row0-col0",
 			oRow = oTable.getRows()[9],
 			$focused;
 
 		jQuery.sap.byId(sCellId).focus();
-		
+
 		$focused = jQuery(document.activeElement);
 		equal($focused.attr('id'), sCellId, "The correct cell has the focus");
 
@@ -554,7 +554,7 @@
 
 		$focused = jQuery(document.activeElement);
 		equal($focused.attr('id'), oTable.getId() + "-rows-row1-col1", "The correct cell has the focus");
-		
+
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
 		$focused = jQuery(document.activeElement);
 		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
@@ -586,7 +586,7 @@
 		var sCellId = oTable.getId() + "-rows-row0-col0",
 			oRow = oTable.getRows()[9],
 			$focused;
-	
+
 		jQuery.sap.byId(sCellId).focus();
 
 		$focused = jQuery(document.activeElement);
@@ -604,7 +604,7 @@
 
 		equal(oRow.getIndex(), 9, "The correct cell has the focus");
 	});
-	
+
 	/*test("Page keys", function() {
 		var $table = oTable.$();
 		//qutils.triggerKeyboardEvent("oSli6", "ARROW_UP", false, false, true);
@@ -822,7 +822,7 @@
 	test("Grouping using table API", 1, function() {
 		var oColumn = oTable.getColumns()[3],
 			oBinding;
-		
+
 		oTable.setGroupBy(oColumn);
 		oBinding = oTable.getBinding("rows");
 		equal(oBinding.getLength(), 203, "Row count is correct!");
@@ -894,7 +894,7 @@
 	test("Headers", 1, function() {
 		equal(jQuery.sap.byId("table").find(".sapUiTableColHdr .sapUiTableCol").length, 6, "Total count of headers");
 	});
-	
+
 	test("Equal widths", 3, function() {
 		var $Table = jQuery.sap.byId("table");
 		var $Head1 = $Table.find(".sapUiTableColHdr:eq(0)");
@@ -983,7 +983,7 @@
 			start();
 		});
 	});
-	
+
 	module("Toolbar");
 	test("Table toolbar should have the transparent design by default without changing the design property", function() {
 		var oTB = new sap.m.Toolbar(),
@@ -1014,7 +1014,7 @@
 
 		oTable.destroy();
 	});
-	
+
 	module("Sorting", {
 		setup: function() {
 			createTable({
@@ -1024,13 +1024,13 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	asyncTest("Multi-columns sorting", function() {
 		creatSortingTableData();
 
 		var fnHandler = function() {
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 
 				strictEqual(aSortedColumns[0].getSortProperty(), "name", "check column name.");
@@ -1038,91 +1038,91 @@
 
 				strictEqual(oTable.getRows()[3].getCells()[0].getText(), "Open", "second sorting column works.");
 				strictEqual(oTable.getRows()[3].getCells()[1].getValue(), "Doris", "first sorting column works.");
-				
+
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				start();
 			}
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 	});
-	
+
 	asyncTest("remove column", function() {
 		creatSortingTableData();
 		var oRemovedColumn;
 
 		var fnHandler = function() {
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				oRemovedColumn = oTable.removeColumn(oTable.getSortedColumns()[0]);
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
 			}
 		};
-		
+
 		var fnHandler2 = function() {
 			var aSortedColumns = oTable.getSortedColumns();
 			strictEqual(aSortedColumns.length, 1, "sorted column deletion.");
 			strictEqual(oRemovedColumn.getSortProperty(), "name", "first name is removed");
 			strictEqual(aSortedColumns[0].getSortProperty(), "lastName", "second column becomes the first column.");
-			
+
 			start();
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
 	});
-	
-	
+
+
 	asyncTest("remove all columns", function() {
 		creatSortingTableData();
-		
+
 		var fnHandler = function() {
-			
+
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				oTable.removeAllColumns();
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
 			}
 		};
-		
+
 		var fnHandler2 = function() {
 			var aSortedColumns = oTable.getSortedColumns();
 			strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
 			start();
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
 	});
-	
-	
+
+
 	asyncTest("destroy columns", function() {
 		creatSortingTableData();
-		
+
 		var fnHandler = function() {
-			
+
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				oTable.destroyColumns();
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
 			}
 		};
-		
+
 		var fnHandler2 = function() {
 			var aSortedColumns = oTable.getSortedColumns();
 			strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
 			start();
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
@@ -1131,29 +1131,29 @@
 	asyncTest("change column order", function() {
 		creatSortingTableData();
 		var oRemovedColumn;
-		
+
 		var fnHandler = function() {
-			
+
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				oTable._iNewColPos = 0;
 				oRemovedColumn = oTable.removeColumn(aSortedColumns[1]);
-				
+
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
 			}
 		};
-		
+
 		var fnHandler2 = function() {
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
 			oTable.insertColumn(oRemovedColumn, oTable._iNewColPos);
 			delete oTable._iNewColPos;
 			oTable.attachEvent("_rowsUpdated", fnHandler3);
 		};
-		
+
 		var fnHandler3 = function() {
-			
+
 			var aSortedColumns = oTable.getSortedColumns();
 			strictEqual(aSortedColumns.length, 2, "2 sorted columns.");
 			strictEqual(aSortedColumns[0].getSortProperty(), "name", "first name stays in first sorted column");
@@ -1161,7 +1161,7 @@
 
 			start();
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
@@ -1177,11 +1177,11 @@
 	test("Prevent re-rendering on setEnableBusyIndicator", function() {
 		var spy = this.spy();
 		oTable.addEventDelegate({onAfterRendering: spy});
-		
+
 		// act
 		oTable.setEnableBusyIndicator(true);
 		sap.ui.getCore().applyChanges();
-		
+
 		// assertions
 		sinon.assert.notCalled(spy);
 		assert.ok(oTable.getEnableBusyIndicator(), "The overwritten function still works");

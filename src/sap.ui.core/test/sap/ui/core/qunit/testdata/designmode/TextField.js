@@ -8,18 +8,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 	"use strict";
 
 	var TextField = Control.extend("example.designmode.TextField", {
-		
+
 		metadata: {
-			
+
 			designTime: {
 				css: "TextField.designtime.css",
 				icon: "TextField.png",
 				name: "{name}",
 				description: "{description}",
 			}
-			
+
 		}
-		
+
 	});
 
 	return TextField;

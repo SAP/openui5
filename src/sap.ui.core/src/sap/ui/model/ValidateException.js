@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Exception'],
 		this.violatedConstraints = violatedConstraints;
 	};
 	ValidateException.prototype = jQuery.sap.newObject(Exception.prototype);
-	
+
 
 	return ValidateException;
 

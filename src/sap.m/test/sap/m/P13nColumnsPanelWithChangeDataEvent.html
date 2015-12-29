@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-compatVersion="1.20">
-	
+
 </script>
 <script>
 	jQuery.sap.require("jquery.sap.xml");
@@ -154,7 +154,7 @@
 			oData.persistentData.columns.columnsItems.push(oColumnsItem);
 		});
 
-		//processing of existing columnsItems --> model change 
+		//processing of existing columnsItems --> model change
 		aExistingColumnsItems.forEach(function(oExistingColumnsItem) {
 			oColumnsItem = null;
 			sColumnKey = oExistingColumnsItem.getColumnKey();

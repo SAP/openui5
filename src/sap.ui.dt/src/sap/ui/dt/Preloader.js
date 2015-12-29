@@ -13,7 +13,7 @@ function(Element) {
 
 	/**
 	 * Class for Preloader.
-	 * 
+	 *
 	 * @class
 	 * Preloader for design time metadata.
 	 *

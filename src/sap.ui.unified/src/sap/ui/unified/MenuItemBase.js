@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Abstract base class <code>MenuItemBase</code> for menu item elements. Please use concrete subclasses.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
@@ -30,21 +30,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
 	var MenuItemBase = Element.extend("sap.ui.unified.MenuItemBase", /** @lends sap.ui.unified.MenuItemBase.prototype */ { metadata : {
-	
+
 		library : "sap.ui.unified",
 		properties : {
-	
+
 			/**
 			 * When an item is disabled the item can not be selected by the user.
 			 * The enabled property of the item has no effect when the menu of the item is disabled ({@link sap.ui.unified.Menu#getEnabled Menu#getEnabled}).
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Invisible items do not appear in the menu.
 			 */
 			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Defines whether a visual separator should be rendered before the item.
 			 * <b>Note:</b> If an item is invisible also the separator of this item is not shown.
@@ -53,14 +53,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		},
 		defaultAggregation : "submenu",
 		aggregations : {
-	
+
 			/**
 			 * An optional submenu of the item which is opened when the item is selected by the user.
 			 */
 			submenu : {type : "sap.ui.unified.Menu", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * Fired when the item is selected by the user.
 			 * <b>Note:</b> The event is also available for items which have a submenu.
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			 */
 			select : {
 				parameters : {
-	
+
 					/**
 					 * The current item
 					 */
@@ -77,16 +77,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			}
 		}
 	}});
-	
+
 	MenuItemBase.prototype.init = function(){
 	   // do something for initialization...
 	};
-	
+
 	/**
 	 * Produces the HTML of an item and writes it to render-output-buffer during the rendering of the corresponding menu.
-	 * 
+	 *
 	 * Subclasses may override this function.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager The <code>RenderManager</code> that can be used for writing to the render-output-buffer
 	 * @param {sap.ui.unified.MenuItemBase} oItem The item which should be rendered
 	 * @param {sap.ui.unified.Menu} oMenu The menu to which this item belongs
@@ -103,12 +103,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 		rm.write("</div></li>");
 	};
-	
-	/** 
+
+	/**
 	 * Changes the visual hover state of the menu item.
-	 * 
+	 *
 	 * Subclasses may override this function.
-	 * 
+	 *
 	 * @param {boolean} bHovered Specifies whether the item is currently hovered or not.
 	 * @param {sap.ui.unified.Menu} oMenu The menu to which this item belongs
 	 * @protected
@@ -116,12 +116,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	MenuItemBase.prototype.hover = function(bHovered, oMenu){
 		this.$("txt").attr("style", bHovered ? "white-space:nowrap;display:inline-block;padding:1px;color:red;" : "white-space:nowrap;display:inline-block;padding:1px;color:black;");
 	};
-	
-	/** 
+
+	/**
 	 * Event handler which is called whenever the submenu of the item is opened or closed.
-	 * 
+	 *
 	 * Subclasses may override this function.
-	 * 
+	 *
 	 * @param {boolean} bOpened Specifies whether the submenu of the item is opened or closed
 	 * @protected
 	 */
@@ -129,20 +129,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		// Subclasses may override this: Called when the items submenu is opend or closed
 		this.$().toggleClass("sapUiMnuItmSubMnuOpen", bOpened);
 	};
-	
+
 	/**
 	 * Informs the item that the item HTML is now applied to the DOM.
-	 * 
+	 *
 	 * Subclasses may override this function.
-	 * 
+	 *
 	 * @protected
 	 */
 	MenuItemBase.prototype.onAfterRendering = function(){
 		// Subclasses may override this: Called after the item is rendered
 	};
-	
-	
-	
+
+
+
 	MenuItemBase.prototype.onmouseover = function(oEvent){
 		var oParent = this.getParent();
 		if (oParent && oParent instanceof sap.ui.unified.Menu && this.getTooltip() instanceof sap.ui.core.TooltipBase) {

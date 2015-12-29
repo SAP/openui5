@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	/**
 	 * Constructor for a new MenuButton.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -25,15 +25,15 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MenuButton = Button.extend("sap.ui.commons.MenuButton", /** @lends sap.ui.commons.MenuButton.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * The position / edge (see sap.ui.core.Popup.Dock) of the button where the menu is docked. Default is 'begin bottom'.
 			 */
 			dockButton : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * The position / edge (see sap.ui.core.Popup.Dock) of the menu which is docked to the button. Default is 'begin top'.
 			 */
@@ -41,25 +41,25 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 		},
 		defaultAggregation : "menu",
 		aggregations : {
-	
+
 			/**
 			 * Menu that shall be opened when the button is clicked
 			 */
 			menu : {type : "sap.ui.unified.Menu", multiple : false}
 		},
 		events : {
-	
+
 			/**
 			 * Event that is fired when a menu item is selected by the user
 			 */
 			itemSelected : {
 				parameters : {
-	
+
 					/**
 					 * The ID of the selected item
 					 */
-					itemId : {type : "string"}, 
-	
+					itemId : {type : "string"},
+
 					/**
 					 * The selected item
 					 */
@@ -68,14 +68,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 			}
 		}
 	}});
-	
+
 	/*Ensure MenuItemBase is loaded (incl. loading of unified library)*/
-	
+
 	MenuButton.prototype.init = function() {
 		this.addStyleClass("sapUiMenuButton");
 		this.bWithKeyboard = false;
 	};
-	
+
 	/**
 	 * Function is called when button is clicked.
 	 *
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 	};
-	
+
 	/**
 	 * Function is called when mouse key is clicked down.
 	 *
@@ -108,8 +108,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 		this.handleMouseDown(oEvent, false);
 		this._bSkipOpen = this.getMenu() && this.getMenu().bOpen;
 	};
-	
-	
+
+
 	/**
 	 * Function is called when mouse leaves the control.
 	 *
@@ -124,8 +124,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 			this._bSkipOpen = false;
 		}
 	};
-	
-	
+
+
 	/**
 	 * Function is called when enter key is pressed.
 	 *
@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 		//It is sufficient to set this flag here only. A click event to open the menu will follow.
 		this.bWithKeyboard = true;
 	};
-	
+
 	/**
 	 * Function is called when space key is pressed.
 	 *
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 		//It is sufficient to set this flag here only. A click event to open the menu will follow.
 		this.bWithKeyboard = true;
 	};
-	
+
 	/**
 	 * Function is called when down key is pressed with a modifier key.
 	 *
@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 			this.onclick(oEvent);
 		}
 	};
-	
+
 	MenuButton.prototype.clone = function(sIdSuffix, aLocalIds) {
 		//Deregister event listener before cloning
 		updateMenuEventRegistration(this);
@@ -169,7 +169,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 		updateMenuEventRegistration(this, this.getMenu());
 		return oClone;
 	};
-	
+
 	/**
 	 * Setter for the aggregated <code>menu</code>.
 	 * @param {sap.ui.unified.Menu} oMenu
@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 		this.setAggregation("menu", oMenu);
 		return this;
 	};
-	
+
 	/**
 	 * Destroys the menu in the aggregation
 	 * named <code>menu</code>.
@@ -193,9 +193,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 		this.destroyAggregation("menu");
 		return this;
 	};
-	
+
 	//********** Private **********
-	
+
 	// Detaches the select event handler from the current menu and attaches it to the new menu
 	var updateMenuEventRegistration = function(oThis, oNewMenu){
 		var oMenu = oThis.getMenu();
@@ -207,16 +207,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 			oNewMenu.attachItemSelect(oThis._fItemSelectHandler);
 		}
 	};
-	
+
 	//Function is called when an item in the menu was selected.
 	var onItemSelected = function(oEvent){
 		var oItem = oEvent.getParameter("item");
 		this.fireItemSelected({itemId: oItem.getId(), item: oItem});
 		this.firePress({itemId: oItem.getId(), item: oItem});
 	};
-	
+
 	// Overwrite JSDoc for inherited press event to make clear that 'press' === 'itemSelected'
-	
+
 	/**
 	 * Fired when an item from the menu was selected.
 	 *
@@ -232,7 +232,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	 * @name sap.ui.commons.MenuButton#press
 	 * @event
 	 */
-	
+
 	/**
 	 * Attach event-handler <code>fnFunction</code> to the 'press' event of this <code>sap.ui.commons.MenuButton</code>.<br/>
 	 *
@@ -253,7 +253,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	 * @name sap.ui.commons.MenuButton#attachPress
 	 * @function
 	 */
-	
+
 	/**
 	 * Detach event-handler <code>fnFunction</code> from the 'press' event of this <code>sap.ui.commons.MenuButton</code>.<br/>
 	 *
@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	 * @name sap.ui.commons.MenuButton#detachPress
 	 * @function
 	 */
-	
+
 	/**
 	 * Fire event press to attached listeners.
 	 *

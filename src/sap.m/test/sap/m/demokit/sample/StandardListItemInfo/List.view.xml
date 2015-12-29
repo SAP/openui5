@@ -2,7 +2,7 @@
 	controllerName="sap.m.sample.StandardListItemInfo.List"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<List 
+	<List
 		headerText="Products"
 		items="{
 			path: '/ProductCollection',

@@ -55,7 +55,7 @@
 								text="{
 									path : 'status',
 									formatter : '.formatter.statusText'
-								}" 
+								}"
 								state="{
 									path : 'status',
 									formatter : '.formatter.statusState'

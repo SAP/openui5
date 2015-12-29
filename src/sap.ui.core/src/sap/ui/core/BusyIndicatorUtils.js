@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			sSizeClass = "sapUiLocalBusyIndicatorSizeBig";
 		}
 		var sTemplate =
-		'<div class="sapUiLocalBusyIndicator ' + sSizeClass + '" role="progressbar" aria-valuemin="0" aria-valuemax="100" alt="" tabindex="0">' + 
+		'<div class="sapUiLocalBusyIndicator ' + sSizeClass + '" role="progressbar" aria-valuemin="0" aria-valuemax="100" alt="" tabindex="0">' +
 			'<div class="sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimStandard">' +
 				'<div></div>' +
 				'<div></div>' +

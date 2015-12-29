@@ -5,7 +5,7 @@
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
-	
+
 	/**
 	 * Clientside Sorter processor
 	 * @namespace sap.ui.model.SorterProcessor
@@ -14,9 +14,9 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Sorts the list
-	 * 
+	 *
 	 * Sorters are applied according to their order in the sorter array.
-	 * 
+	 *
 	 * @param {array} aData the data array to be sorted
 	 * @param {array} aSorters the sorter array
 	 * @param {function} fnGetValue the method to get the actual value use for sorting
@@ -29,11 +29,11 @@ sap.ui.define(['jquery.sap.global'],
 			aCompareFunctions = [],
 			oValue,
 			oSorter;
-	
+
 		if (!aSorters || aSorters.length == 0) {
 			return aData;
 		}
-		
+
 		function fnCompare(a, b) {
 			if (a == b) {
 				return 0;
@@ -55,11 +55,11 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			return 0;
 		}
-		
+
 		for (var j = 0; j < aSorters.length; j++) {
 			oSorter = aSorters[j];
 			aCompareFunctions[j] = oSorter.fnCompare;
-			
+
 			if (!aCompareFunctions[j]) {
 				aCompareFunctions[j] = fnCompare;
 			}
@@ -72,37 +72,37 @@ sap.ui.define(['jquery.sap.global'],
 				if (!aSortValues[j]) {
 					aSortValues[j] = [];
 				}
-				
+
 				// When the data array might contain objects, e.g. in the ClientTreeBinding
 				if (fnGetKey) {
 					vRef = fnGetKey(vRef);
 				}
-				
+
 				aSortValues[j][vRef] = oValue;
 			});
 			/*eslint-enable no-loop-func */
 		}
-	
+
 		aData.sort(function(a, b) {
 			if (fnGetKey) {
 				a = fnGetKey(a);
 				b = fnGetKey(b);
 			}
-			
+
 			var valueA = aSortValues[0][a],
 				valueB = aSortValues[0][b];
-			
+
 			return that._applySortCompare(aSorters, a, b, valueA, valueB, aSortValues, aCompareFunctions, 0);
 		});
-		
+
 		return aData;
 	};
-	
+
 	SorterProcessor._applySortCompare = function(aSorters, a, b, valueA, valueB, aSortValues, aCompareFunctions, iDepth){
 		var oSorter = aSorters[iDepth],
 			fnCompare = aCompareFunctions[iDepth],
 			returnValue;
-	
+
 		returnValue = fnCompare(valueA, valueB);
 		if (oSorter.bDescending) {
 			returnValue = -returnValue;
@@ -114,8 +114,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return returnValue;
 	};
-	
+
 	return SorterProcessor;
-	
+
 });
-	
+

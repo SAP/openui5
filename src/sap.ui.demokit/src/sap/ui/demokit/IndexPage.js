@@ -11,11 +11,11 @@ sap.ui.define(['jquery.sap.global', './DemokitApp'],
 		var oDemokit = DemokitApp.getInstance(),
 			iHierarchyLevel = 3,
 			iCols;
-		
+
 		function suffix(s,n) {
 			return s.split('/').slice(-n - 1).join('/');
 		}
-		
+
 		this.oDemokit = oDemokit;
 		this.sPathToRoot = suffix("../../../../../../../", iHierarchyLevel);
 		this.sRootUrl = window.location.pathname.split('/').slice(-iHierarchyLevel - 1, -1).join('/') + '/';
@@ -28,12 +28,12 @@ sap.ui.define(['jquery.sap.global', './DemokitApp'],
 			}
 		}
 	};
-	
+
 	IndexPage.prototype.add = function add(bEnabled, sControl, sTooltip, sIcon, sLibrary, sRef) {
-	
+
 		var that = this,
 			oButton;
-		
+
 		if ( typeof bEnabled !== "boolean" ) {
 			sRef = sLibrary;
 			sLibrary = sIcon;
@@ -42,12 +42,12 @@ sap.ui.define(['jquery.sap.global', './DemokitApp'],
 			sControl = bEnabled;
 			bEnabled = true;
 		}
-		
+
 		sRef = sRef || this.sRootUrl + sControl + '.html';
 		if ( !sLibrary ) {
 			sLibrary = "sap.ui.commons";
 		}
-	
+
 		if ( !sTooltip ) {
 			if ( bEnabled ) {
 				sTooltip = "A short tutorial that explains how to use the " + sControl + ". Click to start it.";
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './DemokitApp'],
 				sTooltip = "Here you should find a tutorial for the " + sControl + ". Unfortunately we didn't write it in time. Please hover back soon ;-)";
 			}
 		}
-	
+
 		oButton = new sap.ui.demokit.HexagonButton({
 			enabled: bEnabled,
 			color: "Gray",//this.sColor,
@@ -72,10 +72,10 @@ sap.ui.define(['jquery.sap.global', './DemokitApp'],
 			oButton.setIcon(sIcon);
 		}
 		this.oHexGroup.addButton(oButton);
-	
+
 		return this;
 	};
-	
+
 	IndexPage.prototype.placeAt = function(sId) {
 		this.oHexGroup.placeAt(sId);
 		jQuery(function() {
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './DemokitApp'],
 			}
 		});
 	};
-	
+
 
 	return IndexPage;
 

@@ -2,20 +2,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 	function(jQuery, UIComponent) {
 	"use strict";
 
-	
+
 	var Component = UIComponent.extend("sap.ui.test.v1inline.Component", {
 
 		metadata : {
 
 			"name": "sap.ui.test.v1inline.Component",
-		
+
 			"version": "1.0.0",
 
 			"includes" : [
 				"style.css",
 				"script.js"
 			],
-		
+
 			"dependencies" : {
 				"libs" : [
 					"sap.ui.commons"
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 				],
 				"ui5version" : "1.22.5"
 			},
-		
+
 			"config": {
 				"any1": {
 					"entry": "configuration"
@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 					"anyarray": [1, 2, 3]
 				}
 			},
-		
+
 			"models": {
 				"i18n": {
 					"type": "sap.ui.model.resource.ResourceModel",
@@ -50,9 +50,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 					"uri": "/sap/opu/odata/snce/PO_S_SRV/"
 				}
 			},
-				
+
 			"rootView": "sap.ui.test.view.Main",
-		
+
 			"customizing": {
 				"sap.ui.viewReplacements": {
 					"sap.ui.test.view.Main": {
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 					}
 				]
 			},
-		
+
 			"sap.fiori": {
 				"key1": "value1",
 				"key2": "value2",
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 				},
 				"key4": ["value1", "value2"]
 			},
-		
+
 			"custom.entry": {
 				"key1": "value1",
 				"key2": "value2",
@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 				},
 				"key4": ["value1", "value2"]
 			}
-		
+
 		}
 
 	});

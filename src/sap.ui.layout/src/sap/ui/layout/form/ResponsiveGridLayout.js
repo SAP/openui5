@@ -85,8 +85,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * Number of grid cells that are empty at the end of each line on extra large size. 
-			 * 
+			 * Number of grid cells that are empty at the end of each line on extra large size.
+			 *
 			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>emptySpanL</code> value is used.
 			 * @since 1.34.0
 			 */
@@ -905,7 +905,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					bLastXL = bLastL;
 					bLastRowXL = bLastRowL;
 				}
-				
+
 				if (oContainerNext) {
 					var oLDNext = oLayout.getLayoutDataForElement(oContainerNext, "sap.ui.layout.GridData");
 					if (oLDNext && ( oLDNext.getLinebreak() || oLDNext.getLinebreakXL() )) {

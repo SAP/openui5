@@ -11,10 +11,10 @@ sap.ui.define(['./library'], function(library) {
 	var RenderPrefixes = library.RenderPrefixes;
 
 	var HTMLRenderer = {
-	
+
 		/**
 		 * Renders either the configured content or a dummy div that will be replaced after rendering
-		 * 
+		 *
 		 * @param {sap.ui.core.RenderManager} [oRM] The RenderManager instance
 		 * @param {sap.ui.core.Control} [oControl] The instance of the invisible control
 		 */

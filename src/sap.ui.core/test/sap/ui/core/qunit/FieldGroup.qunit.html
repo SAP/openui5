@@ -54,7 +54,7 @@
 			new sap.ui.commons.CheckBox({id:"field21",width:"200px", fieldGroupIds:["group2"]})
 	);
 	oVerticalLayout.addContent(oMatrixLayout);
-	
+
 	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
 	oMatrixLayout.setLayoutFixed(false);
 	oMatrixLayout.createRow(
@@ -70,7 +70,7 @@
 			new sap.ui.commons.TextField({id:"field23",width:"200px", fieldGroupIds:["group2"]})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "Field 1 of group3",labelFor:"field31"}), 
+			new sap.ui.commons.Label({text: "Field 1 of group3",labelFor:"field31"}),
 			new sap.ui.commons.TextField({id:"field31",width:"200px", fieldGroupIds:["group3"]})
 	);
 	oMatrixLayout.createRow(
@@ -94,7 +94,7 @@
 			new sap.ui.commons.TextField({id:"field3",width:"200px"})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "Field 1 of group4",labelFor:"field41"}), 
+			new sap.ui.commons.Label({text: "Field 1 of group4",labelFor:"field41"}),
 			new sap.ui.commons.TextField({id:"field41",width:"200px", fieldGroupIds:["group4"]})
 	);
 	oMatrixLayout.createRow(
@@ -133,10 +133,10 @@
 			new sap.ui.commons.Label({text: "Field 5 of group6 Field 5 of group4",labelFor:"field32"}),
 			new sap.ui.commons.CheckBox({id:"field45-65",width:"200px", fieldGroupIds:["group4","group6"]})
 	);
-	
+
 	oVerticalLayout.addContent(oMatrixLayout);
 	oVerticalLayout.placeAt("content");
-	
+
 	//Attach handler for testing
 	var bPauseEventing = false;
 	oVerticalLayout.attachValidateFieldGroup(function(oEvent) {
@@ -165,11 +165,11 @@
 			equal(oEvent.mParameters.fieldGroupIds.length,iFound,"ValidateFieldGroup groups, event fired for correct group:" + sCurrentGroup);
 		}
 	}
-	
+
 	function moveFocus(sFieldId, sCurrent, sNew, fContinue) {
 		sCurrentGroup = sCurrent;
 		sNewGroup = sNew;
-		
+
 		sap.ui.getCore().byId(sFieldId).focus();
 		setTimeout(function () {
 			var a = sap.ui.core.UIArea._oFieldGroupControl.getFieldGroupIds();
@@ -181,7 +181,7 @@
 				}
 			} else {
 				equal(0,0,"Focus now on no group:" + sNewGroup);
-				
+
 			}
 			sCurrentGroup = [sNew];
 			if (fContinue) {
@@ -189,7 +189,7 @@
 			}
 		},1);
 	};
-	
+
 	asyncTest("focus field of group 1", 1, function(){
 		//focus the content area initially
 		document.getElementById("content").focus();
@@ -230,7 +230,7 @@
 					UIArea._oFieldGroupValidationKey.keyCode,
 					UIArea._oFieldGroupValidationKey.shiftKey,
 					UIArea._oFieldGroupValidationKey.altKey,
-					UIArea._oFieldGroupValidationKey.ctrlKey);	
+					UIArea._oFieldGroupValidationKey.ctrlKey);
 			//resest kecode after test
 			UIArea._oFieldGroupValidationKey = jQuery.extend(oStoreKeyCombination,{})
 			start();
@@ -259,7 +259,7 @@
 				},1)
 			},1);
 		},1)
-		
+
 	});
 
 	test("get controls by field group", 18, function(){
@@ -283,8 +283,8 @@
 		equal(aGroup.length,2,"2 controls with  field groups ['group6','group4']");
 		var aGroup = oVerticalLayout.getControlsByFieldGroupId("group6,group4");
 		equal(aGroup.length,2,"2 controls with  field groups 'group6,group4'");
-		
-		
+
+
 		var aGroup = sap.ui.getCore().byFieldGroupId("group1");
 		equal(aGroup.length,3,"3 controls in group1");
 		var aGroup = sap.ui.getCore().byFieldGroupId("group2");
@@ -301,9 +301,9 @@
 		equal(aGroup.length,1,"1 controls with  field groups ['group6','group4','group5']");
 		var aGroup = sap.ui.getCore().byFieldGroupId(["group6","group4"]);
 		equal(aGroup.length,2,"2 controls with  field groups ['group6','group4']");
-		
+
 	});
-	
+
 	var oParent = null;
 	asyncTest("Destroy of fields", 6, function(){
 		document.getElementById("field11").focus();
@@ -329,8 +329,8 @@
 			});
 		},1);
 	});
-	
-	
+
+
 	asyncTest("Multiple Groups focus field of group 4, group5, group6", 7, function(){
 		//focus the content area initially
 		bPauseEventing = true;

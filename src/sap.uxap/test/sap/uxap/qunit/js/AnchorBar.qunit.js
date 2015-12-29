@@ -107,7 +107,7 @@
         assert.ok(jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0 && jQuery(HIERARCHICAL_CLASS_SELECTOR).is(":visible") == true, "display hierarchical select");
 
     });
-    
+
    QUnit.test("Anchors for sections with multiple subsection must have arrow-down icon", function () {
 		var $arrowDownIcons;
 

@@ -27,13 +27,13 @@ sap.ui.define([
 			this.oSplitter = this.byId("mainSplitter");
 			this.oSplitter.attachResize(function(oEvent) {
 				this.byId("eventStatus").setText(
-					new Date().toLocaleString() + 
+					new Date().toLocaleString() +
 					" - Resize # " + (++this.iResizes)
 				);
 				this.showLayoutOptions();
 			}, this);
 		}
-	
+
 		return this.oSplitter;
 	},
 
@@ -41,7 +41,7 @@ sap.ui.define([
 		if (!this.oOptions) {
 			this.oOptions = this.byId("mainOptions");
 		}
-	
+
 		return this.oOptions;
 	},
 
@@ -49,10 +49,10 @@ sap.ui.define([
 	showLayoutOptions : function() {
 		var oOptionsLayout = this.getOptionsLayout();
 		var oSplitter = this.getSplitter();
-	
+
 		// Remove all Options
 		oOptionsLayout.destroyContent();
-	
+
 		var aContentAreas = oSplitter.getContentAreas();
 		for (var i = 0; i < aContentAreas.length; ++i) {
 			var oContentArea = aContentAreas[i];
@@ -61,14 +61,14 @@ sap.ui.define([
 				oLD = new SplitterLayoutData();
 				oContentArea.setLayoutData(oLD);
 			}
-		
+
 			var oOptions = new HorizontalLayout();
 			oOptions.addContent(
-				new TextView({ 
+				new TextView({
 					text : "ContentArea #" + (i + 1)
 				}).addStyleClass("optionTitle")
 			);
-		
+
 			oOptions.addContent(new TextView({ text : "Resizable: "}));
 			oOptions.addContent(new CheckBox({
 				checked : oLD.getResizable(),
@@ -76,7 +76,7 @@ sap.ui.define([
 					oLayoutData.setResizable(oEvent.getParameter("checked"));
 				};})(oLD)
 			}));
-		
+
 			oOptions.addContent(new TextView({ text : "Size (CSS): " }));
 			oOptions.addContent(new TextField({
 				value : oLD.getSize(),
@@ -84,7 +84,7 @@ sap.ui.define([
 					oLayoutData.setSize(oEvent.getParameter("newValue"));
 				};})(oLD)
 			}));
-		
+
 			oOptions.addContent(new TextView({ text : "Min-Size: (in px)" }));
 			oOptions.addContent(new TextField({
 				value : oLD.getMinSize(),
@@ -92,7 +92,7 @@ sap.ui.define([
 					oLayoutData.setMinSize(parseInt(oEvent.getParameter("newValue"), 10));
 				};})(oLD)
 			}));
-		
+
 			oOptionsLayout.addContent(oOptions);
 		}
 	},
@@ -103,14 +103,14 @@ sap.ui.define([
 			size      : Math.random() > 0.5 ? "auto" : 50 + Math.floor(Math.random() * 300) + "px",
 			maxSize   : Math.random() > 0.5 ? "0" : Math.floor(Math.random() * 100) + "px"
 		});
-	
+
 		var oContent = new Button({
 			width: "100%",
 			height: "100%",
 			text : "Content!",
 			layoutData: oLd
 		});
-	
+
 		return oContent;
 	},
 
@@ -121,7 +121,7 @@ sap.ui.define([
 
 	btnRemoveContentArea: function() {
 		var oSplitter = this.getSplitter();
-	
+
 		var oLastContentArea = oSplitter.getContentAreas().pop();
 		oSplitter.removeContentArea(oLastContentArea);
 		oLastContentArea.destroy();

@@ -126,7 +126,7 @@
 			var oOverlay2 = new sap.ui.dt.ElementOverlay();
 			var oOverlay3 = new sap.ui.dt.ElementOverlay();
 			this.oSelection.add(oOverlay1);
-			this.oSelection.add(oOverlay2); 
+			this.oSelection.add(oOverlay2);
 			this.oSelection.setMode("Single");
 			assert.strictEqual(this.oSelection.getSelection().length, 2, "2 overlays are selected after mode switch");
 			this.oSelection.add(oOverlay3);
@@ -141,14 +141,14 @@
 			var oOverlay1 = new sap.ui.dt.ElementOverlay();
 			var oOverlay2 = new sap.ui.dt.ElementOverlay();
 			this.oSelection.add(oOverlay1);
-			this.oSelection.add(oOverlay2); 
+			this.oSelection.add(oOverlay2);
 			this.oSelection.setMode("Single");
 			this.oSelection.remove(oOverlay2);
 			assert.strictEqual(this.oSelection.getSelection().length, 0, "no overlays is selected after remove in single mode");
 			oOverlay1.destroy();
 			oOverlay2.destroy();
 		});
-		
+
 		</script>
 	</head>
 	<body>

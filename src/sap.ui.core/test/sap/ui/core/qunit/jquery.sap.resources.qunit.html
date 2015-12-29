@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested module: jquery.sap.resources.js
-  Author: Frank Weigel, Martin Schaus 
+  Author: Frank Weigel, Martin Schaus
 -->
 <html>
 	<head>
 		<title>Test Page for ResourceBunde class</title>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta charset="UTF-8" />
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
@@ -35,14 +35,14 @@
 				}
 
 			}
-		
+
 			QUnit.test("jQuery.sap.resource code available", function(assert) {
 				assert.ok(jQuery.sap.resources, "jQuery.sap.resources must exist");
 				assert.equal(typeof jQuery.sap.resources, "function", "jQuery.sap.resources must be a function");
 			});
-			 
+
 			QUnit.module(".properties files");
-			
+
 			function testAccessAndParsing(assert, oProps){
 				var sValue = oProps.getText("transkey5");
 				assert.equal(sValue, "Test Text 1 zh_HK", "transkey5 accessed");
@@ -52,17 +52,17 @@
 				assert.equal(sValue, "Test Text 2 en", "transkey2 accessed");
 				sValue = oProps.getText("transkey1");
 				assert.equal(sValue, "Test Text 1 Fallback", "transkey1 accessed");
-				
+
 				sValue = oProps.getText("emptykey");
 				assert.equal(sValue, "", "emptykey accessed");
 				sValue = oProps.getText("nonexistingkey");
 				assert.equal(sValue, "nonexistingkey", "nonexistingkey accessed");
 			};
-			
+
 			QUnit.test("access and parsing (sync)", function(assert) {
 				loadBundle(assert, {url : "testdata/resources/bundle.properties", locale : "zh_HK"}, testAccessAndParsing);
 			});
-			
+
 			QUnit.test("access and parsing (async)", function(assert) {
 				loadBundle(assert, {url : "testdata/resources/bundle.properties", locale : "zh_HK", async: true}, testAccessAndParsing);
 			});
@@ -71,13 +71,13 @@
 				var sValue = oProps.getText("transkey1");
 				assert.equal(sValue, "Test Text 1 Fallback", "transkey1 accessed");
 			};
-			
+
 			QUnit.test("fallback for invalid locales (sync)", function(assert) {
 				loadBundle(assert, {url : "testdata/resources/bundle.properties", locale : "0815"}, testFallbackForInvalidLocales);
 				loadBundle(assert, {url : "testdata/resources/bundle.properties", locale : ""}, testFallbackForInvalidLocales);
 				loadBundle(assert, {url : "testdata/resources/bundle.properties", locale : undefined}, testFallbackForInvalidLocales);
 			});
-			
+
 			QUnit.test("fallback for invalid locales (async)", function(assert) {
 				loadBundle(assert, {url : "testdata/resources/bundle.properties", locale : "0815", async: true}, testFallbackForInvalidLocales);
 				loadBundle(assert, {url : "testdata/resources/bundle.properties", locale : "", async: true}, testFallbackForInvalidLocales);
@@ -107,13 +107,13 @@
 				sValue = oProps.getText("transkey1");
 				equal(sValue, "Test Text 1 Fallback", "transkey1 accessed");
 			});*/
-			
+
 			QUnit.test("fallback for invalid locales (sync)", function(assert) {
 				loadBundle(assert, {url : "testdata/resources/bundle.hdbtextbundle", locale : "0815"}, testFallbackForInvalidLocales);
 				loadBundle(assert, {url : "testdata/resources/bundle.hdbtextbundle", locale : ""}, testFallbackForInvalidLocales);
 				loadBundle(assert, {url : "testdata/resources/bundle.hdbtextbundle", locale : undefined}, testFallbackForInvalidLocales);
 			});
-			
+
 			QUnit.test("fallback for invalid locales (async)", function(assert) {
 				loadBundle(assert, {url : "testdata/resources/bundle.hdbtextbundle", locale : "0815", async: true}, testFallbackForInvalidLocales);
 				loadBundle(assert, {url : "testdata/resources/bundle.hdbtextbundle", locale : "", async: true}, testFallbackForInvalidLocales);
@@ -152,12 +152,12 @@
 					assert.ok(false, "no exception must occur");
 				}
 			});
-			
+
 			QUnit.test("invalid file types", function(assert) {
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle"});
 				}, "Sync: URL without file extension should raise an exception");
-				
+
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle", async: true});
 				}, "Async: URL without file extension should raise an exception");
@@ -167,7 +167,7 @@
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle.json"});
 				}, "Sync: URL with invalid file extension should raise an exception");
-				
+
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle.json", async: true});
 				}, "Async: URL with invalid file extension should raise an exception");
@@ -177,7 +177,7 @@
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle.json?.properties"});
 				}, "Sync: URL with invalid file extension should raise an exception");
-				
+
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle.json?.properties", async: true});
 				}, "Async: URL with invalid file extension should raise an exception");
@@ -187,7 +187,7 @@
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle.json#.properties"});
 				}, "Sync: URL with invalid file extension should raise an exception");
-				
+
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle.json#.properties", async: true});
 				}, "Async: URL with invalid file extension should raise an exception");
@@ -197,7 +197,7 @@
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle.json?test=true#.properties"});
 				}, "Sync: URL with invalid file extension should raise an exception");
-				
+
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources/bundle.json?test=true#.properties", async: true});
 				}, "Async: URL with invalid file extension should raise an exception");
@@ -207,12 +207,12 @@
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources.properties/bundle"});
 				}, "Sync: URL with misplaced file extension should raise an exception");
-				
+
 				assert.raises(function() {
 					jQuery.sap.resources({ url : "testdata/resources.properties/bundle", async: true});
 				}, "Async: URL with misplaced file extension should raise an exception");
 			});
-			
+
 			QUnit.test("enhancement", function(assert){
 				var oBundle = new jQuery.sap.resources({ url : "testdata/messages.properties" });
 				assert.equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
@@ -224,18 +224,18 @@
 			});
 
 			QUnit.module("fallback");
-			
+
 			QUnit.test("check expected sequences", function(assert) {
 
 				function checkSequence(sLocale, aExpected) {
-					
+
 					var aLocales = [],
 						fnOrigProperties = jQuery.sap.properties;
-					
+
 					try {
 						// create a spy & mock for the properties function
 						jQuery.sap.properties = function(mParams) {
-							// just record the requested locales (by analyzing the URLs) 
+							// just record the requested locales (by analyzing the URLs)
 							var sUrl = mParams.url;
 							var sLocale;
 							var m = /dummy([^.]*)\.properties/i.exec(sUrl);
@@ -254,16 +254,16 @@
 						var oBundle = new jQuery.sap.resources({ url : "dummy.properties", locale: sLocale});
 						// and for a text in it
 						oBundle.getText("DUMMY_KEY");
-						
+
 					} finally {
 						jQuery.sap.properties = fnOrigProperties;
 					}
-					
+
 					assert.deepEqual(aLocales, aExpected, "locale fallback should match for '" + sLocale + "'");
 
 					return aLocales;
-				} 
-				
+				}
+
 				// simple test
 				checkSequence("de", ["_de", "_en", ""]);
 				// ensure that en is not requested twice
@@ -276,18 +276,18 @@
 				checkSequence("en_EN_Geekish", ["_en_EN_Geekish", "_en_EN", "_en", ""]);
 				// special case Hong Kong, should fallback to Taiwan
 				checkSequence("zh_HK", ["_zh_HK", "_zh_TW", "_zh", "_en", ""]);
-				// special case BCP47 tag with private extension for 1Q/saptrc, must always map to en-US and variant saptrc 
+				// special case BCP47 tag with private extension for 1Q/saptrc, must always map to en-US and variant saptrc
 				checkSequence("es-ES-x-saptrc", ["_en_US_saptrc", "_en_US", "_en", ""]);
-				// special case BCP47 tag with private extension for 1Q/sappsd, must always map to en-US and variant sappsd 
+				// special case BCP47 tag with private extension for 1Q/sappsd, must always map to en-US and variant sappsd
 				checkSequence("es-ES-x-sappsd", ["_en_US_sappsd", "_en_US", "_en", ""]);
-				// special case BCP47 tag with variant for 1Q/saptrc, must always map to en-US and variant saptrc 
+				// special case BCP47 tag with variant for 1Q/saptrc, must always map to en-US and variant saptrc
 				checkSequence("es-ES-saptrc", ["_en_US_saptrc", "_en_US", "_en", ""]);
-				// special case BCP47 tag with variant for 1Q/sappsd, must always map to en-US and variant sappsd 
+				// special case BCP47 tag with variant for 1Q/sappsd, must always map to en-US and variant sappsd
 				checkSequence("es-ES-sappsd", ["_en_US_sappsd", "_en_US", "_en", ""]);
 			});
 		</script>
 	</head>
-	<body>		
+	<body>
 		<div id="qunit"></div>
 	</body>
 </html>

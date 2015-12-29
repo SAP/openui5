@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.ux3.Feeder
   Author: D031513
 -->
@@ -8,7 +8,7 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -27,11 +27,11 @@
 		var sSubmitText = '';
 		var sTextTest = 'Test';
 		var sPlaceholderText = "Feedback geben...";
-		
+
 		// XSS Test
 		var bPlaceholderXSSPossible = true;
 		var sPlaceholderTextXSS = '<script>bPlaceholderXSSPossible = false;<\/script><h1>XSS possible!</h1>';
-	
+
 		function handleSubmit(oEvent){
 			sSubmitId = oEvent.oSource.getId();
 			sSubmitText = oEvent.getParameter('text');
@@ -49,47 +49,47 @@
 			text: sTextTest,
 			submit: handleSubmit,
 			}).placeAt("uiArea2");
-		
+
 		var oFeeder3 = new sap.ui.ux3.Feeder("Feeder3",{
 			type: sap.ui.ux3.FeederType.Comment,
 			submit: handleSubmit,
 			placeholderText: sPlaceholderTextXSS
 			}).placeAt("uiArea3");
-	
+
 		module("Appearance");
 
 		test("Feeder styles", function() {
 
 			ok(jQuery.sap.byId("Feeder1").height() > jQuery.sap.byId("Feeder2").height(), "Large feeder higher than medium feeder");
 			ok(jQuery.sap.byId("Feeder2").height() > jQuery.sap.byId("Feeder3").height(), "Medium feeder higher than comment feeder");
-			
+
 		});
-		
+
 		test("Output of Attribute", function() {
 			// image must be rendered
 			equal(jQuery.sap.byId("Feeder1-thumb").attr("src"), "../images/feeder/m_01.png", "Image rendered");
-			
+
 			// no given image - default image?
-			
+
 			// placeholder text for empty feeder
 			ok(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "Placeholder rendered");
-			
+
 			// placeholder text as set in the feeder attribute
 			equal(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0).innerHTML, sPlaceholderText, "Placeholder text rendered");
-			
+
 			// placeholdertext is escaped
 			equal(bPlaceholderXSSPossible, true, "Placeholder text escaped");
-			
+
 			// disabled button for empty feeder
 			ok(jQuery.sap.byId("Feeder1-send").hasClass('sapUiBtnDsbl'), "Send button is disabled if no text entered");
-			
+
 			// given Text must be rendered - no placeholder
 			equal(jQuery.sap.byId("Feeder2-input").text(), sTextTest, "given text rendered");
 			ok(!jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0), "no text placeholder rendered");
-			
+
 			// if text is given Buttom must be enabled
 			ok(!jQuery.sap.byId("Feeder2-send").hasClass('sapUiBtnDsbl'), "Send button is enabled if text entered");
-			
+
 		});
 
 		module("Behaviour");
@@ -102,7 +102,7 @@
 			start();
 			};
 			setTimeout(delayedCall, 0);
-			
+
 		});
 
 		asyncTest("Focus handling2", function() {
@@ -113,7 +113,7 @@
 			start();
 			};
 			setTimeout(delayedCall, 0);
-			
+
 		});
 
 		asyncTest("Mouse navigation", function() {
@@ -132,7 +132,7 @@
 
 			// similar test on disabled button not possible because bwrowser fires no click event for disabled buttons
 			// but our qutil event trigger don't cares about this
-				
+
 		});
 
 		asyncTest("Keyboard Navigation", function() {
@@ -146,7 +146,7 @@
 			jQuery.sap.domById("Feeder2-input").focus();
 			var delayedCall = function() {
 				equal(oFeeder1.getText(), "A", "After focus out the text must be in text-property");
-			
+
 				// on deleting text button must be disabled
 				jQuery.sap.domById("Feeder1-input").focus();
 				jQuery.sap.byId("Feeder1-input").text("");
@@ -234,7 +234,7 @@
 	</script>
 
 	<title>qunit Test for Feeder</title>
- 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Feeder.gif"> 
+ 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Feeder.gif">
 
 
 </head>

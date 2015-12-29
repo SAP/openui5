@@ -3,7 +3,7 @@
  */
 
 /*
- * Helper functions for checking the bootstrap process 
+ * Helper functions for checking the bootstrap process
  */
 
 // wraps jQuery.ajax to count and collect *.js requests
@@ -53,7 +53,7 @@ var _aExpectedAjaxCalls = {
 
 function checkLibrary(sLibraryName, bExpectLazyStubs, assert) {
 
-	// ensure that assert.* even works if a test page doesn't provide 'assert' as a param (e.g. pages outside openui5 repo) 
+	// ensure that assert.* even works if a test page doesn't provide 'assert' as a param (e.g. pages outside openui5 repo)
 	assert = assert || window;
 
 	ajaxCallsReset();
@@ -64,7 +64,7 @@ function checkLibrary(sLibraryName, bExpectLazyStubs, assert) {
 	var oLib = sap.ui.getCore().getLoadedLibraries()[sLibraryName];
 	assert.ok(!!oLib, "library info object must exists");
 
-	// Check that all modules have been loaded. As we don't have access to the "all modules", 
+	// Check that all modules have been loaded. As we don't have access to the "all modules",
 	// we simply check for all types, elements and controls
 	// Note: the tests must not call functions/ctors to avoid side effects like lazy loading
 
@@ -80,7 +80,7 @@ function checkLibrary(sLibraryName, bExpectLazyStubs, assert) {
 	// check existence and lazy loader status
 	var sMessage = bExpectLazyStubs ? "class must be a lazy loader only" : "class must not be a lazy loader";
 	var aExcludes = "sap.ui.core.Element sap.ui.core.Control sap.ui.core.Component sap.ui.table.Column".split(" ");
-	
+
 	jQuery.each(oLib.elements, function(idx,sElement) {
 		if ( jQuery.inArray(sElement, aExcludes) < 0 ) {
 			assert.notEqual(jQuery.sap.isDeclared(sElement), bExpectLazyStubs, "module for element " + sElement + " must have been declared");

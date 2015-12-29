@@ -22,12 +22,12 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * The class <code>ResourceServlet</code> is used to return the resources
- * from the local web application context and from the JAR files in the 
+ * from the local web application context and from the JAR files in the
  * classpath. The resources have to be located in the META-INF path of the
  * JARs.
  * <p>
  * <i>This class must not be used in productive systems.</i>
- * 
+ *
  * @author Peter Muessig
  */
 public class ResourceServlet extends HttpServlet {
@@ -54,25 +54,25 @@ public class ResourceServlet extends HttpServlet {
    */
   @Override
   protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    
+
     String method = request.getMethod().toUpperCase(); // NOSONAR
     String path = request.getServletPath() + request.getPathInfo();
     if (path == null || path.endsWith("/")) {
-      
+
       // serve folder listing
       response.setStatus(HttpServletResponse.SC_OK);
       response.getWriter().close();
-      
+
     } else {
-      
+
       // lookup the resource
       URL url = this.findResource(path);
-      
+
       if (url != null && method.matches("GET|HEAD")) {
-        
+
         URLConnection connection = url.openConnection();
         this.prepareResponse(response, connection);
-        
+
         if ("GET".equals(method)) {
           InputStream is = connection.getInputStream();
           OutputStream os = response.getOutputStream();
@@ -81,15 +81,15 @@ public class ResourceServlet extends HttpServlet {
           os.flush();
           os.close();
         }
-        
+
         response.setStatus(HttpServletResponse.SC_OK);
         this.log("[200] " + request.getRequestURI());
-          
+
       } else {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         this.log("[404] " + request.getRequestURI());
       }
-      
+
     }
 
   } // method: service
@@ -101,9 +101,9 @@ public class ResourceServlet extends HttpServlet {
    * @param connection URL connection of the content to return
    */
   private void prepareResponse(HttpServletResponse response, URLConnection connection) {
-    
+
     String url = connection.getURL().toString();
-    
+
     // determine the content type (special case for properties request)
     String contentType = connection.getContentType();
     if (contentType == null || "content/unknown".equals(contentType)) {
@@ -113,12 +113,12 @@ public class ResourceServlet extends HttpServlet {
         contentType = this.getServletContext().getMimeType(url);
       }
     }
-    
+
     // set the relevant headers (caching, cors, resource location, ...)
     response.setContentType(contentType);
     response.addDateHeader("Last-Modified", connection.getLastModified());
     response.addHeader("x-sap-ResourceUrl", url);
-    
+
   } // method: prepareResponse
 
 
@@ -129,24 +129,24 @@ public class ResourceServlet extends HttpServlet {
    * @throws MalformedURLException
    */
   private URL findResource(String path) throws MalformedURLException {
-    
+
     // define the classpath for the classloader lookup
     String classPath = CLASSPATH_PREFIX + path;
-    
+
     // first lookup the resource in the web context path
     URL url = this.getServletContext().getResource(path);
-    
+
     // lookup the resource in the current threads classloaders
     if (url == null) {
       url = Thread.currentThread().getContextClassLoader().getResource(classPath);
     }
-    
+
     // lookup the resource in the local classloader
     if (url == null) {
       url = ResourceServlet.class.getClassLoader().getResource(classPath);
     }
-    
-    // make sure that also the file system URLs are handled case sensitive 
+
+    // make sure that also the file system URLs are handled case sensitive
     // to have a similar behavior like the classloader (avoid case issues!)
     if (url != null && "file".equals(url.getProtocol())) {
       try {
@@ -156,13 +156,13 @@ public class ResourceServlet extends HttpServlet {
           url = null;
         }
       } catch (URISyntaxException ex) {
-        // we just forward the exception as MalformedURLException 
+        // we just forward the exception as MalformedURLException
         // but normally this issue will not happen here!
         throw new MalformedURLException(ex.getMessage()); // NOSONAR
       }
     }
-    
-    // theme fallback? 
+
+    // theme fallback?
     if (url == null) {
       Matcher m = PATTERN_THEME_REQUEST.matcher(path);
       if (m.matches()) {
@@ -172,8 +172,8 @@ public class ResourceServlet extends HttpServlet {
         }
       }
     }
-    
-    // properties fallback? 
+
+    // properties fallback?
     if (url == null) {
       Matcher m = PATTERN_PROPERTIES_REQUEST.matcher(path);
       if (m.matches()) {
@@ -183,9 +183,9 @@ public class ResourceServlet extends HttpServlet {
         }
       }
     }
-    
+
     return url;
-    
+
   } // method: findResource
 
 
@@ -229,7 +229,7 @@ public class ResourceServlet extends HttpServlet {
           country = "";
         }
       } else if (!lang.isEmpty()) {
-        // non english resource bundles will fallback to 
+        // non english resource bundles will fallback to
         // the english resource bundle!
         if (!"_en".equals(lang)) {
           lang = "_en";

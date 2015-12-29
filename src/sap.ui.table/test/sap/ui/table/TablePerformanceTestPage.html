@@ -158,9 +158,9 @@
 	function fnCreateTable () {
 		// create columns
 		var oControl, oColumn, i;
-	
+
 		jQuery.sap.measure.setActive(true);
-		
+
 		if (!console.timeStamp) {
 			console.timeStamp = function () {};
 		}
@@ -181,9 +181,9 @@
 				oTable = new sap.ui.table.Table({
 					visibleRowCount: iVisibleRowCount
 				});
-				
-				
-				
+
+
+
 				oTable.addDelegate({
 					onBeforeRendering: function () {
 						jQuery.sap.measure.start("onBeforeRendering");
@@ -215,8 +215,8 @@
 					var iAfterRendering = jQuery.sap.measure.getMeasurement("onAfterRendering").duration;
 					var iTableCreate = (iOverall - iRendering);
 					var iFactor = Math.round(iAfterRendering / iRendering * 100);
-					
-					
+
+
 					var sKey = iColumns + "_" + iRows + "_" + iVisibleRowCount + "_" + (iColumnWidth || "");
 					if (!oResults[sKey]) {
 						oResults[sKey] = {

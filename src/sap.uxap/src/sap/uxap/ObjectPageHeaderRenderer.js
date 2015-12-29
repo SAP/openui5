@@ -214,7 +214,7 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			} else if (oControl.getMarkChanges()) {
 				this._renderMarkChanges(oRm, oControl, bTitleInContent);
 			}
-			
+
 			this._renderMarkers(oRm, oControl);
 			this._renderSelectTitleArrow(oRm, oControl, bTitleInContent);
 			oRm.write("</span>");
@@ -264,7 +264,7 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			oRm.write("</span>"); // end title arrow container
 		}
 	};
-	
+
 	/**
 	 * Renders the Unsaved Changes icon.
 	 *

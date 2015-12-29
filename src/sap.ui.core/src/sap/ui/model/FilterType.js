@@ -20,7 +20,7 @@ sap.ui.define(function() {
 			 * @public
 			 */
 			Application: "Application",
-	
+
 			/**
 			 * Filters which are set by the different controls
 			 * @public

@@ -37,10 +37,10 @@
 				{name: "Tress, Matt", userid: "U19"},
 				{name: "Turner, Paige", userid: "U20"}
 			];
-			
+
 			jQuery.sap.require("jquery.sap.strings");
 		</script>
-		
+
 		<style>
 			.sapUiTfAutoComp{
 				margin: 3px;
@@ -229,26 +229,26 @@ oAuto7.placeAt("sample4");
 			];
 		</pre>
 		</p>
-		
+
 		<h3>Predefined items</h3>
-		<p>This example creates two AutoComplete controls with a fixed predefined set of suggestion items. The first one is initialized manually via the API 
+		<p>This example creates two AutoComplete controls with a fixed predefined set of suggestion items. The first one is initialized manually via the API
 		functions. The second one uses data binding.</p>
 		<div code-sample="sample1" script="example1"></div>
 		<br/>
-		
+
 		<h3>Dynamic items</h3>
-		<p>The following example shows two AutoComplete controls for which the suggestion items are created dynamically when they are needed. For this purpose the <code>suggest</code> 
-		event can be used to check the current user input. The items for the first control are added incrementally starting with an empty item list. The item list in the 
+		<p>The following example shows two AutoComplete controls for which the suggestion items are created dynamically when they are needed. For this purpose the <code>suggest</code>
+		event can be used to check the current user input. The items for the first control are added incrementally starting with an empty item list. The item list in the
 		second control is recreated each time. This is useful when the suggestions are quite specific for the current input and it makes sense no sense to keep them for a longer time.</p>
 		<div code-sample="sample2" script="example2"></div>
 		<br/>
-		<p>The following examples are the same as above but the items are added asynchronously (in the examples timeouts are used, in reality this would be some asychronous calls). To ensure that no invalid 
+		<p>The following examples are the same as above but the items are added asynchronously (in the examples timeouts are used, in reality this would be some asychronous calls). To ensure that no invalid
 		suggestions are shown a check should be introduced whether the value of the control is still the same.</p>
 		<div code-sample="sample3" script="example3"></div>
 		<br/>
-		
+
 		<h3>Custom filter function</h3>
-		<p>By default the AutoComplete control only shows the items which texts begins with the value the user has typed (case insensitive). But it is possible to provide a custom filter 
+		<p>By default the AutoComplete control only shows the items which texts begins with the value the user has typed (case insensitive). But it is possible to provide a custom filter
 		function. In the following example it is possible to either type in a name or user id.</p>
 		<div code-sample="sample4" script="example4"></div>
 

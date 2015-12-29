@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
     Tested module: sap-ui-core in general
   -->
 <html>
@@ -34,7 +34,7 @@
 			assert.notStrictEqual(sap.ui.core.UIArea, undefined, "class sap.ui.core.UIArea must exist");
 			assert.notStrictEqual(sap.ui.core.RenderManager, undefined, "class sap.ui.core.RenderManager must exist");
 		});
-		
+
 		QUnit.test("CoreAvailable", function(assert) {
 			assert.ok(typeof(sap.ui.getCore) == "function", "function sap.ui.getCore must be defined");
 			assert.notStrictEqual(sap.ui.getCore(), null, "calling sap.ui.getCore() must not return null");
@@ -52,7 +52,7 @@
 			assert.notStrictEqual(oCore.getConfiguration, undefined, "function getConfiguration on sap.ui.core.Core instance must be defined");
 			assert.ok(oCore.getConfiguration() instanceof sap.ui.base.Interface && _providesPublicMethods(oCore.getConfiguration(), sap.ui.core.Configuration), "calling getConfiguration on Core instance must deliver the RenderManager interface");
 		});
-	
+
 
 		// #####################################################################
 		// Convenience
@@ -60,7 +60,7 @@
 
 		function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /**function*/ fnClass, /**boolean*/ bFailEarly) {
 			var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
-				result = true, 
+				result = true,
 				sMethod;
 			for(var i in aMethodNames){
 				sMethod = aMethodNames[i];

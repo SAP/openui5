@@ -16,7 +16,7 @@ xhr.onCreate = function(request) {
 		var sAnswer = "This should never be received as an answer!";
 
 		switch (request.url) {
-			
+
 			case "fakeService://replay-headers":
 				sAnswer = createHeaderAnnotations(request);
 				break;
@@ -103,7 +103,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/simple-values.xml":
 				sAnswer = sSimpleValues;
 				break;
-				
+
 			// Test multiple annotations loaded after each other...
 			case "fakeService://testdata/odata/multiple-annotations-01.xml":
 				sAnswer = sMultipleTest01;
@@ -122,7 +122,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/UrlRef.xml":
 				sAnswer = sUrlRefTest;
 				break;
-				
+
 			case "fakeService://testdata/odata/Aliases.xml":
 				sAnswer = sAliasesTest;
 				break;
@@ -130,27 +130,27 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/DynamicExpressions.xml":
 				sAnswer = sDynamicExpressionsTest;
 				break;
-				
+
 			case "fakeService://testdata/odata/DynamicExpressions2.xml":
 				sAnswer = sDynamicExpressionsTest2;
 				break;
-				
+
 			case "fakeService://testdata/odata/collections-with-simple-values.xml":
 				sAnswer= sCollectionsWithSimpleValuesTest;
 				break;
-				
+
 			case "fakeService://testdata/odata/simple-values-2.xml":
 				sAnswer = sSimpleValuesTest2;
 				break;
-				
+
 			case "fakeService://testdata/odata/if-in-apply.xml":
 				sAnswer = sIfInApply;
 				break;
-				
+
 			case "fakeService://testdata/odata/labeledelement-other-values.xml":
 				sAnswer = sLabeledElementOtherValues;
 				break;
-				
+
 			case "fakeService://testdata/odata/apply-in-if.xml":
 				sAnswer = sApplyInIf;
 				break;
@@ -158,7 +158,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/empty-collection.xml":
 				sAnswer = sEmptyCollection;
 				break;
-				
+
 			case "fakeService://testdata/odata/multiple-enums.xml":
 				sAnswer = sMultipleEnums;
 				break;
@@ -184,19 +184,19 @@ xhr.onCreate = function(request) {
 					case "all":
 						sAnnotations = aValueListStrings.join("\n");
 						break;
-					
+
 					case "1":
 						sAnnotations = aValueListStrings[0];
 						break;
-						
+
 					case "2":
 						sAnnotations = aValueListStrings[1];
 						break;
-							
+
 					case "3":
 						sAnnotations = aValueListStrings[2];
 						break;
-					
+
 					default:
 					case "none":
 						sAnnotations = "";
@@ -214,7 +214,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/overwrite-on-term-level-2":
 				sAnswer = aOverwriteOnTermLevel[1];
 				break;
-				
+
 			case "fakeService://testdata/odata/edmtype-for-navigationproperties":
 				sAnswer = sEdmtypeForNavigationproperties;
 				break;
@@ -243,19 +243,19 @@ function createHeaderAnnotations(request) {
 		<edmx:DataServices>\
 			<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Test">\
 				<Annotations Target="Replay.Headers">';
-			
+
 	Object.keys(request.requestHeaders).forEach(function(sHeader) {
 		sAnnotations += '\
 					<Annotation Term="' + sHeader + '" String="' + request.requestHeaders[sHeader] +'" />';
 	});
-	
-	
+
+
 	sAnnotations += '\
 				</Annotations>\
 			</Schema>\
 		</edmx:DataServices>\
 	</edmx:Edmx>';
-	
+
 	return sAnnotations;
 }
 

@@ -3,7 +3,7 @@
 	var core = sap.ui.getCore(),
 		sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton",
 		sPopOverAnchorSelector = ".sapMPopoverScroll > .sapUxAPAnchorBarButton";
-	
+
 	sinon.config.useFakeTimers = true;
 
 	jQuery.sap.registerModulePath("view", "view");

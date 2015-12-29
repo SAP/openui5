@@ -13,7 +13,7 @@
 	var iRenderingDelay = 1000;
 
 	QUnit.test("ObjectPage form layout", function (assert) {
-		
+
 		var oObjectPageFormView = sap.ui.xmlview("UxAP-FormLayout", {viewName: "view.UxAP-FormLayout" });
 	    oObjectPageFormView.placeAt('qunit-fixture');
 	    sap.ui.getCore().applyChanges();
@@ -51,12 +51,12 @@
 
 		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain > div.sapUiRespGridSpanL12.sapUiRespGridSpanM12.sapUiRespGridSpanS12");
 		assert.strictEqual(aGridCells.length, 4, "when 1-column span, all cells have L12 M12 S12");
-		
+
 		oObjectPageFormView.destroy();
 	});
 
 	QUnit.test("ObjectPage simple form layout", function (assert) {
-		
+
 		var oObjectPageFormView = sap.ui.xmlview("UxAP-SimpleFormLayout", {viewName: "view.UxAP-SimpleFormLayout" });
 	    oObjectPageFormView.placeAt('qunit-fixture');
 	    sap.ui.getCore().applyChanges();
@@ -94,7 +94,7 @@
 
 		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormResGridMain > div.sapUiRespGridSpanL12.sapUiRespGridSpanM12.sapUiRespGridSpanS12");
 		assert.strictEqual(aGridCells.length, 4, "when 1-column span, all cells have L12 M12 S12");
-		
+
 		oObjectPageFormView.destroy();
 	});
 

@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Message.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -22,45 +22,45 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.4.0. 
+	 * @deprecated Since version 1.4.0.
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
 	 * @alias sap.ui.commons.Message
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Message = Control.extend("sap.ui.commons.Message", /** @lends sap.ui.commons.Message.prototype */ { metadata : {
-	
+
 		deprecated : true,
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * "Success", or "Warning", or "Error" messages. (Mandatory)
 			 */
 			type : {type : "sap.ui.commons.MessageType", group : "Behavior", defaultValue : null},
-	
+
 			/**
 			 * Message short text. (Mandatory)
 			 */
 			text : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * Associated UI element ID. (Optional)
 			 * For navigation to error field.
 			 */
 			associatedElementId : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * Internal attribute, used to force the display of the "short" or the "long" text only.
 			 */
 			design : {type : "string", group : "Misc", defaultValue : null}
 		}
 	}});
-	
-	
+
+
 	Message.prototype.init = function(){
 		// Defining some private data...
 		this.isRTL = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		// The "Details" related Controls.
 	  this.fnCallBack    = null; // Supplied only if a longText is to be provided on demand.
 		this.oLink         = null; // Created only if a longText exists. This is the link opening the Details Dialog.
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 		this.oDetails      = null; // Created only if a longText exists. This is the Controller rendering the Details.
 		this.oBtnOK        = null; // Created only if a longText exists. This is the OK button found within the Dialog.
 	};
-	
+
 	/**
 	 * Destroys this Control instance, called by Element#destroy()
 	 * @private
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 			this.oBtnOK = null;
 		}
 	};
-	
+
 	// #############################################################################
 	// Internal Utilities
 	// #############################################################################
@@ -112,7 +112,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 		this.oContainer.close();
 	  }
 	};
-	
+
 	/**
 	 * This utility renders the Message Details.
 	 * Current Specifications are those of JPaaS:
@@ -152,15 +152,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 		  iOthersMaxZIndex = Math.max(iOthersMaxZIndex,jQuery(oOtherOpenDialogs[i]).css('zIndex'));
 		}
 	  }
-	
+
 	  // Taking note for later:
 	  var bWasOpen = this.oContainer.isOpen();
 	  // No matter what, we have to open the new Details, so:
 	  this.oContainer.open();
-	
+
 	  // jQuery version of our OPEN Dialog Container:
 		var jContainer = this.oContainer.$();
-	
+
 	  // Starting a new Stack in the default Dialog's location:
 	  var jContainerRect = jContainer.rect(); // For Height and Width...
 		if (oOtherOpenDialogs.length == 0) {
@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 			// Nothing else to do:
 			return;
 		}
-	
+
 	  // Dialog limitation. Work-around:
 	  if (bWasOpen) {
 			if (iOthersMaxZIndex > jContainer.css('zIndex')) {
@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 			// Nothing else to do:
 		return;
 	  }
-	
+
 	  //*************** Stacking process starts ***************
 	  // 1st rendering the new Dialog on top of the old one...
 	  var oNextOffsets = this.getNextOffsets();
@@ -195,7 +195,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 	  } else {
 		jContainer.css('left',  (oNextOffsets.left - Message.LEFT_INCR) + "px");
 	  }
-	
+
 	  // Figuring what should the next coordinates be:
 	  var jContainerRect = jContainer.rect(); // For Height and Width...
 	  var scrollTop   = jQuery(window).scrollTop();
@@ -224,7 +224,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 			// Animating the Dialog to its new offset position:
 			jContainer.animate({top:oNextOffsets.top + "px", left:oNextOffsets.left + "px"}, 200);
 	  }
-	
+
 	//MESSAGEBOX BACKUP: Issues: Only Modal, Doesn't accept HTML string, No Resize-Area.
 	//	var rb    = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 	//  var ICON  = this.getType().toUpperCase();		// ERROR, WARNING, ...
@@ -232,11 +232,11 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 	//  var text  = this.getLongText();
 	//  sap.ui.commons.MessageBox.show(text, ICON, title);
 	};
-	
+
 	Message.TOP_INCR  = 20;
 	Message.LEFT_INCR = 10;
-	
-	
+
+
 	// Begin of Dialog-Offsets-Stacking facilities
 	(function() {
 		var oLastOffsets = null;
@@ -259,22 +259,22 @@ sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Contro
 		};
 	}());
 	// End of Dialog-Offsets-Stacking facilities
-	
-	
+
+
 	// #############################################################################
 	// Public APIs
 	// #############################################################################
 
 	/**
-	 * Registers a callback function to be invoked if long text Details are to be made available. 
-	 * 
-	 * This callback function will be supplied the corresponding Message "id", and should 
+	 * Registers a callback function to be invoked if long text Details are to be made available.
+	 *
+	 * This callback function will be supplied the corresponding Message "id", and should
 	 * return the (simple) HTML string to be displayed within the Message Details Dialog.
-	 * 
+	 *
 	 * E.g.: myMessage.bindDetails(getDetails);
 	 * function getDetails(sId) {... return htmlString;}
 	 *
-	 * @param {function} fnCallBack the callback function 
+	 * @param {function} fnCallBack the callback function
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @public
 	 */

@@ -8,7 +8,7 @@
   </edmx:Reference>
   <edmx:Reference Uri="/coco/vocabularies/Common.xml">
     <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common" />
-  </edmx:Reference>    
+  </edmx:Reference>
   <edmx:DataServices>
     <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Alias="UI" Namespace="com.sap.vocabularies.UI.v1">
       <Annotation Term="Core.Description">
@@ -91,8 +91,8 @@
       <Term Name="GeoPoints" Type="Collection(Edm.AnnotationPath)" AppliesTo="EntityType">
         <Annotation Term="Core.Description">
           <String>
-            Each collection element MUST reference an annotation of a  
-              vCard.Contact or 
+            Each collection element MUST reference an annotation of a
+              vCard.Contact or
               collection of vCard.ContactData or
               UI.Contacts or
               UI.GeoLocation or
@@ -156,7 +156,7 @@
         <Annotation Term="Core.Description">
           <String>
             Applies to UI.GeoLocation and vCard.Contact annotations only
-            Provides additional related information for a UI.GeoLocation or vCard.Contact 
+            Provides additional related information for a UI.GeoLocation or vCard.Contact
             Reference to UI.HeaderInfo, UI.Badge, a qualified UI.FieldGroup, or a dedicated property tagged with Core.IsUrl
           </String>
         </Annotation>
@@ -217,19 +217,19 @@
       <ComplexType Name="CriticalityCalculationType">
         <Annotation Term="Core.Description">
           <String>
-              Direction: Target        
+              Direction: Target
                - Positive: ge ToleranceRangeLowValue and le ToleranceRangeHighValue
                - Critical: ge DeviationRangeLowValue  and lt ToleranceRangeLowValue or
                            gt ToleranceRangeHighValue and le DeviationRangeHighValue
                - Negative: lt DeviationRangeLowValue and gt DeviationRangeHighValue
-              Direction: Minimize        
+              Direction: Minimize
                - Positive: le ToleranceRangeHighValue
-               - Critical: gt ToleranceRangeHighValue and le DeviationRangeHighValue  
+               - Critical: gt ToleranceRangeHighValue and le DeviationRangeHighValue
                - Negative: gt DeviationRangeHighValue
-              Direction: Maximize        
-               - Positive: ge ToleranceRangeLowValue  
-               - Critical: lt ToleranceRangeLowValue and ge DeviationRangeLowValue   
-               - Negative: lt DeviationRangeLowValue    
+              Direction: Maximize
+               - Positive: ge ToleranceRangeLowValue
+               - Critical: lt ToleranceRangeLowValue and ge DeviationRangeLowValue
+               - Negative: lt DeviationRangeLowValue
             </String>
         </Annotation>
         <Property Name="ImprovementDirection" Type="UI.ImprovementDirectionType" Nullable="false">

@@ -27,7 +27,7 @@
 				select="selectIconList"
 				mode="{ui>/listMode}"
 				growing="true"
-				growingScrollToLoad="true"				
+				growingScrollToLoad="true"
 				growingThreshold="{ui>/listPageSize}"
 				items="{icons}">
 				<items>

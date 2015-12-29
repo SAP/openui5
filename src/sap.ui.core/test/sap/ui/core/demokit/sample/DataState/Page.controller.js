@@ -3,7 +3,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.core.sample.DataState.Page", {
-		
+
 		addRefreshDataStateMethod : function (oControl) {
 			//experimental override of existing control
 			var that = this;
@@ -17,27 +17,27 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 		},
 		onInit: function (oEvent) {
 			this.addHighlightStyle();
-			
+
 			this.oSampleDataModel = new SimulatedServerModel();
-			
+
 //			this.oSampleDataModel.attachPropertyChangeDelayed(this.onPropertyChangeDelayed,this);
 //			this.oSampleDataModel.attachLaunderingChange(this.onLaunderingChange,this);
 //			this.oSampleDataModel.attachOriginalValueChange(this.onOriginalValueChange, this);
 			this.oSampleDataModel.setDelay(0);
-			
+
 			this.getView().setModel(this.oSampleDataModel,"SampleData");
 			this.oDataStateModel = new JSONModel({});
-			
+
 			this.getView().setModel(this.oDataStateModel,"EmailDataState");
 			this.getView().bindElement("/");
-			//override experimental refreshDataState method on Email Input 
+			//override experimental refreshDataState method on Email Input
 			this.addRefreshDataStateMethod(this.getView().byId("Email"));
-			
+
 			var oEmailType = new sap.ui.model.type.String();
 			oEmailType.setConstraints({contains:"@"});
 			this.getView().byId("Email").bindProperty("value",{path:"SampleData>/Email",type:oEmailType});
 			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
-			
+
 			this.onReset();
 		},
 		onPropertyChangeDelayed : function() {
@@ -54,12 +54,12 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 					that.applyStateMessage("");
 				},1000);
 		},
-		
+
 		onMsgStripClose : function (oEvt) {
 			oEvt.oSource.setVisible(false);
 		},
-		
-		
+
+
 		onDelay : function (oEvt) {
 			var oButton = oEvt.oSource;
 			if (this.oSampleDataModel.getDelay()) {
@@ -103,7 +103,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 			this.oSampleDataModel.setMessages({});
 			this.oSampleDataModel.setData({
 				"Email": "neill.jackson@sample.com"
-			});		
+			});
 		},
 		onSubmit : function (oEvt) {
 			var oButton = oEvt.oSource;
@@ -138,12 +138,12 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 								that.applyStateMessage("");
 							},1000);
 				},this.oSampleDataModel.getDelay());
-				
+
 				setTimeout(function(){
-					
+
 					that.oSampleDataModel.setData({
 						"Email": "akte@akte.akte"
-					});	
+					});
 				},this.oSampleDataModel.getDelay());
 			} else {
 				oButton.setType("Default");
@@ -204,7 +204,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 						that.oDataStateModel.setProperty("/" + sProperty + "/" + n, aJSONMessages);
 					}
 					return true;
-				} 
+				}
 			};
 			for (var n in oDataState.mProperties) {
 				if (!applyMessages(n)) {
@@ -226,7 +226,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 			document.getElementsByTagName("HEAD")[0].appendChild(oStyle);
 		}
 	});
-	
+
 	//Create a simulated server model for a JSON Model
 	var SimulatedServerModel = JSONModel.extend("SimulatedServerModel", /** @lends sap.ui.model.json.JSONModel.prototype */ {
 		constructor : function(oData) {
@@ -243,7 +243,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 	SimulatedServerModel.prototype.getDelay = function() {
 		return this.iDelay;
 	}
-	
+
 	//override set property to allow delay
 	SimulatedServerModel.prototype.setProperty = function(sPath, sValue, oContext) {
 		if (this.iDelay) {
@@ -284,7 +284,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 		}
 		return this.getProperty(sPath, oContext);
 	};
-	
+
 	//simulate the laundering state
 	SimulatedServerModel.prototype.isLaundering = function(sPath, oContext) {
 		var sResolved = this.resolve(sPath, oContext);
@@ -298,7 +298,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 		var sResolved = this.resolve(sPath, oContext);
 		delete this.mOriginalData[sResolved];
 	};
-	
+
 	//set the original value
 	SimulatedServerModel.prototype.setOriginalValue = function(sPath, oValue, oContext) {
 		var sResolved = this.resolve(sPath, oContext);
@@ -333,7 +333,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 	SimulatedServerModel.prototype.fireOriginalValueChange = function() {
 		this.fireEvent("OriginalValueChange");
 	};
-	
+
 return PageController;
 
 });

@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/demokit/js/esprima'],
 		}
 		return node;
 	}
-	
+
 	/**
 	 * Creates a map of property values from an AST 'object literal' node.
 	 *
@@ -26,19 +26,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/demokit/js/esprima'],
 	 * It would be more convenient to just return the values, but the property node is needed
 	 * to find the corresponding (preceding) documentation comment.
 	 *
-	 * If a defaultKey is given, then a simple literal value instead of an object literal is also accepted. 
+	 * If a defaultKey is given, then a simple literal value instead of an object literal is also accepted.
 	 * It will be interpreted as the value of a property with the name specified as defaultKey.
 	 * <pre>
-	 *    "value" 
+	 *    "value"
 	 * </pre>
-	 * is a shorthand notation of 
+	 * is a shorthand notation of
 	 * <pre>
 	 *   {
 	 *     'defaultKey': "value"
 	 *   }
 	 * </pre>
 	 * @param {object} node Esprima compatible node of a syntax tree
-	 * @param {string} defaultKey When no object is given but only a literla, then the literal is assumed to be the value of the defaultKey 
+	 * @param {string} defaultKey When no object is given but only a literla, then the literal is assumed to be the value of the defaultKey
 	 * @returns {Map<string,Property>} Map of "Property" objects keyed by the property key
 	 */
 	function createPropertyMap(node, defaultKey) {
@@ -133,9 +133,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/demokit/js/esprima'],
 	};
 
 	function visit(root, delegate, args) {
-	
+
 		function _visit(node) {
-	
+
 			// call the delegate before the children
 			if ( delegate["*"] ) {
 				delegate["*"].call(delegate, node, args);
@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/demokit/js/esprima'],
 			if ( delegate[node.type] ) {
 				delegate[node.type].call(delegate, node, args);
 			}
-			
+
 			// visit children
 			var aChildNames = astNodeInfos[node.type];
 			if ( aChildNames ) {
@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/demokit/js/esprima'],
 			} else {
 				jQuery.sap.log.warning("don't know how to handle " + node.type);
 			}
-	
+
 			// call the delegate
 			if ( delegate["after:" + node.type] ) {
 				delegate["after:" + node.type].call(delegate, node, args);
@@ -170,9 +170,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/demokit/js/esprima'],
 			if ( delegate["after:*"] ) {
 				delegate["after:*"].call(delegate, node, args);
 			}
-			
+
 		}
-		
+
 		_visit(root);
 	}
 
@@ -181,6 +181,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/demokit/js/esprima'],
 		unlend: unlend,
 		visit : visit
 	};
-	
+
 }, /* export= */ true);
 

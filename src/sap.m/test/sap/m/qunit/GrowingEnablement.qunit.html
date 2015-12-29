@@ -36,7 +36,7 @@
 
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(data);
-				
+
 				//System under Test
 				var oList = new sap.m.List({
 					growing : true,
@@ -56,24 +56,24 @@
 
 				oPage.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
-				
+
 				// sytem under test
 				var oGrowingDelegate = oList._oGrowingDelegate;
 				var oTrigger = oGrowingDelegate._oTrigger;
 
 				// Act
 				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
-				
+
 				// act + assert loading is started case
 				oGrowingDelegate._updateTrigger(true);
-				
+
 				ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
 				ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
 				ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
 				strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
 				strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
 				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
-				
+
 				// act + assert loading is finished case for growingScrollToLoad=false
 				oGrowingDelegate._updateTrigger(false);
 				ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
@@ -86,7 +86,7 @@
 				oList.setGrowingScrollToLoad(true);
 				sap.ui.getCore().applyChanges();
 				ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
-				
+
 				// act + assert loading is started case for growingScrollToLoad=true
 				oGrowingDelegate._updateTrigger(true);
 				ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
@@ -95,7 +95,7 @@
 				strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
 				strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
 				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
-				
+
 				// act + assert loading is finished case for growingScrollToLoad=true
 				oGrowingDelegate._updateTrigger(false);
 				ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
@@ -103,7 +103,7 @@
 				ok(!oList.$("triggerText").is(":visible"), "visible", "Growing trigger text is not visible");
 				ok(!oList.$("triggerInfo").css(":visible"), "visible", "Growing info text is not visible");
 				ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
-				
+
 				// act + assert growingScrollToLoad=true
 				oList.setGrowingScrollToLoad(false);
 				sap.ui.getCore().applyChanges();

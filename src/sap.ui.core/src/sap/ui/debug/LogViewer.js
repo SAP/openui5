@@ -42,15 +42,15 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 		this.clear();
 		this.setFilter(LogViewer.NO_FILTER);
 	};
-	
+
 	LogViewer.NO_FILTER = function(oLogMessage) {
 		return true;
 	};
-	
+
 	LogViewer.prototype.clear = function() {
 		this.oDomNode.innerHTML = "";
 	};
-	
+
 	/**
 	 * Returns an XML escaped version of a given string sText
 	 * @param {string} sText the string that is escaped.
@@ -69,9 +69,9 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 	 * @protected
 	 */
 	LogViewer.prototype.addEntry = function(oLogEntry) {
-	
+
 		var oDomEntry = this.oWindow.document.createElement("div");
-	
+
 		// style the entry
 		if ( this.sLogEntryClassPrefix ) {
 			// note: setting a class has only an effect when the main.css is loaded (testsuite)
@@ -83,28 +83,28 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 			oDomEntry.style.width = "100%";
 			oDomEntry.style.whiteSpace = "noWrap";
 		}
-	
+
 		// create text as text node
 		var sText = LogViewer.xmlEscape(oLogEntry.time + "  " + oLogEntry.message),
 			oTextNode = this.oWindow.document.createTextNode(sText);
 		oDomEntry.appendChild(oTextNode);
 		oDomEntry.title = oLogEntry.message;
-	
+
 		// filter
 		oDomEntry.style.display = this.oFilter(sText) ? "" : "none";
-	
+
 		this.oDomNode.appendChild(oDomEntry);
-	
+
 		return oDomEntry;
 	};
-	
+
 	LogViewer.prototype.fillFromLogger = function(iFirstEntry) {
 		this.clear();
 		this.iFirstEntry = iFirstEntry;
 		if ( !this.oLogger ) {
 			return;
 		}
-	
+
 		// when attached to a log, clear the dom node and add all entries from the log
 		var aLog = this.oLogger.getLog();
 		for (var i = this.iFirstEntry,l = aLog.length;i < l;i++) {
@@ -112,19 +112,19 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 				this.addEntry(aLog[i]);
 			}
 		}
-	
+
 		this.scrollToBottom();
 	};
-	
+
 	LogViewer.prototype.scrollToBottom = function() {
 		this.oDomNode.scrollTop = this.oDomNode.scrollHeight;
 	};
-	
+
 	LogViewer.prototype.truncate = function() {
 		this.clear();
 		this.fillFromLogger(this.oLogger.getLog().length);
 	};
-	
+
 	LogViewer.prototype.setFilter = function(oFilter) {
 		this.oFilter = oFilter = oFilter || LogViewer.NO_FILTER;
 		var childNodes = this.oDomNode.childNodes;
@@ -137,7 +137,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 		}
 		this.scrollToBottom();
 	};
-	
+
 	LogViewer.prototype.setLogLevel = function(iLogLevel) {
 		this.iLogLevel = iLogLevel;
 		if ( this.oLogger ) {
@@ -146,19 +146,19 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 		// fill and filter again
 		this.fillFromLogger(this.iFirstEntry);
 	};
-	
+
 	LogViewer.prototype.lock = function() {
 		this.bLocked = true;
 		//this.oDomNode.style.backgroundColor = 'gray'; // marker for 'locked' state
 	};
-	
+
 	LogViewer.prototype.unlock = function() {
 		this.bLocked = false;
 		//this.oDomNode.style.backgroundColor = ''; // clear 'locked' marker
 		this.fillFromLogger(0);
 		// this.addEntry({ time : '---------', message: '---------------', level : 3});
 	};
-	
+
 	LogViewer.prototype.onAttachToLog = function(oLogger) {
 		this.oLogger = oLogger;
 		this.oLogger.setLevel(this.iLogLevel);
@@ -166,12 +166,12 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 			this.fillFromLogger(0);
 		}
 	};
-	
+
 	LogViewer.prototype.onDetachFromLog = function(oLogger) {
 		this.oLogger = undefined;
 		this.fillFromLogger(0); // clears the viewer
 	};
-	
+
 	LogViewer.prototype.onLogEntry = function(oLogEntry) {
 		if ( !this.bLocked ) {
 			var oDomRef = this.addEntry(oLogEntry);

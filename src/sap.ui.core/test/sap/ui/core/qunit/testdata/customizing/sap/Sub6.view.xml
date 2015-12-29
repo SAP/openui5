@@ -3,5 +3,5 @@
 	<TextView text="SAP View 'Sub6':"></TextView>
 
 	<Button text="Sub6 Button" press="originalSAPAction"></Button>
-	
+
 </mvc:View>

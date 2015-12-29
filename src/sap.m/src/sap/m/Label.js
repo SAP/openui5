@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		return this;
 	};
-	
+
 	// enrich Label functionality
 	LabelEnablement.enrich(Label.prototype);
 

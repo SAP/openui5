@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				},
 
 				/**
-				 * Specifies the date on which the file was uploaded. 
+				 * Specifies the date on which the file was uploaded.
 				 * The application has to define the date format.
 				 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
 				 */

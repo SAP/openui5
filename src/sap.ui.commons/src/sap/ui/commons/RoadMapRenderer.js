@@ -8,16 +8,16 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 
-	
-	
+
+
 	/**
 	 * RoadMap renderer.
 	 * @namespace
 	 */
 	var RoadMapRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	RoadMapRenderer.render = function(oRenderManager, oRoadMap){
 		var rm = oRenderManager;
-	
+
 		oRoadMap.doBeforeRendering(); //Inform the Roadmap that the rendering starts
 
 		rm.write("<div");
@@ -35,23 +35,23 @@ sap.ui.define(['jquery.sap.global'],
 		rm.addClass("sapUiRoadMap");
 		rm.writeClasses();
 		rm.writeAttribute("tabIndex", "0");
-	
+
 		var sTooltip = oRoadMap.getTooltip_AsString();
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
-	
+
 		rm.writeAttribute("style", "width:" + (oRoadMap.getWidth() ? oRoadMap.getWidth() : "100%") + ";");
-	
+
 		rm.write(">");
-	
+
 		renderDelimiter(rm, oRoadMap, true);
-	
+
 		rm.write("<ul");
 		rm.writeAttribute("id", oRoadMap.getId() + "-steparea");
 		rm.addClass("sapUiRoadMapStepArea");
 		rm.writeClasses();
-	
+
 		//ARIA
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			rm.writeAttribute("role", "group");
@@ -60,9 +60,9 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeAttributeEscaped("title", sTooltip);
 			}
 		}
-	
+
 		rm.write(">");
-	
+
 		var aSteps = oRoadMap.getSteps();
 		for (var i = 0; i < aSteps.length; i++) {
 			var oStep = aSteps[i];
@@ -72,15 +72,15 @@ sap.ui.define(['jquery.sap.global'],
 				renderStep(rm, oRoadMap, oStep);
 			}
 		}
-	
+
 		rm.write("</ul>");
-	
+
 		renderDelimiter(rm, oRoadMap, false);
-	
+
 		rm.write("</div>");
 	};
-	
-	
+
+
 	/**
 	 * Updates the CSS classes of the Roadmap to select a new step.
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -106,8 +106,8 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Updates the CSS classes of the Roadmap when a step is selected. If the step is an
 	 * expandable step the exapnd state is toggled.
@@ -130,26 +130,26 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		if (!bIsSubStep && oStep.getSubSteps().length > 0) {
 			//Expandable step -> Toggle the expand state
-	
+
 			var aSteps = oStep.getSubSteps();
 			var jDomRef = oStep.$();
 			var bIsExpanded = jDomRef.hasClass("sapUiRoadMapExpanded"); //Get the current expand state
-	
+
 			var iCounter = 1; //Must be in the end 0 when all animations are done (see fDoOnAnimComplete)
-	
+
 			var fDoOnAnimComplete = function(){ //Function called when an animation is done
 				iCounter--;
 				if (iCounter > 0) {
 					return;
 				}
-	
+
 				//Only do something if the last animation finishs
 				if (fEndCallBack) {
 					fEndCallBack(!bIsExpanded ? "expanded" : "collapsed");
 				}
 				RoadMapRenderer.updateStepArea(oRoadMap);
 			};
-	
+
 			//Animation function to hide / show a step (depending on the current expand state)
 			var fAnim = function(sId, bOpen, fComplete){
 				var jRef = jQuery.sap.byId(sId);
@@ -177,16 +177,16 @@ sap.ui.define(['jquery.sap.global'],
 					}
 				}
 			};
-	
+
 			//Change the expand state of the step immediately
 			jDomRef.toggleClass("sapUiRoadMapExpanded");
-	
+
 			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 				var bExp = jDomRef.hasClass("sapUiRoadMapExpanded");
 				oStep.$("box").attr("aria-expanded", bExp);
 				oStep.$("expandend-box").attr("aria-expanded", bExp);
 			}
-	
+
 			//Hide / Show the sub steps
 			for (var i = 0; i < aSteps.length; i++) {
 				if (aSteps[i].getVisible()) {
@@ -202,8 +202,8 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Recalculates the width of the step area and updates the delimiters.
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -217,9 +217,9 @@ sap.ui.define(['jquery.sap.global'],
 			var jStartDelimRef = oRoadMap.$("Start");
 			var jEndDelimRef = oRoadMap.$("End");
 			var jRoadMapRef = oRoadMap.$();
-	
+
 			var iScrollLeft = jStepAreaRef.scrollLeft();
-	
+
 			var iAvailableSpaceForSteps = jRoadMapRef.width() - jStartDelimRef.outerWidth(true) - jEndDelimRef.outerWidth(true);
 			var iMaxVisibleSteps = oRoadMap.getNumberOfVisibleSteps();
 			var iCurrentMaxVisibleSteps = getNumberOfPotentiallyVisibleSteps(oRoadMap);
@@ -228,16 +228,16 @@ sap.ui.define(['jquery.sap.global'],
 			} else {
 				iMaxVisibleSteps = Math.min(iMaxVisibleSteps, iCurrentMaxVisibleSteps);
 			}
-	
+
 			var iPossibleSteps = Math.floor(iAvailableSpaceForSteps / oRoadMap.iStepWidth);
 			var iNumberOfVisibleSteps = Math.min(iMaxVisibleSteps, iPossibleSteps);
 			jStepAreaRef.width(iNumberOfVisibleSteps * oRoadMap.iStepWidth).scrollLeft(iScrollLeft);
-	
+
 			updateDelimiters(oRoadMap);
 		}
 	};
-	
-	
+
+
 	/**
 	 * Recalculates the width of the step area and updates the delimiters and sets the
 	 * focus either to the specified first visible step of the Roadmap (if not exists the first visible
@@ -264,8 +264,8 @@ sap.ui.define(['jquery.sap.global'],
 			updateScrollState(oRoadMap, oPos + getRTLFactor() * jStepArea.scrollLeft(), true);
 		}
 	};
-	
-	
+
+
 	/**
 	 * Checks whether the step with the given Id is currently in the visible part of the scroll area.
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -286,8 +286,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return false;
 	};
-	
-	
+
+
 	/**
 	 * Returns the Id of the first step in the visible part of the scroll area.
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -306,8 +306,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return null;
 	};
-	
-	
+
+
 	/**
 	 * Updates the label text of the given step
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -320,16 +320,16 @@ sap.ui.define(['jquery.sap.global'],
 		var l = sLabel ? jQuery.sap.encodeHTML(sLabel) : "";
 		oStep.$("label").html(l);
 		oStep.$("expandend-label").html(l);
-		
+
 		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
 			return;
 		}
-		
+
 		oStep.$("box").attr("aria-label", getAriaLabel(oStep, sLabel));
 		oStep.$("expandend-box").attr("aria-label", getAriaLabel(oStep, sLabel));
 	};
-	
-	
+
+
 	/**
 	 * Updates the enabled state of the given step
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -368,8 +368,8 @@ sap.ui.define(['jquery.sap.global'],
 			return bSelected;
 		}
 	};
-	
-	
+
+
 	/**
 	 * Updates the visible state of the given step
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -384,7 +384,7 @@ sap.ui.define(['jquery.sap.global'],
 		var jRef = oStep.$();
 		var jRef2 = oStep.$("expandend");
 		var bSelected = oRoadMap.getSelectedStep() == oStep.getId();
-	
+
 		var oParent = oStep.getParent();
 		if (bIsSubStep) {
 			if (oParent.getEnabled() && oParent.getVisible() && oParent.getExpanded()) {
@@ -400,7 +400,7 @@ sap.ui.define(['jquery.sap.global'],
 			} else {
 				jRef.addClass("sapUiRoadMapHidden");
 			}
-	
+
 			var aSteps = oStep.getSubSteps();
 			if (aSteps.length > 0 && oStep.getExpanded()) {
 				if (bVisible) {
@@ -408,7 +408,7 @@ sap.ui.define(['jquery.sap.global'],
 				} else {
 					jRef2.addClass("sapUiRoadMapHidden");
 				}
-	
+
 				for (var i = 0; i < aSteps.length; i++) {
 					if (aSteps[i].getVisible()) {
 						var jRef3 = aSteps[i].$();
@@ -426,11 +426,11 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			}
 		}
-	
+
 		return bSelected;
 	};
-	
-	
+
+
 	/**
 	 * Updates the width of the Roadmap
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -443,8 +443,8 @@ sap.ui.define(['jquery.sap.global'],
 		var jRef = oRoadMap.$();
 		jRef.attr("style", "width:" + (sWidth ? sWidth : "100%") + ";");
 	};
-	
-	
+
+
 	/**
 	 * Scrolls according to the given direction.
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -463,8 +463,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		updateScrollState(oRoadMap, oPos, false, fEndCallBack);
 	};
-	
-	
+
+
 	/**
 	 * Shortens the label of the given step and adds ellipses if necessary
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -476,15 +476,15 @@ sap.ui.define(['jquery.sap.global'],
 		if (!oStep) {
 			return;
 		}
-	
+
 		var jStepLabel = oStep.$("label");
 		var sOriginalText = oStep.getLabel();
 		var sText = sOriginalText + "";
-	
+
 		var jClone = jQuery("<label class=\"sapUiRoadMapTitle\" style=\"display:none;position:absolute;overflow:visible;font-weight:bold;height:auto\">" + sText + "</label>");
 		jClone.width(jStepLabel.width());
 		jQuery(sap.ui.getCore().getStaticAreaRef()).append(jClone);
-	
+
 		var bIsShortened = false;
 		while (sText.length > 0 && jClone.height() > jStepLabel.height()) {
 			//TODO: Do we need special RTL handling here?
@@ -492,18 +492,18 @@ sap.ui.define(['jquery.sap.global'],
 			jClone.html(jQuery.sap.encodeHTML(sText + "..."));
 			bIsShortened = true;
 		}
-	
+
 		if (bIsShortened) {
 			jStepLabel.html("<span>" + jQuery.sap.encodeHTML(sText) + "</span>");
 			jStepLabel.attr("title", oStep.getLabel());
 		} else {
 			jStepLabel.attr("title", getStepTooltip(oStep));
 		}
-	
+
 		jClone.remove();
 	};
-	
-	
+
+
 	/**
 	 * Updates the ARIA properties of the steps on the same level as the given step.
 	 * (Attention: This function should only be called by the Roadmap control itself).
@@ -530,11 +530,11 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 	};
-	
-	
+
+
 	//********* Private *********
-	
-	
+
+
 	//Writes the delimiter HTML into the rendermanger
 	var renderDelimiter = function(rm, oRoadMap, bStart){
 		var sType = bStart ? "Start" : "End";
@@ -548,8 +548,8 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeClasses();
 		rm.write("></div>");
 	};
-	
-	
+
+
 	//Writes the step HTML into the rendermanger
 	var renderStep = function(rm, oRoadMap, oStep, aAdditionalClasses, fAddAdditionalBoxContent, sId){
 		rm.write("<li");
@@ -561,7 +561,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sStepName = getStepName(oRoadMap, oStep);
 		oStep.__stepName = sStepName;
 		var sTooltip = getStepTooltip(oStep);
-	
+
 		rm.addClass("sapUiRoadMapContent");
 		rm.addClass("sapUiRoadMapStep");
 		if (!oStep.getVisible()) {
@@ -580,31 +580,31 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 		rm.writeClasses();
-	
+
 		rm.write(">");
-	
+
 		renderAdditionalStyleElem(rm, sId ? sId : oStep.getId(), 1);
-	
+
 		rm.write("<div");
 		rm.writeAttribute("id", (sId ? sId : oStep.getId()) + "-box");
 		rm.writeAttribute("tabindex", "-1");
 		rm.addClass("sapUiRoadMapStepBox");
 		rm.writeClasses();
 		rm.writeAttributeEscaped("title", sTooltip);
-	
+
 		writeStepAria(rm, oRoadMap, oStep, fAddAdditionalBoxContent ? true : false);
-	
+
 		rm.write("><span>");
 		rm.write(sStepName);
 		rm.write("</span>");
-	
+
 		//Call callback function to render additional content
 		if (fAddAdditionalBoxContent) {
 			fAddAdditionalBoxContent(rm, oRoadMap, oStep);
 		}
-	
+
 		rm.write("</div>");
-	
+
 		rm.write("<label");
 		rm.writeAttribute("id", (sId ? sId : oStep.getId()) + "-label");
 		rm.addClass("sapUiRoadMapTitle");
@@ -616,13 +616,13 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeEscaped(sLabel);
 		}
 		rm.write("</label>");
-	
+
 		renderAdditionalStyleElem(rm, sId ? sId : oStep.getId(), 2);
-	
+
 		rm.write("</li>");
 	};
-	
-	
+
+
 	//Returns the tooltip of the given step
 	var getStepTooltip = function(oStep){
 		var sTooltip = oStep.getTooltip_AsString();
@@ -631,8 +631,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return sTooltip || "";
 	};
-	
-	
+
+
 	//Writes the additonal style HTML into the rendermanger (see renderStep)
 	var renderAdditionalStyleElem = function(rm, sId, iIdx){
 		rm.write("<div");
@@ -641,16 +641,16 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeClasses();
 		rm.write("></div>");
 	};
-	
-	
+
+
 	//Writes the ARIA properties of a step
 	var writeStepAria = function(rm, oRoadMap, oStep, bIsExpandable){
 		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
 			return;
 		}
-	
+
 		rm.writeAttribute("role", "treeitem");
-	
+
 		if (oStep.getEnabled()) {
 			rm.writeAttribute("aria-checked", oRoadMap.getSelectedStep() == oStep.getId());
 		} else {
@@ -658,32 +658,32 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.writeAttribute("aria-haspopup", bIsExpandable);
 		rm.writeAttribute("aria-level", oStep.getParent() instanceof sap.ui.commons.RoadMap ? 1 : 2);
-		
+
 		rm.writeAttribute("aria-posinset", getAriaPosInSet(oStep));
 		rm.writeAttribute("aria-setsize", getAriaSetSize(oStep));
 		rm.writeAttributeEscaped("aria-label", getAriaLabel(oStep, oStep.getLabel()));
-	
+
 		if (!bIsExpandable) {
 			return;
 		}
-	
+
 		rm.writeAttribute("aria-expanded", oStep.getExpanded());
 	};
-	
-	
+
+
 	//Computes how the aria-label property should be set for the given step
 	var getAriaLabel = function(oStep, sLabel){
 		var bIsExpandable = oStep.getParent() instanceof sap.ui.commons.RoadMap && oStep.getSubSteps().length > 0;
-		
+
 		var sResult = sLabel || "";
 		if (oStep.getEnabled()) {
 			sResult = getText(bIsExpandable ? "RDMP_ARIA_EXPANDABLE_STEP" : "RDMP_ARIA_STANDARD_STEP", [sResult]);
 		}
-		
+
 		return sResult;
 	};
-	
-	
+
+
 	//Computes how the aria-posinset property should be set for the given step
 	var getAriaPosInSet = function(oStep){
 		var bIsTopLevel = oStep.getParent() instanceof sap.ui.commons.RoadMap;
@@ -697,8 +697,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return iIdx + 1 - iCountInvisible;
 	};
-	
-	
+
+
 	//Computes how the aria-setsize property should be set for the given step
 	var getAriaSetSize = function(oStep){
 		var bIsTopLevel = oStep.getParent() instanceof sap.ui.commons.RoadMap;
@@ -711,8 +711,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return iCount;
 	};
-	
-	
+
+
 	//Writes the step HTML of the expandable step and its children into the rendermanger
 	var renderExpandableStep = function(rm, oRoadMap, oStep){
 		var fCreateIcon = function(rm, oRoadMap, sId, sIcon, sAdditonalClass){
@@ -725,14 +725,14 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeClasses();
 			rm.write("></div>");
 		};
-	
+
 		var bIsExpanded = oStep.getExpanded();
-	
+
 		//Render the start step with an additional icon
 		renderStep(rm, oRoadMap, oStep, bIsExpanded ? ["sapUiRoadMapExpanded"] : null, function(rm, oRoadMap, oStep){
 			fCreateIcon(rm, oRoadMap, oStep.getId(), bIsExpanded ? "roundtripstart.gif" : "roundtrip.gif");
 		});
-	
+
 		//Render the sub steps
 		var aSteps = oStep.getSubSteps();
 		for (var i = 0; i < aSteps.length; i++) {
@@ -742,7 +742,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			renderStep(rm, oRoadMap, aSteps[i], aClasses);
 		}
-	
+
 		//Render the end step with an additional icon
 		aClasses = ["sapUiRoadMapExpanded", "sapUiRoadMapStepEnd"];
 		if (!bIsExpanded) {
@@ -752,47 +752,47 @@ sap.ui.define(['jquery.sap.global'],
 			fCreateIcon(rm, oRoadMap, oStep.getId() + "-expandend", "roundtripend.gif");
 		}, oStep.getId() + "-expandend");
 	};
-	
-	
+
+
 	//Returns the name of the step according to its index in the aggregation (like "1", "a", "aa")
 	var getStepName = function(oRoadMap, oStep){
 		var oParent = oStep.getParent();
 		if (oParent === oRoadMap) {
 			return oParent.indexOfStep(oStep) + 1;
 		}
-	
+
 		var iIdx = oParent.indexOfSubStep(oStep);
-	
+
 		if (iIdx < 26) {
 			return String.fromCharCode(97 + iIdx);
 		} // Single character
-	
+
 		//Double characters Substeps name are formed of 2 letters (e.g. "aa"). -> so overall 702 substeps possible
 		var firstCharIdx = Math.floor(iIdx / 26) - 1;
 		var secondCharIdx = iIdx % 26;
 		return String.fromCharCode(97 + firstCharIdx, 97 + secondCharIdx);
 	};
-	
-	
+
+
 	//Refreshs teh delimiters according to the current scroll state
 	var updateDelimiters = function(oRoadMap){
 		var iRTLFactor = getRTLFactor();
-	
+
 		var jStepArea = oRoadMap.$("steparea");
-	
+
 		var iScrollLeft = getScrollLeft(jStepArea);
-	
+
 		var jStartDelim = oRoadMap.$("Start");
 		jStartDelim.removeClass("sapUiRoadMapStartScroll").removeClass("sapUiRoadMapStartFixed");
 		jStartDelim.addClass(iRTLFactor * iScrollLeft >= oRoadMap.iStepWidth ? "sapUiRoadMapStartScroll" : "sapUiRoadMapStartFixed");
-	
+
 		var jEndDelim = oRoadMap.$("End");
 		jEndDelim.removeClass("sapUiRoadMapEndScroll").removeClass("sapUiRoadMapEndFixed");
 		var bEndReached = jStepArea.get(0).scrollWidth - iRTLFactor * iScrollLeft - jStepArea.width() < oRoadMap.iStepWidth;
 		jEndDelim.addClass(bEndReached ? "sapUiRoadMapEndFixed" : "sapUiRoadMapEndScroll");
 	};
-	
-	
+
+
 	//Returns the translatable text according to the given key and arguments
 	var getText = function(sKey, aArgs) {
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
@@ -801,8 +801,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return sKey;
 	};
-	
-	
+
+
 	//Returns the number of steps which currently could be visible
 	//(Must be visible and for substeps the parent must be expanded)
 	var getNumberOfPotentiallyVisibleSteps = function(oRoadMap){
@@ -824,8 +824,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return counter;
 	};
-	
-	
+
+
 	//Returns the position left attribute of the given step within the scroll area
 	var getPositionLeft = function(jStepArea, jStep){
 		var iPos = jStep.position().left;
@@ -834,8 +834,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return iPos;
 	};
-	
-	
+
+
 	//Returns a factor which is needed in some browsers in RTL mode to make the position and scroll calculations running:
 	//Scrolling in RTL is quite strange in the different browsers:
 	//  -Firefox: right side has scrollleft=0, scrolling is indicated with negative values
@@ -844,8 +844,8 @@ sap.ui.define(['jquery.sap.global'],
 	var getRTLFactor = function(){
 		return sap.ui.getCore().getConfiguration().getRTL() && !sap.ui.Device.browser.internet_explorer ? -1 : 1;
 	};
-	
-	
+
+
 	//Calculates the scroll left attribute (with fix for Safari in RTL mode) to make the position and scroll calculations running
 	//(see comment on getRTLFactor for RTL behavior)
 	var getScrollLeft = function(jStepArea){
@@ -854,8 +854,8 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return jStepArea.scrollLeft();
 	};
-	
-	
+
+
 	//Calculates the position of the fisrt/last step (with fix for Safari in RTL mode) to make the position and scroll calculations running
 	//(see comment on getRTLFactor for RTL behavior)
 	var getStepEndPosition = function(oRoadMap, bLast){
@@ -865,13 +865,13 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		return bLast ? iScrollWidth : 0;
 	};
-	
-	
+
+
 	//Scrolls to the given position
 	var updateScrollState = function(oRoadMap, iNewPos, bSkipAnim, fEndCallBack){
 		var jStepArea = oRoadMap.$("steparea");
 		jStepArea.stop(false, true);
-	
+
 		if (iNewPos == "next") {
 			iNewPos = jStepArea.scrollLeft() + oRoadMap.iStepWidth * getRTLFactor();
 		} else if (iNewPos == "prev") {
@@ -881,16 +881,16 @@ sap.ui.define(['jquery.sap.global'],
 		} else {
 			iNewPos = iNewPos * getRTLFactor();
 		}
-	
+
 		var fDoAfterScroll = function(){
 			updateDelimiters(oRoadMap);
-	
+
 			if (fEndCallBack) {
 				var jFirstVisibleRef = RoadMapRenderer.getFirstVisibleRef(oRoadMap);
 				fEndCallBack(jFirstVisibleRef.attr("id"));
 			}
 		};
-	
+
 		if (!jQuery.fx.off && !bSkipAnim) {
 			jStepArea.animate({scrollLeft: iNewPos}, "fast", fDoAfterScroll);
 		} else {
@@ -898,9 +898,9 @@ sap.ui.define(['jquery.sap.global'],
 			fDoAfterScroll();
 		}
 	};
-	
-	
-	
+
+
+
 
 	return RoadMapRenderer;
 

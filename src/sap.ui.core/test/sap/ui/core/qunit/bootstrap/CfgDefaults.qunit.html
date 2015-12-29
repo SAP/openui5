@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested class: sap.ui.core.Configuration
   Author: d020684
 -->
@@ -9,8 +9,8 @@
 	<meta charset="UTF-8" />
 
 	<!-- Initialization -->
-	<script id="sap-ui-bootstrap" 
-			src="../../../../../../resources/sap-ui-core.js" 
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../resources/sap-ui-core.js"
 			>
 	</script>
 
@@ -39,7 +39,7 @@
 		QUnit.test("Settings", function(assert) {
 			var oCfg = new sap.ui.core.Configuration();
 
-			// compare values where possible 
+			// compare values where possible
 			assert.equal(oCfg.theme, "base", "theme");
 			assert.equal(oCfg.language, (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage, "language");
 			assert.equal(oCfg.accessibility, true, "accessibility");

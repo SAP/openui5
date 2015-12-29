@@ -48,7 +48,7 @@
 			{
 				"Type":"sap.ui.commons.Button",
 				"id":"ButtonWithBinding",
-				"text": "{path:\"/test\", formatter: \".valueFormatter\"}" 
+				"text": "{path:\"/test\", formatter: \".valueFormatter\"}"
 			}
 		]
 	}]

@@ -195,10 +195,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './SuggestionsList', '.
 
 		/**
 		 * Hide suggestions on desktop and tablets.
-		 * 
+		 *
 		 * Note: This function does nothing on phone devices where a full screen dialog is opened.
 		 * Only the user may close the full screen dialog. There is no possibility to do it from the application code.
-		 * 
+		 *
 		 * @private
 		 */
 		this.close = function() {

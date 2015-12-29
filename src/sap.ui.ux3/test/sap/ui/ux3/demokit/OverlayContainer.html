@@ -22,14 +22,14 @@ function handler(oEvent) {
 }
 
 var oOverlayContainer = new sap.ui.ux3.OverlayContainer();
-oOverlayContainer.addContent(new sap.ui.commons.TextView({text: "Some Content ..."}));			
+oOverlayContainer.addContent(new sap.ui.commons.TextView({text: "Some Content ..."}));
 oOverlayContainer.attachClose(handler);
 oOverlayContainer.attachOpen(handler);
 oOverlayContainer.attachOpenNew(handler);
 
 var oButton = new sap.ui.commons.Button({
 	text: "Open Overlay Container",
-	press: function(oEvent){ 
+	press: function(oEvent){
 		if(!oOverlayContainer.isOpen()){
 			oOverlayContainer.open();
 		}
@@ -39,19 +39,19 @@ oButton.placeAt("sample1");
 </script>
 
 	</head>
-	
+
 	<body class="sapUiDemokitBody" role="application">
 		<h1 color="Red" icon="images/ctrls/overlaycontainer-icon.png">OverlayContainer</h1>
 		<h2>Introduction</h2>
-		
+
 		<p>The OverlayContainer is quite similar to the <a class="sapUiDemokitSrcLink" href="ThingInspector.html">ThingInspector</a> control.
-		It is a popup which is positioned over the application content. The OverlayContainer is either aligned with the <a class="sapUiDemokitSrcLink" href="Shell.html">Shell</a> 
+		It is a popup which is positioned over the application content. The OverlayContainer is either aligned with the <a class="sapUiDemokitSrcLink" href="Shell.html">Shell</a>
 		control if it is available (on the same window) or with the window itself (like in the example below because the Demokit content runs within an IFrame).
 		The difference to the ThingInspector control is that the OverlayContainer allows arbitrary content.</p>
 		<br/>
 
 		<h2>Example</h2>
-		
+
 		<p>Here is a small example using the OverlayContainer control.</p>
 		<div code-sample="sample1" script="samplescript1"></div>
 

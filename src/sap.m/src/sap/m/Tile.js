@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Sets initial visibility of the Tile.
 	 * @param {boolean} bVisible visibility

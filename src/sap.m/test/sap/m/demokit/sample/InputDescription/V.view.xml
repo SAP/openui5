@@ -10,7 +10,7 @@
 				value="10"
 				description="PC"
 				width="100px"
-				fieldWidth="60%" 
+				fieldWidth="60%"
 				class="sapUiSmallMarginBottom" />
 			<Input
 				value="220"
@@ -24,7 +24,7 @@
 				width="250px"
 				fieldWidth="80%"
 				class="sapUiSmallMarginBottom" />
-			<Input 
+			<Input
 				value="007"
 				description="Bastian Schweinsteiger"
 				width="300px"

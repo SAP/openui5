@@ -21,7 +21,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				}
 			}
 		},
-	
+
 		onAfterRendering : function() {
 			this.oContainer.setHeight("100%");
 		}

@@ -11,7 +11,7 @@ sap.ui.define([
 	// #####################################################
 	//
 	// Entire controller code is only for sample display
-	// 
+	//
 	// #####################################################
 
 		onInit: function(){

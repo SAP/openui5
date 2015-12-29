@@ -42,13 +42,13 @@
 				text="{WeightMeasure} {WeightUnit}"/>
 			<ObjectAttribute
 				title="Dimension per unit"
-				text="{Width} x {Depth} x {Height} {DimUnit}"/>				
+				text="{Width} x {Depth} x {Height} {DimUnit}"/>
 		</attributes>
 		<statuses>
  			<ObjectStatus
 				title="Approval"
 				text="Pending"
-				state="Warning"/>				
+				state="Warning"/>
 		</statuses>
 		<headerContainer>
 			<IconTabBar

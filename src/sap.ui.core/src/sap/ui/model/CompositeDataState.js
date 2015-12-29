@@ -6,12 +6,12 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	"use strict";
 
 	/**
-	 * @class 
-	 * Provides and update the status data of a binding. 
+	 * @class
+	 * Provides and update the status data of a binding.
 	 * Depending on the models state and controls state changes, the data state is used to propagated changes to a control.
-	 * The control can react on these changes by implementing the <code>refreshDataState</code> method for the control. 
+	 * The control can react on these changes by implementing the <code>refreshDataState</code> method for the control.
 	 * Here the the data state object is passed as a parameter.
-	 * 
+	 *
 	 * Using the {@link #getChanges getChanges} method the control can determine the changed properties and their old and new value.
 	 * <pre>
 	 *     //sample implementation to handle message changes
@@ -22,21 +22,21 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	 *                console.log(aMessages.message);
 	 *            }
 	 *        }
-	 *        
+	 *
 	 *     }
-	 *     
+	 *
 	 *     //sample implementation to handle laundering state
 	 *     myControl.prototype.refreshDataState = function(oDataState) {
 	 *        var bLaundering = oDataState.getChanges().laundering || false;
 	 *        this.setBusy(bLaundering);
 	 *     }
-	 *     
+	 *
 	 *     //sample implementation to handle dirty state
 	 *     myControl.prototype.refreshDataState = function(oDataState) {
 	 *        if (oDataState.isDirty()) console.log("Control " + this.getId() + " is now dirty");
 	 *     }
 	 * </pre>
-	 * 
+	 *
 	 * Using the {@link #getProperty getProperty} method the control can read the properties of the data state. The properties are
 	 * <ul>
 	 *     <li><code>value</code> The value formatted by the formatter of the binding
@@ -47,12 +47,12 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	 *     <li><code>messages</code> All messages of the data state
 	 *      <li><code>dirty</code> true if the value was not yet confirmed by the server
 	 * </ul>
-	 * 
+	 *
 	 * @extends sap.ui.model.DataState
-	 * 
+	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * 
+	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.CompositeDataState
@@ -66,11 +66,11 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 			this.mProperties.value = [];
 			this.mProperties.invalidValue = null;
 			this.mProperties.internalValue = [];
-			
+
 			this.aDataStates = aDataStates;
 		}
 	});
-	
+
 	/**
 	 * Returns true if there invalid values set on at least one of the inner datastates
 	 *
@@ -85,7 +85,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 			}
 		}, false);
 	};
-	
+
 	/**
 	 * Returns an array of the properties set on the inner datastates
 	 *
@@ -97,19 +97,19 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 			vReturnValue = this.aDataStates.map(function(oDataState) {
 				return oDataState.getProperty("invalidValue") || oDataState.getProperty("value");
 			});
-			
+
 		} else {
 			vReturnValue = this.aDataStates.map(function(oDataState) {
 				return oDataState.getProperty(sProperty);
 			});
 		}
-		
+
 		return vReturnValue;
 	};
-	
+
 	/**
 	 * Returns the current value of the property
-	 * 
+	 *
 	 * @param {string} the name of the property
 	 * @returns {any} the vaue of the property
 	 * @private
@@ -117,7 +117,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	CompositeDataState.prototype.getProperty = function(sProperty) {
 		var vValue = DataState.prototype.getProperty.apply(this, arguments);
 		var aInnerValues = this.getInternalProperty(sProperty);
-		
+
 		var vReturnValue;
 		switch (sProperty) {
 			case "messages":
@@ -128,19 +128,19 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 					vReturnValue = vReturnValue.concat(aInnerValues[i]);
 				}
 				break;
-				
+
 			default:
 				vReturnValue = vValue;
 		}
-		
+
 		return vReturnValue;
 	};
-	
+
 	/**
 	 * Returns or sets whether the data state is changed.
-	 * As long as changed was not set to false the data state is dirty 
+	 * As long as changed was not set to false the data state is dirty
 	 * and the corresponding binding will fire data state change events.
-	 * 
+	 *
 	 * @param {boolean} [bNewState] the optional new state
 	 * @returns {boolean} whether the data state was changed.
 	 * @protected
@@ -150,7 +150,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 			//clear the changed properties as changed was reset;
 			this.mChangedProperties = {};
 		}
-		
+
 		return this.aDataStates.reduce(function(bLastChanged, oDataState) {
 			if (bLastChanged) {
 				return true;
@@ -164,23 +164,23 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 
 
 	/**
-	 * Returns the changes of the data state in a map that the control can use in the 
+	 * Returns the changes of the data state in a map that the control can use in the
 	 * <code>refreshDataState</code> method.
 	 * The changed property's name is the key in the map. Each element in the map contains an object of below structure.
 	 * <pre>
-	 *    { 
+	 *    {
 	 *        oldValue : The old value of the property,
 	 *        value    : The new value of the property
 	 *    }
 	 * </pre>
 	 * The map only contains the changed properties.
-	 * 
+	 *
 	 * @returns {map} the changed of the data state
 	 * @public
 	 */
 	CompositeDataState.prototype.getChanges = function() {
 		var mChangedProperties = {};
-		
+
 		var i, sKey, mChanges;
 
 		var aInnerChanges = [];
@@ -188,20 +188,20 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 			this.aDataStates[i].calculateChanges();
 			mChanges = this.aDataStates[i].getChanges();
 			this.aDataStates[i].changed(false);
-			
+
 			for (sKey in mChanges) {
 				mChangedProperties[sKey] = [];
 			}
 			aInnerChanges.push(mChanges);
 		}
-		
+
 		var bHasInvalidValue = this._hasInnerInvalidValues();
-		
+
 		var mAllChanges = {};
 		for (sKey in mChangedProperties) {
 			for (i = 0; i < aInnerChanges.length; ++i) {
 				mChanges = aInnerChanges[i][sKey];
-				
+
 				if (!mAllChanges[sKey]) {
 					mAllChanges[sKey] = [];
 				}
@@ -214,12 +214,12 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 					if (sKey === "invalidValue" && bHasInvalidValue && !vValue) {
 						vValue = this.aDataStates[i].getProperty("value");
 					}
-					
+
 					mAllChanges[sKey].push(vValue);
 				}
 			}
 		}
-		
+
 		return mAllChanges;
 	};
 

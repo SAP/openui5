@@ -11,15 +11,15 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	/**
 	 * Constructor for a new InvisibleText.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * An InvisibleText is used to bring hidden texts to the UI for screen reader support. The hidden text can e.g. be referenced
 	 * in the ariaLabelledBy or ariaDescribedBy associations of other controls.
-	 * 
+	 *
 	 * The inherited properties busy, busyIndicatorDelay and visible and the aggregation tooltip is not supported by this control.
-	 * 
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -36,16 +36,16 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 			library : "sap.ui.core",
 			publicMethods: ["toStatic"],
 			properties : {
-				
+
 				/**
 				 * The text of the InvisibleText.
 				 */
 				text : {type : "string", defaultValue : ""}
 			}
 		},
-	
+
 		renderer : function(oRm, oControl) {
-			// The text is hidden through "display: none" in the shared CSS class 
+			// The text is hidden through "display: none" in the shared CSS class
 			// "sapUiInvisibleText", as an alternative in case screen readers have trouble with
 			// "display: none", the following class definition could be used:
 			//	.sapUiInvisibleText {
@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 			oRm.write("</span>");
 		}
 	});
-	
+
 	/**
 	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
 	 * @public
@@ -77,7 +77,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 		jQuery.sap.log.warning("Property busy is not supported by control sap.ui.core.InvisibleText.");
 		return this;
 	};
-	
+
 	/**
 	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
 	 * @public
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 		jQuery.sap.log.warning("Property busyIndicatorDelay is not supported by control sap.ui.core.InvisibleText.");
 		return this;
 	};
-	
+
 	/**
 	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
 	 * @public
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 		jQuery.sap.log.warning("Property visible is not supported by control sap.ui.core.InvisibleText.");
 		return this;
 	};
-	
+
 	/**
 	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
 	 * @public
@@ -116,14 +116,14 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 
 	/**
 	 * Adds <code>this</code> control into the static, hidden area UI area container.
-	 * 
+	 *
 	 * @return {sap.ui.core.InvisibleControl} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @see sap.ui.core.Control#placeAt
 	 */
 	InvisibleText.prototype.toStatic = function() {
 		var oCore = sap.ui.getCore();
-		
+
 		try {
 			var oStatic = oCore.getStaticAreaRef();
 			var oRM = oCore.createRenderManager();
@@ -132,7 +132,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 		} catch (e) {
 			this.placeAt("sap-ui-static");
 		}
-		
+
 		return this;
 	};
 

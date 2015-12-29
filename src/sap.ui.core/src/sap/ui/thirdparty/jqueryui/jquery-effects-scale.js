@@ -1,5 +1,5 @@
 (function(jQuery){
-	
+
 	var MESSAGE = "The file sap/ui/thirdparty/jqueryui/jquery-effects-scale.js has been renamed to sap/ui/thirdparty/jqueryui/jquery-ui-effect-scale.js! Please update the dependencies accordingly.";
 
 	if ( jQuery && jQuery.sap && jQuery.sap.require ) {

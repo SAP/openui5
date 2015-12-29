@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/ui/cor
 	 *
 	 * @class
 	 * Display suggestion list items.
-	 * 
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/ui/cor
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SuggestionItem = Item.extend("sap.m.SuggestionItem", /** @lends sap.m.SuggestionItem.prototype */ { metadata : {
-		
+
 		library : "sap.m",
 		properties : {
 
@@ -65,9 +65,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/ui/cor
 
 	/**
 	 * Produces the HTML of the suggestion item and writes it to render-output-buffer.
-	 * 
+	 *
 	 * Subclasses may override this function.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager The <code>RenderManager</code>
 	 * @param {sap.m.SuggestionItem} oItem The item which should be rendered
 	 * @param {string} sSearch The search text that should be emphasized
@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/ui/cor
 	 * Return suggestion text. By default, it is the value of the <code>text</code> property.
 	 *
 	 * Subclasses may override this function.
-	 * 
+	 *
 	 * @returns {string} suggestion text.
 	 * @protected
 	 */

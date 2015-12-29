@@ -17,11 +17,11 @@
 		</script>
 		<script>
 			jQuery.sap.measure.setActive(true);
-			
+
 			sap.ui.getCore().attachInit(function () {
 				jQuery.sap.require("sap.ui.table.Table");
 
-				jQuery.sap.measure.registerMethod("Table._createRows", sap.ui.table.Table.prototype, "_createRows", ["JS"]); 
+				jQuery.sap.measure.registerMethod("Table._createRows", sap.ui.table.Table.prototype, "_createRows", ["JS"]);
 				jQuery.sap.measure.registerMethod("Table._updateTableContent", sap.ui.table.Table.prototype, "_updateTableContent", ["JS"]);
 				jQuery.sap.measure.registerMethod("Table._syncColumnHeaders", sap.ui.table.Table.prototype, "_syncColumnHeaders", ["JS"]);
 				jQuery.sap.measure.registerMethod("Table._updateRowHeader", sap.ui.table.Table.prototype, "_updateRowHeader", ["JS"]);
