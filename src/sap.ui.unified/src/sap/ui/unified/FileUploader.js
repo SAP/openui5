@@ -753,6 +753,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	FileUploader.prototype.setValue = function(sValue, bFireEvent, bSupressFocus) {
 		var oldValue = this.getValue();
+		var oFiles;
 		if ((oldValue != sValue) || this.getSameFilenameAllowed()) {
 			// only upload when a valid value is set
 			var bUpload = this.getUploadOnChange() && sValue;
@@ -785,7 +786,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			// only fire event when triggered by user interaction
 			if (bFireEvent) {
 				if (window.File) {
-					var oFiles = jQuery.sap.domById(this.getId() + "-fu").files;
+					oFiles = jQuery.sap.domById(this.getId() + "-fu").files;
 				}
 				if (!this.getSameFilenameAllowed() || sValue) {
 					this.fireChange({id:this.getId(), newValue:sValue, files:oFiles});
@@ -847,17 +848,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this.setProperty("additionalData", sAdditionalData, true);
 		var oAdditionalData = this.getDomRef("fu_data");
 		if (oAdditionalData) {
-			var sAdditionalData = this.getAdditionalData() || "";
+			sAdditionalData = this.getAdditionalData() || "";
 			oAdditionalData.value = sAdditionalData;
 		}
 		return this;
 	};
 
-	FileUploader.prototype.sendFiles = function(aXhr, aFiles, iIndex) {
+	FileUploader.prototype.sendFiles = function(aXhr, iIndex) {
 
 		var that = this;
 
-		if (iIndex >= aFiles.length) {
+		var bAllPosted = true;
+		for (var i = 0; i < aXhr.length; i++) {
+			if (!aXhr[i].bPosted) {
+				bAllPosted = false;
+				break;
+			}
+		}
+		if (bAllPosted) {
 			if (this.getSameFilenameAllowed() && this.getUploadOnChange()) {
 				that.setValue("", true);
 			}
@@ -865,10 +873,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 
 		var oXhr = aXhr[iIndex];
-		var sFilename = aFiles[iIndex].name;
+		var sFilename = oXhr.file.name ? oXhr.file.name : "MultipartFile";
 
-		if (sap.ui.Device.browser.internet_explorer && aFiles[iIndex].type && oXhr.xhr.readyState != 0) {
-			var sContentType = aFiles[iIndex].type;
+		if (sap.ui.Device.browser.internet_explorer && oXhr.file.type && oXhr.xhr.readyState !== 0) {
+			var sContentType = oXhr.file.type;
 			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
 			oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
 		}
@@ -890,17 +898,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			});
 		};
 
-		var fnAbordListerner = function(oAbortEvent) {
-			that.fireUploadAborted({
-				"fileName": sFilename,
-				"requestHeaders": oRequestHeaders
-			});
-		};
-
 		oXhr.xhr.upload.addEventListener("progress", fnProgressListener);
-
-		//relay the abort event, if the xhr was aborted manually
-		oXhr.xhr.upload.addEventListener("abort", fnAbordListerner);
 
 		oXhr.xhr.onreadystatechange = function() {
 
@@ -945,13 +943,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 			that._bUploading = false;
 		};
-		if (oXhr.xhr.readyState == 0){
+		if (oXhr.xhr.readyState === 0 || oXhr.bPosted) {
 			iIndex++;
-			that.sendFiles(aXhr, aFiles, iIndex);
+			that.sendFiles(aXhr, iIndex);
 		} else {
-			oXhr.xhr.send(aFiles[iIndex]);
+			oXhr.xhr.send(oXhr.file);
+			oXhr.bPosted = true;
 			iIndex++;
-			that.sendFiles(aXhr, aFiles, iIndex);
+			that.sendFiles(aXhr, iIndex);
 		}
 	};
 
@@ -969,7 +968,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			return;
 		}
 		var uploadForm = this.getDomRef("fu_form");
-
+		var iFiles, sHeader, sValue, oXhrEntry;
 		try {
 			if (uploadForm) {
 				this._bUploading = true;
@@ -978,52 +977,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					if (aFiles.length > 0) {
 						if (this.getUseMultipart()) {
 							//one xhr request for all files
-							var iFiles = 1;
+							iFiles = 1;
 						} else {
 							//several xhr requests for every file
-							var iFiles = aFiles.length;
+							iFiles = aFiles.length;
 						}
-						this._aXhr = [];
+						// Save references to already uploading files if a new upload comes between upload and complete or abort
+						this._aXhr = this._aXhr || [];
 						for (var j = 0; j < iFiles; j++) {
 							//keep a reference on the current upload xhr
 							this._uploadXHR = new window.XMLHttpRequest();
-							this._aXhr.push({
+							oXhrEntry = {
 								xhr: this._uploadXHR,
 								requestHeaders: []
-							});
-							this._aXhr[j].xhr.open("POST", this.getUploadUrl(), true);
+							};
+							this._aXhr.push(oXhrEntry);
+							oXhrEntry.xhr.open("POST", this.getUploadUrl(), true);
 							if (this.getHeaderParameters()) {
 								var aHeaderParams = this.getHeaderParameters();
 								for (var i = 0; i < aHeaderParams.length; i++) {
-									var sHeader = aHeaderParams[i].getName();
-									var sValue = aHeaderParams[i].getValue();
-									this._aXhr[j].requestHeaders.push({
+									sHeader = aHeaderParams[i].getName();
+									sValue = aHeaderParams[i].getValue();
+									oXhrEntry.requestHeaders.push({
 										name: sHeader,
 										value: sValue
 									});
 								}
 							}
 							var sFilename = aFiles[j].name;
-							var aRequestHeaders = this._aXhr[j].requestHeaders;
+							var aRequestHeaders = oXhrEntry.requestHeaders;
+							oXhrEntry.fileName = sFilename;
+							oXhrEntry.file = aFiles[j];
 							this.fireUploadStart({
 								"fileName": sFilename,
 								"requestHeaders": aRequestHeaders
 							});
-							for (var i = 0; i < aRequestHeaders.length; i++) {
+							for (var k = 0; k < aRequestHeaders.length; k++) {
 								// Check if request is still open in case abort() was called.
-								if (this._aXhr[j].xhr.readyState === 0) {
+								if (oXhrEntry.xhr.readyState === 0) {
 									break;
 								}
-								var sHeader = aRequestHeaders[i].name;
-								var sValue = aRequestHeaders[i].value;
-								this._aXhr[j].xhr.setRequestHeader(sHeader, sValue);
+								sHeader = aRequestHeaders[k].name;
+								sValue = aRequestHeaders[k].value;
+								oXhrEntry.xhr.setRequestHeader(sHeader, sValue);
 							}
 						}
 						if (this.getUseMultipart()) {
 							var formData = new window.FormData();
 							var name = jQuery.sap.domById(this.getId() + "-fu").name;
-							for (var i = 0; i < aFiles.length; i++) {
-								formData.append(name, aFiles[i]);
+							for (var l = 0; l < aFiles.length; l++) {
+								formData.append(name, aFiles[l]);
 							}
 							formData.append("_charset_", "UTF-8");
 							var data = jQuery.sap.domById(this.getId() + "-fu_data").name;
@@ -1035,15 +1038,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 							}
 							if (this.getParameters()) {
 								var oParams = this.getParameters();
-								for (var i = 0; i < oParams.length; i++) {
-									var sName = oParams[i].getName();
-									var sValue = oParams[i].getValue();
+								for (var m = 0; m < oParams.length; m++) {
+									var sName = oParams[m].getName();
+									sValue = oParams[m].getValue();
 									formData.append(sName, sValue);
 								}
 							}
-							this.sendFiles(this._aXhr, [formData], 0);
+							oXhrEntry.file = formData;
+							this.sendFiles(this._aXhr, 0);
 						} else {
-							this.sendFiles(this._aXhr, aFiles, 0);
+							this.sendFiles(this._aXhr, 0);
 						}
 						this._bUploading = false;
 					}
@@ -1077,16 +1081,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 						var sValue = this._aXhr[i].requestHeaders[j].value;
 						if (sHeader == sHeaderCheck && sValue == sValueCheck) {
 							this._aXhr[i].xhr.abort();
+							this.fireUploadAborted({
+								"fileName": this._aXhr[i].fileName,
+								"requestHeaders": this._aXhr[i].requestHeaders
+							});
+							// Remove aborted entry from internal array.
+							this._aXhr.splice(i, 1);
 							jQuery.sap.log.info("File upload aborted.");
+							break;
 						}
 					}
 				} else {
 					this._aXhr[i].xhr.abort();
+					this.fireUploadAborted({
+						"fileName": this._aXhr[i].fileName,
+						"requestHeaders": this._aXhr[i].requestHeaders
+					});
+					// Remove aborted entry from internal array.
+					this._aXhr.splice(i, 1);
+					jQuery.sap.log.info("File upload aborted.");
 				}
 			}
 		} else if (this._uploadXHR && this._uploadXHR.abort) {
-			//fires a progress event 'abort' on the _uploadXHR
+			// fires a progress event 'abort' on the _uploadXHR
 			this._uploadXHR.abort();
+			this.fireUploadAborted({
+				"fileName": null,
+				"requestHeaders": null
+			});
+			jQuery.sap.log.info("File upload aborted.");
 		}
 	};
 
@@ -1171,14 +1194,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			var aMimeTypes = this.getMimeType();
 
 			var sFileString = '';
-
+			var bWrongType, sName, iIdx, sFileEnding;
 			var uploadForm = this.getDomRef("fu_form");
 
 			if (window.File) {
 				var aFiles = oEvent.target.files;
 
 				for (var i = 0; i < aFiles.length; i++) {
-					var sName = aFiles[i].name;
+					sName = aFiles[i].name;
 					var sType = aFiles[i].type;
 					if (!sType) {
 						sType = "unknown";
@@ -1224,9 +1247,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					}
 					//check allowed file-types for potential mismatches
 					if (aFileTypes && aFileTypes.length > 0) {
-						var bWrongType = true;
-						var iIdx = sName.lastIndexOf(".");
-						var sFileEnding = sName.substring(iIdx + 1);
+						bWrongType = true;
+						iIdx = sName.lastIndexOf(".");
+						sFileEnding = sName.substring(iIdx + 1);
 						for (var k = 0; k < aFileTypes.length; k++) {
 							if (sFileEnding.toLowerCase() == aFileTypes[k].toLowerCase()) {
 								bWrongType = false;
@@ -1251,12 +1274,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			} else if (aFileTypes && aFileTypes.length > 0) {
 				// This else case is executed if the File-API is not supported by the browser (especially IE9).
 				// Check if allowed file types match the chosen file from the oFileUpload IFrame Workaround.
-				var bWrongType = true;
-				var sName = this.oFileUpload.value || "";
-				var iIdx = sName.lastIndexOf(".");
-				var sFileEnding = sName.substring(iIdx + 1);
-				for (var k = 0; k < aFileTypes.length; k++) {
-					if (sFileEnding == aFileTypes[k]) {
+				bWrongType = true;
+				sName = this.oFileUpload.value || "";
+				iIdx = sName.lastIndexOf(".");
+				sFileEnding = sName.substring(iIdx + 1);
+				for (var l = 0; l < aFileTypes.length; l++) {
+					if (sFileEnding == aFileTypes[l]) {
 						bWrongType = false;
 					}
 				}
@@ -1379,7 +1402,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				aFileUpload.push('title="' + jQuery.sap.encodeHTML(this.getTooltip_AsString()) + '" ');
 			//} else if (this.getTooltip() ) {
 				// object tooltip, do nothing - tooltip will be displayed
-			} else if (this.getValue() != "") {
+			} else if (this.getValue() !== "") {
 				// only if there is no tooltip, then set value as fallback
 				aFileUpload.push('title="' + jQuery.sap.encodeHTML(this.getValue()) + '" ');
 			}
