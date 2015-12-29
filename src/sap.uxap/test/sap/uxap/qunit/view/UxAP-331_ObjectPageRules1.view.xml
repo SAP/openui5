@@ -6,7 +6,7 @@
 		   height="100%"
 		>
 
-	<ObjectPageLayout id="objectPage1" title="">
+	<ObjectPageLayout id="objectPage1" headerTitle="">
 		<sections>
 			<ObjectPageSection id="ObjectPageSectionNoBlock331" title="NoBlock">
 				<ObjectPageSubSection id="ObjectPageSubSectionNoBlock331" title="No block"/>
