@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/
 		this.view.setModel(new ResourceModel({bundleName: this.getProperty("i18nBundle")}), "texts");
 		var oSubscription= this.getEventBusSubscription();
 		oSubscription.fn = this.onContextChanged;
-		sap.ui.getCore().getEventBus().subscribe(oSubscription.channel, oSubscription.event, oSubscription.fn, this); 
+		sap.ui.getCore().getEventBus().subscribe(oSubscription.channel, oSubscription.event, oSubscription.fn, this);
 		return this.view;
 	};
 	/*

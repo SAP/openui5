@@ -7,7 +7,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 	"use strict";
 
 /**
- * 
+ *
  * @namespace
  * @name sap.ui.core.message
  * @public
@@ -15,9 +15,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 
 /**
  * Abstract MessageParser class to be inherited in back-end specific implementations.
- * 
+ *
  * @class
- * @classdesc 
+ * @classdesc
  *   This is an abstract base class for MessageParser objects.
  * @extends sap.ui.base.Object
  *
@@ -41,7 +41,7 @@ var MessageParser = Object.extend("sap.ui.core.message.MessageParser", {
 
 /**
  * This method is used by the model to register itself as MessageProcessor for this parser
- * 
+ *
  * @param {sap.ui.message.MessageProcessor} oProcessor - The MessageProcessor that can be used to fire events
  * @return {sap.ui.message.MessagePaser} Instance reference for method chaining
  * @protected
@@ -53,7 +53,7 @@ MessageParser.prototype.setProcessor = function(oProcessor) {
 
 /**
  * Returns the registered processor on which the events for message handling can be fired
- * 
+ *
  * @return {sap.ui.message.MessageProcessor} The currently set MessageProcessor or null if none is set
  * @protected
  */

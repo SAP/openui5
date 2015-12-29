@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.odata.ODataModel
   Author: d050084
 -->
@@ -27,7 +27,7 @@
 <!--[if IE]>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>	
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- This test is not running against the real Northwind service, but a fake service based on
      Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
@@ -41,7 +41,7 @@
 
 	//TODO currently we rely on northwind odata service for tests...
 	//TODO tests depends on server response time and northwind content...so tests may be unstable
-	
+
 	// time to wait for server responses
 	var timeout = 3000;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
@@ -51,7 +51,7 @@
 	var oPanel = new sap.ui.commons.Panel();
 	oPanel.addContent(oLabel);
 	oPanel.placeAt("target1");
-	
+
 	// create a dummy AMD fdefine to check if shim works for datajs
 	window.define = function() {
 		throw Error("define should not be called");
@@ -64,14 +64,14 @@
 			delete sap.ui.model.odata.ODataModel.mServiceData[sServiceURI];
 		}
 	}
-	
+
 	/**
 	 * Removes all shared Metadata
 	 */
 	function cleanServiceDataCache() {
 		sap.ui.model.odata.ODataModel.mServiceData = {};
 	}
-	
+
 
 	function initModel() {
 		var sURI;
@@ -106,7 +106,7 @@
 		bDataRequested = true;
 		ok(!bDataReceived && !bChanged,"dataRequested fired");
 	};
-	
+
 	var fnDataReceived = function(oEvent) {
 		bDataReceived = true;
 		ok(bChanged && bDataRequested,"dataRecieved fired");
@@ -239,7 +239,7 @@
 				jQuery.sap.log.debug("test 2 - metadata loaded is fired on metadata");
 				bFiredAtMetadata = true;
 			});
-			// attach again and wait for the metadataloaded event at the model itself, 
+			// attach again and wait for the metadataloaded event at the model itself,
 			//fail if event is fired at the metadata object
 			oModel2.attachMetadataLoaded(function() {
 				jQuery.sap.log.debug("metadata loaded is fired");
@@ -259,52 +259,52 @@
 				});
 		});
 	});
-	
+
 	asyncTest("test _isReloadNeeded() - __list check", function(){
 		var oModel = initModel(sURI, false),
 			bReloadNeeded;
 
 		oModel._loadData("Employees", null, function () {
 			equal(oModel.getProperty("/Employees(2)/FirstName"), "Andrew", "Fetching initial data from absolute path");
-			
+
 			//check if reload needed --> true
 			bReloadNeeded = oModel._isReloadNeeded("/Employees(2)", oModel.getObject("/Employees(2)"), {expand: "Employees1/Employees1/Employees1"});
 			equal(bReloadNeeded, true, "First reload needed for 3 levels of expand");
-			
+
 			//create context for 3 levels of expand
 			oModel.createBindingContext("/Employees(2)", null, {expand: "Employees1/Employees1/Employees1"}, function (oContext){
 				//reload should not be needed anymore --> false
 				bReloadNeeded = oModel._isReloadNeeded("/Employees(2)", oModel.getObject("/Employees(2)"), {expand: "Employees1/Employees1/Employees1"});
  				equal(bReloadNeeded, false, "Second reload should not be needed");
- 				
+
  				start(); //resume normal testing
  			});
-			
+
 		});
 	});
-	
+
 	asyncTest("test _isReloadNeeded() - __ref check", function(){
 		var oModel = initModel(sURI, false),
 			bReloadNeeded;
-		
+
 		//Test another case with internal __ref properties instead of __list
 		oModel._loadData("Products", null, function () {
 			equal(oModel.getProperty("/Products(1)/ProductName"), "Chai", "fetching initial data from absolute path.")
-				
+
 			//check if reload needed --> true
 			bReloadNeeded = oModel._isReloadNeeded("/Products(1)", oModel.getObject("/Products(1)"), {expand: "Category/Products/Supplier"});
 			equal(bReloadNeeded, true, "First reload needed for 3 levels of expand");
-				
+
 	 		oModel.createBindingContext("/Products(1)", null, {expand: "Category/Products/Supplier"}, function (oContext){
 	 			//reload should not be needed anymore --> false
 				bReloadNeeded = oModel._isReloadNeeded("/Products(1)", oModel.getObject("/Products(1)"), {expand: "Category/Products/Supplier"});
 	 			equal(bReloadNeeded, false, "Second reload should not be needed");
-	 				
+
 	 			start(); //resume normal testing
 	 		});
-	 		
+
 		});
-		
+
 	});
 
 	asyncTest("test oDataModel _loadData XML",function(){
@@ -320,19 +320,19 @@
 			performTest(oModel);
 		});
 	});
-	
+
 	function performTest(oModel){
 		equal(oModel.getProperty("/Categories(1)/CategoryName"), "Beverages", "absolute path without context");
 		oModel.createBindingContext("/Categories(1)", null, function(newContext){
 			equal(newContext.getProperty("CategoryName"), "Beverages", "relative path with context");
 			var iLength = 0;
-			var categories = oModel.getProperty("/"); 
+			var categories = oModel.getProperty("/");
 			for (category in categories){
 				iLength++;
 				equal(categories[category].CategoryID, iLength);
 			};
 			equal(iLength, 8);
-			start();          // resume normal testing			
+			start();          // resume normal testing
 		});
 	};
 
@@ -340,7 +340,7 @@
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 
-		var oBinding = oModel.bindList("/Categories");	
+		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
 			equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "Description available");
@@ -358,7 +358,7 @@
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 
-		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "Inline" });	
+		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "Inline" });
 		var handler = function() { // delay the following test
 			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
 			equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "Description available");
@@ -376,7 +376,7 @@
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 
-		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None" });	
+		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None" });
 		var handler = function() { // delay the following test
 			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "CategoryName available");
 			equal(oModel.getProperty("/Categories(1)").Description, "Soft drinks, coffees, teas, beers, and ales", "Description available");
@@ -389,12 +389,12 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("test select", function(){
 		var oModel = initModel(sURI, true, "Categories");
 		sap.ui.getCore().setModel(oModel);
 
-		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });	
+		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		var handler = function() { // delay the following test
 			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
 			equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
@@ -407,12 +407,12 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("test select with create binding context", function(){
 		var oModel = initModel(sURI, true, "Categories");
 		sap.ui.getCore().setModel(oModel);
 
-		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });	
+		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		var handler1 = function() { // delay the following test
 			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
 			equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
@@ -426,20 +426,20 @@
 				equal(oModel.getProperty("/Categories(1)").CategoryID, 1, "test select property");
 				start();          // resume normal testing
 			});
-			
+
 			oBinding.detachChange(handler1);
-			
+
 		};
 		oBinding.attachChange(handler1);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("test select with create binding context select", function(){
 		var oModel = initModel(sURI, true, "Categories");
 		sap.ui.getCore().setModel(oModel);
 
-		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });	
+		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		var handler1 = function() { // delay the following test
 			equal(oModel.getProperty("/Categories(1)").CategoryName, "Beverages", "test select property");
 			equal(oModel.getProperty("/Categories(1)").Description, undefined, "other property not available");
@@ -454,21 +454,21 @@
 				equal(oModel.getProperty("/Categories(1)").Picture, undefined, "other property not available");
 				start();          // resume normal testing
 			});
-			
+
 			oBinding.detachChange(handler1);
-			
+
 		};
 		oBinding.attachChange(handler1);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("test expand", function(){
 		var oModel = initModel(sURI, true, "Products");
 		sap.ui.getCore().setModel(oModel);
 
 		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
-		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" });	
+		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" });
 		var handler1 = function() { // delay the following test
 			equal(oModel.getProperty("/Products(1)").ProductName, "Chai", "test property");
 			equal(oModel.getProperty("/Products(1)/Category").CategoryName, "Beverages", "test expand property");
@@ -479,18 +479,18 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("test expand with create binding context", function(){
-		
+
 		var oModel = initModel(sURI, true, "Products");
 		sap.ui.getCore().setModel(oModel);
 
 		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
-		var oBinding = oModel.bindList("/Products", null, null, [oFilter]);	
+		var oBinding = oModel.bindList("/Products", null, null, [oFilter]);
 		var handler1 = function() { // delay the following test
 			equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
 			equal(oModel.getProperty("/Products(2)/Category"), undefined, "test expand property not there");
-			
+
 			oModel.createBindingContext("/Products(2)", null, {expand : "Category" }, function(oContext){
 				// rest expand data should be there now
 				equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
@@ -504,19 +504,19 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("test select expand with create binding context", function(){
-		
+
 		var oModel = initModel(sURI, true, "Products");
 		sap.ui.getCore().setModel(oModel);
 
 		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
-		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category,ProductName", expand : "Category" });	
+		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category,ProductName", expand : "Category" });
 		var handler1 = function() { // delay the following test
 			equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
 			equal(oModel.getProperty("/Products(2)").ProductID, undefined, "test property");
 			equal(oModel.getProperty("/Products(2)/Category").CategoryName, "Beverages", "test expand property");
-			
+
 			oModel.createBindingContext("/Products(2)", null, {select : "Category, ProductID", expand : "Category" }, function(oContext){
 				// rest expand data should be there now
 				equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
@@ -532,7 +532,7 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("test getProperty on label", function(){
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, false, "Categories");
@@ -540,12 +540,12 @@
 		oModel._loadData("Categories", null, function(){
 			equal(oLabel.getText(),"testText", "old text value");
 			oLabel.bindProperty("text", "/Categories(2)/CategoryName");
-			equal(oLabel.getText(), "Condiments", "text value from model");	
+			equal(oLabel.getText(), "Condiments", "text value from model");
 			oLabel.unbindProperty("text");
 			start();
 		});
 	});
-	
+
 	asyncTest("test double load update", function(){
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, false, "Categories");
@@ -564,7 +564,7 @@
 			});
 		});
 	});
-	
+
 	asyncTest("test remove data", function(){
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, false, "Categories");
@@ -580,7 +580,7 @@
 			start();
 		});
 	});
-	
+
 	asyncTest("test create binding context", function(){
 		oLabel.setText("testText");
 		var oModel = initModel(sURI, false, "Categories");
@@ -593,13 +593,13 @@
 					equal(oContext2.getPath(), "/Categories(2)","new Context");
 					oModel.createBindingContext("/Products(2)", null, function(oContext3){
 						equal(oContext3.getPath(), "/Products(2)","new Context");
-						start();	
-					});					
+						start();
+					});
 				});
 			});
 		});
 	});
-	
+
 	asyncTest("test bindElement", 2, function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -616,7 +616,7 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	
+
 	asyncTest("test bindElement 2", 2, function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -633,7 +633,7 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	
+
 	asyncTest("test bindElement - set ParentContext null", 5, function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -658,7 +658,7 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	
+
 	asyncTest("test bindElement 3", 2, function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -675,7 +675,7 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	
+
 	asyncTest("test bindElement 4", 2, function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -692,7 +692,7 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	
+
 	asyncTest("test bindElement 5 - change parentContext", 3, function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -718,7 +718,7 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
-	
+
 	asyncTest("test bindElement 6 - change parentContext with propagation", 3, function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -766,7 +766,7 @@
 		});
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 	});
-	
+
 	asyncTest("test data events for bindElement 204", 3, function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
@@ -788,19 +788,19 @@
 		});
 		ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 	});
-	
+
 	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-	var oItemTemplate = new sap.ui.core.ListItem();	
+	var oItemTemplate = new sap.ui.core.ListItem();
 	oLB.placeAt("target2");
-	
+
 	asyncTest("test model bindAggregation on Listbox", function(){
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
 		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
-		
+
 		var handler = function() {
-			var listItems = oLB.getItems(); 
+			var listItems = oLB.getItems();
 			equal(listItems.length, 8, "length of items");
 			equal(listItems[0].getText(), "Beverages", "category 1 name");
 			equal(listItems[7].getAdditionalText(), "Seaweed and fish", "category 8 description");
@@ -809,12 +809,12 @@
 		}
 		oBinding.attachChange(handler);
 	});
-	
+
 	asyncTest("test model bindAggregation on Listbox events", 1, function(){
-		
+
 		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
 		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
-		
+
 		//Currently no event fired on bind element
 		var fnRequestedHandler = function() {
 			equal(true, true, "Data requested event was fired");
@@ -826,18 +826,18 @@
 		oBinding.attachDataRequested(fnRequestedHandler);
 		oBinding.attachDataReceived(fnRecievedHandler);
 	});
-	
+
 	asyncTest("PropertyBinding getValue", function(){
 		var oModel = initModel(sURI, false, "Categories");
-		oModel._loadData("Categories", null, function(){			
+		oModel._loadData("Categories", null, function(){
 			var oBinding = oModel.bindProperty("/Categories(2)/CategoryName");
 			equal(oBinding.getValue(), "Condiments", "text value from model");
 			start();
 		});
 	});
-		
+
 	asyncTest("createBindingContext expand", function(){
-		
+
 		var oModel = initModel(sURI, false, "Categories");
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
 			equal(oContext.getPath(), "/Products(1)", "Context path");
@@ -847,7 +847,7 @@
 	});
 
 	asyncTest("test Context.getPath/getObject", function(){
-		
+
 		var oModel = initModel(sURI, false, "Categories");
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
 			equal(oContext.getPath("Category"), "/Products(1)/Category", "Expanded entity path");
@@ -857,7 +857,7 @@
 	});
 
 	asyncTest("test getKey", function(){
-		
+
 		var oModel = initModel(sURI, false, "Categories");
 		oModel.createBindingContext("/Products(1)", null, {expand: "Category"}, function(oContext) { // delay the following test
 			equal(oModel.getKey(oContext), "Products(1)", "Context key");
@@ -869,8 +869,8 @@
 	});
 
 	test("test getKey decoded", function(){
-		
-		var oModel = initModel(sURI, false, "Categories"),		
+
+		var oModel = initModel(sURI, false, "Categories"),
 			oObject = {
 			__metadata: {
 				uri: "http://some.host/service/Customers('%2F%3F''%2B')"
@@ -879,20 +879,20 @@
 		equal(oModel.getKey(oObject), "Customers('%2F%3F''%2B')", "Get customers key encoded");
 		equal(oModel.getKey(oObject, true), "Customers('/?''+')", "Get customers key decoded");
 	});
-	
+
 	test("test createKey", function(){
-		
-		var oModel = initModel(sURI, false, "Categories");		
+
+		var oModel = initModel(sURI, false, "Categories");
 		equal(oModel.createKey("Products", {ProductID: 1}), "Products(1)", "Created product key");
 		equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Created key with multiple key properties");
 		equal(oModel.createKey("Customers", {CustomerID: "/?'+"}), "Customers('%2F%3F''%2B')", "Created customers key encoded");
 		equal(oModel.createKey("Customers", {CustomerID: "/?'+"}, true), "Customers('/?''+')", "Created customers key decoded");
 	});
-	
+
 	asyncTest("metadata check", function(){
-		
+
 		var oModel = initModel(sURI, false, "Categories");
-		var oBinding = oModel.bindList("/Categories");	
+		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
 			equal(oBinding.oEntityType.name, "Category", "entity type name check");
@@ -903,7 +903,7 @@
 			ok(oPropMeta, "property type check");
 			equal(oPropMeta.name, "CategoryName", "entity type property check");
 			equal(oPropMeta.type, "Edm.String", "entity type property check");
-			
+
 			oBinding.detachChange(handler);
 			start();          // resume normal testing
 		};
@@ -911,11 +911,11 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("metadata get entity type check", function(){
-		
+
 		var oModel = initModel(sURI, false, "Categories");
-		var oBinding = oModel.bindList("/Categories");	
+		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			equal(oResult.name, "Category", "entity type name check");
@@ -957,11 +957,11 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("metadata get entity type check with context", function(){
 
 		var oModel = initModel(sURI, false, "Categories");
-		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));	
+		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));
 		var handler = function() { // delay the following test
 			oResult = oBinding.oEntityType;
 			equal(oResult.name, "Product", "entity type name check");
@@ -973,25 +973,25 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("metadata get property metadata", function(){
 		var oModel = initModel(sURI, false, "Categories");
-		var oBinding = oModel.bindList("/Categories");	
+		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 			equal(oResult.name, "CategoryName", "Property type name check");
 			equal(oResult.type, "Edm.String", "Property type name check");
-			
-			// check nav property 
+
+			// check nav property
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "/Products/ProductName/");
 			equal(oResult.name, "ProductName", "Nav Property type name check");
 			equal(oResult.type, "Edm.String", "Nav Property type name check");
-			
+
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "Products/ProductName");
 			equal(oResult.name, "ProductName", "Nav Property type name check");
 			equal(oResult.type, "Edm.String", "Nav Property type name check");
-			
+
 			oBinding.detachChange(handler);
 			start();          // resume normal testing
 		};
@@ -999,23 +999,23 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	test("Custom Header test", function(){
 		var oModel = initModel(sURI, true);
 		oModel.setHeaders({"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"});
-		
+
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		oModel.read("/Categories", null, null, false); // sync call
-		
+
 		equal(spy.callCount, 1, "spy read count");
 		ok(spy.calledOnce, "spy called once");
 		equal(spy.args[0][0].headers['myCustomHeader1'], "value1", "spy check custom header");
 		equal(spy.args[0][0].headers['myCustomHeader2'], "4.555", "spy check custom header");
-		
+
 		// override headers
-		oModel.setHeaders({"myCustomHeader1" : "666", "TesT": "new Header", "MyCustomHeader2" : "blubb"});		
+		oModel.setHeaders({"myCustomHeader1" : "666", "TesT": "new Header", "MyCustomHeader2" : "blubb"});
 		oModel.read("/Categories", null, null, false); // sync call
-		
+
 		equal(spy.callCount, 2, "spy read count");
 		equal(spy.args[1][0].headers['myCustomHeader1'], "666", "spy check custom header");
 		equal(spy.args[1][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
@@ -1031,7 +1031,7 @@
 	asyncTest("async metadata request check", function(){
 		removeSharedServicedata(sURI);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
-			json: true, 
+			json: true,
 			loadMetadataAsync: true
 		});
 
@@ -1048,16 +1048,16 @@
 	asyncTest("async metadata request check with bindings", function(){
 		cleanServiceDataCache();
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
-			json: true, 
+			json: true,
 			loadMetadataAsync: true
 		});
 
 
-		var handler = function() { 
+		var handler = function() {
 			ok(true, "Metadata callback handler called");
-			oModel.detachMetadataLoaded(handler); // handler is undefined at this point. This always causes the assertion inside to fail. 
+			oModel.detachMetadataLoaded(handler); // handler is undefined at this point. This always causes the assertion inside to fail.
 			ok(oModel.getServiceMetadata(), "get metadata check");
-			var oBinding = oModel.bindList("/Categories");	
+			var oBinding = oModel.bindList("/Categories");
 			var handler2 = function() { // delay the following test
 				ok(oBinding.oEntityType, "entity type binding check");
 				equal(oBinding.oEntityType.name, "Category", "entity type name check");
@@ -1068,7 +1068,7 @@
 				ok(oPropMeta, "property type check");
 				equal(oPropMeta.name, "CategoryName", "entity type property check");
 				equal(oPropMeta.type, "Edm.String", "entity type property check");
-				
+
 				oBinding.detachChange(handler2);
 				start();          // resume normal testing
 			};
@@ -1082,14 +1082,14 @@
 	asyncTest("async metadata request check with bindings die zwote", function(){
 		cleanServiceDataCache();
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
-			json: true, 
+			json: true,
 			loadMetadataAsync: true
 		});
 
 		// when metadata loaded a refresh is called which will trigger the data loading
 		// if not yet happened
 
-		var oBinding = oModel.bindList("/Categories");	
+		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
 			equal(oBinding.oEntityType.name, "Category", "entity type name check");
@@ -1107,7 +1107,7 @@
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);
 	});
-	
+
 	asyncTest("async test createEntity", function(){
 
 		cleanServiceDataCache();
@@ -1123,12 +1123,12 @@
 			ok(oContext, "context check");
 			var oEntry = oModel.getProperty("", oContext);
 			ok(oEntry, "entry check");
-			
+
 			equal(oEntry.CategoryName, "Food", "category name check");
 			equal(oEntry.CategoryID, 99, "category ID check");
 			equal(oEntry.Description, "Food Desc", "category ID check");
 			ok(oEntry._bCreate, "check create flag");
-			
+
 			ok(oModel.oRequestQueue[oContext.getPath().substr(1)], "queue check");
 			ok(oModel.mContexts[oContext.getPath()], "context check");
 			equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
@@ -1136,24 +1136,24 @@
 			equal(oModel.oRequestQueue[oContext.getPath().substr(1)], undefined, "queue check");
 			equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
 			equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
-			
+
 			// check default values
 			oContext = oModel.createEntry("Categories");
 			ok(oContext, "context check");
 			oEntry = oModel.getProperty("", oContext);
 			ok(oEntry, "entry check");
-			
+
 			equal(oEntry.CategoryName, undefined, "category name check");
 			equal(oEntry.CategoryID, undefined, "category ID check");
 			equal(oEntry.Description, undefined, "category ID check");
 			ok(oEntry._bCreate, "check create flag");
-			
+
 			start();
 		};
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);
 	});
-	
+
 	asyncTest("Event order: bindElement", function(){
 		expect(4);
 		var oModel = initModel(sURI, true, "Categories");
@@ -1164,7 +1164,7 @@
 			ok(oLabel.getElementBinding(), "ContextBinding created")
 			oLabel.unbindElement();
 			bChanged = false;
-			bDataRequested = false; 
+			bDataRequested = false;
 			bDataReceived = false;
 			start(); // resume normal testing
 		}
@@ -1179,14 +1179,14 @@
 		var handler = function(oEvent) {
 			ok(oLabel.getElementBinding(), "ContextBinding created")
 			bChanged = false;
-			bDataRequested = false; 
+			bDataRequested = false;
 			bDataReceived = false;
 			start(); // resume normal testing
 		}
 		oLabel.setModel(oModel);
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
-	
+
 	asyncTest("Event order: bindElement (already bound)", function(){
 		expect(6);
 		cleanServiceDataCache();
@@ -1196,7 +1196,7 @@
 		var handler = function(oEvent) {
 			ok(oLabel.getElementBinding(), "ContextBinding created")
 			bChanged = false;
-			bDataRequested = false; 
+			bDataRequested = false;
 			bDataReceived = false;
 			var fnChange2 = function(oEvent) {
 				bChanged = true;
@@ -1204,7 +1204,7 @@
 				ok(oLabel.getElementBinding(), "ContextBinding created")
 				oLabel.unbindElement();
 				bChanged = false;
-				bDataRequested = false; 
+				bDataRequested = false;
 				bDataReceived = false;
 				start(); // resume normal testing
 			};
@@ -1213,7 +1213,7 @@
 		oLabel.setModel(oModel1);
 		oLabel.getElementBinding().attachDataReceived(handler);
 	});
-	
+
 	test("test ODataModel destroy cancel async metadata", function(){
 		cleanServiceDataCache();
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
@@ -1231,15 +1231,15 @@
 
 		equal(spy.callCount, 1, "number of requests");
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
-		
+
 	});
-	
+
 	test("test ODataModel destroy cancel load data", function(){
 		var oModel = initModel(sURI, true, "Categories");
 		//var oModel = new sap.ui.model.odata.ODataModel(sURI, { json: true, loadMetadataAsync: false });
 		sap.ui.getCore().setModel(oModel);
 
-		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });	
+		var oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		var handler1 = function() { // delay the following test
 			ok(false, "Data should not be loaded");
 			oBinding.detachChange(handler1);
@@ -1250,21 +1250,21 @@
 		// spy on odata request function
 		var spy = this.spy(OData, "request");
 		oBinding.getContexts();
-		
+
 		oModel.destroy();
 		ok(oModel.bDestroyed, "Model should be destroyed");
-		
+
 		equal(spy.callCount, 1, "number of requests");
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
-		
+
 		// fire new request
 		oBinding = oModel.bindList("/Categories", null, null, null, {select : "CategoryName" });
 		oBinding.getContexts();
 		equal(spy.callCount, 1, "number of requests");
 		ok(spy.getCall(0).returnValue.bSuppressErrorHandlerCall, "should be true");
-		
+
 		oBinding.detachChange(handler1);
-		
+
 	});
 
 	module("ODataModel.read", {
@@ -1408,7 +1408,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test metadata loading: sap-value-list",function(){
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.oMetadata.loaded().then(function(){
@@ -1453,7 +1453,7 @@
 			});
 		});
 	});
-	
+
 	asyncTest("test metadata loading (relative metadataUrl): sap-value-list",function(){
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
@@ -1483,7 +1483,7 @@
 			deleteCsrfToken();
 		}
 	});
-	
+
 	asyncTest("No token request for GET requests", function() {
 		this.oModel.oMetadata.loaded().then(function() {
 			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
@@ -1495,7 +1495,7 @@
 			});
 		}.bind(this));
 	});
-	
+
 	asyncTest("Token request for GET request inside batch", function() {
 		this.oModel.setUseBatch(true);
 		this.oModel.oMetadata.loaded().then(function() {
@@ -1508,7 +1508,7 @@
 			});
 		}.bind(this));
 	});
-	
+
 	asyncTest("Token request for POST requests", function() {
 		this.oModel.oMetadata.loaded().then(function() {
 			var refreshSpy = sinon.spy(this.oModel, "refreshSecurityToken");
@@ -1520,7 +1520,7 @@
 							ok(refreshSpy.calledOnce, "No additional token request")
 							start();
 						}
-					});					
+					});
 				}.bind(this)
 			});
 		}.bind(this));
@@ -1540,12 +1540,12 @@
 							ok(refreshSpy.calledTwice, "Token was fetched again after update");
 							start();
 						}
-					});					
+					});
 				}.bind(this)
 			});
 		}.bind(this));
 	});
-	
+
 	module("Metamodel binding", {
 		setup: function() {
 			this.oModel = initModel(sURI, false);
@@ -1582,7 +1582,7 @@
 	asyncTest("Metamodel binding refresh after metamodel load", function() {
 		var oPropertyBinding, oListBinding, oMetaBindingRelative, oMetaBindingAbsolute,
 			propertySpy, listSpy, metaRelativeSpy, metaAbsoluteSpy;
-		
+
 		this.oModel.createBindingContext("/Categories(7)", null, {expand: "Products"}, function(oContext) {
 			oPropertyBinding = this.oModel.bindProperty("CategoryName", oContext);
 			oPropertyBinding.attachChange(function(){});
@@ -1590,12 +1590,12 @@
 			oListBinding = this.oModel.bindList("Products", oContext);
 			oListBinding.attachChange(function(){});
 			oListBinding.initialize();
-			
+
 			// createBindingContext callback is executed before checkUpdate, so wait for RequestCompleted
 			this.oModel.attachRequestCompleted(function() {
 				propertySpy = sinon.spy(oPropertyBinding, "checkUpdate");
 				listSpy = sinon.spy(oListBinding, "checkUpdate");
-				
+
 				oMetaBindingRelative = this.oModel.bindProperty("##name", oContext);
 				oMetaBindingRelative.attachChange(function(){});
 				oMetaBindingRelative.initialize();
@@ -1605,7 +1605,7 @@
 				oMetaBindingAbsolute.attachChange(function(){});
 				oMetaBindingAbsolute.initialize();
 				metaAbsoluteSpy = sinon.spy(oMetaBindingAbsolute, "checkUpdate");
-				
+
 				// Metamodel bindings trigger the creation of the metamodel, so we can wait for loaded() here
 				this.oModel.getMetaModel().loaded().then(function() {
 					ok(!propertySpy.called, "Property binding checkUpdate not called");

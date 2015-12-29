@@ -6,7 +6,7 @@
 function getShellOptionsPanel(oShell, aAdditionalContent, bVertical){
 	var c = sap.ui.commons; /* shorthand */
 	var aContent = [];
-	
+
 	function _getHeaderItems(){
 		var aItems = [];
 		for (var key in sap.ui.ux3.ShellHeaderType) {
@@ -22,11 +22,11 @@ function getShellOptionsPanel(oShell, aAdditionalContent, bVertical){
 		}
 		return aItems;
 	}
-	
+
 	function addContent(aNewContent){
 		aContent.push(bVertical ? new c.layout.VerticalLayout({content: aNewContent}) : new c.layout.HorizontalLayout({content: aNewContent}));
 	}
-	
+
 	function getLabelledControl(sLabel, oControl){
 		return new c.layout.HorizontalLayout({
 			content: [
@@ -38,7 +38,7 @@ function getShellOptionsPanel(oShell, aAdditionalContent, bVertical){
 				]
 			});
 	}
-	
+
 	addContent([
 		new c.Button({
 			text: "Show/Hide Tools",
@@ -86,7 +86,7 @@ function getShellOptionsPanel(oShell, aAdditionalContent, bVertical){
 				oShell.setAllowOverlayHeaderAccess(!oShell.getAllowOverlayHeaderAccess());
 		}})
 	]);
-	
+
 	addContent([
 				getLabelledControl("Header", new c.DropdownBox({
 					value: oShell.getHeaderType(),
@@ -107,7 +107,7 @@ function getShellOptionsPanel(oShell, aAdditionalContent, bVertical){
 						oShell.rerender();
 				}}))
 	]);
-	
+
 	addContent([
 				getLabelledControl("Right Offset", new c.TextField({
 					value: sap.ui.ux3.Shell._SHELL_OFFSET_RIGHT,
@@ -127,7 +127,7 @@ function getShellOptionsPanel(oShell, aAdditionalContent, bVertical){
 				}}))
 	]);
 
-	
+
 	var oPanel = new c.Panel({
 		title : new c.Title({
 			text: "Shell Settings"
@@ -135,7 +135,7 @@ function getShellOptionsPanel(oShell, aAdditionalContent, bVertical){
 		areaDesign: "Transparent"
 	});
 	oPanel.addStyleClass("TestShellOptionsPanel");
-	
+
 	if (aAdditionalContent && aAdditionalContent.length > 0) {
 		addContent(aAdditionalContent);
 	}

@@ -8,7 +8,7 @@
 		width="100%">
 		<l:content>
 			<ObjectNumber
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				binding="{/ProductCollection/0}"
 				number="{
 						parts:[{path:'Price'},{path:'CurrencyCode'}],
@@ -17,7 +17,7 @@
 					}"
 				unit="{CurrencyCode}" />
 			<ObjectNumber
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				binding="{/ProductCollection/1}"
 				number="{
 						parts:[{path:'Price'},{path:'CurrencyCode'}],
@@ -27,7 +27,7 @@
 				unit="{CurrencyCode}"
 				state="Error" />
 			<ObjectNumber
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				binding="{/ProductCollection/2}"
 				number="{
 						parts:[{path:'Price'},{path:'CurrencyCode'}],
@@ -37,7 +37,7 @@
 				unit="{CurrencyCode}"
 				state="Warning" />
 			<ObjectNumber
-				class="sapUiSmallMarginBottom" 
+				class="sapUiSmallMarginBottom"
 				binding="{/ProductCollection/3}"
 				number="{
 						parts:[{path:'Price'},{path:'CurrencyCode'}],

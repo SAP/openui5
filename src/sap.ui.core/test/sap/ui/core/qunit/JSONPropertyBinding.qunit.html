@@ -145,7 +145,7 @@
 		oLabel.setModel(oModel);
 		oLabel.bindProperty("text", "/teamMembers/1/firstName");
 		var oBinding = oLabel.getBinding("text");
-		var oBindingInfo = oLabel.getBindingInfo("text"); 
+		var oBindingInfo = oLabel.getBindingInfo("text");
 		ok(oBindingInfo.parts[0].mode === undefined, "Binding mode = default");
 		equal(oBinding.getBindingMode(), sap.ui.model.BindingMode.TwoWay, "Binding mode = TwoWay");
 		setup();

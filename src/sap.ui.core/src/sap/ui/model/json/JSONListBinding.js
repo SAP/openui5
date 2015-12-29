@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	"use strict";
 
 
-	
+
 	/**
 	 *
 	 * @class
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @extends sap.ui.model.ClientListBinding
 	 */
 	var JSONListBinding = ClientListBinding.extend("sap.ui.model.json.JSONListBinding");
-	
+
 	/**
 	 * Return contexts for the list or a specified subset of contexts
 	 * @param {int} [iStartIndex=0] the startIndex where to start the retrieval of contexts
@@ -37,23 +37,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	JSONListBinding.prototype.getContexts = function(iStartIndex, iLength) {
 		this.iLastStartIndex = iStartIndex;
 		this.iLastLength = iLength;
-		
+
 		if (!iStartIndex) {
 			iStartIndex = 0;
 		}
 		if (!iLength) {
 			iLength = Math.min(this.iLength, this.oModel.iSizeLimit);
 		}
-	
+
 		var aContexts = this._getContexts(iStartIndex, iLength),
 			oContextData = {};
-	
+
 		if (this.bUseExtendedChangeDetection) {
-	
+
 			for (var i = 0; i < aContexts.length; i++) {
 				oContextData[aContexts[i].getPath()] = aContexts[i].getObject();
 			}
-	
+
 			//Check diff
 			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
 				var that = this;
@@ -65,12 +65,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 				});
 				aContexts.diff = aDiff;
 			}
-	
+
 			this.iLastEndIndex = iStartIndex + iLength;
 			this.aLastContexts = aContexts.slice(0);
 			this.oLastContextData = jQuery.extend(true, {}, oContextData);
 		}
-		
+
 		return aContexts;
 	};
 
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			return this.getContexts(this.iLastStartIndex, this.iLastLength);
 		}
 	};
-	
+
 	/**
 	 * Get indices of the list
 	 */
@@ -126,20 +126,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			this.iLength = 0;
 		}
 	};
-	
+
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
-	 * 
+	 *
 	 * @param {boolean} bForceupdate
-	 * 
+	 *
 	 */
 	JSONListBinding.prototype.checkUpdate = function(bForceupdate){
-		
+
 		if (this.bSuspended && !this.bIgnoreSuspend && !bForceupdate) {
 			return;
 		}
-		
+
 		if (!this.bUseExtendedChangeDetection) {
 			var oList = this.oModel._getObject(this.sPath, this.oContext);
 			if (!jQuery.sap.equal(this.oList, oList) || bForceupdate) {
@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		} else {
 			var bChangeDetected = false;
 			var that = this;
-			
+
 			//If the list has changed we need to update the indices first
 			var oList = this.oModel._getObject(this.sPath, this.oContext);
 			if (oList && this.oList.length != oList.length) {
@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			if (!jQuery.sap.equal(this.oList, oList)) {
 				this.update();
 			}
-			
+
 			//Get contexts for visible area and compare with stored contexts
 			var aContexts = this._getContexts(this.iLastStartIndex, this.iLastLength);
 			if (this.aLastContexts) {
@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			}
 		}
 	};
-	
+
 
 	return JSONListBinding;
 

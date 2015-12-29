@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 		onInit : function () {
 			this.byId("text").setText("Hello World");
 		}
-	
+
 	});
 
 	return MainController;

@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	/**
 	 * Constructor for a new CalendarLegendItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class

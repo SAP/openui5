@@ -22,12 +22,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. Supports the same options as {@link sap.ui.core.format.NumberFormat.getFloatInstance NumberFormat.getFloatInstance}
-	 * @param {object} [oFormatOptions.source] additional set of format options to be used if the property in the model is not of type string and needs formatting as well. 
-	 * 										   In case an empty object is given, the default is disabled grouping and a dot as decimal separator. 
-	 * @param {object} [oConstraints] value constraints. 
-	 * @param {float} [oConstraints.minimum] smallest value allowed for this type  
-	 * @param {float} [oConstraints.maximum] largest value allowed for this type  
-	 * @alias sap.ui.model.type.Float 
+	 * @param {object} [oFormatOptions.source] additional set of format options to be used if the property in the model is not of type string and needs formatting as well.
+	 * 										   In case an empty object is given, the default is disabled grouping and a dot as decimal separator.
+	 * @param {object} [oConstraints] value constraints.
+	 * @param {float} [oConstraints.minimum] smallest value allowed for this type
+	 * @param {float} [oConstraints.maximum] largest value allowed for this type
+	 * @alias sap.ui.model.type.Float
 	 */
 	var Float = SimpleType.extend("sap.ui.model.type.Float", /** @lends sap.ui.model.type.Float.prototype  */ {
 
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		}
 		if (this.oInputFormat) {
 			fResult = this.oInputFormat.format(fResult);
-		}				
+		}
 		return fResult;
 	};
 
@@ -139,7 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	Float.prototype._handleLocalizationChange = function() {
 		this._createFormats();
 	};
-	
+
 	/**
 	 * Create formatters used by this type
 	 * @private

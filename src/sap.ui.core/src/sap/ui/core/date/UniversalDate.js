@@ -14,10 +14,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	 * @class
 	 * The Date is the base class of calendar date instances. It contains the static methods to create calendar
 	 * specific instances.
-	 * 
-	 * The member variable this.oData contains the JS Date object, which is the source value of the date information. 
-	 * The prototype is containing getters and setters of the JS Date and is delegating them to the internal date object. 
-	 * Implementations for specific calendars may override methods needed for their specific calendar (e.g. getYear 
+	 *
+	 * The member variable this.oData contains the JS Date object, which is the source value of the date information.
+	 * The prototype is containing getters and setters of the JS Date and is delegating them to the internal date object.
+	 * Implementations for specific calendars may override methods needed for their specific calendar (e.g. getYear
 	 * and getEra for japanese emperor calendar);
 	 *
 	 * @private
@@ -41,21 +41,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 
 	UniversalDate.prototype.createDate = function(clDate, aArgs) {
 		switch (aArgs.length) {
-			case 0: return new clDate(); 
-			case 1: return new clDate(aArgs[0]); 
-			case 2: return new clDate(aArgs[0], aArgs[1]); 
-			case 3: return new clDate(aArgs[0], aArgs[1], aArgs[2]); 
-			case 4: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3]); 
-			case 5: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3], aArgs[4]); 
-			case 6: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3], aArgs[4], aArgs[5]); 
-			case 7: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3], aArgs[4], aArgs[5], aArgs[6]); 
+			case 0: return new clDate();
+			case 1: return new clDate(aArgs[0]);
+			case 2: return new clDate(aArgs[0], aArgs[1]);
+			case 3: return new clDate(aArgs[0], aArgs[1], aArgs[2]);
+			case 4: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3]);
+			case 5: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3], aArgs[4]);
+			case 6: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3], aArgs[4], aArgs[5]);
+			case 7: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3], aArgs[4], aArgs[5], aArgs[6]);
 		}
 	};
-	
+
 	/**
 	 * Returns an instance of Date, based on the calendar type from the configuration, or as explicitly
 	 * defined by parameter. The object provides all methods also known on the JavaScript Date object.
-	 * 
+	 *
 	 * @param [Date] oDate the JavaScript Date object
 	 * @param [sap.ui.core.CalendarType] sCalendarType the type of the used calendar
 	 * @public
@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	/**
 	 * Returns a specific Date class, based on the calendar type from the configuration, or as explicitly
 	 * defined by parameter. The object provides all methods also known on the JavaScript Date object.
-	 * 
+	 *
 	 * @param [sap.ui.core.CalendarType] sCalendarType the type of the used calendar
 	 * @public
 	 */
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		clDate = jQuery.sap.getObject(sClassName);
 		return clDate;
 	};
-	
+
 	/*
 	 * Loop through the Date class and create delegates of all Date API methods
 	 */
@@ -111,25 +111,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 
 	/**
 	 * Returns the JS date object representing the current calendar date value
-	 * 
-	 * @return {Date} 
+	 *
+	 * @return {Date}
 	 * @public
-	 */	
+	 */
 	UniversalDate.prototype.getJSDate = function() {
 		return this.oDate;
 	};
 
 	/**
 	 * Returns the calendar type of the current instance of a UniversalDate
-	 * 
-	 * @return [string] the calendar type 
+	 *
+	 * @return [string] the calendar type
 	 */
 	UniversalDate.prototype.getCalendarType = function() {
 		return this.sCalendarType;
 	};
 
 	/*
-	 * Provide additional getters/setters, not yet covered by the JS Date 
+	 * Provide additional getters/setters, not yet covered by the JS Date
 	 */
 	UniversalDate.prototype.getEra = function() {
 		return UniversalDate.getEraByDate(this.sCalendarType, this.oDate.getFullYear(), this.oDate.getMonth(), this.oDate.getDate());
@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		// The default implementation does not support week
 	};
 
-	
+
 	// TODO: These are currently needed for the DateFormat test, as the date used in the test
 	// has been enhanced with these methods. Should be implemented using CLDR data.
 	UniversalDate.prototype.getTimezoneShort = function() {
@@ -163,12 +163,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			return this.oDate.getTimezoneLong();
 		}
 	};
-	
+
 	/*
 	 * Helper methods for era calculations
 	 */
 	var mEras = {};
-	
+
 	UniversalDate.getEraByDate = function(sCalendarType, iYear, iMonth, iDay) {
 		var aEras = getEras(sCalendarType),
 			iTimestamp = new Date(0).setUTCFullYear(iYear, iMonth, iDay),
@@ -226,9 +226,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		}
 		return aEras;
 	}
-	
+
 	function parseDateString(sDateString) {
-		var aParts = sDateString.split("-"), 
+		var aParts = sDateString.split("-"),
 			iYear, iMonth, iDay;
 		if (aParts[0] == "") {
 			// negative year
@@ -247,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			day: iDay
 		};
 	}
-	
+
 	return UniversalDate;
-	
+
 });

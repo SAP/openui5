@@ -47,8 +47,8 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * Returns the root view of the component.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -67,8 +67,8 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * Returns the routing configuration.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
@@ -86,8 +86,8 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * Returns the array of routes. If not defined the array is undefined.
 	 * <p>
 	 * <b>Important:</b></br>
-	 * If a Component is loaded using the manifest URL (or according the 
-	 * "manifest first" strategy), this function ignores the entries of the 
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *

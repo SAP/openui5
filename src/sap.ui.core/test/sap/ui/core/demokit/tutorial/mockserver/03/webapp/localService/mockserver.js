@@ -20,7 +20,7 @@ sap.ui.define([
 				sMockdataBaseUrl: "../localService/mockdata",
 				bGenerateMissingMockData: true
 			});
-			
+
 			// handling custom URL parameter step
 			var fnCustom = function(oEvent) {
 				var oXhr = oEvent.getParameter("oXhr");

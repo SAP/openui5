@@ -80,7 +80,7 @@
 			// define a shorthand function to respond with a JSON object
 			oServer.respondWithJSONContent = function(oContent) {
 				this.respondWith("GET", "/anylocation/manifest.json", [
-					200, 
+					200,
 					{
 						"Content-Type": "application/json"
 					},
@@ -207,7 +207,7 @@
 					<Button id="theButton" text="Hello World" press="doSomething"></Button> \
 				</mvc:View> \
 			';
-	
+
 			// create the MockServer (before defining the components to support loading by name!)
 			var oServer = this.oServer = sinon.fakeServer.create();
 			oServer.xhr.supportCORS = true;
@@ -241,7 +241,7 @@
 			// define the response for manifest.json for the manifest first test for autoid and prefixid
 			oManifestAutoId["sap.app"].id = "my.own";
 			oServer.respondWith("GET", "/anylocation/mf1st/autoid/manifest.json", [
-				200, 
+				200,
 				{
 					"Content-Type": "application/json"
 				},
@@ -249,7 +249,7 @@
 			]);
 			oManifestPrefixId["sap.app"].id = "my.own";
 			oServer.respondWith("GET", "/anylocation/mf1st/prefixid/manifest.json", [
-				200, 
+				200,
 				{
 					"Content-Type": "application/json"
 				},
@@ -258,7 +258,7 @@
 
 			// define the response for the XMLView
 			oServer.respondWith("GET", "/anylocation/View.view.xml", [
-				200, 
+				200,
 				{
 					"Content-Type": "application/xml"
 				},

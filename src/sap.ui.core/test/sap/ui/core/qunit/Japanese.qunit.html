@@ -42,11 +42,11 @@
 			{Gregorian: {year: 2009, month: 6, day: 11}, Japanese: {era: 235, year: 21, month:6, day: 11}},
 			{Gregorian: {year: 2018, month: 9, day: 19}, Japanese: {era: 235, year: 30, month:9, day: 19}}
 		];
-		
-		
+
+
 		//1. Instance related
 		module("Constructor");
-		
+
 		test("with no arguments", function () {
 			var clock = sinon.useFakeTimers(); // 1, January 1970 = 1, January 45 Showa
 			var oJapaneseDate = new sap.ui.core.date.Japanese(); //1, January 45 Showa
@@ -58,7 +58,7 @@
 
 		test("with value parameter (timestamp)", function () {
 			var oJapaneseDate;
-			
+
 			oJapaneseDate = new sap.ui.core.date.Japanese("invalid Japanese date timestamp");
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as timestamp must return an invalid date");
 
@@ -86,7 +86,7 @@
 		test("with year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: invalid parameter type )", function () {
 			// ------------- object -----------------------------
 			var oJapaneseDate = null;
-		
+
 			oJapaneseDate = new sap.ui.core.date.Japanese("blabla", 0, 23);
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as year must return invalid date");
 
@@ -178,13 +178,13 @@
 			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 10, 2);
 			verifyDate("new Japanese([235, 23], 10, 2) msut be equal to 02.11.23H", oJapaneseDate, 235, 23, 10, 2)
 		});
-		
+
 		module("Overflow/underflow");
 
 		test("Overflow/underflow of date values", function () {
-			var oTestDate = aTestData[1], 
+			var oTestDate = aTestData[1],
 				oJapaneseDate;
-			
+
 			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 			oJapaneseDate.setMonth(12); //11 is max allowed value
 			verifyDate("setMonth(12) must overflow to next year", oJapaneseDate, 235, 24, 0, 1);
@@ -224,9 +224,9 @@
 
 		test("Overflow/underflow of date values close to era borders", function () {
 			var oTestDate, oJapaneseDate;
-			
+
 			oTestDate = aTestData[3]; // end of Showa
-			
+
 			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 			oJapaneseDate.setMonth(1); //11 is max allowed value
 			verifyDate("setMonth(1) must overflow to next era", oJapaneseDate, 235, 1, 1, 7);
@@ -242,7 +242,7 @@
 			verifyDate("date 8 in the constructor must overflow to next era", oJapaneseDate, 235, 1, 0, 8);
 
 			oTestDate = aTestData[2]; // start of Heisei
-			
+
 			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 			oJapaneseDate.setMonth(-1);
 			verifyDate("setMonth(-1) must underflow to previous era", oJapaneseDate, 234, 63, 11, 8);
@@ -259,14 +259,14 @@
 		});
 
 		module("Setters/Getters");
-		
+
 		test("Set/Get Era", function () {
 			var oTestDate = aTestData[0],
 				oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
-			
+
 			oJapaneseDate.setEra(235);
 			verifyDate("setEra sets to first day of era", oJapaneseDate, 235, 1, 0, 8);
-			
+
 			oJapaneseDate.setEra(235, 5);
 			verifyDate("setEra with optional year", oJapaneseDate, 235, 5, 0, 8);
 
@@ -276,11 +276,11 @@
 			oJapaneseDate.setEra(235, 5, 5, 23);
 			verifyDate("setEra with optional year, month, day", oJapaneseDate, 235, 5, 5, 23);
 		});
-		
+
 		test("Set/Get Full Year", function () {
 			var oTestDate = aTestData[0],
 				oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
-		
+
 			oJapaneseDate.setFullYear(5);
 			verifyDate("setFullYear", oJapaneseDate, 234, 5, 0, 1);
 
@@ -294,13 +294,13 @@
 		test("Set/Get Year", function () {
 			var oTestDate = aTestData[0],
 				oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
-		
+
 			oJapaneseDate.setYear(5);
 			verifyDate("setYear", oJapaneseDate, 234, 5, 0, 1);
 		});
 
 		module("Others");
-		
+
 		test("Setters have to return the time since 1.1.1970", function () {
 			var oDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 8, 10, 15, 119);
 
@@ -308,7 +308,7 @@
 				equal(typeof iTimestamp, "number", sSetter + " did return a numeric value");
 				equal(iTimestamp, oDate.getTime(), sSetter + " return value matches date timestamp");
 			}
-			
+
 			check(oDate.setEra(235), "setFullYear");
 			check(oDate.setFullYear(23), "setFullYear");
 			check(oDate.setYear(23), "setYear");
@@ -432,7 +432,7 @@
 		function getTimezoneOffset(oDate) {
 			return -1 * oDate.getTimezoneOffset() * 60 * 1000;
 		}
-		
+
 		function isInvalid(oDate) {
 			return isNaN(oDate.getTime());
 		}

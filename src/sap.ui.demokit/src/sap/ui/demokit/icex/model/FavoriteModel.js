@@ -9,22 +9,22 @@ sap.ui.define([
 	"use strict";
 
 	return sap.ui.model.json.JSONModel.extend("sap.ui.demokit.icex.model.FavoriteModel", {
-	
+
 		_STORAGE_KEY : "ICON_EXPLORER_FAVORITES",
-		
+
 		_storage : jQuery.sap.storage(jQuery.sap.storage.Type.local),
-		
+
 		constructor : function(oSettings) {
-			
+
 			// call super constructor
 			sap.ui.model.json.JSONModel.apply(this, arguments);
-			
+
 			this.setSizeLimit(1000000);
-			
+
 			// load data from local storage
 			var json = this._storage.get(this._STORAGE_KEY);
 			var data = JSON.parse(json);
-			
+
 			// default data if storage is empty
 			if (!data) {
 				data = {
@@ -32,11 +32,11 @@ sap.ui.define([
 					icons : []
 				};
 			}
-			
+
 			// set data
 			this.setData(data);
 		},
-		
+
 		isFavorite : function(name) {
 			var data = this.getData();
 			for (var i = 0; i < data.icons.length ; i++) {
@@ -46,9 +46,9 @@ sap.ui.define([
 			}
 			return false;
 		},
-		
+
 		toggleFavorite : function(name) {
-			
+
 			// update data
 			var data = this.getData();
 			var favorite = this.isFavorite(name);
@@ -64,18 +64,18 @@ sap.ui.define([
 				};
 				data.count++;
 			}
-			
+
 			// sort groups by name
 			// (doing this here as i had trouble doing it in controller assumeably due to async load of data)
 			data.icons.sort(Sorter.sortByName);
-			
+
 			// update model
 			this.setData(data);
-			
+
 			// update local storage
 			var s = JSON.stringify(data);
 			this._storage.put(this._STORAGE_KEY, s);
-			
+
 			// done
 			return !favorite;
 		}

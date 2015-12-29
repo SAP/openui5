@@ -36,7 +36,7 @@ sap.ui.define([
 				                                           })
 		                                               ], false)];
 			}
-			
+
 			this.oSF.getBinding("suggestionItems").filter(filters);
 			this.oSF.suggest();
 		}

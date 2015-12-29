@@ -755,7 +755,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				that[oAggregationInfo._sMutator](oClone);
 			});
 		}
-		
+
 		// update context on all items after applying diff
 		aItems = this.getItems();
 		for (var i = 0, l = aContexts.length; i < l; i++) {

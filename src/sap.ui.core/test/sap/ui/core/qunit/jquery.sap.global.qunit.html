@@ -133,7 +133,7 @@
 				var iBefore = sap.jsunittestvalue;
 				var iScriptCnt = document.getElementsByTagName("SCRIPT").length;
 				jQuery.sap.includeScript({
-					url: "testdata/sapjsunittestvalueincrementor.js", 
+					url: "testdata/sapjsunittestvalueincrementor.js",
 					id: "jsunitIncludeScriptTestScript",
 					promisify: true
 				}).then(function() {
@@ -167,8 +167,8 @@
 				var sBefore = jQuery(oTestArea).css("backgroundColor");
 				var iLinkCnt = document.getElementsByTagName("LINK").length;
 				jQuery.sap.includeStyleSheet({
-					url: "testdata/testC.css", 
-					id: "jsunitIncludeStyleSheetTest", 
+					url: "testdata/testC.css",
+					id: "jsunitIncludeStyleSheetTest",
 					promisify: true
 				}).then(function() {
 					notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");

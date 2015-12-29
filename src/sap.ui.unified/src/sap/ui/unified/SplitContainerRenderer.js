@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @namespace
 	 */
 	var SplitContainerRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
@@ -21,9 +21,9 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	SplitContainerRenderer.render = function(rm, oControl){
 		var sId = oControl.getId();
-	
+
 		var bVertical = oControl.getOrientation() == sap.ui.core.Orientation.Vertical;
-		
+
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUfdSpltCont");
@@ -31,21 +31,21 @@ sap.ui.define(['jquery.sap.global'],
 		if (sap.ui.getCore().getConfiguration().getAnimation()) {
 			rm.addClass("sapUiUfdSpltContAnim");
 		}
-	
+
 		if (!oControl.getShowSecondaryContent()) {
 			rm.addClass("sapUiUfdSpltContPaneHidden");
 		}
 		rm.writeClasses();
 		rm.write(">");
-		
+
 		var sCanvasId = sId + "-canvas";
-	
+
 		rm.write("<section id='", sCanvasId, "' class='sapUiUfdSpltContCanvas'>");
 		this.renderContent(rm, sCanvasId, oControl.getContent(), oControl._bRootContent);
 		rm.write("</section>");
-		
+
 		var sSidePaneId = sId + "-pane";
-	
+
 		var sWidth = oControl.getShowSecondaryContent() ? oControl.getSecondaryContentSize() : "0";
 		rm.write("<aside id='", sSidePaneId, "' style='width:", sWidth, "'");
 		rm.addClass("sapUiUfdSpltContPane");
@@ -56,10 +56,10 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");
 		this.renderContent(rm, sSidePaneId, oControl.getSecondaryContent(), oControl._bRootContent);
 		rm.write("</aside>");
-	
+
 		rm.write("</div>");
 	};
-	
+
 	SplitContainerRenderer.renderContent = function (rm, sId, aContent, bRootContent) {
 		rm.write("<div id='", sId, "cntnt' class='sapUiUfdSpltContCntnt'");
 		if (bRootContent) {
@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write("</div>");
 	};
-	
+
 
 	return SplitContainerRenderer;
 

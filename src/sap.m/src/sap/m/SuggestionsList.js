@@ -10,7 +10,7 @@ sap.ui.define(['./library'],
 		//
 		// SuggestionsList has to be used exclusively by Suggest.js
 		//
-		var SuggestionsList = sap.ui.core.Control.extend("sap.m.SuggestionsList", { 
+		var SuggestionsList = sap.ui.core.Control.extend("sap.m.SuggestionsList", {
 
 			metadata: {
 

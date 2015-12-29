@@ -19,9 +19,9 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 * @alias sap.ui.model.CompositeBinding
 	 * @extends sap.ui.model.PropertyBinding
 	 */
-	
+
 	var CompositeBinding = PropertyBinding.extend("sap.ui.model.CompositeBinding", /** @lends sap.ui.model.CompositeBinding.prototype */ {
-	
+
 		constructor : function (aBindings, bRawValues) {
 			PropertyBinding.apply(this, [null,""]);
 			this.aBindings = aBindings;
@@ -30,29 +30,29 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			this.bPreventUpdate = false;
 		},
 		metadata : {
-			
+
 		  publicMethods : [
 				  "getBindings", "attachChange", "detachChange"
 		  ]
 		}
-	
+
 	});
-	
+
 	CompositeBinding.prototype.getPath = function() {
 		jQuery.sap.assert(null, "Composite Binding has no path!");
 		return null;
 	};
-	
+
 	CompositeBinding.prototype.getModel = function() {
 		jQuery.sap.assert(null, "Composite Binding has no model!");
 		return null;
 	};
-	
+
 	CompositeBinding.prototype.getContext = function() {
 		jQuery.sap.assert(null, "Composite Binding has no context!");
 		return null;
 	};
-	
+
 	CompositeBinding.prototype.isResolved = function() {
 		var bResolved = false;
 		jQuery.each(this.aBindings, function(i, oBinding) {
@@ -66,11 +66,11 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 
 	/**
 	 * Sets the optional type and internal type for the binding. The type and internal type are used to do the parsing/formatting correctly.
-	 * The internal type is the property type of the element which the value is formatted to.  
+	 * The internal type is the property type of the element which the value is formatted to.
 	 *
 	 * @param {sap.ui.model.CompositeType} oType the type for the binding
 	 * @param {String} sInternalType the internal type of the element property which this binding is bound against.
-	 * 
+	 *
 	 * @public
 	 */
 	CompositeBinding.prototype.setType = function(oType, sInternalType) {
@@ -78,13 +78,13 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			throw new Error("Only CompositeType can be used as type for composite bindings!");
 		}
 		PropertyBinding.prototype.setType.apply(this, arguments);
-		
+
 		// If a composite type is used, the type decides whether to use raw values or not
 		if (this.oType) {
 			this.bRawValues = this.oType.getUseRawValues();
 		}
 	};
-	
+
 	/**
 	 * sets the context for each property binding in this composite binding
 	 * @param {object} oContext the new context for the bindings
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			}
 		});
 	};
-	
+
 	/**
 	 * Sets the values. This will cause the setValue to be called for each nested binding, except
 	 * for undefined values in the array.
@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			}
 		});
 	};
-	
+
 	/**
 	 * Returns the raw values of the property bindings in an array.
 	 *
@@ -126,18 +126,18 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	CompositeBinding.prototype.getValue = function() {
 		var aValues = [],
 		oValue;
-	
+
 		jQuery.each(this.aBindings, function(i, oBinding) {
 			oValue = oBinding.getValue();
 			aValues.push(oValue);
 		});
-	
+
 		return aValues;
 	};
 
 	/**
-	 * Sets the external value of a composite binding. If no CompositeType is assigned to the binding, the default 
-	 * implementation assumes a space separated list of values. This will cause the setValue to be called for each 
+	 * Sets the external value of a composite binding. If no CompositeType is assigned to the binding, the default
+	 * implementation assumes a space separated list of values. This will cause the setValue to be called for each
 	 * nested binding, except for undefined values in the array.
 	 *
 	 * @param {object} oValue the value to set for this binding
@@ -146,13 +146,13 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 */
 	CompositeBinding.prototype.setExternalValue = function(oValue) {
 		var aValues, aCurrentValues;
-	
+
 		// No twoway binding when using formatters
 		if (this.fnFormatter) {
 			jQuery.sap.log.warning("Tried to use twoway binding, but a formatter function is used");
 			return;
 		}
-		
+
 		if (this.oType) {
 			try {
 				if (this.oType.getParseWithValues()) {
@@ -193,9 +193,9 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 
 		this.vInvalidValue = null;
 	};
-	
+
 	/**
-	 * Returns the current external value of the bound target which is formatted via a type or formatter function. 
+	 * Returns the current external value of the bound target which is formatted via a type or formatter function.
 	 *
 	 * @return {object} the current value of the bound target
 	 *
@@ -205,7 +205,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 */
 	CompositeBinding.prototype.getExternalValue = function() {
 		var aValues = [];
-		
+
 		if (this.bRawValues) {
 			aValues = this.getValue();
 		} else {
@@ -215,9 +215,9 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 		}
 		return this._toExternalValue(aValues);
 	};
-	
+
 	/**
-	 * Returns the current external value of the given value which is formatted via a type or formatter function. 
+	 * Returns the current external value of the given value which is formatted via a type or formatter function.
 	 *
 	 * @param {any[]} aValues - An array of values that are formatted to one value
 	 * @returns {any} the current value of the bound target
@@ -236,10 +236,10 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 		} else {
 			oValue = aValues[0];
 		}
-		
+
 		return oValue;
 	};
-	
+
 	/**
 	 * Returns the property bindings contained in this composite binding.
 	 *
@@ -250,8 +250,8 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	CompositeBinding.prototype.getBindings = function() {
 		return this.aBindings;
 	};
-	
-	
+
+
 	/**
 	 * {@see sap.ui.model.Binding#hasValidation}
 	 *
@@ -271,11 +271,11 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 				return true;
 			}
 		}
-		
+
 		return false;
 	};
-		
-	
+
+
 	//Eventing and related
 	/**
 	* Attach event-handler <code>fnFunction</code> to the '_change' event of this <code>sap.ui.model.CompositeBinding</code>.<br/>
@@ -302,7 +302,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			});
 		}
 	};
-	
+
 	/**
 	* Detach event-handler <code>fnFunction</code> from the '_change' event of this <code>sap.ui.model.CompositeBinding</code>.<br/>
 	* @param {function} fnFunction The function to call, when the event occurs.
@@ -318,7 +318,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			});
 		}
 	};
-	
+
 	/**
 	* Attach event-handler <code>fnFunction</code> to the 'DataStateChange' event of this <code>sap.ui.model.CompositeBinding</code>.<br/>
 	* @param {function} fnFunction The function to call, when the event occurs.
@@ -332,7 +332,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			if (oBinding.getBindingMode() == BindingMode.OneTime) {
 				oBinding.detachDataStateChange(that.fChangeHandler);
 			}
-			
+
 			that.checkDataState();
 		};
 		this.attachEvent("DataStateChange", fnFunction, oListener);
@@ -358,12 +358,12 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			});
 		}
 	};
-	
+
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'AggregatedDataStateChange' event of this 
+	 * Attach event-handler <code>fnFunction</code> to the 'AggregatedDataStateChange' event of this
 	 * <code>sap.ui.model.CompositeBinding</code>. The CombinedDataStateChange event is fired asynchronously, meaning
 	 * that the datastate object given as parameter of the event contains all changes that were applied to the datastate
-	 * in the running thread. 
+	 * in the running thread.
 	 *
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
@@ -371,18 +371,18 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 */
 	CompositeBinding.prototype.attachAggregatedDataStateChange = function(fnFunction, oListener) {
 		var that = this;
-		
+
 		if (!this.fDataStateChangeHandler) {
 			this.fDataStateChangeHandler = function(oEvent) {
 				var oBinding = oEvent.getSource();
 				if (oBinding.getBindingMode() == BindingMode.OneTime) {
 					oBinding.detachDataStateChange(that.fChangeHandler);
 				}
-				
+
 				that.checkDataState();
 			};
 		}
-		
+
 		this.attachEvent("AggregatedDataStateChange", fnFunction, oListener);
 		if (this.aBindings) {
 			jQuery.each(this.aBindings, function(i,oBinding) {
@@ -406,8 +406,8 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			});
 		}
 	};
-	
-	
+
+
 	/**
 	 * Determines if the property bindings in the composite binding should be updated by calling updateRequired on all property bindings with the specified model.
 	 * @param {object} oModel The model instance to compare against
@@ -449,7 +449,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 */
 	CompositeBinding.prototype.getDataState = function() {
 		if (!this.oDataState) {
-			this.oDataState = new CompositeDataState(this.aBindings.map(function(oBinding) { 
+			this.oDataState = new CompositeDataState(this.aBindings.map(function(oBinding) {
 				return oBinding.getDataState();
 			}));
 		}
@@ -459,9 +459,9 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
-	 * 
+	 *
 	 * @param {boolean} bForceupdate
-	 * 
+	 *
 	 */
 	CompositeBinding.prototype.checkUpdate = function(bForceupdate){
 		if (this.bPreventUpdate) {
@@ -473,12 +473,12 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
-	
+
 	CompositeBinding.prototype._updateDataState = function() {
 		var oDataState = PropertyBinding.prototype._updateDataState.apply(this, arguments);
 
 		var mChanges = oDataState.getChanges();
-		
+
 		for (var sKey in mChanges) {
 			switch (sKey) {
 				case "value":
@@ -488,7 +488,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 				case "originalValue":
 					oDataState.setOriginalValue(this._toExternalValue(mChanges[sKey]));
 					break;
-						
+
 				case "invalidValue":
 				case "controlMessages":
 				case "modelMessages":
@@ -496,7 +496,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 				case "dirty":
 					// Ignore!!
 					break;
-					
+
 				default:
 					oDataState.setProperty(sKey, mChanges[sKey]);
 					break;
@@ -516,8 +516,8 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 
 		return oDataState;
 	};
-	
-	
+
+
 	/**
 	 * Returns false if the given value is null, invalid or an array consisting entirely of null values
 	 *
@@ -536,10 +536,10 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 		} else {
 			return !!vValue;
 		}
-		
+
 	}
-	
-	
+
+
 	return CompositeBinding;
 
 });

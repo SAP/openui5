@@ -75,7 +75,7 @@
 
 		oControl.attachEvent("_rowsUpdated", fnEventHandler);
 	}
-	
+
 	function attachRowsUpdatedOnce(oControl, fnHandler, that) {
 		var fnEventHandler = function() {
 			jQuery.sap.delayedCall(iDelay, that, fnHandler);
@@ -83,7 +83,7 @@
 
 		oControl.attachEventOnce("_rowsUpdated", fnEventHandler, that);
 	}
-	
+
 	function attachRowsUpdated(oControl, fnHandler, that) {
 		var fnEventHandler = function() {
 			jQuery.sap.delayedCall(iDelay, that, fnHandler);
@@ -187,7 +187,7 @@
 				// expand first node, 2 change events, 1 for expand, 1 when data is loaded
 				attachEventHandler(this.oTable, 1, fnHandler2, this);
 				this.oTable.expand(0);
-				
+
 			};
 
 			// test expand next level
@@ -517,12 +517,12 @@
 
 			// expand(0)
 			fnHandler4 = function() {
-				
+
 				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0), CollapseRecursive=false: SelectedIndices OK");
 				deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0), CollapseRecursive=false: SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
-				
+
 				attachRowsUpdatedOnce(this.oTable, fnHandler5, this);
 				this.oTable.expand(0);
 			}

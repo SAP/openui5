@@ -14,7 +14,7 @@ sap.ui.define([], function() {
 			} else {
 				var aName = a.name.toLowerCase();
 				var bName = b.name.toLowerCase();
-				
+
 				if (aName < bName) {
 					return -1;
 				} else {

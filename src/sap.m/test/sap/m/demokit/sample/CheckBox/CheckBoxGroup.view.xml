@@ -1,6 +1,6 @@
 <mvc:View
 	xmlns:l="sap.ui.layout"
-	xmlns:f="sap.ui.layout.form"	
+	xmlns:f="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<VBox>
@@ -10,8 +10,8 @@
 		<CheckBox text="Option d" />
 		<CheckBox text="Option e" enabled="false" />
 	</VBox>
-	<f:SimpleForm 
-		editable="true"	
+	<f:SimpleForm
+		editable="true"
 	  	layout="ResponsiveGridLayout"
 	  	labelSpanL="4"
 	  	labelSpanM="4">
@@ -24,7 +24,7 @@
 						indentL="4"
 						indentM="4" />
 				</layoutData>
-			</CheckBox> 						
+			</CheckBox>
 			<CheckBox id="focusMe" text="Option 3">
 				<layoutData>
 					<l:GridData linebreak="true"

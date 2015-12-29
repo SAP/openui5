@@ -21,7 +21,7 @@ sap.ui.define(function() {
 			 * @public
 			 */
 			Merge: "MERGE",
-			
+
 			/**
 			 * PUT method will send update requests in a PUT request
 			 * @public

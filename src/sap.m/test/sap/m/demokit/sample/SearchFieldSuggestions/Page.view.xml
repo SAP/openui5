@@ -7,12 +7,12 @@
 	<Page
 		showHeader="false" >
 		<content>
-			<SearchField 
-				id="searchField" 
-				width="50%" 
-				placeholder="search for..." 
-				enableSuggestions="true" 
-				search="onSearch" 
+			<SearchField
+				id="searchField"
+				width="50%"
+				placeholder="search for..."
+				enableSuggestions="true"
+				search="onSearch"
 				suggest="onSuggest"
 				suggestionItems="{
 					path: '/ProductCollection',

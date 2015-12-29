@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sGroupName = this.getGroupName(),
 			aControlsInGroup = this._groupNames[sGroupName],
 			iLength = aControlsInGroup && aControlsInGroup.length;
-			
+
 		this.setProperty("selected", bSelected, true); // No re-rendering
 		this._changeGroupName(this.getGroupName());
 
@@ -426,7 +426,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (aOldGroup && aOldGroup.indexOf(this) !== -1) {
 			aOldGroup.splice(aOldGroup.indexOf(this), 1);
 		}
-		
+
 		if (!aNewGroup) {
 			aNewGroup = this._groupNames[sNewGroupName] = [];
 		}

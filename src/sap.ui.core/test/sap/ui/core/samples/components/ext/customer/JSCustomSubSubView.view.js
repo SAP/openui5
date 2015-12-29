@@ -5,7 +5,7 @@ sap.ui.define(['sap/ui/commons/TextView', 'sap/ui/core/mvc/JSView'],
 	sap.ui.jsview("samples.components.ext.customer.JSCustomSubSubView", {
 
 		createContent : function(oController) {
-		
+
 			return [new TextView({text: "I am the customer replacement"}),
 			        sap.ui.extensionpoint(this, "extension44")];
 		}

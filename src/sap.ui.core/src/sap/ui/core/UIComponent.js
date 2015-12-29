@@ -72,9 +72,9 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	}, /* Metadata constructor */ UIComponentMetadata);
 
 	/**
-	 * Creates a new subclass of class <code>sap.ui.core.UIComponent</code> with name 
+	 * Creates a new subclass of class <code>sap.ui.core.UIComponent</code> with name
 	 * <code>sClassName</code> and enriches it with the information contained in <code>oClassInfo</code>.
-	 * <code>oClassInfo</code> might contain the same kind of information as described in 
+	 * <code>oClassInfo</code> might contain the same kind of information as described in
 	 * {@link sap.ui.core.Element.html#.extend}.
 	 *
 	 * @alias {sap.ui.core.UIComponent.extend}
@@ -112,7 +112,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 *             "controlId": "App",
 	 *             "controlAggregation": "pages",
 	 *             "viewNamespace": "myApplication.namespace",
-	 *             // If you are using the mobile library, you have to use a sap.m.Router, to get support for 
+	 *             // If you are using the mobile library, you have to use a sap.m.Router, to get support for
 	 *             // the controls sap.m.App, sap.m.SplitApp, sap.m.NavContainer and sap.m.SplitContainer.
 	 *             "routerClass": "sap.m.routing.Router"
 	 *             // What happens if no route matches the hash?
@@ -356,7 +356,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 * feature is not activated.
 	 *
 	 * You can overwrite this function and return <code>true</code> to activate the automatic
-	 * prefixing. In addition the default behavior can be configured in the manifest 
+	 * prefixing. In addition the default behavior can be configured in the manifest
 	 * by specifying the entry <code>sap.ui5/autoPrefixId</code>.
 	 *
 	 * @since 1.15.1

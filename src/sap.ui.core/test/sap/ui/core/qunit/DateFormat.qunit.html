@@ -294,7 +294,7 @@
 
 		}
 	});
-	
+
 	test("parse with strict check", function(){
 
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd", strictParsing: true}),
@@ -377,13 +377,13 @@
 		equal(oQuarterCombined.format(oDate), "Wed, Jul 4 2001, Q3", "Wed, Jul 4 2001, Q3");
 		equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
 	});
-	
+
 	test("parse with fallback patterns", function(){
 		var oLocaleEN = new sap.ui.core.Locale("en_US"),
 			oLocaleDE = new sap.ui.core.Locale("de_DE"),
 			oFormat,
 			iCompare = new Date(1975, 3, 16).getTime();
-		
+
 		oFormat = sap.ui.core.format.DateFormat.getDateInstance({style: "long"}, oLocaleEN);
 		equal(oFormat.parse("April 16, 1975").getTime(), iCompare, "Parse long style");
 		equal(oFormat.parse("Apr 16, 1975").getTime(), iCompare, "Parse fallback medium style");
@@ -412,7 +412,7 @@
 		equal(oFormat.parse("19750416").getTime(), iCompare, "Parse fallback ABAP");
 
 	});
-	
+
 
 	/** TODO: Move to sap.ui.core.date.Gregorian
 	test("DateFormat.calculateWeekNumber", function() {
@@ -561,8 +561,8 @@
 		equal(oTime.format(date("minute", 95)), "in 1 hour", "Now + 95 Minutes --> in 1 hour");
 		equal(oTime.format(date("hour", 1)), "in 1 hour", "Now + 1 Hour --> in 1 hour");
 		equal(oTime.format(date("day", -5)), "120 hours ago", "Now - 5 Days --> 120 hours ago");
-		
-		
+
+
 		oTime = sap.ui.core.format.DateFormat.getTimeInstance({
 			relative: true,
 			relativeScale: "hour"
@@ -778,7 +778,7 @@
 			doTestRelative(false, {style: "long", relativeRange: [1, 5]}, sLocale, "style long, range [1, 5], " + sLocale);
 		});
 	});
-	
+
 	module("Japanese Date");
 
 	var oDate = new Date("Wed Jul 4 2001");
@@ -851,7 +851,7 @@
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Japanese}, "en", "style long, range [1, 5], en with calendar type Japanese");
 	});
 
-	
+
 </script>
 
 </head>

@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 * @class
 	 * The Japanese date adds support for era, by returning the CLDR era type in the getEra method and calculating
 	 * the year dependent on the current era.
-	 * 
+	 *
 	 * For the constructor and the UTC method, for the year parameter the following rules apply:
 	 * - A year less than 100 will be treated as year of the current emperor era
 	 * - A year equal or more than 100 will be treated as a gregorian year
@@ -34,19 +34,19 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 			this.sCalendarType = sap.ui.core.CalendarType.Japanese;
 		}
 	});
-	
+
 	Japanese.UTC = function() {
 		var aArgs = toGregorianArguments(arguments);
 		return Date.UTC.apply(Date, aArgs);
 	};
-	
+
 	Japanese.now = function() {
 		return Date.now();
 	};
 
 	/**
 	 * Find the matching japanese date for the given gregorian date
-	 * 
+	 *
 	 * @param {object} oGregorian
 	 * @return {object}
 	 */
@@ -60,10 +60,10 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 			day: oGregorian.day
 		};
 	}
-	
+
 	/**
-	 * Calculate gregorian year from japanes era and year 
-	 * 
+	 * Calculate gregorian year from japanes era and year
+	 *
 	 * @param {object} oJapanese
 	 * @return {int}
 	 */
@@ -75,10 +75,10 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 			day: oJapanese.day
 		};
 	}
-		
+
 	/**
 	 * Convert arguments array from japanese date to gregorian data
-	 * 
+	 *
 	 * @param {object} oJapanese
 	 * @return {int}
 	 */
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 			// Invalid year
 			vYear = [];
 		}
-		
+
 		oJapanese = {
 			era: vYear[0],
 			year: vYear[1],
@@ -110,10 +110,10 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		aArgs[0] = oGregorian.year;
 		return aArgs;
 	}
-		
+
 	/**
 	 * Get the japanese era/year from this.oDate
-	 * 
+	 *
 	 * @return {object}
 	 */
 	Japanese.prototype._getJapanese = function() {
@@ -124,18 +124,18 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		};
 		return toJapanese(oGregorian);
 	};
-	
-	/** 
+
+	/**
 	 * Set the japanese era/year to this.oDate
 	 */
 	Japanese.prototype._setJapanese = function(oJapanese) {
 		var oGregorian = toGregorian(oJapanese);
 		return this.oDate.setFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
 	};
-	
+
 	/**
 	 * Get the japanese era/year from this.oDate in UTC
-	 * 
+	 *
 	 * @return {object}
 	 */
 	Japanese.prototype._getUTCJapanese = function() {
@@ -146,15 +146,15 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		};
 		return toJapanese(oGregorian);
 	};
-	
-	/** 
+
+	/**
 	 * Set the japanese era/year to this.oDate in UTC
 	 */
 	Japanese.prototype._setUTCJapanese = function(oJapanese) {
 		var oGregorian = toGregorian(oJapanese);
 		return this.oDate.setUTCFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
 	};
-	
+
 	/*
 	 * Override relevant getters/setters
 	 */
@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		}
 		return this._setUTCJapanese(oJapanese);
 	};
-	
+
 	return Japanese;
-	
+
 });

@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 *
 	 * @class
 	 * Tree binding implementation for JSON format.
-	 * 
-	 * The tree data structure may contain JSON objects and also arrays. If using arrays and don't want to bind every array data in the data structure you can 
+	 *
+	 * The tree data structure may contain JSON objects and also arrays. If using arrays and don't want to bind every array data in the data structure you can
 	 * specify a parameter <code>arrayNames</code> in the mParameters which contains the names of the arrays in a string array which should be bound for the tree.
 	 * An array not included there won't be bound. If an array is included but it is nested in another parent array which isn't included in the names list it won't be bound.
-	 * So make sure that the parent array name is also included. If the tree data structure doesn't include any arrays you don't have to specify this parameter at all. 
+	 * So make sure that the parent array name is also included. If the tree data structure doesn't include any arrays you don't have to specify this parameter at all.
 	 *
 	 * @param {sap.ui.model.json.JSONModel} [oModel]
 	 * @param {string}
@@ -32,12 +32,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	 *         Only the nested objects contained in arrays, with names specified by mParameters.arrayNames, will be included in the tree.
 	 *         Of course this will only happen if all parent-nodes up to the top-level are also included.
 	 *         If you do NOT specify this parameter: by default all nested objects/arrays will be used to build the trees hierarchy.
-	 * 
+	 *
 	 * @alias sap.ui.model.json.JSONTreeBinding
 	 * @extends sap.ui.model.ClientTreeBinding
 	 */
 	var JSONTreeBinding = ClientTreeBinding.extend("sap.ui.model.json.JSONTreeBinding");
-	
+
 	JSONTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
 		// only collect node if it is defined (and not null), because typeof null == "object"!
 		if (oNode && typeof oNode == "object") {

@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	/**
 	 * Determines item specific mode
 	 *
-	 * ActionListItems are not selectable because they are command controls (like Button or Link) so triggering the associated command, rather than selection is 
+	 * ActionListItems are not selectable because they are command controls (like Button or Link) so triggering the associated command, rather than selection is
 	 * appropriate to happen upon user action on these items. By overwriting isSelectable (inherited from ListItemBase) we exclude the item from processing
 	 * specific to selectable list-items.
 	 *
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	/**
 	 * Event handler called when the space key is pressed.
 	 *
-	 * ActionListItems are command controls so keydown [SPACE] should have the same effect as keydown [ENTER] (i.e. triggering the associated command, instead of 
+	 * ActionListItems are command controls so keydown [SPACE] should have the same effect as keydown [ENTER] (i.e. triggering the associated command, instead of
 	 * selection)
 	 *
 	 * @param {jQuery.Event} oEvent

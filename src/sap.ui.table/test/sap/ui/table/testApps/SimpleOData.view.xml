@@ -6,10 +6,10 @@
 	xmlns:table="sap.ui.table"
 	controllerName="sap.ui.table.testApps.SimpleOData"
 	>
-	<Panel 
+	<Panel
 		expandable="true"
 		expanded="true"
-		width="auto" 
+		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>
 			<Toolbar>
@@ -109,10 +109,10 @@
 			</f:Form>
 		</content>
 	</Panel>
-	<Panel 
+	<Panel
 		expandable="true"
 		expanded="true"
-		width="auto" 
+		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding"
 		id="tableContainerPanel">
 		<headerToolbar>
@@ -121,18 +121,18 @@
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<table:Table 
-				id="tableOData" 
-				visibleRowCount="{path: '/visibleRowCount', type:'Integer'}" 
-				visibleRowCountMode="{/visibleRowCountMode}" 
+			<table:Table
+				id="tableOData"
+				visibleRowCount="{path: '/visibleRowCount', type:'Integer'}"
+				visibleRowCountMode="{/visibleRowCountMode}"
 				threshold="{/tableThreshold}">
 			</table:Table>
 		</content>
 	</Panel>
-		<Panel 
+		<Panel
 		expandable="true"
 		expanded="true"
-		width="auto" 
+		width="auto"
 		class="sapUiResponsiveMargin sapUiNoContentPadding">
 		<headerToolbar>
 			<Toolbar>
@@ -141,7 +141,7 @@
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<f:Form 
+			<f:Form
 				editable="true">
 				<f:layout>
 					<f:ResponsiveGridLayout

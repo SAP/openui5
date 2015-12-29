@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Controller, JSONModel) {
 	"use strict";
 	return Controller.extend("sap.ui.table.testApps.TreeTableOData", {
-		
+
 		onInit: function () {
 			var oFormData = {
 				serviceURL: "",
@@ -33,47 +33,47 @@ sap.ui.define([
 			};
 			var oModel = new JSONModel(oFormData);
 			this.getView().setModel(oModel);
-			
+
 			this.aRenderResults = [];
 			this.aFunctionResults = [];
 			this.aVisibleRow = [];
 		},
-		
+
 		onCreateTableClick: function () {
 			var oView = this.getView(),
 			oDataModel = oView.getModel();
-			
+
 			var sServiceUrl = oDataModel.getProperty("/serviceURL");
 			sServiceUrl = "../../../../../proxy/" + sServiceUrl.replace("://", "/");
-			
+
 			var sCollection = oDataModel.getProperty("/collection");
 			var sSelectProperties = oDataModel.getProperty("/selectProperties");
 			var sCountMode = oDataModel.getProperty("/countMode");
 			var sOperationMode = oDataModel.getProperty("/operationMode");
-			
+
 			var sBindingThreshold = oDataModel.getProperty("/bindingThreshold");
-			
+
 			var sFilterProperty = oDataModel.getProperty("/filterProperty");
 			var sFilterOperator = oDataModel.getProperty("/filterOperator");
 			var sFilterValue = oDataModel.getProperty("/filterValue");
 			var oApplicationFilter = sFilterProperty && sFilterOperator && sFilterValue ? new sap.ui.model.Filter(sFilterProperty, sFilterOperator, sFilterValue) : [];
-			
+
 			var iVisibleRowCount = oDataModel.getProperty("/visibleRowCount");
 			var sVisibleRowCountMode = oDataModel.getProperty("/visibleRowCountMode");
-			
+
 			var oVisibleRow = {
 					VisibleRowCount: iVisibleRowCount,
 					VisibleRowCountMode: sVisibleRowCountMode
 				};
-				
+
 			this.aVisibleRow.push(oVisibleRow);
 			/**
-			 * Clear the Table and rebind it 
+			 * Clear the Table and rebind it
 			 */
 			var oTableContainer = oView.byId("tableContainerPanel");
-			
+
 			var oTable = oTableContainer.getContent()[0];
-			
+
 			//clean up
 			if (oTable) {
 				oTableContainer.removeContent(oTable);
@@ -81,13 +81,13 @@ sap.ui.define([
 				oTable.destroyColumns();
 				oTable.destroy();
 			}
-			
+
 			jQuery.sap.measure.start("createTable");
-			
+
 			oTable = new sap.ui.table.TreeTable();
-			
+
 			oTableContainer.addContent(oTable);
-			
+
 			oTable.addDelegate({
 				onBeforeRendering: function () {
 					jQuery.sap.measure.start("onBeforeRendering","",["Render"]);
@@ -107,7 +107,7 @@ sap.ui.define([
 					jQuery.sap.measure.end("rendering");
 				}
 			}, false);
-			
+
 			var that =this;
 			var fnRowsUpdated = function() {
 				var oDataModel = that.getView().getModel();
@@ -127,35 +127,35 @@ sap.ui.define([
 				oDataModel.setProperty("/onAfterRendering",iAfterRendering);
 				oDataModel.setProperty("/tableCreate",iTableCreate);
 				oDataModel.setProperty("/factor",iFactor);
-				
+
 				var oRenderResult = {
 						overall: iOverall,
 						onBeforeRendering: iBeforeRendering,
 						rendering: iRendering,
 						onAfterRendering: iAfterRendering,
 						tableCreate: iTableCreate,
-						factor: iFactor	
+						factor: iFactor
 				};
-					
+
 				that.aRenderResults.push(oRenderResult);
 			};
-			
+
 			oTable.attachEvent("_rowsUpdated", fnRowsUpdated);
-			
+
 			// recreate the columns
 			var aProperties = sSelectProperties.split(",");
 			jQuery.each(aProperties, function(iIndex, sProperty) {
 				oTable.addColumn(new sap.ui.table.Column({
 					label: sProperty,
-					template: sProperty, 
-					sortProperty: sProperty, 
+					template: sProperty,
+					sortProperty: sProperty,
 					filterProperty: sProperty
 				}));
 			});
 
 			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, true);
 			oModel.setDefaultCountMode("Inline");
-			
+
 			oTable.setModel(oModel);
 			oTable.bindRows({
 				path: "/" + sCollection,
@@ -172,18 +172,18 @@ sap.ui.define([
 					}
 				}
 			});
-			
+
 			//for easier table dbg
 			window.oTable = oTable;
-			
+
 			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 				return oMeasurement.categories.indexOf("JS") > -1? oMeasurement : null;
 			});
-			
+
 			var aRenderMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 				return oMeasurement.categories.indexOf("Render") > -1? oMeasurement : null;
 			});
-			
+
 			function getValue(attributeName, oObject) {
 				if (oObject) {
 					return oObject[attributeName];
@@ -196,22 +196,22 @@ sap.ui.define([
 			var iUpdateTableContent = Math.round(getValue("duration", aJSMeasure[1]) * 1) / 1;
 			var iUpdateRowHeader = Math.round(getValue("duration", aJSMeasure[2]) * 1) / 1;
 			var iSyncColumnHeaders = Math.round(getValue("duration", aJSMeasure[3]) * 1) / 1;
-			
+
 			oDataModel.setProperty("/createRows",iCreateRows);
 			oDataModel.setProperty("/updateTableContent", iUpdateTableContent);
 			oDataModel.setProperty("/updateRowHeader", iUpdateRowHeader);
 			oDataModel.setProperty("/syncColumnHeaders", iSyncColumnHeaders);
-			
+
 			var oFunctionResult = {
 				createRows: iCreateRows,
 				updateTableContent: iUpdateTableContent,
 				updateRowHeader: iUpdateRowHeader,
 				syncColumnHeaders: iSyncColumnHeaders
 			};
-			
+
 			this.aFunctionResults.push(oFunctionResult);
 		},
-		
+
 		onDownload: function() {
 
 			var overallAve = 0,
@@ -235,11 +235,11 @@ sap.ui.define([
 			updateRowHeaderSum = 0,
 			syncColumnHeadersSum = 0,
 			iRun = this.aRenderResults.length;
-			
+
 			var sCSV = "Run;VisibleRowCount;VisibleRowCountMode;Overall;Before Rendering;Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering;Table._createRows;Table._updateTableContent;Table._syncColumnHeaders;Table._updateRowHeader\n";
-			
+
 			for (var i = 0; i < iRun; i++) {
-				sCSV += (i+1) + ";" 
+				sCSV += (i+1) + ";"
 						+ this.aVisibleRow[i].VisibleRowCount +";"
 						+ this.aVisibleRow[i].VisibleRowCountMode +";"
 						+ this.aRenderResults[i].overall + ";"
@@ -252,7 +252,7 @@ sap.ui.define([
 						+ this.aFunctionResults[i].updateTableContent + ";"
 						+ this.aFunctionResults[i].updateRowHeader + ";"
 						+ this.aFunctionResults[i].syncColumnHeaders + "\n";
-				
+
 				overallSum += this.aRenderResults[i].overall;
 				onBeforeRenderingSum += this.aRenderResults[i].onBeforeRendering;
 				renderingSum += this.aRenderResults[i].rendering;
@@ -275,19 +275,19 @@ sap.ui.define([
 			updateTableContentAve += Math.round(updateTableContentSum / iRun * 1) / 1;
 			updateRowHeaderAve += Math.round(updateRowHeaderSum / iRun * 1) / 1;
 			syncColumnHeadersAve += Math.round(syncColumnHeadersSum / iRun * 1) / 1;
-			
-			sCSV += "average (ms)" + ";" + 
+
+			sCSV += "average (ms)" + ";" +
 					"-" + ";" +
 					"-" + ";" +
 					overallAve + ";" +
-					onBeforeRenderingAve + ";" + 
-					renderingAve + ";" + 
-					onAfterRenderingAve + ";" + 
-					tableCreateAve + ";" + 
-					factorAve + ";" + 
-					createRowsAve + ";" + 
-					updateTableContentAve + ";" + 
-					updateRowHeaderAve + ";" + 
+					onBeforeRenderingAve + ";" +
+					renderingAve + ";" +
+					onAfterRenderingAve + ";" +
+					tableCreateAve + ";" +
+					factorAve + ";" +
+					createRowsAve + ";" +
+					updateTableContentAve + ";" +
+					updateRowHeaderAve + ";" +
 					syncColumnHeadersAve + "\n";
 
 			var sFileName = "TreeTableODataPerformanceTestResults.csv";

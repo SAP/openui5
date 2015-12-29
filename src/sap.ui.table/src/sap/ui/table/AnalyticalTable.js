@@ -42,23 +42,23 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			 * Number of levels, which should be opened initially (on first load of data).
 			 */
 			numberOfExpandedLevels : {type : "int", group : "Misc", defaultValue : 0},
-			
+
 			/**
 			 * The kind of auto expansion algorithm, e.g. optimised filter conditions, per level requests, ...
 			 * sap.ui.table.TreeAutoExpandMode
 			 */
 			autoExpandMode: {type: "string", group: "Misc", defaultValue: "Bundled" },
-			
+
 			/**
 			 * Functions which is used to sort the column visibility menu entries e.g.: function(ColumnA, ColumnB) { return 0 = equals, <0 lower, >0 greater }; Other values than functions will be ignored.
 			 */
 			columnVisibilityMenuSorter : {type : "any", group : "Appearance", defaultValue : null},
-			
+
 			/**
 			 * Setting collapseRecursive to true means, that when collapsing a node all subsequent child nodes will also be collapsed.
 			 */
 			collapseRecursive : {type: "boolean", defaultValue: true},
-			
+
 			/**
 			 * If dirty the content of the Table will be overlayed.
 			 * @deprecated Since version 1.21.2.
@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 		return oModel;
 	};
-	
+
 	/**
 	 * handler for change events of the binding
 	 * @param {sap.ui.base.Event} oEvent change event
@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.bindRows = function(oBindingInfo) {
 		// Sanitize the arguments for API Compatibility: sName, sPath, oTemplate, oSorter, aFilters
 		var oBindingInfoSanitized = this._sanitizeBindingInfo.apply(this, arguments);
-		
+
 		var vReturn = this.bindAggregation("rows", oBindingInfoSanitized);
 		this._bSupressRefresh = true;
 		this._updateColumns();
@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	/**
-	 * _bindAggregation is overwritten, and will be called by either ManagedObject.prototype.bindAggregation 
+	 * _bindAggregation is overwritten, and will be called by either ManagedObject.prototype.bindAggregation
 	 * or ManagedObject.prototype.setModel
 	 */
 	AnalyticalTable.prototype._bindAggregation = function(sName, sPath, oTemplate, oSorter, aFilters) {
@@ -182,22 +182,22 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// make sure to reset the first visible row (currently needed for the analytical binding)
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
 			this.setProperty("firstVisibleRow", 0, true);
-			
+
 			// The current syntax for _bindAggregation is sPath can be an object wrapping the other parameters
 			// in this case we have to sanitize the parameters, so the ODataModelAdapter will instantiate the correct binding.
 			this._sanitizeBindingInfo.call(this, sPath, oTemplate, oSorter, aFilters);
 		}
 		return Table.prototype._bindAggregation.apply(this, arguments);
 	};
-	
+
 	/**
-	 * Overwritten from Table.js - does nothing since the selection is stored in the 
+	 * Overwritten from Table.js - does nothing since the selection is stored in the
 	 */
 	AnalyticalTable.prototype._initSelectionModel = function (sSelectionMode) {
 		this._oSelection = new sap.ui.model.SelectionModel(sSelectionMode);
 		return this;
 	};
-	
+
 	/**
 	 * Sets the selection mode, the current selection is lost.
 	 * Since the AnalyticalTable relies on the RowSelector for rendering the group headers the SelectionMode "None" is
@@ -239,13 +239,13 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			return Table.prototype.setSelectionBehavior.apply(this, arguments);
 		}
 	};
-	
+
 	AnalyticalTable.prototype._sanitizeBindingInfo = function (oBindingInfo) {
 		var sPath,
 			oTemplate,
 			aSorters,
 			aFilters;
-		
+
 		// Old API compatibility
 		// previously the bind* functions were called in this pattern: sName, sPath, oTemplate, oSorter, aFilters
 		if (typeof oBindingInfo == "string") {
@@ -261,7 +261,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				oBindingInfo.factory = oTemplate;
 			}
 		}
-		
+
 		// extract the sorters from the columns (TODO: reconsider this!)
 		var aColumns = this.getColumns();
 		for (var i = 0, l = aColumns.length; i < l; i++) {
@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				oBindingInfo.sorter.push(new sap.ui.model.Sorter(aColumns[i].getSortProperty() || aColumns[i].getLeadingProperty(), aColumns[i].getSortOrder() === sap.ui.table.SortOrder.Descending));
 			}
 		}
-		
+
 		// Make sure all necessary parameters are given.
 		// The ODataModelAdapter (via bindList) needs these properties to determine if an AnalyticalBinding should be instantiated.
 		// This is the default for the AnalyticalTable.
@@ -279,17 +279,17 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		oBindingInfo.parameters.sumOnTop = this.getSumOnTop();
 		oBindingInfo.parameters.numberOfExpandedLevels = this.getNumberOfExpandedLevels();
 		oBindingInfo.parameters.autoExpandMode = this.getAutoExpandMode();
-		
+
 		// This may fail, in case the model is not yet set.
 		// If this case happens, the ODataModelAdapter is added by the overriden _bindAggregation, which is called during setModel(...)
 		var oModel = this.getModel(oBindingInfo.model);
 		if (oModel) {
 			ODataModelAdapter.apply(oModel);
 		}
-		
+
 		return oBindingInfo;
 	};
-	
+
 	/**
 	 * @param {Boolean} bSuppressRefresh Suppress Refresh
 	 * @returns {sap.ui.table.AnalyticalTable} this
@@ -404,7 +404,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			} else {
 				oContextInfo = this.getContextInfoByIndex(iRowIndex);
 			}
-			
+
 			var iLevel = oContextInfo ? oContextInfo.level : 0;
 
 			if (!oContextInfo || !oContextInfo.context) {
@@ -426,7 +426,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				$fixedRow.addClass("sapUiTableGroupHeader");
 
 				$rowHdr.attr("aria-haspopup", true);
-				
+
 				var sGroupHeaderText = oBinding.getGroupName(oContextInfo.context, oContextInfo.level);
 
 				var sClass = oContextInfo.nodeState.expanded ? "sapUiTableGroupIconOpen" : "sapUiTableGroupIconClosed";
@@ -436,14 +436,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					$fixedRow.addClass("sapUiTableRowHidden");
 					$rowHdr.addClass("sapUiTableRowHidden");
 				}
-				
+
 				var sGroupHeaderMenuButton = "";
 				if ('ontouchstart' in document) {
 					sGroupHeaderMenuButton = "<div class='sapUiTableGroupMenuButton'></div>";
 				}
 				$rowHdr.html("<div id=\"" + oRow.getId() + "-groupHeader\" class=\"sapUiTableGroupIcon " + sClass + "\" tabindex=\"-1\" title=\"" + sGroupHeaderText + "\">" + sGroupHeaderText + "</div>" + sGroupHeaderMenuButton);
 				aAriaLabelledByParts.push(oRow.getId() + "-groupHeader");
-				
+
 				$row.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				$fixedRow.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
 				$rowHdr.removeClass("sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
@@ -499,19 +499,19 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			$rowHdr.attr('aria-level', iLevel + 1);
 			$row.attr('aria-level', iLevel + 1);
 			$fixedRow.attr('aria-level', iLevel + 1);
-			
+
 			//set the level of the node as a data-* attribute
 			$row.data("sap-ui-level", iLevel);
 			$fixedRow.data("sap-ui-level", iLevel);
 			$rowHdr.data("sap-ui-level", iLevel);
-			
+
 			if ('ontouchstart' in document) {
 				var iScrollBarOffset = 0;
 				if (this.$().hasClass("sapUiTableVScr")) {
 					iScrollBarOffset += this.$().find('.sapUiTableVSb').width();
 				}
 				var $GroupHeaderMenuButton = $rowHdr.find(".sapUiTableGroupMenuButton");
-				
+
 				if (this._bRtlMode) {
 					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - iScrollBarOffset) + "px");
 				} else {
@@ -564,20 +564,20 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			}
 			// update aria description for row selection
 			$rowHdr.attr("aria-labelledby", aAriaLabelledByParts.join(" "));
-			
+
 			var $targetRow = this.getFixedColumnCount() > 0 ? $fixedRow : $row;
 			this._resizeGroupHeader($rowHdr, $targetRow, oContextInfo.nodeState.expanded);
 		}
 	};
-	
+
 	/*
 	 * Calculates how much width is available for the group header title.
 	 * Logic tries to grant as much space as possible. Especially to use every gap between each sum/dimension label.
 	 * This is important for users for making sure that they can read the group title even when they scrolled horizontally.
-	 * @param {jQuery} $rowHdr the current row header wrapped by jQuery. 
-	 * @param {jQuery} $row jQuery collection of the current processed row. 
+	 * @param {jQuery} $rowHdr the current row header wrapped by jQuery.
+	 * @param {jQuery} $row jQuery collection of the current processed row.
 	 * @param {Boolean} bIsExpanded
-	 *         flag whether the current node is expanded or not. 
+	 *         flag whether the current node is expanded or not.
 	 */
 	AnalyticalTable.prototype._resizeGroupHeader = function($rowHdr, $row, bIsExpanded) {
 		// Group Icon Layouting logic
@@ -585,15 +585,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		if ($groupIcon.length === 0 || bIsExpanded) {
 			return;
 		}
-		
+
 		var $MeasureAndSumLabels =  $row.find(".sapUiTableCell > *");
 		var oTableClientRect = this.getDomRef().getBoundingClientRect();
 		$groupIcon.width('');
 		var iGroupPosition = this._bRtlMode ? $groupIcon[0].getBoundingClientRect().left : $groupIcon[0].getBoundingClientRect().right;
 		var iGroupIconWidth = $groupIcon.width();
-		
+
 		var bIsRtlMode = this._bRtlMode;
-		
+
 		$MeasureAndSumLabels.each(function(index) {
 			var $this = jQuery(this);
 			if ($this.text().length === 0) {
@@ -603,7 +603,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			$this.width('auto');
 			var iLabelWidth = $this.width();
 			$this.width('');
-			
+
 			var iOverlap = 0;
 			var bDoResize = false;
 			var sTextAlign = $this.css('text-align');
@@ -624,7 +624,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					bDoResize = (iOverlap > 0 && oClientRect.right < oTableClientRect.right);
 				}
 			}
-			
+
 			if (bDoResize) {
 				$groupIcon.width(iGroupIconWidth - iOverlap);
 				// break loop
@@ -694,7 +694,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._iGroupedLevel = jQuery(oEvent.target).closest('[data-sap-ui-level]').data('sap-ui-level');
 			var oMenu = this._getGroupHeaderMenu();
 			var eDock = sap.ui.core.Popup.Dock;
-			
+
 			var iLocationX = oEvent.pageX || oEvent.clientX;
 			var iLocationY = oEvent.pageY || oEvent.clientY;
 			oMenu.open(false, oEvent.target, eDock.LeftTop, eDock.LeftTop, document, (iLocationX - 2) + " " + (iLocationY - 2));
@@ -884,7 +884,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				select: function() {
 					// Why -1? Because the "Collapse Level" Menu Entry should collapse TO the given level - 1
 					// So collapsing level 1 means actually all nodes up TO level 0 will be collapsed.
-					// Potential negative values are handled by the binding. 
+					// Potential negative values are handled by the binding.
 					that.getBinding("rows").collapseToLevel(that._iGroupedLevel - 1);
 					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
 					that.clearSelection();
@@ -932,10 +932,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			oBinding.collapse(iRowIndex);
 		}
 	};
-	
+
 	/**
 	 * Collapses all nodes (and lower if collapseRecursive is activated)
-	 * 
+	 *
 	 * @return {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -946,7 +946,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			oBinding.collapseToLevel(0);
 			this.setFirstVisibleRow(0);
 		}
-		
+
 		return this;
 	};
 
@@ -971,7 +971,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		var oBinding = this.getBinding("rows");
 		return iIndex >= 0 && oBinding ? oBinding.getContextByIndex(iIndex) : null;
 	};
-	
+
 	AnalyticalTable.prototype.getContextInfoByIndex = function(iIndex) {
 		var oBinding = this.getBinding("rows");
 		return iIndex >= 0 && oBinding ? oBinding.getNodeByIndex(iIndex) : null;
@@ -1007,7 +1007,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 	AnalyticalTable.prototype.removeColumn = function(vColumn, bSuppressInvalidate) {
 		var oResult = Table.prototype.removeColumn.apply(this, arguments);
-		
+
 		// only remove from grouped columns if not caused by column move. If this._iNewColPos
 		// is set, the column was moved by user.-
 		if (!this._iNewColPos) {
@@ -1020,7 +1020,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				}
 			});
 		}
-		
+
 		this.updateAnalyticalInfo(bSuppressInvalidate);
 
 		return oResult;
@@ -1029,7 +1029,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.removeAllColumns = function(bSuppressInvalidate) {
 		this._aGroupedColumns = [];
 		var aResult = Table.prototype.removeAllColumns.apply(this, arguments);
-		
+
 		this._updateTableColumnDetails();
 		this.updateAnalyticalInfo(bSuppressInvalidate);
 
@@ -1251,11 +1251,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.setProperty("collapseRecursive", !!bCollapseRecursive, true);
 		return this;
 	};
-	
+
 	/***************************************************
 	 *              Selection of Table Rows            *
 	 ***************************************************/
-	
+
 	/**
 	 * returns the count of rows which can ca selected when bound or 0
 	 * @private
@@ -1263,14 +1263,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype._getSelectableRowCount = function() {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			var oRootNode = oBinding.getGrandTotalContextInfo(); 
+			var oRootNode = oBinding.getGrandTotalContextInfo();
 			return oRootNode ? oRootNode.numberOfLeafs : 0;
 		}
 	};
-	
+
 	/**
 	 * Checks if the row at the given index is selected.
-	 * 
+	 *
 	 * @param {int} iRowIndex The row index for which the selection state should be retrieved
 	 * @return {boolean} true if the index is selected, false otherwise
 	 * @public
@@ -1279,13 +1279,13 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.isIndexSelected = function (iRowIndex) {
 		return TreeTable.prototype.isIndexSelected.call(this, iRowIndex);
 	};
-	
+
 	/**
 	 * Overriden from Table.js base class.
 	 * In a TreeTable you can only select indices, which correspond to the currently visualized tree.
 	 * Invisible tree nodes (e.g. collapsed child nodes) can not be selected via Index, because they do not
 	 * correspond to a TreeTable row.
-	 * 
+	 *
 	 * @param {int} iRowIndex The row index which will be selected (if existing)
 	 * @return {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
 	 * @public
@@ -1294,15 +1294,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.setSelectedIndex = function (iRowIndex) {
 		return TreeTable.prototype.setSelectedIndex.call(this, iRowIndex);
 	};
-	
+
 	/**
 	 * Returns an array containing the row indices of all selected tree nodes (ordered ascending).
-	 * 
+	 *
 	 * Please be aware of the following:
 	 * Due to performance/network traffic reasons, the getSelectedIndices function returns only all indices
 	 * of actually selected rows/tree nodes. Unknown rows/nodes (as in "not yet loaded" to the client), will not be
 	 * returned.
-	 * 
+	 *
 	 * @return {int[]} an array containing all selected indices
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1310,12 +1310,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.getSelectedIndices = function () {
 		return TreeTable.prototype.getSelectedIndices.call(this);
 	};
-	
+
 	/**
 	 * Sets the selection of the TreeTable to the given range (including boundaries).
 	 * Beware: The previous selection will be lost/overriden. If this is not wanted, please use "addSelectionInterval" and
 	 * "removeSelectionIntervall".
-	 * 
+	 *
 	 * @param {int} iFromIndex the start index of the selection range
 	 * @param {int} iToIndex the end index of the selection range
 	 * @return {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
@@ -1325,16 +1325,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.setSelectionInterval = function (iFromIndex, iToIndex) {
 		return TreeTable.prototype.setSelectionInterval.call(this, iFromIndex, iToIndex);
 	};
-	
+
 	/**
 	 * Marks a range of tree nodes as selected, starting with iFromIndex going to iToIndex.
 	 * The TreeNodes are referenced via their absolute row index.
 	 * Please be aware, that the absolute row index only applies to the the tree which is visualized by the TreeTable.
 	 * Invisible nodes (collapsed child nodes) will not be regarded.
-	 * 
+	 *
 	 * Please also take notice of the fact, that "addSelectionInterval" does not change any other selection.
 	 * To override the current selection, please use "setSelctionInterval" or for a single entry use "setSelectedIndex".
-	 * 
+	 *
 	 * @param {int} iFromIndex The starting index of the range which will be selected.
 	 * @param {int} iToIndex The starting index of the range which will be selected.
 	 * @return {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
@@ -1344,13 +1344,13 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.addSelectionInterval = function (iFromIndex, iToIndex) {
 		return TreeTable.prototype.addSelectionInterval.call(this, iFromIndex, iToIndex);
 	};
-	
+
 	/**
 	 * All rows/tree nodes inside the range (including boundaries) will be deselected.
-	 * Tree nodes are referenced with theit absolute row index inside the tree- 
+	 * Tree nodes are referenced with theit absolute row index inside the tree-
 	 * Please be aware, that the absolute row index only applies to the the tree which is visualized by the TreeTable.
 	 * Invisible nodes (collapsed child nodes) will not be regarded.
-	 * 
+	 *
 	 * @param {int} iFromIndex The starting index of the range which will be deselected.
 	 * @param {int} iToIndex The starting index of the range which will be deselected.
 	 * @return {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
@@ -1360,15 +1360,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.removeSelectionInterval = function (iFromIndex, iToIndex) {
 		return TreeTable.prototype.removeSelectionInterval.call(this, iFromIndex, iToIndex);
 	};
-	
+
 	/**
 	 * Selects all available nodes/rows.
-	 * 
+	 *
 	 * Explanation of the SelectAll function and what to expect from its behavior:
 	 * All rows/tree nodes locally stored on the client are selected.
 	 * In addition all subsequent rows/tree nodes, which will be paged into view are also immediatly selected.
 	 * However, due to obvious performance/network traffic reasons, the SelectAll function will NOT retrieve any data from the backend.
-	 * 
+	 *
 	 * @return {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1376,11 +1376,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.selectAll = function () {
 		return TreeTable.prototype.selectAll.call(this);
 	};
-	
+
 	/**
 	 * Retrieves the lead selection index. The lead selection index is, among other things, used to determine the
-	 * start/end of a selection range, when using Shift-Click to select multiple entries at once. 
-	 * 
+	 * start/end of a selection range, when using Shift-Click to select multiple entries at once.
+	 *
 	 * @return {int[]} an array containing all selected indices (ascending ordered integers)
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1388,10 +1388,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.getSelectedIndex = function() {
 		return TreeTable.prototype.getSelectedIndex.call(this);
 	};
-	
+
 	/**
 	 * Clears the complete selection (all tree table rows/nodes will lose their selection)
-	 * 
+	 *
 	 * @return {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1410,7 +1410,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 
 	};
-	
+
 	return AnalyticalTable;
 
 }, /* bExport= */ true);

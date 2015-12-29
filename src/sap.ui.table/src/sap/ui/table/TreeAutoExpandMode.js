@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global'],
 			 * @public
 			 */
 			Sequential: "Sequential",
-	
+
 			/**
 			 * If supported by a backend provider with analytical capabilities, the requests needed for an automatic node expansion are bundled.
 			 * @public

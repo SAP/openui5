@@ -7,12 +7,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sa
 	"use strict";
 
 
-	
+
 	var IndexLayoutPage = function IndexPage(oData, sTarget, sBaseUrl, bCustomFont) {
-		
+
 		var oModel = new JSONModel(oData);
 		sap.ui.getCore().setModel(oModel);
-		
+
 		var oCatIndex = new IndexLayoutPage.Repeat({
 			categories: {
 				path: "/categories",
@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sa
 				})
 			}
 		});
-		
+
 		if (bCustomFont) {
 			IconPool.addIcon("explored", "custom", "brandico", "e001", true);
 			IconPool.addIcon("cart", "custom", "brandico", "e002", true); //Obsolete?
@@ -55,19 +55,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sa
 			IconPool.addIcon("splitapp", "custom", "brandico", "e00C", true);
 			IconPool.addIcon("mvc", "custom", "brandico", "e00B", true); //Obsolete?
 		}
-		
+
 		sap.ui.getCore().attachInit(function(){
 			if (bCustomFont) {
 				var sFontBaseUrl = jQuery.sap.getModulePath("", "/../test-resources/sap/m/demokit/demokit-home/");
 				IndexLayoutPage._introduceCustomFont("brandico", sFontBaseUrl, "demoAppsIconFont");
 			}
-			
+
 			jQuery("body").append("<div id='root'></div>");
 			oCatIndex.placeAt("root");
 		});
 	};
-	
-	
+
+
 	sap.ui.core.Element.extend("sap.ui.demokit.IndexLayoutPage.Cat", {
 		metadata : {
 			properties : {
@@ -78,20 +78,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sa
 			}
 		}
 	});
-	
-	
+
+
 	sap.ui.core.Control.extend("sap.ui.demokit.IndexLayoutPage.Repeat", {
 		metadata : {
 			aggregations : {
 				"categories" : {type : "sap.ui.demokit.IndexLayoutPage.Cat", multiple : true}
 			}
 		},
-		
+
 		renderer: function(oRm, oControl) {
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.write(">");
-			
+
 			var aCats = oControl.getCategories();
 			for (var i = 0; i < aCats.length; i++) {
 				oRm.write("<div");
@@ -105,12 +105,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sa
 				oRm.renderControl(aCats[i].getLayout());
 				oRm.write("</div>");
 			}
-			
+
 			oRm.write("</div>");
 		}
 	});
-	
-	
+
+
 	IndexLayoutPage._introduceCustomFont = function(sFamilyName, sFontPath, sFontFile){
 		var sFontFace = "@font-face {" +
 			"font-family: '" + sFamilyName + "';" +

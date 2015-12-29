@@ -2,7 +2,7 @@
 	controllerName="sap.m.sample.LinkSubtle.Link"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	
+
 	<Table id="idProductsTable"
 		inset="false"
 		items="{

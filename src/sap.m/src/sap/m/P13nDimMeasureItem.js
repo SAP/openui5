@@ -9,7 +9,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new P13nDimMeasureItem.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class Type for <code>columnsItems</code> aggregation in P13nDimMeasurePanel control.
@@ -31,7 +31,7 @@ sap.ui.define([
 
 				/**
 				 * Specifies the unique chart column key. In this context a column refers to dimensions or measures of a chart.
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				columnKey: {
@@ -40,7 +40,7 @@ sap.ui.define([
 
 				/**
 				 * Specifies the order of visible dimensions or measures of a chart.
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				index: {
@@ -50,7 +50,7 @@ sap.ui.define([
 
 				/**
 				 * Specifies the visibility of dimensions or measures.
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				visible: {
@@ -59,7 +59,7 @@ sap.ui.define([
 
 				/**
 				 * Specifies the role of dimensions or measures. The role determines how dimensions and measures influence the chart.
-				 * 
+				 *
 				 * @since 1.34.0
 				 */
 				role: {

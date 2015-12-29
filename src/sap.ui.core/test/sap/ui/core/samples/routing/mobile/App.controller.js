@@ -3,7 +3,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 	"use strict";
 
 	return Controller.extend("sap.ui.core.samples.routing.mobile.App", {
-	
+
 	});
 
 });

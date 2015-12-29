@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unifi
 	/**
 	 * Constructor for a new MenuItem element.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
@@ -25,17 +25,17 @@ sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unifi
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.21.0. 
+	 * @deprecated Since version 1.21.0.
 	 * Please use the element <code>sap.ui.unified.MenuItem</code> of the library <code>sap.ui.unified</code> instead.
 	 * @alias sap.ui.commons.MenuItem
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
 	var MenuItem = MenuItem1.extend("sap.ui.commons.MenuItem", /** @lends sap.ui.commons.MenuItem.prototype */ { metadata : {
-	
+
 		deprecated : true,
 		library : "sap.ui.commons"
 	}});
-	
+
 	/*Ensure MenuItemBase is loaded (incl. loading of unified library)*/
 
 	return MenuItem;

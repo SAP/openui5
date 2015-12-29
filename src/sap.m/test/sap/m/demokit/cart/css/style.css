@@ -19,7 +19,7 @@
 		transform 2.5s ease-in-out,
 		-webkit-transform 2.5s ease-in-out,
 		opacity 5s ease-in-out;
-	
+
 	/* -webkit-transition: Safari, Android Browser, BB Browser, Chrome 25 */
 	-webkit-transition:
 		color 2.5s ease-in-out,
@@ -28,12 +28,12 @@
 }
 
 .welcomeIconRotateForward {
-	
+
 	color: rgb(51,51,51);
-	
+
 	/* transform: IE10, Opera, Firefox */
 	transform: rotate(360deg);
-	
+
 	/* -webkit-transform: Chrome, Safari, Android Browser, BB Browser */
 	-webkit-transform: rotate(360deg);
 }

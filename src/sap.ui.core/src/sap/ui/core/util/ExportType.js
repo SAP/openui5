@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	/**
 	 * Constructor for a new ExportType.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -34,12 +34,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				 *  File extension.
 				 */
 				fileExtension: 'string',
-				
+
 				/**
 				 * MIME type.
 				 */
 				mimeType: 'string',
-				
+
 				/**
 				 * Charset.
 				 */

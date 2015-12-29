@@ -69,7 +69,7 @@
 		<tileContent>
 			<TileContent footer="Actual and Target" unit="EUR" size="M">
 				<content>
-					<NumericContent size="M" value="3" 
+					<NumericContent size="M" value="3"
 						icon="sap-icon://travel-expense" />
 				</content>
 			</TileContent>

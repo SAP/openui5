@@ -1,5 +1,5 @@
-<mvc:View 	xmlns="sap.m" 
-			xmlns:l="sap.ui.layout" 
+<mvc:View 	xmlns="sap.m"
+			xmlns:l="sap.ui.layout"
 			xmlns:mvc="sap.ui.core.mvc">
 	<Panel headerText="{i18n>panel1HeaderText}" class="sapUiResponsiveMargin" width="auto">
 		<content>

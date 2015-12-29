@@ -145,7 +145,7 @@ sap.ui.define([ 'jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/seman
 		},
 		renderer: SemanticPageRenderer.render
 	});
-	
+
 	MasterPage.prototype.init = function () {
 
 		SemanticPage.prototype.init.call(this);

@@ -13,8 +13,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var PanelRenderer = function() {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the Panel, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -24,22 +24,22 @@ sap.ui.define(['jquery.sap.global'],
 	PanelRenderer.render = function(rm, oControl) {
 		var id = oControl.getId();
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
-	
+
 		//var hasToolbar = false; // TODO: this can be used in the future; rendering should already be quite ok, but minor adjustments are expected
-	
+
 		var heightSet = sap.ui.commons.Panel._isSizeSet(oControl.getHeight());
 		var widthSet = sap.ui.commons.Panel._isSizeSet(oControl.getWidth());
-	
+
 		oControl.getScrollTop();  // update the scroll position properties
 		oControl.getScrollLeft();
-	
-	
+
+
 		// root element and classes
 		rm.write("<section");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiPanel");
 		rm.addStyle("width", oControl.getWidth());
-	
+
 		if (!oControl.getCollapsed()) {
 			rm.addStyle("height", oControl.getHeight());
 		} else {
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.addClass("sapUiPanelAreaDesign" + oControl.getAreaDesign());
 		rm.writeClasses();
 		rm.writeStyles();
-	
+
 		if (accessibility) {
 			rm.writeAttribute("aria-labelledby", id + "-title ");
 			rm.writeAttribute("aria-describedby", id + "-acc");
@@ -77,18 +77,18 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			rm.writeAttribute("tabindex", "0");
 		}
-	
+
 		// tooltip of Panel
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
-	
-	
+
+
 		// header
 		rm.write("><header id='" + id + "-hdr'");
 		rm.addClass("sapUiPanelHdr");
-	
+
 		// tooltip of Title, might be set in addition
 		var oTitle = oControl.getTitle();
 		var sTitleTooltip;
@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (sTitleTooltip) {
 				rm.writeAttributeEscaped("title", sTitleTooltip);
 			}
-	
+
 			if (oTitle.getLevel() != sap.ui.core.TitleLevel.Auto) {
 				// if title level is set use emphasized of title, otherwise use default one to be compatible
 				sLevel = oTitle.getLevel();
@@ -109,16 +109,16 @@ sap.ui.define(['jquery.sap.global'],
 		if (bEmphasized) {
 			rm.addClass("sapUiPanelHdrEmph");
 		}
-	
+
 		rm.writeClasses();
 		rm.write(">");
-		
+
 		if (oControl.getShowCollapseIcon() && accessibility) {
 			rm.write("<span id=\"" + id + "-acc\" style=\"display:none;\">");
 			rm.writeEscaped(oControl._rb.getText("PANEL_HEAD_ACC"));
 			rm.write("</span>");
 		}
-	
+
 		var sCollapseTooltip = oControl._rb.getText(oControl.getCollapsed() ? "PANEL_EXPAND" : "PANEL_COLLAPSE");
 		if (oControl.getShowCollapseIcon()) { /* TODO: remove this one and rearrange the other in CSS */
 			rm.write("<a id='" + id + "-collArrow' class='sapUiPanelHdrItem sapUiPanelCollArrow' href='javascript:void(0)' tabindex='0' title='" + sCollapseTooltip + "'");
@@ -128,8 +128,8 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			rm.write(">&nbsp;</a>");
 		}
-	
-	
+
+
 		// IMPORTANT: title h1 is always rendered to simplify calculations and because having no title should be a rare use-case
 		// if (oTitle) {
 		if (oTitle && oTitle.getIcon()) {
@@ -137,16 +137,16 @@ sap.ui.define(['jquery.sap.global'],
 			var sIcon = oTitle.getIcon();
 			var aClasses = [];
 			var mAttributes = {};
-	
+
 			mAttributes["id"] = id + "-ico";
 			mAttributes["title"] = null; // prevent icon tooltip
 			aClasses.push("sapUiPanelIco");
 			aClasses.push("sapUiPanelHdrItem");
 			aClasses.push("sapUiTv" + sLevel); // use same font-size like header level (if icon font is used (for image it dosn't matters)
-	
+
 			rm.writeIcon(sIcon, aClasses, mAttributes);
 		}
-	
+
 		// header title text
 		var text = jQuery.sap.encodeHTML(oControl.getText());
 		if (!text) {
@@ -167,26 +167,26 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(text); // already escaped!
 	//	rm.write("</h1>");
 		rm.write("</" + sLevel + ">");
-	
-	
+
+
 	  // toolbar + buttons
 	  var aButtons = oControl.getButtons();
 	  if (aButtons && (aButtons.length > 0)) {
 		rm.write("<div id='" + id + "-tb' class='sapUiPanelHdrItem sapUiPanelTb sapUiTbDesignFlat'>");
-	
+
 		for (var i = 0; i < aButtons.length; i++) {
 			rm.renderControl(aButtons[i]);
 		}
-	
+
 			rm.write("</div>");
 	  }
-	
-	
+
+
 	  // any other right-aligned buttons go like this:
 	  // <a id="firstIcoRight" class="sapUiPanelHdrRightItem sapUiPanel*">O</a>
 	  // the positioning among these items needs to be solved then, either by fixed CSS classes if there are few items (like Right1 Right2)
 	  // or maybe they need to be put into a nowrap div
-	
+
 	  // collapse icon
 	  if (oControl.getShowCollapseIcon()) {
 			rm.write("<a id='" + id + "-collIco' class='sapUiPanelHdrRightItem sapUiPanelCollIco' href='javascript:void(0)' tabindex='0' title='" + sCollapseTooltip + "'");
@@ -196,27 +196,27 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			rm.write(">&nbsp;</a>");
 		}
-	
+
 	  rm.write("</header>");
-	
-	
-	
+
+
+
 		// content area
-	
+
 		// everything below the header is only rendered initially if not collapsed - saves performance and Panel just re-renders later on expand
 		if (!oControl.getCollapsed()) {
 			rm.write("<div class='sapUiPanelCont' id='", id, "-cont'>");
-	
+
 			// Content (child controls)
 			var oControls = oControl.getContent(),
 					iLength = oControls.length;
 			for (var i = 0; i < iLength; i++) {
 				rm.renderControl(oControls[i]);
 			}
-	
+
 			rm.write("</div>");
 		}
-	
+
 		rm.write("</section>");
 	};
 

@@ -119,7 +119,7 @@ function(Controller, Currency) {
 					));
 				}
 			}
-			// Set item active (so it is clickable) and attach the press event 
+			// Set item active (so it is clickable) and attach the press event
 			// handler for showing the details
 			oUIControl.setType(sap.m.ListType.Active);
 			oUIControl.attachPress(this.onItemSelected, this);

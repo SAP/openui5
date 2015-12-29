@@ -11,7 +11,7 @@
                     path: '/ColumnCollection'
                 }">
 				<items>
-					<!-- P13nItem columnKey="name" text="{i18n>ColumnName}" visible="true" 
+					<!-- P13nItem columnKey="name" text="{i18n>ColumnName}" visible="true"
 						/ -->
 					<P13nItem columnKey="{path}" text="{text}" visible="{visible}" />
 				</items>

@@ -155,7 +155,7 @@
 			oBinding.setContext(oContext);
 		});
 	});
-	
+
 	asyncTest("ListBinding relative with context and client-side filters", function(){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("Products");
@@ -363,13 +363,13 @@
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
 			operationMode: sap.ui.model.odata.OperationMode.Client
 		});
-		
+
 		var handler = function(oEvent){
 			oBinding.detachChange(handler);
 
 			var aContexts = oBinding.getContexts();
 			equal(aContexts.length, 8);
-			
+
 			equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
 			equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
 			equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
@@ -380,21 +380,21 @@
 			equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
 
 			equal(oEvent.getParameter("reason"), "sort", "Change reason is 'sort'.");
-			
+
 			start();
 		};
-		
+
 		oModel.metadataLoaded().then(function () {
 			oBinding.initialize();
-			
+
 			// sort in client mode, before data is available
 			var oSorter = new sap.ui.model.Sorter("CategoryName", true);
 			oBinding.sort(oSorter);
-			
+
 			oBinding.attachChange(handler);
 			oBinding.getContexts();
 		});
-		
+
 	});
 
 	asyncTest("ListBinding expand", function(){
@@ -553,7 +553,7 @@
 		oModel.attachRequestSent(fnSent);
 		oBinding.filter([oFilter]);
 	});
-	
+
 	asyncTest("ListBinding filter multiple times", function(){
 		var count = 0;
 		var handler = function(oEvent){
@@ -565,13 +565,13 @@
 			oBinding.detachChange(handler);
 			start();
 		};
-		
+
 		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
 		//check EQ
 		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
 		var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
 		var oFilter3 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
-		
+
 		oModel.metadataLoaded().then(function() {
 			oBinding.bUseExtendedChangeDetection = true;
 			oBinding.initialize();
@@ -694,14 +694,14 @@
 
 		var handler = function (oEvent) {
 			oBinding.detachChange(handler);
-			
+
 			// contexts should be now loaded
 			var aFilteredContexts = oBinding.getContexts();
 			equal(aFilteredContexts.length, 1, "EQ filtered content length");
 			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
-			
+
 			equal(oEvent.getParameter("reason"), "filter", "Change reason is 'filter'.");
-			
+
 			start();
 		};
 
@@ -710,7 +710,7 @@
 			//check EQ
 			var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
 			oBinding.filter([oFilter]);
-			
+
 			oBinding.attachChange(handler);
 			oBinding.getContexts();
 		});
@@ -999,7 +999,7 @@
 		});
 		oBinding.initialize();
 	});
-	
+
 	asyncTest("Suspend/Resume with sort", function() {
 		var oModel = initModel(false);
 		var oBinding = oModel.bindList("/Categories");
@@ -1083,7 +1083,7 @@
 		};
 		var handler2 = function() {
 			ok(false, "Change handler must not be triggered by autorefresh");
-		};		
+		};
 		var handler3 = function() {
 			oBinding.detachChange(handler2);
 			oBinding.attachChange(handler4);
@@ -1104,7 +1104,7 @@
 		});
 		oBinding.initialize();
 	});
-	
+
 	asyncTest("ListBinding filter with empty data", function(){
 		oModel.metadataLoaded().then(function(){
 			var handler = function(oEvent){
@@ -1128,8 +1128,8 @@
 				equal(aFilteredContexts.length, 0, "NE, contains, filtered content length");
 				oBinding.detachChange(handler1);
 				start();
-			};			
-			
+			};
+
 			var oBinding = oModel.bindList("/Categories");
 
 			var fnFilter = function() {
@@ -1145,8 +1145,8 @@
 		});
 
 	});
-	
-	
+
+
 	</script>
 
 </head>

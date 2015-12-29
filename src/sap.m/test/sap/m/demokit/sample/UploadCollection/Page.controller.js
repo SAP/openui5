@@ -91,7 +91,7 @@ sap.ui.define([
 						if (aItems[index].documentId === aItemsToDelete[i].getDocumentId()){
 							aItems.splice(index, 1);
 						}
-					} 
+					}
 				};
 			});
 			this.getView().byId("UploadCollection").getModel().setData({

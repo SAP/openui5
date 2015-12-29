@@ -892,7 +892,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		if (bPM) {
 			iHours += 12;
 		}
-		
+
 		if (iQuarter !== null && iMonth === null && iDay === null) {
 			iMonth = 3 * iQuarter;
 			iDay = 1;
@@ -1111,7 +1111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 	DateFormat.prototype.formatRelative = function(oJSDate, bUTC, aRange) {
 
 		var oToday = new Date(),
-			sScale = this.oFormatOptions.relativeScale || "day",			
+			sScale = this.oFormatOptions.relativeScale || "day",
 			iToday, iDate, iDiff, sPattern, iDiffSeconds;
 
 		iDiffSeconds = (oJSDate.getTime() - oToday.getTime()) / 1000;
@@ -1122,8 +1122,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		if (!aRange) {
 			aRange = this._mRanges[sScale];
 		}
-		
-		// For dates normalize to UTC to avoid issues with summer-/wintertime  
+
+		// For dates normalize to UTC to avoid issues with summer-/wintertime
 		if (sScale == "year" || sScale == "month" || sScale == "day") {
 			iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
 			if (bUTC) {

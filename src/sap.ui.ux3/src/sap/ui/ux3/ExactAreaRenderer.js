@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var ExactAreaRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
