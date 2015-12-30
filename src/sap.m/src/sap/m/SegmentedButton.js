@@ -285,7 +285,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._isMie || this._bInsideDialog) {
 			setTimeout(function () {
 				that._fCalcBtnWidth();
-			},0);
+			},100);
 		} else {
 			that._fCalcBtnWidth();
 		}
