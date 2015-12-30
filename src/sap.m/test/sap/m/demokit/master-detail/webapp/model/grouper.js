@@ -12,17 +12,17 @@ sap.ui.define([
 
 		return {
 
-			/**
-			 * Groups the items by a price in two groups: Lesser equal than 20 and greater than 20
-			 * This grouping function needs the resource bundle so we pass it as a dependency
-			 * @param {sap.ui.model.resource.ResourceModel} oResourceBundle the resource bundle of your i18n model
-			 * @returns {Function} the grouper function you can pass to your sorter
-			 */
-			UnitNumber : function (oResourceBundle) {
-				return function (oContext) {
-					var iPrice = oContext.getProperty("UnitNumber"),
-						sKey,
-						sText;
+		/**
+		 * Groups the items by a price in two groups: Lesser equal than 20 and greater than 20
+		 * This grouping function needs the resource bundle so we pass it as a dependency
+		 * @param oResourceBundle {sap.ui.model.resource.ResourceModel} the resource bundle of your i18n model
+		 * @returns {Function} the grouper function you can pass to your sorter
+		 */
+		groupUnitNumber : function (oResourceBundle) {
+			return function (oContext) {
+				var iPrice = oContext.getProperty("UnitNumber"),
+					sKey,
+					sText;
 
 					if (iPrice <= 20) {
 						sKey = "LE20";

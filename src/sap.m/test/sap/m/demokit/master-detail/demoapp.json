@@ -8,6 +8,7 @@
 		"webapp/controller/ErrorHandler.js",
 		"webapp/controller/ListSelector.js",
 		"webapp/controller/Master.controller.js",
+		"webapp/index.html",
 		"webapp/i18n/i18n.properties",
 		"webapp/localService/metadata.xml",
 		"webapp/localService/mockdata/LineItems.json",

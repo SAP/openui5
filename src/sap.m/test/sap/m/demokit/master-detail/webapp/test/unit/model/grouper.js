@@ -36,7 +36,7 @@ sap.ui.define([
 			oGrouperReturn;
 
 		// System under test
-		var fnGroup = Grouper.UnitNumber(this._oResourceModel.getResourceBundle());
+		var fnGroup = Grouper.groupUnitNumber(this._oResourceModel.getResourceBundle());
 
 		// Assert
 		oGrouperReturn = fnGroup(oContextObject);
@@ -50,7 +50,7 @@ sap.ui.define([
 			oGrouperReturn;
 
 		// System under test
-		var fnGroup = Grouper.UnitNumber(this._oResourceModel.getResourceBundle());
+		var fnGroup = Grouper.groupUnitNumber(this._oResourceModel.getResourceBundle());
 
 		// Assert
 		oGrouperReturn = fnGroup(oContextObject);

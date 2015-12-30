@@ -2,8 +2,7 @@
 		controllerName="sap.ui.demo.masterdetail.controller.Detail"
 		xmlns="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:semantic="sap.m.semantic"
-		xmlns:footerbar="sap.ushell.ui.footerbar">
+		xmlns:semantic="sap.m.semantic">
 
 	<semantic:DetailPage
 			id="page"
@@ -88,7 +87,6 @@
 					id="shareEmail"
 					press="onShareEmailPress"/>
 		</semantic:sendEmailAction>
-
 
 	</semantic:DetailPage>
 
