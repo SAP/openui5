@@ -173,6 +173,17 @@ sap.ui.define([
 								});
 							}
 						});
+					},
+
+					iShouldSeeTheShareEmailButton : function () {
+						return this.waitFor({
+							id : "shareEmail",
+							viewName : sViewName,
+							success : function () {
+								Opa5.assert.ok(true, "The E-Mail button is visible");
+							},
+							errorMessage : "The E-Mail button was not found"
+						});
 					}
 				}
 

@@ -33,7 +33,7 @@ sap.ui.define([
 					// taken care of by the master list itself.
 					iOriginalBusyDelay = oList.getBusyIndicatorDelay();
 
-				this._oGroupSortState = new GroupSortState(oViewModel, grouper.UnitNumber(this.getResourceBundle()));
+				this._oGroupSortState = new GroupSortState(oViewModel, grouper.groupUnitNumber(this.getResourceBundle()));
 
 				this._oList = oList;
 				// keeps the filter and search state
@@ -107,7 +107,6 @@ sap.ui.define([
 				this._applyFilterSearch();
 
 			},
-
 
 			/**
 			 * Event handler for refresh event. Keeps filter, sort
