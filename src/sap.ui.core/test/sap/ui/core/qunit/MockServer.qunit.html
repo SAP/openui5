@@ -2156,7 +2156,7 @@
 				oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
 				oMockServer.start();
 				ok(oMockServer.isStarted(), "Mock server is started");
-				
+
 				//test for filtering by comma
 				var oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection?$filter=substringof(',', type)",
