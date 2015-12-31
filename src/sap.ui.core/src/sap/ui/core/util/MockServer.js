@@ -606,7 +606,7 @@ sap.ui
 						sValue = that._trim(aODataFilterValues[iValueIndex + 1]);
 						sPath = that._trim(aODataFilterValues[iPathIndex + 1]);
 					} else { //e.g.substringof, startswith, endswith
-						var rStringFilterExpr = new RegExp("(substringof|startswith|endswith)\\(([^,\\)]*),(.*)\\)");
+						var rStringFilterExpr = new RegExp("(substringof|startswith|endswith)\\(([^\\)]*),(.*)\\)");
 						aODataFilterValues = rStringFilterExpr.exec(sODataQueryValue);
 						sValue = that._trim(aODataFilterValues[iValueIndex + 2]);
 						sPath = that._trim(aODataFilterValues[iPathIndex + 2]);
