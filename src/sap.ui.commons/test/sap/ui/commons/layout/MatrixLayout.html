@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 
 		<title>MatrixLayout - sap.ui.commons.layout</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.layout.MatrixLayout.gif">
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_goldreflection"
 				data-sap-ui-trace="false"
 				type="text/javascript"
@@ -186,7 +186,7 @@
 							oTF.setEnabled(false);
 							oTF.setValue("Cell @" + i + "," + j);
 						}
-					} 
+					}
 					oML.placeAt("uiArea");
 
 					// MATRIX 2 -> fixed layout
@@ -201,7 +201,7 @@
 					var oTV = new sap.ui.commons.TextView("TV-Head");
 					oMLC.setColSpan(5);
 					oTV.setText("Contact Data");
-					oTV.setDesign(sap.ui.commons.TextViewDesign.H3); 
+					oTV.setDesign(sap.ui.commons.TextViewDesign.H3);
 					oMLC.addContent(oTV);
 					oML2.createRow(oMLC);
 
@@ -250,8 +250,8 @@
 					oTF2.setMaxLength(5);
 					//Test multiple controls within one cell
 					oMLC = new sap.ui.commons.layout.MatrixLayoutCell();
-					oMLC.addContent(oTF); 
-					oMLC.addContent(oTF2); 
+					oMLC.addContent(oTF);
+					oMLC.addContent(oTF2);
 					oML2.createRow(oLabel, oMLC);
 
 			    oLabel = new sap.ui.commons.Label("L-City");
@@ -305,15 +305,15 @@
 			    oRBG.setTooltip('Gender');
 			    oRBG.setColumns(2);
 					oRBG.setEditable(false);
-					var oItem = new sap.ui.core.Item("RB-Male"); 
-			    oItem.setText("Male"); 
+					var oItem = new sap.ui.core.Item("RB-Male");
+			    oItem.setText("Male");
 			    oItem.setTooltip("Gender: male");
-			    oItem.setKey("male"); 
+			    oItem.setKey("male");
 			    oRBG.addItem(oItem);
-					oItem = new sap.ui.core.Item("RB-Female"); 
-			    oItem.setText("Female"); 
+					oItem = new sap.ui.core.Item("RB-Female");
+			    oItem.setText("Female");
 			    oItem.setTooltip("Gender: female");
-			    oItem.setKey("female"); 
+			    oItem.setKey("female");
 			    oRBG.addItem(oItem);
 					oMLC = new sap.ui.commons.layout.MatrixLayoutCell();
 
@@ -396,8 +396,8 @@
 								break;
 							case(1):
 								// RadioButton
-			   				var oCont = new sap.ui.commons.RadioButton("RB-"+i); 
-	    	    		oCont.setText("Disabled " + i); 
+			   				var oCont = new sap.ui.commons.RadioButton("RB-"+i);
+	    	    		oCont.setText("Disabled " + i);
 	      	  		if(i == 5){
 	        				oCont.setSelected(true);
 	        			}else{
@@ -512,7 +512,7 @@
 					}
 
 					var oML4 = new sap.ui.commons.layout.MatrixLayout("Matrix4", {
-						layoutFixed: true, 
+						layoutFixed: true,
 						width: "600px",
 						height: "75px",
 						columns: 3,
@@ -579,7 +579,7 @@
 		<div id="uiArea" style="background:lavender;"></div>
 		<br> Matrix with fixed layout:
 		<br>
-		<div id="uiArea2" style="width: 1000px; border: 1px solid black; box-shadow: 5px 5px 5px black; -moz-box-shadow: 5px 5px 5px black; -webkit-box-shadow: 5px 5px 5px black;"></div>		
+		<div id="uiArea2" style="width: 1000px; border: 1px solid black; box-shadow: 5px 5px 5px black; -moz-box-shadow: 5px 5px 5px black; -webkit-box-shadow: 5px 5px 5px black;"></div>
 		<br> Matrix with fixed layout - test for cell size:
 		<br>
 		<div id="uiArea3" style="background:lavender;"></div>

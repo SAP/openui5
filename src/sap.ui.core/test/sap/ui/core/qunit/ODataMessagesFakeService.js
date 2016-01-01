@@ -1,235 +1,14 @@
+/* eslint-disable no-multi-str */
+
+/* eslint-disable no-extend-native */
 if (!String.prototype.startsWith) {
 	String.prototype.startsWith = function(sString, iPosition) {
+		"use strict";
 		iPosition = iPosition === undefined ? 0 : iPosition;
 		return this.substr(iPosition, sString.length) === sString;
-	}
+	};
 }
-
-
-var mServiceData = {
-	serviceUrl: "fakeservice://testdata/odata/northwind/",
-	collections: {
-		"Products": {
-			count: 20,
-			type: "NorthwindModel.Product",
-			properties: {
-				"ProductID": { type: "id" },
-				"ProductName": { type: "string" },
-				"SupplierID": { type: "int", maxValue: 20 },
-				"CategoryID": { type: "int", maxValue: 20 },
-				"QuantityPerUnit":  { type: "string", choices: ["kg", "pcs", "ml"] },
-				"UnitPrice":  { type: "float" },
-				"UnitsInStock": { type: "int" },
-				"UnitsOnOrder": { type: "int" },
-				"ReorderLevel": { type: "int" },
-				"Discontinued": { type: "bool" },
-			},
-			itemMessages: [{ // Messages per Item
-				"target": "ProductName",
-				"code": "Item",
-				"message": "This Item is very doof",
-				"severity": "error",
-			}],
-			collectionMessages: [{ // Messages per collection
-				"code": "BL/308",
-				"message": "Steward(ess) Miss Piggy is ill and not available",
-				"severity": "info",
-			}]
-		},
-	},
-	
-	metadata: sNorthwindMetadata
-};
-
-
-var oRandomService = new ODataRandomService(mServiceData);
-
-var xhr = sinon.useFakeXMLHttpRequest(), responseDelay = 50, _setTimeout = window.setTimeout;
-
-xhr.useFilters = true;
-xhr.addFilter(function(method, url) {
-	return url.indexOf("fakeservice://") != 0;
-});
-xhr.onCreate = function(request) {
-	request.onSend = function() {
-		// Default request answer values:
-		
-		var sUrl = request.url;
-		var sParams = "";
-		var iParamStart = sUrl.indexOf("?");
-		// if (iParamStart > -1) {
-		// 	sParams = sUrl.substr(iParamStart);
-		// 	sUrl = sUrl.substr(0, iParamStart);
-		// }
-		
-		var bJson = request.url.indexOf("$format=json") > -1 || request.requestHeaders["Accept"].indexOf("application/json") > -1;
-		
-		var sRandomServiceUrl = null;
-		var iResponseDelay = 200;
-		var iStatus = 404;
-		var mResponseHeaders = [];
-		var sAnswer = "Not found";
-		
-		switch (sUrl) {
-			case "fakeservice://testdata/odata/function-imports/":
-				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
-				mResponseHeaders["sap-message"] = JSON.stringify({
-					"code":		"999",
-					"message":	"This is a server wide test message",
-					"severity":	"error",
-					"target":	"",
-					"details": []
-				});
-				sAnswer = sFunctionImportMain;
-				break;
-			
-			case "fakeservice://testdata/odata/function-imports/$metadata":
-				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
-				sAnswer = sFunctionImportMetadata;
-				break;
-
-			case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000001'":
-				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
-				mResponseHeaders["sap-message"] = JSON.stringify({
-					"code":		"999",
-					"message":	"This is FunctionImport specific test message",
-					"severity":	"error",
-					"target":	"",
-					"details": []
-				});
-				mResponseHeaders["location"] = "fakeservice://testdata/odata/function-imports/Products(guid'10000000-0000-0000-0000-000000000000')";
-				sAnswer = sFunctionImportProduct1;
-				break;
-			
-			case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000002'":
-				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
-				mResponseHeaders["sap-message"] = JSON.stringify({
-					"code":		"999",
-					"message":	"This is FunctionImport specific test message",
-					"severity":	"error",
-					"target":	"/Products(guid'20000000-0000-0000-0000-000000000000')",
-					"details": []
-				});
-				sAnswer = sFunctionImportProduct1;
-				break;
-				
-			case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'30000000-0000-0000-0000-000000000003'":
-				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
-				mResponseHeaders["sap-message"] = JSON.stringify({
-					"code":		"999",
-					"message":	"This is FunctionImport specific test message",
-					"severity":	"error",
-					"details": []
-				});
-				sAnswer = sFunctionImportProduct1;
-				break;
-			
-			case "fakeservice://testdata/odata/technical-errors/Error(400)":
-				iStatus = 400;
-				sAnswer = bJson ? sTechnicalError400Json : sTechnicalError400Xml;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
-				break;
-			
-			case "fakeservice://testdata/odata/technical-errors/Error(500)":
-				iStatus = 500;
-				sAnswer = bJson ? sTechnicalError500Json : sTechnicalError500Xml;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
-				break;
-				
-			case "fakeservice://testdata/odata/technical-errors/Error(900)":
-				iStatus = 900;
-				sAnswer = bJson ? sTechnicalError900Json : sTechnicalError900Xml;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
-				break;
-
-			case "fakeservice://testdata/odata/technical-errors/$metadata":
-				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
-				sAnswer = sFunctionImportMetadata;
-				break;
-			
-			case "fakeservice://testdata/odata/technical-errors/Error2(400)":
-				iStatus = 400;
-				sAnswer = bJson ? sTechnicalError400Json2 : sTechnicalError400Xml2;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
-				break;
-				
-			case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000001'":
-				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
-				mResponseHeaders["sap-message"] = JSON.stringify({
-					"code":		"999",
-					"message":	"This is FunctionImport specific test message",
-					"severity":	"error",
-					"target": "",
-					"details": []
-				});
-				sAnswer = sFunctionImportProduct1;
-				break;
-				
-			case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000002'":
-				iStatus = 200;
-				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
-				mResponseHeaders["sap-message"] = JSON.stringify({
-					"code":		"999",
-					"message":	"This is FunctionImport specific test message",
-					"severity":	"error",
-					"target": "/Products(999)/ProductName",
-					"details": []
-				});
-				sAnswer = sFunctionImportProduct1;
-				break;
-					
-				
-			default:
-				if (sUrl.startsWith(mServiceData["serviceUrl"])) {
-					// This one's for us...
-					sRandomServiceUrl = sUrl.substr(mServiceData["serviceUrl"].length);
-				} else {
-					debugger;
-					throw new Error("Unknown Fakeservice URL");
-				}
-			
-		}
-		
-		if (sRandomServiceUrl !== null) {
-			// Use RandomService
-			oRandomService.serveUrl({ 
-				url: sRandomServiceUrl, 
-				request: request,
-				json: bJson
-			});
-		} else if (request.async === true) {
-			var oRequest = request;
-			_setTimeout(function() {
-				oRequest.respond(iStatus, mResponseHeaders, sAnswer);
-			}.bind(this), iResponseDelay);
-		} else {
-			request.respond(iStatus, mResponseHeaders, sAnswer);
-		}
-		
-		
-
-	}
-};
-
-
-
-
-
-
-
-
-
-function ODataRandomService(oServiceConfig) {
-	this._config = oServiceConfig;
-	this._serviceUrl = this._config["serviceUrl"];
-}
+/* eslint-enable no-extend-native */
 
 var mHeaderTypes = {
 	xml: {
@@ -244,576 +23,875 @@ var mHeaderTypes = {
 		"Content-Type" : "application/json;charset=utf-8",
 		"DataServiceVersion" : "2.0;"
 	},
-	text: {	
+	text: {
 		"Content-Type" : "text/plain;charset=utf-8",
 		"DataServiceVersion" : "2.0;"
 	}
 };
 
-
-
-ODataRandomService.prototype.serveUrl = function(mOptions) {
-	this._url     = mOptions.url;
-	this._request = mOptions.request;
-	this._useJson = !!mOptions.json;
-	this._urlInfo = this._parseUrl(mOptions.url);
-
-	var mResponse = this._createResponse(this._urlInfo, mOptions);
-
-	this._answer(mResponse);
-}
-
-
-ODataRandomService.prototype._createResponse = function(mUrlInfo, mOptions) {
-	var mResponse;
-	if (mUrlInfo.path == "") {
-		// Main service document
-		mResponse = this._answerService(mServiceData);
-	} else if (mUrlInfo.path == "$metadata") {
-		mResponse = this._answerMetadata();
-	} else if (mUrlInfo.path == "$batch") {
-		// TODO: Implement batch mode;
-		mResponse = this.handleBatchRequest(mOptions);
-	} else if (mUrlInfo.postfix == "$count" && mServiceData.collections[mUrlInfo.collection]) {
-		mResponse = this._answerCollectionCount(mServiceData.collections[mUrlInfo.collection]);
-	} else if (!mUrlInfo.item && mServiceData.collections[mUrlInfo.collection]) {
-		// Return the whole collection
-		mResponse = this._answerCollection(mUrlInfo.collection, mServiceData.collections[mUrlInfo.collection]);
-	} else if (mUrlInfo.item && mServiceData.collections[mUrlInfo.collection]) {
-		// return Data for one Item
-		mResponse = this._answerCollectionItem(mUrlInfo.item, mUrlInfo.collection, mServiceData.collections[mUrlInfo.collection]);
-	} else {
-		mResponse = this._answerError();
-	}
-	
-	return mResponse;
+var mPredefinedServiceResponses = {
+	// Defined at the end of this file
 };
 
 
-// TODO: !!! Batch support is very shaky and only works for the specific tests - this should be built more robust and standards compliant
+(function(sinon) {
+	"use strict";
 
-ODataRandomService.prototype.handleBatchRequest = function(mOptions) {
-	var mBatchResponse = {}
-	var aSubRequests = this.parseBatchRequest(mOptions.request.requestBody);
-	
-
-	// TODO: boundary is from odata example http://www.odata.org/documentation/odata-version-2-0/batch-processing/
-	var sBatchSeparator = "batch_36522ad7-fc75-4b56-8c71-56071383e77b";
-	
-	mBatchResponse.status = 202;
-	mBatchResponse.headers = {
-		"DataServiceVersion": "2.0",
-		"Content-Type": "multipart/mixed; boundary=" + sBatchSeparator 
-	};
-	mBatchResponse.body = "";
-
-	var bInChangeset = false;
-	for (var i = 0; i < aSubRequests.length; ++i) {
-		
-		var mRequest = aSubRequests[i];
-		
-		var mResponse = this._createResponse(this._parseUrl(mRequest.url), mOptions);
-		
-		var sBatchContentType = "Content-Type: application/http\r\n";
-		
-		if (mRequest.method == "GET") {
-			// All is good
-			bInChangeset = false;
-			
-		} else if (mRequest.method === "HEAD") {
-			bInChangeset = false;
-			
-			mResponse.status = 204;
-			mResponse.body = "";
-		} else {
-			jQuery.sap.log.warning("ODataRandomService ignores writes...");
-			if (!bInChangeset) {
-				mBatchResponse.body += "\r\n--" + sBatchSeparator + "\r\n";
-				mBatchResponse.body += "Content-Type: multipart/mixed; boundary=changeset_" + sBatchSeparator + "\r\n";
-				// TODO: Content-Length: ###
+	var mServiceData = {
+		serviceUrl: "fakeservice://testdata/odata/northwind/",
+		collections: {
+			"Products": {
+				count: 20,
+				type: "NorthwindModel.Product",
+				properties: {
+					"ProductID": { type: "id" },
+					"ProductName": { type: "string" },
+					"SupplierID": { type: "int", maxValue: 5 },
+					"CategoryID": { type: "int", maxValue: 20 },
+					"QuantityPerUnit":  { type: "string", choices: ["kg", "pcs", "ml"] },
+					"UnitPrice":  { type: "float" },
+					"UnitsInStock": { type: "int" },
+					"UnitsOnOrder": { type: "int" },
+					"ReorderLevel": { type: "int" },
+					"Discontinued": { type: "bool" }
+				},
+				navigationProperties: {
+					"Supplier": { entitySet: "Suppliers", key: "4", multiple: false }
+				},
+				itemMessages: [{ // Messages per Item
+					"target": "ProductName",
+					"code": "Item",
+					"message": "This Item is very doof",
+					"severity": "error"
+				}],
+				collectionMessages: [{ // Messages per collection
+					"code": "BL/308",
+					"message": "Steward(ess) Miss Piggy is ill and not available",
+					"severity": "info"
+				}]
+			},
+			"Suppliers": {
+				count: 5,
+				type: "NorthwindModel.Supplier",
+				properties: {
+					"SupplierID": { type: "id" },
+					"SupplierName": { type: "string" }
+				},
+				itemMessages: [{ // Messages per Item
+					"target": "SupplierName",
+					"code": "Item",
+					"message": "This supplier has a name I cannot accept",
+					"severity": "error"
+				}],
+				collectionMessages: [{ // Messages per collection
+					"code": "XY/123",
+					"message": "What the...?",
+					"severity": "info"
+				}]
 			}
-			bInChangeset = true;
-			
-			mResponse.status = 204;
-			mResponse.body = "";
-			delete mResponse.headers["Content-Type"];
-		}
-			
-		// Start new sub request
-		mBatchResponse.body += "\r\n--" + (bInChangeset ? "changeset_" : "") + sBatchSeparator + "\r\n";
-		// Add batch headers
-		
-		mBatchResponse.body += sBatchContentType;
-		mBatchResponse.body += "Content-Transfer-Encoding:binary\r\n";
-		mBatchResponse.body += "\r\n";
-		
-		mBatchResponse.body += "HTTP/1.1 " + mResponse.status + " Ok\r\n";
-		
-		mBatchResponse.body += Object.keys(mResponse.headers).map(function(sKey) {
-			return sKey + ": " + mResponse.headers[sKey];
-		}).join("\r\n") + "\r\n\r\n";
-		mBatchResponse.body += mResponse.body + "\r\n\r\n";
-	}
-	
-	if (bInChangeset) {
-		mBatchResponse.body += "--changeset_" + sBatchSeparator + "--\r\n";
-	}
-	
-	mBatchResponse.body += "--" + sBatchSeparator + "--";
-	
-	return mBatchResponse;
-};
+		},
+
+		metadata: mPredefinedServiceResponses.northwindMetadata
+	};
+
+	var oRandomService = new ODataRandomService(mServiceData);
+
+	var xhr = sinon.useFakeXMLHttpRequest(), responseDelay = 50, _setTimeout = window.setTimeout;
+
+	xhr.useFilters = true;
+	xhr.addFilter(function(method, url) {
+		return url.indexOf("fakeservice://") != 0;
+	});
+	xhr.onCreate = function(request) {
+		request.onSend = function() {
+			// Default request answer values:
+
+			var sUrl = request.url;
+			var bJson = request.url.indexOf("$format=json") > -1 || request.requestHeaders["Accept"].indexOf("application/json") > -1;
+
+			var sRandomServiceUrl = null;
+			var iResponseDelay = 200;
+			var iStatus = 404;
+			var mResponseHeaders = [];
+			var sAnswer = "Not found";
+
+			switch (sUrl) {
+				case "fakeservice://testdata/odata/function-imports/":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		"999",
+						"message":	"This is a server wide test message",
+						"severity":	"error",
+						"target":	"",
+						"details": []
+					});
+					sAnswer = mPredefinedServiceResponses.functionImportMain;
+					break;
+
+				case "fakeservice://testdata/odata/function-imports/$metadata":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
+					sAnswer = mPredefinedServiceResponses.functionImportMetadata;
+					break;
+
+				case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000001'":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		"999",
+						"message":	"This is FunctionImport specific test message",
+						"severity":	"error",
+						"target":	"",
+						"details": []
+					});
+					mResponseHeaders["location"] = "fakeservice://testdata/odata/function-imports/Products(guid'10000000-0000-0000-0000-000000000000')";
+					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
+					break;
+
+				case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'00000000-0000-0000-0000-000000000002'":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		"999",
+						"message":	"This is FunctionImport specific test message",
+						"severity":	"error",
+						"target":	"/Products(guid'20000000-0000-0000-0000-000000000000')",
+						"details": []
+					});
+					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
+					break;
+
+				case "fakeservice://testdata/odata/function-imports/EditProduct?ProductUUID=guid'30000000-0000-0000-0000-000000000003'":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		"999",
+						"message":	"This is FunctionImport specific test message",
+						"severity":	"error",
+						"details": []
+					});
+					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
+					break;
+
+				case "fakeservice://testdata/odata/technical-errors/Error(400)":
+					iStatus = 400;
+					sAnswer = bJson ? mPredefinedServiceResponses.technicalError400Json : mPredefinedServiceResponses.technicalError400Xml;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+					break;
+
+				case "fakeservice://testdata/odata/technical-errors/Error(500)":
+					iStatus = 500;
+					sAnswer = bJson ? mPredefinedServiceResponses.technicalError500Json : mPredefinedServiceResponses.technicalError500Xml;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+					break;
+
+				case "fakeservice://testdata/odata/technical-errors/Error(900)":
+					iStatus = 900;
+					sAnswer = bJson ? mPredefinedServiceResponses.technicalError900Json : mPredefinedServiceResponses.technicalError900Xml;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+					break;
+
+				case "fakeservice://testdata/odata/technical-errors/$metadata":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
+					sAnswer = mPredefinedServiceResponses.functionImportMetadata;
+					break;
+
+				case "fakeservice://testdata/odata/technical-errors/Error2(400)":
+					iStatus = 400;
+					sAnswer = bJson ? mPredefinedServiceResponses.technicalError400Json2 : mPredefinedServiceResponses.technicalError400Xml2;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes[bJson ? "json" : "xml"]);
+					break;
+
+				case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000001'":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		"999",
+						"message":	"This is FunctionImport specific test message",
+						"severity":	"error",
+						"target": "",
+						"details": []
+					});
+					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
+					break;
+
+				case "fakeservice://testdata/odata/function-imports/ActionForFunction?SupplierUUID=guid'00000000-0000-0000-0000-000000000002'":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		"999",
+						"message":	"This is FunctionImport specific test message",
+						"severity":	"error",
+						"target": "/Products(999)/ProductName",
+						"details": []
+					});
+					sAnswer = mPredefinedServiceResponses.functionImportProduct1;
+					break;
+
+				// Special function import for showing use of invalid targets
+				case "fakeservice://testdata/odata/northwind/functionWithInvalidTarget":
+					iStatus = 204;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		Date.now(),
+						"message":	"This is FunctionImport specific message that will stay until the function is called again.",
+						"severity":	"error",
+						"target": "/PersistedMessages/functionWithInvalidTarget",
+						"details": [{
+							"code":		Date.now(),
+							"message":	"This is a message for '/Products(1)'.",
+							"severity":	"warning",
+							"target": "/Products(1)/SupplierID",
+						}]
+					});
+					mResponseHeaders["location"] = "fakeservice://testdata/odata/northwind/Products(1)";
+					sAnswer = "";
+					break;
+
+				default:
+					if (sUrl.startsWith(mServiceData["serviceUrl"])) {
+						// This one's for us...
+						sRandomServiceUrl = sUrl.substr(mServiceData["serviceUrl"].length);
+					} else {
+						/* eslint-disable no-debugger */
+						debugger;
+						/* eslint-enable no-debugger */
+						throw new Error("Unknown Fakeservice URL");
+					}
+
+			}
+
+			if (sRandomServiceUrl !== null) {
+				// Use RandomService
+				oRandomService.serveUrl({
+					url: sRandomServiceUrl,
+					request: request,
+					json: bJson
+				});
+			} else if (request.async === true) {
+				var oRequest = request;
+				_setTimeout(function() {
+					oRequest.respond(iStatus, mResponseHeaders, sAnswer);
+				}, iResponseDelay);
+			} else {
+				request.respond(iStatus, mResponseHeaders, sAnswer);
+			}
+		};
+	};
 
 
-ODataRandomService.prototype.parseBatchRequest = function(sBatchContent) {
-	function parseHeaders(vHeaders) {
-		var mHeaders = {};
-		
-		var aHeaders = Array.isArray(vHeaders) ? vHeaders : vHeaders.split("\n");
-		for (var i = 0; i < aHeaders.length; ++i) {
-			var aSingleHeader = aHeaders[i].toLowerCase().split(":");
-			mHeaders[aSingleHeader[0].trim()] = aSingleHeader[1].trim();
+
+
+
+
+
+
+
+	function ODataRandomService(oServiceConfig) {
+		this._config = oServiceConfig;
+		this._serviceUrl = this._config["serviceUrl"];
+	}
+
+	ODataRandomService.prototype.serveUrl = function(mOptions) {
+		this._url     = mOptions.url;
+		this._request = mOptions.request;
+		this._useJson = !!mOptions.json;
+		this._urlInfo = this._parseUrl(mOptions.url);
+
+		var mResponse = this._createResponse(this._urlInfo, mOptions);
+
+		this._answer(mResponse);
+	};
+
+
+	ODataRandomService.prototype._createResponse = function(mUrlInfo, mOptions) {
+		var mResponse;
+		var mCollection = mServiceData.collections[mUrlInfo.collection];
+
+		if (mUrlInfo.path == "") {
+			// Main service document
+			mResponse = this._answerService(mServiceData);
+		} else if (mUrlInfo.path == "$metadata") {
+			mResponse = this._answerMetadata();
+		} else if (mUrlInfo.path == "$batch") {
+			// TODO: Implement batch mode;
+			mResponse = this.handleBatchRequest(mOptions);
+		} else if (mUrlInfo.postfix == "$count" && mCollection) {
+			mResponse = this._answerCollectionCount(mCollection);
+		} else if (!mUrlInfo.item && mCollection) {
+			// Return the whole collection
+			mResponse = this._answerCollection(mUrlInfo.collection, mCollection);
+		} else if (mUrlInfo.item && mCollection && mUrlInfo.postfix && mCollection.navigationProperties[mUrlInfo.postfix]) {
+			var sResolvedPath = this.resolveNavigationProperty(mCollection, mUrlInfo.item, mUrlInfo.postfix);
+			var mResolvedUrlInfo = this._parseUrl(sResolvedPath);
+			mOptions.useAboluteMessagePath = true;
+			mResponse = this._createResponse(mResolvedUrlInfo, mOptions);
+		} else if (mUrlInfo.item && mCollection) {
+			// return Data for one Item
+			mResponse = this._answerCollectionItem(mUrlInfo.item, mUrlInfo.collection, mCollection, mOptions);
+		} else {
+			mResponse = this._answerError();
 		}
-		
-		
-		return mHeaders;
-	}
-	
-	// TODO: The following replaces all instances of \r\n - even in the payload... not sure this is ok even for our tests...
-	// The separator is the first line of the body (or second if only return in first one)
-	var aMatches = sBatchContent.match(/^[\r\n]*([^\n]*)/m);
-	
-	if (!aMatches || !aMatches[1]) {
-		throw new Error("Batch request did not contain separator");
-	}
-	
-	var sSeparator = aMatches[1].trim();
-	
-	var aContentParts = sBatchContent.replace(sSeparator + "--", "").trim().split(sSeparator).slice(1);
-	
-	// TODO: Handle changesets correctly
-	if (aContentParts.length == 1) {
-		sBatchContent = aContentParts[0];
-		aMatches = sBatchContent.match(/^.*boundary=([^\n]*)/m);
+
+		return mResponse;
+	};
+
+
+	ODataRandomService.prototype.resolveNavigationProperty = function(mCollection, sItem, sNavigationProperty) {
+		var mNavigationProperty = mCollection.navigationProperties[sNavigationProperty];
+		return mNavigationProperty.entitySet + "(" + mNavigationProperty.key + ")";
+	};
+
+	// TODO: !!! Batch support is very shaky and only works for the specific tests - this should be built more robust and standards compliant
+
+	ODataRandomService.prototype.handleBatchRequest = function(mOptions) {
+		var mBatchResponse = {};
+		var aSubRequests = this.parseBatchRequest(mOptions.request.requestBody);
+
+
+		// TODO: boundary is from odata example http://www.odata.org/documentation/odata-version-2-0/batch-processing/
+		var sBatchSeparator = "batch_36522ad7-fc75-4b56-8c71-56071383e77b";
+
+		mBatchResponse.status = 202;
+		mBatchResponse.headers = {
+			"DataServiceVersion": "2.0",
+			"Content-Type": "multipart/mixed; boundary=" + sBatchSeparator
+		};
+		mBatchResponse.body = "";
+
+
+		function createHeaderString(mHeaders) {
+			return Object.keys(mHeaders).map(function(sKey) {
+				return sKey + ": " + mHeaders[sKey];
+			}).join("\r\n");
+		}
+
+
+		var bInChangeset = false;
+		for (var i = 0; i < aSubRequests.length; ++i) {
+
+			var mRequest = aSubRequests[i];
+
+			var mResponse = this._createResponse(this._parseUrl(mRequest.url), mOptions);
+
+			var sBatchContentType = "Content-Type: application/http\r\n";
+
+			if (mRequest.method == "GET") {
+				// All is good
+				bInChangeset = false;
+
+			} else if (mRequest.method === "HEAD") {
+				bInChangeset = false;
+
+				mResponse.status = 204;
+				mResponse.body = "";
+			} else {
+				jQuery.sap.log.warning("ODataRandomService ignores writes...");
+				if (!bInChangeset) {
+					mBatchResponse.body += "\r\n--" + sBatchSeparator + "\r\n";
+					mBatchResponse.body += "Content-Type: multipart/mixed; boundary=changeset_" + sBatchSeparator + "\r\n";
+					// TODO: Content-Length: ###
+				}
+				bInChangeset = true;
+
+				mResponse.status = 204;
+				mResponse.body = "";
+				delete mResponse.headers["Content-Type"];
+			}
+
+			// Start new sub request
+			mBatchResponse.body += "\r\n--" + (bInChangeset ? "changeset_" : "") + sBatchSeparator + "\r\n";
+			// Add batch headers
+
+			mBatchResponse.body += sBatchContentType;
+			mBatchResponse.body += "Content-Transfer-Encoding:binary\r\n";
+			mBatchResponse.body += "\r\n";
+
+			mBatchResponse.body += "HTTP/1.1 " + mResponse.status + " Ok\r\n";
+
+			mBatchResponse.body += createHeaderString(mResponse.headers) + "\r\n\r\n";
+			mBatchResponse.body += mResponse.body + "\r\n\r\n";
+		}
+
+		if (bInChangeset) {
+			mBatchResponse.body += "--changeset_" + sBatchSeparator + "--\r\n";
+		}
+
+		mBatchResponse.body += "--" + sBatchSeparator + "--";
+
+		return mBatchResponse;
+	};
+
+
+	ODataRandomService.prototype.parseBatchRequest = function(sBatchContent) {
+		function parseHeaders(vHeaders) {
+			var mHeaders = {};
+
+			var aHeaders = Array.isArray(vHeaders) ? vHeaders : vHeaders.split("\n");
+			for (var i = 0; i < aHeaders.length; ++i) {
+				var aSingleHeader = aHeaders[i].toLowerCase().split(":");
+				mHeaders[aSingleHeader[0].trim()] = aSingleHeader[1].trim();
+			}
+
+
+			return mHeaders;
+		}
+
+		// TODO: The following replaces all instances of \r\n - even in the payload... not sure this is ok even for our tests...
+		// The separator is the first line of the body (or second if only return in first one)
+		var aMatches = sBatchContent.match(/^[\r\n]*([^\n]*)/m);
 
 		if (!aMatches || !aMatches[1]) {
-			throw new Error("Changeset did not contain separator");
+			throw new Error("Batch request did not contain separator");
 		}
 
-		sSeparator = aMatches[1].trim();		
-		
-		aContentParts = aContentParts[0].replace(sSeparator + "--", "").trim().split(sSeparator).slice(2);
-	}
-	
-	
-	var aRequests = aContentParts.map(function(sSingleRequest) {
-		var mRequest = {};
-		
-		// Replace \r\n and \r with just \n so we can split easier
-		sSingleRequest = sSingleRequest.replace(/\r\n|\r/g, "\n").trim();
-		if (sSingleRequest.length === 0) {
-			return;
-		}
-		
-		var aSplitted = sSingleRequest.trim().split("\n\n");
-		
-		mRequest.batchHeaders = parseHeaders(aSplitted[0]);
-		
-		var aLines = aSplitted[1].trim().split("\n");
+		var sSeparator = aMatches[1].trim();
 
-		var sRequestLine = aLines.shift();
-		var aMatches = /([^ ]*) (.*) (HTTP.*)/.exec(sRequestLine);
-		
-		mRequest.method = aMatches[1];
-		mRequest.url = aMatches[2];
-		mRequest.headers = parseHeaders(aLines);
-		mRequest.body = aSplitted[2] ? aSplitted[2] : "";
-		
-		return mRequest;
-	});
-	
-	return aRequests;
-};
+		var aContentParts = sBatchContent.replace(sSeparator + "--", "").trim().split(sSeparator).slice(1);
 
-ODataRandomService.prototype._answer = function(mResponse) {
-	function fnRespond(oRequest, mResponse) {
-		oRequest.respond(mResponse.status, mResponse.headers, mResponse.body);
-	} 
-	
-	if (this._request.async === true) {
-		_setTimeout(fnRespond.bind(this, this._request, mResponse), responseDelay);
-	} else {
-		fnRespond(this._request, mResponse);
-	}
-}
+		// TODO: Handle changesets correctly
+		if (aContentParts.length == 1) {
+			sBatchContent = aContentParts[0];
+			aMatches = sBatchContent.match(/^.*boundary=([^\n]*)/m);
 
-ODataRandomService.prototype._parseUrl = function(sUrl) {
-	var sPath, sCollection, sItem, sPostfix;
-	
-	var aMatches = sUrl.match(/^(.*)\?(.*)$/)
-	if (aMatches) {
-		sPath   = aMatches[1];
-		sParams = aMatches[2];
-	} else {
-		sPath   = sUrl;
-		sParams = "";
-	}
-
-	var sCollection = "";
-	var sItem = "";
-	var sPostfix = "";
-	aMatches = sPath.match(/^([A-Za-z0-9]+)([\(\)(0-9)]*)\/{0,1}(.*)$/);
-	if (aMatches && aMatches.length === 3) {
-		sCollection = aMatches[1];
-		sPostfix = aMatches[2];
-	} else if (aMatches && aMatches.length === 4) {
-		sCollection = aMatches[1];
-		sItem = aMatches[2].replace(/^\(|\)$/g, "");
-		sPostfix = aMatches[3];
-	} else {
-		sCollection = sPath;
-	}
-	
-	return {
-		path: sPath,
-		collection: sCollection,
-		item: sItem,
-		postfix: sPostfix
-	};
-};
-
-
-ODataRandomService.prototype._answerCollectionItem = function(sItem, sCollection, mCollection) {
-	var aMessages = [];
-	
-	var sItemUrl = this._serviceUrl + sCollection + "(" + sItem + ")";
-		
-	var mItem = {
-		"__metadata": {
-			"id": sItemUrl,
-			"uri": sItemUrl,
-			"type": mCollection.type
-		},
-	};
-	
-	for (var sName in mCollection.properties) {
-		mItem[sName] = this._createData(mCollection.properties[sName], sItem);
-	}
-	
-		
-	if (mCollection.itemMessages) {
-		for (var n = 0; n < mCollection.itemMessages.length; ++n) {
-			var mMessage = jQuery.extend({}, mCollection.itemMessages[n]);
-			mMessage.target = mCollection.itemMessages[n].target;
-			aMessages.push(mMessage);
-		}
-	}
-	
-	
-	var mAnswer = {
-		d: {
-			results: [ mItem ]
-		}
-	}
-	
-	if (mCollection.message) {
-		aMessages.push(mCollection.message);
-	}
-
-	if (mCollection.collectionMessages) {
-		for (var i = 0; i < mCollection.collectionMessages.length; ++i) {
-			var mMessage = jQuery.extend({}, mCollection.collectionMessages[i]);
-			mMessage.target = "/" + sCollection;
-			aMessages.push(mMessage);
-		}
-	}
-	
-	var sType = this._useJson ? "json" : "atom";
-	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
-
-	var mHead = jQuery.extend({}, mHeaderTypes[sType]);
-	mHead["sap-message"] = this._createMessageHeader(aMessages);
-	
-	return {
-		status: 200,
-		headers: mHead,
-		body: sAnswer
-	};
-};
-
-ODataRandomService.prototype._answerError = function(iStatus, mHeaders, sAnswer) {
-	var mAnswer = {
-		error: {
-			code: "GNARF/42",
-			message: {
-				lang: "en-US",
-				value: "Good news everyone: Something horrible happened!"
+			if (!aMatches || !aMatches[1]) {
+				throw new Error("Changeset did not contain separator");
 			}
+
+			sSeparator = aMatches[1].trim();
+
+			aContentParts = aContentParts[0].replace(sSeparator + "--", "").trim().split(sSeparator).slice(2);
 		}
-	};
 
-	var sType = this._useJson ? "json" : "atom";
-	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "error");
 
-	return {
-		status: 200,
-		headers: mHeaderTypes[sType],
-		body: sAnswer
-	};
-};
+		var aRequests = aContentParts.map(function(sSingleRequest) {
+			var mRequest = {};
 
-ODataRandomService.prototype._createXmlAnswer = function(mAnswer, sType) {
-	var sAnswer = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-
-	if (sType === "error") {
-		// This is an error response
-		sAnswer += "<m:error xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">";
-		sAnswer += "<m:code>" + mAnswer.error.code + "</m:code>";
-		sAnswer += "<m:message xml:lang=\"" +  mAnswer.error.message.lang + "\">" + mAnswer.error.message.value + "</m:message>";
-		sAnswer += "</m:error>";
-	} else if (sType === "service") {
-		sAnswer += "<service xmlns=\"http://www.w3.org/2007/app\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xml:base=\"http://services.odata.org/V3/Northwind/Northwind.svc/\">";
-		sAnswer += "<workspace>";
-		sAnswer += "<atom:title>Default</atom:title>";
-		
-		for (var i = 0; i < mAnswer.d.EntitySets.length; ++i) {
-			var sName = mAnswer.d.EntitySets[i];
-			sAnswer += "<collection href=\"" + sName + "\">";
-			sAnswer += "<atom:title>" + sName + "</atom:title>";
-			sAnswer += "</collection>";
-		}
-		
-		sAnswer += "</workspace>";
-		sAnswer += "</service>";
-	} else if (sType === "collection") {
-		sAnswer += "<feed xmlns=\"http://www.w3.org/2005/Atom\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"; // TODO: xml:base needed?
-		// sAnswer += "<id>" + NOTINJSON. + "</id>";
-		// sAnswer += "<title>" + NOTINJSON. + "</title>";
-		// sAnswer += "<updated>" + NOTINJSON. + "</updated>";
-		// sAnswer += "<link rel=\"self\" title=\"" + NOTINJSON. + "\" href=\"" + NOTINJSON + "\" />";
-		
-		for (var i = 0; i < mAnswer.d.results.length; ++i) {
-			var mEntry = mAnswer.d.results[i];
-			sAnswer += "<entry>";
-			
-			sAnswer += "<id>" + mEntry.__metadata.id + "</id>";
-			sAnswer += "<content type=\"application/xml\">";
-			sAnswer += "<m:properties>";
-			
-			for (var sProp in mEntry) {
-				if (sProp === "__metadata") {
-					continue;
-				}
-
-				sAnswer += "<d:" + sProp + ">";
-				sAnswer += mEntry[sProp];
-				sAnswer += "</d:" + sProp + ">";
+			// Replace \r\n and \r with just \n so we can split easier
+			sSingleRequest = sSingleRequest.replace(/\r\n|\r/g, "\n").trim();
+			if (sSingleRequest.length === 0) {
+				return {};
 			}
-			
-			sAnswer += "</m:properties>";
-			sAnswer += "</content>";
-			
-			sAnswer += "</entry>";
+
+			var aSplitted = sSingleRequest.trim().split("\n\n");
+
+			mRequest.batchHeaders = parseHeaders(aSplitted[0]);
+
+			var aLines = aSplitted[1].trim().split("\n");
+
+			var sRequestLine = aLines.shift();
+			var aMatches = /([^ ]*) (.*) (HTTP.*)/.exec(sRequestLine);
+
+			mRequest.method = aMatches[1];
+			mRequest.url = aMatches[2];
+			mRequest.headers = parseHeaders(aLines);
+			mRequest.body = aSplitted[2] ? aSplitted[2] : "";
+
+			return mRequest;
+		});
+
+		return aRequests;
+	};
+
+	ODataRandomService.prototype._answer = function(mResponse) {
+		function fnRespond(oRequest, mResponse) {
+			oRequest.respond(mResponse.status, mResponse.headers, mResponse.body);
 		}
-		
-		sAnswer += "</feed>";
-		
-		
-	} else if (sType === "entity") {
-		throw "nö";
-	}
-	
-	return sAnswer;
-};
 
-ODataRandomService.prototype._answerMetadata = function() {
-	return {
-		status: 200,
-		headers: mHeaderTypes["xml"],
-		body: sNorthwindMetadata
-	};
-}
-
-ODataRandomService.prototype._answerService = function(oServiceData) {
-	var mAnswer = {
-		d: {
-			EntitySets: oServiceData.collections
+		if (this._request.async === true) {
+			_setTimeout(fnRespond.bind(this, this._request, mResponse), responseDelay);
+		} else {
+			fnRespond(this._request, mResponse);
 		}
 	};
 
-	var sType = this._useJson ? "json" : "atom";
-	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "service");
+	ODataRandomService.prototype._parseUrl = function(sUrl) {
+		var sPath = "",
+			sCollection = "",
+			sItem = "",
+			sPostfix = "",
+			sParams = "";
 
-	return {
-		status: 200,
-		headers: mHeaderTypes[sType],
-		body: sAnswer
+		var aMatches = sUrl.match(/^(.*)\?(.*)$/);
+		if (aMatches) {
+			sPath   = aMatches[1];
+			sParams = aMatches[2];
+		} else {
+			sPath   = sUrl;
+			sParams = "";
+		}
+
+		aMatches = sPath.match(/^([A-Za-z0-9]+)([\(\)(0-9)]*)\/{0,1}(.*)$/);
+		if (aMatches && aMatches.length === 3) {
+			sCollection = aMatches[1];
+			sPostfix = aMatches[2];
+		} else if (aMatches && aMatches.length === 4) {
+			sCollection = aMatches[1];
+			sItem = aMatches[2].replace(/^\(|\)$/g, "");
+			sPostfix = aMatches[3];
+		} else {
+			sCollection = sPath;
+		}
+
+		return {
+			path: sPath,
+			collection: sCollection,
+			item: sItem,
+			postfix: sPostfix,
+			parameters: sParams
+		};
 	};
-}
 
-ODataRandomService.prototype._answerCollectionCount = function(oColData) {
-	return {
-		status: 200,
-		headers: mHeaderTypes[mHeaderTypes["text"]],
-		body: "" + oColData.count
-	};
-}
 
-ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
-	var aItems = [];
-	var aMessages = [];
-	
-	for (var i = 0; i < oColData.count; ++i) {
-		var sItemUrl = this._serviceUrl + sColName + "(" + (i + 1) + ")";
-		
+	ODataRandomService.prototype._answerCollectionItem = function(sItem, sCollection, mCollection, mOptions) {
+		var mMessage, aMessages = [];
+
+		var sTargetPrefix = mOptions.useAboluteMessagePath ? "/" + sCollection + "(" + sItem + ")/" : "";
+
+		var sItemUrl = this._serviceUrl + sCollection + "(" + sItem + ")";
+
 		var mItem = {
 			"__metadata": {
 				"id": sItemUrl,
 				"uri": sItemUrl,
-				"type": oColData.type
-			},
+				"type": mCollection.type
+			}
 		};
-		
-		for (var sName in oColData.properties) {
-			mItem[sName] = this._createData(oColData.properties[sName], i + 1);
+
+		for (var sName in mCollection.properties) {
+			mItem[sName] = this._createData(mCollection.properties[sName], sItem);
 		}
-		
-		aItems.push(mItem);
-		
-		if (oColData.itemMessages) {
-			for (var n = 0; n < oColData.itemMessages.length; ++n) {
-				var mMessage = jQuery.extend({}, oColData.itemMessages[n]);
-				mMessage.target = "(" + (i + 1) + ")/" + oColData.itemMessages[n].target;
+
+
+		if (mCollection.itemMessages) {
+			for (var n = 0; n < mCollection.itemMessages.length; ++n) {
+				mMessage = jQuery.extend({}, mCollection.itemMessages[n]);
+				mMessage.target = sTargetPrefix + mCollection.itemMessages[n].target;
 				aMessages.push(mMessage);
 			}
 		}
-	}
-	
-	
-	var mAnswer = {
-		d: {
-			results: aItems
-		}
-	}
-	
-	if (oColData.message) {
-		aMessages.push(oColData.message);
-	}
 
-	if (oColData.collectionMessages) {
-		for (var i = 0; i < oColData.collectionMessages.length; ++i) {
-			var mMessage = jQuery.extend({}, oColData.collectionMessages[i]);
-			mMessage.target = "/" + sColName;
-			aMessages.push(mMessage);
-		}
-	}
-	
-	var sType = this._useJson ? "json" : "atom";
-	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
 
-	var mHead = jQuery.extend({}, mHeaderTypes[sType]);
-	mHead["sap-message"] = this._createMessageHeader(aMessages);
-	
-	return {
-		status: 200,
-		headers: mHead,
-		body: sAnswer
+		var mAnswer = {
+			d: {
+				results: [ mItem ]
+			}
+		};
+
+		if (mCollection.message) {
+			aMessages.push(mCollection.message);
+		}
+
+		if (mCollection.collectionMessages) {
+			for (var i = 0; i < mCollection.collectionMessages.length; ++i) {
+				mMessage = jQuery.extend({}, mCollection.collectionMessages[i]);
+				mMessage.target = "/" + sCollection;
+				aMessages.push(mMessage);
+			}
+		}
+
+		var sType = this._useJson ? "json" : "atom";
+		var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
+
+		var mHead = jQuery.extend({}, mHeaderTypes[sType]);
+		mHead["sap-message"] = this._createMessageHeader(aMessages);
+
+		return {
+			status: 200,
+			headers: mHead,
+			body: sAnswer
+		};
 	};
-}
 
-ODataRandomService.prototype._createMessageHeader = function(aMessages) {
-	var mMessage = {
-		"code": aMessages[0].code,
-		"message": aMessages[0].message,
-		"severity": aMessages[0].severity,
-		"target": aMessages[0].target,
-		"details": []
-	}
-	
-	for (var i = 1 /* skip first */; i < aMessages.length; ++i) {
-		mMessage.details.push({
-			"code": aMessages[i].code,
-			"message": aMessages[i].message,
-			"severity": aMessages[i].severity,
-			"target": aMessages[i].target,
-		});
-	}
-	
-	return JSON.stringify(mMessage);
-}
+	ODataRandomService.prototype._answerError = function() {
+		var mAnswer = {
+			error: {
+				code: "GNARF/42",
+				message: {
+					lang: "en-US",
+					value: "Good news everyone: Something horrible happened!"
+				}
+			}
+		};
 
-ODataRandomService.prototype._createData = function(mOptions, sId) {
-	switch (mOptions.type) {
-		case "string":
-			if (mOptions.choices) {
-				return mOptions.choices[Math.floor(Math.random() * mOptions.choices.length)];
-			} else {
-				return this._createRandomString();
+		var sType = this._useJson ? "json" : "atom";
+		var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "error");
+
+		return {
+			status: 200,
+			headers: mHeaderTypes[sType],
+			body: sAnswer
+		};
+	};
+
+	ODataRandomService.prototype._createXmlAnswer = function(mAnswer, sType) {
+		var i;
+		var sAnswer = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+
+		if (sType === "error") {
+			// This is an error response
+			sAnswer += "<m:error xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">";
+			sAnswer += "<m:code>" + mAnswer.error.code + "</m:code>";
+			sAnswer += "<m:message xml:lang=\"" +  mAnswer.error.message.lang + "\">" + mAnswer.error.message.value + "</m:message>";
+			sAnswer += "</m:error>";
+		} else if (sType === "service") {
+			sAnswer += "<service xmlns=\"http://www.w3.org/2007/app\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xml:base=\"http://services.odata.org/V3/Northwind/Northwind.svc/\">";
+			sAnswer += "<workspace>";
+			sAnswer += "<atom:title>Default</atom:title>";
+
+			for (i = 0; i < mAnswer.d.EntitySets.length; ++i) {
+				var sName = mAnswer.d.EntitySets[i];
+				sAnswer += "<collection href=\"" + sName + "\">";
+				sAnswer += "<atom:title>" + sName + "</atom:title>";
+				sAnswer += "</collection>";
 			}
 
-		case "id":
-			return sId;
+			sAnswer += "</workspace>";
+			sAnswer += "</service>";
+		} else if (sType === "collection") {
+			sAnswer += "<feed xmlns=\"http://www.w3.org/2005/Atom\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">"; // TODO: xml:base needed?
+			// sAnswer += "<id>" + NOTINJSON. + "</id>";
+			// sAnswer += "<title>" + NOTINJSON. + "</title>";
+			// sAnswer += "<updated>" + NOTINJSON. + "</updated>";
+			// sAnswer += "<link rel=\"self\" title=\"" + NOTINJSON. + "\" href=\"" + NOTINJSON + "\" />";
 
-		case "int":
-			var iMax = mOptions.maxValue ? mOptions.maxValue : 99;
-			return Math.round(Math.random() * iMax);
+			for (i = 0; i < mAnswer.d.results.length; ++i) {
+				var mEntry = mAnswer.d.results[i];
+				sAnswer += "<entry>";
 
-		case "float":
-			var iMax = mOptions.maxValue ? mOptions.maxValue : 99;
-			return Math.random() * iMax;
+				sAnswer += "<id>" + mEntry.__metadata.id + "</id>";
+				sAnswer += "<content type=\"application/xml\">";
+				sAnswer += "<m:properties>";
 
-		case "bool":
-			return Math.random >= 0.5;
+				for (var sProp in mEntry) {
+					if (sProp === "__metadata") {
+						continue;
+					}
 
-		default:
-			return "INVALID DATA TYPE!!!";
-	}
-}
+					sAnswer += "<d:" + sProp + ">";
+					sAnswer += mEntry[sProp];
+					sAnswer += "</d:" + sProp + ">";
+				}
 
-ODataRandomService.prototype._createRandomString = function(iSyllables) {
-	var aSyllables = [[
-		"b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "r", "s", "t", "v", "w", "y", "z",
-		"th", "sh", "ph",
-		"bl", "cl", "kl", "pl", "sl",
-		"gn", "kn", "pn", "sn",
-		"br", "cr", "dr", "fr", "gr", "kr", "pr", "tr"
-	], [
-		"a", "e", "i", "o", "u", "y",
-		"ai", "au", "ay",
-		"ei", "ey",
-		"ou", "oy",
-	]];
-	var iSizes = [
-		aSyllables[0].length, aSyllables[1].length
-	];
+				sAnswer += "</m:properties>";
+				sAnswer += "</content>";
 
-	if (iSyllables === undefined) {
-		iSyllables = 5;
-	}
+				sAnswer += "</entry>";
+			}
 
-	var sString = "";
-
-	var s = 0;
-	for (var i = 0; i < iSyllables; i++) {
-		sString += aSyllables[s][Math.floor(Math.random() * iSizes[s])];
-		s = s == 0 ? 1 : 0;
-	}
-
-	return sString;
-}
+			sAnswer += "</feed>";
 
 
+		} else if (sType === "entity") {
+			throw "nö";
+		}
+
+		return sAnswer;
+	};
+
+	ODataRandomService.prototype._answerMetadata = function() {
+		return {
+			status: 200,
+			headers: mHeaderTypes["xml"],
+			body: mPredefinedServiceResponses.northwindMetadata
+		};
+	};
+
+	ODataRandomService.prototype._answerService = function(oServiceData) {
+		var mAnswer = {
+			d: {
+				EntitySets: oServiceData.collections
+			}
+		};
+
+		var sType = this._useJson ? "json" : "atom";
+		var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "service");
+
+		return {
+			status: 200,
+			headers: mHeaderTypes[sType],
+			body: sAnswer
+		};
+	};
+
+	ODataRandomService.prototype._answerCollectionCount = function(oColData) {
+		return {
+			status: 200,
+			headers: mHeaderTypes[mHeaderTypes["text"]],
+			body: "" + oColData.count
+		};
+	};
+
+	ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
+		var aItems = [];
+		var aMessages = [];
+		var mMessage, i;
+
+		for (i = 0; i < oColData.count; ++i) {
+			var sItemUrl = this._serviceUrl + sColName + "(" + (i + 1) + ")";
+
+			var mItem = {
+				"__metadata": {
+					"id": sItemUrl,
+					"uri": sItemUrl,
+					"type": oColData.type
+				}
+			};
+
+			for (var sName in oColData.properties) {
+				mItem[sName] = this._createData(oColData.properties[sName], i + 1);
+			}
+
+			aItems.push(mItem);
+
+			if (oColData.itemMessages) {
+				for (var n = 0; n < oColData.itemMessages.length; ++n) {
+					mMessage = jQuery.extend({}, oColData.itemMessages[n]);
+					mMessage.target = "(" + (i + 1) + ")/" + oColData.itemMessages[n].target;
+					aMessages.push(mMessage);
+				}
+			}
+		}
+
+
+		var mAnswer = {
+			d: {
+				results: aItems
+			}
+		};
+
+		if (oColData.message) {
+			aMessages.push(oColData.message);
+		}
+
+		if (oColData.collectionMessages) {
+			for (i = 0; i < oColData.collectionMessages.length; ++i) {
+				mMessage = jQuery.extend({}, oColData.collectionMessages[i]);
+				mMessage.target = "/" + sColName;
+				aMessages.push(mMessage);
+			}
+		}
+
+		var sType = this._useJson ? "json" : "atom";
+		var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
+
+		var mHead = jQuery.extend({}, mHeaderTypes[sType]);
+		mHead["sap-message"] = this._createMessageHeader(aMessages);
+
+		return {
+			status: 200,
+			headers: mHead,
+			body: sAnswer
+		};
+	};
+
+	ODataRandomService.prototype._createMessageHeader = function(aMessages) {
+		var mMessage = {
+			"code": aMessages[0].code,
+			"message": aMessages[0].message,
+			"severity": aMessages[0].severity,
+			"target": aMessages[0].target,
+			"details": []
+		};
+
+		for (var i = 1; i < aMessages.length; ++i) { // i = 1 => skip first
+			mMessage.details.push({
+				"code": aMessages[i].code,
+				"message": aMessages[i].message,
+				"severity": aMessages[i].severity,
+				"target": aMessages[i].target
+			});
+		}
+
+		return JSON.stringify(mMessage);
+	};
+
+	ODataRandomService.prototype._createData = function(mOptions, sId) {
+		var sResult, iMax;
+
+		switch (mOptions.type) {
+			case "string":
+				if (mOptions.choices) {
+					sResult = mOptions.choices[Math.floor(Math.random() * mOptions.choices.length)];
+				} else {
+					sResult = this._createRandomString();
+				}
+			break;
+
+			case "id":
+				sResult = sId;
+			break;
+
+			case "int":
+				iMax = mOptions.maxValue ? mOptions.maxValue : 99;
+				sResult = Math.round(Math.random() * iMax);
+			break;
+
+			case "float":
+				iMax = mOptions.maxValue ? mOptions.maxValue : 99;
+				sResult = Math.random() * iMax;
+			break;
+
+			case "bool":
+				sResult = Math.random >= 0.5;
+			break;
+
+			default:
+				sResult = "INVALID DATA TYPE!!!";
+			break;
+		}
+
+		return sResult;
+	};
+
+	ODataRandomService.prototype._createRandomString = function(iSyllables) {
+		var aSyllables = [[
+			"b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "r", "s", "t", "v", "w", "y", "z",
+			"th", "sh", "ph",
+			"bl", "cl", "kl", "pl", "sl",
+			"gn", "kn", "pn", "sn",
+			"br", "cr", "dr", "fr", "gr", "kr", "pr", "tr"
+		], [
+			"a", "e", "i", "o", "u", "y",
+			"ai", "au", "ay",
+			"ei", "ey",
+			"ou", "oy"
+		]];
+		var iSizes = [
+			aSyllables[0].length, aSyllables[1].length
+		];
+
+		if (iSyllables === undefined) {
+			iSyllables = 5;
+		}
+
+		var sString = "";
+
+		var s = 0;
+		for (var i = 0; i < iSyllables; i++) {
+			sString += aSyllables[s][Math.floor(Math.random() * iSizes[s])];
+			s = s == 0 ? 1 : 0;
+		}
+
+		return sString;
+	};
+
+
+})(window.sinon);
 
 
 
-
-
+/*
 var sNorthwindDataJSON = {
 	"d" : {
 		"EntitySets" : [ "Categories", "CustomerDemographics", "Customers", "Employees", "Order_Details", "Orders", "Products", "Regions", "Shippers", "Suppliers", "Territories", "Alphabetical_list_of_products", "Category_Sales_for_1997", "Current_Product_Lists", "Customer_and_Suppliers_by_Cities", "Invoices", "Order_Details_Extendeds", "Order_Subtotals", "Orders_Qries", "Product_Sales_for_1997", "Products_Above_Average_Prices", "Products_by_Categories", "Sales_by_Categories", "Sales_Totals_by_Amounts", "Summary_of_Sales_by_Quarters", "Summary_of_Sales_by_Years" ]
 	}
 };
+*/
 
+/*
 var sNorthwindProductsDataJSON = {
 	"d" : {
 		"results" : [ {
@@ -1440,42 +1518,46 @@ var sNorthwindProductsDataJSON = {
 	// "__next" : "fakeservice://testdata/odata/northwind/Products/?$skiptoken=20"
 	}
 };
+*/
 
+/*
 var oProducts1JSON = {
 	"d" : {
-	"__metadata" : {
-	"id" : "fakeservice://testdata/odata/northwind/Products(1)",
-	"uri" : "fakeservice://testdata/odata/northwind/Products(1)",
-	"type" : "NorthwindModel.Product"
-	},
-	"Category" : {
-		"__deferred" : {
-			"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Category"
-		}
-	},
-	"Order_Details" : {
-		"__deferred" : {
-			"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Order_Details"
-		}
-	},
-	"Supplier" : {
-		"__deferred" : {
-			"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Supplier"
-		}
-	},
-	"ProductID" : 1,
-	"ProductName" : "Chai",
-	"SupplierID" : 1,
-	"CategoryID" : 1,
-	"QuantityPerUnit" : "10 boxes x 20 bags",
-	"UnitPrice" : "18.0000",
-	"UnitsInStock" : 39,
-	"UnitsOnOrder" : 0,
-	"ReorderLevel" : 10,
-	"Discontinued" : false
+		"__metadata" : {
+			"id" : "fakeservice://testdata/odata/northwind/Products(1)",
+			"uri" : "fakeservice://testdata/odata/northwind/Products(1)",
+			"type" : "NorthwindModel.Product"
+		},
+		"Category" : {
+			"__deferred" : {
+				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Category"
+			}
+		},
+		"Order_Details" : {
+			"__deferred" : {
+				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Order_Details"
+			}
+		},
+		"Supplier" : {
+			"__deferred" : {
+				"uri" : "fakeservice://testdata/odata/northwind/Products(1)/Supplier"
+			}
+		},
+		"ProductID" : 1,
+		"ProductName" : "Chai",
+		"SupplierID" : 1,
+		"CategoryID" : 1,
+		"QuantityPerUnit" : "10 boxes x 20 bags",
+		"UnitPrice" : "18.0000",
+		"UnitsInStock" : 39,
+		"UnitsOnOrder" : 0,
+		"ReorderLevel" : 10,
+		"Discontinued" : false
 	}
 };
+*/
 
+/*
 var sNorthwindError400XML = '<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code /><m:message xml:lang="en-US">ERROR MESSAGE!!!</m:message></m:error>';
 var sNorthwindError400JSON = {
 	"odata.error" : {
@@ -1495,13 +1577,17 @@ var sNorthwindError501JSON = {
 	}
 	}
 };
+*/
 
 
-var sNorthwindMetadata = '\
+
+
+mPredefinedServiceResponses.northwindMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">\
 	<edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0"\
-		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
+		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+		xmlns:sap="http://www.sap.com/Protocols/SAPData">\
 		<Schema Namespace="NorthwindModel" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
 			<EntityType Name="Category">\
 				<Key>\
@@ -2018,6 +2104,10 @@ var sNorthwindMetadata = '\
 					</Dependent>\
 				</ReferentialConstraint>\
 			</Association>\
+			<EntityContainer Name="FunctionImports">\
+				<FunctionImport Name="functionWithInvalidTarget" m:HttpMethod="POST">\
+				</FunctionImport>\
+			</EntityContainer>\
 		</Schema>\
 		<Schema Namespace="ODataWebV3.Northwind.Model" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
 			<EntityContainer Name="NorthwindEntities" m:IsDefaultEntityContainer="true" p6:LazyLoadingEnabled="true"\
@@ -2097,8 +2187,7 @@ var sNorthwindMetadata = '\
 	</edmx:DataServices>\
 </edmx:Edmx>';
 
-
-var sFunctionImportMain = '\
+mPredefinedServiceResponses.functionImportMain = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <app:service xml:lang="en"\
 	xml:base="https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/" xmlns:app="http://www.w3.org/2007/app"\
@@ -2196,7 +2285,7 @@ var sFunctionImportMain = '\
 		href="https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/" />\
 </app:service>';
 
-var sFunctionImportMetadata = '\
+mPredefinedServiceResponses.functionImportMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
 	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
@@ -3006,7 +3095,8 @@ var sFunctionImportMetadata = '\
 	</edmx:DataServices>\
 </edmx:Edmx>';
 
-var sFunctionImportProduct1 = '\
+
+mPredefinedServiceResponses.functionImportProduct1 = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <entry xml:base="https://https:/sap/opu/odata/sap/SEPMRA_PROD_MAN/"\
 	xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
@@ -3087,7 +3177,7 @@ var sFunctionImportProduct1 = '\
 </entry>';
 
 
-var sTechnicalError400Xml = '\
+mPredefinedServiceResponses.technicalError400Xml = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
 	<code>/BOBF/FRW_COMMON/118</code>\
@@ -3122,9 +3212,9 @@ var sTechnicalError400Xml = '\
 </error>';
 
 
-var sTechnicalError500Xml = sTechnicalError900Xml = sTechnicalError400Xml;
+mPredefinedServiceResponses.technicalError500Xml = mPredefinedServiceResponses.technicalError900Xml = mPredefinedServiceResponses.technicalError400Xml;
 
-var sTechnicalError400Json = '\
+mPredefinedServiceResponses.technicalError400Json = '\
 {\
 	"error": {\
 		"code": "/BOBF/FRW_COMMON/118",\
@@ -3159,9 +3249,9 @@ var sTechnicalError400Json = '\
 	}\
 }';
 
-var sTechnicalError500Json = sTechnicalError900Json = sTechnicalError400Json;
+mPredefinedServiceResponses.technicalError500Json = mPredefinedServiceResponses.technicalError400Json = mPredefinedServiceResponses.technicalError400Json;
 
-var sTechnicalError400Json2 = '\
+mPredefinedServiceResponses.technicalError400Json2 = '\
 {\
 	"error": {\
 		"code": "SY/530",\
@@ -3212,7 +3302,7 @@ var sTechnicalError400Json2 = '\
 	}\
 }';
 
-var sTechnicalError400Xml2 = '\
+mPredefinedServiceResponses.technicalError400Xml2 = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
 	<code>SY/530</code>\

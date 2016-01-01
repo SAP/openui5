@@ -5,21 +5,8 @@
   box-shadow: 0 0.125rem 1rem 0 @sapHCShadowTint;
 }
 
-.sap-desktop .sapMNLI:focus {
-  outline-offset: -0.1875rem;
-}
-
-.sap-desktop .sapMNLI:focus .sapMNLI-Priority {
-  width: 0.1875rem;
-  left: 0.125rem;
-}
-
 .sapMNLI-UnreadStatus {
   background: @sapHCStandardFG;
-}
-
-.sapMNLI-Icons .sapUiIcon {
-  color: @sapHCStandardFG;
 }
 
 .sapMNLI-Header > .sapMTitle {
@@ -31,7 +18,26 @@
 }
 
 .sapMNLI-Priority {
-  border-radius: 0;
+  top: -1px;
+  &.sapMNLI-None {
+    border-top: 1px solid @sapHCNeutral;
+    border-bottom: 1px solid @sapHCNeutral;
+  }
+
+  &.sapMNLI-Low {
+    border-top: 1px solid @sapHCPositive;
+    border-bottom: 1px solid @sapHCPositive;
+  }
+
+  &.sapMNLI-Medium {
+    border-top: 1px solid @sapHCCritical;
+    border-bottom: 1px solid @sapHCCritical;
+  }
+
+  &.sapMNLI-High {
+    border-top: 1px solid @sapHCNegative;
+    border-bottom: 1px solid @sapHCNegative;
+  }
 }
 
 .sapMNLI-None {
@@ -56,4 +62,36 @@
 
 .sapUiSizeCompact .sapMNLI-CloseButton .sapMBtnInner .sapMBtnIcon {
   line-height: 1.5rem;
+}
+
+// Focus Styles ========================================================================================================
+
+.sap-desktop .sapMLIB.sapMNLI:focus {
+  outline: none;
+}
+
+[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLI:focus::before,
+.sap-desktop .sapMLIB.sapMNLI:focus::before {
+  border: 0.125rem dotted @sapHCStandardFG;
+  border-left-style: solid;
+  position: absolute;
+  content: "";
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 1px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+[data-sap-ui-browser^='ie'].sap-desktop .sapMLIB.sapMNLI:focus::after,
+.sap-desktop .sapMLIB.sapMNLI:focus::after {
+  border-left: 0.125rem dotted @sapHCStandardBG;
+  position: absolute;
+  content: "";
+  top: 0;
+  bottom: 0;
+  left: 1px;
+  z-index: 2;
+  pointer-events: none;
 }

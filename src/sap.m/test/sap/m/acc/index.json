@@ -11,9 +11,19 @@
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
+			"control": "sap.m.App",
+			"url": "../App.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
+		},
+		{
 			"control": "sap.m.Bar",
 			"url": "../Bar.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.BusyDialog",
+			"url": "../BusyDialog.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.BusyIndicator",
@@ -24,6 +34,11 @@
 			"control": "sap.m.Button",
 			"url": "Button.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.Breadcrumbs",
+			"url": "../Breadcrumbs.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.Carousel",
@@ -41,6 +56,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.CustomTile",
+			"url": "../CustomTile.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.DatePicker",
 			"url": "DatePicker.html",
 			"appComponent": "CA-UI5-CTR-WDF"
@@ -51,8 +71,13 @@
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
-			"control": "sap.m.DynamicContainer",
-			"url": "../DynamicContainer.html",
+			"control": "sap.m.FacetFilter",
+			"url": "../FacetFilter.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.FeedContent",
+			"url": "../FeedContent.html",
 			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
@@ -91,11 +116,6 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
-			"control": "sap.m.JamContent",
-			"url": "../JamContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
-		},
-		{
 			"control": "sap.m.Label",
 			"url": "../Label.html",
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
@@ -115,6 +135,16 @@
 			"control": "sap.m.semantic.MasterPage",
 			"url": "./semantic/MasterDetailPages.html",
 			"appComponent": "CA-UI5-CTR-SOF-PIR"
+		},
+		{
+			"control": "sap.m.MessagePage",
+			"url": "../MessagePage.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
+		},
+		{
+			"control": "sap.m.MaskInput",
+			"url": "../MaskInput.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.MessageBox",
@@ -147,9 +177,24 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.sap.m.NavContainer",
+			"url": "../NavContainer.html",
+			"appComponent" : "CA-UI5-CTR-SOF-PIR"
+		},
+		{
 			"control": "sap.m.NewsContent",
 			"url": "../NewsContent.html",
 			"appComponent" : "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.NotificationListGroup",
+			"url": "../NotificationListGroup.html",
+			"appComponent" : "CA-UI5-CTR-SOF-ROD"
+		},
+		{
+			"control": "sap.m.NotificationListItem",
+			"url": "../NotificationListItem.html",
+			"appComponent" : "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.NumericContent",
@@ -172,6 +217,21 @@
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
+			"control": "sap.m.ObjectListItem",
+			"url": "../ObjectListItem.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.ObjectNumber",
+			"url": "../ObjectNumber.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
+			"control": "sap.m.OverflowToolbar",
+			"url": "../OverflowToolbar.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
+		},
+		{
 			"control": "sap.m.ObjectStatus",
 			"url": "../ObjectHeader.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
@@ -180,6 +240,11 @@
 			"control": "sap.m.Page",
 			"url": "Page.html",
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
+		},
+		{
+			"control": "sap.m.PagingButton",
+			"url": "../PagingButton.html",
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.Panel",
@@ -194,12 +259,22 @@
 		{
 			"control": "sap.m.ProgressIndicator",
 			"url": "../ProgressIndicator.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.PullToRefresh",
 			"url": "../PullToRefresh.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.QuickView",
+			"url": "../QuickView.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
+		},
+		{
+			"control": "sap.m.QuickViewCard",
+			"url": "../QuickViewCard.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.RadioButton",
@@ -247,9 +322,29 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.Shell",
+			"url": "../Shell.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.Slider",
 			"url": "../Slider.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.SlideTile",
+			"url": "../SlideTile.html",
+			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.SplitApp",
+			"url": "../SplitApp.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
+		},
+		{
+			"control": "sap.m.StandardTile",
+			"url": "../StandardTile.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Switch",
@@ -257,9 +352,24 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.TabContainer",
+			"url": "../TabContainer.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
+		},
+		{
 			"control": "sap.m.Table",
 			"url": "../Table.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.TableSelectDialog",
+			"url": "../TableSelectDialog.html",
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
+		},
+		{
+			"control": "sap.m.TimePicker",
+			"url": "../TimePicker.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Text",
@@ -283,7 +393,7 @@
 		},
 		{
 			"control": "sap.m.Tile",
-			"url": "../TileContainer.html",
+			"url": "../Tile.html",
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
@@ -294,7 +404,7 @@
 		{
 			"control": "sap.m.TileContent",
 			"url": "../TileContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-BS-FCW"
 		},
 		{
 			"control": "sap.m.Title",
@@ -320,6 +430,11 @@
 			"control": "sap.m.UploadCollectionForPendingUpload",
 			"url": "../UploadCollectionForPendingUpload.html",
 			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.ViewSettingsDialog",
+			"url": "../ViewSettingsDialog.html",
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Wizard",

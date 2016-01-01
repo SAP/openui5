@@ -16,14 +16,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/UIComp
 		}
 	});
 
-	
+
 	Component.prototype.createContent = function() {
 		this.oButton = new Button(this.createId("mybutn"));
 		// Use value of manifest if given
 		if(this.getManifestEntry("sap.app").text){
 			this.oButton.setText(this.getManifestEntry("sap.app").text);
 		}
-		return this.oButton; 
+		return this.oButton;
 	};
 
 

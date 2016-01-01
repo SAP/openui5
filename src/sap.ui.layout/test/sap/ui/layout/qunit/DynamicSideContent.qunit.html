@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Dynamic Side Content - sap.ui.layout</title>
 
 		<script id="sap-ui-bootstrap"
@@ -11,7 +11,7 @@
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.layout, sap.m" >
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -59,6 +59,25 @@
 					assert.strictEqual(this._oDSC.getSideContentFallDown(), sap.ui.layout.SideContentFallDown.OnMinimumWidth, "'showMainContent' property default value should be 'onMinimumWidth'");
 					assert.strictEqual(this._oDSC.getEqualSplit(), false, "'equalSplit' property default value should be false");
 					assert.strictEqual(this._oDSC.getContainerQuery(), false, "'containerQuery' property default value should be false");
+					assert.strictEqual(this._oDSC.getSideContentPosition(), sap.ui.layout.SideContentPosition.End, "'sideContentPosition' property default value should be 'false'");
+				});
+
+				QUnit.test("'sideContentPosition' property set to End by default",function(assert){
+					var oSideContent = this._oDSC.$("SCGridCell"),
+						oMainContent = this._oDSC.$("MCGridCell");
+
+					assert.ok(oSideContent.position().left > oMainContent.position().left, "Main content is before the side content by default");
+				});
+
+				QUnit.test("'sideContentPosition' property set to Begin",function(assert){
+
+					this._oDSC.setSideContentPosition(sap.ui.layout.SideContentPosition.Begin);
+					sap.ui.getCore().applyChanges();
+
+					var oSideContent = this._oDSC.$("SCGridCell"),
+					oMainContent = this._oDSC.$("MCGridCell");
+
+					assert.ok(oSideContent.position().left < oMainContent.position().left, "Side content is before the main content");
 				});
 
 				QUnit.test("'ShowSideContent' property is set correctly",function(assert){
@@ -679,13 +698,34 @@
 
 				QUnit.test("Side Content has correct aria attributes",function(){
 					var sSideContentTag = sap.ui.Device.browser.firefox ? "div" : "aside",
-						$sideContent = $("#" + this._oDSC.getId() + "-SCGridCell"),
-						//$sideContent = this.oDSC.$().find("> aside"),
-						oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+							$sideContent = $("#" + this._oDSC.getId() + "-SCGridCell"),
+					//$sideContent = this.oDSC.$().find("> aside"),
+							oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 
 					strictEqual($sideContent.length, 1, "Side Content has correct " + sSideContentTag + " tag");
 					strictEqual($sideContent.attr("role"), "complementary", "Side Content has correct role 'complementary'");
 					strictEqual($sideContent.attr("aria-label"), oMessageBundle.getText(SIDE_CONTENT_LABEL), "Side Content has correct 'aria-role' " + oMessageBundle.getText(SIDE_CONTENT_LABEL));
+				});
+
+				QUnit.module("Invalidation", {
+					setup : function () {
+						this._oDSC = new sap.ui.layout.DynamicSideContent({showSideContent: false, containerQuery: true});
+						this._oDSC.placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+					},
+					teardown : function () {
+						this._oDSC = null;
+					}
+				});
+
+				QUnit.test("Side Content invisible after invalidation",function() {
+					var SC_GRID_CELL_SELECTOR = "SCGridCell",
+						HIDDEN_CLASS = "sapUiHidden";
+
+					this._oDSC.invalidate();
+					sap.ui.getCore().applyChanges();
+
+					ok(this._oDSC.$(SC_GRID_CELL_SELECTOR).hasClass(HIDDEN_CLASS), "Side content in invisible");
 				});
 
 			})(jQuery);

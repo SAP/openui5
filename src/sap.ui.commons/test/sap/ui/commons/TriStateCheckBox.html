@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>TriStateCheckBox - sap.ui.commons</title>
 <script src="../../../../resources/sap-ui-core.js"
 	type="text/javascript" id="sap-ui-bootstrap"
@@ -10,7 +10,7 @@
 	data-sap-ui-theme="sap_goldreflection">
 </script>
 <script type="text/javascript">
-	var oCore = sap.ui.getCore(); 
+	var oCore = sap.ui.getCore();
 	var oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc1", {
 		text: "Plain vanilla tri-state checkbox; User can directly only switch between checked and unchecked."});
 	oTriStateCB.placeAt("target1");
@@ -61,7 +61,7 @@
 	});
 	oTriStateCB.placeAt("target9");
 
-	
+
 	function registerChildren(allChildren, oParent){
 		var nSelectedChildren = 0;
    		for (var i = 0; i < allChildren.length; i++) {
@@ -108,14 +108,14 @@
 		new sap.ui.commons.CheckBox("ccb1", {text: "Java"}),
 		new sap.ui.commons.CheckBox("ccb2", {text: "ABAP"}),
 		new sap.ui.commons.CheckBox("ccb3", {text: "BASIC"})
-	];	
+	];
 	for (i = 0; i < aChildren.length; i++){
 		oVLayout.addContent(aChildren[i]);
-	}		
+	}
 	registerChildren(aChildren, oParentCheckBox);
 	oVLayout.placeAt("target10");
 
-	
+
 </script>
 <style>
 ul{
@@ -124,7 +124,7 @@ ul{
 	margin:0;
 }
 </style>
-</head>		
+</head>
 <body class="sapUiBody" role="application">
 	<h1>Test Page for sap.ui.commons.TriStateCheckBox</h1>
 	<h2>Basics</h2>
@@ -143,6 +143,6 @@ ul{
 		<h2>Checkbox with state dependent on &quot;child&quot; checkboxes:</h2>
 		<div id="target10"></div>
 	</div>
-	
+
 </body>
 </html>

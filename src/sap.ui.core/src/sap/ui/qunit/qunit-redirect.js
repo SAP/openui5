@@ -7,7 +7,7 @@
 
 	// If running in top window redirect to testrunner
 	if (!parent.jsUnitTestSuite) {
-		
+
 		//extract base URL from script to attach the qunit-redirect script
 		var aScripts = document.getElementsByTagName("script"),
 				sBaseUrl = null,
@@ -28,10 +28,10 @@
 		if (sBaseUrl === null) {
 			throw new Error("qunit-redirect.js: The script tag seems to be malformed!");
 		}
-		
+
 		// forward the testpage to the testrunner
 		window.location = sBaseUrl + "test-resources/sap/ui/qunit/testrunner.html?testpage=" + encodeURIComponent(sTestUrl) + "&autostart=true";
 
 	}
-	
+
 })();

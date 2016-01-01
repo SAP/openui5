@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>QUnit Tests - sap.m.Tile</title>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -10,10 +10,11 @@
 			data-sap-ui-libs="sap.m"
 			src="../../../../resources/sap-ui-core.js">
 	</script>
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script>
 
@@ -114,6 +115,31 @@
 
 				ok(sut.$().hasClass("sapMTileDrag"),"has drag class set");
 		});
+
+
+		test("Should Set Visibility and trigger rerender of the TileContainer", function() {
+			//Arrange
+			var result ,
+			//SUT
+			sut = new sap.m.Tile(),
+			sut2 = new sap.m.Tile(),
+			container = new sap.m.TileContainer({tiles: [sut, sut2]});
+
+			sinon.spy(container, "rerender");
+
+			container.placeAt("qunit-fixture");
+			core.applyChanges();
+
+			//Act
+			sut.setVisible(false);
+			core.applyChanges();
+
+			//Assert
+			assert.ok(container.rerender.calledOnce, "Tile container is rerendered when tile visibility is changed");
+			container.destroy();
+		});
+
+
 
 		module("Events");
 

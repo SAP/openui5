@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
-		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
-		
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+
 		<title>sap.m.Shell Test</title>
-		
-		<script src="../../../resources/sap-ui-core.js" 
+
+		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m" 
+			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal"></script>
-		
+
 		<script>
 			var oShell= new sap.m.Shell("myShell", {
 				title: "My Application",
 				logo: "images/SAPUI5.png",
 				showLogout: false
 			});
-			
+
 			var oApp = new sap.m.SplitApp("myApp", {
 				masterPages: new sap.m.Page("page1", {
 					title: "Some Master"
@@ -81,12 +81,12 @@
 					]
 				})
 			});
-			
+
 			oShell.setApp(oApp);
 			oShell.placeAt("content");
 		</script>
-	
-	
+
+
 		<style>
 			html, body, .UShell {
 				width: 100%;
@@ -97,12 +97,12 @@
 				height: 3rem;
 				text-align: center;
 				line-height: 3rem;
-				
+
 				-moz-box-sizing: border-box;
 				box-sizing: border-box;
 				box-shadow: inset 0 -0.0625em #dddddd;
 				border-top: 0.25rem solid #009de0;
-				
+
 				background-color: #f2f2f2;
 				filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#f7f7f7, endColorstr=#ededed, GradientType=0);
 				background: -ms-linear-gradient(top, #f7f7f7 0%, #f2f2f2 33%, #f2f2f2 75%, #ededed 100%);

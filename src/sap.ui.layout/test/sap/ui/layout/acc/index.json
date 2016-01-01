@@ -1,16 +1,36 @@
-{
-	"tests" : [
-		{
-			"control" : "sap.ui.layout.form.ResponsiveGridLayout",
-			"url" : "ResponsiveGridLayout.html",
-			"desc" : "Form using ResponsiveGridLayout",
-			"appComponent" : "CA-UI5-CTR-WDF"
-		},
-		{
-			"control" : "sap.ui.layout.form.ResponsiveLayout",
-			"url" : "ResponsiveLayout.html",
-			"desc" : "Form using ResponsiveLayout",
-			"appComponent" : "CA-UI5-CTR-WDF"
-		}
+  {
+	"tests": [
+	  {
+		"control": "sap.ui.layout.form.ResponsiveGridLayout",
+		"url": "ResponsiveGridLayout.html",
+		"desc": "Form using ResponsiveGridLayout",
+		"appComponent": "CA-UI5-CTR-WDF"
+	  },
+	  {
+		"control": "sap.ui.layout.form.ResponsiveLayout",
+		"url": "ResponsiveLayout.html",
+		"desc": "Form using ResponsiveLayout",
+		"appComponent": "CA-UI5-CTR-WDF"
+	  },
+	  {
+		"control": "sap.ui.layout.FixFlex",
+		"url": "../FixFlex.html",
+		"appComponent": "CA-UI5-CTR-SOF-ROD"
+	  },
+	  {
+		"control": "sap.ui.layout.ResponsiveFlowLayout",
+		"url": "../ResponsiveFlowLayout.html",
+		"appComponent": "CA-UI5-CTR-SOF-BAL"
+	  },
+	  {
+		"control": "sap.ui.layout.DynamicSideContent",
+		"url": "../DynamicSideContent.html",
+		"appComponent": "CA-UI5-CTR-SOF-BAL"
+	  },
+    {
+		"control": "sap.ui.layout.HorizontalLayout",
+		"url": "../HorizontalLayout.html",
+		"appComponent": "CA-UI5-CTR-SOF-BAL"
+	  }
 	]
-}
+  }

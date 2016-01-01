@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 		 * @param {Element} oRootRef e.g. document.body
 		 * @param {sap.ui.core.Core} oCore Reference to the Core implementation
 		 * @alias sap.ui.core.FocusHandler
+		 * @extends sap.ui.base.Object
 		 * @private
 		 */
 		var FocusHandler = BaseObject.extend("sap.ui.core.FocusHandler", /** @lends sap.ui.core.FocusHandler.prototype */ {
@@ -222,7 +223,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 				return;
 			}
 
-			triggerFocusleave(this.oLast, sControlId, this.oCore);
+			if (this.oLast != this.oCurrent) {
+				// if same control is focused again (e.g. while re-rendering) no focusleave is needed
+				triggerFocusleave(this.oLast, sControlId, this.oCore);
+			}
+
 			this.oLast = null;
 		};
 

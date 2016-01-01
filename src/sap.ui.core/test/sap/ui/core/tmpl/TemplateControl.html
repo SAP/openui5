@@ -2,8 +2,8 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 
 	<title>Template - sap.ui.core.tmpl (Simple)</title>
 
@@ -14,9 +14,9 @@
 			data-sap-ui-theme="sap_goldreflection"
 			>
 	</script>
-	
+
 	<link type="text/css" rel="stylesheet" href="res/tmpl.css">
-	
+
 	<script id="aNewControl" data-control="a.NewControl" type="text/x-handlebars-template">
 
 		<h3>{{property name="lastName"}}, {{property name="firstName"}}</h3>
@@ -25,9 +25,9 @@
 			<li>{{control}}</li>
 		{{/aggregation}}
 		</ul>
-	
+
 	</script>
-	
+
 	<script id="aOtherControl" data-control="a.OtherControl" type="text/x-handlebars-template">
 
 		<span {{controlData}}>
@@ -38,11 +38,11 @@
 			{{/aggregation}}
 			</ul>
 		</span>
-	
+
 	</script>
-	
+
 	<script>
-	
+
 		// sample code
 		jQuery(function() {
 
@@ -50,11 +50,11 @@
 			var $Script = jQuery.sap.byId("aNewControl");
 			var sTemplate = jQuery.sap.escapeHTML($Script.html());
 			jQuery("<pre>").html(sTemplate).insertAfter(jQuery.sap.byId("content"));
-			
+
 			var $Script = jQuery.sap.byId("aOtherControl");
 			var sTemplate = jQuery.sap.escapeHTML($Script.html());
 			jQuery("<pre>").html(sTemplate).insertAfter(jQuery.sap.byId("contentOther"));
-			
+
 			// define the model
 			var oModel = new sap.ui.model.json.JSONModel({
 				title: "Persons",
@@ -76,7 +76,7 @@
 
 			// declare the control based on a template
 			sap.ui.template("aNewControl");
-			
+
 			// create the new control and place it
 			var oControl = new a.NewControl({
 				lastName: "{lastName}",
@@ -97,10 +97,10 @@
 				}
 			});
 			oRowRepeater.placeAt("content");
-			
+
 			// declare the control based on a template
 			sap.ui.template("aOtherControl");
-			
+
 			// create the new control and place it
 			oControl = new a.OtherControl({
 				lastName: "{lastName}",
@@ -121,21 +121,21 @@
 				}
 			});
 			oRowRepeater.placeAt("contentOther");
-			
+
 		});
-	
+
 	</script>
 
 </head>
 <body class="sapUiBody" role="application">
 
 	<h1><code>sap.ui.core.tmpl.Template</code> - Test Page</h1>
-	
+
 	<h2 style="color: red;">Experimental support for control definition via Template!</h2>
-	
+
 	<div id="content"></div>
-	
+
 	<div id="contentOther"></div>
-	
+
 </body>
 </html>

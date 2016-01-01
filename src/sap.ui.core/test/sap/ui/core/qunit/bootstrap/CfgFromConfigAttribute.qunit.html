@@ -5,17 +5,17 @@
   -->
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 
 	<!-- Initialization -->
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-config="theme:'fantasy',language:'klingon',accessibility:true,animation:false,rtl:true,debug:true,noConflict:true,trace:true,libs:'sap.ui.commons',modules:'sap.ui.commons.Button',areas:'area-51,no-go',onInit:'window[\'I was here\']=\'u.g.a.d.m.k.\';',ignoreUrlParams:true" 
+			data-sap-ui-config="theme:'fantasy',language:'klingon',accessibility:true,animation:false,rtl:true,debug:true,noConflict:true,trace:true,libs:'sap.ui.commons',modules:'sap.ui.commons.Button',areas:'area-51,no-go',onInit:'window[\'I was here\']=\'u.g.a.d.m.k.\';',ignoreUrlParams:true"
 			>
 	</script>
 
-	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -27,7 +27,7 @@
 		QUnit.test("Settings", function(assert) {
 			var oCfg = new sap.ui.core.Configuration();
 
-			// compare values where possible 
+			// compare values where possible
 			assert.equal(oCfg.theme, "fantasy", "theme");
 			assert.equal(oCfg.language, "klingon", "language");
 			assert.equal(oCfg.accessibility, true, "accessibility");
@@ -36,7 +36,7 @@
 			assert.equal(oCfg.debug, true, "debug");
 			assert.equal(oCfg.noConflict, true, "noConflict");
 			assert.equal(oCfg.trace, true, "trace");
-			// Note: libs and modules can not be checked in that simple way, see below   
+			// Note: libs and modules can not be checked in that simple way, see below
 			assert.deepEqual(oCfg.areas, ["area-51", "no-go"], "areas");
 			assert.equal(typeof oCfg.onInit, "string", "onInit");
 			assert.equal(oCfg.ignoreUrlParams, true, "ignoreUrlParams");

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>HTML Sanitizer - sap.ui.core</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_goldreflection"
@@ -16,15 +16,15 @@
 				alert("This test page requires the library 'sap.ui.commons' which is not available.");
 				throw(e);
 			}
-		
+
 		    // create the controls in the head
 			var oLayout = new sap.ui.commons.layout.MatrixLayout({
 				layoutFixed: false
 			});
 		    oLayout.createRow(
-		    	new sap.ui.commons.TextView({design:'H4', text:"Input (unsafe)"}), 
-		    	"", 
-		    	new sap.ui.commons.TextView({design:'H4', text:"Output (sanitized)"}), 
+		    	new sap.ui.commons.TextView({design:'H4', text:"Input (unsafe)"}),
+		    	"",
+		    	new sap.ui.commons.TextView({design:'H4', text:"Output (sanitized)"}),
 		    	new sap.ui.commons.TextView({design:'H4', text:"HTML Control"})
 		    );
 		    var oTextArea = new sap.ui.commons.TextArea({

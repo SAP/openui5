@@ -2,9 +2,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>MessageBar Test Page</title>
-    <script id="sap-ui-bootstrap" 
+    <script id="sap-ui-bootstrap"
       data-sap-ui-theme="sap_goldreflection"
       data-sap-ui-trace="true"
       type="text/javascript"
@@ -37,10 +37,10 @@
     }
 
     // ERRORs:
-    var error1 = new sap.ui.commons.Message("error1", {type:sap.ui.commons.MessageType.Error, text:"Error 1"});      	  
-    var error2 = new sap.ui.commons.Message("error2", {type:sap.ui.commons.MessageType.Error, text:"Error 2"});      	  
+    var error1 = new sap.ui.commons.Message("error1", {type:sap.ui.commons.MessageType.Error, text:"Error 1"});
+    var error2 = new sap.ui.commons.Message("error2", {type:sap.ui.commons.MessageType.Error, text:"Error 2"});
     var error3 = new sap.ui.commons.Message("error3", {type:sap.ui.commons.MessageType.Error, text:"Error 3"});
-    var error4 = new sap.ui.commons.Message("error4", {type:sap.ui.commons.MessageType.Error, text:"Error 4"});      	  
+    var error4 = new sap.ui.commons.Message("error4", {type:sap.ui.commons.MessageType.Error, text:"Error 4"});
     error1.setAssociatedElementId("TA1");
     error1.bindDetails(getDetails);
   	error3.bindDetails(getDetails);
@@ -227,7 +227,7 @@
 
 
   	// MELIMELO:
-    var meliError   = new sap.ui.commons.Message("meliError",   {type:sap.ui.commons.MessageType.Error,   text:"Error 5"});      	  
+    var meliError   = new sap.ui.commons.Message("meliError",   {type:sap.ui.commons.MessageType.Error,   text:"Error 5"});
     var meliWarning = new sap.ui.commons.Message("meliWarning", {type:sap.ui.commons.MessageType.Warning, text:"Warning 5"});
     var meliSuccess = new sap.ui.commons.Message("meliSuccess", {type:sap.ui.commons.MessageType.Success, text:"Success 5"});
     meliError.bindDetails(getDetails);
@@ -275,8 +275,8 @@
 
 	// Some text area to show that life goes on while toasts are burning:
 	var oTextArea = new sap.ui.commons.TextArea("TA1");
-	oTextArea.setWidth("300px"); 
-	oTextArea.setHeight("100px"); 
+	oTextArea.setWidth("300px");
+	oTextArea.setHeight("100px");
 	oTextArea.setTooltip("Yes, type something in!");
 	oTextArea.setValue("Check that life goes on while toasts are burning!");
 	oTextArea.placeAt("textArea");

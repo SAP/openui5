@@ -6,7 +6,7 @@
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for jQuery.sap.FrameOptions</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -14,7 +14,7 @@
 	data-sap-ui-theme="sap_bluecrystal">
 </script>
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"/>
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css">
 <script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -61,7 +61,7 @@ function mockBrowserAPI(oTest, mOptions) {
 
 	// parent
 	jQuery.sap.FrameOptions.__parent = {};
-	
+
 	jQuery.sap.FrameOptions.__parent.postMessage = oSpies.parent.postMessage = oTest.spy(function(sMessage, sTargetOrigin) {
 		if (sMessage === 'SAPFrameProtection*require-origin') {
 			switch (mOptions.parentMode) {
@@ -103,7 +103,7 @@ function mockBrowserAPI(oTest, mOptions) {
 		}
 	});
 
-	
+
 	if (mOptions.mode !== 'DIFF_ORIGIN') {
 		jQuery.sap.FrameOptions.__parent.document = {
 			domain: 'localhost'
@@ -204,7 +204,7 @@ function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 		sinon.assert.calledWith(oMock.window.addEventListener, jQuery.sap.FrameOptions.__window.addEventListener ? 'message' : 'onmessage', oMock.window.eventListenerFn);
 
 		this.clock.tick(10);
-		
+
 		sinon.assert.calledOnce(oMock.window.eventListener);
 		sinon.assert.calledWith(oMock.window.eventListener, {
 			source: jQuery.sap.FrameOptions.__parent,
@@ -333,7 +333,7 @@ function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOri
 		sinon.assert.calledWith(oMock.parent.postMessage, 'SAPFrameProtection*require-origin', '*');
 
 		this.clock.tick(200);
-		
+
 		if (sParentMode == "SAFE_DELAYED")	{
 			sinon.assert.calledOnce(oMock.window.eventListener);
 			sinon.assert.calledWith(oMock.window.eventListener, {
@@ -342,7 +342,7 @@ function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOri
 				data: 'SAPFrameProtection*parent-unlocked'
 			});
 		}
-		
+
 		sinon.assert.calledOnce(fnCallback);
 		sinon.assert.calledWith(fnCallback, bAllow);
 
@@ -370,7 +370,7 @@ sap.ui.test.qunit.delayTestStart();
 // SAFE_DELAYED: has the postmessage script, but sends parent-unlocked with one second delay
 // NO_HANDLER: no postmessage handler is running in the parent
 
-//                    test name,                                  environment,     parent mode,    frame option 
+//                    test name,                                  environment,     parent mode,    frame option
 
 module("mode: deny", { teardown: teardown });
 testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'deny');
@@ -382,7 +382,7 @@ testDirectUnlock(    "no frame",                                  'NO_FRAME',   
 testDirectUnlock(    "same origin",                               'SAME_ORIGIN',   'SAFE',         'allow');
 testDirectUnlock(    "different origin",                          'DIFF_ORIGIN',   'SAFE',         'allow');
 
-//                    test name,                                  environment,     parent mode,    frame option,  same origin, 
+//                    test name,                                  environment,     parent mode,    frame option,  same origin,
 
 module("mode: trusted", { teardown: teardown });
 testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'trusted');
@@ -403,7 +403,7 @@ module("mode: trusted, witelist service, parent safe", { teardown: teardown });
 testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE',         'trusted',     false,        true,     true,     true);
 testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     true,     true);
 testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     false,    false);
-testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         false,    true,     true); 
+testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         false,    true,     true);
 
 module("mode: trusted, witelist service, parent safe delayed", { teardown: teardown });
 testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE_DELAYED', 'trusted',     false,        true,     true,     true);

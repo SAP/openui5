@@ -32,9 +32,9 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/Segment', 'sap/ui/base/Metad
 			}
 
 			this._oContainer = oContainer;
-			
+
 			sContainerAggregationName || (sContainerAggregationName = "content");
-			
+
 			this._sContainerAggregationName = sContainerAggregationName;
 
 			this._aSegments = [];

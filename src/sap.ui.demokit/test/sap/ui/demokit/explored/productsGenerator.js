@@ -98,7 +98,7 @@ sap.ui.demokit.explored.resource.DataGenerator.gen = function (oData) {
 		// Aggregate price at category level
 		oData.ProductHierarchy.Suppliers[iSupplierIndex].Categories[iCategoryIndex].Price += mProduct.Price;
 		oData.ProductHierarchy.Suppliers[iSupplierIndex].Categories[iCategoryIndex].CurrencyCode = mProduct.CurrencyCode;
-		
+
 		// print to console
 		var sString = JSON.stringify(oData, null, "\t");
 		jQuery.sap.log.error(sString);

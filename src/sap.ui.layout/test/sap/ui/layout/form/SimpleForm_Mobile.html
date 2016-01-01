@@ -1,6 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>SimpleForm - sap.ui.layout.form</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
 	<script id="sap-ui-bootstrap" type="text/javascript"
@@ -50,8 +52,9 @@
 					minWidth : 1024,
 					maxContainerCols: 2,
 					editable: true,
+					title: "Editable SimpleForm",
 					content:[
-						    new sap.ui.core.Title({text:"Editable SimpleForm"}),
+					        new sap.ui.core.Title({text:"Title 1"}),
 					        new sap.m.Label({text:"Label 1"}),
 					        new sap.m.Input("I1",{value:"Value 1"}),
 					        new sap.m.Label({text:"Label 2"}),
@@ -74,8 +77,10 @@
 					minWidth : 1024,
 					maxContainerCols: 2,
 					editable: false,
+					backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
+					title: new sap.ui.core.Title({text:"Non-Editable SimpleForm with transparent background"}),
 					content:[
-						    new sap.ui.core.Title({text:"Non-Editable SimpleForm"}),
+					        new sap.ui.core.Title({text:"Title 1"}),
 					        new sap.m.Label({text:"Label 1"}),
 					        new sap.m.Text("T1",{text:"Value 1"}),
 					        new sap.m.Label({text:"Label 2"}),

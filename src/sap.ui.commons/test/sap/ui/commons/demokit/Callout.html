@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/Others" data-sap-ui-dk-controls="sap.ui.commons.Callout">
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 	<title>Callout - SAPUI5 Demo Kit</title>
-	<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
-	<script id="sap-ui-bootstrap" 
+	<link rel="stylesheet" href="../../../../../theme/default.css">
+	<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
-			data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.demokit"  
+			data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.demokit"
 	></script>
 	<script src="../../../../../js/utils.js"></script>
 
@@ -97,17 +97,17 @@ new sap.ui.commons.TextView("messageArea").placeAt("sample3");
 
 <body class="sapUiDemokitBody" role="application">
 	<h1 color="Pink" icon="images/ctrls/callout-icon.png">Callout</h1>
-		
+
 	<h2>Introduction</h2>
-	<p>The Callout is a small popup that allows the user to obtain more information on a view element without leaving the current context. 
+	<p>The Callout is a small popup that allows the user to obtain more information on a view element without leaving the current context.
 	The Callout is an non-modal overlay which means that the background remains accessible. The contents of a callout should be immediately
 	related to the referenced screen element, like links to help, immediate settings or quick views.
 	The Callout disappears of the user leaves the area of the Callout or clicks elsewhere.
-	
+
 	<p>A Callout is opened:
 	<ul>
 		<li>when a user hovers with the mouse pointer over the referenced element, or</li>
-		<li>when a user focuses a referenced element and presses Ctrl-I using the keyboard. In that case, the first focusable contents element 
+		<li>when a user focuses a referenced element and presses Ctrl-I using the keyboard. In that case, the first focusable contents element
 		inside of the Callout receives focus</li>
 	</ul>
 	<p>The Callout is closed:
@@ -124,40 +124,40 @@ new sap.ui.commons.TextView("messageArea").placeAt("sample3");
 	<p>Like the <a class="sapUiDemokitSrcLink" href="RichTooltip.html">RichTooltip control</a>, a Callout is assigned to a SAP UI5 control
 	by setting its <code>tooltip</code> property either in a JSON-constructor object or calling the <code>setTooltip()</code> method
 	(see <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.Element.html#setTooltip">API Documentation</a>).
-	
-	<p>The Callout is an empty container and therefore may not be used without contents. 
+
+	<p>The Callout is an empty container and therefore may not be used without contents.
 	Applications must provide contents in a <code>content</code> attribute of the Callout control. It can be either a single SAP UI5 control/view or
 	an array of SAP UI5 controls.
 
-	<p>The following sample attaches Callouts to each of the two controls:</p> 
+	<p>The following sample attaches Callouts to each of the two controls:</p>
 
 	<div code-sample="sample1" script="sample1-script"></div>
-	
+
 	<h2>Methods and Properties</h2>
 
 	<p>Callout inherits properties and methods from the
 	<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.TooltipBase.html">TooltipBase</a> control.
 	Open and close duration of the Callout can be adjusted with help of <code>setOpenDuration</code> and <code>setCloseDuration</code> methods.
-	
+
 	<p>The default docking placement of the Callout window is aligned with the left edge above the parent control.
 	It can be adjusted with help of the <code>setPosition(myPosition, atPosition)</code> method.
 	The meaning of the corresponding docking parameters is explained in the
 	<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.Popup.Dock.html">Popup.Dock</a> documentation.
-	
+
 	<p>The tip in form of the small triangle is shown only above or below of the Callout and points to the parent control.
 	The tip is hidden when the Callout is placed completely outside of the parent control.
-	
+
 	<h2>Late Loading</h2>
 
-	<p>The Callout control allows to load and create its contents at the later time point after it is created itself. 
+	<p>The Callout control allows to load and create its contents at the later time point after it is created itself.
 	This can be useful when, for example, the application developer decides to request data from server only
 	when the Callout is opened or a user hovers the mouse pointer over the parent control.
 
-	<p>The following sample adds a new button to a Callout during the first occurrence of the <code>open</code> event:</p> 
+	<p>The following sample adds a new button to a Callout during the first occurrence of the <code>open</code> event:</p>
 
 	<div code-sample="sample2" script="sample2-script"></div>
-	
-	<p>It is possible to postpone display of the callout until its data is loaded to server. To do that, 
+
+	<p>It is possible to postpone display of the callout until its data is loaded to server. To do that,
 	create a listener to the <code>beforeOpen</code> event and call function <code>preventDefault</code> of the event object
 	like in the following sample:
 
@@ -169,11 +169,11 @@ new sap.ui.commons.TextView("messageArea").placeAt("sample3");
 		data from a remote server. Call function <code>preventDefault</code> of the event
 		object to postpone display until required data is loaded.</li>
 		<li><code>open</code> - A callout window has been opened. If callout contents is dynamically created or changed during or after that event,
-		 the method <code>adjustPosition</code> without parameters should be called to ensure proper 
+		 the method <code>adjustPosition</code> without parameters should be called to ensure proper
 		positioning of the callout window after a possible change of window size.</li>
 		<li><code>close</code> - A callout window is closed.</li>
 	</ul>
-	
+
 	<h2>Keyboard Commands</h2>
 	<p>To open a callout with a keyboard command instead of a mouse, set the input focus to its parent control and press <code>Ctrl-I</code>.
 	In that case the input focus is set to the first focusable element of the callout contents.

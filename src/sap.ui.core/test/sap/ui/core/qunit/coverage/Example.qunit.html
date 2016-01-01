@@ -2,10 +2,10 @@
 <html>
 
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for duplicate ID checks</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -13,7 +13,7 @@
 			data-sap-ui-libs="">
 		</script>
 
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -23,7 +23,7 @@
 		if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		}
-		
+
 		var oListItem;
 		var oListItem2;
 
@@ -32,13 +32,13 @@
 			expect(1);
 			equal(sap.ui.getCore().getConfiguration().getNoDuplicateIds(), true, "default setting should be: allow no duplicate IDs");
 		});
-			
+
 		// make sure initially there is no error
 		test("First creation", function() {
 			expect(0);
 			oListItem = new sap.ui.core.ListItem("L1");
 		});
-			
+
 		test("Second, duplicate creation (with default settings)", function() {
 			expect(1);
 			try {
@@ -47,14 +47,14 @@
 				equal(1, 1, "Error should be thrown");
 			}
 		});
-		
+
 		test("Third, duplicate creation (after first element has been destroyed)", function() {
 			expect(0);
 			oListItem.destroy();
 			oListItem2 = new sap.ui.core.ListItem("L1");
 			oListItem2.destroy();
 		});
-			
+
 		test("ID Generation", function() {
 			expect(1);
 			oListItem = new sap.ui.core.ListItem();

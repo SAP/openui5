@@ -176,10 +176,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 			return;
 		}
 
-		if (jQuery("html").attr("data-sap-ui-browser") != "ie8") {
-			if (oEvent.source != this._oRemoteWindow) {
+		if (oEvent.source != this._oRemoteWindow) {
 				return;
-			}
 		}
 
 		this._oRemoteOrigin = oEvent.origin;
@@ -408,12 +406,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 
 	function wrapPlugin(oPlugin) {
-		oPlugin.$().replaceWith("<div  id='" + oPlugin.getId() + "-Panel' class='sapUiSupportPnl'><h2 class='sapUiSupportPnlHdr'>" +
+		oPlugin.$().replaceWith("<div  id='" + oPlugin.getId() + "-Panel' class='sapUiSupportPnl'><h2 id='" + oPlugin.getId() + "-PanelHeader' class='sapUiSupportPnlHdr'>" +
 				oPlugin.getTitle() + "<div id='" + oPlugin.getId() + "-PanelHandle' class='sapUiSupportPnlHdrHdl sapUiSupportPnlHdrHdlClosed'></div></h2><div id='" +
 				oPlugin.getId() + "-PanelContent' class='sapUiSupportPnlCntnt sapUiSupportHidden'><div id='" +
 				oPlugin.getId() + "' class='sapUiSupportPlugin'></div></div></div>");
 
-		oPlugin.$("PanelHandle").click(function(){
+		oPlugin.$("PanelHeader").click(function(){
 			var jHandleRef = oPlugin.$("PanelHandle");
 			if (jHandleRef.hasClass("sapUiSupportPnlHdrHdlClosed")) {
 				jHandleRef.removeClass("sapUiSupportPnlHdrHdlClosed");

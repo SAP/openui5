@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 <title>DataSet - sap.ui.ux3</title>
 
 <script src="../../../../resources/sap-ui-core.js"
 	type="text/javascript" id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.ui.layout,sap.ui.ux3,sap.ui.commons"
 	data-sap-ui-theme="sap_goldreflection">
-	
+
 </script>
 
 <script>
 	jQuery.sap.require("sap.ui.ux3.DataSetSimpleView");
 	jQuery.sap.registerModulePath("dataset", "./resources/dataset");
-	
+
 	// create DataSets
 	var oDataSet = new sap.ui.ux3.DataSet("RootSet");
 	oDataSet.setMultiSelect(true);
@@ -46,7 +46,7 @@
 	var oTemplate = new sap.ui.layout.HorizontalLayout();
 	var oImage = new sap.ui.commons.Image({
 		src : "{imageSrc}"
-	}); 
+	});
 	var oPanel = new sap.ui.commons.Panel({
 		width : "500px"
 	});
@@ -59,37 +59,37 @@
 		iconHovered: "images/thumbnails_hover.png",
 		iconSelected: "images/thumbnails_hover.png"
 	});
-	
+
 	var oDstv2 = new sap.ui.ux3.DataSetSimpleView({
 		name:"floating view",
 		icon: "images/list.png",
 		iconHovered: "images/list_hover.png",
 		iconSelected: "images/list_hover.png"
 	});
-	
+
 	var oView = sap.ui.view({
 		type : "XML",
 		viewName : "dataset.item"
 	});
-	
+
 	oDstv.setTemplate(oView);
 	oDataSet.addView(oDstv);
-	
+
 	oDstv2.setFloating(false);
 	oDstv2.setTemplate(oView.clone());
 	oDataSet.addView(oDstv2);
-	
+
 	var oItem = new sap.ui.ux3.DataSetItem({
 		title : "{title}",
-		iconSrc : "{imageSrc}" 
+		iconSrc : "{imageSrc}"
 	});
 	oDataSet.setModel(oModel);
 	oDataSet.bindItems("/test", oItem);
 	oDataSet.setSelectedView(oDstv);
 	oDataSet.placeAt('content');
-	
+
 	var oFacetFilter = new sap.ui.ux3.FacetFilter("myFacetFilter");
-	
+
 	var oFFL1 = new sap.ui.ux3.FacetFilterList("ffl1", {
 		title:"Image Name",
 		multiSelect: true,
@@ -115,11 +115,11 @@
 	oFacetFilter.addList(oFFL1);
 	oFacetFilter.addList(oFFL2);
 	oDataSet.addFilter(oFacetFilter);
-	
+
 	var oButton = new sap.ui.commons.Button({text:"New"});
 	var oButton2 = new sap.ui.commons.Button({text:"Copy"});
 	var oButton3 = new sap.ui.commons.Button({
-		text:"Toggle MultiSelect", 
+		text:"Toggle MultiSelect",
 		press : function() {
 			if (!oDataSet.getMultiSelect()){
 				oDataSet.setMultiSelect(true);
@@ -135,8 +135,8 @@
 	oDataSet.addToolbarItem(oButton2);
 	oDataSet.addToolbarItem(oButton3);
 	oDataSet.attachSearch(search);
-	
-	
+
+
 	function switchLayout(oEvent) {
 		if(oDstv3.getFloating()) {
 			oDstv3.setFloating(false);
@@ -149,7 +149,7 @@
 			oDstv.setFloating(true);
 		}
 	}
-	
+
 	function search(oEvent) {
 		var oDataSet = oEvent.getSource();
 		var sFilter = oEvent.getParameters().query;
@@ -157,7 +157,7 @@
 		var oFilter = new sap.ui.model.Filter("imageSrc", "Contains", sFilter);
 		oBinding.filter([ oFilter ]);
 		oDataSet.setLeadSelection(-1);
-		
+
 	}
 </script>
 

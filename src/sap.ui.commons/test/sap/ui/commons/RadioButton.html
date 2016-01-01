@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>RadioButton - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.RadioButton.gif">
@@ -15,7 +15,7 @@
 		</script>
 
 		<script type="text/javascript">
-			var oCore = sap.ui.getCore(); 
+			var oCore = sap.ui.getCore();
 
 			function alertSelected(oEvent) {
 				var oRadioButton = oEvent.oSource;
@@ -34,12 +34,12 @@
 				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
 
 				      // a plain RadioButton
-				var oRadioButton = new sap.ui.commons.RadioButton("c1"); 
-				oRadioButton.setText("Just a plain vanilla RadioButton"); 
+				var oRadioButton = new sap.ui.commons.RadioButton("c1");
+				oRadioButton.setText("Just a plain vanilla RadioButton");
 				oRadioButton.setGroupName("group1");
 				oRadioButton.placeAt("target1");
 
-				oRadioButton = new sap.ui.commons.RadioButton("c2"); 
+				oRadioButton = new sap.ui.commons.RadioButton("c2");
 				oRadioButton.setText("This one is initially selected and has a tooltip (and toggles the readonly state of the box above when changing from unselected to selected)");
 				oRadioButton.setSelected(true);
 				oRadioButton.setGroupName("group1");
@@ -47,33 +47,33 @@
 				oRadioButton.attachSelect(toggleReadonly);
 				oRadioButton.placeAt("target2");
 
-				oRadioButton = new sap.ui.commons.RadioButton("c3"); 
-				oRadioButton.setText("Disabled RadioButton"); 
+				oRadioButton = new sap.ui.commons.RadioButton("c3");
+				oRadioButton.setText("Disabled RadioButton");
 				oRadioButton.setGroupName("group1");
 				oRadioButton.setEnabled(false);
 				oRadioButton.placeAt("target3");
 
-				oRadioButton = new sap.ui.commons.RadioButton("c4"); 
-				oRadioButton.setText("Readonly SELECTED RadioButton"); 
+				oRadioButton = new sap.ui.commons.RadioButton("c4");
+				oRadioButton.setText("Readonly SELECTED RadioButton");
 				oRadioButton.setGroupName("group2");
 				oRadioButton.setEditable(false);
 				oRadioButton.setSelected(true);
 				oRadioButton.placeAt("target4");
 
-				oRadioButton = new sap.ui.commons.RadioButton("c5"); 
+				oRadioButton = new sap.ui.commons.RadioButton("c5");
 				oRadioButton.setText("RadioButton with warning state");
 				oRadioButton.setGroupName("group2");
 				oRadioButton.setValueState(sap.ui.core.ValueState.Warning);
 				oRadioButton.placeAt("target5");
 
-				oRadioButton = new sap.ui.commons.RadioButton("c6"); 
+				oRadioButton = new sap.ui.commons.RadioButton("c6");
 				oRadioButton.setText("RadioButton with error state");
 				oRadioButton.setGroupName("group2");
 				oRadioButton.setValueState(sap.ui.core.ValueState.Error);
 				oRadioButton.placeAt("target6");
 
-				oRadioButton = new sap.ui.commons.RadioButton("c7"); 
-				oRadioButton.setText("RadioButton with event"); 
+				oRadioButton = new sap.ui.commons.RadioButton("c7");
+				oRadioButton.setText("RadioButton with event");
 				oRadioButton.setGroupName("group2");
 				oRadioButton.attachSelect(alertSelected);
 				oRadioButton.placeAt("target7");
@@ -106,19 +106,19 @@
 				oLayout.createRow(oCell, oRadioButton);
 
 				// width test
-				oRadioButton = new sap.ui.commons.RadioButton("c9"); 
+				oRadioButton = new sap.ui.commons.RadioButton("c9");
 				oRadioButton.setText("RadioButton (width = 200px)");
 				oRadioButton.setGroupName("group4");
 				oRadioButton.setWidth("200px");
 				oRadioButton.placeAt("target9");
 
-				oRadioButton = new sap.ui.commons.RadioButton("c10"); 
-				oRadioButton.setText("Another RadioButton"); 
+				oRadioButton = new sap.ui.commons.RadioButton("c10");
+				oRadioButton.setText("Another RadioButton");
 				oRadioButton.setGroupName("group4");
 				oRadioButton.placeAt("target10");
 
 				// invisible RadioButton
-				oRadioButton = new sap.ui.commons.RadioButton("c11"); 
+				oRadioButton = new sap.ui.commons.RadioButton("c11");
 				oRadioButton.setText("This RadioButton must not be visible");
 				oRadioButton.setGroupName("group5");
 				oRadioButton.setVisible(false);

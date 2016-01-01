@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <title>Test Page for sap.m.Carousel</title>
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	type="text/javascript"
 	src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
@@ -11,7 +11,7 @@
 	data-sap-ui-libs="sap.m">
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -32,11 +32,11 @@ asyncTest("SplitContainer containing carousel should not show hidden master page
 			activePage: "myPage2",
 			pages : [new sap.m.Image("myPage1", {
 				src: "../images/demo/nature/desert.jpg",
-				
+
 			}),
 			img2,]
 		});
-		
+
 
 	// System under Test
 	var oSplitApp = new sap.m.SplitApp({
@@ -47,7 +47,7 @@ asyncTest("SplitContainer containing carousel should not show hidden master page
 	// Act
 	oSplitApp.placeAt("qunit-fixture");
 	sap.ui.getCore().applyChanges();
-	
+
 	touchStartEvent =jQuery.Event("touchstart", {
 		originalEvent: {},
 		touches: {
@@ -69,10 +69,10 @@ asyncTest("SplitContainer containing carousel should not show hidden master page
 
 			length: 1
 		},
-		
+
 		srcControl: img2,
 	});
-	
+
 	swipeRightEvent = jQuery.Event("swiperight", {
 		srcControl : img2
 	});
@@ -84,7 +84,7 @@ asyncTest("SplitContainer containing carousel should not show hidden master page
 		oSplitApp.destroy();
 		start();
 	}, 600);
-	
+
 });
 
 

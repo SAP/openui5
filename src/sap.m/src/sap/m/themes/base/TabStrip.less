@@ -180,39 +180,9 @@
 				}
 			}
 		}
-
-	  .sapMTabSelect {
-		position: relative;
-		float: left;
-
-		width: 2rem;
-		height: 100%;
-		padding: 0;
-		margin: 0;
-
-		.sapMSltInner {
-		  position: relative;
-
-		  width: 1.625rem;
-		  height: 1.625rem;
-
-		  .sapMSltIcon {
-			position: absolute;
-			top: 0;
-			left: 0;
-
-			height: 100%;
-			width: 100%;
-		  }
-
-		  .sapUiIcon:before {
-			position: relative;
-			top: 4px;
-		  }
-		}
-	  }
 	}
 }
+
 
 /* ============================================= */
 /* Form factor compact                           */
@@ -365,37 +335,27 @@
 	.sapMTabStrip {
 		.sapMTSLeftOverflowButtons {
 			display: none;
-			.sapMBtn {
-				.sapMBtnInner  {
-					.sapUiIcon {
-					}
-				}
-			}
 		}
 		.sapMTSTabContainer {
 			display: none;
-			.sapMTSTabs {
-				.sapMTabContainerItem {
-					.sapMTabContainerItemModified {
-					}
-					.sapMTabContainerItemModifiedInvisible {
-					}
-				}
-			}
 		}
 		.sapMTSRightOverflowButtons {
 			display: none;
-			.sapMBtn {
-				.sapMBtnInner  {
-					.sapUiIcon {
-					}
-				}
-			}
 		}
-		.sapMTSTouchArea {
-			.sapMBtn {
-				.sapMBtnInner {
-					.sapMBtnIcon {
+	}
+}
+
+/* ============================================= */
+/* Tablet styles                                  */
+/* ============================================= */
+.sap-tablet {
+	.sapMTabStrip {
+		.sapMTSTabContainer {
+			.sapMTSTabs {
+				.sapMTabContainerItem {
+					padding: 0 1.25rem 0 0.25rem;
+					.sapMTSTabCloseBtnCnt {
+						visibility: visible;
 					}
 				}
 			}

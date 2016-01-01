@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
 <title>RatingIndicator - sap.ui.commons</title>
 <link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.RatingIndicator.gif">
 <script src="../../../../resources/sap-ui-core.js"
@@ -65,7 +65,7 @@
     oButton.attachPress(
     		function (oControlEvent) {
 					var maxValue = parseInt(oInputSymbols.getValue());
-					oStarRating.setMaxValue(maxValue); 
+					oStarRating.setMaxValue(maxValue);
 					oStarRating.setValue(parseFloat(oInputValue.getValue()));
 					oStarRating.setVisualMode(oInputHalfSymbols.getSelectedItem().getText());
 					oStarRating.setEditable(!oInputReadOnly.getChecked());

@@ -1,7 +1,7 @@
 {
 
 	"name": "sap.ui.test.v2.Component",
-	
+
 	"sap.app": {
 		"id": "sap.ui.test.v2",
 		"applicationVersion": {
@@ -10,16 +10,16 @@
 		"title": "{{title}}",
 		"description": "{{description}}"
 	},
-	
+
 	"sap.ui5": {
-		
+
 		"resourceRoots": {
 			"x.y.z": "anypath",
 			"foo.bar": "../../foo/bar",
 			"absolute": "http://absolute/uri",
 			"server.absolute": "/server/absolute/uri"
 		},
-		
+
 		"resources": {
 			"js": [
 				{
@@ -35,14 +35,14 @@
 				{}
 			]
 		},
-		
+
 		"dependencies": {
 			"minUI5Version": "1.22.5",
 			"libs": {
 				"sap.ui.commons": {
 					"minVersion": "1.22.0"
 				}
-			}, 
+			},
 			"components": {
 				"sap.ui.test.other": {
 					"optional": true,
@@ -50,7 +50,7 @@
 				}
 			}
 		},
-		
+
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -61,9 +61,9 @@
 				"uri": "/sap/opu/odata/snce/PO_S_SRV/"
 			}
 		},
-		
+
 		"rootView": "sap.ui.test.view.Main",
-		
+
 		"config": {
 			"any1": {
 				"entry": "configuration"
@@ -75,9 +75,10 @@
 			},
 			"any3": {
 				"anyarray": [1, 2, 3]
-			}
+			},
+			"zero": 0
 		},
-		
+
 		"routing": {
 			"config": {
 				"viewType" : "XML",
@@ -95,7 +96,7 @@
 				}
 			]
 		},
-		
+
 		"extends": {
 			"extensions": {
 				"sap.ui.viewReplacements": {
@@ -124,7 +125,10 @@
 				}
 			}
 		}
-	
-	}
+
+	},
+
+	"foo": {},
+	"foo.bar": "string as entry value is not valid!"
 
 }

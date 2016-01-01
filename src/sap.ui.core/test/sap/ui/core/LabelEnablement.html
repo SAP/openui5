@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html><head>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
-	
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+
 	<title>LabelEnablement - sap.ui.core</title>
-	
+
 	<script id='sap-ui-bootstrap' type='text/javascript'
 		src='../../../../resources/sap-ui-core.js'
 		data-sap-ui-theme='sap_bluecrystal'
 		data-sap-ui-libs='sap.ui.core'></script>
-	
+
 	<script id="view1" type="sapui5/xmlview">
 		<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
 				controllerName="my.own.controller" xmlns:html="http://www.w3.org/1999/xhtml">
-			
+
 			<Label id="someFieldLabel" text="SomeLabel" labelFor="someField"/>
 			<TextField id="someField"/>
 
@@ -88,7 +88,7 @@
 					</f:FormContainer>
 				</f:formContainers>
 			</f:Form>
-		</mvc:View> 
+		</mvc:View>
 	</script>
 
 	<script>
@@ -104,12 +104,12 @@
 			alert("This test page requires the library 'sap.ui.layout' which is not available.");
 			throw (e);
 		}
-	
+
 		sap.ui.controller("my.own.controller", {});
 		var myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
 		myView.placeAt("content");
 	</script>
-	
+
 	</head>
 	<body class="sapUiBody">
 		<div id="content"></div>

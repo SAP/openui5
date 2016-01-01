@@ -142,6 +142,7 @@ sap.ui.define([
 		};
 
 		BlockBase.prototype.onBeforeRendering = function () {
+			this._applyMapping();
 			if (!this.getMode() || this.getMode() === "") {
 				if (this.getMetadata().getView("defaultXML")) {
 					this.setMode("defaultXML");
@@ -184,19 +185,6 @@ sap.ui.define([
 		 * model mapping management
 		 * *******************************************/
 
-
-		/**
-		 * This triggers rerendering of itself and its children.<br/> As <code>sap.ui.base.ManagedObject</code> "bubbles up" the
-		 * invalidate, changes to child-<code>Elements</code> will also result in rerendering of the whole sub tree.
-		 * @protected
-		 * @name sap.ui.base.ManagedObject#invalidate
-		 * @function
-		 * @param {*} oOrigin the name of the origin
-		 */
-		BlockBase.prototype.invalidate = function (oOrigin) {
-			this._applyMapping();
-			Control.prototype.invalidate.call(this, oOrigin);
-		};
 
 		/**
 		 * Intercept direct setModel calls.
@@ -479,11 +467,14 @@ sap.ui.define([
 			return oView;
 		};
 
+		// This offset is needed so the breakpoints of the simpleForm match those of the GridLayout
+		BlockBase.FORM_ADUSTMENT_OFFSET = 24;
+
 		BlockBase._FORM_ADJUSTMENT_CONST = {
 			breakpoints: {
-				XL: Device.media._predefinedRangeSets.StdExt.points[2],
-				L: Device.media._predefinedRangeSets.StdExt.points[1],
-				M: Device.media._predefinedRangeSets.StdExt.points[0]
+				XL: Device.media._predefinedRangeSets.StdExt.points[2] - BlockBase.FORM_ADUSTMENT_OFFSET,
+				L: Device.media._predefinedRangeSets.StdExt.points[1] - BlockBase.FORM_ADUSTMENT_OFFSET,
+				M: Device.media._predefinedRangeSets.StdExt.points[0] - BlockBase.FORM_ADUSTMENT_OFFSET
 			},
 			labelSpan: {
 				/* values specified by design requirement */
@@ -604,21 +595,21 @@ sap.ui.define([
 
 		BlockBase.prototype._applyFormAdjustmentFields = function (oFormAdjustmentFields, oFormLayout) {
 
-			//oFormLayout.setColumnsXL(oFormAdjustmentFields.columns.XL);
+			oFormLayout.setColumnsXL(oFormAdjustmentFields.columns.XL);
 			oFormLayout.setColumnsL(oFormAdjustmentFields.columns.L);
 			oFormLayout.setColumnsM(oFormAdjustmentFields.columns.M);
 
-			//oFormLayout.setLabelSpanXL(oFormAdjustmentFields.labelSpan.XL);
+			oFormLayout.setLabelSpanXL(oFormAdjustmentFields.labelSpan.XL);
 			oFormLayout.setLabelSpanL(oFormAdjustmentFields.labelSpan.L);
 			oFormLayout.setLabelSpanM(oFormAdjustmentFields.labelSpan.M);
 			oFormLayout.setLabelSpanS(oFormAdjustmentFields.labelSpan.S);
 
-			//oFormLayout.setEmptySpanXL(oFormAdjustmentFields.emptySpan.XL);
+			oFormLayout.setEmptySpanXL(oFormAdjustmentFields.emptySpan.XL);
 			oFormLayout.setEmptySpanL(oFormAdjustmentFields.emptySpan.L);
 			oFormLayout.setEmptySpanM(oFormAdjustmentFields.emptySpan.M);
 			oFormLayout.setEmptySpanS(oFormAdjustmentFields.emptySpan.S);
 
-			//oFormLayout.setBreakpointXL(oFormAdjustmentFields.breakpoint.XL);
+			oFormLayout.setBreakpointXL(oFormAdjustmentFields.breakpoints.XL);
 			oFormLayout.setBreakpointL(oFormAdjustmentFields.breakpoints.L);
 			oFormLayout.setBreakpointM(oFormAdjustmentFields.breakpoints.M);
 		};

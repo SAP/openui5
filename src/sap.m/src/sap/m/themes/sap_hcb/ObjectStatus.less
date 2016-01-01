@@ -3,14 +3,8 @@
 /* CSS for control sap.m/ObjectStatus.control */
 /* ============================================= */
 
-.sapUiForm .sapMObjStatusText {
-	overflow: hidden;
-	font-size: 0.875rem;
-	line-height: normal;
-	display: inline-block;
-	-webkit-user-select: text;
-	-ms-user-select: text;
-	user-select: text;
+.sapMObjStatus {
+	font-size: @sapMFontMediumSize;
 }
 
 .sapMObjStatus {
@@ -56,13 +50,13 @@
 }
 
 /* Condensed size */
-.sapUiSizeCondensed .sapUiTableCell>.sapMObjStatus>.sapMObjStatusText{
+.sapUiSizeCondensed .sapUiTableCell>.sapMObjStatus>.sapMObjStatusText {
 	.sapUiCondensedTableCellContent; /* see shared.css */
-	font-size: @sapMFontMediumSize; 
+	font-size: @sapMFontMediumSize;
 }
 
 /* HCB theme specific styles */
-.sapMLIBSelected, .sapMLIB:hover { 
+.sapMLIBSelected, .sapMLIB:hover {
 	.sapMObjStatusNone > .sapMObjStatusText,
 	.sapMObjStatusNone > .sapMObjStatusIcon,
 	.sapMObjStatusError > .sapMObjStatusText,

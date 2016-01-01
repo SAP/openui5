@@ -2,7 +2,7 @@
 
 <html>
  <head>
- 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
    <title>Data binding test page with more then one Model</title>
 
@@ -30,16 +30,16 @@
 
     	var oModel = new sap.ui.model.json.JSONModel();
     	oModel.setData({
-    		firstName: "John", 
-    		lastName: "Doe", 
-    		birthday: {day:1,month:4,year:1970}, 
+    		firstName: "John",
+    		lastName: "Doe",
+    		birthday: {day:1,month:4,year:1970},
     		address:[{city:"Walldorf"}]
     	});
     	sap.ui.getCore().setModel(oModel);
 
     	var oModel2 = new sap.ui.model.json.JSONModel();
     	oModel2.setData({
-    		test: "Test", 
+    		test: "Test",
     		enabled: true,
     		items: [{text:"first item"},
     		        {text:"second item"},
@@ -47,51 +47,51 @@
     		        ]
     	});
     	sap.ui.getCore().setModel(oModel2, "test");
-    	
+
 
     	function doIt(){
-    		
-    		
-			var oText = new sap.ui.commons.TextField("source",{change:update});			
+
+
+			var oText = new sap.ui.commons.TextField("source",{change:update});
 			oText.placeAt("target1");
 			var oBtn = new sap.ui.commons.Button({
-				id: "btn", 
+				id: "btn",
 				text: "Trigger Change",
 				press: update
-			});			
+			});
 			oBtn.placeAt("target2");
 
     		var oText = new sap.ui.commons.Label();
-			oText.setText("TextField with text property bound against model 2");			
+			oText.setText("TextField with text property bound against model 2");
 			oText.placeAt("target3");
     		var oText = new sap.ui.commons.TextField("txt");
 			oText.bindValue("test>/test");
 			oText.placeAt("target4");
-			
+
     		var oText = new sap.ui.commons.Label();
-			oText.setText("TextView: with text property bound against model 1");			
+			oText.setText("TextView: with text property bound against model 1");
 			oText.placeAt("target5");
     		var oText = new sap.ui.commons.TextView();
-			oText.bindText("/firstName");			
+			oText.bindText("/firstName");
 			oText.placeAt("target6");
-						
+
     		var oText = new sap.ui.commons.Label();
-			oText.setText("ComboBox: with value property bound against model 1");		
+			oText.setText("ComboBox: with value property bound against model 1");
 			oText.placeAt("target7");
 			var oListItem = new sap.ui.core.ListItem();
 			oListItem.bindProperty("text","test>text");
     		var oComboBox = new sap.ui.commons.ComboBox();
     		oComboBox.bindItems("test>/items", oListItem);
-    		oComboBox.bindValue("/firstName");			
+    		oComboBox.bindValue("/firstName");
     		oComboBox.placeAt("target8");
-			
+
     		var oText = new sap.ui.commons.Label();
-			oText.setText("Checkbox: with checked property bound against model 2");		
+			oText.setText("Checkbox: with checked property bound against model 2");
 			oText.placeAt("target9");
 			var oChkBx = new sap.ui.commons.CheckBox({id:"box", change:handleCheckBoxChange});
 			oChkBx.bindChecked("test>/enabled");
 			oChkBx.placeAt("target10");
-			
+
 			var oML = new sap.ui.commons.layout.MatrixLayout();
 			oML.setLayoutFixed(false);
 
@@ -112,13 +112,13 @@
 			oTxt.bindProperty("enabled", "test>/enabled");
 
 			oML.placeAt("target11");
-			
+
     	};
-    	
+
     	function update(){
 			oModel.setProperty("/firstName", sap.ui.getCore().byId("source").getValue());
     	};
-    	
+
     	function handleCheckBoxChange(oEvent){
     		var bEnabled = oEvent.getParameter("checked");
     		oModel2.setProperty("/enabled", bEnabled);

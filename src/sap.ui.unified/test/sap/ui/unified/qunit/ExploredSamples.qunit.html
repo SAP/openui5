@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta charset="UTF-8">
+	<meta charset="utf-8">
 	<base href="../../../../../">
 	<!--[if lte IE 9]><script type="text/javascript">
 	(function() {
@@ -23,10 +23,10 @@
 			data-sap-ui-resourceroots='{ "sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/" }'
 			data-sap-ui-xx-componentPreload='off' >
 	</script>
-	<link rel="stylesheet" href="resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script>
 		// ignore "error" event fired via jQuery.trigger() (e.g. from sap.m.Image control in FF or PhantomJS)
-		// FF adds a prefix "uncaught exception: ", PhantomJS simply calls toString(). 
+		// FF adds a prefix "uncaught exception: ", PhantomJS simply calls toString().
 		// therefore we test with a regular expression
 		window.onerror = function(e) {
 			return /\[object Object\]/.test(e);

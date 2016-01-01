@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>DatePicker - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.DatePicker.gif">
 
@@ -40,7 +40,7 @@
 			}
 
 			var oCombo = new sap.ui.commons.ComboBox({
-				items : [new sap.ui.core.ListItem("",     {text:"",      additionalText: "(default)"}), 
+				items : [new sap.ui.core.ListItem("",     {text:"",      additionalText: "(default)"}),
 				         new sap.ui.core.ListItem("de",   {text:"de",    additionalText: "(German)"}),
 				         new sap.ui.core.ListItem("en-XX",{text:"en-XX", additionalText: "(unknown-country)"}),
 				         new sap.ui.core.ListItem("fr",   {text:"fr",    additionalText: "(French)"}),
@@ -123,7 +123,7 @@
 										press: function(oEvent){ oDialog.close(); }})]
 				});
 			var oButton = new sap.ui.commons.Button("btn-popup", {
-				text: "Open Sample Dialog", 
+				text: "Open Sample Dialog",
 				press: function(oEvent){ oDialog.open();}
 				}).placeAt("popup");
 
@@ -277,7 +277,7 @@
 				<td id="french"></td>
 			</tr>
 			<tr>
-				<td id="hebrew-label"></td> 
+				<td id="hebrew-label"></td>
 				<td id="hebrew"></td>
 				<td>Note: For true Hebrew, select RTL mode!</td>
 			</tr>
@@ -307,7 +307,7 @@
 		<div id="placeholder"></div>
 		<br>
 		<div id="popup"></div>
-		<br> Test if the DatePicker is somewhere in a <code>fixed</code> area 
+		<br> Test if the DatePicker is somewhere in a <code>fixed</code> area
 		and the screen is scrolled. To test it just make the browser window small and scroll to the bottom.
 		Then open the DatePicker in the blue box. It should open above.
 		<!-- fixed DIV near bottom to check if datepicker opens inside the screen -->

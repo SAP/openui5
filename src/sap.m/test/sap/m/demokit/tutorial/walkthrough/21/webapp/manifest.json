@@ -33,16 +33,16 @@
 		"sap.m": {}
 	  }
 	},
-
-	"config": {
-	  "invoiceLocal": "/Invoices.json"
-	},
 	"models": {
 	  "i18n": {
 		"type": "sap.ui.model.resource.ResourceModel",
 		"settings": {
 		  "bundleName": "sap.ui.demo.wt.i18n.i18n"
 		}
+	  },
+	  "invoice": {
+	    "type": "sap.ui.model.json.JSONModel",
+	    "uri":"Invoices.json"
 	  }
 	},
 	"resources": {

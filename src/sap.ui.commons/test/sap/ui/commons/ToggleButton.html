@@ -1,42 +1,42 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>ToggleButton - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Button.gif">
-		
+
     <!-- ********************************************************************** -->
 		<!-- SAPUI5 Bootstrap:                                                     -->
 		<!-- Extend the "libs" property if you like to import additional libraries  -->
 		<!-- ********************************************************************** -->
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 						data-sap-ui-theme="sap_goldreflection"
 						type="text/javascript"
-						data-sap-ui-libs="sap.ui.commons"  
+						data-sap-ui-libs="sap.ui.commons"
 						src="../../../../resources/sap-ui-core.js"
 						data-sap-ui-areas="target1,target2,target2a,target3,target4,target5,target6,target7,target8,target9,target10,target11,target12,target13,target14,target15,target16,target17,target18,target19"
 		>
-		</script>			
-		
+		</script>
+
 		<style>
 			/* Higher button - test using setStyleClass */
 			.tallButton {
 				height: 45px;
 			}
 		</style>
-				
-		<script type="text/javascript">	
+
+		<script type="text/javascript">
 
 				var oHelper = {
 		  		alert: function (sMsg) {
 		    		jQuery.sap.domById("outputTarget").innerHTML = "Button pressed: '" + sMsg + "'";
 		     	}
 				};
-		
+
 				var oCore = sap.ui.getCore();
 				oCore.attachInitEvent(function () {
-					
+
 				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
 
 				var oButton = new sap.ui.commons.ToggleButton("b1");
@@ -47,156 +47,156 @@
 					alert("Pressed : " + sap.ui.getCore().getControl("b1").getPressed());
 				});
 				oButton.placeAt("target1");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("b2");
 				oButton.setText("Button with icons and width 400px");
      			oButton.setIcon("images/backtotop.gif");
-     			oButton.setWidth("400px"); 
+     			oButton.setWidth("400px");
      			var sText2 = oButton.getText();
 				oButton.attachPress(function() {oHelper.alert(sText2)});
 				oButton.placeAt("target2");
-				
+
 				var oButton = new sap.ui.commons.ToggleButton("b2a");
 				oButton.setText("Button with different icons");
 				oButton.setIcon("images/Button_regular.png");
      			oButton.setIconHovered("images/Button_hover.png");
      			oButton.setIconSelected("images/Button_down.png");
 				oButton.placeAt("target2a");
-				
+
 				// test enable and visibility of button
 				var oLayout = new sap.ui.commons.layout.MatrixLayout("m1");
 				oLayout.setLayoutFixed(false);
 				oLayout.placeAt("target3");
-				
+
 				// row 1: toggle enabled state
 				var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_1");
 				oLayout.addRow(oMLR);
 
-				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1"); 
+				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1");
 				oButton = new sap.ui.commons.ToggleButton("b3");
 				oButton.setText("Toggle enable state");
-				oButton.setWidth("140px");				
+				oButton.setWidth("140px");
 				oButton.attachPress(function toggleEnabledState(oControlEvent) {
 					var oButton1 = sap.ui.getCore().getControl("b3_a");
 					var oButton2 = sap.ui.getCore().getControl("b3_b");
 					oButton1.setEnabled(!oButton1.getEnabled());
 					oButton2.setEnabled(!oButton2.getEnabled());
 					if (oButton1.getEnabled() == true ) {
-						oButton1.setText("Enabled"); 
-						oButton2.setText("Enabled Pressed"); 
+						oButton1.setText("Enabled");
+						oButton2.setText("Enabled Pressed");
 					} else {
 						oButton1.setText("Disabled");
 						oButton2.setText("Disabled Pressed");
 					}
-				} );							
-				oMLC.addContent(oButton);				
+				} );
+				oMLC.addContent(oButton);
 				oMLR.addCell(oMLC);
 
-				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2"); 
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2");
 				var oToggleButton = new sap.ui.commons.ToggleButton("b3_a");
-				oToggleButton.setText("Disabled");	
-				oToggleButton.setWidth("140px");	
+				oToggleButton.setText("Disabled");
+				oToggleButton.setWidth("140px");
 				oToggleButton.setEnabled(false);
-				oMLC.addContent(oToggleButton);					
+				oMLC.addContent(oToggleButton);
 				oMLR.addCell(oMLC);
 
-				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_3"); 
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_3");
 				oToggleButton = new sap.ui.commons.ToggleButton("b3_b");
-				oToggleButton.setText("Disabled Pressed");	
-				oToggleButton.setWidth("140px");	
+				oToggleButton.setText("Disabled Pressed");
+				oToggleButton.setWidth("140px");
 				oToggleButton.setEnabled(false);
 				oToggleButton.setPressed(true);
-				oMLC.addContent(oToggleButton);					
+				oMLC.addContent(oToggleButton);
 				oMLR.addCell(oMLC);
 
 				// row 2: toggle visible state
 				oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_2");
 				oLayout.addRow(oMLR);
 
-				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_1"); 
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_1");
 				oButton = new sap.ui.commons.ToggleButton("b4");
 				oButton.setText("Toggle visibility");
-				oButton.setWidth("140px");				
+				oButton.setWidth("140px");
 				oButton.attachPress(function toggleVisibility(oControlEvent){
 					var oButton1 = sap.ui.getCore().getControl("b4_a");
 					oButton1.setVisible(!oButton1.getVisible());
-				} );									
-				oMLC.addContent(oButton);				
+				} );
+				oMLC.addContent(oButton);
 				oMLR.addCell(oMLC);
 
-				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_2"); 
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_2");
 				oToggleButton = new sap.ui.commons.ToggleButton("b4_a");
 				oToggleButton.setText("Visible");
-				oToggleButton.setWidth("140px");				
+				oToggleButton.setWidth("140px");
 				oMLC.addContent(oToggleButton);
 				oMLR.addCell(oMLC);
-				
-				
+
+
 				// button with icons
 				oButton = new sap.ui.commons.ToggleButton("b5");
-				oButton.setText("Button with icon first"); 
+				oButton.setText("Button with icon first");
 				oButton.setIcon("images/help.gif");
 				oButton.setIconFirst(true);
 				var sText3 = oButton.getText();
 				oButton.attachPress(function() {oHelper.alert(sText3)});
 				oButton.placeAt("target4");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("b6");
-				oButton.setText("Button with icon last"); 
+				oButton.setText("Button with icon last");
 				oButton.setIcon("images/help.gif");
-				oButton.setIconFirst(false);       
+				oButton.setIconFirst(false);
 				var sText4 = oButton.getText();
 				oButton.attachPress(function() {oHelper.alert(sText4)});
 				oButton.placeAt("target5");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("b7");
-				oButton.setText("Button with icon first"); 
-				oButton.setIcon("images/personalize.gif");  
-				oButton.setIconFirst(true);       
+				oButton.setText("Button with icon first");
+				oButton.setIcon("images/personalize.gif");
+				oButton.setIconFirst(true);
 				oButton.setEnabled(false);
 				oButton.placeAt("target6");
-				
+
 				// width test
-				oButton = new sap.ui.commons.ToggleButton("bw1"); 
+				oButton = new sap.ui.commons.ToggleButton("bw1");
 				oButton.setText("Button (width = 200px)");
 				oButton.setWidth("200px");
 				oButton.placeAt("target7");
-				
-				oButton = new sap.ui.commons.ToggleButton("bw2"); 
+
+				oButton = new sap.ui.commons.ToggleButton("bw2");
 				oButton.setText("and 100px");
-				oButton.setWidth("100px"); 
+				oButton.setWidth("100px");
 				oButton.placeAt("target8");
-				
-				oButton = new sap.ui.commons.ToggleButton("b9", {text:"This is a button which uses the new constructor", 
+
+				oButton = new sap.ui.commons.ToggleButton("b9", {text:"This is a button which uses the new constructor",
 					tooltip:"This is a button which uses the new way of full property, aggregation, association, events provisioning via constructor parameter. Just listener function.",
 					press: [function(oControlEvent){oHelper.alert("Button '" + oControlEvent.getSource().getId() + "' was created with the new mProperties!");}]
-				});         
+				});
 				oButton.placeAt("target9");
-				
+
 
 				var oListener = {doSomething: function(oControlEvent){
 					oHelper.alert("Listener Object: Button '" + oControlEvent.getSource().getId() + "' was created with the new mProperties!");}
-				};                
-				oButton = new sap.ui.commons.ToggleButton("b10", {text:"This is a button which uses the new constructor, too", 
+				};
+				oButton = new sap.ui.commons.ToggleButton("b10", {text:"This is a button which uses the new constructor, too",
 					tooltip:"This is a button which uses the new way of full property, aggregation, association, events provisioning via constructor parameter. Listenner function and object.",
 					icon:"images/help.gif",
 					iconFirst:false,
 					press: [oListener.doSomething, oListener]
-				}); 
+				});
 				oButton.placeAt("target10");
-				
-			
+
+
 				oButton = new sap.ui.commons.ToggleButton("b11");
 				oButton.setText("");
 				oButton.setTooltip("This is a button without text but with a 14px icon and a tooltip");
 				oButton.setIcon("images/help.gif");
-				oButton.placeAt("target11"); 
-				
+				oButton.placeAt("target11");
+
 				oButton = new sap.ui.commons.ToggleButton("b11b");
 				oButton.setText("");
 				oButton.setTooltip("This is another button without text but with a 16px icon and a tooltip");
-				oButton.setIcon("images/personalize.gif"); 
-				oButton.placeAt("target11"); 
+				oButton.setIcon("images/personalize.gif");
+				oButton.placeAt("target11");
 
 				oButton = new sap.ui.commons.ToggleButton("b11c");
 				oButton.setText("");
@@ -209,42 +209,42 @@
 				oButton.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
 				oButton.setTooltip("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
 				oButton.placeAt("target12");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("b13");
 				oButton.addStyleClass("tallButton");
-				oButton.setText("Higher via AddStyleClass"); 
-				oButton.setTooltip("This Button uses function AddStyleClass to add an CSS class with different height."); 
-				oButton.setIcon("images/help.gif");  
-				oButton.setIconFirst(true);       
+				oButton.setText("Higher via AddStyleClass");
+				oButton.setTooltip("This Button uses function AddStyleClass to add an CSS class with different height.");
+				oButton.setIcon("images/help.gif");
+				oButton.setIconFirst(true);
 				oButton.setEnabled(true);
 				oButton.placeAt("target13");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("b14", {height:"100px",text:"100px high via 'height' property"});
 				oButton.placeAt("target14");
-				
+
 				var oTextView15 = new sap.ui.commons.TextView("textView15",{text: "Text...", tooltip: "Change me!!!"});
 				oTextView15.placeAt("target15");
 				oButton = new sap.ui.commons.Button('b14_1');
 				oButton.setText('Button');
 				oButton.setLite(true);
-				oButton.placeAt("target15")				
+				oButton.placeAt("target15")
 				oButton = new sap.ui.commons.Button('b14_2');
 				oButton.setText('Button with Icon');
 				oButton.setLite(true);
 				oButton.setIcon("images/help.gif");
-				oButton.placeAt("target15")				
+				oButton.placeAt("target15")
 				oButton = new sap.ui.commons.ToggleButton("b15_1");
 				oButton.setText('Lite ToggleButton with Icon');
-				oButton.setLite(true);	
+				oButton.setLite(true);
 				oButton.setIcon("images/help.gif");
 				oButton.placeAt("target15");
 				oButton = new sap.ui.commons.ToggleButton("b15_2");
-				oButton.setLite(true);	
+				oButton.setLite(true);
 				oButton.setIcon("images/help.gif");
 				oButton.placeAt("target15");
 				oButton = new sap.ui.commons.ToggleButton("b15");
 				oButton.setText('Lite ToggleButton');
-				oButton.setLite(true);	
+				oButton.setLite(true);
 				oButton.placeAt("target15");
 				oButton = new sap.ui.commons.ToggleButton("b16");
 				oButton.setText('Lite Disabled ToggleButton');
@@ -320,7 +320,7 @@
 				oButton.setPressed(true);
 				oButton.setStyle('Reject');
 				oButton.placeAt("target15");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("b18");
 				oButton.setText('Emphasized Button');
 				oButton.setStyle('Emph');
@@ -383,7 +383,7 @@
 				oButton.setEnabled(false);
 				oButton.setStyle('Reject');
 				oButton.placeAt("target18");
-				
+
 				// unstyled buttons
 				var bStyled = false; //for faster change ;-)
 				oButton = new sap.ui.commons.ToggleButton("Button19-1",{
@@ -415,13 +415,13 @@
 					styled: bStyled,
 					enabled: false
 				}).placeAt("target19");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("Button19-6",{
 					text: "Ñagçyfox",
 					styled: bStyled,
 					style: sap.ui.commons.ButtonStyle.Emph
 				}).placeAt("target19");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("Button19-7",{
 					text: "Ñagçyfox",
 					styled: bStyled,
@@ -434,7 +434,7 @@
 					styled: bStyled,
 					style: sap.ui.commons.ButtonStyle.Accept
 				}).placeAt("target19");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("Button19-9",{
 					text: "Ñagçyfox",
 					styled: bStyled,
@@ -447,7 +447,7 @@
 					styled: bStyled,
 					style: sap.ui.commons.ButtonStyle.Reject
 				}).placeAt("target19");
-				
+
 				oButton = new sap.ui.commons.ToggleButton("Button19-11",{
 					text: "Ñagçyfox",
 					styled: bStyled,
@@ -459,7 +459,7 @@
 	</head>
 	<body class="sapUiBody" role="application">
 		<h1>Test Page for sap.ui.commons.ToggleButton</h1>
-	
+
 		<div id="target1"></div>
 		<br>
 		<div id="target2"></div>
@@ -483,9 +483,9 @@
 		<br>
 		<div id="target10"></div>
 		<br>
-		<div id="target11"></div>   
+		<div id="target11"></div>
 		<br>
-		<div id="target12"></div>   
+		<div id="target12"></div>
 		<br>
 		<div id="target13"></div>
 		<p>
@@ -501,6 +501,6 @@
 		<p>
 		<div id="target19"></div>
 		<span id="outputTarget"></span>
-		</p>		
+		</p>
 	</body>
 </html>

@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>sap.m.FeedListItem Test</title>
 		<script id='sap-ui-bootstrap' type='text/javascript'
 			src='../../../resources/sap-ui-core.js'
@@ -10,11 +10,11 @@
 				data-sap-ui-libs='sap.m'>
 		</script>
 		<script type="text/javascript">
-		
+
 		var oList2 = new sap.m.List({
 			inset : true
 		});
-		
+
 		var data = {
 			navigation : [ {
 				title : "Travel Expend",
@@ -53,7 +53,7 @@
 				press : 'detailPage'
 			} ]
 		};
-		
+
 		var oItemTemplate1 = new sap.m.StandardListItem({
 			title : "{title}",
 			description : "{description}",
@@ -61,7 +61,7 @@
 			iconInset : "{iconInset}",
 			type : "{type}"
 		});
-		
+
 		function bindListData(data, itemTemplate, list)
 		{
 			var oModel = new sap.ui.model.json.JSONModel();
@@ -73,9 +73,9 @@
 			// bind Aggregation
 			list.bindAggregation("items", "/navigation", itemTemplate);
 		}
-		
+
 		bindListData(data, oItemTemplate1, oList2);
-		
+
 		var oLeftButton = new sap.m.Button({
 			text: "Modal",
 			type: sap.m.ButtonType.Reject,
@@ -83,7 +83,7 @@
 				oPopover.setModal(!oPopover.getModal());
 			}
 		});
-		
+
 		var oRightButton = new sap.m.Button({
 			text: "Close",
 			type: sap.m.ButtonType.Accept,
@@ -91,16 +91,16 @@
 				oPopover.close();
 			}
 		});
-		
-		var footer = new sap.m.Bar({ 
-			contentLeft: [],	
+
+		var footer = new sap.m.Bar({
+			contentLeft: [],
 			contentMiddle: [new sap.m.Button({icon: "images/favorite@2x.png"}),
 			                new sap.m.Button({icon: "images/feed@2x.png"}),
 			                new sap.m.Button({icon: "images/flag@2x.png"})],
 			contentRight: []
 		});
-		
-		
+
+
 		var oPopover = new sap.m.Popover({
 			placement: sap.m.PlacementType.Auto,
 			title: "Popover",
@@ -124,21 +124,21 @@
 				oList2
 			]
 		});
-		
-		
-		
-		
+
+
+
+
 		var oFeedList = new sap.m.List("oFeedItemList", {
 		    mode: "SingleSelectMaster",
 		    //showSeparators: "None",
 		});
-		
-		
+
+
 		var fnOpenPopup = function(oControlEvent) {
 			oPopover.openBy(oControlEvent.getParameters().domRef);
 		};
-		
-		
+
+
 		var oFeedListItemTemplate = new sap.m.FeedListItem({
 			type: "{type}",
 			icon : "{icon}",
@@ -166,12 +166,12 @@
 			// bind Aggregation
 			list.bindAggregation("items", "/chunks", itemTemplate);
 		}
-		
+
 		jQuery.sap.require("sap.ui.core.IconPool");
 		var sURI = sap.ui.core.IconPool.getIconURI("personnel-view");
-		
-		
-		
+
+
+
 		var feedData = {
 				chunks : [ {
 					icon: "images/male.jpg",
@@ -271,9 +271,9 @@
 					info: "Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved Approved ",
 				}]
 			};
-		
+
 		bindFeedListData(feedData, oFeedListItemTemplate, oFeedList);
-		
+
 		var oRerenderButton = new sap.m.Button({
 			text : "Invalidate / Rerender",
 			press : function (oEvent) {
@@ -293,9 +293,9 @@
 
 		appFeedList.addPage(feedListPage);
 		appFeedList.placeAt("body");
-		
+
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

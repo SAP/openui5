@@ -1,19 +1,19 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.odata.ODataModel
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
 	</script>
 
-<link rel="stylesheet" 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" 	media="screen" />
+<link rel="stylesheet" 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" 	media="screen">
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -74,7 +74,7 @@
 				jQuery.sap.log.debug("test 2 - metadata loaded is fired on metadata");
 				bFiredAtMetadata = true;
 			});
-			// attach again and wait for the metadataloaded event at the model itself, 
+			// attach again and wait for the metadataloaded event at the model itself,
 			//fail if event is fired at the metadata object
 			oModel2.attachMetadataLoaded(function() {
 				jQuery.sap.log.debug("metadata loaded is fired");
@@ -171,7 +171,7 @@
 	asyncTest("metadata get entity type check with context", function(){
 		expect(1);
 		var oModel = initModel(sURI, false, "Categories");
-		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));	
+		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));
 		var handler = function() { // delay the following test
 			oResult = oBinding.oEntityType;
 			equal(oResult.name, "Product", "entity type name check");
@@ -188,14 +188,14 @@
 	asyncTest("metadata get property metadata", function(){
 		expect(6);
 		var oModel = initModel(sURI, false, "Categories");
-		var oBinding = oModel.bindList("/Categories");	
+		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
 			equal(oResult.name, "CategoryName", "Property type name check");
 			equal(oResult.type, "Edm.String", "Property type name check");
 
-			// check nav property 
+			// check nav property
 			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "/Products/ProductName/");
 			equal(oResult.name, "ProductName", "Nav Property type name check");
 			equal(oResult.type, "Edm.String", "Nav Property type name check");
@@ -212,12 +212,12 @@
 		oBinding.getContexts();
 		this.clock.tick(1);
 	});
-	
+
 
 	asyncTest("async metadata request check", function(){
 		expect(2);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
-			json: true, 
+			json: true,
 			loadMetadataAsync: true
 		});
 
@@ -235,15 +235,15 @@
 	asyncTest("async metadata request check with bindings", function(){
 		expect(9);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
-			json: true, 
+			json: true,
 			loadMetadataAsync: true
 		});
 
-		var handler = function() { 
+		var handler = function() {
 			ok(true, "Metadata callback handler called");
-			oModel.detachMetadataLoaded(handler); // handler is undefined at this point. This always causes the assertion inside to fail. 
+			oModel.detachMetadataLoaded(handler); // handler is undefined at this point. This always causes the assertion inside to fail.
 			ok(oModel.getServiceMetadata(), "get metadata check");
-			var oBinding = oModel.bindList("/Categories");	
+			var oBinding = oModel.bindList("/Categories");
 			var handler2 = function() { // delay the following test
 				ok(oBinding.oEntityType, "entity type binding check");
 				equal(oBinding.oEntityType.name, "Category", "entity type name check");
@@ -269,12 +269,12 @@
 	asyncTest("async metadata request check with bindings die zwote", function(){
 		expect(7);
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
-			json: true, 
+			json: true,
 			loadMetadataAsync: true
 		});
 		// when metadata loaded a refresh is called which will trigger the data loading
 		// if not yet happened
-		var oBinding = oModel.bindList("/Categories");	
+		var oBinding = oModel.bindList("/Categories");
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
 			equal(oBinding.oEntityType.name, "Category", "entity type name check");

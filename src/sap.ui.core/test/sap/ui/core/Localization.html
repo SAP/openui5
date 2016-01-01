@@ -2,8 +2,8 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 
 	<title>Localization/Resource Bundles - sap.ui.core</title>
 
@@ -16,7 +16,7 @@
 	</script>
 
 	<script>
-	
+
 		try{
 			sap.ui.getCore().loadLibrary("sap.ui.commons");
 		}catch(e){
@@ -46,27 +46,27 @@
 		var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout();
 		oMatrixLayout.setLayoutFixed(false);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.TextView({text: oBundle.getText("welcome", ["Administrator"])}).attachBrowserEvent("click", showInfo) 
+				new sap.ui.commons.TextView({text: oBundle.getText("welcome", ["Administrator"])}).attachBrowserEvent("click", showInfo)
 		);
 		oMatrixLayout.getRows()[0].getCells()[0].setColSpan(2);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: oBundle.getText("lastname"), tooltip: oBundle.getText("lastname")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: oBundle.getText("lastname"), tooltip: oBundle.getText("lastname")}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: oBundle.getText("firstname")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: oBundle.getText("firstname")}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: oBundle.getText("street")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: oBundle.getText("street")}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: oBundle.getText("zip")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: oBundle.getText("zip")}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: oBundle.getText("city")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: oBundle.getText("city")}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.placeAt("resourcebundle");
@@ -76,27 +76,27 @@
 		oMatrixLayout.setModel(oResourceModel, "i18n");
 		oMatrixLayout.setLayoutFixed(false);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.TextView({text: oResourceModel.getResourceBundle().getText("welcome", ["Administrator"])}).attachBrowserEvent("click", showInfo) 
+				new sap.ui.commons.TextView({text: oResourceModel.getResourceBundle().getText("welcome", ["Administrator"])}).attachBrowserEvent("click", showInfo)
 		);
 		oMatrixLayout.getRows()[0].getCells()[0].setColSpan(2);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: "{i18n>lastname}", tooltip: "{i18n>lastname}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: "{i18n>lastname}", tooltip: "{i18n>lastname}"}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: "{i18n>firstname}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: "{i18n>firstname}"}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: "{i18n>street}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: "{i18n>street}"}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: "{i18n>zip}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: "{i18n>zip}"}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.createRow(
-				new sap.ui.commons.Label({text: "{i18n>city}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.Label({text: "{i18n>city}"}).attachBrowserEvent("click", showInfo) ,
 				new sap.ui.commons.TextField()
 		);
 		oMatrixLayout.placeAt("resourcemodel");
@@ -120,7 +120,7 @@
 	<h2>Resource Model</h2>
 
 	<div id="resourcemodel"></div>
-	
+
 	<hr>
 	<div id="locale"></div>
 

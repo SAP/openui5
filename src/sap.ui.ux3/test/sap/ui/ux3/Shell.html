@@ -1,30 +1,30 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Shell - sap.ui.ux3</title>
 		<script src="../../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
 			data-sap-ui-theme="sap_goldreflection">
 		</script>
 		<script src="resources/ShellSettings.js" type="text/javascript"></script>
-		<link type="text/css" rel="stylesheet" href="resources/ShellSettings.css"/>
-		
+		<link type="text/css" rel="stylesheet" href="resources/ShellSettings.css">
+
 		<style>
-		
+
 		.sapUiPanel .sapUiLnk { /* hacky! this should be done in the layout around the links! Do not copy! */
 			display: block;
 			margin-bottom: 3px;
 		}
-		
+
 		.VisualizeContent .sapUiUx3ShellContent {
 			background-color: red;
 		}
 		</style>
-		    
+
 		<script>
 			function checkClose(oEvent) {
 				var reallyClose = confirm("Really abort creating a contact?")
@@ -33,21 +33,21 @@
 				}
 				return reallyClose; // when called directly, return the result
 			}
-			
+
 			function messageSelected(oEvent){
 				var oMessage = oEvent.getParameter("message");
 				var oNotifier = oEvent.getParameter("notifier");
-				
+
 				oNotifier.removeMessage(oMessage);
 				oMessage.destroy();
 			}
-		
+
 			function paneClosed(oEvent) {
 			    alert("Pane closed. Id: \"" + oEvent.getParameter("id") + "\"");
 			}
-			
+
 			jQuery.sap.require("jquery.sap.script");
-		
+
 			var c = sap.ui.commons; /* shorthand */
 			var mContent = {};
 			var oShell = new sap.ui.ux3.Shell("myShell", {
@@ -80,14 +80,14 @@
 					alert("Feed entry submitted: " + oEvent.getParameter("text"));
 				}
 			});
-			
+
 			oShell.attachPaneClosed(paneClosed);
-			
+
 			jQuery.sap.require("jquery.sap.script");
 			if(jQuery.sap.getUriParameters().get("VisualizeContent")){
 				oShell.addStyleClass("VisualizeContent");
 			}
-			
+
 			oShell.addHeaderItem(new c.TextView({text:"Kate Jacob",tooltip:"KJACOB"}));
 			oShell.addHeaderItem(new c.Button({text:"Personalize",tooltip:"Personalize",press:function(){oShell.openPersonalizationDialog();}}));
 			oShell.addHeaderItem(new c.Link({text:"Homepage", href:"http://www.sap.com"}));
@@ -102,8 +102,8 @@
 					]
 				})
 			}));
-			
-			
+
+
 			var WI = sap.ui.ux3.NavigationItem;
 			oShell.addWorksetItem(new WI("wi_home", {key:"wi_home",text:"Home",subItems:[
 				new WI("wi_home_overview", {key:"wi_home_overview",text:"Overview"}),
@@ -128,8 +128,8 @@
 			oShell.addWorksetItem(new WI({key:"wi_l2",text:"Another rather long workset item"}));
 			oShell.addWorksetItem(new WI({key:"wi_l3",text:"A third rather long workset item"}));
 			oShell.addWorksetItem(new WI({key:"wi_me",text:"Me"}));
-			
-						
+
+
 			// first application-level ToolPopup ("New Contact") - UI content is completely pre-populated
 			var layout = new c.layout.MatrixLayout({width:"auto"});
 			layout.createRow(new c.Label({text:"Title:"}), new c.TextField("titleTextField"));
@@ -138,8 +138,8 @@
 			layout.createRow(new c.Label({text:"City:"}), new c.TextField("cityTextField"));
 			layout.createRow(new c.Label({text:"Country:"}), new c.TextField("countryTextField"));
 			layout.createRow(new c.Label({text:"E-Mail:"}), new c.TextField("emailTextField"));
-			
-			
+
+
 			var oContactTool = new sap.ui.ux3.ToolPopup("contactTool", {
 				title: "New Contact",
 				tooltip: "Create New Contact",
@@ -156,7 +156,7 @@
 					}}),
 					new c.Button("cancelContactButton", {text:"Cancel",press:function(){
 						// simulate a case where cancelling is not allowed, e.g. because of unsaved data
-						var reallyClose = checkClose(); 
+						var reallyClose = checkClose();
 						if (reallyClose) {
 							oContactTool.close();
 						}
@@ -174,8 +174,8 @@
 			});
 			oContactTool.setInitialFocus("saveContactButton");
 			oShell.addToolPopup(oContactTool);
-			
-			
+
+
 			// second application-level ToolPopup ("New Appointment") - UI content is created on-demand and could be thrown away/destroyed after closing (but is not)
 			var oAppointmentTool = new sap.ui.ux3.ToolPopup("appointmentTool", {
 				title: "New Appointment"
@@ -228,16 +228,16 @@
 			oShell.addPaneBarItem(new sap.ui.core.Item("pane_extra2",{text:"Extra Item 2"}));
 			oShell.addPaneBarItem(new sap.ui.core.Item("pane_extra3",{text:"Extra Item 3"}));
 			oShell.addPaneBarItem(new sap.ui.core.Item("pane_extra4",{text:"Extra Item 4"}));
-			
+
 			oShell.attachPaneBarItemSelected(function(oEvent) {
 				var paneId = oEvent.mParameters.id;
 				oShell.setPaneContent(getPaneContent(paneId));
 			});
-			
+
 			oShell.attachWorksetItemSelected(function(oEvent) {
 				var itemKey = oEvent.getParameter("key");
 				var oItem = oEvent.getParameter("item");
-				
+
 				// Disable selection of disabled items
 				if (!oItem.getEnabled()) {
 					oEvent.preventDefault();
@@ -254,16 +254,16 @@
 						itemKey = "wi_pd_one"; // the parent was selected, but now there are children and the first one should be selected, so use the ID of that one for getContent later on
 					}
 				}
-				
+
 				oShell.setContent(getContent(itemKey));
 			});
-			
+
 			// EXPERIMENTAL - THIS WILL CHANGE!!
 			oShell._getPersonalization().attachPersonalizationChange(function(oEvent){
 				var data = oEvent.getParameter("settings"); // retrieve the personalization data object
 				// ...now persist this data on the server or wherever personalization data is stored
 				// (in-browser is not enough because the user wants his settings when logging in from another browser as well)
-				
+
 				// browser-only:
 				if (JSON && window["localStorage"]) { // only in browsers with native JSON and offline storage support
 					var string = JSON.stringify(data);
@@ -288,13 +288,13 @@
                     // Uses previously set design (default: standard)
                 }
             }
-			
+
 			oShell.setContent(getContent("wi_home_overview"));
-			
+
 			oShell.placeAt("shellArea");
-		
-			
-			
+
+
+
 			// content generation and buffering
 			function getContent(id) {
 				if (!mContent[id]) {
@@ -307,20 +307,20 @@
 						p1.addContent(new c.Link({text:"Open Tasks (8)"}));
 						p1.addContent(new c.Link({text:"Open Notifications (0)"}));
 						var cell1 = new c.layout.MatrixLayoutCell({vAlign:c.layout.VAlign.Top}).addContent(p1);
-						
+
 						var p2 = new c.Panel().setText("My Top Worklists");
 						p2.addContent(new c.Link({text:"Open Activities - Activities - Account Management (1)"}));
 						p2.addContent(new c.Link({text:"Open Tasks - Sales Quotes - New Business (2)"}));
 						p2.addContent(new c.Link({text:"Open Tasks - Returns - Sales Orders (2)"}));
 						var cell2 = new c.layout.MatrixLayoutCell({vAlign:c.layout.VAlign.Top}).addContent(p2);
 						layout.createRow(cell1, cell2);
-						
+
 						var cell = new c.layout.MatrixLayoutCell({colSpan:2});
 						var p3 = new c.Panel().setText("Latest News");
 						p3.addContent(new c.TextView({text:"No news available."}));
 						cell.addContent(p3);
 						layout.createRow(cell);
-						
+
 						mContent[id] = layout;
 					} else if (id == "wi_home_inbox") {
 						mContent[id] = [new c.Button({text:"This Button is the content of the Inbox"}),
@@ -339,31 +339,31 @@
 						                }})];
 					} else if (id == "wi_home_news") {
 						mContent[id] = new c.Button({text:"This Button is the content of the News"});
-						
+
 					} else if (id == "wi_home_option") {
-						
+
 						function _createContent(){
 							var _mContent = [];
-							
+
 							for (var i=0; i<=50; i++){
-								_mContent[i] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";	
+								_mContent[i] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
 							}
-							
+
 							var _oTempMatrix = new c.layout.MatrixLayout();
 							for(var i=0; i<=_mContent.length; i++){
 								_oTempMatrix.createRow(_mContent[i]);
 							}
-							
+
 							return _oTempMatrix;
 						};
 						var _oMatrix = _createContent();
-						
+
 						mContent[id] = [
 							getShellOptionsPanel(oShell),
-							
+
 							new c.Panel({
 								title : new c.Title({
-									text: "Some Lorem Ipsum" 
+									text: "Some Lorem Ipsum"
 								}),
 								content : _oMatrix
 							})
@@ -431,10 +431,10 @@
 					} else {
 						mContent[id] = null;
 					}
-				} 
+				}
 				return mContent[id];
 			}
-			
+
 			// Pane content generation and buffering
 			function getPaneContent(id) {
 				if (!mContent[id]) {
@@ -451,12 +451,12 @@
 				return mContent[id];
 			}
 		</script>
-		
+
 		<style>
 			.DemoOuterSideBar {
 				background-color:#007CC0;
 			}
-			
+
 			.DemoOuterSideBar > * {
 				margin-left: 10px;
 				margin-right: 10px;
@@ -465,11 +465,11 @@
 				overflow: hidden;
 				text-overflow: ellipses;
 			}
-			
+
 			.DemoOuterSideBar > h1 {
 				color: white;
 			}
-			
+
 			.DemoOuterSideBar > div {
 				margin-top: 5px;
 				background-color: #F2F2F2;
@@ -479,7 +479,7 @@
 				line-height: 40px;
 			}
 		</style>
-		
+
 	</head>
 	<body  class="sapUiBody" role="application">
 		<div id="shellArea"></div>

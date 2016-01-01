@@ -79,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getVisible() && !this._oBusyIndicator) {
 			jQuery.sap.require("sap.m.BusyIndicator");
 			this._oBusyIndicator = new sap.m.BusyIndicator({
-				size: this._bTouchMode ? "2em" : "1.7em",
+				size: "1.7rem",
 				design: "auto"
 			});
 			this._oBusyIndicator.setParent(this);

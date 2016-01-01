@@ -33,7 +33,7 @@ sap.ui.define([
 					// taken care of by the master list itself.
 					iOriginalBusyDelay = oList.getBusyIndicatorDelay();
 
-				this._oGroupSortState = new GroupSortState(oViewModel, grouper.UnitNumber(this.getResourceBundle()));
+				this._oGroupSortState = new GroupSortState(oViewModel, grouper.groupUnitNumber(this.getResourceBundle()));
 
 				this._oList = oList;
 				// keeps the filter and search state
@@ -227,28 +227,6 @@ sap.ui.define([
 				});
 			},
 
-			/**
-			 * Navigates back in the browser history, if the entry was created by this app.
-			 * If not, it navigates to the Fiori Launchpad home page
-			 * @override
-			 * @public
-			 */
-			onNavBack : function () {
-				var oHistory = sap.ui.core.routing.History.getInstance(),
-					sPreviousHash = oHistory.getPreviousHash(),
-					oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-
-				if (sPreviousHash !== undefined) {
-					// The history contains a previous entry
-					history.go(-1);
-				} else {
-					// Navigate back to FLP home
-					oCrossAppNavigator.toExternal({
-						target : {shellHash: "#"}
-					});
-				}
-			},
-
 			/* =========================================================== */
 			/* begin: internal methods                                     */
 			/* =========================================================== */
@@ -336,6 +314,7 @@ sap.ui.define([
 
 			/**
 			 * Internal helper method to apply both group and sort state together on the list binding
+			 * @param {sap.ui.model.Sorter[]} aSorters an array of sorters
 			 * @private
 			 */
 			_applyGroupSort : function (aSorters) {

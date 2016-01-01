@@ -21,6 +21,7 @@ sap.ui.define(['sap/ui/model/ContextBinding'],
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.odata.ODataContextBinding
+	 * @extends sap.ui.model.ContextBinding
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.ODataContextBinding", /** @lends sap.ui.model.odata.ODataContextBinding.prototype */ {
 
@@ -59,7 +60,7 @@ sap.ui.define(['sap/ui/model/ContextBinding'],
 
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
-	 * 
+	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {map} [mChangedEntities] Map of changed entities
 	 * @private
@@ -103,7 +104,7 @@ sap.ui.define(['sap/ui/model/ContextBinding'],
 
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.setContext
-	 * 
+	 *
 	 * @param {sap.ui.model.Context} oContext The binding context object
 	 * @private
 	 */

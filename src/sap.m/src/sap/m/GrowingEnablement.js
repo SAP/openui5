@@ -169,10 +169,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		_getTrigger : function() {
 			var sTriggerID = this._oControl.getId() + "-trigger",
 				sTriggerText = this._oControl.getGrowingTriggerText();
-			
+
 			sTriggerText = sTriggerText || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LOAD_MORE_DATA");
 			this._oControl.addNavSection(sTriggerID);
-			
+
 			if (this._oTrigger) {
 				this.setTriggerText(sTriggerText);
 				return this._oTrigger;
@@ -210,14 +210,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				}
 			}, this);
 
-			// growing button as a list item should not be affected from the List Mode
-			this._oTrigger.getMode = function() {
-				return sap.m.ListMode.None;
-			};
-
-			// stop tab forwarding of the ListItemBase
-			this._oTrigger.onsaptabnext = function() {
-			};
+			// stop the eventing between item and the list
+			this._oTrigger.getList = function() {};
 
 			return this._oTrigger;
 		},
@@ -394,7 +388,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				this._bDataRequested = true;
 				this._onBeforePageLoaded(sChangeReason);
 			}
-			
+
 			// set iItemCount to initial value if not set or no items at the control yet
 			if (!this._iItemCount || this.shouldReset(sChangeReason) || !this._oControl.getItems(true).length) {
 				this._iItemCount = this._oControl.getGrowingThreshold();
@@ -446,8 +440,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 			// check control based logic to handle from scratch is required or not
 			var bCheckGrowingFromScratch = this._oControl.checkGrowingFromScratch && this._oControl.checkGrowingFromScratch();
-			
-			// rebuild list from scratch if there were no items and new items needs to be added 
+
+			// rebuild list from scratch if there were no items and new items needs to be added
 			if (!this._oControl.getItems(true).length && aContexts.diff && aContexts.diff.length) {
 				aContexts.diff = undefined;
 			}
@@ -592,7 +586,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			if (!this._oTrigger) {
 				return;
 			}
-			
+
 			// update busy state
 			this._oTrigger.setBusy(bLoading);
 			this._oTrigger.$().toggleClass("sapMGrowingListBusyIndicatorVisible", bLoading);
@@ -604,10 +598,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				var iMaxItems = this._oControl.getMaxItemsCount(),
 					iItemsLength = this._oControl.getItems(true).length,
 					bHasScrollToLoad = this._oControl.getGrowingScrollToLoad();
-				
-				if (!iItemsLength || 
-					!this._iItemCount || 
-					this._iItemCount >= iMaxItems || 
+
+				if (!iItemsLength ||
+					!this._iItemCount ||
+					this._iItemCount >= iMaxItems ||
 					bHasScrollToLoad && this._getHasScrollbars()) {
 					this._oControl.$("triggerList").css("display", "none");
 					if (document.activeElement === this._oTrigger.getDomRef()) {

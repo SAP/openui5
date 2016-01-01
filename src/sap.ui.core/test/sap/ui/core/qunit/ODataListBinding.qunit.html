@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
-<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../../resources/sap-ui-core.js" 
+<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -14,7 +14,7 @@
 <!--[if IE]>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>	
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <!-- This test is not running against the real Northwind service, but a fake service based on
      Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
 <script type="text/javascript" src="ODataModelFakeService.js"></script>
@@ -26,24 +26,24 @@
 	var timeout = 3000;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
-	
+
 	var bChanged = false, bDataRequested = false, bDataReceived = false;
-	
+
 	var fnChange = function(oEvent) {
 		bChanged = true;
 		ok(bDataRequested && !bDataReceived,"change fired");
 	};
-	
+
 	var fnDataRequested = function(oEvent) {
 		bDataRequested = true;
 		ok(!bDataReceived && !bChanged,"dataRequested fired");
 	};
-	
+
 	var fnDataReceived = function(oEvent) {
 		bDataReceived = true;
 		ok(bChanged && bDataRequested,"dataRecieved fired");
 	};
-	
+
 	// create a dummy AMD fdefine to check if shim works for datajs
 	window.define = function() {
 		throw Error("define should not be called");
@@ -54,7 +54,7 @@
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, bJSON);
 		return oModel;
 	}
-	
+
 	asyncTest("ListBinding getLength, getContexts", function(){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
@@ -76,7 +76,7 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
+
 	asyncTest("ListBinding getCurrentContexts", function(){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
@@ -84,7 +84,7 @@
 		var handler = function() {
 			var aContexts = oBinding.getContexts(0, 5),
 				aCurrentContexts = oBinding.getCurrentContexts();
-			
+
 			equal(aCurrentContexts.length, 5, "amount of items in current contexts");
 			jQuery(aCurrentContexts).each(function(i, context){
 				equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
@@ -117,7 +117,7 @@
 				start(); // resume normal testing
 			}
 		}
-		
+
 		oBinding.attachRefresh(function() {
 			this.getContexts();
 		});
@@ -127,7 +127,7 @@
 			oBinding.setContext(oContext);
 		});
 	});
-	
+
 	asyncTest("ListBinding with expand with empty data, runs only with sinon because of response manipulation!!!", function(){
 		var oModel = initModel(sURI, true, "Regions");
 		var oBinding = oModel.bindList("/Regions", null,null,null, {expand:"Territories"});
@@ -139,12 +139,12 @@
 			jQuery(oBinding.getContexts()).each(function(i, context){
 				equal(context.getPath(), "/Regions(" + (i + 1) + ")", "ListBinding context");
 			});
-			
-			
+
+
 			var oBinding2 = oModel.bindList("/Regions(1)/Territories");
 			equal(oBinding2.getLength(), 0, "length of items");
 			equal(oBinding2.isLengthFinal(), true, "isLengthFinal");
-			
+
 			var handler2 = function() {
 				ok(false, "should not land here");
 				oBinding2.detachChange(handler2);
@@ -152,22 +152,22 @@
 			}
 			oBinding2.attachChange(handler2);
 			oBinding2.getContexts();
-			
+
 			// has 2 territories here
 			var oBinding3 = oModel.bindList("/Regions(4)/Territories");
 			equal(oBinding3.getLength(), 2, "length of items");
 			equal(oBinding3.isLengthFinal(), true, "isLengthFinal");
-			
+
 			var handler3 = function() {
 				ok(false, "should not land here");
 				oBinding3.detachChange(handler3);
 
-			}			
+			}
 			oBinding3.attachChange(handler3);
 			oBinding3.getContexts();
-			
+
 			oBinding.detachChange(handler);
-			start(); // resume normal testing			
+			start(); // resume normal testing
 
 		}
 		oBinding.attachChange(handler);
@@ -240,7 +240,7 @@
 		var handler0 = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
-			equal(aContexts.length, 8);			    
+			equal(aContexts.length, 8);
 			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "ListBinding before sort");
 			equal(oModel.getProperty("CategoryName", aContexts[1]), "Condiments", "ListBinding before sort");
 			equal(oModel.getProperty("CategoryName", aContexts[2]), "Confections", "ListBinding before sort");
@@ -267,7 +267,7 @@
 	asyncTest("ListBinding expand", function(){
 
 		var oModel = initModel(sURI, false, "Categories");
-		var oBinding = oModel.bindList("/Categories", null, null, null, {expand: "Products"});	
+		var oBinding = oModel.bindList("/Categories", null, null, null, {expand: "Products"});
 		var handler = function() { // delay the following test
 			var aContexts = oBinding.getContexts(),
 				oContext = aContexts[0];
@@ -279,8 +279,8 @@
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
 		oBinding.getContexts();
 	});
-	
-	asyncTest("ListBinding filter", function(){		
+
+	asyncTest("ListBinding filter", function(){
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
@@ -392,7 +392,7 @@
 			//equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 
 			oBinding.detachChange(handler7);
-			start(); 
+			start();
 		};
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
@@ -404,7 +404,7 @@
 	});
 
 	asyncTest("ListBinding ANDing Control and Application Filters", function(){
-		
+
 		//Test initial Application Filter handling
 		var handler = function(oEvent){
 			// contexts should be now loaded
@@ -412,18 +412,18 @@
 			equal(aFilteredContexts.length, 9, "Only AppFilter, content length");
 			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "Application Filter only, filtered content");
 			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M", "Application Filter only, URL-Params-Construction");
-			
+
 			oBinding.detachChange(handler);
-			
+
 			// Apply different Control filters
 			var oFirstControlFilter = new sap.ui.model.Filter("ProductName", sap.ui.model.FilterOperator.Contains, "o");
 			oBinding.filter([oFirstControlFilter]);
-			
+
 			oBinding.attachChange(handler1);
 			oBinding.getContexts();
-			
+
 		};
-		
+
 		//Test Control and Application Filter ANDing
 		var handler1 = function(oEvent){
 			// contexts should be now loaded
@@ -432,34 +432,34 @@
 			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chef Anton's Cajun Seasoning", "ControlFilter AND AppFilter, filtered content");
 			//check if the braces are set correct
 			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(substringof(%27o%27,ProductName))%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)", "Control and Application Filter, Braces when ANDed");
-			
+
 			oBinding.detachChange(handler1);
-			
+
 			// Apply different Control filters
 			oFilter = new sap.ui.model.Filter("UnitPrice", sap.ui.model.FilterOperator.LE, "30.000");
 			oBinding.filter([oFilter]);
-			
+
 			oBinding.attachChange(handler2);
 			oBinding.getContexts();
-			
+
 		};
-		
+
 		//check if different control filters were applied and ANDed with the application filters
 		var handler2 = function (oEvent) {
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			equal(aFilteredContexts.length, 6, "Changing the Control-Filters, content length");
 			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "ControlFilter AND AppFilter, filtered content");
 			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=(UnitPrice%20le%2030.000M)%20and%20(startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M)", "Control and Application Filter, Braces when ANDed");
-			
+
 			oBinding.detachChange(handler2);
-			
+
 			//apply empty filter --> control-filters are reset
 			oBinding.filter();
-			
+
 			oBinding.attachChange(handler3);
 			oBinding.getContexts();
 		};
-		
+
 		//after removing the control filters, check if only App-Filters are applied
 		handler3 = function (oEvent) {
 			// contexts should be now loaded
@@ -467,22 +467,22 @@
 			equal(aFilteredContexts.length, 9, "Reset to AppFilter, content length");
 			equal(oModel.getProperty("ProductName", aFilteredContexts[0]), "Chai", "Application Filter only, filtered content");
 			equal(oBinding.getDownloadUrl(), sURI + "Products?$filter=startswith(ProductName,%27C%27)%20and%20UnitPrice%20ge%2010.000M", "Application Filter only, URL-Params-Construction");
-			
+
 			oBinding.detachChange(handler3);
 			start();
 		};
-		
+
 		//Initialise the stuff
 		var oModel = initModel(sURI, false);
 		var oApplicationFilter = [new sap.ui.model.Filter("ProductName", "StartsWith", "C"), new sap.ui.model.Filter("UnitPrice", "GE", "10.000")];
 		var oBinding = oModel.bindList("/Products", null, null, oApplicationFilter);
-		
+
 		oBinding.attachChange(handler);
 		oBinding.getContexts();
 	});
-	
+
 	test("ListBinding - Clearing Filters if application filters are empty", function (){
-		
+
 		// Arrange
 		var oModel = initModel(sURI, false, "Categories");
 
@@ -498,19 +498,19 @@
 		oBinding.sFilterParams = "$filter=foo%20and%20bar";
 		oBinding.filter([]);
 		strictEqual(oBinding.sFilterParams, undefined, "filter([]) - Filter-Caching should be reset to 'undefined'");
-		
+
 		//test explicit call to createFilterParams with empty arrays
 		oBinding.sFilterParams = "$filter=foo%20and%20bar";
 		oBinding.createFilterParams([],[]);
 		strictEqual(oBinding.sFilterParams, undefined, "createFilterParams([],[]) - Filte-Cache should be reset to 'undefined'");
-		
+
 		//test explicit call to createFilterParams with no parameters
 		oBinding.sFilterParams = "$filter=foo%20and%20bar";
 		oBinding.createFilterParams();
 		strictEqual(oBinding.sFilterParams, undefined, "createFilterParams() - Filte-Cache should be reset to 'undefined'");
 
 	});
-	
+
 	asyncTest("ListBinding Diff", function(){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
@@ -534,7 +534,7 @@
 
 		oBinding.getContexts(0, 8);
 	});
-	
+
 	asyncTest("Event order", function(){
 		expect(4);
 		var oModel = initModel(sURI, false, "Categories");
@@ -549,8 +549,8 @@
 		oList.getBinding("items").attachChange(handler);
 	});
 
-	
-	asyncTest("ListBinding filter (sap.ui.model.odata.Filter.convert)", function(){		
+
+	asyncTest("ListBinding filter (sap.ui.model.odata.Filter.convert)", function(){
 		var handler = function(oEvent){
 			// contexts should be now loaded
 			var aFilteredContexts = oEvent.oSource.getContexts();
@@ -560,10 +560,10 @@
 			oBinding.detachChange(handler);
 			// NE, contains
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator: sap.ui.model.FilterOperator.EQ, 
+				operator: sap.ui.model.FilterOperator.EQ,
 				value1: "Condiments"
 			}, {
-				operator: sap.ui.model.FilterOperator.Contains, 
+				operator: sap.ui.model.FilterOperator.Contains,
 				value1: "ons"
 			}], false);
 			oBinding.filter(oFilter.convert());
@@ -580,8 +580,8 @@
 			oBinding.detachChange(handler1);
 			// between
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator: sap.ui.model.FilterOperator.BT, 
-				value1: "Beverages", 
+				operator: sap.ui.model.FilterOperator.BT,
+				value1: "Beverages",
 				value2: "D"
 			}]);
 			oBinding.filter(oFilter.convert());
@@ -612,13 +612,13 @@
 
 			oBinding.detachChange(handler3);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator:sap.ui.model.FilterOperator.LE, 
+				operator:sap.ui.model.FilterOperator.LE,
 				value1: "Z"
 			}, {
-				operator:sap.ui.model.FilterOperator.GE, 
+				operator:sap.ui.model.FilterOperator.GE,
 				value1: "A"
 			}, {
-				operator:sap.ui.model.FilterOperator.NE, 
+				operator:sap.ui.model.FilterOperator.NE,
 				value1: "Beverages"
 			}]);
 			oBinding.filter(oFilter.convert());
@@ -633,10 +633,10 @@
 
 			oBinding.detachChange(handler4);
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-				operator:sap.ui.model.FilterOperator.EQ, 
+				operator:sap.ui.model.FilterOperator.EQ,
 				value1: "Condiments"
 			}, {
-				operator:sap.ui.model.FilterOperator.EQ, 
+				operator:sap.ui.model.FilterOperator.EQ,
 				value1: "Beverages"
 			}], false);
 			oBinding.filter(oFilter.convert());
@@ -657,7 +657,7 @@
 				operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"
 			}], false);
 			oFilter2 = new sap.ui.model.odata.Filter("Description", [{
-				operator: sap.ui.model.FilterOperator.EndsWith, 
+				operator: sap.ui.model.FilterOperator.EndsWith,
 				value1: "ings"
 			}]);
 			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
@@ -671,20 +671,20 @@
 			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
 
 			oBinding.detachChange(handler6);
-			start(); 
+			start();
 		};
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		//check EQ
 		var oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
-			operator: sap.ui.model.FilterOperator.EQ, 
+			operator: sap.ui.model.FilterOperator.EQ,
 			value1: "Beverages"
 		}]);
 		oBinding.attachChange(handler);
 		oBinding.filter(oFilter.convert());
 		oBinding.getContexts();
 	});
-	
+
 	test("Export to file URL", function(){
 		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");

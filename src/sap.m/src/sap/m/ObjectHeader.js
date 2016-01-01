@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Object header icon.
-			 * 
+			 *
 			 * <b>Note:</b> Recursive resolution of binding expressions is not supported by the framework.
 			 * It works only in ObjectHeader, since it is a composite control and creates an Image control internally.
 			 */
@@ -124,7 +124,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * This property is used to set the background color of the ObjectHeader. Possible values are "Solid", "Translucent" and "Transparent".
-			 * NOTE: The different types of ObjectHeader come with different default background. 
+			 * NOTE: The different types of ObjectHeader come with different default background.
 			 * - non responsive ObjectHeader: Transparent
 			 * - responsive ObjectHeader: Translucent
 			 * - condensed ObjectHeder: Solid
@@ -236,7 +236,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @since 1.21.1
 			 */
 			headerContainer : {type : "sap.m.ObjectHeaderContainer", multiple : false}
-
 		},
 		associations : {
 
@@ -350,7 +349,87 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._fNumberWidth = undefined;
 		this._titleText = new sap.m.Text(this.getId() + "-titleText");
 		this._titleText.setMaxLines(3);
+
 	};
+
+	ObjectHeader.prototype.insertAttribute = function (oAttribute, iIndex) {
+		var vResult = this.insertAggregation("attributes", oAttribute, iIndex);
+		this._registerControlListener(oAttribute);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.addAttribute = function (oAttribute) {
+		var vResult = this.addAggregation("attributes", oAttribute);
+		this._registerControlListener(oAttribute);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.removeAttribute = function (oAttribute) {
+		this._deregisterControlListener(oAttribute);
+		return this.removeAggregation("attributes", oAttribute);
+	};
+
+	ObjectHeader.prototype.removeAllAttributes = function () {
+		var aAttributes = this.removeAllAggregation("attributes");
+		aAttributes.forEach(this._deregisterControlListener, this);
+		return aAttributes;
+	};
+
+	ObjectHeader.prototype.destroyAttributes = function () {
+		this.getAggregation("attributes").forEach(this._deregisterControlListener, this);
+		return this.destroyAggregation("attributes");
+	};
+
+	ObjectHeader.prototype.insertStatus = function (oStatus, iIndex) {
+		var vResult = this.insertAggregation("attributes", oStatus, iIndex);
+		this._registerControlListener(oStatus);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.addStatus = function (oStatus) {
+		var vResult = this.addAggregation("statuses", oStatus);
+		this._registerControlListener(oStatus);
+		return vResult;
+	};
+
+	ObjectHeader.prototype.removeStatus = function (oStatus) {
+		this._deregisterControlListener(oStatus);
+		return this.removeAggregation("statuses", oStatus);
+	};
+
+	ObjectHeader.prototype.removeAllStatuses = function () {
+		var aStatuses = this.removeAllAggregation("statuses");
+		aStatuses.forEach(this._deregisterControlListener, this);
+		return aStatuses;
+	};
+
+	ObjectHeader.prototype.destroyStatuses = function () {
+		this.getAggregation("statuses").forEach(this._deregisterControlListener, this);
+		return this.destroyAggregation("statuses");
+	};
+
+	/**
+	 * Every time a control is inserted in the ObjectHeader, it must be monitored for size/visibility changes
+	 * @param oControl
+	 * @private
+	 */
+	ObjectHeader.prototype._registerControlListener = function (oControl) {
+		if (oControl) {
+			oControl.attachEvent("_change", this.invalidate, this);
+		}
+	};
+
+	/**
+	 * Each time a control is removed from the ObjectHeader, detach listeners
+	 * @param oControl
+	 * @private
+	 */
+	ObjectHeader.prototype._deregisterControlListener = function (oControl) {
+		if (oControl) {
+			oControl.detachEvent("_change", this.invalidate, this);
+		}
+	};
+
 
 	/**
 	 * Set the condensed flag
@@ -366,7 +445,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else {
 			this._oTitleArrowIcon.setSize("1.375rem");
 		}
-		
+
 		return this;
 	};
 
@@ -421,7 +500,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oTitleArrowIcon.setTooltip(sTooltip);
 		return this;
 	};
-	
+
 	/**
 	 * lazy initializes the object number aggregation
 	 * @private
@@ -484,7 +563,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._handleSpaceOrEnter = function(oEvent) {
 		var sSourceId = oEvent.target.id;
 
-		if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" || 
+		if (!this.getResponsive() && this.getTitleActive() && ( sSourceId === this.getId() + "-title" ||
 				jQuery(oEvent.target).parent().attr('id') === this.getId() + "-title" || // check if the parent of the "h" tag is the "title"
 				sSourceId === this.getId() + "-titleText-inner" )) {
 			if (oEvent.type === "sapspace") {
@@ -647,7 +726,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectHeader.prototype.exit = function() {
 		if (sap.ui.Device.system.desktop) {
-			sap.ui.Device.media.detachHandler(this._rerenderOH, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+			sap.ui.Device.media.detachHandler(this._rerenderOHR, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
 		}
 
 		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
@@ -708,7 +787,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				useIconTooltip : false,
 				densityAware : this.getIconDensityAware()
 			},
-				IconPool.isIconURI(this.getIcon()) ? 
+				IconPool.isIconURI(this.getIcon()) ?
 					{ size : sSize } : {height : sHeight, width : sWidth }
 		);
 
@@ -750,7 +829,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			// adjust number div after initial alignment
 			this._adjustNumberDiv();
-			
+
 			// watch for orientation change only on tablet and phone
 			if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
 				sap.ui.Device.orientation.attachHandler(this._onOrientationChange, this);
@@ -910,9 +989,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				return sap.m.BackgroundDesign.Transparent;
 			}
 		}
-		
+
 	};
-	
+
 
 	/**
 	 * Returns either the default background or the one that is set by the user
@@ -920,13 +999,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ObjectHeader.prototype._getBackground = function() {
-		
+
 		if (this.getBackgroundDesign() === undefined) {
 			return this._getDefaultBackgroundDesign();
 		} else {
 			return this.getBackgroundDesign();
 		}
-		
+
 	};
 
 	return ObjectHeader;

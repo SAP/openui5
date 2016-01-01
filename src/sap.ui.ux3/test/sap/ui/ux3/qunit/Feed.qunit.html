@@ -1,20 +1,20 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.ux3.Feed
   Author: D031513
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.ux3">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -65,27 +65,27 @@
 		search: handleSearch,
 		chunkAdded: handleChunkAdded,
 		toggleLive: handleToggleLive,
-		toolsItemSelected: handleToolsItemSelected,												
+		toolsItemSelected: handleToolsItemSelected,
 		chunks: [ new sap.ui.ux3.FeedChunk("Chunk1", {
 								thumbnailSrc: "../images/feeder/m_01.png",
-				  			sender: "Sender", 
-		    				text: "Text", 
+				  			sender: "Sender",
+		    				text: "Text",
 								timestamp: "date",
 								flagged: true,
 								favorite: true,
 								shared: true}),
 							new sap.ui.ux3.FeedChunk("Chunk2", {
 								//thumbnailSrc: "images/feeder/male.jpg",
-				  			sender: "Sender", 
-		    				text: "Text", 
+				  			sender: "Sender",
+		    				text: "Text",
 								timestamp: "date",
 								flagged: false,
 								favorite: true,
 								shared: false,
 								deletionAllowed: true,
 								comments: [ new sap.ui.ux3.FeedChunk("commentChunk1", {
-									 						sender: "CommentSender", 
-								    					text: "Comment", 
+									 						sender: "CommentSender",
+								    					text: "Comment",
 								    					timestamp: "date"})
 								           ]
 								})
@@ -185,7 +185,7 @@
 			equal(sEvent, "Search", "Event by entering value in search field");
 			equal(sEventParameter, "Test", "search query");
 			sEvent = "";
-			sEventParameter = ""; 
+			sEventParameter = "";
 
 		});
 
@@ -215,7 +215,7 @@
 	</script>
 
 	<title>qunit Test for Feed</title>
- 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Feed.gif"> 
+ 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Feed.gif">
 
 
 </head>

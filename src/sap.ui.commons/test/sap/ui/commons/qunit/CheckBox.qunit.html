@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	
-<!-- 
-  JSUNIT: 
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!--
+  JSUNIT:
     Tested control/class: sap.ui.commons.CheckBox
     Author: d046011
  -->
@@ -17,7 +17,7 @@
 				data-sap-ui-libs="sap.ui.commons"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -63,16 +63,16 @@
 			setup : function() {
 				c1 = sap.ui.getCore().getControl("c1");
 				c2 = sap.ui.getCore().getControl("c2");
-	
+
 				c1.setVisible(true);
 				c1.setEnabled(bEnabled);
-	
+
 				c2.setVisible(true);
 				c2.setEnabled(bEnabled);
 				c2.setWidth(sWidth);
-	
+
 				sap.ui.getCore().applyChanges();
-	
+
 				ok(c1, "c1 should not be null");
 				ok(c2, "c2 should not be null");
 			},
@@ -81,9 +81,9 @@
 				c2 = null;
 			}
 		});
-		
+
 		// test control properties
-		
+
 		test("TextOk", function() {
 			strictEqual(c1.getText(), sText, "c1.getText() returns wrong result");
 			strictEqual(c2.getText(), sText, "c2.getText() returns wrong result");
@@ -114,11 +114,11 @@
 			strictEqual(c2.getChecked(), bChecked, "c2.getChecked() returns wrong result");
 		});
 
-		
+
 		// test events
-		
-		// TODO: test event handler with event parameters	
-		
+
+		// TODO: test event handler with event parameters
+
 		test("ChangeOk", function() {
 			try {
 				c1.fireChange();
@@ -147,17 +147,17 @@
 			c1.attachChange(foo);
 		});
 
-		// test methods 
-		
-		// TODO 
-		
-		
+		// test methods
+
+		// TODO
+
+
 		// test misc (control interaction, metadata, styles, etc.)
 		function isEmpty(oObject) {
 			for(var i in oObject){ return false;}
 			return true;
 		}
-		
+
 		test("MetadataOk", function() {
 			var oMetadata = c1.getMetadata();
 			ok(oMetadata !== null, "c1.getMetadata() should not be null");
@@ -202,7 +202,7 @@
 			c1.setEnabled(true);
 			sap.ui.getCore().applyChanges();
 			sClasses = window.document.getElementById("c1").className; // after re-rendering it is a NEW HTML element!!
-			
+
 			ok(sClasses.indexOf("sapUiCb") > -1, "c1 className is missing 'sapUiCb'");
 			ok(sClasses.indexOf("sapUiCbStd") > -1, "c1 className is missing 'sapUiCbStd'");
 			ok(sClasses.indexOf("sapUiCbDis") == -1, "c1 className is containing 'sapUiCbDis' after being enabled");

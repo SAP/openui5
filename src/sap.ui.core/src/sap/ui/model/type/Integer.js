@@ -22,11 +22,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. Supports the same options as {@link sap.ui.core.format.NumberFormat.getIntegerInstance NumberFormat.getIntegerInstance}
-	 * @param {object} [oFormatOptions.source] additional set of format options to be used if the property in the model is not of type string and needs formatting as well. 
-	 * 										   In case an empty object is given, the default is disabled grouping and a dot as decimal separator. 
-	 * @param {object} [oConstraints] value constraints. 
-	 * @param {int} [oConstraints.minimum] smallest value allowed for this type  
-	 * @param {int} [oConstraints.maximum] largest value allowed for this type  
+	 * @param {object} [oFormatOptions.source] additional set of format options to be used if the property in the model is not of type string and needs formatting as well.
+	 * 										   In case an empty object is given, the default is disabled grouping and a dot as decimal separator.
+	 * @param {object} [oConstraints] value constraints.
+	 * @param {int} [oConstraints.minimum] smallest value allowed for this type
+	 * @param {int} [oConstraints.maximum] largest value allowed for this type
 	 * @alias sap.ui.model.type.Integer
 	 */
 	var Integer = SimpleType.extend("sap.ui.model.type.Integer", /** @lends sap.ui.model.type.Integer.prototype */ {
@@ -92,18 +92,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		}
 		if (this.oInputFormat) {
 			iResult = this.oInputFormat.format(iResult);
-		}				
+		}
 		return iResult;
 	};
 
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 */
-	Integer.prototype.validateValue = function(iValue) {
+	Integer.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
 				aViolatedConstraints = [],
-				aMessages = [];
+				aMessages = [],
+				iValue = vValue;
+			if (this.oInputFormat) {
+				iValue = this.oInputFormat.parse(vValue);
+			}
 			jQuery.each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":
@@ -140,7 +144,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	Integer.prototype._handleLocalizationChange = function() {
 		this._createFormats();
 	};
-	
+
 	/**
 	 * Create formatters used by this type
 	 * @private

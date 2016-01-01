@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
 
 <script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
 	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -73,7 +73,7 @@
 	module("Events");
 
 	test("tap", function(assert) {
-		
+
 		var oSpy = this.spy();
 
 		var oList = setup("item1", {
@@ -92,7 +92,7 @@
 	test("Press event on [ENTER]", function() {
 
 		var oSpy = this.spy();
-		
+
 		var oList = setup("item1", {
 			text : "Action1",
 			press : oSpy
@@ -107,9 +107,9 @@
 	});
 
 	test("Press event on [SPACE]", function() {
-		
+
 		var oSpy = this.spy();
-		
+
 		var oList = setup("item1", {
 			text : "Action1",
 			press : oSpy

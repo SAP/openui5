@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Test Page for sap.ui.m.SearchField</title>
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
@@ -9,7 +9,7 @@
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
@@ -173,7 +173,7 @@
 		ok(true, "Test for focused search field started");
 		// touch the search field
 		doTouchEnd("sf3-reset");
-		
+
 		setTimeout(function(){
 			ok(sf3.$().hasClass("sapMFocus"), "Third search field is focused after reset button press");
 			ok(/\uE00D/.test(getIconId(sf3, "search")), "Focused search field icon is magnifier");
@@ -184,7 +184,7 @@
 				start();
 				}, 350)
 			}, 200);
-		
+
 	});
 
 </script>

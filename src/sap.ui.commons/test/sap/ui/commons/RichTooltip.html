@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>RichTooltip - sap.ui.commons</title>
 
@@ -26,7 +26,7 @@
 				var oButton = new sap.ui.commons.Button("b1");
 				oButton.setText("Show the full blown RichTooltip");
 				oButton.setTooltip("this tooltip must be gone");
-				
+
 				var oRtt = new sap.ui.commons.RichTooltip( "TextRtt1", {title: "Rich Tooltip", imageSrc: "images/SAPLogo.gif", text:"This is the full blown RichTooltip that has all it can show at the moment:a title, an image and a text"});
 				oButton.setTooltip(oRtt);
 				oButton.placeAt("target1");
@@ -47,7 +47,7 @@
 					imageAltText: "SAP Logo",
 					offset : "10 -10"
 				});
-				
+
 				var sValueState = sap.ui.core.ValueState.Error;
 				var oTF = new sap.ui.commons.TextField({
 					valueState : sValueState,
@@ -57,7 +57,7 @@
 					}
 				}).placeAt("tf1");
 				oTF.setTooltip(oRttTf);
-				
+
 				var sHtml = "The rating specifies the trustworthiness of the account. You can choose between the following values:<br>";
 				sHtml += "<ul>";
 				sHtml += "<li><strong>A:</strong> Highly trustworthy</li>";
@@ -65,7 +65,7 @@
 				sHtml += "<li><strong>C:</strong> Ambiguous trustworthiness</li>";
 				sHtml += "<li><strong>D:</strong> Trustworthiness beneath contempt</li>";
 				sHtml += "</ul>";
-				
+
 				var oLbl = new sap.ui.commons.Label({
 					text : "Enter an individual value state text",
 					labelFor : oTF
@@ -79,7 +79,7 @@
 						} else {
 							oRttTf.setValueStateText("");
 						}
-						
+
 					}
 				}).placeAt("individualCheck");
 				var oCheckHtml = new sap.ui.commons.CheckBox({
@@ -90,10 +90,10 @@
 						} else {
 							oRttTf.setText(sText);
 						}
-						
+
 					}
 				}).placeAt("htmlCheck");
-				
+
 				var oLblRadio = new sap.ui.commons.Label({
 					text : "ValueState for Textfield"
 				}).placeAt("lbl-valueState");
@@ -101,18 +101,18 @@
 					select : function(){
 						oTF.setValueState(oRBG.getSelectedItem().getText());
 					},
-					
+
 					items : [ new sap.ui.core.Item({
 							text : sap.ui.core.ValueState.Error
 						}), new sap.ui.core.Item({
-							text : sap.ui.core.ValueState.Warning		
+							text : sap.ui.core.ValueState.Warning
 						}), new sap.ui.core.Item({
 							text : sap.ui.core.ValueState.Success
 						}), new sap.ui.core.Item({
 							text : sap.ui.core.ValueState.None
 						})
 					],
-					
+
 					selectedIndex : 0
 				}).placeAt("valueState");
 			});
@@ -124,17 +124,17 @@
 		<div id="target1" title="Tooltip of the surrounding &lt;div&gt; tag. This should not be displayed when hovering the button."></div>
 		<br />
 		<div id="target2"></div>
-		
+
 		<br />
 		<br />
 		<div style="border: 1px solid black; border-radius: 5px; padding: 5px">
 		<div id="individualCheck"></div>
 		<div id="htmlCheck"></div>
-		
+
 		<br />
 		<div id="lbl-valueState"></div>
 		<div id="valueState"></div>
-		
+
 		<br />
 		<div id="lbl-tf1"></div>
 		<div id="tf1"></div>

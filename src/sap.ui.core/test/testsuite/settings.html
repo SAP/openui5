@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Settings</title>
 		<script>
 
@@ -13,18 +13,18 @@
 		function loadPage() {
 			setTimeout(resizePage, 10);
 		};
-		
+
 		function resizePage() {
 			return;
 			var h = document.body.clientHeight;
 			h -= 9; // 2*2px padding + 2 * 1px border + 2px margin
 			h -= document.getElementById("title").offsetHeight;
-			if ( h > 0 ) 
+			if ( h > 0 )
 				document.getElementById("content").style.height = h + "px";
 		};
 		*/
 		var testfwk = top.testfwk;
-		
+
 		function themeDropdownChanged() {
 			var value = document.getElementById("theme_dropdown").value;
 			var input = document.getElementById("theme");
@@ -42,13 +42,13 @@
 	    	while (oDiv && oDiv.nodeType != 1)
 		    	oDiv = oDiv.nextSibling;
 	    	if ( !oDiv )
-		    	return;	
-	        var divclass = oDiv.className; 
+		    	return;
+	        var divclass = oDiv.className;
 	        var oImg = oNode.getElementsByTagName("IMG")[0];
 	        if (divclass=="showdiv" || divclass=="")
-	        {  
+	        {
 		        oDiv.className = "hidediv";
-	        	if (oImg) { 
+	        	if (oImg) {
 	        		oImg.src = "images/tree_node_closed.gif";
 	        	}
 	        }
@@ -59,20 +59,20 @@
 	        		oImg.src = "images/tree_node_open.gif";
 	        	}
 	        }
-	    }	
+	    }
 		</script>
-		
-		<link rel="stylesheet" href="styles/main.css" type="text/css" />
+
+		<link rel="stylesheet" href="styles/main.css" type="text/css">
 	</head>
-	<body class="left"> 
+	<body class="left">
   		<div id="title" class="title">Settings</div>
 		<div class="border right">
   			<div><button style="margin-left:10px" onclick="testfwk.applySettings();">Apply</button></div>
-  
+
 			<div class="section" onclick="toggleNode(this);" >
-				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif">
 				Theme
-			</div>	
+			</div>
 			<div style="padding-left:10px" id="theme_div" >
 				<table style="font-size:10pt">
 					<tbody>
@@ -95,24 +95,24 @@
 					<tr>
 						<td>
 							<label for="theme">Manual</label>
-						</td>	
-						<td> 
-							<input style="font-family:arial;;font-size:8.5pt;width:145px" type="text" id="theme" value="sap_platinum" onblur="themeInputChanged();"/>
+						</td>
+						<td>
+							<input style="font-family:arial;;font-size:8.5pt;width:145px" type="text" id="theme" value="sap_platinum" onblur="themeInputChanged();">
 						</td>
 					</tr>
 					</tbody>
 				</table>
     		</div>
-    	
+
 			<div class="section" onclick="toggleNode(this);" >
-				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif">
 				Miscellaneous
 			</div>
 			<div style="padding-left:10px;vertical-align:middle" id="misc_div">
 				<label for="rtl" title="Activate Right-to-Left (RTL)">RTL</label>
-				<input type="checkbox" id="rtl" onclick="testfwk.setRTL(this.checked);" title="Activate Right-to-Left (RTL)" /><br/>
+				<input type="checkbox" id="rtl" onclick="testfwk.setRTL(this.checked);" title="Activate Right-to-Left (RTL)"><br>
 				<label for="acc" title="Activate Accessibility">Accessibility</label>
-				<input type="checkbox" id="acc" onclick="testfwk.setAccessibilityMode(this.checked);" title="Activate Accessibility" />
+				<input type="checkbox" id="acc" onclick="testfwk.setAccessibilityMode(this.checked);" title="Activate Accessibility">
 			</div>
 		</div>
 	</body>

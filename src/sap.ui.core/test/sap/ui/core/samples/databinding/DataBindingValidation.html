@@ -3,7 +3,7 @@
 <html>
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Data binding validation test page with Two Way data binding, table and JSON Model</title>
 
@@ -68,19 +68,19 @@
     			sortProperty: "id",
     			filterProperty: "id"
     		}));
-    		
+
     		var oStringType = new sap.ui.model.type.String(null, {
     			minLength : 3,
     			maxLength : 10
     		});
-    		
+
     		oTable.addColumn(new sap.ui.table.Column({
     			label: new sap.ui.commons.Label({text: "First Name (minLength: 3, maxLength: 10)"}),
     			template: new sap.ui.commons.TextField().bindValue({path: "firstName", type: oStringType}),
     			sortProperty: "firstName",
     			filterProperty: "firstName"
     		}));
-    		
+
     		oTable.addColumn(new sap.ui.table.Column({
     			label: new sap.ui.commons.Label({text: "Last Name (minLength: 3, maxLength: 10)"}),
     			template: new sap.ui.commons.TextField().bindValue({path: "lastName", type: oStringType}),
@@ -94,48 +94,48 @@
     		}, {
     			maximum : 8000
     		});
-    		
+
     		oTable.addColumn(new sap.ui.table.Column({
     			label: new sap.ui.commons.Label({text: "Client Salary (minFracDigits: 2, maxFracDigits: 2, max: 8000)"}),
     			template: new sap.ui.commons.TextField().bindValue({path: "salary", type: oFloatType}),
     			sortProperty: "salary",
     			filterProperty: "salary"
     		}));
-    		
+
     		oTable.addColumn(new sap.ui.table.Column({
     			label: new sap.ui.commons.Label({text: "Rating"}),
     			template: new sap.ui.commons.RatingIndicator({value:"{rating}"}),
     			sortProperty: "rating",
     			filterProperty: "rating"
     		}));
-    		
+
     		// eventing
-    		
+
     		// override only for demo purposes to show the bubbling events
     		sap.ui.base.ManagedObject.prototype.getEventingParent = function() {
     			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event bubbled to " + this.toString()}));
     			return this.oParent;
 			};
-    		
+
     		var bCancelBubble = true;
-    		
+
     		// validation
     		oTable.attachValidationSuccess(this, function(oEvent){
     			var oElement = oEvent.getParameter('element');
     			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ValidationSuccess handled by table for " + oElement.toString()}));
     			if (bCancelBubble) {
-					oEvent.cancelBubble();	
+					oEvent.cancelBubble();
     			}
     		});
-    		
+
     		oTable.attachValidationError(this, function(oEvent){
     			var oElement = oEvent.getParameter('element');
     			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ValidationError handled by table for " + oElement.toString()}));
     			if (bCancelBubble) {
-					oEvent.cancelBubble();	
+					oEvent.cancelBubble();
     			}
     		});
-    		
+
     		oTable.attachParseError(this, function(oEvent){
     			var oElement = oEvent.getParameter('element');
     			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ParseError handled by table for " + oElement.toString()}));
@@ -143,22 +143,22 @@
 					oEvent.cancelBubble();
     			}
     		});
-    		
+
     		sap.ui.getCore().attachValidationSuccess(this, function(oEvent) {
     			var oElement = oEvent.getParameter('element');
     			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ValidationSuccess handled by core for " + oElement.getId()}));
 			});
-    		
+
     		sap.ui.getCore().attachValidationError(this, function(oEvent) {
     			var oElement = oEvent.getParameter('element');
     			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ValidationError handled by core for " + oElement.getId()}));
 			});
-    		
+
     		sap.ui.getCore().attachParseError(this, function(oEvent) {
-    			var oElement = oEvent.getParameter('element');    			
+    			var oElement = oEvent.getParameter('element');
     			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ParseError handled by core for " + oElement.getId()}));
 			});
-    		
+
     		oTable.bindRows("/clients");
 
     		var oSimpleListBox = new sap.ui.commons.ListBox({
@@ -166,19 +166,19 @@
     	 		width: "600px",
     	 		height: "200px"
     	 	});
-    		
+
     		var oBtn = new sap.ui.commons.Button({text: "Clear", press: function(){
     			oSimpleListBox.removeAllItems();
     		}});
-    		
-    		var oCheckBox = new sap.ui.commons.CheckBox(); 
+
+    		var oCheckBox = new sap.ui.commons.CheckBox();
     		oCheckBox.setText("Cancel Bubbling of events in callback handler of table");
     		oCheckBox.attachChange(function(oEvent){
 				bCancelBubble = oEvent.getParameter('checked');
     		});
     		oCheckBox.setChecked(true);
     		oCheckBox.fireChange({checked:true});
-    		
+
     		var oLayout = new sap.ui.commons.layout.MatrixLayout({
     			id : "matrix1",
     			layoutFixed : false
@@ -194,7 +194,7 @@
     </script>
 <style type="text/css">
 
-</style>    
+</style>
 </head>
 <body class="sapUiBody">
 	<div id="header"></div>

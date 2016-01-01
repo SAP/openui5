@@ -1,0 +1,13 @@
+<core:View controllerName="sap.m.sample.FeedContent.Page"
+	xmlns="sap.m" xmlns:core="sap.ui.core">
+	<FeedContent
+		contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
+		subheader="about 1 minute ago in Computer Market" size="M"
+		class="sapUiSmallMargin" press="press">
+	</FeedContent>
+	<FeedContent
+		contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
+		subheader="about 1 minute ago in Computer Market" size="S"
+		class="sapUiSmallMargin" press="press">
+	</FeedContent>
+</core:View>

@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" Content="IE=edge">
+<title>Test Page for sap.m.SlideTile</title>
+
+<!-- UI5 Bootstrap -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"
+	data-sap-ui-language="en">
+</script>
+
+<!-- QUnit libraries -->
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript">
+	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
+	QUnit.module("Rendering - sap.m.SlideTile", {
+		beforeEach : function() {
+			//Model
+			var oSlideTileData = {
+				tiles : [{
+					header : "Tile 1",
+					frameType : "TwoByOne",
+					size : "M",
+					tileContent : [{
+						footer : "Footer 1",
+						value : 10
+					}, {
+						footer : "Footer 2",
+						value : 20
+					}]
+				}, {
+					header : "Tile 2",
+					frameType : "OneByOne",
+					size : "M",
+					tileContent : [{
+						footer : "Footer 3",
+						value : 30
+					}, {
+						footer : "Footer 4",
+						value : 40
+					}]
+				}]
+			};
+
+			//Template
+			var oTileContent = new sap.m.TileContent({
+				footer : "{footer}",
+				content : new sap.m.NumericContent({
+					value : "{value}"
+				})
+			});
+			var oGenericTile = new sap.m.GenericTile({
+				frameType : "{frameType}",
+				header : "{header}",
+				size : "{size}",
+				tileContent : {
+					template : oTileContent,
+					path : "tileContent",
+					templateShareable: true
+				}
+			});
+			this.oSlideTile = new sap.m.SlideTile("st", {
+				displayTime : 500,
+				transitionTime : 0,
+				tiles : {
+					template : oGenericTile,
+					path : "/tiles",
+					templateShareable: true
+				}
+			});
+
+			var oSlideTileModel = new sap.ui.model.json.JSONModel(oSlideTileData);
+			this.oSlideTile.setModel(oSlideTileModel);
+			this.oSlideTile.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oSlideTile.destroy();
+			this.oSlideTile = null;
+		}
+	});
+
+	QUnit.test("Test tiles displaying", function(assert) {
+		var done = assert.async();
+		assert.equal(jQuery.sap.byId("st-wrapper-0").css("left"), "0px", "The first tile is shown");
+
+		setTimeout(function() {
+			assert.equal(jQuery.sap.byId("st-wrapper-1").css("left"), "0px", "The second tile is shown");
+			done();
+		}, 500);
+	});
+
+	QUnit.test("Test mouse handlers", function(assert) {
+		//Arrange
+		var oEvent = {preventDefault: function(){}};
+		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), false, "Class not available");
+		//Act
+		this.oSlideTile.onmousedown({preventDefault: function(){}});
+		//Assert
+		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), true, "Class available");
+
+		//Arrange
+		//Act
+		this.oSlideTile.onmouseup(oEvent);
+		//Assert
+		assert.equal(this.oSlideTile.$().hasClass("sapMSTHvr"), false, "Class not available");
+	});
+
+	QUnit.module("Rendering - EmptyTile", {
+		beforeEach : function() {
+
+			//One empty tile
+			this.oEmptySlideTile = new sap.m.SlideTile("st-empty", {
+				displayTime : 500,
+				transitionTime : 0,
+				tiles : []
+			});
+
+			this.oEmptySlideTile.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach : function() {
+			this.oEmptySlideTile.destroy();
+			this.oEmptySlideTile = null;
+		}
+	});
+
+	QUnit.test("Empty tile displaying", function(assert) {
+		assert.ok(jQuery.sap.byId("st-empty").length !== 0, "empty tile is shown");
+	});
+
+</script>
+</head>
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

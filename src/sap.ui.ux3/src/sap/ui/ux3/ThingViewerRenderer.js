@@ -1,30 +1,30 @@
 /*!
  * ${copyright}
  */
- 
+
 sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
 
 
 	/**
-	 * Thing renderer. 
+	 * Thing renderer.
 	 * @namespace
 	 */
 	var ThingViewerRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ThingViewerRenderer.render = function(oRenderManager, oControl){
 	    // convenience variable
 		var rm = oRenderManager;
-		
+
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.writeAttributeEscaped("style", "width:" + oControl.getWidth() + "; height:" + oControl.getHeight());
@@ -34,12 +34,12 @@ sap.ui.define(['jquery.sap.global'],
 		this.renderContent(rm,oControl);
 		rm.write("</div>");
 	};
-	
+
 	ThingViewerRenderer.renderContent = function(oRenderManager, oControl) {
 	// convenience variable
 		var rm = oRenderManager,
 			headerType = oControl.getHeaderType();
-	
+
 		rm.write("<div role='Main' class='sapUiUx3TVContent' id='" + oControl.getId() + "-content'>");
 		//render Header
 		//rm.write("<div class='sapUiUx3TVHeader sapUiUx3TVNoActionBar'>");
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeEscaped(oControl.getType());
 		rm.write("</span>");
 		rm.write("</div>");
-	
+
 		if (headerType === sap.ui.ux3.ThingViewerHeaderType.Standard) {
 			rm.write("<div class='sapUiUx3TVHeaderGroupScrollContainer'>");
 			rm.write("<div id='" + oControl.getId() + "-header' class='sapUiUx3TVHeaderContainer'>");
@@ -77,10 +77,10 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		this.renderHeaderContent(rm, oControl);
 		rm.write("</div>");
-	
+
 		rm.write("</div>");
 		rm.write("</div>");
-	
+
 		// render Facets
 		rm.write("<div class='sapUiUx3TVFacets sapUiUx3TVNoActionBar");
 		if (headerType === sap.ui.ux3.ThingViewerHeaderType.Standard) {
@@ -92,16 +92,16 @@ sap.ui.define(['jquery.sap.global'],
 		rm.renderControl(oControl._getNavBar());
 		rm.write("</div>");
 		rm.write("<div id='" + oControl.getId() + "-facetContent' class='sapUiUx3TVFacetContent sapUiBodyBackground'>");
-	
+
 		// render Facet Content
 		this.renderFacetContent(rm, oControl);
-	
+
 		rm.write("</div>");
 		rm.write("</div>");
 		this.renderToolbar(rm, oControl);
 		rm.write("</div>");
 	};
-	
+
 	/**
 	 * Add root class to Thing
 	 *
@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 		rm.addClass("sapUiUx3TV");
 	};
-	
+
 	/**
 	 * Add class to Thing
 	 *
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 		rm.addClass("sapUiUx3TVOverlay");
 	};
-	
+
 	/**
 	 * Renders the HTML for Thing Header
 	 *
@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	ThingViewerRenderer.renderHeader = function(oRenderManager, oControl) {
 		var rm = oRenderManager;
-	
+
 		rm.write("<div class='sapUiUx3TVIconBar'>");
 		rm.writeIcon(oControl.getIcon(),["sapUiUx3TVIcon"],{
 			role: 'presentation',
@@ -166,8 +166,8 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("</div>");
 		rm.write("</div>");
 	};
-	 
-	 
+
+
 	/**
 	 * Renders the HTML for Thing Toolbar
 	 *
@@ -186,7 +186,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("</div>");
 		}
 	};
-	
+
 	/**
 	 * Renders the HTML for Thing Header content
 	 *
@@ -200,7 +200,7 @@ sap.ui.define(['jquery.sap.global'],
 	ThingViewerRenderer.renderHeaderContent = function(rm, oControl) {
 		var headerContentList = oControl.getHeaderContent(),
 			headerType = oControl.getHeaderType();
-			
+
 		for ( var i = 0; i < headerContentList.length; i++) {
 			var headerContent = headerContentList[i];
 			if (headerType === sap.ui.ux3.ThingViewerHeaderType.Standard) {
@@ -230,7 +230,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("</div>");
 		}
 	};
-	
+
 	/**
 	 * Renders the HTML for Thing Facet content
 	 *
@@ -244,11 +244,11 @@ sap.ui.define(['jquery.sap.global'],
 	ThingViewerRenderer.renderFacetContent = function(rm, oControl) {
 		var facetContent = oControl.getFacetContent();
 		var bTitle = true;
-	
+
 		if (facetContent.length == 1 )  {
 			bTitle = false;
 		}
-	
+
 		for ( var i = 0; i < facetContent.length; i++) {
 			var group = facetContent[i];
 			if (group.getColspan()) {

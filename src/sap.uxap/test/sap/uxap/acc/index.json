@@ -1,0 +1,9 @@
+{
+	"tests" : [
+		{
+			"control" : "sap.uxap.ObjectPageLayout",
+			"url" : "ObjectPage.html",
+			"appComponent" : "CA-UI5-CTR-SOF-PIR"
+		}
+	]
+}

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>Label - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Label.gif">
@@ -16,7 +16,7 @@
 
 		<script type="text/javascript">
 
-			var oCore = sap.ui.getCore(); 
+			var oCore = sap.ui.getCore();
 			oCore.attachInitEvent(function () {
 
 				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
@@ -42,7 +42,7 @@
 				oLabel.setIcon("images/backtotop.gif");
 				oLabel.placeAt("target3");
 
-				oLabel = new sap.ui.commons.Label("l4"); 
+				oLabel = new sap.ui.commons.Label("l4");
 				oLabel.setText("Label with bold text and icon");
 				oLabel.setDesign(sap.ui.commons.LabelDesign.Bold);
 				oLabel.setIcon("images/backtotop.gif");
@@ -55,7 +55,7 @@
 				var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_1");
 				oLayout.addRow(oMLR);
 
-				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1"); 
+				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1");
 				oLabel = new sap.ui.commons.Label("l5");
 				oLabel.setText("Label with LabelFor and width 200px:");
 				oLabel.setLabelFor("input_1");
@@ -63,7 +63,7 @@
 				oMLC.addContent(oLabel);
 				oMLR.addCell(oMLC);
 
-				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2"); 
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2");
 				var oInput = new sap.ui.commons.TextField("input_1");
 				oInput.setValue("some value");
 				oInput.setTooltip("Hello!")
@@ -110,20 +110,20 @@
 					);
 
 				// test alignments
-				oLabel = new sap.ui.commons.Label("l6"); 
-				oLabel.setText("Test label with TextAlign.End and width 400px"); 
+				oLabel = new sap.ui.commons.Label("l6");
+				oLabel.setText("Test label with TextAlign.End and width 400px");
 				oLabel.setTextAlign(sap.ui.core.TextAlign.End);
 				oLabel.setWidth("400px");
 				oLabel.placeAt("target6");
 
-				oLabel = new sap.ui.commons.Label("l7"); 
-				oLabel.setText("Test label with TextAlign.Center and width 400px"); 
+				oLabel = new sap.ui.commons.Label("l7");
+				oLabel.setText("Test label with TextAlign.Center and width 400px");
 				oLabel.setTextAlign(sap.ui.core.TextAlign.Center);
 				oLabel.setWidth("400px");
 				oLabel.placeAt("target7");
 
 				// test RTL
-				oLabel = new sap.ui.commons.Label("l8"); 
+				oLabel = new sap.ui.commons.Label("l8");
 				oLabel.setText("Test label with TextDirection.RTL");
 				oLabel.setIcon("images/backtotop.gif");
 				oLabel.setTextDirection(sap.ui.core.TextDirection.RTL);

@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	
-<!-- 
-  JSUNIT: 
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!--
+  JSUNIT:
     Tested control/class: sap.ui.commons.RadioButton
     Author: d046011
  -->
@@ -16,7 +16,7 @@
 				data-sap-ui-libs="sap.ui.commons"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -116,18 +116,18 @@
 			setup : function() {
 				rb1 = sap.ui.getCore().getControl("rb1");
 				rb2 = sap.ui.getCore().getControl("rb2");
-	
+
 				rb1.setVisible(true);
 				rb1.setEnabled(bEnabled);
 				rb1.setSelected(bSelected);
-				
+
 				rb2.setVisible(true);
 				rb2.setEnabled(bEnabled);
 				rb2.setWidth(sWidth);
 				rb2.setSelected(bSelected);
-				
+
 				sap.ui.getCore().applyChanges();
-	
+
 				ok(rb1, "rb1 should not be null");
 				ok(rb2, "rb2 should not be null");
 			},
@@ -138,7 +138,7 @@
 		});
 
 		// test control properties
-		
+
 		test("TextOk", function() {
 			strictEqual(rb1.getText(), sText, "rb1.getText() returns wrong result");
 			strictEqual(rb2.getText(), sText, "rb2.getText() returns wrong result");
@@ -169,11 +169,11 @@
 			strictEqual(rb2.getSelected(), bSelected, "rb2.getSelected() returns wrong result");
 		});
 
-		
+
 		// test events
-		
-		// TODO: test event handler with event parameters	
-		
+
+		// TODO: test event handler with event parameters
+
 		test("SelectOk", function() {
 			try {
 				rb1.fireSelect();
@@ -202,18 +202,18 @@
 			rb1.attachSelect(foo);
 		});
 
-		// test methods 
-		
-		// TODO 
-		
-		
+		// test methods
+
+		// TODO
+
+
 		// test misc (control interaction, metadata, styles, etc.)
-		
+
 		function isEmpty(oObject) {
 			for(var i in oObject){ return false;}
 			return true;
 		}
-		
+
 		test("MetadataOk", function() {
 			var oMetadata = rb1.getMetadata();
 			ok(oMetadata, "rb1.getMetadata() should not be null");
@@ -264,7 +264,7 @@
 			rb1.setEnabled(true);
 			sap.ui.getCore().applyChanges();
 			sClasses = window.document.getElementById("rb1").className; // after re-rendering it is a NEW HTML element!!
-			
+
 			ok(sClasses.indexOf("sapUiRb") > -1, "rb1 className is missing 'sapUiRb'");
 			ok(sClasses.indexOf("sapUiRbStd") > -1, "rb1 className is missing 'sapUiRbStd'");
 			ok(sClasses.indexOf("sapUiRbDis") == -1, "rb1 className is containing 'sapUiRbDis' after being enabled");

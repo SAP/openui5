@@ -3,7 +3,7 @@
 <html>
 
  <head>
- 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
    <title>Data binding test page with resource Model</title>
 
@@ -59,13 +59,13 @@
 	    var view2 = sap.ui.view({type:sap.ui.core.mvc.ViewType.JSON,viewName:"testdata.test"});
 	    view.placeAt("target5");
 	    view2.placeAt("target6");
-	    
+
 	    var oLabel7 = new c.Label({text:"Async:"});
     	oLabel7.placeAt("target7");
 	    var oTextField7 = new c.TextField({value: "{async>TEXT_FIRSTNAME}"});
     	oTextField7.placeAt("target7");
 
-	    function switchLanguage() { 
+	    function switchLanguage() {
 			if (locale === "de") {
 				locale = "en";
 			} else {
@@ -83,7 +83,7 @@
 		}
 
 		function changeParam() {
-			// have some parameter for a text 
+			// have some parameter for a text
 			if (!oTextField3 || jQuery.trim(oTextField3.getValue()).length === 0 ) {
 				return;
 			};

@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.m.TablePersoController</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-compatVersion="1.16" data-sap-ui-libs="sap.m">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -265,7 +265,7 @@
 		strictEqual(oPersData.aColumns[2].visible, false, "2 Number OFF (before 1st reset)");
 
 		// Hit "Reset" button
-		
+
 		oDialog.getContent()[0].getContent()[1].firePress();
 
 		// Close dialog with "OK"
@@ -346,11 +346,11 @@
 			};
 		});
 	});
-	
+
 	test("Destroy TablePersoController", function(){
 		var iDelegatesCount = oTable.aDelegates.length;
 		oTPC.destroy();
-		
+
 		ok(!oTPC._mDelegateMap, null, "Delegate map is destroyed");
 		ok(!oTPC._oPersService, null, "Perso service is cleaned up");
 		ok(!oTPC._mTablePersMap, null, "Resource bundle is cleaned up");

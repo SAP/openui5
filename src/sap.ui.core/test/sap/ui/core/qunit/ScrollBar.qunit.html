@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.ScrollBar
   Author: d029506
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -92,13 +92,13 @@
 		vSB.setScrollPosition(5); // steps
 		hSB.setScrollPosition(38); // pixels
 		equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 5, "scroll position should be 5");
-		equal(jQuery("#horiSB-sb").scrollLeft(), 38, "scroll position is 38");	
+		equal(jQuery("#horiSB-sb").scrollLeft(), 38, "scroll position is 38");
 	});
 
 	test("Size", function() {
 		vSB.setSize("100px");
 		equal(vSB.getSize(), "100px", "size of vertical scrollbar is 100px");
-		equal(hSB.getSize(), "200px", "size of horizontal scrollbar is 200");	
+		equal(hSB.getSize(), "200px", "size of horizontal scrollbar is 200");
 	});
 
 	test("Content Size and steps", function() {
@@ -151,12 +151,12 @@
 			equal(vSB.getScrollPosition(), "8", "scroll position is 8 step");
 			// TODO: this is quite often failing! Check why! Maybe we increase the timeout!
 			//equal(hSB.getScrollPosition(), "155", "scroll position is 155 px");
-			
+
 		}, 10);
 
 	});
-	
-	
+
+
 	asyncTest("Scroll Huge Scrollbars", 1, function() {
 		// Suport of Huge number of steps
 		vSB.setSteps(1000000); //8000000px in Chrom
@@ -169,8 +169,8 @@
 		}, 500);
 
 	});
-	
-	
+
+
 	// Touch support
 	module("Touch Support", {
 		setup : function() {
@@ -193,7 +193,7 @@
 			sap.ui.getCore().applyChanges();
 		},
 
-		
+
 		teardown : function() {
 			this.oVSB.destroy();
 			this.oVSB = null;

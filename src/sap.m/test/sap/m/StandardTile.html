@@ -2,26 +2,26 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-	<meta charset="UTF-8"/>
-	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
 	<title>Standard Tile - sap.m</title>
 
 	<script src="../../../resources/sap-ui-core.js" type="text/javascript"
 		id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
-		data-sap-ui-theme="sap_bluecrystal">    
+		data-sap-ui-theme="sap_bluecrystal">
 	</script>
 
 	<script type="text/javascript">
-	
+
 		jQuery.sap.require("sap.ui.core.IconPool");
-		
+
 		function handlePress(oEvent) {
 			//alert('tile ' + oEvent.oSource.getTitle() + ' pressed');
 		}
 
 		var tiles = new Array();
-		
+
 		var worstCase = new sap.m.StandardTile("worst_case", {
 			icon : sap.ui.core.IconPool.getIconURI("inbox"),
 			number : "999,999,999",
@@ -32,7 +32,7 @@
 			press : handlePress
 		});
 		tiles.push(worstCase);
-		
+
 		var largeNum = new sap.m.StandardTile("large_num", {
 			icon : sap.ui.core.IconPool.getIconURI("inbox"),
 			number : "90,0",
@@ -41,7 +41,7 @@
 			info : "1 day ago"
 		});
 		tiles.push(largeNum);
-		
+
 		var mediumNum = new sap.m.StandardTile("medium_num", {
 			icon : sap.ui.core.IconPool.getIconURI("inbox"),
 			number : "9000090",
@@ -51,35 +51,35 @@
 			infoState : "Warning"
 		});
 		tiles.push(mediumNum);
-		
+
 		var titleOnly = new sap.m.StandardTile("title_only", {
 			title : "Ñagçyf Lorem ipsum Title Ñagçyfox text",
 		});
 		tiles.push(titleOnly);
-		
-		
+
+
 		var iconOnlyTopRow = new sap.m.StandardTile("icon_only_top_row", {
 			type : "Create",
 			title : "Create Purchase Orders",
 			info : "4 Requisitions Released"
 		});
 		tiles.push(iconOnlyTopRow);
-		
+
 		var iconTitle = new sap.m.StandardTile("icon_title", {
 			icon : sap.ui.core.IconPool.getIconURI("inbox"),
 			title : "Open Purchase Orders",
 			type : "Monitor"
 		});
-		tiles.push(iconTitle);		
-		
+		tiles.push(iconTitle);
+
 		var iconNumTitle = new sap.m.StandardTile("icon_num_title", {
 			icon : sap.ui.core.IconPool.getIconURI("inbox"),
 			number : "2226,7",
 			numberUnit : "euro",
 			title : "Late Purchase Orders"
 		});
-		tiles.push(iconNumTitle);	
-		
+		tiles.push(iconNumTitle);
+
 		var iconNumTitleInfo = new sap.m.StandardTile("icon_num_title_info", {
 			icon : sap.ui.core.IconPool.getIconURI("inbox"),
 			number : "9999",
@@ -87,8 +87,8 @@
 			info : "Ñagçyf status",
 			infoState : "Error"
 		});
-		tiles.push(iconNumTitleInfo);		
-		
+		tiles.push(iconNumTitleInfo);
+
 		var numericallyLargeNum = new sap.m.StandardTile("numerically_large_num", {
 			icon : sap.ui.core.IconPool.getIconURI("inbox"),
 			number : "99999999999",
@@ -97,19 +97,19 @@
 			info : "Four score and seven years ago",
 			infoState : "Success"
 		});
-		tiles.push(numericallyLargeNum);		
-				
+		tiles.push(numericallyLargeNum);
+
 
 		var tc = new sap.m.TileContainer("tc",{
 			tiles : tiles
 		});
 		var app = new sap.m.App();
 		var page = new sap.m.Page({});
-		
+
 		app.setInitialPage(page.getId());
 		page.setEnableScrolling(false);
 		page.setShowHeader(true);
-		page.setTitle("Some Standard Tiles"); 
+		page.setTitle("Some Standard Tiles");
 		app.addPage(page);
 		page.addContent(tc);
 		app.placeAt('body');

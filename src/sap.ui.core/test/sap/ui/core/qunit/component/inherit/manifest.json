@@ -72,7 +72,8 @@
 			},
 			"any3": {
 				"anyarray": [1, 2, 3]
-			}
+			},
+			"zero": 0
 		},
 
 		"routing": {
@@ -115,6 +116,9 @@
 			}
 		}
 
-	}
+	},
+
+	"foo": {},
+	"foo.bar": "string as entry value is not valid!"
 
 }

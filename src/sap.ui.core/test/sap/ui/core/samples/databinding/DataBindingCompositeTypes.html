@@ -2,7 +2,7 @@
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Data binding test page with Data Types</title>
 
@@ -43,7 +43,7 @@
 		currency: "EUR"
 	});
 	sap.ui.getCore().setModel(oModel);
-	
+
 	// Simple composite type using string concatenation
 	sap.ui.model.CompositeType.extend("NameType", {
 		formatValue: function(aValues) {
@@ -57,7 +57,7 @@
 			return true;
 		}
 	});
-	
+
 	// Checkbox type for testing parseWithValues
 	sap.ui.model.CompositeType.extend("CheckType", {
 		constructor: function(){
@@ -77,7 +77,7 @@
 			return true;
 		}
 	});
-	
+
 	// More advanced composite type using raw values and numberformat
 	sap.ui.model.CompositeType.extend("CurrencyType", {
 		constructor: function(){
@@ -191,7 +191,7 @@
 	});
 	oCompositeForm.placeAt("content");
 
-	
+
 
 </script>
 </head>

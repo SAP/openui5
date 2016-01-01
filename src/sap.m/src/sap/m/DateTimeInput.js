@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new DateTimeInput.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -27,51 +27,52 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	 * @constructor
 	 * @public
 	 * @since 1.9.1
+	 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code> and/or <code>sap.m.TimePicker</code> controls.
 	 * @alias sap.m.DateTimeInput
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateTimeInput = InputBase.extend("sap.m.DateTimeInput", /** @lends sap.m.DateTimeInput.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * Type of DateTimeInput (e.g. Date, Time, DateTime)
 			 */
 			type : {type : "sap.m.DateTimeInputType", group : "Data", defaultValue : sap.m.DateTimeInputType.Date},
-	
+
 			/**
 			 * Displays date value in this given format in text field. Default value is taken from locale settings.
 			 * If you use data-binding on value property with type sap.ui.model.type.Date then you can ignore this property or latter wins.
 			 * If user browser supports native picker then this property is overwritten by browser with locale settings.
 			 */
 			displayFormat : {type : "string", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Given value property should match with valueFormat to parse date. Default value is taken from locale settings.
 			 * You can only set and get value in this format.
 			 * If you use data-binding on value property with type sap.ui.model.type.Date you can ignore this property or latter wins.
 			 */
 			valueFormat : {type : "string", group : "Data", defaultValue : null},
-	
+
 			/**
 			 * This property as JavaScript Date Object can be used to assign a new value which is independent from valueFormat.
 			 */
 			dateValue : {type : "object", group : "Data", defaultValue : null}
 		},
 		events : {
-	
+
 			/**
 			 * This event gets fired when the selection has finished and the value has changed.
 			 */
 			change : {
 				parameters : {
-	
+
 					/**
 					 * The string value of the control in given valueFormat(or locale format).
 					 */
-					value : {type : "string"}, 
-	
+					value : {type : "string"},
+
 					/**
 					 * The value of control as JavaScript Date Object or null if value is empty.
 					 */
@@ -80,12 +81,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			}
 		}
 	}});
-	
-	
+
+
 	!(function(oPrototype, $, oDevice) {
-	
+
 		var oi18n = sap.m.getLocaleData();
-	
+
 		$.extend(oPrototype, {
 			_origin : "value",
 			_super : InputBase.prototype,
@@ -104,7 +105,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				}
 			}
 		});
-	
+
 		// am-pm picker is hard-coded so use 24 hour format when language is not English
 		if (sap.m.getLocale().getLanguage() != "en") {
 			["valueFormat", "displayFormat"].forEach(function(sFormatType) {
@@ -115,7 +116,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				}
 			});
 		}
-	
+
 		// build DateTime formats from Date And Time values
 		["Time", "Date"].forEach(function(sType, nIndex) {
 			["valueFormat", "displayFormat"].forEach(function(sFormat) {
@@ -123,9 +124,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				oTypes.DateTime[sFormat] = oTypes.DateTime[sFormat].replace("{" + nIndex + "}", oTypes[sType][sFormat]);
 			});
 		});
-	
+
 	}(DateTimeInput.prototype, jQuery, sap.ui.Device));
-	
+
 	/**
 	 * @overwrite sap.m.InputBase#onBeforeRendering
 	 */
@@ -136,7 +137,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			this.setType("Date");
 		}
 	};
-	
+
 	/**
 	 * @overwrite sap.m.InputBase#onAfterRendering
 	 */
@@ -145,7 +146,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		this._$input.scroller(this._getScrollerConfig());
 		this._showValue();
 	};
-	
+
 	/**
 	 * @overwrite sap.m.InputBase#exit
 	 */
@@ -153,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		this._destroyCustomPicker();
 		this._super.exit.call(this);
 	};
-	
+
 	/**
 	 * <pre>
 	 * Setter for property <code>width</code>
@@ -169,7 +170,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	DateTimeInput.prototype.setWidth = function(sWidth) {
 		return this._super.setWidth.call(this, sWidth || "100%");
 	};
-	
+
 	/**
 	 * <pre>
 	 * Getter for property <code>width</code>. Defines the width of the DateTimeInput, this value can be provided in %, em, px… and all possible CSS units.
@@ -184,7 +185,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	DateTimeInput.prototype.getWidth = function() {
 		return this.getProperty("width") || "100%";
 	};
-	
+
 	/**
 	 * <pre>
 	 * This function can be used to assign new value and this is relevant with <code>valueFormat</code> property(see valueFormat) but independent from what is going to display on the field(see displayFormat).
@@ -206,23 +207,23 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		if (sValue.toLowerCase() == "now") {
 			return this.setDateValue(new Date());
 		}
-	
+
 		if (sValue === this.getValue()) {
 			return this;
 		}
-	
+
 		this.setProperty("value", sValue);
 		this._origin = "value";
 		this._getFormatFromBinding();
 		return this;
 	};
-	
+
 	// set the dateValue property if oValue parameter is defined
 	DateTimeInput.prototype.setDateValue = function(oValue) {
 		if (!oValue || oValue === this.getDateValue()) {
 			return this;
 		}
-	
+
 		this._isDate(oValue);
 		this._origin = "dateValue";
 		this.setProperty("dateValue", oValue);
@@ -234,39 +235,39 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		}
 		return this;
 	};
-	
+
 	// returns assigned dateValue property or converts value to JS Date Object.
 	DateTimeInput.prototype.getDateValue = function() {
 		if (this._origin == "dateValue") {
 			return this.getProperty("dateValue");
 		}
-	
+
 		var sValue = this.getProperty("value");
 		if (!sValue) {
 			return null;
 		}
-	
+
 		return sap.ui.core.format.DateFormat.getDateInstance({
 			pattern : this.getValueFormat()
 		}).parse(sValue);
 	};
-	
+
 	DateTimeInput.prototype.getDisplayFormat = function() {
 		return this.getProperty("displayFormat") || this._types[this.getType()].displayFormat;
 	};
-	
+
 	DateTimeInput.prototype.getValueFormat = function() {
 		return this.getProperty("valueFormat") || this._types[this.getType()].valueFormat;
 	};
-	
+
 	DateTimeInput.prototype.onfocusin = function() {
 		this.$().toggleClass("sapMFocus", true);
 		this._setLabelVisibility();
-		
+
 		// open message when focus is back to input field
 		this.openValueStateMessage();
 	};
-	
+
 	// Check given is JS Date Object and throw error if not
 	DateTimeInput.prototype._isDate = function(oValue) {
 		if (!sap.m.isDate(oValue)) {
@@ -274,7 +275,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		}
 		return true;
 	};
-	
+
 	/** *
 	 * Change event handler of the Input field
 	 * Also gets called programmatically without parameter to update input value
@@ -285,18 +286,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		var oDate = null,
 			sNewValue = this._$input.val(),
 			sOldValue = this.getProperty("value");
-	
+
 		if (sNewValue) {
 			oDate = this._$input.scroller("getDate");
 			this.getType() == "Date" && oDate.setHours(0, 0, 0, 0);
-	
+
 			// reformat for CLDR
 			oEvent && this._reformat && this._$input.val(
 				sap.ui.core.format.DateFormat.getDateInstance({
 					pattern : this.getDisplayFormat()
 				}).format(oDate)
 			);
-	
+
 			if (!isNaN(oDate)) {
 				sNewValue = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern : this.getValueFormat()
@@ -306,25 +307,25 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				oDate = null;
 			}
 		}
-	
+
 		if (sOldValue == sNewValue) {
 			return;
 		}
-	
+
 		this.setProperty("value", sNewValue, true);
 		this.setProperty("dateValue", oDate, true);
 		this._setLabelVisibility();
-	
+
 		if (oEvent && oEvent.type != "focus") {
 			this.fireChangeEvent(sNewValue, {
 				dateValue: oDate,
-	
+
 				// backwards compatibility
 				newDateValue: oDate
 			});
 		}
 	};
-	
+
 	/**
 	 * Destroy custom picker if available
 	 */
@@ -334,13 +335,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			this._$input.scroller("destroy");
 		}
 	};
-	
+
 	DateTimeInput.prototype._setInputValue = function(sValue) {
 		this._$input.val(sValue);
 		this._setLabelVisibility();
 		this.onChange();
 	};
-	
+
 	/**
 	 * Do the required conversion and set input value
 	 */
@@ -349,12 +350,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		if (!date) {
 			return;
 		}
-	
+
 		if (this._origin == "value") {
 			date = sap.ui.core.format.DateFormat.getDateInstance({
 				pattern : this.getValueFormat()
 			}).parse(date);
-	
+
 			if (!date) {
 				jQuery.sap.log.error( "Format Error: value property " + this.getValue()
 									+ " does not match with valueFormat " + this.getValueFormat()
@@ -365,7 +366,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		} else {
 			this._isDate(date);
 		}
-	
+
 		this._$input.scroller("setDate", date, false);
 		this._setInputValue(
 			sap.ui.core.format.DateFormat.getDateInstance({
@@ -373,7 +374,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			}).format(date)
 		);
 	};
-	
+
 	/**
 	 * Check data-binding for value property
 	 * Get according pattern from type settings
@@ -383,18 +384,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		if (!oBindingInfo) {
 			return;
 		}
-	
+
 		var oBindingType = oBindingInfo.type;
 		if (!oBindingType || !(oBindingType instanceof Date1)) {
 			return;
 		}
-	
+
 		var sFormat = oBindingType.getOutputPattern();
 		this.setProperty("valueFormat", sFormat, true);
 		this.setProperty("displayFormat", sFormat, true);
 		return sFormat;
 	};
-	
+
 	/**
 	 * Opens scroller on tap
 	 */
@@ -402,12 +403,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		if (document.activeElement) {
 			document.activeElement.blur();
 		}
-		
+
 		this._$input.scroller("show");
 		oEvent.preventDefault();
 		oEvent.setMarked();
 	};
-	
+
 	/**
 	 * Handle backspace
 	 */
@@ -415,22 +416,22 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 		// since input is readonly does not allow browsers back navigation
 		oEvent.preventDefault();
 	};
-	
+
 	/**
 	 * Opens scroller via keyboard [ALT]+[UP]
 	 */
 	DateTimeInput.prototype.onsaphide = DateTimeInput.prototype.ontap;
-	
+
 	/**
 	 * Opens scroller via keyboard [F4] or [ALT]+[DOWN]
 	 */
 	DateTimeInput.prototype.onsapshow = DateTimeInput.prototype.ontap;
-	
+
 	/**
 	 * Enables custom date time and adds related methods to prototype
 	 */
 	(function($, oDevice) {
-	
+
 		var oDefaults = {},
 			oCore = sap.ui.getCore(),
 			oLocale = sap.m.getLocale(),
@@ -462,15 +463,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				monthNamesShort : oLocaleData.getMonthsStandAlone("abbreviated")
 			},
 			oThemeParams = Parameters.get();
-	
+
 		// inject resources
 		$.sap.includeStyleSheet(sCssPath + "mobiscroll-core.css");
-	
+
 		// do not 'calculate' dependency names or analyzer will ignore them
-				
+
 		// get default settings
 		oDefaults = $("<input>").scroller({}).scroller("getInst").settings;
-	
+
 		var device = ["phone", "tablet", "desktop"].filter(function(d) {
 				return oDevice.system[d];
 			})[0],
@@ -496,7 +497,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					setDefaultsByTheme(key, type, device);
 				}
 			};
-	
+
 		oSettings.mode = "mixed";
 		oSettings.display = "modal";
 		oSettings.theme = "sapMDTICustom";
@@ -511,15 +512,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			// mobiscroll needs text to replace
 			oSettings.headerText = "{value}";
 		}
-	
+
 		// load custom fonts
 			IconPool.insertFontFaceStyle();
-	
+
 		// enable language settings
 		$.scroller.i18n[sLanguage] = $.extend({}, oi18n);
-	
+
 		// enable instance management
-		
+
 		// Add custom datetime methods to prototype
 		$.extend(DateTimeInput.prototype, {
 			/**
@@ -529,7 +530,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			close : function() {
 				this._$input.scroller("hide");
 			},
-	
+
 			/**
 			 * Mobiscroll title reformatter to support all cldr formats
 			 * We can only get string value onChange/onWheel event
@@ -539,7 +540,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					var oConfig = this._$input.scroller("getInst").settings,
 						sFormat = !this.getType().indexOf("Date") ? oConfig.dateFormat : oConfig.timeFormat,
 						oDate = $.mobiscroll.parseDate(sFormat, sValue);
-	
+
 					return $.sap.encodeHTML(sap.ui.core.format.DateFormat.getDateInstance({
 						pattern : this.getDisplayFormat()
 					}).format(oDate));
@@ -547,7 +548,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					return sValue;
 				}
 			},
-	
+
 			/**
 			 * Auto close for bubbles
 			 */
@@ -558,13 +559,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					oEvent.preventDefault();
 					return;
 				}
-	
+
 				var oDialog = document.querySelector(".sapMDTICustom .dwwr");
 				if (oDialog && !oDialog.contains(oEvent.target)) {
 					this._$input.scroller("hide");
 				}
 			},
-	
+
 			/**
 			 * Restrict max width of the dialog
 			 */
@@ -572,14 +573,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				//TODO : Find a better way to find out 22 instead of hard coding
 				$dialog[0].querySelector(".dwwr").style.maxWidth = (document.documentElement.clientWidth - 22) + "px";
 			},
-	
+
 			/**
 			 * Handle window resize event
 			 */
 			_handleResize : function(oEvent) {
 				this._restrictMaxWidth(oEvent.data.$dialog);
 			},
-	
+
 			/**
 			 * Handle key down event for buttons
 			 */
@@ -598,7 +599,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					this._$input.scroller("select");
 				}
 			},
-	
+
 			/**
 			 * Date-time conversion for mobiscroll configuration
 			 */
@@ -628,7 +629,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 								}
 								that._popupIsShown = true;
 							}
-	
+
 							InstanceManager.addDialogInstance(that);
 							$(window).on("resize.sapMDTICustom", {$dialog : $dialog}, fnHandleResize);
 							//Fix a bug in mobiscroll-core.js line 805 (mobiscroll 2.7.2): their
@@ -636,7 +637,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 							//pressed on the cancel button
 							$(window).unbind('keydown.dw');
 							$dialog.on('keydown.dw', fnHandleBtnKeyDown);
-	
+
 							if (oSettings.display == "bubble") {
 								document.addEventListener(oDevice.support.touch ? "touchstart" : "mousedown", fnAutoCloseProxy, true);
 							}
@@ -646,45 +647,45 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 								var $scrollerCont = $dialog.find('.dwcc'),
 									$buttonBar = $dialog.find('.dwbc'),
 									aFocusables = $scrollerCont.find(":focusable.dwww"),
-                                   
+
                                     // to determine whether the input is inside a UI5 popup or not
 									sOpenerPopupID = that._$input.closest("[data-sap-ui-popup]").attr("data-sap-ui-popup");
-									
+
 								if (sOpenerPopupID) {
 									// let the inner popup know that a popup will be open
 									var sPickerID = that.getId() + "-picker";
-                                  
+
 									// set a fix id for the picker so it can be set as focusable for the UI5 popup
 									$dialog.attr("id", sPickerID);
-                                  
-									// every popup registers itself to the eventbus so it can be accesses since a popup is not a control that is listed in the control tree. 
+
+									// every popup registers itself to the eventbus so it can be accesses since a popup is not a control that is listed in the control tree.
 									// via using the eventbus and providing the id of the picker it can be focused without that the UI5 popup reclaims the focus
 									var sEventId = "sap.ui.core.Popup.addFocusableContent-" + sOpenerPopupID;
 									sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, {
 										id : sPickerID
 									});
 								}
-								
+
 								$focusLeft.insertBefore($scrollerCont);
 								fnFocusInLast = $.proxy(that._getFocusInHandler($buttonBar, false), that);
 								$focusLeft.focusin(fnFocusInLast);
-	
+
 								$focusRight.insertAfter($buttonBar);
 								fnFocusInFirst = $.proxy(that._getFocusInHandler($scrollerCont, true), that);
 								$focusRight.focusin(fnFocusInFirst);
-	
+
 								// Make sure, the first scroller column has initial focus
 								$.sap.focus($scrollerCont.firstFocusableDomRef());
-								
-								// CSN 0120061532 0001326801 2014: mobiscroll scrollers don't 
+
+								// CSN 0120061532 0001326801 2014: mobiscroll scrollers don't
 								// get focus when clicked upon
 								fnClick = function(oEvent){
-									//The target itself is not focusable. Need to focus the 
-									//scroller parent marked by a 'dwww' class 
+									//The target itself is not focusable. Need to focus the
+									//scroller parent marked by a 'dwww' class
 									$.sap.focus($(oEvent.target).parents(".dwww"));
 								};
 								$dialog.click(fnClick);
-	
+
 								// Support other keyboard events as well, e.g. LEFT, RIGHT
 								$dialogToClean = $dialog;
 								fnKeyDown = $.proxy(that._getKeyDownHandler(aFocusables), that);
@@ -703,7 +704,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 							if (oSettings.display == "bubble") {
 								document.removeEventListener(oDevice.support.touch ? "touchstart" : "mousedown", fnAutoCloseProxy, true);
 							}
-	
+
 							// clean up listeners
 							$focusLeft.unbind('focusin', fnFocusInLast);
 							$focusRight.unbind('focusin', fnFocusInFirst);
@@ -725,7 +726,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 							}
 						}
 					});
-	
+
 				if (sType == "Date") {
 					sFormat = this._convertDatePattern(sFormat);
 					$.extend(oConfig, {
@@ -742,7 +743,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					});
 				} else if (sType == "DateTime") {
 					sFormat = this._convertDatePattern(this._convertTimePattern(sFormat));
-	
+
 					// date-time hack
 					$.extend(oConfig, {
 						dateFormat : sFormat,
@@ -753,7 +754,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 						separator : ""
 					});
 				}
-	
+
 				// check given format is not supported by mobiscroll
 				if (/[^ymdhisa\W]/i.test(sFormat)) {
 					this._reformat = true;
@@ -763,10 +764,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				} else {
 					this._reformat = false;
 				}
-	
+
 				return oConfig;
 			},
-	
+
 			/**
 			 * Until mobiscroll fixes min height(360px) problem for date time
 			 * we just decrease the row count to 3
@@ -778,7 +779,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				}
 				return Math.min(window.innerWidth, window.innerHeight) < 360 ? 3 : rows;
 			},
-	
+
 			/**
 			 * Returns a handler function to focus first or last focusable component
 			 * within a given jQuery element to be used as a handler for
@@ -795,7 +796,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					$.sap.focus(oElementToFocus);
 				};
 			},
-	
+
 			/**
 			 * Returns a handler function to deal with key events for keyboard
 			 * navigation, that are not yet dealt with by the underlying mobiscroll
@@ -852,7 +853,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					}
 				};
 			},
-	
+
 			/**
 			 * cache often used regular expressions
 			 */
@@ -863,7 +864,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			_rgxAmPm : new RegExp("a" + rgxExcludeLiteral, "g"),
 			_rgxDayOfWeekLong : new RegExp("EEEE" + rgxExcludeLiteral, "g"),
 			_rgxDayOfWeekShort : new RegExp("E+" + rgxExcludeLiteral, "g"),
-	
+
 			/**
 			 * Convert date pattern to long month name, 4 digit year, 2 digit day
 			 */
@@ -871,7 +872,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				sPattern = (sPattern || this.getDisplayFormat()).replace(this._rgxYear, "YY");
 				return sPattern.replace(this._rgxMonth, "MM").replace(this._rgxDay, "dd");
 			},
-	
+
 			/**
 			 * Converts the time pattern from CLDR to the mobiscroll time picker
 			 * m is short month name, i = minute
@@ -880,7 +881,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 				sPattern = sPattern || this.getDisplayFormat();
 				return sPattern.replace(this._rgxMinute, "i").replace(this._rgxAmPm, "A");
 			},
-	
+
 			/**
 			 * Converts the date pattern from CLDR to the one of the jQuery datePicker
 			 * Month is coded in the different way
@@ -889,18 +890,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			 */
 			_convertDatePattern : function(sPattern) {
 				sPattern = sPattern || this.getDisplayFormat();
-	
+
 				var iIndex1 = sPattern.indexOf("M"),
 					iIndex2 = sPattern.lastIndexOf("M"),
 					sFormat = sPattern,
 					sNewMonth;
-	
+
 				if (iIndex1 == -1) {
 					// no month defined with M, maybe using L (standalone)
 					iIndex1 = sPattern.indexOf("L");
 					iIndex2 = sPattern.lastIndexOf("L");
 				}
-	
+
 				if (iIndex1 > -1) {
 					switch (iIndex2 - iIndex1) {
 					case 0:
@@ -922,7 +923,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					}
 					sFormat = sPattern.substring(0, iIndex1) + sNewMonth + sPattern.substring(iIndex2 + 1);
 				}
-	
+
 				var sNewYear;
 				iIndex1 = sFormat.indexOf("y");
 				if (iIndex1 > -1) {
@@ -935,12 +936,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					}
 					sFormat = sFormat.substring(0, iIndex1) + sNewYear + sFormat.substring(iIndex2 + 1);
 				}
-	
+
 				var sNewYearDay;
 				iIndex1 = sFormat.indexOf("D");
 				if (iIndex1 > -1) {
 					iIndex2 = sFormat.lastIndexOf("D");
-	
+
 					if (iIndex2 - iIndex1 == 1) {
 						// two chanrs
 						sNewYearDay = "o";
@@ -949,16 +950,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 					}
 					sFormat = sFormat.substring(0, iIndex1) + sNewYearDay + sFormat.substring(iIndex2 + 1);
 				}
-	
+
 				// EEEE = DD = day of week(long)
 				// EEE, EE, E = D = day of week(short)
 				sFormat = sFormat.replace(this._rgxDayOfWeekLong, "DD").replace(this._rgxDayOfWeekShort, "D");
 				return sFormat;
 			}
 		});
-	
+
 	})(jQuery, sap.ui.Device);
-	
+
 
 	return DateTimeInput;
 

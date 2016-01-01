@@ -5,11 +5,11 @@
 /**
  * Initialization Code and shared classes of library sap.m.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	'sap/ui/core/library', // library dependency
 	'jquery.sap.mobile', // referenced here in case the Core decides to throw it out - shall always be available when using the mobile lib.
 	'./Support'], // referenced here to enable the Support feature
-	function(jQuery, Device) {
+	function(jQuery, Device, DataType) {
 
 	"use strict";
 
@@ -106,10 +106,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Dialog",
 			"sap.m.DisplayListItem",
 			"sap.m.DraftIndicator",
-			"sap.m.DynamicContainer",
 			"sap.m.FacetFilter",
 			"sap.m.FacetFilterItem",
 			"sap.m.FacetFilterList",
+			"sap.m.FeedContent",
 			"sap.m.FeedInput",
 			"sap.m.FeedListItem",
 			"sap.m.FlexBox",
@@ -123,7 +123,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Input",
 			"sap.m.InputBase",
 			"sap.m.InputListItem",
-			"sap.m.JamContent",
 			"sap.m.Label",
 			"sap.m.Link",
 			"sap.m.List",
@@ -150,6 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.OverflowToolbar",
 			"sap.m.OverflowToolbarButton",
 			"sap.m.P13nColumnsItem",
+			"sap.m.P13nDimMeasureItem",
 			"sap.m.P13nColumnsPanel",
 			"sap.m.P13nDimMeasurePanel",
 			"sap.m.P13nConditionPanel",
@@ -180,6 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.SelectList",
 			"sap.m.Shell",
 			"sap.m.Slider",
+			"sap.m.SlideTile",
 			"sap.m.SplitApp",
 			"sap.m.SplitContainer",
 			"sap.m.StandardListItem",
@@ -377,6 +378,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @enum {string}
 	 * @public
+	 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code> and/or <code>sap.m.TimePicker</code> controls.
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.m.DateTimeInputType = {
@@ -384,20 +386,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		/**
 		 * An input control for specifying a date value. The user can select a month, day of the month, and year.
 		 * @public
-		 * @deprecated Since version 1.22.
-		 * Instead, use dedicated sap.m.DatePicker control.
+		 * @deprecated Since version 1.22.0. Instead, use dedicated <code>sap.m.DatePicker</code> control.
 		 */
 		Date : "Date",
 
 		/**
 		 * An input control for specifying a date and time value. The user can select a month, day of the month, year, and time of day.
 		 * @public
+		 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code> and <code>sap.m.TimePicker</code> controls.
 		 */
 		DateTime : "DateTime",
 
 		/**
 		 * An input control for specifying a time value. The user can select the hour, minute, and optionally AM or PM.
 		 * @public
+		 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.TimePicker</code> control.
 		 */
 		Time : "Time"
 
@@ -429,7 +432,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * Enum for the trend of the deviation marker within sap.m.NumericContent control.
+	 * Enum of the available deviation markers for the NumericContent control.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1082,6 +1085,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Error : "Error"
 
 	};
+
+	/**
+	 * @classdesc A string type that represents CSS color values and sap.m.ValueColor.
+	 *
+	 * Allowed values are {@link sap.ui.core.CSSColor} and {@link sap.m.ValueColor}
+	 *
+	 * The empty string is also allowed and has the same effect as setting no color.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.ValueCSSColor = DataType.createType('sap.m.ValueCSSColor', {
+		isValid : function(vValue) {
+				// Note: the following regexp by intention is a single regexp literal.
+				// It could be made much more readable by constructing it out of (reused) sub-expressions (strings)
+				// but this would not be parseable by the metamodel recovery tooling that is used inside SAP
+				return /^(#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})|rgb\(\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*(,\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|rgba\((\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){3}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|hsl\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*(,\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|hsla\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*,(\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){2}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coralcornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silverskyblue|slateblue|slategray|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen|transparent|inherit|Neutral|Good|Critical|Error|)$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
+	);
 
 		/**
 	 * A subset of input types that fits to a simple API returning one string.

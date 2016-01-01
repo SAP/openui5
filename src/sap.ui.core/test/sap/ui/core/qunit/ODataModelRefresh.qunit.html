@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.odata.ODataModel
   Author: d050084
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
@@ -23,14 +23,14 @@
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<!-- 
+<!--
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
  -->
  <!--[if IE]>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
-<!-- 
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>	
+<!--
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
  -->
 
 <!-- This test is not running against the real Northwind service, but a fake service based on
@@ -42,15 +42,15 @@
 
 	//TODO currently we rely on northwind odata service for tests...
 	//TODO tests depends on server response time and northwind content...so tests may be unstable
-	
+
 	// time to wait for server responses
 	var timeout = 3000,
 		sReadURI = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
 		sWriteURI = "../../../../../proxy/http/services.odata.org/V3/(S(iigy1oswxpi3mnmpdk0edd2l))/odata/odata.svc/";
-		
+
 	var oLabel = new sap.ui.commons.Label("myLabel");
 	oLabel.placeAt("target1");
-	
+
 	function initModel(sURI, bJSON, bUseBatch){
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: bJSON,
@@ -61,7 +61,7 @@
 		oModel.forceNoCache(true);
 		return oModel;
 	}
-	
+
 	function createContextBinding(oModel, sPath, fnChange) {
 		var oBinding = oModel.bindContext(sPath);
 		if (fnChange) oBinding.attachChange(fnChange);
@@ -78,11 +78,11 @@
 		oBinding.initialize();
 		return oBinding;
 	}
-	
+
 	function readTests(bJSON, bUseBatch) {
-	
+
 		module("After read, " + (bJSON ? "JSON" : "XML") + ", " + (bUseBatch ? "w/" : "w/o") + " $batch");
-		
+
 		asyncTest("Context & Context", function() {
 			var bChanged2, bChanged3,
 				oModel = initModel(sReadURI, bJSON, bUseBatch),
@@ -104,7 +104,7 @@
 				}
 			});
 		});
-	
+
 		asyncTest("Context & List, Context refreshes", function() {
 			var bChanged2, bChanged3, bChanged4,
 				oModel = initModel(sReadURI, bJSON, bUseBatch),
@@ -129,7 +129,7 @@
 				}
 			});
 		});
-		
+
 		asyncTest("Context & List, List refreshes", function() {
 			var bChanged2, bChanged3, bChanged4,
 				oModel = initModel(sReadURI, bJSON, bUseBatch),
@@ -154,7 +154,7 @@
 				}
 			});
 		});
-	
+
 		asyncTest("List & List", function() {
 			var bChanged2, bChanged3, bChanged4,
 				oModel = initModel(sReadURI, bJSON, bUseBatch),
@@ -180,12 +180,12 @@
 			});
 		});
 	}
-	
+
 	readTests(true, true);
 	readTests(true, false);
 	readTests(false, true);
 	readTests(false, false);
-	
+
 	module("After write");
 
 	asyncTest("Create", function() {
@@ -207,7 +207,7 @@
 					ReleaseDate: new Date()
 				}, {
 					success: function() {
-						
+
 					}
 				});
 			}

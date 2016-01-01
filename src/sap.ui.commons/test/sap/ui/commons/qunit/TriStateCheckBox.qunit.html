@@ -1,23 +1,23 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<!-- 
-		  JSUNIT: 
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<!--
+		  JSUNIT:
 		    Tested control/class: sap.ui.commons.TriStateCheckBox
 		    Author: d034262
 		 -->
 		<title>Testpage for sap.ui.commons.TriStateCheckBox</title>
 
-    	<script id="sap-ui-bootstrap" 
+    	<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.commons" >
 		</script>
-    
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -29,16 +29,16 @@
 			bEnabled = true,
 			bVisible = true,
 			sSelectionState = "Checked";
-		
+
 		var oTriStateCb = new sap.ui.commons.TriStateCheckBox("tcb1");
  		oTriStateCb.setText(sText);
 		oTriStateCb.setWidth(sWidth);
 		oTriStateCb.setTooltip(sTooltip);
 		oTriStateCb.setEnabled(bEnabled);
 		oTriStateCb.setVisible(bVisible);
-		oTriStateCb.setSelectionState(sSelectionState); 
+		oTriStateCb.setSelectionState(sSelectionState);
 		oTriStateCb.placeAt("target1");
-		
+
 		oTriStateCb = new sap.ui.commons.TriStateCheckBox("tcb2", {
 			text: sText,
 			width: sWidth,
@@ -47,18 +47,18 @@
 			visible: bVisible,
 			selectionState: sSelectionState
 		});
-		oTriStateCb.placeAt("target2"); 
-		
+		oTriStateCb.placeAt("target2");
+
 		var tcb1 = sap.ui.getCore().getControl("tcb1");
  		var tcb2 = sap.ui.getCore().getControl("tcb2");
-		
-		module("Basic");	
-		
+
+		module("Basic");
+
 		test("TextOk", function() {
 			strictEqual(tcb1.getText(), sText, "tcb1.getText() returns wrong result");
 			strictEqual(tcb2.getText(), sText, "tcb2.getText() returns wrong result");
 		});
-		
+
 		test("WidthOk", function() {
 			strictEqual(tcb1.getWidth(), sWidth, "tcb1.getWidth() returns wrong result");
 			strictEqual(tcb2.getWidth(), sWidth, "tcb2.getWidth() returns wrong result");
@@ -82,8 +82,8 @@
 		test("CheckedOk", function() {
 			strictEqual(tcb1.getSelectionState(), sSelectionState, "tcb1.getSelectionState() returns wrong result");
 			strictEqual(tcb2.getSelectionState(), sSelectionState, "tcb2.getSelectionState() returns wrong result");
-		});		
-		
+		});
+
 		test("Visibility", function() {
 			ok(jQuery.sap.domById("tcb1"), "TriStateCheckBox 1 should exist in page");
 			tcb1.setVisible(false);
@@ -111,7 +111,7 @@
 			tcb1.toggle("Unchecked");
 			strictEqual(tcb1.getSelectionState(), "Unchecked", "tcb1.getSelectionState() returns wrong state after toggle to checked");
 		});
-		
+
 		test("CssClassesOk", function() {
 			var sSpan = jQuery.sap.domById("tcb1");
 			var sClasses = sSpan.className;
@@ -125,13 +125,13 @@
 
 			tcb1.setEnabled(false);
 			tcb1.setEditable(false);
-			
+
 			sap.ui.getCore().applyChanges();
 			var sSpan = jQuery.sap.domById("tcb1").firstChild;
 			sClasses = sSpan.className;
 			ok(sClasses.indexOf("sapUiTriCbDis") > -1, "className of child is missing 'sapUiTriCbDis'");
 			ok(sClasses.indexOf("sapUiTriCbRo") > -1, "className of child is missing 'sapUiTriCbRo'");
-			
+
 			tcb1.toggle("Mixed");
 			sap.ui.getCore().applyChanges();
 			var sSpan = jQuery.sap.domById("tcb1").firstChild;
@@ -147,14 +147,14 @@
 			ok(sClasses.indexOf("sapUiTriCbDis") == -1, "tcb1 className is containing 'sapUiCbDis' after being reenabled");
 			ok(sClasses.indexOf("sapUiTriCbRo") == -1, "tcb1 className is containing 'sapUiCbRo' after switching back to editable");
  		});
-	
+
 		test("AriaOK", function(){
 			equal(jQuery("#tcb1").attr("role"), "checkbox", "Role of the TriStateCheckBox");
 			equal(jQuery("#tcb1").attr("aria-checked"), "mixed", "ARIA-Checked of 1. Checkbox");
 			equal(jQuery("#tcb1").children(".sapUiTriCbInner").attr("aria-labelledby"), "sapUiAriaLabeltcb1", "ARIA-LabelledBy of 1. Checkbox");
 			ok(jQuery("#tcb1").find("#sapUiAriaLabeltcb1").length > 0, "Aria-Labelling span for checkbox");
-		}); 
-		
+		});
+
 		</script>
 	</head>
 	<body>

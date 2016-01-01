@@ -1,20 +1,20 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested class: sap.ui.core.Configuration
   Author: d020684
 -->
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 
 	<!-- Initialization -->
-	<script id="sap-ui-bootstrap" 
-			src="../../../../../../resources/sap-ui-core.js" 
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../resources/sap-ui-core.js"
 			>
 	</script>
 
-	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -39,7 +39,7 @@
 		QUnit.test("Settings", function(assert) {
 			var oCfg = new sap.ui.core.Configuration();
 
-			// compare values where possible 
+			// compare values where possible
 			assert.equal(oCfg.theme, "base", "theme");
 			assert.equal(oCfg.language, (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage, "language");
 			assert.equal(oCfg.accessibility, true, "accessibility");

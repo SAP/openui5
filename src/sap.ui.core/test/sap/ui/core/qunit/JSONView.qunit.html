@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested classes: sap.ui.core.mvc.JSONView + sap.ui.core.mvc.Controller
   Author: d020684,d046011,d049080
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.ui.core.mvc.JSONView +
 sap.ui.core.mvc.Controller</title>
 
@@ -16,6 +16,7 @@ sap.ui.core.mvc.Controller</title>
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons"
+	data-sap-ui-bindingSyntax="complex"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
 </script>
 
@@ -35,20 +36,31 @@ sap.ui.core.mvc.Controller</title>
 		viewClassName : "sap.ui.core.mvc.JSONView",
 		idsToBeChecked : ["myPanel", "Button1"]
 	};
-	
+
 	testsuite(oConfig, "JSONView creation loading from file", function() {
 		return sap.ui.jsonview("example.mvc.test");
 	});
-	
+
 	testsuite(oConfig, "JSONView creation via JSON string", function() {
-		var json = '{	"Type": "sap.ui.core.JSONView",	"controllerName":"example.mvc.test",	"content": [{		"Type":"sap.ui.commons.Panel",		"id":"myPanel",		"content":[{			"Type":"sap.ui.commons.Button",			"id":"Button1",			"text":"Hello World!",			"press": "doIt"		},		{			"Type":"sap.ui.commons.Button",			"id":"Button2",			"text":"Hello"		},		{			"Type":"sap.ui.core.mvc.JSONView",			"viewName":"example.mvc.test2",			"id":"MyJSONView"		},				{			"Type":"sap.ui.core.mvc.JSView",			"viewName":"example.mvc.test2",			"id":"MyJSView"		},				{			"Type":"sap.ui.core.mvc.XMLView",			"viewName":"example.mvc.test2",			"id":"MyXMLView"		},		{			"Type":"sap.ui.core.mvc.HTMLView",			"viewName":"example.mvc.test2",			"controllerName":"example.mvc.test",			"id":"MyHTMLView"		}]	}]}';
+		var json = '{	"Type": "sap.ui.core.JSONView",	"controllerName":"example.mvc.test",	"content": [{		"Type":"sap.ui.commons.Panel",		"id":"myPanel",		"content":[{			"Type":"sap.ui.commons.Button",			"id":"Button1",			"text":"Hello World!",			"press": "doIt"		},		{			"Type":"sap.ui.commons.Button",			"id":"Button2",			"text":"Hello"		},		{			"Type":"sap.ui.commons.Button",			"id":"ButtonX",			"text":"Another Hello",			"press": ".sap.doIt"		},		{			"Type":"sap.ui.core.mvc.JSONView",			"viewName":"example.mvc.test2",			"id":"MyJSONView"		},				{			"Type":"sap.ui.core.mvc.JSView",			"viewName":"example.mvc.test2",			"id":"MyJSView"		},				{			"Type":"sap.ui.core.mvc.XMLView",			"viewName":"example.mvc.test2",			"id":"MyXMLView"		},		{			"Type":"sap.ui.core.mvc.HTMLView",			"viewName":"example.mvc.test2",			"controllerName":"example.mvc.test",			"id":"MyHTMLView"		}]	}]}';
 		return sap.ui.jsonview({viewContent:json});
 	});
-	
+
 	testsuite(oConfig, "JSONView creation via generic view factory", function() {
-		return sap.ui.view({type:sap.ui.core.mvc.ViewType.JSON,viewName:"example.mvc.test", viewData:{test:"testdata"}}); 
+		return sap.ui.view({type:sap.ui.core.mvc.ViewType.JSON,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 	}, true);
-	
+
+	QUnit.test("JSONView should be able to resolve controller methods", function(assert) {
+		var oView = sap.ui.jsonview("example.mvc.test");
+		var oButtonWithBinding = oView.byId("ButtonWithBinding");
+		assert.ok(oButtonWithBinding, "button could be found");
+		var oBindingInfo = oButtonWithBinding.getBindingInfo("text");
+		assert.ok(oBindingInfo, "there should be a binding info for property 'text'");
+		assert.ok(typeof oBindingInfo.formatter === 'function', "formatter should have been resolved");
+		assert.ok(oBindingInfo.formatter(42) === 'formatted-42', "formatter should be the one form the controller"); // TODO test should involve instance
+		oView.destroy();
+	});
+
 </script>
 </head>
 <body>

@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>Test Page for sap.m.P13nDimMeasurePanel</title>
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -45,7 +45,7 @@
 
 	// ------------------------------ //
 	// tests for default values       //
-	// ------------------------------ //    
+	// ------------------------------ //
 	test("constructor - items: []", function() {
 
 		// system under test
@@ -57,12 +57,11 @@
 		strictEqual(oDimMeasurePanel.getTitle(), "");
 		strictEqual(oDimMeasurePanel.getTitleLarge(), "");
 		strictEqual(oDimMeasurePanel.getType(), sap.m.P13nPanelType.dimeasure);
-		strictEqual(oDimMeasurePanel.getVisibleItemsThreshold(), -1);
 		strictEqual(oDimMeasurePanel.getChartTypeKey(), "");
 		deepEqual(oDimMeasurePanel.getAvailableChartTypes(), []);
 		deepEqual(oDimMeasurePanel.getItems(), []);
-		deepEqual(oDimMeasurePanel.getColumnsItems(), []);
-		deepEqual(oDimMeasurePanel._oTableModel.getData().items, []);
+		deepEqual(oDimMeasurePanel.getDimMeasureItems(), []);
+		deepEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items, []);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
@@ -100,13 +99,13 @@
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].columnKey, oItemC.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].persistentSelected, undefined);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
@@ -141,13 +140,13 @@
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].columnKey, oItemC.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].persistentSelected, undefined);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
@@ -185,13 +184,13 @@
 			oItemC, oItemB, oItemA
 		]);
 		// The table items order has been changed to: A, B, C
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].columnKey, oItemC.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].persistentSelected, undefined);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
@@ -230,11 +229,11 @@
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].columnKey, oItemC.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, C=off
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].persistentSelected, undefined);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
@@ -273,11 +272,11 @@
 			oItemC, oItemA
 		]);
 		// The table items order has been changed to: A, C
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].columnKey, oItemC.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, C=off
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].persistentSelected, undefined);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
@@ -310,10 +309,12 @@
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		deepEqual(aItems, [oItemC, oItemB, oItemA]);
+		deepEqual(aItems, [
+			oItemC, oItemB, oItemA
+		]);
 		strictEqual(oDimMeasurePanel.getItems().length, 0);
 		// The table items order has been changed to: []
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items.length, 0);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items.length, 0);
 		// The table selection is: []
 
 		// cleanup
@@ -349,18 +350,18 @@
 		// assertions
 		strictEqual(oDimMeasurePanel.getItems().length, 0);
 		// The table items order has been changed to: []
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items.length, 0);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items.length, 0);
 		// The table selection is: []
 
 		// cleanup
 		oDimMeasurePanel.destroy();
 	});
-	
-	test("constructor - items: [aItems], columnsItems: [aColumnsItems]", function() {
+
+	test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function() {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oColumnsItemC;
+		var oDimMeasureItemC;
 		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
 			items: [
 				oItemC = new sap.m.P13nItem({
@@ -374,8 +375,8 @@
 					text: "A"
 				})
 			],
-			columnsItems: [
-				oColumnsItemC = new sap.m.P13nColumnsItem({
+			dimMeasureItems: [
+				oDimMeasureItemC = new sap.m.P13nDimMeasureItem({
 					columnKey: "keyC",
 					index: 1,
 					visible: true
@@ -389,29 +390,29 @@
 
 		// assertions
 		// The table items order has been changed to: C, A, B
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].columnKey, oItemA.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].columnKey, oItemB.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].columnKey, oItemA.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].columnKey, oItemB.getColumnKey());
 		// The table selection is: C=on, A=off, B=off
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].persistentSelected, true);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].persistentSelected, undefined);
-		// Index of ColumnsItem has not been changed
-		strictEqual(oDimMeasurePanel.getColumnsItems().length, 1);
-		strictEqual(oDimMeasurePanel.getColumnsItems()[0].getIndex(), 1);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].persistentSelected, true);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].persistentSelected, undefined);
+		// Index of DimMeasureItem has not been changed
+		strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 1);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getIndex(), 1);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - columnsItems: [aColumnsItems], items: [aItems]", function() {
+	test("constructor - dimMeasureItems: [aDimMeasureItems], items: [aItems]", function() {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oColumnsItemC;
+		var oDimMeasureItemC;
 		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
-			columnsItems: [
-				oColumnsItemC = new sap.m.P13nColumnsItem({
+			dimMeasureItems: [
+				oDimMeasureItemC = new sap.m.P13nDimMeasureItem({
 					columnKey: "keyC",
 					visible: true,
 					index: 1
@@ -437,26 +438,26 @@
 
 		// assertions
 		// The table items order has been changed to: C, A, B
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].columnKey, oItemC.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].columnKey, oItemA.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].columnKey, oItemB.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].columnKey, oItemC.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].columnKey, oItemA.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].columnKey, oItemB.getColumnKey());
 		// The table selection is: C=on, A=off, B=off
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].persistentSelected, true);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].persistentSelected, undefined);
-		// Index of ColumnsItem has not been changed
-		strictEqual(oDimMeasurePanel.getColumnsItems().length, 1);
-		strictEqual(oDimMeasurePanel.getColumnsItems()[0].getIndex(), 1);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].persistentSelected, true);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].persistentSelected, undefined);
+		// Index of DimMeasureItem has not been changed
+		strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 1);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getIndex(), 1);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
 	});
 
-	test("constructor - items: [aItems], columnsItems: [aColumnsItems]", function() {
+	test("constructor - items: [aItems], dimMeasureItems: [aDimMeasureItems]", function() {
 
 		// system under test
 		var oItemA, oItemB, oItemC;
-		var oColumnsItemC;
+		var oDimMeasureItemC;
 		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
 			items: [
 				oItemC = new sap.m.P13nItem({
@@ -470,40 +471,250 @@
 					text: "A"
 				})
 			],
-			columnsItems: [
-				oColumnsItemC = new sap.m.P13nColumnsItem({
+			dimMeasureItems: [
+				oDimMeasureItemC = new sap.m.P13nDimMeasureItem({
 					columnKey: "keyC",
 					index: 1,
 					visible: true
 				})
 			]
-
 		});
 
 		// arrange
 		oDimMeasurePanel.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		// act		
-		oDimMeasurePanel.removeColumnsItem(oColumnsItemC);
+		// act
+		oDimMeasurePanel.removeDimMeasureItem(oDimMeasureItemC);
 
 		// assertions
 		// The table items order has been changed to: A, B, C
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].columnKey, oItemA.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].columnKey, oItemB.getColumnKey());
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].columnKey, oItemC.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].columnKey, oItemA.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].columnKey, oItemB.getColumnKey());
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].columnKey, oItemC.getColumnKey());
 		// The table selection is: A=off, B=off, C=off
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[0].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[1].persistentSelected, undefined);
-		strictEqual(oDimMeasurePanel._oTableModel.getData().items[2].persistentSelected, undefined);
-		// Index of ColumnsItem has not been changed
-		strictEqual(oDimMeasurePanel.getColumnsItems().length, 0);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[0].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[1].persistentSelected, undefined);
+		strictEqual(oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData().items[2].persistentSelected, undefined);
+		// Index of DimMeasureItem has not been changed
+		strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 0);
 
 		// cleanup
 		oDimMeasurePanel.destroy();
 	});
 
-	
+	test("getOkPayload: â0 -> a0", function() {
+
+		// system under test
+		var oDimMeasureItemA;
+		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			dimMeasureItems: [
+				oDimMeasureItemA = new sap.m.P13nDimMeasureItem({
+					columnKey: "keyA",
+					index: 0,
+					visible: true
+				})
+			]
+		});
+
+		// arrange
+		oDimMeasurePanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData();
+		oData.items[0].persistentSelected = false;
+		oData.items[0].persistentIndex = -1;
+		var oPayload = oDimMeasurePanel.getOkPayload();
+
+		// assertions
+		strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 1);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0], oDimMeasureItemA);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getVisible(), false);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getIndex(), -1);
+		// cleanup
+		oDimMeasurePanel.destroy();
+	});
+
+	test("getOkPayload: a0 -> â0", function() {
+
+		// system under test
+		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			dimMeasureItems: []
+		});
+
+		// arrange
+		oDimMeasurePanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData();
+		oData.items[0].persistentSelected = true;
+		oData.items[0].persistentIndex = 0;
+		var oPayload = oDimMeasurePanel.getOkPayload();
+
+		// assertions
+		strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 1);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getVisible(), true);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getIndex(), 0);
+
+		// cleanup
+		oDimMeasurePanel.destroy();
+	});
+
+	test("getOkPayload: a0 -> a1", function() {
+
+		// system under test
+		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			dimMeasureItems: []
+		});
+
+		// arrange
+		oDimMeasurePanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData();
+		oData.items[0].persistentSelected = undefined;
+		oData.items[0].persistentIndex = 1;
+		var oPayload = oDimMeasurePanel.getOkPayload();
+
+		// assertions
+		strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 0);
+
+		// cleanup
+		oDimMeasurePanel.destroy();
+	});
+
+	test("getOkPayload: a0 -> â1", function() {
+
+		// system under test
+		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			dimMeasureItems: []
+		});
+
+		// arrange
+		oDimMeasurePanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData();
+		oData.items[0].persistentSelected = true;
+		oData.items[0].persistentIndex = 1;
+		var oPayload = oDimMeasurePanel.getOkPayload();
+
+		// assertions
+		strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 1);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getVisible(), true);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getIndex(), 1);
+
+		// cleanup
+		oDimMeasurePanel.destroy();
+	});
+
+	test("getOkPayload: â0 -> â1", function() {
+
+		// system under test
+		var oDimMeasureItemsA;
+		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			dimMeasureItems: [
+				oDimMeasureItemA = new sap.m.P13nDimMeasureItem({
+					columnKey: "keyA",
+					index: 0,
+					visible: true
+				})
+			]
+		});
+
+		// arrange
+		oDimMeasurePanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData();
+		oData.items[0].persistentSelected = true;
+		oData.items[0].persistentIndex = 1;
+		var oPayload = oDimMeasurePanel.getOkPayload();
+
+		// assertions
+		strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 1);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0], oDimMeasureItemA);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getVisible(), true);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getIndex(), 1);
+
+		// cleanup
+		oDimMeasurePanel.destroy();
+	});
+
+	test("getOkPayload: â0 -> a1", function() {
+
+		// system under test
+		var oDimMeasureItemsA;
+		var oDimMeasurePanel = new sap.m.P13nDimMeasurePanel({
+			items: [
+				new sap.m.P13nItem({
+					columnKey: "keyA",
+					text: "A"
+				})
+			],
+			dimMeasureItems: [
+				oDimMeasureItemA = new sap.m.P13nDimMeasureItem({
+					columnKey: "keyA",
+					index: 0,
+					visible: true
+				})
+			]
+		});
+
+		// arrange
+		oDimMeasurePanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var oData = oDimMeasurePanel.getModel("$sapmP13nDimMeasurePanel").getData();
+		oData.items[0].persistentSelected = false;
+		oData.items[0].persistentIndex = -1;
+		var oPayload = oDimMeasurePanel.getOkPayload();
+
+		// assertions
+		strictEqual(oDimMeasurePanel.getDimMeasureItems().length, 1);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0], oDimMeasureItemA);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getVisible(), false);
+		strictEqual(oDimMeasurePanel.getDimMeasureItems()[0].getIndex(), -1);
+
+		// cleanup
+		oDimMeasurePanel.destroy();
+	});
 </script>
 
 </head>

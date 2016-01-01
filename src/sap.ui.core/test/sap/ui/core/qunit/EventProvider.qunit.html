@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	
-<!-- 
-  JSUNIT: 
+
+<!--
+  JSUNIT:
     Tested control/class: sap.ui.base.EventProvider.js
     Author: Martin Schaus
  -->
@@ -15,18 +15,18 @@
 				data-sap-ui-noConflict="true"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
-		
+
 		test("InitialObject", 0, function() {
 			var oObject = new sap.ui.base.EventProvider();
 			var mEventRegistry = oObject.mEventRegistry;
-		
+
 			for(var key in mEventRegistry) {
-				ok(typeof mEventRegistry[key] !== "object", "no data"); 
+				ok(typeof mEventRegistry[key] !== "object", "no data");
 			};
 		});
 
@@ -41,10 +41,10 @@
 				oEventInfo.id = event.getId();
 				oEventInfo.source = event.getSource();
 				oEventInfo.params = event.getParameters();
-			}; 
+			};
 			globalEvents.push(oEventInfo);
 		};
-		
+
 		function receivedWithData(event, theReceiver, theReceiverName, additionalData) {
 			var oEventInfo = { listener : theReceiver,  handler : theReceiverName};
 			if (!event) {
@@ -55,10 +55,10 @@
 				oEventInfo.source = event.getSource();
 				oEventInfo.params = event.getParameters();
 				oEventInfo.additionalData = additionalData;
-			}; 
+			};
 			globalEvents.push(oEventInfo);
 		};
-		
+
 		function handler1(event) {
 			received(event, this,  'handler1');
 		};
@@ -66,7 +66,7 @@
 		function handler2(event) {
 			received(event, this,  'handler2');
 		};
-		
+
 		function handler3(event) {
 			received(event, this,  'handler3');
 		};
@@ -88,12 +88,12 @@
 			if ( !oSource.mEventRegistry[sEventId].length ) {
 				var c=0;
 				for(var key in oSource.mEventRegistry[sEventId]) {
-					c++; 
+					c++;
 				};
 				return c;
 			}
-			
-			return oSource.mEventRegistry[sEventId].length;			
+
+			return oSource.mEventRegistry[sEventId].length;
 		}
 
 		function hasNoListeners(oSource, sEventId) {
@@ -112,7 +112,7 @@
 			 }
 			 return true;
 		}
-		
+
 		test("FireEventSingleListener", function() {
 			var oObject = new sap.ui.base.EventProvider();
 			// simple registration
@@ -135,9 +135,9 @@
 			globalEvents = [];
 			oObject.fireEvent("constructor", {name:"testReservedNames"} );
 			oObject.fireEvent("length", {name:"testReservedNames"} );
-			oObject.fireEvent("prototype", {name:"testReservedNames"} );			
+			oObject.fireEvent("prototype", {name:"testReservedNames"} );
 		});
-		
+
 		test("FireEventMultipleListeners", function() {
 			var oObject = new sap.ui.base.EventProvider();
 			oObject.attachEvent("Fire1", handler3);
@@ -185,40 +185,40 @@
 			oObject.attachEvent("Fire_2", handler1, listenerA);
 			oObject.attachEvent("Fire_2", handler1, listenerB);
 			oObject.attachEvent("Fire_2", handler1, listenerC);
-			
+
 			strictEqual(count(oObject, "Fire1"), 3, "registration for Fire1 complete");
 			strictEqual(count(oObject, "Fire_2"), 3, "registration for Fire_2 complete");
 
 			oObject.detachEvent("Fire1", handler1, listenerA);
-			strictEqual(count(oObject, "Fire1"), 2, "registration removed");					
+			strictEqual(count(oObject, "Fire1"), 2, "registration removed");
 			oObject.detachEvent("Fire1", handler1, listenerA);
-			strictEqual(count(oObject, "Fire1"), 2, "no double remove");					
+			strictEqual(count(oObject, "Fire1"), 2, "no double remove");
 			oObject.detachEvent("Fire1", handler2, listenerA);
-			strictEqual(count(oObject, "Fire1"), 2, "no detach with wrong combination");					
+			strictEqual(count(oObject, "Fire1"), 2, "no detach with wrong combination");
 			oObject.detachEvent("Fire"+1, handler2, listenerB);
-			strictEqual(count(oObject, "Fire1"), 1, "2nd registration removed");					
+			strictEqual(count(oObject, "Fire1"), 1, "2nd registration removed");
 			oObject.detachEvent("Fire1", handler3, listenerC);
 			strictEqual(count(oObject, "Fire1"), undefined, "last registration removed -> deleted");
-			// typeof mEventRegistry["Fire1"] === "undefined");					
+			// typeof mEventRegistry["Fire1"] === "undefined");
 
 			oObject.detachEvent("Fire_2", handler1);
-			strictEqual(count(oObject, "Fire_2"), 3, "wrong params -> no remove");					
+			strictEqual(count(oObject, "Fire_2"), 3, "wrong params -> no remove");
 			oObject.detachEvent("Fire_2", handler1, listenerA);
-			strictEqual(count(oObject, "Fire_2"), 2, "1st remove");					
+			strictEqual(count(oObject, "Fire_2"), 2, "1st remove");
 			oObject.detachEvent("Fire_2", handler1, listenerA);
-			strictEqual(count(oObject, "Fire_2"), 2, "no remove, already removed");					
+			strictEqual(count(oObject, "Fire_2"), 2, "no remove, already removed");
 			oObject.detachEvent("Fire_2", handler1, listenerB);
-			strictEqual(count(oObject, "Fire_2"), 1, "2nd remove");					
+			strictEqual(count(oObject, "Fire_2"), 1, "2nd remove");
 			oObject.attachEvent("Fire_2", handler1);
-			strictEqual(count(oObject, "Fire_2"), 2, "attach");					
+			strictEqual(count(oObject, "Fire_2"), 2, "attach");
 			oObject.detachEvent("Fire_2", handler1);
-			strictEqual(count(oObject, "Fire_2"), 1, "remove again");					
+			strictEqual(count(oObject, "Fire_2"), 1, "remove again");
 			oObject.detachEvent("Fire_2", handler1, listenerC);
 			strictEqual(count(oObject, "Fire_2"), undefined, "last remove");
-			//typeof mEventRegistry["Fire1"] === "undefined");					
+			//typeof mEventRegistry["Fire1"] === "undefined");
 
 		})
-		
+
 		test("FireEventWithAdditionalData", function() {
 			var oObject = new sap.ui.base.EventProvider();
 			oObject.attachEvent("Fire4", {info: "Test data for event-handler function"}, handler4);
@@ -238,7 +238,7 @@
 			notStrictEqual(oEventInfo.additionalData, null, "additional (static) data should be present");
 			notStrictEqual(oEventInfo.additionalData.info, null, "additional (static) data should be present");
 			strictEqual(oEventInfo.additionalData.info, "Test data for event-handler function on listener object", "additional (static) data should be present");
-			
+
 		});
 
 		test("PreventDefault", function() {
@@ -253,55 +253,55 @@
 			bExecDefault = oObject.fireEvent("prevent", true);
 			ok(!(bExecDefault), "If preventDefault is called, this should return false");
 		});
-		
+
 		var oBubble1 = new sap.ui.base.EventProvider(),
 			oBubble2 = new sap.ui.base.EventProvider(),
 			oBubble3 = new sap.ui.base.EventProvider(),
 			cancelHandler = function(event) {
 				event.cancelBubble();
 			};
-			
+
 		oBubble2.getEventingParent = function() {
 			return oBubble1;
-		} 
+		}
 		oBubble3.getEventingParent = function() {
 			return oBubble2;
 		}
-		
+
 		test("EventBubbling", function() {
 			oBubble1.attachEvent("test", handler1);
 			oBubble2.attachEvent("test", handler2);
 			oBubble3.attachEvent("test", handler3);
-			
+
 			// basic test
 			globalEvents = [];
 			oBubble3.fireEvent("test", false, true);
 			ok(globalEvents.length == 3, "three events due to bubbling");
-			
+
 			oBubble1.detachEvent("test", handler1);
 			oBubble2.detachEvent("test", handler2);
 			oBubble3.detachEvent("test", handler3);
 		});
-		
+
 		test("CancelBubble", function() {
 			oBubble1.attachEvent("test", handler1);
 			oBubble2.attachEvent("test", handler2);
 			oBubble3.attachEvent("test", handler3);
-						
+
 			// last handler cancels
 			oBubble1.attachEvent("test", cancelHandler);
 			globalEvents = [];
 			oBubble3.fireEvent("test", false, true);
 			ok(globalEvents.length == 3, "still three events, last handler cancels");
 			oBubble1.detachEvent("test", cancelHandler);
-			
+
 			// second handler cancels
 			oBubble2.attachEvent("test", cancelHandler);
 			globalEvents = [];
 			oBubble3.fireEvent("test", false, true);
 			ok(globalEvents.length == 2, "only two events, as second handler cancels");
 			oBubble1.detachEvent("test", cancelHandler);
-			
+
 			// first handler cancels
 			oBubble3.attachEvent("test", cancelHandler);
 			globalEvents = [];
@@ -313,8 +313,8 @@
 			oBubble2.detachEvent("test", cancelHandler);
 			oBubble3.detachEvent("test", handler3);
 		});
-		
-		
+
+
 		test("attachEventOnce", 2, function() {
 			var oEventProvider = new sap.ui.base.EventProvider();
 			var iCount = 0;
@@ -327,8 +327,8 @@
 			oEventProvider.fireEvent("testOnce");
 			equal(iCount, 1, "Handler is only called once");
 		});
-		
-		
+
+
   	</script>
  	</head>
 	<body>

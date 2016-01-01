@@ -11,11 +11,11 @@ sap.ui.define([
 	"./ObjectPageSubSectionMode",
 	"./BlockBase",
 	"sap/ui/layout/GridData",
-	"sap/ui/core/ResizeHandler",
 	"sap/m/Button",
+	"sap/ui/Device",
 	"./library"
 ], function (CustomData, Grid, ObjectPageSectionBase, ObjectPageSubSectionLayout,
-			 ObjectPageSubSectionMode, BlockBase, GridData, ResizeHandler, Button, library) {
+			 ObjectPageSubSectionMode, BlockBase, GridData, Button, Device, library) {
 	"use strict";
 
 	/**
@@ -84,6 +84,7 @@ sap.ui.define([
 		}
 	});
 
+	ObjectPageSubSection.MEDIA_RANGE = Device.media.RANGESETS.SAP_STANDARD;
 
 	/**
 	 * @private
@@ -98,6 +99,7 @@ sap.ui.define([
 		//dom reference
 		this._$spacer = [];
 		this._sContainerSelector = ".sapUxAPBlockContainer";
+
 
 		//switch logic for the default mode
 		this._switchSubSectionMode(this.getMode());
@@ -115,7 +117,7 @@ sap.ui.define([
 			this.setAggregation("_grid", new Grid({
 				id: this.getId() + "-innerGrid",
 				defaultSpan: "XL12 L12 M12 S12",
-				hSpacing: 0,
+				hSpacing: 1,
 				vSpacing: 1,
 				width: "100%",
 				containerQuery: true
@@ -157,9 +159,9 @@ sap.ui.define([
 			this._oSeeMoreButton = null;
 		}
 
-		if (this._iResizeId) {
-			ResizeHandler.deregister(this._iResizeId);
-		}
+		Device.media.detachHandler(this._updateImportance, this, ObjectPageSubSection.MEDIA_RANGE);
+
+		Device.media.detachHandler(this._titleOnLeftSynchronizeLayouts, this, ObjectPageSubSection.MEDIA_RANGE);
 
 		if (ObjectPageSectionBase.prototype.exit) {
 			ObjectPageSectionBase.prototype.exit.call(this);
@@ -167,7 +169,8 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.onAfterRendering = function () {
-		var oObjectPageLayout = this._getObjectPageLayout();
+		var oObjectPageLayout = this._getObjectPageLayout(),
+			bUseTitleOnTheLeft;
 
 		if (ObjectPageSectionBase.prototype.onAfterRendering) {
 			ObjectPageSectionBase.prototype.onAfterRendering.call(this);
@@ -177,8 +180,12 @@ sap.ui.define([
 			return;
 		}
 
-		if (oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft) {
-			this._afterRenderingTitleOnLeftLayout();
+		bUseTitleOnTheLeft = oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft;
+
+		if (bUseTitleOnTheLeft) {
+			Device.media.attachHandler(this._titleOnLeftSynchronizeLayouts, this, ObjectPageSubSection.MEDIA_RANGE);
+		} else {
+			Device.media.detachHandler(this._titleOnLeftSynchronizeLayouts, this, ObjectPageSubSection.MEDIA_RANGE);
 		}
 
 		this._$spacer = jQuery.sap.byId(oObjectPageLayout.getId() + "-spacer");
@@ -297,7 +304,6 @@ sap.ui.define([
 	/*******************************************************************************
 	 * Keyboard navigation
 	 ******************************************************************************/
-
 	/**
 	 * Handler for key down - handle
 	 * @param oEvent - The event object
@@ -452,29 +458,13 @@ sap.ui.define([
 	 * TitleOnLeft layout
 	 ************************************************************************************/
 
-	/**
-	 * on after rendering actions for the titleOnLeft Layout
-	 * @private
-	 */
-	ObjectPageSubSection.prototype._afterRenderingTitleOnLeftLayout = function () {
-		this._$standardHeader = jQuery.sap.byId(this.getId() + "-header");
-		this._$grid = this._getGrid().$();
-
-		if (!this._iResizeId) {
-			this._iResizeId = ResizeHandler.register(this, this._titleOnLeftSynchronizeLayouts.bind(this));
-		}
-
-		this._titleOnLeftSynchronizeLayouts();
+	ObjectPageSubSection.prototype._onDesktopMediaRange = function (oCurrentMedia) {
+		var oMedia = oCurrentMedia || Device.media.getCurrentRange(ObjectPageSubSection.MEDIA_RANGE);
+		return ["LargeDesktop", "Desktop"].indexOf(oMedia.name) > -1;
 	};
 
-	ObjectPageSubSection.prototype._titleOnLeftSynchronizeLayouts = function () {
-		jQuery.sap.delayedCall(50 /* dom painting */, this, function () {
-
-			var oRootNode = jQuery("html"),
-				bUseTitleOnTheLeftLayout = oRootNode.hasClass("sapUiMedia-Std-Desktop")
-					|| oRootNode.hasClass("sapUiMedia-Std-LargeDesktop");
-			this._$standardHeader.toggleClass("titleOnLeftLayout", bUseTitleOnTheLeftLayout);
-		});
+	ObjectPageSubSection.prototype._titleOnLeftSynchronizeLayouts = function (oCurrentMedia) {
+		this.$("header").toggleClass("titleOnLeftLayout", this._onDesktopMediaRange(oCurrentMedia));
 	};
 
 

@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested code: Scroll Positions set and maintained by ScrollEnablement
 -->
 
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>qUnit Page for Scroll Positions</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -18,26 +18,26 @@
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script>
-			
+
 		QUnit.config.autostart = false;
 		jQuery(document).ready(function() {
 			QUnit.start();
-			
-			// do not let ui5 to retain the focus after rendering to make the scroll position test valid 
+
+			// do not let ui5 to retain the focus after rendering to make the scroll position test valid
 			document.activeElement.blur();
 		});
-		
-		
+
+
 		function getScrollPos(){
 			var s,
 				scrollEnablement = page1.getScrollDelegate();
-			
+
 			if (scrollEnablement._scroller) { // iScroll
 				if (sap.ui.Device.browser.mozilla) {
 					s = jQuery.sap.byId("page1-scroll").css("-moz-transform").split(" ")[5]; // "matrix(1, 0, 0, -99.9999, 0px, 0px)" => "99.9999,"
@@ -47,22 +47,22 @@
 					s = jQuery.sap.byId("page1-scroll").css("top");
 				}
 				return Math.round(parseFloat(s));
-			
+
 			} else { // NativeMouseScroller
 				s = jQuery.sap.domById("page1-cont").scrollTop;
 				return -s;
 			}
 		}
-		
+
 		var app = new sap.m.App("myApp");
-		
+
 		var page1 = new sap.m.Page("page1", {
 			title : "Test Page",
 			footer : new sap.m.Bar({
 				contentMiddle : []
 			})
 		});
-		
+
 		var page2 = new sap.m.Page("page2", {
 			title : "Test Page 2",
 			showNavButton: true,
@@ -70,7 +70,7 @@
 				app.back();
 			}
 		});
-		
+
 		var page3 = new sap.m.Page("page3", {
 			title : "Test Page 3",
 			showNavButton: true,
@@ -78,8 +78,8 @@
 				app.back();
 			}
 		});
-		
-		
+
+
 		var nav = new Array();
 		for ( var i = 0; i < 100; i++) {
 			nav[i] = new Array();
@@ -87,12 +87,12 @@
 			nav[i].description = Math.round(Math.random()*9) + " Description Text";
 			nav[i].type = sap.m.ListType.Navigation;
 		}
-		
+
 		var dataOverview = {
 			navigation : nav
 		}
-			
-			
+
+
 		var oItemTemplate = new sap.m.StandardListItem({
 			title : "{title}",
 			description : "{description}",
@@ -109,21 +109,21 @@
 			growingThreshold : 40,
 			growingScrollToLoad: false
 		});
-		
-		
+
+
 		function bindListData(data, itemTemplate, list) {
 			jQuery.sap.require("sap.ui.model.json.JSONModel");
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData(data);
 			// set the model to the list
 			list.setModel(oModel);
-			
+
 			// bind Aggregation
 			list.bindAggregation("items", "/navigation", itemTemplate);
 		}
-		
-		
-		
+
+
+
 		var oRerenderPageButton = new sap.m.Button({
 			text:"Rerender Page 1",
 			press: function() {
@@ -142,51 +142,51 @@
 				app.rerender();
 			}
 		});
-		
+
 		bindListData(dataOverview, oItemTemplate, oList1);
 		page1.addContent(oList1);
 		page2.addContent(oRerenderPageButton)
 			.addContent(oRemovePageButton)
 			.addContent(oRerenderAppButton);
 		app.addPage(page1).addPage(page2);
-			
+
 		app.placeAt("content");
-		
-		
+
+
 		/***************** TESTS ******************/
-		
+
 		test("Page and List rendered", function() {
 			ok(jQuery.sap.domById("page1"), "page1 should be rendered");
 			ok(jQuery.sap.domById("growingList"), "growingList should be rendered");
 		});
-		
-		
+
+
 		test("Initial scroll position", function() {
 			equal(page1.getScrollDelegate().getScrollTop(), 0, "page1 should be scrolled to position 0");
 		});
-		
-		
+
+
 		test("Scrolling", function() {
 			page1.scrollTo(60, 0);
 
 			equal(getScrollPos(), -60, "Page should be scrolled to position 60");
 			equal(page1.getScrollDelegate().getScrollTop(), 60, "Internally stored y scrolling position should be 60");
 		});
-		
+
 		asyncTest("Scrolling - delayed", function() {
 			expect(2);
-			
+
 			page1.scrollTo(50, 100);
 
 			window.setTimeout(function(){
 				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-				
+
 				start();
 			}, 150);
 		});
-		
-		
+
+
 		if (!sap.ui.Device.browser.internet_explorer) { // known gap in IE
 			test("Scroll position after rerendering page1", function() {
 				page1.rerender();
@@ -197,61 +197,61 @@
 
 			asyncTest("Scroll position after navigating away and back to page1", function() {
 				expect(5);
-				
+
 				var interval = window.setInterval(function(){ // burst of logs to analyze future problems because this is the most tricky situation in IE
-					jQuery.sap.log.info("page1 height: " + jQuery.sap.byId("page1-cont").height() 
-							+ ", scrollTop: " + jQuery.sap.domById("page1-cont").scrollTop 
+					jQuery.sap.log.info("page1 height: " + jQuery.sap.byId("page1-cont").height()
+							+ ", scrollTop: " + jQuery.sap.domById("page1-cont").scrollTop
 							+ "; page1 scroller thinks: " + page1.getScrollDelegate()._scrollY
 							+ ", resizeListener: " + page1.getScrollDelegate()._sResizeListenerId);
 				}, 200);
-				
+
 				var test = function() { // function to be executed after navigating forward and back
 					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-					
+
 					app.detachAfterNavigate(test);
 					window.clearInterval(interval);
 					start();
 				};
-				
+
 				var goBack = function() {
 					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 					app.detachAfterNavigate(goBack);
 					app.attachAfterNavigate(test);
-					
+
 					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 						equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 						app.back();
 					}, 100);
 				};
-	
+
 				app.attachAfterNavigate(goBack);
 				app.to("page2");
 				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 			});
 		}
-		
-		
+
+
 		asyncTest("Scroll position after navigating away and rerendering the page and navigating back to page1", function() {
 			expect(5);
-			
+
 			var test = function() { // function to be executed after navigating forward and back
 				equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 				equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-				
+
 				app.detachAfterNavigate(test);
 				start();
 			};
-			
+
 			var goBack = function() {
 				app.detachAfterNavigate(goBack);
 				app.attachAfterNavigate(test);
-				
+
 				window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 					page1.rerender();
-				
+
 					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-					
+
 					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 						equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 						app.back();
@@ -263,128 +263,128 @@
 			app.to("page2");
 			equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 		});
-		
-		
+
+
 		test("Scroll position after rerendering the APP", function() {
 			app.rerender();
 
 			equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 			equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 		});
-		
+
 		if (!sap.ui.Device.browser.internet_explorer) {
 
 			asyncTest("Scroll position after navigating away and rerendering the APP and navigating back to page1", function() {
 				expect(2);
-				
+
 				var test = function() { // function to be executed after navigating forward and back
 					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-					
+
 					app.detachAfterNavigate(test);
 					start();
 				};
-				
+
 				var goBack = function() {
 					app.detachAfterNavigate(goBack);
 					app.attachAfterNavigate(test);
-					
+
 					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 						app.rerender();
-						
+
 						window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 							app.back();
 						}, 100);
 					}, 100);
 				};
-	
+
 				app.attachAfterNavigate(goBack);
 				app.to("page2");
 			});
-			
-			
+
+
 			asyncTest("Scroll position after navigating away and removing page1 from DOM and navigating back to page1", function() {
 				expect(4);
-				
+
 				var test = function() { // function to be executed after navigating forward and back
 					equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 					equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-					
+
 					app.detachAfterNavigate(test);
 					start();
 				};
-				
+
 				var goBack = function() {
 					app.detachAfterNavigate(goBack);
 					app.attachAfterNavigate(test);
-					
+
 					window.setTimeout(function(){ // Make sure there is one resize listener cycle with no page1 rendered in the html
 						page1.$().remove();
-						
+
 						equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
-						
+
 						window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 							app.back();
 							equal(page1.getScrollDelegate().getScrollTop(), 50, "Internally stored y scrolling position should be 50");
 						}, 100);
 					}, 310);
 				};
-	
+
 				app.attachAfterNavigate(goBack);
 				app.to("page2");
 			});
 		}
-		
-		
+
+
 		asyncTest("Scroll position after making the page huge", function() {
 			expect(4);
 
 			jQuery("#content").css("height", "3000px");
-			
+
 			window.setTimeout(function(){
 				equal(getScrollPos(), 0, "Page should be scrolled to position 0");
 				equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should be 0");
-				
+
 				page1.scrollTo(50, 0, 0); // try to scroll when it should not be possible
-				
+
 				equal(getScrollPos(), 0, "Page should still be scrolled to position 0");
 				equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should still be 0");
-				
+
 				start();
 			}, 300); // required for iScroll with resize Handler
 		});
-		
+
 		asyncTest("Scroll position after making the page small again", function() {
 			expect(2);
 
 			jQuery("#content").css("height", "300px");
-			
+
 			window.setTimeout(function(){
 				equal(getScrollPos(), 0, "Page should be scrolled to position 0");
 				equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should be 0");
-				
+
 				start();
 			}, 10);
 		});
-		
+
 		asyncTest("Scroll position after making the page huge and trying animated scrolling", function() {
 			expect(2);
 
 			jQuery("#content").css("height", "3000px");
 			page1.scrollTo(50, 100); // try to scroll when it should not be possible
-			
+
 			window.setTimeout(function(){
 				equal(getScrollPos(), 0, "Page should still be scrolled to position 0");
 				equal(page1.getScrollDelegate().getScrollTop(), 0, "Internally stored y scrolling position should still be 0");
-				
+
 				jQuery("#content").css("height", "300px");
 				start();
 			}, 700); // required for scroll duration plus iScroll with resize Handler plus rubberband effect
-		}); 
+		});
 		</script>
-		
+
 	</head>
-	<body id="body" class="sapUiBody"> 
+	<body id="body" class="sapUiBody">
 		<h1 id="qunit-header">qUnit Page for Scroll Positions</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>

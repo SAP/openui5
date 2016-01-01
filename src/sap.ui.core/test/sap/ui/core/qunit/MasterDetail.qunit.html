@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.core.Element
   // further model tests for like createbindingcontext are in the specific model tests
   Author: d050084
@@ -8,7 +8,7 @@
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
@@ -31,7 +31,7 @@
 
 	var testdata = {
   		teamMembers:[
-   		            {firstName:"Andreas", lastName:"Klark", 
+   		            {firstName:"Andreas", lastName:"Klark",
    		            	items: [{name:"Snippix"}, {name:"Chili Plants"}]},
    		            {firstName:"Peter", lastName:"Miller",
    		         		items: [{name:"Android"}]},
@@ -46,16 +46,16 @@
    		            {firstName:"Frank", lastName:"Wallace",
    		         		items: [{name:"Hair Gel"}, {name:"Shampoo"}]},
    	   		        {firstName:"Malte", lastName:"Wedel",
-   	   		         	items: [{name:"Ricola"}, {name:"flu shot"}]},      	   		         	
+   	   		         	items: [{name:"Ricola"}, {name:"flu shot"}]},
    		         ],
 	   	buddies:[
 	   	            {firstName:"John", lastName:"Doe"},
 	   	            {firstName:"Max", lastName:"Mustermann"},
 	   	            {firstName:"Lucky", lastName:"Luke"},
-	   	            {firstName:"Luke", lastName:"Skywalker"}]   		            
+	   	            {firstName:"Luke", lastName:"Skywalker"}]
 	};
-	
-	var testdataXML = "<root><teamMembers>" + 
+
+	var testdataXML = "<root><teamMembers>" +
 		"<member firstName=\"Andreas\" lastName=\"Klark\" gender=\"male\">" +
 			"<items><item name=\"Snippix\"></item><item name=\"Chili Plants\"></item></items></member>" +
 		"<member firstName=\"Peter\" lastName=\"Miller\" gender=\"male\">" +
@@ -64,11 +64,11 @@
 			"<items></items></member>" +
 		"<member firstName=\"Steave\" lastName=\"Ander\" gender=\"male\">" +
 			"<items><item name=\"Game1\"></item><item name=\"Game2\"></item><item name=\"Iron Maiden\"></item></items></member>" +
-		"<member firstName=\"Michael\" lastName=\"Spring\" gender=\"male\"></member>" + 
-		"<member firstName=\"Marc\" lastName=\"Green\" gender=\"male\"></member>" + 
+		"<member firstName=\"Michael\" lastName=\"Spring\" gender=\"male\"></member>" +
+		"<member firstName=\"Marc\" lastName=\"Green\" gender=\"male\"></member>" +
 		"<member firstName=\"Frank\" lastName=\"Wallace\" gender=\"male\"></member>" +
 	"</teamMembers> </root>";
-	
+
 	test("test bind Context with JSON model and property binding", function(){
 		var oLabel = new sap.ui.commons.Label();
 		oLabel.setText("testText");
@@ -83,9 +83,9 @@
 		oLabel.bindContext("/teamMembers/2");
 		equal(oLabel.getText(), "Gina", "new text value from model");
 		oLabel.destroy();
-		
+
 	});
-	
+
 	test("test2 bind Context with JSON model and property binding", function(){
 		var oLabel = new sap.ui.commons.Label();
 		oLabel.setText("testText");
@@ -109,7 +109,7 @@
 		equal(oLabel.getText(), "Michael", "text value from model");
 		oLabel.destroy();
 	});
-	
+
 	test("test bind Context with XML model and property binding", function(){
 		var oLabel = new sap.ui.commons.Label();
 		oLabel.setText("testText");
@@ -124,9 +124,9 @@
 		oLabel.bindContext("/teamMembers/member/3");
 		equal(oLabel.getText(), "Ander", "new text value from model");
 		oLabel.destroy();
-		
+
 	});
-	
+
 	test("test2 bind Context with XML model and property binding", function(){
 		var oLabel = new sap.ui.commons.Label();
 		oLabel.setText("testText");
@@ -153,115 +153,115 @@
 
 	test("test bind Context with JSON model and aggregation binding", function(){
 		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-		var oItemTemplate = new sap.ui.core.ListItem();	
+		var oItemTemplate = new sap.ui.core.ListItem();
 		oLB.placeAt("target2");
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testdata);
 		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "name")
 		oLB.bindAggregation("items", "items", oItemTemplate);
-		
-		oLB.bindContext("/teamMembers/0");				
-		var listItems = oLB.getItems(); 
+
+		oLB.bindContext("/teamMembers/0");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 2, "length of items");
 		jQuery(listItems).each( function(i, item){
 			equal(item.getText(), testdata.teamMembers[0].items[i].name, "item name");
 		});
-		oLB.bindContext("/teamMembers/1");				
-		var listItems = oLB.getItems(); 
+		oLB.bindContext("/teamMembers/1");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 1, "length of items");
 		jQuery(listItems).each( function(i, item){
 			equal(item.getText(), testdata.teamMembers[1].items[i].name, "item name");
 		});
-		oLB.bindContext("/teamMembers/2");				
-		var listItems = oLB.getItems(); 
+		oLB.bindContext("/teamMembers/2");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 0, "length of items");
 
-		oLB.bindContext("/teamMembers/3");				
-		var listItems = oLB.getItems(); 
+		oLB.bindContext("/teamMembers/3");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 3, "length of items");
 		jQuery(listItems).each( function(i, item){
 			equal(item.getText(), testdata.teamMembers[3].items[i].name, "item name");
 		});
-		oLB.bindContext("/teamMembers/4");				
-		var listItems = oLB.getItems(); 
+		oLB.bindContext("/teamMembers/4");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 2, "length of items");
 		jQuery(listItems).each( function(i, item){
 			equal(item.getText(), testdata.teamMembers[4].items[i].name, "item name");
 		});
-		oLB.bindContext("/teamMembers/5");				
-		var listItems = oLB.getItems(); 
+		oLB.bindContext("/teamMembers/5");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 2, "length of items");
 		jQuery(listItems).each( function(i, item){
 			equal(item.getText(), testdata.teamMembers[5].items[i].name, "item name");
 		});
-		oLB.bindContext("/teamMembers/6");				
-		var listItems = oLB.getItems(); 
+		oLB.bindContext("/teamMembers/6");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 2, "length of items");
 		jQuery(listItems).each( function(i, item){
 			equal(item.getText(), testdata.teamMembers[6].items[i].name, "item name");
 		});
-		oLB.bindContext("/teamMembers/7");				
-		var listItems = oLB.getItems(); 
+		oLB.bindContext("/teamMembers/7");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 2, "length of items");
 		jQuery(listItems).each( function(i, item){
 			equal(item.getText(), testdata.teamMembers[7].items[i].name, "item name");
 		});
 		oLB.unbindContext();
 		oLB.destroy();
-		
+
 	});
-	
+
 	test("test bind Context with JSON model and aggregation binding with wrong path", function(){
 		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-		var oItemTemplate = new sap.ui.core.ListItem();	
+		var oItemTemplate = new sap.ui.core.ListItem();
 		oLB.placeAt("target2");
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testdata);
 		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "name")
 		oLB.bindAggregation("items", "items", oItemTemplate);
-		
-		oLB.bindContext("/teamMembers/yxz");				
-		var listItems = oLB.getItems(); 
+
+		oLB.bindContext("/teamMembers/yxz");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 0, "length of items");
-		
-		oLB.bindContext("xyz");				
-		var listItems = oLB.getItems(); 
+
+		oLB.bindContext("xyz");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 0, "length of items");
 
 		oLB.unbindContext();
 		oLB.destroy();
-		
+
 	});
-	
+
 	test("test bind Context with XML model and aggregation binding", function(){
 		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-		var oItemTemplate = new sap.ui.core.ListItem();	
+		var oItemTemplate = new sap.ui.core.ListItem();
 		oLB.placeAt("target2");
 		var oModel = new sap.ui.model.xml.XMLModel();
 		oModel.setXML(testdataXML);
 		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "@name")
 		oLB.bindAggregation("items", "items/item", oItemTemplate);
-		
-		oLB.bindContext("/teamMembers/member/0");				
-		var listItems = oLB.getItems(); 
+
+		oLB.bindContext("/teamMembers/member/0");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 2, "length of items");
 		equal(listItems[0].getText(), "Snippix", "item name");
 		equal(listItems[1].getText(), "Chili Plants", "item name");
-		
-		oLB.bindContext("/teamMembers/member/1");				
-		var listItems = oLB.getItems(); 
+
+		oLB.bindContext("/teamMembers/member/1");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 1, "length of items");
 		equal(listItems[0].getText(), "Android", "item name");
-		
-		oLB.bindContext("/teamMembers/member/2");				
-		var listItems = oLB.getItems(); 
+
+		oLB.bindContext("/teamMembers/member/2");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 0, "length of items");
 
 		oLB.bindContext("/teamMembers/member/3");
-		var listItems = oLB.getItems(); 
+		var listItems = oLB.getItems();
 		equal(listItems.length, 3, "length of items");
 		equal(listItems[0].getText(), "Game1", "item name");
 		equal(listItems[1].getText(), "Game2", "item name");
@@ -269,33 +269,33 @@
 
 		oLB.unbindContext();
 		oLB.destroy();
-		
+
 	});
-	
+
 	test("test bind Context with XML model and aggregation binding with wrong path", function(){
 		var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
-		var oItemTemplate = new sap.ui.core.ListItem();	
+		var oItemTemplate = new sap.ui.core.ListItem();
 		oLB.placeAt("target2");
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testdata);
 		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "@name")
 		oLB.bindAggregation("items", "items/item", oItemTemplate);
-		
-		oLB.bindContext("/teamMembers/member/3/yxz");				
-		var listItems = oLB.getItems(); 
+
+		oLB.bindContext("/teamMembers/member/3/yxz");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 0, "length of items");
-		
-		oLB.bindContext("/yxz");				
-		var listItems = oLB.getItems(); 
+
+		oLB.bindContext("/yxz");
+		var listItems = oLB.getItems();
 		equal(listItems.length, 0, "length of items");
 
 		oLB.unbindContext();
 		oLB.destroy();
-		
+
 	});
-	
-	
+
+
 </script>
 
 </head>

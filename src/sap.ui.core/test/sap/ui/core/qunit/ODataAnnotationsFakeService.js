@@ -16,7 +16,7 @@ xhr.onCreate = function(request) {
 		var sAnswer = "This should never be received as an answer!";
 
 		switch (request.url) {
-			
+
 			case "fakeService://replay-headers":
 				sAnswer = createHeaderAnnotations(request);
 				break;
@@ -103,7 +103,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/simple-values.xml":
 				sAnswer = sSimpleValues;
 				break;
-				
+
 			// Test multiple annotations loaded after each other...
 			case "fakeService://testdata/odata/multiple-annotations-01.xml":
 				sAnswer = sMultipleTest01;
@@ -122,7 +122,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/UrlRef.xml":
 				sAnswer = sUrlRefTest;
 				break;
-				
+
 			case "fakeService://testdata/odata/Aliases.xml":
 				sAnswer = sAliasesTest;
 				break;
@@ -130,27 +130,27 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/DynamicExpressions.xml":
 				sAnswer = sDynamicExpressionsTest;
 				break;
-				
+
 			case "fakeService://testdata/odata/DynamicExpressions2.xml":
 				sAnswer = sDynamicExpressionsTest2;
 				break;
-				
+
 			case "fakeService://testdata/odata/collections-with-simple-values.xml":
 				sAnswer= sCollectionsWithSimpleValuesTest;
 				break;
-				
+
 			case "fakeService://testdata/odata/simple-values-2.xml":
 				sAnswer = sSimpleValuesTest2;
 				break;
-				
+
 			case "fakeService://testdata/odata/if-in-apply.xml":
 				sAnswer = sIfInApply;
 				break;
-				
+
 			case "fakeService://testdata/odata/labeledelement-other-values.xml":
 				sAnswer = sLabeledElementOtherValues;
 				break;
-				
+
 			case "fakeService://testdata/odata/apply-in-if.xml":
 				sAnswer = sApplyInIf;
 				break;
@@ -158,7 +158,7 @@ xhr.onCreate = function(request) {
 			case "fakeService://testdata/odata/empty-collection.xml":
 				sAnswer = sEmptyCollection;
 				break;
-				
+
 			case "fakeService://testdata/odata/multiple-enums.xml":
 				sAnswer = sMultipleEnums;
 				break;
@@ -184,19 +184,19 @@ xhr.onCreate = function(request) {
 					case "all":
 						sAnnotations = aValueListStrings.join("\n");
 						break;
-					
+
 					case "1":
 						sAnnotations = aValueListStrings[0];
 						break;
-						
+
 					case "2":
 						sAnnotations = aValueListStrings[1];
 						break;
-							
+
 					case "3":
 						sAnnotations = aValueListStrings[2];
 						break;
-					
+
 					default:
 					case "none":
 						sAnnotations = "";
@@ -213,6 +213,10 @@ xhr.onCreate = function(request) {
 
 			case "fakeService://testdata/odata/overwrite-on-term-level-2":
 				sAnswer = aOverwriteOnTermLevel[1];
+				break;
+
+			case "fakeService://testdata/odata/edmtype-for-navigationproperties":
+				sAnswer = sEdmtypeForNavigationproperties;
 				break;
 
 			default:
@@ -239,19 +243,19 @@ function createHeaderAnnotations(request) {
 		<edmx:DataServices>\
 			<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Test">\
 				<Annotations Target="Replay.Headers">';
-			
+
 	Object.keys(request.requestHeaders).forEach(function(sHeader) {
 		sAnnotations += '\
 					<Annotation Term="' + sHeader + '" String="' + request.requestHeaders[sHeader] +'" />';
 	});
-	
-	
+
+
 	sAnnotations += '\
 				</Annotations>\
 			</Schema>\
 		</edmx:DataServices>\
 	</edmx:Edmx>';
-	
+
 	return sAnnotations;
 }
 
@@ -272,7 +276,6 @@ var mXMLHeaders = 	{
 //	"Content-Type": "text/plain;charset=utf-8",
 //	"DataServiceVersion": "2.0;"
 //};
-
 
 
 
@@ -5206,3 +5209,63 @@ var aOverwriteOnTermLevel = ['\
 		</Schema>\
 	</edm:DataServices>\
 </edm:Edm>'];
+
+
+var sEdmtypeForNavigationproperties = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/coco/vocabularies/UI.xml">\
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />\
+	</edmx:Reference>\
+	<edmx:Reference Uri="http://services.odata.org/Northwind/Northwind.svc/$metadata" >\
+		<edmx:Include Namespace="NorthwindModel" Alias="NorthwindModel" />\
+	</edmx:Reference>	\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="NorthwindModel.Product">\
+				<Annotation Term="UI.LineItem">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product ID" />\
+							<PropertyValue Property="Value" Path="ProductID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Name" />\
+							<PropertyValue Property="Value" Path="ProductName" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="Supplier/SupplierID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier Name" />\
+							<PropertyValue Property="Value" Path="Supplier/CompanyName" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="Category/CategoryName" />\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="NorthwindModel.Supplier">\
+				<Annotation Term="UI.LineItem">\
+					<Collection>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="SupplierID" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier Name" />\
+							<PropertyValue Property="Value" Path="CompanyName" />\
+						</Record>\
+						<Record Type="UI.DataField">\
+							<PropertyValue Property="Label" String="Product Supplier ID" />\
+							<PropertyValue Property="Value" Path="Products/ProductID" />\
+						</Record>\
+					</Collection>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>';

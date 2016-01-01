@@ -2,10 +2,10 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta charset="UTF-8">
+	<meta charset="utf-8">
 	<title>Test Page for sap.m.DraftIndicator</title>
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+
 		<!-- UI5 Bootstrap -->
 		<script id="sap-ui-bootstrap"
 			type="text/javascript"
@@ -14,7 +14,7 @@
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
-		
+
 		<!-- QUnit libraries -->
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -27,14 +27,14 @@
 	<script type="text/javascript">
 		sinon.config.useFakeTimers = true;
 	</script>
-	
+
 	<script>
 
 	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	var oCore = sap.ui.getCore();
-	
+
 	module("id");
-	
+
 	test("semantic control can be retrieved by Id", function () {
 		// Arrange
 		var oDraftIndi = new sap.m.DraftIndicator("draftId");
@@ -51,9 +51,9 @@
 		oDraftIndi.destroy();
 	});
 
-	
+
 	module("states");
-	
+
 	test("set 'Saving draft' and 'Clear Draft' state", function () {
 		// Arrange
 		var oDraftIndi = new sap.m.DraftIndicator();
@@ -66,9 +66,9 @@
 		oDraftIndi.showDraftSaving();
 		// Assert
 		strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Saving draft is shown");
-		
+
 		this.clock.tick(3000);
-		
+
 		// Act
 		oDraftIndi.clearDraftState();
 		// Assert
@@ -78,7 +78,7 @@
 		oDraftIndi._resetDraftTimer();
 		oDraftIndi.destroy();
 	});
-	
+
 	test("set Draft Saved state and check that it is not cleared after default timeout", function () {
 		// Arrange
 		var oDraftIndi = new sap.m.DraftIndicator();
@@ -93,7 +93,7 @@
 		// Assert
 		strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_DRAFT_SAVED"), "Draft saved is shown");
 		this.clock.tick(1500);
-		
+
 		// Assert
 		ok(oDraftIndi.$("label").html()!="", "Draft saved state is not cleared after default timeout");
 
@@ -101,7 +101,7 @@
 		oDraftIndi._resetDraftTimer();
 		oDraftIndi.destroy();
 	});
-	
+
 	test("set Draft Saving state and check that if it is cleared after default timeout", function () {
 		// Arrange
 		var oDraftIndi = new sap.m.DraftIndicator();
@@ -116,7 +116,7 @@
 		// Assert
 		strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Draft saved is shown");
 		this.clock.tick(1500);
-		
+
 		// Assert
 		strictEqual(oDraftIndi.$("label").html(), "", "Draft saving state is cleared after default timeout");
 
@@ -124,8 +124,8 @@
 		oDraftIndi._resetDraftTimer();
 		oDraftIndi.destroy();
 	});
-	
-	
+
+
 	</script>
 </head>
 <body id="body" class="sapUiBody">

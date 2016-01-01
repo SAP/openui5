@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>ResponsiveDemo</title>
 
@@ -134,18 +134,18 @@ for(var i=0; i<aTitles.length; i++){
 var oModel = new sap.ui.model.json.JSONModel();
 oModel.setData(data);
 
-//Some helper functions 
+//Some helper functions
 function select(idx){
 	for(var i=0; i<data.products.length; i++){
 		data.products[i].selected = false;
 	}
 	data.selectionIdx = -1;
-	
+
 	if(idx >=0 && idx < data.products.length){
 		data.products[idx].selected = true;
 		data.selectionIdx = idx;
 	}
-	
+
 	oModel.setData(data);
 };
 
@@ -191,9 +191,9 @@ function initialize(from){
 	}else{
 		aInfo = initializeList();
 	}
-	
+
 	var mobile = aInfo[1];
-	
+
 	function init(){
 		sap.ui.getCore().detachThemeChanged(init);
 		currentControl = aInfo[0];
@@ -205,20 +205,20 @@ function initialize(from){
 		}else{
 			ctrl = oApp;
 		}
-		
+
 		var uiArea = sap.ui.getCore().getUIArea("root");
 		if(!uiArea || uiArea.getContent()[0] != ctrl){
 			ctrl.placeAt("root", "only");
 		}
 	};
-	
+
 	if(currentMobile === null || currentMobile != mobile){
 		sap.ui.getCore().attachThemeChanged(init);
-		
+
 		if(!currentMobile && oShell){
 			oShell._getSearchTool().close();
 		}
-		
+
 		currentMobile = mobile;
 		jQuery("#root").html("");
 		sap.ui.getCore().applyTheme(mobile ? "sap_bluecrystal" : "sap_goldreflection");
@@ -233,10 +233,10 @@ function initializeTable(){
 		oTable.__refresh();
 		return [oTable, false];
 	}
-	
+
 	loadLib("sap.ui.commons");
 	loadLib("sap.ui.table");
-	
+
 	oTable = new sap.ui.table.Table({
 		selectionMode: "Single",
 		rowSelectionChange: function(oEvent){
@@ -265,16 +265,16 @@ function initializeTable(){
 		rows: {path: "/products"}
 	});
 	oTable.setModel(oModel);
-	
+
 	oTable.__refresh = function(){
 		oTable.__ignoreSelectionChange = true;
 		this.getBinding("rows").filter(currentFilter);
 		oTable.__ignoreSelectionChange = false;
 		this.setSelectedIndex(data.selectionIdx);
 	};
-	
+
 	oTable.__refresh();
-	
+
 	return [oTable, false];
 };
 
@@ -287,7 +287,7 @@ function initializeDataset(bSingleRow){
 
 	loadLib("sap.ui.commons");
 	loadLib("sap.ui.ux3");
-	
+
 	sap.ui.core.Control.extend("ItemLayout", {
 	    metadata : {
 	        aggregations : {
@@ -315,14 +315,14 @@ function initializeDataset(bSingleRow){
 			rm.renderControl(ctrl.getForm());
 			rm.write("</div></div></div>");
 	    },
-	    
+
 	    onBeforeRendering : function(){
 	    	if(this.resizeTimer){
 	    		clearTimeout(this.resizeTimer);
 	    		this.resizeTimer = null;
 	    	}
 	    },
-	    
+
 	    onAfterRendering : function(){
 	    	var $This = this.$();
 	    	if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
@@ -331,7 +331,7 @@ function initializeDataset(bSingleRow){
 	    		$This.addClass("CustomItemLayoutSmall");
 	    	}
 	    },
-	    
+
 	    _resize: function(){
 	    	if(!this.getDomRef()){
 	    		return;
@@ -345,7 +345,7 @@ function initializeDataset(bSingleRow){
 	    	setTimeout(jQuery.proxy(this._resize, this), 300);
 	    }
 	});
-	
+
 	function createTemplate(){
 		var c = sap.ui.commons;
 		return new ItemLayout({
@@ -404,7 +404,7 @@ function initializeDataset(bSingleRow){
 		}
 	});
 	oDataSet.setModel(oModel);
-	
+
 	oDataSet.__refresh = function(bChangeCurrentView, bSingleRow){
 		if(bChangeCurrentView){
 			this.setSelectedView(bSingleRow ? oDataSet.getViews()[1] : oDataSet.getViews()[0]);
@@ -412,9 +412,9 @@ function initializeDataset(bSingleRow){
 		this.getBinding("items").filter(currentFilter);
 		this.setLeadSelection(data.selectionIdx);
 	};
-	
+
 	oDataSet.__refresh(true, bSingleRow);
-	
+
 	return [oDataSet, false];
 };
 
@@ -426,7 +426,7 @@ function initializeList(){
 	}
 
 	loadLib("sap.m");
-	
+
 	var oList = new sap.m.List({
 		inset : true,
 		showUnread: false,
@@ -445,15 +445,15 @@ function initializeList(){
 		}
 	});
 
-	oList.setModel(oModel);	
-	
+	oList.setModel(oModel);
+
 	var oSearchField = new sap.m.SearchField({
 		value: "{/filter}",
 		search: doFilter
 	});
-	
+
 	oSearchField.setModel(oModel);
-	
+
 	oApp = new sap.m.App({
 		pages: [new sap.m.Page({
 			title : "Products",
@@ -463,14 +463,14 @@ function initializeList(){
 			})
 		})]
 	});
-			
+
 	oApp.__refresh = function(){
 		var oList = oApp.getPages()[0].getContent()[0];
 		oList.getBinding("items").filter(currentFilter);
 	};
-	
+
 	oApp.__refresh();
-	
+
 	return [oApp, true];
 };
 
@@ -479,16 +479,16 @@ function initializeShell(){
 	if(oShell){
 		return oShell;
 	}
-	
+
 	loadLib("sap.ui.ux3");
-	
+
 	oShell = new sap.ui.ux3.Shell({
 		appTitle: "Products",
 		showFeederTool: false,
 		fullHeightContent: true,
 		worksetItems: [new sap.ui.ux3.NavigationItem({
 			text: "Products"
-		})] 
+		})]
 	});
 
 	var oSearchField = oShell.getSearchField();
@@ -501,7 +501,7 @@ function initializeShell(){
 		doFilter(oEvent);
 		oShell._getSearchTool().close();
 	});
-	
+
 	return oShell;
 };
 sap.ui.Device.media.initRangeSet('myPoints', aPoints);

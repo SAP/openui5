@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './SelectList', './library'],
-	function(jQuery, ComboBoxBase, ComboBoxRenderer, SelectList, library) {
+sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './Popover', './SelectList', './library'],
+	function(jQuery, ComboBoxBase, ComboBoxRenderer, Popover, SelectList, library) {
 		"use strict";
 
 		/**
@@ -192,7 +192,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 		ComboBox.prototype._createPopover = function() {
 
 			// initialize Popover
-			var oPicker = new sap.m.Popover({
+			var oPicker = new Popover({
 				showHeader: false,
 				placement: sap.m.PlacementType.Vertical,
 				offsetX: 0,

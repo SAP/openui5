@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.MenuButton,sap.ui.commons.Menu,sap.ui.commons.MenuItem">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
-		<meta name="keywords" content="Control MenuButton Menu Button" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control MenuButton Menu Button">
 		<title>MenuButton - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -16,7 +16,7 @@
 
 <script id='MenuButtonScript'>
 //Create a MenuButton Control
-var oMenuButton = new sap.ui.commons.MenuButton({text: "File", icon: "images/file.gif", tooltip: "File related actions"}); 
+var oMenuButton = new sap.ui.commons.MenuButton({text: "File", icon: "images/file.gif", tooltip: "File related actions"});
 
 //Create the menu
 var oMenu1 = new sap.ui.commons.Menu("menu1", {ariaDescription: "File Menu", tooltip: "Menu containing file related actions"});
@@ -48,31 +48,31 @@ oMenuButton.attachItemSelected(function (oEvent){
 //Attach the MenuButton to the page
 oMenuButton.placeAt("sample1");
 </script>
-		
+
 	</head>
-	
+
 	<body class="sapUiDemokitBody" role="application">
 		<h1 color="Blue" icon="images/ctrls/menubutton-icon.png">MenuButton</h1>
-		
+
 		<h2>Introduction</h2>
-		
+
 		<p>
 		The MenuButton control is a button that opens a menu upon user's click. MenuButton is a composition of the <a class="sapUiDemokitSrcLink" href="Menu.html" >Menu</a> control and the <a class="sapUiDemokitSrcLink" href="Button.html" >Button</a>
-		control and thus inheriting all features. When a menu item is selected by the user, MenuButton throws an event called <code>itemSelected</code>.  
-		The event transfers the <code>itemId</code> of the selected item. As an alternative, the button <code>press</code> event can be used which has a 
+		control and thus inheriting all features. When a menu item is selected by the user, MenuButton throws an event called <code>itemSelected</code>.
+		The event transfers the <code>itemId</code> of the selected item. As an alternative, the button <code>press</code> event can be used which has a
 		similar behavior.
 		</p>
-		
+
 		<h2>Example</h2>
-		
+
 		<div code-sample="sample1" script="MenuButtonScript"></div>
-		
+
 		<h3>Keyboard Support</h3>
 		<p>
 		When the MenuButton control has mode <code>enabled</code>, it is possible to open the menu using the <code>Enter</code>, the <code>Space</code>, or the key combination <code>Alt + Arrow down</code>. For information on the keyboard support for the menu,
 		see <a class="sapUiDemokitSrcLink" href="Menu.html">Menu</a>.
 		</p>
-		
+
 		<h2>ARIA Support</h2>
 		<p>
 		The MenuButton control implements the ARIA role <code>button</code> with extension <code>haspopup</code>. For the ARIA support of the menu

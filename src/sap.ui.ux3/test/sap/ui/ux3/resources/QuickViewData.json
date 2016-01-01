@@ -29,7 +29,7 @@
 			"type": "Account",
 			"name": "Saturn is a very big planet far away from the Earth",
 			"description": "The Funny corp.",
-			"icon": "images/feeder/w_01.png", 
+			"icon": "images/feeder/w_01.png",
 			"accountData": [
 				{ "label": "Opportunity ID",
 					"text": "4102378" },

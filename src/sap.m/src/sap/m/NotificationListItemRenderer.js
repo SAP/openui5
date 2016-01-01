@@ -218,12 +218,8 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
-	NotificationListItemRenderer.renderAuthorName = function(oRm, oControl) {
-		var name = oControl.getAuthorName();
-		if (name) {
-			var nameTextControl = new sap.m.Text({ text: name}).addStyleClass('sapMNLI-Text');
-			oRm.renderControl(nameTextControl);
-		}
+	NotificationListItemRenderer.renderAuthorName = function (oRm, oControl) {
+		oRm.renderControl(oControl._getAuthorName());
 	};
 
 	/**
@@ -254,19 +250,6 @@ sap.ui.define([], function () {
 			oRm.renderControl(oControl.getAggregation('_overflowToolbar'));
 			oRm.write('</div>');
 		}
-	};
-
-	/**
-	 * Renders the buttons set in the footer of the NotificationListItem.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
-	 * @param {sap.m.Button[]} aButtons The buttons to be rendered in the footer
-	 */
-	NotificationListItemRenderer.renderButtons = function (oRm, oControl, aButtons) {
-		aButtons.forEach(function (button) {
-			oRm.renderControl(button);
-		});
 	};
 
 	return NotificationListItemRenderer;

@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.DataState
   Author: d036800
 -->
 
-<html> 
+<html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <script>
-	//fix IE 1 bug 
+	//fix IE 1 bug
 	window.ActiveXObject = undefined;
 </script>
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.m"
 	xx-handleValidation="true"
 	>
@@ -35,7 +35,7 @@
 <script language="javascript">
 	jQuery.sap.require("sap.ui.model.DataState");
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
-	
+
 	function getSimulatedModel(oData) {
 		//Create a simulated server model for a JSON Model
 		var SimulatedServerModel = sap.ui.model.json.JSONModel.extend("SimulatedServerModel", /** @lends sap.ui.model.json.JSONModel.prototype */ {
@@ -53,14 +53,14 @@
 		SimulatedServerModel.prototype.getDelay = function() {
 			return this.iDelay;
 		}
-		
+
 		//override set property to allow delay
 		SimulatedServerModel.prototype.setProperty = function(sPath, sValue, oContext) {
 			if (this.iDelay) {
 				//store the original value of the model
 				this.setOriginalValue(sPath, this.getProperty(sPath, oContext), oContext);
 			}
-			
+
 			sap.ui.model.json.JSONModel.prototype.setProperty.call(this, sPath, sValue, oContext);
 		}
 		SimulatedServerModel.prototype.submit = function(sPath, oContext) {
@@ -101,7 +101,7 @@
 			}
 			return this.getProperty(sPath, oContext);
 		};
-		
+
 		//simulate the laundering state
 		SimulatedServerModel.prototype.isLaundering = function(sPath, oContext) {
 			var sResolved = this.resolve(sPath, oContext);
@@ -115,7 +115,7 @@
 			var sResolved = this.resolve(sPath, oContext);
 			delete this.mOriginalData[sResolved];
 		};
-		
+
 		//set the original value
 		SimulatedServerModel.prototype.setOriginalValue = function(sPath, oValue, oContext) {
 			var sResolved = this.resolve(sPath, oContext);
@@ -134,19 +134,19 @@
 		};
 		return new SimulatedServerModel(oData);
 	}
-	
-	
+
+
 	module("Basic");
-	
+
 	test("test DataState API",function(){
 		var oDataState = new sap.ui.model.DataState();
 		var mChanges = oDataState.getChanges();
 		var aPropertyChecks = [
 			"Value", "InternalValue" , "OriginalValue", "OriginalInternalValue", "InvalidValue"
 		];
-		
+
 		equal(jQuery.sap.equal(mChanges,{}),true, "Initially the changes are empty");
-		
+
 		for (var i=0;i<aPropertyChecks.length;i++) {
 			var sProp = aPropertyChecks[i];
 			var sOldValue = oDataState["get" + sProp]();
@@ -160,7 +160,7 @@
 			var mChanges = oDataState.getChanges();
 			equal(jQuery.sap.equal(mChanges,{}),true, "Changes empty after apply of old value for " + sProp);
 		}
-		
+
 		//checking dirty state
 		oDataState.setOriginalValue("OriginalValue");
 		oDataState.setValue("OriginalValue");
@@ -175,13 +175,13 @@
 		oDataState.setInvalidValue(null);
 		equal(oDataState.isDirty(),false, "Control Value reset  and not dirty");
 		equal(oDataState.isControlDirty(),false, "Control Value reset and not controlDirty");
-		
+
 		//laundering
 		oDataState.setLaundering(true);
 		equal(oDataState.isLaundering(),true, "Laundering set");
 		oDataState.setLaundering(false);
 		equal(oDataState.isLaundering(),false, "Laundering reset");
-		
+
 		//messages
 		oDataState.setModelMessages(["ModelMessage"]);
 		equal(oDataState.getModelMessages()[0],"ModelMessage", "Model Message set");
@@ -190,258 +190,12 @@
 		equal(oDataState.getMessages().length,2, "All Messages length 2");
 		oDataState.setControlMessages(null);
 		equal(oDataState.getMessages().length,1, "All Messages length 1");
-		equal(jQuery.sap.equal(oDataState.getControlMessages(),null), true, "Control Message reset");
+		equal(oDataState.getControlMessages().length, 0, "Control Message reset");
 		oDataState.setModelMessages(null);
-		equal(oDataState.getMessages(),null, "All Messages length 1");
-		equal(jQuery.sap.equal(oDataState.getModelMessages(),null),true, "Control Message reset");
-		
-	});
-	
-	module("Pimped JSON Model and Input");
-	var bWaitLaunderingReset = false;
-	var bWaitDirtyReset = false;
-	var aControlMessageTypes = [];
-	var aModelMessageTypes = [];
-	var oField1 = null;
-	var oField2 = null;
-	var oField3 = null;
-	
-	var oModel = getSimulatedModel({
-		"Email": "neill.jackson@sample.com",
-		"Name": "NeillJackson"
-	});
-	oField1 = new sap.m.Input();
-	var oEmailType = new sap.ui.model.type.String();
-	oEmailType.setConstraints({contains:"@"});
-	oField1.bindProperty("value",{path:"SampleData>/Email",type:oEmailType});
-	oField1.refreshDataState = function(sName, oDataState) {
-		if (sName === "value") {
-			applyDataStateChanged(oDataState, oField1, oModel); //visualize the data state changes on value
-			//handle data state updated here
-			this.propagateMessages(sName, oDataState.getMessages());
-		}
-	};
-	sap.ui.getCore().getMessageManager().registerObject(oField1, true);
-	oField1.placeAt("content");
-	oField1.setModel(oModel,"SampleData");
-	
-	oField2 = new sap.m.Input();
-	var oEmailType = new sap.ui.model.type.String();
-	oEmailType.setConstraints({contains:"@"});
-	oField2.bindProperty("value",{path:"SampleData>/Email",type:oEmailType});
-	oField2.refreshDataState = function(sName, oDataState) {
-		if (sName === "value") {
-			applyDataStateChanged(oDataState, oField2, oModel); //visualize the data state changes on value
-			//handle data state updated here
-			this.propagateMessages(sName, oDataState.getMessages());
-		}
-	};
-	sap.ui.getCore().getMessageManager().registerObject(oField2, true);
-	oField2.setBusyIndicatorDelay(10);
-	enableDirtyStateSupport(oField2);
-	oField2.setModel(oModel,"SampleData");
-	oField2.placeAt("content");
+		equal(oDataState.getMessages().length, 0, "All Messages length 1");
+		equal(oDataState.getModelMessages().length, 0, "Control Message reset");
 
-	oField3 = new sap.m.Input();
-	var oEmailType = new sap.ui.model.type.String();
-	oEmailType.setConstraints({contains:"@"});
-	oField3.bindProperty("value",{parts:[{path:"SampleData>/Email"},{path:"SampleData>/Name"}]});
-	oField3.refreshDataState = function(sName, oDataState) {
-		if (sName === "value") {
-			applyDataStateChanged(oDataState, oField3, oModel); //visualize the data state changes on value
-			//handle data state updated here
-			this.propagateMessages(sName, oDataState.getMessages());
-		}
-	};
-	sap.ui.getCore().getMessageManager().registerObject(oField3, true);
-	oField3.placeAt("content");
-	oField3.setModel(oModel,"SampleData");
-	
-	
-	function applyDataStateChanged(oDataState, oField, oModel) {
-		var oChanges = oDataState.getChanges();
-		var sModelText = "Client Model ";
-		if (oModel.getDelay()) {
-			sModelText = "Simulated Server Model";
-		}
-		if (oField.getBinding("value") instanceof sap.ui.model.CompositeBinding) {
-			if (oChanges.internalValue) {
-				if (oChanges.internalValue.value[1] == "NeillJackson") {
-					//first binding was changed, ignore
-					return;
-				}
-				equal(oChanges.internalValue.value[0] + " " + oChanges.internalValue.value[1], oField.getValue(), sModelText + " internal " + oField.getValue());
-			}
-			if (oChanges.value) {
-				equal(oChanges.value.value, oField.getValue(), sModelText + " internalValue " + oField.getValue());
-			}
-			if (oChanges.originalValue) {
-				equal(oChanges.originalInternalValue.value[0] + " " + oChanges.originalInternalValue.value[1], oModel.getOriginalProperty("/Email") + " " + oModel.getOriginalProperty("/Name"), sModelText + " originalValue " + oField.getValue());
-			}
-			if (oChanges.dirty) {
-				equal(oChanges.dirty.value, oField.getValue() !== oModel.getOriginalProperty("/Email") + " " + oModel.getOriginalProperty("/Name"), sModelText + " value " + oField.getValue());
-			}
-			
-		} else {
-			if (oChanges.value) {
-				equal(oChanges.value.value, oField.getValue(), sModelText + " value " + oField.getValue());
-			}
-			if (oChanges.originalValue) {
-				equal(oChanges.originalInternalValue.value, oModel.getOriginalProperty("/Email"), sModelText + " originalValue " +  oField.getValue());
-			}
-			if (oChanges.dirty) {
-				equal(oChanges.dirty.value, oField.getValue() != oModel.getOriginalProperty("/Email"), sModelText + " dirty " + oChanges.dirty.value);
-			}
-		}
-		if (aControlMessageTypes && aControlMessageTypes.length > 0 && oChanges.controlMessages && oChanges.controlMessages.length > 0) {
-			for (var i=0;i<aControlMessageTypes.length;i++) {
-				equal(aControlMessageTypes[i], oChanges.controlMessages.value[i].getType(),sModelText + " controlMessage " + aControlMessageTypes[i]);
-			}
-		}
-		if (oDataState.getControlMessages() && oDataState.getControlMessages().length > 0 && aControlMessageTypes.length !== oDataState.getControlMessages().length) {
-			ok(false,sModelText + " controlMessage but none expeced");
-		}
-		
-		if (oModel.getDelay()) {
-			if (oChanges.laundering && oChanges.laundering.value) {
-				equal(oChanges.laundering.value, oModel.isLaundering("/Email"), sModelText + " laundering set to " + oChanges.laundering.value);
-				bWaitLaunderingReset = true;
-			}
-			if (oModel.getDelay() && oChanges.laundering && oChanges.laundering.value === false && bWaitLaunderingReset) {
-				equal(oChanges.laundering.value, false, sModelText + " laundering was reset to " + oChanges.laundering.value);
-				if (oChanges.dirty && oChanges.dirty.value) {
-					equal(oChanges.dirty.value, false, sModelText + " dirty is set to true");
-					bWaitDirtyReset = true;
-				}
-				bWaitLaunderingReset = false;
-			}
-			if (oModel.getDelay() && oChanges.dirty && oChanges.dirty.value === false && bWaitDirtyReset) {
-				bWaitDirtyReset = false;
-				equal(oChanges.dirty.value, oField.getValue() != oModel.getOriginalProperty("/Email"), sModelText + " dirty was reset to " + oChanges.dirty);
-			}
-			if (aModelMessageTypes.length > 0 && oChanges.modelMessages && oChanges.modelMessages.length > 0) {
-				for (var i=0;i<aModelMessageTypes.length;i++) {
-					equal(aModelMessageTypes[i], oChanges.modelMessages.value[i].getLevel(),sModelText + " modelMessage " + aModelMessageTypes[i]);
-				}
-			}
-		} else {
-			if (oChanges.laundering && oChanges.laundering.value) {
-				equal(oChanges.laundering.value, oModel.isLaundering("/Email"), sModelText + " laundering");
-			}
-			if (oChanges.laundering && oChanges.laundering.value) {
-				equal(oChanges.dirty.value, oField.getValue() != oModel.getOriginalProperty("/Email"), sModelText + " dirty was reset");
-			}
-			if (aModelMessageTypes.length > 0 && oChanges.modelMessages && oChanges.modelMessages.value.length > 0) {
-				for (var i=0;i<aModelMessageTypes.length;i++) {
-					equal(aModelMessageTypes[i], oChanges.modelMessages.value[i].getLevel(),sModelText + " modelMessage " + aModelMessageTypes[i]);
-				}
-			}
-		}
-	};
-	
-	function checkControlMessageEmpty (oControl,sBinding) {
-		return !oControl || !oControl.getBinding(sBinding).getDataState().getControlMessages() || oControl.getBinding(sBinding).getDataState().getControlMessages().length === 0;
-	}
-	test("test DataState in client JSON model",function(){
-		oField1.setValue("test@test.com");
-		//check messages
-		aControlMessageTypes = [sap.ui.core.MessageType.Error];
-		oField1.setValue("testtest.com");
-		ok(checkControlMessageEmpty (oField2,"value"), "Field 2 should not have controlMessages");
-		aModelMessageTypes = [sap.ui.core.MessageType.Warning];
-		oModel.setMessages({"/Email" : [new sap.ui.core.Message({level:sap.ui.core.MessageType.Warning})]});
-		ok(checkControlMessageEmpty (oField2,"value"), "Field 2 should not have controlMessages");
-		ok(!oField2 || oField2.getBinding("value").getDataState().getModelMessages(), "Field 2 should have modelMessages");
-		aModelMessageTypes = [sap.ui.core.MessageType.Warning, sap.ui.core.MessageType.Success];
-		oModel.setMessages({"/Email" : [new sap.ui.core.Message({level:sap.ui.core.MessageType.Warning}),new sap.ui.core.Message({level:sap.ui.core.MessageType.Success})]});
-		ok(checkControlMessageEmpty (oField2,"value"), "Field 2 should not have controlMessages");
-		ok(!oField2 || oField2.getBinding("value").getDataState().getModelMessages(), "Field 2 should have modelMessages");
-		aControlMessageTypes=[];
-		oModel.setProperty("/Email","test1@test.com");
-		ok(checkControlMessageEmpty (oField2,"value"), "Field 2 should not have controlMessages");
-		aModelMessageTypes=[];
 	});
-	
-	asyncTest("test DataState in server simulation JSON model",function(){
-		setTimeout(function() {
-			aModelMessageTypes=[];
-			aControlMessageTypes=[];
-			start(); 
-		},4000); //4 seconds to complete the test
-		oModel.setDelay(100);
-		ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-		oField2.setValue("test@test.com");
-		oModel.submit("/Email");
-		ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-		
-		aControlMessageTypes = [sap.ui.core.MessageType.Error];
-		oField2.setValue("testtest.com");
-		aModelMessageTypes = [sap.ui.core.MessageType.Warning];
-		oModel.setMessages({"/Email" : [new sap.ui.core.Message({level:sap.ui.core.MessageType.Warning})]});
-		ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-		
-		setTimeout(function() {
-			ok(!oField1 || oField1.getBinding("value").getDataState().getModelMessages(), "Field 1 should have modelMessages");
-			aModelMessageTypes = [sap.ui.core.MessageType.Warning, sap.ui.core.MessageType.Success];
-			oModel.setMessages({"/Email" : [new sap.ui.core.Message({level:sap.ui.core.MessageType.Warning}),new sap.ui.core.Message({level:sap.ui.core.MessageType.Success})]});
-			ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-				setTimeout(function() {
-				aControlMessageTypes = [];
-				ok(!oField1 || oField1.getBinding("value").getDataState().getModelMessages(), "Field 1 should have modelMessages");
-				ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-				oModel.setProperty("/Email","test1@test.com");
-			},200);
-		},200);
-	});
-	asyncTest("test DataState in server simulation JSON model composite binding",function(){
-		setTimeout(function() {
-			aModelMessageTypes=[];
-			aControlMessageTypes=[];
-			start(); 
-		},4000); //4 seconds to complete the test
-		oModel.setDelay(100);
-		ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-		oField3.setValue("test@test.com Test");
-		oModel.submit("/Email");
-		ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-		aControlMessageTypes = [sap.ui.core.MessageType.Error];
-		oField3.setValue("testtest.com Test");
-		aModelMessageTypes = [sap.ui.core.MessageType.Warning];
-		oModel.setMessages({"/Email" : [new sap.ui.core.Message({level:sap.ui.core.MessageType.Warning})]});
-		ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-		
-		setTimeout(function() {
-			ok(!oField1 || oField1.getBinding("value").getDataState().getModelMessages(), "Field 1 should have modelMessages");
-			aModelMessageTypes = [sap.ui.core.MessageType.Warning, sap.ui.core.MessageType.Success];
-			oModel.setMessages({"/Email" : [new sap.ui.core.Message({level:sap.ui.core.MessageType.Warning}),new sap.ui.core.Message({level:sap.ui.core.MessageType.Success})]});
-			ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-				setTimeout(function() {
-				aControlMessageTypes = [];
-				ok(!oField1 || oField1.getBinding("value").getDataState().getModelMessages(), "Field 1 should have modelMessages");
-				ok(checkControlMessageEmpty (oField1,"value"), "Field 1 should not have controlMessages");
-				oModel.setProperty("/Email","test1@test.com");
-			},200);
-		},200);
-	});
-	
-	function enableDirtyStateSupport(oControl) {
-        jQuery.sap.assert(
-               oControl instanceof sap.ui.core.Control,
-               "The object to add DirtyState support must be a control instance"
-        );
-        
-        var fnOriginalListener = null;
-        if (oControl.refreshDataState) {
-               fnOriginalListener = oControl.refreshDataState.bind(oControl);
-        }
-        oControl.refreshDataState = function(fnOriginalListener, sName, oDataState) {
-               this.setBusy(oDataState.isLaundering());
-               if (fnOriginalListener) {
-                     fnOriginalListener(sName, oDataState);
-               }
-        }.bind(oControl, fnOriginalListener);
- }
-
 
 </script>
 

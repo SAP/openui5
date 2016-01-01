@@ -11,7 +11,7 @@ sap.ui.define(['./Item', './library'],
 	/**
 	 * Constructor for a new ListItem.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -28,16 +28,16 @@ sap.ui.define(['./Item', './library'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListItem = Item.extend("sap.ui.core.ListItem", /** @lends sap.ui.core.ListItem.prototype */ { metadata : {
-	
+
 		library : "sap.ui.core",
 		properties : {
-	
+
 			/**
 			 * The icon belonging to this list item instance.
 			 * This can be an URI to an image or an icon font URI.
 			 */
 			icon : {type : "string", group : "Appearance", defaultValue : null},
-	
+
 			/**
 			 * Some additional text of type string, optionally to be displayed along with this item.
 			 */

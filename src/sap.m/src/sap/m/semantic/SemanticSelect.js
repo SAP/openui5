@@ -29,6 +29,8 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 	var SemanticSelect = SemanticControl.extend("sap.m.semantic.SemanticSelect", /** @lends sap.m.semantic.SemanticSelect.prototype */ {
 		metadata: {
 
+			library: "sap.m",
+
 			properties: {
 				/**
 				 * See {@link sap.m.Select#enabled}
@@ -94,7 +96,7 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 	SemanticSelect.prototype.getSelectedItem = function () {
 		return this._getControl().getSelectedItem();
 	};
-	
+
 	SemanticSelect.prototype.setSelectedItem = function(oItem) {
 		this._getControl().setSelectedItem(oItem);
 
@@ -128,9 +130,9 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 	};
 
 	/**
-	 * Fires change event from the inner select when the selectedItem value of the inner select is changed via UI interaction 
-	 * (tap/click/key-press) rather than via an API call from the application. 
-	 * 
+	 * Fires change event from the inner select when the selectedItem value of the inner select is changed via UI interaction
+	 * (tap/click/key-press) rather than via an API call from the application.
+	 *
 	 * In this case, you have to:
 	 * (1) update the selectedItem value of the outer select as well
 	 * (2) fire change event from the outer select so that application listeners for change on the outer select are notified

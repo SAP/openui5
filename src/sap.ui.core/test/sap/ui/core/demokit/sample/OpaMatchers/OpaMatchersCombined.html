@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Opa sample for combined matchers</title>
+
+    <script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"></script>
+
+    <script>
+        jQuery.sap.require("sap.ui.qunit.qunit-css");
+        jQuery.sap.require("sap.ui.thirdparty.qunit");
+        jQuery.sap.require("sap.ui.qunit.qunit-junit");
+        jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+        QUnit.config.autostart = false;
+
+        sap.ui.require([
+            "sap/ui/test/Opa5",
+            "sap/ui/test/opaQunit",
+            "sap/ui/test/matchers/Properties"
+        ], function (Opa5, opaTest, Properties) {
+            QUnit.module("MatchersCombined");
+
+
+            opaTest("Should find a Button using inline-matchers and multiple matchers", function(Given, When, Then) {
+
+                // Act
+                Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+                When.waitFor({
+                     viewName : "appUnderTest.view.Main",
+                     controlType : "sap.m.Button",
+                     matchers : [
+                            // Properties matcher takes an object containing a property to match as a parameter:
+                            // {propertyName : propertyValue, secondPropertyName : secondPropertyValue, ...}
+                            // where property values can be a regexp values also (with a string typed properties)
+                            new Properties({
+                                text : "Changed text"
+                            }),
+                            function(oControl) {
+                                return oControl.hasStyleClass("mySuperButton");
+                            }
+                        ],
+                    success : function (aButtons) {
+                        Opa5.assert.ok(true, "Found the button: " + aButtons[0]);
+                    },
+                    errorMessage : "Did not find the button with a text 'Changed text' and the class 'mySuperButton''"
+                 });
+
+
+                Then.iTeardownMyAppFrame();
+            });
+
+            QUnit.start();
+        });
+    </script>
+
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>

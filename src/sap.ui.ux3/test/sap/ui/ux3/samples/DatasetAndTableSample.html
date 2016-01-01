@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 <title>DataSet Demokit</title>
 
 <script src="../../../../../resources/sap-ui-core.js"
@@ -145,14 +145,14 @@ sap.ui.core.Control.extend("ItemLayout", {
 		rm.renderControl(ctrl.getForm());
 		rm.write("</div></div></div>");
     },
-    
+
     onBeforeRendering : function(){
     	if(this.resizeTimer){
     		clearTimeout(this.resizeTimer);
     		this.resizeTimer = null;
     	}
     },
-    
+
     onAfterRendering : function(){
     	var $This = this.$();
     	if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
@@ -161,7 +161,7 @@ sap.ui.core.Control.extend("ItemLayout", {
     		$This.addClass("CustomItemLayoutSmall");
     	}
     },
-    
+
     _resize: function(){
     	if(!this.getDomRef()){
     		return;
@@ -316,7 +316,7 @@ var oToolbar = new sap.ui.commons.Toolbar({
 				oDataSet.setLeadSelection(-1);
 				oTable.clearSelection();
 			}
-		})          
+		})
 	],
 	items: [
 		new sap.ui.commons.SegmentedButton({
@@ -328,7 +328,7 @@ var oToolbar = new sap.ui.commons.Toolbar({
 			],
 			select: function(oEvent){
 				var oView = null;
-				
+
 				switch(oEvent.getParameter("selectedButtonId")){
 					case "typeTable":
 						if(!bTableVisible){
@@ -346,7 +346,7 @@ var oToolbar = new sap.ui.commons.Toolbar({
 						oView = oRowView;
 						break;
 				}
-				
+
 				if(oView){
 					if(bTableVisible){
 						oDataSet.placeAt("data", "only");
@@ -355,7 +355,7 @@ var oToolbar = new sap.ui.commons.Toolbar({
 					oDataSet.setSelectedView(oView);
 				}
 			},
-			selectedButton: "typeTable" 
+			selectedButton: "typeTable"
 		})
 	]
 });

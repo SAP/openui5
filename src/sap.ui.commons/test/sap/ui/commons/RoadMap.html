@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>RoadMap - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.RoadMap.gif">
@@ -58,20 +58,20 @@
 			});
 
 			createStepTestButton("Select Step", function(oRoadMap){
-				oRoadMap.setSelectedStep(oStepIdTF.getValue()); 
+				oRoadMap.setSelectedStep(oStepIdTF.getValue());
 			}, true);
 			createStepTestButton("Deselect Step", function(oRoadMap){
-				oRoadMap.setSelectedStep(""); 
+				oRoadMap.setSelectedStep("");
 			}, true);
 			createStepTestButton("Change #Visible Steps", function(oRoadMap){
 				var iNumber = parseInt(oStepIdTF.getValue());
-				oRoadMap.setNumberOfVisibleSteps(iNumber); 
+				oRoadMap.setNumberOfVisibleSteps(iNumber);
 			}, true);
 			createStepTestButton("Change First Visible Step", function(oRoadMap){
-				oRoadMap.setFirstVisibleStep(oStepIdTF.getValue()); 
+				oRoadMap.setFirstVisibleStep(oStepIdTF.getValue());
 			}, true);
 			createStepTestButton("Change Width", function(oRoadMap){
-				oRoadMap.setWidth(oStepIdTF.getValue()); 
+				oRoadMap.setWidth(oStepIdTF.getValue());
 			}, true);
 
 
@@ -105,15 +105,15 @@
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
-		
-		<h1 id="header">Test Page for <code>sap.ui.commons.RoadMap</code></h1>	
-	
-		<div id="uiArea1"></div>	
+
+		<h1 id="header">Test Page for <code>sap.ui.commons.RoadMap</code></h1>
+
+		<div id="uiArea1"></div>
 		<div id="uiArea2"></div>
-		<div id="uiArea3"></div>	
+		<div id="uiArea3"></div>
 		<div id="uiArea4"></div>
 		<div id="uiArea5"></div>
-		<div>Please type a step Id in the 'Value' text field for the step related actions (all ids named like 's3a' or 's1'), 
+		<div>Please type a step Id in the 'Value' text field for the step related actions (all ids named like 's3a' or 's1'),
 		to select a step or to set the first visible step. For the '# visible Steps' RoadMap property use a number and for the 'width' RoadMap property a CSS size.</div>
 	</body>
 </html>

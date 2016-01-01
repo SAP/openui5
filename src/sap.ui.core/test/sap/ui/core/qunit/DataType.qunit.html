@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.base.DataType
   Author: d046314
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.core">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -24,11 +24,11 @@
 	<script language="javascript">
 		jQuery.sap.require("sap.ui.base.DataType");
 	</script>
-	
+
 	<!-- Control initialization -->
 	<script language="javascript">
 	</script>
-	
+
 	<!-- Test functions -->
 	<script language="javascript">
 
@@ -236,20 +236,20 @@
 			equal(type.isValid("0 1px 1px 1px"), true, "0 1px 1px 1px allowed");
 			equal(type.isValid("1px 0 1px 1px"), true, "1px 0 1px 1px allowed");
 			equal(type.isValid("0 0 0 0"), true, "0 0 0 0 allowed");
-			
+
 			equal(type.isValid("1px"), true, "1px allowed");
 			equal(type.isValid("1em 1ex"), true, "2 values allowed");
 			equal(type.isValid("1% 1in 1cm"), true, "3 values allowed");
 			equal(type.isValid("1mm 1pt 1pc 1px"), true, "4 values allowed");
 			equal(type.isValid("1px1px"), false, "values without space NOT allowed");
-			
+
 			equal(type.isValid("auto"), true, "'auto' allowed");
 			equal(type.isValid("auto 1px -1px 1px"), true, "4 values with 'auto' at begin and -1px allowed");
 			equal(type.isValid("-auto 1px -1px 1px"), false, "4 values with '-auto' NOT allowed");
 			equal(type.isValid("1px auto 1px 1px"), true, "4 values with 'auto' in the middle");
 			equal(type.isValid("1px -1px -auto 1px"), false, "4 values with '-auto' in the midle and -1px NOT allowed");
 			equal(type.isValid("auto auto auto auto"), true, "4 times 'auto' allowed");
-			
+
 			equal(type.isValid("inherit"), true, "inherit allowed");
 			equal(type.isValid("inherit inherit"), false, "inherit only once allowed");
 			equal(type.isValid("1px 1px inherit 1px"), false, "inherit NOT allowed with other valid values");
@@ -305,7 +305,7 @@
 			// TODO parsing of illegal values?
 			ok(sap.ui.base.DataType.getType("sap.ui.core.Popup.Dock") === type, "multiple calls should return same type object");
 		});
-		
+
 	</script>
 
 </head>

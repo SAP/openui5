@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">	
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>Splitter - sap.ui.layout</title>
-	<script src="../../../../resources/sap-ui-core.js" 
-	        type="text/javascript" 
-	        id="sap-ui-bootstrap"            
+	<script src="../../../../resources/sap-ui-core.js"
+	        type="text/javascript"
+	        id="sap-ui-bootstrap"
 	        data-sap-ui-libs="sap.ui.core,sap.ui.layout,sap.ui.commons"
 	        data-sap-ui-theme="sap_bluecrystal">
 	</script>
@@ -19,7 +19,7 @@
 			left: 10%;
 			height: 500px;
 		}
-		
+
 		html[dir="rtl"] #content {
 			left: auto;
 			right: 10%;
@@ -32,29 +32,29 @@
 			overflow-x: hidden;
 			overflow-y: auto;
 		}
-		
+
 		#buttons, #options {
 			margin-top: 1rem;
 		}
-		
+
 		#options {
 			margin: 1rem 2rem 1rem 2rem;
 		}
-		
+
 		#options .sapuiVltCell {
 			margin-top: 0.5rem;
 		}
-		
+
 		#options .sapUiTv {
 			margin-right: 0.5rem;
 			margin-left: 0.5rem;
 		}
-		
+
 		.optionTitle {
 			font-weight: bold;
 			margin-right: 4rem;
 		}
-		
+
 	</style>
 	<script>
 		function createExampleContent() {
@@ -62,14 +62,14 @@
 				createExampleContent.called = 0;
 			}
 			++createExampleContent.called;
-			
-			
+
+
 			var oLd = new sap.ui.layout.SplitterLayoutData({
 				resizable : true,
 				size      : Math.random() > 0.5 ? "auto" : 50 + Math.floor(Math.random() * 300) + "px",
 				maxSize   : Math.random() > 0.5 ? "0" : Math.floor(Math.random() * 100) + "px"
 			});
-			
+
 			switch(createExampleContent.called) {
 				case 1:
 					oLd.setSize("200px");
@@ -81,37 +81,37 @@
 					oLd.setSize("35%");
 					break;
 			}
-			
-			
+
+
 			var oContent = new sap.ui.commons.Button({
 				width: "100%",
 				height: "100%",
 				text : "Content!",
 				layoutData: oLd
 			});
-			
+
 			/*
 			oContent = new sap.ui.core.HTML({
-				content : "<iframe style=\"height: 100%; width: 100%; border: 0px solid black;\" border=0 " + 
+				content : "<iframe style=\"height: 100%; width: 100%; border: 0px solid black;\" border=0 " +
 					"src=\"http://veui5infra:8080/uilib-sample/test-resources/sap/ui/ux3/ToolPopup.html?sap-ui-theme=sap_bluecrystal\" " +
 					"></iframe>"
 			});
 			/**/
-			
+
 			return oContent;
 		}
-	
-	
-	
+
+
+
 		var oSplitter = new sap.ui.layout.Splitter("mySplitter", {
 			contentAreas: [
-				createExampleContent(), createExampleContent(), createExampleContent(), 
+				createExampleContent(), createExampleContent(), createExampleContent(),
 			]
 		});
-		
+
 		var oOptionsLayout = new sap.ui.layout.VerticalLayout();
-		
-		
+
+
 		oSplitter._debugLog = function(sLogMessage) {
 			if (!oSplitter._debugLog.aDebugLog) {
 				oSplitter._debugLog.aDebugLog = [];
@@ -120,42 +120,42 @@
 				oSplitter._debugLog.oDebugDom = document.getElementById("debug");
 				oSplitter._debugLog.bFirstTime = true;
 			}
-			
+
 			oSplitter._debugLog.aDebugLog.push(sLogMessage);
-			
+
 			if (!oSplitter._debugLog.oDebugDom) {
 				// DOM Not ready...
 				return
 			}
-			
+
 			var fnCreateLine = function(sText) {
 				var oLogLine = document.createElement("span");
 				oLogLine.className = "sapUiDebugLine";
 				oLogLine.appendChild(document.createTextNode(sText));
 				return oLogLine;
 			}
-			
+
 			if (oSplitter._debugLog.bFirstTime) {
 				// Log everything that came before
 				oSplitter._debugLog.bFirstTime = false;
-				
+
 				for (var i = 0; i < oSplitter._debugLog.aDebugLog.length; ++i) {
 					oSplitter._debugLog.oDebugDom.appendChild(
 						fnCreateLine(oSplitter._debugLog.aDebugLog[i])
 					);
 				}
 			}
-			
+
 			oSplitter._debugLog.oDebugDom.insertBefore(
 				fnCreateLine(sLogMessage), oSplitter._debugLog.oDebugDom.firstChild
 			);
 		}
-		
-		
+
+
 		function showLayoutOptions() {
 			// Remove all Options
 			oOptionsLayout.destroyContent();
-			
+
 			var aContentAreas = oSplitter.getContentAreas();
 			for (var i = 0; i < aContentAreas.length; ++i) {
 				var oContentArea = aContentAreas[i];
@@ -164,14 +164,14 @@
 					oLD = new sap.ui.layout.SplitterLayoutData();
 					oContentArea.setLayoutData(oLD);
 				}
-				
+
 				var oOptions = new sap.ui.layout.HorizontalLayout();
 				oOptions.addContent(
-					new sap.ui.commons.TextView({ 
+					new sap.ui.commons.TextView({
 						text : "ContentArea #" + (i + 1)
 					}).addStyleClass("optionTitle")
 				);
-				
+
 				oOptions.addContent(new sap.ui.commons.TextView({ text : "Resizable: "}));
 				oOptions.addContent(new sap.ui.commons.CheckBox({
 					checked : oLD.getResizable(),
@@ -179,7 +179,7 @@
 						oLayoutData.setResizable(oEvent.getParameter("checked"));
 					}})(oLD)
 				}));
-				
+
 				oOptions.addContent(new sap.ui.commons.TextView({ text : "Size (CSS): " }));
 				oOptions.addContent(new sap.ui.commons.TextField({
 					value : oLD.getSize(),
@@ -187,7 +187,7 @@
 						oLayoutData.setSize(oEvent.getParameter("newValue"));
 					}})(oLD)
 				}));
-				
+
 				oOptions.addContent(new sap.ui.commons.TextView({ text : "Min-Size: (in px)" }));
 				oOptions.addContent(new sap.ui.commons.TextField({
 					value : oLD.getMinSize(),
@@ -195,7 +195,7 @@
 						oLayoutData.setMinSize(parseInt(oEvent.getParameter("newValue"), 10));
 					}})(oLD)
 				}));
-				
+
 				/*
 				oOptions.addContent(new sap.ui.commons.TextView({ value : "Max-Size: " }));
 				oOptions.addContent(new sap.ui.commons.TextField({
@@ -205,16 +205,16 @@
 					}})(oLD)
 				}));
 				*/
-				
+
 				oOptionsLayout.addContent(oOptions);
 			}
 		}
 		showLayoutOptions();
-		
+
 		var oButtons = new sap.ui.layout.HorizontalLayout();
-		
-		
-		
+
+
+
 		var oButton = new sap.ui.commons.Button({
 			text: "Add content area",
 			press: function() {
@@ -222,7 +222,7 @@
 				showLayoutOptions();
 			}
 		});
-		
+
 		var oButton2 = new sap.ui.commons.Button({
 			text: "Remove content area",
 			press: function() {
@@ -251,11 +251,11 @@
 				);
 			}
 		});
-		
+
 		var oEventStatus = new sap.ui.commons.TextView({
 			text : "Nothing happened so far."
 		});
-		
+
 		var iEvents = 0;
 		oSplitter.attachResize(function(oEvent) {
 			oEventStatus.setText(
@@ -263,7 +263,7 @@
 			);
 			showLayoutOptions();
 		});
-		
+
 		oSplitter.placeAt("content");
 		oButtons
 			.addContent(oButton)

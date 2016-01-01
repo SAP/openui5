@@ -1,18 +1,18 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>RowRepeater - sap.ui.commons </title>
 
-    <script id="sap-ui-bootstrap" 
+    <script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.commons" >
 		</script>
-    
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -20,7 +20,7 @@
 		<script language="javascript">
 		/* Create and structure your QUnit tests here
 		Documentation can be found at http://docs.jquery.com/QUnit
-		
+
 		Example:
 		   module("Module A");
 		     test("1. a basic test example", function() {
@@ -40,16 +40,16 @@
 			design: sap.ui.commons.RowRepeaterDesign.Standard
 		});
 		oRowRepeater.placeAt("uiArea1");
-		
+
 	    // create the row repeater control
-	    var oRowRepeater2 = new sap.ui.commons.RowRepeater({ 
+	    var oRowRepeater2 = new sap.ui.commons.RowRepeater({
 	        currentPage: 1,
 	        numberOfRows : 10
 	    });
 	    oRowRepeater2.placeAt("content");
-		
+
 		qutils.delayTestStart();
-		
+
 		module("RowRepeater Test - sap.ui.commons.RowRepeater", {
 			//setup: function(){
 			//}, teardown: function(){}
@@ -60,18 +60,18 @@
 	  for (var n = 0; n < 50; n++) {
 		  oDataObject.data.push( { index:n, name:"Name"+n } );
 	  }
-	  
+
 	  // create test template
 	  var oTextField = new sap.ui.commons.TextField().bindProperty("value", "index");
 	  var oLabel = new sap.ui.commons.Label().bindProperty("text", "name");
 	  var oRowTemplate = new sap.ui.commons.layout.MatrixLayout().createRow(oTextField, oLabel);
-		
+
 	  // create JSON model
 		var oModel = new sap.ui.model.json.JSONModel();
-		oModel.setData(oDataObject); 
+		oModel.setData(oDataObject);
 		sap.ui.getCore().setModel(oModel);
 
-		
+
 		test("Test Creation, Getters and Setter", function(){
 			ok( oRowRepeater != null, "RowRepeater created");
 			equal( oRowRepeater.getVisible(), true , "visible property correct");
@@ -86,33 +86,33 @@
 			equal( oRowRepeater.getDesign(), sap.ui.commons.RowRepeaterDesign.Standard , "design property correct");
 			ok( oRowRepeater.setTitle(new sap.ui.core.Title({text:"RowRepeater"})), "setting a title" );
 		});
-		
+
 		test("Test Aggregation Binding", function() {
 			equal( oRowRepeater.isBound(), false , "not bound yet");
 			ok( oRowRepeater.bindRows("/data",oRowTemplate));
 			equal( oRowRepeater.isBound(), true , "now it is bound");
 		});
-		
+
 		asyncTest("Test ShowMore Feature (1)", function() {
 			equals( oRowRepeater.getNumberOfRows(), 10, "10 rows are expected to be visible at the start" );
 			ok( oRowRepeater.setShowMoreSteps(0), "setting ShowMoreSteps to zero" );
 			ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			ok( oRowRepeater.setShowMoreSteps(3), "setting ShowMoreSteps to 3" );
-			setTimeout(function() {	
+			setTimeout(function() {
 				start();
 			}, 1500);
 		});
-		
+
 		asyncTest("Test ShowMore Feature (2)", function() {
 			ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			ok( oRowRepeater.triggerShowMore(), "triggering show more" );
 			ok( oRowRepeater.triggerShowMore(), "triggering show more" );
-			setTimeout(function() {	
+			setTimeout(function() {
 				start();
-				equals(oRowRepeater.getNumberOfRows(), 19, "19 rows are expected to be visible at the end"); 
+				equals(oRowRepeater.getNumberOfRows(), 19, "19 rows are expected to be visible at the end");
 			}, 1500);
 		});
-		
+
 		asyncTest("Test Resize Feature", function() {
 			equals( oRowRepeater.getNumberOfRows(), 19, "19 rows are expected to be visible at the start" );
 			ok( oRowRepeater.setShowMoreSteps(0), "setting ShowMoreSteps to zero" );
@@ -124,10 +124,10 @@
 			ok( oRowRepeater.resize(7), "resize to 7" );
 			setTimeout(function() {
 				start();
-				equals(oRowRepeater.getNumberOfRows(), 7, "7 rows are expected to be visible at the end"); 
+				equals(oRowRepeater.getNumberOfRows(), 7, "7 rows are expected to be visible at the end");
 			}, 1500);
 		});
-		
+
 		asyncTest("Test Paging Behaviour", function() {
 			ok( oRowRepeater.gotoPage(5), "try to go to page 5, which should not work" );
 			equals( oRowRepeater.getCurrentPage(), 1, "we should still be on page 1" );
@@ -144,17 +144,17 @@
 			ok( oRowRepeater.previousPage(), "go to previous page" );
 			setTimeout(function() {
 				start();
-				equals(oRowRepeater.getCurrentPage(), 1, "we should again be on page 1"); 
+				equals(oRowRepeater.getCurrentPage(), 1, "we should again be on page 1");
 			}, 4000);
 		});
-		
+
 		test("Test Filter Aggregation", function() {
 			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 			ok( oRowRepeater.addFilter(new sap.ui.commons.RowRepeaterFilter("test_filter_1",{text:"Test",filters:[new sap.ui.model.Filter("index", "NE", "Test")],tooltip:"Test"})), "filter added");
 			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 			ok( oRowRepeater.insertFilter(new sap.ui.commons.RowRepeaterFilter("test_filter_2",{text:"Test",filters:[new sap.ui.model.Filter("test", "EQ", "Test")],tooltip:"Test"}),0), "filter inserted");
-			ok( oRowRepeater.applyFilter("test_filter_1"), "filter 'test_filter_1' applied");			
-			ok( oRowRepeater.applyFilter("test_filter_2"), "filter 'test_filter_2' applied");			
+			ok( oRowRepeater.applyFilter("test_filter_1"), "filter 'test_filter_1' applied");
+			ok( oRowRepeater.applyFilter("test_filter_2"), "filter 'test_filter_2' applied");
 			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 			ok( oRowRepeater.removeFilter(1), "filter removed");
 			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
@@ -166,14 +166,14 @@
 			ok( oRowRepeater.destroyFilters(), "filters destroyed");
 			equal(oRowRepeater.getFilters().length,oRowRepeater.getAggregation("filterToolbar").getItems().length, "number of filters equals number of filter buttons");
 		});
-		
+
 		test("Test Sorter Aggregation", function() {
 			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 			ok( oRowRepeater.addSorter(new sap.ui.commons.RowRepeaterSorter("test_sorter_1",{text:"Test",sorter:new sap.ui.model.Sorter("index",false),tooltip:"Test"})), "sorter added");
 			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 			ok( oRowRepeater.insertSorter(new sap.ui.commons.RowRepeaterSorter("test_sorter_2",{text:"Test",sorter:new sap.ui.model.Sorter("index",true),tooltip:"Test"}),0), "sorter inserted");
-			ok( oRowRepeater.triggerSort("test_sorter_1"), "sorter 'test_sorter_1' applied");			
-			ok( oRowRepeater.triggerSort("test_sorter_2"), "sorter 'test_sorter_2' applied");			
+			ok( oRowRepeater.triggerSort("test_sorter_1"), "sorter 'test_sorter_1' applied");
+			ok( oRowRepeater.triggerSort("test_sorter_2"), "sorter 'test_sorter_2' applied");
 			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 			ok( oRowRepeater.removeSorter(1), "sorter removed");
 			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
@@ -185,7 +185,7 @@
 			ok( oRowRepeater.destroySorters(), "sorters destroyed");
 			equal(oRowRepeater.getSorters().length,oRowRepeater.getAggregation("sorterToolbar").getItems().length, "number of sorters equals number of sorter buttons");
 		});
-		
+
 		asyncTest("Test Thresholding", function(){
 		    jQuery.sap.require("sap.ui.model.json.JSONModel");
 		    jQuery.sap.require("sap.ui.model.json.JSONListBinding");
@@ -209,11 +209,11 @@
 						// normally the model would trigger a new read request here
 						iReloadCount++;
 					}
-					
+
 					return sap.ui.model.json.JSONListBinding.prototype.getContexts.apply(this, arguments);
 		        }
 		    });
-		    
+
 		    function createRows() {
 		        var rows = [];
 		        for(var i=0; i<400; i++) {
@@ -221,40 +221,40 @@
 		        }
 		        return rows;
 		    }
-		    
+
 		    var oModel = new FWsJSONModel();
 		    oModel.setData({ rows : createRows()});
-		    // create a template for the row repeater 
+		    // create a template for the row repeater
 		    var oML = new sap.ui.commons.layout.MatrixLayout();
 		    var aControls = [];
 		    jQuery.each(["id", "name"], function(iIndex, sProperty) {
 		        aControls.push(new sap.ui.commons.TextView({
-		            text: "{" + sProperty + "}" 
+		            text: "{" + sProperty + "}"
 		        }))
 		    });
 		    oML.createRow.apply(oML, aControls);
-		    
+
 		    oRowRepeater2.setThreshold(50);
 		    oRowRepeater2.setModel(oModel);
 		    oRowRepeater2.bindRows("/rows", oML);
 		    oRowRepeater2.setNoData(new sap.ui.commons.TextView({text: "Sorry, no data available!"}));
-		    		    
+
 		    // NOTE: -> some goto pages could be skipped because of animation queue optimization where only the last one is executed and so only for the
 		    // last one the getContext method will be called...
-		    
+
 		    ok( oRowRepeater2.gotoPage(2), "go to page 2" ); // should not trigger a reload
 		    ok( oRowRepeater2.gotoPage(4), "go to page 4" ); // should not trigger a reload -> this could be skipped
 		    ok( oRowRepeater2.gotoPage(6), "go to page 6" ); // should trigger a reload
-		    ok( oRowRepeater2.lastPage(), "go to last page" ); // should trigger a reload 
+		    ok( oRowRepeater2.lastPage(), "go to last page" ); // should trigger a reload
 			setTimeout(function() {
 				start();
 				ok(iCount >= 4, "iCount test");
 				equal(iReloadCount, 2, "iReloadCount test");
 				equal(iMaxLoadedContexts, 440 , "iLoadedData test");
 			}, 3000);
-		    
+
 		});
-		
+
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
@@ -263,7 +263,7 @@
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
 		<div id="qunit-fixture">test markup, will be hidden</div>
-		
+
 		<div id="uiArea1"></div>
 		<div id="content"></div>
  		<a id="backLink" style="display:none;" href="../RowRepeater.html">(back to) test page</a>

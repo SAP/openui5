@@ -1,26 +1,26 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for Column Merge Duplicates</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 
 		<script>
-		
+
 		function createSUT(sId, bGrowing, oBindConfig){
-			
+
 			var oTable = new sap.m.Table(sId, {
 				growing : bGrowing,
 				growingThreshold : 5,
@@ -42,7 +42,7 @@
 					})
 				]
 			});
-			
+
 			jQuery.sap.require("sap.ui.model.json.JSONModel");
 
 			// JSON sample data
@@ -88,37 +88,37 @@
 					})
 				]
 			});
-			
+
 			// build binding confing
 			oBindConfig = jQuery.extend({
 				path : "/teamMembers",
 				template : oItemTemplate
 			}, oBindConfig);
 			oTable.setModel(oModel).bindItems(oBindConfig);
-			
+
 			return oTable;
 		}
-			
+
 		module("Display");
-		
+
 		test("Merge Label and Icon", function() {
  			var sut = createSUT("MergeDuplicates");
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			
+
 			var oTable = sap.ui.getCore().byId("MergeDuplicates");
 			$MergedLabel = oTable.getItems()[3].getCells()[2].$();
 			$MergedIcon = oTable.getItems()[3].getCells()[0].$();
-		
+
  			ok($MergedLabel.hasClass("sapMListTblCellDupCnt"), "duplicated label should be merged.");
  			strictEqual($MergedLabel.text(), "Male", "duplicated label is still available in the dom for screen readers.");
 
  			ok($MergedIcon.hasClass("sapMListTblCellDupCnt"), "duplicated icon should be merged.");
- 		
+
 			//clean up
 			sut.destroy();
 		});
-		
+
 		test("Merge in Growing Feature", function() {
 			var sut = createSUT("MergeDuplicates", true);
 			sut.placeAt("qunit-fixture");
@@ -129,7 +129,7 @@
 			sut.attachUpdateFinished(
 				oDeferred.resolve()
 			);
-			
+
 			var firstLabelAfterGrowing = "initial";
 			var firstIconAfterGrowing = "initial";
 			sut._oGrowingDelegate.requestNewPage();
@@ -137,52 +137,52 @@
 				var oTable = sap.ui.getCore().byId("MergeDuplicates");
 				var $FirstLabelAfterGrowing = oTable.getItems()[5].getCells()[2].$();
 				var $FirstIconAfterGrowing =  oTable.getItems()[5].getCells()[0].$();
-				
+
 				ok($FirstLabelAfterGrowing.hasClass("sapMListTblCellDupCnt"), "label of the first item after growing should be merged.");
 	 			strictEqual($FirstLabelAfterGrowing.text(), "Male", "duplicated label is still available in the dom for screen readers.");
 
 				ok($FirstIconAfterGrowing.hasClass("sapMListTblCellDupCnt"), "icon of the first item after growing should be merged.");
 			});
-			
+
 			//clean up
 			sut.destroy();
 		});
-		
+
 		test("Merge when Group Header occures", function() {
 			var oLastNameSorter = new sap.ui.model.Sorter("lastName", false, true);
-			
+
 			var sut = createSUT("MergeDuplicates", false, {sorter: oLastNameSorter});
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			
+
 			var oTable = sap.ui.getCore().byId("MergeDuplicates");
 			var labelBeforeHeader = "before";
 			var labelAfterHeader = "after";
-		
+
 			//get label text of the item before header
 			labelBeforeHeader = oTable.getItems()[3].getCells()[2].$().text();
-			
+
 			//get label text of the item after header
 			labelAfterHeader = oTable.getItems()[5].getCells()[2].$().text();
-			
+
 			ok(labelBeforeHeader == labelAfterHeader, "label value after group header should not be merged.");
-			
+
 			//test for icon value
 			var iconAfterHeader = "after";
 			//get icon src of the item after header
 			iconAfterHeader = oTable.getItems()[5].getCells()[0].getDomRef();
-			
+
 			ok(iconAfterHeader, "icon src after group header should not be merged");
-			
+
 			//clean up
 			sut.destroy();
 		});
-		
+
 		test("Merge when Rerendering", function() {
 			var sut = createSUT("MergeDuplicates");
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			
+
 			var data = {
 					teamMembers:[
 						{lastName:"Doe" ,gender:"Male"}
@@ -190,31 +190,31 @@
 
 			sut.setModel(new sap.ui.model.json.JSONModel(data));
 			sap.ui.getCore().applyChanges();
-				
+
 			var oTable = sap.ui.getCore().byId("MergeDuplicates");
-			
+
 			//test for label value
 			var labelLastValue = oTable.getColumns()[2].getLastValue();
 			//test for icon value
 			var iconLastValue = oTable.getColumns()[0].getLastValue();
-	
-			
+
+
 			//rerender the table
 			oTable.rerender();
 			sap.ui.getCore().applyChanges();
-			
+
 			var labelAfterRender = oTable.getItems()[0].getCells()[2].$().text();
 			var iconAfterRender = oTable.getItems()[0].getCells()[0].getSrc();
-			
+
 			ok(labelLastValue == labelAfterRender, "last value of label should be cleared if there is only one row");
 			ok(iconLastValue == iconAfterRender, "last value of icon should be cleared if there is only one row")
-				
+
 			//clean up
 			sut.destroy();
-		});	
-		
+		});
+
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 		<h1 id="qunit-header">QUnit tests: sap.m.Column#mergeDuplicates</h1>

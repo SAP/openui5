@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
@@ -34,20 +34,20 @@
 
 	jQuery.sap.require("sap.ui.model.analytics.odata4analytics");
 	var odata4analytics = sap.ui.model.analytics.odata4analytics;
-	
+
 	//start the fake service
 	var sCompleteServiceURI = "http://o4aFakeService:8080/";
 	o4aFakeService.fake({
 		baseURI: sCompleteServiceURI
 	});
-	
+
 	function getModelInstance(sServiceURI) {
 		// TODO removeShared MetaData?
 		sServiceURI = sServiceURI || sCompleteServiceURI;
-		
+
 		//set base URI for the fake service if necessray
 		o4aFakeService.setBaseURI(sServiceURI);
-		
+
 		return new odata4analytics.Model({
 			oModel: new sap.ui.model.odata.ODataModel(sServiceURI)
 		});
@@ -511,7 +511,7 @@
 		ok(oParameter, "Parameter was found.");
 		//TODO fails with current metadata
 // 		ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
-		
+
 		// 1. plain list
 		var oParamValueSetRequest = new odata4analytics.ParameterValueSetRequest(oParameter);
 		oParamValueSetRequest.includeParameterText(true);
@@ -521,7 +521,7 @@
 
 		// 2. sorted list
 		var oBaseParameter = oQueryResult.getParameterization().findParameterByName("P_ControllingArea");
-		ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");		
+		ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");
 		//TODO make this work
 // 		var oSortExpression = oQueryResultRequest.getSortExpression();
 // 		oSortExpression.addSorter("P_ControllingArea", odata4analytics.SortOrder.Ascending);

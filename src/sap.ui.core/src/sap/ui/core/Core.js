@@ -260,6 +260,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			this._setupLang($html);
 
+			this._setupAnimation($html);
+
 			this._setupWeinre();
 
 			// create accessor to the Core API early so that initLibrary and others can use it
@@ -593,6 +595,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
+	 * Set the body's Animation-related attribute and configures jQuery accordingly.
+	 * @param $html - jQuery wrapped html object
+	 * @private
+	 */
+	Core.prototype._setupAnimation = function($html) {
+		$html = $html || jQuery("html");
+
+		var bAnimation = this.oConfiguration.getAnimation();
+		$html.attr("data-sap-ui-animation", bAnimation ? "on" : "off");
+		jQuery.fx.off = !bAnimation;
+	};
+
+	/**
 	 * Injects the Weinre remote debugger script, if required
 	 * @private
 	 */
@@ -748,7 +763,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 
 			// remove additional css files (ie9 rule limit fix)
-			if ($this.attr("sap-ui-css-count")) {
+			if ($this.attr("data-sap-ui-css-count")) {
 				$this.remove();
 			}
 
@@ -756,7 +771,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			sHref = that._getThemePath(sLibName, sThemeName) + sLibFileName;
 			if ( sHref != this.href ) {
 				this.href = sHref;
-				$this.removeAttr("sap-ui-ready");
+				$this.removeAttr("data-sap-ui-ready");
 			}
 		});
 	};
@@ -1491,17 +1506,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		// include the library theme, but only if it has not been suppressed in library metadata or by configuration
 		if ( !oLibInfo.noLibraryCSS && jQuery.inArray(sLibName, this.oConfiguration['preloadLibCss']) < 0 ) {
-			var sQuery;
 
-			// append library and distribution version (if available) to allow on demand custom theme compilation
-			if (this.oConfiguration["versionedLibCss"]) {
-				sQuery = "?version=" + oLibInfo.version;
+			// check for configured query parameters and use them
+			var sQuery = this._getLibraryCssQueryParams(oLibInfo);
 
-				// distribution version may not be available (will be loaded in Core constructor syncpoint2)
-				if (sap.ui.versioninfo) {
-					sQuery += "&sap-ui-dist-version=" + sap.ui.versioninfo.version;
-				}
-			}
 			this.includeLibraryTheme(sLibName, undefined, sQuery);
 		}
 
@@ -1569,6 +1577,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 		}
 
+	};
+
+	/**
+	 * Returns a string containing query parameters for theme specific files.
+	 *
+	 * Used in Core#initLibrary and ThemeCheck#checkStyle.
+	 *
+	 * @param {object} oLibInfo Library info object (containing a "version" property)
+	 * @return {string|undefined} query parameters or undefined if "versionedLibCss" config is "false"
+	 * @private
+	 */
+	Core.prototype._getLibraryCssQueryParams = function(oLibInfo) {
+		var sQuery;
+		if (this.oConfiguration["versionedLibCss"] && oLibInfo) {
+			sQuery = "?version=" + oLibInfo.version;
+
+			// distribution version may not be available (will be loaded in Core constructor syncpoint2)
+			if (sap.ui.versioninfo) {
+				sQuery += "&sap-ui-dist-version=" + sap.ui.versioninfo.version;
+			}
+		}
+		return sQuery;
 	};
 
 	/**
@@ -2082,26 +2112,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @private
 	 */
 	Core.prototype.registerElement = function(oElement) {
-		var oldElement = this.byId(oElement.getId());
+
+		var sId = oElement.getId(),
+			oldElement = this.mElements[sId];
+
 		if ( oldElement && oldElement !== oElement ) {
 			if ( oldElement._sapui_candidateForDestroy ) {
 				jQuery.sap.log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
 				oldElement.destroy();
-				oldElement = null;
-			}
-		}
-		if ( oldElement && oldElement !== oElement ) {
-
-			// duplicate ID detected => fail or at least log a warning
-			if (this.oConfiguration.getNoDuplicateIds()) {
-				jQuery.sap.log.error("adding element with duplicate id '" + oElement.getId() + "'");
-				throw new Error("Error: adding element with duplicate id '" + oElement.getId() + "'");
 			} else {
-				jQuery.sap.log.warning("adding element with duplicate id '" + oElement.getId() + "'");
+				// duplicate ID detected => fail or at least log a warning
+				if (this.oConfiguration.getNoDuplicateIds()) {
+					jQuery.sap.log.error("adding element with duplicate id '" + sId + "'");
+					throw new Error("Error: adding element with duplicate id '" + sId + "'");
+				} else {
+					jQuery.sap.log.warning("adding element with duplicate id '" + sId + "'");
+				}
 			}
 		}
 
-		this.mElements[oElement.getId()] = oElement;
+		this.mElements[sId] = oElement;
+
 	};
 
 	/**

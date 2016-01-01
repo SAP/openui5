@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
-	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 	<title>Grid - sap.ui.layout</title>
 
 	<script id='sap-ui-bootstrap' type='text/javascript'
@@ -12,9 +12,9 @@
 		data-sap-ui-libs='sap.ui.layout'>
 	</script>
 
-			
+
 	<script>
-		    
+
 	try{
 		sap.ui.getCore().loadLibrary("sap.ui.commons");
 	}catch(e){
@@ -27,12 +27,12 @@
 				defaultSpan: "XL4 L3 M6 S12",
 				defaultIndent:"XL4",
 				content: [
-				
+
 				// headings
 
 				new sap.ui.core.HTML({
 					content: '<b>Grid with 1rem horizontal and vertical spacing</b>'
-					
+
 				}),
 				new sap.ui.commons.Label({
 					text: 'Area spanning over the full width of the grid on all resolutions (XL8 L12 M12 S12)',
@@ -45,7 +45,7 @@
 					})
 				}),
 
-				
+
 				new sap.ui.core.HTML({
 					content: '<p>(XL4 L1 M1 S1)</p>',
 					width: "100%",
@@ -135,7 +135,7 @@
 					width: "100%"
 				}),
 
-				
+
 				new sap.ui.core.HTML({
 					content: '<p>Span L5, Indent L8</p>'
 				})
@@ -148,15 +148,15 @@
 				defaultSpan: "L4 M6",
 				defaultIndent:"L4",
 				content: [
-				
+
 
 				new sap.ui.core.HTML({
 					content: '<b>Grid with 2rem horizontal and vertical spacing</b>'
-					
+
 				}),
 				new sap.ui.commons.Label({
 					text: 'Area spanning over the full width of the grid on all resolutions (XL8 L12 M12 S12)',
-					
+
 					layoutData: new sap.ui.layout.GridData({
 						span: "XL6 L12 M12 S12",
 						spanXL: 8,
@@ -182,7 +182,7 @@
 
 	oGrid1.placeAt('content1');
 	oGrid2.placeAt('content2');
-		
+
 	</script>
 
 	<style>

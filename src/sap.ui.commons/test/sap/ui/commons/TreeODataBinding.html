@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>TreeTable - sap.ui.table</title>
 <link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.TreeTable.gif">
@@ -12,20 +12,20 @@
 <![endif]-->
 <!-- <script type="text/javascript" src="../../../../sap/ui/core/qunit/ODataModelTreeFakeService.js"></script> -->
 
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	type="text/javascript"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table"
 	data-sap-ui-theme="sap_bluecrystal"
 	src="../../../../resources/sap-ui-core.js"></script>
 
 <script type="text/javascript">
-	var sPath = "/Employees"; 
+	var sPath = "/Employees";
 	var oTree = new sap.ui.commons.Tree({
 		title: sPath,
 		showHeaderIcons : false,
 		height : "300px"
 	});
-	
+
 	var oFactSheetNodeTemplate = new sap.ui.commons.TreeNode({
 		text : {
 			parts : [ "FirstName", "LastName" ],
@@ -40,14 +40,14 @@
 		expanded : false,
 		hasExpander : true
 	});
-	
-	
+
+
 	var sServiceUrl = "../../../../proxy/http/services.odata.org/v2/Northwind/Northwind.svc/";
 	var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl,{
 		json: true
 	});
 	oModel.setSizeLimit(3000);
-	
+
 	oTree.setModel(oModel);
 	oTree.bindAggregation("nodes", {
 		path: sPath,
@@ -59,7 +59,7 @@
 		},
 		filters: new sap.ui.model.Filter("FirstName", "EQ", "Nancy")
 	});
-	
+
 	oTree.placeAt('content');
 </script>
 

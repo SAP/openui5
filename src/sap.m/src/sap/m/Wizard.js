@@ -244,6 +244,15 @@ sap.ui.define([
 		 * @public
 		 */
 		Wizard.prototype.goToStep = function (step, focusFirstStepElement) {
+			if (this._scrollLocked || !this.getVisible()) {
+				/**
+				 * Defensive code
+				 * Prevents an endless loop, if the developer calls
+				 * 2 times in a row the goToStep() method.
+				 */
+				return;
+			}
+
 			this._scrollLocked = true;
 			this._scroller.scrollTo(0, this._getStepScrollOffset(step), Wizard.CONSTANTS.ANIMATION_TIME);
 
@@ -567,7 +576,8 @@ sap.ui.define([
 			var previousStepIndex = event.getParameter("current") - 2;
 			var previousStep = this._stepPath[previousStepIndex];
 			var subsequentStep = this._getNextStep(previousStep, previousStepIndex);
-			this.goToStep(subsequentStep, true);
+			var focusFirstElement = sap.ui.Device.system.desktop ? true : false;
+			this.goToStep(subsequentStep, focusFirstElement);
 		};
 
 		/**

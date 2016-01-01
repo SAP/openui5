@@ -2,8 +2,8 @@
 <html>
 
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 	<title>qUnit Page for sap.ui.test.actions.Press</title>
 
 	<script
@@ -26,7 +26,10 @@
 			"sap/m/Button",
 			"sap/m/List",
 			"sap/m/StandardListItem",
-			"sap/m/ListMode"], function(Press, Button, List, StandardListItem, ListMode){
+			"sap/m/ListMode",
+			"sap/m/IconTabBar",
+			"sap/m/IconTabFilter"],
+		function(Press, Button, List, StandardListItem, ListMode, IconTabBar, IconTabFilter){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
@@ -142,6 +145,44 @@
 				oPressAction.executeOn(oSecondListItem);
 			});
 
+
+			QUnit.test("IconTabBar should fire selection change event", function(assert) {
+				var done = assert.async();
+
+				// Arrange
+				var oFirstTab = new IconTabFilter({
+							key: "foo"
+						}),
+					oSecondTab = new IconTabFilter({
+						key: "bar"
+					}),
+					oTabBar = new  IconTabBar({
+						items : [oFirstTab, oSecondTab]
+					});
+				oTabBar.setSelectedItem(oFirstTab);
+				oTabBar.placeAt("qunit-fixture");
+
+				//No need to add the list items as they will be
+				//cleaned up by its tabbar
+				aControlsToClean.push(oTabBar);
+
+				//Make sure that button is rendered
+				sap.ui.getCore().applyChanges();
+
+				// System under Test
+				var oPressAction = new Press();
+
+				oTabBar.attachSelect(function () {
+					assert.ok(true, "Select has been triggered");
+					assert.ok(jQuery(document.activeElement).is(oSecondTab.$()), "Pressed Tab has focus");
+					assert.strictEqual(oTabBar.getSelectedKey(), "bar", "Pressed Tab is selected");
+					//Call 'done' to resume qunit processing
+					done();
+				}, this);
+
+				// Act
+				oPressAction.executeOn(oSecondTab);
+			});
 		});
 	</script>
 </head>

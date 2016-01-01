@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>OData Annotations - sap.ui.core</title>
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
@@ -33,7 +33,7 @@ var fnOriginalClearTimeout = window.setTimeout;
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
 
-<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>	
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- Whether to use the sinon faketimers for this test -->
 <script type="text/javascript">
@@ -52,7 +52,7 @@ var fnOriginalClearTimeout = window.setTimeout;
 <script>
 	// Enable code coverage
     jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	
+
 	sap.ui.getCore().attachInit(function() {
 		runODataAnnotationTests();
 	})

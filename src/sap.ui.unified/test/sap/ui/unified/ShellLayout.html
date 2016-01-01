@@ -1,18 +1,18 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 	<title>Shell - sap.ui.unified</title>
-	<script src="../../../../resources/sap-ui-core.js" 
-	        type="text/javascript" 
-	        id="sap-ui-bootstrap"            
+	<script src="../../../../resources/sap-ui-core.js"
+	        type="text/javascript"
+	        id="sap-ui-bootstrap"
 	        data-sap-ui-libs="sap.ui.unified"
 	        data-sap-ui-theme="sap_bluecrystal">
 	</script>
 	<script src="resources/ShellTestPage.js" type="text/javascript"></script>
-	<script>	
+	<script>
 	function createContent(sText){
 		var aContent = [];
 		aContent.push(new sap.ui.commons.TextView({text: sText}));
@@ -48,18 +48,18 @@
 		}));
 		return aContent;
 	};
-	
+
 	jQuery.sap.require("sap.ui.unified.ShellHeader");
-	
+
 	var oHeader = new sap.ui.unified.ShellHeader();
-	
+
 	var oShell = new sap.ui.unified.ShellLayout({
 		header: oHeader,
 		content: createContent("Content"),
 		paneContent: createContent("Pane")
 	});
 	oShell.placeAt("content");
-	
+
 	var aContent = createContent("Curtain");
 	for(var i=0; i<aContent.length; i++){
 		oShell.addCurtainContent(aContent[i]);
@@ -68,13 +68,13 @@
 	for(var i=0; i<aContent.length; i++){
 		oShell.addCurtainPaneContent(aContent[i]);
 	}
-	
+
 	//*******************
-	
+
 	function itemPressed(oEvent) {
-		alert("Item pressed");	
+		alert("Item pressed");
 	}
-	
+
 	var oAddItem = new sap.ui.commons.Button({
 		text: "Add Header Item",
 		press: function(){
@@ -84,7 +84,7 @@
 			}));
 		}
 	});
-	
+
 	var oAddEndItem = new sap.ui.commons.Button({
 		text: "Add Header End Item",
 		press: function(){
@@ -94,7 +94,7 @@
 			}));
 		}
 	});
-	
+
 	var oAddUserItem = new sap.ui.commons.Button({
 		text: "Add User Item",
 		press: function(){
@@ -109,14 +109,14 @@
 			}));
 		}
 	});
-	
+
 	var oSetLogo = new sap.ui.commons.Button({
 		text: "Set Logo",
 		press: function(){
 			oHeader.setLogo("images/testlogo_200x50.png");
 		}
 	});
-	
+
 	var oSetSearch = new sap.ui.commons.Button({
 		text: "Set Search",
 		press: function(){
@@ -125,7 +125,7 @@
 			}
 		}
 	});
-	
+
 	var oUsername = new sap.ui.commons.TextField({
 		value: "Karl Mustermann",
 		change: function(){
@@ -134,9 +134,9 @@
 			}
 		}
 	});
-	
+
 	var oImage = new sap.ui.commons.CheckBox({text: "Use Image"});
-	
+
 	var oClear = new sap.ui.commons.Button({
 		text: "Clear",
 		press: function(){
@@ -147,7 +147,7 @@
 			oHeader.setLogo("");
 		}
 	});
-	
+
 	var aAdditionalContent = [new sap.ui.commons.HorizontalDivider(),
 	        		          oAddItem, oAddEndItem, oAddUserItem,
 	        		          new sap.ui.commons.HorizontalDivider(),

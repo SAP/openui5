@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>HorizontalDivider - sap.ui.commons</title>
 	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.HorizontalDivider.gif">
@@ -40,14 +40,14 @@
 		}
 		oInputHeight.setSelectedIndex(2);
 		var oLabelInputHeight = new sap.ui.commons.Label("oLabelInputHeight");
-		oLabelInputHeight.setText("Height: ");    
+		oLabelInputHeight.setText("Height: ");
 		oLabelInputHeight.setLabelFor(oInputHeight);
 
 		var oButton = new sap.ui.commons.Button("oButton");
     oButton.setText("Apply");
     oButton.attachPress(
 	    		function (oControlEvent) {
-	        		oDivider.setWidth(oInputWidth.getValue()); 
+	        		oDivider.setWidth(oInputWidth.getValue());
 	        		oDivider.setHeight(oInputHeight.getSelectedItem().getText());
 	        		oDivider.setType(oInputType.getSelectedItem().getText());
 	    	    }

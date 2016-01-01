@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>SplitContainer - sap.ui.unified</title>
-	<script src="../../../../resources/sap-ui-core.js" 
-	        type="text/javascript" 
-	        id="sap-ui-bootstrap"            
+	<script src="../../../../resources/sap-ui-core.js"
+	        type="text/javascript"
+	        id="sap-ui-bootstrap"
 	        data-sap-ui-libs="sap.ui.unified"
 	        data-sap-ui-theme="sap_bluecrystal">
 	</script>
@@ -18,15 +18,15 @@
 		}
 	</style>
 	<script>
-	
+
 		try{
 			sap.ui.getCore().loadLibrary("sap.ui.commons");
 		}catch(e){
 			alert("This test page requires the library 'sap.ui.commons' which is not available.");
 			throw(e);
 		}
-	
-	
+
+
 		var oContainer = new sap.ui.unified.SplitContainer({
 			content: [new sap.ui.commons.Button({
 				text: "Content",
@@ -42,7 +42,7 @@
 			})]
 		});
 		oContainer.placeAt("content");
-		
+
 		var oButton = new sap.ui.commons.Button({
 			text: "Toggle Side Pane",
 			press: function(){
@@ -55,8 +55,8 @@
 			text: "Switch Orientation",
 			press: function(){
 				oContainer.setOrientation(
-					oContainer.getOrientation() == sap.ui.unified.Orientation.Vertical 
-					? sap.ui.unified.Orientation.Horizontal 
+					oContainer.getOrientation() == sap.ui.unified.Orientation.Vertical
+					? sap.ui.unified.Orientation.Horizontal
 					: sap.ui.unified.Orientation.Vertical
 				);
 			}

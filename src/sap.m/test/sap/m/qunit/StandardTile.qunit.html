@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 	<title>StandardTile - sap.m</title>
 
@@ -22,20 +22,20 @@
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script type="text/javascript">
-		
+
 		var tileBasic, tileNoIcon, tileNoNumber, tileIconFont;
-		
+
 		var tileBasicId = "tileBasic",
 			tileNoIconId = "tileNoIcon",
 			tileNoNumberId = "tileNoNumber",
 			tileIconFontId = "tileIconFont",
 			core = sap.ui.getCore(),
 			pressedTileId;
-		
+
 		function handlePress(oEvent) {
 			pressedTileId = oEvent.oSource.getId();
 		}
-		
+
 		tileBasic = new sap.m.StandardTile(tileBasicId, {
 			icon : "../images/action.png",
 			number : 37,
@@ -57,7 +57,7 @@
 			title : "Lorem ipsum dolor",
 			info : "1 day ago"
 		});
-		
+
 		tileIconFont = new sap.m.StandardTile(tileIconFontId, {
 			icon : sap.ui.core.IconPool.getIconURI("inbox"),
 			number : 37,
@@ -70,11 +70,11 @@
 		tilesList.push(tileNoIcon);
 		tilesList.push(tileNoNumber);
 		tilesList.push(tileIconFont);
-		
+
 		var tc = new sap.m.TileContainer("tc",{
 			tiles : tilesList
 		});
-				
+
 		tc.placeAt("tiles");
 
 		module("Rendering All Fields");
@@ -82,11 +82,11 @@
 		test("ControlRendered", function() {
 			notEqual(jQuery.sap.domById(tileBasicId), null, "tileBasic should be rendered.");
 		});
-		
+
 		test("IconRendered", function() {
 			notEqual(jQuery.sap.domById(tileBasicId + "-img"), null, "tileBasic icon should be rendered.");
-		});		
-		
+		});
+
 		test("IconFontRendered", function() {
 			equal(jQuery.sap.domById(tileIconFont + "-img"), null, "tileIconFont icon should be rendered.");
 		});
@@ -94,32 +94,32 @@
 		test("NumberRendered", function() {
 			notEqual(jQuery.sap.domById(tileBasicId + "-number"), null, "tileBasic number should be rendered.");
 		});
-		
+
 		test("NumberUnitRendered", function() {
 			notEqual(jQuery.sap.domById(tileBasicId + "-numberUnit"), null, "tileBasic number unit should be rendered.");
 		});
-		
+
 		test("TitleRendered", function() {
 			notEqual(jQuery.sap.domById(tileBasicId + "-title"), null, "tileBasic title should be rendered.");
 		});
-		
+
 		test("DescriptionRendered", function() {
 			notEqual(jQuery.sap.domById(tileBasicId + "-info"), null, "tileBasic info should be rendered.");
 		});
-		
-		test("ShouldRenderAddIconIfTypeIsCreate", function() {	
+
+		test("ShouldRenderAddIconIfTypeIsCreate", function() {
 			//SUT
 			var result,
 				sut = new sap.m.StandardTile({type: "Create"});
-			
+
 			//Act
 			result = sut.getIcon();
 
 			//Assert
 			ok(result,"result should not be undefined");
 			ok(result.indexOf("add") !== -1, result,"result should contain add");
-			
-			
+
+
 			sut.destroy();
 		});
 
@@ -154,16 +154,16 @@
 
 
 
-		module("Not Rendering Optional Fields");	
-		
+		module("Not Rendering Optional Fields");
+
 		test("IconNotRendered", function() {
 			equal(jQuery.sap.domById(tileNoIconId + "-img"), null, "tileNoIcon icon should not be rendered.");
-		});		
-		
+		});
+
 		test("NumberNotRendered", function() {
 			equal(jQuery.sap.domById(tileNoNumberId + "-number"), null, "tileNoNumber number and number units should not be rendered.");
-		});		
-		
+		});
+
 
 		module("Events", {
 			setup : function() {
@@ -173,23 +173,23 @@
 				tileBasic = null;
 			}
 		});
-		
+
 		test("PressOk", function() {
 			tileBasic.firePress();
 			jQuery.sap.log.info("Pressed tile id=" + pressedTileId);
 			equals(pressedTileId, tileBasicId, "tileBasic was pressed");
 		});
-		
+
 		test("ShouldDestroyTheImageIfTileGetsDestroyed", function() {
 			//SUT
 			var sut = new sap.m.StandardTile({type: "Create"});
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
-			
+
 			ok(sut._oImageControl, "make sure the Tile has an image");
-						
+
 			//Act
-			sut.destroy();			
+			sut.destroy();
 
 			//Assert
 			equal(sut._oImageControl,null);

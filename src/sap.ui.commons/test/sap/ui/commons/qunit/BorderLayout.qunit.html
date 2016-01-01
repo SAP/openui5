@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.layout.BorderLayout
   Author: d046314
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -47,9 +47,9 @@
 	oLayout.setAreaData("bottom", 	{overflowX: "scroll" , overflowY: "hidden" ,contentAlign: "right", size: "66px", visible: true});
 
 	sap.ui.setRoot("uiArea1", oLayout);
-	
+
 	</script>
-	
+
 	<!-- Test functions -->
 	<script language="javascript">
 
@@ -58,11 +58,11 @@
 	module("Parent-Properties");
 
 	test("Custom Values", function() {
-		equal(oLayout.getRtl()		 , false, "Custom 'rtl': "); 		
+		equal(oLayout.getRtl()		 , false, "Custom 'rtl': ");
 	});
 
 	test("Default Values", function() {
-		equal(oLayoutInner.getRtl()      , false, "Default 'rtl': "); 		
+		equal(oLayoutInner.getRtl()      , false, "Default 'rtl': ");
 	});
 
 	module("Area-Properties");
@@ -71,7 +71,7 @@
 		var oData;
 		//Top
 		equal(oLayout.getTop().getAreaId(), "top", "Top AUTO 'areaId': ");
-		oData = oLayout.getAreaData("top");		
+		oData = oLayout.getAreaData("top");
 		equal(oData.overflowX, "auto", "Top Custom 'overflowX': ");
 		equal(oData.overflowY, "auto", "Top Custom 'overflowY': ");
 		equal(oData.contentAlign, "center", "Top Custom 'contentAlign': ");
@@ -94,17 +94,17 @@
 		equal(oData.overflowY, "auto", "Center Custom 'overflowY': ");
 		equal(oData.contentAlign, "center", "Center Custom 'contentAlign': ");
 		equal(oData.size, "100px", "Center Custom 'size': ");
-		equal(oData.visible, true, "Center Custom 'visible': ");		
-		
+		equal(oData.visible, true, "Center Custom 'visible': ");
+
 		//End
 		equal(oLayout.getEnd().getAreaId(), "end", "End AUTO 'areaId': ");
-		oData = oLayout.getAreaData("end"); 
+		oData = oLayout.getAreaData("end");
 		equal(oData.overflowX, "scroll", "End Custom 'overflowX': ");
 		equal(oData.overflowY, "scroll", "End Custom 'overflowY': ");
 		equal(oData.contentAlign, "left", "End  Custom 'contentAlign': ");
 		equal(oData.size, "78px", "Center Custom 'size': ");
 		equal(oData.visible, true, "Center Custom 'visible': ");
-		
+
 		//Bottom
 		equal(oLayout.getBottom().getAreaId(), "bottom", "Bottom AUTO 'areaId': ");
 		oData = oLayout.getAreaData("bottom");
@@ -119,7 +119,7 @@
 		var oData;
 		//Inner Top
 		equal(oLayoutInner.getTop().getAreaId(), "top", "Inner Top AUTO 'areaId': ");
-		oData = oLayoutInner.getAreaData("top");		
+		oData = oLayoutInner.getAreaData("top");
 		equal(oData.overflowX, "auto", "Inner Top Custom 'overflowX': ");
 		equal(oData.overflowY, "auto", "Inner Top Custom 'overflowY': ");
 		equal(oData.contentAlign, "left", "Inner Top Custom 'contentAlign': ");
@@ -128,34 +128,34 @@
 
 		//Begin
 		equal(oLayoutInner.getBegin().getAreaId(), "begin", "Inner Begin AUTO 'areaId': ");
-		oData = oLayoutInner.getAreaData("begin");		
+		oData = oLayoutInner.getAreaData("begin");
 		equal(oData.overflowX, "auto", "Inner Begin Custom 'overflowX': ");
 		equal(oData.overflowY, "auto", "Inner Begin Custom 'overflowY': ");
 		equal(oData.contentAlign, "left", "Inner TBegin Custom 'contentAlign': ");
 		equal(oData.size, "100px", "Inner Begin Custom 'size': ");
 		equal(oData.visible, true, "Inner Begin Custom 'visible': ");
-		
+
 		//Center
 		equal(oLayoutInner.getCenter().getAreaId(), "center", "Inner Center AUTO 'areaId': ");
-		oData = oLayoutInner.getAreaData("center");		
+		oData = oLayoutInner.getAreaData("center");
 		equal(oData.overflowX, "auto", "Inner Begin Custom 'overflowX': ");
 		equal(oData.overflowY, "auto", "Inner Begin Custom 'overflowY': ");
 		equal(oData.contentAlign, "left", "Inner TBegin Custom 'contentAlign': ");
 		equal(oData.size, "100px", "Inner Begin Custom 'size': ");
 		equal(oData.visible, true, "Inner Begin Custom 'visible': ");
-		
+
 		//End
 		equal(oLayoutInner.getEnd().getAreaId(), "end", "Inner End AUTO 'areaId': ");
-		oData = oLayoutInner.getAreaData("end");		
+		oData = oLayoutInner.getAreaData("end");
 		equal(oData.overflowX, "auto", "Inner End Custom 'overflowX': ");
 		equal(oData.overflowY, "auto", "Inner End Custom 'overflowY': ");
 		equal(oData.contentAlign, "left", "Inner End Custom 'contentAlign': ");
 		equal(oData.size, "100px", "Inner End Custom 'size': ");
 		equal(oData.visible, true, "Inner End Custom 'visible': ");
-		
+
 		//Bottom
 		equal(oLayoutInner.getBottom().getAreaId(), "bottom", "Inner Bottom AUTO 'areaId': ");
-		oData = oLayoutInner.getAreaData("bottom");		
+		oData = oLayoutInner.getAreaData("bottom");
 		equal(oData.overflowX, "auto", "Inner Bottom Custom 'overflowX': ");
 		equal(oData.overflowY, "auto", "Inner Bottom Custom 'overflowY': ");
 		equal(oData.contentAlign, "left", "Inner Bottom Custom 'contentAlign': ");
@@ -167,11 +167,11 @@
 	var oLink1;
 	test("Adding Content", function() {
 		//Add one Control
-		oLink1 = new sap.ui.commons.Link("link1", {text : "Link1 added by addContent"});		
+		oLink1 = new sap.ui.commons.Link("link1", {text : "Link1 added by addContent"});
 		oLayout.addContent("top", oLink1);
 		sap.ui.getCore().applyChanges();
 		equal(oLayout.getTop().getContent()[1].getId(), "link1", "Top Link1 was added: ");
-		
+
 		//Add more than one Control
 		var oLink2 = new sap.ui.commons.Link("link2", {text : "Link2 added by addContent"});
 		var oLink3 = new sap.ui.commons.Link("link3", {text : "Link3 added by addContent"});
@@ -179,7 +179,7 @@
 		sap.ui.getCore().applyChanges();
 
 		equal(oLayout.getEnd().getContent()[1].getId(), "link2", "End Link2 was added: ");
-		equal(oLayout.getEnd().getContent()[2].getId(), "link3", "End Link3 was added: ");			
+		equal(oLayout.getEnd().getContent()[2].getId(), "link3", "End Link3 was added: ");
 	});
 
 	test("Inserting Content", function() {
@@ -197,7 +197,7 @@
 		sap.ui.getCore().applyChanges();
 
 		equal(oLayout.getBottom().getContent()[1].getId(), "link5", "Bottom Link5 and Link6 were added to Index 1");
-		equal(oLayout.getBottom().getContent()[2].getId(), "link6", "Bottom Link5 and Link6 were added to Index 1");		
+		equal(oLayout.getBottom().getContent()[2].getId(), "link6", "Bottom Link5 and Link6 were added to Index 1");
 	});
 
 	test("Removing Content", function() {
@@ -272,7 +272,7 @@
 	});
 
 	</script>
-  
+
 </head>
 <body>
 	<h1 id="qunit-header">QUnit tests: sap.ui.commons.layout.BorderLayout</h1>

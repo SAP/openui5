@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>sap.m.QuickView</title>
 	<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
@@ -20,7 +20,7 @@
 	</style>
 	<script>
 
-		//		create JSON model instance
+		// create JSON model instance
 		var oModel = new sap.ui.model.json.JSONModel();
 
 		// JSON sample data
@@ -227,6 +227,7 @@
 		app.placeAt("body");
 
 		var oQuickView = new sap.m.QuickView({
+			placement : sap.m.PlacementType.VerticalPreferedBottom,
 			tooltip: "Employee QuickView",
 			pages : {
 				path : '/pages',
@@ -256,9 +257,12 @@
 			}
 		});
 
-		var oQuickView1 = new sap.m.QuickView();
+		var oQuickView1 = new sap.m.QuickView({
+			placement : sap.m.PlacementType.VerticalPreferedBottom
+		});
 
 		var oQuickView2 = new sap.m.QuickView({
+			placement : sap.m.PlacementType.VerticalPreferedBottom,
 			pages : [
 				new sap.m.QuickViewPage({
 					header	: "Store",
@@ -297,8 +301,6 @@
 		});
 
 		oQuickView.setModel(oModel);
-
-		// this.getView().addDependent(oQuickView);
 
 		var oButton = new sap.m.Button({
 			text: "Open Quick View with binding",
@@ -339,7 +341,7 @@
 			header	: "Store",
 			title	: "Jumbo",
 			description	: "The best toy store in the USA",
-			icon	: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg", //"sap-icon://retail-store",
+			icon	: "http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg",
 			groups	: [
 				new sap.m.QuickViewGroup({
 					heading		: "Store details",

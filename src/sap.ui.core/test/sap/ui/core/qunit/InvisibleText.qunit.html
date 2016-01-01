@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.core.InvisibleText
   Author: d046314
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -34,23 +34,23 @@
 	test("Hidden Text is really hidden", function(){
 		var iWidth = jQuery.sap.byId("content").width();
 		var iHeight = jQuery.sap.byId("content").height();
-		
+
 		var text = new sap.ui.core.InvisibleText({text: "Hello"});
 		text.placeAt("content");
 		sap.ui.getCore().applyChanges();
-		
+
 		equal(iWidth, jQuery.sap.byId("content").width(), "Width of container not influenced by hidden text.");
 		equal(iHeight, jQuery.sap.byId("content").height(), "Height of container not influenced by hidden text.");
 		ok(text.$().parent().attr("id") == "content", "Invisible Text was rendered.");
 	});
-	
+
 	test("Render to static area", function(){
 		var text = new sap.ui.core.InvisibleText({text: "Hello"});
 		text.toStatic();
 		sap.ui.getCore().applyChanges();
 		ok(text.$().parent().attr("id") == "sap-ui-static", "Invisible Text was rendered to static area");
 	});
-	
+
 	test("Rendering", function(){
 		var text = new sap.ui.core.InvisibleText({text: "Hello"});
 		text.toStatic();

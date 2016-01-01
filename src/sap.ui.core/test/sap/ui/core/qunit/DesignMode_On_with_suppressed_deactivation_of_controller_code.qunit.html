@@ -8,7 +8,7 @@
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for Design Mode</title>
 
  <script id="sap-ui-bootstrap" type="text/javascript"
@@ -36,7 +36,7 @@ test("Get Design Mode and Suppression of Deactivation of Controller Code", 2, fu
 
 	var designMode = sap.ui.getCore().getConfiguration().getDesignMode();
 	equal(designMode, true, "Design Mode is on");
-	
+
 	var suppressDeactivationOfControllerCode = sap.ui.getCore().getConfiguration().getSuppressDeactivationOfControllerCode();
 	equal(suppressDeactivationOfControllerCode, true, "Suppression of Deactivation of Controller Code is on");
 
@@ -46,7 +46,7 @@ test("Create an HTMLView instance and check controller methods are not replaced 
 
 	var oView = sap.ui.htmlview("example.designmode.test01");
 	var oController = oView.getController();
-	
+
 //check lifecycle hooks
 	equal(oController.onInit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
 	equal(oController.onExit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");

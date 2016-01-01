@@ -1,23 +1,23 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.RoadMap
   Author: d046314
 -->
 
-<html> 
-<head> 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>RoadMap - sap.ui.commons</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.RoadMap.gif">
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -74,7 +74,7 @@
 	var oRoadMap3 = createRoadMap(3, {});
 	oRoadMap3.addStep(new sap.ui.commons.RoadMapStep());
 	</script>
-	
+
 	<!-- Test help functions -->
 	<script language="javascript">
 
@@ -86,7 +86,7 @@
 		var bVisible = jQuery("#"+sId).is(":visible");
 		return (bExpectVisible && bVisible) || (!bExpectVisible && !bVisible);
 	};
-	
+
 	var checkExpandState = function(sIdSuffix, bExpectExpanded){
 		var sStepId = "s"+sIdSuffix;
 		var aSubStepIds = [sStepId+"a", sStepId+"b", sStepId+"c", sStepId+"d"];
@@ -98,7 +98,7 @@
 	};
 
 	</script>
-	
+
 	<!-- Test functions -->
 	<script language="javascript">
 
@@ -267,7 +267,7 @@
 	asyncTest("Click on expandable step (expanded)", function() {
 		var bExpandEventFired = false;
 		ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-		
+
 		var handler = function(oControlEvent){
 			ok(false, "No Selected Event should be fired because step was already selected");
 		};
@@ -287,7 +287,7 @@
 			ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
 		}, 1000);
-		
+
 		oRoadMap1.attachStepSelected(handler);
 		oRoadMap1.attachStepExpanded(handler2);
 		qutils.triggerEvent("click", "s3", {}); //Focus is set automatically by the step when selected
@@ -321,7 +321,7 @@
 			checkFocus("s3-box", "Focus still on previously clicked step");
 		}, 1500);
 		qutils.triggerEvent("click", "rm1-End", {}); //Focus is set automatically by the step when selected
-	});		
+	});
 
 
 	module("Interaction - Keyboard");
@@ -404,7 +404,7 @@
 			oRoadMap1.detachStepExpanded(handler2);
 			bExpandEventFired = true;
 		};
-		
+
 		oRoadMap1.attachStepSelected(handler);
 		oRoadMap1.attachStepExpanded(handler2);
 		jQuery("#s3-box").get(0).focus();
@@ -414,7 +414,7 @@
 	asyncTest("SPACE key expandable step (expanded)", function() {
 		var bExpandEventFired = false;
 		ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-		
+
 		var handler = function(oControlEvent){
 			ok(false, "No Selected Event should be fired because step was already selected");
 		};
@@ -434,7 +434,7 @@
 			ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
 		}, 1000);
-		
+
 		oRoadMap1.attachStepSelected(handler);
 		oRoadMap1.attachStepExpanded(handler2);
 		qutils.triggerKeyboardEvent("s3", "SPACE");
@@ -443,7 +443,7 @@
 	asyncTest("ENTER key expandable step (not expanded)", function() {
 		var bExpandEventFired = false;
 		ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-		
+
 		var handler = function(oControlEvent){
 			ok(false, "No Selected Event should be fired because step was already selected");
 		};
@@ -463,7 +463,7 @@
 			ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
 		}, 1000);
-		
+
 		oRoadMap1.attachStepSelected(handler);
 		oRoadMap1.attachStepExpanded(handler2);
 		qutils.triggerKeyboardEvent("s3", "ENTER");
@@ -472,7 +472,7 @@
 	asyncTest("ENTER key expandable step (expanded)", function() {
 		var bExpandEventFired = false;
 		ok(jQuery("#s3").hasClass("sapUiRoadMapSelected"), "Selected Step still has special CSS class");
-		
+
 		var handler = function(oControlEvent){
 			ok(false, "No Selected Event should be fired because step was already selected");
 		};
@@ -492,7 +492,7 @@
 			ok(bExpandEventFired, "Expand event was fired");
 			oRoadMap1.detachStepSelected(handler);
 		}, 1000);
-		
+
 		oRoadMap1.attachStepSelected(handler);
 		oRoadMap1.attachStepExpanded(handler2);
 		qutils.triggerKeyboardEvent("s3", "ENTER");
@@ -560,9 +560,9 @@
 			}, 1200);
 		}, 0);
 	});
-		
+
 	</script>
-	  
+
 	</head>
 	<body class="sapUiBody" role="application">
 		<h1 id="qunit-header">QUnit tests: sap.ui.commons.RoadMap</h1>

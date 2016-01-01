@@ -1,37 +1,37 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: jquery.sap.strings.js
   Author: d050084
 -->
 
 <html>
-  
+
 <head>
-<META http-equiv="Content-Type" content="text/html; charset=utf-8">
-    
+<meta charset="utf-8">
+
 <title>Test Page for jquery.sap.strings.js</title>
-    
+
 	<script id="sap-ui-bootstrap"
 		      type="text/javascript"
 		      src="../../../../../resources/sap-ui-core.js"
 		      data-sap-ui-theme="sap_bluecrystal"
-		      data-sap-ui-noConflict="true"> 
+		      data-sap-ui-noConflict="true">
 	</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
-		
+
     jQuery.sap.require("jquery.sap.strings");
-		
+
 	  test("EndsWithOk", function () {
 			ok(jQuery.sap.endsWith("abcde", "cde"), "'abcde' ends with 'cde'");
 			ok(jQuery.sap.endsWith("abc de", "c de"), "'abc de' ends with 'c de'");
 			ok(!(jQuery.sap.endsWith("abcde", "ce")), "'abcde' doesn't end with 'ce'");
 			ok(!(jQuery.sap.endsWith("abcde", "cDe")), "'abcde' doesn't end with 'cDe'");
-			
+
 			ok(!(jQuery.sap.endsWith("abcde", "")), "'abcde' doesn't end with ''");
 			ok(!(jQuery.sap.endsWith("abcde", 10)), "'abcde' doesn't end with '10'");
 			ok(!(jQuery.sap.endsWith("abcde", null)), "'abcde' doesn't end with null");
@@ -51,12 +51,12 @@
 				ok(jQuery.sap.endsWithIgnoreCase("abcdE", "cDe"), "'abcdE' does end with 'cDe'");
 				ok(jQuery.sap.endsWith("abc De", "c De"), "'abc De' ends with 'c De'");
 				ok(!(jQuery.sap.endsWithIgnoreCase("abcdE", "cE")), "'abcdE' doesn't end with 'cE'");
-				
+
 				ok(!(jQuery.sap.endsWithIgnoreCase("abcdE", "")), "'abcdE' doesn't end with ''");
 				ok(!(jQuery.sap.endsWithIgnoreCase("abcdE", 10)), "'abcdE' doesn't end with '10'");
 				ok(!(jQuery.sap.endsWithIgnoreCase("abcdE", null)), "'abcdE' doesn't end with null");
 			});
-			
+
 			test("EndsWithIgnoreCaseFailed", function () {
 				try {
 					jQuery.sap.endsWithIgnoreCase(null, "abC");
@@ -73,11 +73,11 @@
 			ok(jQuery.sap.startsWith("abc de", "abc "), "'abc de' starts with 'abc '");
 			ok(!(jQuery.sap.startsWith("abcde", "ac")), "'abcde' doesn't start with 'ac'");
 			ok(!(jQuery.sap.startsWith("abcde", "aB")), "'abcde' doesn't start with 'aB'");
-					
+
 			ok(!(jQuery.sap.startsWith("abcde", "")), "'abcde' doesn't start with ''");
 			ok(!(jQuery.sap.startsWith("abcde", 10)), "'abcde' doesn't start with '10'");
 			ok(!(jQuery.sap.startsWith("abcde", null)), "'abcde' doesn't start with null");
-		});	
+		});
 
 		test("StartsWithFailed", function () {
 			try {
@@ -94,11 +94,11 @@
 			ok(jQuery.sap.startsWithIgnoreCase("abC de", "abc D"), "'abC de' starts with 'abc D'");
 			ok(jQuery.sap.startsWithIgnoreCase("abC de", "aBc "), "'abC de' starts with 'aBc '");
 			ok(!(jQuery.sap.startsWithIgnoreCase("abCde", "aC")), "'abCde' doesn't start with 'aC'");
-					
+
 			ok(!(jQuery.sap.startsWithIgnoreCase("abcdE", "")), "'abcdE' doesn't start with ''");
 			ok(!(jQuery.sap.startsWithIgnoreCase("abcdE", 10)), "'abcdE' doesn't start with '10'");
 			ok(!(jQuery.sap.startsWithIgnoreCase("abcdE", null)), "'abcdE' doesn't start with null");
-		});	
+		});
 
 		test("StartsWithIgnoreCaseFailed", function () {
 			try {
@@ -107,7 +107,7 @@
 			} catch (e) {
 		  		ok(true, "exception expected");
 			}
-		});		
+		});
 
 //		test("ContainsOk", function (){
 //			assertTrue("'abcde' contains 'abc'", jQuery.sap.contains("abcde", "abc"));
@@ -129,7 +129,7 @@
 //			} catch (e) {
 //		  		assertTrue("exception expected", true);
 //			}
-//		});			
+//		});
 
 //		test("ContainsIgnoreCaseOk", function (){
 //			assertTrue("'abcde' contains 'aBc'", jQuery.sap.containsIgnoreCase("abcde", "aBc"));
@@ -169,7 +169,7 @@
 			strictEqual("ggGT", jQuery.sap.charToUpperCase("gggT",2));
 			strictEqual("loW", jQuery.sap.charToUpperCase("low",2));
 			strictEqual("Löw", jQuery.sap.charToUpperCase("löw",3));
-			
+
 			strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",-1));
 			strictEqual("GggT", jQuery.sap.charToUpperCase("gggT",-2));
 			strictEqual("GggT", jQuery.sap.charToUpperCase("gggT","kgtzjrf"));
@@ -179,25 +179,25 @@
 			strictEqual(jQuery.sap.charToUpperCase(null,-1), null);
 
 			try {
-				jQuery.sap.charToUpperCase("gggT",k) 
+				jQuery.sap.charToUpperCase("gggT",k)
 				ok(false, "exception should have been thrown");
 			} catch (e) {
 		  		ok(true, "exception expected");
 			}
-			
+
 		});
-		
-		
+
+
 		test("CamelCase", 2, function() {
 			var sCamelCase = jQuery.sap.camelCase("this-is-an-camel-case-string");
 			equal(sCamelCase, "thisIsAnCamelCaseString", "CamelCase function returns the right value");
-			
+
 			var sCamelCase = jQuery.sap.camelCase("this-is-an-1amel-case-ütring");
 			equal(sCamelCase, "thisIsAn1amelCaseÜtring", "CamelCase function returns the right value for numeric and umlauts chars");
 		});
 
 		module("formatMessage");
-		
+
 		test("simple case", function() {
 			equal(jQuery.sap.formatMessage("Say {0}", ["Hello"]), "Say Hello", "should replace unqouted placeholder0");
 			equal(jQuery.sap.formatMessage("{2},{1},{0}, {3}!", ["1", "2", "3", "Go"]), "3,2,1, Go!", "should replace multiple placeholders in the right order");

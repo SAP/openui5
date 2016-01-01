@@ -2,8 +2,8 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 
 	<title>Localization/Formatting - sap.ui.core</title>
 
@@ -78,17 +78,17 @@
 		"de_XX",
 		"xx_XX"
 	];
-	
+
 	var oData = {
-		
+
 		locales: jQuery.map(aLocales, function(sLocale, i) {
 			return {
 				key : sLocale,
 				locale : new sap.ui.core.Locale(sLocale)
 			};
 		}),
-		
-		legacyDateFormats: [ 
+
+		legacyDateFormats: [
 			{ key: "", caption: "(none)" },
 			{ key: "1", caption: "dd.MM.yyyy" },
 			{ key: "2", caption: "MM/dd/yyyy" },
@@ -128,11 +128,11 @@
 		locale : null,
 		formatLanguage : null,
 		formatLocale : null,
-		
+
 		dateValue: new Date(1642342342323),
 		intValue: 234234234,
 		floatValue: 2342234.234,
-		
+
 	};
 
 	var oModel = new sap.ui.model.json.JSONModel();
@@ -145,32 +145,32 @@
 		var mTerritories = oLocaleData.getTerritories();
 
 		function caption(vLocale) {
-			var oLocale = (typeof vLocale === "string") ? new sap.ui.core.Locale(vLocale) : vLocale; 
-			var sLanguage = mLanguages[oLocale.getLanguage()] || oLocale.getLanguage(); 
+			var oLocale = (typeof vLocale === "string") ? new sap.ui.core.Locale(vLocale) : vLocale;
+			var sLanguage = mLanguages[oLocale.getLanguage()] || oLocale.getLanguage();
 			var sTerritory = oLocale.getRegion() ? mTerritories[oLocale.getRegion()] || oLocale.getRegion() : "";
 			return sLanguage + (sTerritory ? " (" + sTerritory + ")" : "");
 		}
-		
+
 		oData.language = sap.ui.getCore().getConfiguration().getLanguage();
 		oData.locale = oCurrentLocale;
 		oData.localeCaption = caption(oCurrentLocale);
 		oData.formatLanguage = sap.ui.getCore().getConfiguration().getFormatLocale();
 		oData.formatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
 		oData.useCustomSettings = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().hasPrivateUseSubtag("sapufmt");
-		
+
 		for (var i=0; i<oData.locales.length; i++) {
 			oData.locales[i].caption = caption(oData.locales[i].locale);
 		}
-		
+
 		oModel.setData(oData);
 	}
-	
+
 	adaptModelToCurrentLocale();
-	
+
 	sap.ui.getCore().attachLocalizationChanged(function() {
 		adaptModelToCurrentLocale();
 	});
-	
+
 	var oLink, oText;
 
 	var oLabel = new sap.ui.commons.Label({
@@ -178,12 +178,12 @@
 		labelFor: "localesContainer"
 		}).addStyleClass("padding").placeAt("locales");
 	var oLocalesContainer = new sap.ui.layout.HorizontalLayout("localesContainer");
-	oLocalesContainer.bindAggregation("content", { path : "/locales", 
+	oLocalesContainer.bindAggregation("content", { path : "/locales",
 		template : new sap.ui.commons.Link({
 			text: "{key}",
 			tooltip : "{caption}",
 			helpId : "{key}", // misuse of help id
-			href :"javascript:void(0)", 
+			href :"javascript:void(0)",
 			press: function() {
 				var sLocale = this.getHelpId(),
 					bRTL = sLocale == "he_IL" || sLocale == "ar_SA";
@@ -192,25 +192,25 @@
 		}).addStyleClass("padding")
 	});
 	oLocalesContainer.placeAt("locales");
-	
+
 	function select(sCaption, sBindingPath, sInitialValue, fnChange, bAllowEditing) {
 		var fnClass = bAllowEditing ? sap.ui.commons.ComboBox : sap.ui.commons.DropdownBox;
 		var oSelect = new fnClass({
-			items: { path: sBindingPath, 
+			items: { path: sBindingPath,
 				template: new sap.ui.core.ListItem({
 					key : "{key}",
 					text: "{key} - {caption}"
 				})
 			},
 			value : sInitialValue,
-			change : fnChange		
+			change : fnChange
 		}).addStyleClass("padding");
-		
+
 		var oLabel = new sap.ui.commons.Label({
 			text : sCaption,
 			labelFor: oSelect
 		}).addStyleClass("padding");
-		
+
 		oLabel.placeAt("settings");
 		oSelect.placeAt("settings");
 		sap.ui.getCore().attachInitEvent(function() {
@@ -218,8 +218,8 @@
 		});
 		return oSelect;
 	}
-	
-	select("Locale", '/locales', "", 
+
+	select("Locale", '/locales', "",
 		function(oEvent) {
 			sap.ui.getCore().getConfiguration().setLanguage(oEvent.getParameter("selectedItem").getKey());
 		}, true
@@ -231,39 +231,39 @@
 		}, true
 	);
 
-	select("Legacy Date Format", '/legacyDateFormats', "", 
+	select("Legacy Date Format", '/legacyDateFormats', "",
 		function(oEvent) {
 			sap.ui.getCore().getConfiguration().getFormatSettings().setLegacyDateFormat(oEvent.getParameter("selectedItem").getKey());
 		}
-	);	
-	select("Legacy Time Format", '/legacyTimeFormats', "", 
+	);
+	select("Legacy Time Format", '/legacyTimeFormats', "",
 		function(oEvent) {
 			sap.ui.getCore().getConfiguration().getFormatSettings().setLegacyTimeFormat(oEvent.getParameter("selectedItem").getKey());
 		}
-	);	
+	);
 	select("Legacy Number Format", '/legacyNumberFormats', "",
 		function(oEvent) {
 			sap.ui.getCore().getConfiguration().getFormatSettings().setLegacyNumberFormat(oEvent.getParameter("selectedItem").getKey());
 		}
-	);	
-	
-	
+	);
+
+
 	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
 	oMatrixLayout.setLayoutFixed(false);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "language"}), 
+			new sap.ui.commons.Label({text: "language"}),
 			new sap.ui.commons.TextField({width:"200px", editable:false, value:{path:"/language"}})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "formatLanguage"}), 
+			new sap.ui.commons.Label({text: "formatLanguage"}),
 			new sap.ui.commons.TextField({width:"200px", editable:false, value:{path:"/formatLanguage"}})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "formatLocale"}), 
+			new sap.ui.commons.Label({text: "formatLocale"}),
 			new sap.ui.commons.TextField({width:"200px", editable:false, value:{path:"/formatLocale"}})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "Use custom settings"}), 
+			new sap.ui.commons.Label({text: "Use custom settings"}),
 			new sap.ui.commons.CheckBox({width:"200px", editable:false, checked:{path:"/useCustomSettings"}})
 	);
 	oMatrixLayout.placeAt("locale");
@@ -271,19 +271,19 @@
 	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
 	oMatrixLayout.setLayoutFixed(false);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "short"}), 
+			new sap.ui.commons.Label({text: "short"}),
 			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Date({style:"short"})}})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "medium"}), 
+			new sap.ui.commons.Label({text: "medium"}),
 			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Date({style:"medium"})}})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "long"}), 
+			new sap.ui.commons.Label({text: "long"}),
 			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Date({style:"long"})}})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "full"}), 
+			new sap.ui.commons.Label({text: "full"}),
 			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Date({style:"full"})}})
 	);
 	oMatrixLayout.placeAt("date");
@@ -291,19 +291,19 @@
 	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
 	oMatrixLayout.setLayoutFixed(false);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "short"}), 
+			new sap.ui.commons.Label({text: "short"}),
 			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Time({style:"short"})}})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "medium"}), 
+			new sap.ui.commons.Label({text: "medium"}),
 			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Time({style:"medium"})}})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "long"}), 
+			new sap.ui.commons.Label({text: "long"}),
 			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Time({style:"long"})}})
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "full"}), 
+			new sap.ui.commons.Label({text: "full"}),
 			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Time({style:"full"})}})
 	);
 	oMatrixLayout.placeAt("time");
@@ -334,31 +334,31 @@
 	oMatrixLayout.setModel(oResourceModel, "i18n");
 	oMatrixLayout.setLayoutFixed(false);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.TextView({text: oResourceModel.getResourceBundle().getText("welcome", ["Administrator"])}) 
+			new sap.ui.commons.TextView({text: oResourceModel.getResourceBundle().getText("welcome", ["Administrator"])})
 	);
 	oMatrixLayout.getRows()[0].getCells()[0].setColSpan(2);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "{i18n>lastname}", tooltip: "{i18n>lastname}"}), 
+			new sap.ui.commons.Label({text: "{i18n>lastname}", tooltip: "{i18n>lastname}"}),
 			new sap.ui.commons.TextField()
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "{i18n>firstname}"}), 
+			new sap.ui.commons.Label({text: "{i18n>firstname}"}),
 			new sap.ui.commons.TextField()
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "{i18n>street}"}), 
+			new sap.ui.commons.Label({text: "{i18n>street}"}),
 			new sap.ui.commons.TextField()
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "{i18n>zip}"}), 
+			new sap.ui.commons.Label({text: "{i18n>zip}"}),
 			new sap.ui.commons.TextField()
 	);
 	oMatrixLayout.createRow(
-			new sap.ui.commons.Label({text: "{i18n>city}"}), 
+			new sap.ui.commons.Label({text: "{i18n>city}"}),
 			new sap.ui.commons.TextField()
 	);
 	oMatrixLayout.placeAt("resourcemodel");
-	
+
 	</script>
 
 </head>
@@ -378,6 +378,6 @@
 	<div id="number"></div>
 	<h2>Resourcemodel</h2>
 	<div id="resourcemodel"></div>
-	
+
 </body>
 </html>

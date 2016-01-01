@@ -257,7 +257,7 @@
 					var oResult = doc.getElementById("qunit-testresult");
 
 					if (oResult && jQuery(oResult).text().indexOf("completed") >= 0) {
-						
+
 						//IE workaround for the lack of document.baseURI property
 						baseURI = doc.location.href;
 

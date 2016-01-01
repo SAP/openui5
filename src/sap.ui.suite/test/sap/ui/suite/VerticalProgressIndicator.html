@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>VerticalProgressIndicator - sap.ui.suite</title>
-    
-    <script id="sap-ui-bootstrap" 
+
+    <script id="sap-ui-bootstrap"
       data-sap-ui-theme="sap_ux"
       data-sap-ui-trace="true"
       type="text/javascript"
@@ -12,14 +12,14 @@
       src="../../../../resources/sap-ui-core.js"
       >
     </script>
-  
+
     <script src="../../../../resources/sap-ui-debug.js"></script>
-  
+
     <script type="text/javascript">
 
-	  //create a label	
-        var oLabel = new sap.ui.commons.Label("l1"); 
-        oLabel.setText("Enter Percentage:"); 
+	  //create a label
+        var oLabel = new sap.ui.commons.Label("l1");
+        oLabel.setText("Enter Percentage:");
         oLabel.placeAt("target1");
 
       //create a simple Input field; predefined Value = 30
@@ -42,14 +42,14 @@
  	       columns : 2,
  	       width : "25%",
  	       widths : [ "15%", "85%" ]
- 	    });	  
+ 	    });
 
         oLayout.createRow({height: "100px"}, oVertProgInd );
-        oLayout.placeAt("target3");	   
-  	  
-  	  
+        oLayout.placeAt("target3");
+
+
     </script>
-  
+
   </head>
   <body class="sapUiBody" style="padding: 0; margin: 0;">
     <div style="margin: 0; padding: 0 10;">

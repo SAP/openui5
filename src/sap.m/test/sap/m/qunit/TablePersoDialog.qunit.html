@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.TablePersoController</title>
 
 		<script id="sap-ui-bootstrap"
@@ -13,7 +13,7 @@
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -565,9 +565,9 @@
 			strictEqual(actual, expected, 'The focus should be on the first list item.');
 			oTPC.destroy();
 			oTable.destroy();
-				
+
 		});
-		
+
 		test("Test Initial focus with grouping", function () {
 			// arrange
 			var oTable = new sap.m.Table("testInitialFocusTable", {
@@ -606,7 +606,7 @@
 					oDeferred.resolve();
 					return oDeferred.promise();
 				},
-				
+
 				getGroup : function(oColumn) {
 					if(oColumn.getHeader() && oColumn.getHeader().getText) {
 						if( oColumn.getHeader().getText() == "Column 0") {
@@ -638,9 +638,9 @@
 			oTPC.destroy();
 			oTable.destroy();
 		});
-		
-		
-		
+
+
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

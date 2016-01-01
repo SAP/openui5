@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>InvisibleText - sap.ui.core</title>
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.ui.core" 
+				data-sap-ui-libs="sap.ui.core"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
 		<script>
-		
+
 		jQuery.sap.declare("sap.ui.core.TestControl");
 		sap.ui.core.Control.extend("sap.ui.core.TestControl", {
 			metadata: {
@@ -19,20 +19,20 @@
 					_texts: {name: "_texts", type: "sap.ui.core.InvisibleText", multiple : true, visibility: "hidden"}
 				},
 				associations : {
-					ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
+					ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
 					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 				}
 			},
-			
+
 			init: function() {
 				if (!sap.ui.core.TestControl._STATIC_LABEL_TEXT) {
 					sap.ui.core.TestControl._STATIC_LABEL_TEXT = new sap.ui.core.InvisibleText({text: "Some static label by control"});
 					sap.ui.core.TestControl._STATIC_LABEL_TEXT.toStatic(); //Put to Static UiArea
 				}
-				
+
 				this.addAggregation("_texts", new sap.ui.core.InvisibleText({text: "Some dynamic label by control"}), true);
 			},
-			
+
 			renderer: {
 				render: function(rm, ctrl){
 					rm.write("<div");
@@ -48,18 +48,18 @@
 					rm.writeAccessibilityState(ctrl, {
 						labelledby : {value: sLabelled, append: true}
 					})
-					rm.write("></input></div>");
+					rm.write("></div>");
 				}
 			}
 		});
-		
-		
+
+
 		(new sap.ui.core.InvisibleText("myText", {text: "Some static label by application"})).toStatic();
-		
+
 		(new sap.ui.core.TestControl({ariaLabelledBy: "myText"})).placeAt("content");
-		
-		
-		
+
+
+
 		sap.ui.controller("my.own.controller", {});
 		var xml = '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons"'
 			+ '              controllerName="my.own.controller" xmlns:html="http://www.w3.org/1999/xhtml">'
@@ -68,7 +68,7 @@
 			+ '    </mvc:View>';
 		var myView = sap.ui.xmlview({viewContent:xml});
 		myView.placeAt('content');
-		
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

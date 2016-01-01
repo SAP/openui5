@@ -1,18 +1,18 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Exact (with Binding) - sap.ui.ux3</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.ux3.Exact.gif">
 		<script src="../../../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
 			data-sap-ui-theme="sap_goldreflection">
 		</script>
 		<script src="../resources/ExactData.js"></script>
-		
+
 		<script>
 			var oExact = new sap.ui.ux3.Exact("myExact");
 			oExact.placeAt("uiArea1");
@@ -37,7 +37,7 @@
 				oExact.bindAggregation("attributes", "/atts", oAttrTemplate);
 			});
 			oExact.attachRefineSearch(function(oEvent) {
-				
+
 			});
 			oExact.setSettingsMenu(
 					new sap.ui.commons.Menu("myExactMenu", {
@@ -48,7 +48,7 @@
 			var oResultArea = oExact.getResultArea();
 			oResultArea.addContent(new sap.ui.commons.TextView({text:"This is some result content"}));
 		</script>
-		
+
 	</head>
 	<body class="sapUiBody" role="application">
 		<div id="uiArea1"></div>

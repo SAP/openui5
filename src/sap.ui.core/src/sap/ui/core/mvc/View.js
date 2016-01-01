@@ -202,7 +202,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		if (CustomizingConfiguration && CustomizingConfiguration.hasCustomProperties(this.sViewName, this)) {
 			this._fnSettingsPreprocessor = function(mSettings) {
 				var sId = this.getId();
-				if (sap.ui.core.CustomizingConfiguration && sId) {
+				if (CustomizingConfiguration && sId) {
 					if (that.isPrefixedId(sId)) {
 						sId = sId.substring((that.getId() + "--").length);
 					}
@@ -214,23 +214,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			};
 		}
 
-		var fnInitController = function() {
-			var oPromise = createAndConnectController(that, mSettings);
-			if (oPromise instanceof Promise) {
-				return oPromise.then(function() {
-					// the controller is connected now => notify the view implementations
-					if (that.onControllerConnected) {
-						that.onControllerConnected(that.oController);
-					}
-				});
-			} else {
-				// the controller is connected now => notify the view implementations
-				if (that.onControllerConnected) {
-					that.onControllerConnected(that.oController);
-				}
-			}
-		};
-
 		var fnPropagateOwner = function(fn) {
 			jQuery.sap.assert(typeof fn === "function", "fn must be a function");
 
@@ -240,6 +223,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				return oOwnerComponent.runAsOwner(fn);
 			} else {
 				return fn.call();
+			}
+		};
+
+		var fnInitController = function() {
+			var oPromise = createAndConnectController(that, mSettings);
+			if (oPromise instanceof Promise) {
+				return oPromise.then(function() {
+					// the controller is connected now => notify the view implementations
+					if (that.onControllerConnected) {
+						// make sure that in case of async callback for controller
+						// creation the owner is propagated properly
+						fnPropagateOwner(function() {
+							that.onControllerConnected(that.oController);
+						});
+					}
+				});
+			} else {
+				// the controller is connected now => notify the view implementations
+				if (that.onControllerConnected) {
+					that.onControllerConnected(that.oController);
+				}
 			}
 		};
 
@@ -334,6 +338,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				// get optional default controller name
 				var defaultController = oThis.getControllerName();
 				if (defaultController) {
+					// check for controller replacement
+					var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+					var sControllerReplacement = CustomizingConfiguration && CustomizingConfiguration.getControllerReplacement(defaultController, ManagedObject._sOwnerId);
+					if (sControllerReplacement) {
+						defaultController = sControllerReplacement;
+					}
 					// create controller
 					oController = sap.ui.controller(defaultController);
 					sName = defaultController;
@@ -357,7 +367,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 					oController.connectToView(oThis);
 				}
 			}
-			
+
 		} else {
 			oThis.oController = {};
 		}
@@ -642,8 +652,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 
 		// view replacement
-		if (sap.ui.core.CustomizingConfiguration) {
-			var customViewConfig = sap.ui.core.CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
+		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+		if (CustomizingConfiguration) {
+			var customViewConfig = CustomizingConfiguration.getViewReplacement(oView.viewName, ManagedObject._sOwnerId);
 			if (customViewConfig) {
 				jQuery.sap.log.info("Customizing: View replacement for view '" + oView.viewName + "' found and applied: " + customViewConfig.viewName + " (type: " + customViewConfig.type + ")");
 				jQuery.extend(oView, customViewConfig);
@@ -728,7 +739,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			switch (sName.indexOf('.')) {
 				case 0:
 					// starts with a dot, must be a controller local handler
-					fnHandler = oController && oController[sName.slice(1)];
+					// usage of jQuery.sap.getObject to allow addressing functions in properties
+					fnHandler = oController && jQuery.sap.getObject(sName.slice(1), undefined, oController);
 					break;
 				case -1:
 					// no dot at all: first check for a controller local, then for a global handler

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-  	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <title>AutoComplete - sap.ui.commons</title>
 	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.AutoComplete.gif">
@@ -13,7 +13,7 @@
 			src="../../../../resources/sap-ui-core.js"
 			>
 	</script>
-	
+
 	<script type="text/javascript">
 	var aData = [
 		{name: "Dente, Al", userid: "U01"},
@@ -37,11 +37,11 @@
 		{name: "Tress, Matt", userid: "U19"},
 		{name: "Turner, Paige", userid: "U20"}
 	];
-	
+
 	function onChange(oEvent){
 		jQuery("#output").html("AutoComplete "+oEvent.getParameter("id")+" changed to '"+oEvent.getParameter("newValue")+"'");
 	}
-	
+
 	//*******************************
 	var oAuto1 = new sap.ui.commons.AutoComplete("TextField-1", {
 		tooltip: "This is an Auto Complete TextField",
@@ -60,7 +60,7 @@
 //	});
 //	oLabel.placeAt("target1");
 	oAuto1.placeAt("target1");
-	
+
 	var oCB1 = new sap.ui.commons.CheckBox({
 		checked: oAuto1.getEnableScrolling(),
 		text: "Enable Scrolling",
@@ -69,13 +69,13 @@
 		}
 	});
 	oCB1.placeAt("target1a");
-	
+
 	//*******************************
 	var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
 		suggestUrl: "../../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
 		suggestType: "json"
 	});
-	
+
 	var oAuto2 = new sap.ui.commons.AutoComplete("TextField-2", {
 		tooltip: "This is an Auto Complete TextField using an Open Search Service",
 		change: onChange,
@@ -91,12 +91,12 @@
 		}
 	});
 	oAuto2.placeAt("target2");
-	
+
 	//*******************************
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData(aData);
-	
+
 	var oAuto3 = new sap.ui.commons.AutoComplete("TextField-3", {
 		tooltip: "This is an Auto Complete TextField with Databinding",
 		displaySecondaryValues: true,
@@ -105,7 +105,7 @@
 	oAuto3.setModel(oModel);
 	oAuto3.bindAggregation("items", "/", new sap.ui.core.ListItem({text: "{name}", additionalText: "{userid}"}));
 	oAuto3.placeAt("target3");
-	
+
 	//*******************************
 	jQuery.sap.require("jquery.sap.strings");
 	var aAlreadyAddedUsers = [];
@@ -124,7 +124,7 @@
 	});
 	oAuto4._sort = true; //ListItems are ordered alphabetically (currently only prototype, might change in future)
 	oAuto4.placeAt("target4");
-	
+
 	//*******************************
 	jQuery.sap.require("jquery.sap.strings");
 	var aAlreadyAddedUsers2 = [];
@@ -150,7 +150,7 @@
 	//*******************************
 	var oModel2 = new sap.ui.model.json.JSONModel();
 	oModel2.setData(aData);
-	
+
 	var oAuto6 = new sap.ui.commons.AutoComplete("TextField-6", {
 		tooltip: "This is an Auto Complete TextField with Custom Filter",
 		displaySecondaryValues: true,
@@ -162,11 +162,11 @@
 	});
 	oAuto6.bindAggregation("items", "/", new sap.ui.core.ListItem({text: "{name}", additionalText: "{userid}"}));
 	oAuto6.placeAt("target6");
-	
+
 	//*******************************
 	var oModel3 = new sap.ui.model.json.JSONModel();
 	oModel3.setData(aData);
-	
+
 	var oLB = new sap.ui.commons.ListBox({
 		visibleItems: 10,
 		enabled: false,
@@ -178,10 +178,10 @@
 	});
 	oLB.setModel(oModel3);
 	oLB.placeAt("reference");
-	
+
 	</script>
   </head>
-  
+
   <body class="sapUiBody" role="application">
   	<span id="MyDesc" style="display:none;">Described By</span>
   	<span id="MyLbl" style="display:none;">Labelled By</span>
@@ -207,5 +207,4 @@
 </html>
 
 
-	
-	
+

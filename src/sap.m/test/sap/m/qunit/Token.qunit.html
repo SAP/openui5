@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Test Page for sap.m.Token</title>
 <script id="sap-ui-bootstrap"
@@ -10,7 +10,7 @@
 		data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
@@ -19,7 +19,7 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
-	var token1;	
+	var token1;
 	var key = "testKey";
 	var text = "testText";
 
@@ -34,7 +34,7 @@
 			token1 = null;
 		}
 	});
-	
+
 	// test property accessor methods
 	test("setter / getter Key", function() {
 		token1.setKey(key);
@@ -49,55 +49,55 @@
 	test("setter / getter editable", function() {
 		var isEditable = true;
 		equals(token1.getEditable(), isEditable, "Token is editable");
-		
+
 		isEditable = false;
 		token1.setEditable(isEditable);
 		equals(token1.getEditable(), isEditable, "Token is not editable");
-		
+
 		isEditable = true;
 		token1.setEditable(isEditable);
 		equals(token1.getEditable(), isEditable, "Token is editable");
 	});
-	
+
 	test("setter / getter isSelected", function() {
 		var isSelected = false;
 		equals(token1.getSelected(), isSelected, "Token is not selected");
-		
+
 		isSelected = true;
 		token1.setSelected(isSelected);
 		equals(token1.getSelected(), isSelected, "Token is selected");
-		
+
 		isSelected = false;
 		token1.setSelected(isSelected);
 		equals(token1.getSelected(), isSelected, "Token is not selected");
-	});	
-	
+	});
+
 	test("show / hide delete icon depending on isEditable", function() {
 		var isEditable = true;
 		token1.setEditable(isEditable);
 		equals(token1.$().children().length, 2, "Token contains icon");
-		
+
 		isEditable = false;
 		token1.setEditable(isEditable);
 		sap.ui.getCore().applyChanges();
 		equals(token1.$().children().length, 1, "Token does not show delete icon");
-				
+
 	});
-	
+
 	test("select/deselect token", function() {
 		token1.setSelected(false);
 		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
 		ok(token1.$().hasClass("sapMTokenSelected"), "token is unselected");
-		
+
 		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
 		ok(!token1.$().hasClass("sapMTokenSelected"), "token is unselected");
 	});
-	
+
 	test("setter / getter textDirection", function() {
 		token1.setTextDirection(sap.ui.core.TextDirection.RTL);
 		equals(token1.getTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
 	});
-	
+
 	test("Token has attribute dir", function() {
 		token1.setTextDirection(sap.ui.core.TextDirection.RTL);
 		sap.ui.getCore().applyChanges();

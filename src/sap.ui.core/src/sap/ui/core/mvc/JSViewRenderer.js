@@ -15,8 +15,8 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 */
 	var JSViewRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	JSViewRenderer.render = function(oRenderManager, oControl){
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		// write the HTML into the render manager
 		rm.write("<div");
 		rm.writeControlData(oControl);
@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 		rm.writeStyles();
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		var content = oControl.getContent();
 		if (content) {
 			if (jQuery.isArray(content)) {
@@ -50,16 +50,16 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 				for (var i = 0; i < content.length; i++) {
 					rm.renderControl(content[i]);
 				}
-	
+
 			} else if (content) {
 				// should be a Control
 				rm.renderControl(content);
 			}
 		}
-	
+
 		rm.write("</div>");
 	};
-	
+
 
 	return JSViewRenderer;
 

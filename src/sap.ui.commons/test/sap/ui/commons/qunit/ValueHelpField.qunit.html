@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.ValueHelpField
   Author: SAP
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -14,7 +14,7 @@
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
@@ -64,22 +64,22 @@
 			var sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sap.ui.core.theming.Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconRegularUrl');
 
 			ok(jQuery.sap.byId("VHF1").children("img").get(0), "Icon image rendered");
-			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), sIcon, "default image displayed"); 
+			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), sIcon, "default image displayed");
 
 			// readOnly ValueHelpField
 			ok(jQuery.sap.byId("VHF2").children("img").get(0), "Readonly: icon image rendered");
-			equal(jQuery.sap.byId("VHF2").children("img").attr('src'), sIcon, "Readonly: default image displayed"); 
+			equal(jQuery.sap.byId("VHF2").children("img").attr('src'), sIcon, "Readonly: default image displayed");
 
 			// disabled ValueHelpField
 			sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sap.ui.core.theming.Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconDsblUrl');
 
 			ok(jQuery.sap.byId("VHF3").children("img").get(0), "Disabled: Icon image rendered");
-			equal(jQuery.sap.byId("VHF3").children("img").attr('src'), sIcon, "disabled image displayed"); 
-			equal(jQuery.sap.domById("VHF3").offsetWidth, 200, "width of the field"); 
+			equal(jQuery.sap.byId("VHF3").children("img").attr('src'), sIcon, "disabled image displayed");
+			equal(jQuery.sap.domById("VHF3").offsetWidth, 200, "width of the field");
 
 			// other images
 			ok(jQuery.sap.byId("VHF4").children("img").get(0), "With URL: Icon image rendered");
-			equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "../images/help.gif", "URL image displayed"); 
+			equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "../images/help.gif", "URL image displayed");
 
 		});
 
@@ -97,75 +97,75 @@
 			equal(oVHFInput.attr("aria-invalid"), "true", "aria-invalid");
     });
 
-		test("hover", function() { 
+		test("hover", function() {
 			// only test for image possible, not for hover CSS styles - this msut be tested in QTP
 			// default
 			qutils.triggerMouseEvent("VHF1-icon", "mouseover");
 			var sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sap.ui.core.theming.Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconHoverUrl');
-			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), sIcon, "default hover image displayed"); 
+			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), sIcon, "default hover image displayed");
 			qutils.triggerMouseEvent("VHF1-icon", "mouseout");
 			sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sap.ui.core.theming.Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconRegularUrl');
-			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), sIcon, "default image displayed"); 
+			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), sIcon, "default image displayed");
 
 			//readonly - no hover effect
 			qutils.triggerMouseEvent("VHF2-icon", "mouseover");
-			equal(jQuery.sap.byId("VHF2").children("img").attr('src'), sIcon, "Readonly: default image displayed"); 
+			equal(jQuery.sap.byId("VHF2").children("img").attr('src'), sIcon, "Readonly: default image displayed");
 			qutils.triggerMouseEvent("VHF2-icon", "mouseout");
 
 			//disabled - no hover effect
 			qutils.triggerMouseEvent("VHF3-icon", "mouseover");
 			sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sap.ui.core.theming.Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconDsblUrl');
-			equal(jQuery.sap.byId("VHF3").children("img").attr('src'), sIcon, "Disabled image displayed"); 
+			equal(jQuery.sap.byId("VHF3").children("img").attr('src'), sIcon, "Disabled image displayed");
 			qutils.triggerMouseEvent("VHF3-icon", "mouseout");
 
 			//own image - but no own hover image -> no change
 			qutils.triggerMouseEvent("VHF4-icon", "mouseover");
-			equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "../images/help.gif", "URL image displayed"); 
+			equal(jQuery.sap.byId("VHF4").children("img").attr('src'), "../images/help.gif", "URL image displayed");
 			qutils.triggerMouseEvent("VHF4-icon", "mouseout");
 
 			//own image + own hover image
 			qutils.triggerMouseEvent("VHF5-icon", "mouseover");
-			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/close.gif", "URL image displayed"); 
+			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/close.gif", "URL image displayed");
 			qutils.triggerMouseEvent("VHF5-icon", "mouseout");
-			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/help.gif", "URL image displayed"); 
+			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/help.gif", "URL image displayed");
 
 		});
 
-		test("Change Image", function() { 
+		test("Change Image", function() {
 			oVHF1.setIconURL("../images/ui5.png");
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), "../images/ui5.png", "URL image displayed"); 
+			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), "../images/ui5.png", "URL image displayed");
 
 			// go back to default
 			oVHF1.setIconURL("");
 			sap.ui.getCore().applyChanges();
 			var sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sap.ui.core.theming.Parameters.get('sap.ui.commons.ValueHelpField:sapUiValueHelpIconRegularUrl');
-			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), sIcon, "default image displayed"); 		
+			equal(jQuery.sap.byId("VHF1").children("img").attr('src'), sIcon, "default image displayed");
 
 			// disabled - regular image given - no disabled image -> regular image should be displayed (with opacity)
 			oVHF3.setIconURL("../images/save.png");
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.byId("VHF3").children("img").attr('src'), "../images/save.png", "default image displayed"); 
-			ok(jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class set"); 
+			equal(jQuery.sap.byId("VHF3").children("img").attr('src'), "../images/save.png", "default image displayed");
+			ok(jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class set");
 			// disabled image
 			oVHF3.setIconDisabledURL("../images/new.png");
 			sap.ui.getCore().applyChanges();
-			equal(jQuery.sap.byId("VHF3").children("img").attr('src'), "../images/new.png", "disabled image displayed"); 
-			ok(!jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class not set"); 
+			equal(jQuery.sap.byId("VHF3").children("img").attr('src'), "../images/new.png", "disabled image displayed");
+			ok(!jQuery.sap.byId("VHF3-icon").hasClass("sapUiTfValueHelpDsblIcon"), "opacity class not set");
 
 			// hover image change
 			oVHF5.setIconHoverURL("../images/personalize.gif");
 			sap.ui.getCore().applyChanges();
 			qutils.triggerMouseEvent("VHF5-icon", "mouseover");
-			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/personalize.gif", "URL image displayed"); 
+			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/personalize.gif", "URL image displayed");
 			qutils.triggerMouseEvent("VHF5-icon", "mouseout");
-			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/help.gif", "URL image displayed"); 
+			equal(jQuery.sap.byId("VHF5").children("img").attr('src'), "../images/help.gif", "URL image displayed");
 
 		});
 
 		module("Interaction");
 
-		test("event", function() { 
+		test("event", function() {
 			qutils.triggerMouseEvent("VHF1-icon", "click");
 			equal(sEvent, "ValueHelpRequest","Click - event fired");
 			sEvent = "";
@@ -197,7 +197,7 @@
 	</script>
 
 	<title>qunit Test for ValueHelpField</title>
- 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.ValueHelpField.gif"> 
+ 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.ValueHelpField.gif">
 
 
 </head>

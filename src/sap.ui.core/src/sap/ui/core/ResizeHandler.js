@@ -12,21 +12,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 
 	/**
 	 * Reference to the Core (implementation view, not facade)
-	 * @type {sap.ui.core.Core} 
+	 * @type {sap.ui.core.Core}
 	 */
 	var oCoreRef = null;
 
-	/** 
-	 * The resize handling API provides firing of resize events on all browsers by regularly 
+	/**
+	 * The resize handling API provides firing of resize events on all browsers by regularly
 	 * checking the width and height of registered DOM elements or controls and firing events accordingly.
-	 * 
+	 *
 	 * @namespace
 	 * @alias sap.ui.core.ResizeHandler
+	 * @extends sap.ui.base.Object
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
 	 */
-	
+
 	var ResizeHandler = BaseObject.extend("sap.ui.core.ResizeHandler", /** @lends sap.ui.core.ResizeHandler.prototype */ {
 
 		constructor : function(oCore) {
@@ -42,19 +43,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 			this.fDestroyHandler = jQuery.proxy(this.destroy, this);
 
 			jQuery(window).bind("unload", this.fDestroyHandler);
-			
+
 			jQuery.sap.act.attachActivate(initListener, this);
 		}
 
 	});
-	
+
 	function clearListener(){
 		if (this.bRegistered) {
 			this.bRegistered = false;
 			sap.ui.getCore().detachIntervalTimer(this.checkSizes, this);
 		}
 	}
-	
+
 	function initListener(){
 		if (!this.bRegistered && this.aResizeListeners.length > 0) {
 			this.bRegistered = true;
@@ -92,7 +93,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 			iHeight = oDom ? oDom.offsetHeight : 0,
 			sId = "rs-" + new Date().valueOf() + "-" + this.iIdCounter++,
 			dbg;
-			
+
 		if (bIsControl) {
 			dbg = ("Control " + oRef.getId());
 		} else if (oRef.id) {
@@ -105,7 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 		log.debug("registered " + dbg);
 
 		initListener.apply(this);
-		
+
 		return sId;
 	};
 
@@ -145,41 +146,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 			if (oResizeListener) {
 				var bCtrl = !!oResizeListener.oControl,
 					oDomRef = bCtrl ? oResizeListener.oControl.getDomRef() : oResizeListener.oDomRef;
-					
-				if ( oDomRef && jQuery.contains(document.documentElement, oDomRef)) { //check that domref is still active 
-					
+
+				if ( oDomRef && jQuery.contains(document.documentElement, oDomRef)) { //check that domref is still active
+
 					var iOldWidth = oResizeListener.iWidth,
 						iOldHeight = oResizeListener.iHeight,
 						iNewWidth = oDomRef.offsetWidth,
 						iNewHeight = oDomRef.offsetHeight;
-				
+
 					if (iOldWidth != iNewWidth || iOldHeight != iNewHeight) {
 						oResizeListener.iWidth = iNewWidth;
 						oResizeListener.iHeight = iNewHeight;
-						
+
 						var oEvent = jQuery.Event("resize");
 						oEvent.target = oDomRef;
 						oEvent.currentTarget = oDomRef;
 						oEvent.size = {width: iNewWidth, height: iNewHeight};
 						oEvent.oldSize = {width: iOldWidth, height: iOldHeight};
 						oEvent.control = bCtrl ? oResizeListener.oControl : null;
-						
+
 						if ( bDebug ) {
 							log.debug("resize detected for '" + oResizeListener.dbg + "': " + oEvent.oldSize.width + "x" + oEvent.oldSize.height + " -> " + oEvent.size.width + "x" + oEvent.size.height);
 						}
-						
+
 						oResizeListener.fHandler(oEvent);
 					}
 
 				}
 			}
 		});
-		
+
 		if (ResizeHandler._keepActive != true && ResizeHandler._keepActive != false) {
 			//initialize default
 			ResizeHandler._keepActive = false;
 		}
-		
+
 		if (!jQuery.sap.act.isActive() && !ResizeHandler._keepActive) {
 			clearListener.apply(this);
 		}
@@ -187,13 +188,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 
 	/**
 	 * Registers the given event handler for resize events on the given DOM element or control.
-	 * 
+	 *
 	 * <b>Note:</b> This function must not be used before the UI5 framework is initialized.
 	 * Please use the {@link sap.ui.core.Core#attachInit init event} of UI5 if you are not sure whether this is the case.
-	 * 
+	 *
 	 * The resize handler periodically checks the dimensions of the registered reference. Whenever it detects changes, an event is fired.
 	 * Be careful when changing dimensions within the event handler which might cause another resize event and so on.
-	 * 
+	 *
 	 * The available parameters of the resize event are:
 	 * <ul>
 	 * <li><code>oEvent.target</code>: The DOM element of which the dimensions were checked</li>
@@ -203,7 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 	 * <li><code>oEvent.oldSize.height</code>: The previous height of the DOM element in pixels</li>
 	 * <li><code>oEvent.control</code>: The control which was given during registration of the event handler (if present)</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param {DOMRef|sap.ui.core.Control} oRef The control or the DOM reference for which the given event handler should be registered (beside the window)
 	 * @param {function} fHandler
 	 *             The event handler which should be called whenever the size of the given reference is changed.
@@ -234,7 +235,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 		}
 		oCoreRef.oResizeHandler.detachListener(sId);
 	};
-	
+
 	/**
 	 * Deregisters all registered handler for resize events for the given control.
 	 *
@@ -245,7 +246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.act', 'jqu
 		if (!oCoreRef || !oCoreRef.oResizeHandler) {
 			return;
 		}
-		
+
 		var aIds = [];
 		jQuery.each(oCoreRef.oResizeHandler.aResizeListeners, function(index, oResizeListener){
 			if (oResizeListener && oResizeListener.oControl && oResizeListener.oControl.getId() === sControlId) {

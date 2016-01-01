@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 <title>DataSet Demokit</title>
 
 <script src="../../../../../resources/sap-ui-core.js"
@@ -138,14 +138,14 @@ sap.ui.core.Control.extend("ItemLayout", {
 		rm.renderControl(ctrl.getForm());
 		rm.write("</div></div></div>");
     },
-    
+
     onBeforeRendering : function(){
     	if(this.resizeTimer){
     		clearTimeout(this.resizeTimer);
     		this.resizeTimer = null;
     	}
     },
-    
+
     onAfterRendering : function(){
     	var $This = this.$();
     	if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
@@ -154,7 +154,7 @@ sap.ui.core.Control.extend("ItemLayout", {
     		$This.addClass("CustomItemLayoutSmall");
     	}
     },
-    
+
     _resize: function(){
     	if(!this.getDomRef()){
     		return;

@@ -1,24 +1,24 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Generic Tests for all Controls in sap.ui.commons
   Author: d020684
 -->
 
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for HTML control</title>
 
-  	<script id="sap-ui-bootstrap" 
+  	<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.core,sap.ui.commons" >
 		</script>
-    
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -42,50 +42,50 @@
 					var aLibControls = oLibrary.aControls;
 					for(var j=0; j<aLibControls.length; j++) {
 						aControls.push(aLibControls[j].replace(/\//g, '.'));
-					}					
+					}
 				} catch (e) {
 				}
 			}
 
 			// var aControls = [ "sap.ui.commons.RoadMap"];
-			
+
 			var mData = {
 			 	"sap.ui.core.HTML" : {
 					allPairTestValues : {
-					  content : [ "", "<div>abc</div>", "<table><tr><td></td></tr></table>" ] 				
-					} 
+					  content : [ "", "<div>abc</div>", "<table><tr><td></td></tr></table>" ]
+					}
 				},
 			 	"sap.ui.commons.Panel" : {
 			 		skip : true
 				},
 			 	"sap.ui.commons.RoadMap" : {
 			 		skip : true
-				}			
+				}
 			};
-			
+
 			for(var ic=0; ic<aControls.length; ic++) {
 				(function (sControlName) {
 					if ( mData[sControlName] && mData[sControlName].skip )
-						return;  
+						return;
 					var oClass=jQuery.sap.getObject(sControlName);
 					var oClass = typeof oClass === "function" && new oClass().getMetadata().getClass();
 					if ( !(oClass.prototype instanceof sap.ui.core.Control) )
-						return; 
+						return;
 					test("all pairs tests " + sControlName, function() {
 						qutils.genericTest(oClass, "uiArea1", jQuery.extend({}, {
 							allPairTestValues : {
 							  icon : ["../images/controls/sap.ui.core.ListItem.gif","../images/controls/sap.ui.core.UIArea.gif"],
 							  width : ["400px", "20%", "20em", "42ex", "auto"]
 							}
-						}, mData[sControlName] || {}));			
+						}, mData[sControlName] || {}));
 					});
 				})(aControls[ic]);
 			}
 
 		  test("final", function() {
 			  qutils.suppressErrors(false);
-		  });		
-		  
+		  });
+
 		</script>
 	</head>
 	<body class="sapUiBody">

@@ -3,7 +3,7 @@
 <html>
 
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 
 		<title>Link - sap.ui.commons</title>
@@ -23,7 +23,7 @@
 
 		<script type="text/javascript">
 
-			// create a standard link 
+			// create a standard link
 			var oLink1 = new sap.ui.commons.Link("l1");
 			oLink1.setText("Link to Action");
 			oLink1.setTooltip("This is a test tooltip");
@@ -41,23 +41,23 @@
 			oLink2.attachPress(function() {alert('Alert from ' + sText2);});
 			oLink2.placeAt("target2");
 
-			// create an external link 
-			var oLink3 = new sap.ui.commons.Link("l3", 
-					{text: "Link to URL (Target: _self)", tooltip: "Target: _self", 
+			// create an external link
+			var oLink3 = new sap.ui.commons.Link("l3",
+					{text: "Link to URL (Target: _self)", tooltip: "Target: _self",
 				   href: "http://www.sap.com", target: "_self"});
 			oLink3.placeAt("target3");
 
-			// create an external link 
-			var oLink4 = new sap.ui.commons.Link("l4", 
-					{text: "Link to URL (Target: _search)", tooltip: "Target: _search", 
+			// create an external link
+			var oLink4 = new sap.ui.commons.Link("l4",
+					{text: "Link to URL (Target: _search)", tooltip: "Target: _search",
 				   href: "http://www.sap.com", target: "_search"});
 			oLink4.placeAt("target4");
 
 			// create an external link with prevent default
 			var oLink5 = new sap.ui.commons.Link("l5", {
-					text: "Link to URL (Prevent default)", 
-					tooltip: "Prevent default", 
-					href: "http://www.sap.com", 
+					text: "Link to URL (Prevent default)",
+					tooltip: "Prevent default",
+					href: "http://www.sap.com",
 					press: function(oEvent) {oEvent.preventDefault()}
 				});
 			oLink5.placeAt("target5");
@@ -77,7 +77,7 @@
 				var innerLink = sap.ui.getCore().getControl("l6_a");
 				innerLink.setEnabled(!innerLink.getEnabled());
 				if (innerLink.getEnabled() == true ) {
-					innerLink.setText("Enabled"); 
+					innerLink.setText("Enabled");
 				} else {
 					innerLink.setText("Disabled");
 				}

@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -10,7 +10,7 @@
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-language="en_US">
 </script>
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -53,7 +53,7 @@
 		};
 
 	};
-	
+
 	var attach = false;
 	var detach = true;
 
@@ -101,7 +101,7 @@
 	test("Binding isResolved", function(){
 		setup();
 		var oNewContext = oModel.getContext("/");
-		
+
 		var oBinding = oModel.bindProperty("lastName");
 		ok(!oBinding.isResolved(), "Binding should not be resolved yet!");
 		oBinding.setContext(oNewContext);
@@ -109,11 +109,11 @@
 
 		oBinding = oModel.bindProperty("/lastName");
 		ok(oBinding.isResolved(), "Binding should be resolved!");
-		
+
 		oBinding = oModel.bindProperty("lastName", oNewContext);
 		ok(oBinding.isResolved(), "Binding should be resolved!");
 	});
-	
+
 	test("Binding changeEvent", function(){
 		setup();
 		createPropertyBindings("/teamMembers", "firstName");

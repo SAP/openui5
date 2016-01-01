@@ -55,6 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		rm.addStyle("table-layout", "fixed");
 		rm.addStyle("width", "100%");
 		rm.addClass("sapUiGrid");
+		this.addBackgroundClass(rm, oLayout);
 
 		rm.writeStyles();
 		rm.writeClasses();

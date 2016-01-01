@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
     Tested module: sap-ui-core in general
   -->
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 
 		<title>Test Page for the SAPUI5 Bootstrap functionality</title>
 		<script id="sap-ui-bootstrap"
@@ -13,7 +13,7 @@
 				data-sap-ui-noConflict="true"
 				src="../../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -34,7 +34,7 @@
 			assert.notStrictEqual(sap.ui.core.UIArea, undefined, "class sap.ui.core.UIArea must exist");
 			assert.notStrictEqual(sap.ui.core.RenderManager, undefined, "class sap.ui.core.RenderManager must exist");
 		});
-		
+
 		QUnit.test("CoreAvailable", function(assert) {
 			assert.ok(typeof(sap.ui.getCore) == "function", "function sap.ui.getCore must be defined");
 			assert.notStrictEqual(sap.ui.getCore(), null, "calling sap.ui.getCore() must not return null");
@@ -52,7 +52,7 @@
 			assert.notStrictEqual(oCore.getConfiguration, undefined, "function getConfiguration on sap.ui.core.Core instance must be defined");
 			assert.ok(oCore.getConfiguration() instanceof sap.ui.base.Interface && _providesPublicMethods(oCore.getConfiguration(), sap.ui.core.Configuration), "calling getConfiguration on Core instance must deliver the RenderManager interface");
 		});
-	
+
 
 		// #####################################################################
 		// Convenience
@@ -60,7 +60,7 @@
 
 		function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /**function*/ fnClass, /**boolean*/ bFailEarly) {
 			var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
-				result = true, 
+				result = true,
 				sMethod;
 			for(var i in aMethodNames){
 				sMethod = aMethodNames[i];

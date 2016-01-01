@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 	<title>qUnit Page for sap.m.MessageBox</title>
 
 	<script id="sap-ui-bootstrap"
@@ -13,7 +13,7 @@
 			data-sap-ui-libs="sap.m">
 	</script>
 
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
@@ -546,6 +546,49 @@
 			ok(!oMessageBox.getLeftButton(), "LeftButton aggregation is not used.");
 			ok(!oMessageBox.getRightButton(), "RightButton aggregation is not used.");
 			equal(oMessageBox.getButtons().length, 2, "Buttons aggregation is used.");
+			oMessageBox.destroy();
+		});
+
+		test("Aria-labelledby attrbute:", function () {
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				id: "messagebox6",
+			});
+
+			this.clock.tick(500);
+			var oMessageBox = sap.ui.getCore().byId("messagebox6");
+			var sExpectedAriaLabelledBy = oMessageBox.$("header").attr("id") + " " + oMessageBox.$().find(".sapMMsgBoxText").attr("id");
+			var sActualAriaLabelledBy = oMessageBox.$().attr("aria-labelledby");
+			equal(sActualAriaLabelledBy, sExpectedAriaLabelledBy, "should point to the header and to the text.");
+			oMessageBox.destroy();
+		});
+
+		test("When used with undefined message aria-labelledby attrbute", function () {
+			sap.m.MessageBox.show(undefined, {
+				title: sMessageTitle,
+				id: "messagebox7",
+			});
+
+			this.clock.tick(500);
+			var oMessageBox = sap.ui.getCore().byId("messagebox7");
+			var sExpectedAriaLabelledBy = oMessageBox.$("header").attr("id");
+			var sActualAriaLabelledBy = oMessageBox.$().attr("aria-labelledby");
+			equal(sActualAriaLabelledBy, sExpectedAriaLabelledBy, "should point to the header.");
+			oMessageBox.destroy();
+		});
+
+		test("When used with details aria-labelledby attrbute:", function () {
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				details: "Some details",
+				id: "messagebox8",
+			});
+
+			this.clock.tick(500);
+			var oMessageBox = sap.ui.getCore().byId("messagebox8");
+			var sExpectedAriaLabelledBy = oMessageBox.$("header").attr("id") + " " + oMessageBox.$().find(".sapMMsgBoxText").attr("id");
+			var sActualAriaLabelledBy = oMessageBox.$().attr("aria-labelledby");
+			equal(sActualAriaLabelledBy, sExpectedAriaLabelledBy, "should point to the header and to the text.");
 			oMessageBox.destroy();
 		});
 

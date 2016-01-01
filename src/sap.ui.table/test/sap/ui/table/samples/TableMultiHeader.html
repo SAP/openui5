@@ -2,8 +2,8 @@
 <html>
 <head>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <title>Table - sap.ui.table</title>
 <link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.Table.gif">
@@ -12,14 +12,14 @@
 <!-- SAPUI5 Bootstrap:                                                     -->
 <!-- Extend the "libs" property if you like to import additional libraries  -->
 <!-- ********************************************************************** -->
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	type="text/javascript"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table"
 	data-sap-ui-theme="sap_goldreflection"
 	src="../../../../../resources/sap-ui-core.js"></script>
 
-<script type="text/javascript">	
-	
+<script type="text/javascript">
+
    // TABLE TEST DATA
 	var aData = [
    		{lastName: "Dente", name: "Al", checked: true },
@@ -45,7 +45,7 @@
    	];
 
 	var oTable = new sap.ui.table.Table("table");
-	
+
 	oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
 
 	var oControl = new sap.ui.commons.TextView().bindProperty("text", "lastName");
@@ -61,7 +61,7 @@
 	       ],template: oControl, sortProperty: "name", filterProperty: "name", autoResizable: true}));
 	oControl = new sap.ui.commons.CheckBox().bindProperty("checked", "checked");
  	oTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Checked (very long label text to show wrapping behavior)" /*, wrapping: true */}), template: oControl, sortProperty: "checked", filterProperty: "checked", hAlign: "Center", autoResizable: true}));
-	
+
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({modelData: aData});
 	oTable.setModel(oModel);

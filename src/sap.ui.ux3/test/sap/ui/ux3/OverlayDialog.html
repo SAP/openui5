@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>OverlayDialog - sap.ui.ux3</title>
 		<script src="../../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
 			data-sap-ui-theme="sap_goldreflection">
 		</script>
 		<script src="resources/ShellSettings.js" type="text/javascript"></script>
-		<link type="text/css" rel="stylesheet" href="resources/ShellSettings.css"/>
-		
+		<link type="text/css" rel="stylesheet" href="resources/ShellSettings.css">
+
 		<script>
 		var olcounter = 0;
-		
+
 		function getShellOptions(){
 			var oButton = new c.Button({
 					text: "Open new OverlayDialog",
@@ -26,9 +26,9 @@
 			}});
 			return getShellOptionsPanel(oShell, [oButton]);
 		};
-		
+
 			var c = sap.ui.commons; /* shorthand */
-			
+
 			var aContent = {};
 			//Shell
 			var oShell = new sap.ui.ux3.Shell("myShell", {
@@ -224,7 +224,7 @@
 				}
 				return aContent[id];
 			}
- 
+
 			// Pane content generation and buffering
 			function getPaneContent(id) {
 				if (!aContent[id]) {
@@ -271,16 +271,16 @@
 			}
 
 			var oOverlayDialog = new sap.ui.ux3.OverlayDialog({width:"500px",height:"500px"});
-			
-			oOverlayDialog.attachClose(function(oControlEvent) { 
+
+			oOverlayDialog.attachClose(function(oControlEvent) {
 		    	var id = oControlEvent.getParameters().id;
 		    });
-		    
+
 			oOverlayDialog.attachOpen(function(oControlEvent) {
 				var id = oControlEvent.getParameters().id;
 			});
 			</script>
-		
+
 	</head>
 	<body  class="sapUiBody">
 		<div id="shellArea"></div>

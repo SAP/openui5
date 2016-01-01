@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.FlexBox with FitContainer set and outer VBox</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<style>
 			#content {
 				width: 400px;
@@ -103,7 +103,7 @@
 				fitContainer: true,
 				alignItems: "Stretch"
 			});
-			
+
 			oOuterVBox.placeAt("content");
 
 			QUnit.config.autostart = false;
@@ -128,7 +128,7 @@
 					item5Height = outervboxHeight * ( 5 / 15 ) / 2;
 					item6Width = outervboxWidth;
 					item6Height = outervboxHeight * ( 5 / 15 );
-	
+
 					QUnit.start();
 					if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout) {
 						test("Dummy Test", function() {

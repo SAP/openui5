@@ -10,7 +10,7 @@
 	QUnit.module("aatTest");
 
 	QUnit.test("ObjectPageSection", function (assert) {
-		
+
 		var ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
             viewName: "view.UxAP-13_ObjectPageSection"
         });
@@ -48,7 +48,7 @@
 
 		var oSubsection3 = ObjectPageSectionView.byId("subsection3");
 		assert.strictEqual(oSubsection3.$().find(".sapUxAPObjectPageSectionHeader").length, 0, "My third section without subsections");
-		
+
 		ObjectPageSectionView.destroy();
 	});
 
@@ -180,7 +180,7 @@
 		SectionPrototype._updateShowHideAllButton.call(oSectionStub, false);
 		assert.ok(!oButton.getVisible());
 		assert.ok(oButton.getText(sExpectedText));
-		
+
 		oButton.destroy();
 	});
 
@@ -206,7 +206,7 @@
 		SectionPrototype._updateShowHideButton.call(oSectionStub, false);
 		assert.ok(!oButton.getVisible());
 		assert.ok(oButton.getText(sExpectedText));
-		
+
 		oButton.destroy();
 	});
 

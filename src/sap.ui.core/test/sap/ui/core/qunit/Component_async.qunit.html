@@ -1,17 +1,19 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.Component (asynchronous preloading)
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>QUnit test: Component (async)</title>
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
-		data-sap-ui-preload="sync">
+		data-sap-ui-preload="sync"
+		data-sap-ui-language="en">
 	</script>
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
@@ -31,27 +33,33 @@
 
 	<script>
 
+	function unloadResources() {
+		// unload libs and components
+		jQuery.sap.unloadResources('sap.test.lib2.library-preload', true, true, true);
+		jQuery.sap.unloadResources('sap.test.lib3.library-preload', true, true, true);
+		jQuery.sap.unloadResources('sap.test.lib4.library-preload', true, true, true);
+		jQuery.sap.unloadResources('sap/test/mycomp/Component-preload', true, true, true);
+		jQuery.sap.unloadResources('sap/test/mysubcomp/Component-preload', true, true, true);
+		jQuery.sap.unloadResources('sap/test/manifestcomp/Component-preload', true, true, true);
+		jQuery.sap.registerResourcePath("sap/test");
+		jQuery.sap.registerResourcePath("sap/test/lib2");
+		jQuery.sap.registerResourcePath("sap/test/lib3");
+		jQuery.sap.registerResourcePath("sap/test/lib4");
+		jQuery.sap.registerResourcePath("sap/test/mycomp");
+		jQuery.sap.registerResourcePath("sap/test/mysubcomp");
+		jQuery.sap.registerResourcePath("sap/test/manifestcomp");
+		jQuery("SCRIPT[data-sap-ui-module^='sap/test/']").remove();
+	}
+
 	// Initialization
 	sinon.config.useFakeTimers = true;
-	
+
 	QUnit.module("Async (Pre-)Loading", {
 		afterEach: function() {
-			// unload libs andcomponents
-			jQuery.sap.unloadResources('sap.test.lib2.library-preload', true, true, true);
-			jQuery.sap.unloadResources('sap.test.lib3.library-preload', true, true, true);
-			jQuery.sap.unloadResources('sap.test.lib4.library-preload', true, true, true);
-			jQuery.sap.unloadResources('sap/test/mycomp/Component-preload', true, true, true);
-			jQuery.sap.unloadResources('sap/test/mysubcomp/Component-preload', true, true, true);
-			jQuery.sap.registerResourcePath("sap/test");
-			jQuery.sap.registerResourcePath("sap/test/lib2");
-			jQuery.sap.registerResourcePath("sap/test/lib3");
-			jQuery.sap.registerResourcePath("sap/test/lib4");
-			jQuery.sap.registerResourcePath("sap/test/mycomp");
-			jQuery.sap.registerResourcePath("sap/test/mysubcomp");
-			jQuery("SCRIPT[data-sap-ui-module^='sap/test/']").remove();
+			unloadResources();
 		}
 	});
-	
+
 	QUnit.test("dependencies as simple strings", function (assert) {
 
 		var done = assert.async();
@@ -86,11 +94,11 @@
 			name: "sap.test.mycomp",
 			async: true,
 			asyncHints: {
-				libs: [ 
+				libs: [
 					{
 						name: 'sap.test.lib2'
 					},
-					'sap.test.lib3' 
+					'sap.test.lib3'
 				],
 				components: [ {
 					name: 'sap.test.mysubcomp'
@@ -108,7 +116,7 @@
 
 		// TODO spy on requireModule, check that expected modules have been loaded
 	});
-	
+
 	QUnit.test("dependencies with names and some URLs", function (assert) {
 
 		var done = assert.async();
@@ -117,17 +125,17 @@
 		jQuery.sap.registerModulePath("sap.test.lib3", "./testdata/components/async/lib3");
 		jQuery.sap.registerModulePath("sap.test.lib4", "./testdata/components/async/lib4");
 		jQuery.sap.registerModulePath("sap.test.mycomp", "./testdata/components/async/mycomp");
-		
+
 		var oResult = sap.ui.component.load({
 			name: "sap.test.mycomp",
 			async: true,
 			asyncHints: {
-				libs: [ 
+				libs: [
 					{
 						name: 'sap.test.lib2',
 						url: './testdata/components/async/lib2'
 					},
-					'sap.test.lib3' 
+					'sap.test.lib3'
 				],
 				components: [ {
 					name: 'sap.test.mysubcomp',
@@ -135,7 +143,7 @@
 				}]
 			}
 		});
-		
+
 		assert.ok(oResult instanceof Promise, "load should return a promise");
 		oResult.then(function() {
 			sap.ui.component({name: "sap.test.mycomp"});
@@ -148,8 +156,7 @@
 		// TODO spy on requireModule, check that expected modules have been loaded
 	});
 
-
-	QUnit.test("Manifest from component instance (async)", function(assert) {
+	QUnit.test("Manifest from component instance", function(assert) {
 
 		jQuery.sap.registerModulePath("samples.components", "../../../../../test-resources/sap/ui/core/samples/components/");
 
@@ -169,7 +176,7 @@
 		});
 
 		oServer.respondWith("GET", "/anylocation/manifest.json", [
-			200, 
+			200,
 			{
 				"Content-Type": "application/json"
 			},
@@ -192,13 +199,72 @@
 			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
 			assert.ok(oComponent.getManifest(), "Manifest is available");
 			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
+			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
 			oDone();
 		}, function(oError) {
-			assert.Ok(false,"Promise of Component hasn't been resolved correctly");
+			assert.ok(false,"Promise of Component hasn't been resolved correctly");
 			oDone();
 		});
 	});
 
+	QUnit.module("Async (Pre-)Loading (Manifest First)", {
+		beforeEach: function() {
+			// Register test module path
+			jQuery.sap.registerModulePath("sap.test", "./testdata/components/async");
+
+			// Create spies
+			this.oLoadLibrariesSpy = sinon.spy(sap.ui.getCore(), "loadLibraries");
+			this.oRegisterPreloadedModulesSpy = sinon.spy(jQuery.sap, "registerPreloadedModules");
+		},
+		afterEach: function() {
+			unloadResources();
+
+			// Restore spies
+			this.oLoadLibrariesSpy.restore();
+			this.oRegisterPreloadedModulesSpy.restore();
+		}
+	});
+
+	QUnit.test("dependencies with manifest component", function(assert) {
+		var done = assert.async();
+
+		// start test
+		sap.ui.component({
+			manifestUrl : "./testdata/components/async/manifestcomp/manifest.json",
+			async: true
+		}).then(function(oComponent) {
+			assert.ok(oComponent instanceof sap.ui.core.Component, "Component has been created.");
+
+			// Verify that all expected libraries have been prelaoded
+			// "sap.test.lib3" is declared as "lazy" and shouldn't get preloaded initially
+			sinon.assert.calledWithExactly(this.oLoadLibrariesSpy,
+			[
+				"sap.test.lib2",
+				"sap.test.lib4"
+			], {
+				async: true
+			});
+
+			// Verify that all expected components have been preloaded
+			sinon.assert.calledWithMatch(this.oRegisterPreloadedModulesSpy, {
+				name: "sap/test/manifestcomp/Component-preload"
+			});
+			sinon.assert.calledWithMatch(this.oRegisterPreloadedModulesSpy, {
+				name: "sap/test/mycomp/Component-preload"
+			});
+
+			// "lazy" component should not get preloaded automatically
+			sinon.assert.neverCalledWithMatch(this.oRegisterPreloadedModulesSpy, {
+				name: "sap/test/mysubcomp/Component-preload"
+			});
+
+			done();
+		}.bind(this), function(oError) {
+			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
+			done();
+		});
+	});
 
 	</script>
 	</head>

@@ -271,11 +271,6 @@
 			font-size: 1rem;
 		}
 	}
-	
-	.sapUiTableColRowHdr.sapUiTableSelAllEnabled,
-	.sapUiTableRowHdr {
-			width: @sapUiTableCozyRowHdrWidth;
-	}
 }
 
 .sapUiSizeCompact, .sapUiSizeCozy {
@@ -297,21 +292,21 @@
 			bottom: 0;
 			right: 0;
 		}
-		
+
 		/* only display if data is available */
 		 .sapUiTableRowHidden.sapUiTableRowHdr::after {
 			display: none;
 		}
-		
+
 		.sapUiTableRowHdr:hover:after {
 			border-color: @sapUiFieldHoverBorderColor;
 		}
-		
+
 		:not(.sapUiTableSelAll).sapUiTableSelAllEnabled.sapUiTableColRowHdr::after,
 		.sapUiTableRowHdr.sapUiTableRowSel::after {
 			content: '\e05b';
 		}
-		
+
 		.sapUiTableColRowHdr .sapUiTableColRowHdrIco,
 		.sapUiTableColRowHdr:hover .sapUiTableColRowHdrIco {
 			display: none;
@@ -486,6 +481,7 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	.sapUiTableRowHdrScr,
 	.sapUiTableColRowHdr {
 		width: @sapUiTableCompactRowHdrWidth;
+		min-height: @sapUiTableCompactRowHeight;
 	}
 }
 
@@ -493,10 +489,12 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	.sapUiTableRowHdrScr,
 	.sapUiTableColRowHdr {
 		width: @sapUiTableCozyRowHdrWidth;
+		min-height: @sapUiTableCozyRowHdrHeight;
 	}
 }
+
 /* Table Column Resizer */
-.sapUiTableColRsz:hover {
+.sapUiTableColRsz:hover, .sapUiTableColRszActive {
 	background-color: @sapUiListHighlightColor;
 }
 

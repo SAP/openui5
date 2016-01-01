@@ -95,7 +95,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			 * <b>Note:</b> If data binding on <code>value</code> property with type <code>sap.ui.model.type.Date</code> is used, this property will be ignored.
 			 * @since 1.28.6
 			 */
-			displayFormatType : {type : "string", group : "Appearance", defaultValue : ""}
+			displayFormatType : {type : "string", group : "Appearance", defaultValue : ""},
+
+			/**
+			 * If set, the days in the calendar popup are also displayed in this calendar type
+			 * If not set, the dates are only displayed in the primary calendar type
+			 * @since 1.34.1
+			 */
+			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
+
 		}
 	}});
 
@@ -115,8 +123,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			this._oMinDate = new UniversalDate(1, 0, 1);
 			this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
 			this._oMaxDate = new UniversalDate(9999, 11, 31);
-
-			this._bMobile = !sap.ui.Device.system.desktop;
 
 		};
 
@@ -280,9 +286,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 			if (jQuery(oEvent.target).hasClass("sapUiIcon")) {
 				_toggleOpen.call(this);
-			} else if (this._bMobile && (!this._oPopup || !this._oPopup.isOpen()) &&
-					this.getEditable() && this.getEnabled()) {
-				_open.call(this);
 			}
 
 		};
@@ -465,6 +468,19 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 			// reuse update from format function
 			this.setDisplayFormat(this.getDisplayFormat());
+
+			return this;
+
+		};
+
+		DatePicker.prototype.setSecondaryCalendarType = function(sCalendarType){
+
+			this._bSecondaryCalendarTypeSet = true; // as property can not be empty but we use it only if set
+			this.setProperty("secondaryCalendarType", sCalendarType, true);
+
+			if (this._oCalendar) {
+				this._oCalendar.setSecondaryCalendarType(sCalendarType);
+			}
 
 			return this;
 
@@ -653,8 +669,28 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				if (this.$().closest(".sapUiSizeCompact").length > 0) {
 					this._oCalendar.addStyleClass("sapUiSizeCompact");
 				}
+				if (this._bSecondaryCalendarTypeSet) {
+					this._oCalendar.setSecondaryCalendarType(this.getSecondaryCalendarType());
+				}
 				this._oCalendar.setPopupMode(true);
 				this._oCalendar.setParent(this, undefined, true); // don't invalidate DatePicker
+			}
+
+			// set displayFormatType as PrimaryCalendarType
+			// not only one because it depends on DataBinding
+			var sCalendarType;
+			var oBinding = this.getBinding("value");
+
+			if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
+				sCalendarType = oBinding.oType.oOutputFormat.oFormatOptions.calendarType;
+			}
+
+			if (!sCalendarType) {
+				sCalendarType = this.getDisplayFormatType();
+			}
+
+			if (sCalendarType) {
+				this._oCalendar.setPrimaryCalendarType(sCalendarType);
 			}
 
 			var sValue = this._formatValue(this.getDateValue());
@@ -719,7 +755,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
 			if (!jQuery.sap.equal(oDate, oDateOld)) {
 				this.setDateValue(oDate);
-				// compare Dates because value can be the same if only 2 digits for year 
+				// compare Dates because value can be the same if only 2 digits for year
 				sValue = this.getValue();
 				this.fireChangeEvent(sValue, {valid: true});
 				if (this.getDomRef()) { // as control could be destroyed during update binding

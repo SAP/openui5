@@ -221,6 +221,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 
+	Tile.prototype.setVisible = function(bVisible){
+		this.setProperty("visible", bVisible);
+		if (this.getParent() && this.getParent() instanceof sap.m.TileContainer) {
+			this.getParent().invalidate(); // Force rerendering of TileContainer, so the tiles can be rearanged
+		}
+		return this;
+	};
+
 	/**
 	 * Sets initial visibility of the Tile.
 	 * @param {boolean} bVisible visibility

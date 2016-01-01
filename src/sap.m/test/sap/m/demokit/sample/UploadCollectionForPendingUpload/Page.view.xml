@@ -1,14 +1,13 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.UploadCollectionForPendingUpload.Page"
-	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 
 	<Page id="Page" showHeader="false">
 		<content>
-			<Toolbar>
+			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Label
 					text="Layout:">
@@ -20,7 +19,7 @@
 					<core:Item key="All" text="sap.m.ListSeparators.All"/>
 					<core:Item key="None" text="sap.m.ListSeparators.None"/>
 				</Select>
-			</Toolbar>
+			</OverflowToolbar>
 			<Label text="Notes"/>
 			<TextArea
 				id="TextArea"

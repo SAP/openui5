@@ -22,12 +22,18 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 			return;
 		}
 		this.beginTabStrip(oRm, oControl);
-		this.renderLeftOverflowButtons(oRm, oControl);
-		this.beginTabContainer(oRm, oControl);
-		this.renderTabs(oRm, oControl);
-		this.endTabContainer(oRm);
-		this.renderRightOverflowButtons(oRm, oControl);
-		this.renderTouchArea(oRm, oControl);
+
+		// for phones show only the select component of the strip
+		if (sap.ui.Device.system.phone === true) {
+			oRm.renderControl(oControl.getAggregation('_select'));
+		} else {
+			this.renderLeftOverflowButtons(oRm, oControl);
+			this.beginTabContainer(oRm, oControl);
+			this.renderTabs(oRm, oControl);
+			this.endTabContainer(oRm);
+			this.renderRightOverflowButtons(oRm, oControl);
+			this.renderTouchArea(oRm, oControl);
+		}
 		this.endTabStrip(oRm);
 	};
 
@@ -38,9 +44,12 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered.
 	 */
 	TabStripRenderer.renderTabs = function (oRm, oControl) {
-		var aTabs           = oControl.getItems();
+		var aTabs = oControl.getItems(),
+			sSelectedItemId = oControl.getSelectedItem();
+
 		aTabs.forEach(function (oTab, iIndex, aTabs) {
-			this.renderTab(oRm, oControl, oTab, (oControl.getSelectedItem().getId() === oTab.getId()));
+			var bIsSelected = sSelectedItemId && sSelectedItemId === oTab.getId();
+			this.renderTab(oRm, oControl, oTab, bIsSelected);
 		}.bind(this));
 	};
 
@@ -56,7 +65,8 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 */
 	TabStripRenderer.renderTab = function (oRm, oControl, oTab, bSelected) {
 		var sItemClass = TabStripItem._CSS_CLASS + (bSelected ? " selected" : ""),
-			bIsTabModified = oTab.getModified();
+			bIsTabModified = oTab.getModified(),
+			oSelectedItem = sap.ui.getCore().byId(oControl.getSelectedItem());
 
 
 		// ToDo: fix the hilarious concatenation..
@@ -67,7 +77,7 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 		oRm.write("<div id='" + oTab.getId() + "' class='" + sItemClass + "'");
 		oRm.writeElementData(oTab);
 
-		oRm.writeAccessibilityState(oTab, getTabStripItemAccAttributes(oTab, oControl.getParent(), oControl.getSelectedItem()));
+		oRm.writeAccessibilityState(oTab, getTabStripItemAccAttributes(oTab, oControl.getParent(), oSelectedItem));
 
 		oRm.write(">");
 
@@ -233,9 +243,10 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 		if (oTabStripParent && oTabStripParent.getRenderer && oTabStripParent.getRenderer().getContentDomId) {
 			mAccAttributes["controls"] = oTabStripParent.getRenderer().getContentDomId(oTabStripParent);
 		}
-		mAccAttributes["selected"] = "false";
 		if (oSelectedItem && oSelectedItem.getId() === oItem.getId()) {
-			mAccAttributes["aria-selected"] = "true";
+			mAccAttributes["selected"] = "true";
+		} else {
+			mAccAttributes["selected"] = "false";
 		}
 		return mAccAttributes;
 	}

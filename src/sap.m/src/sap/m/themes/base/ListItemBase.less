@@ -41,6 +41,23 @@
 	outline: none;
 }
 
+/* IE ignores outline-offset. Use an overlay: */
+.sapMLIBLegacyOutline:focus {
+  outline: none;
+  position: relative;
+}
+
+.sapMLIBLegacyOutline:focus::before {
+  content: "";
+  border: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
 .sapMLIBSelectS,
 .sapMLIBSelectSL,
 .sapMLIBSelectM,

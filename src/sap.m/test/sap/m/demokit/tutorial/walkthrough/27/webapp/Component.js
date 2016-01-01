@@ -7,7 +7,7 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.demo.wt.Component", {
 
-		metadata: {
+		metadata : {
 			manifest: "json"
 		},
 

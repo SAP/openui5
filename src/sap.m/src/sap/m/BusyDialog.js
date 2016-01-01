@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					title: {type: "string", group: "Appearance", defaultValue: ''},
 
 					/**
-					 * Icon displayed in the dialog header. This icon is invisible in iOS platform and it is density aware. You can use the density convention (@2, @1.5, etc.) to provide higher resolution image for higher density screens.
+					 * Icon, used from the BusyIndicator. This icon is invisible in iOS platform and it is density aware. You can use the density convention (@2, @1.5, etc.) to provide higher resolution image for higher density screens.
 					 */
 					customIcon: {type: "sap.ui.core.URI", group: "Appearance", defaultValue: ''},
 
@@ -109,7 +109,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			//create the dialog
 			this._oDialog = new sap.m.Dialog(this.getId() + '-Dialog', {
 				content: this._busyIndicator,
-				showHeader: false
+				showHeader: false,
+				initialFocus: this._busyIndicator
 			}).addStyleClass('sapMBusyDialog');
 
 			this._oDialog.addEventDelegate({
@@ -162,7 +163,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 */
 		BusyDialog.prototype.open = function () {
 			jQuery.sap.log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
-			this._oDialog.open();
+
+			//if the code is not ready yet (new sap.m.BusyDialog().open()) wait 50ms and then try ot open it.
+			if (!document.body || !sap.ui.getCore().isInitialized()) {
+				setTimeout(function() {
+					this.open();
+				}.bind(this), 50);
+			} else {
+				this._oDialog.open();
+			}
+
 			return this;
 		};
 
@@ -184,6 +194,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			//the text can be changed only before opening
 			this.setProperty('title', title, true);
 			this._oDialog.setTitle(title).setShowHeader(!!title);
+
+			return this;
+		};
+
+		BusyDialog.prototype.setTooltip = function (tooltip) {
+			this._oDialog.setTooltip(tooltip);
+
+			return this;
+		};
+
+		BusyDialog.prototype.getTooltip = function () {
+			this._oDialog.getTooltip();
 
 			return this;
 		};
@@ -242,9 +264,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.setProperty("showCancelButton", isCancelButtonShown, false);
 
 			if (isCancelButtonShown) {
-				this._oDialog.setEndButton(this._getCloseButton());
+				this._oDialog.setEndButton(this._getCancelButton());
 			} else {
-				this._destroyTheCloseButton();
+				this._destroyTheCancelButton();
 			}
 
 			return this;
@@ -254,10 +276,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.setProperty("cancelButtonText", text, false);
 
 			if (text) {
-				this._getCloseButton().setText(text);
-				this._oDialog.setEndButton(this._getCloseButton());
+				this._getCancelButton().setText(text);
+				this._oDialog.setEndButton(this._getCancelButton());
 			} else {
-				this._destroyTheCloseButton();
+				this._destroyTheCancelButton();
 			}
 
 			return this;
@@ -269,17 +291,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		//private functions
 
-		BusyDialog.prototype._destroyTheCloseButton = function () {
+		BusyDialog.prototype._destroyTheCancelButton = function () {
 			this._oDialog.destroyEndButton();
 			this._cancelButton = null;
 		};
 
-		BusyDialog.prototype._getCloseButton = function () {
+		BusyDialog.prototype._getCancelButton = function () {
 			var cancelButtonText = this.getCancelButtonText();
-			var closeButtonText = cancelButtonText ? cancelButtonText : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
+			cancelButtonText = cancelButtonText ? cancelButtonText : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
 
 			return this._cancelButton ? this._cancelButton : this._cancelButton = new sap.m.Button(this.getId() + 'busyCancelBtn', {
-				text: closeButtonText,
+				text: cancelButtonText,
 				press: function () {
 					this.close(true);
 				}.bind(this)

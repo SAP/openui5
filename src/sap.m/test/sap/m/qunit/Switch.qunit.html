@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta charset="UTF-8">
+		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Test Page for sap.m.Switch</title>
 		<script id="sap-ui-bootstrap"
@@ -11,7 +11,7 @@
 				data-sap-ui-libs="sap.m"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>​
@@ -331,6 +331,27 @@
 
 				// assert
 				strictEqual(oSwitch.getDomRef().getAttribute("aria-labelledby"), sExpectedLabelledBy);
+
+				// cleanup
+				oSwitch.destroy();
+			});
+
+			test("it should set the value of the invisible element for custom text", function() {
+
+				// system under test
+				var oSwitch = new sap.m.Switch({
+					id: "label1",
+					state: true,
+					customTextOn: "Yes",
+					customTextOff: "No"
+				});
+
+				// arrange
+				oSwitch.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSwitch.getDomRef("invisible").textContent, "Yes");
 
 				// cleanup
 				oSwitch.destroy();

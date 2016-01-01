@@ -1,15 +1,15 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.core.Control.placeAt / sap.ui.core.Core.setRoot
   Author: d046314
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Control.placeAt / Core.setRoot - sap.ui.core</title>
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -17,7 +17,7 @@
 		data-sap-ui-libs="sap.ui.commons"
 		data-sap-ui-language=en>
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -88,16 +88,16 @@
 			aResult = doPerformCall(oContainerRef, "only", sContainerId, bIsUiArea, true);
 			doCheckPlaceAtResult(aResult, 1, 0, "only");
 		};
-	
+
 	</script>
-	
+
 	<!-- Test functions -->
 	<script language="javascript">
-	
+
 		qutils.delayTestStart();
-	
+
 		module("sap.ui.core.Control.placeAt");
-	
+
 		test("Deferred call", function() {
 			doCheckPlaceAtResult(["myPanel", sap.ui.getCore().getUIArea("uiArea1")], 1, 0, "deferred call");
 		});
@@ -139,9 +139,9 @@
 		test("Container Control via ID", function() {
 			doTestSetRoot("myPanel2", "myPanel2", false);
 		});
-	
+
 	</script>
-  
+
 </head>
 <body>
 	<h1 id="qunit-header">QUnit tests: sap.ui.core.Control.placeAt / sap.ui.core.Core.setRoot</h1>

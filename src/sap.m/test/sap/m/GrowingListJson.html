@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>sap.m.List with Growing Feature Test with JSON Model</title>
 
 <script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
-	
+
 </script>
 
 <script type="text/javascript">
@@ -94,8 +94,8 @@
 				if (oEntry == deleteId) {
 					data.splice(iIndex, 1);
 					return false;
-				}		
-		  });  
+				}
+		  });
 		  model.updateBindings();
 		}
 	}
@@ -114,7 +114,7 @@
 
 		// create a CustomData template, set its key to "answer" and bind its value to the answer data
 		var oDataTemplate = new sap.ui.core.CustomData({
-			key : "xyz"	
+			key : "xyz"
 		});
 		oDataTemplate.bindProperty("value", "press");
 
@@ -124,19 +124,19 @@
 		// bind Aggregation
 		list.bindAggregation("items", "test>/navigation", itemTemplate);
 	}
-	
+
 
 	function bindListData2(data, itemTemplate, list) {
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
-		
-		
+
+
 		// set the model to the list
 		list.setModel(oModel, "test");
 		//sap.ui.getCore().setModel(oModel);
 
 		// create a CustomData template, set its key to "answer" and bind its value to the answer data
 		var oDataTemplate = new sap.ui.core.CustomData({
-			key : "xyz"	
+			key : "xyz"
 		});
 		oDataTemplate.bindProperty("value", "press");
 
@@ -168,13 +168,13 @@
 
 
 	/*
-	window.setTimeout(function() { 
+	window.setTimeout(function() {
 		bindListData(dataAgain, oItemTemplate, list);
 		oModel.setData(dataAgain);
 		alert("binding changed")
 	}, 5000);
 	*/
-	
+
 	listOverview.addContent(oList);
 	app.addPage(listOverview)
 

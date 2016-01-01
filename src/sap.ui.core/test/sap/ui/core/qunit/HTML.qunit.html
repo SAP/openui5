@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.core.HTML control
   Author: d020684
 -->
 
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for HTML control</title>
 		<script>
 			window["sap-ui-config"] = {
@@ -16,15 +16,15 @@
 				}
 			};
 		</script>
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.core,sap.ui.testlib,sap.ui.commons" >
 		</script>
-    
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -123,7 +123,7 @@
             };
 
             var oCore = sap.ui.getCore();
-            
+
             function okFragment(oFragment, sUIArea, sComment) {
 	            var $ = jQuery(oFragment.selector, jQuery("#" + sUIArea)[0]);
 	            ok($.length > 0, "expected fragment exists");
@@ -211,7 +211,7 @@
             	equal(jQuery("#html2").css("width"), "64px", "fragment width");
             	equal(jQuery("#html2").css("height"), "64px", "fragment height");
             	equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
-            	
+
           		oCore.byId("html2").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
 							oCore.applyChanges();
 						  okFragment(FRAGMENT_2, "uiAreaA", "html2 DOM must be equal to FRAGMENT_2");
@@ -224,7 +224,7 @@
             	equal(jQuery("#html2").css("width"), "64px", "fragment width");
             	equal(jQuery("#html2").css("height"), "64px", "fragment height");
             	equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
-			      
+
           		oCore.byId("html2").setContent("somePureText");
 							oCore.applyChanges();
 			        equal(jQuery("#html2").size(), 0, "html2 DOM must be empty");
@@ -234,7 +234,7 @@
 						  okFragment(FRAGMENT_2, "uiAreaA", "html2 DOM must be equal to FRAGMENT_2");
             });
 
-            
+
             test("destroy", function() {
             	equal(jQuery("#html1").size(), 1, "html1 DOM should exist");
             	equal(jQuery("#html2").size(), 1, "html2 DOM should exist");
@@ -243,7 +243,7 @@
             	equal(jQuery("#html1").size(), 0, "html2 DOM should have been deleted");
             	equal(jQuery("#html2").size(), 0, "html2 DOM should have been deleted");
             });
-            
+
             module("sap.ui.core.HTML, preferDOM=true", {
                 setup : function() {
                 },
@@ -286,7 +286,7 @@
             	equal(jQuery("#html3").css("width"), "64px", "fragment width");
             	equal(jQuery("#html3").css("height"), "64px", "fragment height");
             	equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
-            	
+
           		oCore.byId("html3").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
 							oCore.applyChanges();
 						  okFragment(FRAGMENT_2, "uiAreaA", "html3 DOM must be equal to FRAGMENT_2");
@@ -299,7 +299,7 @@
             	equal(jQuery("#html3").css("width"), "64px", "fragment width");
             	equal(jQuery("#html3").css("height"), "64px", "fragment height");
             	equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
-			      
+
           		oCore.byId("html3").setContent("somePureText");
 							oCore.applyChanges();
 			        equal(jQuery("#html3").size(), 0, "html3 DOM must be empty");
@@ -309,13 +309,13 @@
 						  okFragment(FRAGMENT_2, "uiAreaA", "html3 DOM must be equal to FRAGMENT_2");
             });
 
-            
+
             test("survive removal", function() {
             	// check preconditions
             	ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
             	equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
-            	var oldDomRef = jQuery("#html3")[0]; 
-            	
+            	var oldDomRef = jQuery("#html3")[0];
+
             	// remove from control tree and rerender
             	sap.ui.getCore().getUIArea("uiAreaA").removeAllContent();
             	sap.ui.getCore().applyChanges();
@@ -326,7 +326,7 @@
             	equal(jQuery("#html3")[0], oldDomRef, "html3 DOM must be the same as before the removal");
             	ok(sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must have been moved to preserve area");
             	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
-	            	
+
             	// add it again to an UIArea and rerender
             	sap.ui.getCore().byId("html3").placeAt("uiAreaB");
             	sap.ui.getCore().applyChanges();
@@ -336,16 +336,16 @@
             	equal(jQuery("#html3")[0], oldDomRef, "html3 DOM still must be the same as before the removal");
             	ok(!sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must no longer be part of preserve area");
             	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
-            	
+
             });
-            
+
             test("destroy", function() {
             	equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
             	sap.ui.getCore().byId("html3").destroy();
             	equal(jQuery("#html3").size(), 0, "html3 DOM should have been deleted");
             	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
             });
-            
+
             module("sap.ui.core.HTML, predefinedContent", {
                 setup : function() {
                 },
@@ -448,23 +448,23 @@
 	            });
 
             });
-            
-            
+
+
             test("order of controls in UIArea", function() {
 	            var html = new sap.ui.core.HTML({content: FRAGMENT_1.content});
 							html.placeAt("uiAreaE");
 	            var button = new sap.ui.testlib.TestButton({text: "Button"});
 							button.placeAt("uiAreaE");
 							sap.ui.getCore().applyChanges();
-							
+
 							var $currentDom = jQuery("#uiAreaE").children();
 							equal($currentDom.length, 2, "both controls have been rendered");
 							equal($currentDom[0].tagName, "DIV");
 							equal($currentDom[1].tagName, "BUTTON");
-							
+
 							html.invalidate();
 							sap.ui.getCore().applyChanges();
-							
+
 							var $currentDom = jQuery("#uiAreaE").children();
 							equal($currentDom.length, 2, "both controls have been rendered");
 							equal($currentDom[0].tagName, "DIV");
@@ -475,30 +475,30 @@
 				var offensiveContent = "<div><script>alert('hello')<\/script></div>",
 					sanitizedContent = "<div></div>",
 					html;
-					
+
 				html = new sap.ui.core.HTML({});
 				html.setSanitizeContent(true);
 				html.setContent(offensiveContent);
 				equal(html.getContent(), sanitizedContent, "HTML sanitized using setters");
-				
+
 				html = new sap.ui.core.HTML({});
 				html.setContent(offensiveContent);
 				html.setSanitizeContent(true);
 				equal(html.getContent(), sanitizedContent, "HTML sanitized using setters, wrong order");
-				
+
 				html = new sap.ui.core.HTML({
 					sanitizeContent: true,
 					content: offensiveContent
 				});
 				equal(html.getContent(), sanitizedContent, "HTML sanitized using constructor");
-				
+
 				html = new sap.ui.core.HTML({
 					content: offensiveContent,
 					sanitizeContent: true
 				});
 				equal(html.getContent(), sanitizedContent, "HTML sanitized using constructor, wrong order");
 			});
-            
+
 		</script>
 	</head>
 	<body>
@@ -516,7 +516,7 @@
 		<div id="uiAreaC">
 			<div id="html5" class="fragment4" style="width:77px;height:77px;background-color:rgb(255,255,0)">
 			</div>
-		</div>		
+		</div>
 		<div id="uiAreaD">
 			<div data-sap-ui-preserve="html7" style="width:256px;height:64px;background-color:rgb(0,0,255)"></div>
 			<div data-sap-ui-preserve="html7" style="width:256px;height:64px;background-color:rgb(255,255,255)"></div>

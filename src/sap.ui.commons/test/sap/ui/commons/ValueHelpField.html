@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>ValueHelpField Test Page</title>
-		<script 
+		<script
 			src="../../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
@@ -12,7 +12,7 @@
 			data-sap-ui-trace="true" >
 		</script>
 
- 		<script src="../../../../resources/sap-ui-debug.js"></script>	
+ 		<script src="../../../../resources/sap-ui-debug.js"></script>
 
 		<script type="text/javascript">
 
@@ -34,13 +34,13 @@
 		  oLabel.placeAt("target1");
 		  oValueHelpField.placeAt("target1");
 
-			// disabled ValueHelpField with Label 
+			// disabled ValueHelpField with Label
 			var oValueHelpField = new sap.ui.commons.ValueHelpField("VHF2",{enabled: false});
 		  oLabel = new sap.ui.commons.Label("Label2",{ text: "UI5 disabled ValueHelpField:", labelFor: oValueHelpField});
 		  oLabel.placeAt("target2");
 		  oValueHelpField.placeAt("target2");
 
-			// read-only ValueHelpField with Label 
+			// read-only ValueHelpField with Label
 			var oValueHelpField = new sap.ui.commons.ValueHelpField("VHF3",{editable: false});
 		  oLabel = new sap.ui.commons.Label("Label3",{ text: "UI5 read-only ValueHelpField:", labelFor: oValueHelpField});
 		  oLabel.placeAt("target3");

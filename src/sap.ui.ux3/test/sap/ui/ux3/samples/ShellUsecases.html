@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Shell Usecases - sap.ui.ux3</title>
 <script src="../../../../../resources/sap-ui-core.js"
@@ -10,15 +10,15 @@
 	data-sap-ui-theme="sap_goldreflection">
 </script>
 <script src="../resources/ShellSettings.js" type="text/javascript"></script>
-<link type="text/css" rel="stylesheet" href="../resources/ShellSettings.css"/>
+<link type="text/css" rel="stylesheet" href="../resources/ShellSettings.css">
 
 <style>
-		
+
 .sapUiPanel .sapUiLnk { /* hacky! this should be done in the layout around the links! Do not copy! */
 	display: block;
 	margin-bottom: 3px;
 }
-		
+
 </style>
 
 <script>
@@ -43,20 +43,20 @@ var mContent = {
 			p1.addContent(new c.Link({text:"Open Tasks (8)"}));
 			p1.addContent(new c.Link({text:"Open Notifications (0)"}));
 			var cell1 = new c.layout.MatrixLayoutCell({vAlign:c.layout.VAlign.Top}).addContent(p1);
-			
+
 			var p2 = new c.Panel().setText("My Top Worklists");
 			p2.addContent(new c.Link({text:"Open Activities - Activities - Account Management (1)"}));
 			p2.addContent(new c.Link({text:"Open Tasks - Sales Quotes - New Business (2)"}));
 			p2.addContent(new c.Link({text:"Open Tasks - Returns - Sales Orders (2)"}));
 			var cell2 = new c.layout.MatrixLayoutCell({vAlign:c.layout.VAlign.Top}).addContent(p2);
 			layout.createRow(cell1, cell2);
-			
+
 			var cell = new c.layout.MatrixLayoutCell({colSpan:2});
 			var p3 = new c.Panel().setText("Latest News");
 			p3.addContent(new c.TextView({text:"No news available."}));
 			cell.addContent(p3);
 			layout.createRow(cell);
-			
+
 			return layout;
 		}
 	},
@@ -76,7 +76,7 @@ var mContent = {
 			}
 			return new c.Panel({
 				title : new c.Title({
-					text: "Some Lorem Ipsum" 
+					text: "Some Lorem Ipsum"
 				}),
 				content : oMatrix
 			});
@@ -253,9 +253,9 @@ var mContent = {
 	"More":	{
 		children: ["SAPHomepage2", "LoremIpsum2", "LoremIpsum3"]
 	},
-	
+
 	//Sub Items
-	
+
 	"SAPHomepage2":	{
 		title: "SAP Homepage",
 		subitem: true,
@@ -305,17 +305,17 @@ var aHeaderItems = [
 function handleContentChange(bPane, sKey){
 	var _mContent = bPane ? mPaneContent : mContent;
 	var oContent =  _mContent[sKey];
-	
+
 	if(!bPane){
 		var oSettings = oContent.settings ? oContent.settings : mShellSettings["default"];
 		oShell.setFullHeightContent(oSettings.fullHeightContent);
 		oShell.setApplyContentPadding(oSettings.contentPadding);
 	}
-	
+
 	if(!bPane && oShell.isPaneOpen() && oShell.__currentPane === "Settings"){
 		oShell.setPaneContent(mPaneContent["Settings"].content());
 	}
-	
+
 	var oControl;
 	if(oContent._content instanceof sap.ui.core.Control){
 		oControl = oContent._content;
@@ -326,7 +326,7 @@ function handleContentChange(bPane, sKey){
 			oContent._content = oControl; // Always refresh settings
 		}
 	}
-	
+
 	if(oControl){
 		if(bPane){
 			oShell.setPaneContent(oControl);
@@ -371,7 +371,7 @@ for(var sKey in mContent){
 			text: oContent.title ? oContent.title : sKey
 		});
 		oShell.addWorksetItem(oItem);
-		
+
 		if(oContent.children){
 			for(j=0; j<oContent.children.length; j++){
 				var sChildKey = oContent.children[j];
@@ -382,7 +382,7 @@ for(var sKey in mContent){
 				}));
 			}
 		}
-		
+
 		if(bFirst){
 			oShell.setSelectedWorksetItem(sKey);
 			handleContentChange(false, sKey);

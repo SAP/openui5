@@ -8,14 +8,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 	"use strict";
 
 
-
-
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.TechInfo.
 		 * @class This class represents the technical info plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 *
 		 * @abstract
-		 * @extends sap.ui.base.Object
+		 * @extends sap.ui.core.support.Plugin
 		 * @version ${version}
 		 * @constructor
 		 * @private
@@ -62,17 +60,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 			line(html, true, true, "SAPUI5 Version", function(buffer){
 				try {
 					var oVersionInfo = sap.ui.getVersionInfo();
-					var sVersion = "<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' title='Open Version Info'>" + oVersionInfo.version + "</a>";
-					buffer.push(sVersion, " (built at ", oVersionInfo.buildTimestamp, ", last change ", oVersionInfo.scmRevision, ")");
+					var sVersion = "<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' title='Open Version Info'>" + jQuery.sap.escapeHTML(oVersionInfo.version || "") + "</a>";
+					buffer.push(sVersion, " (built at ", jQuery.sap.escapeHTML(oVersionInfo.buildTimestamp || ""), ", last change ", jQuery.sap.escapeHTML(oVersionInfo.scmRevision || ""), ")");
 				} catch (ex) {
 					buffer.push("not available");
 				}
 			});
 			line(html, true, true, "Core Version", function(buffer){
-				buffer.push(oData.version, " (built at ", oData.build, ", last change ", oData.change, ")");
+				return oData.version + " (built at " + oData.build + ", last change " + oData.change + ")";
 			});
 			line(html, true, true, "User Agent", function(buffer){
-				buffer.push(jQuery.sap.encodeHTML(oData.useragent), (oData.docmode ? ", Document Mode '" + oData.docmode + "'" : ""));
+				return oData.useragent + (oData.docmode ? ", Document Mode '" + oData.docmode + "'" : "");
 			});
 			line(html, true, true, "Debug Sources", function(buffer){
 				buffer.push((oData.debug ? "ON" : "OFF"), "<a href='javascript:void(0);' id='", that.getId(), "-tggleDbgSrc' class='sapUiSupportLink'>Toggle</a>");
@@ -87,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 			line(html, true, true, "Loaded Modules", function(buffer){
 				jQuery.each(oData.modules, function(i,v){
 					if (v.indexOf("sap.ui.core.support") < 0) {
-						buffer.push("<span>", v, "</span>");
+						buffer.push("<span>", jQuery.sap.escapeHTML(v || ""), "</span>");
 						if (i < oData.modules.length - 1) {
 							buffer.push(", ");
 						}
@@ -272,13 +270,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 
 
 		function line(buffer, right, border, label, content){
-			buffer.push("<tr><td ", right ? "align='right' " : "", "valign='top'>", "<label class='sapUiSupportLabel'>", jQuery.sap.encodeHTML(label), "</label></td><td",
+			buffer.push("<tr><td ", right ? "align='right' " : "", "valign='top'>", "<label class='sapUiSupportLabel'>", jQuery.sap.escapeHTML(label || ""), "</label></td><td",
 					border ? " class='sapUiSupportTechInfoBorder'" : "", ">");
 			var ctnt = content;
 			if (jQuery.isFunction(content)) {
-				ctnt = content(buffer) || "";
+				ctnt = content(buffer);
 			}
-			buffer.push(jQuery.sap.encodeHTML(ctnt));
+			buffer.push(jQuery.sap.escapeHTML(ctnt || ""));
 			buffer.push("</td></tr>");
 		}
 
@@ -300,9 +298,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 				buffer.push("</table>");
 			});
 		}
-
-
-
 
 	return TechInfo;
 

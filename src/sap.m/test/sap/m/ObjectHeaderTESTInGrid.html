@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>Object Header used in Grid - sap.m</title>
 
 <script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.layout,sap.m" data-sap-ui-theme="sap_bluecrystal">
@@ -11,8 +11,8 @@
 
 <script type="text/javascript">
 	jQuery.sap.require("sap.ui.core.IconPool");
-	
-	
+
+
 
 	var marginStyle = jQuery.device.is.phone ? "sapUiSmallMargin" : "sapUiMediumMargin";
 
@@ -58,7 +58,7 @@
 				markFlagged : true,
 				showMarkers : true
 			});
-	
+
 	var oh1Icon = new sap.m.ObjectHeader("oh1-with-icon",{
 				icon : sap.ui.core.IconPool.getIconURI("attachment"),
 				intro : "Introtext: On behalf of John Smith",
@@ -72,7 +72,7 @@
 					state : sap.ui.core.ValueState.Success
 				}) ]
 			});
-	
+
 	var oh1IconNoNumber = new sap.m.ObjectHeader(
 			"oh1-with-icon-no-number",	{
 				icon : sap.ui.core.IconPool.getIconURI("attachment"),
@@ -178,13 +178,13 @@
 		iconPress : oh4PressHandler
 	});
 
-	
+
 /*	var scrollContainer = new sap.m.ScrollContainer({
 		width : "100%",
 		horizontal : sap.ui.Device.system.phone,
 		content: [new sap.m.Label({text: "This label is displayed on the Object Header's right hand side"})]
 	});
-	
+
 	var facetGrid = new sap.ui.layout.Grid({
 		defaultSpan: "L6 M12 S12",
 		hSpacing: 1,
@@ -192,12 +192,12 @@
 		width: "auto",
 		content: [oh1, oh2, oh3, oh4]
 	});
-	
-	var gridOHeader = new sap.m.ObjectHeader ({ 
-		title: "Create fictitious vendor and initiate payment to the vendor [Vendor Management]", 
+
+	var gridOHeader = new sap.m.ObjectHeader ({
+		title: "Create fictitious vendor and initiate payment to the vendor [Vendor Management]",
 		condensed: true });
 	gridOHeader.addAttribute(new sap.m.ObjectAttribute({ text: "P001" }));
-	
+
 	var headerGrid = new sap.ui.layout.Grid({
 		hSpacing: 0,
 		vSpacing: 0,
@@ -206,30 +206,30 @@
 			scrollContainer
 		]
 	});
-	
+
 	var masterPage = new sap.m.Page({
 		content: [headerGrid, facetGrid],
 		showNavButton: true,
 	});
-	
-	
+
+
 	*/
-	
+
 	// put all the testing object header objects on the testing page
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
 			var page1 = new sap.m.Page("page1", {
 				title:"Page 1"
 			});
-			
+
 			page1.addContent(oh1);
 			page1.addContent(oh1Icon);
 			page1.addContent(oh4);
 			app.addPage(page1);
-	
+
 /*	var app = new sap.m.App();
 	app.setInitialPage(masterPage.getId());
 	app.addPage(masterPage);
-*/	
+*/
 	app.placeAt('body');
 </script>
 

@@ -28,6 +28,7 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 
 	var NegativeAction = SemanticButton.extend("sap.m.semantic.NegativeAction", /** @lends sap.m.semantic.NegativeAction.prototype */ {
 		metadata: {
+			library : "sap.m",
 			properties : {
 
 				/**

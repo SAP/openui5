@@ -34,9 +34,28 @@ sap.ui.define([],
 		DynamicSideContentRenderer.renderSubControls = function (oRm, oSideControl) {
 			var iSideContentId = oSideControl.getId(),
 				bShouldSetHeight = oSideControl._shouldSetHeight(),
-				// on firefox the 'aside' side content is not shown when below the main content; use div instead
-				sSideContentTag = sap.ui.Device.browser.firefox ? "div" : "aside";
+				bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
+				position = oSideControl.getSideContentPosition();
 
+			if ((position === sap.ui.layout.SideContentPosition.Begin && !bPageRTL) || (bPageRTL && position === sap.ui.layout.SideContentPosition.End)) {
+				this._renderSideContent(oRm, oSideControl, iSideContentId, bShouldSetHeight);
+				this._renderMainContent(oRm, oSideControl, iSideContentId, bShouldSetHeight);
+			} else {
+				this._renderMainContent(oRm, oSideControl, iSideContentId, bShouldSetHeight);
+				this._renderSideContent(oRm, oSideControl, iSideContentId, bShouldSetHeight);
+			}
+		};
+
+		DynamicSideContentRenderer.renderControls = function (oRM, aContent) {
+			var iLength = aContent.length,
+				i = 0;
+
+			for (; i < iLength; i++) {
+				oRM.renderControl(aContent[i]);
+			}
+		};
+
+		DynamicSideContentRenderer._renderMainContent = function(oRm, oSideControl, iSideContentId, bShouldSetHeight) {
 			oRm.write("<div id='" + iSideContentId + "-MCGridCell'");
 
 			if (oSideControl._iMcSpan) {
@@ -51,6 +70,11 @@ sap.ui.define([],
 
 			this.renderControls(oRm, oSideControl.getMainContent());
 			oRm.write("</div>");
+		};
+
+		DynamicSideContentRenderer._renderSideContent = function(oRm, oSideControl, iSideContentId, bShouldSetHeight) {
+			// on firefox the 'aside' side content is not shown when below the main content; use div instead
+			var sSideContentTag = sap.ui.Device.browser.firefox ? "div" : "aside";
 
 			oRm.write("<" + sSideContentTag + " id='" + iSideContentId + "-SCGridCell'");
 
@@ -73,15 +97,6 @@ sap.ui.define([],
 
 			this.renderControls(oRm, oSideControl.getSideContent());
 			oRm.write("</" + sSideContentTag + ">");
-		};
-
-		DynamicSideContentRenderer.renderControls = function (oRM, aContent) {
-			var iLength = aContent.length,
-				i = 0;
-
-			for (; i < iLength; i++) {
-				oRM.renderControl(aContent[i]);
-			}
 		};
 
 		return DynamicSideContentRenderer;

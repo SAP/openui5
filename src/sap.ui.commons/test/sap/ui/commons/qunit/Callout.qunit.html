@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.ux3.Callout
   Author: D036828
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
@@ -26,7 +26,7 @@
 	var oButton,
 		oLink,
 		oLayout,
-		oCallout; 
+		oCallout;
 
 	jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
 
@@ -68,7 +68,7 @@
 		equal(sap.ui.getCore().getControl("CButton").getTooltip().getId(),
 				"callout", "Callou is assigned as a tooltip to a button");
 	});
-	
+
 	function isCalloutVisible(){
 		return jQuery("#callout").filter(":visible").size() > 0;
 	}
@@ -113,14 +113,14 @@
 		}, 700);
 	});
 
-	
+
 	asyncTest("Opened and closed events", function() {
 		// Randomize number of attempts
 		var iRepetitions = 2 + Math.round(Math.random() * 3);
 		// Delay must be >400 - the events are fired after the animations.
 		var iDelay = 500;
-		
-		// Count the number of times the the open and close events should be triggered and 
+
+		// Count the number of times the the open and close events should be triggered and
 		// how often they were actually triggered.
 		var mCounter = {
 			open   : 0,
@@ -128,7 +128,7 @@
 			close  : 0,
 			closed : 0
 		};
-		
+
 		// Count the number of times the opened-event was fired
 		oCallout.attachOpened(function() {
 			mCounter.opened++;
@@ -137,7 +137,7 @@
 		oCallout.attachClosed(function() {
 			mCounter.closed++;
 		});
-		
+
 		var iChecked = 0;
 		var bOpen = false;
 		var fnCheck = function() {
@@ -151,7 +151,7 @@
 				mCounter.open++;
 			}
 			bOpen = !bOpen;
-			
+
 
 			iChecked++;
 			if (iChecked < iRepetitions * 2) {
@@ -162,31 +162,31 @@
 				// whether the numbers are correct.
 				setTimeout(function() {
 					ok(
-						mCounter.open === iRepetitions, 
+						mCounter.open === iRepetitions,
 						"Callout was opened " + mCounter.open + " times. (Should be "+ iRepetitions +")"
 					);
 					ok(
-						mCounter.close === iRepetitions, 
+						mCounter.close === iRepetitions,
 						"Callout was closed " +  mCounter.close + " times. (Should be "+ iRepetitions +")"
 					);
-					
+
 					ok(
-						mCounter.open === mCounter.opened, 
+						mCounter.open === mCounter.opened,
 						"Opened event fired as often as open occurred. ("+ mCounter.open +"/"+ mCounter.opened +")"
 					);
 					ok(
-						mCounter.close === mCounter.closed, 
+						mCounter.close === mCounter.closed,
 						"Closed event fired as often as close occurred. ("+ mCounter.close +"/"+ mCounter.closed +")"
 					);
 					start();
 				}, iDelay + 10);
 			}
 		};
-		
+
 		fnCheck();
 	});
 
-	
+
 	module("Callout: keyboard navigation");
 	asyncTest("Initial Focus", function() {
 		oButton.focus();
@@ -204,8 +204,8 @@
 			}, 500); // CLOSE
 		}, 500); // OPEN
 	});
-	
-	
+
+
 </script>
 
 <title>qUnit test for the Callout control</title>

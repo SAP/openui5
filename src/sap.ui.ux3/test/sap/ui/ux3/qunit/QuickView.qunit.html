@@ -6,7 +6,7 @@
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <style type="text/css">
 	#uiArea1 {
 		width: 250px;
@@ -28,7 +28,7 @@
 <script language="javascript">
 
 	// Example data
-	var oJSONData = { 
+	var oJSONData = {
 		"type": "Thing Type",
 		"name": "Name",
 		"href": "http://www.google.com",
@@ -79,7 +79,7 @@
 	}
 
 	var testDataQV = {};
-	
+
 	// Event handlers from QuickViews
 	function onOpen(event){
 		testDataQV.opened = true;
@@ -130,7 +130,7 @@
 		equal(sap.ui.getCore().getControl("QVButton").getTooltip().getId(),
 				"QuickView", "QuickView is assigned as a tooltip to a button");
 	});
-	
+
 	function isQuickViewVisible(){
 		return jQuery("#QuickView").filter(":visible").size() > 0;
 	}
@@ -192,9 +192,9 @@
 			}, 400);
 		}, 500);
 	});
-	
+
 	module("QuickView: content");
-	
+
 	asyncTest("Icons", function() {
 		ok(true, "A-sync close() start");
 		qutils.triggerMouseEvent("QVButton", "mouseover");

@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
          * The flexible part has a scrollbar when the content is larger than the available space.
          * Whenever the height of the whole control is less than 256 pixels, the scrollbar becomes joint for the two parts.
          *
-         * <b>Note:</b> In order for the SideNavigation to stretch properly, its parent layout control should only be the sap.tnt.ToolLayout.
+         * <b>Note:</b> In order for the SideNavigation to stretch properly, its parent layout control should only be the sap.tnt.ToolPage.
          * @extends sap.ui.core.Control
          *
          * @author SAP SE
@@ -92,9 +92,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
         };
 
         SideNavigation.prototype.setExpanded = function (isExpanded) {
-            if (sap.ui.Device.system.phone) {
-                isExpanded = true;
-            }
 
             if (this.getExpanded() === isExpanded) {
                 return this;
@@ -151,11 +148,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             var itemAggregation = this.getAggregation('item');
             var fixedItemAggregation = this.getAggregation('fixedItem');
 
-            if (itemAggregation && listId === itemAggregation.getId()) {
+            if (itemAggregation && fixedItemAggregation && listId === itemAggregation.getId()) {
                 fixedItemAggregation.setSelectedItem(null);
             }
 
-            if (fixedItemAggregation && listId === fixedItemAggregation.getId()) {
+            if (itemAggregation && fixedItemAggregation && listId === fixedItemAggregation.getId()) {
                 itemAggregation.setSelectedItem(null);
             }
 
@@ -242,13 +239,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             var isAsideExpanded = this.getExpanded();
 
             if ((scrollContainerContent.offsetHeight > scrollContainerWrapper.offsetHeight) && !isAsideExpanded) {
-                domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'block'; // TODO refactor
-                domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'block'; // TODO refactor
+                domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'block';
+                domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'block';
 
                 domRef.querySelector('.sapTntSideNavigationScrollIconDown').classList.remove('sapTntSideNavigationScrollIconDisabled');
             } else {
-                domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'none'; // TODO refactor
-                domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'none'; // TODO refactor
+                domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'none';
+                domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'none';
             }
         };
 

@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.odata.ODataModel
   Author: d050084
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
@@ -29,7 +29,7 @@
 
 	//TODO currently we rely on northwind odata service for tests...
 	//TODO tests depends on server response time and northwind content...so tests may be unstable
-	
+
 	// time to wait for server responses
 	var oModel, oBinding, fnChange ;
 	var timeout = 3000;
@@ -42,18 +42,18 @@
 	};
 
 	function initBinding(oModel) {
-		return oModel.bindList("/Orders"); 
+		return oModel.bindList("/Orders");
 	};
-	
+
 	function init() {
 		oModel = initModel(sURI, true);
 		oBinding = initBinding(oModel);
 	};
-	
+
 	init();
-	
+
 	module("Model thresholding");
-	
+
 	asyncTest("test threshold 100; get data from 0..10", function(){
 		fnChange = function() {
 			aContexts = oBinding.getContexts(0,10,100);
@@ -62,10 +62,10 @@
 			oBinding.oModel.detachRequestCompleted(fnChange);
 			start();
 		}
-		oBinding.oModel.attachRequestCompleted(fnChange);	
+		oBinding.oModel.attachRequestCompleted(fnChange);
 		var aContexts = oBinding.getContexts(0,10,100);
 	});
-	
+
 	asyncTest("test threshold 100; simulate paging", function(){
 		fnChange = function() {
 			aContexts = oBinding.getContexts(120,10,100);
@@ -74,7 +74,7 @@
 			oBinding.oModel.detachRequestCompleted(fnChange);
 			start();
 		}
-		oBinding.oModel.attachRequestCompleted(fnChange);	
+		oBinding.oModel.attachRequestCompleted(fnChange);
 		var aContexts = oBinding.getContexts(0,10,100);
 		equal(oBinding.getContexts(10,10,100).length,10, "we should have 10 contexts");
 		equal(oBinding.getContexts(20,10,100).length,10, "we should have 10 contexts");
@@ -87,7 +87,7 @@
 		equal(oBinding.getContexts(90,10,100).length,10, "we should have 10 contexts");
 		equal(oBinding.getContexts(100,10,100).length,10, "we should have 10 contexts");
 	});
-	
+
 	asyncTest("test threshold 100; get next page", function(){
 		fnChange = function() {
 			aContexts = oBinding.getContexts(120,10,100);
@@ -100,7 +100,7 @@
 		equal(oBinding.getContexts(110,10,100).length,10, "we should have 10 contexts");
 		equal(oBinding.getContexts(120,10,100).length,10, "we should have 10 contexts");
 	});
-	
+
 	asyncTest("test threshold 100; jumpt to 751", function(){
 		fnChange = function() {
 			aContexts = oBinding.getContexts(751,10,100);
@@ -113,7 +113,7 @@
 		oBinding.oModel.attachRequestCompleted(fnChange);
 		equal(oBinding.getContexts(751,10,100).length,0, "contexts not loaded yet");
 	});
-	
+
 	asyncTest("test threshold 100; page/scroll back", function(){
 		fnChange = function() {
 			equal(oBinding.sRangeParams,"$skip=551&$top=100", "we should read next 100 entries");

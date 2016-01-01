@@ -2,12 +2,12 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <title>ColumnsPanel - sap.m</title>
 <script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-compatVersion="1.20">
-	
+
 </script>
 <script>
 	jQuery.sap.require("jquery.sap.xml");
@@ -154,7 +154,7 @@
 			oData.persistentData.columns.columnsItems.push(oColumnsItem);
 		});
 
-		//processing of existing columnsItems --> model change 
+		//processing of existing columnsItems --> model change
 		aExistingColumnsItems.forEach(function(oExistingColumnsItem) {
 			oColumnsItem = null;
 			sColumnKey = oExistingColumnsItem.getColumnKey();

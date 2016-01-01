@@ -26,7 +26,7 @@
 	<TileContent footer="New Notifications" size="M"
 		class="sapUiSmallMargin">
 		<content>
-			<JamContent size="M"
+			<FeedContent size="M"
 				contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
 				subheader="about 1 minute ago in Computer Market" value="132" />
 		</content>

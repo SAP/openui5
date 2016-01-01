@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.RadioButton">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
-	  <meta name="keywords" content="RadioButton" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+	  <meta name="keywords" content="RadioButton">
 		<title>RadioButton - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -25,7 +25,7 @@ var oRB1 = new sap.ui.commons.RadioButton({
 	text : 'yes',
 	tooltip : 'Select for Yes',
 	groupName : 'Group1',
-		select : function() {alert('YES');} 
+		select : function() {alert('YES');}
 	});
 
 var oRB2 = new sap.ui.commons.RadioButton({
@@ -33,7 +33,7 @@ var oRB2 = new sap.ui.commons.RadioButton({
 	tooltip : 'Select for No',
 	groupName : 'Group1',
 	selected : true,
-	select : function() {alert('NO');} 
+	select : function() {alert('NO');}
 	});
 
 oLayout.createRow(oRB1, oRB2);
@@ -103,7 +103,7 @@ oLayout.placeAt("sample2");
 
 		<h3>Basic Example</h3>
 		<div code-sample="sample1" script="RadioButtons"></div>
-		<br/>
+		<br>
 		<h3>Radio Buttons With Different States</h3>
 		<p>
 		RadioButtons can have different states controlled by the <code>valueState</code> property. The visualization of these states
@@ -111,7 +111,7 @@ oLayout.placeAt("sample2");
 		the selection state cannot be changed via user interaction.
 		</p>
 		<div code-sample="sample2" script="RadioButtonStates"></div>
-		<br/>
+		<br>
 		<p>
 		<h2>API Documentation</h2>
 		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.RadioButton.html" >API documentation</a>

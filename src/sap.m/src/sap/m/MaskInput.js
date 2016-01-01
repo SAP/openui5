@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 */
 	MaskInput.prototype.onkeydown = function (oEvent) {
 		var oKey = parseKeyBoardEvent(oEvent),
-		    mBrowser = sap.ui.Device.browser;
+			mBrowser = sap.ui.Device.browser;
 
 		/* When user types character, the flow of triggered events is keydown -> keypress -> input. The MaskInput
 		 handles user input in keydown (for special keys like Delete and Backspace) or in keypress - for any other user
@@ -185,10 +185,28 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		 */
 		var bIE9AndBackspaceDeleteScenario = (oKey.bBackspace || oKey.bDelete) && mBrowser.msie && mBrowser.version < 10;
 
-        if (!bIE9AndBackspaceDeleteScenario) {
+		if (!bIE9AndBackspaceDeleteScenario) {
 			InputBase.prototype.onkeydown.apply(this, arguments);
 		}
 		keyDownHandler.call(this, oEvent, oKey);
+	};
+
+	/**
+	 * Handles [Enter] key.
+	 * <b>Note:</b> If subclasses override this method, keep in mind that [Enter] is not really handled here, but in {@link sap.m.MaskInput.prototype#onkeydown}.
+	 * @param {jQuery.Event} oEvent The event object
+	 */
+	MaskInput.prototype.onsapenter = function(oEvent) {
+		//Nothing to do, [Enter] is already handled in onkeydown part.
+	};
+
+	/**
+	 * Handles the <code>sapfocusleave</code> event of the MaskInput.
+	 <b>Note:</b> If subclasses override this method, keep in mind that the <code>sapfocusleave</code> event is handled by {@link sap.m.MaskInput.prototype#onfocusout}.
+	 * @param {jQuery.Event} oEvent The event object
+	 * @private
+	 */
+	MaskInput.prototype.onsapfocusleave = function(oEvent) {
 	};
 
 	MaskInput.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
@@ -781,7 +799,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 */
 	function keyDownHandler(oEvent, oKey) {
 		var sDirection,
-		    oSelection,
+			oSelection,
 			iBegin,
 			iEnd,
 			iCursorPos,
@@ -899,8 +917,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 		if (this._sOldInputValue !== this._oTempValue.toString()) {
 			this.setValue(sValue);
-			this.onChange({value: sValue});
-			this.fireChangeEvent(sValue);
+			if (this.onChange && !this.onChange({value: sValue})) {//if the subclass didn't fire the "change" event by itself
+				this.fireChangeEvent(sValue);
+			}
 		}
 	}
 
@@ -1026,8 +1045,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 */
 	function isRtlChar(sString) {
 		var ltrChars    = 'A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF' + '\u2C00-\uFB1C\uFDFE-\uFE6F\uFEFD-\uFFFF',
-		    rtlChars    = '\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC',
-		    rtlDirCheck = new RegExp('^[^' + ltrChars + ']*[' + rtlChars + ']');
+			rtlChars    = '\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC',
+			rtlDirCheck = new RegExp('^[^' + ltrChars + ']*[' + rtlChars + ']');
 
 		return rtlDirCheck.test(sString);
 	}
@@ -1086,7 +1105,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 */
 	function containsRtlChars() {
 		var sTempValue = this._oTempValue.toString(),
-		    bContainsRtl = false;
+			bContainsRtl = false;
 		for (var i = 0; i < sTempValue.length; i++) {
 			bContainsRtl = isRtlChar(sTempValue[i]);
 		}

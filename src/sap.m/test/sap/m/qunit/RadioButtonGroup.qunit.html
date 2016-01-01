@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>RadioButton - sap.m - qUnit test</title>
 
 		<script id="sap-ui-bootstrap"
@@ -12,10 +12,10 @@
 			data-sap-ui-libs="sap.m, sap.ui.core" >
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
+
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -23,14 +23,14 @@
 
 		jQuery.sap.require("sap.ui.thirdparty.jquery-mobile-custom");
 		jQuery.sap.initMobile();
-		
+
 		module("Rendering");
-		
+
 
 		/* --------------------------------------- */
 		/* Test: Default Values                    */
 		/* --------------------------------------- */
-		
+
 		test("Default Values", function(){
 
 			var bEnabled = true;
@@ -51,7 +51,7 @@
 			oRadioButton.setText("Option 1");
 			oRadioButton.setTooltip("Tooltip 1");
 			oRBGroup.addButton(oRadioButton);
-			
+
 			oRadioButton = new sap.m.RadioButton("option2");
 			oRadioButton.setText("Option 2");
 			oRadioButton.setTooltip("Tooltip 2");
@@ -73,20 +73,20 @@
 			oRBGroup.destroyButtons();
 			oRBGroup.destroy();
 		});
-		
+
 		/* ----------------------------------------------- */
 		/* Test: 'visible=false'                           */
 		/* ----------------------------------------------- */
-		
+
 		test("'visible=false'", function(){
-		
+
 			// system under test
 			var oRBGroup = new sap.m.RadioButtonGroup({visible: false});
 			var oRadioButton = new sap.m.RadioButton("option1");
 			oRadioButton.setText("Option 1");
 			oRadioButton.setTooltip("Tooltip 1");
 			oRBGroup.addButton(oRadioButton);
-			
+
 			oRadioButton = new sap.m.RadioButton("option2");
 			oRadioButton.setText("Option 2");
 			oRadioButton.setTooltip("Tooltip 2");
@@ -103,7 +103,33 @@
 			oRBGroup.destroyButtons();
 			oRBGroup.destroy();
 		});
-		
+
+		QUnit.test("aria-posinset and aria-setsize when there is an invisible RB in the group", function(assert) {
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton(),
+				oRadioButton2 = new sap.m.RadioButton({ visible: false }),
+				oRadioButton3 = new sap.m.RadioButton(),
+				oRBGroup = new sap.m.RadioButtonGroup({
+					buttons: [
+						oRadioButton1,
+						oRadioButton2,
+						oRadioButton3
+					]
+				});
+
+			oRBGroup.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.equal(oRadioButton1.$().attr("aria-posinset"), 1, "aria-posinset should be 1 on the first button");
+			assert.equal(oRadioButton1.$().attr("aria-setsize"), 2, "aria-setsize should be 2 on the first button because there are 2 visible buttons on the screen");
+			assert.equal(oRadioButton3.$().attr("aria-posinset"), 2, "aria-posinset should be 2 on the third button because the second is invisible");
+
+			// cleanup
+			oRBGroup.destroyButtons();
+			oRBGroup.destroy();
+		});
+
 		/* ----------------------------------------------- */
 		/* Test: 'enabled=false'                            */
 		/* ----------------------------------------------- */
@@ -117,12 +143,12 @@
 			oRadioButton.setText("Option 1");
 			oRadioButton.setTooltip("Tooltip 1");
 			oRBGroup.addButton(oRadioButton);
-			
+
 			oRadioButton = new sap.m.RadioButton("option2");
 			oRadioButton.setText("Option 2");
 			oRadioButton.setTooltip("Tooltip 2");
 			oRBGroup.addButton(oRadioButton);
-			
+
 			var aRadioButtons = oRBGroup.getButtons();
 
 			// arrange
@@ -140,42 +166,42 @@
 			oRBGroup.destroyButtons();
 			oRBGroup.destroy();
 		});
-		
+
 		/* -------------------------------- */
 		/* 	   tests for setSelectedIndex() */
 		/* -------------------------------- */
 
 		test("setSelectedIndex()", function() {
-			
+
 			var oRBGroup = new sap.m.RadioButtonGroup("RBG");
 			var iSelectedIndex = 1;
-			
+
 			// arrange
 			var oRadioButton1 = new sap.m.RadioButton("option1");
 			oRadioButton1.setText("Option 1");
 			oRadioButton1.setTooltip("Tooltip 1");
 			oRBGroup.addButton(oRadioButton1);
-			
+
 			var oRadioButton2 = new sap.m.RadioButton("option2");
 			oRadioButton2.setText("Option 2");
 			oRadioButton2.setTooltip("Tooltip 2");
 			oRBGroup.addButton(oRadioButton2);
-			
+
 			sap.ui.getCore().applyChanges();
-			
-			
+
+
 			oRBGroup.placeAt("qunit-fixture");
 			oRBGroup.setSelectedIndex(iSelectedIndex);
-			
+
 			// assertions
 			equal(oRBGroup.getSelectedIndex(), iSelectedIndex, "The selectedIndex should be " + iSelectedIndex);
 			equal(oRBGroup.getSelectedButton(), oRadioButton2, "The second Radio Button should be selected");
-			
+
 			// cleanup
 			oRBGroup.destroyButtons();
 			oRBGroup.destroy();
 		});
-		
+
 		/*	--------------------------------------- 	*/
 		/*			tests for keyboard handling			*/
 		/*	--------------------------------------- 	*/
@@ -186,52 +212,52 @@
 			var oRBGroup = new sap.m.RadioButtonGroup("RBG1", {
 				columns : columnsCount
 			});
-			
+
 			for(var i = 0; i < iRadiosCount; i++) {
 				var oRadioButton = new sap.m.RadioButton("option1-" + i);
 				oRadioButton.setText("Option " + i);
 				oRadioButton.setTooltip("Tooltip " + i);
 				oRBGroup.addButton(oRadioButton);
 			}
-			
+
 			sap.ui.getCore().applyChanges();
-			
+
 			// Focus first radio
 			oRBGroup.placeAt("qunit-fixture");
 			qutils.triggerMouseEvent("RBG1-0", "click");
 			sap.ui.getCore().applyChanges();
-			
+
 			equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
-			
+
 			// Test arrow pressing
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_RIGHT");
 			sap.ui.getCore().applyChanges();
 			equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
-			
+
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_DOWN");
 			sap.ui.getCore().applyChanges();
 			equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
-			
+
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
 			sap.ui.getCore().applyChanges();
 			equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
-			
+
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_UP");
 			sap.ui.getCore().applyChanges();
 			equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
-			
+
 			qutils.triggerKeyboardEvent("RBG1", "END");
 			sap.ui.getCore().applyChanges();
 			equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
-			
+
 			qutils.triggerKeyboardEvent("RBG1", "HOME");
 			sap.ui.getCore().applyChanges();
 			equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
-			
+
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
 			sap.ui.getCore().applyChanges();
 			equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
-			
+
 			// cleanup
 			oRBGroup.destroyButtons();
 			oRBGroup.destroy();

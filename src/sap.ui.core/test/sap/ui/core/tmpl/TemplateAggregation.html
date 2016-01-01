@@ -2,8 +2,8 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 
 	<title>Template - sap.ui.core.tmpl (Aggregation)</title>
 
@@ -34,16 +34,16 @@
 <body class="sapUiBody" role="application">
 
 	<h1><code>sap.ui.core.tmpl.Template</code> - Test Page</h1>
-	
+
 	<div id="mySimpleTemplate" data-type="text/x-handlebars-template">
 		{{#control id="event-table" sap-ui-type="sap.m.Table" inset="false" items="{/items}"}}
-			{{#aggregation name="columns"}} 
-				{{#control sap-ui-type="sap.m.Column"}} 
+			{{#aggregation name="columns"}}
+				{{#control sap-ui-type="sap.m.Column"}}
 					{{control sap-ui-type="sap.m.Text" text="Column"}}
 				{{/control}}
 			{{/aggregation}}
 			{{#control sap-ui-type="sap.m.ColumnListItem"}}
-				{{control sap-ui-type="sap.m.Text" text="{name}"}} 
+				{{control sap-ui-type="sap.m.Text" text="{name}"}}
 			{{/control}}
 		{{/control}}
 	</div>

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
-		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
-		
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+
 		<title>sap.m.Shell Test</title>
-		
-		<script src="../../../resources/sap-ui-core.js" 
+
+		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m" 
+			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal"></script>
-		
+
 		<script>
 			var oShell= new sap.m.Shell("myShell", {
 				title: "My Application",
@@ -18,7 +18,7 @@
 				headerRightText: "Nora Crush",
 				logout: function() {alert("Logout button was pressed");}
 			});
-			
+
 			var oApp = new sap.m.SplitApp("myApp", {
 				masterPages: new sap.m.Page("page1", {
 					title: "Some Master"
@@ -82,11 +82,11 @@
 					]
 				})
 			});
-			
+
 			oShell.setApp(oApp);
 			oShell.placeAt("content");
 		</script>
-	
+
 	</head>
 	<body class='sapUiBody' role="application" id="content">
 	</body>

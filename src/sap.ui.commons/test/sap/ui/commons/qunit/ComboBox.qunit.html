@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>ComboBox - sap.ui.commons </title>
 
     <script id="sap-ui-bootstrap"
@@ -12,7 +12,7 @@
 			data-sap-ui-libs="sap.ui.commons" >
 		</script>
 
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -37,7 +37,7 @@
 			oCombo = new sap.ui.commons.ComboBox(sComboId, {value: "",
 				displaySecondaryValues: true,
 	        	items : [
-					new sap.ui.core.ListItem("fi",{text:"first item", additionalText: "(1)", key: "key1"}), 
+					new sap.ui.core.ListItem("fi",{text:"first item", additionalText: "(1)", key: "key1"}),
 					new sap.ui.core.ListItem("si",{text:"second item", additionalText: "(2)", key: "key2"}),
 					new sap.ui.core.ListItem("ti",{text:"third item", additionalText: "(3)", key: "key3"}),
 					new sap.ui.core.ListItem("li",{text:"last item", additionalText: "(4)", key: "key4"})],
@@ -159,7 +159,7 @@
 			});
 			oSharedListBox1 = new sap.ui.commons.ListBox("sharedListBox", {
 	        	items : [
-					new sap.ui.core.ListItem({text:"first item", additionalText: "(1)", key: "key1"}), 
+					new sap.ui.core.ListItem({text:"first item", additionalText: "(1)", key: "key1"}),
 					new sap.ui.core.ListItem({text:"second item", additionalText: "(2)", key: "key2"}),
 					new sap.ui.core.ListItem({text:"third item", additionalText: "(3)", key: "key3"}),
 					new sap.ui.core.ListItem({text:"last item", additionalText: "(4)", key: "key4"})
@@ -177,7 +177,7 @@
 		test("Replace ListBox", function() {
 			oSharedListBox2 = new sap.ui.commons.ListBox("sharedListBox2", {
 	        	items : [
-					new sap.ui.core.ListItem({text:"first item", additionalText: "(1)", key: "key1"}), 
+					new sap.ui.core.ListItem({text:"first item", additionalText: "(1)", key: "key1"}),
 					new sap.ui.core.ListItem({text:"second item", additionalText: "(2)", key: "key2"}),
 					new sap.ui.core.ListItem({text:"third item", additionalText: "(3)", key: "key3"}),
 					new sap.ui.core.ListItem({text:"last item", additionalText: "(4)", key: "key4"})
@@ -210,7 +210,7 @@
 
 		test("TestInputOK", function(){
 			resetBeforeTest();
-			qutils.triggerCharacterInput(sComboInputId, "s");			
+			qutils.triggerCharacterInput(sComboInputId, "s");
 		});
 		asyncTest("TestInputAutocompleteOK", function(){
 			setTimeout(function(){
@@ -313,7 +313,7 @@
 			equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
-			equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");			
+			equal(oCombo.getValue(), "last item", "ComboBox' value should not have changed in HTML.");
 			equal(oCombo.getFocusDomRef().value, "third item", "ComobBox' value should have changed in HTML.");
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
@@ -436,7 +436,7 @@
 		});
 
 		asyncTest("TestSelectItemFromListOK", function(){
-			expect(16); // two from reset, 12 from this method and 2 from the event handler (initiated via click events) 
+			expect(16); // two from reset, 12 from this method and 2 from the event handler (initiated via click events)
 
 			qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 			setTimeout( function(){
@@ -488,7 +488,7 @@
 
 				// also check that second 'END' stays the same
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.END, false, false, false);
-				equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");			
+				equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 				equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
 				equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
 				equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
@@ -496,7 +496,7 @@
 				qutils.triggerKeyboardEvent(sComboInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 				ok(jQuery.sap.byId(sComboListBoxId).is(":hidden"), "ListBox should be hidden again after second F4 press");
 
-				equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");			
+				equal(oCombo.getValue(), "", "ComboBox' value should not have changed in HTML.");
 				equal(oCombo.getFocusDomRef().value, "last item", "ComobBox' value should match to HTML.");
 				equal(oCombo.getSelectedKey(), "", "selectedKey should not have changed");
 				equal(oCombo.getSelectedItemId(), "", "selectedItemId should not have changed");
@@ -563,7 +563,7 @@
 
 			var sText = "Some new value";
 			var oTest = function(oEvent) {
-				equal(oEvent.getParameter("newValue"), sText, "Entered value should be provided as Event parameter");				
+				equal(oEvent.getParameter("newValue"), sText, "Entered value should be provided as Event parameter");
 			};
 			oCombo.attachChange(oTest);
 
@@ -581,10 +581,10 @@
 
 		var sText = "Some other value";
 		var oTest1 = function(oEvent) {
-			equal(oEvent.getParameter("newValue"), sText, "Entered value should be provided as Event parameter");				
+			equal(oEvent.getParameter("newValue"), sText, "Entered value should be provided as Event parameter");
 		};
 		test("TestChangeOnFocusLostAfterTextInputOK", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(4); // two from cleanup + two from the event handler
 			resetBeforeTest();
@@ -597,11 +597,11 @@
 		});
 
 		asyncTest("TestChangeOnFocusLostAfterTextInputOK_check", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(1); // 1 check
 			setTimeout( function(){
-				equal(oCombo.getValue(), sText, "ComboBox should provide new value via getter method.");		
+				equal(oCombo.getValue(), sText, "ComboBox should provide new value via getter method.");
 
 				oCombo.detachChange(oTest1);
 				start();
@@ -609,7 +609,7 @@
 		});
 
 		var oTest2 = function(oEvent) {
-			equal(oEvent.getParameter("newValue"), "second item", "Entered value should be provided as Event parameter");				
+			equal(oEvent.getParameter("newValue"), "second item", "Entered value should be provided as Event parameter");
 		};
 		test("TestChangeOnEnterAfterUpDownOK", function(){
 			expect(8); // two from cleanup + two from the event handler + 4 checks
@@ -631,12 +631,12 @@
 		});
 
 		var oTest3 = function(oEvent) {
-			equal(oEvent.getParameter("newValue"), "third item", "Entered value should be provided as Event parameter");				
+			equal(oEvent.getParameter("newValue"), "third item", "Entered value should be provided as Event parameter");
 		};
 		test("TestChangeOnFocusLostAfterUpDownOK", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
-			// expect(4); // two from cleanup plus two from event handler (focusleave) 
+			// expect(4); // two from cleanup plus two from event handler (focusleave)
 			resetBeforeTest();
 
 			oCombo.attachChange(oTest3);
@@ -649,7 +649,7 @@
 		});
 
 		asyncTest("TestChangeOnFocusLostAfterUpDownOK_check", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(2); // two checks
 			setTimeout( function(){

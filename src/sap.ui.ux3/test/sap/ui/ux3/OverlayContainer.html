@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>OverlayContainer - sap.ui.ux3</title>
 		<script src="../../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
 			data-sap-ui-theme="sap_goldreflection">
 		</script>
 		<script src="resources/ShellSettings.js" type="text/javascript"></script>
-		<link type="text/css" rel="stylesheet" href="resources/ShellSettings.css"/>
-		
+		<link type="text/css" rel="stylesheet" href="resources/ShellSettings.css">
+
 		<script>
 		var olcounter = 0;
-		
+
 		function getShellOptions(){
 			var oButton = new c.Button({
 					text: "Open new OverlayContainer",
@@ -26,9 +26,9 @@
 			}});
 			return getShellOptionsPanel(oShell, [oButton]);
 		};
-		
+
 			var c = sap.ui.commons; /* shorthand */
-			
+
 			var aContent = {};
 			//Shell
 			var oShell = new sap.ui.ux3.Shell("myShell", {
@@ -220,7 +220,7 @@
 				}
 				return aContent[id];
 			}
- 
+
 			// Pane content generation and buffering
 			function getPaneContent(id) {
 				if (!aContent[id]) {
@@ -266,24 +266,24 @@
 				});
 			}
 
-			
+
 		    var oOverlayContainer = new sap.ui.ux3.OverlayContainer();
 		    //some content
 			var oLayout = new c.layout.MatrixLayout();
 			oLayout.addRow(createLMatrixLayoutRowRow("Status", "active"));
 			oLayout.addRow(createLMatrixLayoutRowRow("Owner", "Erwin M."));
 			oLayout.addRow(createLMatrixLayoutRowRow("Territory", "a Contact"));
-			oLayout.addRow(createLMatrixLayoutRowRow("Prim. Contact", "Hugo")); 
+			oLayout.addRow(createLMatrixLayoutRowRow("Prim. Contact", "Hugo"));
 			oLayout.addRow(createLMatrixLayoutRowRow("Web Site", "link!!!"));
 			oLayout.addRow(createLMatrixLayoutRowRow("Classification", "a classification"));
-			
+
 			var oPanel = getShellOptions();
 			oPanel.setCollapsed(true);
-			
+
 			oOverlayContainer.addContent(oLayout);
 			oOverlayContainer.addContent(oPanel);
-			
-		    oOverlayContainer.attachClose(function(oControlEvent) { 
+
+		    oOverlayContainer.attachClose(function(oControlEvent) {
 		    	var id = oControlEvent.getParameters().id;
 		    	alert("Thing \""+ id+ "\"closed");
 		    });
@@ -299,14 +299,14 @@
 	        function createLMatrixLayoutRowRow(sLabel, sText) {
 	            var oLabel = new c.Label({text : sLabel + ":"});
 	            var oTextView = new c.TextView({text : sText});
-	            
+
 	            var oMLCell1 = new c.layout.MatrixLayoutCell({hAlign : c.layout.HAlign.End, vAlign : c.layout.VAlign.Top,  content:[oLabel]});
 	            var oMLCell2 = new c.layout.MatrixLayoutCell({hAlign : c.layout.HAlign.Begin, vAlign : c.layout.VAlign.Top, content:[oTextView]});
-	            
+
 	            return new c.layout.MatrixLayoutRow({cells:[oMLCell1, oMLCell2]});
 	        }
 		</script>
-		
+
 	</head>
 	<body  class="sapUiBody">
 		<div id="shellArea"></div>

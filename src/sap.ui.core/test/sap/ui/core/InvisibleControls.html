@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Control property "invisible" - sap.ui.core</title>
 
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_goldreflection">
@@ -110,10 +110,10 @@
 			})
 		);
 	}
-	
+
 	function addHeadingRow() {
 		var aRowArgs = [];
-		
+
 		for (var i = 0; i < arguments.length; i++) {
 			var oContent = arguments[i];
 			if (typeof oContent === "string") {
@@ -123,17 +123,17 @@
 			oCell.addStyleClass("heading");
 			aRowArgs.push(oCell);
 		}
-		
+
 		switch (arguments.length) {
 			case 1:
 				oCell.setColSpan(4);
 				oCell.addStyleClass("groupsSeparator");
 		}
-		
+
 		return oLayout.createRow.apply(oLayout, aRowArgs);
 	}
 
-	
+
 	var oFirstRow = addHeadingRow(
 		"Control name",
 		"Visible",
@@ -191,9 +191,9 @@
 			]})
 		]})
 	]}));
-	
+
 	addHeadingRow("sap.ui.layout.form");
-	addRow("layout.form/Form", new sap.ui.layout.form.Form({ 
+	addRow("layout.form/Form", new sap.ui.layout.form.Form({
 		title: "Test",
 		layout: new sap.ui.layout.form.GridLayout(),
 		formContainers: [
@@ -207,7 +207,7 @@
 			})
 		]
 	}));
-	
+
 	addHeadingRow("sap.ui.table");
 	addRow("table/Table", new sap.ui.table.Table({
 		columns: [
@@ -219,8 +219,8 @@
 
 	addHeadingRow("sap.ui.unified");
 	addRow("unified/FileUploader", new sap.ui.unified.FileUploader());
-	
-	
+
+
 	addHeadingRow("sap.ui.ux3");
 	addRow("ux3/ExactArea", new sap.ui.ux3.ExactArea({ content: [new sap.ui.commons.Button({text: "A"})]}));
 	addRow("ux3/ExactBrowser", new sap.ui.ux3.ExactBrowser({ attributes: [new sap.ui.ux3.ExactAttribute({text: "A"}), new sap.ui.ux3.ExactAttribute({text: "B"})]}));
@@ -273,10 +273,10 @@
 	addRow("m/Token", new sap.m.Token({text: "A"}));
 	addRow("m/Tokenizer", new sap.m.Tokenizer({tokens: [new sap.m.Token({text: "A"}), new sap.m.Token({text: "B"})]}));
 	addRow("m/Toolbar", new sap.m.Toolbar({content: [new sap.m.Button({text: "A"}), new sap.m.Button({text: "B"})]}));
-	
-	
-	
-	
+
+
+
+
 </script>
 </head>
 <body class="sapUiBody" role="application">
@@ -284,7 +284,7 @@
 
 <h2>Controls which had their own visible property before:</h2>
 <div id="status">
-	Matrix Layout has been rendered 
+	Matrix Layout has been rendered
 	<span id="status_renderings">0</span>
 	times.
 </div>

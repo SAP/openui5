@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>ObjectAttribute - sap.m</title>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 
 <!-- UI5 Bootstrap -->
 <script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
@@ -50,7 +50,7 @@
 		text : "",
 		press: eventHandler
 		});
-	
+
 	var oa5 = new sap.m.ObjectAttribute("oa5", {
 		press: eventHandler
 	});
@@ -59,13 +59,13 @@
 		text: "    \n \n \t\n \t   ",
 		press: eventHandler
 		});
-	
+
 	var oa7 = new sap.m.ObjectAttribute("oa7", {
 		text: "Joe Smith",
 		active: true,
 		press: eventHandler
 		});
-	
+
 	var oTable = new sap.m.Table("table",{
 					inset : false,
 					showUnread : true,
@@ -88,12 +88,12 @@
 						})
 					]
 	});
-	
+
 	oa1.placeAt("objectAttributes");
 	oa2.placeAt("objectAttributes");
 	oa3.placeAt("objectAttributes");
 	oTable.placeAt("objectAttributes");
-	
+
 	module("Rendering All Fields");
 
 	test("AttributesRendered", function() {
@@ -102,108 +102,108 @@
 		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
 		notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
 	});
-	
+
 	test("Screen reader", function() {
-		
+
 		// Arrange
 		var oObjectAttribute = new sap.m.ObjectAttribute({
 			title: "Title",
 			text: "Contract #D1234567890",
 			active: true
 		});
-		
+
 		// System under Test
 		oObjectAttribute.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		equal(oObjectAttribute.$().attr("role"), "link", "Active ObjectAttribute has link role.");
-		
+
 		// Clean up
 		oObjectAttribute.destroy();
-		
+
 	});
 
 	module("Attributes Wrapping");
-	
+
 	test("Attributes Wrapping in ObjectHeader", function() {
-		
+
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("oOA1", {title: "Test",
 			text:"ObjectHeader wrapping"}),
 			oObjectHeader = new sap.m.ObjectHeader("oOH1", {
 				attributes : [oAttr]
 			});
-			
+
 		oObjectHeader.placeAt("objectAtrributesWrap");
-		
+
 		sap.ui.getCore().applyChanges()
-		
+
 		// assertions
 		ok(oAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
 		ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
 		ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
 		ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
-		
+
 		//Cleanup
-		oObjectHeader.destroy(); 
+		oObjectHeader.destroy();
 	});
-	
+
 	test("Attributes Wrapping in Responsive ObjectHeader", function() {
-		
+
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("oOA2", {
 			title: "Test",
 			text:"Responsive ObjectHeader wrapping"
 		});
-		
+
 		var oObjectHeader = new sap.m.ObjectHeader("oOH2", {
 			attributes : [oAttr],
 			responsive : true
 		});
 		oObjectHeader.placeAt("objectAtrributesWrap");
-		
+
 		sap.ui.getCore().applyChanges()
-		
+
 		// assertions
 		ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span is rendered.");
 		ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span is rendered.");
 		ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span is rendered.");
-		
+
 		//Cleanup
-		oObjectHeader.destroy(); 
+		oObjectHeader.destroy();
 	});
-	
+
 	asyncTest("Attributes Wrapping in ObjectListItem", function() {
-		
+
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("oOA3", {text:"Responsive ObjectListItem wrapping test"});
 		var oObjectListItem = new sap.m.ObjectListItem("oOL3", {
 			attributes : [oAttr]
 		});
 		oObjectListItem.placeAt("objectAtrributesWrap");
-		
+
 		sap.ui.getCore().applyChanges()
-		
+
 		// assertions
-		
+
 		ok(oAttr.mAggregations._textControl.$().hasClass("sapMTextNoWrap"), "sapMTextNoWrap class is present.");
 		if(!sap.ui.Device.browser.internet_explorer) {
 			equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
 		}
-		
+
 		//Cleanup
-		oObjectListItem.destroy(); 
-		
+		oObjectListItem.destroy();
+
 		setTimeout( function() {
 			start();
 		}, 500);
 	});
 	/******************************************************************/
-	
+
 	module("Aggregation attribute");
-	
+
 	test("Aggregation sap.m.Link", function() {
-		
+
 		// arrange
 		var oAttr = new sap.m.ObjectAttribute("attr", {
 			text: "Joe Smith",
@@ -212,21 +212,21 @@
 		});
 
 		oAttr.placeAt("objectAtrributesWrap");
-		
+
 		sap.ui.getCore().applyChanges();
-		
+
 		// assertions
 		ok(oAttr.$("attr").find(".sapMLnk"), "The active attribute is rendered as sap.m.Link when the aggregation attributeLink is set.");
-		
+
 		//Cleanup
-		oAttr.destroy(); 
+		oAttr.destroy();
 	});
 	/******************************************************************/
 
 	module("Internal API");
 
 	test ("TestIsEmpty", function() {
-		
+
 		ok(!oa1._isEmpty(), "Object attribute #1 is not empty");
 		ok(!oa2._isEmpty(), "Object attribute #2 is not empty");
 		ok(!oa3._isEmpty(), "Object attribute #3 is not empty");
@@ -265,48 +265,48 @@
 	});
 
 	module("Keyboard handling");
-	
+
 	test("Enter", function() {
-		
+
 		// Arrange
 		var oObjectAttribute = new sap.m.ObjectAttribute({
 			title: "Title",
 			text: "Contract #D1234567890",
 			active: true
 		});
-		
+
 		// System under Test
 		oObjectAttribute.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		var oPressSpy = sinon.spy(sap.m.ObjectAttribute.prototype, "firePress");
 		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
-		
+
 		strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
-		
+
 		// Clean up
 		sap.m.ObjectAttribute.prototype.firePress.restore();
 		oObjectAttribute.destroy();
 	});
-	
+
 	test("Space", function() {
-		
+
 		// Arrange
 		var oObjectAttribute = new sap.m.ObjectAttribute({
 			title: "Title",
 			text: "Contract #D1234567890",
 			active: true
 		});
-		
+
 		// System under Test
 		oObjectAttribute.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		var oPressSpy = sinon.spy(sap.m.ObjectAttribute.prototype, "firePress");
 		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.SPACE);
-		
+
 		strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
-		
+
 		// Clean up
 		sap.m.ObjectAttribute.prototype.firePress.restore();
 		oObjectAttribute.destroy();
@@ -330,7 +330,7 @@
         // Clean up
         oObjectAttribute.destroy();
     });
-	
+
 </script>
 </head>
 

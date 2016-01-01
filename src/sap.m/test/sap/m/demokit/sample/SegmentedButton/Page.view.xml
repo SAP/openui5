@@ -8,45 +8,57 @@
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<SegmentedButton selectedButton="kids">
-					<Button text="Kids" id="kids" />
-					<Button text="Adults" />
-					<Button text="Seniors" />
+				<SegmentedButton selectedKey="kids">
+					<items>
+						<SegmentedButtonItem text="Kids" key="kids" />
+						<SegmentedButtonItem text="Adults" />
+						<SegmentedButtonItem text="Seniors" />
+					</items>
 				</SegmentedButton>
 				<ToolbarSpacer/>
 			</Toolbar>
 		</subHeader>
 		<content>
 			<VBox width="100%">
-				<SegmentedButton selectedButton="satellite" class="sapUiSmallMarginBottom" >
-					<Button text="Map" />
-					<Button text="Satellite" id="satellite" />
-					<Button text="Hybrid" />
+				<SegmentedButton selectedKey="satellite" class="sapUiSmallMarginBottom">
+					<items>
+						<SegmentedButtonItem text="Map" />
+						<SegmentedButtonItem text="Satellite" key="satellite" />
+						<SegmentedButtonItem text="Hybrid" />
+					</items>
 				</SegmentedButton>
-				<SegmentedButton selectedButton="competitor">
-					<Button icon="sap-icon://taxi" />
-					<Button icon="sap-icon://lab" />
-					<Button icon="sap-icon://competitor" id="competitor" />
+				<SegmentedButton selectedKey="competitor">
+					<items>
+						<SegmentedButtonItem icon="sap-icon://taxi" />
+						<SegmentedButtonItem icon="sap-icon://lab" />
+						<SegmentedButtonItem icon="sap-icon://competitor" key="competitor" />
+					</items>
 				</SegmentedButton>
-				<SegmentedButton selectedButton="lab">
-					<Button icon="sap-icon://taxi" text="Taxi" />
-					<Button icon="sap-icon://lab" text="Lab" id="lab" />
-					<Button icon="sap-icon://competitor" text="Competitor" />
+				<SegmentedButton selectedKey="lab">
+					<items>
+						<SegmentedButtonItem icon="sap-icon://taxi" text="Taxi" />
+						<SegmentedButtonItem icon="sap-icon://lab" text="Lab" key="lab" />
+						<SegmentedButtonItem icon="sap-icon://competitor" text="Competitor" />
+					</items>
 				</SegmentedButton>
 				<SegmentedButton>
-					<Button text="Selected" />
-					<Button text="Enabled" />
-					<Button text="Disabled" enabled="false"/>
+					<items>
+						<SegmentedButtonItem text="Selected" />
+						<SegmentedButtonItem text="Enabled" />
+						<SegmentedButtonItem text="Disabled" enabled="false"/>
+					</items>
 				</SegmentedButton>
 			</VBox>
 		</content>
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<SegmentedButton selectedButton="small">
-					<Button text="Small" id="small" />
-					<Button text="Medium" />
-					<Button text="Large" />
+				<SegmentedButton selectedKey="small">
+					<items>
+						<SegmentedButtonItem text="Small" key="small" />
+						<SegmentedButtonItem text="Medium" />
+						<SegmentedButtonItem text="Large" />
+					</items>
 				</SegmentedButton>
 				<ToolbarSpacer/>
 			</Toolbar>

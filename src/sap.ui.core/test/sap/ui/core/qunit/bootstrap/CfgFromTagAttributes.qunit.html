@@ -1,15 +1,15 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested class: sap.ui.core.Configuration
   Author: d020684
   -->
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 
 	<!-- Initialization -->
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="fantasy"
 			data-sap-ui-language="klingon"
@@ -19,7 +19,7 @@
 			data-sap-ui-debug="true"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-trace="true"
-			data-sap-ui-libs="sap.ui.commons" 
+			data-sap-ui-libs="sap.ui.commons"
 			data-sap-ui-modules="sap.ui.commons.Button"
 			data-sap-ui-areas="area-51"
 			data-sap-ui-onInit="window['I was here'] = 'u.g.a.d.m.k.';"
@@ -27,7 +27,7 @@
 			>
 	</script>
 
-	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -40,7 +40,7 @@
 		QUnit.test("Settings", function(assert) {
 			var oCfg = new sap.ui.core.Configuration();
 
-			// compare values where possible 
+			// compare values where possible
 			assert.equal(oCfg.theme, "fantasy", "theme");
 			assert.equal(oCfg.language, "klingon", "language");
 			assert.equal(oCfg.accessibility, true, "accessibility");
@@ -66,9 +66,9 @@
 			assert.ok(window.jQuery, "window.jQuery is available");
 			assert.ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
 		});
-		
+
 	</script>
-  
+
 </head>
 <body>
 	<div id="qunit"></div>

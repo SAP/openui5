@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -10,7 +10,7 @@
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-language="en_US">
 </script>
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -950,8 +950,8 @@
 		aContexts = this.oListBinding.getContexts(0, 10);
 		deepEqual(aContexts.diff, [], "Nothing changed");
 	});
-	
-	
+
+
 	module("Listbinding suspend/resume", {
 		beforeEach: function() {
 			setup();
@@ -1019,9 +1019,9 @@
 		oLB.resume();
 		equal(oLB.getContexts().length, 10, "Binding still has length 10 after calling resume");
 	});
-	
-	
-	
+
+
+
 	</script>
 
 </head>

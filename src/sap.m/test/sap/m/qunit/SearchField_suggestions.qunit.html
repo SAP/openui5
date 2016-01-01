@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Test Page for sap.m.SearchField with suggestions</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.m"
+				src="../../../../resources/sap-ui-core.js">
+		</script>
+		<script>
+		jQuery.sap.require("sap.ui.core.util.MockServer");
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+
+		//
+		// Test for the suggestion functionality of the sap.m.SearchField control.
+		// Other functional tests see SearchField.qunit.html.
+		//
+		sinon.config.useFakeTimers = true;
+		QUnit.config.autostart = false;
+		sap.ui.test.qunit.delayTestStart();
+
+		function createStaticSuggestionItems(a){
+			var items = [];
+			a.forEach(function(i){
+				items.push(new sap.m.SuggestionItem({
+					text : "I" + i,
+					description : "D" + i,
+					key: i,
+					icon: "sap-icon://search"
+				}));
+			});
+			return items;
+		}
+
+		var oSF;
+
+		test("static values", function() {
+			var aItems = ["001", "002", "003", "004", "005"];
+
+			oSF = new sap.m.SearchField({
+				suggestionItems: createStaticSuggestionItems(aItems),
+				placeholder: "search",
+				enableSuggestions: true,
+				//search:onSearch,
+				suggest: function(event){
+					event.getSource().suggest();
+				}
+			});
+
+			// arrange
+			oSF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			strictEqual(oSF.getSuggestionItems().length, aItems.length, "The number of suggestion items is correct");
+
+			// cleanup
+			//oSF.destroy();
+		});
+
+		module("Test the suggest function");
+
+		test("call the suggest() function", function() {
+			// action
+			oSF.suggest();
+			this.clock.tick(1000);
+
+			// assert
+			strictEqual(oSF._oSuggest.isOpen(), true, "The suggestion popup opens");
+			ok(!!jQuery(".sapMSuL:visible").length, "The suggestions list is visible");
+
+			var popupId = jQuery(".sapMSuL:visible").parents(".sapMPopup-CTX").attr("id");
+			var popup = sap.ui.getCore().byId(popupId);
+			ok(!!popup, "popup exists");
+
+			if (!popup) {
+				return;
+			}
+
+			var fnPopupSpy = this.spy(popup, "close");
+
+			// close popup
+			oSF.suggest(false);
+			this.clock.tick(1000);
+
+			if (sap.ui.Device.system.phone) {
+				ok(popup.isOpen(), "Suggest(false) does not close the popup on phones");
+				popup.close();
+				this.clock.tick(1000);
+			}
+
+			ok(!jQuery(".sapMSuL").parents(".sapMPopup-CTX:visible").length, "The suggestions list is not visible after close");
+			ok(fnPopupSpy && fnPopupSpy.callCount, "Popup close was called");
+		});
+
+		module("Aggregations");
+
+		test("update suggestions by aggregation changes", function() {
+
+			// action
+			oSF.suggest();
+			this.clock.tick(1000);
+
+			var fnUpdateSpy = this.spy(oSF._oSuggest, "update");
+
+			var item = createStaticSuggestionItems(["newItem"])[0];
+			var count = oSF.getSuggestionItems().length;
+			oSF.addSuggestionItem(item);
+			this.clock.tick(1000);
+			strictEqual(oSF.getSuggestionItems().length, count + 1, "A new suggestion item has been added");
+			strictEqual(fnUpdateSpy.callCount, 1, "Suggest update() called only once");
+
+			oSF.removeSuggestionItem(item);
+			this.clock.tick(1000);
+			strictEqual(oSF.getSuggestionItems().length, count, "The suggestion item has been deleted");
+			strictEqual(fnUpdateSpy.callCount, 2, "Suggest update() called two times");
+
+			oSF.suggest(false);
+			this.clock.tick(1000);
+		});
+
+		module("User interaction");
+
+		test("select an item via keyboard", function() {
+
+			// action
+			oSF.suggest();
+			this.clock.tick(1000);
+
+			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected");
+			strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
+
+			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			strictEqual(oSF._oSuggest.getSelected(), 1, "The second item is selected");
+			strictEqual(oSF.getValue(), oSF.getSuggestionItems()[1].getSuggestionText(), "Suggestion text value is set to the search field");
+
+			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+			strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected again");
+			strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
+		});
+
+		test("Enter closes suggestions", function(){
+			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeyup(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
+			this.clock.tick(1000);
+			ok(!oSF._oSuggest.isOpen(), "Picker is closed after ENTER");
+		});
+
+		test("Escape closes suggestions", function() {
+			// action
+			oSF.setValue("ABCD");
+			oSF.suggest();
+			this.clock.tick(1000);
+
+
+			// press ESCAPE when the suggestions are visible
+			sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+			sap.ui.test.qunit.triggerKeyup(oSF.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+
+			this.clock.tick(1000);
+
+			ok(!oSF._oSuggest.isOpen(), "Picker is closed after ESCAPE");
+			strictEqual(oSF.getValue(), "ABCD", "Escape closes suggestions and keeps the value");
+		});
+
+		module("Formatting");
+
+		test("Search value is bold in suggestions", function() {
+
+			// set value and open suggestions
+			oSF.setValue("003");
+			oSF.suggest();
+			this.clock.tick(1000);
+
+			// check highlights
+			strictEqual(jQuery("b")[0] && jQuery("b")[0].innerHTML, oSF.getValue(), "Search value is highlighted in suggestions");
+
+			oSF.setValue("002");
+			oSF._oSuggest.update();
+			this.clock.tick(1000);
+
+			strictEqual(jQuery("b")[0] && jQuery("b")[0].innerHTML, oSF.getValue(), "Changed search value is highlighted in suggestions");
+
+			// close
+			oSF.suggest(false);
+			this.clock.tick(1000);
+		});
+
+		module("Clean up");
+		test("cleanup", function(){
+			oSF.destroy();
+			this.clock.tick(1000);
+			ok(!oSF.getDomRef(), "The search field is removed");
+		});
+
+	</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="content" class="content"></div>
+		<h1 id="qunit-header">qUnit tests: sap.m.SearchField</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+	</body>
+</html>

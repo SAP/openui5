@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tests special cases regarding alternative aggregration types (e.g. Tooltip)
   Author: d020684
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script>
 	window["sap-ui-config"] = {
@@ -45,7 +45,7 @@
 				{firstName:"Frank", lastName:"Wallace"}
 		]
  	});
-	
+
 	test("clone", function() {
 		var oButton = new sap.ui.testlib.TestButton({
 			text : "a text text",
@@ -56,7 +56,7 @@
 		equal(oDolly.getText(), oButton.getText(), "property text must have equal values");
 		equal(oDolly.getTooltip(), oButton.getTooltip(), "property tooltip must have equal values");
 	});
-	
+
 	test("bind property via settings", function(){
 		var oButton = new sap.ui.testlib.TestButton({
 			text : "{firstName}",
@@ -65,11 +65,11 @@
 		oButton.setModel(oModel);
 		oButton.bindElement("/teamMembers/0");
 		oButton.placeAt("target");
-		equal(oButton.getText(), "Andreas", "binding of text"); 
-		equal(oButton.getTooltip(), "Klark", "binding of tooltip"); 
+		equal(oButton.getText(), "Andreas", "binding of text");
+		equal(oButton.getTooltip(), "Klark", "binding of tooltip");
 		oButton.destroy();
 	});
-	
+
 	test("bind property via bind...", function(){
 		var oButton = new sap.ui.testlib.TestButton({
 		});
@@ -78,11 +78,11 @@
 		oButton.bindProperty("text", "firstName");
 		oButton.bindProperty("tooltip", "lastName");
 		oButton.placeAt("target");
-		equal(oButton.getText(), "Andreas", "binding of text"); 
-		equal(oButton.getTooltip(), "Klark", "binding of tooltip"); 
+		equal(oButton.getText(), "Andreas", "binding of text");
+		equal(oButton.getTooltip(), "Klark", "binding of tooltip");
 		oButton.destroy();
 	});
-	
+
 	</script>
 
 </head>

@@ -1,15 +1,15 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.m">
 	</script>
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
@@ -61,7 +61,7 @@
 			ok(jQuery.sap.byId("detail").length, "Detail page should be rendered initially.");
 
 			oSplitApp.destroy();
-		});	
+		});
 
 		module("Modes Check on desktop");
 		asyncTest("PopoverMode_portrait", function(){
@@ -446,7 +446,7 @@
 				ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
 				ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
 				equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
-				
+
 				ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should not be hidden.");
 				equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
 				oSplitApp.destroy();
@@ -641,7 +641,7 @@
 			oSplitApp.removeDetailPage(oMovePage);
 			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
 			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
-			
+
 			oMovePage.destroy();
 			oSplitApp.destroy();
 		});

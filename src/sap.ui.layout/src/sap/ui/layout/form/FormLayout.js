@@ -31,7 +31,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 	 */
 	var FormLayout = Control.extend("sap.ui.layout.form.FormLayout", /** @lends sap.ui.layout.form.FormLayout.prototype */ { metadata : {
 
-		library : "sap.ui.layout"
+		library : "sap.ui.layout",
+		properties : {
+			/**
+			 * Specifies the background color of the <code>Form</code> content.
+			 *
+			 * The visualization of the different options depends on the used theme.
+			 *
+			 * @since 1.36.0
+			 */
+			backgroundDesign : {type : "sap.ui.layout.BackgroundDesign", group : "Appearance", defaultValue : sap.ui.layout.BackgroundDesign.Translucent}
+		}
 	}});
 
 	/**

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
  <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>MenuButton - sap.ui.commons</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_goldreflection"
@@ -51,7 +51,7 @@
 				}else{
 					oMenuButton.attachItemSelected(function(oEvent){alertEvent(oEvent, false);});
 				}
-				bUsePressEvent = !bUsePressEvent; 
+				bUsePressEvent = !bUsePressEvent;
 
 				if(!bDoNotPlaceAt)
 					oMenuButton.placeAt("target"+iIdx);
@@ -63,7 +63,7 @@
 
 			var oMenuButton = createMenuButton("Menu Button", null, true, 1); //No Image
 			oMenuButton.setTooltip(new sap.ui.commons.Callout({content: [new sap.ui.commons.Button({text: "Content"})]}));
-			
+
 			createMenuButton("Image Before", "images/backtotop.gif", true, 2); //Image before
 			createMenuButton("Image After", "images/backtotop.gif", false, 3); //Image after
 
@@ -80,7 +80,7 @@
 			oMenu.addItem(oMenuItem);
 
 			//Long Text and different docking position
-			oMenuButton = createMenuButton("This is a really long text in the Menu Button", null, true, 7, oMenu);	
+			oMenuButton = createMenuButton("This is a really long text in the Menu Button", null, true, 7, oMenu);
 			oMenuButton.setDockButton(sap.ui.core.Popup.Dock.EndBottom);
 			oMenuButton.setDockMenu(sap.ui.core.Popup.Dock.EndTop);
 
@@ -95,19 +95,19 @@
 			oToolbar.placeAt("target9");
 
 			//Emphasized
-			createMenuButton("Emphasized", null, true, 10, null, false, sap.ui.commons.ButtonStyle.Emph, false, true); 
+			createMenuButton("Emphasized", null, true, 10, null, false, sap.ui.commons.ButtonStyle.Emph, false, true);
 
 			//Accept
-			createMenuButton("Accept", null, true, 11, null, false, sap.ui.commons.ButtonStyle.Accept, false, true); 
+			createMenuButton("Accept", null, true, 11, null, false, sap.ui.commons.ButtonStyle.Accept, false, true);
 
 			//Reject
-			createMenuButton("Reject", null, true, 12, null, false, sap.ui.commons.ButtonStyle.Reject, false, true); 
+			createMenuButton("Reject", null, true, 12, null, false, sap.ui.commons.ButtonStyle.Reject, false, true);
 
 			//Lite
-			createMenuButton("Lite", null, true, 13, null, false, sap.ui.commons.ButtonStyle.Default, true, true); 
+			createMenuButton("Lite", null, true, 13, null, false, sap.ui.commons.ButtonStyle.Default, true, true);
 
 			//unstyled
-			createMenuButton("unstyled", null, true, 14, null, false, sap.ui.commons.ButtonStyle.Default, false, false); 
+			createMenuButton("unstyled", null, true, 14, null, false, sap.ui.commons.ButtonStyle.Default, false, false);
 
 		</script>
 	</head>

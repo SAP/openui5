@@ -148,7 +148,7 @@ sap.ui.define([
 	 ******************************************************************************/
 	AnchorBar.SCROLL_STEP = 250;// how many pixels to scroll with every overflow arrow click
 	AnchorBar.SCROLL_DURATION = 500; // ms
-	AnchorBar.DOM_CALC_DELAY = 200; //ms.
+	AnchorBar.DOM_CALC_DELAY = 200; // ms
 
 	AnchorBar.prototype.setSelectedButton = function (oButton) {
 
@@ -703,10 +703,15 @@ sap.ui.define([
 			if ((this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon)
 				&& this._oSectionInfo[sId]) {
 
-				//scroll to the positionRtl minus the offset (so the gradient never hide the selected item)
-				iScrollTo = this._oSectionInfo[sId].scrollLeft - this._iOffset;
-				if (iScrollTo < 0) { //do not allow hiding part of the content if negative value for scroll is calculated here
-					iScrollTo = 0;
+				if (this._bRtlScenario && Device.browser.firefox) {
+					// in firefox RTL mode we are working with negative numbers and we have to add the offset in order not to hide the selected item
+					iScrollTo = this._oSectionInfo[sId].scrollLeft + this._iOffset;
+				} else {
+						//scroll to the positionRtl minus the offset (so the gradient never hide the selected item)
+						iScrollTo = this._oSectionInfo[sId].scrollLeft - this._iOffset;
+						if (iScrollTo < 0) { //do not allow hiding part of the content if negative value for scroll is calculated here
+							iScrollTo = 0;
+						}
 				}
 
 				jQuery.sap.log.debug("AnchorBar :: scrolling to section " + sId + " of " + iScrollTo);
@@ -955,7 +960,6 @@ sap.ui.define([
 	/**
 	 * called for figuring out responsive scenarios
 	 */
-
 	AnchorBar.prototype.onAfterRendering = function () {
 		if (Toolbar.prototype.onAfterRendering) {
 			Toolbar.prototype.onAfterRendering.call(this);
@@ -975,6 +979,13 @@ sap.ui.define([
 		if (this.getSelectedButton()) {
 			this.setSelectedButton(this.getSelectedButton());
 		}
+
+		//initial state
+		if (this._bHasButtonsBar) {
+			jQuery.sap.delayedCall(AnchorBar.DOM_CALC_DELAY, this, function () {
+				this._adjustSize();
+			});
+		}
 	};
 
 	AnchorBar.prototype._onScroll = function () {
@@ -984,7 +995,6 @@ sap.ui.define([
 				this._adjustSize();
 			});
 		}
-
 	};
 
 	AnchorBar.prototype._computeBarSectionsInfo = function () {
@@ -997,17 +1007,14 @@ sap.ui.define([
 		aContent.forEach(this._computeNextSectionInfo, this);
 
 		//post processing based on how browsers implement rtl
-		//chrome, safari
-		if (this._bRtlScenario && Device.browser.webkit) { // Reverse all positions as the scroll 0 is at the far end (first item = maxPosition, last item = 0)
-
-			aContent.forEach(this._adjustNextSectionInfo, this);
+		//chrome, safari && Device.browser.webkit && firefox
+		if (this._bRtlScenario && (Device.browser.webkit || Device.browser.firefox)) {
+			aContent.forEach(this._adjustNextSectionInfo, this); // adjust positions depending of the browser
 			this._oScroller.scrollTo(this._iMaxPosition, 0, 0);
 		}
-		//firefox not working yet see internal incident 1570001701
 	};
 
 	AnchorBar.prototype._computeNextSectionInfo = function (oContent) {
-
 		// set ARIA has-popup if button opens submenu
 		if (oContent.data("bHasSubMenu")) {
 			oContent.$().attr("aria-haspopup", "true");
@@ -1036,7 +1043,16 @@ sap.ui.define([
 
 		var oSectionInfo = this._oSectionInfo[oContent.data("sectionId")];
 
-		oSectionInfo.scrollLeft = this._iMaxPosition - oSectionInfo.scrollLeft - oSectionInfo.width;
+		if (Device.browser.firefox) {
+			// 27.11.2015 fix made for the following issue
+			// firefox not working yet see internal incident 1570001701
+			oSectionInfo.scrollLeft = -oSectionInfo.scrollLeft;
+		} else {
+			 // Reverse all positions as the scroll 0 is at the far end (first item = maxPosition, last item = 0)
+			oSectionInfo.scrollLeft = this._iMaxPosition - oSectionInfo.scrollLeft - oSectionInfo.width;
+		}
+
+
 	};
 
 	/**

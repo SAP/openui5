@@ -319,6 +319,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		/**
 		 * Dummy control for after rendering notification before onAfterRendering of
 		 * child controls of the XMLView is called
+		 * @extends sap.ui.core.Control
+		 * @alias sap.ui.core.mvc.XMLAfterRenderingNotifier
+		 * @private
 		 */
 		Control.extend("sap.ui.core.mvc.XMLAfterRenderingNotifier", {
 			renderer: function(oRM, oControl) {

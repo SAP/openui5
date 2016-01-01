@@ -8,14 +8,14 @@
  -->
 
 		<title>Test Page for jquery.sap.dom</title>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-language="de"
 				data-sap-ui-noConflict="true">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -253,7 +253,7 @@
 			notEqual(oParentWithAttribute, null, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test') is null)");
 
 			equal(oParentWithAttribute.getAttribute('data-sap-ui-test'), "true", "jQuery(oDomRef).parentByAttribute('data-sap-ui-test').getAttribute('data-sap-ui-test') should be 'true'");
-			
+
 			var oParentWithAttributeFalse = jQuery(oDomRef).parentByAttribute("data-sap-ui-test", "false");
 			ok(!oParentWithAttributeFalse, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'false') should be undefined");
 
@@ -331,7 +331,7 @@
 			// cleanup
 			document.body.removeChild(oDomRef);
 		});
-		
+
 		test("jQuery aria extensions", function() {
 			var $El = jQuery("<div>Aria Test</div>");
 			jQuery(document.body).append($El);
@@ -373,7 +373,7 @@
 
 			$El.remove();
 		});
-		
+
 		test("DOMPatching", function() {
 			var $Ref = jQuery('' +
 			'<div id="id" title="Ref" style="color:black" class="x" tabindex="-1">' +
@@ -405,8 +405,8 @@
 
 			$Ref.remove();
 		});
-		
-		
+
+
 		</script>
 	</head>
 	<body>
@@ -424,13 +424,13 @@
 				<span id="control2">Control 2</span>
 				<div id="control3" tabindex="0">Control 3</div>
 				<div id="control4" tabindex="0">Control 4</div>
-				<input id="textinput" type="text" value="hello world" />
+				<input id="textinput" type="text" value="hello world">
 				<a name="control5" href="#">Control 5</a>
 				<a id="control6" href="#">Control 6</a>
 				Simple Text
 		</div>
 		</b>
-		<input id="testsel" value="Selection Test"></input>
+		<input id="testsel" value="Selection Test">
 		</div>
 		<div id="control4" tabIndex="0">Control 4</div>
 		<div style="position:absolute;top:10px;left:10px;height:100px;width:200px" id="PositionedSpan">Position</div>

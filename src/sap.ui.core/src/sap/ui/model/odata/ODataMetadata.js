@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		var that = this;
 		sUrl = sUrl || this.sUrl;
 		var oRequest = this._createRequest(sUrl);
-		
+
 		return new Promise(function(resolve, reject) {
 			var oRequestHandle, aEntitySets = [];
 			function _handleSuccess(oMetadata, oResponse) {
@@ -103,11 +103,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					_handleError(mParameters);
 					return;
 				}
-				
+
 				that.sMetadataBody = oResponse.body;
 				that.oMetadata = that.oMetadata ? that.merge(that.oMetadata, oMetadata, aEntitySets) : oMetadata;
 				that.oRequestHandle = null;
-				
+
 				var mParams = {
 					metadataString: that.sMetadataBody,
 					entitySets: aEntitySets
@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				that.fnResolve(mParams);
 				// resolve this promise
 				resolve(mParams);
-				
+
 				if (that.bAsync && !bSuppressEvents) {
 					that.fireLoaded(that);
 				} else if (!that.bAsync && !bSuppressEvents){
@@ -126,7 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [ mParams ]);
 				}
 			}
-			
+
 			function _handleError(oError) {
 				var mParams = {
 						message: oError.message,
@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					mParams.statusText = oError.response.statusText;
 					mParams.responseText = oError.response.body;
 				}
-				
+
 				if (oRequestHandle && oRequestHandle.bSuppressErrorHandlerCall) {
 					return;
 				}
@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					that.oFailedEvent = jQuery.sap.delayedCall(0, that, that.fireFailed, [mParams]);
 				}
 			}
-			
+
 			// execute the request
 			oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
 			if (that.bAsync) {
@@ -161,13 +161,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				that.mRequestHandles[oRequestHandle.id] = oRequestHandle;
 			}
 		});
-		
+
 	};
 
 	/**
 	 * Refreshes the metadata creating a new request to the server.
 	 * Returns a new promise which can be resolved or rejected depending on the metadata loading state.
-	 * 
+	 *
 	 * @returns {Promise} returns a promise on metadata loaded state
 	 *
 	 * @public
@@ -754,32 +754,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	};
 
 
-	ODataMetadata.prototype._getEntityTypeByNavProperty = function(oEntityType, sNavPropertyName) {
-		var that = this, aAssociationName, oAssociation, aEntityTypeName, oNavEntityType;
-		if (!oEntityType.navigationProperty) {
+	/**
+	 * Returns the target EntityType for NavgigationProperty-name of another given Entytype object. The target is
+	 * defined as the toRole of the navigationproperty; this method looks up the corresponding matching End in the
+	 * corresponding Association and returns the matching entityType
+	 * @see sap.ui.model.odata.ODataMetadata#_getEntityTypeByNavPropertyObject
+	 *
+	 * @param {map} mEntityType - The EntityType that has the NavigationProperty
+	 * @param {string} sNavPropertyName - The name of the NavigationProperty in the EntityType
+	 * @returns {map|undefined} The EntityType that the NavigationProperty points to or undefined if not found
+	 * @private
+	 */
+	ODataMetadata.prototype._getEntityTypeByNavProperty = function(mEntityType, sNavPropertyName) {
+		if (!mEntityType.navigationProperty) {
 			return undefined;
 		}
-		jQuery.each(oEntityType.navigationProperty, function(k, oNavigationProperty) {
+
+		for (var i = 0; i < mEntityType.navigationProperty.length; ++i) {
+			var oNavigationProperty = mEntityType.navigationProperty[i];
 			if (oNavigationProperty.name === sNavPropertyName) {
-				// get association for navigation property and then the collection name
-				aAssociationName = that._splitName(oNavigationProperty.relationship);
-				oAssociation = that._getObjectMetadata("association", aAssociationName[0], aAssociationName[1]);
-				if (oAssociation) {
-					var oEnd = oAssociation.end[0];
-					if (oEnd.role !== oNavigationProperty.toRole) {
-						oEnd = oAssociation.end[1];
-					}
-					aEntityTypeName = that._splitName(oEnd.type);
-					oNavEntityType = that._getObjectMetadata("entityType", aEntityTypeName[0], aEntityTypeName[1]);
-					if (oNavEntityType) {
-						// store the type name also in the oEntityType
-						oNavEntityType.entityType = oEnd.type;
-					}
-					return false;
-				}
+				return this._getEntityTypeByNavPropertyObject(oNavigationProperty);
 			}
-		});
-		return oNavEntityType;
+		}
+
+		return undefined;
+	};
+
+
+	/**
+	 * Returns the target EntityType for a given NavgigationProperty object. The target is defined as the toRole of
+	 * the navigationproperty; this method looks up the corresponding matching End in the corresponding Association
+	 * and returns the matching entityType
+	 *
+	 * @param {map} mNavProperty - The NavigationProperty (from the navigationProperty array of an EntityType)
+	 * @returns {map} The EntityType that the NavigationProperty points to
+	 * @private
+	 */
+	ODataMetadata.prototype._getEntityTypeByNavPropertyObject = function(mNavProperty) {
+		var mToEntityType;
+
+		var aAssociationName = this._splitName(mNavProperty.relationship);
+		var mAssociation = this._getObjectMetadata("association", aAssociationName[0], aAssociationName[1]);
+
+		// get association for navigation property and then the collection name
+		if (mAssociation) {
+			var mEnd = mAssociation.end[0];
+			if (mEnd.role !== mNavProperty.toRole) {
+				mEnd = mAssociation.end[1];
+			}
+			var aEntityTypeName = this._splitName(mEnd.type);
+			mToEntityType = this._getObjectMetadata("entityType", aEntityTypeName[0], aEntityTypeName[1]);
+			if (mToEntityType) {
+				// store the type name also in the oEntityType
+				mToEntityType.entityType = mEnd.type;
+			}
+		}
+		return mToEntityType;
 	};
 
 	/**
@@ -862,7 +892,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 */
 	ODataMetadata.prototype._createRequest = function(sUrl) {
 
-		var oHeaders = {}, oLangHeader = {"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()};
+		var oHeaders = {}, oLangHeader = {"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()};
 
 		jQuery.extend(oHeaders, this.mHeaders, oLangHeader);
 
@@ -935,7 +965,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * merges two metadata objects
 	 * @param {object} oTarget Target metadata object
 	 * @param {object} oSource Source metadata object
-	 * @param {array} aEntitySets An array where the entitySets (metadata objects) from the source objects will 
+	 * @param {array} aEntitySets An array where the entitySets (metadata objects) from the source objects will
 	 * 								be collected and returned.
 	 * @return {object} oTarget The merged metadata object
 	 * @private
@@ -1011,7 +1041,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 */
 	ODataMetadata.prototype._getEntitySetByType = function(mEntityType) {
 		var sEntityType = mEntityType.namespace + "." + mEntityType.name;
-		
+
 		var aSchema = this.oMetadata.dataServices.schema;
 		for (var i = 0; i < aSchema.length; ++i) {
 			var aContainers = aSchema[i].entityContainer;
@@ -1030,7 +1060,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		}
 		return null;
 	};
-	
+
 	return ODataMetadata;
 
 });

@@ -46,17 +46,17 @@ sap.ui.define(['./Object'],
 	 */
 	var ObjectPool = BaseObject.extend("sap.ui.base.ObjectPool", /** @lends sap.ui.base.ObjectPool.prototype */ {
 		constructor: function(oObjectClass) {
-		
+
 			BaseObject.call(this);
-		
+
 			this.oObjectClass = oObjectClass;
-		
+
 			this.aFreeObjects = [];
 		//	this.aUsedObjects = []; //PERFOPT: Holding those is currently senseless.
-		
+
 		}
 	});
-	
+
 	/**
 	 * Borrows a free object from the pool. Any arguments to this method
 	 * are forwarded to the init method of the borrowed object.
@@ -66,17 +66,17 @@ sap.ui.define(['./Object'],
 	 * @public
 	 */
 	ObjectPool.prototype.borrowObject = function() {
-	
+
 		// PERFOPT: Reduced callstack
 		var oObject = this.aFreeObjects.length == 0 ?
 				new this.oObjectClass() :
 					this.aFreeObjects.pop();
 		oObject.init.apply(oObject, arguments);
 	//	this.aUsedObjects.push(oObject); //PERFOPT: Holding those is currently senseless.
-	
+
 		return oObject;
 	};
-	
+
 	/**
 	 * Returns an object to the pool. The object must have been borrowed from this
 	 * pool beforehand. The reset method is called on the object before it is added
@@ -86,15 +86,15 @@ sap.ui.define(['./Object'],
 	 * @public
 	 */
 	ObjectPool.prototype.returnObject = function(oObject) {
-	
+
 		oObject.reset();
 		// If the next line is ever activated again, ensure not simply the topmost object is poped but the one returned!!
 	//	this.aUsedObjects.pop(); //PERFOPT: Holding those is currently senseless.
 		this.aFreeObjects.push(oObject);
-	
+
 	};
-	
-	
+
+
 	/**
 	 * Poolable objects must provide a no-arg constructor which is used by the pool
 	 * to construct new, unused objects.
@@ -107,7 +107,7 @@ sap.ui.define(['./Object'],
 	 * @interface Contract for objects that can be pooled by ObjectPool
 	 * @public
 	 */
-	
+
 	/**
 	 * Called by the object pool when this instance will be actived for a caller.
 	 * The same method will be called after a new instance has been created by an otherwise
@@ -120,7 +120,7 @@ sap.ui.define(['./Object'],
 	 * @function
 	 * @public
 	 */
-	
+
 	/**
 	 * Called by the object pool when an instance is returned to the pool.
 	 * While no specific implementation is required, poolable objects in general

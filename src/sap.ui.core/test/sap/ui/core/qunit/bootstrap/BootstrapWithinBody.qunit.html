@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
 <!--
   Tests the bootstrap variant where the bootstrap tag is part of the body.
-  
+
   @author Frank Weigel
   -->
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Test Page for Bootstrap within Body</title>
 
 		<!-- Initialization -->
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script>
@@ -30,7 +30,7 @@
 			});
 
 			QUnit.test("Check boot() has run", function(assert) {
-				
+
 				var id = jQuery("html").attr("data-sap-ui-browser");
 				if ( sap.ui.Device.browser.name ) {
 					assert.ok(typeof id === "string" && id, "browser is known: data-sap-ui-browser should have been set and must not be empty");
@@ -42,7 +42,7 @@
 				assert.ok(sap.ui.lazyRequire._isStub("sap.ui.commons.Button"), "Control from lib is available at least as lazy stub");
 				new sap.ui.commons.Button();
 				assert.ok(typeof sap.ui.commons.Button.prototype.attachPress === "function", "control lazily loaded initialized");
-			}); 
+			});
 
 		</script>
 
@@ -51,9 +51,9 @@
 	<body class="sapUiBody" role="application">
 		<div id="qunit"></div>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 				src="../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.ui.commons" 
+				data-sap-ui-libs="sap.ui.commons"
 				>
 		</script>
 		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>

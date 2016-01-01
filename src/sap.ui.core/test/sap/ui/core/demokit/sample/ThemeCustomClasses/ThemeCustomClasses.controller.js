@@ -9,10 +9,10 @@ sap.ui.define([
 	var ThemeCustomClassesController = Controller.extend("sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses", {
 
 		// ###############################################
-		// 
+		//
 		// whole code in controller is irrelevant for sapTheme prefixed classes!
 		// only for sample display
-		// 
+		//
 		// ###############################################
 		onInit: function () {
 
@@ -53,7 +53,7 @@ sap.ui.define([
 								var aStyles = x[j].selectorText.split(',');
 								for(var k in aStyles){
 									sStyles = aStyles[k].split('.')[1];
-									themeClasses.Styles.push({"stylingString" : sCssRule, "styleClass" : sStyles, "style" : x[j].style, 'border' : bBorder });		
+									themeClasses.Styles.push({"stylingString" : sCssRule, "styleClass" : sStyles, "style" : x[j].style, 'border' : bBorder });
 								}
 							} else if (x[j].selectorText.split('.').length > 2){
 								var aStyles = x[j].selectorText.split('.');
@@ -76,10 +76,10 @@ sap.ui.define([
 		_reloadSample : function(context){
 			// wait until theme is changed
 			jQuery.sap.delayedCall(500,this, function(){
-			
-				// load sapTheme classes 
+
+				// load sapTheme classes
 				var oThemeClasses = this._fetchClasses();
-			
+
 				// reload the view
 				this.oView.setModel(new JSONModel(oThemeClasses));
 				this.oView.invalidate();

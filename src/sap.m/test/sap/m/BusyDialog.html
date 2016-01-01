@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
-		<title>Dialog - sap.m</title>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>BusyDialog - sap.m</title>
 		<script src='../../../resources/sap-ui-core.js'
 				type='text/javascript'
 				id='sap-ui-bootstrap'
@@ -28,6 +28,13 @@
 				close: function (oEvent) {
 					alert('cancelPressed: ' + oEvent.getParameter('cancelPressed'));
 				}
+			});
+
+			var customCancelButtonTextBusyDialog = new sap.m.BusyDialog('customCancelButtonTextBusyDialog', {
+				tooltip: 'BusyDialog example with custom "cancel button text, custom icon and tooltip.',
+				cancelButtonText: 'Custom Close Text',
+				customIcon: 'images/synchronise_48.png',
+				customIconRotationSpeed: 5000
 			});
 
 			var standartNoHeaderBusyDialog = new sap.m.BusyDialog('standartNoHeaderBusyDialog', {
@@ -82,6 +89,7 @@
 							standartBusyDialog.open();
 						}
 					}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.m.Button({
 						text: 'Standart (testing setters)',
 						width: _buttonWidth,
@@ -155,6 +163,7 @@
 							});
 						}
 					}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.m.Button({
 						text: "Binding BusyDialog",
 						width: _buttonWidth,
@@ -178,8 +187,24 @@
 
 							alert('oBusyDialog.$() should be 1 dom element: ' + defaultLightBusyDialog.$().length);
 						}
+					}),
+					new sap.m.Button({
+						text: 'Custom Cancel Text and Icon',
+						width: _buttonWidth,
+						press: function () {
+							customCancelButtonTextBusyDialog.open();
+						}
 					})
 				]
+			});
+
+			var busyDialogInstantOpen = new sap.m.BusyDialog({
+				text: "new sap.m.BusyDialog().open() should work. This will self close after: 3.5sec.",
+				title: 'busyDialogInstantOpen'
+			}).open();
+
+			jQuery.sap.delayedCall(3500, this, function () {
+				busyDialogInstantOpen.close();
 			});
 
 			app.addPage(initialPage).placeAt('content');

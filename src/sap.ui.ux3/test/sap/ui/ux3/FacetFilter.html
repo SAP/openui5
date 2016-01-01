@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>FacetFilter - sap.ui.ux3</title>
 		<!-- link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.ux3.Exact.gif" -->
 		<script src="../../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.ui.core,sap.ui.ux3,sap.ui.commons"
 			data-sap-ui-theme="sap_goldreflection">
@@ -14,7 +14,7 @@
 
 
 		<script>
-		
+
 			var oFacetFilter = new sap.ui.ux3.FacetFilter("myFacetFilter");
 
 			var oFFL1 = new sap.ui.ux3.FacetFilterList("ffl1", {
@@ -33,7 +33,7 @@
  			oFFL1.attachSelect(function(oEvent) {
  				var aId = oEvent.getParameter("id");
 	 			jQuery("#result1").html("Id: " +aId);
-	 			
+
 	 			var bAll = oEvent.getParameter("all");
 	 			if(bAll){
 	 				jQuery("#result4").html("");
@@ -41,7 +41,7 @@
 		 			jQuery("#result10").html("");
 		 			return;
 	 			}
-	 			
+
  				var aSelectedIndices = oEvent.getParameter("selectedIndices");
   				var aSelectedIndiceNames = [];
    				for(var i=0; i<aSelectedIndices.length; i++){
@@ -58,7 +58,7 @@
   				}
 	 			jQuery("#result7").html("Selected items:<br>  * " + aSelectedItemNames.join("<br>  * "));
 	 			jQuery("#result10").html("Selected filters:<br>  * " + aSelectedFilterTexts.join("<br>  * "));
- 			});			
+ 			});
 			oFacetFilter.addList(oFFL1);
 
 			var oFFL2 = new sap.ui.ux3.FacetFilterList("ffl2", {
@@ -78,7 +78,7 @@
  			oFFL2.attachSelect(function(oEvent) {
  				var aId = oEvent.getParameter("id");
  				jQuery("#result2").html("Id: " +aId);
- 				
+
  				var bAll = oEvent.getParameter("all");
 	 			if(bAll){
 	 				jQuery("#result5").html("");
@@ -86,7 +86,7 @@
 		 			jQuery("#result11").html("");
 		 			return;
 	 			}
- 				
+
  				var aSelectedIndices = oEvent.getParameter("selectedIndices");
   				var aSelectedIndiceNames = [];
    				for(var i=0; i<aSelectedIndices.length; i++){
@@ -116,7 +116,7 @@
  			oFFL3.attachSelect(function(oEvent) {
  				var aId = oEvent.getParameter("id");
  				jQuery("#result3").html("Id: " +aId);
- 				
+
  				var bAll = oEvent.getParameter("all");
 	 			if(bAll){
 	 				jQuery("#result6").html("");
@@ -124,7 +124,7 @@
 		 			jQuery("#result12").html("");
 		 			return;
 	 			}
- 				
+
  				var aSelectedIndices = oEvent.getParameter("selectedIndices");
   				var aSelectedIndiceNames = [];
    				for(var i=0; i<aSelectedIndices.length; i++){

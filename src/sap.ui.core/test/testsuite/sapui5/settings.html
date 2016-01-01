@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Settings (using SAPUI5 controls)</title>
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.commons"
 				>
 		</script>
-		<link rel="stylesheet" type="text/css" href="../styles/main.css" />
+		<link rel="stylesheet" type="text/css" href="../styles/main.css">
 		<style type="text/css">
 		#uiAreaQR {
 			display: none;
@@ -24,10 +24,10 @@
 		<script>
 
 	  	jQuery.sap.require("sap.ui.thirdparty.URI");
-	  	
+
 		var testfwk = top.testfwk, oThemeCombo;
 		createUI();
-		
+
 		function languageChanged(e) {
 			testfwk.setLanguage(Combo_getValueAsKey(e.getSource()));
 		}
@@ -39,13 +39,13 @@
 		function jQueryVersionChanged(e) {
 			testfwk.setJQueryVersion(Combo_getValueAsKey(e.getSource()));
 		}
-		
+
 		function checkTouchEventsHint(sUrl, sTheme, sLib) {
 			if (sLib === "sap.m" && !jQuery.support.touch && !sap.ui.getCore().byId("chkSimulateTouch").getChecked()) {
 				var oTouchWarning = new sap.ui.commons.Message({text:"Enable touch events here!",type:sap.ui.commons.MessageType.Warning});
 				var toast = new sap.ui.commons.MessageToast({anchorId:"touchSimulationLabel"});
 				toast.toast(oTouchWarning);
-				
+
 				window.setTimeout(function(){
 					if (toast) toast.destroy();
 					if (oTouchWarning) oTouchWarning.destroy();
@@ -69,7 +69,7 @@
 			}
 			return oCombo;
 		}
-		
+
 		function Combo_getValueAsKey(oCombo) {
 			var sValue = oCombo.getValue(),
 				aItems = oCombo.getItems(),
@@ -80,9 +80,9 @@
 					sKey = aItems[i].getKey();
 			}
 
-			return sKey;	
+			return sKey;
 		}
-		
+
 	    function createUI() {
 			var oLabel,oButton,oListBox,oComboBox,
 				oLayout = new sap.ui.commons.layout.MatrixLayout();
@@ -90,17 +90,17 @@
 
 		    oButton = new sap.ui.commons.Button({text:'Apply', press: function() { testfwk.applySettings(); }});
 		    oLayout.createRow(oButton);
-		    
+
 		    oLabel = new sap.ui.commons.Label({text:'Theme', labelFor:'themeCombo'});
 		    oCombo = Combo_create("themeCombo", testfwk.THEMES, testfwk.getTheme());
 	        oCombo.attachChange(themeChanged);
 	        oLayout.createRow(oLabel, oCombo);
 	        oThemeCombo = oCombo;
-	        
+
 	        testfwk.attachThemeConfigurationChanged(function(){
 	      		var parent = oThemeCombo.getParent();
 	      		oThemeCombo.destroy();
-	      		
+
 	      		var newCombo = Combo_create("themeCombo", testfwk.getAllowedThemes(), testfwk.getTheme());
 	      		newCombo.attachChange(themeChanged);
 	      		parent.addContent(newCombo);
@@ -115,27 +115,27 @@
 	        oLabel =  new sap.ui.commons.Label({text:'RTL', labelFor:'chkRTL'});
 	        oCheckBox = new sap.ui.commons.CheckBox('chkRTL', {checked:testfwk.getRTL(), change:function(e) { testfwk.setRTL(e.getParameter("checked"));}});
 	        oLayout.createRow(oLabel, oCheckBox);
-	        
+
 	        oLabel =  new sap.ui.commons.Label({text:'Accessibility Mode', labelFor:'chkAccMode'});
 	        oCheckBox = new sap.ui.commons.CheckBox('chkAccMode', {checked:testfwk.getAccessibilityMode(), change:function(e) { testfwk.setAccessibilityMode(e.getParameter("checked"));}});
 	        oLayout.createRow(oLabel, oCheckBox);
-	        
+
 	        oLabel =  new sap.ui.commons.Label("touchSimulationLabel", {text:'Simulate touch events', labelFor:'chkSimulateTouch'});
 	        oCheckBox = new sap.ui.commons.CheckBox('chkSimulateTouch', {
-	      	  checked:testfwk.getSimulateTouch(), 
+	      	  checked:testfwk.getSimulateTouch(),
 	      	  tooltip:"When checked, UI5 will try to convert mouse events into touch events, so mobile controls can also be used. This simulation is not perfect, so it is always better to try on a touch device.",
 	      	  change:function(e) { testfwk.setSimulateTouch(e.getParameter("checked"));}
 	        });
 	        oLayout.createRow(oLabel, oCheckBox);
-	        
+
 	        testfwk.attachContentWillChange(checkTouchEventsHint);
-	        
+
 		    oLabel = new sap.ui.commons.Label({text:'jQuery Version', labelFor:'jQueryCombo'});
 		    oCombo = Combo_create("jQueryCombo", testfwk.JQUERY_VERSIONS, testfwk.getJQueryVersion());
 	        oCombo.attachChange(jQueryVersionChanged);
 	        oLayout.createRow(oLabel, oCombo);
 
-	        sap.ui.setRoot("uiArea1", oLayout);            	  
+	        sap.ui.setRoot("uiArea1", oLayout);
 
 			var bDevAvailable = jQuery.sap.sjax({type: "HEAD", url: "../../../resources/sap/ui/dev/library.js"}).success;
 			if (bDevAvailable) {
@@ -156,11 +156,11 @@
 					if (!jQuery.browser.webkit) {
 						alert("Cannot start Web Inspector - WEINRE only runs on WebKit, please use Chrome or Safari.");
 						oEvent.preventDefault();
-					} 
+					}
 				});
 				oWEINRELink.placeAt("uiAreaQR");
 				jQuery(function() {
-					jQuery.sap.byId("uiAreaQR").css("display", "block");					
+					jQuery.sap.byId("uiAreaQR").css("display", "block");
 				});
 				testfwk.attachContentWillChange(function(sUrl) {
 					updateQRCode(sUrl);
@@ -168,7 +168,7 @@
 			}
 
 	    }
-	    
+
 	    function updateQRCode(sUrl) {
 	    	if (sUrl == "welcome.html") {
 	    		sUrl = "../../../test-resources/testsuite/welcome.html";
@@ -185,11 +185,11 @@
 	    		}});
 	    	}
 	    }
-	    
+
 		</script>
-		
+
 	</head>
-	<body class="left" role="application"> 
+	<body class="left" role="application">
   		<div id="title" class="title">Settings</div>
 		<div class="border right">
   			<div id="uiArea1">

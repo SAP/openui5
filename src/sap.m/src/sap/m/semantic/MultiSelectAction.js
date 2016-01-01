@@ -27,7 +27,9 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleBu
 	 */
 
 	var MultiSelectAction = SemanticToggleButton.extend("sap.m.semantic.MultiSelectAction", /** @lends sap.m.semantic.MultiSelectAction.prototype */ {
-
+		metadata: {
+			library: "sap.m"
+		}
 	});
 
 	/**

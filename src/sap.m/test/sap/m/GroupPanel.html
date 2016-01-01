@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>GroupPanel - sap.m</title>
 
@@ -10,7 +10,7 @@
 <!-- SAPUI5 Bootstrap:                                                     -->
 <!-- Extend the "libs" property if you like to import additional libraries  -->
 <!-- ********************************************************************** -->
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 	type="text/javascript"
 	data-sap-ui-libs="sap.m"
 	data-sap-ui-theme="sap_bluecrystal"
@@ -18,17 +18,17 @@
 	data-sap-ui-compatVersion="edge">
 </script>
 
-<script type="text/javascript">	
+<script type="text/javascript">
 	jQuery.sap.require("sap.m.P13nConditionPanel");
 	jQuery.sap.require("sap.m.P13nGroupItem");
 	jQuery.sap.require("sap.m.P13nGroupPanel");
-	jQuery.sap.require("sap.ui.layout.Grid");	
+	jQuery.sap.require("sap.ui.layout.Grid");
 
  	var aConditions= [];
  	var oGroupPanel;
 	var oModel;
 	var iCount= 100;
-	
+
 	show= function(oPanel, sTitle) {
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
@@ -37,20 +37,20 @@
 			var oDialog = new sap.m.Dialog({title: sTitle, draggable: true, resizable: true, content: [oPanel], contentWidth: "1600px"});
 			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
 				oDialog.addStyleClass("sapUiSizeCompact");
-			}			
+			}
 			oDialog.setBeginButton(new sap.m.Button({
 				text: "Close",
 				press: function() {
 					oDialog.close();
 				}
 			}));
-			
+
 			oDialog.open();
 		} else {
 			oPanel.placeAt("contentPanel", "only");
-		}		
-	};	
-	
+		}
+	};
+
 	var btnShow = new sap.m.Button({
 		text: "show bound GroupPanel",
 		press: function() {
@@ -81,9 +81,9 @@
 					"showIfGrouped" : false
 				} ]
 			};
-	
+
 			oModel = new sap.ui.model.json.JSONModel(oData);
-	
+
 			oGroupPanel = new sap.m.P13nGroupPanel({
 				removeGroupItem: function(oEvent) {
 					var params = oEvent.getParameters();
@@ -96,7 +96,7 @@
 							sap.m.MessageToast.show("removeGroupItem ---> " + params.key + " #" + oModel.getData().groupItems.length);
 							return;
 						}
-					});					
+					});
 				},
 				addGroupItem: function(oEvent) {
 					var params = oEvent.getParameters();
@@ -129,9 +129,9 @@
 				columnKey : "{columnKey}",
 				showIfGrouped : "{showIfGrouped}"
 			}));
-			
+
 			show(oGroupPanel, "Group");
-			
+
 			oFieldKey.setModel(oModel);
 			oFieldKey.bindValue("/groupItems/0/key");
 			oFieldKeyField.setModel(oModel);
@@ -142,39 +142,39 @@
 			oFieldShowIfGrouped.bindValue("/groupItems/0/showIfGrouped");
 		}
 	});
-	
+
 	var btnValidate = new sap.m.Button({
 		text: "validate",
 		press: function() {
 			sap.m.MessageToast.show("validate= "+oGroupPanel.validateConditions());
 		}
 	});
-	
+
 	var btnClearErrors = new sap.m.Button({
 		text: "Clear Errors",
 		press: function() {
 			oGroupPanel.removeValidationErrors();
 		}
 	});
-	
+
 	var btnRemoveInvalidConditions = new sap.m.Button({
 		text: "Remove Invalid Conditions",
 		press: function() {
 			oGroupPanel.removeInvalidConditions();
 		}
 	});
-	
+
 	var btnConditions = new sap.m.Button({
 		text: "get Conditions",
 		press: function() {
 			aConditions = oGroupPanel._getConditions();
-	
-			var sConditions= ""; 
+
+			var sConditions= "";
 			for (i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
 				sConditions+= "'" + oCondition.text + "' ";
-			}					
-	
+			}
+
 			sap.m.MessageToast.show("Conditions= "+sConditions);
 		}
 	});
@@ -250,8 +250,8 @@
 		select : function() {
 		}
 	});
-	
-	
+
+
 	btnShow.placeAt("content");
 	btnValidate.placeAt("content");
 	btnClearErrors.placeAt("content");
@@ -266,7 +266,7 @@
 	btnRemoveCondition.placeAt("content2");
 	theCompactMode.placeAt("content");
 	theDialogMode.placeAt("content");
-		 	
+
 </script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" role="application">

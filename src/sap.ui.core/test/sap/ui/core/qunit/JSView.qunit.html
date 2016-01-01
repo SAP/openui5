@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested classes: sap.ui.core.mvc.JSView + sap.ui.core.mvc.Controller
   Author: d046011,d049080
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.ui.core.mvc.JSView +
 sap.ui.core.mvc.Controller</title>
 
@@ -35,7 +35,7 @@ sap.ui.core.mvc.Controller</title>
 		viewClassName : "sap.ui.core.mvc.JSView",
 		idsToBeChecked : ["myPanel", "Button1"]
 	};
-	
+
 	testsuite(oConfig, "JSView creation loading from file", function() {
 		return sap.ui.jsview("example.mvc.test");
 	});
@@ -44,13 +44,13 @@ sap.ui.core.mvc.Controller</title>
 
 		// View definition
 		sap.ui.jsview("example.mvc.testLocal", {
-		
+
 			getControllerName: function() {
 				return "example.mvc.testLocal";
 			},
-			
+
 			/**
-			 * 
+			 *
 			 * @param oController may be null
 			 * @returns {sap.ui.core.Control}
 			 */
@@ -61,6 +61,9 @@ sap.ui.core.mvc.Controller</title>
 				oPanel.addContent(oButton);
 				var oButton = new sap.ui.commons.Button(this.createId("Button2"),{text:"Hello"});
 				oPanel.addContent(oButton);
+				var oButtonX = new sap.ui.commons.Button(this.createId("ButtonX"),{text:"Another Hello"});
+				oButtonX.attachPress(oController.sap.doIt,oController);
+				oPanel.addContent(oButtonX);
 				var oView1 = sap.ui.jsonview(this.createId("MyJSONView"),"example.mvc.test2");
 				oPanel.addContent(oView1);
 				var oView2 = sap.ui.jsview(this.createId("MyJSView"),"example.mvc.test2");
@@ -73,50 +76,57 @@ sap.ui.core.mvc.Controller</title>
 				return [oPanel];
 			}
 		});
-		
+
 		// controller definition
 		sap.ui.controller("example.mvc.testLocal", {
-			
+
 			onInit: function() {
 				ok(true, "onInit is called now");
 				window.onInitCalled = true;
 				if(this.getView().getViewData()) window.dataOnInit = this.getView().getViewData().test;
 			},
-		
-			
+
+
 			onBeforeRendering: function() {
 				window.onBeforeRenderingCalled = true;
 				if(this.getView().getViewData()) window.dataBeforeRendering = this.getView().getViewData().test;
 			},
-			
-			
+
+
 			onAfterRendering: function() {
 				ok(true, "onAfterRendering is called now");
 				window.onAfterRenderingCalled = true;
 				if(this.getView().getViewData()) window.dataAfterRendering = this.getView().getViewData().test;
 			},
-			
-			
+
+
 			onExit: function() {
 				window.onExitCalled = true;
 			},
-			
+
 			doIt: function(oEvent) {
 				ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
 				var controller = this;
 				ok(controller instanceof sap.ui.core.mvc.Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
 				if(this.getView().getViewData()) window.dataEventHandler = this.getView().getViewData().test;
+			},
+
+			sap: {
+				doIt: function(oEvent) {
+					ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
+					ok(this instanceof sap.ui.core.mvc.Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
+				}
 			}
-		
+
 		});
-		
+
 		return sap.ui.jsview("example.mvc.testLocal");
 	});
-	
+
 	testsuite(oConfig, "JSView creation via generic view factory", function() {
 		return sap.ui.view({viewName:"example.mvc.test",type:sap.ui.core.mvc.ViewType.JS, viewData:{test:"testdata"}});
 	}, true);
-	
+
 </script>
 </head>
 <body>

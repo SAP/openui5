@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Token - sap.m</title>
 
 		<script src="../../../resources/sap-ui-core.js"
@@ -16,18 +16,18 @@
 
 		jQuery.sap.require("sap.m.MessageBox");
 		jQuery.sap.require("sap.m.Token");
-				
-		var app = new sap.m.App("myApp");		
-		
+
+		var app = new sap.m.App("myApp");
+
 		var tokenPress = function(args){
 			args.oSource.setSelected(!args.oSource.getSelected());
-			sap.m.MessageBox.alert("Token pressed: " +  args.oSource.getText());			
+			sap.m.MessageBox.alert("Token pressed: " +  args.oSource.getText());
 		};
-		
+
 		var tokenDeleted = function(args){
 			sap.m.MessageBox.alert("Token deleted: " +  args.oSource.getText());
 		};
-		
+
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile Token Control",
 			content : [
@@ -46,9 +46,9 @@
 					]
 		});
 		app.addPage(page1);
-		
+
 		app.placeAt("body");
-		
+
 </script>
 	<style>
 	body {

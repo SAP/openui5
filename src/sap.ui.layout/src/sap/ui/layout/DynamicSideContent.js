@@ -67,7 +67,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				/**
 				 * If set to TRUE, then not the media Query (device screen size) but the size of the container, surrounding the control, defines the current range.
 				 */
-				containerQuery : {type : "boolean", group : "Behavior", defaultValue : false}
+				containerQuery : {type : "boolean", group : "Behavior", defaultValue : false},
+
+				/**
+				 * Determines whether the side content is on the left or on the right side of the main content.
+				 * @since 1.36
+				 */
+				sideContentPosition : {type : "sap.ui.layout.SideContentPosition", group : "Appearance", defaultValue : sap.ui.layout.SideContentPosition.End}
 			},
 			defaultAggregation : "mainContent",
 			events : {
@@ -308,14 +314,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		DynamicSideContent.prototype.onAfterRendering = function () {
 			if (this.getContainerQuery()) {
 				this._attachContainerResizeListener();
-				this._handleMediaChange();
 			} else {
 				var that = this;
 				jQuery(window).resize(function() {
 					that._handleMediaChange();
 				});
-				this._changeGridState();
 			}
+			this._changeGridState();
 			this._initScrolling();
 		};
 

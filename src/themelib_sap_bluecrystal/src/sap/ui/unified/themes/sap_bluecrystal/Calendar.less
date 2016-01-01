@@ -17,7 +17,6 @@
 /* calendar should have only a border if on popup */
 .sapUiCal[data-sap-ui-popup]{
 	border-color: @sapUiContentForegroundBorderColor;
-	-webkit-box-shadow: 0 0.0625rem 0.1875rem fade(@sapUiDarkShadowTint, 50);
 	box-shadow: 0 0.0625rem 0.1875rem fade(@sapUiDarkShadowTint, 50);
 }
 
@@ -155,8 +154,7 @@
 }
 
 /* hover and focus makes only sense on desktops. On mobile devices it's not needed */
-.sap-desktop .sapUiCalItem:hover,
-.sap-desktop .sapUiCalItem:focus{
+.sap-desktop .sapUiCalItem:hover{
 	background-color: darken(@sapUiContentForegroundColor,5);
 }
 
@@ -212,9 +210,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItem:fo
 }
 
 .sap-desktop .sapUiCalItemSel:hover,
-.sap-desktop .sapUiCalItemSel:focus,
-.sap-desktop .sapUiCalItemSel.sapUiCalItemOtherMonth:hover,
-.sap-desktop .sapUiCalItemSel.sapUiCalItemOtherMonth:focus{
+.sap-desktop .sapUiCalItemSel:focus{
 	background-color: darken(@sapUiSelected, 10);
 }
 
@@ -225,9 +221,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 }
 
 .sap-desktop .sapUiCalItemSelBetween:hover,
-.sap-desktop .sapUiCalItemSelBetween:focus,
-.sap-desktop .sapUiCalItemSelBetween.sapUiCalItemOtherMonth:hover,
-.sap-desktop .sapUiCalItemSelBetween.sapUiCalItemOtherMonth:focus{
+.sap-desktop .sapUiCalItemSelBetween:focus{
 	background-color: lighten(@sapUiSelected, 40);
 }
 
@@ -653,7 +647,7 @@ and (orientation: landscape) {
 	.@{class}.sapUiCalItemSel > .sapUiCalItemText{
 		box-shadow: inset 0 -0.125rem 0 @color, inset 0 -0.1875rem lighten(@sapUiListBorderColor,10);
 	}
-	
+
 	.@{class}.sapUiCalItemNow > .sapUiCalItemText{
 		box-shadow: inset 0.0625rem 0.0625rem 0 0 lighten(@sapUiListBorderColor,10), inset -0.0625rem -0.0625rem 0 0 lighten(@sapUiListBorderColor,10), inset 0 -0.1875rem 0 @color, inset 0 -0.25rem lighten(@sapUiListBorderColor,10);
 	}

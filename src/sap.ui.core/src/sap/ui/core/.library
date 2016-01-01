@@ -5,10 +5,10 @@
   <vendor>SAP SE</vendor>
   <copyright>${copyright}</copyright>
   <version>${version}</version>
-  
-  <documentation>The SAPUI5 Core Runtime. 
-  
-  Contains the UI5 jQuery plugins (jQuery.sap.*), the Core and all its components, 
+
+  <documentation>The SAPUI5 Core Runtime.
+
+  Contains the UI5 jQuery plugins (jQuery.sap.*), the Core and all its components,
   base classes for Controls, Components and the Model View Controller classes.</documentation>
 
   <appData>
@@ -115,7 +115,7 @@
         <exclude name="sap/ui/thirdparty/jquery/jquery-1.10.2.js" />
         <exclude name="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
         <!-- CorePlugin, shouldn't be installed by default -->
-        <exclude name="sap/ui/core/plugin/DeclarativeSupport.js" /> 
+        <exclude name="sap/ui/core/plugin/DeclarativeSupport.js" />
         <exclude name="sap/ui/core/plugin/LessSupport.js" />
         <!-- exclude non-productive code -->
         <exclude name="sap/ui/debug/**" />
@@ -124,7 +124,7 @@
         <exclude name="sap/ui/test/**" />
         <exclude name="testsuite/**" />
         <!-- Ignore substitutes for moved third party libs -->
-        <exclude name="jquery-ui-core.js" /> 
+        <exclude name="jquery-ui-core.js" />
         <exclude name="jquery-ui-datepicker.js" />
         <exclude name="jquery-ui-position.js" />
         <exclude name="sap/ui/model/odata/datajs.js" />
@@ -317,15 +317,15 @@
         	<license url="https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
         </lib>
     </thirdparty>
-    
+
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
         indexUrl="../../../../test-resources/sap/ui/core/demokit/docuindex.json"
         resolve="lib" />
-    
+
     <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
         url="../../../../test-resources/sap/ui/core/relnotes/changes-{major}.{minor}.json"
         resolve="lib" />
-    
+
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
         <component>CA-UI5-COR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
         <component>
@@ -341,7 +341,7 @@
             </modules>
         </component>
     </ownership>
-    
+
   </appData>
-    
+
 </library>

@@ -1,10 +1,10 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.m.InstanceManager</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -12,10 +12,10 @@
 			data-sap-ui-libs="sap.m">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
+
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -26,14 +26,14 @@
 			jQuery(document).ready(function() {
 				QUnit.start();
 			});
-			
+
 			jQuery.sap.require("sap.m.InstanceManager");
 			var im = sap.m.InstanceManager;
-			
+
 			var oList2 = new sap.m.List({
 				inset : true
 			});
-			
+
 			var data = {
 				navigation : [ {
 					title : "Travel Expend",
@@ -72,7 +72,7 @@
 					press : 'detailPage'
 				} ]
 			};
-			
+
 			var oItemTemplate1 = new sap.m.StandardListItem({
 				title : "{title}",
 				description : "{description}",
@@ -80,7 +80,7 @@
 				iconInset : "{iconInset}",
 				type : "{type}"
 			});
-			
+
 			function bindListData(data, itemTemplate, list)
 			{
 				var oModel = new sap.ui.model.json.JSONModel();
@@ -88,7 +88,7 @@
 				list.setModel(oModel);
 				list.bindAggregation("items", "/navigation", itemTemplate);
 			}
-			
+
 			bindListData(data, oItemTemplate1, oList2)
 
 			var oScrollContainer = new sap.m.ScrollContainer({
@@ -96,7 +96,7 @@
 				vertical: true,
 				content: oList2
 			});
-			
+
 			var oPopover = new sap.m.Popover("popover", {
 				placement: sap.m.PlacementType.Bottom,
 				title: "Popover",
@@ -117,14 +117,14 @@
 					oScrollContainer
 				]
 			});
-			
+
 			var oDialog = new sap.m.Dialog("dialog", {
 				title: "World Domination",
 				content: [
 					new sap.ui.core.HTML({content:"<p>Do you want to start a new world domination campaign?</p>"}),
 				],
 				icon: "../images/SAPUI5Icon.png",
-				leftButton: 
+				leftButton:
 					new sap.m.Button("leftButton", {
 						text: "Reject",
 						type: sap.m.ButtonType.Reject,
@@ -153,31 +153,31 @@
 					start();
 				}
 			});
-			
+
 			var oButton = new sap.m.Button({
 				text : "Open"
 			});
-			
+
 			var page = new sap.m.Page("myFirstPage", {
 				title : "Instance Mananger Test",
 				showNavButton : true,
 				enableScrolling : true,
 				content : oButton
 			});
-			
+
 			var app = new sap.m.App("myApp", {
 				initPage: "myFirstPage"
 			});
 			app.addPage(page).placeAt("content");
-			
+
 			var sCategoryId = "_category_",
 				oInstance = {property: "Property"};
-			
+
 			module("Initial Check");
 			test("Initialization", function() {
 				ok(sap.m.InstanceManager, "Instance Manager module has been loaded");
 			});
-			
+
 			module("Add and remove normal object");
 			test("Add object", function(){
 				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
@@ -190,28 +190,28 @@
 				equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance shouldn't be added again");
 				ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is still managed");
 			});
-			
+
 			test("Remove object", function(){
 				im.removeInstance(sCategoryId, oInstance);
 				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
 				ok(!im.isInstanceManaged(sCategoryId, oInstance), "Instance is not managed any more");
 				ok(im.getInstancesByCategoryId(sCategoryId).length === 0, "Intance array is empty");
 			});
-			
-			
+
+
 			module("Open and close Dialog");
 			asyncTest("Open Dialog", function(){
 				oDialog.open();
 				expect(3);
 			});
-			
+
 			asyncTest("Close Dialog", function(){
 				im.closeAllDialogs();
 				expect(3);
 			});
-						
+
             module("callbacks");
-            
+
             test("Should close all dialogs and trigger a callback", function() {
 
                     //Arrange
@@ -227,11 +227,11 @@
                         },
                         dialogs = [ fakeDialog , fakeDialog ];
 
-                    
+
 
                     this.stub(im, "getOpenDialogs").returns(dialogs)
 
-                    
+
                     //System under Test + Act
                     im.closeAllDialogs(callback);
 
@@ -252,13 +252,13 @@
                     events[1]();
                     strictEqual(callback.callCount, 1, "callback was executed");
             });
-			
+
 			module("Open and close Popover");
 			asyncTest("Open Dialog", function(){
 				oPopover.openBy(oButton);
 				expect(3);
 			});
-			
+
 			asyncTest("Close Dialog", function(){
 				im.closeAllPopovers();
 				expect(3);

@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *                                   the "arguments" of the sub-class constructor should be given instead.
 		 * @public
 		 * @alias sap.ui.core.mvc.Controller
+		 * @extends sap.ui.base.EventProvider
 		 */
 		var Controller = EventProvider.extend("sap.ui.core.mvc.Controller", /** @lends sap.ui.core.mvc.Controller.prototype */ {
 
@@ -94,41 +95,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			}
 			/*eslint-enable no-loop-func */
 		}
-		
+
 		/**
-		 * This function can be used to extend a controller with controller 
-		 * extensions defined in the Customizing configuration or with the 
+		 * This function can be used to extend a controller with controller
+		 * extensions defined in the Customizing configuration or with the
 		 * controller extensions returned by controller extension provider.
-		 * 
+		 *
 		 * @param {object|sap.ui.core.mvc.Controller} Controller to extend
 		 * @param {string} Name of the controller
 		 * @param {boolean} If set to true, extension will be run in async mode
-		 * @return {sap.ui.core.mvc.Controller|Promise} A <code>Promise</code> in case of asynchronous extend 
+		 * @return {sap.ui.core.mvc.Controller|Promise} A <code>Promise</code> in case of asynchronous extend
 		 *           or the <code>controller</code> in case of synchronous extend
-		 * 
+		 *
 		 * @since 1.33.0
 		 * @private
 		 */
 		sap.ui.core.mvc.Controller.extendIfRequired = function(oController, sName, bAsync) {
 			var oCustomControllerDef;
-			
-			if (sap.ui.core.CustomizingConfiguration) {
-				var controllerExtensionConfig = sap.ui.core.CustomizingConfiguration.getControllerExtension(sName, ManagedObject._sOwnerId);
+
+			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+			if (CustomizingConfiguration) {
+				var controllerExtensionConfig = CustomizingConfiguration.getControllerExtension(sName, ManagedObject._sOwnerId);
 				if (controllerExtensionConfig) {
 					var sExtControllerName = controllerExtensionConfig.controllerName;
-					
-					// create a list of controller names which will be used to extend this controller 
+
+					// create a list of controller names which will be used to extend this controller
 					var aControllerNames = controllerExtensionConfig.controllerNames || [];
 					if (sExtControllerName) {
 						sExtControllerName && aControllerNames.unshift(sExtControllerName);
 					}
-					
+
 					for (var i = 0, l = aControllerNames.length; i < l; i++) {
 						var sControllerName = aControllerNames[i];
-						
+
 						// avoid null values for controllers to be handled here!
 						if (typeof sControllerName === "string") {
-							
+
 							jQuery.sap.log.info("Customizing: Controller '" + sName + "' is now extended by '" + sControllerName + "'");
 
 							// load controller definition if required; first check whether already available...
@@ -146,9 +148,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 							}// else {
 								// FIXME: what to do for typed controllers?
 							//}
-						
+
 						}
-						
+
 					}
 
 				} else {
@@ -168,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 					var oExtensionProvider = new ExtensionProvider();
 					var oExtensions = oExtensionProvider.getControllerExtensions(sName /* controller name */, ManagedObject._sOwnerId /* component ID / clarfiy if this is needed? */, bAsync);
 					if (oExtensions instanceof Promise) {
-						// in async mode, oExtensions has to be resolved before the controller extensions are mixed in 
+						// in async mode, oExtensions has to be resolved before the controller extensions are mixed in
 						return oExtensions.then(function(aControllerExtensions) {
 							if (aControllerExtensions && aControllerExtensions.length) {
 								for (var i = 0, l = aControllerExtensions.length; i < l; i++) {
@@ -323,25 +325,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 
 
 		/**
-		 * Global extension provider name which will be used to create the 
+		 * Global extension provider name which will be used to create the
 		 * instance of the extension provider.
 		 *
 		 * @private
 		 */
 		Controller._sExtensionProvider = null;
-		
-		
+
+
 		/**
-		 * Registers a callback module, which provides code enhancements for the 
-		 * lifecycle and event handler functions of a specific controller. The code 
+		 * Registers a callback module, which provides code enhancements for the
+		 * lifecycle and event handler functions of a specific controller. The code
 		 * enhancements are returned either in sync or async mode.
-		 * 
+		 *
 		 * The extension provider module provides the <code>getControllerExtensions</code> function
-		 * which returns either directly an array of objects or a Promise that returns an array 
-		 * of objects when it resolves. These objects are object literals defining the 
+		 * which returns either directly an array of objects or a Promise that returns an array
+		 * of objects when it resolves. These objects are object literals defining the
 		 * methods and properties of the controller in a similar way as {@link sap.ui.controller}.
-		 * 
-		 * 
+		 *
+		 *
 		 * <b>Example for a callback module definition (sync):</b>
 		 * <pre>
 		 * sap.ui.define("my/custom/sync/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
@@ -365,8 +367,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *   return ExtensionProvider;
 		 * }, true);
 		 * </pre>
-		 * 
-		 * 
+		 *
+		 *
 		 * <b>Example for a callback module definition (async):</b>
 		 * <pre>
 		 * sap.ui.define("my/custom/async/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
@@ -375,7 +377,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *     if (bAsync && sControllerName == "my.own.Controller") {
 		 *       // IMPORTANT:
 		 *       // only return a Promise for a specific controller since it
-		 *       // requires the View/Controller and its parents to run in async 
+		 *       // requires the View/Controller and its parents to run in async
 		 *       // mode!
 		 *       return new Promise(function(fnResolve, fnReject) {
 		 *         fnResolve([{
@@ -395,21 +397,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *   return ExtensionProvider;
 		 * }, true);
 		 * </pre>
-		 * 
-		 * 
+		 *
+		 *
 		 * The lifecycle functions <code>onInit</code>, <code>onExit</code>,
 		 * <code>onBeforeRendering</code> and <code>onAfterRendering</code>
 		 * are added before or after the lifecycle functions of the original
 		 * controller. The event handler functions, such as <code>onButtonClick</code>,
 		 * are replacing the original controller's function.
-		 * 
+		 *
 		 * When using an async extension provider you need to ensure that the
 		 * view is loaded in async mode.
-		 * 
+		 *
 		 * In both cases, return <code>undefined</> if no controller extension shall be applied.
-		 * 
+		 *
 		 * @param {string} sExtensionProvider the module name of the extension provider
-		 * 
+		 *
 		 * @see sap.ui.controller for an overview of the available functions for controllers
 		 * @since 1.34.0
 		 * @public
@@ -425,52 +427,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * hooks.
 		 * (Even though this method is declared as "abstract", it does not need to be defined in controllers, if the
 		 * method does not exist, it will simply not be called.)
-		 * 
+		 *
 		 * @function
 		 * @name sap.ui.core.mvc.Controller.prototype.onInit
 		 * @abstract
-		 * @protected 
+		 * @protected
 		 */
-		
+
 		/**
 		 * This method is called upon desctuction of the View. The controller should perform its internal destruction in
 		 * this hook. It is only called once per View instance, unlike the onBeforeRendering and onAfterRendering
 		 * hooks.
 		 * (Even though this method is declared as "abstract", it does not need to be defined in controllers, if the
 		 * method does not exist, it will simply not be called.)
-		 * 
+		 *
 		 * @function
 		 * @name sap.ui.core.mvc.Controller.prototype.onExit
 		 * @abstract
-		 * @protected 
+		 * @protected
 		 */
 
 		/**
-		 * This method is called every time the View is rendered, before the Renderer is called and the HTML is placed in 
+		 * This method is called every time the View is rendered, before the Renderer is called and the HTML is placed in
 		 * the DOM-Tree. It can be used to perform clean-up-tasks before re-rendering.
 		 * (Even though this method is declared as "abstract", it does not need to be defined in controllers, if the
 		 * method does not exist, it will simply not be called.)
 		 *
 		 * @see sap.ui.core.Control.prototype.onBeforeRendering
-		 * 
+		 *
 		 * @function
 		 * @name sap.ui.core.mvc.Controller.prototype.onBeforeRendering
 		 * @abstract
-		 * @protected 
+		 * @protected
 		 */
 
 		/**
-		 * This method is called every time the View is rendered, after the HTML is placed in the DOM-Tree. It can be 
+		 * This method is called every time the View is rendered, after the HTML is placed in the DOM-Tree. It can be
 		 * used to apply additional changes to the DOM after the Renderer has finished.
 		 * (Even though this method is declared as "abstract", it does not need to be defined in controllers, if the
 		 * method does not exist, it will simply not be called.)
 		 *
 		 * @see sap.ui.core.Control.prototype.onAfterRendering
-		 * 
+		 *
 		 * @function
 		 * @name sap.ui.core.mvc.Controller.prototype.onAfterRendering
 		 * @abstract
-		 * @protected 
+		 * @protected
 		 */
 	return Controller;
 

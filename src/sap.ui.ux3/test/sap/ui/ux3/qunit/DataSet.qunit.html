@@ -1,19 +1,19 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested classes: sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem + sap.ui.ux3.DataSetSimpleView
   Author: d049080
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem +
 sap.ui.ux3.DataSetSimpleView</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3">
 </script>
@@ -29,36 +29,36 @@ sap.ui.ux3.DataSetSimpleView</title>
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
-	
+
 	// satisfy some preconditions
 	jQuery.sap.registerModulePath("dataset","../resources/dataset");
-	
+
 	var oDataSet,oDataSetItem, oDataSetItem2 ,oView, oDataSetSimpleView, oDataSetSimpleView2, oButton,
 	 	oModel = new sap.ui.model.json.JSONModel(),
-	 	data = { test : [] }; 
-	
+	 	data = { test : [] };
+
 	function selection(oEvent) {
 		window.selectionCalled = true;
-		window.oldIndex = oEvent.getParameters().oldLeadSelectedIndex, 
+		window.oldIndex = oEvent.getParameters().oldLeadSelectedIndex,
 		window.newIndex = oEvent.getParameters().newLeadSelectedIndex;
 	}
-	
+
 	function search(oEvent) {
 		window.filterValue = oEvent.getParameters().query;
 		ok(true,"search");
 	}
-	
+
 	function handleSelection(oEvent) {
 		//window.filterValue = oEvent.getParameters().filterValue;
 		ok(true,"item selection");
 	}
-	 
+
 	for ( var i = 0; i < 5; i++) {
 		var item = {};
 		item.imageSrc = "../images/dataset/img" + (i + 1)
 				+ ".jpg";
 		item.title = "Image: img" + (i + 1) + ".jpg"
-		item.test = []; 
+		item.test = [];
 		for ( var j = 6; j < 12; j++) {
 			item2 = {};
 			item2.imageSrc = "../images/dataset/img"
@@ -81,8 +81,8 @@ sap.ui.ux3.DataSetSimpleView</title>
 	});
 	oDataSet = new sap.ui.ux3.DataSet();
 	oDataSet.setModel(oModel);
-	
-	
+
+
 	sap.ui.core.Control.extend("TestItem", {
 		renderer: function(rm, ctrl){
 			rm.write("<div");
@@ -116,8 +116,8 @@ sap.ui.ux3.DataSetSimpleView</title>
 	});
 	oDataSet2.setModel(oModel2);
 	oDataSet2.placeAt("content2");
-	
-	
+
+
 	test("InitialCheck", 3, function() {
 		ok(sap.ui.ux3.DataSet, "sap.ui.ux3.DataSet must be defined");
 		ok(sap.ui.ux3.DataSetItem, "sap.ui.ux3.DataSetItem must be defined");
@@ -172,7 +172,7 @@ sap.ui.ux3.DataSetSimpleView</title>
 			function() {
 				//add some items again
 		 		oDataSet.bindItems("/test",oDataSetItem);
-      
+
 				equal(oDataSet.getLeadSelection(), -1,
 						"LeadSelection: initial selection");
 				oDataSet.setLeadSelection(1);
@@ -248,17 +248,17 @@ sap.ui.ux3.DataSetSimpleView</title>
 		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getItems()[3].getId()),
 				"click", 1, 1, 1, 1);
 	});
-	
+
 	asyncTest("switch views", 2, function() {
 		ok(oDataSetSimpleView2.getDomRef(),"view 2 must be rendered");
 		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getId() + "-view-"+ oDataSet.getViews()[0].getId()),
 				"click", 1, 1, 1, 1);
 		setTimeout(function() {
 			start();
-			ok(oDataSetSimpleView.getDomRef(),"view 1 must be rendered");	
+			ok(oDataSetSimpleView.getDomRef(),"view 1 must be rendered");
 		},500);
 	});
-	
+
 	test("Toolbar", 5, function() {
 		ok(oDataSet.getShowSearchField(),"SearchField enabled")
 		ok(jQuery("#" + oDataSet.getId() + "-searchValue")[0],"SearchField rendered");
@@ -271,9 +271,9 @@ sap.ui.ux3.DataSetSimpleView</title>
 		oDataSet.removeToolbarItem(oButton);
 		ok(!jQuery('#'+oButton.getId()).length,"Custom Toolbaritem removed");
 	});
-	
+
 	module("DataSetSimpleView");
-	
+
 	test("selection", 4, function() {
 		ok(jQuery.sap.byId(oDataSet.getItems()[3].getId()).hasClass("sapUiUx3DSSVSelected"),"class selected of item 1 is set");
 		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getItems()[1].getId()),
@@ -281,12 +281,12 @@ sap.ui.ux3.DataSetSimpleView</title>
 		ok(jQuery.sap.byId(oDataSet.getItems()[3].getId()).hasClass("sapUiUx3DSSVSelected") === false,"class selected of item 1 removed");
 		ok(jQuery.sap.byId(oDataSet.getItems()[1].getId()).hasClass("sapUiUx3DSSVSelected"),"class selected of item 2 is set");
 	});
-	
-	
+
+
 	function getNumberOfItemsPerRow(){
 		var lastOffsetLeft = -1;
 		var count = 0;
-		
+
 		oDataSetLayout.$().children().each(function() {
 			var offset = jQuery(this)[0].offsetLeft;
 			if(lastOffsetLeft < offset){
@@ -299,25 +299,25 @@ sap.ui.ux3.DataSetSimpleView</title>
 
 		return count;
 	};
-	
-	
+
+
 	test("Floating Layout", function() {
 		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVFloating"), "class 'sapUiUx3DSSVFloating' is set");
 		var expectedItems = Math.floor(oDataSetLayout.$().width()/200);
 		equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
 		ok(jQuery(oDataSetLayout.$().children()[0]).outerWidth() - 200 <= 10 /*just some tolerance*/, "item has width of 200px");
 	});
-	
+
 	test("Responsive Layout", function() {
 		oDataSetLayout.setResponsive(true);
 		oDataSetLayout.setItemMinWidth(200);
 		sap.ui.getCore().applyChanges();
-		
+
 		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVResponsive"), "class 'sapUiUx3DSSVResponsive' is set");
 		var expectedItems = oDataSetLayout._itemsPerRow;
 		equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
 		ok(jQuery(oDataSetLayout.$().children()[0]).outerWidth() >= 200, "item has at least width of 200px");
-		
+
 		var $Items = oDataSetLayout.$().children();
 		var iWidth = 0;
 		for(var i=0; i<expectedItems; i++){
@@ -325,18 +325,18 @@ sap.ui.ux3.DataSetSimpleView</title>
 		}
 		ok(Math.abs(oDataSetLayout.$().width() - iWidth) <= 10 /*just some tolerance*/, "items in a row occupy the whole row");
 	});
-	
+
 	test("Single Row Layout", function() {
 		oDataSetLayout.setFloating(false);
 		oDataSetLayout.setResponsive(false);
 		oDataSetLayout.setItemMinWidth(0);
 		sap.ui.getCore().applyChanges();
-		
+
 		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVSingleRow"), "class 'sapUiUx3DSSVSingleRow' is set");
 		equal(getNumberOfItemsPerRow(), 1, "one item per row");
 		ok(Math.abs(oDataSetLayout.$().width() - jQuery(oDataSetLayout.$().children()[0]).outerWidth()) <= 10 /*just some tolerance*/, "item occupies the whole row");
 	});
-	
+
 </script>
 </head>
 <body>

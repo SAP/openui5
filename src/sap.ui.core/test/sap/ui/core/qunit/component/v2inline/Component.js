@@ -2,7 +2,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 	function(jQuery, UIComponent) {
 	"use strict";
 
-	
+
 	var Component = UIComponent.extend("sap.ui.test.v2inline.Component", {
 
 		metadata: {
@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 			"manifest": {
 
 				"name": "sap.ui.test.v2inline.Component",
-			
+
 				"sap.app": {
 					"id": "sap.ui.test.v2inline",
 					"applicationVersion": {
@@ -19,16 +19,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 					"title": "{{title}}",
 					"description": "{{description}}"
 				},
-			
+
 				"sap.ui5": {
-				
+
 					"resourceRoots": {
 						"x.y.z": "anypath",
 						"foo.bar": "../../foo/bar",
 						"absolute": "http://absolute/uri",
 						"server.absolute": "/server/absolute/uri"
 					},
-					
+
 					"resources": {
 						"js": [
 							{
@@ -44,14 +44,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 							{}
 						]
 					},
-				
+
 					"dependencies": {
 						"minUI5Version": "1.22.5",
 						"libs": {
 							"sap.ui.commons": {
 								"minVersion": "1.22.0"
 							}
-						}, 
+						},
 						"components": {
 							"sap.ui.test.other": {
 								"optional": true,
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 							}
 						}
 					},
-				
+
 					"models": {
 						"i18n": {
 							"type": "sap.ui.model.resource.ResourceModel",
@@ -70,9 +70,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 							"uri": "/sap/opu/odata/snce/PO_S_SRV/"
 						}
 					},
-				
+
 					"rootView": "sap.ui.test.view.Main",
-				
+
 					"config": {
 						"any1": {
 							"entry": "configuration"
@@ -84,9 +84,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 						},
 						"any3": {
 							"anyarray": [1, 2, 3]
-						}
+						},
+						"zero": 0
 					},
-				
+
 					"routing": {
 						"config": {
 							"viewType" : "XML",
@@ -104,7 +105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 							}
 						]
 					},
-				
+
 					"extends": {
 						"extensions": {
 							"sap.ui.viewReplacements": {
@@ -133,11 +134,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent'],
 							}
 						}
 					}
-			
-				}
+
+				},
+
+				"foo": {}, // getEntry is not allowed for keys without a dot
+				"foo.bar": "string as entry value is not valid!"
 
 			},
-		
+
 			"custom.entry": {
 				"key1": "value1",
 				"key2": "value2",

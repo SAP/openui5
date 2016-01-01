@@ -2,12 +2,12 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 
 	<title>Declarative Programming Model - sap.ui.core</title>
 
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js",
 			data-sap-ui-theme="sap_goldreflection"
@@ -22,7 +22,7 @@
 			alert("This test page requires the library 'sap.ui.commons' which is not available.");
 			throw(e);
 		}
-	
+
 		function handlePress() {
 			alert("PRESS");
 		}
@@ -100,11 +100,11 @@
 			<div data-sap-ui-type="sap.ui.commons.Button" data-text="Test" data-enabled="true" data-press="handlePress"></div>
 			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
 		</div>
-	
+
 		<div data-sap-ui-type="sap.ui.commons.Panel">
-		
+
 			<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="HTML Content in Panel"></div>
-	
+
 			<table>
 				<tr><td>1</td></tr>
 				<tr><td>2</td></tr>
@@ -113,16 +113,16 @@
 				<tr><td>5</td></tr>
 				<tr><td><div data-sap-ui-type="sap.ui.commons.Button" data-text="Click me!"></div></td></tr>
 				<tr><td>
-	
+
 				<div data-sap-ui-type="sap.ui.commons.Panel">
 					<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="SAPUI5 Content in HTML Table in SAPUI5 Panel"></div>
 					<a href="http://www.sap.com" target="_blank">www.sap.com</a>
 				</div>
-	
+
 				</td></tr>
 			</table>
 		</div>
-	
+
 		<div data-sap-ui-type="sap.ui.commons.Panel"  data-sap-ui-default-aggregation="title">
 			<div data-sap-ui-type="sap.ui.core.Title" data-text="Other Panel"></div>
 			<div data-sap-ui-aggregation="content">

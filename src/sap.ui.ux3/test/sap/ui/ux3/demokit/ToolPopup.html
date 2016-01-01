@@ -2,18 +2,18 @@
 <html data-sap-ui-dk-category="Controls/UX3Controls"
 	data-sap-ui-dk-controls="sap.ui.ux3.ToolPopup">
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8" />
-<meta name="keywords" content="Control NotificationBar" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<meta name="keywords" content="Control NotificationBar">
 <title>ToolPopup - SAPUI5 Demo Kit</title>
-<link rel="stylesheet" type="text/css"
-	href="../../../../../theme/default.css"></link>
+<link rel="stylesheet"
+	href="../../../../../theme/default.css">
 <script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
 	data-sap-ui-language="en">
-	
+
 </script>
 <script>
 	sap.ui.demokit._supportedThemes = [ "sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];
@@ -21,7 +21,7 @@
 </script>
 <script src="../../../../../js/utils.js"></script>
 
-<style type="text/css">
+<style>
 .myButtonLeft {
 	left: 150px;
 	position: relative;
@@ -264,12 +264,12 @@ iframe {
 	<p>
 		Since version 1.9.2 the ToolPopup can be used without the Shell. The
 		corresponding properties are documented in the API whether they are
-		needed for a Shell-use or for the stand-alone-use.<br /> This control
+		needed for a Shell-use or for the stand-alone-use.<br> This control
 		can be used with e.g. a Button that opens the ToolPopup on the
 		button's press event. To do this, the ToolPopup needs to know which
 		other control is the corresponding opener that also indicates the
 		ToolPopup's position. Without an opener the ToolPopup can't be
-		positioned.<br /> Since version 1.18.6 the Toolpopup will close
+		positioned.<br> Since version 1.18.6 the Toolpopup will close
 		itself if the opener of the ToolPopup? is removed instead of trying to
 		position itself relatively to the non-existing opener element.
 	</p>
@@ -292,7 +292,7 @@ iframe {
 				parameters of the Popup</a> are used. If no parameters are given the
 			ToolPopup will open per default to the right of the opener. If there
 			is no opener set in stand-alone-mode the default position of the
-			Popup is used: CenterCenter. <br />If there is no space at the
+			Popup is used: CenterCenter. <br>If there is no space at the
 			corresponding position use a collision value for the
 			position-function. Per default the ToolPopup will flip to the other
 			side.
@@ -309,7 +309,7 @@ iframe {
 		Each control has 9 docking points. Each point can be accessed via a
 		combined parameter. Possible values are: left, begin, center, right,
 		end, top and bottom. So a single docking point is for instance called
-		'TopLeft'. <img src="images/dockingpoints.png"><br /> A list of
+		'TopLeft'. <img src="images/dockingpoints.png"><br> A list of
 		all possible parameters can be found under <a
 			href="../../../../../docs/api/symbols/sap.ui.core.Popup.Dock.html">Popup.Dock</a>.
 		The main difference between 'Left' and 'Begin' is that 'Begin' is

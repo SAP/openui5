@@ -1,24 +1,24 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested class: sap.ui.table.Table
   Author: d029506, d053398
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 
 	<title>qUnit Page for sap.ui.table.Table</title>
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 	    data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.commons,sap.ui.table" >
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -30,6 +30,11 @@
 	var personImg = "../images/Person.png",
 		jobPosImg = "../images/JobPosition.png",
 		oTable;
+
+	// for unittest execution requestAnimationFrame may be queued when the page is not in focus
+	// therefore use setTimeout to get more stable tests
+	window.requestAnimationFrame = window.setTimeout;
+	window.cancelAnimationFrame = window.clearTimeout;
 
 	// TABLE TEST DATA
 	var aData = [
@@ -104,7 +109,7 @@
 		oTable.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
-	
+
 	function destroyTable() {
 		oTable.destroy();
 	}
@@ -124,14 +129,14 @@
 		 oModel.setData({modelData: aData});
 		 oTable.setModel(oModel);
 	}
-	
+
 	function sortTable() {
 		var aColumns = oTable.getColumns(),
 			fSorting = sap.ui.table.SortOrder;
 		oTable.sort(aColumns[1],fSorting.Ascending, false);
 		oTable.sort(aColumns[0],fSorting.Ascending, true);
 	}
-	
+
 	//********** Tests start********************************************
 	qutils.delayTestStart();
 
@@ -217,7 +222,7 @@
 		equals(oColFirstName.getFiltered() && oColMoney.getFiltered(), false, "Column FirstName and Money are not filtered anymore");
 		equals(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
 	});
-	
+
 	test("SelectionMode", function() {
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
 		equals(oTable.getSelectionMode(), "Multi", "Selection mode is Multi!");
@@ -399,32 +404,58 @@
 		oColumn.setMenu(oCustomMenu);
 		ok(oColumn.getMenu() === oCustomMenu, "Custom menu equals set column menu");
 	});
-	
-	test("Resize column", function() {
-		var oColumn = oTable.getColumns()[1],
-			sResizeHandlerId = oColumn.getId() + '-rsz';
-		equals(oColumn.getWidth(), "100px", "Check column width before resize");
 
-		qutils.triggerMouseEvent(sResizeHandlerId, "mousedown", 1, 1, -9850, -9500, 0 );
-		qutils.triggerMouseEvent(sResizeHandlerId, "mousemove", 1, 1, -9577, -9500, 0 );
-		qutils.triggerMouseEvent(sResizeHandlerId, "mouseup", 1, 1, -9577, -9500, 0 );
-		sap.ui.getCore().applyChanges();
+	asyncTest("Resize column", function() {
+		setTimeout(function() {
+			var oColumn = oTable.getColumns()[1],
+				sResizeHandlerId = oTable.getId() + '-rsz';
 
-		equals(oColumn.getWidth(), "197px", "Check column width after resize");
+			var resizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
+			equals(oColumn.getWidth(), "100px", "Check column width before resize");
+
+			var oParams = {};
+			oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
+			oParams.clientY = resizeHandlerTop;
+			qutils.triggerEvent("mousemove", oColumn.getId(), oParams);
+
+			var resizeHandlerLeft = document.getElementById(sResizeHandlerId).getBoundingClientRect().left;
+			equals(resizeHandlerLeft, "-9677", "Resizer is at the correct position");
+			equals(oTable._iLastHoveredColumnIndex, 1, "Hovered column index is 1");
+
+			qutils.triggerMouseEvent(sResizeHandlerId, "mousedown", 1, 1, resizeHandlerLeft, resizeHandlerTop, 0 );
+			qutils.triggerMouseEvent(sResizeHandlerId, "mousemove", 1, 1, resizeHandlerLeft + 97, resizeHandlerTop, 0 );
+			qutils.triggerMouseEvent(sResizeHandlerId, "mouseup", 1, 1, resizeHandlerLeft + 97, resizeHandlerTop, 0 );
+
+			equals(document.getElementById(sResizeHandlerId).getBoundingClientRect().left, "-9586", "Resizer is at the correct position, after resizing");
+
+			equals(oColumn.getWidth(), "196px", "Check column width after resize");
+
+			start();
+		}, 0);
 	});
 
-	test("AutomaticColumnResize", function(){
-		expect(3);
-		var oColumn = oTable.getColumns()[1];
-		var resizer = oColumn.getId() + '-rsz';
-		equals(oColumn.getWidth(), "100px", "check column width before resize");
-		equals(oColumn.getAutoResizable(), true, "check if column is indeed autoresizable at all");
-		qutils.triggerMouseEvent(resizer, "click");
-		qutils.triggerMouseEvent(resizer, "click");
-		var newSize = oTable._calculateAutomaticColumnWidth(1);
-		equals(oColumn.getWidth(), newSize + "px", "check column width after resize");
+	asyncTest("AutomaticColumnResize", function(){
+		setTimeout(function() {
+			expect(3);
+			var oColumn = oTable.getColumns()[1];
+			var resizer = oTable.getId() + '-rsz';
+			equals(oColumn.getWidth(), "100px", "check column width before resize");
+			equals(oColumn.getAutoResizable(), true, "check if column is indeed autoresizable at all");
+
+			var oParams = {};
+			oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
+			oParams.clientY = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
+			qutils.triggerEvent("mousemove", oColumn.getId(), oParams);
+
+			qutils.triggerMouseEvent(resizer, "click");
+			qutils.triggerMouseEvent(resizer, "click");
+
+			var newSize = oTable._calculateAutomaticColumnWidth(1);
+			equals(oColumn.getWidth(), newSize + "px", "check column width after resize");
+			start();
+		}, 0);
 	});
-	
+
 	module("Column filtering", {
 		setup: function() {
 			createTable({
@@ -436,7 +467,7 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	test("Menu & initial filter: references", 4, function() {
 		var oColumn = oTable.getColumns()[0];
 		var oMenu = oColumn.getMenu();
@@ -458,15 +489,21 @@
 	module("Navigation Paginator", {
 		setup: function() {
 			createTable({
-				navigationMode: sap.ui.table.NavigationMode.Paginator
+				navigationMode: sap.ui.table.NavigationMode.Paginator,
+				visibleRowCount: 13
 			})
 		},
 		teardown: destroyTable
 	});
 
-	test("After initialization", function(){
-		var $table = oTable.$();
-		equal($table.find('#table-paginator').length, 1, 'The paginator exists');
+	asyncTest("After initialization", function() {
+		setTimeout(function() {
+			var $table = oTable.$();
+			equal($table.find('#table-paginator').length, 1, 'The paginator exists');
+			oTable._oPaginator.getDomRef("-lastPageLink").click();
+			equal(oTable.getFirstVisibleRow(), 195 , "Navigation to last page OK");
+			start();
+		}, 0);
 	});
 
 	module("VisibleRowcountMode Interactive", {
@@ -477,13 +514,13 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	test("After initialization", function(){
 		var $table = oTable.$();
 		$button = $table.find('.sapUiTableExt').find('#extensionButton');
 		equals($table.find('.sapUiTableSplitterBar').length, 1, "The handle to resize the table is visible");
 	});
-	
+
 	test("Resize", function(){
 		oTable._bTouchMode = false;
 		equals(oTable.getVisibleRowCount(), 10, "Row count of 10");
@@ -493,7 +530,7 @@
 		qutils.triggerMouseEvent(barId, "mousedown", 1, 1, -9950, -10000, 0 );
 		qutils.triggerMouseEvent(barId, "mousemove", 1, 1, -9950, -9500, 0 );
 		qutils.triggerMouseEvent(barId, "mouseup", 1, 1, -9950, -9500, 0 );
-		
+
 		sap.ui.getCore().applyChanges();
 
 		equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
@@ -505,112 +542,108 @@
 		},
 		teardown: destroyTable
 	});
-	
-	test("Arrow keys", function() {
-		var sCellId = oTable.getId() + "-rows-row0-col0",
-			oRow = oTable.getRows()[9],
-			$focused;
 
-		jQuery.sap.byId(sCellId).focus();
-		
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), sCellId, "The correct cell has the focus");
+	asyncTest("Arrow keys", function() {
+		setTimeout(function() {
+			var sCellId = oTable.getId() + "-rows-row0-col0",
+				oRow = oTable.getRows()[9],
+				$focused;
 
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
+			jQuery.sap.byId(sCellId).focus();
 
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
+			$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), sCellId, "The correct cell has the focus");
 
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
 
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
+			$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
 
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_UP", false, false, false);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_LEFT", false, false, false);
 
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-selall", "The correct cell has the focus");
+			$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
 
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_RIGHT", false, false, false);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_UP", false, false, false);
 
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getColumns()[0].getId(), "The correct cell has the focus");
+			$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), oTable.getId() + "-selall", "The correct cell has the focus");
 
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_RIGHT", false, false, false);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_RIGHT", false, false, false);
 
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getColumns()[1].getId(), "The correct cell has the focus");
+			$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), oTable.getColumns()[0].getId(), "The correct cell has the focus");
+
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_RIGHT", false, false, false);
+
+			$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), oTable.getColumns()[1].getId(), "The correct cell has the focus");
 
 
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
 
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-col1", "The correct cell has the focus");
+			$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), oTable.getId() + "-rows-row0-col1", "The correct cell has the focus");
 
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
 
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rows-row1-col1", "The correct cell has the focus");
-		
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
+			$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), oTable.getId() + "-rows-row1-col1", "The correct cell has the focus");
 
-		equal(oRow.getIndex(), 9, "The correct cell has the focus");
-		equal($focused.attr('id'), oTable.getId() + "-rows-row9-col1", "The correct cell has the focus");
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			$focused = jQuery(document.activeElement);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			$focused = jQuery(document.activeElement);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			$focused = jQuery(document.activeElement);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			$focused = jQuery(document.activeElement);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			$focused = jQuery(document.activeElement);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			$focused = jQuery(document.activeElement);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			$focused = jQuery(document.activeElement);
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			$focused = jQuery(document.activeElement);
 
-		qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
-		$focused = jQuery(document.activeElement);
+			equal(oRow.getIndex(), 9, "The correct cell has the focus");
+			equal($focused.attr('id'), oTable.getId() + "-rows-row9-col1", "The correct cell has the focus");
 
-		equal(oRow.getIndex(), 10, "The correct cell has the focus");
-		equal($focused.attr('id'), oTable.getId() + "-rows-row9-col1", "The correct cell has the focus");
+			qutils.triggerKeyboardEvent($focused[0], "ARROW_DOWN", false, false, false);
+			$focused = jQuery(document.activeElement);
+
+			equal(oRow.getIndex(), 10, "The correct cell has the focus");
+			equal($focused.attr('id'), oTable.getId() + "-rows-row9-col1", "The correct cell has the focus");
+			start();
+		}, 0);
 	});
 
-	test("Home end keys", function() {
-		var sCellId = oTable.getId() + "-rows-row0-col0",
-			oRow = oTable.getRows()[9],
-			$focused;
-	
-		jQuery.sap.byId(sCellId).focus();
+	asyncTest("Home end keys", function() {
+		setTimeout(function() {
+			var sCellId = oTable.getId() + "-rows-row0-col0",
+				oRow = oTable.getRows()[9],
+				$focused;
 
-		$focused = jQuery(document.activeElement);
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-col0", "The correct cell has the focus");
+			jQuery.sap.byId(sCellId).focus();
 
-		qutils.triggerKeyboardEvent($focused[0], "HOME", false, false, false);
-		$focused = jQuery(document.activeElement);
+			$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), oTable.getId() + "-rows-row0-col0", "The correct cell has the focus");
 
-		equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
+			qutils.triggerKeyboardEvent($focused[0], "HOME", false, false, false);
+			$focused = jQuery(document.activeElement);
 
-		qutils.triggerKeyboardEvent($focused[0], "END", false, false, false);
-		$focused = jQuery(document.activeElement);
+			equal($focused.attr('id'), oTable.getId() + "-rowsel0", "The correct cell has the focus");
 
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-col0", "The correct cell has the focus");
+			qutils.triggerKeyboardEvent($focused[0], "END", false, false, false);
+			$focused = jQuery(document.activeElement);
 
-		equal(oRow.getIndex(), 9, "The correct cell has the focus");
+			equal($focused.attr('id'), oTable.getId() + "-rows-row0-col0", "The correct cell has the focus");
+
+			equal(oRow.getIndex(), 9, "The correct cell has the focus");
+			start();
+		}, 0);
 	});
-	
-	/*test("Page keys", function() {
-		var $table = oTable.$();
-		//qutils.triggerKeyboardEvent("oSli6", "ARROW_UP", false, false, true);
-	});*/
-
-	/*test("Tab keys", function() {
-		var $table = oTable.$();
-		//qutils.triggerKeyboardEvent("oSli6", "ARROW_UP", false, false, true);
-	});*/
 
 	module("Fixed columns", {
 		setup: function() {
@@ -622,34 +655,43 @@
 		teardown: destroyTable
 	});
 
-	test("After initialization", function(){
-		var $table = oTable.$();
-		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 3 Columns");
-		equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
-		equals($table.find('.sapUiTableHSb').css('padding-left'), "325px", "Horizontal scrollbar has correct left padding");
+	asyncTest("After initialization", function(){
+		setTimeout(function() {
+			var $table = oTable.$();
+			equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+			equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 3 Columns");
+			equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
+			equals($table.find('.sapUiTableHSb').css('padding-left'), "325px", "Horizontal scrollbar has correct left padding");
+			start();
+		}, 0);
 	});
 
-	test("Hide one column in fixed area", function() {
+	asyncTest("Hide one column in fixed area", function() {
 		oTable.getColumns()[1].setVisible(false);
 		sap.ui.getCore().applyChanges();
 
-		var $table = oTable.$();
-		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 2, "Fixed tabled has 2 Columns");
-		equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
-		equals($table.find('.sapUiTableHSb').css('padding-left'), "225px", "Horizontal scrollbar has correct left padding");
+		setTimeout(function() {
+			var $table = oTable.$();
+			equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+			equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 2, "Fixed tabled has 2 Columns");
+			equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 7, "Scroll tabled has 7 Columns");
+			equals($table.find('.sapUiTableHSb').css('padding-left'), "225px", "Horizontal scrollbar has correct left padding");
+			start();
+		}, 0);
 	});
 
-	test("Hide one column in scroll area", function() {
+	asyncTest("Hide one column in scroll area", function() {
 		oTable.getColumns()[5].setVisible(false);
 		sap.ui.getCore().applyChanges();
 
-		var $table = oTable.$();
-		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 6 Columns");
-		equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 6, "Scroll tabled has 3 Columns");
-		equals($table.find('.sapUiTableHSb').css('padding-left'), "325px", "Horizontal scrollbar has correct left padding");
+		setTimeout(function() {
+			var $table = oTable.$();
+			equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+			equals($table.find('.sapUiTableCtrlFixed .sapUiTableCtrlCol th').length, 3, "Fixed tabled has 6 Columns");
+			equals($table.find('.sapUiTableCtrlScroll .sapUiTableCtrlCol th').length, 6, "Scroll tabled has 3 Columns");
+			equals($table.find('.sapUiTableHSb').css('padding-left'), "325px", "Horizontal scrollbar has correct left padding");
+			start();
+		}, 0);
 	});
 
 	module("Fixed rows and columns", {
@@ -663,18 +705,21 @@
 		teardown: destroyTable
 	});
 
-	test("After initialization", function(){
-		var $table = oTable.$();
-		equals(oTable.getFixedRowCount(), 2, "Fixed row count correct");
-		equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 3, "Top left tabled has 3 Columns");
-		equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 3, "Bottom left tabled has 3 Columns");
-		equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 7, "Top right tabled has 7 Columns");
-		equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 7, "Bottom right tabled has 7 Columns");
-		equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed tbody tr').length, 2, "Top left tabled has 2 rows");
-		equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom left tabled has 6 rows");
-		equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed tbody tr').length, 2, "Top right tabled has 2 rows");
-		equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom right tabled has 6 rows");
-		equals($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableRowHdr').filter(':eq(2)')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
+	asyncTest("After initialization", function() {
+		setTimeout(function() {
+			var $table = oTable.$();
+			equals(oTable.getFixedRowCount(), 2, "Fixed row count correct");
+			equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 3, "Top left tabled has 3 Columns");
+			equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 3, "Bottom left tabled has 3 Columns");
+			equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 7, "Top right tabled has 7 Columns");
+			equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 7, "Bottom right tabled has 7 Columns");
+			equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed tbody tr').length, 2, "Top left tabled has 2 rows");
+			equals($table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom left tabled has 6 rows");
+			equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed tbody tr').length, 2, "Top right tabled has 2 rows");
+			equals($table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll tbody tr').length, 6, "Bottom right tabled has 6 rows");
+			equals($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableRowHdr').filter(':eq(2)')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
+			start();
+		}, 0);
 	});
 
 	module("Fixed top and bottom rows and columns", {
@@ -689,25 +734,28 @@
 		teardown: destroyTable
 	});
 
-	test("After initialization", function(){
-		var $table = oTable.$();
-		equals(oTable.getFixedRowCount(), 2, "Fixed row count correct");
-		equals(oTable.getFixedBottomRowCount(), 2, "Fixed bottom row count correct");
-		equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 3, "Left fixed table has 2 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 3, "Left scroll table has 2 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th').length, 3, "Left fixed bottom table has 2 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 7, "Right table has 6 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 7, "Right scroll table has 6 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th').length, 7, "Right fixed bottom table has 6 columns + dummy rowsel");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed tbody tr').length, 2, "Left fixed table has 2 rows");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixed tbody tr').length, 2, "Right table has 2 rows");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll tbody tr').length, 4, "Left scroll table has 4 rows");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowScroll tbody tr').length, 4, "Right scroll table has 4 rows");
-		equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Left fixed bottom table has 2 rows");
-		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Right fixed bottom table has 2 rows");
-		equals($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
-		equals($table.find('.sapUiTableVSb').css('height'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetHeight) + "px", "Vertical scrollbar has correct height");
+	asyncTest("After initialization", function() {
+		setTimeout(function() {
+			var $table = oTable.$();
+			equals(oTable.getFixedRowCount(), 2, "Fixed row count correct");
+			equals(oTable.getFixedBottomRowCount(), 2, "Fixed bottom row count correct");
+			equals(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+			equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 3, "Left fixed table has 2 columns + dummy rowsel");
+			equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 3, "Left scroll table has 2 columns + dummy rowsel");
+			equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th').length, 3, "Left fixed bottom table has 2 columns + dummy rowsel");
+			equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixed .sapUiTableCtrlCol th').length, 7, "Right table has 6 columns + dummy rowsel");
+			equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowScroll .sapUiTableCtrlCol th').length, 7, "Right scroll table has 6 columns + dummy rowsel");
+			equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom .sapUiTableCtrlCol th').length, 7, "Right fixed bottom table has 6 columns + dummy rowsel");
+			equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixed tbody tr').length, 2, "Left fixed table has 2 rows");
+			equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixed tbody tr').length, 2, "Right table has 2 rows");
+			equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowScroll tbody tr').length, 4, "Left scroll table has 4 rows");
+			equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowScroll tbody tr').length, 4, "Right scroll table has 4 rows");
+			equals($table.find('.sapUiTableCtrlScrFixed .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Left fixed bottom table has 2 rows");
+			equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Right fixed bottom table has 2 rows");
+			equals($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
+			equals($table.find('.sapUiTableVSb').css('height'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetHeight) + "px", "Vertical scrollbar has correct height");
+			start();
+		}, 0);
 	});
 
 	QUnit.test("Sanity check for fixed rows", function(assert) {
@@ -819,13 +867,14 @@
 	test("Grouping using table API", 1, function() {
 		var oColumn = oTable.getColumns()[3],
 			oBinding;
-		
+
 		oTable.setGroupBy(oColumn);
 		oBinding = oTable.getBinding("rows");
 		equal(oBinding.getLength(), 203, "Row count is correct!");
 	});
 
 	asyncTest("Grouping rendering", 10, function() {
+		console.error("Grouping rendering")
 		var oColumn = oTable.getColumns()[3],
 			oBinding;
 
@@ -845,6 +894,7 @@
 			ok(!jQuery($RowHeaders.get(9)).hasClass('sapUiTableGroupHeader'), 'Row header is not marked as group header');
 			start();
 		}
+
 		oTable.attachEventOnce("_rowsUpdated", fnHandler);
 		oTable.setGroupBy(oColumn);
 	});
@@ -891,14 +941,17 @@
 	test("Headers", 1, function() {
 		equal(jQuery.sap.byId("table").find(".sapUiTableColHdr .sapUiTableCol").length, 6, "Total count of headers");
 	});
-	
-	test("Equal widths", 3, function() {
-		var $Table = jQuery.sap.byId("table");
-		var $Head1 = $Table.find(".sapUiTableColHdr:eq(0)");
-		var $Head2 = $Table.find(".sapUiTableColHdr:eq(1)");
-		equal($Head1.find(".sapUiTableCol:eq(0)").width(), $Head2.find(".sapUiTableCol:eq(0)").width(), "First column headers have equal width");
-		equal($Head1.find(".sapUiTableCol:eq(1)").width(), $Head2.find(".sapUiTableCol:eq(1)").width(), "Second column headers have equal width");
-		equal($Head1.find(".sapUiTableCol:eq(2)").width(), $Head2.find(".sapUiTableCol:eq(2)").width(), "Third column headers have equal width");
+
+	asyncTest("Equal widths", 3, function() {
+		setTimeout(function() {
+			var $Table = jQuery.sap.byId("table");
+			var $Head1 = $Table.find(".sapUiTableColHdr:eq(0)");
+			var $Head2 = $Table.find(".sapUiTableColHdr:eq(1)");
+			equal($Head1.find(".sapUiTableCol:eq(0)").width(), $Head2.find(".sapUiTableCol:eq(0)").width(), "First column headers have equal width");
+			equal($Head1.find(".sapUiTableCol:eq(1)").width(), $Head2.find(".sapUiTableCol:eq(1)").width(), "Second column headers have equal width");
+			equal($Head1.find(".sapUiTableCol:eq(2)").width(), $Head2.find(".sapUiTableCol:eq(2)").width(), "Third column headers have equal width");
+			start();
+		}, 0);
 	});
 
 	module("Table with extension", {
@@ -980,7 +1033,7 @@
 			start();
 		});
 	});
-	
+
 	module("Toolbar");
 	test("Table toolbar should have the transparent design by default without changing the design property", function() {
 		var oTB = new sap.m.Toolbar(),
@@ -1011,7 +1064,7 @@
 
 		oTable.destroy();
 	});
-	
+
 	module("Sorting", {
 		setup: function() {
 			createTable({
@@ -1021,13 +1074,13 @@
 		},
 		teardown: destroyTable
 	});
-	
+
 	asyncTest("Multi-columns sorting", function() {
 		creatSortingTableData();
 
 		var fnHandler = function() {
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 
 				strictEqual(aSortedColumns[0].getSortProperty(), "name", "check column name.");
@@ -1035,91 +1088,91 @@
 
 				strictEqual(oTable.getRows()[3].getCells()[0].getText(), "Open", "second sorting column works.");
 				strictEqual(oTable.getRows()[3].getCells()[1].getValue(), "Doris", "first sorting column works.");
-				
+
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				start();
 			}
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 	});
-	
+
 	asyncTest("remove column", function() {
 		creatSortingTableData();
 		var oRemovedColumn;
 
 		var fnHandler = function() {
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				oRemovedColumn = oTable.removeColumn(oTable.getSortedColumns()[0]);
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
 			}
 		};
-		
+
 		var fnHandler2 = function() {
 			var aSortedColumns = oTable.getSortedColumns();
 			strictEqual(aSortedColumns.length, 1, "sorted column deletion.");
 			strictEqual(oRemovedColumn.getSortProperty(), "name", "first name is removed");
 			strictEqual(aSortedColumns[0].getSortProperty(), "lastName", "second column becomes the first column.");
-			
+
 			start();
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
 	});
-	
-	
+
+
 	asyncTest("remove all columns", function() {
 		creatSortingTableData();
-		
+
 		var fnHandler = function() {
-			
+
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				oTable.removeAllColumns();
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
 			}
 		};
-		
+
 		var fnHandler2 = function() {
 			var aSortedColumns = oTable.getSortedColumns();
 			strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
 			start();
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
 	});
-	
-	
+
+
 	asyncTest("destroy columns", function() {
 		creatSortingTableData();
-		
+
 		var fnHandler = function() {
-			
+
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				oTable.destroyColumns();
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
 			}
 		};
-		
+
 		var fnHandler2 = function() {
 			var aSortedColumns = oTable.getSortedColumns();
 			strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
 			start();
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
@@ -1128,29 +1181,29 @@
 	asyncTest("change column order", function() {
 		creatSortingTableData();
 		var oRemovedColumn;
-		
+
 		var fnHandler = function() {
-			
+
 			var aSortedColumns = oTable.getSortedColumns();
-			
+
 			if (aSortedColumns.length === 2) {
 				oTable.detachEvent("_rowsUpdated", fnHandler);
 				oTable._iNewColPos = 0;
 				oRemovedColumn = oTable.removeColumn(aSortedColumns[1]);
-				
+
 				oTable.attachEvent("_rowsUpdated", fnHandler2);
 			}
 		};
-		
+
 		var fnHandler2 = function() {
 			oTable.detachEvent("_rowsUpdated", fnHandler2);
 			oTable.insertColumn(oRemovedColumn, oTable._iNewColPos);
 			delete oTable._iNewColPos;
 			oTable.attachEvent("_rowsUpdated", fnHandler3);
 		};
-		
+
 		var fnHandler3 = function() {
-			
+
 			var aSortedColumns = oTable.getSortedColumns();
 			strictEqual(aSortedColumns.length, 2, "2 sorted columns.");
 			strictEqual(aSortedColumns[0].getSortProperty(), "name", "first name stays in first sorted column");
@@ -1158,7 +1211,7 @@
 
 			start();
 		};
-		
+
 		oTable.attachEvent("_rowsUpdated", fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
@@ -1174,11 +1227,11 @@
 	test("Prevent re-rendering on setEnableBusyIndicator", function() {
 		var spy = this.spy();
 		oTable.addEventDelegate({onAfterRendering: spy});
-		
+
 		// act
 		oTable.setEnableBusyIndicator(true);
 		sap.ui.getCore().applyChanges();
-		
+
 		// assertions
 		sinon.assert.notCalled(spy);
 		assert.ok(oTable.getEnableBusyIndicator(), "The overwritten function still works");

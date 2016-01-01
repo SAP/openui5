@@ -4,8 +4,8 @@
 
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Test Page for sap.ui.commons.Link</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="base"
@@ -14,7 +14,7 @@
 				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -62,12 +62,12 @@
 			setup: function() {
 				l1 = sap.ui.getCore().getControl("l1");
 				l2 = sap.ui.getCore().getControl("l2");
-	
+
 				l1.setVisible(true);
 				l2.setVisible(true);
-	
+
 				sap.ui.getCore().applyChanges();
-	
+
 				ok(l1, "l1 should not be null");
 				ok(l2, "l2 should not be null");
 			},
@@ -76,9 +76,9 @@
 				l2 = null;
 			}
 		});
-		
-		// test property accessor methods 
-		
+
+		// test property accessor methods
+
 		test("TextOk", function() {
 			strictEqual(l1.getText(), sText, "l1.getText()");
 			strictEqual(l2.getText(), sText, "l2.getText()");
@@ -86,7 +86,7 @@
 
 		test("EnabledOk", function() {
 			strictEqual(l1.getEnabled(), bEnabled, "l1.getEnabled()");
-			
+
 			strictEqual(l2.getEnabled(), bEnabled, "l2.getEnabled()");
 		});
 
@@ -115,10 +115,10 @@
 			strictEqual(l2.getTarget(), sTarget, "l2.getTarget()");
 		});
 
-		// test event handlers 
-		
-		// TODO: event handler using Event parameters 
-		
+		// test event handlers
+
+		// TODO: event handler using Event parameters
+
 		test("PressOk", function() {
 			try {
 				l1.firePress();
@@ -147,18 +147,18 @@
 			l1.attachPress(pressEventHandler);
 		});
 
-		// test methods 
-		
-		// TODO 
-		
-		
-		// test misc (control interaction, metadata, styles, etc.)	
-		
+		// test methods
+
+		// TODO
+
+
+		// test misc (control interaction, metadata, styles, etc.)
+
 		function isEmpty(oObject) {
 			for(var i in oObject){ return false;}
 			return true;
 		}
-		
+
 		test("MetadataOk", function() {
 			var oMetadata = l1.getMetadata();
 			ok(oMetadata, "l1.getMetadata() should not be null");

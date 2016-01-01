@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 
 		<title>TextField - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.TextField.gif">
@@ -275,7 +275,7 @@
 				oInput.setValue('TextField');
 				oInput.setWidth("300px");
 
-				var oCell = new sap.ui.commons.layout.MatrixLayoutCell("Cell1"); 
+				var oCell = new sap.ui.commons.layout.MatrixLayoutCell("Cell1");
 				oCell.setColSpan(2);
 				oCell.addContent(oInput);
 				oLyt.createRow(oCell);
@@ -310,19 +310,19 @@
 				oRBGroup1.attachSelect(setValueState);
 
 				var oItem = new sap.ui.core.Item("VS-None");
-				oItem.setText("None"); 
+				oItem.setText("None");
 				oItem.setTooltip("None");
 				oRBGroup1.addItem(oItem);
 				oItem = new sap.ui.core.Item("VS-Error");
-				oItem.setText("Error"); 
+				oItem.setText("Error");
 				oItem.setTooltip("Error");
 				oRBGroup1.addItem(oItem);
 				oItem = new sap.ui.core.Item("VS-Warning");
-				oItem.setText("Warning"); 
+				oItem.setText("Warning");
 				oItem.setTooltip("Warning");
 				oRBGroup1.addItem(oItem);
 				oItem = new sap.ui.core.Item("VS-Success");
-				oItem.setText("Success"); 
+				oItem.setText("Success");
 				oItem.setTooltip("Success");
 				oRBGroup1.addItem(oItem);
 
@@ -385,37 +385,37 @@
 
 		<div id="target0"></div>
 		<hr/>
-		<br/>
+		<br>
 		<div id="target1"></div>
-		<br/>
+		<br>
 		<span>Some text in front </span><span id="target2"></span><span>And continued after the input</span>
-		<br/><br/>	
+		<br><br>
 		<div id="target3"></div>
-		<br/>
+		<br>
 		<div id="target4"></div>
-		<br/>
+		<br>
 		<div id="target5"></div>
-		<br/>
+		<br>
 		<div id="target6"></div>
-		<br/>
+		<br>
 		<div id="target7"></div>
-		<br/>
+		<br>
 		<div id="target8"></div>
-		<br/>
+		<br>
 		<div id="target9"></div>
-		<br/>
+		<br>
 		<div id="target10"></div>
-		<br/>
+		<br>
 		Compare <label for="input11">TextField</label> with <label for="TA1">TextArea</label> of one row. It must look similar.
-		<br/>
+		<br>
 		<div id="target11"></div>
-		<br/>
+		<br>
 		<div id="target12"></div>
-		<br/>
+		<br>
 		<div id="target13"></div>
-		<br/>
+		<br>
 		<span id="target14"></span>
-		<br/>
+		<br>
 		<span id="outputTarget"></span>
 	</body>
 </html>

@@ -36,11 +36,8 @@ objectPageHeader Title
 
 	.sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
 	.sapUxAPObjectPageHeaderStickied & .sapUxAPObjectPageHeaderObjectImage {
-		-webkit-transition: opacity 0.5s;
-		transition: opacity 0.5s;
 		width: 3rem;
 		height: 3rem;
-		opacity: 1;
 		display: inline-block;
 		margin-right: 1rem;
 	}
@@ -122,6 +119,18 @@ objectPageHeader Title
 			vertical-align: middle;
 			font-size: 2rem;
 		}
+	}
+
+	html[data-sap-ui-animation="on"] .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+	html[data-sap-ui-animation="on"] .sapUxAPObjectPageHeaderStickied & .sapUxAPObjectPageHeaderObjectImage {
+		-webkit-transition: opacity 0.5s;
+		transition: opacity 0.5s;
+		opacity: 1;
+	}
+
+	html[data-sap-ui-animation="off"] .sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+	html[data-sap-ui-animation="off"] .sapUxAPObjectPageHeaderStickied & .sapUxAPObjectPageHeaderObjectImage  {
+		opacity: 1;
 	}
 }
 
@@ -286,7 +295,7 @@ html[dir=rtl] .sapUxAPObjectPageHeaderMarks .sapMObjStatusMarker .sapUiIcon:last
 	margin-left: 0rem;
 	margin-right: 0.5rem;
 }
- 
+
 html[dir=rtl] .sapUxAPObjectPageHeaderMarks .sapMObjStatusMarker .sapUiIcon:first-child {
 	margin-left: 0.125rem;
 	margin-right: 0rem;

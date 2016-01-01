@@ -1,16 +1,16 @@
 {
 
 	"name": "sap.ui.test.mixed.Component",
-	
+
 	"version": "1.0.0",
-	
+
 	"manifest": "json",
 
 	"includes" : [
 		"style1.css",
 		"script1.js"
 	],
-	
+
 	"dependencies" : {
 		"libs" : [
 			"sap.ui.table"
@@ -20,7 +20,7 @@
 		],
 		"ui5version" : "1.26.2"
 	},
-	
+
 	"config": {
 		"any4": {
 			"entry": "configuration"
@@ -34,7 +34,7 @@
 			"anyarray": [1, 2, 3]
 		}
 	},
-	
+
 	"models": {
 		"i18n1": {
 			"type": "sap.ui.model.resource.ResourceModel",
@@ -45,9 +45,9 @@
 			"uri": "/sap/opu/odata/snce/PO_S_SRV/"
 		}
 	},
-			
+
 	"rootView": "sap.ui.test.view.Main",
-	
+
 	"customizing": {
 		"sap.ui.viewReplacements": {
 			"sap.ui.test.view.Main1": {
@@ -92,7 +92,7 @@
 			}
 		]
 	},
-	
+
 	"custom.entry": {
 		"key1": "value1",
 		"key2": "value2",

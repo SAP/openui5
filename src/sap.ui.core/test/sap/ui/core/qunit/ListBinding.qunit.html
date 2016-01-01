@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.Binding
   Author: d050084
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -33,7 +33,7 @@
 	var testData;
 	var bindings;
 	var control;
-	
+
     sap.ui.core.Element.extend("MyListItem", {
         // the control API:
         metadata : {
@@ -44,14 +44,14 @@
     });
 
     sap.ui.core.Control.extend("MyList", {
-       
+
         // the control API:
         metadata : {
             aggregations : {
                 "items" : {type: "MyListItem", multiple: true}
             }
         },
-       
+
         // the part creating the HTML:
         renderer : function(oRm, oControl) {
             oRm.write("<ul");
@@ -69,11 +69,11 @@
             });
             oRm.write("</ul>");
         }
-       
+
     });
-   
-    
-   	
+
+
+
 	function setup(){
 		// reset bindings
 		bindings = new Array();
@@ -91,34 +91,34 @@
 		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testData);
 		sap.ui.getCore().setModel(oModel);
-		
+
 		oNamedModel = new sap.ui.model.json.JSONModel();
 		oNamedModel.setData(testData);
 		sap.ui.getCore().setModel(oNamedModel,"NamedModel");
-		
+
 		control = new MyList();
 		control.placeAt("content");
-	
+
 	};
 
 	test("ListBinding with Template (classical)", function(){
 		setup();
 		control.bindAggregation("items", "/teamMembers", new MyListItem({text:"{lastName}"}));
-				
+
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
-	
+
 	test("Named model: ListBinding with Template (classical)", function(){
 		setup();
 		control.bindAggregation("items", "NamedModel>/teamMembers", new MyListItem({text:"{NamedModel>firstName}"}));
-				
+
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
-	
+
 	test("ListBinding with Factory (classical)", function(){
 		setup();
 		control.bindAggregation("items", "/teamMembers", function(sId, oContext) {
@@ -129,12 +129,12 @@
 			}
 			return li;
 		});
-				
+
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
-	
+
 	test("Named model: ListBinding with Factory (classical)", function(){
 		setup();
 		control.bindAggregation("items", "NamedModel>/teamMembers", function(sId, oContext) {
@@ -145,24 +145,24 @@
 			}
 			return li;
 		});
-				
+
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
-	
+
 	test("ListBinding with Template", function(){
 		setup();
 		control.bindAggregation("items", {
 			path: "/teamMembers",
 			template: new MyListItem({text:"{lastName}"})
 		})
-				
+
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
-	
+
 	test("ListBinding with Factory", function(){
 		setup();
 		control.bindAggregation("items", {
@@ -176,12 +176,12 @@
 				return li;
 			}
 		})
-				
+
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
-	
+
 	test("ListBinding with bindElement", function(){
 		setup();
 		oModel = new sap.ui.model.json.JSONModel();
@@ -191,12 +191,12 @@
 			path: "teamMembers",
 			template: new MyListItem({text:"{lastName}"})
 		})
-		control.bindElement("/modelData");		
+		control.bindElement("/modelData");
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
-	
+
 	test("Named model: ListBinding with bindElement", function(){
 		setup();
 		oNamedModel = new sap.ui.model.json.JSONModel();
@@ -206,7 +206,7 @@
 			path: "NamedModel>teamMembers",
 			template: new MyListItem({text:"{NamedModel>firstName}"})
 		})
-		control.bindElement("NamedModel>/modelData");		
+		control.bindElement("NamedModel>/modelData");
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
@@ -222,12 +222,12 @@
 			}
 		});
 		control.placeAt("content");
-				
+
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
-	
+
 	test("ListBinding with Template (constructor, json)", function(){
 		setup();
 		control.destroy();
@@ -241,13 +241,13 @@
 			}
 		});
 		control.placeAt("content");
-				
+
 		var items = control.getAggregation("items");
 		equal(items.length, testData.teamMembers.length, "number of list items");
 		ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
-	
-	
+
+
 	</script>
 
 </head>

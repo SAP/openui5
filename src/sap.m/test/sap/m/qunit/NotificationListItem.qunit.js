@@ -52,7 +52,7 @@
 
 		assert.strictEqual(jQuery(classNameCloseButton).length, 1, 'Close Button should be rendered');
 		assert.strictEqual(jQuery(classNameHeader).children('.sapMTitle').length, 1, 'Title should be rendered');
-		assert.strictEqual(jQuery(classNameText).length, 1, 'Text should be rendered');
+		assert.strictEqual(jQuery(classNameText).length, 2, 'Text and author placeholders should be rendered');
 		assert.strictEqual(jQuery(classNameDatetime).length, 1, 'DateTime should be rendered');
 		assert.strictEqual(jQuery(classNameUnread).length, 1, 'Unread status should be rendered');
 	});
@@ -252,6 +252,24 @@
 	    // assert
 	    assert.strictEqual(this.NotificationListItem.getButtons().length, 2, 'The buttons should be added to the NotificationListItem');
 	    assert.strictEqual(this.NotificationListItem.getAggregation('buttons').length, 2, 'The buttons should be added to the NotificationListItem');
+	});
+
+	QUnit.test('Cloning a NotificationListItem', function(assert) {
+		// arrange
+		var firstButton = new sap.m.Button({text: 'First Button'});
+		var secondButton = new sap.m.Button({text: 'Second Button'});
+		var secondNotification;
+
+		// act
+		this.NotificationListItem.addAggregation('buttons', firstButton);
+		this.NotificationListItem.addAggregation('buttons', secondButton);
+
+		secondNotification = this.NotificationListItem.clone();
+
+		// assert
+		assert.ok(
+				secondNotification.getAggregation('_overflowToolbar'),
+				'The cloned notification shoould have the hidden aggregations as well');
 	});
 
 	//================================================================================

@@ -1,21 +1,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.layout.VerticalLayout
   Author: D031513
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -29,7 +29,7 @@
 		          new sap.ui.commons.Image("I1",{src:"http://www.sap.com/global/images/SAPLogo.gif"})]
 	});
 	oLayout1.placeAt("uiArea1");
-		
+
 	oLayout2 = new sap.ui.commons.layout.VerticalLayout("Layout2", {
 		width: "200px",
 		content: [new sap.ui.commons.Slider("S2",{Value:25, tooltip:"Slider tooltip", width: "300px"}),
@@ -44,7 +44,7 @@
 	<script language="javascript">
 
 	qutils.delayTestStart();
-	
+
 	module("Properties");
 
 	test("Default Values", function() {
@@ -83,7 +83,7 @@
 
 
 	});
-	
+
 	</script>
 
 	<title>qunit Test for VerticalLayout</title>

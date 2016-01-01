@@ -142,7 +142,6 @@
 		  "samples": [
 			  "sap.m.sample.Carousel",
 			  "sap.m.sample.CarouselWithControls"
-
 		  ]
 		},
 		{
@@ -164,7 +163,9 @@
 		  "name": "ComboBox",
 		  "category": "User Input",
 		  "since": "1.22",
-		  "samples": ["sap.m.sample.ComboBox"]
+		  "samples": [
+		  	"sap.m.sample.ComboBox",
+			"sap.m.sample.ComboBox2Columns"]
 		},
 		{
 		  "id": "sap.m.ColumnListItem",
@@ -225,12 +226,12 @@
 		  ]
 		},
 		{
-			"id" : "sap.m.DynamicContainer",
-			"name" : "Dynamic Container",
+			"id" : "sap.m.SlideTile",
+			"name" : "Slide Tile",
 			"category" : "Container",
 			"since" : "1.34",
 			"samples" : [
-				"sap.m.sample.DynamicContainer"
+				"sap.m.sample.SlideTile"
 			]
 		},
 		{
@@ -336,7 +337,7 @@
 				"sap.m.sample.GenericTile2x1SingleCont",
 				"sap.m.sample.GenericTile2x1TwoCont",
 				"sap.m.sample.GenericTileStates",
-				"sap.m.sample.DynamicContainer"
+				"sap.m.sample.SlideTile"
 			]
 		},
 		{
@@ -398,11 +399,11 @@
 		  "samples": ["sap.m.sample.InputListItem"]
 		},
 		{
-			"id" : "sap.m.JamContent",
-			"name" : "Jam Content",
-			"category" : "Display",
+			"id" : "sap.m.FeedContent",
+			"name" : "Feed Content",
+			"category" : "Tile",
 			"since" : "1.34",
-			"samples" : [ "sap.m.sample.JamContent" ]
+			"samples" : [ "sap.m.sample.FeedContent" ]
 		},
 		{
 		  "id": "sap.m.Label",
@@ -488,7 +489,7 @@
 		{
 			"id" : "sap.m.NumericContent",
 			"name" : "Numeric Content",
-			"category" : "Chart",
+			"category" : "Tile",
 			"since" : "1.34",
 			"samples" : [
 				"sap.m.sample.NumericContentDifSizes",
@@ -525,7 +526,7 @@
 		{
 		  "id" : "sap.m.NewsContent",
 		  "name" : "News Content",
-		  "category" : "Display",
+		  "category" : "Tile",
 		  "since" : "1.34",
 		  "samples" : [ "sap.m.sample.NewsContent" ]
 		},
@@ -653,6 +654,14 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.PlanningCalendar",
+		  "name": "PlanningCalendar",
+		  "category": "User Input",
+		  "since": "1.34",
+		  "formFactors": "L",
+		  "samples": ["sap.m.sample.PlanningCalendar"]
+		},
+		{
 		  "id": "sap.m.Popover",
 		  "name": "Popover",
 		  "category": "Popup",
@@ -724,7 +733,8 @@
 		  "samples": [
 			"sap.m.sample.SearchField",
 			"sap.m.sample.ListSelectionSearch",
-			"sap.m.sample.DialogSearch"
+			"sap.m.sample.DialogSearch",
+			"sap.m.sample.SearchFieldSuggestions"
 		  ]
 		},
 		{
@@ -1047,9 +1057,9 @@
 			"JSON Model",
 			"Translatable Texts",
 			"Component Configuration",
-			"App Descriptor",
+			"Descriptor for Applications",
 			"Pages and Panels",
-			"Shell Container",
+			"Shell Control as Container",
 			"Margins and Paddings",
 			"Custom CSS and Theme Colors",
 			"Nested Views",
@@ -1064,12 +1074,12 @@
 			"Filtering",
 			"Sorting and Grouping",
 			"Remote OData Service",
-			"Mock Server and Automatic Model Instantiation",
+			"Mock Server Configuration",
 			"Unit Test with QUnit",
 			"Integration Test with OPA",
 			"Debugging Tools",
 			"Routing and Navigation",
-			"Routing with Params",
+			"Routing with Parameters",
 			"Routing Back and History",
 			"Custom Controls",
 			"Responsiveness",
@@ -1086,20 +1096,20 @@
 		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server",
 		  "docuLink": "#docs/guide/291c9121e6044ab381e0b51716f97f52.html",
 		  "samplesAsSteps": [
-			"Handover and Testing Strategy",
-			"A first Unit Test",
-			"Adding a price formatter",
-			"Testing a new type module",
-			"Adding a flagged button",
-			"A first OPA Test",
-			"Changing the table to grow",
+			"Overview and Testing Strategy",
+			"A First Unit Test",
+			"Adding the Price Formatter",
+			"Testing a New Module",
+			"Adding a Flag Button",
+			"A First OPA Test",
+			"Changing the table to a Growing Table",
 			"Testing Navigation",
 			"Adding the Post Page",
 			"Test Suite and Automated Testing",
-			"Testing Interactions",
+			"Testing User Interactions",
 			"Adding Tabs",
-			"Writing a Short Date Formatter TDD style",
-			"Adding the date formatter"
+			"Writing a Short Date Formatter Using TDD ",
+			"Adding the Date Formatter"
 		  ]
 		},
 		{
@@ -1109,13 +1119,15 @@
 		  "since": "1.32",
 		  "formFactors": "-",
 		  "description": "In this tutorial we implement typical features of a full-screen worklist app, a typical SAP Fiori design pattern",
+		  "docuLink": "#docs/guide/6a6a621c978145ad9eef2b221d2cf21d.html",
 		  "samplesAsSteps": [
-			"Getting started with the worklist template",
-			"Extending the worklist table",
-			"Adding quick filters",
-			"Reorder or unlist products",
-			"Adjusting the object view",
-			"Adding a comments section"
+			"Creating the Initial App",
+			"Custom Mock Data",
+			"Extending the Worklist Table",
+			"Quick Filter for the Worklist",
+			"Adding Actions to the Worklist",
+			"Extending the Detail Page",
+			"Adding a Comments Section"
 		  ]
 		}
 	  ],
@@ -1134,6 +1146,11 @@
 		  "id": "sap.m.sample.ComboBox",
 		  "name": "ComboBox",
 		  "description": "The ComboBox control provides a list box with items and a text field allowing the user to either type a value directly into the control or choose from the list of existing items."
+		},
+		{
+		  "id": "sap.m.sample.ComboBox2Columns",
+		  "name": "ComboBox with 2 Columns Layout",
+		  "description": "This combo box displays information in 2 columns"
 		},
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
@@ -1323,12 +1340,12 @@
 		{
 		  "id": "sap.m.sample.PageListReportIconTabBar",
 		  "name": "Fiori List Report Page - Icon Tab Bar",
-		  "description": "This page shows the floorplan for a list report with an Icon Tab Bar: VBox with Filter Bar, Icon Tab Bar with Analytical Tables and a Footer. By applying a bit custom CSS you arrange all the controls with the correct spacing."
+		  "description": "This page shows the floorplan for a list report with an Icon Tab Bar: The upper part extends with its content, but doesn't react to viewport changes. The Icon Tab Bar reacts to the viewport size. The table inside takes the available space. If the minimum size of the table is reached, the page begins to scroll."
 		},
 		{
 		  "id": "sap.m.sample.PageListReportToolbar",
 		  "name": "Fiori List Report Page - Toolbar ",
-		  "description": "This page shows the floorplan for a list report with a Title Bar, Toolbar and a Footer: Filter Bar, Toolbar, second Toolbar, Analytical Table and Footer inside a VBox. By applying a bit custom CSS you arrange all the controls with the correct spacing."
+		  "description": "This page shows the floorplan for a list report with a Toolbar. The upper part extends with its content, but doesn't react to viewport changes. The lower part reacts to the viewport size. The table inside takes the available space. If the minimum size of the table is reached, the page begins to scroll."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBar",
@@ -1376,9 +1393,9 @@
 		  "description": "Images are faster than words and attract people's attention. Images can also have an active state like the last image in this example."
 		},
 		{
-			"id": "sap.m.sample.JamContent",
-			"name": "Jam Content",
-			"description": "This control is used display the jam content text, subheader, and numeric value in a tile."
+			"id": "sap.m.sample.FeedContent",
+			"name": "Feed Content",
+			"description": "Shows the tile containing the text of the feed, a subheader, and a numeric value."
 		},
 		{
 		  "id": "sap.m.sample.Label",
@@ -1493,7 +1510,7 @@
 		{
 		  "id": "sap.m.sample.DateTimeInput",
 		  "name": "Date Time Input",
-		  "description": "The Date & Time Input is an extension of the Input control and is dedicated to Date and Time."
+		  "description": "The Date & Time Input is an extension of the Input control and is dedicated to Date and Time. [Deprecated since 1.32.8]"
 		},
 		{
 		  "id": "sap.m.sample.RadioButton",
@@ -1602,18 +1619,18 @@
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifSizes",
-			"name": "Numeric Content Different Sizes",
-			"description": "NumericContent contains numbers, number units, an icon, and state arrows. The numbers can be displayed in semantic colors. You can set up the size of the NumericContent. By default, the size property is set to Auto. It means that the size of the control changes automatically according to the device. You can also set a fixed control size: small (S), medium (M), or large (L)."
+			"name": "Numeric Content of Different Sizes",
+			"description": "Shows NumericContent including numbers, units of measurement and status arrows indicating a trend. The numbers can be colored according to their meaning. The size of the numbers can be fixed or can adapt to the device used."
 		},
 		{
 			"id": "sap.m.sample.NumericContentIcon",
-			"name": "Numeric Content With Icon",
-			"description": "This is an example of the NumericContent that contains an icon."
+			"name": "Numeric Content with Icon",
+			"description": "Shows NumericContent including an icon."
 		},
 		{
 			"id": "sap.m.sample.NumericContentWithoutMargin",
 			"name": "Numeric Content Without Margins",
-			"description": "This is an example of the NumericContent that contains no margins, so the control fits to the whole size."
+			"description": "This is an example of the NumericContent that contains no margins, so the control is aligned to the left and to the top without any margins."
 		},
 		{
 		  "id": "sap.m.sample.Token",
@@ -1649,6 +1666,11 @@
 		  "id": "sap.m.sample.SearchField",
 		  "name": "Search Field",
 		  "description": "Use the Search Field to let the user enter a search string and trigger the search process."
+		},
+		{
+		  "id": "sap.m.sample.SearchFieldSuggestions",
+		  "name": "Search Field - Suggestions",
+		  "description": "Add suggestion capabilities to a basic Search Field."
 		},
 		{
 		  "id": "sap.m.sample.DialogConfirm",
@@ -2133,32 +2155,32 @@
 		{
 		  "id": "sap.m.sample.GenericTile1x1",
 		  "name": "Generic Tile 1x1",
-		  "description": "The Generic Tile control with the 1x1 frame type that displays the title, description, and customizable main area."
+		  "description": "Shows the 1x1 frame type containing the title, the description, and the customizable main area."
 		},
 		{
 		  "id": "sap.m.sample.GenericTile2x1SingleCont",
-		  "name": "Generic Tile 2x1 Single Content",
-		  "description": "The Generic Tile control with the 2x1 frame type that displays a title, description, and one content."
+		  "name": "Generic Tile 2x1 - Single Content",
+		  "description": "Shows the 2x1 frame type containing the title, the description, and the customizable main area."
 		},
 		{
 		  "id": "sap.m.sample.GenericTile2x1TwoCont",
-		  "name": "Generic Tile 2x1 Two Contents",
-		  "description": "The Generic Tile control with the 2x1 frame type that displays a title, description, and two contents."
+		  "name": "Generic Tile 2x1 - Two Contents",
+		  "description": "Shows the 2x1 frame type containing the title, the description and two customizable areas."
 		},
 		{
-		  "id": "sap.m.sample.DynamicContainer",
-		  "name": "Generic Tiles in Dynamic Container",
-		  "description": "Generic Tile controls with the 2x1 frame type are displayed. Each Generic Tile contains a title, description, and one content."
+		  "id": "sap.m.sample.SlideTile",
+		  "name": "Generic Tiles Sliding",
+		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileStates",
-		  "name": "Generic Tile States",
-		  "description": "These examples show the Generic Tile controls in the loading, failed, or disabled states."
+		  "name": "Generic Tile Statuses",
+		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
-		  "description": "This control serves as a universal container for different types of content and footer."
+		  "description": "Shows the universal container for different types of content and context information in the footer area."
 		},
 		{
 		  "id": "sap.m.sample.Breadcrumbs",
@@ -2169,7 +2191,12 @@
 		  "id": "sap.m.sample.TabContainer",
 		  "name": "Tab Container",
 		  "description": "The sap.m.TabContainer allows for working with multiple tabs."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendar",
+		  "name": "simple PlanningCalendar",
+		  "description": "PlanningCalendar with single row selection."
 		}
-	  ]
+		]
 	}
 }

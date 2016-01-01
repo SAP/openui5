@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html><head>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
-	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
 	<title>Routing Example Page</title>
 
 	<script id='sap-ui-bootstrap' type='text/javascript'
@@ -14,7 +14,7 @@
 		// set application namespace. Views and controller are loaded relative to this page
 		jQuery.sap.registerModulePath("sap.ui.core.samples.routing.mobile", "./");
 		jQuery.sap.require("sap.ui.core.routing.Router");
-		
+
 		var oData = [
 			{
 				name: "Entry 1",
@@ -77,17 +77,17 @@
 				}
 			}
 		];
-		
+
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(oData);
 		sap.ui.getCore().setModel(oModel);
-		
+
 		var shell = new sap.m.Shell("shell", {
 			title:'SAPUI5 Routing Example',
 			showLogout: false
 		});
 		shell.placeAt('content');
-		
+
 		var oRouter = new sap.ui.core.routing.Router();
 		oRouter.addRoute({
 			pattern: "",

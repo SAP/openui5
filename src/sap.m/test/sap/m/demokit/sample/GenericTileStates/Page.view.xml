@@ -28,7 +28,7 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-	<DynamicContainer class="sapUiSmallMargin">
+	<SlideTile class="sapUiSmallMargin">
 		<tiles>
 			<GenericTile
 				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
@@ -38,10 +38,10 @@
 				<tileContent>
 					<TileContent footer="New Notifications">
 						<content>
-							<JamContent
+							<FeedContent
 								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London"
 								subheader="about 1 minute ago in Computer Market" value="9">
-							</JamContent>
+							</FeedContent>
 						</content>
 					</TileContent>
 				</tileContent>
@@ -54,22 +54,22 @@
 				<tileContent>
 					<TileContent footer="New Notifications">
 						<content>
-							<JamContent
+							<FeedContent
 								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest."
 								subheader="about 1 minute ago in Computer Cluster" value="9999">
-							</JamContent>
+							</FeedContent>
 						</content>
 					</TileContent>
 				</tileContent>
 			</GenericTile>
 		</tiles>
-	</DynamicContainer>
+	</SlideTile>
 	<GenericTile class="sapUiSmallMargin" header="Cumulative Totals"
 		subheader="Expenses" size="M" frameType="OneByOne" state="Disabled">
 		<tileContent>
 			<TileContent footer="Actual and Target" unit="EUR" size="M">
 				<content>
-					<NumericContent size="M" value="3" 
+					<NumericContent size="M" value="3"
 						icon="sap-icon://travel-expense" />
 				</content>
 			</TileContent>

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>Object List Item - sap.m</title>
 
@@ -15,7 +15,7 @@
 	jQuery.sap.require("sap.ui.core.IconPool");
 	jQuery.sap.require("sap.m.ObjectAttribute");
 	jQuery.sap.require("sap.m.ObjectStatus");
-	
+
 	var list = new sap.m.List("test_list", {
 		headerText: "Object List Items"
 	});
@@ -65,7 +65,7 @@
 	worstCaseAttrs.push(new sap.m.ObjectAttribute({text: "attribute text 1 attribute text 1", tooltip: "Attribute tip"}));
 	worstCaseAttrs.push(new sap.m.ObjectAttribute({text: "attribute text 2 attribute text 1"}));
 	worstCaseAttrs.push(new sap.m.ObjectAttribute({text: "Seven_seven-seven-seven-seven-seven_sevens_even years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal."}));
-	
+
 	var worstCase = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith, Ñagçyfox",
@@ -82,7 +82,7 @@
 		markFavorite: true
 	});
 	list.addItem(worstCase);
-	
+
 	var longWordTitle = new sap.m.ObjectListItem({
 		type: "Active",
 		icon: sap.ui.core.IconPool.getIconURI("inbox"),
@@ -97,7 +97,7 @@
 		markFavorite: true
 	});
 	list.addItem(longWordTitle);
-	
+
 	var longWordTitleNoNumber = new sap.m.ObjectListItem({
 		type: "Active",
 		icon: sap.ui.core.IconPool.getIconURI("inbox"),
@@ -109,7 +109,7 @@
 		markFavorite: true
 	});
 	list.addItem(longWordTitleNoNumber);
-	
+
 	var longWordTitleOnly = new sap.m.ObjectListItem({
 		title: "123456789012345678901234567890123456789012345678901234567890 This long word should be wrapped to another line",
 		attributes: [new sap.m.ObjectAttribute({text: "attribute text 1 attribute text 1", tooltip: "Attribute tip"})],
@@ -119,15 +119,15 @@
 		markFavorite: true
 	});
 	list.addItem(longWordTitleOnly);
-	
+
 	var bestCase = new sap.m.ObjectListItem({
 		type: "Active",
 		title: "Best case item with minimal fields, medium number",
 		number: "3.62449",
 		numberState : sap.ui.core.ValueState.Success
-	});	
+	});
 	list.addItem(bestCase);
-	
+
 	var withImgIcon = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith, Ñagçyfox",
@@ -139,8 +139,8 @@
 		numberState : sap.ui.core.ValueState.Success
 	});
 	list.addItem(withImgIcon);
-	
-	
+
+
 	var bestVariation1 = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
@@ -148,9 +148,9 @@
 		number: "-900,000,000.01",
 		numberUnit: "Euro",
 		numberState : sap.ui.core.ValueState.Error
-	});	
+	});
 	list.addItem(bestVariation1);
-	
+
 	var bestVariation2 = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
@@ -158,14 +158,14 @@
 		number: "3.6244",
 		numberUnit: "Euro",
 		numberState : sap.ui.core.ValueState.Error
-	});	
-	list.addItem(bestVariation2);	
-	
-	
+	});
+	list.addItem(bestVariation2);
+
+
 	var bestVariation3Attrs = new Array();
 	bestVariation3Attrs.push(new sap.m.ObjectAttribute({text: "attribute text 1"}));
 	bestVariation3Attrs.push(new sap.m.ObjectAttribute({text: "attribute text 2"}));
-	bestVariation3Attrs.push(new sap.m.ObjectAttribute({text: "attribute text 3"}));	
+	bestVariation3Attrs.push(new sap.m.ObjectAttribute({text: "attribute text 3"}));
 	var bestVariation3 = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
@@ -174,21 +174,21 @@
 		numberUnit: "Euro",
 		numberState : sap.ui.core.ValueState.Error,
 		attributes: bestVariation3Attrs
-	});	
-	list.addItem(bestVariation3);	
-	
+	});
+	list.addItem(bestVariation3);
+
 	var bestVariation4 = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
 		title: "Best case item adding first and second status",
 		number: "3.6244",
-		numberUnit: "Euro",	
+		numberUnit: "Euro",
 		numberState : sap.ui.core.ValueState.Success,
 		firstStatus: new sap.m.ObjectStatus({text: "Status state warning", state: "Warning"}),
 		secondStatus: new sap.m.ObjectStatus({text: "Status state none", state: "None"})
-	});	
-	list.addItem(bestVariation4);	
-	
+	});
+	list.addItem(bestVariation4);
+
 	var bestVariation5 = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
@@ -197,9 +197,9 @@
 		numberUnit: "Euro",
 		numberState : sap.ui.core.ValueState.Success,
 		secondStatus: new sap.m.ObjectStatus({text: "Second status"})
-	});	
-	list.addItem(bestVariation5);	
-	
+	});
+	list.addItem(bestVariation5);
+
 	var moreThanThreeAttrs = new Array();
 	moreThanThreeAttrs.push(new sap.m.ObjectAttribute({text: "attribute text 1"}));
 	moreThanThreeAttrs.push(new sap.m.ObjectAttribute({text: "attribute text 2"}));
@@ -207,7 +207,7 @@
 	moreThanThreeAttrs.push(new sap.m.ObjectAttribute({text: "attribute text 4"}));
 	moreThanThreeAttrs.push(new sap.m.ObjectAttribute({text: "attribute text 5"}));
 
-	
+
 	function handlePress(oEvent) {
 		if(!bestVariation6.getInfo()) {
 			bestVariation6.setInfo("I am impressed.");
@@ -215,7 +215,7 @@
 			bestVariation6.setInfo(undefined);
 		}
 	}
-	
+
 	var bestVariation6 = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
@@ -224,9 +224,9 @@
 		numberUnit: "Euro",
 		attributes: moreThanThreeAttrs,
 		press: handlePress
-	});	
-	list.addItem(bestVariation6);	
-	
+	});
+	list.addItem(bestVariation6);
+
 	var bestVariation8 = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
@@ -234,9 +234,9 @@
 		number: "3.6244",
 		numberUnit: "Euro",
 		secondStatus: new sap.m.ObjectStatus({text: "Second status"})
-	});	
-	list.addItem(bestVariation8);	
-	
+	});
+	list.addItem(bestVariation8);
+
 	var bestVariation9 = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
@@ -244,23 +244,23 @@
 		number: "3.6244",
 		numberUnit: "Euro",
 		firstStatus: new sap.m.ObjectStatus({text: "First status info", state: "Success"})
-	});	
-	list.addItem(bestVariation9);	
-	
+	});
+	list.addItem(bestVariation9);
+
 	var withFirstStatusIcon = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
 		title: "First status using icon font",
 		number: "3.62449",
 		firstStatus: new sap.m.ObjectStatus({icon: sap.ui.core.IconPool.getIconURI("inbox")})
-	});	
-	list.addItem(withFirstStatusIcon);	
+	});
+	list.addItem(withFirstStatusIcon);
 
 	var emptyAttributes = new Array();
 	emptyAttributes.push(new sap.m.ObjectAttribute({text: ""}));
 	emptyAttributes.push(new sap.m.ObjectAttribute({text: ""}));
 	emptyAttributes.push(new sap.m.ObjectAttribute({text: ""}));
-	
+
 	var emptyAttributes = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith, Ñagçyfox",
@@ -269,13 +269,13 @@
 		numberUnit: "Euro",
 		attributes: emptyAttributes
 	});
-	list.addItem(emptyAttributes);	
-	
+	list.addItem(emptyAttributes);
+
 	emptyAttributes = new Array();
 	emptyAttributes.push(new sap.m.ObjectAttribute({text: ""}));
 	emptyAttributes.push(new sap.m.ObjectAttribute({text: ""}));
 	emptyAttributes.push(new sap.m.ObjectAttribute({text: ""}));
-	
+
 	var emptyAttributesFirstStatus = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith, Ñagçyfox",
@@ -286,12 +286,12 @@
 		firstStatus: new sap.m.ObjectStatus({text: "First status info"})
 	});
 	list.addItem(emptyAttributesFirstStatus);
-	
+
 	oneAttributeWithRestEmpty = new Array();
 	oneAttributeWithRestEmpty.push(new sap.m.ObjectAttribute({text: "First attrib val"}));
 	oneAttributeWithRestEmpty.push(new sap.m.ObjectAttribute({text: ""}));
 	oneAttributeWithRestEmpty.push(new sap.m.ObjectAttribute({text: ""}));
-	
+
 	var firstAttributeFirstStatus = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith, Ñagçyfox",
@@ -301,21 +301,21 @@
 		attributes: oneAttributeWithRestEmpty,
 		firstStatus: new sap.m.ObjectStatus({text: "First status info"})
 	});
-	list.addItem(firstAttributeFirstStatus);		
+	list.addItem(firstAttributeFirstStatus);
 
-	
+
 	var withFirstStatusImage = new sap.m.ObjectListItem({
 		type: "Active",
 		intro: "On behalf of John Smith",
 		title: "First status using image",
 		number: "3.62449",
 		firstStatus: new sap.m.ObjectStatus({icon: "images/favorite_24.png"})
-	});	
-	list.addItem(withFirstStatusImage);	
-	
-	
+	});
+	list.addItem(withFirstStatusImage);
+
+
 	var allMarkersShown = new sap.m.ObjectListItem({
-		
+
 		type: "Active",
 		intro: "On behalf of John Smith, Ñagçyfox",
 		title: "All possible markers shown initially, no attributes",
@@ -325,10 +325,10 @@
 		markFlagged: true,
 		markFavorite: true
 	});
-	list.addItem(allMarkersShown);	
-	
+	list.addItem(allMarkersShown);
+
 	var flagMarkerOnly = new sap.m.ObjectListItem({
-		
+
 		type: "Active",
 		intro: "On behalf of John Smith, Ñagçyfox",
 		title: "Flagged only",
@@ -338,9 +338,9 @@
 		markFlagged: true
 	});
 	list.addItem(flagMarkerOnly);
-	
+
 	var favoriteMarkerOnly = new sap.m.ObjectListItem({
-		
+
 		type: "Active",
 		intro: "On behalf of John Smith, Ñagçyfox",
 		title: "Favorite only",
@@ -349,10 +349,10 @@
 		showMarkers: true,
 		markFavorite: true
 	});
-	list.addItem(favoriteMarkerOnly);	
-	
+	list.addItem(favoriteMarkerOnly);
+
 	var markersAndStatuses = new sap.m.ObjectListItem({
-		
+
 		type: "Active",
 		intro: "On behalf of John Smith, Ñagçyfox",
 		title: "Markers and statuses, no attributes",
@@ -370,15 +370,15 @@
 	page.setEnableScrolling(true);
 	app.addPage(page);
 	page.addContent(list);
-	
+
 	page.addContent(new sap.m.CheckBox({
 		text: "Show Markers",
 		selected: markersAndStatuses.getShowMarkers(),
 		select: function() {
 			markersAndStatuses.setShowMarkers(this.getSelected());
-		}		
+		}
 	}));
-	
+
 	page.addContent(new sap.m.Button({
 		id: "flag-button",
 		text: "Flag",
@@ -401,7 +401,7 @@
         }
     }));
 	app.placeAt('body');
-	
+
 </script>
 
 </head>

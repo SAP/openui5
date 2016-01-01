@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	
-<!-- 
-  JSUNIT: 
+
+<!--
+  JSUNIT:
     Tested control/class: sap.ui.base.Objects.js
     Author: Martin Schaus
  -->
@@ -15,17 +15,17 @@
 				data-sap-ui-noConflict="true"
 				data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
-		
-		/* 
-		 * JSUNIT: 
-	     *     create your test fixture here, e.g. create SAPUI5 control tree and add it to 
-	     *     "uiArea1".  
-		 */ 
+
+		/*
+		 * JSUNIT:
+	     *     create your test fixture here, e.g. create SAPUI5 control tree and add it to
+	     *     "uiArea1".
+		 */
 
 		if ( typeof Array.indexOf === "undefined" ) {
 			Array.prototype.indexOf = function(m) {
@@ -42,14 +42,14 @@
 				strictEqual(a2, a1, sMessage);
 				return;
 			}
-			
+
 			var l1=a1.length,l2=a2.length;
 			strictEqual(l2, l1, sMessage);
 			for(var i=0; i<l1; i++) {
 				strictEqual(a2[i], a1[i], sMessage);
 			};
 		};
-			
+
 
 		jQuery.sap.require("sap.ui.base.Object");
 		jQuery.sap.declare("sap.test.NewClass");
@@ -64,7 +64,7 @@
 		sap.test.NewClass.prototype.method1 = function() {
 			return this.value1;
 		};
-		
+
 		sap.test.NewSubClass = function(v1,v2){ sap.test.NewClass.call(this, v1); this.value2 = v2; };
 		sap.test.NewSubClass.prototype = jQuery.sap.newObject(sap.test.NewClass.prototype);
 		sap.ui.base.Object.defineClass("sap.test.NewSubClass", {
@@ -99,11 +99,11 @@
 			for(var m in oIntf1) {
 				if ( typeof oIntf1[m] === "function" ) {
 					ok(oNewClassInstance.getMetadata().getAllPublicMethods().indexOf(m) >= 0, "interface has only functions from the list");
-					// TODO the following tests only work for methods that have stable results and that don't require arguments 
+					// TODO the following tests only work for methods that have stable results and that don't require arguments
 					var r1 = oNewClassInstance[m]();
 					var r2 = oIntf1[m]();
-					strictEqual(r2, r1, "same values returned"); 
-				}		
+					strictEqual(r2, r1, "same values returned");
+				}
 			}
 		});
 
@@ -134,7 +134,7 @@
 			ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Cacheable"), "isInstanceOf");
 			ok(oNewSubClassInstance.getMetadata().isInstanceOf("sap.ui.base.Poolable"), "isInstanceOf");
 		});
-		
+
   	</script>
  	</head>
 	<body>

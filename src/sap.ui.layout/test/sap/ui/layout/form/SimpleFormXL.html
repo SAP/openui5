@@ -16,37 +16,11 @@
 	</style>
 
 	<script type="text/javascript">
-		var oButton1 = new sap.m.Button("B1",{
-			text: "ResponsiveLayout",
-			press: function(oEvent){
-					var oSimpleForm = sap.ui.getCore().byId("SF1");
-					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);
-			
-				}
-			}).placeAt("button");
-		var oButton2 = new sap.m.Button("B2",{
-			text: "Grid layout",
-			press: function(oEvent){
-					var oSimpleForm = sap.ui.getCore().byId("SF1");
-					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.GridLayout);
-			
-				}
-			}).placeAt("button");
-		var oButton3 = new sap.m.Button("B3",{
-			text: "Grid",
-			press: function(oEvent){
-					var oSimpleForm = sap.ui.getCore().byId("SF1");
-					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
-			
-				}
-			}).placeAt("button");
 
 		var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 				"SF1",
 				{
-					minWidth : 1024,
-					columnsXL: 3,
-					maxContainerCols: 3,
+					columnsXL:3,
 					editable: true,
 					content:[
 						    new sap.ui.core.Title({text:"Title 1"}),
@@ -54,21 +28,37 @@
 					        new sap.m.Input("I1",{value:"Value 1"}),
 					        new sap.m.Label({text:"Label 2"}),
 					        new sap.m.Input("I2",{value:"Value 2/1"}),
-					        new sap.m.Input("I3",{value:"Value 2/2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),new sap.ui.layout.GridData({span: "XL3 L6 M2 S2"})]})}),
+					        new sap.m.Input("I3",{value:"Value 2/2",
+					        	layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),
+					        	                                                                    new sap.ui.layout.GridData({span: "XL3 L6 M2 S2", linebreakL: true})]})}),
+
 					        new sap.ui.core.Title({text:"Title 2"}),
 					        new sap.m.Label({text:"Label 1"}),
 					        new sap.m.Input({value:"Value 1"}),
 					        new sap.m.Label({text:"Label 2"}),
 					        new sap.m.Input({value:"Value 2/1"}),
-					        new sap.m.Input({value:"Value 2/2"}), new sap.ui.core.Title({text:"Title 3"}),
+					        new sap.m.Input({value:"Value 2/2"}),
+					        new sap.ui.core.Title({text:"Title 3"}),
 					        new sap.m.Label({text:"Label 1"}),
 					        new sap.m.Input("I4",{value:"Value 1"}),
 					        new sap.m.Label({text:"Label 2"}),
-					        new sap.m.Input("I5",{value:"Value 2/2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),new sap.ui.layout.GridData({span: "XL1 L7 M2 S2"})]})}),
-					        new sap.m.Input("I6",{value:"Value 2/1"})
+					        new sap.m.Input("I5",{value:"Value 2/1"}),
+					        new sap.m.Input("I6",{value:"Value 2/2",
+					        	layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),
+					        	                                                                    new sap.ui.layout.GridData({span: "XL4 L7 M2 S2", linebreakXL: true})]})}),
+
+					        new sap.ui.core.Title({text:"Title 4"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input("I7",{value:"Value 4"}),
+					        new sap.ui.core.Title({text:"Title 5"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input("I8",{value:"Value 1"}),
+					        new sap.ui.core.Title({text:"Title 6"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input("I9",{value:"Value 1"})
 					]
 				});
-
+		oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
 		oSimpleForm.placeAt('content');
 
 
@@ -82,7 +72,7 @@
 	<div id="button"></div>
 	<br>
 	<div id="content"></div>
-	
+
 
 </body>
 </html>

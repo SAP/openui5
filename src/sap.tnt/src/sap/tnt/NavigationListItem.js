@@ -406,7 +406,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 					rm.writeAttribute("role", 'option');
 				} else {
 					rm.writeAttribute("role", 'treeitem');
-					rm.writeAttribute("aria-expanded", this.getExpanded());
+					if (this.getItems().length > 0) {
+						rm.writeAttribute("aria-expanded", this.getExpanded());
+					}
 					rm.writeAttribute("aria-level", 1);
 				}
 
@@ -473,6 +475,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 				rm.writeAttribute("role", 'button');
 				rm.writeAttribute("aria-haspopup", true);
+			} else {
+				rm.write(' role="presentation" ');
 			}
 
 			rm.write(">");

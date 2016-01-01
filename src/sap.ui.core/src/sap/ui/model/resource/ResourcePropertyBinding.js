@@ -17,24 +17,25 @@ sap.ui.define(['sap/ui/model/PropertyBinding', 'sap/ui/model/ChangeReason'],
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {object} [mParameters]
 	 * @alias sap.ui.model.resource.ResourcePropertyBinding
+	 * @extends sap.ui.model.PropertyBinding
 	 */
 	var ResourcePropertyBinding = PropertyBinding.extend("sap.ui.model.resource.ResourcePropertyBinding", /** @lends sap.ui.model.resource.ResourcePropertyBinding.prototype */ {
-		
+
 		constructor : function(oModel, sPath){
 			PropertyBinding.apply(this, arguments);
-		
+
 			this.oValue = this.oModel.getProperty(sPath);
 		}
-		
+
 	});
-	
+
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.getValue
 	 */
 	ResourcePropertyBinding.prototype.getValue = function(){
 		return this.oValue;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.checkUpdate
 	 */

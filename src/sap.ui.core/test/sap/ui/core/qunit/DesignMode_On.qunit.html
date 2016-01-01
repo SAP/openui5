@@ -8,7 +8,7 @@
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for Design Mode</title>
 
  <script id="sap-ui-bootstrap" type="text/javascript"
@@ -42,7 +42,7 @@ test("Create an HTMLView instance and check controller methods are replaced by e
 
 	var oView = sap.ui.htmlview("example.designmode.test01");
 	var oController = oView.getController();
-	
+
 	ok(typeof oController !== "undefined", "Controller is not undefined");
 	ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
 
@@ -53,7 +53,7 @@ test("Create a XMLView instance and check controller methods are replaced by emp
 
 	var oView = sap.ui.xmlview("example.designmode.test01");
 	var oController = oView.getController();
-	
+
 	ok(typeof oController !== "undefined", "Controller is not undefined");
 	ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
 
@@ -76,7 +76,7 @@ var testDesignTimeMetadata = function(oButtonDesignTime, oTextFieldDesignTime) {
 		name: "{name}",
 		description: "{description}"
 	});
-	
+
 	deepEqual(oTextFieldDesignTime, {
 		css: "TextField.designtime.css",
 		icon: "TextField.png",
@@ -89,39 +89,39 @@ test("Get Design Time Metadata sync when it's not loaded yet", 1, function() {
 	var oButtonDesignTime = example.designmode.Button.getMetadata().getDesignTime();
 
 	strictEqual(oButtonDesignTime, undefined, "the designTime Metadata is not yet loaded");
-	
+
 });
 
 asyncTest("Get Design Time Metadata async", 2, function() {
 
 	Promise.all([example.designmode.Button.getMetadata().loadDesignTime(),
 		example.designmode.TextField.getMetadata().loadDesignTime()]).then(function(aValues) {
-	
+
 		var oButtonDesignTime = aValues[0];
 		var oTextFieldDesignTime = aValues[1];
-		
+
 		testDesignTimeMetadata(oButtonDesignTime, oTextFieldDesignTime);
-		
+
 		start();
-		
+
 	});
-	
+
 });
 
 asyncTest("Load Design Time Metadata async and the get it sync", 2, function() {
 
 	Promise.all([example.designmode.Button.getMetadata().loadDesignTime(),
 		example.designmode.TextField.getMetadata().loadDesignTime()]).then(function() {
-	
+
 		var oButtonDesignTime = example.designmode.Button.getMetadata().getDesignTime();
 		var oTextFieldDesignTime = example.designmode.TextField.getMetadata().getDesignTime();
-		
+
 		testDesignTimeMetadata(oButtonDesignTime, oTextFieldDesignTime);
-		
+
 		start();
-		
+
 	});
-	
+
 });
 
 </script>

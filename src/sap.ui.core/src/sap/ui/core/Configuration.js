@@ -486,8 +486,28 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns the language string with language and country code
-		 * @return {string} the language string with language and country code
+		 * Returns a string that identifies the current language.
+		 *
+		 * The value returned by this methods in most cases corresponds to the exact value that has been
+		 * configured by the user or application or that has been determined from the user agent settings.
+		 * It neither has been normalized nor validated against a specification or standard, although
+		 * UI5 expects a value compliant with {@link http://www.ietf.org/rfc/bcp/bcp47.txt BCP47}.
+		 *
+		 * The exceptions mentioned above affect languages that have been specified via the URL parameter
+		 * <code>sap-language</code>. That parameter by definition represents a SAP logon language code
+		 * ('ABAP language'). Most but not all of these language codes are valid ISO639 two-letter languages
+		 * and as such are valid BCP47 language tags. For better BCP47 compliance, the framework
+		 * maps the following non-BCP47 SAP logon codes to a BCP47 substitute:
+		 * <pre>
+		 *    "ZH"  -->  "zh-Hans"         // script 'Hans' added to distinguish it from zh-Hant
+		 *    "ZF"  -->  "zh-Hant"         // ZF ist not a valid ISO639 code, use the compliant language + script 'Hant'
+		 "    "1Q"  -->  "en-US-x-saptrc"  // special language code for supportability (tracing),
+		 *                                    represented as en-US with a priate extension
+		 *    "2Q"  -->  "en-US-x-sappsd"  // special language code for supportability (pseudo translation),
+		 *                                    represented as en-US with a priate extension
+		 * </pre>
+		 *
+		 * @return {string} The language string as configured
 		 * @public
 		 */
 		getLanguage : function () {
@@ -495,7 +515,42 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Sets a new language tag to be used from now on for language/region dependent
+		 * Returns a BCP47-compliant language tag for the current language.
+		 *
+		 * If the current {@link #getLanguage language} can't be interpreted as a
+		 * BCP47-compliant language, then the value <code>undefined</code> is returned.
+		 *
+		 * @return {string} The language tag for the current language, conforming to BCP47
+		 * @public
+		 */
+		getLanguageTag : function () {
+			try {
+				return new Locale(this.language).toString();
+			} catch (e) {
+				return undefined;
+			}
+		},
+
+		/**
+		 * Returns a SAP logon language for the current language.
+		 *
+		 * If the current {@link #getLanguage language} can't be interpreted as a
+		 * BCP47-compliant language, or if the BCP47 language can't be converted to
+		 * a SAP Logon language, then the value <code>undefined</code> is returned.
+		 *
+		 * @return {string} The SAP logon language code for the current language
+		 * @public
+		 */
+		getSAPLogonLanguage : function () {
+			try {
+				return new Locale(this.language).toSAPLogonLanguage();
+			} catch (e) {
+				return undefined;
+			}
+		},
+
+		/**
+		 * Sets a new language to be used from now on for language/region dependent
 		 * functionality (e.g. formatting, data types, translated texts, ...).
 		 *
 		 * When the language has changed, the Core will fire its
@@ -528,6 +583,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * <li>all UIAreas will be invalidated (which results in a rendering of the whole UI5 UI)</li>
 		 * </ul>
 		 *
+		 * This method does not handle SAP logon language codes.
+		 *
 		 * @param {string} sLanguage the new language as a BCP47 compliant language tag; case doesn't matter
 		 *   and underscores can be used instead of a dashes to separate components (compatibility with Java Locale Ids)
 		 * @return {sap.ui.core.Configuration} <code>this</code> to allow method chaining
@@ -553,9 +610,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns the active locale for the current session.
-		 * The locale is derived from the {@link #getLanguage language} property.
-		 * @return {sap.ui.core.Locale} the locale
+		 * Returns a Locale object for the current language.
+		 *
+		 * The Locale is derived from the {@link #getLanguage language} property.
+		 *
+		 * @return {sap.ui.core.Locale} The locale
 		 * @public
 		 */
 		getLocale : function () {

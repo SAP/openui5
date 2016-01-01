@@ -1,22 +1,22 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.model.DataState
   Author: d036800
 -->
 
-<html> 
+<html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>QUnit page for V2ODataModelDataState - sap.ui.core</title>
 <script>
-	//fix IE 11 bug 
+	//fix IE 11 bug
 	window.ActiveXObject = undefined;
 </script>
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m, sap.ui.layout"
 	xx-handleValidation="true"
 	>
@@ -34,32 +34,32 @@
 
 <!-- Test functions -->
 <script language="javascript">
-	
+
 	jQuery.sap.require("sap.ui.core.util.MockServer");
 	jQuery.sap.require("sap.ui.model.CompositeBinding");
-	
+
 	var sServiceUri = "/SalesOrderSrv/";
 	var sDataRootPath =  "testdata/SalesOrder/";
 	var oModel, spy;
-	
+
 	var oMockServer = new sap.ui.core.util.MockServer({
 		rootUri: sServiceUri
 	});
-	
+
 	function initServer() {
 		sap.ui.core.util.MockServer.config({
-				autoRespond: true,
-				autoRespondAfter: 250
-			});
-			
+			autoRespond: true,
+			autoRespondAfter: 250
+		});
+
 		oMockServer.simulate("testdata/SalesOrder/metadata.xml", sDataRootPath);
 		oMockServer.start();
 	}
-	
+
 	function stopServer() {
 		oMockServer.stop();
 	}
-	
+
 	function initModel(mParameters) {
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, mParameters);
 	}
@@ -72,7 +72,7 @@
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
-			
+
 		},
 		teardown : function() {
 			oModel.destroy();
@@ -81,35 +81,69 @@
 			stopServer();
 		}
 	});
-	
+
 	function testDataState(oBinding, fnFunc, oDataStateObject, sComment, fnContinue) {
-		var oDataState = new sap.ui.model.DataState();
-		oDataState.setOriginalValue(oDataStateObject.originalValue);
-		oDataState.setValue(oDataStateObject.value);
-		oDataState.setInvalidValue(oDataStateObject.invalidValue);
-		oDataState.setLaundering(oDataStateObject.laundering);
-		if (typeof oDataStateObject.messages === "number" && oDataStateObject.messages) {
-				oDataState.setModelMessages(new Array(oDataStateObject.messages));
-			} else {
-				oDataState.setModelMessages(oDataStateObject.messages);
-		}			
-		oDataStateObject = oDataState;
-		
-		var fCompare = function(oEvent) {
-			checkDataState(oEvent.getParameter("dataState"), oDataStateObject, sComment);
-			oBinding.detachDataStateChange(fCompare);
-			if (fnContinue) {
-				fnContinue();
+		return new Promise(function(fnResolve, fnReject) {
+			oDataStateObject = createDataState(oDataStateObject);
+
+			var fCompare = function(oEvent) {
+				checkDataState(oEvent.getParameter("dataState"), oDataStateObject, sComment);
+				oBinding.detachAggregatedDataStateChange(fCompare);
+				if (fnContinue) {
+					setTimeout(fnContinue, 0);
+				}
+				fnResolve();
 			}
-		}
-		oBinding.attachDataStateChange(fCompare);
-		fnFunc();
+			oBinding.attachAggregatedDataStateChange(fCompare);
+			fnFunc();
+		});
+
 	};
-	
+
+	function createDataState(mDataStateObject) {
+		var oDataState = new sap.ui.model.DataState();
+		oDataState.setOriginalValue(mDataStateObject.originalValue);
+		oDataState.setValue(mDataStateObject.value);
+		oDataState.setInvalidValue(mDataStateObject.invalidValue);
+		oDataState.setLaundering(mDataStateObject.laundering);
+		if (typeof mDataStateObject.messages === "number" && mDataStateObject.messages) {
+				oDataState.setModelMessages(new Array(mDataStateObject.messages));
+			} else {
+				oDataState.setModelMessages(mDataStateObject.messages);
+		}
+
+		// Ugly: Keep comment so it will be added to every test
+		oDataState._comment = mDataStateObject.comment;
+
+		return oDataState;
+	}
+
+	function checkDataStatesInOrder(oBinding, aDataStateObjects) {
+		return new Promise(function(fnResolve, fnReject) {
+			var aDataStates = aDataStateObjects.map(createDataState);
+
+			function fnCheckNextDataStateChange(oEvent) {
+				var mNextDataState = aDataStates.shift();
+
+				checkDataState(oEvent.getParameter("dataState"), mNextDataState, mNextDataState._comment || "");
+
+				if (aDataStates.length === 0) {
+					oBinding.detachAggregatedDataStateChange(fnCheckNextDataStateChange);
+					fnResolve();
+				}
+			}
+
+			oBinding.attachAggregatedDataStateChange(fnCheckNextDataStateChange);
+		});
+	}
+
 	function checkDataState(oDataState1, oDataState2, sComment) {
 		var aCompareMethods = [
 			"isDirty", "isControlDirty", "isLaundering", "getOriginalValue", "getValue", "getInvalidValue","getMessages"
 		]
+
+		ok(true, "Starting Test: " + sComment);
+
 		for (var i=0;i<aCompareMethods.length;i++) {
 			if (!jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]())) {
 				//debugger;
@@ -132,7 +166,7 @@
 							if (aMessages1[j] instanceof sap.ui.core.message.Message && aMessages2[j] instanceof sap.ui.core.message.Message) {
 								equal(aMessages1[j] === aMessages2[j],true,"Compared Message "+ j + " message:'" +aMessages1[j].getMessage() +"': "+ sComment);
 							}
-						
+
 						}
 					}
 				} else {
@@ -142,102 +176,113 @@
 				equal(jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]()),true,"Compared " + aCompareMethods[i] + ": current(" +  oDataState1[aCompareMethods[i]]() + "), expected("+ oDataState2[aCompareMethods[i]]() +"): "+ sComment);
 			}
 		}
+
+		ok(true, "Ending Test: " + sComment);
 	};
-	
+
 	asyncTest("test DataState batch deferred",function(){
 		// create dummy testdata
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
 				var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name"),
 					oFloatBinding = oModel.bindProperty("/ProductSet('AD-1000')/TaxTarifCode");
-				oFloatBinding.setType(new sap.ui.model.type.Float(), "string"); 
+				oFloatBinding.setType(new sap.ui.model.type.Float(), "string");
 				oModel.addBinding(oNameBinding);
 				oModel.addBinding(oFloatBinding);
-				
-				testDataState (oNameBinding,
-						function() {
-							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
-						},
-						{
-							originalValue : "Flyer",
-							value : "blabla2",
-							invalidValue : null,
-							laundering: false
-						},
-						"Setting a string to a string type binding"
-					);
 
 				testDataState (oNameBinding,
 						function() {
-							oModel.resetChanges(["/ProductSet('AD-1000')"]);
+							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
 						},
 						{
 							originalValue : "Flyer",
-							value : "Flyer",
-							invalidValue : null,
+							value : "blabla2",
+							invalidValue: null,
 							laundering: false
 						},
-						"Reset data of model data"
-					);
-				testDataState (oNameBinding,
+						"Setting a string to a string type binding"
+					)
+				.then(function() {
+					return testDataState (oNameBinding,
+							function() {
+								oModel.resetChanges(["/ProductSet('AD-1000')"]);
+							},
+							{
+								originalValue : "Flyer",
+								value : "Flyer",
+								invalidValue: null,
+								laundering: false
+							},
+							"Reset data of model data"
+						);
+				})
+				.then(function() {
+					return testDataState (oNameBinding,
 						function() {
 							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
 						},
 						{
 							originalValue : "Flyer",
 							value : "blabla2",
-							invalidValue : null,
+							invalidValue: null,
 							laundering: false
 						},
 						"Setting a string to a string type binding"
 					);
-				oModel.submitChanges(
-					{ 
+				})
+				.then(function() {
+					var pOthersDone;
+
+					oModel.submitChanges({
 						success: function() {
 							equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
 							equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
-							testDataState (oNameBinding,
-									function() {
-										oModel.setProperty("/ProductSet('AD-1000')/Name","blabla4");
-									},
-									{
-										originalValue : "blabla2",
-										value : "blabla4",
-										invalidValue : null,
-										laundering: false
-									},
-									"Setting a string to a string type binding after submit",
-									start
-								);
+							pOthersDone.then(function() {
+								testDataState (oNameBinding,
+										function() {
+											oModel.setProperty("/ProductSet('AD-1000')/Name","blabla4");
+										},
+										{
+											originalValue : "blabla2",
+											value : "blabla4",
+											invalidValue: null,
+											laundering: false
+										},
+										"Setting a string to a string type binding after submit",
+										start
+									);
+							});
 						}
-					}
-				);
-				oModel.attachBatchRequestSent(function() {
-					testDataState (oNameBinding,
-							function() {
-								oModel.setProperty("/ProductSet('AD-1000')/Name","blabla3");
-							},
-							{
-								originalValue : "Flyer",
-								value : "blabla3",
-								invalidValue : null,
-								laundering: true
-							},
-							"Setting a string to a string type binding after submit"
-						);
-					
-					testDataState (oNameBinding,
-							function() {
-								//do nothing and wait for submit changes
-							},
-							{
-								originalValue : "blabla2",
-								value : "blabla3",
-								invalidValue : null,
-								laundering: false
-							},
-							"Waiting for expected submit change handler."
-						);
+					});
+
+					oModel.attachBatchRequestSent(function() {
+						pOthersDone = testDataState (oNameBinding,
+								function() {
+									oModel.setProperty("/ProductSet('AD-1000')/Name","blabla3");
+								},
+								{
+									originalValue : "Flyer",
+									value : "blabla3",
+									invalidValue: null,
+									laundering: true
+								},
+								"Setting a string to a string type binding after submit"
+							)
+						.then(function() {
+							return testDataState (oNameBinding,
+								function() {
+									//do nothing and wait for submit changes
+								},
+								{
+									originalValue : "blabla2",
+									value : "blabla3",
+									invalidValue: null,
+									laundering: false
+								},
+								"Waiting for expected submit change handler."
+							);
+						});
+					});
 				});
 			},
 			error: function() {
@@ -245,7 +290,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test DataState single deferred",function(){
 		var sRequestId;
 		oModel.setUseBatch(false);
@@ -254,313 +299,477 @@
 			success: function() {
 				var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name"),
 					oFloatBinding = oModel.bindProperty("/ProductSet('AD-1000')/TaxTarifCode");
-				oFloatBinding.setType(new sap.ui.model.type.Float(), "string"); 
+				oFloatBinding.setType(new sap.ui.model.type.Float(), "string");
 				oModel.addBinding(oNameBinding);
 				oModel.addBinding(oFloatBinding);
-				
-				testDataState (oNameBinding,
-						function() {
-							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
-						},
-						{
-							originalValue : "Flyer",
-							value : "blabla2",
-							invalidValue : null,
-							laundering: false
-						},
-						"Setting a string to a string type binding"
-					);
 
 				testDataState (oNameBinding,
 						function() {
-							oModel.resetChanges(["/ProductSet('AD-1000')"]);
-						},
-						{
-							originalValue : "Flyer",
-							value : "Flyer",
-							invalidValue : null,
-							laundering: false
-						},
-						"Reset data of model data"
-					);
-				testDataState (oNameBinding,
-						function() {
 							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
 						},
 						{
 							originalValue : "Flyer",
 							value : "blabla2",
-							invalidValue : null,
+							invalidValue: null,
 							laundering: false
 						},
 						"Setting a string to a string type binding"
-					);
-				oModel.submitChanges();
-				oModel.attachRequestSent(function(oInfo) {
-					sRequestId = oInfo.mParameters["ID"];
-					testDataState (oNameBinding,
+					)
+					.then(function() {
+						return testDataState (oNameBinding,
 							function() {
-								oModel.setProperty("/ProductSet('AD-1000')/Name","blabla3");
+								oModel.resetChanges(["/ProductSet('AD-1000')"]);
 							},
 							{
 								originalValue : "Flyer",
-								value : "blabla3",
-								invalidValue : null,
-								laundering: true
-							},
-							"Setting a string to a string type binding after submit"
-						);
-					
-					testDataState (oNameBinding,
-							function() {
-								//do nothing and wait for submit changes
-							},
-							{
-								originalValue : "blabla2",
-								value : "blabla3",
-								invalidValue : null,
+								value : "Flyer",
+								invalidValue: null,
 								laundering: false
 							},
-							"Waiting for expected submit change handler."
-						);
-				});
-				oModel.attachRequestCompleted(
-					function(oInfo) {
-						if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
-							equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
-							equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
-							testDataState (oNameBinding,
-									function() {
-										oModel.setProperty("/ProductSet('AD-1000')/Name","blabla4");
-									},
-									{
-										originalValue : "blabla2",
-										value : "blabla4",
-										invalidValue : null,
-										laundering: false
-									},
-									"Setting a string to a string type binding after submit",
-									function() {
-										start();
-									}
-								);
-						}
-					}
-				);
-			},
-			error: function() {
-				ok(false,"request failed");
-			}
-		});
-	});
-	
-	asyncTest("test DataState single not deferred",function(){
-		var sRequestId;
-		oModel.setUseBatch(false);
-		oModel.setDeferredBatchGroups([]);
-		// create dummy testdata
-		oModel.read("/ProductSet('AD-1000')", {
-			success: function() {
-				var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name"),
-					oFloatBinding = oModel.bindProperty("/ProductSet('AD-1000')/TaxTarifCode");
-				oFloatBinding.setType(new sap.ui.model.type.Float(), "string"); 
-				oModel.addBinding(oNameBinding);
-				oModel.addBinding(oFloatBinding);
-				
-				testDataState (oNameBinding,
-						function() {
-							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
-						},
-						{
-							originalValue : "Flyer",
-							value : "blabla2",
-							invalidValue : null,
-							laundering: false
-						},
-						"Setting a string to a string type binding"
-					);
-				var fn1 = function(oInfo) {
-					oModel.detachRequestSent(fn1);
-					sRequestId = oInfo.mParameters["ID"];
-					testDataState (oNameBinding,
-							function() {
-								oModel.checkUpdate();
-							},
-							{
-								originalValue : "Flyer",
-								value : "blabla2",
-								invalidValue : null,
-								laundering: true
-							},
-							"Setting a string to a string type binding after submit"
-						);
-					
-					testDataState (oNameBinding,
-							function() {
-								//do nothing and wait for submit changes
-							},
-							{
-								originalValue : "blabla2",
-								value : "blabla2",
-								invalidValue : null,
-								laundering: false
-							},
-							"Waiting for expected submit change handler."
-						);
-				}
-				oModel.attachRequestSent(fn1);
-				oModel.attachRequestCompleted(
-					function(oInfo) {
-						if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
-							equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
-							equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
-							start();
-						}
-					}
-				);
-			},
-			error: function() {
-				ok(false,"request failed");
-			}
-		});
-	});
-	
-	asyncTest("test DataState multiple submits",function(){
-		// create dummy testdata
-		oModel.read("/ProductSet('AD-1000')", {
-			success: function() {
-				var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name");
-				oModel.addBinding(oNameBinding);
-				testDataState (oNameBinding,
-					function() {
-						oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
-					},
-					{
-						originalValue : "Flyer",
-						value : "blabla2",
-						invalidValue : null,
-						laundering: false
-					},
-					"Setting a 'blabla2' to a string type binding"
-				);
-				
-				oModel.submitChanges(
-					{ 
-						success: function() {
-							var oOrigData = oModel.getOriginalProperty("/ProductSet('AD-1000')");
-							var oData = oModel.getProperty("/ProductSet('AD-1000')");
-							equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2");
-							equal(oData.Name,oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
-							ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
-							testDataState (oNameBinding,
-								function() {
-									//do nothing and wait for submit changes
-								},
-								{
-									originalValue : "blabla3",
-									value : "blabla2",
-									invalidValue : null,
-									laundering: true
-								},
-								"Waiting 2 for expected submit change handler."
-							);
-						}
-					}
-				);
-				var fn1 = function() {
-					oModel.detachBatchRequestSent(fn1);
-					/**/
-					testDataState (oNameBinding,
-						function() {
-							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla3");
-						},
-						{
-							originalValue : "Flyer",
-							value : "blabla3",
-							invalidValue : null,
-							laundering: true
-						},
-						"Setting a 'blabla3' to a string type binding"
-					);
-					oModel.submitChanges(
-						{ 
-							success: function() {
-								
-								var oOrigData = oModel.getOriginalProperty("/ProductSet('AD-1000')");
-								var oData = oModel.getProperty("/ProductSet('AD-1000')");
-								equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla3");
-								equal(oData.Name,oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
-								ok(!jQuery.sap.equal(oOrigData, oData), "different reference - no changed Entity");
-								testDataState (oNameBinding,
-								function() {
-									//do nothing and wait for submit changes
-								},
-								{
-									originalValue : "blabla2",
-									value : "blabla2",
-									invalidValue : null,
-									laundering: false
-								},
-								"Waiting 3 for expected submit change handler."
-							);	
-							}
-						}
-					);
-					var fn2 = function() {
-						oModel.detachBatchRequestSent(fn2);
-					
-						
-						testDataState (oNameBinding,
+							"Reset data of model data"
+						)
+					})
+					.then(function() {
+						return testDataState (oNameBinding,
 							function() {
 								oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
 							},
 							{
 								originalValue : "Flyer",
 								value : "blabla2",
-								invalidValue : null,
-								laundering: true
+								invalidValue: null,
+								laundering: false
 							},
-							"Setting a 'blabla2' to a string type binding"
-						);
-						oModel.submitChanges(
-							{ 
-								success: function() {
-									var oOrigData = oModel.getOriginalProperty("/ProductSet('AD-1000')");
-									var oData = oModel.getProperty("/ProductSet('AD-1000')");
-									equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2");
-									equal(oData.Name,oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
-									ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
-									start();
+							"Setting a string to a string type binding"
+						)
+					})
+					.then(function() {
+						var pOthers;
+
+						oModel.submitChanges();
+						oModel.attachRequestSent(function(oInfo) {
+							sRequestId = oInfo.mParameters["ID"];
+							pOthers = testDataState (oNameBinding,
+									function() {
+										oModel.setProperty("/ProductSet('AD-1000')/Name","blabla3");
+									},
+									{
+										originalValue : "Flyer",
+										value : "blabla3",
+										invalidValue: null,
+										laundering: true
+									},
+									"Setting a string to a string type binding after submit"
+								)
+								.then(function() {
+									return testDataState (oNameBinding,
+											function() {
+												//do nothing and wait for submit changes
+											},
+											{
+												originalValue : "blabla2",
+												value : "blabla3",
+												invalidValue: null,
+												laundering: false
+											},
+											"Waiting for expected submit change handler."
+										);
+								});
+
+						});
+						oModel.attachRequestCompleted(
+							function(oInfo) {
+								if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
+									equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla3");
+									equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
+									pOthers.then(function() {
+										testDataState (oNameBinding,
+											function() {
+												oModel.setProperty("/ProductSet('AD-1000')/Name","blabla4");
+											},
+											{
+												originalValue : "blabla2",
+												value : "blabla4",
+												invalidValue: null,
+												laundering: false
+											},
+											"Setting a string to a string type binding after submit",
+											function() {
+												start();
+											}
+										);
+									});
 								}
 							}
 						);
-						var fn3 = function() {
-							oModel.detachBatchRequestSent(fn3);
-							testDataState (oNameBinding,
-								function() {
-									//do nothing and wait for submit changes
-								},
-								{
-									originalValue : "blabla2",
-									value : "blabla2",
-									invalidValue : null,
-									laundering: true
-								},
-								"Waiting 1 for expected submit change handler."
-							);
-						}
-						oModel.attachBatchRequestSent(fn3);
-					}
-					oModel.attachBatchRequestSent(fn2);
-				}
-				oModel.attachBatchRequestSent(fn1);
+					});
 			},
 			error: function() {
 				ok(false,"request failed");
 			}
 		});
 	});
-	
+
+	asyncTest("test DataState single not deferred",function(){
+		var sRequestId;
+		oModel.setUseBatch(false);
+		oModel.setDeferredBatchGroups([]);
+		// create dummy testdata
+		oModel.read("/ProductSet('AD-1000')");
+		oModel.attachRequestCompleted(fnOnRead);
+
+		function fnOnRead() {
+			oModel.detachRequestCompleted(fnOnRead);
+			var oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name"),
+				oFloatBinding = oModel.bindProperty("/ProductSet('AD-1000')/TaxTarifCode");
+			oFloatBinding.setType(new sap.ui.model.type.Float(), "string");
+			oModel.addBinding(oNameBinding);
+			oModel.addBinding(oFloatBinding);
+
+			testDataState(oNameBinding,
+				function() {
+					oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
+				},
+				{
+					originalValue : "Flyer",
+					value : "blabla2",
+					invalidValue: null,
+					laundering: true
+				},
+				"Setting a string to a string type binding"
+			);
+
+
+			var pOthers;
+
+			var fn1 = function(oInfo) {
+				oModel.detachRequestSent(fn1);
+				sRequestId = oInfo.mParameters["ID"];
+				pOthers = testDataState (oNameBinding,
+						function() {
+							oModel.checkUpdate();
+						},
+						{
+							originalValue : "Flyer",
+							value : "blabla2",
+							invalidValue: null,
+							laundering: true
+						},
+						"Setting a string to a string type binding after submit"
+					)
+				.then(function() {
+					testDataState (oNameBinding,
+							function() {
+								//do nothing and wait for submit changes
+							},
+							{
+								originalValue : "blabla2",
+								value : "blabla2",
+								invalidValue: null,
+								laundering: false
+							},
+							"Waiting for expected submit change handler."
+						);
+				});
+			}
+			oModel.attachRequestSent(fn1);
+			oModel.attachRequestCompleted(
+				function(oInfo) {
+					oInfo = jQuery.extend(true, {}, oInfo);
+					pOthers.then(function() {
+					if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
+						equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
+						equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
+						start();
+					}});
+				}
+			);
+		};
+	});
+
+
+	module("New DataState Tests", {
+		setup : function() {
+			initServer();
+			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
+			oModel.setUseBatch(true);
+
+		},
+		teardown : function() {
+			oModel.destroy();
+			oModel = undefined;
+			removeSharedMetadata();
+			stopServer();
+		}
+	});
+
+	function promiseRead(oModel, sPath) {
+		return new Promise(function(fnResolve, fnReject) {
+			oModel.read(sPath, {
+				success: fnResolve,
+				error: fnReject
+			});
+		});
+	}
+
+	function promiseBatchSent(oModel) {
+		return new Promise(function(fnResolve, fnReject) {
+			oModel.attachBatchRequestSent(fnResolve);
+		});
+	}
+
+	function promiseSubmit(oModel) {
+		return new Promise(function(fnResolve, fnReject) {
+			oModel.submitChanges({
+				success: fnResolve,
+				error: fnReject
+			});
+		});
+	}
+
+
+	/**
+	 * Returns a promise that resolves AFTER a setTimeout()
+	 */
+	function timeoutPromise(oPromise, iTimeout) {
+		iTimeout = iTimeout === undefined ? 0 : iTimeout;
+		oPromise = !!oPromise ? oPromise : Promise.resolve();
+		return oPromise.then(function() {
+			return new Promise(function(fnResolve, fnReject) {
+				setTimeout(fnResolve, 0);
+			});
+		});
+	}
+
+	asyncTest("test DataState multiple submits", function() {
+		var oNameBinding;
+
+		var pSubmit1, pSubmit2, pSubmit3;
+
+		/*
+		  Description of what this test is supposed to do.
+
+		  1. Get the information of a single entity (read)
+		  2. Create a Binding to the Name property of that entity - it contains the value "Flyer".
+		  3. Check the initial data state, which should be clean and value should be the same as originalValue, there
+		     should be no invalidValue and the binding should not be currently laundering.
+		  4. Set the Name property to "ChangedOnce" and request notification of the next DataStateChange, which should
+		     then have its value set to "ChangedOnce" and the originalValue should remain as "Flyer".
+		  5. Submit the change done before.
+		       On success, the value and originalValue should be set to "ChangedOnce", laundering should be true, as
+			   we will have submitted other changes in the meantime (see below).
+		  6. Wait for the request to be sent
+		  7. Set the Name property to "ChangedTwice" and request notification of the next DataStateChange, which should
+		     then have its value set to "ChangedTwice" and the originalValue should now be "ChangedOnce".
+		  8. Submit the change done before.
+		       On success, the value and originalValue should be set to "ChangedTwice", laundering should be true, as
+			   we will have submitted other changes in the meantime (see below).
+		  9. Set the Name property to "FinalValue" and request notification of the next DataStateChange, which should
+	 	     then have its value set to "FinalValue" and the originalValue should remain as "ChangedTwice".
+		 10. Submit the change done before.
+		       On success, the value and originalValue should be set to "FinalValue", laundering should be false, as
+			   this is the last change we submitted.
+		*/
+
+		oNameBinding = oModel.bindProperty("/ProductSet('AD-1000')/Name");
+		oModel.addBinding(oNameBinding);
+
+
+		// The DataStateChanges should come in in the following order:
+		checkDataStatesInOrder(oNameBinding, [{
+			comment: "Change after initial read finishes",
+			originalValue : "Flyer",
+			value : "Flyer",
+			invalidValue: null,
+			laundering: false
+		}, {
+			comment: "Change after Value set to \"ChangedOnce\"",
+			originalValue : "Flyer",
+			value : "ChangedOnce",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change after Value set to \"ChangedTwice\"",
+			originalValue : "Flyer",
+			value : "ChangedTwice",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change after Value set to \"FinalValue\"",
+			originalValue : "Flyer",
+			value : "FinalValue",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change at the end",
+			originalValue : "FinalValue",
+			value : "FinalValue",
+			invalidValue: null,
+			laundering: false
+		}]).then(function() {
+			// Exit after all DataStates have been checked
+			start();
+		});
+
+
+		timeoutPromise(promiseRead(oModel, "/ProductSet('AD-1000')"))
+			.then(function() {
+				oModel.setProperty("/ProductSet('AD-1000')/Name","ChangedOnce");
+				oModel.submitChanges();
+				return timeoutPromise(promiseBatchSent(oModel));
+			})
+			.then(function() {
+				oModel.setProperty("/ProductSet('AD-1000')/Name","ChangedTwice");
+				oModel.submitChanges();
+				return timeoutPromise(promiseBatchSent(oModel));
+			})
+			.then(function() {
+				oModel.setProperty("/ProductSet('AD-1000')/Name","FinalValue");
+				oModel.submitChanges();
+				return timeoutPromise(promiseBatchSent(oModel));
+			});
+
+	});
+
+
+	asyncTest("Simulated DataState Changes", function() {
+
+		oNameBinding = oModel.bindProperty("/test");
+
+		// The DataStateChanges should come in in the following order:
+		checkDataStatesInOrder(oNameBinding, [{
+			comment: "Change after initial read finishes",
+			originalValue : "Flyer",
+			value : "Flyer",
+			invalidValue: null,
+			laundering: false
+		}, {
+			comment: "Change after Value set to \"Value 1\"",
+			originalValue : "Flyer",
+			value : "Value 1",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change after Value set to \"Value 2\"",
+			originalValue : "Flyer",
+			value : "Value 2",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change after Value set to \"Value 1\"",
+			originalValue : "Flyer",
+			value : "Value 1",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change at the end",
+			originalValue : "Value 1",
+			value : "Value 1",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change at the end",
+			originalValue : "Value 2",
+			value : "Value 1",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change at the end",
+			originalValue : "Value 1",
+			value : "Value 1",
+			invalidValue: null,
+			laundering: false
+		}]).then(function() {
+			// Exit after all DataStates have been checked
+			start();
+		});
+
+
+		var oDataState = new sap.ui.model.DataState();
+
+		var sTimeoutId;
+		function changeDataState(sProperty, vValue) {
+			oDataState.setProperty(sProperty, vValue);
+			if (oDataState.changed()) {
+				if (!sTimeoutId) {
+					sTimeoutId = setTimeout(function() {
+						oDataState.calculateChanges();
+						oNameBinding.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
+						oDataState.changed(false);
+						sTimeoutId = null;
+					}.bind(this), 0);
+				}
+			}
+		}
+
+		setTimeout(function() {
+
+			changeDataState("originalValue", "Flyer");
+			changeDataState("value", "Flyer");
+			changeDataState("laundering", false);
+			changeDataState("modelMessages", []);
+			changeDataState("controlMessages", []);
+
+			setTimeout(function() {
+				changeDataState("value", "Value 1");
+				changeDataState("laundering", true);
+
+				setTimeout(function() {
+					changeDataState("value", "Value 2");
+					changeDataState("laundering", true);
+
+					setTimeout(function() {
+						changeDataState("value", "Value 1");
+						changeDataState("laundering", true);
+
+
+
+						setTimeout(function() {
+							changeDataState("originalValue", "Value 1");
+							changeDataState("laundering", true);
+							changeDataState("modelMessages", []);
+							changeDataState("controlMessages", []);
+
+							setTimeout(function() {
+								changeDataState("originalValue", "Value 2");
+								changeDataState("laundering", true);
+								changeDataState("modelMessages", []);
+								changeDataState("controlMessages", []);
+
+								setTimeout(function() {
+									changeDataState("originalValue", "Value 1");
+									changeDataState("laundering", false);
+									changeDataState("modelMessages", []);
+									changeDataState("controlMessages", []);
+
+								}, 50);
+							}, 50);
+						}, 50);
+					}, 50);
+				}, 50);
+			}, 50);
+		}, 0);
+
+
+	});
+
+
+	module("Other Old DataState Tests", {
+		setup : function() {
+			initServer();
+			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
+			oModel.setUseBatch(true);
+
+		},
+		teardown : function() {
+			oModel.destroy();
+			oModel = undefined;
+			removeSharedMetadata();
+			stopServer();
+		}
+	});
+
+
 	asyncTest("test DataState submitChanges with expanded nav props",function(){
 		// create dummy testdata
 		oModel.read("/ProductSet('HT-1000')", {
@@ -575,14 +784,14 @@
 					{
 						originalValue : "Notebook Basic 15",
 						value : "blabla2",
-						invalidValue : null,
-						laundering: false
+						invalidValue: null,
+						laundering: true
 					},
 					"Setting a 'blabla2' to a string type binding"
 				);
 				ok(oModel.hasPendingChanges(), "model should have pending changes");
 				oModel.submitChanges(
-					{ 
+					{
 						success: function() {
 							ok(!oModel.hasPendingChanges(), "model should not have pending changes");
 							var oOrigData = oModel.getOriginalProperty("/ProductSet('HT-1000')");
@@ -590,7 +799,18 @@
 							equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('HT-1000')/Name"),"blabla2");
 							equal(oData.Name,oModel.getProperty("/ProductSet('HT-1000')/Name"),"blabla2");
 							ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
-							start();
+							testDataState (oNameBinding,
+								function() {
+									oModel.setProperty("/ProductSet('HT-1000')/Name","blabla2");
+								},
+								{
+									originalValue : "blabla2",
+									value : "blabla2",
+									invalidValue: null,
+									laundering: false
+								},
+								"Setting a 'blabla2' to a string type binding"
+							).then(start);
 						}
 					}
 				);
@@ -600,143 +820,68 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test DataState multiple submits with complext type",function(){
-		// create dummy testdata
-		oModel.read("/ProductSet('AD-1000')", {
-			success: function() {
-				oModel.read("/ProductSet('AD-1000')/ToSupplier", {
-					success: function() {
-						var oCityBinding = oModel.bindProperty("/BusinessPartnerSet('0100000015')/Address/City");
-						oModel.addBinding(oCityBinding);
-						testDataState (oCityBinding,
-								function() {
-									oModel.setProperty("/BusinessPartnerSet('0100000015')/Address/City","Wiesloch");
-								},
-								{
-									originalValue : "Quebec",
-									value : "Wiesloch",
-									invalidValue : null,
-									laundering: false
-								},
-								"Setting 'Wiesloch' to /BusinessPartnerSet('0100000015')/Address/City"
-							);
-						
-						oModel.submitChanges(
-							{ 
-								success: function() {
-									var oOrigData = oModel.getOriginalProperty("/BusinessPartnerSet('0100000015')");
-									var oData = oModel.getProperty("/BusinessPartnerSet('0100000015')");
-									equal(oOrigData.Address.City, oModel.getOriginalProperty("/BusinessPartnerSet('0100000015')/Address/City"),"Wiesloch");
-									equal(oData.Address.City,oModel.getProperty("/BusinessPartnerSet('0100000015')/Address/City"),"Quebec");
-									testDataState (oCityBinding,
-											function() {
-												//do nothing and wait for submit changes
-											},
-											{
-												originalValue : "Mannheim",
-												value : "Quebec",
-												invalidValue : null,
-												laundering: true
-											},
-											"Waiting 2 for expected submit change handler."
-										);
-								}
-							}
-						);
-						var fn1 = function() {
-							oModel.detachBatchRequestSent(fn1);
-							testDataState (oCityBinding,
-									function() {
-										oModel.setProperty("/BusinessPartnerSet('0100000015')/Address/City","Mannheim");
-									},
-									{
-										originalValue : "Quebec",
-										value : "Mannheim",
-										invalidValue : null,
-										laundering: true
-									},
-									"Setting 'Mannheim' to /BusinessPartnerSet('0100000015')/Address/City"
-								);
-							oModel.submitChanges(
-								{ 
-									success: function() {
-										
-										var oOrigData = oModel.getOriginalProperty("/BusinessPartnerSet('0100000015')");
-										var oData = oModel.getProperty("/BusinessPartnerSet('0100000015')");
-										equal(oOrigData.Address.City,oModel.getOriginalProperty("/BusinessPartnerSet('0100000015')/Address/City"),"Quebec");
-										equal(oData.Address.City,oModel.getProperty("/BusinessPartnerSet('0100000015')/Address/City"),"Mannheim");
-										testDataState (oCityBinding,
-												function() {
-													//do nothing and wait for submit changes
-												},
-												{
-													originalValue : "Quebec",
-													value : "Quebec",
-													invalidValue : null,
-													laundering: false
-												},
-												"Waiting 3 for expected submit change handler."
-											);
-									}
-								}
-							);
-							var fn2 = function() {
-								oModel.detachBatchRequestSent(fn2);
-								testDataState (oCityBinding,
-										function() {
-											oModel.setProperty("/BusinessPartnerSet('0100000015')/Address/City","Quebec");
-										},
-										{
-											originalValue : "Quebec",
-											value : "Quebec",
-											invalidValue : null,
-											laundering: true
-										},
-										"Setting 'Walldorf' to /BusinessPartnerSet('0100000015')/Address/City"
-									);
-								
-								oModel.submitChanges(
-									{ 
-										success: function() {
-											var oOrigData = oModel.getOriginalProperty("/BusinessPartnerSet('0100000015')");
-											var oData = oModel.getProperty("/BusinessPartnerSet('0100000015')");
-											equal(oOrigData.Address.City,oModel.getOriginalProperty("/BusinessPartnerSet('0100000015')/Address/City"),"Quebec");
-											equal(oData.Address.City,oModel.getProperty("/BusinessPartnerSet('0100000015')/Address/City"),"Quebec");
-											start();
-										}
-									}
-								);
-								var fn3 = function() {
-									oModel.detachBatchRequestSent(fn3);
-									testDataState (oCityBinding,
-											function() {
-												//do nothing and wait for submit changes
-											},
-											{
-												originalValue : "Wiesloch",
-												value : "Quebec",
-												invalidValue : null,
-												laundering: true
-											},
-											"Waiting 1 for expected submit change handler."
-										);
-								}
-								oModel.attachBatchRequestSent(fn3);
-							}
-							oModel.attachBatchRequestSent(fn2);
-						}
-						oModel.attachBatchRequestSent(fn1);
-					},
-					error: function() {
-						ok(false,"request failed");
-					}
-				});
-			},
-			error: function() {
-				ok(false,"request failed");
-			}
+		oCityBinding = oModel.bindProperty("/BusinessPartnerSet('0100000015')/Address/City");
+		oModel.addBinding(oCityBinding);
+
+		// The DataStateChanges should come in in the following order:
+		checkDataStatesInOrder(oCityBinding, [{
+			comment: "Change after initial read finishes",
+			originalValue : "Quebec",
+			value : "Quebec",
+			invalidValue: null,
+			laundering: false
+		}, {
+			comment: "Change after Value set to \"Wiesloch\"",
+			originalValue : "Quebec",
+			value : "Wiesloch",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change after Value set to \"Mannheim\"",
+			originalValue : "Quebec",
+			value : "Mannheim",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change after Value set to \"Quebec\"",
+			originalValue : "Quebec",
+			value : "Quebec",
+			invalidValue: null,
+			laundering: true
+		}, {
+			comment: "Change at the end",
+			originalValue : "Quebec",
+			value : "Quebec",
+			invalidValue: null,
+			laundering: false
+		}]).then(function() {
+			// Exit after all DataStates have been checked
+			start();
 		});
+
+
+		timeoutPromise(promiseRead(oModel, "/ProductSet('AD-1000')"))
+			.then(function() {
+				return timeoutPromise(promiseRead(oModel, "/ProductSet('AD-1000')/ToSupplier"))
+			})
+			.then(function() {
+				oModel.setProperty("/BusinessPartnerSet('0100000015')/Address/City", "Wiesloch");
+				oModel.submitChanges();
+				return timeoutPromise();
+			})
+			.then(function() {
+				oModel.setProperty("/BusinessPartnerSet('0100000015')/Address/City", "Mannheim");
+				oModel.submitChanges();
+				return timeoutPromise();
+			})
+			.then(function() {
+				oModel.setProperty("/BusinessPartnerSet('0100000015')/Address/City", "Quebec");
+				oModel.submitChanges();
+				// return timeoutPromise(promiseBatchSent(oModel));
+			});
+
 	});
 
 	asyncTest("test DataState Context Change",function(){
@@ -752,61 +897,67 @@
 						{
 							originalValue : "Flyer",
 							value : "blabla2",
-							invalidValue : null,
-							laundering: false
+							invalidValue: null,
+							laundering: true
 						},
-						"Setting a 'blabla2' to a string type binding"
+						"Setting a 'blabla2' to a string type binding on AD-1000"
 				);
 				oModel.submitChanges(
-					{ 
+					{
 						success: function() {
 							oModel.read("/ProductSet('HT-1000')", {
 								success: function() {
-									//switch to HT-1000 context
-									oNameBinding.setContext(oModel.createBindingContext("/ProductSet('HT-1000')"));
-									testDataState (oNameBinding,
-											function() {
-												oModel.setProperty("/ProductSet('HT-1000')/Name","blabla2");
-											},
-											{
-												originalValue : "Notebook Basic 15",
-												value : "blabla2",
-												invalidValue : null,
-												laundering: false
-											},
-											"Setting a 'blabla2' to a string type binding"
-									);
-									//switch back to AD-1000 context
-									oNameBinding.setContext(oModel.createBindingContext("/ProductSet('AD-1000')"));
-									testDataState (oNameBinding,
-											function() {
-												oModel.setProperty("/ProductSet('AD-1000')/Name","blabla3");
-											},
-											{
-												originalValue : "blabla2",
-												value : "blabla3",
-												invalidValue : null,
-												laundering: false
-											},
-											"Setting a 'blabla2' to a string type binding"
-									);
-									
-									//switch back to HT-1000 context
-									oNameBinding.setContext(oModel.createBindingContext("/ProductSet('HT-1000')"));
-									testDataState (oNameBinding,
-											function() {
-												oModel.setProperty("/ProductSet('HT-1000')/Name","blabla3");
-											},
-											{
-												originalValue : "Notebook Basic 15",
-												value : "blabla3",
-												invalidValue : null,
-												laundering: false
-											},
-											"Setting a 'blabla2' to a string type binding"
-									);
-									start()
-									
+									Promise.resolve().then(function() {
+										//switch to HT-1000 context
+										oNameBinding.setContext(oModel.createBindingContext("/ProductSet('HT-1000')"));
+										return testDataState (oNameBinding,
+												function() {
+													oModel.setProperty("/ProductSet('HT-1000')/Name", "blabla2");
+												},
+												{
+													originalValue : "Notebook Basic 15",
+													value : "blabla2",
+													invalidValue: null,
+													laundering: false
+												},
+												"Setting a 'blabla2' to a string type binding on HT-1000"
+										);
+									})
+									.then(function() {
+										//switch back to AD-1000 context
+										oNameBinding.setContext(oModel.createBindingContext("/ProductSet('AD-1000')"));
+										return testDataState(oNameBinding,
+												function() {
+													oModel.setProperty("/ProductSet('AD-1000')/Name", "blabla3");
+												},
+												{
+													originalValue : "blabla2",
+													value : "blabla3",
+													invalidValue: null,
+													laundering: false
+												},
+												"Setting a 'blabla3' to a string type binding on AD-1000"
+										);
+									})
+									.then(function() {
+										//switch back to HT-1000 context
+										oNameBinding.setContext(oModel.createBindingContext("/ProductSet('HT-1000')"));
+										return testDataState(oNameBinding,
+												function() {
+													oModel.setProperty("/ProductSet('HT-1000')/Name", "blabla3");
+												},
+												{
+													originalValue : "Notebook Basic 15",
+													value : "blabla3",
+													invalidValue: null,
+													laundering: false
+												},
+												"Setting a 'blabla3' to a string type binding on HT-1000"
+										);
+									})
+									.then(function() {
+										start()
+									});
 								}
 							});
 						},
@@ -826,80 +977,95 @@
 		// create dummy testdata
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
+				var oInputField = new sap.m.Input("ValidationInput", {
+					value: {
+						path: "TaxTarifCode",
+						type: new sap.ui.model.type.Float()
+					}
+				});
+				oInputField.setModel(oModel);
+				oFloatBinding = oInputField.getBinding("value");
+
 				var oContext = oModel.createBindingContext("/ProductSet('AD-1000')");
-				var oNameBinding = oModel.bindProperty("Name", oContext),
-					oFloatBinding = oModel.bindProperty("TaxTarifCode", oContext);
-				oFloatBinding.setType(new sap.ui.model.type.Float(), "string");
-				var oComositeBinding = new sap.ui.model.CompositeBinding([oNameBinding,oFloatBinding]);
+				oInputField.setBindingContext(oContext);
+
+				sap.ui.getCore().getMessageManager().registerObject(oInputField, true);
+
+				var oNameBinding = oModel.bindProperty("Name", oContext);
+
+				var oComositeBinding = new sap.ui.model.CompositeBinding([oNameBinding, oFloatBinding]);
 				oModel.addBinding(oNameBinding);
 				oModel.addBinding(oFloatBinding);
-				testDataState (oComositeBinding,
-						function() {
-							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
-						},
-						{
-							originalValue : "Flyer 1",
-							value : "blabla2 1",
-							invalidValue : null,
-							laundering: false
-						},
-						"Setting a 'blabla2' to a composite type binding"
-				);
-				testDataState (oComositeBinding,
-						function() {
-							try {
-								oFloatBinding.setvalue("StringToFloatType");
-							} catch (ex) {
-								//we need to catch this because type validation error is thrown
-							}
-							oModel.checkUpdate();
-						},
-						{
-							originalValue : "Flyer 1",
-							value : "blabla2 1",
-							invalidValue : null,
-							laundering: false
-						},
-						"Forcing type error with Composite Binding setting StringToFloatType"
-				);
-				oModel.removeBinding(oComositeBinding);
-				var oNameBinding = oModel.bindProperty("Name", oContext),
-					oFloatBinding = oModel.bindProperty("TaxTarifCode", oContext);
-				oFloatBinding.setType(new sap.ui.model.type.Float(), "string");
-				var oComositeBinding = new sap.ui.model.CompositeBinding([oNameBinding,oFloatBinding],true);
-				oModel.addBinding(oNameBinding);
-				oModel.addBinding(oFloatBinding);
-				
-				testDataState (oComositeBinding,
-						function() {
-							oModel.setProperty("/ProductSet('AD-1000')/Name","blabla2");
-						},
-						{
-							originalValue : "Flyer 1",
-							value : "blabla2 1",
-							invalidValue : null,
-							laundering: false
-						},
-						"Setting a 'blabla2' to a composite type binding"
-				);
-				testDataState (oComositeBinding,
-						function() {
-							try {
-								oFloatBinding.setvalue("StringToFloatType");
-							} catch (ex) {
-								//we need to catch this because type validation error is thrown
-							}
-							oModel.checkUpdate();
-						},
-						{
-							originalValue : "Flyer 1",
-							value : "blabla2 1",
-							invalidValue : null,
-							laundering: false
-						},
-						"Forcing type error with raw Composite Binding setting StringToFloatType"
-				);
-				start();
+
+				Promise.resolve().then(function() {
+					return testDataState (oComositeBinding,
+							function() {
+								oModel.setProperty("/ProductSet('AD-1000')/Name", "blabla2");
+							},
+							{
+								originalValue : "Flyer 1",
+								value : "blabla2 1",
+								invalidValue: null,
+								laundering: false
+							},
+							"Setting a 'blabla2' to a composite type binding"
+					);
+				})
+				.then(function() {
+					return testDataState (oComositeBinding,
+							function() {
+								oInputField.setValue("StringToFloatType");
+								oModel.checkUpdate();
+							},
+							{
+								originalValue : "Flyer 1",
+								value : "blabla2 1",
+								invalidValue: "blabla2 StringToFloatType",
+								laundering: false,
+								messages: 1
+							},
+							"Forcing type error with Composite Binding setting StringToFloatType"
+					);
+				})
+				.then(function() {
+
+
+
+					return testDataState(oComositeBinding,
+							function() {
+								oModel.setProperty("/ProductSet('AD-1000')/Name", "blabla3");
+								oInputField.setValue(1);
+							},
+							{
+								originalValue : "Flyer 1",
+								value : "blabla3 1",
+								invalidValue: null,
+								laundering: false,
+								messages: 0
+							},
+							"Setting a 'blabla3' to a composite type binding"
+					);
+				})
+				.then(function() {
+
+					return testDataState (oComositeBinding,
+							function() {
+								oInputField.setValue("StringToFloatType");
+								oModel.checkUpdate();
+							},
+							{
+								originalValue : "Flyer 1",
+								value : "blabla3 1",
+								invalidValue: "blabla3 StringToFloatType",
+								laundering: false,
+								messages: 1
+							},
+							"Forcing type error with raw Composite Binding setting StringToFloatType"
+					);
+				})
+				.then(function() {
+					start();
+				});
 			},
 			error: function() {
 				ok(false,"request failed");
@@ -918,7 +1084,7 @@
 				});
 		//let the message manager control the vertical layout for messages
 		sap.ui.getCore().getMessageManager().registerObject(oVerticalLayout, true);
-		
+
 		oVerticalLayout.addContent(oFloatInput);
 		oVerticalLayout.addContent(oNameInput);
 		oVerticalLayout.addContent(oCompositeInput);
@@ -937,20 +1103,20 @@
 							value : "1",
 							invalidValue : "StringToFloatType",
 							laundering: false,
-							messages:0
+							messages: 1
 						},
 						"Forcing Validation error on float input",
 						function() {
 							testDataState (oFloatInput.getBinding("value"),
 								function() {
-									oFloatInput.setValue("StringToFloatType"); //force a validation error
+									oFloatInput.setValue(1); //force a validation error
 								},
 								{
 									originalValue : "1",
 									value : "1",
-									invalidValue : "StringToFloatType",
+									invalidValue : null,
 									laundering: false,
-									messages:1
+									messages: 0
 								},
 								"Forcing Validation error on float input",
 								function() {
@@ -970,8 +1136,6 @@
 											function() {
 												oNameInput.setValue("Test1"); //async
 												sap.ui.getCore().getMessageManager().addMessages(oMessage1);
-												oNameInput.setValue("Test2");
-												sap.ui.getCore().getMessageManager().addMessages(oMessage2);
 											},
 											{
 												originalValue : "Flyer",
@@ -982,6 +1146,9 @@
 											},
 											"Added warning and Error on Name input",
 											function () {
+												oNameInput.setValue("Test2");
+												sap.ui.getCore().getMessageManager().addMessages(oMessage2);
+
 												testDataState (oNameInput.getBinding("value"),
 												function() {
 												},
@@ -997,7 +1164,6 @@
 													testDataState (oNameInput.getBinding("value"),
 															function() {
 																sap.ui.getCore().getMessageManager().removeMessages(oMessage1);
-																sap.ui.getCore().getMessageManager().removeMessages(oMessage2);
 															},
 															{
 																originalValue : "Flyer",
@@ -1008,6 +1174,7 @@
 															},
 															"Remove warning and Error on Name input",
 															function () {
+																sap.ui.getCore().getMessageManager().removeMessages(oMessage2);
 																testDataState (oNameInput.getBinding("value"),
 																		function() {
 																		},
@@ -1031,14 +1198,14 @@
 																	);
 															}
 														);
-													
+
 												}
 											);
 										}
 									);
 								}
 							);
-						}	
+						}
 					);
 			},
 			error: function() {
@@ -1046,7 +1213,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("test DataState and Messages on Composite Binding",function(){
 		var oVerticalLayout = new sap.ui.layout.VerticalLayout();
 		var oFloatInput = new sap.m.Input({value:{path:'TaxTarifCode', type:'sap.ui.model.type.Float'}});
@@ -1058,7 +1225,7 @@
 				});
 		//let the message manager control the vertical layout for messages
 		sap.ui.getCore().getMessageManager().registerObject(oVerticalLayout, true);
-		
+
 		oVerticalLayout.addContent(oFloatInput);
 		oVerticalLayout.addContent(oNameInput);
 		oVerticalLayout.addContent(oCompositeInput);
@@ -1084,18 +1251,18 @@
 						function() {
 							oCompositeInput.setValue("Test1 2");
 							sap.ui.getCore().getMessageManager().addMessages(oMessage1);
-							oCompositeInput.setValue("Test2 3");
-							sap.ui.getCore().getMessageManager().addMessages(oMessage2);
 						},
 						{
 							originalValue : "Flyer 1",
 							value : "Test1 2",
-							invalidValue : null,
+							invalidValue: null,
 							laundering: false,
-							messages:[oMessage1]
+							messages: 1
 						},
 						"Added Messages to Composite input",
 						function() {
+							oCompositeInput.setValue("Test2 3");
+							sap.ui.getCore().getMessageManager().addMessages(oMessage2);
 							testDataState (oCompositeInput.getBinding("value"),
 								function() {
 									// wait for second message update
@@ -1103,9 +1270,9 @@
 								{
 									originalValue : "Flyer 1",
 									value : "Test2 3",
-									invalidValue : null,
+									invalidValue: null,
 									laundering: false,
-									messages:[oMessage1, oMessage2]
+									messages: 2
 								},
 								"Added Messages to Composite input",
 								function() {
@@ -1124,6 +1291,202 @@
 			error: function() {
 				ok(false,"request failed");
 			}
+		});
+	});
+
+
+	asyncTest("test DataState and Messages on Composite Binding 2",function(){
+		var oInput = new sap.m.Input("compositeInput", {
+			value: {
+				parts: [
+					{ path: "/ProductSet('AD-1000')/Name" },
+					{ path: "/ProductSet('AD-1000')/TaxTarifCode", type:'sap.ui.model.type.Float' }
+				]
+			}
+		});
+		//let the message manager control the vertical layout for messages
+		sap.ui.getCore().getMessageManager().registerObject(oInput, true);
+		var oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
+		var oMessageManager  = sap.ui.getCore().getMessageManager();
+
+		oMessageManager.registerMessageProcessor(oMessageProcessor);
+
+		oInput.placeAt("content");
+		oInput.setModel(oModel);
+		// create dummy testdata
+		oModel.read("/ProductSet('AD-1000')");
+		oModel.attachBatchRequestCompleted(function() {
+			var oBinding = oInput.getBinding("value");
+			var oDataState = oBinding.getDataState();
+
+			var oMessage1 = new sap.ui.core.message.Message({
+				processor: oMessageProcessor,
+				type: sap.ui.core.MessageType.Error,
+				message: "All is lost",
+				target: "compositeInput/value"
+			});
+
+			equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
+
+
+			Promise.resolve()
+			.then(function() {
+				return testDataState(oBinding, function() {}, {
+						originalValue : "Flyer 1",
+						value : "Flyer 1",
+						invalidValue: null,
+						laundering: false,
+						messages: 0
+					}, "Initial status of Composite input after read"
+				);
+			})
+			.then(function() {
+				oMessageManager.addMessages(oMessage1);
+				return testDataState(oBinding, function() {}, {
+						originalValue : "Flyer 1",
+						value : "Flyer 1",
+						invalidValue: null,
+						laundering: false,
+						messages: 1
+					}, "Added Message to Composite input"
+				);
+			})
+			.then(function() {
+				oInput.setValue("NewName 2");
+
+				return testDataState(oBinding, function() {}, {
+						originalValue : "Flyer 1",
+						value : "NewName 2",
+						invalidValue: null,
+						laundering: false,
+						messages: 1
+					}, "Added Message to Composite input"
+				);
+			})
+			.then(function() {
+				oInput.setValue("NewName Unfug");
+
+				return testDataState(oBinding, function() {}, {
+						originalValue : "Flyer 1",
+						value : "NewName 2",
+						invalidValue: "NewName Unfug",
+						laundering: false,
+						messages: 2
+					}, "Added Message to Composite input"
+				);
+			})
+			.then(function() {
+				oInput.setValue("NewName 1");
+
+				return testDataState(oBinding, function() {}, {
+						originalValue : "Flyer 1",
+						value : "NewName 1",
+						invalidValue: null,
+						laundering: false,
+						messages: 1
+					}, "Added Message to Composite input"
+				);
+			})
+			.then(function() {
+				oMessageManager.removeMessages(oMessage1);
+				return testDataState(oBinding, function() {}, {
+						originalValue : "Flyer 1",
+						value : "NewName 1",
+						invalidValue: null,
+						laundering: false,
+						messages: 0
+					}, "Added Message to Composite input"
+				);
+			})
+			.then(function() {
+				oInput.destroy();
+				start();
+			});
+		});
+	});
+
+	asyncTest("test DataState and Messages on Composite Binding with type",function(){
+		var oInput = new sap.m.Input("compositeInput", {
+			value: {
+				parts: [
+					{ path: "/ProductSet('AD-1000')/Price" },
+					{ path: "/ProductSet('AD-1000')/CurrencyCode" }
+				],
+				type: 'sap.ui.model.type.Currency'
+			}
+		});
+		//let the message manager control the vertical layout for messages
+		sap.ui.getCore().getMessageManager().registerObject(oInput, true);
+		var oMessageProcessor = new sap.ui.core.message.ControlMessageProcessor();
+		var oMessageManager  = sap.ui.getCore().getMessageManager();
+
+		oMessageManager.registerMessageProcessor(oMessageProcessor);
+
+		oInput.placeAt("content");
+		oInput.setModel(oModel);
+		// create dummy testdata
+		oModel.read("/ProductSet('AD-1000')");
+		oModel.attachBatchRequestCompleted(function() {
+			var oBinding = oInput.getBinding("value");
+			var oDataState = oBinding.getDataState();
+
+			var oMessage1 = new sap.ui.core.message.Message({
+				processor: oMessageProcessor,
+				type: sap.ui.core.MessageType.Error,
+				message: "All is lost",
+				target: "compositeInput/value"
+			});
+
+			equal(oDataState.getControlMessages().length, 0, "There should be no control messages on the composite datastate");
+
+
+			Promise.resolve()
+			.then(function() {
+				return testDataState(oBinding, function() {}, {
+						originalValue : "CAD0.00",
+						value : "CAD0.00",
+						invalidValue: null,
+						laundering: false,
+						messages: 0
+					}, "Initial status of Composite input after read"
+				);
+			})
+			.then(function() {
+				oMessageManager.addMessages(oMessage1);
+				return testDataState(oBinding, function() {}, {
+						originalValue : "CAD0.00",
+						value : "CAD0.00",
+						invalidValue: null,
+						laundering: false,
+						messages: 1
+					}, "Added Message to Composite input"
+				);
+			})
+			.then(function() {
+				oInput.setValue("CADHORST")
+				return testDataState(oBinding, function() {}, {
+						originalValue : "CAD0.00",
+						value : "CAD0.00",
+						invalidValue: "CADHORST",
+						laundering: false,
+						messages: 2
+					}, "Added Message to Composite input"
+				);
+			})
+			.then(function() {
+				oInput.setValue("CAD500.00")
+				return testDataState(oBinding, function() {}, {
+						originalValue : "CAD0.00",
+						value : "CAD500.00",
+						invalidValue: null,
+						laundering: false,
+						messages: 1
+					}, "Added Message to Composite input"
+				);
+			})
+			.then(function() {
+				start();
+			});
 		});
 	});
 

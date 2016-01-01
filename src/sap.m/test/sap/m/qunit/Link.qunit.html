@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>Test Page for sap.m.Link</title>
 		<script id="sap-ui-bootstrap"
@@ -11,7 +11,7 @@
 				data-sap-ui-libs="sap.m"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -96,7 +96,7 @@
 			oLinkNRS.setSubtle(false);
 			oLinkNRS.destroy();
 		});
-		
+
 		test("Non-rendered Emphasized values", function() {
 			// this checks for the bug in BCP message 1472023641 - no need to actually render the Link (issue is about non-rendered Links) or write checks, it would fail with a JS error
 			expect(0);
@@ -105,7 +105,7 @@
 			oLinkNRE.setEmphasized(false);
 			oLinkNRE.destroy();
 		});
-		
+
 		test("Rendered initial Subtle values", function() {
 			expect(1);
 			var oLinkRIS = new sap.m.Link({subtle: true});
@@ -114,7 +114,7 @@
 			ok(oLinkRIS.$().hasClass('sapMLnkSubtle'), "Link should have the 'sapMLnkSubtle' CSS class.");
 			oLinkRIS.destroy();
 		});
-		
+
 		test("Rendered initial Emphasized values", function() {
 			expect(1);
 			var oLinkRIE = new sap.m.Link({emphasized: true});
@@ -180,6 +180,14 @@
 
 			oLink1.setEmphasized(false);
 			strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
+
+			oLink1.addAriaLabelledBy("id1");
+			sap.ui.getCore().applyChanges();
+			strictEqual(oLink1.$().attr("aria-labelledby"), "id1 " + oLink1.getId(), "Property 'aria-labelledby' should contain the link ID");
+
+			oLink1.removeAriaLabelledBy("id1");
+			sap.ui.getCore().applyChanges();
+			strictEqual(oLink1.$().attr("aria-labelledby"), undefined, "Property 'aria-labelledby' should not exist");
 
 			oLink1.destroy();
 		});

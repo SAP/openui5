@@ -2,14 +2,14 @@
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.ui.core.util.MockServer Class</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -36,7 +36,7 @@ module('GIVEN data and complex filter features in MockServer', {
    		this.simpleJSON = 'testdata/apfapp/';
    		this.oMockServer.simulate(this.simpleXML, this.simpleJSON);
    		this.oMockServer.start();
-    	
+
         this.log = function (text) {
             var prevLevel = jQuery.sap.log.getLevel();
             jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
@@ -269,17 +269,17 @@ test("POST table", function () {
     response = jQuery.sap.sjax({url: "/myService/TestQueryResults(ID='ID_102',P_SAPClient=999)" });
     ok(response.data.d !== undefined, "match");
 });
-	 
+
 	 module('MockServer URI ', {
 	        setup: function () {
-	            
+
         		this.simpleXML = 'testdata/apfapp/tMockServerFeatureTestingMetadata.xml';
         		this.simpleJSON = 'testdata/apfapp/';
-	        	this.localhost = "http://localhost:9999"; /* avoid running on the same host:port -> test will fail! */ 
+	        	this.localhost = "http://localhost:9999"; /* avoid running on the same host:port -> test will fail! */
 	            this.path = "/mickeyMouse"
 	            this.absUri = this.simpleXML;
 	            this.metaUri = "/$metadata";
-	            
+
 	        }
 	    });
 	    test("test full URL path", function() {
@@ -313,7 +313,7 @@ test("POST table", function () {
 
 	        stubbedServer.destroy();
 	    });
-	    
+
 //TODO check in IE8
 	/*    test("mock server w/0 host but request URL path with host", function() {
 	        var stubbedServer = new sap.ui.core.util.MockServer({
@@ -701,7 +701,7 @@ test("POST table", function () {
 	    });
 */
 
-	
+
 </script>
 </head>
 <body>

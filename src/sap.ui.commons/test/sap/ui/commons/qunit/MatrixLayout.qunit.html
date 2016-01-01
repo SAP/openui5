@@ -6,7 +6,7 @@
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -14,7 +14,7 @@
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -29,7 +29,7 @@
 		oML1.setWidths(["100px", "150px", "300px", "auto", "200px"]);
 		for (var i = 0; i < 5; ++i) {
 			var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("Matrix1-" + i);
-			oMLR.setHeight((20 + 5 * i) + "px"); 
+			oMLR.setHeight((20 + 5 * i) + "px");
 			oML1.addRow(oMLR);
 			for (var j = 0; j < 5; ++j) {
 				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("Matrix1-" + i + "-" + j);
@@ -40,7 +40,7 @@
 				oTV.setText("Cell @" + i + "," + j);
 				oTV.setDesign(sap.ui.commons.TextViewDesign.H2); // to make text bigger than the cells
 			}
-		} 
+		}
 		oML1.placeAt("uiArea1");
 
 		var oML2 = new sap.ui.commons.layout.MatrixLayout("Matrix2");
@@ -57,10 +57,10 @@
 				oImg.setSrc("../images/SAPLogo.gif");
 				oImg.setAlt("Cell @" + i + "," + j);
 				if(i==1){
-					oImg.setHeight("20px"); 
+					oImg.setHeight("20px");
 				}
 				if(j==1){
-					oImg.setWidth("20px"); 
+					oImg.setWidth("20px");
 				}
 			}
 		}
@@ -85,17 +85,17 @@
 				oImg.setSrc("../images/SAPLogo.gif");
 				oImg.setAlt("Cell @" + i + "," + j);
 				if(i==1){
-					oImg.setHeight("20px"); 
+					oImg.setHeight("20px");
 				}
 				if(j==1){
-					oImg.setWidth("20px"); 
+					oImg.setWidth("20px");
 				}
 			}
 		}
 		oML3.placeAt("uiArea3");
 
 		var oML4 = new sap.ui.commons.layout.MatrixLayout("Matrix4", {
-			layoutFixed: true, 
+			layoutFixed: true,
 			width: "600px",
 			columns: 3
 		}).placeAt("uiArea4");

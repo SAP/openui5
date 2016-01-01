@@ -1,0 +1,135 @@
+/* ============================================= */
+/* CSS for support performance statistics                  */
+/* ============================================= */
+
+.sapUiInteractionTreeContainer {
+	position: relative;
+}
+
+.sapUiInteractionTree {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sapUiInteractionTree ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sapUiInteractionTreeItem {
+	box-sizing: border-box;
+
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+}
+
+.sapUiInteractionTreeItemLeft {
+	width: 20rem;
+	box-sizing: border-box;
+	border-right: 1px solid #DDDDDD;
+	background-color: #FAFAFA;
+}
+
+.sapUiInteractionTreeItemLeft div {
+	display: inline-block;
+}
+
+.sapUiInteractionTreeItemRight {
+	-webkit-box-flex: 1;
+	-webkit-flex-grow: 1;
+	-ms-flex: 1 1;
+	flex-grow: 1;
+
+	box-sizing: border-box;
+	border-right: 1px solid #DDDDDD;
+}
+
+.sapUiInteractionItemComponentText {
+	font-weight: bold;
+}
+
+.sapUiInteractionItemTriggerText {
+
+}
+
+.sapUiHiddenUiInteractionItems {
+	display: none;
+}
+
+.sapUiIcon.sapUiInteractionTreeIcon {
+	cursor: pointer;
+	display: inline-block;
+	float: right;
+	padding: 0.6125rem;
+	height: 1rem;
+	width: 1rem;
+}
+
+.sapUiInteractionItemDiv {
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.sapUiInteractionRequestLeft {
+	box-sizing: border-box;
+}
+
+.sapUiInteractionTimeframe {
+	background-color: blue;
+	display: inline-block;
+	min-width: 1px;
+}
+
+.sapUiInteractionTimeInteractionFrame {
+	height: 1rem;
+	margin: 0.5rem 0;
+}
+
+.sapUiInteractionTimeframe.sapUiInteractionTimeRequestFrame {
+	background-color: red;
+	margin-top: 0.2rem;
+	height: 0.8rem;
+}
+
+.sapUiInteractionRequestIcon {
+	margin: 0.125rem;
+	display: inline-block;
+	background-color: red;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 100%;
+}
+
+.sapUiInteractionRequest {
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.sapUiInteractionHeader {
+	height: 2.5rem;
+}
+
+.sapUiInteractionGridLinesContainer {
+	background-color: white;
+	position: absolute;
+	left: 20rem;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.sapUiInteractionGridLine {
+	background-color: #DDDDDD;
+	position: absolute;
+	width: 1px;
+	height: 100%;
+}
+
+.sapUiInteractionGridLineIntervalText {
+	position: absolute;
+	top: 0.5rem;
+	color: #848484;
+}

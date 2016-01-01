@@ -7,48 +7,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 
 	/**
-	 * Tokenizer renderer. 
+	 * Tokenizer renderer.
 	 * @namespace
 	 */
 	var TokenizerRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenizerRenderer.render = function(oRm, oControl){
 		//write the HTML into the render manager
-		oRm.write("<div tabindex=\"0\"");
+		if (oControl.getParent() && (oControl.getParent() instanceof sap.m.MultiInput || oControl.getParent() instanceof sap.m.MultiComboBox)) {
+			oRm.write("<div tabindex=\"-1\"");
+		} else {
+			oRm.write("<div tabindex=\"0\"");
+		}
+
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMTokenizer");
-		
+
 		var aTokens = oControl.getTokens();
 		if (!aTokens.length) {
 			oRm.addClass("sapMTokenizerEmpty");
 		}
-		
+
 		oRm.writeClasses();
-		
-		oRm.writeAttribute("role", "list");		
-		
+
+		oRm.writeAttribute("role", "list");
+
 		var oAccAttributes = {}; // additional accessibility attributes
-		
+
 		//ARIA attributes
 		oAccAttributes.labelledby = {
 			value: oControl._sAriaTokenizerLabelId,
 			append: true
 		};
-		
+
 		oRm.writeAccessibilityState(oControl, oAccAttributes);
-		
+
 		oRm.write(">"); // div element
 
 		oControl._bCopyToClipboardSupport = false;
-		
+
 		if ((Device.system.desktop || Device.system.combi) && aTokens.length) {
 			oRm.write("<div id='" + oControl.getId() + "-clip' class='sapMTokenizerClip'");
 			if (window.clipboardData) { //IE
@@ -58,22 +63,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			oRm.write(">&nbsp;</div>");
 			oControl._bCopyToClipboardSupport = true;
 		}
-	
+
 		var sClass = "class=\"sapMTokenizerScrollContainer\">";
 		var sSpace = " ";
-			
+
 		var sIdScrollContainer = "id=" + oControl.getId() + "-scrollContainer";
 		oRm.write("<div" + sSpace + sIdScrollContainer + sSpace + sClass);
-		
+
 		TokenizerRenderer._renderTokens(oRm, oControl);
-		 
+
 		oRm.write("</div>");
 		oRm.write("</div>");
 	};
-	
+
 	/**
 	 * renders the tokens
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */

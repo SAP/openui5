@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.ValueHelpField
   Author: SAP
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -14,20 +14,20 @@
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<!-- Control initialization -->
 	<script language="javascript">
-		
+
 		var sSelected = "";
-		
+
 		function handleSelected(oEvent){
 			sSelected = oEvent.getParameters().selectedButtonId;
 		}
-	
+
 		var oSegmentedButton = new sap.ui.commons.SegmentedButton({id:"mySB",buttons:[new sap.ui.commons.Button({id:"But1",icon:"../images/sb/list.png",iconHovered:"../images/sb/list_hover.png",iconSelected:"../images/sb/list_hover.png"}),
 	                                                                        new sap.ui.commons.Button({id:"But2",icon:"../images/sb/card.png",iconHovered:"../images/sb/card_hover.png",iconSelected:"../images/sb/card_hover.png"}),
 	                                                                        new sap.ui.commons.Button({id:"But3",icon:"../images/sb/tiles.png",iconHovered:"../images/sb/tiles_hover.png",iconSelected:"../images/sb/tiles_hover.png"}),
@@ -41,14 +41,14 @@
 		module("Appearance");
 
 		test("Output", function() {
-			
+
 			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
-			ok(jQuery.sap.byId("But2").hasClass('sapUiSegButtonSelected'), "Button with id 'But2' selected"); 
-			
-			equal(jQuery.sap.byId("But2").children("img").attr('src'), "../images/sb/card_hover.png", "Button selected: Use iconHovered instead of icon!"); 
+			ok(jQuery.sap.byId("But2").hasClass('sapUiSegButtonSelected'), "Button with id 'But2' selected");
+
+			equal(jQuery.sap.byId("But2").children("img").attr('src'), "../images/sb/card_hover.png", "Button selected: Use iconHovered instead of icon!");
 			equal(jQuery.sap.byId("mySB-radiogroup").children("button").length, 6, "All Buttons rendered");
 		});
-	
+
 		asyncTest("ARIA", function() {
 			equal(jQuery.sap.byId("mySB-radiogroup").attr("role"), "radiogroup", "role = radiogroup");
 			equal(jQuery.sap.byId("mySB-radiogroup").attr("aria-disabled"), "false", "aria-disabled = false");
@@ -59,7 +59,7 @@
 				start();
 			},500);
    		});
-		
+
 		test("Visibility", function() {
 			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
 			oSegmentedButton.setVisible(false);
@@ -69,8 +69,8 @@
 			sap.ui.getCore().applyChanges();
 			ok(jQuery.sap.byId("mySB").get(0), "SegmentedButton rendered");
 		});
-		
-		asyncTest("Icons", function() { 
+
+		asyncTest("Icons", function() {
 			oSegmentedButton.setSelectedButton("But3");
 			setTimeout(function() {
 				equal(jQuery.sap.byId("But2").children("img").attr('src'), "../images/sb/card.png", "Button deselected: Use icon again");
@@ -85,8 +85,8 @@
 		});
 
 		module("Interaction");
-		
-		
+
+
 		test("event", function() {
 			qutils.triggerMouseEvent("But5", "click");
 			equal(sSelected, "But5","Button selected with mouse- event fired");
@@ -95,7 +95,7 @@
 	</script>
 
 	<title>qunit Test for SegmentedButton</title>
- 
+
 </head>
 <body class="sapUiBody">
 	<h1 id="qunit-header">QUnit tests: sap.ui.commons.SegmentedButton</h1>

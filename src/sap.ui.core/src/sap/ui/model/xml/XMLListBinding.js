@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	"use strict";
 
 
-	
+
 	/**
 	 *
 	 * @class
@@ -21,10 +21,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 * @alias sap.ui.model.xml.XMLListBinding
-	 * @extends sap.ui.model.ListBinding
+	 * @extends sap.ui.model.ClientListBinding
 	 */
 	var XMLListBinding = ClientListBinding.extend("sap.ui.model.xml.XMLListBinding");
-	
+
 	/**
 	 * Return contexts for the list or a specified subset of contexts
 	 * @param {int} [iStartIndex=0] the startIndex where to start the retrieval of contexts
@@ -37,22 +37,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	XMLListBinding.prototype.getContexts = function(iStartIndex, iLength) {
 		this.iLastStartIndex = iStartIndex;
 		this.iLastLength = iLength;
-		
+
 		if (!iStartIndex) {
 			iStartIndex = 0;
 		}
 		if (!iLength) {
 			iLength = Math.min(this.iLength, this.oModel.iSizeLimit);
 		}
-	
+
 		var aContexts = this._getContexts(iStartIndex, iLength),
 			oContextData = {};
-		
+
 		if (this.bUseExtendedChangeDetection) {
 			for (var i = 0; i < aContexts.length; i++) {
 				oContextData[aContexts[i].getPath()] = this.oModel._getObject(aContexts[i].getPath())[0];
 			}
-	
+
 			//Check diff
 			if (this.aLastContexts && iStartIndex < this.iLastEndIndex) {
 				var that = this;
@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 				});
 				aContexts.diff = aDiff;
 			}
-		
+
 			this.iLastEndIndex = iStartIndex + iLength;
 			this.aLastContexts = aContexts.slice(0);
 			this.oLastContextData = {};
@@ -75,10 +75,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 				that.oLastContextData[sKey] = oNode.cloneNode(true);
 			});
 		}
-	
+
 		return aContexts;
 	};
-	
+
 	XMLListBinding.prototype.getCurrentContexts = function() {
 		if (this.bUseExtendedChangeDetection) {
 			return this.aLastContexts || [];
@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			return this.getContexts(this.iLastStartIndex, this.iLastLength);
 		}
 	};
-	
+
 	/**
 	 * Update the list, indices array and apply sorting and filtering
 	 * @private
@@ -113,20 +113,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			this.iLength = 0;
 		}
 	};
-	
+
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
-	 * 
+	 *
 	 * @param {boolean} bForceupdate
-	 * 
+	 *
 	 */
 	XMLListBinding.prototype.checkUpdate = function(bForceupdate){
-		
+
 		if (this.bSuspended && !this.bIgnoreSuspend && !bForceupdate) {
 			return;
 		}
-		 
+
 		if (!this.bUseExtendedChangeDetection) {
 			var oList = this.oModel._getObject(this.sPath, this.oContext);
 			if (!this.oList || !oList || oList.length != this.oList.length || bForceupdate) {
@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		} else {
 			var bChangeDetected = false;
 			var that = this;
-			
+
 			//If the list has changed we need to update the indices first
 			var oList = this.oModel._getObject(this.sPath, this.oContext);
 			if (oList && this.oList.length != oList.length) {
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			if (!jQuery.sap.equal(this.oList, oList)) {
 				this.update();
 			}
-			
+
 			//Get contexts for visible area and compare with stored contexts
 			var aContexts = this._getContexts(this.iLastStartIndex, this.iLastLength);
 			if (this.aLastContexts) {
@@ -171,7 +171,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			}
 		}
 	};
-	
+
 
 	return XMLListBinding;
 

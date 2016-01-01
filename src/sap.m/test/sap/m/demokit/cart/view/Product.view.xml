@@ -39,7 +39,7 @@
 					<ObjectAttribute
 						text="{SupplierName}" />
 					<ObjectAttribute
-						text="{ShortDescription}" /> 
+						text="{ShortDescription}" />
 					<ObjectAttribute
 						text="{Weight}g" />
 				</attributes>

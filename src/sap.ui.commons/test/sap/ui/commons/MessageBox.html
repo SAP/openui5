@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html style="height: 100%">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>MessageBox -sap.ui.commons</title>
 
@@ -19,7 +19,7 @@
 
 		    function fnCallback() {
 				var s="callback called with [" + jQuery.makeArray(arguments).toString() + "]";
-				jQuery.sap.log.info(s);  
+				jQuery.sap.log.info(s);
 			    if ( bReportCallback ) {
 					alert(s);
 			    }
@@ -47,7 +47,7 @@
 
 		    function mbox(sIcon) {
 			    return function() {
-		    	sap.ui.commons.MessageBox.show("This message box should show a " + sIcon + " Icon.", 
+		    	sap.ui.commons.MessageBox.show("This message box should show a " + sIcon + " Icon.",
 		    			sIcon,
 		    	        "MessageBox of type " + sIcon,
 		    	        [sap.ui.commons.MessageBox.Action.YES,sap.ui.commons.MessageBox.Action.NO],
@@ -57,11 +57,11 @@
 		    };
 
 		    function doComplexMessageBox(){
-		    	sap.ui.commons.MessageBox.show("Accessing the data in backend 08-15 failed.\nWithout that data creating the report doesn't make much sense.\n\nWhat would you like to do?", 
+		    	sap.ui.commons.MessageBox.show("Accessing the data in backend 08-15 failed.\nWithout that data creating the report doesn't make much sense.\n\nWhat would you like to do?",
 	    			sap.ui.commons.MessageBox.Icon.ERROR,
 	    	        "Backend Access Error",
 	    	        [sap.ui.commons.MessageBox.Action.ABORT,sap.ui.commons.MessageBox.Action.RETRY,sap.ui.commons.MessageBox.Action.IGNORE],
-	    	        function(oAction) { 
+	    	        function(oAction) {
 	    		  		fnCallback.apply(this, arguments);
 	    		  		if ( oAction === sap.ui.commons.MessageBox.Action.IGNORE ) {
 	    	               	sap.ui.commons.MessageBox.alert("Stupid humans!", fnCallback);
@@ -83,7 +83,7 @@
 					if ( typeof s === "string" ) {
 						s = new sap.ui.commons.TextView({text:s});
 					}
-					if ( s instanceof sap.ui.core.Element && !(s instanceof sap.ui.commons.layout.MatrixLayoutCell) ) { 
+					if ( s instanceof sap.ui.core.Element && !(s instanceof sap.ui.commons.layout.MatrixLayoutCell) ) {
 						s = new sap.ui.commons.layout.MatrixLayoutCell({colSpan:255, content: s});
 					}
 					oLayout.createRow(s);
@@ -159,11 +159,11 @@
 				});
 
 				// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId)
-				sap.ui.commons.MessageBox.show(oLayout, 
+				sap.ui.commons.MessageBox.show(oLayout,
 		    		sap.ui.commons.MessageBox.Icon.WARNING,
 		    	    "Title of first MessageBox",
 		    	    [sap.ui.commons.MessageBox.Action.YES, sap.ui.commons.MessageBox.Action.NO],
-		    	    function(oAction) { 
+		    	    function(oAction) {
 						if ( oAction === sap.ui.commons.MessageBox.Action.YES ) {
 							var oCheck = sap.ui.getCore().byId("checkBoxId");
 							var sText = "Checkbox is " + (oCheck.getChecked() ? "" : "not ") + "checked";
@@ -182,25 +182,25 @@
 	<body class="sapUiBody" role="application">
 		<h1>Test Page for sap.ui.commons.MessageBox</h1>
 
-		<span>Some variants of the alert() substitute: </span><br/>
-		<div id="uiAlert"></div><!--  <span id="uiAlert1"></span>&nbsp;<span id="uiAlert2"></span>&nbsp;<span id="uiAlert3"></span>&nbsp;<br/> -->
-		<br/>
-		<div id="uiArea"></div>		
-		<span>Same for the confirm() substitute:</span><br/>
-		<div id="uiConfirm"></div><!--  <span id="uiConfirm1"></span><span id="uiConfirm2"></span><br/> -->
-		<br/>
-		<span>All available message box types / icons:</span><br/>
-		<div id="uiIcons"></div><!-- <span id="uiIcon1"></span><span id="uiIcon2"></span><span id="uiIcon3"></span><span id="uiIcon4"></span><span id="uiIcon5"></span><span id="uiIcon6"></span><br/> -->
-		<br/>
-		<span>A slightly more complex use case: </span><br/>
-		<div id="uiComplex"></div><!-- <span id="uiComplex1"></span><br/> -->
-		<br/>
-		<span>A case with a control as "message": </span><br/>
+		<span>Some variants of the alert() substitute: </span><br>
+		<div id="uiAlert"></div><!--  <span id="uiAlert1"></span>&nbsp;<span id="uiAlert2"></span>&nbsp;<span id="uiAlert3"></span>&nbsp;<br> -->
+		<br>
+		<div id="uiArea"></div>
+		<span>Same for the confirm() substitute:</span><br>
+		<div id="uiConfirm"></div><!--  <span id="uiConfirm1"></span><span id="uiConfirm2"></span><br> -->
+		<br>
+		<span>All available message box types / icons:</span><br>
+		<div id="uiIcons"></div><!-- <span id="uiIcon1"></span><span id="uiIcon2"></span><span id="uiIcon3"></span><span id="uiIcon4"></span><span id="uiIcon5"></span><span id="uiIcon6"></span><br> -->
+		<br>
+		<span>A slightly more complex use case: </span><br>
+		<div id="uiComplex"></div><!-- <span id="uiComplex1"></span><br> -->
+		<br>
+		<span>A case with a control as "message": </span><br>
 		<div id="uiLayoutContent"></div>
-		<br/>
-		<span id="uiOptions"></span><br/>
-		<br/>
-		You might also modify the language (either in the browser settings or by adding the URL parameter sap-ui-language=...).<br/>
+		<br>
+		<span id="uiOptions"></span><br>
+		<br>
+		You might also modify the language (either in the browser settings or by adding the URL parameter sap-ui-language=...).<br>
 
 	</body>
 </html>

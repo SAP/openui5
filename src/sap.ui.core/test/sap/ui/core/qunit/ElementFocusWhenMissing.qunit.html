@@ -1,35 +1,35 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested method: sap.ui.core.Element.focus()
   Author: d046011
 -->
 
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for sap.ui.core.Element.focus() when called on missing Elements</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-libs="sap.ui.commons"
 			data-sap-ui-noConflict="true" >
 		</script>
-    
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	
+
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script language="javascript">
-			
+
 			var iPopupDelay = 10; // delay in ms when opening or closing the popup (meant for opening without delay)
 			var oDialog;
-    	
-    	
+
+
     	/**
     	 * Opens A Dialog, then opens a BusyIndicator (which remembers the last focused element which is in the Dialog).
     	 * Then this closes the Dialog again, which removes the focused element.
@@ -38,19 +38,19 @@
     	 */
     	asyncTest("Focus missing element - actual CSN testcase", function() {
     		expect(1);
-    		
+
     		oDialog = new sap.ui.commons.Dialog({
     			title : "Some Title",
     			modal: true,
     			buttons : [new sap.ui.commons.Button({text:"OK"})]
     		});
-    			
+
     		oDialog.open();
 
 				setTimeout(function() {
 					sap.ui.core.BusyIndicator.show(0);
 					oDialog.close();
-					
+
 					setTimeout(function() {
 						sap.ui.core.BusyIndicator.hide();
 						ok(true, "when this checkpoint is reached, the test is passed")

@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.RatingIndicator
   Author: d046314
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>RatingIndicator - sap.ui.commons</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.RatingIndicator.gif">
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -18,7 +18,7 @@
 		data-sap-ui-libs="sap.ui.commons"
 		data-sap-ui-language=en>
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -29,9 +29,9 @@
 	jQuery.sap.require("sap.ui.commons.RatingIndicator");
 
 	var oRatings = {};
-	
+
 	var fnOnLoad = function() {
-		
+
 		var initRating = function(idx, iMax, fVal, bVisible, bEditable, sVisual, bCustomIcons, sTooltip, fAveragrValue){
 			var sId = "oRating" + idx;
 			var sAreaId = "uiArea" + idx;
@@ -39,13 +39,13 @@
 			var oUiArea = document.createElement("div");
 			oUiArea.id = sAreaId;
 			oBody.appendChild(oUiArea);
-			
+
 			var oRating = new sap.ui.commons.RatingIndicator(sId);
 			if(iMax != -1) oRating.setMaxValue(iMax);
 			if(fVal != -1) oRating.setValue(fVal);
 
 			if(fAveragrValue != -1) oRating.setAverageValue(fAveragrValue);
-			
+
 			if(bVisible != -1) oRating.setVisible(bVisible);
 			if(bEditable != -1) oRating.setEditable(bEditable);
 			if(sVisual) oRating.setVisualMode(sVisual);
@@ -55,13 +55,13 @@
 				oRating.setIconUnselected("../images/rating/star_unselected.png");
 				oRating.setIconHovered("../images/rating/star_hover.png");
 			}
-			
+
 			sap.ui.setRoot(sAreaId, oRating);
 			oRatings[sId] = oRating;
 		};
 
 		var nV = sap.ui.commons.RatingIndicator.NoValue;
-		
+
 		//         id mx  val visible  edit   visual  customIcons    tooltip      average
 		initRating(1, -1,  -1,    -1,    -1, null,         false, false,            -1); //
 		initRating(2,  6,   3,  true, false, "Half",       true,  false,            -1); //
@@ -76,7 +76,7 @@
 	jQuery(fnOnLoad);
 
 	</script>
-	
+
 	<!-- Test functions -->
 	<script language="javascript">
 
@@ -201,7 +201,7 @@
 		qutils.triggerEvent("click", "oRating1-itm-4");
 		ok(!handlerCalled, "Event should not be triggered.");
 	});
-	
+
 
 	module("Visual Appearence");
 
@@ -309,29 +309,29 @@
 		checkTooltip("oRating4", "Custom Tooltip (editable control)", "Custom Tooltip", function(){return "";});
 	});
 
-	
-	
+
+
 	test("Average Value", function() {
-		
+
 		fnTestAverage(oRatings["oRating7"]);
 		fnTestAverage(oRatings["oRating8"]);
 		fnTestAverage(oRatings["oRating9"]);
-		
-		
+
+
 		function fnTestAverage(oRating) {
-			
+
 			var oRating = oRatings["oRating7"];
 			var $Dom = oRating.$();
-			
+
 			var fAverageValue = oRating.getAverageValue();
-			
-			
+
+
 			ok(oRating.getValue() == sap.ui.commons.RatingIndicator.NoValue, "No value set.");
 			ok(fAverageValue == 3.5, "Average value set.");
-			
+
 			var $children = $Dom.children(".sapUiRatingItm");
 			$children.each(function(iIndex, oChild) {
-				
+
 				var fRest = fAverageValue - iIndex;
 				if (fRest > 1) {
 					fRest = 1;
@@ -339,20 +339,20 @@
 					fRest = 0;
 				}
 				fRest = 1 - fRest;
-				
+
 				var fPercent = Math.round(100 * fRest);
-				
+
 				var $OverflowItem = jQuery(oChild).children(".sapUiRatingItmOvrflw");
 				ok(fPercent + "%" == $OverflowItem[0].style.width, "Correct star percentage");
 			});
 		}
-		
-		
-		
+
+
+
 	});
 
 	</script>
-  
+
 </head>
 <body>
 	<h1 id="qunit-header">QUnit tests: sap.ui.commons.RatingIndicator</h1>

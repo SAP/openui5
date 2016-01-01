@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta charset="UTF-8">
+		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Action Select - sap.m</title>
 		<style type="text/css">
@@ -28,7 +28,7 @@
 			.labelSelectTestPageHeader {
 				margin: 1rem 2rem 0 2rem;
 			}
-			
+
 		</style>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
@@ -43,10 +43,10 @@
 			}),
 
 			// select controls
-			oActionSelect0 = new sap.m.ActionSelect({	// the selected item is not specified, the first one will be selected
+			oActionSelect0 = new sap.m.ActionSelect("content_left",{	// the selected item is not specified, the first one will be selected
 				width: "33%",
 				items: [
-					oItem0 = new sap.ui.core.Item({
+					oItem0 = new sap.ui.core.Item("first_content_left",{
 						key: "0",
 						text: "item 0"
 					}),
@@ -100,10 +100,10 @@
 			}),
 
 			// select controls
-			oActionSelect4 = new sap.m.ActionSelect({	// the selected item is not specified, the first one will be selected
+			oActionSelect4 = new sap.m.ActionSelect("content_right",{	// the selected item is not specified, the first one will be selected
 				width: "33%",
 				items: [
-					oItem0 = new sap.ui.core.Item({
+					oItem0 = new sap.ui.core.Item("first_content_right",{
 						key: "0",
 						text: "item 0"
 					}),
@@ -138,10 +138,10 @@
 					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 				}
 			}),
-			oActionSelect1 = new sap.m.ActionSelect({	// the selected item is not specified, the first one will be selected
+			oActionSelect1 = new sap.m.ActionSelect("header_left",{	// the selected item is not specified, the first one will be selected
 				width: "5rem",
 				items: [
-					oItem6 = new sap.ui.core.Item({
+					oItem6 = new sap.ui.core.Item("first_header_left",{
 						key: "0",
 						text: "item 0"
 					}),
@@ -223,10 +223,10 @@
 				}
 			}),
 
-			oActionSelect2 = new sap.m.ActionSelect({	// the selected item is not specified, the first one will be selected
+			oActionSelect2 = new sap.m.ActionSelect("footer_right",{	// the selected item is not specified, the first one will be selected
 				width: "10rem",
 				items: [
-					oItem12 = new sap.ui.core.Item({
+					oItem12 = new sap.ui.core.Item("first_footer_right",{
 						key: "0",
 						text: "item 0"
 					}),
@@ -272,13 +272,13 @@
 				}
 			}),
 
-			oActionSelect3 = new sap.m.ActionSelect({	// the selected item is not specified, the first one will be selected
+			oActionSelect3 = new sap.m.ActionSelect("footer_left",{	// the selected item is not specified, the first one will be selected
 				type: sap.m.SelectType.IconOnly,
 				icon: sap.ui.core.IconPool.getIconURI("filter"),
 				autoAdjustWidth: true,
 				width: "10rem",
 				items: [
-					oItem18 = new sap.ui.core.Item({
+					oItem18 = new sap.ui.core.Item("first_footer_left",{
 						key: "0",
 						text: "item 0"
 					}),
@@ -340,7 +340,7 @@
 				footer: oBar1 = new sap.m.Bar({
 					contentLeft: oActionSelect3,
 					contentRight: [oActionSelect2]
-				}),
+				})
 			});
 
 		oApp.addPage(oPage1);

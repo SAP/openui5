@@ -6,10 +6,10 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	function(jQuery, EventProvider) {
 	"use strict";
-	
+
 
 	/**
-	 * 
+	 *
 	 * @namespace
 	 * @name sap.ui.core.message
 	 * @public
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 		constructor : function () {
 			EventProvider.apply(this, arguments);
-			
+
 			this.mMessages = null;
 			this.id = jQuery.sap.uid();
 			sap.ui.getCore().getMessageManager().registerMessageProcessor(this);
@@ -147,14 +147,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Returns the ID of the MessageProcessor instance
-	 * 
+	 *
 	 * @return {string} sId The MessageProcessor ID
 	 * @public
 	 */
 	MessageProcessor.prototype.getId = function() {
 		return this.id;
 	};
-	
+
 	/**
 	 * Destroys the MessageProcessor Instance
 	 * @public
@@ -163,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		sap.ui.getCore().getMessageManager().unregisterMessageProcessor(this);
 		EventProvider.prototype.destroy.apply(this, arguments);
 	};
-	
+
 	return MessageProcessor;
 
 });

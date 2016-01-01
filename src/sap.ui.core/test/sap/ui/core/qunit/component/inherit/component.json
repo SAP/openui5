@@ -1,9 +1,9 @@
 {
 
 	"name": "sap.ui.test.inherit.Component",
-	
+
 	"version": "1.0.0",
-	
+
 	"manifest": "json",
 
 	"config": {
@@ -19,7 +19,7 @@
 			"anyarray": [1, 2, 3]
 		}
 	},
-	
+
 	"custom.entry": {
 		"key1": "value1",
 		"key2": "value2",

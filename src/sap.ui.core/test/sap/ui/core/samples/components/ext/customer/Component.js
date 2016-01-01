@@ -2,7 +2,7 @@ sap.ui.define(['jquery.sap.global', 'samples/components/ext/sap/Component'],
 	function(jQuery, Component1) {
 	"use strict";
 
-	
+
 	var Component = Component1.extend("samples.components.ext.customer.Component", {
 
 		metadata : {
@@ -17,20 +17,20 @@ sap.ui.define(['jquery.sap.global', 'samples/components/ext/sap/Component'],
 					}
 				}
 			},
-		
+
 			customizing: {
-			
+
 				"sap.ui.viewReplacements": {
 					"samples.components.ext.sap.Sub1": {
 						viewName: "samples.components.ext.customer.CustomSub1",
 						type: "XML"
 					}
 				},
-			
+
 				"sap.ui.controllerReplacements": {
 					"samples.components.ext.sap.Main": "samples.components.ext.customer.Main"
 				},
-			
+
 				"sap.ui.viewExtensions": {
 					"samples.components.ext.sap.Sub2": {
 						"extension2": {
@@ -85,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'samples/components/ext/sap/Component'],
 							type: "JS"
 						}
 					},
-				
+
 					"samples.components.ext.sap.Frag1": {
 						"extensionPointInFragment": {
 							className: "sap.ui.core.Fragment",

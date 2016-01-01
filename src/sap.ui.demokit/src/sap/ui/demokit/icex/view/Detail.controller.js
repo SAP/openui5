@@ -11,17 +11,17 @@ sap.ui.define([
 	return Controller.extend("sap.ui.demokit.icex.view.Detail", {
 
 		onInit : function() {
-			
+
 			// register for events
 			var bus = this.getOwnerComponent().getEventBus();
 			bus.subscribe("app", "RefreshDetail", this.refreshDetail, this);
-			
+
 			// set empty model
 			this._setModel("sap-icon://question-mark");
 		},
-		
+
 		_setModel : function(iconName) {
-			
+
 			var favModel = this.getView().getModel("fav");
 			var favorite = (favModel) ? favModel.isFavorite(iconName) : false;
 			var model = this.getView().getModel();
@@ -40,26 +40,26 @@ sap.ui.define([
 				isNoPhone : !sap.ui.Device.system.phone
 			});
 		},
-		
+
 		refreshDetail : function(channelId, eventId, data) {
 			if (data && data.name) {
 				this._setModel(data.name);
 			}
 		},
-		
+
 		navBack : function(evt) {
 			var bus = this.getOwnerComponent().getEventBus();
 			bus.publish("nav", "back");
 		},
-		
+
 		favorite : function(evt) {
 			var data = this.getView().getModel().getData();
 			if (data && data.name) {
-				
+
 				// update favorite model
 				var favModel = this.getView().getModel("fav");
 				var nowAFavorite = favModel.toggleFavorite(data.name);
-				
+
 				// show  message
 				if (sap.m.InstanceManager.hasOpenPopover()) {
 					sap.m.InstanceManager.closeAllPopovers();
@@ -69,7 +69,7 @@ sap.ui.define([
 				} else {
 					sap.m.MessageToast.show('The icon has been removed from your favorites');
 				}
-				
+
 				// update my model
 				this._setModel(data.name);
 			}

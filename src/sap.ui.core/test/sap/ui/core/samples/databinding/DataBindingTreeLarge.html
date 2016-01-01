@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Data binding test page with Tree sap.ui.commons.Tree using TreeBinding</title>
 
     <script id="sap-ui-bootstrap"
@@ -48,7 +48,7 @@
 			oModel.setProperty("/count", iCount);
 			return oData;
 		}
-		
+
 	    // data has to be tree structured
 	    var oModel = new sap.ui.model.json.JSONModel({
 	    		length: 3,
@@ -61,9 +61,9 @@
 	    		icons: false
 	    	}),
 	    	oTreeModel = new sap.ui.model.json.JSONModel(createTreeData(3, 3));
-	    
+
 	    sap.ui.getCore().setModel(oModel);
-	    
+
 	    var oForm = new sap.ui.layout.form.SimpleForm({
 	    	content: [
 	    		new sap.ui.commons.Label({text: "Child nodes per node"}),
@@ -83,7 +83,7 @@
 	    		new sap.ui.commons.Label({text: "Nodes have icons"}),
 	    		new sap.ui.commons.CheckBox({checked: "{/icons}"}),
 	    		new sap.ui.commons.Button({text: "Update Tree data", press: function() {
-	    			var iTime, 
+	    			var iTime,
 	    				iLength = oModel.getProperty("/length"),
 	    				iDepth = oModel.getProperty("/depth"),
 	    				oData;
@@ -102,8 +102,8 @@
 	    	]
 	    });
 	    oForm.placeAt("form");
-	    
-	    
+
+
 	    var oTree = new sap.ui.commons.Tree({
 	    	models: {
 	    		tree: oTreeModel
@@ -120,7 +120,7 @@
 	    	}
 	    });
 	    oTree.placeAt("tree");
-	    
+
 	    var oExpandedBinding = oModel.bindProperty("/expanded");
 	    oExpandedBinding.attachChange(function() {
 	    	oTree.getBindingInfo("nodes").template.setExpanded(oExpandedBinding.getValue());
@@ -131,7 +131,7 @@
 	    	oTree.getBindingInfo("nodes").template.setIcon(oIconsBinding.getValue() ? "sap-icon://lead" : null);
 	    });
 
-	    
+
 	</script>
 
 	</head>

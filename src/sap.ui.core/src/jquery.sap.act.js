@@ -29,12 +29,12 @@ sap.ui.define(['jquery.sap.global'],
 
 	function _onDeactivate(){
 		_deactivatetimer = null;
-		
+
 		if (_activityDetected) {
 			_onActivate();
 			return;
 		}
-		
+
 		_active = false;
 		//_triggerEvent(_aDeactivateListeners); //Maybe provide later
 		_domChangeObserver.observe(document.documentElement, {childList: true, attributes: true, subtree: true, characterData: true});
@@ -77,13 +77,13 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Registers the given handler to the activity event, which is fired when an activity was detected after a certain period of inactivity.
-	 * 
+	 *
 	 * The Event is not fired for Internet Explorer 8.
-	 * 
+	 *
 	 * @param {Function} fnFunction The function to call, when an activity event occurs.
 	 * @param {Object} [oListener] The 'this' context of the handler function.
 	 * @protected
-	 * 
+	 *
 	 * @function
 	 * @name jQuery.sap.act#attachActivate
 	 */
@@ -93,11 +93,11 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Deregisters a previously registered handler from the activity event.
-	 * 
+	 *
 	 * @param {Function} fnFunction The function to call, when an activity event occurs.
 	 * @param {Object} [oListener] The 'this' context of the handler function.
 	 * @protected
-	 * 
+	 *
 	 * @function
 	 * @name jQuery.sap.act#detachActivate
 	 */
@@ -112,12 +112,12 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Checks whether recently an activity was detected.
-	 * 
+	 *
 	 * Not supported for Internet Explorer 8.
-	 * 
+	 *
 	 * @return true if recently an activity was detected, false otherwise
 	 * @protected
-	 * 
+	 *
 	 * @function
 	 * @name jQuery.sap.act#isActive
 	 */
@@ -125,9 +125,9 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Reports an activity.
-	 * 
+	 *
 	 * @public
-	 * 
+	 *
 	 * @function
 	 * @name jQuery.sap.act#refresh
 	 */
@@ -139,11 +139,11 @@ sap.ui.define(['jquery.sap.global'],
 	if (_deactivateSupported) {
 		var aEvents = ["resize", "orientationchange", "mousemove", "mousedown", "mouseup", //"mouseout", "mouseover",
 					   "paste", "cut", "keydown", "keyup", "DOMMouseScroll", "mousewheel"];
-		
+
 		if (!!('ontouchstart' in window)) { //touch events supported
 			aEvents.push("touchstart", "touchmove", "touchend", "touchcancel");
 		}
-		
+
 		for (var i = 0; i < aEvents.length; i++) {
 			window.addEventListener(aEvents[i], _act.refresh, true);
 		}

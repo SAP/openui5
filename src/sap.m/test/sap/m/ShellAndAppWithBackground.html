@@ -1,26 +1,26 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+
 		<title>Shell AND App with background images - sap.m</title>
-		
+
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		
+
 		<script type="text/javascript">
-		
+
 			var oShell = new sap.m.Shell("myShell", {
 				title: "Shell AND App with Backgrounds",
 				logo: "images/SAPUI5.png",
 				headerRightText: "Avid Themer"
 			});
-			
+
 			var oApp = new sap.m.SplitApp("myApp", {
 				masterPages: new sap.m.Page("page1", {
 					title: "Some Master"
@@ -28,7 +28,7 @@
 				detailPages: new sap.m.Page("page2", {
 					title:"Page 1",
 					content : [
-						new sap.ui.core.HTML({content:"<div><br/><h3>Shell Settings</h3>"}),
+						new sap.ui.core.HTML({content:"<div><br><h3>Shell Settings</h3>"}),
 
 						// background image switches
 						new sap.m.Button({
@@ -42,7 +42,7 @@
 								sap.ui.getCore().byId("repeatSwitch").setState(false);
 							}
 						}),
-						
+
 						new sap.m.Button({
 							text : "Repeating translucent red Cheetah",
 							press : function() {
@@ -54,7 +54,7 @@
 								sap.ui.getCore().byId("repeatSwitch").setState(true);
 							}
 						}),
-						
+
 						new sap.m.Button({
 							text : "Clear Background",
 							press : function() {
@@ -66,20 +66,20 @@
 								sap.ui.getCore().byId("repeatSwitch").setState(false);
 							}
 						}),
-						
+
 						new sap.m.Label({
 							text: "Repeat background:"
 						}),
-						
+
 						new sap.m.Switch("repeatSwitch", {
 							change: function(oEvent){
 								var bRepeatState = oEvent.getParameter("state");
 								oShell.setBackgroundRepeat(bRepeatState);
 							}
 						}),
-						
-						new sap.ui.core.HTML({content:"<br/>"}),
-						
+
+						new sap.ui.core.HTML({content:"<br>"}),
+
 						new sap.m.Slider("opacitySlider", {
 							width: "50%",
 							value: 1,
@@ -91,10 +91,10 @@
 								oShell.setBackgroundOpacity(value);
 							}
 						}),
-						
-						
-						new sap.ui.core.HTML({content:"<div><br/><h3>App Settings</h3>"}),
-						
+
+
+						new sap.ui.core.HTML({content:"<div><br><h3>App Settings</h3>"}),
+
 						// app background image switches
 						new sap.m.Button({
 							text : "Stretched Cheetah",
@@ -107,7 +107,7 @@
 								sap.ui.getCore().byId("appRepeatSelect").setSelectedKey("stretch");
 							}
 						}),
-						
+
 						new sap.m.Button({
 							text : "Repeating translucent red Cheetah",
 							press : function() {
@@ -119,7 +119,7 @@
 								sap.ui.getCore().byId("appRepeatSelect").setSelectedKey("repeat");
 							}
 						}),
-						
+
 						new sap.m.Button({
 							text : "Clear Background",
 							press : function() {
@@ -131,7 +131,7 @@
 								sap.ui.getCore().byId("appRepeatSelect").setSelectedKey("stretch");
 							}
 						}),
-						
+
 						new sap.m.Select("appRepeatSelect", {items:[
 								new sap.ui.core.Item({text:"Stretch background",key:"stretch"}),
 								new sap.ui.core.Item({text:"Repeat background",key:"tile"})
@@ -141,7 +141,7 @@
 								oApp.setBackgroundRepeat(selectedItem.getKey() === "stretch" ? false : true);
 							}
 						}),
-						
+
 						new sap.m.Slider("appOopacitySlider", {
 							width: "50%",
 							min: 0,
@@ -153,13 +153,13 @@
 							}
 						})
 					]
-					
+
 				})
 			});
 
 			oShell.setApp(oApp).placeAt("body");
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

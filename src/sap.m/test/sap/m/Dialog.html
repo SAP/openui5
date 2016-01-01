@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Dialog - sap.m</title>
 		<style type="text/css">
 			.sapMLabel.specialLabelDialogPage {
@@ -970,6 +970,24 @@
 				statusLabel.setText(text);
 			}
 
+			var dialogWithOneHundredPercentHeightContent = new sap.m.Dialog('DialogWithTallContent', {
+				title: '100% height content - verticalScrolling: false',
+				content: [
+					new sap.ui.core.HTML({content: '<iframe url="https://w3c.org/" style="height: 100%; width: 100%;"></iframe>'})
+				],
+				contentHeight: "50%",
+				//verticalScrolling should be false so the content will be able to take the heitgt
+				verticalScrolling: false,
+				buttons: [
+					new sap.m.Button({
+						text: "close",
+						press: function() {
+							dialogWithOneHundredPercentHeightContent.close();
+						}
+					})
+				]
+			});
+
 			var dialogWithManyButtons = new sap.m.Dialog('dialogWithManyButtons', {
 				title: 'DialogWithManyButtons',
 				content: [
@@ -995,7 +1013,7 @@
 							_setStatusForDialogWithManyButtons();
 						}
 					}),
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.m.Button({
 						text: 'Add Begin Button',
 						press: function () {
@@ -1022,7 +1040,7 @@
 							_setStatusForDialogWithManyButtons();
 						}
 					}),
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					statusLabel
 				],
 				buttons: allButtons
@@ -1076,7 +1094,7 @@
 						}
 					}),
 
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 
 					new sap.m.Button({
 						text: "Dialog No Footer Bar",
@@ -1100,7 +1118,7 @@
 						}
 					}),
 
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 
 					new sap.m.Button({
 						text: "Big Content",
@@ -1117,7 +1135,7 @@
 						}
 					}),
 
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 
 					new sap.m.Button({
 						text: "Set Height",
@@ -1141,7 +1159,7 @@
 						}
 					}),
 
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 
 					new sap.m.Button({
 						text: "Scrolling",
@@ -1159,7 +1177,7 @@
 						}
 					}),
 
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 
 					new sap.m.Button({
 						text: "With SubHeader",
@@ -1183,7 +1201,7 @@
 						}
 					}),
 
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 
 
 					new sap.m.Button({
@@ -1201,7 +1219,7 @@
 						}
 					}),
 					oButton6,
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					oButton3,
 					new sap.m.Button({
 						text: "Full-screen Form in Dialog",
@@ -1211,11 +1229,11 @@
 						}
 					}),
 					oButton,
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					oButton4,
 					oButton5,
 					oButton2,
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.m.Button({
 						text: "MessageBox as Dialog",
 						width: _buttonWidth,
@@ -1234,7 +1252,7 @@
 							oMessageDialog1.open();
 						}
 					}),
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.m.Button({
 						text: "Drag Enabled",
 						width: _buttonWidth,
@@ -1256,7 +1274,7 @@
 							oDialogResizeAndDrag.open();
 						}
 					}),
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.m.Button({
 						width: _buttonWidth,
 						text: "Compact size",
@@ -1291,7 +1309,7 @@
 							oDialog1.open();
 						}
 					}),
-					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.ui.core.HTML({content: "<h1>Real use cases</h1>"}),
 					new sap.m.Button({
 						text: "No scrollars with splitter",
@@ -1324,6 +1342,8 @@
 						}
 					}),
 
+					new sap.ui.core.HTML({content: "<br>"}),
+
 					new sap.m.Button({
 						text: "Begin and End buttons with long text",
 						width: _buttonWidth,
@@ -1345,6 +1365,14 @@
 						width: _buttonWidth,
 						press: function () {
 							dragDialogWithMultipleHeaders.open();
+						}
+					}),
+
+					new sap.m.Button({
+						text: "100% Height Content",
+						width: _buttonWidth,
+						press: function () {
+							dialogWithOneHundredPercentHeightContent.open();
 						}
 					})
 				]

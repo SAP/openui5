@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.ImageMap
   Author: D029506, D037899
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -29,36 +29,36 @@
 		oImage.placeAt("uiArea1");
 		var oMap = new sap.ui.commons.ImageMap("m1");
 		oMap.setName("Map1");
-		var aArea1 = new sap.ui.commons.Area ({shape: "rect", alt: "Text on Alt1", href: "http://www.sap.com", coords: "1,1,20,20"}); 
-		var aArea2 = new sap.ui.commons.Area ({shape: "rect", alt: "Text on Alt2", href: "http://www.ibm.com", coords: "21,1,40,20"}); 
+		var aArea1 = new sap.ui.commons.Area ({shape: "rect", alt: "Text on Alt1", href: "http://www.sap.com", coords: "1,1,20,20"});
+		var aArea2 = new sap.ui.commons.Area ({shape: "rect", alt: "Text on Alt2", href: "http://www.ibm.com", coords: "21,1,40,20"});
 		oMap.addArea(aArea1);
 		oMap.createArea(aArea2);
 		oMap.createArea({shape: "rect", alt: "Text on Alt3", href: "http://www.google.com", coords: "1,21,21,40"});
 		oMap.createArea({shape: "rect", alt: "Text on Alt4", href: "http://www.yahoo.com", coords: "21,21,40,40"}, {shape: "rect", alt: "Text on Alt5", href: "http://www.sap.com", coords: "41,1,60,20"});
-	 	
+
 		oMap.placeAt("uiArea2");
-		
+
 	</script>
 
 	<!-- Test functions -->
 	<script language="javascript">
 
 	qutils.delayTestStart();
-	
-	
+
+
 	module("Initial check");
 
-	
-	
+
+
 	test("Controls Check", function() {
 	 	image1 = sap.ui.getCore().getControl("i1");
 		map1 = sap.ui.getCore().getControl("m1");
-		 
+
 		ok((image1 !== undefined) && (image1 != null), "Image1 should not be null or undefined");
 		ok((map1 !== undefined) && (map1 != null), "Map1 should not be null or undefined");
-		
+
 	});
-	
+
 	test("Areas Check", function() {
 
 		if (map1) {
@@ -66,50 +66,50 @@
 		ok((areas !== undefined) && (areas != null) && (areas.length > 0), "Areas are not defined");
 		}
 	});
-	
-	
-	
+
+
+
 	module("Properties");
-	
-	
+
+
 	test("Image Map Properties", function() {
 		ok(((map1.getName() !== undefined) && (areas != null)), "should not be null or undefined");
 		equals(map1.getName(), "Map1", "The name of the map that is referenced within the image");
 	});
 
 	test("Area properties", function() {
-		
+
 		el = areas[0];
 		equals(el.getShape(), "rect", "Shape is a Rectangle:");
 		equals(el.getCoords(), "1,1,20,20", "Coordinates of the first Area:");
 		equals(el.getAlt(), "Text on Alt1", "Alt Text:");
 		equals(el.getHref(), "http://www.sap.com", "HRef:");
-		
+
 		el = areas[1];
 		equals(el.getShape(), "rect", "Shape is a Rectangle:");
 		equals(el.getCoords(), "21,1,40,20", "Coordinates of the second Area:");
 		equals(el.getAlt(), "Text on Alt2", "Alt Text:");
 		equals(el.getHref(), "http://www.ibm.com", "HRef:");
-		
+
 		el = areas[2];
 		equals(el.getShape(), "rect", "Shape is a Rectangle:");
 		equals(el.getCoords(), "1,21,21,40", "Coordinates of the second Area:");
 		equals(el.getAlt(), "Text on Alt3", "Alt Text:");
 		equals(el.getHref(), "http://www.google.com", "HRef:");
-		
+
 		el = areas[3];
 		equals(el.getShape(), "rect", "Shape is a Rectangle:");
 		equals(el.getCoords(), "21,21,40,40", "Coordinates of the second Area:");
 		equals(el.getAlt(), "Text on Alt4", "Alt Text:");
 		equals(el.getHref(), "http://www.yahoo.com", "HRef:");
-		
+
 		el = areas[4];
 		equals(el.getShape(), "rect", "Shape is a Rectangle:");
 		equals(el.getCoords(), "41,1,60,20", "Coordinates of the second Area:");
 		equals(el.getAlt(), "Text on Alt5", "Alt Text:");
 		equals(el.getHref(), "http://www.sap.com", "HRef:");
-		
-		
+
+
 	});
 
 	</script>

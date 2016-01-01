@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>ListBox - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.ListBox.gif">
 
@@ -15,7 +15,7 @@
 		</script>
 
 		<script type="text/javascript">
-		var oCore = sap.ui.getCore(); 
+		var oCore = sap.ui.getCore();
 
 		jQuery(function(){
 
@@ -154,7 +154,7 @@
 				change: function(oControlEvent) {
 					var oLB = sap.ui.getCore().getControl("lb7");
 					oLB.addItem(new sap.ui.core.ListItem("lb7_item" + iCnt++, {text:oControlEvent.getParameter("newValue")}));
-				} 
+				}
 			});
 			oTxtFld.placeAt("target7");
 			oListBox.placeAt("target8");
@@ -173,25 +173,25 @@
 		<h1>Test Page for sap.ui.commons.ListBox</h1>
 
 		<div id="target0"></div>
-		<!-- readonly:--> 
-		<div id="target1"></div> 
-		<label for="lb1b-list">disabled:</label> 
-		<div id="target1b"></div> 
-		<label for="lb2-list">unselected:</label>  
+		<!-- readonly:-->
+		<div id="target1"></div>
+		<label for="lb1b-list">disabled:</label>
+		<div id="target1b"></div>
+		<label for="lb2-list">unselected:</label>
 		<div id="target2"></div>
 		<button onclick="javascript:sap.ui.getCore().getElementById('lb2').setSelectedIndex(6);">select item 'Hallo6'</button>
 		<div id="target2b"></div>
 		<br>
-		<label for="lb3-list">Height: 5 items:</label> 
+		<label for="lb3-list">Height: 5 items:</label>
 		<div id="target3"></div>
-		<label for="lb4-list">Height: 5 items (but no items there to measure):</label> 
+		<label for="lb4-list">Height: 5 items (but no items there to measure):</label>
 		<div id="target4"></div>
-		<label for="lb5-list">ListBox:</label> 
+		<label for="lb5-list">ListBox:</label>
 		<div id="target5"></div>
-		<label for="lb6-list">ListBox with icons:</label>  
+		<label for="lb6-list">ListBox with icons:</label>
 		<div id="target6"></div>
 
-		<br/> <p> <br/>
+		<br> <p> <br>
 		<div id="target7"></div>&nbsp;
 		<div id="target8"></div>
 

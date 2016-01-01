@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested class: sap.ui.core.Core
   Author: Andreas Kunz
 -->
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Test Page for the SAPUI5 Core Events [sap.ui.core.Core]</title>
-		
+
 		<script>
 			window["sap-ui-config"] = {
 				resourceRoots : {
@@ -16,39 +16,39 @@
 				}
 			};
 		</script>
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.testlib">
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		
+
 		<script type="text/javascript">
 
 		qutils.delayTestStart();
-		
+
 		// event handler
 		function uiUpdatedHandler() {
 			ok(true, "(UIUpdated event is fired)");
 		}
-		
-		
+
+
 		test("UI dirty state - initial", function() {
-			equal(sap.ui.getCore().getUIDirty(), false, "UI should not be dirty initially"); 
+			equal(sap.ui.getCore().getUIDirty(), false, "UI should not be dirty initially");
 		});
-		
+
 		// attach event handlers
 		test("Attaching event handlers", function() {
 			expect(0);
 			sap.ui.getCore().attachEvent("UIUpdated", uiUpdatedHandler);
 		});
-		
-		
+
+
 		var btn;
 		test("Control creation", function() {
 			expect(3); // including event handler
@@ -58,8 +58,8 @@
 			sap.ui.getCore().applyChanges();
 			equal(sap.ui.getCore().getUIDirty(), false, "UI should be not dirty after applyChanges");
 		});
-		
-		
+
+
 		asyncTest("UI dirty on control modification", function() {
 			expect(4);
 			btn.setText("new text");
@@ -70,7 +70,7 @@
 				start();
 			}, 500);
 		});
-			
+
 
 
 		</script>

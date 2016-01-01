@@ -1,30 +1,30 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <script id="sap-ui-bootstrap" 
+    <script id="sap-ui-bootstrap"
       type="text/javascript"
       src="../../../../../resources/sap-ui-core.js"
       data-sap-ui-theme="sap_bluecrystal"
       data-sap-ui-noConflict="true"
       data-sap-ui-libs="sap.ui.commons" >
     </script>
-    <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
     <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-    
-    
+
+
     <script language="javascript">
     try{
   		/****************************************************
   		* CREATION OF MESSAGES
   		*****************************************************/
-	      var meliError   = new sap.ui.commons.Message("meliError",   {type:sap.ui.commons.MessageType.Error, text:"Error 5", longText:"Error 5 Details"});      	  
+	      var meliError   = new sap.ui.commons.Message("meliError",   {type:sap.ui.commons.MessageType.Error, text:"Error 5", longText:"Error 5 Details"});
 	      var meliWarning = new sap.ui.commons.Message("meliWarning", {type:sap.ui.commons.MessageType.Warning, text:"Warning 5", longText:"Warning 5 Details"});
 	      var meliSuccess = new sap.ui.commons.Message("meliSuccess", {type:sap.ui.commons.MessageType.Success, text:"Success 5", longText:"Success 5 Details"});
-	
+
 	      var aMeliMelos = new Array();
 		      aMeliMelos.push(meliError);
 		      aMeliMelos.push(meliWarning);
@@ -33,7 +33,7 @@
 		      aMeliMeloIdsB.push("meliError");
 		      aMeliMeloIdsB.push("meliWarning");
 		      aMeliMeloIdsB.push("meliSuccess");
-  		
+
   		/****************************************************
   		* CREATION OF THE MESSAGEBAR
   		*****************************************************/
@@ -45,7 +45,7 @@
     	// This should allow us to recognize environment context errors!
     	alert(err);
     }
-  
+
     qutils.delayTestStart();
     module("MessageBar Control");
     test("Initial Conditions", function() {
@@ -53,7 +53,7 @@
     	equals(msgBar.getVisible()               ,true     ,"Visible");
     	equals(msgBar.getMaxToasted()            ,3        ,"MaxToasted");
     	equals(msgBar.getMaxListed()             ,7        ,"MaxListed");
-    	
+
     	// The "uiArea1" anchor should be visible, but not the Bar nor the List:
 		var jAnchor = jQuery.sap.byId("uiArea1");
 		var jBar    = jQuery.sap.byId("msgBar");
@@ -62,10 +62,10 @@
     	equals((jBar.css('display')=="block")    ,false  ,"Bar not displayed");
     	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
     });
-    
+
     test("Messages added", function() {
     	// Injecting Messages:
-		msgBar.addMessages(aMeliMelos);  
+		msgBar.addMessages(aMeliMelos);
   		// Anchor and Bar should be visible, but not the List:
 		var jAnchor = jQuery.sap.byId("uiArea1");
 		var jBar    = jQuery.sap.byId("msgBar");
@@ -73,12 +73,12 @@
 	  	equals((jAnchor.css('display')=="block") ,true   ,"Anchor displayed");
 	  	equals((jBar.css('display')=="block")    ,true   ,"Bar displayed");
 	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
-    	
+
     	// Can't simulate a click-open of the List with some code like
     	// since JavaScript checks for the "pointer" cursor being rendered!
     	jQuery("msgBar__arrowImg").focus().click();
 	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
-    }); 
+    });
 
     test("Messages removed", function() {
     	// Removing the previous Messages:
@@ -90,8 +90,8 @@
 	  	equals((jAnchor.css('display')=="block") ,true   ,"Anchor displayed");
 	  	equals((jBar.css('display')=="block")    ,false  ,"Bar not displayed");
 	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
-    }); 
-	
+    });
+
 	test("Delete all messages", function () {
 		msgBar.addMessages(aMeliMelos);
 		ok(msgBar.aErrors.length > 0, "The errors should be greater than 0");
@@ -128,8 +128,8 @@
   <body>
     <div id="qunit"></div>
     <div id="qunit-fixture">test markup, will be hidden</div>
-    <div id="uiArea1"></div>    
-    <div id="uiArea2"></div>    
-    <div id="uiArea3"></div>    
+    <div id="uiArea1"></div>
+    <div id="uiArea2"></div>
+    <div id="uiArea3"></div>
   </body>
 </html>

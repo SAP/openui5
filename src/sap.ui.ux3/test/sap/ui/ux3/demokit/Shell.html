@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.Shell">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8"/>
-		<meta name="keywords" content="Control Shell" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control Shell">
 		<title>Shell - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -43,43 +43,43 @@
     width automatically increases to accomodate more items.
 	</p>
     <p>
-    The bar on the right side of the screen is called pane-bar. 
-    <code>paneBarItems</code> can be added to this bar and are displayed as 
+    The bar on the right side of the screen is called pane-bar.
+    <code>paneBarItems</code> can be added to this bar and are displayed as
     clickable text. By attaching to the <code>paneBarItemSelected</code>-Event, the
-    application can react to user interactions with these items. One example would 
+    application can react to user interactions with these items. One example would
     be to set the content of the pane associated with the clicked icon by using
     <code>setPaneContent</code>.
-    Since 1.14, if more items are added to the pane-bar than fit on screen, these additional items 
-    will be added to a menu and a button is rendered at the bottom of the bar which gives access to 
+    Since 1.14, if more items are added to the pane-bar than fit on screen, these additional items
+    will be added to a menu and a button is rendered at the bottom of the bar which gives access to
     said menu.
-    <br/>
-    The method <code>setPaneContent</code> accepts any control-tree (control or 
-    nested controls), and puts it into the currently active pane in place of the 
+    <br>
+    The method <code>setPaneContent</code> accepts any control-tree (control or
+    nested controls), and puts it into the currently active pane in place of the
     current content. Please keep the reduced space of the pane in mind when adding
     content to it.
-    The pane is automatically opened or 
-    closed (based on its current state) when the item is clicked. Before opening of 
-    the pane, the event <code>paneBarItemSelected</code> is fired. After closing the 
+    The pane is automatically opened or
+    closed (based on its current state) when the item is clicked. Before opening of
+    the pane, the event <code>paneBarItemSelected</code> is fired. After closing the
     event <code>paneClosed</code> is fired.
     </p>
     <p>
     <span style="font-style: italic;">
         Please note, that the following setting may not be implemented in every theme.
     </span>
-    <br/>
-    The shell can be used with different design options that can be changed via the 
-    <code>designType</code>-property. The standard-design 
+    <br>
+    The shell can be used with different design options that can be changed via the
+    <code>designType</code>-property. The standard-design
     (<code>sap.ui.ux3.ShellDesignType.Standard</code>) is set as default, the other
-    choices are <code>sap.ui.ux3.ShellDesignType.Light</code> and 
+    choices are <code>sap.ui.ux3.ShellDesignType.Light</code> and
     <code>sap.ui.ux3.ShellDesignType.Crystal</code>. Changing the designType
-    also influences the header (see <code>headerType</code>-property), as the 
-    standard header of the Light and Crystal designs are smaller than the one of the standard 
-    (dark) design. The other <code>headerType</code>s are currently not influenced by the 
-    design.<br/>
-    When the designType is set to <code>sap.ui.ux3.ShellDesignType.Light</code> or 
-    <code>sap.ui.ux3.ShellDesignType.Crystal</code>, the inverted-state of all 
-    <code>ToolPopup</code>-controls in the shell is set to false, while it is set to true 
-    otherwise. The inverted state of the ToolPopups is overwritten, even if it was explicitly set 
+    also influences the header (see <code>headerType</code>-property), as the
+    standard header of the Light and Crystal designs are smaller than the one of the standard
+    (dark) design. The other <code>headerType</code>s are currently not influenced by the
+    design.<br>
+    When the designType is set to <code>sap.ui.ux3.ShellDesignType.Light</code> or
+    <code>sap.ui.ux3.ShellDesignType.Crystal</code>, the inverted-state of all
+    <code>ToolPopup</code>-controls in the shell is set to false, while it is set to true
+    otherwise. The inverted state of the ToolPopups is overwritten, even if it was explicitly set
     before.
     </p>
     <p>

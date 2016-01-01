@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 	<title>test</title>
 
 	<script id='sap-ui-bootstrap' type='text/javascript'
@@ -14,14 +14,14 @@
 		// construct and fill the layout
 		var layout = new c.layout.MatrixLayout()
 		layout.createRow(new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}));
-		
+
 		// add a cell with a custom style class
 		var cell = new c.layout.MatrixLayoutCell({content:new c.TextView({text:"Hello World"})});
 		cell.addStyleClass("myCell");
 		layout.createRow(new c.TextView({text:"Hello World"}), cell, new c.TextView({text:"Hello World"}));
-		
+
 		layout.createRow(new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}));
-		
+
  		// add a row with a custom style class
 		var row = new c.layout.MatrixLayoutRow({
 			cells:[
@@ -32,20 +32,20 @@
 		});
 		row.addStyleClass("myRow");
 		layout.addRow(row);
-		
+
 		layout.createRow(new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}));
-		
+
 		// add the layout to the UI
 		layout.placeAt('content');
 	</script>
 
 	<style>
 		/* here the custom style classes are defined - they set a different text color */
-		
+
 		.myRow {
 			color: green;
 		}
-		
+
 		.myCell {
 			color: red;
 		}

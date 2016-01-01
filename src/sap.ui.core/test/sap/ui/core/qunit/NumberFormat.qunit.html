@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.core.format.NumberFormat
   Author: d040216
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-language="en-US"
 	data-sap-ui-originInfo="true">
 	</script>
@@ -135,7 +135,7 @@
 		equal(oFormat.format(-123456789012), "-123\xa0Mrd.", "-123456789012 formatted");
 		equal(oFormat.format(-999999999999), "-1\xa0Bio.", "-999999999999 formatted");
 		equal(oFormat.format(-1234567890123), "-1\xa0Bio.", "-1234567890123 formatted");
-		
+
 		equal(oFormat.parse("1"), 1, "\"1\" parsed");
 		equal(oFormat.parse("12"), 12, "\"12\" parsed");
 		equal(oFormat.parse("123"), 123, "\"123\" parsed");
@@ -164,9 +164,9 @@
 		equal(oFormat.parse("-10 Mrd."), -10000000000, "\"-10 Mrd.\" parsed");
 		equal(oFormat.parse("-100 Mrd."), -100000000000, "\"-100 Mrd.\" parsed");
 		equal(oFormat.parse("-1 Bio."), -1000000000000, "\"-1 Bio.\" parsed");
-		
+
 		oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "short", shortLimit: 10000, precision: 3}, oLocale);
-		
+
 		equal(oFormat.format(1), "1", "1 formatted");
 		equal(oFormat.format(12), "12", "12 formatted");
 		equal(oFormat.format(123), "123", "123 formatted");
@@ -218,9 +218,9 @@
 		equal(oFormat.format(-999900), "-1\xa0Mio.", "-999900 formatted");
 		equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
 
-		
+
 	});
-	
+
 	test("integer long style", function(){
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "long"}, oLocale);
@@ -285,7 +285,7 @@
 		equal(oFormat.format(-123456), "-123 Tausend", "-123456 formatted");
 		equal(oFormat.format(-999999), "-1 Million", "-999999 formatted");
 		equal(oFormat.format(-1234567), "-1,23 Millionen", "-1234567 formatted");
-		
+
 	});
 
 	test("float default format", function(){
@@ -319,7 +319,7 @@
 		equal(oDefaultFloat.format("1000.0000"), "1,000.0000", "1000.0000");
 		equal(oDefaultFloat.format(123456789.123456789), "123,456,789.1234568", "123456789.123456789 (number)");
 		equal(oDefaultFloat.format("123456789.123456789"), "123,456,789.123456789", "123456789.123456789 (string)");
-		
+
 	});
 
 	test("float format for a specific locale", function(){
@@ -344,10 +344,131 @@
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 2
 		}, oLocale);
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
 		equal(oFloatFormat.format(1000), "1,000.00", "1000");
 		equal(oFloatFormat.format(100000), "1,00,000.00", "100000");
 		equal(oFloatFormat.format(1000000), "10,00,000.00", "1000000");
 		equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
+	});
+
+	test("float format with decimals and myriad grouping", function(){
+		var oLocale = new sap.ui.core.Locale("ja_JP");
+		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 2,
+			groupingSize: 4
+		}, oLocale);
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "1000.00", "1000");
+		equal(oFloatFormat.format(10000), "1,0000.00", "100000");
+		equal(oFloatFormat.format(10000000), "1000,0000.00", "1000000");
+		equal(oFloatFormat.format(100000000), "1,0000,0000.00", "10000000");
+	});
+
+	test("float format with custom grouping", function(){
+		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 2,
+			groupingSize: 2
+		});
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "10,00.00", "1000");
+		equal(oFloatFormat.format(10000), "1,00,00.00", "10000");
+		equal(oFloatFormat.format(10000000), "10,00,00,00.00", "10000000");
+		equal(oFloatFormat.format(100000000), "1,00,00,00,00.00", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 3,
+			groupingBaseSize: 2
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "10.0", "10");
+		equal(oFloatFormat.format(1000), "10,00.0", "1000");
+		equal(oFloatFormat.format(10000), "100,00.0", "10000");
+		equal(oFloatFormat.format(10000000), "100,000,00.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1,000,000,00.0", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 2,
+			groupingBaseSize: 4
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "10.0", "10");
+		equal(oFloatFormat.format(1000), "1000.0", "1000");
+		equal(oFloatFormat.format(10000), "1,0000.0", "10000");
+		equal(oFloatFormat.format(10000000), "10,00,0000.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1,00,00,0000.0", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 5,
+			groupingBaseSize: 3
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "10.0", "10");
+		equal(oFloatFormat.format(1000), "1,000.0", "1000");
+		equal(oFloatFormat.format(10000), "10,000.0", "10000");
+		equal(oFloatFormat.format(10000000), "10000,000.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1,00000,000.0", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 1,
+			groupingBaseSize: 3
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "10.0", "10");
+		equal(oFloatFormat.format(1000), "1,000.0", "1000");
+		equal(oFloatFormat.format(10000), "1,0,000.0", "10000");
+		equal(oFloatFormat.format(10000000), "1,0,0,0,0,000.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1,0,0,0,0,0,000.0", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 4,
+			groupingBaseSize: 1
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "1,0.0", "10");
+		equal(oFloatFormat.format(1000), "100,0.0", "1000");
+		equal(oFloatFormat.format(10000), "1000,0.0", "10000");
+		equal(oFloatFormat.format(10000000), "100,0000,0.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1000,0000,0.0", "100000000");
+	});
+
+	test("float format with pattern defined grouping", function(){
+		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			pattern: "#,##0.00"
+		});
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "1,000.00", "1000");
+		equal(oFloatFormat.format(10000), "10,000.00", "10000");
+		equal(oFloatFormat.format(10000000), "10,000,000.00", "10000000");
+		equal(oFloatFormat.format(100000000), "100,000,000.00", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			pattern: "#,##,##0.00"
+		});
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "1,000.00", "1000");
+		equal(oFloatFormat.format(10000), "10,000.00", "10000");
+		equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
+		equal(oFloatFormat.format(100000000), "10,00,00,000.00", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			pattern: "#,###0.00"
+		});
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "1000.00", "1000");
+		equal(oFloatFormat.format(10000), "1,0000.00", "10000");
+		equal(oFloatFormat.format(10000000), "1000,0000.00", "10000000");
+		equal(oFloatFormat.format(100000000), "1,0000,0000.00", "100000000");
 	});
 
 	test("float custom format", function(){
@@ -362,7 +483,7 @@
 		equal(oCustomFloat.format(-123.23), "-123,23", "-123.23");
 		equal(oCustomFloat.format("1000.00"), "1000,00", "1000.00");
 		equal(oCustomFloat.format("1000.0000"), "1000,0000", "1000.0000");
-		
+
 	});
 
 	test("float format with default rounding mode: HALF_AWAY_FROM_ZERO", function(){
@@ -378,7 +499,11 @@
 		equal(oFormat.format(2.11), "2.11", "2.11");
 		equal(oFormat.format(-.1234), "-0.123", "-.1234");
 		equal(oFormat.format(-.1236), "-0.124", "-.1236");
-		
+		equal(oFormat.format(.0005), "0.001", ".0005");
+		equal(oFormat.format(.0004), "0", ".0004");
+		equal(oFormat.format(-.0005), "-0.001", "-.0005");
+		equal(oFormat.format(-.0004), "0", "-.0004");
+
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 2
 		});
@@ -389,6 +514,15 @@
 
 		equal(oFormat.format(-35.855), "-35.86", "-35.855");
 		equal(oFormat.format(-1.005), "-1.01", "-1.005");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 2
+		});
+		equal(oFormat.format(.005), "0.01", ".005");
+		equal(oFormat.format(.004), "0.00", ".004");
+		equal(oFormat.format(-.005), "-0.01", "-.005");
+		equal(oFormat.format(-.004), "0.00", "-.004");
+
 	});
 
 	test("float format with rounding mode: CEILING", function(){
@@ -498,7 +632,7 @@
 		// These two are the famous test cases for problematic rounding in Javascript
 		equal(oFormat.format(35.855), "35.85", "35.855");
 		equal(oFormat.format(1.005), "1", "1.005");
-		
+
 		equal(oFormat.format(-35.855), "-35.85", "-35.855");
 		equal(oFormat.format(-1.005), "-1", "-1.005");
 	});
@@ -532,7 +666,7 @@
 		equal(oFormat.format(-35.855), "-35.85", "-35.855");
 		equal(oFormat.format(-1.005), "-1", "-1.005");
 	});
-	
+
 	test("float format with rounding mode: HALF_FLOOR", function(){
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			maxFractionDigits: 3,
@@ -697,14 +831,14 @@
 		equal(oDefaultFloat.parse(".5e-3"), 5e-4, ".5e-3");
 		equal(oDefaultFloat.parse("1."), 1, "1.");
 		equal(isNaN(oDefaultFloat.parse("123.x5")), true, "123.x5");
-		
+
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			parseAsString: true
 		});
 		equal(oFormat.parse("123.23"), "123.23", "Simple number is parsed as string");
 		equal(oFormat.parse("000123.23"), "123.23", "Number with leading zeros is parsed as string");
 		equal(oFormat.parse("12,345.67"), "12345.67", "Number with grouping is parsed as string");
-		equal(oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78"), "-12345678901123456345678901123456.78", 
+		equal(oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78"), "-12345678901123456345678901123456.78",
 				"Ridiculously long number is parsed as string");
 	});
 
@@ -788,7 +922,7 @@
 		equal(oFormat.parse("123,23"), "123.23", "Simple number is parsed as string");
 		equal(oFormat.parse("000123,23"), "123.23", "Number with leading zeros is parsed as string");
 		equal(oFormat.parse("12.345,67"), "12345.67", "Number with grouping is parsed as string");
-		equal(oFormat.parse("-12.345.678.901.123.456.345.678.901.123.456,78"), "-12345678901123456345678901123456.78", 
+		equal(oFormat.parse("-12.345.678.901.123.456.345.678.901.123.456,78"), "-12345678901123456345678901123456.78",
 				"Ridiculously long number is parsed as string");
 
 	});
@@ -827,7 +961,7 @@
 		ok(jQuery.isArray(aResult), "Currency parser should return an array");
 		equal(aResult[0], 1234567.89, "Number is parsed correctly");
 		strictEqual(aResult[1], "USD", "Currency Code is parsed correctly: expected USD, parsed " + aResult[1]);
-		
+
 		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			showMeasure: false
 		});
@@ -881,7 +1015,7 @@
 		equal(oFormat.format(0.23), "0", "0.23 formatted");
 		equal(oFormat.format(1.345), "1", "1.3456 formatted");
 		equal(oFormat.format(23.456), "23", "23.456 formatted");
-		
+
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({precision: 1}, oLocale);
 		equal(oFormat.format(0.23), "0,2", "0.23 formatted");
 		equal(oFormat.format(1.345), "1", "1.3456 formatted");
@@ -905,10 +1039,10 @@
 		equal(oFormat.format(1.345), "1,345", "1.3456 formatted");
 		equal(oFormat.format(23.456), "23,46", "23.456 formatted");
 		equal(oFormat.format(123.456), "123,5", "123.456 formatted");
-		
+
 	});
-	
-	
+
+
 	test("float short style", function(){
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({style: "short", shortDecimals: 0}, oLocale);
@@ -961,7 +1095,7 @@
 		equal(oFormat.format(-123456789012), "-123\xa0Mrd.", "-123456789012 formatted");
 		equal(oFormat.format(-999999999999), "-1\xa0Bio.", "-999999999999 formatted");
 		equal(oFormat.format(-1234567890123), "-1\xa0Bio.", "-1234567890123 formatted");
-		
+
 		equal(oFormat.parse("0,23"), 0.23, "\"0,23\" parsed");
 		equal(oFormat.parse("1"), 1, "\"1\" parsed");
 		equal(oFormat.parse("12"), 12, "\"12\" parsed");
@@ -992,9 +1126,9 @@
 		equal(oFormat.parse("-10 Mrd."), -10000000000, "\"-10 Mrd.\" parsed");
 		equal(oFormat.parse("-100 Mrd."), -100000000000, "\"-100 Mrd.\" parsed");
 		equal(oFormat.parse("-1 Bio."), -1000000000000, "\"-1 Bio.\" parsed");
-		
+
 		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({style: "short", shortLimit: 10000, precision: 3}, oLocale);
-		
+
 		equal(oFormat.format(1), "1", "1 formatted");
 		equal(oFormat.format(12), "12", "12 formatted");
 		equal(oFormat.format(123), "123", "123 formatted");
@@ -1031,7 +1165,7 @@
 		equal(oFormat.format(999000000000), "999\xa0Mrd.", "999000000000 formatted");
 		equal(oFormat.format(999999999999), "1\xa0Bio.", "999999999999 formatted");
 		equal(oFormat.format(1234567890123), "1,23\xa0Bio.", "1234567890123 formatted");
-		
+
 	});
 
 	test("float short style", function() {
@@ -1089,36 +1223,40 @@
 
 	test("Format option 'emptyString'", function() {
 		var aMethods = ["getIntegerInstance", "getFloatInstance", "getPercentInstance", "getCurrencyInstance"],
-			aValues = [undefined, null, 0],
-			aCompareValues = [NaN, null, 0];
+			aValues = [NaN, null, 0],
+			aCompareValues = [["NaN", null, "0"], [NaN, null, 0]],
+			aParseAsString = [true, false];
 
 		aMethods.forEach(function(sMethod, index) {
 			aValues.forEach(function(nValue, index1) {
-				var oFormatOptions = {
-						emptyString: nValue
-					},
-					oFormat = sap.ui.core.format.NumberFormat[sMethod](oFormatOptions),
-					nCompareValue = aCompareValues[index1],
-					nParsed,
-					aParsed;
+				aParseAsString.forEach(function(bParseAsString, index2) {
+					var oFormatOptions = {
+							emptyString: nValue,
+							parseAsString: bParseAsString
+						},
+						oFormat = sap.ui.core.format.NumberFormat[sMethod](oFormatOptions),
+						nCompareValue = aCompareValues[index2][index1],
+						nParsed,
+						aParsed;
 
-				// format
-				strictEqual(oFormat.format(nCompareValue), "", nCompareValue + " is formatted to empty string");
+					// format
+					strictEqual(oFormat.format(nValue), "", nValue + " is formatted to empty string");
 
-				// parse
-				if (sMethod === "getCurrencyInstance") {
-					aParsed = oFormat.parse("");
-					nParsed = aParsed[0];
-					strictEqual(aParsed[1], undefined, "currency code is parse as undefined");
-				} else {
-					nParsed = oFormat.parse("");
-				}
+					// parse
+					if (sMethod === "getCurrencyInstance") {
+						aParsed = oFormat.parse("");
+						nParsed = aParsed[0];
+						strictEqual(aParsed[1], undefined, "currency code is parse as undefined");
+					} else {
+						nParsed = oFormat.parse("");
+					}
 
-				if (nParsed !== nParsed) {
-					ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN");
-				} else {
-					strictEqual(nParsed, nCompareValue, "empty string is parsed as " + aCompareValues[index1]);
-				}
+					if (nParsed !== nParsed) {
+						ok(nCompareValue !== nCompareValue, "empty string is parsed as NaN");
+					} else {
+						strictEqual(nParsed, nCompareValue, "empty string is parsed as " + aCompareValues[index2][index1]);
+					}
+				});
 			});
 		});
 	});

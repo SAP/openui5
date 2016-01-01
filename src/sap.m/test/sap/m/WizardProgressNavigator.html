@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-	<meta charset="UTF-8">
+	<meta charset="utf-8">
 	<title>sap.m.WizardProgessNavigator</title>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m, sap.ui.layout"
@@ -10,6 +10,13 @@
 	</script>
 	<script type="text/javascript">
 		jQuery.sap.require("sap.m.WizardProgressNavigator");
+
+		var randomTitle = function () {
+			return Array(Math.floor(Math.random() * 10) + 2).join("-").split("").map(function (x) {
+				return Array(Math.floor(Math.random() * 10 + 4)).join("a");
+
+			}).join(" ");
+		}
 
 		var app = new sap.m.App({initialPage: "landing"});
 		var pageOne = new sap.m.Page("landing", {showHeader: false});
@@ -28,7 +35,10 @@
 					content: [
 						new sap.m.WizardProgressNavigator(navigatorId, {
 							stepCount: steps,
-							varyingStepCount: steps % 2 === 1
+							varyingStepCount: steps % 2 === 1,
+							stepTitles: Array(steps + 1).join("-").split("").map(function (s, i) {
+								return randomTitle();
+							})
 						}),
 						new sap.m.Button({
 							text: "Previous",

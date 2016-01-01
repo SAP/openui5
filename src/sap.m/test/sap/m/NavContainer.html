@@ -1,17 +1,17 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>NavContainer - sap.m</title>
-		
+
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		
+
 		<script type="text/javascript">
 			var app = new sap.m.App("myApp", {
 				initialPage:"page1",
@@ -23,7 +23,7 @@
 					jQuery.sap.log.info(info);
 				}
 			});
-			
+
 			var page1 = new sap.m.Page("page1", {
 				title:"Page 1",
 				content : [ new sap.m.Button({
@@ -61,7 +61,7 @@
 					press : function() {
 						app.to("page2", "show");
 					}
-				}), 
+				}),
 				new sap.m.Button({
 					text : "Slide to Page 2 AND transfer the value of the following Input field",
 					press : function() {
@@ -70,7 +70,7 @@
 					}
 				}),
 				new sap.m.Input("p1input")
-				]			
+				]
 			}).addEventDelegate({
 				onBeforeShow: function(evt) {
 					jQuery.sap.log.info("page 1 is going to be shown (dir: " + evt.direction + ")");
@@ -79,8 +79,8 @@
 					jQuery.sap.log.info("page 1 has been hidden (dir: " + evt.direction + ")");
 				}
 			});
-			
-			
+
+
 			var page2 = new sap.m.Page("page2", {
 				title:"Page 2",
 				showNavButton: true,
@@ -93,27 +93,27 @@
 						press : function() {
 							app.to("page3", "slide");
 						}
-					}), 
+					}),
 					new sap.m.Button({
 						text : "FADE to Page 3",
 						press : function() {
 							app.to("page3", "fade");
 						}
-					}), 
+					}),
 					new sap.m.Button({
 						text : "SHOW to Page 3",
 						press : function() {
 							app.to("page3", "show");
 						}
-					}), 
+					}),
 					new sap.m.Label({
 						text : "The following field shows the data passed from page 1:"
-					}), 
+					}),
 					new sap.m.Input("p2input", {
 						value : null,
 						width: "100%"
-					}), 
-					new sap.ui.core.HTML({content:"<div>This page does not scroll.</div>"}) 
+					}),
+					new sap.ui.core.HTML({content:"<div>This page does not scroll.</div>"})
 				]
 			}).addEventDelegate({
 				onBeforeShow: function(evt) {
@@ -135,14 +135,14 @@
 				navButtonText: "Home",
 				navButtonPress: function(){ app.backToTop(); },
 				icon: "images/SAPUI5.jpg",
-				content : [ 
+				content : [
 					new sap.m.Button({text : "Back to Page 2", press:function(){
 						app.back({myBackPayload:sap.ui.getCore().byId("p3input").getValue()});
-					}}), 
+					}}),
 					new sap.m.Input("p3input", {
 						value : null
 					}),
-					new sap.ui.core.HTML({content:"<div>The 'Back' button directly navigates back to the initial page!</div>"}) 
+					new sap.ui.core.HTML({content:"<div>The 'Back' button directly navigates back to the initial page!</div>"})
 				]
 			}).addEventDelegate({
 				onBeforeShow: function(evt) {
@@ -152,13 +152,13 @@
 					jQuery.sap.log.info("page 3 has been hidden (dir: " + evt.direction + ")");
 				}
 			});;
-			
+
 			app.addPage(page1).addPage(page2).addPage(page3);
 
 			app.placeAt("body");
 		</script>
 
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

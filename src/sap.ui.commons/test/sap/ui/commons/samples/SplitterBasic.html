@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html style="height: 100%">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>Splitter - sap.ui.commons Basic Splitter</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 				type="text/javascript"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_goldreflection"
@@ -89,7 +89,7 @@
 					tooltip : "Je suis un Layout splitted"
 				});
 
-				oMyLayout.setRtl(false);	
+				oMyLayout.setRtl(false);
 
 				//oMyLayout.addSouthControl(oMyImg);
 				oMyLayout.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.center,
@@ -105,7 +105,7 @@
 				oPanel.setWidth("1500px");
 				oPanel.setHeight("800px");
 /****** splitter in standalone mode ****/
-				var oSplitter = new sap.ui.commons.Splitter("mySplitter");	
+				var oSplitter = new sap.ui.commons.Splitter("mySplitter");
 					oSplitter.setHeight("400px");
 					oSplitter.setWidth("600px");
 				var oSplitter0 = new sap.ui.commons.Splitter("mySplitter0");
@@ -124,7 +124,7 @@
 												press : function(oEvent){
 													oSplitter.setSplitterBarVisible(false);
 												}});
-											oSplitter.addFirstPaneContent(olBtn1);	
+											oSplitter.addFirstPaneContent(olBtn1);
 											var olBtn2 = new sap.ui.commons.Button({
 												text: "Show vertical Splitter",
 												press : function(oEvent){
@@ -139,22 +139,22 @@
 												press : function(oEvent){
 													oSplitter0.setSplitterBarVisible(false);
 												}});
-											oSplitter0.addSecondPaneContent(orBtn4);	
+											oSplitter0.addSecondPaneContent(orBtn4);
 											var orBtn5 = new sap.ui.commons.Button({
 												text: "Show horizontal Splitter",
 												press : function(oEvent){
 													oSplitter0.setSplitterBarVisible(true);
 												}});
-											oSplitter0.addSecondPaneContent(orBtn5);		
+											oSplitter0.addSecondPaneContent(orBtn5);
 											var orBtn6 = new sap.ui.commons.Button({text: "Bottom"});
-											oSplitter0.addSecondPaneContent(orBtn6);	
+											oSplitter0.addSecondPaneContent(orBtn6);
 
 											var orBtn7 = new sap.ui.commons.Button({text: "Top"});
-											oSplitter0.addFirstPaneContent(orBtn7);	
+											oSplitter0.addFirstPaneContent(orBtn7);
 											var orBtn8 = new sap.ui.commons.Button({text: "Top"});
-											oSplitter0.addFirstPaneContent(orBtn8);		
+											oSplitter0.addFirstPaneContent(orBtn8);
 											var orBtn9 = new sap.ui.commons.Button({text: "Top"});
-											oSplitter0.addFirstPaneContent(orBtn9);	
+											oSplitter0.addFirstPaneContent(orBtn9);
 											oSplitter.addSecondPaneContent(oSplitter0);
 
 
@@ -266,12 +266,12 @@
 		<h2>2- Splitting a BorderLayout </h2>
 		<div id="uiArea0" style="height: 100%; width:100%;">
 		</div>
-		<h2>3- Splitting a Panel </h2>	
+		<h2>3- Splitting a Panel </h2>
 		<div id="uiArea1" style="height: 100%; width:100%;">
-		</div>	
-		<h2>4- Splitter with Iframe </h2>	
+		</div>
+		<h2>4- Splitter with Iframe </h2>
 		<div id="uiArea4" style="height: 100%; width:100%;">
-		</div>		
+		</div>
 		<h2>5- Splitting a Dialog </h2>
 		<div id="uiArea2" style="height: 100%; width:100%;">
 		</div>

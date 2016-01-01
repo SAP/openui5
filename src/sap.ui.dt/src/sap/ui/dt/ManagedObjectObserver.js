@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new ManagedObjectObserver.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 * @class The ManagedObjectObserver observes changes of a ManagedObject and propagates them via events.
@@ -48,10 +48,11 @@ sap.ui.define([
 				 */
 				modified: {
 					parameters: {
-						type: "string",
-						value: "any",
-						oldValue: "any",
-						target: "sap.ui.core.Element"
+						type : "string",
+						name : "string",
+						value : "any",
+						oldValue : "any",
+						target : "sap.ui.core.Element"
 					}
 				},
 				destroyed: {}
@@ -61,35 +62,36 @@ sap.ui.define([
 
 	/**
 	 * Called when the ManagedObjectObserver is created
-	 * 
+	 *
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.init = function() {
+		var that = this;
+
+		this._fnFireModified = function() {
+			that.fireModified();
+		};
 	};
 
 	/**
 	 * Called when the ManagedObjectObserver is destroyed
-	 * 
+	 *
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.exit = function() {
-		var oTarget = this.getTargetInstance();
-		if (oTarget) {
-			this.unobserve(oTarget);
-		}
+		this.unobserve();
+
+		delete this._fnFireModified;
 	};
 
 	/**
 	 * Sets a target ManagedObject to observe
-	 * 
+	 *
 	 * @param {string|sap.ui.base.ManagedObject} vTarget id or managed object to set
 	 * @return {sap.ui.dt.ManagedObjectObserver} returns this
 	 */
 	ManagedObjectObserver.prototype.setTarget = function(vTarget) {
-		var oOldTarget = this.getTargetInstance();
-		if (oOldTarget) {
-			this.unobserve(oOldTarget);
-		}
+		this.unobserve();
 
 		this.setAssociation("target", vTarget);
 
@@ -103,14 +105,14 @@ sap.ui.define([
 
 	/**
 	 * Starts observing the target object. Override this method in classes wich extend ManagedObjectObserver.
-	 * 
+	 *
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to observe
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.observe = function(oTarget) {
 		var that = this;
 
-		oTarget.attachEvent("_change", this.fireModified, this);
+		oTarget.attachEvent("_change", this._fnFireModified, this);
 
 		// Wrapper for the destroy method to recognize changes
 		var fnOriginalDestroy = this._fnOriginalDestroy = oTarget.destroy;
@@ -119,7 +121,7 @@ sap.ui.define([
 			if (bDestroyed) {
 				return;
 			}
-			that.unobserve(oTarget);
+			that.unobserve();
 			var vOriginalReturn = fnOriginalDestroy.apply(this, arguments);
 			that.fireDestroyed();
 
@@ -195,6 +197,7 @@ sap.ui.define([
 			var vOriginalReturn = that._fnOriginalAddAggregation.apply(this, arguments);
 			that.fireModified({
 				type: "addOrSetAggregation",
+				name : sAggregationName,
 				value: oObject,
 				target: this
 			});
@@ -209,6 +212,7 @@ sap.ui.define([
 			var vOriginalReturn = that._fnOriginalSetAggregation.apply(this, arguments);
 			that.fireModified({
 				type: "addOrSetAggregation",
+				name : sAggregationName,
 				value: oObject,
 				target: this
 			});
@@ -222,6 +226,7 @@ sap.ui.define([
 			var vOriginalReturn = that._fnOriginalRemoveAggregation.apply(this, arguments);
 			that.fireModified({
 				type: "removeAggregation",
+				name : sAggregationName,
 				value: vObject,
 				target: this
 			});
@@ -235,6 +240,7 @@ sap.ui.define([
 			var vOriginalReturn = that._fnOriginalInsertAggregation.apply(this, arguments);
 			that.fireModified({
 				type: "insertAggregation",
+				name : sAggregationName,
 				value: oObject,
 				target: this
 			});
@@ -249,6 +255,7 @@ sap.ui.define([
 			var vOriginalReturn = that._fnOriginalRemoveAllAggregation.apply(this, arguments);
 			that.fireModified({
 				type: "removeAllAggregation",
+				name : sAggregationName,
 				value: aRemovedObjects,
 				target: this
 			});
@@ -263,6 +270,7 @@ sap.ui.define([
 			var vOriginalReturn = that._fnOriginalDestroyAggregation.apply(this, arguments);
 			that.fireModified({
 				type: "destroyAggregation",
+				name : sAggregationName,
 				value: aRemovedObjects,
 				target: this
 			});
@@ -284,24 +292,12 @@ sap.ui.define([
 				// if addAggregation or setAggregation method wasn't called directly
 
 				var vOriginalReturn;
-				// if the mutator is overwritten and inside of the mutator control is temporary detached from root control tree,
-				// overlay destruction should be prevented. For instance, if the label is inserted to SimpleForm content,
-				// it will be added to a hidden FormElement, which has no parent (yet) at this moment we should prevent destuction of the overlay
-				// look SimpleFormInDesignTime.qunit for test
-				if (oObject && typeof oObject === 'object') {
-					oObject.__bSapUiDtSupressOverlayDestroy = true;
-				}
-				try {
-					vOriginalReturn = _fnOriginalAddMutator.apply(this, arguments);
-				} finally {
-					if (oObject && typeof oObject === 'object') {
-						delete oObject.__bSapUiDtSupressOverlayDestroy;
-					}
-				}
+				vOriginalReturn = _fnOriginalAddMutator.apply(this, arguments);
 
 				if (!that._bAddOrSetAggregationCall) {
 					that.fireModified({
 						type: "addOrSetAggregation",
+						name : oAggregation.name,
 						value: oObject,
 						target: this
 					});
@@ -315,25 +311,13 @@ sap.ui.define([
 				that._bInsertAggregationCall = false;
 
 				var vOriginalReturn;
-				// if the mutator is overwritten and inside of the mutator control is temporary detached from root control tree,
-				// overlay destruction should be prevented. For instance, if the label is inserted to SimpleForm content,
-				// it will be added to a hidden FormElement, which has no parent (yet) at this moment we should prevent destuction of the overlay
-				// look SimpleFormInDesignTime.qunit for test
-				if (oObject && typeof oObject === 'object') {
-					oObject.__bSapUiDtSupressOverlayDestroy = true;
-				}
-				try {
-					vOriginalReturn = _fnOriginalInsertMutator.apply(this, arguments);
-				} finally {
-					if (oObject && typeof oObject === 'object') {
-						delete oObject.__bSapUiDtSupressOverlayDestroy;
-					}
-				}
+				vOriginalReturn = _fnOriginalInsertMutator.apply(this, arguments);
 
 				// if insertAggregation method wasn't called directly
 				if (!that._bInsertAggregationCall) {
 					that.fireModified({
 						type: "insertAggregation",
+						name : oAggregation.name,
 						value: oObject,
 						target: this
 					});
@@ -350,6 +334,7 @@ sap.ui.define([
 				if (!that._bRemoveAggregationCall) {
 					that.fireModified({
 						type: "removeAggregation",
+						name : oAggregation.name,
 						value: vObject,
 						target: this
 					});
@@ -367,6 +352,7 @@ sap.ui.define([
 				if (!that._bRemoveAllAggregationCall) {
 					that.fireModified({
 						type: "removeAllAggregation",
+						name : oAggregation.name,
 						value: aRemovedObjects,
 						target: this
 					});
@@ -384,6 +370,7 @@ sap.ui.define([
 				if (!that._bDestroyAggregationCall) {
 					that.fireModified({
 						type: "destroyAggregation",
+						name : oAggregation.name,
 						value: aRemovedObjects,
 						target: this
 					});
@@ -396,55 +383,60 @@ sap.ui.define([
 
 	/**
 	 * Stops observing the target object. Override this method in classes wich extend ManagedObjectObserver.
-	 * 
+	 *
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to unobserve
 	 * @protected
 	 */
-	ManagedObjectObserver.prototype.unobserve = function(oTarget) {
+	ManagedObjectObserver.prototype.unobserve = function() {
 		var that = this;
 
-		oTarget.destroy = this._fnOriginalDestroy;
+		var oTarget = this.getTargetInstance();
+
+		if (oTarget) {
+			oTarget.destroy = this._fnOriginalDestroy;
+			oTarget.bindProperty = this._fnOriginalBindProperty;
+			oTarget.unbindProperty = this._fnOriginalUnBindProperty;
+			oTarget.bindAggregation = this._fnOriginalBindAggregation;
+			oTarget.unbindAggregation = this._fnOriginalUnBindAggregation;
+			oTarget.setParent = this._fnOriginalSetParent;
+
+			oTarget.addAggregation = this._fnOriginalAddAggregation;
+			oTarget.removeAggregation = this._fnOriginalRemoveAggregation;
+			oTarget.insertAggregation = this._fnOriginalInsertAggregation;
+			oTarget.setAggregation = this._fnOriginalSetAggregation;
+			oTarget.removeAllAggregation = this._fnOriginalRemoveAllAggregation;
+			oTarget.destroyAggregation = this._fnOriginalDestroyAggregation;
+
+			var mAllAggregations = oTarget.getMetadata().getAllAggregations();
+			Object.keys(mAllAggregations).forEach(function(sAggregationName) {
+				var oAggregation = mAllAggregations[sAggregationName];
+				oTarget[oAggregation._sMutator] = that._aOriginalAddMutators[oAggregation.name];
+				oTarget[oAggregation._sInsertMutator] = that._aOriginalInsertMutators[oAggregation.name];
+				oTarget[oAggregation._sRemoveMutator] = that._aOriginalRemoveMutators[oAggregation.name];
+				oTarget[oAggregation._sRemoveAllMutator] = that._aOriginalRemoveAllMutators[oAggregation.name];
+				oTarget[oAggregation._sDestructor] = that._aOriginalDestructors[oAggregation.name];
+			});
+			oTarget.detachEvent("_change", this._fnFireModified, this);
+		}
+
 		delete this._fnOriginalDestroy;
-		oTarget.bindProperty = this._fnOriginalBindProperty;
 		delete this._fnOriginalBindProperty;
-		oTarget.unbindProperty = this._fnOriginalUnBindProperty;
 		delete this._fnOriginalUnBindProperty;
-		oTarget.bindAggregation = this._fnOriginalBindAggregation;
 		delete this._fnOriginalBindAggregation;
-		oTarget.unbindAggregation = this._fnOriginalUnBindAggregation;
 		delete this._fnOriginalUnBindAggregation;
-		oTarget.setParent = this._fnOriginalSetParent;
 		delete this._fnOriginalSetParent;
-
-		oTarget.addAggregation = this._fnOriginalAddAggregation;
 		delete this._fnOriginalAddAggregation;
-		oTarget.removeAggregation = this._fnOriginalRemoveAggregation;
 		delete this._fnOriginalRemoveAggregation;
-		oTarget.insertAggregation = this._fnOriginalInsertAggregation;
 		delete this._fnOriginalInsertAggregation;
-		oTarget.setAggregation = this._fnOriginalSetAggregation;
 		delete this._fnOriginalSetAggregation;
-		oTarget.removeAllAggregation = this._fnOriginalRemoveAllAggregation;
 		delete this._fnOriginalRemoveAllAggregations;
-		oTarget.destroyAggregation = this._fnOriginalDestroyAggregation;
 		delete this._fnOriginalDestroyAggregation;
-
-		var mAllAggregations = oTarget.getMetadata().getAllAggregations();
-		Object.keys(mAllAggregations).forEach(function(sAggregationName) {
-			var oAggregation = mAllAggregations[sAggregationName];
-			oTarget[oAggregation._sMutator] = that._aOriginalAddMutators[oAggregation.name];
-			oTarget[oAggregation._sInsertMutator] = that._aOriginalInsertMutators[oAggregation.name];
-			oTarget[oAggregation._sRemoveMutator] = that._aOriginalRemoveMutators[oAggregation.name];
-			oTarget[oAggregation._sRemoveAllMutator] = that._aOriginalRemoveAllMutators[oAggregation.name];
-			oTarget[oAggregation._sDestructor] = that._aOriginalDestructors[oAggregation.name];
-		});
 		delete this._aOriginalAddMutators;
 		delete this._aOriginalInsertMutators;
 		delete this._aOriginalRemoveMutators;
 		delete this._aOriginalRemoveAllMutators;
 		delete this._aOriginalDestructors;
 
-		oTarget.detachEvent("_change", this.fireModified, this);
 	};
 
 	/**

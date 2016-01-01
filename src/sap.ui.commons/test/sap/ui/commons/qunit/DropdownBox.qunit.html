@@ -1,19 +1,19 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>DropdownBox - sap.ui.commons </title>
 
-    <script id="sap-ui-bootstrap" 
+    <script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.ui.commons" 
+			data-sap-ui-libs="sap.ui.commons"
 			data-sap-ui-modules="jquery.sap.storage">
 		</script>
 
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -34,7 +34,7 @@
 		var oDropdown = new sap.ui.commons.DropdownBox(sDropdownId, {value: "",
 				displaySecondaryValues: true,
 	      items : [
-					new sap.ui.core.ListItem("fi",{text:"first item", additionalText: "(1)", key: "key1"}), 
+					new sap.ui.core.ListItem("fi",{text:"first item", additionalText: "(1)", key: "key1"}),
 					new sap.ui.core.ListItem("si",{text:"second item", additionalText: "(2)", key: "key2"}),
 					new sap.ui.core.ListItem("ti",{text:"third item", additionalText: "(3)", key: "key3"}),
 					new sap.ui.core.ListItem("li",{text:"last item", additionalText: "(4)", key: "key4"})]
@@ -49,7 +49,7 @@
 
 		var oDropdown2 = new sap.ui.commons.DropdownBox(sDropdownId + "2", {editable: false,
 			items : [
-				new sap.ui.core.ListItem("red",{text:"red"}), 
+				new sap.ui.core.ListItem("red",{text:"red"}),
 				new sap.ui.core.ListItem("blue",{text:"blue"}),
 				new sap.ui.core.ListItem("yellow",{text:"yellow"})]
 			});
@@ -70,7 +70,7 @@
 										bSearchHelpFired = true;
 									},
       items : [
-				new sap.ui.core.ListItem("Langu1",{text:"German", additionalText: "DE"}), 
+				new sap.ui.core.ListItem("Langu1",{text:"German", additionalText: "DE"}),
 				new sap.ui.core.ListItem("Langu2",{text:"English", additionalText: "EN"}),
 				new sap.ui.core.ListItem("Langu3",{text:"Spanish", additionalText: "SP"})]
 			}
@@ -337,7 +337,7 @@
 		});
 
 		test("TestSelectItemFromListOK", function(){
-			expect(12); // two from reset, 8 from this method and 2 from the event handler (initiated via click events) 
+			expect(12); // two from reset, 8 from this method and 2 from the event handler (initiated via click events)
 
 			qutils.triggerKeyboardEvent(sDropdownTypingInputId, jQuery.sap.KeyCodes.F4, false, false, false);
 			ok(jQuery.sap.byId(sDropdownListBoxId).is(":visible"), "ListBox should be visible after F4 press");
@@ -462,7 +462,7 @@
 			equal(oEvent.getParameter("newValue"), sText, "Entered value should be provided as Event parameter");
 		};
 		test("TestChangeOnFocusLostAfterTextInputOK", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(4); // two from cleanup + two from the event handler
 			resetBeforeTest();
@@ -476,7 +476,7 @@
 		});
 
 		asyncTest("TestChangeOnFocusLostAfterTextInputOK_check", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(1); // 1 check
 			setTimeout( function(){
@@ -498,10 +498,10 @@
 		});
 
 		var oTest3 = function(oEvent) {
-			equal(oEvent.getParameter("newValue"), "third item", "Entered value should be provided as Event parameter");				
+			equal(oEvent.getParameter("newValue"), "third item", "Entered value should be provided as Event parameter");
 		};
 		test("TestChangeOnFocusLostAfterUpDownOK", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(4); // two from cleanup + two from the event handler
 			resetBeforeTest();
@@ -515,7 +515,7 @@
 		});
 
 		asyncTest("TestChangeOnFocusLostAfterUpDownOK_check", function(){
-			// we do not expect (anymore) as different browsers handle events in different execution orders 
+			// we do not expect (anymore) as different browsers handle events in different execution orders
 			// and thus this is (unfortunately) not precisely predictable.
 			// expect(2); // two checks
 			setTimeout( function(){
@@ -566,7 +566,7 @@
 				equal(oListBox.getItems()[0].getText(), rb.getText("DDBX_SHI"), "Seach help item default text");
 				equal(oListBox.getItems()[0].getAdditionalText(), rb.getText("DDBX_SHIF4"), "Seach help item default additional text");
 				equal(oListBox.getItems()[0].getIcon(), sap.ui.resource("sap.ui.commons", "images/dropdown/ico12_f4.gif"), "Seach help item default icon");
-				// close list box 
+				// close list box
 				qutils.triggerEvent("click", "ddb4-icon");
 				sap.ui.getCore().applyChanges();
 
@@ -580,7 +580,7 @@
 					equal(oListBox.getItems()[0].getText(), "Test", "Seach help item default text");
 					equal(oListBox.getItems()[0].getAdditionalText(), "XX", "Seach help item default additional text");
 					equal(oListBox.getItems()[0].getIcon(), sap.ui.resource("sap.ui.core", "mimes/logo/txtonly_16x16.ico"), "Seach help item default icon");
-					// close list box 
+					// close list box
 					qutils.triggerEvent("click", "ddb4-icon");
 					start();
 				},100);

@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested classes: sap.ui.core.mvc.HTMLView + sap.ui.core.mvc.Controller
   Author: d058497
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.ui.core.mvc.HTMLView +
 sap.ui.core.mvc.Controller</title>
 
@@ -37,20 +37,20 @@ sap.ui.core.mvc.Controller</title>
 		viewClassName : "sap.ui.core.mvc.HTMLView",
 		idsToBeChecked : ["myPanel", "Button1", "Button2"]
 	};
-	
+
 	testsuite(oConfig, "HTMLView creation loading from file", function() {
 		return sap.ui.htmlview("example.mvc.test");
 	});
-	
+
 	testsuite(oConfig, "HTMLView creation via HTML string", function() {
-		var sHtml = '<template data-controller-name="example.mvc.test"><div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Panel" id="myPanel">	<div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Button" id="Button1" data-text="Hello World" data-press="doIt"></div>	<div data-sap-ui-type="sap.ui.commons.Button" id="Button2" data-text="Hello"></div>	<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="example.mvc.test2"></div>	<div data-sap-ui-type="sap.ui.core.mvc.JSView" id="MyJSView" data-view-name="example.mvc.test2"></div>	<div data-sap-ui-type="sap.ui.core.mvc.JSONView" id="MyJSONView" data-view-name="example.mvc.test2"></div>	<div data-sap-ui-type="sap.ui.core.mvc.XMLView" id="MyXMLView" data-view-name="example.mvc.test2"></div></div></template>';
+		var sHtml = '<template data-controller-name="example.mvc.test"><div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Panel" id="myPanel">	<div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Button" id="Button1" data-text="Hello World" data-press="doIt"></div>	<div data-sap-ui-type="sap.ui.commons.Button" id="Button2" data-text="Hello"></div>	<div data-sap-ui-type="sap.ui.commons.Button" id="ButtonX" data-text="Another Hello" data-press=".sap.doIt"></div>	<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="example.mvc.test2"></div>	<div data-sap-ui-type="sap.ui.core.mvc.JSView" id="MyJSView" data-view-name="example.mvc.test2"></div>	<div data-sap-ui-type="sap.ui.core.mvc.JSONView" id="MyJSONView" data-view-name="example.mvc.test2"></div>	<div data-sap-ui-type="sap.ui.core.mvc.XMLView" id="MyXMLView" data-view-name="example.mvc.test2"></div></div></template>';
 		return sap.ui.htmlview({viewContent:sHtml});
 	});
-	
+
 	testsuite(oConfig, "HTMLView creation via generic view factory", function() {
-		return sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}}); 
+		return sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 	}, true);
-	
+
 	module("Custom Tests");
 
 	test("Embedded HTML", 13, function() {
@@ -62,7 +62,7 @@ sap.ui.core.mvc.Controller</title>
 		ok(jQuery("#htmlEmbeddedTable")[0], "HTML at embedded level rendered");
 		oView.destroy();
 	});
-	
+
 	test("Assocations", 13, function() {
 		var oView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"example.mvc.test", viewData:{test:"testdata"}});
 		oView.placeAt("content");
@@ -83,9 +83,9 @@ sap.ui.core.mvc.Controller</title>
 		equal(oView.byId("Button2").data("myData2"), "formatted-value", "Custom Data Formatter works properly");
 		oView.destroy();
 	});
-	
+
 	test("DataBinding", function() {
-		
+
 		var oModel1 = new sap.ui.model.json.JSONModel({
 			booleanValue : true,
 			integerValue: 8015,
@@ -101,13 +101,13 @@ sap.ui.core.mvc.Controller</title>
 			integerValue: 4711,
 			stringValue : '1txeT'
 		});
-		
+
 		var htmlWithBindings = [
       		'<template data-controller-name="example.mvc.test">',
       		'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-enabled="{/booleanValue}" data-text="{/stringValue}" data-width="{/integerValue}"></div>',
       		'</template>'
       	].join('');
-		
+
 		var htmlWithNamedBindings = [
        		'<template data-controller-name="example.mvc.test">',
       		'  <div data-sap-ui-type="sap.ui.testlib.TestButton" id="btn" data-enabled="{model2>/booleanValue}" data-text="{model1>/stringValue}" data-width="{/integerValue}"></div>',
@@ -140,14 +140,14 @@ sap.ui.core.mvc.Controller</title>
 		equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
 		equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
 		equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
-		
+
 		var oViewWithNamedBindings = sap.ui.htmlview({viewContent:htmlWithNamedBindings});
 		oViewWithNamedBindings.setModel(oModel1, "model1");
 		oViewWithNamedBindings.setModel(oModel2, "model2");
 		equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
 		equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
 		equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
-		
+
 		var oViewWithElementBinding = sap.ui.htmlview({viewContent:htmlWithElementBinding});
 		oViewWithBindings1.setModel(oModel1);
 		equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
@@ -164,7 +164,7 @@ sap.ui.core.mvc.Controller</title>
 		equal(oViewWithoutBindings.byId("btn4").getText(), "[] is an empty array", "Check 'text' property of button 'btn4'");
 	});
 
-	
+
 </script>
 </head>
 <body>

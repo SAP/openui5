@@ -80,14 +80,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 						}
 						this._oDraftMetadata.draftRootEditName = oEntitySetAnnotations[this._oConstants.COM_SAP_VOCABULARIES_COMMON_V1_DRAFTROOT][this
 							._oConstants.EDIT_ACTION
-						].String;
+						];
+						this._oDraftMetadata.draftRootEditName = this._oDraftMetadata.draftRootEditName ? this._oDraftMetadata.draftRootEditName.String :
+							undefined;
 						if (this._oDraftMetadata.draftRootEditName) {
 							this._oDraftMetadata.draftRootEditName = this._oDraftMetadata.draftRootEditName.substring(this._oDraftMetadata.draftRootEditName
 								.lastIndexOf("/") + 1);
 						}
 						this._oDraftMetadata.draftRootValidationName = oEntitySetAnnotations[this._oConstants.COM_SAP_VOCABULARIES_COMMON_V1_DRAFTROOT][this
 							._oConstants.VALIDATE_ACTION
-						].String;
+						];
+						this._oDraftMetadata.draftRootValidationName = this._oDraftMetadata.draftRootValidationName ? this._oDraftMetadata.draftRootValidationName
+							.String : undefined;
 						if (this._oDraftMetadata.draftRootValidationName) {
 							this._oDraftMetadata.draftRootValidationName = this._oDraftMetadata.draftRootValidationName.substring(this._oDraftMetadata.draftRootValidationName
 								.lastIndexOf("/") + 1);
@@ -95,7 +99,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 						this._oDraftMetadata.draftRootPreparationtionName = oEntitySetAnnotations[this._oConstants.COM_SAP_VOCABULARIES_COMMON_V1_DRAFTROOT]
 						[this
 							._oConstants.PREPARE_ACTION
-						].String;
+						];
+						this._oDraftMetadata.draftRootPreparationtionName = this._oDraftMetadata.draftRootPreparationtionName ? this._oDraftMetadata.draftRootPreparationtionName
+							.String : undefined;
 						if (this._oDraftMetadata.draftRootPreparationtionName) {
 							this._oDraftMetadata.draftRootPreparationtionName = this._oDraftMetadata.draftRootPreparationtionName.substring(this._oDraftMetadata
 								.draftRootPreparationtionName
@@ -312,10 +318,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 			jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 				jQuery.each(oMockdata[sEntitySetName], function(iIndex, oEntry) {
 					// add the metadata for the entry
-					oEntry.__metadata = {
-						uri: sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")",
-						type: oEntitySet.schema + "." + oEntitySet.type
-					};
+					oEntry.__metadata = oEntry.__metadata || {};
+					oEntry.__metadata.uri = sRootUri + sEntitySetName + "(" + that._createKeysString(oEntitySet, oEntry) + ")";
+					oEntry.__metadata.type = oEntitySet.schema + "." + oEntitySet.type;
 					// add the navigation properties
 					jQuery.each(oEntitySet.navprops, function(sKey) {
 						oEntry[sKey] = {
@@ -432,160 +437,165 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 					return true;
 				}
 			});
-			aRequests.push({
-				method: "POST",
-				path: new RegExp(that._oDraftMetadata.draftRootEditName + "(\\?(.*))?"),
-				response: function(oXhr, sUrlParams) {
-					var aFilter = [];
-					var oRequestBody = JSON.parse(oXhr.requestBody);
-					if (oRequestBody && !jQuery.isEmptyObject(oRequestBody)) {
+			if (that._oDraftMetadata.draftRootEditName) {
+				aRequests.push({
+					method: "POST",
+					path: new RegExp(that._oDraftMetadata.draftRootEditName + "(\\?(.*))?"),
+					response: function(oXhr, sUrlParams) {
+						var aFilter = [];
+						var oRequestBody = JSON.parse(oXhr.requestBody);
+						if (oRequestBody && !jQuery.isEmptyObject(oRequestBody)) {
+							for (var property in oRequestBody) {
+								aFilter.push(property + " eq " + oRequestBody[property]);
+							}
+						} else {
+							var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
+
+							for (var param in aUrlParams) {
+								var sParamValue = aUrlParams[param];
+								var rKeyValue = new RegExp("(.*)=(.*)");
+								var aRes;
+								if (sParamValue) {
+									aRes = rKeyValue.exec(sParamValue);
+									aFilter.push(aRes[1] + " eq " + aRes[2]);
+								}
+							}
+						}
+						var oResponse = jQuery.sap.sjax({
+							url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
+							dataType: "json"
+						});
+						if (!oResponse.success || !oResponse.data.d.results[0]) {
+							// respond negative - no entity found
+							oXhr.respond(404);
+						}
+						var oEntry = oResponse.data.d.results[0];
+						if (!oEntry.IsActiveEntity || oEntry.HasDraftEntity) {
+							// respond negative - edit draft is only valid for an active document. If a business document already has an edit draft,
+							// the Edit action fails; there can be at most one edit draft per active business document.
+							oXhr.respond(400);
+						}
+						//  creates a deep copy of the business document.
+						var oDraftEntry = jQuery.extend(true, {}, oEntry);
+						oDraftEntry.IsActiveEntity = false; // true for active documents
+						oDraftEntry.HasActiveEntity = true; // false for new drafts and active documents
+						oDraftEntry.HasDraftEntity = false;
+						oDraftEntry[that._oDraftMetadata.draftRootKey] = that._generatePropertyValue(that._oDraftMetadata.draftRootKey, "Guid");
+
+						// add the metadata for the entry
+						var sRootUri = that._getRootUri();
+						var oEntitySet = that._mEntitySets[that._oDraftMetadata.draftRootName];
+						oDraftEntry.__metadata = oDraftEntry.__metadata || {};
+						oDraftEntry.__metadata.uri = sRootUri + that._oDraftMetadata.draftRootName + "(" + that._createKeysString(oEntitySet,
+							oDraftEntry) + ")";
+						oDraftEntry.__metadata.type = oEntitySet.schema + "." + oEntitySet.type;
+						// add the navigation properties
+						jQuery.each(oEntitySet.navprops, function(sKey) {
+							oDraftEntry[sKey] = {
+								__deferred: {
+									uri: sRootUri + that._oDraftMetadata.draftRootName + "(" + that._createKeysString(oEntitySet, oDraftEntry) + ")/" + sKey
+								}
+							};
+						});
+						that._oMockdata[that._oDraftMetadata.draftRootName].push(oDraftEntry);
+						// update the active with HasDraftEntity = true
+						oResponse = jQuery.sap.sjax({
+							url: oEntry.__metadata.uri,
+							type: "PATCH",
+							data: JSON.stringify({
+								HasDraftEntity: true
+							})
+						});
+						oXhr.respondJSON(200, {}, JSON.stringify({
+							d: oDraftEntry
+						}));
+						return true;
+					}
+				});
+			}
+			if (that._oDraftMetadata.draftRootValidationName) {
+				aRequests.push({
+					method: "GET",
+					path: new RegExp(that._oDraftMetadata.draftRootValidationName + "(\\?(.*))?"),
+					response: function(oXhr, sUrlParams) {
+						var sValidation = that._oDraftMetadata.draftRootValidationName;
+						//trigger the before callback funtion
+						that.fireEvent(MockServer.HTTPMETHOD.GET + sValidation + ":before", {
+							oXhr: oXhr,
+							sUrlParams: sUrlParams
+						});
+						that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
+							oXhr: oXhr,
+							sUrlParams: sUrlParams
+						});
+
+						var oResponse = {
+							d: {}
+						};
+						oResponse.d[sValidation] = {
+							"__metadata": {
+								"type": "ValidationResult"
+							},
+							"IsValid": true
+						};
+
+						//trigger the after callback funtion
+						that.fireEvent(MockServer.HTTPMETHOD.GET + sValidation + ":after", {
+							oXhr: oXhr,
+							oResult: oResponse
+						});
+						that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
+							oXhr: oXhr,
+							oResult: oResponse
+						});
+						oXhr.respondJSON(200, {}, JSON.stringify(oResponse));
+						return true;
+					}
+				});
+			}
+			if (that._oDraftMetadata.draftRootPreparationtionName) {
+				aRequests.push({
+					method: "POST",
+					path: new RegExp(that._oDraftMetadata.draftRootPreparationtionName),
+					response: function(oXhr) {
+						//trigger the before callback funtion
+						that.fireEvent(MockServer.HTTPMETHOD.POST + that._oDraftMetadata.draftRootPreparationtionName + ":before", {
+							oXhr: oXhr
+						});
+						that.fireEvent(MockServer.HTTPMETHOD.POST + ":before", {
+							oXhr: oXhr
+						});
+						var oRequestBody = JSON.parse(oXhr.requestBody);
+						var aFilter = [];
 						for (var property in oRequestBody) {
 							aFilter.push(property + " eq " + oRequestBody[property]);
 						}
-					} else {
-						var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
-
-						for (var param in aUrlParams) {
-							var sParamValue = aUrlParams[param];
-							var rKeyValue = new RegExp("(.*)=(.*)");
-							var aRes;
-							if (sParamValue) {
-								aRes = rKeyValue.exec(sParamValue);
-								aFilter.push(aRes[1] + " eq " + aRes[2]);
-							}
+						var oResponse = jQuery.sap.sjax({
+							url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
+							dataType: "json"
+						});
+						if (!oResponse.success || !oResponse.data.d.results[0]) {
+							// respond negative - no entity found
+							oXhr.respond(404);
 						}
-					}
-					var oResponse = jQuery.sap.sjax({
-						url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
-						dataType: "json"
-					});
-					if (!oResponse.success || !oResponse.data.d.results[0]) {
-						// respond negative - no entity found
-						oXhr.respond(404);
-					}
-					var oEntry = oResponse.data.d.results[0];
-					if (!oEntry.IsActiveEntity || oEntry.HasDraftEntity) {
-						// respond negative - edit draft is only valid for an active document. If a business document already has an edit draft,
-						// the Edit action fails; there can be at most one edit draft per active business document.
-						oXhr.respond(400);
-					}
-					//  creates a deep copy of the business document.
-					var oDraftEntry = jQuery.extend(true, {}, oEntry);
-					oDraftEntry.IsActiveEntity = false; // true for active documents
-					oDraftEntry.HasActiveEntity = true; // false for new drafts and active documents
-					oDraftEntry.HasDraftEntity = false;
-					oDraftEntry[that._oDraftMetadata.draftRootKey] = that._generatePropertyValue(that._oDraftMetadata.draftRootKey, "Guid");
+						var oEntry = oResponse.data.d.results[0];
 
-					// add the metadata for the entry
-					var sRootUri = that._getRootUri();
-					var oEntitySet = that._mEntitySets[that._oDraftMetadata.draftRootName];
-					oDraftEntry.__metadata = {
-						uri: sRootUri + that._oDraftMetadata.draftRootName + "(" + that._createKeysString(oEntitySet,
-							oDraftEntry) + ")",
-						type: oEntitySet.schema + "." + oEntitySet.type
-					};
-					// add the navigation properties
-					jQuery.each(oEntitySet.navprops, function(sKey) {
-						oDraftEntry[sKey] = {
-							__deferred: {
-								uri: sRootUri + that._oDraftMetadata.draftRootName + "(" + that._createKeysString(oEntitySet, oDraftEntry) + ")/" + sKey
-							}
-						};
-					});
-					that._oMockdata[that._oDraftMetadata.draftRootName].push(oDraftEntry);
-					// update the active with HasDraftEntity = true
-					oResponse = jQuery.sap.sjax({
-						url: oEntry.__metadata.uri,
-						type: "PATCH",
-						data: JSON.stringify({
-							HasDraftEntity: true
-						})
-					});
-					oXhr.respondJSON(200, {}, JSON.stringify({
-						d: oDraftEntry
-					}));
-					return true;
-				}
-			});
-			aRequests.push({
-				method: "GET",
-				path: new RegExp(that._oDraftMetadata.draftRootValidationName + "(\\?(.*))?"),
-				response: function(oXhr, sUrlParams) {
-					var sValidation = that._oDraftMetadata.draftRootValidationName;
-					//trigger the before callback funtion
-					that.fireEvent(MockServer.HTTPMETHOD.GET + sValidation + ":before", {
-						oXhr: oXhr,
-						sUrlParams: sUrlParams
-					});
-					that.fireEvent(MockServer.HTTPMETHOD.GET + ":before", {
-						oXhr: oXhr,
-						sUrlParams: sUrlParams
-					});
-
-					var oResponse = {
-						d: {}
-					};
-					oResponse.d[sValidation] = {
-						"__metadata": {
-							"type": "ValidationResult"
-						},
-						"IsValid": true
-					};
-
-					//trigger the after callback funtion
-					that.fireEvent(MockServer.HTTPMETHOD.GET + sValidation + ":after", {
-						oXhr: oXhr,
-						oResult: oResponse
-					});
-					that.fireEvent(MockServer.HTTPMETHOD.GET + ":after", {
-						oXhr: oXhr,
-						oResult: oResponse
-					});
-					oXhr.respondJSON(200, {}, JSON.stringify(oResponse));
-					return true;
-				}
-			});
-			aRequests.push({
-				method: "POST",
-				path: new RegExp(that._oDraftMetadata.draftRootPreparationtionName),
-				response: function(oXhr) {
-					//trigger the before callback funtion
-					that.fireEvent(MockServer.HTTPMETHOD.POST + that._oDraftMetadata.draftRootPreparationtionName + ":before", {
-						oXhr: oXhr
-					});
-					that.fireEvent(MockServer.HTTPMETHOD.POST + ":before", {
-						oXhr: oXhr
-					});
-					var oRequestBody = JSON.parse(oXhr.requestBody);
-					var aFilter = [];
-					for (var property in oRequestBody) {
-						aFilter.push(property + " eq " + oRequestBody[property]);
+						//trigger the after callback funtion
+						that.fireEvent(MockServer.HTTPMETHOD.POST + that._oDraftMetadata.draftRootPreparationtionName + ":after", {
+							oXhr: oXhr,
+							oEntry: oEntry
+						});
+						that.fireEvent(MockServer.HTTPMETHOD.POST + ":after", {
+							oXhr: oXhr,
+							oEntry: oEntry
+						});
+						oXhr.respondJSON(200, {}, JSON.stringify({
+							d: oEntry
+						}));
+						return true;
 					}
-					var oResponse = jQuery.sap.sjax({
-						url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
-						dataType: "json"
-					});
-					if (!oResponse.success || !oResponse.data.d.results[0]) {
-						// respond negative - no entity found
-						oXhr.respond(404);
-					}
-					var oEntry = oResponse.data.d.results[0];
-
-					//trigger the after callback funtion
-					that.fireEvent(MockServer.HTTPMETHOD.POST + that._oDraftMetadata.draftRootPreparationtionName + ":after", {
-						oXhr: oXhr,
-						oEntry: oEntry
-					});
-					that.fireEvent(MockServer.HTTPMETHOD.POST + ":after", {
-						oXhr: oXhr,
-						oEntry: oEntry
-					});
-					oXhr.respondJSON(200, {}, JSON.stringify({
-						d: oEntry
-					}));
-					return true;
-				}
-			});
+				});
+			}
 			MockServer.prototype.setRequests.apply(this, [aRequests]);
 		},
 
@@ -627,6 +637,28 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 			var mEntitySets = MockServer.prototype._findEntitySets.apply(this, [oMetadata]);
 			this._prepareDraftMetadata(mEntitySets);
 			return mEntitySets;
+		},
+
+		getEntitySetData: function(sEntitySet) {
+			var aEntitySet = MockServer.prototype.getEntitySetData.apply(this, [sEntitySet]);
+			var fnGetParameter = function() {
+				return aEntitySet;
+			};
+			if (sEntitySet === this._oDraftMetadata.draftRootName) {
+				this._fnDraftAdministrativeData({
+					getParameter: fnGetParameter
+				});
+				return aEntitySet;
+			}
+			for (var j = 0; j < this._oDraftMetadata.draftNodes.length; j++) {
+				if (sEntitySet === this._oDraftMetadata.draftNodes[j]) {
+					this._fnDraftAdministrativeData({
+						getParameter: fnGetParameter
+					});
+					return aEntitySet;
+				}
+			}
+			return aEntitySet;
 		}
 
 	};

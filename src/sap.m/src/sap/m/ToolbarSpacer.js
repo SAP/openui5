@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ToolbarSpacer.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -30,10 +30,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToolbarSpacer = Control.extend("sap.m.ToolbarSpacer", /** @lends sap.m.ToolbarSpacer.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * Defines the width of the horizontal space.
 			 * Note: Empty("") value makes the space flexible which means it covers the remaining space between toolbar items.
@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''}
 		}
 	}});
-	
+
 	/**
 	 * Flexible Spacer Class Name
 	 * @protected

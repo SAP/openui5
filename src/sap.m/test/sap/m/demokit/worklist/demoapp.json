@@ -9,6 +9,7 @@
 		"webapp/controller/Object.controller.js",
 		"webapp/controller/Worklist.controller.js",
 		"webapp/i18n/i18n.properties",
+		"webapp/index.html",
 		"webapp/localService/metadata.xml",
 		"webapp/localService/mockdata/Objects.json",
 		"webapp/localService/mockserver.js",

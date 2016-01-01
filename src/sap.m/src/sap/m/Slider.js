@@ -266,63 +266,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Sets the <code>value</code>.
-		 *
-		 * @see sap.m.Slider#setValue
-		 * @param {float} fValue new value for property <code>value</code>.
-		 * @param {object} [mOptions.snapValue=true]
-		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
-		 * @private
-		 */
-		Slider.prototype._setValue = function(fNewValue, mOptions) {
-			var fMin = this.getMin(),
-				fMax = this.getMax(),
-				fStep = this.getStep(),
-				fValue = this.getValue(),
-				sNewValueFixedPoint,
-				bSnapValue = true,
-				fModStepVal;
-
-			if (mOptions) {
-				bSnapValue = !!mOptions.snapValue;
-			}
-
-			// validate the new value before arithmetic calculations
-			if (typeof fNewValue !== "number" || !isFinite(fNewValue)) {
-				jQuery.sap.log.error("Error:", '"fNewValue" needs to be a finite number on ', this);
-				return this;
-			}
-
-			fModStepVal = Math.abs((fNewValue - fMin) % fStep);
-
-			if (bSnapValue && (fModStepVal !== 0) /* division with remainder */) {
-
-				// adjust the new value to the nearest step
-				fNewValue = fModStepVal * 2 >= fStep ? fNewValue + fStep - fModStepVal : fNewValue - fModStepVal;
-			}
-
-			// constrain the new value between the minimum and maximum
-			if (fNewValue < fMin) {
-				fNewValue = fMin;
-			} else if (fNewValue > fMax) {
-				fNewValue = fMax;
-			}
-
-			sNewValueFixedPoint = this.toFixed(fNewValue, this.getDecimalPrecisionOfNumber(fStep));
-			fNewValue = Number(sNewValueFixedPoint);
-
-			// update the value and suppress re-rendering
-			this.setProperty("value", fNewValue, true);
-
-			// update the value in DOM only when it has changed
-			if (fValue !== this.getValue()) {
-				this.setDomValue(sNewValueFixedPoint);
-			}
-
-			return this;
-		};
-
-		/**
 		 * Formats the <code>fNumber</code> using the fixed-point notation.
 		 *
 		 * <b>Note:</b> The number of digits to appear after the decimal point of the value
@@ -467,6 +410,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// used to track the id of touch points
 			this._iActiveTouchId = -1;
+
+			this._bSetValueFirstCall = true;
 		};
 
 		/**
@@ -921,15 +866,60 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @public
 		 */
-		Slider.prototype.setValue = function(fNewValue) {
+		Slider.prototype.setValue = function(fNewValue, mOptions) {
 
-			// note: setValue() method sometimes is called, before the step,
-			// max and min properties are set, due the value of the slider
-			// needs to be updated in onBeforeRendering()
-			this.setValue = this._setValue;
+			// note: sometimes the setValue() method is call before the step, max and min
+			// properties are set, in this case the value should not be adjusted
+			if (this._bSetValueFirstCall) {
+				this._bSetValueFirstCall = false;
+				return this.setProperty("value", fNewValue, true);
+			}
+
+			var fMin = this.getMin(),
+				fMax = this.getMax(),
+				fStep = this.getStep(),
+				fValue = this.getValue(),
+				sNewValueFixedPoint,
+				bSnapValue = true,
+				fModStepVal;
+
+			if (mOptions) {
+				bSnapValue = !!mOptions.snapValue;
+			}
+
+			// validate the new value before arithmetic calculations
+			if (typeof fNewValue !== "number" || !isFinite(fNewValue)) {
+				jQuery.sap.log.error("Error:", '"fNewValue" needs to be a finite number on ', this);
+				return this;
+			}
+
+			fModStepVal = Math.abs((fNewValue - fMin) % fStep);
+
+			if (bSnapValue && (fModStepVal !== 0) /* division with remainder */) {
+
+				// snap the new value to the nearest step
+				fNewValue = fModStepVal * 2 >= fStep ? fNewValue + fStep - fModStepVal : fNewValue - fModStepVal;
+			}
+
+			// constrain the new value between the minimum and maximum
+			if (fNewValue < fMin) {
+				fNewValue = fMin;
+			} else if (fNewValue > fMax) {
+				fNewValue = fMax;
+			}
+
+			sNewValueFixedPoint = this.toFixed(fNewValue, this.getDecimalPrecisionOfNumber(fStep));
+			fNewValue = Number(sNewValueFixedPoint);
 
 			// update the value and suppress re-rendering
-			return this.setProperty("value", fNewValue, true);
+			this.setProperty("value", fNewValue, true);
+
+			// update the value in DOM only when it has changed
+			if (fValue !== this.getValue()) {
+				this.setDomValue(sNewValueFixedPoint);
+			}
+
+			return this;
 		};
 
 		return Slider;

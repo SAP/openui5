@@ -1,22 +1,22 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>qUnit Page for Theme-dependent CSS Classes</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m">
 		</script>
-    
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		
+
 		<style>
 		.crazy {
 			color:blue;
@@ -54,8 +54,8 @@
 			text-align: left;
 		}
 		</style>
-		
-		
+
+
 		<script language="javascript">
 
 		QUnit.config.autostart = false;
@@ -68,18 +68,18 @@
 				var cell = jQuery.sap.domById("cell1");
 				equal(window.getComputedStyle(cell).color, "rgb(0, 0, 0)", "the text color of cell 1 should be correct");
 				equal(window.getComputedStyle(cell).backgroundColor, "rgb(242, 242, 242)", "the background color of cell 1 should be correct");
-				
+
 				cell = jQuery.sap.domById("cell2");
 				equal(window.getComputedStyle(cell).color, "rgb(242, 242, 242)", "the text color of cell 2 should be correct");
 				equal(window.getComputedStyle(cell).backgroundColor, "rgb(0, 0, 0)", "the background color of cell 2 should be correct");
-				
+
 				cell = jQuery.sap.domById("cell3");
 				equal(window.getComputedStyle(cell).color, "rgb(102, 102, 102)", "the text color of cell 3 should be correct");
 				equal(window.getComputedStyle(cell).backgroundColor, "rgb(242, 242, 242)", "the background color of cell 3 should be correct");
 				start();
 			}, 1000);
 		});
-		
+
 		/* TODO: remove if MVI theme remains deleted, re-enable otherwise
 		asyncTest("Check MVI theme", function() {
 			sap.ui.getCore().applyTheme("sap_mvi");
@@ -87,11 +87,11 @@
 				var cell = jQuery.sap.domById("cell1");
 				equal(window.getComputedStyle(cell).color, "rgb(0, 0, 0)", "the text color of cell 1 should be correct");
 				equal(window.getComputedStyle(cell).backgroundColor, "rgb(247, 247, 247)", "the background color of cell 1 should be correct");
-				
+
 				cell = jQuery.sap.domById("cell2");
 				equal(window.getComputedStyle(cell).color, "rgb(247, 247, 247)", "the text color of cell 2 should be correct");
 				equal(window.getComputedStyle(cell).backgroundColor, "rgb(0, 0, 0)", "the background color of cell 2 should be correct");
-				
+
 				cell = jQuery.sap.domById("cell3");
 				equal(window.getComputedStyle(cell).color, "rgb(240, 171, 0)", "the text color of cell 3 should be correct");
 				equal(window.getComputedStyle(cell).backgroundColor, "rgb(0, 0, 0)", "the background color of cell 3 should be correct");
@@ -99,7 +99,7 @@
 			}, 1000);
 		});
 		*/
-		
+
 		</script>
 
 	</head>
@@ -109,7 +109,7 @@
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
-		
+
 		<div class="crazy">
 			This is a crazy &lt;div&gt;, but the cells in the second column of the following static HTML table should have current theme colors.<br>
 			<div id="tableWrapper">

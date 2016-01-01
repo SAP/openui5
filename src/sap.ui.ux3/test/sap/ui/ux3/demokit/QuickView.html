@@ -2,14 +2,14 @@
 <html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.QuickView">
 <head>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <title>QuickView - SAPUI5 Demo Kit</title>
-<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+<link rel="stylesheet" href="../../../../../theme/default.css">
 <style>
 	td.pad { padding: 15px; }
-	#target1 { 
+	#target1 {
 		width:600px;
 		margin-bottom:200px;
 		text-align:right }
@@ -42,7 +42,7 @@
 	}
 </style>
 
-<script id="sap-ui-bootstrap" 
+<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.ux3,sap.ui.demokit"
@@ -51,11 +51,11 @@
 
 <script id="sample1-script">
 //Create a JSON data model with sample data:
-var oData = { 
-	"items": [{ 
+var oData = {
+	"items": [{
 		"type": "Account", "name": "Moonlight", "href": "#",
 		"description":  "The Sunny corp.", "icon": "images/Employee.png",
-		"accountData": [ 
+		"accountData": [
 			{ "label": "Opportunity ID", "text": "4102346" },
 			{ "label": "Description", "text": "Delivery postponed" },
 			{ "label": "Priority", "text": "High" },
@@ -65,7 +65,7 @@ var oData = {
 			{ "label": "Item Total Value", "text": "$1,000.00" }
 			]},
 		{ "type": "Account", "name": "Saturn",
-		"description": "The Funny corp.", "icon": "images/Employee.png", 
+		"description": "The Funny corp.", "icon": "images/Employee.png",
 		"accountData": [
 			{ "label": "Opportunity ID", "text": "4102378" },
 			{ "label": "Description", "text": "Due delivery" },
@@ -172,7 +172,7 @@ var oQuickViewTemplate = new sap.ui.ux3.QuickView({
 // Arrange navigation with arrow keys over the QuickView content
 function onOpen(event){
 	var oQuickViewContent = event.getSource().getContent()[0];
-	// Data is loaded and content is rendered at this point of time, 
+	// Data is loaded and content is rendered at this point of time,
 	// so call the setKeyboardNavigation function directly
 	setKeyboardNavigation.call(oQuickViewContent);
 }
@@ -189,7 +189,7 @@ var oRow = new sap.ui.commons.layout.MatrixLayoutRow();
 oRow.addCell(oCell);
 
 var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout();
-//One could bind a single QuickView to a row number 0 of the "items" array 
+//One could bind a single QuickView to a row number 0 of the "items" array
 //of the DataModel like this: oQuickViewThing.bindContext("/items/0");
 // Instead, we clone the items using the just created row as a template
 oMatrixLayout.bindAggregation("rows", "/items", oRow);
@@ -242,7 +242,7 @@ oTextField.placeAt("sample3");
 
 function onActionSelected(event){
 	var param = event.getParameters();
-	alert("Action from " + event.getSource().getId() + ":: id:" + param.id + 
+	alert("Action from " + event.getSource().getId() + ":: id:" + param.id +
 			", action:(" + param.action + "), state:" + param.state);
 }
 
@@ -282,7 +282,7 @@ oTextField.placeAt("sample4");
 
 	<h2>Introduction</h2>
 	<p>The QuickView is a basis control for displaying a Thing overview. The QuickView appears as a
-	small popup window with a short description of the related/referenced entity. The referenced entity is 
+	small popup window with a short description of the related/referenced entity. The referenced entity is
 	usually represented as a link but can be any control.
 	<p>A QuickView can be attached to any SAPUI5 control as a tooltip.
 
@@ -296,7 +296,7 @@ oTextField.placeAt("sample4");
 		this Thing, normally in a Thing Inspector.</li>
 		<li><code>icon</code> - Link to the Thing icon.</li>
 		<li><code>secondTitle</code> - A short line of text that describes the particular Thing.</li>
-		<li><code>content</code> (aggregation) - The content of the QuickView body must be provided 
+		<li><code>content</code> (aggregation) - The content of the QuickView body must be provided
 		by the application.</li>
 	</ul>
 
@@ -325,11 +325,11 @@ oTextField.placeAt("sample4");
 
 	<p>Usually, properties of a QuickView are not assigned directly but are bound to a DataModel.
 	The following example creates a template button with an attached QuickView and binds corresponding
-	fields of DataModel to control properties. The template is then used to 
+	fields of DataModel to control properties. The template is then used to
 	display all rows of the provided data array in a rows list of a matrix layout:
 
 	<div code-sample="sample2" script="sample2-script"></div>
-	
+
 	<h2>Data Collection QuickView</h2>
 
 	<p>One of possible uses of a QuickView can be a list of entities/links that are related to

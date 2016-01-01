@@ -1042,10 +1042,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		Popover.prototype._calcVertical = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentTop = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().top : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentTop = bHasParent ? $parent[0].getBoundingClientRect().top : 0;
+			var iParentHeight = bHasParent ? $parent[0].getBoundingClientRect().height : 0;
 			var iOffsetY = this._getOffsetY();
 			var iTopSpace = iParentTop - this._marginTop + iOffsetY;
-			var iParentBottom = iParentTop + $parent.outerHeight();
+			var iParentBottom = iParentTop + iParentHeight;
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 			var iPopoverHeight = this.$().outerHeight();
 
@@ -1062,10 +1064,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		Popover.prototype._calcHorizontal = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentLeft = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().left : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentLeft = bHasParent ? $parent[0].getBoundingClientRect().left : 0;
+			var iParentWidth = bHasParent ? $parent[0].getBoundingClientRect().width : 0;
 			var iOffsetX = this._getOffsetX();
 			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
-			var iParentRight = iParentLeft + $parent.outerWidth();
+			var iParentRight = iParentLeft + iParentWidth;
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 			var iPopoverWidth = this.$().outerWidth();
 
@@ -1108,10 +1112,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		Popover.prototype._checkHorizontal = function () {
 			//check if there is enough space
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentLeft = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().left : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentLeft = bHasParent ? $parent[0].getBoundingClientRect().left : 0;
+			var iParentWidth = bHasParent ? $parent[0].getBoundingClientRect().width : 0;
 			var iOffsetX = this._getOffsetX();
 			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
-			var iParentRight = iParentLeft + $parent.outerWidth();
+			var iParentRight = iParentLeft + iParentWidth;
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 
 			var $this = this.$();
@@ -1125,10 +1131,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		Popover.prototype._checkVertical = function () {
 			//check if there is enough space
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentTop = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().top : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentTop = bHasParent ? $parent[0].getBoundingClientRect().top : 0;
+			var iParentHeight = bHasParent ? $parent[0].getBoundingClientRect().height : 0;
 			var iOffsetY = this._getOffsetY();
 			var iTopSpace = iParentTop - this._marginTop + iOffsetY;
-			var iParentBottom = iParentTop + $parent.outerHeight();
+			var iParentBottom = iParentTop + iParentHeight;
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 
 			var $this = this.$();
@@ -1147,15 +1155,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 			var $parent = jQuery(this._getOpenByDomRef());
-			var iParentLeft = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().left : 0;
-			var iParentTop = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().top : 0;
+			var bHasParent = $parent[0] !== undefined;
+			var iParentLeft = bHasParent ? $parent[0].getBoundingClientRect().left : 0;
+			var iParentTop = bHasParent ? $parent[0].getBoundingClientRect().top : 0;
+			var iParentWidth = bHasParent ? $parent[0].getBoundingClientRect().width : 0;
+			var iParentHeight = bHasParent ? $parent[0].getBoundingClientRect().height : 0;
 			var iOffsetX = this._getOffsetX();
 			var iOffsetY = this._getOffsetY();
 			var iTopSpace = iParentTop - this._marginTop + iOffsetY;
-			var iParentBottom = iParentTop + $parent.outerHeight();
+			var iParentBottom = iParentTop + iParentHeight;
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
-			var iParentRight = iParentLeft + $parent.outerWidth();
+			var iParentRight = iParentLeft + iParentWidth;
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 
 			//calculation for every possible position how many percent of the popover can be covered
@@ -1319,7 +1330,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					if (bRtl) {
 						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fOffsetX;
 					} else {
-						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fOffsetX;
+						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset + oPosParams._fOffsetX;
 					}
 					break;
 				case sap.m.PlacementType.Right:
@@ -1330,7 +1341,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					}
 					break;
 				case sap.m.PlacementType.Top:
-					oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset - oPosParams._fOffsetY;
+					oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset + oPosParams._fOffsetY;
 					break;
 				case sap.m.PlacementType.Bottom:
 					oPosParams._fMarginTop = oPosParams._$parent.offset().top + oPosParams._$parent.outerHeight() + this._arrowOffset + oPosParams._fOffsetY;

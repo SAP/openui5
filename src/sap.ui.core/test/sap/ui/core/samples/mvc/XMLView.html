@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>XMLView - sap.ui.core.mvc</title>
 
@@ -54,9 +54,9 @@
 					var sHtml = $("#content3_2").html();
 					sHtml = sHtml.replace(/&lt;/g, "<");
 					sHtml = sHtml.replace(/&gt;/g, ">");
-					
+
 					var oIncorrectView = sap.ui.view({
-						viewContent: sHtml, 
+						viewContent: sHtml,
 						type : sap.ui.core.mvc.ViewType.XML
 					}).placeAt("content3_3");
 				}
@@ -72,7 +72,7 @@
 						sHtml = sHtml.replace("&lt;Text text=", "&lt;text text=");
 						document.getElementById("content3_3").innerHTML = "";
 					}
-					
+
 					document.getElementById("content3_2").innerHTML = sHtml;
 				}
 			}).placeAt("content3_1");
@@ -85,10 +85,10 @@
 		<div id="functions"></div>
 		<hr/>
 		<div id="content"></div>
-		<br/>
+		<br>
 		<hr/>
 		<div id="content2"></div>
-		<br/>
+		<br>
 		<hr/>
 		<div id="content3_1"></div>
 		<h2>XML-View code</h2>

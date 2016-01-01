@@ -1,35 +1,44 @@
 .sapMWizardProgressNav {
 	background: @sapUiGroupContentBackground;
+	font-size: @sapMFontMediumSize;
 	border-color: @sapUiGroupContentBorderColor;
 }
 
-.sapMWizardProgressNavAnchor {
-	color: @sapUiContentLabelColor;
-	background: @sapUiGroupContentBackground;
-	border-color: @sapUiActive;
-
-	&:hover {
-		background: darken(@sapUiGroupContentBackground, 5);
-	}
-
-	&:focus {
-		outline: 1px dotted @sapUiFocus;
-		outline-offset: 1px;
-	}
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+	background: @sapUiButtonHoverBackground;
 }
 
-.sapMWizardProgressNavSeparator::after {
-	border-color: @sapUiActive;
+.sapMWizardProgressNavAnchor:focus {
+	outline: 1px dotted @sapUiFocus;
+	outline-offset: 1px;
+}
+
+.sapMWizardProgressNavAnchorCircle {
+	color: @sapUiButtonTextColor;
+	background: @sapUiSegmentedButtonBackground;
+	border-color: @sapUiSegmentedButtonSelectedBackground;
+}
+
+.sapMWizardProgressNavAnchorIcon {
+	font-size: @sapMFontLargeSize;
+}
+
+.sapMWizardProgressNavAnchorTitle {
+	background: @sapUiGroupContentBackground;
+}
+
+.sapMWizardProgressNavStep::after {
+	border-bottom-color: @sapUiSelected;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
-	&::after {
-		background: @sapUiActive;
+	& .sapMWizardProgressNavAnchor::after {
+		background: @sapUiSelected;
 	}
 
-	& > .sapMWizardProgressNavAnchor {
-		color: @sapUiContentContrastTextColor;
-		background: @sapUiActive;
+	& .sapMWizardProgressNavAnchorCircle {
+		color: @sapUiSegmentedButtonSelectedTextColor;
+		background: @sapUiSegmentedButtonSelectedBackground;
 		border: none;
 	}
 }
@@ -37,13 +46,15 @@
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
 
 	/* anchors in all steps after the active one have inactive style */
-	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
-		background: @sapUiGroupContentBackground;
-		border-color: @sapUiGroupContentBorderColor;
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
+		color: @sapUiSegmentedButtonIconColor;
+		background: @sapUiButtonBackground;
+		border-color: @sapUiSegmentedButtonBorderColor;
 	}
 
-	/* all separators after the active step have inactive style */
-	& ~ .sapMWizardProgressNavSeparator::after {
-		border-color: @sapUiGroupContentBorderColor;
+	/* all separators after (and including) the active step have inactive style */
+	&::after,
+	& ~ .sapMWizardProgressNavStep::after {
+		border-bottom-color: @sapUiSegmentedButtonBorderColor;
 	}
 }

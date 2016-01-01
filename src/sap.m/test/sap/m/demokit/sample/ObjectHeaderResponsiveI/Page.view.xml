@@ -52,7 +52,7 @@
 								<Image src="{ProductPicUrl}"/>
 								<Text text="{Width} x {Depth} x {Height} {DimUnit}"/>
 							</l:content>
-						</l:VerticalLayout>					
+						</l:VerticalLayout>
 					</content>
 				</IconTabFilter>
 				<IconTabFilter

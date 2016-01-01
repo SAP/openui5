@@ -1,18 +1,18 @@
 <!DOCTYPE HTML>
 <html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.ListBox,sap.ui.core.ListItem">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
-		<meta charset="UTF-8"/>
-		<meta name="keywords" content="Control Selection ListBox Items" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="keywords" content="Control Selection ListBox Items">
 		<title>ListBox - SAPUI5 Demo Kit</title>
-		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<link rel="stylesheet" href="../../../../../theme/default.css">
 		<script id="sap-ui-bootstrap"
 				src="../../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
 		</script>
 		<script src="../../../../../js/utils.js"></script>
-		
+
 <script id='SimpleListBox'>
 // Create the ListBox
 var oSimpleListBox = new sap.ui.commons.ListBox({
@@ -32,7 +32,7 @@ var oTextSummary = new sap.ui.commons.TextView().placeAt("sample1");
 var oMultiSelectionCheckBox = new sap.ui.commons.CheckBox({
 		text: "MultiSelection",
 		checked : false,
-		change : function(e) { oSimpleListBox.setAllowMultiSelect(e.getSource().getChecked()); } 
+		change : function(e) { oSimpleListBox.setAllowMultiSelect(e.getSource().getChecked()); }
 }).placeAt("sample1");
 </script>
 
@@ -112,9 +112,9 @@ var oIconListBox3 = new sap.ui.commons.ListBox({
 
 	<h3>Visible Items, Scrolling, Selection</h3>
 	<p>
-	In the case of a large number of list box items, you would have the need to restrict the space 
-	regarding the number of displayed items at the same time. Using the <code>visibleItems </code> property you can limit the number of 
-	displayed items. A scrollbar appears in the list box, and you can scroll through the items.      
+	In the case of a large number of list box items, you would have the need to restrict the space
+	regarding the number of displayed items at the same time. Using the <code>visibleItems </code> property you can limit the number of
+	displayed items. A scrollbar appears in the list box, and you can scroll through the items.
 	</p>
 	<p>
 	Sometimes you have the requirement to make a specific item visible in the ListBox that might occur - without doing further settings -
@@ -122,7 +122,7 @@ var oIconListBox3 = new sap.ui.commons.ListBox({
 	Its first argument is an integer that specifies the item that shall become visible. The second, optional argument
 	<code>bLazy</code> is a boolean flag that checks whether the specified item shall appear at the top of the list
 	(value <code>false</code>). It is also possible to make the setting that way that an item becomes visible with minimal scrolling effort (value <code>true</code>).
-	</p> 
+	</p>
 	<p>
 	The following example shows a larger list of items. Five items are always visible at the same time. Whenever the <i>Random</i> button
 	is pressed, an item is chosen randomly; it is selected and made visible using the <code>scrollToIndex</code> method.
@@ -159,8 +159,8 @@ var oIconListBox3 = new sap.ui.commons.ListBox({
 
   	<p>Note: The height of individual items cannot be configured; their height is always determined from their content.</p>
 
-	Following you see the different ways to deal with the height of a ListBox. 
-	For the ListBox representing the "Height in Items" variant, the value for <code>visibleItems</code> is set to "5". 
+	Following you see the different ways to deal with the height of a ListBox.
+	For the ListBox representing the "Height in Items" variant, the value for <code>visibleItems</code> is set to "5".
 	But the items have differing heights, and therefore the resulting height does not exactly match the number of visible items.
 	</p>
 	<br><br>

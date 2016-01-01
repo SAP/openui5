@@ -2,7 +2,7 @@
 
 <html>
  <head>
- 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
    <title>Data binding test page using List binding</title>
 
@@ -89,17 +89,17 @@
 			oCell5.addContent(oCB2);
 			oRow2.addCell(oCell5);
 			oML.addRow(oRow2);
-			
+
 			oML.placeAt("target3");
 
 			//*********************************
 			// ComboBox
-			
+
 			var oML = new sap.ui.commons.layout.MatrixLayout();
 			oML.setLayoutFixed(false);
-			
+
 			var oRow1 = new sap.ui.commons.layout.MatrixLayoutRow();
-			
+
 			var oCell1 = new sap.ui.commons.layout.MatrixLayoutCell();
 			var oCombo1 = new sap.ui.commons.ComboBox("Entry");
 			oCombo1.bindProperty("editable", "/editable");
@@ -113,19 +113,19 @@
 			oCombo1.setListBox(oListBox2);
 			oCell1.addContent(oCombo1);
 			oRow1.addCell(oCell1);
-			
+
 			var oCell4 = new sap.ui.commons.layout.MatrixLayoutCell();
 			var oButton1 = new sap.ui.commons.Button();
 			oButton1.setText("Remove list entry");
 			oButton1.attachPress(removeEntryCB);
 			oCell4.addContent(oButton1);
 			oRow1.addCell(oCell4);
-			
+
 			oML.addRow(oRow1);
-			
-			
+
+
 			var oRow2 = new sap.ui.commons.layout.MatrixLayoutRow();
-			
+
 			var oCell2 = new sap.ui.commons.layout.MatrixLayoutCell();
 			var oCombo2 = new sap.ui.commons.ComboBox("Entry1");
 			oCombo2.bindProperty("editable", "/editable");
@@ -138,17 +138,17 @@
 			oCell2.addContent(oCombo2);
 			oRow2.addCell(oCell2);
 			oML.addRow(oRow2);
-			
+
 			oML.placeAt("target4");
-			
+
 			//*********************************
 			// DropdownBox
-			
+
 			var oML = new sap.ui.commons.layout.MatrixLayout();
 			oML.setLayoutFixed(false);
-			
+
 			var oRow1 = new sap.ui.commons.layout.MatrixLayoutRow();
-			
+
 			var oCell1 = new sap.ui.commons.layout.MatrixLayoutCell();
 			var oCombo1 = new sap.ui.commons.DropdownBox("DDEntry");
 			oCombo1.bindProperty("editable", "/editable");
@@ -162,7 +162,7 @@
 			oCombo1.setListBox(oListBox2);
 			oCell1.addContent(oCombo1);
 			oRow1.addCell(oCell1);
-			
+
 			var oCell4 = new sap.ui.commons.layout.MatrixLayoutCell();
 			var oButton1 = new sap.ui.commons.Button();
 			oButton1.setText("Remove list entry");
@@ -170,9 +170,9 @@
 			oCell4.addContent(oButton1);
 			oRow1.addCell(oCell4);
 			oML.addRow(oRow1);
-			
+
 			var oRow2 = new sap.ui.commons.layout.MatrixLayoutRow();
-			
+
 			var oCell2 = new sap.ui.commons.layout.MatrixLayoutCell();
 			var oCombo2 = new sap.ui.commons.DropdownBox("DDEntry1");
 			oCombo2.bindProperty("editable", "/editable");
@@ -185,12 +185,12 @@
 			oCell2.addContent(oCombo2);
 			oRow2.addCell(oCell2);
 			oML.addRow(oRow2);
-			
+
 			oML.placeAt("target5");
 
 			//*********************************
 			// RadioButtonGroup
-			
+
 			var oML = new sap.ui.commons.layout.MatrixLayout();
 			oML.setLayoutFixed(false);
 
@@ -204,31 +204,31 @@
 			oItemTemplate1.bindProperty("text", "firstName");
 			oItemTemplate1.bindProperty("enabled", "enabled");
 			oRBGroup1.bindItems("/teamMembers", oItemTemplate1);
-			
+
 			var oButton1 = new sap.ui.commons.Button();
 			oButton1.setText("Remove list entry");
 			oButton1.attachPress(removeEntryRBG);
 
 			oML.createRow(oRBGroup1, oButton1);
-			
+
 			oML.placeAt("target6");
-			
+
     	};
-    	
+
     	function addEntry() {
     		var firstName = sap.ui.getCore().byId("firstName").getValue(),
     			lastName = sap.ui.getCore().byId("lastName").getValue(),
     			CBenabled = sap.ui.getCore().byId("CB-enabled").getChecked();
-    		
+
     		oModel.oData.teamMembers.push({firstName: firstName, lastName: lastName, enabled: CBenabled});
     		oModel.checkUpdate();
     	};
-    	
+
     	function removeEntryCB() {
     		var firstName = sap.ui.getCore().byId("Entry").getValue();
 			removeEntry(firstName);
 		};
-    	
+
     	function removeEntryDD() {
     		var firstName = sap.ui.getCore().byId("DDEntry").getValue();
 	    	removeEntry(firstName);
@@ -238,15 +238,15 @@
     		var firstName = sap.ui.getCore().byId("RBGEntry1").getSelectedItem().getText();
 	    	removeEntry(firstName);
 		};
-		
+
     	function removeEntry(firstName) {
     		var teamMembers = oModel.oData.teamMembers;
-    		
+
     		for (var i = 0; i < teamMembers.length; i++) {
     			if (teamMembers[i].firstName == firstName) {
     				teamMembers.splice(i, 1);
     				break;
-    			}	
+    			}
     		}
     		oModel.checkUpdate();
        	};

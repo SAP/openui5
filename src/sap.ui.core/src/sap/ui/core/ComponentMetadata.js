@@ -139,8 +139,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		this._convertLegacyMetadata(oStaticInfo, oManifest);
 
 		this._oStaticInfo = oStaticInfo;
-		
-		this._oManifest = new Manifest(oManifest, oStaticInfo.__metadataVersion === 2);
+
+		this._oManifest = new Manifest(oManifest, {
+			componentName: this._sComponentName,
+			baseUrl: jQuery.sap.getModulePath(this._sComponentName) + "/",
+			process: oStaticInfo.__metadataVersion === 2
+		});
 
 	};
 
@@ -208,18 +212,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 */
 	ComponentMetadata.prototype.onExitComponent = function() {
 		this._iInstanceCount = Math.max(this._iInstanceCount - 1, 0);
-		var oUI5Manifest = this.getManifestEntry("sap.ui5", true),
-			mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
-		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {
-			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
-			if (CustomizingConfiguration) {
-				CustomizingConfiguration.deactivateForComponent(this._sComponentName);
-			}
+		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+		if (this._iInstanceCount === 0 && CustomizingConfiguration) {
+			CustomizingConfiguration.deactivateForComponent(this._sComponentName);
 		}
 	};
 
 	/**
-	 * Returns whether the class of this metadata is a component base class 
+	 * Returns whether the class of this metadata is a component base class
 	 * or not.
 	 * @return {boolean} true if it is sap.ui.core.Component or sap.ui.core.UIComponent
 	 * @protected
@@ -307,49 +307,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 
 	/**
-	 * Returns the manifest configuration entry with the specified key (this must be a JSON object).
-	 * If no key is specified, the return value is null.
+	 * Returns the configuration of a manifest section or the value for a
+	 * specific path. If no section or key is specified, the return value is null.
 	 *
 	 * Example:
 	 * <code>
-	 *   sap.ui.core.Component.extend("sample.Component", {
-	 *       metadata: {
-	 *           manifest: {
-	 *               "my.custom.config" : {
-	 *                   "property1" : true,
-	 *                   "property2" : "Something else"
-	 *               }
-	 *           }
+	 *   {
+	 *     "sap.ui5": {
+	 *       "dependencies": {
+	 *         "libs": {
+	 *           "sap.m": {}
+	 *         },
+	 *         "components": {
+	 *           "my.component.a": {}
+	 *         }
 	 *       }
 	 *   });
 	 * </code>
 	 *
-	 * The configuration above can be accessed via <code>sample.Component.getMetadata().getManifestEntry("my.custom.config")</code>.
+	 * The configuration above can be accessed in the following ways:
+	 * <ul>
+	 * <li><b>By section/namespace</b>: <code>oComponent.getMetadata().getManifestEntry("sap.ui5")</code></li>
+	 * <li><b>By path</b>: <code>oComponent.getMetadata().getManifestEntry("/sap.ui5/dependencies/libs")</code></li>
+	 * </ul>
 	 *
-	 * @param {string} sKey Key of the custom configuration (must be prefixed with a namespace separated with dots)
+	 * By section/namespace returns the configuration for the specified manifest
+	 * section and by path allows to specify a concrete path to a dedicated entry
+	 * inside the manifest. The path syntax always starts with a slash (/).
+	 *
+	 * @param {string} sKey Either the manifest section name (namespace) or a concrete path
 	 * @param {boolean} [bMerged] Indicates whether the custom configuration is merged with the parent custom configuration of the Component.
-	 * @return {Object} custom Component configuration with the specified key.
+	 * @return {any|null} Value of the manifest section or the key (could be any kind of value)
 	 * @public
 	 * @since 1.27.1
 	 * @deprecated  Since 1.33.0. Please use the sap.ui.core.Component#getManifest
 	 */
 	ComponentMetadata.prototype.getManifestEntry = function(sKey, bMerged) {
-		if (!sKey || sKey.indexOf(".") <= 0) {
-			jQuery.sap.log.warning("Manifest entries with keys without namespace prefix can not be read via getEntry. Key: " + sKey + ", Component: " + this.getName());
-			return null;
+		var oData = this._oManifest.getEntry(sKey);
+
+		// merge / extend should only be done for objects or when entry wasn't found
+		if (oData && !jQuery.isPlainObject(oData)) {
+			return oData;
 		}
 
-		var oParent, 
-		    oData = this._oManifest.getEntry(sKey);
-
-		if (!jQuery.isPlainObject(oData)) {
-			jQuery.sap.log.warning("Custom Manifest entry with key '" + sKey + "' must be an object. Component: " + this.getName());
-			return null;
-		}
-
+		// merge the configuration of the parent manifest with local manifest
+		// the configuration of the static component metadata will be ignored
+		var oParent, oParentData;
 		if (bMerged && (oParent = this.getParent()) instanceof ComponentMetadata) {
-			return jQuery.extend(true, {}, oParent.getManifestEntry(sKey, bMerged), oData);
+			oParentData = oParent.getManifestEntry(sKey, bMerged);
 		}
+
+		// only extend / clone if there is data
+		// otherwise "null" will be converted into an empty object
+		if (oParentData || oData) {
+				oData = jQuery.extend(true, {}, oParentData, oData);
+		}
+
 		return oData;
 	};
 
@@ -409,15 +422,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 	/**
 	 * Returns the dependencies defined in the metadata of the Component. If not specified, the return value is null.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @return {Object} Component dependencies.
 	 * @public
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/dependencies")
 	 */
 	ComponentMetadata.prototype.getDependencies = function() {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getDependencies is deprecated!");
 		if (!this._oLegacyDependencies) {
-			var oUI5Manifest = this.getManifestEntry("sap.ui5"),
-			    mDependencies = oUI5Manifest && oUI5Manifest.dependencies,
+
+			var mDependencies = this.getManifestEntry("/sap.ui5/dependencies"),
 			    sUI5Version = mDependencies && mDependencies.minUI5Version || null,
 			    mLibs = mDependencies && mDependencies.libs || {},
 			    mComponents = mDependencies && mDependencies.components || {};
@@ -438,17 +458,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns the array of the included files that the Component requires such as CSS and JavaScript. If not specified or the array is empty, the return value is null.
+	 * Returns the array of the included files that the Component requires such
+	 * as CSS and JavaScript. If not specified or the array is empty, the return
+	 * value is null.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @return {string[]} Included files.
 	 * @public
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/resources")
 	 */
 	ComponentMetadata.prototype.getIncludes = function() {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getIncludes is deprecated!");
 		if (!this._aLegacyIncludes) {
 			var aIncludes = [],
-			    oUI5Manifest = this.getManifestEntry("sap.ui5"),
-			    mResources = oUI5Manifest && oUI5Manifest.resources || {},
+			    mResources = this.getManifestEntry("/sap.ui5/resources") || {},
 			    aCSSResources = mResources && mResources.css || [],
 			    aJSResources = mResources && mResources.js || [];
 				for (var i = 0, l = aCSSResources.length; i < l; i++) {
@@ -467,22 +495,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns the required version of SAPUI5 defined in the metadata of the Component. If returned value is null, then no special UI5 version is required.
+	 * Returns the required version of SAPUI5 defined in the metadata of the
+	 * Component. If returned value is null, then no special UI5 version is
+	 * required.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @return {string} Required version of UI5 or if not specified then null.
 	 * @public
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/dependencies/minUI5Version")
 	 */
 	ComponentMetadata.prototype.getUI5Version = function() {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getUI5Version is deprecated!");
-		var oUI5Manifest = this.getManifestEntry("sap.ui5");
-		return oUI5Manifest && oUI5Manifest.dependencies && oUI5Manifest.dependencies.minUI5Version;
+		return this.getManifestEntry("/sap.ui5/dependencies/minUI5Version");
 	};
 
 	/**
-	 * Returns array of components specified in the metadata of the Component. If not specified or the array is empty, the return value is null.
+	 * Returns array of components specified in the metadata of the Component.
+	 * If not specified or the array is empty, the return value is null.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @return {string[]} Required Components.
 	 * @public
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/dependencies/components")
 	 */
 	ComponentMetadata.prototype.getComponents = function() {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getComponents is deprecated!");
@@ -490,11 +534,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns array of libraries specified in metadata of the Component, that are automatically loaded when an instance of the component is created.
+	 * Returns array of libraries specified in metadata of the Component, that
+	 * are automatically loaded when an instance of the component is created.
 	 * If not specified or the array is empty, the return value is null.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @return {string[]} Required libraries.
 	 * @public
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/dependencies/libs")
 	 */
 	ComponentMetadata.prototype.getLibs = function() {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getLibs is deprecated!");
@@ -502,70 +554,94 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns the version of the component. If not specified, the return value is null.
+	 * Returns the version of the component. If not specified, the return value
+	 * is null.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @return {string} The version of the component.
 	 * @public
+	 * @deprecated Since 1.34.2. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.app/applicationVersion/version")
 	 */
 	ComponentMetadata.prototype.getVersion = function() {
-		var oAppManifest = this.getManifestEntry("sap.app");
-		return oAppManifest && oAppManifest.applicationVersion && oAppManifest.applicationVersion.version;
+		return this.getManifestEntry("/sap.app/applicationVersion/version");
 	};
 
 	/**
-	 * Returns a copy of the configuration property to disallow modifications. If no
-	 * key is specified it returns the complete configuration property.
+	 * Returns a copy of the configuration property to disallow modifications.
+	 * If no key is specified it returns the complete configuration property
+	 *
 	 * @param {string} [sKey] Key of the configuration property
 	 * @param {boolean} [bDoNotMerge] If set to <code>true</code>, only the local configuration is returned
 	 * @return {object} the value of the configuration property
 	 * @public
 	 * @since 1.15.1
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/config")
 	 */
 	ComponentMetadata.prototype.getConfig = function(sKey, bDoNotMerge) {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getConfig is deprecated!");
-		var oUI5Manifest = this.getManifestEntry("sap.ui5", !bDoNotMerge),
-		    mConfig = oUI5Manifest && oUI5Manifest.config;
+		var mConfig = this.getManifestEntry("/sap.ui5/config", !bDoNotMerge);
 
-		// return the configuration
-		return jQuery.extend(true, {}, mConfig && sKey ? mConfig[sKey] : mConfig);
+		if (!mConfig) {
+			return {};
+		}
+
+		if (!sKey) {
+			return mConfig;
+		}
+
+		return mConfig.hasOwnProperty(sKey) ? mConfig[sKey] : {};
 	};
 
 
 	/**
 	 * Returns a copy of the Customizing property
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @param {boolean} [bDoNotMerge] If set to <code>true</code>, only the local configuration is returned
 	 * @return {object} the value of the Customizing property
 	 * @private
 	 * @since 1.15.1
 	 * @experimental Since 1.15.1. Implementation might change.
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/extends/extensions")
 	 */
 	ComponentMetadata.prototype.getCustomizing = function(bDoNotMerge) {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getCustomizing is deprecated!");
-		var  oUI5Manifest = this.getManifestEntry("sap.ui5", !bDoNotMerge),
-		    mExtensions = jQuery.extend(true, {}, oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions);
-
-		// return the exensions object
-		return mExtensions;
+		return this.getManifestEntry("/sap.ui5/extends/extensions", !bDoNotMerge);
 	};
 
 
 	/**
 	 * Returns the models configuration which defines the available models of the
 	 * Component.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @param {boolean} [bDoNotMerge] If set to <code>true</code>, only the local configuration is returned
 	 * @return {object} models configuration
 	 * @private
 	 * @since 1.15.1
 	 * @experimental Since 1.15.1. Implementation might change.
-	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/models")
 	 */
 	ComponentMetadata.prototype.getModels = function(bDoNotMerge) {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getModels is deprecated!");
 		if (!this._oLegacyModels) {
 			this._oLegacyModels = {};
-			var oUI5Manifest = this.getManifestEntry("sap.ui5"),
-			    mDataSources = oUI5Manifest && oUI5Manifest.models || {};
+			var mDataSources = this.getManifestEntry("/sap.ui5/models") || {};
 			for (var sDataSource in mDataSources) {
 				var oDataSource = mDataSources[sDataSource];
 				this._oLegacyModels[sDataSource] = oDataSource.settings || {};
@@ -588,21 +664,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 	/**
 	 * Returns messaging flag
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
 	 *
 	 * @return {boolean} bMessaging Messaging enabled/disabled
 	 * @private
 	 * @since 1.28.0
-	 * @deprecated Since 1.28.1. Please use the sap.ui.core.ComponentMetadata#getManifest
+	 * @deprecated Since 1.28.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/handleValidation")
 	 */
 	ComponentMetadata.prototype.handleValidation = function() {
 		//jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.handleValidation is deprecated!");
-		var oUI5Manifest = this.getManifestEntry("sap.ui5");
-		return oUI5Manifest && oUI5Manifest.handleValidation;
+		return this.getManifestEntry("/sap.ui5/handleValidation");
 	};
 
 	/**
-	 * Returns the services configuration which defines the available services of the
-	 * component.
+	 * Returns the services configuration which defines the available services
+	 * of the component.
+	 * <p>
+	 * <b>Important:</b></br>
+	 * If a Component is loaded using the manifest URL (or according the
+	 * "manifest first" strategy), this function ignores the entries of the
+	 * manifest file! It returns only the entries which have been defined in
+	 * the Component metadata or in the proper Component manifest.
+	 *
 	 * @return {object} services configuration
 	 * @private
 	 * @since 1.15.1
@@ -617,7 +705,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 	/**
 	 * Converts the legacy metadata into the new manifest format
-	 *
 	 * @private
 	 */
 	ComponentMetadata.prototype._convertLegacyMetadata = function(oStaticInfo, oManifest) {

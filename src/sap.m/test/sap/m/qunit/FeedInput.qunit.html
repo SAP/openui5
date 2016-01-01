@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Test Page for sap.m.FeedInput</title>
 
 		<script id="sap-ui-bootstrap"
@@ -12,7 +12,7 @@
 			src="../../../../resources/sap-ui-core.js">
 		</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -22,18 +22,18 @@
 				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 			}
 
-			module("Properties", {
-				setup : function() {
+			QUnit.module("Properties", {
+				beforeEach : function() {
 					this.oFeedInput = new sap.m.FeedInput("input");
-					this.oFeedInput.placeAt("uiArea");
+					this.oFeedInput.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oFeedInput.destroy();
 				}
 			});
 
-			test("Defaults", function(assert) {
+			QUnit.test("Defaults", function(assert) {
 				assert.strictEqual(this.oFeedInput.getButtonTooltip(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FEEDINPUT_SUBMIT"), "buttonTooltip is correct");
 				assert.strictEqual(this.oFeedInput.getEnabled(), true, "enabled is 'true'");
 				assert.strictEqual(this.oFeedInput.getIcon(), "", "icon is ''");
@@ -46,7 +46,7 @@
 				assert.strictEqual(this.oFeedInput.getAriaLabelForPicture(), "", "ariaLabelForPicture is ''");
 			});
 
-			test("TextForPicture", function(assert) {
+			QUnit.test("TextForPicture", function(assert) {
 				//No Image -> default Icon
 				this.oFeedInput.setAriaLabelForPicture("My test default icon description");
 				sap.ui.getCore().applyChanges();
@@ -66,13 +66,22 @@
 				assert.strictEqual($Image.getAttribute("aria-label"),"SAPUI5 Image" ,"Aria-label of image was set");
 			});
 
-			test("ButtonTooltip", function(assert) {
+			QUnit.test("ButtonTooltip", function(assert) {
 				this.oFeedInput.setButtonTooltip("My Submit");
 				assert.strictEqual(this.oFeedInput.getButtonTooltip(), "My Submit", "Getter should return correct non-default value");
 				assert.strictEqual(this.oFeedInput._getPostButton().getTooltip(), this.oFeedInput.getButtonTooltip(), "Property should be passed to button control");
+				this.oFeedInput.setButtonTooltip(new sap.ui.core.TooltipBase({
+					text : "Otto Hahn"
+				}));
+				assert.strictEqual(this.oFeedInput.getButtonTooltip().getText(), "Otto Hahn");
+				assert.strictEqual(this.oFeedInput._getPostButton().getTooltip(), this.oFeedInput.getButtonTooltip());
+				assert.strictEqual(this.oFeedInput._getPostButton().getTooltip().getText(), "Otto Hahn");
+				assert.throws(function () {
+					this.oFeedInput.setButtonTooltip(4711)
+				}, "Setting a different type is not possible.");
 			});
 
-			test("Enabled", function(assert) {
+			QUnit.test("Enabled", function(assert) {
 				this.oFeedInput.setEnabled(false);
 				assert.strictEqual(this.oFeedInput.getEnabled(), false, "Getter should return correct non-default value");
 				assert.strictEqual(this.oFeedInput._getTextArea().getEnabled(), false, "enabled=false: TextArea should be disabled");
@@ -92,13 +101,13 @@
 				assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), true, "enabled=true, Value = 'some string': Button should be enabled when TextArea contains any non-whitespace chars");
 			});
 
-			test("Icon", function(assert) {
+			QUnit.test("Icon", function(assert) {
 				this.oFeedInput.setIcon("myIcon");
 				assert.strictEqual(this.oFeedInput.getIcon(), "myIcon", "Getter should return correct non-default value");
 				assert.strictEqual(this.oFeedInput._getImageControl().getSrc(), this.oFeedInput.getIcon(), "Property should be passed to image control");
 			});
 
-			test("IconDensityAware", function(assert) {
+			QUnit.test("IconDensityAware", function(assert) {
 				this.oFeedInput.setIconDensityAware(false);
 				assert.strictEqual(this.oFeedInput.getIconDensityAware(), false, "Getter should return correct non-default value");
 
@@ -108,7 +117,7 @@
 				var oFeedInput = new sap.m.FeedInput({
 					icon : "../images/SAPUI5.jpg"
 				});
-				oFeedInput.placeAt("uiArea");
+				oFeedInput.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
 				oFeedInput.setIconDensityAware(false);
@@ -116,19 +125,19 @@
 				oFeedInput.destroy();
 			});
 
-			test("MaxLength", function(assert) {
+			QUnit.test("MaxLength", function(assert) {
 				this.oFeedInput.setMaxLength(1001);
 				assert.strictEqual(this.oFeedInput.getMaxLength(), 1001, "Getter should return correct non-default value");
 				assert.strictEqual(this.oFeedInput._getTextArea().getMaxLength(), this.oFeedInput.getMaxLength(), "Property should be passed to TextArea control");
 			});
 
-			test("Placeholder", function(assert) {
+			QUnit.test("Placeholder", function(assert) {
 				this.oFeedInput.setPlaceholder("asdf");
 				assert.strictEqual(this.oFeedInput.getPlaceholder(), "asdf", "Getter should return correct non-default value");
 				assert.strictEqual(this.oFeedInput._getTextArea().getPlaceholder(), this.oFeedInput.getPlaceholder(), "Property should be passed to TextArea");
 			});
 
-			test("ShowIcon", function(assert) {
+			QUnit.test("ShowIcon", function(assert) {
 				this.oFeedInput.setShowIcon(false);
 				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oFeedInput.getShowIcon(), false, "Getter should return correct non-default value");
@@ -140,13 +149,13 @@
 				assert.ok(jQuery.sap.byId("input-figure").hasClass("sapMFeedInFigure"), "ShowIcon=true: div figure should have class 'sapMFeedInFigure'");
 			});
 
-			test("Value", function(assert) {
+			QUnit.test("Value", function(assert) {
 				this.oFeedInput.setValue("asdf");
 				assert.strictEqual(this.oFeedInput.getValue(), "asdf", "Getter should return correct non-default value");
 				assert.strictEqual(this.oFeedInput._getTextArea().getValue(), this.oFeedInput.getValue(), "Property should be passed to TextArea");
 			});
 
-			test("Visible", function(assert){
+			QUnit.test("Visible", function(assert){
 				this.oFeedInput.setVisible(true);
 				assert.ok(jQuery.sap.domById("input"), "visible=true: FeedInput control should be rendered");
 				this.oFeedInput.setVisible(false);
@@ -154,35 +163,35 @@
 			});
 
 
-			module("CSS", {
-				setup : function() {
+			QUnit.module("CSS", {
+				beforeEach : function() {
 					this.oFeedInput = new sap.m.FeedInput("input");
-					this.oFeedInput.placeAt("uiArea");
+					this.oFeedInput.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oFeedInput.destroy();
 				}
 			});
 
-			test("General Stuff", function(assert){
+			QUnit.test("General Stuff", function(assert){
 				assert.ok(jQuery.sap.byId("input").hasClass("sapMFeedIn"), "FeedInput control should have class 'sapMFeedIn'");
 				assert.ok(jQuery.sap.byId("input-container").hasClass("sapMFeedInContainer"), "input container should have class 'sapMFeedInContainer'");
 			});
 
 
-			module("Events", {
-				setup : function() {
+			QUnit.module("Events", {
+				beforeEach : function() {
 					this.oFeedInput = new sap.m.FeedInput("input");
-					this.oFeedInput.placeAt("uiArea");
+					this.oFeedInput.placeAt("qunit-fixture");
 					sap.ui.getCore().applyChanges();
 				},
-				teardown : function() {
+				afterEach : function() {
 					this.oFeedInput.destroy();
 				}
 			});
 
-			test("Post - fired with correct param", function(assert) {
+			QUnit.test("Post - fired with correct parameters", function(assert) {
 				assert.expect(1); // verifies the event handler was executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
@@ -194,7 +203,7 @@
 				qutils.triggerEvent("click", "input-button");
 			});
 
-			test("Post - not fired if disabled", function(assert) {
+			QUnit.test("Post - not fired if disabled", function(assert) {
 				assert.expect(0); // verifies the event handler was NOT executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
@@ -204,7 +213,7 @@
 				qutils.triggerEvent("tap", "input-button");
 			});
 
-			test("Post - not fired if value contains only whitespaces", function(assert) {
+			QUnit.test("Post - not fired if value contains only whitespaces", function(assert) {
 				assert.expect(0); // verifies the event handler was NOT executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
@@ -215,7 +224,7 @@
 				qutils.triggerEvent("tap", "input-button");
 			});
 
-			test("Post - not fired if enabled BUT value contains only whitespaces", function(assert) {
+			QUnit.test("Post - not fired if enabled but value contains only whitespaces", function(assert) {
 				assert.expect(0); // verifies the event handler was NOT executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
@@ -226,7 +235,7 @@
 				qutils.triggerEvent("tap", "input-button");
 			});
 
-			test("Post - value is empty afterwards", function(assert) {
+			QUnit.test("Post - value is empty afterwards", function(assert) {
 				assert.expect(2); // verifies the event handler was executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
@@ -239,7 +248,7 @@
 				assert.strictEqual(this.oFeedInput.getValue(), "", "value should be empty");
 			});
 
-			test("Post - fired when pressing ENTER", function(assert) {
+			QUnit.test("Post - fired when pressing the Enter key", function(assert) {
 				assert.expect(1); //verifies the event handler was executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
@@ -252,7 +261,7 @@
 				qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.ENTER);
 			});
 
-			test("Post - fired when pressing SPACE", function(assert) {
+			QUnit.test("Post - fired when pressing the Space key", function(assert) {
 				assert.expect(1); //verifies the event handler was executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
@@ -265,7 +274,7 @@
 				qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.SPACE);
 			});
 
-			test("Post - not fired when pressing 'A'", function(assert) {
+			QUnit.test("Post - not fired when pressing 'A' Key", function(assert) {
 				assert.expect(0); //verifies the event handler was NOT executed
 				function onPost(oEvt) {
 					assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
@@ -281,6 +290,6 @@
 	</head>
 	<body class="sapUiBody">
 		<div id="qunit"></div>
-		<div id="uiArea"></div>
+		<div id="qunit-fixture"></div>
 	</body>
 </html>

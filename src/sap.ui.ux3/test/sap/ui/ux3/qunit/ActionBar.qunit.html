@@ -1,70 +1,70 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.ux3.ActionBar
   Author: D051856
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.ux3">
-	
+
 </script>
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <!-- Control initialization -->
 <script language="javascript">
-	
+
 	//Specify business actions "create", "delete" and "duplicate"
 	var oCreateAction = new sap.ui.ux3.ThingAction({
 		id : "create",
 		text : "Create Survey"
 	});
-    
+
     var oDeleteAction =  new sap.ui.ux3.ThingAction({
 		id : "delete",
 		text : "Delete"
 	});
-   
+
 	var oDuplicateAction = new sap.ui.ux3.ThingAction({
 		id : "duplicate",
 		text : "Duplicate"
 	});
-	
-	
+
+
 	jQuery.sap.require("sap.ui.ux3.ActionBar");
 	jQuery.sap.require("sap.ui.ux3.ActionBarSocialActions");
-   		
-	
+
+
     var oActionBar1 = new sap.ui.ux3.ActionBar({
 		id : "ActionBar0001",
-		
+
 		businessActions: [ oCreateAction, oDeleteAction, oDuplicateAction ]
 	});
-    
-    
-    var oEventData = {}; 
-	
-	//event handler for standard and business actions 
+
+
+    var oEventData = {};
+
+	//event handler for standard and business actions
 	oActionBar1.attachActionSelected(function(oControlEvent) {
 		var id = oControlEvent.getParameters().id;
 		oEventData.action = oControlEvent.getParameters().id;
 		oEventData.state = oControlEvent.getParameters().state;
-	}); 
-	
-	
-	
+	});
+
+
+
 	//event handler for submitted feeds
 	oActionBar1.attachFeedSubmit(function(oEvent) {
 		ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
-		var text = oEvent.getParameter("text"); 
+		var text = oEvent.getParameter("text");
 		equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 	});
 
@@ -72,10 +72,10 @@
 	var oPanel1 = new sap.ui.commons.Panel("panel1");
 	//Add actionBar to the panel's content area
 	oPanel1.addContent(oActionBar1);
-	
-	
+
+
 	sap.ui.setRoot("uiArea1", oPanel1);
-	
+
 	// TEST functions
 	module("Appearance");
 	//Test social action
@@ -83,7 +83,7 @@
 		oActionBar1.setThingIconURI("../images/Account_48.png");
 		ok(oActionBar1.getThingIconURI() == "../images/Account_48.png", "Thin icon uri: " + oActionBar1.getThingIconURI());
 	});
-	
+
 
 	// TEST functions
 	module("Social Actions");
@@ -92,7 +92,7 @@
 		var iVisibleChildCount = jQuery("#ActionBar0001-socialActions").children(":visible").size();
 		ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
 	});
-	
+
 	asyncTest("Open Feed and close it again", function() {
 		expect(2);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
@@ -106,8 +106,8 @@
 				"Rendered update popup should have been removed from the page");
 			}, 500);
 		}, 500);
-	});	
-	
+	});
+
 	asyncTest("Press \"Create an Update\" (Feed)", function() {
 		expect(4);
 		qutils.triggerMouseEvent(qutils.triggerMouseEvent("ActionBar0001-Update", "click"), "click", 1, 1, 1, 1);
@@ -130,17 +130,17 @@
 				}, 500);
 			}, 500);
 		}, 500);
-	});	
-	
+	});
+
 	// Following test case has caused occasional trouble when being executed on internet explorer 9
 	// What is being tested works on ie. To be save for automatic tests, the timeout for internet explorer
 	// tests is twice as big as usual.
-	var iTimeOut = 500; 
+	var iTimeOut = 500;
 	if(sap.ui.Device.browser.internet_explorer) {
 		iTimeOut = 1000;
 	}
-	
-	
+
+
 	asyncTest("Press \"Follow Toggle\" ", function() {
 		expect(14);
 		equal(oActionBar1.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
@@ -189,44 +189,44 @@
 		}, iTimeOut);
 
 	});
-	
-	
-	
+
+
+
 	test("Press \"Follow Up Toggle Pressed\" ", function() {
-		qutils.triggerMouseEvent("ActionBar0001-Flag", "click");	
-		ok(oEventData.action == "Flag" && oEventData.state == true, 
+		qutils.triggerMouseEvent("ActionBar0001-Flag", "click");
+		ok(oEventData.action == "Flag" && oEventData.state == true,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
-	
+
 	test("Press \"Follow Up Toggle Default\" ", function() {
-		qutils.triggerMouseEvent("ActionBar0001-Flag", "click");	
-		ok(oEventData.action == "Flag" && oEventData.state == false, 
+		qutils.triggerMouseEvent("ActionBar0001-Flag", "click");
+		ok(oEventData.action == "Flag" && oEventData.state == false,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
-	
+
 	test("Press \"Favorite Toggle Pressed\" ", function() {
-		qutils.triggerMouseEvent("ActionBar0001-Favorite", "click");	
-		ok(oEventData.action == "Favorite" && oEventData.state == true, 
+		qutils.triggerMouseEvent("ActionBar0001-Favorite", "click");
+		ok(oEventData.action == "Favorite" && oEventData.state == true,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
-	
+
 	test("Press \"Favorite Toggle Default\" ", function() {
-		qutils.triggerMouseEvent("ActionBar0001-Favorite", "click");	
-		ok(oEventData.action == "Favorite" && oEventData.state == false, 
+		qutils.triggerMouseEvent("ActionBar0001-Favorite", "click");
+		ok(oEventData.action == "Favorite" && oEventData.state == false,
 				"ActionId: " + oEventData.action + ", State: " + oEventData.state);
 	});
-	
+
 	test("Press \"Open Thing\" ", function() {
-		qutils.triggerMouseEvent("ActionBar0001-Open", "click");	
+		qutils.triggerMouseEvent("ActionBar0001-Open", "click");
 		ok(oEventData.action == "Open", "ActionId: " + oEventData.action);
 	});
-	
 
-	
-	
-	
+
+
+
+
 	test("Hide social actions using \"setShow...\" properties", function() {
-		
+
 		oActionBar1.setShowUpdate(false);
 		oActionBar1.setShowFollow(false);
 		oActionBar1.setShowFlag(false);
@@ -235,9 +235,9 @@
 		var iVisibleChildCount = jQuery("#ActionBar0001-socialActions").children(":visible").size();
 		ok(iVisibleChildCount == 0, iVisibleChildCount + " social actions visible");
 	});
-	
+
 	test("Show social actions using \"setShow...\" properties", function() {
-		
+
 		oActionBar1.setShowUpdate(true);
 		oActionBar1.setShowFollow(true);
 		oActionBar1.setShowFlag(true);
@@ -246,58 +246,58 @@
 		var iVisibleChildCount = jQuery("#ActionBar0001-socialActions").children(":visible").size();
 		ok(iVisibleChildCount == 5, iVisibleChildCount + " social actions visible");
 	});
-	
+
 	asyncTest("Press social actions programmatically using setter function", function() {
 		expect(3);
 		oActionBar1.setFollowState(sap.ui.ux3.FollowActionState.Follow);
 		oActionBar1.setFlagState(true);
 		oActionBar1.setFavoriteState(true);
-		
-		
+
+
 		setTimeout(function() {
 			start();
-			ok(jQuery.sap.byId("ActionBar0001-Follow").hasClass("Follow"), 
+			ok(jQuery.sap.byId("ActionBar0001-Follow").hasClass("Follow"),
 					"Follow Icon is set");
-			ok(jQuery.sap.byId("ActionBar0001-Flag").hasClass("Selected"), 
+			ok(jQuery.sap.byId("ActionBar0001-Flag").hasClass("Selected"),
 				"Flag Icon is set");
-			ok(jQuery.sap.byId("ActionBar0001-Favorite").hasClass("Selected"), 
+			ok(jQuery.sap.byId("ActionBar0001-Favorite").hasClass("Selected"),
 				"Favorite Icon is set");
 		}, iTimeOut);
 	});
-	
-	
-	
+
+
+
 	module("Business Actions");
-	
+
 	//Test business action events
 	test("Test business action events", function() {
-		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");	
+		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenu-MenuItem-create", "click");
 		ok(oEventData.action == "create", "ActionId: " + oEventData.action );
-		
-		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");	
+
+		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenu-MenuItem-delete", "click");
 		ok(oEventData.action == "delete", "ActionId: " + oEventData.action );
-		
-		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");	
+
+		qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 		qutils.triggerMouseEvent("ActionBar0001-MoreMenu-MenuItem-duplicate", "click");
 		ok(oEventData.action == "duplicate", "ActionId: " + oEventData.action );
-		
+
 	});
-	
+
 	asyncTest("Disable a business action in \"More\" menu", function() {
 		expect(1);
 		oCreateAction.setEnabled(false);
 		setTimeout(function() {
 			start();
-			qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");	
+			qutils.triggerMouseEvent("ActionBar0001-MoreMenuButton", "click");
 			var bIsDisabled = jQuery("#ActionBar0001-MoreMenu-MenuItem-create").hasClass("sapUiMnuItmDsbl");
 			ok(bIsDisabled, "Create action is disabled");
 		}, 500);
 	});
-	
 
-	
+
+
 
 	asyncTest("Show business action buttons in \"action bar\"", function() {
 		expect(1);
@@ -308,31 +308,31 @@
 			ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
 		}, 500);
 	});
-	
+
 	test("Remove two business actions: one directly, one by its Id", function() {
 		oActionBar1.removeBusinessAction(oCreateAction);
 		oActionBar1.removeBusinessAction('duplicate');
 		var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
 		ok(iVisibleChildCount == 1, iVisibleChildCount + " business action buttons visible");
 	});
-	
+
 	test("Remove all business actions", function() {
 		oActionBar1.removeAllBusinessActions();
 		var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
 		ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
 	});
-	
+
 	test("Add three business actions", function() {
 		oActionBar1.addBusinessAction(oCreateAction);
 		oActionBar1.addBusinessAction(oDuplicateAction);
 		oActionBar1.addBusinessAction(oDeleteAction);
-		
+
 		var iVisibleChildCount = jQuery("#ActionBar0001-businessActions").children(":visible").size();
 		ok(iVisibleChildCount == 3, iVisibleChildCount + " business action buttons visible");
-		
-	}); 
-	
-	
+
+	});
+
+
 	asyncTest("Disable a business action in toolbar", function() {
 		expect(1);
 		oDeleteAction.setEnabled(false);
@@ -342,8 +342,8 @@
 			ok(bIsDisabled, "Delete action is disabled");
 		}, 500);
 	});
-	
-	
+
+
 	asyncTest("Hide business action buttons from \"action bar\"", function() {
 		expect(2);
 		oActionBar1.setAlwaysShowMoreMenu(true);
@@ -355,7 +355,7 @@
 			ok(bVisible, "More Menu Button is visible");
 		}, 500);
 	});
-	
+
 	asyncTest("Show business action's buttons on \"action bar\" again and destroy them afterwards", function() {
 		expect(1);
 		oActionBar1.setAlwaysShowMoreMenu(false);
@@ -366,15 +366,15 @@
 			ok(iVisibleChildCount == 0, iVisibleChildCount + " business action buttons visible");
 		}, 500);
 	});
-	
+
 	test("Destroy actionBar", function() {
 		oActionBar1.destroy();
 		ok(true, "Action Bar successfully destroyed");
-		
+
 	});
-	
-	
-	
+
+
+
 </script>
 
 <title>qunit Test for ActionBar</title>

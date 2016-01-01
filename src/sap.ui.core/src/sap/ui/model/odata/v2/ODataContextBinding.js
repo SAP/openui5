@@ -17,10 +17,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {String} sPath
 	 * @param {Object} oContext
-	 * @param {Object} [mParameters]
+	 * @param {map} [mParameters] a map which contains additional parameters for the binding.
+	 * @param {string} [mParameters.expand] for the OData <code>$expand</code> query option parameter which should be included in the request
+	 * @param {string} [mParameters.select] for the OData <code>$select</code> query option parameter which should be included in the request
+	 * @param {map} [mParameters.custom] an optional map of custom query parameters. Custom parameters must not start with <code>$</code>.
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataContextBinding
+	 * @extends sap.ui.model.ContextBinding
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v2.ODataContextBinding", /** @lends sap.ui.model.odata.v2.ODataContextBinding.prototype */ {
 
@@ -38,11 +42,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 */
 	ODataContextBinding.prototype.initialize = function() {
 		var that = this,
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
+			sResolvedPath,
+			bReloadNeeded;
 
 		// don't fire any requests if metadata is not loaded yet.
 		if (this.oModel.oMetadata.isLoaded()) {
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
 			if (sResolvedPath && bReloadNeeded) {
 				this.fireDataRequested();
 			}
@@ -66,10 +72,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	};
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
-	 * 
+	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {string} [sGroupId] The group Id for the refresh
-	 * 
+	 *
 	 * @public
 	 */
 	ODataContextBinding.prototype.refresh = function(bForceUpdate, sGroupId) {
@@ -81,23 +87,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 		this._refresh(bForceUpdate);
 		this.sRefreshGroup = undefined;
 	};
-	
+
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.refresh
-	 * 
+	 *
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @param {map} [mChangedEntities] Map of changed entities
 	 * @private
 	 */
 	ODataContextBinding.prototype._refresh = function(bForceUpdate, mChangedEntities) {
-		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false, 
+		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false,
 			mParameters = this.mParameters,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
 		if (this.bInitial) {
 			return;
 		}
-		
+
 		if (mChangedEntities) {
 			//get entry from model. If entry exists get key for update bindings
 			oStoredEntry = this.oModel._getObject(this.sPath, this.oContext);
@@ -118,7 +124,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			if (this.sRefreshGroup) {
 				mParameters = jQuery.extend({},this.mParameters);
 				mParameters.groupId = this.sRefreshGroup;
-			} 
+			}
 			this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
 				if (that.oElementContext === oContext) {
 					if (bForceUpdate) {
@@ -143,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 
 	/**
 	 * @see sap.ui.model.ContextBinding.prototype.setContext
-	 * 
+	 *
 	 * @param {sap.ui.model.Context} oContext The binding context object
 	 * @private
 	 */

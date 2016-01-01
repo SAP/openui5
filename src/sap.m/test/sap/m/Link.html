@@ -1,41 +1,41 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Link - sap.m</title>
-		
+
 		<style>
 			.sapMLnk {
 				margin: 5px;
 			}
 		</style>
-		
+
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		
+
 		<script type="text/javascript">
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
-			
+
 			var page1 = new sap.m.Page("page1", {
 				title:"Page 1",
-				content : [ 
+				content : [
 					new sap.m.Link({
 						text : "To Page 2",
 						press : function() {
 							app.to("page2");
 						}
 					}),
-					
+
 					new sap.m.Link({
 						text : "Disabled Link",
 						enabled : false
 					}),
-					
+
 					new sap.m.Link({
 						text : "Subtle Link",
 						subtle : true,
@@ -43,7 +43,7 @@
 							app.to("page2");
 						}
 					}),
-					
+
 					new sap.m.Link({
 						text : "Emphasized Link",
 						emphasized : true,
@@ -51,7 +51,7 @@
 							app.to("page2");
 						}
 					}),
-					
+
 					new sap.m.Link({
 						text : "Disabled & Subtle Link",
 						subtle : true,
@@ -60,7 +60,7 @@
 							app.to("page2");
 						}
 					}),
-					
+
 					new sap.m.Link({
 						text : "Disabled & Emphasized Link",
 						emphasized : true,
@@ -70,9 +70,9 @@
 						}
 					})
 				]
-				
+
 			});
-					
+
 			var page2 = new sap.m.Page("page2", {
 				title:"Page 2",
 				showNavButton: true,
@@ -89,7 +89,7 @@
 
 			app.placeAt("body");
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

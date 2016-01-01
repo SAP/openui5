@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>ComboBox - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.ComboBox.gif">
@@ -110,8 +110,8 @@
 				}});
 			oLabel = new sap.ui.commons.Label("LabelKey1",{ text: "selectedKey:", labelFor: oTextField});
 			var oButton = new sap.ui.commons.Button("ButtonKey",{
-				text: "getSelectedKey", 
-				press: function(oEvent){ 
+				text: "getSelectedKey",
+				press: function(oEvent){
 					sap.ui.getCore().byId("KeyInput1").setValue(sap.ui.getCore().byId("myCombo1").getSelectedKey());
 				}});
 
@@ -128,8 +128,8 @@
 				}});
 			oLabel = new sap.ui.commons.Label("LabelItem1",{ text: "selectedItemId:", labelFor: oTextField});
 			oButton = new sap.ui.commons.Button("ButtonItem",{
-				text: "getSelectedItemId", 
-				press: function(oEvent){ 
+				text: "getSelectedItemId",
+				press: function(oEvent){
 					var sId = sap.ui.getCore().byId("myCombo1").getSelectedItemId();
 					sap.ui.getCore().byId("ItemInput1").setValue(sId);
 				}});

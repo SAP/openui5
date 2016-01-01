@@ -81,7 +81,7 @@ sap.ui.define([],
         SideNavigationRenderer.renderItem = function (rm, control) {
             var itemAggregation = control.getAggregation('item');
 
-            rm.write('<div id="' + control.getId() + '-Flexible" class="sapTntSideNavigationFlexible sapTntSideNavigationVerticalScrolling">');
+            rm.write('<div id="' + control.getId() + '-Flexible" tabindex="-1" class="sapTntSideNavigationFlexible sapTntSideNavigationVerticalScrolling">');
             rm.write('<div id="' + control.getId() + '-Flexible-Content" class="sapTntSideNavigationFlexibleContent">');
             rm.renderControl(itemAggregation);
             rm.write('</div></div>');

@@ -1,7 +1,7 @@
 <html>
 <head>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>FormattedTextView - sap.ui.commons</title>
 <script id="sap-ui-bootstrap" type="text/javascript"
 	data-sap-ui-theme="sap_goldreflection"
@@ -56,8 +56,8 @@
 			if (oFTV.getVisible()) {
 
 				// since the HTML text contains an XSS attack and if sanatizing is disabled the
-				// content of the div where the FormattedTextView is rendered into contains more 
-				// that the rendered control. This additional stuff needs to be removed, since 
+				// content of the div where the FormattedTextView is rendered into contains more
+				// that the rendered control. This additional stuff needs to be removed, since
 				// it won't be removed by rerendering the control.
 				if (oCheck.getChecked()) {
 					var aContentChildren = jQuery("#content").children();

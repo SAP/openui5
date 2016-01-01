@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global'],
 			oDeferred.resolve();
 			return oDeferred.promise();
 		},
-	
+
 		resetPersData : function () {
 			var oDeferred = new jQuery.Deferred();
 			var oInitialData = {
@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global'],
 			oDeferred.resolve();
 			return oDeferred.promise();
 		},
-	
+
 		//this caption callback will modify the TablePersoDialog' entry for the 'Weight' column
 		//to 'Weight (Important!)', but will leave all other column names as they are.
 		getCaption : function (oColumn) {
@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			return null;
 		},
-	
+
 		getGroup : function(oColumn) {
 			if( oColumn.getId().indexOf('productCol') != -1 ||
 					oColumn.getId().indexOf('supplierCol') != -1) {

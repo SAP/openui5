@@ -73,6 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 	 * @param {any} [oValue2] Second value to use with the given filter operator (only for some operators)
 	 * @public
 	 * @alias sap.ui.model.Filter
+	 * @extends sap.ui.base.Object
 	 */
 	var Filter = BaseObject.extend("sap.ui.model.Filter", /** @lends sap.ui.model.Filter.prototype */ {
 		constructor : function(vFilterInfo, vOperator, oValue1, oValue2){

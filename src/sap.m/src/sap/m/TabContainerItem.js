@@ -58,7 +58,8 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 		},
 		events : {
 			/**
-			 * Fires item property change event
+			 * Let the outside world know that some of its properties has changed.
+			 * @private
 			 */
 			itemPropertyChanged : {
 				parameters: {

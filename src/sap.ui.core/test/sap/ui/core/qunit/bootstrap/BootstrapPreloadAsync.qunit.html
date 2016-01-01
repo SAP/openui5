@@ -1,23 +1,23 @@
 <!DOCTYPE HTML>
 <!--
   Tests the bootstrap variant where the bootstrap tag is part of the head.
-  
+
   @author Frank Weigel
   -->
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Test Page for Bootstrap with preload=sync</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 				src="../../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.ui.ux3"
-				data-sap-ui-preload="async" 
+				data-sap-ui-preload="async"
 				>
 		</script>
 
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -46,7 +46,7 @@
 					}
 
 					var oCfg = new sap.ui.core.Configuration();
-					assert.deepEqual(oCfg.modules, ["sap.ui.commons.library","sap.ui.table.library","sap.ui.ux3.library"], "Libraries");	
+					assert.deepEqual(oCfg.modules, ["sap.ui.commons.library","sap.ui.table.library","sap.ui.ux3.library"], "Libraries");
 				});
 
 				["sap.ui.core","sap.ui.commons","sap.ui.table","sap.ui.ux3"].forEach(function(sLib) {

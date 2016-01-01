@@ -1,0 +1,27 @@
+/* ============================================== */
+/* CSS for control sap.m/SlideTile.control */
+/* ============================================== */
+.sapMST {
+	box-shadow: 0rem 0rem 0rem 1px @sapHCStandardFG; /* Usage of px as aligned with designers. */
+}
+
+.sap-desktop .sapMST:focus {
+	outline-color: @sapHCStandardFG;
+	outline-style: dotted;
+	outline-width: 0.125rem;
+	box-shadow: 0rem 0rem 0rem 1px @sapHCStandardFG; /* Usage of px as aligned with designers. */
+}
+
+.sap-desktop .sapMST:hover:not(:focus) {
+	box-shadow: 0rem 0rem 0rem 0.125rem @sapHCStandardFG;
+}
+
+.sapMSTIcon {
+	color: @sapHCStandardBG;
+}
+
+.sap-desktop .sapMST:hover,
+.sap-tablet .sapMSTHvr:hover,
+.sap-phone .sapMSTHvr:hover {
+	box-shadow: 0rem 0rem 0rem 0.125rem @sapHCStandardFG;
+}

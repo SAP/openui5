@@ -15,6 +15,7 @@ sap.ui.define([
 				title: 'Root Item',
 				icon: 'sap-icon://employee',
 				expanded: true,
+				key: 'root1',
 				items: [{
 					title: 'Child Item 1',
 					key: 'page1'
@@ -296,15 +297,6 @@ sap.ui.define([
 			this._setToggleButtonTooltip(sideExpanded);
 
 			toolPage.setSideExpanded(!toolPage.getSideExpanded());
-		},
-
-		onDeviceChange : function(oEvent) {
-			var viewId = this.getView().getId();
-			var toolPage = sap.ui.getCore().byId(viewId + "--toolPage");
-			var device = oEvent.getParameter('device');
-			var isPhoneOrTablet = device === 'Phone' || device === 'Tablet'
-
-			this._setToggleButtonTooltip(isPhoneOrTablet);
 		},
 
 		_setToggleButtonTooltip : function(bLarge) {

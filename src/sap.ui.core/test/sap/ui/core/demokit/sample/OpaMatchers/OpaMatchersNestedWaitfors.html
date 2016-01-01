@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Opa sample for matchers with nested WaitFors</title>
+
+    <script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"></script>
+
+    <script>
+        jQuery.sap.require("sap.ui.qunit.qunit-css");
+        jQuery.sap.require("sap.ui.thirdparty.qunit");
+        jQuery.sap.require("sap.ui.qunit.qunit-junit");
+        jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+        QUnit.config.autostart = false;
+
+        sap.ui.require([
+            "sap/ui/test/Opa5",
+            "sap/ui/test/opaQunit",
+            "sap/ui/test/matchers/PropertyStrictEquals",
+            "sap/ui/test/matchers/Properties",
+            "sap/ui/test/matchers/Ancestor"
+        ], function (Opa5, opaTest, PropertyStrictEquals, Properties, Ancestor) {
+            QUnit.module("MatchersNestedWaitfors");
+
+
+            opaTest("Should find a Button using a nested waitFor and an Ancestor matcher", function(Given, When, Then) {
+
+                // Act
+                Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+                When.waitFor({
+                    viewName : "appUnderTest.view.Main",
+                    controlType : "sap.m.Page",
+                    success : function (aPages) {
+                        var oPage = aPages[0];
+                        // nested waitFor
+                        this.waitFor({
+                            viewName : "appUnderTest.view.Main",
+                            controlType : "sap.m.Button",
+                            id: new RegExp("buttonInAPage"),
+                            matchers : [
+                                // Ancestor matcher takes a control as a parameter
+                                new Ancestor(oPage, false)
+                            ],
+                            success : function (aButtons) {
+                                Opa5.assert.ok(true, "Found the button: " + aButtons[0] + "in a page" + oPage);
+                            },
+                            errorMessage : "Did not find the button with the id 'buttonInAPage' in an ancestor 'page'"
+                        });
+
+                        Opa5.assert.ok(true, "Found the page " + oPage);
+
+                    },
+                    errorMessage : "Did not find a page in the view"
+                });
+
+                Then.iTeardownMyAppFrame();
+            });
+
+            QUnit.start();
+        });
+    </script>
+
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>

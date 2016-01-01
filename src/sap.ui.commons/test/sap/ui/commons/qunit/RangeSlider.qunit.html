@@ -1,19 +1,19 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.RangeSlider
   Author: SAP
 -->
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons">
 </script>
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -674,7 +674,7 @@
 	});
 
 	test("Mouse Move", function() {
-		// Simulate mousemove using "not real" coordinates. Works, because only difference is used to calculate position  
+		// Simulate mousemove using "not real" coordinates. Works, because only difference is used to calculate position
 		var oSli = oSlis["oSli2"];
 		var oGrip = jQuery.sap.domById('oSli2-grip');
 		var oGrip2 = jQuery.sap.domById('oSli2-grip');
@@ -1511,7 +1511,7 @@
 			} else {
 				setTimeout(function() {
 					ok(
-						iCurrentRepetition > 0, 
+						iCurrentRepetition > 0,
 						"Test was triggered several times ("+ iCurrentRepetition +")"
 					);
 					ok(

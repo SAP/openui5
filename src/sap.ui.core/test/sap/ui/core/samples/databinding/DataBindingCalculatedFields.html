@@ -2,7 +2,7 @@
 
 <html>
  <head>
- 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
    <title>Data binding Calculated Fields test page</title>
 
@@ -30,18 +30,18 @@
 
     	var oModel = new sap.ui.model.json.JSONModel();
     	oModel.setData({
-    		firstName: "John", 
-    		lastName: "Doe", 
-    		birthday: {day:1,month:4,year:1970}, 
+    		firstName: "John",
+    		lastName: "Doe",
+    		birthday: {day:1,month:4,year:1970},
     		amount: 6000.94,
-    		address:[{city:"Walldorf"}], 
+    		address:[{city:"Walldorf"}],
     		enabled: true
     	});
     	sap.ui.getCore().setModel(oModel);
-    	
+
     	var oModel2 = new sap.ui.model.json.JSONModel();
     	oModel2.setData({
-		   amount : 3000.53, 
+		   amount : 3000.53,
 		   currency : "$"
     	});
     	sap.ui.getCore().setModel(oModel2, "model2");
@@ -49,13 +49,13 @@
     	function doIt(){
 
 
-			var oText = new sap.ui.commons.TextField("source",{change:update});			
+			var oText = new sap.ui.commons.TextField("source",{change:update});
 			oText.placeAt("target1");
 			var oBtn = new sap.ui.commons.Button({
-				id: "btn", 
+				id: "btn",
 				text: "Trigger Change",
 				press: update
-			});			
+			});
 			oBtn.placeAt("target2");
 
     		var oText = new sap.ui.commons.Label();
@@ -90,8 +90,8 @@
 			oML.setLayoutFixed(false);
 
 			var oTxt = new sap.ui.commons.TextField("birthday", {
-				value : { parts: ["/birthday/day", "/birthday/month", "/birthday/year"], 
-					formatter : function (iDay, iMonth, iYear) {						
+				value : { parts: ["/birthday/day", "/birthday/month", "/birthday/year"],
+					formatter : function (iDay, iMonth, iYear) {
 						return iDay + "/" + iMonth + "/" + iYear;
 					}},
 				enabled : { path: "/enabled" }
@@ -139,7 +139,7 @@
     		//oModel.setProperty("enabled", bEnabled);
     		oModel.setProperty("/enabled", bEnabled);
     	};
-    	
+
     	// table
     	var tableData = {
 	  		"teamMembers":[
@@ -152,9 +152,9 @@
 				{"firstName":"Frank", "lastName":"Wallace", "gender":"male"}
 	   		]
     	};
-    	
+
     	var oModel3 = new sap.ui.model.json.JSONModel(tableData);
-    	
+
 		var oTable = new sap.ui.table.Table({
 			columns: [
 					   //calc fields binding
@@ -169,14 +169,14 @@
 		                   	formatter: function (firstName, lastName, gender){
 		                   		if (firstName && lastName && gender) {
 		                   			if (gender == "male") {
-		                   				return "Mr. " + firstName + " " + lastName;	                    			
+		                   				return "Mr. " + firstName + " " + lastName;
 		                   			} else {
 		                   				return "Ms. " + firstName + " " + lastName;
 		                   			}
 		                   		}
 		                   		return null;
 		                   	}
-		                   } 
+		                   }
 		                   })
 		               }),
 		               // single property binding
@@ -191,12 +191,12 @@
 		               })
 		           ]
 		});
-  
+
        oTable.setModel(oModel3);
 	   oTable.bindRows("/teamMembers");
 	   oTable.placeAt("target11");
-    	
-    	
+
+
     </script>
   </head>
 

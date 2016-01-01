@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
  <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>Menu - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Menu.gif">
@@ -11,7 +11,7 @@
 				data-sap-ui-theme="sap_goldreflection">
 		</script>
 
-		<script type="text/javascript">	
+		<script type="text/javascript">
 			var alertSelected = function(sId){
 				alert("You selected menu item '" + sId +"'.");
 			};
@@ -131,7 +131,7 @@
 			});
 
 			//Code for ACC Demo
-			
+
 			function fillMenuButtonMenu(oMenuButton, bIcon) {
 				var aItems = [
 					{text: "Meat", items: []},
@@ -151,14 +151,14 @@
 				/*for(var i=0; i<40; i++){
 					aItems.push({text: "Item "+i, items: []});
 				}*/
-	
+
 				var fillMenu = function(aItems, oMenu){
 					for(var i=0; i<aItems.length; i++){
 						var sTooltip = aItems[i].tooltip ? aItems[i].tooltip : "Our offer of "+aItems[i].text;
 						var oMenuItem = new sap.ui.commons.MenuItem({text: aItems[i].text, tooltip: sTooltip, startsSection: !!aItems[i].divider, icon: aItems[i].icon});
 						oMenu.addItem(oMenuItem);
 						if(aItems[i].items.length > 0){
-							var oSubMenu = new sap.ui.commons.Menu(); 
+							var oSubMenu = new sap.ui.commons.Menu();
 							oMenuItem.setSubmenu(oSubMenu);
 							fillMenu(aItems[i].items, oSubMenu);
 						}else{
@@ -169,7 +169,7 @@
 						}
 					}
 				};
-	
+
 				var oMenu = new sap.ui.commons.Menu({ariaDescription: "Demo Menu"});
 				fillMenu(aItems, oMenu);
 				oMenu.addItem(new sap.ui.commons.MenuTextFieldItem({label: "Filter:", enabled: true, startsSection: true, icon: bIcon ? "images/filter.gif" : null, select: function(oEvent){
@@ -183,22 +183,22 @@
 				}}));
 				oMenuButton.setMenu(oMenu);
 			}
-			
+
 			var oMenuButton4 = new sap.ui.commons.MenuButton("demoButton", {text: "Demo", tooltip: ""});
 			fillMenuButtonMenu(oMenuButton4);
 			oMenuButton4.placeAt("target6");
 			oMenuButton5 = new sap.ui.commons.MenuButton("demoButton2", {text: "Demo", tooltip: ""});
 			fillMenuButtonMenu(oMenuButton5, true);
 			oMenuButton5.placeAt("target6");
-			
-			
+
+
 			var fnCreateTooltip = function () {
 				return new sap.ui.commons.RichTooltip({
 	                text : "some text",
 	                title: "tooltip"
 				});
 			};
-			
+
 			var btn = new sap.ui.commons.MenuButton({
 				text: "Click to open menu",
 				menu: new sap.ui.commons.Menu({

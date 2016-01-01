@@ -9,7 +9,7 @@
 	jQuery.sap.require("sap.uxap.ObjectPageLayout");
 	jQuery.sap.require("sap.uxap.ObjectPageSection");
 	jQuery.sap.require("sap.uxap.ObjectPageHeader");
-	
+
 	module("aat_UxAP-ManageDisplay", {
     	beforeEach: function () {
     		//aat_UxAP-331_ObjectPageRules1
@@ -19,7 +19,7 @@
     		this.objectPageSampleView1.placeAt('qunit-fixture');
 
 		    sap.ui.getCore().applyChanges();
-		    
+
 		    this.referencedObjectPage1 = this.objectPageSampleView1.byId("objectPage1");
 		},
 		afterEach: function () {
@@ -72,7 +72,7 @@
 		var objectPageTitle331 = $("#UxAP-331_ObjectPageRules1--ObjectPageSubSectionVisible331").is(":visible");
 		assert.strictEqual(objectPageTitle331, false, "SubSection is visible by override");
 	});
-	
+
 	module("Single section", {
     	beforeEach: function () {
     		//aat_UxAP-331_ObjectPageRules2
@@ -81,7 +81,7 @@
     		});
     		this.objectPageSampleView2.placeAt('qunit-fixture');
 		    sap.ui.getCore().applyChanges();
-		    
+
 		    this.referencedObjectPage2 = this.objectPageSampleView2.byId("objectPage2");
 		},
 		afterEach: function () {
@@ -89,7 +89,7 @@
 			this.referencedObjectPage2 = null;
 		}
 	});
-	
+
 	QUnit.test("ObjectPageId 2 created", function (assert) {
 		assert.notStrictEqual(this.referencedObjectPage2, undefined, "ObjectPageLayout 2 created successfuly");
 	});

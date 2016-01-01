@@ -7,7 +7,7 @@
 
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Test Page for VerticalProgressIndicator - sap.ui.suite </title>
 
 	<script id="sap-ui-bootstrap"
@@ -18,7 +18,7 @@
 			data-sap-ui-libs="sap.ui.commons, sap.ui.suite">
 		</script>
 
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -74,7 +74,7 @@
 			var oVPIndicator6 =  new sap.ui.suite.VerticalProgressIndicator(sCtrlId + "6");
 			oVPIndicator6.setProperty('percentage', 111);
 			oVPIndicator6.placeAt("uiArea6");
-	
+
 		</script>
 
 		<!-- Test functions -->
@@ -96,7 +96,7 @@
 			function determineTop(iPercentage){
 				return (58 - determineHeight(iPercentage));
 			}
-            
+
 			//determine ARIA-value
 			function determineAria(iPercentage){
 				if (iPercentage < 0) iPercentage = 0;

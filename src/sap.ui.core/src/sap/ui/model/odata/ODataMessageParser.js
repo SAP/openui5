@@ -50,7 +50,7 @@ var mSeverityMap = {
 
 
 /**
- * 
+ *
  * @namespace
  * @name sap.ui.model.odata
  * @public
@@ -58,9 +58,9 @@ var mSeverityMap = {
 
 /**
  * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
- * 
+ *
  * @class
- * @classdesc 
+ * @classdesc
  *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
  * @extends sap.ui.core.message.MessageParser
  *
@@ -162,6 +162,25 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 ////////////////////////////////////////// Private Methods /////////////////////////////////////////
 
 /**
+ * Checks whether the property with the given name on the parent entity referenced by thegiven path is a
+ * NavigationProperty.
+ *
+ * @param {string} sParentEntity - The path of the parent entity in which to search for the NavigationProperty
+ * @param {string} sPropertyName - The name of the property which should be checked whether it is a NavigationProperty
+ * @returns {boolean} Returns true if the given property is an NavigationProperty
+ * @private
+ */
+ODataMessageParser.prototype._isNavigationProperty = function(sParentEntity, sPropertyName) {
+	var mEntityType = this._metadata._getEntityTypeByPath(sParentEntity);
+	if (mEntityType) {
+		var aNavigationProperties = this._metadata._getNavigationPropertyNames(mEntityType);
+		return aNavigationProperties.indexOf(sPropertyName) > -1;
+	}
+
+	return false;
+};
+
+/**
  * Parses the request URL as well as all message targets for paths that are affected, i.e. which have messages meaning
  * that currently available messages for that path will be replaced with the new ones
  *
@@ -182,36 +201,48 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, sRequestU
 		// This is an absolute URL, remove the service part at the front
 		sRequestTarget = sRequestTarget.substr(this._serviceUrl.length + 1);
 	}
-	
+
 	var mEntitySet = this._metadata._getEntitySetByPath(sRequestTarget);
 	if (mEntitySet) {
 		mAffectedTargets[mEntitySet.name] = true;
 	}
-	
-	
+
+
 	// Get the EntitySet for every single target
 	for (var i = 0; i < aMessages.length; ++i) {
 		var sTarget = aMessages[i].getTarget();
 
 		if (sTarget) {
-			// Add all "parents" of the current target to the list of affected targets
 			var sTrimmedTarget = sTarget.replace(/^\/+|\/$/g, "");
 			mAffectedTargets[sTrimmedTarget] = true;
-			var iPos = sTrimmedTarget.lastIndexOf("/");
-			while (iPos > -1) {
-				sTrimmedTarget = sTrimmedTarget.substr(0, iPos);
-				mAffectedTargets[sTrimmedTarget] = true;
-				iPos = sTrimmedTarget.lastIndexOf("/");
+
+			var iSlashPos = sTrimmedTarget.lastIndexOf("/");
+			if (iSlashPos > 0) {
+				// This seems to be a property...
+				// But is it a NavigationProperty?
+				var sParentEntity = sTrimmedTarget.substr(0, iSlashPos);
+				var sProperty = sTrimmedTarget.substr(iSlashPos);
+
+				// If this is a property (but no NavigationProperty!), also remove the messages for the entity containing it
+				var bIsNavigationProperty = this._isNavigationProperty(sParentEntity, sProperty);
+				if (!bIsNavigationProperty) {
+					// It isn't a NavigationProperty, which means that the messages for this target belong to the
+					// entity. The entity must be added to the affected targets.
+					mAffectedTargets[sParentEntity] = true;
+				}
 			}
-			
-			// Add the Entityset itself
-			mEntitySet = this._metadata._getEntitySetByPath(sTarget);
-			if (mEntitySet) {
-				mAffectedTargets[mEntitySet.name] = true;
-			}
+
+			// Info: As of 2015-11-12 the "parent" EntitySet should not be part of the affected targets, meaning that
+			//       messages for the entire collection should not be deleted just because one entry of that selection
+			//       has been requested.
+			//       Before this all messages for the parent collection were deleted when an entry returned anything.
+			//       This only concerns messages for the EntitySet itself, not for its entities.
+			//       Example:
+			//         GET /Products(1) used to delete all messages for /Products(1) and /Products
+			//         now it only deletes all messages for the single entity /Products(1)
 		}
 	}
-	
+
 	return mAffectedTargets;
 };
 
@@ -229,11 +260,11 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 	var i, sTarget;
 
 	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo.url, mGetEntities, mChangeEntities);
-	
+
 	var aRemovedMessages = [];
 	var aKeptMessages = [];
 	for (i = 0; i < this._lastMessages.length; ++i) {
-		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must 
+		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must
 		// be trimmed here
 		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
 
@@ -297,7 +328,7 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 };
 
 /**
- * Returns the path of the Entity affected by the given FunctionImport. It either uses the location header sent by the 
+ * Returns the path of the Entity affected by the given FunctionImport. It either uses the location header sent by the
  * back-end or if none is sent tries to construct the correct URL from the metadata information about the function.
  * In case the URL of the target is built using only one key, the parameter-name is removed from the URL.
  * Example, if there are two keys "A" and "B", the URL mitgt look like this: "/List(A=1,B=2)" in case there is only one
@@ -310,20 +341,20 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
  */
 ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mRequestInfo, mUrlData) {
 	var sTarget = "";
-	
+
 	var i;
-	
+
 	// In case of a function import the location header may point to the corrrect entry in the service.
 	// This should be the case for writing/changing operations using POST
 	if (mRequestInfo.response && mRequestInfo.response.headers && mRequestInfo.response.headers["location"]) {
 		sTarget = mRequestInfo.response.headers["location"];
-		
+
 		var iPos = sTarget.lastIndexOf(this._serviceUrl);
 		if (iPos > -1) {
 			sTarget = sTarget.substr(iPos + this._serviceUrl.length);
 		}
 	} else {
-		
+
 		// Search for "action-for" annotation
 		var sActionFor = null;
 		if (mFunctionInfo.extensions) {
@@ -334,7 +365,7 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 				}
 			}
 		}
-		
+
 		var mEntityType;
 		if (sActionFor) {
 			mEntityType = this._metadata._getEntityTypeByName(sActionFor);
@@ -343,11 +374,11 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 		} else if (mFunctionInfo.returnType) {
 			mEntityType = this._metadata._getEntityTypeByName(mFunctionInfo.returnType);
 		}
-		
+
 		var mEntitySet = this._metadata._getEntitySetByType(mEntityType);
-		
+
 		if (mEntitySet && mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
-			
+
 			var sId = "";
 			var sParam;
 
@@ -368,7 +399,7 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 				}
 				sId = aKeys.join(",");
 			}
-			
+
 			sTarget = "/" + mEntitySet.name + "(" + sId + ")";
 		} else if (!mEntitySet) {
 			jQuery.sap.log.error("Could not determine path of EntitySet for function call: " + mUrlData.url);
@@ -405,7 +436,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 
 		var mUrlData = this._parseUrl(mRequestInfo.url);
 		var sUrl = mUrlData.url;
-		
+
 		var iPos = sUrl.lastIndexOf(this._serviceUrl);
 		if (iPos > -1) {
 			sRequestTarget = sUrl.substr(iPos + this._serviceUrl.length + 1);
@@ -424,7 +455,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 			} else {
 				sTarget = sRequestTarget;
 			}
-			
+
 		} else {
 			sRequestTarget = "/" + sRequestTarget;
 
@@ -441,7 +472,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 				sTarget = sRequestTarget + sTarget;
 			}
 		}
-		
+
 
 	} /* else {
 		// Absolute target path, do not use base URL
@@ -460,7 +491,18 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
  */
 ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
 	var sField = this.getHeaderField();
-	if (!oResponse.headers || !oResponse.headers[sField]) {
+	if (!oResponse.headers) {
+		// No header set, nothing to process
+		return;
+	}
+
+	for (var sKey in oResponse.headers) {
+		if (sKey.toLowerCase() === sField.toLowerCase()) {
+			sField = sKey;
+		}
+	}
+
+	if (!oResponse.headers[sField]) {
 		// No header set, nothing to process
 		return;
 	}
@@ -503,7 +545,7 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 		// JSON response
 		this._parseBodyJSON(/* ref: */ aMessages, oResponse, mRequestInfo);
 	}
-	
+
 	// Messages from an error response should contain duplicate messages - the main error should be the
 	// same as the first errordetail error. If this is the case, remove the first one.
 	// TODO: Check if this is actually correct, and if so, check if the below check can be improved
@@ -633,12 +675,12 @@ ODataMessageParser.prototype._parseUrl = function(sUrl) {
 		parameters: {},
 		hash: ""
 	};
-	
+
 	var iPos = -1;
 
 	iPos = sUrl.indexOf("#");
 	if (iPos > -1) {
-		mUrlData.hash = mUrlData.url.substr(iPos + 1); 
+		mUrlData.hash = mUrlData.url.substr(iPos + 1);
 		mUrlData.url = mUrlData.url.substr(0, iPos);
 	}
 
@@ -717,7 +759,7 @@ function getContentType(oResponse) {
 var oLinkElement = document.createElement("a");
 /**
  * Returns the URL relative to the host (i.e. the absolute path on the server) for the given URL
- * 
+ *
  * @param {string} sUrl - The URL to be converted
  * @returns {string} The server-relative URL
  */
@@ -736,24 +778,24 @@ function getRelativeServerUrl(sUrl) {
  */
 function getAllElements(oDocument, aElementNames) {
 	var aElements = [];
-	
+
 	var mElementNames = {};
 	for (var i = 0; i < aElementNames.length; ++i) {
 		mElementNames[aElementNames[i]] = true;
 	}
-	
+
 	var oElement = oDocument;
 	while (oElement) {
 		if (mElementNames[oElement.tagName]) {
 			aElements.push(oElement);
 		}
-		
+
 		if (oElement.hasChildNodes()) {
 			oElement = oElement.firstChild;
 		} else {
 			while (!oElement.nextSibling) {
 				oElement = oElement.parentNode;
-				
+
 				if (!oElement || oElement === oDocument) {
 					oElement = null;
 					break;
@@ -764,7 +806,7 @@ function getAllElements(oDocument, aElementNames) {
 			}
 		}
 	}
-	
+
 	return aElements;
 }
 

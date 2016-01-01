@@ -6,7 +6,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	"use strict";
 
 
-	
+
 	/**
 	 * DateTimeInput renderer.
 	 * @namespace
@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 * DateTimeInputRenderer extends the InputRenderer
 	 */
 	var DateTimeInputRenderer = Renderer.extend(InputBaseRenderer);
-	
+
 	/**
 	 * Adds control specific class
 	 *
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	DateTimeInputRenderer.addOuterClasses = function(oRm, oControl) {
 		oRm.addClass("sapMDTI");
 	};
-	
+
 	/**
 	 * Add pointer cursor to date-time input
 	 *
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			oRm.addClass("sapMPointer");
 		}
 	};
-	
+
 	/**
 	 * Add extra styles for input container
 	 *

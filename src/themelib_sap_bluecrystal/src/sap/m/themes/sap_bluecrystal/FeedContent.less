@@ -1,0 +1,38 @@
+/* ======================================== */
+/* CSS for control sap.m/FeedContent.control */
+/* ======================================== */
+.sapUiMedia-Std-Desktop .sapMFCCTxt.Auto > .sapMText,
+.sapUiMedia-Std-Tablet .sapMFCCTxt.Auto > .sapMText,
+.sapMFCCTxt.L > .sapMText, .sapMFCCTxt.M > .sapMText,
+.sapUiMedia-Std-Desktop .sapMFCSbh.Auto,
+.sapUiMedia-Std-Tablet .sapMFCSbh.Auto,
+.sapMFCSbh.L, .sapMFCSbh.M {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMFCValue {
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+}
+
+.sapMFCValue.Neutral {
+	color: @sapUiChartNeutral;
+}
+
+.sapMFCValue.Good {
+	color: @sapUiChartGood;
+}
+
+.sapMFCValue.Critical {
+	color: @sapUiChartCritical;
+}
+
+.sapMFCValue.Error {
+	color: @sapUiChartBad;
+}
+
+.sap-desktop .sapMFC:focus {
+	outline-color: @sapUiFocus;
+	outline-style: dotted;
+	outline-width: 1px; /* Usage of px as aligned with designers. */
+}

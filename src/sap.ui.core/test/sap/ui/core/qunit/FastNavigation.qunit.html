@@ -2,26 +2,26 @@
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>QUnit page for Fast Keyboard Navigation (F6)</title>
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	
+
 	<script src="../resources/fastnav.js"></script>
 	<link type="text/css" rel="stylesheet" href="../resources/fastnav.css">
-	
+
 	<script>
 	var _FocusedId = null;
-	
+
 	// Enhance the focus function to directly get feedback about what was focused
 	jQuery.sap.orig_focus = jQuery.sap.focus;
 	jQuery.sap.focus = function focus(oDomRef) {
@@ -32,7 +32,7 @@
 		}
 		return res;
 	};
-	
+
 	// Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM) and the target of the event instead of the activeElement
 	// to be more focus independent (-> More test stability)
 	jQuery.sap.handleF6GroupNavigation_orig = jQuery.sap.handleF6GroupNavigation;
@@ -46,63 +46,63 @@
 		}
 		jQuery.sap.handleF6GroupNavigation_orig(oEvent, oSettings);
 	};
-	
+
 	function triggerTestEvent(sTarget, bForward){
 		sap.ui.test.qunit.triggerKeydown(sTarget, jQuery.sap.KeyCodes.F6, !bForward, false, false)
 	}
-	
-	
+
+
 	sap.ui.getCore().getEventBus().subscribe("fastnav", "screenready", function(){
-		
+
 		test("Page initialized", function() {
 			ok(jQuery("#content").children().length > 0, "Page initialized");
 		});
-		
+
 		test("Forward Navigation", function() {
 			var aFields = [95, 98, 131, 136, 139, 142, 144, 145, 147, 92];
-			
+
 			for(var i=0; i<aFields.length-1; i++){
 				triggerTestEvent("id"+aFields[i], true);
 				equal(_FocusedId, "id"+aFields[i+1], "Step "+(i+1)+": "+aFields[i]+"->"+aFields[i+1]);
 			}
 		});
-		
+
 		test("Backward Navigation", function() {
 			var aFields = [95, 147, 145, 144, 142, 139, 136, 131, 98, 92];
-			
+
 			for(var i=0; i<aFields.length-1; i++){
 				triggerTestEvent("id"+aFields[i], false);
 				equal(_FocusedId, "id"+aFields[i+1], "Step "+(i+1)+": "+aFields[i]+"->"+aFields[i+1]);
 			}
 		});
-		
+
 		test("Non-Modal Popup - Nav Mode NONE", function() {
 			_FocusedId = "dummy";
 			sap.ui.test.qunit.triggerEvent("click", "openPopup1");
-			
+
 			triggerTestEvent("id1", true);
 			ok(_FocusedId == "dummy" || _FocusedId == "id1", "F6 on non-modal Popup with Nav Mode NONE has no effect");
 			triggerTestEvent("id1", false);
 			ok(_FocusedId == "dummy" || _FocusedId == "id1", "Shift+F6 on non-modal Popup with Nav Mode NONE has no effect");
-			
+
 			_FocusedId = null;
 			oPopup1.close(0);
 		});
-		
+
 		test("Non-Modal Popup - Nav Mode DOCK", function() {
 			sap.ui.test.qunit.triggerEvent("click", "openPopup2");
-			
+
 			triggerTestEvent("id14", true);
 			equal(_FocusedId, "id98", "F6 on non-modal Popup with Nav Mode DOCK moves the focus to next element in F6 chain after the dock element");
 			triggerTestEvent("id14", false);
 			ok(_FocusedId == "dummy" || _FocusedId == "id147", "Shift+F6 on non-modal Popup with Nav Mode DOCK moves the focus to previous element in F6 chain before the dock element");
-			
+
 			oPopup2.close(0);
 		});
-		
+
 		test("Non-Modal Popup - Nav Mode SCOPE", function() {
 			sap.ui.test.qunit.triggerEvent("click", "openPopup3");
-			
+
 			triggerTestEvent("id27", true);
 			equal(_FocusedId, "id33", "Step 1: 27->33");
 			triggerTestEvent("id33", true);
@@ -111,26 +111,26 @@
 			equal(_FocusedId, "id33", "Step 3: 27->33");
 			triggerTestEvent("id33", false);
 			equal(_FocusedId, "id27", "Step 4: 33->27");
-			
+
 			oPopup3.close(0);
 		});
-		
+
 		test("Modal Popup - Nav Mode NONE", function() {
 			_FocusedId = "dummy";
 			sap.ui.test.qunit.triggerEvent("click", "openPopup4");
-			
+
 			triggerTestEvent("id40", true);
 			ok(_FocusedId == "dummy" || _FocusedId == "id40", "F6 on modal Popup with Nav Mode NONE has no effect");
 			triggerTestEvent("id40", false);
 			ok(_FocusedId == "dummy" || _FocusedId == "id40", "Shift+F6 on modal Popup with Nav Mode NONE has no effect");
-			
+
 			_FocusedId = null;
 			oPopup4.close(0);
 		});
-		
+
 		test("Modal Popup - Nav Mode SCOPE", function() {
 			sap.ui.test.qunit.triggerEvent("click", "openPopup5");
-			
+
 			triggerTestEvent("id53", true);
 			equal(_FocusedId, "id59", "Step 1: 53->59");
 			triggerTestEvent("id59", true);
@@ -139,27 +139,27 @@
 			equal(_FocusedId, "id59", "Step 3: 53->59");
 			triggerTestEvent("id59", false);
 			equal(_FocusedId, "id53", "Step 4: 59->53");
-			
+
 			oPopup5.close(0);
 		});
-		
+
 		test("Modal Popup - Nav Mode SCOPE and inner non-modal popup with Nav Mode DOCK", function() {
 			sap.ui.test.qunit.triggerEvent("click", "openPopup6");
 			sap.ui.test.qunit.triggerEvent("click", "openPopup7");
-			
+
 			triggerTestEvent("id66", true);
 			equal(_FocusedId, "id79", "F6 on non-modal Popup with Nav Mode DOCK moves the focus to next element in F6 chain after the dock element");
 			triggerTestEvent("id66", false);
 			equal(_FocusedId, "id79", "Shift+F6 on non-modal Popup with Nav Mode DOCK moves the focus to previous element in F6 chain before the dock element");
-			
+
 			oPopup7.close(0);
 			oPopup6.close(0);
 		});
 
-		
+
 	});
 	</script>
-		  
+
 </head>
 <body class="sapUiBody">
 	<h1 id="qunit-header">QUnit tests: Fast Keyboard Navigation (F6)</h1>
@@ -167,7 +167,7 @@
  	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
-	
+
 	<div id="scope">
 		<div id="content"></div>
 		<div id="content2"></div>

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Data binding test page with Tree sap.ui.commons.Tree using TreeBinding</title>
 
     <script id="sap-ui-bootstrap"
@@ -41,7 +41,7 @@
 	    						name: "subsubitem3"
 	    					}
 	    				}
-	    				
+
 	    			},
 	    			1:{
 	    				name: "item2",
@@ -49,26 +49,26 @@
 	    					name: "subitem3"
 	    				}
 	    			}
-	    			
+
 	    		}
 	    };
 		  var oModel = new sap.ui.model.json.JSONModel();
 		  // set the data to the model
 		  oModel.setData(oData);
-	      
+
 	      var oTree = new sap.ui.commons.Tree("tree");
 	      oTree.setWidth("100%");
 	      oTree.attachSelect(function(oEvent) {oSimpleForm.getContent()[3].setText("Fired Event: SELECT" + '\n' + oEvent.getParameter("node"))});
 	      oTree.attachSelectionChange(function(oEvent) {oSimpleForm.getContent()[3].setText("Fired Event: SELECTIONCHANGE" + '\n' + oEvent.getParameter("nodes"))});
 	      // set the model to the tree
 	      oTree.setModel(oModel);
-	
+
 	      var oTreeNodeTemplate = new sap.ui.commons.TreeNode("node");
 	      oTreeNodeTemplate.bindProperty("text", "name");
 	      oTreeNodeTemplate.setExpanded(true);
-	      
+
 	      oTree.bindAggregation("nodes", "/root", oTreeNodeTemplate);
-	      
+
 	      oTree.placeAt("targetTree");
 
 	      // Button Line
@@ -78,7 +78,7 @@
 
  		  var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("ml1_1");
 		  oLayout.addRow(oMLR);
-		  
+
 		  var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("ml1_1_1");
 	      var oButton = new sap.ui.commons.Button("button1");
 	      oButton.setText("modify model");
@@ -88,8 +88,8 @@
 	      });
 	      oMLC.addContent(oButton);
 		  oMLR.addCell(oMLC);
-		  
-		  oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2"); 
+
+		  oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2");
 	      var oButton = new sap.ui.commons.Button("button2");
 	      oButton.setText("refresh model");
 	  	  oButton.setWidth("100px");

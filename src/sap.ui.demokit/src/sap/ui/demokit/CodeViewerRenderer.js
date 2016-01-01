@@ -9,26 +9,26 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class CodeViewer renderer. 
+	 * @class CodeViewer renderer.
 	 * @static
 	 */
 	var CodeViewerRenderer = function() {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
+	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	CodeViewerRenderer.render = function(oRM, oControl){
-		
+
 		if ( !oControl.getVisible() ) {
 			return;
 		}
-		
-		// write the HTML into the render manager  
+
+		// write the HTML into the render manager
 		oRM.write("<pre");
 		oRM.writeControlData(oControl);
 		if ( oControl.getEditable() ) {
@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global'],
 		if (oControl.getLineNumbering()) {
 			oRM.addClass("linenums");
 		}
-			
+
 		var sHeight = oControl.getHeight();
 		if (sHeight) {
 			oRM.addStyle("height", sHeight);
@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		oRM.write("</pre>");
 	};
-	
+
 
 	return CodeViewerRenderer;
 

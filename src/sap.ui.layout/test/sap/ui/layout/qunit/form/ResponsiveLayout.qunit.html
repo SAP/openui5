@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.layout.form.ResponsiveLayout
   Author: SAP
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../../resources/sap-ui-core.js"
@@ -14,7 +14,7 @@
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.layout, sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -39,7 +39,9 @@
 				]
 			}).placeAt("uiArea1");
 
-		var oLayout2 = new sap.ui.layout.form.ResponsiveLayout("Layout2");
+		var oLayout2 = new sap.ui.layout.form.ResponsiveLayout("Layout2", {
+			backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent
+		});
 		var oForm2 = new sap.ui.layout.form.Form("F2",{
 			title: "Form2",
 			layout: oLayout2,
@@ -57,7 +59,9 @@
 				]
 			}).placeAt("uiArea2");
 
-		var oLayout3 = new sap.ui.layout.form.ResponsiveLayout("Layout3");
+		var oLayout3 = new sap.ui.layout.form.ResponsiveLayout("Layout3", {
+			backgroundDesign: sap.ui.layout.BackgroundDesign.Solid
+		});
 		var oForm3 = new sap.ui.layout.form.Form("F3",{
 			title: "Form3",
 			layout: oLayout3,
@@ -196,6 +200,13 @@
 		});
 
 		module("Rendering");
+
+		test("BackgroundDesign", function() {
+			ok(jQuery("#Layout1").hasClass("sapUiFormBackgrTranslucent"), "Form1: translucent design per default");
+			ok(!jQuery("#Layout2").hasClass("sapUiFormBackgrTranslucent"), "Form2: no translucent design");
+			ok(!jQuery("#Layout2").hasClass("sapUiFormBackgrSolid"), "Form2: no solid design");
+			ok(jQuery("#Layout3").hasClass("sapUiFormBackgrSolid"), "Form1: solid design");
+		});
 
 		test("Container rendering", function() {
 			ok(jQuery.sap.domById("F1"), "Form1 is rendered");

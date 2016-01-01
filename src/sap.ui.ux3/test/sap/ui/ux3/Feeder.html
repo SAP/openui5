@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 	<title>Feeder - sap.ui.ux3</title>
 	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.ux3.Feeder.gif">
-  <script 
-				src="../../../../resources/sap-ui-core.js" 
-        type="text/javascript" 
-        id="sap-ui-bootstrap"            
+  <script
+				src="../../../../resources/sap-ui-core.js"
+        type="text/javascript"
+        id="sap-ui-bootstrap"
         data-sap-ui-libs="sap.ui.core,sap.ui.ux3,sap.ui.commons"
-				data-sap-ui-theme="sap_goldreflection" 
+				data-sap-ui-theme="sap_goldreflection"
 				data-sap-ui-areas="target1,target2,target3" >
   </script>
 
@@ -39,13 +39,13 @@
 						oTextField.getValue());
 			},
 		}).placeAt("target3");
-		
+
 		oFeeder = new sap.ui.ux3.Feeder("Feeder2",{
 			type: sap.ui.ux3.FeederType.Medium,
 			text:"I suggest ",
 			submit: handleSubmit
 		}).placeAt("target4");
-		
+
 		oFeeder = new sap.ui.ux3.Feeder("Feeder3",{
 			type: sap.ui.ux3.FeederType.Comment,
 			submit: handleSubmit
@@ -62,10 +62,10 @@
 	<div id="target1" style="width:80%;"> </div>
 	<div id="target2" style="width:80%;margin-top:20px;"> </div>
 	<div id="target3" style="width:80%;"> </div>
-	<br/>
+	<br>
 	<br> medium feeder
 	<div id="target4" style="width:80%;"> </div>
-	<br/>
+	<br>
 	<br> comment feeder
 	<div id="target5" style="width:80%;"> </div>
 </body>

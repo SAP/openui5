@@ -7,8 +7,8 @@
 
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 <title>qUnit Page for sap.ui.table.DataTable test Table API</title>
 <script id="sap-ui-bootstrap"
 		type="text/javascript"
@@ -17,7 +17,7 @@
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.commons,sap.ui.table" >
 </script>
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -415,7 +415,8 @@ test("Resize", function(){
 
 	sap.ui.getCore().applyChanges();
 
-	equals(oTable.getVisibleRowCount(), 16, "Row count of 16 expected. Has: " + oTable.getVisibleRowCount());
+	ok(oTable.getVisibleRowCount() > 14, "Row count is greater than 14. Has: " + oTable.getVisibleRowCount());
+	ok(oTable.getVisibleRowCount() < 17, "Row count is lower than 17. Has: " + oTable.getVisibleRowCount());
 });
 
 module("Keyboard navigation", {

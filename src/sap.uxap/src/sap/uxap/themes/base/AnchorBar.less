@@ -67,7 +67,7 @@ Common Compact/Cozy
 
 		.sapMBtnContent,
 		.sapMBtnIcon {
-			height: 2.7rem;
+			height: 2.8rem;
 			line-height: 3rem;
 		}
 	}
@@ -92,11 +92,6 @@ Common Compact/Cozy
 	text-transform: uppercase;
 }
 
-/* used to smoothen the 2rem change in padding when switching between present or absent leftwards scrolling
-.sapUxAPAnchorBar {
-	transition: padding-left 0.5s;
-} */
-
 /***********************/
 /* BEGIN Scroll Arrows */
 /***********************/
@@ -119,24 +114,20 @@ Common Compact/Cozy
 }
 
 // Full-screen alignment (L + XL)
-.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
-html[dir=rtl] .sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 	left: 1rem;
 }
 
-.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
-html[dir=rtl] .sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
 	right: 3rem;
 }
 
 // Split-screen alignment in Detail (M)
-.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
-html[dir=rtl] .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 	left: 0.5rem;
 }
 
-.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
-html[dir=rtl] .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+.sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
 	right: 2.5rem;
 }
 
@@ -268,8 +259,19 @@ Compact
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBarButton .sapMBtnInner {
-	padding-top: 1px;
 	padding-bottom: 1px;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtnIcon {
+	margin-left: 0rem;
+	margin-right: 0rem;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnIcon {
+	height: 2.55rem;
+	line-height: 2.6rem;
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnIconLast {

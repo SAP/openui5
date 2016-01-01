@@ -18,10 +18,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {object} [mParameters]
 	 * @alias sap.ui.model.xml.XMLPropertyBinding
-	 * @extends sap.ui.model.PropertyBinding
+	 * @extends sap.ui.model.ClientPropertyBinding
 	 */
 	var XMLPropertyBinding = ClientPropertyBinding.extend("sap.ui.model.xml.XMLPropertyBinding");
-	
+
 	/**
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
@@ -32,13 +32,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			}
 		}
 	};
-	
+
 	/**
 	 * Check whether this Binding would provide new values and in case it changed,
 	 * inform interested parties about this.
-	 * 
+	 *
 	 * @param {boolean} bForceupdate
-	 * 
+	 *
 	 */
 	XMLPropertyBinding.prototype.checkUpdate = function(bForceupdate){
 		var oValue = this._getValue();

@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.ux3.Exact
   Author: d046314
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>Exact - sap.ui.ux3</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Exact.gif">
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -18,11 +18,11 @@
 		data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
 		data-sap-ui-language=en>
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	
+
 	<script src="../resources/ExactData.js"></script>
 
 	<!-- Control initialization -->
@@ -39,12 +39,12 @@
 		var oResultText = oExact1._resultText;
 
 	</script>
-	
+
 	<!-- Test functions -->
 	<script language="javascript">
-	
+
 		qutils.delayTestStart();
-		
+
 		module("API");
 
 		test("Default Values", function() {
@@ -75,9 +75,9 @@
 			equals(oExact2.getAttributes().length, 0, "Number of attributes after removeAll");
 		});
 
-		
+
 		module("Interaction Flow");
-	
+
 		test("Initial State", function() {
 			equals(oSearchTextField.getValue(), "", "Initial text State of Search TextField:");
 			ok(oSearchTextField.getDomRef(), "Initial visibility State of Search TextField:");
@@ -110,7 +110,7 @@
 				ok(oBrowser.getDomRef(), "Visibility State of Browse Area:");
 				ok(oResultText.getDomRef(), "Visibility State of Result Text:");
 				ok(oResultArea.getDomRef(), "Visibility State of Result Area:");
-	
+
 				equals(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
 				var aSubLists = oBrowser._rootList.getSubLists();
 				equals(aSubLists.length, 2, "Number of visible 1st level lists:");
@@ -153,16 +153,16 @@
 						}
 					}
 				}, 1000);
-				
+
 				oExact1.detachRefineSearch(handler);
 			};
 			oExact1.attachRefineSearch(handler);
 
 			qutils.triggerMouseEvent(jQuery(jQuery("#"+oBrowser._rootList._lb.getId()).children()[0]).children()[2], "click");
 		});
-	
+
 	</script>
-  
+
 </head>
 <body class="sapUiBody" role="application">
 	<h1 id="qunit-header">QUnit tests: sap.ui.ux3.Exact</h1>

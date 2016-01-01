@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 	<title>SAPUI5 Data Binding Tutorial</title>
 	<script
 		id="sap-ui-bootstrap"
@@ -18,7 +18,7 @@
 		// ------------------------------------------------------------------------
 		// Attach an anonymous function to the SAPUI5 'init' event
 		sap.ui.getCore().attachInit(function () {
-			
+
 			var oProductModel = new sap.ui.model.json.JSONModel();
 			oProductModel.loadData("./model/Products.json");
 			sap.ui.getCore().setModel(oProductModel, "products");
@@ -52,7 +52,7 @@
 
 			// Register the view with the message manager
 			sap.ui.getCore().getMessageManager().registerObject(oView, true);
-			
+
 			// Insert the view into the DOM
 			oView.placeAt("content");
 		});

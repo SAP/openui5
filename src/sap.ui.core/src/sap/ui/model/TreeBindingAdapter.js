@@ -233,19 +233,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				if (!oNode) {
 					return;
 				}
-				var iMaxGroupSize = 0;
-				if (oNode.isArtificial) {
-					// when displaying the root node, the magnitude will always be at least 1,
-					// because we display the one node we request
-					// if the user requests the root node(s) by level and not by ID, we can retrieve a group-size
-					if (this.bDisplayRootNode && this.mParameters.rootNodeID && !this._bRootMissing) {
-						iMaxGroupSize = 1;
-					} else {
-						iMaxGroupSize = this._getGroupSize(oNode) || 0;
-					}
-				} else {
-					iMaxGroupSize = this.nodeHasChildren(oNode) ? this._getGroupSize(oNode) : 0;
-				}
+				var iMaxGroupSize = this._getMaxGroupSize(oNode);
+
 				// adapt node sections if the page size increased since the last getcontexts call
 				// and only if we do not already have a count for the group
 				var oNodeState = oNode.nodeState;
@@ -261,6 +250,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			};
 
 			this._map(this._oRootNode, fnIncreaseSections);
+		};
+
+		/**
+		 * Calculates the maximum possible group-size for a given node.
+		 * Not the same as the direct number of children.
+		 */
+		TreeBindingAdapter.prototype._getMaxGroupSize = function (oNode) {
+			var iMaxGroupSize = 0;
+			if (oNode.isArtificial) {
+				// When displaying the root node, the magnitude will always be at least 1:
+				// Except: if we are bound to a list/collection (e.g. Employees), there will be no single root node
+				// so we retrieve the regular groupSize instead
+				var bIsList = this.oModel.isList(this.sPath, this.getContext());
+				if (this.bDisplayRootNode && !bIsList && !this._bRootMissing) {
+					iMaxGroupSize = 1;
+				} else {
+					iMaxGroupSize = this._getGroupSize(oNode) || 0;
+				}
+			} else {
+				iMaxGroupSize = this.nodeHasChildren(oNode) ? this._getGroupSize(oNode) : 0;
+			}
+			return iMaxGroupSize;
 		};
 
 		/**
@@ -452,19 +463,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			var oNodeState = oNode.nodeState;
 
 			// calculate magnitude/groupsize of (artificial) root node seperately
-			var iMaxGroupSize = 0;
-			if (oNode.isArtificial) {
-				// when displaying the root node, the magnitude will always be at least 1,
-				// because we display the one node we request
-				// if the user requests the root node(s) by level and not by ID, we can retrieve a group-size
-				if (this.bDisplayRootNode && this.mParameters.rootNodeID && !this._bRootMissing) {
-					iMaxGroupSize = 1;
-				} else {
-					iMaxGroupSize = this._getGroupSize(oNode) || 0;
-				}
-			} else {
-				iMaxGroupSize = this.nodeHasChildren(oNode) ? this._getGroupSize(oNode) : 0;
-			}
+			var iMaxGroupSize = this._getMaxGroupSize(oNode);
+
 			// make sure the children array gets at least the requested length
 			if (iMaxGroupSize > 0) {
 				if (!oNode.children[iMaxGroupSize - 1]) {
@@ -479,7 +479,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 					length: iMaxGroupSize
 				}];
 			}
-			
+
 			//iterate all loaded (known) sections
 			for (var i = 0; i < oNodeState.sections.length; i++) {
 

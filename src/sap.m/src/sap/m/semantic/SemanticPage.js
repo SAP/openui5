@@ -44,6 +44,8 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 	var SemanticPage = sap.ui.core.Control.extend("sap.m.semantic.SemanticPage", /** @lends sap.m.semantic.SemanticPage.prototype */ {
 		metadata: {
 
+			library: "sap.m",
+
 			properties: {
 
 				/**
@@ -212,6 +214,17 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 	SemanticPage.prototype.setShowSubHeader = function (bShowSubHeader, bSuppressInvalidate) {
 		this._getPage().setShowSubHeader(bShowSubHeader, bSuppressInvalidate);
+		this.setProperty("showSubHeader", bShowSubHeader, true);
+		return this;
+	};
+
+	SemanticPage.prototype.getShowFooter = function () {
+		return this._getPage().getShowFooter();
+	};
+
+	SemanticPage.prototype.setShowFooter = function (bShowFooter, bSuppressInvalidate) {
+		this._getPage().setShowFooter(bShowFooter, bSuppressInvalidate);
+		this.setProperty("showFooter", bShowFooter, true);
 		return this;
 	};
 

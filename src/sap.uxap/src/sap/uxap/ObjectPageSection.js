@@ -95,16 +95,23 @@ sap.ui.define([
 	 */
 
 	ObjectPageSection.prototype.onkeyup = function (oEvent) {
-		if (oEvent.keyCode === jQuery.sap.KeyCodes.TAB && this._getObjectPageLayout()._isFirstSection(this)) {
+		var eventTarget = sap.ui.getCore().byId(jQuery(oEvent.target).attr("id"));
+		if (oEvent.keyCode === jQuery.sap.KeyCodes.TAB && eventTarget instanceof sap.uxap.ObjectPageSection && this._getObjectPageLayout()._isFirstSection(this)) {
 			this._getObjectPageLayout().$("opwrapper").scrollTop(0);
 		}
 	};
 
-	ObjectPageSection.prototype._updateImportance = function (oCurrentMedia) {
+	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {
 		var oObjectPage = this._getObjectPageLayout(),
 			oMedia = oCurrentMedia || Device.media.getCurrentRange(ObjectPageSection.MEDIA_RANGE),
-			bShowOnlyHighImportance = oObjectPage && oObjectPage.getShowOnlyHighImportance(),
-			sImportanceLevelToHide = this._determineTheLowestLevelOfImportanceToShow(oMedia.name, bShowOnlyHighImportance);
+			bShowOnlyHighImportance = oObjectPage && oObjectPage.getShowOnlyHighImportance();
+
+		return this._determineTheLowestLevelOfImportanceToShow(oMedia.name, bShowOnlyHighImportance);
+	};
+
+	ObjectPageSection.prototype._updateImportance = function (oCurrentMedia) {
+		var oObjectPage = this._getObjectPageLayout(),
+			sImportanceLevelToHide = this._getImportanceLevelToHide(oCurrentMedia);
 
 		this.getSubSections().forEach(function (oSubSection) {
 			oSubSection._applyImportanceRules(sImportanceLevelToHide);
@@ -113,7 +120,7 @@ sap.ui.define([
 		this._applyImportanceRules(sImportanceLevelToHide);
 		this._updateShowHideAllButton(false);
 
-		if (oObjectPage) {
+		if (oObjectPage && this.getDomRef()) {
 			oObjectPage._adjustLayout();
 		}
 	};
@@ -141,9 +148,7 @@ sap.ui.define([
 		if (!this.getAggregation(sAriaLabeledBy)) {
 			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy());
 		}
-	};
 
-	ObjectPageSection.prototype.onAfterRendering = function () {
 		this._updateImportance();
 	};
 
@@ -246,6 +251,7 @@ sap.ui.define([
 	ObjectPageSection.prototype._getShowHideAllButton = function () {
 		if (!this.getAggregation("_showHideAllButton")) {
 			this.setAggregation("_showHideAllButton", new Button({
+				visible: this._getShouldDisplayShowHideAllButton(),
 				text: this._getShowHideAllButtonText(!this._thereAreHiddenSubSections()),
 				press: this._showHideContentAllContent.bind(this),
 				type: sap.m.ButtonType.Transparent
@@ -272,6 +278,7 @@ sap.ui.define([
 	ObjectPageSection.prototype._getShowHideButton = function () {
 		if (!this.getAggregation("_showHideButton")) {
 			this.setAggregation("_showHideButton", new Button({
+				visible: this._shouldBeHidden(),
 				text: this._getShowHideButtonText(!this._getIsHidden()),
 				press: this._showHideContent.bind(this),
 				type: sap.m.ButtonType.Transparent

@@ -45,10 +45,10 @@
                 <module>sap/m/FeedInput</module>
                 <module>sap/m/FeedListItem</module>
                 <module>sap/m/UploadCollection</module>
-                <module>sap/m/DynamicContainer</module>
+                <module>sap/m/SlideTile</module>
                 <module>sap/m/GenericTile</module>
                 <module>sap/m/TileContent</module>
-                <module>sap/m/JamContent</module>
+                <module>sap/m/FeedContent</module>
                 <module>sap/m/NewsContent</module>
                 <module>sap/m/NumericContent</module>
             </modules>

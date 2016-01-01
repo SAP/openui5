@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new ToggleButton.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -28,19 +28,19 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToggleButton = Button.extend("sap.m.ToggleButton", /** @lends sap.m.ToggleButton.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * The property is “true” when the control is toggled. The default state of this property is "false".
 			 */
 			pressed : {type : "boolean", group : "Data", defaultValue : false}
 		}
 	}});
-	
+
 	EnabledPropagator.call(ToggleButton.prototype);
-	
+
 	/**
 	 * Function is called when ToggleButton is clicked.
 	 *
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 			this.firePress({ pressed: this.getPressed() });
 		}
 	};
-	
+
 	ToggleButton.prototype.setPressed = function(bPressed) {
 		if (bPressed != this.getPressed()) {
 			this.setProperty("pressed", bPressed, true);
@@ -64,19 +64,19 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Handle the key down event for SPACE and ENTER.
 	 * @param {jQuery.Event} oEvent - the keyboard event.
 	 * @private
 	 */
 	ToggleButton.prototype.onkeydown = function(oEvent) {
-	
+
 		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
 			this.ontap(oEvent);
 		}
 	};
-	
+
 
 	return ToggleButton;
 

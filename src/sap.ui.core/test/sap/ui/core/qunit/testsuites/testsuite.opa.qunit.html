@@ -37,6 +37,9 @@
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/EnterText.qunit.html");
 
+			// OPA Launcher
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/launchers/componentLauncher.qunit.html");
+
 			//OPA matchers
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationFilled.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationLengthEquals.qunit.html");
@@ -61,10 +64,13 @@
 				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaPageObject/OpaPageObject.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/demokit/sample/OpaAction/Opa.html");
 
-
 				// Matcher samples
 				addTestPage("/test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/BindingPath.html");
 				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaMatchers/OpaMatchers.html");
+
+				// Launcher samples
+				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent.html");
+				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html");
 			}
 
 			return suite;

@@ -8,7 +8,7 @@
     jQuery.sap.require("sap.uxap.ObjectPageLayout");
     jQuery.sap.require("sap.uxap.ObjectPageSection");
     jQuery.sap.require("sap.uxap.ObjectPageHeader");
-    
+
     module("aat_UxAP-162", {
     	beforeEach: function () {
     		this.objectPageSampleView = sap.ui.xmlview("UxAP-162_ObjectPageSample", {viewName : "view.UxAP-162_ObjectPageSample" });
@@ -56,7 +56,7 @@
         var headerRole = this.objectPageSampleView.byId("headerRole162");
         assert.ok(headerRole != undefined, "Header role created successfuly");
     });
-    
+
     QUnit.test("TextId", function (assert) {
 
         var text = this.objectPageSampleView.byId("HeaderJobTitle");

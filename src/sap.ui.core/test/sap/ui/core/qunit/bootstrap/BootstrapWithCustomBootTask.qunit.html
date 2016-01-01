@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <!--
   Tests the bootstrap variant where a custom boot task is used
-  
+
   @author Frank Weigel
   -->
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Test Page for Bootstrap with a Custom Boot Task</title>
 		<script>
 			window.testresults = {
@@ -20,7 +20,7 @@
 				$LinksBefore : null,
 				$LinksAfter : null
 			}
-			
+
 			window["sap-ui-config"] = {
 				"xx-bootTask" : function(callback) {
 					testresults.bHookCalled = true;
@@ -48,7 +48,7 @@
 				data-sap-ui-libs="sap.ui.core"
 				src="../../../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -58,7 +58,7 @@
 		 * Tests whether basic classes are available that together can be considered the SAPUI5 Core
 		 */
 		QUnit.test("BasicClassesAvailable", function(assert) {
-			
+
 			assert.ok(testresults.bHookCalled, "boottask should be called");
 			assert.ok(testresults.bSapUiCoreExists, "sap.ui.getCore() should exist in the boor task");
 			assert.ok(testresults.bApplyThemeExists, "sap.ui.getCore().applyTheme() should exist when the boot task is executed");

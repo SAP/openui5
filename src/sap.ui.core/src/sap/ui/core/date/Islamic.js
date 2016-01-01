@@ -17,8 +17,9 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 *
 	 * @private
 	 * @alias sap.ui.core.date.Islamic
+	 * @extends sap.ui.core.date.UniversalDate
 	 */
-	var Islamic = UniversalDate.extend("sap.ui.core.date.Islamic", /** @lends sap.ui.core.date.Date.prototype */ {
+	var Islamic = UniversalDate.extend("sap.ui.core.date.Islamic", /** @lends sap.ui.core.date.Islamic.prototype */ {
 		constructor: function() {
 			var aArgs = arguments;
 			if (aArgs.length > 1) {
@@ -43,54 +44,68 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		ISLAMIC_EPOCH_DAYS = 1948439.5,   // Julian days since noon on January 1, 4713 BC
 		ISLAMIC_MILLIS = -42521587200000, // 7/16/622
 		ONE_DAY = 86400000;
-	
+
 	var oCustomizationMap = null;
-	
+
 	/**
 	 * Calculate islamic date from gregorian
-	 * 
+	 *
 	 * @param {object} oGregorian a JS object containing day, month and year in the gregorian calendar
 	 * @private
 	 */
 	function toIslamic(oGregorian) {
 		var iGregorianYear = oGregorian.year,
 			iGregorianMonth = oGregorian.month,
-			iGregorianDay = oGregorian.day;
+			iGregorianDay = oGregorian.day,
+			iIslamicYear,
+			iIslamicMonth,
+			iIslamicDay,
+			iMonths,
+			iDays,
+			iLeapAdj,
+			iJulianDay;
 
-		var iLeapAdj = 0;
+		iLeapAdj = 0;
 		if ((iGregorianMonth + 1) > 2) {
-			iLeapAdj = (isGregorianLeapYear(iGregorianYear) ? -1 : -2);
+			iLeapAdj = isGregorianLeapYear(iGregorianYear) ? -1 : -2;
 		}
-		var iJulianDay = (GREGORIAN_EPOCH_DAYS - 1) + (365 * (iGregorianYear - 1)) + Math.floor((iGregorianYear - 1) / 4)
+		iJulianDay = (GREGORIAN_EPOCH_DAYS - 1) + (365 * (iGregorianYear - 1)) + Math.floor((iGregorianYear - 1) / 4)
 			+ (-Math.floor((iGregorianYear - 1) / 100)) + Math.floor((iGregorianYear - 1) / 400)
 			+ Math.floor((((367 * (iGregorianMonth + 1)) - 362) / 12)
 			+ iLeapAdj + iGregorianDay);
 
 		iJulianDay = Math.floor(iJulianDay) + 0.5;
 
-		var iDays = iJulianDay - ISLAMIC_EPOCH_DAYS;
+		iDays = iJulianDay - ISLAMIC_EPOCH_DAYS;
 
-		// guess the month start
-		var iMonths = Math.floor(iDays / 29.530588853); // day/CalendarAstronomer.SYNODIC_MONTH
+		iMonths = Math.floor(iDays / 29.530588853); // day/CalendarAstronomer.SYNODIC_MONTH
 
-		/*
-		 * Always also check the next month, since customization can
-		 * differ. It can differ for not more than 3 days. so that
-		 * checking the next month is enough.
-		 */
-		iMonths++;
+		if (iMonths < 0) { //negative means Islamic date before the Islamic's calendar start. So we do not apply customization.
+			iIslamicYear = Math.floor(iMonths / 12) + 1;
+			iIslamicMonth = iMonths % 12;
+			if (iIslamicMonth < 0) {
+				iIslamicMonth += 12;
+			}
+			iIslamicDay = iDays - monthStart(iIslamicYear, iIslamicMonth) + 1;
+		} else {
+			/* Guess the month start.
+			 * Always also check the next month, since customization can
+			 * differ. It can differ for not more than 3 days. so that
+			 * checking the next month is enough.
+			 */
+			iMonths++;
 
-		/*
-		 * Check the true month start for the given month. If it is
-		 * later, check the previous month, until a suitable is found.
-		 */
-		while (getCustomMonthStartDays(iMonths) > iDays) {
-			iMonths--;
+			/*
+			 * Check the true month start for the given month. If it is
+			 * later, check the previous month, until a suitable is found.
+			 */
+			while (getCustomMonthStartDays(iMonths) > iDays) {
+				iMonths--;
+			}
+			iIslamicYear = Math.floor(iMonths / 12) + 1;
+			iIslamicMonth = iMonths % 12;
+			iIslamicDay = (iDays - getCustomMonthStartDays(12 * (iIslamicYear - 1) + iIslamicMonth)) + 1;
 		}
-
-		var iIslamicYear = Math.floor(iMonths / 12) + 1;
-		var iIslamicMonth = iMonths % 12;
-		var iIslamicDay = (iDays - getCustomMonthStartDays(12 * (iIslamicYear - 1) + iIslamicMonth)) + 1;
 
 		return {
 			day: iIslamicDay,
@@ -98,10 +113,10 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 			year: iIslamicYear
 		};
 	}
-	
+
 	/**
 	 * Calculate gregorian date from islamic
-	 * 
+	 *
 	 * @param {object} oIslamic a JS object containing day, month and year in the islamic calendar
 	 * @private
 	 */
@@ -109,7 +124,9 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		var iIslamicYear = oIslamic.year,
 			iIslamicMonth = oIslamic.month,
 			iIslamicDate = oIslamic.day,
-			iJulianDay = iIslamicDate + getCustomMonthStartDays(12 * (iIslamicYear - 1) + iIslamicMonth) + ISLAMIC_EPOCH_DAYS - 1,
+		/* Islamic Calendar starts from  0001/0/1 (19 July 622 AD), so for any date before it customization is not needed */
+			iMonthStart = iIslamicYear < 1 ? monthStart(iIslamicYear, iIslamicMonth) : getCustomMonthStartDays(12 * (iIslamicYear - 1) + iIslamicMonth),
+			iJulianDay = iIslamicDate + iMonthStart + ISLAMIC_EPOCH_DAYS - 1,
 			iJulianDayNoon = Math.floor(iJulianDay - 0.5) + 0.5,
 			iDaysSinceGregorianEpoch = iJulianDayNoon - GREGORIAN_EPOCH_DAYS,
 			iQuadricent = Math.floor(iDaysSinceGregorianEpoch / 146097),
@@ -119,49 +136,54 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 			iQuad = Math.floor(iCentNormalized / 1461),
 			iQuadNormalized = mod(iCentNormalized, 1461),
 			iYearIndex = Math.floor(iQuadNormalized / 365),
-			iYear = (iQuadricent * 400) + (iCent * 100) + (iQuad * 4) + iYearIndex;
+			iYear = (iQuadricent * 400) + (iCent * 100) + (iQuad * 4) + iYearIndex,
+			iMonth, iDay,
+			iGregorianYearStartDays,
+			iDayOfYear,
+			tjd, tjd2,
+			iLeapAdj, iLeapAdj2;
 
 		if (!(iCent == 4 || iYearIndex == 4)) {
 			iYear++;
 		}
 
-		var iGregorianYearStartDays = GREGORIAN_EPOCH_DAYS + (365 * (iYear - 1)) + Math.floor((iYear - 1) / 4)
+		iGregorianYearStartDays = GREGORIAN_EPOCH_DAYS + (365 * (iYear - 1)) + Math.floor((iYear - 1) / 4)
 			- ( Math.floor((iYear - 1) / 100)) + Math.floor((iYear - 1) / 400);
 
-		var iDayOfYear = iJulianDayNoon - iGregorianYearStartDays;
+		iDayOfYear = iJulianDayNoon - iGregorianYearStartDays;
 
-		var tjd = (GREGORIAN_EPOCH_DAYS - 1) + (365 * (iYear - 1)) + Math.floor((iYear - 1) / 4)
+		tjd = (GREGORIAN_EPOCH_DAYS - 1) + (365 * (iYear - 1)) + Math.floor((iYear - 1) / 4)
 			- ( Math.floor((iYear - 1) / 100)) + Math.floor((iYear - 1) / 400) + Math.floor((739 / 12)
 			+ ( (isGregorianLeapYear(iYear) ? -1 : -2)) + 1);
 
-		var iLeapAdj = 0;
+		iLeapAdj = 0;
 		if (iJulianDayNoon < tjd) {
 			iLeapAdj = 0;
 		} else {
 			iLeapAdj = isGregorianLeapYear(iYear) ? 1 : 2;
 		}
 
-		var iMonth = Math.floor((((iDayOfYear + iLeapAdj) * 12) + 373) / 367);
+		iMonth = Math.floor((((iDayOfYear + iLeapAdj) * 12) + 373) / 367);
 
-		var tjd2 = (GREGORIAN_EPOCH_DAYS - 1) + (365 * (iYear - 1))
+		tjd2 = (GREGORIAN_EPOCH_DAYS - 1) + (365 * (iYear - 1))
 			+ Math.floor((iYear - 1) / 4) - (Math.floor((iYear - 1) / 100))
 			+ Math.floor((iYear - 1) / 400);
 
-		var iLeapAdj2 = 0;
+		iLeapAdj2 = 0;
 		if (iMonth > 2) {
 			iLeapAdj2 = isGregorianLeapYear(iYear) ? -1 : -2;
 		}
 		tjd2 += Math.floor((((367 * iMonth) - 362) / 12) + iLeapAdj2 + 1);
 
-		var iDay = (iJulianDayNoon - tjd2) + 1;
+		iDay = (iJulianDayNoon - tjd2) + 1;
 
 		return {
-			day: iDay, 
-			month: iMonth - 1, 
+			day: iDay,
+			month: iMonth - 1,
 			year: iYear
 		};
 	}
-	
+
 	function toGregorianArguments(aArgs) {
 		var aGregorianArgs = Array.prototype.slice.call(aArgs),
 			oIslamic, oGregorian;
@@ -173,41 +195,41 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		oGregorian = toGregorian(oIslamic);
 		aGregorianArgs[0] = oGregorian.year;
 		aGregorianArgs[1] = oGregorian.month;
-		aGregorianArgs[2] = oGregorian.day;		
+		aGregorianArgs[2] = oGregorian.day;
 		return aGregorianArgs;
 	}
-	
+
 	function initCustomizationMap() {
 		var sDateFormat,
 			oCustomizationJSON;
 
 		oCustomizationMap = {};
-	
+
 		sDateFormat = sap.ui.getCore().getConfiguration().getFormatSettings().getLegacyDateFormat();
 		oCustomizationJSON = sap.ui.getCore().getConfiguration().getFormatSettings().getLegacyDateCalendarCustomizing();
 		oCustomizationJSON = oCustomizationJSON || [];
-	
+
 		if (!sDateFormat && !oCustomizationJSON.length) {//working with no customization
 			jQuery.sap.log.info("No calendar customizations.");
 			return;
 		}
-	
+
 		if ((sDateFormat && !oCustomizationJSON.length) || (!sDateFormat && oCustomizationJSON.length)) {
 			jQuery.sap.log.warning("There is a inconsistency between customization data [" + JSON.stringify(oCustomizationJSON) +
 			"] and the date format [" + sDateFormat + "]. Calendar customization won't be used.");
 			return;
 		}
-	
+
 		oCustomizationJSON.forEach(function (oEntry) {
 			if (oEntry.dateFormat === sDateFormat) {
 				var date = parseDate(oEntry.gregDate);
 				var iGregorianDate = new Date(Date.UTC(date.year, date.month - 1, date.day));
 				var iMillis = iGregorianDate.getTime();
 				var iIslamicMonthStartDays = (iMillis - ISLAMIC_MILLIS) / ONE_DAY;
-	
+
 				date = parseDate(oEntry.islamicMonthStart);
 				var iIslamicMonths = (date.year - 1) * 12 + date.month - 1;
-	
+
 				oCustomizationMap[iIslamicMonths] = iIslamicMonthStartDays;
 			}
 		});
@@ -257,7 +279,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 			year: this.oDate.getFullYear()
 		});
 	};
-	
+
 	/**
 	 * Set the islamic date to the current this.oDate object
 	 * @param {object} oIslamic a JS object containing day, month and year in the islamic calendar
@@ -266,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		var oGregorian = toGregorian(oIslamic);
 		return this.oDate.setFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
 	};
-	
+
 	/**
 	 * Get the islamic date from the this.oDate
 	 */
@@ -277,7 +299,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 			year: this.oDate.getUTCFullYear()
 		});
 	};
-	
+
 	/**
 	 * Set the islamic date to the current this.oDate object
 	 * @param {object} oIslamic a JS object containing day, month and year in the islamic calendar
@@ -286,7 +308,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		var oGregorian = toGregorian(oIslamic);
 		return this.oDate.setUTCFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
 	};
-	
+
 	/*
 	 * Override setters and getters specific to the islamic date
 	 */
@@ -364,7 +386,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		}
 		return this._setUTCIslamic(oIslamic);
 	};
-	
+
 	return Islamic;
-	
+
 });

@@ -821,10 +821,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @protected
 	 */
 	InputBase.prototype.openValueStateMessage = function (){
-		
+
 		var sState = this.getValueState();
-		if (sState == sap.ui.core.ValueState.None || 
-			!this.getShowValueStateMessage() || 
+		if (sState == sap.ui.core.ValueState.None ||
+			!this.getShowValueStateMessage() ||
 			!this.getEditable() ||
 			!this.getEnabled()) {
 			return;
@@ -949,7 +949,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this.updateValueStateClasses(sValueState, sOldValueState);
-		
+
 		if ($Input[0] === document.activeElement) {
 			(sValueState == mValueState.None) ? this.closeValueStateMessage() : this.openValueStateMessage();
 		}
@@ -1086,10 +1086,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * @see sap.ui.core.Element.refreshDataState
+	 * This method is called in case an AggregatedDataStateChange happens.
 	 */
 	InputBase.prototype.refreshDataState = function(sName, oDataState) {
-		if (sName === "value" && oDataState.getMessages()) {
+		if (oDataState.getChanges().messages) {
 			this.propagateMessages(sName, oDataState.getMessages());
 		}
 	};

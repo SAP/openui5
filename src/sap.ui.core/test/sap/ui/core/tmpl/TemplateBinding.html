@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>Template with Binding - sap.ui.core.tmpl</title>
 
@@ -15,39 +15,39 @@
 		data-sap-ui-modules="sap.ui.core.plugin.DeclarativeSupport"
 		data-sap-ui-compatVersion="1.16">
 	</script>
-	
+
 	<script>
 		sap.ui.controller("test.myController", {
-			model: new sap.ui.model.json.JSONModel({ 
+			model: new sap.ui.model.json.JSONModel({
 				title: "Hallo123"
 			}),
-    
+
 			onInit: function(){
 				sap.ui.getCore().setModel(this.model, "navigation");
 				//this.getView().setModel(this.model);
 			},
-    
+
 			onAfterRendering: function() {
 				/* sap.ui.template({
 					id: "myTemplate",
 				}); */
 			},
 		});
-		
+
 		var html = '' +
 			'<template data-controller-name="test.myController">' +
 				'<div id="myTemplate" data-type="text/x-handlebars-template">' +
 					'<div>Binding in Template:</div>' +
 					'{{text path="navigation>/title"}}' +
 				'</div>' +
-   
-				'<br/>' +
-				'<br/>' +
+
+				'<br>' +
+				'<br>' +
 				'<div>Binding in Control:</div>' +
 				'<div data-sap-ui-type="sap.m.Text" data-text="{path: \'navigation>/title\'}">' +
 				'</div>' +
 			'</template>';
-		
+
 		var myView = sap.ui.htmlview({viewContent:html});
 		myView.placeAt("content");
 		//sap.ui.template({

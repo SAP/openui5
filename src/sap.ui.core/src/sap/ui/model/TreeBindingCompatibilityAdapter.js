@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 				_initContexts: function(bSkipFirstLevelLoad) {
 					// load the root contexts and create the context info map entry (if missing)
-					this.aContexts = this.getRootContexts();
+					this.aContexts = this.getRootContexts(0, Number.MAX_VALUE);
 					for (var i = 0, l = this.aContexts.length; i < l; i++) {
 						var oldContextInfo = this._getContextInfo(this.aContexts[i]);
 						this._setContextInfo({
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				_loadChildContexts: function(oContext) {
 					var oContextInfo = this._getContextInfo(oContext);
 					var iIndex = jQuery.inArray(oContext, this.aContexts);
-					var aNodeContexts = this.getNodeContexts(oContext);
+					var aNodeContexts = this.getNodeContexts(oContext, 0, Number.MAX_VALUE);
 					for (var i = 0, l = aNodeContexts.length; i < l; i++) {
 						this.aContexts.splice(iIndex + i + 1, 0, aNodeContexts[i]);
 						var oldContextInfo = this._getContextInfo(aNodeContexts[i]);

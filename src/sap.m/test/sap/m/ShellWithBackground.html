@@ -1,26 +1,26 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+
 		<title>Shell with background images - sap.m</title>
-		
+
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
-		
+
 		<script type="text/javascript">
-		
+
 			var oShell = new sap.m.Shell("myShell", {
 				title: "Shell with Backgrounds",
 				logo: "images/SAPUI5.png",
 				headerRightText: "Avid Themer"
 			});
-			
+
 			var oApp = new sap.m.SplitApp("myApp", {
 				masterPages: new sap.m.Page("page1", {
 					title: "Some Master"
@@ -40,7 +40,7 @@
 								sap.ui.getCore().byId("repeatSwitch").setState(false);
 							}
 						}),
-						
+
 						new sap.m.Button({
 							text : "Repeating translucent red Cheetah",
 							press : function() {
@@ -52,7 +52,7 @@
 								sap.ui.getCore().byId("repeatSwitch").setState(true);
 							}
 						}),
-						
+
 						new sap.m.Button({
 							text : "Clear Background",
 							press : function() {
@@ -64,20 +64,20 @@
 								sap.ui.getCore().byId("repeatSwitch").setState(false);
 							}
 						}),
-						
+
 						new sap.m.Label({
 							text: "Repeat background:"
 						}),
-						
+
 						new sap.m.Switch("repeatSwitch", {
 							change: function(oEvent){
 								var bRepeatState = oEvent.getParameter("state");
 								oShell.setBackgroundRepeat(bRepeatState);
 							}
 						}),
-						
-						new sap.ui.core.HTML({content:"<br/>"}),
-						
+
+						new sap.ui.core.HTML({content:"<br>"}),
+
 						new sap.m.Slider("opacitySlider", {
 							width: "50%",
 							value: 1,
@@ -90,13 +90,13 @@
 							}
 						})
 					]
-					
+
 				})
 			});
 
 			oShell.setApp(oApp).placeAt("body");
 		</script>
-		
+
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

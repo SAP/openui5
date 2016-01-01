@@ -6,7 +6,7 @@ test("InitialCheck", 6, function() {
 	jQuery.sap.require("sap.ui.core.mvc.JSONView");
 	jQuery.sap.require("sap.ui.core.mvc.JSView");
 	jQuery.sap.require("sap.ui.core.mvc.XMLView");
-	jQuery.sap.require("sap.ui.core.mvc.HTMLView")
+	jQuery.sap.require("sap.ui.core.mvc.HTMLView");
 	ok(sap.ui.core.mvc.Controller, "sap.ui.core.mvc.Controller must be defined");
 	ok(sap.ui.core.mvc.JSONView, "sap.ui.core.mvc.JSONView must be defined");
 	ok(sap.ui.core.mvc.JSView, "sap.ui.core.mvc.JSView must be defined");
@@ -116,8 +116,9 @@ function testsuite(oConfig, sCaption, fnViewFactory, bCheckViewData) {
 		equal(oLabel.getLabelFor(), oXMLView.createId("Button1"), "Association has been adapted");
 	});
 
-	asyncTest("Eventhandling", 2, function() {
+	asyncTest("Eventhandling", 4, function() {
 		qutils.triggerMouseEvent(jQuery.sap.byId(view.createId("Button1")), "click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(jQuery.sap.byId(view.createId("ButtonX")), "click", 1, 1, 1, 1);
 		setTimeout(function() {
 			start();
 		}, 500);

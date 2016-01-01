@@ -1,13 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Component - sap.ui.core</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_goldreflection" 
-	data-sap-ui-libs="sap.ui.ux3, sap.ui.commons, sap.ui.table" 
+	data-sap-ui-theme="sap_goldreflection"
+	data-sap-ui-libs="sap.ui.ux3, sap.ui.commons, sap.ui.table"
 	data-sap-ui-xx-bindingSyntax="complex">
 
 </script>
@@ -16,11 +16,11 @@
 	sap.ui.localResources("samples");
 
 	// Sample Data
-	
+
 // the purpose of this json model is to roughly emulate the data that could be delivered from some backend,
 // dynamically specifying the components that should be displayed.
-	
-	var aData = 
+
+	var aData =
 [{
 	group : "products",
 	text: "Products",
@@ -46,7 +46,7 @@
 		component : "samples.components.orders"
 	} ]
 }];
-	
+
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData({
 		modelData : aData
@@ -60,7 +60,7 @@
 			model: oModel
 		}
 	});
-	
+
 	//oComp.setModel(oModel);
 
 	// ToDo: check if ref per id works as object ref

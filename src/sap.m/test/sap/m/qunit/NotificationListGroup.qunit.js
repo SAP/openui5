@@ -10,7 +10,7 @@
 
     var classNameHeader = '.sapMNLG-Header';
     var classNameDatetime = '.sapMNLG-Datetime';
-    var classNameFooter = '.sapMNLG-Footer';
+    var classNameFooterToolbar = '.sapMTB';
     var classNameCloseButton = '.sapMNLG-CloseButton';
 
     var RENDER_LOCATION = 'qunit-fixture';
@@ -34,8 +34,8 @@
         // arrange
         this.NotificationListGroup.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.');
         this.NotificationListGroup.setDatetime('3 hours');
-        for (var i = 0; i < 5; i++) {
-            this.NotificationListGroup.addAggregation('items', new sap.m.NotificationListItem({title: i}));
+        for (var index = 0; index < 5; index++) {
+            this.NotificationListGroup.addAggregation('items', new sap.m.NotificationListItem({title: index}));
         }
 
         this.NotificationListGroup.addAggregation('buttons', new sap.m.Button({text : 'Accept', type: sap.m.ButtonType.Accept}));
@@ -125,6 +125,25 @@
         assert.strictEqual(this.NotificationListGroup._getHeaderTitle().getText(), newTitle, 'The title should be set to ' + newTitle);
     });
 
+    QUnit.test('Cloning a NotificationListGroup', function(assert) {
+        // arrange
+        var firstButton = new sap.m.Button({text: 'First Button'});
+        var secondButton = new sap.m.Button({text: 'Second Button'});
+        var secondGroup;
+
+        // act
+        this.NotificationListGroup.addAggregation('buttons', firstButton);
+        this.NotificationListGroup.addAggregation('buttons', secondButton);
+
+        secondGroup = this.NotificationListGroup.clone();
+
+        // assert
+        assert.ok(
+            secondGroup.getAggregation('_overflowToolbar'),
+            'The cloned notification shoould have the hidden aggregations as well');
+    });
+
+
     //================================================================================
     // Notification List Group rendering methods
     //================================================================================
@@ -149,6 +168,8 @@
     QUnit.test('Render action buttons', function(assert) {
         // arrange
         var that = this;
+        var buttonsInFooter = 2;
+
         this.NotificationListGroup.addAggregation('buttons',
             new sap.m.Button({
                 text: 'Accept',
@@ -167,8 +188,9 @@
         );
         sap.ui.getCore().applyChanges();
 
+
         // assert
-        assert.strictEqual(jQuery(classNameFooter).children('button').length, 3, 'Buttons should be rendered');
+        assert.strictEqual(jQuery(classNameFooterToolbar).children('button').length, buttonsInFooter, 'Buttons should be rendered');
     });
 
     QUnit.test('Changing the title', function(assert) {

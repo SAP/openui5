@@ -19,10 +19,11 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/model/Filter', 'sap/ui/model/Filter
 	 * @param {boolean} [bAND=true] If true the values from aValues will be ANDed; otherwise ORed
 	 * @public
 	 * @alias sap.ui.model.odata.Filter
+	 * @extends sap.ui.base.Object
 	 * @deprecated Since 1.22. Please use the sap.ui.model.Filter instead (@link: sap.ui.model.Filter).
 	 */
 	var ODataFilter = BaseObject.extend("sap.ui.model.odata.Filter", /** @lends sap.ui.model.odata.Filter.prototype */ {
-		
+
 		constructor : function(sPath, aValues, bAND){
 			if (typeof sPath === "object") {
 				var oFilterData = sPath;
@@ -34,17 +35,17 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/model/Filter', 'sap/ui/model/Filter
 			this.aValues = aValues;
 			this.bAND = bAND == undefined ? true : bAND;
 		},
-		
-		
+
+
 		/**
-		 * Converts the <code>sap.ui.model.odata.Filter</code> into a 
-		 * <code>sap.ui.model.Filter</code>. 
-		 * 
+		 * Converts the <code>sap.ui.model.odata.Filter</code> into a
+		 * <code>sap.ui.model.Filter</code>.
+		 *
 		 * @return {sap.ui.model.Filter} a <code>sap.ui.model.Filter</code> object
 		 * @public
 		 */
 		convert: function() {
-			
+
 			// covert the values array into an array of filter objects
 			var aFilters = [];
 			for (var i = 0, l = this.aValues && this.aValues.length || 0; i < l; i++) {
@@ -55,23 +56,23 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/model/Filter', 'sap/ui/model/Filter
 					value2: this.aValues[i].value2
 				}));
 			}
-			
+
 			// create the new filter object based on the filters
 			if (aFilters.length > 1) {
 				var oFilter = new Filter({
 					filters: aFilters,
 					and: this.bAND
 				});
-				
+
 				return oFilter;
 			} else {
 				return aFilters[0];
 			}
-			
+
 		}
-	
+
 	});
-	
+
 
 	return ODataFilter;
 

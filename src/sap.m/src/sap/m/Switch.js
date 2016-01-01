@@ -173,11 +173,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			switch (this.getType()) {
 				case sap.m.SwitchType.Default:
-
-					if (!this.getCustomTextOn()) {
-						sText = "SWITCH_ON";
-					}
-
+					sText = this.getCustomTextOn() || "SWITCH_ON";
 					break;
 
 				case sap.m.SwitchType.AcceptReject:

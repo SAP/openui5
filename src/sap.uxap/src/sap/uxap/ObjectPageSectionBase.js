@@ -245,7 +245,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 	 */
 	ObjectPageSectionBase.prototype._applyImportanceRules = function (sCurrentLowestImportanceLevelToShow) {
 		this._sCurrentLowestImportanceLevelToShow = sCurrentLowestImportanceLevelToShow;
-		this._updateShowHideState(this._shouldBeHidden());
+
+		if (this.getDomRef()) {
+			this._updateShowHideState(this._shouldBeHidden());
+		} else {
+			this._isHidden = this._shouldBeHidden();
+		}
 	};
 
 	/*******************************************************************************

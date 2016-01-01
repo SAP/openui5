@@ -18,7 +18,9 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			oParent = oControl.getParent(),
 			oExpandButton = oControl.getAggregation("_expandButton"),
 			bIsDesktop = sap.ui.Device.system.desktop,
-			bIsHeaderContentVisible = oParent && oParent instanceof ObjectPageLayout && oParent.getHeaderContent() && oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent();
+			bIsHeaderContentVisible = oParent && oParent instanceof ObjectPageLayout
+					&& ((oParent.getHeaderContent() && oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent())
+					|| (oParent.getShowHeaderContent() && oParent.getShowTitleInHeaderContent()));
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -214,7 +216,7 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			} else if (oControl.getMarkChanges()) {
 				this._renderMarkChanges(oRm, oControl, bTitleInContent);
 			}
-			
+
 			this._renderMarkers(oRm, oControl);
 			this._renderSelectTitleArrow(oRm, oControl, bTitleInContent);
 			oRm.write("</span>");
@@ -264,7 +266,7 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			oRm.write("</span>"); // end title arrow container
 		}
 	};
-	
+
 	/**
 	 * Renders the Unsaved Changes icon.
 	 *

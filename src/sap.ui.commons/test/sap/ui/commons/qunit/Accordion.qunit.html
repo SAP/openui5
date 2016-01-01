@@ -1,24 +1,24 @@
-<html> 
-   <head> 
-     <meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
-  
-     <script id="sap-ui-bootstrap"  
-          type="text/javascript" 
-          src="../../../../../resources/sap-ui-core.js" 
-          data-sap-ui-theme="sap_bluecrystal" 
-          data-sap-ui-noConflict="true"
-          data-sap-ui-libs="sap.ui.commons" > 
-     </script> 
+<html>
+   <head>
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-     <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" /> 
-     <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script> 
+     <script id="sap-ui-bootstrap"
+          type="text/javascript"
+          src="../../../../../resources/sap-ui-core.js"
+          data-sap-ui-theme="sap_bluecrystal"
+          data-sap-ui-noConflict="true"
+          data-sap-ui-libs="sap.ui.commons" >
+     </script>
+
+     <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+     <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
      <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
 	   <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 
-  
-     <script language="javascript">        																						
+
+     <script language="javascript">
 			function createAccordion(bNoSections) {
 				//Accordion 1 --> Constructor and setters to fill properties
 				var oAccordion1 = new sap.ui.commons.Accordion("accordion1");
@@ -231,7 +231,7 @@
 
 
 			});
-						
+
 			module("Accordion Keyboard Handling Test",{
 				setup : function () {
 					this.oAccordion1 = createAccordion();
@@ -242,9 +242,9 @@
 					this.oAccordion1 = null;
 				}
 			} );
-			
+
 			test("Space and Arrows Left & Right ", function() {
-														
+
 				var aSections = this.oAccordion1.getSections();
 				strictEqual(aSections[0].getCollapsed(), false, "Section 1 is open by default");
 				qutils.triggerEvent("click", "section1-minL");
@@ -257,7 +257,7 @@
 				qutils.triggerEvent("click", "section1-minL");
 				qutils.triggerKeyboardEvent("accordion1", "ARROW_RIGHT");
 				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
-								
+
 //				Navigate up by 1, section is disabled, so it will jump top section 2
 //				Section 2 is now opened and section 4 is now collapsed
 				jQuery("section4-minL").focus();
@@ -265,12 +265,12 @@
 				qutils.triggerKeyboardEvent("section2-minL", jQuery.sap.KeyCodes.SPACE);
 				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now opened");
 				strictEqual(aSections[3].getCollapsed(), true, "Section 4 is now closed");
-				
+
 //				Close it and the default section will reopen, in this case, it is section1
 				qutils.triggerKeyboardEvent("accordion1", jQuery.sap.KeyCodes.SPACE);
 				strictEqual(aSections[1].getCollapsed(), false, "Section 2 is now open");
 				strictEqual(aSections[0].getCollapsed(), true, "Section 1 is now closed");
-			
+
 			});
 
 			test("Space and End buttons ", function() {
@@ -437,18 +437,18 @@
 				strictEqual(this.oAccordion1.getSections()[0].getTitle(), "My section 2", "Section 2 is now at the fist position");
 				strictEqual(this.oAccordion1.getSections()[1].getTitle(), "My section 1", "Section 1 is now at the second position");
 			});
-								
+
 		</script>
 
-     </head> 
+     </head>
 
-   <body> 
-     	<h1 id="qunit-header">QUnit Page for sap.ui.commons.Accordion</h1> 
-     	<h2 id="qunit-banner"></h2> 
-     	<h2 id="qunit-userAgent"></h2> 
-     	<ol id="qunit-tests"></ol> 
+   <body>
+     	<h1 id="qunit-header">QUnit Page for sap.ui.commons.Accordion</h1>
+     	<h2 id="qunit-banner"></h2>
+     	<h2 id="qunit-userAgent"></h2>
+     	<ol id="qunit-tests"></ol>
      	<div id="qunit-fixture">test markup, will be hidden</div>
-		<div id="uiArea1"></div> 	   	 
-   </body> 
+		<div id="uiArea1"></div>
+   </body>
 
- </html> 
+ </html>

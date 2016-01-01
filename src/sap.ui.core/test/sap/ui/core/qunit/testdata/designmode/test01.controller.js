@@ -10,7 +10,7 @@ sap.ui.controller("example.designmode.test01", {
 	},
 
 	onBeforeRendering : function(){
-		return "aString";	
+		return "aString";
 	},
 
 	onAfterRendering : function(){
@@ -21,13 +21,13 @@ sap.ui.controller("example.designmode.test01", {
 	method1: function() {
 		return "aString";
 	},
-	
+
 	method2: function() {
 		return "aString";
 	},
 
 	onPress : function() {
-		
+
 	}
 
 });

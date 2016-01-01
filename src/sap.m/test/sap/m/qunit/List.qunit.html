@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>qUnit Page for sap.m.List and all sap.m List Items</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
@@ -9,7 +9,7 @@
 
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
@@ -18,7 +18,7 @@
 
 <script>
 
-	// sinon timers cause issues with page transitions 
+	// sinon timers cause issues with page transitions
 	sinon.config.useFakeTimers = false;
 
 	var app = new sap.m.App("myApp");
@@ -1045,7 +1045,7 @@
 		sap.ui.getCore().applyChanges();
 		var aItems = oListStandardThumb.getItems();
 		var listItemId = aItems[0].getId();
-		
+
 		jQuery.sap.require("sap.ui.core.theming.Parameters");
 		var _bShowUnreadBubble = (sap.ui.core.theming.Parameters.get("sapUiLIUnreadAsBubble") == "true");
 		if (_bShowUnreadBubble) {
@@ -1205,14 +1205,14 @@
 		var radioButtonId4 = aItems[3].getModeControl().getId();
 		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId1);
-		
+
 		setTimeout(function() {
 			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), true, "SingleSelection: Item 1 should be checked");
 			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelection: Item 2 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelection: Item 3 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId4).getSelected(), false, "SingleSelection: Item 4 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId5).getSelected(), false, "SingleSelection: Item 5 should not be checked");
-			
+
 			start();
 		}, 0);
 	});
@@ -1431,7 +1431,7 @@
 		var radioButtonId5 = aItems[4].getModeControl().getId();
 		qutils.triggerEvent("tap", radioButtonId5);
 		setTimeout(function() {
-	
+
 			equal(sap.ui.getCore().byId(radioButtonId1).getSelected(), false, "SingleSelectionLeft: Item 1 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId2).getSelected(), false, "SingleSelectionLeft: Item 2 should not be checked");
 			equal(sap.ui.getCore().byId(radioButtonId3).getSelected(), false, "SingleSelectionLeft: Item 3 should not be checked");
@@ -1507,8 +1507,8 @@
 		switchModeDelete();
 		equals(oListSelection.getMode(), sap.m.ListMode.Delete, "Switch to Delete: Ok");
 	});
-	
-	
+
+
 	module("Properties", {
 		setup: function() {
 			sinon.config.useFakeTimers = true;
@@ -1517,10 +1517,10 @@
 			sinon.config.useFakeTimers = false;
 		}
 	});
-	
+
 
 	test("StandardListItem activeIcon", function() {
-		
+
 		var sIcon = "sap-icon://up";
 		var sActiveIcon = "sap-icon://down";
 		var oStdLI = new sap.m.StandardListItem({
@@ -1529,11 +1529,11 @@
 			activeIcon: sActiveIcon,
 			type : sap.m.ListType.Active
 		});
-		
+
 		var oList = new sap.m.List({
 			items : [oStdLI]
 		});
-		
+
 		oList.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		var oIcon = oStdLI.$().find(".sapUiIcon").control(0);
@@ -1565,10 +1565,10 @@
 		oStdLI.ontouchstart(oTouchStart);
 
 		strictEqual(oIcon.getSrc(), sIcon, "Icon has correct path before active handling.");
-		
+
 		// wait active feedback
 		this.clock.tick(300);
-		
+
 		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon has correct path during active handling");
 		var oTouchEnd = createEvent("touchend", oStdLI.getDomRef(), {
 			srcControl : oStdLI,
@@ -1581,9 +1581,9 @@
 
 		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
 	});
-	
+
 	module("StandartListItem RTL attributes");
-	
+
 	test("setter / getter titleTextDirection", function() {
 		var oStdLI = new sap.m.StandardListItem({
 			title : "123 456"
@@ -1593,15 +1593,15 @@
 		});
 		oList.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		oStdLI.setTitleTextDirection(sap.ui.core.TextDirection.RTL);
 		// Assert
 		equals(oStdLI.getTitleTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
-		
+
 		// Clean up
 		oList.destroy();
 	});
-	
+
 	test("setter / getter infoTextDirection", function() {
 		var oStdLI = new sap.m.StandardListItem({
 			title : "Title",
@@ -1612,56 +1612,90 @@
 		});
 		oList.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		oStdLI.setInfoTextDirection(sap.ui.core.TextDirection.RTL);
 		// Assert
 		equals(oStdLI.getInfoTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
-		
+
 		// Clean up
 		oList.destroy();
 	});
-	
+
 	test("StandardListItem titleTextDirection", function() {
 		var oStdLI = new sap.m.StandardListItem({
 			title : "123 456",
 			titleTextDirection: sap.ui.core.TextDirection.LTR
 			});
-		
+
 		var oList = new sap.m.List({
 			items : [oStdLI]
 		});
-		
+
 		oList.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		var oTitle = oStdLI.$().find(".sapMSLITitleDiv").children(0);
 		// Assert
 		equals(oTitle.attr("dir"), 'ltr', "Title has attribute dir equal to ltr");
-		
+
 		// Clean up
 		oList.destroy();
 	});
-	
+
 	test("StandardListItem infoTextDirection", function() {
 		var oStdLI = new sap.m.StandardListItem({
 			title : "Title",
 			info : "+359 1234 567",
 			infoTextDirection: sap.ui.core.TextDirection.LTR
 		});
-		
+
 		var oList = new sap.m.List({
 			items : [oStdLI]
 		});
-		
+
 		oList.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		var oInfo = oStdLI.$().find(".sapMSLIInfo");
 		// Assert
 		equals(oInfo.attr("dir"), 'ltr', "Info has attribute dir equal to ltr");
-		
+
 		// Clean up
 		oList.destroy();
+	});
+
+	module("ListItemBase");
+
+	test("ListItemBase RenderOulineClass", function() {
+		var oMsieStub = this.stub(sap.ui.Device, "browser", {"msie": true});
+		this.stub(sap.ui.Device.system, "desktop", true);
+
+		// SUT
+		var sut1 = new sap.m.StandardListItem(),
+			sut2 = new sap.m.StandardListItem(),
+			list = new sap.m.List({
+				items : sut1
+			});
+
+		list.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		ok(sut1.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		ok(sut1.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is added");
+
+		// Act
+		oMsieStub.restore();
+		this.stub(sap.ui.Device, "browser", {"msie": false });
+		list.addItem(sut2);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		ok(sut2.$().hasClass("sapMLIBFocusable"), "Outline class is added");
+		ok(!sut2.$().hasClass("sapMLIBLegacyOutline"), "Legacy outline class is not added");
+
+		//Cleanup
+		list.destroy();
 	});
 
 </script>

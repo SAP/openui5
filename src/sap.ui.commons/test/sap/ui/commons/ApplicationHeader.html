@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html style="height: 100%">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>ApplicationHeader - sap.ui.commons</title>
 
@@ -16,7 +16,7 @@
 		<script>
 
 		//Let's create 4 different cases to show different displays of the application header
-		var bDisplayAllAreas = true;		
+		var bDisplayAllAreas = true;
 		var bDisplayWithoutLogOutArea = true;
 		var bDisplayWithNoName = true;
 		var bDisplayLongTitle = true;
@@ -26,14 +26,14 @@
 		var bDisplayWrongLogoSrc = true;
 
 		//First case, all areas will be displayed (logo, functions, search and logout)
-		if(bDisplayAllAreas){		
+		if(bDisplayAllAreas){
 			var oApplicationHeader = new sap.ui.commons.ApplicationHeader("appHeaderAll");
 			oApplicationHeader.setLogoText("Title - All areas");
 			oApplicationHeader.setUserName("Carey Price");
 			oApplicationHeader.placeAt("uiApplicationHeaderAll");
 		}
 
-		if (bDisplayWithoutLogOutArea){			
+		if (bDisplayWithoutLogOutArea){
 			var oApplicationHeader2 = new sap.ui.commons.ApplicationHeader("appHeaderNoLogout");
 			oApplicationHeader2.setLogoText("Title - No Logout");
 			oApplicationHeader2.setDisplayLogoff(false);

@@ -1,18 +1,18 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>CustomData Support - sap.ui.core</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 				type="text/javascript"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-theme="sap_goldreflection">
 		</script>
 
 		<script>
-		
+
 		try{
 			sap.ui.getCore().loadLibrary("sap.ui.commons");
 		}catch(e){
@@ -112,38 +112,38 @@
 		myView.placeAt("content3");
 
 		</script>
-		
-		
+
+
 		<style>
 		#content > * {
 			margin-left: 6px;
 		}
-		
+
 		pre {
 			padding: 10px;
 			background-color: white;
 			border: 1px solid #333;
 		}
-		
+
 		h2 {
 			margin-top: 40px;
 		}
-		
+
 		.highlight {
 			background-color: yellow;
 		}
 		</style>
-		
+
 	</head>
 	<body class="sapUiBody" role="application">
 		<h1>Test Page for sap.ui.core.CustomData</h1>
-		
+
 		<h2>Controls where each got something to say</h2>
 		<div id="content"></div>
 		<pre>
    // code used to set the data:
    ctrl<span class="highlight">.data(</span>"myData", "Hello, I was born at " + new Date());</pre>
-		
+
 		<h2>Quiz with ListBox, custom data, and list binding</h2>
 		<div id="content2"></div>
 		<pre>
@@ -160,4 +160,3 @@
    &lt;Button id="myBtn" text="Click to show stored coordinates data" <span class="highlight">app:coords="{data}"</span> press="alertCoordinates"&gt;&lt;/Button&gt;</pre>
 	</body>
 </html>
-		

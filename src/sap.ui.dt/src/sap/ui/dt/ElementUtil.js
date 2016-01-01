@@ -75,12 +75,32 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.hasAncestor = function(oElement, oAncestor) {
-		var oParent = oElement;
+		oAncestor = this.fixComponentContainerElement(oAncestor);
+
+		var oParent = this.fixComponentParent(oElement);
 		while (oParent && oParent !== oAncestor) {
 			oParent = oParent.getParent();
+			oParent = this.fixComponentParent(oParent);
 		}
 
 		return !!oParent;
+	};
+
+	/**
+	 * ! Please, use this method only if OverlayUtil.getClosestOverlayForType is not available in your case !
+	 * find the closest element of the given type
+	 * @param  {sap.ui.core.Element} oSourceElement to start search for
+	 * @param  {string} sType to check instance of
+	 * @return {sap.ui.core.Element} element of the given type, if found
+	 */
+	ElementUtil.getClosestElementOfType = function(oSourceElement, sType) {
+		var oElement = oSourceElement;
+
+		while (oElement && !this.isInstanceOf(oElement, sType)) {
+			oElement = oElement.getParent();
+		}
+
+		return oElement;
 	};
 
 	/**
@@ -288,8 +308,6 @@ function(jQuery) {
 			// setParent event with parent null, private flag is set.
 			oElement.__bSapUiDtSupressParentChangeEvent = true;
 			try {
-				// invalidate should be supressed, because if the controls have some checks and sync on invalidate,
-				// internal structure can be also removed (SimpleForm invalidate destroyed all content temporary)
 				oParent.removeAggregation(sAggregationName, oElement, true);
 			} finally {
 				delete oElement.__bSapUiDtSupressParentChangeEvent;

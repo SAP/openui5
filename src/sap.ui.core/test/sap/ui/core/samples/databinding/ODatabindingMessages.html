@@ -2,7 +2,7 @@
 
 <html>
  <head>
- 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
    <title>Data binding test page</title>
 
@@ -17,7 +17,7 @@
         data-sap-ui-libs="sap.ui.layout,sap.m">
     </script>
 	<script type="text/javascript" src="/testsuite/resources/sap/ui/thirdparty/sinon.js"></script>
-    
+
     <script src="/testsuite/test-resources/sap/ui/core/qunit/ODataMessagesFakeService.js"></script>
 
 	<script>
@@ -26,7 +26,7 @@
 		jQuery.sap.require("sap.ui.core.message.MessageManager");
 		jQuery.sap.require("sap.ui.model.odata.ODataMessageParser");
 		var oMM = new sap.ui.core.message.MessageManager();
-		
+
 		sap.ui.getCore().setMessageManager(oMM);
 
 		var sServiceURI = "fakeService://testdata/odata/northwind/";
@@ -39,7 +39,7 @@
 		var oParser = new sap.ui.model.odata.ODataMessageParser();
 		oModel.setMessageParser(oParser);
 		// sap.ui.getCore().setModel(oModel);
-	
+
 		oDate = new sap.ui.model.type.Date();
 		oZip = new sap.ui.model.type.String(null,{maxLength: 5});
 		oStreet = new sap.ui.model.type.Integer();
@@ -178,7 +178,7 @@
 			}
 		});
 		//oButton3.placeAt("buttons");
-	
+
 		var oButton4 = new sap.m.Button({
 			text: "Set message to MM",
 			press: function() {
@@ -193,7 +193,7 @@
 			}
 		});
 		oButton4.placeAt("buttons");
-		
+
 		var oButton5 = new sap.m.Button({
 			text: "clear messages of MM",
 			press: function() {
@@ -201,7 +201,7 @@
 			}
 		});
 		oButton5.placeAt("buttons");
-		
+
 		var oLItem = new sap.m.ColumnListItem({
 			cells: [
 				new sap.m.Text({
@@ -215,7 +215,7 @@
 				})
 			]
 		});
-		
+
 		var oMList = new sap.m.Table({
 			headerText: "Messages",
 			columns: [
@@ -237,7 +237,7 @@
 			]
 		});
 		oMList.bindItems({path:"message>/", template:oLItem});
-		
+
 		oMList.placeAt("messages");
 	</script>
 </head>

@@ -84,6 +84,15 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		};
 
 		/**
+		 * Add padding class to input container.
+		 * May be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 */
+		ComboBoxTextFieldRenderer.addPaddingClass = jQuery.noop;
+
+		/**
 		 * Add inner classes to the control's input element.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
@@ -106,7 +115,6 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxTextFieldRenderer.addValueStateClasses = function(oRm, oControl) {
-			InputBaseRenderer.addValueStateClasses.apply(this, arguments);
 			var CSS_CLASS = ComboBoxTextFieldRenderer.CSS_CLASS_COMBOBOXTEXTFIELD;
 			oRm.addClass(CSS_CLASS + "State");
 			oRm.addClass(CSS_CLASS + oControl.getValueState());

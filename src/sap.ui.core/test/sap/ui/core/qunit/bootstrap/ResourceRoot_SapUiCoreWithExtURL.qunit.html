@@ -3,37 +3,37 @@
   Tests the bootstrap variant where the script src contains a sap-ui-boot|core|custom script but no resources/ folder
 
   To be able to test the unusual URL 'resources/sap-ui-core.js', we use a trick.
-  A first script tag (pointing to a non-existent script), bears the sap-ui-bootstrap ID and 
-  the desired configuration. 
-  A second script tag without ID correctly loads the SAPUI5 core. 
-  When the core initializes, it uses the configuration from the first script, so we can test 
+  A first script tag (pointing to a non-existent script), bears the sap-ui-bootstrap ID and
+  the desired configuration.
+  A second script tag without ID correctly loads the SAPUI5 core.
+  When the core initializes, it uses the configuration from the first script, so we can test
   arbitrary configuration.
   To make the core work even with the (expected, but nevertheless wrong) resourceRoot value,
-  we redirect anything below sap/ui to the correct path.  
- 
+  we redirect anything below sap/ui to the correct path.
+
   Tricky, but works ;-)
-  
-  @author Frank Weigel	
+
+  @author Frank Weigel
   -->
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Test Page for Resource Root when 'src' contains 'sap-ui-boot|core|custom' but no 'resources/'</title>
 
 		<!-- Initialization -->
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script>
 			/*
 			 * FireFix 10 throws an exception for failed script loads and newer QUnit versions
 			 * register an onerror handler and report global errors as test failures.
 			 *
-			 * This test intentionally references non-existing files and therefore fails 
-			 * in FireFox 10, when newer QUnit versions are used.   
-			 *  
+			 * This test intentionally references non-existing files and therefore fails
+			 * in FireFox 10, when newer QUnit versions are used.
+			 *
 			 * As a workarund, a 'Don't care' global event handler is used, which is honored by QUnit.
 			 */
-			window.onerror = function(e) { 
+			window.onerror = function(e) {
 				return true;
 			};
 		</script>
@@ -41,7 +41,7 @@
 		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
 		<!-- 'broken' script tag that bears the configuration -->
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 				src="/my-download-app/phx/sap-ui-core.js"
 				>
 		</script>

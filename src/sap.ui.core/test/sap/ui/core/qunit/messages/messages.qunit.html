@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
 
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -26,43 +26,43 @@
 
 <!-- Test functions -->
 <script language="javascript" charset="utf-8"> // IE needs this :-/
-	
+
 	var oModel;
 	var oLabel, oLabel2, oStreet, oZip, oNr;
-	
+
 	function createControls() {
 		// create some control for testing
 		oLabel = new sap.m.Input({value:"{path:'/form/firstname'}"});
 		oLabel2 = new sap.m.Input({value:"{/form/lastname}"});
 		oString = new sap.ui.model.type.String(null,{maxLength: 5});
 		oInteger = new sap.ui.model.type.Integer();
-		oNrFormat = function(oValue) { 
+		oNrFormat = function(oValue) {
 			if (typeof(oValue) === 'string') {
 				throw new sap.ui.model.FormatException("Error");
 			} else {
 				return oValue;
 			}
 		};
-		
+
 		oZip = new sap.m.Input({value:{path:'/form/zip', type: oInteger}});
 		oStreet = new sap.m.Input({value:{path:'/form/street', type: oString}});
 		oNr = new sap.m.Input({value:{path:'/form/nr', formatter: oNrFormat}});
-		
+
 		oLabel.placeAt("content");
 		oLabel2.placeAt("content");
 		oZip.placeAt("content");
 		oStreet.placeAt("content");
 		oNr.placeAt("content");
 	};
-	
+
 	function destroyControls() {
 		oLabel.destroy();
 		oLabel2.destroy();
 		oZip.destroy();
 		oStreet.destroy();
-		oNr.destroy();	
+		oNr.destroy();
 	};
-	
+
 	function spyDataState(oControl, fnTest) {
 		if (oControl.refreshDataState) {
 			var fnRefresh = oControl.refreshDataState;
@@ -73,7 +73,7 @@
 			}
 		}
 	};
-	
+
 	var createMessage = function(sText, sTarget, sType) {
 		return new sap.ui.core.message.Message({
 			target: sTarget || '/form/firstname',
@@ -82,7 +82,7 @@
 			type: sType || sap.ui.core.MessageType.Error
 		});
 	};
-	
+
 	var initModel = function(sType) {
 		if (sType === "json") {
 			oModel = new sap.ui.model.json.JSONModel();
@@ -102,9 +102,9 @@
 	}
 	module("MessageManager", {
 		setup : function() {
-			initModel("json");	
+			initModel("json");
 		},
-		
+
 		teardown : function() {
 			destroyControls();
 			oModel.destroy();
@@ -119,7 +119,7 @@
 		ok(oMessageModel instanceof sap.ui.model.message.MessageModel, 'MessageModel created');
 		equal(oMessageModel.getObject('/').length, 0, 'No Messages');
 	});
-	
+
 	asyncTest("addMessage", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
@@ -131,13 +131,13 @@
 				start();
 			}
 		);
-		
+
 		oMessageManager.addMessages(oMessage);
 		ok(jQuery.isArray(oMessageModel.getObject('/')), 'Message added to Model');
 		ok(oMessageModel.getObject('/').length === 1, 'MessageModel holds one Message');
 		ok(oMessageModel.getObject('/')[0] === oMessage, 'MessageModel: message instance ok');
 	});
-	
+
 	asyncTest("removeMessage", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
@@ -153,21 +153,21 @@
 		oMessageManager.removeMessages(oMessage);
 		ok(oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 	});
-	
+
 	asyncTest("removeAllMessages", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oMessage = createMessage('mt1','/form/lastname');
 		var oMessage2 = createMessage('mt2');
 		var oMessage3 = createMessage('mt3');
-	
+
 		spyDataState(oLabel, function(sName, oDataState) {
 				ok(oDataState.getMessages().length == 2, 'Message propagated to control - 2');
 				ok(oLabel.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
 				ok(oLabel.getValueStateText() === 'mt2', 'Input: ValueStateText set correctly')
 			}
 		);
-		
+
 		spyDataState(oLabel2,
 			function(sName, oDataState) {
 				ok(oDataState.getMessages().length == 1, 'Message propagated to control - 1');
@@ -175,14 +175,14 @@
 				ok(oLabel2.getValueStateText() === 'mt1', 'Input: ValueStateText set correctly')
 			}
 		);
-		
+
 		oMessageManager.addMessages([oMessage,oMessage2,oMessage3]);
 		ok(jQuery.isArray(oMessageModel.getObject('/')), 'Message added to Model');
 		ok(oMessageModel.getObject('/').length === 3, 'MessageModel holds three Message');
 		equals(oMessageModel.getObject('/')[0].message,'mt1', 'MessageModel: message1 instance ok');
 		equals(oMessageModel.getObject('/')[1].message,'mt2', 'MessageModel: message2 instance ok');
 		equals(oMessageModel.getObject('/')[2].message,'mt3', 'MessageModel: message3 instance ok');
-		
+
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oLabel, function(sName, oDataState) {
 				ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
@@ -199,13 +199,13 @@
 			ok(oMessageModel.getObject('/').length == 0, 'No Messages in Model');
 		});
 	});
-	
+
 	asyncTest("parseError", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var iChangeHandler = 0;
 		var iChangeHandler2 = 0;
-		
+
 		spyDataState(oZip, function(sName, oDataState) {
 			ok(oDataState.getMessages().length == 1, 'ParseError Message propagated to control');
 			ok(oZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
@@ -222,11 +222,11 @@
 			oZip.setValue('123');
 		})
 	});
-	
+
 	asyncTest("validationError", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
-		
+
 		spyDataState(oStreet, function(sName, oDataState) {
 			ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
 			ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
@@ -247,9 +247,8 @@
 	asyncTest("validationError - multiple input", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
-		
+
 		spyDataState(oStreet, function(sName, oDataState) {
-			ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
 			ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
 			ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
 		});
@@ -257,21 +256,18 @@
 
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oStreet, function(sName, oDataState) {
-				ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 				ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 				ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
 			});
 			oStreet.setValue('Busch');
 			jQuery.sap.delayedCall(0, this, function() {
 				spyDataState(oStreet, function(sName, oDataState) {
-					ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
 					ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
 					ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly');
 				});
 				oStreet.setValue('am Busche');
 				jQuery.sap.delayedCall(0, this, function() {
 					spyDataState(oStreet, function(sName, oDataState) {
-						ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 						ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 						ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
 						start();

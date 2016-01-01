@@ -48,11 +48,11 @@
 	QUnit.test("Locked mark rendering", function (assert) {
 		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderLockBtn").length === 1, "Locked mark is rendered");
 	});
-	
+
 	QUnit.test("Unsaved changes mark is not rendered when Locked mark is set", function (assert) {
 		ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 0, "Unsaved changes mark is not rendered when Locked mark is set");
 	});
-	
+
 	QUnit.test("Unsaved changes mark rendering", function (assert) {
 		this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
 		this._oHeader.setMarkLocked(false);
@@ -118,17 +118,4 @@
 
 		assert.ok(oNewLink.bIsDestroyed, "There breadcrumbs are destroyed");
 	});
-
-	QUnit.test("When the header title is changed so is the currentLocation of the breadcrumbs control", function (assert) {
-		var oTitle = this._oHeader.getObjectTitle(),
-			oBreadcrumbs = this._oHeader._getInternalAggregation("_breadCrumbs"),
-			sNewTitle = "newTitle";
-
-		assert.strictEqual(oBreadcrumbs.getCurrentLocation().getText(), oTitle);
-
-		this._oHeader.setObjectTitle(sNewTitle);
-
-		assert.strictEqual(oBreadcrumbs.getCurrentLocation().getText(), sNewTitle);
-	});
-
 }(jQuery, QUnit));

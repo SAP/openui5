@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/CustomData",
 	"sap/ui/Device",
-	"./BreadCrumbs",
+	"sap/m/Breadcrumbs",
 	"./ObjectPageHeaderActionButton",
 	"sap/ui/core/ResizeHandler",
 	"sap/m/Text",
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/ui/core/Icon",
 	"./library"
-], function (Control, IconPool, CustomData, Device, BreadCrumbs, ObjectPageHeaderActionButton,
+], function (Control, IconPool, CustomData, Device, Breadcrumbs, ObjectPageHeaderActionButton,
 			 ResizeHandler, Text, Button, ActionSheet, Image, Icon, library) {
 	"use strict";
 
@@ -136,11 +136,12 @@ sap.ui.define([
 				 * Enables support of a placeholder image in case no image is specified or the URL of the provided image is invalid.
 				 */
 				showPlaceholder: {type: "boolean", group: "Misc", defaultValue: false},
-				
+
 				/**
 				 * Marks that there are unsaved changes in the objectPageHeader.
 				 * The markChanges state cannot be used together with the markLocked state.
 				 * If both are set to true, only the locked state will be displayed.
+				 * @since 1.34.0
 				 */
 				markChanges: {type: "boolean", group: "Misc", defaultValue: false}
 			},
@@ -151,7 +152,7 @@ sap.ui.define([
 				 *
 				 * Internal aggregation for the BreadCrumbs in the header.
 				 */
-				_breadCrumbs: {type: "sap.uxap.BreadCrumbs", multiple: false, visibility: "hidden"},
+				_breadCrumbs: {type: "sap.m.Breadcrumbs", multiple: false, visibility: "hidden"},
 
 				/**
 				 *
@@ -236,6 +237,7 @@ sap.ui.define([
 
 						/**
 						 * DOM reference of the changed item's icon to be used for positioning.
+						 * @since 1.34.0
 						 */
 						domRef: {type: "string"}
 					}
@@ -318,12 +320,8 @@ sap.ui.define([
 			return this._getButton(oParent, "sap-icon://locked", "lock-cont");
 		},
 		"_breadCrumbs": function (oParent) {
-			return new BreadCrumbs({
-				links: oParent.getAggregation("breadCrumbLinks"),
-				currentLocation: new Text({
-					text: oParent.getProperty("objectTitle")
-				}),
-				showCurrentLocation: false
+			return new Breadcrumbs({
+				links: oParent.getAggregation("breadCrumbLinks")
 			});
 		},
 		"_lockIcon": function (oParent) {
@@ -451,11 +449,6 @@ sap.ui.define([
 	 * @return {*} this
 	 */
 	ObjectPageHeader.prototype.setObjectTitle = function (sTitle) {
-		var oBreadcrumbs = this._getInternalAggregation("_breadCrumbs");
-		if (oBreadcrumbs) {
-			oBreadcrumbs.getCurrentLocation().setText(sTitle);
-		}
-
 		return this._applyActionProperty("objectTitle", Array.prototype.slice.call(arguments));
 	};
 
@@ -716,15 +709,21 @@ sap.ui.define([
 		var iIdentifierContWidth = this.$("identifierLine").width(),
 			iActionsWidth = this._getActionsWidth(), // the width off all actions without hidden one
 			iActionsContProportion = iActionsWidth / iIdentifierContWidth, // the percentage(proportion) that action buttons take from the available space
-			iAvailableSpaceForActions = this._iAvailablePercentageForActions * iIdentifierContWidth;
+			iAvailableSpaceForActions = this._iAvailablePercentageForActions * iIdentifierContWidth,
+			$overflowButton = this._oOverflowButton.$(),
+			$actionButtons = this.$("actions").find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton");
 
 		if (iActionsContProportion > this._iAvailablePercentageForActions) {
 			this._adaptActions(iAvailableSpaceForActions);
-		} else {
-			this._oOverflowButton.$().hide();
 		}
 
-		this.$("actions").find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton").css("visibility", "visible");
+		$actionButtons.css("visibility", "visible");
+
+		// verify overflow button visibility
+		if ($actionButtons.filter(":visible").length === $actionButtons.length) {
+			$overflowButton.hide();
+		}
+
 		this._adaptObjectPageHeaderIndentifierLine();
 	};
 
@@ -735,6 +734,7 @@ sap.ui.define([
 	ObjectPageHeader.prototype._adaptObjectPageHeaderIndentifierLine = function () {
 		var iIdentifierContWidth = this.$("identifierLine").width(),
 			$subtitle = this.$("subtitle"),
+			$identifierLineContainer = this.$("identifierLineContainer"),
 			iSubtitleBottom,
 			iTitleBottom,
 			iActionsAndImageWidth = this.$("actions").width() + this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer").width(),
@@ -753,7 +753,7 @@ sap.ui.define([
 			}
 		}
 
-		this.$("identifierLineContainer").width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
+		$identifierLineContainer.width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
 	};
 
 	/**
@@ -765,7 +765,7 @@ sap.ui.define([
 			iVisibleActionsWidth = this._oOverflowButton.$().show().width(),
 			aActions = this.getActions(),
 			oActionSheetButton;
-		
+
 		aActions.sort(ObjectPageHeader._sortActionsByImportance);
 
 		aActions.forEach(function (oAction) {

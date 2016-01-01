@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
 		<title>Tokenizer - sap.m</title>
 
 		<script src="../../../resources/sap-ui-core.js"
@@ -16,9 +16,9 @@
 
 		jQuery.sap.require("sap.m.MessageBox");
 		jQuery.sap.require("sap.m.Tokenizer");
-		jQuery.sap.require("sap.m.Token");		
-		jQuery.sap.require("sap.m.Table");	
-		
+		jQuery.sap.require("sap.m.Token");
+		jQuery.sap.require("sap.m.Table");
+
 		//*******************************
 		var oEventList = new sap.m.List();
 		var fEventWriter = function(eventArgs){
@@ -26,7 +26,7 @@
 			var item = new sap.m.StandardListItem({title: "token: " + type});
 			oEventList.addItem(item);
 		};
-		
+
 		//*******************************
 		var oTokenizer1 = new sap.m.Tokenizer({
 			tokens: [
@@ -41,8 +41,8 @@
 			         new sap.m.Token({text: "Token 9 - ABCDEF", key: "0009"}),
 			         new sap.m.Token({text: "Token 10 - ABCDEFGHIKL", key: "0010"}),
 			         new sap.m.Token({text: "Token 11", key: "0011"}),
-			         new sap.m.Token({text: "Token 12", key: "0012"})			         
-			         ],			
+			         new sap.m.Token({text: "Token 12", key: "0012"})
+			         ],
 			         tokenChange: fEventWriter,
 		});
 		//*******************************
@@ -72,27 +72,27 @@
 			        new sap.m.Token({text:"Mann", editable: true})
 			        ]
 		});
-		
-		var app = new sap.m.App("myApp");		
-		
+
+		var app = new sap.m.App("myApp");
+
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile MultiInput Control",
-			content : [		
+			content : [
 					new sap.m.Label({ text : "Tokenizer.editable = true", width:"100%"}),
-					oTokenizer1,										
+					oTokenizer1,
 					new sap.m.Label({ text : "Tokenizer.editable = false", width:"100%"}),
 					oTokenizer2,
 					new sap.m.Label({ text : "set the first two tokens editable property to false", width:"100%"}),
 					oTokenizer3,
 					new sap.m.Label({ text : "Token events:", width: "100%"}),
 					oEventList
-			]			
+			]
 		});
 
 		app.addPage(page1);
-		
+
 		app.placeAt("body");
-		
+
 </script>
 	<style>
 	body {

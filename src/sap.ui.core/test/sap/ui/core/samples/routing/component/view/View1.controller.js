@@ -3,7 +3,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/UIComponent'],
 	"use strict";
 
 	var View1Controller = Controller.extend("NavigationWithoutMasterDetailPattern.view.View1", {
-		
+
 		oApplication : null,
 
 		/**
@@ -12,7 +12,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/UIComponent'],
 		 * @memberOf view.Detail
 		 */
 		onInit: function() {
-		
+
 			this.getRouter().attachRouteMatched(function(oEvent) {
 				if (oEvent.getParameter("name") === "view1") {
 					var text = this.getView().byId("text");
@@ -39,7 +39,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/UIComponent'],
 		handleBtn1Press : function() {
 			this.getRouter().navTo("view2", { from : "View 1"});
 		},
-	
+
 		/**
 		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.
 		 * This hook is the same one that SAPUI5 controls get after being rendered.

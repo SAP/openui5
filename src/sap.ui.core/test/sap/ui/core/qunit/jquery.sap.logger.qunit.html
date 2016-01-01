@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	
-<!-- 
-  QUNIT: 
+
+<!--
+  QUNIT:
     Tested control/class: jquery.sap.logger.js
     Author: Andreas Kunz, Frank Weigel
  -->
@@ -17,12 +17,12 @@
 				data-sap-ui-logLevel = "WARNING"
 				>
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
-		
+
 		var iListenedMessages;
 		var oLastEntry;
 		module("Test", {
@@ -34,7 +34,7 @@
 
 		/**
 		 * IMPORTANT !!!
-		 * 
+		 *
 		 * If you get an error saying:  expected: ';'
 		 * then likely one of the comments is the cause. The JSUnit parser seems to misinterpret certain
 		 * variants/positions of the word "test" even in a comment as the beginning of a function to test!
@@ -49,7 +49,7 @@
 		test("Configuration", function() {
 			strictEqual(jQuery.sap.log.getLevel(), jQuery.sap.log.Level.WARNING, "configuration is evaluated");
 		});
-		
+
 		test("Debug", function () {
 			// set log level and count messages
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
@@ -131,7 +131,7 @@
 			iListenedMessages++;
 			oLastEntry = oLogEntry;
 		};
-		
+
 		test("LogListener", function () {
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
 			strictEqual(iListenedMessages, 0, "listened messages should initially be empty");
@@ -146,9 +146,9 @@
 			strictEqual(iListenedMessages, 1, "listened messages should be 1");
 			notStrictEqual(oLastEntry, null, "listened message should there");
 			strictEqual(oLastEntry.message, myLogMessageDebug, "listened message should have the correct text");
-			
+
 			jQuery.sap.log.removeLogListener(oLogListener);
-			
+
 			jQuery.sap.log.debug(myLogMessageDebug);
 			strictEqual(iListenedMessages, 1, "listened messages should still be 1");
 		});
@@ -165,11 +165,11 @@
 			log = log.debug("Debug message");
 			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
 			log = log.trace("Trace message");
-			strictEqual(log, jQuery.sap.log, "The log instance should always be returned"); 
+			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
 		});
 
 		module("ComponentLoggers");
-		
+
 		test("Basic Methods", function () {
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);
 			var mylog = jQuery.sap.log.getLogger("mylog");
@@ -182,7 +182,7 @@
 				strictEqual(aLogAfter[aLogAfter.length-1].component, "mylog", "check component of last log entry");
 			});
 		});
-			
+
 		test("Individual Log Levels", function () {
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING, "mylog");
@@ -202,9 +202,9 @@
 			strictEqual(aLogAfter[aLogAfter.length-7].message, "error message3", "check message of log entry");
 			strictEqual(aLogAfter[aLogAfter.length-8].message, "error message2", "check message of log entry");
 			strictEqual(aLogAfter[aLogAfter.length-9].message, "error message1", "check message of log entry");
-			
+
 		});
-			
+
 		test("Method Chaining", function (){
 			var mylog0, mylog;
 			mylog = mylog0 = jQuery.sap.log.getLogger("mylog");
@@ -217,13 +217,13 @@
 			mylog = mylog.debug("Debug message");
 			strictEqual(mylog, mylog0, "The log instance should always be returned");
 			mylog = mylog.trace("Trace message");
-			strictEqual(mylog, mylog0, "The log instance should always be returned"); 
+			strictEqual(mylog, mylog0, "The log instance should always be returned");
 		});
-			
-		
+
+
 		</script>
 		</head>
-		
+
 		<body>
 			<h1 id="qunit-header">QUnit page for jquery.sap.logger</h1>
 			<h2 id="qunit-banner"></h2>
@@ -232,4 +232,3 @@
 			<ol id="qunit-tests"></ol>
 		</body>
 </html>
-			

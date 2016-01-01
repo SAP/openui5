@@ -36,6 +36,11 @@
 	border-bottom: 0.0625rem solid @sapHCStandardFG;
 }
 
+/* make place for the busy indicator */
+.sapMPullDownTouch.sapMLoading:not(.sapMPullDownLogo) {
+	padding-left: 4rem;
+}
+
 .sapMPullDownTouch.sapMPullDownLogo {
 	padding-top: 4.125rem;
 	height: 3.25rem;
@@ -108,11 +113,11 @@
 	font-size: 2em;
 	color: @sapHCStandardFG;
 	content: '\e089';
-	
+
 	-webkit-transform-origin: center center;
 	-webkit-transition-duration: 250ms;
 	-webkit-transition-property: -webkit-transform;
-	
+
 	transfrom-origin: center center;
 	transition-duration: 250ms;
 	transition-property: transform;

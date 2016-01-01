@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.layout.form.Form
   Author: SAP
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../../resources/sap-ui-core.js"
@@ -14,7 +14,7 @@
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.layout, sap.ui.commons">
 	</script>
-	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -63,6 +63,7 @@
 				minWidth : 1024,
 				maxContainerCols: 2,
 				layout: sap.ui.layout.form.SimpleFormLayout.GridLayout,
+				backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
 				content:[
 					    new sap.ui.core.Title("SF2-title1",{text:"Title 1"}),
 			        new sap.ui.commons.Label("SF2-L1",{text:"Label 1"}),
@@ -84,6 +85,7 @@
 			{
 				minWidth : 1024,
 				maxContainerCols: 2,
+				backgroundDesign: sap.ui.layout.BackgroundDesign.Static,
 				title: "Test",
 				content:[
 					    new sap.ui.core.Title("SF3-title1",{text:"Title 1"}),
@@ -115,10 +117,12 @@
 			var oForm = oSimpleForm.getAggregation("form");
 			var oLayout = oForm.getLayout();
 			equal(oLayout.getMetadata().getName(), "sap.ui.layout.form.ResponsiveLayout", "ResponsiveLayout used by default");
+			equal(oLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Translucent, "BackgroundDesign set")
 
 			oForm = oSimpleForm2.getAggregation("form");
 			oLayout = oForm.getLayout();
 			equal(oLayout.getMetadata().getName(), "sap.ui.layout.form.GridLayout", "GridLayout used");
+			equal(oLayout.getBackgroundDesign(), sap.ui.layout.BackgroundDesign.Transparent, "BackgroundDesign set")
 		});
 
 		test("title", function() {

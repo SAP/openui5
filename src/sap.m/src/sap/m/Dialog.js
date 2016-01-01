@@ -247,7 +247,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 		});
 
-		Dialog._bIOS7Tablet = sap.ui.Device.os.ios && sap.ui.Device.system.tablet && sap.ui.Device.os.version >= 7 && sap.ui.Device.os.version < 8 && sap.ui.Device.browser.name === "sf";
 		Dialog._bPaddingByDefault = (sap.ui.getCore().getConfiguration().getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
 
 		Dialog._mStateClasses = {};
@@ -303,8 +302,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			 * @private
 			 */
 			this.oPopup._applyPosition = function (oPosition, bFromResize) {
-				var $that = that.$();
-
 				that._setDimensions();
 				that._adjustScrollingPane();
 
@@ -315,13 +312,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				};
 
 				Popup.prototype._applyPosition.call(this, oPosition);
-
-				var iTop = $that.offset().top;
-
-				//TODO: remove this code after Apple fixes the jQuery(window).height() is 20px more than the window.innerHeight issue.
-				if (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape) {
-					$that.css("top", iTop - 10); //the calculated window size is 20px more than the actual size in ios 7 tablet landscape mode.
-				}
 			};
 
 			if (Dialog._bPaddingByDefault) {
@@ -370,6 +360,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 		Dialog.prototype.exit = function () {
 			InstanceManager.removeDialogInstance(this);
+			this._deregisterResizeHandler();
 
 			if (this.oPopup) {
 				this.oPopup.detachOpened(this._handleOpened, this);
@@ -414,7 +405,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			var oPopup = this.oPopup;
 			// Set the initial focus to the dialog itself.
 			// The initial focus should be set because otherwise the first focusable element will be focused.
-			// This first element can be input or textarea which will trigger the keyboard to open.
+			// This first element can be input or textarea which will trigger the keyboard to open (mobile device).
 			// The focus will be change after the dialog is opened;
 			oPopup.setInitialFocusId(this.getId());
 
@@ -433,20 +424,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			oPopup.open();
 
-			//resize handler ===========================================================================================
-			var __delayTimer;
-			jQuery(window).on('resize.sapMDialogWindowResize', function () {
-				if (__delayTimer) {
-					__delayTimer = clearTimeout(__delayTimer);
-				}
-
-				__delayTimer = setTimeout(this._onResize.bind(this), 50);
-			}.bind(this));
-
-			//set the content size so the scroller can work properly
-			this._onResize();
+			this._registerResizeHandler();
 
 			InstanceManager.addDialogInstance(this);
+
 			return this;
 		};
 
@@ -460,8 +441,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype.close = function () {
 			this.$().removeClass('sapDialogDisableTransition');
 
-			//clear the resize listener
-			jQuery(window).off('resize.sapMDialogWindowResize');
+			this._deregisterResizeHandler();
 
 			var oPopup = this.oPopup;
 
@@ -512,6 +492,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._handleClosed = function () {
+			// TODO: remove the following three lines after the popup open state problem is fixed
+			if (!this.oPopup) {
+				return;
+			}
+
 			this.oPopup.detachClosed(this._handleClosed, this);
 
 			// Not removing the content DOM leads to the  problem that control DOM with the same ID exists in two places if
@@ -665,21 +650,25 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 		/**
 		 *
+		 *
 		 * @private
 		 */
 		Dialog.prototype._onResize = function () {
-			if (this.getContentHeight()) {
+			//if there is a manually set height or height by manually resizing return;
+			if (this.getContentHeight() || this._oManuallySetSize) {
 				return;
 			}
 
-			var $dialog = this.$();
-			var $dialogContent = this.$('cont');
+			var $dialog = this.$(),
+				$dialogContent = this.$('cont');
 
 			//reset the height so the dialog can grow
-			$dialogContent.height('auto');
+			$dialogContent.css({
+				height: 'auto'
+			});
+
 			//set the newly calculated size by getting it from the browser rendered layout - by the max-height
-			var dialogContentHeight = parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10);
-			$dialogContent.height(dialogContentHeight);
+			$dialogContent.height(parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10));
 		};
 
 		/**
@@ -830,12 +819,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._setInitialFocus = function () {
-
 			var sFocusId = this._getFocusId();
 			var oControl = sap.ui.getCore().byId(sFocusId);
 			var oFocusDomRef;
 
 			if (oControl) {
+				//if someone tryies to focus an existing but not visible control, focus the Dialog itself.
+				if (!oControl.getVisible()) {
+					this.focus();
+					return;
+				}
+
 				oFocusDomRef = oControl.getFocusDomRef();
 			}
 
@@ -983,6 +977,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._deregisterResizeHandler = function () {
+			if (this._resizeListenerId) {
+				sap.ui.core.ResizeHandler.deregister(this._resizeListenerId);
+				this._resizeListenerId = null;
+			}
+
+			sap.ui.Device.resize.detachHandler(this._onResize);
 		};
 
 		/**
@@ -990,16 +990,55 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._registerResizeHandler = function () {
+			var _$srollSontent = this.$("scroll");
+
+			//The content have to have explicit size so the scroll will work when the user's content is larger then the available space.
+			//This can be removed and the layout change to flex when the support for IE9 is dropped
+			this._resizeListenerId = sap.ui.core.ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
+			sap.ui.Device.resize.attachHandler(this._onResize.bind(this));
+
+			//set the initial size of the content container so when a dialog with large content is open there will be a scroller
+			this._onResize();
+		};
+
+		Dialog.prototype._attachHandler = function(oButton) {
+			var that = this;
+
+			if (!this._oButtonDelegate) {
+				this._oButtonDelegate = {
+					ontap: function(){
+						that._oCloseTrigger = this;
+					}
+				};
+			}
+
+			if (oButton) {
+				oButton.addDelegate(this._oButtonDelegate, true, oButton);
+			}
 		};
 
 		Dialog.prototype._createToolbarButtons = function () {
 			var toolbar = this._getToolbar();
 			var buttons = this.getButtons();
 			var beginButton = this.getBeginButton();
-			var endButton = this.getEndButton();
+			var endButton = this.getEndButton(),
+				that = this,
+				aButtons = [beginButton, endButton];
+
+
+			// remove handler if such exists
+			aButtons.forEach(function(oBtn) {
+				if (oBtn && that._oButtonDelegate) {
+					oBtn.removeDelegate(that._oButtonDelegate);
+				}
+			});
 
 			toolbar.removeAllContent();
 			toolbar.addContent(new ToolbarSpacer());
+			// attach handler which sets origin parameter only for begin and End buttons
+			aButtons.forEach(function(oBtn) {
+				that._attachHandler(oBtn);
+			});
 
 			//if there are buttons they should be in the toolbar and the begin and end buttons should not be used
 			if (buttons && buttons.length) {
@@ -1338,6 +1377,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				};
 
 				if ((isHeaderClicked(e.target) && this.getDraggable()) || bResize) {
+					that._bDisableRepositioning = true;
+
 					that._$dialog.addClass('sapDialogDisableTransition');
 					//remove the transform translate
 					that._$dialog.addClass('sapMDialogTouched');

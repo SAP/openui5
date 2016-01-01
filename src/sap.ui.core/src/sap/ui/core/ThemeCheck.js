@@ -68,10 +68,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		var $Style = jQuery(oStyle);
 
 		try {
-			var res = !oStyle || !!((oStyle.sheet && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0) ||
-							!!(oStyle.styleSheet && oStyle.styleSheet.cssText && oStyle.styleSheet.cssText.length > 0) ||
+			var res = !oStyle || !!((oStyle.sheet && oStyle.sheet.href === oStyle.href && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0) ||
+							!!(oStyle.styleSheet && oStyle.styleSheet.href === oStyle.href && oStyle.styleSheet.cssText && oStyle.styleSheet.cssText.length > 0) ||
 							!!(oStyle.innerHTML && oStyle.innerHTML.length > 0));
-			var res2 = $Style.attr("sap-ui-ready");
+			var res2 = $Style.attr("data-sap-ui-ready");
 			res2 = !!(res2 === "true" || res2 === "false");
 			if (bLog) {
 				jQuery.sap.log.debug("ThemeCheck: Check styles '" + $Style.attr("id") + "': " + res + "/" + res2 + "/" + !!oStyle);
@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 					// IE9 and below can only handle up to 4095 rules and therefore additional
 					// css files have to be included
 					if (iRules === 4095) {
-						var iNumber = parseInt(jQuery(oStyle).attr("sap-ui-css-count"), 10);
+						var iNumber = parseInt(jQuery(oStyle).attr("data-sap-ui-css-count"), 10);
 						if (isNaN(iNumber)) {
 							iNumber = 1; // first additional stylesheet
 						} else {
@@ -163,11 +163,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 							oLink.id = sLinkId;
 
 							jQuery(oLink)
-							.attr("sap-ui-css-count", iNumber)
+							.attr("data-sap-ui-css-count", iNumber)
 							.load(function() {
-								jQuery(oLink).attr("sap-ui-ready", "true");
+								jQuery(oLink).attr("data-sap-ui-ready", "true");
 							}).error(function() {
-								jQuery(oLink).attr("sap-ui-ready", "false");
+								jQuery(oLink).attr("data-sap-ui-ready", "false");
 							});
 
 							oStyle.parentNode.insertBefore(oLink, oStyle.nextSibling);
@@ -180,8 +180,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				 */
 				if (oThemeCheck._themeCheckedForCustom != sThemeName) {
 					if (checkCustom(oThemeCheck, lib)) {
-							//load custom css available at sap/ui/core/themename/library.css
-						jQuery.sap.includeStyleSheet(sPath, oThemeCheck._CUSTOMID);
+						// load custom css available at sap/ui/core/themename/custom.css
+						var sCustomCssPath = sPath;
+
+						// check for configured query parameters and add them if available
+						var sLibCssQueryParams = oThemeCheck._oCore._getLibraryCssQueryParams(mLibs["sap.ui.core"]);
+						if (sLibCssQueryParams) {
+							sCustomCssPath += sLibCssQueryParams;
+						}
+
+						jQuery.sap.includeStyleSheet(sCustomCssPath, oThemeCheck._CUSTOMID);
 						oThemeCheck._customCSSAdded = true;
 						jQuery.sap.log.warning("ThemeCheck delivered custom CSS needs to be loaded, Theme not yet applied");
 						oThemeCheck._themeCheckedForCustom = sThemeName;

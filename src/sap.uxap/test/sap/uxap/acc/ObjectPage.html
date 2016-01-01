@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SAP UxAP :: ObjectPage</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
+	<script
+		id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-xx-bindingSyntax="complex"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.m, sap.uxap, sap.ui.layout" >
+	</script>
+
+	<script>
+		var ObjectPageLayout = new sap.uxap.ObjectPageLayout({
+			showEditHeaderButton: true,
+			headerTitle:
+				new sap.uxap.ObjectPageHeader({
+					isObjectTitleAlwaysVisible: true,
+					showPlaceholder: true,
+					isObjectIconAlwaysVisible: true,
+					objectTitle:"Denise Smith",
+					objectSubtitle: "Web developer",
+					actions: [
+						new sap.uxap.ObjectPageHeaderActionButton ({ icon: "sap-icon://pull-down", text: "show section", type: "Emphasized"}),
+						new sap.uxap.ObjectPageHeaderActionButton ({ icon: "sap-icon://show", text: "show state", type: "Emphasized"})
+					]
+				}),
+			headerContent:[
+				new sap.m.Label({text:"Hello! I am Denise and I use UxAP"}),
+				new sap.m.ObjectAttribute({
+					title: "Phone",
+					text: "+33 6 4512 5158",
+					active: true
+				})
+				],
+			sections: [
+				new sap.uxap.ObjectPageSection({
+					title:"Goals plan",
+					subSections: new sap.uxap.ObjectPageSubSection({
+						blocks: new sap.m.Label({text: "Block1" })
+					})
+				}),
+				new sap.uxap.ObjectPageSection({
+					title:"Employment",
+					subSections: new sap.uxap.ObjectPageSubSection({
+						blocks: new sap.m.Label({text: "Block2" }),
+						moreBlocks: new sap.m.Label({text: "Anbother block" })
+					})
+				}),
+				new sap.uxap.ObjectPageSection({
+					title:"Personal",
+					subSections: new sap.uxap.ObjectPageSubSection({
+						blocks: new sap.m.Label({text: "Block3" })
+					})
+				})
+			]
+		});
+
+		ObjectPageLayout.placeAt('content');
+
+	</script>
+
+</head>
+<body class="sapUiBody" id="content" role="application">
+
+</body>
+</html>

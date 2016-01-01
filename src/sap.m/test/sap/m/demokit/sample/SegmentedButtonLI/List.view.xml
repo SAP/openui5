@@ -4,10 +4,12 @@
 	<List
 		headerText="Input List Item" >
 		<InputListItem label="Battery Saving">
-			<SegmentedButton selectedButton="SBYes">
-				<Button text="High" id="SBYes" />
-				<Button text="Low" />
-				<Button text="Off" />
+			<SegmentedButton selectedKey="SBYes">
+				<items>
+					<SegmentedButtonItem text="High" key="SBYes" />
+					<SegmentedButtonItem text="Low" />
+					<SegmentedButtonItem text="Off" />
+				</items>
 			</SegmentedButton>
 		</InputListItem>
 	</List>

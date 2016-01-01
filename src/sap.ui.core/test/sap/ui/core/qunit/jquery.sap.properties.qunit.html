@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-		<!-- 
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<!--
 		    Tested control/class: jquery.sap.properties.js
 		    Author: Frank Weigel, Martin Schaus
 		 -->
@@ -16,7 +16,7 @@
 				data-sap-ui-noConflict="true"
 				>
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -28,7 +28,7 @@
 		sinon.xhr.supportsCORS = true;
 
 		var _test = "äöü";
-		
+
 		test("PropertiesClassAvailable", function () {
 			equal(typeof jQuery.sap.properties, "function", "jQuery.properties must be a function");
 		});
@@ -70,33 +70,33 @@
 			'unsupported_escapes_bv\\':'unsupported_escapes_bv\\',
 			'no_double_escaping_\u005cu005a':'no_double_escaping_\u005cu005a',
 			'i18n_äöü_key':'ÄÖÜäöü',
-			
+
 			quoted1 : 'a value with \'single quotes\' in it',
 			quoted2 : 'a value with "double quotes" in it',
 			quoted3 : 'a value with \'single quotes\' and "double quotes" in it',
 			quoted4 : 'a value with \'\'\'unbalanced quotes"""',
 			quoted5 : 'a value with \'\'"" escaped quotes \'\'""',
-			
+
 			key_without_value: "",
 			continuedkey:'continuedkey',
 			single_line:'single_line\\',
 			no_continuation_3:'ok',
-			
+
 			'non.identifier.key' : 'some value',
-			
+
 			test1: 'value\\',
 			test2: 'value2',
 			test3: 'T"; alert(\'Hello!\'); //',
-			
+
 			Truth1: 'Beauty',
 			Truth2: 'Beauty',
 			Truth3: 'Beauty',
 			fruits: 'apple, banana, pear, cantaloupe, watermelon, kiwi, mango',
 			cheeses: ''
-		};	
-		
+		};
+
 		function checkProperties(oProps){
-			// check that the expected content is available 
+			// check that the expected content is available
 			for(var sKey in expected) {
 				var sValue = oProps.getProperty(sKey, "Default given");
 				strictEqual(sValue, expected[sKey], "value for key '" + sKey + "'");
@@ -117,12 +117,12 @@
 			var sValue = oProps.getProperty("initially-undefined","Default given");
 			strictEqual(sValue, "New Value added", "initially-undefined accessed");
 		};
-					 
+
 		test("ParseAndAccess (sync)", function () {
 			var oProps = jQuery.sap.properties({url : "testdata/test.properties"});
 			checkProperties(oProps);
 		});
-		
+
 		asyncTest("ParseAndAccess (async)", function () {
 			var oPromise = jQuery.sap.properties({url : "testdata/test.properties", async: true});
 			oPromise.then(function(oProps){
@@ -133,12 +133,12 @@
 				start();
 			});
 		});
-		
+
 		test("Access non existing (sync)", function () {
 			var oProps = jQuery.sap.properties({url : "testdata/doesnotexist.properties"});
 			equal(oProps.getKeys().length, 0, "Non-existing Properties file results in empty properties list.");
 		});
-		
+
 		asyncTest("Access non existing (async)", function () {
 			var oPromise = jQuery.sap.properties({url : "testdata/doesnotexist.properties", async: true});
 			oPromise.then(function(oProps){
@@ -153,10 +153,10 @@
 		test("IncompleteUnicodeEscape (sync)", function () {
 			QUnit.raises(function() {
 				jQuery.sap.properties({url : "testdata/broken.properties"});
-				
+
 			}, "broken unicode escape");
 		});
-		
+
 		asyncTest("IncompleteUnicodeEscape (async)", function () {
 			var oPromise = jQuery.sap.properties({url : "testdata/broken.properties", async: true});
 			oPromise.then(function(oProps){
@@ -186,7 +186,7 @@
 				properties : ' \t\n \tfoo=bar'
 			}
 		];
-		
+
 		for(var i=0; i<FIRST_LINE_TESTS.length; i++) {
 			(function(info) {
 				test(info.caption, function() {
@@ -211,7 +211,7 @@
 				notStrictEqual(sValue, "Default for Key "+i, "key"+i+" accessed");
 			}
 		});
-		
+
 		test("clone", function () {
 			var oProps = jQuery.sap.properties({url : "testdata/test.properties"});
 
@@ -253,7 +253,7 @@
 		});
 		</script>
 	</head>
-	
+
 	<body>
 		<h1 id="qunit-header">QUnit page for jquery.sap.properties</h1>
 		<h2 id="qunit-banner"></h2>

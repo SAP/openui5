@@ -1,16 +1,16 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.ux3.ExactAttribute
   Author: d046314
 -->
 
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>ExactAttribute - sap.ui.ux3</title>
 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Exact.gif">
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -18,7 +18,7 @@
 		data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
 		data-sap-ui-language=en>
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -26,14 +26,14 @@
 	<!-- Control initialization -->
 	<script language="javascript">
 	</script>
-	
+
 	<!-- Test functions -->
 	<script language="javascript">
-	
+
 		qutils.delayTestStart();
-	
+
 		module("sap.ui.ux3.ExactAttribute");
-	
+
 		test("API - Attribute Default Values", function() {
 			var oAtt = new sap.ui.ux3.ExactAttribute();
 			equal(oAtt.getText(), "", "Default 'text':");
@@ -46,7 +46,7 @@
 			equal(oAtt.getWidth(), 168, "Default 'width':");
 			equal(oAtt.getListOrder(), sap.ui.ux3.ExactOrder.Select, "Default 'listOrder':");
 		 });
-	
+
 		test("API - Attribute Custom Values", function() {
 			var oAtt = new sap.ui.ux3.ExactAttribute(
 					{text: "Hallo", selected: true, showSubAttributesIndicator: false, additionalData: {text: "Hallo"},
@@ -60,13 +60,13 @@
 			equal(oAtt.getAutoActivateSupply(), true, "Custom 'autoActivateSupply':");
 			equal(oAtt.getWidth(), 200, "Custom 'width':");
 			equal(oAtt.getListOrder(), sap.ui.ux3.ExactOrder.Fixed, "Custom 'listOrder':");
-			
+
 			oAtt.setWidth(sap.ui.ux3.ExactAttribute._MINWIDTH-10);
 			equal(oAtt.getWidth(), sap.ui.ux3.ExactAttribute._MINWIDTH, "Custom 'width' (check Min):");
 			oAtt.setWidth(sap.ui.ux3.ExactAttribute._MAXWIDTH+10);
 			equal(oAtt.getWidth(), sap.ui.ux3.ExactAttribute._MAXWIDTH, "Custom 'width' (check Max):");
 		 });
-	
+
 		test("API - Aggregation 'attributes'", function() {
 			var oAtt = new sap.ui.ux3.ExactAttribute();
 			equals(oAtt.getAttributes().length, 0, "Initial number of sub attributes");
@@ -82,16 +82,16 @@
 			oAtt.removeAllAttributes();
 			equals(oAtt.getAttributes().length, 0, "Number of sub attributes after removeAll");
 		});
-	
+
 		test("API - Function 'getShowSubAttributesIndicator_Computed'", function() {
 			var fDummyHandler = function(){};
 			var aTestAttributes = [];
-	
+
 			var getExpected = function(bHasSubAtts, bSupplyActive, bHasHandler, bShowSubAttributesIndicator){
 				if(bSupplyActive && bHasHandler) return bShowSubAttributesIndicator;
 				return bHasSubAtts;
 			};
-			
+
 			for(var i=0; i<2; i++){ //attributes.length
 				for(var j=0; j<2; j++){ //supplyActive
 					for(var k=0; k<2; k++){ //handler
@@ -108,12 +108,12 @@
 					}
 				}
 			}
-	
-			for(var i=0; i<aTestAttributes.length; i++){ 
+
+			for(var i=0; i<aTestAttributes.length; i++){
 				equals(aTestAttributes[i].attr.getShowSubAttributesIndicator_Computed(), aTestAttributes[i].expected, aTestAttributes[i].text);
 			}
 		});
-	
+
 		test("API - Supply function mechanism", function() {
 			var bSupplyFunctionCallExpected = false;
 			var oAtt;
@@ -126,7 +126,7 @@
 					ok(false, "Supply function must not be called");
 				}
 			};
-	
+
 			var fCheckSupply = function(fCallback){
 				bSupplyFunctionCallExpected = true;
 				fCallback();
@@ -134,34 +134,34 @@
 				bSupplyFunctionCallExpected = false;
 				oAtt.getAttributes(); //No supply function should be called
 			};
-	
+
 			ok(1, "--- SUPPLY DISABLED ---");
 			//There should be no further checks be visible in the result
 			oAtt = new sap.ui.ux3.ExactAttribute({supplyActive: false});
 			oAtt.attachSupplyAttributes(fSupply);
 			oAtt.setSelected(true);
-	
+
 			ok(1, "--- SUPPLY ON GETATTRIBUTES ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: false});
 			oAtt.attachSupplyAttributes(fSupply);
 			fCheckSupply(function(){ oAtt.getAttributes(); });
-	
+
 			ok(1, "--- SUPPLY ON ATTACH ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: true});
 			fCheckSupply(function(){ oAtt.attachSupplyAttributes(fSupply); });
-			
+
 			ok(1, "--- SUPPLY ON SELECT ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: false});
 			oAtt.attachSupplyAttributes(fSupply);
 			fCheckSupply(function(){ oAtt.setSelected(true); });
-			
+
 			ok(1, "--- NO AUTO SUPPLY ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: false});
 			oAtt.attachSupplyAttributes(fSupply);
 			fCheckSupply(function(){ oAtt.setSelected(true); });
 			oAtt.setSelected(false);
 			oAtt.setSelected(true);
-	
+
 			ok(1, "--- AUTO SUPPLY ---");
 			oAtt = new sap.ui.ux3.ExactAttribute({selected: false, autoActivateSupply: true});
 			oAtt.attachSupplyAttributes(fSupply);
@@ -169,7 +169,7 @@
 			oAtt.setSelected(false);
 			fCheckSupply(function(){ oAtt.setSelected(true); });
 		});
-	
+
 		test("Internal - ChangeListener", function() {
 			var fCurrentTestFunction;
 			var oTestChangeListener = {id : "myListener", _bActive: true, _notifyOnChange: function(sType, oAttribute){
@@ -178,7 +178,7 @@
 			var oAtt = new sap.ui.ux3.ExactAttribute("att1");
 			var oSubAtt = new sap.ui.ux3.ExactAttribute("att1_1");
 			oAtt.addAttribute(oSubAtt);
-	
+
 			var sExpectedType = "";
 			var fDefaultTestFunction = function(oTestChangeListener, sType, oAttribute){
 				equals(sType, sExpectedType, "Expected change type");
@@ -188,16 +188,16 @@
 			var fFailTestFunction = function(oTestChangeListener, sType, oAttribute){
 				ok(false, "Change listener must not be called");
 			};
-	
+
 			ok(1, "--- INIT ---");
 			ok(!oAtt.getChangeListener(), "Initially no change listener is used");
 			ok(!oSubAtt.getChangeListener(), "Initially no change listener is used (Sub-Attribute)");
-	
+
 			oAtt.setChangeListener(oTestChangeListener);
-	
+
 			ok(oTestChangeListener === oAtt.getChangeListener(), "Change listener is used");
 			ok(!oSubAtt.getChangeListener(), "Sub attribute still uses no change listener");
-	
+
 			//Check attribute changes
 			ok(1, "--- ATTRIBUTES ---");
 			sExpectedType = "text";
@@ -206,22 +206,22 @@
 			oAtt.setTooltip("X");
 			sExpectedType = "selected";
 			oAtt.setSelected(false);
-	
+
 			fCurrentTestFunction = fFailTestFunction;
-	
+
 			oAtt.setShowSubAttributesIndicator(true);
 			oAtt.setAdditionalData({});
 			oAtt.setSupplyActive(true);
 			oAtt.setAutoActivateSupply(true);
-	
+
 			//Check aggregation changes
 			ok(1, "--- ADD/INSERT ---");
 			sExpectedType = "attributes";
 			fCurrentTestFunction = fDefaultTestFunction;
-	
+
 			oAtt.addAttribute(new sap.ui.ux3.ExactAttribute("att1_2"));
 			oAtt.insertAttribute(new sap.ui.ux3.ExactAttribute("att1_3"), 1);
-	
+
 			var oRemovedAtt;
 			var fExitOnRemoveTestFunction = function(oTestChangeListener, sType, oAttribute){
 				equals(sType, "attributes", "Expected change type");
@@ -229,18 +229,18 @@
 				sExpectedType = "attributes";
 				fCurrentTestFunction = fDefaultTestFunction;
 			};
-	
+
 			ok(1, "--- REMOVE ---");
 			fCurrentTestFunction = fDefaultTestFunction;
 			sExpectedType = "attributes";
 			oAtt.removeAttribute(2);
 			oAtt.removeAttribute(1);
 			oAtt.removeAllAttributes();
-	
+
 			ok(1, "--- GETATTRIBUTES ---");
 			fCurrentTestFunction = fFailTestFunction;
 			oAtt.getAttributes();
-	
+
 			oAtt.setSupplyActive(true);
 			oAtt.attachSupplyAttributes(function(){
 				sExpectedType = "attributes";
@@ -254,7 +254,7 @@
 				fCurrentTestFunction = fDefaultTestFunction;
 			});
 			oAtt.getAttributes();
-			
+
 			//Bubbling
 			ok(1, "--- BUBBLING ---");
 			oSubAtt = oAtt.getAttributes()[0];
@@ -265,16 +265,16 @@
 			sExpectedType = "text";
 			ok(!oSubAtt.getChangeListener(), "Sub attribute still uses no change listener");
 			oSubAtt.setText("X");
-	
+
 			//Check exit
 			ok(1, "--- EXIT ---");
 			oAtt.setChangeListener();
 			ok(!oAtt.getChangeListener(), "No change listener is used");
 			ok(!oSubAtt.getChangeListener(), "Sub attribute uses also no change listener");
 		});
-	
+
 	</script>
-  
+
 </head>
 <body class="sapUiBody" role="application">
 	<h1 id="qunit-header">QUnit tests: sap.ui.ux3.ExactAttribute</h1>

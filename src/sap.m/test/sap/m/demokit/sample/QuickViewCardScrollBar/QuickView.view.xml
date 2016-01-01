@@ -2,7 +2,6 @@
 		   xmlns:core="sap.ui.core"
 		   xmlns="sap.m"
 		   xmlns:l="sap.ui.layout"
-		   xmlns:form="sap.ui.layout.form"
 		   xmlns:html="http://www.w3.org/1999/xhtml"
 		   controllerName="sap.m.sample.QuickViewCardScrollBar.QuickView">
 	<Page showHeader="false" class="sapUiContentPadding" showNavButton="false">

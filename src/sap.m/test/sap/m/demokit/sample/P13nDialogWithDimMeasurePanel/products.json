@@ -18,6 +18,12 @@
 		{"text" : "DimUnit", "path" : "dimUnit", "type": "Dimension"},
 		{"text" : "ProductPicUrl", "path" : "productPicUrl", "type": "Dimension"}
 	],
+	"ChartTypes":[
+		{"key":"chartKey1","text":"Bar Chart"},
+		{"key":"chartKey2","text":"Column Chart"},
+		{"key":"chartKey3","text":"Line Chart"},
+		{"key":"chartKey4","text":"Pie Chart"}
+	],
 	"ColumnsItems":[
 		{"columnKey" : "name", "index" : 1, "visible" : true},
 		{"columnKey" : "category", "index" : 2, "visible" : true},

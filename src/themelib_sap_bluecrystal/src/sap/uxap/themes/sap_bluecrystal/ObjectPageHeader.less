@@ -96,19 +96,12 @@
 	color: @sapUiAccent7;
 }
 
-
-.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn {
-	margin-top: -0.25rem;
-}
-
-.sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn {
-	margin-top: 0rem;
-}
-
+.sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
 .sapUiMedia-Std-Phone .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
 	margin-top: -0.5rem;
 }
 
+.sapUiSizeCompact.sapUxAPObjectPageHeaderChangesBtn .sapMBtn,
 .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
 	margin-top: -0.25rem;
 }
@@ -133,4 +126,12 @@
 
 html.sap-desktop .sapUxAPObjectPageHeaderDesign-Dark .sapMBtn:focus > .sapMFocusable {
 	outline: 1px dotted @sapUiInvertedFocus;
+}
+
+.sapUxAPObjectPageHeaderObjectImageContainer .sapUiIcon {
+	color: @sapUiElement;
+}
+
+.sapUxAPObjectPageHeaderDesign-Dark .sapUxAPObjectPageHeaderObjectImageContainer .sapUiIcon {
+	color: @sapUiInvertedElement;
 }
