@@ -26,6 +26,12 @@
 		<!-- Test functions -->
 		<script language="javascript">
 
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+			// use sinon to simulate the June 24th 2015
+			sinon.useFakeTimers(Date.UTC(2015, 6, 24));
+
 			jQuery.sap.require("sap.ui.core.LocaleData");
 			jQuery.sap.require("sap.ui.model.type.Date");
 
