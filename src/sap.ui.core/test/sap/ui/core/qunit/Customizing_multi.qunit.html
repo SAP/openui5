@@ -99,7 +99,7 @@
 		equal(sap.ui.core.CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2").controllerName,
 				"testdata.customizing.sap.Sub2",
 				"sap.ui.core.CustomizingConfiguration should return the Controller extension data (using the lookup magic)");
-		equal(sap.ui.core.CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2", oCompSub.getId()).controllerName,
+		equal(sap.ui.core.CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2", oCompSub.getId()),
 				"testdata.customizing.customersub.Sub2SubControllerExtension",
 				"sap.ui.core.CustomizingConfiguration should return the Controller extension data");
 		equal(sap.ui.core.CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2", oAnotherCompSub.getId()).controllerName,
@@ -134,6 +134,12 @@
 		ok(jQuery.sap.domById("customerComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
 	});
 
+
+	// Controller Replacement
+
+	test("Controller Replacement", function() {
+		equal(sap.ui.getCore().byId("customerComponent---mainView").getController().getMetadata().getName(), "testdata.customizing.customersub.Main", "The controller has been replaced");
+	});
 
 	// Controller Extension
 
