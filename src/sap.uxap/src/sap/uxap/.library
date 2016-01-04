@@ -4,8 +4,7 @@
 	<name>sap.uxap</name>
 	<vendor>SAP SE</vendor>
 	<version>${version}</version>
-	<copyright>SAP UI development toolkit for HTML5 (SAPUI5) (c) Copyright
-		2009-2015 SAP SE. All rights reserved</copyright>
+	<copyright>${copyright}</copyright>
 
 	<documentation>SAP UxAP</documentation>
 
