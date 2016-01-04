@@ -212,7 +212,7 @@
 				oContext = this.oTable.getContextByIndex(8);
 				equal(oContext.getProperty("CostCenterText"), "Marketing Canada", "Last data row is correct");
 
-				oContext = this.oTable._getFixedBottomRowContexts(this.oTable.getBinding("rows"));
+				oContext = this.oTable._getFixedBottomRowContexts(oBinding);
 				equal(oContext.getPath(), "/artificialRootContext", "No Grand Totals: Root Context is artificial!");
 
 				// initial expand

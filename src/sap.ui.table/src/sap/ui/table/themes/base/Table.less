@@ -71,6 +71,11 @@
 	position: relative;
 }
 
+.sapUiTableNoHeight {
+	overflow: hidden;
+	height: 0px;
+}
+
 .sapUiTable > div {
 	border: 1px solid @sapUiListHeaderBorderColor;
 	border-bottom: none;
@@ -89,7 +94,6 @@
 	border-bottom: none;
 	z-index: 2;
 }
-
 
 .sapUiTableHdr,
 .sapUiTableFtr {
@@ -144,7 +148,7 @@
 	white-space: nowrap;
 }
 
-.sapUiTableColHdrCnt {
+.sapUiTableCol {
 	min-height: @sapUiTableColHdrHeight;
 }
 
@@ -154,7 +158,7 @@
 
 .sapUiTableColHdrScr {
 	height: 100%;
-	display: inline-block;
+	display: block;
 	overflow: hidden;
 	margin: 0;
 	white-space: nowrap;
@@ -311,15 +315,20 @@
 .sapUiTableResizeSensor {
 	position: absolute;
 	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	width: 100%;
 	height: 100%;
 	opacity: 0;
 	z-index: -1000;
+	border: none;
 	pointer-events: none;
 }
 
  .sapUiTableNoOpacity {
 	 opacity: 0;
+	 overflow: hidden;
  }
 
 .sapUiTableColIcons {
@@ -479,10 +488,6 @@ html[dir=rtl] .sapUiTableColRsz {
 	.sapUiTableCol, .sapUiTableColRowHdr {
 		padding-top: 0;
 		padding-bottom: 0;
-	}
-
-	.sapUiTableColRowHdr {
-		margin-top: -1px;
 	}
 
 	.sapUiTableColCell {

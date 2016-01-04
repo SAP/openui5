@@ -193,7 +193,6 @@
 	background: @sapUiListBackground;
 }
 
-
 /* Table Row (only) Selected */
 /* data cells of row */
 .sapUiTableCtrl tr.sapUiTableRowSel:not(.sapUiTableGroupHeader) > td {
@@ -475,6 +474,13 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 
 .sapUiTableRowHdrScr,.sapUiTableColRowHdr {
 	width: @sapUiTableRowHdrWidth;
+}
+
+.sapUiSizeCondensed {
+	.sapUiTableRowHdrScr,
+	.sapUiTableColRowHdr {
+		min-height: 32px;
+	}
 }
 
 .sapUiSizeCompact {
