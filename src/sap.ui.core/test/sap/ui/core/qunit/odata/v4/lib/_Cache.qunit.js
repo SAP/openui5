@@ -301,13 +301,12 @@ sap.ui.require([
 		oCache = Cache.createSingle(oRequestor, sUrl);
 		oPromise = oCache.read();
 
-		oPromise.then(function () {
+		return oPromise.then(function () {
 			assert.strictEqual(oCache.oPromise, oPromise, "Promise is cached");
 
 			oCache.refresh();
 			assert.strictEqual(oCache.oPromise, undefined, "Cached promise is cleared");
 		});
-		return oPromise;
 	});
 
 	//*********************************************************************************************
