@@ -392,8 +392,12 @@ sap.ui.define([
 	};
 
 	Popup.Layer.prototype.reset = function(){
-		this._$Ref.hide().css("visibility", "hidden")
-			.appendTo(sap.ui.getCore().getStaticAreaRef());
+		if (this._$Ref.length) {
+			this._$Ref[0].style.display = "none";
+			this._$Ref[0].style.visibility = "hidden";
+
+			this._$Ref.appendTo(sap.ui.getCore().getStaticAreaRef());
+		}
 	};
 
 	/**
@@ -741,8 +745,9 @@ sap.ui.define([
 		var fnOpened = function() {
 			// internal status that any animation has been finished should set to true;
 			that.bOpen = true;
-			$Ref.css("display","block");
-
+			if ($Ref[0] && $Ref[0].style) {
+				$Ref[0].style.display = "block";
+			}
 
 			// in modal and auto-close case the focus needs to be in the popup; provide this generic implementation as helper, but users can change the focus in the "opened" event handler
 			if (that._bModal || that._bAutoClose || that._sInitialFocusId) {
@@ -1108,24 +1113,30 @@ sap.ui.define([
 		}
 
 		var fnClosed = function() { // the function to call when the popup closing animation has completed
-			// hide the old DOM ref
-			jQuery($Ref).hide().css({
-				"visibility" : "hidden",
-				"left" : "0px",
-				"top" : "0px",
-				"right" : ""
-			});
-
-			// update the DomRef because it could have been rerendered during closing
-			$Ref = that._$(/* forceRerender */ false, /* only get DOM */ true);
 			if ($Ref.length) {
-				// also hide the new DOM ref
-				jQuery($Ref).hide().css({
-					"visibility" : "hidden",
-					"left" : "0px",
-					"top" : "0px",
-					"right" : ""
-				});
+				var oDomRef = $Ref.get(0);
+
+				// hide the old DOM ref
+				if (oDomRef) {
+					oDomRef.style.display = "none";
+					oDomRef.style.visibility = "hidden";
+					oDomRef.style.left = "0px";
+					oDomRef.style.top = "0px";
+					oDomRef.style.right = "";
+				}
+
+				// update the DomRef because it could have been rerendered during closing
+				$Ref = that._$(/* forceRerender */ false, /* only get DOM */ true);
+				oDomRef = $Ref.length ? $Ref[0] : null;
+				if (oDomRef) {
+					// also hide the new DOM ref
+					oDomRef.style.display = "none";
+					oDomRef.style.visibility = "hidden";
+					oDomRef.style.left = "0px";
+					oDomRef.style.top = "0px";
+					oDomRef.style.right = "";
+				}
+
 			}
 
 			//disabled for mobile or desktop browser in touch mode
@@ -1424,40 +1435,44 @@ sap.ui.define([
 	Popup.prototype._applyPosition = function(oPosition) {
 		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		var $Ref = this._$();
-		var oAt = oPosition.at;
 
-		if (typeof (oAt) === "string") {
-			$Ref.css("display", "block").position(this._resolveReference(this._convertPositionRTL(oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
-			this._fixPositioning(oPosition, bRtl);
-		} else if (sap.ui.core.CSSSize.isValid(oAt.left) && sap.ui.core.CSSSize.isValid(oAt.top)) {
-			$Ref.css({
-				"left" : oAt.left,
-				"top" : oAt.top
-			});
-		} else if (sap.ui.core.CSSSize.isValid(oAt.right) && sap.ui.core.CSSSize.isValid(oAt.top)) {
-			$Ref.css({
-				"right" : oAt.right,
-				"top" : oAt.top
-			});
-		} else if (typeof (oAt.left) === "number" && typeof (oAt.top) === "number") {
-			var domRef = $Ref[0];
-			if (domRef && domRef.style.right) { // in some RTL cases leave the Popup attached to the right side of the browser window
-				var width = $Ref.outerWidth();
+		if ($Ref.length) {
+			var oAt = oPosition.at;
+
+			if (typeof (oAt) === "string") {
+				$Ref.get(0).style.display = "block";
+				$Ref.position(this._resolveReference(this._convertPositionRTL(oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
+				this._fixPositioning(oPosition, bRtl);
+			} else if (sap.ui.core.CSSSize.isValid(oAt.left) && sap.ui.core.CSSSize.isValid(oAt.top)) {
 				$Ref.css({
-					"right" : (document.documentElement.clientWidth - (oAt.left + width)) + "px",
-					"top" : oAt.top + "px"
+					"left" : oAt.left,
+					"top" : oAt.top
 				});
-			} else {
+			} else if (sap.ui.core.CSSSize.isValid(oAt.right) && sap.ui.core.CSSSize.isValid(oAt.top)) {
 				$Ref.css({
-					"left" : oAt.left + "px",
-					"top" : oAt.top + "px"
+					"right" : oAt.right,
+					"top" : oAt.top
 				});
+			} else if (typeof (oAt.left) === "number" && typeof (oAt.top) === "number") {
+				var domRef = $Ref[0];
+				if (domRef && domRef.style.right) { // in some RTL cases leave the Popup attached to the right side of the browser window
+					var width = $Ref.outerWidth();
+					$Ref.css({
+						"right" : (document.documentElement.clientWidth - (oAt.left + width)) + "px",
+						"top" : oAt.top + "px"
+					});
+				} else {
+					$Ref.css({
+						"left" : oAt.left + "px",
+						"top" : oAt.top + "px"
+					});
+				}
 			}
-		}
 
-		// remember given position for later redraws
-		this._oLastPosition = oPosition;
-		this._oLastOfRect = this._calcOfRect(oPosition.of);
+			// remember given position for later redraws
+			this._oLastPosition = oPosition;
+			this._oLastOfRect = this._calcOfRect(oPosition.of);
+		}
 	};
 
 	/**
@@ -2207,20 +2222,22 @@ sap.ui.define([
 		// a dialog was closed so pop his z-index from the stack
 		Popup.blStack.pop();
 
-		// if there are more z-indices this means there are more dialogs stacked up. So redisplay the blocklayer (with new z-index) under the new current dialog which should be displayed.
-		if (Popup.blStack.length > 0) {
+		var oBlockLayerDomRef = jQuery("#sap-ui-blocklayer-popup").get(0);
+		if (oBlockLayerDomRef) {
+			// if there are more z-indices this means there are more dialogs stacked up. So redisplay the blocklayer (with new z-index) under the new current dialog which should be displayed.
+			if (Popup.blStack.length > 0) {
+				// set the blocklayer z-index to the last z-index in the stack and show it
+				oBlockLayerDomRef.style.zindex = Popup.blStack[Popup.blStack.length - 1];
+				oBlockLayerDomRef.style.visibility = "visible";
+				oBlockLayerDomRef.style.display = "block";
+			} else {
+				// the last dialog was closed so we can hide the block layer now
+				oBlockLayerDomRef.style.visibility = "hidden";
+				oBlockLayerDomRef.style.display = "none";
 
-			// set the blocklayer z-index to the last z-index in the stack and show it
-			jQuery("#sap-ui-blocklayer-popup").css({
-				"z-index" : Popup.blStack[Popup.blStack.length - 1],
-				"visibility" : "visible"
-			}).show();
-		} else {
-			// the last dialog was closed so we can hide the block layer now
-			jQuery("#sap-ui-blocklayer-popup").css("visibility","hidden").hide();
-
-			// Allow scrolling again in HTML page only if there is no BlockLayer left
-			jQuery("html").removeClass("sapUiBLyBack");
+				// Allow scrolling again in HTML page only if there is no BlockLayer left
+				jQuery("html").removeClass("sapUiBLyBack");
+			}
 		}
 	};
 
