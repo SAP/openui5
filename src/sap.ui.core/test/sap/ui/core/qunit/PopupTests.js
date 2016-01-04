@@ -533,12 +533,14 @@ QUnit.asyncTest("Autoclose popup opened from another autoclose popup", function(
 	oPopup2.open();
 	assert.ok(oPopup2.isOpen(), "Popup2 is open");
 
-	jQuery.sap.domById("focusableElement").focus();
+	// check whether both Popups will close
+	oPopup1.close();
 	setTimeout(function() {
 		assert.ok(!oPopup1.isOpen(), "Popup1 is closed");
 		assert.ok(!oPopup2.isOpen(), "Popup2 is closed");
 		oPopup1.destroy();
 		oPopup2.destroy();
+
 		start();
 	}, 200);
 });
