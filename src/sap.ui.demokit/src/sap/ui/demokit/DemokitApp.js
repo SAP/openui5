@@ -493,7 +493,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					oSAPUI5Logo.addStyleClass("extraLeftPadding");
 
 					sAboutDialogContentHtml  = '<h2>OpenUI5 - Demo Kit</h2>';
-					sAboutDialogContentHtml += '<span>&copy; 2009-2015 SAP SE or an SAP affiliate company.</span><br>';
+					sAboutDialogContentHtml += '<span>&copy; 2009-2016 SAP SE or an SAP affiliate company.</span><br>';
 					sAboutDialogContentHtml += '<span>Licensed under the Apache License, Version 2.0 – <embed data-index="3"><br><br><br></span>';
 					sAboutDialogContentHtml += '<span>OpenUI5 Version <embed data-index="0"></span><br>';
 				} else {
@@ -502,7 +502,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 					oSAPUI5Logo.addStyleClass("extraLeftPadding");
 
 					sAboutDialogContentHtml  = '<h2>SAP UI Development Toolkit for HTML5 (SAPUI5) - Demo Kit</h2>';
-					sAboutDialogContentHtml += '<span>&copy; Copyright 2009-2015 SAP SE. All rights reserved.</span><br><br><br>';
+					sAboutDialogContentHtml += '<span>&copy; Copyright 2009-2016 SAP SE. All rights reserved.</span><br><br><br>';
 					sAboutDialogContentHtml += '<span>SAPUI5 Version <embed data-index="0"></span><br>';
 				}
 
