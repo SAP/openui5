@@ -581,6 +581,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._bAccMode = sap.ui.getCore().getConfiguration().getAccessibility();
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
+		/**
+		 * Updates the row binding contexts and synchronizes the row heights. This function will be called by updateRows
+		 */
+		this._delayedCallUpdateRows = function() {
+			// update only if control not marked as destroyed (could happen because updateRows is called during destroying the table)
+			if (!this.bIsDestroyed) {
+				this._updateBindingContexts();
+				var oTableSizes = this._collectTableSizes();
+				this._updateRowHeader(oTableSizes);
+				this._updateVSb();
+				this._updateTableContent();
+				// Helper event for testing
+				this._sBindingTimer = undefined;
+				this.fireEvent("_rowsUpdated");
+			}
+		}.bind(this);
+
 		// basic selection model (by default the table uses multi selection)
 		this._initSelectionModel(sap.ui.model.SelectionModel.MULTI_SELECTION);
 
@@ -659,6 +676,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		// determines whether item navigation should be reapplied from scratch
 		this._bItemNavigationInvalidated = false;
+		this._bInvalid = true;
 	};
 
 
@@ -668,6 +686,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.exit = function() {
 		// destroy the child controls
+		this._bExitCalled = true;
 		this._oVSb.destroy();
 		this._oHSb.destroy();
 		if (this._oPaginator) {
@@ -679,7 +698,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._cleanUpTimers();
 		this._detachEvents();
 	};
-
 
 	/**
 	 * theme changed
@@ -699,22 +717,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._collectTableSizes = function() {
 		var oSizes = {
-			tableWidth: 0,
-			tableHeight: 0,
 			tableParentHeight: 0,
 			tableCtrlScrollWidth: 0,
 			tableRowHdrScrWidth: 0,
 			tableCtrlRowScrollTop: 0,
 			tableCtrlRowScrollHeight: 0,
 			tableCtrlScrWidth: 0,
-			tableCtrlScrLeft: 0,
-			tableColHdrScrLeft: 0,
 			tableHSbScrollLeft: 0,
-			tableHSbParentWidth: 0,
 			tableCtrlFixedWidth: 0,
-			tableSelectAllWidth: 0,
-			columnHeaderHeight: 0,
-			invisibleColWidth: 0
+			columnRowHeight: 0,
+			invisibleColWidth: 0,
+			usedHeight: 0
 		};
 
 		var oDomRef = this.getDomRef();
@@ -722,93 +735,99 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return oSizes;
 		}
 
-		oSizes["tableWidth"] = oDomRef.clientWidth;
-		oSizes["tableHeight"] = oDomRef.clientHeight;
-		if (oDomRef.offsetParent) {
-			oSizes["tableParentHeight"] = oDomRef.offsetParent.clientHeight;
-		}
-
-		var oSapUiTableSelAll = oDomRef.querySelector(".sapUiTableSelAll");
-		if (oSapUiTableSelAll) {
-			// +1 for border
-			oSizes["tableSelectAllWidth"] = oSapUiTableSelAll.clientWidth + 1;
+		if (oDomRef.parentNode) {
+			oSizes.tableParentHeight = oDomRef.parentNode.clientHeight;
 		}
 
 		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll");
 		if (oSapUiTableCtrlScroll) {
-			oSizes["tableCtrlScrollWidth"] = oSapUiTableCtrlScroll.clientWidth;
+			oSizes.tableCtrlScrollWidth = oSapUiTableCtrlScroll.clientWidth;
 		}
 
 		var oSapUiTableRowHdrScr = oDomRef.querySelector(".sapUiTableRowHdrScr");
 		if (oSapUiTableRowHdrScr) {
-			oSizes["tableRowHdrScrWidth"] = oSapUiTableRowHdrScr.clientWidth;
+			oSizes.tableRowHdrScrWidth = oSapUiTableRowHdrScr.clientWidth;
 		}
 
 		var oSapUiTableCtrlRowScroll = oDomRef.querySelector(".sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll");
 		if (oSapUiTableCtrlRowScroll) {
-			oSizes["tableCtrlRowScrollTop"] = oSapUiTableCtrlRowScroll.offsetTop;
-			oSizes["tableCtrlRowScrollHeight"] = oSapUiTableCtrlRowScroll.offsetHeight;
+			oSizes.tableCtrlRowScrollTop = oSapUiTableCtrlRowScroll.offsetTop;
+			oSizes.tableCtrlRowScrollHeight = oSapUiTableCtrlRowScroll.offsetHeight;
 		}
 
 		var oCtrlScrDomRef = oDomRef.querySelector(".sapUiTableCtrlScr");
 		if (oCtrlScrDomRef) {
-			oSizes["tableCtrlScrWidth"] = oCtrlScrDomRef.clientWidth;
+			oSizes.tableCtrlScrWidth = oCtrlScrDomRef.clientWidth;
 		}
 
 		if (this._oHSb) {
 			if (!!sap.ui.Device.browser.webkit && this._bRtlMode) {
-				var oColHdrScrDomRef = oDomRef.querySelector(".sapUiTableColHdrScr");
-				if (oColHdrScrDomRef) {
-					oSizes["tableHSbScrollLeft"] = oColHdrScrDomRef.scrollWidth - oColHdrScrDomRef.clientWidth - this._oHSb.getScrollPosition();
+				if (oCtrlScrDomRef) {
+					oSizes.tableHSbScrollLeft = oCtrlScrDomRef.scrollWidth - oCtrlScrDomRef.clientWidth - this._oHSb.getScrollPosition();
 				}
 			} else {
-				oSizes["tableHSbScrollLeft"] = this._oHSb.getNativeScrollPosition();
+				oSizes.tableHSbScrollLeft = this._oHSb.getNativeScrollPosition();
 			}
-		}
-
-		var oSapUiTableHsb = oDomRef.querySelector(".sapUiTableHSb");
-		if (oSapUiTableHsb && oSapUiTableHsb.offsetParent) {
-			oSizes["tableHSbParentWidth"] = oSapUiTableHsb.offsetParent.clientWidth;
 		}
 
 		var oCtrlFixed = oDomRef.querySelector(".sapUiTableCtrlFixed");
 		if (oCtrlFixed) {
-			oSizes["tableCtrlFixedWidth"] = oCtrlFixed.clientWidth;
+			oSizes.tableCtrlFixedWidth = oCtrlFixed.clientWidth;
 		}
 
 		var aHeaderWidths = [];
 		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol > th:not(.sapUiTableColSel)");
 		if (aHeaderElements) {
 			for (var i = 0; i < aHeaderElements.length; i++) {
-				aHeaderWidths.push(aHeaderElements[i].clientWidth);
+				var oHeaderElementClientBoundingRect = aHeaderElements[i].getBoundingClientRect();
+				aHeaderWidths.push(oHeaderElementClientBoundingRect.right - oHeaderElementClientBoundingRect.left);
 			}
 		}
-		oSizes["headerWidths"] = aHeaderWidths;
+
+		oSizes.headerWidths = aHeaderWidths;
 
 		if (this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) {
 			var oFirstInvisibleColumn = oDomRef.querySelector(".sapUiTableCtrlFirstCol > th:first-child");
 			if (oFirstInvisibleColumn) {
-				oSizes["invisibleColWidth"] = oFirstInvisibleColumn.clientWidth;
+				oSizes.invisibleColWidth = oFirstInvisibleColumn.clientWidth;
 			}
 		}
 
-		var oColumnHeaders = oDomRef.querySelectorAll(".sapUiTableColHdrCnt, .sapUiTableColRowHdr");
-		var iColumnHeaderHeight = 0;
-		for (var i = 0; i < oColumnHeaders.length; i++) {
-			iColumnHeaderHeight = Math.max(oColumnHeaders[i].clientHeight, iColumnHeaderHeight);
+		var iColumnRowHeight = 0;
+		var oColumn = oDomRef.querySelector(".sapUiTableCol");
+		if (oColumn) {
+			iColumnRowHeight = oColumn.clientHeight;
 		}
-		var oColumnHeaderContainer = oDomRef.querySelector(".sapUiTableColHdr");
-		if (oColumnHeaderContainer) {
-			iColumnHeaderHeight = Math.max(iColumnHeaderHeight, oColumnHeaderContainer.clientHeight);
-		}
-		oSizes["columnHeaderHeight"] = iColumnHeaderHeight;
+		oSizes.columnRowHeight = iColumnRowHeight;
 
-		var aRowItems = oDomRef.querySelectorAll(".sapUiTableCtrl .sapUiTableTr");
-		var aRowItemHeights = [];
-		for (var i = 0; i < aRowItems.length; i++) {
-			aRowItemHeights.push(aRowItems[i].clientHeight);
+		var oFixedDomRef = this.getDomRef("table-fixed");
+		var oScrollDomRef = this.getDomRef("table");
+		var aFixedRowItems = [];
+		if (oFixedDomRef) {
+			aFixedRowItems = oFixedDomRef.querySelectorAll(".sapUiTableCtrl .sapUiTableTr");
 		}
-		oSizes["tableRowHeights"] = aRowItemHeights;
+
+		var aScrollRowItems = [];
+		if (oScrollDomRef) {
+			aScrollRowItems = oScrollDomRef.querySelectorAll(".sapUiTableCtrl .sapUiTableTr");
+		}
+
+		var aRowItemHeights = [];
+		for (var i = 0; i < aScrollRowItems.length; i++) {
+			var iFixedRowHeight = 0;
+			if (aFixedRowItems[i]) {
+				iFixedRowHeight = aFixedRowItems[i].clientHeight;
+			}
+			aRowItemHeights.push(Math.max(iFixedRowHeight, aScrollRowItems[i].clientHeight));
+		}
+		oSizes.tableRowHeights = aRowItemHeights;
+
+		// The used height is the table height, when the inner content container (rows) has no height set
+		var oCtrlCnt = oDomRef.querySelector(".sapUiTableCtrlCnt");
+		if (oCtrlCnt) {
+			oSizes.usedHeight = oDomRef.clientHeight;
+		}
+
 		return oSizes;
 	};
 
@@ -817,14 +836,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._updateRowHeader = function(oTableSizes) {
-		var aRowItemHeights = oTableSizes["tableRowHeights"];
+		var aRowItemHeights = oTableSizes.tableRowHeights;
 		var aRowHeaderItems = this.getDomRef().querySelectorAll(".sapUiTableRowHdr");
-		for (var i = 0; i < aRowHeaderItems.length; i++) {
-			aRowHeaderItems[i].style.height = aRowItemHeights[i] + "px";
+
+		var oFixedDomRef = this.getDomRef("table-fixed");
+		var oScrollDomRef = this.getDomRef("table");
+		var aFixedRowItems = [];
+		if (oFixedDomRef) {
+			aFixedRowItems = oFixedDomRef.querySelectorAll(".sapUiTableCtrl .sapUiTableTr");
 		}
-		var oSapUiTableRowHdrScr = this.getDomRef().querySelector(".sapUiTableRowHdrScr");
+
+		var aScrollRowItems = [];
+		if (oScrollDomRef) {
+			aScrollRowItems = oScrollDomRef.querySelectorAll(".sapUiTableCtrl .sapUiTableTr");
+		}
+
+		var iLength = Math.max(aRowHeaderItems.length, aScrollRowItems.length, 0);
+		for (var i = 0; i < iLength; i++) {
+			if (aRowHeaderItems[i]) {
+				aRowHeaderItems[i].style.height = aRowItemHeights[i] + "px";
+			}
+
+			if (aFixedRowItems[i]) {
+				aFixedRowItems[i].style.height = aRowItemHeights[i] + "px";
+			}
+
+			if (aScrollRowItems[i]) {
+				aScrollRowItems[i].style.height = aRowItemHeights[i] + "px";
+			}
+		}
+		var oSapUiTableRowHdrScr = this.$().find(".sapUiTableRowHdrScr, .sapUiTableColHdrFixed");
 		if (oSapUiTableRowHdrScr) {
-			oSapUiTableRowHdrScr.classList.remove("sapUiTableNoOpacity");
+			// change to classList when IE9 support is dropped
+			oSapUiTableRowHdrScr.removeClass("sapUiTableNoOpacity");
 		}
 	};
 
@@ -843,11 +887,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype.onAfterRendering = function() {
+		this._bInvalid = false;
 		this._bOnAfterRendering = true;
 		var $this = this.$();
 
 		this._renderOverlay();
 		this._attachEvents();
+
+		// since the row is an element it has no own renderer. Anyway, logically it has a domref. Let the rows
+		// update their domrefs after the rendering is done. This is required to allow performant access to row domrefs
+		var aRows = this.getRows();
+		for (var i = 0; i < aRows.length; i++) {
+			aRows[i].initDomRefs();
+		}
 
 		// restore the column icons
 		var aCols = this.getColumns();
@@ -872,17 +924,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		// Async to avoid Layout Thrashing
-		this._iUpdateTableSizeTimerId = window.requestAnimationFrame(this._updateTableSizes.bind(this));
+		// change to requestAnimationFrame when IE9 support ends
+		this._iUpdateTableSizeTimerId = window.setTimeout(this._updateTableSizes.bind(this), 0);
 	};
 
 	Table.prototype.invalidate = function() {
-		Control.prototype.invalidate.apply(this, arguments);
+		var vReturn = Control.prototype.invalidate.apply(this, arguments);
+		this._bInvalid = true;
 		// abort column/row sync rendering task when invalidation has happened.
 		// Because a new rendering task will be set up.
 		if (this._iUpdateTableSizeTimerId) {
-			window.cancelAnimationFrame(this._iUpdateTableSizeTimerId);
+			// change to requestAnimationFrame when IE9 support ends
+			window.clearTimeout(this._iUpdateTableSizeTimerId);
 			this._iUpdateTableSizeTimerId = undefined;
 		}
+
+		return vReturn;
 	};
 
 	/**
@@ -890,13 +947,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._updateTableSizes = function() {
-		this._iUpdateTableSizeTimerId = null;
-		if (!this.getDomRef()) {
+		var oDomRef = this.getDomRef();
+		if (this._bInvalid || !oDomRef) {
+			this._iUpdateTableSizeTimerId = null;
 			return;
 		}
 
+		if (this._sResizeHandlerId) {
+			ResizeHandler.deregister(this._sResizeHandlerId);
+			this._sResizeHandlerId = undefined;
+		}
+
+		var $this = this.$();
+		var $sapUiTableCCnt = $this.find(".sapUiTableCCnt");
+		$sapUiTableCCnt.addClass("sapUiTableNoHeight");
+
 		// Reading of UI Sizes
 		var oTableSizes = this._collectTableSizes();
+
+		$sapUiTableCCnt.removeClass("sapUiTableNoHeight");
 
 		// Manipulation of UI Sizes
 		this._updateRowHeader(oTableSizes);
@@ -904,6 +973,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._handleResize(oTableSizes);
 		this._determineVisibleCols(oTableSizes);
 		this._syncHeaderAndContent(oTableSizes);
+
+		this._iUpdateTableSizeTimerId = null;
+		setTimeout(function() {
+			if (oDomRef && oDomRef.parentNode) {
+				this._sResizeHandlerId = ResizeHandler.register(oDomRef.parentNode, this._onTableResize.bind(this));
+			}
+		}.bind(this), 0);
 	};
 
 	/**
@@ -1366,7 +1442,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		if (iVisibleRowCount <= (this.getFixedRowCount() + this.getFixedBottomRowCount())) {
-			jQuery.sap.log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')");
+			jQuery.sap.log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
 			return this;
 		}
 
@@ -1418,6 +1494,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype.updateRows = function(sReason) {
+		if (this._bExitCalled) {
+			return;
+		}
+
 		this._setBusy(sReason ? {changeReason: sReason} : false);
 
 		// by default the start index is the first visible row
@@ -1460,17 +1540,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// we do an immediate update instead of a delayed one
 
 			var iDelay = (sReason == ChangeReason.Change ? 0 : 50);
-			this._sBindingTimer = this._sBindingTimer || jQuery.sap.delayedCall(iDelay, this, function() {
-				// update only if control not marked as destroyed (could happen because updateRows is called during destroying the table)
-				if (!this.bIsDestroyed) {
-					this._updateBindingContexts();
-					this._updateVSb();
-					this._updateTableContent();
-					this._sBindingTimer = undefined;
-					// Helper event for testing
-					this.fireEvent("_rowsUpdated");
-				}
-			});
+			this._sBindingTimer = this._sBindingTimer || window.setTimeout(this._delayedCallUpdateRows, iDelay);
 		}
 	};
 
@@ -1478,35 +1548,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.insertRow = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"insertRow\" cannot be used programmatically!");
+		jQuery.sap.log.error("The control manages the rows aggregation. The method \"insertRow\" cannot be used programmatically!", this);
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.addRow = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"addRow\" cannot be used programmatically!");
+		jQuery.sap.log.error("The control manages the rows aggregation. The method \"addRow\" cannot be used programmatically!", this);
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.removeRow = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeRow\" cannot be used programmatically!");
+		jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeRow\" cannot be used programmatically!", this);
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.removeAllRows = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeAllRows\" cannot be used programmatically!");
+		jQuery.sap.log.error("The control manages the rows aggregation. The method \"removeAllRows\" cannot be used programmatically!", this);
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.destroyRows = function() {
-		jQuery.sap.log.error("The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!");
+		jQuery.sap.log.error("The control manages the rows aggregation. The method \"destroyRows\" cannot be used programmatically!", this);
 	};
 
 	/**
@@ -1594,10 +1664,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		this._enableColumnAutoResizing();
 
-		// Listen to resize sensor
-		var resizeSensor = $this.find(".sapUiTableResizeSensor")[0].contentWindow;
-		resizeSensor.onresize = this._onTableResize.bind(this);
-
 		// the vertical scrollbar listens to the mousewheel on the content section
 		this._oHSb.bind($this.find(".sapUiTableCtrlScr").get(0));
 		this._oVSb.bind($this.find(".sapUiTableCtrlScr").get(0));
@@ -1670,6 +1736,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._oVSb.unbind($this.find(".sapUiTableRowHdrScr").get(0));
 
 		jQuery("body").unbind('webkitTransitionEnd transitionend');
+
+		if (this._sResizeHandlerId) {
+			ResizeHandler.deregister(this._sResizeHandlerId);
+			this._sResizeHandlerId = undefined;
+		}
 	};
 
 
@@ -1680,7 +1751,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype._cleanUpTimers = function() {
 
 		if (this._sBindingTimer) {
-			jQuery.sap.clearDelayedCall(this._sBindingTimer);
+			clearTimeout(this._sBindingTimer);
 			this._sBindingTimer = undefined;
 		}
 
@@ -1710,17 +1781,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		if (this._iUpdateTableSizeTimerId) {
-			window.cancelAnimationFrame(this._iUpdateTableSizeTimerId);
+			// change to requestAnimationFrame when IE9 support ends
+			window.clearTimeout(this._iUpdateTableSizeTimerId);
 			this._iUpdateTableSizeTimerId = undefined;
 		}
 
 		if (this._HSbContentSizeTimer) {
-			window.cancelAnimationFrame(this._HSbContentSizeTimer);
+			// change to requestAnimationFrame when IE9 support ends
+			window.clearTimeout(this._HSbContentSizeTimer);
 			this._HSbContentSizeTimer = undefined;
 		}
 
 		if (this._updateRowHeaderTimer) {
-			window.cancelAnimationFrame(this._updateRowHeaderTimer);
+			// change to requestAnimationFrame when IE9 support ends
+			window.clearTimeout(this._updateRowHeaderTimer);
 			this._updateRowHeaderTimer = undefined;
 		}
 
@@ -1844,13 +1918,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype._updateHSb = function(oTableSizes) {
 		// get the width of the container
 		var $this = this.$();
-		var iColsWidth = oTableSizes["tableCtrlScrollWidth"];
+		var iColsWidth = oTableSizes.tableCtrlScrollWidth;
 		if (!!sap.ui.Device.browser.safari) {
 			iColsWidth = Math.max(iColsWidth, this._getColumnsWidth(this.getFixedColumnCount()));
 		}
 
 		// add the horizontal scrollbar
-		if (iColsWidth > oTableSizes["tableCtrlScrWidth"]) {
+		if (iColsWidth > oTableSizes.tableCtrlScrWidth) {
 			// show the scrollbar
 			if (!$this.hasClass("sapUiTableHScr")) {
 				$this.addClass("sapUiTableHScr");
@@ -1866,9 +1940,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				}
 			}
 
-			var iScrollPadding = oTableSizes["tableCtrlFixedWidth"];
+			var iScrollPadding = oTableSizes.tableCtrlFixedWidth;
 			if ($this.find(".sapUiTableRowHdrScr").length > 0) {
-				iScrollPadding += oTableSizes["tableRowHdrScrWidth"];
+				iScrollPadding += oTableSizes.tableRowHdrScrWidth;
 			}
 
 			var $sapUiTableHSb = $this.find(".sapUiTableHSb");
@@ -1877,16 +1951,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			} else {
 				$sapUiTableHSb.css('padding-left', iScrollPadding + 'px');
 			}
-			// When table has no fixed width, the scrollbar is not allowed to increase the width of the table.
-			// We define the max-width of the scrollbar to be limited by its parent width.
-			$sapUiTableHSb.css('max-width', oTableSizes["tableHSbParentWidth"] + "px");
 
-			this._HSbContentSizeTimer = window.requestAnimationFrame(function() {
+			// change to requestAnimationFrame when IE9 support ends
+			this._HSbContentSizeTimer = window.setTimeout(function() {
 				this._oHSb.setContentSize(iColsWidth + "px");
 				if (this._oHSb.getDomRef()) {
 					this._oHSb.rerender();
 				}
-			}.bind(this));
+			}.bind(this), 0);
 		} else {
 			// hide the scrollbar
 			if ($this.hasClass("sapUiTableHScr")) {
@@ -1907,6 +1979,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype._updateVSb = function(bOnAfterRendering) {
 		var $this = this.$();
 		var bDoResize = false;
+		var fnUpdateTableSizes = function() {
+			if (this._iUpdateTableSizeTimerId) {
+				// change to requestAnimationFrame when IE9 support ends
+				window.clearTimeout(this._iUpdateTableSizeTimerId);
+				this._iUpdateTableSizeTimerId = undefined;
+			}
+
+			// change to requestAnimationFrame when IE9 support ends
+			this._iUpdateTableSizeTimerId = window.setTimeout(this._updateTableSizes.bind(this), 0);
+		}.bind(this);
 		var bForceUpdateVSb = false;
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
@@ -1970,6 +2052,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 						if ($this) {
 							$this.toggleClass("sapUiTableVScr", iSteps > 0);
+							var oTableSizes = this._collectTableSizes();
+							this._syncColumnHeaders(oTableSizes);
 						}
 
 						this._oVSb.setSteps(iSteps);
@@ -1995,8 +2079,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				bDoResize = true;
 			}
 		}
-		if (bDoResize) {
-			this._iUpdateTableSizeTimerId = window.requestAnimationFrame(this._updateTableSizes.bind(this));
+		if (bDoResize && !this._bInvalid) {
+			fnUpdateTableSizes();
 		}
 	};
 
@@ -2180,9 +2264,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var bRtl = this._bRtlMode;
 
 			// calculate the view port
-			var iScrollLeft = oTableSizes["tableHSbScrollLeft"];
-			var iScrollWidth = oTableSizes["tableCtrlScrollWidth"];
-			var iScrWidth = oTableSizes["tableCtrlScrWidth"];
+			var iScrollLeft = oTableSizes.tableHSbScrollLeft;
+			var iScrollWidth = oTableSizes.tableCtrlScrollWidth;
+			var iScrWidth = oTableSizes.tableCtrlScrWidth;
 
 			if (bRtl && sap.ui.Device.browser.firefox && iScrollLeft < 0) {
 				// Firefox deals with negative scrollPosition in RTL mode
@@ -2206,7 +2290,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					this._aVisibleColumns.push(i);
 				}
 
-				var aHeaderWidths = oTableSizes["headerWidths"];
+				var aHeaderWidths = oTableSizes.headerWidths;
 				for (var i = 0; i < aHeaderWidths.length; i++) {
 					var iHeaderWidth = aHeaderWidths[i];
 					if (bRtl && sap.ui.Device.browser.chrome) {
@@ -2474,7 +2558,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype._handleResize = function(oTableSizes) {
 		// when using the native resize handler then this function could be called
 		// before the table has been rendered - therefore we interrupt this method
-		if (!this.getDomRef()) {
+		if (this._bInvalid || !this.getDomRef()) {
 			return;
 		}
 
@@ -2491,10 +2575,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var $sapUiTableVSb = this.$().find('.sapUiTableVSb');
 			if ($sapUiTableVSb.length > 0) {
 				if (iFixedRowCount > 0) {
-					$sapUiTableVSb.css('top', (oTableSizes["tableCtrlRowScrollTop"] - 1) + 'px');
+					$sapUiTableVSb.css('top', (oTableSizes.tableCtrlRowScrollTop - 1) + 'px');
 				}
 				if (iFixedBottomRowCount > 0) {
-					$sapUiTableVSb.css('height', oTableSizes["tableCtrlRowScrollHeight"] + 'px');
+					$sapUiTableVSb.css('height', oTableSizes.tableCtrlRowScrollHeight + 'px');
 				}
 			}
 		}
@@ -2509,35 +2593,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._onTableResize = function() {
-		if (!this.getDomRef()) {
+		if (this._bInvalid || !this.getDomRef()) {
 			return;
 		}
 
 		if (this._iUpdateTableSizeTimerId) {
-			window.cancelAnimationFrame(this._iUpdateTableSizeTimerId);
+			// change to requestAnimationFrame when IE9 support ends
+			window.clearTimeout(this._iUpdateTableSizeTimerId);
 			this._iUpdateTableSizeTimerId = undefined;
 		}
 
-		if (this.getBinding("rows")) {
-			this.updateRows();
-		}
-
 		// Async to avoid Layout Thrashing
-		this._iUpdateTableSizeTimerId = window.requestAnimationFrame(this._updateTableSizes.bind(this));
+		// change to requestAnimationFrame when IE9 support ends
+		this._iUpdateTableSizeTimerId = window.setTimeout(this._updateTableSizes.bind(this), 50);
 	};
 
 	Table.prototype._handleRowCountModeAuto = function(oTableSizes) {
 		//if visibleRowCountMode is auto change the visibleRowCount according to the parents container height
 		if (this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
-			var iRows = this._calculateRowsToDisplay(oTableSizes.tableParentHeight);
-
+			var iRows = this._calculateRowsToDisplay(oTableSizes.tableParentHeight - oTableSizes.usedHeight);
 			if (isNaN(iRows)) {
 				return;
 			}
 			// Currently this needs to be executed in a timeout because invalidate is lost wenn method is called during onAfterRendering
 			// This can be reverted when keeping the invalidate calls, that occur during onAfterRendering are kept
 			var that = this;
-			this._visibleRowCountTimer = setTimeout(function() {
+			this._visibleRowCountTimer = window.setTimeout(function() {
 				that.setVisibleRowCount(iRows);
 			}, 0);
 		}
@@ -2555,7 +2636,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 		var $this = this.$();
 
-		var aHeaderWidths = oTableSizes["headerWidths"];
+		var aHeaderWidths = oTableSizes.headerWidths;
 		var iFixedColumns = this.getFixedColumnCount();
 		var aVisibleColumns = this._getVisibleColumns();
 		if (aVisibleColumns.length == 0) {
@@ -2586,7 +2667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			// for the first column also calculate the width of the hidden column
 			if (iIndex == 0 || iIndex == iFixedColumns) {
-				iTargetWidth += oTableSizes["invisibleColWidth"];
+				iTargetWidth += Math.max(0, oTableSizes.invisibleColWidth);
 			}
 
 			// apply the width of the column
@@ -2631,12 +2712,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 		});
 
+		var that = this;
 		// Map target column header divs to corresponding source table header.
 		$cols.each(function(iIndex, oElement) {
 			var iColIndex = parseInt(oElement.getAttribute("data-sap-ui-colindex"), 10);
 			var mHeader = mHeaders[iColIndex];
 			if (mHeader) {
 				mHeader.domRefColumnDivs.push(oElement);
+			} else {
+				jQuery.sap.log.error("Inconsistent DOM / Control Tree combination", that);
 			}
 		});
 
@@ -2649,6 +2733,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				if (mHeader.domRefColumnDivs[i]) {
 					mHeader.domRefColumnDivs[i].style.width = oHeaderData.width + "px";
 					mHeader.domRefColumnDivs[i].setAttribute("data-sap-ui-colspan", oHeaderData.span);
+				} else {
+					jQuery.sap.log.error("Inconsistent DOM / Control Tree combination", that);
 				}
 			}
 		});
@@ -2658,20 +2744,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// find out whether to use the height of a cell or the min height of the col header.
 		var bHasColHdrHeight = this.getColumnHeaderHeight() > 0;
 		if (!bHasColHdrHeight) {
-			var $jqo = $this.find(".sapUiTableColHdrCnt, .sapUiTableColRowHdr");
 			// Height of one row within the header
 			// avoid half pixels
-			var iColumnHeaderHeight = oTableSizes["columnHeaderHeight"];
-			var iRegularHeight = Math.floor(iColumnHeaderHeight / this._getHeaderRowCount());
-			$cols.outerHeight(iRegularHeight);
-			$jqo.outerHeight(iColumnHeaderHeight);
+			var iColumnRowHeight = oTableSizes.columnRowHeight;
+			$cols.outerHeight(iColumnRowHeight);
+			$this.find(".sapUiTableColHdrCnt").height(Math.floor(iColumnRowHeight * this._getHeaderRowCount()));
 		}
 
 		// Sync width of content scroll area to header scroll area
-		$colHdrScr.width(oTableSizes["tableCtrlScrWidth"]);
+		$colHdrScr.width(oTableSizes.tableCtrlScrWidth);
 
 		// Make Column Header Container visible after width/height adjustment
-		$colHeaderContainer.removeClass("sapUiTableNoOpacity");
+		$this.find(".sapUiTableColHdr").removeClass("sapUiTableNoOpacity");
 	};
 
 	/**
@@ -2755,7 +2839,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._bSyncScrollLeft = true;
 			// synchronize the scroll areas
 			var $this = this.$();
-			var iHSbScrollLeft = oTableSizes["tableHSbScrollLeft"];
+			var iHSbScrollLeft = oTableSizes.tableHSbScrollLeft;
 			$this.find(".sapUiTableColHdrScr").scrollLeft(iHSbScrollLeft);
 			$this.find(".sapUiTableCtrlScr").scrollLeft(iHSbScrollLeft);
 			this._bSyncScrollLeft = false;
@@ -3650,7 +3734,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		// Re-apply focus
-		this._reApplyFocusTimer = setTimeout(function() {
+		this._reApplyFocusTimer = window.setTimeout(function() {
 			var iOldFocusedIndex = this._oItemNavigation.getFocusedIndex();
 			this._oItemNavigation.focusItem(0, oEvent);
 			this._oItemNavigation.focusItem(iOldFocusedIndex, oEvent);
@@ -3775,7 +3859,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		} else {
 			iColIndex = iIndex;
 		}
-		var oColumn = this.getColumns()[iColIndex];
+		var oColumn = this._getVisibleColumns()[iColIndex];
 		// if the resize has started and we have a new width for the column
 		// we apply it to the column object
 		var bResized = false;
@@ -5697,14 +5781,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.setFixedRowCount = function(iFixedRowCount) {
 		if (!(parseInt(iFixedRowCount, 10) >= 0)) {
-			jQuery.sap.log.error("Number of fixed rows must be greater or equal 0");
+			jQuery.sap.log.error("Number of fixed rows must be greater or equal 0", this);
 			return this;
 		}
 
 		if ((iFixedRowCount + this.getFixedBottomRowCount()) < this.getVisibleRowCount()) {
 			this.setProperty("fixedRowCount", iFixedRowCount);
 		} else {
-			jQuery.sap.log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')");
+			jQuery.sap.log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
 		}
 		return this;
 	};
@@ -5714,14 +5798,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.setFixedBottomRowCount = function(iFixedRowCount) {
 		if (!(parseInt(iFixedRowCount, 10) >= 0)) {
-			jQuery.sap.log.error("Number of fixed bottom rows must be greater or equal 0");
+			jQuery.sap.log.error("Number of fixed bottom rows must be greater or equal 0", this);
 			return this;
 		}
 
 		if ((iFixedRowCount + this.getFixedRowCount()) < this.getVisibleRowCount()) {
 			this.setProperty("fixedBottomRowCount", iFixedRowCount);
 		} else {
-			jQuery.sap.log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')");
+			jQuery.sap.log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')", this);
 		}
 		return this;
 	};
@@ -5738,6 +5822,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
+	 * Checks whether the passed oEvent is a touch event.
+	 * @private
+	 * @param {event} oEvent The event to check
+	 * @return {boolean} false
+	 */
+	Table.prototype._isTouchMode = function(oEvent) {
+		return !!oEvent.originalEvent["touches"];
+	};
+
+	/**
 	 * The selectstart event triggered in IE to select the text.
 	 * @private
 	 * @param {event} oEvent The splitterselectstart event
@@ -5750,43 +5844,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
-	 * Checks whether the passed oEvent is a touch event.
-	 * @private
-	 * @param {event} oEvent The event to check
-	 * @return {boolean} false
-	 */
-	Table.prototype._isTouchMode = function(oEvent) {
-		return !!oEvent.originalEvent["touches"];
-	};
-
-	/**
-	 * drops the splitter bar
+	 * Drops the previous dragged horizontal splitter bar and recalculates the amount of rows to be displayed.
 	 * @private
 	 */
 	Table.prototype._onGhostMouseRelease = function(oEvent) {
-		var splitterBarGhost = this.getDomRef("ghost");
 
+
+
+		var $this = this.$();
+		var $splitterBarGhost = jQuery(this.getDomRef("ghost"));
 		var iLocationY = this._isTouchMode(oEvent) ? oEvent.changedTouches[0].pageY : oEvent.pageY;
-		var iNewHeight = iLocationY - this.$().offset().top;
 
-	    this.setVisibleRowCount(this._calculateRowsToDisplay(iNewHeight));
+		var iNewHeight = iLocationY - $this.find(".sapUiTableCCnt").offset().top - $splitterBarGhost.height() - $this.find(".sapUiTableFtr").height();
 
-		jQuery(splitterBarGhost).remove();
+		this.setVisibleRowCount(this._calculateRowsToDisplay(iNewHeight));
+
+		$splitterBarGhost.remove();
 		this.$("overlay").remove();
 
 		jQuery(document.body).unbind("selectstart", this._splitterSelectStart);
 
-		var $Document = jQuery(document);
-		$Document.unbind("touchend", this._onGhostMouseRelease);
-		$Document.unbind("touchmove", this._onGhostMouseMove);
-		$Document.unbind("mouseup", this._onGhostMouseRelease);
-		$Document.unbind("mousemove", this._onGhostMouseMove);
+		var $document = jQuery(document);
+		$document.unbind("touchend", this._onGhostMouseRelease);
+		$document.unbind("touchmove", this._onGhostMouseMove);
+		$document.unbind("mouseup", this._onGhostMouseRelease);
+		$document.unbind("mousemove", this._onGhostMouseMove);
 
 		this._enableTextSelection();
 	};
 
 	/**
-	 *
+	 * Drags the horizontal splitter bar for visibleRowCountMode "Interactive".
 	 * @param oEvent
 	 * @private
 	 */
@@ -5817,8 +5905,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return iMinRowCount;
 		}
 
-		var iUsedHeight = this._calculateUsedHeight($this.find('.sapUiTableCCnt'), $this);
-
 		var aRows = this.getRows();
 		if (!aRows.length) {
 			return iMinRowCount;
@@ -5838,8 +5924,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		// Maximum height of the table is the height of the window minus two row height, reserved for header and footer.
-		var iMaxHeight = window.innerHeight - 2 * iRowHeight;
-		var iCalculatedSpace = iHeight - iUsedHeight;
+		var iMaxHeight = 50000;
+
+		var iCalculatedSpace = iHeight;
 
 		// Make sure that table does not grow to infinity
 		var iAvailableSpace = Math.min(iCalculatedSpace, iMaxHeight);
@@ -5848,21 +5935,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// to avoid issues with having more fixed rows than visible row count, the number of visible rows must be
 		// adjusted.
 		return Math.max((this.getFixedRowCount() + this.getFixedBottomRowCount()) + 1, Math.max(iMinRowCount, Math.floor((iAvailableSpace + 1) / iRowHeight)));
-	};
-
-	/**
-	 * Calculates the already used vertical space of the table which is blocked by other elements than the row content area.
-	 * @private
-	 * @param $element start element from which traversing begins
-	 * @param $targetElement end element where traversing stops
-	 * @returns {Number} the used height as a number
-	 */
-	Table.prototype._calculateUsedHeight = function($element, $targetElement) {
-		if (!$element || $element.length == 0 || !$targetElement || $element.is($targetElement)) {
-			return 0;
-		}
-
-		return Math.max(0, $targetElement.height() - $element.height());
 	};
 
 	/*
@@ -6250,7 +6322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (this._oVSb) {
 			this._oVSb._bLargeDataScrolling = !!bLargeDataScrolling;
 		} else {
-			jQuery.sap.log.error("Vertical Scrollbar wasn't initialized yet.");
+			jQuery.sap.log.error("Vertical Scrollbar wasn't initialized yet.", this);
 		}
 	};
 
