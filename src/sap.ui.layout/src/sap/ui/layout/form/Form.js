@@ -64,8 +64,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 			/**
 			 * Title of the <code>Form</code>. Can either be a <code>Title</code> object, or a string.
 			 * If a <code>Title</code> object it used, the style of the title can be set.
+			 *
+			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
 			 */
 			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
+
+			/**
+			 * Toolbar of the <code>Form</code>.
+			 *
+			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
+			 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
+			 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
+			 * @since 1.36.0
+			 */
+			toolbar : {type : "sap.ui.core.Toolbar", multiple : false},
 
 			/**
 			 * Layout of the <code>Form</code>. The assigned <code>Layout</code> renders the <code>Form</code>.
@@ -84,129 +96,128 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 		designTime : true
 	}});
 
-	/**
-	 * This file defines behavior for the control,
+	Form.prototype.toggleContainerExpanded = function(oContainer){
+
+		var oLayout = this.getLayout();
+		if (oLayout) {
+			oLayout.toggleContainerExpanded(oContainer);
+		}
+
+	};
+
+	/*
+	 * If onAfterRendering of a field is processed the layout might need to change it.
 	 */
+	Form.prototype.contentOnAfterRendering = function(oFormElement, oControl){
 
-	(function() {
+		// call function of the layout
+		var oLayout = this.getLayout();
+		if (oLayout && oLayout.contentOnAfterRendering) {
+			oLayout.contentOnAfterRendering( oFormElement, oControl);
+		}
 
-	//	sap.ui.commons.Form.prototype.init = function(){
-	//	// do something for initialization...
-	//	};
+	};
 
-		Form.prototype.toggleContainerExpanded = function(oContainer){
+	/*
+	 * If LayoutData changed on control this may need changes on the layout. So bubble to the Layout
+	 */
+	Form.prototype.onLayoutDataChange = function(oEvent){
 
-			var oLayout = this.getLayout();
-			if (oLayout) {
-				oLayout.toggleContainerExpanded(oContainer);
+		// call function of the layout
+		var oLayout = this.getLayout();
+		if (oLayout && oLayout.onLayoutDataChange) {
+			oLayout.onLayoutDataChange(oEvent);
+		}
+
+	};
+
+	Form.prototype.onBeforeFastNavigationFocus = function(oEvent){
+		var oLayout = this.getLayout();
+		if (oLayout && oLayout.onBeforeFastNavigationFocus) {
+			oLayout.onBeforeFastNavigationFocus(oEvent);
+		}
+	};
+
+	Form.prototype.setEditable = function(bEditable) {
+
+		var bOldEditable = this.getEditable();
+		this.setProperty("editable", bEditable, true);
+
+		if (bEditable != bOldEditable && this.getDomRef()) {
+			if (bEditable) {
+				this.$().addClass("sapUiFormEdit").addClass("sapUiFormEdit-CTX");
+				this.$().removeAttr("aria-readonly");
+			} else {
+				this.$().removeClass("sapUiFormEdit").removeClass("sapUiFormEdit-CTX");
+				this.$().attr("aria-readonly", "true");
 			}
+		}
 
-		};
+		return this;
 
-		/*
-		 * If onAfterRendering of a field is processed the layout might need to change it.
-		 */
-		Form.prototype.contentOnAfterRendering = function(oFormElement, oControl){
+	};
 
-			// call function of the layout
-			var oLayout = this.getLayout();
-			if (oLayout && oLayout.contentOnAfterRendering) {
-				oLayout.contentOnAfterRendering( oFormElement, oControl);
-			}
+	Form.prototype.setToolbar = function(oToolbar) {
 
-		};
+		// for sap.m.Toolbar Auto-design must be set to transparent
+		oToolbar = sap.ui.layout.form.FormHelper.setToolbar.call(this, oToolbar);
 
-		/*
-		 * If LayoutData changed on control this may need changes on the layout. So bubble to the Layout
-		 */
-		Form.prototype.onLayoutDataChange = function(oEvent){
+		this.setAggregation("toolbar", oToolbar);
 
-			// call function of the layout
-			var oLayout = this.getLayout();
-			if (oLayout && oLayout.onLayoutDataChange) {
-				oLayout.onLayoutDataChange(oEvent);
-			}
+		return this;
 
-		};
+	};
 
-		Form.prototype.onBeforeFastNavigationFocus = function(oEvent){
-			var oLayout = this.getLayout();
-			if (oLayout && oLayout.onBeforeFastNavigationFocus) {
-				oLayout.onBeforeFastNavigationFocus(oEvent);
-			}
-		};
+	/*
+	 * Overwrite of INVALIDATE
+	 * do not invalidate Form during rendering. Because there the Layout may update the content
+	 * otherwise the Form will render twice
+	*/
+	Form.prototype.invalidate = function(oOrigin) {
 
-		Form.prototype.setEditable = function(bEditable) {
+		if (!this._bNoInvalidate) {
+			Control.prototype.invalidate.apply(this, arguments);
+		}
 
-			var bOldEditable = this.getEditable();
-			this.setProperty("editable", bEditable, true);
+	};
 
-			if (bEditable != bOldEditable && this.getDomRef()) {
-				if (bEditable) {
-					this.$().addClass("sapUiFormEdit").addClass("sapUiFormEdit-CTX");
-					this.$().removeAttr("aria-readonly");
-				} else {
-					this.$().removeClass("sapUiFormEdit").removeClass("sapUiFormEdit-CTX");
-					this.$().attr("aria-readonly", "true");
-				}
-			}
+	/**
+	 * As Elements must not have a DOM reference it is not sure if one exists
+	 * If the <code>FormContainer</code> has a DOM representation this function returns it,
+	 * independent from the ID of this DOM element
+	 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
+	 * @return {Element} The Element's DOM representation or null
+	 * @private
+	 */
+	Form.prototype.getContainerRenderedDomRef = function(oContainer) {
 
-			return this;
+		var oLayout = this.getLayout();
+		if (oLayout && oLayout.getContainerRenderedDomRef) {
+			return oLayout.getContainerRenderedDomRef(oContainer);
+		}else {
+			return null;
+		}
 
-		};
+	};
 
-		/*
-		 * Overwrite of INVALIDATE
-		 * do not invalidate Form during rendering. Because there the Layout may update the content
-		 * otherwise the Form will render twice
-		*/
-		Form.prototype.invalidate = function(oOrigin) {
+	/**
+	 * As Elements must not have a DOM reference it is not sure if one exists
+	 * If the <code>FormElement</code> has a DOM representation this function returns it,
+	 * independent from the ID of this DOM element
+	 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
+	 * @return {Element} The Element's DOM representation or null
+	 * @private
+	 */
+	Form.prototype.getElementRenderedDomRef = function(oElement) {
 
-			if (!this._bNoInvalidate) {
-				Control.prototype.invalidate.apply(this, arguments);
-			}
+		var oLayout = this.getLayout();
+		if (oLayout && oLayout.getElementRenderedDomRef) {
+			return oLayout.getElementRenderedDomRef(oElement);
+		}else {
+			return null;
+		}
 
-		};
-
-		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists
-		 * If the <code>FormContainer</code> has a DOM representation this function returns it,
-		 * independent from the ID of this DOM element
-		 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
-		 * @return {Element} The Element's DOM representation or null
-		 * @private
-		 */
-		Form.prototype.getContainerRenderedDomRef = function(oContainer) {
-
-			var oLayout = this.getLayout();
-			if (oLayout && oLayout.getContainerRenderedDomRef) {
-				return oLayout.getContainerRenderedDomRef(oContainer);
-			}else {
-				return null;
-			}
-
-		};
-
-		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists
-		 * If the <code>FormElement</code> has a DOM representation this function returns it,
-		 * independent from the ID of this DOM element
-		 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
-		 * @return {Element} The Element's DOM representation or null
-		 * @private
-		 */
-		Form.prototype.getElementRenderedDomRef = function(oElement) {
-
-			var oLayout = this.getLayout();
-			if (oLayout && oLayout.getElementRenderedDomRef) {
-				return oLayout.getElementRenderedDomRef(oElement);
-			}else {
-				return null;
-			}
-
-		};
-
-	}());
+	};
 
 	return Form;
 

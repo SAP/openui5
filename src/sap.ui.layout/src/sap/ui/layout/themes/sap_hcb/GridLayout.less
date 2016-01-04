@@ -7,10 +7,6 @@
 	font-size: @sapUiDesktopFontSize;
 }
 
-.sapUiGrid > tbody > tr > td:first-child{
-	padding-left: 1rem;
-}
-
 .sapUiGrid > tbody > tr > td{
 	padding: 0.25rem 0 0.25rem 0.5rem;
 }
@@ -19,8 +15,27 @@
 	padding: 0 0 0 0.5rem;
 }
 
-.sapUiGrid > tbody > tr:first-child > td, /* if no title */
+.sapUiGrid > tbody > tr > td:first-child{
+	padding-left: 1rem;
+}
+
+.sapUiGrid > tbody > tr:first-child > td, /* if no form title */
 .sapUiForm[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td{
+	padding-top: 1rem;
+}
+
+/* In Cozy mode put first FormContainers with title or toolbar 0.5rem on top */
+.sapUiFormM > .sapUiGrid > tbody > tr:first-child > td.sapUiFormContainerTitle, /* if no Form title */
+.sapUiFormM > .sapUiGrid > tbody > tr:first-child > td.sapUiFormContainerToolbar, /* if no Form title */
+.sapUiFormM[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormContainerTitle,
+.sapUiFormM[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormContainerToolbar{
+	padding-top: 0.75rem;
+}
+
+.sapUiSizeCompact .sapUiFormM > .sapUiGrid > tbody > tr:first-child > td.sapUiFormContainerTitle, /* if no Form title */
+.sapUiSizeCompact .sapUiFormM > .sapUiGrid > tbody > tr:first-child > td.sapUiFormContainerToolbar, /* if no Form title */
+.sapUiSizeCompact .sapUiFormM[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormContainerTitle,
+.sapUiSizeCompact .sapUiFormM[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormContainerToolbar{
 	padding-top: 1rem;
 }
 
@@ -30,6 +45,10 @@
 
 .sapUiGrid > tbody > tr:last-child > td{
 	padding-bottom: 1rem;
+}
+
+.sapUiFormM > .sapUiGrid > tbody > tr:last-child > td{
+	padding-bottom: 0.75rem;
 }
 
 .sapUiGrid > tbody > tr > td.sapUiFormElementLbl{
@@ -61,31 +80,18 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .s
 	padding-top: 0;
 }
 
-.sapUiGrid .sapUiGridHeader{
-	padding: 0;
+.sapUiGridSpace{
+	width: 1.5rem; /* as cells after separator have padding-left of 0.5rem */
 }
 
+.sapUiGrid .sapUiGridHeader{
+	padding: 0 0 0 0.5rem;
+}
+
+/* Title */
 .sapUiGrid th > .sapUiFormTitle{
-	height: 3rem;
-	line-height: 3rem;
-	-moz-box-sizing: padding-box;
 	box-sizing: border-box;
 	padding: 0 1rem 0 1rem;
-}
-
-.sapUiGrid > tbody > tr > td > .sapUiFormTitle{
-	border: none;
-	margin-bottom: 1rem;
-	margin-top: 2rem;
-}
-
-.sapUiGrid > tbody > tr:first-child > td > .sapUiFormTitle, /* if no title */
-.sapUiForm[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td > .sapUiFormTitle{
-	margin-top: 0;
-}
-
-.sapUiGridSpace{
-	width: 2rem;
 }
 
 .sapUiGrid .sapUiFormTitle > img,
@@ -93,10 +99,30 @@ html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .s
 	margin-right: 0.25rem;
 }
 
-.sapUiGridHeader > .sapUiFormTitle > button{
-	right: 0.1875rem;
+.sapUiGridHeader > .sapUiFormTitle > .sapUiBtn{
+	bottom: 0.4375rem;
 }
 
-.sapUiGridHeader > .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite{
-	bottom: 0.125rem;
+/* Toolbar */
+.sapUiGrid.sapUiFormToolbar th{
+	height: 3rem; /* to have in compact mode and in commons always 3rem on Form header */
+	line-height: 3rem;
+	padding: 0 1rem 0 1rem;
+	box-sizing: border-box;
+}
+
+.sapUiGrid > tbody > tr > .sapUiFormContainerToolbar > div{
+	margin-bottom: 0.5rem;
+}
+
+.sapUiGrid td > .sapUiFormTitle,
+.sapUiGrid td.sapUiFormContainerToolbar > div{
+	margin-top: 2rem;
+}
+
+.sapUiGrid > tbody > tr:first-child > td > .sapUiFormTitle, /* if no Form title */
+.sapUiForm[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td > .sapUiFormTitle,
+.sapUiGrid > tbody > tr:first-child > td.sapUiFormContainerToolbar > div, /* if no Form title */
+.sapUiForm[aria-labelledby] > .sapUiGrid > tbody > tr:nth-child(2) > td.sapUiFormContainerToolbar > div{
+	margin-top: 0;
 }

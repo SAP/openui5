@@ -9,10 +9,6 @@
 	border: 1px solid @sapUiMediumBorder;
 }
 
-.sapUiFormTitle{
-	margin: 0;
-}
-
 .sapUiFormLayout > .sapUiFormContainer{
 	display: block;
 }
@@ -26,6 +22,12 @@
 	width: 100%;
 	font-weight: bold;
 	color: @sapUiTextTitle;
+	margin: 0;
+}
+
+.sapUiFormContainerTitle > .sapUiFormTitle{
+	position: relative;
+	margin-bottom: 1rem;
 }
 
 .sapUiFormTitle.sapUiFormTitleEmph{
@@ -59,4 +61,8 @@
 .sapUiFormTitleH6 {
 	font-size: @sapUiFontHeader6Size;
 	color: @sapUiTextTitle;
+}
+
+.sapUiFormTitle> img{
+	vertical-align: middle;
 }

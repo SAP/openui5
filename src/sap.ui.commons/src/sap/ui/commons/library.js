@@ -1175,11 +1175,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			createLabel: function(sText){
 				return new sap.ui.commons.Label({text: sText});
 			},
-			createButton: function(sId, fPressFunction, oThis){
+			createButton: function(sId, fPressFunction){
 				var oButton = new sap.ui.commons.Button(sId,{
 					lite: true
 					});
-				oButton.attachEvent('press', fPressFunction, oThis); // attach event this way to have the right this-reference in handler
+				oButton.attachEvent('press', fPressFunction, this); // attach event this way to have the right this-reference in handler
 				return oButton;
 			},
 			setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
@@ -1189,6 +1189,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 				oButton.setIconHovered(sIconHovered);
 			},
 			addFormClass: function(){ return null; },
+			setToolbar: function(oToolbar){ return oToolbar; },
 			bArrowKeySupport: true, /* enables the keyboard support for arrow keys */
 			bFinal: false /* to allow mobile to overwrite  */
 		};

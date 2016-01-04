@@ -3002,9 +3002,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		createLabel: function(sText){
 			return new sap.m.Label({text: sText});
 		},
-		createButton: function(sId, fPressFunction, oThis){
-			var oButton = new sap.m.Button(sId);
-			oButton.attachEvent('press', fPressFunction, oThis); // attach event this way to have the right this-reference in handler
+		createButton: function(sId, fPressFunction){
+			var oButton = new sap.m.Button(sId, {type: sap.m.ButtonType.Transparent});
+			oButton.attachEvent('press', fPressFunction, this); // attach event this way to have the right this-reference in handler
 			return oButton;
 		},
 		setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
@@ -3014,6 +3014,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			oButton.setActiveIcon(sIconHovered);
 		},
 		addFormClass: function(){ return "sapUiFormM"; },
+		setToolbar: function(oToolbar){
+			var oOldToolbar = this.getToolbar();
+			if (oOldToolbar && oOldToolbar.setDesign) {
+				// check for setDesign vecause we don't know what kind of custom toolbars might be used.
+				oOldToolbar.setDesign(oOldToolbar.getDesign(), true);
+			}
+			if (oToolbar && oToolbar.setDesign) {
+				oToolbar.setDesign(sap.m.ToolbarDesign.Transparent, true);
+			}
+			return oToolbar;
+		},
 		bArrowKeySupport: false, /* disables the keyboard support for arrow keys */
 		bFinal: true
 	});

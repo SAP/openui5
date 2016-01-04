@@ -411,8 +411,8 @@
 
 		test("Container Full-Size", function() {
 			ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
-			ok(jQuery('h3:contains("Container1")').get(0), "Title (as text) is renderd");
-			equal(jQuery('h3:contains("Container1")').parent().attr("title"), "Container tooltip", "Container tooltip is renderd");
+			ok(jQuery('h5:contains("Container1")').get(0), "Title (as text) is renderd");
+			equal(jQuery('h5:contains("Container1")').parent().attr("title"), "Container tooltip", "Container tooltip is renderd");
 		});
 
 		test("Element", function() {

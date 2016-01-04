@@ -60,6 +60,10 @@
 	var oSimpleForm2 = new sap.ui.layout.form.SimpleForm(
 			"sf2",
 			{
+				toolbar: new sap.ui.commons.Toolbar("SF2-TB", {
+					items: [new sap.ui.commons.TextView("SF2-Title", {text: "Form Title", design: sap.ui.commons.TextViewDesign.H3, tooltip: "Title tooltip"})],
+					rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+				}),
 				minWidth : 1024,
 				maxContainerCols: 2,
 				layout: sap.ui.layout.form.SimpleFormLayout.GridLayout,
@@ -131,6 +135,15 @@
 
 			oForm = oSimpleForm3.getAggregation("form");
 			equal(oForm.getTitle(), "Test", "Form3 gets Title of SimpleForm");
+		});
+
+		test("toolbar", function() {
+			var oForm = oSimpleForm.getAggregation("form");
+			ok(!oForm.getToolbar(), "Form1 has no toolbar");
+
+			oForm = oSimpleForm2.getAggregation("form");
+			ok(oForm.getToolbar(), "Form2 gets Toolbar of SimpleForm");
+			equal(oForm.getToolbar().getId(), "SF2-TB", "Form2 gets Toolbar of SimpleForm");
 		});
 
 		test("first content", function() {
@@ -258,6 +271,14 @@
 			equal(oElement.getLabel().getId(), "L-X", "new FormElement has label");
 			equal(oElement.getFields().length, 3, "new FormElemnt number of fields");
 
+			var oToolbar = new sap.ui.commons.Toolbar("SF2-TB1", {
+				items: [new sap.ui.commons.TextView("SF2-TB1-Title", {text: "Title", design: sap.ui.commons.TextViewDesign.H4})],
+				rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+			});
+			oSimpleForm2.addContent(oToolbar);
+			aContainers = oSimpleForm2.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 3, "Form32 number of FormContainers after adding Toolbar");
+
 			sap.ui.getCore().applyChanges();
 		});
 
@@ -351,6 +372,21 @@
 			oElement = oTextField.getParent();
 			equal(oElement.getParent().getId(), aContainers[4].getId(), "TextField now in container5");
 
+			var oToolbar = new sap.ui.commons.Toolbar("SF2-TB2", {
+				items: [new sap.ui.commons.TextView("SF2-TB2-Title", {text: "Title", design: sap.ui.commons.TextViewDesign.H4})],
+				rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+			});
+			oSimpleForm2.insertContent(oToolbar, 9);
+			aContainers = oSimpleForm2.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 4, "Form2: number of FormContainers after adding Toolbar");
+			equal(aContainers[2].getToolbar().getId(), "SF2-TB2", "Form2: container4 toolbar");
+			oLabel = sap.ui.getCore().byId("SF2-L2-2");
+			oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "Label now in container3");
+			oTextField = sap.ui.getCore().byId("SF2-tf2-1");
+			oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[1].getId(), "TextField still in container2");
+
 			sap.ui.getCore().applyChanges();
 		});
 
@@ -413,6 +449,16 @@
 			oSimpleForm.removeContent("TF-X-2"); // remove TextField
 			equal(oElement.getFields().length, 2, "FormElement number of fields after removing TextField");
 			ok(!oTextField.getLayoutData(), "TextField has no LayoutData");
+
+			oSimpleForm2.removeContent("SF2-TB2"); // remove Toolbar
+			aContainers = oSimpleForm2.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 3, "Form2: number of FormContainers after adding Toolbar");
+			oLabel = sap.ui.getCore().byId("SF2-L2-2");
+			oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[1].getId(), "Label now in container2");
+			oTextField = sap.ui.getCore().byId("SF2-tf2-1");
+			oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[1].getId(), "TextField still in container2");
 
 			sap.ui.getCore().applyChanges();
 		});

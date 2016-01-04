@@ -4,7 +4,7 @@
 /* ===================================================== */
 
 @sapUiFormTitleSize: ~"H4";
-@sapUiFormSubTitleSize: ~"H3";
+@sapUiFormSubTitleSize: ~"H5";
 
 .sapUiFormLayout{
 	font-size: @sapUiDesktopFontSize;
@@ -15,6 +15,26 @@
 	box-sizing: border-box;
 	font-weight: @sapUiFontHeaderWeight;
 	color: @sapHCStandardFG;
+	height: 3rem;
+	line-height: 3rem;
+}
+
+.sapUiFormContainerTitle > .sapUiFormTitle{
+	border: none;
+	box-sizing: border-box;
+	margin-bottom: 0.5rem;
+	height: 2rem;
+	line-height: 2rem;
+}
+
+.sapUiFormM .sapUiFormContainerTitle > .sapUiFormTitle{
+	height: 3rem;
+	line-height: 3rem;
+}
+
+.sapUiSizeCompact .sapUiFormContainerTitle > .sapUiFormTitle{
+	height: 2rem;
+	line-height: 2rem;
 }
 
 .sapUiFormTitle.sapUiFormTitleEmph{
@@ -44,4 +64,9 @@
 
 .sapUiFormTitleH6 {
 	font-size: @sapMFontHeader6Size;
+}
+
+/* Toolbar */
+.sapUiFormContainerToolbar > div:first-child {
+	margin-bottom: 0.5rem;
 }

@@ -5,7 +5,7 @@ sap.ui.define([
 	], function(jQuery, Controller, JSONModel) {
 	"use strict";
 
-	var PanelController = Controller.extend("sap.ui.layout.sample.FormToolbar.Panel", {
+	var PageController = Controller.extend("sap.ui.layout.sample.FormToolbar.Page", {
 
 		onInit: function (oEvent) {
 
@@ -14,10 +14,12 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 
 			this.getView().bindElement("/SupplierCollection/0");
+
 		}
+
 	});
 
 
-	return PanelController;
+	return PageController;
 
 });
