@@ -270,22 +270,6 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	}
 
 	/**
-	 * Returns the attributes of the DOM Element as map.
-	 *
-	 * @param {Element} oElement the element
-	 * @returns {object} the attributes
-	 */
-	function getAttributes(oElement) {
-		var oAttribute, oAttributeList = oElement.attributes, i, oResult = {};
-
-		for (i = 0; i < oAttributeList.length; i++) {
-			oAttribute = oAttributeList.item(i);
-			oResult[oAttribute.name] = oAttribute.value;
-		}
-		return oResult;
-	}
-
-	/**
 	 * Fetches the array at the given property. Ensures that there is at least an empty array.
 	 * @param {object} oParent the parent object
 	 * @param {string} sProperty the property name
@@ -367,8 +351,33 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			case "String":
 				return sValue;
 			default:
-				return true;
+				return undefined;
 		}
+	}
+
+	/**
+	 * Determines the value for an inline annotation in the element.
+	 *
+	 * @param {Element} oElement the element
+	 * @param {object} oAggregate
+	 *   the aggregate
+	 * @returns {any}
+	 *   the value for the JSON
+	 */
+	function getInlineAnnotationValue(oElement, oAggregate) {
+		var oAttribute,
+			oAttributeList = oElement.attributes,
+			i,
+			vValue;
+
+		for (i = 0; i < oAttributeList.length; i++) {
+			oAttribute = oAttributeList.item(i);
+			vValue = getAnnotationValue(oAttribute.name, oAttribute.value, oAggregate);
+			if (vValue !== undefined) {
+				return vValue;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -382,6 +391,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function postProcessAnnotation(oElement, aResult, oAggregate) {
 		// oAggregate.annotatable is the Annotation itself currently.
 		var oAnnotatable = oAggregate.annotatable.parent;
+
 		if (aResult.length) {
 			oAnnotatable.target[oAnnotatable.qualifiedName] = aResult[0];
 		}
@@ -397,6 +407,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function postProcessApply(oElement, aResult, oAggregate) {
 		var oResult = oAggregate.annotatable.target;
+
 		oResult.$Apply = aResult;
 		oResult.$Function =
 			MetadataConverter.resolveAlias(oElement.getAttribute("Function"), oAggregate);
@@ -413,12 +424,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function postProcessCastOrIsOf(oElement, aResult, oAggregate) {
 		var sName = oElement.localName,
-			oAttributes = getAttributes(oElement),
 			oResult = oAggregate.annotatable.target;
 
 		oResult["$" + sName] = aResult[0];
-		processTypedCollection(oAttributes.Type, oResult, oAggregate);
-		MetadataConverter.processFacetAttributes(oAttributes, oResult);
+		processTypedCollection(oElement.getAttribute("Type"), oResult, oAggregate);
+		MetadataConverter.processFacetAttributes(oElement, oResult);
 		return oResult;
 	}
 
@@ -443,23 +453,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {any} the value for the JSON
 	 */
 	function postProcessLabeledElement(oElement, aResult, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			sKey,
-			oResult = oAggregate.annotatable.target,
-			vValue = true;
+		var oResult = oAggregate.annotatable.target;
 
-		if (aResult.length) {
-			vValue = aResult[0];
-		} else {
-			for (sKey in oAttributes) {
-				if (sKey !== "Name") {
-					vValue = getAnnotationValue(sKey, oAttributes[sKey], oAggregate);
-					break;
-				}
-			}
-		}
-		oResult.$LabeledElement = vValue;
-		oResult.$Name = oAttributes.Name;
+		oResult.$LabeledElement = aResult.length ? aResult[0] :
+			getInlineAnnotationValue(oElement, oAggregate);
+		oResult.$Name = oElement.getAttribute("Name");
 		return oResult;
 	}
 
@@ -533,23 +531,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {any} the value for the JSON
 	 */
 	function postProcessPropertyValue(oElement, aResult, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			sKey,
-			vValue = true;
-
-		if (aResult.length) {
-			vValue = aResult[0];
-		} else {
-			for (sKey in oAttributes) {
-				if (sKey !== "Property") {
-					vValue = getAnnotationValue(sKey, oAttributes[sKey], oAggregate);
-					break;
-				}
-			}
-		}
 		return {
-			property: oAttributes.Property,
-			value: vValue
+			property: oElement.getAttribute("Property"),
+			value: aResult.length ? aResult[0] :
+				getInlineAnnotationValue(oElement, oAggregate)
 		};
 	}
 
@@ -608,15 +593,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processActionOrFunction(oElement, oAggregate) {
 		var sKind = oElement.localName,
-			oAttributes = getAttributes(oElement),
-			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name,
+			sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name"),
 			aActions = oAggregate.result[sQualifiedName] || [],
 			oAction = {
 				$kind: sKind,
 				$Parameter: []
 			};
 
-		processAttributes(oAttributes, oAction, {
+		processAttributes(oElement, oAction, {
 			"IsBound" : setIfTrue,
 			"EntitySetPath" : setValue,
 			"IsComposable" : setIfTrue
@@ -633,10 +617,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processAlias(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement);
+		var sAlias = oElement.getAttribute("Alias");
 
-		if (oAttributes.Alias) {
-			oAggregate.aliases[oAttributes.Alias] = oAttributes.Namespace;
+		if (sAlias) {
+			oAggregate.aliases[sAlias] = oElement.getAttribute("Namespace");
 		}
 	}
 
@@ -655,12 +639,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processAnnotations(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement);
-
 		annotatable(oAggregate,
-			MetadataConverter.resolveAliasInPath(oAttributes.Target, oAggregate),
+			MetadataConverter.resolveAliasInPath(oElement.getAttribute("Target"), oAggregate),
 			undefined, // no prefix
-			oAttributes.Qualifier);
+			oElement.getAttribute("Qualifier"));
 	}
 
 	/**
@@ -671,13 +653,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processAnnotation(oElement, oAggregate) {
 		var oAnnotatable = oAggregate.annotatable,
 			oAnnotations,
-			oAttributes = getAttributes(oElement),
-			sKey,
 			sQualifiedName = oAnnotatable.prefix + "@"
-				+ MetadataConverter.resolveAlias(oAttributes.Term, oAggregate),
+				+ MetadataConverter.resolveAlias(oElement.getAttribute("Term"), oAggregate),
 			// oAnnotatable.qualifier can only come from <Annotations>. If such a qualifier is set
 			// <Annotation> itself MUST NOT supply a qualifier. (see spec Part 3, 14.3.2)
-			sQualifier = oAnnotatable.qualifier || oAttributes.Qualifier,
+			sQualifier = oAnnotatable.qualifier || oElement.getAttribute("Qualifier"),
 			vValue = true;
 
 		if (sQualifier) {
@@ -688,12 +668,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			oAnnotations = getOrCreateObject(oAggregate.schema, "$Annotations");
 			oAnnotatable.target = oAnnotations[oAnnotatable.target] = {};
 		}
-		for (sKey in oAttributes) {
-			if (sKey !== "Term" && sKey !== "Qualifier") {
-				vValue = getAnnotationValue(sKey, oAttributes[sKey], oAggregate);
-				break;
-			}
-		}
+		vValue = getInlineAnnotationValue(oElement, oAggregate);
 
 		oAnnotatable.qualifiedName = sQualifiedName;
 		oAnnotatable.target[sQualifiedName] = vValue;
@@ -702,16 +677,17 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Copies all attributes from oAttributes to oTarget according to oConfig.
-	 * @param {object} oAttributes the attribute of an Element as returned by getAttributes
+	 * @param {Element} oElement the element
 	 * @param {object} oTarget the target object
 	 * @param {object} oConfig
 	 *   the configuration: each property describes a property of oAttributes to copy; the value is
 	 *   a conversion function, if this function returns undefined, the property is not set
 	 */
-	function processAttributes(oAttributes, oTarget, oConfig) {
+	function processAttributes(oElement, oTarget, oConfig) {
 		Object.keys(oConfig).forEach(function (sProperty) {
-			var sValue = oConfig[sProperty](oAttributes[sProperty]);
-			if (sValue !== undefined) {
+			var sValue = oConfig[sProperty](oElement.getAttribute(sProperty));
+
+			if (sValue !== undefined && sValue !== null) {
 				oTarget["$" + sProperty] = sValue;
 			}
 		});
@@ -732,7 +708,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processEdmx(oElement, oAggregate) {
-		processAttributes(getAttributes(oElement), oAggregate.result, {
+		processAttributes(oElement, oAggregate.result, {
 			"Version": setValue
 		});
 	}
@@ -744,6 +720,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processEntityContainer(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name");
+
 		oAggregate.result[sQualifiedName] = oAggregate.entityContainer = {
 			"$kind" : "EntityContainer"
 		};
@@ -757,15 +734,16 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processEntitySet(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement);
-		oAggregate.entityContainer[oAttributes.Name] = oAggregate.entitySet = {
+		var sName = oElement.getAttribute("Name");
+
+		oAggregate.entityContainer[sName] = oAggregate.entitySet = {
 			$kind : "EntitySet",
-			$Type : MetadataConverter.resolveAlias(oAttributes.EntityType, oAggregate)
+			$Type : MetadataConverter.resolveAlias(oElement.getAttribute("EntityType"), oAggregate)
 		};
-		if (oAttributes.IncludeInServiceDocument === "false") {
-			oAggregate.entitySet.$IncludeInServiceDocument = false;
-		}
-		annotatable(oAggregate, oAttributes.Name);
+		processAttributes(oElement, oAggregate.entitySet, {
+			"IncludeInServiceDocument": setIfFalse
+		});
+		annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -786,14 +764,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processEntityTypeKeyPropertyRef(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			vKey;
+		var sAlias = oElement.getAttribute("Alias"),
+			vKey,
+			sName = oElement.getAttribute("Name");
 
-		if (oAttributes.Alias) {
+		if (sAlias) {
 			vKey = {};
-			vKey[oAttributes.Alias] = oAttributes.Name;
+			vKey[sAlias] = sName;
 		} else {
-			vKey = oAttributes.Name;
+			vKey = sName;
 		}
 		oAggregate.type.$Key = oAggregate.type.$Key.concat(vKey);
 	}
@@ -804,13 +783,12 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processEnumType(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name,
+		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name"),
 			oEnumType = {
 				"$kind": "EnumType"
 			};
 
-		processAttributes(oAttributes, oEnumType, {
+		processAttributes(oElement, oEnumType, {
 			"IsFlags" : setIfTrue,
 			"UnderlyingType" : function (sValue) {
 				return sValue !== "Edm.Int32" ? sValue : undefined;
@@ -828,20 +806,21 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processEnumTypeMember(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			vValue = oAttributes.Value;
+		var sName = oElement.getAttribute("Name"),
+			sValue = oElement.getAttribute("Value"),
+			vValue;
 
-		if (vValue) {
-			vValue = parseInt(vValue, 10);
+		if (sValue) {
+			vValue = parseInt(sValue, 10);
 			if (!Helper.isSafeInteger(vValue)) {
-				vValue = oAttributes.Value;
+				vValue = sValue;
 			}
 		} else {
 			vValue = oAggregate.enumTypeMemberCounter;
 			oAggregate.enumTypeMemberCounter++;
 		}
-		oAggregate.enumType[oAttributes.Name] = vValue;
-		annotatable(oAggregate, oAttributes.Name);
+		oAggregate.enumType[sName] = vValue;
+		annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -851,20 +830,20 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processImport(sWhat, oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			oImport = {
+		var oImport = {
 				$kind: sWhat + "Import"
 			};
 
-		oImport["$" + sWhat] = MetadataConverter.resolveAlias(oAttributes[sWhat], oAggregate);
-		processAttributes(oAttributes, oImport, {
+		oImport["$" + sWhat]
+			= MetadataConverter.resolveAlias(oElement.getAttribute(sWhat), oAggregate);
+		processAttributes(oElement, oImport, {
 			"EntitySet" : function (sValue) {
 				return resolveTargetPath(sValue, oAggregate);
 			},
 			"IncludeInServiceDocument" : setIfFalse
 		});
 
-		oAggregate.entityContainer[oAttributes.Name] = oImport;
+		oAggregate.entityContainer[oElement.getAttribute("Name")] = oImport;
 		annotatable(oAggregate, oImport);
 	}
 
@@ -875,6 +854,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processInclude(oElement, oAggregate) {
 		var oInclude = getOrCreateArray(oAggregate.reference, "$Include");
+
 		oInclude.push(oElement.getAttribute("Namespace"));
 	}
 
@@ -884,14 +864,13 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processIncludeAnnotations(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			oReference = oAggregate.reference,
+		var oReference = oAggregate.reference,
 			oIncludeAnnotation = {
-				"$TermNamespace" : oAttributes.TermNamespace
+				"$TermNamespace" : oElement.getAttribute("TermNamespace")
 			},
 			aIncludeAnnotations = getOrCreateArray(oReference, "$IncludeAnnotations");
 
-		processAttributes(oAttributes, oIncludeAnnotation, {
+		processAttributes(oElement, oIncludeAnnotation, {
 			"TargetNamespace" : setValue,
 			"Qualifier" : setValue
 		});
@@ -905,12 +884,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processNavigationPropertyBinding(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			oNavigationPropertyBinding =
+		var oNavigationPropertyBinding =
 				getOrCreateObject(oAggregate.entitySet, "$NavigationPropertyBinding");
 
-		oNavigationPropertyBinding[oAttributes.Path]
-			= resolveTargetPath(oAttributes.Target, oAggregate);
+		oNavigationPropertyBinding[oElement.getAttribute("Path")]
+			= resolveTargetPath(oElement.getAttribute("Target"), oAggregate);
 	}
 
 	/**
@@ -919,16 +897,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processParameter(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			oActionOrFunction = oAggregate.actionOrFunction,
+		var oActionOrFunction = oAggregate.actionOrFunction,
 			oParameter = {};
 
-		processTypedCollection(oAttributes.Type, oParameter, oAggregate);
-		processAttributes(oAttributes, oParameter, {
+		processTypedCollection(oElement.getAttribute("Type"), oParameter, oAggregate);
+		processAttributes(oElement, oParameter, {
 			"Name" : setValue,
 			"Nullable" : setIfFalse
 		});
-		MetadataConverter.processFacetAttributes(oAttributes, oParameter);
+		MetadataConverter.processFacetAttributes(oElement, oParameter);
 
 		oActionOrFunction.$Parameter.push(oParameter);
 		annotatable(oAggregate, oParameter);
@@ -961,15 +938,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processReturnType(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			oActionOrFunction = oAggregate.actionOrFunction,
+		var oActionOrFunction = oAggregate.actionOrFunction,
 			oReturnType = {};
 
-		processTypedCollection(oAttributes.Type, oReturnType, oAggregate);
-		processAttributes(oAttributes, oReturnType, {
+		processTypedCollection(oElement.getAttribute("Type"), oReturnType, oAggregate);
+		processAttributes(oElement, oReturnType, {
 			"Nullable" : setIfFalse
 		});
-		MetadataConverter.processFacetAttributes(oAttributes, oReturnType);
+		MetadataConverter.processFacetAttributes(oElement, oReturnType);
 
 		oActionOrFunction.$ReturnType = oReturnType;
 		annotatable(oAggregate, oReturnType);
@@ -994,12 +970,13 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processSingleton(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement);
-		oAggregate.entityContainer[oAttributes.Name] = oAggregate.entitySet = {
+		var sName = oElement.getAttribute("Name");
+
+		oAggregate.entityContainer[sName] = oAggregate.entitySet = {
 			$kind : "Singleton",
-			$Type : MetadataConverter.resolveAlias(oAttributes.Type, oAggregate)
+			$Type : MetadataConverter.resolveAlias(oElement.getAttribute("Type"), oAggregate)
 		};
-		annotatable(oAggregate, oAttributes.Name);
+		annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -1008,20 +985,19 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processTerm(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name,
+		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name"),
 			oTerm = {
 				$kind: "Term"
 			};
 
-		processTypedCollection(oAttributes.Type, oTerm, oAggregate);
-		processAttributes(oAttributes, oTerm, {
+		processTypedCollection(oElement.getAttribute("Type"), oTerm, oAggregate);
+		processAttributes(oElement, oTerm, {
 			"Nullable" : setIfFalse,
 			"BaseTerm" : function (sValue) {
 				return sValue ? MetadataConverter.resolveAlias(sValue, oAggregate) : undefined;
 			}
 		});
-		MetadataConverter.processFacetAttributes(oAttributes, oTerm);
+		MetadataConverter.processFacetAttributes(oElement, oTerm);
 
 		oAggregate.result[sQualifiedName] = oTerm;
 		annotatable(oAggregate, sQualifiedName);
@@ -1034,10 +1010,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oType the initial typed result object
 	 */
 	function processType(oElement, oAggregate, oType) {
-		var oAttributes = getAttributes(oElement),
-			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name;
+		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name");
 
-		processAttributes(oAttributes, oType, {
+		processAttributes(oElement, oType, {
 			"OpenType" : setIfTrue,
 			"HasStream" : setIfTrue,
 			"Abstract" : setIfTrue,
@@ -1071,15 +1046,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processTypeDefinition(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
-			sQualifiedName = oAggregate.namespace + "." + oAttributes.Name,
+		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name"),
 			oTypeDefinition = {
 				"$kind" : "TypeDefinition",
-				"$UnderlyingType" : oAttributes.UnderlyingType
+				"$UnderlyingType" : oElement.getAttribute("UnderlyingType")
 			};
 
 		oAggregate.result[sQualifiedName] = oTypeDefinition;
-		MetadataConverter.processFacetAttributes(oAttributes, oTypeDefinition);
+		MetadataConverter.processFacetAttributes(oElement, oTypeDefinition);
 		annotatable(oAggregate, sQualifiedName);
 	}
 
@@ -1089,20 +1063,20 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processTypeNavigationProperty(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
+		var sName = oElement.getAttribute("Name"),
 			oProperty = {
 				$kind : "NavigationProperty"
 			};
 
-		processTypedCollection(oAttributes.Type, oProperty, oAggregate);
-		processAttributes(oAttributes, oProperty, {
+		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate);
+		processAttributes(oElement, oProperty, {
 			"Nullable" : setIfFalse,
 			"Partner" : setValue,
 			"ContainsTarget" : setIfTrue
 		});
 
-		oAggregate.type[oAttributes.Name] = oAggregate.navigationProperty = oProperty;
-		annotatable(oAggregate, oAttributes.Name);
+		oAggregate.type[sName] = oAggregate.navigationProperty = oProperty;
+		annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -1121,12 +1095,12 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processTypeNavigationPropertyReferentialConstraint(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
+		var sProperty = oElement.getAttribute("Property"),
 			oReferentialConstraint =
 				getOrCreateObject(oAggregate.navigationProperty, "$ReferentialConstraint");
 
-		oReferentialConstraint[oAttributes.Property] = oAttributes.ReferencedProperty;
-		annotatable(oAggregate, oReferentialConstraint, oAttributes.Property);
+		oReferentialConstraint[sProperty] = oElement.getAttribute("ReferencedProperty");
+		annotatable(oAggregate, oReferentialConstraint, sProperty);
 	}
 
 	/**
@@ -1135,20 +1109,20 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processTypeProperty(oElement, oAggregate) {
-		var oAttributes = getAttributes(oElement),
+		var sName = oElement.getAttribute("Name"),
 			oProperty = {
 				"$kind" : "Property"
 			};
 
-		processTypedCollection(oAttributes.Type, oProperty, oAggregate);
-		processAttributes(oAttributes, oProperty, {
+		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate);
+		processAttributes(oElement, oProperty, {
 			"Nullable" : setIfFalse,
 			"DefaultValue" : setValue
 		});
-		MetadataConverter.processFacetAttributes(oAttributes, oProperty);
+		MetadataConverter.processFacetAttributes(oElement, oProperty);
 
-		oAggregate.type[oAttributes.Name] = oProperty;
-		annotatable(oAggregate, oAttributes.Name);
+		oAggregate.type[sName] = oProperty;
+		annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -1255,11 +1229,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		/**
 		 * Processes the TFacetAttributes and TPropertyFacetAttributes of the elements Property,
 		 * TypeDefinition etc.
-		 * @param {object} oAttributes the element attributes
+		 * @param {Element} oElement the element
 		 * @param {object} oResult the result object to fill
 		 */
-		processFacetAttributes : function (oAttributes, oResult) {
-			processAttributes(oAttributes, oResult, {
+		processFacetAttributes : function (oElement, oResult) {
+			processAttributes(oElement, oResult, {
 				"MaxLength" : setNumber,
 				"Precision" : setNumber,
 				"Scale" : function (sValue) {

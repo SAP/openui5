@@ -501,15 +501,14 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("processFacetAttributes", function (assert) {
 		function test(sProperty, sValue, vExpectedValue) {
-			var oAttributes = {},
+			var oXml = xml(assert, '<Foo ' + sProperty + '="' + sValue + '"/>'),
 				oResult = {},
 				oExpectedResult = {};
 
-			oAttributes[sProperty] = sValue;
 			if (vExpectedValue !== undefined) {
 				oExpectedResult["$" + sProperty] = vExpectedValue;
 			}
-			MetadataConverter.processFacetAttributes(oAttributes, oResult);
+			MetadataConverter.processFacetAttributes(oXml.documentElement, oResult);
 			assert.deepEqual(oResult, oExpectedResult);
 		}
 
@@ -688,13 +687,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: TypeDefinition", function (assert) {
 		this.mock(MetadataConverter).expects("processFacetAttributes")
-			.withExactArgs({
-				Name: "Bar",
-				UnderlyingType: "Edm.String"
-			}, {
-				$kind: "TypeDefinition",
-				$UnderlyingType: "Edm.String"
-			});
+			.withExactArgs(
+				sinon.match.has("localName", "TypeDefinition"),
+				{
+					$kind: "TypeDefinition",
+					$UnderlyingType: "Edm.String"
+				});
 		testConversion(assert, '\
 				<DataServices>\
 					<Schema Namespace="foo">\
