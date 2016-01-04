@@ -38,8 +38,8 @@ sap.ui.define([
 
 		handleTitleSelectorPress: function (oEvent) {
 			var _oPopover = this._getResponsivePopover();
-			_oPopover.openBy(oEvent.getParameter("domRef"));
 			_oPopover.setModel(oEvent.getSource().getModel());
+			_oPopover.openBy(oEvent.getParameter("domRef"));
 		}
 
 	});
