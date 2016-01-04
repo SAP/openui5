@@ -25,10 +25,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			oRm.addClass("sapMInputVH"); // just reuse styling of value help icon
 		}
 
-		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
-			oRm.addClass("sapMInputIE9");
-		}
-
 	};
 
 	/**
