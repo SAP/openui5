@@ -423,7 +423,7 @@
 		oBar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		this.clock.tick();
+		this.clock.tick(1000);
 
 		var elementWidth = oSegmentedButton.$().width();
 		var expectedButtonOuterWidth = Math.floor((elementWidth / 2));
