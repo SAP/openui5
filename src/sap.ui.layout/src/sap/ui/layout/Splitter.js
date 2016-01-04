@@ -381,7 +381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		var mCalcSizes = this.getCalculatedSizes();
 		var iBarSize = this._bHorizontal ?  $Bar.innerWidth() : $Bar.innerHeight();
 
-		var aContentAreas = this.getContentAreas();
+		var aContentAreas = this._getContentAreas();
 		var oLd1   = aContentAreas[iBar].getLayoutData();
 		var oLd2   = aContentAreas[iBar + 1].getLayoutData();
 
@@ -529,7 +529,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			return;
 		}
 
-		var aContentAreas = this.getContentAreas();
+		var aContentAreas = this._getContentAreas();
 		var oLd1   = aContentAreas[iLeftContent].getLayoutData();
 		var oLd2   = aContentAreas[iLeftContent + 1].getLayoutData();
 
@@ -648,7 +648,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 
 		var i = 0, $Bar;
-		var aContentAreas = this.getContentAreas();
+		var aContentAreas = this._getContentAreas();
 
 		// Resize Splitter bars so that they do not influence the content sizes the wrong way
 		this._resizeBars(aContentAreas);
@@ -762,7 +762,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 		// Read all content sizes from the layout data
 		var aSizes = [];
-		var aContentAreas = this.getContentAreas();
+		var aContentAreas = this._getContentAreas();
 		for (i = 0; i < aContentAreas.length; ++i) {
 			oLayoutData = aContentAreas[i].getLayoutData();
 			sSize = oLayoutData ? oLayoutData.getSize() : "auto";
@@ -1169,6 +1169,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this._needsInvalidation = true;
 		_ensureLayoutData(oContent);
 		return this.insertAggregation("contentAreas", oContent, iIndex);
+	};
+
+	Splitter.prototype._getContentAreas = function() {
+		return this.getContentAreas();
 	};
 
 	    ///////////////////////////////////// Association "xxx" ////////////////////////////////////
