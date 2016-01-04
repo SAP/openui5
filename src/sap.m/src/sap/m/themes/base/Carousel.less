@@ -13,11 +13,6 @@
 	-ms-touch-action: pan-y;
 }
 
-//show the left and right arrows when the carousel is focused
-.sapMCrsl:focus .sapMCrslHud a {
-	opacity: 0.3;
-}
-
 .sapMCrsl.sapMCrslLeft {
 	text-align: left;
 }
@@ -31,7 +26,7 @@
 }
 
 .sapMCrsl.sapMCrslFluid.sapMCrslCenter>.sapMCrslInner>*:first-child {
-	margin-left: 0;
+	margin-left: 0%;
 }
 
 .sapMCrslInner {
@@ -103,9 +98,6 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 
 .sapMCrslFluid>.sapMCrslInner>* {
 	box-sizing: border-box;
-	-ms-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 }
 
 .sapMCrslItemTable,
@@ -116,3 +108,14 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMCrsl", ~"> .sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll");
+
+
+
+/* Styles needed for keyboard handling
+   ========================================================================== */
+.sapMCrslItem {
+  visibility: hidden;
+}
+.sapMCrslActive {
+  visibility: visible;
+}

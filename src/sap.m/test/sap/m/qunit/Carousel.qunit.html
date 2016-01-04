@@ -21,6 +21,11 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
+<!-- use the sinon faketimers for this test -->
+<script type="text/javascript">
+	sinon.config.useFakeTimers = true;
+</script>
+
 <script>
 module("Properties");
 
@@ -660,39 +665,6 @@ test("END", function() {
        sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.END); // trigger End on carousel, should go to last page
 
        this.clock.tick(500);
-
-       // Assert
-       equal(oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
-
-       // Cleanup
-       oCarousel.destroy();
-});
-
-test("ESCAPE", function() {
-       // Arrange
-       var oCarousel = new sap.m.Carousel({
-              pages : [
-                     new sap.m.Page("keyTestPage1"),
-                     new sap.m.Page("keyTestPage2"),
-                     new sap.m.Page("keyTestPage3")
-              ],
-              activePage : "keyTestPage2"
-       });
-
-       // System under Test
-       oCarousel.placeAt("qunit-fixture");
-       sap.ui.getCore().applyChanges();
-
-       oCarousel.$().focus();
-
-       // go to next page
-       oCarousel.next();
-
-       this.clock.tick(500);
-
-       sap.ui.test.qunit.triggerKeydown(oCarousel.$(), jQuery.sap.KeyCodes.ESCAPE); // trigger Escape, should return to the default active page - 2
-
-       this.clock.tick(700);
 
        // Assert
        equal(oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage2");
