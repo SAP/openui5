@@ -18,7 +18,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		TimePickerRenderer.CSS_CLASS = "sapMTimePicker";
 
 		var INPUT_WITH_VALUE_HELP_CLASS = "sapMInputVH",
-			INPUT_IE9_CLASS = "sapMInputIE9",
 			VALUE_HELP_ICON_INNER_CLASS = "sapMInputValHelpInner",
 			VALUE_HELP_ICON_CLASS = "sapMInputValHelp";
 
@@ -32,10 +31,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		TimePickerRenderer.addOuterClasses = function(oRm, oControl) {
 			oRm.addClass(TimePickerRenderer.CSS_CLASS);
 			oRm.addClass(INPUT_WITH_VALUE_HELP_CLASS); // just reuse styling of value help icon
-
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
-				oRm.addClass(INPUT_IE9_CLASS);
-			}
 		};
 
 		/**

@@ -28,10 +28,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			if (oControl.getValueHelpOnly()) {
 				oRm.addClass("sapMInputVHO");
 			}
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
-				// IE9 and IE10 ignore padding-right in <input>
-				oRm.addClass("sapMInputIE9");
-			}
 		}
 		if (oControl.getDescription()) {
 				oRm.addClass("sapMInputDescription");
