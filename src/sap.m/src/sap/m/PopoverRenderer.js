@@ -123,6 +123,8 @@ sap.ui.define(['jquery.sap.global'],
 				rm.addStyle("width", sContentWidth);
 			}
 
+			rm.addStyle("min-width", oControl.getContentMinWidth());
+
 			if (sContentHeight) {
 				rm.addStyle("height", sContentHeight);
 			}
