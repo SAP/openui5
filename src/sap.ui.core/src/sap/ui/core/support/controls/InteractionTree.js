@@ -7,31 +7,68 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
        'use strict';
 
        var InteractionTree = ManagedObject.extend("sap.ui.core.support.controls.InteractionTree", {
-
+          constructor: function () {
+             this.start = 0;
+             this.end = 1;
+          }
        });
 
        InteractionTree.expandIcon = 'sap-icon://navigation-right-arrow';
        InteractionTree.collapseIcon = 'sap-icon://navigation-down-arrow';
 
-       InteractionTree.prototype.setInteractions = function (interactions, startTime, endTime) {
+       InteractionTree.prototype.setInteractions = function (interactions) {
 
           this.interactions = interactions;
 
-          this.startTime = startTime;
-          this.endTime = endTime;
+          this.updateRanges();
+       };
 
+       InteractionTree.prototype.setRange = function (start, end) {
+          this.start = start;
+          this.end = end;
+
+          this.updateRanges();
+
+          this.update();
+       };
+
+       InteractionTree.prototype.updateRanges = function () {
+
+          var interactions = this.interactions;
           if (!interactions || !interactions.length) {
              return;
           }
 
-          this.actualStartTime = interactions[0].start;
-          this.actualEndTime = interactions[interactions.length - 1].end;
+          this.startTime = interactions[0].start;
+          this.endTime = interactions[interactions.length - 1].end;
+
+          var range = this.endTime - this.startTime;
+
+          this.actualStartTime = this.startTime + this.start * range;
+          this.actualEndTime = this.startTime + this.end * range;
 
           this.timeRange = this.actualEndTime - this.actualStartTime;
        };
 
-       InteractionTree.prototype.setRange = function (start, end) {
+       InteractionTree.prototype.update = function () {
+          if (!this.parent) {
+             return;
+          }
 
+          jQuery(this.parent).find('#' + this.getId()).remove();
+
+          this.renderAt(this.parent);
+       };
+
+       InteractionTree.prototype.renderAt = function (parent) {
+          this.parent = parent;
+
+          var rm = sap.ui.getCore().createRenderManager();
+          this.render(rm);
+          rm.flush(parent);
+          rm.destroy();
+
+          this.attachEvents();
        };
 
        InteractionTree.prototype.render = function (rm) {
@@ -60,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           for (var i = 0; i < interactions.length; i++) {
              interaction = interactions[i];
 
-             this.renderInteraction(rm, interaction);
+             this.renderInteraction(rm, interaction, i);
           }
 
           rm.write("</ul>");
@@ -106,6 +143,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           }
 
           gridContainer.empty();
+
+          gridContainer.append('<div style="left:' + (this.getPosition(width, range, 0) + 2) + 'px" class="sapUiInteractionGridLineIntervalText">' + this.formatDuration(0) + '</div>');
 
           var interval = this.calculateInterval(width, range);
 
@@ -161,7 +200,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           var iconHTML = this.getIconHTML(!expanded);
           $parent.append(iconHTML);
 
-          var $container = $parent.parent().parent().find('ul');
+          var $li = $parent.parent().parent();
+
+          var index = parseInt($li.attr('interaction'), 10);
+          this.interactions[index].isExpanded = !expanded;
+
+          var $container = $li.find('ul');
 
           var func = expanded ? 'slideUp' : 'slideDown';
 
@@ -213,11 +257,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write("</li>");
        };
 
-       InteractionTree.prototype.renderInteraction = function (rm, interaction) {
+       InteractionTree.prototype.renderInteraction = function (rm, interaction, index) {
           var request,
               requests = interaction.requests;
 
-          rm.write('<li>');
+          if (this.actualStartTime > interaction.end || this.actualEndTime < interaction.start) {
+             return;
+          }
+
+          rm.write('<li interaction="' + index + '">');
 
           this.renderInteractionDiv(rm, interaction);
 
@@ -225,7 +273,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.addClass("sapUiInteractionItem");
 
-          // rm.addClass("sapUiHiddenUiInteractionItems");
+          if (!interaction.isExpanded) {
+             rm.addClass("sapUiHiddenUiInteractionItems");
+          }
 
           rm.writeClasses();
           rm.write(">");
@@ -268,7 +318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write("</div>");
 
-          this.renderIcon(rm, true);
+          this.renderIcon(rm, interaction.isExpanded);
 
           rm.write('</div>'); // sapUiInteractionTreeItemLeft
 
@@ -278,8 +328,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write('<div class="sapUiInteractionTreeItemRight" title="' + title + '" >');
 
-          var left = 100 / this.timeRange * (interaction.start - this.actualStartTime);
-          var right = 100 / this.timeRange * (interaction.end - this.actualStartTime);
+          var start = Math.max(interaction.start, this.actualStartTime);
+          var end = Math.min(interaction.end, this.actualEndTime);
+
+          var left = 100 / this.timeRange * (start - this.actualStartTime);
+          var right = 100 / this.timeRange * (end - this.actualStartTime);
           var width = right - left;
 
           rm.write('<span style="margin-left: ' + left + '%; width: ' + width + '%" class="sapUiInteractionTimeframe sapUiInteractionTimeInteractionFrame"></span>');
@@ -289,6 +342,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
        };
 
        InteractionTree.prototype.renderRequest = function (rm, interaction, request) {
+
+          var start = request.fetchStartOffset + request.startTime;
+          var end = request.fetchStartOffset + request.startTime + request.duration;
+
+          if (this.actualStartTime > end || this.actualEndTime < start) {
+             return;
+          }
+
           rm.write('<li');
 
           rm.addClass("sapUiInteractionTreeItem");
@@ -332,8 +393,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write('<div class="sapUiInteractionTreeItemRight" title="' + title + '" >');
 
-          var left = 100 / this.timeRange * (request.fetchStartOffset + request.startTime - this.actualStartTime);
-          var right = 100 / this.timeRange * (request.fetchStartOffset + request.startTime + request.duration - this.actualStartTime);
+          var start = Math.max(start, this.actualStartTime);
+          var end = Math.min(end, this.actualEndTime);
+
+          var left = 100 / this.timeRange * (start - this.actualStartTime);
+          var right = 100 / this.timeRange * (end - this.actualStartTime);
           var width = right - left;
 
           rm.write('<span style="margin-left: ' + left + '%; width: ' + width + '%" class="sapUiInteractionTimeframe sapUiInteractionTimeRequestFrame"></span>');
@@ -348,7 +412,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
        };
 
        InteractionTree.prototype.formatDuration = function (duration) {
-          return duration > 500 ? (duration / 1000).toFixed(2) + 's' : duration + 'ms';
+
+          var offset = this.actualStartTime - this.startTime;
+          duration += offset;
+
+          return duration > 100 ? (duration / 1000).toFixed(2) + 's' : duration.toFixed(0) + 'ms';
        };
 
        InteractionTree.prototype.formatTime = function (now) {

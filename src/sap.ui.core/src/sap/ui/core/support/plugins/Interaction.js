@@ -149,16 +149,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 				that._oInteractionTree.setRange(arg1, arg2);
 			});
 
-
-			// render interaction tree
-			var oStatsDiv = this.$().find('.sapUiPerformanceStatsDiv .sapUiPerformanceBottom').get(0);
-			rm = sap.ui.getCore().createRenderManager();
-			this._oInteractionTree.render(rm);
-			rm.flush(oStatsDiv);
-			rm.destroy();
-			this._oInteractionTree.attachEvents();
-
-
 			this.$("refresh").click(jQuery.proxy(function(oEvent) {
 				this._oStub.sendEvent(this.getId() + "Refresh");
 			}, this));
@@ -255,13 +245,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			this._oInteractionSlider._initSlider();
 			//
 			var oStatsDiv = this.$().find('.sapUiPerformanceStatsDiv .sapUiPerformanceBottom').get(0);
-			rm = sap.ui.getCore().createRenderManager();
 			this._oInteractionTree.setInteractions(aMeasurements);
-			this._oInteractionTree.render(rm);
-			rm.flush(oStatsDiv);
-			rm.destroy();
-			this._oInteractionTree.attachEvents();
-
+			this._oInteractionTree.renderAt(oStatsDiv);
 		};
 
 		/**
