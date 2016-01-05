@@ -43,6 +43,10 @@
 	position: absolute;
 	right: 0;
 	top: 0;
+	-webkit-padding-start: 0;
+	list-style: none;
+	margin: 2px;
+	padding: 0;
 }
 
 #sapUiInteractionTimelineOverview .InteractionTimeline ol {
