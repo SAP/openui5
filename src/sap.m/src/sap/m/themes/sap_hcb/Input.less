@@ -68,53 +68,6 @@ html[data-sap-ui-browser='ie9'] .sapMInputValHelp { /* IE9 ignores padding-right
 	outline:					none;
 }
 
-/* value help icon in IE9 */
-.sapMInputIE9.sapMInput {
-	padding-right: 2.25rem;
-}
-.sapMInputIE9.sapMInput > .sapMInputBaseInner { /* only in sapMInput and not in .sapMDP */
-	padding-right: 0;
-	border-right: 0;
-}
-
-.sapMInputIE9 .sapMInputValHelp {
-	color: @sapHCStandardFG;
-	background-color:	@sapHCStandardBG;
-	border:	0.0625rem solid @sapHCStandardFG;
-	border-left: none;
-	margin: 0;
-	line-height: normal;
-	height: 2.5rem;
-	width: 2.4375rem;
-	top: 0.25rem;
-	right: 0;
-}
-
-.sapMInputIE9.sapMInputDescription.sapMInputVH > span > .sapMInputValHelp{
-	left: -2.375rem;
-	top: 0;
-}
-
-.sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):focus  + .sapMInputValHelp,
-.sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):hover  + .sapMInputValHelp,
-.sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):focus  + span > .sapMInputValHelp,
-.sapMInputIE9 > .sapMInputBaseInner:not(.sapMInputBaseStateInner):hover  + span > .sapMInputValHelp{
-	border-color: @sapHCStandardFG;
-}
-
-.sapMInputIE9.sapMInputBaseState .sapMInputValHelp {
-	border:				   0.0625rem dashed @sapHCStandardFG;
-	border-left:		   none;
-}
-
-.sapMInputIE9 .sapMInputValHelp > .sapMInputValHelpInner {
-	width: 2.3125rem;
-}
-
-.sapMInputIE9.sapMInputBaseError .sapMInputValHelpInner {
-	background-color: @sapHCHighlightBG;
-}
-
 /* suggestion popup */
 div.sapMInputSuggestionPopup {
 	border: none;
@@ -173,28 +126,6 @@ div.sapMInputSuggestionPopup {
 
 	.sapMInputDescription.sapMInputVH > span > .sapMInputValHelp > .sapMInputValHelpInner{
 		vertical-align: top;
-	}
-
-	.sapMInputIE9.sapMInput {
-		padding-right: 1.4rem;
-	}
-
-	.sapMInputIE9 .sapMInputValHelp {
-		height: 1.625rem;
-		width: 1.5625rem;
-		top: 0.1875rem;
-	}
-
-	.sapMInputIE9 .sapMInputValHelpInner {
-		width: 1.465rem;
-	}
-
-	.sapMInputIE9.sapMInputDescription.sapMInputVH > span > .sapMInputValHelp{
-		left: -1.5rem;
-	}
-
-	.sapMInputIE9.sapMInputDescription.sapMInputVH > span > .sapMInputValHelp > .sapMInputValHelpInner {
-		width: 1.4025em;
 	}
 
 	.sapMInputDescription > span {
