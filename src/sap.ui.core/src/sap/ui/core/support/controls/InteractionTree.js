@@ -361,10 +361,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write('<div class="sapUiInteractionTreeItemLeft sapUiInteractionRequestLeft">');
 
-          rm.write('<span class="sapUiInteractionRequestIcon"></span>');
+          var requestType = request.initiatorType || request.entryType;
+
+          var colorClass;
+
+          switch (requestType) {
+             case 'OData':
+                colorClass = 'sapUiRed';
+                  break;
+             case 'xmlhttprequest':
+                colorClass = 'sapUiPurple';
+                break;
+             default:
+                colorClass = 'sapUiBlue';
+                  break;
+          }
+
+          rm.write('<span class="sapUiInteractionRequestIcon ' + colorClass + '"></span>');
 
           rm.write('<span class="sapUiInteractionItemEntryType">');
-          rm.writeEscaped(request.initiatorType || request.entryType);
+          rm.writeEscaped(requestType);
           rm.write('</span>');
 
           rm.write('</div>');
@@ -400,7 +416,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           var right = 100 / this.timeRange * (end - this.actualStartTime);
           var width = right - left;
 
-          rm.write('<span style="margin-left: ' + left + '%; width: ' + width + '%" class="sapUiInteractionTimeframe sapUiInteractionTimeRequestFrame"></span>');
+          rm.write('<span style="margin-left: ' + left + '%; width: ' + width + '%" class="sapUiInteractionTimeframe sapUiInteractionTimeRequestFrame ' + colorClass + '"></span>');
 
           rm.write('</div>');
 

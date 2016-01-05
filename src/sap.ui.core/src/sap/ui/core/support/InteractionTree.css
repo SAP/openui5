@@ -29,10 +29,10 @@
 }
 
 .sapUiInteractionTreeItemLeft {
-	width: 20rem;
+	width: 320px;
 	box-sizing: border-box;
-	border-right: 1px solid #DDDDDD;
-	background-color: #FAFAFA;
+	border-right: 1px solid #e5e5e5;
+	background-color: #fafafa;
 }
 
 .sapUiInteractionTreeItemLeft div {
@@ -46,15 +46,17 @@
 	flex-grow: 1;
 
 	box-sizing: border-box;
-	border-right: 1px solid #DDDDDD;
+	border-right: 1px solid #e5e5e5;
 }
 
 .sapUiInteractionItemComponentText {
-	font-weight: bold;
+	color: #000;
+	font-size: 12px;
 }
 
 .sapUiInteractionItemTriggerText {
-
+	color: #666;
+	font-size: 11px;
 }
 
 .sapUiHiddenUiInteractionItems {
@@ -64,6 +66,7 @@
 .sapUiIcon.sapUiInteractionTreeIcon {
 	cursor: pointer;
 	display: inline-block;
+	color: #666;
 	float: right;
 	padding: 0.6125rem;
 	height: 1rem;
@@ -71,7 +74,7 @@
 }
 
 .sapUiInteractionItemDiv {
-	border-bottom: 1px solid #DDDDDD;
+	border-top: 1px solid #bfbfbf;
 }
 
 .sapUiInteractionRequestLeft {
@@ -79,7 +82,7 @@
 }
 
 .sapUiInteractionTimeframe {
-	background-color: blue;
+	background-color: #007cc0;
 	display: inline-block;
 	min-width: 1px;
 }
@@ -90,7 +93,6 @@
 }
 
 .sapUiInteractionTimeframe.sapUiInteractionTimeRequestFrame {
-	background-color: red;
 	margin-top: 0.2rem;
 	height: 0.8rem;
 }
@@ -98,14 +100,25 @@
 .sapUiInteractionRequestIcon {
 	margin: 0.125rem;
 	display: inline-block;
-	background-color: red;
 	width: 0.5rem;
 	height: 0.5rem;
 	border-radius: 100%;
 }
 
+.sapUiBlue {
+	background-color: #007cc0;
+}
+
+.sapUiPurple {
+	background-color: #ab218e;
+}
+
+.sapUiRed {
+	background-color: #e52929;
+}
+
 .sapUiInteractionRequest {
-	border-bottom: 1px solid #DDDDDD;
+
 }
 
 .sapUiInteractionHeader {
@@ -122,7 +135,7 @@
 }
 
 .sapUiInteractionGridLine {
-	background-color: #DDDDDD;
+	background-color: #f2f2f2;
 	position: absolute;
 	width: 1px;
 	height: 100%;
@@ -131,5 +144,5 @@
 .sapUiInteractionGridLineIntervalText {
 	position: absolute;
 	top: 0.5rem;
-	color: #848484;
+	color: #666;
 }
