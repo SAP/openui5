@@ -93,14 +93,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 
 			var rm = sap.ui.getCore().createRenderManager();
 			rm.write("<div class=\"sapUiSupportToolbar\">");
-			rm.write("<button id=\"" + this.getId() + "-refresh\" class=\"sapUiSupportBtn\">Refresh</button>");
-			rm.write("<button id=\"" + this.getId() + "-clear\" class=\"sapUiSupportBtn\">Clear</button>");
+			/*rm.write("<button id=\"" + this.getId() + "-refresh\" class=\"sapUiSupportBtn\">Refresh</button>");*/
 	//		rm.write("<button id=\"" + this.getId() + "-start\" class=\"sapUiSupportBtn\">Start</button>");
 	//		rm.write("<button id=\"" + this.getId() + "-end\" class=\"sapUiSupportBtn\">End</button>");
-			rm.write("<input type=\"checkbox\" id=\"" + this.getId() + "-active\" class=\"sapUiSupportChB\">");
-			rm.write("<label for=\"" + this.getId() + "-active\" class=\"sapUiSupportLabel\">Active</label>");
-			rm.write("<button id=\"" + this.getId() + "-export\" class=\"sapUiSupportBtn\">Export</button>");
-			rm.write("<button id=\"" + this.getId() + "-import\" class=\"sapUiSupportBtn\">Import</button>");
+			/*rm.write("<input type=\"checkbox\" id=\"" + this.getId() + "-active\" class=\"sapUiSupportChB\">");*/
+			//rm.write("<button id=\"sapUiSupportIntToggleRecordingBtn-test\"></button>");
+			rm.write("<button id=\"" + this.getId() + "-record\" class=\"sapUiSupportIntToggleRecordingBtn\"></button>");
+			rm.write("<span id=\"" + this.getId() + "-info\" class=\"sapUiSupportIntRecordingInfo\"></span>");
+			/*rm.write("<label for=\"" + this.getId() + "-active\" class=\"sapUiSupportLabel\">Active</label>");*/
+			/*rm.write("<button id=\"" + this.getId() + "-clear\" class=\"sapUiSupportBtn sapUiSupportIntClearBtn\">Clear</button>");*/
+			rm.write("<button id=\"" + this.getId() + "-export\" class=\"sapUiSupportBtn sapUiSupportIntImportExportBtn sapUiSupportIntExportBtn sapUiSupportIntHidden\">Export</button>");
+			rm.write("<button id=\"" + this.getId() + "-import\" class=\"sapUiSupportBtn sapUiSupportIntImportExportBtn\">Import</button>");
 			rm.write("</div><div class=\"sapUiSupportInteractionCntnt\">");
 			//rm.write("<table id=\"" + this.getId() + "-tab\" width=\"100%\">");
 			//rm.write("<colgroup><col><col><col><col><col><col></colgroup>");
@@ -118,9 +121,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			rm.write("</div>");
 
 
-			rm.write('<div class="sapUiPerformanceStatsDiv">');
+			rm.write('<div class="sapUiPerformanceStatsDiv sapUiSupportIntHidden">');
 			rm.write('<div class="sapUiPerformanceTimeline" style="height: 50px;"></div>');
-			rm.write('<div class="sapUiPerformanceTop" style="height: 50px;">');
+			rm.write('<div class="sapUiPerformanceTop">');
 			rm.write('</div>');
 
 			rm.write('<div class="sapUiPerformanceBottom">');
@@ -171,6 +174,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 					bActive = true;
 				}
 				this._oStub.sendEvent(this.getId() + "Activate", {"active": bActive});
+			}, this));
+
+
+			this.$('record').attr('data-state', 'Start recording');
+			this.$('record').click(jQuery.proxy(function(oEvent) {
+				if (this.$('record').attr('data-state') === 'Stop recording') {
+					this._oStub.sendEvent(this.getId() + "Refresh");
+					this._oStub.sendEvent(this.getId() + "Activate", {"active": false});
+					this.$('record').attr('data-state', 'Start recording');
+					jQuery(".sapUiPerformanceStatsDiv.sapUiSupportIntHidden").removeClass("sapUiSupportIntHidden");
+					jQuery(".sapUiSupportIntExportBtn.sapUiSupportIntHidden").removeClass("sapUiSupportIntHidden");
+				} else if (this.$('record').attr('data-state') === 'Start recording') {
+					jQuery(".sapUiPerformanceStatsDiv").addClass("sapUiSupportIntHidden");
+					jQuery(".sapUiSupportIntExportBtn").addClass("sapUiSupportIntHidden");
+					this._oStub.sendEvent(this.getId() + "Clear");
+					this._oStub.sendEvent(this.getId() + "Activate", {"active": true});
+					this.$('record').attr('data-state', 'Stop recording');
+				}
 			}, this));
 
 		}
@@ -234,6 +255,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 
 			var aMeasurements = oEvent.getParameter("measurements");
 
+			var requestsCount = 0;
+			for (var i = 0; i < aMeasurements.length; i++) {
+				requestsCount += aMeasurements[i].requests.length;
+			}
+			this.$('info').text("(Total " + requestsCount + " Requests in " + aMeasurements.length + " Interactions)");
 
 			var oTimelineDiv = this.$().find('.sapUiPerformanceStatsDiv .sapUiPerformanceTimeline').get(0);
 			var rm = sap.ui.getCore().createRenderManager();

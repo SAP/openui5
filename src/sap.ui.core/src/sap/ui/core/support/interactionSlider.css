@@ -13,6 +13,7 @@
     user-select: none;
     z-index: 10;
     height: 50px;
+    opacity: 0.7;
 }
 
 #interactionSlideHandle,
