@@ -202,7 +202,7 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			oRm.writeEscaped(sOHTitleStart);
 			oRm.write("</span>");
 			oRm.write("<span");
-			oRm.addClass('sapUxAPObjectPageHeaderNowrap');
+			oRm.addClass('sapUxAPObjectPageHeaderNowrapMarkers');
 			if (oControl.getMarkLocked() || oControl.getMarkChanges()) {
 				oRm.addClass('sapUxAPObjectPageHeaderMarks');
 			}
