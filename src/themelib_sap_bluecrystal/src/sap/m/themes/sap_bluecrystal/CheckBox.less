@@ -54,11 +54,14 @@
 }
 
 .sapMCbBg > input{
-	position: absolute;
-	/* in FF the input needs to be positioned exactly behind the visible checkbox for the focus outline */
 	left: 0;
 	-webkit-appearance:none;
 	visibility: hidden;
+}
+
+html[data-sap-ui-browser^=ff] .sapMCbBg > input {
+  /* in FF the input needs to be positioned exactly behind the visible checkbox for the focus outline */
+  position: absolute;
 }
 
 .sapMCbBg:focus,
