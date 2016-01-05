@@ -30,6 +30,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           this.timeRange = this.actualEndTime - this.actualStartTime;
        };
 
+       InteractionTree.prototype.setRange = function (start, end) {
+
+       };
+
        InteractionTree.prototype.render = function (rm) {
 
           rm.write('<div id="' + this.getId() + '" class="sapUiInteractionTreeContainer">');
