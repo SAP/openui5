@@ -88,8 +88,8 @@ html[data-sap-ui-animation='on'] {
 	/* for flip animation */
 
 	.sapMNavItem.sapMNavItemFlipNext {
-		-webkit-transform: rotate3d(0, 1, 0, 180deg);
-		transform: rotate3d(0, 1, 0, 180deg);
+		-webkit-transform: rotateY(180deg);
+		transform: rotateY(180deg);
 		-webkit-backface-visibility: hidden;
 		backface-visibility: hidden;
 	}
@@ -99,12 +99,14 @@ html[data-sap-ui-animation='on'] {
 	}
 
 	.sapMNavItem.sapMNavItemFlipPrevious {
-		-webkit-transform: rotate3d(0, 1, 0, -180deg);
-		transform: rotate3d(0, 1, 0, -180deg);
+		-webkit-transform: rotateY(-180deg);
+		transform: rotateY(-180deg);
+		backface-visibility: hidden;
 	}
 
 	.sap-winphone .sapMNavItem.sapMNavItemFlipPrevious {
 		transform: rotateY(-180deg);
+		backface-visibility: hidden;
 	}
 
 	.sapMNavItem.sapMNavItemFlipping {
