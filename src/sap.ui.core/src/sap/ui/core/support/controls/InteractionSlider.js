@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
                     mousedown: undefined,
                     mousemove: undefined,
                     mouseup: undefined,
-                    drag: undefined
+                    dragstart: undefined
                 };
             }
         });
@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             }
 
             this._registerOnMouseUpListener();
-            this._registerOnDragListener();
+            this._registerOnDragStartListener();
         };
 
         InteractionSlider.prototype._registerOnMouseMoveListener = function () {
@@ -194,9 +194,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             window.addEventListener('mouseup', this.fRefs.mouseup);
         };
 
-        InteractionSlider.prototype._registerOnDragListener = function () {
-            this.fRefs.drag = this._onMouseDrag.bind(this);
-            window.addEventListener('drag', this.fRefs.drag);
+        InteractionSlider.prototype._registerOnDragStartListener = function () {
+            this.fRefs.dragstart = this._onDragStart.bind(this);
+            window.addEventListener('dragstart', this.fRefs.dragstart);
         };
 
         InteractionSlider.prototype._onMouseMove = function (evt) {
@@ -259,13 +259,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             evt.stopImmediatePropagation();
             window.removeEventListener('mousemove', this.fRefs.mousemove);
             window.removeEventListener('mouseup', this.fRefs.mouseup);
-            window.removeEventListener('drag', this.fRefs.drag);
+            window.removeEventListener('dragstart', this.fRefs.dragstart);
             this._updateUI();
             this._fireSelectEvent();
         };
 
-        InteractionSlider.prototype._onMouseDrag = function (evt) {
-            this._onMouseUp(evt);
+        InteractionSlider.prototype._onDragStart = function (evt) {
+            evt.preventDefault();
         };
 
         InteractionSlider.prototype._fireSelectEvent = function () {
