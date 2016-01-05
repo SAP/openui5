@@ -25,8 +25,7 @@
 	<script language="javascript">
 		sinon.config.useFakeTimers = true;
 
-
-		var oProductModel = new sap.ui.model.json.JSONModel({
+		sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({
 			"ProductCollection": [
 				{
 					"ProductId": "1239102",
@@ -74,9 +73,7 @@
 					"CurrencyCode": "EUR"
 				}
 			]
-		});
-
-		sap.ui.getCore().setModel(oProductModel);
+		}));
 
 		var oTemplate = new sap.m.TabContainerItem({
 			name: "{Name}",
@@ -98,15 +95,13 @@
 
 
 		var fnCloseItem = function(oEvent) {
-			// prevent the tab being closed by default
-			oEvent.preventDefault();
 			var oItemToClose = oEvent.getParameter('item');
-			setTimeout(function () {
+			if (oItemToClose && this.oTabContainer && this.oTabContainer.removeItem) {
 				this.oTabContainer.removeItem(oItemToClose);
-			}.bind(this), 1000);
+			}
 		};
 
-		module("Delition", {
+		module("Deletion", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
 					items: {
@@ -128,10 +123,14 @@
 		});
 
 		test("Default behavior", function () {
-			var oItem = this.oTabContainer._getTabStrip().getItems()[0];
+			var oTabStrip = this.oTabContainer._getTabStrip();
+			var oItem = oTabStrip.getItems()[0];
+			var oCloseButton = oItem.getAggregation("_closeButton");
 			var sName = oItem.getText();
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
-			sap.ui.test.qunit.triggerEvent("tap", oItem.getAggregation('_closeButton').$());
+			var aTargetTouches = [{pageX: oCloseButton.$().offset().left + 2}];
+			qutils.triggerTouchEvent('touchstart', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oCloseButton.getDomRef()});
+			qutils.triggerTouchEvent('touchend', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oCloseButton.getDomRef()});
 			this.clock.tick(1000);
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 0, 'Element with name "'+sName+'" is in not in the DOM.');
 
@@ -155,28 +154,16 @@
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
-		test("Custom confirmation", function () {
-			var oItem = this.oTabContainer._getTabStrip().getItems()[0];
-			var sName = oItem.getText();
-
-			this.oTabContainer.attachItemClose(fnCloseItem.bind(this));
-
-			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
-			sap.ui.test.qunit.triggerEvent("tap", oItem.getAggregation('_closeButton').$());
-			this.clock.tick(1000);
-			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
-		});
-
-		module("Misc", {
-			beforeEach: function () {
-				this.oTabContainer = new sap.m.TabContainer({
-					items: {
-						path: "/ProductCollection",
-						template: oTemplate
-					},
-					itemSelect: fnOnItemSelected,
-					addNewButtonPress: fnOnAddButtonClick
-				});
+        module("Misc", {
+            beforeEach: function () {
+                this.oTabContainer = new sap.m.TabContainer({
+                    items: {
+                        path: "/ProductCollection",
+                        template: oTemplate
+                    },
+                    itemSelect: fnOnItemSelected,
+                    addNewButtonPress: fnOnAddButtonClick
+                });
 
 				this.oTabContainer.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -206,7 +193,7 @@
 					}
 				});
 
-				this.oTabContainer.placeAt("visible-content");
+				this.oTabContainer.placeAt("qunit-fixture");
 				this.oTabStrip = this.oTabContainer._getTabStrip();
 				this.items = this.oTabContainer.getItems();
 				sap.ui.getCore().applyChanges();

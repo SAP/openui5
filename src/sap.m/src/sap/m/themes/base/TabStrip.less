@@ -4,11 +4,19 @@
 .sapMTabStrip {
 	position: relative;
 	height: 3rem;
+	&.sapMTSScrollForward .sapMTSRightOverflowButtons,
+	&.sapMTSScrollBack .sapMTSLeftOverflowButtons {
+		visibility: visible;
+	}
+	&:not(.sapMTSScrollForward):not(.sapMTSScrollBack) .sapMTabSelect {
+		display: none;
+	}
 	.sapMTSLeftOverflowButtons {
 		display: inline-block;
 		position: absolute;
 		left: .5rem;
 		height: 100%;
+		visibility: hidden;
 		width: 3rem;
 		z-index: 20;
 		.sapMBtn {
@@ -19,7 +27,7 @@
 			.sapMBtnContent {
 				line-height: 100%;
 			}
-			.sapMBtnInner  {
+			.sapMBtnInner {
 				height: 1.625rem;
 				min-width: 1.625rem;
 				width: 1.625rem;
@@ -126,6 +134,7 @@
 		position: absolute;
 		right: 4.5rem;
 		height: 100%;
+		visibility: hidden;
 		width: 3rem;
 		z-index: 20;
 		.sapMBtn {
@@ -136,7 +145,7 @@
 			.sapMBtnContent {
 				line-height: 100%;
 			}
-			.sapMBtnInner  {
+			.sapMBtnInner {
 				height: 1.625rem;
 				min-width: 1.625rem;
 				width: 1.625rem;
@@ -165,7 +174,7 @@
 			.sapMBtnContent {
 				line-height: 100%;
 			}
-			.sapMBtnInner  {
+			.sapMBtnInner {
 				height: 1.625rem;
 				min-width: 1.625rem;
 				width: 1.625rem;
@@ -183,7 +192,6 @@
 	}
 }
 
-
 /* ============================================= */
 /* Form factor compact                           */
 /* ============================================= */
@@ -200,7 +208,7 @@
 				.sapMBtnContent {
 					line-height: 100%;
 				}
-				.sapMBtnInner  {
+				.sapMBtnInner {
 					height: 1.25rem;
 					min-width: 1.25rem;
 					width: 1.25rem;
@@ -335,6 +343,12 @@
 	.sapMTabStrip {
 		.sapMTSLeftOverflowButtons {
 			display: none;
+			.sapMBtn {
+				.sapMBtnInner {
+					.sapUiIcon {
+					}
+				}
+			}
 		}
 		.sapMTSTabContainer {
 			display: none;

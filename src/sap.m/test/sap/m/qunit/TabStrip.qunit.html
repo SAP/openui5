@@ -13,13 +13,13 @@
 			data-sap-ui-libs="sap.m">
 	</script>
 
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
 	<script>
 		sinon.config.useFakeTimers = true;
@@ -89,7 +89,8 @@
 			var fnSetSelectedItemSpy = sinon.spy(this.sut, "setSelectedItem");
 
 			var srcControl = this.sut.getItems()[1];
-			this.sut.ontap({srcControl: srcControl, setMarked: function(){}});
+			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
+			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
 			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
 
 			strictEqual(fnFireItemPressSpy.calledOnce, true, "On tap fires item press event");
@@ -98,7 +99,8 @@
 			strictEqual(fnSetSelectedItemSpy.calledOnce, false, "On tap does not fire selection change when the same selected tab is pressed");
 
 			var srcControl = this.sut.getItems()[2];
-			this.sut.ontap({srcControl: srcControl, setMarked: function(){}});
+			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
+			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
 			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
 
 			strictEqual(fnFireItemPressSpy.calledOnce, false, "On tap does not fire an item press event");
@@ -120,7 +122,9 @@
 					"After removing an item there are 2 left");
 
 			var oItem = this.sut.getItems()[0];
-			sap.ui.test.qunit.triggerTouchEvent("tap", oItem.$().find('.sapMTabSelectListItemCloseBtn')[0]);
+			var oItemButton = oItem.getAggregation("_closeButton");
+			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
+			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
 			//TODO: sapMTabSelectListItemCloseButton should be changed to
 			//sapMTabStripItemCloseButton in order to make sense everywhere
 
@@ -332,63 +336,83 @@
 				oCore.applyChanges();
 			},
 			afterEach: function () {
+				this.resetAllTabs();
 				this.sut.destroy();
+				this.sut = null;
+			},
+			addTabs: function (iNumberOfTabs) {
+				for (var iIndex = 1; iIndex <= iNumberOfTabs; iIndex++) {
+					this.sut.addItem(
+							new sap.m.TabStripItem({
+								text: "Tab with long title " + iIndex
+							})
+					);
+				}
+			},
+			resetAllTabs: function () {
+				this.sut.destroyAggregation("items");
 			}
 		});
 
 		test("Is scrolling needed", function () {
 			//assert
-			ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow");
+			ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow (" + this.sut.getItems().length + ") tabs");
+
 			//arrange
-			for (var i = 0, l = 15; i < l; i++ ) {
-				this.sut.addItem(new sap.m.TabStripItem({
-					text: "Tab " + i + " long text to overflow"
-				}));
-			}
+			this.addTabs(15);
 			oCore.applyChanges();
-			ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow");
+			ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow (" + this.sut.getItems().length + ") tabs");
 		});
 
 		test("Overflow Buttons", function () {
 			//arrange
-			var iTestCurrentScrollLeft = null;
+			var iTestCurrentScrollLeft = this._iCurrentScrollLeft;
 			var fnUpdateTestScrollValue = function () {
 				iTestCurrentScrollLeft = this.sut._iCurrentScrollLeft;
 			}.bind(this);
-			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Tab 4"
-			}));
-			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Tab 5"
-			}));
-			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Tab 6"
-			}));
-			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Tab 7"
-			}));
+			this.addTabs(15);
 			oCore.applyChanges();
 			fnUpdateTestScrollValue();
 			//assert
 			strictEqual(iTestCurrentScrollLeft, 0, "The initial ScrollLeft value is as expected");
+			strictEqual(this.sut._oLeftArrowButton.$().css("visibility"), "hidden", "Left scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft );
+			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 			//arrange
 			this.sut._oRightArrowButton.firePress({});
-			this.clock.tick(600);
+			this.clock.tick(1000);
+			this.sut._oRightArrowButton.firePress({});
+			this.clock.tick(1000);
+			this.sut._checkOverflow();
 			//assert
 			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on RightScrollButton press");
 			//arrange
 			fnUpdateTestScrollValue();
 			//assert
-			// ToDo: fix the assertion - the value "320" cannot be hardcoded because it depends on the Viewport size
-//			strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
+			strictEqual(iTestCurrentScrollLeft, 640, "ScrollLeft value is as expected");
+			strictEqual(this.sut._oLeftArrowButton.$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 			//arrange
 			this.sut._oLeftArrowButton.firePress({});
-			this.clock.tick(600);
+			this.clock.tick(1000);
+			this.sut._checkOverflow();
 			//assert
 			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on LeftScrollButton press");
 			//arrange
 			fnUpdateTestScrollValue();
-			strictEqual(iTestCurrentScrollLeft, 0, "ScrollLeft value is as expected");
+			strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
+			//arrange
+			var iLargeScroll = 100000;
+			this.sut._scroll(iLargeScroll, 500); //make sure that this enforces max right position
+			ok(true, "Performing very large scroll (" + iLargeScroll + "/" + this.sut._iMaxOffsetLeft + ")");
+			this.clock.tick(1000);
+			this.sut._checkOverflow();
+			//assert
+			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on _scroll call");
+			equal(this.sut._iCurrentScrollLeft, this.sut._iMaxOffsetLeft, "Scroll out of range test passed successfully");
+			fnUpdateTestScrollValue();
+			ok(iTestCurrentScrollLeft === this.sut._iCurrentScrollLeft && iTestCurrentScrollLeft === this.sut._iMaxOffsetLeft, "ScrollLeft value is as expected");
+			strictEqual(this.sut._oLeftArrowButton.$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "hidden", "Right scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 		});
 
 		module("ARIA", {
