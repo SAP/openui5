@@ -2164,27 +2164,27 @@
 		{
 		  "id": "sap.m.sample.GenericTile1x1",
 		  "name": "Generic Tile 1x1",
-		  "description": "Shows the 1x1 frame type containing the title, the description, and the customizable main area."
+		  "description": "Shows the 1x1 frame type containing the title, the description, and the customizable main area. The 1x1 frame type is shown in two different sizes defined with explicit tile sizes."
 		},
 		{
 		  "id": "sap.m.sample.GenericTile2x1SingleCont",
 		  "name": "Generic Tile 2x1 - Single Content",
-		  "description": "Shows the 2x1 frame type containing the title, the description, and the customizable main area."
+		  "description": "Shows the 2x1 frame type containing the title, the description, and the customizable main area. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
 		},
 		{
 		  "id": "sap.m.sample.GenericTile2x1TwoCont",
 		  "name": "Generic Tile 2x1 - Two Contents",
-		  "description": "Shows the 2x1 frame type containing the title, the description and two customizable areas."
+		  "description": "Shows the 2x1 frame type containing the title, the description and two customizable areas. The 2x1 frame type is shown in different sizes defined with explicit tile sizes."
 		},
 		{
 		  "id": "sap.m.sample.SlideTile",
 		  "name": "Generic Tiles Sliding",
-		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles."
+		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileStates",
 		  "name": "Generic Tile Statuses",
-		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status."
+		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
