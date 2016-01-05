@@ -30,11 +30,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				}
 			});
 
-			//this.allDurationSum = interactions.map(function (item) {
-			//	return item.duration;
-			//}).reduce(function (sum, b) {
-			//	return sum + b;
-			//});
 		};
 
 		TimelineOverview.prototype.render = function (rm) {
@@ -57,6 +52,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			//get the data to be rendered
 			var stepsData = this._getTimelineOverviewData(interactions);
 
+			//find the max duration
+			var that = this;
+			stepsData.forEach(function(stepObject) {
+				if (stepObject.totalDuration > that.maxDuration) {
+					that.maxDuration = stepObject.totalDuration;
+				}
+			});
+
 			//render the data ==========================================================================================
 
 			for (var i = 0; i < stepsData.length; i++) {
@@ -68,8 +71,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			rm.write("</ol></div>");
 		};
 
-		TimelineOverview.prototype.renderInteractionStep = function (rm, interaction) {
-			var stepDurationInPercent = Math.ceil((interaction.duration._total / this.maxDuration) * 100);
+		TimelineOverview.prototype.renderInteractionStep = function (rm, step) {
+			var stepDurationInPercent = Math.ceil((step.totalDuration / this.maxDuration) * 100);
 
 			var stepDurationInPercentInlineStyle = 'height: ' + stepDurationInPercent + '%;';
 			if (stepDurationInPercent > 0) {
@@ -77,17 +80,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			}
 
 			rm.write('<li>');
-			rm.write('<div class="bars-wrapper" title="Duration: ' + interaction.duration._total + 'ms">');
+			rm.write('<div class="bars-wrapper" title="Duration: ' + step.totalDuration + 'ms">');
 			rm.write('<div class="duration" style="' + stepDurationInPercentInlineStyle + '">');
 			// write step duration
-			rm.write('<div class="requestType" style="height: 100%;"></div>');
+			var aInteractions = step.interactions,
+				stepInteractionInPercent = 100;
+			aInteractions.forEach(function(interaction, index) {
+				stepInteractionInPercent = (step.totalDuration === 0) ? 100 : Math.ceil((interaction.calculatedDuration / step.totalDuration) * 100);
+				rm.write('<div class="requestType" style="height: ' + stepInteractionInPercent + '%;"></div>');
+				//write spacer between interactions
+				if (index !== (aInteractions.length - 1)) {
+					rm.write('<div style="min-height: 1px;"></div>');
+				}
+			});
+
+
 			rm.write('</div>');
 			rm.write('</div>');
 			rm.write('<div class="sapUiInteractionTimelineStepRight"></div>');
 			rm.write('</li>');
 		};
 		TimelineOverview.prototype._getTimelineOverviewData = function(copiedData) {
-			var stepCount = 50;
+			var stepCount = 60;
 			var stepTime = this.timeRange / stepCount;
 			var stepsData = [];
 
@@ -97,25 +111,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				var selectedStepsByTime = this._filterByTime({start: stepStart, end: stepEnd}, copiedData);
 
 				/* eslint-disable no-loop-func */
-				var stepSumDuration = selectedStepsByTime.map(function (item) {
-					return {
-						duration: item.calculatedDuration
-					};
+				var stepItem = {
+					interactions: selectedStepsByTime,
+					totalDuration: 0
+				};
+
+				selectedStepsByTime.map(function(step) {
+					stepItem.totalDuration += step.calculatedDuration;
 				});
-
-				var _resultsDuration = {_total: 0};
-				stepSumDuration.map(function (itemData) {
-					_resultsDuration._total = itemData.duration;
-				});
-
-
-
 				/* eslint-enable no-loop-func */
-				// ====================================================================================================
 
-				stepsData.push({
-					duration: _resultsDuration
-				});
+
+				stepsData.push(stepItem);
+
 			}
 
 			return stepsData;
