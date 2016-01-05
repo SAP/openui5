@@ -135,7 +135,7 @@
 }
 
 .sapUiSupportToolbar {
-	background-color: #F9F9F9;
+	background-color: #F2F2F2;
 	height: 28px;
 	margin-bottom: 5px;
 	padding-left: 5px;
@@ -1304,6 +1304,19 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	top: 18px;
 }
 
+.sapUiSupportIntToggleRecordingBtn {
+	line-height: 30px;
+	margin-right: 5px;
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 100%;
+	font-weight: bold;
+	outline: none;
+	padding: 0;
+}
+
+.sapUiSupportIntToggleRecordingBtn::before,
 #sapUiSupportPerfToggleRecordingBtn::before {
 	border: solid 5px #bf3020;
 	border-radius: 5px;
@@ -1314,11 +1327,13 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	width: 0;
 }
 
+.sapUiSupportIntToggleRecordingBtn::after,
 #sapUiSupportPerfToggleRecordingBtn::after {
 	color: #bf3020;
 	content: attr(data-state);
 }
 
+.sapUiSupportIntToggleRecordingBtn[data-state^="Start recording"]::before,
 #sapUiSupportPerfToggleRecordingBtn[data-state^="Start recording"]::before {
 	border-color: transparent transparent transparent #333;
 	border-radius: 0;
@@ -1328,7 +1343,38 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	width: 0;
 }
 
+.sapUiSupportIntToggleRecordingBtn[data-state^="Start recording"]::after,
 #sapUiSupportPerfToggleRecordingBtn[data-state^="Start recording"]::after {
 	color: #333;
 }
 
+.sapUiSupportIntRecordingInfo {
+	margin-right: 10px;
+}
+
+.sapUiSupportIntClearBtn{
+	background-color: #F2F2F2;
+	border-radius: 3px;
+}
+
+.sapUiSupportIntExportBtn {
+	margin-left: 5px;
+}
+
+.sapUiSupportIntImportExportBtn {
+	background-color: #417BAB;
+	color: white;
+	border-radius: 3px;
+	border-color: #417BAB;
+	float: right;
+}
+
+.sapUiSupportIntImportExportBtn:hover {
+	background-color: #F2F2F2;
+	border-color: #A3A3A3;
+	color: black;
+}
+
+.sapUiSupportIntHidden {
+	display:none;
+}
