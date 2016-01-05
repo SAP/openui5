@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			renderer: TimePickerSliderRenderer.render
 		});
 
-		var SCROLL_ANIMATION_DURATION = 200;
+		var SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 200 : 0;
 		var MIN_ITEMS = 50;
 
 		/**
