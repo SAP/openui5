@@ -40,6 +40,7 @@
 }
 
 .sapUiInteractionTreeItemRight {
+	position: relative;
 	-webkit-box-flex: 1;
 	-webkit-flex-grow: 1;
 	-ms-flex: 1 1;
@@ -95,6 +96,9 @@
 .sapUiInteractionTimeframe.sapUiInteractionTimeRequestFrame {
 	margin-top: 0.2rem;
 	height: 0.8rem;
+	position: absolute;
+	left: 0;
+	top: 0;
 }
 
 .sapUiInteractionRequestIcon {
@@ -115,6 +119,18 @@
 
 .sapUiRed {
 	background-color: #e52929;
+}
+
+.sapUiBlue70 {
+	background-color: rgba(0, 124, 192, 0.7);
+}
+
+.sapUiPurple70 {
+	background-color: rgba(171, 33, 142, 0.7);
+}
+
+.sapUiRed70 {
+	background-color: rgba(229, 41, 41, 0.7);
 }
 
 .sapUiInteractionRequest {
