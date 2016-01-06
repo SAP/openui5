@@ -25,7 +25,7 @@
 	-ms-user-select: none;
 	-o-user-select: none;
 	user-select: none;
-	outline : none;
+	outline: none;
 	z-index: 2; /* needed when the NotiBar has to cover the Table's row headers */
 }
 
@@ -81,63 +81,49 @@
 	background-repeat: no-repeat;
 	height: 16px;
 	background-position: center center;
+	font-family: 'SAP-icons';
+	color: white;
+	font-size: 16px;
+	opacity: 0.5;
+	text-align: center;
 }
 
 .sapUiBarToggleItem:hover,
 .sapUiBarToggleItem:active {
 	background-color: @sapUiNotifierHoverColor;
+	opacity: 1;
 }
 
 /* Enlarge Arrow */
-.sapUiBarToggleArrowUp {
-	background-image: url("img/notification_bar/arrows/DoubleArrow_up.png");
+.sapUiBarToggleArrowUp::before {
+	content: "\e200";
 }
 
-.sapUiBarToggleArrowUp:hover,
-.sapUiBarToggleArrowUp:active {
-	background-image: url("img/notification_bar/arrows/DoubleArrow_up_hover.png");
+/* Minimize Arrow */
+.sapUiBarToggleArrowDown::before {
+	content: "\e1f9";
+}
+
+/* BarUp */
+.sapUiBarToggleBarUp::before {
+	content: "\e1e9";
+}
+
+/* BarDown */
+.sapUiBarToggleBarDown::before {
+	content: "\e1ea";
 }
 
 .sapUiBarToggleArrowUp.sapUiBarToggleHide {
 	display: none;
 }
 
-/* Minimize Arrow */
-.sapUiBarToggleArrowDown {
-	background-image: url("img/notification_bar/arrows/DoubleArrow_down.png");
-}
-
-.sapUiBarToggleArrowDown:hover,
-.sapUiBarToggleArrowDown:active {
-	background-image: url("img/notification_bar/arrows/DoubleArrow_down_hover.png");
-}
-
 .sapUiBarToggleArrowDown.sapUiBarToggleHide {
-	display: none;
-}
-
-/* BarUp */
-.sapUiBarToggleBarUp {
-	background-image: url("img/notification_bar/arrows/ArrowBar_up.png");
-}
-
-.sapUiBarToggleBarUp:hover,
-.sapUiBarToggleBarUp:active {
-	background-image: url("img/notification_bar/arrows/ArrowBar_up_hover.png");
+  display: none;
 }
 
 .sapUiBarToggleBarUp.sapUiBarToggleHide {
 	display: none;
-}
-
-/* BarDown */
-.sapUiBarToggleBarDown {
-	background-image: url("img/notification_bar/arrows/ArrowBar_down.png");
-}
-
-.sapUiBarToggleBarDown:hover,
-.sapUiBarToggleBarDown:active {
-	background-image: url("img/notification_bar/arrows/ArrowBar_down_hover.png");
 }
 
 .sapUiBarToggleBarDown.sapUiBarToggleHide {
@@ -145,15 +131,15 @@
 }
 
 .sapUiNotifiers {
-	padding: 0px;
-	margin: 0px;
-	height: inherit;
+  padding: 0px;
+  margin: 0px;
+  height: inherit;
 }
 
 .sapUiNotifier {
 	/* this is needed to show the Notifier's icon on tablets. Otherwise the icon would be only visible if
 	the windows i.e. */
-	-webkit-transform: translate3d(0,0,0);
+	-webkit-transform: translate3d(0, 0, 0);
 	display: inline-block;
 	position: relative;
 	font-size: 12px;
@@ -165,7 +151,7 @@
 	margin: 0;
 	padding: 0;
 	vertical-align: top;
-	outline : none;
+	outline: none;
 }
 
 .sapUiNotifier:hover,
@@ -173,14 +159,16 @@
 	background-color: @sapUiNotifierHoverColor;
 }
 
-.sapUiNotifier img {
+.sapUiNotifier img, .sapUiNotifier .sapUiIcon {
 	position: relative;
 	top: 8px;
 	left: 8px;
 	opacity: 0.75;
+	font-size: 22px;
+	cursor: pointer;
 }
 
-.sapUiNotifier:hover img {
+.sapUiNotifier:hover img, .sapUiNotifier:hover .sapUiIcon {
 	opacity: 1;
 }
 
@@ -257,12 +245,13 @@ html[dir=rtl] .sapUiNotifierCallout {
 	min-height: 35px;
 	background: transparent;
 	padding: 5px 5px;
-	outline : none;
+	outline: none;
 }
 
 .sapUiNotifierSelectable .sapUiNotifierMessage {
 	cursor: pointer;
 }
+
 .sapUiNotifierSelectable .sapUiNotifierMessage.sapUiNotifierMessageReadOnly {
 	cursor: default;
 }
@@ -308,10 +297,10 @@ li.sapUiInPlaceMessage div.sapUiNotifierMessageText {
 	max-height: 12px;
 	padding-bottom: 2px;
 	white-space: nowrap;
-	outline : none;
+	outline: none;
 }
 
-li.sapUiInPlaceMessage>div.sapUiNotifierMessageText:focus {
+li.sapUiInPlaceMessage > div.sapUiNotifierMessageText:focus {
 	background-color: @sapUiNotifierHoverColor;
 }
 
