@@ -1,4 +1,10 @@
 jQuery.sap.require("sap.ui.core.Popup");
+jQuery.sap.require("sap.m.Button");
+
+jQuery.sap.require("sap.ui.qunit.QUnitUtils");
+jQuery.sap.require("sap.ui.thirdparty.sinon");
+jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+sinon.config.useFakeTimers = false;
 
 var oDomRef;
 var $Ref;
@@ -565,6 +571,65 @@ QUnit.asyncTest("Child registered at parent", function(assert) {
 	this.oParentPop.attachOpened(fnParentOpened);
 	this.oChildPop.attachOpened(fnChildOpened);
 	this.oChildPop.attachClosed(fnChildClosed);
+	this.oParentPop.open();
+});
+
+QUnit.asyncTest("Increase z-index: Child must not be re-rendered", function(assert) {
+	var oDelegate = {
+		onBeforeRendering : function() {}
+	}
+	this.oRenderingStub = sinon.stub(oDelegate, "onBeforeRendering");
+
+	var oButton = new sap.m.Button({
+		text : "Sis is se dschaild"
+	}).addDelegate(oDelegate, this);
+	var oChildPop = new sap.ui.core.Popup(oButton);
+
+	// Create some stubs to check if and how many times the functions were called
+	this.oMouseSpy = sinon.spy(this.oParentPop, "onmousedown");
+
+	var fnGetZIndexFromDomRef = function(oDomRef) {
+		if (oDomRef) {
+			return parseInt(jQuery(oDomRef).css("z-index"), 10);
+		} else {
+			return -1;
+		}
+	}
+
+	var fnParentOpened = function() {
+		this.oParentPop.detachOpened(fnParentOpened);
+
+		oChildPop.open(0, sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, this.oChildOpener, "0 0", "fit");
+	}.bind(this);
+
+	var fnChildOpened = function() {
+		oChildPop.detachOpened(fnParentOpened);
+		start();
+
+		assert.equal(this.oRenderingStub.callCount, 1, "'onBeforeRendering' should have been called once for rendering for child");
+
+		var oDomRef = this.oParentPop._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
+		var iParentOldIndex = fnGetZIndexFromDomRef(oDomRef);
+		oDomRef = oChildPop._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
+		var iChildOldIndex = fnGetZIndexFromDomRef(oDomRef);
+		assert.ok(iParentOldIndex < iChildOldIndex, "Child should have a bigger z-index that its parent");
+
+		qutils.triggerMouseEvent(this.oParentPop, "onmousedown", /*iOffsetX*/0, /*iOffsetY*/0, /*iPageX*/0, /*iPageY*/0, /*Button left*/0);
+		assert.equal(this.oMouseSpy.callCount, 1, "'onmousedown' should have been called at parent Popup");
+
+		oDomRef =  this.oParentPop._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
+		var iParentNewIndex = fnGetZIndexFromDomRef(oDomRef);
+		oDomRef = oChildPop._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
+		var iChildNewIndex = fnGetZIndexFromDomRef(oDomRef);
+		assert.ok(iParentNewIndex < iChildNewIndex, "Child should still have a bigger z-index that its parent");
+		assert.ok(iChildOldIndex < iChildNewIndex, "Child z-index should have been increased");
+		assert.ok(iParentOldIndex < iParentNewIndex, "Parent z-index should have been increased");
+
+		assert.equal(this.oRenderingStub.callCount, 1, "'onBeforeRendering' shouldn't have been called after increasing the z-index for child");
+	}.bind(this);
+
+	this.oParentPop.attachOpened(fnParentOpened);
+	oChildPop.attachOpened(fnChildOpened);
 	this.oParentPop.open();
 });
 
