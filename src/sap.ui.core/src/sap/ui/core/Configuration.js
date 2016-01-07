@@ -654,8 +654,15 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			}
 
 			var sLegacyDateFormat = this.oFormatSettings.getLegacyDateFormat();
-			if (sLegacyDateFormat === "A" || sLegacyDateFormat === "B") {
-				return CalendarType.Islamic;
+
+			switch (sLegacyDateFormat) {
+				case "A":
+				case "B":
+					return CalendarType.Islamic;
+				case "7":
+				case "8":
+				case "9":
+					return CalendarType.Japanese;
 			}
 
 			return LocaleData.getInstance(this.getLocale()).getPreferredCalendarType();
@@ -1143,9 +1150,9 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		"4": {pattern: "yyyy.MM.dd"},
 		"5": {pattern: "yyyy/MM/dd"},
 		"6": {pattern: "yyyy-MM-dd"},
-		"7": {pattern: "Gyy.MM.dd", ignore:true},
-		"8": {pattern: "Gyy/MM/dd", ignore:true},
-		"9": {pattern: "Gyy-MM-dd", ignore:true},
+		"7": {pattern: "Gyy.MM.dd"},
+		"8": {pattern: "Gyy/MM/dd"},
+		"9": {pattern: "Gyy-MM-dd"},
 		"A": {pattern: "yyyy/MM/dd"},
 		"B": {pattern: "yyyy/MM/dd"},
 		"C": {pattern: "yyyy/MM/dd", ignore:true}
@@ -1386,10 +1393,9 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * Note: those date formats that are not based on the Gregorian calendar (Japanese date formats '7', '8' and '9',
-		 * Islamic date formats 'A' and 'B' and Iranian date format 'C') are not yet supported by UI5. They are accepted
-		 * by this method for convenience (user settings from ABAP system can be used without filtering), but they are
-		 * ignored. Instead, the formats from the current format locale will be used and a warning will be logged.
+		 * Note: Iranian date format 'C' is NOT yet supported by UI5. It's accepted by this method for convenience
+		 * (user settings from ABAP system can be used without filtering), but it's ignored. Instead, the formats
+		 * from the current format locale will be used and a warning will be logged.
 		 *
 		 * @param {string} sFormatId id of the ABAP data format (one of '1','2','3','4','5','6','7','8','9','A','B','C')
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining

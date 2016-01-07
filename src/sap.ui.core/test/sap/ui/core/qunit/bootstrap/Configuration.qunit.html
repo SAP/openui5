@@ -86,6 +86,19 @@
 			oCfg.setCalendarType(null);
 			oFormatSettings.setLegacyDateFormat("B");
 			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
+
+			oFormatSettings.setLegacyDateFormat("7");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Japanese, "The legacy date format '7' changes the calendar type to japanese");
+
+			oFormatSettings.setLegacyDateFormat("A");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+			oFormatSettings.setLegacyDateFormat("8");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Japanese, "The legacy date format '8' changes the calendar type to japanese");
+
+			oFormatSettings.setLegacyDateFormat("A");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+			oFormatSettings.setLegacyDateFormat("9");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Japanese, "The legacy date format '9' changes the calendar type to japanese");
 		});
 	</script>
 
