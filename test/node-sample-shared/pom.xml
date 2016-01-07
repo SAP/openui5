@@ -89,6 +89,10 @@
 				<version>0.9.7</version>
 				<configuration>
 					<nodeType>SHARED</nodeType>
+					<nodeLocation>${node.location}</nodeLocation>
+					<nodeVersion>${node.version}</nodeVersion>
+					<npmRegistry>${npm.registry}</npmRegistry>
+					<npmVersion>${npm.version}</npmVersion>
 				</configuration>
 				<executions>
 					<execution>
