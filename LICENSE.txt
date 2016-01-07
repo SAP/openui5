@@ -447,7 +447,7 @@ License: MIT License
 <year> = 2010
 <copyright holders> = Acid Media
 
-Component: qunit 1.16.0
+Component: qunit 1.18.0
 Licensor: jQuery Foundation and other contributors
 Website: http://github.com/jquery/qunit/
 License: MIT License
