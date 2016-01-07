@@ -81,7 +81,7 @@
 
 #sapUiInteractionTimelineOverview .InteractionTimeline li .duration {
 	margin-right: 1px;
-	width: 10px;
+	width: 7px;
 }
 
 
@@ -103,7 +103,7 @@
 }
 
 .InteractionTimeline .requestType {
-	background: lightskyblue;
+	background: #007cc0;
 }
 
 .sapUiInteractionTimelineStepRight {

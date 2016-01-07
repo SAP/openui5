@@ -103,7 +103,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		TimelineOverview.prototype._getTimelineOverviewData = function(copiedData) {
 			var stepCount = 60;
 			var stepTime = this.timeRange / stepCount;
-			var stepsData = [];
+			var stepsData = [],
+				oldStepItem = { interactions: [] },
+				bAlreadyInserted = true;
 
 			for (var i = 0; i < stepCount; i++) {
 				var stepStart = stepTime * i;
@@ -121,8 +123,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				});
 				/* eslint-enable no-loop-func */
 
+				bAlreadyInserted = selectedStepsByTime.length > 0 &&
+					oldStepItem.interactions.length > 0 &&
+					selectedStepsByTime[0].start === oldStepItem.interactions[0].start;
+				if (!bAlreadyInserted) {
+					stepsData.push(stepItem);
+					oldStepItem = stepItem;
+				}
 
-				stepsData.push(stepItem);
 
 			}
 
