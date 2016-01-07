@@ -343,8 +343,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
        InteractionTree.prototype.renderRequest = function (rm, interaction, request) {
 
-          var start = request.fetchStartOffset + request.startTime;
-          var end = request.fetchStartOffset + request.startTime + request.duration;
+          var fetchStartOffset = request.fetchStartOffset;
+
+          var start = fetchStartOffset + request.startTime;
+          var end = fetchStartOffset + request.startTime + request.duration;
 
           if (this.actualStartTime > end || this.actualEndTime < start) {
              return;
@@ -385,29 +387,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write('</div>');
 
-          var title = 'Name: ' + request.name;
+          var title = 'InitiatorType: ' + request.initiatorType;
+          title += '\nentryType: ' + request.entryType;
+          title += '\nName: ' + request.name;
 
           title += '\n\nStart: ' + this.formatTime(request.fetchStartOffset + request.startTime);
           title += '\nEnd: ' + this.formatTime(request.fetchStartOffset + request.startTime + request.duration);
           title += '\nDuration: ' + request.duration;
 
-          //title += '\n\nConnect Start: ' + this.formatTime(request.fetchStartOffset + request.connectStart);
-          //title += '\nConnect End: ' + this.formatTime(request.fetchStartOffset + request.connectEnd);
-          //title += '\nConnect Duration: ' + (request.connectEnd - request.connectStart).toString();
-          //
-          //title += '\n\nDomainLookup Start: ' + this.formatTime(request.fetchStartOffset + request.domainLookupStart);
-          //title += '\nDomainLookup End: ' + this.formatTime(request.fetchStartOffset + request.domainLookupEnd);
-          //title += '\nDomainLookup Duration: ' + (request.domainLookupEnd - request.domainLookupStart).toString();
-          //
-          //title += '\n\nRedirect Start: ' + this.formatTime(request.fetchStartOffset + request.redirectStart);
-          //title += '\nRedirect End: ' + this.formatTime(request.fetchStartOffset + request.redirectEnd);
-          //title += '\nRedirect Duration: ' + (request.redirectEnd - request.redirectStart).toString();
-          //
-          //title += '\n\nResponse Start: ' + this.formatTime(request.fetchStartOffset + request.responseStart);
-          //title += '\nResponse End: ' + this.formatTime(request.fetchStartOffset + request.responseEnd);
-          //title += '\nResponse Duration: ' + (request.responseEnd - request.responseStart).toString();
+          title += '\n\nConnect Start: ' + this.formatTime(request.fetchStartOffset + request.connectStart);
+          title += '\nConnect End: ' + this.formatTime(request.fetchStartOffset + request.connectEnd);
+          title += '\nConnect Duration: ' + (request.connectEnd - request.connectStart).toString();
+
+          title += '\n\nDomainLookup Start: ' + this.formatTime(request.fetchStartOffset + request.domainLookupStart);
+          title += '\nDomainLookup End: ' + this.formatTime(request.fetchStartOffset + request.domainLookupEnd);
+          title += '\nDomainLookup Duration: ' + (request.domainLookupEnd - request.domainLookupStart).toString();
+
+          title += '\n\nRedirect Start: ' + this.formatTime(request.fetchStartOffset + request.redirectStart);
+          title += '\nRedirect End: ' + this.formatTime(request.fetchStartOffset + request.redirectEnd);
+          title += '\nRedirect Duration: ' + (request.redirectEnd - request.redirectStart).toString();
+
+          title += '\n\nRequest Start: ' + this.formatTime(request.fetchStartOffset + request.requestStart);
+          title += '\nRequest Duration: ' + (request.responseStart - request.requestStart).toString();
+
+          title += '\n\nResponse Start: ' + this.formatTime(request.fetchStartOffset + request.responseStart);
+          title += '\nResponse End: ' + this.formatTime(request.fetchStartOffset + request.responseEnd);
+          title += '\nResponse Duration: ' + (request.responseEnd - request.responseStart).toString();
 
           rm.write('<div class="sapUiInteractionTreeItemRight" title="' + title + '" >');
+
+          var requestStart = request.requestStart + fetchStartOffset;
+          var responseStart = request.responseStart + fetchStartOffset;
+
+          this.renderRequestPart(rm, start, requestStart, colorClass + '70');
+          this.renderRequestPart(rm, requestStart, responseStart, colorClass);
+          this.renderRequestPart(rm, responseStart, end, colorClass + '70');
+
+          rm.write('</div>');
+
+          rm.write("</li>");
+       };
+
+       InteractionTree.prototype.renderRequestPart = function (rm, start, end, colorClass) {
+          if (this.actualStartTime > end || this.actualEndTime < start) {
+             return;
+          }
 
           var start = Math.max(start, this.actualStartTime);
           var end = Math.min(end, this.actualEndTime);
@@ -418,9 +442,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write('<span style="margin-left: ' + left + '%; width: ' + width + '%" class="sapUiInteractionTimeframe sapUiInteractionTimeRequestFrame ' + colorClass + '"></span>');
 
-          rm.write('</div>');
-
-          rm.write("</li>");
        };
 
        InteractionTree.prototype.pad0 = function (i, w) {
