@@ -571,6 +571,7 @@ sap.ui.define([
 		//copy binding if present
 		var oCopy = new Button({
 			press: jQuery.proxy(this._onSeeMoreContentSelect, this),
+			enabled: oButton.getEnabled(),
 			customData: new CustomData({
 				key: "originalId",
 				value: oButton.getId()
@@ -682,11 +683,16 @@ sap.ui.define([
 	 * Actions custom sorter function
 	 * @private
 	 */
-	ObjectPageHeader._sortActionsByImportance = function (oActionA ,oActionB) {
+	ObjectPageHeader._sortActionsByImportance = function (oActionA, oActionB) {
 		var sImportanceA = (oActionA instanceof ObjectPageHeaderActionButton) ? oActionA.getImportance() : sap.uxap.Importance.High,
-			sImportanceB = (oActionB instanceof ObjectPageHeaderActionButton) ? oActionB.getImportance() : sap.uxap.Importance.High;
+			sImportanceB = (oActionB instanceof ObjectPageHeaderActionButton) ? oActionB.getImportance() : sap.uxap.Importance.High,
+			iImportanceDifference = ObjectPageHeader._actionImportanceMap[sImportanceA] - ObjectPageHeader._actionImportanceMap[sImportanceB];
 
-		return ObjectPageHeader._actionImportanceMap[sImportanceA] - ObjectPageHeader._actionImportanceMap[sImportanceB];
+		if (iImportanceDifference === 0) {
+			return oActionA.position - oActionB.position;
+		}
+
+		return iImportanceDifference;
 	};
 
 	ObjectPageHeader.prototype._hasOneButtonShowText = function (aActions) {
@@ -765,8 +771,12 @@ sap.ui.define([
 		var bMobileScenario = jQuery("html").hasClass("sapUiMedia-Std-Phone") || Device.system.phone,
 			iVisibleActionsWidth = this._oOverflowButton.$().show().width(),
 			aActions = this.getActions(),
+			iActionsLength = aActions.length,
 			oActionSheetButton;
 
+		for (var i = 0; i < iActionsLength; i++) {
+			aActions[i].position = i;
+		}
 		aActions.sort(ObjectPageHeader._sortActionsByImportance);
 
 		aActions.forEach(function (oAction) {
