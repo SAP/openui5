@@ -31,11 +31,13 @@ sap.ui.define([
 
 			var oSelect = this.getView().byId("tbSelect");
 			oSelect.setModel(oModelCB);
-		},
 
-		onBeforeRendering : function () {
 			// Sets the text to the label
-			this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+			this.getView().byId("UploadCollection").addEventDelegate({
+				onBeforeRendering : function () {
+					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText())
+				}.bind(this)
+			});
 		},
 
 		formatAttribute : function (sValue) {
