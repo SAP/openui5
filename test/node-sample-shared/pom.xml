@@ -34,6 +34,24 @@
 
 
 	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- Node.js settings -->
+		<node.version>0.12.4</node.version>
+		<node.gav>gav:org.nodejs.download.node:node</node.gav>
+		<node.location>${node.gav}</node.location>
+
+		<!-- NPM settings -->
+		<npm.version>2.11.3</npm.version>
+		<npm.registry>http://nexus:8081/nexus/content/groups/build.milestones.npm</npm.registry>
+
+	</properties>
+
+
+	<!--**************************************************************************
 	* POM SECTION: Build Settings
 	***************************************************************************-->
 
