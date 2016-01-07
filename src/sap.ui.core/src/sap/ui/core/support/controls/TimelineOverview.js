@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				stepInteractionInPercent = 100;
 			aInteractions.forEach(function(interaction, index) {
 				stepInteractionInPercent = (step.totalDuration === 0) ? 100 : Math.ceil((interaction.calculatedDuration / step.totalDuration) * 100);
-				rm.write('<div class="requestType" style="height: ' + stepInteractionInPercent + '%;"></div>');
+				rm.write('<div class="requestType" style="height: ' + stepInteractionInPercent + '%; min-height: 1px;"></div>');
 				//write spacer between interactions
 				if (index !== (aInteractions.length - 1)) {
 					rm.write('<div style="min-height: 1px;"></div>');
