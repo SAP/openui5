@@ -2467,7 +2467,7 @@
 		"era": {
 			"displayName": "สมัย"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "ปี",
 			"relative-type--1": "ปีที่แล้ว",
 			"relative-type-0": "ปีนี้",
@@ -2479,7 +2479,31 @@
 				"relativeTimePattern-count-other": "{0} ปีที่แล้ว"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "ปี",
+			"relative-type--1": "ปีที่แล้ว",
+			"relative-type-0": "ปีนี้",
+			"relative-type-1": "ปีหน้า",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} ปี"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ปีที่แล้ว"
+			}
+		},
+		"year-narrow": {
+			"displayName": "ปี",
+			"relative-type--1": "ปีที่แล้ว",
+			"relative-type-0": "ปีนี้",
+			"relative-type-1": "ปีหน้า",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} ปี"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ปีที่แล้ว"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "ไตรมาส",
 			"relative-type--1": "last quarter",
 			"relative-type-0": "this quarter",
@@ -2491,7 +2515,31 @@
 				"relativeTimePattern-count-other": "{0} ไตรมาสที่แล้ว"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "ไตรมาส",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} ไตรมาส"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ไตรมาสที่แล้ว"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "ไตรมาส",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} ไตรมาส"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ไตรมาสที่แล้ว"
+			}
+		},
+		"month-wide": {
 			"displayName": "เดือน",
 			"relative-type--1": "เดือนที่แล้ว",
 			"relative-type-0": "เดือนนี้",
@@ -2503,7 +2551,31 @@
 				"relativeTimePattern-count-other": "{0} เดือนที่ผ่านมา"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "เดือน",
+			"relative-type--1": "เดือนที่แล้ว",
+			"relative-type-0": "เดือนนี้",
+			"relative-type-1": "เดือนหน้า",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} เดือน"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} เดือนที่แล้ว"
+			}
+		},
+		"month-narrow": {
+			"displayName": "เดือน",
+			"relative-type--1": "เดือนที่แล้ว",
+			"relative-type-0": "เดือนนี้",
+			"relative-type-1": "เดือนหน้า",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} เดือน"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} เดือนที่แล้ว"
+			}
+		},
+		"week-wide": {
 			"displayName": "สัปดาห์",
 			"relative-type--1": "สัปดาห์ที่แล้ว",
 			"relative-type-0": "สัปดาห์นี้",
@@ -2515,7 +2587,31 @@
 				"relativeTimePattern-count-other": "{0} สัปดาห์ที่ผ่านมา"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "สัปดาห์",
+			"relative-type--1": "สัปดาห์ที่แล้ว",
+			"relative-type-0": "สัปดาห์นี้",
+			"relative-type-1": "สัปดาห์หน้า",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} สัปดาห์"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} สัปดาห์ที่แล้ว"
+			}
+		},
+		"week-narrow": {
+			"displayName": "สัปดาห์",
+			"relative-type--1": "สัปดาห์ที่แล้ว",
+			"relative-type-0": "สัปดาห์นี้",
+			"relative-type-1": "สัปดาห์หน้า",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} สัปดาห์"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} สัปดาห์ที่แล้ว"
+			}
+		},
+		"day-wide": {
 			"displayName": "วัน",
 			"relative-type--2": "เมื่อวานซืน",
 			"relative-type--1": "เมื่อวาน",
@@ -2529,10 +2625,38 @@
 				"relativeTimePattern-count-other": "{0} วันที่ผ่านมา"
 			}
 		},
+		"day-short": {
+			"displayName": "วัน",
+			"relative-type--2": "เมื่อวานซืน",
+			"relative-type--1": "เมื่อวาน",
+			"relative-type-0": "วันนี้",
+			"relative-type-1": "พรุ่งนี้",
+			"relative-type-2": "มะรืนนี้",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} วัน"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} วันที่แล้ว"
+			}
+		},
+		"day-narrow": {
+			"displayName": "วัน",
+			"relative-type--2": "เมื่อวานซืน",
+			"relative-type--1": "เมื่อวาน",
+			"relative-type-0": "วันนี้",
+			"relative-type-1": "พรุ่งนี้",
+			"relative-type-2": "มะรืนนี้",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} วัน"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} วันที่แล้ว"
+			}
+		},
 		"weekday": {
 			"displayName": "วันในสัปดาห์"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "ชั่วโมง",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ในอีก {0} ชั่วโมง"
@@ -2541,7 +2665,25 @@
 				"relativeTimePattern-count-other": "{0} ชั่วโมงที่ผ่านมา"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "ชม.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} ชม."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ชม. ที่แล้ว"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "ชม.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} ชม."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ชม. ที่แล้ว"
+			}
+		},
+		"minute-wide": {
 			"displayName": "นาที",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ในอีก {0} นาที"
@@ -2550,7 +2692,25 @@
 				"relativeTimePattern-count-other": "{0} นาทีที่ผ่านมา"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "น.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} นาที"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} นาทีที่แล้ว"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "น.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} นาที"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} นาทีที่แล้ว"
+			}
+		},
+		"second-wide": {
 			"displayName": "วินาที",
 			"relative-type-0": "ขณะนี้",
 			"relativeTime-type-future": {
@@ -2558,6 +2718,26 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} วินาทีที่ผ่านมา"
+			}
+		},
+		"second-short": {
+			"displayName": "วิ",
+			"relative-type-0": "ขณะนี้",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} วินาที"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} วินาทีที่แล้ว"
+			}
+		},
+		"second-narrow": {
+			"displayName": "วิ",
+			"relative-type-0": "ขณะนี้",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ใน {0} วินาที"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} วินาทีที่แล้ว"
 			}
 		},
 		"zone": {

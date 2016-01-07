@@ -2413,7 +2413,7 @@
 		"era": {
 			"displayName": "العصر"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "السنة",
 			"relative-type--1": "السنة الماضية",
 			"relative-type-0": "السنة الحالية",
@@ -2435,7 +2435,51 @@
 				"relativeTimePattern-count-other": "قبل {0} سنة"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "السنة",
+			"relative-type--1": "السنة الماضية",
+			"relative-type-0": "السنة الحالية",
+			"relative-type-1": "السنة التالية",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} سنة",
+				"relativeTimePattern-count-one": "خلال سنة واحدة",
+				"relativeTimePattern-count-two": "خلال سنتين",
+				"relativeTimePattern-count-few": "خلال {0} سنوات",
+				"relativeTimePattern-count-many": "خلال {0} سنة",
+				"relativeTimePattern-count-other": "خلال {0} سنة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} سنة",
+				"relativeTimePattern-count-one": "قبل سنة واحدة",
+				"relativeTimePattern-count-two": "قبل سنتين",
+				"relativeTimePattern-count-few": "قبل {0} سنوات",
+				"relativeTimePattern-count-many": "قبل {0} سنة",
+				"relativeTimePattern-count-other": "قبل {0} سنة"
+			}
+		},
+		"year-narrow": {
+			"displayName": "السنة",
+			"relative-type--1": "السنة الماضية",
+			"relative-type-0": "السنة الحالية",
+			"relative-type-1": "السنة التالية",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} سنة",
+				"relativeTimePattern-count-one": "خلال سنة واحدة",
+				"relativeTimePattern-count-two": "خلال سنتين",
+				"relativeTimePattern-count-few": "خلال {0} سنوات",
+				"relativeTimePattern-count-many": "خلال {0} سنة",
+				"relativeTimePattern-count-other": "خلال {0} سنة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} سنة",
+				"relativeTimePattern-count-one": "قبل سنة واحدة",
+				"relativeTimePattern-count-two": "قبل سنتين",
+				"relativeTimePattern-count-few": "قبل {0} سنوات",
+				"relativeTimePattern-count-many": "قبل {0} سنة",
+				"relativeTimePattern-count-other": "قبل {0} سنة"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "ربع السنة",
 			"relative-type--1": "الربع الأخير",
 			"relative-type-0": "هذا الربع",
@@ -2457,7 +2501,51 @@
 				"relativeTimePattern-count-other": "قبل {0} ربع سنة"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "ربع السنة",
+			"relative-type--1": "الربع الأخير",
+			"relative-type-0": "هذا الربع",
+			"relative-type-1": "الربع القادم",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} ربع سنة",
+				"relativeTimePattern-count-one": "خلال ربع سنة واحد",
+				"relativeTimePattern-count-two": "خلال ربعي سنة",
+				"relativeTimePattern-count-few": "خلال {0} أرباع سنة",
+				"relativeTimePattern-count-many": "خلال {0} ربع سنة",
+				"relativeTimePattern-count-other": "خلال {0} ربع سنة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} ربع سنة",
+				"relativeTimePattern-count-one": "قبل ربع سنة واحد",
+				"relativeTimePattern-count-two": "قبل ربعي سنة",
+				"relativeTimePattern-count-few": "قبل {0} أرباع سنة",
+				"relativeTimePattern-count-many": "قبل {0} ربع سنة",
+				"relativeTimePattern-count-other": "قبل {0} ربع سنة"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "ربع السنة",
+			"relative-type--1": "الربع الأخير",
+			"relative-type-0": "هذا الربع",
+			"relative-type-1": "الربع القادم",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} ربع سنة",
+				"relativeTimePattern-count-one": "خلال ربع سنة واحد",
+				"relativeTimePattern-count-two": "خلال ربعي سنة",
+				"relativeTimePattern-count-few": "خلال {0} أرباع سنة",
+				"relativeTimePattern-count-many": "خلال {0} ربع سنة",
+				"relativeTimePattern-count-other": "خلال {0} ربع سنة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} ربع سنة",
+				"relativeTimePattern-count-one": "قبل ربع سنة واحد",
+				"relativeTimePattern-count-two": "قبل ربعي سنة",
+				"relativeTimePattern-count-few": "قبل {0} أرباع سنة",
+				"relativeTimePattern-count-many": "قبل {0} ربع سنة",
+				"relativeTimePattern-count-other": "قبل {0} ربع سنة"
+			}
+		},
+		"month-wide": {
 			"displayName": "الشهر",
 			"relative-type--1": "الشهر الماضي",
 			"relative-type-0": "هذا الشهر",
@@ -2479,7 +2567,51 @@
 				"relativeTimePattern-count-other": "قبل {0} شهر"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "الشهر",
+			"relative-type--1": "الشهر الماضي",
+			"relative-type-0": "هذا الشهر",
+			"relative-type-1": "الشهر التالي",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} شهر",
+				"relativeTimePattern-count-one": "خلال شهر واحد",
+				"relativeTimePattern-count-two": "خلال شهرين",
+				"relativeTimePattern-count-few": "خلال {0} أشهر",
+				"relativeTimePattern-count-many": "خلال {0} شهرًا",
+				"relativeTimePattern-count-other": "خلال {0} شهر"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} شهر",
+				"relativeTimePattern-count-one": "قبل شهر واحد",
+				"relativeTimePattern-count-two": "قبل شهرين",
+				"relativeTimePattern-count-few": "خلال {0} أشهر",
+				"relativeTimePattern-count-many": "قبل {0} شهرًا",
+				"relativeTimePattern-count-other": "قبل {0} شهر"
+			}
+		},
+		"month-narrow": {
+			"displayName": "الشهر",
+			"relative-type--1": "الشهر الماضي",
+			"relative-type-0": "هذا الشهر",
+			"relative-type-1": "الشهر التالي",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} شهر",
+				"relativeTimePattern-count-one": "خلال شهر واحد",
+				"relativeTimePattern-count-two": "خلال شهرين",
+				"relativeTimePattern-count-few": "خلال {0} أشهر",
+				"relativeTimePattern-count-many": "خلال {0} شهرًا",
+				"relativeTimePattern-count-other": "خلال {0} شهر"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} شهر",
+				"relativeTimePattern-count-one": "قبل شهر واحد",
+				"relativeTimePattern-count-two": "قبل شهرين",
+				"relativeTimePattern-count-few": "قبل {0} أشهر",
+				"relativeTimePattern-count-many": "قبل {0} شهرًا",
+				"relativeTimePattern-count-other": "قبل {0} شهر"
+			}
+		},
+		"week-wide": {
 			"displayName": "الأسبوع",
 			"relative-type--1": "الأسبوع الماضي",
 			"relative-type-0": "هذا الأسبوع",
@@ -2501,7 +2633,99 @@
 				"relativeTimePattern-count-other": "قبل {0} أسبوع"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "الأسبوع",
+			"relative-type--1": "الأسبوع الماضي",
+			"relative-type-0": "هذا الأسبوع",
+			"relative-type-1": "الأسبوع التالي",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} أسبوع",
+				"relativeTimePattern-count-one": "خلال أسبوع واحد",
+				"relativeTimePattern-count-two": "خلال {0} أسبوعين",
+				"relativeTimePattern-count-few": "خلال {0} أسابيع",
+				"relativeTimePattern-count-many": "خلال {0} أسبوعًا",
+				"relativeTimePattern-count-other": "خلال {0} أسبوع"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} أسبوع",
+				"relativeTimePattern-count-one": "قبل أسبوع واحد",
+				"relativeTimePattern-count-two": "قبل أسبوعين",
+				"relativeTimePattern-count-few": "قبل {0} أسابيع",
+				"relativeTimePattern-count-many": "قبل {0} أسبوعًا",
+				"relativeTimePattern-count-other": "قبل {0} أسبوع"
+			}
+		},
+		"week-narrow": {
+			"displayName": "الأسبوع",
+			"relative-type--1": "الأسبوع الماضي",
+			"relative-type-0": "هذا الأسبوع",
+			"relative-type-1": "الأسبوع التالي",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} أسبوع",
+				"relativeTimePattern-count-one": "خلال أسبوع واحد",
+				"relativeTimePattern-count-two": "خلال أسبوعين",
+				"relativeTimePattern-count-few": "خلال {0} أسابيع",
+				"relativeTimePattern-count-many": "خلال {0} أسبوعًا",
+				"relativeTimePattern-count-other": "خلال {0} أسبوع"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} أسبوع",
+				"relativeTimePattern-count-one": "قبل أسبوع واحد",
+				"relativeTimePattern-count-two": "قبل أسبوعين",
+				"relativeTimePattern-count-few": "قبل {0} أسابيع",
+				"relativeTimePattern-count-many": "قبل {0} أسبوعًا",
+				"relativeTimePattern-count-other": "قبل {0} أسبوع"
+			}
+		},
+		"day-wide": {
+			"displayName": "يوم",
+			"relative-type--2": "أول أمس",
+			"relative-type--1": "أمس",
+			"relative-type-0": "اليوم",
+			"relative-type-1": "غدًا",
+			"relative-type-2": "بعد الغد",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} يوم",
+				"relativeTimePattern-count-one": "خلال يوم واحد",
+				"relativeTimePattern-count-two": "خلال يومين",
+				"relativeTimePattern-count-few": "خلال {0} أيام",
+				"relativeTimePattern-count-many": "خلال {0} يومًا",
+				"relativeTimePattern-count-other": "خلال {0} يوم"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} يوم",
+				"relativeTimePattern-count-one": "قبل يوم واحد",
+				"relativeTimePattern-count-two": "قبل يومين",
+				"relativeTimePattern-count-few": "قبل {0} أيام",
+				"relativeTimePattern-count-many": "قبل {0} يومًا",
+				"relativeTimePattern-count-other": "قبل {0} يوم"
+			}
+		},
+		"day-short": {
+			"displayName": "يوم",
+			"relative-type--2": "أول أمس",
+			"relative-type--1": "أمس",
+			"relative-type-0": "اليوم",
+			"relative-type-1": "غدًا",
+			"relative-type-2": "بعد الغد",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} يوم",
+				"relativeTimePattern-count-one": "خلال يوم واحد",
+				"relativeTimePattern-count-two": "خلال يومين",
+				"relativeTimePattern-count-few": "خلال {0} أيام",
+				"relativeTimePattern-count-many": "خلال {0} يومًا",
+				"relativeTimePattern-count-other": "خلال {0} يوم"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} يوم",
+				"relativeTimePattern-count-one": "قبل يوم واحد",
+				"relativeTimePattern-count-two": "قبل يومين",
+				"relativeTimePattern-count-few": "قبل {0} أيام",
+				"relativeTimePattern-count-many": "قبل {0} يومًا",
+				"relativeTimePattern-count-other": "قبل {0} يوم"
+			}
+		},
+		"day-narrow": {
 			"displayName": "يوم",
 			"relative-type--2": "أول أمس",
 			"relative-type--1": "أمس",
@@ -2528,7 +2752,7 @@
 		"weekday": {
 			"displayName": "اليوم"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "الساعات",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "خلال {0} ساعة",
@@ -2547,7 +2771,45 @@
 				"relativeTimePattern-count-other": "قبل {0} ساعة"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "الساعات",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} ساعة",
+				"relativeTimePattern-count-one": "خلال ساعة واحدة",
+				"relativeTimePattern-count-two": "خلال ساعتين",
+				"relativeTimePattern-count-few": "خلال {0} ساعات",
+				"relativeTimePattern-count-many": "خلال {0} ساعة",
+				"relativeTimePattern-count-other": "خلال {0} ساعة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} ساعة",
+				"relativeTimePattern-count-one": "قبل ساعة واحدة",
+				"relativeTimePattern-count-two": "قبل ساعتين",
+				"relativeTimePattern-count-few": "قبل {0} ساعات",
+				"relativeTimePattern-count-many": "قبل {0} ساعة",
+				"relativeTimePattern-count-other": "قبل {0} ساعة"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "الساعات",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} ساعة",
+				"relativeTimePattern-count-one": "خلال ساعة واحدة",
+				"relativeTimePattern-count-two": "خلال ساعتين",
+				"relativeTimePattern-count-few": "خلال {0} ساعات",
+				"relativeTimePattern-count-many": "خلال {0} ساعة",
+				"relativeTimePattern-count-other": "خلال {0} ساعة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} ساعة",
+				"relativeTimePattern-count-one": "قبل ساعة واحدة",
+				"relativeTimePattern-count-two": "قبل ساعتين",
+				"relativeTimePattern-count-few": "قبل {0} ساعات",
+				"relativeTimePattern-count-many": "قبل {0} ساعة",
+				"relativeTimePattern-count-other": "قبل {0} ساعة"
+			}
+		},
+		"minute-wide": {
 			"displayName": "الدقائق",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "خلال {0} دقيقة",
@@ -2566,7 +2828,45 @@
 				"relativeTimePattern-count-other": "قبل {0} دقيقة"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "الدقائق",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} دقيقة",
+				"relativeTimePattern-count-one": "خلال دقيقة واحدة",
+				"relativeTimePattern-count-two": "خلال دقيقتين",
+				"relativeTimePattern-count-few": "خلال {0} دقائق",
+				"relativeTimePattern-count-many": "خلال {0} دقيقة",
+				"relativeTimePattern-count-other": "خلال {0} دقيقة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} دقيقة",
+				"relativeTimePattern-count-one": "قبل دقيقة واحدة",
+				"relativeTimePattern-count-two": "قبل دقيقتين",
+				"relativeTimePattern-count-few": "قبل {0} دقائق",
+				"relativeTimePattern-count-many": "قبل {0} دقيقة",
+				"relativeTimePattern-count-other": "قبل {0} دقيقة"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "الدقائق",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} دقيقة",
+				"relativeTimePattern-count-one": "خلال دقيقة واحدة",
+				"relativeTimePattern-count-two": "خلال دقيقتين",
+				"relativeTimePattern-count-few": "خلال {0} دقائق",
+				"relativeTimePattern-count-many": "خلال {0} دقيقة",
+				"relativeTimePattern-count-other": "خلال {0} دقيقة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} دقيقة",
+				"relativeTimePattern-count-one": "قبل دقيقة واحدة",
+				"relativeTimePattern-count-two": "قبل دقيقتين",
+				"relativeTimePattern-count-few": "قبل {0} دقائق",
+				"relativeTimePattern-count-many": "قبل {0} دقيقة",
+				"relativeTimePattern-count-other": "قبل {0} دقيقة"
+			}
+		},
+		"second-wide": {
 			"displayName": "الثواني",
 			"relative-type-0": "الآن",
 			"relativeTime-type-future": {
@@ -2582,6 +2882,46 @@
 				"relativeTimePattern-count-one": "قبل ثانية واحدة",
 				"relativeTimePattern-count-two": "قبل ثانيتين",
 				"relativeTimePattern-count-few": "قبل {0} ثوانِ",
+				"relativeTimePattern-count-many": "قبل {0} ثانية",
+				"relativeTimePattern-count-other": "قبل {0} ثانية"
+			}
+		},
+		"second-short": {
+			"displayName": "الثواني",
+			"relative-type-0": "الآن",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} ثانية",
+				"relativeTimePattern-count-one": "خلال ثانية واحدة",
+				"relativeTimePattern-count-two": "خلال ثانيتين",
+				"relativeTimePattern-count-few": "خلال {0} ثوانٍ",
+				"relativeTimePattern-count-many": "خلال {0} ثانية",
+				"relativeTimePattern-count-other": "خلال {0} ثانية"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} ثانية",
+				"relativeTimePattern-count-one": "قبل ثانية واحدة",
+				"relativeTimePattern-count-two": "قبل ثانيتين",
+				"relativeTimePattern-count-few": "قبل {0} ثوانٍ",
+				"relativeTimePattern-count-many": "قبل {0} ثانية",
+				"relativeTimePattern-count-other": "قبل {0} ثانية"
+			}
+		},
+		"second-narrow": {
+			"displayName": "الثواني",
+			"relative-type-0": "الآن",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} ثانية",
+				"relativeTimePattern-count-one": "خلال ثانية واحدة",
+				"relativeTimePattern-count-two": "خلال ثانيتين",
+				"relativeTimePattern-count-few": "خلال {0} ثوانٍ",
+				"relativeTimePattern-count-many": "خلال {0} ثانية",
+				"relativeTimePattern-count-other": "خلال {0} ثانية"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} ثانية",
+				"relativeTimePattern-count-one": "قبل ثانية واحدة",
+				"relativeTimePattern-count-two": "قبل ثانيتين",
+				"relativeTimePattern-count-few": "قبل {0} ثوانٍ",
 				"relativeTimePattern-count-many": "قبل {0} ثانية",
 				"relativeTimePattern-count-other": "قبل {0} ثانية"
 			}

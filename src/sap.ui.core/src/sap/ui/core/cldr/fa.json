@@ -2419,7 +2419,7 @@
 		"era": {
 			"displayName": "دوره"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "سال",
 			"relative-type--1": "سال گذشته",
 			"relative-type-0": "امسال",
@@ -2433,7 +2433,35 @@
 				"relativeTimePattern-count-other": "{0} سال پیش"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "سال",
+			"relative-type--1": "سال گذشته",
+			"relative-type-0": "امسال",
+			"relative-type-1": "سال آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} سال بعد",
+				"relativeTimePattern-count-other": "{0} سال بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} سال پیش",
+				"relativeTimePattern-count-other": "{0} سال پیش"
+			}
+		},
+		"year-narrow": {
+			"displayName": "سال",
+			"relative-type--1": "سال گذشته",
+			"relative-type-0": "امسال",
+			"relative-type-1": "سال آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} سال بعد",
+				"relativeTimePattern-count-other": "{0} سال بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} سال پیش",
+				"relativeTimePattern-count-other": "{0} سال پیش"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "سه‌ماهه",
 			"relative-type--1": "سه‌ماههٔ گذشته",
 			"relative-type-0": "سه‌ماههٔ کنونی",
@@ -2447,7 +2475,35 @@
 				"relativeTimePattern-count-other": "{0} سه‌ماههٔ پیش"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "سه‌ماهه",
+			"relative-type--1": "سه‌ماههٔ گذشته",
+			"relative-type-0": "سه‌ماههٔ کنونی",
+			"relative-type-1": "سه‌ماههٔ آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} سه‌ماههٔ بعد",
+				"relativeTimePattern-count-other": "{0} سه‌ماههٔ بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} سه‌ماههٔ پیش",
+				"relativeTimePattern-count-other": "{0} سه‌ماههٔ پیش"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "سه‌ماهه",
+			"relative-type--1": "سه‌ماههٔ گذشته",
+			"relative-type-0": "سه‌ماههٔ کنونی",
+			"relative-type-1": "سه‌ماههٔ آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} سه‌ماههٔ بعد",
+				"relativeTimePattern-count-other": "{0} سه‌ماههٔ بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} سه‌ماههٔ پیش",
+				"relativeTimePattern-count-other": "{0} سه‌ماههٔ پیش"
+			}
+		},
+		"month-wide": {
 			"displayName": "ماه",
 			"relative-type--1": "ماه گذشته",
 			"relative-type-0": "این ماه",
@@ -2461,7 +2517,35 @@
 				"relativeTimePattern-count-other": "{0} ماه پیش"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "ماه",
+			"relative-type--1": "ماه پیش",
+			"relative-type-0": "این ماه",
+			"relative-type-1": "ماه آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ماه بعد",
+				"relativeTimePattern-count-other": "{0} ماه بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ماه پیش",
+				"relativeTimePattern-count-other": "{0} ماه پیش"
+			}
+		},
+		"month-narrow": {
+			"displayName": "ماه",
+			"relative-type--1": "ماه پیش",
+			"relative-type-0": "این ماه",
+			"relative-type-1": "ماه آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ماه بعد",
+				"relativeTimePattern-count-other": "{0} ماه بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ماه پیش",
+				"relativeTimePattern-count-other": "{0} ماه پیش"
+			}
+		},
+		"week-wide": {
 			"displayName": "هفته",
 			"relative-type--1": "هفتهٔ گذشته",
 			"relative-type-0": "این هفته",
@@ -2475,7 +2559,67 @@
 				"relativeTimePattern-count-other": "{0} هفته پیش"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "هفته",
+			"relative-type--1": "هفتهٔ گذشته",
+			"relative-type-0": "این هفته",
+			"relative-type-1": "هفتهٔ آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} هفته بعد",
+				"relativeTimePattern-count-other": "{0} هفته بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} هفته پیش",
+				"relativeTimePattern-count-other": "{0} هفته پیش"
+			}
+		},
+		"week-narrow": {
+			"displayName": "هفته",
+			"relative-type--1": "هفتهٔ گذشته",
+			"relative-type-0": "این هفته",
+			"relative-type-1": "هفتهٔ آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} هفته بعد",
+				"relativeTimePattern-count-other": "{0} هفته بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} هفته پیش",
+				"relativeTimePattern-count-other": "{0} هفته پیش"
+			}
+		},
+		"day-wide": {
+			"displayName": "روز",
+			"relative-type--2": "پریروز",
+			"relative-type--1": "دیروز",
+			"relative-type-0": "امروز",
+			"relative-type-1": "فردا",
+			"relative-type-2": "پس‌فردا",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} روز بعد",
+				"relativeTimePattern-count-other": "{0} روز بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} روز پیش",
+				"relativeTimePattern-count-other": "{0} روز پیش"
+			}
+		},
+		"day-short": {
+			"displayName": "روز",
+			"relative-type--2": "پریروز",
+			"relative-type--1": "دیروز",
+			"relative-type-0": "امروز",
+			"relative-type-1": "فردا",
+			"relative-type-2": "پس‌فردا",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} روز بعد",
+				"relativeTimePattern-count-other": "{0} روز بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} روز پیش",
+				"relativeTimePattern-count-other": "{0} روز پیش"
+			}
+		},
+		"day-narrow": {
 			"displayName": "روز",
 			"relative-type--2": "پریروز",
 			"relative-type--1": "دیروز",
@@ -2494,7 +2638,7 @@
 		"weekday": {
 			"displayName": "روز هفته"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "ساعت",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} ساعت بعد",
@@ -2505,7 +2649,29 @@
 				"relativeTimePattern-count-other": "{0} ساعت پیش"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "ساعت",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ساعت بعد",
+				"relativeTimePattern-count-other": "{0} ساعت بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ساعت پیش",
+				"relativeTimePattern-count-other": "{0} ساعت پیش"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "ساعت",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ساعت بعد",
+				"relativeTimePattern-count-other": "{0} ساعت بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ساعت پیش",
+				"relativeTimePattern-count-other": "{0} ساعت پیش"
+			}
+		},
+		"minute-wide": {
 			"displayName": "دقیقه",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} دقیقه بعد",
@@ -2516,7 +2682,53 @@
 				"relativeTimePattern-count-other": "{0} دقیقه پیش"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "دقیقه",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} دقیقه بعد",
+				"relativeTimePattern-count-other": "{0} دقیقه بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} دقیقه پیش",
+				"relativeTimePattern-count-other": "{0} دقیقه پیش"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "دقیقه",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} دقیقه بعد",
+				"relativeTimePattern-count-other": "{0} دقیقه بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} دقیقه پیش",
+				"relativeTimePattern-count-other": "{0} دقیقه پیش"
+			}
+		},
+		"second-wide": {
+			"displayName": "ثانیه",
+			"relative-type-0": "اکنون",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ثانیه بعد",
+				"relativeTimePattern-count-other": "{0} ثانیه بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ثانیه پیش",
+				"relativeTimePattern-count-other": "{0} ثانیه پیش"
+			}
+		},
+		"second-short": {
+			"displayName": "ثانیه",
+			"relative-type-0": "اکنون",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ثانیه بعد",
+				"relativeTimePattern-count-other": "{0} ثانیه بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ثانیه پیش",
+				"relativeTimePattern-count-other": "{0} ثانیه پیش"
+			}
+		},
+		"second-narrow": {
 			"displayName": "ثانیه",
 			"relative-type-0": "اکنون",
 			"relativeTime-type-future": {
