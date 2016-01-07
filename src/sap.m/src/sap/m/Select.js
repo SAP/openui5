@@ -1654,7 +1654,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
 		 * @param {string} sKey New value for property <code>selectedKey</code>.
-		 * If the provided <code>sKey</code> is an empty string <code>""</code> or <code>undefined</code>, the first enabled item is selected (if any).
+		 * If the <code>forceSelection</code> property is set to <code>true</code> and the provided <code>sKey</code> is
+		 * an empty string <code>""</code> or <code>undefined</code>, the value of <code>sKey</code> is changed to match
+		 * the <code>key</code> of the first enabled item and the first enabled item is selected (if any).
+		 *
 		 * In the case that an item has the default key value, it is selected instead.
 		 * If duplicate keys exist, the first item matching the key is selected.
 		 *
