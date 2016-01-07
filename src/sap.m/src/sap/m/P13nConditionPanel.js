@@ -1020,11 +1020,15 @@ sap.ui.define([
 								if (oKeyField.type && this._oTypeOperations[oKeyField.type]) {
 									aOperations = this._oTypeOperations[oKeyField.type];
 								}
+								if (oKeyField.operations) {
+									aOperations = oKeyField.operations;
+								}
 							}
 
-							aOperations.forEach(function(oOperation, index) {
+							aOperations.some(function(oOperation, index) {
 								if (oConditionGridData.operation === oOperation) {
-									oControl.setSelectedItem(oControl.getItems()[index]);
+									oControl.setSelectedKey(oOperation);
+									return true;
 								}
 							}, this);
 						} else {
