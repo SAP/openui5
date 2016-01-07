@@ -481,7 +481,6 @@ sap.ui.require([
 	QUnit.test("readValue rejects when accessing non-primitive value", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			sMessage = "Accessed value is not primitive",
-			oError = new Error(sMessage),
 			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
 		oCacheMock.expects("read")
@@ -493,7 +492,11 @@ sap.ui.require([
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read value with index 0 for /service/EMPLOYEES and "
 					+ "path LOCATION",
-				oError, "sap.ui.model.odata.v4.ODataListBinding");
+				// custom matcher because mobile Safari adds line and column properties to Error
+				sinon.match(function (oError) {
+					return oError instanceof Error && oError.message === sMessage;
+				}),
+				"sap.ui.model.odata.v4.ODataListBinding");
 		oListBinding.getContexts(0, 10); // creates cache
 
 		return oListBinding.readValue("LOCATION", false, 0).then(

@@ -217,7 +217,6 @@ sap.ui.require([
 				read: function () {}
 			},
 			sMessage = "Accessed value is not primitive",
-			oErrorObjectAccess = new Error(sMessage),
 			oErrorRead = new Error("Cache read error"),
 			oCacheMock = this.oSandbox.mock(oCache),
 			oModel = new ODataModel("/service/?sap-client=111"),
@@ -234,7 +233,10 @@ sap.ui.require([
 		this.oSandbox.mock(Cache).expects("createSingle").returns(oCache);
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read value for /service/EMPLOYEES(ID='1') and path LOCATION",
-				oErrorObjectAccess, "sap.ui.model.odata.v4.ODataContextBinding");
+				// custom matcher because mobile Safari adds line and column properties to Error
+				sinon.match(function (oError) {
+					return oError instanceof Error && oError.message === sMessage;
+				}), "sap.ui.model.odata.v4.ODataContextBinding");
 
 		oCacheMock.expects("read").returns(Promise.reject(oErrorRead));
 		this.oLogMock.expects("error")
