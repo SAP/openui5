@@ -72,9 +72,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			 *
 			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
 			 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
+			 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
 			 * @since 1.36.0
 			 */
 			toolbar : {type : "sap.ui.core.Toolbar", multiple : false}
+		},
+		associations: {
+
+			/**
+			 * Association to controls / IDs that label this control (see WAI-ARIA attribute aria-labelledby).
+			 *
+			 * <b>Note:</b> This attribute is only rendered if the <code>FormContainer</code> has it's own
+			 * DOM representation in the used <code>FormLayout</code>.
+			 * @since 1.36.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
 		designTime : true
 	}});

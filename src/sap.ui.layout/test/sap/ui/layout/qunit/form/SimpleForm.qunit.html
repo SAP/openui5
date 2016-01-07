@@ -277,7 +277,9 @@
 			});
 			oSimpleForm2.addContent(oToolbar);
 			aContainers = oSimpleForm2.getAggregation("form").getFormContainers();
-			equal(aContainers.length, 3, "Form32 number of FormContainers after adding Toolbar");
+			equal(aContainers.length, 3, "Form2 number of FormContainers after adding Toolbar");
+			equal(aContainers[2].getToolbar(), oToolbar, "Form2: toolbar assigned to container")
+			equal(aContainers[2].getAriaLabelledBy(), oToolbar.getId(), "Form2: toolbar assigned as aria-label to container")
 
 			sap.ui.getCore().applyChanges();
 		});

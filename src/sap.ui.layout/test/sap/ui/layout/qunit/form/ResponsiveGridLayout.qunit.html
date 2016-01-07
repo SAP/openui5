@@ -215,6 +215,7 @@
 							items: [new sap.ui.commons.TextView("F6C1-Title", {text: "Container 1", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
 							rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
 						}),
+						ariaLabelledBy: "F6C1-Title",
 						formElements: [
 							new sap.ui.layout.form.FormElement("F6C1E1",{
 									label: "Label",
@@ -226,6 +227,7 @@
 							items: [new sap.ui.commons.TextView("F6C2-Title", {text: "Container 2", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
 							rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
 						}),
+						ariaLabelledBy: "F6C2-Title",
 						formElements: [
 							new sap.ui.layout.form.FormElement("F6C2E1",{
 									label: "Label",
@@ -431,6 +433,9 @@
 			ok(!jQuery("#F2C1--Grid").attr("role"), "Container-F2C1: role \"form\" not set on grid level");
 			equal(jQuery("#F2C1---Panel").attr("aria-labelledby"), "F2C1--title", "Container-F2C1: aria-labelledby set");
 			equal(jQuery("#F3C1---Panel").attr("aria-labelledby"), "F3C1T", "Container-F3C1: aria-labelledby set");
+
+			equal(jQuery("#F6").attr("aria-labelledby"), "F6-Title", "Form6: aria-labelledby set");
+			equal(jQuery("#F6C1---Panel").attr("aria-labelledby"), "F6C1-Title", "Container-F6C1: aria-labelledby set");
 		});
 
 		test("Toolbar", function() {

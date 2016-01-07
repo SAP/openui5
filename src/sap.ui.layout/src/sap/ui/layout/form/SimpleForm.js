@@ -565,6 +565,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 					oFormContainer.setTitle(oElement);
 				} else {
 					oFormContainer.setToolbar(oElement);
+					oFormContainer.addAriaLabelledBy(oElement.getId()); // as we don't know in SimpeForm if Toolbar contains a title just assignt the whole Toolbar
 				}
 			} else {
 				oFormContainer = _createFormContainer(this, oElement);
@@ -743,6 +744,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 				oFormContainer = oElement.getParent();
 				oFormContainer.setTitle(null);
 				oFormContainer.setToolbar(null);
+				oFormContainer.removeAllAriaLabelledBy();
 				if (iIndex > 0) {
 					// if it's the first container -> just remove title
 					// remove container and add content to previous container
@@ -1262,6 +1264,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 				oContainer.setTitle(oTitle);
 			} else if (oTitle.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
 				oContainer.setToolbar(oTitle);
+				oContainer.addAriaLabelledBy(oTitle.getId()); // as we don't know in SimpeForm if Toolbar contains a title just assignt the whole Toolbar
 			}
 		}
 		return oContainer;
