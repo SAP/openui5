@@ -422,12 +422,19 @@ sap.ui.define([
 
 					oCurrentGroupElementValue = oCurrentGroupElement._getGroupElementValue(sQuickViewId);
 
+					oForm.addContent(oLabel);
+
+					if (!oCurrentGroupElementValue) {
+						// Add dummy text element so that the form renders the oLabel
+						oForm.addContent(new sap.m.Text({text : ""}));
+						continue;
+					}
+
 					if (oCurrentGroupElementValue instanceof Link) {
 						oCurrentGroupElementValue.addAriaLabelledBy(oCurrentGroupElementValue);
 					}
 
 					oLabel.setLabelFor(oCurrentGroupElementValue.getId());
-					oForm.addContent(oLabel);
 
 					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.pageLink) {
 						oCurrentGroupElementValue.attachPress(this._attachPressLink(this));
