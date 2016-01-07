@@ -2432,7 +2432,7 @@
 		"era": {
 			"displayName": "aikakausi"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "vuosi",
 			"relative-type--1": "viime vuonna",
 			"relative-type-0": "tänä vuonna",
@@ -2446,7 +2446,35 @@
 				"relativeTimePattern-count-other": "{0} vuotta sitten"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "v",
+			"relative-type--1": "viime v",
+			"relative-type-0": "tänä v",
+			"relative-type-1": "ensi v",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} v päästä",
+				"relativeTimePattern-count-other": "{0} v päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} v sitten",
+				"relativeTimePattern-count-other": "{0} v sitten"
+			}
+		},
+		"year-narrow": {
+			"displayName": "v",
+			"relative-type--1": "viime v",
+			"relative-type-0": "tänä v",
+			"relative-type-1": "ensi v",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} v päästä",
+				"relativeTimePattern-count-other": "{0} v päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} v sitten",
+				"relativeTimePattern-count-other": "{0} v sitten"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "neljännesvuosi",
 			"relative-type--1": "viime neljännesvuonna",
 			"relative-type-0": "tänä neljännesvuonna",
@@ -2460,7 +2488,35 @@
 				"relativeTimePattern-count-other": "{0} neljännesvuotta sitten"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "neljännes",
+			"relative-type--1": "viime neljänneksenä",
+			"relative-type-0": "tänä neljänneksenä",
+			"relative-type-1": "ensi neljänneksenä",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} neljänneksen päästä",
+				"relativeTimePattern-count-other": "{0} neljänneksen päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} neljännes sitten",
+				"relativeTimePattern-count-other": "{0} neljännes sitten"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "nelj.",
+			"relative-type--1": "viime nelj.",
+			"relative-type-0": "tänä nelj.",
+			"relative-type-1": "ensi nelj.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} nelj. päästä",
+				"relativeTimePattern-count-other": "{0} nelj. päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} nelj. sitten",
+				"relativeTimePattern-count-other": "{0} nelj. sitten"
+			}
+		},
+		"month-wide": {
 			"displayName": "kuukausi",
 			"relative-type--1": "viime kuussa",
 			"relative-type-0": "tässä kuussa",
@@ -2474,7 +2530,35 @@
 				"relativeTimePattern-count-other": "{0} kuukautta sitten"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "kk",
+			"relative-type--1": "viime kk",
+			"relative-type-0": "tässä kk",
+			"relative-type-1": "ensi kk",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} kk päästä",
+				"relativeTimePattern-count-other": "{0} kk päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} kk sitten",
+				"relativeTimePattern-count-other": "{0} kk sitten"
+			}
+		},
+		"month-narrow": {
+			"displayName": "kk",
+			"relative-type--1": "viime kk",
+			"relative-type-0": "tässä kk",
+			"relative-type-1": "ensi kk",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} kk päästä",
+				"relativeTimePattern-count-other": "{0} kk päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} kk sitten",
+				"relativeTimePattern-count-other": "{0} kk sitten"
+			}
+		},
+		"week-wide": {
 			"displayName": "viikko",
 			"relative-type--1": "viime viikolla",
 			"relative-type-0": "tällä viikolla",
@@ -2488,7 +2572,35 @@
 				"relativeTimePattern-count-other": "{0} viikkoa sitten"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "vk",
+			"relative-type--1": "viime vk",
+			"relative-type-0": "tällä vk",
+			"relative-type-1": "ensi vk",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} vk päästä",
+				"relativeTimePattern-count-other": "{0} vk päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} vk sitten",
+				"relativeTimePattern-count-other": "{0} vk sitten"
+			}
+		},
+		"week-narrow": {
+			"displayName": "vk",
+			"relative-type--1": "viime vk",
+			"relative-type-0": "tällä vk",
+			"relative-type-1": "ensi vk",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} vk päästä",
+				"relativeTimePattern-count-other": "{0} vk päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} vk sitten",
+				"relativeTimePattern-count-other": "{0} vk sitten"
+			}
+		},
+		"day-wide": {
 			"displayName": "päivä",
 			"relative-type--2": "toissa päivänä",
 			"relative-type--1": "eilen",
@@ -2504,10 +2616,42 @@
 				"relativeTimePattern-count-other": "{0} päivää sitten"
 			}
 		},
+		"day-short": {
+			"displayName": "pv",
+			"relative-type--2": "toissap.",
+			"relative-type--1": "eilen",
+			"relative-type-0": "tänään",
+			"relative-type-1": "huom.",
+			"relative-type-2": "ylihuom.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} pv päästä",
+				"relativeTimePattern-count-other": "{0} pv päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} pv sitten",
+				"relativeTimePattern-count-other": "{0} pv sitten"
+			}
+		},
+		"day-narrow": {
+			"displayName": "pv",
+			"relative-type--2": "toissap.",
+			"relative-type--1": "eilen",
+			"relative-type-0": "tänään",
+			"relative-type-1": "huom.",
+			"relative-type-2": "ylihuom.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} pv päästä",
+				"relativeTimePattern-count-other": "{0} pv päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} pv sitten",
+				"relativeTimePattern-count-other": "{0} pv sitten"
+			}
+		},
 		"weekday": {
 			"displayName": "viikonpäivä"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "tunti",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} tunnin päästä",
@@ -2518,7 +2662,29 @@
 				"relativeTimePattern-count-other": "{0} tuntia sitten"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "t",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} t päästä",
+				"relativeTimePattern-count-other": "{0} t päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} t sitten",
+				"relativeTimePattern-count-other": "{0} t sitten"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "t",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} t päästä",
+				"relativeTimePattern-count-other": "{0} t päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} t sitten",
+				"relativeTimePattern-count-other": "{0} t sitten"
+			}
+		},
+		"minute-wide": {
 			"displayName": "minuutti",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} minuutin päästä",
@@ -2529,7 +2695,29 @@
 				"relativeTimePattern-count-other": "{0} minuuttia sitten"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "min",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} min päästä",
+				"relativeTimePattern-count-other": "{0} min päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} min sitten",
+				"relativeTimePattern-count-other": "{0} min sitten"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "min",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} min päästä",
+				"relativeTimePattern-count-other": "{0} min päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} min sitten",
+				"relativeTimePattern-count-other": "{0} min sitten"
+			}
+		},
+		"second-wide": {
 			"displayName": "sekunti",
 			"relative-type-0": "nyt",
 			"relativeTime-type-future": {
@@ -2539,6 +2727,30 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} sekunti sitten",
 				"relativeTimePattern-count-other": "{0} sekuntia sitten"
+			}
+		},
+		"second-short": {
+			"displayName": "s",
+			"relative-type-0": "nyt",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} s päästä",
+				"relativeTimePattern-count-other": "{0} s päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} s sitten",
+				"relativeTimePattern-count-other": "{0} s sitten"
+			}
+		},
+		"second-narrow": {
+			"displayName": "s",
+			"relative-type-0": "nyt",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} s päästä",
+				"relativeTimePattern-count-other": "{0} s päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} s sitten",
+				"relativeTimePattern-count-other": "{0} s sitten"
 			}
 		},
 		"zone": {

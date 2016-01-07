@@ -669,11 +669,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * }
 		 *
 		 * @param {string[]} aScales The scales for which the available patterns should be returned
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 The style of the scale patterns. The valid values are "wide", "short" and "narrow".
 		 * @returns {object[]} An array of all relative time patterns
 		 * @public
 		 * @since 1.34
 		 */
-		getRelativePatterns : function(aScales) {
+		getRelativePatterns : function(aScales, sStyle) {
+			if (sStyle === undefined) {
+				sStyle = "wide";
+			}
+
+			jQuery.sap.assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
+
 			var aPatterns = [],
 				oScale,
 				oTimeEntry,
@@ -685,7 +692,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			}
 
 			aScales.forEach(function(sScale) {
-				oScale = this._get("dateFields", sScale);
+				oScale = this._get("dateFields", sScale + "-" + sStyle);
 				for (var sEntry in oScale) {
 					if (sEntry.indexOf("relative-type-") === 0) {
 						iValue = parseInt(sEntry.substr(14), 10);
@@ -722,21 +729,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @param {string} sScale the scale the relative pattern is needed for
 		 * @param {int} iDiff the difference in the given scale unit
 		 * @param {boolean} [bFuture] whether a future or past pattern should be used
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
 		 * @returns {string} the relative format pattern
 		 * @public
 		 * @since 1.34
 		 */
-		getRelativePattern : function(sScale, iDiff, bFuture) {
-			var sPattern, oTypes;
+		getRelativePattern : function(sScale, iDiff, bFuture, sStyle) {
+			var sPattern, oTypes, sKey;
+
+			if (typeof bFuture === "string") {
+				sStyle = bFuture;
+				bFuture = undefined;
+			}
 
 			if (bFuture === undefined) {
 				bFuture = iDiff > 0;
 			}
 
-			sPattern = this._get("dateFields", sScale, "relative-type-" + iDiff);
+			if (sStyle === undefined) {
+				sStyle = "wide";
+			}
+
+			jQuery.sap.assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
+
+			sKey = sScale + "-" + sStyle;
+
+			sPattern = this._get("dateFields", sKey, "relative-type-" + iDiff);
 
 			if (!sPattern) {
-				oTypes = this._get("dateFields", sScale, "relativeTime-type-" + (bFuture ? "future" : "past"));
+				oTypes = this._get("dateFields", sKey, "relativeTime-type-" + (bFuture ? "future" : "past"));
 
 				if (Math.abs(iDiff) === 1) {
 					sPattern = oTypes["relativeTimePattern-count-one"];
@@ -755,12 +776,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * difference value (0 means now, positive value means in the future and negative value means in the past).
 		 *
 		 * @param {int} iDiff the difference in seconds
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
 		 * @returns {string} the relative resource pattern in unit 'second'
 		 * @public
 		 * @since 1.31.0
 		 */
-		getRelativeSecond : function(iDiff) {
-			return this.getRelativePattern("second", iDiff);
+		getRelativeSecond : function(iDiff, sStyle) {
+			return this.getRelativePattern("second", iDiff, sStyle);
 		},
 
 		/**
@@ -771,15 +793,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * function to format the difference using unit 'second'.
 		 *
 		 * @param {int} iDiff the difference in minutes
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
 		 * @returns {string|null} the relative resource pattern in unit 'minute'. The method returns null if 0 is given as parameter.
 		 * @public
 		 * @since 1.31.0
 		 */
-		getRelativeMinute : function(iDiff) {
+		getRelativeMinute : function(iDiff, sStyle) {
 			if (iDiff == 0) {
 				return null;
 			}
-			return this.getRelativePattern("minute", iDiff);
+			return this.getRelativePattern("minute", iDiff, sStyle);
 		},
 
 		/**
@@ -790,15 +813,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * function to format the difference using unit 'minute' or 'second'.
 		 *
 		 * @param {int} iDiff the difference in hours
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
 		 * @returns {string|null} the relative resource pattern in unit 'hour'. The method returns null if 0 is given as parameter.
 		 * @public
 		 * @since 1.31.0
 		 */
-		getRelativeHour : function(iDiff) {
+		getRelativeHour : function(iDiff, sStyle) {
 			if (iDiff == 0) {
 				return null;
 			}
-			return this.getRelativePattern("hour", iDiff);
+			return this.getRelativePattern("hour", iDiff, sStyle);
 		},
 
 		/**
@@ -806,12 +830,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * difference of days (0 means today, 1 means tommorrow, -1 means yesterday, ...).
 		 *
 		 * @param {int} iDiff the difference in days
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
 		 * @returns {string} the relative day resource pattern
 		 * @public
 		 * @since 1.25.0
 		 */
-		getRelativeDay : function(iDiff) {
-			return this.getRelativePattern("day", iDiff);
+		getRelativeDay : function(iDiff, sStyle) {
+			return this.getRelativePattern("day", iDiff, sStyle);
 		},
 
 		/**
@@ -819,12 +844,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * difference of weeks (0 means this week, 1 means next week, -1 means last week, ...).
 		 *
 		 * @param {int} iDiff the difference in weeks
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
 		 * @returns {string} the relative week resource pattern
 		 * @public
 		 * @since 1.31.0
 		 */
-		getRelativeWeek : function(iDiff) {
-			return this.getRelativePattern("week", iDiff);
+		getRelativeWeek : function(iDiff, sStyle) {
+			return this.getRelativePattern("week", iDiff, sStyle);
 		},
 
 		/**
@@ -832,27 +858,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * difference of months (0 means this month, 1 means next month, -1 means last month, ...).
 		 *
 		 * @param {int} iDiff the difference in months
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
 		 * @returns {string} the relative month resource pattern
 		 * @public
 		 * @since 1.25.0
 		 */
-		getRelativeMonth : function(iDiff) {
-			return this.getRelativePattern("month", iDiff);
+		getRelativeMonth : function(iDiff, sStyle) {
+			return this.getRelativePattern("month", iDiff, sStyle);
 		},
 
 		/**
 		 * Returns the display name for a time unit (second, minute, hour, day, week, month, year)
 		 *
 		 * @param {string} sType Type (second, minute, hour, day, week, month, year)
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
 		 * returns {string} display name
 		 * @public
 		 * @since 1.34.0
 		 */
-		getDisplayName: function(sType) {
+		getDisplayName: function(sType, sStyle) {
 			jQuery.sap.assert(sType == "second" || sType == "minute" || sType == "hour" || sType == "zone" || sType == "day"
 				|| sType == "weekday" || sType == "week" || sType == "month" || sType == "quarter" || sType == "year" || sType == "era",
 				"sType must be second, minute, hour, zone, day, weekday, week, month, quarter, year, era");
-			return this._get("dateFields", sType, "displayName");
+
+			if (sStyle === undefined) {
+				sStyle = "wide";
+			}
+
+			jQuery.sap.assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
+
+			var aSingleFormFields = ["era", "weekday", "zone"],
+				sKey = aSingleFormFields.indexOf(sType) === -1 ? sType + "-" + sStyle : sType;
+
+			return this._get("dateFields", sKey, "displayName");
 		},
 
 		/**
@@ -860,12 +898,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * difference of years (0 means this year, 1 means next year, -1 means last year, ...).
 		 *
 		 * @param {int} iDiff the difference in years
+		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
 		 * @returns {string} the relative year resource pattern
 		 * @public
 		 * @since 1.25.0
 		 */
-		getRelativeYear : function(iDiff) {
-			return this.getRelativePattern("year", iDiff);
+		getRelativeYear : function(iDiff, sStyle) {
+			return this.getRelativePattern("year", iDiff, sStyle);
 		},
 
 		/**
@@ -1203,7 +1242,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				"era": {
 					"displayName": "era"
 				},
-				"year": {
+				"year-wide": {
 					"displayName": "year",
 					"relative-type--1": "last year",
 					"relative-type-0": "this year",
@@ -1217,7 +1256,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} years ago"
 					}
 				},
-				"quarter": {
+				"quarter-wide": {
 					"displayName": "quarter",
 					"relative-type--1": "last quarter",
 					"relative-type-0": "this quarter",
@@ -1231,7 +1270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} quarters ago"
 					}
 				},
-				"month": {
+				"month-wide": {
 					"displayName": "month",
 					"relative-type--1": "last month",
 					"relative-type-0": "this month",
@@ -1245,7 +1284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} months ago"
 					}
 				},
-				"week": {
+				"week-wide": {
 					"displayName": "week",
 					"relative-type--1": "last week",
 					"relative-type-0": "this week",
@@ -1259,7 +1298,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} weeks ago"
 					}
 				},
-				"day": {
+				"day-wide": {
 					"displayName": "day",
 					"relative-type--1": "yesterday",
 					"relative-type-0": "today",
@@ -1276,7 +1315,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				"weekday": {
 					"displayName": "day of the week"
 				},
-				"hour": {
+				"hour-wide": {
 					"displayName": "hour",
 					"relativeTime-type-future": {
 						"relativeTimePattern-count-one": "in {0} hour",
@@ -1287,7 +1326,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} hours ago"
 					}
 				},
-				"minute": {
+				"minute-wide": {
 					"displayName": "minute",
 					"relativeTime-type-future": {
 						"relativeTimePattern-count-one": "in {0} minute",
@@ -1298,7 +1337,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} minutes ago"
 					}
 				},
-				"second": {
+				"second-wide": {
 					"displayName": "second",
 					"relative-type-0": "now",
 					"relativeTime-type-future": {
