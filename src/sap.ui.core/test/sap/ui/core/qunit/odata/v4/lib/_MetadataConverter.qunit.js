@@ -33,7 +33,10 @@ sap.ui.require([
 
 	/**
 	 * Tests the conversion of the given XML snippet of a constant/dynamic expression below an
-	 * Annotation element.
+	 * Annotation element. If the expression contains a Path element, a second test is performed
+	 * with the Path element replaced by an expression. By this recursive expressions are tested
+	 * automatically.
+	 *
 	 * @param {object} assert
 	 *   QUnit's assert
 	 * @param {string} sXmlSnippet
@@ -42,20 +45,40 @@ sap.ui.require([
 	 *   the expected value for the annotation
 	 */
 	function testExpression(assert, sXmlSnippet, vExpected) {
-		var oXML = xml(assert, '\
-				<Edmx>\
-					<DataServices>\
-						<Schema Namespace="foo" Alias="f">\
-							<Annotations Target="foo.Bar">\
-								<Annotation Term="foo.Term">' + sXmlSnippet + '\
-								</Annotation>\
-							</Annotations>\
-						</Schema>\
-					</DataServices>\
-				</Edmx>'),
-			oResult = MetadataConverter.convertXMLMetadata(oXML);
+		var aMatches, sPath;
 
-		assert.deepEqual(oResult["foo"].$Annotations["foo.Bar"]["@foo.Term"], vExpected);
+		function test() {
+			var oXml = xml(assert, '\
+					<Edmx>\
+						<DataServices>\
+							<Schema Namespace="foo" Alias="f">\
+								<Annotations Target="foo.Bar">\
+									<Annotation Term="foo.Term">' + sXmlSnippet + '\
+									</Annotation>\
+								</Annotations>\
+							</Schema>\
+						</DataServices>\
+					</Edmx>'),
+				// code under test
+				oResult = MetadataConverter.convertXMLMetadata(oXml);
+			assert.deepEqual(oResult["foo"].$Annotations["foo.Bar"]["@foo.Term"], vExpected,
+				sXmlSnippet);
+		}
+
+		test();
+
+		// Rewrite sXmlSnippet and vExpectedValue so that the (first) Path is converted to a
+		// (rather stupid) If and thus create a recursive expression.
+		aMatches = /<Path>(.*?)<\/Path>/.exec(sXmlSnippet);
+		if (aMatches) {
+			sPath = aMatches[1];
+			sXmlSnippet = sXmlSnippet.replace("<Path>" + sPath + "</Path>",
+				"<If><Bool>true</Bool><Path>" + sPath + "</Path><Null/></If>");
+			sPath = '{"$Path":"' + sPath.replace(/f\./g, "foo.") + '"}';
+			vExpected = JSON.parse(JSON.stringify(vExpected)
+				.replace(sPath, '{"$If":[true,' + sPath + ',null]}'));
+			test();
+		}
 	}
 
 	/**
@@ -977,8 +1000,8 @@ sap.ui.require([
 			{"$Ge": [{"$Path": "Price"}, 20]});
 		testExpression(assert, '<Le><Path>Price</Path><Int>20</Int></Le>',
 			{"$Le": [{"$Path": "Price"}, 20]});
-		testExpression(assert, '<Le><Path>Price</Path><Int>20</Int></Le>',
-			{"$Le": [{"$Path": "Price"}, 20]});
+		testExpression(assert, '<Lt><Path>Price</Path><Int>20</Int></Lt>',
+			{"$Lt": [{"$Path": "Price"}, 20]});
 		testExpression(assert,
 			'<If><Path>IsFemale</Path><String>Female</String><String>Male</String></If>',
 			{"$If": [{"$Path": "IsFemale"}, "Female", "Male"]});
@@ -1033,8 +1056,8 @@ sap.ui.require([
 	QUnit.test("annotations: Collection", function (assert) {
 		testExpression(assert, '<Collection/>', []);
 		testExpression(assert,
-			'<Collection><String>Product</String><String>Supplier</String></Collection>',
-			["Product", "Supplier"]);
+			'<Collection><String>Product</String><Path>Supplier</Path></Collection>',
+			["Product", {"$Path": "Supplier"}]);
 	});
 
 	//*********************************************************************************************
