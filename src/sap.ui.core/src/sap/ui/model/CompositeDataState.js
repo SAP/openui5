@@ -18,11 +18,10 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	 *     myControl.prototype.refreshDataState = function(oDataState) {
 	 *        var aMessages = oDataState.getChanges().messages;
 	 *        if (aMessages) {
-	 *            for (var i=0;i<aMessages.length;i++) {
+	 *            for (var i = 0; i &lt; aMessages.length; i++) {
 	 *                console.log(aMessages.message);
 	 *            }
 	 *        }
-	 *
 	 *     }
 	 *
 	 *     //sample implementation to handle laundering state
