@@ -581,31 +581,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	sap.m.FlexAlignItems = {
 
 		/**
-		 * The cross-start margin edges of the box items are placed flush with the cross-start edge of the line.
+		 * The cross-start margin edges of the flex items are placed flush with the cross-start edge of the line.
 		 * @public
 		 */
 		Start : "Start",
 
 		/**
-		 * The cross-start margin edges of the box items are placed flush with the cross-end edge of the line.
+		 * The cross-start margin edges of the flex items are placed flush with the cross-end edge of the line.
 		 * @public
 		 */
 		End : "End",
 
 		/**
-		 * The box items' margin boxes are centered in the cross axis within the line.
+		 * The flex item's margin boxes are centered in the cross axis within the line.
 		 * @public
 		 */
 		Center : "Center",
 
 		/**
-		 * If the box items' inline axes are the same as the cross axis, this value is identical to ?start?. Otherwise, it participates in baseline alignment: all participating box items on the line are aligned such that their baselines align, and the item with the largest distance between its baseline and its cross-start margin edge is placed flush against the cross-start edge of the line.
+		 * If the flex item's inline axes are the same as the cross axis, this value is identical to "Start". Otherwise, it participates in baseline alignment: all participating box items on the line are aligned such that their baselines align, and the item with the largest distance between its baseline and its cross-start margin edge is placed flush against the cross-start edge of the line.
 		 * @public
 		 */
 		Baseline : "Baseline",
 
 		/**
-		 * Make the cross size of the items' margin boxes as close to the same size as the line as possible.
+		 * Make the cross size of the item's margin boxes as close to the same size as the line as possible.
 		 * @public
 		 */
 		Stretch : "Stretch",
@@ -635,25 +635,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Auto : "Auto",
 
 		/**
-		 * The cross-start margin edges of the box item is placed flush with the cross-start edge of the line.
+		 * The cross-start margin edges of the flex item is placed flush with the cross-start edge of the line.
 		 * @public
 		 */
 		Start : "Start",
 
 		/**
-		 * The cross-start margin edges of the box item is placed flush with the cross-end edge of the line.
+		 * The cross-start margin edges of the flex item is placed flush with the cross-end edge of the line.
 		 * @public
 		 */
 		End : "End",
 
 		/**
-		 * The box item's margin box is centered in the cross axis within the line.
+		 * The flex item's margin box is centered in the cross axis within the line.
 		 * @public
 		 */
 		Center : "Center",
 
 		/**
-		 * If the box item's inline axis is the same as the cross axis, this value is identical to ?start?. Otherwise, it participates in baseline alignment: all participating box items on the line are aligned such that their baselines align, and the item with the largest distance between its baseline and its cross-start margin edge is placed flush against the cross-start edge of the line.
+		 * If the flex item's inline axis is the same as the cross axis, this value is identical to "Start". Otherwise, it participates in baseline alignment: all participating box items on the line are aligned such that their baselines align, and the item with the largest distance between its baseline and its cross-start margin edge is placed flush against the cross-start edge of the line.
 		 * @public
 		 */
 		Baseline : "Baseline",
@@ -683,25 +683,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	sap.m.FlexDirection = {
 
 		/**
-		 * Elements are layed out along the direction of the inline axis (text direction).
+		 * Flex items are laid out along the direction of the inline axis (text direction).
 		 * @public
 		 */
 		Row : "Row",
 
 		/**
-		 * Elements are layed out along the direction of the block axis (usually top to bottom).
+		 * Flex items are laid out along the direction of the block axis (usually top to bottom).
 		 * @public
 		 */
 		Column : "Column",
 
 		/**
-		 * Elements are layed out along the reverse direction of the inline axis (against the text direction).
+		 * Flex items are laid out along the reverse direction of the inline axis (against the text direction).
 		 * @public
 		 */
 		RowReverse : "RowReverse",
 
 		/**
-		 * Elements are layed out along the reverse direction of the block axis (usually bottom to top).
+		 * Flex items are laid out along the reverse direction of the block axis (usually bottom to top).
 		 * @public
 		 */
 		ColumnReverse : "ColumnReverse",
@@ -725,31 +725,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	sap.m.FlexJustifyContent = {
 
 		/**
-		 * Box items are packed toward the start of the line.
+		 * Flex items are packed toward the start of the line.
 		 * @public
 		 */
 		Start : "Start",
 
 		/**
-		 * Box items are packed toward the end of the line.
+		 * Flex items are packed toward the end of the line.
 		 * @public
 		 */
 		End : "End",
 
 		/**
-		 * Box items are packed toward the center of the line.
+		 * Flex items are packed toward the center of the line.
 		 * @public
 		 */
 		Center : "Center",
 
 		/**
-		 * Box items are evenly distributed in the line.
+		 * Flex items are evenly distributed in the line.
 		 * @public
 		 */
 		SpaceBetween : "SpaceBetween",
 
 		/**
-		 * Box items are evenly distributed in the line, with half-size spaces on either end.
+		 * Flex items are evenly distributed in the line, with half-size spaces on either end.
 		 * <b>Note:</b> This value behaves like SpaceBetween in Internet Explorer 10.
 		 * @public
 		 */
@@ -765,6 +765,90 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 	/**
+	 * Available options for the wrapping behavior of a flex container.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.FlexWrap = {
+
+		/**
+		 * The flex container is single-line.
+		 * @public
+		 */
+		NoWrap : "NoWrap",
+
+		/**
+		 * The flex container is multi-line.
+		 * @public
+		 */
+		Wrap : "Wrap",
+
+		/**
+		 * The flex container is multi-line with the cross-axis start and end being swapped.
+		 * @public
+		 */
+		WrapReverse : "WrapReverse"
+
+	};
+
+
+	/**
+	 * Available options for the layout of container lines along the cross axis of the flexbox layout. <b>Note:</b> This property has no effect in Internet Explorer 10.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.FlexAlignContent = {
+
+		/**
+		 * Lines are packed toward the start of the line.
+		 * @public
+		 */
+		Start : "Start",
+
+		/**
+		 * Lines are packed toward the end of the line.
+		 * @public
+		 */
+		End : "End",
+
+		/**
+		 * Line are packed toward the center of the line.
+		 * @public
+		 */
+		Center : "Center",
+
+		/**
+		 * Lines are evenly distributed in the line.
+		 * @public
+		 */
+		SpaceBetween : "SpaceBetween",
+
+		/**
+		 * Lines are evenly distributed in the line, with half-size spaces on either end.
+		 * <b>Note:</b> This value behaves like SpaceBetween in Internet Explorer 10.
+		 * @public
+		 */
+		SpaceAround : "SpaceAround",
+
+		/**
+		 * Lines stretch to take up the remaining space.
+		 * @public
+		 */
+		Stretch : "Stretch",
+
+		/**
+		 * Inherits the value from its parent.
+		 * @public
+		 */
+		Inherit : "Inherit"
+
+	};
+
+	/**
 	 * Determines the type of HTML elements used for rendering controls.
 	 *
 	 * @enum {string}
@@ -774,13 +858,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	sap.m.FlexRendertype = {
 
 		/**
-		 * DIV elements are used for rendering
+		 * The UI5 controls are wrapped in DIV elements
 		 * @public
 		 */
 		Div : "Div",
 
 		/**
-		 * Unordered lists are used for rendering.
+		 * The UI5 controls are wrapped in LI elements, the entire Flex Box is an unordered list (UL)
 		 * @public
 		 */
 		List : "List"
