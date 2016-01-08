@@ -46,7 +46,7 @@
 
 		<!-- NPM settings -->
 		<npm.version>2.11.3</npm.version>
-		<npm.registry>http://nexus:8081/nexus/content/groups/build.milestones.npm</npm.registry>
+		<npm.registry>http://nexus:8081/nexus/content/groups/build.milestones</npm.registry>
 
 	</properties>
 
