@@ -440,7 +440,8 @@ sap.ui.define([
 						oCurrentGroupElementValue.attachPress(this._attachPressLink(this));
 					}
 
-					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.mobile) {
+					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.mobile &&
+						!sap.ui.Device.system.desktop) {
 						var oSmsLink = new Icon({
 							src: IconPool.getIconURI("post"),
 							tooltip : this._oResourceBundle.getText("QUICKVIEW_SEND_SMS"),
