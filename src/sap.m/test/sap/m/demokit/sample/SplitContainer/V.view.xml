@@ -17,7 +17,7 @@
 					<VBox class="sapUiSmallMargin">
 						<Label text="This is Detail Page2" />
 						<Text text="Here you could change the Split Application mode. After the mode change, resize the browser window to see the difference in the master form behaviour." />
-						<RadioButtonGroup columns="4" width="500px" class="sapUiMediumMarginBottom" select="onPressModeBtn">
+						<RadioButtonGroup columns="1" width="500px" class="sapUiMediumMarginBottom" select="onPressModeBtn">
 							<buttons>
 								<RadioButton id="RB1-1" text="show/hide" selected="true" custom:splitAppMode="ShowHideMode" />
 								<RadioButton id="RB1-2" text="stretch/compress" custom:splitAppMode="StretchCompressMode" />
