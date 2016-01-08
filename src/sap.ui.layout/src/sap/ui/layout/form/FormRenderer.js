@@ -52,7 +52,8 @@ sap.ui.define(['jquery.sap.global'],
 
 		var mAriaProps = {role: "form"};
 		var oTitle = oForm.getTitle();
-		if (oTitle) {
+		var oToolbar = oForm.getToolbar();
+		if (oTitle && !oToolbar) {
 			var sId = "";
 			if (typeof oTitle == "string") {
 				sId = oForm.getId() + "--title";
