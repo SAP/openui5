@@ -252,6 +252,9 @@ sap.ui.define([
 		if (!this.oLibraryResourceBundle) {
 			this.oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
 		}
+		if (!this.oLibraryResourceBundleOP) {
+			this.oLibraryResourceBundleOP = library.i18nModel.getResourceBundle(); // get resource translation bundle
+		}
 
 		this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
 		this._iOffset = parseInt(0.25 * this._iREMSize, 10);
@@ -325,42 +328,44 @@ sap.ui.define([
 			});
 		},
 		"_lockIcon": function (oParent) {
-			return this._getButton(oParent, "sap-icon://locked", "lock");
+			return this._getButton(oParent, "sap-icon://locked", "lock", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_LOCK_MARK_VALUE"));
 		},
 		"_titleArrowIconCont": function (oParent) {
-			return this._getButton(oParent, "sap-icon://arrow-down", "titleArrow-cont");
+			return this._getButton(oParent, "sap-icon://arrow-down", "titleArrow-cont", oParent.oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"));
 		},
-		"_titleArrowIcon": function (parent) {
-			return this._getButton(parent, "sap-icon://arrow-down", "titleArrow");
+		"_titleArrowIcon": function (oParent) {
+			return this._getButton(oParent, "sap-icon://arrow-down", "titleArrow", oParent.oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"));
 		},
 		"_favIcon": function (oParent) {
-			return this._getIcon(oParent, "favorite");
+			return this._getIcon(oParent, "favorite", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_FAVORITE_MARK_VALUE"));
 		},
 		"_flagIcon": function (oParent) {
-			return this._getIcon(oParent, "flag");
+			return this._getIcon(oParent, "flag", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_FLAG_MARK_VALUE"));
 		},
 		"_overflowButton": function (oParent) {
 			return this._getButton(oParent, "sap-icon://overflow", "overflow");
 		},
 		"_expandButton": function (oParent) {
-			return this._getButton(oParent, "sap-icon://slim-arrow-down", "expand");
+			return this._getButton(oParent, "sap-icon://slim-arrow-down", "expand", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_EXPAND_HEADER_BTN"));
 		},
 		"_changesIconCont": function (oParent) {
-			return this._getButton(oParent, "sap-icon://request", "changes-cont");
+			return this._getButton(oParent, "sap-icon://request", "changes-cont", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_CHANGES_MARK_VALUE"));
 		},
 		"_changesIcon": function (oParent) {
-			return this._getButton(oParent, "sap-icon://request", "changes");
+			return this._getButton(oParent, "sap-icon://request", "changes", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_CHANGES_MARK_VALUE"));
 		},
-		_getIcon: function (oParent, sIcon) {
+		_getIcon: function (oParent, sIcon, sTooltip) {
 			return IconPool.createControlByURI({
 				id: this._getParentAugmentedId(oParent, sIcon),
+				tooltip: sTooltip,
 				src: IconPool.getIconURI(sIcon),
 				visible: false
 			});
 		},
-		_getButton: function (oParent, sIcon, sChildSignature) {
+		_getButton: function (oParent, sIcon, sChildSignature, sTooltip) {
 			return new Button({
 				id: this._getParentAugmentedId(oParent, sChildSignature),
+				tooltip: sTooltip,
 				icon: sIcon,
 				type: sap.m.ButtonType.Transparent
 			});
