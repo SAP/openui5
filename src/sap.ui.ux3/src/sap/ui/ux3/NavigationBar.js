@@ -38,7 +38,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			/**
 			 * Defines whether the navigation bar shall have top-level appearance
 			 */
-			toplevelVariant : {type : "boolean", group : "Misc", defaultValue : false}
+			toplevelVariant: {type: "boolean", group: "Misc", defaultValue: false},
+
+			/**
+			 * Sets the appearance of the menu items in the overflow menu to uppercase
+			 * @since 1.36
+			 */
+			overflowItemsToUpperCase: {type: "boolean", group: "Appearance", defaultValue: false}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -308,6 +314,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this._handleActivation(oEvent);
 	};
 
+	NavigationBar.prototype.setOverflowItemsToUpperCase = function (bValue) {
+		this._getOverflowMenu().toggleStyleClass("sapUiUx3NavBarUpperCaseText", bValue);
+		return this.setProperty("overflowItemsToUpperCase", bValue);
+	};
 
 	NavigationBar.prototype._handleActivation = function(oEvent) {
 		var sTargetId = oEvent.target.id;
