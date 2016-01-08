@@ -1090,6 +1090,246 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("inline annotations: Schema, EntityType, ComplexType", function (assert) {
+		testConversion(assert, '\
+				<DataServices>\
+					<Schema Namespace="foo" Alias="f">\
+						<Annotation Term="f.Term1" String="Schema"/>\
+						<EntityType Name="EntityType">\
+							<Property Name="Property" Type="Edm.String">\
+								<Annotation Term="f.Term" String="Property"/>\
+							</Property>\
+							<NavigationProperty Name="NavigationProperty" Type="foo.Target">\
+								<Annotation Term="f.Term" String="NavigationProperty"/>\
+								<ReferentialConstraint Property="p" ReferencedProperty="r">\
+									<Annotation Term="f.Term" String="ReferentialConstraint"/>\
+								</ReferentialConstraint>\
+								<OnDelete Action="a">\
+									<Annotation Term="f.Term" String="OnDelete"/>\
+								</OnDelete>\
+							</NavigationProperty>\
+							<Annotation Term="f.Term" String="EntityType"/>\
+						</EntityType>\
+						<ComplexType Name="ComplexType">\
+							<Annotation Term="f.Term" String="ComplexType"/>\
+						</ComplexType>\
+						<Annotation Term="f.Term2" String="Schema"/>\
+					</Schema>\
+				</DataServices>',
+			{
+				"foo": {
+					"$kind": "Schema",
+					"@foo.Term1": "Schema",
+					"@foo.Term2": "Schema",
+					"$Annotations": {
+						"foo.EntityType": {
+							"@foo.Term": "EntityType"
+						},
+						"foo.EntityType/Property": {
+							"@foo.Term": "Property"
+						},
+						"foo.EntityType/NavigationProperty": {
+							"@foo.Term": "NavigationProperty"
+						},
+						"foo.ComplexType": {
+							"@foo.Term": "ComplexType"
+						}
+					}
+				},
+				"foo.EntityType": {
+					"$kind": "EntityType",
+					"$Key": [],
+					"Property": {
+						"$kind": "Property",
+						"$Type": "Edm.String"
+					},
+					"NavigationProperty": {
+						"$kind": "NavigationProperty",
+						"$Type": "foo.Target",
+						"$ReferentialConstraint": {
+							"p": "r",
+							"p@foo.Term": "ReferentialConstraint"
+						},
+						"$OnDelete": "a",
+						"$OnDelete@foo.Term": "OnDelete"
+					}
+				},
+				"foo.ComplexType": {
+					"$kind": "ComplexType"
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inline annotations: EnumType, Term, TypeDefinition", function (assert) {
+		testConversion(assert, '\
+				<DataServices>\
+					<Schema Namespace="foo" Alias="f">\
+						<EnumType Name="EnumType">\
+							<Member Name="Member">\
+								<Annotation Term="f.Term" String="Member"/>\
+							</Member>\
+							<Annotation Term="f.Term" String="EnumType"/>\
+						</EnumType>\
+						<Term Name="Term" Type="Edm.String">\
+							<Annotation Term="f.Term" String="Term"/>\
+						</Term>\
+						<TypeDefinition Name="TypeDefinition" UnderlyingType="Edm.String">\
+							<Annotation Term="f.Term" String="TypeDefinition"/>\
+						</TypeDefinition>\
+					</Schema>\
+				</DataServices>',
+			{
+				"foo": {
+					"$kind": "Schema",
+					"$Annotations": {
+						"foo.EnumType": {
+							"@foo.Term": "EnumType"
+						},
+						"foo.EnumType/Member": {
+							"@foo.Term": "Member"
+						},
+						"foo.Term": {
+							"@foo.Term": "Term"
+						},
+						"foo.TypeDefinition": {
+							"@foo.Term": "TypeDefinition"
+						}
+					}
+				},
+				"foo.EnumType": {
+					"$kind": "EnumType",
+					"Member": 0
+				},
+				"foo.Term": {
+					"$kind": "Term",
+					"$Type": "Edm.String"
+				},
+				"foo.TypeDefinition": {
+					"$kind": "TypeDefinition",
+					"$UnderlyingType": "Edm.String"
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inline annotations: Action, Function", function (assert) {
+		testConversion(assert, '\
+				<DataServices>\
+					<Schema Namespace="foo" Alias="f">\
+						<Action Name="Action">\
+							<Parameter Name="Parameter" Type="Edm.String">\
+								<Annotation Term="f.Term" String="Parameter"/>\
+							</Parameter>\
+							<ReturnType Type="Edm.String">\
+								<Annotation Term="f.Term" String="ReturnType"/>\
+							</ReturnType>\
+							<Annotation Term="f.Term" String="Action1"/>\
+						</Action>\
+						<Action Name="Action">\
+							<Annotation Term="f.Term" String="Action2"/>\
+						</Action>\
+						<Function Name="Function">\
+							<Annotation Term="f.Term" String="Function"/>\
+						</Function>\
+					</Schema>\
+				</DataServices>',
+			{
+				"foo": {
+					"$kind": "Schema"
+				},
+				"foo.Action": [{
+					"$kind": "Action",
+					"$Parameter": [{
+						"$Name": "Parameter",
+						"$Type": "Edm.String",
+						"@foo.Term": "Parameter"
+					}],
+					"$ReturnType": {
+						"$Type": "Edm.String",
+						"@foo.Term": "ReturnType"
+					},
+					"@foo.Term": "Action1"
+				}, {
+					"$kind": "Action",
+					"$Parameter": [],
+					"@foo.Term": "Action2"
+				}],
+				"foo.Function": [{
+					"$kind": "Function",
+					"$Parameter": [],
+					"@foo.Term": "Function"
+				}]
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inline annotations: EntityContainer and children", function (assert) {
+		testConversion(assert, '\
+				<DataServices>\
+					<Schema Namespace="foo" Alias="f">\
+						<EntityContainer Name="Container">\
+							<EntitySet Name="EntitySet" EntityType="f.EntityType">\
+								<Annotation Term="f.Term1" String="EntitySet"/>\
+							</EntitySet>\
+							<Singleton Name="Singleton" Type="f.EntityType">\
+								<Annotation Term="f.Term" String="Singleton"/>\
+							</Singleton>\
+							<ActionImport Name="ActionImport" Action="f.Action">\
+								<Annotation Term="f.Term" String="ActionImport"/>\
+							</ActionImport>\
+							<FunctionImport Name="FunctionImport" Function="f.Function">\
+								<Annotation Term="f.Term" String="FunctionImport"/>\
+							</FunctionImport>\
+							<Annotation Term="f.Term" String="EntityContainer"/>\
+						</EntityContainer>\
+						<Annotations Target="foo.Container/EntitySet">\
+							<Annotation Term="f.Term2" String="EntitySet"/>\
+						</Annotations>\
+					</Schema>\
+				</DataServices>',
+			{
+				"$EntityContainer": "foo.Container",
+				"foo": {
+					"$kind": "Schema",
+					"$Annotations": {
+						"foo.Container": {
+							"@foo.Term": "EntityContainer"
+						},
+						"foo.Container/EntitySet": {
+							"@foo.Term1": "EntitySet",
+							"@foo.Term2": "EntitySet"
+						},
+						"foo.Container/Singleton": {
+							"@foo.Term": "Singleton"
+						}
+					}
+				},
+				"foo.Container": {
+					"$kind": "EntityContainer",
+					"EntitySet": {
+						"$kind": "EntitySet",
+						"$Type": "foo.EntityType"
+					},
+					"Singleton": {
+						"$kind": "Singleton",
+						"$Type": "foo.EntityType"
+					},
+					"ActionImport": {
+						"$kind": "ActionImport",
+						"$Action": "foo.Action",
+						"@foo.Term": "ActionImport"
+					},
+					"FunctionImport": {
+						"$kind": "FunctionImport",
+						"$Function": "foo.Function",
+						"@foo.Term": "FunctionImport"
+					}
+				}
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
 		return Promise.all([
 			jQuery.ajax("/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata")
