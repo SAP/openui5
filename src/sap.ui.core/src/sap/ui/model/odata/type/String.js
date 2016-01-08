@@ -8,9 +8,6 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	function(FormatException, ODataType, ParseException, ValidateException, StringType) {
 	"use strict";
 
-	var rDigitsOnly = /^\d+$/,
-		EdmString;
-
 	/**
 	 * Sets the constraints.
 	 *
@@ -91,13 +88,14 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @public
 	 * @since 1.27.0
 	 */
-	EdmString = ODataType.extend("sap.ui.model.odata.type.String", {
+	var EdmString = ODataType.extend("sap.ui.model.odata.type.String", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					setConstraints(this, oConstraints);
 				}
 			}
-		);
+		),
+		rDigitsOnly = /^\d+$/;
 
 	/**
 	 * Formats the given value to the given target type.
