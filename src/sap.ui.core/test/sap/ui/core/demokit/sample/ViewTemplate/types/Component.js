@@ -30,8 +30,7 @@ sap.ui.define([
 					jQuery.sap.getModulePath("sap.ui.core.sample.ViewTemplate.types.data", "/"),
 				oMockServer,
 				oModel,
-				bRealOData = (jQuery.sap.getUriParameters().get("realOData") === "true"),
-				oView;
+				bRealOData = (jQuery.sap.getUriParameters().get("realOData") === "true");
 
 			if (bRealOData) {
 				sUri = this.proxy(sUri);
@@ -69,7 +68,7 @@ sap.ui.define([
 						viewName: "sap.ui.core.sample.ViewTemplate.types.Types"
 					});
 
-				oView.setLayoutData(new FlexItemData({growFactor: 1.0}));
+				oView.setLayoutData(new FlexItemData({growFactor: 1.0, baseSize: "0%"}));
 				oLayout.addItem(oView);
 			}, function (oError) {
 				MessageBox.alert(oError.message, {
