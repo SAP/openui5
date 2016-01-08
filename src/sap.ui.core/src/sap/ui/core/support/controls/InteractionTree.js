@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           gridContainer.empty();
 
-          gridContainer.append('<div style="left:' + (this.getPosition(width, range, 0) + 2) + 'px" class="sapUiInteractionGridLineIntervalText">' + this.formatDuration(0) + '</div>');
+          gridContainer.append('<div style="left:' + (this.getPosition(width, range, 0) + 6) + 'px" class="sapUiInteractionGridLineIntervalText">' + this.formatDuration(0) + '</div>');
 
           var interval = this.calculateInterval(width, range);
 
@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              var position = this.getPosition(width, range, i);
 
              if (i + interval < range) {
-                gridContainer.append('<div style="left:' + (position + 2) + 'px" class="sapUiInteractionGridLineIntervalText">' + this.formatDuration(i) + '</div>');
+                gridContainer.append('<div style="left:' + (position + 6) + 'px" class="sapUiInteractionGridLineIntervalText">' + this.formatDuration(i) + '</div>');
              }
 
              gridContainer.append('<div style="left:' + position + 'px" class="sapUiInteractionGridLine"></div>');
@@ -381,7 +381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write('<span class="sapUiInteractionRequestIcon ' + colorClass + '"></span>');
 
-          rm.write('<span class="sapUiInteractionItemEntryType">');
+          rm.write('<span class="sapUiInteractionItemEntryTypeText">');
           rm.writeEscaped(requestType);
           rm.write('</span>');
 
