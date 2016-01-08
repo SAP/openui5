@@ -110,4 +110,67 @@
 
 	oHelpers.generateLayoutConfigTests("TitleOnLeft", true, testData.aTitleOnTheLeftConfigAndTwoColumnInL);
 
+	QUnit.module("Object Page SubSection - subSectionLayout prop");
+
+	QUnit.test("SubSection Header is with title on the LEFT", function (assert) {
+		var oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+				subSectionLayout: sap.uxap.ObjectPageSubSectionLayout.TitleOnLeft,
+				sections: [
+					new sap.uxap.ObjectPageSection({
+						title:"Personal",
+						subSections: [
+							new sap.uxap.ObjectPageSubSection({
+								title: "Connect",
+								blocks: new sap.m.Label({text: "Block1" })
+							}),
+							new sap.uxap.ObjectPageSubSection({
+								title: "Payment information",
+								blocks: new sap.m.Label({text: "Block1" })
+							})
+						]
+					})
+				]
+			}),
+			oSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0]
+
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+
+		assert.ok(oSubSection.$("header").hasClass("titleOnLeftLayout"), "SubSection header has class titleOnLeftLayout");
+
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("SubSection Header is with title on TOP", function (assert) {
+		var oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+					sections: [
+						new sap.uxap.ObjectPageSection({
+							title:"Personal",
+							subSections: [
+								new sap.uxap.ObjectPageSubSection({
+									title: "Connect",
+									blocks: new sap.m.Label({text: "Block1" })
+								}),
+								new sap.uxap.ObjectPageSubSection({
+									title: "Payment information",
+									blocks: new sap.m.Label({text: "Block1" })
+								})
+							]
+						})
+					]
+				}),
+				oSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0]
+
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+
+		assert.notOk(oSubSection.$("header").hasClass("titleOnLeftLayout"), "SubSection header has no titleOnLeftLayout class");
+
+		oObjectPageLayout.destroy();
+	});
+
 }(jQuery, QUnit, sinon, testData));
