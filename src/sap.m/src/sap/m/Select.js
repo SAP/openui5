@@ -560,29 +560,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		Select.prototype._decoratePopover = function(oPopover) {
 			var that = this;
 
-			oPopover._setMinWidth = function(sWidth) {
-				var oPickerDomRef = this.getDomRef();
-
-				if (oPickerDomRef) {
-					oPickerDomRef.style.minWidth = sWidth;
-				}
-			};
-
 			oPopover.open = function() {
 				return this.openBy(that);
 			};
 		};
 
 		/**
-		 * Required adaptations after rendering of the Popover.
+		 * Required adaptations before rendering of the popover.
 		 *
 		 * @private
 		 */
-		Select.prototype._onAfterRenderingPopover = function() {
+		Select.prototype._onBeforeRenderingPopover = function() {
 			var oPopover = this.getPicker(),
 				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
 
-			oPopover._setMinWidth(sWidth);
+			if (oPopover) {
+				oPopover.setContentMinWidth(sWidth);
+			}
 		};
 
 		/* ----------------------------------------------------------- */
