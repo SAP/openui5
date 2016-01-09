@@ -9,11 +9,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/qunit/QUnitUti
 	 * @class The Press action is used to simulate a press interaction on a control's dom ref.
 	 * @extends sap.ui.base.Object
 	 * @public
-	 * @alias sap.ui.test.actions.Press
+	 * @name sap.ui.test.actions.Press
 	 * @author SAP SE
 	 * @since 1.34
 	 */
-	return Ui5Object.extend("sap.ui.test.actions.Press", {
+	return Ui5Object.extend("sap.ui.test.actions.Press", /** @lends sap.ui.test.actions.Press.prototype */ {
 
 		metadata : {
 			publicMethods : [ "executeOn" ]
@@ -26,7 +26,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/qunit/QUnitUti
 		 *
 		 * @param {sap.ui.core.Control} oControl the control on which the 'press' event is triggered
 		 * @public
-		 * @function
 		 */
 		executeOn : function (oControl) {
 			var oFocusDomRef = oControl.getFocusDomRef(),

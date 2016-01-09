@@ -185,34 +185,6 @@ sap.ui.define([
 	});
 
 
-	/**
-	 * Scrolls the Object page to the given Section
-	 *
-	 * @name sap.uxap.ObjectPageLayout#scrollToSection
-	 * @function
-	 * @param {string} sId
-	 *         The Section ID to scroll to
-	 * @param {int} iDuration
-	 *         Scroll duration (in ms). Default value is 0
-	 * @param {int} iOffset
-	 *         Additional pixels to scroll
-	 * @type sap.uxap.ObjectPageLayout
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Returns a sap.ui.core.delegate.ScrollEnablement object used to handle scrolling
-	 *
-	 * @name sap.uxap.ObjectPageLayout#getScrollDelegate
-	 * @function
-	 * @type object
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
 	/*************************************************************************************
 	 * life cycle management
 	 ************************************************************************************/
@@ -816,12 +788,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Scroll to a specific Section
+	 * Scrolls the Object page to the given Section.
 	 *
-	 * @param sId       id of the section to scroll to
-	 * @param iDuration  Scroll duration. Default value is 0
-	 * @param iOffset Additional offset to scroll
-	 *
+	 * @param {string} sId The Section ID to scroll to
+	 * @param {int} iDuration Scroll duration (in ms). Default value is 0
+	 * @param {int} iOffset Additional pixels to scroll
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset) {
 
@@ -1485,8 +1458,13 @@ sap.ui.define([
 		this.fireToggleAnchorBar({fixed: bStuck});
 	};
 
+	// use type 'object' because Metamodel doesn't know ScrollEnablement
 	/**
-	 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+	 * Returns a sap.ui.core.delegate.ScrollEnablement object used to handle scrolling
+	 *
+	 * @type object
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ObjectPageLayout.prototype.getScrollDelegate = function () {
 		return this._oScroller;

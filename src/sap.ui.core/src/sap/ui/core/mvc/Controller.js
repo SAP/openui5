@@ -408,7 +408,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * When using an async extension provider you need to ensure that the
 		 * view is loaded in async mode.
 		 *
-		 * In both cases, return <code>undefined</> if no controller extension shall be applied.
+		 * In both cases, return <code>undefined</code> if no controller extension shall be applied.
 		 *
 		 * @param {string} sExtensionProvider the module name of the extension provider
 		 *

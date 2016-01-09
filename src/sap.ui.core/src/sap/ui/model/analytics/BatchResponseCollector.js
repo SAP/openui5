@@ -14,13 +14,14 @@ sap.ui.define(function() {
 	"use strict";
 
 	/**
-	 * Constructor for a batch response collecting component
+	 * Constructor for a batch response collecting component.
 	 *
-	 * Simple Response Collection Component, collects the responses for each sub-request inside a bigger batch request
+	 * @classdesc Simple Response Collection Component, collects the responses for each sub-request inside a bigger batch request.
+	 *
 	 * Also handles clean-up after all responses (either success or error) have been collected.
 	 * Instantiated in AnalyticalBinding.prototype._executeBatchRequest()
 	 *
-	 * @name sap.ui.model.analytics.v2.BatchResponseCollector
+	 * @alias sap.ui.model.analytics.BatchResponseCollector
 	 * @constructor
 	 * @public
 	 * @param {object} [mParams] optional Setup-Parameter, @see BatchResponseCollector#setup
@@ -41,9 +42,8 @@ sap.ui.define(function() {
 	BatchResponseCollector.TYPE_ERROR = "error";
 
 	/**
-	 * Setup-Function to initialize/reset the BatchResponseCollector
+	 * Setup-Function to initialize/reset the BatchResponseCollector.
 	 *
-	 * @function
 	 * @public
 	 * @param {object} [mParams] optional Setup-Parameter
 	 * @param {array} mParams.executedRequests an Array with detail informations for all executed batch sub-requests
@@ -68,11 +68,10 @@ sap.ui.define(function() {
 
 	/**
 	 * Convenience function to collect a success response.
+	 *
 	 * Internally BatchResponseCollector#collect is called with second parameter BatchResponseCollector.TYPE_SUCCESS
 	 *
-	 * @function
 	 * @public
-	 * @name BatchResponseCollector#success
 	 * @param {object} oResponse the successful response, which should be collected
 	 */
 	BatchResponseCollector.prototype.success = function(oResponse) {
@@ -81,11 +80,10 @@ sap.ui.define(function() {
 
 	/**
 	 * Convenience function to collect an error response.
+	 *
 	 * Internally BatchResponseCollector#collect is called, the second parameter is set to BatchResponseCollector.TYPE_ERROR
 	 *
-	 * @function
 	 * @public
-	 * @name BatchResponseCollector#error
 	 * @param {object} oResponse the erroneous response object
 	 */
 	BatchResponseCollector.prototype.error = function(oResponse) {
@@ -93,13 +91,12 @@ sap.ui.define(function() {
 	};
 
 	/**
-	 * Collects responses of type BatchResponseCollector.TYPE_SUCCESS and BatchResponseCollector. TYPE_ERROR
+	 * Collects responses of type BatchResponseCollector.TYPE_SUCCESS and BatchResponseCollector.TYPE_ERROR.
+	 *
 	 * Keeps track of all collected responses and fires the necessary events after all responses for the
 	 * requests, given in the constructor, have returned.
 	 *
-	 * @function
 	 * @public
-	 * @name BatchResponseCollector#collect
 	 * @param {object} oResponse the response which should be collected
 	 * @param {string} [sResponseType] the type of the response, either BatchResponseCollector.TYPE_SUCCESS
 	 * 									or BatchResponseCollector.TYPE_ERROR

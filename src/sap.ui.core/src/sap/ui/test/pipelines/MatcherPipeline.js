@@ -49,11 +49,11 @@ sap.ui.define([
 		 *
 		 * @class
 		 * @private
-		 * @alias sap.ui.test.matcherPipeline
+		 * @alias sap.ui.test.pipelines.MatcherPipeline
 		 * @author SAP SE
 		 * @since 1.34
 		 */
-		return UI5Object.extend("sap.ui.test.pipelines.MatcherPipeline",{
+		return UI5Object.extend("sap.ui.test.pipelines.MatcherPipeline", /** @lends sap.ui.test.pipelines.MatcherPipeline.prototype */ {
 
 			/**
 			 * Matches a set or a single control agains matchers that check conditions.
@@ -66,7 +66,6 @@ sap.ui.define([
 			 * @param {sap.ui.core.Element|sap.ui.core.Element[]} options.control The controls to filter.
 			 * @returns {false|sap.ui.core.Element|sap.ui.core.Element[]} The filtered input of options.control. If no control matched, false is returned.
 			 * @private
-			 * @function
 			 */
 			process: function (options) {
 				var vResult,

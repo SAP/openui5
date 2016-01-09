@@ -21,7 +21,8 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function (fnManagedObject) {
 		},
 
 		/**
-		 * Checks if the matcher is matching - will get an instance of sap.ui.Control as parameter
+		 * Checks if the matcher is matching - will get an instance of sap.ui.Control as parameter.
+		 *
 		 * Should be overwritten by subclasses
 		 *
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher

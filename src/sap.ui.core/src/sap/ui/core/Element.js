@@ -1038,7 +1038,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	};
 
 	/**
-	 * Allows the parent of a control to enhance the aria information during rendering
+	 * Allows the parent of a control to enhance the aria information during rendering.
 	 *
 	 * This function is called by the RenderManager's writeAccessibilityState method
 	 * for the parent of the currently rendered control - if the parent implements it.

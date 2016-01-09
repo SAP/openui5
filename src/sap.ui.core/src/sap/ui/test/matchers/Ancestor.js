@@ -10,7 +10,7 @@ sap.ui.define([], function () {
 	 * @param {object} oAncestorControl the ancestor control to check, if undefined, validates every control to true
 	 * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
 	 * @public
-	 * @alias sap.ui.test.matchers.Ancestor
+	 * @name sap.ui.test.matchers.Ancestor
 	 * @author SAP SE
 	 * @since 1.27
 	 */

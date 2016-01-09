@@ -9,11 +9,11 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 	 * @class Visible - check if a controls domref is visible
 	 * @private
 	 * @extends sap.ui.test.matchers.Matcher
-	 * @alias sap.ui.test.matchers.Visible
+	 * @name sap.ui.test.matchers.Visible
 	 * @author SAP SE
 	 * @since 1.34
 	 */
-	return Matcher.extend("sap.ui.test.matchers.Visible", {
+	return Matcher.extend("sap.ui.test.matchers.Visible", /** @lends sap.ui.test.matchers.Visible.prototype */ {
 		isMatching:  function(oControl) {
 			if (!oControl.getDomRef()) {
 				$.sap.log.debug("The control " + oControl + " is not rendered", this);

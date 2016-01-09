@@ -73,31 +73,6 @@ sap.ui.define([
 	});
 
 
-	/**
-	 * Scrolls to the given Section
-	 *
-	 * @name sap.uxap.AnchorBar#scrollToSection
-	 * @function
-	 * @param {string} sId
-	 *         The Section ID to scroll to
-	 * @param {int} iDuration
-	 *         Scroll duration (in ms). Default value is 0
-	 * @type sap.uxap.ObjectPageLayout
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Returns a sap.ui.core.delegate.ScrollEnablement object used to handle scrolling
-	 *
-	 * @name sap.uxap.AnchorBar#getScrollDelegate
-	 * @function
-	 * @type object
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
 	AnchorBar.prototype.init = function () {
 		if (Toolbar.prototype.init) {
 			Toolbar.prototype.init.call(this);
@@ -688,11 +663,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Scroll to a specific Section
+	 * Scroll to a specific Section.
 	 *
-	 * @param sId       id of the section to scroll to
-	 * @param duration  Scroll duration. Default value is 0
-	 *
+	 * @param {string} sId The Section ID to scroll to
+	 * @param {int} duration Scroll duration (in ms). Default value is 0
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AnchorBar.prototype.scrollToSection = function (sId, duration) {
 
@@ -738,8 +714,13 @@ sap.ui.define([
 		}
 	};
 
+	// use type 'object' because Metamodel doesn't know ScrollEnablement
 	/**
-	 * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+	 * Returns a sap.ui.core.delegate.ScrollEnablement object used to handle scrolling.
+	 *
+	 * @type object
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AnchorBar.prototype.getScrollDelegate = function () {
 		return this._oScroller;

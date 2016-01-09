@@ -9,11 +9,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/qunit/Q
 	 * @class The EnterText action is used to simulate a user entering texts to inputs.
 	 * @extends sap.ui.base.ManagedObject
 	 * @public
-	 * @alias sap.ui.test.actions.EnterText
+	 * @name sap.ui.test.actions.EnterText
 	 * @author SAP SE
 	 * @since 1.34
 	 */
-	return ManagedObject.extend("sap.ui.test.actions.EnterText", {
+	return ManagedObject.extend("sap.ui.test.actions.EnterText", /** @lends sap.ui.test.actions.EnterText.prototype */ {
 
 		metadata : {
 			properties: {
@@ -33,7 +33,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/qunit/Q
 		 *
 		 * @param {sap.ui.core.Control} oControl the control on which the text event should be entered in.
 		 * @public
-		 * @function
 		 */
 		executeOn : function (oControl) {
 			// Every input control should have a focusable domref

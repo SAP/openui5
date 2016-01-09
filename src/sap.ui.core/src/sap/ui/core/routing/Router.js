@@ -408,7 +408,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			/**
 			 * Returns a cached view for a given name or creates it if it does not yet exists
 			 *
-			 * @deprecated @since 1.28.1 use {@link #getViews} instead.
+			 * @deprecated Since 1.28.1 use {@link #getViews} instead.
 			 * @param {string} sViewName Name of the view
 			 * @param {string} sViewType Type of the view
 			 * @param {string} sViewId Optional view id
@@ -434,7 +434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			/**
 			 * Adds or overwrites a view in the viewcache of the router, the viewname serves as a key
 			 *
-			 * @deprecated @since 1.28 use {@link #getViews} instead.
+			 * @deprecated Since 1.28 use {@link #getViews} instead.
 			 * @param {string} sViewName Name of the view
 			 * @param {sap.ui.core.mvc.View} oView the view instance
 			 * @since 1.22
@@ -547,7 +547,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 * oListener-instance (if present) or in a 'static way'.
 			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
 			 *
-			 * @deprecated @since 1.28 use {@link #getViews} instead.
+			 * @deprecated Since 1.28 use {@link #getViews} instead.
 			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 			 * @public
 			 */
@@ -561,7 +561,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 *
 			 * The passed function and listener object must match the ones previously used for event registration.
 			 *
-			 * @deprecated @since 1.28 use {@link #getViews} instead.
+			 * @deprecated Since 1.28 use {@link #getViews} instead.
 			 * @param {function} fnFunction The function to call, when the event occurs.
 			 * @param {object} oListener Object on which the given function had to be called.
 			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
@@ -575,7 +575,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			/**
 			 * Fire event viewCreated to attached listeners.
 			 *
-			 * @deprecated @since 1.28 use {@link #getViews} instead.
+			 * @deprecated Since 1.28 use {@link #getViews} instead.
 			 * @param {object} [mArguments] the arguments to pass along with the event.
 			 *
 			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining

@@ -27,7 +27,7 @@ function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 	 * @alias sap.m.WizardProgressNavigator
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var WizardProgressNavigator = Control.extend("sap.m.WizardProgressNavigator", { metadata: {
+	var WizardProgressNavigator = Control.extend("sap.m.WizardProgressNavigator", { /** @lends sap.m.WizardProgressNavigator.prototype */ metadata: {
 		properties: {
 
 			/**

@@ -1109,7 +1109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		DataType.getType('string')
 	);
 
-		/**
+	/**
 	 * A subset of input types that fits to a simple API returning one string.
 	 * Not available on purpose: button, checkbox, hidden, image, password, radio, range, reset, search, submit.
 	 *
@@ -2047,7 +2047,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	!(function(oLib) {
 
 		/**
-		 * Returns invalid date value of UI5
+		 * Returns invalid date value of UI5.
 		 *
 		 * @deprecated Since 1.12 UI5 returns null for invalid date
 		 * @returns {null}
@@ -2086,7 +2086,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		};
 
 		/**
-		 * Finds default locale data once and returns always the same
+		 * Finds default locale data once and returns always the same.
 		 *
 		 * @return {Object} sap.ui.core.LocaleData instance
 		 * @public
@@ -2106,7 +2106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		};
 
 		/**
-		 * Checks if the given parameter is a valid JsDate Object
+		 * Checks if the given parameter is a valid JsDate Object.
 		 *
 		 * @param {any} value Any variable to test.
 		 * @return {boolean}
@@ -2121,7 +2121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 		/**
-		 * Search given control's parents and try to find iScroll
+		 * Search given control's parents and try to find iScroll.
 		 *
 		 * @param {sap.ui.core.Control} oControl
 		 * @return {iScroll|undefined} iScroll reference or undefined if cannot find
@@ -2147,7 +2147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 		/**
-		 * Search given control's parents and try to find ScrollDelegate
+		 * Search given control's parents and try to find ScrollDelegate.
 		 *
 		 * @param {sap.ui.core.Control} oControl
 		 * @return {Object|undefined} ScrollDelegate or undefined if cannot find
@@ -2201,7 +2201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		oLib.BaseFontSize = jQuery(document.documentElement).css("font-size");
 
 		/**
-		 * Hide the soft keyboard
+		 * Hide the soft keyboard.
 		 *
 		 * @name sap.m#closeKeyboard
 		 * @public
@@ -2313,19 +2313,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * <pre>
-	 * URL(Uniform Resource Locator) Helper
+	 * URL(Uniform Resource Locator) Helper.
+	 *
 	 * This helper can be used to trigger a native application (e.g. email, sms, phone) from the browser.
 	 * That means we are restricted of browser or application implementation. e.g.
-	 *  - Some browsers do not let you to pass more than 2022 characters in the URL
-	 *  - MAPI (Outlook) limit is 2083, max. path under Internet Explorer it is 2048
-	 *  - Different Internet Explorer versions have a different limitation (IE9 approximately 1000 characters)
-	 *  - MS mail app under Windows 8 cuts mail links after approximately 100 characters
-	 *  - Safari gets a confirmation from user before opening a native application and can block other triggers if the user cancels it
-	 *  - Some mail applications(Outlook) do not respect all encodings(e.g. Cyrillic texts are not encoded correctly)
+	 * <ul>
+	 * <li>Some browsers do not let you to pass more than 2022 characters in the URL</li>
+	 * <li>MAPI (Outlook) limit is 2083, max. path under Internet Explorer it is 2048</li>
+	 * <li>Different Internet Explorer versions have a different limitation (IE9 approximately 1000 characters)</li>
+	 * <li>MS mail app under Windows 8 cuts mail links after approximately 100 characters</li>
+	 * <li>Safari gets a confirmation from user before opening a native application and can block other triggers if the user cancels it</li>
+	 * <li>Some mail applications(Outlook) do not respect all encodings(e.g. Cyrillic texts are not encoded correctly)</li>
+	 * </ul>
 	 *
-	 * Note: all the given limitation lengths are for encoded text(e.g space character will be encoded to "%20")
-	 * </pre>
+	 * Note: all the given limitation lengths are for encoded text(e.g space character will be encoded to "%20").
 	 *
 	 * @namespace
 	 * @name sap.m.URLHelper
@@ -2517,7 +2518,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 	/**
-	 * Helper for rendering themable background
+	 * Helper for rendering themable background.
 	 *
 	 * @namespace
 	 * @name sap.m.BackgroundHelper
@@ -2631,7 +2632,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	}(jQuery, window));
 
 	/**
-	 * Helper for Images
+	 * Helper for Images.
 	 *
 	 * @namespace
 	 * @name sap.m.ImageHelper
@@ -2727,7 +2728,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	}(jQuery, window));
 
 	/**
-	 * Helper for Popups
+	 * Helper for Popups.
 	 *
 	 * @namespace
 	 * @name sap.m.PopupHelper

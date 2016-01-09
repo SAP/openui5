@@ -99,7 +99,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * Enumeration providing the possible support stub types.
 	 *
 	 * @static
-	 * @protected
+	 * @enum
+	 * @private
 	 */
 	Support.StubType = mTypes;
 
@@ -108,8 +109,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * Enumeration providing the predefined support event ids.
 	 *
 	 * @static
-	 * @namespace
-	 * @protected
+	 * @enum
+	 * @private
 	 */
 	Support.EventType = mEvents;
 
@@ -130,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * @param {string} [sType=sap.ui.core.support.Support.EventType.APPLICATION] the type
 	 * @return {sap.ui.core.support.Support} the support stub
 	 * @static
-	 * @protected
+	 * @private
 	 */
 	Support.getStub = function(sType) {
 		if (_oStubInstance) {
@@ -154,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 *
 	 * @see sap.ui.core.support.Support.StubType
 	 * @return {string} the type of the support stub
-	 * @protected
+	 * @private
 	 */
 	Support.prototype.getType = function() {
 		return this._sType;
@@ -201,7 +202,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 *
 	 * @param {string} sEventId the event id
 	 * @param {Object} [mParams] the parameter map (JSON)
-	 * @protected
+	 * @private
 	 */
 	Support.prototype.sendEvent = function(sEventId, mParams) {
 		if (!this._oRemoteWindow) {
@@ -230,7 +231,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	/**
 	 * Opens the support tool in an external browser window.
 	 *
-	 * @protected
+	 * @private
 	 */
 	Support.prototype.openSupportTool = function() {
 		var sToolUrl = jQuery.sap.getModulePath("sap.ui.core.support", "/support.html");
@@ -294,7 +295,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	/**
 	 * @see sap.ui.base.EventProvider.prototype.toString
 	 *
-	 * @protected
+	 * @private
 	 */
 	Support.prototype.toString = function() {
 		return "sap.ui.core.support.Support";
@@ -318,7 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 *
 	 * @name sap.ui.core.support.Support.prototype.detachEvent
 	 * @function
-	 * @protected
+	 * @private
 	 */
 
 
@@ -327,7 +328,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 *
 	 * @name sap.ui.core.support.Support.prototype.attachEvent
 	 * @function
-	 * @protected
+	 * @private
 	 */
 
 

@@ -887,7 +887,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @description Gives the position of the place holder for the FileUploader that every toolbar provided
 	 * by the application must have
 	 * @param {sap.m.OverflowToolbar} oToolbar Toolbar where to find the place holder
-	 * @return {Number | -1} The position of the place holder or -1 if there's no place holder.
+	 * @return {int} The position of the place holder or -1 if there's no place holder.
 	 * @private
 	 */
 	UploadCollection.prototype._getFileUploaderPlaceHolderPosition = function(oToolbar){
