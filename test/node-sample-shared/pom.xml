@@ -138,7 +138,7 @@
 			<plugin>
 				<groupId>com.sap.ui5.tools.maven</groupId>
 				<artifactId>node-maven-plugin</artifactId>
-				<version>0.9.16</version>
+				<version>1.0.1</version>
 				<configuration>
 					<nodeType>SHARED</nodeType>
 					<nodeLocation>${node.location}</nodeLocation>
