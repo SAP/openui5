@@ -8,8 +8,9 @@ sap.ui.define(['sap/ui/core/ComponentContainer', 'sap/uxap/ObjectPageConfigurati
 
 		/**
 		 * The objectPageComponentContainer initialize and render an objectPageLayout
+		 * @alias sap.uxap.component.ObjectPageComponentContainer
 		 */
-		var ObjectPageComponentContainer = ComponentContainer.extend("sap.uxap.component.ObjectPageComponentContainer", {
+		var ObjectPageComponentContainer = ComponentContainer.extend("sap.uxap.component.ObjectPageComponentContainer", /** @lends sap.uxap.component.ObjectPageComponentContainer.prototype */ {
 			metadata: {
 				properties: {
 					"jsonConfigurationURL": {type: "string", group: "Behavior"},

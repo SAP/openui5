@@ -29,7 +29,7 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 	 * @alias sap.m.WizardStep
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var WizardStep = Control.extend("sap.m.WizardStep", /** @lends sap.m.Wizard.prototype */ {
+	var WizardStep = Control.extend("sap.m.WizardStep", /** @lends sap.m.WizardStep.prototype */ {
 		metadata: {
 			properties: {
 				/**

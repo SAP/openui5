@@ -966,7 +966,7 @@
 		  ]
 		},
 		{
-		  "id": "sap.m.UrlHelper",
+		  "id": "sap.m.URLHelper",
 		  "name": "Url Helper",
 		  "category": "Action",
 		  "since": "1.10",

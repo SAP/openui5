@@ -19,11 +19,11 @@ sap.ui.define([
 		 *
 		 * @class
 		 * @private
-		 * @alias sap.ui.test.matcherPipeline
+		 * @name sap.ui.test.matcherPipeline
 		 * @author SAP SE
 		 * @since 1.34
 		 */
-		return UI5Object.extend("sap.ui.test.matcherPipeline",{
+		return UI5Object.extend("sap.ui.test.matcherPipeline", /** @lends sap.ui.test.matcherPipeline.prototype */ {
 
 			/**
 			 * Executes a set of actions on a set of Controls
@@ -32,8 +32,6 @@ sap.ui.define([
 			 * A single action or an array of actions {@link sap.ui.test.actions}.
 			 * @param {sap.ui.core.Element|sap.ui.core.Element[]} oOptions.control The set of controls the actions will be executed on.
 			 * @private
-			 * @function
-			 * @static
 			 */
 			process: function (oOptions) {
 				var aControls,

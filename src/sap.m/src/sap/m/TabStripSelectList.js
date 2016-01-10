@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 function(jQuery, library, Control, SelectList, TabStripItem, ManagedObject) {
 	"use strict";
 
-		/**
+	/**
 	 * Constructor for a new TabStripSelectList.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
@@ -15,7 +15,7 @@ function(jQuery, library, Control, SelectList, TabStripItem, ManagedObject) {
 	 *
 	 * @class
 	 * The <code>sap.m.TabStripSelectList</code> displays a list of items that allows the user to select an item.
-	 * @extends sap.ui.core.SelectList
+	 * @extends sap.m.SelectList
 	 *
 	 * @author SAP SE
 	 * @version ${version}

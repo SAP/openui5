@@ -15,11 +15,11 @@ sap.ui.define([
 		 *
 		 * @class
 		 * @private
-		 * @alias sap.ui.pipelines.PipelineFactory
+		 * @name sap.ui.test.pipelines.PipelineFactory
 		 * @author SAP SE
 		 * @since 1.34
 		 */
-		return UI5Object.extend("sap.ui.test.pipelines.PipelineFactory",{
+		return UI5Object.extend("sap.ui.test.pipelines.PipelineFactory", /** @lends sap.ui.test.pipelines.PipelineFactory.prototype */ {
 
 			/**
 			 * Usage example is here: @link{sap.ui.test.pipelines.PipelineFactory.create}
@@ -60,7 +60,6 @@ sap.ui.define([
 			 * @param {function|function[]|object|object[]} input or several functions or objects all of them will have a uniform structure after the create
 			 * @returns {object[]} result - an array of objects implementing the given functionName
 			 * @private
-			 * @function
 			 */
 			create: function (input) {
 				var aResult = [];

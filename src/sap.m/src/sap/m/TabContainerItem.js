@@ -10,13 +10,13 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 
 
 	/**
-	 * Constructor for a new Item.
+	 * Constructor for a new TabContainerItem.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * A control base type.
+	 * An item to be used in a TabContainer.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
@@ -24,11 +24,11 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 *
 	 * @constructor
 	 * @public
-     * @since 1.34
-	 * @alias sap.ui.core.Item
+	 * @since 1.34
+	 * @alias sap.m.TabContainerItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TabContainerItem = Element.extend("sap.m.TabContainerItem", /** @lends sap.ui.core.Item.prototype */ { metadata : {
+	var TabContainerItem = Element.extend("sap.m.TabContainerItem", /** @lends sap.m.TabContainerItem.prototype */ { metadata : {
 
 		library : "sap.ui.core",
 		properties : {
