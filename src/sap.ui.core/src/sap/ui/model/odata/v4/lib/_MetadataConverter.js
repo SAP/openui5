@@ -312,7 +312,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   the value for the JSON
 	 */
 	function getAnnotationValue(sType, sValue, oAggregate) {
-		var vValue, aValues;
+		var i, vValue, aValues;
 
 		switch (sType) {
 			case "AnnotationPath":
@@ -336,9 +336,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				return sValue === "true";
 			case "EnumMember":
 				aValues = sValue.trim().replace(/ +/g, " ").split(" ");
-				aValues.forEach(function (sPath, i) {
-					aValues[i] = MetadataConverter.resolveAliasInPath(sPath, oAggregate);
-				});
+				for (i = 0; i < aValues.length; i++) {
+					aValues[i] = MetadataConverter.resolveAliasInPath(aValues[i], oAggregate);
+				}
 				return {$EnumMember: aValues.join(" ")};
 			case "Float":
 				if (sValue === "NaN" || sValue === "INF" || sValue === "-INF") {
@@ -547,15 +547,18 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {object} the value for the JSON
 	 */
 	function postProcessRecord(oElement, aResult, oAggregate) {
-		var oResult = oAggregate.annotatable.target,
+		var i,
+			oPropertyValue,
+			oResult = oAggregate.annotatable.target,
 			oType = oElement.getAttribute("Type");
 
 		if (oType) {
 			oResult.$Type = MetadataConverter.resolveAlias(oType, oAggregate);
 		}
-		aResult.forEach(function (oPropertyValue) {
+		for (i = 0; i < aResult.length; i++) {
+			oPropertyValue = aResult[i];
 			oResult[oPropertyValue.property] = oPropertyValue.value;
-		});
+		}
 		return oResult;
 	}
 
@@ -684,13 +687,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   a conversion function, if this function returns undefined, the property is not set
 	 */
 	function processAttributes(oElement, oTarget, oConfig) {
-		Object.keys(oConfig).forEach(function (sProperty) {
+		var sProperty;
+
+		for (sProperty in oConfig) {
 			var sValue = oConfig[sProperty](oElement.getAttribute(sProperty));
 
 			if (sValue !== undefined && sValue !== null) {
 				oTarget["$" + sProperty] = sValue;
 			}
-		});
+		}
 	}
 
 	/**
@@ -1316,16 +1321,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				oChildNode,
 				vChildResult,
 				i,
+				aIncludes,
+				j,
 				sName,
 				vResult,
 				aResult = [];
-
-			function tryInclude(oInclude) {
-				if (sName in oInclude) {
-					oChildConfig = oInclude[sName];
-					return true;
-				}
-			}
 
 			if (oConfig.__processor) {
 				oConfig.__processor(oElement, oAggregate);
@@ -1336,7 +1336,13 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					sName = oChildNode.localName;
 					oChildConfig = oConfig[sName];
 					if (!oChildConfig && oConfig.__include) {
-						oConfig.__include.some(tryInclude);
+						aIncludes = oConfig.__include;
+						for (j = 0; j < aIncludes.length; j++) {
+							oChildConfig = aIncludes[j][sName];
+							if (oChildConfig) {
+								break;
+							}
+						}
 					}
 					if (oChildConfig) {
 						vChildResult =
