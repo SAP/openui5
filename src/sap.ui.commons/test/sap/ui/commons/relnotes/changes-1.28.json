@@ -1031,5 +1031,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.26": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "929f9e7c3df1e5a9b968163dec955f7ed5668282",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButtonGroup: Fixed text truncation",
+        "references": []
+      }
+    ]
   }
 }

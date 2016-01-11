@@ -4559,5 +4559,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.26": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "f0a1ce15b1bdcb268894130cda48536b7973e748",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Popover places itself with correct offset when Left or Top placement is used.\"",
+        "references": []
+      },
+      {
+        "id": "555a7712b77841b5a629aec9cde524a5f82e9259",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Active ObjectAttribute works on IE",
+        "references": []
+      },
+      {
+        "id": "ac3523519134450fb5f2ca21576f5404cdc018c1",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: RemoveAllAggregations now works properly",
+        "references": []
+      },
+      {
+        "id": "89de8308ad3bf1adb1fa56e685ffedac492d9bde",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nDialog - missing explored example added",
+        "references": []
+      },
+      {
+        "id": "2b971de95e61514eff4aa373f4301e3eb4b6ddd0",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Removed empty links from DOM",
+        "references": []
+      }
+    ]
   }
 }
