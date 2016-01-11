@@ -353,6 +353,32 @@
 			ok(!oPopover.isOpen(), "Popover is already closed");
 		});
 
+		QUnit.test('it should set the width of the content to "450px"', function(assert) {
+
+			// act
+			this.oPopover.setContentMinWidth("450px");  // note: contentWidth is set to "400px"
+
+			// arrange
+			this.oPopover.openBy(this.oButton);
+			this.clock.tick(1000);  // wait 1s after the open animation is completed
+
+			// assert
+			assert.strictEqual(this.oPopover.getDomRef("cont").offsetWidth, 450);
+		});
+
+		QUnit.test('it should set the width of the content to "50px"', function(assert) {
+
+			// act
+			this.oPopover.setContentWidth("50px");
+
+			// arrange
+			this.oPopover.openBy(this.oButton);
+			this.clock.tick(1000);  // wait 1s after the open animation is completed
+
+			// assert
+			assert.strictEqual(this.oPopover.getDomRef("cont").offsetWidth, 50);
+		});
+
 		module("Position calculation");
 
 		test("vertical calculation of Popover positioning should be correct", function () {

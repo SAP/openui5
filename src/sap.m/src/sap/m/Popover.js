@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					 * Sets the minimum width of the content area inside popover.
 					 * @since 1.36
 					 */
-					contentMinWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100px" },
+					contentMinWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "" },
 
 					/**
 					 * Set the height of the content area inside Popover. When controls which adapt their size to the parent control are added directly into Popover, for example sap.m.Page control, a size needs to be specified to the content area of the Popover. Otherwise, Popover control isn't able to display the content in the right way. This values isn't necessary for controls added to Popover directly which can decide their size by themselves, for exmaple sap.m.List, sap.m.Image etc., only needed for controls that adapt their size to the parent control.
