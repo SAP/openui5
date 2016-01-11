@@ -133,6 +133,20 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			}
 		};
 
+		ComboBox.prototype._getSelectedItemText = function(vItem) {
+			vItem = vItem || this.getSelectedItem();
+
+			if (!vItem) {
+				vItem = this.getDefaultSelectedItem();
+			}
+
+			if (vItem) {
+				return vItem.getText();
+			}
+
+			return "";
+		};
+
 		ComboBox.prototype._callMethodInControl = function(sFunctionName, aArgs) {
 			var oList = this.getList();
 
@@ -1179,18 +1193,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			}
 
 			this.setSelection(vItem);
-
-			// set the input value
-			if (vItem) {
-				this.setValue(vItem.getText());
-				/*eslint-disable no-cond-assign */
-			} else if (vItem = this.getDefaultSelectedItem()) {
-				/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText());
-			} else {
-				this.setValue("");
-			}
-
+			this.setValue(this._getSelectedItemText(vItem));
 			return this;
 		};
 
@@ -1215,18 +1218,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 
 			this.setSelection(vItem);
 			vItem = this.getSelectedItem();
-
-			// set the input value
-			if (vItem) {
-				this.setValue(vItem.getText());
-				/*eslint-disable no-cond-assign */
-			} else if (vItem = this.getDefaultSelectedItem()) {
-				/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText());
-			} else {
-				this.setValue("");
-			}
-
+			this.setValue(this._getSelectedItemText(vItem));
 			return this;
 		};
 
@@ -1255,20 +1247,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			var oItem = this.getItemByKey(sKey);
 
 			if (oItem) {
-
 				this.setSelection(oItem);
-
-				// set the input value
-				if (oItem) {
-					this.setValue(oItem.getText());
-					/*eslint-disable no-cond-assign */
-				} else if (oItem = this.getDefaultSelectedItem()) {
-					/*eslint-enable no-cond-assign */
-					this.setValue(oItem.getText());
-				} else {
-					this.setValue("");
-				}
-
+				this.setValue(this._getSelectedItemText(oItem));
 				return this;
 			}
 
