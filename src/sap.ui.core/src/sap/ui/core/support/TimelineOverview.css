@@ -115,3 +115,20 @@
 	box-sizing: border-box;
 	border-right: 1px solid #F2F2F2;
 }
+
+.sapUiInteractionTimelineStepRightBold {
+	-webkit-box-flex: 1;
+	-webkit-flex-grow: 1;
+	-ms-flex: 1 1;
+	flex-grow: 1;
+
+	box-sizing: border-box;
+	border-right: 1px solid #d8d8d8;
+}
+
+.sapUiInteractionTimelineTimeLbl {
+	font-size: 9px;
+	color: #333;
+	position: absolute;
+	top: 0;
+}
