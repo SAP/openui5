@@ -71,6 +71,38 @@
 				sap.ui.getCore().applyChanges();
 			});
 
+
+			QUnit.module("Given that a label is observed", {
+				beforeEach : function() {
+					this.oLabel = new sap.m.Label({
+						text : "initial text"
+					});
+					this.oControlObserver = new sap.ui.dt.ControlObserver({
+						target : this.oLabel
+					});
+					this.oLabel.placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oControlObserver.destroy();
+					this.oLabel.destroy();
+				}
+			});
+
+
+			QUnit.test("when the text node of a control is modified", function(assert) {
+				var done = assert.async();
+
+				this.oControlObserver.attachEventOnce("domChanged", function(oEvent) {
+					assert.ok(oEvent, 'then a "domChanged" event is fired because of the mutation observer');
+					done();
+				});
+
+				this.oLabel.setText("test");
+			});
+
+
+
 		</script>
 	</head>
 	<body>
