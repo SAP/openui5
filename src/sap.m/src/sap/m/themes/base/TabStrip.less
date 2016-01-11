@@ -5,7 +5,6 @@
 	position: relative;
 	height: 3rem;
 	.sapMTSLeftOverflowButtons {
-		display: inline-block;
 		position: absolute;
 		left: .5rem;
 		height: 100%;
@@ -35,7 +34,6 @@
 		}
 	}
 	.sapMTSTabContainer {
-		display: inline-block;
 		height: 100%;
 		white-space: nowrap;
 		position: absolute;
@@ -44,12 +42,10 @@
 		overflow: hidden;
 		outline: none;
 		.sapMTSTabs {
-			display: inline-block;
 			float: left;
 			height: 100%;
 			margin-right: -999em;
 			.sapMTabContainerItem {
-				display: table;
 				position: relative;
 				box-sizing: border-box;
 				height: 100%;
@@ -66,9 +62,9 @@
 				-ms-user-select: none;
 				user-select: none;
 				.sapMTabContainerItemLabel {
-					display: table-cell;
 					vertical-align: middle;
 					margin-right: 0.375rem;
+					line-height: 3rem;
 					&:after {
 						content: '';
 						vertical-align: middle;
@@ -76,14 +72,12 @@
 					}
 				}
 				.sapMTSTabCloseBtnCnt {
-					display: table-cell;
 					visibility: hidden;
 					position: absolute;
 					top: 0.8rem;
 					right: 0;
 					vertical-align: middle;
 					.sapMBtn {
-						display: table-cell;
 						float: right;
 						height: 100%;
 						width: 1.5rem;
@@ -122,7 +116,6 @@
 		}
 	}
 	.sapMTSRightOverflowButtons {
-		display: inline-block;
 		position: absolute;
 		right: 4.5rem;
 		height: 100%;
@@ -153,7 +146,6 @@
 		}
 	}
 	.sapMTSTouchArea {
-		display: inline-block;
 		height: 100%;
 		position: absolute;
 		right: .5rem;
@@ -221,9 +213,9 @@
 			.sapMTSTabs {
 				.sapMTabContainerItem {
 					.sapMTabContainerItemLabel {
-						display: table-cell;
 						vertical-align: middle;
 						margin-right: 0.375rem;
+						line-height: 2rem;
 						&:after {
 							content: '';
 							vertical-align: middle;
@@ -231,14 +223,12 @@
 						}
 					}
 					.sapMTSTabCloseBtnCnt {
-						display: table-cell;
 						visibility: hidden;
 						position: absolute;
 						top: 0.225rem;
 						right: 0;
 						vertical-align: middle;
 						.sapMBtn {
-							display: table-cell;
 							float: right;
 							height: 100%;
 							width: 1.5rem;
