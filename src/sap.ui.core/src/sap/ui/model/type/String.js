@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/For
 	 * @param {object} [oFormatOptions] formatting options. String doesn't support any formatting options
 	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid
 	 * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have
+	 * @param {int} [oConstraints.minLength] minimum length (in characters) that a string of this value may have
 	 * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with
 	 * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case
 	 * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with
