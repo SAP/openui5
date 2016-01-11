@@ -1,0 +1,535 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<title>XMLView - sap.ui.core.mvc</title>
+
+	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m">
+	</script>
+
+	<script id="myview" type="text/xml">
+		<core:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" controllerName="mycontroller">
+		<Panel id="Panel0">
+		<content>
+			<Panel headerText="Panel1" height="25%" showFooter="true" id="Panel1" stashed="true">
+				<content>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+
+					<l:VerticalLayout width="50%">
+						<Label text="Vertical Layout 2"></Label>
+						<List width="50%">
+							<StandardListItem title="List Item 4"></StandardListItem>
+							<StandardListItem title="List Item 5"></StandardListItem>
+							<StandardListItem title="List Item 6"></StandardListItem>
+						</List>
+						<Button text="Button 3" width="100px"></Button>
+						<Button text="Button 4" width="100px"></Button>
+					</l:VerticalLayout>
+
+					<l:VerticalLayout>
+						<ObjectHeader title="Object Header">
+							<attributes>
+								<ObjectAttribute text="attribute 1"></ObjectAttribute>
+								<ObjectAttribute text="attribute 2"></ObjectAttribute>
+							</attributes>
+						</ObjectHeader>
+						<Button text=" 5"></Button>
+					</l:VerticalLayout>
+
+					<l:VerticalLayout width="100%">
+						<f:Form>
+							<f:layout>
+								<f:ResponsiveGridLayout />
+							</f:layout>
+							<f:formContainers>
+								<f:FormContainer title="Form Container With Title">
+									<f:formElements>
+										<f:FormElement label="Name">
+											<f:fields>
+												<Input value="SupplierName" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Street">
+											<f:fields>
+												<Input value="Street" />
+												<Input value="HouseNumber">
+												</Input>
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="ZIP Code/City">
+											<f:fields>
+												<Input value="ZIPCode">
+												</Input>
+												<Input value="City" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Country">
+											<f:fields>
+												<Select width="100%" selectedKey="Country">
+												</Select>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+								<f:FormContainer>
+									<f:formElements>
+										<f:FormElement label="2">
+											<f:fields>
+												<Input value="3" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="4">
+											<f:fields>
+												<Input value="Street" />
+												<Input value="HouseNumber">
+												</Input>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+							</f:formContainers>
+						</f:Form>
+					</l:VerticalLayout>
+				</content>
+			</Panel>
+			<Panel headerText="Panel2" height="25%" showFooter="true" id="Panel2" stashed="false">
+				<content>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+
+					<l:VerticalLayout width="50%">
+						<Label text="Vertical Layout 2"></Label>
+						<List width="50%">
+							<StandardListItem title="List Item 4"></StandardListItem>
+							<StandardListItem title="List Item 5"></StandardListItem>
+							<StandardListItem title="List Item 6"></StandardListItem>
+						</List>
+						<Button text="Button 3" width="100px"></Button>
+						<Button text="Button 4" width="100px"></Button>
+					</l:VerticalLayout>
+
+					<l:VerticalLayout>
+						<ObjectHeader title="Object Header">
+							<attributes>
+								<ObjectAttribute text="attribute 1"></ObjectAttribute>
+								<ObjectAttribute text="attribute 2"></ObjectAttribute>
+							</attributes>
+						</ObjectHeader>
+						<Button text=" 5"></Button>
+					</l:VerticalLayout>
+
+					<l:VerticalLayout width="100%">
+						<f:Form>
+							<f:layout>
+								<f:ResponsiveGridLayout />
+							</f:layout>
+							<f:formContainers>
+								<f:FormContainer title="Form Container With Title">
+									<f:formElements>
+										<f:FormElement label="Name">
+											<f:fields>
+												<Input value="SupplierName" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Street">
+											<f:fields>
+												<Input value="Street" />
+												<Input value="HouseNumber">
+												</Input>
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="ZIP Code/City">
+											<f:fields>
+												<Input value="ZIPCode">
+												</Input>
+												<Input value="City" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Country">
+											<f:fields>
+												<Select width="100%" selectedKey="Country">
+												</Select>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+								<f:FormContainer>
+									<f:formElements>
+										<f:FormElement label="2">
+											<f:fields>
+												<Input value="3" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="4">
+											<f:fields>
+												<Input value="Street" />
+												<Input value="HouseNumber">
+												</Input>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+							</f:formContainers>
+						</f:Form>
+					</l:VerticalLayout>
+				</content>
+			</Panel>
+			<Panel headerText="Panel3" height="25%" showFooter="true" id="Panel3" stashed="{/stashed3}">
+				<content>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+
+					<l:VerticalLayout width="50%">
+						<Label text="Vertical Layout 2"></Label>
+						<List width="50%">
+							<StandardListItem title="List Item 4"></StandardListItem>
+							<StandardListItem title="List Item 5"></StandardListItem>
+							<StandardListItem title="List Item 6"></StandardListItem>
+						</List>
+						<Button text="Button 3" width="100px"></Button>
+						<Button text="Button 4" width="100px"></Button>
+					</l:VerticalLayout>
+
+					<l:VerticalLayout>
+						<ObjectHeader title="Object Header">
+							<attributes>
+								<ObjectAttribute text="attribute 1"></ObjectAttribute>
+								<ObjectAttribute text="attribute 2"></ObjectAttribute>
+							</attributes>
+						</ObjectHeader>
+						<Button text=" 5"></Button>
+					</l:VerticalLayout>
+
+					<l:VerticalLayout width="100%">
+						<f:Form>
+							<f:layout>
+								<f:ResponsiveGridLayout />
+							</f:layout>
+							<f:formContainers>
+								<f:FormContainer title="Form Container With Title">
+									<f:formElements>
+										<f:FormElement label="Name">
+											<f:fields>
+												<Input value="SupplierName" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Street">
+											<f:fields>
+												<Input value="Street" />
+												<Input value="HouseNumber">
+												</Input>
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="ZIP Code/City">
+											<f:fields>
+												<Input value="ZIPCode">
+												</Input>
+												<Input value="City" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Country">
+											<f:fields>
+												<Select width="100%" selectedKey="Country">
+												</Select>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+								<f:FormContainer>
+									<f:formElements>
+										<f:FormElement label="2">
+											<f:fields>
+												<Input value="3" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="4">
+											<f:fields>
+												<Input value="Street" />
+												<Input value="HouseNumber">
+												</Input>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+							</f:formContainers>
+						</f:Form>
+					</l:VerticalLayout>
+				</content>
+			</Panel>
+			<Panel headerText="Panel4" height="25%" showFooter="true" id="Panel4" stashed="{/stashed4}">
+				<content>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+					<f:SimpleForm editable="false" layout="ResponsiveGridLayout">
+						<f:content>
+							<core:Title text="Title" />
+							<Label text="Label 1" />
+							<Input width="100%" value="Input 1" enabled="false" />
+							<Input width="100%" value="Input 2" enabled="false" />
+							<Label text="Label 2" />
+							<Input width="100%" value="Input 3" enabled="false" />
+						</f:content>
+					</f:SimpleForm>
+
+					<l:VerticalLayout width="50%">
+						<Label text="Vertical Layout 2"></Label>
+						<List width="50%">
+							<StandardListItem title="List Item 4"></StandardListItem>
+							<StandardListItem title="List Item 5"></StandardListItem>
+							<StandardListItem title="List Item 6"></StandardListItem>
+						</List>
+						<Button text="Button 3" width="100px"></Button>
+						<Button text="Button 4" width="100px"></Button>
+					</l:VerticalLayout>
+
+					<l:VerticalLayout>
+						<ObjectHeader title="Object Header">
+							<attributes>
+								<ObjectAttribute text="attribute 1"></ObjectAttribute>
+								<ObjectAttribute text="attribute 2"></ObjectAttribute>
+							</attributes>
+						</ObjectHeader>
+						<Button text=" 5"></Button>
+					</l:VerticalLayout>
+
+					<l:VerticalLayout width="100%">
+						<f:Form>
+							<f:layout>
+								<f:ResponsiveGridLayout />
+							</f:layout>
+							<f:formContainers>
+								<f:FormContainer title="Form Container With Title">
+									<f:formElements>
+										<f:FormElement label="Name">
+											<f:fields>
+												<Input value="SupplierName" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Street">
+											<f:fields>
+												<Input value="Street" />
+												<Input value="HouseNumber">
+												</Input>
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="ZIP Code/City">
+											<f:fields>
+												<Input value="ZIPCode">
+												</Input>
+												<Input value="City" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Country">
+											<f:fields>
+												<Select width="100%" selectedKey="Country">
+												</Select>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+								<f:FormContainer>
+									<f:formElements>
+										<f:FormElement label="2">
+											<f:fields>
+												<Input value="3" />
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="4">
+											<f:fields>
+												<Input value="Street" />
+												<Input value="HouseNumber">
+												</Input>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+							</f:formContainers>
+						</f:Form>
+					</l:VerticalLayout>
+				</content>
+			</Panel>
+			</content>
+			</Panel>
+		</core:View>
+	</script>
+
+	<script type="text/javascript">
+		var myController = sap.ui.controller("mycontroller", {
+			onInit: function() {
+				jQuery.sap.log.debug("in controller onInit");
+			},
+		});
+
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		var oModel = new sap.ui.model.json.JSONModel({
+			stashed3: false,
+			stashed4: false
+		});
+
+
+		jQuery.sap.measure.setActive(true);
+		jQuery.sap.measure.start("view_loading");
+		sap.ui.xmlview("view1", {
+			controller: myController,
+			viewContent: document.getElementById("myview").innerHTML
+		}).setModel(oModel).placeAt("content");
+		jQuery.sap.measure.end("view_loading");
+		new sap.m.Label({
+			text: "loading time: " + jQuery.sap.measure.getMeasurement("view_loading").duration + " ms"
+		}).placeAt("result");
+	</script>
+</head>
+
+<body class="sapUiBody" role="application">
+	<h1>Test Panel for sap.ui.core.XMLView</h1>
+	<div id="control"></div>
+	<div id="content"></div>
+	<div id="result"></div>
+</body>
+
+</html>

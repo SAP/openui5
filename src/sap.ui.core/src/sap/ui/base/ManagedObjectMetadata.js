@@ -908,6 +908,25 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 
 	// ---- special settings ------------------------------------------------------------------
 
+
+	/**
+	 * Adds a new special setting.
+	 * Special settings are settings that are accepted in the mSettings
+	 * object at construction time or in an {@link sap.ui.base.ManagedObject.applySettings}
+	 * call but that are neither properties, aggregations, associations nor events.
+	 *
+	 * @param {string} sName name of the setting
+	 * @private
+	 * @experimental since 1.35.0
+	 */
+	ManagedObjectMetadata.prototype.addSpecialSetting = function (sName, oInfo) {
+		var oSS = this._mProperties[sName] = new SpecialSetting(this, sName, oInfo);
+		this._mSpecialSettings[sName] = oSS;
+		if (!this._mAllSpecialSettings[sName]) {
+			this._mAllSpecialSettings[sName] = oSS;
+		}
+	};
+
 	/**
 	 * Checks the existence of the given special setting.
 	 * Special settings are settings that are accepted in the mSettings
