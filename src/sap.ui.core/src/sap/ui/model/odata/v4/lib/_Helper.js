@@ -8,6 +8,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 
 	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},
 		rAmpersand = /&/g,
+		rContentIdReference = /\$(?:\d*)*/,
 		rEquals = /\=/g,
 		rHash = /#/g,
 		rHeaderParameter = /(\S*?)=(?:"(.+)"|(\S+))/,
@@ -209,20 +210,20 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						? sContentType : undefined;
 				}
 
-				function getChangeSetResponseNumber(sMimeTypeHeaders) {
+				function getChangeSetResponseIndex(sMimeTypeHeaders) {
 					var sContentID = getHeaderValue(sMimeTypeHeaders, "content-id"),
-						iContentID;
+						iResponseIndex;
 
 					if (!sContentID) {
 						throw new Error(
 							"Content-ID MIME header missing for the change set response.");
 					}
 
-					iContentID = parseInt(sContentID, 10);
-					if (isNaN(iContentID)) {
+					iResponseIndex = parseInt(sContentID, 10);
+					if (isNaN(iResponseIndex)) {
 						throw new Error("Invalid Content-ID value in change set response.");
 					}
-					return iContentID;
+					return iResponseIndex;
 				}
 
 				/**
@@ -264,7 +265,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						i,
 						sMimeHeaders,
 						oResponse = {},
-						iResponseNumber,
+						iResponseIndex,
 						aResponseParts;
 
 					// aResponseParts will take 3 elements:
@@ -310,8 +311,8 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					oResponse.responseText = aResponseParts[2].slice(0, -2);
 
 					if (bIsChangeSet) {
-						iResponseNumber = getChangeSetResponseNumber(sMimeHeaders);
-						aResponses[iResponseNumber] = oResponse;
+						iResponseIndex = getChangeSetResponseIndex(sMimeHeaders);
+						aResponses[iResponseIndex] = oResponse;
 					} else {
 						aResponses.push(oResponse);
 					}
@@ -387,7 +388,9 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {string} oRequest.method
 		 *   HTTP method, e.g. "GET"
 		 * @param {string} oRequest.url
-		 *   absolute or relative URL
+		 *   absolute or relative URL. If the URL contains Content-ID reference then the reference
+		 *   has to be specified as zero-based index of the referred request inside the change set.
+		 *   See example below.
 		 * @param {object} oRequest.headers
 		 *   map of request headers. RFC-2047 encoding rules are not supported. Nevertheless non
 		 *   US-ASCII values can be used.
@@ -410,19 +413,19 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *           }
 		 *       },
 		 *       [{
-		 *           method : "PATCH",
-		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+		 *           method : "POST",
+		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
 		 *           headers : {
 		 *               "Content-Type" : "application/json"
 		 *           },
 		 *           body : '{"TEAM_ID" : "TEAM_03"}'
 		 *       }, {
-		 *           method : "PATCH",
-		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')",
+		 *           method : "POST",
+		 *           url : "$0/TEAM_2_Employees",
 		 *           headers : {
 		 *               "Content-Type" : "application/json"
 		 *           },
-		 *           body : '{"TEAM_ID" : "TEAM_01"}'
+		 *           body : '{"Name" : "John Smith"}'
 		 *       }],
 		 *       {
 		 *           method : "PATCH",
@@ -435,12 +438,23 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   ]);
 		 */
 		serializeBatchRequest : function (aRequests) {
-			var sContentTypeBoundary,
-				iBatchRequestNumber = 0;
+			var sContentTypeBoundary;
 
-			function serializeBatchRequests(aRequests, bIsChangeSet) {
-				var sBatchBoundary = (bIsChangeSet ? "changeset_" : "batch_") + jQuery.sap.uid(),
-					iChangeSetRequestNumber = 0,
+			/**
+			 * Serializes the given array of request objects into $batch request body.
+			 *
+			 * @param {object[]} aRequests
+			 *   see parameter <code>aRequests</code> of serializeBatchRequest function
+			 * @param {number} [iChangeSetIndex]
+			 *   is only specified if the function is called to serialize change sets and
+			 *   contains zero-based index of the change set within <code>aRequests</code> array.
+			 * @returns {string}
+			 *   the $batch request body
+			 */
+			function serializeBatchRequests(aRequests, iChangeSetIndex) {
+				var sBatchBoundary = (iChangeSetIndex !== undefined ? "changeset_" : "batch_")
+						+ jQuery.sap.uid(),
+					bIsChangeSet = iChangeSetIndex !== undefined,
 					aRequestBody = [];
 
 				/**
@@ -448,7 +462,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				 *
 				 * @param {object} mHeaders
 				 *   a map of request headers
-				 * @returns {string} serialized string of the given headers
+				 * @returns {object[]} array representing the serialized headers
 				 */
 				function serializeHeaders (mHeaders) {
 					var sHeaderName,
@@ -463,18 +477,15 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 
 				if (bIsChangeSet) {
 					aRequestBody = aRequestBody.concat("Content-Type: multipart/mixed;boundary=",
-							sBatchBoundary, "\r\n\r\n");
-					iChangeSetRequestNumber = 0;
+						sBatchBoundary, "\r\n\r\n");
 				}
 
-				aRequests.forEach(function(oRequest) {
+				aRequests.forEach(function(oRequest, iRequestIndex) {
 					var sContentIdHeader = "";
 
 					if (bIsChangeSet) {
-						sContentIdHeader = "Content-ID:" + iChangeSetRequestNumber + "."
-							+ iBatchRequestNumber + "\r\n";
-						iChangeSetRequestNumber++;
-						iBatchRequestNumber++;
+						sContentIdHeader = "Content-ID:" + iRequestIndex + "." + iChangeSetIndex
+							+ "\r\n";
 					}
 
 					aRequestBody = aRequestBody.concat("--", sBatchBoundary, "\r\n");
@@ -482,13 +493,19 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						if (bIsChangeSet) {
 							throw new Error('Change set must not contain a nested change set.');
 						}
-						aRequestBody = aRequestBody.concat(serializeBatchRequests(oRequest, true));
+						aRequestBody =
+							aRequestBody.concat(serializeBatchRequests(oRequest, iRequestIndex));
 					} else {
 						if (bIsChangeSet && !mAllowedChangeSetMethods[oRequest.method]) {
 							throw new Error("Invalid HTTP request method: " + oRequest.method +
 								". Change set must contain only POST, PUT, PATCH or " +
 								"DELETE requests.");
 						}
+
+						// adjust URL if it contains Content-ID reference by adding the change set
+						// index
+						oRequest.url = oRequest.url.replace(rContentIdReference,
+							"$&." + iChangeSetIndex);
 
 						aRequestBody = aRequestBody.concat(
 							"Content-Type:application/http\r\n",

@@ -204,6 +204,14 @@ sap.ui.require([
 				"BONUS_CURR" : ""
 			}
 		},
+		oNewTeamBody =  {
+			"Team_Id": "TEAM_04",
+			"Name": "UI2 Services",
+			"MEMBER_COUNT": 9,
+			"MANAGER_ID": "1",
+			"BudgetCurrency": "EUR",
+			"Budget": 5555
+		},
 		sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/";
 
 	function parseResponses(aResponses) {
@@ -509,7 +517,7 @@ sap.ui.require([
 			"--changeset_id-9876543210987-654\r\n" +
 			"Content-Type:application/http\r\n" +
 			"Content-Transfer-Encoding:binary\r\n" +
-			"Content-ID:1.1\r\n" +
+			"Content-ID:1.0\r\n" +
 			"\r\n" +
 			"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2') HTTP/1.1\r\n" +
 			"Content-Type:application/json\r\n" +
@@ -585,7 +593,7 @@ sap.ui.require([
 			"--changeset_id-9876543210987-654\r\n" +
 			"Content-Type:application/http\r\n" +
 			"Content-Transfer-Encoding:binary\r\n" +
-			"Content-ID:0.0\r\n" +
+			"Content-ID:0.1\r\n" +
 			"\r\n" +
 			"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1') HTTP/1.1\r\n" +
 			"Content-Type:application/json\r\n" +
@@ -615,7 +623,7 @@ sap.ui.require([
 			"--changeset_id-0123456789012-912\r\n" +
 			"Content-Type:application/http\r\n" +
 			"Content-Transfer-Encoding:binary\r\n" +
-			"Content-ID:0.2\r\n" +
+			"Content-ID:0.3\r\n" +
 			"\r\n" +
 			"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('3') HTTP/1.1\r\n" +
 			"Content-Type:application/json\r\n" +
@@ -633,6 +641,130 @@ sap.ui.require([
 			"--changeset_id-0123456789012-912--\r\n" +
 			"--batch_id-0123456789012-345--\r\n",
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+		"MIME-Version" : "1.0"
+	}, {
+		testTitle: "batch request with content-ID references",
+		expectedBoundaryIDs :
+			["id-1450426018742-911", "id-1450426018742-912", "id-1450426018742-913"],
+		requests: [
+			[{
+				method: "POST",
+				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(oNewTeamBody)
+			}, {
+				method: "POST",
+				url: "$0/TEAM_2_EMPLOYEES",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(oNewEmployeeBody)
+			}],
+			[{
+				method: "POST",
+				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: '{\
+"Team_Id": "TEAM_05",\
+"Name": "UI2 Services",\
+"MEMBER_COUNT": 9,\
+"MANAGER_ID": "1",\
+"BudgetCurrency": "EUR",\
+"Budget": 5555\
+}'
+			}, {
+				method: "POST",
+				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: '{\
+"Team_Id": "TEAM_06",\
+"Name": "UI2 Services",\
+"MEMBER_COUNT": 9,\
+"MANAGER_ID": "1",\
+"BudgetCurrency": "EUR",\
+"Budget": 5555\
+}'
+			}, {
+				method: "POST",
+				url: "$1/TEAM_2_EMPLOYEES",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(oNewEmployeeBody)
+			}]
+		],
+		body: "--batch_id-1450426018742-911\r\n" +
+			"Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-912\r\n" +
+			"\r\n" +
+			"--changeset_id-1450426018742-912\r\n" +
+			"Content-Type:application/http\r\n" +
+			"Content-Transfer-Encoding:binary\r\n" +
+			"Content-ID:0.0\r\n" +
+			"\r\n" +
+			"POST /sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS HTTP/1.1\r\n" +
+			"Content-Type:application/json\r\n" +
+			"\r\n" +
+			JSON.stringify(oNewTeamBody) + "\r\n" +
+			"--changeset_id-1450426018742-912\r\n" +
+			"Content-Type:application/http\r\n" +
+			"Content-Transfer-Encoding:binary\r\n" +
+			"Content-ID:1.0\r\n" +
+			"\r\n" +
+			"POST $0.0/TEAM_2_EMPLOYEES HTTP/1.1\r\n" +
+			"Content-Type:application/json\r\n" +
+			"\r\n" +
+			JSON.stringify(oNewEmployeeBody) + "\r\n" +
+			"--changeset_id-1450426018742-912--\r\n" +
+
+			"--batch_id-1450426018742-911\r\n" +
+			"Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-913\r\n" +
+			"\r\n" +
+			"--changeset_id-1450426018742-913\r\n" +
+			"Content-Type:application/http\r\n" +
+			"Content-Transfer-Encoding:binary\r\n" +
+			"Content-ID:0.1\r\n" +
+			"\r\n" +
+			"POST /sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS HTTP/1.1\r\n" +
+			"Content-Type:application/json\r\n" +
+			"\r\n" +
+			'{"Team_Id": "TEAM_05",'
+				+ '"Name": "UI2 Services",'
+				+ '"MEMBER_COUNT": 9,'
+				+ '"MANAGER_ID": "1",'
+				+ '"BudgetCurrency": "EUR",'
+				+ '"Budget": 5555}\r\n' +
+			"--changeset_id-1450426018742-913\r\n" +
+			"Content-Type:application/http\r\n" +
+			"Content-Transfer-Encoding:binary\r\n" +
+			"Content-ID:1.1\r\n" +
+			"\r\n" +
+			"POST /sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS HTTP/1.1\r\n" +
+			"Content-Type:application/json\r\n" +
+			"\r\n" +
+			'{"Team_Id": "TEAM_06",'
+				+ '"Name": "UI2 Services",'
+				+ '"MEMBER_COUNT": 9,'
+				+ '"MANAGER_ID": "1",'
+				+ '"BudgetCurrency": "EUR",'
+				+ '"Budget": 5555}\r\n' +
+			"--changeset_id-1450426018742-913\r\n" +
+			"Content-Type:application/http\r\n" +
+			"Content-Transfer-Encoding:binary\r\n" +
+			"Content-ID:2.1\r\n" +
+			"\r\n" +
+			"POST $1.1/TEAM_2_EMPLOYEES HTTP/1.1\r\n" +
+			"Content-Type:application/json\r\n" +
+			"\r\n" +
+			JSON.stringify(oNewEmployeeBody) + "\r\n" +
+			"--changeset_id-1450426018742-913--\r\n" +
+			"--batch_id-1450426018742-911--\r\n",
+		"Content-Type" : "multipart/mixed; boundary=batch_id-1450426018742-911",
 		"MIME-Version" : "1.0"
 	}].forEach(function (oFixture) {
 		QUnit.test("serializeBatchRequest: " + oFixture.testTitle, function (assert) {
@@ -940,7 +1072,7 @@ Content-Length: 1603\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 655\r\n\
 content-transfer-encoding: binary\r\n\
-content-id: 0.0\r\n\
+content-id: 0.1\r\n\
 \r\n\
 HTTP/1.1 200 OK\r\n\
 Content-Type: application/json;odata.metadata=minimal\r\n\
@@ -997,7 +1129,7 @@ etag: W/\"20151211144619.4760440\"\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 652\r\n\
 content-transfer-encoding: binary\r\n\
-content-id: 0.2\r\n\
+content-id: 0.3\r\n\
 \r\n\
 HTTP/1.1 200 OK\r\n\
 Content-Type: application/json;odata.metadata=minimal\r\n\
@@ -1639,8 +1771,50 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				}
 			}
 		}]]
+	},
+	// --------------------------------------------
+	{   testTitle : "changeset with Content-ID reference",
+		// TODO: remove skip as soon as gateway supports Content-ID references
+		skip: true,
+		batchRequests: [
+			[{
+				method: "POST",
+				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(oNewTeamBody)
+			}, {
+				method: "POST",
+				url: "$0/TEAM_2_EMPLOYEES",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(oNewEmployeeBody)
+			}]
+		],
+		expectedResponses : [
+		[{
+			status : 201,
+			statusText : "Created",
+			headers : {
+				"Content-Type" : "application/json;odata.metadata=minimal",
+				"odata-version" : "4.0"
+			},
+			responseText : oNewTeamBody
+		},
+		{
+			status : 201,
+			statusText : "Created",
+			headers : {
+				"Content-Type" : "application/json;odata.metadata=minimal",
+				"odata-version" : "4.0"
+			},
+			responseText : oNewEmployeeBody
+		}]]
 		}].forEach(function (oFixture, i) {
-			QUnit.test("Multipart Integration Test: " + oFixture.testTitle,
+			QUnit[oFixture.skip ? "skip" : "test"](
+				"Multipart Integration Test: " + oFixture.testTitle,
 				function (assert) {
 					var oBatchRequestContent,
 						done = assert.async();
