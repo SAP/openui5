@@ -8,9 +8,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -22,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -32,9 +36,6 @@ import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.service.UADetectorServiceFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPHTTPClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,8 +43,8 @@ import org.json.JSONObject;
 public class AkamaiLogDownloader {
 
 	// this is the Akamai server+path to use
-	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "saphcp.upload.akamai.com", "/341459/eu1/openui5/openui5/web");
-	private static final ApplicationConfig sapui5_config = new ApplicationConfig("sapui5", "saphcp.upload.akamai.com", "/341459/eu1/services/sapui5/web");
+	private static final ApplicationConfig openui5_config = new ApplicationConfig("openui5", "https://monitoring.int.hana.ondemand.com/log/api/logs/openui5/openui5/web/");
+	private static final ApplicationConfig sapui5_config = new ApplicationConfig("sapui5", "https://monitoring.int.hana.ondemand.com/log/api/logs/services/sapui5/web/");
 	
 	private static final ApplicationConfig[] APPLICATION_CONFIGS = { openui5_config };
 	
@@ -233,14 +234,14 @@ public class AkamaiLogDownloader {
 
 
 
-		if (!DEV_MODE) { // = normal mode, accessing the Akamai FTP server (dev mode works with local files)
+		if (!DEV_MODE) { // = normal mode, accessing the HCP server (dev mode works with local files)
 
 			log("\nStarting log download process for application '" + applicationConfig.getApplication() + "'...\n\n");
 
-			// Step 1: get all log files from the server (would be better to interactively check which ones we need, but as I can't get the Java FTP client to work, we use the windows commandline client)
-			log("Accessing Akamai FTP server to get list of available log files...");
-			List<String> availableLogFileNames = this.getLogFileNames(applicationConfig.getFtpServer(), applicationConfig.getFtpPath());
-			log("...available list of " + availableLogFileNames.size() + " Akamai log files downloaded (ftpUrl: " + applicationConfig.getFtpUrl() + ").\n");
+			// Step 1: get all log file names from the server
+			log("Accessing HCP server to get list of available log files...");
+			List<String> availableLogFileNames = this.getHCPLogFileNames(applicationConfig.getLogUrl());
+			log("...available list of " + availableLogFileNames.size() + " Akamai log files downloaded ( HCP URL: " + applicationConfig.getLogUrl() + ").\n");
 	
 	
 			/*
@@ -268,8 +269,8 @@ public class AkamaiLogDownloader {
 	
 	
 			// Step 4: download all new log files
-			log("Downloading log files from Akamai FTP server...");
-			List<File> downloadedFiles = downloadLogFiles(applicationConfig.getFtpServer(), applicationConfig.getFtpPath(), neededLogFileNames);
+			log("Downloading log files from HCP server...");
+			List<File> downloadedFiles = downloadLogFilesFromHCP(neededLogFileNames, applicationConfig.getLogUrl());
 			log("..." + downloadedFiles.size() + " log files downloaded.\n");
 			
 			
@@ -415,7 +416,7 @@ public class AkamaiLogDownloader {
 
 
 	/**
-	 * Uncompresses and deletes the given list of gzip-compressed files (they need to end with ".gz").
+	 * Uncompresses and deletes the given list of gzip-compressed files
 	 * Returns the list of uncompressed files.
 	 * 
 	 * @param downloadedFiles
@@ -427,12 +428,7 @@ public class AkamaiLogDownloader {
 		
 		try {
 			for (File gzFile : gzFiles) {
-				int indexOfGz = gzFile.getName().lastIndexOf(".gz");
-				if (indexOfGz < 8) {
-					throw new RuntimeException("Unexpected log file name (not compressed?): " + gzFile.getName());
-				}
-				
-				String unzippedFileName = gzFile.getName().substring(0, indexOfGz);
+				String unzippedFileName = gzFile.getName() + ".log";
 				File unzippedFile = new File(directory.getAbsolutePath() + File.separator + unzippedFileName);
 				unzippedFile.deleteOnExit();
 				
@@ -530,30 +526,49 @@ public class AkamaiLogDownloader {
 	/**
 	 * Returns the list of available log file names from the server
 	 * 
-	 * @param ftpServer
-	 * @param ftpPath
+	 * @param logUrl
 	 * @return
 	 */
-	private List<String> getLogFileNames(String ftpServer, String ftpPath) {
+	private List<String> getHCPLogFileNames(String logUrl) {
 		List<String> result = new ArrayList<String>();
 
-		FTPClient ftpClient = new FTPHTTPClient("proxy", 8080); // need to connect to the SAP proxy, using the Akamai credentials (and Akamai server appended to username)
-		ftpClient = new FTPClient();
-				
+		
 		try {
-			ftpClient.connect("proxy", 21);
-			ftpClient.login(USER + "@" + ftpServer, PASSWORD);
-			ftpClient.pasv();
-			ftpClient.enterLocalPassiveMode();
+			Properties props = System.getProperties();
+			props.put("https.proxyPort","8080"); //proxy port
+			props.put("https.proxyHost","proxy"); //the proxy server name or IP
+			props.put("https.proxySet", "true");
 			
-			// lists files and directories in the current working directory
-			FTPFile[] files = ftpClient.listFiles(ftpPath);
+			
+			URL hcp = new URL(logUrl);
 
-			for (FTPFile file : files) {
-				result.add(file.getName());
+			String passwdstring = USER + ":" + PASSWORD;
+			String encoding = new sun.misc.BASE64Encoder().encode(passwdstring.getBytes());
+
+			URLConnection uc = hcp.openConnection();
+			uc.setRequestProperty("Authorization", "Basic " + encoding);
+			InputStream content = (InputStream) uc.getInputStream();
+			BufferedReader in = new BufferedReader (new InputStreamReader (content));
+
+			String response = "";
+			String line;
+			while ((line = in.readLine()) != null) {
+				response += line;
 			}
+			in.close();
+			// example result for testing   String response = "{\"account\":\"openui5\",\"application\":\"openui5\",\"component\":\"web\",\"logFiles\":[{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"ljs_trace_0c4fef3_2016-01-03.log\",\"size\":182,\"lastModified\":1451833879000,\"description\":\"Default Trace\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"ljs_trace_0c4fef3_2016-01-07.log\",\"size\":818,\"lastModified\":1452173227000,\"description\":\"Default Trace\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"http_access_0c4fef3_2016-01-06.log\",\"size\":1073774,\"lastModified\":1452124802000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"ljs_trace_0c4fef3_2016-01-02.log\",\"size\":157,\"lastModified\":1451758367000,\"description\":\"Default Trace\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"ljs_trace_0c4fef3_2016-01-01.log\",\"size\":244,\"lastModified\":1451681780000,\"description\":\"Default Trace\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"http_access_0c4fef3_2016-01-07.log\",\"size\":10127076,\"lastModified\":1452177655000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"name\":\"http_access_cdn_2015-12-30_0_1701115962\",\"size\":2679496,\"lastModified\":1451538120000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"gc_0c4fef3_2016-01-07.log\",\"size\":32876,\"lastModified\":1452177541000,\"description\":\"GC file\",\"component\":\"web\"},{\"name\":\"http_access_cdn_2015-12-31_0_1701115962\",\"size\":1681676,\"lastModified\":1451624520000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"http_access_0c4fef3_2016-01-03.log\",\"size\":558940,\"lastModified\":1451865614000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"ljs_trace_0c4fef3_2015-12-31.log\",\"size\":376,\"lastModified\":1451583136000,\"description\":\"Default Trace\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"ljs_trace_0c4fef3_2016-01-06.log\",\"size\":386,\"lastModified\":1452114727000,\"description\":\"Default Trace\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"ljs_trace_0c4fef3_2016-01-04.log\",\"size\":277,\"lastModified\":1451922574000,\"description\":\"Default Trace\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"http_access_0c4fef3_2016-01-04.log\",\"size\":1103996,\"lastModified\":1451951999000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"http_access_0c4fef3_2016-01-02.log\",\"size\":518236,\"lastModified\":1451779214000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"http_access_0c4fef3_2015-12-31.log\",\"size\":657210,\"lastModified\":1451606413000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"gc_0c4fef3_2016-01-06.log\",\"size\":10853,\"lastModified\":1452124704000,\"description\":\"GC file\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"gc_0c4fef3_2016-01-02.log\",\"size\":9047,\"lastModified\":1451779157000,\"description\":\"GC file\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"http_access_0c4fef3_2015-12-30.log\",\"size\":918745,\"lastModified\":1451520011000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"http_access_0c4fef3_2016-01-01.log\",\"size\":489829,\"lastModified\":1451692812000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"gc_0c4fef3_2016-01-04.log\",\"size\":12332,\"lastModified\":1451951934000,\"description\":\"GC file\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"gc_0c4fef3_2016-01-01.log\",\"size\":8819,\"lastModified\":1451692708000,\"description\":\"GC file\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"gc_0c4fef3_2016-01-03.log\",\"size\":8891,\"lastModified\":1451865217000,\"description\":\"GC file\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"http_access_0c4fef3_2016-01-05.log\",\"size\":1107081,\"lastModified\":1452038402000,\"description\":\"HTTP Access Log\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"gc_0c4fef3_2016-01-05.log\",\"size\":10966,\"lastModified\":1452038244000,\"description\":\"GC file\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"gc_0c4fef3_2015-12-31.log\",\"size\":11606,\"lastModified\":1451606194000,\"description\":\"GC file\",\"component\":\"web\"},{\"processId\":\"0c4fef3a17c86e9889e2a22c88de0d73374d067c\",\"name\":\"ljs_trace_0c4fef3_2016-01-05.log\",\"size\":297,\"lastModified\":1452009919000,\"description\":\"Default Trace\",\"component\":\"web\"}]}";
 			
-			ftpClient.quit();
+			JSONObject json = new JSONObject(response);
+			JSONArray logFiles = json.getJSONArray("logFiles");
+			
+			for (int i = 0; i < logFiles.length(); i++) {
+				JSONObject logFile = logFiles.getJSONObject(i);
+				String logFileName = logFile.getString("name");
+				if (logFileName.startsWith("http_access_cdn_")) { // an Akamai log file we are interested in
+					result.add(logFileName);
+				}
+			}
+
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -563,43 +578,36 @@ public class AkamaiLogDownloader {
 
 
 	/**
-	 * Downloads the files with the given names from the given FTP location. Connects through proxy:8080.
+	 * Downloads the files with the given names from the given HCP log URL. Connects through proxy:8080.
 	 * 
-	 * @param ftpServer
-	 * @param ftpPath
 	 * @param fileNames
+	 * @param logUrl
 	 * @return
 	 */
-	private List<File> downloadLogFiles(String ftpServer, String ftpPath, List<String> fileNames) {
+	private List<File> downloadLogFilesFromHCP(List<String> fileNames, String logUrl) {
 		List<File> downloadedFiles = new ArrayList<File>();
 
-		FTPClient ftpClient = new FTPHTTPClient("proxy", 8080); // need to connect to the SAP proxy, using the Akamai credentials (and Akamai server appended to username)
-		ftpClient = new FTPClient();
-				
+		
 		try {
-			ftpClient.connect("proxy", 21);
-			ftpClient.login(USER + "@" + ftpServer, PASSWORD);
-			ftpClient.pasv();
-			ftpClient.enterLocalPassiveMode();
-			
-			ftpClient.changeWorkingDirectory(ftpPath);
-			
 			for (String fileName : fileNames) {
 				File localFile = new File(directory + File.separator + fileName);
 				
 				log("   ..." + localFile.getAbsolutePath() + "...");
+
+				// get the file from the HCP system
+				URL hcpLogFile = new URL(logUrl + fileName);
+				String passwdstring = USER + ":" + PASSWORD;
+				String encoding = new sun.misc.BASE64Encoder().encode(passwdstring.getBytes());
+				URLConnection uc = hcpLogFile.openConnection();
+				uc.setRequestProperty("Authorization", "Basic " + encoding);
+				InputStream in = (InputStream) uc.getInputStream();
 				
-				OutputStream output = new FileOutputStream(localFile);
-				// get the file from the remote system
-				ftpClient.retrieveFile(fileName, output);
-				output.close();
-				
+				FileUtils.copyInputStreamToFile(in, localFile);
+				in.close();
+
 				localFile.deleteOnExit();
 				downloadedFiles.add(localFile);
 			}
-			
-			ftpClient.quit();
-			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -623,7 +631,7 @@ public class AkamaiLogDownloader {
 		List<FileWithDate> anonymizedLogFiles = new ArrayList<FileWithDate>();
 		Set<String> usedFileNames = new HashSet<String>();
 
-		final Pattern FILE_DATE_PATTERN = Pattern.compile(".*S\\.(\\d\\d\\d\\d)(\\d\\d)(\\d\\d)0000-.*"); // to get the date from the log file name
+		final Pattern FILE_DATE_PATTERN = Pattern.compile("http_access_cdn_(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)_.*"); // to get the date from the log file name
 
 		try {
 			for (int i = 0; i < rawLogFiles.size(); i++) {
@@ -1301,11 +1309,13 @@ public class AkamaiLogDownloader {
 
 		for (File file : newFiles) {
 			String fileName = file.getName();
-			if (fileName.indexOf(".gz") > 0) {
+			if (fileName.endsWith(".log")) {
+				fileName = fileName.substring(0, fileName.length() - 4);
+			} else {
 				// not expected, should look into this
-				throw new RuntimeException("Error while saving new known log file names: these should be the unzipped files, but one of the files contains the substring '.gz', which is suspicious: " + fileName);
+				throw new RuntimeException("Error while saving new known log file names: these should be the unzipped files, but one of the files did not end with '.log', which is suspicious: " + fileName);
 			}
-			dataArray.put(fileName + ".gz");
+			dataArray.put(fileName);
 		}
 		return json;
 	}
