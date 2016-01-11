@@ -1198,7 +1198,8 @@
 				aRestrictedCategories = null,
 				aAverageMethods = [],
 				aOriginalMethods = [],
-				aMethods = ["start", "end", "pause", "resume", "add", "remove", "clear", "average"];
+				mMethods = {},
+				mMeasurements = {};
 
 			/**
 			 * Gets the current state of the perfomance measurement functionality
@@ -1240,11 +1241,10 @@
 				if (bActive) {
 
 					//activate method implementations once
-					for (var i = 0; i < aMethods.length; i++) {
-						this[aMethods[i]] = this["_" + aMethods[i]];
-
+					for (var sName in mMethods) {
+						this[sName] = mMethods[sName];
 					}
-					aMethods = [];
+					mMethods = [];
 					// wrap and instrument jQuery.ajax
 					jQuery.ajax = function(url, options) {
 
@@ -1274,9 +1274,6 @@
 				return bActive;
 			};
 
-			this.mMeasurements = {};
-
-
 			/**
 			 * Starts a performance measure.
 			 * Optionally a category or list of categories can be passed to allow filtering of measurements.
@@ -1290,7 +1287,7 @@
 			 * @function
 			 * @public
 			 */
-			this._start = function(sId, sInfo, aCategories) {
+			mMethods["start"] = function(sId, sInfo, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -1312,7 +1309,7 @@
 	//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
 
 				if (oMeasurement) {
-					this.mMeasurements[sId] = oMeasurement;
+					mMeasurements[sId] = oMeasurement;
 					return this.getMeasurement(oMeasurement.id);
 				} else {
 					return false;
@@ -1328,13 +1325,13 @@
 			 * @function
 			 * @public
 			 */
-			this._pause = function(sId) {
+			mMethods["pause"] = function(sId) {
 				if (!bActive) {
 					return;
 				}
 
 				var iTime = jQuery.sap.now();
-				var oMeasurement = this.mMeasurements[sId];
+				var oMeasurement = mMeasurements[sId];
 				if (oMeasurement && oMeasurement.end > 0) {
 					// already ended -> no pause possible
 					return false;
@@ -1368,13 +1365,13 @@
 			 * @function
 			 * @public
 			 */
-			this._resume = function(sId) {
+			mMethods["resume"] = function(sId) {
 				if (!bActive) {
 					return;
 				}
 
 				var iTime = jQuery.sap.now();
-				var oMeasurement = this.mMeasurements[sId];
+				var oMeasurement = mMeasurements[sId];
 	//			jQuery.sap.log.info("Performance measurement resume: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
 
 				if (oMeasurement && oMeasurement.pause > 0) {
@@ -1399,14 +1396,14 @@
 			 * @function
 			 * @public
 			 */
-			this._end = function(sId) {
+			mMethods["end"] = function(sId) {
 				if (!bActive) {
 					return;
 				}
 
 				var iTime = jQuery.sap.now();
 
-				var oMeasurement = this.mMeasurements[sId];
+				var oMeasurement = mMeasurements[sId];
 	//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
 
 				if (oMeasurement && !oMeasurement.end) {
@@ -1452,8 +1449,8 @@
 			 * @function
 			 * @public
 			 */
-			this._clear = function() {
-				this.mMeasurements = {};
+			mMethods["clear"] = function() {
+				mMeasurements = {};
 			};
 
 			/**
@@ -1464,8 +1461,8 @@
 			 * @function
 			 * @public
 			 */
-			this._remove = function(sId) {
-				delete this.mMeasurements[sId];
+			mMethods["remove"] = function(sId) {
+				delete mMeasurements[sId];
 			};
 			/**
 			 * Adds a performance measurement with all data
@@ -1483,7 +1480,7 @@
 			 * @function
 			 * @public
 			 */
-			this._add = function(sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories) {
+			mMethods["add"] = function(sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -1496,7 +1493,7 @@
 				oMeasurement.duration = iDuration;
 
 				if (oMeasurement) {
-					this.mMeasurements[sId] = oMeasurement;
+					mMeasurements[sId] = oMeasurement;
 					return this.getMeasurement(oMeasurement.id);
 				} else {
 					return false;
@@ -1516,7 +1513,7 @@
 			 * @function
 			 * @public
 			 */
-			this._average = function(sId, sInfo, aCategories) {
+			mMethods["average"] = function(sId, sInfo, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -1525,11 +1522,11 @@
 					return;
 				}
 
-				var oMeasurement = this.mMeasurements[sId],
+				var oMeasurement = mMeasurements[sId],
 					iTime = jQuery.sap.now();
 				if (!oMeasurement || !oMeasurement.average) {
 					this.start(sId, sInfo, aCategories);
-					oMeasurement = this.mMeasurements[sId];
+					oMeasurement = mMeasurements[sId];
 					oMeasurement.average = true;
 				} else {
 					if (!oMeasurement.end) {
@@ -1553,7 +1550,7 @@
 			 */
 			this.getMeasurement = function(sId) {
 
-				var oMeasurement = this.mMeasurements[sId];
+				var oMeasurement = mMeasurements[sId];
 
 				if (oMeasurement) {
 					return {id: oMeasurement.id,
@@ -1610,7 +1607,7 @@
 			this.filterMeasurements = function(fnFilter, bCompleted) {
 				var aMeasurements = [],
 					that = this;
-				jQuery.each(this.mMeasurements, function(sId){
+				jQuery.each(mMeasurements, function(sId){
 					var oMeasurement = that.getMeasurement(sId);
 					if (fnFilter) {
 						var oResult = fnFilter(oMeasurement);
@@ -1940,8 +1937,8 @@
 					return null;
 				};
 				//deactivate methods implementations
-				for (var i = 0; i < aMethods.length; i++) {
-					this[aMethods[i]] = fnInactive;
+				for (var sName in mMethods) {
+					this[sName] = fnInactive;
 				}
 			}
 		}
