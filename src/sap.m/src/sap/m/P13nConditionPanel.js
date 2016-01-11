@@ -602,8 +602,7 @@ sap.ui.define([
 				"SpanFilter": "L3 M5 S10",
 				"SpanSort": "L5 M5 S12",
 				"SpanGroup": "L4 M4 S12",
-				"Control": "ComboBox",
-				"SelectedKey": "0"
+				"Control": "ComboBox"
 			}, {
 				"ID": "operationLabel",
 				"Text": "Sort Order",
@@ -617,8 +616,7 @@ sap.ui.define([
 				"SpanFilter": "L2 M5 S10",
 				"SpanSort": sap.ui.Device.system.phone ? "L5 M5 S8" : "L5 M5 S9",
 				"SpanGroup": "L2 M5 S10",
-				"Control": "ComboBox",
-				"SelectedKey": "0"
+				"Control": "ComboBox"
 			}, {
 				"ID": "value1",
 				"Label": this._sFromLabelText,
@@ -885,7 +883,6 @@ sap.ui.define([
 				case "ComboBox":
 					if (field["ID"] === "keyField") {
 						oControl = new sap.m.ComboBox({ // before we used the new sap.m.Select control
-							selectedKey: field["SelectedKey"],
 							width: "100%"
 						});
 
@@ -970,7 +967,6 @@ sap.ui.define([
 
 					if (field["ID"] === "operation") {
 						oControl = new sap.m.Select({
-							selectedKey: field["SelectedKey"],
 							width: "100%",
 							layoutData: new sap.ui.layout.GridData({
 								span: field["Span" + this._sConditionType]
@@ -996,11 +992,15 @@ sap.ui.define([
 								if (oKeyField.type && this._oTypeOperations[oKeyField.type]) {
 									aOperations = this._oTypeOperations[oKeyField.type];
 								}
+								if (oKeyField.operations) {
+									aOperations = oKeyField.operations;
+								}
 							}
 
-							aOperations.forEach(function(oOperation, index) {
+							aOperations.some(function(oOperation, index) {
 								if (oConditionGridData.operation === oOperation) {
 									oControl.setSelectedItem(oControl.getItems()[index]);
+									return true;
 								}
 							}, this);
 						} else {
@@ -1555,6 +1555,11 @@ sap.ui.define([
 		var fHandledIsDefault = function(oKeyFieldItem, index) {
 			if (oKeyFieldItem.isDefault) {
 				oKeyField.setSelectedItem(oKeyField.getItems()[index]);
+			}
+			if (!oKeyField.getSelectedItem()) {
+				if (oKeyFieldItem.type !== "boolean") {
+					oKeyField.setSelectedItem(oKeyField.getItems()[index]);
+				}
 			}
 		};
 
