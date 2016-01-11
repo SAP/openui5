@@ -12,7 +12,7 @@ sap.ui.define(function () {
 	var ObjectPageSubSectionRenderer = {};
 
 	ObjectPageSubSectionRenderer.render = function (oRm, oControl) {
-		var aActions, bHasTitle, bHasTitleLine, bHasActions;
+		var aActions, bHasTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft;
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
 			return;
@@ -35,7 +35,8 @@ sap.ui.define(function () {
 			oRm.write("<div");
 			oRm.addClass("sapUxAPObjectPageSubSectionHeader");
 
-			if (oControl._onDesktopMediaRange()) {
+			bUseTitleOnTheLeft = oControl._getUseTitleOnTheLeft();
+			if (bUseTitleOnTheLeft && oControl._onDesktopMediaRange()) {
 				oRm.addClass("titleOnLeftLayout");
 			}
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-header");

@@ -169,8 +169,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.onAfterRendering = function () {
-		var oObjectPageLayout = this._getObjectPageLayout(),
-			bUseTitleOnTheLeft;
+		var oObjectPageLayout = this._getObjectPageLayout();
 
 		if (ObjectPageSectionBase.prototype.onAfterRendering) {
 			ObjectPageSectionBase.prototype.onAfterRendering.call(this);
@@ -180,9 +179,7 @@ sap.ui.define([
 			return;
 		}
 
-		bUseTitleOnTheLeft = oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft;
-
-		if (bUseTitleOnTheLeft) {
+		if (this._getUseTitleOnTheLeft()) {
 			Device.media.attachHandler(this._titleOnLeftSynchronizeLayouts, this, ObjectPageSubSection.MEDIA_RANGE);
 		} else {
 			Device.media.detachHandler(this._titleOnLeftSynchronizeLayouts, this, ObjectPageSubSection.MEDIA_RANGE);
@@ -697,6 +694,12 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	ObjectPageSubSection.prototype._getUseTitleOnTheLeft = function () {
+		var oObjectPageLayout = this._getObjectPageLayout();
+
+		return oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft;
 	};
 
 	/**
