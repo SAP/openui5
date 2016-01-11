@@ -1241,40 +1241,29 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		};
 
 		/**
-		 * Return width of the element, for IE specific return the float number of width.
-		 *
-		 * @protected
-		 */
-		Popover.width = function (oElement) {
-			if (sap.ui.Device.browser.msie) {
-				var sWidth = window.getComputedStyle(oElement, null).getPropertyValue("width");
-				return Math.ceil(parseFloat(sWidth));
-			} else {
-				return jQuery(oElement).width();
-			}
-
-		};
-
-		/**
-		 * Calculate outerWidth of the element, for IE specific return the float number of width.
+		 * Calculate outerWidth of the element; used as hook for SVG elements
 		 *
 		 * @protected
 		 */
 		Popover.outerWidth = function (oElement, bIncludeMargin) {
-			var iWidth = Popover.width(oElement),
-				iPaddingLeft = parseInt(jQuery(oElement).css("padding-left"), 10),
-				iPaddingRight = parseInt(jQuery(oElement).css("padding-right"), 10),
-				iBorderLeftWidth = parseInt(jQuery(oElement).css("border-left-width"), 10),
-				iBorderRightWidth = parseInt(jQuery(oElement).css("border-right-width"), 10);
-
-			var iOuterWidth = iWidth + iPaddingLeft + iPaddingRight + iBorderLeftWidth + iBorderRightWidth;
-
-			if (bIncludeMargin) {
-				var iMarginLeft = parseInt(jQuery(oElement).css("margin-left"), 10),
-					iMarginRight = parseInt(jQuery(oElement).css("margin-right"), 10);
-				iOuterWidth = iOuterWidth + iMarginLeft + iMarginRight;
+			if (typeof window.SVGElement !== "undefined" && oElement instanceof window.SVGElement) {
+				return oElement.getBoundingClientRect().width;
 			}
-			return iOuterWidth;
+
+			return jQuery(oElement).outerWidth(bIncludeMargin);
+		};
+
+		/**
+		 * Calculate outerHeight of the element; used as hook for SVG elements
+		 *
+		 * @protected
+		 */
+		Popover.outerHeight = function (oElement, bIncludeMargin) {
+			if (typeof window.SVGElement !== "undefined" && oElement instanceof window.SVGElement) {
+				return oElement.getBoundingClientRect().height;
+			}
+
+			return jQuery(oElement).outerHeight(bIncludeMargin);
 		};
 
 		Popover.prototype._getPositionParams = function ($popover, $arrow, $content, $scrollArea) {
@@ -1509,25 +1498,25 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 			// Recalculate Popover width and height because they can be changed after position adjustments
-			oPosParams._fWidth = Popover.outerWidth(oPosParams._$popover[0]);
+			oPosParams._fWidth = oPosParams._$popover.outerWidth();
 			oPosParams._fHeight = oPosParams._$popover.outerHeight();
 
-			//set arrow offset
+			// Set arrow offset
 			if (sCalculatedPlacement === sap.m.PlacementType.Left || sCalculatedPlacement === sap.m.PlacementType.Right) {
-				iPosArrow = oPosParams._$parent.offset().top - oPosParams._$popover.offset().top - oPosParams._fPopoverBorderTop + oPosParams._fOffsetY + 0.5 * (oPosParams._$parent.outerHeight(false) - oPosParams._$arrow.outerHeight(false));
+				iPosArrow = oPosParams._$parent.offset().top - oPosParams._$popover.offset().top - oPosParams._fPopoverBorderTop + oPosParams._fOffsetY + 0.5 * (Popover.outerHeight(oPosParams._$parent[0], false) - oPosParams._$arrow.outerHeight(false));
 				iPosArrow = Math.max(iPosArrow, this._arrowOffsetThreshold);
 				iPosArrow = Math.min(iPosArrow, oPosParams._fHeight - this._arrowOffsetThreshold - oPosParams._$arrow.outerHeight());
 				return {"top": iPosArrow};
 			} else if (sCalculatedPlacement === sap.m.PlacementType.Top || sCalculatedPlacement === sap.m.PlacementType.Bottom) {
 				if (bRtl) {
-					iPosArrow = oPosParams._$popover.offset().left + Popover.outerWidth(oPosParams._$popover[0], false) - (oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false)) + oPosParams._fPopoverBorderRight + oPosParams._fOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - Popover.outerWidth(oPosParams._$arrow[0], false));
+					iPosArrow = oPosParams._$popover.offset().left + Popover.outerWidth(oPosParams._$popover[0], false) - (oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false)) + oPosParams._fPopoverBorderRight + oPosParams._fOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$arrow.outerWidth(false));
 					iPosArrow = Math.max(iPosArrow, this._arrowOffsetThreshold);
-					iPosArrow = Math.min(iPosArrow, oPosParams._fWidth - this._arrowOffsetThreshold - Popover.outerWidth(oPosParams._$arrow[0], false));
+					iPosArrow = Math.min(iPosArrow, oPosParams._fWidth - this._arrowOffsetThreshold - oPosParams._$arrow.outerWidth(false));
 					return {"right": iPosArrow};
 				} else {
-					iPosArrow = oPosParams._$parent.offset().left - oPosParams._$popover.offset().left - oPosParams._fPopoverBorderLeft + oPosParams._fOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - Popover.outerWidth(oPosParams._$arrow[0], false));
+					iPosArrow = oPosParams._$parent.offset().left - oPosParams._$popover.offset().left - oPosParams._fPopoverBorderLeft + oPosParams._fOffsetX + 0.5 * (Popover.outerWidth(oPosParams._$parent[0], false) - oPosParams._$arrow.outerWidth(false));
 					iPosArrow = Math.max(iPosArrow, this._arrowOffsetThreshold);
-					iPosArrow = Math.min(iPosArrow, oPosParams._fWidth - this._arrowOffsetThreshold - Popover.outerWidth(oPosParams._$arrow[0], false));
+					iPosArrow = Math.min(iPosArrow, oPosParams._fWidth - this._arrowOffsetThreshold - oPosParams._$arrow.outerWidth(false));
 					return {"left": iPosArrow};
 				}
 			}
