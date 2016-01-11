@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		"use strict";
 
 		/**
-		 * Constructor for a new Select.
+		 * Constructor for a new <code>sap.m.Select</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
 		 * @param {object} [mSettings] Initial settings for the new control.
@@ -104,6 +104,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 				/**
 				 * Indicates whether the selection is restricted to one of the items in the list.
+				 * <b>Note:</b> We strongly recommend that you always set this property to <code>false</code> and bind
+				 * the <code>selectedKey</code> property to the desired value for better interoperability with data binding.
 				 * @since 1.34
 				 */
 				forceSelection: { type: "boolean", group: "Behavior", defaultValue: true }
