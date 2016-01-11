@@ -44,13 +44,13 @@
 			},
 			{
 				"text": "Manage Products",
-				"ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/mockServer.html",
 				"icon": "task",
 				"desc": "This app is the final result of the 'Worklist App Tutorial'"
 			},
 			{
 				"text": "Bulletin Board",
-				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/mockServer.html",
 				"icon": "task",
 				"desc": "This worklist-style app is the final result of the 'Testing Tutorial'"
 			}
