@@ -13,7 +13,7 @@
     </tokens>
 </MultiInput>
 
-<Label text="toekn databinding in multi-line multiinput" />
+<Label text="token databinding in multi-line multiinput" />
 <MultiInput enableMultiLineMode="true" id="multiinput2"
 	tokens="{
 				path: '/ProductCollection',
