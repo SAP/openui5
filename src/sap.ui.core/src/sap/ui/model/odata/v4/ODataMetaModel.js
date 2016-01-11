@@ -86,7 +86,7 @@ sap.ui.define([
 	 *
 	 * Example:
 	 * <pre>
-	 * &lt;template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
+	 * &lt;template:repeat list="{path : 'entityType>', filters : {path : '@sapui.name', operator : 'StartsWith', value1 : 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
 	 * </pre>
 	 *
 	 * @extends sap.ui.model.json.JSONListBinding
@@ -175,7 +175,17 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype._getObject = function (sPath, oContext) {
 		var sKey,
-			vResult = this.getObject(sPath ? sPath + "/." : ".", oContext);
+			sPathDot,
+			vResult;
+
+		if (sPath === "/") {
+			sPathDot = "/.";
+		} else if (sPath) {
+			sPathDot = sPath + "/.";
+		} else {
+			sPathDot = ".";
+		}
+		vResult = this.getObject(sPathDot, oContext);
 
 		vResult = jQuery.extend({}, vResult);
 		for (sKey in vResult) {
@@ -233,74 +243,116 @@ sap.ui.define([
 	ODataMetaModel.prototype.fetchObject = function (sPath, oContext) {
 		var sResolvedPath = this.resolve(sPath, oContext);
 
-		/*
-		 * Outputs a warning message; takes care not to construct the message in vain.
-		 * @param {...string} aTexts
-		 *   the message is constructed from the given arguments joined by a space
-		 */
-		function warn(/*...*/) {
-			if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-				jQuery.sap.log.warning(Array.prototype.join.call(arguments, " "),
-					sResolvedPath, sODataMetaModel);
-			}
-		}
+		return this.fetchEntityContainer().then(function (mScope) {
+			var oEntityContainer = mScope[mScope.$EntityContainer],
+				bJsonMode = false, // "JSON" drill-down mode triggered by technical property
+				sName, // the object's OData name
+				vResult = mScope;
 
-		return this.fetchEntityContainer().then(function (oMetadata) {
-			var sName, // the object's OData name
-				vResult = oMetadata;
+			/*
+			 * Takes one step according to the given segment, starting at the current
+			 * <code>vResult</code> and changing that.
+			 * @param {string} [sLocation]
+			 *   where the relative path has been found (in case of implicit lookup)
+			 * @param {string} sSegment
+			 *   current segment
+			 * @param {number} i
+			 *   current segment's index
+			 * @param {string[]} aSegments
+			 *   all segments
+			 * @returns {boolean}
+			 *   whether to continue after this step
+			 */
+			function step(sLocation, sSegment, i, aSegments) {
+				if (!sSegment) {
+					return warn("Invalid empty part");
+				}
+				// Note: "@sapui.name" refers back to the object's OData name
+				if (sSegment === "@sapui.name") {
+					vResult = sName;
+					if (vResult === undefined) {
+						warn("Unsupported path before @sapui.name");
+					} else if (i + 1 < aSegments.length) {
+						warn("Unsupported path after @sapui.name");
+					}
+					return false;
+				}
+				if (typeof vResult === "string"
+					// implicit scope lookup
+					&& !steps(vResult, aSegments.slice(0, i).join("/"))) {
+					return false;
+				}
+				if (!vResult || typeof vResult !== "object") {
+					// Note: even an OData path cannot continue here (e.g. by type cast)
+					return warn("Invalid part: " + sSegment);
+				}
+				bJsonMode = bJsonMode || sSegment.charAt(0) === "$";
+				if (!bJsonMode) {
+					if (sSegment.indexOf(".") > 0) {
+						// "17.3 QualifiedName": lookup
+						if (!(sSegment in mScope)) {
+							return warn("Unknown qualified name '" + sSegment
+								+ "' at /" + sLocation);
+						}
+						sName = sSegment;
+						vResult = mScope[sSegment];
+						return true;
+					} else if (vResult === mScope) {
+						// initial "17.2 SimpleIdentifier": treat as child of default container
+						if (sLocation && !(sSegment in oEntityContainer)) {
+							return warn("Unknown container child '" + sSegment
+								+ "' at /" + sLocation);
+						}
+						sName = mScope.$EntityContainer;
+						vResult = oEntityContainer;
+					} else if (("$Type" in vResult)
+						// implicit $Type insertion, e.g. at (navigation) property
+						&& !steps(vResult.$Type, aSegments.slice(0, i).join("/") + "/$Type")) {
+						return false;
+					}
+				}
+				// Note: "." is useful to force implicit lookup or $Type insertion
+				if (sSegment !== ".") {
+					sName = bJsonMode ? undefined : sSegment;
+					vResult = vResult[sSegment];
+				}
+				return true;
+			}
+
+			/*
+			 * Takes multiple steps according to the given relative path, starting at the global
+			 * scope and changing <code>vResult</code>.
+			 * @param {string} sRelativePath
+			 *   some relative path (semantically, it is absolute as we start at the global scope,
+			 *   but it does not begin with a slash!)
+			 * @param {string} [sLocation]
+			 *   where the relative path has been found (in case of implicit lookup)
+			 * @returns {boolean}
+			 *   whether to continue after all steps
+			 */
+			function steps(sRelativePath, sLocation) {
+				bJsonMode = false;
+				vResult = mScope;
+				return sRelativePath.split("/").every(step.bind(null, sLocation));
+			}
+
+			/*
+			 * Outputs a warning message. Leads to an <code>undefined</code> result.
+			 * @param {string} sMessage
+			 *   the message
+			 * @returns {boolean}
+			 *   <code>false</code>
+			 */
+			function warn(sMessage) {
+				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+					jQuery.sap.log.warning(sMessage, sResolvedPath, sODataMetaModel);
+				}
+				vResult = undefined;
+				return false;
+			}
 
 			if (sResolvedPath !== "/") {
-				sResolvedPath.slice(1).split("/").every(function (sSegment, i, aSegments) {
-					var bStartsWithDollar = sSegment.charAt(0) === "$";
-
-					/*
-					 * Returns meta data for the given qualified name, warns about invalid names.
-					 * @param {string} sQualifiedName
-					 *   a qualified name
-					 * @returns {object}
-					 *   meta data for the given qualified name
-					 */
-					function lookup(sQualifiedName) {
-						if (!(sQualifiedName in oMetadata)) {
-							warn("Unknown qualified name", sQualifiedName, "before", sSegment);
-						}
-						sName = sQualifiedName;
-						return oMetadata[sQualifiedName];
-					}
-
-					// Note: "@sapui.name" refers back to the object's OData name
-					if (sSegment === "@sapui.name") {
-						vResult = sName;
-						if (vResult === undefined) {
-							warn("Invalid path before @sapui.name");
-						}
-						if (i + 1 < aSegments.length) {
-							warn("Invalid path after @sapui.name");
-							vResult = undefined;
-						}
-						return false; // path must not continue
-					}
-					// implicit map lookup
-					if (typeof vResult === "string" && !(vResult = lookup(vResult))) {
-						return false; // "Unknown qualified name"
-					}
-					if (!vResult || typeof vResult !== "object") {
-						warn("Invalid part:", sSegment);
-						vResult = undefined;
-						return false; // cannot continue
-					}
-					// OData: implicitly drill down into type, e.g. at (navigation) property
-					if (!bStartsWithDollar && !(sSegment in vResult)
-						&& ("$Type" in vResult) && !(vResult = lookup(vResult.$Type))) {
-						return false; // "Unknown qualified name"
-					}
-					// Note: "." is useful to force implicit lookup or drill-down
-					if (sSegment !== ".") {
-						sName = bStartsWithDollar ? undefined : sSegment;
-						vResult = vResult[sSegment];
-					}
-					return true; // next segment, please
-				});
+				steps(sResolvedPath.slice(1));
 			}
 
 			return vResult;
@@ -363,11 +415,11 @@ sap.ui.define([
 	 *   an absolute data path within the OData data model, e.g. "/EMPLOYEES[0];list=1/ENTRYDATE"
 	 * @returns {sap.ui.model.Context}
 	 *   the corresponding meta data context within the OData meta model, e.g. with meta data path
-	 *   "/$EntityContainer/EMPLOYEES/ENTRYDATE"
+	 *   "/EMPLOYEES/ENTRYDATE"
 	 * @public
 	 */
 	ODataMetaModel.prototype.getMetaContext = function (sPath) {
-		return new Context(this, "/$EntityContainer" + sPath.replace(rNotMetaContext, ""));
+		return new Context(this, sPath.replace(rNotMetaContext, ""));
 	};
 
 	/**
@@ -452,11 +504,11 @@ sap.ui.define([
 			this.fetchEntityContainer()
 		]).then(function (aValues) {
 			var oEntityInstance = aValues[0],
-				oMetadata = aValues[1],
-				oEntityContainer = oMetadata[oMetadata.$EntityContainer],
+				mScope = aValues[1],
+				oEntityContainer = mScope[mScope.$EntityContainer],
 				sEntitySetName = aSegments.shift(),
 				oEntitySet = oEntityContainer[sEntitySetName],
-				oEntityType = oMetadata[oEntitySet.$Type];
+				oEntityType = mScope[oEntitySet.$Type];
 
 			aSegments.forEach(function (sSegment) {
 				var oNavigationProperty = oEntityType[sSegment];
@@ -467,7 +519,7 @@ sap.ui.define([
 
 				sEntitySetName = oEntitySet.$NavigationPropertyBinding[sSegment];
 				oEntitySet = oEntityContainer[sEntitySetName];
-				oEntityType = oMetadata[oNavigationProperty.$Type];
+				oEntityType = mScope[oNavigationProperty.$Type];
 			});
 
 			return sServiceUrl + encodeURIComponent(sEntitySetName)
@@ -480,33 +532,40 @@ sap.ui.define([
 	 * Returns a <code>Promise</code> which is resolved with the requested meta model value or
 	 * rejected with an error.
 	 *
-	 * The resolved path "/" addresses the global scope of all known qualified names.
+	 * The resolved path "/" addresses the global scope of all known qualified names. It has two
+	 * technical properties: "$Version" (typically "4.0") and "$EntityContainer" with the name
+	 * of the single entity container for this meta model's service; you can address it via
+	 * "/$EntityContainer".
 	 *
-	 * "/$EntityContainer" addresses the name of the single entity container for this meta model's
-	 * service. If a path comes across a string value like this and continues, the string value is
-	 * treated as a qualified name and looked up in the global scope first ("map lookup"). This
-	 * way, "/$EntityContainer/EMPLOYEES" addresses the "EMPLOYEES" child of the entity container.
+	 * If a path comes across a string value like this and continues, the string value is treated
+	 * as a qualified name and looked up in the global scope first ("scope lookup"). This way,
+	 * "/$EntityContainer/EMPLOYEES" addresses the "EMPLOYEES" child of the entity container.
 	 * A warning is logged in case the string value is not a known qualified name.
 	 *
-	 * If a path continues with an OData simple identifier which is not a property of the current
-	 * object, "$Type" is inserted into the path implicitly ("implicit drill-down into type"). This
-	 * way, "/$EntityContainer/EMPLOYEES/ENTRYDATE" addresses the same object as
+	 * If a path starts with an OData simple identifier, "$EntityContainer" is inserted into the
+	 * path implicitly. This way, "/EMPLOYEES" addresses the same object as
+	 * "/$EntityContainer/EMPLOYEES", namely the "EMPLOYEES" child of the entity container.
+	 *
+	 * If a path comes across an object that does not contain OData children, but continues with
+	 * an OData simple identifier, "$Type" is inserted into the path implicitly. This way,
+	 * "/$EntityContainer/EMPLOYEES/ENTRYDATE" addresses the same object as
 	 * "/$EntityContainer/EMPLOYEES/$Type/ENTRYDATE", namely the "ENTRYDATE" child of the entity
 	 * type corresponding to the "EMPLOYEES" child of the entity container.
 	 *
-	 * "." can be used as a segment to continue a path and thus force map lookup or implicit
-	 * drill-down, but then stay at the resulting object ("current directory"). This way,
-	 * "/$EntityContainer/EMPLOYEES/$Type/." addresses the entity type itself corresponding to the
-	 * "EMPLOYEES" child of the entity container. Although "." is not an OData simple identifier,
-	 * it can be used as a placeholder for one. In this way, "/$EntityContainer/EMPLOYEES/."
-	 * addresses the same entity type as "/$EntityContainer/EMPLOYEES/$Type/.". That entity type in
-	 * turn is a map of all its OData children (structural and navigation properties) and thus
-	 * determines the set of possible child names to use instead of the "." placeholder.
+	 * "." can be used as a segment to continue a path and thus force scope lookup or implicit
+	 * ($EntityContainer or $Type) insertion, but then stay at the resulting object ("current
+	 * directory"). This way, "/$EntityContainer/EMPLOYEES/$Type/." addresses the entity type
+	 * itself corresponding to the "EMPLOYEES" child of the entity container. Although "." is not
+	 * an OData simple identifier, it can be used as a placeholder for one. In this way,
+	 * "/$EntityContainer/EMPLOYEES/." addresses the same entity type as
+	 * "/$EntityContainer/EMPLOYEES/$Type/.". That entity type in turn is a map of all its OData
+	 * children (structural and navigation properties) and thus determines the set of possible
+	 * child names that might be used instead of the "." placeholder.
 	 *
 	 * "@sapui.name" can be used as a segment to refer back to the last OData name (simple
 	 * identifier or qualified name) immediately before that segment, e.g.
 	 * "/$EntityContainer/EMPLOYEES/@sapui.name" results in "EMPLOYEES". It does not matter whether
-	 * that name is valid or not. No map lookup or implicit drill-down is triggered by
+	 * that name is valid or not. No scope lookup or implicit insertion is triggered by
 	 * "@sapui.name" itself, but "." can still be used. Lookup of a qualified name also contributes
 	 * here, i.e. "/$EntityContainer/EMPLOYEES/./@sapui.name" results in the name of the
 	 * entity type corresponding to the "EMPLOYEES" child of the entity container.
@@ -516,7 +575,7 @@ sap.ui.define([
 	 * In case a path continues after "@sapui.name", this leads to an <code>undefined</code> result
 	 * and a warning is logged.
 	 *
-	 * In case a path comes across a non-object value and continues (except for map lookup or
+	 * In case a path comes across a non-object value and continues (except for scope lookup or
 	 * "@sapui.name"), this leads to an <code>undefined</code> result and a warning
 	 * ("Invalid part") is logged.
 	 *
