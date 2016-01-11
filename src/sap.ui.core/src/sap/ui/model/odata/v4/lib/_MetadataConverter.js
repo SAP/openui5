@@ -370,7 +370,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			i,
 			vValue;
 
-		for (i = 0; i < oAttributeList.length; i++) {
+		// check the last attribute first, this is typically the one with the annotation value
+		for (i = oAttributeList.length - 1; i >= 0; i--) {
 			oAttribute = oAttributeList.item(i);
 			vValue = getAnnotationValue(oAttribute.name, oAttribute.value, oAggregate);
 			if (vValue !== undefined) {
@@ -392,9 +393,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		// oAggregate.annotatable is the Annotation itself currently.
 		var oAnnotatable = oAggregate.annotatable.parent;
 
-		if (aResult.length) {
-			oAnnotatable.target[oAnnotatable.qualifiedName] = aResult[0];
-		}
+		oAnnotatable.target[oAnnotatable.qualifiedName] =
+			aResult.length ? aResult[0] : getInlineAnnotationValue(oElement, oAggregate);
 	}
 
 	/**
@@ -660,8 +660,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				+ MetadataConverter.resolveAlias(oElement.getAttribute("Term"), oAggregate),
 			// oAnnotatable.qualifier can only come from <Annotations>. If such a qualifier is set
 			// <Annotation> itself MUST NOT supply a qualifier. (see spec Part 3, 14.3.2)
-			sQualifier = oAnnotatable.qualifier || oElement.getAttribute("Qualifier"),
-			vValue = true;
+			sQualifier = oAnnotatable.qualifier || oElement.getAttribute("Qualifier");
 
 		if (sQualifier) {
 			sQualifiedName += "#" + sQualifier;
@@ -671,10 +670,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			oAnnotations = getOrCreateObject(oAggregate.schema, "$Annotations");
 			oAnnotatable.target = oAnnotations[oAnnotatable.target] = {};
 		}
-		vValue = getInlineAnnotationValue(oElement, oAggregate);
 
 		oAnnotatable.qualifiedName = sQualifiedName;
-		oAnnotatable.target[sQualifiedName] = vValue;
+		// do not calculate a value yet, this is done in postProcessAnnotation
+		oAnnotatable.target[sQualifiedName] = true;
 		annotatable(oAggregate, oAnnotatable.target, sQualifiedName);
 	}
 
