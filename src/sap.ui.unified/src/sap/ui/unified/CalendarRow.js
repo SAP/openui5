@@ -404,10 +404,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * it is better if the container triggers the resize check once an then calls this function
 	 * of each <code>CalendarRow</code>.
 	 *
+	 * @param {jQuery.Event} oEvent The event object of the resize handler.
 	 * @returns {sap.ui.unified.CalendarRow} <code>this</code> to allow method chaining
 	 * @public
 	 */
-	CalendarRow.prototype.handleResize = function() {
+	CalendarRow.prototype.handleResize = function(oEvent) {
+
+		if (oEvent && oEvent.size && oEvent.size.width <= 0) {
+			// only if visible at all
+			return this;
+		}
 
 		var $DummyApp = this.$("DummyApp");
 
