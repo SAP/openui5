@@ -340,6 +340,28 @@ sap.ui.require([
 		}, new Error("Refresh on this binding is not supported"));
 	});
 
+	//*********************************************************************************************
+	QUnit.test("refresh cancels pending read", function (assert) {
+		var oBinding,
+			oModel = new ODataModel("/service/?sap-client=111"),
+			oContext = oModel.getContext("/TEAMS('TEAM_01')"),
+			oPromise;
+
+		this.oSandbox.mock(oModel.oRequestor).expects("request")
+			.returns(Promise.resolve({value: {"ID" : "1"}}));
+		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
+		this.oSandbox.mock(oBinding).expects("_fireChange");
+
+		// trigger read before refresh
+		oPromise = oBinding.readValue("ID").then(function () {
+			assert.ok(false, "First read has to be canceled");
+		}, function (oError1) {
+			assert.strictEqual(oError1.canceled, true);
+			// no Error is logged because error has canceled flag
+		});
+		oBinding.refresh(true);
+		return oPromise;
+	});
 	// TODO check behavior if request for refresh fails (e.g. if data is already deleted)
 	// TODO events dataRequested, dataReceived
 	// TODO bSuspended? In v2 it is ignored (check with core)

@@ -78,16 +78,22 @@ sap.ui.define([
 		});
 
 	/**
-	 * Checks for an update of this binding's value. Triggers a read at the binding's resolved
-	 * path. If the binding cannot be resolved or if the property value has not changed since the
-	 * latest <code>checkUpdate</code> nothing else happens. Otherwise a change event is fired;
-	 * this event will always be asynchronous.
-	 *
+	 * Updates the binding's value and sends a change event if necessary. A change event is sent
+	 * if the <code>bForceUpdate</code> parameter is set to <code>true</code> or if the value
+	 * has changed. If a relative binding has no context the <code>bForceUpdate</code> parameter
+	 * is ignored and the change event is only fired if the old value was not
+	 * <code>undefined</code>.
 	 * If the binding has no type, the property's type is requested from the meta model and set.
-	 * In this case, the change event is only fired when the type and the value are known.
+	 * Note: The change event is only sent asynchronously after reading the binding's value and
+	 * type information.
+	 * If the binding's path cannot be resolved or if reading the binding's value fails or if the
+	 * value read is invalid (e.g. not a primitive value), the binding's value is reset to
+	 * <code>undefined</code>. As described above, this may trigger a change event depending on the
+	 * previous value and the <code>bForceUpdate</code> parameter.
 	 *
 	 * @param {boolean} [bForceUpdate=false]
-	 *   if <code>true</code> the change event is fired even if the value has not changed.
+	 *   if <code>true</code> the change event is always fired except there is no context for a
+	 *   relative binding and the value is <code>undefined</code>.
 	 * @returns {Promise}
 	 *   a Promise to be resolved when the check is finished
 	 *
@@ -95,19 +101,26 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate) {
 		var bFire = false,
+			oPromise,
 			aPromises = [],
 			oReadPromise,
 			sResolvedPath = this.getModel().resolve(this.getPath(), this.getContext()),
 			that = this;
 
 		if (!sResolvedPath) {
-			return Promise.resolve();
-		} else if ((bForceUpdate || !this.bRequestTypeFailed) && !this.getType()) {
-			// request type only once
+			oPromise = Promise.resolve();
+			if (that.oValue !== undefined) {
+				oPromise = oPromise.then(function () {
+					that._fireChange({reason: ChangeReason.Change});
+				});
+			}
+			that.oValue = undefined; // ensure value is reset
+			return oPromise;
+		}
+		if (!this.bRequestTypeFailed && !this.getType()) { // request type only once
 			aPromises.push(this.getModel().getMetaModel().requestUI5Type(sResolvedPath)
 				.then(function (oType) {
 					that.setType(oType, that.sInternalType);
-					bFire = true;
 				})["catch"](function (oError) {
 					that.bRequestTypeFailed = true;
 					jQuery.sap.log.warning(oError.message, sResolvedPath, sClassName);
@@ -118,17 +131,25 @@ sap.ui.define([
 		aPromises.push(oReadPromise.then(function (oData) {
 			if (oData.value === undefined || typeof oData.value === "object") {
 				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
-			} else if (bForceUpdate || !jQuery.sap.equal(that.oValue, oData.value)) {
+				bFire = that.oValue !== undefined;
+				that.oValue = undefined;
+			} else if (!jQuery.sap.equal(that.oValue, oData.value)) {
 				that.oValue = oData.value;
 				bFire = true;
 			}
-		})["catch"](function () {
+		})["catch"](function (oError) {
 			// do not rethrow, ManagedObject doesn't react on this either
 			// throwing an exception would cause "Uncaught (in promise)" in Chrome
+			if (!oError.canceled) {
+				jQuery.sap.log.error("Failed to read path " + sResolvedPath, oError, sClassName);
+				// fire change event only if error was not caused by refresh and value was undefined
+				bFire = that.oValue !== undefined;
+			}
+			that.oValue = undefined;
 		}));
 
 		return Promise.all(aPromises).then(function () {
-			if (bFire) {
+			if (bForceUpdate || bFire) {
 				that._fireChange({reason: ChangeReason.Change});
 			}
 		});
@@ -146,8 +167,34 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the (base) context which is used when the binding path is relative. This triggers a
-	 * {@link #checkUpdate} to check for the current value.
+	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
+	 * control, that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * Refresh is supported for absolute bindings.
+	 *
+	 * @param {boolean} bForceUpdate
+	 *   <code>bForceUpdate</code> has to be <code>true</code>
+	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code> or refresh
+	 *   on this binding is not supported
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#refresh
+	 */
+	ODataPropertyBinding.prototype.refresh = function (bForceUpdate) {
+		if (!bForceUpdate) {
+			throw new Error("Falsy values for bForceUpdate are not supported");
+		}
+		if (!this.oCache) {
+			throw new Error("Refresh on this binding is not supported");
+		}
+		this.oCache.refresh();
+		this.checkUpdate(true);
+	};
+
+	/**
+	 * Sets the (base) context if the binding path is relative and triggers a
+	 * {@link #checkUpdate} to check for the current value if the context has changed.
+	 * In case of absolute bindings nothing is done.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path

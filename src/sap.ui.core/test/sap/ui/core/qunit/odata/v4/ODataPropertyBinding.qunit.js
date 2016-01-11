@@ -38,13 +38,14 @@ sap.ui.require([
 		},
 
 		/**
-		 * Creates a sinon mock for a cache object with read and refresh method.
+		 * Creates a Sinon mock for a cache object with read and refresh method.
 		 * @returns {object}
 		 *   a Sinon mock for the created cache object
 		 */
 		getCacheMock : function () {
 			var oCache = {
-					read: function () {}
+					read: function () {},
+					refresh: function () {}
 				};
 
 			this.oSandbox.mock(Cache).expects("createSingle").returns(oCache);
@@ -73,7 +74,12 @@ sap.ui.require([
 				.returns(Promise.resolve({value: "value"}));
 
 			return new Promise(function (fnResolve, fnReject) {
-				var oBinding;
+				var oBinding,
+					fnChangeHandler = function () {
+						assert.strictEqual(oControl.getText(), "value", "initialized");
+						oBinding.detachChange(fnChangeHandler);
+						fnResolve(oBinding);
+					};
 
 				oControl.bindProperty("text", {
 					path : "property",
@@ -83,10 +89,7 @@ sap.ui.require([
 
 				assert.strictEqual(oControl.getText(), undefined, "synchronous: no value yet");
 				oBinding = oControl.getBinding("text");
-				oBinding.attachChange(function () {
-					assert.strictEqual(oControl.getText(), "value", "initialized");
-					fnResolve(oBinding);
-				});
+				oBinding.attachChange(fnChangeHandler);
 			});
 		}
 	});
@@ -180,26 +183,68 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkUpdate(): unresolved path after setContext", function (assert) {
+		var done = assert.async(),
+			fnChangeHandler = function () {
+				done();
+			};
+		this.createTextBinding(assert).then(function (oBinding) {
+			assert.strictEqual(oBinding.getValue(), "value", "value before context reset");
+			oBinding.attachChange(fnChangeHandler);
+			oBinding.setContext(); // reset context triggers checkUpdate
+			assert.strictEqual(oBinding.getValue(), undefined, "value after context reset");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("checkUpdate(): read error", function (assert) {
 		var that = this;
 
 		return this.createTextBinding(assert).then(function (oBinding) {
-			var sValue = oBinding.getValue();
+			var bChangeReceived = false,
+				oError = new Error("Expected failure"),
+				sPath = "/EntitySet('foo')/property";
 
-			that.oModelMock.expects("read")
-				.withExactArgs("/EntitySet('foo')/property")
-				.returns(Promise.reject());
+			assert.strictEqual(oBinding.getValue(), "value",
+				"value is set before failing read");
+			that.oModelMock.expects("read").withExactArgs(sPath)
+				.returns(Promise.reject(oError));
+			that.oLogMock.expects("error").withExactArgs("Failed to read path " + sPath, oError,
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
 			oBinding.attachChange(function () {
-				assert.ok(false, "unexpected change event");
+				bChangeReceived = true;
 			});
 
 			// code under test
 			oBinding.checkUpdate(false).then(function () {
-				assert.strictEqual(oBinding.getValue(), sValue,
-					"read error treated as unchanged value");
+				assert.strictEqual(oBinding.getValue(), undefined,
+					"read error resets the value");
+				assert.ok(bChangeReceived, "Value changed -> expecting change event");
 			}, function () {
 				assert.ok(false, "unexpected failure");
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate(): read error with force update", function (assert) {
+		var that = this;
+
+		return this.createTextBinding(assert).then(function (oBinding) {
+			var done = assert.async(),
+				oError = new Error("Expected failure"),
+				sPath = "/EntitySet('foo')/property";
+
+			that.oModelMock.expects("read").withExactArgs(sPath)
+				.returns(Promise.reject(oError));
+			that.oLogMock.expects("error").withExactArgs("Failed to read path " + sPath, oError,
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+			oBinding.attachChange(function () {
+				done();
+			});
+
+			// code under test
+			oBinding.checkUpdate(true);
 		});
 	});
 
@@ -339,6 +384,40 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("bindProperty with non-primitive resets value", function (assert) {
+		var oBinding,
+			oCacheMock = this.getCacheMock(),
+			bChangeReceived = false,
+			done = assert.async(),
+			oModel = new ODataModel("/service/?sap-client=111"),
+			sPath = "/EMPLOYEES(ID='1')/Name";
+
+		// initial read and after refresh
+		oCacheMock.expects("read").returns(Promise.resolve({value: "foo"}));
+		// force non-primitive error
+		oCacheMock.expects("read").returns(Promise.resolve({value: {}}));
+
+		this.oLogMock.expects("error").withExactArgs("Accessed value is not primitive", sPath,
+			"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+
+		oBinding = oModel.bindProperty(sPath);
+		oBinding.setType(new TypeString());
+
+		oBinding.checkUpdate(false).then(function () {
+			assert.strictEqual(oBinding.getValue(), "foo");
+			oBinding.attachChange(function () {
+				bChangeReceived = true;
+			});
+			oBinding.checkUpdate(false).then(function () {
+				assert.strictEqual(oBinding.getValue(), undefined, "Value reset");
+				assert.ok(bChangeReceived, "Change event received");
+				done();
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("automaticTypes: type already set by app", function (assert) {
 		var oModel = new ODataModel("/service/"),
 			oControl = new TestControl({models: oModel}),
@@ -396,7 +475,6 @@ sap.ui.require([
 		QUnit.test("automaticTypes: failed type, bForceUpdate = " + bForceUpdate,
 			function (assert) {
 				var oBinding,
-					iCalls = bForceUpdate ? 2 : 1,
 					oError = new Error("failed type"),
 					done = assert.async(),
 					oModel = new ODataModel("/service/"),
@@ -408,9 +486,9 @@ sap.ui.require([
 				oCacheMock.expects("read")
 					.returns(Promise.resolve({value: "update"})); // 2nd read gets an update
 				this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
-					.exactly(iCalls).withExactArgs(sPath)
+					.withExactArgs(sPath) // always requested only once
 					.returns(Promise.reject(oError)); // UI5 type not found
-				this.oLogMock.expects("warning").exactly(iCalls)
+				this.oLogMock.expects("warning")
 					.withExactArgs("failed type", sPath,
 						"sap.ui.model.odata.v4.ODataPropertyBinding");
 
@@ -429,6 +507,82 @@ sap.ui.require([
 				oBinding.attachChange(onChange);
 			}
 		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh absolute path", function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			done = assert.async(),
+			oModel = new ODataModel("/service/?sap-client=111"),
+			oBinding,
+			sPath = "/EMPLOYEES(ID='1')/Name";
+
+		// initial read and after refresh
+		oCacheMock.expects("read").returns(Promise.resolve({value: "foo"}));
+		oCacheMock.expects("refresh");
+		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+			.withExactArgs(sPath)
+			.returns(Promise.resolve(new TypeString()));
+
+		oBinding = oModel.bindProperty(sPath);
+
+		// refresh triggers change
+		oBinding.attachChange(function () {
+			done();
+		});
+
+		assert.throws(function () {
+			oBinding.refresh();
+		}, new Error("Falsy values for bForceUpdate are not supported"));
+		assert.throws(function () {
+			oBinding.refresh(false);
+		}, new Error("Falsy values for bForceUpdate are not supported"));
+		oBinding.refresh(true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh cancels pending read", function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			done = assert.async(),
+			oError = new Error(),
+			oModel = new ODataModel("/service/?sap-client=111"),
+			oBinding,
+			sPath = "/EMPLOYEES(ID='1')/Name";
+
+		oError.canceled = true; // simulate canceled cache read
+		// initial read and after refresh
+		oCacheMock.expects("read").returns(Promise.reject(oError));
+		oCacheMock.expects("read").returns(Promise.resolve({value: "foo"}));
+		oCacheMock.expects("refresh");
+		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type").twice()
+			.withExactArgs(sPath)
+			.returns(Promise.resolve(new TypeString()));
+
+		oBinding = oModel.bindProperty(sPath);
+
+		// only refresh fires change
+		oBinding.attachChange(function () {
+			// log mock checks there is no console error from canceling processing of read
+			// and if change handler is called a second time test fails with error:
+			// Called the callback returned from 'assert.async' more than once
+			done();
+		});
+		// trigger read before refresh
+		oBinding.checkUpdate(false);
+		oBinding.refresh(true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh on relative binding is not supported", function (assert) {
+		var oModel = new ODataModel("/service/?sap-client=111"),
+			oBinding = oModel.bindProperty("Name");
+
+		// no Cache for relative bindings
+		this.oSandbox.mock(Cache).expects("createSingle").never();
+
+		assert.throws(function () {
+			oBinding.refresh(true);
+		}, new Error("Refresh on this binding is not supported"));
 	});
 	// TODO bSuspended? In v2 it is ignored (check with core)
 	// TODO read in initialize and refresh? This forces checkUpdate to use getProperty.
