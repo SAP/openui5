@@ -299,6 +299,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Refreshes the model by calling refresh on all bindings which have a change event handler
+	 * attached. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 *
+	 * @param {boolean} bForceUpdate
+	 *   <code>bForceUpdate</code> has to be <code>true</code>
+	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code>
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#refresh
+	 * @see sap.ui.model.odata.v4.ODataListBinding#refresh
+	 * @see sap.ui.model.odata.v4.ODataPropertyBinding#refresh
+	 */
+	ODataModel.prototype.refresh = function (bForceUpdate) {
+		if (!bForceUpdate) {
+			throw new Error("Falsy values for bForceUpdate are not supported");
+		}
+		this.aBindings.slice().forEach(function (oBinding) {
+			if (oBinding.oCache) { // relative bindings have no cache and cannot be refreshed
+				oBinding.refresh(bForceUpdate);
+			}
+		});
+	};
+
+	/**
 	 * Removes the entity with the given context from the service, using the currently known
 	 * entity tag ("ETag") value.
 	 *

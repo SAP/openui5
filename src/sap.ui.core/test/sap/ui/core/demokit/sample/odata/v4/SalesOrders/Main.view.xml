@@ -18,6 +18,8 @@
 					</layoutData>
 				</Text>
 				<Button icon="sap-icon://refresh" press="onRefreshFavoriteProduct"/>
+				<ToolbarSpacer />
+				<Button text="Refresh all" press="onRefreshAll"/>
 			</content>
 		</Toolbar>
 		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
