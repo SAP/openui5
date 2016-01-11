@@ -408,11 +408,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			for (var i = 0; i < aMeasurements.length; i++) {
 				requestsCount += aMeasurements[i].requests.length;
 			}
-			this.$('info').text("(Total " + requestsCount + " Requests in " + aMeasurements.length + " Interactions)");
 
 			if (aMeasurements.length > 0) {
 				jQuery(".sapUiPerformanceStatsDiv.sapUiSupportIntHidden").removeClass("sapUiSupportIntHidden");
 				jQuery(".sapUiSupportIntExportBtn.sapUiSupportIntHidden").removeClass("sapUiSupportIntHidden");
+				this.$('info').text("(Total " + requestsCount + " Requests in " + aMeasurements.length + " Interactions)");
+			} else {
+				jQuery(".sapUiPerformanceStatsDiv").addClass("sapUiSupportIntHidden");
+				jQuery(".sapUiSupportIntExportBtn").addClass("sapUiSupportIntHidden");
+				this.$('info').text("");
 			}
 
 			var oTimelineDiv = this.$().find('.sapUiPerformanceStatsDiv .sapUiPerformanceTimeline').get(0);

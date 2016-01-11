@@ -20,6 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 			this.timeRange = this.actualEndTime - this.actualStartTime;
 			this.maxDuration = 0;
+			this.stepCount = 60;
 			var that = this;
 			this.interactions.forEach(function(interaction){
 				interaction.start = parseFloat((interaction.start - that.actualStartTime).toFixed(2));
@@ -65,13 +66,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			for (var i = 0; i < stepsData.length; i++) {
 				interaction = stepsData[i];
 
-				this.renderInteractionStep(rm, interaction);
+				this.renderInteractionStep(rm, interaction, i);
 			}
 
 			rm.write("</ol></div>");
 		};
 
-		TimelineOverview.prototype.renderInteractionStep = function (rm, step) {
+		TimelineOverview.prototype.renderInteractionStep = function (rm, step, index) {
 			var stepDurationInPercent = Math.ceil((step.totalDuration / this.maxDuration) * 100);
 
 			var stepDurationInPercentInlineStyle = 'height: ' + stepDurationInPercent + '%;';
@@ -86,7 +87,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			var aInteractions = step.interactions,
 				stepInteractionInPercent = 100;
 			aInteractions.forEach(function(interaction, index) {
-				stepInteractionInPercent = (step.totalDuration === 0) ? 100 : Math.ceil((interaction.calculatedDuration / step.totalDuration) * 100);
+				stepInteractionInPercent = (step.totalDuration === 0) ? 100 : Math.ceil((interaction.calculatedDuration
+					/ step.totalDuration) * 100);
 				rm.write('<div class="requestType" style="height: ' + stepInteractionInPercent + '%; min-height: 1px;"></div>');
 				//write spacer between interactions
 				if (index !== (aInteractions.length - 1)) {
@@ -97,11 +99,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 			rm.write('</div>');
 			rm.write('</div>');
-			rm.write('<div class="sapUiInteractionTimelineStepRight"></div>');
+			var sClassNameSeparator = (index % 10 === 0 && index !== 0) ? "sapUiInteractionTimelineStepRightBold" :
+				"sapUiInteractionTimelineStepRight";
+
+			rm.write('<div class="' + sClassNameSeparator + '"></div>');
+			if (index % 10 === 0 && index !== 0) {
+				rm.write('<div class="sapUiInteractionTimelineTimeLbl">' + Math.round((index * this.timeRange /
+						this.stepCount) / 10 ) / 100 + 's</div>');
+			}
 			rm.write('</li>');
 		};
 		TimelineOverview.prototype._getTimelineOverviewData = function(copiedData) {
-			var stepCount = 60;
+			var stepCount = this.stepCount;
 			var stepTime = this.timeRange / stepCount;
 			var stepsData = [],
 				oldStepItem = { interactions: [] },
