@@ -801,7 +801,8 @@
 			"sap.m.sample.MultiInput",
 			"sap.m.sample.MultiInputValidators",
 			"sap.m.sample.MultiInputMultiLine",
-			"sap.m.sample.MultiInputDatabinding"
+			"sap.m.sample.MultiInputDatabinding",
+			"sap.m.sample.MultiInputMaxTokens"
 		  ]
 		},
 		{
@@ -1616,6 +1617,11 @@
 			"id": "sap.m.sample.MultiInputDatabinding",
 			"name": "MultiInput Databinding",
 			"description": "MultiInput Databinding allows data to be binded to tokens in MultiInput."
+		},
+		{
+			"id": "sap.m.sample.MultiInputMaxTokens",
+			"name": "MultiInput with Max Tokens",
+			"description": "Number of Tokens in MultiInput cannot exceeds the maxToken number."
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifSizes",

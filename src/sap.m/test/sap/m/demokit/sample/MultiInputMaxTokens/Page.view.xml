@@ -1,0 +1,17 @@
+<mvc:View height="100%" controllerName="sap.m.sample.MultiInputMaxTokens.Page"
+	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+<Label text="no more than 2 products can be added"  width="100%"/>
+	<MultiInput
+		width="500px"
+		maxTokens="2"
+		suggestionItems="{
+                                        path: '/ProductCollection',
+                                        sorter: { path: 'Name' }
+                                  }"
+       	 showValueHelp="false">
+		<core:Item key="{ProductId}" text="{Name}" />
+	</MultiInput>
+
+</mvc:View>

@@ -1016,6 +1016,17 @@
 				]
 			});
 	   //******************************************
+	   //maxTokens
+	   var oMultiInput8 = new sap.m.MultiInput({
+		    enableMultiLineMode: true,
+		    maxTokens: 3
+	    });
+
+	    oMultiInput8.addValidator(function(args){
+			var text = args.text;
+			return new sap.m.Token({key: text, text: text});
+		});
+	   //******************************************
 		var app = new sap.m.App("myApp");
 
 		var page1 = new sap.m.Page("page1", {
@@ -1053,6 +1064,8 @@
 					new sap.m.VBox({items: [new sap.m.Button({text: "Open Popup", press: openDialog})]}),
 					new sap.m.Label({text : "token databinding in MultiInput"}),
 					oTable,
+					new sap.m.Label({text:"MultiInput with maximum three tokens"}),
+					oMultiInput8,
 					new sap.m.Label({text : "Token events:"}),
 					oEventList
 			],
