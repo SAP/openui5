@@ -1,0 +1,13 @@
+logBackup*
+http_*
+lib
+*.csv
+data_*
+knownLogFiles_*
+*.lnk
+*.log
+analysis_*
+openui5_*
+target
+logBackup_*
+.settings
