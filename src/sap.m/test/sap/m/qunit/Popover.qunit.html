@@ -407,15 +407,21 @@
 			testCase(50, 50, 500, sap.m.PlacementType.Vertical, sap.m.PlacementType.Bottom);
 			testCase(450, 50, 500, sap.m.PlacementType.Vertical, sap.m.PlacementType.Top);
 
-			// Prefered Top
+			// Preferred Top
 			testCase(400, 50, 500, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.Top); // You have enough space to the Top and Top space is greater than the Bottom space
+			testCase(400, 50, 500, sap.m.PlacementType.VerticalPreferredTop, sap.m.PlacementType.Top); // You have enough space to the Top and Top space is greater than the Bottom space
 			testCase(150, 50, 500, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.Top); // You have enough space to the Top but Top space is smaller than the Bottom space
-			testCase(40, 50, 500, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.Bottom); // You do not have enough space at the prefered position, so the position with more space is used
+			testCase(150, 50, 500, sap.m.PlacementType.VerticalPreferredTop, sap.m.PlacementType.Top); // You have enough space to the Top but Top space is smaller than the Bottom space
+			testCase(40, 50, 500, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.Bottom); // You do not have enough space at the preferred position, so the position with more space is used
+			testCase(40, 50, 500, sap.m.PlacementType.VerticalPreferredTop, sap.m.PlacementType.Bottom); // You do not have enough space at the preferred position, so the position with more space is used
 
-			// Prefered Bottom
+			// Preferred Bottom
 			testCase(100, 50, 500, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.Bottom); // You have enough space to the Bottom and Bottom space is greater than the Top space
+			testCase(100, 50, 500, sap.m.PlacementType.VerticalPreferredBottom, sap.m.PlacementType.Bottom); // You have enough space to the Bottom and Bottom space is greater than the Top space
 			testCase(350, 50, 500, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.Bottom); // You have enough space to the Bottom but Bottom space is smaller than the Bottom space
-			testCase(450, 50, 500, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.Top); // You do not have enough space at the prefered position, so the position with more space is used
+			testCase(350, 50, 500, sap.m.PlacementType.VerticalPreferredBottom, sap.m.PlacementType.Bottom); // You have enough space to the Bottom but Bottom space is smaller than the Bottom space
+			testCase(450, 50, 500, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.Top); // You do not have enough space at the preferred position, so the position with more space is used
+			testCase(450, 50, 500, sap.m.PlacementType.VerticalPreferredBottom, sap.m.PlacementType.Top); // You do not have enough space at the preferred position, so the position with more space is used
 		});
 
 		test("horizontal calculation of Popover positioning should be correct", function () {
@@ -443,15 +449,21 @@
 			testCase(50, 50, 500, sap.m.PlacementType.Horizontal, sap.m.PlacementType.Right);
 			testCase(450, 50, 500, sap.m.PlacementType.Horizontal, sap.m.PlacementType.Left);
 
-			// Prefered Left
+			// Preferred Left
 			testCase(400, 50, 500, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.Left); // You have enough space to the Left and Left space is greater than the Right space
+			testCase(400, 50, 500, sap.m.PlacementType.HorizontalPreferredLeft, sap.m.PlacementType.Left); // You have enough space to the Left and Left space is greater than the Right space
 			testCase(100, 50, 500, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.Left); // You have enough space to the Left but Left space is smaller than the Right space
-			testCase(40, 50, 500, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.Right); // You do not have enough space at the prefered position, so the position with more space is used
+			testCase(100, 50, 500, sap.m.PlacementType.HorizontalPreferredLeft, sap.m.PlacementType.Left); // You have enough space to the Left but Left space is smaller than the Right space
+			testCase(40, 50, 500, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.Right); // You do not have enough space at the preferred position, so the position with more space is used
+			testCase(40, 50, 500, sap.m.PlacementType.HorizontalPreferredLeft, sap.m.PlacementType.Right); // You do not have enough space at the preferred position, so the position with more space is used
 
-			// Prefered Right
+			// Preferred Right
 			testCase(100, 50, 500, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Right); // You have enough space to the Right and Right space is greater than the Left space
+			testCase(100, 50, 500, sap.m.PlacementType.HorizontalPreferredRight, sap.m.PlacementType.Right); // You have enough space to the Right and Right space is greater than the Left space
 			testCase(350, 50, 500, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Right); // You have enough space to the Right but Right space is smaller than the Left space
-			testCase(450, 50, 500, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Left); // You do not have enough space at the prefered position, so the position with more space is used
+			testCase(350, 50, 500, sap.m.PlacementType.HorizontalPreferredRight, sap.m.PlacementType.Right); // You have enough space to the Right but Right space is smaller than the Left space
+			testCase(450, 50, 500, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Left); // You do not have enough space at the preferred position, so the position with more space is used
+			testCase(450, 50, 500, sap.m.PlacementType.HorizontalPreferredRight, sap.m.PlacementType.Left); // You do not have enough space at the preferred position, so the position with more space is used
 		});
 
 		test("auto calculation of Popover positioning should be correct", function () {
