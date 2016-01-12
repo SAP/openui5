@@ -1075,6 +1075,41 @@
 
 		});
 
+		test("Select All checkbox works correctly", function  (assert) {
+			var done = assert.async(),
+					that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
+
+			setTimeout(function() {
+				var oSelectAllCheckbox = that.oVSD._filterDetailList.getHeaderToolbar().getContent()[0],
+					bAllSelected = that.oVSD._filterDetailList.getItems().every(function(oItem) { return oItem.getSelected(); }),
+					bNoItemsSelected;
+
+				ok(!bAllSelected, "Not all list items are selected at first");
+
+				oSelectAllCheckbox.setSelected(true);
+				oSelectAllCheckbox.fireSelect({ selected: true });
+
+				bAllSelected = that.oVSD._filterDetailList.getItems().every(function(oItem) { return oItem.getSelected(); });
+
+				ok(bAllSelected, "After check select all - all list items are selected");
+
+				oSelectAllCheckbox.setSelected(false);
+				oSelectAllCheckbox.fireSelect({ selected: false });
+
+				bNoItemsSelected = that.oVSD._filterDetailList.getItems().every(function(oItem) { return !oItem.getSelected(); })
+				ok(bNoItemsSelected, "After uncheck select all - no items are selected");
+
+				done();
+			}, 1000);
+		});
+
 		module ("Filter only checks", {
 			setup : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();
