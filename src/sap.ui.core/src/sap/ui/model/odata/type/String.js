@@ -8,6 +8,48 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	function(FormatException, ODataType, ParseException, ValidateException, StringType) {
 	"use strict";
 
+	var rDigitsOnly = /^\d+$/,
+		rLeadingZeros = /^0*(?=\d)/,
+		rOneLeadingZero = /^0(?=\d)/,
+		sZeros = "00000000000000000000000000000000000000000000000000000000000000000000000000000000";
+
+	/**
+	 * Adds leading zeros to the given value.
+	 *
+	 * @param {string} sValue
+	 *   the string which needs to be filled up with leading zeros
+	 * @param {number} iLength
+	 *   the expected length of the resulting string; resulting string might be longer if given
+	 *   value is already longer
+	 * @returns {string}
+	 *   given value with leading zeros
+	 */
+	function fillLeadingZeros(sValue, iLength) {
+		if (sValue.length >= iLength) {
+			return sValue;
+		}
+		// ensure that constant for zeros is long enough
+		while (sZeros.length < iLength) {
+			sZeros = sZeros + sZeros;
+		}
+		return sZeros.slice(0, iLength - sValue.length) + sValue;
+	}
+
+	/**
+	 * Checks whether isDigitSequence constraint is set to true and the given value is a digit
+	 * sequence.
+	 *
+	 * @param {string} [sValue]
+	 *   the value to be checked
+	 * @param {object} [oConstraints]
+	 *   the currently used constraints
+	 * @returns {boolean}
+	 *   true if isDigitSequence is set to true and the given value is a digit sequence
+	 */
+	function isDigitSequence(sValue, oConstraints) {
+		return oConstraints && oConstraints.isDigitSequence && sValue && sValue.match(rDigitsOnly);
+	}
+
 	/**
 	 * Sets the constraints.
 	 *
@@ -33,12 +75,8 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 			}
 			vIsDigitSequence = oConstraints.isDigitSequence;
 			if (vIsDigitSequence === true || vIsDigitSequence === "true") {
-				if (oType.oConstraints && oType.oConstraints.maxLength) {
-					oType.oConstraints.isDigitSequence = true;
-				} else {
-					jQuery.sap.log.warning("isDigitSequence requires maxLength", null,
-						oType.getName());
-				}
+				oType.oConstraints = oType.oConstraints || {};
+				oType.oConstraints.isDigitSequence = true;
 			} else if (vIsDigitSequence !== undefined && vIsDigitSequence !== false
 					&& vIsDigitSequence !== "false") {
 				jQuery.sap.log.warning("Illegal isDigitSequence: " + vIsDigitSequence, null,
@@ -78,9 +116,10 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
 	 * @param {boolean|string} [oConstraints.isDigitSequence=false]
-	 *   if <code>true</code>, the value is handled as a sequence of digits with an exact length
-	 *   given by the mandatory <code>maxLength</code> constraint; this constraint is supported
-	 *   since 1.35.0
+	 *   if <code>true</code>, the value is handled as a sequence of digits; while formatting
+	 *   leading zeros are removed from the value and while parsing the value is enhanced with
+	 *   leading zeros (if a maxLength constraint is given) or leading zeros are removed from the
+	 *   value (if no maxLength constraint is given); this constraint is supported since 1.35.0
 	 * @param {int|string} [oConstraints.maxLength]
 	 *   the maximal allowed length of the string; unlimited if not defined
 	 * @param {boolean|string} [oConstraints.nullable=true]
@@ -94,8 +133,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 					setConstraints(this, oConstraints);
 				}
 			}
-		),
-		rDigitsOnly = /^\d+$/;
+		);
 
 	/**
 	 * Formats the given value to the given target type.
@@ -118,10 +156,8 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @public
 	 */
 	EdmString.prototype.formatValue = function(sValue, sTargetType) {
-		var oConstraints = this.oConstraints || {};
-
-		if (oConstraints.isDigitSequence && sValue && sValue.match(rDigitsOnly)) {
-			sValue = sValue.replace(/^(0*)(.+)$/, "$2");
+		if (isDigitSequence(sValue, this.oConstraints)) {
+			sValue = sValue.replace(rLeadingZeros, "");
 		}
 		return StringType.prototype.formatValue(sValue, sTargetType);
 	};
@@ -129,9 +165,9 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	/**
 	 * Parses the given value which is expected to be of the given type to a string.
 	 * If <code>isDigitSequence</code> constraint of this type is set to <code>true</code> and
-	 * the parsed string is a sequence of digits, the parsed string is enhanced with leading zeros
-	 * until the length of the resulting string equals the value of <code>maxLength</code>
-	 * constraint.
+	 * the parsed string is a sequence of digits, then the parsed string is either enhanced with
+	 * leading zeros, if <code>maxLength</code> constraint is given, or leading zeros are removed
+	 * from parsed string.
 	 *
 	 * @param {string|number|boolean} vValue
 	 *   the value to be parsed, maps <code>""</code> to <code>null</code>
@@ -145,15 +181,18 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @public
 	 */
 	EdmString.prototype.parseValue = function (vValue, sSourceType) {
-		var oConstraints = this.oConstraints || {},
-			oResult;
+		var sResult;
 
-		oResult = vValue === "" ? null : StringType.prototype.parseValue.apply(this, arguments);
+		sResult = vValue === "" ? null : StringType.prototype.parseValue.apply(this, arguments);
 
-		if (oResult != null && oConstraints.isDigitSequence && oResult.match(rDigitsOnly)) {
-			oResult = new Array(oConstraints.maxLength - oResult.length + 1).join("0") + oResult;
+		if (isDigitSequence(sResult, this.oConstraints)) {
+			if (this.oConstraints.maxLength) {
+				sResult = fillLeadingZeros(sResult, this.oConstraints.maxLength);
+			} else {
+				sResult = sResult.replace(rLeadingZeros, "");
+			}
 		}
-		return oResult;
+		return sResult;
 	};
 
 	/**
@@ -176,10 +215,21 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 			}
 		} else if (typeof sValue !== "string") {
 			throw new ValidateException("Illegal " + this.getName() + " value: " + sValue);
-		} else if (oConstraints.isDigitSequence
-				&& (sValue.length !== iMaxLength || !sValue.match(rDigitsOnly))) {
-			throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle()
-				.getText("EnterDigitsOnly", [iMaxLength]));
+		} else if (oConstraints.isDigitSequence) {
+			if (!sValue.match(rDigitsOnly)) {
+				throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle()
+					.getText("EnterInt"));
+			}
+			if (iMaxLength) {
+				if (sValue.length !== iMaxLength) {
+					throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle()
+							.getText("EnterDigitsOnly", [iMaxLength]));
+				}
+			} else if (sValue.match(rOneLeadingZero)) {
+				throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle()
+					.getText("EnterNoLeadingZeros"));
+			}
+			return;
 		} else if (!iMaxLength || sValue.length <= iMaxLength) {
 			return;
 		}

@@ -178,77 +178,127 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("isDigitSequence", function (assert) {
+	QUnit.test("isDigitSequence: constructor", function (assert) {
+		var oLogMock = this.mock(jQuery.sap.log),
+			oType;
+
+		// check valid values for isDigitSequence constraint
+		[true, "true", false, "false"].forEach(function (vIsDigitSequence, i) {
+			// without maxLength
+			oType = new StringType({}, {isDigitSequence : vIsDigitSequence});
+			assert.deepEqual(oType.oConstraints, i < 2 ? {isDigitSequence : true} : undefined,
+				"constructor test #" + i);
+
+			// with maxLength
+			oType = new StringType({}, {isDigitSequence : vIsDigitSequence, maxLength : 7});
+			assert.deepEqual(oType.oConstraints, i < 2 ? {isDigitSequence : true, maxLength : 7}
+				: {maxLength : 7}, "constructor test with maxLength #" + i);
+		});
+		// check invalid values for isDigitSequence constraint
+		["foo", 1, 0, null].forEach(function (vIsDigitSequence, i) {
+			oLogMock.expects("warning").withExactArgs("Illegal isDigitSequence: "
+				+ vIsDigitSequence, null, "sap.ui.model.odata.type.String");
+			oType = new StringType({}, {isDigitSequence : vIsDigitSequence});
+			assert.deepEqual(oType.oConstraints, undefined, "Ignore: " + vIsDigitSequence);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isDigitSequence: format", function (assert) {
+		var oType = new StringType({}, {isDigitSequence : true, maxLength : 7}),
+			oTypeNoDigit = new StringType({}, {isDigitSequence : false, maxLength : 7}),
+			oTypeNoLength = new StringType({}, {isDigitSequence : true}),
+			sValue = "0012345";
+
+		// isDigitSequence: false --> leading zeros are not truncated
+		assert.strictEqual(oTypeNoDigit.formatValue(sValue, "string"), sValue, "as string");
+		assert.strictEqual(oTypeNoDigit.formatValue(sValue, "int"), 12345, "as int");
+
+		// isDigitSequence: true --> for valid digit sequences leading zeros are truncated except
+		// the last digit
+		[
+			{ v : sValue, r : "12345" }, { v : "0103040", r : "103040" },
+			{ v : "0000000", r : "0" }, { v : "A003400", r : "A003400" },
+			{ v : "00A3400", r : "00A3400" }, { v : "", r : "" },
+			{ v : "7654321", r : "7654321" }, { v : null, r : null }, { v : undefined, r : null }
+		].forEach(function (oFixture) {
+			assert.strictEqual(oType.formatValue(oFixture.v, "string"), oFixture.r,
+				oFixture.v + " as string");
+			assert.strictEqual(oTypeNoLength.formatValue(oFixture.v, "string"), oFixture.r,
+				oFixture.v + " as string");
+		});
+		assert.strictEqual(oType.formatValue(sValue, "any"), "12345", "as any");
+		assert.throws(function () {
+			oType.formatValue("0", "boolean");
+		}, new FormatException("0 is not a valid boolean value"));
+		assert.strictEqual(oType.formatValue(sValue, "float"), 12345.0, "as float");
+		assert.strictEqual(oType.formatValue(sValue, "int"), 12345, "as int");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isDigitSequence: parse", function (assert) {
+		var sParsedValue,
+			oType = new StringType({}, {isDigitSequence : true, maxLength : 7}),
+			sValue = "1234";
+		// parse
+		assert.strictEqual(oType.parseValue(null, "string"), null, "null");
+		assert.strictEqual(oType.parseValue(undefined, "string"), undefined, "undefined");
+		assert.strictEqual(oType.parseValue("", "string"), null, "empty string");
+		assert.strictEqual(oType.parseValue("42", "string"), "0000042", "parse as string");
+		assert.strictEqual(oType.parseValue("1234567", "string"), "1234567", "parse 1234567");
+		assert.strictEqual(oType.parseValue(42, "int"), "0000042", "parse as int");
+
+		// do not adjust invalid or too long values
+		["A42", "34.2", "12345678"].forEach(function (oValue) {
+			assert.strictEqual(oType.parseValue(oValue, "string"), oValue, "parse " + oValue);
+		});
+		assert.strictEqual(oType.parseValue(true, "boolean"), "true", "parse as boolean");
+
+		// different lengths
+		[6, 10, 100, 1000, 1000000, 10000000].forEach(function (iLength) {
+			oType = new StringType({}, {isDigitSequence : true, maxLength : iLength});
+			sParsedValue = oType.parseValue(sValue, "string");
+			assert.strictEqual(sParsedValue.length, iLength, "Length ok: " + iLength);
+			assert.strictEqual(sParsedValue.indexOf(sValue), iLength - sValue.length);
+		});
+
+		// no maxLength
+		oType = new StringType({}, {isDigitSequence : true});
+		assert.strictEqual(oType.parseValue("00123", "string"), "123", "remove leading zeros");
+		assert.strictEqual(oType.parseValue("00000", "string"), "0", "keep last 0");
+		assert.strictEqual(oType.parseValue("12345", "string"), "12345", "parse no leading zeros");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isDigitSequence: validate", function (assert) {
 		TestUtils.withNormalizedMessages(function () {
-			var oType,
-				sValue = "0012345";
+			var oType = new StringType({}, {isDigitSequence : true, maxLength : 7});
 
-			// check valid values for isDigitSequence constraint
-			oType = new StringType({}, {isDigitSequence : true, maxLength : 7});
-			assert.deepEqual(oType.oConstraints, {isDigitSequence : true, maxLength : 7},
-				"isDigitSequence: true");
-			oType = new StringType({}, {isDigitSequence : "true", maxLength : 7});
-			assert.deepEqual(oType.oConstraints, {isDigitSequence : true, maxLength : 7},
-				"isDigitSequence: true");
-			oType = new StringType({}, {isDigitSequence : false});
-			assert.deepEqual(oType.oConstraints, undefined, "isDigitSequence: false");
-			oType = new StringType({}, {isDigitSequence : "false"});
-			assert.deepEqual(oType.oConstraints, undefined, "isDigitSequence: false");
-
-			// format
-			oType = new StringType({}, {isDigitSequence : "false", maxLength : 7});
-			assert.strictEqual(oType.formatValue(sValue, "string"), sValue, "as string");
-			assert.strictEqual(oType.formatValue(sValue, "int"), 12345, "as int");
-
-			oType = new StringType({}, {isDigitSequence : "true", maxLength : 7});
-			[
-				{ v : sValue, r : "12345" }, { v : "0103040", r : "103040" },
-				{ v : "0000000", r : "0" }, { v : "A003400", r : "A003400" },
-				{ v : "00A3400", r : "00A3400" }, { v : "", r : "" }
-			].forEach(function (oFixture) {
-				assert.strictEqual(oType.formatValue(oFixture.v, "string"),
-					oFixture.r, oFixture.v + " as string");
+			// success
+			oType.validateValue("0012345");
+			// errors
+			["", "0123.45", "0003ABC"].forEach(function (vValue) {
+				assert.throws(function () {
+					oType.validateValue(vValue);
+				}, new ValidateException("EnterInt"), "Invalid value: " + vValue);
 			});
-			assert.strictEqual(oType.formatValue(sValue, "int"), 12345, "as int");
-			assert.strictEqual(oType.formatValue(sValue, "float"), 12345.0, "as float");
-
-			// parse
-			assert.strictEqual(oType.parseValue(42, "int"), "0000042", "parse 42 as int");
-			assert.strictEqual(oType.parseValue("42", "string"), "0000042",
-				"parse \"42\" as string");
-			// do not adjust invalid values
-			assert.strictEqual(oType.parseValue("A42", "string"), "A42", "parse \"A42\" as string");
-			assert.strictEqual(oType.parseValue("34.2", "string"), "34.2",
-				"parse \"34.2\" as string");
-
-			// validate
-			oType.validateValue(sValue);
-			["", "0123.45", "0003ABC", "0324", "12345678"].forEach(function (vValue) {
+			["324", "12345678"].forEach(function (vValue) {
 				// too short digit values do not happen if parse is called before but nevertheless
 				// should throw a validation error.
 				assert.throws(function () {
 					oType.validateValue(vValue);
-				}, new ValidateException("EnterDigitsOnly 7"));
+				}, new ValidateException("EnterDigitsOnly 7"), "Invalid value: " + vValue);
 			});
-		});
-	});
-	//*********************************************************************************************
-	[
-		{isDigitSequence : "foo", maxLength : 7, warning : "Illegal isDigitSequence: foo"},
-		{isDigitSequence : 1, maxLength : 7, warning : "Illegal isDigitSequence: 1"},
-		{isDigitSequence : 0, maxLength : 7, warning : "Illegal isDigitSequence: 0"},
-		{isDigitSequence : true, warning : "isDigitSequence requires maxLength"}
-	].forEach(function (oFixture, i) {
-		QUnit.test("isDigitSequence - errors #" + i, function (assert) {
-			var oType;
 
-			this.mock(jQuery.sap.log).expects("warning")
-				.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.String");
-
-			oType = new StringType({}, {isDigitSequence : oFixture.isDigitSequence,
-				maxLength : oFixture.maxLength});
-			assert.deepEqual(oType.oConstraints,
-				oFixture.maxLength ? {maxLength: oFixture.maxLength} : undefined);
+			// no maxLength
+			oType = new StringType({}, {isDigitSequence : true});
+			// success
+			oType.validateValue("4711");
+			oType.validateValue("0");
+			// error
+			assert.throws(function () {
+				oType.validateValue("002345");
+			}, new ValidateException("EnterNoLeadingZeros"), "Invalid value: 002345");
 		});
 	});
 });
