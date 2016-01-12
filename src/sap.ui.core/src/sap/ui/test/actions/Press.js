@@ -2,18 +2,18 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/qunit/QUnitUtils'], function ($, Ui5Object, QUnitUtils) {
+sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], function ($, Action, QUnitUtils) {
 	"use strict";
 
 	/**
 	 * @class The Press action is used to simulate a press interaction on a control's dom ref.
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.test.actions.Action
 	 * @public
 	 * @name sap.ui.test.actions.Press
 	 * @author SAP SE
 	 * @since 1.34
 	 */
-	return Ui5Object.extend("sap.ui.test.actions.Press", /** @lends sap.ui.test.actions.Press.prototype */ {
+	return Action.extend("sap.ui.test.actions.Press", /** @lends sap.ui.test.actions.Press.prototype */ {
 
 		metadata : {
 			publicMethods : [ "executeOn" ]
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/qunit/QUnitUti
 				$FocusDomRef.focus();
 				// trigger 'tap' which is translated
 				// internally into a 'press' event
-				$.sap.log.debug("Pressed the control " + oControl, this);
+				$.sap.log.debug("Pressed the control " + oControl, this._sLogPrefix);
 				var x = $FocusDomRef.offset().x,
 					y = $FocusDomRef.offset().y;
 
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/qunit/QUnitUti
 				$FocusDomRef.trigger("tap");
 				QUnitUtils.triggerEvent("saptouchend", oFocusDomRef, oEventObject);
 			} else {
-				$.sap.log.error("Control " + oControl.getId() + " has no dom representation", this);
+				$.sap.log.error("Control " + oControl + " has no dom representation", this._sLogPrefix);
 			}
 		}
 	});
