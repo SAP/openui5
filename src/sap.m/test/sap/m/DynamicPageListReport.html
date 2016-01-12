@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+	<meta charset="UTF-8">
+	<title></title>
+	<script type="text/javascript" src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout" data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<style type="text/css">
+		.sapMDynamicPageTitle > .sapMDynamicPageTitleLeft img {
+			border-radius: 100%;
+		}
+
+		.sapMDynamicPageTitle > .sapMDynamicPageTitleLeft * {
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+</head>
+
+<body id="body" class="sapUiBody" role="application">
+<script type="text/javascript">
+	var currentMessageStrip = 0;
+	var getMessageStrip = function (iNumber) {
+				return new sap.m.MessageStrip({
+					text: "Content " + ++iNumber
+				});
+			},
+			getMessageStrips = function (iNumber) {
+				var aMessageStrips = [];
+
+				for (var i = 0; i < iNumber; i++) {
+					aMessageStrips.push(getMessageStrip(i));
+				}
+				return aMessageStrips;
+			},
+			getColumnListItem = function (iNumber) {
+				return new sap.m.ColumnListItem({
+					type: "Navigation",
+					vAlign: "Middle",
+					cells: [new sap.m.Text({
+						text: "Master Link " + iNumber
+					})]
+				});
+			},
+			getMultipleItems = function (iCount, fnItemCreator) {
+				var aItems = [];
+
+				for (var i = 0; i < iCount; i++) {
+					aItems.push(fnItemCreator(i + 1));
+				}
+
+				return aItems;
+			},
+			getTable = function () {
+				return new sap.m.Table({
+					items: getMultipleItems(50, getColumnListItem),
+					columns: [
+						new sap.m.Column({
+							header: new sap.m.Text({
+								text: "Master list"
+							})
+						})
+					],
+				});
+			},
+			getLabel = function (sValue) {
+				return new sap.m.Label({
+					text: sValue
+				});
+			},
+			getLabelWithSelect = function (sValue) {
+				return new sap.ui.layout.VerticalLayout({
+					content: [getLabel(sValue), getSelect(10)]
+				})
+			},
+			getLabelWithSelectCombo = function (iCount) {
+				var aLabelCombos = [];
+
+				for (var i = 0; i < iCount; i++) {
+					aLabelCombos.push(getLabelWithSelect("Something Something" + i));
+				}
+
+				return aLabelCombos;
+			},
+			addTitleSnappedContentDynamically = function () {
+				bpl.getTitle().addSnappedContent(getMessageStrip(currentMessageStrip++));
+			},
+			addTitleExpandedContentDynamically = function () {
+				bpl.getTitle().addExpandedContent(getMessageStrip(currentMessageStrip++));
+			},
+			removeAllContentDynamically = function () {
+				bpl.getTitle().removeAllSnappedContent();
+				table.removeAllItems();
+			},
+			addContentDynamically = function () {
+				table.addItem(getColumnListItem(table.getItems().length + 1));
+			},
+			getSelectItem = function (iNumber) {
+				return new sap.ui.core.Item({
+					text: "Content " + ++iNumber,
+					key: iNumber
+				});
+			},
+			getSelect = function (iCount) {
+				var aSelectItems = [];
+
+				for (var i = 0; i < iCount; i++) {
+					aSelectItems.push(getSelectItem(i));
+				}
+
+				return new sap.m.Select({
+					autoAdjustWidth: true,
+					items: aSelectItems
+				});
+			};
+
+	// Title
+	var bplTitle = new sap.m.DynamicPageTitle({
+		heading: new sap.m.Title({
+			text: "Anna Maria Luisa"
+		}),
+		snappedContent: new sap.m.Label({
+			text: "Filtered by: (Something 1, Something 2)"
+		}),
+//		expandedContent: getMessageStrips(3),
+		actions: [
+			new sap.m.OverflowToolbarButton({
+				icon: "sap-icon://add",
+				text: "Add",
+				type: "Transparent",
+				press: addTitleSnappedContentDynamically
+			}),
+			new sap.m.OverflowToolbarButton({
+				icon: "sap-icon://edit",
+				text: "Edit",
+				type: "Transparent",
+				press: addTitleExpandedContentDynamically
+			}),
+			new sap.m.OverflowToolbarButton({
+				icon: "sap-icon://delete",
+				text: "Delete",
+				type: "Transparent",
+				press: removeAllContentDynamically
+			}),
+			new sap.m.Button({
+				icon: "sap-icon://bar-chart",
+				text: "Analyze",
+				type: "Transparent"
+			}),
+			new sap.m.Button({
+				icon: "sap-icon://cart",
+				type: "Transparent",
+				text: "Cart"
+			}),
+			new sap.m.Button({
+				icon: "sap-icon://employee",
+				type: "Transparent",
+				text: "Hire",
+				press: function () {
+					bpl.setShowFooter(true);
+				}
+			})
+		]
+	});
+
+	// Header
+	var bplHeader = new sap.m.DynamicPageHeader({
+		pinnable: true,
+		content: [
+			new sap.ui.layout.Grid({
+				content: getLabelWithSelectCombo(6),
+				defaultSpan: "XL2 L3 M4 S6"
+			})
+		]
+	});
+
+	var hideToolbar = function () {
+		bpl.setShowFooter(false);
+	}
+
+	// Footer
+	var footer = new sap.m.OverflowToolbar({
+		content: [
+			new sap.m.ToolbarSpacer(),
+			new sap.m.Button({
+				text: "Accept",
+				type: "Accept",
+				press: hideToolbar
+			}),
+			new sap.m.Button({
+				text: "Reject",
+				type: "Reject",
+				press: hideToolbar
+			})
+		]
+	});
+
+	var table = getTable();
+	// Layout
+	var bpl = new sap.m.DynamicPage({
+		headerAlwaysExpanded: false,
+		title: bplTitle,
+		header: bplHeader,
+		content: table,
+		footer: footer
+	});
+
+	// App
+	var app = sap.m.App({
+		backgroundColor: "transparent"
+	}).addPage(bpl).placeAt("body");
+</script>
+</body>
+
+</html>

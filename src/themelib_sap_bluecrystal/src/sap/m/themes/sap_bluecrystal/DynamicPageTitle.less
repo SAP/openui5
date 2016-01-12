@@ -1,0 +1,21 @@
+.sapMDynamicPageTitle {
+	background: mix(@sapUiAccent5, @sapUiWhite, 5);
+	border-bottom:0.125rem solid mix(@sapUiAccent5, @sapUiWhite, 5);
+}
+
+.sapMDynamicPageTitleWrapper.sapMDynamicPageTitleSnapped > .sapMDynamicPageTitle {
+	border-bottom: 0.125rem solid @sapUiLightBorder;
+}
+
+.sapMDynamicPageTitle > .sapMDynamicPageTitleLeft {
+	.sapMDynamicPageTitleLeftInner {
+		.sapMDynamicPageTitleLeftSnappedExpandContent {
+			color: @sapUiContentLabelColor;
+	  	}
+		.sapMDynamicPageTitleLeftHeading {
+			.sapMTitle { // Move to Blue Crystal
+				color: @sapUiGroupTitleTextColor;
+	  		}
+		}
+	}
+}
