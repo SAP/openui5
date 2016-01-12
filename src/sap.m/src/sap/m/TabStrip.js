@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation',
-	'sap/ui/base/ManagedObject', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/InvisibleText', './AccButton', './TabStripItem', './TabStripSelect'],
-	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, ScrollEnablement, InvisibleText, AccButton, TabStripItem, TabStripSelect) {
+	'sap/ui/base/ManagedObject', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/InvisibleText', './AccButton', './TabStripItem', './TabStripSelect', 'sap/ui/Device'],
+	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, ScrollEnablement, InvisibleText, AccButton, TabStripItem, TabStripSelect, Device) {
 		"use strict";
 
 		/**
@@ -323,7 +323,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				bScrollForward = false;
 
 			if (this._checkScrolling() && oTabsDomRef && oTabContainerDomRef) {
-				iScrollLeft = oTabContainerDomRef.scrollLeft;
+				if (this._bRtl && Device.browser.firefox) {
+					iScrollLeft = -oTabContainerDomRef.scrollLeft;
+				} else {
+					iScrollLeft = oTabContainerDomRef.scrollLeft;
+				}
+
 				realWidth = oTabsDomRef.scrollWidth;
 				availableWidth = oTabContainerDomRef.clientWidth;
 				if (Math.abs(realWidth - availableWidth) === 1) {
@@ -430,14 +435,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype._scroll = function(iDelta, iDuration) {
 			var iScrollLeft = this.getDomRef("tabContainer").scrollLeft,
+				iScrollTarget;
+
+			if (this._bRtl && Device.browser.firefox) {
+				iScrollTarget = iScrollLeft - iDelta;
+
+				// Avoid out ofRange situation
+				if (iScrollTarget < -this._iMaxOffsetLeft) {
+					iScrollTarget = -this._iMaxOffsetLeft;
+				}
+				if (iScrollTarget > 0) {
+					iScrollTarget = 0;
+				}
+			} else {
 				iScrollTarget = iScrollLeft + iDelta;
 
-			// Avoid out ofRange situation
-			if (iScrollTarget < 0) {
-				iScrollTarget = 0;
-			}
-			if (iScrollTarget > this._iMaxOffsetLeft) {
-				iScrollTarget = this._iMaxOffsetLeft;
+				if (iScrollTarget < 0) {
+					iScrollTarget = 0;
+				}
+				if (iScrollTarget > this._iMaxOffsetLeft) {
+					iScrollTarget = this._iMaxOffsetLeft;
+				}
 			}
 
 			this._oScroller.scrollTo(iScrollTarget, 0, iDuration);
@@ -464,15 +482,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			// check if item is outside of viewport
 			if (iItemPosLeft < 0 || iItemPosLeft > iContainerWidth - iItemWidth) {
-				if (iItemPosLeft < 0) { // left side: make this the first item
-					iNewScrollLeft += iItemPosLeft;
-				} else { // right side: make this the last item
-					iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
+
+				if (this._bRtl && Device.browser.firefox) {
+					if (iItemPosLeft < 0) { // right side: make this the last item
+						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
+					} else { // left side: make this the first item
+						iNewScrollLeft += iItemPosLeft;
+					}
+				} else {
+					if (iItemPosLeft < 0) { // left side: make this the first item
+						iNewScrollLeft += iItemPosLeft;
+					} else { // right side: make this the last item
+						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
+					}
 				}
 
 				// store current scroll state to set it after rerendering
 				this._iCurrentScrollLeft = iNewScrollLeft;
 				this._oScroller.scrollTo(iNewScrollLeft, 0, iDuration);
+
 			}
 		};
 
