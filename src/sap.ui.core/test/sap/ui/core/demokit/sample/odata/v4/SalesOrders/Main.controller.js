@@ -74,6 +74,10 @@ sap.ui.define([
 			);
 		},
 
+		onRefreshAll : function () {
+			this.getView().getModel().refresh(true);
+		},
+
 		onRefreshFavoriteProduct : function (oEvent) {
 			var oBinding = this.getView().byId("FavoriteProduct").getBinding("text");
 			if (oBinding) {

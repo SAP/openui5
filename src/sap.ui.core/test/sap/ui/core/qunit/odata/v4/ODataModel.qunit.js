@@ -423,6 +423,55 @@ sap.ui.require([
 
 		oModel.requestCanonicalPath(oEntityContext);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh", function (assert) {
+		var oModel = createModel(),
+			oListBinding = oModel.bindList("/TEAMS"),
+			oListBinding2 = oModel.bindList("/TEAMS"),
+			oPropertyBinding = oModel.bindProperty("Name");
+
+		oListBinding.attachChange(function () {});
+		oPropertyBinding.attachChange(function () {});
+		this.oSandbox.mock(oListBinding).expects("refresh").withExactArgs(true);
+		//check: only bindings with change event handler are refreshed
+		this.oSandbox.mock(oListBinding2).expects("refresh").never();
+		//check: no refresh on binding with relative path
+		this.oSandbox.mock(oPropertyBinding).expects("refresh").never();
+
+		oModel.refresh(true);
+
+		assert.throws(function () {
+			oModel.refresh();
+		}, new Error("Falsy values for bForceUpdate are not supported"));
+		assert.throws(function () {
+			oModel.refresh(false);
+		}, new Error("Falsy values for bForceUpdate are not supported"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("oModel.aBindings modified during refresh", function (assert) {
+		var iCallCount = 0,
+			oModel = createModel(),
+			oListBinding = oModel.bindList("/TEAMS"),
+			oListBinding2 = oModel.bindList("/TEAMS");
+
+		function change() {}
+
+		function detach() {
+			this.detachChange(change); // removes binding from oModel.aBindings
+			iCallCount += 1;
+		}
+
+		oListBinding.attachChange(change); // adds binding to oModel.aBindings
+		oListBinding2.attachChange(change);
+		oListBinding.attachRefresh(detach);
+		oListBinding2.attachRefresh(detach);
+
+		oModel.refresh(true);
+
+		assert.strictEqual(iCallCount, 2, "refresh called for both bindings");
+	});
 });
 // TODO constructor: sDefaultBindingMode, mSupportedBindingModes
 // TODO constructor: test that the service root URL is absolute?
