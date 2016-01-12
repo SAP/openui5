@@ -3,17 +3,25 @@
 /* ============================================================ */
 
 /* ------------------------------ */
-/* arrow                          */
+/* text field                     */
 /* ------------------------------ */
 
 /* hover */
 
+.sapMComboBoxBasePressed:not(.sapMComboBoxTextFieldReadonly):not(.sapMComboBoxTextFieldState):not(.sapMComboBoxTextFieldDisabled) {
+	border-color: @sapUiFieldFocusBorderColor;
+}
+
+/* ------------------------------ */
+/* arrow                          */
+/* ------------------------------ */
+
+/* hover */
 .sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
 	background: contrast(@sapUiFieldHoverBackground, darken(@sapUiFieldHoverBackground, 6), lighten(@sapUiFieldHoverBackground, 6));
 }
 
 /* pressed */
-
 /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
 .sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
@@ -26,7 +34,7 @@
 }
 
 /* ------------------------------ */
-/* ComboBox's Picker              */
+/* picker                         */
 /* ------------------------------ */
 
 div.sapMComboBoxBasePicker {
@@ -35,7 +43,7 @@ div.sapMComboBoxBasePicker {
 }
 
 /* ------------------------------ */
-/* ComboBox's Dialog              */
+/* dialog                         */
 /* ------------------------------ */
 
 .sapMComboBoxBaseBar {
@@ -44,27 +52,4 @@ div.sapMComboBoxBasePicker {
 
 div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 	padding: 0;
-}
-
-/* ===================================================================== */
-/* CSS for control sap.m/ComboBox.control BlueCrystal theme compact size */
-/* ===================================================================== */
-
-/* ------------------------------ */
-/* ComboBox Arrow                 */
-/* ------------------------------ */
-
-.sapUiSizeCompact .sapMComboBoxBaseArrow {
-	width: 2rem;
-	height: 1.5rem;
-	line-height: 1.5rem;
-}
-
-.sapUiSizeCompact .sapMComboBoxBaseState .sapMComboBoxBaseArrow {
-	height: 1.375rem;
-	line-height: 1.375rem;
-}
-
-.sapUiSizeCondensed .sapUiTableCell .sapMComboBoxBaseArrow {
-	right: 0;
 }

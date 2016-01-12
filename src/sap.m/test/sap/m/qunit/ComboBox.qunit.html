@@ -3288,8 +3288,8 @@
 			oComboBox.setValueState(sap.ui.core.ValueState.Error);
 
 			// assert
-			ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE));
-			ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Error"));
+			ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD));
+			ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "Error"));
 
 			// cleanup
 			oComboBox.destroy();
