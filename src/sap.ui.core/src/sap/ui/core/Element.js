@@ -641,14 +641,17 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @private
 	 */
 	Element.prototype.removeDelegate = function (oDelegate) {
-		for (var i = 0;i < this.aDelegates.length;i++) {
+		var i;
+		for (i = 0; i < this.aDelegates.length; i++) {
 			if (this.aDelegates[i].oDelegate == oDelegate) {
-				this.aDelegates.splice(i,1);
+				this.aDelegates.splice(i, 1);
+				i--; // One element removed means the next element now has the index of the current one
 			}
 		}
-		for (var i = 0;i < this.aBeforeDelegates.length;i++) {
+		for (i = 0; i < this.aBeforeDelegates.length; i++) {
 			if (this.aBeforeDelegates[i].oDelegate == oDelegate) {
-				this.aBeforeDelegates.splice(i,1);
+				this.aBeforeDelegates.splice(i, 1);
+				i--; // One element removed means the next element now has the index of the current one
 			}
 		}
 		return this;
