@@ -1293,6 +1293,50 @@
 		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
 		assert.strictEqual(oDeleteButton.getTooltip(), "Delete", "The delete button has correct tooltip");
 	});
+
+	QUnit.module("Managing event delegates when entering and exiting edit mode", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			});
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+	QUnit.test("First rendering after initialisation of UploadCollection", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "No event delegations saved for deletion");
+	});
+	QUnit.test("In edit mode", function(assert) {
+		//Arrange
+		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+		//Act
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, true, "Event delegations saved to be deleted on the beginning of the next rendering cycle");
+	});
+	QUnit.test("After exiting edit mode", function(assert) {
+		//Arrange
+		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+		this.oUploadCollection.editModeItem = null;
+		//Act
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "Event delegation has been successfully deleted while exiting edit mode");
+	});
 </script>
 
 </head>
