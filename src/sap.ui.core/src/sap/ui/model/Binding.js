@@ -303,19 +303,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @private
 	 */
 	Binding.prototype.checkDataState = function() {
-		var oDataState = this._updateDataState();
+		var oDataState;
 
-		this.fireEvent("DataStateChange", { dataState: oDataState });
+		// Only calculate DataState in case there are any listeners. This is needed so the formatters used to calculate
+		// the correct datastate values are not called unneededly. Without checking for listeners applications can run
+		// into performance problems with long running formatters or even errors in case the formatters have side-
+		// effects that lead to DataState-Changes.
+		if (this.hasListeners("DataStateChange")) {
+			oDataState = this._updateDataState();
+			this.fireEvent("DataStateChange", { dataState: oDataState });
+		}
 
-		if (oDataState && oDataState.changed()) {
-			if (!this._sDataStateTimout) {
-				this._sDataStateTimout = setTimeout(function() {
-					//console.info("[DS]" + JSON.stringify(jQuery.extend({}, oDataState), null, 4));
-					oDataState.calculateChanges();
-					this.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
-					oDataState.changed(false);
-					this._sDataStateTimout = null;
-				}.bind(this), 0);
+		// Only calculate DataState in case there are any listeners. See explanation above
+		if (this.hasListeners("AggregatedDataStateChange")) {
+			oDataState = oDataState ? oDataState : this._updateDataState();
+			if (oDataState && oDataState.changed()) {
+				if (!this._sDataStateTimout) {
+					this._sDataStateTimout = setTimeout(function() {
+						//console.info("[DS]" + JSON.stringify(jQuery.extend({}, oDataState), null, 4));
+						oDataState.calculateChanges();
+						this.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
+						oDataState.changed(false);
+						this._sDataStateTimout = null;
+					}.bind(this), 0);
+				}
 			}
 		}
 	};
