@@ -16,6 +16,9 @@
 					<semantic:addAction>
 						<semantic:AddAction press="onSemanticButtonPress"/>
 					</semantic:addAction>
+					<semantic:deleteAction>
+						<semantic:DeleteAction press="onSemanticButtonPress"/>
+					</semantic:deleteAction>
 					<semantic:editAction>
 						<semantic:EditAction press="onSemanticButtonPress"/>
 					</semantic:editAction>
