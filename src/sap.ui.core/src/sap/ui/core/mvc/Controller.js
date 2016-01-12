@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			if (CustomizingConfiguration) {
 				var controllerExtensionConfig = CustomizingConfiguration.getControllerExtension(sName, ManagedObject._sOwnerId);
 				if (controllerExtensionConfig) {
-					var sExtControllerName = controllerExtensionConfig.controllerName;
+					var sExtControllerName = typeof controllerExtensionConfig === "string" ? controllerExtensionConfig : controllerExtensionConfig.controllerName;
 
 					// create a list of controller names which will be used to extend this controller
 					var aControllerNames = controllerExtensionConfig.controllerNames || [];
