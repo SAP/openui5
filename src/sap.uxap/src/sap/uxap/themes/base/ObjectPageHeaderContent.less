@@ -4,7 +4,7 @@ objectPageHeader Content
 .sapUxAPObjectPageHeaderContent {
 	position: relative;
 
-	div.sapUxAPObjectPageHeaderContentItem {
+	.sapUxAPObjectPageHeaderContentItem {
 		display: inline-block;
 		vertical-align: top;
 		margin-right: 2rem;
@@ -12,6 +12,10 @@ objectPageHeader Content
 		line-height: 1.5rem;
 	}
 
+	.sapUxAPObjectPageHeaderContentItem.sapUiRespGrid {
+		display: inherit;
+	}
+	
 	.sapUxAPObjectPageHeaderSeparatorContainer {
 		position: relative;
 		margin-right: 4rem;
@@ -126,6 +130,10 @@ objectPageHeader Content
 	.sapUiMedia-Std-Phone & .sapUxAPObjectPageHeaderLayoutHiddenS {
 		display: none;
 	}
+}
+
+html[data-sap-ui-browser^='ie'] .sapUxAPObjectPageHeaderContent div.sapUxAPObjectPageHeaderContentItem {
+	vertical-align: top;
 }
 
 .sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderContent {
