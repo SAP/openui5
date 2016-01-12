@@ -88,7 +88,7 @@
 	display: inline-block;
 	color: #666;
 	float: right;
-	padding: 0.75rem 0.5rem;
+	padding: 0.75rem 0.5rem 0.75rem 0.1rem;
 	text-align: right;
 	height: 1rem;
 	width: 1rem;
@@ -100,6 +100,13 @@
 	user-select: none;
 }
 
+.sapUiInteractionTreeItemLeft .sapUiInteractionTreeSpace {
+	display: inline-block;
+	width: 1rem;
+	float: right;
+	padding: 0.75rem 0.5rem 0.75rem 0.1rem;
+}
+
 .sapUiInteractionHeader.sapUiInteractionItemDiv  {
 	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);
 	border-bottom: 1px solid #bfbfbf;
@@ -109,6 +116,22 @@
 
 .sapUiInteractionTree li[interaction="0"] .sapUiInteractionItemDiv  {
 	border-top: 1px solid transparent;
+}
+
+.sapUiInteractionTreeItemLeft .sapUiInteractionHeaderIcon {
+	box-sizing: border-box;
+	color: #fff;
+	display: inline-block;
+	font-weight: bolder;
+	text-align: center;
+	vertical-align: middle;
+	width: 1rem;
+	height: 1rem;
+	font-size: 6px;
+	padding-top: 0.3rem;
+	margin: 0.75rem 0;
+	border-radius: 0.5rem;
+	float: right;
 }
 
 .sapUiInteractionItemDiv {
@@ -192,6 +215,10 @@ li.sapUiInteractionItemExpanded {
 	background-color: #e52929;
 }
 
+.sapUiAccent8 {
+	background-color: rgb(0, 157, 224);
+}
+
 .sapUiBlue70 {
 	background-color: rgba(0, 124, 192, 0.7);
 }
@@ -202,6 +229,10 @@ li.sapUiInteractionItemExpanded {
 
 .sapUiRed70 {
 	background-color: rgba(229, 41, 41, 0.7);
+}
+
+.sapUiAccent870 {
+	background-color: rgba(0, 157, 224, 0.7);
 }
 
 .sapUiInteractionRequest {
