@@ -35,9 +35,24 @@
 	background-color: #fafafa;
 }
 
+.sapUiInteractionLeft {
+	cursor: pointer;
+}
+
+.sapUiInteractionItemExpanded .sapUiInteractionTreeItemLeft {
+	background-color: #f2f2f2;
+	border-right: 1px solid #e5e5e5;
+}
+
 .sapUiInteractionTreeItemLeft div {
 	display: inline-block;
 	padding: 0.3125rem 0;
+
+	pointer-events: none;
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;
 }
 
 .sapUiInteractionTreeItemRight {
@@ -70,21 +85,69 @@
 }
 
 .sapUiIcon.sapUiInteractionTreeIcon {
-	cursor: pointer;
 	display: inline-block;
 	color: #666;
 	float: right;
-	padding: 0.75rem;
+	padding: 0.75rem 0.5rem;
+	text-align: right;
 	height: 1rem;
 	width: 1rem;
+
+	pointer-events: none;
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;
+}
+
+.sapUiInteractionHeader.sapUiInteractionItemDiv  {
+	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);
+	border-bottom: 1px solid #bfbfbf;
+	position: relative;
+	z-index: 100;
+}
+
+.sapUiInteractionTree li[interaction="0"] .sapUiInteractionItemDiv  {
+	border-top: 1px solid transparent;
 }
 
 .sapUiInteractionItemDiv {
 	border-top: 1px solid #f2f2f2;
 }
 
+.sapUiInteractionItemDiv:not(.sapUiInteractionHeader):hover {
+	background-color: rgba(0, 157, 224, 0.05);
+}
+
+.sapUiInteractionItemDiv:not(.sapUiInteractionHeader):hover .sapUiInteractionTreeItemLeft {
+	background-color: transparent;
+	border-right: 1px solid transparent;
+}
+
+.sapUiInteractionItemExpanded .sapUiInteractionItemDiv {
+	border-top: 1px solid #e5e5e5;
+}
+
+.sapUiInteractionItemExpanded + li .sapUiInteractionItemDiv {
+	border-top: none;
+}
+
+li.sapUiInteractionItemExpanded {
+	border-bottom: 1px solid #e5e5e5;
+}
+
 .sapUiInteractionRequestLeft {
 	box-sizing: border-box;
+	padding-top: 2px;
+}
+
+.sapUiInteractionRequest.sapUiInteractionTreeItem:hover {
+	background-color: rgba(0, 157, 224, 0.05);
+}
+
+.sapUiInteractionRequest.sapUiInteractionTreeItem:hover .sapUiInteractionTreeItemLeft {
+	background-color: transparent;
+	border-right: 1px solid transparent;
 }
 
 .sapUiInteractionTimeframe {
@@ -152,10 +215,14 @@
 .sapUiInteractionGridLinesContainer {
 	background-color: white;
 	position: absolute;
-	left: 20rem;
+	left: 320px;
 	top: 0;
 	right: 0;
 	bottom: 0;
+}
+
+.sapUiInteractionItemExpanded .sapUiInteractionTreeItemRight {
+	background-color: rgba(242, 242, 242, 0.4);
 }
 
 .sapUiInteractionGridLine {

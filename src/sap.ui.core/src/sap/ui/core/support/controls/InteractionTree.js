@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
        InteractionTree.prototype.attachEvents = function () {
           var that = this,
-              interactionTree = this.icon = jQuery('.sapUiInteractionTreeContainer .sapUiInteractionTree');
+              interactionTree = jQuery('.sapUiInteractionTreeContainer .sapUiInteractionTree');
 
           this.gridContainer = jQuery('.sapUiInteractionTreeContainer .sapUiInteractionGridLinesContainer');
           this.gridContainerWidth = 0;
@@ -116,8 +116,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
              var $target = jQuery(event.target);
 
-             if ($target.hasClass('sapUiInteractionTreeIcon')) {
-                that.handleIconClick($target);
+             if ($target.hasClass('sapUiInteractionLeft')) {
+                that.handleInteractionClick($target);
              }
           });
 
@@ -191,7 +191,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           return position;
        };
 
-       InteractionTree.prototype.handleIconClick = function ($icon) {
+       InteractionTree.prototype.handleInteractionClick = function ($div) {
+
+          var $icon = $div.find('.sapUiInteractionTreeIcon');
+
+          if (!$icon.length) {
+             return;
+          }
+
           var expanded = $icon.attr('expanded') == 'true';
 
           var $parent = $icon.parent();
@@ -201,6 +208,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           $parent.append(iconHTML);
 
           var $li = $parent.parent().parent();
+          $li.toggleClass('sapUiInteractionItemExpanded');
 
           var index = parseInt($li.attr('interaction'), 10);
           this.interactions[index].isExpanded = !expanded;
@@ -268,7 +276,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              return;
           }
 
-          rm.write('<li interaction="' + index + '">');
+          rm.write('<li interaction="' + index + '"');
+
+          if (interaction.isExpanded) {
+             rm.addClass('sapUiInteractionItemExpanded');
+             rm.writeClasses();
+          }
+
+          rm.write('>');
 
           this.renderInteractionDiv(rm, interaction);
 
@@ -303,7 +318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write(">");
 
-          rm.write('<div class="sapUiInteractionTreeItemLeft">');
+          rm.write('<div class="sapUiInteractionLeft sapUiInteractionTreeItemLeft">');
 
           rm.write("<div>");
 
@@ -321,7 +336,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write("</div>");
 
-          this.renderIcon(rm, interaction.isExpanded);
+          if (interaction.requests.length) {
+             this.renderIcon(rm, interaction.isExpanded);
+          }
 
           rm.write('</div>'); // sapUiInteractionTreeItemLeft
 
