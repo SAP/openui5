@@ -49,7 +49,6 @@
 	width: 1em;
 	height: 1em;
 	border-radius: @sapUiLocalBusyIndicatorBorderRadius;
-	box-shadow: inset 0px 0px 3px 1em @sapUiLocalBusyIndicatorColor;
 	display: block;
 	float: left;
 	margin: 0px;
@@ -59,20 +58,52 @@
 	text-indent: 1px;
 }
 
+/* General pseudo-element styles for background/shadow animation */
+.sapUiLocalBusyIndicatorAnimation > div::before,
+.sapUiLocalBusyIndicatorAnimation > div::after {
+	content: "";
+	opacity: 1;
+	position: absolute;
+	z-index: -1;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: @sapUiLocalBusyIndicatorBorderRadius;
+}
+
+/* Background animation element */
+.sapUiLocalBusyIndicatorAnimation > div::before {
+	background: fade(@sapUiLocalBusyIndicatorColor, 100%);
+}
+
+/* Shadow animation element */
+.sapUiLocalBusyIndicatorAnimation > div::after {
+	box-shadow: inset 0px 0px 2px 1px fade(@sapUiLocalBusyIndicatorColor, 80%);
+}
+
 /* Animations Starting Classes */
+.sapUiLocalBusyIndicatorAnimation > div,
+.sapUiLocalBusyIndicatorAnimation > div::before,
+.sapUiLocalBusyIndicatorAnimation > div::after {
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+
 /* Big Animation for Elments >= (3rem x 3rem) */
 .sapUiLocalBusyIndicatorAnimStandard > div {
 	-webkit-animation: sapUiBusyAnimationStandard 1.8s infinite ease-in-out;
 	animation: sapUiBusyAnimationStandard 1.8s infinite ease-in-out;
-	-webkit-animation-fill-mode: both;
-	animation-fill-mode: both;
 }
-/* Small animation for elements < (3rem x 3rem) */
-.sapUiLocalBusyIndicatorAnimSmall > div {
-	-webkit-animation: sapUiBusyAnimationSmall 2s infinite ease-in-out;
-	animation: sapUiBusyAnimationSmall 2s infinite ease-in-out;
-	-webkit-animation-fill-mode: both;
-	animation-fill-mode: both;
+
+.sapUiLocalBusyIndicatorAnimStandard > div::before {
+	-webkit-animation: sapUiBusyAnimationStandardBackground 1.8s infinite ease-in-out;
+	animation: sapUiBusyAnimationStandardBackground 1.8s infinite ease-in-out;
+}
+
+.sapUiLocalBusyIndicatorAnimStandard > div::after {
+	-webkit-animation: sapUiBusyAnimationStandardShadow 1.8s infinite ease-in-out;
+	animation: sapUiBusyAnimationStandardShadow 1.8s infinite ease-in-out;
 }
 
 .sapUiLocalBusyIndicatorAnimStandard > div:nth-child(1) {
@@ -85,13 +116,26 @@
 	animation-delay: -0.16s;
 }
 
-/* marker class for switching horizontal and small animation */
-.sapUiLocalBusyIndicatorAnimSmall > div:nth-child(1) {
-	visibility: hidden;
+/* Small animation for elements < (3rem x 3rem) */
+.sapUiLocalBusyIndicatorAnimSmall > div {
+	-webkit-animation: sapUiBusyAnimationSmall 1.6s infinite ease-in-out;
+	animation: sapUiBusyAnimationSmall 1.6s infinite ease-in-out;
 }
+
+.sapUiLocalBusyIndicatorAnimSmall > div::before {
+	-webkit-animation: sapUiBusyAnimationSmallBackground 1.6s infinite ease-in-out;
+	animation: sapUiBusyAnimationSmallBackground 1.6s infinite ease-in-out;
+}
+
+.sapUiLocalBusyIndicatorAnimSmall > div::after {
+	-webkit-animation: sapUiBusyAnimationSmallShadow 1.6s infinite ease-in-out;
+	animation: sapUiBusyAnimationSmallShadow 1.6s infinite ease-in-out;
+}
+
+/* marker class for switching horizontal and small animation */
+.sapUiLocalBusyIndicatorAnimSmall > div:nth-child(1),
 .sapUiLocalBusyIndicatorAnimSmall > div:nth-child(3) {
-	left: -2.5em;
-	animation-delay: -0.8s;
+	visibility: hidden;
 }
 
 #sapUiBusyIndicator {
@@ -102,44 +146,64 @@
  * Keyframe definitions
  */
 .mixin-standard-animation-frames {
-	0%{
-		-webkit-transform: scale(0.4, 0.4);
-		-moz-transform: scale(0.4, 0.4);
-		-ms-transform: scale(0.4, 0.4);
-		background: fade(@sapUiLocalBusyIndicatorColor, 100%);
+	0%, 80%, 100% {
+		-webkit-transform: scale(0.4);
+		-moz-transform: scale(0.4);
+		-ms-transform: scale(0.4);
+		transform: scale(0.4);
 	}
 	40% {
-		-webkit-transform: scale(1, 1);
-		-moz-transform: scale(1, 1);
-		-ms-transform: scale(1, 1);
-		background: fade(@sapUiLocalBusyIndicatorColor, 10%);
-		box-shadow: inset 0px 0px 2px 1px fade(@sapUiLocalBusyIndicatorColor, 80%);
+		-webkit-transform: scale(1);
+		-moz-transform: scale(1);
+		-ms-transform: scale(1);
+		transform: scale(1);
 	}
-	80% {
-		-webkit-transform: scale(0.4, 0.4);
-		-moz-transform: scale(0.4, 0.4);
-		-ms-transform: scale(0.4, 0.4);
+}
+.mixin-standard-background-animation-frames {
+	0%, 80%, 100% {
+		opacity: 1;
 	}
-	100% {
-		-webkit-transform: scale(0.4, 0.4);
-		-moz-transform: scale(0.4, 0.4);
-		-ms-transform: scale(0.4, 0.4);
+	40% {
+		opacity: 0.1;
+	}
+}
+.mixin-standard-shadow-animation-frames {
+	0%, 80%, 100% {
+		opacity: 0;
+	}
+	40% {
+		opacity: 1;
 	}
 }
 
 .mixin-small-animation-frames {
 	0%, 100% {
-		-webkit-transform: scale(0.3, 0.3);
-		-moz-transform: scale(0.3, 0.3);
-		-ms-transform: scale(0.3, 0.3);
-		background: @sapUiLocalBusyIndicatorColor;
+		-webkit-transform: scale(0.2);
+		-moz-transform: scale(0.2);
+		-ms-transform: scale(0.2);
+		transform: scale(0.2);
 	}
 	50% {
-		-webkit-transform: scale(1, 1);
-		-moz-transform: scale(1, 1);
-		-ms-transform: scale(1, 1);
-		background: fade(@sapUiLocalBusyIndicatorColor, 10%);
-		box-shadow:  inset 0px 0px 1px 1px fade(@sapUiLocalBusyIndicatorColor, 80%);
+		-webkit-transform: scale(1);
+		-moz-transform: scale(1);
+		-ms-transform: scale(1);
+		transform: scale(1);
+	}
+}
+.mixin-small-background-animation-frames {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.1;
+	}
+}
+.mixin-small-shadow-animation-frames {
+	0%, 100% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
 	}
 }
 
@@ -151,7 +215,27 @@
 @-moz-keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
 @-ms-keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
 
+@keyframes sapUiBusyAnimationStandardBackground { .mixin-standard-background-animation-frames; }
+@-webkit-keyframes sapUiBusyAnimationStandardBackground { .mixin-standard-background-animation-frames; }
+@-moz-keyframes sapUiBusyAnimationStandardBackground { .mixin-standard-background-animation-frames; }
+@-ms-keyframes sapUiBusyAnimationStandardBackground { .mixin-standard-background-animation-frames; }
+
+@keyframes sapUiBusyAnimationStandardShadow { .mixin-standard-shadow-animation-frames; }
+@-webkit-keyframes sapUiBusyAnimationStandardShadow { .mixin-standard-shadow-animation-frames; }
+@-moz-keyframes sapUiBusyAnimationStandardShadow { .mixin-standard-shadow-animation-frames; }
+@-ms-keyframes sapUiBusyAnimationStandardShadow { .mixin-standard-shadow-animation-frames; }
+
 @keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
 @-webkit-keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
 @-moz-keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
 @-ms-keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
+
+@keyframes sapUiBusyAnimationSmallBackground { .mixin-small-background-animation-frames; }
+@-webkit-keyframes sapUiBusyAnimationSmallBackground { .mixin-small-background-animation-frames; }
+@-moz-keyframes sapUiBusyAnimationSmallBackground { .mixin-small-background-animation-frames; }
+@-ms-keyframes sapUiBusyAnimationSmallBackground { .mixin-small-background-animation-frames; }
+
+@keyframes sapUiBusyAnimationSmallShadow { .mixin-small-shadow-animation-frames; }
+@-webkit-keyframes sapUiBusyAnimationSmallShadow { .mixin-small-shadow-animation-frames; }
+@-moz-keyframes sapUiBusyAnimationSmallShadow { .mixin-small-shadow-animation-frames; }
+@-ms-keyframes sapUiBusyAnimationSmallShadow { .mixin-small-shadow-animation-frames; }
