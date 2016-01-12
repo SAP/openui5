@@ -99,6 +99,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				}
 			},
 			constructor : function (vId, mSettings) {
+				var aStashedItems = [];
+
+				// normalize the expected arguments
+				if (!mSettings && typeof vId === 'object') {
+					mSettings = vId;
+				}
+
+				/* Store the items for later and remove them for the initialization of the control to avoid racing
+				 * condition with the initialization of the tab strip. This is only required when the items aggregation
+				 * is initialized directly with an array of TabContainerItem's without data binding and a template. */
+				if (Array.isArray(mSettings['items']) && mSettings['items'].length) {
+					aStashedItems = mSettings['items'];
+					delete mSettings['items'];
+				}
+
 				sap.ui.base.ManagedObject.prototype.constructor.apply(this, arguments);
 				var oControl = new sap.m.TabStrip(this.getId() + "--tabstrip", {
 					hasSelect: true,
@@ -124,12 +139,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 				this.setAggregation("_tabStrip", oControl, true);
 
-				if (!mSettings && vId && typeof vId === 'object') {
-					mSettings = vId;
-				}
 				if (mSettings && mSettings['showAddNewButton']) {
 					this.setShowAddNewButton(true);
 				}
+
+				// re-introduce any existing items from the constructor settings
+				aStashedItems.forEach(function (oItem) {
+					this.addItem(oItem);
+				}, this);
 			}
 		});
 

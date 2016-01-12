@@ -297,6 +297,54 @@
 
 		});
 
+
+
+		module("Constructing with array of items", {
+			beforeEach: function () {
+				this.item = new sap.m.TabContainerItem({
+					id: 'test2',
+					name: 'test2'
+				});
+
+				this.oTabContainer = new sap.m.TabContainer({
+					items: [
+						this.item,
+						new sap.m.TabContainerItem({
+							id: 'test1',
+							name: 'test1'
+						}),
+						new sap.m.TabContainerItem({
+							id: 'test3',
+							name: 'test3'
+						})
+					],
+					selectedItem: this.item
+				});
+
+				this.oTabContainer.placeAt("qunit-fixture");
+				this.oTabStrip = this.oTabContainer._getTabStrip();
+				this.items = this.oTabContainer.getItems();
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oTabContainer.destroy();
+				this.oTabContainer 	= null;
+				this.oTabStrip 		= null;
+				this.items 			= null;
+				this.item 			= null
+			}
+		});
+
+		test("Deault selected item", function () {
+			//arrange
+			var sConstructorSelectedItemName 	= this.item.getName();
+			var sContainerSelectedItem 			= this.oTabContainer.getSelectedItem();
+			var sSelectSelectedItemText 		= this.oTabContainer._getTabStrip().getAggregation('_select').getSelectedItem().getText();
+
+			strictEqual(sConstructorSelectedItemName, sSelectSelectedItemText, 'Default selected items is the one passed to the constructor.');
+			strictEqual(sContainerSelectedItem, sSelectSelectedItemText, 'Default selected items is propagated to the select list.');
+		});
+
 	</script>
 </head>
 <body id="body" class="sapUiBody">
