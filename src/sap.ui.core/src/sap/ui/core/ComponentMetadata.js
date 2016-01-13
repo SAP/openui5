@@ -346,7 +346,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		var oData = this._oManifest.getEntry(sKey);
 
 		// merge / extend should only be done for objects or when entry wasn't found
-		if (oData && !jQuery.isPlainObject(oData)) {
+		if (oData !== undefined && !jQuery.isPlainObject(oData)) {
 			return oData;
 		}
 
