@@ -475,6 +475,41 @@
 
 	});
 
+	test("Button visible attribute", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons: [
+				new sap.m.Button({
+					text: "Button 1"
+				}),
+				new sap.m.Button({
+					text: "Button 2"
+				}),
+				new sap.m.Button({
+					text: "Button 3"
+				}),
+				new sap.m.Button({
+					text: "Invisible Button",
+					visible: false
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
 	if (sap.ui.Device.browser.name == "ie" && (sap.ui.Device.browser.versionStr == "9" || sap.ui.Device.browser.versionStr == "10")) {
 		// TODO: fix this - do not run this tests on IE9 & IE10 because of width reading problem
 	} else {
@@ -567,6 +602,42 @@
 
 		strictEqual($button1.attr("title"), "Tooltip 1", "First button should have a title with the setted value");
 		strictEqual($button2.attr("title"), undefined, "There should be no title for the second button");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("Items aggregation visible property", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 2"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 3"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Invisible Button",
+					visible: false
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oSegmentedButton.getItems().length, 4, "Control should have 4 items");
+		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
 
 		// Cleanup
 		oSegmentedButton.destroy();
