@@ -1408,13 +1408,19 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	float: left;
 }
 
-.sapUiSupportIntProgressBarLeft {
+.sapUiSupportIntProgressBarPreprocess {
+	background-color: #6D3662;
+	height: inherit;
+	float: left;
+}
+
+.sapUiSupportIntProgressBarClient {
 	background-color: #AB218E;
 	height: inherit;
 	float: left;
 }
 
-.sapUiSupportIntProgressBarRight {
+.sapUiSupportIntProgressBarServer {
 	background-color: #C463B0;
 	height: inherit;
 	float: left;
