@@ -244,7 +244,12 @@ sap.ui.define(['jquery.sap.global'],
 		var mAriaProps = {role: "form"};
 		var oTitle = oContainer.getTitle();
 		var oToolbar = oContainer.getToolbar();
-		if (oTitle && !oToolbar) {
+		if (oToolbar) {
+			if (!oContainer.getAriaLabelledBy() || oContainer.getAriaLabelledBy().length == 0) {
+				// no aria-label -> use complete Toolbar as fallback
+				mAriaProps["labelledby"] = oToolbar.getId();
+			}
+		} else if (oTitle) {
 			var sId = "";
 			if (typeof oTitle == "string") {
 				sId = oContainer.getId() + "--title";

@@ -172,7 +172,6 @@
 							items: [new sap.ui.commons.TextView("F4C2-Title", {text: "Container 2", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
 							rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
 						}),
-						ariaLabelledBy: "F4C2-Title",
 						formElements: [
 							new sap.ui.layout.form.FormElement("F4C2E1",{
 									label: "Label",
@@ -305,6 +304,7 @@
 
 			equal(jQuery("#F4").attr("aria-labelledby"), "F4-Title", "Form4: aria-labelledby set");
 			equal(jQuery("#F4C1--Panel").attr("aria-labelledby"), "F4C1-Title", "Container-F4C1: aria-labelledby set");
+			equal(jQuery("#F4C2--Panel").attr("aria-labelledby"), "F4-TB3", "Container-F4C2: aria-labelledby default set");
 		});
 
 		test("Toolbar", function() {
