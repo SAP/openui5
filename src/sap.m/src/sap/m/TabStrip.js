@@ -146,6 +146,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		TabStrip._MINDRAGOFFSET = sap.ui.Device.support.touch ? 15 : 5;
 
 		/**
+		 * Scrolling animation duration constant
+		 *
+		 * @type {number}
+		 * @private
+		 */
+		TabStrip._SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 500 : 0;
+
+		/**
 		 * Initializes the control.
 		 *
 		 * @public
@@ -376,7 +384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 						tabIndex: "-1",
 						ariaHidden: "true",
 						press: function (oEvent) {
-							that._scroll(-TabStrip._SCROLLSIZE, 500);
+							that._scroll(-TabStrip._SCROLLSIZE, TabStrip._SCROLL_ANIMATION_DURATION);
 						}
 					});
 					break;
@@ -388,7 +396,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 						tabIndex: "-1",
 						ariaHidden: "true",
 						press: function (oEvent) {
-							that._scroll(TabStrip._SCROLLSIZE, 500);
+							that._scroll(TabStrip._SCROLLSIZE, TabStrip._SCROLL_ANIMATION_DURATION);
 						}
 					});
 					break;

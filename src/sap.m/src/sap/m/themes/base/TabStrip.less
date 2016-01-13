@@ -60,11 +60,6 @@
 				padding: 0 .75rem;
 				float: left;
 				cursor: pointer;
-				-webkit-transition: padding 0.2s;
-				-moz-transition: padding 0.2s;
-				-ms-transition: padding 0.2s;
-				-o-transition: padding 0.2s;
-				transition: padding 0.2s;
 				-webkit-user-select: none;
 				-moz-user-select: none;
 				-ms-user-select: none;
@@ -182,6 +177,14 @@
 			}
 		}
 	}
+}
+
+html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabContainer .sapMTSTabs .sapMTabContainerItem {
+	-webkit-transition: padding 0.2s;
+	-moz-transition: padding 0.2s;
+	-ms-transition: padding 0.2s;
+	-o-transition: padding 0.2s;
+	transition: padding 0.2s;
 }
 
 /* ============================================= */
