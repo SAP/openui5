@@ -21,15 +21,15 @@
 	right: 0;
 }
 
-.sapUiRGLContainerCont{
-	padding-bottom: 1.5rem;
-}
-
 .sapUiRGLContainerColl > .sapUiRGLContainerCont{
 	display: none;
 }
 
 /* add paddings to content */
+.sapUiFormResGridCont{
+	padding-bottom: 1.5rem;
+}
+
 .sapUiFormResGridCont > div{
 	padding: 0 0.25rem 0.5rem 0.25rem;
 	-moz-box-sizing: padding-box;
@@ -43,7 +43,7 @@
 /* ================= */
 /*   SMALL DEVICES   */
 /* ================= */
-.sapUiRespGridMedia-Std-Phone > div > .sapUiRGLContainer > .sapUiRGLContainerCont{
+.sapUiRespGridMedia-Std-Phone > div > .sapUiRGLContainer > .sapUiFormResGridCont{
 	padding-bottom: 0.5rem;
 }
 
@@ -82,10 +82,10 @@
 }
 
 /* on last row no padding-bottom on container content */
-.sapUiRespGridMedia-Std-Phone > .sapUiFormResGridLastRowM:last-child > .sapUiRGLContainer > .sapUiRGLContainerCont,
-.sapUiRespGridMedia-Std-Tablet > .sapUiFormResGridLastRowM > .sapUiRGLContainer > .sapUiRGLContainerCont,
-.sapUiRespGridMedia-Std-Desktop > .sapUiFormResGridLastRowL > .sapUiRGLContainer > .sapUiRGLContainerCont,
-.sapUiRespGridMedia-Std-LargeDesktop > .sapUiFormResGridLastRowL > .sapUiRGLContainer > .sapUiRGLContainerCont{
+.sapUiRespGridMedia-Std-Phone > .sapUiFormResGridLastRowM:last-child .sapUiFormResGridCont,
+.sapUiRespGridMedia-Std-Tablet > .sapUiFormResGridLastRowM .sapUiFormResGridCont,
+.sapUiRespGridMedia-Std-Desktop > .sapUiFormResGridLastRowL .sapUiFormResGridCont,
+.sapUiRespGridMedia-Std-LargeDesktop > .sapUiFormResGridLastRowL .sapUiFormResGridCont{
 	padding-bottom: 0;
 }
 
