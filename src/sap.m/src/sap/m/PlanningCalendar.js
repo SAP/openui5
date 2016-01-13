@@ -925,6 +925,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	function _handleResize(oEvent, bNoRowResize){
 
+		if (oEvent.size.width <= 0) {
+			// only if visible at all
+			return;
+		}
+
 		var aRows = this.getRows();
 		var oRow;
 		var i = 0;
@@ -976,6 +981,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oRow.getCalendarRow().handleResize();
 			}
 		}
+
 	}
 
 	function _updateCurrentTimeVisualization(bUpdateRows){
