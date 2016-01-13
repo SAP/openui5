@@ -10,7 +10,6 @@
 	display: flex;
 
 	box-sizing: border-box;
-	overflow: hidden;
 }
 
 .sapMFlexBoxInline:not(.sapMFlexBoxFit) {
@@ -30,6 +29,7 @@
 };
 
 .sapMFlexItem {
+	position: relative;
 	/* make the default shrinkable for IE 10 */
 	-ms-flex-preferred-size: auto;
 	-ms-flex-negative: 1;
