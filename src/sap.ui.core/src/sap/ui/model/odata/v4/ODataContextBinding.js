@@ -43,7 +43,7 @@ sap.ui.define([
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
-				var bAbsolute = sPath.charAt(0) === "/",
+				var bAbsolute = sPath[0] === "/",
 					sBindingPath = bAbsolute ? sPath + ";root=" + iIndex : sPath;
 
 				ContextBinding.call(this, oModel, sBindingPath, oContext);

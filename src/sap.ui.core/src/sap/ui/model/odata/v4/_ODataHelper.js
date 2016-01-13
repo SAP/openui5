@@ -33,8 +33,8 @@ sap.ui.define([
 			var mResult = JSON.parse(JSON.stringify(mModelOptions || {}));
 
 			Object.keys(mOptions || {}).forEach(function (sKey) {
-				if (sKey.charAt(0) === "@"
-					|| sKey.charAt(0) === "$" && (aAllowed || []).indexOf(sKey) === -1) {
+				if (sKey[0] === "@"
+					|| sKey[0] === "$" && (aAllowed || []).indexOf(sKey) === -1) {
 					throw new Error("Parameter " + sKey + " is not supported");
 				}
 				mResult[sKey] = mOptions[sKey];
