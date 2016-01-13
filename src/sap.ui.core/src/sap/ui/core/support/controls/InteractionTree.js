@@ -205,7 +205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           $icon.remove();
 
           var iconHTML = this.getIconHTML(!expanded);
-          $parent.append(iconHTML);
+          $parent.children().eq(0).after(iconHTML);
 
           var $li = $parent.parent().parent();
           $li.toggleClass('sapUiInteractionItemExpanded');
@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           for (var i = 0; i < requests.length; i++) {
              request = requests[i];
 
-             this.renderRequest(rm, interaction, request);
+             this.renderRequest(rm, interaction, request, i);
           }
 
           rm.write("</ul>");
@@ -338,6 +338,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           if (interaction.requests.length) {
              this.renderIcon(rm, interaction.isExpanded);
+          } else {
+             rm.write('<div class="sapUiInteractionTreeSpace"></div>');
+          }
+
+          if (interaction.sapStatistics.length) {
+             rm.write('<div class="sapUiInteractionHeaderIcon sapUiBlue">H</div>');
           }
 
           rm.write('</div>'); // sapUiInteractionTreeItemLeft
@@ -361,7 +367,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write("</div>");
        };
 
-       InteractionTree.prototype.renderRequest = function (rm, interaction, request) {
+       InteractionTree.prototype.renderRequest = function (rm, interaction, request, index) {
 
           var fetchStartOffset = request.fetchStartOffset;
 
@@ -395,7 +401,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 colorClass = 'sapUiPurple';
                 break;
              default:
-                colorClass = 'sapUiBlue';
+                colorClass = 'sapUiAccent8';
                   break;
           }
 
