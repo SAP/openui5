@@ -102,7 +102,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			var sClassNameSeparator = (index % 10 === 0 && index !== 0) ? "sapUiInteractionTimelineStepRightBold" :
 				"sapUiInteractionTimelineStepRight";
 
-			rm.write('<div class="' + sClassNameSeparator + '"></div>');
+			if (index % 2 === 0) {
+				rm.write('<div class="' + sClassNameSeparator + '"></div>');
+			}
+
 			if (index % 10 === 0 && index !== 0) {
 				rm.write('<div class="sapUiInteractionTimelineTimeLbl">' + Math.round((index * this.timeRange /
 						this.stepCount) / 10 ) / 100 + 's</div>');
