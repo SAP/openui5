@@ -400,8 +400,8 @@
 				oItem1DomRef.style.width = "100%";
 				oItem2DomRef.style.width = "100%";
 				oItem3DomRef.style.width = "100%";
-				if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.phantomJS) {
-					// IE 10-11 and PhantomJS miscalculate the width of the flex items when box-sizing: border-box
+				if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.phantomJS || sap.ui.Device.browser.safari) {
+					// IE 10-11, PhantomJS and Safari miscalculate the width of the flex items when box-sizing: border-box
 					ok(Math.abs(oItem1DomRef.offsetWidth - 247) <= 1, "Width of Item 1 should be 247 (is " + oItem1DomRef.offsetWidth + ")");
 					ok(Math.abs(oItem2DomRef.offsetWidth - 107) <= 1, "Width of Item 2 should be 107 (is " + oItem2DomRef.offsetWidth + ")");
 					ok(Math.abs(oItem3DomRef.offsetWidth - 34) <= 1, "Width of Item 3 should be 34 (is " + oItem3DomRef.offsetWidth + ")");
@@ -436,8 +436,8 @@
 			test("Min Height", function() {
 				oItem1LayoutData.setMinHeight("200px");
 				ok(Math.abs(oItem1DomRef.offsetHeight - 200) <= 1, "Height of Item 1 should be 200 (is " + oItem1DomRef.offsetHeight + ")");
-				if (sap.ui.Device.browser.phantomJS) {
-					// PhantomJS apparently doesn't support min-width:auto yet
+				if (sap.ui.Device.browser.phantomJS || sap.ui.Device.browser.safari) {
+					// PhantomJS and Safari apparently don't support min-width:auto yet
 					oItem1LayoutData.setMinHeight("");
 				} else {
 					oItem1LayoutData.setMinHeight("auto");
@@ -455,8 +455,8 @@
 			test("Min Width", function() {
 				oItem1LayoutData.setMinWidth("200px");
 				ok(Math.abs(oItem1DomRef.offsetWidth - 200) <= 1, "Width of Item 1 should be 200 (is " + oItem1DomRef.offsetWidth + ")");
-				if (sap.ui.Device.browser.phantomJS) {
-					// PhantomJS apparently doesn't support min-width:auto yet
+				if (sap.ui.Device.browser.phantomJS || sap.ui.Device.browser.safari) {
+					// PhantomJS and Safari apparently don't support min-width:auto yet
 					oItem1LayoutData.setMinWidth("");
 				} else {
 					oItem1LayoutData.setMinWidth("auto");
