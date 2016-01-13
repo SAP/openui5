@@ -443,7 +443,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		var iPos = oEvent[this._moveCord];
 
 		var iDelta = (iPos - this._move.start);
-		iDelta = this._bRtl ? -iDelta : iDelta;
+		//We should only switch direction of change in case it is left or right.
+		//Otherwise the vertical splitter is moved opposite to the mouse movement
+		if (this.getOrientation() == sap.ui.core.Orientation.Horizontal && this._bRtl) {
+			iDelta = -iDelta;
+		}
 
 		var c1NewSize = this._move.c1Size + iDelta;
 		var c2NewSize = this._move.c2Size - iDelta;
@@ -462,9 +466,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 			if (this._liveResize) {
 				var fMove = (this._move["start"] - oEvent[this._moveCord]);
+
+				//We should only switch direction of change in case it is left or right.
+				//Otherwise the vertical splitter is moved opposite to the mouse movement
+				if (this.getOrientation() == sap.ui.core.Orientation.Horizontal && this._bRtl) {
+					fMove = -fMove;
+				}
+
 				this._resizeContents(
 					/* left content number:    */ this._move["barNum"],
-					/* number of pixels:       */ this._bRtl ? fMove : -fMove,
+					/* number of pixels:       */ -fMove,
 					/* also change layoutData: */ false
 				);
 			}
@@ -492,9 +503,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		var iPos = oEvent[this._moveCord];
 
 		var fMove = this._move["start"] - iPos;
+
+		//We should only switch direction of change in case it is left or right.
+		//Otherwise the vertical splitter is moved opposite to the mouse movement
+		if (this.getOrientation() == sap.ui.core.Orientation.Horizontal && this._bRtl) {
+			fMove = -fMove;
+		}
+
 		this._resizeContents(
 			/* left content number:    */ this._move["barNum"],
-			/* number of pixels:       */ this._bRtl ? fMove : -fMove,
+			/* number of pixels:       */ -fMove,
 			/* also change layoutData: */ true
 		);
 
