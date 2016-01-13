@@ -123,6 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					//delay the event so anyone can attach to this _before_ it is fired, but make
 					//sure that bLoaded is already set properly
 					that.bLoaded = true;
+					that.bFailed = false;
 					that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [ mParams ]);
 				}
 			}
@@ -225,6 +226,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 */
 	ODataMetadata.prototype.fireLoaded = function(mParams) {
 		this.bLoaded = true;
+		this.bFailed = false;
 		this.fireEvent("loaded", mParams);
 		jQuery.sap.log.debug(this + " - loaded was fired");
 		return this;

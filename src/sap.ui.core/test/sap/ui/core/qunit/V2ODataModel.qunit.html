@@ -333,6 +333,44 @@
 
 	});
 
+	asyncTest("test metadata isMetadataLoadingFailed", function() {
+
+		oModel = initModel();
+		ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
+		var oPromise = oModel.metadataLoaded();
+		var sTempService = sServiceUri;
+		ok(oPromise, "promise exists");
+		oPromise.then(function(result){
+			ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
+			sServiceUri = "/doesnotWork/";
+			oModel.oMetadata.sUrl = sServiceUri + "$metadata";
+			var oNewP = oModel.refreshMetadata();
+			ok(oNewP, "oNewP promise exists");
+			return oNewP;
+		}, function(){
+			ok(false, "Promise rejected which should never happen");
+		})
+		.then(function(result){
+			ok(false, "oNewP Promise resolved");
+		}, function(){
+			ok(oModel.isMetadataLoadingFailed(), "check metadata loaded failed");
+			// fix url
+			oModel.oMetadata.sUrl = sTempService + "$metadata";
+			var oNewP2 = oModel.refreshMetadata();
+			ok(oNewP2, "oNewP promise exists");
+			return oNewP2;
+		})
+		.then(function(result){
+			ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
+			removeSharedMetadata();
+			sServiceUri = sTempService;
+			start();
+		}, function(){
+			ok(false, "oNewP2 Promise rejected");
+		});
+
+	});
+
 	asyncTest("test oDataModel read filter test", function() {
 		oModel.read("/ProductSet", {
 			filters : [ new sap.ui.model.Filter("ProductID", "EQ",

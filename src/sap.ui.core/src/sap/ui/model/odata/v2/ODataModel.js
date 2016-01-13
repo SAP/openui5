@@ -3617,6 +3617,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether metadata loading has failed in the past.
+	 *
+	 * @public
+	 * @returns {boolean} returns whether metadata request has failed
+	 *
+	 * @since 1.38
+	 */
+	ODataModel.prototype.isMetadataLoadingFailed = function() {
+		return this.oMetadata.isFailed();
+	};
+
+	/**
 	 * Return the annotation object. Please note that the metadata is loaded asynchronously and this function might return undefined because the
 	 * metadata has not been loaded yet.
 	 * In this case attach to the <code>annotationsLoaded</code> event to get notified when the annotations are available and then call this function.
