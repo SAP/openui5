@@ -17,7 +17,7 @@
 				</items>
 			</P13nColumnsPanel>
 			<P13nSortPanel title="Sort" visible="false" type="sort"
-				containerQuery="true" layoutMode="Desktop"
+				containerQuery="true"
 				items="{
                     path: '/ColumnCollection'
                 }"
@@ -30,7 +30,7 @@
 				</sortItems>
 			</P13nSortPanel>
 			<P13nFilterPanel title="Filter" visible="true" type="filter"
-				containerQuery="true" layoutMode="Desktop"
+				containerQuery="true"
 				items="{
                     path: '/ColumnCollection'
                 }"
