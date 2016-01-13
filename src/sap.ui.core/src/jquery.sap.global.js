@@ -1244,7 +1244,7 @@
 					for (var sName in mMethods) {
 						this[sName] = mMethods[sName];
 					}
-					mMethods = [];
+					mMethods = {};
 					// wrap and instrument jQuery.ajax
 					jQuery.ajax = function(url, options) {
 
