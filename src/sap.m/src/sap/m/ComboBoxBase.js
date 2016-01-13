@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', './SelectList', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, Bar, Dialog, ComboBoxTextField, SelectList, Popover, library, EnabledPropagator, IconPool) {
+sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './SelectList', './Popover', './library'],
+	function(jQuery, Dialog, ComboBoxTextField, SelectList, Popover, library) {
 		"use strict";
 
 		/**
