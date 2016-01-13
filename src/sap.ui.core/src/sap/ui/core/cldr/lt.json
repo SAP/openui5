@@ -2439,7 +2439,7 @@
 		"era": {
 			"displayName": "era"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "metai",
 			"relative-type--1": "praėjusiais metais",
 			"relative-type-0": "šiais metais",
@@ -2457,7 +2457,43 @@
 				"relativeTimePattern-count-other": "prieš {0} metų"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "m.",
+			"relative-type--1": "praėjusiais metais",
+			"relative-type-0": "šiais metais",
+			"relative-type-1": "kitais metais",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} m.",
+				"relativeTimePattern-count-few": "po {0} m.",
+				"relativeTimePattern-count-many": "po {0} m.",
+				"relativeTimePattern-count-other": "po {0} m."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} m.",
+				"relativeTimePattern-count-few": "prieš {0} m.",
+				"relativeTimePattern-count-many": "prieš {0} m.",
+				"relativeTimePattern-count-other": "prieš {0} metų"
+			}
+		},
+		"year-narrow": {
+			"displayName": "m.",
+			"relative-type--1": "praėjusiais metais",
+			"relative-type-0": "šiais metais",
+			"relative-type-1": "kitais metais",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} m.",
+				"relativeTimePattern-count-few": "po {0} m.",
+				"relativeTimePattern-count-many": "po {0} m.",
+				"relativeTimePattern-count-other": "po {0} m."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} m.",
+				"relativeTimePattern-count-few": "prieš {0} m.",
+				"relativeTimePattern-count-many": "prieš {0} m.",
+				"relativeTimePattern-count-other": "prieš {0} m."
+			}
+		},
+		"quarter-wide": {
 			"displayName": "ketvirtis",
 			"relative-type--1": "last quarter",
 			"relative-type-0": "this quarter",
@@ -2475,7 +2511,43 @@
 				"relativeTimePattern-count-other": "prieš {0} ketvirčių"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "ketv.",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} ketv.",
+				"relativeTimePattern-count-few": "po {0} ketv.",
+				"relativeTimePattern-count-many": "po {0} ketv.",
+				"relativeTimePattern-count-other": "po {0} ketv."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} ketv.",
+				"relativeTimePattern-count-few": "prieš {0} ketv.",
+				"relativeTimePattern-count-many": "prieš {0} ketv.",
+				"relativeTimePattern-count-other": "prieš {0} ketv."
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "ketv.",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} ketv.",
+				"relativeTimePattern-count-few": "po {0} ketv.",
+				"relativeTimePattern-count-many": "po {0} ketv.",
+				"relativeTimePattern-count-other": "po {0} ketv."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} ketv.",
+				"relativeTimePattern-count-few": "prieš {0} ketv.",
+				"relativeTimePattern-count-many": "prieš {0} ketv.",
+				"relativeTimePattern-count-other": "prieš {0} ketv."
+			}
+		},
+		"month-wide": {
 			"displayName": "mėnuo",
 			"relative-type--1": "praėjusį mėnesį",
 			"relative-type-0": "šį mėnesį",
@@ -2493,7 +2565,43 @@
 				"relativeTimePattern-count-other": "prieš {0} mėnesių"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "mėn.",
+			"relative-type--1": "praėjusį mėnesį",
+			"relative-type-0": "šį mėnesį",
+			"relative-type-1": "kitą mėnesį",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} mėn.",
+				"relativeTimePattern-count-few": "po {0} mėn.",
+				"relativeTimePattern-count-many": "po {0} mėn.",
+				"relativeTimePattern-count-other": "po {0} mėn."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} mėn.",
+				"relativeTimePattern-count-few": "prieš {0} mėn.",
+				"relativeTimePattern-count-many": "prieš {0} mėn.",
+				"relativeTimePattern-count-other": "prieš {0} mėn."
+			}
+		},
+		"month-narrow": {
+			"displayName": "mėn.",
+			"relative-type--1": "praėjusį mėnesį",
+			"relative-type-0": "šį mėnesį",
+			"relative-type-1": "kitą mėnesį",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} mėn.",
+				"relativeTimePattern-count-few": "po {0} mėn.",
+				"relativeTimePattern-count-many": "po {0} mėn.",
+				"relativeTimePattern-count-other": "po {0} mėn."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} mėn.",
+				"relativeTimePattern-count-few": "prieš {0} mėn.",
+				"relativeTimePattern-count-many": "prieš {0} mėn.",
+				"relativeTimePattern-count-other": "prieš {0} mėn."
+			}
+		},
+		"week-wide": {
 			"displayName": "savaitė",
 			"relative-type--1": "praėjusią savaitę",
 			"relative-type-0": "šią savaitę",
@@ -2511,7 +2619,43 @@
 				"relativeTimePattern-count-other": "prieš {0} savaičių"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "sav.",
+			"relative-type--1": "praėjusią savaitę",
+			"relative-type-0": "šią savaitę",
+			"relative-type-1": "kitą savaitę",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} sav.",
+				"relativeTimePattern-count-few": "po {0} sav.",
+				"relativeTimePattern-count-many": "po {0} sav.",
+				"relativeTimePattern-count-other": "po {0} sav."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} sav.",
+				"relativeTimePattern-count-few": "prieš {0} sav.",
+				"relativeTimePattern-count-many": "prieš {0} sav.",
+				"relativeTimePattern-count-other": "prieš {0} sav."
+			}
+		},
+		"week-narrow": {
+			"displayName": "sav.",
+			"relative-type--1": "praėjusią savaitę",
+			"relative-type-0": "šią savaitę",
+			"relative-type-1": "kitą savaitę",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} sav.",
+				"relativeTimePattern-count-few": "po {0} sav.",
+				"relativeTimePattern-count-many": "po {0} sav.",
+				"relativeTimePattern-count-other": "po {0} sav."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} sav.",
+				"relativeTimePattern-count-few": "prieš {0} sav.",
+				"relativeTimePattern-count-many": "prieš {0} sav.",
+				"relativeTimePattern-count-other": "prieš {0} sav."
+			}
+		},
+		"day-wide": {
 			"displayName": "diena",
 			"relative-type--2": "užvakar",
 			"relative-type--1": "vakar",
@@ -2531,10 +2675,50 @@
 				"relativeTimePattern-count-other": "prieš {0} dienų"
 			}
 		},
+		"day-short": {
+			"displayName": "d.",
+			"relative-type--2": "užvakar",
+			"relative-type--1": "vakar",
+			"relative-type-0": "šiandien",
+			"relative-type-1": "rytoj",
+			"relative-type-2": "poryt",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} d.",
+				"relativeTimePattern-count-few": "po {0} d.",
+				"relativeTimePattern-count-many": "po {0} d.",
+				"relativeTimePattern-count-other": "po {0} d."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} d.",
+				"relativeTimePattern-count-few": "prieš {0} d.",
+				"relativeTimePattern-count-many": "prieš {0} d.",
+				"relativeTimePattern-count-other": "prieš {0} d."
+			}
+		},
+		"day-narrow": {
+			"displayName": "d.",
+			"relative-type--2": "užvakar",
+			"relative-type--1": "vakar",
+			"relative-type-0": "šiandien",
+			"relative-type-1": "rytoj",
+			"relative-type-2": "poryt",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} d.",
+				"relativeTimePattern-count-few": "po {0} d.",
+				"relativeTimePattern-count-many": "po {0} d.",
+				"relativeTimePattern-count-other": "po {0} d."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} d.",
+				"relativeTimePattern-count-few": "prieš {0} d.",
+				"relativeTimePattern-count-many": "prieš {0} d.",
+				"relativeTimePattern-count-other": "prieš {0} d."
+			}
+		},
 		"weekday": {
 			"displayName": "savaitės diena"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "valanda",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "po {0} valandos",
@@ -2549,7 +2733,37 @@
 				"relativeTimePattern-count-other": "prieš {0} valandų"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "val.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} val.",
+				"relativeTimePattern-count-few": "po {0} val.",
+				"relativeTimePattern-count-many": "po {0} val.",
+				"relativeTimePattern-count-other": "po {0} val."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} val.",
+				"relativeTimePattern-count-few": "prieš {0} val.",
+				"relativeTimePattern-count-many": "prieš {0} val.",
+				"relativeTimePattern-count-other": "prieš {0} val."
+			}
+		},
+		"hour-narrow": {
+			"displayName": "h",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} val.",
+				"relativeTimePattern-count-few": "po {0} val.",
+				"relativeTimePattern-count-many": "po {0} val.",
+				"relativeTimePattern-count-other": "po {0} val."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} val.",
+				"relativeTimePattern-count-few": "prieš {0} val.",
+				"relativeTimePattern-count-many": "prieš {0} val.",
+				"relativeTimePattern-count-other": "prieš {0} val."
+			}
+		},
+		"minute-wide": {
 			"displayName": "minutė",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "po {0} minutės",
@@ -2564,7 +2778,37 @@
 				"relativeTimePattern-count-other": "prieš {0} minučių"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "min.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} min.",
+				"relativeTimePattern-count-few": "po {0} min.",
+				"relativeTimePattern-count-many": "po {0} min.",
+				"relativeTimePattern-count-other": "po {0} min."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} min.",
+				"relativeTimePattern-count-few": "prieš {0} min.",
+				"relativeTimePattern-count-many": "prieš {0} min.",
+				"relativeTimePattern-count-other": "prieš {0} min."
+			}
+		},
+		"minute-narrow": {
+			"displayName": "min.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} min.",
+				"relativeTimePattern-count-few": "po {0} min.",
+				"relativeTimePattern-count-many": "po {0} min.",
+				"relativeTimePattern-count-other": "po {0} min."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} min.",
+				"relativeTimePattern-count-few": "prieš {0} min.",
+				"relativeTimePattern-count-many": "prieš {0} min.",
+				"relativeTimePattern-count-other": "prieš {0} min."
+			}
+		},
+		"second-wide": {
 			"displayName": "sekundė",
 			"relative-type-0": "dabar",
 			"relativeTime-type-future": {
@@ -2578,6 +2822,38 @@
 				"relativeTimePattern-count-few": "prieš {0} sekundes",
 				"relativeTimePattern-count-many": "prieš {0} sekundės",
 				"relativeTimePattern-count-other": "prieš {0} sekundžių"
+			}
+		},
+		"second-short": {
+			"displayName": "sek.",
+			"relative-type-0": "dabar",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} sek.",
+				"relativeTimePattern-count-few": "po {0} sek.",
+				"relativeTimePattern-count-many": "po {0} sek.",
+				"relativeTimePattern-count-other": "po {0} sek."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} sek.",
+				"relativeTimePattern-count-few": "prieš {0} sek.",
+				"relativeTimePattern-count-many": "prieš {0} sek.",
+				"relativeTimePattern-count-other": "prieš {0} sek."
+			}
+		},
+		"second-narrow": {
+			"displayName": "s",
+			"relative-type-0": "dabar",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} s",
+				"relativeTimePattern-count-few": "po {0} s",
+				"relativeTimePattern-count-many": "po {0} s",
+				"relativeTimePattern-count-other": "po {0} s"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} s",
+				"relativeTimePattern-count-few": "prieš {0} s",
+				"relativeTimePattern-count-many": "prieš {0} s",
+				"relativeTimePattern-count-other": "prieš {0} s"
 			}
 		},
 		"zone": {

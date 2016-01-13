@@ -2401,7 +2401,7 @@
 		"era": {
 			"displayName": "תקופה"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "שנה",
 			"relative-type--1": "השנה שעברה",
 			"relative-type-0": "השנה",
@@ -2419,7 +2419,43 @@
 				"relativeTimePattern-count-other": "לפני {0} שנים"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "שנ׳",
+			"relative-type--1": "השנה שעברה",
+			"relative-type-0": "השנה",
+			"relative-type-1": "השנה הבאה",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד שנה",
+				"relativeTimePattern-count-two": "בעוד שנתיים",
+				"relativeTimePattern-count-many": "בעוד {0} שנה",
+				"relativeTimePattern-count-other": "בעוד {0} שנים"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני שנה",
+				"relativeTimePattern-count-two": "לפני שנתיים",
+				"relativeTimePattern-count-many": "לפני {0} שנה",
+				"relativeTimePattern-count-other": "לפני {0} שנים"
+			}
+		},
+		"year-narrow": {
+			"displayName": "שנ׳",
+			"relative-type--1": "השנה שעברה",
+			"relative-type-0": "השנה",
+			"relative-type-1": "השנה הבאה",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד שנה",
+				"relativeTimePattern-count-two": "בעוד שנתיים",
+				"relativeTimePattern-count-many": "בעוד {0} שנה",
+				"relativeTimePattern-count-other": "בעוד {0} שנים"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני שנה",
+				"relativeTimePattern-count-two": "לפני שנתיים",
+				"relativeTimePattern-count-many": "לפני {0} שנה",
+				"relativeTimePattern-count-other": "לפני {0} שנים"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "רבעון",
 			"relative-type--1": "last quarter",
 			"relative-type-0": "this quarter",
@@ -2437,7 +2473,43 @@
 				"relativeTimePattern-count-other": "לפני {0} רבעונים"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "רבע׳",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "ברבע׳ הבא",
+				"relativeTimePattern-count-two": "בעוד שני רבע׳",
+				"relativeTimePattern-count-many": "בעוד {0} רבע׳",
+				"relativeTimePattern-count-other": "בעוד {0} רבע׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "ברבע׳ הקודם",
+				"relativeTimePattern-count-two": "לפני שני רבע׳",
+				"relativeTimePattern-count-many": "לפני {0} רבע׳",
+				"relativeTimePattern-count-other": "לפני {0} רבע׳"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "רבע׳",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "ברבע׳ הבא",
+				"relativeTimePattern-count-two": "בעוד שני רבע׳",
+				"relativeTimePattern-count-many": "בעוד {0} רבע׳",
+				"relativeTimePattern-count-other": "בעוד {0} רבע׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "ברבע׳ הקודם",
+				"relativeTimePattern-count-two": "לפני שני רבע׳",
+				"relativeTimePattern-count-many": "לפני {0} רבע׳",
+				"relativeTimePattern-count-other": "לפני {0} רבע׳"
+			}
+		},
+		"month-wide": {
 			"displayName": "חודש",
 			"relative-type--1": "החודש שעבר",
 			"relative-type-0": "החודש",
@@ -2455,7 +2527,43 @@
 				"relativeTimePattern-count-other": "לפני {0} חודשים"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "חו׳",
+			"relative-type--1": "החודש שעבר",
+			"relative-type-0": "החודש",
+			"relative-type-1": "החודש הבא",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד חודש",
+				"relativeTimePattern-count-two": "בעוד חודשיים",
+				"relativeTimePattern-count-many": "בעוד {0} חודשים",
+				"relativeTimePattern-count-other": "בעוד {0} חודשים"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני חודש",
+				"relativeTimePattern-count-two": "לפני חודשיים",
+				"relativeTimePattern-count-many": "לפני {0} חודשים",
+				"relativeTimePattern-count-other": "לפני {0} חודשים"
+			}
+		},
+		"month-narrow": {
+			"displayName": "חו׳",
+			"relative-type--1": "החודש שעבר",
+			"relative-type-0": "החודש",
+			"relative-type-1": "החודש הבא",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד חו׳",
+				"relativeTimePattern-count-two": "בעוד חודשיים",
+				"relativeTimePattern-count-many": "בעוד {0} חו׳",
+				"relativeTimePattern-count-other": "בעוד {0} חו׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני חו׳",
+				"relativeTimePattern-count-two": "לפני חודשיים",
+				"relativeTimePattern-count-many": "לפני {0} חו׳",
+				"relativeTimePattern-count-other": "לפני {0} חו׳"
+			}
+		},
+		"week-wide": {
 			"displayName": "שבוע",
 			"relative-type--1": "השבוע שעבר",
 			"relative-type-0": "השבוע",
@@ -2473,7 +2581,43 @@
 				"relativeTimePattern-count-other": "לפני {0} שבועות"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "שב׳",
+			"relative-type--1": "השבוע שעבר",
+			"relative-type-0": "השבוע",
+			"relative-type-1": "השבוע הבא",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד שב׳",
+				"relativeTimePattern-count-two": "בעוד שבועיים",
+				"relativeTimePattern-count-many": "בעוד {0} שב׳",
+				"relativeTimePattern-count-other": "בעוד {0} שב׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני שב׳",
+				"relativeTimePattern-count-two": "לפני שבועיים",
+				"relativeTimePattern-count-many": "לפני {0} שב׳",
+				"relativeTimePattern-count-other": "לפני {0} שב׳"
+			}
+		},
+		"week-narrow": {
+			"displayName": "שב׳",
+			"relative-type--1": "השבוע שעבר",
+			"relative-type-0": "השבוע",
+			"relative-type-1": "השבוע הבא",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד שב׳",
+				"relativeTimePattern-count-two": "בעוד שבועיים",
+				"relativeTimePattern-count-many": "בעוד {0} שב׳",
+				"relativeTimePattern-count-other": "בעוד {0} שב׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני שבוע",
+				"relativeTimePattern-count-two": "לפני שבועיים",
+				"relativeTimePattern-count-many": "לפני {0} שב׳",
+				"relativeTimePattern-count-other": "לפני {0} שב׳"
+			}
+		},
+		"day-wide": {
 			"displayName": "יום",
 			"relative-type--2": "שלשום",
 			"relative-type--1": "אתמול",
@@ -2493,10 +2637,50 @@
 				"relativeTimePattern-count-other": "לפני {0} ימים"
 			}
 		},
+		"day-short": {
+			"displayName": "יום",
+			"relative-type--2": "שלשום",
+			"relative-type--1": "אתמול",
+			"relative-type-0": "היום",
+			"relative-type-1": "מחר",
+			"relative-type-2": "מחרתיים",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "מחר",
+				"relativeTimePattern-count-two": "בעוד יומיים",
+				"relativeTimePattern-count-many": "בעוד {0} יום",
+				"relativeTimePattern-count-other": "בעוד {0} ימ׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "אתמול",
+				"relativeTimePattern-count-two": "לפני יומיים",
+				"relativeTimePattern-count-many": "לפני {0} יום",
+				"relativeTimePattern-count-other": "לפני {0} ימ׳"
+			}
+		},
+		"day-narrow": {
+			"displayName": "יום",
+			"relative-type--2": "שלשום",
+			"relative-type--1": "אתמול",
+			"relative-type-0": "היום",
+			"relative-type-1": "מחר",
+			"relative-type-2": "מחרתיים",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "מחר",
+				"relativeTimePattern-count-two": "בעוד יומיים",
+				"relativeTimePattern-count-many": "בעוד {0} יום",
+				"relativeTimePattern-count-other": "בעוד {0} ימ׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "אתמול",
+				"relativeTimePattern-count-two": "לפני יומיים",
+				"relativeTimePattern-count-many": "לפני {0} יום",
+				"relativeTimePattern-count-other": "לפני {0} ימ׳"
+			}
+		},
 		"weekday": {
 			"displayName": "יום בשבוע"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "שעה",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "בעוד שעה",
@@ -2511,7 +2695,37 @@
 				"relativeTimePattern-count-other": "לפני {0} שעות"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "שעה",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד שעה",
+				"relativeTimePattern-count-two": "בעוד שעתיים",
+				"relativeTimePattern-count-many": "בעוד {0} שע׳",
+				"relativeTimePattern-count-other": "בעוד {0} שע׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני שעה",
+				"relativeTimePattern-count-two": "לפני שעתיים",
+				"relativeTimePattern-count-many": "לפני {0} שע׳",
+				"relativeTimePattern-count-other": "לפני {0} שע׳"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "שע׳",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד שעה",
+				"relativeTimePattern-count-two": "בעוד שעתיים",
+				"relativeTimePattern-count-many": "בעוד {0} שע׳",
+				"relativeTimePattern-count-other": "בעוד {0} שע׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני שעה",
+				"relativeTimePattern-count-two": "לפני שעתיים",
+				"relativeTimePattern-count-many": "לפני {0} שע׳",
+				"relativeTimePattern-count-other": "לפני {0} שע׳"
+			}
+		},
+		"minute-wide": {
 			"displayName": "דקה",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "בעוד דקה",
@@ -2526,7 +2740,37 @@
 				"relativeTimePattern-count-other": "לפני {0} דקות"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "דק׳",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד דקה",
+				"relativeTimePattern-count-two": "בעוד שתי דק׳",
+				"relativeTimePattern-count-many": "בעוד {0} דק׳",
+				"relativeTimePattern-count-other": "בעוד {0} דק׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני דקה",
+				"relativeTimePattern-count-two": "לפני {0} דק׳",
+				"relativeTimePattern-count-many": "לפני {0} דק׳",
+				"relativeTimePattern-count-other": "לפני {0} דק׳"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "דק׳",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד דקה",
+				"relativeTimePattern-count-two": "בעוד שתי דק׳",
+				"relativeTimePattern-count-many": "בעוד {0} דק׳",
+				"relativeTimePattern-count-other": "בעוד {0} דק׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני דקה",
+				"relativeTimePattern-count-two": "לפני שתי דק׳",
+				"relativeTimePattern-count-many": "לפני {0} דק׳",
+				"relativeTimePattern-count-other": "לפני {0} דק׳"
+			}
+		},
+		"second-wide": {
 			"displayName": "שנייה",
 			"relative-type-0": "עכשיו",
 			"relativeTime-type-future": {
@@ -2540,6 +2784,38 @@
 				"relativeTimePattern-count-two": "לפני שתי שניות",
 				"relativeTimePattern-count-many": "לפני {0} שניות",
 				"relativeTimePattern-count-other": "לפני {0} שניות"
+			}
+		},
+		"second-short": {
+			"displayName": "שנ׳",
+			"relative-type-0": "עכשיו",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד שנ׳",
+				"relativeTimePattern-count-two": "בעוד שתי שנ׳",
+				"relativeTimePattern-count-many": "בעוד {0} שנ׳",
+				"relativeTimePattern-count-other": "בעוד {0} שנ׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני שנ׳",
+				"relativeTimePattern-count-two": "לפני שתי שנ׳",
+				"relativeTimePattern-count-many": "לפני {0} שנ׳",
+				"relativeTimePattern-count-other": "לפני {0} שנ׳"
+			}
+		},
+		"second-narrow": {
+			"displayName": "שנ׳",
+			"relative-type-0": "עכשיו",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "בעוד שנ׳",
+				"relativeTimePattern-count-two": "בעוד שתי שנ׳",
+				"relativeTimePattern-count-many": "בעוד {0} שנ׳",
+				"relativeTimePattern-count-other": "בעוד {0} שנ׳"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "לפני שנ׳",
+				"relativeTimePattern-count-two": "לפני שתי שנ׳",
+				"relativeTimePattern-count-many": "לפני {0} שנ׳",
+				"relativeTimePattern-count-other": "לפני {0} שנ׳"
 			}
 		},
 		"zone": {

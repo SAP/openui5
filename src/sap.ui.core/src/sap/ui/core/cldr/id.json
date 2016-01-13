@@ -2413,7 +2413,7 @@
 		"era": {
 			"displayName": "Era"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "Tahun",
 			"relative-type--1": "tahun lalu",
 			"relative-type-0": "tahun ini",
@@ -2425,7 +2425,31 @@
 				"relativeTimePattern-count-other": "{0} tahun yang lalu"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "thn.",
+			"relative-type--1": "tahun lalu",
+			"relative-type-0": "tahun ini",
+			"relative-type-1": "tahun depan",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "Dalam {0} tahun"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} tahun yang lalu"
+			}
+		},
+		"year-narrow": {
+			"displayName": "thn.",
+			"relative-type--1": "tahun lalu",
+			"relative-type-0": "tahun ini",
+			"relative-type-1": "tahun depan",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "Dalam {0} tahun"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} tahun yang lalu"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "Triwulan",
 			"relative-type--1": "last quarter",
 			"relative-type-0": "this quarter",
@@ -2437,7 +2461,31 @@
 				"relativeTimePattern-count-other": "{0} triwulan yang lalu"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "triwln.",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "dalam {0} triwulan"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} triwulan yang lalu"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "triwln.",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "+{0} triwln."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "-{0} triwln."
+			}
+		},
+		"month-wide": {
 			"displayName": "Bulan",
 			"relative-type--1": "bulan lalu",
 			"relative-type-0": "bulan ini",
@@ -2449,7 +2497,31 @@
 				"relativeTimePattern-count-other": "{0} bulan yang lalu"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "bln.",
+			"relative-type--1": "bulan lalu",
+			"relative-type-0": "bulan ini",
+			"relative-type-1": "Bulan berikutnya",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "Dalam {0} bulan"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} bulan yang lalu"
+			}
+		},
+		"month-narrow": {
+			"displayName": "bln.",
+			"relative-type--1": "bulan lalu",
+			"relative-type-0": "bulan ini",
+			"relative-type-1": "Bulan berikutnya",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "+{0} bln."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "-{0} bln."
+			}
+		},
+		"week-wide": {
 			"displayName": "Minggu",
 			"relative-type--1": "minggu lalu",
 			"relative-type-0": "minggu ini",
@@ -2461,8 +2533,60 @@
 				"relativeTimePattern-count-other": "{0} minggu yang lalu"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "mgg.",
+			"relative-type--1": "minggu lalu",
+			"relative-type-0": "minggu ini",
+			"relative-type-1": "minggu depan",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "Dalam {0} minggu"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} minggu yang lalu"
+			}
+		},
+		"week-narrow": {
+			"displayName": "mgg.",
+			"relative-type--1": "minggu lalu",
+			"relative-type-0": "minggu ini",
+			"relative-type-1": "minggu depan",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "+{0} mgg."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "-{0} mgg."
+			}
+		},
+		"day-wide": {
 			"displayName": "Hari",
+			"relative-type--2": "kemarin lusa",
+			"relative-type--1": "kemarin",
+			"relative-type-0": "hari ini",
+			"relative-type-1": "besok",
+			"relative-type-2": "lusa",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "Dalam {0} hari"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} hari yang lalu"
+			}
+		},
+		"day-short": {
+			"displayName": "h",
+			"relative-type--2": "kemarin lusa",
+			"relative-type--1": "kemarin",
+			"relative-type-0": "hari ini",
+			"relative-type-1": "besok",
+			"relative-type-2": "lusa",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "Dalam {0} hari"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} hari yang lalu"
+			}
+		},
+		"day-narrow": {
+			"displayName": "h",
 			"relative-type--2": "kemarin lusa",
 			"relative-type--1": "kemarin",
 			"relative-type-0": "hari ini",
@@ -2478,7 +2602,7 @@
 		"weekday": {
 			"displayName": "Hari dalam Seminggu"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "Jam",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "Dalam {0} jam"
@@ -2487,7 +2611,25 @@
 				"relativeTimePattern-count-other": "{0} jam yang lalu"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "jam",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "dlm {0} jam"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} jam yg lalu"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "j",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "+{0} jam"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "-{0} jam"
+			}
+		},
+		"minute-wide": {
 			"displayName": "Menit",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "Dalam {0} menit"
@@ -2496,7 +2638,25 @@
 				"relativeTimePattern-count-other": "{0} menit yang lalu"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "mnt.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "dlm {0} mnt"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} mnt yg lalu"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "m",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "+{0} mnt"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "-{0} mnt"
+			}
+		},
+		"second-wide": {
 			"displayName": "Detik",
 			"relative-type-0": "sekarang",
 			"relativeTime-type-future": {
@@ -2504,6 +2664,26 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} detik yang lalu"
+			}
+		},
+		"second-short": {
+			"displayName": "dtk.",
+			"relative-type-0": "sekarang",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "dlm {0} dtk"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} dtk yg lalu"
+			}
+		},
+		"second-narrow": {
+			"displayName": "d",
+			"relative-type-0": "sekarang",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "+{0} dtk"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "-{0} d yg lalu"
 			}
 		},
 		"zone": {
