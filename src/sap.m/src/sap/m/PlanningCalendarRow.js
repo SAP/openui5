@@ -211,6 +211,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		this.setProperty("text", sText, true); // do not invalidate, only real rendered control must be invalidated
 		this._oColumnListItem.getCells()[0].setDescription(sText);
 
+		if (sText) {
+			this._oColumnListItem.getCells()[1].addStyleClass("sapMPlanCalRowLarge");
+		} else {
+			this._oColumnListItem.getCells()[1].removeStyleClass("sapMPlanCalRowLarge");
+		}
+
 		return this;
 
 	};
