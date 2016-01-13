@@ -475,6 +475,49 @@
 
 	});
 
+	test("Button visible attribute", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons: [
+				new sap.m.Button({
+					text: "Button 1"
+				}),
+				new sap.m.Button({
+					text: "Button 2"
+				}),
+				new sap.m.Button({
+					text: "Button 3"
+				}),
+				new sap.m.Button({
+					text: "Invisible Button",
+					visible: false
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
+
+		//Act
+		oSegmentedButton.getButtons()[3].setVisible(true);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 0, "Control should have 0 button invisible");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
 	if (sap.ui.Device.browser.name == "ie" && (sap.ui.Device.browser.versionStr == "9" || sap.ui.Device.browser.versionStr == "10")) {
 		// TODO: fix this - do not run this tests on IE9 & IE10 because of width reading problem
 	} else {
@@ -569,6 +612,129 @@
 		strictEqual($button2.attr("title"), undefined, "There should be no title for the second button");
 
 		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("Items aggregation visible property", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 2"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 3"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Invisible Button",
+					visible: false
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oSegmentedButton.getItems().length, 4, "Control should have 4 items");
+		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
+
+		//Act
+		oSegmentedButton.getItems()[3].setVisible(true);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 0, "Control should have 0 button invisible");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("selectedKey is set correctly for invisible items and removes the selection from other items", function() {
+
+		//Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					key: "k1",
+					text: "item 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "k2",
+					text: "item 2",
+					visible: false
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "k3",
+					text: "item 3"
+				})
+			],
+			selectedKey: "k1"
+		});
+
+		//System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 1, "1 selected button is rendered");
+
+		//Act
+		oSegmentedButton.setSelectedKey("k2");
+
+		//Assert
+		strictEqual(oSegmentedButton.getSelectedButton(), oSegmentedButton.getButtons()[1].getId(), "The invisible button is selected");
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 0, "No selected buttons are rendered");
+
+		//Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("Invisible button is not included in the width calculations", function() {
+
+		//Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					key: "k1",
+					text: "item 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "k2",
+					text: "item 2",
+					visible: false
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "k3",
+					text: "item 3"
+				})
+			]
+		});
+
+		var oSetGhostButtonSpy = sinon.spy(oSegmentedButton, "_setGhostButtonText"); //really should rename this method
+
+		//System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oSegmentedButton._aButtonWidth.length, 2, "Only visible buttons are considered when calculating widths");
+		ok(oSetGhostButtonSpy.calledWith(oSegmentedButton.getButtons()[0]), "Widths helper setter is called for one of the visible buttons");
+		ok(oSetGhostButtonSpy.calledWith(oSegmentedButton.getButtons()[2]), "Widths helper setter is called for the other visible button");
+		ok(!oSetGhostButtonSpy.calledWith(oSegmentedButton.getButtons()[1]), "Widths helper setter is not called for the invisible button");
+
+		//Cleanup
 		oSegmentedButton.destroy();
 
 	});
@@ -2021,6 +2187,49 @@
 				0,
 				"The select is not in the DOM");
 
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	test("_toSelectMode transfers only visible buttons into select items", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons: [
+				new sap.m.Button({
+					text: "Button 1"
+				}),
+				new sap.m.Button({
+					text: "Button 2",
+					visible: false
+				}),
+				new sap.m.Button({
+					text: "Button 3"
+				}),
+				new sap.m.Button({
+					text: "Invisible Button",
+					visible: false
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oSegmentedButton._toSelectMode();
+
+		// Assert
+		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should still have 4 buttons");
+		strictEqual(oSegmentedButton.getAggregation("_select").getItems().length, 2, "Select should have 2 items");
+
+		//Act
+		oSegmentedButton.getButtons()[1].setVisible(true);
+
+		// Assert
+		strictEqual(oSegmentedButton.getAggregation("_select").getItems().length, 3, "Select should have 3 items");
 
 		// Cleanup
 		oSegmentedButton.destroy();
