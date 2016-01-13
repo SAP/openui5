@@ -37,15 +37,15 @@
 	box-sizing: border-box;
 }
 
-.sapUiRGLContainerCont{
-	padding-bottom: 2rem;
-}
-
 .sapUiRGLContainerColl > .sapUiRGLContainerCont{
 	display: none;
 }
 
 /* add paddings to content */
+.sapUiFormResGridCont{
+	padding-bottom: 2rem;
+}
+
 .sapUiFormResGridCont > div{
 	padding: 0 0.25rem 0.5rem 0.25rem;
 	box-sizing: border-box;
@@ -67,7 +67,7 @@
 /* ================= */
 /*   SMALL DEVICES   */
 /* ================= */
-.sap-phone .sapUiRGLContainerCont{
+.sap-phone .sapUiFormResGridCont{
 	/* on real phones use smaller space between containers */
 	padding-bottom: 1rem;
 }
@@ -158,10 +158,10 @@ html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapU
 }
 
 /* on last row no padding-bottom on container content */
-.sapUiRespGridMedia-Std-Phone > .sapUiFormResGridLastRowM:last-child > .sapUiRGLContainer > .sapUiRGLContainerCont,
-.sapUiRespGridMedia-Std-Tablet > .sapUiFormResGridLastRowM > .sapUiRGLContainer > .sapUiRGLContainerCont,
-.sapUiRespGridMedia-Std-Desktop > .sapUiFormResGridLastRowL > .sapUiRGLContainer > .sapUiRGLContainerCont,
-.sapUiRespGridMedia-Std-LargeDesktop > .sapUiFormResGridLastRowXL > .sapUiRGLContainer > .sapUiRGLContainerCont{
+.sapUiRespGridMedia-Std-Phone > .sapUiFormResGridLastRowM:last-child .sapUiFormResGridCont,
+.sapUiRespGridMedia-Std-Tablet > .sapUiFormResGridLastRowM .sapUiFormResGridCont,
+.sapUiRespGridMedia-Std-Desktop > .sapUiFormResGridLastRowL .sapUiFormResGridCont,
+.sapUiRespGridMedia-Std-LargeDesktop > .sapUiFormResGridLastRowXL .sapUiFormResGridCont{
 	padding-bottom: 0;
 }
 
