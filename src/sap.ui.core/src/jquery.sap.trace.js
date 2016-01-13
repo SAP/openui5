@@ -134,7 +134,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 						this.pendingInteraction.sapStatistics.push({
 							// add response url for mapping purposes
 							url: this.responseURL,
-							statistics: sSapStatistics
+							statistics: sSapStatistics,
+							timing: jQuery.sap.measure.getRequestTimings().pop()
 						});
 					}
 					delete this.requestHeaderLength;
