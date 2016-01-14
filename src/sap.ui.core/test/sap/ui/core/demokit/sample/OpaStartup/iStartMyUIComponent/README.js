@@ -1,15 +1,31 @@
-jQuery(function() {
-	"use strict"
+sap.ui.require(
+	[
+		"sap/m/Panel",
+		"sap/m/Text"
+	], function(Panel, Text) {
+	"use strict";
 
-	jQuery.sap.require("sap/m/Panel");
-	jQuery.sap.require("sap/m/Text");
+	jQuery("#readme").css({
+		top: "350px",
+		position: "fixed",
+		left: 0,
+		width: "20%"
+	});
 
-	var oPanel = new sap.m.Panel({
+	QUnit.done(function () {
+		jQuery("#readme").css({
+			width: "100%",
+			top: "190px"
+		});
+	});
+
+	var oText = new Text(),
+		oPanel = new Panel({
 		headerText: "README",
 		expandable: true,
-		expanded: true
+		expanded: true,
+		content: oText
 	});
-	var oText = new sap.m.Text();
 
 	oText.setText("******Definition******\n" +
 		"	The function iStartMyUIComponent allows starting a UIComponent by using a component.js file" +
@@ -26,7 +42,6 @@ jQuery(function() {
 		"- No isolated execution environment\n" +
 		"	");
 
-	oPanel.addContent(oText);
 	oPanel.placeAt("readme");
 
 });
