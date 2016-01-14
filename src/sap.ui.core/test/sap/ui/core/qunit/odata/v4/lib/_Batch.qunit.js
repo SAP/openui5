@@ -1685,9 +1685,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 							oBatchHeaders = {
 								"Content-Type" : oBatchRequestContent["Content-Type"],
 								"MIME-Version" : oBatchRequestContent["MIME-Version"],
-								"X-CSRF-Token" : sCsrfToken,
-								// FIX4MASTER: remove sap-rfcswitch
-								"sap-rfcswitch" : "X"
+								"X-CSRF-Token" : sCsrfToken
 							};
 
 						if (oFixture.continueOnError) {
@@ -1744,9 +1742,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						headers : {
 							"Content-Type" : oBatchRequestContent["Content-Type"],
 							"MIME-Version" : oBatchRequestContent["MIME-Version"],
-							"X-CSRF-Token" : sCsrfToken,
-							// FIX4MASTER: remove sap-rfcswitch
-							"sap-rfcswitch" : "X"
+							"X-CSRF-Token" : sCsrfToken
 						},
 						data : oBatchRequestContent.body
 					}).then(function (oData, sTextStatus, jqXHR) {

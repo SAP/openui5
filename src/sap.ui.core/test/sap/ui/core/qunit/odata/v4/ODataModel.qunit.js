@@ -345,16 +345,12 @@ sap.ui.require([
 	//TODO make sure Context objects are deleted from this.mContexts
 
 	//*********************************************************************************************
-	[
-		{"response" : {"statusCode" : 404}},
-		{"response" : {"statusCode" : 500}},
-		undefined
-	].forEach(function (oCause) {
-		QUnit.test("remove: map 404 to 200, cause: " + JSON.stringify(oCause), function (assert) {
+	[404, 500].forEach(function (iStatus) {
+		QUnit.test("remove: map 404 to 200, status: " + iStatus, function (assert) {
 			var oError = new Error(""),
 				oModel = createModel();
 
-			oError.cause = oCause; //FIX4MASTER: _Requestor.request() does not deliver this!
+			oError.status = iStatus;
 			this.oSandbox.stub(oModel, "read")
 				.returns(Promise.resolve({value : 'W/""'}));
 			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl")
@@ -365,11 +361,10 @@ sap.ui.require([
 			return oModel.remove(oModel.getContext("/EMPLOYEES[0];root=0"))
 				.then(function (oResult) {
 					assert.strictEqual(oResult, undefined);
-					assert.ok(oCause && oCause.response.statusCode === 404, "unexpected success");
+					assert.ok(iStatus === 404, "unexpected success");
 				}, function (oError0) {
 					assert.strictEqual(oError0, oError);
-					assert.ok(!oCause || oCause.response.statusCode !== 404,
-						JSON.stringify(oError0));
+					assert.ok(iStatus !== 404, JSON.stringify(oError0));
 				});
 		});
 	});

@@ -352,7 +352,7 @@ sap.ui.define([
 
 			return that.oRequestor.request("DELETE", sCanonicalUrl, {"If-Match" : sEtag})
 				["catch"](function (oError) {
-					if (oError.cause && oError.cause.response.statusCode === 404) {
+					if (oError.status === 404) {
 						return; // map 404 to 200
 					}
 					throw oError;

@@ -32,7 +32,6 @@ sap.ui.define([
 		buildQueryOptions : function (mModelOptions, mOptions, aAllowed) {
 			var mResult = JSON.parse(JSON.stringify(mModelOptions || {}));
 
-			//FIX4MASTER throw error if $expand contains unsupported query options
 			Object.keys(mOptions || {}).forEach(function (sKey) {
 				if (sKey.charAt(0) === "@"
 					|| sKey.charAt(0) === "$" && (aAllowed || []).indexOf(sKey) === -1) {
