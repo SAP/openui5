@@ -72,8 +72,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 			oRm.write('<p');
 			oRm.writeAttribute('class', 'sapMSelectListItemText');
 			oRm.write('>');
-			oRm.writeEscaped(oItem.getText().slice(0, TabStripItem.DISPLAY_TEXT_MAX_LENGHT));
-			if (oItem.getText().length > TabStripItem.DISPLAY_TEXT_MAX_LENGHT) {
+
+			// always show the full text on phone
+			oRm.writeEscaped(oItem.getText().slice(0, (sap.ui.Device.system.phone ? oItem.getText().length : TabStripItem.DISPLAY_TEXT_MAX_LENGHT)));
+
+			// add three dots "..." at the end if not the whole text is shown
+			if (!sap.ui.Device.system.phone && oItem.getText().length > TabStripItem.DISPLAY_TEXT_MAX_LENGHT) {
 				oRm.write('...');
 			}
 			oRm.write('</p>');

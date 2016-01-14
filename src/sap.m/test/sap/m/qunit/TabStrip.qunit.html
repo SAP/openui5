@@ -13,7 +13,7 @@
 			data-sap-ui-libs="sap.m">
 	</script>
 
-	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -23,6 +23,7 @@
 
 	<script>
 		sinon.config.useFakeTimers = true;
+
 		var oCore = sap.ui.getCore();
 
 		module("API", {
@@ -40,7 +41,7 @@
 						})
 					]
 				});
-				this.sut.placeAt('content');
+				this.sut.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
 			afterEach: function () {
@@ -56,8 +57,102 @@
 		test("Control defaults", function () {
 			//assert
 			ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
-			strictEqual(this.sut.$("touchArea").children(".sapMTabSelect").length, 0, "Select is not rendered in DOM");
+			strictEqual(this.sut.$("touchArea").children(".sapMTabStripSelect").length, 0,
+					"Select is not rendered in DOM");
 			strictEqual(this.sut.getSelectedItem(), null, "Correct default selectedItem property value");
+
+			this.sut.setHasSelect(true);
+
+			ok(this.sut.getHasSelect(), "Correct default hasSelect property value");
+
+			strictEqual(this.sut.getFocusDomRef(), null, "When no item is selected there is no focused DomRef");
+
+			this.sut.setSelectedItem(this.sut.getItems()[1]);
+
+			strictEqual(this.sut.getSelectedItem(),this.sut.getItems()[1].getId(),
+					"Correctly set selectedItem property value");
+			this.clock.tick(1000);
+
+			strictEqual(this.sut.$("touchArea").children(".sapMTabStripSelect").length, 1,
+					"Toucharea is rendered in DOM");
+
+			strictEqual(this.sut.getFocusDomRef(), this.sut.getItems()[1].getDomRef(),
+					"When there is a selected item the focus is properly set as focused DOM ref");
+
+			strictEqual(this.sut.getAggregation('_select').getSelectedItem().getId(),
+					sap.m.TabStrip.SELECT_ITEMS_ID_PREFIX+this.sut.getSelectedItem(),
+					"The selected item in the select aggregation is the same as the one in the TabStrip area");
+
+			var fnActivateItemSpy = sinon.spy(this.sut, "_activateItem");
+			var fnFireItemPressSpy = sinon.spy(this.sut, "fireItemPress");
+			var fnFireSelectionChangeSpy = sinon.spy(this.sut, "fireSelectionChange");
+			var fnSetSelectedItemSpy = sinon.spy(this.sut, "setSelectedItem");
+
+			var srcControl = this.sut.getItems()[1];
+			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
+			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
+			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
+
+			strictEqual(fnFireItemPressSpy.calledOnce, true, "On tap fires item press event");
+			strictEqual(fnFireSelectionChangeSpy.calledOnce, false,
+					"On tap does not fire selection change when the same selected tab is pressed");
+			strictEqual(fnSetSelectedItemSpy.calledOnce, false, "On tap does not fire selection change when the same selected tab is pressed");
+
+			var srcControl = this.sut.getItems()[2];
+			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
+			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
+			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
+
+			strictEqual(fnFireItemPressSpy.calledOnce, false, "On tap does not fire an item press event");
+			strictEqual(fnFireSelectionChangeSpy.calledOnce, true,
+					"On tap does not fire selection change when the same selected tab is pressed");
+			strictEqual(fnSetSelectedItemSpy.calledOnce, true,
+					"On tap does not fire selection change when the same selected tab is pressed");
+
+			fnActivateItemSpy.restore();
+			fnFireItemPressSpy.restore();
+			fnFireSelectionChangeSpy.restore();
+			fnSetSelectedItemSpy.restore();
+
+			strictEqual(this.sut.getItems().length, 3,
+					"There are 3 items");
+
+			this.sut.removeAggregation('items', this.sut.getItems()[2]);
+			strictEqual(this.sut.getItems().length, 2,
+					"After removing an item there are 2 left");
+
+			var oItem = this.sut.getItems()[0];
+			var oItemButton = oItem.getAggregation("_closeButton");
+			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
+			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
+			//TODO: sapMTabSelectListItemCloseButton should be changed to
+			//sapMTabStripItemCloseButton in order to make sense everywhere
+
+			this.clock.tick(1000);
+			strictEqual(this.sut.getItems().length, 1,
+					"Successfuly deleted element when pressing close button");
+
+			this.sut.removeAllAggregation ('items', false);
+			strictEqual(this.sut.getItems().length, 0,
+					"All tabs are removed after remove all aggregation");
+
+			var item1 = new sap.m.TabStripItem({
+				text: "insert item"
+			});
+			this.sut.insertAggregation('items', item1, 1);
+			strictEqual(this.sut.getItems().length, 1,
+					"Insert aggregation inserts successfuly");
+
+			this.sut.destroyAggregation('items');
+			strictEqual(this.sut.getItems().length, 0,
+					"Destroy aggregation destroys successfuly");
+
+			var item2 = new sap.m.TabStripItem({
+				text: "add item"
+			});
+			this.sut.addAggregation('items', item2, 1);
+			strictEqual(this.sut.getItems().length, 1,
+					"Add aggregation adds successfuly");
 		});
 
 		test("Render all tabs", function () {
@@ -69,32 +164,69 @@
 				text: "Button tab 2"
 			}));
 			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Button tab 3"
+				text: "Button tab 3",
+				modified:true
 			}));
 			oCore.applyChanges();
 			strictEqual(this.sut.$().find(".sapMTSTabs").children().length, 6, "All tabs are rendered");
+
+			var itemToBeRemovedId = this.sut.getItems()[2].getId();
+
+			this.sut.removeItem(this.sut.getItems()[2]);
+			this.clock.tick(1000);
+
+			strictEqual(this.sut.$("tabs").children("#"+itemToBeRemovedId).length, 0,
+					"The ID of the item on position 2 is removed");
+
+			strictEqual(this.sut.getItems()[4].getModified(), true,
+					"Modified state is correct");
+
+			var modifiedItem = 'sapMTabContainerItemModified';
+			strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), false,
+					"The correspondent CSS class for the item change state is available ");
+			strictEqual(jQuery(this.sut.getItems()[4].getFocusDomRef()).hasClass(modifiedItem), true,
+					"The correspondent CSS class for the item change state is available ");
+
+			this.sut.changeItemState(this.sut.getItems()[3].getId(), true);
+			strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), true,
+					"The correspondent CSS class for the item change state is available ");
+		});
+
+		// tests for a bug that resulted in destroying the select aggr if it already existed on setHasSelect(true)
+		test("setHasSelect(true)", function () {
+			this.sut.setHasSelect(true);
+			strictEqual(this.sut.getHasSelect(), true, "Correct hasSelect property value");
+			this.sut.setHasSelect(true);
+			strictEqual(this.sut.getAggregation('_select') instanceof sap.m.TabStripSelect, true, "The select aggregation should not be destroyed when hasSelect is set to 'true'");
 		});
 
 		module("Keyboard Handling", {
 			beforeEach: function () {
+				this.items = [
+					new sap.m.TabStripItem({
+						text: "Tab 1"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 2"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 3"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 4"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 5"
+					})
+				];
 				this.sut = new sap.m.TabStrip({
 					selectedItem: 0,
-					items: [
-						new sap.m.TabStripItem({
-							text: "Tab 1"
-						}),
-						new sap.m.TabStripItem({
-							text: "Tab 2"
-						}),
-						new sap.m.TabStripItem({
-							text: "Tab 3"
-						})
-					],
+					items: this.items,
 					addButton: new sap.m.Button("addButton", {
 						type: sap.m.ButtonType.Transparent
 					})
 				});
-				this.sut.placeAt('content');
+				this.sut.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
 			afterEach: function () {
@@ -104,32 +236,85 @@
 
 		test("Tabs focus handling", function () {
 			var oTabs = this.sut.getItems();
+
 			//arrage
 			oTabs[0].focus();
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[0].getId(), document.activeElement.id, "First tab is focused");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_RIGHT);
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on ARROW_RIGHT");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_DOWN);
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[2].getId(), document.activeElement.id, "Third tab is focused on ARROW_DOWN");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_LEFT);
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[1].getId(), document.activeElement.id, "Second tab is focused on forth ARROW_LEFT");
 			//arrange
 			qutils.triggerKeydown(this.sut.$("tabs"), jQuery.sap.KeyCodes.ARROW_UP);
-			this.clock.tick(1);
+			this.clock.tick(1000);
 			//assert
 			strictEqual(oTabs[0].getId(), document.activeElement.id, "First is focused on fifth ARROW_UP");
 
+		});
+
+		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
+		test("Select first item, focus it and remove it", function () {
+			//arrange
+			var oTabStripItemToRemove = this.items[0];
+			var oTabStripItemToBeSelectedAndFocused = this.items[1];
+			this.sut.setSelectedItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			jQuery(oTabStripItemToRemove).focus();
+			this.sut._removeItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			//assert
+			equal(this.sut.getItems().length, 4, "Length check");
+			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
+			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
+			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
+		});
+
+		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
+		test("Select last item, focus it and remove it", function () {
+			//arrange
+			var oTabStripItemToRemove = this.items[4];
+			var oTabStripItemToBeSelectedAndFocused = this.items[3];
+			this.sut.setSelectedItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			jQuery(oTabStripItemToRemove).focus();
+			this.sut._removeItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			//assert
+			equal(this.sut.getItems().length, 4, "Length check");
+			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
+			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelectedAndFocused.getId(), "Selection is applied to the right item");
+			strictEqual(document.activeElement.id, oTabStripItemToBeSelectedAndFocused.getId(), "Focus is applied to the right item");
+		});
+
+		//ToDo: Might be reconsidered when TabStrip is released for standalone usage
+		test("Select random item, focus another and remove it", function () {
+			//arrange
+			var oTabStripItemToRemove = this.items[3];
+			var oTabStripItemToBeSelected = this.items[0];
+			var oTabStripItemToBeFocused = this.items[4];
+			this.sut.setSelectedItem(oTabStripItemToBeSelected);
+			this.clock.tick(1000);
+			jQuery(oTabStripItemToRemove).focus();
+			this.sut._removeItem(oTabStripItemToRemove);
+			this.clock.tick(1000);
+			//assert
+			equal(this.sut.getItems().length, 4, "Length check");
+			equal(this.sut.getItems().indexOf(oTabStripItemToRemove), -1, "The item should not exist at any index");
+			equal(this.sut.getSelectedItem(), oTabStripItemToBeSelected.getId(), "Selection is applied to the right item");
+			strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
 		module("Scrolling", {
@@ -147,66 +332,87 @@
 						})
 					]
 				});
-				this.sut.placeAt('content');
+				this.sut.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
 			afterEach: function () {
+				this.resetAllTabs();
 				this.sut.destroy();
+				this.sut = null;
+			},
+			addTabs: function (iNumberOfTabs) {
+				for (var iIndex = 1; iIndex <= iNumberOfTabs; iIndex++) {
+					this.sut.addItem(
+							new sap.m.TabStripItem({
+								text: "Tab with long title " + iIndex
+							})
+					);
+				}
+			},
+			resetAllTabs: function () {
+				this.sut.destroyAggregation("items");
 			}
 		});
 
 		test("Is scrolling needed", function () {
 			//assert
-			ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow");
+			ok(!this.sut._checkScrolling(), "Scrolling is not needed when tabs don't overflow (" + this.sut.getItems().length + ") tabs");
+
 			//arrange
-			for (var i = 0, l = 15; i < l; i++ ) {
-				this.sut.addItem(new sap.m.TabStripItem({
-					text: "Tab " + i + " long text to overflow"
-				}));
-			}
+			this.addTabs(15);
 			oCore.applyChanges();
-			ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow");
+			ok(this.sut._checkScrolling(), "Scrolling is needed when tabs overflow (" + this.sut.getItems().length + ") tabs");
 		});
 
 		test("Overflow Buttons", function () {
 			//arrange
-			var iTestCurrentScrollLeft = null;
+			var iTestCurrentScrollLeft = this._iCurrentScrollLeft;
 			var fnUpdateTestScrollValue = function () {
 				iTestCurrentScrollLeft = this.sut._iCurrentScrollLeft;
 			}.bind(this);
-			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Tab 4"
-			}));
-			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Tab 5"
-			}));
-			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Tab 6"
-			}));
-			this.sut.addItem(new sap.m.TabStripItem({
-				text: "Tab 7"
-			}));
+			this.addTabs(15);
 			oCore.applyChanges();
 			fnUpdateTestScrollValue();
 			//assert
 			strictEqual(iTestCurrentScrollLeft, 0, "The initial ScrollLeft value is as expected");
+			strictEqual(this.sut._oLeftArrowButton.$().css("visibility"), "hidden", "Left scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft );
+			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 			//arrange
 			this.sut._oRightArrowButton.firePress({});
-			this.clock.tick(600);
+			this.clock.tick(1000);
+			this.sut._oRightArrowButton.firePress({});
+			this.clock.tick(1000);
+			this.sut._checkOverflow();
 			//assert
 			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on RightScrollButton press");
 			//arrange
 			fnUpdateTestScrollValue();
 			//assert
-			strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
+			strictEqual(iTestCurrentScrollLeft, 640, "ScrollLeft value is as expected");
+			strictEqual(this.sut._oLeftArrowButton.$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "visible", "Right scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 			//arrange
 			this.sut._oLeftArrowButton.firePress({});
-			this.clock.tick(600);
+			this.clock.tick(1000);
+			this.sut._checkOverflow();
 			//assert
 			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on LeftScrollButton press");
 			//arrange
 			fnUpdateTestScrollValue();
-			strictEqual(iTestCurrentScrollLeft, 0, "ScrollLeft value is as expected");
+			strictEqual(iTestCurrentScrollLeft, 320, "ScrollLeft value is as expected");
+			//arrange
+			var iLargeScroll = 100000;
+			this.sut._scroll(iLargeScroll, 500); //make sure that this enforces max right position
+			ok(true, "Performing very large scroll (" + iLargeScroll + "/" + this.sut._iMaxOffsetLeft + ")");
+			this.clock.tick(1000);
+			this.sut._checkOverflow();
+			//assert
+			ok(iTestCurrentScrollLeft != this.sut._iCurrentScrollLeft, "ScrollLeft value was successfully changed on _scroll call");
+			equal(this.sut._iCurrentScrollLeft, this.sut._iMaxOffsetLeft, "Scroll out of range test passed successfully");
+			fnUpdateTestScrollValue();
+			ok(iTestCurrentScrollLeft === this.sut._iCurrentScrollLeft && iTestCurrentScrollLeft === this.sut._iMaxOffsetLeft, "ScrollLeft value is as expected");
+			strictEqual(this.sut._oLeftArrowButton.$().css("visibility"), "visible", "Left scroll button is visible when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
+			strictEqual(this.sut._oRightArrowButton.$().css("visibility"), "hidden", "Right scroll button is hidden when scrollLeft is " + iTestCurrentScrollLeft + "/" + this.sut._iMaxOffsetLeft);
 		});
 
 		module("ARIA", {
@@ -226,7 +432,7 @@
 					selectedItem: _aItems[0],
 					items: _aItems
 				});
-				this.sut.placeAt('content');
+				this.sut.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
 			afterEach: function () {
@@ -241,10 +447,10 @@
 			ok(!!(this.sut.$('tabs').children().eq(0).attr("aria-selected")), "The initial aria-selected attribute value is correct");
 			this.sut.$('tabs').children().each(function () {
 				var $Tab = jQuery(this),
-					bHasRole = $Tab.is("[role]"),
-					sRoleValue = $Tab.attr("role"),
-					bHasAriaSelected = $Tab.is("[aria-selected]"),
-					bIsSelected = $Tab.attr("aria-selected");
+						bHasRole = $Tab.is("[role]"),
+						sRoleValue = $Tab.attr("role"),
+						bHasAriaSelected = $Tab.is("[aria-selected]"),
+						bIsSelected = $Tab.attr("aria-selected");
 
 				ok(bHasRole, this.id + " has role attribute assigned");
 				strictEqual(sRoleValue, "tab", this.id + " has a correct role value");
@@ -281,8 +487,8 @@
 			}
 		});
 
-		test("Is label rendered", function () {
-			preparePhonePlatform.call(this);
+		test("Rendering", function () {
+			var stubs = preparePhonePlatform.call(this);
 			this.oTS = new sap.m.TabStrip({
 				hasSelect: true,
 				items: [
@@ -295,9 +501,17 @@
 			this.oTS.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered for phone platform');
-			strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered for phone platform');
+			strictEqual(this.oTS.$("touchArea").length, 0, "Toucharea is not rendered");
+			strictEqual(this.oTS.$("leftOverflowButtons").length, 0, "Left overflow buttons are not rendered");
+			strictEqual(this.oTS.$("rightflowButtons").length, 0, "Right overflow buttons are not rendered");
+			strictEqual(this.oTS.$("tabContainer").length, 0, "Tab container is not rendered");
+
+			strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered');
+			strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered');
+			jQuery('body').removeClass('sap-phone');
+			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
+
 
 		function preparePhonePlatform() {
 			var oSystem = {
@@ -305,9 +519,11 @@
 				phone : true,
 				tablet : false
 			};
-			this.stub(sap.ui.Device, "system", oSystem);
-			this.stub(jQuery.device, "is", oSystem);
+			var stubs = [];
+			stubs.push(this.stub(sap.ui.Device, "system", oSystem));
+			stubs.push(this.stub(jQuery.device, "is", oSystem));
 			jQuery('body').addClass('sap-phone');
+			return stubs;
 		}
 
 		module("Selection", {
@@ -332,7 +548,7 @@
 		});
 
 		test("Initial selection if no selected item is passed", function () {
-			//arragnge
+			//arrange
 			this.sut = new sap.m.TabStrip({
 				items: this.items
 			});
@@ -348,11 +564,67 @@
 				selectedItem: this.selectedItem,
 				items: this.items
 			});
-			this.sut.placeAt('content');
+			this.sut.placeAt('qunit-fixture');
 			oCore.applyChanges();
 			//assert
 			strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
 			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass("selected"), "The initial selection is applied correctly");
+		});
+
+		module("Tablet platform tests", {
+			beforeEach: function () {
+				this.oOriginalSysInfo = this.getSystemInfo();
+				this.prepareSystem();
+				this.oTS = new sap.m.TabStrip({
+					hasSelect: true,
+					items: [
+						new sap.m.TabStripItem({key: "0", text: "01234567890123456789012345"}),
+						new sap.m.TabStripItem({key: "1", text: "item 1"}),
+						new sap.m.TabStripItem({key: "2", text: "item 2"})
+					]
+				});
+				this.oTS.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.restoreSystemValues();
+				this.oTS.destroy();
+				this.oTS = null;
+			},
+			getSystemInfo: function () {
+				return {
+					desktop: sap.ui.Device.system.desktop,
+					tablet: sap.ui.Device.system.tablet,
+					phone: sap.ui.Device.system.phone
+				}
+			},
+			prepareSystem: function () {
+				sap.ui.Device.system.desktop = false;
+				sap.ui.Device.system.tablet = true;
+				sap.ui.Device.system.phone = false;
+				jQuery("html").removeClass("sap-desktop");
+				jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+				jQuery("html").addClass("sap-tablet");
+				jQuery("html").addClass("sapUiMedia-Std-Tablet");
+			},
+			restoreSystemValues: function () {
+				sap.ui.Device.system.desktop = this.oOriginalSysInfo.desktop;
+				sap.ui.Device.system.tablet = this.oOriginalSysInfo.tablet;
+				sap.ui.Device.system.phone = this.oOriginalSysInfo.phone;
+				jQuery("html").removeClass("sap-tablet");
+				jQuery("html").removeClass("sapUiMedia-Std-Tablet");
+				jQuery("html").addClass("sap-desktop");
+				jQuery("html").addClass("sapUiMedia-Std-Desktop");
+			}
+		});
+
+		test("All close buttons are visible on tablet", function () {
+			//arrange
+			var fnAreAllItemsButtonsVisible = function (oItem) {
+				return oItem.$().find("button").css("visibility") === 'visible';
+			};
+			//assert
+			ok(this.oTS.getItems().every(fnAreAllItemsButtonsVisible), "All buttons on tablet are visible");
 		});
 	</script>
 </head>

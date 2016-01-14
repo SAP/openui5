@@ -15,24 +15,35 @@
 
 .sapMTabStripSelect { /* change this only in contexxt of sap.m.TabStripSelect*/
 	&.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
-		background-color: transparent;
-		&.sapMSltHoverable:hover {
-			background-color: transparent;
-		}
-		.sapMSltInner {
-			.sapMSltIcon {
-				background-color: @sapUiFieldActiveBackground;
+				background-color: transparent;
+			&.sapMSltHoverable:hover {
+				background-color: transparent;
+			}
+			.sapMSltInner {
+				.sapMSltIcon {
+					background-color: @sapUiFieldActiveBackground;
+				}
 			}
 		}
-	}
 
 	&:not(.sapMSltPressed) {
 		&.sapMSltHoverable:hover {
 			.sapMSltInner {
 				.sapMSltIcon {
-					background-color: @sapUiButtonLiteHoverBackground;
+				  background-color: @sapUiButtonLiteHoverBackground;
 				}
 			}
 		}
+	}
+}
+
+
+.sap-phone {
+	.sapMSlt.sapMTabStripSelect {
+		background: @sapUiLightestBG;
+	}
+
+	.sapMTabStripSelect.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+		background-color: @sapUiLightestBG;
 	}
 }

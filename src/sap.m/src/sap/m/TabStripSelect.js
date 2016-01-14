@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TabStripSelect.
-sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/m/Select'],
-	function(jQuery, Popover, TabStripSelectList, library, Control, EnabledPropagator, IconPool, Select) {
+sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/m/Select', 'sap/m/TabStripItem'],
+	function(jQuery, Popover, TabStripSelectList, library, Control, EnabledPropagator, IconPool, Select, TabStripItem) {
 		"use strict";
 
 		/**
@@ -168,8 +168,16 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		 * @private
 		 */
 		TabStripSelect.prototype.onAfterRenderingPicker = function() {
+			var iPickerOffsetX,
+				bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
+
 			Select.prototype.onAfterRenderingPicker.call(this);
-			var iPickerOffsetX = this.getPicker().$().width() - this.$().width();
+			if (bPageRTL) {
+				iPickerOffsetX = this.$().width() - this.getPicker().$().width();
+			} else {
+				iPickerOffsetX = this.getPicker().$().width() - this.$().width();
+			}
+
 			this.getPicker().setOffsetX(-iPickerOffsetX);
 			this.getPicker()._calcPlacement(); // needed to apply the new offset after the popup is open
 		};
@@ -257,6 +265,36 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 
 				// note: the "aria-owns" attribute is removed when the list is not visible and in view
 				oDomRef.removeAttribute("aria-owns");
+			}
+		};
+
+		/**
+		 * Override the method in order to turn off default selected item.
+		 *
+		 * @returns {null}
+		 */
+		TabStripSelect.prototype.getDefaultSelectedItem = function(aItems) {
+			// always need to have default item when viewed on phone
+			if (sap.ui.Device.system.phone) {
+				return Select.prototype.getDefaultSelectedItem.apply(this, arguments);
+			}
+			return null;
+		};
+
+		/**
+		 * Overriden in order to also set proper visibility for modified state of the <code>Select</code> field.
+		 *
+		 * @override
+		 * @param {string} sValue
+		 * @private
+		 */
+		TabStripSelect.prototype.setValue = function(sValue) {
+			var $ModifiedDom = this.$().find(".sapMTabSelectListItemModified").eq(0);
+			Select.prototype.setValue.apply(this, arguments);
+			if (this.getSelectedItem().getProperty('modified')) {
+				$ModifiedDom.removeClass(TabStripItem.CSS_CLASS_STATEINVISIBLE);
+			} else {
+				$ModifiedDom.addClass(TabStripItem.CSS_CLASS_STATEINVISIBLE);
 			}
 		};
 

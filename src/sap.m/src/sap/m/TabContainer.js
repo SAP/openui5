@@ -97,6 +97,56 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					 */
 					addNewButtonPress: { }
 				}
+			},
+			constructor : function (vId, mSettings) {
+				var aStashedItems = [];
+
+				// normalize the expected arguments
+				if (!mSettings && typeof vId === 'object') {
+					mSettings = vId;
+				}
+
+				/* Store the items for later and remove them for the initialization of the control to avoid racing
+				 * condition with the initialization of the tab strip. This is only required when the items aggregation
+				 * is initialized directly with an array of TabContainerItem's without data binding and a template. */
+				if (Array.isArray(mSettings['items']) && mSettings['items'].length) {
+					aStashedItems = mSettings['items'];
+					delete mSettings['items'];
+				}
+
+				sap.ui.base.ManagedObject.prototype.constructor.apply(this, arguments);
+				var oControl = new sap.m.TabStrip(this.getId() + "--tabstrip", {
+					hasSelect: true,
+					itemPress: function(oEvent) {
+						var oItem = oEvent.getParameter("item"),
+						    oSelectedItem = this._fromTabStripItem(oItem);
+						this.fireItemSelect({ item: oSelectedItem });
+
+						this.setSelectedItem(oSelectedItem);
+					}.bind(this),
+					itemCloseRequest: function(oEvent) {
+						var oItem = oEvent.getParameter("item"),
+						    oRemovedItem = this._fromTabStripItem(oItem);
+
+						// prevent the tabstrip from closing the item by default
+						oEvent.preventDefault();
+						if (this.fireItemClose({item: oRemovedItem})) {
+							this.removeItem(oRemovedItem); // the tabstrip item will also get removed
+						}
+
+					}.bind(this)
+				});
+
+				this.setAggregation("_tabStrip", oControl, true);
+
+				if (mSettings && mSettings['showAddNewButton']) {
+					this.setShowAddNewButton(true);
+				}
+
+				// re-introduce any existing items from the constructor settings
+				aStashedItems.forEach(function (oItem) {
+					this.addItem(oItem);
+				}, this);
 			}
 		});
 
@@ -120,40 +170,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return oControl;
 		};
 
+
+
 		/**
-		 * Lazy initializes the tab strip aggregation.
+		 * Get a reference to the instance of the tab strip aggregation
 		 */
 		TabContainer.prototype._getTabStrip = function () {
-			var oControl = this.getAggregation("_tabStrip");
-
-			if (!oControl) {
-				oControl = new sap.m.TabStrip(this.getId() + "--tabstrip", {
-					hasSelect: true,
-					itemPress: function(oEvent) {
-						var oItem = oEvent.getParameter("item"),
-						    oSelectedItem = this._fromTabStripItem(oItem);
-
-						this.fireItemSelect({ item: oSelectedItem });
-
-						this.setSelectedItem(oSelectedItem);
-					}.bind(this),
-					itemCloseRequest: function(oEvent) {
-						var oItem = oEvent.getParameter("item"),
-						    oRemovedItem = this._fromTabStripItem(oItem);
-
-						// prevent the tabstrip from closing the item by default
-						oEvent.preventDefault();
-						if (this.fireItemClose({item: oRemovedItem})) {
-							this.removeItem(oRemovedItem); // the tabstrip item will also get removed
-						}
-
-					}.bind(this)
-				});
-
-				this.setAggregation("_tabStrip", oControl, true);
-			}
-
-			return oControl;
+			return this.getAggregation("_tabStrip");
 		};
 
 		TabContainer.prototype._fromTabStripItem = function(oItem) {
@@ -177,10 +200,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @protected
 		 */
 		TabContainer.prototype._toTabStripItem = function(vItem) {
-			var oTabStripItems = this._getTabStrip().getItems(),
-			    oTabStripItemsCount = oTabStripItems.length,
-			    sKey = vItem,
-			    i = 0;
+			var i = 0,
+				sKey = vItem,
+				oTabStripItems,
+				oTabStripItemsCount,
+				oTabStrip = this._getTabStrip();
+
+			if (!oTabStrip) {
+				// resolves error /getItems() of null/ in case only the _tabStrip aggregation was for some reason removed/destroyed from the container
+				return null;
+			}
+			oTabStripItems = oTabStrip.getItems();
+		    oTabStripItemsCount = oTabStripItems.length;
 
 			if (typeof vItem === "object") {
 				sKey = vItem.getId();
@@ -196,13 +227,43 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		};
 
 		TabContainer.prototype._getSelectedItemContent = function() {
-			var sSelectedItem = this.getSelectedItem(),
-			    oSelectedItem = sap.ui.getCore().byId(sSelectedItem),
-			    oTabStripItem = this._toTabStripItem(oSelectedItem);
+			var oTabStrip     = this._getTabStrip(),
+				sSelectedItem = this.getSelectedItem(),
+				oSelectedItem = sap.ui.getCore().byId(sSelectedItem),
+				oTabStripItem = this._toTabStripItem(oSelectedItem);
 
-			this._getTabStrip().setSelectedItem(oTabStripItem);
+			// ToDo: Maybe the selected item of the TabStrip should not be handled here?
+			if (oTabStrip) {
+				// resolves error /getItems() of null/ in case only the _tabStrip aggregation was for some reason removed/destroyed from the container
+				oTabStrip.setSelectedItem(oTabStripItem);
+			}
 
 			return oSelectedItem ? oSelectedItem.getContent() : null;
+		};
+
+		/**
+		 * Calculates the next item to be focused & selected and applies the focus & selection when an item is removed
+		 *
+		 * @param bSetAsSelected {boolean} Whether the next item to be selected
+		 * @private
+		 */
+		TabContainer.prototype._moveToNextItem = function (bSetAsSelected) {
+			var iItemsCount = this.getItems().length,
+					iCurrentFocusedIndex = this._getTabStrip()._oItemNavigation.getFocusedIndex(),
+					iNextIndex = iItemsCount === iCurrentFocusedIndex ? --iCurrentFocusedIndex : iCurrentFocusedIndex,
+					oNextItem = this.getItems()[iNextIndex],
+					fnFocusCallback = function () {
+						this._getTabStrip()._oItemNavigation.focusItem(iNextIndex);
+					};
+
+			// Selection (causes invalidation)
+			if (bSetAsSelected) {
+				this.setSelectedItem(oNextItem);
+				// Notify the subscriber
+				this.fireItemSelect({item: oNextItem});
+			}
+			// Focus (force to wait until invalidated)
+			jQuery.sap.delayedCall(0, this, fnFocusCallback);
 		};
 
 		/**
@@ -213,20 +274,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @public
 		 */
 		TabContainer.prototype.removeItem = function(vItem) {
-			var oTabStripItem;
-
-			vItem = this.removeAggregation("items", vItem);
+			var bIsSelected;
 
 			if (!vItem) {
 				return null;
 			}
 
-			if (vItem.getId() === this.getSelectedItem()) {
-				//ToDo (by Niki): Apply the removal logic here
-			}
+			// The selection flag of the removed item
+			bIsSelected = vItem.getId() === this.getSelectedItem();
+			//Remove the corresponding TabContainerItem
+			vItem = this.removeAggregation("items", vItem);
+			this._getTabStrip().removeItem(this._toTabStripItem(vItem));
+			// Perform selection switch
+			this._moveToNextItem(bIsSelected);
 
-			oTabStripItem = this._toTabStripItem(vItem);
-			this._getTabStrip().removeItem(oTabStripItem);
 
 			return vItem;
 		};
@@ -308,15 +369,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		};
 
 		TabContainer.prototype.setShowAddNewButton = function (bShowButton) {
-			var oTabStrip = this._getTabStrip(),
-			    oButton = bShowButton ? this._getAddNewTabButton() : null;
-
-			oTabStrip.setAddButton(oButton);
-
-			this.setAggregation("_tabStrip", oTabStrip, true);
+			var oTabStrip = this._getTabStrip();
+			if (oTabStrip) {
+				oTabStrip.setAddButton(bShowButton ? this._getAddNewTabButton() : null);
+			}
 		};
-
-
 
 		return TabContainer;
 

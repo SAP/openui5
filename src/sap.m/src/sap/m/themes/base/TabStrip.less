@@ -4,10 +4,18 @@
 .sapMTabStrip {
 	position: relative;
 	height: 3rem;
+	&.sapMTSScrollForward .sapMTSRightOverflowButtons,
+	&.sapMTSScrollBack .sapMTSLeftOverflowButtons {
+		visibility: visible;
+	}
+	&:not(.sapMTSScrollForward):not(.sapMTSScrollBack) .sapMTabSelect {
+		display: none;
+	}
 	.sapMTSLeftOverflowButtons {
 		position: absolute;
 		left: .5rem;
 		height: 100%;
+		visibility: hidden;
 		width: 3rem;
 		z-index: 20;
 		.sapMBtn {
@@ -18,7 +26,7 @@
 			.sapMBtnContent {
 				line-height: 100%;
 			}
-			.sapMBtnInner  {
+			.sapMBtnInner {
 				height: 1.625rem;
 				min-width: 1.625rem;
 				width: 1.625rem;
@@ -52,11 +60,6 @@
 				padding: 0 .75rem;
 				float: left;
 				cursor: pointer;
-				-webkit-transition: padding 0.2s;
-				-moz-transition: padding 0.2s;
-				-ms-transition: padding 0.2s;
-				-o-transition: padding 0.2s;
-				transition: padding 0.2s;
 				-webkit-user-select: none;
 				-moz-user-select: none;
 				-ms-user-select: none;
@@ -119,6 +122,7 @@
 		position: absolute;
 		right: 4.5rem;
 		height: 100%;
+		visibility: hidden;
 		width: 3rem;
 		z-index: 20;
 		.sapMBtn {
@@ -129,7 +133,7 @@
 			.sapMBtnContent {
 				line-height: 100%;
 			}
-			.sapMBtnInner  {
+			.sapMBtnInner {
 				height: 1.625rem;
 				min-width: 1.625rem;
 				width: 1.625rem;
@@ -157,7 +161,7 @@
 			.sapMBtnContent {
 				line-height: 100%;
 			}
-			.sapMBtnInner  {
+			.sapMBtnInner {
 				height: 1.625rem;
 				min-width: 1.625rem;
 				width: 1.625rem;
@@ -172,10 +176,16 @@
 				}
 			}
 		}
-
 	}
 }
 
+html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabContainer .sapMTSTabs .sapMTabContainerItem {
+	-webkit-transition: padding 0.2s;
+	-moz-transition: padding 0.2s;
+	-ms-transition: padding 0.2s;
+	-o-transition: padding 0.2s;
+	transition: padding 0.2s;
+}
 
 /* ============================================= */
 /* Form factor compact                           */
@@ -193,7 +203,7 @@
 				.sapMBtnContent {
 					line-height: 100%;
 				}
-				.sapMBtnInner  {
+				.sapMBtnInner {
 					height: 1.25rem;
 					min-width: 1.25rem;
 					width: 1.25rem;
@@ -327,7 +337,7 @@
 		.sapMTSLeftOverflowButtons {
 			display: none;
 			.sapMBtn {
-				.sapMBtnInner  {
+				.sapMBtnInner {
 					.sapUiIcon {
 					}
 				}
@@ -335,28 +345,24 @@
 		}
 		.sapMTSTabContainer {
 			display: none;
-			.sapMTSTabs {
-				.sapMTabContainerItem {
-					.sapMTabContainerItemModified {
-					}
-					.sapMTabContainerItemModifiedInvisible {
-					}
-				}
-			}
 		}
 		.sapMTSRightOverflowButtons {
 			display: none;
-			.sapMBtn {
-				.sapMBtnInner  {
-					.sapUiIcon {
-					}
-				}
-			}
 		}
-		.sapMTSTouchArea {
-			.sapMBtn {
-				.sapMBtnInner {
-					.sapMBtnIcon {
+	}
+}
+
+/* ============================================= */
+/* Tablet styles                                  */
+/* ============================================= */
+.sap-tablet {
+	.sapMTabStrip {
+		.sapMTSTabContainer {
+			.sapMTSTabs {
+				.sapMTabContainerItem {
+					padding: 0 1.25rem 0 0.25rem;
+					.sapMTSTabCloseBtnCnt {
+						visibility: visible;
 					}
 				}
 			}
