@@ -988,6 +988,32 @@
 				]
 			});
 
+			//Added as result of Internal Incident 1570901570
+			var oDialogWithOUTSettedWidthInRTL = new sap.m.Dialog({
+				title: "Title",
+				showHeader: true,
+				type: "Standard",
+				state: "None",
+				stretchOnPhone: false,
+				stretch: false,
+				contentWidth: "",
+				contentHeight: "",
+				horizontalScrolling: false,
+				verticalScrolling: true,
+				resizable: false,
+				draggable: false,
+				content: [
+					new sap.m.Button({
+					text: "Loooooooooooooooooooooooooooooooooooong button text - 600px width",
+					width: "600px"
+				})],
+				endButton: new sap.m.Button({
+					text: "Cancel", press: function () {
+						oDialogWithOUTSettedWidthInRTL.close();
+					}
+				})
+			});
+
 			var dialogWithManyButtons = new sap.m.Dialog('dialogWithManyButtons', {
 				title: 'DialogWithManyButtons',
 				content: [
@@ -1373,6 +1399,14 @@
 						width: _buttonWidth,
 						press: function () {
 							dialogWithOneHundredPercentHeightContent.open();
+						}
+					}),
+
+					new sap.m.Button({
+						text: "Big width of the content in RTL",
+						width: _buttonWidth,
+						press: function () {
+							oDialogWithOUTSettedWidthInRTL.open();
 						}
 					})
 				]
