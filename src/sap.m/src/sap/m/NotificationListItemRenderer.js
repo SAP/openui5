@@ -12,6 +12,7 @@ sap.ui.define([], function () {
 	var NotificationListItemRenderer = {};
 
 	var classNameItem = 'sapMNLI';
+	var classNameTextWrapper = 'sapMNLI-TextWrapper';
 	var classNameListBaseItem = 'sapMLIB';
 	var classNameAuthor = 'sapMNLI-AuthorPicture';
 	var classNamePriority = 'sapMNLI-Priority';
@@ -22,6 +23,9 @@ sap.ui.define([], function () {
 	var classNameBullet = 'sapMNLI-Bullet';
 	var classNameFooter = 'sapMNLI-Footer';
 	var classNameCloseButton = 'sapMNLI-CloseButton';
+	var classNameCollapseButton = 'sapMNLI-CollapseButton';
+	var classNameInitialOverwriteTitle = 'sapMNLI-TitleWrapper--initial-overwrite';
+	var classNameInitialOverwriteText = 'sapMNLI-TextWrapper--initial-overwrite';
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -126,6 +130,16 @@ sap.ui.define([], function () {
 		}
 	};
 
+	/**
+	 * Renders the close button of the NotificationListItem.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 */
+	NotificationListItemRenderer.renderCollapseButton = function (oRm, oControl) {
+		oRm.renderControl(oControl._collapseButton.addStyleClass(classNameCollapseButton));
+	};
+
 	//================================================================================
 	// Header rendering methods
 	//================================================================================
@@ -137,7 +151,16 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListItemRenderer.renderHeader = function (oRm, oControl) {
-		oRm.write('<div class=' + classNameHeader + '>');
+		oRm.write('<div');
+		oRm.addClass(classNameHeader);
+		oRm.addClass(classNameInitialOverwriteTitle);
+
+		if (!oControl.getTruncate()) {
+			//oRm.addClass(classNameTitleExpanded);
+		}
+
+		oRm.writeClasses();
+		oRm.write('>');
 		this.renderTitle(oRm, oControl);
 		oRm.write('</div>');
 	};
@@ -182,7 +205,19 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListItemRenderer.renderDescription = function (oRm, oControl) {
+		oRm.write('<div');
+		oRm.addClass(classNameTextWrapper);
+		oRm.addClass(classNameInitialOverwriteText);
+
+		if (!oControl.getTruncate()) {
+			//oRm.addClass(classNameTextExpanded);
+		}
+
+		oRm.writeClasses();
+		oRm.write('>');
+
 		oRm.renderControl(oControl._getDescriptionText());
+		oRm.write('</div>');
 	};
 
 	/**
@@ -245,11 +280,13 @@ sap.ui.define([], function () {
 	NotificationListItemRenderer.renderFooter = function (oRm, oControl) {
 		var aButtons = oControl.getButtons();
 
+		oRm.write('<div class=' + classNameFooter + '>');
+		this.renderCollapseButton(oRm, oControl);
+
 		if (aButtons && aButtons.length && oControl.getShowButtons()) {
-			oRm.write('<div class=' + classNameFooter + '>');
 			oRm.renderControl(oControl.getAggregation('_overflowToolbar'));
-			oRm.write('</div>');
 		}
+		oRm.write('</div>');
 	};
 
 	return NotificationListItemRenderer;

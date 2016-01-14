@@ -9,8 +9,8 @@
 		<l:content>
 			<List>
 				<NotificationListItem
-						title="New order (#2525)"
-						description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc. "
+						title="New order (#2525) With a very long title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc."
+						description="And with a very long description and long labels of the action buttons - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc."
 						showCloseButton="true"
 						datetime="1 hour"
 						unread="true"
@@ -26,8 +26,8 @@
 					</NotificationListItem>
 
 				<NotificationListItem
-						title="New order (#2524)"
-						description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
+						title="New order (#2524), without action buttons"
+						description="Short description"
 						showCloseButton="true"
 						datetime="3 days"
 						unread="true"
@@ -39,8 +39,8 @@
 				</NotificationListItem>
 
 				<NotificationListItem
-						title="New order (#2523)"
-						description="Aliquam quis varius ligula.."
+						title="New order (#2523) With a long title - Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+						description="And short description"
 						showCloseButton="false"
 						unread="false"
 						datetime="3 days"
@@ -57,7 +57,7 @@
 
 				<NotificationListItem
 						title="New order (#2522)"
-						description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
+						description="With a very long description - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc."
 						showCloseButton="true"
 						datetime="3 days"
 						unread="true"
@@ -70,7 +70,7 @@
 
 				<NotificationListItem
 						title="New order (#2521)"
-						description="Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc."
+						description="With a very long description and no action buttons below - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc."
 						showCloseButton="true"
 						datetime="3 days"
 						unread="true"
@@ -82,8 +82,8 @@
 				</NotificationListItem>
 
 				<NotificationListItem
-						title="New order (#2520)"
-						description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc. "
+						title="New order (#2525) With a very long title and truncation disabled by default! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc."
+						description="And a very long description and long labels of the action buttons - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc."
 						showCloseButton="true"
 						datetime="2 day"
 						unread="false"
@@ -91,7 +91,8 @@
 						close="onItemClose"
 						press="onListItemPress"
 						authorName="Jean Doe"
-						authorPicture="test-resources/sap/m/images/Woman_04.png">
+						authorPicture="test-resources/sap/m/images/Woman_04.png"
+						truncate="false">
 					<buttons>
 						<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
 						<Button text="Reject" type="Reject" press="onRejectPress"></Button>

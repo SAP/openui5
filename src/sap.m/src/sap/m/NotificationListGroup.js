@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		});
 
 		/**
-		 * @type {sap.m.Link}
+		 * @type {sap.m.Button}
 		 * @private
 		 */
 		this._collapseButton = new sap.m.Button({
