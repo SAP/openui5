@@ -596,7 +596,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processActionOrFunction(oElement, oAggregate) {
 		var sKind = oElement.localName,
-			sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name"),
+			sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			aActions = oAggregate.result[sQualifiedName] || [],
 			oAction = {
 				$kind: sKind,
@@ -623,7 +623,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		var sAlias = oElement.getAttribute("Alias");
 
 		if (sAlias) {
-			oAggregate.aliases[sAlias] = oElement.getAttribute("Namespace");
+			oAggregate.aliases[sAlias] = oElement.getAttribute("Namespace") + ".";
 		}
 	}
 
@@ -724,7 +724,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processEntityContainer(oElement, oAggregate) {
-		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name");
+		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
 
 		oAggregate.result[sQualifiedName] = oAggregate.entityContainer = {
 			"$kind" : "EntityContainer"
@@ -788,7 +788,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processEnumType(oElement, oAggregate) {
-		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name"),
+		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			oEnumType = {
 				"$kind": "EnumType"
 			};
@@ -860,7 +860,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processInclude(oElement, oAggregate) {
 		var oInclude = getOrCreateArray(oAggregate.reference, "$Include");
 
-		oInclude.push(oElement.getAttribute("Namespace"));
+		oInclude.push(oElement.getAttribute("Namespace") + ".");
 	}
 
 	/**
@@ -871,12 +871,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processIncludeAnnotations(oElement, oAggregate) {
 		var oReference = oAggregate.reference,
 			oIncludeAnnotation = {
-				"$TermNamespace" : oElement.getAttribute("TermNamespace")
+				"$TermNamespace" : oElement.getAttribute("TermNamespace") + "."
 			},
 			aIncludeAnnotations = getOrCreateArray(oReference, "$IncludeAnnotations");
 
 		processAttributes(oElement, oIncludeAnnotation, {
-			"TargetNamespace" : setValue,
+			"TargetNamespace" : function setValue(sValue) {
+				return sValue ? sValue + "." : sValue;
+			},
 			"Qualifier" : setValue
 		});
 
@@ -962,7 +964,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processSchema(oElement, oAggregate) {
-		oAggregate.namespace = oElement.getAttribute("Namespace");
+		oAggregate.namespace = oElement.getAttribute("Namespace") + ".";
 		oAggregate.result[oAggregate.namespace] = oAggregate.schema = {
 			"$kind": "Schema"
 		};
@@ -990,7 +992,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processTerm(oElement, oAggregate) {
-		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name"),
+		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			oTerm = {
 				$kind: "Term"
 			};
@@ -1015,7 +1017,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oType the initial typed result object
 	 */
 	function processType(oElement, oAggregate, oType) {
-		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name");
+		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
 
 		processAttributes(oElement, oType, {
 			"OpenType" : setIfTrue,
@@ -1051,7 +1053,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @param {object} oAggregate the aggregate
 	 */
 	function processTypeDefinition(oElement, oAggregate) {
-		var sQualifiedName = oAggregate.namespace + "." + oElement.getAttribute("Name"),
+		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			oTypeDefinition = {
 				"$kind" : "TypeDefinition",
 				"$UnderlyingType" : oElement.getAttribute("UnderlyingType")
@@ -1262,7 +1264,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			if (iDot >= 0 && sName.indexOf(".", iDot + 1) < 0) { // if there is exactly one dot
 				sNamespace = oAggregate.aliases[sName.slice(0, iDot)];
 				if (sNamespace) {
-					return sNamespace + "." + sName.slice(iDot + 1);
+					return sNamespace + sName.slice(iDot + 1);
 				}
 			}
 			return sName;

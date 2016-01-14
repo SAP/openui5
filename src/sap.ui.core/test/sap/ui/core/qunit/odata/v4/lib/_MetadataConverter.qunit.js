@@ -61,7 +61,7 @@ sap.ui.require([
 					</Edmx>'),
 				// code under test
 				oResult = MetadataConverter.convertXMLMetadata(oXml);
-			assert.deepEqual(oResult["foo"].$Annotations["foo.Bar"]["@foo.Term"], vExpected,
+			assert.deepEqual(oResult["foo."].$Annotations["foo.Bar"]["@foo.Term"], vExpected,
 				sXmlSnippet);
 		}
 
@@ -179,7 +179,7 @@ sap.ui.require([
 	QUnit.test("resolveAlias", function (assert) {
 		var oAggregate = {
 				aliases : {
-					"display": "org.example.vocabularies.display"
+					"display": "org.example.vocabularies.display."
 				}
 			};
 
@@ -244,7 +244,7 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				},
 				"foo.Container": {
@@ -276,17 +276,17 @@ sap.ui.require([
 			{
 				"$Reference": {
 					"qux/$metadata": {
-						"$Include": ["qux.foo", "qux.bar"],
+						"$Include": ["qux.foo.", "qux.bar."],
 						"$IncludeAnnotations": [{
-							"$TermNamespace": "qux.foo"
+							"$TermNamespace": "qux.foo."
 						}, {
-							"$TermNamespace": "qux.bar",
-							"$TargetNamespace": "qux.bar",
+							"$TermNamespace": "qux.bar.",
+							"$TargetNamespace": "qux.bar.",
 							"$Qualifier": "Tablet"
 						}]
 					},
 					"bla/$metadata": {
-						"$Include": ["bla"]
+						"$Include": ["bla."]
 					}
 				}
 			});
@@ -312,10 +312,10 @@ sap.ui.require([
 			{
 				"$Reference": {
 					"qux/$metadata": {
-						"$Include": ["qux"]
+						"$Include": ["qux."]
 					}
 				},
-				"bar": {
+				"bar.": {
 					"$kind": "Schema"
 				},
 				"bar.Worker": {
@@ -339,7 +339,7 @@ sap.ui.require([
 						"$Type": "foo.Address"
 					}
 				},
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				}
 			});
@@ -368,7 +368,7 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				},
 				"foo.Container": {
@@ -407,7 +407,7 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				},
 				"foo.Container": {
@@ -444,7 +444,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				},
 				"foo.Worker": {
@@ -479,7 +479,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				},
 				"foo.Worker": {
@@ -525,7 +525,7 @@ sap.ui.require([
 	["ComplexType", "EntityType"].forEach(function (sType) {
 		QUnit.test("convertXMLMetadata: " + sType + ": (Navigation)Property", function (assert) {
 			var oExpected = {
-					"foo": {
+					"foo.": {
 						"$kind": "Schema"
 					},
 					"foo.Worker": {
@@ -641,7 +641,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				},
 				"foo.Bar1": {
@@ -700,7 +700,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				},
 				"foo.Bar": {
@@ -728,7 +728,7 @@ sap.ui.require([
 						</Schema>\
 					</DataServices>',
 				{
-					"foo": {
+					"foo.": {
 						"$kind": "Schema"
 					},
 					"foo.Baz": [{
@@ -771,7 +771,7 @@ sap.ui.require([
 		QUnit.test("convertXMLMetadata: " + sWhat + "Import", function (assert) {
 			var oExpected = {
 					"$EntityContainer": "foo.Container",
-					"foo": {
+					"foo.": {
 						"$kind": "Schema"
 					},
 					"foo.Container": {
@@ -834,7 +834,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				},
 				"foo.Term1": {
@@ -897,7 +897,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema",
 					"$Annotations": {
 						"foo.Bar/foo.Baz": {
@@ -1115,7 +1115,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema",
 					"@foo.Term1": "Schema",
 					"@foo.Term2": "Schema",
@@ -1178,7 +1178,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema",
 					"$Annotations": {
 						"foo.EnumType": {
@@ -1233,7 +1233,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema"
 				},
 				"foo.Action": [{
@@ -1288,7 +1288,7 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$EntityContainer": "foo.Container",
-				"foo": {
+				"foo.": {
 					"$kind": "Schema",
 					"$Annotations": {
 						"foo.Container": {
@@ -1345,7 +1345,7 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo": {
+				"foo.": {
 					"$kind": "Schema",
 					"@foo.Term1#q1": "Schema",
 					"@foo.Term1#q1@foo.Term2#q2": "Annotation2",

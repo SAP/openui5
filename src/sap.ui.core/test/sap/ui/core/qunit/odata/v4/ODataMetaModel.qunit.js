@@ -20,6 +20,9 @@ sap.ui.require([
 
 	var mScope = { // tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
 			"$EntityContainer" : "tea_busi.DefaultContainer",
+			"tea_busi." : {
+				"$kind" : "Schema"
+			},
 			"tea_busi.TEAM" : {
 				"$kind" : "EntityType",
 				"$Key" : ["Team_Id"],
@@ -302,6 +305,8 @@ sap.ui.require([
 		"/Foo" : undefined,
 		"/$Foo" : undefined,
 		"/$EntityContainer" : "tea_busi.DefaultContainer",
+		"/tea_busi." : mScope["tea_busi."], // access to schema
+		"/tea_busi./$kind" : "Schema",
 		"/tea_busi.DefaultContainer/$kind" : "EntityContainer",
 		"/tea_busi.DefaultContainer/Foo" : undefined,
 		"/tea_busi.DefaultContainer/$Foo" : undefined,
@@ -376,6 +381,7 @@ sap.ui.require([
 			"/$Foo/$Bar/$Baz" : "Invalid part: $Bar",
 			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid part: .",
 			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid part: .",
+			"/tea_busi./$Annotations" : "Invalid part: $Annotations", // entrance forbidden!
 			//TODO take care not to construct these complicated warning messages in vain?
 			"/$EntityContainer|$kind/Foo" :
 				"Unknown container child 'EntityContainer' at /$EntityContainer/$kind",
