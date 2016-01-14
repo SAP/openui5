@@ -301,10 +301,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.writeClasses();
           rm.write(">");
 
+          var sapStatistic;
           for (var i = 0; i < requests.length; i++) {
+             sapStatistic = null;
              request = requests[i];
 
-             this.renderRequest(rm, interaction, request, sapStatistics[i], i);
+             for (var j = 0; j < sapStatistics.length; j++) {
+                if (sapStatistics[j].timing && request.startTime === sapStatistics[j].timing.startTime) {
+                   sapStatistic = sapStatistics[j];
+                   break;
+                }
+             }
+
+             this.renderRequest(rm, interaction, request, sapStatistic, i);
           }
 
           rm.write("</ul>");
