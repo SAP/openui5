@@ -69,6 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.destroy();
 
           this.attachEvents();
+          this.attachInteractionDetailsPopover();
           this.attachRequestDetailsPopover();
        };
 
@@ -350,11 +351,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write('</div>'); // sapUiInteractionTreeItemLeft
 
-          var title = 'Start: ' + this.formatTime(interaction.start);
-          title += '\nEnd: ' + this.formatTime(interaction.end);
-          title += '\nDuration: ' + interaction.duration;
-
-          rm.write('<div class="sapUiInteractionTreeItemRight" title="' + title + '" >');
+          rm.write('<div class="sapUiInteractionTreeItemRight"');
+          this.writeInteractionAttrAsCustomData(interaction, rm);
+          rm.write('>');
 
           var start = Math.max(interaction.start, this.actualStartTime);
           var end = Math.min(interaction.start + interaction.duration, this.actualEndTime);
@@ -367,6 +366,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write('</div>');
           rm.write("</div>");
+       };
+
+       InteractionTree.prototype.writeInteractionAttrAsCustomData = function (interaction, rm) {
+          for (var property in interaction) {
+             if (interaction.hasOwnProperty(property) && interaction[property].constructor !== Array) {
+                rm.writeAttribute('data-' + property, interaction[property]);
+             }
+          }
+          rm.writeAttribute('data-requestscount', interaction.requests.length);
        };
 
        InteractionTree.prototype.renderRequest = function (rm, interaction, request, sapStatistic, index) {
@@ -416,8 +424,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write('</div>');
 
           rm.write('<div class="sapUiInteractionTreeItemRight"');
-          this.writeRequestAttributesAsCustomData(request, rm);
-          this.writeSapStatisticsAsCustomData(sapStatistic, rm);
+          this.writeAttributesAsCustomData(request, rm);
+          this.writeAttributesAsCustomData(sapStatistic, rm);
           rm.write('>');
 
           var requestStart = request.requestStart + fetchStartOffset;
@@ -432,25 +440,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write("</li>");
        };
 
-       InteractionTree.prototype.writeSapStatisticsAsCustomData = function (sapStatistic, rm) {
-          for (var property in sapStatistic) {
-             if (sapStatistic.hasOwnProperty(property)) {
-                rm.writeAttribute('data-' + property, sapStatistic[property]);
-             }
-          }
-       };
-
-       InteractionTree.prototype.writeRequestAttributesAsCustomData = function (request, rm) {
-          for (var property in request) {
-             if (request.hasOwnProperty(property)) {
-                rm.writeAttribute('data-' + property, request[property]);
+       InteractionTree.prototype.writeAttributesAsCustomData = function (attrs, rm) {
+          for (var property in attrs) {
+             if (attrs.hasOwnProperty(property)) {
+                rm.writeAttribute('data-' + property, attrs[property]);
              }
           }
        };
 
        InteractionTree.prototype.attachRequestDetailsPopover = function () {
-          var simpleForm, clientVsServerTitle, progressBar, initiatorTypeText, entryTypeText, nameText, startText, endText, durationText, connectStartText, connectEndText,
-              connectDurationText, domainLookupStartText, domainLookupEndText, domainLookupDurationText, redirectStartText, redirectEndText, redirectDurationText,
+          var simpleForm, clientVsServerTitle, progressBar, initiatorTypeText, entryTypeText, nameText, startText, endText, durationText,
               requestStartText, requestDurationText, responseStartText, responseEndText, responseDurationText, statisticsTitle, totalLabel, totalText, fwLabel,
               fwText, appLabel, appText;
 
@@ -490,6 +489,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 fwText.setText(statisticAttr.substring(statisticAttr.indexOf("fw=") + "fw=".length, statisticAttr.indexOf(",")));
                 statisticAttr = statisticAttr.substring(statisticAttr.indexOf(",") + 1);
                 appText.setText(statisticAttr.substring(statisticAttr.indexOf("app=") + "app=".length, statisticAttr.indexOf(",")));
+             } else {
+                simpleForm.removeContent(statisticsTitle);
+                simpleForm.removeContent(totalLabel);
+                simpleForm.removeContent(totalText);
+                simpleForm.removeContent(fwLabel);
+                simpleForm.removeContent(fwText);
+                simpleForm.removeContent(appLabel);
+                simpleForm.removeContent(appText);
              }
           }
 
@@ -500,15 +507,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              startText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-startTime"))));
              endText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-startTime")) + parseFloat(this.getAttribute("data-duration"))));
              durationText.setText(this.getAttribute("data-duration"));
-             connectStartText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-connectStart"))));
-             connectEndText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-connectEnd"))));
-             connectDurationText.setText(parseFloat(this.getAttribute("data-connectEnd")) - parseFloat(this.getAttribute("data-connectStart")));
-             domainLookupStartText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-domainLookupStart"))));
-             domainLookupEndText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-domainLookupEnd"))));
-             domainLookupDurationText.setText(parseFloat(this.getAttribute("data-domainLookupEnd")) - parseFloat(this.getAttribute("data-domainLookupStart")));
-             redirectStartText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-redirectStart"))));
-             redirectEndText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-redirectEnd"))));
-             redirectDurationText.setText(parseFloat(this.getAttribute("data-redirectEnd")) - parseFloat(this.getAttribute("data-redirectStart")));
              requestStartText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-requestStart"))));
              requestDurationText.setText(parseFloat(this.getAttribute("data-responseStart")) - parseFloat(this.getAttribute("data-requestStart")));
              responseStartText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-responseStart"))));
@@ -517,16 +515,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           }
 
           function initializePopOverClientServerProgressBar() {
+             var connectDuration = (parseFloat(this.getAttribute("data-connectEnd")) - parseFloat(this.getAttribute("data-connectStart")));
+             var domainLookupDuration = (parseFloat(this.getAttribute("data-domainLookupEnd")) - parseFloat(this.getAttribute("data-domainLookupStart")));
+             var redirectDuration = (parseFloat(this.getAttribute("data-redirectEnd")) - parseFloat(this.getAttribute("data-redirectStart")));
+
+             var preprocessingTime = connectDuration + domainLookupDuration + redirectDuration ;
              var serverTotalTime = parseFloat(this.getAttribute("data-responseStart")) - parseFloat(this.getAttribute("data-requestStart"));
              var clientTotalTime = parseFloat(this.getAttribute("data-responseEnd")) - parseFloat(this.getAttribute("data-responseStart"));
-             var serverTimePercent = (serverTotalTime / (serverTotalTime + clientTotalTime)) * 100;
-             var clientTimePercent = (clientTotalTime / (serverTotalTime + clientTotalTime)) * 100;
-             var serverTimePercentRounded = Math.round(serverTimePercent * 100) / 100;
-             var clientTimePercentRounded = Math.round(clientTimePercent * 100) / 100;
 
-             clientVsServerTitle.setText("Client Request Vs Server Response (" + clientTimePercentRounded + "% / " + serverTimePercentRounded + "%)");
-             progressBar.setContent("<div class='sapUiSupportIntProgressBarParent'><span class='sapUiSupportIntProgressBarLeft' style=\"width:calc(" + clientTimePercentRounded
-                 + "% - 1px)\"></span><span class='sapUiSupportIntProgressBarSeparator'></span><span class='sapUiSupportIntProgressBarRight' style=\"width:calc(" + serverTimePercentRounded + "% - 1px)\"></span></div>");
+             var serverTimePercent = (serverTotalTime / (serverTotalTime + clientTotalTime + preprocessingTime)) * 100;
+             var clientTimePercent = (clientTotalTime / (serverTotalTime + clientTotalTime + preprocessingTime)) * 100;
+             var preprocessingTimePercent = (preprocessingTime / (serverTotalTime + clientTotalTime + preprocessingTime)) * 100;
+
+             var preprocessingTimeRounded = Math.round(preprocessingTime * 100) / 100;
+             var serverTimeRounded = Math.round(serverTotalTime * 100) / 100;
+             var clientTimeRounded = Math.round(clientTotalTime * 100) / 100;
+
+             clientVsServerTitle.setText("Preprocessing / Client / Server (" + preprocessingTimeRounded + "ms / " + clientTimeRounded + "ms / " + serverTimeRounded + "ms)");
+             progressBar.setContent("<div class='sapUiSupportIntProgressBarParent'><span class='sapUiSupportIntProgressBarPreprocess' style=\"width:calc(" + preprocessingTimePercent
+                 + "% - 1px)\"></span><span class='sapUiSupportIntProgressBarSeparator'></span><span class='sapUiSupportIntProgressBarClient' style=\"width:calc(" + clientTimePercent + "% - 1px)\"></span>" +
+                 "<span class='sapUiSupportIntProgressBarSeparator'></span><span class='sapUiSupportIntProgressBarServer' style=\"width:calc(" + serverTimePercent + "% - 1px)\"></span></div>");
           }
 
           function createEmptyPopOver() {
@@ -553,15 +561,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              startText = new Text().addStyleClass("sapUiSupportIntRequestText");
              endText = new Text().addStyleClass("sapUiSupportIntRequestText");
              durationText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             connectStartText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             connectEndText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             connectDurationText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             domainLookupStartText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             domainLookupEndText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             domainLookupDurationText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             redirectStartText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             redirectEndText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             redirectDurationText = new Text().addStyleClass("sapUiSupportIntRequestText");
              requestStartText = new Text().addStyleClass("sapUiSupportIntRequestText");
              requestDurationText = new Text().addStyleClass("sapUiSupportIntRequestText");
              responseStartText = new Text().addStyleClass("sapUiSupportIntRequestText");
@@ -601,24 +600,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    endText,
                    new sap.m.Label({text:"duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    durationText,
-                   new sap.m.Label({text:"connectStart"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   connectStartText,
-                   new sap.m.Label({text:"connectEnd"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   connectEndText,
-                   new sap.m.Label({text:"connectDuration"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   connectDurationText,
-                   new sap.m.Label({text:"domainLookupStart"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   domainLookupStartText,
-                   new sap.m.Label({text:"domainLookupEnd"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   domainLookupEndText,
-                   new sap.m.Label({text:"domainLookupDuration"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   domainLookupDurationText,
-                   new sap.m.Label({text:"redirectStart"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   redirectStartText,
-                   new sap.m.Label({text:"redirectEnd"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   redirectEndText,
-                   new sap.m.Label({text:"redirectDuration"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   redirectDurationText,
                    new sap.m.Label({text:"requestStart"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    requestStartText,
                    new sap.m.Label({text:"requestDuration"}).addStyleClass("sapUiSupportIntRequestLabel"),
@@ -629,6 +610,85 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    responseEndText,
                    new sap.m.Label({text:"responseDuration"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    responseDurationText
+                ]
+             });
+             return simpleForm;
+          }
+       };
+
+       InteractionTree.prototype.attachInteractionDetailsPopover = function () {
+          var simpleForm, durationText, bytesReceivedText, requestNumberText, startTimeText, endTimeText;
+
+          var that = this;
+          var interactionsDivElements = jQuery('.sapUiInteractionItemDiv.sapUiInteractionTreeItem .sapUiInteractionTreeItemRight');
+
+          /* eslint-disable no-loop-func */
+          if (interactionsDivElements.length) {
+             var oPopover = createEmptyPopOver();
+
+             for (var i = 0; i < interactionsDivElements.length; i++) {
+                interactionsDivElements[i].addEventListener('click', function (event) {
+                   initializePopOverInteractionData.call(this);
+
+                   var interactionBarElement = jQuery(this).children()[0];
+                   oPopover.openBy(interactionBarElement);
+                });
+             }
+          }
+          /* eslint-enable no-loop-func */
+
+          function initializePopOverInteractionData() {
+             durationText.setText(parseFloat(this.getAttribute("data-end")) - parseFloat(this.getAttribute("data-start")));
+             bytesReceivedText.setText(this.getAttribute("data-bytesreceived"));
+             requestNumberText.setText(this.getAttribute("data-requestscount"));
+             startTimeText.setText(that.formatTime(parseFloat(this.getAttribute("data-start"))));
+             endTimeText.setText(that.formatTime(parseFloat(this.getAttribute("data-end"))));
+          }
+
+          function createEmptyPopOver() {
+             var oPopover = new Popover({
+                placement: sap.m.PlacementType.Auto,
+                contentWidth: "450px",
+                showHeader: false,
+                showArrow: true,
+                verticalScrolling: true,
+                horizontalScrolling: false,
+                content: [
+                   createPopOverContent()
+                ]
+             });
+             return oPopover;
+          }
+
+          function createPopOverContent() {
+             durationText = new Text().addStyleClass("sapUiSupportIntRequestText");
+             bytesReceivedText = new Text().addStyleClass("sapUiSupportIntRequestText");
+             requestNumberText = new Text().addStyleClass("sapUiSupportIntRequestText");
+             startTimeText = new Text().addStyleClass("sapUiSupportIntRequestText");
+             endTimeText = new Text().addStyleClass("sapUiSupportIntRequestText");
+
+             simpleForm = new sap.ui.layout.form.SimpleForm({
+                maxContainerCols: 2,
+                minWidth: 400,
+                labelMinWidth: 100,
+                editable: false,
+                layout: "ResponsiveGridLayout",
+                labelSpanM: 5,
+                emptySpanM: 0,
+                columnsM: 1,
+                breakpointM: 0,
+                content:[
+                   new sap.ui.core.Title({text:"INTERACTION DATA"}),
+                   new sap.m.Label({text: "duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   durationText,
+                   new sap.m.Label({text:"bytesReceived"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   bytesReceivedText,
+                   new sap.m.Label({text:"requests"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   requestNumberText,
+                   new sap.m.Label({text:"start"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   startTimeText,
+                   new sap.m.Label({text:"end"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   endTimeText
                 ]
              });
              return simpleForm;
