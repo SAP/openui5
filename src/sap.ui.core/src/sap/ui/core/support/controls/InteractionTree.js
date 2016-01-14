@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/IconPool', 'sap/m/Popover', 'sap/m/Text', 'sap/ui/layout/form/SimpleForm', 'sap/m/Label'],
-    function (jQuery, ManagedObject, IconPool, Popover, Text, SimpleForm, Label) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/IconPool', 'sap/m/Popover', 'sap/m/Text', 'sap/ui/layout/form/SimpleForm', 'sap/m/Label', 'sap/m/Link'],
+    function (jQuery, ManagedObject, IconPool, Popover, Text, SimpleForm, Label, Link) {
        'use strict';
 
        var InteractionTree = ManagedObject.extend("sap.ui.core.support.controls.InteractionTree", {
@@ -449,9 +449,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
        };
 
        InteractionTree.prototype.attachRequestDetailsPopover = function () {
-          var simpleForm, clientVsServerTitle, progressBar, initiatorTypeText, entryTypeText, nameText, startText, endText, durationText,
-              requestStartText, requestDurationText, responseStartText, responseEndText, responseDurationText, statisticsTitle, totalLabel, totalText, fwLabel,
-              fwText, appLabel, appText;
+          var simpleForm, clientVsServerTitle, progressBar, initiatorTypeText, entryTypeText, nameLink, startText, endText, durationText,
+              statisticsTitle, totalLabel, totalText, fwLabel, fwText, appLabel, appText;
 
           var that = this;
           var requestDivElements = jQuery('.sapUiInteractionRequest.sapUiInteractionTreeItem .sapUiInteractionTreeItemRight');
@@ -503,15 +502,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           function initializePopOverRequestData() {
              initiatorTypeText.setText(this.getAttribute("data-initiatorType"));
              entryTypeText.setText(this.getAttribute("data-entryType"));
-             nameText.setText(this.getAttribute("data-name"));
+             nameLink.setText(this.getAttribute("data-name"));
+             nameLink.setHref(this.getAttribute("data-name"));
              startText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-startTime"))));
              endText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-startTime")) + parseFloat(this.getAttribute("data-duration"))));
-             durationText.setText(this.getAttribute("data-duration"));
-             requestStartText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-requestStart"))));
-             requestDurationText.setText(parseFloat(this.getAttribute("data-responseStart")) - parseFloat(this.getAttribute("data-requestStart")));
-             responseStartText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-responseStart"))));
-             responseEndText.setText(that.formatTime(parseFloat(this.getAttribute("data-fetchStartOffset")) + parseFloat(this.getAttribute("data-responseEnd"))));
-             responseDurationText.setText(parseFloat(this.getAttribute("data-responseEnd")) - parseFloat(this.getAttribute("data-responseStart")));
+             durationText.setText(that.formatDuration(parseFloat(this.getAttribute("data-duration"))));
           }
 
           function initializePopOverClientServerProgressBar() {
@@ -531,10 +526,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              var serverTimeRounded = Math.round(serverTotalTime * 100) / 100;
              var clientTimeRounded = Math.round(clientTotalTime * 100) / 100;
 
-             clientVsServerTitle.setText("Preprocessing / Client / Server (" + preprocessingTimeRounded + "ms / " + clientTimeRounded + "ms / " + serverTimeRounded + "ms)");
+             clientVsServerTitle.setText("Preprocessing / Server / Client (" + preprocessingTimeRounded + "ms / " + serverTimeRounded + "ms / " + clientTimeRounded + "ms)");
              progressBar.setContent("<div class='sapUiSupportIntProgressBarParent'><span class='sapUiSupportIntProgressBarPreprocess' style=\"width:calc(" + preprocessingTimePercent
-                 + "% - 1px)\"></span><span class='sapUiSupportIntProgressBarSeparator'></span><span class='sapUiSupportIntProgressBarClient' style=\"width:calc(" + clientTimePercent + "% - 1px)\"></span>" +
-                 "<span class='sapUiSupportIntProgressBarSeparator'></span><span class='sapUiSupportIntProgressBarServer' style=\"width:calc(" + serverTimePercent + "% - 1px)\"></span></div>");
+                 + "% - 1px)\"></span><span class='sapUiSupportIntProgressBarSeparator'></span><span class='sapUiSupportIntProgressBarClient' style=\"width:calc(" + serverTimePercent + "% - 1px)\"></span>" +
+                 "<span class='sapUiSupportIntProgressBarSeparator'></span><span class='sapUiSupportIntProgressBarServer' style=\"width:calc(" + clientTimePercent + "% - 1px)\"></span></div>");
           }
 
           function createEmptyPopOver() {
@@ -557,15 +552,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              progressBar = new sap.ui.core.HTML();
              initiatorTypeText = new Text().addStyleClass("sapUiSupportIntRequestText");
              entryTypeText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             nameText = new Text().addStyleClass("sapUiSupportIntRequestText");
+             nameLink = new Link({target: "_blank", wrapping: true}).addStyleClass("sapUiSupportIntRequestLink");
              startText = new Text().addStyleClass("sapUiSupportIntRequestText");
              endText = new Text().addStyleClass("sapUiSupportIntRequestText");
              durationText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             requestStartText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             requestDurationText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             responseStartText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             responseEndText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             responseDurationText = new Text().addStyleClass("sapUiSupportIntRequestText");
              statisticsTitle = new sap.ui.core.Title({text:"SAP STATISTICS"});
              totalLabel = new sap.m.Label({text:"Total"}).addStyleClass("sapUiSupportIntRequestLabel");
              totalText = new Text().addStyleClass("sapUiSupportIntRequestText");
@@ -593,23 +583,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    new sap.m.Label({text:"entryType"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    entryTypeText,
                    new sap.m.Label({text:"name"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   nameText,
+                   nameLink,
                    new sap.m.Label({text:"start"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    startText,
                    new sap.m.Label({text:"end"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    endText,
                    new sap.m.Label({text:"duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   durationText,
-                   new sap.m.Label({text:"requestStart"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   requestStartText,
-                   new sap.m.Label({text:"requestDuration"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   requestDurationText,
-                   new sap.m.Label({text:"responseStart"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   responseStartText,
-                   new sap.m.Label({text:"responseEnd"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   responseEndText,
-                   new sap.m.Label({text:"responseDuration"}).addStyleClass("sapUiSupportIntRequestLabel"),
-                   responseDurationText
+                   durationText
                 ]
              });
              return simpleForm;
