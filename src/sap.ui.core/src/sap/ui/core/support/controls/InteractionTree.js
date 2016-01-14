@@ -146,7 +146,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           gridContainer.empty();
 
-          gridContainer.append('<div style="left:' + (this.getPosition(width, range, 0) + 6) + 'px" class="sapUiInteractionGridLineIntervalText">' + this.formatDuration(0) + '</div>');
+          gridContainer.append('<div style="left:' + (this.getPosition(width, range, 0) + 6) + 'px" class="sapUiInteractionGridLineIntervalText">' + this.formatGridLineDuration(0) + '</div>');
 
           var interval = this.calculateInterval(width, range);
 
@@ -155,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              var position = this.getPosition(width, range, i);
 
              if (i + interval < range) {
-                gridContainer.append('<div style="left:' + (position + 6) + 'px" class="sapUiInteractionGridLineIntervalText">' + this.formatDuration(i) + '</div>');
+                gridContainer.append('<div style="left:' + (position + 6) + 'px" class="sapUiInteractionGridLineIntervalText">' + this.formatGridLineDuration(i) + '</div>');
              }
 
              gridContainer.append('<div style="left:' + position + 'px" class="sapUiInteractionGridLine"></div>');
@@ -356,7 +356,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write('>');
 
           var start = Math.max(interaction.start, this.actualStartTime);
-          var end = Math.min(interaction.start + interaction.duration, this.actualEndTime);
+          var end = Math.min(interaction.end, this.actualEndTime);
 
           var left = 100 / this.timeRange * (start - this.actualStartTime);
           var right = 100 / this.timeRange * (end - this.actualStartTime);
@@ -638,7 +638,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           /* eslint-enable no-loop-func */
 
           function initializePopOverInteractionData() {
-             durationText.setText(parseFloat(this.getAttribute("data-end")) - parseFloat(this.getAttribute("data-start")));
+             durationText.setText(that.formatDuration(parseFloat(this.getAttribute("data-duration"))));
              bytesReceivedText.setText(this.getAttribute("data-bytesreceived"));
              requestNumberText.setText(this.getAttribute("data-requestscount"));
              startTimeText.setText(that.formatTime(parseFloat(this.getAttribute("data-start"))));
@@ -715,7 +715,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           return ("000" + String(i)).slice(-w);
        };
 
-       InteractionTree.prototype.formatDuration = function (duration) {
+       InteractionTree.prototype.formatGridLineDuration = function (duration) {
 
           var offset = this.actualStartTime - this.startTime;
           duration += offset;
@@ -723,12 +723,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           return duration > 100 ? (duration / 1000).toFixed(2) + 's' : duration.toFixed(0) + 'ms';
        };
 
+       InteractionTree.prototype.formatDuration = function (duration) {
+
+          return duration.toFixed(0) + ' ms';
+       };
+
        InteractionTree.prototype.formatTime = function (now) {
 
-          var oNow = new Date(now),
-              iMicroSeconds = Math.floor((now - Math.floor(now)) * 1000);
+          var oNow = new Date(now);
 
-          return this.pad0(oNow.getHours(), 2) + ":" + this.pad0(oNow.getMinutes(), 2) + ":" + this.pad0(oNow.getSeconds(), 2) + "." + this.pad0(oNow.getMilliseconds(), 3) + this.pad0(iMicroSeconds, 3);
+          return this.pad0(oNow.getHours(), 2) + ":" + this.pad0(oNow.getMinutes(), 2) + ":" + this.pad0(oNow.getSeconds(), 2) + "." + this.pad0(oNow.getMilliseconds(), 2);
        };
 
        InteractionTree.prototype.renderIcon = function (rm, expanded) {
