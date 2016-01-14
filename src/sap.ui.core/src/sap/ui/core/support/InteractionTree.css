@@ -114,7 +114,7 @@
 	/*z-index: 100;*/
 }
 
-.sapUiInteractionTree li[interaction="0"] .sapUiInteractionItemDiv  {
+.sapUiInteractionTree li[data-interaction-index="0"] .sapUiInteractionItemDiv  {
 	border-top: 1px solid transparent;
 }
 
