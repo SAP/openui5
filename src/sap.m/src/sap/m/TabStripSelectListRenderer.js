@@ -6,19 +6,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 		"use strict";
 
 		/**
-		 * TabStripSelectListRenderer renderer.
+		 * <code>TabStripSelectList</code> renderer.
 		 *
 		 * @namespace
 		 */
 		var TabStripSelectListRenderer = Renderer.extend(SelectListRenderer);
 
 		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}
 		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
-		 * @param {sap.ui.core.Element} oItem An object representation of the element that should be rendered.
-		 * @param {object} mStates
+		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+		 * @param oList {sap.ui.core.Control} An object representation of the control that should be rendered
+		 * @param oItem {sap.ui.core.Element} An object representation of the element that should be rendered
+		 * @param mStates {object}
 		 */
 		TabStripSelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
 			if (!(oItem instanceof sap.ui.core.Element)) {
@@ -81,8 +81,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 				oRm.write('...');
 			}
 			oRm.write('</p>');
-
-
 
 			if (!oItem.getProperty('modified')) {
 				sStateClass += TabStripItem.CSS_CLASS_STATEINVISIBLE; // ToDo: fix the name of the variable
