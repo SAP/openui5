@@ -1,10 +1,11 @@
 /*!
  * ${copyright}
  */
-(function () {
+sap.ui.require([
+	"sap/ui/base/ExpressionParser"
+], function (ExpressionParser) {
+	/*global QUnit */
 	"use strict";
-
-	jQuery.sap.require("sap.ui.base.ExpressionParser");
 
 	var iCount = 100000,
 		oModel = new sap.ui.model.json.JSONModel({x: 2}),
@@ -18,19 +19,15 @@
 			}
 		});
 
-	function toMicroSeconds(iMilliSeconds) {
-		return iMilliSeconds / iCount * 1000;
-	}
-
-	function repeatedTest(fnTest) {
+	function repeatedTest(assert, fnTest) {
 		var i, iStart = Date.now(), iDuration;
 
 		for (i = iCount; i; i -= 1) {
 			fnTest();
 		}
 		iDuration = Date.now() - iStart;
-		ok(true, iCount + " iterations took " + iDuration + " ms, that is " + iDuration / iCount
-			+ " ms per iteration");
+		assert.ok(true, iCount + " iterations took " + iDuration + " ms, that is "
+			+ iDuration / iCount + " ms per iteration");
 		sResult += "\t" + iDuration / iCount;
 	}
 
@@ -44,65 +41,69 @@
 		},
 
 		complex: function (iValue) {
-			return 'foo'.charCodeAt(-17+2*Math.floor(null||(iValue===2?5+2*iValue:42)));
+			return 'foo'
+				.charCodeAt(-17  + 2 * Math.floor(null || (iValue ===  2 ? 5 + 2 * iValue : 42)));
 		}
 	};
 
-	function bindTest(oBindingInfo) {
+	function bindTest(assert, oBindingInfo) {
 		var oControl = new TestControl({
 				models: oModel,
 				bindingContexts: oModel.createBindingContext("/")
 			});
 
-		repeatedTest(function () {
+		repeatedTest(assert, function () {
 			oControl.bindProperty("value", oBindingInfo);
 		});
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.base.ExpressionParser Performance");
+	QUnit.module("sap.ui.base.ExpressionParser Performance");
 
 	QUnit.done(function () {
 		jQuery.sap.log.info(sResult);
 	});
 
 	//*********************************************************************************************
-	[
-		{name: "trivial", expression:"{=${x}}"},
-		{name: "moderate", expression: "{=3+2*${x}}"},
-		{name: "complex", expression: "{='foo'.charCodeAt(-17+2*Math.floor(null||(${x}===2?5+2*${x}:42)))}"}
-	].forEach(function(oFixture) {
+	[{
+		name: "trivial", expression:"{=${x}}"
+	}, {
+		name: "moderate", expression: "{=3+2*${x}}"
+	}, {
+		name: "complex", expression:
+			"{='foo'.charCodeAt(-17  + 2 * Math.floor(null || (${x} ===  2 ? 5 + 2 * ${x} : 42)))}"
+	}].forEach(function(oFixture) {
 
-		test("Parse expression binding: " + oFixture.name, function () {
+		QUnit.test("Parse expression binding: " + oFixture.name, function (assert) {
 			sResult += oFixture.name;
-			repeatedTest(function () {
+			repeatedTest(assert, function () {
 				sap.ui.base.BindingParser.complexParser(oFixture.expression);
 			});
 		});
 
-		test("Evaluate expression binding: " + oFixture.name, function () {
+		QUnit.test("Evaluate expression binding: " + oFixture.name, function (assert) {
 			var oBindingInfo = sap.ui.base.BindingParser.complexParser(oFixture.expression);
-			repeatedTest(function () {
+			repeatedTest(assert, function () {
 				oBindingInfo.formatter(2);
 			});
 		});
 
-		test("Formatter: " + oFixture.name, function () {
+		QUnit.test("Formatter: " + oFixture.name, function (assert) {
 			var fnFormatter = window.formatters[oFixture.name];
 
-			repeatedTest(function () {
+			repeatedTest(assert, function () {
 				fnFormatter(2);
 			});
 		});
 
-		test("Bind with expression: " + oFixture.name, function () {
-			bindTest(sap.ui.base.BindingParser.complexParser(oFixture.expression));
+		QUnit.test("Bind with expression: " + oFixture.name, function (assert) {
+			bindTest(assert, sap.ui.base.BindingParser.complexParser(oFixture.expression));
 		});
 
-		test("Bind with formatter: " + oFixture.name, function () {
-			bindTest(sap.ui.base.BindingParser.complexParser(
+		QUnit.test("Bind with formatter: " + oFixture.name, function (assert) {
+			bindTest(assert, sap.ui.base.BindingParser.complexParser(
 				"{path: '/x', formatter: 'formatters." + oFixture.name + "'}"));
 			sResult += "\n";
 		});
 	});
-} ());
+});
