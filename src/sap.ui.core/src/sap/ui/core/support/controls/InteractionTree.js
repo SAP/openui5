@@ -549,6 +549,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 showArrow: true,
                 verticalScrolling: true,
                 horizontalScrolling: false,
+                initialFocus: "dummyFocus",
                 content: [
                    createPopOverContent()
                 ]
@@ -597,7 +598,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    startText,
                    new sap.m.Label({text:"end"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    endText,
-                   new sap.m.Label({text:"duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   new sap.m.Label("dummyFocus", {text:"duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    durationText
                 ]
              });
