@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>qUnit Page for sap.m.StepInput</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
+	<script language="javascript">
+		sinon.config.useFakeTimers = true;
+
+		var oCore = sap.ui.getCore();
+
+		module("API", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput();
+
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
+
+		test("DOM", function () {
+			//assert
+			ok(this.stepInput.$().length > 0, "The control was successfully rendered");
+		});
+
+		test("incrementButton", function () {
+			var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+
+			//assert
+			strictEqual(oIncrementButton.getMetadata().getName(), "sap.m.Button",
+					"the picker aggregation holds an instance of a button");
+
+			oIncrementButton.firePress();
+			this.clock.tick(1000);
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 1,
+					"The increment button successfully incremented the value");
+		});
+
+		test("decrementButton", function () {
+			var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
+
+			//assert
+			strictEqual(oDecrementButton.getMetadata().getName(), "sap.m.Button",
+					"the step input _decrementButton aggregation holds an instance of a button");
+
+			oDecrementButton.firePress();
+			this.clock.tick(1000);
+
+			//assert
+			strictEqual(this.stepInput.getValue(), -1,
+					"The decrement button successfully decremented the value");
+		});
+
+		test("input", function () {
+			strictEqual(this.stepInput._getInput().getMetadata().getName(), "sap.m.Input",
+					"the picker aggregation holds an instance of an input");
+			strictEqual(this.stepInput.getValue(), 0, "The default value is correctly set in the input");
+
+			this.stepInput._getInput().setValue("random string");
+			strictEqual(this.stepInput.getValue(), 0, "The value is successfully set in the input");
+
+		});
+
+		module("Operations", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput({
+							value: 3,
+							max: 10
+				});
+
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
+
+
+		test("Disable button based on the value", function () {
+			//assert
+			strictEqual(this.stepInput._getIncrementButton().getEnabled(), true,
+					"The increment button is enabled as it should be");
+			strictEqual(this.stepInput._getDecrementButton().getEnabled(), true,
+					"The decrement button is enabled as it should be");
+
+			this.stepInput.setMin(3);
+            this.stepInput.onfocusout();
+
+			strictEqual(this.stepInput._getDecrementButton().getEnabled(), false,
+					"The decrement button is disabled as it should be");
+            this.stepInput.setValue(2);
+
+            strictEqual(this.stepInput._getDecrementButton().getEnabled(), false,
+                    "The decrement button is disabled as it should be because the min is 3 and the value is 2");
+
+            this.stepInput.setValue(4);
+            this.stepInput.onfocusout()
+
+            strictEqual(this.stepInput._getDecrementButton().getEnabled(), true,
+                    "The decrement button is enabled as it should be because the value is 1 bigger than the min");
+		});
+
+
+        test("Increment button enabled/disabled state", function () {
+            this.stepInput._getInput().setValue(11);
+            this.stepInput.onfocusout();
+            strictEqual(this.stepInput._getIncrementButton().getEnabled(), false,
+                    "The increment button is disabled as it should be because the value is 1 bigger than the max");
+        });
+
+        test("Error state when setting values out of the limit", function () {
+            this.stepInput.setMin(3);
+            this.stepInput.setValue(2);
+            this.stepInput.onfocusout();
+            strictEqual(this.stepInput._getInput().getValueState(), "Error",
+                    "The value state is Error as it should be because the value is under the limit");
+
+            //value becomes 3
+            this.stepInput._getIncrementButton().firePress();
+
+            this.stepInput.onfocusout();
+            strictEqual(this.stepInput._getInput().getValueState(), "None",
+                    "The value state is None as it should be because the value is equal to the min");
+        });
+
+
+        module("Floating point", {
+            beforeEach: function () {
+                this.stepInput = new sap.m.StepInput({
+                    step: 1.1,
+                    max: 2
+                });
+
+                this.stepInput.placeAt('qunit-fixture');
+                oCore.applyChanges();
+            },
+            afterEach: function () {
+                this.stepInput.destroy();
+            }
+        });
+
+        test("working with floating point", function () {
+            var oIncrementButton = this.stepInput.getAggregation("_incrementButton");
+            var oDecrementButton = this.stepInput.getAggregation("_decrementButton");
+
+            oIncrementButton.firePress();
+            strictEqual(this.stepInput.getValue(), "1.1",
+                    "The value is successfuly incremented");
+            oDecrementButton.firePress();
+            strictEqual(this.stepInput.getValue(), "0.0",
+                    "The value is successfuly decremented");
+
+            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+            this.clock.tick(1000);
+            strictEqual(this.stepInput.getValue(), "1.1",
+                    "The value is successfuly incremented");
+            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+            this.clock.tick(1000);
+            strictEqual(this.stepInput.getValue(), "0.0",
+                    "The value is successfuly decremented");
+            oIncrementButton.firePress();
+            oIncrementButton.firePress();
+            strictEqual(this.stepInput.getValue(), 2,
+                    "The value is successfuly decremented");
+
+        });
+
+		module("Keyboard Handling", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput({
+					value: 4,
+					max: 10,
+					min: -4
+				});
+
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
+
+        test("up/down increases/decreases the value", function () {
+            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+            this.clock.tick(1000);
+            strictEqual(this.stepInput.getValue(), 5,
+                    "The value is increasing with 1 after arrow up");
+
+            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+            this.clock.tick(1000);
+            strictEqual(this.stepInput.getValue(), 4,
+                    "The value is decreasing with 1 after arrow down");
+
+            this.stepInput.setStep(5);
+
+            qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+            this.clock.tick(1000);
+            strictEqual(this.stepInput.getValue(), 9,
+                    "The value is decreasing with 5 after arrow up");
+        });
+
+		test("pageup and pagedown increases/decreases the value with a larger step", function () {
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 6, "The value is increasing with step=step*2 after pageup");
+
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 4,
+					"The value is decreasing with step=step*2 after pagedown");
+
+			this.stepInput.setStep(5);
+            this.clock.tick(1000);
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 14,
+					"The value is decreasing with step=step*2 after pageup");
+		});
+
+		test("shift+up/down increases/decreases the value with a larger step if specified", function () {
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 6,
+					"The value is increasing with step=2*step after arrow up");
+
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true, false, false);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 4,
+					"The value is decreasing with step=1 after arrow down");
+
+			this.stepInput.setStep(5);
+            this.clock.tick(1000);
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, false);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 14,
+					"The value is decreasing with step=2*step after arrow up");
+		});
+
+		test("shift+pageup/pagedown sets value to max/min", function () {
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 10,
+					"The value is set to max after page up");
+
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), -4,
+					"The value is set to min after page down");
+		});
+
+		test("ctrl+shift+up/down sets value to max/min", function () {
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, true, false, true);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(), 10,
+					"The value is set to max after page up");
+
+			qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, true, false, true);
+			this.clock.tick(1000);
+			strictEqual(this.stepInput.getValue(),-4,
+					"The value is set to min after page down");
+		});
+
+		module("Accessibility", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput({
+					value: 4,
+					max: 10,
+					min: -4,
+					ariaLabelledBy: "__text0"
+				});
+
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
+
+		test("Spinner specific aria attributes", function () {
+			var $input = this.stepInput.$("input-inner");
+
+			strictEqual($input.attr("role"), "spinbutton", "To have a proper role");
+			ok($input.attr("aria-valuenow"), "To have set a value");
+			ok($input.attr("aria-valuemin"), "To have set a min value");
+			ok($input.attr("aria-valuemax"), "To have set a max value");
+			strictEqual($input.attr("aria-labelledby"), "__text0", "To have a label");
+		});
+
+		test("Spinner alter aria attributes", function () {
+			strictEqual(this.stepInput.$("input-inner").attr("aria-valuenow"), "4", "To have set value on init");
+
+			this.stepInput.setValue(9);
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.stepInput.$("input-inner").attr("aria-valuenow"), "9", "To have properly changed the value");
+
+			this.stepInput.setEditable(false);
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.stepInput.$("input-inner").attr("aria-readonly"), "true", "To set state to read only");
+
+			this.stepInput.setEditable(true);
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.stepInput.$("input-inner").attr("aria-readonly"), undefined, "To set it as editable");
+
+			this.stepInput.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.stepInput.$("input-inner").attr("aria-disabled"), "true", "To set state to disabled");
+
+			this.stepInput.setEnabled(true);
+			sap.ui.getCore().applyChanges();
+			strictEqual(this.stepInput.$("input-inner").attr("aria-disabled"), undefined, "To set it as editable");
+		});
+	</script>
+
+</head>
+<body id="body" class="sapUiBody">
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>

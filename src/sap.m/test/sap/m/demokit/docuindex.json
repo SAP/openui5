@@ -888,6 +888,13 @@
 		  "formFactors": "L",
 		  "samples": ["sap.m.sample.TileContainer"]
 		},
+        {
+          "id": "sap.m.StepInput",
+          "name": "StepInput",
+          "category": "User Input",
+          "since": "1.40",
+          "samples": ["sap.m.sample.StepInput"]
+        },
 		{
 		  "id": "sap.m.Switch",
 		  "name": "Switch",
@@ -2197,6 +2204,11 @@
 		  "name": "Remove Margins",
 		  "description": "Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides."
 		},
+        {
+          "id": "sap.m.sample.StepInput",
+          "name": "StepInput",
+          "description": "The StepInput allows the user to change stepwise a value by a predefined step."
+        },
 		{
 		"id": "sap.m.sample.TimePicker",
 		"name": "Time Picker",
