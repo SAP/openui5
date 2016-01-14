@@ -16,6 +16,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
        InteractionTree.expandIcon = 'sap-icon://navigation-right-arrow';
        InteractionTree.collapseIcon = 'sap-icon://navigation-down-arrow';
 
+       var popoverCloseOpenDelay = 200, popoverCloseTimeStamp;
+
        InteractionTree.prototype.setInteractions = function (interactions) {
 
           this.interactions = interactions;
@@ -470,12 +472,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
              for (var i = 0; i < requestDivElements.length; i++) {
                 requestDivElements[i].addEventListener('click', function (event) {
-                   initializePopOverClientServerProgressBar.call(this);
-                   initializePopOverRequestData.call(this);
-                   initializePopOverSapStatisticsData.call(this);
+                   if (!popoverCloseTimeStamp || (popoverCloseTimeStamp + popoverCloseOpenDelay < (new Date().getTime()))) {
+                     initializePopOverClientServerProgressBar.call(this);
+                     initializePopOverRequestData.call(this);
+                     initializePopOverSapStatisticsData.call(this);
 
-                   var requestBarElement = jQuery(this).children()[1];
-                   oPopover.openBy(requestBarElement);
+                     var requestBarElement = jQuery(this).children()[1];
+                     oPopover.openBy(requestBarElement);
+                   }
                 });
              }
           }
@@ -552,7 +556,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 initialFocus: "dummyFocus",
                 content: [
                    createPopOverContent()
-                ]
+                ],
+                afterClose: that.setPopoverCloseTimestamp
              });
              return oPopover;
           }
@@ -618,10 +623,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
              for (var i = 0; i < interactionsDivElements.length; i++) {
                 interactionsDivElements[i].addEventListener('click', function (event) {
-                   initializePopOverInteractionData.call(this);
+                   if (!popoverCloseTimeStamp || (popoverCloseTimeStamp + popoverCloseOpenDelay < (new Date().getTime()))) {
+                      initializePopOverInteractionData.call(this);
 
-                   var interactionBarElement = jQuery(this).children()[0];
-                   oPopover.openBy(interactionBarElement);
+                      var interactionBarElement = jQuery(this).children()[0];
+                      oPopover.openBy(interactionBarElement);
+                   }
                 });
              }
           }
@@ -645,7 +652,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 horizontalScrolling: false,
                 content: [
                    createPopOverContent()
-                ]
+                ],
+                afterClose: that.setPopoverCloseTimestamp
              });
              return oPopover;
           }
@@ -683,6 +691,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              });
              return simpleForm;
           }
+       };
+
+       InteractionTree.prototype.setPopoverCloseTimestamp = function () {
+          popoverCloseTimeStamp = new Date().getTime();
        };
 
        InteractionTree.prototype.renderRequestPart = function (rm, start, end, colorClass) {
