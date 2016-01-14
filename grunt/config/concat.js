@@ -19,6 +19,7 @@ module.exports = function(grunt, config) {
 				footer: 'if (!window["sap-ui-debug"]) { jQuery.sap.preloadModules("sap.ui.core.library-preload", false); } jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();'
 			},
 			src: [
+				sSourcesFolder + 'sap/ui/core/globalErrorHandler.js',
 				sSourcesFolder + 'sap/ui/Device.js',
 				sSourcesFolder + 'sap/ui/thirdparty/URI.js',
 				sSourcesFolder + 'sap/ui/thirdparty/es6-promise.js',
@@ -31,6 +32,7 @@ module.exports = function(grunt, config) {
 				footer:  '<%= concat.coreNoJQueryJS.options.footer %>'
 			},
 			src: [
+				sSourcesFolder + 'sap/ui/core/globalErrorHandler.js',
 				sSourcesFolder + 'sap/ui/thirdparty/jquery.js',
 				sSourcesFolder + 'sap/ui/thirdparty/jqueryui/jquery-ui-position.js',
 				'<%= concat.coreNoJQueryJS.src %>'

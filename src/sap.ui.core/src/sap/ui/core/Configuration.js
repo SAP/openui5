@@ -122,6 +122,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-suppressDeactivationOfControllerCode" : { type : "boolean",  defaultValue : false }, //temporarily to suppress the deactivation of controller code in design mode
 					"xx-lesssupport"        : { type : "boolean",  defaultValue : false },
 					"xx-handleValidation"   : { type : "boolean",  defaultValue : false },
+					"xx-enableGlobalErrorHandler" : { type : "boolean",  defaultValue : false },
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -1096,6 +1097,24 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				this._oCore && this._oCore.fireLocalizationChanged(mChanges);
 				delete this.mChanges;
 			}
+		},
+
+		/**
+		 * Flag to turn on global error handling support (window.onerror)
+		 *
+		 * @returns {boolean} enableGlobalErrorHandler mode
+		 * @private
+		 */
+		getEnableGlobalErrorHandler : function() {
+			return this["xx-enableGlobalErrorHandler"];
+		},
+
+		/**
+		 * set Flag to turn on global error handling support (window.onerror)
+		 * @private
+		 */
+		setEnableGlobalErrorHandler : function(bValue) {
+			this["xx-enableGlobalErrorHandler"] = !!bValue;
 		},
 
 		/**
