@@ -124,12 +124,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				var stepEnd = stepStart + stepTime;
 				var selectedStepsByTime = this._filterByTime({start: stepStart, end: stepEnd}, copiedData);
 
-				/* eslint-disable no-loop-func */
 				var stepItem = {
 					interactions: selectedStepsByTime,
 					totalDuration: 0
 				};
 
+				/* eslint-disable no-loop-func */
 				selectedStepsByTime.map(function(step) {
 					stepItem.totalDuration += step.calculatedDuration;
 				});
@@ -138,11 +138,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				bAlreadyInserted = selectedStepsByTime.length > 0 &&
 					oldStepItem.interactions.length > 0 &&
 					selectedStepsByTime[0].start === oldStepItem.interactions[0].start;
-				if (!bAlreadyInserted) {
-					stepsData.push(stepItem);
-					oldStepItem = stepItem;
+
+				// insert empty step when already is inserted in the previous step
+				if (bAlreadyInserted) {
+					stepItem.interactions = [];
+					stepItem.totalDuration = 0;
 				}
 
+				stepsData.push(stepItem);
+				oldStepItem = stepItem;
 
 			}
 
