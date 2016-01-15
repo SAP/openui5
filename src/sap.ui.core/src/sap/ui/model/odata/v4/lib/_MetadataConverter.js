@@ -147,6 +147,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			__processor : processEdmx,
 			"Reference" : {
 				__processor : processReference,
+				__include : [oAnnotationConfig],
 				"Include" : {
 					__processor : processInclude
 				},
@@ -935,6 +936,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		// FIXME if the URI is relative, check xml:base in the element and its parent(s)
 		oAggregate.reference = oReference[oElement.getAttribute("Uri")] = {};
+		annotatable(oAggregate, oAggregate.reference);
 	}
 
 	/**

@@ -1328,6 +1328,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("inline annotations: Reference", function (assert) {
+		testConversion(assert, '\
+				<Reference Uri="qux/$metadata">\
+					<Annotation Term="foo.Term" String="Reference"/>\
+				</Reference>',
+			{
+				"$Reference": {
+					"qux/$metadata": {
+						"@foo.Term": "Reference"
+					}
+				}
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("annotated annotations", function (assert) {
 		testConversion(assert, '\
 				<DataServices>\
