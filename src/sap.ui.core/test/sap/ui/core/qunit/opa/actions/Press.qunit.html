@@ -34,7 +34,8 @@
 			"sap/ui/table/Column",
 			"sap/m/Label",
 			"sap/m/TileContainer",
-			"sap/m/StandardTile"],
+			"sap/m/StandardTile",
+			"sap/m/SearchField"],
 		function(Press,
 				 Button,
 				 List,
@@ -47,7 +48,8 @@
 				 Column,
 				 Label,
 				 TileContainer,
-				 StandardTile){
+				 StandardTile,
+				 SearchField){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
@@ -271,6 +273,29 @@
 
 				// Act
 				oPressAction.executeOn(oTile);
+			});
+
+			QUnit.test("Should press a SearchField", function (assert) {
+				var done = assert.async(),
+					oSearchField = new SearchField();
+
+				oSearchField.placeAt("qunit-fixture");
+
+				aControlsToClean.push(oSearchField);
+
+				sap.ui.getCore().applyChanges();
+
+				// System under Test
+				var oPressAction = new Press();
+
+				oSearchField.attachSearch(function () {
+					// Assert
+					assert.ok(true, "Fired the event");
+					done();
+				});
+
+				// Act
+				oPressAction.executeOn(oSearchField);
 			});
 		});
 	</script>
