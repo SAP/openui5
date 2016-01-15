@@ -2020,7 +2020,9 @@ if ( eventCaptureSupported ) {
 			$this.bind( "vmousedown", function( event ) {
 
 				if ( event.which && event.which !== 1 ) {
-					return false;
+					// SAP MODIFICATION: 'return false' is changed with 'return' to let the event
+					// still propagate to the parent DOMs.
+					return;
 				}
 
 				var origTarget = event.target,
