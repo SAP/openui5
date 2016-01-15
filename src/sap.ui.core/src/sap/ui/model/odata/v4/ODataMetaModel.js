@@ -9,12 +9,11 @@ sap.ui.define([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
-	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/model/PropertyBinding"
-], function (ContextBinding, Context, FilterProcessor, JSONListBinding, MetaModel, ODataUtils,
-		Helper, SyncPromise, PropertyBinding) {
+], function (ContextBinding, Context, FilterProcessor, JSONListBinding, MetaModel, Helper,
+		SyncPromise, PropertyBinding) {
 	"use strict";
 
 	var ODataMetaContextBinding,
@@ -266,6 +265,9 @@ sap.ui.define([
 			function step(sLocation, sSegment, i, aSegments) {
 				if (!sSegment) {
 					return warn("Invalid empty part");
+				}
+				if (sSegment === "$Annotations") {
+					return warn("Invalid part: $Annotations");
 				}
 				// Note: "@sapui.name" refers back to the object's OData name
 				if (sSegment === "@sapui.name") {
