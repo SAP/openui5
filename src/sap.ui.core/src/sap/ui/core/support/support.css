@@ -1373,11 +1373,11 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	float: right;
 }
 
-.sapUiSupportIntImportExportBtn:hover {
+/*.sapUiSupportIntImportExportBtn:hover {
 	background-color: #F2F2F2;
 	border-color: #A3A3A3;
 	color: black;
-}
+}*/
 
 .sapUiSupportIntHidden {
 	display:none;
