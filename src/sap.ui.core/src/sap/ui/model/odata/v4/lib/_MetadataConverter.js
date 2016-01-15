@@ -585,7 +585,6 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {object} the constant value for the JSON
 	 */
 	function postProcessUrlRef(oElement, aResult) {
-		// FIXME if the URL is relative, check xml:base. What if the URL is calculated at runtime?
 		return {$UrlRef: aResult[0]};
 	}
 
@@ -934,7 +933,6 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processReference(oElement, oAggregate) {
 		var oReference = getOrCreateObject(oAggregate.result, "$Reference");
 
-		// FIXME if the URI is relative, check xml:base in the element and its parent(s)
 		oAggregate.reference = oReference[oElement.getAttribute("Uri")] = {};
 	}
 
