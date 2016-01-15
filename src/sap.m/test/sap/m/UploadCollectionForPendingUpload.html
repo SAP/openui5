@@ -94,27 +94,7 @@
 		jQuery.sap.log.info("Event uploadComplete triggered for file " + sFileName);
 		if (iRequestCounter <= 1) {
 			setTimeout(function() {
-				// Destroys old UploadCollection instance and creates a new one
-				oPage.removeContent(oUploadCollection);
-				oUploadCollection.destroy();
-				// Creates an instance of UploadCollection
-				oUploadCollection = new sap.m.UploadCollection({
-					maximumFilenameLength : 55,
-					maximumFileSize : 50,
-					multiple : true,
-					fileType : aFileTypes,
-					sameFilenameAllowed : true,
-					instantUpload : false,
-					// events
-					change : fnChange,
-					fileDeleted : fnFileDeleted,
-					filenameLengthExceed : fnfilenameLengthExceed,
-					fileSizeExceed : fnFileSizeExceed,
-					typeMissmatch : fnTypeMissmatch,
-					uploadComplete : fnUploadComplete,
-					beforeUploadStarts : fnBeforeUploadStarts
-				});
-				oPage.insertContent(oUploadCollection);
+				oUploadCollection.removeAllItems();
 			}, 6000);
 			iRequestCounter = 0;
 		} else {
