@@ -597,10 +597,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processActionOrFunction(oElement, oAggregate) {
 		var sKind = oElement.localName,
 			sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
-			aActions = oAggregate.result[sQualifiedName] || [],
 			oAction = {
-				$kind: sKind,
-				$Parameter: []
+				$kind: sKind
 			};
 
 		processAttributes(oElement, oAction, {
@@ -609,7 +607,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"IsComposable" : setIfTrue
 		});
 
-		oAggregate.result[sQualifiedName] = aActions.concat(oAction);
+		getOrCreateArray(oAggregate.result, sQualifiedName).push(oAction);
 		oAggregate.actionOrFunction = oAction;
 		annotatable(oAggregate, oAction);
 	}
@@ -757,8 +755,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processEntityType(oElement, oAggregate) {
 		processType(oElement, oAggregate, {
-			$kind: "EntityType",
-			$Key : []
+			$kind: "EntityType"
 		});
 	}
 
@@ -778,7 +775,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		} else {
 			vKey = sName;
 		}
-		oAggregate.type.$Key = oAggregate.type.$Key.concat(vKey);
+		getOrCreateArray(oAggregate.type, "$Key").push(vKey);
 	}
 
 	/**
@@ -913,7 +910,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		});
 		MetadataConverter.processFacetAttributes(oElement, oParameter);
 
-		oActionOrFunction.$Parameter.push(oParameter);
+		getOrCreateArray(oActionOrFunction, "$Parameter").push(oParameter);
 		annotatable(oAggregate, oParameter);
 	}
 
