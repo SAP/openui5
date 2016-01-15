@@ -2,37 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], function ($, Action, QUnitUtils) {
+sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	"use strict";
-
-	function triggerEvent (sName, $FocusDomRef) {
-		var oFocusDomRef = $FocusDomRef[0],
-			x = $FocusDomRef.offset().x,
-			y = $FocusDomRef.offset().y;
-
-		// See file jquery.sap.events.js for some insights to the magic
-		var oMouseEventObject = {
-			identifier: 1,
-			// Well offset should be fine here
-			pageX: x,
-			pageY: y,
-			// ignore scrolled down stuff in OPA
-			clientX: x,
-			clientY: y,
-			// Assume stuff is over the whole screen
-			screenX: x,
-			screenY: y,
-			target: $FocusDomRef[0],
-			radiusX: 1,
-			radiusY: 1,
-			rotationAngle: 0,
-			// left mouse button
-			button: 0,
-			// include the type so jQuery.event.fixHooks can copy properties properly
-			type: sName
-		};
-		QUnitUtils.triggerEvent(sName, oFocusDomRef, oMouseEventObject);
-	}
 
 	/**
 	 * @class The Press action is used to simulate a press interaction on a control's dom ref.
@@ -71,13 +42,42 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], func
 				$.sap.log.debug("Pressed the control " + oControl, this._sLogPrefix);
 
 				// the missing events like saptouchstart and tap will be fired by the event simulation
-				triggerEvent("mousedown", $FocusDomRef);
-				QUnitUtils.triggerEvent("selectstart", $FocusDomRef[0]);
-				triggerEvent("mouseup", $FocusDomRef);
-				triggerEvent("click", $FocusDomRef);
+				this._triggerEvent("mousedown", $FocusDomRef);
+				this._getUtils().triggerEvent("selectstart", $FocusDomRef);
+				this._triggerEvent("mouseup", $FocusDomRef);
+				this._triggerEvent("click", $FocusDomRef);
 			} else {
 				$.sap.log.error("Control " + oControl + " has no dom representation", this._sLogPrefix);
 			}
+		},
+
+		_triggerEvent : function (sName, $FocusDomRef) {
+			var oFocusDomRef = $FocusDomRef[0],
+				x = $FocusDomRef.offset().x,
+				y = $FocusDomRef.offset().y;
+
+			// See file jquery.sap.events.js for some insights to the magic
+			var oMouseEventObject = {
+				identifier: 1,
+				// Well offset should be fine here
+				pageX: x,
+				pageY: y,
+				// ignore scrolled down stuff in OPA
+				clientX: x,
+				clientY: y,
+				// Assume stuff is over the whole screen
+				screenX: x,
+				screenY: y,
+				target: $FocusDomRef[0],
+				radiusX: 1,
+				radiusY: 1,
+				rotationAngle: 0,
+				// left mouse button
+				button: 0,
+				// include the type so jQuery.event.fixHooks can copy properties properly
+				type: sName
+			};
+			this._getUtils().triggerEvent(sName, oFocusDomRef, oMouseEventObject);
 		}
 	});
 
