@@ -252,6 +252,7 @@
                   <artifactId>performance-webm</artifactId>
                   <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
+                <!--
                 <deployable>
                   <groupId>com.sap.ui5.tools</groupId>
                   <artifactId>jsunit-testrunner</artifactId>
@@ -262,7 +263,6 @@
                   <artifactId>jsunit-tests</artifactId>
                   <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
-                <!--
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>cactus-unit-tests</artifactId>
@@ -289,11 +289,13 @@
                   <artifactId>ui5infoapp</artifactId>
                   <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
+                <!--
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>ui5team</artifactId>
                   <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
+                -->
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>charting-sample</artifactId>
