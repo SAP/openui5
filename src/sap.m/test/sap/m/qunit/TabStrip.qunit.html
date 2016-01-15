@@ -49,6 +49,32 @@
 			}
 		});
 
+		test("Set default selected item", function () {
+			var oItem2 = new sap.m.TabStripItem({
+				text: "Tab 2"
+			});
+			var oTS = new sap.m.TabStrip({
+				hasSelect: true,
+				selectedItem: oItem2,
+				items: [
+					new sap.m.TabStripItem({
+						text: "Tab 1"
+					}),
+					oItem2,
+					new sap.m.TabStripItem({
+						text: "Tab 3"
+					})
+				]
+			});
+			oTS.placeAt('qunit-fixture');
+
+			this.clock.tick(1000);
+
+			strictEqual(oTS.getAggregation('_select').getSelectedItem().getText(), oItem2.getText(), "Correct default selectedItem property value");
+
+			oTS.destroy();
+		});
+
 		test("DOM", function () {
 			//assert
 			ok(this.sut.$().length > 0, "The control was successfully rendered");
@@ -155,6 +181,8 @@
 					"Add aggregation adds successfuly");
 		});
 
+
+
 		test("Render all tabs", function () {
 			//arrange
 			this.sut.addItem(new sap.m.TabStripItem({
@@ -199,6 +227,7 @@
 			this.sut.setHasSelect(true);
 			strictEqual(this.sut.getAggregation('_select') instanceof sap.m.TabStripSelect, true, "The select aggregation should not be destroyed when hasSelect is set to 'true'");
 		});
+
 
 		module("Keyboard Handling", {
 			beforeEach: function () {
