@@ -42,7 +42,11 @@
 							<Column>
 								<template:if test="{field>Label}">
 									<template:then>
-										<Text text="{field>Label}"/>
+										<!-- TODO $EnumMember is a bit strange, what about computed values etc.? -->
+										<Label design="{:= ${field>@com.sap.vocabularies.UI.v1.Importance}
+											&amp;&amp; ${field>@com.sap.vocabularies.UI.v1.Importance}['$EnumMember']
+											=== 'com.sap.vocabularies.UI.v1.ImportanceType/High' ? 'Bold' : 'Standard'}"
+											text="{field>Label}"/>
 									</template:then>
 									<template:else>
 										<!-- TODO insert "$Path" automatically?
@@ -57,7 +61,19 @@
 						<ColumnListItem>
 							<cells>
 								<template:repeat list="{target>}" var="field">
-									<Text text="{= '{' + ${field>Value/$Path} + '}' }" />
+									<template:if test="{field>Value/$Path/@com.sap.vocabularies.Common.v1.Text}">
+										<template:then>
+											<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
+											<template:if test="{= ${field>Value/$Path/@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement/$EnumMember}
+												=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
+												<Text text="{= '{' + ${field>Value/$Path} + '} {'
+													+ ${field>Value/$Path/@com.sap.vocabularies.Common.v1.Text/$Path} + '}' }" />
+											</template:if>
+										</template:then>
+										<template:else>
+											<Text text="{= '{' + ${field>Value/$Path} + '}' }" />
+										</template:else>
+									</template:if>
 								</template:repeat>
 							</cells>
 						</ColumnListItem>

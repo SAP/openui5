@@ -18,8 +18,9 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var mScope = { // tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
+	var mScope = {
 			"$EntityContainer" : "tea_busi.DefaultContainer",
+			// tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
 			"tea_busi." : {
 				"$kind" : "Schema",
 				"$Annotations" : {
@@ -30,8 +31,12 @@ sap.ui.require([
 						"@empty" : {}
 					},
 					"tea_busi.TEAM" : {
-						"@com.sap.vocabularies.UI.v1.LineItem" : [{
-							"$Type" : "com.sap.vocabularies.UI.v1.LineItem",
+						// UI := com.sap.vocabularies.UI.v1
+						"@UI.LineItem" : [{
+							"@UI.Importance" : {
+								"$EnumMember" : "UI.ImportanceType/High"
+							},
+							"$Type" : "UI.LineItem",
 							"Label" : "Team_Id",
 							"Value" : {
 								"$Path" : "Team_Id"
@@ -39,7 +44,14 @@ sap.ui.require([
 						}]
 					},
 					"tea_busi.TEAM/Team_Id" : {
-						"@empty" : {}
+						// Common := com.sap.vocabularies.Common.v1
+						"@Common.Text" : {
+							"$Path" : "Name"
+						},
+						"@Common.Text@UI.TextArrangement" : {
+							"$EnumMember"
+								: "UI.TextArrangementType/TextLast"
+						}
 					}
 				}
 			},
@@ -51,6 +63,12 @@ sap.ui.require([
 					"$Type" : "Edm.String",
 					"$Nullable" : false,
 					"$MaxLength" : 10
+				},
+				"Name" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String",
+					"$Nullable" : false,
+					"$MaxLength" : 40
 				},
 				"TEAM_2_EMPLOYEES" : {
 					"$kind" : "NavigationProperty",
@@ -107,8 +125,7 @@ sap.ui.require([
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
 		oTeamData = mScope["tea_busi.TEAM"],
-		oTeamLineItem = mScope["tea_busi."].$Annotations["tea_busi.TEAM"]
-			["@com.sap.vocabularies.UI.v1.LineItem"], // at entity type
+		oTeamLineItem = mScope["tea_busi."].$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		oWorkerData = mScope["tea_busi.Worker"];
 
 	/**
@@ -336,9 +353,6 @@ sap.ui.require([
 		"/$EntityContainer/$Foo" : undefined,
 		"/$EntityContainer/T€AMS/$Type" : "tea_busi.TEAM",
 		"/$EntityContainer/T€AMS/$Type/Team_Id" : oTeamData.Team_Id,
-		// initial "17.2 SimpleIdentifier" --------------------------------------------------------
-		"/T€AMS" : oContainerData["T€AMS"],
-		//TODO later "17.2 SimpleIdentifier" inside non-default container?
 		// "17.3 QualifiedName", e.g. type cast ---------------------------------------------------
 		"/tea_busi.DefaultContainer/EMPLOYEES/tea_busi.Worker/AGE" : oWorkerData.AGE,
 		// implicit $Type insertion ---------------------------------------------------------------
@@ -350,16 +364,17 @@ sap.ui.require([
 		"/T€AMS/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
 		// scope lookup, then implicit $Type insertion!
 		"/$$Term/AGE" : oWorkerData.AGE,
+		// "17.2 SimpleIdentifier": lookup inside current schema child ----------------------------
+		"/T€AMS" : oContainerData["T€AMS"],
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/." : oWorkerData,
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
+		"/T€AMS/$Type/@UI.LineItem/0/Value/$Path/@empty"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@empty"],
 		// placeholder "." ------------------------------------------------------------------------
 		"/." : oContainerData,
 		"/T€AMS/$Type/." : oTeamData,
 		"/T€AMS/." : oTeamData,
-		// "17.2 SimpleIdentifier": lookup inside current schema child ----------------------------
-		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/." : oWorkerData,
-		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
-		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
-		"/T€AMS/$Type/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/@empty"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@empty"],
 		// @sapui.name ----------------------------------------------------------------------------
 		"/./@sapui.name" : "tea_busi.DefaultContainer",
 		"/Foo/@sapui.name" : "Foo", // "It does not matter whether that name is valid or not."
@@ -374,13 +389,17 @@ sap.ui.require([
 		// annotations ----------------------------------------------------------------------------
 		"/$EntityContainer/@empty"
 			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@empty"],
-		"/T€AMS/$Type/./@com.sap.vocabularies.UI.v1.LineItem" : oTeamLineItem,
-		"/T€AMS/$Type/@com.sap.vocabularies.UI.v1.LineItem" : oTeamLineItem,
-		"/T€AMS/$Type/@com.sap.vocabularies.UI.v1.LineItem/0/Label" : oTeamLineItem[0].Label,
+		"/T€AMS/$Type/./@UI.LineItem" : oTeamLineItem,
+		"/T€AMS/$Type/@UI.LineItem" : oTeamLineItem,
+		"/T€AMS/$Type/@UI.LineItem/0/Label" : oTeamLineItem[0].Label,
+		"/T€AMS/$Type/@UI.LineItem/0/@UI.Importance" : oTeamLineItem[0]["@UI.Importance"],
 		"/T€AMS/@empty"
 			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer/T€AMS"]["@empty"],
-		"/T€AMS/Team_Id/@empty"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@empty"]
+		"/T€AMS/Team_Id/@Common.Text"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
+		"/T€AMS/Team_Id/@Common.Text@UI.TextArrangement"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]
+				["@Common.Text@UI.TextArrangement"]
 	}, function (sPath, sContextPath, sMetaPath, vResult) {
 		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var oContext = sContextPath && this.oMetaModel.getContext(sContextPath),
@@ -396,7 +415,6 @@ sap.ui.require([
 		});
 	});
 	//TODO support also external targeting from a different schema!
-	//TODO inline annotations!
 	//TODO also support all variants of "14.5.12 Path"
 	//TODO special cases from sap.ui.model.odata.ODataMetaModel#_getObject:
 	// - "Invalid relative path w/o context"
@@ -653,41 +671,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["bar", null, undefined, 42].forEach(function (vValue) {
-		QUnit.test("getProperty: primitive value " + vValue, function (assert) {
-			var oContext = {};
-
-			this.mock(this.oMetaModel).expects("getObject").withExactArgs("foo", oContext)
-				.returns(vValue);
-
-			assert.strictEqual(this.oMetaModel.getProperty("foo", oContext), vValue,
-				"property access to primitive values only");
-		});
-	});
-
-	//*********************************************************************************************
-	[false, true].forEach(function (bWarn) {
-		QUnit.test("getProperty: object values, warn = " + bWarn, function (assert) {
-			var oContext = this.oMetaModel.getContext("/"),
-				sPath = "EMPLOYEES",
-				sResolvedPath = "/EMPLOYEES";
-
-			this.mock(this.oMetaModel).expects("getObject").withExactArgs(sPath, oContext)
-				.returns({});
-			this.oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING)
-				.returns(bWarn);
-			this.mock(this.oMetaModel).expects("resolve").withExactArgs(sPath, oContext)
-				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
-				.returns(sResolvedPath);
-			this.oLogMock.expects("warning")
-				.exactly(bWarn ? 1 : 0)
-				.withExactArgs("Accessed value is not primitive", sResolvedPath,
-					"sap.ui.model.odata.v4.ODataMetaModel");
-
-			assert.strictEqual(this.oMetaModel.getProperty(sPath, oContext), null,
-				"no property access to objects");
-		});
+	QUnit.test("getProperty = getObject", function (assert) {
+		assert.strictEqual(this.oMetaModel.getProperty, this.oMetaModel.getObject);
 	});
 
 	//*********************************************************************************************
