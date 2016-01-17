@@ -1339,6 +1339,10 @@ sap.ui
 						if (sFirstChar === "'" || sLastChar !== "'") {
 							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
 						}
+					} else if (oEntitySet.keysType[sKey] === "Edm.Binary") {
+						if (!(new RegExp("(binary|X)'[A-Fa-f0-9][A-Fa-f0-9]*'").test(sRequestValue))) {
+							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
+						}
 					} else {
 						if ((sFirstChar === "'" && sLastChar !== "'") || (sLastChar === "'" && sFirstChar !== "'")) {
 							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
