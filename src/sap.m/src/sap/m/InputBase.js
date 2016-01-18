@@ -1051,20 +1051,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var oDescribedByDomRef = this.getDomRef("describedby"),
 				sAnnouncement = this.getRenderer().getDescribedByAnnouncement(this),
 				sDescribedbyId = this.getId() + "-describedby",
-				sAriaDescribedbyAttr = "aria-describedby",
+				sAriaDescribedByAttr = "aria-describedby",
 				oFocusDomRef = this.getFocusDomRef(),
-				sAriaDescribedby = oFocusDomRef.getAttribute(sAriaDescribedbyAttr);
+				sAriaDescribedby = oFocusDomRef.getAttribute(sAriaDescribedByAttr);
 
 			if (!oDescribedByDomRef && sAnnouncement) {
 				oDescribedByDomRef = document.createElement("span");
-				oDescribedByDomRef.setAttribute("id", sDescribedbyId);
+				oDescribedByDomRef.id = sDescribedbyId;
 				oDescribedByDomRef.setAttribute("aria-hidden", "true");
-				oDescribedByDomRef.setAttribute("class", "sapUiInvisibleText");
+				oDescribedByDomRef.className = "sapUiInvisibleText";
 
 				if (this.getAriaDescribedBy) {
-					oFocusDomRef.setAttribute(sAriaDescribedbyAttr, (this.getAriaDescribedBy().join(" ") + " " + sDescribedbyId).trim());
+					oFocusDomRef.setAttribute(sAriaDescribedByAttr, (this.getAriaDescribedBy().join(" ") + " " + sDescribedbyId).trim());
 				} else {
-					oFocusDomRef.setAttribute(sAriaDescribedbyAttr, sDescribedbyId);
+					oFocusDomRef.setAttribute(sAriaDescribedByAttr, sDescribedbyId);
 				}
 
 				oDomRef.appendChild(oDescribedByDomRef);
@@ -1073,7 +1073,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var sDescribedByDomRefId = oDescribedByDomRef.id;
 
 				if (sAriaDescribedby && sDescribedByDomRefId) {
-					oFocusDomRef.setAttribute(sAriaDescribedbyAttr, sAriaDescribedby.replace(sDescribedByDomRefId, "").trim());
+					oFocusDomRef.setAttribute(sAriaDescribedByAttr, sAriaDescribedby.replace(sDescribedByDomRefId, "").trim());
 				}
 			}
 

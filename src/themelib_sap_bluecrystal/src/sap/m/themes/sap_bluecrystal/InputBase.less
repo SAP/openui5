@@ -1,11 +1,13 @@
 /* ========================================================= */
-/* CSS for control sap.m/InputBase.control BlueCrystal theme */
+/* CSS for control sap.m/InputBase BlueCrystal theme         */
 /* ========================================================= */
 
 .sapMInputBase {
-	border: none;
-	padding: 0.25rem 0;
 	height: 3rem;
+}
+
+.sapMInputBaseWidthPadding {
+	padding: 0.25rem 0;
 }
 
 .sapMInputBaseInner {
@@ -62,7 +64,7 @@
 	border-color: @sapUiFieldSuccessColor;
 }
 
-.sapMInputBaseInner.sapMInputBaseReadonlyInner {
+.sapMInputBaseReadonlyInner {
 	border-color: transparent;
 	background: transparent;
 }
@@ -127,7 +129,6 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 
 	.sapMInputBase {
 		height: 2rem;
-		padding: 0.1875rem 0;
 	}
 
 	.sapMInputBaseInner {
@@ -139,6 +140,10 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 		line-height: 1.625rem;
 		padding: 0 0.5rem;
 	}
+}
+
+.sapUiSizeCompact .sapMInputBaseWidthPadding {
+	padding: 0.1875rem 0;
 }
 
 /* Compact size */
