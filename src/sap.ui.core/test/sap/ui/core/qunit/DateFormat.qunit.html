@@ -26,6 +26,7 @@
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 
 <!-- Test functions -->
 <script language="javascript">
@@ -135,26 +136,28 @@
 			return [sTargetDate, sTargetDate];
 		}
 
-		return [oLocaleData.getRelativeDay(iDiff).replace("{0}", iDays), sTargetDate];
+		return [oLocaleData.getRelativeDay(iDiff, oFormatOptions.relativeStyle).replace("{0}", iDays), sTargetDate];
 	}
 
 	function doTestRelative(bFormat, oFormatOptions, sLocale, sTestInfo){
-		var oFormat1 = sap.ui.core.format.DateFormat.getDateInstance(jQuery.extend({relative: bFormat}, oFormatOptions), new sap.ui.core.Locale(sLocale)),
-			oFormat2 = sap.ui.core.format.DateFormat.getDateInstance(oFormatOptions, new sap.ui.core.Locale(sLocale)),
-			oToday = new Date(),
-			iToday = oToday.getTime(),
-			iTarget, aExpected;
+		[undefined, 'wide', 'short', 'narrow'].forEach(function(sStyle) {
+			oFormatOptions.relativeStyle = sStyle;
+			var oFormat1 = sap.ui.core.format.DateFormat.getDateInstance(jQuery.extend({relative: bFormat}, oFormatOptions), new sap.ui.core.Locale(sLocale)),
+				oFormat2 = sap.ui.core.format.DateFormat.getDateInstance(oFormatOptions, new sap.ui.core.Locale(sLocale)),
+				oToday = new Date(),
+				iToday = oToday.getTime(),
+				iTarget, aExpected;
 
-		for(var i=-10; i<=10; i++){
-			iTarget = iToday + i * (24 * 60 * 60 * 1000);
-			var aExpected = getExpectedRelativeDate(i, iTarget, oFormatOptions, sLocale);
-			if(bFormat){
-				equal(oFormat1.format(new Date(iTarget)), aExpected[0], sTestInfo+" ----------- Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[0]+" "+(aExpected[0] == aExpected[1] ? "" : "("+aExpected[1]+")"));
-			}else{
-				equal(oFormat2.format(oFormat1.parse(aExpected[0]))+"", aExpected[1], sTestInfo+" ----------- "+aExpected[0]+" -> Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[1]);
+			for(var i=-10; i<=10; i++){
+				iTarget = iToday + i * (24 * 60 * 60 * 1000);
+				var aExpected = getExpectedRelativeDate(i, iTarget, oFormatOptions, sLocale);
+				if(bFormat){
+					equal(oFormat1.format(new Date(iTarget)), aExpected[0], sTestInfo+" ----------- Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[0]+" "+(aExpected[0] == aExpected[1] ? "" : "("+aExpected[1]+")"));
+				}else{
+					equal(oFormat2.format(oFormat1.parse(aExpected[0]))+"", aExpected[1], sTestInfo+" ----------- "+aExpected[0]+" -> Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[1]);
+				}
 			}
-;
-		}
+		});
 	}
 
 
@@ -506,132 +509,198 @@
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Islamic}, "ar", "style long, range [1, 5], ar with calendar type Islamic");
 	});
 
-	module("Scaling: Relative Time Formater")
+	module("Scaling: Relative Time Formater", {
+		setup: function() {
+			this.clock = sinon.useFakeTimers(1444724476000);
+		},
+		teardown: function() {
+			this.clock.restore();
+		}
+	});
 
 	function date(scale, diff) {
-		var oResult = new Date();
+		var oNow = new Date(),
+			oResult = new Date(Date.UTC(oNow.getFullYear(), oNow.getMonth(), oNow.getDate(), oNow.getHours(), oNow.getMinutes(), oNow.getSeconds(), oNow.getMilliseconds()));
 		switch(scale) {
-			case "second": oResult.setSeconds(oResult.getSeconds() + diff); break;
-			case "minute": oResult.setMinutes(oResult.getMinutes() + diff); break;
-			case "hour": oResult.setHours(oResult.getHours() + diff); break;
-			case "day": oResult.setDate(oResult.getDate() + diff); break;
-			case "month": oResult.setMonth(oResult.getMonth() + diff); break;
-			case "year": oResult.setFullYear(oResult.getFullYear() + diff); break;
+			case "second": oResult.setUTCSeconds(oResult.getUTCSeconds() + diff); break;
+			case "minute": oResult.setUTCMinutes(oResult.getUTCMinutes() + diff); break;
+			case "hour": oResult.setUTCHours(oResult.getUTCHours() + diff); break;
+			case "day": oResult.setUTCDate(oResult.getUTCDate() + diff); break;
+			case "month": oResult.setUTCMonth(oResult.getUTCMonth() + diff); break;
+			case "year": oResult.setUTCFullYear(oResult.getUTCFullYear() + diff); break;
 		}
-		return oResult;
+		return new Date(oResult.getUTCFullYear(), oResult.getUTCMonth(), oResult.getUTCDate(), oResult.getUTCHours(), oResult.getUTCMinutes(), oResult.getUTCSeconds(), oResult.getUTCMilliseconds());
 	}
 
-	test("format Time relative", function(){
-		var oTime = sap.ui.core.format.DateFormat.getTimeInstance({
-					relative: true,
-					relativeScale: "auto"
-				});
+	test("Time relative: format and parse", function() {
+		var aStyles = [undefined, 'wide', 'short', 'narrow'],
+			aTestData = [{
+				scale: "auto",
+				data: [
+					{unit: "second", diff: 0, results: ["now", "now", "now", "now"], description: "now"},
+					{unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1 sec."], description: "Now + 1 Second --> in 1 second"},
+					{unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1 sec. ago"], description: "Now - 1 Second --> 1 second ago"},
+					{unit: "second", diff: 2, results: ["in 2 seconds", "in 2 seconds", "in 2 sec.", "in 2 sec."], description: "Now + 2 Seconds --> in 2 seconds"},
+					{unit: "second", diff: -7, results: ["7 seconds ago", "7 seconds ago", "7 sec. ago", "7 sec. ago"], description: "Now + 2 Seconds --> in 2 seconds"},
+					{unit: "second", diff: 61, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 61 Seconds --> in 1 minute", parseDiff: 1000},
+					{unit: "second", diff: 3601, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 3601 Seconds --> in 1 hour", parseDiff: 1000},
+					{unit: "minute", diff: 1, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 1 Minute --> in 1 minute"},
+					{unit: "minute", diff: -1, results: ["1 minute ago", "1 minute ago", "1 min. ago", "1 min. ago"], description: "Now - 1 Minute --> 1 minute ago"},
+					{unit: "minute", diff: 13, results: ["in 13 minutes", "in 13 minutes", "in 13 min.", "in 13 min."], description: "Now + 13 Minutes --> in 13 minutes"},
+					{unit: "minute", diff: -54, results: ["54 minutes ago", "54 minutes ago", "54 min. ago", "54 min. ago"], description: "Now - 54 Minutes --> 54 minutes ago"},
+					{unit: "minute", diff: 95, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 95 Minutes --> in 1 hour", parseDiff: 35*60*1000},
+					{unit: "hour", diff: 1, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 1 Hour --> in 1 hour"},
+					{unit: "day", diff: -5, results: ["120 hours ago", "120 hours ago", "120 hr. ago", "120 hr. ago"], description: "Now - 5 Days --> 120 hours ago"}
+				]
+			}, {
+				scale: "hour",
+				data: [
+					{unit: "second", diff: 0, results: ["0 hours ago", "0 hours ago", "0 hr. ago", "0 hr. ago"], description: "Now --> 0 hours ago"},
+					{unit: "second", diff: 1, results: ["in 0 hours", "in 0 hours", "in 0 hr.", "in 0 hr."], description: "Now + 1 Second --> in 0 hours", parseDiff: 1000},
+					{unit: "second", diff: -1, results: ["0 hours ago", "0 hours ago", "0 hr. ago", "0 hr. ago"], description: "Now - 1 Second --> 0 hours ago", parseDiff: -1000},
+					{unit: "minute", diff: 30, results: ["in 0 hours", "in 0 hours", "in 0 hr.", "in 0 hr."], description: "Now + 30 Minutes --> in 0 hours", parseDiff: 30*60*1000},
+					{unit: "minute", diff: -30, results: ["0 hours ago", "0 hours ago", "0 hr. ago", "0 hr. ago"], description: "Now - 30 Minutes --> 0 hours ago", parseDiff: -30*60*1000},
+					{unit: "hour", diff: 4, results: ["in 4 hours", "in 4 hours", "in 4 hr.", "in 4 hr."], description: "Now + 4 Hours --> in 4 hours"},
+					{unit: "hour", diff: -10, results: ["10 hours ago", "10 hours ago", "10 hr. ago", "10 hr. ago"], description: "Now - 10 Hours --> 10 hours ago"}
+				]
+			}, {
+				scale: "minute",
+				data: [
+					{unit: "second", diff: 0, results: ["0 minutes ago", "0 minutes ago", "0 min. ago", "0 min. ago"], description: "Now --> 0 minutes ago"},
+					{unit: "second", diff: 1, results: ["in 0 minutes", "in 0 minutes", "in 0 min.", "in 0 min."], description: "Now + 1 Second --> in 0 minutes", parseDiff: 1000},
+					{unit: "second", diff: -1, results: ["0 minutes ago", "0 minutes ago", "0 min. ago", "0 min. ago"], description: "Now - 1 Second --> 0 minutes ago", parseDiff: -1000},
+					{unit: "minute", diff: 30, results: ["in 30 minutes", "in 30 minutes", "in 30 min.", "in 30 min."], description: "Now + 30 Minutes --> in 30 minutes"},
+					{unit: "minute", diff: -30, results: ["30 minutes ago", "30 minutes ago", "30 min. ago", "30 min. ago"], description: "Now - 30 Minutes --> 30 minutes ago"},
+					{unit: "hour", diff: 1, results: ["in 60 minutes", "in 60 minutes", "in 60 min.", "in 60 min."], description: "Now + 4 Hours --> in 60 minutes"}
+				]
+			}, {
+				scale: "second",
+				data: [
+					{unit: "second", diff: 0, results: ["now", "now", "now", "now"], description: "Now --> now"},
+					{unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1 sec."], description: "Now + 1 Second --> in 1 second"},
+					{unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1 sec. ago"], description: "Now - 1 Second --> 1 second ago"},
+					{unit: "minute", diff: 1, results: ["in 60 seconds", "in 60 seconds", "in 60 sec.", "in 60 sec."], description: "Now + 1 Minute --> in 60 seconds"},
+					{unit: "minute", diff: -1, results: ["60 seconds ago", "60 seconds ago", "60 sec. ago", "60 sec. ago"], description: "Now - 1 Minute --> 60 seconds ago"}
+				]
+			}];
 
-		equal(oTime.format(date()), "now", "now");
-		equal(oTime.format(date("second", 1)), "in 1 second", "Now + 1 Second --> in 1 second");
-		equal(oTime.format(date("second", -1)), "1 second ago", "Now - 1 Second --> 1 second ago");
-		equal(oTime.format(date("second", 2)), "in 2 seconds", "Now + 2 Seconds --> in 2 seconds");
-		equal(oTime.format(date("second", -7)), "7 seconds ago", "Now - 7 Seconds --> 7 seconds ago");
-		equal(oTime.format(date("second", 61)), "in 1 minute", "Now + 61 Seconds --> in 1 minute");
-		equal(oTime.format(date("second", 3601)), "in 1 hour", "Now + 3601 Seconds --> in 1 hour");
-		equal(oTime.format(date("minute", 1)), "in 1 minute", "Now + 1 Minute --> in 1 minute");
-		equal(oTime.format(date("minute", -1)), "1 minute ago", "Now - 1 Minute --> 1 minute ago");
-		equal(oTime.format(date("minute", 13)), "in 13 minutes", "Now + 13 Minutes --> in 13 minutes");
-		equal(oTime.format(date("minute", -54)), "54 minutes ago", "Now - 54 Minutes --> 54 minutes ago");
-		equal(oTime.format(date("minute", 95)), "in 1 hour", "Now + 95 Minutes --> in 1 hour");
-		equal(oTime.format(date("hour", 1)), "in 1 hour", "Now + 1 Hour --> in 1 hour");
-		equal(oTime.format(date("day", -5)), "120 hours ago", "Now - 5 Days --> 120 hours ago");
+		aStyles.forEach(function(sStyle, index) {
+			aTestData.forEach(function(oTestData) {
+				var oTime = sap.ui.core.format.DateFormat.getTimeInstance({
+							relative: true,
+							relativeScale: oTestData.scale,
+							relativeStyle: sStyle
+						});
+
+				oTestData.data.forEach(function(data) {
+					if (!data.parseOnly) {
+						equal(oTime.format(date(data.unit, data.diff)), data.results[index], data.description + " (" + sStyle + ")");
+					}
+					equal(oTime.parse(data.results[index]).getTime() + (data.parseDiff || 0), date(data.unit, data.diff).getTime(), "Parse: " + data.results[index] + " (" + sStyle + ")");
+				});
+			});
+		});
 	});
 
-/*	test("parse Time relative", function(){
-		var oTime = sap.ui.core.format.DateFormat.getTimeInstance({
-					relative: true,
-					relativeScale: "auto"
-				});
-
-		equal(oTime.parse("now").getTime(), date().getTime(), "now")
-	});*/
-
-	test("format Date relative", function(){
+	test("Date relative: format and parse", function() {
 		var oDate = sap.ui.core.format.DateFormat.getDateInstance({
 					relative: true,
 					relativeScale: "auto"
 				});
 
-		equal(oDate.format(date()), "today", "today");
-		equal(oDate.format(date("second", 1)), "today", "Today + 1 Second --> today");
-		equal(oDate.format(date("second", -86400)), "yesterday", "Today - 86400 Seconds --> yesterday");
-		equal(oDate.format(date("minute", 1440)), "tomorrow", "Today + 1440 Minutes --> todmorrow");
-		equal(oDate.format(date("hour", 24)), "tomorrow", "Today + 24 Hours --> todmorrow");
-		equal(oDate.format(date("day", 5)), "in 5 days", "Today + 5 Days --> in 5 days");
-		equal(oDate.format(date("day", -5)), "5 days ago", "Today - 5 Days --> 5 days ago");
-		equal(oDate.format(date("day", 8)), "next week", "Today + 8 Days --> next week");
-		equal(oDate.format(date("day", -8)), "last week", "Today - 8 Days --> last week");
-		equal(oDate.format(date("day", -32)), "last month", "Today - 32 Days --> last month");
-		equal(oDate.format(date("month", 1)), "next month", "Today + 1 Month --> next month");
-		equal(oDate.format(date("month", -1)), "last month", "Today - 1 Month --> last month");
-		equal(oDate.format(date("month", 15)), "next year", "Today + 15 Months --> next year");
-		equal(oDate.format(date("month", 28)), "in 2 years", "Today + 28 Months --> in 2 years");
+		var aStyles = [undefined, 'wide', 'short', 'narrow'],
+			aTestData = [{
+				scale: "auto",
+				data: [
+					{unit: "second", diff: 0, results: ["today", "today", "today", "today"], description: "today"},
+					{unit: "second", diff: 1, results: ["today", "today", "today", "today"], description: "Today + 1 Second --> today", parseDiff: 1000},
+					{unit: "second", diff: -86400, results: ["yesterday", "yesterday", "yesterday", "yesterday"], description: "Today - 86400 Seconds --> yesterday"},
+					{unit: "minute", diff: 1440, results: ["tomorrow", "tomorrow", "tomorrow", "tomorrow"], description: "Today + 1440 Minutes --> tomorrow"},
+					{unit: "hour", diff: 24, results: ["tomorrow", "tomorrow", "tomorrow", "tomorrow"], description: "Today + 24 Hours --> tomorrow"},
+					{unit: "day", diff: 5, results: ["in 5 days", "in 5 days", "in 5 days", "in 5 days"], description: "Today + 5 Days --> in 5 days"},
+					{unit: "day", diff: -5, results: ["5 days ago", "5 days ago", "5 days ago", "5 days ago"], description: "Today - 5 Days --> 5 days ago"},
+					{unit: "day", diff: 8, results: ["next week", "next week", "next wk.", "next wk."], description: "Today + 8 Days --> next week", parseDiff: 24*60*60*1000},
+					{unit: "day", diff: -8, results: ["last week", "last week", "last wk.", "last wk."], description: "Today - 8 Days --> last week", parseDiff: -24*60*60*1000},
+					{unit: "day", diff: -32, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 32 Days --> last month", parseDiff: -2*24*60*60*1000},
+					{unit: "month", diff: 1, results: ["next month", "next month", "next mo.", "next mo."], description: "Today + 1 Month --> next month"},
+					{unit: "month", diff: -1, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 1 Month --> last month"},
+					{unit: "month", diff: 15, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 15 Months --> next year", parseDiff: (92*24+1/* summer->winter switch */)*60*60*1000},
+					{unit: "month", diff: 28, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 28 Months --> in 2 years", parseDiff: (123*24+1/* summer->winter switch */)*60*60*1000},
+					{unit: "day", diff: 90, results: ["next quarter", "next quarter", "next qtr.", "next qtr."], description: "Today + 90 Days", parseOnly: true, parseDiff: -2*24*60*60*1000},
+					{unit: "hour", diff: 24, results: ["in 24 hours", "in 24 hours", "in 24 hr.", "in 24 hr."], description: "Today + 1 Days", parseOnly: true},
+					{unit: "hour", diff: 72, results: ["in 72 hours", "in 72 hours", "in 72 hr.", "in 72 hr."], description: "Today + 3 Days", parseOnly: true},
+					{unit: "minute", diff: -4320, results: ["4320 minutes ago", "4320 minutes ago", "4320 min. ago", "4320 min. ago"], description: "Today - 3 Days", parseOnly: true}
+				]
+			}];
+
+		aStyles.forEach(function(sStyle, index) {
+			aTestData.forEach(function(oTestData) {
+				var oDate = sap.ui.core.format.DateFormat.getDateInstance({
+							relative: true,
+							relativeScale: "auto",
+							relativeStyle: sStyle
+						});
+
+				oTestData.data.forEach(function(data) {
+					if (!data.parseOnly) {
+						equal(oDate.format(date(data.unit, data.diff)), data.results[index], data.description + " (" + sStyle + ")");
+					}
+					equal(oDate.parse(data.results[index]).getTime() + (data.parseDiff || 0), date(data.unit, data.diff).getTime(), "Parse: " + data.results[index] + " (" + sStyle + ")");
+				});
+			});
+		});
 	});
 
-	test("parse Date relative", function(){
-		var oDate = sap.ui.core.format.DateFormat.getDateInstance({
-					relative: true,
-					relativeScale: "auto"
+	test("DateTime relative: format and parse", function() {
+		var aStyles = [undefined, 'wide', 'short', 'narrow'],
+			aTestData = [{
+				scale: "auto",
+				data: [
+					{unit: "second", diff: 0, results: ["now", "now", "now", "now"], description: "now"},
+					{unit: "second", diff: 1, results: ["in 1 second", "in 1 second", "in 1 sec.", "in 1 sec."], description: "Now + 1 Second --> in 1 second"},
+					{unit: "second", diff: -1, results: ["1 second ago", "1 second ago", "1 sec. ago", "1 sec. ago"], description: "Now - 1 Second --> 1 second ago"},
+					{unit: "second", diff: 2, results: ["in 2 seconds", "in 2 seconds", "in 2 sec.", "in 2 sec."], description: "Now + 2 Second --> in 2 seconds"},
+					{unit: "second", diff: -7, results: ["7 seconds ago", "7 seconds ago", "7 sec. ago", "7 sec. ago"], description: "Now - 7 Second --> 7 seconds ago"},
+					{unit: "second", diff: 61, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 61 Seconds --> in 1 minute", parseDiff: 1000},
+					{unit: "second", diff: 3601, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 3601 Seconds --> in 1 hour", parseDiff: 1000},
+					{unit: "second", diff: -86401, results: ["yesterday", "yesterday", "yesterday", "yesterday"], description: "Today - 86401 Seconds --> yesterday", parseDiff: -1000},
+					{unit: "minute", diff: 1, results: ["in 1 minute", "in 1 minute", "in 1 min.", "in 1 min."], description: "Now + 1 Minute --> in 1 minute"},
+					{unit: "minute", diff: -1, results: ["1 minute ago", "1 minute ago", "1 min. ago", "1 min. ago"], description: "Now - 1 Minute --> 1 minute ago"},
+					{unit: "minute", diff: 13, results: ["in 13 minutes", "in 13 minutes", "in 13 min.", "in 13 min."], description: "Now + 13 Mintues --> in 13 minutes"},
+					{unit: "minute", diff: -54, results: ["54 minutes ago", "54 minutes ago", "54 min. ago", "54 min. ago"], description: "Now - 54 Minutes --> 54 minutes ago"},
+					{unit: "minute", diff: 95, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 95 Minutes --> in 1 hour", parseDiff: 35*60*1000},
+					{unit: "minute", diff: 1440, results: ["tomorrow", "tomorrow", "tomorrow", "tomorrow"], description: "Today + 1440 Minutes --> tomorrow"},
+					{unit: "hour", diff: 1, results: ["in 1 hour", "in 1 hour", "in 1 hr.", "in 1 hr."], description: "Now + 1 Hour --> in 1 hour"},
+					{unit: "day", diff: 5, results: ["in 5 days", "in 5 days", "in 5 days", "in 5 days"], description: "Today + 5 Days --> in 5 days"},
+					{unit: "day", diff: -5, results: ["5 days ago", "5 days ago", "5 days ago", "5 days ago"], description: "Today - 5 Days --> 5 days ago"},
+					{unit: "day", diff: 8, results: ["next week", "next week", "next wk.", "next wk."], description: "Today + 8 Days --> next week", parseDiff: 24*60*60*1000},
+					{unit: "day", diff: -8, results: ["last week", "last week", "last wk.", "last wk."], description: "Today - 8 Days --> last week", parseDiff: -24*60*60*1000},
+					{unit: "day", diff: -32, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 32 Days --> last month", parseDiff: -2*24*60*60*1000},
+					{unit: "month", diff: 1, results: ["next month", "next month", "next mo.", "next mo."], description: "Today + 1 Month --> next month"},
+					{unit: "month", diff: -1, results: ["last month", "last month", "last mo.", "last mo."], description: "Today - 1 Month --> last month"},
+					{unit: "month", diff: 15, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 15 Months --> next year", parseDiff: (92*24+1/* summer->winter switch */)*60*60*1000},
+					{unit: "month", diff: 28, results: ["in 2 years", "in 2 years", "in 2 yr.", "in 2 yr."], description: "Today + 28 Months --> in 2 years", parseDiff: (123*24+1/* summer->winter switch */)*60*60*1000},
+					{unit: "year", diff: 1, results: ["next year", "next year", "next yr.", "next yr."], description: "Today + 1 year --> next year"}
+				]
+			}];
+
+		aStyles.forEach(function(sStyle, index) {
+			aTestData.forEach(function(oTestData) {
+				var oDateTime = sap.ui.core.format.DateFormat.getDateTimeInstance({
+							relative: true,
+							relativeScale: "auto",
+							relativeStyle: sStyle
+						});
+
+				oTestData.data.forEach(function(data) {
+					if (!data.parseOnly) {
+						equal(oDateTime.format(date(data.unit, data.diff)), data.results[index], data.description + " (" + sStyle + ")");
+					}
+					equal(oDateTime.parse(data.results[index]).getTime() + (data.parseDiff || 0), date(data.unit, data.diff).getTime(), "Parse: " + data.results[index] + " (" + sStyle + ")");
 				});
-
-		equal(oDate.parse("today").getDate(), date().getDate(), "today")
-		equal(oDate.parse("5 days ago").getDate(), date("day", -5).getDate(), "Today - 5 Days");
-		equal(oDate.parse("tomorrow").getDate(), date("day", 1).getDate(), "tomorrow");
-		equal(oDate.parse("in 5 days").getDate(), date("day", 5).getDate(), "Today + 5 Days");
-		equal(oDate.parse("in 24 hours").getDate(), date("hour", 24).getDate(), "Today + 1 Days");
-		equal(oDate.parse("in 72 hours").getDate(), date("hour", 72).getDate(), "Today + 3 Days");
-		equal(oDate.parse("4320 minutes ago").getDate(), date("minute", -4320).getDate(), "Today - 3 Days");
-	});
-
-	test("format DateTime relative", function(){
-		var oDateTime = sap.ui.core.format.DateFormat.getDateTimeInstance({
-					relative: true,
-					relativeScale: "auto"
-				});
-
-			equal(oDateTime.format(date()), "now", "now");
-			equal(oDateTime.format(date("second", 1)), "in 1 second", "Now + 1 Second --> in 1 second");
-			equal(oDateTime.format(date("second", -1)), "1 second ago", "Now - 1 Second --> 1 second ago");
-			equal(oDateTime.format(date("second", 2)), "in 2 seconds", "Now + 2 Seconds --> in 2 seconds");
-			equal(oDateTime.format(date("second", -7)), "7 seconds ago", "Now - 7 Seconds --> 7 seconds ago");
-			equal(oDateTime.format(date("second", 61)), "in 1 minute", "Now + 61 Seconds --> in 1 minute");
-			equal(oDateTime.format(date("second", 3601)), "in 1 hour", "Now + 3601 Seconds --> in 1 hour");
-			equal(oDateTime.format(date("second", -86401)), "yesterday", "Today - 86401 Seconds --> yesterday");
-			equal(oDateTime.format(date("minute", 1)), "in 1 minute", "Now + 1 Minute --> in 1 minute");
-			equal(oDateTime.format(date("minute", -1)), "1 minute ago", "Now - 1 Minute --> 1 minute ago");
-			equal(oDateTime.format(date("minute", 13)), "in 13 minutes", "Now + 13 Mintues --> in 13 minutes");
-			equal(oDateTime.format(date("minute", -54)), "54 minutes ago", "Now - 54 Minutes --> 54 minutes ago");
-			equal(oDateTime.format(date("minute", 95)), "in 1 hour", "Now + 95 Minutes --> in 1 hour");
-			equal(oDateTime.format(date("minute", 1440)), "tomorrow", "Today + 1440 Minutes --> todmorrow");
-			equal(oDateTime.format(date("hour", 1)), "in 1 hour", "Now + 1 Hour --> in 1 hour");
-			equal(oDateTime.format(date("day", 5)), "in 5 days", "Today + 5 Days --> in 5 days");
-			equal(oDateTime.format(date("day", -5)), "5 days ago", "Today - 5 Days --> 5 days ago");
-			equal(oDateTime.format(date("day", 8)), "next week", "Today + 8 Days --> next week");
-			equal(oDateTime.format(date("day", -8)), "last week", "Today - 8 Days --> last week");
-			equal(oDateTime.format(date("day", -32)), "last month", "Today - 32 Days --> last month");
-			equal(oDateTime.format(date("month", 1)), "next month", "Today + 1 Month --> next month");
-			equal(oDateTime.format(date("month", -1)), "last month", "Today - 1 Month --> last month");
-			equal(oDateTime.format(date("month", 15)), "next year", "Today + 15 Months --> next year");
-			equal(oDateTime.format(date("month", 28)), "in 2 years", "Today + 28 Months --> in 2 years");
-			equal(oDateTime.format(date("year", 1)), "next year", "Today + 1 year --> next year");
+			});
+		});
 	 });
-
-	 test("parse DateTime relative", function(){
- 		var oDateTime = sap.ui.core.format.DateFormat.getDateTimeInstance({
- 					relative: true,
- 					relativeScale: "auto"
- 				});
-
- 		equal(oDateTime.parse("now").getDate(), date().getDate(), "now")
-		equal(oDateTime.parse("in 3 hours").getDate(), date("hour", 3).getDate(), "Today + 3 hours");
-		equal(oDateTime.parse("in 72 hours").getDate(), date("hour", 72).getDate(), "Today + 3 Days");
- 	});
 
 	module("Islamic Date in locale en");
 
