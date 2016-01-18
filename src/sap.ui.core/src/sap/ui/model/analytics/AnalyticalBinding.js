@@ -1142,8 +1142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						if (sParentGroupId == null) { // root node is requested, so discard all not received responses, because the entire table must be set up from scratch
 							this._abortAllPendingRequests();
 						}
-
-						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
+						Promise.resolve().then(AnalyticalBinding.prototype._processRequestQueue.bind(this));
 					}
 				} else { // ! bUseBatchRequests
 					var oMemberRequestDetails;
@@ -2580,7 +2579,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		if (this.bReloadSingleUnitMeasures && aReloadMeasuresRequestDetails.length > 0) {
 			if (this.bUseBatchRequests) {
 				this.aBatchRequestQueue.push([AnalyticalBinding._requestType.reloadMeasuresQuery, aReloadMeasuresRequestDetails]);
-				jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
+				Promise.resolve().then(AnalyticalBinding.prototype._processRequestQueue.bind(this));
 			} else {
 				for (var q = 0; q < aReloadMeasuresRequestDetails.length; q++){
 					var oReloadMeasuresRequestDetails2 = aReloadMeasuresRequestDetails[q];
