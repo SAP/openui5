@@ -10,7 +10,6 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 
 	var rDigitsOnly = /^\d+$/,
 		rLeadingZeros = /^0*(?=\d)/,
-		rOneLeadingZero = /^0(?=\d)/,
 		sZeros = "00000000000000000000000000000000000000000000000000000000000000000000000000000000";
 
 	/**
@@ -186,10 +185,9 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 		sResult = vValue === "" ? null : StringType.prototype.parseValue.apply(this, arguments);
 
 		if (isDigitSequence(sResult, this.oConstraints)) {
+			sResult = sResult.replace(rLeadingZeros, "");
 			if (this.oConstraints.maxLength) {
 				sResult = fillLeadingZeros(sResult, this.oConstraints.maxLength);
-			} else {
-				sResult = sResult.replace(rLeadingZeros, "");
 			}
 		}
 		return sResult;
@@ -218,16 +216,11 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 		} else if (oConstraints.isDigitSequence) {
 			if (!sValue.match(rDigitsOnly)) {
 				throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle()
-					.getText("EnterInt"));
+					.getText("EnterDigitsOnly"));
 			}
-			if (iMaxLength) {
-				if (sValue.length !== iMaxLength) {
-					throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle()
-							.getText("EnterDigitsOnly", [iMaxLength]));
-				}
-			} else if (sValue.match(rOneLeadingZero)) {
+			if (iMaxLength && sValue.length > iMaxLength) {
 				throw new ValidateException(sap.ui.getCore().getLibraryResourceBundle()
-					.getText("EnterNoLeadingZeros"));
+					.getText("EnterMaximumOfDigits", [iMaxLength]));
 			}
 			return;
 		} else if (!iMaxLength || sValue.length <= iMaxLength) {

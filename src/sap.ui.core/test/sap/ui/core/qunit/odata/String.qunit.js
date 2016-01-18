@@ -247,12 +247,13 @@ sap.ui.require([
 		assert.strictEqual(oType.parseValue("42", "string"), "0000042", "parse as string");
 		assert.strictEqual(oType.parseValue("1234567", "string"), "1234567", "parse 1234567");
 		assert.strictEqual(oType.parseValue(42, "int"), "0000042", "parse as int");
+		// remove leading zeros even if length is bigger than expected
+		assert.strictEqual(oType.parseValue("012345678", "string"), "12345678", "parse 012345678");
 
 		// do not adjust invalid or too long values
 		["A42", "34.2", "12345678"].forEach(function (oValue) {
 			assert.strictEqual(oType.parseValue(oValue, "string"), oValue, "parse " + oValue);
 		});
-		assert.strictEqual(oType.parseValue(true, "boolean"), "true", "parse as boolean");
 
 		// different lengths
 		[6, 10, 100, 1000, 1000000, 10000000].forEach(function (iLength) {
@@ -276,29 +277,24 @@ sap.ui.require([
 
 			// success
 			oType.validateValue("0012345");
+			oType.validateValue("324"); // shorter values are OK
+
 			// errors
 			["", "0123.45", "0003ABC"].forEach(function (vValue) {
 				assert.throws(function () {
 					oType.validateValue(vValue);
-				}, new ValidateException("EnterInt"), "Invalid value: " + vValue);
+				}, new ValidateException("EnterDigitsOnly"), "Invalid value: " + vValue);
 			});
-			["324", "12345678"].forEach(function (vValue) {
-				// too short digit values do not happen if parse is called before but nevertheless
-				// should throw a validation error.
-				assert.throws(function () {
-					oType.validateValue(vValue);
-				}, new ValidateException("EnterDigitsOnly 7"), "Invalid value: " + vValue);
-			});
+			assert.throws(function () {
+				oType.validateValue("12345678");
+			}, new ValidateException("EnterMaximumOfDigits 7"), "Invalid value: 12345678");
 
 			// no maxLength
 			oType = new StringType({}, {isDigitSequence : true});
 			// success
 			oType.validateValue("4711");
 			oType.validateValue("0");
-			// error
-			assert.throws(function () {
-				oType.validateValue("002345");
-			}, new ValidateException("EnterNoLeadingZeros"), "Invalid value: 002345");
+			oType.validateValue("002345");
 		});
 	});
 });
