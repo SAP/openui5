@@ -519,7 +519,7 @@ sap.ui.require([
 		// Note: no need to log the stacktrace, it does not really matter to most people here
 		// Note: the exact error message is browser-dependent
 		this.mock(jQuery.sap.log).expects("warning").withExactArgs(
-			sinon.match(/TypeError:.*null/),
+			sinon.match(/TypeError:.*null/i),
 			sExpression,
 			"sap.ui.base.ExpressionParser");
 
