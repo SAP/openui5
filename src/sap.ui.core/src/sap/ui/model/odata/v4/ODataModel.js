@@ -98,7 +98,7 @@ sap.ui.define([
 						throw new Error("Missing service root URL");
 					}
 					oUri = new URI(sServiceUrl);
-					if (oUri.path().charAt(oUri.path().length - 1) !== "/") {
+					if (oUri.path()[oUri.path().length - 1] !== "/") {
 						throw new Error("Service root URL must end with '/'");
 					}
 					//TODO remove usage once cache is used for all crud operations
@@ -275,7 +275,7 @@ sap.ui.define([
 	ODataModel.prototype.read = function (sPath, bAllowObjectAccess) {
 		var that = this;
 
-		if (sPath.charAt(0) !== "/") {
+		if (sPath[0] !== "/") {
 			throw new Error("Not an absolute data binding path: " + sPath);
 		}
 

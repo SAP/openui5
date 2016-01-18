@@ -97,7 +97,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	["/EMPLOYEES(ID='1')/Name", "Name"].forEach(function (sPath) {
 		QUnit.test("bindProperty, sPath = '" + sPath + "'", function (assert) {
-			var bAbsolute = sPath.charAt(0) === "/",
+			var bAbsolute = sPath[0] === "/",
 				oBinding,
 				oCache = {},
 				oModel = new ODataModel("/service/"),
@@ -292,7 +292,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	["/EMPLOYEES(ID='1')/Name", "Name"].forEach(function (sPath) {
 		QUnit.test("ManagedObject.bindProperty: type and value, path " + sPath, function (assert) {
-			var bAbsolute = sPath.charAt(0) === "/",
+			var bAbsolute = sPath[0] === "/",
 				oBinding,
 				oCache = {
 					read: function () {}
