@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Opa Page Objects with Gherkin Test Runner</title>
+
+    <script
+      id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"
+      data-sap-ui-resourceroots='{"myApp.test": "./", "sap.ui.test.gherkin.test": "./"}'>
+    </script>
+
+    <script>
+      (function () {
+        // Load the Test Harness first so that code coverage will be calculated for all modules loaded afterward
+        $.sap.require("sap.ui.test.gherkin.opa5TestHarness");
+        $.sap.require("sap.ui.test.gherkin.test.OpaPageObject2Steps");
+
+        var Opa5 = sap.ui.test.Opa5;
+
+        jQuery.sap.require("myApp.test.arrangements.Common");
+        //Ensure to add arrangements, action, assertions before loading the page objects,
+        //otherwise they would be overwritten.
+        Opa5.extendConfig({
+          viewName : "Main",
+          viewNamespace : "view.",
+          arrangements : new myApp.test.arrangement.Common()
+        });
+
+        //Load all page objects needed for this test
+        jQuery.sap.require("myApp.test.pageObjects.Intro");
+        jQuery.sap.require("myApp.test.pageObjects.Overview");
+        jQuery.sap.require("myApp.test.pageObjects.TestPage1");
+        jQuery.sap.require("myApp.test.pageObjects.TestPage2");
+
+        $.sap.log.setLevel($.sap.log.LogLevel.INFO);
+        sap.ui.test.Opa.config.timeout = 5;
+
+        var testHarness = sap.ui.test.gherkin.opa5TestHarness;
+        testHarness.test({featurePath: 'sap.ui.test.gherkin.test.OpaPageObject1'});
+        testHarness.test({
+          featurePath: 'sap.ui.test.gherkin.test.OpaPageObject2',
+          steps: sap.ui.test.gherkin.test.OpaPageObject2Steps,
+          generateMissingSteps: true
+        });
+
+      })();
+    </script>
+
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+  </body>
+</html>
