@@ -9,9 +9,20 @@
 	border-color: @sapUiFieldBackground;
 }
 
+.sapUiCal:not(.sapUiCalInt){
+	width: 198px;
+	min-width: 198px;
+}
+
+.sapUiCalMulti:not(.sapUiCalInt){
+	width: 392px; /* to display 2 months side by side as default */
+}
+
 /* calendar should have only a border if on popup */
 .sapUiCal.sapUiShd{
 	border: 0.0625rem solid @sapUiFieldBorderColor;
+	width: 196px;
+	min-width: 196px;
 }
 
 .sapUiCalMulti{
@@ -207,6 +218,8 @@
 	padding-top: 24px;
 }
 
+.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker,
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalYearPicker{
 	top: 20px;
@@ -217,6 +230,10 @@
 
 .sapUiCalContent > .sapUiCalYears.sapUiCalYearNoTop{
 	padding-top: 0;
+}
+
+.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker.sapUiCalYearNoTop{
+	top: 0;
 }
 
 .sapUiCalMonthPicker .sapUiCalItem,

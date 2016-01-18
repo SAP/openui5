@@ -84,7 +84,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * If not set, the dates are only displayed in the primary calendar type
 			 * @since 1.34.0
 			 */
-			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"}
+			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+
+			/**
+			 * Width of Month
+			 * @since 1.38.0
+			 */
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
 		},
 		aggregations : {
 
@@ -645,6 +651,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		return oType;
+
+	};
+
+	Month.prototype.setWidth = function(sWidth){
+
+		this.setProperty("width", sWidth, true);
+
+		if (this.getDomRef()) {
+			sWidth = this.getWidth(); // to get in right type
+			this.$().css("width", sWidth);
+		}
+
+		return this;
 
 	};
 

@@ -80,7 +80,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * If not set, the dates are only displayed in the primary calendar type
 			 * @since 1.34.0
 			 */
-			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
+			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+
+			/**
+			 * Width of Calendar
+			 *
+			 * <b>Note:</b> There is a theme depending minimum width, so the calendar can not be set smaller.
+			 * @since 1.38.0
+			 */
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+
 		},
 		aggregations : {
 
@@ -144,6 +153,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	Calendar.prototype.init = function(){
 
+		this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
+		this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
+		this._iBreakPointLargeDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
+
 		// set default calendar type from configuration
 		var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
 		this.setProperty("primaryCalendarType", sCalendarType);
@@ -185,6 +198,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oYearPicker.attachEvent("select", _handleSelectYear, this);
 		this.setAggregation("yearPicker",oYearPicker);
 
+		this._resizeProxy = jQuery.proxy(_handleResize, this);
+
 	};
 
 	Calendar.prototype.exit = function(){
@@ -193,11 +208,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			jQuery.sap.clearDelayedCall(this._sInvalidateMonth);
 		}
 
+		if (this._sResizeListener) {
+			sap.ui.core.ResizeHandler.deregister(this._sResizeListener);
+			this._sResizeListener = undefined;
+		}
+
 	};
 
 	Calendar.prototype._createMonth = function(sId){
 
-		var oMonth = new Month(sId);
+		var oMonth = new Month(sId, {width: "100%"});
 
 		return oMonth;
 
@@ -228,12 +248,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this._updateHeader(oDate);
 
+		this._iSize = 0; // initialize to recalculate new after rendering
+
 	};
 
-	Calendar.prototype.onAfterRendering = function(){
+	Calendar.prototype.onAfterRendering = function(oEvent){
 
 		// check if day names and month names are too big -> use smaller ones
 		_checkNamesLength.call(this);
+
+		if (_getMonths.call(this) > 1 || this._bInitMonth) {
+			// check if size is right and adopt it if necessary
+			oEvent.size = {width: this.getDomRef().offsetWidth};
+			_handleResize.call(this, oEvent, true);
+			if (!this._sResizeListener) {
+				this._sResizeListener = sap.ui.core.ResizeHandler.register(this, this._resizeProxy);
+			}
+			this._bInitMonth = undefined;
+		}
 
 	};
 
@@ -420,6 +452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	Calendar.prototype.setMonths = function(iMonths){
 
+		this._bDateRangeChanged = undefined; // to force rerendering
 		this.setProperty("months", iMonths, false); // rerender
 		iMonths = _getMonths.call(this); // to use validation
 
@@ -442,6 +475,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			for (i = aMonths.length; i > iMonths; i--) {
 				oMonth = this.removeAggregation("month", i - 1);
 				oMonth.destroy();
+			}
+			if (iMonths == 1) {
+				// back to standard case -> initialize month width
+				this._bInitMonth = true;
 			}
 		}
 
@@ -575,6 +612,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}else {
 			return false;
 		}
+
+	};
+
+	Calendar.prototype.setWidth = function(sWidth){
+
+		this.setProperty("width", sWidth, true);
+		if (this.getDomRef()) {
+			sWidth = this.getWidth(); // to get in right type
+			this.$().css("width", sWidth);
+
+			if (sWidth) {
+				this.$().addClass("sapUiCalWidth");
+			} else {
+				this.$().removeClass("sapUiCalWidth");
+			}
+		}
+
+		return this;
 
 	};
 
@@ -1092,7 +1147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (!bNoFocus) {
 			_renderMonth.call(this); // to focus date
 
-			if (this.getMonths() > 1) {
+			if (_getMonths.call(this) > 1) {
 				// restore tabindex because if date not changed in _renderMonth only the focused date is updated
 				var aMonths = this.getAggregation("month");
 				for (var i = 0; i < aMonths.length; i++) {
@@ -1198,7 +1253,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (!bNoFocus) {
 			_renderMonth.call(this); // to focus date
 
-			if (this.getMonths() > 1) {
+			if (_getMonths.call(this) > 1) {
 				// restore tabindex because if date not changed in _renderMonth only the focused date is updated
 				var aMonths = this.getAggregation("month");
 				for (var i = 0; i < aMonths.length; i++) {
@@ -1227,7 +1282,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oDate = this._getFocusedDate();
 				_setHeaderText.call(this, oDate);
 			}
-		}else if (this.getMonths() > 1) {
+		}else if (_getMonths.call(this) > 1) {
 			// on rerendering focus might be set on wrong month
 			_focusDate.call(this, this._getFocusedDate(), true, true);
 		}
@@ -1546,6 +1601,93 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			_focusDate.call(this, this._getFocusedDate(), true, true);
 		}
 		this._bDateRangeChanged = undefined;
+
+	}
+
+	function _handleResize(oEvent){
+
+		var iWidth = oEvent.size.width;
+
+		if (iWidth <= 0) {
+			// only if visible at all
+			return;
+		}
+
+		var iOldSize = this._iSize;
+		if (iWidth < this._iBreakPointTablet) {
+			this._iSize = 0; // phone
+		} else if (iWidth < this._iBreakPointDesktop) {
+			this._iSize = 1; // tablet
+		} else if (iWidth < this._iBreakPointLargeDesktop) {
+			this._iSize = 2; // desktop
+		} else {
+			this._iSize = 3; // large desktop
+		}
+
+		var iMonths = _getMonths.call(this);
+		var iColumns;
+
+		if (iOldSize != this._iSize || this._bInitMonth) {
+			switch (this._iSize) {
+			case 1: // tablet
+				iColumns = 2;
+				break;
+
+			case 2: // desktop
+				iColumns = 3;
+				break;
+
+			case 3: // large desktop
+				iColumns = 4;
+				break;
+
+			default:
+				iColumns = 1;
+				break;
+			}
+
+			if (iMonths < iColumns) {
+				iColumns = iMonths;
+			}
+
+			// determine best fitting colums
+			if (iColumns > 2 && iMonths > iColumns) {
+				var iCheckColumns = iColumns;
+				var fUseage = 0.0;
+				var iUseColumns = iColumns;
+				while (iCheckColumns >= 2) {
+					var iMod = iMonths % iCheckColumns;
+					if (iMod == 0) {
+						iUseColumns = iCheckColumns;
+						break;
+					}else {
+						var fNewUseage = iMod / iCheckColumns;
+						if (fNewUseage > fUseage) {
+							fUseage = fNewUseage;
+							iUseColumns = iCheckColumns;
+						}
+					}
+					iCheckColumns--;
+				}
+				iColumns = iUseColumns;
+			}
+
+			var sWidth;
+			var aMonths = this.getAggregation("month");
+
+			if (iColumns > 1) {
+				sWidth = 100 / iColumns + "%";
+				this.$("content").removeClass("sapUiCalContentSingle");
+			}else {
+				sWidth = "100%";
+				this.$("content").addClass("sapUiCalContentSingle");
+			}
+
+			for (var i = 0; i < aMonths.length; i++) {
+				var oMonth = aMonths[i];
+				oMonth.setWidth(sWidth);
+			}
+		}
 
 	}
 
