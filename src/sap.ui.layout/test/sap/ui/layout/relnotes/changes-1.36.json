@@ -1,0 +1,63 @@
+{
+  "1.36.0": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "d2249203a73896b871ece61ab4639a72833f0b44",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.DynamicSideContent: New property sideContentPosition added",
+        "references": []
+      },
+      {
+        "id": "1664b1ab8269d14e0ffe11332b073ef579b3c4b1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: allow Toolbars as Title",
+        "references": []
+      },
+      {
+        "id": "881d75b8a3eb298a4cc10be7fac68bb0ceee3dd2",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: new backgroundDesign property",
+        "references": []
+      },
+      {
+        "id": "d87bd654bd8791b515329937f3268ddd104675c4",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.BlockLayout: add flex prefixes for IE 10",
+        "references": []
+      },
+      {
+        "id": "662ff98ab20ea1b7713a0f061e6e72b5c70fafb8",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
+        "references": []
+      },
+      {
+        "id": "690963771ea5f3a12e2e7c59d3382a8c7bd6b83c",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: Side content visibility on invalidation solved",
+        "references": []
+      },
+      {
+        "id": "bbbc6db0bd74f293154ccb36e15dd3b0e256e2e9",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: default behaviour of linebreak if linebreakXL is not defined",
+        "references": []
+      },
+      {
+        "id": "fd6e463c48a8d60ed9a57dc3e54c36087059e7a0",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: linebreakXL support correction in Grid.",
+        "references": []
+      }
+    ]
+  }
+}

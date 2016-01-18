@@ -1,0 +1,63 @@
+{
+  "1.36.0": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "1664b1ab8269d14e0ffe11332b073ef579b3c4b1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.Form: allow Toolbars as Title",
+        "references": []
+      },
+      {
+        "id": "906e675a6fc503c23d77ee117f6c6aaca23e67ee",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Minium size is properly calculated when there is no size constraint",
+        "references": []
+      },
+      {
+        "id": "7a8e582692fca0221d867cddbeb4992457634852",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdownBox: with searchhelp error on blur",
+        "references": []
+      },
+      {
+        "id": "ff7db156ee0132713ffbb10b9da79f1785f6098c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdownBox: wrong text-selection in IE",
+        "references": []
+      },
+      {
+        "id": "e5b4997c443265231f50d126afff232eb3cf4143",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RadioButtonGroup: Fixed text truncation",
+        "references": []
+      },
+      {
+        "id": "0bae058a3a4138160b5d949482ef7edc0f1bc04e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextArea: typed text lost after re-rendering",
+        "references": []
+      },
+      {
+        "id": "a11d735b9d33db3d2fb921458cb5d94600f40c3a",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree: Expand and collapse performance improved",
+        "references": []
+      },
+      {
+        "id": "485089d8ed0b19a67251f46c8269a27f7902c16c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: rerendering during liveChange moves cursor",
+        "references": []
+      }
+    ]
+  }
+}

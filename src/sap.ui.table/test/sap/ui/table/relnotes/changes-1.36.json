@@ -1,0 +1,105 @@
+{
+  "1.36.0": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "c4f69d965ee40bea5657e781acfe9c452729032f",
+        "author": "Lisa Klein \u003clisa.klein@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.table.TreeTable: Adds ExploredApp example",
+        "references": []
+      },
+      {
+        "id": "0d108f08f280d360465e5079172cded7eab65b55",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding - Retrieve all available entries",
+        "references": []
+      },
+      {
+        "id": "31df5a756d0a6cc3e4004255f48c23a2f7d7a545",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBindingAdapter - Wrong GroupIDs",
+        "references": []
+      },
+      {
+        "id": "d0a0457ff8064f05063a9e1a396ebc47dccdd518",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fix changes of Layout Thrashing improvements",
+        "references": []
+      },
+      {
+        "id": "dd298b1e543468fc74ea7080078d3f19258f842f",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "TreeTable - Group Mode - Shows Null values",
+        "references": []
+      },
+      {
+        "id": "59c04fe371e693b5b595cbe45f0680ab8813cdfe",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: fixes navigation to last page with paginator",
+        "references": []
+      },
+      {
+        "id": "7c7c7d44454fe7629d20bb7519a72386765ac65e",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Removed Checkboxes in group header in HCB theme",
+        "references": []
+      },
+      {
+        "id": "2f751120dff4b942d5fc6519b263cdf0fb8b835d",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes ScrollBar visibility",
+        "references": []
+      },
+      {
+        "id": "be2700acd2ed5d9981b1c84f57ccf1911d9565a0",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes display issue with MultiLabels and fixedColumnCount",
+        "references": []
+      },
+      {
+        "id": "3422c318ac14e9092cbffa8cfe69de8cd785cfa2",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes undefined DomRef in delayed call",
+        "references": []
+      },
+      {
+        "id": "61237c5041a376e99eef6f0d35053cecaa4e505b",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: prevents invalidation if tooltip is set",
+        "references": []
+      },
+      {
+        "id": "c72b8721a9fbd04b316599ebdb1f4c7363a76e9e",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: icons display are corrected in Cozy mode",
+        "references": []
+      },
+      {
+        "id": "5f8624c7b350d0cf08a3bc7ebc884c6c2b8fac43",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.table: Display of selectAll checkBox on No Data is corrected",
+        "references": []
+      },
+      {
+        "id": "de26986f172c68b58795c5167ec128f8fc5c684b",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table: Selection of MultiToggle mode in HCB theme is corrected",
+        "references": []
+      }
+    ]
+  }
+}
