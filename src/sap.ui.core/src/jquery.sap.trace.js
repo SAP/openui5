@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 
 			var bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(location.search),
 				bTraceActive,
-				bInteractionActive = bFesrActive,
+				bInteractionActive,
 				bXHROverridden,
 				ROOT_ID = createGUID(), // static per session
 				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID, // static per session
@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					bXHROverridden = true;
 					// in case we do not have this API measurement is superfluous due to insufficient performance data
 					if (!(window.performance && window.performance.getEntries)) {
-						jQuery.sap.log.warning("Frontend Subrecords is not supported on browsers with insufficient performance API");
+						jQuery.sap.log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
 					}
 
 					var fnXHRopen = window.XMLHttpRequest.prototype.open,
@@ -49,40 +49,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 						fnXHRopen.apply(this, arguments);
 						// as we should not reset this function override, we just skip the implementation in case none
 						// of the features is activated - later override should so be kept active
-						if (bFesrActive || bTraceActive) {
+						if (bInteractionActive || bFesrActive || bTraceActive) {
 							var sHost = new URI(arguments[1]).host();
 
 							// only use passport & FESR for non CORS requests (relative or with same host)
 							if (!sHost || sHost === HOST) {
 								sTransactionId = createGUID();
-								if (bFesrActive) {
+								if (bInteractionActive || bFesrActive) {
 									this.addEventListener("readystatechange", handleResponse);
 									this.pendingInteraction = oPendingInteraction;
 
 									iStepCounter++;
 
-									// set FESR
-									if (sFESR) {
-										this.setRequestHeader("SAP-Perf-FESRec", sFESR);
-										this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
-										sFESR = null;
-										sFESRopt = null;
-										iStepCounter = 0;
-										sFESRTransactionId = sTransactionId;
-									} else if (!sFESRTransactionId) {
-										// initial request should set the FESR Transaction Id
-										sFESRTransactionId = sTransactionId;
-									}
+									if (bFesrActive) {
+										// set FESR
+										if (sFESR) {
+											this.setRequestHeader("SAP-Perf-FESRec", sFESR);
+											this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
+											sFESR = null;
+											sFESRopt = null;
+											iStepCounter = 0;
+											sFESRTransactionId = sTransactionId;
+										} else if (!sFESRTransactionId) {
+											// initial request should set the FESR Transaction Id
+											sFESRTransactionId = sTransactionId;
+										}
 
-									// set passport with Root Context ID, Transaction ID, Component Name, Action
-									this.setRequestHeader("SAP-PASSPORT", passportHeader(
-										iE2eTraceLevel,
-										ROOT_ID,
-										sTransactionId,
-										oPendingInteraction.component,
-										oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter)
-									);
-								} else if (bTraceActive) {
+										// set passport with Root Context ID, Transaction ID, Component Name, Action
+										this.setRequestHeader("SAP-PASSPORT", passportHeader(
+											iE2eTraceLevel,
+											ROOT_ID,
+											sTransactionId,
+											oPendingInteraction.component,
+											oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter)
+										);
+									}
+								}
+								if (!bFesrActive && bTraceActive) {
 									// set passport with Root Context ID, Transaction ID for Trace
 									this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
 								}
@@ -93,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					// inject function in window.XMLHttpRequest.send
 					window.XMLHttpRequest.prototype.send = function() {
 						fnXHRsend.apply(this, arguments);
-						if (bFesrActive && this.pendingInteraction) {
+						if ((bInteractionActive || bFesrActive) && this.pendingInteraction) {
 							// double string length for byte length as in js characters are stored as 16 bit ints
 							this.pendingInteraction.bytesSent += arguments[0] ? arguments[0].length * 2 : 0;
 						}
@@ -102,7 +105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					// count request header size
 					window.XMLHttpRequest.prototype.setRequestHeader = function(sHeader, sValue) {
 						fnXHRsetRequestHeader.apply(this, arguments);
-						if (bFesrActive) {
+						if (bInteractionActive || bFesrActive) {
 							// count request header length consistent to what getAllResponseHeaders().length would return
 							if (!this.requestHeaderLength) {
 								this.requestHeaderLength = 0;
@@ -124,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength, 10) : 0;
 					// double string length for byte length as in js characters are stored as 16 bit ints
 					this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length * 2;
-					this.pendingInteraction.bytesSent += this.requestHeaderLength;
+					this.pendingInteraction.bytesSent += this.requestHeaderLength || 0;
 					// this should be true only if all responses are compressed
 					this.pendingInteraction.requestCompression = bCompressed && (this.pendingInteraction.requestCompression !== false);
 					// sap-perf-fesrec header contains milliseconds
@@ -201,6 +204,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			 * @since 1.32
 			 */
 			jQuery.sap.interaction.setActive = function(bActive) {
+				if (bActive && !bInteractionActive) {
+					overrideXHRMethods();
+				}
 				bInteractionActive = bActive;
 			};
 
@@ -238,7 +244,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 
 						// update pending interaction infos
 						oPendingInteraction = oPI ? oPI : oPendingInteraction;
-						if (oFinshedInteraction && oFinshedInteraction.requests.length > 0) {
+						if (bFesrActive && oFinshedInteraction && oFinshedInteraction.requests.length > 0) {
 							// create FESR from completed interaction
 							sFESR = createFESR(oFinshedInteraction);
 							sFESRopt = createFESRopt(oFinshedInteraction);
@@ -295,7 +301,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			jQuery.sap.fesr.setActive = function(bActive) {
 				if (bActive && !bFesrActive) {
 					bFesrActive = true;
-					overrideXHRMethods();
+					if (!bInteractionActive) {
+						overrideXHRMethods();
+					}
 				} else if (!bActive) {
 					bFesrActive = false;
 				}
