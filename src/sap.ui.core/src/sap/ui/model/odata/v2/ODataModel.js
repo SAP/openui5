@@ -1542,7 +1542,117 @@ sap.ui.define([
 	};
 
 	/**
-	 * checks if data based on select, expand parameters is already loaded or not.
+	 * Splits a select or expand option by comma into separate entries and then by slash into path segments
+	 *
+	 * @param {string} sEntries the select or expand entries string
+	 * @return {array} An array containing arrays of entry path segments
+	 * @private
+	 */
+	ODataModel.prototype._splitEntries = function(sEntries) {
+		return sEntries.replace(/\s/g, "").split(',').map(function(sEntry) {
+			return sEntry.split("/");
+		});
+	};
+
+	/**
+	 * Filter select properties for selects applying to the current entity (remove deep selects)
+	 * and filter/expand according to metadata properties
+	 *
+	 * @param {array} aSelect the select entries
+	 * @param {array} aEntityProps the metadata properties array
+	 * @return {array} the array of own select properties
+	 * @private
+	 */
+	ODataModel.prototype._filterOwnSelect = function(aSelect, aEntityProps) {
+		var aOwnSelect, aOwnProps;
+		if (!aEntityProps) {
+			return [];
+		}
+		// Create array of property names from metadata
+		aOwnProps = aEntityProps.map(function(oProperty) {
+			return oProperty.name;
+		});
+		// Filter select for own entries
+		aOwnSelect = aSelect.filter(function(aSegments) {
+			// Only entries with a single segment
+			return aSegments.length === 1;
+		}).map(function(aSegments) {
+			// Map to contained strings
+			return aSegments[0];
+		});
+		if (aSelect.length === 0 || aOwnSelect.indexOf("*") !== -1 || aOwnSelect.indexOf("**") !== -1) {
+			// If no select options are defined or the star is contained,
+			// use all existing properties from the metadata
+			return aOwnProps;
+		} else {
+			// Otherwise filter for own properties only
+			return aOwnSelect.filter(function(sSelect) {
+				return aOwnProps.indexOf(sSelect) !== -1;
+			});
+		}
+	};
+
+	/**
+	 * Filter expand properties for expand applying to the current entity (remove deep expands)
+	 * and remove expands not covered by the select entries
+	 *
+	 * @param {array} aEntries the own expand entries as strings
+	 * @param {array} aSelect the own expand entries as strings
+	 * @returns {array} the array of own expand properties
+	 * @private
+	 */
+	ODataModel.prototype._filterOwnExpand = function(aExpand, aSelect) {
+		return aExpand.map(function(aSegments) {
+			// The first segment of all entries
+			return aSegments[0];
+		}).filter(function(sValue, iIndex, aEntries) {
+			// Filter for unique entries
+			return aEntries.indexOf(sValue) === iIndex;
+		}).filter(function(sValue) {
+			// Keep selected entries only
+			return aSelect.length === 0 ||
+				aSelect.some(function(aSegments) {
+					return aSegments.indexOf(sValue) === 0 ||
+						aSegments.indexOf("**") === 0;
+				});
+		});
+	};
+
+	/**
+	 * Filter select properties belonging to the given navigation property
+	 *
+	 * @param {array} aEntries the select entries as segment arrays
+	 * @private
+	 */
+	ODataModel.prototype._filterSelectByNavProp = function(aEntries, sNavProp) {
+		return aEntries.filter(function(aSegments) {
+			// Entries with more than one segment starting with given nav path
+			return aSegments[0] === sNavProp;
+		}).map(function(aSegments) {
+			// Remove first segment from the path. If a navigation property was
+			// the last segment, all of its properties are selected
+			return aSegments.length > 1 ? aSegments.slice(1) : ["**"];
+		});
+	};
+
+	/**
+	 * Filter expand properties belonging to the given navigation property
+	 *
+	 * @param {array} aEntries the select entries as segment arrays
+	 * @private
+	 */
+	ODataModel.prototype._filterExpandByNavProp = function(aEntries, sNavProp) {
+		return aEntries.filter(function(aSegments) {
+			// Entries with more than one segment starting with given nav path
+			return aSegments.length > 1 && aSegments[0] === sNavProp;
+		}).map(function(aSegments) {
+			// Remove first segment from the path
+			return aSegments.slice(1);
+		});
+	};
+
+	/**
+	 * Checks if data based on select, expand parameters is already loaded or not.
 	 * In case it couldn't be found we should reload the data so we return true.
 	 *
 	 * @param {string} sPath the entity path
@@ -1552,29 +1662,12 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._isReloadNeeded = function(sPath, mParameters) {
 
-		var oMetadata = this.oMetadata,
+		var that = this,
+			oMetadata = this.oMetadata,
 			oData = this.oData,
 			oEntityType = this.oMetadata._getEntityTypeByPath(sPath),
-			oEntity = this.getObject(sPath),
+			oEntity = this._getObject(sPath),
 			aExpand = [], aSelect = [];
-
-		function filterOwn(aEntries) {
-			return aEntries.map(function(sEntry) {
-				var iSlash = sEntry.indexOf("/");
-				return iSlash === -1 ? sEntry : sEntry.substr(0, iSlash);
-			}).filter(function(sValue, iIndex, aEntries) {
-				return aEntries.indexOf(sValue) === iIndex;
-			});
-		}
-
-		function filterNav(aEntries, sExpand) {
-			var sNavPath = sExpand + "/";
-			return aEntries.filter(function(sEntry) {
-				return sEntry.indexOf(sNavPath) === 0;
-			}).map(function(sEntry) {
-				return sEntry.substr(sNavPath.length);
-			});
-		}
 
 		function checkReloadNeeded(oEntityType, oEntity, aSelect, aExpand) {
 			var aOwnSelect, aOwnExpand,
@@ -1595,44 +1688,34 @@ sap.ui.define([
 			}
 
 			// check select properties
-			aOwnSelect = filterOwn(aSelect);
-			if (aOwnSelect.length === 0 || aOwnSelect.indexOf("*") >= 0) {
-				// If no select options are defined or the star is contained,
-				// check all existing properties
-				aOwnSelect = oEntityType.property.map(function(oProperty) {
-					return oProperty.name;
-				});
-			}
+			aOwnSelect = that._filterOwnSelect(aSelect, oEntityType.property);
 			for (var i = 0; i < aOwnSelect.length; i++) {
 				sSelect = aOwnSelect[i];
-				if (!oEntity.hasOwnProperty(sSelect)) {
+				if (oEntity[sSelect] === undefined) {
 					return true;
 				}
 			}
 
 			// check expanded entities
-			aOwnExpand = filterOwn(aExpand);
+			aOwnExpand = that._filterOwnExpand(aExpand, aSelect);
 			for (var i = 0; i < aOwnExpand.length; i++) {
-				var sExpand = aOwnExpand[i];
-				if (!oEntity.hasOwnProperty(sExpand)) {
-					return true;
-				}
+				sExpand = aOwnExpand[i];
 				vNavData = oEntity[sExpand];
 
 				// if nav property is null, no further checks are required
-				if (!vNavData) {
+				if (vNavData === null) {
 					continue;
 				}
 
-				// if nav property is deferred, it needs to be loaded
-				if (vNavData.__deferred) {
+				// if nav property is undefined or deferred, it needs to be loaded
+				if (vNavData === undefined || vNavData.__deferred) {
 					return true;
 				}
 
 				// get entity type and filter expand/select for this expanded entity
 				oNavEntityType = oMetadata._getEntityTypeByNavProperty(oEntityType, sExpand);
-				aNavSelect = filterNav(aSelect, sExpand);
-				aNavExpand = filterNav(aExpand, sExpand);
+				aNavSelect = that._filterSelectByNavProp(aSelect, sExpand);
+				aNavExpand = that._filterExpandByNavProp(aExpand, sExpand);
 
 				// expanded entities need to be checked recursively for nested expand/select
 				if (vNavData.__ref) {
@@ -1656,10 +1739,10 @@ sap.ui.define([
 
 		if (mParameters) {
 			if (mParameters.select) {
-				aSelect = mParameters.select.replace(/\s/g, "").split(',');
+				aSelect = this._splitEntries(mParameters.select);
 			}
 			if (mParameters.expand) {
-				aExpand = mParameters.expand.replace(/\s/g, "").split(',');
+				aExpand = this._splitEntries(mParameters.expand);
 			}
 		}
 
@@ -1815,11 +1898,10 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath the path/name of the property
 	 * @param {object} [oContext] the context if available to access the property value
-	 * @param {boolean} [bIncludeExpandEntries=null] This parameter should be set when a URI or custom parameter
-	 * with a $expand System Query Option was used to retrieve associated entries embedded/inline.
+	 * @param {boolean} [bIncludeExpandEntries=false] @deprecated Please use getObject function with select/expand parameters instead.
+	 * This parameter should be set when a URI or custom parameter with a $expand System Query Option was used to retrieve associated entries embedded/inline.
 	 * If true then the getProperty function returns a desired property value/entry and includes the associated expand entries (if any).
-	 * If false the associated/expanded entry properties are removed and not included in the
-	 * desired entry as properties at all. This is useful for performing updates on the base entry only. Note: A copy and not a reference of the entry will be returned.
+	 * Note: A copy and not a reference of the entry will be returned.
 	 * @returns {any} vValue the value of the property
 	 * @public
 	 */
@@ -1830,7 +1912,6 @@ sap.ui.define([
 		if (!bIncludeExpandEntries) {
 			return oValue;
 		}
-
 		// if value is a plain value and not an object we return directly
 		if (!jQuery.isPlainObject(oValue)) {
 			return oValue;
@@ -1846,6 +1927,138 @@ sap.ui.define([
 			// remove expanded references
 			return this._removeReferences(oValue);
 		}
+	};
+
+	/**
+	 * Returns the JSON object for an entity with the given <code>sPath</code> and optional <code>oContext</code>.
+	 * With the <code>mParameters.select</code> parameter it is possible to specify comma separated property or navigation property
+	 * names which should be included in the result object. This works like the OData <code>$select</code> parameter.
+	 * With the <code>mParameters.expand</code> parameter it is possible to specify comma separated navigation property names
+	 * which should be included inline in the result object. This works like the OData <code>$expand</code> parameter.
+	 *
+	 * This method will return a copy and not a reference of the entity. It does not load any data and may not return all requested
+	 * data if it is not available/loaded. If select entries are contained in the parameters and not all selected properties are
+	 * available, this method will return undefined instead of incomplete data. If no select entries are defined, all properties
+	 * available on the client will be returned.
+	 *
+	 * Example:
+	 * <code>{select: "Products/ProductName, Products", expand:"Products"}</code> will return no properties of the entity itself, but
+	 * only the ProductName property of the Products navigation property. If Products/ProductName has not been loaded before, so is not
+	 * avilable on the client, it will return undefined.
+	 *
+	 * @param {string} sPath the path referencing the object
+	 * @param {object} [oContext] the context the path should be resolved with, in case it is relative
+	 * @param {string} [mParameters.select] comma separated list of properties/paths to select
+	 * @param {string} [mParameters.expand] comma separated list of navigation properties/paths to expand
+	 * @returns {any} vValue the value for the given path/context or undefined if data or entity type could not be found or was incomplete
+	 * @public
+	 */
+	ODataModel.prototype.getObject = function(sPath, oContext, mParameters) {
+		var that = this,
+			sResolvedPath = this.resolve(sPath, oContext),
+			oValue = this._getObject(sResolvedPath),
+			oEntityType = this.oMetadata._getEntityTypeByPath(sResolvedPath),
+			aExpand = [], aSelect = [],
+			bIncomplete = true;
+
+		function getRequestedData(oEntityType, oValue, aSelect, aExpand) {
+			var aOwnExpand, oResultValue,
+				aOwnPropSelect, aOwnNavSelect,
+				vNavData, oNavEntityType, oNavValue, oNavObject,
+				aNavSelect, aNavExpand,
+				sExpand, sSelect, aResultProps;
+
+			// do a value copy or the changes to that value will be modified in the model as well (reference)
+			oValue = jQuery.sap.extend(true, {}, oValue);
+			// if no entity type could be found we decide to return no data
+			if (!oEntityType) {
+				return undefined;
+			}
+			// if no value we return undefined
+			if (!oValue) {
+				return undefined;
+			}
+			// check select properties
+			aOwnPropSelect = that._filterOwnSelect(aSelect, oEntityType.property);
+			// copy selected properties
+			oResultValue = {};
+			for (var i = 0; i < aOwnPropSelect.length; i++) {
+				sSelect = aOwnPropSelect[i];
+				if (oValue[sSelect] !== undefined) {
+					oResultValue[sSelect] = oValue[sSelect];
+				} else if (!bIncomplete) {
+					jQuery.sap.log.fatal("No data loaded for select property: " + sSelect + " of entry: " + that.getKey(oValue));
+					return undefined;
+				}
+			}
+			// add metadata
+			if (oValue.__metadata) {
+				oResultValue.__metadata = oValue.__metadata;
+			}
+
+			// check expanded entities
+			aOwnExpand = that._filterOwnExpand(aExpand, aSelect);
+			for (var i = 0; i < aOwnExpand.length; i++) {
+				sExpand = aOwnExpand[i];
+				vNavData = oValue[sExpand];
+
+				// get entity type and filter expand/select for this expanded entity
+				oNavEntityType = that.oMetadata._getEntityTypeByNavProperty(oEntityType, sExpand);
+				aNavSelect = that._filterSelectByNavProp(aSelect, sExpand);
+				aNavExpand = that._filterExpandByNavProp(aExpand, sExpand);
+
+				// expanded entities need to be checked recursively for nested expand/select
+				if (vNavData && vNavData.__ref) {
+					oNavObject = that._getObject("/" + vNavData.__ref);
+					oNavValue = getRequestedData(oNavEntityType, oNavObject, aNavSelect, aNavExpand);
+					if (oNavValue !== undefined) {
+						oResultValue[sExpand] = oNavValue;
+					} else if (!bIncomplete) {
+						jQuery.sap.log.fatal("No data loaded for expand property: " + sExpand + " of entry: " + that.getKey(oNavValue));
+						return undefined;
+					}
+				}
+				if (vNavData && vNavData.__list) {
+					aResultProps = [];
+					for (var j = 0; j < vNavData.__list.length; j++) {
+						oNavObject = that._getObject("/" + vNavData.__list[j]);
+						oNavValue = getRequestedData(oNavEntityType, oNavObject, aNavSelect, aNavExpand);
+						if (oNavValue !== undefined) {
+							aResultProps.push(oNavValue);
+						} else if (!bIncomplete) {
+							jQuery.sap.log.fatal("No data loaded for expand property: " + sExpand + " of entry: " + that.getKey(oNavValue));
+							return undefined;
+						}
+					}
+					oResultValue[sExpand] = aResultProps;
+				}
+			}
+			// create _deferred entries for all not expanded nav properties
+			aOwnNavSelect = that._filterOwnSelect(aSelect, oEntityType.navigationProperty);
+			for (var k = 0; k < aOwnNavSelect.length; k++) {
+				sExpand = aOwnNavSelect[k];
+				if (aOwnExpand.indexOf(sExpand) === -1) {
+					var sUri = oResultValue.__metadata.uri + "/" + sExpand;
+					oResultValue[sExpand] = { __deferred: { uri: sUri } };
+				}
+			}
+
+			return oResultValue;
+		}
+
+		if (mParameters) {
+			if (mParameters.select) {
+				aSelect = this._splitEntries(mParameters.select);
+				bIncomplete = false;
+			}
+			if (mParameters.expand) {
+				aExpand = this._splitEntries(mParameters.expand);
+			}
+		}
+
+		oValue = getRequestedData(oEntityType, oValue, aSelect, aExpand);
+
+		return oValue;
 	};
 
 	/**
