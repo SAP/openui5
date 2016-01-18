@@ -263,19 +263,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: Reference", function (assert) {
 		testConversion(assert, '\
-				<Reference Uri="qux/$metadata">\
+				<Reference Uri="/qux/$metadata">\
 					<Include Namespace="qux.foo"/>\
 					<Include Namespace="qux.bar"/>\
 					<IncludeAnnotations TermNamespace="qux.foo"/>\
 					<IncludeAnnotations TermNamespace="qux.bar" TargetNamespace="qux.bar"\
 						Qualifier="Tablet"/>\
 				</Reference>\
-				<Reference Uri="bla/$metadata">\
+				<Reference Uri="/bla/$metadata">\
 					<Include Namespace="bla"/>\
 				</Reference>',
 			{
 				"$Reference": {
-					"qux/$metadata": {
+					"/qux/$metadata": {
 						"$Include": ["qux.foo.", "qux.bar."],
 						"$IncludeAnnotations": [{
 							"$TermNamespace": "qux.foo."
@@ -285,17 +285,18 @@ sap.ui.require([
 							"$Qualifier": "Tablet"
 						}]
 					},
-					"bla/$metadata": {
+					"/bla/$metadata": {
 						"$Include": ["bla."]
 					}
 				}
 			});
 	});
+	// TODO look at xml:base if the Uri in Reference is relative
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: aliases in types", function (assert) {
 		testConversion(assert, '\
-				<Reference Uri="qux/$metadata">\
+				<Reference Uri="/qux/$metadata">\
 					<Include Namespace="qux" Alias="q"/>\
 				</Reference>\
 				<DataServices>\
@@ -311,7 +312,7 @@ sap.ui.require([
 				</DataServices>',
 			{
 				"$Reference": {
-					"qux/$metadata": {
+					"/qux/$metadata": {
 						"$Include": ["qux."]
 					}
 				},
@@ -932,6 +933,7 @@ sap.ui.require([
 				}
 			});
 	});
+	// TODO look at xml:base if the UrlRef is static and relative
 
 	//*********************************************************************************************
 	QUnit.test("annotations: leaf elements", function (assert) {
@@ -1076,9 +1078,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("annotations: UrlRef", function (assert) {
-		testExpression(assert, '<UrlRef><Path>Url</Path></UrlRef>',
-			{"$UrlRef": {"$Path": "Url"}});
+		testExpression(assert, '<UrlRef><Path>/Url</Path></UrlRef>',
+			{"$UrlRef": {"$Path": "/Url"}});
 	});
+	// TODO look at xml:base if the URL in UrlRef is static and relative
 
 	//*********************************************************************************************
 	QUnit.test("inline annotations: Schema, EntityType, ComplexType", function (assert) {
