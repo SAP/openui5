@@ -214,4 +214,67 @@ sap.ui.require([
 		test(Infinity, false);
 		test(-Infinity, false);
 	});
+
+	//*********************************************************************************************
+	// t: the tested type
+	// v: the value to format
+	// e: the expected result
+	[
+		{t : "Edm.Binary", v : "1qkYNh/P5uvZ0zA+siScD=", e : "binary'1qkYNh/P5uvZ0zA+siScD='"},
+		{t : "Edm.Boolean", v : true, e : "true"},
+		{t : "Edm.Byte", v : 255, e : "255"},
+		{t : "Edm.Date", v : "2016-01-19", e : "2016-01-19"},
+		{t : "Edm.DateTimeOffset", v : "2016-01-13T14:08:31Z", e : "2016-01-13T14:08:31Z"},
+		{t : "Edm.Decimal", v : "-255.55", e : "-255.55"},
+		{t : "Edm.Double", v : 3.14, e : "3.14"},
+		{t : "Edm.Double", v : "INF", e : "INF"},
+		{t : "Edm.Duration", v : "P1DT0H0M0S",	e : "duration'P1DT0H0M0S'"},
+		{t : "Edm.Guid", v: "936DA01F-9ABD-4D9D-80C7-02AF85C822A8",
+			e: "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"},
+		{t : "Edm.Int16", v : -32768, e : "-32768"},
+		{t : "Edm.Int32", v : 2147483647, e : "2147483647"},
+		{t : "Edm.Int64", v : "12345678901234568", e : "12345678901234568"},
+		{t : "Edm.SByte", v : -128, e : "-128"},
+		// Note: the internal representation of NaN/Infinity/-Infinity in the ODataModel
+		// is "NaN", "INF" and "-INF".
+		// That is how it comes from the server and it is not possible to change the model values
+		// to the JS representation Infinity,-Infinity or NaN
+		{t : "Edm.Single", v : "NaN", e : "NaN"},
+		{t : "Edm.Single", v : "-INF", e : "-INF"},
+		{t : "Edm.String", v : "foo", e : "'foo'"},
+		{t : "Edm.String", v : "string with 'quote'", e : "'string with ''quote'''"},
+		{t : "Edm.String", v : null, e : "null"},
+		{t : "Edm.TimeOfDay", v : "18:59:59.999", e : "18:59:59.999"}
+	].forEach(function(oFixture) {
+		QUnit.test("formatLiteral: " + oFixture.t + " " +  oFixture.v, function (assert) {
+			assert.strictEqual(
+				Helper.formatLiteral(oFixture.v, oFixture.t), oFixture.e);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("formatLiteral: error case", function (assert) {
+		assert.throws(
+			function () { Helper.formatLiteral("foo", "Edm.bar"); },
+			new Error("Unsupported type: Edm.bar")
+		);
+	});
+
+	//*********************************************************************************************
+	// Integration Tests with real backend
+	if (TestUtils.isRealOData()) {
+		QUnit.test("Integration test for formatLiteral", function (assert) {
+			var done = assert.async(),
+			sResolvedServiceUrl = TestUtils.proxy(
+				"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC");
+
+			jQuery.ajax(sResolvedServiceUrl + "/BusinessPartnerList?"
+				+ "$filter=CompanyName eq + " + Helper.formatLiteral("Becker Berlin", "Edm.String")
+				, { method: "GET"}
+			).then(function (oData, sTextStatus, jqXHR) {
+				assert.strictEqual(oData.value[0].CompanyName, "Becker Berlin");
+				done();
+			});
+		});
+	}
 });

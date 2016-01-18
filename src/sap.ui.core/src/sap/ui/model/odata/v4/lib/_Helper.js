@@ -11,6 +11,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		rHash = /#/g,
 		rPlus = /\+/g,
 		rSemicolon = /;/g,
+		rSingleQuote = /'/g,
 		Helper;
 
 	Helper = {
@@ -149,6 +150,54 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 */
 		encodePair : function (sKey, sValue) {
 			return Helper.encode(sKey, true) + "=" + Helper.encode(sValue, false);
+		},
+
+		/**
+		 * Formats a given internal value into a literal suitable for usage in URLs.
+		 *
+		 * @param {any} vValue
+		 *   The value according to "OData JSON Format Version 4.0" section "7.1 Primitive Value"
+		 * @param {string} sType
+		 *   The OData Edm type, e.g. "Edm.String"
+		 * @returns {string}
+		 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
+		 *   "5.1.1.6.1 Primitive Literals"
+		 */
+		formatLiteral : function (vValue, sType) {
+			if (vValue === null) {
+				return "null";
+			}
+
+			switch (sType) {
+			case "Edm.Binary":
+				return "binary'" + vValue + "'";
+
+			case "Edm.Boolean":
+			case "Edm.Byte":
+			case "Edm.Double":
+			case "Edm.Int16":
+			case "Edm.Int32":
+			case "Edm.SByte":
+			case "Edm.Single":
+				return String(vValue);
+
+			case "Edm.Date":
+			case "Edm.DateTimeOffset":
+			case "Edm.Decimal":
+			case "Edm.Guid":
+			case "Edm.Int64":
+			case "Edm.TimeOfDay":
+				return vValue;
+
+			case "Edm.Duration":
+				return "duration'" + vValue + "'";
+
+			case "Edm.String":
+				return "'" + vValue.replace(rSingleQuote, "''") + "'";
+
+			default:
+				throw new Error("Unsupported type: " + sType);
+			}
 		},
 
 		/**

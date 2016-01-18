@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/model/odata/ODataUtils"
-], function (ODataUtils) {
+	"sap/ui/model/odata/v4/lib/_Helper"
+], function (Helper) {
 	"use strict";
 
-	var Helper;
+	var ODataHelper;
 
-	Helper = {
+	ODataHelper = {
 		/**
 		 * Constructs a map of query options from the given options and model options; an option
 		 * overwrites a model option having the same key.
@@ -58,7 +58,7 @@ sap.ui.define([
 
 			oEntityType.$Key.forEach(function (sName) {
 				var sType = oEntityType[sName].$Type,
-					sValue = ODataUtils.formatValue(oEntityInstance[sName], sType);
+					sValue = Helper.formatLiteral(oEntityInstance[sName], sType);
 
 				aKeyValuePairs.push(
 					encodeURIComponent(sName) + "=" + encodeURIComponent(sValue));
@@ -68,5 +68,5 @@ sap.ui.define([
 		}
 	};
 
-	return Helper;
+	return ODataHelper;
 }, /* bExport= */ false);
