@@ -1666,8 +1666,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Vertical : "Vertical",
 
 		/**
-		 * Popover will be placed at the top or bottom of the reference control but will try to position on the
-		 * top side if the space is greater than the Popover's height.
+		 * Deprecated - use <code>sap.m.PlacementType.VerticalPreferredTop</code> type.
+		 * @deprecated Since version 1.36. Instead, use <code>sap.m.PlacementType.VerticalPreferredTop</code> type.
 		 * @public
 		 * @since 1.29
 		 */
@@ -1675,11 +1675,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Popover will be placed at the top or bottom of the reference control but will try to position on the
-		 * bottom side if the space is greater than the Popover's height.
+		 * top side if the space is greater than the Popover's height.
+		 * @public
+		 * @since 1.36
+		 */
+		VerticalPreferredTop : "VerticalPreferredTop",
+
+		/**
+		 * Deprecated - use <code>sap.m.PlacementType.VerticalPreferredBottom</code> type.
+		 * @deprecated Since version 1.36. Instead, use <code>sap.m.PlacementType.VerticalPreferredBottom</code> type.
 		 * @public
 		 * @since 1.29
 		 */
 		VerticalPreferedBottom : "VerticalPreferedBottom",
+
+		/**
+		 * Popover will be placed at the top or bottom of the reference control but will try to position on the
+		 * bottom side if the space is greater than the Popover's height.
+		 * @public
+		 * @since 1.36
+		 */
+		VerticalPreferredBottom : "VerticalPreferredBottom",
 
 		/**
 		 * Popover will be placed at the right or left side of the reference control.
@@ -1688,8 +1704,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Horizontal : "Horizontal",
 
 		/**
-		 * Popover will be placed at the right or left side of the reference control but will try to position on the
-		 * right side if the space is greater than the Popover's width.
+		 * Deprecated - use <code>sap.m.PlacementType.HorizontalPreferredRight</code> type.
+		 * @deprecated Since version 1.36. Instead, use <code>sap.m.PlacementType.HorizontalPreferredRight</code> type.
 		 * @public
 		 * @since 1.29
 		 */
@@ -1697,11 +1713,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Popover will be placed at the right or left side of the reference control but will try to position on the
-		 * left side if the space is greater than the Popover's width.
+		 * right side if the space is greater than the Popover's width.
+		 * @public
+		 * @since 1.36
+		 */
+		HorizontalPreferredRight : "HorizontalPreferredRight",
+
+		/**
+		 * Deprecated - use <code>sap.m.PlacementType.HorizontalPreferredLeft</code> type.
+		 * @deprecated Since version 1.36. Instead, use <code>sap.m.PlacementType.HorizontalPreferredLeft</code> type.
 		 * @public
 		 * @since 1.29
 		 */
 		HorizontalPreferedLeft : "HorizontalPreferedLeft",
+
+		/**
+		 * Popover will be placed at the right or left side of the reference control but will try to position on the
+		 * left side if the space is greater than the Popover's width.
+		 * @public
+		 * @since 1.36
+		 */
+		HorizontalPreferredLeft : "HorizontalPreferredLeft",
 
 		/**
 		 * Popover will be placed automatically at the reference control.
