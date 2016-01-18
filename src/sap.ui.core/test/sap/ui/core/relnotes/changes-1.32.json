@@ -1728,5 +1728,115 @@
         "references": []
       }
     ]
+  },
+  "1.32.10": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "f5ce109997291d81616f8fdbd36ea95f7b10bbbd",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Add some concrete reboot UI5 versions/URLs to support popup",
+        "references": []
+      },
+      {
+        "id": "2762a4963ce6aef43266bf54faf36cf537e128db",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.format.DateFormat: relative format can be configured with \u0027relativeStyle\u0027",
+        "references": []
+      },
+      {
+        "id": "3679514e7d84c3cbde6083af6c1b9f4440a90fe5",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Binding: fix documentation for suspend and resume functions",
+        "references": []
+      },
+      {
+        "id": "f2620a0c15ef6323db7051b31e5e9c6640788ba2",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: reduce animation CPU consumption",
+        "references": []
+      },
+      {
+        "id": "3e95b2b81a4f55c7eed4da5202a7fa3bc46e5555",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Fix eventing issues in Edge on Windows Phone 10",
+        "references": []
+      },
+      {
+        "id": "2d89097a0b8b22c637adc0eb0152fd36cc2d3625",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataState: Calculate DataState only if event listeners available",
+        "references": []
+      },
+      {
+        "id": "f71fb677a548845d2b4e8eafc7cf5d9615cf419a",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataState: Repair DataState Propagation",
+        "references": []
+      },
+      {
+        "id": "d33b16fe2a886d19020641f391dd135bab08cbe2",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataListBinding: fix iLength when no data returned",
+        "references": []
+      },
+      {
+        "id": "4390fdf4e8d95abf1b412a6070bc75e1352cb407",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Specification changes",
+        "references": []
+      },
+      {
+        "id": "455e44569a11ca89dc9cdf70c2d9623c3c749171",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Theme Change: custom.css handling",
+        "references": []
+      },
+      {
+        "id": "3a3f1fe4ea95144698d856532478aae85241cd17",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Element: Remove duplicate delegates correctly",
+        "references": []
+      },
+      {
+        "id": "51829ddd9fe5d72ab620b6337ee4a11d538cdf99",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.measure: fix XHR and console issues",
+        "references": []
+      },
+      {
+        "id": "e1ff5de704168efee28b7b3f25c825f20d86bd82",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: parse \u0027emptyString\u0027 should also consider the format option \u0027parseAsString\u0027",
+        "references": []
+      },
+      {
+        "id": "4b2d0693dfbd022d854c096669a86392235435ec",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.type.String: JSDoc for minLength is added",
+        "references": []
+      },
+      {
+        "id": "8d6f5f62b8b9a17c5728abb89e1f24b2baa64a5d",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: hasPendingChanges returns wrong state",
+        "references": []
+      }
+    ]
   }
 }

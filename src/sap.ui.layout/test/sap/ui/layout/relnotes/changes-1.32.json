@@ -163,5 +163,24 @@
         "references": []
       }
     ]
+  },
+  "1.32.10": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "c5ca5d00ed461d74f8f88a788aca168afc066b4a",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
+        "references": []
+      },
+      {
+        "id": "d56b80cbf0494c8aab5b1978d807e853a9967170",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: Side content visibility on invalidation solved",
+        "references": []
+      }
+    ]
   }
 }
