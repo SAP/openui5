@@ -30,14 +30,14 @@
 			},
 			{
 				"text": "Worklist",
-				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/mockServer.html",
 				"config": "test-resources/sap/m/demokit/worklist/demoapp.json",
 				"icon": "task",
 				"desc": "Best-practice starting point for a worklist-style app"
 			},
 			{
 				"text": "Master-Detail",
-				"ref": "test-resources/sap/m/demokit/master-detail/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/master-detail/webapp/test/mockServer.html",
 				"config": "test-resources/sap/m/demokit/master-detail/demoapp.json",
 				"icon": "task",
 				"desc": "Best-practice starting point for a master-detail app"

@@ -15,20 +15,24 @@
 					MaxLength="40" sap:label="Object ID" sap:creatable="false"
 					sap:updatable="false" />
 				<Property Name="Name" Type="Edm.String" Nullable="false"
-					MaxLength="255" sap:label="Name" sap:creatable="false"
+					MaxLength="255" sap:label="Name"
+					sap:creatable="false"
 					sap:updatable="false" />
 				<Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false"
 					MaxLength="3" sap:label="Unit of Measure" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
 				<Property Name="UnitNumber" Type="Edm.Decimal" Nullable="false"
-					Precision="23" Scale="4" sap:label="Unit Number" sap:creatable="false"
+					Precision="23" Scale="4" sap:label="Unit Number"
+					sap:creatable="false"
 					sap:updatable="false" sap:filterable="false" />
 			</EntityType>
 
 			<EntityContainer Name="WORKLIST_ENTITIES"
 				m:IsDefaultEntityContainer="true">
 				<EntitySet Name="Objects" EntityType="WORKLIST.Object"
-					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:creatable="false"
+					sap:updatable="false"
+					sap:deletable="false"
 					sap:pageable="false" sap:content-version="1"
 					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
 			</EntityContainer>
