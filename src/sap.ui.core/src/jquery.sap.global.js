@@ -1867,7 +1867,7 @@
 			};
 
 			/**
-			 * Sets the request buffer size for the interaction measurement
+			 * Sets the request buffer size for the measurement safely
 			 *
 			 * @param {integer} iSize size of the buffer
 			 *
@@ -1888,9 +1888,9 @@
 			};
 
 			/**
-			 * Gets the request timings for the interaction measurement
+			 * Gets the current request timings array for type 'resource' safely
 			 *
-			 * @return {object[]} iSize size of the buffer
+			 * @return {object[]} array of performance timing objects
 			 * @name jQuery.sap.measure#getRequestTimings
 			 * @function
 			 * @public
@@ -1898,13 +1898,13 @@
 			 */
 			this.getRequestTimings = function() {
 				if (window.performance && window.performance.getEntriesByType) {
-					return jQuery.extend(window.performance.getEntriesByType("resource"),{});
+					return window.performance.getEntriesByType("resource");
 				}
 				return [];
 			};
 
 			 /**
- 			 * Clears all request timings
+ 			 * Clears all request timings safely
  			 *
  			 * @name jQuery.sap.measure#clearRequestTimings
  			 * @function
