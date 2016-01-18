@@ -79,7 +79,6 @@
 	"com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeAges" : [
 		{
 			"$kind" : "Function",
-			"$Parameter" : [],
 			"$ReturnType" : {
 				"$Nullable" : false,
 				"$Type" : "Edm.Int16",
@@ -145,7 +144,6 @@
 	"com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeMaxAge" : [
 		{
 			"$kind" : "Function",
-			"$Parameter" : [],
 			"$ReturnType" : {
 				"$Nullable" : false,
 				"$Type" : "Edm.Int16"

@@ -457,12 +457,10 @@ sap.ui.require([
 				},
 				"foo.Base": {
 					"$kind": "EntityType",
-					"$Key": [],
 					"$Abstract": true
 				},
 				"foo.Derived": {
 					"$kind": "EntityType",
-					"$Key": [],
 					"$BaseType": "foo.Base"
 				}
 			});
@@ -576,10 +574,6 @@ sap.ui.require([
 						}
 					}
 				};
-
-			if (sType === "EntityType") {
-				oExpected["foo.Worker"].$Key = [];
-			}
 
 			testConversion(assert, '\
 					<DataServices>\
@@ -759,8 +753,7 @@ sap.ui.require([
 					},{
 						"$kind": sRunnable,
 						"$IsBound": true,
-						"$IsComposable": true,
-						"$Parameter": []
+						"$IsComposable": true
 					}]
 				});
 		});
@@ -1136,7 +1129,6 @@ sap.ui.require([
 				},
 				"foo.EntityType": {
 					"$kind": "EntityType",
-					"$Key": [],
 					"Property": {
 						"$kind": "Property",
 						"$Type": "Edm.String"
@@ -1250,12 +1242,10 @@ sap.ui.require([
 					"@foo.Term": "Action1"
 				}, {
 					"$kind": "Action",
-					"$Parameter": [],
 					"@foo.Term": "Action2"
 				}],
 				"foo.Function": [{
 					"$kind": "Function",
-					"$Parameter": [],
 					"@foo.Term": "Function"
 				}]
 			});
