@@ -397,7 +397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		if (!this.bProvideTotalSize) {
 			jQuery.sap.log.fatal("total size of result explicitly turned off, but getter invoked");
 		}
-		return this.iTotalSize;
+		return +this.iTotalSize;
 	};
 
 	/**
