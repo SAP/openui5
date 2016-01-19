@@ -704,6 +704,8 @@ sap.ui.define([
 		// Re-Index only the persistentIndex after user interaction
 		this._reindexModelItemsByPersistentIndex(oData);
 		oModel.refresh();
+
+		this._notifyChange();
 	};
 
 	/**
@@ -1273,6 +1275,13 @@ sap.ui.define([
 		}
 
 		oModel.refresh();
+	};
+
+	P13nDimMeasurePanel.prototype._notifyChange = function() {
+		var fListener = this.getChangeNotifier();
+		if (fListener) {
+			fListener(this);
+		}
 	};
 
 	/**
