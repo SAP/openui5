@@ -58,7 +58,11 @@
 			});
 
 			QUnit.module("Given that an Overlay Container is created on RTL mode", {
-				beforeEach : function() {
+				beforeEach : function(assert) {
+					var done = assert.async();
+					sap.ui.getCore().attachLocalizationChanged(function(){
+						done();
+					});
 					sap.ui.getCore().getConfiguration().setRTL(true);
 					sap.ui.dt.Overlay.getOverlayContainer();
 				},
