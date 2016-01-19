@@ -1,10 +1,9 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, InputBaseRenderer, Renderer, ValueStateSupport) {
+sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, ComboBoxBaseRenderer, Renderer, ValueStateSupport) {
 	"use strict";
-
 
 	/**
 	 * MultiComboBox renderer.
@@ -17,14 +16,14 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 	 *
 	 * @type {string}
 	 */
-	MultiComboBoxRenderer.CSS_CLASS = "sapMMultiComboBox";
+	MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX = "sapMMultiComboBox";
 
 	/**
 	 * CSS class to be applied to the HTML root element of the MultiComboBox control.
 	 *
 	 * @type {string}
 	 */
-	MultiComboBoxRenderer.DOT_CSS_CLASS = ".sapMMultiComboBox";
+	MultiComboBoxRenderer.DOT_CSS_CLASS_MULTICOMBOBOX = ".sapMMultiComboBox";
 
 	/**
 	 * Add classes to the MultiComboBox.
@@ -36,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 	 */
 	MultiComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
 		sap.m.ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
-		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS);
+		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX);
 		if (oControl._hasTokens()) {
 			oRm.addClass("sapMMultiComboBoxHasToken");
 		}
@@ -51,8 +50,20 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 	 *          oControl An object representation of the control that should be rendered.
 	 */
 	MultiComboBoxRenderer.addInnerClasses = function(oRm, oControl) {
-		sap.m.ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
-		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS + "InputInner");
+		ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
+		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "InputInner");
+	};
+
+	/**
+	 * Add CSS classes to the combo box arrow button, using the provided {@link sap.ui.core.RenderManager}.
+	 * To be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	MultiComboBoxRenderer.addButtonClasses = function(oRm, oControl) {
+		ComboBoxBaseRenderer.addButtonClasses.apply(this, arguments);
+		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Arrow");
 	};
 
 	MultiComboBoxRenderer.openInputTag = function(oRm, oControl) {
@@ -63,16 +74,15 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		oRm.renderControl(oControl._oTokenizer);
 
 		oRm.write("<div class=\"sapMMultiComboBoxInputContainer\">");
-		InputBaseRenderer.openInputTag.call(this, oRm, oControl);
+		ComboBoxBaseRenderer.openInputTag.call(this, oRm, oControl);
 	};
 
 	MultiComboBoxRenderer.closeInputTag = function(oRm, oControl) {
-		InputBaseRenderer.closeInputTag.call(this, oRm, oControl);
+		ComboBoxBaseRenderer.closeInputTag.call(this, oRm, oControl);
 		oRm.write("</div>");
 		oRm.write("</div>");
 		oRm.write("<div class=\"sapMMultiComboBoxShadowDiv\"/>");
 	};
-
 
 	return MultiComboBoxRenderer;
 
