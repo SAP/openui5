@@ -28,6 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 			PropertyBinding.apply(this, arguments);
 			this.bInitial = true;
 			this.oValue = this._getValue();
+			this.getDataState().setValue(this.oValue);
 		}
 
 	});
@@ -67,12 +68,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	ODataPropertyBinding.prototype.setValue = function(oValue){
-		if (!jQuery.sap.equal(oValue, this.oValue)) {
-			if (this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
-				this.oValue = oValue;
-			}
+		if (!jQuery.sap.equal(oValue, this.oValue) && this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
+			this.oValue = oValue;
+
+			var oDataState = this.getDataState();
+			oDataState.setValue(this.oValue);
 		}
 	};
+
 
 	/**
 	 * Setter for context
@@ -94,9 +97,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 	 *
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function(bForceUpdate){
+		var oDataState = this.getDataState();
+
+		var vOriginalValue = this.oModel.getOriginalProperty(this.sPath, this.oContext);
+		oDataState.setOriginalValue(vOriginalValue);
+
 		var oValue = this._getValue();
-		if (!jQuery.sap.equal(oValue, this.oValue) || bForceUpdate) {// optimize for not firing the events when unneeded
+		if (bForceUpdate || !jQuery.sap.equal(oValue, this.oValue)) {
 			this.oValue = oValue;
+
+			oDataState.setValue(this.oValue);
+
 			this._fireChange({reason: ChangeReason.Change});
 		}
 	};

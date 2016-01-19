@@ -142,7 +142,7 @@
 		var oDataState = new sap.ui.model.DataState();
 		var mChanges = oDataState.getChanges();
 		var aPropertyChecks = [
-			"Value", "InternalValue" , "OriginalValue", "OriginalInternalValue", "InvalidValue"
+			"Value", "OriginalValue", "InvalidValue"
 		];
 
 		equal(jQuery.sap.equal(mChanges,{}),true, "Initially the changes are empty");
