@@ -39,7 +39,7 @@ sap.ui.define([
 			this.model.setProperty("/productType", productType);
 			this._wizard.validateStep(this.getView().byId("ProductTypeStep"));
 		},
-		additinalInfoValidation : function () {
+		additionalInfoValidation : function () {
 			var name = this.getView().byId("ProductName").getValue();
 			var weight = parseInt(this.getView().byId("ProductWeight").getValue());
 
