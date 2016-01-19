@@ -651,12 +651,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (!this._isSuggestionItemSelectable(aListItems[iSelectedIndex])) {
 			// if no further visible item can be found -> do nothing (e.g. set the old item as selected again)
 			if (iOldIndex >= 0) {
-				aListItems[iOldIndex].setSelected(true);
+				aListItems[iOldIndex].setSelected(true).updateAccessibilityState();
 				this.$("inner").attr("aria-activedescendant", aListItems[iOldIndex].getId());
 			}
 			return;
 		} else {
-			aListItems[iSelectedIndex].setSelected(true);
+			aListItems[iSelectedIndex].setSelected(true).updateAccessibilityState();
 			this.$("inner").attr("aria-activedescendant", aListItems[iSelectedIndex].getId());
 		}
 
