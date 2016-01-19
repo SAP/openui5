@@ -11,8 +11,6 @@ sap.ui.define([
 ], function(jQuery, BindingParser, Basics, Expression) {
 		'use strict';
 
-		var AnnotationHelper;
-
 		/**
 		 * Returns a function representing the composition <code>fnAfter</code> after
 		 * <code>fnBefore</code>.
@@ -54,9 +52,10 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @since 1.27.0
-		 * @namespace sap.ui.model.odata.AnnotationHelper
+		 * @namespace
+		 * @alias sap.ui.model.odata.AnnotationHelper
 		 */
-		AnnotationHelper = /** @lends sap.ui.model.odata.AnnotationHelper */ {
+		var AnnotationHelper = {
 			/**
 			 * Creates a property setting (which is either a constant value or a binding info
 			 * object) from the given parts and from the optional root formatter function.
