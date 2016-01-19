@@ -13,6 +13,7 @@
 
 	<items>
 		<rdf:Seq>
+			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/137623135285" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/134911941785" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/126093935815" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/126093309405" />
@@ -21,12 +22,17 @@
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/112684181095" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/105856062395" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/105856162090" />
-			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98297520315" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/100831992435" />
 		</rdf:Seq>
 	</items>
 </channel>
 
+<item rdf:about="http://openui5picks.tumblr.com/post/137623135285">
+	<title>Demos: Instantly Prototype Responsive MVC-based Web Apps</title>
+	<link>http://openui5picks.tumblr.com/post/137623135285</link>
+	<content:encoded>&lt;img src=&quot;http://40.media.tumblr.com/fa8614bea3d00cf8aff78c24af2e783d/tumblr_inline_o17hl6UvPp1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;At NCDEVCON - North Carolinas Premier Web  Mobile Conference - Alex shows how to build instant prototypes with UI5 in this recording. Watch how to build UI5 apps with just very few steps.</content:encoded>
+	<dc:date>2016-01-08T21:57:54+00:00</dc:date>
+</item>
 <item rdf:about="http://openui5picks.tumblr.com/post/134911941785">
 	<title>Demos: SAPUI5 single file template using XMLViews, Controllers, Fragments and Custom Controls for bug illustrations, support requests or demos</title>
 	<link>http://openui5picks.tumblr.com/post/134911941785</link>
@@ -76,12 +82,6 @@ As the UI5 community is growing every day I have experienced that people new to 
 	<link>http://openui5picks.tumblr.com/post/105856162090</link>
 	<content:encoded>&lt;img src=&quot;http://38.media.tumblr.com/b000e44e51cca2b907b7df8f7c37c33d/tumblr_inline_ngz7kp8eJ21sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Before Ill answer the question, let me step back and set the stage for my arguments! I was invited by Leigh Jin, an associate professor at the San Francisco State University, to give a guest lecture...</content:encoded>
 	<dc:date>2014-12-17T11:23:00+00:00</dc:date>
-</item>
-<item rdf:about="http://openui5picks.tumblr.com/post/98297520315">
-	<title>Demos: Configuring JetBrains WebStorm for UI5 development</title>
-	<link>http://openui5picks.tumblr.com/post/98297520315</link>
-	<content:encoded>&lt;img src=&quot;http://38.media.tumblr.com/4b0cef96fb5cf4833e07c8df681f9ccf/tumblr_inline_ncg30dJjt91sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Today, Eclipse has grown to quite a robust and widely used Java IDE, however it lacks severely in the Web / Javascript department. For web development  not only SAPUI5 / OpenUI5, but in my...</content:encoded>
-	<dc:date>2014-09-22T11:46:00+00:00</dc:date>
 </item>
 <item rdf:about="http://openui5picks.tumblr.com/post/100831992435">
 	<title>Demos: Analysing UK Road Traffic Accident data with HANA and SAPUI5</title>

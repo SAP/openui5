@@ -8,6 +8,13 @@
 	<description>Planet OpenUI5 - http://openui5.org/</description>
 
 <item>
+	<title>Demos: Instantly Prototype Responsive MVC-based Web Apps</title>
+	<guid>http://openui5picks.tumblr.com/post/137623135285</guid>
+	<link>http://openui5picks.tumblr.com/post/137623135285</link>
+	<description>&lt;img src=&quot;http://40.media.tumblr.com/fa8614bea3d00cf8aff78c24af2e783d/tumblr_inline_o17hl6UvPp1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;At NCDEVCON - North Carolinas Premier Web  Mobile Conference - Alex shows how to build instant prototypes with UI5 in this recording. Watch how to build UI5 apps with just very few steps.</description>
+	<pubDate>Fri, 08 Jan 2016 21:57:54 +0000</pubDate>
+</item>
+<item>
 	<title>Demos: SAPUI5 single file template using XMLViews, Controllers, Fragments and Custom Controls for bug illustrations, support requests or demos</title>
 	<guid>http://openui5picks.tumblr.com/post/134911941785</guid>
 	<link>http://openui5picks.tumblr.com/post/134911941785</link>
@@ -64,13 +71,6 @@ As the UI5 community is growing every day I have experienced that people new to 
 	<link>http://openui5picks.tumblr.com/post/105856162090</link>
 	<description>&lt;img src=&quot;http://38.media.tumblr.com/b000e44e51cca2b907b7df8f7c37c33d/tumblr_inline_ngz7kp8eJ21sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Before Ill answer the question, let me step back and set the stage for my arguments! I was invited by Leigh Jin, an associate professor at the San Francisco State University, to give a guest lecture...</description>
 	<pubDate>Wed, 17 Dec 2014 11:23:00 +0000</pubDate>
-</item>
-<item>
-	<title>Demos: Configuring JetBrains WebStorm for UI5 development</title>
-	<guid>http://openui5picks.tumblr.com/post/98297520315</guid>
-	<link>http://openui5picks.tumblr.com/post/98297520315</link>
-	<description>&lt;img src=&quot;http://38.media.tumblr.com/4b0cef96fb5cf4833e07c8df681f9ccf/tumblr_inline_ncg30dJjt91sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Today, Eclipse has grown to quite a robust and widely used Java IDE, however it lacks severely in the Web / Javascript department. For web development  not only SAPUI5 / OpenUI5, but in my...</description>
-	<pubDate>Mon, 22 Sep 2014 11:46:00 +0000</pubDate>
 </item>
 <item>
 	<title>Demos: Analysing UK Road Traffic Accident data with HANA and SAPUI5</title>
