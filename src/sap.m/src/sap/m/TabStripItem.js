@@ -7,13 +7,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 		"use strict";
 
 		/**
-		 * Constructor for a new TabStripItem.
+		 * Constructor for a new <code>TabStripItem</code>.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * Items provide information about Error Messages in the page.
+		 * <code>TabStripItem</code> provides information about Error Messages in the page.
 		 * @extends sap.ui.core.Item
 		 *
 		 * @author SAP SE
@@ -28,43 +28,61 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 			metadata: {
 				library: "sap.m",
 				properties: {
+
 					/**
-					 * Boolean property to show if a control is edited (default is false). Items that are marked as 'modified' have a star to indicate that they haven't been saved
+					 * Shows if a control is edited (default is false). Items that are marked as modified have a * symbol to indicate that they haven't been saved.
 					 */
 					modified: {type : "boolean", group : "Misc", defaultValue : false}
 				},
 				aggregations: {
+
 					/**
-					 * Internal aggregation to hold the close button
+					 * Internal aggregation to hold the Close button.
 					 */
 					_closeButton: { type : "sap.m.Button", multiple: false}
 				},
 				events: {
+
 					/**
-					 * Fired when the close button is pressed
+					 * Fired when the Close button is pressed.
 					 */
 					itemClosePressed: {
 						allowPreventDefault: true,
 						parameters: {
+
 							/**
-							 * Tab id of the tab to be closed
+							 * Tab ID of the tab to be closed.
 							 */
 							item: {type: "sap.m.TabStripItem"}
 						}
 					},
+
 					/**
-					 * Let the outside world know that some of its properties has changed.
+					 * Sends information that some of the properties have changed.
 					 * @private
 					 */
 					itemPropertyChanged: {
 						parameters: {
+
+							/**
+							 * The <code>TabStripItem</code> that provoked the change.
+							 */
 							itemChanged: {type: 'sap.m.TabStripItem'},
+
+							/**
+							 * The property name to be changed.
+							 */
 							propertyKey: {type: "string"},
+
+							/**
+							 * The new property value.
+							 */
 							propertyValue:  {type: "mixed"}
 						}
 					},
+
 					/**
-					 * Fired when the tab item is selected
+					 * Fired when the <code>TabStripItem</code> is selected.
 					 * ToDo: Is this needed? (Vesko)
 					 */
 					tabSelected: {
@@ -79,12 +97,56 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 
 		// ToDo: change the constants names
 		// ToDo: (2) move all css constants to an array constant
+		/**
+		 * The maximum text length of a <code>TabStripItem</code>.
+		 * ToDo: Add underscore to the beginning to mark this constant private
+		 * @type {number}
+		 */
 		TabStripItem.DISPLAY_TEXT_MAX_LENGHT = 25;
+
+		/**
+		 * The default CSS class name of <code>TabStripItem</code> in context of the <code>TabStrip</code>.
+		 *
+		 * @type {string}
+		 * @private
+		 */
 		TabStripItem._CSS_CLASS = "sapMTabContainerItem";
+
+		/**
+		 * The default CSS class name of the <code>TabStripItem</code>'s label in context of <code>TabStrip</code>.
+		 *
+		 * @type {string}
+		 * @private
+		 */
 		TabStripItem._CSS_CLASS_LABEL = "sapMTabContainerItemLabel";
+
+		/**
+		 * The default CSS class name of <code>TabStripItem</code>'s button in context of <code>TabStrip</code>.
+		 *
+		 * @type {string}
+		 * @private
+		 */
 		TabStripItem._CSS_CLASS_BUTTON = "sapMTabContainerItemButton";
+
+		/**
+		 * The default CSS class name of <code>TabStripItem</code>'s modified state in context of <code>TabStripSelect</code>.
+		 *
+		 * @type {string}
+		 */
 		TabStripItem.CSS_CLASS_STATE = "sapMTabSelectListItemModified";
+
+		/**
+		 * The default CSS class name of <code>TabStripItem</code>'s invisible state in context of <code>TabStripSelect</code>.
+		 *
+		 * @type {string}
+		 */
 		TabStripItem.CSS_CLASS_STATEINVISIBLE = "sapMTabSelectListItemModifiedInvisible";
+
+		/**
+		 * The default CSS class name of <code>TabStripItem</code>'s Close button in context of <code>TabStripSelect</code>.
+		 *
+		 * @type {string}
+		 */
 		TabStripItem.CSS_CLASS_CLOSEBUTTON = 'sapMTabSelectListItemCloseBtn';
 
 
@@ -97,30 +159,18 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 				type: sap.m.ButtonType.Transparent,
 				icon: IconPool.getIconURI("decline"),
 				tabIndex: "-1",
-				ariaHidden: "true",
-				press : function (oEvent) {
-					this.fireItemClosePressed({
-						item: this
-					});
-				}.bind(this)
-			})
-			.addEventDelegate({
-				ontap: function (oEvent) {
-					oEvent.stopPropagation();
-					oEvent.preventDefault();
-				}
-			})
-			.addStyleClass(TabStripItem.CSS_CLASS_CLOSEBUTTON);
+				ariaHidden: "true"
+			}).addStyleClass(TabStripItem.CSS_CLASS_CLOSEBUTTON);
 			this.setAggregation('_closeButton', oButton);
 		};
 
 		/**
-		 * Overriding of the setProperty method in order to avoid unnecessary rerendering.
+		 * Overrides the <code>setProperty</code> method in order to avoid unnecessary re-rendering.
 		 *
 		 * @override
-		 * @param {string} sName The name of the property
-		 * @param {string} sValue The value of the property
-		 * @param {boolean} bSupressInvalidation
+		 * @param sName {string} The name of the property
+		 * @param vValue {boolean | string | object} The value of the property
+		 * @param bSupressInvalidation {boolean} Whether to suppress invalidation
 		 */
 		TabStripItem.prototype.setProperty = function (sName, vValue, bSupressInvalidation) {
 			if (sName === 'modified') {

@@ -285,7 +285,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._isMie || this._bInsideDialog) {
 			setTimeout(function () {
 				that._fCalcBtnWidth();
-			},0);
+			},100);
 		} else {
 			that._fCalcBtnWidth();
 		}
@@ -613,6 +613,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (aButtons.length === 0 && aItems.length > 0) {
 			this.updateItems();
+
+			//Keep buttons in sync
+			aButtons = this.getButtons();
 		}
 
 		if (aItems.length > 0 && aButtons.length > 0) {

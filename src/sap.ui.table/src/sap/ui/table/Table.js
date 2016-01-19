@@ -2635,7 +2635,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		$cols.each(function(iIndex, oElement) {
 			var iColIndex = parseInt(oElement.getAttribute("data-sap-ui-colindex"), 10);
 			var mHeader = mHeaders[iColIndex];
-			mHeader.domRefColumnDivs.push(oElement);
+			if (mHeader) {
+				mHeader.domRefColumnDivs.push(oElement);
+			}
 		});
 
 		jQuery.each(mHeaders, function(iIndex, mHeader) {
@@ -2644,8 +2646,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				if (mHeader.aHeaderData[i]) {
 					oHeaderData = mHeader.aHeaderData[i];
 				}
-				mHeader.domRefColumnDivs[i].style.width = oHeaderData.width + "px";
-				mHeader.domRefColumnDivs[i].setAttribute("data-sap-ui-colspan", oHeaderData.span);
+				if (mHeader.domRefColumnDivs[i]) {
+					mHeader.domRefColumnDivs[i].style.width = oHeaderData.width + "px";
+					mHeader.domRefColumnDivs[i].setAttribute("data-sap-ui-colspan", oHeaderData.span);
+				}
 			}
 		});
 

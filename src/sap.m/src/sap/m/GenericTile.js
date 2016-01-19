@@ -72,6 +72,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				"tileContent" : {type : "sap.m.TileContent", multiple : true},
 				/**
 				 * An icon or image to be displayed in the control.
+				 * This aggregation is deprecated since version 1.36.0, to display an icon or image use sap.m.TileContent control instead.
+				 * @deprecated Since version 1.36.0. This aggregation is deprecated, use sap.m.TileContent control to display an icon instead.
 				 */
 				"icon" : {type : "sap.ui.core.Control", multiple : false},
 				/**

@@ -381,7 +381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * {@link sap.ui.core.UIComponent.createContent constructed} or when a
 	 * {@link sap.ui.core.routing.Router Router} creates a new View and its content.
 	 *
-	 * <strong>Note</string>: This method does not guarantee that the returned owner ID belongs
+	 * <strong>Note</strong>: This method does not guarantee that the returned owner ID belongs
 	 * to a Component. Currently, it always does. But future versions of UI5 might introduce a
 	 * more fine grained ownership concept, e.g. taking Views into account. Callers that
 	 * want to deal only with components as owners, should use the following method:

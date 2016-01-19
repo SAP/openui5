@@ -20,8 +20,6 @@
 	color: @sapUiTextSelection;
 	height: 33px; /* may be removed by sapUiUx3ShellHeaderFlex, so having min-height as well makes sense */
 	padding: 12px 20px 0 20px;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	white-space: nowrap;
 }
@@ -141,7 +139,6 @@
 /* tool palette area */
 .sapUiUx3ShellToolPaletteArea, .sapUiUx3ShellPaneBar {
 	position: fixed;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	bottom: 0;
 	width: @sapUiUx3ShellSideBarBaseWidth;
@@ -288,9 +285,6 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
 	width: @sapUiUx3ShellSideBarBaseWidth;
 	display: inline-block;
 	height: 100%;
-
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	-moz-user-select: none;
 	-webkit-user-select: none;
@@ -425,8 +419,6 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
 	/* Do not finally hardcode the width here. This width is only the default and will be overwritten by script code. */
 	width: 250px;
 	overflow: auto;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	border-right: 2px solid @sapUiMediumBorder;
 	-moz-user-select: auto;

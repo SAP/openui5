@@ -176,6 +176,24 @@
 			equal(valid, true, "the ID 'item1' is a valid selection");
 		});
 
+		test("enabaling the overflowItemsToUppercase", function (){
+			var oOverflowMenu = oCtrl._getOverflowMenu();
+
+			strictEqual(oCtrl.getOverflowItemsToUpperCase(), false, "the property is disabled by default");
+
+			oCtrl.setOverflowItemsToUpperCase(true);
+
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oOverflowMenu.hasStyleClass("sapUiUx3NavBarUpperCaseText"), true,  "the items in the menu are uppercased")
+
+			oCtrl.setOverflowItemsToUpperCase(false);
+
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(oOverflowMenu.hasStyleClass("sapUiUx3NavBarUpperCaseText"), false,  "the items in the menu are with their original case")
+		})
+
 		asyncTest("Overflow", function() {
 			jQuery.sap.byId("uiArea1").css("width", "80px");
 			setTimeout(function(){

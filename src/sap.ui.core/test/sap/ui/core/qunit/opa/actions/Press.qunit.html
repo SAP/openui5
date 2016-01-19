@@ -9,7 +9,7 @@
 	<script
 			src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m, sap.ui.table">
 	</script>
 
 
@@ -28,18 +28,40 @@
 			"sap/m/StandardListItem",
 			"sap/m/ListMode",
 			"sap/m/IconTabBar",
-			"sap/m/IconTabFilter"],
-		function(Press, Button, List, StandardListItem, ListMode, IconTabBar, IconTabFilter){
+			"sap/m/IconTabFilter",
+			"sap/ui/model/json/JSONModel",
+			"sap/ui/table/Table",
+			"sap/ui/table/Column",
+			"sap/m/Label",
+			"sap/m/TileContainer",
+			"sap/m/StandardTile"],
+		function(Press,
+				 Button,
+				 List,
+				 StandardListItem,
+				 ListMode,
+				 IconTabBar,
+				 IconTabFilter,
+				 JSONModel,
+				 Table,
+				 Column,
+				 Label,
+				 TileContainer,
+				 StandardTile){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
 
 			QUnit.module("positive tests",{
+				beforeEach: function() {
+					this.oSpy = sinon.spy($.sap.log, "debug")
+				},
 				afterEach: function() {
 					while(aControlsToClean.length) {
 						//Clean up controls after each test
 						aControlsToClean.pop().destroy();
 					}
+					this.oSpy.restore();
 				}
 			});
 
@@ -60,6 +82,7 @@
 				oButton.attachPress( function () {
 					assert.ok(true, "Press Event has been triggered");
 					assert.ok(jQuery(document.activeElement).is(oButton.$()), "Button has focus");
+					sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
 					//Call 'done' to resume qunit processing
 					done();
 				}, this);
@@ -182,6 +205,72 @@
 
 				// Act
 				oPressAction.executeOn(oSecondTab);
+			});
+
+			QUnit.test("Should be able to press a row in the sap.ui.table.Table", function(asssert) {
+				// Arrange
+				var oTable = new Table({
+						selectionBehavior: "Row"
+					}),
+					done = assert.async(),
+					aData = [
+						{lastName: "Dente"},
+						{lastName: "Friese"},
+						{lastName: "Mann"}
+					],
+					oModel = new JSONModel();
+				oModel.setData({ modelData: aData });
+
+				oTable.addColumn(new Column({
+					template: new Label({ text: "{lastName}"})
+				}));
+				oTable.setModel(oModel);
+				oTable.bindRows("/modelData");
+				oTable.placeAt("qunit-fixture");
+
+
+				aControlsToClean.push(oTable);
+
+				sap.ui.getCore().applyChanges();
+
+				// System under Test
+				var oPressAction = new Press();
+
+				oTable.attachRowSelectionChange(function () {
+					// Assert
+					assert.ok(true, "Fired the event");
+					done();
+				});
+
+				// Act
+				oPressAction.executeOn(oTable.getRows()[1].getCells()[0]);
+			});
+
+
+			QUnit.test("Should press a Tile in a Tile container", function (assert) {
+				var done = assert.async(),
+					oTile = new StandardTile(),
+					oTileContainer = new TileContainer({
+						tiles: oTile
+					});
+
+				oTileContainer.placeAt("qunit-fixture");
+
+				aControlsToClean.push(oTileContainer);
+
+				sap.ui.getCore().applyChanges();
+
+				// System under Test
+				var oPressAction = new Press();
+
+				oTile.attachPress(function () {
+					// Assert
+					assert.ok(true, "Fired the event");
+					done();
+				});
+
+				// Act
+				oPressAction.executeOn(oTile);
 			});
 		});
 	</script>

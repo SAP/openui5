@@ -11,23 +11,25 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 	 * @class BindingPath - checks if a control has a binding context with the exact same binding path
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] Map/JSON-object with initial settings for the new BindingPath.
-	 * @param {string} [mSettings.path] {@Link #getPath path} The value of the binding path that is used for matching.
-	 * The property path is a mandatory parameter and should be set by using a constructor or setter function
-	 * otherwise the binding path matcher won't work.
-	 * @param {string} [mSettings.modelName] {@Link #getModelName modelName} The name of the binding's model that is used for matching.
 	 * @public
 	 * @name sap.ui.test.matchers.BindingPath
 	 * @author SAP SE
 	 * @since 1.32
 	 */
-	return Matcher.extend("sap.ui.test.matchers.BindingPath", {
+	return Matcher.extend("sap.ui.test.matchers.BindingPath", /** @lends sap.ui.test.matchers.BindingPath.prototype */ {
 
 		metadata: {
 			publicMethods: ["isMatching"],
 			properties: {
+				/**
+				 * The value of the binding path that is used for matching.
+				 */
 				path: {
 					type: "string"
 				},
+				/**
+				 * The name of the binding model that is used for matching.
+				 */
 				modelName: {
 					type: "string"
 				}
@@ -35,54 +37,11 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 		},
 
 		/**
-		 * Getter for property <code>path</code>.
-		 *
-		 * The value of the binding path that is used for matching.
-		 *
-		 * @return {string} the value of binding path <code>path</code>
-		 * @public
-		 * @name sap.ui.test.matchers.BindingPath#getPath
-		 * @function
-		 */
-
-		/**
-		 * Setter for property <code>path</code>.
-		 *
-		 * @param {string} sPath the value of the binding path <code>path</code>
-		 * @return {sap.ui.test.matchers.BindingPath} <code>this</code> to allow method chaining
-		 * @public
-		 * @name sap.ui.test.matchers.BindingPath#setPath
-		 * @function
-		 */
-
-		/**
-		 * Getter for property <code>modelName</code>.
-		 *
-		 * The name of the binding model that is used for matching.
-		 *
-		 * @return {string} the name of binding model <code>modelName</code>
-		 * @public
-		 * @name sap.ui.test.matchers.BindingPath#getModelName
-		 * @function
-		 */
-
-		/**
-		 * Setter for property <code>modelName</code>.
-		 *
-		 * @param {string} sModelName the name of binding model <code>modelName</code>
-		 * @return {sap.ui.test.matchers.BindingPath} <code>this</code> to allow method chaining
-		 * @public
-		 * @name sap.ui.test.matchers.BindingPath#setModelName
-		 * @function
-		 */
-
-		/**
 		 * Checks if the control has a binding context that matches the path
 		 *
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
 		 * @return {boolean} true if the binding path has a strictly matching value.
 		 * @public
-		 * @function
 		 */
 
 		isMatching: function (oControl) {
@@ -90,7 +49,7 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 
 			// check if there is a binding path
 			if (!this.getPath()) {
-				jQuery.sap.log.error(this,"matchers.BindingPath: the path needs to be a not empty string");
+				jQuery.sap.log.error(this,"matchers.BindingPath: the path needs to be a not empty string", this._sLogPrefix);
 				return false;
 			}
 
@@ -103,11 +62,20 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 
 			// check if there is a binding context
 			if (!oBindingContext) {
+				jQuery.sap.log.debug("The control " + oControl + " has no binding context for the model " + this.getModelName(), this._sLogPrefix);
 				return false;
 			}
 
 			// check if the binding context is correct
-			return this.getPath() === oBindingContext.getPath();
+			var bResult = this.getPath() === oBindingContext.getPath();
+
+			if (!bResult) {
+				jQuery.sap.log.debug("The control " + oControl + " does not " +
+					"have a matching binding context expected " + this.getPath() + " but got " +
+				oBindingContext.getPath(), this._sLogPrefix);
+			}
+
+			return bResult;
 		}
 
 	});

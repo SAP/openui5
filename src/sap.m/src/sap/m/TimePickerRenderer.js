@@ -18,7 +18,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		TimePickerRenderer.CSS_CLASS = "sapMTimePicker";
 
 		var INPUT_WITH_VALUE_HELP_CLASS = "sapMInputVH",
-			INPUT_IE9_CLASS = "sapMInputIE9",
 			VALUE_HELP_ICON_INNER_CLASS = "sapMInputValHelpInner",
 			VALUE_HELP_ICON_CLASS = "sapMInputValHelp";
 
@@ -32,10 +31,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		TimePickerRenderer.addOuterClasses = function(oRm, oControl) {
 			oRm.addClass(TimePickerRenderer.CSS_CLASS);
 			oRm.addClass(INPUT_WITH_VALUE_HELP_CLASS); // just reuse styling of value help icon
-
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
-				oRm.addClass(INPUT_IE9_CLASS);
-			}
 		};
 
 		/**
@@ -90,21 +85,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		 */
 		TimePickerRenderer.writeInnerValue = function(oRm, oControl) {
 			oRm.writeAttributeEscaped("value", oControl._formatValue(oControl.getDateValue()));
-		};
-
-		/**
-		 * Adds extra attributes for the input element.
-		 *
-		 * See {@link sap.m.InputBaseRenderer#writeInnerAttributes}.
-		 * @override
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
-		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered
-		 */
-		TimePickerRenderer.writeInnerAttributes = function(oRm, oControl) {
-			if (sap.ui.Device.browser.mobile) {
-				// prevent keyboard in mobile devices
-				oRm.writeAttribute("readonly", "readonly");
-			}
 		};
 
 		/**

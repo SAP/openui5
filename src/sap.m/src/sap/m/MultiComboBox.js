@@ -578,14 +578,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			CSS_CLASS_MULTICOMBOBOX = oRenderer.CSS_CLASS_MULTICOMBOBOX;
 
 		// configuration
-		oPicker.setHorizontalScrolling(false).addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "Picker")
-											.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker")
-											.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker-CTX")
-				.attachBeforeOpen(this.onBeforeOpen, this).attachAfterOpen(this.onAfterOpen, this).attachBeforeClose(
-						this.onBeforeClose, this).attachAfterClose(this.onAfterClose, this).addEventDelegate({
+		oPicker.setHorizontalScrolling(false)
+				.addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "Picker")
+				.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker")
+				.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker-CTX")
+				.attachBeforeOpen(this.onBeforeOpen, this)
+				.attachAfterOpen(this.onAfterOpen, this)
+				.attachBeforeClose(this.onBeforeClose, this)
+				.attachAfterClose(this.onAfterClose, this)
+				.addEventDelegate({
 					onBeforeRendering : this.onBeforeRenderingPicker,
 					onAfterRendering : this.onAfterRenderingPicker
-				}, this).addContent(this.getList());
+				}, this)
+				.addContent(this.getList());
 
 		return oPicker;
 	};
@@ -708,13 +713,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 *
 	 */
 	MultiComboBox.prototype._onBeforeOpenPopover = function() {
-		if (this.getWidth() != "auto") {
-			var oDomRef = this.getDomRef();
-			var oComputedStyle = window.getComputedStyle(oDomRef);
+		var oPopover = this.getPicker(),
+			oDomRef = this.getDomRef(),
+			sWidth;
 
-			if (oComputedStyle) {
-				this.getPicker().setContentWidth((parseFloat(oComputedStyle.width) / parseFloat(sap.m.BaseFontSize)) + "rem");
-			}
+		if (oDomRef && oPopover) {
+			sWidth = (oDomRef.offsetWidth / parseFloat(sap.m.BaseFontSize)) + "rem";
+			oPopover.setContentMinWidth(sWidth);
 		}
 	};
 

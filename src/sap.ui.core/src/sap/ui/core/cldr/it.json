@@ -2408,7 +2408,7 @@
 		"era": {
 			"displayName": "era"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "anno",
 			"relative-type--1": "anno scorso",
 			"relative-type-0": "quest’anno",
@@ -2422,7 +2422,35 @@
 				"relativeTimePattern-count-other": "{0} anni fa"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "anno",
+			"relative-type--1": "anno scorso",
+			"relative-type-0": "quest’anno",
+			"relative-type-1": "anno prossimo",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} anno",
+				"relativeTimePattern-count-other": "tra {0} anni"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} anno fa",
+				"relativeTimePattern-count-other": "{0} anni fa"
+			}
+		},
+		"year-narrow": {
+			"displayName": "anno",
+			"relative-type--1": "anno scorso",
+			"relative-type-0": "quest’anno",
+			"relative-type-1": "anno prossimo",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} anno",
+				"relativeTimePattern-count-other": "tra {0} anni"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} anno fa",
+				"relativeTimePattern-count-other": "{0} anni fa"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "trimestre",
 			"relative-type--1": "last quarter",
 			"relative-type-0": "this quarter",
@@ -2436,7 +2464,35 @@
 				"relativeTimePattern-count-other": "{0} trimestri fa"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "trim.",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} trim.",
+				"relativeTimePattern-count-other": "tra {0} trim."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} trim. fa",
+				"relativeTimePattern-count-other": "{0} trim. fa"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "trim.",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} trim.",
+				"relativeTimePattern-count-other": "tra {0} trim."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} trim. fa",
+				"relativeTimePattern-count-other": "{0} trim. fa"
+			}
+		},
+		"month-wide": {
 			"displayName": "mese",
 			"relative-type--1": "mese scorso",
 			"relative-type-0": "questo mese",
@@ -2450,7 +2506,35 @@
 				"relativeTimePattern-count-other": "{0} mesi fa"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "mese",
+			"relative-type--1": "mese scorso",
+			"relative-type-0": "questo mese",
+			"relative-type-1": "mese prossimo",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} mese",
+				"relativeTimePattern-count-other": "tra {0} mesi"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} mese fa",
+				"relativeTimePattern-count-other": "{0} mesi fa"
+			}
+		},
+		"month-narrow": {
+			"displayName": "mese",
+			"relative-type--1": "mese scorso",
+			"relative-type-0": "questo mese",
+			"relative-type-1": "mese prossimo",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} mese",
+				"relativeTimePattern-count-other": "tra {0} mesi"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} mese fa",
+				"relativeTimePattern-count-other": "{0} mesi fa"
+			}
+		},
+		"week-wide": {
 			"displayName": "settimana",
 			"relative-type--1": "settimana scorsa",
 			"relative-type-0": "questa settimana",
@@ -2464,7 +2548,35 @@
 				"relativeTimePattern-count-other": "{0} settimane fa"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "sett.",
+			"relative-type--1": "settimana scorsa",
+			"relative-type-0": "questa settimana",
+			"relative-type-1": "settimana prossima",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} sett.",
+				"relativeTimePattern-count-other": "tra {0} sett."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} sett. fa",
+				"relativeTimePattern-count-other": "{0} sett. fa"
+			}
+		},
+		"week-narrow": {
+			"displayName": "sett.",
+			"relative-type--1": "settimana scorsa",
+			"relative-type-0": "questa settimana",
+			"relative-type-1": "settimana prossima",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} sett.",
+				"relativeTimePattern-count-other": "tra {0} sett."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} sett. fa",
+				"relativeTimePattern-count-other": "{0} sett. fa"
+			}
+		},
+		"day-wide": {
 			"displayName": "giorno",
 			"relative-type--2": "l’altro ieri",
 			"relative-type--1": "ieri",
@@ -2480,10 +2592,42 @@
 				"relativeTimePattern-count-other": "{0} giorni fa"
 			}
 		},
+		"day-short": {
+			"displayName": "g",
+			"relative-type--2": "l’altro ieri",
+			"relative-type--1": "ieri",
+			"relative-type-0": "oggi",
+			"relative-type-1": "domani",
+			"relative-type-2": "dopodomani",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} g",
+				"relativeTimePattern-count-other": "tra {0} gg"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} g fa",
+				"relativeTimePattern-count-other": "{0} gg fa"
+			}
+		},
+		"day-narrow": {
+			"displayName": "g",
+			"relative-type--2": "l’altro ieri",
+			"relative-type--1": "ieri",
+			"relative-type-0": "oggi",
+			"relative-type-1": "domani",
+			"relative-type-2": "dopodomani",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} g",
+				"relativeTimePattern-count-other": "tra {0} gg"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} g fa",
+				"relativeTimePattern-count-other": "{0} gg fa"
+			}
+		},
 		"weekday": {
 			"displayName": "giorno della settimana"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "ora",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} ora",
@@ -2494,7 +2638,29 @@
 				"relativeTimePattern-count-other": "{0} ore fa"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "h.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} h.",
+				"relativeTimePattern-count-other": "tra {0} h."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} h. fa",
+				"relativeTimePattern-count-other": "{0} h. fa"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "h",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} h",
+				"relativeTimePattern-count-other": "tra {0} h"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} h fa",
+				"relativeTimePattern-count-other": "{0} h fa"
+			}
+		},
+		"minute-wide": {
 			"displayName": "minuto",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} minuto",
@@ -2505,7 +2671,29 @@
 				"relativeTimePattern-count-other": "{0} minuti fa"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "min.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} min.",
+				"relativeTimePattern-count-other": "tra {0} min."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} min. fa",
+				"relativeTimePattern-count-other": "{0} min. fa"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "m",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} min",
+				"relativeTimePattern-count-other": "tra {0} min"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} min fa",
+				"relativeTimePattern-count-other": "{0} min fa"
+			}
+		},
+		"second-wide": {
 			"displayName": "Secondo",
 			"relative-type-0": "ora",
 			"relativeTime-type-future": {
@@ -2515,6 +2703,30 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} secondo fa",
 				"relativeTimePattern-count-other": "{0} secondi fa"
+			}
+		},
+		"second-short": {
+			"displayName": "sec.",
+			"relative-type-0": "ora",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} sec.",
+				"relativeTimePattern-count-other": "tra {0} sec."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} sec. fa",
+				"relativeTimePattern-count-other": "{0} sec. fa"
+			}
+		},
+		"second-narrow": {
+			"displayName": "s",
+			"relative-type-0": "ora",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "tra {0} s",
+				"relativeTimePattern-count-other": "tra {0} s"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} s fa",
+				"relativeTimePattern-count-other": "{0} s fa"
 			}
 		},
 		"zone": {

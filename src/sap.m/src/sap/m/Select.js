@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		"use strict";
 
 		/**
-		 * Constructor for a new Select.
+		 * Constructor for a new <code>sap.m.Select</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
 		 * @param {object} [mSettings] Initial settings for the new control.
@@ -104,6 +104,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 				/**
 				 * Indicates whether the selection is restricted to one of the items in the list.
+				 * <b>Note:</b> We strongly recommend that you always set this property to <code>false</code> and bind
+				 * the <code>selectedKey</code> property to the desired value for better interoperability with data binding.
 				 * @since 1.34
 				 */
 				forceSelection: { type: "boolean", group: "Behavior", defaultValue: true }
@@ -560,29 +562,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		Select.prototype._decoratePopover = function(oPopover) {
 			var that = this;
 
-			oPopover._setMinWidth = function(sWidth) {
-				var oPickerDomRef = this.getDomRef();
-
-				if (oPickerDomRef) {
-					oPickerDomRef.style.minWidth = sWidth;
-				}
-			};
-
 			oPopover.open = function() {
 				return this.openBy(that);
 			};
 		};
 
 		/**
-		 * Required adaptations after rendering of the Popover.
+		 * Required adaptations before rendering of the popover.
 		 *
 		 * @private
 		 */
-		Select.prototype._onAfterRenderingPopover = function() {
+		Select.prototype._onBeforeRenderingPopover = function() {
 			var oPopover = this.getPicker(),
 				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
 
-			oPopover._setMinWidth(sWidth);
+			if (oPopover) {
+				oPopover.setContentMinWidth(sWidth);
+			}
 		};
 
 		/* ----------------------------------------------------------- */
@@ -1599,7 +1595,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @param {string | sap.ui.core.Item | null} vItem New value for the <code>selectedItem</code> association.
 		 * If an ID of a <code>sap.ui.core.Item</code> is given, the item with this ID becomes the <code>selectedItem</code> association.
 		 * Alternatively, a <code>sap.ui.core.Item</code> instance may be given or <code>null</code>.
-		 * If the value of <code>null</code> is provided, the first enabled item will be selected (if any).
+		 * If the value of <code>null</code> is provided, the first enabled item will be selected (if any items exist).
 		 *
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
@@ -1630,7 +1626,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
 		 * @param {string | undefined} vItem New value for property <code>selectedItemId</code>.
-		 * If the provided <code>vItem</code> has a default value, the first enabled item will be selected (if any).
+		 * If the provided <code>vItem</code> has a default value, the first enabled item will be selected (if any items exist).
 		 *
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
@@ -1654,7 +1650,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
 		 * @param {string} sKey New value for property <code>selectedKey</code>.
-		 * If the provided <code>sKey</code> is an empty string <code>""</code> or <code>undefined</code>, the first enabled item is selected (if any).
+		 * If the <code>forceSelection</code> property is set to <code>true</code> and the provided <code>sKey</code> is
+		 * an empty string <code>""</code> or <code>undefined</code>, the value of <code>sKey</code> is changed to match
+		 * the <code>key</code> of the first enabled item and the first enabled item is selected (if any items exist).
+		 *
 		 * In the case that an item has the default key value, it is selected instead.
 		 * If duplicate keys exist, the first item matching the key is selected.
 		 *
@@ -1677,7 +1676,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			if (oItem || bDefaultKey) {
 
 				// if "sKey" is an empty string "" or undefined,
-				// the first enabled item will be selected (if any)
+				// the first enabled item will be selected (if any items exist)
 				if (!oItem && bDefaultKey) {
 					oItem = this.getDefaultSelectedItem();
 				}

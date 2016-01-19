@@ -80,6 +80,7 @@ sap.ui.define(['jquery.sap.global'],
 				oFooter = oControl.getFooter(),
 				oSubHeader = oControl.getSubHeader(),
 				sContentWidth = oControl.getContentWidth(),
+				sContentMinWidth = oControl.getContentMinWidth(),
 				sContentHeight = oControl.getContentHeight(),
 				sFooterClass = "sapMPopoverFooter ";
 
@@ -121,6 +122,10 @@ sap.ui.define(['jquery.sap.global'],
 
 			if (sContentWidth) {
 				rm.addStyle("width", sContentWidth);
+			}
+
+			if (sContentMinWidth) {
+				rm.addStyle("min-width", sContentMinWidth);
 			}
 
 			if (sContentHeight) {

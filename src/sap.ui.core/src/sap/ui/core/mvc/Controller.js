@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			if (CustomizingConfiguration) {
 				var controllerExtensionConfig = CustomizingConfiguration.getControllerExtension(sName, ManagedObject._sOwnerId);
 				if (controllerExtensionConfig) {
-					var sExtControllerName = controllerExtensionConfig.controllerName;
+					var sExtControllerName = typeof controllerExtensionConfig === "string" ? controllerExtensionConfig : controllerExtensionConfig.controllerName;
 
 					// create a list of controller names which will be used to extend this controller
 					var aControllerNames = controllerExtensionConfig.controllerNames || [];
@@ -408,7 +408,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * When using an async extension provider you need to ensure that the
 		 * view is loaded in async mode.
 		 *
-		 * In both cases, return <code>undefined</> if no controller extension shall be applied.
+		 * In both cases, return <code>undefined</code> if no controller extension shall be applied.
 		 *
 		 * @param {string} sExtensionProvider the module name of the extension provider
 		 *

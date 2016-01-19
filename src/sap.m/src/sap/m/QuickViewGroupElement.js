@@ -118,6 +118,10 @@ sap.ui.define([
 		 * @private
 		 */
 		GroupElement.prototype._getGroupElementValue = function(sQuickViewPageId) {
+			if (!this.getValue()) {
+				return null;
+			}
+
 			switch (this.getType()) {
 				case GroupElementType.email:
 

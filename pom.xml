@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>reactor</artifactId>
-	<version>1.35.0-SNAPSHOT</version>
+	<version>1.37.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 
@@ -72,7 +72,7 @@
 		<!-- filtering properties -->
 		<version>${project.version}</version>
 		<copyright><![CDATA[UI development toolkit for HTML5 (OpenUI5)
- * (c) Copyright 2009-2015 SAP SE or an SAP affiliate company.
+ * (c) Copyright 2009-2016 SAP SE or an SAP affiliate company.
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
 ]]></copyright>
 		<buildtime>${maven.build.timestamp}</buildtime>
@@ -191,7 +191,7 @@
 						<plugin>
 							<groupId>com.sap.ui5.tools.build</groupId>
 							<artifactId>ui5builder-maven-plugin</artifactId>
-							<version>1.35.0-SNAPSHOT</version>
+							<version>1.37.0-SNAPSHOT</version>
 						</plugin>
 
 						<!-- translation support (for internal use) -->

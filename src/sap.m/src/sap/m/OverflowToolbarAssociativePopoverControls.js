@@ -188,6 +188,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 				canOverflow: false,
 				listenForEvents: [],
 				noInvalidationProps: ["enabled", "selected"]
+			},
+			"sap.m.Slider": {
+				canOverflow: false,
+				listenForEvents: [],
+				noInvalidationProps: ["enabled", "value"]
 			}
 		};
 

@@ -27,6 +27,68 @@
 
 	<script>
 		jQuery.sap.require("sap.ui.core.format.DateFormat");
+		jQuery.sap.require("sap.m.TimePickerSlider");
+
+		module("slider select value by typing", {
+			beforeEach: function() {
+				//SUT
+				this.oSlider = new sap.m.TimePickerSlider({
+					items: [
+						{key: "1", text: "01"},
+						{key: "2", text: "02"},
+						{key: "3", text: "03"},
+						{key: "11", text: "11"},
+						{key: "113", text: "113"}
+					]
+				});
+				this.oSpy = sinon.spy(this.oSlider, "setSelectedValue");
+				this.iNowTimeStamp = 50501234;
+			},
+			afterEach: function() {
+				this.oSpy.restore();
+				this.oSlider.destroy();
+				this.oSlider = null;
+			}
+		});
+
+		test("_fnHandleTypeValues immediately sets the selected value when a unique key is matched", function() {
+			//Act
+			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_2);
+
+			//Assert
+			ok(this.oSpy.calledOnce, "setSelectedValue is called once");
+			ok(this.oSpy.calledWith("2"), "setSelectedValue is called with the right item key");
+		});
+
+		test("_fnHandleTypeValues stacks calls that do not have exact match within a second", function() {
+			//Act
+			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_1);
+			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp + 500, jQuery.sap.KeyCodes.DIGIT_1);
+
+			//Assert
+			equal(this.oSpy.callCount, 0, "setSelectedValue is not called yet, because there are 2 matched keys");
+
+			//Wait
+			this.clock.tick(1000);
+
+			//Assert
+			ok(this.oSpy.calledOnce, "setSelectedValue is called only once after 1 second when there are multiple matched keys");
+			ok(this.oSpy.calledWith("11"), "setSelectedValue is called with the right item key");
+		});
+
+		test("_fnHandleTypeValues does not change selection when there is no matched item key", function() {
+			//Act
+			this.oSlider._fnHandleTypeValues(this.iNowTimeStamp, jQuery.sap.KeyCodes.DIGIT_5);
+
+			//Assert
+			equal(this.oSpy.callCount, 0, "setSelectedValue is not called after typing non-existent item key");
+
+			//Wait
+			this.clock.tick(1000);
+
+			//Assert
+			equal(this.oSpy.callCount, 0, "setSelectedValue is still not called after waiting 1 second");
+		});
 
 		module("API", {
 			setup : function() {
@@ -1174,7 +1236,7 @@
 			strictEqual(jQuery(".sapMTPInputActive").is(":visible"), false, "the picker is closed and not focussed");
 
 			qutils.triggerEvent("focusout", tp.getDomRef());
-			ok(!tp.$().hasClass(".sapMTPInputActive"), "the picker is closed and not focussed");
+			ok(!tp.$().hasClass("sapMTPInputActive"), "the picker is closed and not focussed");
 
 
 			tp.destroy();
@@ -1236,6 +1298,39 @@
 			oDateValue.setMonth(expDateValue.getMonth());
 			oDateValue.setDate(expDateValue.getDate());
 			equals(oDateValue.toString(), expDateValue.toString(), "getDateValue ok");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		module("Time picker has same behaviour on mobile like on desktop", {
+			setup: function () {
+				jQuery("html").removeClass("sap-desktop");
+				jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+				jQuery("html").addClass("sap-phone");
+				jQuery("html").addClass("sapUiMedia-Std-Phone");
+			},
+			teardown: function () {
+				jQuery("html").removeClass("sap-phone");
+				jQuery("html").removeClass("sapUiMedia-Std-Phone");
+				jQuery("html").addClass("sap-desktop");
+				jQuery("html").addClass("sapUiMedia-Std-Desktop");
+			}
+		});
+
+		test("focus on the input does not open the picker on mobile", function() {
+			//system under test
+			var tp = new sap.m.TimePicker('tp');
+
+			// arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			qutils.triggerEvent("focusin", tp.getDomRef());
+
+			strictEqual(tp.$().hasClass("sapMFocus"), true, "the input is focused");
+			strictEqual(tp._getPicker(), null, "the picker is not opened");
 
 			//cleanup
 			tp.destroy();

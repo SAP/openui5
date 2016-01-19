@@ -143,6 +143,43 @@
 				]
 			}).placeAt("uiArea3");
 
+		// test toolbar as header
+		var oLayout4 = new sap.ui.layout.form.ResponsiveLayout("Layout4");
+		var oForm4 = new sap.ui.layout.form.Form("F4",{
+			title: new sap.ui.core.Title("F4-T",{text: "Form4"}),
+			toolbar: new sap.ui.commons.Toolbar("F4-TB1", {
+				items: [new sap.ui.commons.TextView("F4-Title", {text: "Form 4", design: sap.ui.commons.TextViewDesign.H3, tooltip: "Title tooltip"})],
+				rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+			}),
+			ariaLabelledBy: "F4-Title",
+			layout: oLayout4,
+			formContainers: [
+				new sap.ui.layout.form.FormContainer("F4C1",{
+						title: new sap.ui.core.Title("F4-C1T",{text: "Container 1"}),
+						toolbar: new sap.ui.commons.Toolbar("F4-TB2", {
+							items: [new sap.ui.commons.TextView("F4C1-Title", {text: "Container 1", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
+							rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+						}),
+						ariaLabelledBy: "F4C1-Title",
+						formElements: [
+							new sap.ui.layout.form.FormElement("F4C1E1",{
+									label: "Label",
+									fields: [new sap.ui.commons.TextField("F4C1E1_T1")]
+								})]
+					}),
+				new sap.ui.layout.form.FormContainer("F4C2",{
+						toolbar: new sap.ui.commons.Toolbar("F4-TB3", {
+							items: [new sap.ui.commons.TextView("F4C2-Title", {text: "Container 2", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
+							rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+						}),
+						formElements: [
+							new sap.ui.layout.form.FormElement("F4C2E1",{
+									label: "Label",
+									fields: [new sap.ui.commons.TextField("F4C2E1_T1")]
+								})]
+					})]
+			}).placeAt("uiArea4");
+
 		// test functions
 		qutils.delayTestStart();
 
@@ -264,6 +301,18 @@
 			ok(!jQuery("#F2C1--RFLayout").attr("role"), "Container-F2C1: role \"form\" not set on RFLayout level");
 			equal(jQuery("#F2C1--Panel").attr("aria-labelledby"), "F2C1--title", "Container-F2C1: aria-labelledby set");
 			equal(jQuery("#F3C1--Panel").attr("aria-labelledby"), "F3C1T", "Container-F3C1: aria-labelledby set");
+
+			equal(jQuery("#F4").attr("aria-labelledby"), "F4-Title", "Form4: aria-labelledby set");
+			equal(jQuery("#F4C1--Panel").attr("aria-labelledby"), "F4C1-Title", "Container-F4C1: aria-labelledby set");
+			equal(jQuery("#F4C2--Panel").attr("aria-labelledby"), "F4-TB3", "Container-F4C2: aria-labelledby default set");
+		});
+
+		test("Toolbar", function() {
+			ok(!jQuery.sap.domById("F4-T"), "Form6: Title not rendered");
+			ok(jQuery.sap.domById("F4-TB1"), "Form6: Toolbar rendered");
+			ok(!jQuery.sap.domById("F4-C1T"), "Form6: Title of Container1 not rendered");
+			ok(jQuery.sap.domById("F4-TB2"), "Form6: Toolbar of Container1 rendered");
+			ok(jQuery.sap.domById("F4-TB3"), "Form6: Toolbar of Container2 rendered");
 		});
 
 		module("Interaction");
@@ -474,6 +523,8 @@
 	<div id="uiArea2"></div>
 	<br>
 	<div id="uiArea3"></div>
+	<br>
+	<div id="uiArea4"></div>
 
 </body>
 </html>

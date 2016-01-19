@@ -2,19 +2,20 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/base/ManagedObject', 'sap/ui/core/InvisibleText', './AccButton', './TabStripItem', './TabStripSelect'],
-	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, InvisibleText, AccButton, TabStripItem, TabStripSelect) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/base/ManagedObject', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/InvisibleText', './AccButton', './TabStripItem', './TabStripSelect', 'sap/ui/Device'],
+	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, ScrollEnablement, InvisibleText, AccButton, TabStripItem, TabStripSelect, Device) {
 		"use strict";
 
 		/**
 		 * Constructor for a new <code>TabStrip</code>.
 		 *
-		 * @param {string} [sID] Id for the new control, generated automatically if no ID is given
+		 * @param {string} [sID] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
 		 * This control displays a number of tabs. If the available horizontal
-		 * space is exceeded, a horizontal scrolling appears.
+		 * space is exceeded, a horizontal scrollbar appears.
 		 *
 		 * @extends sap.ui.core.Control
 		 * @version ${version}
@@ -30,64 +31,64 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				properties : {
 
 					/**
-					 * Defines whether button for showing all the tabs in a dropdown menu is present
+					 * Defines whether the button <code>Opened Tabs</code> for showing all the tabs in a dropdown menu is present.
 					 */
 					hasSelect : {type : "boolean", group : "Misc", defaultValue : false}
 				},
 				aggregations : {
 
 					/**
-					 * The tabs displayed in the TabStrip.
+					 * The tabs displayed in the <code>TabStrip</code>.
 					 */
 					items : {type : "sap.m.TabStripItem", multiple : true, singularName : "item"},
 
 					/**
-					 * The down arrow button displayed in the TabStrip.
-					 * // ToDo: check if this has to be removed
+					 * The <code>Opened Tabs</code> button displayed in the <code>TabStrip</code>.
+					 * ToDo: check if this has to be removed
 					 */
 					downArrowButton : {type : "sap.m.Button", multiple : false, singularName : "downArrowButton"},
 
 					/**
-					 * The add button displayed in the TabStrip.
+					 * The <code>Add New Tab</code> button displayed in the <code>TabStrip</code>.
 					 */
 					addButton : {type : "sap.m.Button", multiple : false, singularName : "addButton"},
 
 					/**
-					 * Holds the instance of the select when 'hasSelect' is set to true
+					 * Holds the instance of the select when <code>hasSelect</code> is set to <code>true</code>.
 					 */
 					_select : {type: 'sap.m.TabStripSelect', multiple : false, visibility : "hidden"}
 				},
 				associations: {
 
 					/**
-					 * Sets or retrieves the selected item from the aggregation named items.
+					 * Sets or retrieves the selected item from the <code>items</code> aggregation..
 					 */
 					selectedItem: {type : 'sap.m.TabStripItem', group : "Misc"}
 				},
 				events : {
 
 					/**
-					 * Fired when item has been selected
+					 * Fired when an item is selected.
 					 */
 					selectionChange: {
 						parameters: {
 
 							/**
-							 * The id of the tab to be selected
+							 * The selected item.
 							 */
 							item: {type: "sap.m.TabStripItem"}
 						}
 					},
 
 					/**
-					 * Fired when an item wants to be closed
+					 * Fired when an item is closed.
 					 */
 					itemCloseRequest: {
 						allowPreventDefault: true,
 						parameters: {
 
 							/**
-							 * Tab id of the tab to be closed
+							 * The closed item.
 							 */
 							item: {type: "sap.m.TabStripItem"}
 						}
@@ -95,6 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 					/**
 					 * Fired when an item is pressed.
+					 * ToDo: check if this has to be removed
 					 */
 					itemPress: {
 						parameters: {
@@ -106,12 +108,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 						}
 					}
 				}
+			},
+			constructor : function (vId, mSettings) {
+				// normalize the expected arguments
+				if (!mSettings && typeof vId === 'object') {
+					mSettings = vId;
+				}
+
+				/* Stash the 'hasSelect' setting for later in order to have all items added to the tabstrip
+				* before the "select" control is instantiated. */
+				var bHasSelect = mSettings['hasSelect'];
+				delete mSettings['hasSelect'];
+
+				sap.ui.base.ManagedObject.prototype.constructor.apply(this, arguments);
+
+				// after the tabstrip is instantiated, add the select
+				this.setProperty('hasSelect', bHasSelect, true);
 			}
 		});
 
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		/**
-		 * Icon buttons used in TabStrip
+		 * Library internationalization resource bundle.
+		 *
+		 * @type {jQuery.sap.util.ResourceBundle}
+		 */
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		/**
+		 * Icon buttons used in <code>TabStrip</code>.
 		 *
 		 * @enum
 		 * @type {{LeftArrowButton: string, RightArrowButton: string, DownArrowButton: string, AddButton: string}}
@@ -125,11 +149,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			DeclineButton       : "decline"
 		};
 
-
+		/**
+		 * <code>TabStripSelect</code> ID prefix.
+		 *
+		 * @type {string}
+		 * @public
+		 */
 		TabStrip.SELECT_ITEMS_ID_PREFIX = 'SelectItem-';
 
 		/**
-		 * ScrollLeft constant
+		 * ScrollLeft constant.
 		 *
 		 * @type {number}
 		 * @private
@@ -137,31 +166,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		TabStrip._SCROLLSIZE = 320;
 
 		/**
+		 * The minimum horizontal offset threshold for drag/swipe.
+		 * @type {number}
+		 * @private
+		 */
+		TabStrip._MINDRAGOFFSET = sap.ui.Device.support.touch ? 15 : 5;
+
+		/**
+		 * Scrolling animation duration constant
+		 *
+		 * @type {number}
+		 * @private
+		 */
+		TabStrip._SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 500 : 0;
+
+		/**
 		 * Initializes the control.
 		 *
+		 * @override
 		 * @public
 		 */
 		TabStrip.prototype.init = function () {
-			this._bDoScroll             = !sap.ui.Device.system.phone;
-			this._bRtl                  = sap.ui.getCore().getConfiguration().getRTL();
-			this._iCurrentScrollLeft    = 0;
-			this._iMaxOffsetLeft        = null;
-			this._scrollable            = null;
-			this._oLeftArrowButton      = null;
-			this._oRightArrowButton     = null;
+			this._bDoScroll = !sap.ui.Device.system.phone;
+			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			this._iCurrentScrollLeft = 0;
+			this._iMaxOffsetLeft = null;
+			this._scrollable = null;
+			this._oLeftArrowButton = null;
+			this._oRightArrowButton = null;
+			this._oTouchStartX = null;
+
+			if (!sap.ui.Device.system.phone) {
+				this._oScroller = new ScrollEnablement(this, this.getId() + "-tabs", {
+					horizontal: true,
+					vertical: false,
+					nonTouchScrolling: true
+				});
+			}
 		};
 
 		/**
 		 * Called from parent if the control is destroyed.
 		 *
+		 * @override
 		 * @public
 		 */
 		TabStrip.prototype.exit = function () {
-			this._bDoScroll             = null;
-			this._bRtl                  = null;
-			this._iCurrentScrollLeft    = null;
-			this._iMaxOffsetLeft        = null;
-			this._scrollable            = null;
+			this._bRtl = null;
+			this._iCurrentScrollLeft = null;
+			this._iMaxOffsetLeft = null;
+			this._scrollable = null;
+			this._oTouchStartX = null;
 			if (this._oLeftArrowButton) {
 				this._oLeftArrowButton.destroy();
 				this._oLeftArrowButton = null;
@@ -170,15 +225,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				this._oRightArrowButton.destroy();
 				this._oRightArrowButton = null;
 			}
+			if (this._oScroller) {
+				this._oScroller.destroy();
+				this._oScroller = null;
+			}
+			if (this._sResizeListenerId) {
+				sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+				this._sResizeListenerId = null;
+			}
 			this._removeItemNavigation();
 		};
 
 		/**
-		 * Function is called before the rendering of the control is started
+		 * Called before the rendering of the control is started.
+		 *
+		 * @override
+		 * @public
 		 */
 		TabStrip.prototype.onBeforeRendering = function () {
 			var oDownArrowButton = this.getDownArrowButton(),
 			    oAddButton = this.getAddButton();
+
+			if (this._sResizeListenerId) {
+				sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+				this._sResizeListenerId = null;
+			}
 
 			//Create overflow buttons
 			this._oLeftArrowButton = this._generateButton(TabStrip._ICONBUTTONS.LeftArrowButton);
@@ -193,14 +264,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
-		 * Function is called when the rendering of the control is completed
+		 * Called when the rendering of the control is completed.
+		 *
+		 * @override
+		 * @public
 		 */
 		TabStrip.prototype.onAfterRendering = function () {
 			//use ItemNavigation for keyboardHandling
 			var aItems = this.getItems(),
 			    aTabDomRefs = [];
 
-			aItems.forEach(function(oTab, iIndex) {
+			if (this._oScroller) {
+				this._oScroller.setIconTabBar(this, jQuery.proxy(this._checkOverflow, this), null);
+			}
+
+			aItems.forEach(function(oTab) {
 				var oItemDomRef = oTab.getDomRef();
 				jQuery(oItemDomRef).attr("tabindex", "-1");
 				aTabDomRefs.push(oItemDomRef);
@@ -208,13 +286,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			this._addItemNavigation(this.getDomRef("tabContainer"), aTabDomRefs);
 
-			this._iMaxOffsetLeft = Math.abs(this.$("tabContainer").width() - this.$("tabs").width());
+			this._adjustScrolling();
+
+			this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._adjustScrolling, this));
 		};
 
 		/**
+		 * Finds the DOM element that should get the focus.
 		 *
-		 * @param oFocusTab
-		 * @returns {*}
+		 * @returns {null | Element} The element that have to receive the focus or null
+		 * @public
 		 * @override
 		 */
 		TabStrip.prototype.getFocusDomRef = function () {
@@ -228,9 +309,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
+		 * Returns an object representing the serialized focus information.
 		 *
 		 * @param oFocusInfo
 		 * @override
+		 * @public
 		 */
 		TabStrip.prototype.applyFocusInfo = function (oFocusInfo) {
 			if (oFocusInfo.focusDomRef) {
@@ -239,11 +322,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
-		 * Adds item navigation functionality
+		 * Adds item navigation functionality.
 		 *
-		 * @param oHeadDomRef
-		 * @param aTabDomRefs
-		 * @param iSelectedDomIndex
+		 * @param oHeadDomRef { Element } The parent DOM element holding the item DOM elements that have to be iterated
+		 * @param aTabDomRefs { array<{Element}> } An array with all the DOM elements that have to be iterated
 		 * @private
 		 */
 		TabStrip.prototype._addItemNavigation = function (oHeadDomRef, aTabDomRefs) {
@@ -268,34 +350,61 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * @private
 		 */
 		TabStrip.prototype._checkScrolling = function() {
-			var bScrolling = false,
-			    $This,
-			    oTabContainer,
-			    oTabs;
+			var oTabsDomRef = this.getDomRef("tabs"),
+				bScrollNeeded = oTabsDomRef && (oTabsDomRef.scrollWidth > this.getDomRef("tabContainer").clientWidth);
 
-			if (this._bDoScroll) {
-				$This = this.$();
-				oTabContainer = this.getDomRef("tabContainer");
-				oTabs = this.getDomRef("tabs");
-				if (oTabContainer && oTabs) {
-					if (oTabContainer.offsetWidth < oTabs.offsetWidth) {
-						bScrolling = true;
-					}
+			this.$().toggleClass("sapMTSScrollable", bScrollNeeded);
+
+			return bScrollNeeded;
+		};
+
+		TabStrip.prototype._checkOverflow = function() {
+			var oTabsDomRef = this.getDomRef("tabs"),
+				oTabContainerDomRef = this.getDomRef("tabContainer"),
+				iScrollLeft,
+				realWidth,
+				availableWidth,
+				bScrollBack = false,
+				bScrollForward = false;
+
+			if (this._checkScrolling() && oTabsDomRef && oTabContainerDomRef) {
+				if (this._bRtl && Device.browser.firefox) {
+					iScrollLeft = -oTabContainerDomRef.scrollLeft;
+				} else {
+					iScrollLeft = oTabContainerDomRef.scrollLeft;
 				}
-			}
 
-			if (this._scrollable !== bScrolling) {
-				//Mark the control as scrollable or not
-				$This.toggleClass("sapMTSScrollable", bScrolling);
-				$This.toggleClass("sapMTSNotScrollable", !bScrolling);
-				this._scrollable = bScrolling;
-			}
+				realWidth = oTabsDomRef.scrollWidth;
+				availableWidth = oTabContainerDomRef.clientWidth;
+				if (Math.abs(realWidth - availableWidth) === 1) {
+					realWidth = availableWidth;
+				}
 
-			return bScrolling;
+				if (iScrollLeft > 0) {
+					bScrollBack = true;
+				}
+				if ((realWidth > availableWidth) && (iScrollLeft + availableWidth < realWidth)) {
+					bScrollForward = true;
+				}
+
+				this.$().toggleClass("sapMTSScrollBack", bScrollBack)
+						.toggleClass("sapMTSScrollForward", bScrollForward);
+			} else {
+				this.$().toggleClass("sapMTSScrollBack", false)
+						.toggleClass("sapMTSScrollForward", false);
+			}
+		};
+
+		TabStrip.prototype._adjustScrolling = function() {
+
+			this._iMaxOffsetLeft = Math.abs(this.$("tabContainer").width() - this.$("tabs").width());
+
+			this._checkOverflow();
 		};
 
 		/**
-		 * Generates an IconOnly transparent button
+		 * Generates an IconOnly transparent button.
+		 *
 		 * @param oButtonType { TabStrip._ICONBUTTONS }
 		 * @returns { sap.m.Button } The generated button
 		 * @private
@@ -313,7 +422,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 						tabIndex: "-1",
 						ariaHidden: "true",
 						press: function (oEvent) {
-							that._scroll(-TabStrip._SCROLLSIZE, 500);
+							that._scroll(-TabStrip._SCROLLSIZE, TabStrip._SCROLL_ANIMATION_DURATION);
 						}
 					});
 					break;
@@ -325,7 +434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 						tabIndex: "-1",
 						ariaHidden: "true",
 						press: function (oEvent) {
-							that._scroll(TabStrip._SCROLLSIZE, 500);
+							that._scroll(TabStrip._SCROLLSIZE, TabStrip._SCROLL_ANIMATION_DURATION);
 						}
 					});
 					break;
@@ -354,23 +463,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
-		 * Before scroll callback
+		 * Removes the item navigation delegate.
+		 *
 		 * @private
-		 */
-		TabStrip.prototype._fnBeforeScrollCallback = function() {
-			this.$().toggleClass("sapMTSScrolling", true);
-		};
-
-		/**
-		 * After scroll callback
-		 * @private
-		 */
-		TabStrip.prototype._fnAfterScrollCallback = function() {
-			this.$().toggleClass("sapMTSScrolling", false);
-		};
-
-		/**
-		 * Removes the item navigation delegate
 		 */
 		TabStrip.prototype._removeItemNavigation = function () {
 			if (this._oItemNavigation) {
@@ -381,47 +476,89 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
-		 * Performs horizontal scroll
+		 * Performs horizontal scroll.
+		 *
 		 * @param iDelta {int} The target scrollLeft value
 		 * @param iDuration {int} Scroll animation duration
 		 * @private
 		 */
 		TabStrip.prototype._scroll = function(iDelta, iDuration) {
-			var oDomRef = this.getDomRef("tabContainer"),
-			    iScrollLeft = oDomRef.scrollLeft,
-			    iScrollTarget = iScrollLeft + iDelta;
+			var iScrollLeft = this.getDomRef("tabContainer").scrollLeft,
+				iScrollTarget;
 
-			this._fnBeforeScrollCallback();
+			if (this._bRtl && Device.browser.firefox) {
+				iScrollTarget = iScrollLeft - iDelta;
 
-			//Perform needed checks for ScrollLeft value
-			if (iScrollTarget < 0) {
-				iScrollTarget = 0;
+				// Avoid out ofRange situation
+				if (iScrollTarget < -this._iMaxOffsetLeft) {
+					iScrollTarget = -this._iMaxOffsetLeft;
+				}
+				if (iScrollTarget > 0) {
+					iScrollTarget = 0;
+				}
+			} else {
+				iScrollTarget = iScrollLeft + iDelta;
+
+				if (iScrollTarget < 0) {
+					iScrollTarget = 0;
+				}
+				if (iScrollTarget > this._iMaxOffsetLeft) {
+					iScrollTarget = this._iMaxOffsetLeft;
+				}
 			}
-			if (iScrollTarget > this._iMaxOffsetLeft) {
-				iScrollTarget = this._iMaxOffsetLeft;
-			}
-			jQuery(oDomRef).animate({scrollLeft: iScrollTarget}, iDuration);
+
+			this._oScroller.scrollTo(iScrollTarget, 0, iDuration);
 			this._iCurrentScrollLeft = iScrollTarget;
-
-			this._fnAfterScrollCallback();
 		};
 
 		/**
-		 * Scrolls to a particular tab
+		 * Scrolls to a particular item.
 		 *
-		 * @param oTab {sap.ui.core.Control}
+		 * @param oItem {sap.m.TabStripItem} The item to be scrolled to
 		 * @param iDuration {int} Duration of the scrolling animation
 		 * @private
 		 */
-		TabStrip.prototype._scrollIntoView = function (oTab, iDuration) {
-			this._scroll(oTab.scrollLeft, iDuration);
+		TabStrip.prototype._scrollIntoView = function (oItem, iDuration) {
+			var $tabs = this.$("tabs"),
+				$item = oItem.$(),
+				iTabsPaddingWidth = $tabs.innerWidth() - $tabs.width(),
+				iItemWidth = $item.outerWidth(true),
+				iItemPosLeft = $item.position().left - iTabsPaddingWidth / 2,
+				oTabContainerDomRef = this.getDomRef("tabContainer"),
+				iScrollLeft = oTabContainerDomRef.scrollLeft,
+				iContainerWidth = this.$("tabContainer").width(),
+				iNewScrollLeft = iScrollLeft;
+
+			// check if item is outside of viewport
+			if (iItemPosLeft < 0 || iItemPosLeft > iContainerWidth - iItemWidth) {
+
+				if (this._bRtl && Device.browser.firefox) {
+					if (iItemPosLeft < 0) { // right side: make this the last item
+						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
+					} else { // left side: make this the first item
+						iNewScrollLeft += iItemPosLeft;
+					}
+				} else {
+					if (iItemPosLeft < 0) { // left side: make this the first item
+						iNewScrollLeft += iItemPosLeft;
+					} else { // right side: make this the last item
+						iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
+					}
+				}
+
+				// store current scroll state to set it after rerendering
+				this._iCurrentScrollLeft = iNewScrollLeft;
+				this._oScroller.scrollTo(iNewScrollLeft, 0, iDuration);
+
+			}
 		};
 
 
 		/**
-		 * Create the instance of the tab select list.
-		 * @param {array} aTabStripItems Array with the tab items
-		 * @returns {object }{sap.m.TabStripSelect}
+		 * Create the instance of the <code>TabStripSelect</code>.
+		 *
+		 * @param aTabStripItems { array<sap.m.TabStripItem> } Array with the <code>TabStripItems</code>
+		 * @returns {sap.m.TabStripSelect} The created <code>TabStripSelect</code>
 		 * @private
 		 */
 		TabStrip.prototype._createSelect = function (aTabStripItems) {
@@ -447,22 +584,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			return oSelect;
 		};
 
-		/**
-		 * Handles the <code>tap</code> event on the tab strip.
-		 *
-		 * @param {jQuery.Event} oEvent The event object.
-		 */
-		TabStrip.prototype.ontap = function(oEvent) {
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-			this._activateItem(oEvent.srcControl);
-		};
-
 
 		/**
-		 * Handles when the space or enter key is pressed.
+		 * Handles when the Space or Enter key is pressed.
 		 *
-		 * @param {jQuery.Event} oEvent The event object.
+		 * @param {jQuery.Event} oEvent The event object
 		 */
 		TabStrip.prototype.onsapselect = function(oEvent) {
 			// mark the event for components that needs to know if the event was handled
@@ -487,7 +613,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
-		 * Calculates the next item to be focused & selected and applies the focus & selection when an item is removed
+		 * Calculates the next item to be focused and selected and applies the focus and selection when an item is removed.
 		 *
 		 * @param bSetAsSelected {boolean} Whether the next item to be selected
 		 * @private
@@ -514,9 +640,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
-		 * Activates an item on the tab strip.
+		 * Activates an item on the <code>TabStrip</code>.
 		 *
-		 * @param {sap.m.TabStripItem} oItem The item to be activated.
+		 * @param oItem {sap.m.TabStripItem} The item to be activated
 		 * @private
 		 */
 		TabStrip.prototype._activateItem = function(oItem) {
@@ -533,7 +659,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			}
 		};
 
-
+		/**
+		 * Adds an entity <code>oObject</code> to the aggregation identified by <code>sAggregationName</code>.
+		 *
+		 * @param sAggregationName {string} The name of the aggregation where the new entity is to be added
+		 * @param oObject {mixed} The value of the aggregation to be added
+		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @override
+		 */
 		TabStrip.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 			if (sAggregationName === 'items') {
 				oAggregationsHelper.handleItemsAggregation.call(this, ['addAggregation', oObject, bSuppressInvalidate], true);
@@ -541,6 +675,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			return Control.prototype.addAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 		};
 
+		/**
+		 * Inserts an entity to the aggregation named <code>sAggregationName</code> at position <code>iIndex</code>.
+		 *
+		 * @param sAggregationName {string} The name of the aggregation
+		 * @param oObject {mixed} The value of the aggregation to be inserted
+		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @override
+		 */
 		TabStrip.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 			if (sAggregationName === 'items') {
 				oAggregationsHelper.handleItemsAggregation.call(this, ['insertAggregation', oObject, iIndex, bSuppressInvalidate], true);
@@ -548,6 +691,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			return Control.prototype.insertAggregation.call(this, sAggregationName, oObject, iIndex, bSuppressInvalidate);
 		};
 
+		/**
+		 * Removes an entity from the aggregation named <code>sAggregationName</code>.
+		 *
+		 * @param sAggregationName {string} The name of the aggregation
+		 * @param oObject {mixed} The value of aggregation to be removed
+		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @override
+		 */
 		TabStrip.prototype.removeAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 			if (sAggregationName === 'items') {
 				oAggregationsHelper.handleItemsAggregation.call(this, ['removeAggregation', oObject, bSuppressInvalidate]);
@@ -555,6 +707,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			return Control.prototype.removeAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 		};
 
+		/**
+		 * Removes all objects from the aggregation named <code>sAggregationName</code>.
+		 *
+		 * @param sAggregationName {string} The name of aggregation
+		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @override
+		 */
 		TabStrip.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
 			if (sAggregationName === 'items') {
 				oAggregationsHelper.handleItemsAggregation.call(this, ['removeAllAggregation', null, bSuppressInvalidate]);
@@ -562,6 +722,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			return Control.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
 		};
 
+		/**
+		 * Destroys all the entities in the aggregation named <code>sAggregationName</code>.
+		 *
+		 * @param sAggregationName {string} The name of aggregation
+		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @override
+		 */
 		TabStrip.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 			if (sAggregationName === 'items') {
 				oAggregationsHelper.handleItemsAggregation.call(this, ['destroyAggregation', bSuppressInvalidate]);
@@ -570,14 +738,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
-		 * Sets an item as current.
-		 * @param {sap.m.TabStripItem} oSelectedItem the item that should be set as current.
-		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining.
+		 * Sets a <code>TabStripItem</code> as current.
+		 *
+		 * @param {sap.m.TabStripItem} oSelectedItem the item that should be set as current
+		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @override
 		 */
 		TabStrip.prototype.setSelectedItem = function(oSelectedItem) {
 			if (!oSelectedItem) {
 				return;
 			}
+
+			if (oSelectedItem.$().length > 0) {
+				this._scrollIntoView(oSelectedItem, 500);
+			}
+
 			updateAriaSelectedAttributes(this.getItems(), oSelectedItem);
 			updateSelectedItemClasses.call(this, oSelectedItem.getId());
 
@@ -591,10 +766,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
-		 * Overrite the default method to make sure a TabStripSelect instance is created when needed.
-		 * @param sPropertyName
-		 * @param vValue
-		 * @param bSuppressInvalidate
+		 * Overrides the default method to make sure a <code>TabStripSelect</code> instance is created when needed.
+		 *
+		 * @param sPropertyName {string} The property name to be set
+		 * @param vValue {mixed} The property value to be set
+		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @override
 		 */
 		TabStrip.prototype.setProperty = function(sPropertyName, vValue, bSuppressInvalidate) {
 			var vRes;
@@ -615,10 +793,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 
+		/**
+		 * oEventsHelper {object} EventHandling helper class
+		 * ToDo: [Refactoring] Consider removing this helper class and adding its methods in TabStrip.prototype
+		 * @private
+		 */
 		var oEventsHelper = {
 			/**
-			 * Attach any previously added event handlers.
-			 * @param {object} oObject The TabStripItem instance on which events will be detached/attached
+			 * Attaches any previously added event handlers.
+			 *
+			 * @param oObject {object} The <code>TabStripItem</code> instance on which events will be detached/attached
 			 * @private
 			 */
 			attachItemEventListeners: function (oObject) {
@@ -630,8 +814,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				oObject.attachItemClosePressed(oEventsHelper.handleItemClosePressed.bind(this));
 			},
 			/**
-			 * Detach any previously added event handlers.
-			 * @param {object} oObject The TabStripItem instance on which events will be detached/attached
+			 * Detaches any previously added event handlers.
+			 *
+			 * @param oObject {object} The <code>TabStripItem</code> instance on which events will be detached/attached.
 			 * @private
 			 */
 			detachItemEventListeners: function (oObject) {
@@ -650,8 +835,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				}
 			},
 			/**
-			 * Propagate the property change from a tabstrip item isntance to the tabstrip select item copy instance
-			 * @param oEvent
+			 * Propagates the property change from a <code>TabStrip</code> item instance to the <code>TabStrip</code> select item copy instance.
+			 *
+			 * @param oEvent {jQuery.Event} Event object
 			 * @private
 			 */
 			handleTabStripItemPropertyChanged: function (oEvent) {
@@ -659,8 +845,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				oSelectItem.setProperty(oEvent['mParameters'].propertyKey, oEvent['mParameters'].propertyValue);
 			},
 			/**
-			 * Fire an item close request event based on an item close button press
-			 * @param oEvent
+			 * Fires an item close request event based on an item close button press.
+			 *
+			 * @param oEvent {jQuery.Event} Event object
 			 * @private
 			 */
 			handleItemClosePressed: function (oEvent) {
@@ -670,9 +857,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 
 		/**
-		 * Request close of the given item and removes it from the items aggregation if permitted.
-		 * @param {sap.m.TabStripItem} oItem the item which will disappear
-		 * @param {function} fnCallback A callback function to be called after the item is removed
+		 * Request the given item to be closed and removes it from the <code>items</code> aggregation if permitted.
+		 *
+		 * @param oItem {sap.m.TabStripItem} The item which will disappear
+		 * @param fnCallback {function} A callback function to be called after the item is removed
 		 * @private
 		 */
 		TabStrip.prototype._removeItem = function(oItem, fnCallback) {
@@ -684,6 +872,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			}
 			if (oItem.getId().indexOf(TabStrip.SELECT_ITEMS_ID_PREFIX) !== -1) {
 				oTabStripItem = oAggregationsHelper.findTabStripItemFromSelectItem.call(this, oItem);
+
 			} else {
 				oTabStripItem = oItem;
 			}
@@ -698,14 +887,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			}
 		};
 
-
+		/**
+		 * oAggregationHelper {object} AggregationHandling helper class
+		 * ToDo: [Refactoring] Consider removing this helper class and adding its methods in TabStrip.prototype
+		 * @private
+		 */
 		var oAggregationsHelper = {
-
+			/**
+			 * Ensures proper handling of <code>TabStrip</code> <code>items</code> aggregation> and proxies to the <code>TabStripSelect</code> <code>items</code> aggregation.
+			 *
+			 * @param aArgs {array}
+			 * @param bIsAdding {boolean}
+			 * @returns {sap.m.TabStrip} <code>this</code> instance for chaining
+			 */
 			handleItemsAggregation: function (aArgs, bIsAdding) {
-				var sAggregationName    = 'items', // name of the aggregation in TabStripSelect
-				    sFunctionName       = aArgs[0],
-				    oObject             = aArgs[1],
-				    aNewArgs            = [sAggregationName];
+				var sAggregationName = 'items', // name of the aggregation in TabStripSelect
+					sFunctionName = aArgs[0],
+					oObject = aArgs[1],
+					aNewArgs = [sAggregationName];
 
 				/* remove the function name from the args array */
 				aArgs.forEach(function (iItem, iIndex) {
@@ -731,7 +930,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				}
 				return this;
 			},
-
+			/**
+			 * Ensures proper handling of <code>TabStrip</code> <code>items</code> aggregation and proxies to the <code>TabStripSelect</code> <code>items</code> aggregation.
+			 *
+			 * @param aArgs {array}
+			 * @param bIsAdding {boolean}
+			 * @param sFunctionName {string}
+			 * @param oObject {object}
+			 * @returns {*}
+			 */
 			handleSelectItemsAggregation: function (aArgs, bIsAdding, sFunctionName, oObject) {
 				var oSelect             = this.getAggregation('_select'),
 				    oDerivedObject;     // a new instance, holding a copy of the TabStripItem which is given to the TabStripSelect instance
@@ -762,9 +969,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 				return oSelect[sFunctionName]['apply'](oSelect, aArgs);
 			},
-
-
-
+			/**
+			 * Creates <code>TabStripItem</code> in context of <code>TabStripSelect</code>.
+			 *
+			 * @param oSelect
+			 * @param aItems
+			 */
 			addItemsToSelect: function (oSelect, aItems) {
 				aItems.forEach(function (oItem) {
 					var oSelectItem = oAggregationsHelper.createSelectItemFromTabStripItem.call(this, oItem);
@@ -776,7 +986,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					}
 				}, this);
 			},
-
+			/**
+			 * Ensures proper <code>TabStripItem</code> inheritance in context of <code>TabStripSelect</code>.
+			 *
+			 * @param oTabStripItem {sap.m.TabStripItem}
+			 * @returns {sap.ui.core.Element}
+			 */
 			createSelectItemFromTabStripItem: function (oTabStripItem) {
 				if (!oTabStripItem) {
 					return; // ToDo: sap log error ?
@@ -797,11 +1012,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					itemClosePressed: function (oEvent) {
 						oEventsHelper.handleItemClosePressed.call(this, oEvent);
 					}.bind(this)
+				}).addEventDelegate({
+					ontap: function (oEvent) {
+						var oTarget = oEvent.srcControl;
+						if (oTarget instanceof AccButton) {
+							oTarget.fireItemClosePressed({item: oTarget});
+						} else if (oTarget instanceof sap.ui.core.Icon) {
+							oTarget = oTarget.getParent && oTarget.getParent().getParent && oTarget.getParent().getParent();
+							oTarget.fireItemClosePressed({item: oTarget});
+						} else if (oTarget instanceof TabStripItem) {
+							oTarget.fireTabSelected({item: oTarget});
+						}
+					}
 				});
 
 				return oSelectItem;
 			},
-
+			/**
+			 * Finds the correct <code>TabStripItem</code> in context of <code>TabStrip</code> by a given <code>TabStripItem</code> instance.
+			 *
+			 * @param oTabStripSelectItem {sap.m.TabStripItem} The <code>TabStripItem</code> instance which analogue is to be found
+			 * @returns {sap.m.TabStripItem} The <code>TabStripItem</code> in context of <code>TabStripSelect</code> found (if any)
+			 */
 			findTabStripItemFromSelectItem: function (oTabStripSelectItem) {
 				var i,
 				    sTabStripItemId = oTabStripSelectItem.getId().replace(TabStrip.SELECT_ITEMS_ID_PREFIX , ''),
@@ -812,7 +1044,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					}
 				}
 			},
-
+			/**
+			 * Finds the correct <code>TabStripItem</code> in context of <code>TabStripSelect</code> by a given <code>TabStripItem</code> instance.
+			 *
+			 * @param oTabStripItem {sap.m.TabStripItem} The <code>TabStripItem</code> instance which analogue is to be found
+			 * @returns {sap.m.TabStripItem} The <code>TabStripItem</code> in context of <code>TabStripSelect</code> found (if any)
+			 */
 			findSelectItemFromTabStripItem: function (oTabStripItem) {
 				var i,
 				    aSelectItems,
@@ -830,7 +1067,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			}
 		};
 
-		// ToDo: move these declarations on top
+		/**
+		 * <code>TabStripItem</code> states translations
+		 * ToDo: move these declarations on top
+		 * @enum
+		 * @type {{closable: sap.ui.core.InvisibleControl, modified: sap.ui.core.InvisibleControl, notModified: sap.ui.core.InvisibleControl}}
+		 * @private
+		 */
 		TabStrip._ariaStaticTexts = {
 			/**
 			 * Holds the static text for "Closable" item that should be read by screen reader
@@ -847,9 +1090,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		};
 
 		/**
-		 * Handle aria-selected attributes depending on currently selected item.
-		 * @param {Array.<sap.m.TabStripItem>} aItems the whole set of items
-		 * @param {sap.m.TabStripItem} oSelectedItem currently selected item
+		 * Handles ARIA-selected attributes depending on the currently selected item.
+		 * ToDo: [Refactoring] Consider adding this method in TabStrip.prototype
+		 * @param aItems {Array.<sap.m.TabStripItem>} The whole set of items
+		 * @param oSelectedItem {sap.m.TabStripItem} Currently selected item
 		 * @private
 		 */
 		function updateAriaSelectedAttributes(aItems, oSelectedItem) {
@@ -864,6 +1108,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				}
 			});
 		}
+
+		/**
+		 * Handles the proper update of the <code>TabStripItem</code> selection class.
+		 * ToDo: [Refactoring] Consider adding this method in TabStrip.prototype
+		 * @param sSelectedItemId
+		 */
 		function updateSelectedItemClasses(sSelectedItemId) {
 			if (this.$("tabs")) {
 				this.$("tabs").children(".selected").removeClass("selected");
@@ -876,7 +1126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * renderer, so this logic would work the same way for the select item and tabstrip item. */
 
 		/**
-		 * Change the visibility of the item "state" symbol
+		 * Changes the visibility of the item "state" symbol.
 		 * @param {mixed} vItemId
 		 * @param {boolean} bShowState
 		 */
@@ -904,6 +1154,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					}
 				}
 			});
+		};
+
+		/**
+		 * Handles the <code>onTouchStart</code> event.
+		 * @param oEvent {jQuery.event} Event object
+		 * @returns {boolean}
+		 */
+		TabStrip.prototype.ontouchstart = function (oEvent) {
+			var oTargetItem = jQuery(oEvent.target).control(0);
+			if (oTargetItem instanceof TabStripItem ||
+				oTargetItem instanceof AccButton ||
+				oTargetItem instanceof sap.ui.core.Icon ||
+				oTargetItem instanceof TabStripSelect) {
+				// Support only single touch
+				// Store the pageX coordinate for for later usage in touchend
+				this._oTouchStartX = oEvent.changedTouches[0].pageX;
+			}
+		};
+
+		/**
+		 * Handles the <code>onTouchEnd</code> event.
+		 * @param oEvent {jQuery.event} Event object
+		 * @returns {boolean}
+		 */
+		TabStrip.prototype.ontouchend = function (oEvent) {
+			var oTarget,
+				iDeltaX;
+
+			if (!this._oTouchStartX) {
+				return;
+			}
+
+			oTarget = jQuery(oEvent.target).control(0);
+			// Support only single touch
+			iDeltaX = Math.abs(oEvent.changedTouches[0].pageX - this._oTouchStartX);
+
+			if (iDeltaX < TabStrip._MINDRAGOFFSET) {
+				if (oTarget instanceof TabStripItem) {
+					// TabStripItem clicked
+					this._activateItem(oTarget);
+				} else if (oTarget instanceof sap.m.AccButton) {
+					// TabStripItem close button clicked
+					if (oTarget && oTarget.getParent && oTarget.getParent() instanceof TabStripItem) {
+						oTarget = oTarget.getParent();
+						this._removeItem(oTarget);
+					}
+				} else if (oTarget instanceof sap.ui.core.Icon) {
+					// TabStripItem close button icon clicked
+					if (oTarget && oTarget.getParent && oTarget.getParent().getParent && oTarget.getParent().getParent() instanceof TabStripItem) {
+						oTarget = oTarget.getParent().getParent();
+						this._removeItem(oTarget);
+					}
+				}
+				// Not needed anymore
+				this._oTouchStartX = null;
+			}
 		};
 
 		return TabStrip;

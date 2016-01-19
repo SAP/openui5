@@ -3,8 +3,8 @@
 */
 
 // Provides control sap.m.ViewSettingsDialog.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-function(jQuery, library, Control, IconPool) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', './Toolbar', './CheckBox', './SearchField'],
+function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	"use strict";
 
 	/**
@@ -1697,7 +1697,8 @@ function(jQuery, library, Control, IconPool) {
 		    oResetButton    = this._getResetButton(),
 		    oHeader         = this._getHeader(),
 		    oSubHeader      = this._getSubHeader(),
-		    oListItem;
+		    oListItem,
+			bMultiSelectMode;
 
 		// nothing to do if we are already on the requested page (except for filter detail page)
 		if (this._vContentPage === vWhich && vWhich !== 3) {
@@ -1781,13 +1782,15 @@ function(jQuery, library, Control, IconPool) {
 					this._getPage2().addContent(oItem.getCustomControl());
 				} else if (oItem instanceof sap.m.ViewSettingsFilterItem
 					&& oItem.getItems()) {
+					bMultiSelectMode = oItem.getMultiSelect();
 					aSubFilters = oItem.getItems();
 					if (this._filterDetailList) { // destroy previous list
 						this._filterDetailList.destroy();
 					}
+
 					this._filterDetailList = new sap.m.List(
 						{
-							mode : (oItem.getMultiSelect() ? sap.m.ListMode.MultiSelect
+							mode : (bMultiSelectMode ? sap.m.ListMode.MultiSelect
 								: sap.m.ListMode.SingleSelectLeft),
 							includeItemInSelection : true,
 							selectionChange : function(oEvent) {
@@ -1797,8 +1800,13 @@ function(jQuery, library, Control, IconPool) {
 								    i = 0;
 
 								that._clearPresetFilter();
+
+								if (bMultiSelectMode) {
+									that._updateSelectAllCheckBoxState();
+								}
+
 								// check if multiple items are selected - [CTRL] + [A] combination from the list
-								if (aEventListItems.length > 1 && oItem.getMultiSelect()){
+								if (aEventListItems.length > 1 && bMultiSelectMode){
 									aSubItems = oItem.getItems();
 									for (; i < aSubItems.length; i++) {
 										for (var j = 0; j < aEventListItems.length; j++){
@@ -1821,6 +1829,16 @@ function(jQuery, library, Control, IconPool) {
 								}
 							}
 						});
+
+					if (bMultiSelectMode) {
+						this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
+						this._selectAllCheckBox = this._getSelectAllCheckbox(aSubFilters, this._filterDetailList);
+						this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
+						this._filterDetailList.setHeaderToolbar(new Toolbar({
+							content: [ this._selectAllCheckBox ]
+						}).addStyleClass('sapMVSDFilterHeaderToolbar'));
+					}
+
 					for (i = 0; i < aSubFilters.length; i++) {
 						// use name if there is no key defined
 						oListItem = new sap.m.StandardListItem({
@@ -1870,6 +1888,76 @@ function(jQuery, library, Control, IconPool) {
 
 				break;
 		}
+	};
+
+	/**
+	 * Creates the Select All checkbox.
+	 *
+	 * @param {Array} aFilterSubItems The detail filter items
+	 * @param oFilterDetailList The actual list created for the detail filter page
+	 * @returns {sap.m.CheckBox} A checkbox instance
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getSelectAllCheckbox = function(aFilterSubItems, oFilterDetailList) {
+		var oSelectAllCheckBox = new CheckBox({
+			text: 'Select All',
+			selected: aFilterSubItems.every(function(oItem) { return oItem.getSelected(); }),
+			select: function(oEvent) {
+				var bSelected = oEvent.getParameter('selected');
+				//update the list items
+				//and corresponding view settings items
+				oFilterDetailList.getItems().filter(function(oItem) {
+					return oItem.getVisible();
+				}).forEach(function(oItem) {
+					oItem.setSelected(bSelected);
+					var oVSDItem = oItem.data("item");
+					oVSDItem.setSelected(bSelected);
+				});
+			}
+		});
+
+		return oSelectAllCheckBox;
+	};
+
+	/**
+	 * Updates the state of the select all checkbox after selecting a single item or after filtering items.
+	 *
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._updateSelectAllCheckBoxState = function() {
+		var bAllSelected = this._filterDetailList.getItems().filter(function(oItem) {
+			return oItem.getVisible();
+		}).every(function(oItem) {
+			return oItem.getSelected();
+		});
+		this._selectAllCheckBox.setSelected(bAllSelected);
+	};
+
+	/**
+	 * Creates the filter items search field.
+	 *
+	 * @param {Array} oFilterDetailList The actual list created for the detail filter page
+	 * @returns {sap.m.SearchField} A search field instance
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getFilterSearchField = function(oFilterDetailList) {
+		var that = this,
+			oFilterSearchField = new SearchField({
+			search: function(oEvent) {
+				var sQuery = oEvent.getParameter('query').toLowerCase();
+
+				//update the list items visibility
+				oFilterDetailList.getItems().forEach(function(oItem) {
+					var bStartsWithQuery = oItem.getTitle().toLowerCase().indexOf(sQuery) === 0;
+					oItem.setVisible(bStartsWithQuery);
+				});
+
+				//update Select All checkbox
+				that._updateSelectAllCheckBoxState();
+			}
+		});
+
+		return oFilterSearchField;
 	};
 
 	/**

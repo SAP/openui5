@@ -92,13 +92,17 @@ body {
 										new sap.ui.core.Item({text: "ResponsiveGridLayout"})],
 						select: function(oEvent){
 							var oForm = sap.ui.getCore().byId("sf");
+							var oForm2 = sap.ui.getCore().byId("SF2");
 							var iIndex = oEvent.getParameter("selectedIndex");
 							if(iIndex == 0){
 								oForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);
+								oForm2.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);
 							}else if(iIndex == 1){
 								oForm.setLayout(sap.ui.layout.form.SimpleFormLayout.GridLayout);
+								oForm2.setLayout(sap.ui.layout.form.SimpleFormLayout.GridLayout);
 							}else{
 								oForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
+								oForm2.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
 							}
 						}
 					}),
@@ -122,10 +126,38 @@ body {
 
 	oSimpleForm.placeAt('sample1');
 
+	var oSimpleForm = new sap.ui.layout.form.SimpleForm(
+			"SF2",
+			{
+				minWidth : 1024,
+				maxContainerCols: 2,
+				toolbar: new sap.ui.commons.Toolbar("TB1", {
+					items: [new sap.ui.commons.TextView("SF2-Title", {text: "Form Title", design: sap.ui.commons.TextViewDesign.H3, tooltip: "Title tooltip"})],
+					rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+				}),
+				ariaLabelledBy: "SF2-Title",
+				editable: true,
+				content:[
+					new sap.ui.commons.Toolbar("TB2", {
+						items: [new sap.ui.commons.TextView("SF2C1-Title", {text: "Title 1", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
+						rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+					}),
+					new sap.ui.commons.Label({text:"Label 1"}),
+					new sap.ui.commons.TextField({value:"Value 1", required: true}),
+					new sap.ui.commons.Toolbar("TB3", {
+						items: [new sap.ui.commons.TextView("SF2C2-Title", {text: "Title 2", design: sap.ui.commons.TextViewDesign.H4, tooltip: "Title tooltip"})],
+						rightItems: [ new sap.ui.commons.Button({icon: "sap-icon://sap-ui5", lite: true})]
+					}),
+					new sap.ui.commons.Label({text:"Label 2"}),
+					new sap.ui.commons.TextField({value:"Value 2"}),
+				]
+			}).placeAt('sample2');
 </script>
 
 </head>
 <body id="body" class="sapUiBody">
 	<div id="sample1"></div>
+	<br>
+	<div id="sample2"></div>
 </body>
 </html>

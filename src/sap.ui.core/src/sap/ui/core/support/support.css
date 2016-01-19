@@ -135,7 +135,7 @@
 }
 
 .sapUiSupportToolbar {
-	background-color: #F9F9F9;
+	background-color: #F2F2F2;
 	height: 28px;
 	margin-bottom: 5px;
 	padding-left: 5px;
@@ -1304,6 +1304,19 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	top: 18px;
 }
 
+.sapUiSupportIntToggleRecordingBtn {
+	line-height: 30px;
+	margin-right: 5px;
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 100%;
+	font-weight: bold;
+	outline: none;
+	padding: 0;
+}
+
+.sapUiSupportIntToggleRecordingBtn::before,
 #sapUiSupportPerfToggleRecordingBtn::before {
 	border: solid 5px #bf3020;
 	border-radius: 5px;
@@ -1314,11 +1327,13 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	width: 0;
 }
 
+.sapUiSupportIntToggleRecordingBtn::after,
 #sapUiSupportPerfToggleRecordingBtn::after {
 	color: #bf3020;
 	content: attr(data-state);
 }
 
+.sapUiSupportIntToggleRecordingBtn[data-state^="Start recording"]::before,
 #sapUiSupportPerfToggleRecordingBtn[data-state^="Start recording"]::before {
 	border-color: transparent transparent transparent #333;
 	border-radius: 0;
@@ -1328,7 +1343,125 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	width: 0;
 }
 
+.sapUiSupportIntToggleRecordingBtn[data-state^="Start recording"]::after,
 #sapUiSupportPerfToggleRecordingBtn[data-state^="Start recording"]::after {
 	color: #333;
 }
 
+.sapUiSupportIntRecordingInfo {
+	margin-right: 10px;
+}
+
+.sapUiSupportIntClearBtn{
+	background-color: #F2F2F2;
+	border-radius: 3px;
+}
+
+.sapUiSupportIntExportBtn {
+	margin-left: 5px;
+}
+
+.sapUiSupportIntImportBtn {
+	margin-left: 5px;
+}
+
+.sapUiSupportIntImportExportBtn {
+	background-color: #417BAB;
+	color: white;
+	border-radius: 3px;
+	border-color: #417BAB;
+	float: right;
+}
+
+/*.sapUiSupportIntImportExportBtn:hover {
+	background-color: #F2F2F2;
+	border-color: #A3A3A3;
+	color: black;
+}*/
+
+.sapUiSupportIntHidden {
+	display:none;
+}
+
+.sapMLabel.sapUiSupportIntRequestLabel {
+	font-size: 0.75rem;
+	font-family: Arial,Helvetica,sans-serif;
+	font-weight: bold;
+}
+
+.sapUiSupportIntRequestText.sapMText  {
+	font-size: 0.75rem;
+}
+
+.sapUiFormResGridCont > .sapUiFormElementLbl.sapUiRespGridBreak {
+	min-height: 15px;
+}
+
+.sapUiSupportIntProgressBarParent {
+	height: 10px;
+}
+
+.sapUiSupportIntProgressBarSeparator {
+	width: 1px;
+	background-color: white;
+	height: inherit;
+	float: left;
+}
+
+.sapUiSupportIntProgressBarPreprocess {
+	background-color: #6D3662;
+	height: inherit;
+	float: left;
+}
+
+.sapUiSupportIntProgressBarClient {
+	background-color: #AB218E;
+	height: inherit;
+	float: left;
+}
+
+.sapUiSupportIntProgressBarServer {
+	background-color: #C463B0;
+	height: inherit;
+	float: left;
+}
+
+/* ================================================================================================================== */
+/* FileUpload control used in Interaction tab */
+/* ================================================================================================================== */
+
+.sapUiSupportIntFupInputMask {  /* the element masking the real (but hidden) file input, so the clickable area has exactly the same size as the visible control */
+	display: inline-block;
+	position: absolute;
+	right: 0;
+	overflow: hidden;
+	width: 60px;
+	float: right;
+	height: 26px;
+}
+
+.sapUiSupportIntFupInputMask > input { /* the real, but hidden file input */
+	position: absolute;
+	opacity: 0;
+	top: 0px;
+	bottom: 0px;
+	cursor: pointer;
+	cursor: hand;
+	left: -4em;       /* avoid the input field behind the file chooser */
+	font-size: 500px; /* to make the field high enough for most themes; for themes with very large fonts this needs to be increased further */
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiSupportIntFup > form input {
+	display: block;
+}
+
+html[data-sap-ui-browser^="sf"] .sapUiSupportIntFupInputMask > input, /* for Safari and Chrome the file input is not clickable with opacity "0" */
+html[data-sap-ui-browser^="cr"] .sapUiSupportIntFupInputMask > input {
+	position: relative;
+	left: auto;
+	opacity: 0.01;
+}
+
+html[data-sap-ui-browser^="cr"] .sapUiSupportIntFupInputMask > input {
+	float: right;
+}

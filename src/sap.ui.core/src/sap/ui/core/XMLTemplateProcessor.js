@@ -4,8 +4,8 @@
 
 /*global HTMLTemplateElement, DocumentFragment*/
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', './ExtensionPoint'],
-	function(jQuery, ManagedObject, View, ExtensionPoint) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', './ExtensionPoint', './StashedControlSupport'],
+	function(jQuery, ManagedObject, View, ExtensionPoint, StashedControlSupport) {
 	"use strict";
 
 
@@ -417,57 +417,80 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 
 				function handleChildren(node, oAggregation, mAggregations) {
 
-					var childNode,oNamedAggregation;
+					var childNode;
 
 					// loop over all nodes
 					for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
 
-						// inspect only element nodes
-						if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
-
-							// check for a named aggregation (must have the same namespace as the parent and an aggregation with the same name must exist)
-							oNamedAggregation = childNode.namespaceURI === ns && mAggregations && mAggregations[localName(childNode)];
-							if (oNamedAggregation) {
-
-								// the children of the current childNode are aggregated controls (or HTML) below the named aggregation
-								handleChildren(childNode, oNamedAggregation);
-
-							} else if (oAggregation) {
-								// child node name does not equal an aggregation name,
-								// so this child must be a control (or HTML) which is aggregated below the DEFAULT aggregation
-								var aControls = createControls(childNode);
-								for (var j = 0; j < aControls.length; j++) {
-									var oControl = aControls[j];
-									// append the child to the aggregation
-									var name = oAggregation.name;
-									if (oAggregation.multiple) {
-										// 1..n AGGREGATION
-										if (!mSettings[name]) {
-											mSettings[name] = [];
-										}
-										if (typeof mSettings[name].path === "string") {
-											jQuery.sap.assert(!mSettings[name].template, "list bindings support only a single template object");
-											mSettings[name].template = oControl;
-										} else {
-											mSettings[name].push(oControl);
-										}
-									} else {
-										// 1..1 AGGREGATION
-										jQuery.sap.assert(!mSettings[name], "multiple aggregates defined for aggregation with cardinality 0..1");
-										mSettings[name] = oControl;
-									}
-								}
-							} else if (localName(node) !== "FragmentDefinition" || node.namespaceURI !== "sap.ui.core") { // children of FragmentDefinitions are ok, they need no aggregation
-								throw new Error("Cannot add direct child without default aggregation defined for control " + oMetadata.getElementName());
-							}
-
-						} else if (childNode.nodeType === 3 /* TEXT_NODE */) {
-							if (jQuery.trim(childNode.textContent || childNode.text)) { // whitespace would be okay
-								throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: " + jQuery.trim(childNode.textContent || childNode.text));
-							}
-						} // other nodes types are silently ignored
-
+						handleChild(node, oAggregation, mAggregations, childNode);
 					}
+				}
+
+				function handleChild(node, oAggregation, mAggregations, childNode, bActivate) {
+					var oNamedAggregation;
+
+					// inspect only element nodes
+					if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
+
+						// check for a named aggregation (must have the same namespace as the parent and an aggregation with the same name must exist)
+						oNamedAggregation = childNode.namespaceURI === ns && mAggregations && mAggregations[localName(childNode)];
+						if (oNamedAggregation) {
+
+							// the children of the current childNode are aggregated controls (or HTML) below the named aggregation
+							handleChildren(childNode, oNamedAggregation);
+
+						} else if (oAggregation) {
+							// TODO consider moving this to a place where HTML and SVG nodes can be handled properly
+							// create a StashedControl for inactive controls, which is not placed in an aggregation
+							if (!bActivate && childNode.getAttribute("stashed") === "true") {
+								StashedControlSupport.createStashedControl(oView._oContainingView.createId(childNode.getAttribute("id")), {
+									stashedAlias: childNode.getAttribute("stashedAlias"),
+									sParentId: mSettings["id"],
+									sParentAggregationName: oAggregation.name,
+									fnCreate: function() {
+										return handleChild(node, oAggregation, mAggregations, childNode, true);
+									}
+								});
+								// do not create the control
+								return;
+							}
+
+							// child node name does not equal an aggregation name,
+							// so this child must be a control (or HTML) which is aggregated below the DEFAULT aggregation
+							var aControls = createControls(childNode);
+							for (var j = 0; j < aControls.length; j++) {
+								var oControl = aControls[j];
+								// append the child to the aggregation
+								var name = oAggregation.name;
+								if (oAggregation.multiple) {
+									// 1..n AGGREGATION
+									if (!mSettings[name]) {
+										mSettings[name] = [];
+									}
+									if (typeof mSettings[name].path === "string") {
+										jQuery.sap.assert(!mSettings[name].template, "list bindings support only a single template object");
+										mSettings[name].template = oControl;
+									} else {
+										mSettings[name].push(oControl);
+									}
+								} else {
+									// 1..1 AGGREGATION
+									jQuery.sap.assert(!mSettings[name], "multiple aggregates defined for aggregation with cardinality 0..1");
+									mSettings[name] = oControl;
+								}
+							}
+							return aControls;
+						} else if (localName(node) !== "FragmentDefinition" || node.namespaceURI !== "sap.ui.core") { // children of FragmentDefinitions are ok, they need no aggregation
+							throw new Error("Cannot add direct child without default aggregation defined for control " + oMetadata.getElementName());
+						}
+
+					} else if (childNode.nodeType === 3 /* TEXT_NODE */) {
+						if (jQuery.trim(childNode.textContent || childNode.text)) { // whitespace would be okay
+							throw new Error("Cannot add text nodes as direct child of an aggregation. For adding text to an aggregation, a surrounding html tag is needed: " + jQuery.trim(childNode.textContent || childNode.text));
+						}
+					} // other nodes types are silently ignored
+
+					return [];
 				}
 
 				// loop child nodes and handle all AGGREGATIONS

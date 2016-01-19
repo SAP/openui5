@@ -62,194 +62,219 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			/**
 			 * Title of the <code>FormContainer</code>. Can either be a <code>Title</code> object, or a string.
 			 * If a <code>Title</code> object is used, the style of the title can be set.
+			 *
+			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
 			 */
-			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false}
+			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
+
+			/**
+			 * Toolbar of the <code>FormContainer</code>.
+			 *
+			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
+			 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
+			 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
+			 * @since 1.36.0
+			 */
+			toolbar : {type : "sap.ui.core.Toolbar", multiple : false}
+		},
+		associations: {
+
+			/**
+			 * Association to controls / IDs that label this control (see WAI-ARIA attribute aria-labelledby).
+			 *
+			 * <b>Note:</b> This attribute is only rendered if the <code>FormContainer</code> has it's own
+			 * DOM representation in the used <code>FormLayout</code>.
+			 * @since 1.36.0
+			 */
+			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
 		designTime : true
 	}});
 
-	/**
-	 * This file defines behavior for the control,
-	 */
+	FormContainer.prototype.init = function(){
 
+		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 
-	//sap.ui.core.EnabledPropagator.call(sap.ui.layout.form.FormContainer.prototype);
+	};
 
-	(function() {
+	FormContainer.prototype.exit = function(){
 
-		FormContainer.prototype.init = function(){
+		if (this._oExpandButton) {
+			this._oExpandButton.destroy();
+			delete this._oExpandButton;
+		}
+		this._rb = undefined;
 
-			this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+	};
 
-		};
+	FormContainer.prototype.setExpandable = function(bExpandable){
 
-		FormContainer.prototype.exit = function(){
+		this.setProperty("expandable", bExpandable);
 
-			if (this._oExpandButton) {
-				this._oExpandButton.destroy();
-				delete this._oExpandButton;
-			}
-			this._rb = undefined;
-
-		};
-
-		FormContainer.prototype.setExpandable = function(bExpandable){
-
-			this.setProperty("expandable", bExpandable);
-
-			if (bExpandable) {
-				var that = this;
-				if (!this._oExpandButton) {
-					this._oExpandButton = sap.ui.layout.form.FormHelper.createButton(this.getId() + "--Exp", _handleExpButtonPress, that);
-					this._oExpandButton.setParent(this);
-				}
-				_setExpanderIcon(that);
-			}
-
-			return this;
-
-		};
-
-		FormContainer.prototype.setExpanded = function(bExpanded){
-
-			this.setProperty("expanded", bExpanded, true); // no automatic rerendering
-
+		if (bExpandable) {
 			var that = this;
+			if (!this._oExpandButton) {
+				this._oExpandButton = sap.ui.layout.form.FormHelper.createButton.call(this, this.getId() + "--Exp", _handleExpButtonPress);
+				this._oExpandButton.setParent(this);
+			}
 			_setExpanderIcon(that);
+		}
 
-			var oForm = this.getParent();
-			if (oForm && oForm.toggleContainerExpanded) {
-				oForm.toggleContainerExpanded(that);
-			}
+		return this;
 
-			return this;
+	};
 
-		};
+	FormContainer.prototype.setExpanded = function(bExpanded){
 
-		/*
-		 * If onAfterRendering of a field is processed the Form (layout) might need to change it.
-		 */
-		FormContainer.prototype.contentOnAfterRendering = function(oFormElement, oControl){
+		this.setProperty("expanded", bExpanded, true); // no automatic rerendering
 
-			// call function of parent (if assigned)
-			var oParent = this.getParent();
-			if (oParent && oParent.contentOnAfterRendering) {
-				oParent.contentOnAfterRendering( oFormElement, oControl);
-			}
+		var that = this;
+		_setExpanderIcon(that);
 
-		};
+		var oForm = this.getParent();
+		if (oForm && oForm.toggleContainerExpanded) {
+			oForm.toggleContainerExpanded(that);
+		}
 
-		/*
-		 * If LayoutData changed on control this may need changes on the layout. So bubble to the form
-		 */
-		FormContainer.prototype.onLayoutDataChange = function(oEvent){
+		return this;
 
-			// call function of parent (if assigned)
-			var oParent = this.getParent();
-			if (oParent && oParent.onLayoutDataChange) {
-				oParent.onLayoutDataChange(oEvent);
-			}
+	};
 
-		};
+	FormContainer.prototype.setToolbar = function(oToolbar) {
 
-		/*
-		 * Checks if properties are fine
-		 * Expander only visible if title is set -> otherwise give warning
-		 * @return 0 = no problem, 1 = warning, 2 = error
-		 * @private
-		 */
-		FormContainer.prototype._checkProperties = function(){
+		// for sap.m.Toolbar Auto-design must be set to transparent
+		oToolbar = sap.ui.layout.form.FormHelper.setToolbar.call(this, oToolbar);
 
-			var iReturn = 0;
+		this.setAggregation("toolbar", oToolbar);
 
-			if (this.getExpandable() && !this.getTitle()) {
-				jQuery.sap.log.warning("Expander only displayed if title is set", this.getId(), "FormContainer");
-				iReturn = 1;
-			}
+		return this;
 
-			return iReturn;
+	};
 
-		};
+	/*
+	 * If onAfterRendering of a field is processed the Form (layout) might need to change it.
+	 */
+	FormContainer.prototype.contentOnAfterRendering = function(oFormElement, oControl){
 
-		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists
-		 * If the FormContainer has a DOM representation this function returns it,
-		 * independent from the ID of this DOM element
-		 * @return {Element} The Element's DOM representation or null
-		 * @private
-		 */
-		FormContainer.prototype.getRenderedDomRef = function(){
+		// call function of parent (if assigned)
+		var oParent = this.getParent();
+		if (oParent && oParent.contentOnAfterRendering) {
+			oParent.contentOnAfterRendering( oFormElement, oControl);
+		}
 
-			var that = this;
-			var oForm = this.getParent();
+	};
 
-			if (oForm && oForm.getContainerRenderedDomRef) {
-				return oForm.getContainerRenderedDomRef(that);
-			}else {
-				return null;
-			}
+	/*
+	 * If LayoutData changed on control this may need changes on the layout. So bubble to the form
+	 */
+	FormContainer.prototype.onLayoutDataChange = function(oEvent){
 
-		};
+		// call function of parent (if assigned)
+		var oParent = this.getParent();
+		if (oParent && oParent.onLayoutDataChange) {
+			oParent.onLayoutDataChange(oEvent);
+		}
 
-		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists
-		 * If the FormElement has a DOM representation this function returns it,
-		 * independent from the ID of this DOM element
-		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
-		 * @return {Element} The Element's DOM representation or null
-		 * @private
-		 */
-		FormContainer.prototype.getElementRenderedDomRef = function(oElement){
+	};
 
-			var oForm = this.getParent();
+	/*
+	 * Checks if properties are fine
+	 * Expander only visible if title is set -> otherwise give warning
+	 * @return 0 = no problem, 1 = warning, 2 = error
+	 * @private
+	 */
+	FormContainer.prototype._checkProperties = function(){
 
-			if (oForm && oForm.getElementRenderedDomRef) {
-				return oForm.getElementRenderedDomRef(oElement);
-			}else {
-				return null;
-			}
+		var iReturn = 0;
 
-		};
+		if (this.getExpandable() && (!this.getTitle() || this.getToolbar())) {
+			jQuery.sap.log.warning("Expander only displayed if title is set", this.getId(), "FormContainer");
+			iReturn = 1;
+		}
 
-		function _setExpanderIcon(oContainer){
+		return iReturn;
 
-			if (!oContainer._oExpandButton) {
-				return;
-			}
+	};
 
-			var sIcon, sIconHovered, sText, sTooltip;
+	/**
+	 * As Elements must not have a DOM reference it is not sure if one exists
+	 * If the FormContainer has a DOM representation this function returns it,
+	 * independent from the ID of this DOM element
+	 * @return {Element} The Element's DOM representation or null
+	 * @private
+	 */
+	FormContainer.prototype.getRenderedDomRef = function(){
 
-			if (oContainer.getExpanded()) {
-				sIcon = Parameters.get('sapUiFormContainerColImageURL');
-				sIconHovered = Parameters.get('sapUiFormContainerColImageDownURL');
-				sText = "-";
-				sTooltip = oContainer._rb.getText("FORM_COLLAPSE");
-			} else {
-				sIcon = Parameters.get('sapUiFormContainerExpImageURL');
-				sIconHovered = Parameters.get('sapUiFormContainerExpImageDownURL');
-				sText = "+";
-				sTooltip = oContainer._rb.getText("FORM_EXPAND");
-			}
+		var that = this;
+		var oForm = this.getParent();
 
-			var sModulePath = "sap.ui.layout.themes." + sap.ui.getCore().getConfiguration().getTheme();
-			if (sIcon) {
+		if (oForm && oForm.getContainerRenderedDomRef) {
+			return oForm.getContainerRenderedDomRef(that);
+		}else {
+			return null;
+		}
+
+	};
+
+	/**
+	 * As Elements must not have a DOM reference it is not sure if one exists
+	 * If the FormElement has a DOM representation this function returns it,
+	 * independent from the ID of this DOM element
+	 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+	 * @return {Element} The Element's DOM representation or null
+	 * @private
+	 */
+	FormContainer.prototype.getElementRenderedDomRef = function(oElement){
+
+		var oForm = this.getParent();
+
+		if (oForm && oForm.getElementRenderedDomRef) {
+			return oForm.getElementRenderedDomRef(oElement);
+		}else {
+			return null;
+		}
+
+	};
+
+	function _setExpanderIcon(oContainer){
+
+		if (!oContainer._oExpandButton) {
+			return;
+		}
+
+		var sIcon, sIconHovered, sText, sTooltip;
+
+		if (oContainer.getExpanded()) {
+			sIcon = Parameters.get('sapUiFormContainerColImageURL');
+			sIconHovered = Parameters.get('sapUiFormContainerColImageDownURL');
+			sText = "-";
+			sTooltip = oContainer._rb.getText("FORM_COLLAPSE");
+		} else {
+			sIcon = Parameters.get('sapUiFormContainerExpImageURL');
+			sIconHovered = Parameters.get('sapUiFormContainerExpImageDownURL');
+			sText = "+";
+			sTooltip = oContainer._rb.getText("FORM_EXPAND");
+		}
+
+		var sModulePath = "sap.ui.layout.themes." + sap.ui.getCore().getConfiguration().getTheme();
+		if (sIcon) {
+			if (!sap.ui.core.IconPool.isIconURI(sIcon)) {
 				sIcon = jQuery.sap.getModulePath(sModulePath, sIcon);
-				sText = "";
 			}
-			if (sIconHovered) {
-				sIconHovered = jQuery.sap.getModulePath(sModulePath, sIconHovered);
-			}
-			sap.ui.layout.form.FormHelper.setButtonContent(oContainer._oExpandButton, sText, sTooltip, sIcon, sIconHovered);
-
+			sText = "";
 		}
-
-		function _handleExpButtonPress(oEvent){
-
-			this.setExpanded(!this.getExpanded());
-
+		if (sIconHovered && !sap.ui.core.IconPool.isIconURI(sIconHovered)) {
+			sIconHovered = jQuery.sap.getModulePath(sModulePath, sIconHovered);
 		}
+		sap.ui.layout.form.FormHelper.setButtonContent(oContainer._oExpandButton, sText, sTooltip, sIcon, sIconHovered);
 
-	}());
+	}
+
+	function _handleExpButtonPress(oEvent){
+
+		this.setExpanded(!this.getExpanded());
+
+	}
 
 	return FormContainer;
 

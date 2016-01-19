@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sId = oControl.getId();
 
 		// write the HTML into the render manager
-		rm.addClass("sapUiUx3NavBar");
+		rm.addClass("sapUiUx3NavBar").addClass("sapUiUx3NavBarUpperCaseText");
 		if (oControl.getToplevelVariant()) {
 			rm.addClass("sapUiUx3NavBarToplevel");
 		}

@@ -1,0 +1,63 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.SimpleFormToolbar.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<f:SimpleForm id="SimpleFormToolbar"
+			editable="true"
+			layout="ResponsiveGridLayout" >
+			<f:toolbar>
+				<Toolbar id="TB1">
+					<Title text="Address" level="H4" titleStyle="H4"/>
+					<ToolbarSpacer />
+					<Button icon="sap-icon://settings"/>
+					<Button icon="sap-icon://drop-down-list" />
+				</Toolbar>
+			</f:toolbar>
+			<f:content>
+				<Toolbar>
+					<Title text="Office" level="H5" titleStyle="H5"/>
+					<ToolbarSpacer />
+					<Button icon="sap-icon://settings"/>
+				</Toolbar>
+				<Label text="Name" />
+				<Input value="{SupplierName}" />
+				<Label text="Street/No." />
+				<Input value="{Street}">
+				</Input>
+				<Input value="{HouseNumber}">
+					<layoutData>
+						<l:GridData span="L3 M4 S4" />
+					</layoutData>
+				</Input>
+				<Label text="ZIP Code/City" />
+				<Input value="{ZIPCode}">
+					<layoutData>
+						<l:GridData span="L3 M4 S4" />
+					</layoutData>
+				</Input>
+				<Input value="{City}" />
+				<Label text="Country" />
+				<Select width="100%">
+					<items>
+						<core:Item text="Germany" />
+						<core:Item text="USA" />
+						<core:Item text="England" />
+					</items>
+				</Select>
+				<Toolbar>
+					<Title text="Online" level="H5" titleStyle="H5"/>
+					<ToolbarSpacer />
+					<Button icon="sap-icon://settings"/>
+				</Toolbar>
+				<Label text="Web" />
+				<Input value="{Url}" type="Url" />
+				<Label text="Twitter" />
+				<Input value="{Twitter}" />
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
+</mvc:View>

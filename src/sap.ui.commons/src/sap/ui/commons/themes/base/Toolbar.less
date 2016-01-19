@@ -40,8 +40,6 @@
 	float: left;
 	width: 100%;
 	box-sizing: border-box;
-	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 	height: 27px;
 	padding-top: 1px;
 }
@@ -125,4 +123,10 @@
 .sapUiTbInner > .sapUiBtnDsbl:focus,
 .sapUiTbInnerRight > .sapUiBtnDsbl:focus{
 	outline: 1px dotted @sapUiBaseBorder;
+}
+
+/* Toolbar inside of Form as Form- and Container- header */
+.sapUiGridTitle > th > .sapUiTb,
+.sapUiFormToolbar > .sapUiTb{
+	border-bottom: 2px solid @sapUiMediumBorder;
 }

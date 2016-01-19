@@ -361,6 +361,15 @@
 		equals(multiInput1._sResizeHandlerId, undefined, "Resizehandler got deleted");
 	});
 
+	test("max tokens", function() {
+		multiInput1.setMaxTokens(2);
+		var token1 = new sap.m.Token();
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token();
+		multiInput1.setTokens([token1, token2, token3]);
+		equals(multiInput1.getTokens().length, 2, "no more than 2 tokens can be added");
+	});
+
 	test("token data binding", function() {
 		jQuery.sap.require("sap.ui.model.json.JSONModel");
 

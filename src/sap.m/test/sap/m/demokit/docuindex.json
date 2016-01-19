@@ -44,13 +44,13 @@
 			},
 			{
 				"text": "Manage Products",
-				"ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/mockServer.html",
 				"icon": "task",
 				"desc": "This app is the final result of the 'Worklist App Tutorial'"
 			},
 			{
 				"text": "Bulletin Board",
-				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/mockServer.html",
 				"icon": "task",
 				"desc": "This worklist-style app is the final result of the 'Testing Tutorial'"
 			}
@@ -801,7 +801,8 @@
 			"sap.m.sample.MultiInput",
 			"sap.m.sample.MultiInputValidators",
 			"sap.m.sample.MultiInputMultiLine",
-			"sap.m.sample.MultiInputDatabinding"
+			"sap.m.sample.MultiInputDatabinding",
+			"sap.m.sample.MultiInputMaxTokens"
 		  ]
 		},
 		{
@@ -906,7 +907,10 @@
 		  "name" : "Tile Content",
 		  "category" : "Tile",
 		  "since" : "1.34",
-		  "samples" : ["sap.m.sample.TileContent"]
+		  "samples" : [
+		  	"sap.m.sample.TileContent",
+		  	"sap.m.sample.TileContentAutoSize"
+		  ]
 		},
 		{
 		"id": "sap.m.TimePicker",
@@ -966,7 +970,7 @@
 		  ]
 		},
 		{
-		  "id": "sap.m.UrlHelper",
+		  "id": "sap.m.URLHelper",
 		  "name": "Url Helper",
 		  "category": "Action",
 		  "since": "1.10",
@@ -1618,6 +1622,11 @@
 			"description": "MultiInput Databinding allows data to be binded to tokens in MultiInput."
 		},
 		{
+			"id": "sap.m.sample.MultiInputMaxTokens",
+			"name": "MultiInput with Max Tokens",
+			"description": "Number of Tokens in MultiInput cannot exceeds the maxToken number."
+		},
+		{
 			"id": "sap.m.sample.NumericContentDifSizes",
 			"name": "Numeric Content of Different Sizes",
 			"description": "Shows NumericContent including numbers, units of measurement and status arrows indicating a trend. The numbers can be colored according to their meaning. The size of the numbers can be fixed or can adapt to the device used."
@@ -2181,6 +2190,11 @@
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
 		  "description": "Shows the universal container for different types of content and context information in the footer area."
+		},
+		{
+		  "id": "sap.m.sample.TileContentAutoSize",
+		  "name": "Tile Content with Auto Size to Fit to Small Screen Sizes",
+		  "description": "Shows the universal container with auto size for different types of content and context information in the footer area to fit to small screens."
 		},
 		{
 		  "id": "sap.m.sample.Breadcrumbs",

@@ -1,6 +1,6 @@
 #interactionSlider {
     position: absolute;
-    top: 0;
+    top: 34px;
     right: 0;
     bottom: 0;
     /*left: 250px;*/
@@ -11,6 +11,9 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    z-index: 10;
+    height: 50px;
+    opacity: 0.7;
 }
 
 #interactionSlideHandle,

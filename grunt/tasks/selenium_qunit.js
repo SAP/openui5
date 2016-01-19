@@ -2,7 +2,7 @@
  * grunt-selenium-qunit
  *
  *
- * Copyright (c) 2014-2015 SAP SE
+ * Copyright (c) 2014-2016 SAP SE
  */
 
 'use strict';

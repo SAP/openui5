@@ -1075,6 +1075,145 @@
 
 		});
 
+		test("Select All checkbox works correctly", function  (assert) {
+			var done = assert.async(),
+					that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
+
+			setTimeout(function() {
+				var oSelectAllCheckbox = that.oVSD._selectAllCheckBox,
+					bAllSelected = that.oVSD._filterDetailList.getItems().every(function(oItem) { return oItem.getSelected(); }),
+					bNoItemsSelected;
+
+				ok(!bAllSelected, "Not all list items are selected at first");
+
+				//Act
+				oSelectAllCheckbox.setSelected(true);
+				oSelectAllCheckbox.fireSelect({ selected: true });
+
+				bAllSelected = that.oVSD._filterDetailList.getItems().every(function(oItem) { return oItem.getSelected(); });
+
+				//Assert
+				ok(bAllSelected, "After check select all - all list items are selected");
+
+				//Act
+				oSelectAllCheckbox.setSelected(false);
+				oSelectAllCheckbox.fireSelect({ selected: false });
+
+				bNoItemsSelected = that.oVSD._filterDetailList.getItems().every(function(oItem) { return !oItem.getSelected(); })
+				//Assert
+				ok(bNoItemsSelected, "After uncheck select all - no items are selected");
+
+				done();
+			}, 1000);
+		});
+
+		test("Query filter search field works correctly", function  (assert) {
+			var done = assert.async(),
+				that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
+
+			setTimeout(function() {
+				var oSearchField = that.oVSD._filterSearchField,
+					aFilteredItems;
+
+				//Act
+				oSearchField.fireSearch({ query: "Mo" }); // Matches: Mousepad, Monitor
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
+					return oItem.getVisible();
+				});
+				//Assert
+				equal(aFilteredItems.length, 2, "After filter search there are 2 visible items left in the list.");
+
+				//Act
+				oSearchField.fireSearch({ query: "" }); // Matches: Mousepad, Monitor
+				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
+					return oItem.getVisible();
+				});
+				//Assert
+				equal(aFilteredItems.length, 7, "Empty query in filter search shows all items.");
+
+				done();
+			}, 1000);
+		});
+
+		test("Query filter search field updates the select all checkbox", function  (assert) {
+			var done = assert.async(),
+				that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
+
+			setTimeout(function() {
+				var oSearchField = that.oVSD._filterSearchField,
+					oSelectAllCheckbox = that.oVSD._selectAllCheckBox;
+
+				ok(!oSelectAllCheckbox.getSelected(), "At first the select all checkbox is not selected.");
+
+				//Act
+				oSearchField.fireSearch({ query: "H" }); // Matches: Headphone
+				//Assert
+				ok(oSelectAllCheckbox.getSelected(), "After filter search with selected results only, the select all checkbox is also selected.");
+
+				done();
+			}, 1000);
+		});
+
+		test("Select All checkbox updates only the filtered items", function  (assert) {
+			var done = assert.async(),
+				that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
+
+			setTimeout(function() {
+				var oSearchField = that.oVSD._filterSearchField,
+					oSelectAllCheckbox = that.oVSD._selectAllCheckBox,
+					aSelectedItems;
+
+				aSelectedItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
+					return oItem.getSelected();
+				});
+
+				equal(aSelectedItems.length, 4, "At first the selected items are 4.");
+
+				//Act
+				oSearchField.fireSearch({ query: "H" }); // Matches: Headphone
+				oSelectAllCheckbox.setSelected(false);
+				oSelectAllCheckbox.fireSelect({ selected: false });
+
+				oSearchField.fireSearch({ query: "" }); // Matches: All items
+				aSelectedItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
+					return oItem.getSelected();
+				});
+
+				//Assert
+				equal(aSelectedItems.length, 3, "After deselecting select all checkbox, on a filtered list with 1 selected result, the selected items are only decreased by 1.");
+
+				done();
+			}, 1000);
+		});
+
 		module ("Filter only checks", {
 			setup : function () {
 				this.oVSD = new sap.m.ViewSettingsDialog();

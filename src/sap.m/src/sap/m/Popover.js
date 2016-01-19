@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				properties: {
 
 					/**
-					 * This is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.Auto. The default value is sap.m.PlacementType.Right. Setting this property while popover is open won't cause any rerendering of the popover, but it will take effect when it's opened again.
+					 * This is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferredLeft, sap.m.PlacementType.HorizontalPreferredRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferredTop, sap.m.PlacementType.VerticalPreferredBottom, sap.m.PlacementType.Auto. The default value is sap.m.PlacementType.Right. Setting this property while popover is open won't cause any rerendering of the popover, but it will take effect when it's opened again.
 					 */
 					placement: {
 						type: "sap.m.PlacementType",
@@ -81,6 +81,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					 * @since 1.9.0
 					 */
 					contentWidth: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null},
+
+					/**
+					 * Sets the minimum width of the content area inside popover.
+					 * @since 1.36
+					 */
+					contentMinWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "" },
 
 					/**
 					 * Set the height of the content area inside Popover. When controls which adapt their size to the parent control are added directly into Popover, for example sap.m.Page control, a size needs to be specified to the content area of the Popover. Otherwise, Popover control isn't able to display the content in the right way. This values isn't necessary for controls added to Popover directly which can decide their size by themselves, for exmaple sap.m.List, sap.m.Image etc., only needed for controls that adapt their size to the parent control.
@@ -278,7 +284,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
 
 			// This is data used to position the popover depending on the placement property
-			this._placements = [sap.m.PlacementType.Top, sap.m.PlacementType.Right, sap.m.PlacementType.Bottom, sap.m.PlacementType.Left, sap.m.PlacementType.Vertical, sap.m.PlacementType.Horizontal, sap.m.PlacementType.Auto, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight];
+			this._placements = [sap.m.PlacementType.Top, sap.m.PlacementType.Right, sap.m.PlacementType.Bottom, sap.m.PlacementType.Left, sap.m.PlacementType.Vertical, sap.m.PlacementType.Horizontal, sap.m.PlacementType.Auto, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.VerticalPreferredTop, sap.m.PlacementType.VerticalPreferredBottom, sap.m.PlacementType.HorizontalPreferredLeft, sap.m.PlacementType.HorizontalPreferredRight];
 			this._myPositions = ["center bottom", "begin center", "center top", "end center"];
 			this._atPositions = ["center top", "end center", "center bottom", "begin center"];
 			this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
@@ -1023,12 +1029,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					break;
 				case sap.m.PlacementType.Vertical:
 				case sap.m.PlacementType.VerticalPreferedTop:
+				case sap.m.PlacementType.VerticalPreferredTop:
 				case sap.m.PlacementType.VerticalPreferedBottom:
+				case sap.m.PlacementType.VerticalPreferredBottom:
 					this._calcVertical();
 					break;
 				case sap.m.PlacementType.Horizontal:
 				case sap.m.PlacementType.HorizontalPreferedLeft:
+				case sap.m.PlacementType.HorizontalPreferredLeft:
 				case sap.m.PlacementType.HorizontalPreferedRight:
+				case sap.m.PlacementType.HorizontalPreferredRight:
 					this._calcHorizontal();
 					break;
 			}
@@ -1043,6 +1053,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		Popover.prototype._calcVertical = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
 			var bHasParent = $parent[0] !== undefined;
+			var bPreferredPlacementTop = this.getPlacement() === sap.m.PlacementType.VerticalPreferedTop || this.getPlacement() === sap.m.PlacementType.VerticalPreferredTop;
+			var bPreferredPlacementBottom = this.getPlacement() === sap.m.PlacementType.VerticalPreferedBottom || this.getPlacement() === sap.m.PlacementType.VerticalPreferredBottom;
 			var iParentTop = bHasParent ? $parent[0].getBoundingClientRect().top : 0;
 			var iParentHeight = bHasParent ? $parent[0].getBoundingClientRect().height : 0;
 			var iOffsetY = this._getOffsetY();
@@ -1051,9 +1063,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 			var iPopoverHeight = this.$().outerHeight();
 
-			if (this.getPlacement() === sap.m.PlacementType.VerticalPreferedTop && iTopSpace > iPopoverHeight + this._arrowOffset) {
+			if (bPreferredPlacementTop && iTopSpace > iPopoverHeight + this._arrowOffset) {
 				this._oCalcedPos = sap.m.PlacementType.Top;
-			} else if (this.getPlacement() === sap.m.PlacementType.VerticalPreferedBottom && iBottomSpace > iPopoverHeight + this._arrowOffset) {
+			} else if (bPreferredPlacementBottom && iBottomSpace > iPopoverHeight + this._arrowOffset) {
 				this._oCalcedPos = sap.m.PlacementType.Bottom;
 			} else if (iTopSpace > iBottomSpace) {
 				this._oCalcedPos = sap.m.PlacementType.Top;
@@ -1065,6 +1077,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		Popover.prototype._calcHorizontal = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
 			var bHasParent = $parent[0] !== undefined;
+			var bPreferredPlacementLeft = this.getPlacement() === sap.m.PlacementType.HorizontalPreferedLeft || this.getPlacement() === sap.m.PlacementType.HorizontalPreferredLeft;
+			var bPreferredPlacementRight = this.getPlacement() === sap.m.PlacementType.HorizontalPreferedRight || this.getPlacement() === sap.m.PlacementType.HorizontalPreferredRight;
 			var iParentLeft = bHasParent ? $parent[0].getBoundingClientRect().left : 0;
 			var iParentWidth = bHasParent ? $parent[0].getBoundingClientRect().width : 0;
 			var iOffsetX = this._getOffsetX();
@@ -1075,9 +1089,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
-			if (this.getPlacement() === sap.m.PlacementType.HorizontalPreferedLeft && iLeftSpace > iPopoverWidth + this._arrowOffset) {
+			if (bPreferredPlacementLeft && iLeftSpace > iPopoverWidth + this._arrowOffset) {
 				this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
-			} else if (this.getPlacement() === sap.m.PlacementType.HorizontalPreferedRight && iRightSpace > iPopoverWidth + this._arrowOffset) {
+			} else if (bPreferredPlacementRight && iRightSpace > iPopoverWidth + this._arrowOffset) {
 				this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
 			} else if (iLeftSpace > iRightSpace) {
 				this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;

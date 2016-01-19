@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			renderer: TimePickerSliderRenderer.render
 		});
 
-		var SCROLL_ANIMATION_DURATION = 200;
+		var SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 200 : 0;
 		var MIN_ITEMS = 50;
 
 		/**
@@ -95,6 +95,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			this._marginTop = null;
 			this._marginBottom = null;
 			this._bOneTimeValueSelectionAnimation = false;
+
+			if (sap.ui.Device.system.desktop) {
+				this._fnHandleTypeValues = fnTimedKeydownHelper.call(this);
+			}
 
 			this._initArrows();
 		};
@@ -391,6 +395,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		TimePickerSlider.prototype.onsapdown = function(oEvent) {
 			if (this.getIsExpanded()) {
 				this._offsetValue(1);
+			}
+		};
+
+		/**
+		 * Handles the keydown event.
+		 *
+		 * @param {jQuery.Event} oEvent Event object
+		 */
+		TimePickerSlider.prototype.onkeydown = function(oEvent) {
+			var iKC = oEvent.which || oEvent.keyCode,
+				oKCs = jQuery.sap.KeyCodes;
+
+			//we only recieve uppercase codes here, which is nice
+			if ((iKC >= oKCs.A && iKC <= oKCs.Z)
+				|| (iKC >= oKCs.DIGIT_0 && iKC <= oKCs.DIGIT_9)) {
+				this._fnHandleTypeValues(oEvent.timeStamp, iKC);
 			}
 		};
 
@@ -1041,6 +1061,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			});
 
 			return aItems[index].getKey();
+		};
+
+		/*
+		 * Returns a function that remembers consecutive keydown events and adjust the slider values
+		 * if they together match an item key.
+		 */
+		var fnTimedKeydownHelper = function() {
+			var iLastTimeStamp = -1,
+				iLastTimeoutId = -1,
+				iWaitTimeout = 1000,
+				sCurrentKeyPrefix = "",
+				fnTimedKeydown = function(iTimeStamp, iKeyCode) {
+					var aMatchingItems;
+					//the previous call was more than a second ago or this is the first call
+					if (iLastTimeStamp + iWaitTimeout < iTimeStamp) {
+						sCurrentKeyPrefix = "";
+					} else {
+						if (iLastTimeoutId !== -1) {
+							jQuery.sap.clearDelayedCall(iLastTimeoutId);
+							iLastTimeoutId = -1;
+						}
+					}
+
+					sCurrentKeyPrefix += String.fromCharCode(iKeyCode).toLowerCase();
+
+					aMatchingItems = this.getItems().filter(function(item) {
+						return item.getKey().indexOf(sCurrentKeyPrefix) === 0; //starts with the current prefix
+					});
+
+					if (aMatchingItems.length > 1) {
+						iLastTimeoutId = jQuery.sap.delayedCall(iWaitTimeout, this, function() {
+							this.setSelectedValue(sCurrentKeyPrefix);
+							sCurrentKeyPrefix = "";
+							iLastTimeoutId = -1;
+						});
+					} else if (aMatchingItems.length === 1) {
+						this.setSelectedValue(aMatchingItems[0].getKey());
+						sCurrentKeyPrefix = "";
+					} // else - 0: do nothing, user just waits 1 second and the sCurrentKeyPrefix gets a reset next call
+
+					iLastTimeStamp = iTimeStamp;
+				};
+
+			return fnTimedKeydown;
 		};
 
 		return TimePickerSlider;

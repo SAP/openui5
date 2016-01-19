@@ -26,6 +26,7 @@
 
 <!-- use the sinon faketimers for this test -->
 <script type="text/javascript">
+	jQuery.sap.require("sap.m.SegmentedButton");
 	sinon.config.useFakeTimers = true;
 </script>
 
@@ -423,7 +424,7 @@
 		oBar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		this.clock.tick();
+		this.clock.tick(1000);
 
 		var elementWidth = oSegmentedButton.$().width();
 		var expectedButtonOuterWidth = Math.floor((elementWidth / 2));
@@ -1169,6 +1170,35 @@
 		// Cleanup
 		oSegmentedButton.destroy();
 
+	});
+
+	test("when using items & setSelectedKey() is called, setSelectedButton() is called too", function() {
+		// Arrange
+		var oItem1 = new sap.m.SegmentedButtonItem({
+			key: "b1",
+			text: "Button 1"
+		});
+		var oItem2 = new sap.m.SegmentedButtonItem({
+			key: "b2",
+			text: "Button 2"
+		});
+		var oItem3 = new sap.m.SegmentedButtonItem({
+			key: "b3",
+			text: "Button 3"
+		});
+
+		var oSetSelectedButtonSpy = this.spy(sap.m.SegmentedButton.prototype, 'setSelectedButton');
+
+		// System under Test
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items : [oItem1, oItem2, oItem3],
+			selectedKey : "b2"
+		});
+
+		equal(oSetSelectedButtonSpy.callCount, 1, "setSelectedButton is called");
+
+		// Cleanup
+		oSegmentedButton.destroy();
 	});
 
 	test("setSelectedKey()", function() {

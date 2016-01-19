@@ -4,11 +4,18 @@
 .sapMTabStrip {
 	position: relative;
 	height: 3rem;
+	&.sapMTSScrollForward .sapMTSRightOverflowButtons,
+	&.sapMTSScrollBack .sapMTSLeftOverflowButtons {
+		visibility: visible;
+	}
+	&:not(.sapMTSScrollForward):not(.sapMTSScrollBack) .sapMTabSelect {
+		display: none;
+	}
 	.sapMTSLeftOverflowButtons {
-		display: inline-block;
 		position: absolute;
 		left: .5rem;
 		height: 100%;
+		visibility: hidden;
 		width: 3rem;
 		z-index: 20;
 		.sapMBtn {
@@ -19,7 +26,7 @@
 			.sapMBtnContent {
 				line-height: 100%;
 			}
-			.sapMBtnInner  {
+			.sapMBtnInner {
 				height: 1.625rem;
 				min-width: 1.625rem;
 				width: 1.625rem;
@@ -35,7 +42,6 @@
 		}
 	}
 	.sapMTSTabContainer {
-		display: inline-block;
 		height: 100%;
 		white-space: nowrap;
 		position: absolute;
@@ -44,31 +50,24 @@
 		overflow: hidden;
 		outline: none;
 		.sapMTSTabs {
-			display: inline-block;
 			float: left;
 			height: 100%;
 			margin-right: -999em;
 			.sapMTabContainerItem {
-				display: table;
 				position: relative;
 				box-sizing: border-box;
 				height: 100%;
 				padding: 0 .75rem;
 				float: left;
 				cursor: pointer;
-				-webkit-transition: padding 0.2s;
-				-moz-transition: padding 0.2s;
-				-ms-transition: padding 0.2s;
-				-o-transition: padding 0.2s;
-				transition: padding 0.2s;
 				-webkit-user-select: none;
 				-moz-user-select: none;
 				-ms-user-select: none;
 				user-select: none;
 				.sapMTabContainerItemLabel {
-					display: table-cell;
 					vertical-align: middle;
 					margin-right: 0.375rem;
+					line-height: 3rem;
 					&:after {
 						content: '';
 						vertical-align: middle;
@@ -76,14 +75,12 @@
 					}
 				}
 				.sapMTSTabCloseBtnCnt {
-					display: table-cell;
 					visibility: hidden;
 					position: absolute;
 					top: 0.8rem;
 					right: 0;
 					vertical-align: middle;
 					.sapMBtn {
-						display: table-cell;
 						float: right;
 						height: 100%;
 						width: 1.5rem;
@@ -122,10 +119,10 @@
 		}
 	}
 	.sapMTSRightOverflowButtons {
-		display: inline-block;
 		position: absolute;
 		right: 4.5rem;
 		height: 100%;
+		visibility: hidden;
 		width: 3rem;
 		z-index: 20;
 		.sapMBtn {
@@ -136,7 +133,7 @@
 			.sapMBtnContent {
 				line-height: 100%;
 			}
-			.sapMBtnInner  {
+			.sapMBtnInner {
 				height: 1.625rem;
 				min-width: 1.625rem;
 				width: 1.625rem;
@@ -153,7 +150,6 @@
 		}
 	}
 	.sapMTSTouchArea {
-		display: inline-block;
 		height: 100%;
 		position: absolute;
 		right: .5rem;
@@ -165,7 +161,7 @@
 			.sapMBtnContent {
 				line-height: 100%;
 			}
-			.sapMBtnInner  {
+			.sapMBtnInner {
 				height: 1.625rem;
 				min-width: 1.625rem;
 				width: 1.625rem;
@@ -183,6 +179,13 @@
 	}
 }
 
+html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabContainer .sapMTSTabs .sapMTabContainerItem {
+	-webkit-transition: padding 0.2s;
+	-moz-transition: padding 0.2s;
+	-ms-transition: padding 0.2s;
+	-o-transition: padding 0.2s;
+	transition: padding 0.2s;
+}
 
 /* ============================================= */
 /* Form factor compact                           */
@@ -200,7 +203,7 @@
 				.sapMBtnContent {
 					line-height: 100%;
 				}
-				.sapMBtnInner  {
+				.sapMBtnInner {
 					height: 1.25rem;
 					min-width: 1.25rem;
 					width: 1.25rem;
@@ -220,9 +223,9 @@
 			.sapMTSTabs {
 				.sapMTabContainerItem {
 					.sapMTabContainerItemLabel {
-						display: table-cell;
 						vertical-align: middle;
 						margin-right: 0.375rem;
+						line-height: 2rem;
 						&:after {
 							content: '';
 							vertical-align: middle;
@@ -230,14 +233,12 @@
 						}
 					}
 					.sapMTSTabCloseBtnCnt {
-						display: table-cell;
 						visibility: hidden;
 						position: absolute;
 						top: 0.225rem;
 						right: 0;
 						vertical-align: middle;
 						.sapMBtn {
-							display: table-cell;
 							float: right;
 							height: 100%;
 							width: 1.5rem;
@@ -335,6 +336,12 @@
 	.sapMTabStrip {
 		.sapMTSLeftOverflowButtons {
 			display: none;
+			.sapMBtn {
+				.sapMBtnInner {
+					.sapUiIcon {
+					}
+				}
+			}
 		}
 		.sapMTSTabContainer {
 			display: none;

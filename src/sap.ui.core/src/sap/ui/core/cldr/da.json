@@ -2416,7 +2416,7 @@
 		"era": {
 			"displayName": "æra"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "år",
 			"relative-type--1": "sidste år",
 			"relative-type-0": "i år",
@@ -2430,7 +2430,35 @@
 				"relativeTimePattern-count-other": "for {0} år siden"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "år",
+			"relative-type--1": "sidste år",
+			"relative-type-0": "i år",
+			"relative-type-1": "næste år",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} år",
+				"relativeTimePattern-count-other": "om {0} år"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} år siden",
+				"relativeTimePattern-count-other": "for {0} år siden"
+			}
+		},
+		"year-narrow": {
+			"displayName": "år",
+			"relative-type--1": "sidste år",
+			"relative-type-0": "i år",
+			"relative-type-1": "næste år",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} år",
+				"relativeTimePattern-count-other": "om {0} år"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} år siden",
+				"relativeTimePattern-count-other": "for {0} år siden"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "kvartal",
 			"relative-type--1": "sidste kvartal",
 			"relative-type-0": "dette kvartal",
@@ -2444,7 +2472,35 @@
 				"relativeTimePattern-count-other": "for {0} kvartaler siden"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "kvt.",
+			"relative-type--1": "sidste kvt.",
+			"relative-type-0": "dette kvt.",
+			"relative-type-1": "næste kvt.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} kvt.",
+				"relativeTimePattern-count-other": "om {0} kvt."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} kvt. siden",
+				"relativeTimePattern-count-other": "for {0} kvt. siden"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "kvt.",
+			"relative-type--1": "sidste kvt.",
+			"relative-type-0": "dette kvt.",
+			"relative-type-1": "næste kvt.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} kvt.",
+				"relativeTimePattern-count-other": "om {0} kvt."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} kvt. siden",
+				"relativeTimePattern-count-other": "for {0} kvt. siden"
+			}
+		},
+		"month-wide": {
 			"displayName": "måned",
 			"relative-type--1": "sidste måned",
 			"relative-type-0": "denne måned",
@@ -2458,7 +2514,35 @@
 				"relativeTimePattern-count-other": "for {0} måneder siden"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "md.",
+			"relative-type--1": "sidste md.",
+			"relative-type-0": "denne md.",
+			"relative-type-1": "næste md.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} md.",
+				"relativeTimePattern-count-other": "om {0} md."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} md. siden",
+				"relativeTimePattern-count-other": "for {0} md. siden"
+			}
+		},
+		"month-narrow": {
+			"displayName": "md.",
+			"relative-type--1": "sidste md.",
+			"relative-type-0": "denne md.",
+			"relative-type-1": "næste md.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} md.",
+				"relativeTimePattern-count-other": "om {0} md."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} md. siden",
+				"relativeTimePattern-count-other": "for {0} md. siden"
+			}
+		},
+		"week-wide": {
 			"displayName": "uge",
 			"relative-type--1": "sidste uge",
 			"relative-type-0": "denne uge",
@@ -2472,7 +2556,67 @@
 				"relativeTimePattern-count-other": "for {0} uger siden"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "uge",
+			"relative-type--1": "sidste uge",
+			"relative-type-0": "denne uge",
+			"relative-type-1": "næste uge",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} uge",
+				"relativeTimePattern-count-other": "om {0} uger"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} uge siden",
+				"relativeTimePattern-count-other": "for {0} uger siden"
+			}
+		},
+		"week-narrow": {
+			"displayName": "uge",
+			"relative-type--1": "sidste uge",
+			"relative-type-0": "denne uge",
+			"relative-type-1": "næste uge",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} uge",
+				"relativeTimePattern-count-other": "om {0} uger"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} uge siden",
+				"relativeTimePattern-count-other": "for {0} uger siden"
+			}
+		},
+		"day-wide": {
+			"displayName": "dag",
+			"relative-type--2": "i forgårs",
+			"relative-type--1": "i går",
+			"relative-type-0": "i dag",
+			"relative-type-1": "i morgen",
+			"relative-type-2": "i overmorgen",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} dag",
+				"relativeTimePattern-count-other": "om {0} dage"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} dag siden",
+				"relativeTimePattern-count-other": "for {0} dage siden"
+			}
+		},
+		"day-short": {
+			"displayName": "dag",
+			"relative-type--2": "i forgårs",
+			"relative-type--1": "i går",
+			"relative-type-0": "i dag",
+			"relative-type-1": "i morgen",
+			"relative-type-2": "i overmorgen",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} dag",
+				"relativeTimePattern-count-other": "om {0} dage"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} dag siden",
+				"relativeTimePattern-count-other": "for {0} dage siden"
+			}
+		},
+		"day-narrow": {
 			"displayName": "dag",
 			"relative-type--2": "i forgårs",
 			"relative-type--1": "i går",
@@ -2491,7 +2635,7 @@
 		"weekday": {
 			"displayName": "ugedag"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "time",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} time",
@@ -2502,7 +2646,29 @@
 				"relativeTimePattern-count-other": "for {0} timer siden"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "t.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} time",
+				"relativeTimePattern-count-other": "om {0} timer"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} time siden",
+				"relativeTimePattern-count-other": "for {0} timer siden"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "t",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} time",
+				"relativeTimePattern-count-other": "om {0} timer"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} time siden",
+				"relativeTimePattern-count-other": "for {0} timer siden"
+			}
+		},
+		"minute-wide": {
 			"displayName": "minut",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} minut",
@@ -2513,7 +2679,29 @@
 				"relativeTimePattern-count-other": "for {0} minutter siden"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "min.",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} min.",
+				"relativeTimePattern-count-other": "om {0} min."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} min. siden",
+				"relativeTimePattern-count-other": "for {0} min. siden"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "min",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} min.",
+				"relativeTimePattern-count-other": "om {0} min."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} min. siden",
+				"relativeTimePattern-count-other": "for {0} min. siden"
+			}
+		},
+		"second-wide": {
 			"displayName": "sekund",
 			"relative-type-0": "nu",
 			"relativeTime-type-future": {
@@ -2523,6 +2711,30 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "for {0} sekund siden",
 				"relativeTimePattern-count-other": "for {0} sekunder siden"
+			}
+		},
+		"second-short": {
+			"displayName": "sek.",
+			"relative-type-0": "nu",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} sek.",
+				"relativeTimePattern-count-other": "om {0} sek."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} sek. siden",
+				"relativeTimePattern-count-other": "for {0} sek. siden"
+			}
+		},
+		"second-narrow": {
+			"displayName": "s",
+			"relative-type-0": "nu",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} sek.",
+				"relativeTimePattern-count-other": "om {0} sek."
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} sek. siden",
+				"relativeTimePattern-count-other": "for {0} sek. siden"
 			}
 		},
 		"zone": {

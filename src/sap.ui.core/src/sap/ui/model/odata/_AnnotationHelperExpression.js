@@ -691,6 +691,7 @@ sap.ui.define([
 		path: function (oInterface, oPathValue) {
 			var sBindingPath = oPathValue.value,
 				oConstraints = {},
+				oIsDigitSequence,
 				oModel = oInterface.getModel(),
 				oPathValueInterface = {
 					getModel : function () { return oModel; },
@@ -718,6 +719,10 @@ sap.ui.define([
 					break;
 				case "Edm.String":
 					oConstraints.maxLength = oProperty.maxLength;
+					oIsDigitSequence = oProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
+					if (oIsDigitSequence) {
+						oConstraints.isDigitSequence = oIsDigitSequence.Bool;
+					}
 					break;
 				// no default
 				}

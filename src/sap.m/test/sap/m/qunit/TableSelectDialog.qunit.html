@@ -317,6 +317,15 @@
 
 		});
 
+		test("busyIndicatorDelay propagation test", function() {
+			var iDelay = 50;
+			oTableSelectDialog.setBusyIndicatorDelay(iDelay);
+
+			sap.ui.getCore().applyChanges();
+			strictEqual(oTableSelectDialog._oTable.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
+			strictEqual(oTableSelectDialog.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
+		});
+
 		module("Bindings Check");
 
 		test("Bindings", function() {

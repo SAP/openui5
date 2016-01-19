@@ -887,7 +887,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @description Gives the position of the place holder for the FileUploader that every toolbar provided
 	 * by the application must have
 	 * @param {sap.m.OverflowToolbar} oToolbar Toolbar where to find the place holder
-	 * @return {int | -1} The position of the place holder or -1 if there's no place holder.
+	 * @return {int} The position of the place holder or -1 if there's no place holder.
 	 * @private
 	 */
 	UploadCollection.prototype._getFileUploaderPlaceHolderPosition = function(oToolbar){
@@ -1989,7 +1989,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		var sFileName = oEvent.getParameter("fileName");
 		var cItems = this.aItems.length;
 		for (i = 0; i < cItems ; i++) {
-			if (this.aItems[i] === sFileName && this.aItems[i]._requestIdName === sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
+			if (this.aItems[i] && this.aItems[i].getFileName() === sFileName && this.aItems[i]._requestIdName === sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
 				this.aItems.splice(i, 1);
 				this.removeItem(i);
 				break;
@@ -2212,9 +2212,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 		var iDeletedItemForPendingUploadLength = this._aDeletedItemForPendingUpload.length;
 		for ( i = 0; i < iDeletedItemForPendingUploadLength; i++ ) {
-			if (this._aDeletedItemForPendingUpload[i].getAssociation("fileUploader") === oEvent.oSource.sId
-					&& this._aDeletedItemForPendingUpload[i].getFileName() === sFileName
-					&& this._aDeletedItemForPendingUpload[i]._internalFileIndexWithinFileUploader === this._iUploadStartCallCounter){
+			if (this._aDeletedItemForPendingUpload[i].getAssociation("fileUploader") === oEvent.oSource.sId &&
+					this._aDeletedItemForPendingUpload[i].getFileName() === sFileName &&
+					this._aDeletedItemForPendingUpload[i]._internalFileIndexWithinFileUploader === this._iUploadStartCallCounter){
 				oEvent.getSource().abort(this._headerParamConst.fileNameRequestIdName, this._encodeToAscii(sFileName) + sRequestIdValue);
 				return;
 			}
@@ -2598,8 +2598,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		var aUcpRequestHeaders = [];
 		var aRequestHeaders = this.getParameter("requestHeaders");
 		var iParamCounter = aRequestHeaders.length;
+		var i;
 		if (aRequestHeaders && sHeaderParameterName) {
-			for ( i = 0; i < iParamCounter; i++ ) {
+			for (i = 0; i < iParamCounter; i++ ) {
 				if (aRequestHeaders[i].name === sHeaderParameterName) {
 					return new sap.m.UploadCollectionParameter({
 						name: aRequestHeaders[i].name,
@@ -2609,7 +2610,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 		} else {
 			if (aRequestHeaders) {
-				for (var i = 0; i < iParamCounter; i++) {
+				for (i = 0; i < iParamCounter; i++) {
 					aUcpRequestHeaders.push(new sap.m.UploadCollectionParameter({
 						name: aRequestHeaders[i].name,
 						value: aRequestHeaders[i].value

@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListItemBase', './Title', './Text', './Button',
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListItemBase', './Text', './Button',
 		'sap/ui/core/InvisibleText', './Image', './OverflowToolbar', './ToolbarSpacer', 'sap/ui/core/Icon'],
-	function (jQuery, library, Control, ListItemBase, Title, Text, Button, InvisibleText, Image, OverflowToolbar, ToolbarSpacer, Icon) {
+	function (jQuery, library, Control, ListItemBase, Text, Button, InvisibleText, Image, OverflowToolbar, ToolbarSpacer, Icon) {
 
 		'use strict';
 
@@ -75,8 +75,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					/**
 					 * Determines the notification's author picture address.
 					 */
-					authorPicture: {type: 'sap.ui.core.URI',  multiple: false}
+					authorPicture: {type: 'sap.ui.core.URI',  multiple: false},
 
+					/**
+					 * Determines if the text in the title and the description of the notification are truncated to the first two lines.
+					 */
+					truncate: {type: 'boolean', group: 'Appearance', defaultValue: true}
 				},
 				aggregations: {
 					/**
@@ -88,7 +92,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					 * The title control that holds the datetime text of the NotificationListItem.
 					 * @private
 					 */
-					_headerTitle: {type: 'sap.m.Title', multiple: false, visibility: "hidden"},
+					_headerTitle: {type: 'sap.m.Text', multiple: false, visibility: "hidden"},
 
 					/**
 					 * The text control that holds the description text of the NotificationListItem.
@@ -132,6 +136,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		});
 
 		NotificationListItem.prototype.init = function () {
+			var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+			this._expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
+			this._collapseText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS');
+
 			//set it to an active ListItemBase to the press and tap events are fired
 			this.setType('Active');
 
@@ -148,6 +156,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			});
 
 			/**
+			 * @type {sap.m.Button}
+			 * @private
+			 */
+			this._collapseButton = new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+                text: this.getTruncate() ? this._expandText : this._collapseText,
+                id: this.getId() + '-expandCollapseButton',
+				press: function () {
+					this._deregisterResize();
+					this.setProperty("truncate", !this.getTruncate(), true);
+                    this._collapseButton.setText(this.getTruncate() ? this._expandText : this._collapseText);
+                    this.getDomRef().querySelector('.sapMNLI-TextWrapper').classList.toggle('sapMNLI-TextWrapper--is-expanded');
+					this.getDomRef().querySelector('.sapMNLI-Header').classList.toggle('sapMNLI-TitleWrapper--is-expanded');
+					this._registerResize();
+                }.bind(this)
+			});
+
+			/**
 			 * @type {sap.ui.core.InvisibleText}
 			 * @private
 			 */
@@ -160,6 +186,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			 * @private
 			 */
 			this.setAggregation('_overflowToolbar', new OverflowToolbar());
+		};
+
+		NotificationListItem.prototype.onBeforeRendering = function () {
+			this._deregisterResize();
+		};
+
+		NotificationListItem.prototype.onAfterRendering = function () {
+			this._showHideTruncateButton();
+			this._registerResize();
 		};
 
 		//================================================================================
@@ -369,6 +404,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		 * @private
 		 */
 		NotificationListItem.prototype.exit = function () {
+			this._deregisterResize();
+
 			if (this._closeButton) {
 				this._closeButton.destroy();
 				this._closeButton = null;
@@ -392,9 +429,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			var title = this.getAggregation("_headerTitle");
 
 			if (!title) {
-				title = new Title({
+				title = new Text({
 					id: this.getId() + '-title',
-					text: this.getTitle()
+					text: this.getTitle(),
+					maxLines: 2
 				});
 
 				this.setAggregation("_headerTitle", title, true);
@@ -414,7 +452,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			if (!bodyText) {
 				bodyText = new sap.m.Text({
 					id: this.getId() + '-body',
-					text: this.getDescription()
+					text: this.getDescription(),
+                    maxLines: 2
 				}).addStyleClass('sapMNLI-Text');
 
 				this.setAggregation("_bodyText", bodyText, true);
@@ -513,6 +552,68 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				[this.getDatetime(), this.getPriority()]);
 
 			this._ariaDetailsText.setText(readUnreadText + ' ' + dueAndPriorityString);
+		};
+
+		/**
+		 * Returns true if the text in the title or the text in the description is longer than two lines.
+		 * @returns {boolean}
+		 * @private
+		 */
+        NotificationListItem.prototype._canTruncate = function () {
+			var titleHeight = this.getDomRef('title').offsetHeight;
+			var titleWrapperHeight = this.getDomRef('title').parentElement.offsetHeight;
+            var textHeight = this.getDomRef("body").offsetHeight;
+            var textWrapperHeight = this.getDomRef("body").parentElement.offsetHeight;
+
+            return textHeight > textWrapperHeight || titleHeight > titleWrapperHeight;
+        };
+
+		NotificationListItem.prototype._showHideTruncateButton = function() {
+			var notificationDomRef = this.getDomRef();
+
+			if (this._canTruncate()) { // if the Notification has long text
+				// show the truncate button
+				this.getDomRef('expandCollapseButton').classList.remove('sapMNLI-CollapseButtonHide');
+
+				// set the truncate button text && toggle 'collapse' class
+				if (this.getTruncate()) {
+					this._collapseButton.setText(this._expandText);
+					notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
+					notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--is-expanded');
+				} else {
+					this._collapseButton.setText(this._collapseText);
+					notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.add('sapMNLI-TextWrapper--is-expanded');
+					notificationDomRef.querySelector('.sapMNLI-Header').classList.add('sapMNLI-TitleWrapper--is-expanded');
+				}
+
+			} else {
+				// hide the truncate button
+				this.getDomRef('expandCollapseButton').classList.add('sapMNLI-CollapseButtonHide');
+			}
+
+			// remove classes used only to calculate text size
+			notificationDomRef.querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--initial-overwrite');
+			notificationDomRef.querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--initial-overwrite');
+		};
+
+		NotificationListItem.prototype._deregisterResize = function() {
+			if (this._sPopupResizeHandler) {
+				sap.ui.core.ResizeHandler.deregister(this._sPopupResizeHandler);
+				this._sPopupResizeHandler = null;
+			}
+		};
+
+		NotificationListItem.prototype._registerResize = function () {
+			var that = this;
+
+			this._sPopupResizeHandler = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
+				that.getDomRef().querySelector('.sapMNLI-TextWrapper').classList.remove('sapMNLI-TextWrapper--is-expanded');
+				that.getDomRef().querySelector('.sapMNLI-Header').classList.remove('sapMNLI-TitleWrapper--is-expanded');
+				that.getDomRef().querySelector('.sapMNLI-TextWrapper').classList.add('sapMNLI-TextWrapper--initial-overwrite');
+				that.getDomRef().querySelector('.sapMNLI-Header').classList.add('sapMNLI-TitleWrapper--initial-overwrite');
+
+				that._showHideTruncateButton();
+			});
 		};
 
 		/**

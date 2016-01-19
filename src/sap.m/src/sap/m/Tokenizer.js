@@ -793,6 +793,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	Tokenizer.prototype.addToken = function(oToken, bSuppressInvalidate) {
+		// if tokenizer is in MultiInput
+		var oParent = this.getParent();
+		if (oParent instanceof sap.m.MultiInput) {
+			// if max number is set and the number of existing tokens is equal to or more than the max number, then do not add token.
+			if (oParent.getMaxTokens() !== undefined && oParent.getTokens().length >= oParent.getMaxTokens()) {
+				return;
+			}
+		}
 		this.addAggregation("tokens", oToken, bSuppressInvalidate);
 		oToken.attachDelete(this._onDeleteToken, this);
 		oToken.attachPress(this._onTokenPress, this);

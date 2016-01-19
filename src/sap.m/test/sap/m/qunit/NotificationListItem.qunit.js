@@ -51,7 +51,7 @@
 		assert.ok(this.NotificationListItem, 'NotificationListItem should be rendered');
 
 		assert.strictEqual(jQuery(classNameCloseButton).length, 1, 'Close Button should be rendered');
-		assert.strictEqual(jQuery(classNameHeader).children('.sapMTitle').length, 1, 'Title should be rendered');
+		assert.strictEqual(jQuery(classNameHeader).children('.sapMText').length, 1, 'Title should be rendered');
 		assert.strictEqual(jQuery(classNameText).length, 2, 'Text and author placeholders should be rendered');
 		assert.strictEqual(jQuery(classNameDatetime).length, 1, 'DateTime should be rendered');
 		assert.strictEqual(jQuery(classNameUnread).length, 1, 'Unread status should be rendered');
@@ -343,7 +343,7 @@
 
 		// assert
 		assert.strictEqual(jQuery(classNameFooter).find('.sapMTB').length, 1, 'Footer toolbar should be rendered');
-		assert.strictEqual(jQuery(classNameFooter).find('button').length, 2, 'Buttons should be rendered');
+		assert.strictEqual(jQuery(classNameFooter).find('.sapMTB > button').length, 2, 'Buttons should be rendered');
 	});
 
 	QUnit.test('Changing the title', function(assert) {

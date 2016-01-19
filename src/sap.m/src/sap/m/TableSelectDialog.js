@@ -418,6 +418,19 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
+	 * Sets the busyIndicatorDelay value to the internal table
+	 * @public
+	 * @param {int} iValue Value for the busyIndicatorDelay.
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
+	 */
+	TableSelectDialog.prototype.setBusyIndicatorDelay = function (iValue) {
+		this._oTable.setBusyIndicatorDelay(iValue);
+		this.setProperty("busyIndicatorDelay", iValue, true);
+
+		return this;
+	};
+
+	/**
 	 * Enables/Disables multi selection mode.
 	 * @overwrite
 	 * @public

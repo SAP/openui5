@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', './Matcher', './Visible'], function ($, Matc
 
 			// Check busy of the control
 			if (oControl.getBusy && oControl.getBusy()) {
-				$.sap.log.debug("The control " + oControl + " is busy so it is filtered out", this);
+				$.sap.log.debug("The control " + oControl + " is busy so it is filtered out", this._sLogPrefix);
 				return false;
 			}
 
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './Matcher', './Visible'], function ($, Matc
 			while (oParent) {
 				// Check busy of parents
 				if (oParent.getBusy && oParent.getBusy()) {
-					$.sap.log.debug("The control " + oControl + " has a parent that is busy " + oParent, this);
+					$.sap.log.debug("The control " + oControl + " has a parent that is busy " + oParent, this._sLogPrefix);
 					return false;
 				}
 
@@ -61,12 +61,12 @@ sap.ui.define(['jquery.sap.global', './Matcher', './Visible'], function ($, Matc
 				var sName = oParent.getMetadata().getName();
 				// Split container and splitapp use navcontainers in the control tree
 				if ((sName === "sap.m.App" || sName === "sap.m.NavContainer") && oParent._bNavigating) {
-					$.sap.log.debug("The control " + oControl + " has a parent NavContainer " + oParent + " that is currently navigating", this);
+					$.sap.log.debug("The control " + oControl + " has a parent NavContainer " + oParent + " that is currently navigating", this._sLogPrefix);
 					return false;
 				}
 
 				if (sName === "sap.ui.core.UIArea" && oParent.bNeedsRerendering) {
-					$.sap.log.debug("The control " + oControl + " is currently in an ui area that needs a new rendering", this);
+					$.sap.log.debug("The control " + oControl + " is currently in an ui area that needs a new rendering", this._sLogPrefix);
 					return false;
 				}
 
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './Matcher', './Visible'], function ($, Matc
 
 			// Check for blocking layer and if the control is not in the static ui area
 			if ($("#sap-ui-blocklayer-popup").is(":visible") && oControl.$().closest("#sap-ui-static").length === 0) {
-				$.sap.log.debug("The control " + oControl + " is hidden behind a blocking layer of a Popup", this);
+				$.sap.log.debug("The control " + oControl + " is hidden behind a blocking layer of a Popup", this._sLogPrefix);
 				return false;
 			}
 

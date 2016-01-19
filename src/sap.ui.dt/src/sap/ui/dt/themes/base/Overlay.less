@@ -69,8 +69,7 @@
 #overlay-container {
 	// to prevent overlay's height from expanding the body
 	position: fixed;
-	top: 0;
-	left: 0;
+	// position is set in code to prevent RTL style conversion
 }
 
 .sapUiDtDragGhostWrapper {
@@ -82,7 +81,7 @@
 .sap-desktop[data-sap-ui-browser^="cr"] {
 
 	.sapUiDtDragGhostWrapper {
-		padding-right: 500px;
+		padding-left : -500px;
 		padding-bottom: 500px;
 		bottom: -1000px;
 	}

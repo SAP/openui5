@@ -724,6 +724,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Optional StashedControlSupport dependecy
+	 * @private
+	 */
+	var StashedControlSupport;
+
+	/**
+	 * Returns an array of stashed child elements or an empty array if there are none.
+	 *
+	 * @param {string} sId id of the object which should have stashed children
+	 * @return {sap.ui.core._StashedControl[]} array of stashed children
+	 * @private
+	 */
+	function getStashedControls(sId) {
+		if (!StashedControlSupport) {
+			StashedControlSupport = sap.ui.require("sap/ui/core/StashedControlSupport");
+		}
+		if (StashedControlSupport) {
+			return StashedControlSupport.getStashedControls(sId);
+		}
+		return [];
+	}
+
+	/**
 	 * A global preprocessor for the ID of a ManagedObject (used internally).
 	 * If set, this function will be called before the ID is applied to any ManagedObject.
 	 * If the original ID was empty, the hook will not be called (to be discussed).
@@ -1043,7 +1066,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the value for the property with the given <code>sPropertyName</code>
+	 * Returns the value for the property with the given <code>sPropertyName</code>.
 	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically retrieve the value of a property.
@@ -1906,6 +1929,13 @@ sap.ui.define([
 		var aChildren = this.mAggregations[sAggregationName],
 			i, aChild;
 
+		// destroy surrogates in this aggregation
+		getStashedControls(this.getId()).forEach(function(c) {
+			if (c.sParentAggregationName === sAggregationName) {
+				c.destroy();
+			}
+		});
+
 		if (!aChildren) {
 			return this;
 		}
@@ -2157,6 +2187,11 @@ sap.ui.define([
 		for (var oAggr in this.mAggregations) {
 			this.destroyAggregation(oAggr, bSuppressInvalidate);
 		}
+
+		// destroy all inactive children
+		getStashedControls(this.getId()).forEach(function(c) {
+			c.destroy();
+		});
 
 		// Deregister, if available
 		if (this.deregister) {
@@ -3745,6 +3780,14 @@ sap.ui.define([
 						mSettings[sName] = oAggregation;
 					}
 				}
+			}
+
+			// clone inactive children
+			var aInactiveChildren = getStashedControls(this.getId());
+			for (var i = 0, l = aInactiveChildren.length; i < l; i++) {
+					var oClonedChild = aInactiveChildren[i].clone(sIdSuffix);
+					oClonedChild.sParentId = sId;
+					oClonedChild.sParentAggregationName = aInactiveChildren[i].sParentAggregationName;
 			}
 
 			// Clone associations

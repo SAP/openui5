@@ -2,18 +2,18 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/qunit/QUnitUtils'], function ($, ManagedObject, Utils) {
+sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], function ($, Action, Utils) {
 	"use strict";
 
 	/**
 	 * @class The EnterText action is used to simulate a user entering texts to inputs.
-	 * @extends sap.ui.base.ManagedObject
+	 * @extends sap.ui.test.actions.Action
 	 * @public
-	 * @alias sap.ui.test.actions.EnterText
+	 * @name sap.ui.test.actions.EnterText
 	 * @author SAP SE
 	 * @since 1.34
 	 */
-	return ManagedObject.extend("sap.ui.test.actions.EnterText", {
+	return Action.extend("sap.ui.test.actions.EnterText", /** @lends sap.ui.test.actions.EnterText.prototype */  {
 
 		metadata : {
 			properties: {
@@ -33,13 +33,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/qunit/Q
 		 *
 		 * @param {sap.ui.core.Control} oControl the control on which the text event should be entered in.
 		 * @public
-		 * @function
 		 */
 		executeOn : function (oControl) {
 			// Every input control should have a focusable domref
 			var oFocusDomRef = oControl.getFocusDomRef();
 			if (!oFocusDomRef) {
-				$.sap.log.error("Control " + oControl + " has no focusable dom representation", this);
+				$.sap.log.error("Control " + oControl + " has no focusable dom representation", this._sLogPrefix);
 				return;
 			}
 
@@ -48,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/qunit/Q
 			$FocusDomRef.focus();
 
 			if (!$FocusDomRef.is(":focus")) {
-				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this);
+				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
 			}
 
 			// Trigger events for every keystroke - livechange controls

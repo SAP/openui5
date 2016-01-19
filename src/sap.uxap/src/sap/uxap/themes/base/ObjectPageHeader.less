@@ -199,6 +199,10 @@ html[data-sap-ui-browser^=ie] .sapUxAPObjectPageHeaderObjectImageContainerSub > 
 	white-space: normal;
 }
 
+.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderTitleTextWrappable {
+	word-break: break-all;
+}
+
 .sapUxAPObjectPageHeaderIdentifierTitle .sapMObjStatusMarker {
 	font-family: SAP-icons;
 	font-size: 1rem;
@@ -272,12 +276,18 @@ html[dir=rtl] .sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectI
 	margin-top: -0.625rem;
 }
 
-.sapUxAPObjectPageHeaderNowrap {
+.sapUxAPObjectPageHeaderNowrapMarkers {
 	white-space: nowrap;
+}
+
+.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderNowrapMarkers {
+	white-space: normal;
+	word-break: break-all;
 }
 
 .sapUxAPObjectPageHeaderChangesBtn,
 .sapUxAPObjectPageHeaderLockBtn {
+	white-space: nowrap;
 	margin-left: 0.125rem;
 }
 

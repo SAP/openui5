@@ -26,7 +26,7 @@ sap.ui.define([
 	 * or plain HTML content to popup on the screen like menues, dialogs, drop down boxes.
 	 *
 	 * It allows the controls to be aligned to other dom elements
-	 * using the {@link sap.ui.core.Popup.Dock.html} method. With it you can define where
+	 * using the {@link sap.ui.core.Popup.Dock} method. With it you can define where
 	 * the popup should be docked. One can dock the popup to the top bottom left or right side
 	 * of a dom ref.
 	 *
@@ -2371,26 +2371,27 @@ sap.ui.define([
 		 * If true then all child popups should increase their indexes accordingly
 		 * to the parent popup.
 		 */
-		if (oEventData.type && oEventData.type === "mousedown" || oEventData.isFromParentPopup || oParentPopup.length === 0) {
+		if (oEventData && oEventData.type === "mousedown" || oEventData && oEventData.isFromParentPopup || oParentPopup.length === 0) {
 			this._iZIndex = this.getNextZIndex();
 
-			var $Ref = this._$();
+			var $Ref = this._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
 			$Ref.css("z-index", this._iZIndex);
 
 			if (this._oBlindLayer) {
 				this._oBlindLayer.update($Ref, this._iZIndex - 1);
 			}
 
-			// only increase children's z-index if this function call
-			if (!oEventData.type || oEventData.type != "mousedown") {
+			// only increase children's z-index if this function called via mousedown
+			if (oEventData && !oEventData.type || oEventData && oEventData.type != "mousedown" || sEvent === "mousedown") {
 				var aChildPopups = this.getChildPopups();
 				for (var i = 0, l = aChildPopups.length; i < l; i++) {
-					this.increaseZIndex(aChildPopups[i], true);
+					this.increaseZIndex(aChildPopups[i], /*bIsParent*/ true);
 				}
 			}
 		} else if (oParentPopup.length > 0) {
 			// call the parent popup to increase index
-			this.increaseZIndex(jQuery(oParentPopup.get(0)).attr("data-sap-ui-popup"), false);
+			var sPopupId = jQuery(oParentPopup.get(0)).attr("data-sap-ui-popup");
+			this.increaseZIndex(sPopupId, /*bIsParent*/ false);
 		}
 	};
 

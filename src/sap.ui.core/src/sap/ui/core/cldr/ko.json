@@ -2463,7 +2463,7 @@
 		"era": {
 			"displayName": "연호"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "년",
 			"relative-type--1": "작년",
 			"relative-type-0": "올해",
@@ -2475,7 +2475,31 @@
 				"relativeTimePattern-count-other": "{0}년 전"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "년",
+			"relative-type--1": "작년",
+			"relative-type-0": "올해",
+			"relative-type-1": "내년",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}년 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}년 전"
+			}
+		},
+		"year-narrow": {
+			"displayName": "년",
+			"relative-type--1": "작년",
+			"relative-type-0": "올해",
+			"relative-type-1": "내년",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}년 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}년 전"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "분기",
 			"relative-type--1": "last quarter",
 			"relative-type-0": "this quarter",
@@ -2487,7 +2511,31 @@
 				"relativeTimePattern-count-other": "{0}분기 전"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "분기",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}분기 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}분기 전"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "분기",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}분기 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}분기 전"
+			}
+		},
+		"month-wide": {
 			"displayName": "월",
 			"relative-type--1": "지난달",
 			"relative-type-0": "이번 달",
@@ -2499,7 +2547,31 @@
 				"relativeTimePattern-count-other": "{0}개월 전"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "월",
+			"relative-type--1": "지난달",
+			"relative-type-0": "이번 달",
+			"relative-type-1": "다음 달",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}개월 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}개월 전"
+			}
+		},
+		"month-narrow": {
+			"displayName": "월",
+			"relative-type--1": "지난달",
+			"relative-type-0": "이번 달",
+			"relative-type-1": "다음 달",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}개월 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}개월 전"
+			}
+		},
+		"week-wide": {
 			"displayName": "주",
 			"relative-type--1": "지난주",
 			"relative-type-0": "이번 주",
@@ -2511,7 +2583,59 @@
 				"relativeTimePattern-count-other": "{0}주 전"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "주",
+			"relative-type--1": "지난주",
+			"relative-type-0": "이번 주",
+			"relative-type-1": "다음 주",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}주 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}주 전"
+			}
+		},
+		"week-narrow": {
+			"displayName": "주",
+			"relative-type--1": "지난주",
+			"relative-type-0": "이번 주",
+			"relative-type-1": "다음 주",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}주 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}주 전"
+			}
+		},
+		"day-wide": {
+			"displayName": "일",
+			"relative-type--2": "그저께",
+			"relative-type--1": "어제",
+			"relative-type-0": "오늘",
+			"relative-type-1": "내일",
+			"relative-type-2": "모레",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}일 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}일 전"
+			}
+		},
+		"day-short": {
+			"displayName": "일",
+			"relative-type--2": "그저께",
+			"relative-type--1": "어제",
+			"relative-type-0": "오늘",
+			"relative-type-1": "내일",
+			"relative-type-2": "모레",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}일 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}일 전"
+			}
+		},
+		"day-narrow": {
 			"displayName": "일",
 			"relative-type--2": "그저께",
 			"relative-type--1": "어제",
@@ -2528,7 +2652,7 @@
 		"weekday": {
 			"displayName": "요일"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "시",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0}시간 후"
@@ -2537,7 +2661,25 @@
 				"relativeTimePattern-count-other": "{0}시간 전"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "시",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}시간 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}시간 전"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "시",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}시간 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}시간 전"
+			}
+		},
+		"minute-wide": {
 			"displayName": "분",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0}분 후"
@@ -2546,7 +2688,45 @@
 				"relativeTimePattern-count-other": "{0}분 전"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "분",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}분 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}분 전"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "분",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}분 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}분 전"
+			}
+		},
+		"second-wide": {
+			"displayName": "초",
+			"relative-type-0": "지금",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}초 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}초 전"
+			}
+		},
+		"second-short": {
+			"displayName": "초",
+			"relative-type-0": "지금",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}초 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}초 전"
+			}
+		},
+		"second-narrow": {
 			"displayName": "초",
 			"relative-type-0": "지금",
 			"relativeTime-type-future": {

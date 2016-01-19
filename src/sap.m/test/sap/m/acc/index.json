@@ -347,6 +347,12 @@
 			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
+			"control": "sap.m.SuggestionsList",
+			"url": "../SearchField_Suggestions.html",
+			"desc" : "Suggestions list of the Search Field",
+			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
 			"control": "sap.m.Switch",
 			"url": "../Switch.html",
 			"appComponent": "CA-UI5-CTR-WDF"

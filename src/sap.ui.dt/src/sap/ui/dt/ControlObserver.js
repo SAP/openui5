@@ -128,7 +128,8 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 			this._oMutationObserver.observe(oDomRef, {
 				childList : true,
 				subtree : true,
-				attributes : true
+				attributes : true,
+				characterData : true // also observe text node changes, see https://dom.spec.whatwg.org/#characterdata
 			});
 		}
 	};
