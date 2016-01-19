@@ -10,15 +10,18 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		rEquals = /\=/g,
 		rHash = /#/g,
 		rPlus = /\+/g,
-		rSemicolon = /;/g,
 		rSingleQuote = /'/g,
 		Helper;
 
 	Helper = {
 		/**
 		 * Builds a query string from the given parameter map. Takes care of encoding, but ensures
-		 * that the characters "$", "(", ")" and "=" are not encoded, so that OData queries remain
-		 * readable.
+		 * that the characters "$", "(", ")", ";" and "=" are not encoded, so that OData queries
+		 * remain readable.
+		 *
+		 * ';' is not encoded although RFC 1866 encourages its usage as separator between query
+		 * parameters. However OData Version 4.0 Part 2 specifies that only '&' is a valid
+		 * separator.
 		 *
 		 * @param {object} [mParameters]
 		 *   A map of key-value pairs representing the query string, the value in this pair has to
@@ -130,8 +133,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			var sEncoded = encodeURI(sPart)
 					.replace(rAmpersand, "%26")
 					.replace(rHash, "%23")
-					.replace(rPlus, "%2B")
-					.replace(rSemicolon, "%3B");
+					.replace(rPlus, "%2B");
 			if (bEncodeEquals) {
 				sEncoded = sEncoded.replace(rEquals, "%3D");
 			}

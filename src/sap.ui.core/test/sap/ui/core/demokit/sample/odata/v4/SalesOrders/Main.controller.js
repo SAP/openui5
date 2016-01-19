@@ -109,9 +109,23 @@ sap.ui.define([
 				oView.byId("ObjectPage").bindElement({
 					path : sCanonicalPath,
 					parameters: {
-						"$expand" : "SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP"
-							+ "($expand=BP_2_CONTACT)))",
-						"$select" : "ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
+						"$expand" : {
+							"SO_2_SOITEM" : {
+								"$expand" : {
+									"SOITEM_2_PRODUCT" : {
+										"$expand" : {
+											"PRODUCT_2_BP" : {
+												"$expand" : {
+													"BP_2_CONTACT" : true
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"$select" : ["ChangedAt", "CreatedAt" , "LifecycleStatusDesc", "Note",
+							"SalesOrderID"]
 					}
 				});
 				oView.byId("SupplierContactData").setBindingContext(undefined);

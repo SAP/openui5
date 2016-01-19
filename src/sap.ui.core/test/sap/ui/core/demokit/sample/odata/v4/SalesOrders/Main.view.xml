@@ -23,7 +23,7 @@
 			</content>
 		</Toolbar>
 		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
-			items="{path: '/SalesOrderList', parameters: {'$expand':'SO_2_BP',
+			items="{path: '/SalesOrderList', parameters: {'$expand':{'SO_2_BP':true},
 				'$select' : 'SalesOrderID,BuyerName,GrossAmount,CurrencyCode'}}"
 			mode="SingleSelectMaster" selectionChange="onSalesOrdersSelect">
 			<headerToolbar>

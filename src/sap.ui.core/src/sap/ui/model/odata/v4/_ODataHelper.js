@@ -32,12 +32,52 @@ sap.ui.define([
 		buildQueryOptions : function (mModelOptions, mOptions, aAllowed) {
 			var mResult = JSON.parse(JSON.stringify(mModelOptions || {}));
 
+			/**
+			 * Validates an expand item.
+			 *
+			 * @param {boolean|object} vExpandOptions
+			 *   The expand options (the value for the "$expand" in the hierarchical options);
+			 *   either a map or simply true if there are no options
+			 */
+			function validateExpandItem(vExpandOptions) {
+				var sOption;
+
+				if (typeof vExpandOptions === "object") {
+					for (sOption in vExpandOptions) {
+						validateSystemQueryOption(sOption, vExpandOptions[sOption]);
+					}
+				}
+			}
+
+			/**
+			 * Validates a system query option.
+			 * @param {string} sOption The name of the option
+			 * @param {any} vValue The value of the option
+			 */
+			function validateSystemQueryOption(sOption, vValue) {
+				var sPath;
+
+				if (aAllowed.indexOf(sOption) < 0) {
+					throw new Error("System query option " + sOption + " is not supported");
+				}
+				if (sOption === "$expand") {
+					for (sPath in vValue) {
+						validateExpandItem(vValue[sPath]);
+					}
+				}
+			}
+
+			aAllowed = aAllowed || [];
 			Object.keys(mOptions || {}).forEach(function (sKey) {
-				if (sKey[0] === "@"
-					|| sKey[0] === "$" && (aAllowed || []).indexOf(sKey) === -1) {
+				var vValue = mOptions[sKey];
+
+				if (sKey[0] === "@") {
 					throw new Error("Parameter " + sKey + " is not supported");
 				}
-				mResult[sKey] = mOptions[sKey];
+				if (sKey[0] === "$") {
+					validateSystemQueryOption(sKey, vValue);
+				}
+				mResult[sKey] = vValue;
 			});
 			return mResult;
 		},

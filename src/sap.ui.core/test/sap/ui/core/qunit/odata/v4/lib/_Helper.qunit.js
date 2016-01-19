@@ -133,13 +133,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("encode", function (assert) {
-		var sUnchanged = "foo$,/:?@()";
+		var sUnchanged = "foo$,/:?@();";
 
 		assert.strictEqual(Helper.encode(sUnchanged, false), sUnchanged);
 		assert.strictEqual(Helper.encode(sUnchanged, true), sUnchanged);
 
-		assert.strictEqual(Helper.encode("€_&_=_#_+_;", false), "%E2%82%AC_%26_=_%23_%2B_%3B");
-		assert.strictEqual(Helper.encode("€_&_=_#_+_;", true), "%E2%82%AC_%26_%3D_%23_%2B_%3B");
+		assert.strictEqual(Helper.encode("€_&_=_#_+", false), "%E2%82%AC_%26_=_%23_%2B");
+		assert.strictEqual(Helper.encode("€_&_=_#_+", true), "%E2%82%AC_%26_%3D_%23_%2B");
 	});
 
 	//*********************************************************************************************

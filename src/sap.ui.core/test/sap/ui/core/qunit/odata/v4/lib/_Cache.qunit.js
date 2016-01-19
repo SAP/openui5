@@ -193,27 +193,174 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("query params", function (assert) {
-		var oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees",
-			mQueryParams = {
-				"$select": "ID",
-				"$expand" : "Address",
-				"$filter" : "€",
-				"foo" : ["bar", "baz€"]
+	QUnit.test("convertQueryOptions", function (assert) {
+		var oCacheMock = this.mock(Cache),
+			oExpand = {};
+
+		oCacheMock.expects("convertExpand")
+			.withExactArgs(sinon.match.same(oExpand)).returns("expand");
+
+		assert.deepEqual(Cache.convertQueryOptions({
+			"foo" : "bar",
+			"$expand" : oExpand,
+			"$select" : ["select1", "select2"]
+		}), {
+			"foo" : "bar",
+			"$expand" : "expand",
+			"$select" : "select1,select2"
+		});
+
+		assert.deepEqual(Cache.convertQueryOptions({
+			"$select" : "singleSelect"
+		}), {
+			"$select" : "singleSelect"
+		});
+
+		assert.strictEqual(Cache.convertQueryOptions(undefined), undefined);
+
+		["$filter", "$format", "$id", "$inlinecount", "$orderby", "$search", "$skip", "$skiptoken",
+			"$top"
+		].forEach(function (sSystemOption) {
+			assert.throws(function () {
+				var mQueryOptions = {};
+
+				mQueryOptions[sSystemOption] = "foo";
+				Cache.convertQueryOptions(mQueryOptions);
+			}, new RegExp("Unsupported system query option \\" + sSystemOption));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertExpandOptions", function (assert) {
+		var oCacheMock = this.mock(Cache),
+			oExpand = {};
+
+		oCacheMock.expects("convertExpand")
+			.withExactArgs(sinon.match.same(oExpand)).returns("expand");
+
+		assert.strictEqual(Cache.convertExpandOptions("foo", {
+			"$expand" : oExpand,
+			"$select" : ["select1", "select2"]
+		}), "foo($expand=expand;$select=select1,select2)");
+
+		assert.strictEqual(Cache.convertExpandOptions("foo", {}), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertExpand", function (assert) {
+		var oOptions = {};
+
+		["Address", null].forEach(function (vValue) {
+			assert.throws(function () {
+				Cache.convertExpand(vValue);
+			}, new Error("$expand must be a valid object"));
+		});
+
+		this.mock(Cache).expects("convertExpandOptions")
+			.withExactArgs("baz", sinon.match.same(oOptions)).returns("baz(options)");
+
+		assert.strictEqual(Cache.convertExpand({
+			"foo" : true,
+			"bar" : null,
+			"baz" : oOptions
+		}), "foo,bar,baz(options)");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildQueryString", function (assert) {
+		var oCacheMock = this.mock(Cache),
+			oConvertedQueryParams = {},
+			oQueryParams = {};
+
+		oCacheMock.expects("convertQueryOptions")
+			.withExactArgs(undefined).returns(undefined);
+
+		assert.strictEqual(Cache.buildQueryString(undefined), "");
+
+		oCacheMock.expects("convertQueryOptions")
+			.withExactArgs(oQueryParams).returns(oConvertedQueryParams);
+		this.mock(Helper).expects("buildQuery")
+			.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
+
+		assert.strictEqual(Cache.buildQueryString(oQueryParams), "?query");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildQueryString examples", function (assert) {
+		[{
+			o: {foo: ["bar", "€"], $select: "IDÖ"},
+			s: "foo=bar&foo=%E2%82%AC&$select=ID%C3%96"
+		}, {
+			o: {$select: ["ID"]},
+			s: "$select=ID"
+		}, {
+			o: {$select: ["ID", "Name"]},
+			s: "$select=ID,Name"
+		}, {
+			o: {$expand: {"SO_2_BP": true, "SO_2_SOITEM": true}},
+			s: "$expand=SO_2_BP,SO_2_SOITEM"
+		}, {
+			o: {$expand: {"SO_2_BP": true, "SO_2_SOITEM": {$select: "CurrencyCode"}}},
+			s: "$expand=SO_2_BP,SO_2_SOITEM($select=CurrencyCode)"
+		}, {
+			o: {
+				$expand: {
+					"SO_2_BP": true,
+					"SO_2_SOITEM": {
+						"$select": ["ItemPosition", "Note"]
+					}
+				}
 			},
-			oCache = Cache.create(oRequestor, sUrl, mQueryParams);
+			s: "$expand=SO_2_BP,SO_2_SOITEM($select=ItemPosition,Note)"
+		}, {
+			o: {
+				$expand: {
+					"SO_2_BP": true,
+					"SO_2_SOITEM": {
+						"$expand": {
+							"SOITEM_2_PRODUCT": {
+								"$expand" : {
+									"PRODUCT_2_BP" : true
+								},
+								"$select": "CurrencyCode"
+							},
+							"SOITEM_2_SO": true
+						}
+					}
+				},
+				"sap-client" : "003"
+			},
+			s: "$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;"
+				+ "$select=CurrencyCode),SOITEM_2_SO)&sap-client=003"
+		}].forEach(function (oFixture) {
+			assert.strictEqual(Cache.buildQueryString(oFixture.o, false), "?" + oFixture.s,
+				oFixture.s);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("query params", function (assert) {
+		var oCache,
+			mQueryParams = {},
+			sQueryParams = "?query",
+			oRequestor,
+			sUrl = "/~/Employees";
+
+		this.oSandbox.mock(Cache).expects("buildQueryString")
+			.withExactArgs(sinon.match.same(mQueryParams))
+			.returns(sQueryParams);
+
+		oRequestor = Requestor.create("/~/");
+		oCache = Cache.create(oRequestor, sUrl, mQueryParams);
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sUrl + "?$select=ID&$expand=Address&$filter=%E2%82%AC"
-				+ "&foo=bar&foo=baz%E2%82%AC&$skip=0&$top=5")
+			.withExactArgs("GET", sUrl + sQueryParams + "&$skip=0&$top=5")
 			.returns(Promise.resolve({value:[]}));
 
 		// code under test
 		mQueryParams.$select = "foo"; // modification must not affect Cache
 		return oCache.read(0, 5);
 	});
-	// TODO get rid of %-encoding of $, (, ) etc
 
 	//*********************************************************************************************
 	QUnit.test("error handling", function (assert) {
@@ -251,7 +398,8 @@ sap.ui.require([
 			oCache,
 			aPromises = [];
 
-		this.oSandbox.mock(Helper).expects("buildQuery").withExactArgs(mQueryParams).returns("?~");
+		this.oSandbox.mock(Cache).expects("buildQueryString")
+			.withExactArgs(mQueryParams).returns("?~");
 		this.oSandbox.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sUrl + "?~")
 			.returns(Promise.resolve(oExpectedResult));

@@ -6,19 +6,36 @@
 sap.ui.define(["./_Helper"], function (Helper) {
 	"use strict";
 
-	/**
-	 * Builds a partial query string from the parameter map
-	 *
-	 * @param {object} mQueryParameters
-	 *   A map of key-value pairs representing the query string
-	 * @returns {string}
-	 *   Returns an encoded query string starting with "?" and ending with "&" if parameters are
-	 *   available so that we can simply append further parameters
-	 */
-	function buildQueryString(mQueryParameters) {
-		var sQueryString = Helper.buildQuery(mQueryParameters);
+	var Cache;
 
-		return sQueryString ? sQueryString + "&" : "?";
+	/**
+	 * Converts the known OData system query options from map or array notation to a string. All
+	 * other parameters are simply passed through.
+	 *
+	 * @param {object} mQueryOptions The query options
+	 * @param {function(string,any)} fnResultHandler
+	 *   The function to process the converted options getting the name and the value
+	 */
+	function convertSystemQueryOptions(mQueryOptions, fnResultHandler) {
+		Object.keys(mQueryOptions).forEach(function (sKey) {
+			var vValue = mQueryOptions[sKey];
+
+			switch (sKey) {
+				case "$select":
+					if (Array.isArray(vValue)) {
+						vValue = vValue.join(",");
+					}
+					break;
+				case "$expand":
+					vValue = Cache.convertExpand(vValue);
+					break;
+				default:
+					if (sKey[0] === '$') {
+						throw new Error("Unsupported system query option " + sKey);
+					}
+			}
+			fnResultHandler(sKey, vValue);
+		});
 	}
 
 	/**
@@ -48,7 +65,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * A refresh cancels processing of all pending requests by throwing an error that has a
 	 * property <code>canceled</code> which is set to <code>true</code>.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._Cache} oCache
+	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 	 *   The cache
 	 * @param {int} iStart
 	 *   The index of the first element to request ($skip)
@@ -96,12 +113,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   The requestor
 	 * @param {string} sUrl
 	 *   The URL to request from
-	 * @param {object} [mQueryParameters]
+	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 */
-	function Cache(oRequestor, sUrl, mQueryParameters) {
+	function CollectionCache(oRequestor, sUrl, mQueryOptions) {
+		var sQuery = Cache.buildQueryString(mQueryOptions);
+
+		sQuery += sQuery.length ? "&" : "?";
 		this.oRequestor = oRequestor;
-		this.sUrl = sUrl + buildQueryString(mQueryParameters);
+		this.sUrl = sUrl + sQuery;
 		this.sContext = undefined;  // the "@odata.context" from the responses
 		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
 		this.aElements = [];        // the available elements
@@ -123,7 +143,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   property <code>canceled</code> which is set to <code>true</code>.
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	Cache.prototype.read = function (iIndex, iLength) {
+	CollectionCache.prototype.read = function (iIndex, iLength) {
 		var i,
 			iEnd = iIndex + iLength,
 			iGapStart = -1,
@@ -165,7 +185,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Clears cache and cancels processing of all pending read requests.
 	 */
-	Cache.prototype.refresh = function () {
+	CollectionCache.prototype.refresh = function () {
 		this.sContext = undefined;
 		this.iMaxElements = -1;
 		this.aElements = [];
@@ -176,7 +196,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *
 	 * @returns {string} The URL
 	 */
-	Cache.prototype.toString = function () {
+	CollectionCache.prototype.toString = function () {
 		return this.sUrl;
 	};
 
@@ -187,12 +207,12 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   The requestor
 	 * @param {string} sUrl
 	 *   The URL to request from
-	 * @param {object} [mQueryParameters]
+	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 */
-	function SingleCache(oRequestor, sUrl, mQueryParameters) {
+	function SingleCache(oRequestor, sUrl, mQueryOptions) {
 		this.oRequestor = oRequestor;
-		this.sUrl = sUrl + Helper.buildQuery(mQueryParameters);
+		this.sUrl = sUrl + Cache.buildQueryString(mQueryOptions);
 		this.oPromise = null;
 	}
 
@@ -240,7 +260,104 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		return this.sUrl;
 	};
 
-	return {
+	Cache = {
+		/**
+		 * Builds a query string from the parameter map. Converts $select (which may be an array)
+		 * and $expand (which must be an object) accordingly. All other system query options are
+		 * rejected.
+		 *
+		 * @param {object} mQueryOptions
+		 *   A map of key-value pairs representing the query string
+		 * @returns {string}
+		 *   The query string; it is empty if there are no options; it starts with "?" otherwise
+		 * @example
+		 * {
+		 *		$expand: {
+		 *			"SO_2_BP": true,
+		 *			"SO_2_SOITEM": {
+		 *				"$expand": {
+		 *					"SOITEM_2_PRODUCT": {
+		 *						"$expand" : {
+		 *							"PRODUCT_2_BP" : true,
+		 *						},
+		 *						"$select": "CurrencyCode"
+		 *					},
+		 *					"SOITEM_2_SO": true
+		 *				}
+		 *			}
+		 *		},
+		 *		"sap-client" : "003"
+		 *	}
+		 */
+		buildQueryString: function (mQueryOptions) {
+			return Helper.buildQuery(Cache.convertQueryOptions(mQueryOptions));
+		},
+
+		/**
+		 *  Converts the value for a "$expand" in mQueryParams.
+		 *
+		 *  @param {object} mExpandItems The expand items, a map from path to options
+		 *  @returns {string} The resulting value for the query string
+		 *  @throws {Error} If the expand items are not an object
+		 */
+		convertExpand : function (mExpandItems) {
+			var aResult = [];
+
+			if (!mExpandItems || typeof mExpandItems  !== "object") {
+				throw new Error("$expand must be a valid object");
+			}
+
+			Object.keys(mExpandItems).forEach(function (sExpandPath) {
+				var vExpandOptions = mExpandItems[sExpandPath];
+
+				if (vExpandOptions && typeof vExpandOptions === "object") {
+					aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions));
+				} else {
+					aResult.push(sExpandPath);
+				}
+			});
+
+			return aResult.join(",");
+		},
+
+		/**
+		 * Converts the expand options.
+		 *
+		 * @param {string} sExpandPath The expand path
+		 * @param {boolean|object} vExpandOptions
+		 *   The options; either a map or simply <code>true</code>
+		 * @returns {string} The resulting string for the OData query in the form "path" (if no
+		 *   options) or "path($option1=foo;$option2=bar)"
+		 */
+		convertExpandOptions : function (sExpandPath, vExpandOptions) {
+			var aExpandOptions = [];
+
+			convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
+				aExpandOptions.push(sOptionName + '=' + vOptionValue);
+			});
+			return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
+				: sExpandPath;
+		},
+
+		/**
+		 * Converts the query options. All system query options are converted to strings, so that
+		 * the result can be used for Helper.buildQuery.
+		 *
+		 * @param {object} mQueryOptions The query options
+		 * @returns {object} The converted query options
+		 */
+		convertQueryOptions : function (mQueryOptions) {
+			var mConvertedQueryOptions = {};
+
+			if (!mQueryOptions) {
+				return undefined;
+			}
+			convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
+				mConvertedQueryOptions[sKey] = vValue;
+			});
+			return mConvertedQueryOptions;
+		},
+
 		/**
 		 * Creates a cache for a collection of entities that performs requests using the given
 		 * requestor.
@@ -251,7 +368,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   The URL to request from; it must contain the path to the OData service, it must not
 		 *   contain a query string<br>
 		 *   Example: /V4/Northwind/Northwind.svc/Products
-		 * @param {object} mQueryParameters
+		 * @param {object} mQueryOptions
 		 *   A map of key-value pairs representing the query string, the value in this pair has to
 		 *   be a string or an array of strings; if it is an array, the resulting query string
 		 *   repeats the key for each array value.
@@ -261,8 +378,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		create: function _create(oRequestor, sUrl, mQueryParameters) {
-			return new Cache(oRequestor, sUrl, mQueryParameters);
+		create: function _create(oRequestor, sUrl, mQueryOptions) {
+			return new CollectionCache(oRequestor, sUrl, mQueryOptions);
 		},
 
 		/**
@@ -274,7 +391,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   The URL to request from; it must contain the path to the OData service, it must not
 		 *   contain a query string<br>
 		 *   Example: /V4/Northwind/Northwind.svc/Products(ProductID=1)
-		 * @param {object} mQueryParameters
+		 * @param {object} mQueryOptions
 		 *   A map of key-value pairs representing the query string, the value in this pair has to
 		 *   be a string or an array of strings; if it is an array, the resulting query string
 		 *   repeats the key for each array value.
@@ -284,8 +401,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		createSingle: function _createSingle(oRequestor, sUrl, mQueryParameters) {
-			return new SingleCache(oRequestor, sUrl, mQueryParameters);
+		createSingle: function _createSingle(oRequestor, sUrl, mQueryOptions) {
+			return new SingleCache(oRequestor, sUrl, mQueryOptions);
 		}
 	};
+
+	return Cache;
 }, /* bExport= */false);
