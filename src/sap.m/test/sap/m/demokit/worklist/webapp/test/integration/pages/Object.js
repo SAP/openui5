@@ -33,7 +33,7 @@ sap.ui.define([
 						return this.waitFor({
 							success : function () {
 								var sBindingPath = this.getContext().currentItem.bindingPath;
-								return this.waitFor({
+								this.waitFor({
 									id : "page",
 									viewName : sViewName,
 									matchers : function (oPage) {

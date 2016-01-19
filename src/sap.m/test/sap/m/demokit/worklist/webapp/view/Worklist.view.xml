@@ -65,9 +65,7 @@
 						</cells>
 					</ColumnListItem>
 				</items>
-
 			</Table>
-
 		</semantic:content>
 
 		<semantic:sendEmailAction>

@@ -4,7 +4,12 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/routing/History",
 		"sap/ui/demo/worklist/model/formatter"
-	], function (BaseController, JSONModel, History, formatter) {
+	], function (
+		BaseController,
+		JSONModel,
+		History,
+		formatter
+	) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.worklist.controller.Object", {
@@ -30,6 +35,7 @@ sap.ui.define([
 					});
 
 				this.getRouter().getRoute("object").attachPatternMatched(this._onObjectMatched, this);
+
 				// Store original busy indicator delay, so it can be restored later on
 				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
 				this.setModel(oViewModel, "objectView");
@@ -115,7 +121,7 @@ sap.ui.define([
 				});
 			},
 
-			_onBindingChange : function (oEvent) {
+			_onBindingChange : function () {
 				var oView = this.getView(),
 					oViewModel = this.getModel("objectView"),
 					oElementBinding = oView.getElementBinding();
