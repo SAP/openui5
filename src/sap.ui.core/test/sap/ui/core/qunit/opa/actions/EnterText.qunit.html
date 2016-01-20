@@ -21,6 +21,8 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+		QUnit.config.autostart = false;
+
 		sap.ui.require([
 			"sap/ui/test/actions/EnterText",
 			"sap/m/Input",
@@ -179,6 +181,9 @@
 
 				sinon.assert.calledWith(oSpy,  sinon.match(/could not be focused/),  sinon.match(oEnterText._sLogPrefix));
 			});
+
+			// wait for domready because of popups
+			jQuery(QUnit.start);
 		});
 	</script>
 </head>
