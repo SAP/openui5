@@ -51,7 +51,7 @@ sap.ui.define([
 				objectImageURI: {type: "string", defaultValue: null},
 
 				/**
-				 * The text to be used for the Alt attribute of the image, supplied via the objectImageURI property
+				 * The text to be used for the Alt and Tooltip attribute of the image, supplied via the objectImageURI property
 				 */
 				objectImageAlt: {type: "string", defaultValue: ''},
 
@@ -314,6 +314,9 @@ sap.ui.define([
 
 			oObjectImage.setSrc(sObjectImageURI);
 			oObjectImage.addStyleClass("sapUxAPObjectPageHeaderObjectImage");
+			if (oParent.getObjectImageAlt()) {
+				oObjectImage.setTooltip(oParent.getObjectImageAlt());
+			}
 			return oObjectImage;
 		},
 		"_overflowActionSheet": function () {
