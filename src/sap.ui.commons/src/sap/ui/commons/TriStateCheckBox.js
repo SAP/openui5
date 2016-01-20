@@ -122,6 +122,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	TriStateCheckBox.prototype.onsapspace = function(oEvent) {
+		oEvent.preventDefault();
 		this.userToggle(oEvent);
 	};
 
