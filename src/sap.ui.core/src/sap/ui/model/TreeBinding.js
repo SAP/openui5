@@ -34,9 +34,22 @@ sap.ui.define(['./Binding'],
 
 		constructor : function(oModel, sPath, oContext, aFilters, mParameters, aSorters){
 			Binding.call(this, oModel, sPath, oContext, mParameters);
-			this.aApplicationFilters = aFilters || [];
 			this.aFilters = [];
+
 			this.aSorters = aSorters;
+			if (!jQuery.isArray(this.aSorters) && this.aSorters instanceof sap.ui.model.Sorter) {
+				this.aSorters = [this.aSorters];
+			} else if (!jQuery.isArray(this.aSorters)) {
+				this.aSorters = [];
+			}
+
+			this.aApplicationFilters = aFilters;
+			if (!jQuery.isArray(aFilters) && aFilters instanceof sap.ui.model.Filter) {
+				this.aApplicationFilters = [aFilters];
+			} else if (!jQuery.isArray(aFilters)) {
+				this.aApplicationFilters = [];
+			}
+
 			this.bDisplayRootNode = mParameters && mParameters.displayRootNode === true;
 		},
 
