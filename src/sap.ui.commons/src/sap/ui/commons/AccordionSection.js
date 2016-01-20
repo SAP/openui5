@@ -44,6 +44,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 
 			/**
 			 * It is recommended to adjust the settings for the width when the section is set to 'collapsed'.
+			 * @deprecated since 1.34
+			 * Use Accordion's "openedSectionsId" property
 			 */
 			collapsed : {type : "boolean", group : "Behavior", defaultValue : false},
 
