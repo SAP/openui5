@@ -5,6 +5,7 @@ module.exports = [
 	"Table.spec.js",
 	"Breadcrumbs.spec.js",
 	"Wizard.spec.js",
+	"MessagePage.spec.js",
 	"NotificationListItem.spec.js",
 	"NotificationListGroup.spec.js"
 ];
