@@ -1,11 +1,13 @@
 /* ================================================================= */
-/* CSS for control sap.m/InputBase.control High Contrast Black theme */
+/* CSS for control sap.m/InputBase High Contrast Black theme         */
 /* ================================================================= */
 
 .sapMInputBase {
-	border: none;
-	padding: 0.25rem 0;
 	height: 3rem;
+}
+
+.sapMInputBaseWidthPadding {
+	padding: 0.25rem 0;
 }
 
 .sapMInputBaseInner {
@@ -24,7 +26,7 @@
 	opacity: 1;
 }
 
-.sapMInputBaseDisabled .sapMInputBaseInner {
+.sapMInputBaseDisabledInner {
 	background: @sapHCReducedBG;
 	border-color: @sapHCReducedAltFG;
 	color: @sapHCReducedFG;
@@ -131,7 +133,7 @@
 	font-weight: bold;
 }
 
-.sapMInputBaseInner.sapMInputBaseReadonlyInner {
+.sapMInputBaseReadonlyInner {
 	border-color: @sapHCReducedAltFG;
 	background: @sapHCReducedBG;
 }
@@ -155,7 +157,7 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 	text-align: right;
 }
 
-.sapMILI-CTX :not(.sapMInputVH) .sapMInputBaseInner:not(.sapMInputBaseStateInner){
+.sapMILI-CTX :not(.sapMInputVH) .sapMInputBaseInner:not(.sapMInputBaseStateInner) {
 	border: none;
 }
 
@@ -201,7 +203,6 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 
 	.sapMInputBase {
 		height: 2rem;
-		padding: 0.1875rem 0;
 	}
 
 	.sapMInputBaseInner {
@@ -213,6 +214,10 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 		line-height: 1.625rem;
 		padding: 0 0.5rem;
 	}
+}
+
+.sapUiSizeCompact .sapMInputBaseWidthPadding {
+	padding: 0.1875rem 0;
 }
 
 /* Condensed size */
@@ -247,8 +252,8 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 
 /* focus in IE (workaround) */
 html[data-sap-ui-browser^="ie"] {
-	.sapMInputBase > .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus,
-	.sapMInputBase > .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):hover {
+	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus,
+	.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):hover {
 		outline: none;
 	}
 
