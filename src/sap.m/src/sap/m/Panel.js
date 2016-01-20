@@ -206,12 +206,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	Panel.prototype.onBeforeRendering = function () {
-		var sId;
-
-		if (this.oIconCollapsed) {
-			sId = this._getLabellingElementId();
-			this.oIconCollapsed.addAriaLabelledBy(sId);
-		}
+		this._updateIconAriaLabelledBy();
 	};
 
 	Panel.prototype.onAfterRendering = function () {
@@ -292,6 +287,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		$this.children(".sapMPanelWrappingDiv").toggleClass("sapMPanelWrappingDivExpanded");
 		$this.children(".sapMPanelWrappingDivTb").toggleClass("sapMPanelWrappingDivTbExpanded");
 		$this.find(".sapMPanelExpandableIcon").first().toggleClass("sapMPanelExpandableIconExpanded");
+	};
+
+	Panel.prototype._updateIconAriaLabelledBy = function () {
+		var sLabelId, aAriaLabels;
+
+		if (!this.oIconCollapsed) {
+			return;
+		}
+
+		sLabelId = this._getLabellingElementId();
+		aAriaLabels = this.oIconCollapsed.getAriaLabelledBy();
+
+		// If the old label is different we should reinitialize the association, because we can have only one label
+		if (aAriaLabels.indexOf(sLabelId) === -1) {
+			this.oIconCollapsed.removeAllAssociation("ariaLabelledBy");
+			this.oIconCollapsed.addAriaLabelledBy(sLabelId);
+		}
 	};
 
 	Panel.prototype._getLabellingElementId = function () {
