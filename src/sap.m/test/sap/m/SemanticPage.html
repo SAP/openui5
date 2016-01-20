@@ -7,11 +7,12 @@
 
 	<style>
 		#statusLabel {
-			font-size: 2rem;
+			font-weight: bold;
+			color: green;
 		}
 	</style>
 
-	<script src="../../../../resources/sap-ui-core.js" type="text/javascript"
+	<script src="../../../resources/sap-ui-core.js" type="text/javascript"
 			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.layout"
 			data-sap-ui-theme="sap_bluecrystal">
 
@@ -140,7 +141,7 @@
 		var oPressedLabel = new sap.m.Text({id: "pressedLabel",
 			text: "{status>/master/multiSelectPressed}"});
 
-		var oAddWarningButton = new sap.m.Button({
+		var oAddWarningButton = new sap.m.Button("addMessagesBtn", {
 			text: "add Warning",
 			press: function () {
 				sap.ui.getCore().getMessageManager().addMessages(
@@ -153,35 +154,35 @@
 			}
 		});
 
-		var oClearWarningsButton = new sap.m.Button({
+		var oClearWarningsButton = new sap.m.Button("clearMessagesBtn", {
 			text: "clear Messages",
 			press: function () {
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 			}
 		});
 
-		var oSavingDraftButton = new sap.m.Button({
+		var oSavingDraftButton = new sap.m.Button("showSavingDraftBtn", {
 			text: "show Saving Draft",
 			press: function () {
 				draftInd.showDraftSaving();
 			}
 		});
 
-		var oSavedDraftButton = new sap.m.Button({
+		var oSavedDraftButton = new sap.m.Button("showDraftSavedBtn", {
 			text: "show Draft Saved",
 			press: function () {
 				draftInd.showDraftSaved();
 			}
 		});
 
-		var oClearDraftButton = new sap.m.Button({
+		var oClearDraftButton = new sap.m.Button("clearDraftStateBtn", {
 			text: "clear Draft state",
 			press: function () {
 				draftInd.clearDraftState();
 			}
 		});
 
-		var oToggleMultiselectPressed = new sap.m.Button({
+		var oToggleMultiselectPressed = new sap.m.Button("toggleMultiselectPressedBtn", {
 			text: "Toggle Multiselect Pressed",
 			press: function () {
 				var bToggle = !oStatusModel.getData().master.multiSelectPressed;
@@ -189,7 +190,7 @@
 			}
 		});
 
-		var oToggleMultiselectEnabled= new sap.m.Button({
+		var oToggleMultiselectEnabled= new sap.m.Button("toggleMultiselectEnabledBtn", {
 			text: "Toggle Multiselect Enabled",
 			press: function () {
 				var bToggle = !oStatusModel.getData().master.multiSelectEnabled;
@@ -1131,7 +1132,7 @@
 
 		var oModifyFooter = new sap.m.HBox({
 			items: [
-				new sap.m.Button({text: "Show / Hide Footer",
+				new sap.m.Button("showHideFooterBtn", {text: "Show / Hide Footer",
 					press: function() {
 						var bShow = page1.getShowFooter();
 						var bShow2 = page2.getShowFooter();
@@ -1176,19 +1177,19 @@
 			title: "{status>/master/title}",
 			showNavButton: "{status>/master/showNavButton}",
 			subHeader: new sap.m.Bar({contentMiddle: [new sap.m.SearchField()]}),
-			multiSelectAction: new sap.m.semantic.MultiSelectAction({press: onMultiSelectPress,
+			multiSelectAction: new sap.m.semantic.MultiSelectAction("multiselectAction", {press: onMultiSelectPress,
 																	pressed: "{status>/master/multiSelectPressed}",
 																	enabled: "{status>/master/multiSelectEnabled}"}),
-			addAction: new sap.m.semantic.AddAction({press: onSemanticBtnPress}),
-			group: new sap.m.semantic.GroupAction("groupButton", {press: onSemanticBtnPress}),
-			sort: new sap.m.semantic.SortSelect({
+			addAction: new sap.m.semantic.AddAction("addAction", {press: onSemanticBtnPress}),
+			group: new sap.m.semantic.GroupAction("groupAction", {press: onSemanticBtnPress}),
+			sort: new sap.m.semantic.SortSelect("sortSelect", {
 				items: {
 					path: "testData>/sortItems",
 					template: oItemTemplate
 				},
 				change: onSemanticSelectChange
 			}),
-			filter: new sap.m.semantic.FilterAction({press: onSemanticBtnPress}),
+			filter: new sap.m.semantic.FilterAction("filterAction", {press: onSemanticBtnPress}),
 			customHeaderContent: [new sap.m.Button({text: "Custom in header"})]
 		});
 	var draftInd = new sap.m.DraftIndicator();
@@ -1207,19 +1208,19 @@
 			],
 			messagesIndicator: new sap.m.semantic.MessagesIndicator(),
 			draftIndicator: draftInd,
-			positiveAction: new sap.m.semantic.PositiveAction({text: "Positive", press: onSemanticBtnPress}),
-			mainAction: new sap.m.semantic.MainAction({text: "Main", press: onSemanticBtnPress}),
-			negativeAction: new sap.m.semantic.NegativeAction({text: "Negative", press: onSemanticBtnPress}),
-			editAction: new sap.m.semantic.EditAction({press: onSemanticBtnPress}),
-			flagAction: new sap.m.semantic.FlagAction({press: onSemanticBtnPress, pressed: true}),
-			favoriteAction: new sap.m.semantic.FavoriteAction({press: onSemanticBtnPress}),
-			saveAction: new sap.m.semantic.SaveAction({press: onSemanticBtnPress}),
-			cancelAction: new sap.m.semantic.CancelAction({press: onSemanticBtnPress}),
-			deleteAction: new sap.m.semantic.DeleteAction({press: onSemanticBtnPress}),
-			forwardAction: new sap.m.semantic.ForwardAction({press: onSemanticBtnPress}),
-			sendMessageAction: new sap.m.semantic.SendMessageAction({press: onSemanticBtnPress}),
-			saveAsTileAction: new sap.m.Button({icon: "sap-icon://add-favorite", text: "Save as Tile"}),
-			pagingAction: new sap.m.PagingButton({count: 5})
+			positiveAction: new sap.m.semantic.PositiveAction("positiveAction", {text: "Positive", press: onSemanticBtnPress}),
+			mainAction: new sap.m.semantic.MainAction("mainAction", {text: "Main", press: onSemanticBtnPress}),
+			negativeAction: new sap.m.semantic.NegativeAction("negativeAction", {text: "Negative", press: onSemanticBtnPress}),
+			editAction: new sap.m.semantic.EditAction("editAction", {press: onSemanticBtnPress}),
+			flagAction: new sap.m.semantic.FlagAction("flagAction", {press: onSemanticBtnPress, pressed: true}),
+			favoriteAction: new sap.m.semantic.FavoriteAction("favoriteAction", {press: onSemanticBtnPress}),
+			saveAction: new sap.m.semantic.SaveAction("saveAction", {press: onSemanticBtnPress}),
+			cancelAction: new sap.m.semantic.CancelAction("cancelAction", {press: onSemanticBtnPress}),
+			deleteAction: new sap.m.semantic.DeleteAction("deleteAction", {press: onSemanticBtnPress}),
+			forwardAction: new sap.m.semantic.ForwardAction("forwardAction", {press: onSemanticBtnPress}),
+			sendMessageAction: new sap.m.semantic.SendMessageAction("sendMessageAction", {press: onSemanticBtnPress}),
+			saveAsTileAction: new sap.m.Button("saveAsTileBtn", {icon: "sap-icon://add-favorite", text: "Save as Tile"}),
+			pagingAction: new sap.m.PagingButton("pagingBtn", {count: 5})
 		});
 		var oSplitContainer = new sap.m.SplitContainer();
 
