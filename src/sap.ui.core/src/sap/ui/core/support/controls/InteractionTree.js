@@ -498,16 +498,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              var interaction = that.interactions[interactionIndex];
              var request = interaction.requests[requestIndex];
 
+             if (!interaction || !request) {
+                return;
+             }
+
              var sapStatistic = that.getRequestSapStatistics(interaction, request);
 
              if (sapStatistic) {
-                simpleForm.addContent(statisticsTitle);
-                simpleForm.addContent(totalLabel);
-                simpleForm.addContent(totalText);
-                simpleForm.addContent(fwLabel);
-                simpleForm.addContent(fwText);
-                simpleForm.addContent(appLabel);
-                simpleForm.addContent(appText);
+                if (!statisticsTitle.getParent()) {
+                   simpleForm.addContent(statisticsTitle);
+                   simpleForm.addContent(totalLabel);
+                   simpleForm.addContent(totalText);
+                   simpleForm.addContent(fwLabel);
+                   simpleForm.addContent(fwText);
+                   simpleForm.addContent(appLabel);
+                   simpleForm.addContent(appText);
+                }
 
                 var statistics = sapStatistic.statistics;
 
@@ -516,7 +522,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 fwText.setText(that.formatDuration(parseFloat(statistics.substring(statistics.indexOf("fw=") + "fw=".length, statistics.indexOf(",")))));
                 statistics = statistics.substring(statistics.indexOf(",") + 1);
                 appText.setText(that.formatDuration(parseFloat(statistics.substring(statistics.indexOf("app=") + "app=".length, statistics.indexOf(",")))));
-             } else {
+             } else if (statisticsTitle.getParent()) {
                 simpleForm.removeContent(statisticsTitle);
                 simpleForm.removeContent(totalLabel);
                 simpleForm.removeContent(totalText);
@@ -531,8 +537,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
              var request = that.getRequestFromElement(jQuery(this));
 
-             initiatorTypeText.setText(request.initiatorType);
-             entryTypeText.setText(request.entryType);
+             initiatorTypeText.setText(request.initiatorType || '');
+             entryTypeText.setText(request.entryType || '');
              nameLink.setText(request.name);
              nameLink.setHref(request.name);
 
@@ -567,11 +573,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              var clientTimePercent = 100 * clientTotalTime / duration;
              var preprocessingTimePercent = 100 *  preprocessingTime / duration;
 
-             var preprocessingTimeRounded = Math.round(preprocessingTime * 100) / 100;
-             var serverTimeRounded = Math.round(serverTotalTime * 100) / 100;
-             var clientTimeRounded = Math.round(clientTotalTime * 100) / 100;
+             var titleTemplate = '<span class="sapUiInteractionTitleSection"><div class="sapUiInteractionTitleText">{Title}</div><div class="sapUiInteractionTitleSubText">{Subtitle}</div></span>';
 
-             clientVsServerTitle.setText("Preprocessing / Server / Client (" + preprocessingTimeRounded + "ms / " + serverTimeRounded + "ms / " + clientTimeRounded + "ms)");
+             var clientVsServerHTML = '<div class="sapUiInteractionTitle">';
+
+             clientVsServerHTML += titleTemplate.replace('{Title}', 'PREPROCESSING').replace('{Subtitle}', that.formatDuration(preprocessingTime));
+             clientVsServerHTML += titleTemplate.replace('{Title}', 'SERVER').replace('{Subtitle}', that.formatDuration(serverTotalTime));
+             clientVsServerHTML += titleTemplate.replace('{Title}', 'CLIENT').replace('{Subtitle}', that.formatDuration(clientTotalTime));
+
+             clientVsServerHTML += '</div>';
+
+             clientVsServerTitle.setContent(clientVsServerHTML);
 
              var requestType = request.initiatorType || request.entryType;
 
@@ -594,7 +606,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           function createEmptyPopOver() {
              var oPopover = new Popover({
                 placement: sap.m.PlacementType.Auto,
-                contentWidth: "450px",
+                contentWidth: "400px",
                 showHeader: false,
                 showArrow: true,
                 verticalScrolling: true,
@@ -603,7 +615,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    createPopOverContent()
                 ],
                 afterClose: that.setPopoverCloseTimestamp.bind(that)
-             });
+             }).addStyleClass('sapUiSupportPopover');
 
              oPopover.attachAfterOpen(function(oEvent){
                 oEvent.getSource().$().focus();
@@ -613,7 +625,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           }
 
           function createPopOverContent() {
-             clientVsServerTitle = new Title();
+             clientVsServerTitle = new HTML();
              progressBar = new HTML();
              initiatorTypeText = new Text().addStyleClass("sapUiSupportIntRequestText");
              entryTypeText = new Text().addStyleClass("sapUiSupportIntRequestText");
@@ -621,12 +633,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              startText = new Text().addStyleClass("sapUiSupportIntRequestText");
              endText = new Text().addStyleClass("sapUiSupportIntRequestText");
              durationText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             statisticsTitle = new Title({text:"SAP Statistics for OData Calls"});
-             totalLabel = new Label({text:"Gateway Total"}).addStyleClass("sapUiSupportIntRequestLabel");
+             statisticsTitle = new Title({text: "SAP STATISTICS FOR ODATA CALLS"});
+             totalLabel = new Label({text: "Gateway Total"}).addStyleClass("sapUiSupportIntRequestLabel");
              totalText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             fwLabel = new Label({text:"Framework"}).addStyleClass("sapUiSupportIntRequestLabel");
+             fwLabel = new Label({text: "Framework"}).addStyleClass("sapUiSupportIntRequestLabel");
              fwText = new Text().addStyleClass("sapUiSupportIntRequestText");
-             appLabel = new Label({text:"Application"}).addStyleClass("sapUiSupportIntRequestLabel");
+             appLabel = new Label({text: "Application"}).addStyleClass("sapUiSupportIntRequestLabel");
              appText = new Text().addStyleClass("sapUiSupportIntRequestText");
 
              simpleForm = new SimpleForm({
@@ -635,29 +647,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 labelMinWidth: 100,
                 editable: false,
                 layout: "ResponsiveGridLayout",
-                labelSpanM: 5,
+                labelSpanM: 3,
                 emptySpanM: 0,
                 columnsM: 1,
                 breakpointM: 0,
-                content:[
-                   clientVsServerTitle,
-                   progressBar,
-                   new Title({text:"Request Data"}),
+                content: [
+                   new Title({text: "REQUEST DATA"}),
                    new Label({text: "Initiator Type"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    initiatorTypeText,
-                   new Label({text:"Entry Type"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   new Label({text: "Entry Type"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    entryTypeText,
-                   new Label({text:"Name"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   new Label({text: "Name"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    nameLink,
-                   new Label({text:"Start Time"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   new Label({text: "Start Time"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    startText,
-                   new Label({text:"End Time"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   new Label({text: "End Time"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    endText,
-                   new Label({text:"Duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
+                   new Label({text: "Duration"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    durationText
                 ]
              });
-             return simpleForm;
+
+             return [
+                clientVsServerTitle,
+                progressBar,
+                simpleForm
+             ];
           }
        };
 
@@ -710,6 +725,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              var index = parseInt($li.attr('data-interaction-index'), 10);
              var interaction = that.interactions[index];
 
+             if (!interaction) {
+                return;
+             }
+
              var e2eDuration = interaction.end - interaction.start;
              e2eDurationText.setText(that.formatDuration(e2eDuration));
              processingText.setText(that.formatDuration(e2eDuration - interaction.roundtrip));
@@ -726,7 +745,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           function createEmptyPopOver() {
              var oPopover = new Popover({
                 placement: sap.m.PlacementType.Auto,
-                contentWidth: "450px",
+                contentWidth: "350px",
                 showHeader: false,
                 showArrow: true,
                 verticalScrolling: true,
@@ -735,7 +754,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    createPopOverContent()
                 ],
                 afterClose: that.setPopoverCloseTimestamp.bind(that)
-             });
+             }).addStyleClass('sapUiSupportPopover');
 
              return oPopover;
           }
@@ -756,7 +775,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 labelMinWidth: 100,
                 editable: false,
                 layout: "ResponsiveGridLayout",
-                labelSpanM: 5,
+                labelSpanM: 7,
                 emptySpanM: 0,
                 columnsM: 1,
                 breakpointM: 0,
@@ -817,6 +836,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
        };
 
        InteractionTree.prototype.formatDuration = function (duration) {
+
+          if (duration < 3) {
+             return duration.toFixed(2) + ' ms';
+          }
 
           return duration >= 1000 ? (duration / 1000).toFixed(3) + ' s' : duration.toFixed(0) + ' ms';
        };
