@@ -20,6 +20,9 @@ sap.ui.require([
 
 	var mScope = {
 			"$EntityContainer" : "tea_busi.DefaultContainer",
+			"empty." : {
+				"$kind" : "Schema"
+			},
 			// tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
 			"tea_busi." : {
 				"$kind" : "Schema",
@@ -53,6 +56,27 @@ sap.ui.require([
 								: "UI.TextArrangementType/TextLast"
 						}
 					}
+				},
+				"@empty" : {}
+			},
+			"empty.Container" : {
+				"$kind" : "EntityContainer"
+			},
+			"tea_busi.DefaultContainer" : {
+				"$kind" : "EntityContainer",
+				"EMPLOYEES" : {
+					"$kind" : "EntitySet",
+					"$NavigationPropertyBinding" : {
+						"EMPLOYEE_2_TEAM" : "T€AMS"
+					},
+					"$Type" : "tea_busi.Worker"
+				},
+				"T€AMS" : {
+					"$kind" : "EntitySet",
+					"$NavigationPropertyBinding" : {
+						"TEAM_2_EMPLOYEES" : "EMPLOYEES"
+					},
+					"$Type" : "tea_busi.TEAM"
 				}
 			},
 			"tea_busi.TEAM" : {
@@ -94,23 +118,6 @@ sap.ui.require([
 					"$kind" : "NavigationProperty",
 					"$Type" : "tea_busi.TEAM",
 					"$Nullable" : false
-				}
-			},
-			"tea_busi.DefaultContainer" : {
-				"$kind" : "EntityContainer",
-				"EMPLOYEES" : {
-					"$kind" : "EntitySet",
-					"$NavigationPropertyBinding" : {
-						"EMPLOYEE_2_TEAM" : "T€AMS"
-					},
-					"$Type" : "tea_busi.Worker"
-				},
-				"T€AMS" : {
-					"$kind" : "EntitySet",
-					"$NavigationPropertyBinding" : {
-						"TEAM_2_EMPLOYEES" : "EMPLOYEES"
-					},
-					"$Type" : "tea_busi.TEAM"
 				}
 			},
 			"name.space.Broken" : {
@@ -386,9 +393,14 @@ sap.ui.require([
 		"/T€AMS/TEAM_2_EMPLOYEES/@sapui.name" : "TEAM_2_EMPLOYEES",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/./@sapui.name" : "tea_busi.Worker",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE/@sapui.name" : "AGE",
+		"/T€AMS/@empty/@sapui.name" : "@empty",
+		"/T€AMS/@/@empty/@sapui.name" : "@empty",
+		"/T€AMS/$Type/@UI.LineItem/0/@UI.Importance/@sapui.name" : "@UI.Importance",
 		// annotations ----------------------------------------------------------------------------
 		"/$EntityContainer/@empty"
 			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@empty"],
+		"/tea_busi.Worker/@missing" : undefined,
+		"/tea_busi.Worker/@/@missing" : undefined,
 		"/T€AMS/$Type/./@UI.LineItem" : oTeamLineItem,
 		"/T€AMS/$Type/@UI.LineItem" : oTeamLineItem,
 		"/T€AMS/$Type/@UI.LineItem/0/Label" : oTeamLineItem[0].Label,
@@ -399,7 +411,10 @@ sap.ui.require([
 			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
 		"/T€AMS/Team_Id/@Common.Text@UI.TextArrangement"
 			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]
-				["@Common.Text@UI.TextArrangement"]
+				["@Common.Text@UI.TextArrangement"],
+		"/tea_busi./@empty" : mScope["tea_busi."]["@empty"],
+		// "@" to access to all annotations, e.g. for iteration
+		"/T€AMS/Team_Id/@" : mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]
 	}, function (sPath, sContextPath, sMetaPath, vResult) {
 		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var oContext = sContextPath && this.oMetaModel.getContext(sContextPath),
@@ -414,14 +429,41 @@ sap.ui.require([
 			assert.strictEqual(oSyncPromise.getResult(), vResult);
 		});
 	});
+	//TODO special cases where inline and external targeting annotations need to be merged!
 	//TODO support also external targeting from a different schema!
-	//TODO also support all variants of "14.5.12 Path"
-	//TODO special cases from sap.ui.model.odata.ODataMetaModel#_getObject:
-	// - "Invalid relative path w/o context"
-	// - BindingParser.parseExpression() ??? we hardly have any arrays...
+	//TODO also support all variants of "14.5.12 Path", esp. "14.5.2 Expression AnnotationPath"
 	//TODO $count?
 	//TODO this.oList => getObject/getProperty MUST also accept object instead of context!
 
+	//*********************************************************************************************
+	QUnit.test("fetchObject: Invalid relative path w/o context", function (assert) {
+		var sMetaPath = "some/relative/path",
+			oSyncPromise;
+
+		this.oLogMock.expects("error").withExactArgs("Invalid relative path w/o context", sMetaPath,
+			"sap.ui.model.odata.v4.ODataMetaModel");
+
+		oSyncPromise = this.oMetaModel.fetchObject(sMetaPath, null);
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.strictEqual(oSyncPromise.getResult(), null);
+	});
+
+	//*********************************************************************************************
+	["/empty.Container/@", "/tea_busi.Worker/@", "/T€AMS/Name/@"].forEach(function (sPath) {
+		QUnit.test("fetchObject returns {} (anonymous empty object): " + sPath, function (assert) {
+			var oSyncPromise;
+
+			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+				.returns(SyncPromise.resolve(mScope));
+
+			oSyncPromise = this.oMetaModel.fetchObject(sPath);
+
+			assert.strictEqual(oSyncPromise.isFulfilled(), true);
+			assert.deepEqual(oSyncPromise.getResult(), {}); // strictEqual would not work!
+		});
+	});
+	//TODO if there are no annotations for an external target, avoid {} unless "@" is used?
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
@@ -679,20 +721,18 @@ sap.ui.require([
 	QUnit.test("bindProperty", function (assert) {
 		var oBinding,
 			oContext = {},
-			mParameters = {},
 			sPath = "foo",
 			oValue = {};
 
 		this.mock(this.oMetaModel).expects("getProperty").withExactArgs(sPath, oContext)
 			.returns(oValue);
 
-		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext);
 
 		assert.ok(oBinding instanceof PropertyBinding);
 		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
 		assert.strictEqual(oBinding.getPath(), sPath);
 		assert.strictEqual(oBinding.getContext(), oContext);
-		assert.strictEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.getValue(), oValue);
 	});
 
@@ -705,16 +745,14 @@ sap.ui.require([
 				iChangeCount = 0,
 				oContext = this.oMetaModel.getMetaContext("/EMPLOYEES"),
 				oContextCopy = this.oMetaModel.getMetaContext("/EMPLOYEES"),
-				oNewContext = this.oMetaModel.getMetaContext("/T€AMS"),
-				mParameters = {};
+				oNewContext = this.oMetaModel.getMetaContext("/T€AMS");
 
-			oBinding = this.oMetaModel.bindContext(sPath, oContextCopy, mParameters);
+			oBinding = this.oMetaModel.bindContext(sPath, oContextCopy);
 
 			assert.ok(oBinding instanceof ContextBinding);
 			assert.strictEqual(oBinding.getModel(), this.oMetaModel);
 			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.getContext(), oContextCopy);
-			assert.strictEqual(oBinding.mParameters, mParameters);
 
 			assert.strictEqual(oBinding.isInitial(), true);
 			assert.strictEqual(oBinding.getBoundContext(), null);
@@ -786,7 +824,6 @@ sap.ui.require([
 			aFilters = [],
 			fnGetValue, // fnApply.args[0][2]
 			aIndices = ["ID", "AGE"], // mock filter result
-			mParameters = {},
 			sPath = "",
 			aSorters = [];
 
@@ -800,15 +837,17 @@ sap.ui.require([
 		fnApply.withArgs(["ID", "AGE", "EMPLOYEE_2_TEAM"], aFilters).returns(aIndices);
 
 		// code under test: implicitly calls oBinding.applyFilter()
-		oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
+		oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters);
 
 		assert.ok(oBinding instanceof JSONListBinding);
+		//TODO improve performance by not extending JSONListBinding?
+		// - update() makes a shallow copy of this.oList, avoid?!
+		// - checkUpdate() calls _getObject() twice; uses jQuery.sap.equal(); avoid?!
 		assert.strictEqual(oBinding.getModel(), oMetaModel);
 		assert.strictEqual(oBinding.getPath(), sPath);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.aSorters, aSorters);
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
-		assert.strictEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.aIndices, aIndices);
 		assert.strictEqual(oBinding.iLength, oBinding.aIndices.length);
 
@@ -845,6 +884,7 @@ sap.ui.require([
 		//TODO support for $BaseType
 		contextPath : "/EMPLOYEES",
 		metaPath : "",
+		pathDot : ".",
 		result : {
 			"ID" : oWorkerData.ID,
 			"AGE" : oWorkerData.AGE,
@@ -855,6 +895,7 @@ sap.ui.require([
 		// same as before, but with non-empty path
 		contextPath : "/",
 		metaPath : "EMPLOYEES",
+		pathDot : "EMPLOYEES/.",
 		result : {
 			"ID" : oWorkerData.ID,
 			"AGE" : oWorkerData.AGE,
@@ -865,9 +906,39 @@ sap.ui.require([
 		// Iterate all OData path segments, i.e. entity sets.
 		// Implicit scope lookup happens here!
 		metaPath : "/",
+		pathDot : "/.",
 		result : {
 			"EMPLOYEES" : oContainerData.EMPLOYEES,
 			"T€AMS" : oContainerData["T€AMS"]
+		}
+	}, {
+		// <template:repeat list="{property>@}" ...>
+		// Iterate all external targeting annotations.
+		contextPath : "/T€AMS/Team_Id",
+		metaPath : "@",
+		result : mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"],
+		strict : true
+	}, {
+		// <template:repeat list="{property>@}" ...>
+		// Iterate all external targeting annotations.
+		contextPath : "/T€AMS/Name",
+		metaPath : "@",
+		result : {}
+	}, {
+		// <template:repeat list="{field>@}" ...>
+		// Iterate all inline annotations.
+		contextPath : "/T€AMS/$Type/@UI.LineItem/0",
+		metaPath : "@",
+		result : {
+			"@UI.Importance" : oTeamLineItem[0]["@UI.Importance"]
+		}
+	}, {
+		// <template:repeat list="{at>}" ...>
+		// Iterate all inline annotations (edge case with empty relative path).
+		contextPath : "/T€AMS/$Type/@UI.LineItem/0/@",
+		metaPath : "",
+		result : {
+			"@UI.Importance" : oTeamLineItem[0]["@UI.Importance"]
 		}
 	}].forEach(function (oFixture) {
 		var sResolvedPath = oFixture.contextPath
@@ -876,19 +947,31 @@ sap.ui.require([
 
 		QUnit.test("_getObject: " + sResolvedPath, function (assert) {
 			var oContext = oFixture.contextPath && this.oMetaModel.getContext(oFixture.contextPath),
-				oMetadataUsed = JSON.parse(JSON.stringify(mScope)),
-				oObject;
+				fnGetObjectSpy = this.spy(this.oMetaModel, "getObject"),
+				oMetadataClone = JSON.parse(JSON.stringify(mScope)),
+				oObject,
+				sPathDot = oFixture.pathDot || oFixture.metaPath;
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
-				.returns(SyncPromise.resolve(oMetadataUsed));
+				.returns(SyncPromise.resolve(mScope));
 
 			// code under test
 			oObject = this.oMetaModel._getObject(oFixture.metaPath, oContext);
 
-			assert.deepEqual(oObject, oFixture.result);
-			assert.deepEqual(oMetadataUsed, mScope, "used meta data unchanged");
+			assert.strictEqual(fnGetObjectSpy.callCount, 1);
+			assert.ok(fnGetObjectSpy.alwaysCalledWithExactly(sPathDot, oContext),
+				fnGetObjectSpy.printf("%C"));
+			if (oFixture.strict) {
+				assert.strictEqual(oObject, oFixture.result);
+			} else {
+				assert.deepEqual(oObject, oFixture.result);
+			}
+			assert.deepEqual(mScope, oMetadataClone, "meta data unchanged");
 		});
 	});
+	//TODO iterate mix of inline and external targeting annotations
+	//TODO iterate annotations like "foo@..." for our special cases, e.g. annotations of annotation
+	//TODO avoid additional "." in case metaPath already contains one? hard to check...
 	//TODO Avoid copies of objects? Makes sense only after we get rid of JSONListBinding which
 	// makes copies itself. If we get rid of it, we might become smarter in updateIndices and
 	// learn from the path which collection to iterate: sPath = "", "$", or "@", oContext holds
