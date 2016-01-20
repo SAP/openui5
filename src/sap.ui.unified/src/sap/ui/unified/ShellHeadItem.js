@@ -47,9 +47,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 			showSeparator : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * If set to true, the item gets a special design.
+			 * Defines the toggle state in case the item represents a toggle button (see also property <code>toggleEnabled</code>).
 			 */
 			selected : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * If set to true, the item represents a toggle button. The <code>selected</code> property can the be used to
+			 * define the toggle state. Otherwise the item is displayed as action button. In this case the <code>selected</code> property
+			 * is ignored.
+			 * @since 1.34.3
+			 */
+			toggleEnabled : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
 			 * If set to true, a theme dependent marker is shown on the item.
@@ -110,12 +118,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 		return this;
 	};
 
+	function _updateSelectionStateInDOM() {
+		var $This = this.$(),
+			bToggleEnabled = this.getToggleEnabled(),
+			bSelected = this.getSelected();
+
+		if (!$This.length) {
+			return;
+		}
+
+		if (bToggleEnabled) {
+			$This.toggleClass("sapUiUfdShellHeadItmSel", bSelected);
+			$This.attr("aria-pressed", bSelected);
+		} else {
+			$This.removeClass("sapUiUfdShellHeadItmSel");
+			$This.removeAttr("aria-pressed");
+		}
+	}
+
+	ShellHeadItem.prototype.setToggleEnabled = function(bEnable){
+		this.setProperty("toggleEnabled", !!bEnable, true);
+		_updateSelectionStateInDOM.apply(this);
+		return this;
+	};
+
 
 	ShellHeadItem.prototype.setSelected = function(bSelected){
-		bSelected = !!bSelected;
-		this.setProperty("selected", bSelected, true);
-		this.$().toggleClass("sapUiUfdShellHeadItmSel", bSelected);
-		this.$().attr("aria-pressed", bSelected);
+		this.setProperty("selected", !!bSelected, true);
+		_updateSelectionStateInDOM.apply(this);
 		return this;
 	};
 
