@@ -5,7 +5,7 @@
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
 	'jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './P13nDialogRenderer', './library', 'sap/ui/core/EnabledPropagator', 'jquery.sap.xml'
-], function(jQuery, Dialog, IconTabBar, IconTabFilter, P13nDialogRenderer, library, EnabledPropagator/* , jQuerySap */) {
+], function(jQuery, Dialog, IconTabBar, IconTabFilter, P13nDialogRenderer, library, EnabledPropagator) {
 	"use strict";
 
 	/**
@@ -185,14 +185,36 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDialog.prototype._createDialog = function() {
-		this.setHorizontalScrolling(false);
-		// according to consistency we adjust the content width of P13nDialog to the content width of value help dialog
-		this.setContentWidth("65rem");
-		this.setContentHeight("40rem");
-		this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
-		this.addButton(this._createOKButton());
-		this.addButton(this._createCancelButton());
-		this.addButton(this._createResetButton());
+		if (sap.ui.Device.system.phone) {
+			var that = this;
+			this.setStretch(true);
+			this.setVerticalScrolling(false);
+			this.setHorizontalScrolling(false);
+			this.setCustomHeader(new sap.m.Bar({
+				contentLeft: new sap.m.Button({
+					visible: false,
+					type: sap.m.ButtonType.Back,
+					press: function(oEvent) {
+						that._backToList();
+					}
+				}),
+				contentMiddle: new sap.m.Title({
+					text: this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"),
+					level: "H1"
+				})
+			}));
+			this.setBeginButton(this._createOKButton());
+			this.setEndButton(this._createCancelButton());
+		} else {
+			this.setHorizontalScrolling(false);
+			// according to consistency we adjust the content width of P13nDialog to the content width of value help dialog
+			this.setContentWidth("65rem");
+			this.setContentHeight("40rem");
+			this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
+			this.addButton(this._createOKButton());
+			this.addButton(this._createCancelButton());
+			this.addButton(this._createResetButton());
+		}
 	};
 
 	/**
@@ -334,6 +356,7 @@ sap.ui.define([
 	 */
 	P13nDialog.prototype._switchPanel = function(oNavigationItem) {
 		var oPanel = this._getPanelByNavigationItem(oNavigationItem);
+		this.setVerticalScrolling(oPanel.getVerticalScrolling());
 		if (sap.ui.Device.system.phone) {
 			var oNavigationControl = this._getNavigationControl();
 			if (oNavigationControl) {
@@ -344,7 +367,6 @@ sap.ui.define([
 				this.getCustomHeader().getContentLeft()[0].setVisible(true);
 			}
 		} else {
-			this.setVerticalScrolling(oPanel.getVerticalScrolling());
 			this.getPanels().forEach(function(oPanel_) {
 				if (oPanel_ === oPanel) {
 					oPanel_.beforeNavigationTo();
