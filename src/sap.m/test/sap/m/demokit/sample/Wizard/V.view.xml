@@ -38,7 +38,8 @@
 							</WizardStep>
 							<WizardStep id="ProductInfoStep"
 										validated="false"
-										title="Product Information">
+										title="Product Information"
+										activate="additionalInfoValidation">
 								<MessageStrip class="sapUiSmallMarginBottom"
 											  text="Validation in the wizard is controlled by calling the validateStep(Step) and invalidateStep(Step) methods "
 											  showIcon="true"/>
@@ -47,12 +48,12 @@
 										editable="true">
 									<Label text="Name" required="true"/>
 									<Input valueStateText="Enter 6 symbols or more"
-										   valueState="{/productNameState}" id="ProductName" liveChange="additinalInfoValidation"
+										   valueState="{/productNameState}" id="ProductName" liveChange="additionalInfoValidation"
 										   placeholder="Enter name with length greater than 6" value="{/productName}"/>
 									<Label text="Weight" required="true"/>
 									<Input valueStateText="Enter digits"
 										   valueState="{/productWeightState}" id="ProductWeight"
-										   liveChange="additinalInfoValidation" type="Number" placeholder="Enter digits"
+										   liveChange="additionalInfoValidation" type="Number" placeholder="Enter digits"
 										   value="{/productWeight}"/>
 									<Label text="Manufacturer"/>
 									<Select selectedKey="{/productManufacturer}">
