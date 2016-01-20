@@ -252,9 +252,29 @@
 				oItem.attachPress(onPress);
 				bEventFired = false;
 				sap.ui.test.qunit.triggerEvent("click", aItems[i]);
-				ok(bEventFired, "Press event fired when Item '"+aItems[i]+"' is pressed.")
+				ok(bEventFired, "Press event fired when Item '"+aItems[i]+"' is pressed.");
 				oItem.detachPress(onPress);
 			}
+		});
+
+		test("Item toggle state", function() {
+			var oItem = sap.ui.getCore().byId("_itm");
+
+			function checkToggle(bSelected, bToggleEnabled, bExpectVisualSelection, sAriaPressed) {
+				oItem.setSelected(bSelected);
+				oItem.setToggleEnabled(bToggleEnabled);
+				var sStateInfo = "toggle state (selected=" + bSelected + ";toggleEnabled=" + bToggleEnabled + ")";
+				ok(bExpectVisualSelection && oItem.$().hasClass("sapUiUfdShellHeadItmSel")
+					|| !bExpectVisualSelection && !oItem.$().hasClass("sapUiUfdShellHeadItmSel"),
+					"Visual Selection " + (!bExpectVisualSelection ? "not " : "") + "expected for " + sStateInfo);
+				ok(sAriaPressed == oItem.$().attr("aria-pressed"),
+					"Attribute aria-pressed=" + sAriaPressed + " expected for " + sStateInfo);
+			}
+
+			checkToggle(false, false, false, null);
+			checkToggle(true, false, false, null);
+			checkToggle(false, true, false, "false");
+			checkToggle(true, true, true, "true");
 		});
 
 		test("Clear UI", 0, function(){
