@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-	<P13nDialog ok="handleClose" cancel="handleClose" showReset="true"
+	<P13nDialog ok="handleOK" cancel="handleCancel" showReset="true"
 		reset="handleReset" initialVisiblePanelType="sort">
 		<panels>
 			<P13nColumnsPanel title="Columns" visible="true"

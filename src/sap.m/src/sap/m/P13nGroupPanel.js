@@ -426,6 +426,7 @@ sap.ui.define([
 					index: iIndex,
 					groupItemData: oGroupItem
 				});
+				that._notifyChange();
 			}
 			if (sOperation === "add") {
 				oGroupItem = new sap.m.P13nGroupItem({
@@ -441,6 +442,7 @@ sap.ui.define([
 					groupItemData: oGroupItem
 				});
 				that._bIgnoreBindCalls = false;
+				that._notifyChange();
 			}
 			if (sOperation === "remove") {
 				that._bIgnoreBindCalls = true;
@@ -449,6 +451,7 @@ sap.ui.define([
 					index: iIndex
 				});
 				that._bIgnoreBindCalls = false;
+				that._notifyChange();
 			}
 		};
 	};
@@ -498,6 +501,13 @@ sap.ui.define([
 		this.setProperty("validationListener", fListener);
 		if (fListener) {
 			fListener(this, jQuery.proxy(this._updateValidationResult, this));
+		}
+	};
+
+	P13nGroupPanel.prototype._notifyChange = function() {
+		var fListener = this.getChangeNotifier();
+		if (fListener) {
+			fListener(this);
 		}
 	};
 

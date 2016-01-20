@@ -1,8 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-	<P13nDialog ok="onClose" cancel="onClose" showReset="true"
-		reset="onReset" initialVisiblePanelType="dimeasure">
+	<P13nDialog ok="handleOK" cancel="handleCancel" showReset="true"
+		reset="handleReset" initialVisiblePanelType="dimeasure">
 		<panels>
 			<P13nDimMeasurePanel title="{i18n>Title}"
 				visible="true"

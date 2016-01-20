@@ -699,6 +699,7 @@ sap.ui.define([
 					index: iIndex,
 					filterItemData: oFilterItem
 				});
+				that._notifyChange();
 			}
 			if (sOperation === "add") {
 				if (iConditionIndex >= 0) {
@@ -720,6 +721,7 @@ sap.ui.define([
 					filterItemData: oFilterItem
 				});
 				that._bIgnoreBindCalls = false;
+				that._notifyChange();
 			}
 			if (sOperation === "remove") {
 				that._bIgnoreBindCalls = true;
@@ -728,6 +730,7 @@ sap.ui.define([
 					index: iIndex
 				});
 				that._bIgnoreBindCalls = false;
+				that._notifyChange();
 			}
 
 // that.getFilterItems().forEach(function(oItem, i) {
@@ -740,6 +743,13 @@ sap.ui.define([
 // });
 
 		};
+	};
+
+	P13nFilterPanel.prototype._notifyChange = function() {
+		var fListener = this.getChangeNotifier();
+		if (fListener) {
+			fListener(this);
+		}
 	};
 
 	return P13nFilterPanel;

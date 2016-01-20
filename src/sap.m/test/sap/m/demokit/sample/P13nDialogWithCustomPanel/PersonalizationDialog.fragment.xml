@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m"
 	xmlns:custom="sap.m.sample.P13nDialogWithCustomPanel" xmlns:core="sap.ui.core"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
-	<P13nDialog ok="handleClose" cancel="handleClose" showReset="true"
+	<P13nDialog ok="handleOK" cancel="handleCancel" showReset="true"
 		reset="handleReset" initialVisiblePanelType="custom1">
 		<panels>
 			<custom:CustomPanel title="Columns Setting (Custom Panel)"
@@ -9,14 +9,15 @@
 				<custom:content>
 					<RadioButtonGroup columns="2">
 						<buttons>
-							<RadioButton text="All Data" />
-							<RadioButton text="Evaluated Data" />
+							<RadioButton text="All Data" select="handleSelect" />
+							<RadioButton text="Evaluated Data" select="handleSelect" />
 						</buttons>
 					</RadioButtonGroup>
 				</custom:content>
 			</custom:CustomPanel>
 			<P13nColumnsPanel title="Columns" visible="true"
-				addColumnsItem="onAddColumnsItem" type="columns"
+				addColumnsItem="onAddColumnsItem" changeColumnsItems="onChangeColumnsItem"
+				type="columns"
 				items="{
                     path: '/ColumnCollection'
                 }">
