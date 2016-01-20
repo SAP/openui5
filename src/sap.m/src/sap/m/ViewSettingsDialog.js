@@ -153,7 +153,19 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			/**
 			 * Called when the reset filters button is pressed. It can be used to clear the state of custom filter controls.
 			 */
-			resetFilters : {}
+			resetFilters : {},
+
+			/**
+			 * Fired when the filter detail page is opened.
+			 */
+			filterDetailPageOpened: {
+				parameters: {
+					/**
+					 * The filter item for which the details are opened.
+					 */
+					parentFilterItem: {type: "sap.m.ViewSettingsFilterItem"}
+				}
+			}
 		}
 	}});
 
@@ -1887,6 +1899,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 
 				break;
+		}
+
+		// fire "filterDetailPageOpened" event if that is the case
+		if (vWhich === 3) {
+			this.fireFilterDetailPageOpened({parentFilterItem : oItem});
 		}
 	};
 
