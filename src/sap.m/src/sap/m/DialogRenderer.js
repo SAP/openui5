@@ -59,6 +59,10 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				oRm.addClass("sapMDialogOpen");
 			}
 
+			if (window.devicePixelRatio > 1) {
+				oRm.addClass("sapMDialogHighPixelDensity");
+			}
+
 			if (oControl._bDisableRepositioning) {
 				oRm.addClass("sapMDialogTouched");
 			}
