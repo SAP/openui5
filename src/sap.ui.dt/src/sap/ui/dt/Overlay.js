@@ -447,7 +447,20 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			var oParent = this.getParent();
 			var oParentDomRef = oParent.getDomRef();
 			if (oParentDomRef !== this.$().parent().get(0)) {
-				$this.appendTo(oParentDomRef);
+				var $parentDomRef = oParent.$();
+				var $parentContainer = $parentDomRef.find(">.sapUiDtOverlayChildren");
+
+				var aDomRefChildren = $parentContainer.children();
+				var iDomPosition = aDomRefChildren.index($this);
+				var aChildren = oParent.getChildren();
+				var iPosition = aChildren.indexOf(this);
+				if (iDomPosition !== iPosition) {
+					if (iPosition === 0) {
+						$parentContainer.prepend($this);
+					} else {
+						aChildren[iPosition - 1].$().after($this);
+					}
+				}
 			}
 		} else {
 			// instead of adding the created DOM into the UIArea's DOM, we are adding it to overlay-container to avoid clearing of the DOM

@@ -35,6 +35,7 @@
 			jQuery.sap.require("sap.ui.dt.ElementOverlay");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			jQuery.sap.require("sap.ui.dt.DOMUtil");
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
 			jQuery.sap.require("sap.m.Button");
 			jQuery.sap.require("sap.m.Page");
 			jQuery.sap.require("sap.ui.layout.VerticalLayout");
@@ -559,6 +560,106 @@
 				this.oOverlay.destroy();
 				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(sId), undefined, "then OverlayRegistry.getOverlay should returns undefined for it's id");
 			});
+
+			QUnit.module("Given that an Overlay is created for two layouts with two child controls", {
+				beforeEach : function() {
+					this.oButton1 = new sap.m.Button({
+						text : "Button 1"
+					});
+					this.oButton2 = new sap.m.Button({
+						text : "Button 2"
+					});
+					this.oButton3 = new sap.m.Button({
+						text : "Button 3"
+					});
+					this.oButton4 = new sap.m.Button({
+						text : "Button 4"
+					});
+
+					this.oVerticalLayout1 = new sap.ui.layout.VerticalLayout({
+							content : [this.oButton1, this.oButton2]
+					});
+
+					this.oVerticalLayout2 = new sap.ui.layout.VerticalLayout({
+						content : [this.oButton3, this.oButton4]
+					});
+
+					this.oVerticalLayout1.placeAt("content");
+					this.oVerticalLayout2.placeAt("content");
+
+					sap.ui.getCore().applyChanges();
+
+
+					this.oOverlayLayout1 = new sap.ui.dt.ElementOverlay({
+						element : this.oVerticalLayout1
+					});
+
+					this.oOverlayLayout2 = new sap.ui.dt.ElementOverlay({
+						element : this.oVerticalLayout2
+					});
+
+					this.oOverlayButton1 = new sap.ui.dt.ElementOverlay({
+						element : this.oButton1
+					});
+
+					this.oOverlayButton2 = new sap.ui.dt.ElementOverlay({
+						element : this.oButton2
+					});
+
+					this.oOverlayButton3 = new sap.ui.dt.ElementOverlay({
+						element : this.oButton3
+					});
+
+					this.oOverlayButton4 = new sap.ui.dt.ElementOverlay({
+						element : this.oButton4
+					});
+
+				},
+				afterEach : function() {
+
+					this.oButton1.destroy();
+					this.oButton2.destroy();
+					this.oButton3.destroy();
+					this.oButton4.destroy();
+					this.oVerticalLayout1.destroy();
+					this.oVerticalLayout2.destroy();
+					this.oOverlayLayout1.destroy();
+					this.oOverlayLayout2.destroy();
+					this.oOverlayButton1.destroy();
+					this.oOverlayButton2.destroy();
+					this.oOverlayButton3.destroy();
+					this.oOverlayButton4.destroy();
+
+				}
+			});
+
+			QUnit.test("when a control is moved to another layout", function(assert) {
+				sap.ui.dt.ElementUtil.insertAggregation(this.oVerticalLayout2, "content", this.oButton2, 1);
+				sap.ui.getCore().applyChanges();
+
+				var oDomRefButton1 = this.oOverlayButton1.getDomRef();
+				var oDomRefButton2 = this.oOverlayButton2.getDomRef();
+				var oDomRefButton3 = this.oOverlayButton3.getDomRef();
+				var oDomRefButton4 = this.oOverlayButton4.getDomRef();
+
+				assert.strictEqual(oDomRefButton4, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order");
+				assert.strictEqual(null, oDomRefButton1.nextElementSibling, "and source layout contains only one control");
+			});
+
+			QUnit.test("when DomRef of Overlay Layout contains extra elements and the control is prepended to this layout", function(assert) {
+				this.oOverlayLayout2.$().prepend("<div></div>");
+				sap.ui.dt.ElementUtil.insertAggregation(this.oVerticalLayout2, "content", this.oButton2, 0);
+				sap.ui.getCore().applyChanges();
+
+				var oDomRefButton1 = this.oOverlayButton1.getDomRef();
+				var oDomRefButton2 = this.oOverlayButton2.getDomRef();
+				var oDomRefButton3 = this.oOverlayButton3.getDomRef();
+				var oDomRefButton4 = this.oOverlayButton4.getDomRef();
+
+				assert.strictEqual(oDomRefButton3, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order");
+				assert.strictEqual(null, oDomRefButton2.previousElementSibling, "and extra element is not taken into account");
+			});
+
 		</script>
 	</head>
 	<body>

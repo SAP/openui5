@@ -57,8 +57,13 @@ function(jQuery) {
 		oRm.writeStyles();
 		oRm.write(">");
 
+		oRm.write("<div");
+		oRm.addClass("sapUiDtOverlayChildren");
+		oRm.writeClasses();
+		oRm.write(">");
 		this._renderChildren(oRm, oOverlay);
 
+		oRm.write("</div>");
 		oRm.write("</div>");
 	};
 
