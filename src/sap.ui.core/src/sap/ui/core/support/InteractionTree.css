@@ -282,6 +282,7 @@ li.sapUiInteractionItemExpanded {
 .sapUiSupportIntProgressBarParent {
 	position: relative;
 	height: 10px;
+	margin : 0 1rem;
 }
 
 .sapUiSupportIntProgressBarSeparator {
@@ -294,4 +295,55 @@ li.sapUiInteractionItemExpanded {
 .sapUiSupportIntProgressBar {
 	height: inherit;
 	float: left;
+}
+
+.sapUiInteractionTitle {
+	margin : 1rem;
+	width: 100%;
+}
+
+.sapUiInteractionTitleSection {
+	display: inline-block;
+	width: 33%;
+}
+
+.sapUiInteractionTitleText {
+	font-size: 10px;
+	color: #666;
+}
+
+.sapUiInteractionTitleSubText {
+	font-size: 16px;
+	color: #333;
+}
+
+.sapUiSupportPopover .sapUiFormM .sapUiFormContainerTitle > .sapUiFormTitle  {
+	font-size: 12px;
+	color: #666;
+	height: 1rem;
+	line-height: 1rem;
+}
+
+.sapUiSupportPopover .sapUiFormM .sapUiFormResGridLastContXL  {
+	margin-top: 1rem;
+}
+
+
+.sapUiSupportIntHidden {
+	display: none;
+}
+
+.sapUiSupportPopover .sapMLabel.sapUiSupportIntRequestLabel {
+	font-weight: bold;
+	font-size: 12px;
+	color: #333;
+}
+
+.sapUiSupportPopover .sapUiSupportIntRequestText.sapMText  {
+	font-size: 12px;
+	color: #333;
+}
+
+.sapUiSupportPopover .sapUiRGLContainerCont {
+	padding-bottom: 0;
 }
