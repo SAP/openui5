@@ -19,42 +19,49 @@
 				title:"Page 1",
 				content : [
 					new sap.m.Button({
+					id : "show-footer-btn",
 					text : "Show footer",
 					press : function() {
 						page1.setShowFooter(true);
 					}
 				}),
 				new sap.m.Button({
+					id : "hide-footer-btn",
 					text : "Hide footer",
 					press : function() {
 						page1.setShowFooter(false);
 					}
 				}),
 				new sap.m.Button({
+					id : "set-bgnd-solid-btn",
 					text : "Set Background Design Solid",
 					press : function() {
 						page1.setBackgroundDesign("Solid");
 					}
 				}),
 				new sap.m.Button({
+					id : "set-bgnd-transparent-btn",
 					text : "Set Background Design Transparent",
 					press : function() {
 						page1.setBackgroundDesign("Transparent");
 					}
 				}),
 					new sap.m.Button({
+					id : "go-to-page-2-btn",
 					text : "To Page 2",
 					press : function() {
 						app.to("page2");
 					}
 				}),
 					new sap.m.Button({
+					id : "show-nav-btn",
 					text : "show Nav Button",
 					press : function() {
 						page1.setShowNavButton(true);
 					}
 				}),
 					new sap.m.Button({
+					id : "hide-nav-btn",
 					text : "hide Nav Button",
 					press : function() {
 						page1.setShowNavButton(false);
