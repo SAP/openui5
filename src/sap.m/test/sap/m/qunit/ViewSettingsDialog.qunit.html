@@ -686,6 +686,26 @@
 				this.oVSD._resetButton.firePress();
 			});
 
+			test("filterDetailPageOpened event", function () {
+				var done = assert.async(),
+					oFilterItem = this.oVSD.getFilterItems()[0];
+
+				strictEqual(typeof this.oVSD.fireFilterDetailPageOpened, 'function', 'fireFilterDetailPageOpened exists');
+
+				var fnFireItemPressSpy = sinon.spy(this.oVSD, "fireFilterDetailPageOpened");
+
+				this.oVSD.open();
+
+				jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+				this.oVSD._switchToPage(3, oFilterItem); // name details page
+
+
+				setTimeout(function() {
+					strictEqual(fnFireItemPressSpy.calledOnce, true, "filterDetailPageOpened event is fired when filter detial page is opened");
+					done();
+				}, 1000);
+			});
+
 			module ("Construction/Destruction", {
 				setup : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
@@ -1640,6 +1660,11 @@
 			this.oVSD.open();
 			strictEqual(this.oVSD._getSubHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
 		});
+
+
+
+
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
