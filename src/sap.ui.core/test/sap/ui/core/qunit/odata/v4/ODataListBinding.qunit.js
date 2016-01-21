@@ -83,7 +83,8 @@ sap.ui.require([
 		getCacheMock : function () {
 			var oCache = {
 					read: function () {},
-					refresh: function () {}
+					refresh: function () {},
+					toString: function () { return "/service/EMPLOYEES"; }
 				};
 
 			this.oSandbox.mock(Cache).expects("create").returns(oCache);

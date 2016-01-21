@@ -172,6 +172,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	};
 
 	/**
+	 * Returns the cache's URL.
+	 *
+	 * @returns {string} the URL
+	 */
+	Cache.prototype.toString = function () {
+		return this.sUrl;
+	};
+
+	/**
 	 * Creates a cache for a single entity that performs requests using the given requestor.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
@@ -220,6 +229,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	SingleCache.prototype.refresh = function () {
 		this.oPromise = undefined;
+	};
+
+	/**
+	 * Returns the single cache's URL.
+	 *
+	 * @returns {string} the URL
+	 */
+	SingleCache.prototype.toString = function () {
+		return this.sUrl;
 	};
 
 	return {

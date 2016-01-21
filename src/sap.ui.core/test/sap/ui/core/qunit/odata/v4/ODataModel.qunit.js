@@ -290,6 +290,7 @@ sap.ui.require([
 				oPromise = {};
 
 			this.mock(oModel.oRequestor).expects("request")
+				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
 				.withExactArgs("POST", getServiceUrl("/EMPLOYEES") + oModel._sQuery, null,
 					oEmployeeData).returns(oPromise);
 

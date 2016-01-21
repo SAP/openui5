@@ -819,6 +819,9 @@ sap.ui.require([
 
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
 			assert.ok(oBinding instanceof JSONListBinding);
+			//TODO improve performance by not extending JSONListBinding?
+			// - update() makes a shallow copy of this.oList, avoid?!
+			// - checkUpdate() calls _getObject() twice; uses jQuery.sap.equal(); avoid?!
 			assert.strictEqual(oBinding.getModel(), oMetaModel, "inner model not leaked");
 			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.getContext(), oContext);
