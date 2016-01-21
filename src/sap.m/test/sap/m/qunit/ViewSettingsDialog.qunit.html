@@ -258,6 +258,9 @@
 				}
 			};
 
+
+
+
 			module("Initial Check", {
 				setup : function () {
 					this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -279,6 +282,40 @@
 				strictEqual(this.oVSD.getSelectedSortItem(), null, 'The default value for selectedSortItem should be "null"');
 				strictEqual(this.oVSD.getSelectedGroupItem(), null, 'The default value for selectedGroupItem should be "null"');
 				strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, 'The default value for selectedPresetFilterItem should be "null"');
+			});
+
+			module("States", {
+				setup : function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
+			});
+
+
+			test("Setting busy state", function () {
+				var done = assert.async();
+
+				this.oVSD.open();
+				setTimeout(function() {
+					strictEqual(this.oVSD.$().find('.sapUiLocalBusyIndicator').length, 0, 'No busy indicator is shown');
+
+					this.oVSD.setBusy(true);
+
+					setTimeout(function() {
+						strictEqual(this.oVSD.$().find('.sapUiLocalBusyIndicator').length, 1,'Busy indicator is shown');
+
+						this.oVSD.setBusy(false);
+						strictEqual(this.oVSD.$().find('.sapUiLocalBusyIndicator').length, 0, 'No busy indicator is shown');
+
+						this.oVSD.exit();
+						done();
+					}.bind(this), 1000);
+				}.bind(this), 1000);
 			});
 
 			module ("getter/setter", {
