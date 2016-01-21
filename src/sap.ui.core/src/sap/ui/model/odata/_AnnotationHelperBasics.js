@@ -353,7 +353,7 @@ sap.ui.define([
 
 			switch (oResult.result) {
 			case "binding":
-				return bExpression ?  "$" + binding(false) : binding(bWithType);
+				return (bExpression ?  "$" : "") + binding(bWithType);
 
 			case "composite":
 				if (bExpression) {
