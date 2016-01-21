@@ -674,11 +674,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		var oElement = null,
 			bInteractionRelevant;
 
-		// notify interaction tracing for relevant event
-		bInteractionRelevant = oEvent.type.match(rEvents);
-		if (bInteractionRelevant) {
-			jQuery.sap.interaction.notifyEventStart(oEvent);
-		}
 
 		// TODO: this should be the 'lowest' SAPUI5 Control of this very
 		// UIArea instance's scope -> nesting scenario
@@ -724,6 +719,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		// as control event afterwards!
 		if (this.bLocked || this.oCore.isLocked()) {
 			return;
+		}
+
+		// notify interaction tracing for relevant event - it is important to have evaluated all the previous switches
+		// in case the method would return before dispatching the event, we should not notify an event start
+		if (jQuery.sap.interaction.getActive()) {
+			bInteractionRelevant = oEvent.type.match(rEvents);
+			if (bInteractionRelevant) {
+				jQuery.sap.interaction.notifyEventStart(oEvent);
+			}
 		}
 
 		// retrieve the pseudo event types
