@@ -1486,7 +1486,6 @@ sap.ui.define([
 		this._oToolbarSpacer = new sap.m.ToolbarSpacer();
 
 		this._oToolbar = new sap.m.OverflowToolbar({
-			active: true,
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
 			content: [
 				this._oToolbarSpacer, this._oSearchField, this._oShowSelectedButton, this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton
