@@ -66,7 +66,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			var sWeinreId = jQuery.sap.uid();
 			var sWeinreClientUrl = sap.ui.getCore().getConfiguration().getWeinreServer() + "/client/#" + sWeinreId;
 			var html = [];
-			html.push("<div id='sap-ui-techinfo' class='sapUiTInf sapUiDlg' style='width:640px; position: relative;'>");
+			html.push("<div id='sap-ui-techinfo' class='sapUiTInf sapUiDlg' style='width:800px; position: relative;'>");
 			html.push("<table border='0' cellpadding='3'>");
 			try {
 				var oVersionInfo = sap.ui.getVersionInfo();
