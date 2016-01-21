@@ -6,6 +6,7 @@ module.exports = [
 	"Breadcrumbs.spec.js",
 	"Wizard.spec.js",
 	"MessagePage.spec.js",
+	"ObjectHeaderVisualTest.spec.js",
 	"SemanticPage.spec.js",
 	"NotificationListItem.spec.js",
 	"NotificationListGroup.spec.js"
