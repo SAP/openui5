@@ -213,7 +213,12 @@ sap.ui.define([
 											sCurrentId = aItemsNotInTheList[0].ObjectID;
 										}
 
-										this.getContext().currentItem.id = sCurrentId;
+										var oCurrentItem = this.getContext().currentItem;
+										// Construct a binding path since the list item is not created yet and we only have the id.
+										oCurrentItem.bindingPath = "/" + oList.getModel().createKey("Objects", {
+											ObjectID : sCurrentId
+										});
+										oCurrentItem.id = sCurrentId;
 									},
 									errorMessage : "the model does not have a item that is not in the list"
 								});
