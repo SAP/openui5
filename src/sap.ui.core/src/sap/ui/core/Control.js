@@ -466,15 +466,18 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			if (!bIsUIArea) {
 				var oContentAggInfo = oContainer.getMetadata().getAggregation("content");
 				var bContainerSupportsPlaceAt = true;
+
 				if (oContentAggInfo) {
 					if (!oContentAggInfo.multiple || oContentAggInfo.type != "sap.ui.core.Control") {
 						bContainerSupportsPlaceAt = false;
 					}
-				} else {
-					//Temporary workaround for sap.ui.commons.AbsoluteLayout to enable placeAt even when no content aggregation is available. TODO: Find a proper solution
-					if (!oContainer.addContent || !oContainer.insertContent || !oContainer.removeAllContent) {
-						bContainerSupportsPlaceAt = false;
-					}
+				} else if (!oContainer.addContent ||
+						!oContainer.insertContent ||
+						!oContainer.removeAllContent) {
+					//Temporary workaround for sap.ui.commons.AbsoluteLayout to enable
+					// placeAt even when no content aggregation is available.
+					// TODO: Find a proper solution
+					bContainerSupportsPlaceAt = false;
 				}
 				if (!bContainerSupportsPlaceAt) {
 					jQuery.sap.log.warning("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
