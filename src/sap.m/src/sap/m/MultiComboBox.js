@@ -698,21 +698,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			}
 		};
 
-		// adding additional capabilities to the Popover
-		oPopover._removeArrow = function() {
-			this._marginTop = 0;
-			this._marginLeft = 0;
-			this._marginRight = 0;
-			this._marginBottom = 0;
-			this._arrowOffset = 0;
-			this._offsets = ["0 0", "0 0", "0 0", "0 0"];
-		};
-
-		oPopover._setPosition = function() {
-			this._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
-			this._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
-		};
-
 		oPopover.open = function() {
 			return this.openBy(that);
 		};
@@ -726,12 +711,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	MultiComboBox.prototype._onAfterRenderingPopover = function() {
 		var oPopover = this.getPicker(),
 			sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
-
-		// remove the Popover arrow
-		oPopover._removeArrow();
-
-		// position adaptations
-		oPopover._setPosition();
 
 		oPopover._setMinWidth(sWidth);
 	};
@@ -752,6 +731,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			bounce: false
 		});
 
+		oPopup._bShowArrow = false;
 		this._decoratePopover(oPopup);
 		return oPopup;
 	};
