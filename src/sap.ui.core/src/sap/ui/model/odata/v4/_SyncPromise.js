@@ -2,30 +2,21 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.model.odata.v4.SyncPromise
-
-/**
- * A wrapper around a Promise which observes settlement and provides synchronous access to result.
- *
- * Implements https://github.com/promises-aplus/promises-spec except:
- * <ul>
- * <li> "4. onFulfilled or onRejected
- * must not be called until the execution context stack contains only platform code."
- * <li> Interoperability is limited to <code>Promise</code> instances (use
- * <code>Promise.resolve</code> to wrap e.g. a <code>jQuery.Deferred</code> instance).
- * </ul>
- *
- * @namespace
- * @name sap.ui.model.odata.v4
- * @private
- */
-
 sap.ui.define([
 ], function() {
 	"use strict";
 
 	/**
-	 * Constructor for a SyncPromise to wrap the given promise.
+	 * Constructor for a SyncPromise to wrap the given promise in order to observe settlement and
+	 * provide synchronous access to the result.
+	 *
+	 * Implements https://github.com/promises-aplus/promises-spec except:
+	 * <ul>
+	 * <li> "4. onFulfilled or onRejected
+	 * must not be called until the execution context stack contains only platform code."
+	 * <li> Interoperability is limited to <code>Promise</code> instances (use
+	 * <code>Promise.resolve</code> to wrap e.g. a <code>jQuery.Deferred</code> instance).
+	 * </ul>
 	 *
 	 * @param {Promise|SyncPromise|any} oPromise
 	 *   the promise to wrap or the result to synchronously fulfill with

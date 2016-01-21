@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.model.odata.v4.ODataModel
-
 /**
  * Model and related classes like bindings for OData v4.
  *
@@ -12,6 +10,7 @@
  * @public
  */
 
+//Provides class sap.ui.model.odata.v4.ODataModel
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/Model",
@@ -54,7 +53,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sServiceUrl]
 	 *   root URL of the service to request data from; it is required, but may also be given via
-	 *   <code>mParameters.serviceUrl</code>. Must end with a forward slash according to OData V4
+	 *   <code>mParameters.serviceUrl</code>. Must end with a forward slash according to OData v4
 	 *   specification ABNF, rule "serviceRoot" unless you append OData custom query options
 	 *   to the service root URL separated with a "?", e.g. "/MyService/?custom=foo". See parameter
 	 *   <code>mParameters.serviceUrlParams</code> for details on custom query options.
@@ -66,7 +65,8 @@ sap.ui.define([
 	 *   given
 	 * @param {object} [mParameters.serviceUrlParams]
 	 *   map of OData custom query options to be used in each data service request for this model,
-	 *   see OData V4 specification part 2, "5.2 Custom Query Options". OData system query options
+	 *   see specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
+	 *   OData system query options
 	 *   and OData parameter aliases lead to an error.
 	 *   Query options from this map overwrite query options with the same name specified via the
 	 *   <code>sServiceUrl</code> parameter.
@@ -135,9 +135,9 @@ sap.ui.define([
 	 *   the context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
-	 *   $select "5.1 System Query Options" (see OData V4 specification part 2) are allowed. All
-	 *   other query options lead to an error. Query options specified for the binding overwrite
-	 *   model query options.
+	 *   $select "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL
+	 *   Conventions") are allowed. All other query options lead to an error. Query options
+	 *   specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
@@ -167,9 +167,9 @@ sap.ui.define([
 	 *   predefined filters
 	 * @param {object} [mParameters]
 	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
-	 *   $select "5.1 System Query Options" (see OData V4 specification part 2) are allowed. All
-	 *   other query options lead to an error. Query options specified for the binding overwrite
-	 *   model query options.
+	 *   $select "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL
+	 *   Conventions") are allowed. All other query options lead to an error. Query options
+	 *   specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @return {sap.ui.model.odata.v4.ODataListBinding}
@@ -196,9 +196,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   map of OData query options where only "5.2 Custom Query Options" (see OData V4
-	 *   specification part 2) are allowed. All other query options lead to an error.
-	 *   Query options specified for the binding overwrite model query options.
+	 *   map of OData query options where only "5.2 Custom Query Options" (see specification "OData
+	 *   Version 4.0 Part 2: URL Conventions") are allowed. All other query options lead to an
+	 *   error. Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
@@ -363,9 +363,9 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise for the "canonical path" of the entity for the given context.
-	 * According to "4.3.1 Canonical URL" of the OData V4 specification part 2, this is the "name
-	 * of the entity set associated with the entity followed by the key predicate identifying the
-	 * entity within the collection".
+	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
+	 * Conventions", this is the "name of the entity set associated with the entity followed by the
+	 * key predicate identifying the entity within the collection".
 	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
 	 * binding.
 	 *

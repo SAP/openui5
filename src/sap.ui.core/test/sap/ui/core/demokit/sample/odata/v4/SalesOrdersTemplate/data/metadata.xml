@@ -284,6 +284,10 @@
 			</EntityContainer>
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerID">
 				<Annotation Term="Common.Label" String="Characterfeld der Länge 10" />
+				<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="CompanyName">
+					<Annotation Term="com.sap.vocabularies.UI.v1.TextArrangement"
+						EnumMember="com.sap.vocabularies.UI.v1.TextArrangementType/TextLast"/>
+				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">
 				<Annotation Term="Common.Label" String="Feld der Laenge 3 Bytes" />
@@ -325,8 +329,11 @@
 				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
 					<Collection>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
-							<PropertyValue Property="Label" String="ID"/>
+							<PropertyValue Property="Label" String="Business Partner"/>
 							<PropertyValue Property="Value" Path="BusinessPartnerID"/>
+							<!-- TODO name vs. (number) value for enums -->
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High"/>
 						</Record>
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">
 							<PropertyValue Property="Label" String="Role"/>

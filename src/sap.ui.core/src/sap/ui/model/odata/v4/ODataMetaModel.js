@@ -18,7 +18,6 @@ sap.ui.define([
 
 	var ODataMetaContextBinding,
 		ODataMetaListBinding,
-		ODataMetaModel,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
 		// rest of segment after opening ( or [ and segments that consist only of digits
@@ -46,7 +45,7 @@ sap.ui.define([
 		};
 
 	/**
-	 * @class Context binding implementation for the OData meta model.
+	 * @class Context binding implementation for the OData meta data model.
 	 *
 	 * @extends sap.ui.model.ContextBinding
 	 * @private
@@ -79,7 +78,7 @@ sap.ui.define([
 		});
 
 	/**
-	 * @class List binding implementation for the OData meta model which supports filtering on
+	 * @class List binding implementation for the OData meta data model which supports filtering on
 	 * the virtual property "@sapui.name" (which refers back to the name of the object in
 	 * question).
 	 *
@@ -115,7 +114,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @class Property binding implementation for the OData meta model.
+	 * @class Property binding implementation for the OData meta data model.
 	 *
 	 * @extends sap.ui.model.PropertyBinding
 	 * @private
@@ -139,17 +138,17 @@ sap.ui.define([
 	 * @param {string} sUrl
 	 *   the URL to the $metadata document of the service
 	 *
-	 * @class Implementation of an OData meta model which offers access to OData v4 meta data.
+	 * @class Implementation of an OData meta data model which offers access to OData v4 meta data.
 	 *
 	 * This model is read-only.
 	 *
-	 * @author SAP SE
-	 * @version ${version}
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
+	 * @author SAP SE
 	 * @extends sap.ui.model.MetaModel
 	 * @public
+	 * @version ${version}
 	 */
-	ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
+	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
 		constructor : function (oRequestor, sUrl) {
 			MetaModel.call(this);
 			this.oMetadataPromise = null;
@@ -159,9 +158,10 @@ sap.ui.define([
 	});
 
 	/**
-	 * Returns the value of the object or property inside this model's data which can be reached,
-	 * starting at the given context, by following the given path. The resulting value is suitable
-	 * for a list binding, e.g. <code>&lt;template:repeat list="{context>path}" ...&gt;</code>.
+	 * Returns the value of the object or property inside this model's meta data which can be
+	 * reached, starting at the given context, by following the given path. The resulting value is
+	 * suitable for a list binding, for example
+	 * <code>&lt;template:repeat list="{context>path}" ...&gt;</code>.
 	 *
 	 * @param {string} sPath
 	 *   a relative or absolute path
@@ -210,9 +210,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the single entity container for this meta model's service by reading the $metadata
-	 * document via the meta data requestor. The resulting $metadata JSON object is a map of
-	 * qualified names to their corresponding meta data, with the special key "$EntityContainer"
+	 * Requests the single entity container for this meta data model's service by reading the
+	 * $metadata document via the meta data requestor. The resulting $metadata JSON object is a map
+	 * of qualified names to their corresponding meta data, with the special key "$EntityContainer"
 	 * mapped to the entity container's qualified name as a starting point.
 	 *
 	 * @returns {SyncPromise}
@@ -229,12 +229,12 @@ sap.ui.define([
 
 	/**
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta model, e.g.
+	 *   A relative or absolute path within the meta data model, for example
 	 *   "/$EntityContainer/EMPLOYEES/ENTRYDATE"
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {SyncPromise}
-	 *   A promise which is resolved with the requested meta model object as soon as it is
+	 *   A promise which is resolved with the requested meta data object as soon as it is
 	 *   available
 	 * @see #requestObject
 	 * @private
@@ -293,18 +293,19 @@ sap.ui.define([
 					// Note: even an OData path cannot continue here (e.g. by type cast)
 					return warn("Invalid segment: " + sSegment);
 				}
-				if (sSegment[0] === "@") {
-					// annotation
-					if (!sTarget) {
-						return warn("Unsupported path before " + sSegment);
-					}
-					sSchemaName = sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
-					vResult = mScope[sSchemaName].$Annotations[sTarget][sSegment];
-					bJsonMode = true;
-					return true;
-				}
 				bJsonMode = bJsonMode || sSegment[0] === "$";
 				if (!bJsonMode) {
+					if (sSegment[0] === "@") {
+						// annotation via external targeting
+						if (!sTarget) {
+							return warn("Unsupported path before " + sSegment);
+						}
+						sSchemaName
+							= sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
+						vResult = mScope[sSchemaName].$Annotations[sTarget][sSegment];
+						bJsonMode = true;
+						return true;
+					}
 					if (sSegment.indexOf(".") > 0) {
 						// "17.3 QualifiedName": scope lookup
 						if (!(sSegment in mScope)) {
@@ -314,7 +315,8 @@ sap.ui.define([
 						sTarget = sName = sSchemaChildName = sSegment;
 						vResult = oSchemaChild = mScope[sSchemaChildName];
 						return true;
-					} else if ("$Type" in vResult) {
+					}
+					if ("$Type" in vResult) {
 						// implicit $Type insertion, e.g. at (navigation) property
 						if (!steps(vResult.$Type, aSegments.slice(0, i).join("/") + "/$Type")) {
 							return false;
@@ -391,6 +393,7 @@ sap.ui.define([
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
 	 *   rejected with the corresponding error
+	 * @see #requestUI5Type
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
@@ -431,13 +434,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the OData meta model context corresponding to the given OData model path.
+	 * Returns the OData meta data model context corresponding to the given OData data model path.
 	 *
 	 * @param {string} sPath
-	 *   an absolute data path within the OData data model, e.g. "/EMPLOYEES[0];list=1/ENTRYDATE"
+	 *   an absolute data path within the OData data model, for example
+	 *   "/EMPLOYEES[0];list=1/ENTRYDATE"
 	 * @returns {sap.ui.model.Context}
-	 *   the corresponding meta data context within the OData meta model, e.g. with meta data path
-	 *   "/EMPLOYEES/ENTRYDATE"
+	 *   the corresponding meta data context within the OData meta data model, for example with
+	 *   meta data path "/EMPLOYEES/ENTRYDATE"
 	 * @public
 	 */
 	ODataMetaModel.prototype.getMetaContext = function (sPath) {
@@ -446,47 +450,40 @@ sap.ui.define([
 
 	/**
 	 * Returns the meta data object for the given path relative to the given context. Returns
-	 * <code>undefined</code> in case the meta data is not (yet) available.
+	 * <code>undefined</code> in case the meta data is not (yet) available. Use
+	 * {@link #requestObject requestObject} for asynchronous access.
 	 *
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta model
+	 *   A relative or absolute path within the meta data model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {any}
-	 *   the requested meta model object if it is already available, or <code>undefined</code>
+	 *   the requested meta data object if it is already available, or <code>undefined</code>
+	 * @function
 	 * @public
+	 * @see #requestObject
 	 */
 	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("fetchObject");
 
 	/**
-	 * Returns the meta data value for the given path relative to the given context. Returns
-	 * <code>undefined</code> in case the meta data is not (yet) available. Returns
-	 * <code>null</code> instead of object values!
+	 * Same as {@link #getObject getObject}.
 	 *
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta model
+	 *   A relative or absolute path within the meta data model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {any}
-	 *   the requested meta model value if it is already available, or <code>undefined</code> or
-	 *   <code>null</code>
+	 *   the requested meta data object if it is already available, or <code>undefined</code>
+	 * @function
 	 * @public
+	 * @see #getObject
 	 */
-	ODataMetaModel.prototype.getProperty = function (sPath, oContext) {
-		var vResult = this.getObject(sPath, oContext);
-		if (vResult && typeof vResult === "object") {
-			if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-				jQuery.sap.log.warning("Accessed value is not primitive",
-					this.resolve(sPath, oContext), sODataMetaModel);
-			}
-			return null;
-		}
-		return vResult;
-	};
+	ODataMetaModel.prototype.getProperty = ODataMetaModel.prototype.getObject;
 
 	/**
 	 * Returns the UI5 type for the given property path that formats and parses corresponding to
-	 * the property's EDM type and constraints. The property's type must be a primitive type.
+	 * the property's EDM type and constraints. The property's type must be a primitive type. Use
+	 * {@link #requestUI5Type requestUI5Type} for asynchronous access.
 	 *
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
@@ -496,7 +493,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   if the UI5 type cannot be determined synchronously (due to a pending meta data request) or
 	 *   cannot be determined at all (due to a wrong data path)
+	 * @function
 	 * @public
+	 * @see #requestUI5Type
 	 */
 	ODataMetaModel.prototype.getUI5Type = SyncPromise.createGetMethod("fetchUI5Type", true);
 
@@ -507,12 +506,12 @@ sap.ui.define([
 	 * @param {string} sServiceUrl
 	 *   root URL of the service
 	 * @param {string} sPath
-	 *   an absolute data binding path pointing to an entity, e.g.
+	 *   an absolute data binding path pointing to an entity, for example
 	 *   "/TEAMS[0];root=0/TEAM_2_EMPLOYEES/0"
 	 * @param {function} fnRead
 	 *   function like {@link sap.ui.model.odata.v4.ODataModel#read} which provides access to data
 	 * @returns {Promise}
-	 *   a promise which is resolved with the canonical URL (e.g.
+	 *   a promise which is resolved with the canonical URL (for example
 	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
 	 *   of <code>Error</code> in case of failure
 	 * @private
@@ -551,81 +550,112 @@ sap.ui.define([
 
 	/**
 	 * Requests the meta data value for the given path relative to the given context.
-	 * Returns a <code>Promise</code> which is resolved with the requested meta model value or
-	 * rejected with an error.
+	 * Returns a <code>Promise</code> which is resolved with the requested meta data value or
+	 * rejected with an error (only in case meta data cannot be loaded). An invalid path leads to
+	 * an <code>undefined</code> result and a warning is logged. Use {@link #getObject getObject}
+	 * for synchronous access.
 	 *
-	 * The resolved path "/" addresses the global scope of all known qualified names. It has two
-	 * technical properties: "$Version" (typically "4.0") and "$EntityContainer" with the name
-	 * of the single entity container for this meta model's service; you can address it via
-	 * "/$EntityContainer".
+	 * The absolute path is split into segments and followed step-by-step, starting at the global
+	 * scope of all known qualified OData names. There are two technical properties there:
+	 * "$Version" (typically "4.0") and "$EntityContainer" with the name of the single entity
+	 * container for this meta data model's service.
 	 *
-	 * If a path comes across a string value like this and continues, the string value is treated
-	 * as a qualified name and looked up in the global scope first ("scope lookup"). This way,
-	 * "/$EntityContainer/EMPLOYEES" addresses the "EMPLOYEES" child of the entity container.
-	 * A warning is logged in case the string value is not a known qualified name.
+	 * An empty segment is invalid.
 	 *
-	 * If a path starts with an OData simple identifier, "$EntityContainer" is inserted into the
-	 * path implicitly. This way, "/EMPLOYEES" addresses the same object as
-	 * "/$EntityContainer/EMPLOYEES", namely the "EMPLOYEES" child of the entity container.
+	 * The segment "@sapui.name" refers back to the last OData name (simple identifier or qualified
+	 * name) encountered during path traversal immediately before "@sapui.name", for example
+	 * "/EMPLOYEES/@sapui.name" results in "EMPLOYEES". A technical property (that is a segment
+	 * starting with a "$") immediately before "@sapui.name" is invalid, for example
+	 * "/$EntityContainer/@sapui.name". The path must not continue after "@sapui.name".
 	 *
-	 * If a path comes across an object that does not contain OData children, but continues with
-	 * an OData simple identifier, "$Type" is inserted into the path implicitly. This way,
-	 * "/$EntityContainer/EMPLOYEES/ENTRYDATE" addresses the same object as
-	 * "/$EntityContainer/EMPLOYEES/$Type/ENTRYDATE", namely the "ENTRYDATE" child of the entity
-	 * type corresponding to the "EMPLOYEES" child of the entity container.
+	 * If the current object is a string value, that string value is treated as a relative path and
+	 * followed step-by-step before the next segment is processed. Except for this, a path must
+	 * not continue if it comes across a non-object value. Such a string value can be a qualified
+	 * name (example path "/$EntityContainer/..."), a simple identifier (example path
+	 * "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/...") or even a path (example path
+	 * "/TEAMS/$Type/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/...").
 	 *
-	 * "." can be used as a segment to continue a path and thus force scope lookup or implicit
-	 * ($EntityContainer or $Type) insertion, but then stay at the resulting object ("current
-	 * directory"). This way, "/$EntityContainer/EMPLOYEES/$Type/." addresses the entity type
-	 * itself corresponding to the "EMPLOYEES" child of the entity container. Although "." is not
-	 * an OData simple identifier, it can be used as a placeholder for one. In this way,
-	 * "/$EntityContainer/EMPLOYEES/." addresses the same entity type as
-	 * "/$EntityContainer/EMPLOYEES/$Type/.". That entity type in turn is a map of all its OData
-	 * children (structural and navigation properties) and thus determines the set of possible
-	 * child names that might be used instead of the "." placeholder.
+	 * Segments starting with an "@" character, for example
+	 * "@com.sap.vocabularies.Common.v1.Label", address annotations at the current object. As the
+	 * first segment, this is invalid. For objects which can only be annotated inline (see "14.3
+	 * Element edm:Annotation" minus "14.2.1 Attribute Target" in specification "OData Version 4.0
+	 * Part 3: Common Schema Definition Language"), the object already contains the annotations as
+	 * a property. For objects which can (only or also) be annotated via external targeting, the
+	 * object does not contain any annotation as a property. Such annotations MUST be accessed via
+	 * a path. BEWARE of a special case: Actions, functions and their parameters can be annotated
+	 * inline for a single overload or via external targeting for all overloads at the same time.
+	 * In this case, the object contains all annotations for the single overload as a property, but
+	 * annotations MUST nevertheless be accessed via a path in order to include also annotations
+	 * for all overloads at the same time!
 	 *
-	 * "@sapui.name" can be used as a segment to refer back to the last OData name (simple
-	 * identifier or qualified name) immediately before that segment, e.g.
-	 * "/$EntityContainer/EMPLOYEES/@sapui.name" results in "EMPLOYEES". It does not matter whether
-	 * that name is valid or not. No scope lookup or implicit insertion is triggered by
-	 * "@sapui.name" itself, but "." can still be used. Lookup of a qualified name also contributes
-	 * here, i.e. "/$EntityContainer/EMPLOYEES/./@sapui.name" results in the name of the
-	 * entity type corresponding to the "EMPLOYEES" child of the entity container.
-	 * Any technical property (i.e. one with a "$" as first character of the name) immediately
-	 * before "@sapui.name", e.g. "/$EntityContainer/EMPLOYEES/$kind/@sapui.name", leads to an
-	 * <code>undefined</code> result and a warning is logged.
-	 * In case a path continues after "@sapui.name", this leads to an <code>undefined</code> result
-	 * and a warning is logged.
+	 * Annotations of an annotation are addressed not by two separate segments, but by a single
+	 * segment like
+	 * "@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.Common.v1.TextArrangement". Each
+	 * annotation can have a qualifier, for example "@first#foo@second#bar". Note: If the first
+	 * annotation's value is a record, a separate segment addresses an annotation of that record,
+	 * not an annotation of the first annotation itself.
+	 * In a similar way, annotations of "7.2 Element edm:ReferentialConstraint",
+	 * "7.3 Element edm:OnDelete", "10.2 Element edm:Member" and
+	 * "14.5.14.2 Element edm:PropertyValue" are addressed by segments like
+	 * "<7.2.1 Attribute Property>@...", "$OnDelete@...", "<10.2.1 Attribute Name>@..." and
+	 * "<14.5.14.2.1 Attribute Property>@..." (where angle brackets denote a variable part and
+	 * sections refer to specification "OData Version 4.0 Part 3: Common Schema Definition
+	 * Language").
 	 *
-	 * In case a path comes across a non-object value and continues (except for scope lookup or
-	 * "@sapui.name"), this leads to an <code>undefined</code> result and a warning
-	 * ("Invalid segment") is logged.
+	 * A segment which represents an OData qualified name is looked up in the global scope ("scope
+	 * lookup") and thus determines a schema child which is used later on. Unknown qualified names
+	 * are invalid. This way, "/acme.DefaultContainer/EMPLOYEES" addresses the "EMPLOYEES" child of
+	 * the schema child named "acme.DefaultContainer". This also works indirectly
+	 * ("/$EntityContainer/EMPLOYEES") and implicitly ("/EMPLOYEES", see below).
 	 *
-	 * Segments starting with an "@" character, e.g. "@com.sap.vocabularies.Common.v1.Label",
-	 * address annotations at the current object. For objects which can only be annotated inline
-	 * (see "14.3 Element edm:Annotation" minus "14.2.1 Attribute Target"), the object already
-	 * contains the annotations as a property. For objects which can (only or also) be annotated
-	 * via external targeting, the object does not contain any annotation as a property. Such
-	 * annotations MUST be accessed via a path. BEWARE of a special case: Actions, functions and
-	 * their parameters can be annotated inline for a single overload or via external targeting for
-	 * all overloads at the same time. In this case, the object contains all annotations for the
-	 * single overload as a property, but annotations MUST nevertheless be accessed via a path in
-	 * order to include also annotations for all overloads at the same time!
+	 * A segment which represents an OData simple identifier, including "." (see below), needs
+	 * special preparations:
+	 * <ol>
+	 * <li> If the current object has a "$Type" property, it is used for scope lookup first. This
+	 *    way, "/EMPLOYEES/ENTRYDATE" addresses the same object as "/EMPLOYEES/$Type/ENTRYDATE",
+	 *    namely the "ENTRYDATE" child of the entity type corresponding to the "EMPLOYEES" child of
+	 *    the entity container.
+	 * <li> Else, the last schema child addressed via scope lookup is used instead of the current
+	 *    object. This normally happens indirectly as in
+	 *    "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/..." where the schema child is the
+	 *    entity container and the navigation property binding can contain the simple identifier of
+	 *    another entity set within the same container.
+	 *
+	 *    If the segment is the first one, "$EntityContainer" is inserted into the path implicitly.
+	 *    In other words, the entity container is used as the initial schema child. This way,
+	 *    "/EMPLOYEES" addresses the same object as "/$EntityContainer/EMPLOYEES", namely the
+	 *    "EMPLOYEES" child of the entity container.
+	 * </ol>
+	 *
+	 * "." can be used as a segment to continue a path and thus force scope lookup or OData simple
+	 * identifier preparations, but then stay at the current object. This way, "/EMPLOYEES/$Type/."
+	 * addresses the entity type itself corresponding to the "EMPLOYEES" child of the entity
+	 * container. Although "." is not an OData simple identifier, it can be used as a placeholder
+	 * for one. In this way, "/EMPLOYEES/." addresses the same entity type as "/EMPLOYEES/$Type/.".
+	 * That entity type in turn is a map of all its OData children (that is structural and
+	 * navigation properties) and thus determines the set of possible child names that might be
+	 * used instead of the "." placeholder.
+	 *
+	 * Any other segment, including an OData simple identifier, is looked up as a property of the
+	 * current object.
 	 *
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta model
+	 *   A relative or absolute path within the meta data model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {Promise}
-	 *   A promise which is resolved with the requested meta model value as soon as it is
+	 *   A promise which is resolved with the requested meta data value as soon as it is
 	 *   available
+	 * @function
 	 * @public
+	 * @see #getObject
 	 */
 	ODataMetaModel.prototype.requestObject = SyncPromise.createRequestMethod("fetchObject");
 
 	/**
 	 * Requests the UI5 type for the given property path that formats and parses corresponding to
-	 * the property's EDM type and constraints. The property's type must be a primitive type.
+	 * the property's EDM type and constraints. The property's type must be a primitive type. Use
+	 * {@link #getUI5Type getUI5Type} for synchronous access.
 	 *
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
@@ -633,7 +663,9 @@ sap.ui.define([
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
 	 *   rejected with the corresponding error
+	 * @function
 	 * @public
+	 * @see #getUI5Type
 	 */
 	ODataMetaModel.prototype.requestUI5Type
 		= SyncPromise.createRequestMethod("fetchUI5Type");

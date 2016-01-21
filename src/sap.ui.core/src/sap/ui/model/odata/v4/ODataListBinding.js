@@ -23,10 +23,10 @@ sap.ui.define([
 	 *   the index of this list binding in the array of root bindings kept by the model, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}
 	 * @param {object} [mParameters]
-	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
-	 *   $select "5.1 System Query Options" (see OData V4 specification part 2) are allowed. All
-	 *   other query options lead to an error. Query options specified for the binding overwrite
-	 *   model query options.
+	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and $select
+	 *   "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL Conventions")
+	 *   are allowed. All other query options lead to an error. Query options specified for the
+	 *   binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @throws {Error} when disallowed OData query options are provided
