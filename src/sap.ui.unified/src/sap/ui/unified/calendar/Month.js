@@ -805,7 +805,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._bLongWeekDays = undefined;
 			var aWeekHeaders = this.$().find(".sapUiCalWH");
 			var oLocaleData = this._getLocaleData();
-			var iStartDay = this._getFirstDayOfWeek();
+			var iStartDay = this._getFirstWeekDay();
 			var aDayNames = oLocaleData.getDaysStandAlone("abbreviated");
 			for (var i = 0; i < aWeekHeaders.length; i++) {
 				var oWeekDay = aWeekHeaders[i];
@@ -921,6 +921,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
 				this.$("Head").text(aMonthNames[oDate.getUTCMonth()]);
 			}
+
+		};
+
+		/*
+		 * returns the first displayed week day. Needed to change week days if too long
+		 */
+		Month.prototype._getFirstWeekDay = function(){
+
+			return this._getFirstDayOfWeek();
 
 		};
 
@@ -1472,7 +1481,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				if (bTooLong) {
 					oThis._bLongWeekDays = false;
 					var oLocaleData = oThis._getLocaleData();
-					var iStartDay = oThis._getFirstDayOfWeek();
+					var iStartDay = oThis._getFirstWeekDay();
 					var aDayNames = oLocaleData.getDaysStandAlone("narrow");
 					for ( i = 0; i < aWeekHeaders.length; i++) {
 						oWeekDay = aWeekHeaders[i];
