@@ -21,6 +21,8 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+		QUnit.config.autostart = false;
+
 		sap.ui.require([
 			"sap/ui/test/actions/EnterText",
 			"sap/m/Input",
@@ -47,22 +49,26 @@
 			[{
 				Control: Input,
 				changeEvent: "change",
-				liveChangeEventParameter: "value"
+				liveChangeEventParameter: "value",
+				changeEventParameter: "value"
 			},{
 				Control: TextArea,
 				changeEvent: "change",
-				liveChangeEventParameter: "value"
+				liveChangeEventParameter: "value",
+				changeEventParameter: "value"
 			},{
 				Control: MultiInput,
 				changeEvent: "change",
-				liveChangeEventParameter: "value"
+				liveChangeEventParameter: "value",
+				changeEventParameter: "value"
 			},{
 				Control: SearchField,
 				changeEvent: "search",
-				liveChangeEventParameter: "newValue"
+				liveChangeEventParameter: "newValue",
+				changeEventParameter: "query"
 			}].forEach(function (testInfo) {
 
-				QUnit.test("Should enter a text in a " + testInfo.Control.getMetadata().getName(), function(assert) {
+				QUnit.test("Should enter a text and clear the value in a " + testInfo.Control.getMetadata().getName(), function(assert) {
 					// Arrange
 					var oControl = new testInfo.Control({
 								value: "A"
@@ -86,26 +92,32 @@
 						assert.strictEqual(document.activeElement, oControl.getFocusDomRef(), "Input has focus");
 
 						if (iLiveChangeCalls === 1) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "Af");
+							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "");
 						}
 
 						if (iLiveChangeCalls === 2) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "Afo");
+							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "f");
 						}
 
 						if (iLiveChangeCalls === 3) {
-							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "AfoO");
+							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "fo");
+						}
+
+						if (iLiveChangeCalls === 4) {
+							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "foO");
 							fnLiveChangeTriggered();
 						}
 					}, this);
 
-					oControl.attachEvent(testInfo.changeEvent,function () {
+					oControl.attachEvent(testInfo.changeEvent, function (oEvent) {
+						assert.strictEqual(oEvent.getParameter(testInfo.changeEventParameter), "foO");
 						fnChangeTriggered();
 					});
 
 					// Act
 					oEnterTextAction.executeOn(oControl);
 				});
+
 			});
 
 			QUnit.test("Should enter tokens to a multi input", function (assert) {
@@ -179,6 +191,25 @@
 
 				sinon.assert.calledWith(oSpy,  sinon.match(/could not be focused/),  sinon.match(oEnterText._sLogPrefix));
 			});
+
+			test("Should log an error if no text is passed to EnterText", function () {
+				// Arrange
+				var oSpy = this.spy(jQuery.sap.log, "error");
+				this.oControl = new Input();
+				this.oControl.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+
+				var oEnterText = new EnterText({});
+
+				// Act
+				oEnterText.executeOn(this.oControl);
+
+				sinon.assert.calledWith(oSpy,  sinon.match(/Please provide a text/), sinon.match(oEnterText._sLogPrefix));
+			});
+
+			// wait for domready because of popups
+			jQuery(QUnit.start);
 		});
 	</script>
 </head>
