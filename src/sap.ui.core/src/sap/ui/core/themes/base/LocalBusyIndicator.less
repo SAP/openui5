@@ -9,13 +9,22 @@
 @sapUiLocalBusyIndicatorSizeBig: 2rem;
 
 .sapUiLocalBusyIndicator {
-	display: block;
 	background-color: @sapUiLocalBusyIndicatorBG;
 	position: absolute;
 	top: 0;
 	left: 0;
 	bottom: 0;
 	right: 0;
+
+	opacity: 0;
+	transition: opacity 0.3s ease-in;
+	-ms-transition: opacity 0.3s ease-in;
+	-moz-transition: opacity 0.3s ease-in;
+	-webkit-transition: opacity 0.3s ease-in;
+}
+
+.sapUiLocalBusyIndicatorFade {
+	opacity: 1;
 }
 /* TODO: Can this be removed, since IE8 is not supported anymore? */
 HTML[data-sap-ui-browser='ie8'] .sapUiLocalBusyIndicator {
