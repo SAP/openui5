@@ -2642,8 +2642,8 @@ sap.ui.define([
 				oMap[aParts[1]] = oRequest.data;
 				this._updateChangedEntities(oMap);
 			}
-			//for delete requests delete data in model
-			if (oRequest.method === "DELETE") {
+			//for delete requests delete data in model (exclude $links)
+			if (oRequest.method === "DELETE" && aParts[2] !== "$links") {
 				delete that.oData[aParts[1]];
 				delete that.mContexts["/" + aParts[1]]; // contexts are stored starting with /
 				delete that.mChangedEntities[aParts[1]];
