@@ -337,61 +337,61 @@
 		oMultiComboBox.setSelectedKeys(["0"]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem0));
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
+		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(["0", "1"]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["0", "1"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0, oItem1]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem0));
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem1));
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
+		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem1));
+		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys([null]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), []);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
+		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(["2", null, "1"]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["2", "1"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem2, oItem1]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem1));
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem2));
+		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem1));
+		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem2));
 
 		oMultiComboBox.setSelectedKeys(["0"]);
 		oMultiComboBox.setSelectedKeys(["dummy"]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["dummy"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
+		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(["0"]);
 		oMultiComboBox.setSelectedKeys([""]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), [""]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem3]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
+		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.setSelectedKeys(["0", "1"]);
 		oMultiComboBox.removeSelectedKeys(["1"]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem0));
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
+		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		oMultiComboBox.removeSelectedKeys(["dummy"]);
 		deepEqual(oMultiComboBox.getSelectedKeys(), ["0"]);
 		deepEqual(oMultiComboBox.getSelectedItems(), [oItem0]);
-		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), oMultiComboBox._getTokenByItem(oItem0));
-		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
-		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token"), null);
+		deepEqual(oItem0.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), oMultiComboBox._getTokenByItem(oItem0));
+		deepEqual(oItem1.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
+		deepEqual(oItem2.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Token"), null);
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3266,8 +3266,8 @@
 		strictEqual(fnOpenSpy.callCount, 0, "open was not called");
 		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
 		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+		ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3313,8 +3313,8 @@
 		strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3356,8 +3356,8 @@
 		strictEqual(fnOpenSpy.callCount, 1, "openwas called exactly once");
 		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3399,8 +3399,8 @@
 		strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3443,8 +3443,8 @@
 		strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 		// cleanup
@@ -3487,8 +3487,8 @@
 		strictEqual(fnOpenSpy.callCount, 1, "open was called exactly once");
 		strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 		ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 		// cleanup
@@ -3585,8 +3585,8 @@
 				strictEqual(fnOpenSpy.callCount, 2, "open was called exactly once");
 				strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 				ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-				ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+				ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 				// cleanup
 				oMultiComboBox.destroy();
@@ -3642,8 +3642,8 @@
 				strictEqual(fnOpenSpy.callCount, 2, "open was called exactly twice");
 				strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Popup is open");
 				ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
-				ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+				ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+						'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 				ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
 
 				// cleanup
@@ -3726,8 +3726,8 @@
 	      strictEqual(fnCloseSpy.callCount, 1, "close was called exactly once");
 	      strictEqual(oMultiComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup is closed");
 	      ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-	      ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), 'The MultiComboBox must not have the css class “'
-	                    + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+	      ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The MultiComboBox must not have the css class “'
+	                    + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 	      // cleanup
 	      oMultiComboBox.destroy();
@@ -3760,8 +3760,8 @@
 
 		// assertions
 		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3790,8 +3790,8 @@
 
 		// assertions
 		ok(!oMultiComboBox.isOpen(), "oMultiComboBox is closed");
-		ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+		ok(!oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				'The MultiComboBox must not have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3836,8 +3836,8 @@
 		// assertions
 		ok(oMultiComboBox.isOpen(), "oMultiComboBox is closed");
 		ok(!oMultiComboBox._isListInSuggestMode(), 'Complete list is open');
-		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"),
-				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed”');
+		ok(oMultiComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Pressed"),
+				'The MultiComboBox must have the css class “' + sap.m.ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + 'Pressed”');
 
 		// cleanup
 		oMultiComboBox.destroy();

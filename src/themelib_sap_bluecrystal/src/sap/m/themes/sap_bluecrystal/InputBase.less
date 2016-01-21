@@ -1,64 +1,50 @@
 /* ========================================================= */
-/* CSS for control sap.m/InputBase.control BlueCrystal theme */
+/* CSS for control sap.m/InputBase BlueCrystal theme         */
 /* ========================================================= */
 
 .sapMInputBase {
-	background-color:	   transparent;
-	border:                none;
-	position:              relative;
-	display:			   inline-block;
-	padding: 			   0.25rem 0;
-	height: 			   3rem;
-	vertical-align:        top;
+	height: 3rem;
+}
+
+.sapMInputBaseWidthPadding {
+	padding: 0.25rem 0;
 }
 
 .sapMInputBaseInner {
-	color: 				   @sapUiInputBaseText;
-	background-color:	   @sapUiInputBaseBG;
-	border:		           1px solid @sapUiInputBaseBorder;
-	margin:                0;
-	font-size: 			   @sapMFontMediumSize;
-	font-family: 		   @sapUiInputBaseFont;
-	line-height:		   normal;
-	height: 			   2.5rem;
-	vertical-align:		   top;
-	padding:               0 0.75rem;
-	-moz-appearance:       textfield;
+	color: @sapUiInputBaseText;
+	background: @sapUiInputBaseBG;
+	border: 1px solid @sapUiInputBaseBorder;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiInputBaseFont;
+	line-height: normal;
+	height: 2.5rem;
+	padding: 0 0.75rem;
 }
 
 .sapMInputBaseInner::-webkit-input-placeholder {
-	color:				   @sapUiInputBasePlaceholder;
-	font-size: 			   @sapMFontMediumSize;
-	font-style:			   italic;
+	color: @sapUiInputBasePlaceholder;
+	font-size: @sapMFontMediumSize;
+	font-style: italic;
 }
 
 .sapMInputBaseInner::-moz-placeholder {
-	color:				   @sapUiInputBasePlaceholder;
-	font-size: 			   @sapMFontMediumSize;
-	font-style:			   italic;
+	color: @sapUiInputBasePlaceholder;
+	font-size: @sapMFontMediumSize;
+	font-style: italic;
 }
 
 .sapMInputBaseInner:-ms-input-placeholder {
-	color:				   @sapUiInputBasePlaceholder;
-	font-size: 			   @sapMFontMediumSize;
-	font-style:			   italic;
+	color: @sapUiInputBasePlaceholder;
+	font-size: @sapMFontMediumSize;
+	font-style: italic;
 }
 
 .sapMInputBasePlaceholder {
-	color:				   @sapUiInputBasePlaceholder;
-	font-size: 			   @sapMFontMediumSize;
-	font-style:			   italic;
-	position:			   absolute;
-	text-overflow:		   ellipsis;
-	white-space:           nowrap;
-	overflow:			   hidden;
-	line-height:		   2.5rem;
-	padding:               0 0.75rem;
-}
-
-.sapMInputBaseInner:focus {
-	outline:               none;
-	outline-width:         0;
+	color: @sapUiInputBasePlaceholder;
+	font-size: @sapMFontMediumSize;
+	font-style: italic;
+	line-height: 2.5rem;
+	padding: 0 0.75rem;
 }
 
 .sapMInputBaseStateInner {
@@ -78,9 +64,9 @@
 	border-color: @sapUiInputBaseSuccess;
 }
 
-.sapMInputBaseInner.sapMInputBaseReadonlyInner {
+.sapMInputBaseReadonlyInner {
 	border-color: transparent;
-	background-color: transparent;
+	background: transparent;
 }
 
 .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus,
@@ -93,8 +79,8 @@
 }
 
 .sapMILI-CTX .sapMInputBaseInner {
-	text-align:	right;
-	background-color: transparent;
+	text-align: right;
+	background: transparent;
 }
 
 html[dir=rtl] .sapMILI-CTX .sapMInputBaseInner,
@@ -106,7 +92,7 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 	text-align: right;
 }
 
-.sapMILI-CTX :not(.sapMInputVH) .sapMInputBaseInner:not(.sapMInputBaseStateInner){
+.sapMILI-CTX :not(.sapMInputVH) .sapMInputBaseInner:not(.sapMInputBaseStateInner) {
 	border: none;
 }
 
@@ -120,13 +106,13 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 }
 
 .sapMInputBaseMessage {
-	color: 				   @sapUiInputBaseText;
-	border-width:          0;
-	font-size:             @sapMFontSmallSize;
-	font-family:           @sapUiFontFamily;
-	padding:               0.3rem 0.625rem;
-	min-width:             6rem;
-	max-width:             22rem;
+	color: @sapUiInputBaseText;
+	border-width: 0;
+	font-size: @sapMFontSmallSize;
+	font-family: @sapUiFontFamily;
+	padding: 0.3rem 0.625rem;
+	min-width: 6rem;
+	max-width: 22rem;
 }
 
 .sapMInputBaseMessageError {
@@ -140,41 +126,43 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 }
 
 /* Compact size */
-.sapUiSizeCompact{
+.sapUiSizeCompact {
 
 	.sapMInputBase {
-		height: 		   2rem;
-		padding: 		   0.1875rem 0;
+		height: 2rem;
 	}
 
 	.sapMInputBaseInner {
-		height: 		   1.625rem;
-		padding:           0 0.5rem;
+		height: 1.625rem;
+		padding: 0 0.5rem;
 	}
 
 	.sapMInputBasePlaceholder {
-		line-height:	   1.625rem;
-		padding:           0 0.5rem;
+		line-height: 1.625rem;
+		padding: 0 0.5rem;
 	}
+}
 
+.sapUiSizeCompact .sapMInputBaseWidthPadding {
+	padding: 0.1875rem 0;
 }
 
 /* Compact size */
-.sapUiSizeCondensed{
+.sapUiSizeCondensed {
 	.sapMInputBase {
-		height: 		   1.5rem;
-		padding: 		   0;
+		height: 1.5rem;
+		padding: 0;
 	}
 
-	.sapMInputBaseInner{
+	.sapMInputBaseInner {
 		border-color: transparent;
 	}
 
 	.sapMInputBaseInner {
-		height: 		   1.5rem;
+		height: 1.5rem;
 	}
 
 	.sapMInputBasePlaceholder {
-		line-height:	   1.5rem;
+		line-height: 1.5rem;
 	}
 }

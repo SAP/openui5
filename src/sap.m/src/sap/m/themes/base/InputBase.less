@@ -6,14 +6,17 @@
 
 .sapMInputBase,
 .sapMInputBaseInner,
-.sapMInputBasePlaceholder {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
+.sapMInputBasePlaceholder,
+.sapMInputBaseMessage {
 	box-sizing: border-box;
 }
 
 .sapMInputBasePlaceholder {
 	cursor: text;
+	position: absolute;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .sapMInputBaseDisabled > .sapMInputBaseReadonly,
@@ -35,6 +38,30 @@
 .sapMInputBaseInner::-webkit-inner-spin-button {
 	-webkit-appearance: none;
 	margin: 0;
+}
+
+.sapMInputBase {
+	background: transparent;
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.sapMILI-CTX .sapMInputBase {
+	display: block;
+}
+
+.sapMInputBaseInner {
+	-webkit-appearance: none;
+	border-radius: 0;
+	vertical-align: top;
+	margin: 0;
+	-moz-appearance: textfield;
+}
+
+.sapMInputBaseInner:focus {
+	outline: none;
+	outline-width: 0;
 }
 
 /* remove user agent pseudo-element clear button (IE specifix) */
@@ -61,7 +88,8 @@
 .sapMInputBaseInner[placeholder] {
 	text-overflow: ellipsis;
 }
-.sapMInputBaseInner::-webkit-input-placeholder{
+
+.sapMInputBaseInner::-webkit-input-placeholder {
 	text-overflow: ellipsis !important; /* important is necessary to overwrite inline style of shadow dom */
 }
 
@@ -69,16 +97,14 @@
 	padding: 0.3125rem;
 	background: @sapMInputBaseMsgBG;
 	display: inline-block;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
 }
 
 .sapMInputBaseMessageText {
 	width: 100%;
 }
 
-.sapMInputBaseInner:invalid{
+.sapMInputBaseInner:invalid {
+
 	/* disable native browser input validation visualization e.g. for type email or number */
 	box-shadow: none;
 }
