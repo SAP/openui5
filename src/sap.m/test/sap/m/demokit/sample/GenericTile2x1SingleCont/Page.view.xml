@@ -16,7 +16,7 @@
 	</GenericTile>
 
 	<GenericTile frameType="TwoByOne" press="press"
-		backgroundImage="test-resources/sap/m/demokit/GenericTile2x1SingleCont/images/NewsImage1.png">
+		backgroundImage="test-resources/sap/m/demokit/sample/GenericTile2x1SingleCont/images/NewsImage1.png">
 		<tileContent>
 			<TileContent footer="August 21, 2013">
 				<content>
@@ -41,5 +41,4 @@
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-
 </core:View>
