@@ -328,15 +328,16 @@ sap.ui.define([
 	 * entity tag ("ETag") value.
 	 *
 	 * @param {sap.ui.model.Context} oContext
-	 *   a context in the data model pointing to an entity, it MUST be related to some list
+	 *   A context in the data model pointing to an entity. It MUST be related to some list
 	 *   binding's context because you can only remove data from the model which has been read
-	 *   into the model before
+	 *   into the model before.
 	 * @returns {Promise}
-	 *   a promise which is resolved in case of success, or rejected with an instance of
+	 *   A promise which is resolved in case of success, or rejected with an instance of
 	 *   <code>Error</code> in case of failure. The error instance is flagged with
 	 *   <code>isConcurrentModification</code> in case a concurrent modification (e.g. by another
 	 *   user) of the entity between loading and removal has been detected; this should be shown
-	 *   to the user who needs to decide whether to try removal again.
+	 *   to the user who needs to decide whether to try removal again. If the entity does not exist,
+	 *   we assume it has already been deleted by someone else and report success.
 	 * @public
 	 */
 	ODataModel.prototype.remove = function (oContext) {
@@ -353,7 +354,7 @@ sap.ui.define([
 			return that.oRequestor.request("DELETE", sCanonicalUrl, {"If-Match" : sEtag})
 				["catch"](function (oError) {
 					if (oError.status === 404) {
-						return; // map 404 to 200
+						return; // map 404 to 200, i.e. resolve if already deleted
 					}
 					throw oError;
 				});
