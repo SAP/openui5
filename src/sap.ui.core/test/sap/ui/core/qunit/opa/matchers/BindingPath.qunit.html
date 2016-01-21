@@ -59,6 +59,7 @@
 								path: "JSONModel>/",
 								template: new StandardListItem()
 							});
+							this.oSpy = sinon.spy(jQuery.sap.log, "debug");
 						},
 
 						afterEach: function () {
@@ -67,6 +68,7 @@
 							this.oModel2.destroy();
 							this.oList.destroy();
 							this.oBindingPath.destroy();
+							this.oSpy.restore();
 						}
 					});
 
@@ -86,6 +88,7 @@
 						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
 						// Assert
 						assert.ok(!bResult, "Did not match because the binding path is incorrect");
+						sinon.assert.calledWith(this.oSpy, sinon.match(/does not have a matching binding context/), this.oBindingPath._sLogPrefix)
 					});
 
 					QUnit.test("Should match an correct model name and binding path", function (assert) {
@@ -104,6 +107,7 @@
 						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
 						// Assert
 						assert.ok(!bResult, "Did not match because the model name is incorrect");
+						sinon.assert.calledWith(this.oSpy, sinon.match(/ has no binding context for the model/), this.oBindingPath._sLogPrefix)
 					});
 
 					QUnit.test("Should not match no model name despite of using correct binding path", function (assert) {

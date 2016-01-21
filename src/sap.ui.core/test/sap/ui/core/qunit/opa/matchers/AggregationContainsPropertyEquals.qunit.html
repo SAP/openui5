@@ -119,7 +119,8 @@
 							new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "" }),
 							new sap.ui.core.ListItem({ text : "bar" }),
 							new sap.ui.core.ListItem({ key : "foo" })
-						]});
+						]}),
+						oSpy = this.spy(jQuery.sap.log, "debug");
 
 					// System under Test
 					var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
@@ -133,6 +134,7 @@
 
 					// Assert
 					ok(!bResult, "Did not match because there was no matching item");
+					sinon.assert.calledWith(oSpy, sinon.match(/as no Control with the value/), oMatcher._sLogPrefix);
 
 					// Cleanup
 					oComboBox.destroy();
@@ -176,7 +178,7 @@
 
 					// Assert
 					strictEqual(bResult, false, "Did not match");
-					strictEqual(oErrorSpy.callCount, 1, "Did complain");
+					sinon.assert.calledWith(oErrorSpy, sinon.match(/does not have an aggregation called/), oMatcher._sLogPrefix);
 
 					// Cleanup
 					oComboBox.destroy();

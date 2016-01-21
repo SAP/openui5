@@ -82,7 +82,7 @@
 
 							// Assert
 							assert.ok(!bResult, "Control isn't matching");
-							sinon.assert.calledWith(oSpy,  sinon.match(/is not rendered/));
+							sinon.assert.calledWith(oSpy,  sinon.match(/is not rendered/), oInteractable._sLogPrefix);
 						});
 
 						QUnit.test("Should not match a Button while it is busy", function (assert) {
@@ -98,7 +98,7 @@
 
 							// Assert
 							assert.ok(!bResult, "Control isn't matching");
-							sinon.assert.calledWith(oSpy,  sinon.match(/is busy/), oInteractable);
+							sinon.assert.calledWith(oSpy,  sinon.match(/is busy/), oInteractable._sLogPrefix);
 						});
 
 						QUnit.test("Should not match a Button while one of its parents is busy", function (assert) {
@@ -114,7 +114,7 @@
 
 							// Assert
 							assert.ok(!bResult, "Control isn't matching");
-							sinon.assert.calledWith(oSpy,  sinon.match(/parent that is busy/), oInteractable);
+							sinon.assert.calledWith(oSpy,  sinon.match(/parent that is busy/), oInteractable._sLogPrefix);
 						});
 
 						QUnit.test("Should not match a Button while its navContainer is navigating", function (assert) {
@@ -139,7 +139,7 @@
 								assert.ok(bSecondPageButtonResultAfterNavigationFinished, "Control is matching");
 
 
-								sinon.assert.calledWith(oSpy,  sinon.match(/that is currently navigating/), oInteractable);
+								sinon.assert.calledWith(oSpy,  sinon.match(/that is currently navigating/), oInteractable._sLogPrefix);
 								fnStart();
 							}, this);
 						});
@@ -180,7 +180,7 @@
 							// Assert
 							assert.ok(bResultBeforeOpening, "Control is matching");
 							assert.ok(!bResultAfterOpening, "Control isn't matching after a dialog is opened");
-							sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking layer of a Popup/), oInteractable);
+							sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking layer of a Popup/), oInteractable._sLogPrefix);
 
 							fnStart();
 						}, this);
@@ -205,7 +205,7 @@
 							// Assert
 							assert.ok(!bResultBeforeOpening, "Control isn't matching");
 							assert.ok(bResultAfterOpening, "Control is matching after a dialog is opened");
-							sinon.assert.calledWith(this.oSpy,  sinon.match(/is not rendered/));
+							sinon.assert.calledWith(this.oSpy, sinon.match(/is not rendered/), oInteractable._sLogPrefix);
 
 							fnStart();
 						}, this);
@@ -243,7 +243,7 @@
 						setTimeout(function () {
 							// Act
 							assert.ok(!oInteractable.isMatching(oButton), "No match because the button was invalidated");
-							sinon.assert.calledWith(this.oSpy, sinon.match(/needs a new rendering/), sinon.match(oInteractable));
+							sinon.assert.calledWith(this.oSpy, sinon.match(/needs a new rendering/), oInteractable._sLogPrefix);
 							fnTimeoutDone();
 						}.bind(this), 0);
 

@@ -157,7 +157,7 @@
 				// Act
 				oEnterText.executeOn(this.oControl);
 
-				sinon.assert.calledWith(oSpy,  sinon.match(/has no focusable/),  sinon.match(oEnterText));
+				sinon.assert.calledWith(oSpy,  sinon.match(/has no focusable/), sinon.match(oEnterText._sLogPrefix));
 			});
 
 			test("Should log a warning if a control cannot be focused", function () {
@@ -177,7 +177,7 @@
 				// Act
 				oEnterText.executeOn(this.oControl);
 
-				sinon.assert.calledWith(oSpy,  sinon.match(/could not be focused/),  sinon.match(oEnterText));
+				sinon.assert.calledWith(oSpy,  sinon.match(/could not be focused/),  sinon.match(oEnterText._sLogPrefix));
 			});
 		});
 	</script>
