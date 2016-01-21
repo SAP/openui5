@@ -42,6 +42,23 @@
 			oMyListBox.setBusy(bBusy);
 		}
 	}).placeAt("button1");
+	var oBtn_short = new sap.ui.commons.Button({
+		text : "show short",
+		press : function() {
+			bBusy = !oMyListBox.isBusy();
+
+			oMyListBox.setBusyIndicatorDelay(0);
+			bBusy ? oBtn1.setText("set loading-mode: off") : oBtn1.setText("set loading-mode: on")
+			oMyListBox.setBusy(bBusy);
+
+			jQuery.sap.delayedCall(200, this, function() {
+				bBusy = !oMyListBox.isBusy();
+
+				bBusy ? oBtn1.setText("set loading-mode: off") : oBtn1.setText("set loading-mode: on")
+				oMyListBox.setBusy(bBusy);
+			});
+		}
+	}).placeAt("button1");
 
 	var oMyTable = new sap.ui.table.Table({
 	}).placeAt("uiArea2");
