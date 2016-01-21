@@ -12,9 +12,20 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var oModel = new JSONModel(
-			{mail: "mail", tel: "tel", tel2: "tel", 3: 3, five: 5, thirteen: 13}
-		);
+	var oModel = new JSONModel({
+			mail : "mail",
+			tel : "tel",
+			tel2 : "tel",
+			3 : 3,
+			five : 5,
+			thirteen : 13,
+			complex : {
+				$dollar$ : "$",
+				_underscore_ : "_"
+				//TODO "You can use ISO 8859-1 or Unicode letters such as å and ü in identifiers.
+				// You can also use the Unicode escape sequences as characters in identifiers."
+			}
+		});
 
 	/**
 	 * Checks the string result of an expression binding when bound to a control property of type
@@ -27,7 +38,7 @@ sap.ui.require([
 	 */
 	function check(assert, sExpression, vResult, oScope) {
 		var oIcon = new Icon({
-				color: sExpression.charAt(0) === "{" ? sExpression : "{=" + sExpression + "}",
+				color: sExpression[0] === "{" ? sExpression : "{=" + sExpression + "}",
 				models: oModel
 			}, oScope);
 
@@ -63,32 +74,31 @@ sap.ui.require([
 		 * Checks that the code throws an expected error.
 		 *
 		 * @param {object} assert the assertions
-		 * @param {function} fnCodeUnderTest
-		 *   the code under test
+		 * @param {string} sExpression
+		 *   the expression binding in {=... syntax
 		 * @param {string} sMessage
 		 *   the expected error message
-		 * @param {string} sDetails
-		 *   the expected error details
 		 * @param {number} iAt
 		 *   the expected error position
 		 */
-		checkError : function (assert, fnCodeUnderTest, sMessage, sDetails, iAt) {
+		checkError : function (assert, sExpression, sMessage, iAt) {
 			var oLogMock = this.mock(jQuery.sap.log);
 
 			oLogMock.expects("error").withExactArgs(
 				sMessage + (iAt !== undefined ? " at position " + iAt : ""),
-				sDetails,
+				sExpression,
 				"sap.ui.base.ExpressionParser"
 			);
 			try {
-				fnCodeUnderTest();
+				// call ExpressionParser through BindingParser to gain resolution of bindings
+				BindingParser.complexParser(sExpression);
 				assert.ok(false, "code under test throws");
 			} catch (e) {
 				assert.ok(e instanceof SyntaxError, "Error type: " + e);
 				assert.strictEqual(e.message, sMessage, "Error.message");
 				assert.strictEqual(e.at, iAt, "Error.at");
 				if (iAt) {
-					assert.strictEqual(e.text, sDetails, "Error.at");
+					assert.strictEqual(e.text, sExpression, "Error.at");
 				}
 			}
 		}
@@ -175,19 +185,6 @@ sap.ui.require([
 	]);
 
 	//*********************************************************************************************
-	[
-		//parser error
-		{binding: "{=$invalid}}", message: "Expected '{' instead of 'i'", at: 4}
-	].forEach(function(oFixture) {
-		QUnit.test("Invalid binding: " + oFixture.binding, function (assert) {
-			this.checkError(assert, function () {
-				// call ExpressionParser through BindingParser to gain resolution of bindings
-				BindingParser.complexParser(oFixture.binding);
-			}, oFixture.message, oFixture.binding, oFixture.at);
-		});
-	});
-
-	//*********************************************************************************************
 	checkFixtures("Boolean literals, &&, ||, !", [
 		{ expression: "true", result: "true" },
 		{ expression: "false", result: "false" },
@@ -218,6 +215,12 @@ sap.ui.require([
 		//wrong: (true ? 'foo' : true) ? 'bar' : 'baz' --> "bar"
 		{ expression: "true ? 'foo' : true ? 'bar' : 'baz'", result: "foo" },
 		{ expression: "(true ? 'foo' : true) ? 'bar' : 'baz'", result: "bar" }
+	]);
+
+	//*********************************************************************************************
+	checkFixtures("Member access", [
+		{ expression: "${/complex}.$dollar$", result: "$" },
+		{ expression: "${/complex}._underscore_", result: "_" }
 	]);
 
 	//*********************************************************************************************
@@ -298,13 +301,9 @@ sap.ui.require([
 	].forEach(function(oFixture) {
 		QUnit.test("Error handling " + oFixture.binding + " --> " + oFixture.message,
 			function (assert) {
-				this.checkError(assert, function () {
-						BindingParser.complexParser(oFixture.binding);
-					},
-					oFixture.message,
-					oFixture.binding,
-					oFixture.at || (oFixture.token
-						? oFixture.binding.lastIndexOf(oFixture.token) + 1 : undefined));
+				this.checkError(assert, oFixture.binding, oFixture.message,
+					oFixture.at
+					|| oFixture.token && oFixture.binding.lastIndexOf(oFixture.token) + 1);
 			});
 	});
 
@@ -320,7 +319,7 @@ sap.ui.require([
 			assert.throws(function () {
 				BindingParser.complexParser(oFixture.binding);
 			}, new SyntaxError("Expected '}' and instead saw '"
-					+ oFixture.binding.charAt(oFixture.at) + "' in expression binding "
+					+ oFixture.binding[oFixture.at] + "' in expression binding "
 					+ oFixture.binding + " at position " + oFixture.at)
 			);
 		});
@@ -598,9 +597,7 @@ sap.ui.require([
 		assert.strictEqual(oAverageSpy.callCount, 1, "parse start measurement");
 		assert.strictEqual(oEndSpy.callCount, 1, "parse end measurement");
 
-		this.checkError(assert, function () {
-			BindingParser.complexParser("{=$invalid}}");
-		}, "Expected '{' instead of 'i'", "{=$invalid}}", 4);
+		this.checkError(assert, "{=, 'foo'}", "Unexpected ,", 3);
 		assert.strictEqual(oAverageSpy.callCount, 2, "parse start measurement");
 		assert.strictEqual(oEndSpy.callCount, 1, "parse end measurement - end not reached");
 	});
