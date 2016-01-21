@@ -50,7 +50,7 @@
 
 						// Assert
 						assert.ok(!oResult, "Control isn't matching");
-						sinon.assert.calledWith(oSpy,  sinon.match(/is not rendered/),  sinon.match(oVisibleMatcher));
+						sinon.assert.calledWith(oSpy,  sinon.match(/is not rendered/),  sinon.match(oVisibleMatcher._sLogPrefix));
 					});
 
 					QUnit.test("Should not match an invisible Button", function (assert) {
@@ -69,7 +69,7 @@
 
 						// Assert
 						assert.ok(!oResult, "Control isn't matching");
-						sinon.assert.calledWith(oSpy,  sinon.match(/is not visible/),  sinon.match(oVisibleMatcher));
+						sinon.assert.calledWith(oSpy,  sinon.match(/is not visible/),  sinon.match(oVisibleMatcher._sLogPrefix));
 					});
 
 

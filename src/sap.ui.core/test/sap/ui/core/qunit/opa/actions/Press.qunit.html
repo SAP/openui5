@@ -32,11 +32,15 @@
 			var aControlsToClean = [];
 
 			QUnit.module("positive tests",{
+				beforeEach: function() {
+					this.oSpy = sinon.spy($.sap.log, "debug")
+				},
 				afterEach: function() {
 					while(aControlsToClean.length) {
 						//Clean up controls after each test
 						aControlsToClean.pop().destroy();
 					}
+					this.oSpy.restore();
 				}
 			});
 
@@ -57,6 +61,7 @@
 				oButton.attachPress( function () {
 					assert.ok(true, "Press Event has been triggered");
 					assert.ok(jQuery(document.activeElement).is(oButton.$()), "Button has focus");
+					sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
 					//Call 'done' to resume qunit processing
 					done();
 				}, this);
