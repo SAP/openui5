@@ -91,6 +91,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("relative path", function (assert) {
+		var oModel = new ODataModel("/service/"),
+			oContext = oModel.bindContext("SO_2_BP");
+		assert.throws(function () {
+			oContext.setContext("/SalesOrders(ID='1')")
+		}, new Error("Nested context bindings are not supported"));
+	});
+
+	//*********************************************************************************************
 	//TODO support nested context bindings
 	QUnit.skip("ManagedObject.bindObject on child (relative), then on parent", function (assert) {
 		var oBinding,
