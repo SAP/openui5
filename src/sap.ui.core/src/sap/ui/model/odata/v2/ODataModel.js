@@ -2409,8 +2409,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				oMap[aParts[1]] = true;
 				this._updateChangedEntities(oMap);
 			}
-			//for delete requests delete data in model
-			if (oRequest.method === "DELETE") {
+			//for delete requests delete data in model (exclude $links)
+			if (oRequest.method === "DELETE" && aParts[2] !== "$links") {
 				delete that.oData[aParts[1]];
 				delete that.mContexts["/" + aParts[1]]; // contexts are stored starting with /
 			}
