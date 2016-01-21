@@ -684,25 +684,13 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 		};
 
 		/**
-		 * Decorates internal popover to remove its arrow and adjust position for the toolbar mode
+		 * Decorates internal popover
 		 *
 		 * @param {sap.m.ResponsivePopover} oPopover Internal ResponsivePopover
 		 * @private
 		 */
 		MessagePopover.prototype._decoratePopover = function (oPopover) {
-			// adding additional capabilities to the Popover
-			oPopover._marginTop = 0;
-			oPopover._marginLeft = 0;
-			oPopover._marginRight = 0;
-			oPopover._marginBottom = 0;
-			oPopover._arrowOffset = 0;
-			oPopover._offsets = ["0 0", "0 0", "0 0", "0 0"];
-			oPopover._myPositions = ["begin bottom", "begin center", "begin top", "end center"];
-			oPopover._atPositions = ["begin top", "end center", "begin bottom", "begin center"];
-
 			oPopover.addStyleClass(CSSCLASS + '-ModeToolbar');
-
-			oPopover._setArrowPosition = function() {};
 		};
 
 		/**
@@ -748,6 +736,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/
 			// If MessagePopover is opened from an instance of sap.m.Toolbar and is instance of sap.m.Popover
 			if (oControl.getParent() instanceof sap.m.Toolbar &&
 				oResponsivePopoverControl instanceof sap.m.Popover) {
+				oResponsivePopoverControl._bShowArrow = false;
 				this._decoratePopover(oResponsivePopoverControl);
 			}
 
