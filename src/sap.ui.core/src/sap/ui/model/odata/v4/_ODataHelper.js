@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/model/odata/v4/lib/_Helper"
-], function (Helper) {
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Parser"
+], function (Helper, Parser) {
 	"use strict";
 
 	var ODataHelper;
@@ -75,6 +76,9 @@ sap.ui.define([
 					throw new Error("Parameter " + sKey + " is not supported");
 				}
 				if (sKey[0] === "$") {
+					if ((sKey === "$expand" || sKey === "$select") && typeof vValue === "string") {
+						vValue = Parser.parseSystemQueryOption(sKey + "=" + vValue)[sKey];
+					}
 					validateSystemQueryOption(sKey, vValue);
 				}
 				mResult[sKey] = vValue;

@@ -278,11 +278,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *				"$expand": {
 		 *					"SOITEM_2_PRODUCT": {
 		 *						"$expand" : {
-		 *							"PRODUCT_2_BP" : true,
+		 *							"PRODUCT_2_BP" : null,
 		 *						},
 		 *						"$select": "CurrencyCode"
 		 *					},
-		 *					"SOITEM_2_SO": true
+		 *					"SOITEM_2_SO": null
 		 *				}
 		 *			}
 		 *		},
