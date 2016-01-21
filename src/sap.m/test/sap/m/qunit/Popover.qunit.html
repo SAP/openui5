@@ -220,53 +220,63 @@
 				ok(!jQuery.sap.domById("popover"), "Popover is not rendered in the beginning.");
 			});
 
-			module("Open and Close");
+			module("Open and Close", {
+				setup: function () {
+					this.oButton = new sap.m.Button().addStyleClass("positioned");
+					this.oPopover = new sap.m.Popover({
+						contentWidth: "400px",
+						contentHeight: "300px"
+					});
+					page.addContent(this.oButton);
+					sap.ui.getCore().applyChanges();
+				},
+				teardown: function () {
+					this.oPopover.destroy();
+					this.oButton.destroy();
+				}
+			});
 
-			test("Open with placement: Bottom", function(){
-				oPopover.setPlacement(sap.m.PlacementType.Bottom);
+			test("Open with placement: Bottom, and then close", function () {
+				this.oPopover.setPlacement(sap.m.PlacementType.Bottom);
+
 				var fnBeforeOpen = this.spy(),
-					fnAfterOpen = this.spy(),
-					fnSetArrowPosition = this.spy(oPopover, "_fnSetArrowPosition"),
-					$Button = jQuery(oButton.getDomRef("inner"));
+						fnAfterOpen = this.spy(),
+						fnSetArrowPosition = this.spy(this.oPopover, "_fnAdjustPositionAndArrow"),
+						$Button = jQuery(this.oButton.getDomRef("inner"));
 
-				oPopover.attachBeforeOpen(fnBeforeOpen);
-				oPopover.attachAfterOpen(fnAfterOpen);
+				this.oPopover.attachBeforeOpen(fnBeforeOpen);
+				this.oPopover.attachAfterOpen(fnAfterOpen);
 
-				oButton.firePress();
-				ok(oPopover.isOpen(), "Popover is already open");
+				this.oPopover.openBy(this.oButton);
+
+				ok(this.oPopover.isOpen(), "Popover is already open");
+
 				this.clock.tick(500);
-				var $popover = jQuery.sap.byId("popover");
-				ok(jQuery.sap.domById("popover"), "Popover is rendered after it's opened.");
+
+				var $popover = this.oPopover.$();
+				ok($popover.length, "Popover is rendered after it's opened.");
 				ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 				ok(Math.ceil($popover.offset().top - iArrowOffset) >= Math.floor($Button.offset().top + $Button.outerHeight()), "Popover should be opened at the bottom of the button");
-				if(!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop){
-					ok(jQuery.sap.containsOrEquals(oPopover.$()[0], document.activeElement), "Popover should have the focus")
+				if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+					ok(jQuery.sap.containsOrEquals($popover[0], document.activeElement), "Popover should have the focus")
 				}
 				equal(fnBeforeOpen.callCount, 1, "beforeOpen event is fired");
 				equal(fnAfterOpen.callCount, 1, "afterOpen event is fired");
 				equal(fnSetArrowPosition.callCount, 1, "Popover is only positioned once");
-				oPopover.detachBeforeOpen(fnBeforeOpen);
-				oPopover.detachAfterOpen(fnAfterOpen);
-// 				ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
-// 				ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
-			});
 
-			test("Close", function(){
 				var fnBeforeClose = this.spy(),
-					fnAfterClose = this.spy();
-				oPopover.attachBeforeClose(fnBeforeClose);
-				oPopover.attachAfterClose(fnAfterClose);
-				oPopover.close();
+						fnAfterClose = this.spy();
+				this.oPopover.attachBeforeClose(fnBeforeClose);
+				this.oPopover.attachAfterClose(fnAfterClose);
+				this.oPopover.close();
 				this.clock.tick(500);
-				equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
-				ok(!oPopover.isOpen(), "Popover is already closed");
+				equal(this.oPopover.$().css("visibility"), "hidden", "popover should be hidden after it's closed");
+				ok(!this.oPopover.isOpen(), "Popover is already closed");
 				ok(fnBeforeClose.calledOnce, "beforeClose event is fired");
 				ok(fnAfterClose.calledOnce, "afterClose event is fired");
-				oPopover.detachBeforeClose(fnBeforeClose);
-				oPopover.detachAfterClose(fnAfterClose);
 			});
 
-			test("Open with placement: Right", function(){
+			test("Open with placement: Right", function () {
 				oButton.removeStyleClass("positioned").addStyleClass("positioned1");
 				oPopover.setPlacement(sap.m.PlacementType.Right);
 				oButton.firePress();
@@ -276,161 +286,59 @@
 				ok(jQuery.sap.domById("popover"), "Popover is rendered after it's opened.");
 				ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 				ok(Math.ceil($popover.offset().left - iArrowOffset) >= Math.floor(oButton.$().offset().left + oButton.$().outerWidth()), "Popover should be opened at the right side of the button");
-				//the window size of the test machine is too small, this test can't be executed successfully
-// 				ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
-// 				ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
-// 				ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
+
 			});
 
-			test("Close", function(){
+			test("Close", function () {
 				oPopover.close();
 				this.clock.tick(500);
 				equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
 				ok(!oPopover.isOpen(), "Popover is already closed");
 			});
 
-			test("Open with placement: Left", function(){
+			test("Open with placement: Left", function () {
 				oButton.removeStyleClass("positioned1").addStyleClass("positioned2");
 				oPopover.setPlacement(sap.m.PlacementType.Left);
 				oButton.firePress();
 				ok(oPopover.isOpen(), "Popover is already open");
 				this.clock.tick(500);
 				var $popover = jQuery.sap.byId("popover"),
-					$Button = jQuery(oButton.getFocusDomRef());
+						$Button = jQuery(oButton.getFocusDomRef());
 				ok(jQuery.sap.domById("popover"), "Popover is rendered after it's opened.");
 				ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
 				ok(Math.floor($popover.offset().left + $popover.outerWidth() + iArrowOffset) <= Math.ceil($Button.offset().left), "Popover should be opened at the left side of the button");
-				//the window size of the test machine is too small, this test can't be executed successfully
-// 				ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
-// 				ok(($popover.position().top + $popover.outerHeight()) <= (jQuery(window).height() - 20), "popover is not overlapping bottom border");
+
 			});
 
-			test("Close", function(){
+			test("Close", function () {
 				oPopover.close();
 				this.clock.tick(500);
 				equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
 				ok(!oPopover.isOpen(), "Popover is already closed");
 			});
 
-			test("Open with placement: Top", function(){
+			test("Open with placement: Top", function () {
 				oButton.removeStyleClass("positioned2").addStyleClass("positioned3");
 				oPopover.setPlacement(sap.m.PlacementType.Top);
 				oButton.firePress();
 				ok(oPopover.isOpen(), "Popover is already open");
 				this.clock.tick(500);
 				var $popover = jQuery.sap.byId("popover"),
-					$Button = jQuery(oButton.getDomRef("inner"));
+						$Button = jQuery(oButton.getDomRef("inner"));
 				ok(jQuery.sap.domById("popover"), "Popover is rendered after it's opened.");
 				ok($popover.closest("#sap-ui-static")[0], "Popover should be rendered inside the static uiArea.");
-				if(jQuery(window).height() > 150){
+				if (jQuery(window).height() > 150) {
 					// when the browser window is really short, this has to be disabled.
 					ok(Math.floor($popover.offset().top + $popover.outerHeight() + iArrowOffset) <= Math.ceil($Button.offset().top), "Popover should be opened at the top of the button");
 				}
-				//the window size of the test machine is too small, this test can't be executed successfully
-// 				ok($popover.position().top >= iBarHeight + 2, "popover is not overlapping the Page Header");
-// 				ok(($popover.position().left + $popover.outerWidth()) <= (jQuery(window).width() - 10), "popover is not overlapping the right border");
-				//the window size of the test machine is too small, this test can't be executed successfully
-// 				ok($popover.position().left >= 10, "popover is not overlapping the left border");
+
 			});
 
-			test("Close", function(){
+			test("Close", function () {
 				oPopover.close();
 				this.clock.tick(500);
 				equal(jQuery.sap.byId("popover").css("visibility"), "hidden", "popover should be hidden after it's closed");
 				ok(!oPopover.isOpen(), "Popover is already closed");
-			});
-
-			module("Position calculation");
-
-			test("vertical calculation of Popover positioning should be correct", function() {
-				var testCase = function(offset, outerHeight, height, expectedPlace) {
-					var stubOffset = sinon.stub(jQuery.fn, "offset").returns({top:offset});
-					var stubOuterHeight = sinon.stub(jQuery.fn, "outerHeight").returns(outerHeight);
-					var stubWindowHeight = sinon.stub(jQuery.fn, "height").returns(height);
-
-					var oPopover3 = new sap.m.Popover({
-						placement: sap.m.PlacementType.Vertical
-					});
-
-					oPopover3._calcPlacement();
-
-					strictEqual(oPopover3._oCalcedPos, expectedPlace);
-
-					stubOffset.restore();
-					stubOuterHeight.restore();
-					stubWindowHeight.restore();
-				}
-
-				testCase(50, 50, 500, sap.m.PlacementType.Bottom);
-				testCase(450, 50, 500, sap.m.PlacementType.Top);
-
-			});
-
-			test("horizontal calculation of Popover positioning should be correct", function() {
-				var testCase = function(offset, outerWidth, width, expectedPlace) {
-					var stubOffset = sinon.stub(jQuery.fn, "offset").returns({left:offset});
-					var stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(outerWidth);
-					var stubWindowWidth = sinon.stub(jQuery.fn, "width").returns(width);
-
-					var oPopover3 = new sap.m.Popover({
-						placement: sap.m.PlacementType.Horizontal
-					});
-
-					oPopover3._calcPlacement();
-
-					strictEqual(oPopover3._oCalcedPos, expectedPlace);
-
-					stubOffset.restore();
-					stubOuterWidth.restore();
-					stubWindowWidth.restore();
-				}
-
-				testCase(50, 50, 500, sap.m.PlacementType.Right);
-				testCase(450, 50, 500, sap.m.PlacementType.Left);
-
-			});
-
-			test("auto calculation of Popover positioning should be correct", function() {
-				var testCase = function(offsetLeft, offsetTop, outerWidth, outerHeight, width, height, expectedPlace) {
-					var stubOffset = sinon.stub(jQuery.fn, "offset").returns({left:offsetLeft, top:offsetTop});
-					var stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(outerWidth);
-					var stubWindowWidth = sinon.stub(jQuery.fn, "width").returns(width);
-					var stubOuterHeight = sinon.stub(jQuery.fn, "outerHeight").returns(outerHeight);
-					var stubWindowHeight = sinon.stub(jQuery.fn, "height").returns(height);
-					var stubPopover = sinon.stub(sap.m.Popover.prototype, "$").returns(
-							{	outerWidth: sinon.stub().returns(200),
-								outerHeight: sinon.stub().returns(200)
-							});
-					var oPopover3 = new sap.m.Popover({
-						placement: sap.m.PlacementType.Auto
-					});
-
-					oPopover3._calcPlacement();
-
-					strictEqual(oPopover3._oCalcedPos, expectedPlace);
-
-					stubOffset.restore();
-					stubOuterWidth.restore();
-					stubWindowWidth.restore();
-					stubOuterHeight.restore();
-					stubWindowHeight.restore();
-					stubPopover.restore();
-				}
-
-				//tests for preferred positioning if the popover fits in both placementTypes (vertical and horizontal)
-				//landscape mode: vertical should be preferred
-				testCase(50, 0, 50, 50, 500, 300, sap.m.PlacementType.Right);
-				testCase(450, 0, 50, 50, 500, 300, sap.m.PlacementType.Left);
-				//portrait mode: horizontal should be preferred
-				testCase(0, 50, 50, 50, 300, 500, sap.m.PlacementType.Bottom);
-				testCase(0, 450, 50, 50, 300, 500, sap.m.PlacementType.Top);
-
-				//tests for positioning if the popover is too big for all positions
-				//position with the best coverage of the popover should be chosen
-				testCase(50, 100, 50, 50, 200, 200, sap.m.PlacementType.Right);
-				testCase(150, 100, 50, 50, 200, 200, sap.m.PlacementType.Left);
-				testCase(100, 50, 50, 50, 200, 200, sap.m.PlacementType.Bottom);
-				testCase(100, 150, 50, 50, 200, 200, sap.m.PlacementType.Top);
 			});
 
 			module("Property Setter");
