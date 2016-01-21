@@ -1,0 +1,54 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.BusyIndicator.Page"
+	height="100%"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		class="sapUiFioriObjectPage"
+		showHeader="false" >
+		<content>
+			<!-- in this example we set the delay until the busy indicator is shown to zero -->
+			<Panel>
+				<Text text="Press a button to show the global BusyIndicator"/>
+			</Panel>
+
+			<Panel
+				headerText="Open BusyIndicator for four seconds (default delay, which is 1 second)"
+			>
+				<content>
+					<Button
+						text="Show BusyIndicator"
+						press="show4000"
+					>
+					</Button>
+				</content>
+			</Panel>
+
+			<Panel
+				headerText="Open BusyIndicator for four seconds (zero delay)"
+			>
+				<content>
+					<Button
+						text="Show BusyIndicator"
+						press="show4000_0"
+					>
+					</Button>
+				</content>
+			</Panel>
+
+			<Panel
+				headerText="Open BusyIndicator for one second (two seconds delay, so it should never appear at all)"
+			>
+				<content>
+					<Button
+						text="Show BusyIndicator"
+						press="show1000_2000"
+					>
+					</Button>
+				</content>
+			</Panel>
+
+		</content>
+	</Page>
+</mvc:View>
