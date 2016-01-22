@@ -131,11 +131,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					this.pendingInteraction.networkTime += sFesrec ? Math.round(parseFloat(sFesrec, 10) / 1000) : 0;
 					var sSapStatistics = this.getResponseHeader("sap-statistics");
 					if (sSapStatistics) {
+						var aTimings = jQuery.sap.measure.getRequestTimings();
 						this.pendingInteraction.sapStatistics.push({
 							// add response url for mapping purposes
 							url: this.responseURL,
 							statistics: sSapStatistics,
-							timing: jQuery.sap.measure.getRequestTimings().pop()
+							timing: aTimings ? aTimings[aTimings.length - 1] : undefined
 						});
 					}
 					delete this.requestHeaderLength;
