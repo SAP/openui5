@@ -100,13 +100,6 @@
 	user-select: none;
 }
 
-.sapUiInteractionTreeItemLeft .sapUiInteractionTreeSpace {
-	display: inline-block;
-	width: 1rem;
-	float: right;
-	padding: 0.75rem 0.5rem 0.75rem 0.1rem;
-}
-
 .sapUiInteractionHeader.sapUiInteractionItemDiv  {
 	box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);
 	border-bottom: 1px solid #bfbfbf;
@@ -119,19 +112,22 @@
 }
 
 .sapUiInteractionTreeItemLeft .sapUiInteractionHeaderIcon {
-	box-sizing: border-box;
-	color: #fff;
-	display: inline-block;
-	font-weight: bolder;
-	text-align: center;
-	vertical-align: middle;
-	width: 1rem;
-	height: 1rem;
-	font-size: 6px;
-	padding-top: 0.3rem;
-	margin: 0.75rem 0;
-	border-radius: 0.5rem;
 	float: right;
+	padding: 0.875rem 0 0 0;
+}
+
+.sapUiInteractionRequestLeft .sapUiInteractionRequestHeaderIcon {
+	float: right;
+	padding: 0;
+	margin-right: 1.6125rem;
+}
+
+.sapUiInteractionSvgImage {
+	background-color: #007cc0;
+	width: 6px;
+	height: 8px;
+	border-radius: 50%;
+	padding: 2px 3px;
 }
 
 .sapUiInteractionItemDiv {
@@ -207,28 +203,36 @@ li.sapUiInteractionItemExpanded {
 	background-color: #007cc0;
 }
 
-.sapUiPurple {
-	background-color: #ab218e;
-}
-
-.sapUiRed {
-	background-color: #e52929;
-}
-
-.sapUiAccent8 {
-	background-color: rgb(0, 157, 224);
-}
-
 .sapUiBlue70 {
 	background-color: rgba(0, 124, 192, 0.7);
+}
+
+.sapUiPurple {
+	background-color: #ab218e;
 }
 
 .sapUiPurple70 {
 	background-color: rgba(171, 33, 142, 0.7);
 }
 
+.sapUiRed {
+	background-color: #e52929;
+}
+
 .sapUiRed70 {
 	background-color: rgba(229, 41, 41, 0.7);
+}
+
+.sapUiAccent1 {
+	background-color: rgb(240, 171, 0);
+}
+
+.sapUiAccent170 {
+	background-color: rgba(240, 171, 0, 0.7);
+}
+
+.sapUiAccent8 {
+	background-color: rgb(0, 157, 224);
 }
 
 .sapUiAccent870 {
@@ -273,4 +277,73 @@ li.sapUiInteractionItemExpanded {
 	color: #333;
 	font-size: 12px;
 	display: inline-block;
+}
+
+.sapUiSupportIntProgressBarParent {
+	position: relative;
+	height: 10px;
+	margin : 0 1rem;
+}
+
+.sapUiSupportIntProgressBarSeparator {
+	width: 1px;
+	background-color: white;
+	height: inherit;
+	float: left;
+}
+
+.sapUiSupportIntProgressBar {
+	height: inherit;
+	float: left;
+}
+
+.sapUiInteractionTitle {
+	margin : 1rem;
+	width: 100%;
+}
+
+.sapUiInteractionTitleSection {
+	display: inline-block;
+	width: 33%;
+}
+
+.sapUiInteractionTitleText {
+	font-size: 10px;
+	color: #666;
+}
+
+.sapUiInteractionTitleSubText {
+	font-size: 16px;
+	color: #333;
+}
+
+.sapUiSupportPopover .sapUiFormM .sapUiFormContainerTitle > .sapUiFormTitle  {
+	font-size: 12px;
+	color: #666;
+	height: 1rem;
+	line-height: 1rem;
+}
+
+.sapUiSupportPopover .sapUiFormM .sapUiFormResGridLastContXL  {
+	margin-top: 1rem;
+}
+
+
+.sapUiSupportIntHidden {
+	display: none;
+}
+
+.sapUiSupportPopover .sapMLabel.sapUiSupportIntRequestLabel {
+	font-weight: bold;
+	font-size: 12px;
+	color: #333;
+}
+
+.sapUiSupportPopover .sapUiSupportIntRequestText.sapMText  {
+	font-size: 12px;
+	color: #333;
+}
+
+.sapUiSupportPopover .sapUiRGLContainerCont {
+	padding-bottom: 0;
 }
