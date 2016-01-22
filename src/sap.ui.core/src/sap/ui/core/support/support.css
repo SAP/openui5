@@ -1373,57 +1373,8 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	float: right;
 }
 
-/*.sapUiSupportIntImportExportBtn:hover {
-	background-color: #F2F2F2;
-	border-color: #A3A3A3;
-	color: black;
-}*/
-
-.sapUiSupportIntHidden {
-	display:none;
-}
-
-.sapMLabel.sapUiSupportIntRequestLabel {
-	font-size: 0.75rem;
-	font-family: Arial,Helvetica,sans-serif;
-	font-weight: bold;
-}
-
-.sapUiSupportIntRequestText.sapMText  {
-	font-size: 0.75rem;
-}
-
 .sapUiFormResGridCont > .sapUiFormElementLbl.sapUiRespGridBreak {
 	min-height: 15px;
-}
-
-.sapUiSupportIntProgressBarParent {
-	height: 10px;
-}
-
-.sapUiSupportIntProgressBarSeparator {
-	width: 1px;
-	background-color: white;
-	height: inherit;
-	float: left;
-}
-
-.sapUiSupportIntProgressBarPreprocess {
-	background-color: #6D3662;
-	height: inherit;
-	float: left;
-}
-
-.sapUiSupportIntProgressBarClient {
-	background-color: #AB218E;
-	height: inherit;
-	float: left;
-}
-
-.sapUiSupportIntProgressBarServer {
-	background-color: #C463B0;
-	height: inherit;
-	float: left;
 }
 
 /* ================================================================================================================== */
