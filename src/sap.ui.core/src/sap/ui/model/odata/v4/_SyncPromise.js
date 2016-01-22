@@ -19,13 +19,13 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {Promise|SyncPromise|any} oPromise
-	 *   the promise to wrap or the result to synchronously fulfill with
+	 *   The promise to wrap or the result to synchronously fulfill with
 	 * @param {function} [fnCallback]
-	 *   function to apply to the result of the SyncPromise to be wrapped
+	 *   Function to apply to the result of the SyncPromise to be wrapped
 	 * @param {any[]} [aValues]
-	 *   the values to be combined via the static method <code>SyncPromise.all</code>
+	 *   The values to be combined via the static method <code>SyncPromise.all</code>
 	 * @returns {SyncPromise}
-	 *   the SyncPromise created
+	 *   The SyncPromise created
 	 */
 	function SyncPromise(oPromise, fnCallback, aValues) {
 		var bFulfilled = false,
@@ -87,9 +87,9 @@ sap.ui.define([
 
 		/**
 		 * @param {function} [fnOnRejected]
-		 *   callback function if this SyncPromise is rejected
+		 *   Callback function if this SyncPromise is rejected
 		 * @returns {SyncPromise}
-		 *   a new SyncPromise
+		 *   A new SyncPromise
 		 */
 		this["catch"] = function (fnOnRejected) {
 			return this.then(undefined, fnOnRejected);
@@ -97,7 +97,7 @@ sap.ui.define([
 
 		/**
 		 * @returns {any}
-		 *   the result in case this SyncPromise is already fulfilled or <code>this</code> if it is
+		 *   The result in case this SyncPromise is already fulfilled or <code>this</code> if it is
 		 *   still pending
 		 */
 		this.getResult = function () {
@@ -106,7 +106,7 @@ sap.ui.define([
 
 		/**
 		 * @returns {boolean}
-		 *   whether this SyncPromise is fulfilled
+		 *   Whether this SyncPromise is fulfilled
 		 */
 		this.isFulfilled = function () {
 			return bFulfilled;
@@ -114,7 +114,7 @@ sap.ui.define([
 
 		/**
 		 * @returns {boolean}
-		 *   whether this SyncPromise is rejected
+		 *   Whether this SyncPromise is rejected
 		 */
 		this.isRejected = function () {
 			return bRejected;
@@ -122,11 +122,11 @@ sap.ui.define([
 
 		/**
 		 * @param {function} [fnOnFulfilled]
-		 *   callback function if this SyncPromise is fulfilled
+		 *   Callback function if this SyncPromise is fulfilled
 		 * @param {function} [fnOnRejected]
-		 *   callback function if this SyncPromise is rejected
+		 *   Callback function if this SyncPromise is rejected
 		 * @returns {SyncPromise}
-		 *   a new SyncPromise
+		 *   A new SyncPromise
 		 */
 		this.then = function (fnOnFulfilled, fnOnRejected) {
 			if (bFulfilled || bRejected) {
@@ -146,9 +146,9 @@ sap.ui.define([
 		 * <code>Promise.all(aValues)</code>.
 		 *
 		 * @param {any[]} aValues
-		 *   the values
+		 *   The values
 		 * @returns {SyncPromise}
-		 *   the SyncPromise
+		 *   The SyncPromise
 		 */
 		all : function (aValues) {
 			return new SyncPromise(null, null, aValues.slice());
@@ -158,11 +158,11 @@ sap.ui.define([
 		 * Returns a "get*" method corresponding to the given "fetch*" method.
 		 *
 		 * @param {string} sFetch
-		 *   a "fetch*" method's name
+		 *   A "fetch*" method's name
 		 * @param {boolean} [bThrow=false]
-		 *   whether the "get*" method throws if the promise is not fulfilled
+		 *   Whether the "get*" method throws if the promise is not fulfilled
 		 * @returns {function}
-		 *   a "get*" method returning the "fetch*" method's result or
+		 *   A "get*" method returning the "fetch*" method's result or
 		 *   <code>undefined</code> in case the promise is not (yet) fulfilled
 		 */
 		createGetMethod : function (sFetch, bThrow) {
@@ -183,9 +183,9 @@ sap.ui.define([
 		 * Returns a "request*" method corresponding to the given "fetch*" method.
 		 *
 		 * @param {string} sFetch
-		 *   a "fetch*" method's name
+		 *   A "fetch*" method's name
 		 * @returns {function}
-		 *   a "request*" method returning the "fetch*" method's result wrapped via
+		 *   A "request*" method returning the "fetch*" method's result wrapped via
 		 *   <code>Promise.resolve()</code>
 		 */
 		createRequestMethod : function (sFetch) {
@@ -201,9 +201,9 @@ sap.ui.define([
 		 * <code>oPromise</code> if it is already a SyncPromise.
 		 *
 		 * @param {Promise|SyncPromise} oPromise
-		 *   the promise to wrap
+		 *   The promise to wrap
 		 * @returns {SyncPromise}
-		 *   the SyncPromise
+		 *   The SyncPromise
 		 */
 		resolve : resolve
 	};

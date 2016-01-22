@@ -17,8 +17,8 @@ sap.ui.define([
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
 	 * framework. The error message includes the arguments to the method call.
-	 * @param {string} sMethodName - the method name
-	 * @param {object} args - the arguments passed to this method when called by SAPUI5
+	 * @param {string} sMethodName The method name
+	 * @param {object} args The arguments passed to this method when called by SAPUI5
 	 */
 	function notImplemented(sMethodName, args) {
 		var sArgs;
@@ -37,18 +37,18 @@ sap.ui.define([
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindProperty bindProperty} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-	 *   the OData v4 model
+	 *   The OData v4 model
 	 * @param {string} sPath
-	 *   the binding path in the model
+	 *   The binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   map of OData query options where only "5.2 Custom Query Options" (see specification "OData
+	 *   Map of OData query options where only "5.2 Custom Query Options" (see specification "OData
 	 *   Version 4.0 Part 2: URL Conventions") are allowed. All other query options lead to an
 	 *   error. Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} when disallowed OData query options are provided
+	 * @throws {Error} When disallowed, OData query options are provided
 	 *
 	 * @class Property binding for an OData v4 model.
 	 *
@@ -92,10 +92,10 @@ sap.ui.define([
 	 * previous value and the <code>bForceUpdate</code> parameter.
 	 *
 	 * @param {boolean} [bForceUpdate=false]
-	 *   if <code>true</code> the change event is always fired except there is no context for a
+	 *   If <code>true</code> the change event is always fired except there is no context for a
 	 *   relative binding and the value is <code>undefined</code>.
 	 * @returns {Promise}
-	 *   a Promise to be resolved when the check is finished
+	 *   A Promise to be resolved when the check is finished
 	 *
 	 * @private
 	 */
@@ -159,7 +159,7 @@ sap.ui.define([
 	 * Returns the current value of the bound property.
 	 *
 	 * @returns {any}
-	 *   the current value of the bound property
+	 *   The current value of the bound property
 	 * @public
 	 */
 	ODataPropertyBinding.prototype.getValue = function () {
@@ -167,14 +167,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
-	 * control, that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
+	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 * Refresh is supported for absolute bindings.
 	 *
 	 * @param {boolean} bForceUpdate
-	 *   <code>bForceUpdate</code> has to be <code>true</code>
-	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code> or refresh
+	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code>, refresh
 	 *   on this binding is not supported
 	 *
 	 * @public
@@ -197,7 +197,7 @@ sap.ui.define([
 	 * In case of absolute bindings nothing is done.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @protected
 	 */
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
@@ -210,11 +210,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * TODO Sets the value for this binding. A model implementation should check if the current
-	 * default binding mode permits setting the binding value and if so set the new value also in
-	 * the model.
+	 * Sets the value for this binding. A model implementation should check if the current default
+	 * binding mode permits setting the binding value and if so set the new value also in the model.
 	 *
-	 * @param {any} oValue the value to set for this binding
+	 * @param {any} oValue The value to set for this binding
 	 *
 	 * @public
 	 */

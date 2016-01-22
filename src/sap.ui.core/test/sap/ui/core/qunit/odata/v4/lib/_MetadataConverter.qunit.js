@@ -1314,11 +1314,11 @@ sap.ui.require([
 					},
 					"ActionImport": {
 						"$kind": "ActionImport",
-						"$Action": "foo.Action",
+						"$Action": "foo.Action"
 					},
 					"FunctionImport": {
 						"$kind": "FunctionImport",
-						"$Function": "foo.Function",
+						"$Function": "foo.Function"
 					}
 				}
 			});

@@ -132,9 +132,9 @@ sap.ui.define([
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#getMetaModel getMetaModel} instead.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._MetadataRequestor} oRequestor
-	 *   the meta data requestor
+	 *   The meta data requestor
 	 * @param {string} sUrl
-	 *   the URL to the $metadata document of the service
+	 *   The URL to the $metadata document of the service
 	 *
 	 * @class Implementation of an OData meta data model which offers access to OData v4 meta data.
 	 *
@@ -162,11 +162,11 @@ sap.ui.define([
 	 * <code>&lt;template:repeat list="{context>path}" ...&gt;</code>.
 	 *
 	 * @param {string} sPath
-	 *   a relative or absolute path
+	 *   A relative or absolute path
 	 * @param {object|sap.ui.model.Context} [oContext]
-	 *   the context to be used as a starting point in case of a relative path
+	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {any}
-	 *   the value of the object or property or <code>null</code> in case a relative path without
+	 *   The value of the object or property or <code>null</code> in case a relative path without
 	 *   a context is given
 	 * @private
 	 */
@@ -291,15 +291,15 @@ sap.ui.define([
 			 * Takes one step according to the given segment, starting at the current
 			 * <code>vResult</code> and changing that.
 			 * @param {string} [sLocation]
-			 *   where the relative path has been found (in case of implicit lookup)
+			 *   Where the relative path has been found (in case of implicit lookup)
 			 * @param {string} sSegment
-			 *   current segment
+			 *   Current segment
 			 * @param {number} i
-			 *   current segment's index
+			 *   Current segment's index
 			 * @param {string[]} aSegments
-			 *   all segments
+			 *   All segments
 			 * @returns {boolean}
-			 *   whether to continue after this step
+			 *   Whether to continue after this step
 			 */
 			function step(sLocation, sSegment, i, aSegments) {
 				var sSchemaName;
@@ -381,12 +381,12 @@ sap.ui.define([
 			 * Takes multiple steps according to the given relative path, starting at the global
 			 * scope and changing <code>vResult</code>.
 			 * @param {string} sRelativePath
-			 *   some relative path (semantically, it is absolute as we start at the global scope,
+			 *   Some relative path (semantically, it is absolute as we start at the global scope,
 			 *   but it does not begin with a slash!)
 			 * @param {string} [sLocation]
-			 *   where the relative path has been found (in case of implicit lookup)
+			 *   Where the relative path has been found (in case of implicit lookup)
 			 * @returns {boolean}
-			 *   whether to continue after all steps
+			 *   Whether to continue after all steps
 			 */
 			function steps(sRelativePath, sLocation) {
 				bODataMode = true;
@@ -397,7 +397,7 @@ sap.ui.define([
 			/*
 			 * Outputs a warning message. Leads to an <code>undefined</code> result.
 			 * @param {string} sMessage
-			 *   the message
+			 *   The message
 			 * @returns {boolean}
 			 *   <code>false</code>
 			 */
@@ -471,10 +471,10 @@ sap.ui.define([
 	 * Returns the OData meta data model context corresponding to the given OData data model path.
 	 *
 	 * @param {string} sPath
-	 *   an absolute data path within the OData data model, for example
+	 *   An absolute data path within the OData data model, for example
 	 *   "/EMPLOYEES[0];list=1/ENTRYDATE"
 	 * @returns {sap.ui.model.Context}
-	 *   the corresponding meta data context within the OData meta data model, for example with
+	 *   The corresponding meta data context within the OData meta data model, for example with
 	 *   meta data path "/EMPLOYEES/ENTRYDATE"
 	 * @public
 	 */
@@ -492,7 +492,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {any}
-	 *   the requested meta data object if it is already available, or <code>undefined</code>
+	 *   The requested meta data object if it is already available, or <code>undefined</code>
 	 * @function
 	 * @public
 	 * @see #requestObject
@@ -517,7 +517,7 @@ sap.ui.define([
 	 *   The corresponding UI5 type from <code>sap.ui.model.odata.type</code>, if all required meta
 	 *   data to calculate this type is already available
 	 * @throws {Error}
-	 *   if the UI5 type cannot be determined synchronously (due to a pending meta data request) or
+	 *   If the UI5 type cannot be determined synchronously (due to a pending meta data request) or
 	 *   cannot be determined at all (due to a wrong data path)
 	 * @function
 	 * @public
@@ -530,14 +530,14 @@ sap.ui.define([
 	 * and absolute data binding path which must point to an entity.
 	 *
 	 * @param {string} sServiceUrl
-	 *   root URL of the service
+	 *   Root URL of the service
 	 * @param {string} sPath
-	 *   an absolute data binding path pointing to an entity, for example
+	 *   An absolute data binding path pointing to an entity, for example
 	 *   "/TEAMS[0];root=0/TEAM_2_EMPLOYEES/0"
 	 * @param {function} fnRead
-	 *   function like {@link sap.ui.model.odata.v4.ODataModel#read} which provides access to data
+	 *   Function like {@link sap.ui.model.odata.v4.ODataModel#read} which provides access to data
 	 * @returns {Promise}
-	 *   a promise which is resolved with the canonical URL (for example
+	 *   A promise which is resolved with the canonical URL (for example
 	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
 	 *   of <code>Error</code> in case of failure
 	 * @private

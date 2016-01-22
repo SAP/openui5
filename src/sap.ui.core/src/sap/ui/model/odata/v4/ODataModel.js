@@ -33,8 +33,8 @@ sap.ui.define([
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
 	 * framework. The error message includes the arguments to the method call.
-	 * @param {string} sMethodName - the method name
-	 * @param {object} args - the arguments passed to this method when called by SAPUI5
+	 * @param {string} sMethodName The method name
+	 * @param {object} args The arguments passed to this method when called by SAPUI5
 	 */
 	function notImplemented(sMethodName, args) {
 		var sArgs;
@@ -52,25 +52,25 @@ sap.ui.define([
 	 * Constructor for a new ODataModel.
 	 *
 	 * @param {string} [sServiceUrl]
-	 *   root URL of the service to request data from; it is required, but may also be given via
+	 *   Root URL of the service to request data from; it is required, but may also be given via
 	 *   <code>mParameters.serviceUrl</code>. Must end with a forward slash according to OData v4
 	 *   specification ABNF, rule "serviceRoot" unless you append OData custom query options
 	 *   to the service root URL separated with a "?", e.g. "/MyService/?custom=foo". See parameter
 	 *   <code>mParameters.serviceUrlParams</code> for details on custom query options.
 	 * @param {object} [mParameters]
-	 *   the parameters
+	 *   The parameters
 	 * @param {string} [mParameters.serviceUrl]
-	 *   root URL of the service to request data from as specified for the parameter
+	 *   Root URL of the service to request data from as specified for the parameter
 	 *   <code>sServiceUrl</code>; only used if the parameter <code>sServiceUrl</code> has not been
 	 *   given
 	 * @param {object} [mParameters.serviceUrlParams]
-	 *   map of OData custom query options to be used in each data service request for this model,
+	 *   Map of OData custom query options to be used in each data service request for this model,
 	 *   see specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
 	 *   OData system query options
 	 *   and OData parameter aliases lead to an error.
 	 *   Query options from this map overwrite query options with the same name specified via the
 	 *   <code>sServiceUrl</code> parameter.
-	 * @throws {Error} if the given service root URL does not end with a forward slash or if
+	 * @throws {Error} If the given service root URL does not end with a forward slash or if
 	 *   OData system query options or parameter aliases are specified as parameters
 	 *
 	 * @class Model implementation for OData v4.
@@ -129,19 +129,19 @@ sap.ui.define([
 	 * context is available.
 	 *
 	 * @param {string} sPath
-	 *   the binding path in the model
+	 *   The binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
+	 *   Map of OData query options where "5.2 Custom Query Options" and the $expand and
 	 *   $select "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL
 	 *   Conventions") are allowed. All other query options lead to an error. Query options
 	 *   specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
-	 *   the context binding
-	 * @throws {Error} when disallowed OData query options are provided
+	 *   The context binding
+	 * @throws {Error} When disallowed OData query options are provided
 	 * @public
 	 */
 	ODataModel.prototype.bindContext = function (sPath, oContext, mParameters) {
@@ -157,23 +157,23 @@ sap.ui.define([
 	 * resolve to an absolute OData path for an entity set.
 	 *
 	 * @param {string} sPath
-	 *   the binding path in the model
+	 *   The binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter[]} [aSorters]
-	 *   initial sort order
+	 *   Initial sort order
 	 * @param {sap.ui.model.Filter[]} [aFilters]
-	 *   predefined filters
+	 *   Predefined filters
 	 * @param {object} [mParameters]
-	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
+	 *   Map of OData query options where "5.2 Custom Query Options" and the $expand and
 	 *   $select "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL
 	 *   Conventions") are allowed. All other query options lead to an error. Query options
 	 *   specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @return {sap.ui.model.odata.v4.ODataListBinding}
-	 *   the list binding
-	 * @throws {Error} when disallowed OData query options are provided
+	 *   The list binding
+	 * @throws {Error} When disallowed OData query options are provided
 	 * @public
 	 */
 	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
@@ -191,18 +191,18 @@ sap.ui.define([
 	 * to be informed when the value is available.
 	 *
 	 * @param {string} sPath
-	 *   the binding path in the model
+	 *   The binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   map of OData query options where only "5.2 Custom Query Options" (see specification "OData
+	 *   Map of OData query options where only "5.2 Custom Query Options" (see specification "OData
 	 *   Version 4.0 Part 2: URL Conventions") are allowed. All other query options lead to an
 	 *   error. Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
-	 *   the property binding
-	 * @throws {Error} when parameters are provided
+	 *   The property binding
+	 * @throws {Error} When parameters are provided
 	 * @public
 	 */
 	ODataModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
@@ -217,12 +217,12 @@ sap.ui.define([
 	 * Creates a new entity from the given data in the collection pointed to by the given path.
 	 *
 	 * @param {string} sPath
-	 *   an absolute data binding path pointing to an entity set, e.g. "/EMPLOYEES"
+	 *   An absolute data binding path pointing to an entity set, e.g. "/EMPLOYEES"
 	 * @param {object} oEntityData
-	 *   the new entity's properties, e.g.
+	 *   The new entity's properties, e.g.
 	 *   <code>{"ID" : "1", "AGE" : 52, "ENTRYDATE" : "1977-07-24", "Is_Manager" : false}</code>
 	 * @returns {Promise}
-	 *   a promise which is resolved with the server's response data in case of success, or
+	 *   A promise which is resolved with the server's response data in case of success, or
 	 *   rejected with an instance of <code>Error</code> in case of failure
 	 *
 	 * @private
@@ -262,7 +262,7 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   An absolute data binding path to the data which should be retrieved
 	 * @param {boolean} [bAllowObjectAccess=false]
-	 *   whether access to whole objects is allowed
+	 *   Whether access to whole objects is allowed
 	 * @returns {Promise}
 	 *   A promise to be resolved when the OData request is finished, providing a data object
 	 *   just like the OData v4 JSON format, e.g. <code>{"value" : "foo"}</code> for simple
@@ -300,11 +300,11 @@ sap.ui.define([
 	/**
 	 * Refreshes the model by calling refresh on all bindings which have a change event handler
 	 * attached. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 *
 	 * @param {boolean} bForceUpdate
-	 *   <code>bForceUpdate</code> has to be <code>true</code>
-	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code>
+	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code>
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#refresh
@@ -369,9 +369,9 @@ sap.ui.define([
 	 * binding.
 	 *
 	 * @param {sap.ui.model.Context} oEntityContext
-	 *   a context in this model which must point to a non-contained OData entity
+	 *   A context in this model which must point to a non-contained OData entity
 	 * @returns {Promise}
-	 *   a promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
+	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
 	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
 	 *   the given context does not point to an entity
 	 *

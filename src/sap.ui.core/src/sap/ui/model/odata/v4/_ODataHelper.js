@@ -20,14 +20,14 @@ sap.ui.define([
 		 * <li> parameter aliases (key starts with "@")
 		 * </ul>
 		 * @param {object} [mModelOptions={}]
-		 *   map of query options specified for the model
+		 *   Map of query options specified for the model
 		 * @param {object} [mOptions={}]
-		 *   map of query options
+		 *   Map of query options
 		 * @param {string[]} [aAllowed=[]]
-		 *   names of allowed system query options
+		 *   Names of allowed system query options
 		 * @throws {Error} when disallowed OData query options are provided
 		 * @returns {object}
-		 *   the map of query options
+		 *   The map of query options
 		 */
 		buildQueryOptions : function (mModelOptions, mOptions, aAllowed) {
 			var mResult = JSON.parse(JSON.stringify(mModelOptions || {}));
@@ -47,11 +47,11 @@ sap.ui.define([
 		 * data and entity instance runtime data.
 		 *
 		 * @param {object} oEntityType
-		 *   entity type meta data
+		 *   Entity type meta data
 		 * @param {object} oEntityInstance
-		 *   entity instance runtime data
+		 *   Entity instance runtime data
 		 * @returns {string}
-		 *   the key predicate, e.g. "(Sector='DevOps',ID='42')"
+		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')"
 		 */
 		getKeyPredicate : function (oEntityType, oEntityInstance) {
 			var aKeyValuePairs = [];

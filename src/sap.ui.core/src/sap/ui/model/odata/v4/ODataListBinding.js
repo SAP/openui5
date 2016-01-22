@@ -14,22 +14,22 @@ sap.ui.define([
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-	 *   the OData v4 model
+	 *   The OData v4 model
 	 * @param {string} sPath
-	 *   the path in the model
+	 *   The path in the model
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {number} iIndex
-	 *   the index of this list binding in the array of root bindings kept by the model, see
+	 *   The index of this list binding in the array of root bindings kept by the model, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}
 	 * @param {object} [mParameters]
-	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and $select
+	 *   Map of OData query options where "5.2 Custom Query Options" and the $expand and $select
 	 *   "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL Conventions")
 	 *   are allowed. All other query options lead to an error. Query options specified for the
 	 *   binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} when disallowed OData query options are provided
+	 * @throws {Error} When disallowed, OData query options are provided
 	 * @class List binding for an OData v4 model.
 	 *
 	 * @author SAP SE
@@ -75,12 +75,12 @@ sap.ui.define([
 	 * yields the updated array of contexts.
 	 *
 	 * @param {number} [iStart=0]
-	 *   the index where to start the retrieval of contexts
+	 *   The index where to start the retrieval of contexts
 	 * @param {number} [iLength]
-	 *   the number of contexts to retrieve beginning from the start index; defaults to the model's
+	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
 	 * @return {sap.ui.model.Context[]}
-	 *   the array of already created contexts with the first entry containing the context for
+	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
 	 * @see sap.ui.model.Binding#attachChange
 	 * @protected
@@ -120,8 +120,8 @@ sap.ui.define([
 		 * Creates entries in aContexts for each value in oResult.
 		 * Uses fnGetPath to create the context path.
 		 * Fires "change" event if new contexts are created.
-		 * @param {function} fnGetPath function calculating base or dependent path
-		 * @param {object} oResult resolved OData result
+		 * @param {function} fnGetPath Function calculating base or dependent path
+		 * @param {object} oResult Resolved OData result
 		 */
 		function createContexts(fnGetPath, oResult) {
 			var bChanged = false,
@@ -190,7 +190,7 @@ sap.ui.define([
 	 * the server an estimated length is returned.
 	 *
 	 * @return {number}
-	 *   the number of entries in the list
+	 *   The number of entries in the list
 	 * @see sap.ui.model.ListBinding#getLength
 	 * @public
 	 */
@@ -203,7 +203,7 @@ sap.ui.define([
 	 * server. If the length is a client side estimation <code>false</code> is returned.
 	 *
 	 * @return {boolean}
-	 *   <code>true</true> if the length is determined by server side data
+	 *   If <code>true</true> the length is determined by server side data
 	 * @see sap.ui.model.ListBinding#isLengthFinal
 	 * @public
 	 */
@@ -216,13 +216,13 @@ sap.ui.define([
 	 * given index.
 	 *
 	 * @param {string} sPath
-	 *   the path to the property
+	 *   The path to the property
 	 * @param {boolean} bAllowObjectAccess
-	 *   whether access to whole objects is allowed
+	 *   Whether access to whole objects is allowed
 	 * @param {number} iIndex
-	 *   the item's index
+	 *   The item's index
 	 * @return {Promise}
-	 *   the promise which is resolved with the value, e.g. <code>"foo"</code> for simple
+	 *   The promise which is resolved with the value, e.g. <code>"foo"</code> for simple
 	 *   properties, <code>[...]</code> for collections and <code>{"foo" : "bar", ...}</code> for
 	 *   objects
 	 * @private
@@ -262,14 +262,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
-	 * control, that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
+	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 * Refresh is supported for absolute bindings.
 	 *
 	 * @param {boolean} bForceUpdate
-	 *   <code>bForceUpdate</code> has to be <code>true</code>
-	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code> or refresh
+	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code>, refresh
 	 *   on this binding is not supported
 	 *
 	 * @public
@@ -293,7 +293,7 @@ sap.ui.define([
 	 * Sets the context and resets the cached contexts of the list items.
 	 *
 	 * @param {sap.ui.model.Context} oContext
-	 *   the context object
+	 *   The context object
 	 * @protected
 	 * @override
 	 */

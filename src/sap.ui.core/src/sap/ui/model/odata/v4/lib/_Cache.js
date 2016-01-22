@@ -10,9 +10,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * Builds a partial query string from the parameter map
 	 *
 	 * @param {object} mQueryParameters
-	 *   a map of key-value pairs representing the query string
+	 *   A map of key-value pairs representing the query string
 	 * @returns {string}
-	 *   returns an encoded query string starting with "?" and ending with "&" if parameters are
+	 *   Returns an encoded query string starting with "?" and ending with "&" if parameters are
 	 *   available so that we can simply append further parameters
 	 */
 	function buildQueryString(mQueryParameters) {
@@ -26,13 +26,13 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * elements are appended to the end, in contrast to Array.fill.
 	 *
 	 * @param {any[]} aArray
-	 *   the array
+	 *   The array
 	 * @param {any} vValue
-	 *   the value
+	 *   The value
 	 * @param {int} iStart
-	 *   the start index
+	 *   The start index
 	 * @param {int} iEnd
-	 *   the end index (will not be filled)
+	 *   The end index (will not be filled)
 	 */
 	function fill(aArray, vValue, iStart, iEnd) {
 		var i;
@@ -49,11 +49,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * property <code>canceled</code> which is set to <code>true</code>.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Cache} oCache
-	 *   the cache
+	 *   The cache
 	 * @param {int} iStart
-	 *   the index of the first element to request ($skip)
+	 *   The index of the first element to request ($skip)
 	 * @param {int} iEnd
-	 *   the position of the last element to request ($skip + $top)
+	 *   The position of the last element to request ($skip + $top)
 	 */
 	function requestElements(oCache, iStart, iEnd) {
 		var aElements = oCache.aElements,
@@ -93,11 +93,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * requestor.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
-	 *   the requestor
+	 *   The requestor
 	 * @param {string} sUrl
-	 *   the URL to request from
+	 *   The URL to request from
 	 * @param {object} [mQueryParameters]
-	 *   a map of key-value pairs representing the query string
+	 *   A map of key-value pairs representing the query string
 	 */
 	function Cache(oRequestor, sUrl, mQueryParameters) {
 		this.oRequestor = oRequestor;
@@ -111,11 +111,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * Returns a promise resolved with an OData object for a range of the requested data.
 	 *
 	 * @param {int} iIndex
-	 *   the start index of the range; the first row has index 0
+	 *   The start index of the range; the first row has index 0
 	 * @param {int} iLength
-	 *   the length of the range
+	 *   The length of the range
 	 * @returns {Promise}
-	 *   a Promise to be resolved with the requested range given as an OData response object (with
+	 *   A Promise to be resolved with the requested range given as an OData response object (with
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>). If an HTTP
 	 *   request fails, the error from the _Requestor is returned and the requested range is reset
 	 *   to undefined.
@@ -174,7 +174,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Returns the cache's URL.
 	 *
-	 * @returns {string} the URL
+	 * @returns {string} The URL
 	 */
 	Cache.prototype.toString = function () {
 		return this.sUrl;
@@ -184,11 +184,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * Creates a cache for a single entity that performs requests using the given requestor.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
-	 *   the requestor
+	 *   The requestor
 	 * @param {string} sUrl
-	 *   the URL to request from
+	 *   The URL to request from
 	 * @param {object} [mQueryParameters]
-	 *   a map of key-value pairs representing the query string
+	 *   A map of key-value pairs representing the query string
 	 */
 	function SingleCache(oRequestor, sUrl, mQueryParameters) {
 		this.oRequestor = oRequestor;
@@ -200,7 +200,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * Returns a promise resolved with an OData object for the requested data.
 	 *
 	 * @returns {Promise}
-	 *   a Promise to be resolved with the element.
+	 *   A Promise to be resolved with the element.
 	 *   A refresh cancels processing a pending promise by throwing an error that has a
 	 *   property <code>canceled</code> which is set to <code>true</code>.
 	 */
@@ -234,7 +234,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Returns the single cache's URL.
 	 *
-	 * @returns {string} the URL
+	 * @returns {string} The URL
 	 */
 	SingleCache.prototype.toString = function () {
 		return this.sUrl;
@@ -246,20 +246,20 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 * requestor.
 		 *
 		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
-		 *   the requestor
+		 *   The requestor
 		 * @param {string} sUrl
-		 *   the URL to request from; it must contain the path to the OData service, it must not
+		 *   The URL to request from; it must contain the path to the OData service, it must not
 		 *   contain a query string<br>
 		 *   Example: /V4/Northwind/Northwind.svc/Products
 		 * @param {object} mQueryParameters
-		 *   a map of key-value pairs representing the query string, the value in this pair has to
+		 *   A map of key-value pairs representing the query string, the value in this pair has to
 		 *   be a string or an array of strings; if it is an array, the resulting query string
 		 *   repeats the key for each array value.
 		 *   Examples:
 		 *   {foo: "bar", "bar": "baz"} results in the query string "foo=bar&bar=baz"
 		 *   {foo: ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
-		 *   the cache
+		 *   The cache
 		 */
 		create: function _create(oRequestor, sUrl, mQueryParameters) {
 			return new Cache(oRequestor, sUrl, mQueryParameters);
@@ -269,20 +269,20 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 * Creates a cache for a single entity that performs requests using the given requestor.
 		 *
 		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
-		 *   the requestor
+		 *   The requestor
 		 * @param {string} sUrl
-		 *   the URL to request from; it must contain the path to the OData service, it must not
+		 *   The URL to request from; it must contain the path to the OData service, it must not
 		 *   contain a query string<br>
 		 *   Example: /V4/Northwind/Northwind.svc/Products(ProductID=1)
 		 * @param {object} mQueryParameters
-		 *   a map of key-value pairs representing the query string, the value in this pair has to
+		 *   A map of key-value pairs representing the query string, the value in this pair has to
 		 *   be a string or an array of strings; if it is an array, the resulting query string
 		 *   repeats the key for each array value.
 		 *   Examples:
 		 *   {foo: "bar", "bar": "baz"} results in the query string "foo=bar&bar=baz"
 		 *   {foo: ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
-		 *   the cache
+		 *   The cache
 		 */
 		createSingle: function _createSingle(oRequestor, sUrl, mQueryParameters) {
 			return new SingleCache(oRequestor, sUrl, mQueryParameters);

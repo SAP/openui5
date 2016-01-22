@@ -23,7 +23,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	 * @param {string} sServiceUrl
 	 *   URL of the service document to request the CSRF token from
 	 * @param {object} mHeaders
-	 *   map of default headers; may be overridden with request-specific headers; certain
+	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData v4 headers are added by default, but may be overridden
 	 * @private
 	 */
@@ -75,19 +75,19 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	 * @param {string} sMethod
 	 *   HTTP method, e.g. "GET"
 	 * @param {string} sUrl
-	 *   some absolute URL (which must belong to the service for which this requestor has been
+	 *   Some absolute URL (which must belong to the service for which this requestor has been
 	 *   created)
 	 * @param {object} [mHeaders]
-	 *   map of request-specific headers, overriding both the mandatory OData v4 headers and the
+	 *   Map of request-specific headers, overriding both the mandatory OData v4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
 	 *   "X-CSRF-Token" header.
 	 * @param {object} [oPayload]
-	 *   data to be sent to the server
+	 *   Data to be sent to the server
 	 * @param {boolean} [bIsFreshToken=false]
-	 *   whether the CSRF token has already been refreshed and thus should not be refreshed
+	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
 	 *   again
 	 * @returns {Promise}
-	 *   a promise on the outcome of the HTTP request
+	 *   A promise on the outcome of the HTTP request
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sUrl, mHeaders, oPayload, bIsFreshToken) {
@@ -131,7 +131,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		 * @param {string} sServiceUrl
 		 *   URL of the service document to request the CSRF token from
 		 * @param {object} mHeaders
-		 *   map of default headers; may be overridden with request-specific headers; certain
+		 *   Map of default headers; may be overridden with request-specific headers; certain
 		 *   OData v4 headers are predefined, but may be overridden by the default or
 		 *   request-specific headers:
 		 *   <pre>{
@@ -143,7 +143,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		 *   <code>_Requestor<code> always sets the "Content-Type" header to
 		 *   "application/json;charset=UTF-8" value.
 		 * @returns {object}
-		 *   a new <code>_Requestor<code> instance
+		 *   A new <code>_Requestor<code> instance
 		 */
 		create : function (sServiceUrl, mHeaders) {
 			return new Requestor(sServiceUrl, mHeaders);

@@ -21,14 +21,14 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * readable.
 		 *
 		 * @param {object} [mParameters]
-		 *   a map of key-value pairs representing the query string, the value in this pair has to
+		 *   A map of key-value pairs representing the query string, the value in this pair has to
 		 *   be a string or an array of strings; if it is an array, the resulting query string
-		 *   repeats the key for each array value.
+		 *   repeats the key for each array value
 		 *   Examples:
 		 *   buildQuery({foo: "bar", "bar": "baz"}) results in the query string "?foo=bar&bar=baz"
 		 *   buildQuery({foo: ["bar", "baz"]}) results in the query string "?foo=bar&foo=baz"
 		 * @returns {string}
-		 *   the query string; it is empty if there are no parameters; it starts with "?" otherwise
+		 *   The query string; it is empty if there are no parameters; it starts with "?" otherwise
 		 */
 		buildQuery : function (mParameters) {
 			var aKeys, aQuery;
@@ -62,9 +62,9 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * Returns an <code>Error</code> instance from a jQuery XHR wrapper.
 		 *
 		 * @param {object} jqXHR
-		 *   a jQuery XHR wrapper as received by a failure handler
+		 *   A jQuery XHR wrapper as received by a failure handler
 		 * @param {function} jqXHR.getResponseHeader
-		 *   used to access the HTTP response header "Content-Type"
+		 *   Used to access the HTTP response header "Content-Type"
 		 * @param {string} jqXHR.responseText
 		 *   HTTP response body, sometimes in JSON format ("Content-Type" : "application/json")
 		 *   according to OData "19 Error Response" specification, sometimes plain text
@@ -74,15 +74,15 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {string} jqXHR.statusText
 		 *   HTTP status text
 		 * @returns {Error}
-		 *   an <code>Error</code> instance with the following properties:
+		 *   An <code>Error</code> instance with the following properties:
 		 *   <ul>
-		 *     <li><code>error</code>: the "error" value from the OData v4 error response JSON
-		 *     object (if available);
-		 *     <li><code>isConcurrentModification</code>: <code>true</code> in case of a
-		 *     concurrent modification detected via ETags (i.e. HTTP status code 412);
-		 *     <li><code>message</code>: error message;
-		 *     <li><code>status</code>: HTTP status code;
-		 *     <li><code>statusText</code>: HTTP status text.
+		 *     <li><code>error</code>: The "error" value from the OData v4 error response JSON
+		 *     object (if available)
+		 *     <li><code>isConcurrentModification</code>: <code>true</code> In case of a
+		 *     concurrent modification detected via ETags (i.e. HTTP status code 412)
+		 *     <li><code>message</code>: Error message
+		 *     <li><code>status</code>: HTTP status code
+		 *     <li><code>statusText</code>: HTTP status text
 		 *   </ul>
 		 * @see <a href=
 		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html"
@@ -120,11 +120,11 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * Encodes a query part, either a key or a value.
 		 *
 		 * @param {string} sPart
-		 *   the query part
+		 *   The query part
 		 * @param {boolean} bEncodeEquals
-		 *   if true, "=" is encoded, too
+		 *   If true, "=" is encoded, too
 		 * @returns {string}
-		 *   the encoded query part
+		 *   The encoded query part
 		 */
 		encode : function (sPart, bEncodeEquals) {
 			var sEncoded = encodeURI(sPart)
@@ -142,11 +142,11 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * Encodes a key-value pair.
 		 *
 		 * @param {string} sKey
-		 *   the key
+		 *   The key
 		 * @param {string} sValue
-		 *   the sValue
+		 *   The sValue
 		 * @returns {string}
-		 *   the encoded key-value pair in the form "key=value"
+		 *   The encoded key-value pair in the form "key=value"
 		 */
 		encodePair : function (sKey, sValue) {
 			return Helper.encode(sKey, true) + "=" + Helper.encode(sValue, false);
@@ -203,9 +203,9 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		/**
 		 * Checks that the value is a safe integer.
 		 *
-		 * @param {number} iNumber the value
+		 * @param {number} iNumber The value
 		 * @returns {boolean}
-		 *   true if the value is a safe integer
+		 *   True if the value is a safe integer
 		 */
 		isSafeInteger : function (iNumber) {
 			if (typeof iNumber !== "number" || !isFinite(iNumber)) {
