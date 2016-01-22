@@ -32,6 +32,7 @@
 		jQuery.sap.require("sap.m.semantic.FilterAction");
 		jQuery.sap.require("sap.m.semantic.GroupAction");
 		jQuery.sap.require("sap.m.semantic.MessagesIndicator");
+		jQuery.sap.require("sap.m.semantic.MessagesAction");
 		jQuery.sap.require("sap.m.semantic.FlagAction");
 		jQuery.sap.require("sap.m.semantic.FavoriteAction");
 		jQuery.sap.require("sap.m.semantic.OpenInAction");
@@ -1205,7 +1206,22 @@
 			customShareMenuContent : [
 				new sap.m.Button({icon : "sap-icon://video", text: "test", press: onCustomBtnPress})
 			],
-			messagesIndicator: new sap.m.semantic.MessagesIndicator(),
+			messagesAction: new sap.m.semantic.MessagesAction("messagesAction",
+					{
+						models: {message: sap.ui.getCore().getMessageManager().getMessageModel()},
+						visible: {
+							path: "message>/",
+							formatter: function (aMessages) {
+								return aMessages && aMessages.length > 0;
+							}
+						},
+						count: {
+							path: "message>/",
+							formatter: function (aMessages) {
+								return aMessages.length;
+							}
+						}
+					}),
 			draftIndicator: draftInd,
 			positiveAction: new sap.m.semantic.PositiveAction({text: "Positive", press: onSemanticBtnPress}),
 			mainAction: new sap.m.semantic.MainAction({text: "Main", press: onSemanticBtnPress}),
