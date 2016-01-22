@@ -2406,6 +2406,17 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		return (this._getPage1().getContent().length && aPageIds.indexOf(this._vContentPage) === -1);
 	}
 
+	/**
+	 * Forward the busy state setting to the internal dialog instance.
+	 * Needed because of the not-bullet proof implementation of setBusy in sap.ui.core.Control
+	 * @public
+	 * @param {boolean} bBusy The busy state flag
+	 * @return {sap.m.ViewSettingsDialog} this Instance for chaining
+	 */
+	ViewSettingsDialog.prototype.setBusy = function (bBusy) {
+		this._getDialog().setBusy(bBusy);
+	};
+
 
 	return ViewSettingsDialog;
 
