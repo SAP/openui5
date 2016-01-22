@@ -26,9 +26,7 @@
 	<script  language="javascript">
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-	<!-- use the sinon faketimers for this test -->
-	sinon.config.useFakeTimers = true;
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 	var personImg = "../images/Person.png",
 		jobPosImg = "../images/JobPosition.png",
@@ -502,6 +500,28 @@
 		equal($table.find('#table-paginator').length, 1, 'The paginator exists');
 		oTable._oPaginator.getDomRef("-lastPageLink").click();
 		equal(oTable.getFirstVisibleRow(), 195 , "Navigation to last page OK");
+	});
+
+	module("VisibleRowcountMode Auto", {
+		setup: function() {
+			document.getElementById("qunit-fixture").style.height = "800px";
+			this.clock = sinon.useFakeTimers();
+			createTable({
+				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Auto
+			});
+		},
+		teardown: function() {
+			destroyTable();
+			this.clock.restore();
+			document.getElementById("qunit-fixture").style.height = "";
+		}
+	});
+
+	test("After initialization", function(){
+		this.clock.tick(1000);
+		this.clock.tick(1000);
+		equal(oTable.getVisibleRowCount(), 27, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
+
 	});
 
 	module("VisibleRowcountMode Interactive", {
@@ -1004,7 +1024,6 @@
 
 	module("Data export", {
 		setup: function() {
-			sinon.config.useFakeTimers = false;
 			createTable({}, null, "myModel");
 			oTable.filter(oTable.getColumns()[1], "Al");
 
@@ -1017,7 +1036,6 @@
 			oExport.destroy();
 			oExport = null;
 			destroyTable();
-			sinon.config.useFakeTimers = true;
 		}
 	});
 

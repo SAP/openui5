@@ -211,13 +211,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			this.renderVariableHeight(rm ,oTable);
 		}
 		rm.write("</div>");
-
-		// Resize Sensor
-		rm.write("<iframe");
-		rm.writeAttribute("id", oTable.getId() + "-resizesensor");
-		rm.addClass("sapUiTableResizeSensor");
-		rm.writeClasses();
-		rm.write("/>");
 	};
 
 	// =============================================================================
