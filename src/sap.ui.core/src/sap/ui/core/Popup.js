@@ -305,14 +305,16 @@ sap.ui.define([
 	Popup.prototype.touchEnabled = Device.support.touch || jQuery.sap.simulateMobileOnDesktop;
 
 	/**
-	 * This property changes how focus handling works. When it's set to true, focus will be restored after Popup is closed to the previous focused element before Popup is open. Otherwise, this function is disabled.
+	 * This property changes how focus handling works. When it's set to true,
+	 * focus will be restored after Popup is closed to the previous focused
+	 * element before Popup is open. Otherwise, this function is disabled.
 	 *
 	 * By default, the focus is restored only in non-touch environments.
 	 *
 	 * @type {boolean}
 	 * @private
 	 */
-	Popup.prototype.restoreFocus = !Device.support.touch && !jQuery.sap.simulateMobileOnDesktop;
+	Popup.prototype.restoreFocus = (!Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) || Device.system.combi;
 
 	//****************************************************
 	//Layer et al
