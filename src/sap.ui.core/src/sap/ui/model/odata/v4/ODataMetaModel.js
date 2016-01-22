@@ -276,8 +276,9 @@ sap.ui.define([
 		}
 
 		return this.fetchEntityContainer().then(function (mScope) {
-			var bODataMode = true, // OData navigation mode with scope lookup etc.
+			var vLocation, // {string[]|string} location of indirection
 				sName, // what "@sapui.name" refers to: OData or annotation name
+				bODataMode = true, // OData navigation mode with scope lookup etc.
 				// parent for next "17.2 SimpleIdentifier"...
 				// (normally the schema child containing the current object)
 				oSchemaChild, // ...as object
@@ -288,10 +289,26 @@ sap.ui.define([
 				vResult = mScope; // current object
 
 			/*
+			 * Looks up the given qualified name in the global scope.
+			 *
+			 * @param {string} sQualifiedName
+			 *   A qualified name
+			 * @returns {boolean}
+			 *   Whether to continue after scope lookup
+			 */
+			function scopeLookup(sQualifiedName) {
+				if (!(sQualifiedName in mScope)) {
+					vLocation = vLocation || sTarget && sTarget + "/$Type";
+					return warn("Unknown qualified name '", sQualifiedName, "'");
+				}
+				sTarget = sName = sSchemaChildName = sQualifiedName;
+				vResult = oSchemaChild = mScope[sSchemaChildName];
+				return true;
+			}
+
+			/*
 			 * Takes one step according to the given segment, starting at the current
 			 * <code>vResult</code> and changing that.
-			 * @param {string} [sLocation]
-			 *   Where the relative path has been found (in case of implicit lookup)
 			 * @param {string} sSegment
 			 *   Current segment
 			 * @param {number} i
@@ -301,7 +318,7 @@ sap.ui.define([
 			 * @returns {boolean}
 			 *   Whether to continue after this step
 			 */
-			function step(sLocation, sSegment, i, aSegments) {
+			function step(sSegment, i, aSegments) {
 				var sSchemaName;
 
 				if (!sSegment) {
@@ -319,22 +336,24 @@ sap.ui.define([
 					}
 					return false;
 				}
+
 				if (typeof vResult === "string"
-					// implicit scope lookup
-					&& !steps(vResult, aSegments.slice(0, i).join("/"))) {
+					// indirection: re-use scope lookup etc.
+					&& !steps(vResult, aSegments.slice(0, i))) {
 					return false;
 				}
 				if (!vResult || typeof vResult !== "object") {
 					// Note: even an OData path cannot continue here (e.g. by type cast)
-					return warn("Invalid segment: " + sSegment);
+					return warn("Invalid segment: ", sSegment);
 				}
+
 				if (bODataMode) {
 					if (sSegment[0] === "$") {
 						bODataMode = false; // technical property, switch to pure "JSON" drill-down
 					} else if (sSegment[0] === "@") {
 						// annotation(s) via external targeting
 						if (!sTarget) {
-							return warn("Unsupported path before " + sSegment);
+							return warn("Unsupported path before ", sSegment);
 						} // else: sSchemaChildName is well defined
 						sSchemaName
 							= sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
@@ -344,16 +363,10 @@ sap.ui.define([
 						bODataMode = false; // switch to pure "JSON" drill-down
 					} else if (sSegment.indexOf(".") > 0) {
 						// "17.3 QualifiedName": scope lookup
-						if (!(sSegment in mScope)) {
-							return warn("Unknown qualified name '" + sSegment + "'"
-								+ (sLocation ? " at /" + sLocation : ""));
-						}
-						sTarget = sName = sSchemaChildName = sSegment;
-						vResult = oSchemaChild = mScope[sSchemaChildName];
-						return true;
+						return scopeLookup(sSegment);
 					} else if ("$Type" in vResult) {
 						// implicit $Type insertion, e.g. at (navigation) property
-						if (!steps(vResult.$Type, aSegments.slice(0, i).join("/") + "/$Type")) {
+						if (!scopeLookup(vResult.$Type)) {
 							return false;
 						}
 					} else {
@@ -362,12 +375,13 @@ sap.ui.define([
 						sTarget = sName = sSchemaChildName
 							= sSchemaChildName || mScope.$EntityContainer;
 						vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
-						if (sLocation && !(sSegment in oSchemaChild)) {
-							return warn("Unknown child '" + sSegment + "' of '" + sSchemaChildName
-								+ "' at /" + sLocation);
+						if (sSegment !== "." && !(sSegment in oSchemaChild)) {
+							return warn("Unknown child '", sSegment,
+								"' of '", sSchemaChildName, "'");
 						}
 					}
 				}
+
 				// Note: "." is useful to force implicit lookup or $Type insertion
 				if (sSegment !== "." && sSegment !== "@") {
 					sName = bODataMode || sSegment[0] === "@" ? sSegment : undefined;
@@ -380,30 +394,50 @@ sap.ui.define([
 			/*
 			 * Takes multiple steps according to the given relative path, starting at the global
 			 * scope and changing <code>vResult</code>.
+			 *
 			 * @param {string} sRelativePath
 			 *   Some relative path (semantically, it is absolute as we start at the global scope,
 			 *   but it does not begin with a slash!)
-			 * @param {string} [sLocation]
-			 *   Where the relative path has been found (in case of implicit lookup)
+			 * @param {string[]} [vNewLocation]
+			 *   List of segments up to the point where the relative path has been found (in case
+			 *   of indirection)
 			 * @returns {boolean}
 			 *   Whether to continue after all steps
 			 */
-			function steps(sRelativePath, sLocation) {
+			function steps(sRelativePath, vNewLocation) {
+				var bContinue;
+
+				if (vLocation) {
+					return warn("Invalid recursion");
+				}
+				vLocation = vNewLocation;
+
 				bODataMode = true;
 				vResult = mScope;
-				return sRelativePath.split("/").every(step.bind(null, sLocation));
+				bContinue = sRelativePath.split("/").every(step);
+
+				vLocation = undefined;
+				return bContinue;
 			}
 
 			/*
 			 * Outputs a warning message. Leads to an <code>undefined</code> result.
-			 * @param {string} sMessage
-			 *   The message
+			 *
+			 * @param {...string} aTexts
+			 *   The main text of the message is constructed from the arguments by joining them
 			 * @returns {boolean}
 			 *   <code>false</code>
 			 */
-			function warn(sMessage) {
+			function warn() {
+				var sLocation;
+
 				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-					jQuery.sap.log.warning(sMessage, sResolvedPath, sODataMetaModel);
+					sLocation = Array.isArray(vLocation)
+						? vLocation.join("/")
+						: vLocation;
+					jQuery.sap.log.warning(Array.prototype.join.call(arguments, "")
+						+ (sLocation ? " at /" + sLocation : ""),
+						sResolvedPath, sODataMetaModel);
 				}
 				vResult = undefined;
 				return false;
