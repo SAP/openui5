@@ -1292,7 +1292,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			oGlobalSandbox.stub(Expression, "path", function (oInterface, oPathValue) {
 				// do not try to "determine type for property"
-				return {result: "binding", value: oPathValue.value};
+				return {result: "binding", value: oPathValue.value, type: "Edm.String"};
 			});
 
 			assert.strictEqual(format(oRawValue, oCurrentContext),

@@ -633,29 +633,27 @@ sap.ui.require([
 		title: "composite binding",
 		bExpression: false,
 		parameter2: {result: "constant", value: "{foo}", type: "Edm.String"},
-		result: {result: "composite", value: "{path:'path',type:" +
-			"'sap.ui.model.odata.type.String'}\\{foo\\}", type: "Edm.String"}
+		result: {result: "composite", value: "\\{foo\\}"}
 	}, {
 		title: "composite binding w/ null",
 		bExpression: false,
 		parameter2: {result: "constant", value: "null", type: "edm:Null"},
-		result: {result: "composite", value: "{path:'path',type:" +
-			"'sap.ui.model.odata.type.String'}", type: "Edm.String"}
+		result: {result: "composite", value: ""}
 	}, {
 		title: "expression binding",
 		bExpression: true,
 		parameter2: {result: "constant", value: "foo\\bar", type: "Edm.String"},
-		result: {result: "expression", value: "${path}+'foo\\\\bar'", type: "Edm.String"}
+		result: {result: "expression", value: "+'foo\\\\bar'"}
 	}, {
 		title: "expression binding w/ null",
 		bExpression: true,
 		parameter2: {result: "constant", value: "null", type: "edm:Null"},
-		result: {result: "expression", value: "${path}", type: "Edm.String"}
+		result: {result: "expression", value: ""}
 	}, {
 		title: "expression parameter",
 		bExpression: false,
 		parameter2: {result: "expression", value: "${foo}?42:23", type: "Edm.String"},
-		result: {result: "expression", value: "${path}+(${foo}?42:23)", type: "Edm.String"}
+		result: {result: "expression", value: "+(${foo}?42:23)"}
 	}].forEach(function (oFixture) {
 		QUnit.test("concat: " + oFixture.title, function (assert) {
 			var oInterface = {},
@@ -669,8 +667,13 @@ sap.ui.require([
 			oExpression.expects("parameter")
 				.withExactArgs(oInterface, oPathValue, 1).returns(oFixture.parameter2);
 
-			assert.deepEqual(Expression.concat(oInterface, oPathValue, oFixture.bExpression),
-				oFixture.result);
+			assert.deepEqual(Expression.concat(oInterface, oPathValue, oFixture.bExpression), {
+				result: oFixture.result.result,
+				value: (oFixture.result.result === "expression" ? "$" : "")
+					+ "{path:'path',type:'sap.ui.model.odata.type.String'}"
+					+ oFixture.result.value,
+				type: "Edm.String"
+			});
 		});
 	});
 
