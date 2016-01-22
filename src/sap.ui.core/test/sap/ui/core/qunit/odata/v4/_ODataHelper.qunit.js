@@ -3,10 +3,9 @@
  */
 sap.ui.require([
 	"sap/ui/model/Context",
-	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/_SyncPromise"
-], function (Context, ODataUtils, Helper, SyncPromise) {
+	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/_ODataHelper"
+], function (Context, Helper, ODataHelper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -66,21 +65,21 @@ sap.ui.require([
 		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
 			var sProperty;
 
-			this.oSandbox.spy(ODataUtils, "formatValue"); //TODO v2 vs. v4?
+			this.oSandbox.spy(Helper, "formatLiteral");
 
 			assert.strictEqual(
-				Helper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
+				ODataHelper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
 				oFixture.sKeyPredicate);
 
-			// check that ODataUtils.formatValue() is called for each property
+			// check that Helper.formatLiteral() is called for each property
 			for (sProperty in oFixture.oEntityType) {
 				if (sProperty[0] !== "$") {
 					assert.ok(
-						ODataUtils.formatValue.calledWithExactly(
+						Helper.formatLiteral.calledWithExactly(
 							oFixture.oEntityInstance[sProperty],
 							oFixture.oEntityType[sProperty].$Type),
-						ODataUtils.formatValue.printf(
-							"ODataUtils.formatValue('" + sProperty + "',...) %C"));
+						Helper.formatLiteral.printf(
+							"Helper.formatLiteral('" + sProperty + "',...) %C"));
 				}
 			}
 		});
@@ -107,7 +106,7 @@ sap.ui.require([
 					o.mModelOptions && JSON.parse(JSON.stringify(o.mModelOptions)),
 				mOriginalOptions = o.mOptions && JSON.parse(JSON.stringify(o.mOptions));
 
-			mOptions = Helper.buildQueryOptions(o.mModelOptions, o.mOptions, o.allowed);
+			mOptions = ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.allowed);
 
 			assert.deepEqual(mOptions, jQuery.extend({}, o.mModelOptions, o.mOptions));
 			assert.deepEqual(o.mModelOptions, mOriginalModelOptions);
@@ -134,7 +133,7 @@ sap.ui.require([
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
 			assert.throws(function () {
-				Helper.buildQueryOptions(o.mModelOptions, o.mOptions, o.allowed);
+				ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.allowed);
 			}, new Error(o.error));
 		});
 	});
