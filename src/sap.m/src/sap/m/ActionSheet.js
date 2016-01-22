@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		if (oDomRef) {
 			this._oItemNavigation.setRootDomRef(oDomRef);
 			for (var i = 0; i < aButtons.length; i++) {
-				if (aButtons[i].getEnabled()) {
+				if (aButtons[i].getEnabled() && aButtons[i].getVisible()) {
 					aDomRefs.push(aButtons[i].getFocusDomRef());
 				}
 			}
