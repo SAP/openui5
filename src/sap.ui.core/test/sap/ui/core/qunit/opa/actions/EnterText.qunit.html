@@ -20,6 +20,7 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 		QUnit.config.autostart = false;
 
@@ -216,7 +217,7 @@
 				// Act
 				oEnterText.executeOn(this.oControl);
 
-				sinon.assert.calledWith(oSpy,  sinon.match(/has no focusable/), sinon.match(oEnterText._sLogPrefix));
+				sinon.assert.calledWith(oSpy,  sinon.match(/has no dom representation/), sinon.match(oEnterText._sLogPrefix));
 			});
 
 			test("Should log a warning if a control cannot be focused", function () {

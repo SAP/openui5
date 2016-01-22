@@ -52,10 +52,11 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 		 * @public
 		 */
 		executeOn : function (oControl) {
-			// Every input control should have a focusable domref
-			var oFocusDomRef = oControl.getFocusDomRef();
-			if (!oFocusDomRef) {
-				$.sap.log.error("Control " + oControl + " has no focusable dom representation", this._sLogPrefix);
+			// focus it
+			var $ActionDomRef = this.$(oControl),
+				oActionDomRef = $ActionDomRef[0];
+
+			if (!oActionDomRef) {
 				return;
 			}
 			if (this.getText() === undefined || (!this.getClearTextFirst() && !this.getText())) {
@@ -63,37 +64,35 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				return;
 			}
 
-			// focus it
-			var $FocusDomRef = $(oFocusDomRef);
-			$FocusDomRef.focus();
+			$ActionDomRef.focus();
 
-			if (!$FocusDomRef.is(":focus")) {
+			if (!$ActionDomRef.is(":focus")) {
 				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
 			}
-			var oUtils = this._getUtils();
+			var oUtils = this.getUtils();
 
 			if (this.getClearTextFirst()) {
-				oUtils.triggerKeydown(oFocusDomRef, $.sap.KeyCodes.DELETE);
-				oUtils.triggerKeyup(oFocusDomRef, $.sap.KeyCodes.DELETE);
-				$FocusDomRef.val("");
-				oUtils.triggerEvent("input", oFocusDomRef);
+				oUtils.triggerKeydown(oActionDomRef, $.sap.KeyCodes.DELETE);
+				oUtils.triggerKeyup(oActionDomRef, $.sap.KeyCodes.DELETE);
+				$ActionDomRef.val("");
+				oUtils.triggerEvent("input", oActionDomRef);
 			}
 
 			// Trigger events for every keystroke - livechange controls
 			this.getText().split("").forEach(function (sChar) {
 				// Change the domref and fire the input event
-				oUtils.triggerCharacterInput(oFocusDomRef, sChar);
-				oUtils.triggerEvent("input", oFocusDomRef);
+				oUtils.triggerCharacterInput(oActionDomRef, sChar);
+				oUtils.triggerEvent("input", oActionDomRef);
 			});
 
 			// trigger change by pressing enter - the dom should be updated by the events above
 
 			// Input change will fire here
-			oUtils.triggerKeydown(oFocusDomRef, "ENTER");
+			oUtils.triggerKeydown(oActionDomRef, "ENTER");
 			// Seachfield will fire here
-			oUtils.triggerKeyup(oFocusDomRef, "ENTER");
+			oUtils.triggerKeyup(oActionDomRef, "ENTER");
 			// To make extra sure - textarea only works with blur
-			oUtils.triggerEvent("blur", oFocusDomRef);
+			oUtils.triggerEvent("blur", oActionDomRef);
 		}
 	});
 

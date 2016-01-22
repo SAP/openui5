@@ -6,16 +6,30 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	"use strict";
 
 	/**
-	 * The Press action is used to simulate a press interaction on a control's focus dom ref.
-	 * This action is not guaranteed to work since sometimes the focus dom ref is not the dom ref you want to click.
-	 * Supported controls are (for other controls this action still might work):
+	 * The Press action is used to simulate a press interaction on a Control's dom ref.
+	 * This will work out of the box for most of the controls (even custom controls).
+	 *
+	 * Here is a List of supported controls:
+	 *
 	 * <ul>
 	 *     <li>sap.m.Button</li>
+	 *     <li>sap.m.Link</li>
 	 *     <li>sap.m.StandardListItem</li>
 	 *     <li>sap.m.IconTabFilter</li>
-	 *     <li>sap.m.StandardTile</li>
 	 *     <li>sap.m.SearchField</li>
-	 *     <li>sap.ui.table.Table.cell</li>
+	 *     <li>sap.m.Page</li>
+	 *     <li>sap.m.List</li>
+	 *     <li>sap.m.Table</li>
+	 *     <li>sap.m.StandardTile</li>
+	 * </ul>
+	 *
+	 * Some Controls will trigger the press on a specific region:
+	 *
+	 * Here are a List of special defaults:
+	 * <ul>
+	 *     <li>sap.m.SeachField - Search Button</li>
+	 *     <li>sap.m.Page - Back Button</li>
+	 *     <li>sap.m.ListBase - More Button</li>
 	 * </ul>
 	 *
 	 * @class
@@ -31,6 +45,11 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 			publicMethods : [ "executeOn" ]
 		},
 
+		init: function () {
+			Action.prototype.init.apply(this, arguments);
+			this.controlAdapters = jQuery.extend(this.controlAdapters, Press.controlAdapters);
+		},
+
 		/**
 		 * Sets focus on given control and triggers a 'tap' event on it (which is
 		 * internally translated into a 'press' event).
@@ -40,33 +59,30 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 		 * @public
 		 */
 		executeOn : function (oControl) {
-			var $FocusDomRef,
-				sAdapterDomRef = Press._controlAdapters[oControl.getMetadata().getName()];
+			var $ActionDomRef = this.$(oControl);
 
-			if (sAdapterDomRef) {
-				$FocusDomRef = oControl.$(sAdapterDomRef);
-			} else {
-				$FocusDomRef = $(oControl.getFocusDomRef());
-			}
-
-			if ($FocusDomRef.length) {
-				$FocusDomRef.focus();
+			if ($ActionDomRef.length) {
+				$ActionDomRef.focus();
 				$.sap.log.debug("Pressed the control " + oControl, this._sLogPrefix);
 
 				// the missing events like saptouchstart and tap will be fired by the event simulation
-				this._triggerEvent("mousedown", $FocusDomRef);
-				this._getUtils().triggerEvent("selectstart", $FocusDomRef);
-				this._triggerEvent("mouseup", $FocusDomRef);
-				this._triggerEvent("click", $FocusDomRef);
-			} else {
-				$.sap.log.error("Control " + oControl + " has no dom representation", this._sLogPrefix);
+				this._triggerEvent("mousedown", $ActionDomRef);
+				this.getUtils().triggerEvent("selectstart", $ActionDomRef);
+				this._triggerEvent("mouseup", $ActionDomRef);
+				this._triggerEvent("click", $ActionDomRef);
 			}
 		},
 
-		_triggerEvent : function (sName, $FocusDomRef) {
-			var oFocusDomRef = $FocusDomRef[0],
-				x = $FocusDomRef.offset().x,
-				y = $FocusDomRef.offset().y;
+		/**
+		 * Create the correct event object for a mouse event
+		 * @param sName the mouse event name
+		 * @param $ActionDomRef the domref on that the event is going to be triggered
+		 * @private
+		 */
+		_triggerEvent : function (sName,$ActionDomRef) {
+			var oFocusDomRef = $ActionDomRef[0],
+				x = $ActionDomRef.offset().x,
+				y = $ActionDomRef.offset().y;
 
 			// See file jquery.sap.events.js for some insights to the magic
 			var oMouseEventObject = {
@@ -80,7 +96,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				// Assume stuff is over the whole screen
 				screenX: x,
 				screenY: y,
-				target: $FocusDomRef[0],
+				target: $ActionDomRef[0],
 				radiusX: 1,
 				radiusY: 1,
 				rotationAngle: 0,
@@ -89,13 +105,56 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				// include the type so jQuery.event.fixHooks can copy properties properly
 				type: sName
 			};
-			this._getUtils().triggerEvent(sName, oFocusDomRef, oMouseEventObject);
+			this.getUtils().triggerEvent(sName, oFocusDomRef, oMouseEventObject);
 		}
 	});
 
-	Press._controlAdapters = {
-		"sap.m.SearchField" : "search"
-	};
+	/**
+	 * A map that contains the id suffixes for certain controls of the library.
+	 * If you need an adapter for your own control you can add it here. For example:
+	 * You wrote a control with the namespace my.Control it renders two buttons and you want the press action to press the second one by default.
+	 *
+	 * <pre>
+	 * <code>
+	 *     new my.Control("myId");
+	 * </code>
+	 * </pre>
+	 *
+	 * It contains two button tags in its dom.
+	 * When you render your control it creates the following dom:
+	 *
+	 *
+	 * <pre>
+	 * <code>
+	 *     <div id="myId">
+	 *         <button id="myId-firstButton"/>
+	 *         <button id="myId-secondButton"/>
+	 *     </div>
+	 * </code>
+	 * </pre>
+	 *
+	 * Then you may add a control adapter like this
+	 *
+	 * <pre>
+	 * <code>
+	 *     Press.controlAdapters["my.control"] = "secondButton" //This can be used by setting the Target Property of an action
+	 *
+	 *     // Example usage
+	 *     new Press(); // executes on second Button since it is set as default
+	 *     new Press({ idSuffix: "firstButton"}); // executes on the first button has to be the same as the last part of the id in the dom
+	 * </code>
+	 * </pre>
+	 *
+	 *
+	 * @public
+	 * @static
+	 * @type map
+	 */
+	Press.controlAdapters = {};
+	Press.controlAdapters["sap.m.SearchField"] = "search";
+	Press.controlAdapters["sap.m.List"] = "trigger";
+	Press.controlAdapters["sap.m.Table"] = "trigger";
+	Press.controlAdapters["sap.m.Page"] = "navButton";
 
 	return Press;
 
