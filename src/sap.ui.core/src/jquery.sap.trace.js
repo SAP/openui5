@@ -266,7 +266,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			 * @since 1.32
 			 */
 			jQuery.sap.interaction.notifyEventStart = function(oEvent) {
-				oCurrentBrowserEvent = bInteractionActive ? oEvent : null;
+				oCurrentBrowserEvent = (bInteractionActive || bFesrActive) ? oEvent : null;
 			};
 
 			/**
