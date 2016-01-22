@@ -33,8 +33,9 @@
 
 	// for unittest execution requestAnimationFrame may be queued when the page is not in focus
 	// therefore use setTimeout to get more stable tests
-	window.requestAnimationFrame = window.setTimeout;
-	window.cancelAnimationFrame = window.clearTimeout;
+	// this stubbing of requestAnimationFrame will be required when IE9 support ends and table code is changed to that
+	// window.requestAnimationFrame = window.setTimeout;
+	// window.cancelAnimationFrame = window.clearTimeout;
 
 	//Initialize mock servers
 
