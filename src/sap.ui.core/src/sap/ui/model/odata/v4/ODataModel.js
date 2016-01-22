@@ -101,7 +101,6 @@ sap.ui.define([
 					if (oUri.path()[oUri.path().length - 1] !== "/") {
 						throw new Error("Service root URL must end with '/'");
 					}
-					//TODO remove usage once cache is used for all crud operations
 					this._sQuery = oUri.search(); //return query part with leading "?"
 					this.mUriParameters = Helper.buildQueryOptions(jQuery.extend({},
 						oUri.query(true), mParameters && mParameters.serviceUrlParams));

@@ -108,9 +108,6 @@ sap.ui.define([
 		enableExtendedChangeDetection : function () {
 			throw new Error("Unsupported operation");
 		}
-		//TODO improve performance? see below:
-		// update() makes a shallow copy of this.oList, avoid?!
-		// checkUpdate() calls _getObject() twice; uses jQuery.sap.equal(); avoid?!
 	});
 
 	/**

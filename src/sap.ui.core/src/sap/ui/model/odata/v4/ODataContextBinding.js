@@ -111,10 +111,7 @@ sap.ui.define([
 
 		return new Promise(function (fnResolve, fnReject) {
 			function message() {
-				return "Failed to read value for "
-					//TODO use oModel.mUriParameters
-					+ that.getModel().sServiceUrl + that.getPath().slice(1).split(";root=")[0]
-					+ " and path " + sPath;
+				return "Failed to read value for " + that.oCache + " and path " + sPath;
 			}
 
 			function reject(oError) {
@@ -127,7 +124,7 @@ sap.ui.define([
 
 			that.oCache.read().then(function (oData) {
 				if (sPath) {
-					sPath.split("/").every(function (sSegment) { //TODO refactor to Helper.foo?
+					sPath.split("/").every(function (sSegment) {
 						if (!oData) {
 							jQuery.sap.log.warning(message() + ": Invalid segment " + sSegment,
 								null, "sap.ui.model.odata.v4.ODataContextBinding");

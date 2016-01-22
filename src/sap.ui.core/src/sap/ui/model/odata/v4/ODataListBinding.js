@@ -232,11 +232,8 @@ sap.ui.define([
 
 		return new Promise(function (fnResolve, fnReject) {
 			function reject(oError) {
-				var oModel = that.getModel(),
-					sUrl = oModel.sServiceUrl //TODO use oModel.mUriParameters
-						+ oModel.resolve(that.getPath(), that.getContext()).slice(1);
 				jQuery.sap.log.error("Failed to read value with index " + iIndex + " for "
-					+ sUrl + " and path " + sPath,
+					+ that.oCache + " and path " + sPath,
 					oError, "sap.ui.model.odata.v4.ODataListBinding");
 				fnReject(oError);
 			}

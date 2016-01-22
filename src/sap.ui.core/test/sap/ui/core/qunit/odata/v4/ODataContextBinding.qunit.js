@@ -166,7 +166,8 @@ sap.ui.require([
 	QUnit.test("readValue fulfill", function (assert) {
 		var oBinding,
 			oCache = {
-				read: function () {}
+				read: function () {},
+				toString: function () { return "/service/EMPLOYEES(ID='1')?sap-client=111"; }
 			},
 			oCacheMock = this.oSandbox.mock(oCache),
 			oModel = new ODataModel("/service/?sap-client=111"),
@@ -187,7 +188,8 @@ sap.ui.require([
 			.returns(oCache);
 
 		this.oLogMock.expects("warning").withExactArgs(
-			"Failed to read value for /service/EMPLOYEES(ID='1') and path Foo/COUNTRY: "
+			"Failed to read value for /service/EMPLOYEES(ID='1')"
+				+ "?sap-client=111 and path Foo/COUNTRY: "
 				+ "Invalid segment COUNTRY",
 			null,
 			"sap.ui.model.odata.v4.ODataContextBinding");
@@ -214,7 +216,8 @@ sap.ui.require([
 	QUnit.test("readValue reject", function (assert) {
 		var oBinding,
 			oCache = {
-				read: function () {}
+				read: function () {},
+				toString: function () { return "/service/EMPLOYEES(ID='1')?sap-client=111"; }
 			},
 			sMessage = "Accessed value is not primitive",
 			oErrorRead = new Error("Cache read error"),
@@ -232,7 +235,8 @@ sap.ui.require([
 		oCacheMock.expects("read").returns(Promise.resolve(oResult));
 		this.oSandbox.mock(Cache).expects("createSingle").returns(oCache);
 		this.oLogMock.expects("error")
-			.withExactArgs("Failed to read value for /service/EMPLOYEES(ID='1') and path LOCATION",
+			.withExactArgs("Failed to read value for /service/EMPLOYEES(ID='1')?sap-client=111"
+				+ " and path LOCATION",
 				// custom matcher because mobile Safari adds line and column properties to Error
 				sinon.match(function (oError) {
 					return oError instanceof Error && oError.message === sMessage;
@@ -240,7 +244,8 @@ sap.ui.require([
 
 		oCacheMock.expects("read").returns(Promise.reject(oErrorRead));
 		this.oLogMock.expects("error")
-			.withExactArgs("Failed to read value for /service/EMPLOYEES(ID='1') and path Name",
+			.withExactArgs("Failed to read value for /service/EMPLOYEES(ID='1')?sap-client=111"
+				+ " and path Name",
 				oErrorRead, "sap.ui.model.odata.v4.ODataContextBinding");
 
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')");

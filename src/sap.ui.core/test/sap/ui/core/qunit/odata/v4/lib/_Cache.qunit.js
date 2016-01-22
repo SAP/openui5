@@ -392,4 +392,20 @@ sap.ui.require([
 		aPromises.push(oCache.read(0, 10));
 		return Promise.all(aPromises);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache.toString", function (assert) {
+		var oCache,
+			oRequestor = Requestor.create("/~/"),
+			mQueryParams = {"$select": "ID"},
+			sUrl = "/~/Employees",
+			sUrlSingle = "/~/Employees('1')";
+
+		oCache = Cache.create(oRequestor, sUrl, mQueryParams);
+		assert.strictEqual(oCache.toString(), sUrl + "?$select=ID&");
+
+		oCache = Cache.createSingle(oRequestor, sUrlSingle);
+		assert.strictEqual(oCache.toString(), sUrlSingle);
+
+	});
 });
