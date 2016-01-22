@@ -18,10 +18,19 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 		metadata : {
 			properties: {
 				/**
-				 * The Text that is going to be typed to the control.
+				 * The Text that is going to be typed to the control. If you are entering an empty string, the value will be cleared.
 				 */
 				text: {
 					type: "string"
+				},
+				/**
+				 * @Since 1.38.0 If it is set to false, the current text of the Control will be preserved. By default the current text of the control will be cleared.
+				 * When the text is going to be cleared, a delete character event will be fired and then the value of the input is emptied.
+				 * This will trigger a liveChange event on the input with an empty value.
+				 */
+				clearTextFirst: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			publicMethods : [ "executeOn" ]
@@ -41,6 +50,10 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				$.sap.log.error("Control " + oControl + " has no focusable dom representation", this._sLogPrefix);
 				return;
 			}
+			if (this.getText() === undefined || (!this.getClearTextFirst() && !this.getText())) {
+				$.sap.log.error("Please provide a text for this EnterText action", this._sLogPrefix);
+				return;
+			}
 
 			// focus it
 			var $FocusDomRef = $(oFocusDomRef);
@@ -50,6 +63,13 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
 			}
 			var oUtils = this._getUtils();
+
+			if (this.getClearTextFirst()) {
+				oUtils.triggerKeydown(oFocusDomRef, $.sap.KeyCodes.DELETE);
+				oUtils.triggerKeyup(oFocusDomRef, $.sap.KeyCodes.DELETE);
+				$FocusDomRef.val("");
+				oUtils.triggerEvent("input", oFocusDomRef);
+			}
 
 			// Trigger events for every keystroke - livechange controls
 			this.getText().split("").forEach(function (sChar) {
