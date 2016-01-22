@@ -87,6 +87,8 @@
 
 		<script type="text/javascript">
 
+		jQuery.sap.require("sap/ui/thirdparty/URI");
+
 			function checkFilter(sFilterValue, sLib, sControl, sComp) {
 				sFilterValue = sFilterValue.trim().toLowerCase();
 				if (!sFilterValue) {
@@ -102,7 +104,7 @@
 				return false;
 			}
 
-			function renderTests(aBuffer, oLibInfo, sParams, bAllLibs, sFilterValue) {
+			function renderTests(aBuffer, oLibInfo, mParams, bAllLibs, sFilterValue) {
 				if (oLibInfo.testinfo.tests && oLibInfo.testinfo.tests.length) {
 					for(var i=0; i<oLibInfo.testinfo.tests.length; i++) {
 						if (checkFilter(sFilterValue, oLibInfo.name, oLibInfo.testinfo.tests[i].control, oLibInfo.testinfo.tests[i].appComponent)) {
@@ -111,12 +113,20 @@
 								aBuffer.push("<td>", oLibInfo.name,"</td>");
 							}
 							aBuffer.push("<td>", oLibInfo.testinfo.tests[i].control,"</td>");
-							aBuffer.push("<td><a href='", oLibInfo.root, oLibInfo.testinfo.tests[i].url, sParams, "' target='_blank'>", oLibInfo.testinfo.tests[i].name || "Testpage" ,"</a></td>");
+							aBuffer.push("<td><a href='", oLibInfo.root, addParamsToURL(oLibInfo.testinfo.tests[i].url, mParams), "' target='_blank'>", oLibInfo.testinfo.tests[i].name || "Testpage" ,"</a></td>");
 							aBuffer.push("<td>", oLibInfo.testinfo.tests[i].appComponent || "", "</td>");
 							aBuffer.push("<td>", oLibInfo.testinfo.tests[i].desc || "", "</td></tr>");
 						}
 					}
 				}
+			}
+
+			function addParamsToURL(sUrl, mParams) {
+				var oUrl = URI(sUrl);
+				for (var sParam in mParams) {
+					oUrl.addSearch(sParam, mParams[sParam]);
+				}
+				return oUrl.toString();
 			}
 
 			function onChange() {
@@ -131,7 +141,12 @@
 				var sTheme = jQuery("#theme").val();
 				var bRTL = jQuery("#rtl").is(":checked");
 				var $Content = jQuery("#content");
-				var sParams = "?sap-ui-language=en&sap-ui-theme=" + sTheme + "&sap-ui-rtl=" + bRTL;
+
+				var mParams = {
+					"sap-ui-language": "en",
+					"sap-ui-theme": sTheme,
+					"sap-ui-rtl": "" + bRTL
+				}
 				var aBuffer = [];
 
 				aBuffer.push("<table id='tests' cellspacing='0' style='width:100%'><thead><tr>");
@@ -142,10 +157,10 @@
 
 				if (bAllLibs) {
 					for (var lib in oData) {
-						renderTests(aBuffer, oData[lib], sParams, true, sFilter);
+						renderTests(aBuffer, oData[lib], mParams, true, sFilter);
 					}
 				} else {
-					renderTests(aBuffer, oData[sLib], sParams, false, sFilter);
+					renderTests(aBuffer, oData[sLib], mParams, false, sFilter);
 				}
 
 				aBuffer.push("</tbody></table>");
