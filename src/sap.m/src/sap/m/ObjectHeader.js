@@ -357,7 +357,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ObjectHeader.prototype.destroyAttributes = function () {
-		this.getAggregation("attributes").forEach(this._deregisterControlListener, this);
+		var aAttributes = this.getAggregation("attributes");
+		if (aAttributes !== null) {
+			aAttributes.forEach(this._deregisterControlListener, this);
+		}
 		return this.destroyAggregation("attributes");
 	};
 
@@ -386,7 +389,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ObjectHeader.prototype.destroyStatuses = function () {
-		this.getAggregation("statuses").forEach(this._deregisterControlListener, this);
+		var aStatuses = this.getAggregation("statuses");
+		if (aStatuses !== null) {
+			aStatuses.forEach(this._deregisterControlListener, this);
+		}
 		return this.destroyAggregation("statuses");
 	};
 

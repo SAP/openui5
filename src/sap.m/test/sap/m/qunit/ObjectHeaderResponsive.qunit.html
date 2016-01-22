@@ -372,6 +372,109 @@
 					ok(!attr.length, "Zero attributes are rendered.");
 				});
 
+				test("Attribute should be rendered after insertAttribute", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					var oAttr = new sap.m.ObjectAttribute({
+						title: "Manufacturer",
+						text: "ACME Corp",
+						active: true
+					});
+					oObjectHeader.insertAttribute(oAttr, 0);
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok(attr.length, "One attribute is rendered.");
+				});
+
+				test("Attribute should be removed: removeAttribute", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					var oAttr = new sap.m.ObjectAttribute({
+						title: "Manufacturer",
+						text: "ACME Corp",
+						active: true
+					});
+					oObjectHeader.insertAttribute(oAttr, 0);
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok((attr.length==1), "One attribute is rendered.");
+
+					oObjectHeader.removeAttribute(oAttr);
+					oCore.applyChanges();
+
+					// Assert
+					attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok(!attr.length, "The attribute is removed.");
+				});
+
+				test("Attributes should be removed: removeAllAttributes", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					addAttributes(oObjectHeader, 2);
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok((attr.length==2), "Two attributes are rendered.");
+
+					oObjectHeader.removeAllAttributes();
+					oCore.applyChanges();
+
+					// Assert
+					attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok(!attr.length, "All attributes are removed.");
+				});
+
+				test("removeAllAttributes when no attributes at all", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					oObjectHeader.removeAllAttributes();
+					oCore.applyChanges();
+
+					// Assert
+					var attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok(!attr.length, "No error is raised when executing removeAllAttributes");
+				});
+
+				test("Attributes should be destroyed: destroyAttributes", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					addAttributes(oObjectHeader, 2);
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok((attr.length==2), "Two attributes are rendered.");
+
+					oObjectHeader.destroyAttributes();
+					oCore.applyChanges();
+
+					// Assert
+					attr = oObjectHeader.$().find(".sapMOHRAttr");
+					ok(!attr.length, "All attributes are destroyed.");
+				});
+
 				test("Status should be rendered", function () {
 					// Arrange
 					var oObjectHeader = createObjectHeader({
@@ -406,6 +509,108 @@
 					ok(!status.length, "Zero statuses are rendered.");
 				});
 
+				test("Status should be rendered after insertStatus", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					var oStatus = new sap.m.ObjectStatus({
+						title: "Approval",
+						text: "Pending",
+						state: sap.ui.core.ValueState.Warning
+					});
+					oObjectHeader.insertStatus(oStatus, 0);
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok(status.length, "Status is rendered.");
+				});
+
+				test("Status should be removed: removeStatus", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					var oStatus = new sap.m.ObjectStatus({
+						title: "Approval",
+						text: "Pending",
+						state: sap.ui.core.ValueState.Warning
+					});
+					oObjectHeader.insertStatus(oStatus, 0);
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok((status.length===1), "One status is rendered.");
+
+					oObjectHeader.removeStatus(oStatus);
+					oCore.applyChanges();
+
+					// Assert
+					status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok(!status.length, "The status is removed.");
+				});
+
+				test("Statuses should be removed: removeAllStatuses", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					addStatuses(oObjectHeader, 2);
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok(status.length===2, "Two statuses are rendered.");
+
+					oObjectHeader.removeAllStatuses();
+					oCore.applyChanges();
+
+					// Assert
+					status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok(!status.length, "All statuses are removed.");
+				});
+
+				test("removeAllStatuses when no statuses at all", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					oObjectHeader.removeAllStatuses();
+					oCore.applyChanges();
+
+					// Assert
+					var status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok(!status.length, "No error is raised when executing removeAllStatuses");
+				});
+
+				test("Statuses should be destroyed: destroyStatuses", function () {
+					// Arrange
+					var oObjectHeader = createObjectHeader();
+					addStatuses(oObjectHeader, 2);
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// Assert
+					var status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok(status.length===2, "Two statuses are rendered.");
+
+					oObjectHeader.destroyStatuses();
+					oCore.applyChanges();
+
+					// Assert
+					status = oObjectHeader.$().find(".sapMOHRStatus");
+					ok(!status.length, "All statuses are destroyed.");
+				});
 
 			module("Desktop master detail rendering", {
 				setup: function () {
