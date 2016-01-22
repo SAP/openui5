@@ -330,7 +330,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 				}
 
 				// first match of the value
-				if (bFirst && bMatch && sValue !== "") {
+				if (oItem.getEnabled() && bFirst && bMatch && sValue !== "") {
 					bFirst = false;
 
 					if (this._bDoTypeAhead) {
