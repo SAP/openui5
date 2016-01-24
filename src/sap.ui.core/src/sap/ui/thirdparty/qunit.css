@@ -114,6 +114,12 @@
 	display: list-item;
 }
 
+/* MODIFIED BY SAP */
+#qunit-tests.hidepass {
+	position: relative;
+}
+/* END MODIFIED BY SAP */
+
 #qunit-tests.hidepass li.running,
 #qunit-tests.hidepass li.pass {
 	visibility: hidden;
