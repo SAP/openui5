@@ -2486,6 +2486,7 @@ sap.ui
 															oFilteredData: oFilteredData
 														});
 
+														oFilteredData.results = oFilteredData.results || [];
 														oXhr
 															.respond(
 																200,
