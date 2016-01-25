@@ -4,6 +4,7 @@
 
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/model/PropertyBinding"
-], function (ContextBinding, Context, FilterProcessor, JSONListBinding, MetaModel, Helper,
+], function (jQuery, ContextBinding, Context, FilterProcessor, JSONListBinding, MetaModel, Helper,
 		SyncPromise, PropertyBinding) {
 	"use strict";
 
@@ -52,10 +53,10 @@ sap.ui.define([
 	 */
 	ODataMetaContextBinding
 		= ContextBinding.extend("sap.ui.model.odata.v4.ODataMetaContextBinding", {
-			constructor : function (oModel, sPath, oContext, mParameters) {
+			constructor : function (oModel, sPath, oContext) {
 				jQuery.sap.assert(!oContext || oContext.getModel() === oModel,
 					"oContext must belong to this model");
-				ContextBinding.call(this, oModel, sPath, oContext, mParameters);
+				ContextBinding.call(this, oModel, sPath, oContext);
 			},
 			initialize : function () {
 				var oElementContext = this.oModel.createBindingContext(this.sPath, this.oContext);
@@ -170,11 +171,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype._getObject = function (sPath, oContext) {
-		var sKey,
+		var bIsCloned = false,
+			bIterateAnnotations = sPath === "@"
+				|| sPath === "" && oContext.getPath().slice(-2) === "/@"
+				|| sPath.slice(-2) === "/@",
+			sKey,
 			sPathDot,
 			vResult;
 
-		if (sPath === "/") {
+		if (bIterateAnnotations) {
+			sPathDot = sPath; // no dot needed
+		} else if (sPath === "/") {
 			sPathDot = "/.";
 		} else if (sPath) {
 			sPathDot = sPath + "/.";
@@ -183,9 +190,13 @@ sap.ui.define([
 		}
 		vResult = this.getObject(sPathDot, oContext);
 
-		vResult = jQuery.extend({}, vResult);
 		for (sKey in vResult) {
-			if (sKey[0] === "$") {
+			// always filter technical properties; filter annotations iff. not iterating them
+			if (sKey[0] === "$" || bIterateAnnotations === (sKey[0] !== "@")) {
+				if (!bIsCloned) { // copy on write
+					vResult = jQuery.extend({}, vResult);
+					bIsCloned = true;
+				}
 				delete vResult[sKey];
 			}
 		}
@@ -193,17 +204,38 @@ sap.ui.define([
 		return vResult;
 	};
 
-	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
-		return new ODataMetaContextBinding(this, sPath, oContext, mParameters);
+	ODataMetaModel.prototype.bindContext = function (sPath, oContext) {
+		return new ODataMetaContextBinding(this, sPath, oContext);
 	};
 
-	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters,
-		mParameters) {
-		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
+	/**
+	 * Creates a list binding for this meta data model which iterates content from the given path
+	 * (relative to the given context), sorted and filtered as indicated.
+	 *
+	 * By default, OData names are iterated and OData simple identifier preparations are forced by
+	 * implicitly adding a "." to the path; technical properties and inline annotations are
+	 * filtered out. A path which ends with an "@" segment can be used to iterate all inline or
+	 * external targeting annotations; technical properties and OData names are then filtered out.
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the meta data model, for example "/EMPLOYEES"
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters]
+	 *   Initial sort order, see {@link sap.ui.model.ListBinding#sort sort}
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters]
+	 *   Initial application filter(s), see {@link sap.ui.model.ListBinding#filter filter}
+	 * @return {sap.ui.model.ListBinding}
+	 *   A list binding for this meta data model
+	 * @public
+	 * @see #requestObject
+	 */
+	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters) {
+		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters);
 	};
 
-	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
-		return new ODataMetaPropertyBinding(this, sPath, oContext, mParameters);
+	ODataMetaModel.prototype.bindProperty = function (sPath, oContext) {
+		return new ODataMetaPropertyBinding(this, sPath, oContext);
 	};
 
 	/**
@@ -226,29 +258,34 @@ sap.ui.define([
 
 	/**
 	 * @param {string} sPath
-	 *   A relative or absolute path within the meta data model, for example
-	 *   "/$EntityContainer/EMPLOYEES/ENTRYDATE"
+	 *   A relative or absolute path within the meta data model, for example "/EMPLOYEES/ENTRYDATE"
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {SyncPromise}
 	 *   A promise which is resolved with the requested meta data object as soon as it is
 	 *   available
-	 * @see #requestObject
 	 * @private
+	 * @see #requestObject
 	 */
 	ODataMetaModel.prototype.fetchObject = function (sPath, oContext) {
 		var sResolvedPath = this.resolve(sPath, oContext);
 
+		if (!sResolvedPath) {
+			jQuery.sap.log.error("Invalid relative path w/o context", sPath, sODataMetaModel);
+			return SyncPromise.resolve(null);
+		}
+
 		return this.fetchEntityContainer().then(function (mScope) {
-			var bJsonMode, // "JSON" drill-down mode triggered by technical property
-				sName, // the current object's OData name
-				// parent for next "17.2 SimpleIdentifier"
+			var bODataMode = true, // OData navigation mode with scope lookup etc.
+				sName, // what "@sapui.name" refers to: OData or annotation name
+				// parent for next "17.2 SimpleIdentifier"...
 				// (normally the schema child containing the current object)
-				oSchemaChild,
-				sSchemaChildName,
-				sSchemaName,
-				sTarget, // annotation target pointing to current object
-				vResult = mScope;
+				oSchemaChild, // ...as object
+				sSchemaChildName, // ...as qualified name
+				// annotation target pointing to current object, or undefined
+				// (schema child's qualified name plus optional segments)
+				sTarget,
+				vResult = mScope; // current object
 
 			/*
 			 * Takes one step according to the given segment, starting at the current
@@ -265,13 +302,14 @@ sap.ui.define([
 			 *   whether to continue after this step
 			 */
 			function step(sLocation, sSegment, i, aSegments) {
+				var sSchemaName;
+
 				if (!sSegment) {
 					return warn("Invalid empty segment");
 				}
 				if (sSegment === "$Annotations") {
 					return warn("Invalid segment: $Annotations");
 				}
-				// Note: "@sapui.name" refers back to the object's OData name
 				if (sSegment === "@sapui.name") {
 					vResult = sName;
 					if (vResult === undefined) {
@@ -290,20 +328,21 @@ sap.ui.define([
 					// Note: even an OData path cannot continue here (e.g. by type cast)
 					return warn("Invalid segment: " + sSegment);
 				}
-				bJsonMode = bJsonMode || sSegment[0] === "$";
-				if (!bJsonMode) {
-					if (sSegment[0] === "@") {
-						// annotation via external targeting
+				if (bODataMode) {
+					if (sSegment[0] === "$") {
+						bODataMode = false; // technical property, switch to pure "JSON" drill-down
+					} else if (sSegment[0] === "@") {
+						// annotation(s) via external targeting
 						if (!sTarget) {
 							return warn("Unsupported path before " + sSegment);
-						}
+						} // else: sSchemaChildName is well defined
 						sSchemaName
 							= sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
-						vResult = mScope[sSchemaName].$Annotations[sTarget][sSegment];
-						bJsonMode = true;
-						return true;
-					}
-					if (sSegment.indexOf(".") > 0) {
+						vResult = sSchemaName === sSchemaChildName
+							? oSchemaChild // annotations at schema are inline
+							: (mScope[sSchemaName].$Annotations || {})[sTarget] || {};
+						bODataMode = false; // switch to pure "JSON" drill-down
+					} else if (sSegment.indexOf(".") > 0) {
 						// "17.3 QualifiedName": scope lookup
 						if (!(sSegment in mScope)) {
 							return warn("Unknown qualified name '" + sSegment + "'"
@@ -312,8 +351,7 @@ sap.ui.define([
 						sTarget = sName = sSchemaChildName = sSegment;
 						vResult = oSchemaChild = mScope[sSchemaChildName];
 						return true;
-					}
-					if ("$Type" in vResult) {
+					} else if ("$Type" in vResult) {
 						// implicit $Type insertion, e.g. at (navigation) property
 						if (!steps(vResult.$Type, aSegments.slice(0, i).join("/") + "/$Type")) {
 							return false;
@@ -321,20 +359,19 @@ sap.ui.define([
 					} else {
 						// "17.2 SimpleIdentifier" (or placeholder): lookup inside schema child
 						// (which is determined lazily)
-						sSchemaChildName = sSchemaChildName || mScope.$EntityContainer;
-						oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
+						sTarget = sName = sSchemaChildName
+							= sSchemaChildName || mScope.$EntityContainer;
+						vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
 						if (sLocation && !(sSegment in oSchemaChild)) {
 							return warn("Unknown child '" + sSegment + "' of '" + sSchemaChildName
 								+ "' at /" + sLocation);
 						}
-						sTarget = sName = sSchemaChildName;
-						vResult = oSchemaChild;
 					}
 				}
 				// Note: "." is useful to force implicit lookup or $Type insertion
-				if (sSegment !== ".") {
-					sName = bJsonMode ? undefined : sSegment;
-					sTarget = bJsonMode ? undefined : sTarget + "/" + sSegment;
+				if (sSegment !== "." && sSegment !== "@") {
+					sName = bODataMode || sSegment[0] === "@" ? sSegment : undefined;
+					sTarget = bODataMode ? sTarget + "/" + sSegment : undefined;
 					vResult = vResult[sSegment];
 				}
 				return true;
@@ -352,7 +389,7 @@ sap.ui.define([
 			 *   whether to continue after all steps
 			 */
 			function steps(sRelativePath, sLocation) {
-				bJsonMode = false;
+				bODataMode = true;
 				vResult = mScope;
 				return sRelativePath.split("/").every(step.bind(null, sLocation));
 			}
@@ -390,8 +427,8 @@ sap.ui.define([
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
 	 *   rejected with the corresponding error
-	 * @see #requestUI5Type
 	 * @private
+	 * @see #requestUI5Type
 	 */
 	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
 		// Note: undefined is more efficient than "" here
@@ -463,17 +500,9 @@ sap.ui.define([
 	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("fetchObject");
 
 	/**
-	 * Same as {@link #getObject getObject}.
-	 *
-	 * @param {string} sPath
-	 *   A relative or absolute path within the meta data model
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context to be used as a starting point in case of a relative path
-	 * @returns {any}
-	 *   the requested meta data object if it is already available, or <code>undefined</code>
+	 * @deprecated Use {@link #getObject getObject}.
 	 * @function
 	 * @public
-	 * @see #getObject
 	 */
 	ODataMetaModel.prototype.getProperty = ODataMetaModel.prototype.getObject;
 
@@ -560,9 +589,11 @@ sap.ui.define([
 	 * An empty segment is invalid.
 	 *
 	 * The segment "@sapui.name" refers back to the last OData name (simple identifier or qualified
-	 * name) encountered during path traversal immediately before "@sapui.name", for example
-	 * "/EMPLOYEES/@sapui.name" results in "EMPLOYEES". A technical property (that is a segment
-	 * starting with a "$") immediately before "@sapui.name" is invalid, for example
+	 * name) or annotation name encountered during path traversal immediately before "@sapui.name",
+	 * for example "/EMPLOYEES/@sapui.name" results in "EMPLOYEES" and
+	 * "/EMPLOYEES/@com.sap.vocabularies.Common.v1.Label/@sapui.name" results in
+	 * "@com.sap.vocabularies.Common.v1.Label". A technical property (that is a segment starting
+	 * with a "$") immediately before "@sapui.name" is invalid, for example
 	 * "/$EntityContainer/@sapui.name". The path must not continue after "@sapui.name".
 	 *
 	 * If the current object is a string value, that string value is treated as a relative path and
@@ -584,6 +615,10 @@ sap.ui.define([
 	 * In this case, the object contains all annotations for the single overload as a property, but
 	 * annotations MUST nevertheless be accessed via a path in order to include also annotations
 	 * for all overloads at the same time!
+	 *
+	 * "@" can be used as a segment to address a map of all annotations of the current object. This
+	 * is useful for iteration, for example via
+	 * <code>&lt;template:repeat list="{entityType>@}" ...></code>.
 	 *
 	 * Annotations of an annotation are addressed not by two separate segments, but by a single
 	 * segment like
