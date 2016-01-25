@@ -21,14 +21,16 @@
 		src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
 		src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript"
-		src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 
 <!-- Test functions -->
 <script language="javascript">
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+
 	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
 	jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAdapter");
-	sinon.config.useFakeTimers = false;
 	var iDelay = 0;
 
 	// for unittest execution requestAnimationFrame may be queued when the page is not in focus

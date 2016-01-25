@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', 'sap/ui/model/ChangeReason', './Row', './library', 'sap/ui/core/IconPool', 'jquery.sap.dom'],
-	function(jQuery, Control, ScrollBar, ItemNavigation, Parameters, SelectionModel, ChangeReason, Row, library, IconPool) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', 'sap/ui/model/ChangeReason', './Row', './library', 'sap/ui/core/IconPool', 'jquery.sap.dom'],
+	function(jQuery, Control, ResizeHandler, ScrollBar, ItemNavigation, Parameters, SelectionModel, ChangeReason, Row, library, IconPool) {
 	"use strict";
 
 
@@ -695,10 +695,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 		// destroy helpers
 		this._destroyItemNavigation();
 		// cleanup
-		var oResizeSensor = document.getElementById(this.getId() + "-resizesensor");
-		if (oResizeSensor) {
-			oResizeSensor.parentNode.removeChild(oResizeSensor);
-		}
 		this._cleanUpTimers();
 		this._detachEvents();
 	};
@@ -881,10 +877,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 	 * @private
 	 */
 	Table.prototype.onBeforeRendering = function() {
-		var oResizeSensor = document.getElementById(this.getId() + "-resizesensor");
-		if (oResizeSensor) {
-			oResizeSensor.parentNode.removeChild(oResizeSensor);
-		}
 		this._cleanUpTimers();
 		this._detachEvents();
 	};
@@ -955,13 +947,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 	 * @private
 	 */
 	Table.prototype._updateTableSizes = function() {
-		if (this._bInvalid || !this.getDomRef()) {
-			window.clearTimeout(this._iUpdateTableSizeTimerId);
+		var oDomRef = this.getDomRef();
+		if (this._bInvalid || !oDomRef) {
 			this._iUpdateTableSizeTimerId = null;
 			return;
 		}
 
-		this._bNoUpdateTableSizes = true;
+		if (this._sResizeHandlerId) {
+			ResizeHandler.deregister(this._sResizeHandlerId);
+			this._sResizeHandlerId = undefined;
+		}
 
 		var $this = this.$();
 		var $sapUiTableCCnt = $this.find(".sapUiTableCCnt");
@@ -979,10 +974,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 		this._determineVisibleCols(oTableSizes);
 		this._syncHeaderAndContent(oTableSizes);
 
-		window.clearTimeout(this._iUpdateTableSizeTimerId);
 		this._iUpdateTableSizeTimerId = null;
 		setTimeout(function() {
-			this._bNoUpdateTableSizes = false;
+			if (oDomRef && oDomRef.parentNode) {
+				this._sResizeHandlerId = ResizeHandler.register(oDomRef.parentNode, this._onTableResize.bind(this));
+			}
 		}.bind(this), 0);
 	};
 
@@ -1668,12 +1664,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 
 		this._enableColumnAutoResizing();
 
-		// Listen to resize sensor
-		var oResizeSensor = document.getElementById(this.getId() + "-resizesensor").contentWindow;
-		if (oResizeSensor) {
-			oResizeSensor.onresize = this._onTableResize.bind(this);
-		}
-
 		// the vertical scrollbar listens to the mousewheel on the content section
 		this._oHSb.bind($this.find(".sapUiTableCtrlScr").get(0));
 		this._oVSb.bind($this.find(".sapUiTableCtrlScr").get(0));
@@ -1746,6 +1736,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 		this._oVSb.unbind($this.find(".sapUiTableRowHdrScr").get(0));
 
 		jQuery("body").unbind('webkitTransitionEnd transitionend');
+
+		if (this._sResizeHandlerId) {
+			ResizeHandler.deregister(this._sResizeHandlerId);
+			this._sResizeHandlerId = undefined;
+		}
 	};
 
 
@@ -1984,6 +1979,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 	Table.prototype._updateVSb = function(bOnAfterRendering) {
 		var $this = this.$();
 		var bDoResize = false;
+		var fnUpdateTableSizes = function() {
+			if (this._iUpdateTableSizeTimerId) {
+				// change to requestAnimationFrame when IE9 support ends
+				window.clearTimeout(this._iUpdateTableSizeTimerId);
+				this._iUpdateTableSizeTimerId = undefined;
+			}
+
+			// change to requestAnimationFrame when IE9 support ends
+			this._iUpdateTableSizeTimerId = window.setTimeout(this._updateTableSizes.bind(this), 0);
+		}.bind(this);
 		var bForceUpdateVSb = false;
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
@@ -2047,6 +2052,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 
 						if ($this) {
 							$this.toggleClass("sapUiTableVScr", iSteps > 0);
+							var oTableSizes = this._collectTableSizes();
+							this._syncColumnHeaders(oTableSizes);
 						}
 
 						this._oVSb.setSteps(iSteps);
@@ -2073,14 +2080,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 			}
 		}
 		if (bDoResize && !this._bInvalid) {
-			if (this._iUpdateTableSizeTimerId) {
-				// change to requestAnimationFrame when IE9 support ends
-				window.clearTimeout(this._iUpdateTableSizeTimerId);
-				this._iUpdateTableSizeTimerId = undefined;
-			}
-
-			// change to requestAnimationFrame when IE9 support ends
-			this._iUpdateTableSizeTimerId = window.setTimeout(this._updateTableSizes.bind(this), 0);
+			fnUpdateTableSizes();
 		}
 	};
 
@@ -2593,7 +2593,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ScrollBa
 	 * @private
 	 */
 	Table.prototype._onTableResize = function() {
-		if (this._bInvalid || this._bNoUpdateTableSizes || !this.getDomRef()) {
+		if (this._bInvalid || !this.getDomRef()) {
 			return;
 		}
 
