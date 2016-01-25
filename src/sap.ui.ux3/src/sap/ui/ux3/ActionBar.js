@@ -340,7 +340,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 						} else {
 							var oDomRef, iTIHeight, iContentHeight;
 
-							oActionBar._oUpdatePopup.setPosition(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop, oEvent.getSource().getDomRef(), "-1 -13", "none");
+							oActionBar._oUpdatePopup.setPosition(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop, oEvent.getSource().getDomRef(), "-8 -13", "none");
 							oActionBar._oUpdatePopup.open();
 							oDomRef = jQuery(oActionBar._oUpdatePopup.getDomRef());
 							iTIHeight = jQuery(window).height();
