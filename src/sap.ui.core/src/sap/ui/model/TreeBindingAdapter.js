@@ -843,7 +843,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 * @param {int} iIndex the absolute row index
 		 */
 		TreeBindingAdapter.prototype.toggleIndex = function(iIndex) {
-			var oNode = this._aRowIndexMap[iIndex];
+			var oNode = this.findNode(iIndex);
 
 			jQuery.sap.assert(oNode, "There is no node at index " + iIndex + ".");
 
