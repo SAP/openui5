@@ -118,11 +118,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 			this._bValid = true;
 
-			// use UniversalDate because this is calendar dependent.
-			// But timestamp comparison with JS-Date later should work fine
-			this._oMinDate = new UniversalDate(1, 0, 1);
+			this._oMinDate = new Date(1, 0, 1);
 			this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
-			this._oMaxDate = new UniversalDate(9999, 11, 31);
+			this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 99);
 
 		};
 
@@ -371,17 +369,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		DatePicker.prototype.setDateValue = function(oDate) {
 
-			if (jQuery.sap.equal(this.getDateValue(), oDate)) {
-				return this;
-			}
-
 			if (oDate && !(oDate instanceof Date)) {
 				throw new Error("Date must be a JavaScript date object; " + this);
+			}
+
+			if (jQuery.sap.equal(this.getDateValue(), oDate)) {
+				return this;
 			}
 
 			if (oDate && (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime())) {
 				this._bValid = false;
 				jQuery.sap.assert(this._bValid, "Date must be in valid range");
+				oDate = undefined; // don't use wrong date to determine sValue
 			}else {
 				this._bValid = true;
 				this.setProperty("dateValue", oDate, true); // no rerendering
