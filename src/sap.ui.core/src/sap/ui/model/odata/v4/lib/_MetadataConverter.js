@@ -833,7 +833,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processImport(sWhat, oElement, oAggregate) {
 		var oImport = {
 				$kind: sWhat + "Import"
-			};
+			},
+			sName = oElement.getAttribute("Name");
 
 		oImport["$" + sWhat]
 			= MetadataConverter.resolveAlias(oElement.getAttribute(sWhat), oAggregate);
@@ -844,8 +845,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"IncludeInServiceDocument" : setIfFalse
 		});
 
-		oAggregate.entityContainer[oElement.getAttribute("Name")] = oImport;
-		annotatable(oAggregate, oImport);
+		oAggregate.entityContainer[sName] = oImport;
+		annotatable(oAggregate, sName);
 	}
 
 	/**

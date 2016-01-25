@@ -1293,6 +1293,12 @@ sap.ui.require([
 						},
 						"foo.Container/Singleton": {
 							"@foo.Term": "Singleton"
+						},
+						"foo.Container/ActionImport": {
+							"@foo.Term": "ActionImport"
+						},
+						"foo.Container/FunctionImport": {
+							"@foo.Term": "FunctionImport"
 						}
 					}
 				},
@@ -1309,12 +1315,10 @@ sap.ui.require([
 					"ActionImport": {
 						"$kind": "ActionImport",
 						"$Action": "foo.Action",
-						"@foo.Term": "ActionImport"
 					},
 					"FunctionImport": {
 						"$kind": "FunctionImport",
 						"$Function": "foo.Function",
-						"@foo.Term": "FunctionImport"
 					}
 				}
 			});
