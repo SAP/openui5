@@ -84,11 +84,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.writeStyles();
 		rm.write(">");
 
-		rm.write("<iframe");
-		rm.addClass("sapUiTableResizeSensor");
-		rm.writeClasses();
-		rm.write("/>");
-
 		if (oTable.getTitle()) {
 			this.renderHeader(rm, oTable, oTable.getTitle());
 		}
@@ -215,9 +210,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oTable.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Interactive) {
 			this.renderVariableHeight(rm ,oTable);
 		}
-
 		rm.write("</div>");
-
 	};
 
 	// =============================================================================
@@ -353,6 +346,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (iFixedColumnCount > 0) {
 			rm.write("<div");
 			rm.addClass("sapUiTableColHdrFixed");
+			rm.addClass("sapUiTableNoOpacity");
 			rm.writeClasses();
 			rm.write(">");
 
