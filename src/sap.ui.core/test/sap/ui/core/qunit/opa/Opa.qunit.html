@@ -270,12 +270,25 @@
 
 	});
 
-	function theCurrentBrowserSupporstStacktraces () {
+	function theCurrentBrowserSupportsStacktraces () {
+		if (sap.ui.Device.browser.phantomJS) {
+			return false;
+		}
+
 		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
 			return false;
 		}
 
-		if (sap.ui.Device.browser.safari) {
+		//Incident 1580223677: IOS does not support stacktraces
+		if (sap.ui.Device.os.ios) {
+			return false;
+		}
+
+		if(sap.ui.Device.browser.safari) {
+			return false;
+		}
+
+		if (navigator.userAgent.indexOf("SAPFioriClient") !== -1) {
 			return false;
 		}
 
@@ -300,7 +313,7 @@
 			ok(oOptions, "Options are passed");
 			ok(oOptions.errorMessage, "Error message is there");
 
-			if (theCurrentBrowserSupporstStacktraces()) {
+			if (theCurrentBrowserSupportsStacktraces()) {
 				ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
 			}
 
@@ -341,7 +354,7 @@
 			ok(oOptions, "Options are passed");
 			ok(oOptions.errorMessage, "Error message is there");
 
-			if (theCurrentBrowserSupporstStacktraces()) {
+			if (theCurrentBrowserSupportsStacktraces()) {
 				ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
 				ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
 			}
