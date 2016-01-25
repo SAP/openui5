@@ -687,8 +687,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() != oDate.getTime()) {
 					this._oDateRange.setStartDate(new Date(oDate.getTime()));
 				}
-			} else if (this._oDateRange.getStartDate()) {
-				this._oDateRange.setStartDate(undefined);
+			} else {
+				this._oCalendar.focusDate(new Date());
+				if (this._oDateRange.getStartDate()) {
+					this._oDateRange.setStartDate(undefined);
+				}
 			}
 
 		};
