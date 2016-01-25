@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		var TreeBindingAdapter = function() {
 
 			// ensure only TreeBindings are enhanced which have not been enhanced yet
-			if (!(this instanceof TreeBinding && this.getContexts === undefined)) {
+			if (!(this instanceof TreeBinding) || this._bIsAdapted) {
 				return;
 			}
 
@@ -52,6 +52,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 			//create general tree structure
 			this._createTreeState();
+
+			this._bIsAdapted = true;
 		};
 
 		TreeBindingAdapter.prototype.setAutoExpandMode = function (sAutoExpandMode) {
@@ -1347,6 +1349,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 */
 		TreeBindingAdapter.prototype.setCollapseRecursive = function (bCollapseRecursive) {
 			this.bCollapseRecursive = !!bCollapseRecursive;
+		};
+
+		/**
+		 * Gets the collapsing behavior when parent nodes are collapsed.
+		 * @param {boolean} bCollapseRecursive
+		 */
+		TreeBindingAdapter.prototype.getCollapseRecursive = function () {
+			return this.bCollapseRecursive;
 		};
 
 		//*********************************************

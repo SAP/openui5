@@ -1281,6 +1281,12 @@ sap.ui.define(['jquery.sap.global',
 				}
 			} else {
 				this.resetData();
+				// abort running request, since new requests will be sent containing $orderby
+				jQuery.each(this.mRequestHandles, function (sRequestKey, oRequestHandle) {
+					if (oRequestHandle) {
+						oRequestHandle.abort();
+					}
+				});
 				this.sChangeReason = ChangeReason.Filter;
 				this._fireRefresh({reason: this.sChangeReason});
 			}
@@ -1658,9 +1664,109 @@ sap.ui.define(['jquery.sap.global',
 			this.bHasTreeAnnotations = this._hasTreeAnnotations();
 			this._processSelectParameters();
 			this.oEntityType = this._getEntityType();
+
+			if (this._bShouldBeAdapted) {
+				this._applyAdapter();
+			}
+
 			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 		return this;
+	};
+
+	/**
+	 * Initially only apply the Adapter interface.
+	 * The real adapter will be applied after the initialize.
+	 * @private
+	 */
+	ODataTreeBinding.prototype.applyAdapter = function () {
+		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && !this.bInitial) {
+			this._applyAdapter();
+			return this;
+		}
+
+		/**
+		 * Data Interface.
+		 * Documentation, see the corresponding Adapter classes.
+		 */
+		this.getContexts = this.getContexts || function () {
+			return [];
+		};
+		this.getLength = this.getLength || function () {
+			return 0;
+		};
+		this.isLengthFinal = this.isLengthFinal || function () {
+			return false;
+		};
+		this.getContextByIndex = this.getContextByIndex || function () {
+			return;
+		};
+		/**
+		 * Event Interface.
+		 * Documentation, see the corresponding Adapter classes.
+		 */
+		this.attachSelectionChanged = function(oData, fnFunction, oListener) {
+			this.attachEvent("selectionChanged", oData, fnFunction, oListener);
+			return this;
+		};
+		this.detachSelectionChanged = function(fnFunction, oListener) {
+			this.detachEvent("selectionChanged", fnFunction, oListener);
+			return this;
+		};
+		this.fireSelectionChanged = function(mArguments) {
+			this.fireEvent("selectionChanged", mArguments);
+			return this;
+		};
+
+		this._bShouldBeAdapted = true;
+
+		return this;
+	};
+
+	ODataTreeBinding.prototype._applyAdapter = function () {
+		var sMagnitudeAnnotation = "hierarchy-node-descendant-count-for";
+
+		if (this.bHasTreeAnnotations) {
+
+			var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			// remove url parameters if any to get correct path for entity type resolving
+			if (sAbsolutePath.indexOf("?") !== -1) {
+				sAbsolutePath = sAbsolutePath.split("?")[0];
+			}
+			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sAbsolutePath);
+			var that = this;
+
+			//Check if all required properties are available
+			jQuery.each(oEntityType.property, function(iIndex, oProperty) {
+				if (!oProperty.extensions) {
+					return true;
+				}
+				jQuery.each(oProperty.extensions, function(iIndex, oExtension) {
+					var sName = oExtension.name;
+					if (oExtension.namespace === that.oModel.oMetadata.mNamespaces["sap"] &&
+							sName == sMagnitudeAnnotation) {
+						that.oTreeProperties[sName] = oProperty.name;
+					}
+				});
+			});
+
+			//perform magnitude annotation check
+			this.oTreeProperties[sMagnitudeAnnotation] = this.oTreeProperties[sMagnitudeAnnotation] ||
+				(this.mParameters.treeAnnotationProperties && this.mParameters.treeAnnotationProperties.hierarchyNodeDescendantCountFor);
+
+			// apply the auto-expand adapter if the necessary annotations were found
+			// exception: the binding runs in operation-mode "Client"
+			// In this case there is no need for the advanced auto expand, since everything is loaded anyway.
+			if (this.oTreeProperties[sMagnitudeAnnotation] && !this.bClientOperation) {
+				jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAutoExpand");
+				var ODataTreeBindingAutoExpand = sap.ui.model.odata.ODataTreeBindingAutoExpand;
+				ODataTreeBindingAutoExpand.apply(this);
+			} else {
+				jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAdapter");
+				var ODataTreeBindingAdapter = sap.ui.model.odata.ODataTreeBindingAdapter;
+				ODataTreeBindingAdapter.apply(this);
+			}
+		}
 	};
 
 	/**
