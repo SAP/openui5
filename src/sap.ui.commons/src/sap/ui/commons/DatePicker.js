@@ -608,6 +608,7 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 					oThis._oDateRange.setStartDate(new Date(oDate.getTime()));
 				}
 			} else {
+				oThis._oCalendar.focusDate(new Date());
 				if (oThis._oDateRange.getStartDate()) {
 					oThis._oDateRange.setStartDate(undefined);
 				}
