@@ -299,7 +299,7 @@ sap.ui.define([
 		 * The actions will be invoked directly before success is called.
 		 * In the documentation of the success parameter there is a list of conditions that have to be fulfilled.
 		 * They also apply for the actions.
-		 * There are some predefined actions in the @{link sap.ui.test.actions} namespace.
+		 * There are some predefined actions in the {@link sap.ui.test.actions} namespace.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 */

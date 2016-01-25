@@ -6,7 +6,15 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	"use strict";
 
 	/**
-	 * @class The EnterText action is used to simulate a user entering texts to inputs.
+	 * The EnterText action is used to simulate a user entering texts to inputs.
+	 * EnterText will be executed on a control's focus dom ref.
+	 * Supported controls are (for other controls this action still might work):
+	 * <ul>
+	 *     <li>sap.m.Input</li>
+	 *     <li>sap.m.SearchField</li>
+	 *     <li>sap.m.TextArea</li>
+	 * </ul>
+	 * @class
 	 * @extends sap.ui.test.actions.Action
 	 * @public
 	 * @name sap.ui.test.actions.EnterText

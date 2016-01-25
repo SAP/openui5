@@ -6,7 +6,19 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	"use strict";
 
 	/**
-	 * @class The Press action is used to simulate a press interaction on a control's dom ref.
+	 * The Press action is used to simulate a press interaction on a control's focus dom ref.
+	 * This action is not guaranteed to work since sometimes the focus dom ref is not the dom ref you want to click.
+	 * Supported controls are (for other controls this action still might work):
+	 * <ul>
+	 *     <li>sap.m.Button</li>
+	 *     <li>sap.m.StandardListItem</li>
+	 *     <li>sap.m.IconTabFilter</li>
+	 *     <li>sap.m.StandardTile</li>
+	 *     <li>sap.m.SearchField</li>
+	 *     <li>sap.ui.table.Table.cell</li>
+	 * </ul>
+	 *
+	 * @class
 	 * @extends sap.ui.test.actions.Action
 	 * @public
 	 * @name sap.ui.test.actions.Press
