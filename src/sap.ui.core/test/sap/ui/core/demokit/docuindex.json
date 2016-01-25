@@ -15,6 +15,15 @@
 		],
 		"entities" : [
 			{
+				"id" : "sap.ui.core.BusyIndicator",
+				"name" : "Global Busy Indicator",
+				"category" : "Display",
+				"since" : "1.0",
+				"samples" : [
+					"sap.ui.core.sample.BusyIndicator"
+				]
+			},
+			{
 				"id" : "sap.ui.core.Control",
 				"name" : "Control",
 				"category" : "Display",
@@ -325,6 +334,11 @@
 				"id": "sap.ui.core.sample.DataStateOData",
 				"name": "OData Data State",
 				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
+			},
+			{
+				"id": "sap.ui.core.sample.BusyIndicator",
+				"name": "Busy Indicator",
+				"description": "A busy indicator can be used to block the entire screen until an operation has finished."
 			},
 			{
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
