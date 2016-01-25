@@ -2761,5 +2761,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.27": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "bedc6d4344c32fb1c0552847c44ae446d8353155",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Fix eventing issues in Edge on Windows Phone 10",
+        "references": []
+      },
+      {
+        "id": "4defc9cc02bcbd7270806e577a3dc9b5726d418d",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Prevent rendering of Popups in \u0027_increaseMyZIndex\u0027",
+        "references": []
+      }
+    ]
   }
 }

@@ -4588,7 +4588,7 @@
         "id": "89de8308ad3bf1adb1fa56e685ffedac492d9bde",
         "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
         "type": "FIX",
-        "text": "sap.m.P13nDialog - missing explored example added",
+        "text": "sap.m.P13nDialog: Missing explored example added",
         "references": []
       },
       {
@@ -4596,6 +4596,60 @@
         "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
         "type": "FIX",
         "text": "sap.m.QuickView: Removed empty links from DOM",
+        "references": []
+      }
+    ]
+  },
+  "1.28.27": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "4733f16065d32dfaf496adb2ba8ac673cfdd4657",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Bar: sap.m.Label displayed correctly",
+        "references": []
+      },
+      {
+        "id": "57c6fcb83c24c8b974daa1528858337d808a5f64",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Exclude disable items from the auto-complete suggestion list",
+        "references": []
+      },
+      {
+        "id": "1d9bd61242bb65410538a58425abff580b678130",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Fix dropdown button alignment issue",
+        "references": []
+      },
+      {
+        "id": "1462bff72e388a9a4076115b096aa6883b6f97f4",
+        "author": "Mikhail Benderskiy \u003cmikhail.benderskiy@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Fix add and removeAttribute/Status",
+        "references": []
+      },
+      {
+        "id": "e3c08b845cf70771bd3040cb9c7c884609b67514",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nDialog - support of phone devices",
+        "references": []
+      },
+      {
+        "id": "0fea4c653d49eaccf9610695d0e5c0160dbf3de3",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Preventing arrow from rerendering in Select when there is  a scrollbar",
+        "references": []
+      },
+      {
+        "id": "2c180a17893e64d7f1500fc45db7da25a1acb8ae",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickViewCard: Scrolling position when navigate is correct now",
         "references": []
       }
     ]

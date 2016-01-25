@@ -1043,5 +1043,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.27": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "84ffd8dfe7b64865b8f6a7c9c7f36c63ee096ac1",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TriStateCheckBox scroll trigger fixed",
+        "references": []
+      }
+    ]
   }
 }
