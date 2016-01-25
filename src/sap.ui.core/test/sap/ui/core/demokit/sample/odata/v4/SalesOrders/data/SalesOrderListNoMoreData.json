@@ -1,0 +1,4 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(SalesOrderID,BuyerName,GrossAmount,CurrencyCode)",
+	"value" : []
+}

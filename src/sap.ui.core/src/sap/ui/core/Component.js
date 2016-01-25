@@ -702,7 +702,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					if (!oModelConfig.type) {
 						switch (oDataSource.type) {
 							case 'OData':
-								oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
+								if (oDataSource.settings && oDataSource.settings.odataVersion === "4.0") {
+									oModelConfig.type = 'sap.ui.model.odata.v4.ODataModel';
+								} else {
+									oModelConfig.type = 'sap.ui.model.odata.v2.ODataModel';
+								}
 								break;
 							case 'JSON':
 								oModelConfig.type = 'sap.ui.model.json.JSONModel';
@@ -825,6 +829,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				switch (oModelConfig.type) {
 					case 'sap.ui.model.odata.ODataModel':
 					case 'sap.ui.model.odata.v2.ODataModel':
+					case 'sap.ui.model.odata.v4.ODataModel':
 						oModelConfig.uriSettingName = 'serviceUrl';
 						break;
 					case 'sap.ui.model.resource.ResourceModel':

@@ -1,0 +1,233 @@
+{
+	"@odata.context" : "$metadata#TEAMS",
+	"value" : [{
+		"Team_Id" : "TEAM_01",
+		"Name" : "Business Suite",
+		"MEMBER_COUNT" : 2,
+		"MANAGER_ID" : "3",
+		"BudgetCurrency" : "USD",
+		"Budget" : 555.55,
+		"TEAM_2_EMPLOYEES" : [{
+			"@odata.etag" : "W/\"19770724000000.0000000\"",
+			"ID" : "1",
+			"Name" : "Walter\"s Win's",
+			"AGE" : 52,
+			"ENTRYDATE" : "1977-07-24",
+			"MANAGER_ID" : "1",
+			"ROOM_ID" : "1",
+			"TEAM_ID" : "TEAM_01",
+			"Is_Manager" : false,
+			"LAST_MODIFIED_AT" : "1977-07-24T00:00:00Z",
+			"LOCATION" : {
+				"COUNTRY" : "Germany",
+				"City" : {
+					"POSTALCODE" : "69124",
+					"CITYNAME" : "Heidelberg"
+				}
+			},
+			"SALARY" : {
+				"MONTHLY_BASIC_SALARY_AMOUNT" : 5000.00,
+				"BASIC_SALARY_CURR" : "EUR",
+				"YEARLY_BONUS_AMOUNT" : 5000.000,
+				"BONUS_CURR" : "KWD"
+			},
+			"EMPLOYEE_2_EQUIPMENTS" : [{
+				"Category" : "Electronics",
+				"ID" : 1,
+				"Name" : "Office PC",
+				"EmployeeId" : "0001"
+			}, {
+				"Category" : "Electronics",
+				"ID" : 2,
+				"Name" : "Tablet X",
+				"EmployeeId" : "0001"
+			}]
+		}, {
+			"@odata.etag" : "W/\"19770724000000.0000000\"",
+			"ID" : "3",
+			"Name" : "Jonathan Smith",
+			"AGE" : 56,
+			"ENTRYDATE" : "1977-07-24",
+			"MANAGER_ID" : "1",
+			"ROOM_ID" : "2",
+			"TEAM_ID" : "TEAM_01",
+			"Is_Manager" : true,
+			"LAST_MODIFIED_AT" : "1977-07-24T00:00:00Z",
+			"LOCATION" : {
+				"COUNTRY" : "Germany",
+				"City" : {
+					"POSTALCODE" : "69190",
+					"CITYNAME" : "Walldorf"
+				}
+			},
+			"SALARY" : {
+				"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
+				"BASIC_SALARY_CURR" : "EUR",
+				"YEARLY_BONUS_AMOUNT" : 10000.00,
+				"BONUS_CURR" : "EUR"
+			},
+			"EMPLOYEE_2_EQUIPMENTS" : [{
+				"Category" : "Vehicle",
+				"ID" : 5,
+				"Name" : "VW Golf 2.0",
+				"EmployeeId" : "0003"
+			}]
+		}],
+		"TEAM_2_MANAGER" : {
+			"@odata.etag" : "W/\"0003\"",
+			"ID" : "3",
+			"TEAM_ID" : "TEAM_01"
+		}
+	}, {
+		"Team_Id" : "TEAM_02",
+		"Name" : "SAP NetWeaver Gateway Core",
+		"MEMBER_COUNT" : 2,
+		"MANAGER_ID" : "5",
+		"BudgetCurrency" : "KWD",
+		"Budget" : 666.666,
+		"TEAM_2_EMPLOYEES" : [{
+			"@odata.etag" : "W/\"20040912000000.0000000\"",
+			"ID" : "4",
+			"Name" : "Peter Burke",
+			"AGE" : 39,
+			"ENTRYDATE" : "2004-09-12",
+			"MANAGER_ID" : "3",
+			"ROOM_ID" : "2",
+			"TEAM_ID" : "TEAM_02",
+			"Is_Manager" : false,
+			"LAST_MODIFIED_AT" : "2004-09-12T00:00:00Z",
+			"LOCATION" : {
+				"COUNTRY" : "Germany",
+				"City" : {
+					"POSTALCODE" : "69190",
+					"CITYNAME" : "Walldorf"
+				}
+			},
+			"SALARY" : {
+				"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
+				"BASIC_SALARY_CURR" : "GBP",
+				"YEARLY_BONUS_AMOUNT" : 15000.00,
+				"BONUS_CURR" : "USD"
+			},
+			"EMPLOYEE_2_EQUIPMENTS" : [{
+				"Category" : "Vehicle",
+				"ID" : 6,
+				"Name" : "Audi A3 2.5",
+				"EmployeeId" : "0004"
+			}]
+		}, {
+			"@odata.etag" : "W/\"20010201000000.0000000\"",
+			"ID" : "5",
+			"Name" : "John Field",
+			"AGE" : 42,
+			"ENTRYDATE" : "2001-02-01",
+			"MANAGER_ID" : "3",
+			"ROOM_ID" : "3",
+			"TEAM_ID" : "TEAM_02",
+			"Is_Manager" : true,
+			"LAST_MODIFIED_AT" : "2001-02-01T00:00:00Z",
+			"LOCATION" : {
+				"COUNTRY" : "Germany",
+				"City" : {
+					"POSTALCODE" : "69190",
+					"CITYNAME" : "Walldorf"
+				}
+			},
+			"SALARY" : {
+				"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
+				"BASIC_SALARY_CURR" : "GBP",
+				"YEARLY_BONUS_AMOUNT" : 15000.00,
+				"BONUS_CURR" : "USD"
+			},
+			"EMPLOYEE_2_EQUIPMENTS" : [{
+				"Category" : "Electronics",
+				"ID" : 7,
+				"Name" : "Office PC",
+				"EmployeeId" : "0005"
+			}, {
+				"Category" : "Vehicle",
+				"ID" : 8,
+				"Name" : "Mercedes B 3.0",
+				"EmployeeId" : "0005"
+			}]
+		}],
+		"TEAM_2_MANAGER" : {
+			"@odata.etag" : "W/\"0004\"",
+			"ID" : "5",
+			"TEAM_ID" : "TEAM_02"
+		}
+	}, {
+		"Team_Id" : "TEAM_03",
+		"Name" : "SAP NetWeaver Gateway Content",
+		"MEMBER_COUNT" : 2,
+		"MANAGER_ID" : "2",
+		"BudgetCurrency" : "JPY",
+		"Budget" : 4444,
+		"TEAM_2_EMPLOYEES" : [{
+			"@odata.etag" : "W/\"20030701000000.0000000\"",
+			"ID" : "2",
+			"Name" : "Frederic Fall",
+			"AGE" : 32,
+			"ENTRYDATE" : "2003-07-01",
+			"MANAGER_ID" : "1",
+			"ROOM_ID" : "2",
+			"TEAM_ID" : "TEAM_03",
+			"Is_Manager" : true,
+			"LAST_MODIFIED_AT" : "2003-07-01T00:00:00Z",
+			"LOCATION" : {
+				"COUNTRY" : "Germany",
+				"City" : {
+					"POSTALCODE" : "69190",
+					"CITYNAME" : "Walldorf"
+				}
+			},
+			"SALARY" : {
+				"MONTHLY_BASIC_SALARY_AMOUNT" : 5100.33,
+				"BASIC_SALARY_CURR" : "EUR",
+				"YEARLY_BONUS_AMOUNT" : 10000.00,
+				"BONUS_CURR" : "EUR"
+			},
+			"EMPLOYEE_2_EQUIPMENTS" : [{
+				"Category" : "Electronics",
+				"ID" : 3,
+				"Name" : "Smartphone X",
+				"EmployeeId" : "0002"
+			}, {
+				"Category" : "Furniture",
+				"ID" : 4,
+				"Name" : "Electric Table Model A1",
+				"EmployeeId" : "0002"
+			}]
+		}, {
+			"@odata.etag" : "W/\"20101201000000.0000000\"",
+			"ID" : "6",
+			"Name" : "Susan Bay",
+			"AGE" : 29,
+			"ENTRYDATE" : "2010-12-01",
+			"MANAGER_ID" : "1",
+			"ROOM_ID" : "2",
+			"TEAM_ID" : "TEAM_03",
+			"Is_Manager" : false,
+			"LAST_MODIFIED_AT" : "2010-12-01T00:00:00Z",
+			"LOCATION" : {
+				"COUNTRY" : "Germany",
+				"City" : {
+					"POSTALCODE" : "69190",
+					"CITYNAME" : "Walldorf"
+				}
+			},
+			"SALARY" : {
+				"MONTHLY_BASIC_SALARY_AMOUNT" : 2689.44,
+				"BASIC_SALARY_CURR" : "GBP",
+				"YEARLY_BONUS_AMOUNT" : 15000.00,
+				"BONUS_CURR" : "USD"
+			},
+			"EMPLOYEE_2_EQUIPMENTS" : []
+		}],
+		"TEAM_2_MANAGER" : {
+			"@odata.etag" : "W/\"0002\"",
+			"ID" : "2",
+			"TEAM_ID" : "TEAM_03"
+		}
+	}]
+}
