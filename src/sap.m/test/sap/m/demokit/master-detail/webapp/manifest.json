@@ -53,7 +53,6 @@
 			"type": "XML",
 			"id": "app"
 		},
-		"autoPrefixId": true,
 
 		"dependencies": {
 			"minUI5Version": "1.36.0",
