@@ -288,7 +288,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 						jQuery.sap.measure.endInteraction(/*bForce*/true);
 					}
 				}
-				oCurrentBrowserEvent = null;
 			};
 
 			// ***** FESR API, consumed by E2eTraceLib instead of former EppLib.js ***** //
