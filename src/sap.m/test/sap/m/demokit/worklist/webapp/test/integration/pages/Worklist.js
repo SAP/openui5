@@ -1,11 +1,13 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
+		"sap/ui/test/actions/Press",
+		"sap/ui/test/actions/EnterText",
 		"sap/ui/test/matchers/AggregationLengthEquals",
 		"sap/ui/test/matchers/AggregationFilled",
 		"sap/ui/test/matchers/PropertyStrictEquals",
 		"sap/ui/demo/worklist/test/integration/pages/Common",
 		"sap/ui/demo/worklist/test/integration/pages/shareOptions"
-	], function(Opa5, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
+	], function(Opa5, Press, EnterText,AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
 		"use strict";
 
 		var sViewName = "Worklist",
@@ -18,7 +20,7 @@ sap.ui.define([
 				oSearchField = aControls[1],
 				aItems = oTable.getItems();
 
-			// table need items
+			// table needs items
 			if (aItems.length === 0) {
 				return false;
 			}
@@ -36,31 +38,10 @@ sap.ui.define([
 				matchers : function (oTable) {
 					return oTable.getItems()[iPosition];
 				},
+				actions : oOptions.actions,
 				success : oOptions.success,
 				errorMessage : "Table in view '" + sViewName + "' does not contain an Item at position '" + iPosition + "'"
 			};
-		}
-
-		function enterSomethingInASearchField (oSearchField, oSearchParams) {
-			oSearchParams = oSearchParams || {};
-
-			if (oSearchParams.searchValue) {
-				oSearchField.setValue(oSearchParams.searchValue);
-			}
-
-			if (oSearchParams.skipEvent) {
-				return;
-			}
-
-			/*eslint-disable new-cap */
-			var oEvent = jQuery.Event("touchend");
-			/*eslint-enable new-cap */
-			oEvent.originalEvent = {query: oSearchParams.searchValue, refreshButtonPressed: oSearchParams.refreshButtonPressed, id: oSearchField.getId()};
-			oEvent.target = oSearchField;
-			oEvent.srcElement = oSearchField;
-			jQuery.extend(oEvent, oEvent.originalEvent);
-
-			oSearchField.fireSearch(oEvent);
 		}
 
 		Opa5.createPageObjects({
@@ -71,9 +52,7 @@ sap.ui.define([
 					iPressATableItemAtPosition : function (iPosition) {
 						return this.waitFor(createWaitForItemAtPosition({
 							position : iPosition,
-							success : function (oTableItem) {
-								oTableItem.$().trigger("tap");
-							}
+							actions : new Press()
 						}));
 					},
 
@@ -100,7 +79,7 @@ sap.ui.define([
 							matchers : function (oTable) {
 								return !!oTable.$("trigger").length;
 							},
-							success : function (oTable) {
+							actions : function (oTable) {
 								oTable.$("trigger").trigger("tap");
 							},
 							errorMessage : "The Table does not have a trigger"
@@ -132,7 +111,7 @@ sap.ui.define([
 					iSearchForTheFirstObject: function() {
 						var sFirstObjectTitle;
 
-						this.waitFor({
+						return this.waitFor({
 							id: sTableId,
 							viewName: sViewName,
 							matchers: new AggregationFilled({
@@ -140,54 +119,56 @@ sap.ui.define([
 							}),
 							success: function(oTable) {
 								sFirstObjectTitle = oTable.getItems()[0].getCells()[0].getTitle();
+
+								this.waitFor({
+									id: sSearchFieldId,
+									viewName: sViewName,
+									actions: [new EnterText({text: sFirstObjectTitle}), new Press()],
+									errorMessage: "Failed to find search field in Worklist view.'"
+								});
+
+								this.waitFor({
+									id: [sTableId, sSearchFieldId],
+									viewName: sViewName,
+									check : allItemsInTheListContainTheSearchTerm,
+									errorMessage: "Did not find any table entries or too many while trying to search for the first object."
+								});
 							},
 							errorMessage: "Did not find table entries while trying to search for the first object."
 						});
-
-						this.waitFor({
-							id: sSearchFieldId,
-							viewName: sViewName,
-							success: function(oSearchField) {
-								enterSomethingInASearchField(oSearchField, {
-									searchValue: sFirstObjectTitle
-								});
-							},
-							errorMessage: "Failed to find search field in Worklist view.'"
-						});
-
-						return this.waitFor({
-							id: [sTableId, sSearchFieldId],
-							viewName: sViewName,
-							check : allItemsInTheListContainTheSearchTerm,
-							errorMessage: "Did not find any table entries or too many while trying to search for the first object."
-						});
 					},
 
-					iTypeSomethingInTheSearchThatCannotBeFound : function () {
-						return this.iSearchForValue({searchValue : sSomethingThatCannotBeFound, skipEvent : true});
-					},
-
-					iSearchForValue : function (oSearchParams) {
+					iSearchForValue : function (aActions) {
 						return this.waitFor({
 							id : sSearchFieldId,
 							viewName : sViewName,
-							success : function (oSearchField) {
-								enterSomethingInASearchField(oSearchField, oSearchParams);
-							},
+							actions: aActions,
 							errorMessage : "Failed to find search field in Worklist view.'"
 						});
 					},
 
+					iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh : function () {
+						var fireRefreshButtonPressedOnSearchField = function (oSearchField) {
+
+							/*eslint-disable new-cap */
+							var oEvent = jQuery.Event("touchend");
+							/*eslint-enable new-cap */
+							oEvent.originalEvent = {refreshButtonPressed: true, id: oSearchField.getId()};
+							oEvent.target = oSearchField;
+							oEvent.srcElement = oSearchField;
+							jQuery.extend(oEvent, oEvent.originalEvent);
+
+							oSearchField.fireSearch(oEvent);
+						};
+						return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), fireRefreshButtonPressedOnSearchField]);
+					},
+
 					iClearTheSearch : function () {
-						return this.iSearchForValue({searchValue : ""});
+						return this.iSearchForValue([new EnterText({text: ""}), new Press()]);
 					},
 
 					iSearchForSomethingWithNoResults : function () {
-						return this.iSearchForValue({ searchValue : sSomethingThatCannotBeFound});
-					},
-
-					iTriggerRefresh : function () {
-						return this.iSearchForValue({refreshButtonPressed : true});
+						return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), new Press()]);
 					}
 
 				}, shareOptions.createActions(sViewName)),
