@@ -38,10 +38,49 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			 * Selected state of the item. If set to "true", the item will be displayed as selected in the view settings dialog.
 			 */
 			selected : {type : "boolean", group : "Behavior", defaultValue : false}
+		},
+		events : {
+			/**
+			 * Let the outside world know that some of its properties has changed.
+			 * @private
+			 */
+			itemPropertyChanged: {
+				parameters: {
+					/**
+					 * Instance of the item that changed.
+					 */
+					changedItem: {type: 'sap.m.ViewSettingsItem'},
+					/**
+					 * Key of the changed property.
+					 */
+					propertyKey: {type: "string"},
+					/**
+					 * Value of the changed property.
+					 */
+					propertyValue:  {type: "mixed"}
+				}
+			}
 		}
 	}});
 
 
+	/**
+	 * Overriding of the setProperty method in order to fire an event.
+	 *
+	 * @override
+	 * @param {string} sName The name of the property
+	 * @param {string} sValue The value of the property
+	 * @param {boolean} bSupressInvalidation
+	 */
+	ViewSettingsItem.prototype.setProperty = function (sName, vValue, bSupressInvalidation) {
+		sap.ui.base.ManagedObject.prototype.setProperty.apply(this, arguments);
+
+		this.fireItemPropertyChanged({
+			changedItem     : this,
+			propertyKey     : sName,
+			propertyValue   : vValue
+		});
+	};
 
 	return ViewSettingsItem;
 
