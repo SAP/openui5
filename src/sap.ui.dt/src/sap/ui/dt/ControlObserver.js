@@ -64,7 +64,8 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 	ControlObserver.prototype.init = function() {
 		ManagedObjectObserver.prototype.init.apply(this, arguments);
 
-		this._fnFireDomChanged = this.fireDomChanged.bind(this);
+		this._bVisible = false;
+		this._fnFireDomChanged = this._fireDomChangedIfVisible.bind(this);
 		this._oControlDelegate = {
 			onAfterRendering : this._onAfterRendering,
 			onBeforeRendering : this._onBeforeRendering
@@ -112,6 +113,7 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 	ControlObserver.prototype._onAfterRendering = function() {
 		this._startObservers();
 		this.fireDomChanged();
+
 	};
 
 	/**
@@ -123,7 +125,11 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 		var oDomRef = this.getTargetInstance().getDomRef();
 		if (MutationObserver && oDomRef) {
 			this._oMutationObserver = this._oMutationObserver || new MutationObserver(function(aMutations) {
-				that.fireDomChanged();
+				var bVisible = DOMUtil.isVisible(oDomRef);
+				if (bVisible || that._bVisible !== bVisible) {
+					that.fireDomChanged();
+				}
+				that._bVisible = bVisible;
 			});
 			this._oMutationObserver.observe(oDomRef, {
 				childList : true,
@@ -161,12 +167,10 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 	 * @private
 	 */
 	ControlObserver.prototype._startObservers = function() {
-		var bVisible = DOMUtil.isVisible(this.getTargetInstance().$());
-
-		if (bVisible) {
-			this._startResizeObserver();
-			this._startMutationObserver();
-		}
+		this._bVisible = DOMUtil.isVisible(this.getTargetInstance().$());
+		// always start mutation observer to recognize also visibility changes (via CSS)
+		this._startMutationObserver();
+		this._startResizeObserver();
 	};
 
 	/**
@@ -175,6 +179,15 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 	ControlObserver.prototype._stopObservers = function() {
 		this._stopResizeObserver();
 		this._stopMutationObserver();
+	};
+
+	/**
+	 * @private
+	 */
+	ControlObserver.prototype._fireDomChangedIfVisible = function() {
+		if (this._bVisible) {
+			this.fireDomChanged();
+		}
 	};
 
 	return ControlObserver;

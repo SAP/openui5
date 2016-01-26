@@ -544,16 +544,19 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @private
 	 */
 	ElementOverlay.prototype._onElementDomChanged = function(oEvent) {
-		delete this._mGeometry;
-
-		this.sync();
-
-		var oParent = this.getParent();
-		if (oParent) {
-			if (!oParent.getDomRef) {
-				this.applyStyles();
+		if (this._mGeometry && !this._mGeometry.visible) {
+			this.invalidate();
+		} else {
+			this.sync();
+			var oParent = this.getParent();
+			if (oParent) {
+				if (!oParent.getDomRef) {
+					this.applyStyles();
+				}
 			}
 		}
+
+		delete this._mGeometry;
 	};
 
 	/**
