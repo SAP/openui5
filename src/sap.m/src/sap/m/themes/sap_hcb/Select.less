@@ -72,7 +72,7 @@
 	outline-offset: -0.1875rem;
 }
 
-.sap-desktop .sapMSlt:not(.sapMSltIconOnly):focus,
+.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):focus,
 .sapMSltHoverable:not(.sapMSltIconOnly):hover {
 	border-color: @sapHCStandardFG;
 }
@@ -85,7 +85,7 @@ html[data-sap-ui-browser^="ie"] {
 		position: relative;
 	}
 
-	.sapMSlt:focus:not(.sapMSltPressed)::before {
+	.sapMSlt:focus:not(.sapMSltDisabled):not(.sapMSltPressed)::before {
 		content: "";
 		box-sizing: border-box;
 		width: 100%;
