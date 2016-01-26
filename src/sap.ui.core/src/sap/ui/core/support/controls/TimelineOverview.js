@@ -73,7 +73,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		};
 
 		TimelineOverview.prototype.renderInteractionStep = function (rm, step, index) {
-			var stepDurationInPercent = Math.ceil((step.totalDuration / this.maxDuration) * 100);
+			// 100% is the whole height, but need to keep space for time labels
+			var MAX_ALLOWED_HEIGHT_IN_PERC = 85,
+				stepDurationInPercent = Math.ceil((step.totalDuration / this.maxDuration) * MAX_ALLOWED_HEIGHT_IN_PERC);
+
 
 			var stepDurationInPercentInlineStyle = 'height: ' + stepDurationInPercent + '%;';
 			if (stepDurationInPercent > 0) {
