@@ -10,7 +10,7 @@
 		<Panel expandable="true" headerText="(Technical Tests)">
 			<content>
 				<VBox>
-					<template:with path="meta>/$EntityContainer/." var="objectWithKind">
+					<template:with path="meta>/$EntityContainer/" var="objectWithKind">
 						<core:Fragment
 							fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText"
 							type="XML"/>
@@ -22,7 +22,6 @@
 							type="XML"/>
 					</template:with>
 					<Text text="----------"/>
-					<!-- Note: path: 'meta>/' is same as path: 'meta>/$EntityContainer/.' -->
 					<template:repeat
 						list="{path: 'meta>/', filters: {path: '@sapui.name', operator: 'EndsWith', value1: 'List'}}"
 						var="entitySet">
@@ -31,7 +30,9 @@
 					<Text text="----------"/>
 					<template:repeat list="{meta>/BusinessPartnerList}" var="property">
 						<Label design="Bold" text="{property>@sapui.name}: {property>$Type}"/>
-						<template:repeat list="{property>@}" var="annotation">
+						<template:repeat
+							list="{path: 'property>@', filters: {path: '@sapui.name', operator: 'StartsWith', value1: '@com.sap.vocabularies.Common.v1.'}}"
+							var="annotation">
 							<Text text="{annotation>@sapui.name} = {path:'annotation>', formatter: '.stringify'}"/>
 						</template:repeat>
 					</template:repeat>
@@ -39,7 +40,7 @@
 				</VBox>
 			</content>
 		</Panel>
-		<template:with path="meta>/BusinessPartnerList/$Type/." var="entityType">
+		<template:with path="meta>/BusinessPartnerList/" var="entityType">
 			<template:with path="entityType>@com.sap.vocabularies.UI.v1.LineItem" var="lineItem">
 				<!-- Note: this limits the data shown to 5 rows! -->
 				<Table headerText="Business Partners"
@@ -56,9 +57,7 @@
 											text="{field>Label}"/>
 									</template:then>
 									<template:else>
-										<!-- TODO insert "$Path" automatically?
-											{field>Value/@com.sap.vocabularies.Common.v1.Label} -->
-										<Text text="{field>Value/$Path/@com.sap.vocabularies.Common.v1.Label}"/>
+										<Text text="{field>Value/$Path@com.sap.vocabularies.Common.v1.Label}"/>
 									</template:else>
 								</template:if>
 							</Column>
@@ -68,19 +67,21 @@
 						<ColumnListItem>
 							<cells>
 								<template:repeat list="{lineItem>}" var="field">
-									<template:if test="{field>Value/$Path/@com.sap.vocabularies.Common.v1.Text}">
-										<template:then>
-											<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
-											<template:if test="{= ${field>Value/$Path/@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement/$EnumMember}
-												=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
-												<Text text="{= '{' + ${field>Value/$Path} + '} {'
-													+ ${field>Value/$Path/@com.sap.vocabularies.Common.v1.Text/$Path} + '}' }" />
-											</template:if>
-										</template:then>
-										<template:else>
-											<Text text="{= '{' + ${field>Value/$Path} + '}' }" />
-										</template:else>
-									</template:if>
+									<template:with path="field>Value/$Path" var="target">
+										<template:if test="{target>@com.sap.vocabularies.Common.v1.Text}">
+											<template:then>
+												<!-- Note: TextFirst, TextLast, TextSeparate, TextOnly -->
+												<template:if test="{= ${target>@com.sap.vocabularies.Common.v1.Text@com.sap.vocabularies.UI.v1.TextArrangement/$EnumMember}
+													=== 'com.sap.vocabularies.UI.v1.TextArrangementType/TextLast' }">
+													<Text text="{= '{' + ${target>} + '} {'
+														+ ${target>@com.sap.vocabularies.Common.v1.Text/$Path} + '}' }" />
+												</template:if>
+											</template:then>
+											<template:else>
+												<Text text="{= '{' + ${target>} + '}' }" />
+											</template:else>
+										</template:if>
+									</template:with>
 								</template:repeat>
 							</cells>
 						</ColumnListItem>

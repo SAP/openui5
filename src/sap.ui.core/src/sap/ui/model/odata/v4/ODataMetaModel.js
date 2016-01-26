@@ -159,7 +159,7 @@ sap.ui.define([
 	 * Returns the value of the object or property inside this model's meta data which can be
 	 * reached, starting at the given context, by following the given path. The resulting value is
 	 * suitable for a list binding, for example
-	 * <code>&lt;template:repeat list="{context>path}" ...&gt;</code>.
+	 * <code>&lt;template:repeat list="{context>path}" ...></code>.
 	 *
 	 * @param {string} sPath
 	 *   A relative or absolute path
@@ -176,19 +176,17 @@ sap.ui.define([
 				|| sPath === "" && oContext.getPath().slice(-2) === "/@"
 				|| sPath.slice(-2) === "/@",
 			sKey,
-			sPathDot,
+			sPathIntoObject,
 			vResult;
 
-		if (bIterateAnnotations) {
-			sPathDot = sPath; // no dot needed
-		} else if (sPath === "/") {
-			sPathDot = "/.";
+		if (bIterateAnnotations || sPath === "/") {
+			sPathIntoObject = sPath; // no trailing slash needed
 		} else if (sPath) {
-			sPathDot = sPath + "/.";
+			sPathIntoObject = sPath + "/";
 		} else {
-			sPathDot = ".";
+			sPathIntoObject = "./";
 		}
-		vResult = this.getObject(sPathDot, oContext);
+		vResult = this.getObject(sPathIntoObject, oContext);
 
 		for (sKey in vResult) {
 			// always filter technical properties; filter annotations iff. not iterating them
@@ -225,7 +223,7 @@ sap.ui.define([
 	 *   Initial sort order, see {@link sap.ui.model.ListBinding#sort sort}
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters]
 	 *   Initial application filter(s), see {@link sap.ui.model.ListBinding#filter filter}
-	 * @return {sap.ui.model.ListBinding}
+	 * @returns {sap.ui.model.ListBinding}
 	 *   A list binding for this meta data model
 	 * @public
 	 * @see #requestObject
@@ -309,6 +307,7 @@ sap.ui.define([
 			/*
 			 * Takes one step according to the given segment, starting at the current
 			 * <code>vResult</code> and changing that.
+			 *
 			 * @param {string} sSegment
 			 *   Current segment
 			 * @param {number} i
@@ -319,13 +318,65 @@ sap.ui.define([
 			 *   Whether to continue after this step
 			 */
 			function step(sSegment, i, aSegments) {
-				var sSchemaName;
+				var iIndexOfAt,
+					sSchemaName,
+					bSplitSegment;
 
-				if (!sSegment) {
-					return warn("Invalid empty segment");
-				}
 				if (sSegment === "$Annotations") {
 					return warn("Invalid segment: $Annotations");
+				}
+
+				if (sSegment.length > 11 && sSegment.slice(-11) === "@sapui.name") {
+					// split trailing @sapui.name first
+					iIndexOfAt = sSegment.length - 11;
+				} else {
+					iIndexOfAt = sSegment.indexOf("@");
+				}
+				if (iIndexOfAt > 0) {
+					// <17.2 SimpleIdentifier|17.3 QualifiedName>@<annotation[@annotation]>
+					if (!step(sSegment.slice(0, iIndexOfAt), i, aSegments)) {
+						return false;
+					}
+					sSegment = sSegment.slice(iIndexOfAt);
+					bSplitSegment = true;
+				}
+
+				if (!(bSplitSegment && sSegment === "@sapui.name") && typeof vResult === "string"
+					// indirection: treat string content as a meta model path
+					&& !steps(vResult, aSegments.slice(0, i))) {
+					return false;
+				}
+
+				if (bODataMode) {
+					if (sSegment[0] === "$") {
+						bODataMode = false; // technical property, switch to pure "JSON" drill-down
+					} else if (!bSplitSegment) {
+						if (sSegment[0] !== "@" && sSegment.indexOf(".") > 0) {
+							// "17.3 QualifiedName": scope lookup
+							return scopeLookup(sSegment);
+						} else if ("$Type" in vResult) {
+							// implicit $Type insertion, e.g. at (navigation) property
+							if (!scopeLookup(vResult.$Type)) {
+								return false;
+							}
+						} else {
+							// "17.2 SimpleIdentifier" (or placeholder):
+							// lookup inside schema child (which is determined lazily)
+							sTarget = sName = sSchemaChildName
+								= sSchemaChildName || mScope.$EntityContainer;
+							vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
+							if (sSegment && sSegment[0] !== "@"
+								&& !(sSegment in oSchemaChild)) {
+								return warn("Unknown child '", sSegment,
+									"' of '", sSchemaChildName, "'");
+							}
+						}
+					}
+				}
+
+				// Note: trailing slash is useful to force implicit lookup or $Type insertion
+				if (!sSegment) { // empty segment is at end or else...
+					return i + 1 >= aSegments.length || warn("Invalid empty segment");
 				}
 				if (sSegment === "@sapui.name") {
 					vResult = sName;
@@ -336,54 +387,21 @@ sap.ui.define([
 					}
 					return false;
 				}
-
-				if (typeof vResult === "string"
-					// indirection: re-use scope lookup etc.
-					&& !steps(vResult, aSegments.slice(0, i))) {
-					return false;
-				}
 				if (!vResult || typeof vResult !== "object") {
 					// Note: even an OData path cannot continue here (e.g. by type cast)
 					return warn("Invalid segment: ", sSegment);
 				}
-
-				if (bODataMode) {
-					if (sSegment[0] === "$") {
-						bODataMode = false; // technical property, switch to pure "JSON" drill-down
-					} else if (sSegment[0] === "@") {
-						// annotation(s) via external targeting
-						if (!sTarget) {
-							return warn("Unsupported path before ", sSegment);
-						} // else: sSchemaChildName is well defined
-						sSchemaName
-							= sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
-						vResult = sSchemaName === sSchemaChildName
-							? oSchemaChild // annotations at schema are inline
-							: (mScope[sSchemaName].$Annotations || {})[sTarget] || {};
-						bODataMode = false; // switch to pure "JSON" drill-down
-					} else if (sSegment.indexOf(".") > 0) {
-						// "17.3 QualifiedName": scope lookup
-						return scopeLookup(sSegment);
-					} else if ("$Type" in vResult) {
-						// implicit $Type insertion, e.g. at (navigation) property
-						if (!scopeLookup(vResult.$Type)) {
-							return false;
-						}
-					} else {
-						// "17.2 SimpleIdentifier" (or placeholder): lookup inside schema child
-						// (which is determined lazily)
-						sTarget = sName = sSchemaChildName
-							= sSchemaChildName || mScope.$EntityContainer;
-						vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
-						if (sSegment !== "." && !(sSegment in oSchemaChild)) {
-							return warn("Unknown child '", sSegment,
-								"' of '", sSchemaChildName, "'");
-						}
-					}
+				if (bODataMode && sSegment[0] === "@") {
+					// annotation(s) via external targeting
+					sSchemaName
+						= sSchemaChildName.slice(0, sSchemaChildName.lastIndexOf(".") + 1);
+					vResult = sSchemaName === sSchemaChildName
+						? oSchemaChild // annotations at schema are inline
+						: (mScope[sSchemaName].$Annotations || {})[sTarget] || {};
+					bODataMode = false; // switch to pure "JSON" drill-down
 				}
 
-				// Note: "." is useful to force implicit lookup or $Type insertion
-				if (sSegment !== "." && sSegment !== "@") {
+				if (sSegment !== "@") {
 					sName = bODataMode || sSegment[0] === "@" ? sSegment : undefined;
 					sTarget = bODataMode ? sTarget + "/" + sSegment : undefined;
 					vResult = vResult[sSegment];
@@ -443,9 +461,7 @@ sap.ui.define([
 				return false;
 			}
 
-			if (sResolvedPath !== "/") {
-				steps(sResolvedPath.slice(1));
-			}
+			steps(sResolvedPath.slice(1));
 
 			return vResult;
 		});
@@ -609,46 +625,75 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the meta data value for the given path relative to the given context.
-	 * Returns a <code>Promise</code> which is resolved with the requested meta data value or
-	 * rejected with an error (only in case meta data cannot be loaded). An invalid path leads to
-	 * an <code>undefined</code> result and a warning is logged. Use {@link #getObject getObject}
-	 * for synchronous access.
+	 * Requests the meta data value for the given path relative to the given context (see
+	 * {@link #resolve resolve} on how this resolution happens and how slashes are inserted as a
+	 * separator). Returns a <code>Promise</code> which is resolved with the requested meta data
+	 * value or rejected with an error (only in case meta data cannot be loaded). An invalid path
+	 * leads to an <code>undefined</code> result and a warning is logged. Use
+	 * {@link #getObject getObject} for synchronous access.
+	 *
+	 * The basic idea is that every path described in "14.2.1 Attribute Target" in specification
+	 * "OData Version 4.0 Part 3: Common Schema Definition Language" is a valid absolute path
+	 * within the meta data model if a leading slash is added; for example
+	 * "/" + "MySchema.MyEntityContainer/MyEntitySet/MyComplexProperty/MyNavigationProperty". Also,
+	 * every path described in "14.5.2 Expression edm:AnnotationPath",
+	 * "14.5.11 Expression edm:NavigationPropertyPath", "14.5.12 Expression edm:Path", and
+	 * "14.5.13 Expression edm:PropertyPath" is a valid relative path within the meta data model
+	 * if a suitable prefix is added which addresses an entity container, entity set, singleton,
+	 * complex type, entity type, or property; for example
+	 * "/MySchema.MyEntityType/MyProperty" + "@vCard.Address#work/FullName".
 	 *
 	 * The absolute path is split into segments and followed step-by-step, starting at the global
 	 * scope of all known qualified OData names. There are two technical properties there:
 	 * "$Version" (typically "4.0") and "$EntityContainer" with the name of the single entity
 	 * container for this meta data model's service.
 	 *
-	 * An empty segment is invalid.
+	 * An empty segment in between is invalid. An empty segment at the end caused by a trailing
+	 * slash differentiates between a name and the object it refers to. This way,
+	 * "/$EntityContainer" refers to the name of the single entity container and
+	 * "/$EntityContainer/" refers to the single entity container as an object.
 	 *
 	 * The segment "@sapui.name" refers back to the last OData name (simple identifier or qualified
-	 * name) or annotation name encountered during path traversal immediately before "@sapui.name",
-	 * for example "/EMPLOYEES/@sapui.name" results in "EMPLOYEES" and
-	 * "/EMPLOYEES/@com.sap.vocabularies.Common.v1.Label/@sapui.name" results in
-	 * "@com.sap.vocabularies.Common.v1.Label". A technical property (that is a segment starting
-	 * with a "$") immediately before "@sapui.name" is invalid, for example
-	 * "/$EntityContainer/@sapui.name". The path must not continue after "@sapui.name".
+	 * name) or annotation name encountered during path traversal immediately before "@sapui.name":
+	 * <ul>
+	 * <li> "/EMPLOYEES@sapui.name" results in "EMPLOYEES" and "/EMPLOYEES/@sapui.name"
+	 * results in the same as "/EMPLOYEES/$Type", that is, the qualified name of the entity set's
+	 * type (see below how "$Type" is inserted implicitly). Note how the separating slash again
+	 * makes a difference here.
+	 * <li> "/EMPLOYEES/@com.sap.vocabularies.Common.v1.Label@sapui.name" results in
+	 * "@com.sap.vocabularies.Common.v1.Label" and a slash does not make any difference as long as
+	 * the annotation does not have a "$Type" property.
+	 * <li> A technical property (that is, a segment starting with a "$") immediately before
+	 * "@sapui.name" is invalid, for example "/$EntityContainer/@sapui.name".
+	 * </ul>
+	 * The path must not continue after "@sapui.name".
 	 *
 	 * If the current object is a string value, that string value is treated as a relative path and
 	 * followed step-by-step before the next segment is processed. Except for this, a path must
 	 * not continue if it comes across a non-object value. Such a string value can be a qualified
 	 * name (example path "/$EntityContainer/..."), a simple identifier (example path
-	 * "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/...") or even a path (example path
+	 * "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/...") or even a path according to
+	 * "14.5.12 Expression edm:Path" etc. (example path
 	 * "/TEAMS/$Type/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/...").
 	 *
-	 * Segments starting with an "@" character, for example
-	 * "@com.sap.vocabularies.Common.v1.Label", address annotations at the current object. As the
-	 * first segment, this is invalid. For objects which can only be annotated inline (see "14.3
-	 * Element edm:Annotation" minus "14.2.1 Attribute Target" in specification "OData Version 4.0
-	 * Part 3: Common Schema Definition Language"), the object already contains the annotations as
-	 * a property. For objects which can (only or also) be annotated via external targeting, the
-	 * object does not contain any annotation as a property. Such annotations MUST be accessed via
-	 * a path. BEWARE of a special case: Actions, functions and their parameters can be annotated
-	 * inline for a single overload or via external targeting for all overloads at the same time.
-	 * In this case, the object contains all annotations for the single overload as a property, but
-	 * annotations MUST nevertheless be accessed via a path in order to include also annotations
-	 * for all overloads at the same time!
+	 * Segments starting with an "@" character, for example "@com.sap.vocabularies.Common.v1.Label",
+	 * address annotations at the current object. As the first segment, they refer to the single
+	 * entity container. For objects which can only be annotated inline (see "14.3 Element
+	 * edm:Annotation" minus "14.2.1 Attribute Target"), the object already contains the
+	 * annotations as a property. For objects which can (only or also) be annotated via external
+	 * targeting, the object does not contain any annotation as a property. Such annotations MUST
+	 * be accessed via a path. BEWARE of a special case: Actions, functions and their parameters
+	 * can be annotated inline for a single overload or via external targeting for all overloads at
+	 * the same time. In this case, the object contains all annotations for the single overload as
+	 * a property, but annotations MUST nevertheless be accessed via a path in order to include
+	 * also annotations for all overloads at the same time.
+	 *
+	 * Segments starting with an OData name followed by an "@" character, for example
+	 * "/TEAMS@Org.OData.Capabilities.V1.TopSupported", address annotations at an entity set,
+	 * singleton, or property, not at the corresponding type. In contrast,
+	 * "/TEAMS/@com.sap.vocabularies.Common.v1.Deletable" (note the separating slash) addresses an
+	 * annotation at the entity set's type. This is in line with the special rule of
+	 * "14.5.12 Expression edm:Path" regarding annotations at a navigation property itself.
 	 *
 	 * "@" can be used as a segment to address a map of all annotations of the current object. This
 	 * is useful for iteration, for example via
@@ -663,8 +708,8 @@ sap.ui.define([
 	 * In a similar way, annotations of "7.2 Element edm:ReferentialConstraint",
 	 * "7.3 Element edm:OnDelete", "10.2 Element edm:Member" and
 	 * "14.5.14.2 Element edm:PropertyValue" are addressed by segments like
-	 * "<7.2.1 Attribute Property>@...", "$OnDelete@...", "<10.2.1 Attribute Name>@..." and
-	 * "<14.5.14.2.1 Attribute Property>@..." (where angle brackets denote a variable part and
+	 * "&lt;7.2.1 Attribute Property>@...", "$OnDelete@...", "&lt;10.2.1 Attribute Name>@..." and
+	 * "&lt;14.5.14.2.1 Attribute Property>@..." (where angle brackets denote a variable part and
 	 * sections refer to specification "OData Version 4.0 Part 3: Common Schema Definition
 	 * Language").
 	 *
@@ -674,8 +719,8 @@ sap.ui.define([
 	 * the schema child named "acme.DefaultContainer". This also works indirectly
 	 * ("/$EntityContainer/EMPLOYEES") and implicitly ("/EMPLOYEES", see below).
 	 *
-	 * A segment which represents an OData simple identifier, including "." (see below), needs
-	 * special preparations:
+	 * A segment which represents an OData simple identifier needs special preparations. The same
+	 * applies to the empty segment after a trailing slash.
 	 * <ol>
 	 * <li> If the current object has a "$Type" property, it is used for scope lookup first. This
 	 *    way, "/EMPLOYEES/ENTRYDATE" addresses the same object as "/EMPLOYEES/$Type/ENTRYDATE",
@@ -693,14 +738,14 @@ sap.ui.define([
 	 *    "EMPLOYEES" child of the entity container.
 	 * </ol>
 	 *
-	 * "." can be used as a segment to continue a path and thus force scope lookup or OData simple
-	 * identifier preparations, but then stay at the current object. This way, "/EMPLOYEES/$Type/."
+	 * A trailing slash can be used to continue a path and thus force scope lookup or OData simple
+	 * identifier preparations, but then stay at the current object. This way, "/EMPLOYEES/$Type/"
 	 * addresses the entity type itself corresponding to the "EMPLOYEES" child of the entity
-	 * container. Although "." is not an OData simple identifier, it can be used as a placeholder
-	 * for one. In this way, "/EMPLOYEES/." addresses the same entity type as "/EMPLOYEES/$Type/.".
-	 * That entity type in turn is a map of all its OData children (that is structural and
-	 * navigation properties) and thus determines the set of possible child names that might be
-	 * used instead of the "." placeholder.
+	 * container. Although the empty segment is not an OData simple identifier, it can be used as a
+	 * placeholder for one. In this way, "/EMPLOYEES/" addresses the same entity type as
+	 * "/EMPLOYEES/$Type/". That entity type in turn is a map of all its OData children (that is,
+	 * structural and navigation properties) and determines the set of possible child names that
+	 * might be used after the trailing slash.
 	 *
 	 * Any other segment, including an OData simple identifier, is looked up as a property of the
 	 * current object.
@@ -708,7 +753,8 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   A relative or absolute path within the meta data model
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context to be used as a starting point in case of a relative path
+	 *   The context to be used as a starting point in case of a relative path, see
+	 *   {@link #resolve resolve}
 	 * @returns {Promise}
 	 *   A promise which is resolved with the requested meta data value as soon as it is
 	 *   available
@@ -735,6 +781,59 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.requestUI5Type
 		= SyncPromise.createRequestMethod("fetchUI5Type");
+
+	/**
+	 * Resolves the given path relative to the given context. Without a context, a relative path
+	 * cannot be resolved and <code>undefined</code> is returned. An absolute path is returned
+	 * unchanged. A relative path is appended to the context's path separated by a forward slash
+	 * ("/"). A relative path starting with "@" (that is, an annotation) is appended without a
+	 * separator. Use "./" as a prefix for such a relative path to enforce a separator.
+	 *
+	 * Example:
+	 * <pre>
+	 * &lt;template:with path="/EMPLOYEES/ENTRYDATE" var="property">
+	 * &lt;!-- /EMPLOYEES/ENTRYDATE/$Type -->
+	 * "{property>$Type}"
+	 * &lt;!-- /EMPLOYEES/ENTRYDATE@com.sap.vocabularies.Common.v1.Text -->
+	 * "{property>@com.sap.vocabularies.Common.v1.Text}"
+	 * &lt;!-- /EMPLOYEES/ENTRYDATE/@com.sap.vocabularies.Common.v1.Text -->
+	 * "{property>./@com.sap.vocabularies.Common.v1.Text}"
+	 * </pre>
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the meta data model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @returns {string}
+	 *   Resolved path or <code>undefined</code>
+	 * @public
+	 * @throws Error if relative path starts with a dot which is not followed by a forward slash
+	 */
+	ODataMetaModel.prototype.resolve = function (sPath, oContext) { // @override
+		var sContextPath,
+			sPathFirst;
+
+		if (!sPath) {
+			return oContext ? oContext.getPath() : undefined;
+		}
+		sPathFirst = sPath[0];
+		if (sPathFirst === "/") {
+			return sPath;
+		}
+		if (!oContext) {
+			return undefined;
+		}
+		if (sPathFirst === ".") {
+			if (sPath[1] !== "/") {
+				throw new Error("Unsupported relative path: " + sPath);
+			}
+			sPath = sPath.slice(2); // BEWARE: sPathFirst !== sPath[0] intentionally now
+		}
+		sContextPath = oContext.getPath();
+		return sPathFirst === "@" || sContextPath.slice(-1) === "/"
+			? sContextPath + sPath
+			: sContextPath + "/" + sPath;
+	};
 
 	return ODataMetaModel;
 }, /* bExport= */ true);
