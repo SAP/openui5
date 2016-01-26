@@ -608,16 +608,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * override element updateAggregation method with this one and update the tree node bindings
 	 * @private
 	 */
-	Tree.prototype.updateNodes = function(){
+	Tree.prototype.updateNodes = function(sReason){
 		var oNode,
-			that = this;
+			oContext;
+
 		this.updateAggregation("nodes");
-		jQuery.each(this.mSelectedContexts, function(sId, oContext) {
-			oNode = that.getNodeByContext(oContext);
-			if (oNode) {
-				oNode.setIsSelected(true);
+
+		// If the reason for updating the model is "filter" clear selected nodes.
+		if (sReason === "filter") {
+			this._clearSelection();
+		} else {
+			for (var sKey in this.mSelectedContexts) {
+				oContext = this.mSelectedContexts[sKey];
+				oNode = this.getNodeByContext(oContext);
+				if (oNode) {
+					oNode.setIsSelected(true);
+				}
 			}
-		});
+		}
+
 	};
 
 	/**
@@ -950,6 +959,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			oVisibleNode = this._getVisibleNode(oParentNode);
 		}
 		return oVisibleNode;
+	};
+
+	/**
+	 * Clears tree selection and fires <code>SelectionChange</code> event with blank parameters.
+	 *
+	 * @private
+	 */
+	Tree.prototype._clearSelection = function () {
+		this._delSelection();
+		this.fireSelectionChange({nodes: [], nodeContexts: []});
 	};
 
 	return Tree;
