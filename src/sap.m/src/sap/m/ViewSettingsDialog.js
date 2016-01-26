@@ -429,6 +429,112 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		return this;
 	};
 
+
+	/**
+	 * Override the method in order to attach an event handler responsible for propagating item property changes.
+	 * @override
+	 * @param {string} sAggregationName Name of the added aggregation
+	 * @param {object} oObject Intance that is going to be added
+	 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be supressed
+	 * @returns {object} This instance for chaining
+	 */
+	ViewSettingsDialog.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
+		sap.ui.base.ManagedObject.prototype.addAggregation.apply(this, arguments);
+
+		// perform the following logic only for the items aggregations, except custom tabs
+		if (sAggregationName !== 'sortItems' && sAggregationName !== 'groupItems' && sAggregationName !== 'filterItems') {
+			return this;
+		}
+
+		var sType = sAggregationName.replace('Items', ''); // extract "filter"/"group"/"sort"
+		sType = sType.charAt(0).toUpperCase() + sType.slice(1); // capitalize
+
+
+		// Attach 'itemPropertyChaged' handler, that will re-initiate (specific) dialog content
+		oObject.attachEvent('itemPropertyChanged', function (sAggregationName, oEvent) {
+			/* If the the changed item was a filter item, but not an instance of 'sap.m.ViewSettingsFilterItem'
+			 * then threat it differently as filter detail item.
+			 * */
+			if (sAggregationName === 'filterItems' && !(oEvent.getParameter('changedItem') instanceof sap.m.ViewSettingsFilterItem)) {
+				// handle the select differently
+				if (oEvent.getParameter('propertyKey') !== 'selected') {
+					// if on filter details page for a concrete filter item
+					if (this._vContentPage === 3 && this._oContentItem) {
+						this._setFilterDetailTitle(this._oContentItem);
+						this._initFilterDetailItems(this._oContentItem);
+					}
+				} else {
+					// Change only the "select" property on the concrete item (instead calling _initFilterDetailItems() all over) to avoid re-rendering
+					// ToDo: make this optimization for all properties
+					if (this._filterDetailList) {
+						var aItems = this._filterDetailList.getItems();
+						aItems.forEach(function (oItem) {
+							if (oItem.data('item').getId() === oEvent.getParameter('changedItem').getId()) {
+								oItem.setSelected(oEvent.getParameter('propertyValue'));
+							}
+						});
+
+						this._updateSelectAllCheckBoxState();
+					}
+				}
+			} else {
+				// call _initFilterContent and _initFilterItems methods, where "Filter" might be also "Group" or "Sort"
+				if (typeof this['_init' + sType + 'Content'] === 'function') {
+					this['_init' + sType + 'Content']();
+				}
+				if (typeof this['_init' + sType + 'Items'] === 'function') {
+					this['_init' + sType + 'Items']();
+				}
+			}
+		}.bind(this, sAggregationName));
+
+		// Attach 'filterDetailItemsAggregationChange' handler, that will re-initiate (specific) dialog content
+		oObject.attachEvent('filterDetailItemsAggregationChange', function (oEvent) {
+			if (this._vContentPage === 3 && this._oContentItem) {
+				this._setFilterDetailTitle(this._oContentItem);
+				this._initFilterDetailItems(this._oContentItem);
+			}
+		}.bind(this));
+	};
+
+	/**
+	 * Set header title for the filter detail page.
+	 * @param {object} oItem Item that will serve as a title
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._setFilterDetailTitle = function (oItem) {
+		this._getDetailTitleLabel().setText(
+			this._rb.getText("VIEWSETTINGS_TITLE_FILTERBY") + " "
+			+ oItem.getText());
+	};
+
+	/**
+	 * Take care to update the internal instances when any of the corresponding aggregation is being updated.
+	 *
+	 * @override
+	 * @param {string} sAggregationName Name of the updated aggregation
+	 * @returns {ViewSettingsDialog} this instance for chaining
+	 */
+	ViewSettingsDialog.prototype.updateAggregation = function (sAggregationName) {
+		sap.ui.base.ManagedObject.prototype.updateAggregation.apply(this, arguments);
+
+		// perform the following logic only for the items aggregations, except custom tabs
+		if (sAggregationName !== 'sortItems' && sAggregationName !== 'groupItems' && sAggregationName !== 'filterItems') {
+			return this;
+		}
+
+		var sType = sAggregationName.replace('Items', ''); // extract "filter"/"group"/"sort"
+		sType = sType.charAt(0).toUpperCase() + sType.slice(1); // capitalize
+
+		// call _initFilterContent and _initFilterItems methods, where "Filter" might be also "Group" or "Sort"
+		if (typeof this['_init' + sType + 'Content'] === 'function') {
+			this['_init' + sType + 'Content']();
+		}
+		if (typeof this['_init' + sType + 'Items'] === 'function') {
+			this['_init' + sType + 'Items']();
+		}
+	};
+
 	/**
 	 * Adds a sort item and sets the association to reflect the selected state.
 	 *
@@ -438,10 +544,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.addSortItem = function(oItem) {
+		this.addAggregation("sortItems", oItem);
+
 		if (oItem.getSelected()) {
 			this.setSelectedSortItem(oItem);
 		}
-		this.addAggregation("sortItems", oItem);
 		return this;
 	};
 
@@ -454,10 +561,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.addGroupItem = function(oItem) {
+		this.addAggregation("groupItems", oItem);
+
 		if (oItem.getSelected()) {
 			this.setSelectedGroupItem(oItem);
 		}
-		this.addAggregation("groupItems", oItem);
 		return this;
 	};
 
@@ -470,10 +578,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.addPresetFilterItem = function(oItem) {
+		this.addAggregation("presetFilterItems", oItem);
+
 		if (oItem.getSelected()) {
 			this.setSelectedPresetFilterItem(oItem);
 		}
-		this.addAggregation("presetFilterItems", oItem);
 		return this;
 	};
 
@@ -498,10 +607,14 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		if (validateViewSettingsItem(oItem)) {
 			// set selected = true for this item & selected = false for all others items
 			for (i = 0; i < aItems.length; i++) {
-				aItems[i].setProperty('selected', false, true);
+				if (aItems[i].getId() !== oItem.getId()) {
+					aItems[i].setProperty('selected', false, true);
+				}
 			}
 
-			oItem.setProperty('selected', true, true);
+			if (oItem.getProperty('selected') !== true) {
+				oItem.setProperty('selected', true, true);
+			}
 
 			// update the list selection
 			if (this._getDialog().isOpen()) {
@@ -1129,6 +1242,114 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		return this._page2;
 	};
 
+
+	/**
+	 * Create list item instance for each filter detail item.
+	 * @param {object} oItem Filter item instance for which the details should be displayed
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._initFilterDetailItems = function(oItem) {
+		var oListItem;
+		var bMultiSelectMode = oItem.getMultiSelect();
+		var aSubFilters = oItem.getItems();
+		var that = this;
+
+		if (this._filterDetailList) { // destroy previous list
+			this._filterDetailList.destroy();
+		}
+
+		this._getPage2().removeAllAggregation('content');
+
+		this._filterDetailList = new sap.m.List(
+		{
+			mode : (bMultiSelectMode ? sap.m.ListMode.MultiSelect
+				: sap.m.ListMode.SingleSelectLeft),
+			includeItemInSelection : true,
+			selectionChange : function(oEvent) {
+				var oSubItem,
+				    aEventListItems = oEvent.getParameter("listItems"),
+				    aSubItems,
+				    i = 0;
+
+				that._clearPresetFilter();
+
+				if (bMultiSelectMode) {
+					this._updateSelectAllCheckBoxState();
+				}
+
+				// check if multiple items are selected - [CTRL] + [A] combination from the list
+				if (aEventListItems.length > 1 && bMultiSelectMode){
+					aSubItems = oItem.getItems();
+					for (; i < aSubItems.length; i++) {
+						for (var j = 0; j < aEventListItems.length; j++){
+							if (aSubItems[i].getKey() === aEventListItems[j].getCustomData()[0].getValue().getKey()){
+								aSubItems[i].setProperty('selected', aEventListItems[j].getSelected(), true);
+							}
+						}
+					}
+				} else {
+					oSubItem = oEvent.getParameter("listItem").data("item");
+					// clear selection of all subitems if this is a
+					// single select item
+					if (!oItem.getMultiSelect()) {
+						aSubItems = oItem.getItems();
+						for (; i < aSubItems.length; i++) {
+							if (aSubItems[i].getId() !== oSubItem.getId()) {
+								aSubItems[i].setProperty('selected', false, true);
+							}
+						}
+					}
+					if (oSubItem.getProperty('selected') !== true) {
+						oSubItem.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
+					}
+				}
+			}.bind(this)
+		});
+
+		for (var i = 0; i < aSubFilters.length; i++) {
+			// use name if there is no key defined
+			oListItem = new sap.m.StandardListItem({
+				title : aSubFilters[i].getText(),
+				type : sap.m.ListType.Active,
+				selected : aSubFilters[i].getSelected()
+			}).data("item", aSubFilters[i]);
+			this._filterDetailList.addItem(oListItem);
+		}
+
+		if (bMultiSelectMode) {
+			this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
+			this._selectAllCheckBox = this._getSelectAllCheckbox(aSubFilters, this._filterDetailList);
+			this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
+			this._filterDetailList.setHeaderToolbar(new Toolbar({
+				content: [ this._selectAllCheckBox ]
+			}).addStyleClass('sapMVSDFilterHeaderToolbar'));
+		}
+
+		this._getPage2().addContent(this._filterDetailList);
+	};
+
+	/**
+	 * Create list item instance for each sort item.
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._initSortItems = function() {
+		var aSortItems,
+		    oListItem;
+		this._sortList.removeAllItems();
+		aSortItems = this.getSortItems();
+
+		if (aSortItems.length) {
+			aSortItems.forEach(function(oItem) {
+				oListItem = new sap.m.StandardListItem({
+					title : oItem.getText(),
+					type : sap.m.ListType.Active,
+					selected : oItem.getSelected()
+				}).data("item", oItem);
+				this._sortList.addItem(oListItem);
+			}, this);
+		}
+	};
+
 	/**
 	 * Creates and initializes the sort content controls.
 	 * @private
@@ -1170,8 +1391,12 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
+				var oSelectedSortItem = sap.ui.getCore().byId(that.getSelectedSortItem());
 				var item = oEvent.getParameter("listItem").data("item");
 				if (item) {
+					if (oSelectedSortItem) {
+						oSelectedSortItem.setSelected(!oEvent.getParameter("listItem").getSelected());
+					}
 					item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 				}
 				that.setAssociation("selectedSortItem", item, true);
@@ -1180,6 +1405,36 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		});
 
 		this._sortContent = [ this._ariaSortOrderInvisibleText, this._sortOrderList, this._ariaSortListInvisibleText, this._sortList ];
+	};
+
+	/**
+	 * Create list item instance for each group item.
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._initGroupItems = function() {
+		var aGroupItems,
+		    oListItem;
+		this._groupList.removeAllItems();
+		aGroupItems = this.getGroupItems();
+		if (aGroupItems.length) {
+			aGroupItems.forEach(function(oItem) {
+				oListItem = new sap.m.StandardListItem({
+					title : oItem.getText(),
+					type : sap.m.ListType.Active,
+					selected : oItem.getSelected()
+				}).data("item", oItem);
+				this._groupList.addItem(oListItem);
+			}, this);
+		}
+		// add none item to group list
+		if (aGroupItems.length) {
+			oListItem = new sap.m.StandardListItem({
+				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
+				type : sap.m.ListType.Active,
+				selected : !!this.getSelectedGroupItem()
+			});
+			this._groupList.addItem(oListItem);
+		}
 	};
 
 	/**
@@ -1237,6 +1492,66 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	};
 
 	/**
+	 * Create list instance for each filter item.
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._initFilterItems = function() {
+		var aPresetFilterItems,
+		    aFilterItems,
+		    oListItem,
+			that = this;
+
+		this._presetFilterList.removeAllItems();
+		aPresetFilterItems = this.getPresetFilterItems();
+		if (aPresetFilterItems.length) {
+			aPresetFilterItems.forEach(function(oItem) {
+				oListItem = new sap.m.StandardListItem({
+					title : oItem.getText(),
+					type : sap.m.ListType.Active,
+					selected : oItem.getSelected()
+				}).data("item", oItem);
+				this._presetFilterList.addItem(oListItem);
+			}, this);
+		}
+		// add none item to preset filter list
+		if (aPresetFilterItems.length) {
+			oListItem = new sap.m.StandardListItem({
+				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
+				selected : !!this.getSelectedPresetFilterItem()
+			});
+			this._presetFilterList.addItem(oListItem);
+		}
+
+		this._filterList.removeAllItems();
+		aFilterItems = this.getFilterItems();
+		if (aFilterItems.length) {
+			aFilterItems.forEach(function(oItem) {
+				oListItem = new sap.m.StandardListItem(
+					{
+						title : oItem.getText(),
+						type : sap.m.ListType.Active,
+						press : (function(oItem) {
+							return function(oEvent) {
+								// navigate to details page
+								if (that._navContainer.getCurrentPage() .getId() !== that.getId() + '-page2') {
+									that._switchToPage(3, oItem);
+									that._prevSelectedFilterItem = this;
+									jQuery.sap.delayedCall(0, that._navContainer, "to", [ that.getId() + '-page2', "slide" ]);
+								}
+								if (sap.ui.Device.system.desktop && that._filterDetailList && that._filterDetailList.getItems()[0]) {
+									that._getNavContainer().attachEventOnce("afterNavigate", function() {
+										that._filterDetailList.getItems()[0].focus();
+									});
+								}
+							};
+						}(oItem))
+					}).data("item", oItem);
+				this._filterList.addItem(oListItem);
+			}, this);
+		}
+	};
+
+	/**
 	 * Creates and initializes the filter content controls.
 	 * @private
 	 */
@@ -1277,109 +1592,24 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		var bSort               = !!this.getSortItems().length,
 		    bGroup              = !!this.getGroupItems().length,
 		    bPredefinedFilter   = !!this.getPresetFilterItems().length,
-		    bFilter             = !!this.getFilterItems().length,
-		    that                = this,
-		    aSortItems          = [],
-		    aGroupItems         = [],
-		    aPresetFilterItems  = [],
-		    aFilterItems        = [],
-		    oListItem;
+		    bFilter             = !!this.getFilterItems().length;
 
 		// sort
 		if (bSort) {
 			this._initSortContent();
-			this._sortList.removeAllItems();
-			aSortItems = this.getSortItems();
-			if (aSortItems.length) {
-				aSortItems.forEach(function(oItem) {
-					oListItem = new sap.m.StandardListItem({
-						title : oItem.getText(),
-						type : sap.m.ListType.Active,
-						selected : oItem.getSelected()
-					}).data("item", oItem);
-					this._sortList.addItem(oListItem);
-				}, this);
-			}
+			this._initSortItems();
 		}
 
 		// group
 		if (bGroup) {
 			this._initGroupContent();
-			this._groupList.removeAllItems();
-			aGroupItems = this.getGroupItems();
-			if (aGroupItems.length) {
-				aGroupItems.forEach(function(oItem) {
-					oListItem = new sap.m.StandardListItem({
-						title : oItem.getText(),
-						type : sap.m.ListType.Active,
-						selected : oItem.getSelected()
-					}).data("item", oItem);
-					this._groupList.addItem(oListItem);
-				}, this);
-			}
-			// add none item to group list
-			if (aGroupItems.length) {
-				oListItem = new sap.m.StandardListItem({
-					title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
-					type : sap.m.ListType.Active,
-					selected : !!this.getSelectedGroupItem()
-				});
-				this._groupList.addItem(oListItem);
-			}
+			this._initGroupItems();
 		}
 
-		// predefined filters
+		// filters
 		if (bPredefinedFilter || bFilter) {
 			this._initFilterContent();
-			this._presetFilterList.removeAllItems();
-			aPresetFilterItems = this.getPresetFilterItems();
-			if (aPresetFilterItems.length) {
-				aPresetFilterItems.forEach(function(oItem) {
-					oListItem = new sap.m.StandardListItem({
-						title : oItem.getText(),
-						type : sap.m.ListType.Active,
-						selected : oItem.getSelected()
-					}).data("item", oItem);
-					this._presetFilterList.addItem(oListItem);
-				}, this);
-			}
-			// add none item to preset filter list
-			if (aPresetFilterItems.length) {
-				oListItem = new sap.m.StandardListItem({
-					title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
-					selected : !!this.getSelectedPresetFilterItem()
-				});
-				this._presetFilterList.addItem(oListItem);
-			}
-
-			// filters
-			this._filterList.removeAllItems();
-			aFilterItems = this.getFilterItems();
-			if (aFilterItems.length) {
-				aFilterItems.forEach(function(oItem) {
-					oListItem = new sap.m.StandardListItem(
-						{
-							title : oItem.getText(),
-							type : sap.m.ListType.Active,
-							press : (function(oItem) {
-								return function(oEvent) {
-									// navigate to details page
-									if (that._navContainer.getCurrentPage() .getId() !== that.getId() + '-page2') {
-										that._switchToPage(3, oItem);
-										that._prevSelectedFilterItem = this;
-										jQuery.sap.delayedCall(0, that._navContainer, "to", [ that.getId() + '-page2', "slide" ]);
-									}
-									if (sap.ui.Device.system.desktop && that._filterDetailList && that._filterDetailList.getItems()[0]) {
-										that._getNavContainer().attachEventOnce("afterNavigate", function() {
-											that._filterDetailList.getItems()[0].focus();
-										});
-									}
-								};
-							}(oItem))
-						}).data("item", oItem);
-					this._filterList.addItem(oListItem);
-				}, this);
-			}
+			this._initFilterItems();
 		}
 
 		// hide elements that are not visible and set the active content
@@ -1710,14 +1940,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 */
 	ViewSettingsDialog.prototype._switchToPage = function(vWhich, oItem) {
 		var i               = 0,
-		    that            = this,
-		    aSubFilters     = [],
 		    oTitleLabel     = this._getTitleLabel(),
 		    oResetButton    = this._getResetButton(),
 		    oHeader         = this._getHeader(),
-		    oSubHeader      = this._getSubHeader(),
-		    oListItem,
-			bMultiSelectMode;
+		    oSubHeader      = this._getSubHeader();
 
 		// nothing to do if we are already on the requested page (except for filter detail page)
 		if (this._vContentPage === vWhich && vWhich !== 3) {
@@ -1791,9 +2017,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 				break;
 			case 3: // filtering details
 				// display filter title
-				this._getDetailTitleLabel().setText(
-					this._rb.getText("VIEWSETTINGS_TITLE_FILTERBY") + " "
-					+ oItem.getText());
+				this._setFilterDetailTitle(oItem);
 				// fill detail page
 				if (oItem instanceof sap.m.ViewSettingsCustomItem
 					&& oItem.getCustomControl()) {
@@ -1801,73 +2025,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 					this._getPage2().addContent(oItem.getCustomControl());
 				} else if (oItem instanceof sap.m.ViewSettingsFilterItem
 					&& oItem.getItems()) {
-					bMultiSelectMode = oItem.getMultiSelect();
-					aSubFilters = oItem.getItems();
-					if (this._filterDetailList) { // destroy previous list
-						this._filterDetailList.destroy();
-					}
-
-					this._filterDetailList = new sap.m.List(
-						{
-							mode : (bMultiSelectMode ? sap.m.ListMode.MultiSelect
-								: sap.m.ListMode.SingleSelectLeft),
-							includeItemInSelection : true,
-							selectionChange : function(oEvent) {
-								var oSubItem,
-								    aEventListItems = oEvent.getParameter("listItems"),
-								    aSubItems,
-								    i = 0;
-
-								that._clearPresetFilter();
-
-								if (bMultiSelectMode) {
-									that._updateSelectAllCheckBoxState();
-								}
-
-								// check if multiple items are selected - [CTRL] + [A] combination from the list
-								if (aEventListItems.length > 1 && bMultiSelectMode){
-									aSubItems = oItem.getItems();
-									for (; i < aSubItems.length; i++) {
-										for (var j = 0; j < aEventListItems.length; j++){
-											if (aSubItems[i].getKey() === aEventListItems[j].getCustomData()[0].getValue().getKey()){
-												aSubItems[i].setProperty('selected', aEventListItems[j].getSelected(), true);
-											}
-										}
-									}
-								} else {
-									oSubItem = oEvent.getParameter("listItem").data("item");
-									// clear selection of all subitems if this is a
-									// single select item
-									if (!oItem.getMultiSelect()) {
-										aSubItems = oItem.getItems();
-										for (; i < aSubItems.length; i++) {
-											aSubItems[i].setProperty('selected', false, true);
-										}
-									}
-									oSubItem.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
-								}
-							}
-						});
-
-					if (bMultiSelectMode) {
-						this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
-						this._selectAllCheckBox = this._getSelectAllCheckbox(aSubFilters, this._filterDetailList);
-						this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
-						this._filterDetailList.setHeaderToolbar(new Toolbar({
-							content: [ this._selectAllCheckBox ]
-						}).addStyleClass('sapMVSDFilterHeaderToolbar'));
-					}
-
-					for (i = 0; i < aSubFilters.length; i++) {
-						// use name if there is no key defined
-						oListItem = new sap.m.StandardListItem({
-							title : aSubFilters[i].getText(),
-							type : sap.m.ListType.Active,
-							selected : aSubFilters[i].getSelected()
-						}).data("item", aSubFilters[i]);
-						this._filterDetailList.addItem(oListItem);
-					}
-					this._getPage2().addContent(this._filterDetailList);
+					this._initFilterDetailItems(oItem);
 				}
 				break;
 			case 0: // sorting
@@ -1933,7 +2091,6 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 				oFilterDetailList.getItems().filter(function(oItem) {
 					return oItem.getVisible();
 				}).forEach(function(oItem) {
-					oItem.setSelected(bSelected);
 					var oVSDItem = oItem.data("item");
 					oVSDItem.setSelected(bSelected);
 				});
@@ -1954,7 +2111,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 		}).every(function(oItem) {
 			return oItem.getSelected();
 		});
-		this._selectAllCheckBox.setSelected(bAllSelected);
+		if (this._selectAllCheckBox) {
+			this._selectAllCheckBox.setSelected(bAllSelected);
+		}
 	};
 
 	/**
