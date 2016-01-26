@@ -29,9 +29,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				iInteractionStepTimer,
 				oCurrentBrowserEvent,
 				sFESR,
-				sFESRopt;
+				sFESRopt,
+				iScrollEventDelayId = 0;
 
-			function overrideXHRMethods() {
+			function activateDetectionMethods() {
 				// only start this once to avoid multiple overrides of the xhr methods
 				if (!bXHROverridden) {
 					bXHROverridden = true;
@@ -115,6 +116,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 							this.requestHeaderLength += (sHeader.length + sValue.length + 3) * 2;
 						}
 					};
+
+					// detect scroll interactions by global event handler
+					var fnDetectScroll = function(e) {
+						// notify for a newly started interaction, but not more often than every 250ms.
+						if (!iScrollEventDelayId) {
+							jQuery.sap.interaction.notifyEventStart(e);
+						} else {
+							jQuery.sap.clearDelayedCall(iScrollEventDelayId);
+						}
+						iScrollEventDelayId = jQuery.sap.delayedCall(250, undefined, function() {
+							jQuery.sap.interaction.notifyStepStart();
+							iScrollEventDelayId = 0;
+						});
+					};
+					window.addEventListener("scroll", fnDetectScroll);
+					window.addEventListener("mousewheel", fnDetectScroll);
 				}
 			}
 
@@ -206,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			 */
 			jQuery.sap.interaction.setActive = function(bActive) {
 				if (bActive && !bInteractionActive) {
-					overrideXHRMethods();
+					activateDetectionMethods();
 				}
 				bInteractionActive = bActive;
 			};
@@ -237,6 +254,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 						} else {
 							sType = oCurrentBrowserEvent.type;
 						}
+
 						jQuery.sap.measure.startInteraction(sType, oElement);
 
 						var aInteraction = jQuery.sap.measure.getAllInteractionMeasurements();
@@ -302,7 +320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				if (bActive && !bFesrActive) {
 					bFesrActive = true;
 					if (!bInteractionActive) {
-						overrideXHRMethods();
+						activateDetectionMethods();
 					}
 				} else if (!bActive) {
 					bFesrActive = false;
@@ -339,7 +357,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			jQuery.sap.passport.setActive = function(bActive) {
 				if (bActive && !bTraceActive) {
 					bTraceActive = true;
-					overrideXHRMethods();
+					activateDetectionMethods();
 				} else if (!bActive) {
 					bTraceActive = false;
 				}
@@ -492,7 +510,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 
 			// activate FESR header generation
 			if (bFesrActive) {
-				overrideXHRMethods();
+				activateDetectionMethods();
 			}
 
 			// *********** Include E2E-Trace Scripts *************
