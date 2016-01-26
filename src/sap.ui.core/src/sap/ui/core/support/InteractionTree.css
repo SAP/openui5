@@ -344,6 +344,7 @@ li.sapUiInteractionItemExpanded {
 	color: #333;
 }
 
-.sapUiSupportPopover .sapUiRGLContainerCont {
+.sapUiSupportPopover .sapUiRGLContainerCont,
+.sapUiSupportPopover .sapUiFormResGridCont {
 	padding-bottom: 0;
 }
