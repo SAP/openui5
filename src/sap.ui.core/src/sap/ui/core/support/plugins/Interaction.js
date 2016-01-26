@@ -77,6 +77,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 
 		Interaction.prototype.init = function(oSupportStub){
 			Plugin.prototype.init.apply(this, arguments);
+
+			this._bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test((window.opener) ? window.opener.location.search : window.location.search);
 			if (this.isToolPlugin()) {
 				initInTools.call(this, oSupportStub);
 			} else {
@@ -159,7 +161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			}, this));
 
 
-			this.$('record').attr('data-state', 'Start recording');
+			this.$('record').attr('data-state', (!this._bFesrActive) ? 'Start recording' : 'Stop recording');
 			this.$('record').click(jQuery.proxy(function(oEvent) {
 				if (this.$('record').attr('data-state') === 'Stop recording') {
 					this._oStub.sendEvent(this.getId() + "Refresh");
@@ -183,7 +185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		}
 
 		function getPerformanceData(oSupportStub, jsonData) {
-			var bActive = jQuery.sap.interaction.getActive();
+			var bActive = jQuery.sap.interaction.getActive() || this._bFesrActive;
 			var aMeasurements = [];
 
 			if (bActive || jsonData) {
@@ -220,8 +222,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 						};
 					}
 				}
+
 			}
 
+			//this._oStub.$('record').attr('data-state', (bActive) ? 'Stop recording' : 'Start recording');
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", { "measurements": aMeasurements });
 			this._oStub.sendEvent(this.getId() + "SetActive", {"active": bActive});
 		}
