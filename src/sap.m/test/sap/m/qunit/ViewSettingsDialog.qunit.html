@@ -363,6 +363,18 @@
 				jQuery.sap.log.error.restore();
 			});
 
+			test("setSelectedSortItem does not throw error if the item is null or undefined", function () {
+				var oErrorLogSpy = sinon.spy(jQuery.sap.log, "error");
+
+				//act
+				this.oVSD.setSelectedSortItem(undefined);
+				//assert
+				strictEqual(oErrorLogSpy.callCount, 0, "setSelectedSortItem does not throw an error.");
+
+				//clean
+				jQuery.sap.log.error.restore();
+			});
+
 			module("Performance", {
 				setup : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
