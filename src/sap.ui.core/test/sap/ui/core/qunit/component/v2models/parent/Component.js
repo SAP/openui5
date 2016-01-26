@@ -47,6 +47,14 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							}
 						},
 
+						"ODataV4": {
+							"uri": "/path/to/odata/service/",
+							"type": "OData",
+							"settings": {
+								"odataVersion": "4.0"
+							}
+						},
+
 						"AnotherOData": {
 							"uri": "/path/to/odata/service/with/trailing/slash/",
 							"type": "OData",
@@ -158,6 +166,10 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 								"useBatch": false,
 								"refreshAfterChange": false
 							}
+						},
+
+						"ODataV4Model": {
+							"dataSource": "ODataV4",
 						},
 
 						"v2-ODataModel": {

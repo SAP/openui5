@@ -1,0 +1,73 @@
+{
+	"__query__" : "~/$metadata/Annotations?$expand=Target($select=QualifiedName),Term($select=QualifiedName)",
+	"@odata.context" : "~/$metadata/$metadata#Annotations",
+	"value" : [{
+		"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker@com.sap.vocabularies.UI.v1.HeaderInfo",
+		"Qualifier" : null,
+		"Target" : {
+			"@odata.type" : "#Edm.Metadata.EntityType",
+			"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
+		},
+		"Term" : {
+			"QualifiedName" : "com.sap.vocabularies.UI.v1.HeaderInfo"
+		},
+		"Value" : {
+			"@odata.type" : "Edm.Metadata.Record",
+			"PropertyValues" : [{
+				"Property" : "TypeName",
+				"Value" : {
+					"@odata.type" : "Edm.Metadata.Constant",
+					"Value" : "Worker",
+					"Value@odata.type" : "Edm.String"
+				}
+			}, {
+				"Property" : "TypeNamePlural",
+				"Value" : {
+					"@odata.type" : "Edm.Metadata.Constant",
+					"Value" : "Workers",
+					"Value@odata.type" : "Edm.String"
+				}
+			}, {
+				"Property" : "Title",
+				"Value" : {
+					"@odata.type" : "Edm.Metadata.Record",
+					"PropertyValues" : [{
+						"Property" : "Label",
+						"Value" : {
+							"@odata.type" : "Edm.Metadata.Constant",
+							"Value" : "Worker's ID",
+							"Value@odata.type" : "Edm.String"
+						}
+					}, {
+						"Property" : "Value",
+						"Value" : {
+							"@odata.type" : "Edm.Metadata.Constant",
+							"Value" : "ID",
+							"Value@odata.type" : "Edm.String"
+						}
+					}]
+				}
+			}, {
+				"Property" : "Description",
+				"Value" : {
+					"@odata.type" : "Edm.Metadata.Record",
+					"PropertyValues" : [{
+						"Property" : "Label",
+						"Value" : {
+							"@odata.type" : "Edm.Metadata.Constant",
+							"Value" : "Worker's Name",
+							"Value@odata.type" : "Edm.String"
+						}
+					}, {
+						"Property" : "Value",
+						"Value" : {
+							"@odata.type" : "Edm.Metadata.Constant",
+							"Value" : "Name",
+							"Value@odata.type" : "Edm.String"
+						}
+					}]
+				}
+			}]
+		}
+	}]
+}

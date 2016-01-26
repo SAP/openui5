@@ -36,6 +36,7 @@
 		"sap/ui/core/UIComponent",
 		"sap/ui/model/odata/ODataModel",
 		"sap/ui/model/odata/v2/ODataModel",
+		"sap/ui/model/odata/v4/ODataModel",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/model/xml/XMLModel",
 		"sap/ui/model/resource/ResourceModel",
@@ -48,6 +49,7 @@
 				this.modelSpy = {
 					odata: this.spy(sap.ui.model.odata, "ODataModel"),
 					odataV2: this.spy(sap.ui.model.odata.v2, "ODataModel"),
+					odataV4: this.spy(sap.ui.model.odata.v4, "ODataModel"),
 					json: this.spy(sap.ui.model.json, "JSONModel"),
 					xml: this.spy(sap.ui.model.xml, "XMLModel"),
 					resource: this.spy(sap.ui.model.resource, "ResourceModel"),
@@ -158,6 +160,15 @@
 			});
 
 
+			// sap.ui.model.odata.v4.ODataModel
+			sinon.assert.callCount(this.modelSpy.odataV4, 1);
+
+			// model: "default-with-annotations"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+				serviceUrl: '/path/to/odata/service/?sap-client=foo&sap-server=bar',
+			});
+
+
 			// sap.ui.model.json.JSONModel
 			sinon.assert.callCount(this.modelSpy.json, 3);
 
@@ -248,6 +259,7 @@
 				"ODataModel": sap.ui.model.odata.ODataModel,
 				"v2-ODataModel": sap.ui.model.odata.v2.ODataModel,
 				"invalid-annotations": sap.ui.model.odata.v2.ODataModel,
+				"ODataV4Model": sap.ui.model.odata.v4.ODataModel,
 				"json": sap.ui.model.json.JSONModel,
 				"json-relative": sap.ui.model.json.JSONModel,
 				"json-relative-2": sap.ui.model.json.JSONModel,
