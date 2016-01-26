@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 		metadata : {
 			properties: {
 				/**
-				 * The Text that is going to be typed to the control.
+				 * The Text that is going to be typed to the control. If you are entering an empty string, the value will be cleared.
 				 */
 				text: {
 					type: "string"
@@ -41,6 +41,10 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				$.sap.log.error("Control " + oControl + " has no focusable dom representation", this._sLogPrefix);
 				return;
 			}
+			if (this.getText() === undefined) {
+				$.sap.log.error("Please provide a text for this EnterText action", this._sLogPrefix);
+				return;
+			}
 
 			// focus it
 			var $FocusDomRef = $(oFocusDomRef);
@@ -50,6 +54,11 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
 			}
 			var oUtils = this._getUtils();
+
+			oUtils.triggerKeydown(oFocusDomRef, $.sap.KeyCodes.DELETE);
+			oUtils.triggerKeyup(oFocusDomRef, $.sap.KeyCodes.DELETE);
+			$FocusDomRef.val("");
+			oUtils.triggerEvent("input", oFocusDomRef);
 
 			// Trigger events for every keystroke - livechange controls
 			this.getText().split("").forEach(function (sChar) {
