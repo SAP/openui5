@@ -909,8 +909,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// check if any dimension has been added or removed. If so, invalidate the total size
 		var compileDimensionNames = function (oDimensionDetailsSet) {
 			var aName = [];
-			for (var oDimDetails in oDimensionDetailsSet)
+			for (var oDimDetails in oDimensionDetailsSet) {
 				aName.push(oDimDetails.name);
+			}
 			return aName.sort().join(";");
 		};
 		if (compileDimensionNames(oPreviousDimensionDetailsSet) != compileDimensionNames(this.oDimensionDetailsSet)) {
@@ -4131,8 +4132,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// add current list of dimensions
 		var aSelectedDimension = [];
 		var aSelectedMeasure = [];
-		for (var oDimensionName in this.oDimensionDetailsSet)
+		for (var oDimensionName in this.oDimensionDetailsSet) {
 			aSelectedDimension.push(oDimensionName);
+		}
 		oAnalyticalQueryRequest.setAggregationLevel(aSelectedDimension);
 		for (var oDimensionName2 in this.oDimensionDetailsSet) {
 			var oDimensionDetails = this.oDimensionDetailsSet[oDimensionName2];
@@ -4142,8 +4144,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 
 		// add current list of measures
-		for (var sMeasureName in this.oMeasureDetailsSet)
+		for (var sMeasureName in this.oMeasureDetailsSet) {
 			aSelectedMeasure.push(sMeasureName);
+		}
 		oAnalyticalQueryRequest.setMeasures(aSelectedMeasure);
 		for ( var sMeasureName2 in this.oMeasureDetailsSet) {
 			var oMeasureDetails = this.oMeasureDetailsSet[sMeasureName2];
