@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], function ($, Action, Utils) {
+sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	"use strict";
 
 	/**
@@ -49,22 +49,23 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], func
 			if (!$FocusDomRef.is(":focus")) {
 				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
 			}
+			var oUtils = this._getUtils();
 
 			// Trigger events for every keystroke - livechange controls
 			this.getText().split("").forEach(function (sChar) {
 				// Change the domref and fire the input event
-				Utils.triggerCharacterInput(oFocusDomRef, sChar);
-				Utils.triggerEvent("input", oFocusDomRef);
+				oUtils.triggerCharacterInput(oFocusDomRef, sChar);
+				oUtils.triggerEvent("input", oFocusDomRef);
 			});
 
 			// trigger change by pressing enter - the dom should be updated by the events above
 
 			// Input change will fire here
-			Utils.triggerKeydown(oFocusDomRef, "ENTER");
+			oUtils.triggerKeydown(oFocusDomRef, "ENTER");
 			// Seachfield will fire here
-			Utils.triggerKeyup(oFocusDomRef, "ENTER");
+			oUtils.triggerKeyup(oFocusDomRef, "ENTER");
 			// To make extra sure - textarea only works with blur
-			Utils.triggerEvent("blur", oFocusDomRef);
+			oUtils.triggerEvent("blur", oFocusDomRef);
 		}
 	});
 
