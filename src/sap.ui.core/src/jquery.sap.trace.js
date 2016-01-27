@@ -192,11 +192,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 					"", "", // 2 empty fields
 					format(oInteraction.processing, 16), // client_processing_time
 					oInteraction.requestCompression ? "X" : "", // compressed - empty if not compressed
-					"", "", "", "", "", "", "", "", "" // 9 empty fields
+					"", "", "", "", // 4 empty fields
+					format(oInteraction.busyDuration, 16), // busy duration
+					"", "", "", "" // 4 empty fields
 				].join(",");
 			}
 
-			// cut string to designated length
+			// format string to fesr compliant string
 			function format(vField, iLength, bCutFromFront) {
 				if (!vField) {
 					vField = vField === 0 ? "0" : "";
@@ -390,6 +392,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 			};
 
 			/**
+			 * @return {boolean} state of the FESR header creation
+			 * @private
+			 * @since 1.36.4
+			 */
+			jQuery.sap.fesr.getActive = function() {
+				return bFesrActive;
+			};
+
+			/**
 			 * @return {String} ID of the currently processed transaction
 			 * @private
 			 * @since 1.32
@@ -405,6 +416,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 			 */
 			jQuery.sap.fesr.getRootId = function() {
 				return ROOT_ID;
+			};
+
+			/**
+			 * @param {float} iDuration increase busy duration of pending interaction by this value
+			 * @private
+			 * @since 1.36.4
+			 */
+			jQuery.sap.fesr.addBusyDuration = function(iDuration) {
+				if (!oPendingInteraction.busyDuration) {
+					oPendingInteraction.busyDuration = 0;
+				}
+				oPendingInteraction.busyDuration += iDuration;
 			};
 
 
