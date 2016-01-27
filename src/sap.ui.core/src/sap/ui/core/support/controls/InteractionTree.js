@@ -331,7 +331,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write("<div>");
 
           rm.write('<span class="sapUiInteractionItemComponentText">');
-          rm.writeEscaped(interaction.component);
+          rm.writeEscaped((interaction.component !== "undetermined") ? interaction.component : 'Initial Loading');
           rm.write('</span>');
 
 
@@ -339,7 +339,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
 
           rm.write('<span class="sapUiInteractionItemTriggerText">');
-          rm.writeEscaped(interaction.trigger);
+          rm.writeEscaped(interaction.trigger + " / " + interaction.event);
           rm.write('</span>');
 
           rm.write("</div>");
