@@ -79,19 +79,31 @@ sap.ui.define([],
 		oRm.write(">");
 		if (bWithMargin) {
 			this._renderScaleAndIndicator(oRm, oControl, bIndicator, bScale, sWithoutMargin, sSize, sIndicator, sScale);
-			if (oIcon) {
-				oRm.renderControl(oIcon);
-			}
+			this._prepareAndRenderIcon(oRm, oControl, oIcon);
 			this._renderValue(oRm, oControl, sWithoutMargin, sSize, sValue);
 		} else {
-			if (oIcon) {
-				oRm.renderControl(oIcon);
-			}
+			this._prepareAndRenderIcon(oRm, oControl, oIcon);
 			this._renderValue(oRm, oControl, sWithoutMargin, sSize, sValue);
 			this._renderScaleAndIndicator(oRm, oControl, bIndicator, bScale, sWithoutMargin, sSize, sIndicator, sScale);
 		}
 		oRm.write("</div>");
 		oRm.write("</div>");
+	};
+
+	/**
+	 * Adds missing style attributes to the icon due to a different property initialization order in Internet Explorer
+	 * in comparison to Chrome.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.Icon} oIcon the icon inside the control
+	 * @private
+	 */
+	NumericContentRenderer._prepareAndRenderIcon = function(oRm, oControl, oIcon) {
+		if (oIcon) {
+			oIcon.addStyleClass("sapMNCIconImage").addStyleClass(oControl.getSize()).addStyleClass(oControl.getState());
+			oRm.renderControl(oIcon);
+		}
 	};
 
 	/**
