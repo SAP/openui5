@@ -1723,7 +1723,7 @@
 
 			/**
 			 * Clears all interaction measurements
-			 * @name jQuery.sap.measure#getLastInteractionMeasurement
+			 * @name jQuery.sap.measure#clearInteractionMeasurements
 			 * @function
 			 * @public
 			 * @since 1.34.0
