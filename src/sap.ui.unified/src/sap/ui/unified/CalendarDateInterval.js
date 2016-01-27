@@ -49,11 +49,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * Width of Calendar
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-
-			/**
 			 * If set, the month- and yearPicker opens on a popup
 			 * @since 1.34.0
 			 */

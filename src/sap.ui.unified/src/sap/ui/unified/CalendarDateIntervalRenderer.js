@@ -27,12 +27,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './CalendarRenderer'
 			oRm.addClass("sapUiCalIntHead");
 		}
 
-		var sWidth = oCal.getWidth();
-		if (sWidth && sWidth != '') {
-			oRm.addStyle("width", sWidth);
-			oRm.writeStyles();
-		}
-
 	};
 
 	return CalendarDateIntervalRenderer;
