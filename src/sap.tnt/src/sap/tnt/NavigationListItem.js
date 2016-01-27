@@ -181,10 +181,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				items: newSubItems
 			});
 
-			if (selectedItem == this) {
-				popupSelectedItem = newGroup;
-			}
-
 			var navList = new NavigationList({
 				itemSelect: this.onPopupItemSelect.bind(this),
 				items: [
@@ -193,6 +189,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}).addStyleClass('sapTntNavLIPopup');
 
 			navList.setHasListBoxRole(true);
+
+			if (selectedItem == this) {
+				popupSelectedItem = newGroup;
+				navList.isGroupSelected = true;
+			}
 
 			navList.setSelectedItem(popupSelectedItem);
 
