@@ -559,28 +559,13 @@ sap.ui.define([
 				return true;
 			}
 
-			oOptions.sOriginalControlType = vControlType;
-			var oWindow = iFrameLauncher.getWindow() || window;
+			var oControlConstructor = Opa5.getPlugin().getControlConstructor(vControlType);
 
-			// if the new _isStub is available, check for a stub first before accessing the object via its global name
-			if (oWindow.sap.ui.lazyRequire && oWindow.sap.ui.lazyRequire._isStub && oWindow.sap.ui.lazyRequire._isStub(vControlType)) {
-				jQuery.sap.log.debug("The control type " + vControlType + " is currently a lazy stub. Skipped check and will wait until it is invoked", this);
+			if (!oControlConstructor) {
 				return false;
 			}
 
-			var fnControlType = oWindow.jQuery.sap.getObject(vControlType);
-
-			// no control type
-			if (!fnControlType) {
-				jQuery.sap.log.debug("The control type " + vControlType + " is undefined. Skipped check and will wait until it is required", this);
-				return false;
-			}
-			if (fnControlType._sapUiLazyLoader) {
-				jQuery.sap.log.debug("The control type " + vControlType + " is currently a lazy stub. Skipped check and will wait until it is invoked", this);
-				return false;
-			}
-
-			oOptions.controlType = fnControlType;
+			oOptions.controlType = oControlConstructor;
 			return true;
 		};
 
