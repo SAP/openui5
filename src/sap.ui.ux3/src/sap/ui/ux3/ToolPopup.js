@@ -806,20 +806,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			 * @private
 			 */
 			var fnSetArrow = function (oThis) {
+				var sKey = "",
+					iVal = 0,
+					iZero = 0, // this is the 0 of the  relative position between ToolPopup and Opener
+					iHalfArrow = oThis.iArrowHeight / 2,
+					isRTL = sap.ui.getCore().getConfiguration().getRTL(),
+					sArrowDir,
+					oPopRect = oThis.$().rect(),
+					oOpener = jQuery.sap.byId(oThis.getOpener()),
+					oOpenerRect = oOpener.rect(),
+					$Arrow = oThis.$("arrow");
+
 				if (!oThis.getDomRef()) {
 					return;
 				}
 
-                var HCB_THEME_NAME = 'sap_hcb';
-				var sKey = "";
-				var iVal = 0;
-				var iZero = 0; // this is the 0 of the  relative position between ToolPopup and Opener
-				var iHalfArrow = oThis.iArrowHeight / 2;
-                var isHCBTheme = sap.ui.getCore().getConfiguration().getTheme() === HCB_THEME_NAME;
-				var isRTL = sap.ui.getCore().getConfiguration().getRTL();
-
 				oThis._sArrowDir = fnGetArrowDirection(oThis);
-				var sArrowDir = oThis._sArrowDir;
+				sArrowDir = oThis._sArrowDir;
 				if (isRTL) {
 					// in RTL mode arrow must be mirrowed here
 					if (oThis._sArrowDir === "Right") {
@@ -829,13 +832,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					}
 				}
 
-				var oPopRect = oThis.$().rect();
-				var oOpenerRect = jQuery.sap.byId(oThis.getOpener()).rect();
 				if (!oOpenerRect) {
 					// if a proper opener isn't available
 					jQuery.sap.log.warning("Opener wasn't set properly. Therefore arrow will be at a default position", "", "sap.ui.ux3.ToolPopup");
 				}
-				var $Arrow = oThis.$("arrow");
 
 				// get the corresponding my-property
 				if (!oThis._my && oThis.oPopup) {
@@ -855,28 +855,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
                         // if the position would exceed the ToolPopup's height
                         iVal = iVal + iHalfArrow > oPopRect.height ? iVal - oThis.iArrowHeight : iVal;
                     }
-
-                    if (isHCBTheme) {
-                        if (!iZero) {
-                            iVal = 1;
-						} else if (oOpenerRect.height > iZero) {
-                            iVal -= iHalfArrow;
-						} else if (iZero > 0) {
-                            iVal += iHalfArrow;
-						}
-                    }
-
 				} else {
 					// up/down arrow
 					sKey = "left";
 
 					if (oOpenerRect) {
-                        if (isRTL) {
+						var openerBorderLeft = parseInt(jQuery(oOpener).css('border-left'), 10);
+						var openerBorderRight = parseInt(jQuery(oOpener).css('border-right'), 10);
+						if (isRTL) {
 							sKey = "right";
-							iVal = Math.round(oOpenerRect.width / 2);
+							iZero = parseInt(oPopRect.left + oPopRect.width - oOpenerRect.left - oOpenerRect.width - openerBorderRight, 10);
 						} else {
-							iVal = Math.round(oOpenerRect.width / 2);
+							iZero = parseInt(oOpenerRect.left - oPopRect.left - openerBorderLeft, 10);
 						}
+
+						iVal = Math.round(iZero + oOpenerRect.width / 2 - iHalfArrow);
 						// if the position would exceed the ToolPopup's width
 						iVal = iVal + iHalfArrow > oPopRect.width ? iVal - oThis.iArrowHeight : iVal;
 					}
@@ -886,10 +879,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				// for setting the arrow and so we have another logic
 				if (!oOpenerRect) {
 					iVal = oThis.iArrowHeight;
-				} else if (!isHCBTheme) {
-					iVal -= iHalfArrow;
-                }
-
+				}
 
 				// set the corresponding classes
 				var sClassAttr = "";
@@ -910,12 +900,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 						iWidth += oThis.iArrowPadding;
 					}
 
-					if (isHCBTheme) {
-						iWidth -= oThis.iArrowWidth;
-						$Arrow.css("top", 0);
-					}
-
-
 					if (isRTL) {
 						$Arrow.css("right", iWidth + "px");
 					} else {
@@ -930,12 +914,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 				iVal = parseInt(iVal, 10);
 				iVal = iVal < 0 ? 0 : iVal;
-				if (iVal > 0) {
-					iVal -= 2; // due to some padding
-					// only correct corresponding position if there is something to correct
-					// otherwise the default position is used (via styling)
-					$Arrow.css(sKey, iVal + "px");
-				}
+
+				$Arrow.css(sKey, iVal + "px");
 			};
 			/**
 			 * Handles the sapescape event, triggers closing of the ToolPopup.
