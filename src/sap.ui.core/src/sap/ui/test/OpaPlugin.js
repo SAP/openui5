@@ -284,6 +284,30 @@ sap.ui.define(['jquery.sap.global',
 				});
 			},
 
+			/**
+			 * Gets the constructor function of a certain controlType
+			 *
+			 * @param {string} sControlType the name of the type eg: "sap.m.Button"
+			 * @returns {null|function} When the type is loaded, the contstructor is returned, if it is a lazy stub or not yet loaded, null will be returned and there will be a log entry.
+			 * @public
+			 */
+			getControlConstructor : function (sControlType) {
+				if (sap.ui.lazyRequire._isStub(sControlType)) {
+					$.sap.log.debug("The control type " + sControlType + " is currently a lazy stub. Skipped check and will wait until it is invoked", "Opa5");
+					return null;
+				}
+
+				var fnControlType = $.sap.getObject(sControlType);
+
+				// no control type
+				if (!fnControlType) {
+					$.sap.log.debug("The control type " + sControlType + " is undefined. Skipped check and will wait until it is required", "Opa5");
+					return null;
+				}
+
+				return fnControlType;
+			},
+
 			_filterUniqueControlsByCondition : function (aControls, fnCondition) {
 				return aControls.filter(function (oControl, iPosition, aAllControls) {
 					var bKeepMe = !!fnCondition(oControl);
