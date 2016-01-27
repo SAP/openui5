@@ -232,6 +232,10 @@ sap.ui.define([
 	 */
 
 	ObjectPageLayout.prototype.onBeforeRendering = function () {
+		if (!this.getVisible()) {
+			return;
+		}
+
 		this._bMobileScenario = library.Utilities.isPhoneScenario();
 		this._bTabletScenario = library.Utilities.isTabletScenario();
 
