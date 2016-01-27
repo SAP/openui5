@@ -20,6 +20,16 @@ describe('sap.m.NotificationListItem', function() {
         expect(takeScreenshot()).toLookAs('cancel-clicked');
     });
 
+    it('should expand the notification', function() {
+        element(by.id('firstNotification-expandCollapseButton')).click();
+        expect(takeScreenshot()).toLookAs('show-more-clicked');
+    });
+
+    it('should collapse the notification', function() {
+        element(by.id('firstNotification-expandCollapseButton')).click();
+        expect(takeScreenshot()).toLookAs('show-less-clicked');
+    });
+
     it('should close the item', function () {
         element(by.css('#firstNotification .sapMNLI-CloseButton')).click();
         expect(takeScreenshot()).toLookAs('close-clicked');

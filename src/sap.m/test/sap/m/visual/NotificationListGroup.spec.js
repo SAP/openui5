@@ -19,13 +19,23 @@ describe('sap.m.NotificationListGroup', function () {
         expect(takeScreenshot()).toLookAs('expanded');
     });
 
+    it('should collapse the first notification', function() {
+        element(by.id('firstNotification-expandCollapseButton')).click();
+        expect(takeScreenshot()).toLookAs('collapsedNotification');
+    });
+
+    it('should expand the first notification', function() {
+        element(by.id('firstNotification-expandCollapseButton')).click();
+        expect(takeScreenshot()).toLookAs('expandedNotification');
+    });
+
     it('should fire "accept all" button pressed event', function () {
-        element(by.css('#notificationGroup .sapMNLG-Footer button:nth-of-type(1)')).click();
+        element(by.css('#notificationGroup .sapMNLG-Footer .sapMTB button:nth-of-type(1)')).click();
         expect(takeScreenshot()).toLookAs('accept-all-clicked');
     });
 
     it('should fire "cancel all" button pressed event', function () {
-        element(by.css('#notificationGroup .sapMNLG-Footer button:nth-of-type(2)')).click();
+        element(by.css('#notificationGroup .sapMNLG-Footer .sapMTB button:nth-of-type(2)')).click();
         expect(takeScreenshot()).toLookAs('cancel-all-clicked');
     });
 
