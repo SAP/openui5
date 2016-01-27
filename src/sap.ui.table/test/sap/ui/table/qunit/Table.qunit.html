@@ -413,29 +413,58 @@
 	});
 
 	test("Resize column", function() {
-
 		var oColumn = oTable.getColumns()[1],
 			sResizeHandlerId = oTable.getId() + '-rsz';
 
 		this.clock.tick(1000);
+		var iResizeHandlerLeftInitial = jQuery("#" + sResizeHandlerId).position().left;
+		// resizer should be way out of screen when the table gets rendered
+		equals(iResizeHandlerLeftInitial, "-10000", "Resizer is at the correct initial position");
 
-		var resizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
+		var iResizeHandlerTop = Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100);
 		equals(oColumn.getWidth(), "100px", "Check column width before resize");
+
+		// resizer gets positioned when hovering a column -> move mouse to column
+		var oParams = {};
+		oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
+		oParams.clientY = iResizeHandlerTop;
+		qutils.triggerEvent("mousemove", oColumn.getId(), oParams);
+
+		// resizer should now be positioned at the column end, while the center of the resizer is at the column border
+		var iResizeHandlerLeft = jQuery("#" + sResizeHandlerId).position().left;
+		var $column = jQuery(oColumn.getDomRef());
+		equals(iResizeHandlerLeft, $column.position().left + $column.width() + Math.floor(jQuery("#" + sResizeHandlerId).width() / 2), "Resizer is at the correct position");
+		equals(oTable._iLastHoveredColumnIndex, 1, "Hovered column index is 1");
+
+		// drag resizer to resize column
+		qutils.triggerMouseEvent(sResizeHandlerId, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0 );
+		qutils.triggerMouseEvent(sResizeHandlerId, "mousemove", 1, 1, iResizeHandlerLeft + 97, iResizeHandlerTop, 0 );
+		qutils.triggerMouseEvent(sResizeHandlerId, "mouseup", 1, 1, iResizeHandlerLeft + 97, iResizeHandlerTop, 0 );
+
+		equals(oColumn.getWidth(), "196px", "Check column width after resize");
+
+		// columns which are not resizeable should not be considered when the resizer gets positioned
+		oTable.getColumns()[1].setResizable(false);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
 
 		var oParams = {};
 		oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
-		oParams.clientY = resizeHandlerTop;
+		oParams.clientY = iResizeHandlerTop;
 		qutils.triggerEvent("mousemove", oColumn.getId(), oParams);
 
-		var resizeHandlerLeft = document.getElementById(sResizeHandlerId).getBoundingClientRect().left;
-		equals(resizeHandlerLeft, "-9677", "Resizer is at the correct position");
-		equals(oTable._iLastHoveredColumnIndex, 1, "Hovered column index is 1");
+		iResizeHandlerLeft = jQuery("#" + sResizeHandlerId).position().left;
+		equals(iResizeHandlerLeft, "-10000", "Resizer is at the initial position");
 
-		qutils.triggerMouseEvent(sResizeHandlerId, "mousedown", 1, 1, resizeHandlerLeft, resizeHandlerTop, 0 );
-		qutils.triggerMouseEvent(sResizeHandlerId, "mousemove", 1, 1, resizeHandlerLeft + 97, resizeHandlerTop, 0 );
-		qutils.triggerMouseEvent(sResizeHandlerId, "mouseup", 1, 1, resizeHandlerLeft + 97, resizeHandlerTop, 0 );
+		// other columns should still be resizable
+		oColumn = oTable.getColumns()[2];
+		$column = jQuery(oColumn.getDomRef());
 
-		equals(oColumn.getWidth(), "196px", "Check column width after resize");
+		oParams.clientX = Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10);
+		oParams.clientY = iResizeHandlerTop;
+		qutils.triggerEvent("mousemove", oColumn.getId(), oParams);
+		iResizeHandlerLeft = jQuery("#" + sResizeHandlerId).position().left;
+		equals(iResizeHandlerLeft, $column.position().left + $column.width() + Math.floor(jQuery("#" + sResizeHandlerId).width() / 2), "Resizer is at the correct position");
 	});
 
 	test("AutomaticColumnResize", function(){

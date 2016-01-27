@@ -1713,8 +1713,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				}
 			}
 		}
-		this.$().find(".sapUiTableColRsz").css("left", iResizerPositionX + "px");
-		this._iLastHoveredColumnIndex = iLastHoveredColumn;
+
+		var oColumn = this._getVisibleColumns()[iLastHoveredColumn];
+		if (oColumn && oColumn.getResizable()) {
+			this.$().find(".sapUiTableColRsz").css("left", iResizerPositionX + "px");
+			this._iLastHoveredColumnIndex = iLastHoveredColumn;
+		}
 	};
 
 	/**
