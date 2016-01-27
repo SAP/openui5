@@ -19,14 +19,14 @@ sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject', 'sap/ui/qunit/QU
 		metadata : {
 			properties: {
 				/**
-				 * @since 1.38
-				 * Use this only if the target property or the default of the action does not work for your control.
-				 * The id suffix of the DOM Element the press action will be executed on.
-				 * For most of the controls you do not have to specify this, since the Control Adapters will find the correct DOM Element.
-				 * But some controls have multiple DOM elements that could be target of your Action.
-				 * Then you should set this property.
-				 * For a detailed documentation of the suffix see {@link sap.ui.core.Element#$}
-				 */
+				* @since 1.38
+				* Use this only if the target property or the default of the action does not work for your control.
+				* The id suffix of the DOM Element the press action will be executed on.
+				* For most of the controls you do not have to specify this, since the Control Adapters will find the correct DOM Element.
+				* But some controls have multiple DOM elements that could be target of your Action.
+				* Then you should set this property.
+				* For a detailed documentation of the suffix see {@link sap.ui.core.Element#$}
+			*/
 				idSuffix: {
 					type: "string"
 				}
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject', 'sap/ui/qunit/QU
 		 */
 		$: function (oControl) {
 			var $FocusDomRef,
-				sAdapter = this.controlAdapters[oControl.getMetadata().getName()],
+				sAdapter = this._getAdapter(oControl.getMetadata()),
 				sAdapterDomRefId = this.getIdSuffix() || sAdapter;
 
 			if (sAdapterDomRefId) {
@@ -80,6 +80,26 @@ sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject', 'sap/ui/qunit/QU
 			}
 
 			return $FocusDomRef;
+		},
+
+		/**
+		 * Traverses the metadata chain of ui5 to and looks for adapters
+		 * @param oMetadata a controls metadata
+		 * @returns {string|null}
+		 * @private
+		 */
+		_getAdapter : function (oMetadata) {
+			var sAdapter = this.controlAdapters[oMetadata.getName()];
+
+			if (sAdapter) {
+				return sAdapter;
+			}
+			var oParentMetadata = oMetadata.getParent();
+			if (oParentMetadata) {
+				return this._getAdapter(oParentMetadata);
+			}
+
+			return null;
 		},
 
 		/**

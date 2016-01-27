@@ -18,6 +18,8 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 *     <li>sap.m.IconTabFilter</li>
 	 *     <li>sap.m.SearchField</li>
 	 *     <li>sap.m.Page</li>
+	 *     <li>sap.m.semantic.FullscreenPage</li>
+	 *     <li>sap.m.semantic.DetailPage</li>
 	 *     <li>sap.m.List</li>
 	 *     <li>sap.m.Table</li>
 	 *     <li>sap.m.StandardTile</li>
@@ -29,7 +31,10 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 * <ul>
 	 *     <li>sap.m.SeachField - Search Button</li>
 	 *     <li>sap.m.Page - Back Button</li>
-	 *     <li>sap.m.ListBase - More Button</li>
+	 *     <li>sap.m.semantic.FullscreenPage - Back Button</li>
+	 *     <li>sap.m.semantic.DetailPage - Back Button</li>
+	 *     <li>sap.m.List - More Button</li>
+	 *     <li>sap.m.Table - More Button</li>
 	 * </ul>
 	 *
 	 * @class
@@ -111,6 +116,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 
 	/**
 	 * A map that contains the id suffixes for certain controls of the library.
+	 * When you extended a UI5 controls the adapter of the control will be taken.
 	 * If you need an adapter for your own control you can add it here. For example:
 	 * You wrote a control with the namespace my.Control it renders two buttons and you want the press action to press the second one by default.
 	 *
@@ -152,9 +158,10 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 */
 	Press.controlAdapters = {};
 	Press.controlAdapters["sap.m.SearchField"] = "search";
-	Press.controlAdapters["sap.m.List"] = "trigger";
-	Press.controlAdapters["sap.m.Table"] = "trigger";
+	Press.controlAdapters["sap.m.ListBase"] = "trigger";
 	Press.controlAdapters["sap.m.Page"] = "navButton";
+	Press.controlAdapters["sap.m.semantic.FullscreenPage"] = "navButton";
+	Press.controlAdapters["sap.m.semantic.DetailPage"] = "navButton";
 
 	return Press;
 

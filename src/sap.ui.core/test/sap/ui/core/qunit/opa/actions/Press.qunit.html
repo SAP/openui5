@@ -39,6 +39,8 @@
 			"sap/m/StandardTile",
 			"sap/m/SearchField",
 			"sap/m/Page",
+			"sap/m/semantic/FullscreenPage",
+			"sap/m/semantic/DetailPage",
 			"sap/m/CheckBox"],
 		function(Press,
 				 Button,
@@ -56,6 +58,8 @@
 				 StandardTile,
 				 SearchField,
 				 Page,
+				 FullscreenPage,
+				 DetailPage,
 				 CheckBox){
 			// stack contains controls to be destroyed
 			// and emptied after each test
@@ -77,6 +81,16 @@
 
 			[{
 				control: new Page({
+					showNavButton: true
+				}),
+				event: "NavButtonPress"
+			},{
+				control: new FullscreenPage({
+					showNavButton: true
+				}),
+				event: "NavButtonPress"
+			},{
+				control: new DetailPage({
 					showNavButton: true
 				}),
 				event: "NavButtonPress"
