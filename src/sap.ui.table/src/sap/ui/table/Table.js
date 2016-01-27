@@ -3767,11 +3767,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
-	 * start the column resize
+	 * Handler for the beginning of a column resizing.
 	 * @private
 	 */
 	Table.prototype._onColumnResizeStart = function(oEvent) {
 		this._bIsColumnResizerMoving = true;
+		var $body = jQuery(document.body);
 		this.$().addClass("sapUiTableResizing");
 		if (this._isTouchMode(oEvent)) {
 			this._iColumnResizeStart = oEvent.targetTouches[0].pageX;
@@ -3779,9 +3780,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			this._$colResize = jQuery("#" + this.getId() + "-rsz");
 
-			var $body = jQuery(document.body);
-			$body.bind("touchmove", this._onColumnResize.bind(this));
-			$body.bind("touchend", this._onColumnResized.bind(this));
+			$body.bind("touchmove.sapUiTableColumnResize", this._onColumnResize.bind(this));
+			$body.bind("touchend.sapUiTableColumnResize", this._onColumnResized.bind(this));
 		} else {
 			// only resize on left click!
 			if (oEvent.button === 0) {
@@ -3790,15 +3790,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				this._disableTextSelection();
 				this._$colResize = jQuery(oEvent.target);
 
-				jQuery(document.body).
-					mousemove(jQuery.proxy(this._onColumnResize, this)).
-					mouseup(jQuery.proxy(this._onColumnResized, this));
+				$body.bind("mousemove.sapUiTableColumnResize", this._onColumnResize.bind(this));
+				$body.bind("mouseup.sapUiTableColumnResize", this._onColumnResized.bind(this));
 			}
 		}
 	};
 
 	/**
-	 * resize the column
+	 * Handler for the resizing of a column.
 	 * @private
 	 */
 	Table.prototype._onColumnResize = function(oEvent) {
@@ -3844,7 +3843,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
-	 * column is resized => update!
+	 * Handler for column resizing. If a resizing happens, the table will get invalidated.
 	 * @private
 	 */
 	Table.prototype._onColumnResized = function(oEvent, iIndex) {
@@ -3862,7 +3861,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		} else {
 			iColIndex = iIndex;
 		}
+
 		var oColumn = this._getVisibleColumns()[iColIndex];
+
 		// if the resize has started and we have a new width for the column
 		// we apply it to the column object
 		var bResized = false;
@@ -3886,10 +3887,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		// unbind the event handlers
 		var $body = jQuery(document.body);
-		$body.unbind("touchmove", this._onColumnResize);
-		$body.unbind("touchend", this._onColumnResized);
-		$body.unbind("mousemove", this._onColumnResize);
-		$body.unbind("mouseup", this._onColumnResized);
+		$body.unbind("touchmove.sapUiTableColumnResize");
+		$body.unbind("touchend.sapUiTableColumnResize");
+		$body.unbind("mousemove.sapUiTableColumnResize");
+		$body.unbind("mouseup.sapUiTableColumnResize");
 
 		// focus the column
 		oColumn.focus();
