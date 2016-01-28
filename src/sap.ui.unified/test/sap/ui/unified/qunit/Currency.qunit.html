@@ -66,6 +66,36 @@
 				strictEqual(this.sut.getUseSymbol(), false, "UseSymbol setter is correct");
 			});
 
+			test("Test properly currency formatting", function () {
+				//act
+				this.sut.setValue(45012.91);
+				this.sut.setCurrency("EUR");
+				this.sut.setUseSymbol(false);
+				sap.ui.getCore().applyChanges();
+
+				strictEqual(this.fnGetRenderedValue(), "45,012.91\u2007", "Default formatting for EUR");
+
+				this.sut.setMaxPrecision(0);
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.fnGetRenderedValue(), "45,012", "Format number without precision in EUR");
+
+				this.sut.setMaxPrecision(-1);
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.fnGetRenderedValue(), "45,01", "Unlikely usage: Precision with negative value for EUR");
+
+				this.sut.setCurrency("JPY");
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.fnGetRenderedValue(), "45,01", "Unlikely usage: Precision with negative value for JPY");
+
+				this.sut.setMaxPrecision(0);
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.fnGetRenderedValue(), "45,013", "Format number without precision in JPY");
+
+				this.sut.setMaxPrecision(2);
+				sap.ui.getCore().applyChanges();
+				strictEqual(this.fnGetRenderedValue(), "45,013\u2008\u2007\u2007", "Format number with 2 decimals in JPY");
+			});
+
 			test("MaxPrecision changes the rendered value", function () {
 				//arrange
 				var iStringLength;
