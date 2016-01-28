@@ -1,7 +1,8 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
+		"sap/ui/test/actions/Press",
 		"sap/ui/test/matchers/PropertyStrictEquals"
-	], function(Opa5, PropertyStrictEquals) {
+	], function(Opa5, Press, PropertyStrictEquals) {
 		"use strict";
 
 		return {
@@ -16,9 +17,7 @@ sap.ui.define([
 								name : "icon",
 								value : "sap-icon://action"
 							}),
-							success : function (aButtons) {
-								aButtons[0].$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "Did not find the share button"
 						});
 					}
