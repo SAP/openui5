@@ -138,6 +138,10 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 	.sapMLIBSelectM > .sapMCb {
 		width: 2rem;
 	}
+
+	.sapUiForm .sapMCbBg { /* In forms, align left with '0.125rem' ( the focus width) */
+		left: 0.125rem;
+	}
 }
 
 .sap-desktop {
@@ -149,7 +153,7 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 		}
 
 		.sapUiSimpleForm .sapMCb:not(.sapMCbBgDis):focus:before {
-			left: 0.365rem;
+			left: 0;
 		}
 	}
 }
