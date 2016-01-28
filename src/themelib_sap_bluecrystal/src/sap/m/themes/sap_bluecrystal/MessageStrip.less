@@ -43,7 +43,7 @@
 	// does not work in IE if directly set on ::after
 	// 1.5rem - 4px (1px border and 1px offset per side)
 	line-height: 1.25rem;
-
+	color: fade(@sapUiStandardText, 60%);
 	&:focus::after {
 		border-color: @sapUiFocus;
 	}
@@ -54,5 +54,9 @@
 		bottom: 1px;
 		right: 1px;
 		border: 1px dotted transparent;
+	}
+
+	&:hover {
+		color: @sapUiStandardText;
 	}
 }
