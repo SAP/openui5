@@ -2,8 +2,8 @@
  * ${copyright}
  */
 // Provides control sap.m.UploadCollection.
-sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sap/ui/core/Control', 'sap/ui/unified/FileUploaderParameter', "sap/ui/unified/FileUploader", 'sap/ui/core/format/FileSizeFormat', 'sap/m/Link', './ObjectAttribute', './ObjectStatus', "./UploadCollectionItem", "sap/ui/core/HTML", "./BusyIndicator", "./CustomListItem", "./CustomListItemRenderer", "sap/ui/core/HTMLRenderer", "./LinkRenderer", "./ObjectAttributeRenderer", "./ObjectStatusRenderer", "./TextRenderer", "./DialogRenderer"],
-	function(jQuery, MessageBox, Dialog, Library, Control, FileUploaderParamter, FileUploader, FileSizeFormat, Link, ObjectAttribute, ObjectStatus, UploadCollectionItem, HTML, BusyIndicator, CustomListItem) {
+sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sap/ui/core/Control', 'sap/ui/unified/FileUploaderParameter', "sap/ui/unified/FileUploader", 'sap/ui/core/format/FileSizeFormat', './ObjectAttribute', './ObjectStatus', "./UploadCollectionItem", "sap/ui/core/HTML", "./BusyIndicator", "./CustomListItem", "./Link", "./CustomListItemRenderer", "sap/ui/core/HTMLRenderer", "./LinkRenderer", "./ObjectAttributeRenderer", "./ObjectStatusRenderer", "./TextRenderer", "./DialogRenderer"],
+	function(jQuery, MessageBox, Dialog, Library, Control, FileUploaderParamter, FileUploader, FileSizeFormat, ObjectAttribute, ObjectStatus, UploadCollectionItem, HTML, BusyIndicator, CustomListItem, Link) {
 	"use strict";
 
 	/**
@@ -558,7 +558,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this._RenderManager = this._RenderManager || sap.ui.getCore().createRenderManager();
 		var i, cAitems;
 		checkInstantUpload.bind(this)();
-		if (!this.getInstantUpload()) {//
+		if (!this.getInstantUpload()) {
+			this.aItems = this.getItems();
 			this._getListHeader(this.aItems.length);
 			this._clearList();
 			this._fillList(this.aItems);
@@ -1876,7 +1877,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					break;
 				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
 						this.aItems[i]._requestIdName === sRequestId &&
-						this.aItems[i]._status === UploadCollection._uploadingStatus) {
+						this.aItems[i]._status === UploadCollection._uploadingStatus ||
+						this.aItems[i]._status === UploadCollection._pendingUploadStatus) {
 					this.aItems.splice(i, 1);
 					break;
 				}

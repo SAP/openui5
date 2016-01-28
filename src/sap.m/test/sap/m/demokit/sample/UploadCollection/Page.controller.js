@@ -12,7 +12,7 @@ sap.ui.define([
 		onInit: function () {
 
 			// set mock data
-			var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollection", "/uploadCollection.json")
+			var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollection", "/uploadCollection.json");
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 
