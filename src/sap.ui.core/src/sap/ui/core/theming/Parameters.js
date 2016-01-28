@@ -80,8 +80,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		function loadParameters(sId, sUrl) {
 
 			// read inline parameters from css style rule
+			// (can be switched off for testing purposes via private URI parameter "sap-ui-xx-no-inline-theming-parameters=true")
 			var $link = jQuery.sap.byId(sId);
-			if ($link.length > 0) {
+			if ($link.length > 0 && !/sap-ui-xx-no-inline-theming-parameters=true/.test(location.search)) {
 				var sDataUri = $link.css("background-image");
 				var aParams = /\(["']data:text\/plain;utf-8,(.*)["']\)$/i.exec(sDataUri);
 				if (aParams && aParams.length >= 2) {
