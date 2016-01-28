@@ -1,7 +1,8 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
+		"sap/ui/test/actions/Press",
 		"sap/ui/demo/masterdetail/test/integration/pages/Common"
-	], function(Opa5, Common) {
+	], function(Opa5, Press, Common) {
 		"use strict";
 
 		var sNotFoundPageId = "page",
@@ -18,9 +19,9 @@ sap.ui.define([
 						return this.waitFor({
 							id : sNotFoundPageId,
 							viewName : sViewName,
-							success : function (oPage) {
-								oPage.fireNavButtonPress();
-							}
+							actions : function (oPage) {
+								oPage.$("navButton").trigger("tap");
+							},
 						});
 					}
 
