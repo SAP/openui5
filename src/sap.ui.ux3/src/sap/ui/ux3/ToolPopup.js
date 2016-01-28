@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.ux3.ToolPopup.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/theming/Parameters', './library'],
-    function (jQuery, Control, IconPool, Popup, Parameters, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager', './library'],
+    function (jQuery, Control, IconPool, Popup, Parameters, RenderManager, library) {
         "use strict";
 
 
@@ -952,6 +952,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
                 // to use for rendering; since there are two elements with the same ID at that point, it does not work.
                 // As the Dialog can only contain other controls, we can safely discard the DOM - we cannot do this inside
                 // the Popup, since it supports displaying arbitrary HTML content.
+                RenderManager.preserveContent(this.getDomRef());
                 this.$().remove();
 
                 this.fireClosed();
