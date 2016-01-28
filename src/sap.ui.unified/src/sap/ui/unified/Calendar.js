@@ -1327,6 +1327,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		// if a date should be focused thats out of the borders -> focus the border
 		var oFocusedDate;
 		var bChanged = false;
+		var bFireStartDateChange = false;
 		if (oDate.getTime() < this._oMinDate.getTime()) {
 			oFocusedDate = this._oMinDate;
 			bChanged = true;
@@ -1339,7 +1340,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (this._focusDateExtend) {
 			// hook for CalenarDateInterval
-			this._focusDateExtend(oDate, bOtherMonth, bNoEvent);
+			bFireStartDateChange = this._focusDateExtend(oDate, bOtherMonth, bNoEvent);
 		}
 
 		var bInLastMonth = oFocusedDate.getTime() < this._getFocusedDate().getTime();
@@ -1348,6 +1349,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (bChanged || bOtherMonth) {
 			_renderMonth.call(this, false, bInLastMonth, bNoEvent);
+		}
+
+		if (bFireStartDateChange) {
+			this.fireStartDateChange();
 		}
 
 	}
