@@ -9,6 +9,8 @@ sap.ui.define([
 ], function (jQuery, Binding, ChangeReason, ListBinding, Helper, Cache) {
 	"use strict";
 
+	var sClassName = "sap.ui.model.odata.v4.ODataListBinding";
+
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataListBinding</code>,
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} instead!
@@ -63,6 +65,33 @@ sap.ui.define([
 		});
 
 	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * Registered event handlers are called without parameters.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @see sap.ui.base.Event
+	 * @public
+	 */
+
+	/**
+	 * The 'dataReceived' event is fired after the back end data has been processed and the
+	 * registered 'change' event listeners have been notified.
+	 * The 'dataReceived' event is also fired if a back end request failed.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
+	 *   If there are multiple failed back end requests, the error of the first one is provided.
+	 *   If all back end requests succeed, the event has no parameters.
+	 * @see sap.ui.base.Event
+	 * @public
+	 */
+
+	/**
 	 * Always fires a change event on this list binding.
 	 */
 	ODataListBinding.prototype.checkUpdate = function () {
@@ -90,6 +119,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.getContexts = function (iStart, iLength) {
 		var oContext = this.getContext(),
+			bDataRequested = false,
 			oModel = this.getModel(),
 			sResolvedPath = oModel.resolve(this.getPath(), oContext),
 			that = this;
@@ -174,13 +204,32 @@ sap.ui.define([
 				oModel.read(sResolvedPath, true)
 					.then(createContexts.bind(undefined, getDependentPath));
 			} else { // absolute path
-				this.oCache.read(iStart, iLength)
-					.then(createContexts.bind(undefined, getBasePath), function (oError) {
+				this.oCache.read(iStart, iLength, function () {
+						bDataRequested = true;
+						try {
+							that.fireDataRequested();
+						} catch (e) {
+							jQuery.sap.log.warning("Call to 'dataRequested' event handler failed: "
+									+ (e.message || e.toString()),
+								e.stack, // may be undefined: only supported in Chrome, FF
+								sClassName);
+						}
+					}).then(createContexts.bind(undefined, getBasePath)).then(function () {
+						//fire dataReceived after change event fired in createContexts()
+						if (bDataRequested) {
+							that.fireDataReceived(); // no try catch needed: uncaught in promise
+						}
+					}, function (oError) {
 						if (!oError.canceled) {
 							jQuery.sap.log.error("Failed to get contexts for "
 								+ oModel.sServiceUrl + sResolvedPath.slice(1)
 								+ " with start index " + iStart + " and length " + iLength, oError,
-								"sap.ui.model.odata.v4.ODataListBinding");
+								sClassName);
+						}
+						//cache shares promises for concurrent read
+						if (bDataRequested) {
+							// no try catch needed: uncaught in promise
+							that.fireDataReceived({error : oError});
 						}
 					});
 			}
@@ -237,7 +286,7 @@ sap.ui.define([
 			function reject(oError) {
 				jQuery.sap.log.error("Failed to read value with index " + iIndex + " for "
 					+ that.oCache + " and path " + sPath,
-					oError, "sap.ui.model.odata.v4.ODataListBinding");
+					oError, sClassName);
 				fnReject(oError);
 			}
 
@@ -248,7 +297,7 @@ sap.ui.define([
 					sPath.split("/").every(function (sSegment) {
 						if (!oResult){
 							jQuery.sap.log.warning("Invalid segment " + sSegment, "path: " + sPath,
-								"sap.ui.model.odata.v4.ODataListBinding");
+								sClassName);
 							return false;
 						}
 						oResult = oResult[sSegment];

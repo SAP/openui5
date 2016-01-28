@@ -47,6 +47,13 @@ sap.ui.define([
 			);
 		},
 
+		onDataEvents : function (oEvent) {
+			var oSource = oEvent.getSource();
+
+			jQuery.sap.log.info(oEvent.getId() + " event processed for path " + oSource.getPath(),
+				"sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
+		},
+
 		onDeleteSalesOrder : function (oEvent) {
 			var oSalesOrderContext = oEvent.getSource().getBindingContext(),
 				oModel = oSalesOrderContext.getModel(),

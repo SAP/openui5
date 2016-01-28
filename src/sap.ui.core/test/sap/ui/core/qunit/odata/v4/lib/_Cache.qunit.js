@@ -20,6 +20,12 @@ sap.ui.require([
 		};
 	}
 
+	function mockRequest(oRequestorMock, sUrl, iStart, iLength) {
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sUrl + "?$skip=" + iStart + "&$top=" + iLength)
+			.returns(Promise.resolve(createResult(iStart, iLength)));
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
 		beforeEach : function () {
@@ -115,7 +121,8 @@ sap.ui.require([
 	}, {
 		title : "same range",
 		reads : [{index : 1, length : 2}, {index : 1, length : 2}],
-		expectedRequests : [{skip : 1, top : 2}]
+		expectedRequests : [{skip : 1, top : 2}],
+		expectedCallbackCount : 1
 	}, {
 		title : "second range overlaps after",
 		reads : [{index : 3, length : 4}, {index : 5, length : 4}],
@@ -127,7 +134,8 @@ sap.ui.require([
 	}, {
 		title : "second range part of first range",
 		reads : [{index : 5, length : 8}, {index : 7, length : 2}],
-		expectedRequests : [{skip : 5, top : 8}]
+		expectedRequests : [{skip : 5, top : 8}],
+		expectedCallbackCount : 1
 	}, {
 		title : "first range part of second range",
 		reads : [{index : 7, length : 2}, {index : 5, length : 6}],
@@ -146,49 +154,59 @@ sap.ui.require([
 		expectedRequests : [{skip : 2, top : 5}, {skip : 0, top : 2}]
 	}].forEach(function (oFixture) {
 		QUnit.test("multiple read, " + oFixture.title + " (sequentially)", function (assert) {
-			var oRequestor = Requestor.create("/~/"),
+			var iDataRequestedCount = 0,
+				fnDataRequested = function () {iDataRequestedCount++;},
+				oRequestor = Requestor.create("/~/"),
 				sResourcePath = "Employees",
 				oCache = Cache.create(oRequestor, sResourcePath),
 				oPromise = Promise.resolve(),
 				oRequestorMock = this.oSandbox.mock(oRequestor);
 
 			oFixture.expectedRequests.forEach(function (oRequest) {
-				oRequestorMock.expects("request")
-					.withExactArgs("GET", sResourcePath + "?$skip=" + oRequest.skip + "&$top="
-						+ oRequest.top)
-					.returns(Promise.resolve(createResult(oRequest.skip, oRequest.top)));
+				mockRequest(oRequestorMock, sResourcePath, oRequest.skip, oRequest.top);
 			});
 
 			oFixture.reads.forEach(function (oRead) {
 				oPromise = oPromise.then(function () {
-					 return oCache.read(oRead.index, oRead.length).then(function (oResult) {
-						 assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
-					 });
+					return oCache.read(oRead.index, oRead.length, fnDataRequested)
+						.then(function (oResult) {
+							assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
+					});
 				});
 			});
-			return oPromise;
+			return oPromise.then(function () {
+				// expect by default 2 calls of the callback
+				assert.strictEqual(iDataRequestedCount,
+					oFixture.expectedCallbackCount ? oFixture.expectedCallbackCount : 2,
+					"data requested called");
+			});
 		});
 
 		QUnit.test("multiple read, " + oFixture.title + " (parallel)", function (assert) {
-			var oRequestor = Requestor.create("/~/"),
+			var iDataRequestedCount = 0,
+				fnDataRequested = function () {iDataRequestedCount++;},
+				oRequestor = Requestor.create("/~/"),
 				sResourcePath = "Employees",
 				oCache = Cache.create(oRequestor, sResourcePath),
 				aPromises = [],
 				oRequestorMock = this.oSandbox.mock(oRequestor);
 
 			oFixture.expectedRequests.forEach(function (oRequest) {
-				oRequestorMock.expects("request")
-					.withExactArgs("GET", sResourcePath + "?$skip=" + oRequest.skip + "&$top="
-						+ oRequest.top)
-					.returns(Promise.resolve(createResult(oRequest.skip, oRequest.top)));
+				mockRequest(oRequestorMock, sResourcePath, oRequest.skip, oRequest.top);
 			});
 
 			oFixture.reads.forEach(function (oRead) {
-				aPromises.push(oCache.read(oRead.index, oRead.length).then(function (oResult) {
-					assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
+				aPromises.push(oCache.read(oRead.index, oRead.length, fnDataRequested)
+					.then(function (oResult) {
+						assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
 				}));
 			});
-			return Promise.all(aPromises);
+			return Promise.all(aPromises).then(function () {
+				// expect by default 2 calls of the callback
+				assert.strictEqual(iDataRequestedCount,
+					oFixture.expectedCallbackCount ? oFixture.expectedCallbackCount : 2,
+					"data requested called");
+			});
 		});
 	});
 
@@ -556,4 +574,5 @@ sap.ui.require([
 		assert.strictEqual(oCache.toString(), "/~/" + sResourcePathSingle);
 
 	});
+	//TODO: dataRequested handling for SingleCache
 });

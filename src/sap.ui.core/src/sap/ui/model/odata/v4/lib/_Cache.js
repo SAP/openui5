@@ -135,6 +135,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   The start index of the range; the first row has index 0
 	 * @param {int} iLength
 	 *   The length of the range
+	 * @param {function} [fnDataRequested]
+	 *   The function is called directly after all back end requests have been triggered.
+	 *   If no back end request is needed, the function is not called.
 	 * @returns {Promise}
 	 *   A Promise to be resolved with the requested range given as an OData response object (with
 	 *   "@odata.context" and the rows as an array in the property <code>value</code>). If an HTTP
@@ -142,12 +145,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   to undefined.
 	 *   A refresh cancels processing of all pending promises by throwing an error that has a
 	 *   property <code>canceled</code> which is set to <code>true</code>.
+	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	CollectionCache.prototype.read = function (iIndex, iLength) {
+	CollectionCache.prototype.read = function (iIndex, iLength, fnDataRequested) {
 		var i,
 			iEnd = iIndex + iLength,
 			iGapStart = -1,
+			bIsDataRequested = false,
 			that = this;
 
 		if (iIndex < 0) {
@@ -165,6 +170,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			if (this.aElements[i] !== undefined) {
 				if (iGapStart >= 0) {
 					requestElements(this, iGapStart, i);
+					bIsDataRequested = true;
 					iGapStart = -1;
 				}
 			} else if (iGapStart < 0) {
@@ -173,6 +179,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		}
 		if (iGapStart >= 0) {
 			requestElements(this, iGapStart, iEnd);
+			bIsDataRequested = true;
+		}
+
+		if (bIsDataRequested && fnDataRequested) {
+			fnDataRequested();
 		}
 
 		return Promise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
