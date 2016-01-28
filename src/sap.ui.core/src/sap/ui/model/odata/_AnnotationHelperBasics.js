@@ -43,10 +43,16 @@ sap.ui.define([
 		 *
 		 * @param {object} oPathValue
 		 *   a path/value pair
+		 * @param {boolean} oPathValue.asExpression
+		 *   if <code>true</code> an embedded concat must use expression binding; the value is
+		 *   simply passed through here; it is only used in _AnnotationHelperExpression.concat
 		 * @param {string} oPathValue.path
 		 *   the meta model path to start at
 		 * @param {object|any[]} oPathValue.value
 		 *   the value at this path
+		 * @param {boolean} oPathValue.withType
+		 *   if <code>true</code> bindings shall be rendered with type information; the value is
+		 *   simply passed through here
 		 * @param {string|number} vProperty
 		 *   the property name or array index
 		 * @param {string} [sExpectedType]
@@ -60,8 +66,10 @@ sap.ui.define([
 		descend: function (oPathValue, vProperty, sExpectedType) {
 			Basics.expectType(oPathValue, typeof vProperty === "number" ? "array" : "object");
 			oPathValue = {
+				asExpression: oPathValue.asExpression,
 				path: oPathValue.path + "/" + vProperty,
-				value: oPathValue.value[vProperty]
+				value: oPathValue.value[vProperty],
+				withType: oPathValue.withType
 			};
 			if (sExpectedType) {
 				Basics.expectType(oPathValue, sExpectedType);
@@ -313,9 +321,8 @@ sap.ui.define([
 		 *   if true the value is to be embedded into a binding expression, otherwise in a
 		 *   composite binding
 		 * @param {boolean} [bWithType=false]
-		 *  if <code>true</code> and <code>oResult.result</code> is "binding" and
-		 *  <code>bExpression</code> is <code>false</code>, type and constraint information is
-		 *  written to the resulting binding string
+		 *  if <code>true</code> and <code>oResult.result</code> is "binding", type and constraint
+		 *  information is written to the resulting binding string
 		 * @returns {string}
 		 *   the resulting string to embed into an composite binding or a binding expression
 		 */
