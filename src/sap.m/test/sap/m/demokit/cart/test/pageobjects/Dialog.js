@@ -1,7 +1,8 @@
 sap.ui.define([
 		'sap/ui/test/Opa5',
-		'sap/ui/test/matchers/PropertyStrictEquals'
-	], function (Opa5, PropertyStrictEquals) {
+		'sap/ui/test/matchers/PropertyStrictEquals',
+		'sap/ui/test/actions/Press'
+	], function (Opa5, PropertyStrictEquals, Press) {
 
 		Opa5.createPageObjects({
 			onTheDialog : {
@@ -12,13 +13,7 @@ sap.ui.define([
 						return this.waitFor({
 								controlType : "sap.m.Button",
 								matchers : new PropertyStrictEquals({name : "text", value : "Delete"}),
-								success : function (aBtn) {
-									aBtn[0].$().focusin();
-									aBtn[0].$().trigger("tap");
-									jQuery.sap.log.info(aBtn);
-									jQuery.sap.log.info(jQuery("[role*='dialog']"));
-									jQuery.sap.log.info(jQuery("[id*='sap-ui-blocklayer-popup']"));
-								},
+								actions : new Press(),
 								errorMessage : "The delete button could not be pressed"
 							}
 						);
@@ -27,16 +22,7 @@ sap.ui.define([
 						return this.waitFor({
 							controlType : "sap.m.Button",
 							matchers : new PropertyStrictEquals({name : "text", value : "Cancel"}),
-							success : function (aBtn) {
-								aBtn[0].$().focusin();
-								aBtn[0].$().trigger("tap");
-								this.waitFor({
-									check: function(){
-										jQuery.sap.log.info("Check for dialog existence: ", jQuery("[role*='dialog']"));
-										return !jQuery("[role*='dialog']").length;
-									}
-								});
-							},
+							actions : new Press(),
 							errorMessage : "The cancel button could not be pressed"
 						});
 					}

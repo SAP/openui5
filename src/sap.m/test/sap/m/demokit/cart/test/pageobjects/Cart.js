@@ -2,8 +2,9 @@ sap.ui.define([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/AggregationFilled',
 		'sap/ui/test/matchers/PropertyStrictEquals',
-		'sap/ui/test/matchers/AggregationContainsPropertyEqual'
-	], function (Opa5, AggregationFilled, PropertyStrictEquals, AggregationContainsPropertyEqual) {
+		'sap/ui/test/matchers/AggregationContainsPropertyEqual',
+		'sap/ui/test/actions/Press'
+	], function (Opa5, AggregationFilled, PropertyStrictEquals, AggregationContainsPropertyEqual, Press) {
 
 		Opa5.createPageObjects({
 			onTheCart : {
@@ -15,9 +16,7 @@ sap.ui.define([
 							viewName : "Cart",
 							controlType : "sap.m.Button",
 							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://edit"}),
-							success : function (aButtons) {
-								aButtons[0].$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "The edit button could not be pressed"
 						});
 					},
@@ -27,7 +26,7 @@ sap.ui.define([
 							id : "entryList",
 							viewName : "Cart",
 							matchers : new PropertyStrictEquals({name : "mode", value : "Delete"}),
-							success : function (oList) {
+							actions : function (oList) {
 								oList.fireDelete({listItem : oList.getItems()[0]});
 							},
 							errorMessage : "The delete button could not be pressed"
@@ -39,9 +38,7 @@ sap.ui.define([
 							viewName : "Cart",
 							controlType : "sap.m.Button",
 							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://accept"}),
-							success : function (aButtons) {
-								aButtons[0].$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "The accept button could not be pressed"
 						});
 					}
@@ -54,11 +51,8 @@ sap.ui.define([
 							id : "entryList",
 							viewName : "Cart",
 							matchers : new AggregationFilled({name : "items"}),
-							success : function (oList) {
-								Opa5.assert.ok(
-									oList.getItems().length > 0,
-									"The cart has entries"
-								);
+							success : function () {
+								Opa5.assert.ok(true, "The cart has entries");
 							},
 							errorMessage : "The cart does not contain any entries"
 						});
