@@ -719,11 +719,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {Object} oEvent - key object
 	 */
 	Carousel.prototype.onkeydown = function(oEvent) {
+		if (oEvent.keyCode == jQuery.sap.KeyCodes.F7) {
+			this._handleF7Key(oEvent);
+			return;
+		}
+
+		// Exit the function if the event is not from the Carousel
+		if (oEvent.target != this.getDomRef()) {
+			return;
+		}
+
 		switch (oEvent.keyCode) {
-			// F7 key
-			case jQuery.sap.KeyCodes.F7:
-				this._handleF7Key(oEvent);
-				break;
 
 			// Minus keys
 			// TODO  jQuery.sap.KeyCodes.MINUS is not returning 189
