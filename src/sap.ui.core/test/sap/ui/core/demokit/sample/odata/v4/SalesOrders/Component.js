@@ -44,7 +44,7 @@ sap.ui.define([
 			// TODO: Add Mockdata for single sales orders *with expand*
 			// http://localhost:8080/testsuite/proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/SalesOrderList('050001110')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))
 			if (!bHasOwnProxy) {
-				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
+				TestUtils.setupODataV4Server(this.oSandbox, {
 					"$metadata" : {source : "metadata.xml" },
 					"$batch" : {
 						"SalesOrderList\?$expand=SO_2_BP\&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=0&$top=5" : {

@@ -28,7 +28,6 @@ sap.ui.define([
 				oLayout = new HBox(),
 				sMockServerBaseUri =
 					jQuery.sap.getModulePath("sap.ui.core.sample.ViewTemplate.types.data", "/"),
-				oMockServer,
 				oModel,
 				bRealOData = (jQuery.sap.getUriParameters().get("realOData") === "true");
 
@@ -36,12 +35,11 @@ sap.ui.define([
 				sUri = this.proxy(sUri);
 			} else {
 				jQuery.sap.require("sap.ui.core.util.MockServer");
-
-				oMockServer = new MockServer({rootUri : sUri});
-				oMockServer.simulate(sMockServerBaseUri + "metadata.xml", {
-					sMockdataBaseUrl : sMockServerBaseUri
+				this.aMockServers.push(new MockServer({rootUri: sUri}));
+				this.aMockServers[0].simulate(sMockServerBaseUri + "metadata.xml", {
+					sMockdataBaseUrl: sMockServerBaseUri
 				});
-				oMockServer.start();
+				this.aMockServers[0].start();
 			}
 
 			oModel = new ODataModel(sUri, {
@@ -76,10 +74,6 @@ sap.ui.define([
 					title : "Error"});
 			});
 			return oLayout;
-		},
-
-		exit : function () {
-			MockServer.destroyAll();
 		}
 	});
 

@@ -30,11 +30,11 @@ sap.ui.define([
 				});
 
 			if (!bHasOwnProxy) {
-				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
+				TestUtils.setupODataV4Server(this.oSandbox, {
 					"$batch" : {
 						"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER&$skip=0&$top=100" : {
 							source : "TEAMS.txt"
-						},
+						}
 					},
 					"$metadata" : {source : "metadata.xml"}
 				}, "sap/ui/core/demokit/sample/odata/v4/ListBinding/data",
