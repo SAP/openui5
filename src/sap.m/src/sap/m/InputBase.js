@@ -844,7 +844,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var mDock = Popup.Dock;
 		var $Input = jQuery(this.getFocusDomRef());
-		var bIsRightAligned = $Input.css("text-align") === "right";
 		var sClass = "sapMInputBaseMessage sapMInputBaseMessage" + sState;
 		var sTextClass = "sapMInputBaseMessageText";
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -876,8 +875,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._popup.close(0);
 		this._popup.open(
 			this.iOpenMessagePopupDuration,
-			bIsRightAligned ? mDock.EndTop : mDock.BeginTop,
-			bIsRightAligned ? mDock.EndBottom : mDock.BeginBottom,
+			mDock.BeginTop,
+			mDock.BeginBottom,
 			this.getDomRefForValueStateMessage(),
 			null,
 			null,
