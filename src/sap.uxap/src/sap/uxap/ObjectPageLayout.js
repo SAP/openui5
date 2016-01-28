@@ -390,16 +390,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._ensureCorrectParentHeight = function () {
-		var $parent;
-
 		if (this._bCorrectParentHeightIsSet) {
 			return;
 		}
 
-		$parent = this.$().parent();
-
-		if (["", "auto"].indexOf($parent.css("height") !== -1)) {
-			$parent.css("height", "100%");
+		/* BCP: 1670054830 - returned the original check here since it was breaking in a case where
+		the object page was embedded in sap.m.Page, the sap.m.Page already had height 100%,
+		but we set it to its content div where the ObjectPage is resulting in the sap.m.Page
+		footer would float above some of the ObjectPage content. Its still a bit strange that we check
+		for the framework controls parent's height, but then we apply height 100% to the direct dom parent. */
+		if (this.getParent().getHeight && ["", "auto"].indexOf(this.getParent().getHeight()) !== -1) {
+			this.$().parent().css("height", "100%");
 		}
 
 		this._bCorrectParentHeightIsSet = true;
