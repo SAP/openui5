@@ -74,6 +74,55 @@
 			 */
 			QUnit.module("Given that some DOM element with child nodes is rendered...", {
 				beforeEach : function() {
+					this.oDomElement = jQuery("<div class='parent' id='parent'></div>");
+
+					jQuery("<div class='child' id='first-child'></div>").appendTo(this.oDomElement);
+					jQuery("<div class='child' id='second-child'></div>").appendTo(this.oDomElement);
+
+					this.oDomElement.appendTo("#content");
+				},
+				afterEach : function() {
+					this.oDomElement.remove();
+				}
+			});
+
+			/**
+			 * getDomRefForCSSSelector test
+			 */
+			QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref", function(assert) {
+				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref");
+				assert.strictEqual(oDomRef.length, 1, "one element found");
+				assert.strictEqual(oDomRef.get(0).getAttribute("id"), "parent", "right element found");
+			});
+
+			QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref > #first-child", function(assert) {
+				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > #first-child");
+				assert.strictEqual(oDomRef.length, 1, "one element found");
+				assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
+			});
+
+			QUnit.test("when the getDomRefForCSSSelector is called for :first-child", function(assert) {
+				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":first-child");
+				assert.strictEqual(oDomRef.length, 1, "one element found");
+				assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
+			});
+
+			QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref > .child", function(assert) {
+				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > .child");
+				assert.strictEqual(oDomRef.length, 2, "two elements found");
+			});
+
+			QUnit.test("when the getDomRefForCSSSelector is called for '> #third-child,> #first-child'", function(assert) {
+				var oDomRef = sap.ui.dt.DOMUtil.getDomRefForCSSSelector(this.oDomElement, "> #third-child, > #first-child");
+				assert.strictEqual(oDomRef.length, 1, "one element found");
+				assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
+			});
+
+			/**
+			 * cloneDOMAndStyles
+			 */
+			QUnit.module("Given that some DOM element with child nodes is rendered...", {
+				beforeEach : function() {
 					jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#content");
 					jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#content");
 
