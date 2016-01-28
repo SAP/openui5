@@ -68,26 +68,27 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("ab-CD");
 			this.oSandbox = sinon.sandbox.create();
 			TestUtils.setupODataV4Server(this.oSandbox, mFixture);
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+			this.oSandbox.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag")
+				.atLeast(0).returns("ab-CD");
 		},
 
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			this.oSandbox.verifyAndRestore();
-			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
-		},
-
-		sDefaultLanguage : sap.ui.getCore().getConfiguration().getLanguage()
+		}
 	});
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var oHelperMock = this.mock(Helper),
+		var mHeaders = {
+				"Accept-Language" : "ab-CD"
+			},
+			oHelperMock = this.mock(Helper),
 			oMetadataRequestor = {},
 			oMetadataRequestorMock = this.mock(MetadataRequestor),
 			oMetaModel,
@@ -106,7 +107,7 @@ sap.ui.require([
 			"serviceUrl in mParameters");
 
 		oHelperMock.expects("buildQueryOptions").returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
 		//code under test
 		oModel = new ODataModel("/foo/");
@@ -114,7 +115,7 @@ sap.ui.require([
 
 		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
 			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
 		//code under test
 		oModel = new ODataModel("/foo/?sap-client=111");
@@ -127,7 +128,7 @@ sap.ui.require([
 
 		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
 			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
 		//code under test, serviceUrlParams overwrite URL parameters from this.sServiceUrl
 		oModel = new ODataModel("/foo/?sap-client=222",

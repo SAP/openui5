@@ -85,7 +85,10 @@ sap.ui.define([
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
 				constructor : function (sServiceUrl, mParameters) {
-					var oUri;
+					var mHeaders = {
+							"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()
+						},
+						oUri;
 
 					// do not pass any parameters to Model
 					Model.apply(this);
@@ -107,11 +110,9 @@ sap.ui.define([
 					this.sServiceUrl = oUri.query("").toString();
 
 					this.oMetaModel = new ODataMetaModel(
-						MetadataRequestor.create(null, this.mUriParameters),
+						MetadataRequestor.create(mHeaders, this.mUriParameters),
 						this.sServiceUrl + "$metadata");
-					this.oRequestor = Requestor.create(this.sServiceUrl, {
-						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
-					});
+					this.oRequestor = Requestor.create(this.sServiceUrl, mHeaders);
 					this.aRoots = [];
 				}
 			});
