@@ -125,11 +125,7 @@
 		jQuery.sap.log.info("Event uploadComplete triggered for file " + sFileName);
 		if (iRequestCounter <= 1) {
 			setTimeout(function() {
-				// Destroys old UploadCollection instance and creates a new one
-				oPage.removeContent(oUploadCollection);
-				oUploadCollection.destroy();
-				oUploadCollection = fnCreateUploadCollection();
-				oPage.insertContent(oUploadCollection);
+				oUploadCollection.removeAllItems();
 			}, 6000);
 			iRequestCounter = 0;
 		} else {
