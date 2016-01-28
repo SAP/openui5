@@ -1553,18 +1553,12 @@
 				var oMeasurement = mMeasurements[sId];
 
 				if (oMeasurement) {
-					return {id: oMeasurement.id,
-							info: oMeasurement.info,
-							start: oMeasurement.start,
-							end: oMeasurement.end,
-							pause: oMeasurement.pause,
-							resume: oMeasurement.resume,
-							time: oMeasurement.time,
-							duration: oMeasurement.duration,
-							completeDuration: oMeasurement.completeDuration,
-							count: oMeasurement.count,
-							average: oMeasurement.average,
-							categories: oMeasurement.categories};
+					// create a flat copy
+					var oCopy = {};
+					for (var sProp in oMeasurement) {
+						oCopy[sProp] = oMeasurement[sProp];
+					}
+					return oCopy;
 				} else {
 					return false;
 				}
@@ -1574,7 +1568,7 @@
 			 * Gets all performance measurements
 			 *
 			 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
-			 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories
+			 * @return {object[]} current array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories
 			 * @name jQuery.sap.measure#getAllMeasurements
 			 * @function
 			 * @public
@@ -1586,19 +1580,18 @@
 			};
 
 			/**
-			 * Gets all performance measurements where a provided filter function returns true.
-			 * The filter function is called for every measurement and should return the measurement to be added.
+			 * Gets all performance measurements where a provided filter function returns a truthy value.
 			 * If no filter function is provided an empty array is returned.
 			 * To filter for certain categories of measurements a fnFilter can be implemented like this
 			 * <code>
 			 * function(oMeasurement) {
-			 *     return oMeasurement.categories.indexOf("rendering") > -1 ? oMeasurement : null
+			 *     return oMeasurement.categories.indexOf("rendering") > -1;
 			 * }</code>
 			 *
 			 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
 			 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
 			 *
-			 * @return {object} [] current measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
+			 * @return {object} [] filtered array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
 			 * @name jQuery.sap.measure#filterMeasurements
 			 * @function
 			 * @public
@@ -1606,16 +1599,17 @@
 		 	 */
 			this.filterMeasurements = function(fnFilter, bCompleted) {
 				var aMeasurements = [],
-					that = this;
-				jQuery.each(mMeasurements, function(sId){
-					var oMeasurement = that.getMeasurement(sId);
-					if (fnFilter) {
-						var oResult = fnFilter(oMeasurement);
-						if (oResult && ((bCompleted === false && oResult.end === 0) || (bCompleted !== false && (!bCompleted || oResult.end)))) {
-							aMeasurements.push(oResult);
+					oMeasurement,
+					bValid;
+				if (fnFilter) {
+					for (var sId in mMeasurements) {
+						oMeasurement = this.getMeasurement(sId);
+						bValid = (bCompleted === false && oMeasurement.end === 0) || (bCompleted !== false && (!bCompleted || oMeasurement.end));
+						if (bValid && fnFilter(oMeasurement)) {
+							aMeasurements.push(oMeasurement);
 						}
 					}
-				});
+				}
 				return aMeasurements;
 			};
 
