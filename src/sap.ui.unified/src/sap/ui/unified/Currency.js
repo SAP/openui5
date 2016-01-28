@@ -81,27 +81,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Currency.prototype.getFormattedValue = function() {
-		if (this.getCurrency() === "*") {
+		var sCurrency = this.getCurrency(),
+			iMaxPrecision,
+			iPadding,
+			iCurrencyDigits,
+			sFormattedCurrencyValue;
+
+		if (sCurrency === "*") {
 			return "";
 		}
 
-		var iPadding = this.getMaxPrecision() - this._oFormat.oLocaleData.getCurrencyDigits(this.getCurrency());
-		var sValue = this._oFormat.format(this.getValue(), this.getCurrency());
+		iCurrencyDigits = this._oFormat.oLocaleData.getCurrencyDigits(sCurrency);
+		iMaxPrecision = this.getMaxPrecision();
+		// Should recalculate iMaxPrecision in order to fix an edge case where decimal precision is not removed
+		// Note: Take into account currencies that do not have decimal values. Example: JPY
+		iMaxPrecision = (iMaxPrecision <= 0 && iCurrencyDigits > 0 ? iMaxPrecision - 1 : iMaxPrecision);
+		iPadding = iMaxPrecision - iCurrencyDigits;
+		sFormattedCurrencyValue = this._oFormat.format(this.getValue(), sCurrency);
 
-		if (iPadding == this.getMaxPrecision() && this.getMaxPrecision() > 0) {
-			sValue += Currency.PUNCTUATION_SPACE;
+		if (iPadding == iMaxPrecision && iMaxPrecision > 0) {
+			sFormattedCurrencyValue += Currency.PUNCTUATION_SPACE;
 		}
 
 		// create spaces
 		if (iPadding > 0) {
-			sValue = jQuery.sap.padRight(sValue, Currency.FIGURE_SPACE, sValue.length + iPadding);
+			sFormattedCurrencyValue = jQuery.sap.padRight(sFormattedCurrencyValue, Currency.FIGURE_SPACE, sFormattedCurrencyValue.length + iPadding);
 		} else if (iPadding < 0) {
-			sValue = sValue.substr(0, sValue.length + iPadding);
+			sFormattedCurrencyValue = sFormattedCurrencyValue.substr(0, sFormattedCurrencyValue.length + iPadding);
 		}
 
-		return sValue;
+		return sFormattedCurrencyValue;
 	};
-
 
 	/**
 	 * Get symbol of the currency, if available
