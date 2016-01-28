@@ -1741,6 +1741,42 @@
 
 	});
 
+	test("test EDM.Binary", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/patient/metadata.xml";
+		oMockServer.simulate(sMetadataUrl, "testdata/patient/");
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		// Test binary of type X'<hexadecimal number>'
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/Patient(X'49534830317A67634C684A75484848746B4C4372444A61477A5534')",
+			dataType : "json"
+		});
+		ok(oResponse.success);
+		ok(oResponse.data.d);
+
+		// Test for binary of type binary'<hexadecimal number>'
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Patient(binary'49534830317A67634C684A75484848746B4C4372444A61477A5534')",
+			dataType : "json"
+		});
+		ok(!oResponse.success);
+		equal(oResponse.statusCode, 404);
+
+		// Test for an illegal binary value
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Patient('notBinary')",
+			dataType : "json"
+		});
+		ok(!oResponse.success);
+		equal(oResponse.statusCode, 400);
+
+		oMockServer.destroy();
+	});
+
 	test("test $format", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
