@@ -108,9 +108,6 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 		// In steps
 		this._iOldStep = 0;
 
-		// Delayed call id for interactions
-		this._iIxId = 0;
-
 		// True if the scroll position was verified. And false if the check was not done yet - for example if the rendering is not done completely
 		this._bScrollPosIsChecked = false;
 
@@ -720,17 +717,8 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 		this._iOldScrollPos = iScrollPos;
 		this._bMouseWheel = false;
 
-		// notify for a newly started interaction, but not more often than every 250ms.
-		if (jQuery.sap.interaction.getActive()) {
-			if (!this._iIxId) {
-				jQuery.sap.interaction.notifyEventStart({type: eAction});
-			} else {
-				jQuery.sap.clearDelayedCall(this._iIxId);
-			}
-			this._iIxId = jQuery.sap.delayedCall(250, this, function() {
-				this._iIxId = 0;
-			});
-		}
+		// notify for a scroll event
+		jQuery.sap.interaction.notifyScrollEvent({type: eAction});
 	};
 
 	ScrollBar.prototype.onThemeChanged = function() {
