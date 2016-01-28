@@ -40,7 +40,7 @@ sap.ui.require([
 								"$EnumMember" : "UI.ImportanceType/High"
 							},
 							"$Type" : "UI.LineItem",
-							"Label" : "Team_Id",
+							"Label" : "Team ID",
 							"Value" : {
 								"$Path" : "Team_Id"
 							}
@@ -55,6 +55,22 @@ sap.ui.require([
 							"$EnumMember"
 								: "UI.TextArrangementType/TextLast"
 						}
+					},
+					"tea_busi.Worker" : {
+						"@UI.Facets" : [{
+							"$Type" : "UI.ReferenceFacet",
+							"Label" : "Team",
+							"Target" : {
+								"$AnnotationPath" : "EMPLOYEE_2_TEAM/@UI.LineItem" // term cast
+							}
+						}],
+						"@UI.LineItem" : [{
+							"$Type" : "UI.LineItem",
+							"Label" : "Team ID",
+							"Value" : {
+								"$Path" : "EMPLOYEE_2_TEAM/Team_Id"
+							}
+						}]
 					}
 				},
 				"@empty" : {}
@@ -128,6 +144,7 @@ sap.ui.require([
 				"$kind" : "Term",
 				"$Type" : "tea_busi.Worker"
 			},
+			"$$Loop" : "$$Loop/.", // some endless loop
 			"$$Term" : "name.space.Term" // replacement for any reference to the term
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
@@ -344,19 +361,16 @@ sap.ui.require([
 	forEach({
 		// "JSON" drill-down ----------------------------------------------------------------------
 		"/" : mScope,
-		"/Foo" : undefined,
 		"/$Foo" : undefined,
 		"/$EntityContainer" : "tea_busi.DefaultContainer",
 		"/tea_busi." : mScope["tea_busi."], // access to schema
 		"/tea_busi./$kind" : "Schema",
 		"/tea_busi.DefaultContainer/$kind" : "EntityContainer",
-		"/tea_busi.DefaultContainer/Foo" : undefined,
 		"/tea_busi.DefaultContainer/$Foo" : undefined,
 		"/tea_busi.TEAM/$Key/not.Found" : undefined,
 		// scope lookup ("17.3 QualifiedName") ----------------------------------------------------
 		"/$EntityContainer/$kind" : "EntityContainer",
 		"/$EntityContainer|$kind" : "EntityContainer",
-		"/$EntityContainer/Foo" : undefined,
 		"/$EntityContainer/$Foo" : undefined,
 		"/$EntityContainer/T€AMS/$Type" : "tea_busi.TEAM",
 		"/$EntityContainer/T€AMS/$Type/Team_Id" : oTeamData.Team_Id,
@@ -376,15 +390,27 @@ sap.ui.require([
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/." : oWorkerData,
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
+		// "14.5.12 Expression edm:Path"
+		// Note: An edm:Path cannot address annotations at a structural property!
+		// Annotations at a navigation property can be addressed like "EMPLOYEE_2_TEAM@empty".
+		// "EMPLOYEE_2_TEAM/@empty" addresses an annotation at the target type.
+		//TODO Do we want to be consequent with this?
+		//     "T€AMS/@UI.LineItem" vs. "T€AMS@empty", no explicit $Type needed?
+		//     "Address@foo" vs. "Address/@foo", no explicit $Type needed?
+		//     For the path/context split, we need to undo the implicit "/" at times! How?
 		"/T€AMS/$Type/@UI.LineItem/0/Value/$Path/@empty"
 			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@empty"],
+		"/EMPLOYEES/$Type/@UI.LineItem/0/Value/$Path/@empty"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@empty"],
+		// "14.5.2 Expression edm:AnnotationPath"
+//TODO		"/EMPLOYEES/$Type/@UI.Facets/0/Target/$AnnotationPath/." // incl. term cast!
+//			: mScope["tea_busi."].$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
 		// placeholder "." ------------------------------------------------------------------------
 		"/." : oContainerData,
 		"/T€AMS/$Type/." : oTeamData,
 		"/T€AMS/." : oTeamData,
 		// @sapui.name ----------------------------------------------------------------------------
 		"/./@sapui.name" : "tea_busi.DefaultContainer",
-		"/Foo/@sapui.name" : "Foo", // "It does not matter whether that name is valid or not."
 		"/tea_busi.DefaultContainer/@sapui.name" : "tea_busi.DefaultContainer",
 		"/tea_busi.DefaultContainer/./@sapui.name" : "tea_busi.DefaultContainer",
 		"/T€AMS/@sapui.name" : "T€AMS",
@@ -430,10 +456,16 @@ sap.ui.require([
 		});
 	});
 	//TODO special cases where inline and external targeting annotations need to be merged!
+	//TODO $AnnotationPath that refers to annotation at nav.property: "EMPLOYEE_2_TEAM@empty"
 	//TODO support also external targeting from a different schema!
-	//TODO also support all variants of "14.5.12 Path", esp. "14.5.2 Expression AnnotationPath"
+	//TODO MySchema.MyFunction/MyParameter --> requires search in array?!
 	//TODO $count?
 	//TODO this.oList => getObject/getProperty MUST also accept object instead of context!
+	//TODO "For annotations targeting a property of an entity type or complex type, the path
+	// expression is evaluated starting at the outermost entity type or complex type named in the
+	// Target of the enclosing edm:Annotations element, i.e. an empty path resolves to the
+	// outermost type, and the first segment of a non-empty path MUST be a property or navigation
+	// property of the outermost type, a type cast, or a term cast." --> consequences for us?
 
 	//*********************************************************************************************
 	QUnit.test("fetchObject: Invalid relative path w/o context", function (assert) {
@@ -450,7 +482,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["/empty.Container/@", "/tea_busi.Worker/@", "/T€AMS/Name/@"].forEach(function (sPath) {
+	["/empty.Container/@", "/T€AMS/Name/@"].forEach(function (sPath) {
 		QUnit.test("fetchObject returns {} (anonymous empty object): " + sPath, function (assert) {
 			var oSyncPromise;
 
@@ -468,6 +500,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
 		forEach({
+			"/$$Loop/." : "Invalid recursion at /$$Loop",
+			// Invalid segment --------------------------------------------------------------------
 			"//." : "Invalid empty segment",
 			"/$Foo/." : "Invalid segment: .",
 			"/$Foo/@bar" : "Invalid segment: @bar",
@@ -476,9 +510,12 @@ sap.ui.require([
 			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid segment: .",
 			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: .",
 			"/tea_busi./$Annotations" : "Invalid segment: $Annotations", // entrance forbidden!
+			// Unknown ... ------------------------------------------------------------------------
 			"/name.space.not.Found" :
 				"Unknown qualified name 'name.space.not.Found'",
-			//TODO take care not to construct these complicated warning messages in vain?
+			"/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
+			"/$EntityContainer/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
+			"/tea_busi.DefaultContainer/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
 			"/$EntityContainer|$kind/Foo" : "Unknown child 'EntityContainer'"
 				+ " of 'tea_busi.DefaultContainer' at /$EntityContainer/$kind",
 			// implicit $Type insertion
