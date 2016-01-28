@@ -685,6 +685,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 		checkInstantUpload.bind(this)();
 		if (!this.getInstantUpload()) {
+			this.aItems = this.getItems();
 			this._getListHeader(this.aItems.length);
 			this._clearList();
 			this._fillList(this.aItems);
@@ -2046,7 +2047,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					break;
 				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
 						this.aItems[i]._requestIdName === sRequestId &&
-						this.aItems[i]._status === UploadCollection._uploadingStatus) {
+						this.aItems[i]._status === UploadCollection._uploadingStatus ||
+						this.aItems[i]._status === UploadCollection._pendingUploadStatus) {
 					this.aItems.splice(i, 1);
 					break;
 				}
