@@ -1032,10 +1032,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var $rowDomRefs = oRow.getDomRefs(true);
 
 			// update row header tooltip
-			if (oRow.getBindingContext() && this._isRowSelectable(oRow.getIndex())) {
-				$rowDomRefs.rowSelector.attr("title", this._oResBundle.getText("TBL_ROW_SELECT"));
-			} else {
-				$rowDomRefs.rowSelector.attr("title", "");
+			if ($rowDomRefs.rowSelector) {
+				if (oRow.getBindingContext() && this._isRowSelectable(oRow.getIndex())) {
+					$rowDomRefs.rowSelector.attr("title", this._oResBundle.getText("TBL_ROW_SELECT"));
+				} else {
+					$rowDomRefs.rowSelector.attr("title", "");
+				}
 			}
 
 			if (iFixedTopRows > 0) {
@@ -1441,7 +1443,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return this;
 		}
 
-		if (iVisibleRowCount <= (this.getFixedRowCount() + this.getFixedBottomRowCount())) {
+		var iFixedRowsCount = this.getFixedRowCount() + this.getFixedBottomRowCount();
+		if (iVisibleRowCount <= iFixedRowsCount && iFixedRowsCount > 0) {
 			jQuery.sap.log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
 			return this;
 		}
