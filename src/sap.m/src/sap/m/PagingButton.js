@@ -82,6 +82,7 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 
 		/**
 		 * This function lazily retrieves the nextButton
+		 * @private
 		 * @returns {sap.m.Button}
 		 */
 		PagingButton.prototype._getNextButton = function () {
@@ -98,6 +99,7 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 
 		/**
 		 * This function lazily retrieves the previousButton
+		 * @private
 		 * @returns {sap.m.Button}
 		 */
 		PagingButton.prototype._getPreviousButton = function () {
@@ -112,6 +114,10 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 			return this.getAggregation("previousButton");
 		};
 
+		/**
+		 * This function attaches the press handlers for both buttons
+		 * @private
+		 */
 		PagingButton.prototype._attachPressEvents = function () {
 			this._getPreviousButton().attachPress(this._handlePositionChange.bind(this, false));
 			this._getNextButton().attachPress(this._handlePositionChange.bind(this, true));
@@ -119,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 
 		/**
 		 * This function handles the position change
-		 * @params {boolean} bIncrease - Indicates the direction of the change of position
+		 * @param {boolean} bIncrease - Indicates the direction of the change of position
 		 * @returns {sap.m.PagingButton} Reference to the control instance for chaining
 		 */
 		PagingButton.prototype._handlePositionChange = function (bIncrease) {
@@ -145,17 +151,28 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 			return this;
 		};
 
+		/**
+		 * Validate the count position to ensure it is correct.
+		 * @param {number} iPosition
+		 * @override
+		 */
 		PagingButton.prototype.setPosition = function (iPosition) {
 			return this._validateProperty("position", iPosition);
 		};
 
+		/**
+		 * Validate the count property to ensure it is correct.
+		 * @param {number} iCount
+		 * @override
+		 */
 		PagingButton.prototype.setCount = function (iCount) {
 			return this._validateProperty("count", iCount);
 		};
 
 		/**
 		 * Validate both the count/position properties and ensure they are correct
-		 * @params {string} sProperty - The property to be checked, {number} iValue - The value to be checked
+		 * @param {string} sProperty - The property to be checked
+		 * @param {number} iValue - The value to be checked
 		 * @returns {sap.m.PagingButton} Reference to the control instance for chaining
 		 */
 		PagingButton.prototype._validateProperty = function (sProperty, iValue) {
@@ -169,7 +186,7 @@ sap.ui.define(['jquery.sap.global', './Button', 'sap/ui/core/Control', 'sap/ui/c
 
 		/**
 		 * Validates the position property to ensure that it's not set higher than the total count
-		 * @params {number} iPosition
+		 * @param {number} iPosition
 		 * @returns {sap.m.PagingButton} Reference to the control instance for chaining
 		 */
 		PagingButton.prototype._enforceValidPosition = function (iPosition) {
