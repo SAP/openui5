@@ -856,7 +856,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				// if binding is updated during suggest event, the list items don't need to be refreshed here
 				// because they will be refreshed in updateItems function.
 				// This solves the popup blinking problem
-				if (!this.bBindingUpdate) {
+				if (!this._bBindingUpdated) {
 					this._refreshItemsDelayed();
 				}
 			});
