@@ -10,7 +10,6 @@ sap.ui.require([
 	"use strict";
 
 	var oEmployeesBody = {
-			"@odata.context" : "$metadata#EMPLOYEES",
 			"value" : [{
 				"@odata.etag" : "W/\"19770724000000.0000000\"",
 				"ID" : "1",
@@ -158,7 +157,6 @@ sap.ui.require([
 			}]
 		},
 		oDepartmentsBody = {
-			"@odata.context" : "$metadata#Departments",
 			"value" : [{
 				"Sector" : "Consulting",
 				"ID" : "1",
@@ -180,7 +178,6 @@ sap.ui.require([
 			}]
 		},
 		oNewEmployeeBody = {
-			"@odata.context" : "$metadata#EMPLOYEES",
 			"ID" : "7",
 			"Name" : "Egon",
 			"AGE" : 17,
@@ -1168,7 +1165,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				statusText: "OK",
 				headers: {
 					"Content-Type" : "application/json;odata.metadata=minimal",
-					"Content-Length" : "2652",
 					"odata-version" : "4.0"
 				},
 				responseText : oEmployeesBody
@@ -1177,7 +1173,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				statusText: "OK",
 				headers: {
 					"Content-Type" : "application/json;odata.metadata=minimal",
-					"Content-Length" : "344",
 					"odata-version" : "4.0"
 				},
 				responseText :  oDepartmentsBody
@@ -1210,7 +1205,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				statusText : "OK",
 				headers : {
 					"Content-Type" : "application/json;odata.metadata=minimal",
-					"Content-Length" : "2652",
 					"odata-version" : "4.0"
 				},
 				responseText : oEmployeesBody
@@ -1218,7 +1212,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				status : 204,
 				statusText : "No Content",
 				headers : {
-					"Content-Length" : "0",
 					"odata-version" : "4.0"
 				},
 				responseText : ""
@@ -1366,7 +1359,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					"odata-version" : "4.0"
 				},
 				responseText : {
-					"@odata.context" : "$metadata#TEAMS",
 					"value" : [
 						{
 							"Budget" : 555.55,
@@ -1470,7 +1462,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : {
-						"@odata.context" : "$metadata#EMPLOYEES/$entity",
 						"ID" : "1",
 						"Name" : "Walter\"s Win's",
 						"AGE" : 52,
@@ -1502,7 +1493,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : {
-						"@odata.context" : "$metadata#EMPLOYEES/$entity",
 						"ID" : "2",
 						"Name" : "Frederic Fall",
 						"AGE" : 32,
@@ -1535,7 +1525,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					"odata-version" : "4.0"
 				},
 				responseText : {
-					"@odata.context" : "$metadata#EMPLOYEES/$entity",
 					"ID" : "5",
 					"Name" : "John Field",
 					"AGE" : 42,
@@ -1568,7 +1557,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : {
-						"@odata.context" : "$metadata#EMPLOYEES/$entity",
 						"ID" : "3",
 						"Name" : "Jonathan Smith",
 						"AGE" : 56,
@@ -1600,7 +1588,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						"odata-version" : "4.0"
 					},
 					responseText : {
-						"@odata.context" : "$metadata#EMPLOYEES/$entity",
 						"ID" : "4",
 						"Name" : "Peter Burke",
 						"AGE" : 39,
