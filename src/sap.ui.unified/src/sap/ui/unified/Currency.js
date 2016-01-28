@@ -107,14 +107,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var sCurrency = this.getCurrency(),
 				iMaxPrecision,
 				iPadding,
+				iCurrencyDigits,
 				sFormattedCurrencyValue;
 
 			if (sCurrency === "*") {
 				return "";
 			}
 
+			iCurrencyDigits = this._oFormat.oLocaleData.getCurrencyDigits(sCurrency);
 			iMaxPrecision = this.getMaxPrecision();
-			iPadding = iMaxPrecision - this._oFormat.oLocaleData.getCurrencyDigits(sCurrency);
+			// Should recalculate iMaxPrecision in order to fix an edge case where decimal precision is not removed
+			// Note: Take into account currencies that do not have decimal values. Example: JPY
+			iMaxPrecision = (iMaxPrecision <= 0 && iCurrencyDigits > 0 ? iMaxPrecision - 1 : iMaxPrecision);
+			iPadding = iMaxPrecision - iCurrencyDigits;
 			sFormattedCurrencyValue = this._oFormat.format(this.getValue(), sCurrency);
 
 			if (iPadding == iMaxPrecision && iMaxPrecision > 0) {
