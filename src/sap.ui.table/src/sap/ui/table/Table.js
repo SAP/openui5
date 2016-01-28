@@ -1478,6 +1478,150 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
+	 * Requests fixed bottom row contexts from the binding.
+	 * @returns {sap.ui.model.Context[]} Array of fixed bottom row context
+	 * @private
+	 */
+	Table.prototype._getFixedBottomRowContexts = function (iFixedBottomRowCount, iBindingLength) {
+		var oBinding = this.getBinding("rows");
+		var aContexts = [];
+		if (!oBinding) {
+			return aContexts;
+		}
+
+		iFixedBottomRowCount = iFixedBottomRowCount || this.getFixedBottomRowCount();
+		iBindingLength = iBindingLength || oBinding.getLength();
+
+		var iVisibleRowCount = this.getVisibleRowCount();
+		if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < iBindingLength) {
+			aContexts = this._getContexts(iBindingLength - iFixedBottomRowCount, iFixedBottomRowCount, 1);
+		}
+
+		return aContexts;
+	};
+
+	/**
+	 * Requests fixed top row contexts from the binding.
+	 * @returns {sap.ui.model.Context[]} Array of fixed top row context
+	 * @private
+	 */
+	Table.prototype._getFixedRowContexts = function(iFixedRowCount) {
+		iFixedRowCount = iFixedRowCount || this.getFixedRowCount();
+		if (iFixedRowCount > 0) {
+			return this._getContexts(0, iFixedRowCount);
+		} else {
+			return [];
+		}
+	};
+
+	Table.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			return oBinding.getContexts(iStartIndex, iLength, iThreshold);
+		} else {
+			return [];
+		}
+	};
+
+	/**
+	 * Requests all required contexts for visibleRowCount from the binding
+	 * @returns {sap.ui.model.Context[]} Array of row contexts
+	 * @private
+	 */
+	Table.prototype._getRowContexts = function (iVisibleRows) {
+		var aContexts = [];
+		var oBinding = this.getBinding("rows");
+		var iVisibleRowCount = iVisibleRows || this.getRows().length;
+		if (!oBinding || iVisibleRowCount <= 0) {
+			// without binding there are no contexts to be retrieved
+			return [];
+		}
+
+		var iFirstVisibleRow = this.getFirstVisibleRow();
+
+		var iFixedRowCount = this.getFixedRowCount();
+		var iFixedBottomRowCount = this.getFixedBottomRowCount();
+		var iReceivedLength = 0;
+		var aTmpContexts;
+
+		// because of the analytical table the fixed bottom row must always be requested separately as it is the grand
+		// total row for the table.
+		var iLength = iVisibleRowCount - iFixedBottomRowCount;
+		var iMergeOffsetScrollRows = 0;
+		var iMergeOffsetBottomRow = iLength;
+
+		// if the threshold is not explicitly disabled by setting it to 0,
+		// the default threshold should be at the the visibleRowCount.
+		var iThreshold = this.getThreshold();
+		iThreshold = iThreshold ? Math.max(iVisibleRowCount, iThreshold) : 0;
+
+		// data can be requested with a single getContexts call if the fixed rows and the scrollable rows overlap.
+		var iStartIndex = iFirstVisibleRow;
+
+		var fnMergeArrays = function (aTarget, aSource, iStartIndex) {
+			for (var i = 0; i < aSource.length; i++) {
+				aTarget[iStartIndex + i] = aSource[i];
+			}
+		};
+
+		if (iFixedRowCount > 0 && iFirstVisibleRow > 0) {
+			// since there is a gap between first visible row and fixed rows it must be requested separately
+			// the first visible row always starts counting with 0 in the scroll part of the table no matter
+			// how many fixed rows there are.
+			iStartIndex = iFirstVisibleRow + iFixedRowCount;
+			// length must be reduced by number of fixed rows since they were just requested separately
+			iLength -= iFixedRowCount;
+			iMergeOffsetScrollRows = iFixedRowCount;
+			// retrieve fixed rows separately
+			aTmpContexts = this._getFixedRowContexts(iFixedRowCount);
+			iReceivedLength += aTmpContexts.length;
+			aContexts = aContexts.concat(aTmpContexts);
+		}
+
+		// request scroll part contexts but may include fixed rows depending on scroll and length settings
+		// if this is done before requesting fixed bottom rows, it saves some performance for the analytical table
+		// since the tree gets only build once (as result of getContexts call). If first the fixed bottom row would
+		// be requested the analytical binding would build the tree twice.
+		var iBindingLength = 0;
+
+		// if a paginator is used as navigation mode there may be a gap between the fixed bottom rows and the scrollable
+		// rows of the table. This must be considered when requesting contexts to make sure the fixed bottom row contexts
+		// are not requested twice. For scroll scenarios however it's not applicable and will brake when using TreeBindings
+		// as the TreeBindingAdapters rely on larger getContexts calls in order to fully build up the tree structure
+		if (this.getNavigationMode === sap.ui.table.NavigationMode.Paginator) {
+			iBindingLength = oBinding.getLength();
+			iLength = Math.min(iLength, (Math.max(iBindingLength - iFirstVisibleRow - iFixedBottomRowCount, 0)));
+		}
+		aTmpContexts = this._getContexts(iStartIndex, iLength, iThreshold);
+
+		// get the binding length after getContext call to make sure that for TreeBindings the client tree was correctly rebuilt
+		// this step can be moved to an earlier point when the TreeBindingAdapters all implement tree invalidation in case of getLength calls
+		iBindingLength = oBinding.getLength();
+		iReceivedLength += aTmpContexts.length;
+		fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetScrollRows);
+
+		// request binding length after getContexts call to make sure that in case of tree binding and analytical binding
+		// the tree gets only built once (by getContexts call).
+		iMergeOffsetBottomRow = Math.min(iMergeOffsetBottomRow, Math.max(iBindingLength - iFixedBottomRowCount, 0));
+		if (iFixedBottomRowCount > 0) {
+			// retrieve fixed bottom rows separately
+			// instead of just concatenating them to the existing contexts it must be made sure that they are put
+			// to the correct row index otherwise they would flip into the scroll area in case data gets requested for
+			// the scroll part.
+			aTmpContexts = this._getFixedBottomRowContexts(iFixedBottomRowCount, iBindingLength);
+			iReceivedLength += aTmpContexts.length;
+			fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetBottomRow);
+		}
+
+		this._setBusy({
+			requestedLength: iFixedRowCount + iLength + iFixedBottomRowCount,
+			receivedLength: iReceivedLength,
+			contexts: aContexts });
+
+		return aContexts;
+	};
+
+	/**
 	 * refresh rows
 	 * @private
 	 */
@@ -1812,31 +1956,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 	};
 
-
 	// =============================================================================
 	// PRIVATE TABLE STUFF :)
 	// =============================================================================
-
-	/**
-	 *
-	 * @param oBinding
-	 * @returns {*}
-	 * @private
-	 */
-	Table.prototype._getFixedBottomRowContexts = function (oBinding) {
-		var iFixedBottomRowCount = this.getFixedBottomRowCount();
-		var iVisibleRowCount = this.getVisibleRowCount();
-		var aContexts;
-		if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < oBinding.getLength()) {
-			aContexts = oBinding.getContexts(oBinding.getLength() - iFixedBottomRowCount, iFixedBottomRowCount, 1);
-		} else {
-			aContexts = [];
-		}
-
-		return aContexts;
-	};
-
-
 	/**
 	 * creates the rows for the rows aggregation
 	 * @private
@@ -1875,26 +1997,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var oBinding = this.getBinding("rows");
 		var oBindingInfo = this.mBindingInfos["rows"];
 		if (oBinding && iVisibleRowCount > 0) {
-			// if thresholding is 0 then it is disabled and we forward 0 to the binding
-			var iThreshold = this.getThreshold() ? Math.max(this.getVisibleRowCount(), this.getThreshold()) : 0;
-			var iFixedBottomRowCount = this.getFixedBottomRowCount();
-			aContexts = oBinding.getContexts(iStartIndex, iVisibleRowCount - iFixedBottomRowCount, iThreshold);
-			this._setBusy({
-				requestedLength: iVisibleRowCount - iFixedBottomRowCount,
-				receivedLength: aContexts.length,
-				contexts: aContexts });
-
-			var aFixedBottomContexts = [];
-			aFixedBottomContexts = this._getFixedBottomRowContexts(oBinding);
-
-			aContexts = aContexts.concat(aFixedBottomContexts);
-
-			if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < oBinding.getLength()) {
-				this._setBusy({
-					requestedLength: iFixedBottomRowCount,
-					receivedLength: aFixedBottomContexts.length,
-					contexts: aFixedBottomContexts });
-			}
+			aContexts = this._getRowContexts();
 		}
 		for (var i = 0; i < iVisibleRowCount; i++) {
 			var oClone = oTemplate.clone("row" + i); // TODO: Isn't the following required! + "-" + this.getId());
@@ -2096,61 +2199,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._updateBindingContexts = function(bSuppressUpdate) {
-
 		var aRows = this.getRows(),
 			oBinding = this.getBinding("rows"),
 			oBindinginfo = this.mBindingInfos["rows"],
-			aFixedContexts,
-			aContexts,
-			aFixedBottomContexts,
-			iFixedRows = this.getFixedRowCount(),
-			iFixedBottomRows = this.getFixedBottomRowCount(),
-			iVisibleRowCount = this.getVisibleRowCount();
+			aContexts;
 
 		// fetch the contexts from the binding
 		if (oBinding) {
-			var iThreshold;
-			if ((iFixedRows > 0 || iFixedBottomRows > 0) && aRows.length > 0) {
-				// thresholding is deactivated when value is 0
-				var iTotalFixedRows = iFixedRows + iFixedBottomRows;
-				iThreshold = this.getThreshold() ? Math.max((this.getVisibleRowCount() - iTotalFixedRows), this.getThreshold()) : 0;
-				var iRequestedLength = Math.max(0, aRows.length - iTotalFixedRows);
-				aContexts = oBinding.getContexts(this.getFirstVisibleRow() + iFixedRows, iRequestedLength, iThreshold);
-				this._setBusy({
-					requestedLength: iRequestedLength,
-					receivedLength: aContexts.length,
-					contexts: aContexts });
-				// static rows: we fetch the contexts without threshold to avoid loading
-				// of unnecessary data. Make sure to fetch after the normal rows to avoid
-				// outgoing double requests for the contexts.
-				if (iFixedRows > 0) {
-					aFixedContexts = oBinding.getContexts(0, iFixedRows);
-					this._setBusy({
-						requestedLength: iFixedRows,
-						receivedLength: aFixedContexts.length,
-						contexts: aFixedContexts });
-
-					aContexts = aFixedContexts.concat(aContexts);
-				}
-
-				var aFixedBottomContexts = this._getFixedBottomRowContexts(oBinding);
-				aContexts = aContexts.concat(aFixedBottomContexts);
-
-				if (iFixedBottomRows > 0 && (iVisibleRowCount - iFixedBottomRows) < oBinding.getLength()) {
-					this._setBusy({
-						requestedLength: iFixedBottomRows,
-						receivedLength: aFixedBottomContexts.length,
-						contexts: aFixedBottomContexts });
-				}
-			} else if (aRows.length > 0) {
-				// thresholding is deactivated when value is 0
-				iThreshold = this.getThreshold() ? Math.max(this.getVisibleRowCount(), this.getThreshold()) : 0;
-				aContexts = oBinding.getContexts(this.getFirstVisibleRow(), aRows.length, iThreshold);
-				this._setBusy({
-					requestedLength: aRows.length,
-					receivedLength: aContexts.length,
-					contexts: aContexts });
-			}
+			aContexts = this._getRowContexts();
 		}
 
 		// update the binding contexts only for the visible columns
@@ -2166,7 +2222,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				}
 			}
 		}
-
 	};
 
 	/**

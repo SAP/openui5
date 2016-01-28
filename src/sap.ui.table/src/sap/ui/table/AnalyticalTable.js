@@ -78,8 +78,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * Overidden from Table.js
 	 * @overrides
 	 */
-	AnalyticalTable.prototype._getFixedBottomRowContexts = function (oBinding) {
-		return oBinding.getGrandTotalContext();
+	AnalyticalTable.prototype._getFixedBottomRowContexts = function () {
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			return [oBinding.getGrandTotalContext()];
+		}
 	};
 
 	/**
