@@ -45,6 +45,15 @@
 				bMultiSelect = oEvent.getParameter("multiSelect");
 			};
 
+			var oIntervalStartDate;
+			var oIntervalEndDate;
+			var bSubInterval = false;
+			var handleIntervalSelect = function(oEvent){
+				oIntervalStartDate = oEvent.getParameter("startDate");
+				oIntervalEndDate = oEvent.getParameter("endDate");
+				bSubInterval = oEvent.getParameter("subInterval");
+			};
+
 			var bStartDateChange = false;
 			var oStartDate;
 			var handleStartDateChange = function(oEvent){
@@ -68,6 +77,7 @@
 				startDate: new Date("2015", "01", "01", "10", "15"),
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
+				intervalSelect: handleIntervalSelect,
 				leaveRow: handleLeaveRow,
 				appointments: [new sap.ui.unified.CalendarAppointment("App0", {
 													startDate: new Date("2015", "01", "01", "08", "15"),
@@ -204,7 +214,8 @@
 				intervalType: sap.ui.unified.CalendarIntervalType.Day,
 				tooltip: "Row tooltip",
 				showIntervalHeaders: false,
-				select: handleSelect
+				select: handleSelect,
+				intervalSelect: handleIntervalSelect
 			}).placeAt("uiArea2");
 
 			qutils.delayTestStart();
@@ -715,6 +726,84 @@
 				ok(bMultiSelect, "Appointment 1: multiple selection");
 				ok(sap.ui.getCore().byId("App3").getSelected(), "Appointment3: selected property set");
 				ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
+			});
+
+			test("click on interval", function() {
+				oIntervalStartDate = undefined;
+				oIntervalEndDate = undefined;
+				bSubInterval = undefined;
+				qutils.triggerEvent("click", "Row1-AppsInt1");
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201502011100", "StartDate set");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502011159", "EndDate set");
+				ok(!bSubInterval, "No sub-interval clicked");
+
+				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+				sap.ui.getCore().applyChanges();
+				oIntervalStartDate = undefined;
+				oIntervalEndDate = undefined;
+				bSubInterval = undefined;
+				qutils.triggerEvent("click", "Row1-AppsInt1");
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201502020000", "StartDate set");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502022359", "EndDate set");
+				ok(!bSubInterval, "No sub-interval clicked");
+
+				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+				sap.ui.getCore().applyChanges();
+				oIntervalStartDate = undefined;
+				oIntervalEndDate = undefined;
+				bSubInterval = undefined;
+				qutils.triggerEvent("click", "Row1-AppsInt1");
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201503010000", "StartDate set");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201503312359", "EndDate set");
+				ok(!bSubInterval, "No sub-interval clicked");
+
+				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hours);
+				sap.ui.getCore().applyChanges();
+			});
+
+			test("click on sub-interval", function() {
+				oRow1.setShowSubIntervals(true);
+				sap.ui.getCore().applyChanges();
+				var aSubIntervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
+				oIntervalStartDate = undefined;
+				oIntervalEndDate = undefined;
+				bSubInterval = undefined;
+				qutils.triggerEvent("click", aSubIntervals[1]);
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201502011115", "StartDate set");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502011129", "EndDate set");
+				ok(bSubInterval, "sub-interval clicked");
+
+				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+				sap.ui.getCore().applyChanges();
+				aSubIntervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
+				oIntervalStartDate = undefined;
+				oIntervalEndDate = undefined;
+				bSubInterval = undefined;
+				qutils.triggerEvent("click", aSubIntervals[1]);
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201502020100", "StartDate set");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201502020159", "EndDate set");
+				ok(bSubInterval, "sub-interval clicked");
+
+				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+				sap.ui.getCore().applyChanges();
+				aSubIntervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
+				oIntervalStartDate = undefined;
+				oIntervalEndDate = undefined;
+				bSubInterval = undefined;
+				qutils.triggerEvent("click", aSubIntervals[1]);
+				ok(oIntervalStartDate && oIntervalEndDate, "IntervalSelect event fired")
+				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201503020000", "StartDate set");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201503022359", "EndDate set");
+				ok(bSubInterval, "sub-interval clicked");
+
+				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hours);
+				oRow1.setShowSubIntervals(false);
+				sap.ui.getCore().applyChanges();
 			});
 
 			test("keyboard arrow navigation", function() {

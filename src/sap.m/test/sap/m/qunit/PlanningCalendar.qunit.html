@@ -71,9 +71,15 @@
 
 			var bIntervalSelect = false;
 			var oIntervalStartDate;
+			var oIntervalEndDate;
+			var bSubInterval;
+			var oIntervalRow;
 			var handleIntervalSelect = function(oEvent){
 				bIntervalSelect = true;
 				oIntervalStartDate = oEvent.getParameter("startDate");
+				oIntervalEndDate = oEvent.getParameter("endDate");
+				bSubInterval = oEvent.getParameter("bubInterval");
+				oIntervalRow = oEvent.getParameter("row");
 			};
 
 			var createPlanningCalendar = function(sID, oSearchField, oButton) {
@@ -911,12 +917,30 @@
 			test("intervalselect", function() {
 				bIntervalSelect = false;
 				oIntervalStartDate = undefined;
+				oIntervalEndDate = undefined;
+				bSubInterval = undefined,
+				oIntervalRow = undefined,
 				jQuery("#PC1-TimeInt--TimesRow-201501011200").focus();
 				qutils.triggerKeyboardEvent("PC1-TimeInt--TimesRow-201501011200", "ENTER");
 				sap.ui.getCore().applyChanges();
 				ok(bIntervalSelect, "intervalSelect fired");
 				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011200", "interval start date returned");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201501011259", "interval end date returned");
+				ok(!bSubInterval, "No sub-interval");
+				ok(!oIntervalRow, "No row");
 				ok(!jQuery("#PC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemSel"), "interval not longer selected");
+
+				bIntervalSelect = false;
+				oIntervalStartDate = undefined;
+				oIntervalEndDate = undefined;
+				bSubInterval = undefined,
+				oIntervalRow = undefined,
+				qutils.triggerEvent("click", "PC1-Row1-CalRow-AppsInt3");
+				ok(bIntervalSelect, "intervalSelect fired");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011100", "interval start date returned");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201501011159", "interval end date returned");
+				ok(!bSubInterval, "No sub-interval");
+				equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
 			});
 
 			module("Interaction");
