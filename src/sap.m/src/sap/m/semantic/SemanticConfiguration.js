@@ -174,7 +174,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 						moveToOverflow: false,
 						stayInOverflow: false
 					}),
-					type: sap.m.ButtonType.Reject,
 					ariaLabelledBy: _ensureInvisibleText("DeleteAction", oBundle.getText("SEMANTIC_CONTROL_DELETE"))
 				};
 			},
