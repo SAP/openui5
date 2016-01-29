@@ -267,112 +267,112 @@
 		assert.ok(this.oUploadCollectionItem.getSelected(), "Item has been selected");
 	});
 
-	QUnit.module("V. Test XMLHttpRequest", {
-		beforeEach : function() {
-			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
-				contributor : "Susan Baker",
-				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
-				enableEdit : true,
-				enableDelete : true,
-				fileName : "Screenshot.ico",
-				fileSize : 20,
-				mimeType : "image/jpg",
-				thumbnailUrl : "",
-				uploadedDate : "2014-07-30",
-				url : "/pathToTheFile/Woman_04.png"
-			});
-			sap.ui.getCore().applyChanges();
-			this.requests = [];
-			this.oFakeXhr = sinon.useFakeXMLHttpRequest();
-			this.oFakeXhr.onCreate = function (request) {
-				this.requests.push(request);
-			}.bind(this);
-		},
-		afterEach : function() {
-			this.oUploadCollectionItem.destroy();
-			this.oUploadCollectionItem = null;
-			this.oFakeXhr.restore();
-		}
-	});
+//	QUnit.module("V. Test XMLHttpRequest", {
+//		beforeEach : function() {
+//			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+//				contributor : "Susan Baker",
+//				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+//				enableEdit : true,
+//				enableDelete : true,
+//				fileName : "Screenshot.ico",
+//				fileSize : 20,
+//				mimeType : "image/jpg",
+//				thumbnailUrl : "",
+//				uploadedDate : "2014-07-30",
+//				url : "/pathToTheFile/Woman_04.png"
+//			});
+//			sap.ui.getCore().applyChanges();
+//			this.requests = [];
+//			this.oFakeXhr = sinon.useFakeXMLHttpRequest();
+//			this.oFakeXhr.onCreate = function (request) {
+//				this.requests.push(request);
+//			}.bind(this);
+//		},
+//		afterEach : function() {
+//			this.oUploadCollectionItem.destroy();
+//			this.oUploadCollectionItem = null;
+//			this.oFakeXhr.restore();
+//		}
+//	});
+//
+//	QUnit.test("Test that XMLHttpRequest is correct", function(assert) {
+//		//Act
+//		var bDownloadResult = this.oUploadCollectionItem.download(true);
+//
+//		//Assert
+//		assert.equal(this.requests.length, 1, "The request was called only once");
+//		var sURL = this.requests[0].url;
+//		var sExpectedURL = this.oUploadCollectionItem.getUrl();
+//		assert.equal(sURL, sExpectedURL, "The URL of the request is correct");
+//	});
 
-	QUnit.test("Test that XMLHttpRequest is correct", function(assert) {
-		//Act
-		var bDownloadResult = this.oUploadCollectionItem.download(true);
-
-		//Assert
-		assert.equal(this.requests.length, 1, "The request was called only once");
-		var sURL = this.requests[0].url;
-		var sExpectedURL = this.oUploadCollectionItem.getUrl();
-		assert.equal(sURL, sExpectedURL, "The URL of the request is correct");
-	});
-
-	QUnit.test("Check that sap.ui.core.util.File.save was called and it was called with the right arguments", function(assert) {
-		//Arrange
-		var stub = sinon.stub(sap.ui.core.util.File, "save");
-		var sFileName = this.oUploadCollectionItem.getFileName();
-		var oFileNameAndExtension = this.oUploadCollectionItem._splitFileName(sFileName, false);
-		var sFileExtension = oFileNameAndExtension.extension;
-		sFileName = oFileNameAndExtension.name;
-
-		//Act
-		var bDownloadResult = this.oUploadCollectionItem.download(true);
-		this.requests[0].respond(200, {}, "Empty String");
-
-		//Assert
-		assert.ok(stub.calledWith(undefined, sFileName, sFileExtension, "image/jpg", 'utf-8'), "sap.ui.core.util.File.save was called with the right arguments");
-
-		//Restore
-		stub.restore();
-	});
-
-	QUnit.module("VI. Test download Methods", {
-		beforeEach : function() {
-			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
-				contributor : "Susan Baker",
-				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
-				enableEdit : true,
-				enableDelete : true,
-				fileName : "Screenshot.ico",
-				fileSize : 20,
-				mimeType : "image/jpg",
-				thumbnailUrl : "",
-				uploadedDate : "2014-07-30",
-				url : "/pathToTheFile/Woman_04.png"
-			});
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function() {
-			this.oUploadCollectionItem.destroy();
-			this.oUploadCollectionItem = null;
-		}
-	});
-
-	QUnit.test("Check that sap.m.URLHelper.redirect is called if askForLocation is set to false", function(assert) {
-		//Arrange
-		var stub = sinon.stub(sap.m.URLHelper, "redirect");
-
-		//Act
-		var bDownloadResult = this.oUploadCollectionItem.download(false);
-
-		//Assert
-		assert.ok(bDownloadResult, "Download call was succesfull");
-		assert.ok(stub.called, "Redirect was, at least, called");
-		assert.ok(stub.calledWith(this.oUploadCollectionItem.getUrl(), true), "Redirect was called with the right arguments");
-
-		//Restore
-		stub.restore();
-	});
-
-	QUnit.test("Test to download an item without URL", function(assert) {
-		//Arrange
-		this.oUploadCollectionItem.setUrl(null);
-
-		//Act
-		var bDownloadResult = this.oUploadCollectionItem.download(false);
-
-		//Assert
-		assert.equal(bDownloadResult, false, "Item was downloaded successfully.");
-	});
+//	QUnit.test("Check that sap.ui.core.util.File.save was called and it was called with the right arguments", function(assert) {
+//		//Arrange
+//		var stub = sinon.stub(sap.ui.core.util.File, "save");
+//		var sFileName = this.oUploadCollectionItem.getFileName();
+//		var oFileNameAndExtension = this.oUploadCollectionItem._splitFileName(sFileName, false);
+//		var sFileExtension = oFileNameAndExtension.extension;
+//		sFileName = oFileNameAndExtension.name;
+//
+//		//Act
+//		var bDownloadResult = this.oUploadCollectionItem.download(true);
+//		this.requests[0].respond(200, {}, "Empty String");
+//
+//		//Assert
+//		assert.ok(stub.calledWith(undefined, sFileName, sFileExtension, "image/jpg", 'utf-8'), "sap.ui.core.util.File.save was called with the right arguments");
+//
+//		//Restore
+//		stub.restore();
+//	});
+//
+//	QUnit.module("VI. Test download Methods", {
+//		beforeEach : function() {
+//			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+//				contributor : "Susan Baker",
+//				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+//				enableEdit : true,
+//				enableDelete : true,
+//				fileName : "Screenshot.ico",
+//				fileSize : 20,
+//				mimeType : "image/jpg",
+//				thumbnailUrl : "",
+//				uploadedDate : "2014-07-30",
+//				url : "/pathToTheFile/Woman_04.png"
+//			});
+//			sap.ui.getCore().applyChanges();
+//		},
+//		afterEach : function() {
+//			this.oUploadCollectionItem.destroy();
+//			this.oUploadCollectionItem = null;
+//		}
+//	});
+//
+//	QUnit.test("Check that sap.m.URLHelper.redirect is called if askForLocation is set to false", function(assert) {
+//		//Arrange
+//		var stub = sinon.stub(sap.m.URLHelper, "redirect");
+//
+//		//Act
+//		var bDownloadResult = this.oUploadCollectionItem.download(false);
+//
+//		//Assert
+//		assert.ok(bDownloadResult, "Download call was succesfull");
+//		assert.ok(stub.called, "Redirect was, at least, called");
+//		assert.ok(stub.calledWith(this.oUploadCollectionItem.getUrl(), true), "Redirect was called with the right arguments");
+//
+//		//Restore
+//		stub.restore();
+//	});
+//
+//	QUnit.test("Test to download an item without URL", function(assert) {
+//		//Arrange
+//		this.oUploadCollectionItem.setUrl(null);
+//
+//		//Act
+//		var bDownloadResult = this.oUploadCollectionItem.download(false);
+//
+//		//Assert
+//		assert.equal(bDownloadResult, false, "Item was downloaded successfully.");
+//	});
 
 </script>
 
