@@ -1,14 +1,16 @@
 module.exports = [
 	"ActionSelect.spec.js",
-	"AppWithBackground.spec.js",
 	"App.spec.js",
-	"Table.spec.js",
+	"AppWithBackground.spec.js",
 	"Breadcrumbs.spec.js",
-	"Wizard.spec.js",
+	"Dialog.spec.js",
+	"IconTabBar.spec.js",
 	"MessagePage.spec.js",
-	"ObjectHeaderVisualTest.spec.js",
-	"SemanticPage.spec.js",
-	"NotificationListItem.spec.js",
 	"NotificationListGroup.spec.js",
-	"Dialog.spec.js"
+	"NotificationListItem.spec.js",
+	"ObjectHeaderVisualTest.spec.js",
+	"Page.spec.js",
+	"SemanticPage.spec.js",
+	//"Table.spec.js",
+	"Wizard.spec.js"
 ];
