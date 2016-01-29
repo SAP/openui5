@@ -37,9 +37,7 @@ sap.ui.require([
 							matchers:  new BindingPath({
 								path: "/Posts('" + sId + "')"
 							}),
-							success: function (aListItems) {
-								aListItems[0].$().trigger("tap");
-							},
+							actions: new Press(),
 							errorMessage: "No list item with the id " + sId + " was found."
 						});
 					}
