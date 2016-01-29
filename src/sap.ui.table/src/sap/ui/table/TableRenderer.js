@@ -972,7 +972,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			this.renderTableCell(rm, oTable, oRow, aCells[cell], cell, bFixedTable, iStartColumn, iEndColumn, aVisibleColumns);
 		}
 		if (!bFixedTable && bHasOnlyFixedColumns && aCells.length > 0) {
-			rm.write("<td></td>");
+			rm.write("<td");
+			rm.addClass("sapUiTableTDDummy");
+			rm.writeClasses();
+			rm.write(">");
+			rm.write("</td>");
 		}
 		rm.write("</tr>");
 
