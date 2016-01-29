@@ -312,7 +312,8 @@ sap.ui.define([
 			var fnOriginalCheck = oOptions.check,
 				vControl = null,
 				fnOriginalSuccess = oOptions.success,
-				vResult;
+				vResult,
+				bPluginLooksForControls;
 
 			oOptions.check = function () {
 				//retrieve the constructor instance
@@ -326,11 +327,14 @@ sap.ui.define([
 
 				// Create a new options object for the plugin to keep the original one as is
 				var oPluginOptions = $.extend({}, oOptions, {
-					// only pass interactable if there are actions for backwards compatibility
-					interactable: !!vActions
-				});
+						// only pass interactable if there are actions for backwards compatibility
+						interactable: !!vActions
+					}),
+					oPlugin = Opa5.getPlugin();
 
-				vControl = Opa5.getPlugin().getMatchingControls(oPluginOptions);
+				bPluginLooksForControls = oPlugin._isLookingForAControl(oPluginOptions);
+
+				vControl = oPlugin.getMatchingControls(oPluginOptions);
 
 				//Search for a controlType in a view or open dialog
 				if ((oOptions.viewName || oOptions.searchOpenDialogs) && !oOptions.id && !vControl || (vControl && vControl.length === 0)) {
@@ -368,7 +372,8 @@ sap.ui.define([
 					return false;
 				}
 
-				if (vControl && oOptions.matchers) {
+				// If the plugin does not look for controls execute matchers even if vControl is falsy
+				if ((vControl || !bPluginLooksForControls) && oOptions.matchers) {
 					vResult = oMatcherPipeline.process({
 						matchers: oOptions.matchers,
 						control: vControl
@@ -391,7 +396,8 @@ sap.ui.define([
 			};
 
 			oOptions.success = function () {
-				if (vActions && vResult) {
+				// If the plugin does not look for controls execute actions even if vControl is falsy
+				if (vActions && (vResult || !bPluginLooksForControls)) {
 					oActionPipeline.process({
 						actions: vActions,
 						control: vResult

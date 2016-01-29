@@ -26,7 +26,12 @@ sap.ui.define(['jquery.sap.global',
 	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline) {
 		var oMatcherPipeline = new MatcherPipeline(),
 			oInteractableMatcher = new Interactable(),
-			oVisibleMatcher = new Visible();
+			oVisibleMatcher = new Visible(),
+			aControlSelectorsForMatchingControls = [
+				"id",
+				"viewName",
+				"controlType"
+			];
 
 		/**
 		 * @class A Plugin to search UI5 controls.
@@ -306,6 +311,18 @@ sap.ui.define(['jquery.sap.global',
 				}
 
 				return fnControlType;
+			},
+
+			/**
+			 * Checks if the option when they would be passed to getMatchingControls could return a result
+			 * @param oOptions
+			 * @returns boolean
+			 * @private
+			 */
+			_isLookingForAControl : function (oOptions) {
+				return Object.keys(oOptions).some(function (sKey) {
+					return aControlSelectorsForMatchingControls.indexOf(sKey) !== -1;
+				});
 			},
 
 			_filterUniqueControlsByCondition : function (aControls, fnCondition) {
