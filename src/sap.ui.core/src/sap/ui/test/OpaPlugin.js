@@ -43,8 +43,9 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		var OpaPlugin = UI5Object.extend("sap.ui.test.OpaPlugin", /** @lends sap.ui.test.OpaPlugin.prototype */ {
 
-			constructor : function() {
+			constructor : function(sLogPrefix) {
 				var that = this;
+				this._sLogPrefix = sLogPrefix || "";
 
 				sap.ui.getCore().registerPlugin({
 					startPlugin: function(oCore) {
@@ -126,7 +127,7 @@ sap.ui.define(['jquery.sap.global',
 					sViewId;
 
 				if (!oView) {
-					$.sap.log.info("Found no view with the name: " + sViewName);
+					$.sap.log.debug("Found no view with the name: " + sViewName, this._sLogPrefix);
 					return null;
 				}
 
@@ -142,7 +143,12 @@ sap.ui.define(['jquery.sap.global',
 				}
 
 				if (typeof oOptions.id === "string") {
-					return oView.byId(oOptions.id);
+					var oElement = oView.byId(oOptions.id);
+					if (!oElement) {
+						$.sap.log.debug("Found no control with the id " + oOptions.id + " in the view " + sViewName, this._sLogPrefix);
+					}
+
+					return oElement;
 				}
 
 				var aAllControlsOfTheView = this.getAllControlsWithTheParent(oView, oOptions.controlType);

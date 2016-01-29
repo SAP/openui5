@@ -36,7 +36,7 @@ sap.ui.define([
 			 ActionPipeline) {
 		"use strict";
 
-		var oPlugin = new OpaPlugin(),
+		var oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
