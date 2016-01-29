@@ -9,5 +9,6 @@ module.exports = [
 	"ObjectHeaderVisualTest.spec.js",
 	"SemanticPage.spec.js",
 	"NotificationListItem.spec.js",
-	"NotificationListGroup.spec.js"
+	"NotificationListGroup.spec.js",
+	"Dialog.spec.js"
 ];
