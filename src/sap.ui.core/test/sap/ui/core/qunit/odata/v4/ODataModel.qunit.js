@@ -142,9 +142,11 @@ sap.ui.require([
 
 		this.mock(Requestor).expects("create").withExactArgs("/foo/", {
 			"Accept-Language" : "ab-CD"
+		}, {
+			"sap-client" : "123"
 		}).returns(oRequestor);
 
-		oModel = new ODataModel("/foo/");
+		oModel = new ODataModel("/foo/?sap-client=123");
 
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);
@@ -292,7 +294,7 @@ sap.ui.require([
 
 			this.mock(oModel.oRequestor).expects("request")
 				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
-				.withExactArgs("POST", getServiceUrl("/EMPLOYEES") + oModel._sQuery, null,
+				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, null,
 					oEmployeeData).returns(oPromise);
 
 			assert.strictEqual(oModel.create("/EMPLOYEES", oEmployeeData), oPromise);
@@ -302,14 +304,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	[undefined, "?foo=bar"].forEach(function (sQuery) {
 		QUnit.test("remove", function (assert) {
-			var sCanonicalUrl = getServiceUrl("/EMPLOYEES(ID='1')"),
-			sEtag = 'W/"19770724000000.0000000"',
-			oModel = createModel(sQuery),
-			sPath = "/EMPLOYEES[0];root=0";
+			var sEtag = 'W/"19770724000000.0000000"',
+				oModel = createModel(sQuery),
+				sPath = "/EMPLOYEES[0];root=0";
 
 			this.oSandbox.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("DELETE", sCanonicalUrl + oModel._sQuery, {"If-Match" : sEtag})
-			.returns(Promise.resolve(undefined));
+				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, {"If-Match" : sEtag})
+				.returns(Promise.resolve(undefined));
 			//TODO make such basic APIs like sap.ui.model.Context#getProperty work?!
 			//     they could be used instead of async read()...
 			this.oSandbox.stub(oModel, "read", function (sPath0, bAllowObjectAccess) {
@@ -323,7 +324,8 @@ sap.ui.require([
 			});
 			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl",
 				function (sServiceUrl, sPath0, fnRead) {
-					assert.strictEqual(sServiceUrl, getServiceUrl());
+					assert.strictEqual(sServiceUrl, "",
+						"no service URL, return resource path only");
 					assert.strictEqual(sPath0, sPath);
 					// make sure that fnRead === oModel.read.bind(oModel)
 					oModel.read.reset();
@@ -332,7 +334,7 @@ sap.ui.require([
 					assert.ok(oModel.read.calledWithExactly(sPath, true),
 						"fnRead passes arguments");
 					assert.ok(oModel.read.calledOn(oModel), "fnRead bound to 'this'");
-					return Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')"));
+					return Promise.resolve("EMPLOYEES(ID='1')");
 				});
 
 			return oModel.remove(oModel.getContext(sPath)).then(function (oResult) {
@@ -379,8 +381,8 @@ sap.ui.require([
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 
 		oMetaModelMock.expects("requestCanonicalUrl")
-			.withExactArgs(oModel.sServiceUrl, oEntityContext.getPath(), sinon.match.func)
-			.returns(Promise.resolve(oModel.sServiceUrl + "EMPLOYEES(ID='1')"));
+			.withExactArgs("/", oEntityContext.getPath(), sinon.match.func)
+			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
 
 		return oModel.requestCanonicalPath(oEntityContext).then(function (sCanonicalPath) {
 			assert.strictEqual(sCanonicalPath, "/EMPLOYEES(ID='1')");

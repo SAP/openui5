@@ -112,7 +112,8 @@ sap.ui.define([
 					this.oMetaModel = new ODataMetaModel(
 						MetadataRequestor.create(mHeaders, this.mUriParameters),
 						this.sServiceUrl + "$metadata");
-					this.oRequestor = Requestor.create(this.sServiceUrl, mHeaders);
+					this.oRequestor = Requestor.create(this.sServiceUrl, mHeaders,
+						this.mUriParameters);
 					this.aRoots = [];
 				}
 			});
@@ -229,9 +230,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.create = function (sPath, oEntityData) {
-		var sUrl = this.sServiceUrl + sPath.slice(1) + this._sQuery;
+		var sResourcePath = sPath.slice(1) + this._sQuery;
 
-		return this.oRequestor.request("POST", sUrl, null, oEntityData);
+		return this.oRequestor.request("POST", sResourcePath, null, oEntityData);
 	};
 
 	ODataModel.prototype.createBindingContext = function () {
@@ -346,12 +347,12 @@ sap.ui.define([
 
 		return Promise.all([
 			this.read(sPath + "/@odata.etag"),
-			this.getMetaModel().requestCanonicalUrl(this.sServiceUrl, sPath, this.read.bind(this))
+			this.getMetaModel().requestCanonicalUrl("", sPath, this.read.bind(this))
 		]).then(function (aValues) {
 			var sEtag = aValues[0].value,
-				sCanonicalUrl = aValues[1] + that._sQuery;
+				sResourcePath = aValues[1] + that._sQuery; // "canonical path" w/o service URL
 
-			return that.oRequestor.request("DELETE", sCanonicalUrl, {"If-Match" : sEtag})
+			return that.oRequestor.request("DELETE", sResourcePath, {"If-Match" : sEtag})
 				["catch"](function (oError) {
 					if (oError.status === 404) {
 						return; // map 404 to 200, i.e. resolve if already deleted
@@ -379,15 +380,10 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
-		var that = this;
-
 		jQuery.sap.assert(oEntityContext.getModel() === this,
 				"oEntityContext must belong to this model");
 		return this.getMetaModel()
-			.requestCanonicalUrl(this.sServiceUrl, oEntityContext.getPath(), this.read.bind(this))
-			.then(function (sCanonicalUrl) {
-				return sCanonicalUrl.slice(that.sServiceUrl.length - 1);
-			});
+			.requestCanonicalUrl("/", oEntityContext.getPath(), this.read.bind(this));
 	};
 
 	return ODataModel;

@@ -43,8 +43,7 @@ sap.ui.define([
 				ListBinding.call(this, oModel, sPath, oContext);
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.create(oModel.oRequestor,
-						oModel.sServiceUrl + sPath.slice(1),
+					this.oCache = Cache.create(oModel.oRequestor, sPath.slice(1),
 						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
