@@ -470,19 +470,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		ComboBox.prototype.onsapenter = function(oEvent) {
 			ComboBoxBase.prototype.onsapenter.apply(this, arguments);
 
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
 			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
-
-			var sValue = this.getValue();
-			this.setValue(sValue);
-
-			// no text selection
-			this.selectText(sValue.length, sValue.length);
 
 			if (this.isOpen()) {
 				this.close();
