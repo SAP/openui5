@@ -225,7 +225,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 		NavigationList.prototype._openPopover = function (source, list) {
 
 			var selectedItem = list.getSelectedItem();
-			if (selectedItem && selectedItem.getMetadata().getName() == 'sap.tnt.NavigationListItem') {
+			if (selectedItem && list.isGroupSelected) {
 				selectedItem = null;
 			}
 
