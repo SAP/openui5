@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	controllerName="sap.m.sample.UploadCollection.Page"
+	controllerName="sap.m.sample.UploadCollectionVersioning.Page"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
@@ -9,17 +9,11 @@
 		<content>
 			<OverflowToolbar>
 				<ToolbarSpacer/>
-				<Label
-					text="Layout: Enable FileUploader">
-				</Label>
-				<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
-				<Label text="Multi-selection mode"></Label>
-				<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
 				<Select
 					id="tbSelect"
 					items="{/items}"
 					selectedKey="{/selectedKey}"
-					change="onSeparatorsChange" >
+					change="onSelectChange" >
 					<core:Item key="{key}" text="{text}"/>
 				</Select>
 			</OverflowToolbar>
@@ -30,9 +24,6 @@
 				multiple="true"
 				showSeparators="All"
 				change="onChange"
-				fileDeleted="onFileDeleted"
-				filenameLengthExceed="onFilenameLengthExceed"
-				fileRenamed="onFileRenamed"
 				fileSizeExceed="onFileSizeExceed"
 				selectionChange="onSelectionChange"
 				typeMissmatch="onTypeMissmatch"
@@ -41,14 +32,12 @@
 				uploadTerminated="onUploadTerminated"
 				items="{path : '/items', templateShareable : 'true'}"
 				numberOfAttachmentsText="Uploaded (8)"
-				mode="SingleSelectMaster">
+				mode="MultiSelect">
 				<toolbar>
 					<OverflowToolbar id="myId" >
 						<Title id="attachmentTitle"/>
 						<ToolbarSpacer/>
-						<SearchField width="10rem" search="onSearch"></SearchField>
-						<Button id="deleteSelectedButton" text="Delete" press="onDeleteSelectedItems" enabled="false" visible="false" type="Transparent"></Button>
-						<ToggleButton id="selectAllButton" text="Select all" press="onSelectAllPress" enabled="false" visible="false" type="Transparent"></ToggleButton>
+						<Button id="downloadButton" text="Download" press="onDownloadItem" enabled="false" type="Transparent"></Button>
 						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
 					</OverflowToolbar>
 				</toolbar>
@@ -59,10 +48,10 @@
 						mimeType="{mimeType}"
 						thumbnailUrl="{thumbnailUrl}"
 						url="{url}"
-						enableEdit="{enableEdit}"
-						enableDelete="{enableDelete}"
-						visibleDelete="{visibleDelete}"
-						visibleEdit="{visibleEdit}"
+						enableEdit="false"
+						enableDelete="false"
+						visibleDelete="false"
+						visibleEdit="false"
 						attributes="{path : 'attributes', templateShareable : 'true'}"
 						statuses="{path : 'statuses', templateShareable : 'true'}"
 						selected="{selected}">
