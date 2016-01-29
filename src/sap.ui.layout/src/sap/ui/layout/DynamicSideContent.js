@@ -116,7 +116,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			SPAN_SIZE_9 = 9,
 			SPAN_SIZE_12 = 12,
 			INVALID_BREAKPOINT_ERROR_MSG = "Invalid Breakpoint. Expected: S, M, L or XL",
-			INVALID_PARENT_WIDTH_ERROR_MSG = "Invalid input. Only values greater then 0 are allowed",
 			SC_GRID_CELL_SELECTOR = "SCGridCell",
 			MC_GRID_CELL_SELECTOR = "MCGridCell",
 			S_M_BREAKPOINT = 720,
@@ -411,9 +410,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @returns {String} Breakpoint corresponding to the width passed
 		 */
 		DynamicSideContent.prototype._getBreakPointFromWidth = function (iWidth) {
-			if (iWidth <= 0) {
-				throw new Error(INVALID_PARENT_WIDTH_ERROR_MSG);
-			}
 			if (iWidth <= S_M_BREAKPOINT && this._currentBreakpoint !== S) {
 				return S;
 			} else if ((iWidth > S_M_BREAKPOINT) && (iWidth <= M_L_BREAKPOINT) && this._currentBreakpoint !== M) {
@@ -433,9 +429,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @param {integer} iWidth is the parent container width
 		 */
 		DynamicSideContent.prototype._setBreakpointFromWidth = function (iWidth) {
-			if (iWidth <= 0) {
-				throw new Error(INVALID_PARENT_WIDTH_ERROR_MSG);
-			}
 			this._currentBreakpoint = this._getBreakPointFromWidth(iWidth);
 			if (this._bSuppressInitialFireBreakPointChange) {
 				this._bSuppressInitialFireBreakPointChange = false;
