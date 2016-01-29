@@ -23,11 +23,12 @@ sap.ui.require([
 					},
 					iPressOnTheTabWithTheKey: function (sKey) {
 						return this.waitFor({
-							id: "iconTabBar",
+							controlType: "sap.m.IconTabFilter",
 							viewName : sViewName,
-							success: function (oIconTabBar) {
-								oIconTabBar.setSelectedKey(sKey);
-							},
+							matchers: new Properties({
+								key: sKey
+							}),
+							actions: new Press(),
 							errorMessage: "Cannot find the icon tab bar"
 						});
 
