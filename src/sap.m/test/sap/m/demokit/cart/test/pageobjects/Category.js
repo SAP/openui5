@@ -2,8 +2,9 @@ sap.ui.define([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/PropertyStrictEquals',
 		'sap/ui/test/matchers/AggregationFilled',
-		'sap/ui/test/matchers/BindingPath'
-	], function (Opa5, PropertyStrictEquals, AggregationFilled, BindingPath) {
+		'sap/ui/test/matchers/BindingPath',
+		'sap/ui/test/actions/Press'
+	], function (Opa5, PropertyStrictEquals, AggregationFilled, BindingPath, Press) {
 
 		Opa5.createPageObjects({
 			onTheCategory : {
@@ -14,9 +15,7 @@ sap.ui.define([
 						return this.waitFor({
 							controlType : "sap.m.ObjectListItem",
 							matchers : new BindingPath({path : "/Products('id_11')"}),
-							success : function (aListItems) {
-								aListItems[0].$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "The product list does not contain required selection"
 						});
 					},
@@ -26,9 +25,7 @@ sap.ui.define([
 							viewName : "Category",
 							controlType : "sap.m.Button",
 							matchers : new PropertyStrictEquals({name : "icon", value : "sap-icon://cart"}),
-							success : function (aBtn) {
-								aBtn[0].$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "The cart button was not found and could not be pressed"
 						});
 					}
