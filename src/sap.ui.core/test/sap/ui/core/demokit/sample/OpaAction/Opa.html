@@ -11,7 +11,8 @@
 				data-sap-ui-theme='sap_bluecrystal'
 				data-sap-ui-libs='sap.m'
 				data-sap-ui-resourceroots='{
-					"appUnderTest" : "./applicationUnderTest"
+					"appUnderTest" : "./applicationUnderTest",
+					"sap.ui.demo.mock" : "../../../../../../sap/ui/demokit/explored/"
 				}'>
 
 		</script>
@@ -26,10 +27,12 @@
 			sap.ui.require([
 				"sap/ui/test/Opa5",
 				"sap/ui/test/opaQunit",
+				"sap/ui/test/matchers/AggregationLengthEquals",
 				"sap/ui/test/actions/Press",
 				"sap/ui/test/actions/EnterText"
 			], function (Opa5,
 						 opaTest,
+						 AggregationLengthEquals,
 						 Press,
 						 EnterText) {
 				QUnit.module("Navigation using the press action");
@@ -44,6 +47,24 @@
 					// Act
 					Given.iStartMyUIComponent({
 						componentConfig: { name: "appUnderTest" }
+					});
+
+					When.waitFor({
+						controlType : "sap.m.StandardListItem",
+						// Pressing a special region of a control may be achieved with the id suffix
+						actions: new Press({ idSuffix : "imgDel" }),
+						errorMessage: "List items where not pressable"
+					});
+
+					Then.waitFor({
+						controlType: "sap.m.List",
+						matchers: new AggregationLengthEquals({
+							name: "items",
+							length: 0
+						}),
+						success: function () {
+							Opa5.assert.ok(true, "List has no items");
+						}
 					});
 
 					When.waitFor({
