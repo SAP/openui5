@@ -182,12 +182,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var aMonths = this.getAggregation("month");
 			var oDate;
 			var oMonthDate = aMonths[0].getDate();
+			var oFocusedDate = this._getFocusedDate();
 
 			if (aMonths.length > 1 && oMonthDate) {
 				// for more than one month - re-render same months (if already rendered once)
 				oDate = new UniversalDate(oMonthDate.getTime());
+			}else if (aMonths.length > 1) {
+				oDate = _determineFirstMonthDate.call(this, this._getFocusedDate());
 			}else {
-				oDate = this._getFocusedDate();
+				oDate = oFocusedDate;
 			}
 
 			this._updateHeader(oDate);
@@ -199,7 +202,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oMonthDate.setUTCDate(1);
 					oMonthDate.setUTCMonth(oDate.getUTCMonth() + i);
 				}
-				oMonth.setDate(CalendarUtils._createLocalDate(oMonthDate));
+				if (oFocusedDate.getUTCFullYear() == oMonthDate.getUTCFullYear() && oFocusedDate.getUTCMonth() == oMonthDate.getUTCMonth()) {
+					oMonth.setDate(CalendarUtils._createLocalDate(oFocusedDate));
+				} else {
+					oMonth.displayDate(CalendarUtils._createLocalDate(oMonthDate));
+				}
 			}
 
 		};
@@ -395,6 +402,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oMonth = this.removeAggregation("month", i - 1);
 					oMonth.destroy();
 				}
+			}
+
+			if (iMonths > 1 && aMonths[0].getDate()) {
+				// remove date from first month to recalculate months date before rendering
+				aMonths[0].setProperty("date", null, true);
 			}
 
 			return this;
@@ -819,10 +831,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oFirstDate = new UniversalDate(oDate.getTime());
 
 				if (aMonths.length > 1) {
-					oFirstDate.setUTCDate(1);
-					if (bInLastMonth) {
-						oFirstDate.setUTCMonth(oFirstDate.getUTCMonth() - aMonths.length + 1);
-					}
+					oFirstDate = _determineFirstMonthDate.call(oThis, oFirstDate);
 
 					for (i = 0; i < aMonths.length; i++) {
 						oMonth = aMonths[i];
@@ -1322,6 +1331,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				_focusDate(oThis, oThis._getFocusedDate(), true);
 			}
 			oThis._bDateRangeChanged = undefined;
+
+		}
+
+		function _determineFirstMonthDate(oDate){
+
+			var oFirstDate = new UniversalDate(oDate.getTime());
+			oFirstDate.setUTCDate(1);
+
+			var that = this;
+			var iMonths = _getMonths(that); // to use validation
+			if (iMonths <= 12) {
+				// only if intervals fit into a year -> otherwise just display the months according to the date
+				var iMonth = oDate.getUTCMonth();
+				iMonth = iMonth - iMonth % iMonths;
+				if (12 % iMonths > 0 && iMonth + iMonths > 11) {
+					// do not show months over year borders if possible
+					iMonth = 12 - iMonths;
+				}
+				oFirstDate.setUTCMonth(iMonth);
+			}
+
+			return oFirstDate;
 
 		}
 
