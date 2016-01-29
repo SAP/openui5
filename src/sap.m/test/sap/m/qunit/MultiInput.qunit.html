@@ -425,7 +425,11 @@
 
 	    oTable.destroy();
 	});
-
+	
+	test("tabindex of tokenizer in MultiInput", function() {
+		equals(!multiInput1.$().find(".sapMTokenizer").attr("tabindex"), true, "tokenizer has no tabindex if it is in MultiInput");
+	});
+	
 	module("MultiLineMode");
 
 	test("property EnableMultiLineMode", function() {
@@ -545,8 +549,6 @@
 
 		oMLInput2.destroy();
 	});
-
-
 
 </script>
 
