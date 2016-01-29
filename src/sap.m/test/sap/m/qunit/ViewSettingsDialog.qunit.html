@@ -1187,7 +1187,7 @@
 					aFilteredItems;
 
 				//Act
-				oSearchField.fireSearch({ query: "Mo" }); // Matches: Mousepad, Monitor
+				oSearchField.fireLiveChange({ newValue: "Mo" }); // Matches: Mousepad, Monitor
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
 					return oItem.getVisible();
 				});
@@ -1195,7 +1195,7 @@
 				equal(aFilteredItems.length, 2, "After filter search there are 2 visible items left in the list.");
 
 				//Act
-				oSearchField.fireSearch({ query: "" }); // Matches: Mousepad, Monitor
+				oSearchField.fireLiveChange({ newValue: "" }); // Matches: Mousepad, Monitor
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
 					return oItem.getVisible();
 				});
@@ -1224,7 +1224,7 @@
 				ok(!oSelectAllCheckbox.getSelected(), "At first the select all checkbox is not selected.");
 
 				//Act
-				oSearchField.fireSearch({ query: "H" }); // Matches: Headphone
+				oSearchField.fireLiveChange({ newValue: "H" }); // Matches: Headphone
 				//Assert
 				ok(oSelectAllCheckbox.getSelected(), "After filter search with selected results only, the select all checkbox is also selected.");
 
@@ -1255,11 +1255,11 @@
 				equal(aSelectedItems.length, 4, "At first the selected items are 4.");
 
 				//Act
-				oSearchField.fireSearch({ query: "H" }); // Matches: Headphone
+				oSearchField.fireLiveChange({ newValue: "H" }); // Matches: Headphone
 				oSelectAllCheckbox.setSelected(false);
 				oSelectAllCheckbox.fireSelect({ selected: false });
 
-				oSearchField.fireSearch({ query: "" }); // Matches: All items
+				oSearchField.fireLiveChange({ newValue: "" }); // Matches: All items
 				aSelectedItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
 					return oItem.getSelected();
 				});

@@ -1960,19 +1960,19 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	ViewSettingsDialog.prototype._getFilterSearchField = function(oFilterDetailList) {
 		var that = this,
 			oFilterSearchField = new SearchField({
-			search: function(oEvent) {
-				var sQuery = oEvent.getParameter('query').toLowerCase();
+				liveChange: function(oEvent) {
+					var sQuery = oEvent.getParameter('newValue').toLowerCase();
 
-				//update the list items visibility
-				oFilterDetailList.getItems().forEach(function(oItem) {
-					var bStartsWithQuery = oItem.getTitle().toLowerCase().indexOf(sQuery) === 0;
-					oItem.setVisible(bStartsWithQuery);
-				});
+					//update the list items visibility
+					oFilterDetailList.getItems().forEach(function(oItem) {
+						var bStartsWithQuery = oItem.getTitle().toLowerCase().indexOf(sQuery) === 0;
+						oItem.setVisible(bStartsWithQuery);
+					});
 
-				//update Select All checkbox
-				that._updateSelectAllCheckBoxState();
-			}
-		});
+					//update Select All checkbox
+					that._updateSelectAllCheckBoxState();
+				}
+			});
 
 		return oFilterSearchField;
 	};
