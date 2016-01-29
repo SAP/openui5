@@ -318,12 +318,9 @@ sap.ui.define([
 			oOptions.check = function () {
 				//retrieve the constructor instance
 				if (!this._modifyControlType(oOptions)) {
-
 					// skip - control type resulted in undefined or lazy stub
 					return false;
-
 				}
-
 
 				// Create a new options object for the plugin to keep the original one as is
 				var oPluginOptions = $.extend({}, oOptions, {
