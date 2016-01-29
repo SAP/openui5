@@ -353,6 +353,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else {
 			jQuery(window).on("resize", this._fnAdjustAfterResize);
 		}
+
+		// Fixes wrong focusing in IE
+		// BCP: 1670008915
+		this.$().find('.sapMCrslItemTableCell').focus(function(e) {
+
+			e.preventDefault();
+
+			jQuery(e.target).parents('.sapMCrsl').focus();
+
+			return false;
+		});
 	};
 
 	/**
