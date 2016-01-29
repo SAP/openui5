@@ -44,6 +44,7 @@
 			if (bPerformanceSupported) {
 				// setup
 				jQuery.sap.fesr.setActive(true);
+				assert.ok(jQuery.sap.interaction.getActive(), "Implicit interaction activation successful");
 				spy = sinon.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 				jQuery.sap.interaction.notifyStepStart(null, true);
 				var oReq = new XMLHttpRequest();
@@ -59,6 +60,7 @@
 				jQuery.sap.interaction.notifyStepEnd(true);
 				// assertions
 				sinon.assert.calledOn(spy, oReq);
+				sinon.assert.calledWith(spy, "SAP-PASSPORT");
 				sinon.assert.calledWith(spy, "SAP-Perf-FESRec");
 				sinon.assert.calledWith(spy, "SAP-Perf-FESRec-opt");
 			} else {
@@ -69,6 +71,7 @@
 				sinon.assert.calledWithExactly(spy, "Interaction tracking is not supported on browsers with insufficient performance API");
 			}
 			jQuery.sap.fesr.setActive(false);
+			assert.ok(!jQuery.sap.interaction.getActive(), "Implicit interaction deactivation successful");
 			spy.restore();
 		});
 
@@ -76,6 +79,7 @@
 			if (bPerformanceSupported) {
 				// setup
 				jQuery.sap.interaction.setActive(true);
+				assert.ok(jQuery.sap.interaction.getActive(), "Activation successful");
 				jQuery.sap.interaction.notifyStepStart(null, true);
 				var oReq = new XMLHttpRequest();
 				// first request without FESR header
@@ -95,6 +99,7 @@
 				spy.restore();
 			}
 			jQuery.sap.interaction.setActive(false);
+			assert.ok(!jQuery.sap.interaction.getActive(), "Deactivation successful");
 		});
 
 		QUnit.module("Passport Header");
