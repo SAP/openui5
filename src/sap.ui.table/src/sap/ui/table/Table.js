@@ -818,7 +818,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			if (aFixedRowItems[i]) {
 				iFixedRowHeight = aFixedRowItems[i].clientHeight;
 			}
-			aRowItemHeights.push(Math.max(iFixedRowHeight, aScrollRowItems[i].clientHeight));
+			var iRowHeight = aScrollRowItems[i].clientHeight || aScrollRowItems[i].offsetHeight;
+			aRowItemHeights.push(Math.max(iFixedRowHeight, iRowHeight));
 		}
 		oSizes.tableRowHeights = aRowItemHeights;
 
@@ -853,16 +854,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		var iLength = Math.max(aRowHeaderItems.length, aScrollRowItems.length, 0);
 		for (var i = 0; i < iLength; i++) {
-			if (aRowHeaderItems[i]) {
-				aRowHeaderItems[i].style.height = aRowItemHeights[i] + "px";
-			}
+			var iRowItemHeight = aRowItemHeights[i];
+			if (iRowItemHeight) {
+				if (aRowHeaderItems[i]) {
+					aRowHeaderItems[i].style.height = iRowItemHeight + "px";
+				}
 
-			if (aFixedRowItems[i]) {
-				aFixedRowItems[i].style.height = aRowItemHeights[i] + "px";
-			}
+				if (aFixedRowItems[i]) {
+					aFixedRowItems[i].style.height = iRowItemHeight + "px";
+				}
 
-			if (aScrollRowItems[i]) {
-				aScrollRowItems[i].style.height = aRowItemHeights[i] + "px";
+				if (aScrollRowItems[i]) {
+					aScrollRowItems[i].style.height = iRowItemHeight + "px";
+				}
 			}
 		}
 		var oSapUiTableRowHdrScr = this.$().find(".sapUiTableRowHdrScr, .sapUiTableColHdrFixed");
