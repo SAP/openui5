@@ -1,4 +1,4 @@
-(function ($, QUnit) {
+(function ($, QUnit, sinon) {
 	"use strict";
 
 	jQuery.sap.require("sap.m.PagingButton");
@@ -23,7 +23,7 @@
 
 	QUnit.module("sap.m.PagingButton API", {
 		setup: function () {
-			this.oPagingButton = helpers.getPagingButton()
+			this.oPagingButton = helpers.getPagingButton();
 		},
 		teardown: function () {
 			this.oPagingButton.destroy();
@@ -33,6 +33,8 @@
 	QUnit.test("Default values", function (assert) {
 		assert.strictEqual(this.oPagingButton.getPosition(), 1, "for position should be 1");
 		assert.strictEqual(this.oPagingButton.getCount(), 1, "for count should be 1");
+		assert.ok(!this.oPagingButton.getNextButtonTooltip());
+		assert.ok(!this.oPagingButton.getPreviousButtonTooltip());
 	});
 
 	QUnit.test("Changing values", function (assert) {
@@ -40,7 +42,9 @@
 			iInvalidCount = -123,
 			iValidPosition = 4,
 			iInvalidPosition = -10,
-			oPagingButton = this.oPagingButton;
+			oPagingButton = this.oPagingButton,
+			oPrevButton = oPagingButton._getPreviousButton(),
+			oNextButton = oPagingButton._getNextButton();
 
 		oPagingButton.setCount(iValidCount);
 
@@ -61,6 +65,15 @@
 			"the invalid value of position is not set, and the original value is kept");
 
 		oPagingButton.setCount(iValidCount);
+
+		oPagingButton.setPreviousButtonTooltip("TestingPrevious");
+
+		assert.strictEqual(oPrevButton.getTooltip(), "TestingPrevious");
+
+		oPagingButton.setNextButtonTooltip("TestingNext");
+
+		assert.strictEqual(oNextButton.getTooltip(), "TestingNext");
+
 	});
 
 	QUnit.module("sap.m.PagingButton Rendering", {
@@ -114,4 +127,4 @@
 		assert.ok(oPositionChangedEvent.calledTwice, "PositionChanged is not fired when the position doesn't change");
 	});
 
-}(jQuery, QUnit));
+}(jQuery, QUnit, sinon));
