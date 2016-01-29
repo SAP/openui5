@@ -319,74 +319,86 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			}
 
 			var oSelectedItem = this.getSelectedItem(),
-				aItems = this.getItems(),
-				oInputDomRef = oEvent.target,
-				sValue = oInputDomRef.value,
-				bFirst = true,
-				bVisibleItems = false,
-				oItem,
-				bMatch,
-				i = 0;
+				sValue = oEvent.target.value,
+				bEmptyValue = sValue === "";
 
-			for (; i < aItems.length; i++) {
+			var aItems = this.filterItems({
+				property: "text",
+				value: sValue
+			}, this.getItems());
 
-				// the item match with the value
-				oItem = aItems[i];
-				bMatch = jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
+			var oItem = aItems[0];	// first item that match the value
 
-				if (sValue === "") {
-					bMatch = true;
+			if (!bEmptyValue && oItem && oItem.getEnabled()) {
+
+				if (this._bDoTypeAhead) {
+					oEvent.srcControl.updateDomValue(oItem.getText());
 				}
 
-				this._setItemVisibility(oItem, bMatch);
+				this.setSelection(oItem);
 
-				if (bMatch && !bVisibleItems) {
-					bVisibleItems = true;
+				if (oSelectedItem !== this.getSelectedItem()) {
+					this.fireSelectionChange({
+						selectedItem: this.getSelectedItem()
+					});
 				}
 
-				// first match of the value
-				if (oItem.getEnabled() && bFirst && bMatch && sValue !== "") {
-					bFirst = false;
+				if (this._bDoTypeAhead) {
 
-					if (this._bDoTypeAhead) {
-						this.updateDomValue(oItem.getText());
+					if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android) {
+
+						// note: timeout required for a BlackBerry bug
+						setTimeout(fnSelectTextIfFocused.bind(this, sValue.length, this.getValue().length), 0);
+					} else {
+						oEvent.srcControl.selectText(sValue.length, 9999999);
 					}
-
-					this.setSelection(oItem);
-
-					if (oSelectedItem !== this.getSelectedItem()) {
-						this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-					}
-
-					if (this._bDoTypeAhead) {
-
-						if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android) {
-
-							// note: timeout required for a BlackBerry bug
-							setTimeout(fnSelectTextIfFocused.bind(this, sValue.length, this.getValue().length), 0);
-						} else {
-							this.selectText(sValue.length, 9999999);
-						}
-					}
-
-					this.scrollToItem(this.getSelectedItem());
 				}
 			}
 
-			if (sValue === "" || !bVisibleItems) {
+			if (bEmptyValue || !aItems.length) {
 				this.setSelection(null);
 
 				if (oSelectedItem !== this.getSelectedItem()) {
-					this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+					this.fireSelectionChange({
+						selectedItem: this.getSelectedItem()
+					});
 				}
 			}
 
-			// open the picker on input
-			if (bVisibleItems) {
+			if (aItems.length || bEmptyValue) {
 				this.open();
+				this.scrollToItem(this.getSelectedItem());
 			} else {
 				this.isOpen() ? this.close() : this.clearFilter();
 			}
+		};
+
+		ComboBox.prototype.filterItems = function(mOptions, aItems) {
+			var sProperty = mOptions.property,
+				sValue = mOptions.value,
+				bEmptyValue = sValue === "",
+				bMatch = false,
+				sMutator = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
+				aFilteredItems = [],
+				oItem = null;
+
+			aItems = aItems || this.getItems();
+
+			for (var i = 0; i < aItems.length; i++) {
+
+				oItem = aItems[i];
+
+				// the item match with the value
+				bMatch = jQuery.sap.startsWithIgnoreCase(oItem[sMutator](), sValue) || bEmptyValue;
+
+				if (bMatch) {
+					aFilteredItems.push(oItem);
+				}
+
+				this._setItemVisibility(oItem, bMatch);
+			}
+
+			return aFilteredItems;
 		};
 
 		/**
