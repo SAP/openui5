@@ -10,7 +10,7 @@
 
     var classNameHeader = '.sapMNLG-Header';
     var classNameDatetime = '.sapMNLG-Datetime';
-    var classNameFooter = '.sapMNLG-Footer';
+    var classNameFooterToolbar = '.sapMTB';
     var classNameCloseButton = '.sapMNLG-CloseButton';
 
     var RENDER_LOCATION = 'qunit-fixture';
@@ -168,6 +168,8 @@
     QUnit.test('Render action buttons', function(assert) {
         // arrange
         var that = this;
+        var buttonsInFooter = 2;
+
         this.NotificationListGroup.addAggregation('buttons',
             new sap.m.Button({
                 text: 'Accept',
@@ -187,7 +189,7 @@
         sap.ui.getCore().applyChanges();
 
         // assert
-        assert.strictEqual(jQuery(classNameFooter).children('button').length, 3, 'Buttons should be rendered');
+        assert.strictEqual(jQuery(classNameFooterToolbar).children('button').length, buttonsInFooter, 'Buttons should be rendered');
     });
 
     QUnit.test('Changing the title', function(assert) {
