@@ -195,12 +195,9 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NewsContent.qunit.html");
 
 				// NotificationListGroup
-				if (!ie9 && !ie10) {
-					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NotificationListGroup.qunit.html");
-				}
-
 				// NotificationListItem
 				if (!ie9 && !ie10) {
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NotificationListGroup.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NotificationListItem.qunit.html");
 				}
 
