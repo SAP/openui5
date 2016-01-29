@@ -2671,7 +2671,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		this.bNeedsUpdate = true;
 
 		if (iDiscardedEntriesCount > 0) { // update load factor if entries have been discarded
-			this.aMultiUnitLoadFactor[aAggregationLevel.length] = oData.results.length / (oData.results.length - iDiscardedEntriesCount);
+
+			// If all loaded entries have been discarded, we have the following situation:
+			// the last multi-unit entry was previously loaded with another data page, and thus it can happen, that all response entries
+			// will have to be discarded, since there already is a virtual multi-unit entry created.
+			// In this case we keep the last known load-factor stable.
+			if (oData.results.length - iDiscardedEntriesCount > 0) {
+				this.aMultiUnitLoadFactor[aAggregationLevel.length] = oData.results.length / (oData.results.length - iDiscardedEntriesCount);
+			}
+
 			if (this.aMultiUnitLoadFactor[aAggregationLevel.length] < 1.5) { // avoid too small factors
 				this.aMultiUnitLoadFactor[aAggregationLevel.length] = 2;
 			}
