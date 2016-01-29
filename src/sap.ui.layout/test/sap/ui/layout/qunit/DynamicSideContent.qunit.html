@@ -292,6 +292,18 @@
 					}
 				});
 
+				QUnit.test("Control should work with 0px width", function (assert) {
+					var sBreakpoint;
+
+					// _getBreakPointFromWidth
+					sBreakpoint = this._oDSC._getBreakPointFromWidth(0);
+					strictEqual(sBreakpoint, S, "If parent container's width is 0px, the breakpoint should default to 'S'");
+
+					// _setBreakpointFromWidth
+					this._oDSC._setBreakpointFromWidth(0);
+					strictEqual(this._oDSC.getCurrentBreakpoint(), S, "If setting the breakpoint from width 0px, the breakpoint should default to 'S'");
+				});
+
 				QUnit.test("Calculate breakpoint from width",function(assert){
 					var sBreakpoint;
 
@@ -320,9 +332,6 @@
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(1500);
 					strictEqual(sBreakpoint, XL, "If parent container's width is above 1440px, the breakpoint should be 'XL'");
 
-					assert.throws(function () {
-						this._oDSC._setBreakPointFromWidth(-2);
-					}, "parent container's width should be greater then 0");
 				});
 
 				QUnit.test("The size of the main and side content is calculated correctly, according to the current breakpoint",function(){
