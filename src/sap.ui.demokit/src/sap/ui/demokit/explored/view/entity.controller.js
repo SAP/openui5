@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/demokit/EntityInfo"
-], function (Controller, EntityInfo) {
+	"sap/ui/demokit/EntityInfo",
+	"sap/ui/demokit/util/JSDocUtil"
+], function (Controller, EntityInfo, JSDocUtil) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.entity", {
@@ -15,6 +16,12 @@ sap.ui.define([
 			this.router = sap.ui.core.UIComponent.getRouterFor(this);
 			this.router.attachRoutePatternMatched(this.onRouteMatched, this);
 			this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
+			// click handler for @link tags in JSdoc fragments
+			this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
+		},
+
+		onExit: function() {
+			this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 		},
 
 		onTypeLinkPress: function (oEvt) {
@@ -28,6 +35,29 @@ sap.ui.define([
 
 			// notify master of selection change
 			this._component.getEventBus().publish("app", "selectEntity", {id: sType});
+		},
+
+		onJSDocLinkClick: function (oEvt) {
+
+			// get target
+			var sType = oEvt.target.getAttribute("data-sap-ui-target");
+			if ( sType && sType.indexOf('#') >= 0 ) {
+				sType = sType.slice(0, sType.indexOf('#'));
+			}
+
+			if ( sType ) {
+
+				this.router.navTo("entity", {
+					id: sType,
+					part: "samples"
+				}, false);
+
+				// notify master of selection change
+				this._component.getEventBus().publish("app", "selectEntity", {id: sType});
+
+				oEvt.preventDefault();
+			}
+
 		},
 
 		onIntroLinkPress: function (oEvt) {
@@ -213,6 +243,8 @@ sap.ui.define([
 			var methodsCount = 0,
 				eventsCount = 0;
 
+			var sBaseName = sId.slice(sId.lastIndexOf('.') + 1);
+
 			// no documentation !
 			if (!oDoc) {
 				return oData;
@@ -260,9 +292,9 @@ sap.ui.define([
 				}
 			}
 			for (key in oDoc.methods) {
-				if (oDoc.methods.hasOwnProperty(key) && key.indexOf("_") !== 0) {
+				if (oDoc.methods.hasOwnProperty(key) && key.indexOf("_") !== 0 && !oDoc.methods[key].synthetic ) {
 					var oMethod = oDoc.methods[key];
-					oMethod.name = key;
+					oMethod.name = oDoc.methods[key].static ? sBaseName + "." + key : key;
 					oMethod.deprecatedDescription = this._formatDeprecatedDescription(oMethod.deprecation);
 					oMethod.deprecated = this._formatDeprecated(oMethod.deprecation);
 					oMethod.doc = this._wrapInSpanTag(oMethod.doc);
@@ -352,7 +384,27 @@ sap.ui.define([
 		 * @private
 		 */
 		_wrapInSpanTag: function (sText) {
-			return '<span class="fs0875">' + sText + '</span>';
+			return '<span class="fs0875">' + JSDocUtil.formatTextBlock(sText, {
+				linkFormatter: function (target, text) {
+
+					var p;
+
+					target = target.trim().replace(/\.prototype\./g, "#");
+					p = target.indexOf("#");
+					if ( p === 0 ) {
+						// a relative reference - we can't support that
+						return "<code>" + target.slice(1) + "</code>";
+					}
+
+					if ( p > 0 ) {
+						text = text || target; // keep the full target in the fallback text
+						target = target.slice(0, p);
+					}
+
+					return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + (text || target) + "</a>";
+
+				}
+			}) + '</span>';
 		},
 
 		/**

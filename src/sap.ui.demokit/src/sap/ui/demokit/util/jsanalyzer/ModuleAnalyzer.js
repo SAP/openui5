@@ -61,6 +61,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 		 */
 		var scope; // TODO implement scope properly using escope
 
+		// some shortcuts
+		var createPropertyMap = ASTUtils.createPropertyMap;
+		var unlend = ASTUtils.unlend;
+		var guessSingularName = MOMetadata._guessSingularName;
+		var getLeadingDoclet = Doclet.get;
+		var error = jQuery.sap.log.error;
+		var warning = jQuery.sap.log.warning;
+		var verbose = jQuery.sap.log.debug;
+
+		function isExtendCall(node) {
+
+			return (
+				node
+				&& node.type === Syntax.CallExpression
+				&& node.callee.type === Syntax.MemberExpression
+				&& node.callee.property.type === Syntax.Identifier
+				&& node.callee.property.name === 'extend'
+				&& node.arguments.length >= 2
+				&& node.arguments[0].type === Syntax.Literal
+				&& typeof node.arguments[0].value === "string"
+				&& unlend(node.arguments[1]).type === Syntax.ObjectExpression
+			);
+
+		}
+
+		function isSapUiDefineCall(node) {
+
+			return (
+				node
+				&& node.type === Syntax.CallExpression
+				&& node.callee.type === Syntax.MemberExpression
+				&& /* TODO currentScope.getContext(). */ getObjectName(node.callee) === 'sap.ui.define'
+			);
+
+		}
+
 		function getObjectName(node) {
 			if ( node.type === Syntax.MemberExpression ) {
 				var prefix = getObjectName(node.object);
@@ -72,97 +108,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			}
 		}
 
-		function isSapUiDefineCall(node) {
-			return (
-				node.type == Syntax.CallExpression
-				&& node.callee.type == Syntax.MemberExpression
-				&& /* TODO currentScope.getContext(). */ getObjectName(node.callee) == "sap.ui.define"
-			);
-		}
+		function convertValue(node, type) {
 
-		function isExtendCall(node) {
-			return (
-				node.type == Syntax.CallExpression
-				&& node.callee.type == Syntax.MemberExpression
-				&& node.callee.property.type == Syntax.Identifier
-				&& node.callee.property.name == 'extend'
-				&& node.arguments.length >= 2
-				&& node.arguments[0].type == Syntax.Literal
-				&& typeof node.arguments[0].value == "string"
-				&& ASTUtils.unlend(node.arguments[1]).type == Syntax.ObjectExpression
-			);
-		}
+			var value;
 
-		function resolveRelativeDependency(dep) {
-			return /^\.\//.test(dep) ? currentPackage + dep.slice(1) : dep;
-		}
+			if ( node.type === Syntax.Literal ) {
 
-		/**
-		 * Get the documentation information needed for a given parameter
-		 * @param {string} sParamName
-		 * @param {array} aDocTags with documentation tags
-		 * @return {Object} with parameter information
-		 */
-		function getParamInfo(sParamName, aDocTags) {
+				// 'string' or number or true or false
+				return node.value;
 
-			//set default parameter type if there are no @ definitions for the type
-			var sParamType = '',
-				sParamDescription = '',
-				iParamNameIndex,
-				iDocStartIndex,
-				rEgexMatchType = /{(.*)}/,
-				aMatch;
+			} else if ( node.type === Syntax.UnaryExpression
+				&& node.prefix
+				&& node.argument.type === Syntax.Literal
+				&& typeof node.argument.value === 'number'
+				&& ( node.operator === '-' || node.operator === '+' )) {
 
-			for (var i = 0; i < aDocTags.length; i++) {
+				// -n or +n
+				value = node.argument.value;
+				return node.operator === '-' ? -value : value;
 
-				if ( aDocTags[i].tag !== 'param' ) {
-					continue;
+			} else if ( node.type === Syntax.MemberExpression && type ) {
+
+				// enum value (a.b.c)
+				value = getObjectName(node);
+				if ( value.indexOf(type + ".") === 0 ) {
+					// fully qualified enum name
+					return value.slice(type.length + 1);
+				} else if ( value.indexOf(type.split(".").slice(-1)[0] + ".") === 0 ) {
+					// local name (just a guess - needs static code analysis)
+					return value.slice(type.split(".").slice(-1)[0].length + 1);
+				} else {
+					warning("did not understand default value '%s', falling back to source", value);
+					return value;
 				}
 
-				aMatch = rEgexMatchType.exec(aDocTags[i].content);
-				iParamNameIndex = aDocTags[i].content.indexOf(sParamName);
+			} else if ( node.type === Syntax.Identifier
+				&& node.name === 'undefined') {
 
-				if ( aMatch && iParamNameIndex > -1 ) {
-					//get the match without the curly brackets
-					sParamType = aMatch[1];
+				// undefined
+				return undefined;
 
-					iDocStartIndex = iParamNameIndex + sParamName.length;
-					sParamDescription = aDocTags[i].content.substr(iDocStartIndex);
+			} else if ( node.type === Syntax.ArrayExpression
+				&& node.elements.length === 0 ) {
 
-					//clean the doc from - symbol if they come after the param name and trim the extra whitespace
-					sParamDescription = sParamDescription.replace(/[-]/, '').trim();
-
-					// prevent unnecessary looping!
-					break;
-				}
+				// empty array literal
+				return "[]"; // TODO return this string or an empty array
 			}
 
-			return {
-				name: sParamName,
-				type: sParamType,
-				doc: sParamDescription
-			};
+			error("unexpected type of default value (type='%s', source='%s'), falling back to '???'", node.type, JSON.stringify(node, null, "\t"));
+			return '???';
 		}
-
-		/**
-		 * Adds the methods section to the metadata
-		 * @param {Object} metadata
-		 */
-
-		// it should be done at the latest because sometimes it is empty on collectClassInfo
-		// and it does not call collectClassInfo or createPropertyMap by itself
-		function addMethodsToMetadata(metadata) {
-			metadata.methods = oPublicFunctions;
-		}
-
-		// some shortcuts
-		var createPropertyMap = ASTUtils.createPropertyMap;
-		var unlend = ASTUtils.unlend;
-		var guessSingularName = MOMetadata._guessSingularName;
-		var getLeadingDoclet = Doclet.get;
-		var error = jQuery.sap.log.error;
-		var warning = jQuery.sap.log.warning;
-		var verbose = jQuery.sap.log.debug;
 
 		function collectClassInfo(extendCall, classDoclet) {
 
@@ -176,12 +171,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				deprecation: classDoclet && classDoclet.deprecated,
 				since: classDoclet && classDoclet.since,
 				experimental: classDoclet && classDoclet.experimental,
+				specialSettings : {},
 				properties: {},
 				aggregations: {},
 				associations: {},
 				events: {},
 				methods: {}
 			};
+
+			function upper(n) {
+				return n.slice(0,1).toUpperCase() + n.slice(1);
+			}
 
 			function each(node, defaultKey, callback) {
 				var map, n, settings, doclet;
@@ -218,7 +218,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				oClassInfo["abstract"] = !!(metadata["abstract"] && metadata["abstract"].value.value);
 				oClassInfo["final"] = !!(metadata["final"] && metadata["final"].value.value);
 
+				each(metadata.specialSettings, "readonly", function(n, settings, doclet) {
+					oClassInfo.specialSettings[n] = {
+						name : n,
+						doc : doclet && doclet.description,
+						since : doclet && doclet.since,
+						deprecation : doclet && doclet.deprecated,
+						experimental : doclet && doclet.experimental,
+						visibility : (settings.visibility && settings.visibility.value.value) || "public",
+						type : settings.type ? settings.type.value.value : "any",
+						readonly : (settings.readyonly && settings.readonly.value.value) || true
+					};
+				});
+
 				each(metadata.properties, "type", function (n, settings, doclet) {
+				var type;
+					var N = upper(n);
+					var methods;
 					oClassInfo.properties[n] = {
 						name: n,
 						doc: doclet && doclet.description,
@@ -226,16 +242,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 						deprecation: doclet && doclet.deprecated,
 						experimental: doclet && doclet.experimental,
 						visibility: (settings.visibility && settings.visibility.value.value) || "public",
-						type: settings.type ? settings.type.value.value : "string",
-						defaultValue: (settings.defaultValue && settings.defaultValue.value.value !== null) ? settings.defaultValue.value.value : undefined,
-						bindable: settings.bindable ? settings.bindable.value.value === "bindable" : false
+						type: (type = settings.type ? settings.type.value.value : "string"),
+						defaultValue: settings.defaultValue ? convertValue(settings.defaultValue.value, type) : null,
+						group : settings.group ? settings.group.value.value : 'Misc',
+						bindable : settings.bindable ? !!convertValue(settings.bindable.value) : false,
+						methods: (methods = {
+							"get": "get" + N,
+							"set": "set" + N
+						})
 					};
+					if ( oClassInfo.properties[n].bindable ) {
+						methods["bind"] = "bind" + N;
+						methods["unbind"] = "unbind" + N;
+					}
 				});
 
 				oClassInfo.defaultAggregation = (metadata.defaultAggregation && metadata.defaultAggregation.value.value) || undefined;
 
 				each(metadata.aggregations, "type", function (n, settings, doclet) {
-
+					var N = upper(n);
+					var methods;
 					oClassInfo.aggregations[n] = {
 						name: n,
 						doc: doclet && doclet.description,
@@ -246,11 +272,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 						type: settings.type ? settings.type.value.value : "sap.ui.core.Control",
 						singularName: settings.singularName ? settings.singularName.value.value : guessSingularName(n),
 						cardinality: (settings.multiple && !settings.multiple.value.value) ? "0..1" : "0..n",
-						bindable: settings.bindable ? settings.bindable.value.value === "bindable" : false
+						bindable : settings.bindable ? !!convertValue(settings.bindable.value) : false,
+						methods: (methods = {
+							"get": "get" + N,
+							"destroy": "destroy" + N
+						})
 					};
+					if ( oClassInfo.aggregations[n].cardinality === "0..1" ) {
+						methods["set"] = "set" + N;
+					} else {
+						var N1 = upper(oClassInfo.aggregations[n].singularName);
+						methods["insert"] = "insert" + N1;
+						methods["add"] = "add" + N1;
+						methods["remove"] = "remove" + N1;
+						methods["indexOf"] = "indexOf" + N1;
+						methods["removeAll"] = "removeAll" + N;
+					}
+					if ( oClassInfo.aggregations[n].bindable ) {
+						methods["bind"] = "bind" + N;
+						methods["unbind"] = "unbind" + N;
+					}
 				});
 
 				each(metadata.associations, "type", function (n, settings, doclet) {
+					var N = upper(n);
+					var methods;
 					oClassInfo.associations[n] = {
 						name: n,
 						doc: doclet && doclet.description,
@@ -260,11 +306,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 						visibility: (settings.visibility && settings.visibility.value.value) || "public",
 						type: settings.type ? settings.type.value.value : "sap.ui.core.Control",
 						singularName: settings.singularName ? settings.singularName.value.value : guessSingularName(n),
-						cardinality: (settings.multiple && settings.multiple.value.value) ? "0..n" : "0..1"
+						cardinality : (settings.multiple && settings.multiple.value.value) ? "0..n" : "0..1",
+						methods: (methods = {
+							"get": "get" + N
+						})
 					};
+					if ( oClassInfo.associations[n].cardinality === "0..1" ) {
+						methods["set"] = "set" + N;
+					} else {
+						var N1 = upper(oClassInfo.associations[n].singularName);
+						methods["add"] = "add" + N1;
+						methods["remove"] = "remove" + N1;
+						methods["removeAll"] = "removeAll" + N;
+					}
 				});
 
 				each(metadata.events, null, function (n, settings, doclet) {
+					var N = upper(n);
 					var info = oClassInfo.events[n] = {
 						name: n,
 						doc: doclet && doclet.description,
@@ -272,7 +330,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 						since: doclet && doclet.since,
 						experimental: doclet && doclet.experimental,
 						allowPreventDefault: !!(settings.allowPreventDefault && settings.allowPreventDefault.value.value),
-						parameters: {}
+						parameters : {},
+						methods: {
+							"attach": "attach" + N,
+							"detach": "detach" + N,
+							"fire": "fire" + N
+						}
 					};
 					each(settings.parameters, null, function (pName, pSettings, pDoclet) {
 						info.parameters[pName] = {
@@ -318,7 +381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				oTypeDoc.values = {};
 				for (var i = 0; i < properties.length; i++) {
 
-					// documentation must preceed the name/value pair
+					// documentation must precede the name/value pair
 					var propDoclet = Doclet.get(properties[i]);
 					var key = properties[i].key;
 					var value = properties[i].value;
@@ -393,8 +456,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 
 				var defaultValue = settings.defaultValue;
 				if ( defaultValue ) {
-					oTypeDoc.defaultValue = defaultValue.value.value;
-					/* TODO (convertValue(defaultValue, null, currentScope)); */
+					oTypeDoc.defaultValue = convertValue(defaultValue.value, name);
 				}
 
 				var isValid = settings.isValid;
@@ -420,6 +482,57 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 				aInfos.push(oTypeDoc);
 			}
 
+		}
+
+		function resolveRelativeDependency(dep) {
+			return /^\.\//.test(dep) ? currentPackage + dep.slice(1) : dep;
+		}
+
+		/**
+		 * Get the documentation information needed for a given parameter
+		 * @param {string} sParamName
+		 * @param {array} aDocTags with documentation tags
+		 * @return {Object} with parameter information
+		 */
+		function getParamInfo(sParamName, aDocTags) {
+
+			//set default parameter type if there are no @ definitions for the type
+			var sParamType = '',
+				sParamDescription = '',
+				iParamNameIndex,
+				iDocStartIndex,
+				rEgexMatchType = /{(.*)}/,
+				aMatch;
+
+			for (var i = 0; i < aDocTags.length; i++) {
+
+				if ( aDocTags[i].tag !== 'param' ) {
+					continue;
+				}
+
+				aMatch = rEgexMatchType.exec(aDocTags[i].content);
+				iParamNameIndex = aDocTags[i].content.indexOf(sParamName);
+
+				if ( aMatch && iParamNameIndex > -1 ) {
+					//get the match without the curly brackets
+					sParamType = aMatch[1];
+
+					iDocStartIndex = iParamNameIndex + sParamName.length;
+					sParamDescription = aDocTags[i].content.substr(iDocStartIndex);
+
+					//clean the doc from - symbol if they come after the param name and trim the extra whitespace
+					sParamDescription = sParamDescription.replace(/[-]/, '').trim();
+
+					// prevent unnecessary looping!
+					break;
+				}
+			}
+
+			return {
+				name: sParamName,
+				type: sParamType,
+				doc: sParamDescription
+			};
 		}
 
 		var delegate = {
@@ -553,6 +666,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 			}
 
 		};
+
+		/**
+		 * Adds the methods section to the metadata
+		 * @param {Object} metadata
+		 */
+
+		// it should be done at the latest because sometimes it is empty on collectClassInfo
+		// and it does not call collectClassInfo or createPropertyMap by itself
+		function addMethodsToMetadata(metadata) {
+			metadata.methods = oPublicFunctions;
+		}
 
 		function analyze(oData, sEntityName, sModuleName) {
 
