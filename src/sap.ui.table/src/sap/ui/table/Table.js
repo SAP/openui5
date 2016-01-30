@@ -1909,11 +1909,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._sBindingTimer = undefined;
 		}
 
-		if (this._sScrollBarTimer) {
-			jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
-			this._sScrollBarTimer = undefined;
-		}
-
 		if (this._sDelayedMenuTimer) {
 			jQuery.sap.clearDelayedCall(this._sDelayedMenuTimer);
 			this._sDelayedMenuTimer = undefined;
@@ -2102,11 +2097,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// change to requestAnimationFrame when IE9 support ends
 			this._iUpdateTableSizeTimerId = window.setTimeout(this._updateTableSizes.bind(this), 0);
 		}.bind(this);
-		var bForceUpdateVSb = false;
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			var iLength = oBinding.getLength();
-			var iSteps = Math.max(0, (iLength || 0) - this.getVisibleRowCount());
+
 			// check for paging mode or scrollbar mode
 			if (this._oPaginator && this.getNavigationMode() === sap.ui.table.NavigationMode.Paginator) {
 				// update the paginator (set the first visible row property)
@@ -2118,64 +2112,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				if (this._oPaginator.getDomRef()) {
 					this._oPaginator.rerender();
 				}
-				if ($this.hasClass("sapUiTableVScr")) {
-					$this.removeClass("sapUiTableVScr");
-				}
 
-				if (this._sScrollBarTimer != undefined) {
-					jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
-				}
+				$this.removeClass("sapUiTableVScr");
 			} else {
 				// in case of scrollbar mode show or hide the scrollbar dependening on the
 				// calculated steps:
-				if (iSteps > 0) {
-					if (!$this.hasClass("sapUiTableVScr")) {
-						$this.addClass("sapUiTableVScr");
-						bDoResize = true;
-					}
-				} else {
+				var iSteps = Math.max(0, (iLength || 0) - this.getVisibleRowCount());
+				if (bOnAfterRendering || iSteps !== this._oVSb.getSteps() || this.getFirstVisibleRow() !== this._oVSb.getScrollPosition()) {
 					//scroll to top when the scrollbar vanishes -> the binding length is smaller than the number of visible rows
-					if (iLength > 0 && this.getFirstVisibleRow() != 0) {
+					if (iSteps ==  0 && iLength > 0 && this.getFirstVisibleRow() != 0) {
 						// only set the scroll position to 0 if there is some data which can be shown.
 						// this allows the application to set a scroll position even though the data was not yet loaded.
 						this.setFirstVisibleRow(0);
 					}
-
-					if ($this.hasClass("sapUiTableVScr")) {
-						$this.removeClass("sapUiTableVScr");
-						bDoResize = true;
-					}
-				}
-
-				// update the scrollbar only if it is required
-				if (bOnAfterRendering || bForceUpdateVSb || iSteps !== this._oVSb.getSteps() || this.getFirstVisibleRow() !== this._oVSb.getScrollPosition()) {
-					jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
-					this._sScrollBarTimer = undefined;
-					// TODO: in case of bForceUpdateVSb the scrolling doesn't work anymore
-					//       height changes of the scrollbar should not require a re-rendering!
-					this._sScrollBarTimer = jQuery.sap.delayedCall(bOnAfterRendering ? 0 : 250, this, function() {
-						// When the scrollbar timer is planned iSteps might be 0 because the binding might not have data yet.
-						// This can even happen with JSON ListBinding if setProperty is called on a collection
-						// Make sure to get the current length from the binding.
-						var iSteps = 0;
-						if (oBinding) {
-							// the binding might have changed by the time the function gets called
-							iSteps = Math.max(0, (oBinding.getLength() || 0) - this.getVisibleRowCount());
-						}
-
-						if ($this) {
-							$this.toggleClass("sapUiTableVScr", iSteps > 0);
-							var oTableSizes = this._collectTableSizes();
-							this._syncColumnHeaders(oTableSizes);
-						}
-
-						this._oVSb.setSteps(iSteps);
-						if (this._oVSb.getDomRef()) {
-							this._oVSb.rerender();
-						}
-						this._oVSb.setScrollPosition(this.getFirstVisibleRow());
-						this._sScrollBarTimer = undefined;
-					});
+					this._oVSb.setSteps(iSteps);
+					this._oVSb.setScrollPosition(this.getFirstVisibleRow());
+					this._oVSb.rerender();
 				}
 			}
 		} else {
