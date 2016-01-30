@@ -81,6 +81,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		if (oTable.getWidth()) {
 			rm.addStyle("width", oTable.getWidth());
 		}
+
+		if (oTable.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
+			rm.addStyle("height", "0px");
+		}
+
 		rm.writeStyles();
 		rm.write(">");
 
@@ -98,6 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.write("<div");
 		rm.addClass("sapUiTableCnt");
 		rm.writeClasses();
+
 		// Define group for F6 handling
 		rm.writeAttribute("data-sap-ui-fastnavgroup", "true");
 		if (oTable._bAccMode) {
