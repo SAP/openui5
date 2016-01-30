@@ -254,7 +254,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapenter = function(oEvent) {
-		ComboBoxBase.prototype.onsapenter.apply(this, arguments);
+		InputBase.prototype.onsapenter.apply(this, arguments);
 		this._selectItemByKey(oEvent);
 	};
 

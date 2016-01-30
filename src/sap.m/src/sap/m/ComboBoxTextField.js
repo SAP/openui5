@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		"use strict";
 
 		/**
-		 * Constructor for a new ComboBoxTextField.
+		 * Constructor for a new <code>sap.m.ComboBoxTextField</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
 		 * @param {object} [mSettings] Initial settings for the new control.
@@ -56,6 +56,51 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			if (sValueState !== mValueState.None) {
 				$DomRef.addClass(CSS_CLASS + "State " + CSS_CLASS + sValueState);
 			}
+		};
+
+		/**
+		 * Gets the trigger element of the control's picker popup.
+		 *
+		 * @returns {Element | null} The element that is used as trigger to open the control's picker popup.
+		 */
+		ComboBoxTextField.prototype.getOpenArea = function() {
+			return this.getDomRef("arrow");
+		};
+
+		/**
+		 * Checks whether the provided element is the open area.
+		 *
+		 * @param {Element} oDomRef
+		 * @returns {boolean}
+		 */
+		ComboBoxTextField.prototype.isOpenArea = function(oDomRef) {
+			var oOpenAreaDomRef = this.getOpenArea();
+			return oOpenAreaDomRef && oOpenAreaDomRef.contains(oDomRef);
+		};
+
+		/**
+		 * Handles the <code>sapenter</code> event when enter key is pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		ComboBoxTextField.prototype.onsapenter = function(oEvent) {
+			InputBase.prototype.onsapenter.apply(this, arguments);
+
+			// in case of a non-editable or disabled combo box, the selection cannot be modified
+			if (!this.getEnabled() || !this.getEditable()) {
+				return;
+			}
+
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+
+			var sValue = this.getValue(),
+				iValueLength = sValue.length;
+
+			this.setValue(sValue);
+
+			// deselect text
+			this.selectText(iValueLength, iValueLength);
 		};
 
 		return ComboBoxTextField;

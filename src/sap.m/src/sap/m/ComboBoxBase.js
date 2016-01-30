@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		"use strict";
 
 		/**
-		 * Constructor for a new ComboBoxBase.
+		 * Constructor for a new <code>sap.m.ComboBoxBase</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
 		 * @param {object} [mSettings] Initial settings for the new control.
@@ -488,26 +488,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		ComboBoxBase.prototype.getSelectableItems = function() {
 			var oList = this.getList();
 			return oList ? oList.getSelectableItems() : [];
-		};
-
-		/**
-		 * Gets the trigger element of the control's picker popup.
-		 *
-		 * @returns {Element | null} The element that is used as trigger to open the control's picker popup.
-		 */
-		ComboBoxBase.prototype.getOpenArea = function() {
-			return this.getDomRef("arrow");
-		};
-
-		/**
-		 * Checks whether the provided element is the open area.
-		 *
-		 * @param {Element} oDomRef
-		 * @returns {boolean}
-		 */
-		ComboBoxBase.prototype.isOpenArea = function(oDomRef) {
-			var oOpenAreaDomRef = this.getOpenArea();
-			return oOpenAreaDomRef && oOpenAreaDomRef.contains(oDomRef);
 		};
 
 		/**
