@@ -63,7 +63,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 
 		rm.addClass("sapUiTableSelMode" + oTable.getSelectionMode()); // row selection mode
-		//rm.addClass("sapUiTableHScr"); // show horizontal scrollbar
 		if (oTable.getNavigationMode() === sap.ui.table.NavigationMode.Scrollbar) {
 			rm.addClass("sapUiTableVScr"); // show vertical scrollbar
 		}
