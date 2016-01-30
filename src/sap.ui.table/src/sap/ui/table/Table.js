@@ -811,9 +811,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		for (var i = 0; i < aScrollRowItems.length; i++) {
 			var iFixedRowHeight = 0;
 			if (aFixedRowItems[i]) {
-				iFixedRowHeight = aFixedRowItems[i].clientHeight;
+				var oFixedRowClientRect = aFixedRowItems[i].getBoundingClientRect();
+				iFixedRowHeight = oFixedRowClientRect.bottom - oFixedRowClientRect.top;
 			}
-			var iRowHeight = aScrollRowItems[i].clientHeight || aScrollRowItems[i].offsetHeight;
+
+			var oScrollRowClientRect = aScrollRowItems[i].getBoundingClientRect();
+			var iRowHeight = oScrollRowClientRect.bottom - oScrollRowClientRect.top;
+
 			aRowItemHeights.push(Math.max(iFixedRowHeight, iRowHeight));
 		}
 		oSizes.tableRowHeights = aRowItemHeights;
