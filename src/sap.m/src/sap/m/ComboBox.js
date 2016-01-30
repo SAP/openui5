@@ -291,10 +291,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * This event handler is called before the rendering of the control is started.
-		 *
-		 */
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 			this.synchronizeSelection();

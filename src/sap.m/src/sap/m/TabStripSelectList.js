@@ -46,11 +46,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		TabStripSelectList.CSS_CLASS_CLOSEBUTTON            = 'sapMTabSelectListItemCloseBtn';
 		TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabSelectListItemCloseBtnInvisible'; // ToDo: this belongs to item
 
-		/**
-		 * Initializes the control instance.
-		 * @override
-		 * @private
-		 */
 		TabStripSelectList.prototype.init = function () {
 			SelectList.prototype.init.call(this);
 			this.addStyleClass(TabStripSelectList.CSS_CLASS_SELECTLIST);
