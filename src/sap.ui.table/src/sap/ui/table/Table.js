@@ -717,7 +717,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._collectTableSizes = function() {
 		var oSizes = {
-			tableParentHeight: 0,
+			tableAvailableSpace: 0,
 			tableCtrlScrollWidth: 0,
 			tableRowHdrScrWidth: 0,
 			tableCtrlRowScrollTop: 0,
@@ -726,17 +726,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			tableHSbScrollLeft: 0,
 			tableCtrlFixedWidth: 0,
 			columnRowHeight: 0,
-			invisibleColWidth: 0,
-			usedHeight: 0
+			invisibleColWidth: 0
 		};
 
 		var oDomRef = this.getDomRef();
 		if (!oDomRef) {
 			return oSizes;
-		}
-
-		if (oDomRef.parentNode) {
-			oSizes.tableParentHeight = oDomRef.parentNode.clientHeight;
 		}
 
 		var oSapUiTableCtrlScroll = oDomRef.querySelector(".sapUiTableCtrlScroll");
@@ -823,10 +818,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 		oSizes.tableRowHeights = aRowItemHeights;
 
-		// The used height is the table height, when the inner content container (rows) has no height set
-		var oCtrlCnt = oDomRef.querySelector(".sapUiTableCtrlCnt");
-		if (oCtrlCnt) {
-			oSizes.usedHeight = oDomRef.clientHeight;
+		if (oDomRef.parentNode) {
+			var oCnt = oDomRef.querySelector(".sapUiTableCnt");
+			var oCCnt = oDomRef.querySelector(".sapUiTableCCnt");
+			if (oCCnt && oCnt) {
+				var iUsedHeight = oCnt.clientHeight - oCCnt.clientHeight;
+				oSizes.tableAvailableSpace = oDomRef.parentNode.clientHeight - iUsedHeight;
+			}
 		}
 
 		return oSizes;
@@ -962,14 +960,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._sResizeHandlerId = undefined;
 		}
 
-		var $this = this.$();
-		var $sapUiTableCCnt = $this.find(".sapUiTableCCnt");
-		$sapUiTableCCnt.addClass("sapUiTableNoHeight");
-
 		// Reading of UI Sizes
 		var oTableSizes = this._collectTableSizes();
-
-		$sapUiTableCCnt.removeClass("sapUiTableNoHeight");
 
 		// Manipulation of UI Sizes
 		this._updateRowHeader(oTableSizes);
@@ -2680,10 +2672,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype._handleRowCountModeAuto = function(oTableSizes) {
 		//if visibleRowCountMode is auto change the visibleRowCount according to the parents container height
 		if (this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
-			var iRows = this._calculateRowsToDisplay(oTableSizes.tableParentHeight - oTableSizes.usedHeight);
-			if (isNaN(iRows)) {
+			var iRows = this._calculateRowsToDisplay(oTableSizes.tableAvailableSpace);
+			// if minAutoRowCount has reached, table should use block this height.
+			// In case row > minAutoRowCount, the table height is 0, because ResizeTrigger must detect any changes of the table parent.
+			if (iRows == this._determineMinAutoRowCount()) {
+				this.$().height("auto");
+			}
+
+			if (isNaN(iRows) || iRows == this.getVisibleRowCount()) {
 				return;
 			}
+
 			// Currently this needs to be executed in a timeout because invalidate is lost wenn method is called during onAfterRendering
 			// This can be reverted when keeping the invalidate calls, that occur during onAfterRendering are kept
 			var that = this;
@@ -5918,15 +5917,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._onGhostMouseRelease = function(oEvent) {
-
-
-
 		var $this = this.$();
 		var $splitterBarGhost = jQuery(this.getDomRef("ghost"));
 		var iLocationY = this._isTouchMode(oEvent) ? oEvent.changedTouches[0].pageY : oEvent.pageY;
 
 		var iNewHeight = iLocationY - $this.find(".sapUiTableCCnt").offset().top - $splitterBarGhost.height() - $this.find(".sapUiTableFtr").height();
-
 		this.setVisibleRowCount(this._calculateRowsToDisplay(iNewHeight));
 
 		$splitterBarGhost.remove();
@@ -5959,25 +5954,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
-	 * Calculates the maximum rows to display within the table.
+	 * Determines the default row height of this table.
 	 * @private
 	 */
-	Table.prototype._calculateRowsToDisplay = function(iHeight) {
-		var iMinRowCount = this.getMinAutoRowCount() || 5;
-
-		// If no iHeight is passed, return minimum row count.
-		if (!iHeight) {
-			return iMinRowCount;
-		}
-
-		var $this = this.$();
-		if (!$this.get(0)) {
-			return iMinRowCount;
-		}
-
+	Table.prototype._determineRowHeight = function() {
 		var aRows = this.getRows();
 		if (!aRows.length) {
-			return iMinRowCount;
+			return 0;
 		}
 
 		var oDomRefs = aRows[0].getDomRefs(true);
@@ -5987,19 +5970,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// No rows displayed when visible row count == 0, no row height can be determined, therefore we set standard row height
 		if (!iRowHeight) {
 			var sRowHeightParamName = "sap.ui.table.Table:sapUiTableRowHeight";
-			if ($this.parents().hasClass('sapUiSizeCompact')) {
+			if (this.$().parents().hasClass('sapUiSizeCompact')) {
 				sRowHeightParamName = "sap.ui.table.Table:sapUiTableCompactRowHeight";
 			}
 			iRowHeight = parseInt(Parameters.get(sRowHeightParamName), 10);
 		}
+		return iRowHeight;
+	};
 
-		// Maximum height of the table is the height of the window minus two row height, reserved for header and footer.
-		var iMaxHeight = 50000;
+	/**
+	 * Determines the minimal row count for rowCountMode "auto".
+	 * @private
+	 */
+	Table.prototype._determineMinAutoRowCount = function() {
+		return this.getMinAutoRowCount() || 5;
+	};
 
-		var iCalculatedSpace = iHeight;
+	/**
+	 * Calculates the maximum rows to display within the table.
+	 * @private
+	 */
+	Table.prototype._calculateRowsToDisplay = function(iHeight) {
+		var iMinRowCount = this._determineMinAutoRowCount();
+		var iRowHeight = this._determineRowHeight();
+		var $this = this.$();
+		if (!iRowHeight || !iHeight || !$this.get(0) || !this.getRows().length) {
+			return iMinRowCount;
+		}
 
 		// Make sure that table does not grow to infinity
-		var iAvailableSpace = Math.min(iCalculatedSpace, iMaxHeight);
+		var iAvailableSpace = Math.min(iHeight, 50000);
 
 		// the last content row height is iRowHeight - 1, therefore + 1 in the formula below:
 		// to avoid issues with having more fixed rows than visible row count, the number of visible rows must be
