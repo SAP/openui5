@@ -807,15 +807,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			 */
 			var fnSetArrow = function (oThis) {
 				var sKey = "",
-                                    iVal = 0,
-                                    iZero = 0, // this is the 0 of the  relative position between ToolPopup and Opener
-                                    iHalfArrow = oThis.iArrowHeight / 2,
-                                    isRTL = sap.ui.getCore().getConfiguration().getRTL(),
-                                    sArrowDir,
-                                    oPopRect = oThis.$().rect(),
-                                    oOpener = jQuery.sap.byId(oThis.getOpener()),
-                                    oOpenerRect = oOpener.rect(),
-                                    $Arrow = oThis.$("arrow");
+					iVal = 0,
+					iZero = 0, // this is the 0 of the  relative position between ToolPopup and Opener
+					iHalfArrow = oThis.iArrowHeight / 2,
+					isRTL = sap.ui.getCore().getConfiguration().getRTL(),
+					sArrowDir,
+					oPopRect = oThis.$().rect(),
+					oOpener = jQuery.sap.byId(oThis.getOpener()),
+					oOpenerRect = oOpener.rect(),
+					popupBorderLeft,
+					popupBorderRight,
+					popupBorderTop,
+					$Arrow = oThis.$("arrow");
 
 				if (!oThis.getDomRef()) {
 					return;
@@ -849,7 +852,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
                     sKey = "top";
 
                     if (oOpenerRect) {
-                        iZero = parseInt(oOpenerRect.top - oPopRect.top, 10);
+			popupBorderTop = parseInt(oThis.$().css('border-top'), 10);
+                        iZero = parseInt(oOpenerRect.top - popupBorderTop - oPopRect.top, 10);
 
                         iVal = Math.round(iZero + oOpenerRect.height / 2 - iHalfArrow);
 
@@ -861,13 +865,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					sKey = "left";
 
 					if (oOpenerRect) {
-						var openerBorderLeft = parseInt(jQuery(oOpener).css('border-left'), 10);
-						var openerBorderRight = parseInt(jQuery(oOpener).css('border-right'), 10);
+						popupBorderLeft = parseInt(oThis.$().css('border-left'), 10);
+						popupBorderRight = parseInt(oThis.$().css('border-right'), 10);
 						if (isRTL) {
 							sKey = "right";
-							iZero = parseInt(oPopRect.left + oPopRect.width - oOpenerRect.left - oOpenerRect.width - openerBorderRight, 10);
+							iZero = parseInt(oPopRect.left + oPopRect.width - oOpenerRect.left - oOpenerRect.width - popupBorderRight, 10);
 						} else {
-							iZero = parseInt(oOpenerRect.left - oPopRect.left - openerBorderLeft, 10);
+							iZero = parseInt(oOpenerRect.left - oPopRect.left - popupBorderLeft, 10);
 						}
 
 						iVal = Math.round(iZero + oOpenerRect.width / 2 - iHalfArrow);
