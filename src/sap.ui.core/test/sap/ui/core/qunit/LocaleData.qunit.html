@@ -143,33 +143,39 @@
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMMMMEEEEdHms\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("Q", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"Q\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("w", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"w\", \"" + aCalendarTypes[i] + "\")");
-			raises(function(){oLocaleData.getCustomDateTimePattern("My", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"My\", \"" + aCalendarTypes[i] + "\")")
-			raises(function(){oLocaleData.getCustomDateTimePattern("yMLd", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMLd\", \"" + aCalendarTypes[i] + "\")")
-			raises(function(){oLocaleData.getCustomDateTimePattern("yMdp", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMdp\", \"" + aCalendarTypes[i] + "\")")
-			equal(typeof oLocaleData.getDisplayName("era"), "string", "getDisplayName(\"era\")");
-			equal(typeof oLocaleData.getDisplayName("year"), "string", "getDisplayName(\"year\")");
-			equal(typeof oLocaleData.getDisplayName("quarter"), "string", "getDisplayName(\"quarter\")");
-			equal(typeof oLocaleData.getDisplayName("month"), "string", "getDisplayName(\"month\")");
-			equal(typeof oLocaleData.getDisplayName("day"), "string", "getDisplayName(\"day\")");
-			equal(typeof oLocaleData.getDisplayName("weekday"), "string", "getDisplayName(\"weekday\")");
-			equal(typeof oLocaleData.getDisplayName("hour"), "string", "getDisplayName(\"hour\")");
-			equal(typeof oLocaleData.getDisplayName("minute"), "string", "getDisplayName(\"minute\")");
-			equal(typeof oLocaleData.getDisplayName("second"), "string", "getDisplayName(\"second\")");
-			equal(typeof oLocaleData.getDisplayName("zone"), "string", "getDisplayName(\"zone\")");
-			for (j = -2 ; j <= 2 ; j++) {
-				equal(typeof oLocaleData.getRelativeSecond(j), "string", "getRelativeSecond(" + j + ")");
-				if (j === 0) {
-					strictEqual(oLocaleData.getRelativeMinute(j), null, "getRelativeMinute(" + j + ")");
-					strictEqual(oLocaleData.getRelativeHour(j), null, "getRelativeHour(" + j + ")");
-				} else {
-					equal(typeof oLocaleData.getRelativeMinute(j), "string", "getRelativeMinute(" + j + ")");
-					equal(typeof oLocaleData.getRelativeHour(j), "string", "getRelativeHour(" + j + ")");
+			raises(function(){oLocaleData.getCustomDateTimePattern("My", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"My\", \"" + aCalendarTypes[i] + "\")");
+			raises(function(){oLocaleData.getCustomDateTimePattern("yMLd", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMLd\", \"" + aCalendarTypes[i] + "\")");
+			raises(function(){oLocaleData.getCustomDateTimePattern("yMdp", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMdp\", \"" + aCalendarTypes[i] + "\")");
+			[undefined, "wide", "short", "narrow"].forEach(function(sStyle, index) {
+				if (sLocale === "xx_XX" && (sStyle !== "wide" && sStyle !== undefined)) {
+					return;
 				}
-				equal(typeof oLocaleData.getRelativeDay(j), "string", "getRelativeDay(" + j + ")");
-				equal(typeof oLocaleData.getRelativeWeek(j), "string", "getRelativeWeek(" + j + ")");
-				equal(typeof oLocaleData.getRelativeMonth(j), "string", "getRelativeMonth(" + j + ")");
-				equal(typeof oLocaleData.getRelativeYear(j), "string", "getRelativeYear(" + j + ")");
-			}
+
+				equal(typeof oLocaleData.getDisplayName("era", sStyle), "string", "getDisplayName(\"era\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				equal(typeof oLocaleData.getDisplayName("year", sStyle), "string", "getDisplayName(\"year\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				equal(typeof oLocaleData.getDisplayName("quarter", sStyle), "string", "getDisplayName(\"quarter\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				equal(typeof oLocaleData.getDisplayName("month", sStyle), "string", "getDisplayName(\"month\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				equal(typeof oLocaleData.getDisplayName("day", sStyle), "string", "getDisplayName(\"day\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				equal(typeof oLocaleData.getDisplayName("weekday", sStyle), "string", "getDisplayName(\"weekday\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				equal(typeof oLocaleData.getDisplayName("hour", sStyle), "string", "getDisplayName(\"hour\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				equal(typeof oLocaleData.getDisplayName("minute", sStyle), "string", "getDisplayName(\"minute\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				equal(typeof oLocaleData.getDisplayName("second", sStyle), "string", "getDisplayName(\"second\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				equal(typeof oLocaleData.getDisplayName("zone", sStyle), "string", "getDisplayName(\"zone\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				for (j = -2 ; j <= 2 ; j++) {
+					equal(typeof oLocaleData.getRelativeSecond(j), "string", "getRelativeSecond(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					if (j === 0) {
+						strictEqual(oLocaleData.getRelativeMinute(j), null, "getRelativeMinute(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+						strictEqual(oLocaleData.getRelativeHour(j), null, "getRelativeHour(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					} else {
+						equal(typeof oLocaleData.getRelativeMinute(j), "string", "getRelativeMinute(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+						equal(typeof oLocaleData.getRelativeHour(j), "string", "getRelativeHour(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					}
+					equal(typeof oLocaleData.getRelativeDay(j), "string", "getRelativeDay(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					equal(typeof oLocaleData.getRelativeWeek(j), "string", "getRelativeWeek(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					equal(typeof oLocaleData.getRelativeMonth(j), "string", "getRelativeMonth(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+					equal(typeof oLocaleData.getRelativeYear(j), "string", "getRelativeYear(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
+				}
+			});
 		}
 
 		equal(typeof oLocaleData.getNumberSymbol("decimal"), "string", "getNumberSymbol(\"decimal\")");

@@ -2419,7 +2419,7 @@
 		"era": {
 			"displayName": "Thời đại"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "Năm",
 			"relative-type--1": "năm ngoái",
 			"relative-type-0": "năm nay",
@@ -2431,7 +2431,31 @@
 				"relativeTimePattern-count-other": "{0} năm trước"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "Năm",
+			"relative-type--1": "năm ngoái",
+			"relative-type-0": "năm nay",
+			"relative-type-1": "năm sau",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} năm nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} năm trước"
+			}
+		},
+		"year-narrow": {
+			"displayName": "Năm",
+			"relative-type--1": "năm ngoái",
+			"relative-type-0": "năm nay",
+			"relative-type-1": "năm sau",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} năm nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} năm trước"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "Quý",
 			"relative-type--1": "quý trước",
 			"relative-type-0": "quý này",
@@ -2443,7 +2467,31 @@
 				"relativeTimePattern-count-other": "{0} quý trước"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "Quý",
+			"relative-type--1": "quý trước",
+			"relative-type-0": "quý này",
+			"relative-type-1": "quý sau",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} quý nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} quý trước"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "Quý",
+			"relative-type--1": "quý trước",
+			"relative-type-0": "quý này",
+			"relative-type-1": "quý sau",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} quý nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} quý trước"
+			}
+		},
+		"month-wide": {
 			"displayName": "Tháng",
 			"relative-type--1": "tháng trước",
 			"relative-type-0": "tháng này",
@@ -2455,7 +2503,31 @@
 				"relativeTimePattern-count-other": "{0} tháng trước"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "Tháng",
+			"relative-type--1": "tháng trước",
+			"relative-type-0": "tháng này",
+			"relative-type-1": "tháng sau",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} tháng nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} tháng trước"
+			}
+		},
+		"month-narrow": {
+			"displayName": "Tháng",
+			"relative-type--1": "tháng trước",
+			"relative-type-0": "tháng này",
+			"relative-type-1": "tháng sau",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} tháng nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} tháng trước"
+			}
+		},
+		"week-wide": {
 			"displayName": "Tuần",
 			"relative-type--1": "tuần trước",
 			"relative-type-0": "tuần này",
@@ -2467,7 +2539,59 @@
 				"relativeTimePattern-count-other": "{0} tuần trước"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "Tuần",
+			"relative-type--1": "tuần trước",
+			"relative-type-0": "tuần này",
+			"relative-type-1": "tuần sau",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} tuần nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} tuần trước"
+			}
+		},
+		"week-narrow": {
+			"displayName": "Tuần",
+			"relative-type--1": "tuần trước",
+			"relative-type-0": "tuần này",
+			"relative-type-1": "tuần sau",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} tuần nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} tuần trước"
+			}
+		},
+		"day-wide": {
+			"displayName": "Ngày",
+			"relative-type--2": "Hôm kia",
+			"relative-type--1": "Hôm qua",
+			"relative-type-0": "Hôm nay",
+			"relative-type-1": "Ngày mai",
+			"relative-type-2": "Ngày kia",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} ngày nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ngày trước"
+			}
+		},
+		"day-short": {
+			"displayName": "Ngày",
+			"relative-type--2": "Hôm kia",
+			"relative-type--1": "Hôm qua",
+			"relative-type-0": "Hôm nay",
+			"relative-type-1": "Ngày mai",
+			"relative-type-2": "Ngày kia",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} ngày nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ngày trước"
+			}
+		},
+		"day-narrow": {
 			"displayName": "Ngày",
 			"relative-type--2": "Hôm kia",
 			"relative-type--1": "Hôm qua",
@@ -2484,7 +2608,7 @@
 		"weekday": {
 			"displayName": "Ngày trong tuần"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "Giờ",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} giờ nữa"
@@ -2493,7 +2617,25 @@
 				"relativeTimePattern-count-other": "{0} giờ trước"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "Giờ",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} giờ nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} giờ trước"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "Giờ",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} giờ nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} giờ trước"
+			}
+		},
+		"minute-wide": {
 			"displayName": "Phút",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} phút nữa"
@@ -2502,7 +2644,45 @@
 				"relativeTimePattern-count-other": "{0} phút trước"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "Phút",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} phút nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} phút trước"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "Phút",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} phút nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} phút trước"
+			}
+		},
+		"second-wide": {
+			"displayName": "Giây",
+			"relative-type-0": "bây giờ",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} giây nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} giây trước"
+			}
+		},
+		"second-short": {
+			"displayName": "Giây",
+			"relative-type-0": "bây giờ",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} giây nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} giây trước"
+			}
+		},
+		"second-narrow": {
 			"displayName": "Giây",
 			"relative-type-0": "bây giờ",
 			"relativeTime-type-future": {

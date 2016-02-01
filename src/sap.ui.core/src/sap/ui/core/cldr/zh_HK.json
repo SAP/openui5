@@ -2417,7 +2417,7 @@
 		"era": {
 			"displayName": "纪元"
 		},
-		"year": {
+		"year-wide": {
 			"displayName": "年",
 			"relative-type--1": "去年",
 			"relative-type-0": "今年",
@@ -2429,7 +2429,31 @@
 				"relativeTimePattern-count-other": "{0}年前"
 			}
 		},
-		"quarter": {
+		"year-short": {
+			"displayName": "年",
+			"relative-type--1": "去年",
+			"relative-type-0": "今年",
+			"relative-type-1": "明年",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}年后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}年前"
+			}
+		},
+		"year-narrow": {
+			"displayName": "年",
+			"relative-type--1": "去年",
+			"relative-type-0": "今年",
+			"relative-type-1": "明年",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}年后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}年前"
+			}
+		},
+		"quarter-wide": {
 			"displayName": "季",
 			"relative-type--1": "last quarter",
 			"relative-type-0": "this quarter",
@@ -2441,7 +2465,31 @@
 				"relativeTimePattern-count-other": "{0}季度前"
 			}
 		},
-		"month": {
+		"quarter-short": {
+			"displayName": "季",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}季度后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}季度前"
+			}
+		},
+		"quarter-narrow": {
+			"displayName": "季",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}季度后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}季度前"
+			}
+		},
+		"month-wide": {
 			"displayName": "月",
 			"relative-type--1": "上个月",
 			"relative-type-0": "本月",
@@ -2453,7 +2501,31 @@
 				"relativeTimePattern-count-other": "{0}个月前"
 			}
 		},
-		"week": {
+		"month-short": {
+			"displayName": "月",
+			"relative-type--1": "上个月",
+			"relative-type-0": "本月",
+			"relative-type-1": "下个月",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}个月后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}个月前"
+			}
+		},
+		"month-narrow": {
+			"displayName": "月",
+			"relative-type--1": "上个月",
+			"relative-type-0": "本月",
+			"relative-type-1": "下个月",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}个月后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}个月前"
+			}
+		},
+		"week-wide": {
 			"displayName": "周",
 			"relative-type--1": "上周",
 			"relative-type-0": "本周",
@@ -2465,7 +2537,59 @@
 				"relativeTimePattern-count-other": "{0}周前"
 			}
 		},
-		"day": {
+		"week-short": {
+			"displayName": "周",
+			"relative-type--1": "上周",
+			"relative-type-0": "本周",
+			"relative-type-1": "下周",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}周后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}周前"
+			}
+		},
+		"week-narrow": {
+			"displayName": "周",
+			"relative-type--1": "上周",
+			"relative-type-0": "本周",
+			"relative-type-1": "下周",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}周后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}周前"
+			}
+		},
+		"day-wide": {
+			"displayName": "日",
+			"relative-type--2": "前天",
+			"relative-type--1": "昨天",
+			"relative-type-0": "今天",
+			"relative-type-1": "明天",
+			"relative-type-2": "后天",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}天后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}天前"
+			}
+		},
+		"day-short": {
+			"displayName": "日",
+			"relative-type--2": "前天",
+			"relative-type--1": "昨天",
+			"relative-type-0": "今天",
+			"relative-type-1": "明天",
+			"relative-type-2": "后天",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}天后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}天前"
+			}
+		},
+		"day-narrow": {
 			"displayName": "日",
 			"relative-type--2": "前天",
 			"relative-type--1": "昨天",
@@ -2482,7 +2606,7 @@
 		"weekday": {
 			"displayName": "工作日"
 		},
-		"hour": {
+		"hour-wide": {
 			"displayName": "小时",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0}小时后"
@@ -2491,7 +2615,25 @@
 				"relativeTimePattern-count-other": "{0}小时前"
 			}
 		},
-		"minute": {
+		"hour-short": {
+			"displayName": "小时",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}小时后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}小时前"
+			}
+		},
+		"hour-narrow": {
+			"displayName": "小时",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}小时后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}小时前"
+			}
+		},
+		"minute-wide": {
 			"displayName": "分钟",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0}分钟后"
@@ -2500,7 +2642,45 @@
 				"relativeTimePattern-count-other": "{0}分钟前"
 			}
 		},
-		"second": {
+		"minute-short": {
+			"displayName": "分钟",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}分钟后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}分钟前"
+			}
+		},
+		"minute-narrow": {
+			"displayName": "分钟",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}分钟后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}分钟前"
+			}
+		},
+		"second-wide": {
+			"displayName": "秒钟",
+			"relative-type-0": "现在",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}秒后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}秒前"
+			}
+		},
+		"second-short": {
+			"displayName": "秒钟",
+			"relative-type-0": "现在",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}秒后"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}秒前"
+			}
+		},
+		"second-narrow": {
 			"displayName": "秒钟",
 			"relative-type-0": "现在",
 			"relativeTime-type-future": {
