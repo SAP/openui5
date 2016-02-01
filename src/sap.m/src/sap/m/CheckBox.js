@@ -74,7 +74,13 @@ sap.ui.define(['jquery.sap.global', './Label', './library', 'sap/ui/core/Control
 			 * Specifies whether the user shall be allowed to edit the state of the checkbox
 			 * @since 1.25
 			 */
-			editable : {type : "boolean", group : "Behavior", defaultValue : true}
+			editable : {type : "boolean", group : "Behavior", defaultValue : true},
+
+			/**
+			 * Accepts the core enumeration ValueState.type that supports 'None', 'Error', 'Warning' and 'Success'.
+			 * @since 1.38
+			 */
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None}
 		},
 		associations : {
 

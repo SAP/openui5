@@ -43,6 +43,20 @@
 	-webkit-focus-ring-color: none;
 }
 
+.sapMCb.sapMCbWarn .sapMCbBg {
+	border-color: @sapUiWarningBorder;
+	&.sapMCbMarkChecked:before {
+		color: darken(@sapUiCriticalElement,100);
+	}
+}
+
+.sapMCb.sapMCbErr .sapMCbBg {
+	border-color: @sapUiErrorBorder;
+	&.sapMCbMarkChecked:before {
+		color: @sapUiNegativeElement;
+	}
+}
+
 .sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem' ( the focus width) */
 	left: 0.0625rem;
 }
