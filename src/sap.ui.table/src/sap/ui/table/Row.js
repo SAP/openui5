@@ -38,20 +38,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 	}});
 
-	Row.prototype.init = function() {
-		this.initDomRefs();
-	};
-
-	Row.prototype.exit = function() {
-		this.initDomRefs();
-	};
-
-	/**
-	 * @private
-	 */
-	Row.prototype.initDomRefs = function() {
-		this._mDomRefs = {};
-	};
 
 	/**
 	 * Returns the index of the row in the table or -1 if not added to a table. This
@@ -98,52 +84,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 	 * @returns {object} contains DomRefs or jQuery objects of the row
 	 */
 	Row.prototype.getDomRefs = function (bJQuery) {
-		var fnAccess;
-		var sKey;
+		var oDomRefs = {};
+		var fnAccess = jQuery.sap.domById;
 		if (bJQuery === true) {
 			fnAccess = jQuery.sap.byId;
-			sKey = "jQuery";
-		} else {
-			fnAccess = jQuery.sap.domById;
-			sKey = "dom";
 		}
 
-		if (!this._mDomRefs[sKey]) {
-			this._mDomRefs[sKey] = {};
-			var oTable = this.getParent();
-			if (oTable) {
-				var iRowIndex = oTable.indexOfRow(this);
-				// row selector domRef
-				this._mDomRefs[sKey].rowSelector = fnAccess(oTable.getId() + "-rowsel" + iRowIndex);
-			}
-
-			// row domRef
-			this._mDomRefs[sKey].rowScrollPart = fnAccess(this.getId());
-			// row domRef (the fixed part)
-			this._mDomRefs[sKey].rowFixedPart = fnAccess(this.getId() + "-fixed");
+		var oTable = this.getParent();
+		if (oTable) {
+			var iRowIndex = oTable.indexOfRow(this);
 			// row selector domRef
-			this._mDomRefs[sKey].rowSelectorText = fnAccess(this.getId() + "-rowselecttext");
+			oDomRefs.rowSelector = fnAccess(oTable.getId() + "-rowsel" + iRowIndex);
+		}
 
-			if (bJQuery === true) {
-				this._mDomRefs[sKey].row = this._mDomRefs[sKey].rowScrollPart;
+		// row domRef
+		oDomRefs.rowScrollPart = fnAccess(this.getId());
+		// row domRef (the fixed part)
+		oDomRefs.rowFixedPart = fnAccess(this.getId() + "-fixed");
+		// row selector domRef
+		oDomRefs.rowSelectorText = fnAccess(this.getId() + "-rowselecttext");
 
-				if (this._mDomRefs[sKey].rowFixedPart.length > 0) {
-					this._mDomRefs[sKey].row = this._mDomRefs[sKey].row.add(this._mDomRefs[sKey].rowFixedPart);
-				} else {
-					// since this won't be undefined in jQuery case
-					this._mDomRefs[sKey].rowFixedPart = undefined;
-				}
+		if (bJQuery === true) {
+			oDomRefs.row = oDomRefs.rowScrollPart;
+			if (oDomRefs.rowSelector && oDomRefs.rowSelector.length > 0) {
+				oDomRefs.row = oDomRefs.row.add(oDomRefs.rowSelector);
+			} else {
+				// since this won't be undefined in jQuery case
+				oDomRefs.rowSelector = undefined;
+			}
 
-				if (this._mDomRefs[sKey].rowSelector && this._mDomRefs[sKey].rowSelector.length > 0) {
-					this._mDomRefs[sKey].row = this._mDomRefs[sKey].row.add(this._mDomRefs[sKey].rowSelector);
-				} else {
-					// since this won't be undefined in jQuery case
-					this._mDomRefs[sKey].rowSelector = undefined;
-				}
+			if (oDomRefs.rowFixedPart.length > 0) {
+				oDomRefs.row = oDomRefs.row.add(oDomRefs.rowFixedPart);
+			} else {
+				// since this won't be undefined in jQuery case
+				oDomRefs.rowFixedPart = undefined;
 			}
 		}
 
-		return this._mDomRefs[sKey];
+		return oDomRefs;
 	};
 
 	/**
@@ -199,19 +177,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			$DomRefs.row.toggleClass("sapUiTableRowSel", bIsSelected);
 			$DomRefs.row.children("td").add($DomRefs.row).attr("aria-selected", bIsSelected.toString());
 		}
-	};
-
-	Row.prototype.setBindingContext = function(oContext) {
-		var $row = this.getDomRefs(false);
-		if ($row.rowScrollPart) {
-			$row.rowScrollPart.style.height = "";
-		}
-
-		if ($row.rowFixedPart) {
-			$row.rowFixedPart.style.height = "";
-		}
-
-		return Element.prototype.setBindingContext.apply(this, arguments);
 	};
 
 	return Row;
