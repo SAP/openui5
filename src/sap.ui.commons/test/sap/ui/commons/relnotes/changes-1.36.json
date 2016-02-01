@@ -59,5 +59,38 @@
         "references": []
       }
     ]
+  },
+  "1.36.1": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "9b5c0ce85a2348fe8f190b4baaaf78d1c144f9c8",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: if date is deleted open calendar on today",
+        "references": []
+      },
+      {
+        "id": "d4554dcd2b4c29930788342518aff92cc1da92b9",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: issues with date \u003e 99991231",
+        "references": []
+      },
+      {
+        "id": "a048f0a8c19e11c8896a7a0a616264b2facf13ed",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Generating correct tab id in createTab() method fixed.",
+        "references": []
+      },
+      {
+        "id": "224f8b5e0d8e3557cc2cfc2b8cb90c176c67f8cb",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TriStateCheckBox scroll trigger fixed",
+        "references": []
+      }
+    ]
   }
 }

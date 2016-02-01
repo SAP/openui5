@@ -17,5 +17,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.1": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "a9051c16916d628aa9eef987ac2c78809801b52e",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.Shell: Left and right part of the header do not overlap",
+        "references": []
+      }
+    ]
   }
 }
