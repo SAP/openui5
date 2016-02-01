@@ -1692,6 +1692,9 @@ sap.ui.define(['jquery.sap.global',
 		this.getContexts = this.getContexts || function () {
 			return [];
 		};
+		this.getNodes = this.getNodes || function () {
+				return [];
+			};
 		this.getLength = this.getLength || function () {
 			return 0;
 		};

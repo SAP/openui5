@@ -945,6 +945,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	 * Returns if a node has children.
 	 * This does not mean, the children have to be loaded or the node has to be expanded.
 	 * If the node is a leaf it has not children, otherwise the function returns true.
+	 * @param oContext
+	 * @returns if the given context has children
 	 */
 	ODataTreeBindingAutoExpand.prototype.hasChildren = function(oContext) {
 		if (!oContext) {
@@ -953,6 +955,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 
 		var sDrilldownState = oContext.getProperty(this.oTreeProperties["hierarchy-drill-state-for"]);
 		return sDrilldownState !== "leaf";
+	};
+
+	/**
+	 * Returns if a node has children.
+	 * This does not mean, the children have to be loaded or the node has to be expanded.
+	 * If the node is a leaf it has not children, otherwise the function returns true.
+	 * @param oNode
+	 * @returns if the given node has children
+	 */
+	ODataTreeBindingAutoExpand.prototype.nodeHasChildren = function(oNode) {
+		if (oNode === undefined) {
+			return false;
+		} else if (oNode === null) {
+			return true;
+		} else {
+			return this.hasChildren(oNode.context);
+		}
 	};
 
 	//*************************************************

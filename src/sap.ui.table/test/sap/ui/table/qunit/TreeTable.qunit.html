@@ -2,8 +2,8 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -11,7 +11,7 @@
 		data-sap-ui-noConflict="true"
 	    data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.table" >
     </script>
-    <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
     <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
@@ -19,62 +19,76 @@
 
     <script  language="javascript">
 
-    var oData = {
-    	root: {
-    		0: {
-   				name: "item1",
-       			description: "item1 description",
-   				0: {
-   					name: "subitem1-1",
-           			description: "subitem1-1 description",
-   					0: {
-   						name: "subsubitem1-1-1",
-  		        		description: "subsubitem1-1-1 description"
-   					},
-   					1: {
-   						name: "subsubitem1-1-2",
-		        		description: "subsubitem1-1-2 description"
-   					}
-   				},
-   				1: {
-   					name: "subitem1-2",
-        			description: "subitem1-2 description",
-   					0: {
-   						name: "subsubitem1-2-1",
-		        		description: "subsubitem1-2-1 description"
-   					}
-   				}
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
-   			},
-   			1: {
-   				name: "item2",
-       			description: "item2 description",
-   				0: {
-   					name: "subitem2-1",
-        			description: "subitem2-1 description"
-   				}
-   			},
-   			2: {
-   				name: "item3",
-       			description: "item3 description"
-   			}
-   		}
-    };
+	function getData() {
+		return {
+			root: {
+				0: {
+					name: "item1",
+					description: "item1 description",
+					0: {
+						name: "subitem1-1",
+						description: "subitem1-1 description",
+						0: {
+							name: "subsubitem1-1-1",
+							description: "subsubitem1-1-1 description"
+						},
+						1: {
+							name: "subsubitem1-1-2",
+							description: "subsubitem1-1-2 description"
+						}
+					},
+					1: {
+						name: "subitem1-2",
+						description: "subitem1-2 description",
+						0: {
+							name: "subsubitem1-2-1",
+							description: "subsubitem1-2-1 description"
+						}
+					}
 
-    var oModel = new sap.ui.model.json.JSONModel();
-    oModel.setData(oData);
+				},
+				1: {
+					name: "item2",
+					description: "item2 description",
+					0: {
+						name: "subitem2-1",
+						description: "subitem2-1 description"
+					}
+				},
+				2: {
+					name: "item3",
+					description: "item3 description"
+				}
+			}
+		};
+	}
 
-	var oTable = new sap.ui.table.TreeTable({
-		columns: [
-			new sap.ui.table.Column({label: "Name", template: "name", filterProperty: "name"}),
-			new sap.ui.table.Column({label: "Description", template: "description"})
-		]
-	});
-	oTable.bindRows("/root");
-	oTable.setModel(oModel);
+	function createTable() {
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(getData());
 
-	oTable.placeAt("target1");
+		var oTable = new sap.ui.table.TreeTable({
+			columns: [
+				new sap.ui.table.Column({label: "Name", template: "name", filterProperty: "name"}),
+				new sap.ui.table.Column({label: "Description", template: "description"})
+			]
+		});
+		oTable.bindRows("/root");
+		oTable.setModel(oModel);
 
+		oTable.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		return oTable;
+	}
+
+	function destroyTable(oTable) {
+		oTable.destroy();
+		sap.ui.getCore().applyChanges();
+	}
 
 	// *************************************************************************
 	// QUNIT TEST CODE
@@ -82,96 +96,154 @@
 
 	qutils.delayTestStart();
 
-	module("Basic checks");
+	module("Basic checks", {
+		setup: function() {
+			this.clock = sinon.useFakeTimers();
+			this.table = createTable();
+		},
+		teardown: function () {
+			this.clock.restore();
+			destroyTable(this.table);
+		}
+	});
 
 	test("InitialOk", 1, function() {
-		equal(oTable.getBinding("rows").getLength(), 3,	"Row count is correct!");
+		equal(this.table.getBinding("rows").getLength(), 3,	"Row count is correct!");
 	});
 
 	test("ExpandFirstLevelOk", 2, function() {
 		// check the behavior of the expand first level property (only used intially)
-		oTable.setExpandFirstLevel(true);
-		oTable.unbindRows().bindRows("/root");
-		equal(oTable.getBinding("rows").getLength(), 6,	"Row count is correct!");
-		oTable.setExpandFirstLevel(false);
-		oTable.unbindRows().bindRows("/root");
-		equal(oTable.getBinding("rows").getLength(), 3,	"Row count is correct!");
+		this.table.setExpandFirstLevel(true);
+		this.table.unbindRows().bindRows("/root");
+		equal(this.table.getBinding("rows").getLength(), 6,	"Row count is correct!");
+		this.table.setExpandFirstLevel(false);
+		this.table.unbindRows().bindRows("/root");
+		equal(this.table.getBinding("rows").getLength(), 3,	"Row count is correct!");
 	});
 
 	test("ExpandRow", 2, function() {
-		oTable.unbindRows().bindRows("/root");
-		oTable.expand(0);
-		equal(oTable.getBinding("rows").getLength(), 5, "Row count is correct!");
-		equal(oTable.isExpanded(0), true, "Expanded state is correct!");
+		this.table.expand(0);
+		equal(this.table.getBinding("rows").getLength(), 5, "Row count is correct!");
+		equal(this.table.isExpanded(0), true, "Expanded state is correct!");
 	});
 
 	test("CollapseRow", 2, function() {
-		oTable.collapse(0);
-		equal(oTable.getBinding("rows").getLength(), 3, "Row count is correct!");
-		equal(oTable.isExpanded(0), false, "Expanded state is correct!");
+		this.table.collapse(0);
+		equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
+		equal(this.table.isExpanded(0), false, "Expanded state is correct!");
 	});
 
 	test("InsertRow", 1, function() {
+		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root, {
 			3: {
 				name: "new item",
     			description: "new item description"
 			}
 		});
-		oTable.getModel().setData(oData);
-		equal(oTable.getBinding("rows").getLength(), 4, "Row count is correct!");
+		this.table.getModel().setData(oData);
+		equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
 	});
 
 	test("RemoveRow", 1, function() {
+		var oData = this.table.getModel().getData();
 		delete oData.root[3];
-		oTable.getModel().setData(oData);
-		equal(oTable.getBinding("rows").getLength(), 3, "Row count is correct!");
+		this.table.getModel().setData(oData);
+		equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
 	});
 
 	test("InsertChildRow", 3, function() {
+		var oData = this.table.getModel().getData();
 		jQuery.extend(oData.root[2], {
 			0: {
 				name: "new child item",
     			description: "new child item description"
 			}
 		});
-		oTable.getModel().setData(oData);
-		equal(oTable.getBinding("rows").getLength(), 3, "Row count is correct!");
-		oTable.expand(2);
-		equal(oTable.getBinding("rows").getLength(), 4, "Row count is correct!");
-		equal(oTable.isExpanded(2), true, "Expanded state is correct!");
+		this.table.getModel().setData(oData);
+		equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
+		this.table.expand(2);
+		equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
+		equal(this.table.isExpanded(2), true, "Expanded state is correct!");
 	});
 
 	test("ApplyFilter", 1, function() {
-		oTable.filter(oTable.getColumns()[0], "new");
-		equal(oTable.getBinding("rows").getLength(), 2, "Row count is correct!");
+		var oData = this.table.getModel().getData();
+		jQuery.extend(oData.root[2], {
+			0: {
+				name: "new child item",
+				description: "new child item description"
+			}
+		});
+		this.table.getModel().setData(oData);
+		this.table.expand(2);
+
+		this.table.filter(this.table.getColumns()[0], "new");
+		equal(this.table.getBinding("rows").getLength(), 2, "Row count is correct!");
 	});
 
 	test("RemoveFilter", 1, function() {
-		oTable.filter(oTable.getColumns()[0], "");
-		equal(oTable.getBinding("rows").getLength(), 4, "Row count is correct!");
+		var oData = this.table.getModel().getData();
+		jQuery.extend(oData.root[2], {
+			0: {
+				name: "new child item",
+				description: "new child item description"
+			}
+		});
+		this.table.getModel().setData(oData);
+		this.table.expand(2);
+
+		this.table.filter(this.table.getColumns()[0], "new");
+		this.table.filter(this.table.getColumns()[0], "");
+
+		equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
 	});
 
 	test("FilterSaveExpandedState", 3, function() {
-		oTable.expand(0);
-		equal(oTable.getBinding("rows").getLength(), 6, "Row count is correct!");
-		oTable.filter(oTable.getColumns()[0], "new");
-		equal(oTable.getBinding("rows").getLength(), 2, "Row count is correct!");
-		oTable.filter(oTable.getColumns()[0], "");
-		equal(oTable.getBinding("rows").getLength(), 6, "Row count is correct!");
+		var oData = this.table.getModel().getData();
+		jQuery.extend(oData.root[2], {
+			0: {
+				name: "new child item",
+				description: "new child item description"
+			}
+		});
+		this.table.getModel().setData(oData);
+		this.table.expand(2);
+
+		this.table.filter(this.table.getColumns()[0], "new");
+		this.table.filter(this.table.getColumns()[0], "");
+
+		this.table.expand(0);
+		equal(this.table.getBinding("rows").getLength(), 6, "Row count is correct!");
+		this.table.filter(this.table.getColumns()[0], "new");
+		equal(this.table.getBinding("rows").getLength(), 2, "Row count is correct!");
+		this.table.filter(this.table.getColumns()[0], "");
+		equal(this.table.getBinding("rows").getLength(), 6, "Row count is correct!");
 	});
 
 	test("Paginator", function() {
-		oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
-		oTable.setVisibleRowCount(4);
+		var oData = this.table.getModel().getData();
+		jQuery.extend(oData.root[2], {
+			0: {
+				name: "new child item",
+				description: "new child item description"
+			}
+		});
+		this.table.getModel().setData(oData);
+		this.table.expand(2);
+		this.table.expand(0);
+
+		this.table.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
+		this.table.setVisibleRowCount(4);
 		sap.ui.getCore().applyChanges();
 
-		var $table = oTable.$();
-		equal($table.find('#' + oTable.getId() + '-paginator').length, 1, 'The paginator exists');
-		oTable._oPaginator.getDomRef("-forwardLink").click();
-		equal(oTable.getFirstVisibleRow(), 4, "Navigation to last page OK");
-	});
+		this.clock.tick(1000);
+		var $table = this.table.$();
 
+		equal($table.find('#' + this.table.getId() + '-paginator').length, 1, 'The paginator exists');
+		this.table._oPaginator.getDomRef("-forwardLink").click();
+		equal(this.table.getFirstVisibleRow(), 4, "Navigation to last page OK");
+	});
 
 	</script>
   </head>
@@ -180,7 +252,6 @@
     <h2 id="qunit-banner"></h2>
     <h2 id="qunit-userAgent"></h2>
     <ol id="qunit-tests"></ol>
-    <div id="qunit-fixture">test markup, will be hidden</div>
-    <div id="target1"></div>
+    <div id="qunit-fixture"></div>
   </body>
 </html>

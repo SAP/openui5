@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 		return new sap.ui.table.AnalyticalColumnMenu(this.getId() + "-menu");
 	};
 
-	AnalyticalColumn.prototype.setGrouped = function(bGrouped) {
+	AnalyticalColumn.prototype.setGrouped = function(bGrouped, bSuppressInvalidate) {
 		var oParent = this.getParent();
 		var that = this;
 		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
@@ -101,7 +101,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 			}
 		}
 
-		var bReturn = this.setProperty("grouped", bGrouped);
+		var bReturn = this.setProperty("grouped", bGrouped, bSuppressInvalidate);
 		this._updateTableColumnDetails();
 		this._updateTableAnalyticalInfo(true);
 		return bReturn;

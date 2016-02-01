@@ -47,6 +47,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	};
 
 	/**
+	 * Returns the Root node of our tree, which is actually the context for the Grand Total
+	 * Used by the AnalyticalTable to display the sum row.
+	 */
+	AnalyticalTreeBindingAdapter.prototype.getGrandTotalNode = function () {
+		if (this._oRootNode) {
+			return this._oRootNode;
+		}
+	};
+
+	/**
 	 * Returns the Root node, which contains the rendering information.
 	 */
 	AnalyticalTreeBindingAdapter.prototype.getGrandTotalContextInfo = function () {
@@ -126,7 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * @param {int} iLength the number of entries to be retrieved, starting at iStartIndex
 	 * @param {int} iThreshold the number of additional entries, which will be loaded after (iStartIndex + iLength) as a buffer
 	 */
-	AnalyticalTreeBindingAdapter.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
+	AnalyticalTreeBindingAdapter.prototype.getContexts = function(iStartIndex, iLength, iThreshold, bReturnNodes) {
 		if (!iLength) {
 			iLength = this.oModel.iSizeLimit;
 		}
@@ -200,7 +210,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 			}
 		}
 
-		return aContexts;
+		if (bReturnNodes) {
+			return aNodes;
+		} else {
+			return aContexts;
+		}
 	};
 
 	/**

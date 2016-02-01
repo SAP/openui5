@@ -815,7 +815,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 *            aColumns an array with objects holding the analytical information for every column, from left to right.
 	 * @public
 	 */
-	AnalyticalBinding.prototype.updateAnalyticalInfo = function(aColumns) {
+	AnalyticalBinding.prototype.updateAnalyticalInfo = function(aColumns, bForceChange) {
 		if (!this.oModel.oMetadata || !this.oModel.oMetadata.isLoaded() || this.bInitial) {
 			this.aInitialAnalyticalInfo = aColumns;
 			return;
@@ -925,6 +925,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		this.resetData();
 
 		this.bNeedsUpdate = false;
+
+		if (bForceChange) {
+			this._fireChange({reason: ChangeReason.Change});
+		}
+
 	};
 
 	/**

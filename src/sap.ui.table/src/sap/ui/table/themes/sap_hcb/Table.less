@@ -84,8 +84,8 @@
 	background-color:@sapHCHighlightBG;
 }
 
-.sapUiTable > .sapUiTableFtr:last-child {
-	border-top: 0.185rem solid @sapHCStandardFG;
+.sapUiTableCCnt {
+	border-bottom: 0.185rem solid @sapHCStandardFG;
 }
 
 .sapUiTable > .sapUiTableFtr > .sapUiTv{
@@ -358,24 +358,18 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	outline-offset: -0.125rem;
 }
 
-.sapUiTableRSel .sapUiTableColHdrScr,
-.sapUiTableRSel .sapUiTableColHdrFixed,
 .sapUiTableRSel .sapUiTableCtrlScr,
 .sapUiTableRSel .sapUiTableCtrlScrFixed {
 	margin-left: @sapUiTableRowHdrWidth;
 }
 
 .sapUiSizeCozy .sapUiTableRSel {
-	.sapUiTableColHdrScr,
-	.sapUiTableColHdrFixed,
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
 		margin-left: @sapUiTableCozyRowHdrWidth;
 	}
 }
 
-.sapUiSizeCompact .sapUiTableRSel .sapUiTableColHdrScr,
-.sapUiSizeCompact .sapUiTableRSel .sapUiTableColHdrFixed,
 .sapUiSizeCompact .sapUiTableRSel .sapUiTableCtrlScr,
 .sapUiSizeCompact .sapUiTableRSel .sapUiTableCtrlScrFixed {
 	margin-left: @sapUiTableCompactRowHdrWidth;

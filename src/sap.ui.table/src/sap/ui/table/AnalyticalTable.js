@@ -78,9 +78,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * Overidden from Table.js
 	 * @overrides
 	 */
-	AnalyticalTable.prototype._getFixedBottomRowContexts = function (oBinding) {
-		return oBinding.getGrandTotalContext();
+	AnalyticalTable.prototype._getFixedBottomRowContexts = function () {
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			return [oBinding.getGrandTotalNode()];
+		}
 	};
+
+	AnalyticalTable.prototype._getContexts = sap.ui.table.TreeTable.prototype._getContexts;
 
 	/**
 	 * Initialization of the AnalyticalTable control
@@ -166,9 +171,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		var oBindingInfoSanitized = this._sanitizeBindingInfo.apply(this, arguments);
 
 		var vReturn = this.bindAggregation("rows", oBindingInfoSanitized);
-		this._bSupressRefresh = true;
-		this._updateColumns();
-		this._bSupressRefresh = false;
+
+		var aColumnInfo = this._getColumnInformation();
+		this._updateTotalRow(aColumnInfo);
 
 		return vReturn;
 	};
@@ -361,8 +366,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._updateTableContent = function() {
-		Table.prototype._updateTableContent.apply(this, arguments);
-
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
@@ -564,73 +567,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			}
 			// update aria description for row selection
 			$rowHdr.attr("aria-labelledby", aAriaLabelledByParts.join(" "));
-
-			var $targetRow = this.getFixedColumnCount() > 0 ? $fixedRow : $row;
-			this._resizeGroupHeader($rowHdr, $targetRow, oContextInfo.nodeState.expanded);
 		}
-	};
-
-	/*
-	 * Calculates how much width is available for the group header title.
-	 * Logic tries to grant as much space as possible. Especially to use every gap between each sum/dimension label.
-	 * This is important for users for making sure that they can read the group title even when they scrolled horizontally.
-	 * @param {jQuery} $rowHdr the current row header wrapped by jQuery.
-	 * @param {jQuery} $row jQuery collection of the current processed row.
-	 * @param {Boolean} bIsExpanded
-	 *         flag whether the current node is expanded or not.
-	 */
-	AnalyticalTable.prototype._resizeGroupHeader = function($rowHdr, $row, bIsExpanded) {
-		// Group Icon Layouting logic
-		var $groupIcon = $rowHdr.find(".sapUiTableGroupIcon");
-		if ($groupIcon.length === 0 || bIsExpanded) {
-			return;
-		}
-
-		var $MeasureAndSumLabels =  $row.find(".sapUiTableCell > *");
-		var oTableClientRect = this.getDomRef().getBoundingClientRect();
-		$groupIcon.width('');
-		var iGroupPosition = this._bRtlMode ? $groupIcon[0].getBoundingClientRect().left : $groupIcon[0].getBoundingClientRect().right;
-		var iGroupIconWidth = $groupIcon.width();
-
-		var bIsRtlMode = this._bRtlMode;
-
-		$MeasureAndSumLabels.each(function(index) {
-			var $this = jQuery(this);
-			if ($this.text().length === 0) {
-				return true;
-			}
-			var oClientRect = $this[0].getBoundingClientRect();
-			$this.width('auto');
-			var iLabelWidth = $this.width();
-			$this.width('');
-
-			var iOverlap = 0;
-			var bDoResize = false;
-			var sTextAlign = $this.css('text-align');
-			if (!bIsRtlMode) {
-				if (sTextAlign === "left") {
-					iOverlap = iGroupPosition - oClientRect.left;
-					bDoResize = (iOverlap > 0 && oClientRect.left + iLabelWidth > oTableClientRect.left);
-				} else if (sTextAlign === "right") {
-					iOverlap = iGroupPosition - oClientRect.right + iLabelWidth;
-					bDoResize = (iOverlap > 0 && oClientRect.right > oTableClientRect.left);
-				}
-			} else {
-				if (sTextAlign === "left") {
-					iOverlap = oClientRect.left + iLabelWidth - iGroupPosition;
-					bDoResize = (iOverlap > 0 && oClientRect.left < oTableClientRect.right);
-				} else if (sTextAlign === "right") {
-					iOverlap = oClientRect.right - iGroupPosition;
-					bDoResize = (iOverlap > 0 && oClientRect.right < oTableClientRect.right);
-				}
-			}
-
-			if (bDoResize) {
-				$groupIcon.width(iGroupIconWidth - iOverlap);
-				// break loop
-				return false;
-			}
-		});
 	};
 
 	AnalyticalTable.prototype.onclick = function(oEvent) {
@@ -794,6 +731,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					}
 					that._updateTableColumnDetails();
 					that.updateAnalyticalInfo();
+					that._getRowContexts();
 				}
 			}));
 			this._oGroupHeaderMenu.addItem(new sap.ui.unified.MenuItem({
@@ -813,6 +751,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 					that._bSupressRefresh = true;
 					that._updateTableColumnDetails();
 					that.updateAnalyticalInfo();
+					that._getRowContexts();
 					that._bSupressRefresh = false;
 					that.fireGroup({column: undefined, groupedColumns: [], type: sap.ui.table.GroupEventType.ungroupAll});
 				}
@@ -979,7 +918,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 	AnalyticalTable.prototype._onColumnMoved = function(oEvent) {
 		Table.prototype._onColumnMoved.apply(this, arguments);
-		this.updateAnalyticalInfo();
+		this.updateAnalyticalInfo(true, true);
 	};
 
 	AnalyticalTable.prototype.addColumn = function(vColumn, bSuppressInvalidate) {
@@ -1056,11 +995,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.updateAnalyticalInfo();
 	};
 
-	AnalyticalTable.prototype.updateAnalyticalInfo = function(bSupressRefresh) {
+	AnalyticalTable.prototype.updateAnalyticalInfo = function(bSupressRefresh, bForceChange) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
 			var aColumnInfo = this._getColumnInformation();
-			oBinding.updateAnalyticalInfo(aColumnInfo);
+			oBinding.updateAnalyticalInfo(aColumnInfo, bForceChange);
+
 			this._updateTotalRow(aColumnInfo, bSupressRefresh);
 			if (bSupressRefresh || this._bSupressRefresh) {
 				return;

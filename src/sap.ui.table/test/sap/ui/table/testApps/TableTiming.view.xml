@@ -1,0 +1,28 @@
+<mvc:View xmlns="sap.m"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  controllerName="sap.ui.table.testApps.TableTiming"
+		  height="100%"
+>
+	<Page
+		id="testPage"
+		title="Test Table Timings"
+		class="sapUiContentPadding">
+		<content>
+			<VBox>
+				<Text text="Make settings to your test-setup and click the run button to start the test." />
+			</VBox>
+		</content>
+		<footer>
+			<Toolbar>
+				<Button text="Setup" press="onSettings" type="Emphasized" />
+				<ToolbarSpacer/>
+				<Button text="Prepare" press="onPrepare" />
+				<Button text="Create" press="onCreateTable" />
+				<Button text="Render" press="onRenderTable" />
+				<ToggleButton text="Bind" pressed="{settings>/tableBound}" press="onBindTable" />
+				<Button text="Cleanup" press="onCleanup" />
+				<Button text="Run" press="onRun" type="Accept" />
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

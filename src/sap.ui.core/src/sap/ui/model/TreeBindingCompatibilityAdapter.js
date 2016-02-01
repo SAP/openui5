@@ -118,6 +118,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				getContexts: function(iStartIndex, iLength) {
 					return this.aContexts.slice(iStartIndex, iStartIndex + iLength);
 				},
+				getNodes: function(iStartIndex, iLength) {
+					var aContexts = this.getContexts(iStartIndex, iStartIndex + iLength);
+					//wrap contexts into node objects
+					var aNodes = [];
+					for (var i = 0; i < aContexts.length; i++) {
+						var oContextInfo = this._getContextInfo(aContexts[i]) || {}; //empty object to make sure this does not break
+						var oContext = aContexts[i];
+						aNodes.push({
+							context: oContext,
+							level: oContextInfo.iLevel,
+							parent: oContextInfo.oParentContext,
+							nodeState: {
+								expanded: oContextInfo.bExpanded,
+								collapsed: !oContextInfo.bExpanded,
+								selected: false //default should be false, correct value is given via the selection model
+							}
+						});
+					}
+					return aNodes;
+				},
+				hasChildren: function() {
+					return true;
+				},
+				nodeHasChildren: function() {
+					return true;
+				},
 				getContextByIndex: function (iRowIndex) {
 					return this.aContexts[iRowIndex];
 				},
