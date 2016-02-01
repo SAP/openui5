@@ -700,13 +700,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			},
 
 			_onBypassed : function (sHash) {
+				var fnFireEvent = function() {
+					this.fireBypassed({
+						hash: sHash
+					});
+				}.bind(this);
+
 				if (this._oConfig.bypassed) {
-					this._oTargets.display(this._oConfig.bypassed.target, { hash : sHash});
+					// In sync case, oReturn is a Targets reference
+					// In async case, it's a Promise instance
+					var oReturn = this._oTargets.display(this._oConfig.bypassed.target, { hash : sHash});
+
+					if (oReturn instanceof Promise) {
+						// When Promise is returned, make sure the bypassed event is fired after the target view is loaded
+						oReturn.then(fnFireEvent);
+						return;
+					}
 				}
 
-				this.fireBypassed({
-					hash: sHash
-				});
+				fnFireEvent();
 			},
 
 			_isAsync : function() {
