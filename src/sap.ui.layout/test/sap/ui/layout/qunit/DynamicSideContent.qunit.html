@@ -239,6 +239,7 @@
 						sap.ui.getCore().applyChanges();
 					},
 					teardown : function () {
+						$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
 						this._oDSC.destroy();
 						this._oDSC = null;
 					},
@@ -554,6 +555,29 @@
 
 					strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_9, "Main content span size should be equal to " + SPAN_SIZE_9);
 					strictEqual(this._oDSC._iScSpan, SPAN_SIZE_3, "Side content span size should be equal to " + SPAN_SIZE_3);
+				});
+
+				QUnit.module("Content Query", {
+					setup : function () {
+						this._oDSC = new sap.ui.layout.DynamicSideContent({
+							containerQuery: true
+						});
+						sinon.spy(this._oDSC, "_adjustToScreenSize");
+						$("#qunit-fixture").width(960);
+						this._oDSC.placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+					},
+					teardown : function () {
+						$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
+						this._oDSC._adjustToScreenSize.restore();
+						this._oDSC.destroy();
+						this._oDSC = null;
+					}
+				});
+
+				QUnit.test("On init with contentQuery _adjustToScreenSize method should be called", function (){
+					assert.ok(this._oDSC._adjustToScreenSize.calledOnce, "The resize event handler is fired once initially");
+					strictEqual(this._oDSC.getCurrentBreakpoint(), M, "The current breakpoint in this setup should be 'M'");
 				});
 
 				QUnit.module("Construction / Destruction", {
