@@ -693,16 +693,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Downloads the given item.
+	 * Downloads the given item.
+	 * This function delegates to {sap.m.UploadCollectionItem.download}.
 	 * @param {sap.m.UploadCollectionItem} uploadCollectionItem The item to download. This parameter is mandatory.
 	 * @param {boolean} askForLocation Decides whether to ask for a location to download or not.
 	 * @returns {boolean} True if the download has started successfully. False if the download couldn't be started.
 	 * @since 1.36.0
-	 * @experimental
 	 * @public
 	 */
 	UploadCollection.prototype.downloadItem = function(uploadCollectionItem, askForLocation) {
-		if (!this.getInstantUpload()){
+		if (!this.getInstantUpload()) {
 			jQuery.sap.log.info("Download is not possible on Pending Upload mode");
 			return false;
 		} else {
