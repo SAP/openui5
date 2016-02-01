@@ -18,6 +18,7 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="UploadCollectionForPendingUpload.qunit.js"></script>
 <script type="text/javascript" src="UploadCollectionToolbar.qunit.js"></script>
+<script type="text/javascript" src="UploadCollectionOpenFileDialog.qunit.js"></script>
 
 <script type="text/javascript">
 	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
@@ -209,9 +210,9 @@
 
 	QUnit.test("Determine and set unique key for a file", function(assert) {
 		var sFileName = "someFileName", sRequestId = "1", sFileNameRequestIdValue, aRequestHeaders = [{
-				name: this.oUploadCollection._headerParamConst.requestIdName,
-				value: sRequestId
-			}];
+			name: this.oUploadCollection._headerParamConst.requestIdName,
+			value: sRequestId
+		}];
 		var oFileUploader = this.oUploadCollection._getFileUploader();
 		oFileUploader.fireUploadStart({
 			fileName : sFileName,
@@ -1359,7 +1360,6 @@
 		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "Event delegation has been successfully deleted while exiting edit mode");
 	});
 </script>
-
 </head>
 <body class="sapUiBody">
 	<div id="qunit"></div>
