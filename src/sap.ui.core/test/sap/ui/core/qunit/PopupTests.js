@@ -72,7 +72,7 @@ QUnit.asyncTest("Close Popup", function(assert) {
 		this.oPopup.close(0);
 	}
 	var fnClosed = function() {
-		this.oPopup.attachClosed(fnClosed);
+		this.oPopup.detachClosed(fnClosed);
 
 		assert.equal(this.oPopup.isOpen(), false, "Popup should be closed after closing");
 		assert.equal(this.$Ref.css("display"), "none", "Popup should be 'display:none' after closing");
