@@ -706,7 +706,8 @@ sap.ui.define(['sap/ui/model/odata/AnnotationParser', 'sap/ui/Device', 'sap/ui/b
 	 * @private
 	 */
 	ODataAnnotations.prototype._parseSource = function(mSource) {
-		jQuery.sap.assert(mSource.document instanceof window.Document, "Source must contain a parsed XML document converted to an annotation object");
+		// On IE we have a specia format for the XML documents on every other browser it must be a "Document" object.
+		jQuery.sap.assert(mSource.document instanceof window.Document || Device.browser.internet_explorer, "Source must contain a parsed XML document converted to an annotation object");
 
 		var oAnnotations = AnnotationParser.parse(this._oMetadata, mSource.document);
 
