@@ -1286,12 +1286,12 @@
 
 	QUnit.test("Edit Button", function(assert) {
 		var oEditButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
-		assert.strictEqual(oEditButton.getTooltip(), "Edit", "The edit button has correct tooltip");
+		assert.strictEqual(oEditButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"), "The edit button has correct tooltip");
 	});
 
 	QUnit.test("Delete Button", function(assert) {
 		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
-		assert.strictEqual(oDeleteButton.getTooltip(), "Delete", "The delete button has correct tooltip");
+		assert.strictEqual(oDeleteButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"), "The delete button has correct tooltip");
 	});
 
 	QUnit.module("Managing event delegates when entering and exiting edit mode", {
