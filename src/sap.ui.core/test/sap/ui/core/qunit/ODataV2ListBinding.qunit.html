@@ -103,6 +103,31 @@
 		});
 	});
 
+	asyncTest("ListBinding: Length calculation no count", function(){
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: sap.ui.model.odata.CountMode.None} );
+			var handler = function() {
+				equal(oBinding.getPath(), "/Categories", "ListBinding path");
+				ok(oBinding.getModel() == oModel, "ListBinding model");
+				equal(oBinding.getLength(), 16, "length of items");
+				equal(oBinding.isLengthFinal(), false, "length not final");
+				oBinding.detachChange(handler);
+				oBinding.attachChange(function() {
+					equal(oBinding.getLength(), 8, "length of items");
+					equal(oBinding.isLengthFinal(), true, "length final");
+					start(); // resume normal testing
+				});
+				oBinding.getContexts(8,8);
+			}
+			oBinding.attachRefresh(function() {
+				oBinding.getContexts(0,8);
+			});
+			oBinding.attachChange(handler);
+			oBinding.initialize();
+			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		});
+	});
+
 	// TODO: Find out why this fails in PhantomJS and rewrite test
 	if (!sap.ui.Device.browser.phantomJS) {
 		asyncTest("ListBinding getCurrentContexts", function(){
