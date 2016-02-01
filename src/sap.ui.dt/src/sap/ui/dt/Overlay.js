@@ -58,6 +58,13 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				inHiddenTree : {
 					type : "boolean",
 					defaultValue : false
+				},
+				/**
+				 * Whether the Overlay can get the browser focus (has tabindex)
+				 */
+				focusable : {
+					type : "boolean",
+					defaultValue : false
 				}
 			},
 			associations : {
@@ -78,6 +85,14 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				}
 			},
 			events : {
+				/**
+				 * Event fired when the property "Focusable" is changed
+				 */
+				focusableChange : {
+					parameters : {
+						focusable : { type : "boolean" }
+					}
+				},
 				/**
 				 * Event fired when the Overlay is destroyed
 				 */
@@ -185,12 +200,18 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			this._updateDom();
 		}
 
-		if (this._bRestoreFocus) {
-			delete this._bRestoreFocus;
+		var bFocusable = this.isFocusable();
+		if (bFocusable) {
+			this.$().attr("tabindex", 0);
 
-			this.focus();
+			if (this._bRestoreFocus) {
+				delete this._bRestoreFocus;
+
+				this.focus();
+			}
+		} else {
+			this.$().attr("tabindex", null);
 		}
-
 	};
 
 	/**
@@ -226,6 +247,31 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype.hasFocus = function() {
 		return document.activeElement === this.getFocusDomRef();
+	};
+
+	/**
+	 * Sets whether the Overlay can get the browser focus (tabindex)
+	 * @param {boolean} bFocusable if the Overlay is focusable
+	 * @returns {sap.ui.dt.Overlay} returns this
+	 * @public
+	 */
+	Overlay.prototype.setFocusable = function(bFocusable) {
+		if (this.isFocusable() !== bFocusable) {
+			this.setProperty("focusable", bFocusable);
+			this.toggleStyleClass("sapUiDtOverlayFocusable", bFocusable);
+			this.fireFocusableChange({focusable : bFocusable});
+		}
+
+		return this;
+	};
+
+	/**
+	 * Returns if the Overlay is can get the focus
+	 * @public
+	 * @return {boolean} if the Overlay is focusable
+	 */
+	Overlay.prototype.isFocusable = function() {
+		return this.getFocusable();
 	};
 
 	/**
