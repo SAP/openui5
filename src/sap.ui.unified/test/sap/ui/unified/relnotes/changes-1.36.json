@@ -52,5 +52,59 @@
         "references": []
       }
     ]
+  },
+  "1.36.1": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "fc33a8bce6b1ee5bf8b51e8e59915a31a544304b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: appointments in new line if invisible",
+        "references": []
+      },
+      {
+        "id": "0b4019e6a87cd9fa40b2136ea88774d8cec01c88",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: multi-month switch blocks",
+        "references": []
+      },
+      {
+        "id": "814f7e101b93a4898937082226fc881eb1847ec6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: startDateChange event too early",
+        "references": []
+      },
+      {
+        "id": "76af0f9a60160545d656263f4ae29b12ea06ee03",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: wrong weekday names",
+        "references": []
+      },
+      {
+        "id": "0716a1f763d7f43c48b0fd95fc94c9206b7cbd44",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarLegend: rename \"normal Day\" to \"working day\"",
+        "references": []
+      },
+      {
+        "id": "8fdc778577b560ff3dfda2e78c816339c69ded21",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: When \"maxPrecision\" is set to 0 only the base part is being displayed",
+        "references": []
+      },
+      {
+        "id": "c396f5f46d4b0a59f7ac8b6fd302d46debaeffec",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.ShellHeadItem: Provide API to differentiate between toggle button mode and action button mode.",
+        "references": []
+      }
+    ]
   }
 }
