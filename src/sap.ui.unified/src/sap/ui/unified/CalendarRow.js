@@ -190,6 +190,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					 */
 					type : {type : "string"}
 				}
+			},
+
+			/**
+			 * Fired if an interval was selected
+			 * @since 1.38.0
+			 */
+			intervalSelect : {
+				parameters : {
+					/**
+					 * Interval start date as JavaScript date object
+					 */
+					startDate : {type : "object"},
+
+					/**
+					 * Interval end date as JavaScript date object
+					 */
+					endDate : {type : "object"},
+
+					/**
+					 * If set, the selected interval is a subinterval
+					 */
+					subInterval : {type : "boolean"}
+				}
 			}
 		}
 	}});
@@ -385,7 +408,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	CalendarRow.prototype.onclick = function(oEvent) {
 
-		this.onsapselect(oEvent);
+		var aIntervals = this.$("Apps").children(".sapUiCalendarRowAppsInt");
+		var iIndex = 0;
+		var bInterval = false;
+
+		// check if part of an Interval
+		for (iIndex = 0; iIndex < aIntervals.length; iIndex++) {
+			var oInterval = aIntervals[iIndex];
+			if (jQuery.sap.containsOrEquals(oInterval, oEvent.target)) {
+				bInterval = true;
+				break;
+			}
+		}
+
+		if (bInterval) {
+			// click on interval
+			_selectInterval.call(this, iIndex, oEvent.target);
+		} else {
+			// click on appointment?
+			this.onsapselect(oEvent);
+		}
 
 	};
 
@@ -1450,6 +1492,81 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		} else {
 			this.fireLeaveRow({type: oEvent.type});
 		}
+
+	}
+
+	function _selectInterval(iInterval, oDomRef){
+
+		var sIntervalType = this.getIntervalType();
+		var oStartDate = this._getStartDate();
+		var oIntervalStartDate = new UniversalDate(oStartDate.getTime());
+		var oIntervalEndDate;
+		var bSubInterval = false;
+		var iSubInterval = 0;
+		var iSubIntervals = 0;
+
+		if (jQuery(oDomRef).hasClass("sapUiCalendarRowAppsSubInt")) {
+			// it's a sub-interval
+			bSubInterval = true;
+			var aSubIntervals = jQuery(jQuery(oDomRef).parent()).children(".sapUiCalendarRowAppsSubInt");
+			iSubIntervals = aSubIntervals.length;
+			for (iSubInterval = 0; iSubInterval < iSubIntervals; iSubInterval++) {
+				var oSubInterval = aSubIntervals[iSubInterval];
+				if (oSubInterval == oDomRef) {
+					break;
+				}
+			}
+
+		}
+
+		// calculate with hours, days and months and not timestamps and millisecons because of rounding issues
+		switch (sIntervalType) {
+		case sap.ui.unified.CalendarIntervalType.Hour:
+			oIntervalStartDate.setUTCHours(oIntervalStartDate.getUTCHours() + iInterval);
+			if (bSubInterval) {
+				oIntervalStartDate.setUTCMinutes(oIntervalStartDate.getUTCMinutes() + iSubInterval * 60 / iSubIntervals);
+				oIntervalEndDate = new UniversalDate(oIntervalStartDate.getTime());
+				oIntervalEndDate.setUTCMinutes(oIntervalEndDate.getUTCMinutes() + 60 / iSubIntervals);
+			} else {
+				oIntervalEndDate = new UniversalDate(oIntervalStartDate.getTime());
+				oIntervalEndDate.setUTCHours(oIntervalEndDate.getUTCHours() + 1);
+			}
+			break;
+
+		case sap.ui.unified.CalendarIntervalType.Day:
+			oIntervalStartDate.setUTCDate(oIntervalStartDate.getUTCDate() + iInterval);
+			if (bSubInterval) {
+				oIntervalStartDate.setUTCHours(oIntervalStartDate.getUTCHours() + iSubInterval * 24 / iSubIntervals);
+				oIntervalEndDate = new UniversalDate(oIntervalStartDate.getTime());
+				oIntervalEndDate.setUTCHours(oIntervalEndDate.getUTCHours() + 24 / iSubIntervals);
+			} else {
+				oIntervalEndDate = new UniversalDate(oIntervalStartDate.getTime());
+				oIntervalEndDate.setUTCDate(oIntervalEndDate.getUTCDate() + 1);
+			}
+			break;
+
+		case sap.ui.unified.CalendarIntervalType.Month:
+			oIntervalStartDate.setUTCMonth(oIntervalStartDate.getUTCMonth() + iInterval);
+			if (bSubInterval) {
+				oIntervalStartDate.setUTCDate(oIntervalStartDate.getUTCDate() + iSubInterval);
+				oIntervalEndDate = new UniversalDate(oIntervalStartDate.getTime());
+				oIntervalEndDate.setUTCDate(oIntervalEndDate.getUTCDate() + 1);
+			} else {
+				oIntervalEndDate = new UniversalDate(oIntervalStartDate.getTime());
+				oIntervalEndDate.setUTCMonth(oIntervalEndDate.getUTCMonth() + 1);
+			}
+			break;
+
+		default:
+			throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
+		}
+
+		oIntervalEndDate.setUTCMilliseconds(oIntervalEndDate.getUTCMilliseconds() - 1);
+
+		oIntervalStartDate = CalendarUtils._createLocalDate(oIntervalStartDate, true);
+		oIntervalEndDate = CalendarUtils._createLocalDate(oIntervalEndDate, true);
+
+		this.fireIntervalSelect({startDate: oIntervalStartDate, endDate: oIntervalEndDate, subInterval: bSubInterval});
 
 	}
 
