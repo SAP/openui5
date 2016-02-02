@@ -2033,7 +2033,7 @@ sap.ui.define([
 			// token needs to be set directly on request headers, as request is already created
 			_readyForRequest(oRequest).then(function(sToken) {
 				// Check bTokenHandling again, as updating the token might disable token handling
-				if (that.bTokenHandling) {
+				if (that.bTokenHandling && oRequest.method !== "GET") {
 					oRequest.headers["x-csrf-token"] = sToken;
 				}
 				_submit();
