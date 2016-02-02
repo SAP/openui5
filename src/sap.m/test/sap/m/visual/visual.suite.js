@@ -11,6 +11,6 @@ module.exports = [
 	"ObjectHeaderVisualTest.spec.js",
 	"Page.spec.js",
 	"SemanticPage.spec.js",
-	//"Table.spec.js",
+	"TableSelectDialog.spec.js",
 	"Wizard.spec.js"
 ];
