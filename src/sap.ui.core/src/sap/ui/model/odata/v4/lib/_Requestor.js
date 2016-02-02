@@ -21,17 +21,32 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	 * headers.
 	 *
 	 * @param {string} sServiceUrl
-	 *   URL of the service document to request the CSRF token from
+	 *   URL of the service document to request the CSRF token from; also used to resolve
+	 *   relative resource paths (see {@link #request})
 	 * @param {object} mHeaders
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData v4 headers are added by default, but may be overridden
+	 * @param {object} mQueryParams
+	 *   A map of query parameters as described in {@link _Header.buildQuery}; used only to
+	 *   request the CSRF token
 	 * @private
 	 */
-	function Requestor(sServiceUrl, mHeaders) {
+	function Requestor(sServiceUrl, mHeaders, mQueryParams) {
 		this.sServiceUrl = sServiceUrl;
 		this.mHeaders = mHeaders || {};
+		this.sQueryParams = Helper.buildQuery(mQueryParams); // CSRF token only!
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 	}
+
+	/**
+	 * Returns this requestor's service URL.
+	 *
+	 * @returns {string}
+	 *   URL of the service document to request the CSRF token from
+	 */
+	Requestor.prototype.getServiceUrl = function () {
+		return this.sServiceUrl;
+	};
 
 	/**
 	 * Returns a promise that will be resolved once the CSRF token has been refreshed, or rejected
@@ -48,7 +63,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 
 		if (!this.oSecurityTokenPromise) {
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
-				jQuery.ajax(that.sServiceUrl, {
+				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
 					method: "HEAD",
 					headers : {
 						"X-CSRF-Token" : "Fetch"
@@ -74,9 +89,8 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	 *
 	 * @param {string} sMethod
 	 *   HTTP method, e.g. "GET"
-	 * @param {string} sUrl
-	 *   Some absolute URL (which must belong to the service for which this requestor has been
-	 *   created)
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL for which this requestor has been created
 	 * @param {object} [mHeaders]
 	 *   Map of request-specific headers, overriding both the mandatory OData v4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
@@ -90,11 +104,12 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	 *   A promise on the outcome of the HTTP request
 	 * @private
 	 */
-	Requestor.prototype.request = function (sMethod, sUrl, mHeaders, oPayload, bIsFreshToken) {
+	Requestor.prototype.request = function (sMethod, sResourcePath, mHeaders, oPayload,
+		bIsFreshToken) {
 		var that = this;
 
 		return new Promise(function (fnResolve, fnReject) {
-			jQuery.ajax(sUrl, {
+			jQuery.ajax(that.sServiceUrl + sResourcePath, {
 				data : JSON.stringify(oPayload),
 				headers : jQuery.extend({},
 					mPredefinedHeaders, that.mHeaders, mHeaders, mFinalHeaders),
@@ -109,7 +124,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
 					// refresh CSRF token and repeat original request
 					that.refreshSecurityToken().then(function () {
-						fnResolve(that.request(sMethod, sUrl, mHeaders, oPayload, true));
+						fnResolve(that.request(sMethod, sResourcePath, mHeaders, oPayload, true));
 					}, fnReject);
 				} else {
 					fnReject(Helper.createError(jqXHR));
@@ -129,7 +144,8 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		 * headers.
 		 *
 		 * @param {string} sServiceUrl
-		 *   URL of the service document to request the CSRF token from
+		 *   URL of the service document to request the CSRF token from; also used to resolve
+		 *   relative resource paths (see {@link #request})
 		 * @param {object} mHeaders
 		 *   Map of default headers; may be overridden with request-specific headers; certain
 		 *   OData v4 headers are predefined, but may be overridden by the default or
@@ -142,11 +158,14 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
 		 *   <code>_Requestor<code> always sets the "Content-Type" header to
 		 *   "application/json;charset=UTF-8" value.
+		 * @param {object} mQueryParams
+		 *   A map of query parameters as described in {@link _Header.buildQuery}; used only to
+		 *   request the CSRF token
 		 * @returns {object}
 		 *   A new <code>_Requestor<code> instance
 		 */
-		create : function (sServiceUrl, mHeaders) {
-			return new Requestor(sServiceUrl, mHeaders);
+		create : function (sServiceUrl, mHeaders, mQueryParams) {
+			return new Requestor(sServiceUrl, mHeaders, mQueryParams);
 		}
 	};
 }, /* bExport= */false);

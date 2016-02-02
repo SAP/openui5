@@ -142,11 +142,9 @@ sap.ui.require([
 
 			if (bAbsolute) {
 				this.oSandbox.mock(Cache).expects("createSingle")
-				.withExactArgs(sinon.match.same(oModel.oRequestor),
-					oModel.sServiceUrl + sPath.slice(1), {
+				.withExactArgs(sinon.match.same(oModel.oRequestor), sPath.slice(1), {
 					"sap-client" : "111"
-				})
-				.returns(oCache);
+				}).returns(oCache);
 			} else {
 				this.oSandbox.mock(Cache).expects("createSingle").never();
 			}
@@ -182,7 +180,7 @@ sap.ui.require([
 
 		oCacheMock.expects("read").exactly(6).returns(Promise.resolve(oResult));
 		this.oSandbox.mock(Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oModel.oRequestor), "/service/EMPLOYEES(ID='1')", {
+			.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES(ID='1')", {
 				"sap-client" : "111"
 			})
 			.returns(oCache);
@@ -283,7 +281,7 @@ sap.ui.require([
 			.withExactArgs(oModel.mUriParameters, mParameters, ["$expand", "$select"])
 			.returns(mQueryOptions);
 		this.mock(Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oModel.oRequestor), "/service/EMPLOYEES(ID='1')",
+			.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES(ID='1')",
 				sinon.match.same(mQueryOptions));
 
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", null, mParameters);

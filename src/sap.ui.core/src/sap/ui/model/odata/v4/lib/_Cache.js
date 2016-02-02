@@ -76,14 +76,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		var aElements = oCache.aElements,
 			iExpectedLength = iEnd - iStart,
 			oPromise,
-			sUrl = oCache.sUrl + "$skip=" + iStart + "&$top=" + iExpectedLength;
+			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength;
 
-		oPromise = oCache.oRequestor.request("GET", sUrl)
+		oPromise = oCache.oRequestor.request("GET", sResourcePath)
 			.then(function (oResult) {
 				var i, iResultLength = oResult.value.length, oError;
 
 				if (aElements !== oCache.aElements) {
-					oError = new Error("Refresh canceled processing of pending request: " + sUrl);
+					oError = new Error("Refresh canceled processing of pending request: "
+						+ oCache.oRequestor.getServiceUrl() + sResourcePath);
 					oError.canceled = true;
 					throw oError;
 				}
@@ -111,17 +112,17 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
-	 * @param {string} sUrl
-	 *   The URL to request from
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 */
-	function CollectionCache(oRequestor, sUrl, mQueryOptions) {
+	function CollectionCache(oRequestor, sResourcePath, mQueryOptions) {
 		var sQuery = Cache.buildQueryString(mQueryOptions);
 
 		sQuery += sQuery.length ? "&" : "?";
 		this.oRequestor = oRequestor;
-		this.sUrl = sUrl + sQuery;
+		this.sResourcePath = sResourcePath + sQuery;
 		this.sContext = undefined;  // the "@odata.context" from the responses
 		this.iMaxElements = -1;     // the max. number of elements if known, -1 otherwise
 		this.aElements = [];        // the available elements
@@ -197,7 +198,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {string} The URL
 	 */
 	CollectionCache.prototype.toString = function () {
-		return this.sUrl;
+		return this.oRequestor.getServiceUrl() + this.sResourcePath;
 	};
 
 	/**
@@ -205,14 +206,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   The requestor
-	 * @param {string} sUrl
-	 *   The URL to request from
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 */
-	function SingleCache(oRequestor, sUrl, mQueryOptions) {
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions) {
 		this.oRequestor = oRequestor;
-		this.sUrl = sUrl + Cache.buildQueryString(mQueryOptions);
+		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
 		this.oPromise = null;
 	}
 
@@ -228,12 +229,12 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		var that = this,
 			oError,
 			oPromise,
-			sUrl = this.sUrl;
+			sResourcePath = this.sResourcePath;
 
 		if (!this.oPromise) {
-			oPromise = this.oRequestor.request("GET", sUrl).then(function (oResult) {
+			oPromise = this.oRequestor.request("GET", sResourcePath).then(function (oResult) {
 				if (that.oPromise !== oPromise) {
-					oError = new Error("Refresh canceled processing of pending request: " + sUrl);
+					oError = new Error("Refresh canceled processing of pending request: " + that);
 					oError.canceled = true;
 					throw oError;
 				}
@@ -257,7 +258,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {string} The URL
 	 */
 	SingleCache.prototype.toString = function () {
-		return this.sUrl;
+		return this.oRequestor.getServiceUrl() + this.sResourcePath;
 	};
 
 	Cache = {
@@ -364,10 +365,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *
 		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 		 *   The requestor
-		 * @param {string} sUrl
-		 *   The URL to request from; it must contain the path to the OData service, it must not
-		 *   contain a query string<br>
-		 *   Example: /V4/Northwind/Northwind.svc/Products
+		 * @param {string} sResourcePath
+		 *   A resource path relative to the service URL; it must not contain a query string<br>
+		 *   Example: Products
 		 * @param {object} mQueryOptions
 		 *   A map of key-value pairs representing the query string, the value in this pair has to
 		 *   be a string or an array of strings; if it is an array, the resulting query string
@@ -378,8 +378,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		create: function _create(oRequestor, sUrl, mQueryOptions) {
-			return new CollectionCache(oRequestor, sUrl, mQueryOptions);
+		create: function _create(oRequestor, sResourcePath, mQueryOptions) {
+			return new CollectionCache(oRequestor, sResourcePath, mQueryOptions);
 		},
 
 		/**
@@ -387,10 +387,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *
 		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 		 *   The requestor
-		 * @param {string} sUrl
-		 *   The URL to request from; it must contain the path to the OData service, it must not
-		 *   contain a query string<br>
-		 *   Example: /V4/Northwind/Northwind.svc/Products(ProductID=1)
+		 * @param {string} sResourcePath
+		 *   A resource path relative to the service URL; it must not contain a query string<br>
+		 *   Example: Products
 		 * @param {object} mQueryOptions
 		 *   A map of key-value pairs representing the query string, the value in this pair has to
 		 *   be a string or an array of strings; if it is an array, the resulting query string
@@ -401,8 +400,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		createSingle: function _createSingle(oRequestor, sUrl, mQueryOptions) {
-			return new SingleCache(oRequestor, sUrl, mQueryOptions);
+		createSingle: function _createSingle(oRequestor, sResourcePath, mQueryOptions) {
+			return new SingleCache(oRequestor, sResourcePath, mQueryOptions);
 		}
 	};
 

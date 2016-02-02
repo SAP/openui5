@@ -63,8 +63,7 @@ sap.ui.define([
 				PropertyBinding.call(this, oModel, sPath, oContext);
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.createSingle(oModel.oRequestor,
-						oModel.sServiceUrl + sPath.slice(1),
+					this.oCache = Cache.createSingle(oModel.oRequestor, sPath.slice(1),
 						Helper.buildQueryOptions(oModel.mUriParameters, mParameters));
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");

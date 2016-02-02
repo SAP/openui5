@@ -48,8 +48,8 @@ sap.ui.require([
 	].forEach(function (oFixture) {
 		QUnit.test("read(" + oFixture.index + ", " + oFixture.length + ")", function (assert) {
 			var oRequestor = Requestor.create("/~/"),
-				sUrl = "/~/Employees",
-				oCache = Cache.create(oRequestor, sUrl),
+				sResourcePath = "Employees",
+				oCache = Cache.create(oRequestor, sResourcePath),
 				oPromise,
 				aData = ["a", "b", "c"],
 				oMockResult = {
@@ -58,7 +58,7 @@ sap.ui.require([
 				};
 
 			this.oSandbox.mock(oRequestor).expects("request")
-				.withExactArgs("GET", sUrl + "?$skip=" + oFixture.index + "&$top="
+				.withExactArgs("GET", sResourcePath + "?$skip=" + oFixture.index + "&$top="
 					+ oFixture.length)
 				.returns(Promise.resolve(oMockResult));
 
@@ -78,8 +78,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("read(-1, 1)", function (assert) {
 		var oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees",
-			oCache = Cache.create(oRequestor, sUrl);
+			sResourcePath = "Employees",
+			oCache = Cache.create(oRequestor, sResourcePath);
 
 		this.oSandbox.mock(oRequestor).expects("request").never();
 
@@ -92,8 +92,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("read(1, -1)", function (assert) {
 		var oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees",
-			oCache = Cache.create(oRequestor, sUrl);
+			sResourcePath = "Employees",
+			oCache = Cache.create(oRequestor, sResourcePath);
 
 		this.oSandbox.mock(oRequestor).expects("request").never();
 
@@ -147,14 +147,14 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("multiple read, " + oFixture.title + " (sequentially)", function (assert) {
 			var oRequestor = Requestor.create("/~/"),
-				sUrl = "/~/Employees",
-				oCache = Cache.create(oRequestor, sUrl),
+				sResourcePath = "Employees",
+				oCache = Cache.create(oRequestor, sResourcePath),
 				oPromise = Promise.resolve(),
 				oRequestorMock = this.oSandbox.mock(oRequestor);
 
 			oFixture.expectedRequests.forEach(function (oRequest) {
 				oRequestorMock.expects("request")
-					.withExactArgs("GET", sUrl + "?$skip=" + oRequest.skip + "&$top="
+					.withExactArgs("GET", sResourcePath + "?$skip=" + oRequest.skip + "&$top="
 						+ oRequest.top)
 					.returns(Promise.resolve(createResult(oRequest.skip, oRequest.top)));
 			});
@@ -171,14 +171,14 @@ sap.ui.require([
 
 		QUnit.test("multiple read, " + oFixture.title + " (parallel)", function (assert) {
 			var oRequestor = Requestor.create("/~/"),
-				sUrl = "/~/Employees",
-				oCache = Cache.create(oRequestor, sUrl),
+				sResourcePath = "Employees",
+				oCache = Cache.create(oRequestor, sResourcePath),
 				aPromises = [],
 				oRequestorMock = this.oSandbox.mock(oRequestor);
 
 			oFixture.expectedRequests.forEach(function (oRequest) {
 				oRequestorMock.expects("request")
-					.withExactArgs("GET", sUrl + "?$skip=" + oRequest.skip + "&$top="
+					.withExactArgs("GET", sResourcePath + "?$skip=" + oRequest.skip + "&$top="
 						+ oRequest.top)
 					.returns(Promise.resolve(createResult(oRequest.skip, oRequest.top)));
 			});
@@ -344,17 +344,17 @@ sap.ui.require([
 			mQueryParams = {},
 			sQueryParams = "?query",
 			oRequestor,
-			sUrl = "/~/Employees";
+			sResourcePath = "Employees";
 
 		this.oSandbox.mock(Cache).expects("buildQueryString")
 			.withExactArgs(sinon.match.same(mQueryParams))
 			.returns(sQueryParams);
 
 		oRequestor = Requestor.create("/~/");
-		oCache = Cache.create(oRequestor, sUrl, mQueryParams);
+		oCache = Cache.create(oRequestor, sResourcePath, mQueryParams);
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sUrl + sQueryParams + "&$skip=0&$top=5")
+			.withExactArgs("GET", sResourcePath + sQueryParams + "&$skip=0&$top=5")
 			.returns(Promise.resolve({value:[]}));
 
 		// code under test
@@ -367,15 +367,15 @@ sap.ui.require([
 		var oError = {},
 			oRequestor = Requestor.create("/~/"),
 			oSuccess = createResult(0, 5),
-			sUrl = "/~/Employees",
-			oCache = Cache.create(oRequestor, sUrl),
+			sResourcePath = "Employees",
+			oCache = Cache.create(oRequestor, sResourcePath),
 			oRequestorMock = this.oSandbox.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sUrl + "?$skip=0&$top=5")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5")
 			.returns(Promise.reject(oError));
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sUrl + "?$skip=0&$top=5")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5")
 			.returns(Promise.resolve(oSuccess));
 
 		// code under test
@@ -394,17 +394,17 @@ sap.ui.require([
 			},
 			oExpectedResult = {},
 			oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees('1')",
+			sResourcePath = "Employees('1')",
 			oCache,
 			aPromises = [];
 
 		this.oSandbox.mock(Cache).expects("buildQueryString")
 			.withExactArgs(mQueryParams).returns("?~");
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sUrl + "?~")
+			.withExactArgs("GET", sResourcePath + "?~")
 			.returns(Promise.resolve(oExpectedResult));
 
-		oCache = Cache.createSingle(oRequestor, sUrl, mQueryParams);
+		oCache = Cache.createSingle(oRequestor, sResourcePath, mQueryParams);
 		aPromises.push(oCache.read().then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedResult);
 		}));
@@ -426,9 +426,9 @@ sap.ui.require([
 					BudgetCurrency: "USD",
 					Budget: 555.55
 				},
-				oRequestor = Requestor.create("/sap/opu/local_v4/IWBEP/TEA_BUSI"),
-				sUrl = TestUtils.proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')"),
-				oCache = Cache.createSingle(oRequestor, sUrl);
+				oRequestor = Requestor.create(TestUtils.proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/")),
+				sResourcePath = "TEAMS('TEAM_01')",
+				oCache = Cache.createSingle(oRequestor, sResourcePath);
 
 			return oCache.read().then(function (oResult) {
 				assert.deepEqual(oResult, oExpectedResult);
@@ -441,12 +441,12 @@ sap.ui.require([
 		var oCache,
 			oPromise,
 			oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees('1')";
+			sResourcePath = "Employees('1')";
 
-		this.oSandbox.mock(oRequestor).expects("request").withExactArgs("GET", sUrl)
+		this.oSandbox.mock(oRequestor).expects("request").withExactArgs("GET", sResourcePath)
 			.returns(Promise.resolve({}));
 
-		oCache = Cache.createSingle(oRequestor, sUrl);
+		oCache = Cache.createSingle(oRequestor, sResourcePath);
 		oPromise = oCache.read();
 
 		return oPromise.then(function () {
@@ -462,14 +462,14 @@ sap.ui.require([
 		var oCache,
 			aPromises = [],
 			oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees('1')";
+			sResourcePath = "Employees('1')";
 
 		this.oSandbox.mock(oRequestor).expects("request").twice()
-			.withExactArgs("GET", sUrl)
+			.withExactArgs("GET", sResourcePath)
 			.onFirstCall().returns(Promise.resolve({}))
 			.onSecondCall().returns(Promise.resolve({}));
 
-		oCache = Cache.createSingle(oRequestor, sUrl);
+		oCache = Cache.createSingle(oRequestor, sResourcePath);
 
 		aPromises.push(oCache.read().then(function () {
 			assert.ok(false, "Refresh shall cancel this read");
@@ -490,13 +490,13 @@ sap.ui.require([
 	QUnit.test("Cache.refresh - basics", function (assert) {
 		var oCache,
 			oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees";
+			sResourcePath = "Employees";
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sUrl + "?$skip=0&$top=20")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=20")
 			.returns(Promise.resolve(createResult(0, 10)));
 
-		oCache = Cache.create(oRequestor, sUrl);
+		oCache = Cache.create(oRequestor, sResourcePath);
 
 		// read 20 but receive only 10 to simulate a short read to set iMaxElements
 		return oCache.read(0, 20).then(function () {
@@ -516,13 +516,13 @@ sap.ui.require([
 		var oCache,
 			aPromises = [],
 			oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees";
+			sResourcePath = "Employees";
 
 		this.oSandbox.mock(oRequestor).expects("request").twice()
-			.withExactArgs("GET", sUrl + "?$skip=0&$top=10")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=10")
 			.returns(Promise.resolve(createResult(0, 10)));
 
-		oCache = Cache.create(oRequestor, sUrl);
+		oCache = Cache.create(oRequestor, sResourcePath);
 
 		aPromises.push(oCache.read(0, 10).then(function () {
 			assert.ok(false, "Refresh shall cancel this read");
@@ -546,14 +546,14 @@ sap.ui.require([
 		var oCache,
 			oRequestor = Requestor.create("/~/"),
 			mQueryParams = {"$select": "ID"},
-			sUrl = "/~/Employees",
-			sUrlSingle = "/~/Employees('1')";
+			sResourcePath = "Employees",
+			sResourcePathSingle = "Employees('1')";
 
-		oCache = Cache.create(oRequestor, sUrl, mQueryParams);
-		assert.strictEqual(oCache.toString(), sUrl + "?$select=ID&");
+		oCache = Cache.create(oRequestor, sResourcePath, mQueryParams);
+		assert.strictEqual(oCache.toString(), "/~/" + sResourcePath + "?$select=ID&");
 
-		oCache = Cache.createSingle(oRequestor, sUrlSingle);
-		assert.strictEqual(oCache.toString(), sUrlSingle);
+		oCache = Cache.createSingle(oRequestor, sResourcePathSingle);
+		assert.strictEqual(oCache.toString(), "/~/" + sResourcePathSingle);
 
 	});
 });

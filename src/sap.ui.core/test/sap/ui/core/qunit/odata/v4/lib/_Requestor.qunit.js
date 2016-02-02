@@ -64,22 +64,34 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getServiceUrl", function (assert) {
+		var sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/",
+			oRequestor = Requestor.create(sServiceUrl, undefined, {"foo" : "bar"});
+
+		// code under test
+		assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("request", function (assert) {
 		var oPayload = {"foo" : 42},
 			oPromise,
-			oRequestor = Requestor.create("/ignored"),
-			oResult = {},
-			sUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees";
+			sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/",
+			oRequestor = Requestor.create(sServiceUrl, undefined, {
+				"foo" : "URL params are ignored for normal requests"
+			}),
+			oResult = {};
 
 		this.oSandbox.mock(jQuery).expects("ajax")
-			.withExactArgs(sUrl, {
+			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
 				data : JSON.stringify(oPayload),
 				headers : sinon.match({"Content-Type" : "application/json;charset=UTF-8"}),
 				method : "FOO"
 			}).returns(createMock(assert, oResult, "OK"));
 
 		// code under test
-		oPromise = oRequestor.request("FOO", sUrl, {"Content-Type" : "wrong"}, oPayload);
+		oPromise = oRequestor.request("FOO", "Employees?foo=bar", {"Content-Type" : "wrong"},
+			oPayload);
 
 		return oPromise.then(function (result){
 				assert.strictEqual(result, oResult);
@@ -116,7 +128,7 @@ sap.ui.require([
 			var mDefaultHeaders = clone(mHeaders.defaultHeaders),
 				oPromise,
 				mRequestHeaders = clone(mHeaders.requestHeaders),
-				oRequestor = Requestor.create("/~/", mDefaultHeaders),
+				oRequestor = Requestor.create("/sap/opu/local_v4/IWBEP/TEA_BUSI/", mDefaultHeaders),
 				oResult = {},
 				// add predefined request headers for OData v4
 				mResultHeaders = jQuery.extend({}, {
@@ -125,22 +137,21 @@ sap.ui.require([
 					"OData-MaxVersion" : "4.0",
 					"OData-Version" : "4.0",
 					"X-CSRF-Token" : "Fetch"
-				}, mHeaders.result),
-				sUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees";
+				}, mHeaders.result);
 
 			function clone(o) {
 				return o && JSON.parse(JSON.stringify(o));
 			}
 
 			this.oSandbox.mock(jQuery).expects("ajax")
-				.withExactArgs(sUrl, {
+				.withExactArgs("/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees", {
 					data : undefined,
 					headers : mResultHeaders,
 					method : "GET"
 				}).returns(createMock(assert, oResult, "OK"));
 
 			// code under test
-			oPromise = oRequestor.request("GET", sUrl, mRequestHeaders);
+			oPromise = oRequestor.request("GET", "Employees", mRequestHeaders);
 
 			assert.deepEqual(mDefaultHeaders, mHeaders.defaultHeaders,
 				"caller's map is unchanged");
@@ -155,26 +166,26 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(), store CSRF token from server", function (assert) {
-		var oRequestor = Requestor.create("");
+		var oRequestor = Requestor.create("/");
 
 		this.oSandbox.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
 			.returns(createMock(assert, {/*oPayload*/}, "OK", "abc123"));
 
-		return oRequestor.request("GET", "/").then(function () {
+		return oRequestor.request("GET", "").then(function () {
 			assert.strictEqual(oRequestor.mHeaders["X-CSRF-Token"], "abc123");
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("request(), keep old CSRF token in case no one is sent", function (assert) {
-		var oRequestor = Requestor.create("", {"X-CSRF-Token" : "abc123"});
+		var oRequestor = Requestor.create("/", {"X-CSRF-Token" : "abc123"});
 
 		this.oSandbox.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "abc123"}}))
 			.returns(createMock(assert, {/*oPayload*/}, "OK", /*sToken*/null));
 
-		return oRequestor.request("GET", "/").then(function () {
+		return oRequestor.request("GET", "").then(function () {
 			assert.strictEqual(oRequestor.mHeaders["X-CSRF-Token"], "abc123");
 		});
 	});
@@ -182,18 +193,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request(), keep fetching CSRF token in case no one is sent", function (assert) {
 		var oMock = this.oSandbox.mock(jQuery),
-			oRequestor = Requestor.create("");
+			oRequestor = Requestor.create("/");
 
 		oMock.expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
 			.returns(createMock(assert, {/*oPayload*/}, "OK", /*sToken*/null));
 
-		return oRequestor.request("GET", "/").then(function () {
+		return oRequestor.request("GET", "").then(function () {
 			oMock.expects("ajax")
 				.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
 				.returns(createMock(assert, {/*oPayload*/}, "OK", /*sToken*/null));
 
-			return oRequestor.request("GET", "/");
+			return oRequestor.request("GET", "");
 		});
 	});
 
@@ -202,7 +213,7 @@ sap.ui.require([
 		QUnit.test("refreshSecurityToken: success = " + bSuccess, function (assert) {
 			var oError = {},
 				oPromise,
-				oRequestor = Requestor.create("/~/"),
+				oRequestor = Requestor.create("/~/", undefined, {"sap-client" : "123"}),
 				oTokenRequiredResponse = {};
 
 			this.oSandbox.mock(Helper).expects("createError")
@@ -213,7 +224,7 @@ sap.ui.require([
 			this.oSandbox.stub(jQuery, "ajax", function (sUrl, oSettings) {
 				var jqXHR;
 
-				assert.strictEqual(sUrl, "/~/");
+				assert.strictEqual(sUrl, "/~/?sap-client=123");
 				assert.strictEqual(oSettings.headers["X-CSRF-Token"], "Fetch");
 				assert.strictEqual(oSettings.method, "HEAD");
 
@@ -287,8 +298,7 @@ sap.ui.require([
 						return o.sRequired;
 					},
 					"status" : o.iStatus || 403
-				},
-				sUrl = "/~/foo";
+				};
 
 			this.oSandbox.mock(Helper).expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
@@ -302,7 +312,7 @@ sap.ui.require([
 			this.oSandbox.stub(jQuery, "ajax", function (sUrl0, oSettings) {
 				var jqXHR;
 
-				assert.strictEqual(sUrl0, sUrl);
+				assert.strictEqual(sUrl0, "/~/foo");
 				assert.strictEqual(oSettings.data, JSON.stringify(oRequestPayload));
 				assert.strictEqual(oSettings.method, "FOO");
 				assert.strictEqual(oSettings.headers.foo, "bar");
@@ -340,7 +350,7 @@ sap.ui.require([
 				});
 			}
 
-			return oRequestor.request("FOO", sUrl, {"foo" : "bar"}, oRequestPayload)
+			return oRequestor.request("FOO", "foo", {"foo" : "bar"}, oRequestPayload)
 				.then(function (oPayload) {
 					assert.ok(bSuccess, "success possible");
 					assert.strictEqual(oPayload, oResponsePayload);

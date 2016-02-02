@@ -105,9 +105,8 @@ sap.ui.require([
 
 			if (bAbsolute) {
 				this.mock(Cache).expects("createSingle").withExactArgs(
-						sinon.match.same(oModel.oRequestor), oModel.sServiceUrl + sPath.slice(1),
-							{})
-					.returns(oCache);
+						sinon.match.same(oModel.oRequestor), sPath.slice(1), {}
+					).returns(oCache);
 			} else {
 				this.mock(Cache).expects("createSingle").never();
 			}
@@ -137,7 +136,7 @@ sap.ui.require([
 			.withExactArgs(oModel.mUriParameters, mParameters)
 			.returns(mQueryOptions);
 		this.mock(Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oModel.oRequestor), "/service/EMPLOYEES(ID='1')/Name",
+			.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES(ID='1')/Name",
 				sinon.match.same(mQueryOptions));
 
 		oBinding = oModel.bindProperty("/EMPLOYEES(ID='1')/Name", null, mParameters);
@@ -309,8 +308,7 @@ sap.ui.require([
 			if (bAbsolute) { // absolute path: use cache on binding
 				sResolvedPath = sPath;
 				oCacheMock.expects("createSingle")
-					.withExactArgs(sinon.match.same(oModel.oRequestor),
-						oModel.sServiceUrl + sResolvedPath.slice(1), {})
+					.withExactArgs(sinon.match.same(oModel.oRequestor), sResolvedPath.slice(1), {})
 					.returns(oCache);
 				this.oSandbox.mock(oCache).expects("read")
 					.returns(Promise.resolve({value: oValue}));
@@ -321,8 +319,7 @@ sap.ui.require([
 					.returns(Promise.resolve({value: oValue}));
 			}
 			oCacheMock.expects("createSingle")
-				.withExactArgs(sinon.match.same(oModel.oRequestor),
-					oModel.sServiceUrl + sContextPath.slice(1), {});
+				.withExactArgs(sinon.match.same(oModel.oRequestor), sContextPath.slice(1), {});
 			this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
 				.withExactArgs(sResolvedPath)
 				.returns(Promise.resolve(oType));
