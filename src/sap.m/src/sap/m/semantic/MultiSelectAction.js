@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleButton) {
+sap.ui.define(['sap/m/semantic/SemanticToggleButton', 'sap/m/semantic/SemanticConfiguration'], function(SemanticToggleButton, SemanticConfiguration) {
 	"use strict";
 
 	/**
@@ -32,13 +32,24 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleBu
 		}
 	});
 
+	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 	/**
 	 * Defines the icon url for each state
 	 * @private
 	 */
-	MultiSelectAction.prototype._PRESSED_STATE_TO_ICON_MAP = {
+	MultiSelectAction._PRESSED_STATE_TO_ICON_MAP = {
 		"true": "sap-icon://sys-cancel",
 		"false": "sap-icon://multi-select"
+	};
+
+	/**
+	 * Defines the icon tooltip and screen reader text for each state
+	 * @private
+	 */
+	MultiSelectAction._ACC_TOOLTIP_TO_ICON_MAP = {
+		"true": oBundle.getText("SEMANTIC_CONTROL_MULTI_SELECT_CANCEL"),
+		"false": oBundle.getText("SEMANTIC_CONTROL_MULTI_SELECT")
 	};
 
 	/**
@@ -48,8 +59,12 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleBu
 	 * @private
 	 */
 	MultiSelectAction.prototype._setPressed = function(bPressed, bSuppressInvalidate) {
-		var sIconUrl = MultiSelectAction.prototype._PRESSED_STATE_TO_ICON_MAP[bPressed];
+		var sIconUrl = MultiSelectAction._PRESSED_STATE_TO_ICON_MAP[bPressed];
+		var sIconTooltip = MultiSelectAction._ACC_TOOLTIP_TO_ICON_MAP[bPressed];
 		this._getControl().setIcon(sIconUrl);
+		var sId = SemanticConfiguration.getAriaId("sap.m.semantic.MultiSelectAction");
+		this._getControl().setTooltip(sIconTooltip);
+		sap.ui.getCore().byId(sId).$().text(sIconTooltip);
 	};
 
 	return MultiSelectAction;
