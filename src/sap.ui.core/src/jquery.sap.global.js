@@ -1720,7 +1720,7 @@
 			 * @name jQuery.sap.measure#filterInteractionMeasurements
 			 * @function
 			 * @public
-			 * @since 1.36.0
+			 * @since 1.36.2
 			 */
 			this.filterInteractionMeasurements = function(fnFilter) {
 				var aFilteredInteractions = [];

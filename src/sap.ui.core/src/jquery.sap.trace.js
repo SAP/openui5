@@ -324,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
 			/**
 			 * @param {Event} oEvent scroll event whose processing has started
 			 * @private
-			 * @since 1.36.1
+			 * @since 1.36.2
 			 */
 			 jQuery.sap.interaction.notifyScrollEvent = function(oEvent) {
 				if (bInteractionActive || bFesrActive) {
