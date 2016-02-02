@@ -87,5 +87,112 @@
         "references": []
       }
     ]
+  },
+  "1.32.1": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "0b5893021be1d114e3c8189af6b36e7c9803fa07",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "e4c2c9494d8ae57280c8561d56e3c6ddd016514f",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
+        "references": []
+      },
+      {
+        "id": "96bc2a14d5baa26b46b2753ca4790e6e69024524",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
+        "references": []
+      }
+    ]
+  },
+  "1.32.4": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "3654daaea35f10024661010d59f62465022979f5",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Don\u0027t Attempt Resize on Preserved DOM",
+        "references": []
+      }
+    ]
+  },
+  "1.32.6": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "87e88aad20521407474670de6f37e32ff57d8f08",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Layout.DynamicSideContent - Height is properly",
+        "references": []
+      },
+      {
+        "id": "e149d9d601d90e05a6dec740b634fb636b84a8b8",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent - Show and hide functionality now works correct when changing breakpoints",
+        "references": []
+      },
+      {
+        "id": "e991937fb8b99c19496fe6915cb33f6b1d41aac1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      }
+    ]
+  },
+  "1.32.7": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "80251897c2ca17c032ed333fe60bb316f55123eb",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.layout.VerticalLayout: fix vertical-align in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.32.10": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "c5ca5d00ed461d74f8f88a788aca168afc066b4a",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
+        "references": []
+      },
+      {
+        "id": "d56b80cbf0494c8aab5b1978d807e853a9967170",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: Side content visibility on invalidation solved",
+        "references": []
+      }
+    ]
+  },
+  "1.32.11": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "210b05b32e376a7313b0128022efe07759c009e8",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
+        "references": []
+      }
+    ]
   }
 }

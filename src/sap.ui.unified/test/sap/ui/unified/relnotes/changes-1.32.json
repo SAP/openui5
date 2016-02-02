@@ -134,5 +134,149 @@
         "references": []
       }
     ]
+  },
+  "1.32.4": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "96c3fa3c1f507fd41a1c4ccbb06df54bfe1803a3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.uinified.Calendar current day is wrong displayed",
+        "references": []
+      },
+      {
+        "id": "247f0f184f942de758616602886e1ba002137f72",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar Focus changes while rendering",
+        "references": []
+      },
+      {
+        "id": "8e870e5c01ca6b8e3e891d8621d41dd6d110a86a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.DateRange return instance to allow method chaining",
+        "references": []
+      },
+      {
+        "id": "44067c231931683537762efc58a605b064f40d30",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Avoid additional labelling the items with the menu labels",
+        "references": []
+      },
+      {
+        "id": "3df7210550add1a81209426df275fc5751c87dc3",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Avoid focusing when Menu is not open",
+        "references": []
+      }
+    ]
+  },
+  "1.32.6": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "306e05402986863297f7fe5fdb6d36a5d9e71abc",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: fixed termination in case of multiple file uploads",
+        "references": []
+      },
+      {
+        "id": "89c4bf8be6b130d2e4ba694e9683bc5668977868",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: focus lost after closing month picker or year picker",
+        "references": []
+      },
+      {
+        "id": "db0df4735044189c2aa9266b148da3d90e10ffe3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: HCB - selected day in other month not shown",
+        "references": []
+      },
+      {
+        "id": "913f3b29405ec1e3892ed6a35a194772849d439e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: date is selected before mouseup",
+        "references": []
+      },
+      {
+        "id": "a178275eee2047714d71fe9cc74018c27cc0cc44",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: mousemove inside same day switch month",
+        "references": []
+      }
+    ]
+  },
+  "1.32.7": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "879ae35090902833e0cca319b42f7d6b282db495",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: day navigated twice on touch device",
+        "references": []
+      }
+    ]
+  },
+  "1.32.8": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "c709780528040addce34271d9be723352b539e54",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Aria Text enhanced",
+        "references": []
+      },
+      {
+        "id": "52dc328e55e56098a8c01c13dfed672233373192",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.32.11": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "8a9abdf232f6333380e48f6e55bc3ee2b417d45b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: multi-month switch blocks",
+        "references": []
+      },
+      {
+        "id": "d885696d67614dffe2d5661364f4a0b2cb2cac4c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: wrong weekday names",
+        "references": []
+      },
+      {
+        "id": "da5967aba41847e836c23657c4ac784d8acd9f10",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: When \"maxPrecision\" is set to 0 only the base part is being displayed",
+        "references": []
+      },
+      {
+        "id": "9b5b5dfeabc680f90fea9a7cbc1a50b2a29d9aab",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Abort in case of parellel uploads corrected",
+        "references": []
+      }
+    ]
   }
 }
