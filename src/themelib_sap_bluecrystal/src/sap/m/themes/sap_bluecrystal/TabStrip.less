@@ -3,13 +3,19 @@
 /* ================================================================= */
 .sapMTabStrip {
 	background: @sapUiExtraLightBG;
-	border: 1px solid @sapUiLightBorder;
+	border-top: 1px solid @sapUiLightBorder;
+	border-bottom: 1px solid @sapUiLightBorder;
+	/* This class can override the default border-top style */
+	&.sapMTabStripTopBorderVisible {
+		border-top: 1px solid @sapUiLightBorder;
+	}
 	.sapMTSLeftOverflowButtons {
 		background: linear-gradient(90deg, @sapUiExtraLightBG 0%, @sapUiExtraLightBG 75%, fade(@sapUiExtraLightBG, 0) 100%);
 	}
 	.sapMTSTabContainer {
 		.sapMTSTabs {
 			.sapMTabContainerItem {
+				font-size: @sapMFontMediumSize;
 				background: @sapUiHeaderBG;
 				border-right: 1px solid @sapUiLightBorder;
 				color: @sapUiDarkText;
@@ -35,19 +41,21 @@
 						}
 					}
 				}
-				&:focus {
-				  outline: none;
+				&:first-child {
+					border-left: 1px solid @sapUiLightBorder;
 				}
-				position: relative;
+				&:focus {
+					outline: none;
+				}
 				&:focus::before {
-				  pointer-events: none;
-				  content: "";
-				  position: absolute;
-				  top: 0;
-				  left: 0;
-				  right: 0;
-				  bottom: 0;
-				  border: 1px dotted @sapUiFocus;
+					pointer-events: none;
+					content: "";
+					position: absolute;
+					top: 0.0625rem;
+					left: 0.0625rem;
+					right: 0.0625rem;
+					bottom: 0.0625rem;
+					border: 1px dotted @sapUiFocus;
 				}
 			}
 		}
