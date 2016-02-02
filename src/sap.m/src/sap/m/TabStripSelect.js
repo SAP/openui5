@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		 *
 		 * @type {number}
 		 */
-		TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER = 5;
+		TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER = -5;
 
 		/**
 		 * Initialization hook.
