@@ -64,7 +64,9 @@
 
 				if (jQuery && jQuery.sap) {
 					jQuery.sap.require._hook = function(sScript, sModuleName) {
-						// TODO: manage includes/excludes? (usage of regex)
+						// manage includes and excludes with blanket utils
+						var bFiltered = window.blanket.utils.matchPatternAttribute(sModuleName, window.blanket.options("filter"));
+						bFiltered &= !window.blanket.utils.matchPatternAttribute(sModuleName, window.blanket.options("anti-filter"));
 						// avoid duplicate instrumentation on server and client-side
 						if (sScript.indexOf("window['sap-ui-qunit-coverage'] = 'server';") !== 0) {
 							window.blanket.instrument({
