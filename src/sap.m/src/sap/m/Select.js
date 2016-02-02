@@ -632,10 +632,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * Initialization hook.
-		 *
-		 */
 		Select.prototype.init = function() {
 
 			// set the picker type
@@ -658,10 +654,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			this._bProcessChange = false;
 		};
 
-		/**
-		 * This event handler is called before the rendering of the control is started.
-		 *
-		 */
 		Select.prototype.onBeforeRendering = function() {
 
 			// rendering phase is started
@@ -675,20 +667,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			this.synchronizeSelection();
 		};
 
-		/**
-		 * This event handler is called when the rendering of the control is completed.
-		 *
-		 */
 		Select.prototype.onAfterRendering = function() {
 
 			// rendering phase is finished
 			this._bRenderingPhase = false;
 		};
 
-		/**
-		 * Cleans up before destruction.
-		 *
-		 */
 		Select.prototype.exit = function() {
 			this._oSelectionOnFocus = null;
 		};

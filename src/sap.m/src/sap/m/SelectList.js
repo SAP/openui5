@@ -230,10 +230,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * Initialization hook.
-		 *
-		 */
 		SelectList.prototype.init = function() {
 
 			// timeoutID used to cancel the active state added on touchstart
@@ -247,26 +243,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._fStartY = 0;
 		};
 
-		/**
-		 * This event handler is called before the rendering of the control is started.
-		 *
-		 */
 		SelectList.prototype.onBeforeRendering = function() {
 			this.synchronizeSelection();
 		};
 
-		/**
-		 * This event handler is called when the rendering of the control is completed.
-		 *
-		 */
 		SelectList.prototype.onAfterRendering = function() {
 			this.createItemNavigation();
 		};
 
-		/**
-		 * Cleans up before destruction.
-		 *
-		 */
 		SelectList.prototype.exit = function() {
 
 			if (this._oItemNavigation) {

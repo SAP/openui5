@@ -82,12 +82,6 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * Called after the ActionSelect picker pop-up is render.
-		 *
-		 * @override
-		 * @protected
-		 */
 		ActionSelect.prototype.onAfterRenderingPicker = function() {
 			Select.prototype.onAfterRenderingPicker.call(this);
 			var oPicker = this.getPicker(),

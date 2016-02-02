@@ -595,11 +595,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		return oPicker;
 	};
 
-	/**
-	 * Required adaptations before rendering.
-	 *
-	 * @private
-	 */
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 		var aItems = this.getItems();
@@ -1455,11 +1450,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}
 	};
 
-	/**
-	 * Required adaptations after rendering.
-	 *
-	 * @private
-	 */
 	MultiComboBox.prototype.onAfterRendering = function() {
 		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
 
@@ -2298,11 +2288,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}
 	};
 
-	/**
-	 * Initialization.
-	 *
-	 * @private
-	 */
 	MultiComboBox.prototype.init = function() {
 		InputBase.prototype.init.apply(this, arguments);
 
@@ -2467,11 +2452,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		return this._oList;
 	};
 
-	/**
-	 * Cleans up before destruction.
-	 *
-	 * @private
-	 */
 	MultiComboBox.prototype.exit = function() {
 		ComboBoxBase.prototype.exit.apply(this, arguments);
 

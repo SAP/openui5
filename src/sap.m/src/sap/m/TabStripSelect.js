@@ -61,12 +61,6 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		 */
 		TabStripSelect.SPACE_BETWEEN_SELECT_BUTTON_AND_POPOVER = -5;
 
-		/**
-		 * Initialization hook.
-		 *
-		 * @override
-		 * @private
-		 */
 		TabStripSelect.prototype.init = function() {
 			// set the picker type
 			this.setPickerType("Popover");
@@ -195,13 +189,6 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 			this.getPicker()._calcPlacement(); // needed to apply the new offset after the popup is open
 		};
 
-
-		/**
-		 * Cleans up before destruction.
-		 *
-		 * @override
-		 * @private
-		 */
 		TabStripSelect.prototype.exit = function() {
 			Select.prototype.exit.call(this);
 			this._oList.destroy();
