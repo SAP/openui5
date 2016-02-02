@@ -1469,11 +1469,21 @@
 						}
 					});
 
+				var done = assert.async(),
+					fnBypassed = this.spy(function() {
+						assert.ok(true, "bypass event is fired");
+						done();
+					});
+
+				this.oRouter.attachBypassed(fnBypassed);
+
 				var fnDisplayFooStub = this.stub(this.oRouter.getTarget("foo"), "_display", function() {
 						return Promise.resolve();
 					}),
 					fnDisplayBarStub = this.stub(this.oRouter.getTarget("bar"), "_display", function() {
-						return Promise.resolve();
+						return Promise.resolve().then(function() {
+							assert.strictEqual(fnBypassed.callCount, 0, "bypass event isn't fired yet");
+						});
 					});
 
 				// Act
