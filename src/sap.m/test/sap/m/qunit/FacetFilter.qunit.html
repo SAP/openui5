@@ -1844,6 +1844,26 @@
 			});
 		}
 
+		test("Reset button & dialog with list items filtering sync", function () {
+			var oFF = oSCHelper.createFFWithModel();
+			var oFFL = oFF.getLists()[0];
+			var oResetButton = oFF._createResetButton();
+			oFF.placeAt("content");
+
+			var iInitialItems = oFFL.getItems().length;
+			ok(iInitialItems > 0, "Items have been set");
+
+			oFFL._searchValue = "5";
+			oFFL._applySearch();
+			sap.ui.getCore().applyChanges();
+			ok(oFFL.getItems().length !== iInitialItems, "Items are being filtered");
+
+			oResetButton.firePress();
+			ok(oFFL.getItems().length === iInitialItems, "Items filtering is being reset properly");
+
+			destroyFF(oFF);
+		});
+
 		module("List Container Rendering");
 
 		asyncTest("Popover rendering", function() {
