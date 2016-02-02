@@ -335,9 +335,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	Binding.prototype.checkDataState = function() {
 		var oDataState = this._updateDataState();
 
-		this.fireEvent("DataStateChange", { dataState: oDataState });
-
 		if (oDataState && oDataState.changed()) {
+			this.fireEvent("DataStateChange", { dataState: oDataState });
+
 			if (!this._sDataStateTimout) {
 				this._sDataStateTimout = setTimeout(function() {
 					//console.info("[DS]" + JSON.stringify(jQuery.extend({}, oDataState), null, 4));

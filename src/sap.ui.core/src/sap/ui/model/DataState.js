@@ -322,29 +322,6 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	};
 
 	/**
-	 * Returns the value of the data state .
-	 * The internal value is not formatted
-	 * in the corresponding <code>PropertyBinding</code>.
-	 *
-	 * @returns {any} The internal value of the data.
-	 * @private
-	 */
-	DataState.prototype.getInternalValue = function(vValue) {
-		return this.getProperty("internalValue");
-	};
-
-	/**
-	 * Sets the internal value.
-	 *
-	 * @param {any} vInternalValue the value
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
-	 * @protected
-	 */
-	DataState.prototype.setInternalValue = function(vInternalValue) {
-		return this.setProperty("internalValue",vInternalValue);
-	};
-
-	/**
 	 * Returns the dirty value of a binding that was rejected by a type validation.
 	 * This value was of an incorrect type and could not be applied to the model. If the
 	 * value was not rejected it will return null. In this case the current
@@ -388,29 +365,6 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 */
 	DataState.prototype.setOriginalValue = function(vOriginalValue) {
 		return this.setProperty("originalValue",vOriginalValue);
-	};
-
-	/**
-	 * Returns the original internal value of the data state.
-	 * The original internal value is the last confirmed data.
-	 *
-	 * @returns {any} the original confirmed value of the server
-	 * @private
-	 */
-	DataState.prototype.getOriginalInternalValue = function() {
-		return this.getProperty("originalInternalValue");
-	};
-
-	/**
-	 * Returns the original internal value of the data state.
-	 * The original internal value is the last confirmed data.
-	 *
-	 * @param {boolean} vOriginalInternalValue the original value
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
-	 * @protected
-	 */
-	DataState.prototype.setOriginalInternalValue = function(vOriginalInternalValue) {
-		return this.setProperty("originalInternalValue",vOriginalInternalValue);
 	};
 
 	/**
