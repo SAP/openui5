@@ -1856,9 +1856,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	};
 
 	/**
-	 * Returns whether the Popup is currently open (this includes opening and closing animations).
+	 * Returns whether the Popup is currently open (this includes opening and
+	 * closing animations).
 	 *
-	 * @returns {boolean} whether the Popup is opened (or currently being opened or closed)
+	 * @returns {boolean} whether the Popup is opened (or currently being
+	 *                            opened or closed)
 	 * @public
 	 */
 	Popup.prototype.isOpen = function() {
