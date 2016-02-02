@@ -1304,7 +1304,7 @@
 
 				// create timeline entries if available
 				/*eslint-disable no-console */
-				if (window.console && console.time) {
+				if (jQuery.sap.log.getLevel("sap.ui.Performance") >= 4 && window.console && console.time) {
 					console.time(sInfo + " - " + sId);
 				}
 				/*eslint-enable no-console */
@@ -1434,7 +1434,7 @@
 				if (oMeasurement) {
 					// end timeline entry
 					/*eslint-disable no-console */
-					if (window.console && console.timeEnd) {
+					if (jQuery.sap.log.getLevel("sap.ui.Performance") >= 4 && window.console && console.timeEnd) {
 						console.timeEnd(oMeasurement.info + " - " + sId);
 					}
 					/*eslint-enable no-console */
