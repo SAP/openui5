@@ -1,10 +1,24 @@
 describe("sap.m.SemanticPage", function() {
 
-	var fnClickThenCompare = function (sId, sImageName, sTestMessage) {
+	var fnClickThenCompare = function (sId, sImageName, sTestMessage, bEnsureOverflowVisible) {
 		it(sTestMessage, function () {
+
+			if (bEnsureOverflowVisible) {
+				fnEnsureOverflowVisible();
+			}
 			element(by.id(sId)).click();
 			expect(takeScreenshot()).toLookAs(sImageName);
 		});
+	}
+
+	var fnEnsureOverflowVisible = function() {
+		var overflowBtn = element(by.id("detail-footer-overflowButton"));
+		overflowBtn.isPresent().then(function(isPresent) {
+			if(isPresent) {
+				overflowBtn.click(); // we ensure that any buttons in overflow are also visible
+			}
+		})
+
 	}
 
 	it("Should load test page",function(){
@@ -35,13 +49,13 @@ describe("sap.m.SemanticPage", function() {
 	fnClickThenCompare("multiselectAction-toggleButton", "semantic-multiselect-on", "should show a multiselect-cancel button");
 	fnClickThenCompare("multiselectAction-toggleButton", "semantic-multiselect-off", "should show a multiselect button");
 
-	//favorite on/off
-	fnClickThenCompare("favoriteAction-toggleButton", "semantic-favorite-on", "should show a favorite emphasized button");
-	fnClickThenCompare("favoriteAction-toggleButton", "semantic-favorite-off", "should show a favorite non-emphasized button");
+	 //favorite on/off
+	 fnClickThenCompare("favoriteAction-toggleButton", "semantic-favorite-on", "should show a favorite emphasized button", true);
+	 fnClickThenCompare("favoriteAction-toggleButton", "semantic-favorite-off", "should show a favorite non-emphasized button", true);
 
 	//flag on/off
-	fnClickThenCompare("flagAction-toggleButton", "semantic-flag-on", "should show a flag emphasized button");
-	fnClickThenCompare("flagAction-toggleButton", "semantic-flag-off", "should show a flag non-emphasized button");
+	fnClickThenCompare("flagAction-toggleButton", "semantic-flag-on", "should show a flag emphasized button", true);
+	fnClickThenCompare("flagAction-toggleButton", "semantic-flag-off", "should show a flag non-emphasized button", true);
 
 	//sort select on/off
 	fnClickThenCompare("sortSelect-select", "semantic-sort-select-options", "should open select options");
@@ -57,8 +71,8 @@ describe("sap.m.SemanticPage", function() {
 	fnClickThenCompare("deleteAction-button", "semantic-delete-action", "should trigger delete action");
 	fnClickThenCompare("positiveAction-button", "semantic-positive-action", "should trigger positive action");
 	fnClickThenCompare("negativeAction-button", "semantic-negative-action", "should trigger negative action");
-	fnClickThenCompare("cancelAction-button", "semantic-cancel-action", "should trigger cancel action");
-	fnClickThenCompare("forwardAction-button", "semantic-forward-action", "should trigger forward action");
+	fnClickThenCompare("cancelAction-button", "semantic-cancel-action", "should trigger cancel action", true);
+	fnClickThenCompare("forwardAction-button", "semantic-forward-action", "should trigger forward action", true);
 
 	//share menu
 	fnClickThenCompare("detail-shareButton", "semantic-share-menu-expanded", "should expand the share menu");
