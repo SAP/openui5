@@ -530,8 +530,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 		Dialog.prototype.setTitle = function (sText) {
-			this.setProperty("title", sText, true); // last parameter avoids invalidation
-			this.$("lbl").text(sText);
+			if (this.oPopup.getOpenState() === sap.ui.core.OpenState.OPENING) {
+				// if the title is changed while the dialog opens a re-rendering
+				// has to be triggered to apply the position of the dialog's popup
+				// properly
+				this.setProperty("title", sText, /*bSuppressInvalidate*/ false);
+			} else {
+				this.setProperty("title", sText, /*bSuppressInvalidate*/ true);
+				this.$("lbl").text(sText);
+			}
+
 			return this;
 		};
 

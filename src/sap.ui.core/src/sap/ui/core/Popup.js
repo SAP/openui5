@@ -746,6 +746,7 @@ sap.ui.define([
 		var fnOpened = function() {
 			// internal status that any animation has been finished should set to true;
 			that.bOpen = true;
+
 			if ($Ref[0] && $Ref[0].style) {
 				$Ref[0].style.display = "block";
 			}
@@ -1934,9 +1935,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the Popup is currently open (this includes opening and closing animations).
+	 * Returns whether the Popup is currently open (this includes opening and
+	 * closing animations).
 	 *
-	 * @returns {boolean} whether the Popup is opened (or currently being opened or closed)
+	 * @returns {boolean} whether the Popup is opened (or currently being
+	 *                            opened or closed)
 	 * @public
 	 */
 	Popup.prototype.isOpen = function() {
