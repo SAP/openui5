@@ -9,8 +9,9 @@ sap.ui.define([
 	"./ObjectPageSectionBase",
 	"sap/ui/Device",
 	"sap/m/Button",
+	"sap/ui/core/StashedControlSupport",
 	"./library"
-], function (jQuery, InvisibleText, ObjectPageSectionBase, Device, Button, library) {
+], function (jQuery, InvisibleText, ObjectPageSectionBase, Device, Button, StashedControlSupport, library) {
 	"use strict";
 
 	/**
@@ -287,6 +288,8 @@ sap.ui.define([
 
 		return this.getAggregation("_showHideButton");
 	};
+
+	StashedControlSupport.mixInto(ObjectPageSection);
 
 	return ObjectPageSection;
 });
