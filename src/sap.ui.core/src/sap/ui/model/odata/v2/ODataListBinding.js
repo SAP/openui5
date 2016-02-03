@@ -528,6 +528,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 					that.iLength = 0;
 					that.bLengthFinal = true;
 				}
+
+				// if next requested page has no results, and startindex = actual length
+				// we could set lengthFinal true as we know the length.
+				if (iStartIndex === that.iLength) {
+					that.bLengthFinal = true;
+				}
 			}
 
 			// For clientside sorting filtering store all keys separately and set length to final
