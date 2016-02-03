@@ -12,6 +12,7 @@ module.exports = [
 	"SemanticPage.spec.js",
 	"NotificationListItem.spec.js",
 	"ObjectHeaderVisualTest.spec.js",
+	"OverflowToolbar.spec.js",
 	"Page.spec.js",
 	"SemanticPage.spec.js",
 	"TableSelectDialog.spec.js",
