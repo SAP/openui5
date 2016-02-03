@@ -25,16 +25,12 @@
 	color: @sapUiHighlight;
 }
 
-.sap-desktop .sapMGT:focus {
-	border-color: @sapUiFocus;
-}
-
-.sap-desktop .sapMGT:focus:not([tabindex]) {
-	border-color: transparent;
-}
-
 .sapMGT {
-	box-shadow: 0rem 0rem 0.25rem fade(@sapUiDarkShadowTint, 10);
+	border: 1px solid @sapUiTileBorderColor;
+}
+
+.sapMGTBackgroundImage {
+	border-color: fade(@sapUiTileBorderColor, 60);
 }
 
 .sapMGenericTileFtrFldTxt {
@@ -47,6 +43,22 @@
 .sap-phone .sapMGTHvrOutln:hover,
 .sap-tablet .sapMGTHvrOutln:hover {
 	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiLightShadowTint;
+	border-color: transparent;
+}
+
+.sap-desktop .sapMGTBackgroundImage:hover,
+.sap-phone .sapMGTBackgroundHvrOutln:hover,
+.sap-tablet .sapMGTBackgroundHvrOutln:hover {
+	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiLightShadowTint;
+	border-color: fade(@sapUiTileBorderColor, 60);
+}
+
+.sap-desktop .sapMGT:focus {
+	border: 1px dotted @sapUiFocus;
+}
+
+.sap-desktop .sapMGT:focus:not([tabindex]) {
+	border-color: transparent;
 }
 
 .sapMGenericTileFtrFldIcn {

@@ -40,14 +40,14 @@ sap.ui.define([], function() {
 			oRm.addClass("sapMPointer");
 			oRm.writeAttribute("tabindex", "0");
 		}
-		oRm.writeClasses();
 
 		if (oControl.getBackgroundImage()) {
 			oRm.write(" style='background-image:url(");
 			oRm.writeEscaped(oControl.getBackgroundImage());
 			oRm.write(");'");
+			oRm.addClass("sapMGTBackgroundImage");
 		}
-
+		oRm.writeClasses();
 		oRm.write(">");
 		var sState = oControl.getState();
 		if (sState != sap.m.LoadState.Loaded) {

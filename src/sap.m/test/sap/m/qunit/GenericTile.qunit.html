@@ -44,13 +44,43 @@
 						valueColor : sap.m.ValueColor.Good,
 						icon : "sap-icon://customer-financial-fact-sheet"
 					})
-				})
+				}),
+				press: jQuery.noop
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			this.sTheme = sap.ui.getCore().getConfiguration().getTheme();
+
+			this.oQueuedTheme = null;
+			this.queueThemeChange = jQuery.proxy(function(sName, fnHandler){
+				if (sap.ui.getCore().isThemeApplied(sName)){
+					fnHandler();
+				} else {
+					this.oQueuedTheme = {
+						theme: sName,
+						handler: fnHandler
+					};
+				}
+			}, this);
+
+			//theme changed handler
+			this._themeChangedHandler = function(){
+				var oEntry = this.oQueuedTheme;
+				if (oEntry && sap.ui.getCore().isThemeApplied(oEntry.theme)){
+					oEntry.handler();
+					this.oQueuedTheme = null;
+				}
+			};
+			sap.ui.getCore().attachThemeChanged(this._themeChangedHandler, this);
 		},
 		afterEach : function () {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
+
+			sap.ui.getCore().applyTheme(this.sTheme);
+
+			//detach theme change handler
+			sap.ui.getCore().detachThemeChanged(this._themeChangedHandler);
 		}
 	});
 
@@ -65,6 +95,76 @@
 		assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+	});
+
+	QUnit.test("GenericTile border rendered - blue crystal", function(assert){
+		var $tile = this.oGenericTile.$();
+		sap.ui.getCore().applyTheme("sap_bluecrystal");
+
+		var done = assert.async();
+		this.queueThemeChange("sap_bluecrystal", function(){
+			// the complete property name should be written for text in 'ie' and 'firefox'
+			assert.equal($tile.css('border-bottom-width'), "1px", "Border bottom width was rendered successfully");
+			assert.equal($tile.css('border-bottom-style'), "solid", "Border bottom style was rendered successfully");
+			assert.equal($tile.css('border-top-width'), "1px", "Border top width was rendered successfully");
+			assert.equal($tile.css('border-top-style'), "solid", "Border top style was rendered successfully");
+			assert.equal($tile.css('border-right-width'), "1px", "Border right width was rendered successfully");
+			assert.equal($tile.css('border-right-style'), "solid", "Border right style was rendered successfully");
+			assert.equal($tile.css('border-left-width'), "1px", "Border left width was rendered successfully");
+			assert.equal($tile.css('border-left-style'), "solid", "Border left style was rendered successfully");
+			done();
+		});
+	});
+
+	QUnit.test("GenericTile focus rendered - blue crystal", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		var $tile = this.oGenericTile.$();
+		sap.ui.getCore().applyTheme("sap_bluecrystal");
+		var done = assert.async();
+		this.queueThemeChange("sap_bluecrystal", function(){
+			$tile.focus();
+			assert.equal($tile.css("border-bottom-style"), "dotted", "Generic Tile focus bottom border was rendered successfully");
+			assert.equal($tile.css("border-top-style"), "dotted", "Generic Tile focus top border was rendered successfully");
+			assert.equal($tile.css("border-right-style"), "dotted", "Generic Tile focus right border was rendered successfully");
+			assert.equal($tile.css("border-left-style"), "dotted", "Generic Tile focus left border was rendered successfully");
+			done();
+		});
+	});
+
+	QUnit.test("GenericTile border rendered - HCB", function(assert){
+		var $tile = this.oGenericTile.$();
+		sap.ui.getCore().applyTheme("sap_hcb");
+
+		var done = assert.async();
+		this.queueThemeChange("sap_hcb", function(){
+			// the complete property name should be written for text in 'ie' and 'firefox'
+			assert.equal($tile.css('border-bottom-style'), "dotted", "Border bottom style was rendered successfully");
+			assert.equal($tile.css('border-top-style'), "dotted", "Border top style was rendered successfully");
+			assert.equal($tile.css('border-right-style'), "dotted", "Border right style was rendered successfully");
+			assert.equal($tile.css('border-left-style'), "dotted", "Border left style was rendered successfully");
+			done();
+		});
+	});
+
+	QUnit.test("GenericTile focus rendered - HCB", function(assert) {
+		if (sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		var $tile = this.oGenericTile.$();
+		sap.ui.getCore().applyTheme("sap_hcb");
+		var done = assert.async();
+		this.queueThemeChange("sap_hcb", function(){
+			$tile.focus();
+			assert.equal($tile.css("border-bottom-style"), "dotted", "Generic Tile focus bottom border was rendered successfully");
+			assert.equal($tile.css("border-top-style"), "dotted", "Generic Tile focus top border was rendered successfully");
+			assert.equal($tile.css("border-right-style"), "dotted", "Generic Tile focus right border was rendered successfully");
+			assert.equal($tile.css("border-left-style"), "dotted", "Generic Tile focus left border was rendered successfully");
+			done();
+		});
 	});
 
 	QUnit.module("Rendering tests for failing state", {
