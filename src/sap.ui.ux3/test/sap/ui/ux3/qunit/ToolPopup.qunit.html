@@ -881,7 +881,7 @@
 			start();
 
 			oTPRect = oTPMaxHeight.$().rect();
-			bTest = oTPRect.height <= 200;
+			bTest = Math.round(oTPRect.height) <= 200;
 			if (bIE8) {
 				ok(true, "Internet Explorer 8 is too stupid to calculate the correct height of the content");
 			} else {
@@ -904,7 +904,7 @@
 
 			oTPRect = oTPMaxHeight.$().rect();
 			// IE10, 11 are adding some fractions to the calculation in some cases
-			bTest = parseInt(oTPRect.width, 10) === 120;
+			bTest = Math.round(oTPRect.width) <= 120;
 			ok(bTest, "ToolPopup's width of 120px");
 		};
 
