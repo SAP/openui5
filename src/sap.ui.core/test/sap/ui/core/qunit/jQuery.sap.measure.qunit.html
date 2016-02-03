@@ -318,13 +318,15 @@
 		});
 
 		module("Interaction", {
-			beforeEach: function() {
+			setup: function() {
 				this.oButton = new sap.ui.commons.Button();
+				jQuery.sap.measure.endInteraction(true);
 				jQuery.sap.measure.clearInteractionMeasurements();
 				jQuery.sap.measure.clear();
 			},
-			afterEach: function() {
+			teardown: function() {
 				this.oButton.destroy();
+				jQuery.sap.measure.endInteraction(true);
 				jQuery.sap.measure.clearInteractionMeasurements();
 				jQuery.sap.measure.clear();
 			}
@@ -332,24 +334,68 @@
 
 		test("startInteraction", function() {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
-			ok(!jQuery.sap.measure.getAllInteractionMeasurements.length, "No completed interaction");
-			jQuery.sap.measure.startInteraction("click", this.oButton);
+			ok(!jQuery.sap.measure.getAllInteractionMeasurements().length, "No completed interaction");
 		});
 
 		test("endInteraction", function() {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
-			jQuery.sap.measure.startInteraction("click", this.oButton);
+			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			ok(oMeasurement, "Measurement has been created");
 		});
 
+		test("getAllInteractionMeasurements", function() {
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
+			ok(Array.isArray(aMeasurements), "An array was returned");
+			strictEqual(aMeasurements.length, 0, "Measurements count is correct");
+			jQuery.sap.measure.endInteraction(true);
+			aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
+			strictEqual(aMeasurements.length, 1, "Measurements count is correct");
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			jQuery.sap.measure.endInteraction(true);
+			aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
+			strictEqual(aMeasurements.length, 2, "Measurements count is correct");
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements(/*bFinalize =*/true);
+			strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
+		});
+
+		test("filterInteractionMeasurements", function() {
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			jQuery.sap.measure.endInteraction(true);
+			jQuery.sap.measure.startInteraction("flick", this.oButton);
+			jQuery.sap.measure.endInteraction(true);
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			jQuery.sap.measure.endInteraction(true);
+			var aFilteredMeasurements = jQuery.sap.measure.filterInteractionMeasurements(jQuery.noop);
+			ok(Array.isArray(aFilteredMeasurements), "Array has been returned");
+			equal(aFilteredMeasurements.length, 0, "Array is empty");
+			aFilteredMeasurements = jQuery.sap.measure.filterInteractionMeasurements(function() {
+				return true;
+			});
+			equal(aFilteredMeasurements.length, jQuery.sap.measure.getAllInteractionMeasurements().length, "No filtering applied");
+			aFilteredMeasurements = jQuery.sap.measure.filterInteractionMeasurements(function(oMeasurement) {
+				return oMeasurement.event === "flick";
+			});
+			equal(aFilteredMeasurements.length, 1, "Filter applied correctly");
+		});
+
+		test("getPendingInteractionMeasurement", function() {
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			var oMeasurement = jQuery.sap.measure.getPendingInteractionMeasurement();
+			ok(oMeasurement, "Measuerement was returned");
+			strictEqual(oMeasurement.end, 0, "Measurements has not been finalized yet");
+		});
+
 		test("Interaction properties", function() {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
-			jQuery.sap.measure.startInteraction("click", this.oButton);
+			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			equal(oMeasurement.event, "click", "Event type is set");
 			equal(oMeasurement.trigger, this.oButton.getId(), " Id of control which triggered interaction is set");
 			equal(oMeasurement.component, "undetermined", "No component could be found");
+			equal(oMeasurement.appVersion, "", "No app version could be found");
 			equal(oMeasurement.requests.length, 0, "No requests");
 			equal(oMeasurement.measurements.length, 0, "No measurements");
 			ok(oMeasurement.start !== 0, "Start is set");
@@ -424,7 +470,10 @@
 				metadata : {
 					manifest: {
 						"sap.app" : {
-							id: sComponentName
+							id: sComponentName,
+							applicationVersion: {
+								version: "0.0.0"
+							}
 						}
 					}
 				},
