@@ -834,18 +834,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Removes all the items in the aggregation named <code>items</code>.
-		 * Additionally unregisters them from the hosting UIArea and clears the selection.
+		 * Additionally unregisters them from the hosting UIArea.
 		 *
 		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
 		 * @public
 		 */
 		SelectList.prototype.removeAllItems = function() {
-			var aItems = this.removeAllAggregation("items");
-
-			// clear the selection
-			this.clearSelection();
-
-			return aItems;
+			return this.removeAllAggregation("items");
 		};
 
 		/**
