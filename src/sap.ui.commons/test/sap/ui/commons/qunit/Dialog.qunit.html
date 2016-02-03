@@ -156,6 +156,40 @@
 			this.oDialog.open();
 		});
 
+		QUnit.test("Change Title (Width) During Opening", function(assert) {
+			var done = assert.async();
+			var that = this;
+			var iWinWidth = window.innerWidth;
+			var iWinMiddle = parseInt(iWinWidth / 2, 10);
+
+			var sTitle = "Lorem Ipsum dolor sit amet";
+
+			var fnOpened = function() {
+				var oDomRef = that.oDialog.getDomRef();
+				var iDialWidth = oDomRef.offsetWidth;
+				var iDialLeft = oDomRef.offsetLeft;
+				var iDialMiddleAbsolute = iDialLeft + parseInt(iDialWidth / 2, 10);
+
+				// is the dialog centered (calculated with a little puffer)
+				var bDialogCentered = iWinMiddle + 3 > iDialMiddleAbsolute &&
+						iWinMiddle - 3 < iDialMiddleAbsolute;
+
+				assert.ok(bDialogCentered, "Dialog is centered for the current window");
+				done();
+			};
+
+			this.oDialog.destroyContent();
+			this.oDialog.destroyButtons();
+			this.oDialog.oPopup.attachOpened(fnOpened);
+			this.oDialog.open();
+			this.oDialog.setTitle(sTitle);
+
+			// var oDialogTitle = new sap.ui.commons.Dialog();
+			// oDialogTitle.oPopup.attachOpened(fnOpened);
+			// oDialogTitle.open();
+			// oDialogTitle.setTitle(sTitle);
+		});
+
 		QUnit.test('Close Dialog', function(assert) {
 			var done = assert.async(),
 				that = this;
@@ -175,7 +209,7 @@
 		});
 
 		QUnit.test("Test dialog onClick event handling", function () {
-			var 	done = assert.async(),
+			var done = assert.async(),
 					that = this;
 
 			function fnClosed () {
