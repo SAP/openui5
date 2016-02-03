@@ -23,3 +23,20 @@
 	background-color: @sapUiFieldSuccessBackground;
 	border-color: @sapUiFieldSuccessColor;
 }
+
+/* Styling of the down-arrow is Type/Priority dependent */
+.sapUiMsgToastArrow {
+	background-image: url("img/messagebar/toastarrow_multi.gif");
+}
+
+.sapUiMsgTError .sapUiMsgToastArrow {
+	background-image: url("img/messagebar/toastarrow_Error.gif");
+}
+
+.sapUiMsgTWarning .sapUiMsgToastArrow {
+	background-image: url("img/messagebar/toastarrow_Warning.gif");
+}
+
+.sapUiMsgTSuccess .sapUiMsgToastArrow {
+	background-image: url("img/messagebar/toastarrow_Success.gif");
+}
