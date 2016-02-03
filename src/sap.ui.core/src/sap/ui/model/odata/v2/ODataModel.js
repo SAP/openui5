@@ -661,8 +661,7 @@ sap.ui.define([
 
 		this.initialize();
 		if (this.bLoadAnnotationsJoined) {
-			this.oAnnotations.loaded().then(fnFire);
-			this.oAnnotations.loaded().catch(this.fireMetadataFailed.bind(this));
+			this.oAnnotations.loaded().then(fnFire, this.fireMetadataFailed.bind(this));
 		} else {
 			fnFire();
 		}
