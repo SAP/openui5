@@ -3712,18 +3712,14 @@ sap.ui.define([
 	 * If a URI with a $expand System Query Option was used then the expand entries will be removed from the collected changes.
 	 * Changes to this entries should be done on the entry itself. So no deep updates are supported.
 	 *
+	 * Important: The success/error handler will only be called if batch support is enabled. If multiple batchGroups are submitted the handlers will be called for every batchGroup.
+	 *
 	 * @param {object} [mParameters] a map which contains the following parameter properties:
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: defines the batchGroup that should be submitted. If not specified all deferred groups will be submitted
 	 * @param {string} [mParameters.groupId] defines the group that should be submitted. If not specified all deferred groups will be submitted
-	 * @param {function} [mParameters.success] a callback function which is called when the data has
-	 *            					 been successfully updated. The handler can have the
-	 *            	                 following parameters: oData
-	 * @param {function} [mParameters.error] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
-	 * additional error information
-	 *
-	 * Important: The success/error handler will only be called if batch support is enabled. If multiple batchGroups are submitted the handlers will be called for every batchGroup.
-	 *
-	 * @param {string} [mParameters.eTag] an ETag which can be used for concurrency control. If it is specified, it will be used in an If-Match-Header in the request to the server for this entry.
+	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully updated. The handler can have the following parameters: oData
+	 * @param {function} [mParameters.error] a callback function which is called when the request failed. The handler can have the parameter: oError which contains additional error information
+	 * @param {string} [mParameters.eTag] an ETag which can be used for concurrency control. If it is specified, it will be used in an If-Match-Header in the request to the server for this entry
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request or requests
 	 *
 	 * @public
