@@ -1349,7 +1349,9 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 }
 
 .sapUiSupportIntRecordingInfo {
-	margin-right: 10px;
+	margin-right: 5px;
+	margin-top: 5px;
+	float: right;
 }
 
 .sapUiSupportIntClearBtn{
