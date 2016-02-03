@@ -4,7 +4,7 @@ describe("sap.uxap.ObjectPageIconTabBar", function() {
 	});
 
 	it("Should collapse header", function() {
-		element(by.id("__button9")).click();
+		element(by.css(".sapUxAPAnchorBarButton:nth-child(2)")).click();
 
 		expect(takeScreenshot()).toLookAs("switchtab");
 	});
