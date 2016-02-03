@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.MessageBox
-sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/core/IconPool'],
-		function (jQuery, Button, Dialog, Text, IconPool) {
+sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextArea', './Link', './VBox', 'sap/ui/core/IconPool'],
+		function (jQuery, Button, Dialog, Text, TextArea, Link, VBox, IconPool) {
 			"use strict";
 
 			/**
@@ -292,13 +292,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 					function getInformationLayout(mOptions, oMessageText) {
 						//Generate MessageBox Layout
 
-						var oTextArea = new sap.m.TextArea({
+						var oTextArea = new TextArea({
 							editable: false,
 							visible: false,
 							rows: 3
 						}).setValue(mOptions.details);
 
-						var oLink = new sap.m.Link({
+						var oLink = new Link({
 							text: that._rb.getText("MSGBOX_LINK_TITLE"),
 							press: function () {
 								oTextArea.setVisible(true);
@@ -309,15 +309,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						oLink.addStyleClass("sapMMessageBoxLinkText");
 						oTextArea.addStyleClass("sapMMessageBoxDetails");
 
-						var oLayout = new sap.ui.layout.VerticalLayout({
-							width: "100%",
-							content: [
+						return new VBox({
+							items: [
 								oMessageText,
 								oLink,
 								oTextArea
 							]
 						});
-						return oLayout;
 					}
 
 					function onclose() {
