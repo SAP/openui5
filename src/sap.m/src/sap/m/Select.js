@@ -1843,7 +1843,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 		/**
 		 * Removes all the items in the aggregation named <code>items</code>.
-		 * Additionally unregisters them from the hosting UIArea and clears the selection.
+		 * Additionally unregisters them from the hosting UIArea.
 		 *
 		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
 		 * @public
@@ -1852,7 +1852,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			var oList = this.getList(),
 				aItems = oList ? oList.removeAllItems() : [];
 
-			this.clearSelection();
 			this.setValue("");
 
 			if (this._isRequiredSelectElement()) {
