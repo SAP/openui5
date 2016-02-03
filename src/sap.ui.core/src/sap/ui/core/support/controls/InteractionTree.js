@@ -26,6 +26,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           this.interactions = interactions;
 
+          this.start = 0;
+          this.end = 1;
+
           this.updateRanges();
        };
 
@@ -356,17 +359,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
           rm.write('<div class="sapUiInteractionTreeItemRight">');
 
-          var start = Math.max(interaction.start, this.actualStartTime);
-          var end = Math.min(interaction.end, this.actualEndTime);
+          var middle = Math.round(interaction.start + interaction.duration);
+
+          this.renderInteractionPart(rm, interaction.start, middle, 'sapUiInteractionBlue');
+          this.renderInteractionPart(rm, middle, interaction.end, 'sapUiInteractionBlueLight');
+
+          rm.write('</div>');
+          rm.write("</div>");
+       };
+
+       InteractionTree.prototype.renderInteractionPart = function (rm, start, end, colorClass) {
+          if (this.actualStartTime > end || this.actualEndTime < start) {
+             return;
+          }
+
+          end = Math.min(end, this.actualEndTime);
+          start = Math.max(start, this.actualStartTime);
 
           var left = 100 / this.timeRange * (start - this.actualStartTime);
           var right = 100 / this.timeRange * (end - this.actualStartTime);
           var width = right - left;
 
-          rm.write('<span style="margin-left: ' + left + '%; width: ' + width + '%" class="sapUiInteractionTimeframe sapUiInteractionTimeInteractionFrame"></span>');
-
-          rm.write('</div>');
-          rm.write("</div>");
+          rm.write('<span style="margin-left: ' + left + '%; width: ' + width + '%" class="sapUiInteractionTimeframe sapUiInteractionTimeInteractionFrame ' + colorClass + '"></span>');
        };
 
        InteractionTree.prototype.renderRequest = function (rm, interaction, request, index) {
