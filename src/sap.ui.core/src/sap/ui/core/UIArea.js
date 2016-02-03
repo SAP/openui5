@@ -955,7 +955,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				jQuery.sap.clearDelayedCall(UIArea._iFieldGroupTriggerDelay);
 			}
 			var oCurrentControl = this.getFieldGroupControl(),
-				aCurrentGroupIds = (oCurrentControl ? oCurrentControl.getFieldGroupIds() : []);
+				aCurrentGroupIds = (oCurrentControl ? oCurrentControl._getFieldGroupIds() : []);
 			if (aCurrentGroupIds.length > 0) {
 				oCurrentControl.triggerValidateFieldGroup(aCurrentGroupIds);
 			}
@@ -999,8 +999,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					return oElement instanceof sap.ui.core.Control;
 				});
 			}
-			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl.getFieldGroupIds() : []),
-				aNewGroupIds = (oControl ? oControl.getFieldGroupIds() : []),
+			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl._getFieldGroupIds() : []),
+				aNewGroupIds = (oControl ? oControl._getFieldGroupIds() : []),
 				aTargetFieldGroupIds = [];
 			for (var i = 0; i < aCurrentGroupIds.length; i++) {
 				var sCurrentGroupId = aCurrentGroupIds[i];
