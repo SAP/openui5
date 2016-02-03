@@ -218,7 +218,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	SegmentedButton.prototype._getButtonWidths = function () {
-		var aButtons = this.getButtons(),
+		var aButtons = this._getVisibleButtons(),
 			i = 0;
 
 		if (this._oGhostButton && this._oGhostButton.length == 0) {
@@ -285,7 +285,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._isMie || this._bInsideDialog) {
 			setTimeout(function () {
 				that._fCalcBtnWidth();
-			},100);
+			}, 0);
 		} else {
 			that._fCalcBtnWidth();
 		}
@@ -307,6 +307,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SegmentedButton.prototype._fCalcBtnWidth = function () {
+		var aButtons = this._getVisibleButtons();
+
 		if (this._bPreventWidthRecalculationOnAfterRendering) {
 			return;
 		}
@@ -316,7 +318,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			window.clearTimeout(sap.m.SegmentedButton._ghostTimer);
 			sap.m.SegmentedButton._ghostTimer = null;
 		}
-		var iItm = this.getButtons().length;
+		var iItm = aButtons.length;
 		if (iItm === 0 || !this.$().is(":visible"))  {
 			return;
 		}
@@ -326,11 +328,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iCntOutWidth = $this.outerWidth(true) - $this.width(),
 			iBarContainerPadding = $this.closest('.sapMBarContainer').outerWidth() - $this.closest('.sapMBarContainer').width(),
 			iBarContainerPaddingFix = 2,//Temporary solution to fix the segmentedButton with 100% width in dialog issue.
-			iInnerWidth = $this.children('#' + this.getButtons()[0].getId()).outerWidth(true) - $this.children('#' + this.getButtons()[0].getId()).width(),
-			oButtons = this.getButtons();
-		// If parent width is bigger than actual screen width set parent width to screen width => android 2.3
-		iParentWidth;
+			iInnerWidth = $this.children('#' + aButtons[0].getId()).outerWidth(true) - $this.children('#' + aButtons[0].getId()).width();
 
+		// If parent width is bigger than actual screen width set parent width to screen width => android 2.3
 		if (jQuery(window).width() < $this.parent().outerWidth()) {
 			iParentWidth = jQuery(window).width();
 		} else if (this._bInsideBar) {
@@ -348,7 +348,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iMaxWidth = parseInt(this.getWidth(), 10);
 			var iCustomBtnWidths = iItm;
 			for (var i = 0; i < iItm; i++) {
-				var sWidth = this.getButtons()[i].getWidth();
+				var sWidth = aButtons[i].getWidth();
 				if (sWidth.length > 0 && sWidth.indexOf("%") === -1) {
 					iMaxWidth = iMaxWidth - parseInt(sWidth, 10);
 					iCustomBtnWidths--;
@@ -369,8 +369,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		iMaxWidth = Math.floor(iMaxWidth);
 
 		for (var i = 0; i < iItm; i++) {
-			var $button = oButtons[i].$(),
-				sBtnWidth = oButtons[i].getWidth();
+			var $button = aButtons[i].$(),
+				sBtnWidth = aButtons[i].getWidth();
 			if (!isNaN(iMaxWidth) && iMaxWidth > 0) {
 				// Bug: +2px for IE9(10)
 				// When segmentedButton is in popup, its size can't be increased because otherwise it triggers resize of the dialog again.
@@ -486,6 +486,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			textDirection: oItem.getTextDirection(),
 			width: oItem.getWidth(),
 			tooltip: oItem.getTooltip(),
+			visible: oItem.getVisible(),
 			press: function () {
 				oItem.firePress();
 			}
@@ -526,6 +527,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					.toggleClass("sapMFocusable", bEnabled);
 
 				fnOriginalSetEnabled.apply(oButton, arguments);
+			};
+
+			oButton.setVisible = function (bVisible) {
+				sap.m.Button.prototype.setVisible.apply(this, arguments);
+				oParent.invalidate();
 			};
 		}
 
@@ -686,7 +692,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SegmentedButton.prototype._selectDefaultButton = function () {
-		var aButtons = this.getButtons();
+		var aButtons = this._getVisibleButtons();
 
 		// CSN# 0001429454/2014: when the id evaluates to false (null, undefined, "") the first button should be selected
 		if (aButtons.length > 0) {
@@ -810,7 +816,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		oSelect.destroyItems();
-		this.getButtons().forEach(function (oButton) {
+		this._getVisibleButtons().forEach(function (oButton) {
 			sButtonText = oButton.getText();
 			oSelect.addItem(new sap.ui.core.Item({
 				key: iKey.toString(),
@@ -881,6 +887,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sResult = oIconInfo.name;
 		}
 		return sResult;
+	};
+
+	/**
+	 * Gets the visible buttons.
+	 * @returns {*} Array of the visible buttons
+	 * @private
+	 */
+	SegmentedButton.prototype._getVisibleButtons = function() {
+		return this.getButtons().filter(function(oButton) {
+			return oButton.getVisible();
+		});
 	};
 
 	return SegmentedButton;

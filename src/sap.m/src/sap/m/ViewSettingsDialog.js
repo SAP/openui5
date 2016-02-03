@@ -1043,7 +1043,6 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	ViewSettingsDialog.prototype._getSortButton = function() {
 		if (this._sortButton === undefined) {
 			this._sortButton = new sap.m.Button(this.getId() + "-sortbutton", {
-				visible : false, // controlled by update state method
 				icon : IconPool.getIconURI("sort"),
 				tooltip : this._rb.getText("VIEWSETTINGS_TITLE_SORT")
 			});
@@ -1058,7 +1057,6 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	ViewSettingsDialog.prototype._getGroupButton = function() {
 		if (this._groupButton === undefined) {
 			this._groupButton = new sap.m.Button(this.getId() + "-groupbutton", {
-				visible : false, // controlled by update state method
 				icon : IconPool.getIconURI("group-2"),
 				tooltip : this._rb.getText("VIEWSETTINGS_TITLE_GROUP")
 			});
@@ -1073,7 +1071,6 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	ViewSettingsDialog.prototype._getFilterButton = function() {
 		if (this._filterButton === undefined) {
 			this._filterButton = new sap.m.Button(this.getId() + "-filterbutton", {
-				visible : false, // controlled by update state method
 				icon : IconPool.getIconURI("filter"),
 				tooltip : this._rb.getText("VIEWSETTINGS_TITLE_FILTER")
 			});
