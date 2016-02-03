@@ -120,9 +120,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			// caches jQuery reference to the input field
-			this._$Input = null;
-
 			// marks if the value is valid or not
 			this._bValid = false;
 
@@ -156,7 +153,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			this._removePickerEvents();
 
 			this._oResourceBundle = null;
-			this._$Input = null;
 			this._bValid = false;
 			this._sUsedDisplayPattern = null;
 			this._oDisplayFormat = null;
@@ -171,15 +167,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 */
 		TimePicker.prototype.onBeforeRendering = function() {
 			MaskInput.prototype.onBeforeRendering.apply(this, arguments);
-		};
-
-		/**
-		 * Called after the control is rendered.
-		 */
-		TimePicker.prototype.onAfterRendering = function() {
-			MaskInput.prototype.onAfterRendering.apply(this, arguments);
-
-			this._$Input = jQuery(this.getFocusDomRef());
 		};
 
 		/**
@@ -305,7 +292,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			var oDate,
 				oPicker;
 
-			sValue = sValue || this._$Input.val();
+			sValue = sValue || this._$input.val();
 
 			this._bValid = true;
 			if (sValue !== "") {
@@ -318,11 +305,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				}
 			}
 
-			if (this.isActive() && (this._$Input.val() !== sValue)) {
+			if (this.isActive() && (this._$input.val() !== sValue)) {
 				this.updateDomValue(sValue);
-				if (this._$label) {
+				if (this.bShowLabelAsPlaceholder) {
 					// because value property might not be updated between typing
-					this._$label.css("display", sValue ? "none" : "inline");
+					this.$("placeholder").css("display", sValue ? "none" : "inline");
 				}
 			}
 
@@ -536,7 +523,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				// convert to output
 				sValue = this._formatValue(oDate);
 
-				if (this._$Input.val() !== sValue) {
+				if (this._$input.val() !== sValue) {
 					this.updateDomValue(sValue);
 				}
 			}
@@ -775,7 +762,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @private
 		 */
 		TimePicker.prototype._synchronizeInput = function(sValue) {
-			if ((this._$Input.val() !== sValue)) {
+			if ((this._$input.val() !== sValue)) {
 				this.updateDomValue(sValue);
 			}
 		};

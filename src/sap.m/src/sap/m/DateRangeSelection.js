@@ -585,19 +585,6 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			return this;
 		};
 
-		// overwrite InputBase function because this calls _getInputValue what calls _parseValue what updates the properties
-		// This should be redesigned at all, because parsing should not update the properties in every case
-		DateRangeSelection.prototype._setLabelVisibility = function() {
-
-			if (!this.bShowLabelAsPlaceholder || !this._$label || !this.isActive()) {
-				return;
-			}
-
-			var sValue = this._$input.val();
-			this._$label.css("display", sValue ? "none" : "inline");
-
-		};
-
 		//Do nothing in case of PageUp
 		DateRangeSelection.prototype.onsappageup = function(){}; //EXC_JSLINT_021
 		DateRangeSelection.prototype.onsappageupmodifiers = function(){}; //EXC_JSLINT_021
