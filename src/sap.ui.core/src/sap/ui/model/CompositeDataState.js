@@ -148,6 +148,11 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 		if (bNewState === false) {
 			//clear the changed properties as changed was reset;
 			this.mChangedProperties = {};
+
+			this.aDataStates.forEach(function(oDataState) {
+				oDataState.changed(false);
+			});
+
 		}
 
 		return this.aDataStates.reduce(function(bLastChanged, oDataState) {
@@ -186,7 +191,6 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 		for (i = 0; i < this.aDataStates.length; ++i) {
 			this.aDataStates[i].calculateChanges();
 			mChanges = this.aDataStates[i].getChanges();
-			this.aDataStates[i].changed(false);
 
 			for (sKey in mChanges) {
 				mChangedProperties[sKey] = [];
