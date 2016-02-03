@@ -299,7 +299,7 @@ li.sapUiInteractionItemExpanded {
 
 .sapUiInteractionTitle {
 	margin : 1rem;
-	width: 100%;
+	width: calc(100% - 80px);
 }
 
 .sapUiInteractionTitleSection {
@@ -347,4 +347,31 @@ li.sapUiInteractionItemExpanded {
 .sapUiSupportPopover .sapUiRGLContainerCont,
 .sapUiSupportPopover .sapUiFormResGridCont {
 	padding-bottom: 0;
+}
+
+.sapMBtn.sapUiSupportReqPopoverCloseButton,
+.sapMBtn.sapUiSupportIntPopoverCloseButton {
+	position: absolute;
+	top: 4px;
+	right: 10px;
+	height: 30px;
+	width: 20px;
+}
+
+.sapMBtn.sapUiSupportReqPopoverCloseButton .sapMBtnInner,
+.sapMBtn.sapUiSupportIntPopoverCloseButton .sapMBtnInner{
+	height: 20px;
+	width: 20px;
+	min-width: 20px;
+}
+
+.sapMBtn.sapUiSupportReqPopoverCloseButton .sapMBtnInner .sapMBtnIcon,
+.sapMBtn.sapUiSupportIntPopoverCloseButton .sapMBtnInner .sapMBtnIcon{
+	font-size: 12px;
+	line-height: 20px;
+	width: 20px;
+}
+
+.sapUiSupportIntPopoverForm .sapUiForm .sapUiFormTitle {
+	width: calc(100% - 80px);
 }
