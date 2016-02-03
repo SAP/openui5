@@ -24,8 +24,8 @@
 			var aSpecialDays = [["20160101",undefined,"Neujahr",1],
 			                    ["20160106",undefined,"Heilige Drei Könige",1],
 			                    ["20160208",undefined,"Rosenmontag",2],
-			                    ["20140209",undefined,"Fastnacht",2],
-			                    ["20140210",undefined,"Aschermittwoch",2],
+			                    ["20160209",undefined,"Fastnacht",2],
+			                    ["20160210",undefined,"Aschermittwoch",2],
 			                    ["20160214",undefined,"Valentinstag",2],
 			                    ["20160325",undefined,"Karfreitag",1],
 			                    ["20160327",undefined,"Ostersonntag",1],
@@ -138,13 +138,42 @@
 												sap.ui.getCore().byId("Cal1").destroySpecialDates();
 											}
 										}
+									}),
+									new sap.ui.commons.ToggleButton({
+										text: "disable days",
+										press: function(oEvent){
+											var bPressed = oEvent.getParameter("pressed");
+											var oCal = sap.ui.getCore().byId("Cal1");
+											if (bPressed) {
+												var oDate = oCal.getStartDate();
+												if (oDate) {
+													oDate = new Date(oDate.getTime());
+												} else {
+													oDate = new Date();
+												}
+												oDate.setDate(2);
+												oCal.addDisabledDate(new sap.ui.unified.DateRange({
+													startDate: oDate
+												}));
+												oStartDate = new Date(oDate);
+												oStartDate.setDate(10);
+												oEndDate = new Date(oDate);
+												oEndDate.setDate(20);
+												oCal.addDisabledDate(new sap.ui.unified.DateRange({
+													startDate: oStartDate,
+													endDate: oEndDate
+												}));
+											} else {
+												oCal.destroyDisabledDates();
+											}
+										}
 									})
 								]
 			});
 			oFormContainer.addFormElement(oFormElement);
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E2", {
-				label: new sap.ui.commons.Label({text: "selected date"}),
+				label: "selected date",
 				fields: [ new sap.ui.commons.TextField("TF1",{
 										editable: true,
 										width: "9em",
@@ -174,7 +203,7 @@
 			oFormContainer.addFormElement(oFormElement);
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E3", {
-				label: new sap.ui.commons.Label({text: "start date"}),
+				label: "start date",
 				fields: [ new sap.ui.commons.TextField("TF2",{
 										editable: false,
 										width: "9em",
@@ -186,7 +215,7 @@
 			oFormContainer.addFormElement(oFormElement);
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E4", {
-				label: new sap.ui.commons.Label({text: "primary calendar type"}),
+				label: "primary calendar type",
 				fields: [ new sap.ui.commons.ComboBox("CB1",{
 										editable: true,
 										width: "9em",
@@ -211,7 +240,7 @@
 			oFormContainer.addFormElement(oFormElement);
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E5", {
-				label: new sap.ui.commons.Label({text: "secondary calendar type"}),
+				label: "secondary calendar type",
 				fields: [ new sap.ui.commons.ComboBox("CB2",{
 										editable: true,
 										width: "9em",
@@ -236,7 +265,7 @@
 			oFormContainer.addFormElement(oFormElement);
 
 			oFormElement = new sap.ui.layout.form.FormElement("F1E6", {
-				label: new sap.ui.commons.Label({text: "width"}),
+				label: "width",
 				fields: [ new sap.ui.commons.TextField("TF3",{
 										editable: true,
 										width: "9em",
@@ -245,6 +274,48 @@
 											var sValue = oEvent.getParameter('newValue');
 											var oCalendar = sap.ui.getCore().byId("Cal1");
 											oCalendar.setWidth(sValue);
+										}
+									})
+								]
+			});
+			oFormContainer.addFormElement(oFormElement);
+
+			oFormElement = new sap.ui.layout.form.FormElement("F1E7", {
+				label: "min. date",
+				fields: [ new sap.ui.commons.TextField("TF-min",{
+										editable: true,
+										width: "9em",
+										placeholder: "yyyyMMdd",
+										change: function(oEvent){
+											var oTF = oEvent.oSource;
+											var sValue = oEvent.getParameter('newValue');
+											var oCalendar = sap.ui.getCore().byId("Cal1");
+											var oDate;
+											if(sValue.length == 8 && !isNaN(sValue)){
+												oDate = oFormatYyyymmdd.parse(sValue);
+											}
+											oCalendar.setMinDate(oDate);
+										}
+									})
+								]
+			});
+			oFormContainer.addFormElement(oFormElement);
+
+			oFormElement = new sap.ui.layout.form.FormElement("F1E8", {
+				label: "max. date",
+				fields: [ new sap.ui.commons.TextField("TF-max",{
+										editable: true,
+										width: "9em",
+										placeholder: "yyyyMMdd",
+										change: function(oEvent){
+											var oTF = oEvent.oSource;
+											var sValue = oEvent.getParameter('newValue');
+											var oCalendar = sap.ui.getCore().byId("Cal1");
+											var oDate;
+											if(sValue.length == 8 && !isNaN(sValue)){
+												oDate = oFormatYyyymmdd.parse(sValue);
+											}
+											oCalendar.setMaxDate(oDate);
 										}
 									})
 								]

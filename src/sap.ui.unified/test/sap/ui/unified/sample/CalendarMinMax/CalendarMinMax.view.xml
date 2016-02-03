@@ -1,0 +1,31 @@
+<mvc:View
+		controllerName="sap.ui.unified.sample.CalendarMinMax.CalendarMinMax"
+		xmlns:l="sap.ui.layout"
+		xmlns:u="sap.ui.unified"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		class="viewPadding">
+	<l:VerticalLayout>
+		<l:content>
+			<u:Calendar
+					id="calendar"
+					select="handleCalendarSelect"
+					minDate="{path: '/minDate'}"
+					maxDate="{path: '/maxDate'}"
+					disabledDates="{path: '/disabled'}">
+					<u:disabledDates>
+						<u:DateRange
+							startDate="{start}"
+							endDate="{end}"/>
+					</u:disabledDates>
+			</u:Calendar>
+			<l:HorizontalLayout>
+				<Label
+						text="Selected Date:"/>
+				<Text
+						id="selectedDate"
+						text="No Date Selected"/>
+			</l:HorizontalLayout>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

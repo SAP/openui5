@@ -103,7 +103,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * Date Range with type to visualize special days in the Calendar.
 			 * If one day is assigned to more than one Type, only the first one will be used.
 			 */
-			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"}
+			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
+
+			/**
+			 * Date Ranges for disabled dates
+			 * @since 1.38.0
+			 */
+			disabledDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "disabledDate"}
 		},
 		associations: {
 
@@ -185,9 +191,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (this._bMouseMove) {
 				this._unbindMousemove(true);
 
-				_selectDay.call(this, this._getDate());
+				var bSelected = _selectDay.call(this, this._getDate());
+				if (!bSelected && this._oMoveSelectedDate) {
+					_selectDay.call(this, this._oMoveSelectedDate);
+				}
 				this._bMoveChange = false;
 				this._bMousedownChange = false;
+				this._oMoveSelectedDate = undefined;
 				_fireSelect.call(this);
 			}
 
@@ -246,6 +256,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this._bDateRangeChanged = true;
 		var oDestroyed = this.destroyAggregation("specialDates");
+		return oDestroyed;
+
+	};
+
+	Month.prototype.removeAllDisabledDates = function() {
+
+		this._bDateRangeChanged = true;
+		var aRemoved = this.removeAllAggregation("disabledDates");
+		return aRemoved;
+
+	};
+
+	Month.prototype.destroyDisabledDates = function() {
+
+		this._bDateRangeChanged = true;
+		var oDestroyed = this.destroyAggregation("disabledDates");
 		return oDestroyed;
 
 	};
@@ -474,6 +500,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * if used inside Calendar get the value from the parent
 	 * To don't have sync issues...
 	 */
+	Month.prototype.getDisabledDates = function(){
+
+		var oParent = this.getParent();
+
+		if (oParent && oParent.getDisabledDates) {
+			return oParent.getDisabledDates();
+		} else {
+			return this.getAggregation("disabledDates", []);
+		}
+
+	};
+
+	/*
+	 * if used inside Calendar get the value from the parent
+	 * To don't have sync issues...
+	 */
 	Month.prototype._getShowHeader = function(){
 
 		var oParent = this.getParent();
@@ -565,10 +607,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var iSelected = 0;
 		var aSelectedDates = this.getSelectedDates();
 		var oTimeStamp = oDate.getTime();
+		var sCalendarType = this.getPrimaryCalendarType();
 
 		for ( var i = 0; i < aSelectedDates.length; i++) {
 			// initalize the time part of the start and end time
-			var sCalendarType = this.getPrimaryCalendarType();
 			var oRange = aSelectedDates[i];
 			var oStartDate = oRange.getStartDate();
 			var oStartTimeStamp = 0;
@@ -626,10 +668,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oType;
 		var aSpecialDates = this.getSpecialDates();
 		var oTimeStamp = oDate.getTime();
+		var sCalendarType = this.getPrimaryCalendarType();
 
 		for ( var i = 0; i < aSpecialDates.length; i++) {
 			// initialize the time part of the start and end time
-			var sCalendarType = this.getPrimaryCalendarType();
 			var oRange = aSpecialDates[i];
 			var oStartDate = oRange.getStartDate();
 			var oStartTimeStamp = 0;
@@ -651,6 +693,63 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		return oType;
+
+	};
+
+	/*
+	 * Checks if a date is enabled
+	 * beside the disabledDates aggregation the min. and max. date of the Calendar are used
+	 * @return {boolean} Flag if enabled
+	 * @private
+	 */
+	Month.prototype._checkDateEnabled = function(oDate){
+
+		if (!(oDate instanceof UniversalDate)) {
+			throw new Error("Date must be a UniversalDate object " + this);
+		}
+
+		var bEnabled = true;
+		var aDisabledDates = this.getDisabledDates();
+		var oTimeStamp = oDate.getTime();
+		var sCalendarType = this.getPrimaryCalendarType();
+		var oParent = this.getParent();
+
+		if (oParent && oParent._oMinDate && oParent._oMaxDate) {
+			if (oTimeStamp < oParent._oMinDate.getTime() || oTimeStamp > oParent._oMaxDate.getTime()) {
+				return false;
+			}
+		}
+
+		for ( var i = 0; i < aDisabledDates.length; i++) {
+			// initalize the time part of the start and end time
+			var oRange = aDisabledDates[i];
+			var oStartDate = oRange.getStartDate();
+			var oStartTimeStamp = 0;
+			if (oStartDate) {
+				oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, sCalendarType);
+				oStartTimeStamp = oStartDate.getTime();
+			}
+			var oEndDate = oRange.getEndDate();
+			var oEndTimeStamp = 0;
+			if (oEndDate) {
+				oEndDate = CalendarUtils._createUniversalUTCDate(oEndDate, sCalendarType);
+				oEndTimeStamp = oEndDate.getTime();
+			}
+
+			if (oEndDate) {
+				// range disabled
+				if (oTimeStamp > oStartTimeStamp && oTimeStamp < oEndTimeStamp) {
+					bEnabled = false;
+					break;
+				}
+			} else if (oTimeStamp == oStartTimeStamp) {
+				// single day disabled
+				bEnabled = false;
+				break;
+			}
+		}
+
+		return bEnabled;
 
 	};
 
@@ -713,7 +812,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: true});
 					} else {
 						this._setDate(oFocusedDate);
-						_selectDay.call(this, oFocusedDate, true);
+						var bSelected = _selectDay.call(this, oFocusedDate, true);
+						if (bSelected) {
+							// remember last selected enabled date
+							this._oMoveSelectedDate = this._newUniversalDate(oFocusedDate);
+						}
 						this._bMoveChange = true;
 					}
 				}
@@ -745,19 +848,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (this._bMoveChange) {
 				// selection was changed -> make it final
-				var $Target = jQuery(oEvent.target);
-
-				if ($Target.hasClass("sapUiCalItemNum")) {
-					$Target = $Target.parent();
+				var bSelected = _selectDay.call(this, oFocusedDate);
+				if (!bSelected && this._oMoveSelectedDate) {
+					_selectDay.call(this, this._oMoveSelectedDate);
 				}
-
-				if ($Target.hasClass("sapUiCalItem")) {
-					oFocusedDate = this._newUniversalDate(this._oFormatYyyymmdd.parse($Target.attr("data-sap-day"), true));
-				}
-
-				_selectDay.call(this, oFocusedDate);
 				this._bMoveChange = false;
 				this._bMousedownChange = false;
+				this._oMoveSelectedDate = undefined;
 				_fireSelect.call(this);
 			}
 		}
@@ -772,8 +869,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	Month.prototype.onsapselect = function(oEvent){
 
 		// focused item must be selected
-		_selectDay.call(this, this._getDate());
-		_fireSelect.call(this);
+		var bSelected = _selectDay.call(this, this._getDate());
+		if (bSelected) {
+			_fireSelect.call(this);
+		}
 
 		//to prevent bubbling into input field if in DatePicker
 		oEvent.stopPropagation();
@@ -1175,16 +1274,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return;
 		}
 
-		_selectDay.call(this, oFocusedDate);
-		this._bMousedownChange = true;
+		var bSelected = _selectDay.call(this, oFocusedDate);
+		if (bSelected) {
+			this._bMousedownChange = true;
+		}
 
 		if (this._bMouseMove) {
 			// a mouseup must be happened outside of control -> just end move
 			this._unbindMousemove(true);
 			this._bMoveChange = false;
-		}else if (this.getIntervalSelection() && this.$().is(":visible")) {
+			this._oMoveSelectedDate = undefined;
+		}else if (bSelected && this.getIntervalSelection() && this.$().is(":visible")) {
 			// if calendar was closed in select event, do not add mousemove handler
 			this._bindMousemove(true);
+			this._oMoveSelectedDate = this._newUniversalDate(oFocusedDate);
 		}
 
 		oEvent.preventDefault(); // to prevent focus set outside of DatePicker
@@ -1298,6 +1401,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	function _selectDay(oDate, bMove){
 
+		if (!this._checkDateEnabled(oDate)) {
+			// date is disabled -> do not select it
+			return false;
+		}
+
 		var aSelectedDates = this.getSelectedDates();
 		var oDateRange;
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
@@ -1390,6 +1498,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}
 			}
 		}
+
+		return true;
 
 	}
 

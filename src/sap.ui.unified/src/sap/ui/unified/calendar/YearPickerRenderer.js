@@ -47,18 +47,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 		oRm.write(">"); // div element
 
-		var iYear = iCurrentYear - Math.floor(iYears / 2);
-		var iMinYear = oYP._oMinDate.getUTCFullYear();
-		var iMaxYear = oYP._oMaxDate.getUTCFullYear();
-
-		if (iYear >= iMaxYear - iYears) {
-			iYear = iMaxYear - iYears + 1;
-		}else if (iYear < iMinYear) {
-			iYear = iMinYear;
-		}
-
 		var oDate = oYP._newUniversalDate(oCurrentDate);
-		oDate.setUTCFullYear(iYear);
+		oDate.setUTCFullYear(oDate.getFullYear() - Math.floor(iYears / 2));
+		var bEnabledCheck = false; // check for disabled years only needed if borders touched
+		var oFirstDate = oYP._checkFirstDate(oDate);
+		if (oFirstDate.getTime() != oDate.getTime()) {
+			oDate = oFirstDate;
+			bEnabledCheck = true;
+		}
 
 		if (iColumns > 0) {
 			sWidth = ( 100 / iColumns ) + "%";
@@ -68,6 +64,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 		for ( var i = 0; i < iYears; i++) {
 			var sYyyymmdd = oYP._oFormatYyyymmdd.format(oDate.getJSDate(), true);
+			var mAccProps = {
+					role: "gridcell"
+				};
+			var bEnabled = true;
+
+			if (bEnabledCheck) {
+				bEnabled = oYP._checkDateEnabled(oDate);
+			}
 
 			if (iColumns > 0 && i % iColumns == 0) {
 				// begin of row
@@ -82,12 +86,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			if ( oDate.getUTCFullYear() == iCurrentYear) {
 				oRm.addClass("sapUiCalItemSel");
 			}
+			if (!bEnabled) {
+				oRm.addClass("sapUiCalItemDsbl"); // day disabled
+				mAccProps["disabled"] = true;
+			}
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.writeAttribute("data-sap-year-start", sYyyymmdd);
 			oRm.addStyle("width", sWidth);
 			oRm.writeClasses();
 			oRm.writeStyles();
-			oRm.writeAccessibilityState(null, {role: "gridcell"});
+			oRm.writeAccessibilityState(null, mAccProps);
 			oRm.write(">"); // div element
 			oRm.write(oYP._oYearFormat.format(oDate, true)); // to render era in Japanese
 			oRm.write("</div>");

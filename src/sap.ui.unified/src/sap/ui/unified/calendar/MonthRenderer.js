@@ -280,6 +280,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		var iWeekDay = oDay.getUTCDay();
 		var iSelected = oMonth._checkDateSelected(oDay);
 		var oType = oMonth._getDateType(oDay);
+		var bEnabled = oMonth._checkDateEnabled(oDay);
 
 		var iWeekNumber = 0;
 		if (bWeekNum) {
@@ -340,6 +341,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			if (oType.tooltip) {
 				oRm.writeAttributeEscaped('title', oType.tooltip);
 			}
+		}
+
+		if (!bEnabled) {
+			oRm.addClass("sapUiCalItemDsbl"); // day disabled
+			mAccProps["disabled"] = true;
 		}
 
 		if (oHelper.aNonWorkingDays) {
