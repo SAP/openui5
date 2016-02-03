@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				/* Store the items for later and remove them for the initialization of the control to avoid racing
 				 * condition with the initialization of the tab strip. This is only required when the items aggregation
 				 * is initialized directly with an array of TabContainer items without data binding and a template. */
-				if (Array.isArray(mSettings['items'])) {
+				if (mSettings && Array.isArray(mSettings['items'])) {
 					aStashedItems = mSettings['items'];
 					delete mSettings['items'];
 				}
