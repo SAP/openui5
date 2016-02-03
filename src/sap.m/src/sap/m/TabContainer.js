@@ -147,6 +147,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				aStashedItems.forEach(function (oItem) {
 					this.addItem(oItem);
 				}, this);
+
+				setTimeout(function () {
+					if (!this.getSelectedItem()) {
+						this._setDefaultTab();
+			}
+				}.bind(this), 0);
 			}
 		});
 
@@ -373,6 +379,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			if (oTabStrip) {
 				oTabStrip.setAddButton(bShowButton ? this._getAddNewTabButton() : null);
 			}
+		};
+
+		TabContainer.prototype._setDefaultTab = function() {
+
+			var oFirstItem = this.getItems()[0] || null;
+
+			this.setSelectedItem(oFirstItem);
+
+			return oFirstItem;
 		};
 
 		return TabContainer;
