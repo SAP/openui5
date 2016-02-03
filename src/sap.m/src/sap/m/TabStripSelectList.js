@@ -58,6 +58,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		 * @private
 		 */
 		TabStripSelectList.prototype.onAfterRendering = function () {
+			SelectList.prototype.onAfterRendering.apply(this, arguments);
 			var oDomRef = this.getDomRef();
 			oDomRef.addEventListener("mouseenter", jQuery.proxy(TabStripSelectList.prototype.mouseenter, this), true);
 			oDomRef.addEventListener("mouseleave", jQuery.proxy(TabStripSelectList.prototype.mouseleave, this), true);

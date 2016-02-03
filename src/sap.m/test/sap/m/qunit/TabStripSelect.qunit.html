@@ -77,6 +77,16 @@
 		});
 
 
+
+		test("Rendering dialog on phones", function () {
+			var stubs = prepareMobilePlatform.call(this, true);
+			beforeEachQUnitTest.call(this);
+			this.oMITS.open();
+			this.clock.tick(1000);
+			strictEqual(jQuery('.sapMDialog').length, 1, 'Dialog is rendered on mobile.')
+		});
+
+
 		module("Close Button", {
 			beforeEach: function () {
 				beforeEachQUnitTest.call(this);
