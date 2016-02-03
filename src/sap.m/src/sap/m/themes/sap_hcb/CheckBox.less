@@ -42,6 +42,26 @@
 	-webkit-focus-ring-color: none;
 }
 
+.sapMCb.sapMCbWarn .sapMCbBg {
+	border: 0.125rem dashed @sapHCStandardFG;
+}
+
+.sapMCb.sapMCbErr .sapMCbBg {
+	background-color: @sapHCHighlightBG;
+	border: 0.125rem dashed @sapHCStandardFG;
+}
+
+.sapMCb.sapMCbBgDis.sapMCbWarn .sapMCbBg.sapMCbMarkChecked:before {
+	color: @sapHCStandardFG;
+}
+
+.sapMCb.sapMCbBgDis.sapMCbErr .sapMCbBg {
+	border-color: @sapHCReducedAltFG;
+	&.sapMCbMarkChecked:before {
+		color: @sapHCStandardFG;
+	}
+}
+
 .sapUiForm .sapMCbBg { /* In forms, align left with '0.125rem' ( the focus width) */
 	left: 0.125rem;
 }
@@ -88,7 +108,7 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 	}
 }
 
-.sapMCbHoverable:hover {
+.sapMCb:not(.sapMCbWarn):not(.sapMCbErr) .sapMCbBg.sapMCbHoverable:hover {
 	background-color: @sapHCHighlightAltBG;
 }
 
