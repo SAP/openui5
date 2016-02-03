@@ -193,8 +193,6 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 		}
 		aFilters = this.aFilters.concat(this.aApplicationFilters);
 		if (aFilters.length == 0) {
-			this.aFilters = [];
-			this.aApplicationFilters = [];
 			this.iLength = this._getLength();
 		} else {
 			this.applyFilter();

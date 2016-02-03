@@ -245,12 +245,12 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 			this.aApplicationFilters = [];
 		}
 
-		if (!aFilters || !jQuery.isArray(aFilters) || aFilters.length == 0) {
-			this.aFilters = [];
-			this.aApplicationFilters = [];
+
+		aFilters = this.aFilters.concat(this.aApplicationFilters);
+		if (aFilters.length == 0) {
 			this.aAllFilters = null;
 		} else {
-			this.aAllFilters = this.aFilters.concat(this.aApplicationFilters);
+			this.aAllFilters = aFilters;
 			this.applyFilter();
 		}
 		this._mLengthsCache = {};

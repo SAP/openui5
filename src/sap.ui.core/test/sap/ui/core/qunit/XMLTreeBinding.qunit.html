@@ -244,7 +244,7 @@
 		var treeBinding = bindings[0];
 
 		//control filters after initial application filters
-		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "John"), "Control");
+		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "John"), sap.ui.model.FilterType.Control);
 
 		//Peter
 		var filteredContext = treeBinding.getRootContexts();
@@ -270,7 +270,7 @@
 
 		// apply application/control filters
 		treeBinding.filter(new sap.ui.model.Filter("@tree", sap.ui.model.FilterOperator.Contains, "#1"), "Application");
-		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "Jennifer"), "Control");
+		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "Jennifer"), sap.ui.model.FilterType.Control);
 
 		//Peter
 		var filteredContext = treeBinding.getRootContexts();
@@ -301,6 +301,60 @@
 		equal(nodeContexts2.length, 2, "3rd level length is correct");
 	});
 
+	test("TreeBinding - Application & Control filters - clear filters separately", function(){
+		setup();
+		createTreeBinding("/orgStructureAppControlFilter");
+
+		var treeBinding = bindings[0];
+
+		// apply application/control filters
+		treeBinding.filter(new sap.ui.model.Filter("@tree", sap.ui.model.FilterOperator.Contains, "#1"), "Application");
+		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "Jennifer"), sap.ui.model.FilterType.Control);
+
+		//Peter
+		var filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+
+		//Inga
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
+
+		//only Jennifer Wallace filtered
+		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
+
+		//remove app filter but not control filter
+		treeBinding.filter([], sap.ui.model.FilterType.Application);
+
+		//Peter
+		var filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+
+		//Inga
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
+
+		//only Jennifer Wallace filtered
+		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
+
+		treeBinding.filter([], sap.ui.model.FilterType.Control);
+
+		//1st level
+		filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+
+		//2nd level
+		nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 3, "2nd level length is correct");
+
+		//3rd level
+		nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 2, "3rd level length is correct");
+	});
+
 	test("TreeBinding - Application & Control filters - changing filters", function(){
 		setup();
 		createTreeBinding("/orgStructureAppControlFilter");
@@ -309,7 +363,7 @@
 
 		// apply application/control filters
 		treeBinding.filter(new sap.ui.model.Filter("@tree", sap.ui.model.FilterOperator.Contains, "#1"), "Application");
-		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "Jennifer"), "Control");
+		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "Jennifer"), sap.ui.model.FilterType.Control);
 
 		//Peter
 		var filteredContext = treeBinding.getRootContexts();
@@ -325,7 +379,7 @@
 		equal(oModel.getProperty("@name", nodeContexts2[0]), "Jennifer Wallace", "TreeBinding filter value");
 
 		//change control filter
-		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "John"), "Control");
+		treeBinding.filter(new sap.ui.model.Filter("@name", sap.ui.model.FilterOperator.Contains, "John"), sap.ui.model.FilterType.Control);
 
 		//Peter
 		filteredContext = treeBinding.getRootContexts();
