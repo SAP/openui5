@@ -110,6 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				}
 			},
 			constructor : function (vId, mSettings) {
+				var bHasSelect = false;
 				// normalize the expected arguments
 				if (!mSettings && typeof vId === 'object') {
 					mSettings = vId;
@@ -117,8 +118,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 				/* Stash the 'hasSelect' setting for later in order to have all items added to the tabstrip
 				* before the "select" control is instantiated. */
-				var bHasSelect = mSettings['hasSelect'];
-				delete mSettings['hasSelect'];
+				if (mSettings) {
+					bHasSelect = mSettings['hasSelect'];
+					delete mSettings['hasSelect'];
+				}
 
 				sap.ui.base.ManagedObject.prototype.constructor.apply(this, arguments);
 
