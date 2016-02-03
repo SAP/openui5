@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * Constructor for a Currency type.
 	 *
 	 * @class
-	 * This class represents float simple types.
+	 * This class represents the currency composite type.
 	 *
 	 * @extends sap.ui.model.CompositeType
 	 *
@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	});
 
 	/**
-	 * @see sap.ui.model.SimpleType.prototype.formatValue
+	 * @see sap.ui.model.CompositeType.prototype.formatValue
 	 */
 	Currency.prototype.formatValue = function(vValue, sInternalType) {
 		var aValues = vValue;
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	};
 
 	/**
-	 * @see sap.ui.model.SimpleType.prototype.parseValue
+	 * @see sap.ui.model.CompositeType.prototype.parseValue
 	 */
 	Currency.prototype.parseValue = function(vValue, sInternalType) {
 		var vResult, oBundle;
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	};
 
 	/**
-	 * @see sap.ui.model.SimpleType.prototype.validateValue
+	 * @see sap.ui.model.CompositeType.prototype.validateValue
 	 */
 	Currency.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	};
 
 	/**
-	 * @see sap.ui.model.SimpleType.prototype.setFormatOptions
+	 * @see sap.ui.model.CompositeType.prototype.setFormatOptions
 	 */
 	Currency.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
