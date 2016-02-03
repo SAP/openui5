@@ -486,6 +486,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			textDirection: oItem.getTextDirection(),
 			width: oItem.getWidth(),
 			tooltip: oItem.getTooltip(),
+			visible: oItem.getVisible(),
 			press: function () {
 				oItem.firePress();
 			}
