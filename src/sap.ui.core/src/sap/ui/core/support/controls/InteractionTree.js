@@ -19,7 +19,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
        InteractionTree.expandIcon = 'sap-icon://navigation-right-arrow';
        InteractionTree.collapseIcon = 'sap-icon://navigation-down-arrow';
-       InteractionTree.popoverCloseOpenDelay = 200;
        InteractionTree.headerIcon = '<img class="sapUiInteractionSvgImage" src="HeaderIcon.svg">';
 
        InteractionTree.prototype.setInteractions = function (interactions) {
@@ -460,7 +459,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
        };
 
        InteractionTree.prototype.attachRequestDetailsPopover = function () {
-          var simpleForm, clientVsServerTitle, progressBar, initiatorTypeText, entryTypeText, nameLink, startText, endText, durationText,
+          var simpleForm, clientVsServerTitle, progressBar, closeButton, initiatorTypeText, entryTypeText, nameLink, startText, endText, durationText,
               statisticsTitle, totalLabel, totalText, fwLabel, fwText, appLabel, appText;
 
           var that = this;
@@ -472,14 +471,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
              for (var i = 0; i < requestDivElements.length; i++) {
                 requestDivElements[i].addEventListener('click', function (event) {
-                   if (!that.popoverCloseTimeStamp || (that.popoverCloseTimeStamp + InteractionTree.popoverCloseOpenDelay < (new Date().getTime()))) {
-                     initializePopOverClientServerProgressBar.call(this);
-                     initializePopOverRequestData.call(this);
-                     initializePopOverSapStatisticsData.call(this);
+                   initializePopOverClientServerProgressBar.call(this);
+                   initializePopOverRequestData.call(this);
+                   initializePopOverSapStatisticsData.call(this);
 
-                     var requestBarElement = jQuery(this).children()[1];
-                     oPopover.openBy(requestBarElement);
-                   }
+                   var requestBarElement = jQuery(this).children()[1];
+                   oPopover.openBy(requestBarElement);
                 });
              }
           }
@@ -613,8 +610,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 horizontalScrolling: false,
                 content: [
                    createPopOverContent()
-                ],
-                afterClose: that.setPopoverCloseTimestamp.bind(that)
+                ]
              }).addStyleClass('sapUiSupportPopover');
 
              oPopover.attachAfterOpen(function(oEvent){
@@ -627,6 +623,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           function createPopOverContent() {
              clientVsServerTitle = new HTML();
              progressBar = new HTML();
+             closeButton = new sap.m.Button({
+                icon : IconPool.getIconURI("decline"),
+                type: "Transparent",
+                press : function() {
+                   oPopover.close();
+                }
+             }).addStyleClass("sapUiSupportReqPopoverCloseButton");
              initiatorTypeText = new Text().addStyleClass("sapUiSupportIntRequestText");
              entryTypeText = new Text().addStyleClass("sapUiSupportIntRequestText");
              nameLink = new Link({target: "_blank", wrapping: true}).addStyleClass("sapUiSupportIntRequestLink");
@@ -671,6 +674,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              return [
                 clientVsServerTitle,
                 progressBar,
+                closeButton,
                 simpleForm
              ];
           }
@@ -690,6 +694,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
        InteractionTree.prototype.attachInteractionDetailsPopover = function () {
           var simpleForm,
+              closeButton,
               e2eDurationText,
               processingText,
               requestTimeText,
@@ -708,12 +713,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
              for (var i = 0; i < interactionsDivElements.length; i++) {
                 interactionsDivElements[i].addEventListener('click', function (event) {
-                   if (!that.popoverCloseTimeStamp || (that.popoverCloseTimeStamp + InteractionTree.popoverCloseOpenDelay < (new Date().getTime()))) {
-                      initializePopOverInteractionData.call(this);
+                   initializePopOverInteractionData.call(this);
 
-                      var interactionBarElement = jQuery(this).children()[0];
-                      oPopover.openBy(interactionBarElement);
-                   }
+                   var interactionBarElement = jQuery(this).children()[0];
+                   oPopover.openBy(interactionBarElement);
                 });
              }
           }
@@ -752,14 +755,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                 horizontalScrolling: false,
                 content: [
                    createPopOverContent()
-                ],
-                afterClose: that.setPopoverCloseTimestamp.bind(that)
+                ]
              }).addStyleClass('sapUiSupportPopover');
 
+             oPopover.attachAfterOpen(function(oEvent){
+                oEvent.getSource().$().focus();
+             });
              return oPopover;
           }
 
           function createPopOverContent() {
+             closeButton = new sap.m.Button({
+                icon : IconPool.getIconURI("decline"),
+                type: "Transparent",
+                press : function() {
+                   oPopover.close();
+                }
+             }).addStyleClass("sapUiSupportIntPopoverCloseButton");
              e2eDurationText = new Text().addStyleClass("sapUiSupportIntRequestText");
              processingText = new Text().addStyleClass("sapUiSupportIntRequestText");
              requestTimeText = new Text().addStyleClass("sapUiSupportIntRequestText");
@@ -798,13 +810,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    new Label({text:"End Time"}).addStyleClass("sapUiSupportIntRequestLabel"),
                    endTimeText
                 ]
-             });
-             return simpleForm;
+             }).addStyleClass("sapUiSupportIntPopoverForm");
+             return [closeButton, simpleForm];
           }
-       };
-
-       InteractionTree.prototype.setPopoverCloseTimestamp = function () {
-          this.popoverCloseTimeStamp = new Date().getTime();
        };
 
        InteractionTree.prototype.renderRequestPart = function (rm, start, end, colorClass) {
