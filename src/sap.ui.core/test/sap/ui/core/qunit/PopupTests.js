@@ -652,3 +652,106 @@ QUnit.test("Close a popup without opening animation in 'opened' event handler", 
 	assert.equal(oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup state is CLOSED");
 	assert.ok(!oPopup.isOpen(), "isOpen method returns the correct state.");
 });
+
+QUnit.module("BlockLayer");
+
+QUnit.test("Check if the BlockLayer is displayed", function(assert) {
+	var done = assert.async();
+	var oPopupDomRef = jQuery.sap.domById("popup"),
+		oPopup = new sap.ui.core.Popup(oPopupDomRef, /*bModal*/ true);
+
+	this.oSpyShowBL = sinon.spy(oPopup, "_showBlockLayer");
+	this.oSpyHideBL = sinon.spy(oPopup, "_hideBlockLayer");
+
+	var fnOpened = function() {
+		oPopup.detachOpened(fnOpened);
+
+		assert.ok(this.oSpyShowBL.calledOnce, "_showBlockLayer called within Popup");
+		assert.ok(jQuery("html").hasClass("sapUiBLyBack"), "CSS class added to HTML-tag");
+
+		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+		var $oPopup = oPopup._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
+
+		assert.ok($oDomRefBL.length, "BlockLayer added to DOM");
+		var iBLIndex = parseInt($oDomRefBL.css("z-index"), 10);
+		var iPopupIndex = parseInt($oPopup.css("z-index"), 10);
+		assert.ok(iBLIndex && iPopupIndex && iBLIndex < iPopupIndex, "Z-index of BlockLayer must be smaller than the popup's z-index");
+
+		oPopup.close();
+	};
+
+	var fnClosed = function() {
+		oPopup.detachClosed(fnClosed);
+
+		assert.ok(this.oSpyHideBL.calledOnce, "_showBlockLayer called within Popup");
+
+		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+		assert.ok(!jQuery("html").hasClass("sapUiBLyBack"), "CSS class removed from HTML-tag");
+		assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
+
+		done();
+	};
+
+	oPopup.setDurations(0, 0);
+	oPopup.attachOpened(fnOpened, this);
+	oPopup.attachClosed(fnClosed, this);
+	oPopup.open();
+});
+
+QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(assert) {
+	var oPopup1DomRef = jQuery.sap.domById("popup1"),
+			oPopup2DomRef = jQuery.sap.domById("popup2"),
+			oPopup1 = new sap.ui.core.Popup(oPopup1DomRef, /*bModal*/ true),
+			oPopup2 = new sap.ui.core.Popup(oPopup2DomRef, /*bModal*/ true);
+
+	var done = assert.async();
+	var fnOpened = function() {
+		var $oPop1 = oPopup1._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
+		var iZIndex1 = parseInt($oPop1.css("z-index"), 10);
+
+		var $oPop2 = oPopup2._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
+		var iZIndex2 = parseInt($oPop2.css("z-index"), 10);
+
+		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+		var iZIndexBL = parseInt($oDomRefBL.css("z-index"), 10);
+
+		assert.ok($oDomRefBL.length, "BlockLayer should be added to DOM");
+
+		assert.ok(iZIndex1 && iZIndex2 && iZIndex1 < iZIndex2, "Z-Index of Popup1 must be smaller z-index of Popup2's");
+		assert.ok(iZIndexBL && iZIndex1 < iZIndexBL < iZIndex2, "Z-Index of BlockLayer must be between Popup1 and Popup2");
+
+		oPopup2.close();
+	}.bind(this);
+
+	var fnClosed1 = function() {
+		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+		var iZIndexBL = parseInt($oDomRefBL.css("z-index"), 10);
+
+		assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
+		assert.ok(!jQuery("html").hasClass("sapUiBLyBack"), "CSS class should be removed from HTML-tag");
+
+		done();
+	}.bind(this);
+
+	var fnClosed2 = function() {
+		var $oPop1 = oPopup1._$(/*bForceReRender*/ false, /*bGetOnly*/ true);
+		var iZIndex1 = parseInt($oPop1.css("z-index"), 10);
+
+		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
+		var iZIndexBL = parseInt($oDomRefBL.css("z-index"), 10);
+
+		assert.ok($oDomRefBL.length, "BlockLayer should still in DOM");
+
+		assert.ok(iZIndex1 && iZIndexBL && iZIndexBL < iZIndex1, "Z-Index of BlockLayer must be smaller than z-index of Popup1 now");
+		oPopup1.close();
+	}.bind(this);
+
+
+	oPopup1.setDurations(0, 0);
+	oPopup1.attachClosed(fnClosed1);
+	oPopup1.open();
+	oPopup2.setDurations(0, 0);
+	oPopup2.attachOpened(fnOpened);
+	oPopup2.attachClosed(fnClosed2);
+	oPopup2.open();
+});
