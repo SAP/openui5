@@ -15,9 +15,10 @@ sap.ui.define([
 		 * overwrites a model option having the same key.
 		 * The following query options are disallowed:
 		 * <ul>
-		 * <li> system query options (key starts with "$") except those specified in
+		 * <li> System query options (key starts with "$") except those specified in
 		 *   <code>aAllowed</code>
-		 * <li> parameter aliases (key starts with "@")
+		 * <li> Parameter aliases (key starts with "@")
+		 * <li> Custom query options starting with "sap-"
 		 * </ul>
 		 * @param {object} [mModelOptions={}]
 		 *   Map of query options specified for the model
@@ -76,6 +77,8 @@ sap.ui.define([
 				}
 				if (sKey[0] === "$") {
 					validateSystemQueryOption(sKey, vValue);
+				} else if (sKey.indexOf("sap-") === 0) {
+					throw new Error("Custom query option " + sKey + " is not supported");
 				}
 				mResult[sKey] = vValue;
 			});

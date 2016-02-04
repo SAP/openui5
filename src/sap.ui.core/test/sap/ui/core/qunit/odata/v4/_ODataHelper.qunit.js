@@ -140,6 +140,11 @@ sap.ui.require([
 		mOptions : {"$expand" : {"foo": {"select" : "bar"}}},
 		allowed : ["$expand", "$select"],
 		error : "System query option select is not supported"
+	}, {
+		mModelOptions : undefined,
+		mOptions : {"sap-foo" : "300"},
+		allowed : undefined,
+		error : "Custom query option sap-foo is not supported"
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
 			assert.throws(function () {

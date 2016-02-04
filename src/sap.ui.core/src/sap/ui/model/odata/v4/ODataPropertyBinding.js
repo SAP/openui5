@@ -43,9 +43,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of OData query options where only "5.2 Custom Query Options" (see specification "OData
-	 *   Version 4.0 Part 2: URL Conventions") are allowed. All other query options lead to an
-	 *   error. Query options specified for the binding overwrite model query options.
+	 *   Map of OData query options where only "5.2 Custom Query Options" are allowed (see
+	 *   specification "OData Version 4.0 Part 2: URL Conventions"), except for those with a name
+	 *   starting with "sap-". All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @throws {Error} When disallowed, OData query options are provided
