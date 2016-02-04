@@ -297,6 +297,16 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 						</Or>\
 					</PropertyValue>\
 				</Record>\
+				<!-- If and types -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+					<PropertyValue Property="Value">\
+						<If>\
+							<Path>p1</Path>\
+							<Path>p2</Path>\
+							<Path>p3</Path>\
+						</If>\
+					</PropertyValue>\
+				</Record>\
 			</Collection>\
 		</Annotation>\
 	</Annotations>\
@@ -1320,23 +1330,23 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	[
-	    {path: "_Boolean", value: true},
-	    {path: "_Byte", value: 255},
-	    {path: "_DateTime", value: new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
-	    {path: "_DateTimeOffset", value: new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
-	    {path: "_Decimal", value: "104245025234234502435.6430345"},
-	    {path: "_Double", value: 3.1415927},
-	    {path: "_Float", value: 0.30103},
-	    {path: "_Guid", value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23"},
-	    {path: "_Int16", value: 16},
-	    {path: "_Int32", value: 32},
-	    {path: "_Int64", value: "9007199254740992"},
-	    {path: "_Int64Small", value: "64"},
-	    {path: "_SByte", value: -126},
-	    {path: "_Single", value: 2.7182818},
-	    {path: "_String10", value: "foo"},
-	    {path: "_String80", value: "bar"},
-	    {path: "_Time", value: {__edmType: "Edm.Time", ms: Date.UTC(1970, 0, 1, 12, 43, 7, 236)}}
+		{path: "_Boolean", value: true},
+		{path: "_Byte", value: 255},
+		{path: "_DateTime", value: new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
+		{path: "_DateTimeOffset", value: new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
+		{path: "_Decimal", value: "104245025234234502435.6430345"},
+		{path: "_Double", value: 3.1415927},
+		{path: "_Float", value: 0.30103},
+		{path: "_Guid", value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23"},
+		{path: "_Int16", value: 16},
+		{path: "_Int32", value: 32},
+		{path: "_Int64", value: "9007199254740992"},
+		{path: "_Int64Small", value: "64"},
+		{path: "_SByte", value: -126},
+		{path: "_Single", value: 2.7182818},
+		{path: "_String10", value: "foo"},
+		{path: "_String80", value: "bar"},
+		{path: "_Time", value: {__edmType: "Edm.Time", ms: Date.UTC(1970, 0, 1, 12, 43, 7, 236)}}
 	].forEach(function (oFixture, i) {
 		QUnit.test("14.5.1 Comparison and Logical Operators: Eq on" + oFixture.path,
 			function (assert) {
@@ -1365,6 +1375,25 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			testBinding(assert, oCurrentContext, "Mr. ", {Sex: "M"});
 			testBinding(assert, oCurrentContext, "Mrs. ", {Sex: "F"});
 			testBinding(assert, oCurrentContext, "", {Sex: ""});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("14.5.6 Expression edm:If: types", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/8/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			oGlobalSandbox.stub(Expression, "path", function (oInterface, oPathValue) {
+				// do not try to "determine type for property"
+				return {result: "binding", value: oPathValue.value, type: "Edm.Boolean"};
+			});
+
+			assert.strictEqual(format(oRawValue, oCurrentContext),
+				"{=${p1}?${path:'p2',type:'sap.ui.model.odata.type.Boolean'}"
+				+ ":${path:'p3',type:'sap.ui.model.odata.type.Boolean'}}");
 		});
 	});
 

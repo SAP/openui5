@@ -105,22 +105,23 @@ sap.ui.require([
 				{type: "array", property: 0, value: ["foo"]}
 			].forEach(sinon.test(function (oFixture) {
 				var oStart = {
+						asExpression: "asExpression",
 						path: "/my/path",
-						value: oFixture.value
+						value: oFixture.value,
+						withType: "withType"
 					},
 					oEnd = {
+						asExpression: "asExpression",
 						path: "/my/path/" + oFixture.property,
-						value: "foo"
+						value: "foo",
+						withType: "withType"
 					},
 					oResult,
 					oBasics = this.mock(Basics);
 
 				oBasics.expects("expectType").withExactArgs(oStart, oFixture.type);
-				if (bTestProperty) {
-					oBasics.expects("expectType").withExactArgs(oEnd, "string");
-				} else {
-					oBasics.expects("expectType").never();
-				}
+				oBasics.expects("expectType").exactly(bTestProperty ? 1 : 0)
+					.withExactArgs(oEnd, "string");
 
 				oResult = bTestProperty ?
 					Basics.descend(oStart, oFixture.property, "string") :
@@ -255,7 +256,10 @@ sap.ui.require([
 			oFixture.value.value = "foo/'bar'";
 			assert.strictEqual(Basics.resultToString(oFixture.value, false, true),
 				"{path:'foo/\\'bar\\''" + oFixture.binding + "}",
-				JSON.stringify(oFixture.value));
+				JSON.stringify(oFixture.value) + " (binding)");
+			assert.strictEqual(Basics.resultToString(oFixture.value, true, true),
+				"${path:'foo/\\'bar\\''" + oFixture.binding + "}",
+				JSON.stringify(oFixture.value) + " (expression)");
 		});
 
 		assert.strictEqual(Basics.resultToString({
