@@ -928,9 +928,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	};
 
 	/**
-	 * Get download URL
-	 * @param {string} sFormat The required format for the download
+	 * Get a download URL with the specified format considering the
+	 * sort/filter/custom parameters.
+	 *
+	 * @param {string} sFormat Value for the $format Parameter
+	 * @return {string} URL which can be used for downloading
 	 * @since 1.24
+	 * @public
 	 */
 	ODataListBinding.prototype.getDownloadUrl = function(sFormat) {
 		var aParams = [],
