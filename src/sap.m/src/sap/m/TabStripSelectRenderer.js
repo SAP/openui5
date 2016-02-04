@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 
 			oRm.write("<button");
 
+			// ToDo: use TabStripSelect.CSS_CLASS
 			oRm.addClass('sapMTabStripSelect');
 
 			if (!oSelect.getVisible()) {
