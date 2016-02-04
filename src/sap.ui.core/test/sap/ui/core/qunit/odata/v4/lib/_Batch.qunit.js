@@ -243,24 +243,24 @@ sap.ui.require([
 		requests: [
 			{
 				method: "GET",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')"
+				url: "Employees('1')"
 			}, {
 				method: "GET",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')"
+				url: "Employees('2')"
 			}
 		],
 		body: "--batch_id-0123456789012-345\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
 		"\r\n" +
-		"GET /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1') HTTP/1.1\r\n" +
+		"GET Employees('1') HTTP/1.1\r\n" +
 		"\r\n" +
 		"\r\n" +
 		"--batch_id-0123456789012-345\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
 		"\r\n" +
-		"GET /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2') HTTP/1.1\r\n" +
+		"GET Employees('2') HTTP/1.1\r\n" +
 		"\r\n" +
 		"\r\n" +
 		"--batch_id-0123456789012-345--\r\n",
@@ -271,14 +271,14 @@ sap.ui.require([
 		requests: [
 			{
 				method: "GET",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+				url: "Employees('1')?$select=EmployeeID",
 				headers: {
 					foo: "bar1",
 					abc: "123"
 				}
 			}, {
 				method: "GET",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')",
+				url: "Employees('2')",
 				headers: {
 					foo: "bar2",
 					abc: "456"
@@ -289,7 +289,7 @@ sap.ui.require([
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
 		"\r\n" +
-		"GET /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1') HTTP/1.1\r\n" +
+		"GET Employees('1')?$select=EmployeeID HTTP/1.1\r\n" +
 		"foo:bar1\r\n" +
 		"abc:123\r\n" +
 		"\r\n" +
@@ -298,7 +298,7 @@ sap.ui.require([
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
 		"\r\n" +
-		"GET /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2') HTTP/1.1\r\n" +
+		"GET Employees('2') HTTP/1.1\r\n" +
 		"foo:bar2\r\n" +
 		"abc:456\r\n" +
 		"\r\n" +
@@ -312,14 +312,14 @@ sap.ui.require([
 		requests: [[
 			{
 				method: "PATCH",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+				url: "Employees('1')",
 				headers: {
 					"Content-Type": "application/json"
 				},
 				body: '{"TEAM_ID": "TEAM_03"}'
 			}, {
 				method: "PATCH",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')",
+				url: "Employees('2')",
 				headers: {
 					"Content-Type": "application/json"
 				},
@@ -334,7 +334,7 @@ sap.ui.require([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:0.0\r\n" +
 		"\r\n" +
-		"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1') HTTP/1.1\r\n" +
+		"PATCH Employees('1') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"TEAM_ID": "TEAM_03"}\r\n' +
@@ -343,7 +343,7 @@ sap.ui.require([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:1.0\r\n" +
 		"\r\n" +
-		"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2') HTTP/1.1\r\n" +
+		"PATCH Employees('2') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"TEAM_ID": "TEAM_01"}\r\n' +
@@ -358,7 +358,7 @@ sap.ui.require([
 		requests: [
 			{
 				method: "GET",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+				url: "Employees('1')",
 				headers: {
 					foo: "bar1",
 					abc: "123"
@@ -367,14 +367,14 @@ sap.ui.require([
 			[
 				{
 					method: "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+					url: "Employees('1')",
 					headers: {
 						"Content-Type": "application/json"
 					},
 					body: '{"TEAM_ID": "TEAM_03"}'
 				}, {
 					method: "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')",
+					url: "Employees('2')",
 					headers: {
 						"Content-Type": "application/json"
 					},
@@ -383,7 +383,7 @@ sap.ui.require([
 			],
 			{
 				method: "PATCH",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('3')",
+				url: "Employees('3')",
 				headers: {
 					"Content-Type": "application/json"
 				},
@@ -392,14 +392,14 @@ sap.ui.require([
 			[
 				{
 					method: "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('3')",
+					url: "Employees('3')",
 					headers: {
 						"Content-Type": "application/json"
 					},
 					body: '{"TEAM_ID": "TEAM_02"}'
 				}, {
 					method: "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('4')",
+					url: "Employees('4')",
 					headers: {
 						"Content-Type": "application/json"
 					},
@@ -411,7 +411,7 @@ sap.ui.require([
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
 		"\r\n" +
-		"GET /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1') HTTP/1.1\r\n" +
+		"GET Employees('1') HTTP/1.1\r\n" +
 		"foo:bar1\r\n" +
 		"abc:123\r\n" +
 		"\r\n" +
@@ -424,7 +424,7 @@ sap.ui.require([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:0.1\r\n" +
 		"\r\n" +
-		"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1') HTTP/1.1\r\n" +
+		"PATCH Employees('1') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"TEAM_ID": "TEAM_03"}\r\n' +
@@ -433,7 +433,7 @@ sap.ui.require([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:1.1\r\n" +
 		"\r\n" +
-		"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2') HTTP/1.1\r\n" +
+		"PATCH Employees('2') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"TEAM_ID": "TEAM_01"}\r\n' +
@@ -442,7 +442,7 @@ sap.ui.require([
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
 		"\r\n" +
-		"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('3') HTTP/1.1\r\n" +
+		"PATCH Employees('3') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"TEAM_ID": "TEAM_01"}\r\n' +
@@ -454,7 +454,7 @@ sap.ui.require([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:0.3\r\n" +
 		"\r\n" +
-		"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('3') HTTP/1.1\r\n" +
+		"PATCH Employees('3') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"TEAM_ID": "TEAM_02"}\r\n' +
@@ -463,7 +463,7 @@ sap.ui.require([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:1.3\r\n" +
 		"\r\n" +
-		"PATCH /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('4') HTTP/1.1\r\n" +
+		"PATCH Employees('4') HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"TEAM_ID": "TEAM_01"}\r\n' +
@@ -478,7 +478,7 @@ sap.ui.require([
 		requests: [
 			[{
 				method: "POST",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+				url: "TEAMS",
 				headers: {
 					"Content-Type": "application/json"
 				},
@@ -493,7 +493,7 @@ sap.ui.require([
 			}],
 			[{
 				method: "POST",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+				url: "TEAMS",
 				headers: {
 					"Content-Type": "application/json"
 				},
@@ -507,7 +507,7 @@ sap.ui.require([
 }'
 			}, {
 				method: "POST",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+				url: "TEAMS",
 				headers: {
 					"Content-Type": "application/json"
 				},
@@ -536,7 +536,7 @@ sap.ui.require([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:0.0\r\n" +
 		"\r\n" +
-		"POST /sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS HTTP/1.1\r\n" +
+		"POST TEAMS HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		JSON.stringify(oNewTeamBody) + "\r\n" +
@@ -558,7 +558,7 @@ sap.ui.require([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:0.1\r\n" +
 		"\r\n" +
-		"POST /sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS HTTP/1.1\r\n" +
+		"POST TEAMS HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"Team_Id": "TEAM_05",'
@@ -572,7 +572,7 @@ sap.ui.require([
 		"Content-Transfer-Encoding:binary\r\n" +
 		"Content-ID:1.1\r\n" +
 		"\r\n" +
-		"POST /sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS HTTP/1.1\r\n" +
+		"POST TEAMS HTTP/1.1\r\n" +
 		"Content-Type:application/json\r\n" +
 		"\r\n" +
 		'{"Team_Id": "TEAM_06",'
@@ -622,7 +622,7 @@ sap.ui.require([
 		requests: [
 			[{
 				method: "PATCH",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+				url: "Employees('1')",
 				headers: {
 					"Content-Type": "application/json"
 				},
@@ -631,7 +631,7 @@ sap.ui.require([
 			[
 				{
 					method: "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')",
+					url: "Employees('2')",
 					headers: {
 						"Content-Type": "application/json"
 					},
@@ -645,14 +645,14 @@ sap.ui.require([
 		requests: [
 			[{
 				method: "PATCH",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+				url: "Employees('1')",
 				headers: {
 					"Content-Type": "application/json"
 				},
 				body: '{"TEAM_ID": "TEAM_03"}'
 			}, {
 				method: "GET",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')",
+				url: "Employees('2')",
 				headers: {
 					"Content-Type": "application/json"
 				},
@@ -1153,11 +1153,11 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		[{  testTitle: "two get request for employees and departments",
 			batchRequests: [{
 				method : "GET",
-				url : sServiceUrl + "EMPLOYEES",
+				url : "EMPLOYEES",
 				headers : { "Accept": "application/json" }
 			}, {
 				method : "GET",
-				url : sServiceUrl + "Departments",
+				url : "Departments",
 				headers : {"Accept": "application/json"}
 			}],
 			expectedResponses : [{
@@ -1182,18 +1182,18 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		{   testTitle : "get, delete and post request",
 			batchRequests: [{
 				method : "GET",
-				url : sServiceUrl + "EMPLOYEES",
+				url : "EMPLOYEES",
 				headers : { "Accept": "application/json"}
 			}, {
 				method : "DELETE",
-				url : sServiceUrl + "EMPLOYEES('1')",
+				url : "EMPLOYEES('1')",
 				headers : {
 					"Accept": "application/json",
 					"If-Match" : "W/\"19770724000000.0000000\""
 				}
 			}, {
 				method : "POST",
-				url : sServiceUrl + "EMPLOYEES",
+				url : "EMPLOYEES",
 				headers : {
 					"Accept": "application/json",
 					"Content-Type": "application/json;charset=UTF-8"
@@ -1229,15 +1229,15 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		{   testTitle : "GET not existing entity set",
 			batchRequests: [{
 				method : "GET",
-				url : sServiceUrl + "Departments",
+				url : "Departments",
 				headers : { "Accept": "application/json"}
 			},{
 				method : "GET",
-				url : sServiceUrl + "Unknown",
+				url : "Unknown",
 				headers : { "Accept": "application/json"}
 			},{
 				method : "GET",
-				url : sServiceUrl + "TEAMS",
+				url : "TEAMS",
 				headers : { "Accept": "application/json"}
 			}],
 			expectedResponses : [{
@@ -1261,13 +1261,13 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		{   testTitle : "POST to not existing entity within change set",
 			batchRequests: [{
 				method : "GET",
-				url : sServiceUrl + "Departments",
+				url : "Departments",
 				headers : { "Accept": "application/json"}
 			},
 			[
 				{
 					method : "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('1')",
+					url: "EMPLOYEES('1')",
 					headers : {
 						"Content-Type": "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
@@ -1275,7 +1275,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					body : '{"TEAM_ID": "TEAM_03"}'
 				}, {
 					method : "POST",
-					url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Unknown",
+					url : "Unknown",
 					headers : {
 						"Content-Type": "application/json"
 					},
@@ -1284,7 +1284,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			],
 			{
 				method : "GET",
-				url : sServiceUrl + "TEAMS",
+				url : "TEAMS",
 				headers : { "Accept": "application/json"}
 			}],
 			expectedResponses : [{
@@ -1309,13 +1309,13 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			continueOnError : true,
 			batchRequests : [{
 					method : "GET",
-					url : sServiceUrl + "Departments",
+					url : "Departments",
 					headers : { "Accept": "application/json"}
 				},
 				[
 					{
 						method : "PATCH",
-						url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('1')",
+						url : "EMPLOYEES('1')",
 						headers : {
 							"Content-Type": "application/json",
 							"If-Match" : "W/\"19770724000000.0000000\""
@@ -1323,7 +1323,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						body : '{"TEAM_ID": "TEAM_03"}'
 					}, {
 						method : "POST",
-						url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Unknown",
+						url : "Unknown",
 						headers : {
 							"Content-Type": "application/json"
 						},
@@ -1332,7 +1332,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				],
 				{
 					method : "GET",
-					url : sServiceUrl + "TEAMS",
+					url : "TEAMS",
 					headers : { "Accept": "application/json"}
 				}
 			],
@@ -1392,7 +1392,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		{   testTitle : "changesets and individual requests",
 			batchRequests: [{
 				method: "GET",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES",
+				url: "EMPLOYEES",
 				headers: {
 					"Accept": "application/json"
 				}
@@ -1400,7 +1400,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			[
 				{
 					method: "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('1')",
+					url: "EMPLOYEES('1')",
 					headers: {
 						"Content-Type": "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
@@ -1408,7 +1408,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					body: '{"TEAM_ID": "TEAM_03"}'
 				}, {
 					method: "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('2')",
+					url: "EMPLOYEES('2')",
 					headers: {
 						"Content-Type": "application/json",
 						"If-Match" : "W/\"20030701000000.0000000\""
@@ -1418,7 +1418,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			],
 			{
 				method: "PATCH",
-				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('5')",
+				url: "EMPLOYEES('5')",
 				headers: {
 					"Content-Type": "application/json",
 					"If-Match" : "W/\"20010201000000.0000000\""
@@ -1428,7 +1428,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			[
 				{
 					method: "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('3')",
+					url: "EMPLOYEES('3')",
 					headers: {
 						"Content-Type": "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
@@ -1436,7 +1436,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					body: '{"TEAM_ID": "TEAM_02"}'
 				}, {
 					method: "PATCH",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('4')",
+					url: "EMPLOYEES('4')",
 					headers: {
 						"Content-Type": "application/json",
 						"If-Match" : "W/\"20040912000000.0000000\""
@@ -1620,7 +1620,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			batchRequests: [
 				[{
 					method: "POST",
-					url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+					url: "TEAMS",
 					headers: {
 						"Content-Type": "application/json"
 					},
@@ -1711,7 +1711,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					sResolvedServiceUrl = TestUtils.proxy(sServiceUrl),
 					aBatchRequests = [{
 						method : "GET",
-						url : sServiceUrl + "EMPLOYEES('9')",
+						url : "EMPLOYEES('9')",
 						headers : { "Accept": "application/json" }
 					}];
 

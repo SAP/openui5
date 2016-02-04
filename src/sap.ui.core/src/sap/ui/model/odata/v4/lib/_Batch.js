@@ -8,7 +8,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 
 	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},
 		oBatch,
-		rContentIdReference = /\$(?:\d*)*/,
+		rContentIdReference = /\$\d+/,
 		rHeaderParameter = /(\S*?)=(?:"(.+)"|(\S+))/;
 
 	/**
