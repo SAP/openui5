@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if ((!this.isOpen() || !this.hasContent()) && this.isOpenArea(oEvent.target)) {
+			if (!this.isOpen() && this.isOpenArea(oEvent.target)) {
 
 				// remove the active state of the control's field
 				this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
@@ -187,9 +187,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 					return;
 				}
 
-				if (this.hasContent()) {
-					this.open();
-				}
+				this.open();
 			}
 
 			if (this.isOpen()) {
@@ -228,13 +226,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				return;
 			}
 
-			// select all text
-			this.selectText(0, this.getValue().length);
-
-			// open only if the combobox has items
-			if (this.hasContent()) {
-				this.open();
-			}
+			this.selectText(0, this.getValue().length); // select all text
+			this.open();
 		};
 
 		/**
@@ -257,7 +250,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				oEvent.preventDefault();
 
 				this.close();
-			} else {	// the picker is closed
+			} else {
 
 				// cancel changes and revert to the value which the Input field had when it got the focus
 				ComboBoxTextField.prototype.onsapescape.apply(this, arguments);
@@ -391,7 +384,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @protected
 		 */
 		ComboBoxBase.prototype.hasContent = function() {
-			return !!this.getItems().length;
+			return this.getItems().length > 0;
 		};
 
 		/**
