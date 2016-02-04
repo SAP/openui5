@@ -26,9 +26,7 @@ sap.ui.define([
 		ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataModel",
-		// /TEAMS[2];root=0/Name or /TEAMS('4711');root=0/Name
-		rRootBindingPath = /^\/.+(?:(?:\[(\d+)\])|(?:\(.+\)));root=(\d+)(?:\/(.+))?$/;
+	var sClassName = "sap.ui.model.odata.v4.ODataModel";
 
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
@@ -114,7 +112,6 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata");
 					this.oRequestor = Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters);
-					this.aRoots = [];
 				}
 			});
 
@@ -131,7 +128,7 @@ sap.ui.define([
 	 * context is available.
 	 *
 	 * @param {string} sPath
-	 *   The binding path in the model
+	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
@@ -151,11 +148,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.bindContext = function (sPath, oContext, mParameters) {
-		var oContextBinding = new ODataContextBinding(this, sPath, oContext, this.aRoots.length,
-				mParameters);
-
-		this.aRoots.push(oContextBinding);
-		return oContextBinding;
+		return new ODataContextBinding(this, sPath, oContext, mParameters);
 	};
 
 	/**
@@ -163,7 +156,7 @@ sap.ui.define([
 	 * resolve to an absolute OData path for an entity set.
 	 *
 	 * @param {string} sPath
-	 *   The binding path in the model
+	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter[]} [aSorters]
@@ -181,17 +174,13 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @return {sap.ui.model.odata.v4.ODataListBinding}
+	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   The list binding
 	 * @throws {Error} When disallowed OData query options are provided
 	 * @public
 	 */
 	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
-		var oListBinding = new ODataListBinding(this, sPath, oContext, this.aRoots.length,
-				mParameters);
-
-		this.aRoots.push(oListBinding);
-		return oListBinding;
+		return new ODataListBinding(this, sPath, oContext, mParameters);
 	};
 
 	/**
@@ -201,7 +190,7 @@ sap.ui.define([
 	 * to be informed when the value is available.
 	 *
 	 * @param {string} sPath
-	 *   The binding path in the model
+	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
@@ -244,16 +233,41 @@ sap.ui.define([
 		return this.oRequestor.request("POST", sResourcePath, undefined, null, oEntityData);
 	};
 
+	/**
+	 * Cannot create contexts at this model at will; retrieve them from a binding instead.
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
+	 * @see sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts
+	 * @throws {Error}
+	 */
 	ODataModel.prototype.createBindingContext = function () {
-		notImplemented("createBindingContext", arguments);
-	};
-
-	ODataModel.prototype.destroyBindingContext = function () {
-		notImplemented("destroyBindingContext", arguments);
+		throw new Error("Cannot create context at model");
 	};
 
 	/**
-	 * Returns the meta model for this ODataModel
+	 * Cannot destroy contexts.
+	 *
+	 * @public
+	 * @throws {Error}
+	 */
+	ODataModel.prototype.destroyBindingContext = function () {
+		throw new Error("Cannot destroy context");
+	};
+
+	/**
+	 * Cannot get a shared context for a path. Contexts are created by bindings instead and there
+	 * may be multiple contexts for the same path.
+	 *
+	 * @private
+	 * @throws {Error}
+	 */
+	ODataModel.prototype.getContext = function () {
+		throw new Error("Cannot get context at model");
+	};
+
+	/**
+	 * Returns the meta model for this ODataModel.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ODataMetaModel}
 	 *   The meta model for this ODataModel
@@ -265,47 +279,6 @@ sap.ui.define([
 
 	ODataModel.prototype.getProperty = function () {
 		notImplemented("getProperty", arguments);
-	};
-
-	/**
-	 * Triggers a GET request to this model's OData service. The data will be stored in the model.
-	 *
-	 * @param {string} sPath
-	 *   An absolute data binding path to the data which should be retrieved
-	 * @param {boolean} [bAllowObjectAccess=false]
-	 *   Whether access to whole objects is allowed
-	 * @returns {Promise}
-	 *   A promise to be resolved when the OData request is finished, providing a data object
-	 *   just like the OData v4 JSON format, e.g. <code>{"value" : "foo"}</code> for simple
-	 *   properties, <code>{"value" : [...]}</code> for collections and
-	 *   <code>{"foo" : "bar", ...}</code> for objects
-	 *
-	 * @protected
-	 */
-	ODataModel.prototype.read = function (sPath, bAllowObjectAccess) {
-		var that = this;
-
-		if (sPath[0] !== "/") {
-			throw new Error("Not an absolute data binding path: " + sPath);
-		}
-
-		return new Promise(function (fnResolve, fnReject) {
-			var aMatches = rRootBindingPath.exec(sPath);
-
-			if (aMatches) { // use list binding to retrieve the value
-				that.aRoots[Number(aMatches[2])]
-					.readValue(aMatches[3], bAllowObjectAccess, Number(aMatches[1]))
-					.then(function (oValue) {
-						// property access: wrap property value just like OData does
-						fnResolve(typeof oValue === "object" && !Array.isArray(oValue)
-							? oValue
-							: {value : oValue});
-					}, function (oError) {
-						fnReject(oError);
-					});
-				return;
-			}
-		});
 	};
 
 	/**
@@ -355,10 +328,10 @@ sap.ui.define([
 			that = this;
 
 		return Promise.all([
-			this.read(sPath + "/@odata.etag"),
-			this.getMetaModel().requestCanonicalUrl("", sPath, this.read.bind(this))
+			oContext.requestValue("@odata.etag"),
+			this.getMetaModel().requestCanonicalUrl("", sPath, oContext)
 		]).then(function (aValues) {
-			var sEtag = aValues[0].value,
+			var sEtag = aValues[0],
 				sResourcePath = aValues[1] + that._sQuery; // "canonical path" w/o service URL
 
 			return that.oRequestor.request("DELETE", sResourcePath, undefined, {"If-Match" : sEtag})
@@ -392,7 +365,7 @@ sap.ui.define([
 		jQuery.sap.assert(oEntityContext.getModel() === this,
 				"oEntityContext must belong to this model");
 		return this.getMetaModel()
-			.requestCanonicalUrl("/", oEntityContext.getPath(), this.read.bind(this));
+			.requestCanonicalUrl("/", oEntityContext.getPath(), oEntityContext);
 	};
 
 	return ODataModel;

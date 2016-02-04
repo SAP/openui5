@@ -82,6 +82,59 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("read and drill-down", function (assert) {
+		var oExpectedResult = {
+				// "@odata.context"
+				value : [{
+					foo : {
+						bar : 42,
+						"null" : null
+					}
+				}]
+			},
+			oRequestor = Requestor.create("/~/"),
+			sResourcePath = "Employees",
+			oCache = Cache.create(oRequestor, sResourcePath, {$select : "foo"}),
+			aPromises = [];
+
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("GET", sResourcePath + "?$select=foo&$skip=0&$top=1")
+			.returns(Promise.resolve(oExpectedResult));
+
+		assert.throws(function () {
+			oCache.read(0, 0, "");
+		}, new Error("Cannot drill-down for length 0"));
+		aPromises.push(oCache.read(0, 1, "").then(function (oResult) {
+			assert.strictEqual(oResult, oExpectedResult.value[0],
+				"empty path drills down into single array element");
+		}));
+		assert.throws(function () {
+			oCache.read(0, 2, "");
+		}, new Error("Cannot drill-down for length 2"));
+		aPromises.push(oCache.read(0, 1, "foo").then(function (oResult) {
+			assert.strictEqual(oResult, oExpectedResult.value[0].foo);
+		}));
+		aPromises.push(oCache.read(0, 1, "foo/bar").then(function (oResult) {
+			assert.strictEqual(oResult, 42);
+		}));
+		this.oLogMock.expects("warning").withExactArgs(
+			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
+				+ " via foo/bar/invalid, invalid segment: invalid",
+			null, "sap.ui.model.odata.v4.lib._Cache");
+		aPromises.push(oCache.read(0, 1, "foo/bar/invalid").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		}));
+		this.oLogMock.expects("warning").withExactArgs(
+			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
+				+ " via foo/null/invalid, invalid segment: invalid",
+			null, "sap.ui.model.odata.v4.lib._Cache");
+		aPromises.push(oCache.read(0, 1, "foo/null/invalid").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		}));
+		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("read(-1, 1)", function (assert) {
 		var oRequestor = Requestor.create("/~/"),
 			sResourcePath = "Employees",
@@ -168,7 +221,7 @@ sap.ui.require([
 
 			oFixture.reads.forEach(function (oRead) {
 				oPromise = oPromise.then(function () {
-					return oCache.read(oRead.index, oRead.length, fnDataRequested)
+					return oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
 						.then(function (oResult) {
 							assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
 					});
@@ -196,7 +249,7 @@ sap.ui.require([
 			});
 
 			oFixture.reads.forEach(function (oRead) {
-				aPromises.push(oCache.read(oRead.index, oRead.length, fnDataRequested)
+				aPromises.push(oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
 					.then(function (oResult) {
 						assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
 				}));
@@ -428,6 +481,81 @@ sap.ui.require([
 		}));
 		aPromises.push(oCache.read().then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedResult);
+		}));
+		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read single property", function (assert) {
+		var oExpectedResult = {value : "John Doe"},
+			oRequestor = Requestor.create("/~/"),
+			sResourcePath = "Employees('1')/Name",
+			oCache;
+
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("GET", sResourcePath)
+			.returns(Promise.resolve(oExpectedResult));
+
+		// code under test
+		oCache = Cache.createSingle(oRequestor, sResourcePath, undefined, /*bSingleProperty*/true);
+
+		oCache.read().then(function (sName) {
+			assert.strictEqual(sName, "John Doe", "automatic {value : ...} unwrapping");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read single null value", function (assert) {
+		var oRequestor = Requestor.create("/~/"),
+			sResourcePath = "Employees('1')/DateOfBirth",
+			oCache;
+
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("GET", sResourcePath)
+			.returns(Promise.resolve(undefined)); // 204 No Content
+
+		// code under test
+		oCache = Cache.createSingle(oRequestor, sResourcePath, undefined, /*bSingleProperty*/true);
+
+		return oCache.read().then(function (sName) {
+			assert.strictEqual(sName, null, "automatic {value : ...} unwrapping");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("read single employee, drill-down", function (assert) {
+		var oExpectedResult = {
+				foo : {
+					bar : 42,
+					"null" : null
+				}
+			},
+			oRequestor = Requestor.create("/~/"),
+			sResourcePath = "Employees('1')",
+			oCache = Cache.createSingle(oRequestor, sResourcePath),
+			aPromises = [];
+
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("GET", sResourcePath)
+			.returns(Promise.resolve(oExpectedResult));
+
+		aPromises.push(oCache.read("foo").then(function (oResult) {
+			assert.strictEqual(oResult, oExpectedResult.foo);
+		}));
+		aPromises.push(oCache.read("foo/bar").then(function (oResult) {
+			assert.strictEqual(oResult, 42);
+		}));
+		this.oLogMock.expects("warning").withExactArgs(
+			"Failed to drill-down into Employees('1')/foo/bar/invalid, invalid segment: invalid",
+			null, "sap.ui.model.odata.v4.lib._Cache");
+		aPromises.push(oCache.read("foo/bar/invalid").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		}));
+		this.oLogMock.expects("warning").withExactArgs(
+			"Failed to drill-down into Employees('1')/foo/null/invalid, invalid segment: invalid",
+			null, "sap.ui.model.odata.v4.lib._Cache");
+		aPromises.push(oCache.read("foo/null/invalid").then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
 		}));
 		return Promise.all(aPromises);
 	});

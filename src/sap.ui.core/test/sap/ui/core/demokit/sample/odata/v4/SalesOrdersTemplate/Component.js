@@ -46,7 +46,7 @@ sap.ui.define([
 					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/$metadata"
 						: {source : "metadata.xml"},
 					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=5"
-						: {source : "BusinessPartnerList.json"},
+						: {source : "BusinessPartnerList.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrdersTemplate/data");
 			}
 

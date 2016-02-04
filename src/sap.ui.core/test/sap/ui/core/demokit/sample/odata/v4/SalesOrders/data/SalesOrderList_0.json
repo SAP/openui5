@@ -83,7 +83,7 @@
 							"FaxNumber" : "2208791004",
 							"EmailAddress" : "johanna.esther@meliva.de",
 							"Language" : "EN",
-							"DateOfBirth" : null,
+							"DateOfBirth" : "2016-02-08",
 							"Address" : {
 								"City" : "Köln",
 								"PostalCode" : "50667",

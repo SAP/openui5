@@ -245,7 +245,7 @@ sap.ui.define([], function () {
 		 * </pre>
 		 *
 		 * @param {string} sOption The option string
-		 * @return {object} The option value as object
+		 * @returns {object} The option value as object
 		 * @throws {SyntaxError} If the string could not be parsed
 		 */
 		parseSystemQueryOption : function(sOption) {

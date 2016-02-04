@@ -13,6 +13,7 @@ sap.ui.require([
 	"sap/ui/core/qunit/odata/v4/lib/_MetadataRequestor.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_Parser.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_Requestor.qunit",
+	"sap/ui/core/qunit/odata/v4/_Context.qunit",
 	"sap/ui/core/qunit/odata/v4/_ODataHelper.qunit",
 	"sap/ui/core/qunit/odata/v4/_SyncPromise.qunit",
 	"sap/ui/core/qunit/odata/v4/ODataContextBinding.qunit",
