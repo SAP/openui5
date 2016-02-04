@@ -710,7 +710,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if (this.getEnabled() && (!this.isOpen() || !this.hasContent()) && this.isOpenArea(oEvent.target)) {
+			if (this.getEnabled() && !this.isOpen() && this.isOpenArea(oEvent.target)) {
 
 				// remove the active state of the Select HTMLDIVElement container
 				this.removeStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
@@ -741,9 +741,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 					return;
 				}
 
-				if (this.hasContent()) {
-					this.open();
-				}
+				this.open();
 			}
 
 			if (this.isOpen()) {
@@ -1274,7 +1272,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @returns {boolean}
 		 */
 		Select.prototype.hasContent = function() {
-			return !!this.getItems().length;
+			return this.getItems().length > 0;
 		};
 
 		/**
@@ -1321,7 +1319,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		Select.prototype.toggleOpenState = function() {
 			if (this.isOpen()) {
 				this.close();
-			} else if (this.hasContent()) {
+			} else {
 				this.open();
 			}
 
