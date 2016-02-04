@@ -1097,6 +1097,27 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		return this.getObjectBinding(sModelName);
 	};
 
+	/*
+	 * If Control has no FieldGroupIds use the one of the parents.
+	 */
+	Element.prototype._getFieldGroupIds = function() {
+
+		var aFieldGroupIds;
+		if (this.getMetadata().hasProperty("fieldGroupIds")) {
+			aFieldGroupIds = this.getFieldGroupIds();
+		}
+
+		if (!aFieldGroupIds || aFieldGroupIds.length == 0) {
+			var oParent = this.getParent();
+			if (oParent && oParent._getFieldGroupIds) {
+				return oParent._getFieldGroupIds();
+			}
+		}
+
+		return aFieldGroupIds;
+
+	};
+
 	return Element;
 
 });
