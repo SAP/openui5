@@ -10,9 +10,4 @@ describe("sap.m.Page", function () {
 			expect(takeScreenshot()).toLookAs("page-background-is-" + sBackgroundStyle);
 		});
 	});
-
-	it("Only content area shoudld be busy", function () {
-		element(by.id("setbusy-button")).click();
-		expect(takeScreenshot()).toLookAs("only-content-is-busy");
-	});
 });
