@@ -109,12 +109,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		ShellRenderer.renderFacetBar(rm, oControl);
 
-		rm.write("<article class='sapUiUx3ShellContent' id='" + sId + "-content' role='main' data-sap-ui-fastnavgroup='true'>");
+		rm.write("<article class='sapUiUx3ShellContent' id='" + sId + "-content' role='main' data-sap-ui-fastnavgroup='true'><div>");
 		var aContent = oControl.getContent();
 		for (var i = 0; i < aContent.length; i++) {
 			rm.renderControl(aContent[i]);
 		}
-		rm.write("</article><div class='sapUiUx3ShellNotifySpace'></div></div>");
+		rm.write("</div></article><div class='sapUiUx3ShellNotifySpace'></div></div>");
 
 
 
