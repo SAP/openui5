@@ -848,7 +848,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				}
 				return this.checkFieldGroupIds(vFieldGroupIds.split(","));
 			}
-			var aFieldGroups = this.getFieldGroupIds();
+			var aFieldGroups = this._getFieldGroupIds();
 			if (jQuery.isArray(vFieldGroupIds)) {
 				var iFound = 0;
 				for (var i = 0; i < vFieldGroupIds.length; i++) {
