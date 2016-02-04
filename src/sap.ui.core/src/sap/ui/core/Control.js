@@ -215,6 +215,16 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		UIArea.rerenderControl(this);
 	};
 
+	// @see sap.ui.core.Element#getDomRef
+	Control.prototype.getDomRef = function(sSuffix) {
+		// while cloning we know that control DOM does not exist
+		if (this.bOutput === false && !this.oParent) {
+			return null;
+		}
+
+		return Element.prototype.getDomRef.call(this, sSuffix);
+	};
+
 	/**
 	 * Defines whether the user can select text inside this control.
 	 * Defaults to <code>true</code> as long as this method has not been called.
