@@ -2298,7 +2298,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		 * To detect whether the data is updated.
 		 *
 		 */
-		this.bDataUpdated = false;
+		this.bItemsUpdated = false;
 		this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Popover");
 		this._oTokenizer = this._createTokenizer();
 		this._aCustomerKeys = [];

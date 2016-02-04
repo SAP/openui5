@@ -152,10 +152,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *
 		 */
 		SelectList.prototype.updateItems = function(sReason) {
-			this._bDataAvailable = false;
+			this.bItemsUpdated = false;
 			this.destroyItems();
 			this.updateAggregation("items");
-			this._bDataAvailable = true;
+			this.bItemsUpdated = true;
 
 			// Try to synchronize the selection (synchronous), but if any item's key match with the value of the "selectedKey" property,
 			// don't force the first enabled item to be selected when the forceSelection property is set to true.
@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @see sap.ui.base.ManagedObject#bindAggregation
 		 */
 		SelectList.prototype.refreshItems = function() {
-			this._bDataAvailable = false;
+			this.bItemsUpdated = false;
 			this.refreshAggregation("items");
 		};
 
@@ -508,7 +508,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// the aggregation items is not bound or
 			// it is bound and the data is already available
-			} else if (bForceSelection && this.getDefaultSelectedItem() && (!this.isBound("items") || this._bDataAvailable)) {
+			} else if (bForceSelection && this.getDefaultSelectedItem() && (!this.isBound("items") || this.bItemsUpdated)) {
 				this.setSelection(this.getDefaultSelectedItem());
 			}
 		};
