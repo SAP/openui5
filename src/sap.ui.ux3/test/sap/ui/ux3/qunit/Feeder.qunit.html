@@ -169,7 +169,7 @@
 
 				if (sap.ui.Device.browser.webkit) {
 					input = inputValues.webkit;
-				} else if(sap.ui.Device.browser.internet_explorer) {
+				} else if(sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge) {
 					input = inputValues.internet_explorer;
 				} else if (sap.ui.Device.browser.firefox) {
 					input = inputValues.firefox;
