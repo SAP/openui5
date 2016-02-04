@@ -321,7 +321,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 			bUTC = this.oFormatOptions.UTC;
 		}
 
-		if (isNaN(oDate.getTime())) {
+		if (!oDate || isNaN(oDate.getTime())) {
 			return "";
 		}
 
