@@ -34,13 +34,10 @@
 		jQuery.sap.require("sap.ui.dt.DesignTime");
 		jQuery.sap.require("sap.ui.dt.ElementOverlay");
 		jQuery.sap.require("sap.ui.dt.plugin.TabHandling");
-		jQuery.sap.require("sap.ui.dt.Preloader");
 
 
 		QUnit.module("Given that the design time is active ", {
 			beforeEach : function() {
- 				var that = this;
- 				var done = assert.async();
 				this.oButton1 = new sap.m.Button();
 				this.oButton2 = new sap.m.Button();
 				this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oButton1, this.oButton2]});
@@ -49,14 +46,16 @@
 
 				this.oTabHandling = new sap.ui.dt.plugin.TabHandling();
 
-				sap.ui.dt.Preloader.load(["sap.ui.layout.VerticalLayout", "sap.m.Button"]).then(function() {
-					that.oDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [that.oLayout],
-						plugins : [
-						    that.oTabHandling
-						]
-					});
+				var done = assert.async();
 
+				this.oDesignTime = new sap.ui.dt.DesignTime({
+					rootElements : [this.oLayout],
+					plugins : [
+					    this.oTabHandling
+					]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
 					sap.ui.getCore().applyChanges();
 					done();
 				});

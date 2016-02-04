@@ -34,14 +34,11 @@
 
 			jQuery.sap.require("sap.ui.dt.DesignTime");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-			jQuery.sap.require("sap.ui.dt.Preloader");
 
 			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
 
 			QUnit.module("Given that a DesignTime is created for a SplitContainer with 2 pages, one is hidden and one is visible", {
 				beforeEach: function(assert) {
-					var done = assert.async();
-
 					this.oButton1 = new sap.m.Button("button1", {text : "button"});
 					this.oButton2 = new sap.m.Button("button2", {text : "button"});
 
@@ -68,29 +65,27 @@
 					this.oSplitContainer.placeAt("content");
 					sap.ui.getCore().applyChanges();
 
-					var that = this;
-					sap.ui.dt.Preloader.load([this.oSplitContainer, this.oPage]).then(function() {
+					var done = assert.async();
 
-						that.oDesignTime = new sap.ui.dt.DesignTime({
-							rootElements: [
-								that.oSplitContainer
-							]
-						});
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements: [
+							this.oSplitContainer
+						]
+					});
 
-						that.oSplitContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oSplitContainer);
-						that.oSplitContainerMasterPagesAggregationOverlay = that.oSplitContainerOverlay.getAggregationOverlay("masterPages");
-						that.oSplitContainerDetailPagesAggregationOverlay = that.oSplitContainerOverlay.getAggregationOverlay("detailPages");
-
-
-						that.oPage1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oPage1);
-						that.oPage2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oPage2);
-
+					this.oDesignTime.attachEventOnce("synced", function() {
 						sap.ui.getCore().applyChanges();
 						done();
 					});
 
+					this.oSplitContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSplitContainer);
+					this.oSplitContainerMasterPagesAggregationOverlay = this.oSplitContainerOverlay.getAggregationOverlay("masterPages");
+					this.oSplitContainerDetailPagesAggregationOverlay = this.oSplitContainerOverlay.getAggregationOverlay("detailPages");
 
+					this.oPage1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage1);
+					this.oPage2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage2);
 
+					sap.ui.getCore().applyChanges();
 				},
 				afterEach: function() {
 					this.oDesignTime.destroy();
@@ -116,8 +111,6 @@
 
 			QUnit.module("Given that a DesignTime is created for an element in an ignored aggregation", {
 				beforeEach: function(assert) {
-					var done = assert.async();
-
 					this.oCustomData = new sap.ui.core.CustomData();
 					this.oButton = new sap.m.Button({
 						text : "button",
@@ -130,15 +123,15 @@
 					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 
-					var that = this;
-					sap.ui.dt.Preloader.load([this.oButton]).then(function() {
+					var done = assert.async();
 
-						that.oDesignTime = new sap.ui.dt.DesignTime({
-							rootElements: [
-								that.oButton
-							]
-						});
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements: [
+							this.oButton
+						]
+					});
 
+					this.oDesignTime.attachEventOnce("synced", function() {
 						sap.ui.getCore().applyChanges();
 						done();
 					});

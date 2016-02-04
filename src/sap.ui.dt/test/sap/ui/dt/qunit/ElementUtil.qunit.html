@@ -30,7 +30,6 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 			jQuery.sap.require("sap.ui.dt.ElementUtil");
-			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.m.Button");
 
 			var ElementUtil = sap.ui.dt.ElementUtil;
@@ -38,7 +37,6 @@
 			QUnit.module("Given that a control is created", {
 
 				beforeEach : function() {
-
 					this.oButton = new sap.m.Button({text : "Button"});
 
 					this.oHorizontalLayoutChild = new sap.ui.layout.HorizontalLayout({
@@ -95,7 +93,7 @@
 			QUnit.test("when the DesingTime Metadata are loaded", function(assert) {
 				var done = assert.async();
 				var that = this;
-				sap.ui.dt.Preloader.load(["sap.ui.layout.VerticalLayout"]).then(function() {
+				ElementUtil.loadDesignTimeMetadata(this.oVerticalLayout).then(function() {
 					var mDesignTimeMetadata = ElementUtil.getDesignTimeMetadata(that.oVerticalLayout);
 					assert.equal(!!mDesignTimeMetadata, true, 'then the static method "getDesignTimeMetadata" returns the metadata...');
 					assert.equal(!!mDesignTimeMetadata.aggregations.content, true, "... with the right values");

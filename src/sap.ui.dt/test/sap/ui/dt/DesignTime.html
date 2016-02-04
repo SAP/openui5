@@ -25,7 +25,6 @@
 		</script>
 
 		<script>
-			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.ui.dt.ElementUtil");
 			jQuery.sap.require("sap.ui.dt.DesignTime");
 			jQuery.sap.require("sap.ui.dt.plugin.TabHandling");
@@ -47,22 +46,15 @@
 					movableTypes : aMOVABLE_TYPES
 				});
 
-				var aElements = sap.ui.dt.ElementUtil.findAllPublicElements(oView);
-				sap.ui.dt.Preloader.load(aElements).then(function() {
-					var oDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [oView],
-						plugins : [
-						    oTabHandlingPlugin,
-							oSelectionPlugin,
-							oCutPastePlugin,
-							oDragPlugin
-						]
-					});
+				var oDesignTime = new sap.ui.dt.DesignTime({
+					rootElements : [oView],
+					plugins : [
+						oSelectionPlugin,
+						oCutPastePlugin,
+						oDragPlugin
+					]
 				});
 			});
-
-
-
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">

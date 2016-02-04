@@ -28,8 +28,8 @@
 
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.ui.dt.ElementOverlay");
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
 			jQuery.sap.require("sap.ui.dt.OverlayUtil");
 			jQuery.sap.require("sap.m.Button");
 			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
@@ -37,9 +37,6 @@
 
 			QUnit.module("Given that an Overlay is created for a control", {
 				beforeEach : function(assert) {
-					var that = this;
-					var done = assert.async();
-
 					this.oButton01 = new sap.m.Button({
 						text : "Button01"
 					});
@@ -56,31 +53,41 @@
 					this.oLayout2 = new sap.ui.layout.VerticalLayout({content : [this.oLayout1, this.oButton21]});
 
 					this.oLayout2.placeAt("content");
-					sap.ui.dt.Preloader.load(["sap.ui.layout.VerticalLayout", "sap.m.Button"]).then(function() {
-						that.oButtonOverlay01 = new sap.ui.dt.ElementOverlay({
-							element : that.oButton01
-						});
-						that.oButtonOverlay02 = new sap.ui.dt.ElementOverlay({
-							element : that.oButton02
-						});
-						that.oLayoutOverlay0 = new sap.ui.dt.ElementOverlay({
-							element : that.oLayout0
-						});
 
-						that.oLayoutOverlay1 = new sap.ui.dt.ElementOverlay({
-							element : that.oLayout1
-						});
-
-						that.oButtonOverlay21 = new sap.ui.dt.ElementOverlay({
-							element : that.oButton21
-						});
-						that.oLayoutOverlay2 = new sap.ui.dt.ElementOverlay({
-							element : that.oLayout2
-						});
-
-						done();
-						sap.ui.getCore().applyChanges();
+					this.oButtonOverlay01 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton01
 					});
+					this.oButtonOverlay01.placeInOverlayContainer();
+					this.oButtonOverlay02 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton02
+					});
+					this.oButtonOverlay02.placeInOverlayContainer();
+					this.oLayoutOverlay0 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oLayout0
+					});
+					this.oLayoutOverlay0.placeInOverlayContainer();
+
+					this.oLayoutOverlay1 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oLayout1
+					});
+					this.oLayoutOverlay1.placeInOverlayContainer();
+
+					this.oButtonOverlay21 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oButton21
+					});
+					this.oButtonOverlay21.placeInOverlayContainer();
+					this.oLayoutOverlay2 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : this.oLayout2
+					});
+					this.oLayoutOverlay2.placeInOverlayContainer();
+
+					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
 					this.oLayout2.destroy();

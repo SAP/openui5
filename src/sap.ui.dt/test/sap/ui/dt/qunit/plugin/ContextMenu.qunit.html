@@ -118,6 +118,8 @@
 				this.oContextMenuPlugin.addMenuItem(this.oMenuEntries[key]);
 			}
 
+			var done = assert.async();
+
 			this.oDesignTime = new sap.ui.dt.DesignTime({
 				rootElements: [
 					this.oLayout
@@ -127,14 +129,17 @@
 				]
 			});
 
-			this.oButton1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1);
-			this.oButton1Overlay.setSelectable(true);
-			this.oButton2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2);
-			this.oButton2Overlay.setSelectable(true);
-			this.oUnselectableOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButtonUnselectable);
+			this.oDesignTime.attachEventOnce("synced", function() {
+				sap.ui.getCore().applyChanges();
 
-			sap.ui.getCore().applyChanges();
+				that.oButton1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oButton1);
+				that.oButton1Overlay.setSelectable(true);
+				that.oButton2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oButton2);
+				that.oButton2Overlay.setSelectable(true);
+				that.oUnselectableOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oButtonUnselectable);
 
+				done();
+			});
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
