@@ -1,0 +1,143 @@
+<View xmlns="sap.m" displayBlock="true" controllerName="sap.m.sample.FlexibleColumnLayoutSimple.Detail" height="100%">
+	<Page id="detailPage" title="Detail page">
+		<Table>
+			<columns>
+				<Column><Label text="Detail List" /></Column>
+			</columns>
+			<items>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+				<ColumnListItem type="Navigation" vAlign="Middle" press="handleDetailPress">
+					<cells>
+						<Text text="Open end column"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Page>
+</View>
+
+
