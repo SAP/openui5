@@ -81,6 +81,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		/* ----------------------------------------------------------- */
 
 		function fnHandleKeyboardNavigation(oItem) {
+
+			if (!oItem) {
+				return;
+			}
+
 			var oDomRef = this.getFocusDomRef(),
 				iSelectionStart = oDomRef.selectionStart,
 				iSelectionEnd = oDomRef.selectionEnd,
@@ -88,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
 				oSelectedItem = this.getSelectedItem();
 
-			if (oItem && (oItem !== oSelectedItem)) {
+			if (oItem !== oSelectedItem) {
 				this.updateDomValue(oItem.getText());
 				this.setSelection(oItem);
 				this.fireSelectionChange({ selectedItem: oItem });
@@ -318,20 +323,21 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				sValue = oEvent.target.value,
 				bEmptyValue = sValue === "";
 
-			var aItems = this.filterItems({
+			var aVisibleItems = this.filterItems({
 				property: "text",
 				value: sValue
 			}, this.getItems());
 
-			var oItem = aItems[0];	// first item that match the value
+			var bItemsVisible = aVisibleItems.length;
+			var oFirstVisibleItem = aVisibleItems[0];	// first item that match the value
 
-			if (!bEmptyValue && oItem && oItem.getEnabled()) {
+			if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
 
 				if (this._bDoTypeAhead) {
-					oEvent.srcControl.updateDomValue(oItem.getText());
+					oEvent.srcControl.updateDomValue(oFirstVisibleItem.getText());
 				}
 
-				this.setSelection(oItem);
+				this.setSelection(oFirstVisibleItem);
 
 				if (oSelectedItem !== this.getSelectedItem()) {
 					this.fireSelectionChange({
@@ -351,7 +357,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				}
 			}
 
-			if (bEmptyValue || !aItems.length) {
+			if (bEmptyValue || !bItemsVisible) {
 				this.setSelection(null);
 
 				if (oSelectedItem !== this.getSelectedItem()) {
@@ -361,11 +367,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				}
 			}
 
-			if (aItems.length || bEmptyValue) {
+			if (bItemsVisible || bEmptyValue) {
 				this.open();
 				this.scrollToItem(this.getSelectedItem());
+			} else if (this.isOpen()) {
+				this.close();
 			} else {
-				this.isOpen() ? this.close() : this.clearFilter();
+				this.clearFilter();
 			}
 		};
 
@@ -1277,7 +1285,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			vItem = ComboBoxBase.prototype.removeItem.apply(this, arguments);
 			var oItem;
 
-			if (this.isBound("items") && !this.bDataUpdated) {
+			if (this.isBound("items") && !this.bItemsUpdated) {
 				return vItem;
 			}
 

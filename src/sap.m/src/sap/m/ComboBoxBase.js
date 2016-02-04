@@ -55,10 +55,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 *
 		 */
 		ComboBoxBase.prototype.updateItems = function(sReason) {
-			this.bDataUpdated = false;
+			this.bItemsUpdated = false;
 			this.destroyItems();
 			this.updateAggregation("items");
-			this.bDataUpdated = true;
+			this.bItemsUpdated = true;
 		};
 
 		/**
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @see sap.ui.base.ManagedObject#bindAggregation
 		 */
 		ComboBoxBase.prototype.refreshItems = function() {
-			this.bDataUpdated = false;
+			this.bItemsUpdated = false;
 			this.refreshAggregation("items");
 		};
 
@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			/**
 			 * To detect whether the data is updated.
 			 */
-			this.bDataUpdated = false;
+			this.bItemsUpdated = false;
 		};
 
 		ComboBoxBase.prototype.exit = function() {
