@@ -4,8 +4,9 @@
 sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/_ODataHelper"
-], function (Context, Helper, ODataHelper) {
+], function (Context, Helper, Parser, ODataHelper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -89,7 +90,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		mModelOptions : {"sap-client" : "111"},
-		mOptions : {"$expand" : {"foo": null}, "$select" : "bar", "custom" : "baz"},
+		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
 		allowed : ["$expand", "$select"]
 	}, {
 		mModelOptions : {"custom" : "bar"},
@@ -111,6 +112,26 @@ sap.ui.require([
 			assert.deepEqual(mOptions, jQuery.extend({}, o.mModelOptions, o.mOptions));
 			assert.deepEqual(o.mModelOptions, mOriginalModelOptions);
 			assert.deepEqual(o.mOptions, mOriginalOptions);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
+		var oExpand = {"foo" : true},
+			oParserMock = this.mock(Parser),
+			aSelect = ["bar"];
+
+		oParserMock.expects("parseSystemQueryOption")
+			.withExactArgs("$expand=foo").returns({"$expand" : oExpand});
+		oParserMock.expects("parseSystemQueryOption")
+			.withExactArgs("$select=bar").returns({"$select" : aSelect});
+
+		assert.deepEqual(ODataHelper.buildQueryOptions({}, {
+			$expand : "foo",
+			$select : "bar"
+		}, ["$expand", "$select"]), {
+			$expand : oExpand,
+			$select : aSelect
 		});
 	});
 
