@@ -16,7 +16,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
                 this.selectedInterval = {
                     start: 0,
-                    end: 0
+                    end: 0,
+                    duration: 0
                 };
                 this.nodes = {
                     slider: null,
@@ -58,6 +59,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
         InteractionSlider.prototype.initialize = function () {
             this._registerEventListeners();
             this._initSlider();
+        };
+
+        InteractionSlider.prototype.setDuration = function(aMeasurements) {
+            if (!aMeasurements || !aMeasurements.length) {
+                return;
+            }
+
+            this.selectedInterval.duration = aMeasurements[aMeasurements.length - 1].end - aMeasurements[0].start;
         };
 
         InteractionSlider.prototype._registerEventListeners = function () {
@@ -332,19 +341,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             jQuery("#interactionSlider").trigger("InteractionSliderChange", [ this.selectedInterval.start, this.selectedInterval.end ]);
         };
 
-        InteractionSlider.prototype._calculateStartEndPeriod = function () {
-            var sliderWidth = this.nodes.slider.offsetWidth;
-            var leftHandlerPosition = this.nodes.leftResizeHandle.getBoundingClientRect().left -
-                this.nodes.slider.getBoundingClientRect().left - this.HANDLE_BORDER_SIZE;
-            var rightHandlerPosition = this.nodes.rightResizeHandle.getBoundingClientRect().left -
-                this.nodes.slider.getBoundingClientRect().left + this.HANDLE_BORDER_SIZE + this.HANDLES_WIDTH;
-            var leftHandlerPositionPercent = leftHandlerPosition / sliderWidth;
-            var rightHandlerPositionPercent = rightHandlerPosition / sliderWidth;
-            var leftHandlerPositionPercentRounded = Math.round(leftHandlerPositionPercent * 100) / 100;
-            var rightHandlerPositionPercentRounded = Math.round(rightHandlerPositionPercent * 100) / 100;
-            this.selectedInterval.start = leftHandlerPositionPercentRounded;
-            this.selectedInterval.end = rightHandlerPositionPercentRounded;
-        };
 
         InteractionSlider.prototype._calculateStartEndPeriod = function () {
             var sliderWidth = this.nodes.slider.offsetWidth;
@@ -353,7 +349,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             var rightHandlerPosition = this.nodes.rightResizeHandle.getBoundingClientRect().left -
                 this.nodes.slider.getBoundingClientRect().left + this.HANDLE_BORDER_SIZE + this.HANDLES_WIDTH;
             var leftHandlerPositionPercent = leftHandlerPosition / sliderWidth;
-            var rightHandlerPositionPercent = rightHandlerPosition / sliderWidth;
+            var rightHandlerPositionPercent = rightHandlerPosition / sliderWidth,
+                that = this,
+                getTooltipText = function(handlerPosition) {
+                    return "" + Math.round( handlerPosition * that.selectedInterval.duration / 10 ) / 100 + "s";
+                };
+
+            // update slider title before update the positions
+            var sSliderTooltip = "";
+            if (leftHandlerPositionPercent != this.selectedInterval.start ) {
+                // left handler is moved
+                sSliderTooltip = getTooltipText(leftHandlerPositionPercent);
+                jQuery("#interactionLeftHandle").attr('title', sSliderTooltip);
+            }
+
+            if (rightHandlerPositionPercent != this.selectedInterval.end ) {
+                // right handler is moved
+                sSliderTooltip = getTooltipText(rightHandlerPositionPercent);
+                jQuery("#interactionRightHandle").attr('title', sSliderTooltip);
+            }
+            // end update slider tooltip
+
             this.selectedInterval.start = leftHandlerPositionPercent;
             this.selectedInterval.end = rightHandlerPositionPercent;
         };
