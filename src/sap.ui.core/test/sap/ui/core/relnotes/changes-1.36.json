@@ -500,5 +500,108 @@
         "references": []
       }
     ]
+  },
+  "1.36.1": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "7c4c9bd0b2bdb11d584968628a1168ca94e19e27",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "BusyIndicator: New Explored Examples",
+        "references": []
+      },
+      {
+        "id": "c09dba28897065249a827d7e833eee2e45a8c410",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Increase width of technical info dialog to make it less crappy",
+        "references": []
+      },
+      {
+        "id": "2f7c20059fdfd56ffbf06af933a1dbc40f138666",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.action.* work in an IFrame now",
+        "references": []
+      },
+      {
+        "id": "df5c67f50d9b52e93a365675ffab35fbfc0b2441",
+        "author": "Gerald Krause \u003cgerald.krause@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding: getTotalSize: fix return type",
+        "references": []
+      },
+      {
+        "id": "981a303f9644ee6c22f763b8cff17ddca4827de4",
+        "author": "Uwe Reeder \u003cuwe.reeder@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnnotationHelper: type information in concat",
+        "references": []
+      },
+      {
+        "id": "38f52f2ee438ede4a8adfe67f03350c87db783ed",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Faster Adding of DOM",
+        "references": []
+      },
+      {
+        "id": "1120588e046b117ba256a9deee63b1cd5aa84a23",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component/Manifest: Read manifest entries",
+        "references": []
+      },
+      {
+        "id": "a0fa5213213c8ed2df3a6eb199cec7f9525c2c0f",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Restore Focus for Combi-Devices Enabled",
+        "references": []
+      },
+      {
+        "id": "7078eb7c84cecd96bf61737677bf58279bd2de3c",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.global.js: jsdoc correction",
+        "references": []
+      },
+      {
+        "id": "2abb73ee42838c62019070eeceae102ed0fcfcc7",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.trace.js: fixed detection when only fesr is active",
+        "references": []
+      },
+      {
+        "id": "8d6212f3095d854c861603ba71531aace8fde6b5",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.TreeBinding: Allow adding sorters",
+        "references": []
+      },
+      {
+        "id": "c9522255977dcd1fdb0ae11f9868c5122790d7bd",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: BusyIndicator gets not removed when fixed rows are requested",
+        "references": []
+      },
+      {
+        "id": "a23aa2199558c1bc8bbdf42dd3b7327c316933ff",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Do not delete entity for $links delete requests",
+        "references": []
+      },
+      {
+        "id": "66ddd3eec3130f56fd271fed1cb2ad121cbddfe3",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": ": Do not run OPA qUnit test under IOS  on non-safari browsers",
+        "references": []
+      }
+    ]
   }
 }

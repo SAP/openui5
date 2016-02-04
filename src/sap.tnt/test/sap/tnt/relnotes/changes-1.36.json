@@ -1,0 +1,14 @@
+{
+  "1.36.1": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "3a91b31344fdd066a7f9f20237b008f3c63aff7c",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Focus is now styled correctly",
+        "references": []
+      }
+    ]
+  }
+}
