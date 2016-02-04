@@ -79,7 +79,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		// calculated the size of the indicator we need to know the pixel-size of
 		// 3rem, under which the indicator will animate differently
 		if ($control[0].offsetWidth < iWidth) {
-			vAnimation.className = "sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimStandard";
+			vAnimation.className = "sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimSmall";
 		}
 
 		//Set the actual DOM Element to 'aria-busy'
