@@ -228,7 +228,7 @@
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed-icon-image"), "Icon was rendered successfully");
 	});
 
-	QUnit.module("Tests for ARIA label and tooltip text", {
+	QUnit.module("Tests for ARIA-label and tooltip text", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
 				subheader : "Expenses By Region",
@@ -261,21 +261,21 @@
 		}
 	});
 
-	QUnit.test("Generation of text for ARIA label and tooltip", function(assert) {
+	QUnit.test("Generation of text for ARIA-label and tooltip", function(assert) {
 		//Arrange
 		var sLoadingText = this.oGenericTile._rb.getText("INFOTILE_LOADING");
 		this.oGenericTile.setState(sap.m.LoadState.Loading);
 		//Act
 		var sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
 		//Assert
-		assert.equal(sAriaAndTooltipText, sLoadingText, "Text for ARIA label and tooltip has been generated for Loading state");
+		assert.equal(sAriaAndTooltipText, sLoadingText, "Text for ARIA-label and tooltip has been generated for Loading state");
 
 		//Arrange
 		this.oGenericTile.setState(sap.m.LoadState.Disabled);
 		//Act
 		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
 		//Assert
-		assert.equal(sAriaAndTooltipText, "", "Text for ARIA label and tooltip has been generated for Disabled state");
+		assert.equal(sAriaAndTooltipText, "", "Text for ARIA-label and tooltip has been generated for Disabled state");
 	});
 
 	QUnit.module("Tooltip handling", {
@@ -306,18 +306,18 @@
 		}
 	});
 
-	QUnit.test("Generic tile with consistent tooltip provided by the control", function(assert) {
+	QUnit.test("GenericTile with consistent tooltip provided by the control", function(assert) {
 		//Arrange
 		var sConsistentTooltip = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 		//Act
 		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
 		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
 		//Assert
-		assert.equal(sGenericTileTooltip, sConsistentTooltip, "Tooltip of generic tile is consistent");
-		assert.equal(sGenericTileTooltip, sGenericTileAriaLabel, "Tooltip of generic tile is identical with ARIA label");
+		assert.equal(sGenericTileTooltip, sConsistentTooltip, "Tooltip of GenericTile is consistent");
+		assert.equal(sGenericTileTooltip, sGenericTileAriaLabel, "Tooltip of GenericTile is identical with ARIA-label");
 	});
 
-	QUnit.test("Generic tile with an explicite tooltip", function(assert) {
+	QUnit.test("GenericTile with an explicite tooltip", function(assert) {
 		//Arrange
 		this.oGenericTile.setTooltip("tooltip");
 		sap.ui.getCore().applyChanges();
@@ -325,11 +325,11 @@
 		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
 		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
 		//Assert
-		assert.equal(sGenericTileTooltip, "tooltip", "Explicite tooltip of generic tile is consistent");
-		assert.equal(sGenericTileAriaLabel, sGenericTileTooltip, "Explicite tooltip of generic tile is identical with ARIA label");
+		assert.equal(sGenericTileTooltip, "tooltip", "Explicite tooltip of GenericTile is consistent");
+		assert.equal(sGenericTileAriaLabel, sGenericTileTooltip, "Explicite tooltip of GenericTile is identical with ARIA-label");
 	});
 
-	QUnit.test("Generic tile without tooltip", function(assert) {
+	QUnit.test("GenericTile without tooltip", function(assert) {
 		//Arrange
 		this.oGenericTile.setTooltip(" ");
 		sap.ui.getCore().applyChanges();
@@ -338,8 +338,8 @@
 		var sGenericTileTooltip = jQuery.sap.byId("generic-tile")[0].getAttribute("title");
 		var sGenericTileAriaLabel = jQuery.sap.byId("generic-tile")[0].getAttribute("aria-label");
 		//Assert
-		assert.equal(sGenericTileTooltip, null, "Generic tile rendered without tooltip");
-		assert.equal(sGenericTileAriaLabel, sConsistentTooltip, "Generic tile has correct ARIA label");
+		assert.equal(sGenericTileTooltip, null, "GenericTile rendered without tooltip");
+		assert.equal(sGenericTileAriaLabel, sConsistentTooltip, "GenericTile has correct ARIA-label");
 	});
 
 	QUnit.module("Tooltip handling on content elements", {
@@ -352,7 +352,61 @@
 						tooltip : "tooltip of TileContent 1"
 					}),
 					new sap.m.TileContent("tile-cont-2", {
-						tooltip : "tooltip of TileContent 2"
+						tooltip : "tooltip of TileContent 2",
+						content: new sap.m.NumericContent("numeric-content", {
+						})
+					})
+				]
+			}).placeAt("qunit-fixture");
+			// stub function _getAriaAndTooltipText of the NumericContent
+			this.oGenericTile.getTileContent()[1].getContent()._getAriaAndTooltipText = function () {
+				return "ARIA and tooltip text of NumericContent";
+			};
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("TileContent content doesn't contain attributes ARIA-label and title", function(assert) {
+		//Arrange
+		jQuery.sap.byId("tile-cont-1").trigger("mouseenter");
+		jQuery.sap.byId("tile-cont-2").trigger("mouseenter");
+		//Act
+		var sAriaLabelOfContent1 = jQuery.sap.byId("tile-cont-1").attr("aria-label");
+		var sTitleOfTileContent1 = jQuery.sap.byId("tile-cont-1").attr("title");
+		var sAriaLabelOfContent2 = jQuery.sap.byId("tile-cont-2").attr("aria-label");
+		var sTitleOfTileContent2 = jQuery.sap.byId("tile-cont-2").attr("title");
+		//Assert
+		assert.ok(!sAriaLabelOfContent1,"GenericTile 1 doesn't contain attribute aria-label");
+		assert.ok(!sTitleOfTileContent1,"GenericTile 1 doesn't contain attribute title");
+		assert.ok(!sAriaLabelOfContent2,"GenericTile 1 doesn't contain attribute aria-label");
+		assert.ok(!sTitleOfTileContent2,"GenericTile 1 doesn't contain attribute title");
+	});
+
+	QUnit.test("NumericContent doesn't contain attributes ARIA-label and title", function(assert) {
+		//Arrange
+		jQuery.sap.byId("numeric-content").trigger("mouseover");
+		//Act
+		var sAriaLabelOfNumericContent = jQuery.sap.byId("numeric-content").attr("aria-label");
+		var sTitleOfNumericContent = jQuery.sap.byId("numeric-content").attr("title");
+		//Assert
+		assert.ok(!sAriaLabelOfNumericContent,"NumericContent doesn't contain attribute ARIA-label");
+		assert.ok(!sTitleOfNumericContent,"NumericContent doesn't contain attribute title");
+	});
+
+	QUnit.module("Tooltip handling if content elements changed", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				header : "header text of GenericTile",
+				subheader : "subheader text of GenericTile",
+				tileContent : [
+					new sap.m.TileContent("tile-cont-1", {
+						content: new sap.m.NumericContent("numeric-content", {
+							value: 111
+						})
 					})
 				]
 			}).placeAt("qunit-fixture");
@@ -364,16 +418,25 @@
 		}
 	});
 
-	QUnit.test("Generic tile content doesn't contain attribute title", function(assert) {
+	QUnit.test("Attributes of GenericTile and its descendants updated after content changed", function(assert) {
 		//Arrange
-		jQuery.sap.byId("tile-cont-1").trigger("mouseenter");
-		jQuery.sap.byId("tile-cont-2").trigger("mouseenter");
-		var sTitleOfTileContent1 = jQuery.sap.byId("tile-cont-1").attr("title");
-		var sTitleOfTileContent2 = jQuery.sap.byId("tile-cont-2").attr("title");
+		var $Tile = this.oGenericTile.$();
 		//Act
+		var sAriaLabelOfGenericTile = $Tile.attr("aria-label");
+		var sTitleOfGenericTile = $Tile.attr("title");
 		//Assert
-		assert.ok(!sTitleOfTileContent1,"Generic tile 1 doesn't contain attribute title");
-		assert.ok(!sTitleOfTileContent2,"Generic tile 1 doesn't contain attribute title");
+		assert.equal(sAriaLabelOfGenericTile, "header text of GenericTile\nsubheader text of GenericTile\n111\nNeutral","GenericTile has correct ARIA-label attribute before content changed");
+		assert.equal(sTitleOfGenericTile, "header text of GenericTile\nsubheader text of GenericTile\n111\nNeutral","GenericTile has correct title attribute before content changed");
+
+		//Arrange
+		this.oGenericTile.getTileContent()[0].getContent().setValue("999");
+		$Tile.trigger("mouseenter");
+		//Act
+		var sAriaLabelOfNumericContent = jQuery.sap.byId("numeric-content").attr("aria-label");
+		var sTitleOfNumericContent = jQuery.sap.byId("numeric-content").attr("title");
+		//Assert
+		assert.ok(!sAriaLabelOfNumericContent, "NumericContent doesn't contain ARIA-label attribute after content changed");
+		assert.ok(!sTitleOfNumericContent, "NumericContent doesn't contain title attribute after content changed");
 	});
 
 	/* Module wrapper to define a scope for helper functions. This can be replaced with nested approach of QUnit in the future
