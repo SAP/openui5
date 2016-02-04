@@ -129,5 +129,6 @@
 	font-size: 9px;
 	color: #333;
 	position: absolute;
-	top: 0;
+	top: 1px;
+	margin-left: 2px;
 }
