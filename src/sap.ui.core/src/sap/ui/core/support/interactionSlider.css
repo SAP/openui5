@@ -3,7 +3,6 @@
     top: 34px;
     right: 0;
     bottom: 0;
-    /*left: 250px;*/
     left: 0px;
     cursor: pointer;
     overflow: hidden;
@@ -28,8 +27,6 @@
     position: relative;
     height: 50px;
     box-sizing: border-box;
-    /*border-right: 1px solid #457BAA;*/
-    /*border-left: 1px solid #457BAA;*/
     top: -1px;
 }
 
@@ -58,10 +55,11 @@
 #interactionRightHandle {
     position: absolute;
     height: 100%;
-    width: 4px;
+    width: 3px;
     cursor: ew-resize;
     overflow: hidden;
     background: #457BAA;
+    /*background: rgba(66, 124, 172, 0.2);*/
 }
 
 #interactionLeftHandle {
@@ -92,16 +90,19 @@
 #interactionRightHandleBottom {
     position: absolute;
     height: 100%;
-    width: 2px;
+    width: 1px;
     cursor: ew-resize;
     overflow: hidden;
     background: #111;
+    border-left-color: transparent;
+    border-left-width: 1px;
+    border-right-color: transparent;
+    border-right-width: 1px;
 }
 
 #interactionSlideHandleBottom {
     position: relative;
     height: 100%;
-    box-sizing: border-box;
     width: 100%;
 }
 
