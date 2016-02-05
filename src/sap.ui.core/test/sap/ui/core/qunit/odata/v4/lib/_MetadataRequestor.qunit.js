@@ -70,7 +70,7 @@ sap.ui.require([
 			oExpectedXml = "xml",
 			oHeaders = {},
 			oQueryParams = {
-				"sap-client":"300"
+				"sap-client" :"300"
 			},
 			oMetadataRequestor,
 			sUrl = "/~/";

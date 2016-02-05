@@ -262,11 +262,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			}
 		}
 		oAggregate.annotatable = {
-			parent: oAggregate.annotatable,
-			path: sPath,
-			prefix: sPrefix || "",
-			qualifier: sQualifier,
-			target: vTarget
+			parent : oAggregate.annotatable,
+			path : sPath,
+			prefix : sPrefix || "",
+			qualifier : sQualifier,
+			target : vTarget
 		};
 	}
 
@@ -340,15 +340,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				for (i = 0; i < aValues.length; i++) {
 					aValues[i] = MetadataConverter.resolveAliasInPath(aValues[i], oAggregate);
 				}
-				return {$EnumMember: aValues.join(" ")};
+				return {$EnumMember : aValues.join(" ")};
 			case "Float":
 				if (sValue === "NaN" || sValue === "INF" || sValue === "-INF") {
-					return {$Float: sValue};
+					return {$Float : sValue};
 				}
 				return parseFloat(sValue);
 			case "Int":
 				vValue = parseInt(sValue, 10);
-				return Helper.isSafeInteger(vValue) ? vValue : {$Int: sValue};
+				return Helper.isSafeInteger(vValue) ? vValue : {$Int : sValue};
 			case "String":
 				return sValue;
 			default:
@@ -533,8 +533,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function postProcessPropertyValue(oElement, aResult, oAggregate) {
 		return {
-			property: oElement.getAttribute("Property"),
-			value: aResult.length ? aResult[0] :
+			property : oElement.getAttribute("Property"),
+			value : aResult.length ? aResult[0] :
 				getInlineAnnotationValue(oElement, oAggregate)
 		};
 	}
@@ -586,7 +586,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * @returns {object} The constant value for the JSON
 	 */
 	function postProcessUrlRef(oElement, aResult) {
-		return {$UrlRef: aResult[0]};
+		return {$UrlRef : aResult[0]};
 	}
 
 	/**
@@ -598,7 +598,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		var sKind = oElement.localName,
 			sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			oAction = {
-				$kind: sKind
+				$kind : sKind
 			};
 
 		processAttributes(oElement, oAction, {
@@ -711,7 +711,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processEdmx(oElement, oAggregate) {
 		processAttributes(oElement, oAggregate.result, {
-			"Version": setValue
+			"Version" : setValue
 		});
 	}
 
@@ -743,7 +743,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			$Type : MetadataConverter.resolveAlias(oElement.getAttribute("EntityType"), oAggregate)
 		};
 		processAttributes(oElement, oAggregate.entitySet, {
-			"IncludeInServiceDocument": setIfFalse
+			"IncludeInServiceDocument" : setIfFalse
 		});
 		annotatable(oAggregate, sName);
 	}
@@ -755,7 +755,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processEntityType(oElement, oAggregate) {
 		processType(oElement, oAggregate, {
-			$kind: "EntityType"
+			$kind : "EntityType"
 		});
 	}
 
@@ -786,7 +786,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processEnumType(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			oEnumType = {
-				"$kind": "EnumType"
+				"$kind" : "EnumType"
 			};
 
 		processAttributes(oElement, oEnumType, {
@@ -832,7 +832,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 */
 	function processImport(sWhat, oElement, oAggregate) {
 		var oImport = {
-				$kind: sWhat + "Import"
+				$kind : sWhat + "Import"
 			},
 			sName = oElement.getAttribute("Name");
 
@@ -963,7 +963,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processSchema(oElement, oAggregate) {
 		oAggregate.namespace = oElement.getAttribute("Namespace") + ".";
 		oAggregate.result[oAggregate.namespace] = oAggregate.schema = {
-			"$kind": "Schema"
+			"$kind" : "Schema"
 		};
 		annotatable(oAggregate, oAggregate.schema);
 	}
@@ -991,7 +991,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	function processTerm(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			oTerm = {
-				$kind: "Term"
+				$kind : "Term"
 			};
 
 		processTypedCollection(oElement.getAttribute("Type"), oTerm, oAggregate);

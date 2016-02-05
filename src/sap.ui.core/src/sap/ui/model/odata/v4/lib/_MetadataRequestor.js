@@ -32,7 +32,7 @@ sap.ui.define([
 				 * @returns {Promise}
 				 *   A promise fulfilled with the metadata as a JSON object
 				 */
-				read: function (sUrl) {
+				read : function (sUrl) {
 					return new Promise(function (fnResolve, fnReject) {
 						jQuery.ajax(sUrl + sQueryStr, {
 							method : "GET",

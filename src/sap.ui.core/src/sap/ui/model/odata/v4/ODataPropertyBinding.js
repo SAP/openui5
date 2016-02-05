@@ -111,7 +111,7 @@ sap.ui.define([
 			oPromise = Promise.resolve();
 			if (that.oValue !== undefined) {
 				oPromise = oPromise.then(function () {
-					that._fireChange({reason: ChangeReason.Change});
+					that._fireChange({reason : ChangeReason.Change});
 				});
 			}
 			that.oValue = undefined; // ensure value is reset
@@ -150,7 +150,7 @@ sap.ui.define([
 
 		return Promise.all(aPromises).then(function () {
 			if (bForceUpdate || bFire) {
-				that._fireChange({reason: ChangeReason.Change});
+				that._fireChange({reason : ChangeReason.Change});
 			}
 		});
 	};

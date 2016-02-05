@@ -178,7 +178,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		return Promise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
 			return {
 				"@odata.context" : that.sContext,
-				value: that.aElements.slice(iIndex, iEnd)
+				value : that.aElements.slice(iIndex, iEnd)
 			};
 		});
 	};
@@ -273,24 +273,24 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   The query string; it is empty if there are no options; it starts with "?" otherwise
 		 * @example
 		 * {
-		 *		$expand: {
-		 *			"SO_2_BP": true,
-		 *			"SO_2_SOITEM": {
-		 *				"$expand": {
-		 *					"SOITEM_2_PRODUCT": {
+		 *		$expand : {
+		 *			"SO_2_BP" : true,
+		 *			"SO_2_SOITEM" : {
+		 *				"$expand" : {
+		 *					"SOITEM_2_PRODUCT" : {
 		 *						"$expand" : {
 		 *							"PRODUCT_2_BP" : null,
 		 *						},
-		 *						"$select": "CurrencyCode"
+		 *						"$select" : "CurrencyCode"
 		 *					},
-		 *					"SOITEM_2_SO": null
+		 *					"SOITEM_2_SO" : null
 		 *				}
 		 *			}
 		 *		},
 		 *		"sap-client" : "003"
 		 *	}
 		 */
-		buildQueryString: function (mQueryOptions) {
+		buildQueryString : function (mQueryOptions) {
 			return Helper.buildQuery(Cache.convertQueryOptions(mQueryOptions));
 		},
 
@@ -373,12 +373,12 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   be a string or an array of strings; if it is an array, the resulting query string
 		 *   repeats the key for each array value.
 		 *   Examples:
-		 *   {foo: "bar", "bar": "baz"} results in the query string "foo=bar&bar=baz"
-		 *   {foo: ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+		 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
+		 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		create: function _create(oRequestor, sResourcePath, mQueryOptions) {
+		create : function _create(oRequestor, sResourcePath, mQueryOptions) {
 			return new CollectionCache(oRequestor, sResourcePath, mQueryOptions);
 		},
 
@@ -395,12 +395,12 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   be a string or an array of strings; if it is an array, the resulting query string
 		 *   repeats the key for each array value.
 		 *   Examples:
-		 *   {foo: "bar", "bar": "baz"} results in the query string "foo=bar&bar=baz"
-		 *   {foo: ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+		 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
+		 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		createSingle: function _createSingle(oRequestor, sResourcePath, mQueryOptions) {
+		createSingle : function _createSingle(oRequestor, sResourcePath, mQueryOptions) {
 			return new SingleCache(oRequestor, sResourcePath, mQueryOptions);
 		}
 	};

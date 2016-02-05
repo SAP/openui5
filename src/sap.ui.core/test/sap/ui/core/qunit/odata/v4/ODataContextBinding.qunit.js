@@ -14,12 +14,15 @@ sap.ui.require([
 	"use strict";
 
 	var TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataContextBinding", {
-			metadata: {
-				properties: {
-					text: "string"
+			metadata : {
+				properties : {
+					text : "string"
 				},
-				aggregations: {
-					child: {multiple: false, type: "test.sap.ui.model.odata.v4.ODataContextBinding"}
+				aggregations : {
+					child : {
+						multiple : false,
+						type : "test.sap.ui.model.odata.v4.ODataContextBinding"
+					}
 				}
 			}
 		});
@@ -51,7 +54,7 @@ sap.ui.require([
 		 */
 		createContextBinding : function (assert) {
 			var oModel = new ODataModel("/service/"),
-				oControl = new TestControl({models: oModel});
+				oControl = new TestControl({models : oModel});
 
 			this.oModelMock = this.oSandbox.mock(oModel);
 			this.oModelMock.expects("read").never();
@@ -97,7 +100,7 @@ sap.ui.require([
 			oChild = new TestControl(),
 			done = assert.async(),
 			oModel = new ODataModel("/service/"),
-			oParent = new TestControl({models: oModel, child: oChild});
+			oParent = new TestControl({models : oModel, child : oChild});
 
 		// This should not trigger anything yet
 		oChild.bindObject("child");
@@ -164,8 +167,8 @@ sap.ui.require([
 	QUnit.test("readValue fulfill", function (assert) {
 		var oBinding,
 			oCache = {
-				read: function () {},
-				toString: function () { return "/service/EMPLOYEES(ID='1')?sap-client=111"; }
+				read : function () {},
+				toString : function () { return "/service/EMPLOYEES(ID='1')?sap-client=111"; }
 			},
 			oCacheMock = this.oSandbox.mock(oCache),
 			oModel = new ODataModel("/service/?sap-client=111"),
@@ -214,8 +217,8 @@ sap.ui.require([
 	QUnit.test("readValue reject", function (assert) {
 		var oBinding,
 			oCache = {
-				read: function () {},
-				toString: function () { return "/service/EMPLOYEES(ID='1')?sap-client=111"; }
+				read : function () {},
+				toString : function () { return "/service/EMPLOYEES(ID='1')?sap-client=111"; }
 			},
 			sMessage = "Accessed value is not primitive",
 			oErrorRead = new Error("Cache read error"),
@@ -305,7 +308,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh absolute path", function (assert) {
 		var oCache = {
-				refresh: function () {}
+				refresh : function () {}
 			},
 			oModel = new ODataModel("/service/?sap-client=111"),
 			oContext = oModel.getContext("/TEAMS('TEAM_01')"),
@@ -351,7 +354,7 @@ sap.ui.require([
 			oPromise;
 
 		this.oSandbox.mock(oModel.oRequestor).expects("request")
-			.returns(Promise.resolve({value: {"ID" : "1"}}));
+			.returns(Promise.resolve({value : {"ID" : "1"}}));
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oBinding).expects("_fireChange");
 

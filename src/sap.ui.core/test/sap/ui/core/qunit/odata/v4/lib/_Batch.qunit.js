@@ -201,12 +201,12 @@ sap.ui.require([
 			}
 		},
 		oNewTeamBody =  {
-			"Team_Id": "TEAM_04",
-			"Name": "UI2 Services",
-			"MEMBER_COUNT": 9,
-			"MANAGER_ID": "1",
-			"BudgetCurrency": "EUR",
-			"Budget": 5555
+			"Team_Id" : "TEAM_04",
+			"Name" : "UI2 Services",
+			"MEMBER_COUNT" : 9,
+			"MANAGER_ID" : "1",
+			"BudgetCurrency" : "EUR",
+			"Budget" : 5555
 		},
 		sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/";
 
@@ -239,17 +239,17 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{// serialization
-		testTitle: "query parts without headers",
-		requests: [
+		testTitle : "query parts without headers",
+		requests : [
 			{
-				method: "GET",
-				url: "Employees('1')"
+				method : "GET",
+				url : "Employees('1')"
 			}, {
-				method: "GET",
-				url: "Employees('2')"
+				method : "GET",
+				url : "Employees('2')"
 			}
 		],
-		body: "--batch_id-0123456789012-345\r\n" +
+		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
 		"\r\n" +
@@ -267,25 +267,25 @@ sap.ui.require([
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
-		testTitle: "query parts with headers",
-		requests: [
+		testTitle : "query parts with headers",
+		requests : [
 			{
-				method: "GET",
-				url: "Employees('1')?$select=EmployeeID",
-				headers: {
-					foo: "bar1",
-					abc: "123"
+				method : "GET",
+				url : "Employees('1')?$select=EmployeeID",
+				headers : {
+					foo : "bar1",
+					abc : "123"
 				}
 			}, {
-				method: "GET",
-				url: "Employees('2')",
-				headers: {
-					foo: "bar2",
-					abc: "456"
+				method : "GET",
+				url : "Employees('2')",
+				headers : {
+					foo : "bar2",
+					abc : "456"
 				}
 			}
 		],
-		body: "--batch_id-0123456789012-345\r\n" +
+		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
 		"\r\n" +
@@ -307,26 +307,26 @@ sap.ui.require([
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
-		testTitle: "batch request with changesets",
+		testTitle : "batch request with changesets",
 		expectedBoundaryIDs : ["id-0123456789012-345", "id-9876543210987-654"],
-		requests: [[
+		requests : [[
 			{
-				method: "PATCH",
-				url: "Employees('1')",
-				headers: {
-					"Content-Type": "application/json"
+				method : "PATCH",
+				url : "Employees('1')",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: '{"TEAM_ID": "TEAM_03"}'
+				body : '{"TEAM_ID": "TEAM_03"}'
 			}, {
-				method: "PATCH",
-				url: "Employees('2')",
-				headers: {
-					"Content-Type": "application/json"
+				method : "PATCH",
+				url : "Employees('2')",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: '{"TEAM_ID": "TEAM_01"}'
+				body : '{"TEAM_ID": "TEAM_01"}'
 			}
 		]],
-		body: "--batch_id-0123456789012-345\r\n" +
+		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
 		"\r\n" +
 		"--changeset_id-9876543210987-654\r\n" +
@@ -352,62 +352,62 @@ sap.ui.require([
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
-		testTitle: "batch request with changesets and individual requests",
+		testTitle : "batch request with changesets and individual requests",
 		expectedBoundaryIDs :
 			["id-0123456789012-345", "id-9876543210987-654", "id-0123456789012-912"],
-		requests: [
+		requests : [
 			{
-				method: "GET",
-				url: "Employees('1')",
-				headers: {
-					foo: "bar1",
-					abc: "123"
+				method : "GET",
+				url : "Employees('1')",
+				headers : {
+					foo : "bar1",
+					abc : "123"
 				}
 			},
 			[
 				{
-					method: "PATCH",
-					url: "Employees('1')",
-					headers: {
-						"Content-Type": "application/json"
+					method : "PATCH",
+					url : "Employees('1')",
+					headers : {
+						"Content-Type" : "application/json"
 					},
-					body: '{"TEAM_ID": "TEAM_03"}'
+					body : '{"TEAM_ID": "TEAM_03"}'
 				}, {
-					method: "PATCH",
-					url: "Employees('2')",
-					headers: {
-						"Content-Type": "application/json"
+					method : "PATCH",
+					url : "Employees('2')",
+					headers : {
+						"Content-Type" : "application/json"
 					},
-					body: '{"TEAM_ID": "TEAM_01"}'
+					body : '{"TEAM_ID": "TEAM_01"}'
 				}
 			],
 			{
-				method: "PATCH",
-				url: "Employees('3')",
-				headers: {
-					"Content-Type": "application/json"
+				method : "PATCH",
+				url : "Employees('3')",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: '{"TEAM_ID": "TEAM_01"}'
+				body : '{"TEAM_ID": "TEAM_01"}'
 			},
 			[
 				{
-					method: "PATCH",
-					url: "Employees('3')",
-					headers: {
-						"Content-Type": "application/json"
+					method : "PATCH",
+					url : "Employees('3')",
+					headers : {
+						"Content-Type" : "application/json"
 					},
-					body: '{"TEAM_ID": "TEAM_02"}'
+					body : '{"TEAM_ID": "TEAM_02"}'
 				}, {
-					method: "PATCH",
-					url: "Employees('4')",
-					headers: {
-						"Content-Type": "application/json"
+					method : "PATCH",
+					url : "Employees('4')",
+					headers : {
+						"Content-Type" : "application/json"
 					},
-					body: '{"TEAM_ID": "TEAM_01"}'
+					body : '{"TEAM_ID": "TEAM_01"}'
 				}
 			]
 		],
-		body: "--batch_id-0123456789012-345\r\n" +
+		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
 		"\r\n" +
@@ -472,32 +472,32 @@ sap.ui.require([
 		"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 		"MIME-Version" : "1.0"
 	}, {
-		testTitle: "batch request with content-ID references",
+		testTitle : "batch request with content-ID references",
 		expectedBoundaryIDs :
 			["id-1450426018742-911", "id-1450426018742-912", "id-1450426018742-913"],
-		requests: [
+		requests : [
 			[{
-				method: "POST",
-				url: "TEAMS",
-				headers: {
-					"Content-Type": "application/json"
+				method : "POST",
+				url : "TEAMS",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: JSON.stringify(oNewTeamBody)
+				body : JSON.stringify(oNewTeamBody)
 			}, {
-				method: "POST",
-				url: "$0/TEAM_2_EMPLOYEES",
-				headers: {
-					"Content-Type": "application/json"
+				method : "POST",
+				url : "$0/TEAM_2_EMPLOYEES",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: JSON.stringify(oNewEmployeeBody)
+				body : JSON.stringify(oNewEmployeeBody)
 			}],
 			[{
-				method: "POST",
-				url: "TEAMS",
-				headers: {
-					"Content-Type": "application/json"
+				method : "POST",
+				url : "TEAMS",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: '{\
+				body : '{\
 "Team_Id": "TEAM_05",\
 "Name": "UI2 Services",\
 "MEMBER_COUNT": 9,\
@@ -506,12 +506,12 @@ sap.ui.require([
 "Budget": 5555\
 }'
 			}, {
-				method: "POST",
-				url: "TEAMS",
-				headers: {
-					"Content-Type": "application/json"
+				method : "POST",
+				url : "TEAMS",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: '{\
+				body : '{\
 "Team_Id": "TEAM_06",\
 "Name": "UI2 Services",\
 "MEMBER_COUNT": 9,\
@@ -520,15 +520,15 @@ sap.ui.require([
 "Budget": 5555\
 }'
 			}, {
-				method: "POST",
-				url: "$1/TEAM_2_EMPLOYEES",
-				headers: {
-					"Content-Type": "application/json"
+				method : "POST",
+				url : "$1/TEAM_2_EMPLOYEES",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: JSON.stringify(oNewEmployeeBody)
+				body : JSON.stringify(oNewEmployeeBody)
 			}]
 		],
-		body: "--batch_id-1450426018742-911\r\n" +
+		body : "--batch_id-1450426018742-911\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-912\r\n" +
 		"\r\n" +
 		"--changeset_id-1450426018742-912\r\n" +
@@ -618,45 +618,45 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		title: "changeset within a changeset",
-		requests: [
+		title : "changeset within a changeset",
+		requests : [
 			[{
-				method: "PATCH",
-				url: "Employees('1')",
-				headers: {
-					"Content-Type": "application/json"
+				method : "PATCH",
+				url : "Employees('1')",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: '{"TEAM_ID": "TEAM_03"}'
+				body : '{"TEAM_ID": "TEAM_03"}'
 			},
 			[
 				{
-					method: "PATCH",
-					url: "Employees('2')",
-					headers: {
-						"Content-Type": "application/json"
+					method : "PATCH",
+					url : "Employees('2')",
+					headers : {
+						"Content-Type" : "application/json"
 					},
-					body: '{"TEAM_ID": "TEAM_01"}'
+					body : '{"TEAM_ID": "TEAM_01"}'
 				}
 			]]
 		],
 		errorMessage : "Change set must not contain a nested change set."
 	}, {
-		title: "changeset with GET request",
-		requests: [
+		title : "changeset with GET request",
+		requests : [
 			[{
-				method: "PATCH",
-				url: "Employees('1')",
-				headers: {
-					"Content-Type": "application/json"
+				method : "PATCH",
+				url : "Employees('1')",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: '{"TEAM_ID": "TEAM_03"}'
+				body : '{"TEAM_ID": "TEAM_03"}'
 			}, {
-				method: "GET",
-				url: "Employees('2')",
-				headers: {
-					"Content-Type": "application/json"
+				method : "GET",
+				url : "Employees('2')",
+				headers : {
+					"Content-Type" : "application/json"
 				},
-				body: '{"TEAM_ID": "TEAM_01"}'
+				body : '{"TEAM_ID": "TEAM_01"}'
 			}]
 		],
 		errorMessage : "Invalid HTTP request method: GET. Change set must contain only POST, " +
@@ -673,9 +673,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	// deserialization
 	[{
-		testTitle: "batch parts with preamble and epilogue",
-		contentType: "multipart/mixed; boundary=batch_id-0123456789012-345",
-		body: "this is a preamble for the batch request\r\n\
+		testTitle : "batch parts with preamble and epilogue",
+		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345",
+		body : "this is a preamble for the batch request\r\n\
 --batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 4711\r\n\
@@ -724,9 +724,9 @@ this is a batch request epilogue",
 			responseText : "{\"foo1\":\"bar1\"}"
 		}]
 	}, {
-		testTitle: "batch parts without headers",
-		contentType: 'multipart/mixed; boundary="batch_1 23456"',
-		body: "--batch_1 23456\r\n\
+		testTitle : "batch parts without headers",
+		contentType : 'multipart/mixed; boundary="batch_1 23456"',
+		body : "--batch_1 23456\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 4711\r\n\
 content-transfer-encoding: binary\r\n\
@@ -755,10 +755,10 @@ HTTP/1.1 200 OK\r\n\
 			responseText : "{\"foo1\":\"bar1\"}"
 		}]
 	}, {
-		testTitle: "batch boundary with special characters",
-		contentType: ' multipart/mixed; myboundary="invalid"; '
+		testTitle : "batch boundary with special characters",
+		contentType : ' multipart/mixed; myboundary="invalid"; '
 		+ 'boundary="batch_id-0123456789012-345\'()+_,-./:=?"',
-		body: "--batch_id-0123456789012-345\'()+_,-./:=? \r\n\
+		body : "--batch_id-0123456789012-345\'()+_,-./:=? \r\n\
 Content-Type: application/http\r\n\
 Content-Length: 4711\r\n\
 content-transfer-encoding: binary\r\n\
@@ -787,9 +787,9 @@ HTTP/1.1 200 OK\r\n\
 			responseText : "{\"foo1\":\"bar1\"}"
 		}]
 	}, {
-		testTitle: "multiple Content-Type parameters separated with space",
-		contentType: 'multipart/mixed; boundary=batch_id-0123456789012-345 ; foo=bar',
-		body: "--batch_id-0123456789012-345\r\n\
+		testTitle : "multiple Content-Type parameters separated with space",
+		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345 ; foo=bar',
+		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
 content-transfer-encoding: binary\r\n\
@@ -805,9 +805,9 @@ HTTP/1.1 200 OK\r\n\
 			responseText : "{\"foo1\":\"bar1\"}"
 		}]
 	}, {
-		testTitle: "multiple Content-Type parameters separated w/o space",
-		contentType: 'multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar',
-		body: "--batch_id-0123456789012-345\r\n\
+		testTitle : "multiple Content-Type parameters separated w/o space",
+		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar',
+		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
 content-transfer-encoding: binary\r\n\
@@ -823,9 +823,9 @@ HTTP/1.1 200 OK\r\n\
 			responseText : "{\"foo1\":\"bar1\"}"
 		}]
 	}, {
-		testTitle: "Content-Type with charset parameter lowercase",
-		contentType: 'multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar',
-		body: "--batch_id-0123456789012-345\r\n\
+		testTitle : "Content-Type with charset parameter lowercase",
+		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar',
+		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
 content-transfer-encoding: binary\r\n\
@@ -842,9 +842,9 @@ Content-Type: application/json;odata.metadata=minimal;charset=utf-8\r\n\
 			responseText : "{\"foo1\":\"bar1\"}"
 		}]
 	}, {
-		testTitle: "Content-Type with charset parameter uppercase + space + following parameter",
-		contentType: 'multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar',
-		body: "--batch_id-0123456789012-345\r\n\
+		testTitle : "Content-Type with charset parameter uppercase + space + following parameter",
+		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345;foo=bar',
+		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
 content-transfer-encoding: binary\r\n\
@@ -863,9 +863,9 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8 ;foo=bar\r\n
 			responseText : "{\"foo1\":\"bar1\"}"
 		}]
 	}, {
-		testTitle: "Content-Type text/plain with only spaces in response body",
-		contentType: 'multipart/mixed; boundary=batch_id-0123456789012-345',
-		body: "--batch_id-0123456789012-345\r\n\
+		testTitle : "Content-Type text/plain with only spaces in response body",
+		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345',
+		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 459\r\n\
 content-transfer-encoding: binary\r\n\
@@ -884,9 +884,9 @@ Content-Type: text/plain\r\n\
 			responseText : "  "
 		}]
 	}, {
-		testTitle: "individual requests and change sets",
-		contentType: 'multipart/mixed; boundary=batch_id-0123456789012-345',
-		body: "--batch_id-0123456789012-345\r\n\
+		testTitle : "individual requests and change sets",
+		contentType : 'multipart/mixed; boundary=batch_id-0123456789012-345',
+		body : "--batch_id-0123456789012-345\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 2768\r\n\
 content-transfer-encoding: binary\r\n\
@@ -1150,28 +1150,28 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 	if (TestUtils.isRealOData()) {
 		// integration tests serialization/deserialization
 		// --------------------------------------------
-		[{  testTitle: "two get request for employees and departments",
-			batchRequests: [{
+		[{  testTitle : "two get request for employees and departments",
+			batchRequests : [{
 				method : "GET",
 				url : "EMPLOYEES",
-				headers : { "Accept": "application/json" }
+				headers : { "Accept" : "application/json" }
 			}, {
 				method : "GET",
 				url : "Departments",
-				headers : {"Accept": "application/json"}
+				headers : {"Accept" : "application/json"}
 			}],
 			expectedResponses : [{
-				status: 200,
-				statusText: "OK",
-				headers: {
+				status : 200,
+				statusText : "OK",
+				headers : {
 					"Content-Type" : "application/json;odata.metadata=minimal",
 					"odata-version" : "4.0"
 				},
 				responseText : oEmployeesBody
 			}, {
-				status: 200,
-				statusText: "OK",
-				headers: {
+				status : 200,
+				statusText : "OK",
+				headers : {
 					"Content-Type" : "application/json;odata.metadata=minimal",
 					"odata-version" : "4.0"
 				},
@@ -1180,23 +1180,23 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		},
 		// --------------------------------------------
 		{   testTitle : "get, delete and post request",
-			batchRequests: [{
+			batchRequests : [{
 				method : "GET",
 				url : "EMPLOYEES",
-				headers : { "Accept": "application/json"}
+				headers : { "Accept" : "application/json"}
 			}, {
 				method : "DELETE",
 				url : "EMPLOYEES('1')",
 				headers : {
-					"Accept": "application/json",
+					"Accept" : "application/json",
 					"If-Match" : "W/\"19770724000000.0000000\""
 				}
 			}, {
 				method : "POST",
 				url : "EMPLOYEES",
 				headers : {
-					"Accept": "application/json",
-					"Content-Type": "application/json;charset=UTF-8"
+					"Accept" : "application/json",
+					"Content-Type" : "application/json;charset=UTF-8"
 				},
 				body : '{"ENTRYDATE":"2015-10-01", "Name":"Egon", "AGE":17}'
 			}],
@@ -1227,18 +1227,18 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		},
 		// --------------------------------------------
 		{   testTitle : "GET not existing entity set",
-			batchRequests: [{
+			batchRequests : [{
 				method : "GET",
 				url : "Departments",
-				headers : { "Accept": "application/json"}
+				headers : { "Accept" : "application/json"}
 			},{
 				method : "GET",
 				url : "Unknown",
-				headers : { "Accept": "application/json"}
+				headers : { "Accept" : "application/json"}
 			},{
 				method : "GET",
 				url : "TEAMS",
-				headers : { "Accept": "application/json"}
+				headers : { "Accept" : "application/json"}
 			}],
 			expectedResponses : [{
 				status : 200,
@@ -1259,17 +1259,17 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		},
 		// --------------------------------------------
 		{   testTitle : "POST to not existing entity within change set",
-			batchRequests: [{
+			batchRequests : [{
 				method : "GET",
 				url : "Departments",
-				headers : { "Accept": "application/json"}
+				headers : { "Accept" : "application/json"}
 			},
 			[
 				{
 					method : "PATCH",
-					url: "EMPLOYEES('1')",
+					url : "EMPLOYEES('1')",
 					headers : {
-						"Content-Type": "application/json",
+						"Content-Type" : "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
 					},
 					body : '{"TEAM_ID": "TEAM_03"}'
@@ -1277,7 +1277,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					method : "POST",
 					url : "Unknown",
 					headers : {
-						"Content-Type": "application/json"
+						"Content-Type" : "application/json"
 					},
 					body : '{"bar": "bar"}'
 				}
@@ -1285,7 +1285,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			{
 				method : "GET",
 				url : "TEAMS",
-				headers : { "Accept": "application/json"}
+				headers : { "Accept" : "application/json"}
 			}],
 			expectedResponses : [{
 				status : 200,
@@ -1310,14 +1310,14 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 			batchRequests : [{
 					method : "GET",
 					url : "Departments",
-					headers : { "Accept": "application/json"}
+					headers : { "Accept" : "application/json"}
 				},
 				[
 					{
 						method : "PATCH",
 						url : "EMPLOYEES('1')",
 						headers : {
-							"Content-Type": "application/json",
+							"Content-Type" : "application/json",
 							"If-Match" : "W/\"19770724000000.0000000\""
 						},
 						body : '{"TEAM_ID": "TEAM_03"}'
@@ -1325,15 +1325,15 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						method : "POST",
 						url : "Unknown",
 						headers : {
-							"Content-Type": "application/json"
+							"Content-Type" : "application/json"
 						},
-						body: '{"bar": "bar"}'
+						body : '{"bar": "bar"}'
 					}
 				],
 				{
 					method : "GET",
 					url : "TEAMS",
-					headers : { "Accept": "application/json"}
+					headers : { "Accept" : "application/json"}
 				}
 			],
 			expectedResponses : [{
@@ -1390,58 +1390,58 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		},
 		// --------------------------------------------
 		{   testTitle : "changesets and individual requests",
-			batchRequests: [{
-				method: "GET",
-				url: "EMPLOYEES",
-				headers: {
-					"Accept": "application/json"
+			batchRequests : [{
+				method : "GET",
+				url : "EMPLOYEES",
+				headers : {
+					"Accept" : "application/json"
 				}
 			},
 			[
 				{
-					method: "PATCH",
-					url: "EMPLOYEES('1')",
-					headers: {
-						"Content-Type": "application/json",
+					method : "PATCH",
+					url : "EMPLOYEES('1')",
+					headers : {
+						"Content-Type" : "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
 					},
-					body: '{"TEAM_ID": "TEAM_03"}'
+					body : '{"TEAM_ID": "TEAM_03"}'
 				}, {
-					method: "PATCH",
-					url: "EMPLOYEES('2')",
-					headers: {
-						"Content-Type": "application/json",
+					method : "PATCH",
+					url : "EMPLOYEES('2')",
+					headers : {
+						"Content-Type" : "application/json",
 						"If-Match" : "W/\"20030701000000.0000000\""
 					},
-					body: '{"TEAM_ID": "TEAM_01"}'
+					body : '{"TEAM_ID": "TEAM_01"}'
 				}
 			],
 			{
-				method: "PATCH",
-				url: "EMPLOYEES('5')",
-				headers: {
-					"Content-Type": "application/json",
+				method : "PATCH",
+				url : "EMPLOYEES('5')",
+				headers : {
+					"Content-Type" : "application/json",
 					"If-Match" : "W/\"20010201000000.0000000\""
 				},
-				body: '{"TEAM_ID": "TEAM_01"}'
+				body : '{"TEAM_ID": "TEAM_01"}'
 			},
 			[
 				{
-					method: "PATCH",
-					url: "EMPLOYEES('3')",
-					headers: {
-						"Content-Type": "application/json",
+					method : "PATCH",
+					url : "EMPLOYEES('3')",
+					headers : {
+						"Content-Type" : "application/json",
 						"If-Match" : "W/\"19770724000000.0000000\""
 					},
-					body: '{"TEAM_ID": "TEAM_02"}'
+					body : '{"TEAM_ID": "TEAM_02"}'
 				}, {
-					method: "PATCH",
-					url: "EMPLOYEES('4')",
-					headers: {
-						"Content-Type": "application/json",
+					method : "PATCH",
+					url : "EMPLOYEES('4')",
+					headers : {
+						"Content-Type" : "application/json",
 						"If-Match" : "W/\"20040912000000.0000000\""
 					},
-					body: '{"TEAM_ID": "TEAM_01"}'
+					body : '{"TEAM_ID": "TEAM_01"}'
 				}
 			]],
 			expectedResponses : [{
@@ -1616,22 +1616,22 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 		// --------------------------------------------
 		{   testTitle : "changeset with Content-ID reference",
 			// TODO: remove skip as soon as gateway supports Content-ID references
-			skip: true,
-			batchRequests: [
+			skip : true,
+			batchRequests : [
 				[{
-					method: "POST",
-					url: "TEAMS",
-					headers: {
-						"Content-Type": "application/json"
+					method : "POST",
+					url : "TEAMS",
+					headers : {
+						"Content-Type" : "application/json"
 					},
-					body: JSON.stringify(oNewTeamBody)
+					body : JSON.stringify(oNewTeamBody)
 				}, {
-					method: "POST",
-					url: "$0/TEAM_2_EMPLOYEES",
-					headers: {
-						"Content-Type": "application/json"
+					method : "POST",
+					url : "$0/TEAM_2_EMPLOYEES",
+					headers : {
+						"Content-Type" : "application/json"
 					},
-					body: JSON.stringify(oNewEmployeeBody)
+					body : JSON.stringify(oNewEmployeeBody)
 				}]
 			],
 			expectedResponses : [
@@ -1663,7 +1663,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					oBatchRequestContent = Batch.serializeBatchRequest(oFixture.batchRequests);
 
 					jQuery.ajax(TestUtils.proxy(sServiceUrl), {
-						method: "HEAD",
+						method : "HEAD",
 						headers : {
 							"X-CSRF-Token" : "Fetch"
 						}
@@ -1680,7 +1680,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						}
 
 						jQuery.ajax(TestUtils.proxy(sServiceUrl) + '$batch', {
-							method: "POST",
+							method : "POST",
 							headers : oBatchHeaders,
 							data : oBatchRequestContent.body
 						}).then(function (oData, sTextStatus, jqXHR) {
@@ -1712,7 +1712,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					aBatchRequests = [{
 						method : "GET",
 						url : "EMPLOYEES('9')",
-						headers : { "Accept": "application/json" }
+						headers : { "Accept" : "application/json" }
 					}];
 
 				oBatchRequestContent = Batch.serializeBatchRequest(aBatchRequests);
@@ -1725,7 +1725,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 				}).then(function (oData, sTextStatus, jqXHR) {
 					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
 					jQuery.ajax(sResolvedServiceUrl + '$batch', {
-						method: "POST",
+						method : "POST",
 						headers : {
 							"Content-Type" : oBatchRequestContent["Content-Type"],
 							"MIME-Version" : oBatchRequestContent["MIME-Version"],

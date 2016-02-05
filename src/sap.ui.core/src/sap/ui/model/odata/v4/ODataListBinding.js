@@ -289,7 +289,7 @@ sap.ui.define([
 		this.aContexts = [];
 		this.iMaxLength = Infinity;
 		this.bLengthFinal = false;
-		this._fireRefresh({reason: ChangeReason.Refresh});
+		this._fireRefresh({reason : ChangeReason.Refresh});
 	};
 
 	/**

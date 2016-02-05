@@ -28,14 +28,14 @@ sap.ui.require([
 	 */
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')/Name": {source: "Name.json"},
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')":
-				{code: 404, source: "TEAMS('UNKNOWN').json"}
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')/Name" : {source : "Name.json"},
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')" :
+				{code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
 		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
-			metadata: {
-				properties: {
-					text: "string"
+			metadata : {
+				properties : {
+					text : "string"
 				}
 			}
 		});
@@ -113,7 +113,7 @@ sap.ui.require([
 		oModel = new ODataModel("/foo/");
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
+		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
 		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
@@ -126,7 +126,7 @@ sap.ui.require([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, "/foo/$metadata");
 
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
+		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
 		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
@@ -155,7 +155,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.skip("Property access from ManagedObject w/o context binding", function (assert) {
 		var oModel = createModel(),
-			oControl = new TestControl({models: oModel}),
+			oControl = new TestControl({models : oModel}),
 			done = assert.async();
 
 		oControl.bindProperty("text", {
@@ -173,7 +173,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.skip("Property access from ManagedObject w/ context binding", function (assert) {
 		var oModel = createModel(),
-			oControl = new TestControl({models: oModel}),
+			oControl = new TestControl({models : oModel}),
 			done = assert.async();
 
 		oControl.bindObject("/TEAMS('TEAM_01')");
