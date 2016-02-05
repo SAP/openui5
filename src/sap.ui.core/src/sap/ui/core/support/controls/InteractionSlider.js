@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
                 this.SIDE_LIST_WIDTH = 0;
                 this.LEFT_HANDLE_ID = 'left';
                 this.RIGHT_HANDLE_ID = 'right';
-                this.HANDLE_BORDER_SIZE = 1;
+                this.HANDLE_BORDER_SIZE = 0;
                 this.HANDLES_WIDTH = 3;
 
                 this.selectedInterval = {
