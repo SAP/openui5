@@ -382,72 +382,113 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch(...): success", function (assert) {
-		var aExpectedRequests = [{
-				method: "GET",
-				url: "Products",
-				headers: {
-					"Accept" : "application/json;odata.metadata=full",
-					"Foo" : "bar"
-				},
-				body: undefined,
-				$reject: sinon.match.typeOf("function"),
-				$resolve: sinon.match.typeOf("function")
+	[false, true].forEach(function (bAsynchronous) {
+		QUnit.test("submitBatch(bAsynchronous=" + bAsynchronous + "): success", function (assert) {
+			var aExpectedRequests = [{
+					method: "GET",
+					url: "Products",
+					headers: {
+						"Accept" : "application/json;odata.metadata=full",
+						"Foo" : "bar"
+					},
+					body: undefined,
+					$reject: sinon.match.typeOf("function"),
+					$resolve: sinon.match.typeOf("function")
+				}, {
+					method: "POST",
+					url: "Customers",
+					headers: {
+						"Accept" : "application/json;odata.metadata=minimal",
+						"Foo" : "baz"
+					},
+					body: '{"ID":1}',
+					$reject: sinon.match.typeOf("function"),
+					$resolve: sinon.match.typeOf("function")
+				}],
+				oFirst,
+				aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}],
+				oSecond,
+				aBatchResults = [
+					{responseText: JSON.stringify(aResults[0])},
+					{responseText: JSON.stringify(aResults[1])}
+				],
+				oRequestor = Requestor.create("/Service/", {"sap-client" : "123"});
+
+			oRequestor.request("GET", "Products", "group1", {
+				Foo : "bar",
+				Accept : "application/json;odata.metadata=full"
+			}).then(function (oResult) {
+				assert.deepEqual(oResult, aResults[0]);
+				aResults[0] = null;
+			});
+
+			if (bAsynchronous) {
+				// This must not trigger a $batch only for Products
+				oFirst = oRequestor.submitBatch("group1", true);
+			}
+
+			oRequestor.request("POST", "Customers", "group1", {
+				Foo : "baz"
 			}, {
-				method: "POST",
-				url: "Customers",
-				headers: {
-					"Accept" : "application/json;odata.metadata=minimal",
-					"Foo" : "baz"
-				},
-				body: '{"ID":1}',
-				$reject: sinon.match.typeOf("function"),
-				$resolve: sinon.match.typeOf("function")
-			}],
-			aPromises = [],
-			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}],
-			aBatchResults = [
-				{responseText: JSON.stringify(aResults[0])},
-				{responseText: JSON.stringify(aResults[1])}
-			],
-			oRequestor = Requestor.create("/Service/", {"sap-client" : "123"});
+				"ID" : 1
+			}).then(function (oResult) {
+				assert.deepEqual(oResult, aResults[1]);
+				aResults[1] = null;
+			});
+			oRequestor.request("GET", "SalesOrders", "group2");
 
-		aPromises.push(oRequestor.request("GET", "Products", "group1", {
-			Foo : "bar",
-			Accept : "application/json;odata.metadata=full"
-		}).then(function (oResult) {
-			assert.deepEqual(oResult, aResults[0]);
-			aResults[0] = null;
-		}));
-		aPromises.push(oRequestor.request("POST", "Customers", "group1", {
-			Foo : "baz"
-		}, {
-			"ID" : 1
-		}).then(function (oResult) {
-			assert.deepEqual(oResult, aResults[1]);
-			aResults[1] = null;
-		}));
-		oRequestor.request("GET", "SalesOrders", "group2");
+			this.oSandbox.mock(oRequestor).expects("request")
+				.withExactArgs("POST", "$batch", undefined, undefined, aExpectedRequests)
+				.returns(Promise.resolve(aBatchResults));
 
-		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("POST", "$batch", undefined, undefined, aExpectedRequests)
-			.returns(Promise.resolve(aBatchResults));
+			oSecond = oRequestor.submitBatch("group1", bAsynchronous);
 
-		aPromises.push(oRequestor.submitBatch("group1").then(function (oResult) {
-			assert.strictEqual(oResult, undefined);
-			assert.deepEqual(aResults, [null, null], "all batch requests already resolved");
-		}));
-		aPromises.push(oRequestor.submitBatch("group1")); // must not call request again
+			if (bAsynchronous) {
+				assert.ok(oFirst === oSecond, "promise re-used");
+			} else {
+				oRequestor.submitBatch("group1"); // must not call request again
+				assert.strictEqual(oRequestor.mBatchQueue.group1, undefined);
+			}
 
-		assert.strictEqual(oRequestor.mBatchQueue.group1, undefined);
-		TestUtils.deepContains(oRequestor.mBatchQueue.group2, [{
-			method: "GET",
-			url: "SalesOrders"
-		}]);
+			TestUtils.deepContains(oRequestor.mBatchQueue.group2, [{
+				method: "GET",
+				url: "SalesOrders"
+			}]);
 
-		return Promise.all(aPromises);
+			return oSecond.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+				assert.deepEqual(aResults, [null, null], "all batch requests already resolved");
+			});
+		});
 	});
 	// TODO Is that.mHeaders relevant for requests in the body of a $batch?
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch: asynchronous queue management", function (assert) {
+		var oRequestor = Requestor.create("/Service/"),
+			fnRequest = oRequestor.request;
+
+		this.oSandbox.stub(oRequestor, "request", function (sMethod, sResourcePath) {
+			if (sResourcePath === "$batch") {
+				return Promise.resolve([{responseText : "{}"}])
+			}
+			return fnRequest.apply(this, arguments);
+		});
+
+		// requests two queues asynchronously at the same time
+		return Promise.all([
+			oRequestor.request("GET", "Products", "group1"),
+			oRequestor.request("GET", "Customers", "group2"),
+			oRequestor.submitBatch("group1", true),
+			oRequestor.submitBatch("group2", true)
+		]).then(function () {
+			// ensure that a subsequent asynchronous request is processed correctly
+			return Promise.all([
+				oRequestor.request("GET", "Products", "group1"),
+				oRequestor.submitBatch("group1", true),
+			]);
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): $batch failure", function (assert) {

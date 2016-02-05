@@ -44,7 +44,11 @@ sap.ui.define([
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
 					"$metadata" : {source : "metadata.xml"},
-					"BusinessPartnerList?$skip=0&$top=5" : {source : "BusinessPartnerList.json"}
+					"$batch" : {
+						"BusinessPartnerList" : {
+							source : "BusinessPartnerList.txt"
+						}
+					}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrdersTemplate/data",
 				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 			}

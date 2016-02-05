@@ -1670,8 +1670,8 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					}).then(function (oData, sTextStatus, jqXHR) {
 						var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token"),
 							oBatchHeaders = {
-								"Content-Type" : oBatchRequestContent["Content-Type"],
-								"MIME-Version" : oBatchRequestContent["MIME-Version"],
+								"Content-Type" : oBatchRequestContent.headers["Content-Type"],
+								"MIME-Version" : oBatchRequestContent.headers["MIME-Version"],
 								"X-CSRF-Token" : sCsrfToken
 							};
 

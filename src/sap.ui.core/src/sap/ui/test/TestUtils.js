@@ -9,7 +9,9 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 	// Note: The dependency to Sinon.js has been omitted deliberately. Most test files load it via
 	// <script> anyway and declaring the dependency would cause it to be loaded twice.
 
-	var mMessageForPath = {}, // a cache for files, see useFakeServer
+	var rBatch = /\/\$batch($|\?)/,
+		rBoundary = /^--(.*?)\r\n/,
+		mMessageForPath = {}, // a cache for files, see useFakeServer
 		sRealOData = jQuery.sap.getUriParameters().get("realOData"),
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
 		bRealOData = bProxy || sRealOData === "direct",
@@ -150,17 +152,65 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 *     case the header <code>Content-Type</code> is determined from the source name's
 		 *     extension.
 		 *   </ul>
+		 *   For "$batch" URLs the value is an object in which the keys are searched within the
+		 *   request message. The value at this key is an object as described above. For "$batch"
+		 *   responses the Content-Type header is automatically calculated by looking into the
+		 *   response message (searching for the batch boundary).
 		 */
 		useFakeServer : function (oSandbox, sBase, mFixture) {
-			var oHeaders,
-				sMessage,
-				sPath,
-				oResponse,
-				fnRestore,
-				oResult,
-				oServer,
-				sUrl,
-				mUrls = {};
+
+			function batch(mUrls, oRequest) {
+				var oResponse = [
+						500,
+						{"Content-Type" : "text/plain"},
+						"FakeServer: No matching response found"
+					],
+					sUrl;
+
+				for (sUrl in mUrls) {
+					if (oRequest.requestBody.indexOf("GET " + sUrl) > 0) {
+						oResponse = mUrls[sUrl];
+					}
+				}
+				oRequest.respond.apply(oRequest, oResponse);
+			}
+
+			function buildResponses(mFixture, bIsBatch) {
+				var oHeaders,
+					aMatches,
+					sMessage,
+					oResponse,
+					sUrl,
+					mUrls = {};
+
+				for (sUrl in mFixture) {
+					oResponse = mFixture[sUrl];
+					oHeaders = oResponse.headers || {};
+					if (!bIsBatch && rBatch.test(sUrl)) {
+						mUrls[sUrl] = batch.bind(null, buildResponses(oResponse, true));
+					} else {
+						if (oResponse.source) {
+							sMessage = readMessage(sBase + oResponse.source);
+							if (bIsBatch) {
+								// In Git no files may contain CRLF, but multipart responses
+								// require it. So we simply add the CR again.
+								sMessage = sMessage.replace(/\n/g, "\r\n");
+								aMatches = rBoundary.exec(sMessage);
+								if (aMatches) {
+									oHeaders["Content-Type"] = "multipart/mixed; boundary="
+										+ aMatches[1];
+								}
+							}
+							oHeaders["Content-Type"] = oHeaders["Content-Type"]
+								|| contentType(oResponse.source);
+						} else {
+							sMessage = oResponse.message || "";
+						}
+						mUrls[sUrl] = [oResponse.code || 200, oHeaders, sMessage];
+					}
+				}
+				return mUrls;
+			}
 
 			function contentType(sName) {
 				if (/\.xml$/.test(sName)) {
@@ -172,40 +222,51 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 				return "application/x-octet-stream";
 			}
 
-			sBase = "/" + window.location.pathname.split("/")[1] + "/test-resources/" + sBase + "/";
-			for (sUrl in mFixture) {
-				oResponse = mFixture[sUrl];
-				oHeaders = oResponse.headers || {};
-				if (oResponse.source) {
-					sPath = sBase + oResponse.source;
-					if (!mMessageForPath[sPath]) {
-						oResult = jQuery.sap.sjax({
-							url: sPath,
-							dataType: "text"
-						});
-						if (!oResult.success) {
-							throw new Error(sPath + ": resource not found");
-						}
-						mMessageForPath[sPath] = oResult.data;
+			function readMessage(sPath) {
+				var sMessage = mMessageForPath[sPath],
+					oResult;
+
+				if (!sMessage) {
+					oResult = jQuery.sap.sjax({
+						url: sPath,
+						dataType: "text"
+					});
+					if (!oResult.success) {
+						throw new Error(sPath + ": resource not found");
 					}
-					sMessage = mMessageForPath[sPath];
-					oHeaders["Content-Type"] = oHeaders["Content-Type"] || contentType(sPath);
-				} else {
-					sMessage = oResponse.message || "";
+					mMessageForPath[sPath] = sMessage = oResult.data;
 				}
-				mUrls[sUrl] = [oResponse.code || 200, oHeaders, sMessage];
+				return sMessage;
+			}
+
+			function setupServer() {
+				var fnRestore,
+					oServer,
+					mUrls = buildResponses(mFixture, false),
+					sUrl;
+
+				// set up the fake server
+				oServer = oSandbox.useFakeServer();
+				oServer.autoRespond = true;
+
+				for (sUrl in mUrls) {
+					oServer.respondWith(sUrl, mUrls[sUrl]);
+				}
+
+				// wrap oServer.restore to also clear the filter
+				fnRestore = oServer.restore;
+				oServer.restore = function () {
+					sinon.FakeXMLHttpRequest.filters = []; // no API to clear the filter
+					fnRestore.apply(this, arguments); // call the original restore
+				};
 			}
 
 			//TODO remove this workaround in IE9 for
 			// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
 			sinon.xhr.supportsCORS = true;
 
-			// set up the fake server
-			oServer = oSandbox.useFakeServer();
-			for (sUrl in mUrls) {
-				oServer.respondWith(sUrl, mUrls[sUrl]);
-			}
-			oServer.autoRespond = true;
+			sBase = "/" + window.location.pathname.split("/")[1] + "/test-resources/" + sBase + "/";
+			setupServer();
 
 			// set up a filter so that other requests (e.g. from jQuery.sap.require) go through
 			sinon.FakeXMLHttpRequest.useFilters = true;
@@ -213,12 +274,6 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 				return !(sUrl in mFixture); // do not fake if URL is unknown
 			});
 
-			// wrap oServer.restore to also clear the filter
-			fnRestore = oServer.restore;
-			oServer.restore = function () {
-				sinon.FakeXMLHttpRequest.filters = []; // no API to clear the filter
-				fnRestore.apply(this, arguments); // call the original restore
-			};
 		},
 
 		/**

@@ -198,9 +198,10 @@ sap.ui.define([
 
 		if (!isRangeInContext(iStart, iLength)) {
 			oPromise = this.oCache
-				? this.oCache.read(iStart, iLength, undefined, function () {
+				? this.oCache.read(iStart, iLength, "", undefined, function () {
 						bDataRequested = true;
 						that.fireDataRequested();
+						that.oModel.addedRequestToGroup("");
 					})
 				: oContext.requestValue(this.getPath());
 			oPromise.then(createContexts).then(function () {
@@ -292,7 +293,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.requestValue = function (sPath, iIndex) {
 		return this.oCache
-			? this.oCache.read(iIndex, /*iLength*/1, sPath)
+			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath)
 			: this.getContext().requestValue(this.getPath() + "/" + iIndex
 				+ (sPath ? "/" + sPath : ""));
 	};

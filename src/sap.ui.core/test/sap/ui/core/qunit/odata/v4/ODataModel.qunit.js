@@ -389,6 +389,18 @@ sap.ui.require([
 				oModel.getContext();
 			}, new Error("Cannot get context at model"));
 		});
+
+	//*********************************************************************************************
+	QUnit.test("addedRequestToGroup", function (assert) {
+		var oError = new Error("Error in submitBatch"),
+			sGroupId = "group",
+			oModel = createModel();
+
+		this.mock(oModel.oRequestor).expects("submitBatch")
+			.withExactArgs(sGroupId, true);
+
+		assert.strictEqual(oModel.addedRequestToGroup(sGroupId), undefined);
+	});
 });
 // TODO constructor: sDefaultBindingMode, mSupportedBindingModes
 // TODO constructor: test that the service root URL is absolute?

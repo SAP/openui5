@@ -46,13 +46,16 @@ sap.ui.define([
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
 					"$metadata" : {source : "metadata.xml" },
-					"BusinessPartnerList?$skip=0&$top=100" : {source : "BusinessPartnerList.json"},
+					"$batch" : {
+						"SalesOrderList\?$expand=SO_2_BP\&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=0&$top=5" : {
+							source : "SalesOrderAndBusinessPartnerList.txt"
+						},
+						"SalesOrderList?$expand=SO_2_BP&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=5&$top=5" : {
+							source : "SalesOrderListNoMoreData.txt"
+						}
+					},
 					"ProductList('HT-1000')/Name" : {source : "Product_Name.json"},
 					// TODO enhance TestUtils to support also regular expressions as URLs
-					"SalesOrderList\?$expand=SO_2_BP\&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=0&$top=5"
-						: {source : "SalesOrderList.json"},
-					"SalesOrderList?$expand=SO_2_BP&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=6&$top=4"
-						: {source : "SalesOrderListNoMoreData.json"},
 					"SalesOrderList(SalesOrderID='0500000002')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
 						: {source : "SalesOrderList_0.json"},
 					"SalesOrderList(SalesOrderID='0500000003')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
