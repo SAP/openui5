@@ -6,16 +6,18 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Control',
+	'sap/ui/dt/MutationObserver',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/DOMUtil',
 	'jquery.sap.dom'
 ],
-function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
+function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	"use strict";
 
 	var sOverlayContainerId = "overlay-container";
 	var oOverlayContainer;
+	var oMutationObserver;
 
 	/**
 	 * Constructor for an Overlay.
@@ -146,6 +148,26 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		}
 
 		oOverlayContainer = null;
+	};
+
+	/**
+	 * @static
+	 */
+	Overlay.getMutationObserver = function() {
+		if (!oMutationObserver) {
+			oMutationObserver = new MutationObserver();
+		}
+		return oMutationObserver;
+	};
+
+	/**
+	 * @static
+	 */
+	Overlay.destroyMutationObserver = function() {
+		if (oMutationObserver) {
+			oMutationObserver.destroy();
+			oMutationObserver = null;
+		}
 	};
 
 	/**
@@ -421,27 +443,27 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	Overlay.prototype._updateDom = function() {
 		var $this = this.$();
 
-		var oParent = this.getParent();
-		if (oParent) {
-			if (oParent.getDomRef) {
-				var oParentDomRef = oParent.getDomRef();
-				if (oParentDomRef !== this.$().parent().get(0)) {
-					$this.appendTo(oParentDomRef);
-				}
-			} else {
-				// instead of adding the created DOM into the UIArea's DOM, we are adding it to overlay-container to avoid clearing of the DOM
-				var oOverlayContainer = Overlay.getOverlayContainer();
-				var $parent = $this.parent();
-				var oParentElement = $parent.length ? $parent.get(0) : null;
-				if (oOverlayContainer !== oParentElement) {
-					$this.appendTo(oOverlayContainer);
-				}
-				this.applyStyles();
+		if (!this.isRoot()) {
+			var oParent = this.getParent();
+			var oParentDomRef = oParent.getDomRef();
+			if (oParentDomRef !== this.$().parent().get(0)) {
+				$this.appendTo(oParentDomRef);
 			}
+		} else {
+			// instead of adding the created DOM into the UIArea's DOM, we are adding it to overlay-container to avoid clearing of the DOM
+			var oOverlayContainer = Overlay.getOverlayContainer();
+			var $parent = $this.parent();
+			var oParentElement = $parent.length ? $parent.get(0) : null;
+			if (oOverlayContainer !== oParentElement) {
+				$this.appendTo(oOverlayContainer);
+			}
+			this.applyStyles();
 		}
 	};
 
-
+	/**
+	 * @private
+	 */
 	Overlay.prototype._onScroll = function() {
 		var oGeometry = this.getGeometry();
 		var oDomRef = oGeometry ? oGeometry.domRef : null;
@@ -514,6 +536,19 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype.isVisible = function() {
 		return this.getVisible();
+	};
+
+	/**
+	 * Returns if overlay is root
+	 * @public
+	 */
+	Overlay.prototype.isRoot = function() {
+		var oParent = this.getParent();
+		if (oParent) {
+			if (!oParent.getDomRef) {
+				return true;
+			}
+		}
 	};
 
 	return Overlay;

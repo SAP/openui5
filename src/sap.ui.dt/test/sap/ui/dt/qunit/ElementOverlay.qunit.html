@@ -37,6 +37,7 @@
 			jQuery.sap.require("sap.ui.dt.DOMUtil");
 			jQuery.sap.require("sap.m.Button");
 			jQuery.sap.require("sap.m.Page");
+			jQuery.sap.require("sap.ui.layout.VerticalLayout");
 			jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 			jQuery.sap.require("sap.ui.dt.ElementDesignTimeMetadata");
 
@@ -231,6 +232,51 @@
 				this.oOverlay.onAfterRendering = function() {
 					var vOriginalReturn = fnOriginalOnAfterRendering.apply(this, arguments);
 					assert.ok(this.$().is(":visible"), "the overlay is also visible in DOM");
+
+					done();
+					return vOriginalReturn;
+				};
+			});
+
+			QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
+				beforeEach : function(assert) {
+					var that = this;
+					var done = assert.async();
+					this.oLabel = new sap.m.Label({text : "text"});
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel] });
+					this.oVerticalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					this.oVerticalLayout.$().css("display", "none");
+
+					sap.ui.dt.Preloader.load(["sap.m.oLabel"]).then(function() {
+						that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
+							element : that.oVerticalLayout
+						});
+						that.oLabelOverlay = new sap.ui.dt.ElementOverlay({
+							element : that.oLabel
+						});
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+				},
+				afterEach : function() {
+					this.oVerticalLayout.destroy();
+					this.oLayoutOverlay.destroy();
+					this.oLabelOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the layout's domRef is changed to visible...", function(assert) {
+				var that = this;
+				var done = assert.async();
+
+				this.oVerticalLayout.$().css("display", "block");
+
+				var fnOriginalOnAfterRendering =  this.oLabelOverlay.onAfterRendering;
+				this.oLabelOverlay.onAfterRendering = function() {
+					var vOriginalReturn = fnOriginalOnAfterRendering.apply(this, arguments);
+					assert.ok(that.oLayoutOverlay.$(), "the layout's overlay is also in DOM");
+					assert.ok(this.$(), "layout children's overlay is also in DOM");
 
 					done();
 					return vOriginalReturn;
