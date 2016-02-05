@@ -2473,7 +2473,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					vHeaderSpan = [vHeaderSpan];
 				}
 				jQuery.each(vHeaderSpan, function(iSpanIndex, iSpan) {
-					vHeaderSpan[iSpanIndex] = Math.max((iSpan + iIndex > aVisibleColumns.length) ? Math.min(iSpan, aVisibleColumns.length - iIndex) : iSpan, 1);
+					vHeaderSpan[iSpanIndex] = Math.max(iSpan, 1);
 				});
 
 				aSpans = vHeaderSpan;
