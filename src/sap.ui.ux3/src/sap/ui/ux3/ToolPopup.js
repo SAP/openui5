@@ -815,9 +815,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 							oPopRect = oThis.$().rect(),
 							oOpener = jQuery.sap.byId(oThis.getOpener()),
 							oOpenerRect = oOpener.rect(),
-							popupBorderLeft,
-							popupBorderRight,
-							popupBorderTop,
+							popupBorder = 0,
 							$Arrow = oThis.$("arrow");
 
 					if (!oThis.getDomRef()) {
@@ -851,10 +849,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 						sKey = "top";
 
 						if (oOpenerRect) {
-							popupBorderTop = parseInt(oThis.$().css('border-top'), 10);
-							iZero = parseInt(oOpenerRect.top - popupBorderTop - oPopRect.top, 10);
+							popupBorder = parseInt(oThis.$().css('border-top-width'), 10) || 0;
+							iZero = parseInt(oOpenerRect.top - popupBorder - oPopRect.top, 10);
 
-							iVal = Math.round(iZero + oOpenerRect.height / 2);
+							iVal = Math.round(iZero + oOpenerRect.height / 2 - iHalfArrow);
 
 							// if the position would exceed the ToolPopup's height
 							iVal = iVal + iHalfArrow > oPopRect.height ? iVal - oThis.iArrowHeight : iVal;
@@ -864,13 +862,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 						sKey = "left";
 
 						if (oOpenerRect) {
-							popupBorderLeft = parseInt(oThis.$().css('border-left'), 10);
-							popupBorderRight = parseInt(oThis.$().css('border-right'), 10);
 							if (isRTL) {
 								sKey = "right";
-								iZero = parseInt(oPopRect.left + oPopRect.width - oOpenerRect.left - oOpenerRect.width - popupBorderRight, 10);
+								popupBorder = parseInt(oThis.$().css('border-right-width'), 10) || 0;
+								iZero = parseInt(oPopRect.left + oPopRect.width - oOpenerRect.left - oOpenerRect.width - popupBorder, 10);
 							} else {
-								iZero = parseInt(oOpenerRect.left - oPopRect.left - popupBorderLeft, 10);
+								popupBorder = parseInt(oThis.$().css('border-left-width'), 10) || 0;
+								iZero = parseInt(oOpenerRect.left - oPopRect.left - popupBorder, 10);
 							}
 
 							iVal = Math.round(iZero + oOpenerRect.width / 2 - iHalfArrow);
@@ -917,7 +915,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					}
 
 					iVal = parseInt(iVal, 10);
-					iVal = iVal < 0 ? 0 : iVal;
+					iVal = iVal < -popupBorder ? -popupBorder : iVal;
 
 					$Arrow.css(sKey, iVal + "px");
 				};
