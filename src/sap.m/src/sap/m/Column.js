@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The column allows to define column specific properties that will be applied when rendering the List.
+	 * The <code>sap.m.Column</code> allows to define column specific properties that will be applied when rendering the <code>sap.m.Table</code>.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
