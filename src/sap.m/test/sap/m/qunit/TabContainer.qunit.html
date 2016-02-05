@@ -190,6 +190,13 @@
 			}
 		});
 
+		test("Initialization without parameters", function () {
+			var oTabContainer = new sap.m.TabContainer();
+			strictEqual(typeof oTabContainer === 'object', true, 'Sucessfully initialized.');
+			oTabContainer.destroy();
+			oTabContainer = null;
+		});
+
 		test("Rerendering", function () {
 			var oItem = this.oTabContainer._getTabStrip().getItems()[0];
 			var sName = oItem.getText();
