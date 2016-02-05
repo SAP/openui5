@@ -172,21 +172,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the (base) context which is used when the binding path is relative. This triggers a
-	 * {@link #checkUpdate} resulting in an asynchronous change event if the bound context changes.
-	 * Dependent bindings then will react and also check for updates.
+	 * Sets the (base) context which is used when the binding path is relative.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @protected
 	 */
 	ODataContextBinding.prototype.setContext = function (oContext) {
-		// only trigger an update if this context can change something
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
 			if (this.isRelative()) {
-				// TODO not tested
-				this.checkUpdate(false);
+				throw new Error("Nested context bindings are not supported");
 			}
 		}
 	};
