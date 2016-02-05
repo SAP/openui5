@@ -88,14 +88,19 @@ sap.ui.define(['jquery.sap.global'],
 						"aria-orientation=\"" + (bHorizontal ? "vertical" : "horizontal") + "\" " +
 						"tabindex=\"0\">"
 				);
-				// Icon ID must start with sId + "-splitbar-" + i so that the target is recognized for resizing
-				oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
-					"id" : sId + "-splitbar-" + i + "-icon",
-					// prevent any tooltip / ARIA attributes on the icon as they
-					// are already set on the outer div
-					"title" : null,
-					"aria-label" : null
-				});
+
+				if (oControl._bUseIconForSeparator) {
+					// Icon ID must start with sId + "-splitbar-" + i so that the target is recognized for resizing
+					oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
+						"id" : sId + "-splitbar-" + i + "-icon",
+						// prevent any tooltip / ARIA attributes on the icon as they
+						// are already set on the outer div
+						"title" : null,
+						"aria-label" : null
+					});
+				} else {
+					oRm.write("<span class='sapUiLoSplitterBarIcon'></span>");
+				}
 				oRm.write("</div>");
 			}
 		}
@@ -104,14 +109,19 @@ sap.ui.define(['jquery.sap.global'],
 			"<div id=\"" + sId + "-overlay\" class=\"sapUiLoSplitterOverlay\" style=\"display: none;\">" +
 			"<div id=\"" + sId + "-overlayBar\" class=\"sapUiLoSplitterOverlayBar\">"
 		);
-		// Icon ID must start with sId + "-splitbar" so that the target is recognized for resizing
-		oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
-			"id" : sId + "-splitbar-Overlay-icon",
-			// prevent any tooltip / ARIA attributes on the icon as they
-			// are already set on the outer div
-			"title" : null,
-			"aria-label" : null
-		});
+
+		if (oControl._bUseIconForSeparator) {
+			// Icon ID must start with sId + "-splitbar" so that the target is recognized for resizing
+			oRm.writeIcon(sGripIcon, "sapUiLoSplitterBarIcon", {
+				"id" : sId + "-splitbar-Overlay-icon",
+				// prevent any tooltip / ARIA attributes on the icon as they
+				// are already set on the outer div
+				"title" : null,
+				"aria-label" : null
+			});
+		} else {
+			oRm.write("<span class=\"sapUiLoSplitterBarIcon\"></span>");
+		}
 		oRm.write(
 			"</div>" +
 			"</div>"
