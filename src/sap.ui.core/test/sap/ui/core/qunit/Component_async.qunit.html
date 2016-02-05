@@ -55,9 +55,6 @@
 		jQuery("SCRIPT[data-sap-ui-module^='sap/test/']").remove();
 	}
 
-	// Initialization
-	sinon.config.useFakeTimers = true;
-
 	QUnit.module("Async (Pre-)Loading", {
 		afterEach: function() {
 			unloadResources();
@@ -231,7 +228,6 @@
 			}
 		};
 
-
 		var oServer = this.sandbox.useFakeServer();
 		oServer.useFilters = true;
 		oServer.autoRespond = true;
@@ -252,9 +248,6 @@
 			manifestUrl : "/anylocation/manifest.json",
 			async: true
 		});
-
-		this.clock.tick(1);
-		oServer.respond();
 
 		var oDone = assert.async();
 
