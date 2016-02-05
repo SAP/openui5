@@ -30,120 +30,146 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 			jQuery.sap.require("sap.ui.dt.DesignTime");
+			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+			var Preloader = sap.ui.dt.Preloader;
 			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
 
-			QUnit.module("Given that overlays are created for a form with formContainers", {
-				beforeEach : function() {
-					this.oElement1 = new sap.ui.layout.form.FormElement({
-						label: new sap.ui.commons.Label({text:"Label0"}),
-						fields: [new sap.ui.commons.TextField({required:true})]
-					});
-
-					this.oFormContainer1 = new sap.ui.layout.form.FormContainer({
-						title: "Container1",
-						formElements: [
-							this.oElement1,
-							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"Label1"}),
-								fields: [new sap.ui.commons.TextField({required:true})]
-							})
-						]
-					});
-
-					this.oFormContainer2 = new sap.ui.layout.form.FormContainer({
-						title: "Container2",
-						formElements: [
-							new sap.ui.layout.form.FormElement({
-								label: "Label0",
-								fields: [new sap.ui.commons.TextField({required:true})]
-							}),
-							new sap.ui.layout.form.FormElement({
-								label: new sap.ui.commons.Label({text:"Label1"}),
-								fields: [new sap.ui.commons.TextField( {required:true})]
-							})
-						]
-					});
-
-					this.oFormContainer3 = new sap.ui.layout.form.FormContainer({
-						title: new sap.ui.commons.Title({text: "Container3", level: sap.ui.commons.TitleLevel.H3}),
-						tooltip: "Container tooltip",
-						expandable: true,
-						formElements: [
-							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.CheckBox({text: 'one'}),
-								         new sap.ui.commons.CheckBox({text: 'two'})]
-							}),
-							new sap.ui.layout.form.FormElement({
-								fields: [new sap.ui.commons.CheckBox({text: 'three'})]
-							})
-						]
-					});
-
-					this.oForm = new sap.ui.layout.form.Form({
-						tooltip: "Form tooltip",
-						formContainers: [
-							this.oFormContainer1,
-							this.oFormContainer2,
-							this.oFormContainer3
-						]
-					}).placeAt("content");
-
-					this.oFormDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [this.oForm]
-					});
+			// ----- ResponsiveLayout -----
+			QUnit.module("Given that overlays are created for a form with ResponsiveLayout with formContainers", {
+				beforeEach : function(assert) {
+					initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.ResponsiveLayout());
 				},
 				afterEach : function() {
-					this.oElement1.destroy();
-					this.oFormContainer1.destroy();
-					this.oFormContainer2.destroy();
-					this.oFormContainer3.destroy();
-					this.oLayout.destroy();
-					this.oForm.destroy();
-					this.oFormDesignTime.destroy();
+					cleanup.call(this);
 				}
 			});
 
-			QUnit.test("when rendering is finished and ResponsiveLayout is used withing a Form, overlays are visible and ...", function(assert) {
-				if (this.oLayout) {
-					this.oLayout.destroy();
-				}
-				this.oLayout = new sap.ui.layout.form.ResponsiveLayout();
-				this.oForm.setLayout(this.oLayout);
-				sap.ui.getCore().applyChanges();
+			QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
 				testFormHierarchyWithDesignTime.call(this);
 			});
 
-
-			QUnit.test("when rendering is finished and ResponsiveGridLayout is used withing a Form, overlays are visible and ...", function(assert) {
-				if (this.oLayout) {
-					this.oLayout.destroy();
+			// ----- ResponsiveGridLayout -----
+			QUnit.module("Given that overlays are created for a form with ResponsiveGridLayout with formContainers", {
+				beforeEach : function(assert) {
+					initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.ResponsiveGridLayout());
+				},
+				afterEach : function() {
+					cleanup.call(this);
 				}
-				this.oLayout = new sap.ui.layout.form.ResponsiveGridLayout();
-				this.oForm.setLayout(this.oLayout);
-				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
 				testFormHierarchyWithDesignTime.call(this);
 			});
 
-			QUnit.test("when rendering is finished and FormLayout is used withing a Form, overlays are visible and ...", function(assert) {
-				if (this.oLayout) {
-					this.oLayout.destroy();
+			// ----- FormLayout -----
+			QUnit.module("Given that overlays are created for a form with FormLayout with formContainers", {
+				beforeEach : function(assert) {
+					initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.FormLayout());
+				},
+				afterEach : function() {
+					cleanup.call(this);
 				}
-				this.oLayout = new sap.ui.layout.form.FormLayout();
-				this.oForm.setLayout(this.oLayout);
-				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
 				testFormHierarchyWithDesignTime.call(this);
 			});
 
-			QUnit.test("when rendering is finished and GridLayout is used withing a Form, overlays are visible and ...", function(assert) {
-				if (this.oLayout) {
-					this.oLayout.destroy();
+			// ----- GridLayout -----
+			QUnit.module("Given that overlays are created for a form with GridLayout with formContainers", {
+				beforeEach : function(assert) {
+					initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.GridLayout());
+				},
+				afterEach : function() {
+					cleanup.call(this);
 				}
-				this.oLayout = new sap.ui.layout.form.GridLayout();
-				this.oForm.setLayout(this.oLayout);
-				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
 				testFormHierarchyWithDesignTime.call(this);
 			});
+
+			// ----- Utils -----
+			var initFormWithGivenLayout = function(assert, oLayout) {
+				var that = this;
+				var done = assert.async();
+
+				this.oElement1 = new sap.ui.layout.form.FormElement({
+					label: new sap.ui.commons.Label({text:"Label0"}),
+					fields: [new sap.ui.commons.TextField({required:true})]
+				});
+
+				this.oFormContainer1 = new sap.ui.layout.form.FormContainer({
+					title: "Container1",
+					formElements: [
+						this.oElement1,
+						new sap.ui.layout.form.FormElement({
+							label: new sap.ui.commons.Label({text:"Label1"}),
+							fields: [new sap.ui.commons.TextField({required:true})]
+						})
+					]
+				});
+
+				this.oFormContainer2 = new sap.ui.layout.form.FormContainer({
+					title: "Container2",
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							label: "Label0",
+							fields: [new sap.ui.commons.TextField({required:true})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							label: new sap.ui.commons.Label({text:"Label1"}),
+							fields: [new sap.ui.commons.TextField( {required:true})]
+						})
+					]
+				});
+
+				this.oFormContainer3 = new sap.ui.layout.form.FormContainer({
+					title: new sap.ui.commons.Title({text: "Container3", level: sap.ui.commons.TitleLevel.H3}),
+					tooltip: "Container tooltip",
+					expandable: true,
+					formElements: [
+						new sap.ui.layout.form.FormElement({
+							fields: [new sap.ui.commons.CheckBox({text: 'one'}),
+							         new sap.ui.commons.CheckBox({text: 'two'})]
+						}),
+						new sap.ui.layout.form.FormElement({
+							fields: [new sap.ui.commons.CheckBox({text: 'three'})]
+						})
+					]
+				});
+
+				this.oForm = new sap.ui.layout.form.Form({
+					tooltip: "Form tooltip",
+					layout : oLayout,
+					formContainers: [
+						this.oFormContainer1,
+						this.oFormContainer2,
+						this.oFormContainer3
+					]
+				}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var aElements = sap.ui.dt.ElementUtil.findAllPublicElements(this.oForm);
+				Preloader.load(aElements).then(function() {
+					that.oFormDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [that.oForm]
+					});
+					sap.ui.getCore().applyChanges();
+					done();
+				});
+			};
+
+			var cleanup = function() {
+				this.oElement1.destroy();
+				this.oFormContainer1.destroy();
+				this.oFormContainer2.destroy();
+				this.oFormContainer3.destroy();
+				this.oForm.destroy();
+				this.oFormDesignTime.destroy();
+			};
 
 			var testFormHierarchyWithDesignTime = function() {
 				var oFormOverlay = OverlayRegistry.getOverlay(this.oForm.getId());
