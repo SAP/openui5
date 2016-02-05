@@ -273,10 +273,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	};
 
 	/**
-	 * @description Downloads the item.
+	 * Downloads the item.
+	 * The sap.ui.core.util.File method is used here. For further details on this method, see {sap.ui.core.util.File.save}.
 	 * @param {boolean} askForLocation Decides whether to ask for a location to download or not.
 	 * @since 1.36.0
-	 * @experimental
 	 * @public
 	 */
 	UploadCollectionItem.prototype.download = function(askForLocation) {
