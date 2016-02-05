@@ -61,13 +61,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 					defaultValue : false
 				},
 				/**
-				 * Whether the ElementOverlay can get the browser focus (tabindex)
-				 */
-				focusable : {
-					type : "boolean",
-					defaultValue : false
-				},
-				/**
 				 * Whether the ElementOverlay is movable
 				 */
 				movable : {
@@ -122,14 +115,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				selectableChange : {
 					parameters : {
 						selectable : { type : "boolean" }
-					}
-				},
-				/**
-				 * Event fired when the property "Focusable" is changed
-				 */
-				focusableChange : {
-					parameters : {
-						focusable : { type : "boolean" }
 					}
 				},
 				/**
@@ -284,20 +269,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 					selected : bSelected
 				});
 			}
-		}
-
-		return this;
-	};
-	/**
-	 * Sets whether the ElementOverlay can get the browser focus (tabindex)
-	 * @param {boolean} bFocusable if the ElementOverlay is focusable
-	 * @returns {sap.ui.dt.ElementOverlay} returns this
-	 * @public
-	 */
-	ElementOverlay.prototype.setFocusable = function(bFocusable) {
-		if (this.isFocusable() !== bFocusable) {
-			this.setProperty("focusable", bFocusable);
-			this.fireFocusableChange({focusable : bFocusable});
 		}
 
 		return this;
@@ -614,20 +585,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	};
 
 	/**
-	 * @protected
-	 */
-	ElementOverlay.prototype.onAfterRendering = function() {
-		Overlay.prototype.onAfterRendering.apply(this, arguments);
-
-		var bFocusable = this.isFocusable();
-		if (bFocusable) {
-			this.$().attr("tabindex", 0);
-		} else {
-			this.$().attr("tabindex", null);
-		}
-	};
-
-	/**
 	 * Returns if the ElementOverlay is selected
 	 * @public
 	 * @return {boolean} if the ElementOverlay is selected
@@ -643,15 +600,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 */
 	ElementOverlay.prototype.isSelectable = function() {
 		return this.getSelectable();
-	};
-
-	/**
-	 * Returns if the ElementOverlay is can get the focus
-	 * @public
-	 * @return {boolean} if the ElementOverlay is focusable
-	 */
-	ElementOverlay.prototype.isFocusable = function() {
-		return this.getFocusable();
 	};
 
 	/**
