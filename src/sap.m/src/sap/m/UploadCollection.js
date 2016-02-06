@@ -710,6 +710,30 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 	};
 
+	UploadCollection.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+		if (!this.getInstantUpload() && sAggregationName === "items" && vObject) {
+			this._aDeletedItemForPendingUpload.push(vObject);
+		}
+		if (Control.prototype.removeAggregation) {
+			return Control.prototype.removeAggregation.apply(this, arguments);
+		}
+	};
+
+	UploadCollection.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
+		if (!this.getInstantUpload() && sAggregationName === "items") {
+			if (this._aFileUploadersForPendingUpload) {
+				for (var i = 0; i < this._aFileUploadersForPendingUpload.length; i++) {
+					this._aFileUploadersForPendingUpload[i].destroy();
+					this._aFileUploadersForPendingUpload[i] = null;
+				}
+				this._aFileUploadersForPendingUpload = [];
+			}
+		}
+		if (Control.prototype.removeAllAggregation) {
+			return Control.prototype.removeAllAggregation.apply(this, arguments);
+		}
+	};
+
 	/* =========================================================== */
 	/* Lifecycle methods                                           */
 	/* =========================================================== */
@@ -2260,8 +2284,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		};
 		oEvent.getParameter("requestHeaders").push(oRequestHeaders);
 
-		var iDeletedItemForPendingUploadLength = this._aDeletedItemForPendingUpload.length;
-		for ( i = 0; i < iDeletedItemForPendingUploadLength; i++ ) {
+		for ( i = 0; i < this._aDeletedItemForPendingUpload.length; i++ ) {
 			if (this._aDeletedItemForPendingUpload[i].getAssociation("fileUploader") === oEvent.oSource.sId &&
 					this._aDeletedItemForPendingUpload[i].getFileName() === sFileName &&
 					this._aDeletedItemForPendingUpload[i]._internalFileIndexWithinFileUploader === this._iUploadStartCallCounter){
