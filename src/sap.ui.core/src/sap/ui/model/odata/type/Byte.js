@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	function(Int) {
 	"use strict";
 
-	var oRange = {minimum: 0, maximum: 255};
+	var oRange = {minimum : 0, maximum : 255};
 
 	/**
 	 * Constructor for a primitive type <code>Edm.Byte</code>.

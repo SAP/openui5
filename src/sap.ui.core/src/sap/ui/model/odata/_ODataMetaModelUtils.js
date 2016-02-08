@@ -72,7 +72,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					"work" : "work"
 				},
 				v4EnumType : "com.sap.vocabularies.Communication.v1.ContactInformationType",
-				v4PropertyAnnotation: "com.sap.vocabularies.Communication.v1.IsEmailAddress"
+				v4PropertyAnnotation : "com.sap.vocabularies.Communication.v1.IsEmailAddress"
 			},
 			"tel" : {
 				typeMapping : {
@@ -85,7 +85,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 					"work" : "work"
 				},
 				v4EnumType : "com.sap.vocabularies.Communication.v1.PhoneType",
-				v4PropertyAnnotation: "com.sap.vocabularies.Communication.v1.IsPhoneNumber"
+				v4PropertyAnnotation : "com.sap.vocabularies.Communication.v1.IsPhoneNumber"
 			}
 		},
 		// map from v2 to v4 for NON-DEFAULT cases only
@@ -162,7 +162,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {boolean} bDeepCopy
 		 *   if true the annotation is mixed in as deep copy of the entry in mV2ToV4 map
 		 */
-		addEntitySetAnnotation: function (o, oExtension, sTypeClass, sNonDefaultValue, bDeepCopy) {
+		addEntitySetAnnotation : function (o, oExtension, sTypeClass, sNonDefaultValue, bDeepCopy) {
 			if (sTypeClass === "EntitySet" && oExtension.value === sNonDefaultValue) {
 				// potentially nested structure so do deep copy
 				if (bDeepCopy) {
@@ -183,7 +183,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oEntitySet
 		 *   the entity set to which the corresponding v4 annotations needs to be added
 		 */
-		addFilterRestriction: function (oProperty, oEntitySet) {
+		addFilterRestriction : function (oProperty, oEntitySet) {
 			var aFilterRestrictions,
 				sFilterRestrictionValue = mFilterRestrictions[oProperty["sap:filter-restriction"]];
 
@@ -201,9 +201,9 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 				oEntitySet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"] || [];
 
 			aFilterRestrictions.push({
-				"Property": { "PropertyPath": oProperty.name},
-				"AllowedExpressions": {
-					"EnumMember": "com.sap.vocabularies.Common.v1.FilterExpressionType/"
+				"Property" : { "PropertyPath" : oProperty.name},
+				"AllowedExpressions" : {
+					"EnumMember" : "com.sap.vocabularies.Common.v1.FilterExpressionType/"
 						+ sFilterRestrictionValue
 				}
 			});
@@ -221,7 +221,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oProperty
 		 *   the property of the entity
 		 */
-		addPropertyToAnnotation: function (sV2AnnotationName, oEntitySet, oProperty) {
+		addPropertyToAnnotation : function (sV2AnnotationName, oEntitySet, oProperty) {
 			var aNames = mV2ToV4PropertyCollection[sV2AnnotationName],
 				sTerm = aNames[0],
 				sCollection = aNames[1],
@@ -239,7 +239,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oType
 		 *   the entity type or the complex type for which sap:semantics needs to be added
 		 */
-		addSapSemantics: function (oType) {
+		addSapSemantics : function (oType) {
 			if (oType.property) {
 				oType.property.forEach(function (oProperty) {
 					var aAnnotationParts,
@@ -321,7 +321,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object[]} aProperties
 		 *   the array of properties containing the unit
 		 */
-		addUnitAnnotation: function (oValueProperty, aProperties) {
+		addUnitAnnotation : function (oValueProperty, aProperties) {
 			var sUnitProperty = oValueProperty["sap:unit"],
 				i = Utils.findIndex(aProperties, sUnitProperty),
 				oUnit;
@@ -350,7 +350,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   the type class of the given object; supported type classes are "Property" and
 		 *   "EntitySet"
 		 */
-		addV4Annotation: function (o, oExtension, sTypeClass) {
+		addV4Annotation : function (o, oExtension, sTypeClass) {
 			var sTerm;
 			switch (oExtension.name) {
 				case "display-format":
@@ -429,7 +429,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oEntityType
 		 *   the corresponding entity type
 		 */
-		calculateEntitySetAnnotations: function (oEntitySet, oEntityType) {
+		calculateEntitySetAnnotations : function (oEntitySet, oEntityType) {
 			if (oEntityType.property) {
 				oEntityType.property.forEach(function (oProperty) {
 					if (oProperty["sap:filterable"] === "false") {
@@ -462,7 +462,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @returns {number}
 		 *   the index of the object found or <code>-1</code> if no such object is found
 		 */
-		findIndex: function (aArray, vExpectedPropertyValue, sPropertyName) {
+		findIndex : function (aArray, vExpectedPropertyValue, sPropertyName) {
 			var iIndex = -1;
 
 			sPropertyName = sPropertyName || "name";
@@ -491,7 +491,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @returns {object}
 		 *   the object found or <code>null</code> if no such object is found
 		 */
-		findObject: function (aArray, vExpectedPropertyValue, sPropertyName) {
+		findObject : function (aArray, vExpectedPropertyValue, sPropertyName) {
 			var iIndex = Utils.findIndex(aArray, vExpectedPropertyValue, sPropertyName);
 
 			return iIndex < 0 ? null : aArray[iIndex];
@@ -510,7 +510,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @returns {object}
 		 *   the map from child name to annotations
 		 */
-		getChildAnnotations: function (oAnnotations, sQualifiedName, bInContainer) {
+		getChildAnnotations : function (oAnnotations, sQualifiedName, bInContainer) {
 			var o = bInContainer
 				? oAnnotations.EntityContainer
 				: oAnnotations.propertyAnnotations;
@@ -532,7 +532,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   (the path to) the thing with the given qualified name; <code>undefined</code> (for a
 		 *   path) or <code>null</code> (for an object) if no such thing is found
 		 */
-		getFromContainer: function (oEntityContainer, sArrayName, sName, bAsPath) {
+		getFromContainer : function (oEntityContainer, sArrayName, sName, bAsPath) {
 			var k,
 				vResult = bAsPath ? undefined : null;
 
@@ -564,7 +564,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   (the path to) the thing with the given qualified name; <code>undefined</code> (for a
 		 *   path) or <code>null</code> (for an object) if no such thing is found
 		 */
-		getObject: function (vModel, sArrayName, sQualifiedName, bAsPath) {
+		getObject : function (vModel, sArrayName, sQualifiedName, bAsPath) {
 			var aArray,
 				vResult = bAsPath ? undefined : null,
 				oSchema,
@@ -602,7 +602,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @returns {object}
 		 *   the schema with the given namespace; <code>null</code> if no such schema is found
 		 */
-		getSchema: function (vModel, sNamespace) {
+		getSchema : function (vModel, sNamespace) {
 			var oSchema = null,
 				aSchemas = Array.isArray(vModel)
 					? vModel
@@ -637,7 +637,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   returns an empty string if the sap:semantics value is not supported; unsupported types
 		 *   are logged and skipped;
 		 */
-		getV4TypesForV2Semantics: function (sSemantics, sTypesList, oProperty, oType) {
+		getV4TypesForV2Semantics : function (sSemantics, sTypesList, oProperty, oType) {
 			var aResult = [],
 				oV4TypeInfo = mV2SemanticsToV4TypeInfo[sSemantics];
 
@@ -663,7 +663,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oProperty the property
 		 * @returns {object} map of ValueList annotations contained in oProperty
 		 */
-		getValueLists: function (oProperty) {
+		getValueLists : function (oProperty) {
 			var sName,
 				sQualifier,
 				mValueLists = {};
@@ -688,7 +688,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   the type class of the given object; supported type classes are "Property" and
 		 *   "EntitySet"
 		 */
-		liftSAPData: function (o, sTypeClass) {
+		liftSAPData : function (o, sTypeClass) {
 			if (!o.extensions) {
 				return;
 			}
@@ -731,7 +731,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oData
 		 *   meta data "JSON"
 		 */
-		merge: function (oAnnotations, oData) {
+		merge : function (oAnnotations, oData) {
 			var aSchemas = oData.dataServices.schema || [];
 			aSchemas.forEach(function (oSchema, i) {
 				// remove datajs artefact for inline annotations in $metadata
@@ -787,7 +787,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {number} [iStartIndex=0]
 		 *   optional start index in the given array
 		 */
-		visitChildren: function (aChildren, mChildAnnotations, sTypeClass, aSchemas, fnCallback,
+		visitChildren : function (aChildren, mChildAnnotations, sTypeClass, aSchemas, fnCallback,
 				iStartIndex) {
 			if (!aChildren) {
 				return;
@@ -827,7 +827,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} mChildAnnotations
 		 *   map from child name (or role) to annotations
 		 */
-		visitEntityType: function (oEntityType, mChildAnnotations) {
+		visitEntityType : function (oEntityType, mChildAnnotations) {
 			Utils.visitChildren(oEntityType.property, mChildAnnotations, "Property");
 			Utils.visitChildren(oEntityType.navigationProperty, mChildAnnotations);
 			Utils.addSapSemantics(oEntityType);
@@ -845,7 +845,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oFunctionImport
 		 *   a function import's v2 meta data object
 		 */
-		visitParameters: function (oAnnotations, oSchema, oEntityContainer, oFunctionImport) {
+		visitParameters : function (oAnnotations, oSchema, oEntityContainer, oFunctionImport) {
 			var mAnnotations;
 
 			if (!oFunctionImport.parameter) {
@@ -878,7 +878,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {number} [iIndex]
 		 *   optional index of a single parent to visit; default is to visit all
 		 */
-		visitParents: function (oSchema, oAnnotations, sArrayName, fnCallback, iIndex) {
+		visitParents : function (oSchema, oAnnotations, sArrayName, fnCallback, iIndex) {
 			var aParents = oSchema[sArrayName];
 
 			function visitParent(oParent, j) {

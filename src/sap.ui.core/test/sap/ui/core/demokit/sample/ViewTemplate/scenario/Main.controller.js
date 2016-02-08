@@ -21,22 +21,22 @@ sap.ui.define([
 		jQuery.sap.log.error(oError, oError.stack,
 			"sap.ui.core.sample.ViewTemplate.scenario.Main");
 		MessageBox.alert(oError.message, {
-			icon: sap.m.MessageBox.Icon.ERROR,
-			title: "Error"});
+			icon : sap.m.MessageBox.Icon.ERROR,
+			title : "Error"});
 	}
 
 	var MainController = Controller.extend("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 		// Turns an instance's id (full OData URL) into its path within the OData model
-		id2Path: function (sInstanceId) {
+		id2Path : function (sInstanceId) {
 			// Note: if "last /" is wrong, search for this.getView().getModel().sServiceUrl instead!
 			return sInstanceId.slice(sInstanceId.lastIndexOf("/"));
 		},
 
-		onInit: function () {
+		onInit : function () {
 			// Note: cannot access view model in onInit
 		},
 
-		onBeforeRendering: function () {
+		onBeforeRendering : function () {
 			var bIsRealOData,
 				oMetaModel,
 				oView = this.getView(),
@@ -63,11 +63,11 @@ sap.ui.define([
 			}
 		},
 
-		onChangeType: function (oEvent) {
+		onChangeType : function (oEvent) {
 			this._bindSelectInstance();
 		},
 
-		onChangeInstance: function (oEvent) {
+		onChangeInstance : function (oEvent) {
 			var sInstanceId = this.getView().getModel("ui").getProperty("/selectedInstance"),
 				sPath = this.id2Path(sInstanceId);
 
@@ -75,7 +75,7 @@ sap.ui.define([
 			//TODO keep table selection in sync!
 		},
 
-		onSourceCode: function (oEvent) {
+		onSourceCode : function (oEvent) {
 			var oView = this.getView(),
 				sSource,
 				bVisible = oView.byId("toggleSourceCode").getPressed();
@@ -93,15 +93,15 @@ sap.ui.define([
 			}
 		},
 
-		_bindSelectInstance: function () {
+		_bindSelectInstance : function () {
 			var oBinding,
 				oControl = this.getView().byId("selectInstance");
 
 			oControl.bindAggregation("items", {
-				path: "/" + this._getSelectedSet(),
-				template: new ListItem({
-					text: "{path:'__metadata/id', formatter: '.id2Path'}",
-					key: "{__metadata/id}"
+				path : "/" + this._getSelectedSet(),
+				template : new ListItem({
+					text : "{path:'__metadata/id', formatter: '.id2Path'}",
+					key : "{__metadata/id}"
 				}, this)
 			});
 
@@ -114,15 +114,15 @@ sap.ui.define([
 				this);
 		},
 
-		_getDetailView: function () {
+		_getDetailView : function () {
 			return this.getView().byId("detailBox").getContent()[0];
 		},
 
-		_getSelectedSet: function () {
+		_getSelectedSet : function () {
 			return this.getView().getModel("ui").getProperty("/selectedEntitySet");
 		},
 
-		_showDetails: function (sPath) {
+		_showDetails : function (sPath) {
 			var oMetaModel = this.getView().getModel().getMetaModel(),
 				that = this;
 
@@ -134,19 +134,19 @@ sap.ui.define([
 
 				Component.getOwnerComponentFor(that.getView()).runAsOwner(function () {
 					oDetailView = sap.ui.view({
-						preprocessors: {
-							xml: {
-								bindingContexts: {
-									meta: oMetaModel.createBindingContext(sMetadataPath)
+						preprocessors : {
+							xml : {
+								bindingContexts : {
+									meta : oMetaModel.createBindingContext(sMetadataPath)
 								},
-								models: {
-									meta: oMetaModel
+								models : {
+									meta : oMetaModel
 								},
-								bindTexts: that.getView().getModel("ui").getProperty("/bindTexts")
+								bindTexts : that.getView().getModel("ui").getProperty("/bindTexts")
 							}
 						},
-						type: sap.ui.core.mvc.ViewType.XML,
-						viewName: "sap.ui.core.sample.ViewTemplate.scenario.Detail"
+						type : sap.ui.core.mvc.ViewType.XML,
+						viewName : "sap.ui.core.sample.ViewTemplate.scenario.Detail"
 					});
 					oDetailView.bindElement(sPath);
 				});

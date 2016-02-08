@@ -135,8 +135,8 @@ sap.ui.define([
 			return sap.ui.view({
 				async : true,
 				models : {
-					undefined: oModel,
-					ui: new JSONModel({valueHelpDetails: false})
+					undefined : oModel,
+					ui : new JSONModel({valueHelpDetails : false})
 				},
 				type : sap.ui.core.mvc.ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.valuelist.Main"

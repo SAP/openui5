@@ -610,10 +610,10 @@ sap.ui.require([
 			'</mvc:View>'
 		],
 		aDebugMessages : [
-			{m: "[ 0] Start processing qux"},
-			{m: "[ 1] test == undefined --> false", d: 1},
-			{m: "[ 1] Finished", d: 3},
-			{m: "[ 0] Finished processing qux"}
+			{m : "[ 0] Start processing qux"},
+			{m : "[ 1] test == undefined --> false", d : 1},
+			{m : "[ 1] Finished", d : 3},
+			{m : "[ 0] Finished processing qux"}
 		]
 	}, {
 		aViewContent : [
@@ -652,8 +652,8 @@ sap.ui.require([
 						.exactly(bWarn ? 1 : 0); // do not construct arguments in vain!
 
 					window.foo = {
-						Helper: {
-							fail: function (oRawValue) {
+						Helper : {
+							fail : function (oRawValue) {
 								throw oError;
 							}
 						}
@@ -662,11 +662,11 @@ sap.ui.require([
 					if (bWarn && oFixture.aDebugMessages) {
 						checkTracing.call(oLogMock, assert, true, oFixture.aDebugMessages,
 							aViewContent, {
-								models: new JSONModel({flag: true})
+								models : new JSONModel({flag : true})
 							}, vExpected);
 					} else {
 						check.call(oLogMock, assert, aViewContent, {
-							models: new JSONModel({flag: true})
+							models : new JSONModel({flag : true})
 						}, vExpected);
 					}
 				}
@@ -748,7 +748,7 @@ sap.ui.require([
 					.exactly(bWarn ? 1 : 0); // do not construct arguments in vain!
 
 				check.call(oLogMock, assert, aViewContent, {
-					models: new JSONModel()
+					models : new JSONModel()
 				}, vExpected);
 			});
 		});
@@ -757,8 +757,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("Do not process nested template:ifs if not necessary", function (assert) {
 		window.foo = {
-			Helper: {
-				forbidden: function (oRawValue) {
+			Helper : {
+				forbidden : function (oRawValue) {
 					assert.ok(false, "formatter MUST not be called!");
 				}
 			}
@@ -770,7 +770,7 @@ sap.ui.require([
 			'</template:if>',
 			'</mvc:View>'
 		], {
-			models: new JSONModel({flag: true})
+			models : new JSONModel({flag : true})
 		});
 	});
 
@@ -1022,11 +1022,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("binding resolution", function (assert) {
 		window.foo = {
-			Helper: {
-				help: function (vRawValue) {
+			Helper : {
+				help : function (vRawValue) {
 					return vRawValue.String || "{" + vRawValue.Path + "}";
 				},
-				nil: function () {
+				nil : function () {
 					return null;
 				}
 			}
@@ -1050,16 +1050,16 @@ sap.ui.require([
 			'</mvc:View>'
 		], {
 			models: new JSONModel({
-				"com.sap.vocabularies.UI.v1.HeaderInfo": {
-					"TypeImageUrl": {
-						"String": "/coco/apps/main/img/Icons/product_48.png"
+				"com.sap.vocabularies.UI.v1.HeaderInfo" : {
+					"TypeImageUrl" : {
+						"String" : "/coco/apps/main/img/Icons/product_48.png"
 					},
-					"Title": {
-						"Label": {
-							"String": "Customer"
+					"Title" : {
+						"Label" : {
+							"String" : "Customer"
 						},
-						"Value": {
-							"Path": "CustomerName"
+						"Value" : {
+							"Path" : "CustomerName"
 						}
 					}
 				}
@@ -1081,14 +1081,14 @@ sap.ui.require([
 		QUnit.test(
 				"binding resolution: interface to formatter, debug = " + bDebug, function (assert) {
 			var oModel = new JSONModel({
-					"somewhere": {
-						"com.sap.vocabularies.UI.v1.HeaderInfo": {
-							"Title": {
-								"Label": {
-									"String": "Customer"
+					"somewhere" : {
+						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
+							"Title" : {
+								"Label" : {
+									"String" : "Customer"
 								},
-								"Value": {
-									"Path": "CustomerName"
+								"Value" : {
+									"Path" : "CustomerName"
 								}
 							}
 						}
@@ -1313,24 +1313,24 @@ sap.ui.require([
 			other.requiresIContext = "ignored";
 
 			window.foo = {
-				Helper: {
-					formatParts: formatParts,
-					help: help,
-					other: other
+				Helper : {
+					formatParts : formatParts,
+					help : help,
+					other : other
 				}
 			};
 
 			checkTracing.call(this, assert, bDebug, [
-				{m: "[ 0] Start processing qux"},
-				{m: "[ 0] undefined = /somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"},
-				{m: "[ 0] Removed attribute text", d: 1},
-				{m: "[ 0] text = Customer", d: 2},
-				{m: "[ 0] text = Value: {CustomerName}", d: 3},
-				{m: "[ 0] text = Customer: {CustomerName}", d: 4},
-				{m: "[ 0] Binding not ready for attribute text", d: 5},
-				{m: "[ 0] text = [Customer] {CustomerName}", d: 6},
-				{m: "[ 0] text = [Customer]", d: 7},
-				{m: "[ 0] Finished processing qux"}
+				{m : "[ 0] Start processing qux"},
+				{m : "[ 0] undefined = /somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"},
+				{m : "[ 0] Removed attribute text", d : 1},
+				{m : "[ 0] text = Customer", d : 2},
+				{m : "[ 0] text = Value: {CustomerName}", d : 3},
+				{m : "[ 0] text = Customer: {CustomerName}", d : 4},
+				{m : "[ 0] Binding not ready for attribute text", d : 5},
+				{m : "[ 0] text = [Customer] {CustomerName}", d : 6},
+				{m : "[ 0] text = [Customer]", d : 7},
+				{m : "[ 0] Finished processing qux"}
 			], [
 				mvcView(),
 				'<Text text="{formatter: \'foo.Helper.other\', path: \'Title/Label\'}"/>',
@@ -1344,10 +1344,10 @@ sap.ui.require([
 				'<Text text="{formatter: \'foo.Helper.formatParts\', path: \'Title/Label\'}"/>',
 				'</mvc:View>'
 			], {
-				models: oModel,
-				bindingContexts: oModel.createBindingContext(
+				models : oModel,
+				bindingContexts : oModel.createBindingContext(
 						"/somewhere/com.sap.vocabularies.UI.v1.HeaderInfo"),
-				bindTexts: true
+				bindTexts : true
 			}, [
 				'<Text/>',
 				'<Text text="Customer"/>',
@@ -1367,18 +1367,20 @@ sap.ui.require([
 				var oError = new Error("deliberate failure");
 
 				window.foo = {
-						Helper: {
-							fail: function (oRawValue) {
+						Helper : {
+							fail : function (oRawValue) {
 								throw oError;
 							}
 						}
 					};
 
 				checkTracing.call(this, assert, bDebug, [
-					{m: "[ 0] Start processing qux"},
-					{m: sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/), d: 1},
-					{m: sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/), d: 2},
-					{m: "[ 0] Finished processing qux"}
+					{m : "[ 0] Start processing qux"},
+					{m : sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/),
+						d : 1},
+					{m : sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/),
+						d : 2},
+					{m : "[ 0] Finished processing qux"}
 				], [
 					mvcView(),
 					'<In text="{formatter: \'foo.Helper.fail\','
@@ -1387,14 +1389,14 @@ sap.ui.require([
 						+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
 					'</mvc:View>'
 				], {
-					models: new JSONModel({
-						"com.sap.vocabularies.UI.v1.HeaderInfo": {
-							"Title": {
-								"Label": {
-									"String": "Customer"
+					models : new JSONModel({
+						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
+							"Title" : {
+								"Label" : {
+									"String" : "Customer"
 								},
-								"Value": {
-									"Path": "CustomerName"
+								"Value" : {
+									"Path" : "CustomerName"
 								}
 							}
 						}
@@ -1415,11 +1417,11 @@ sap.ui.require([
 			'</template:with>',
 			'</mvc:View>'
 		], {
-			models: new JSONModel({
-				some: {
-					random: {
-						path: {
-							flag: true
+			models : new JSONModel({
+				some : {
+					random : {
+						path : {
+							flag : true
 						}
 					}
 				}
@@ -1448,11 +1450,11 @@ sap.ui.require([
 					'</template:with>',
 					'</mvc:View>'
 				], {
-					models: new JSONModel({
-						some: {
-							random: {
-								path: {
-									flag: true
+					models : new JSONModel({
+						some : {
+							random : {
+								path : {
+									flag : true
 								}
 							}
 						}
@@ -1487,7 +1489,7 @@ sap.ui.require([
 			'<template:with path="some/random/place" var="place"/>',
 			'</mvc:View>'
 		], "Cannot resolve path for {0}", {
-			models: new JSONModel()
+			models : new JSONModel()
 		});
 	});
 
@@ -1495,8 +1497,8 @@ sap.ui.require([
 	[false, true].forEach(function (bWithVar) {
 		QUnit.test("template:with and helper, with var = " + bWithVar, function (assert) {
 			var oModel = new JSONModel({
-					target: {
-						flag: true
+					target : {
+						flag : true
 					}
 				});
 
@@ -1520,7 +1522,7 @@ sap.ui.require([
 				'</template:with>',
 				'</mvc:View>'
 			], {
-				models: oModel
+				models : oModel
 			});
 		});
 	});
@@ -1530,8 +1532,8 @@ sap.ui.require([
 		QUnit.test("template:with and helper changing the model, with var = " + bWithVar,
 			function (assert) {
 				var oMetaModel = new JSONModel({
-						target: {
-							flag: true
+						target : {
+							flag : true
 						}
 					}),
 					oModel = new JSONModel();
@@ -1556,9 +1558,9 @@ sap.ui.require([
 					'</template:with>',
 					'</mvc:View>'
 				], {
-					models: {
-						meta: oMetaModel,
-						"undefined": oModel
+					models : {
+						meta : oMetaModel,
+						"undefined" : oModel
 					}
 				});
 			}
@@ -1574,7 +1576,7 @@ sap.ui.require([
 				'<template:with path="/unused" var="target" helper="foo"/>',
 				'</mvc:View>'
 			], "Cannot resolve helper for {0}", {
-				models: new JSONModel()
+				models : new JSONModel()
 			});
 		});
 	});
@@ -1586,7 +1588,7 @@ sap.ui.require([
 			'<template:with path="/unused" var="target" helper="."/>',
 			'</mvc:View>'
 		], "Cannot resolve helper for {0}", {
-			models: new JSONModel()
+			models : new JSONModel()
 		});
 	});
 
@@ -1601,7 +1603,7 @@ sap.ui.require([
 				'<template:with path="/unused" var="target" helper="foo"/>',
 				'</mvc:View>'
 			], "Illegal helper result '" + vResult + "' in {0}", {
-				models: new JSONModel()
+				models : new JSONModel()
 			});
 		});
 	});
@@ -1629,9 +1631,9 @@ sap.ui.require([
 			sTemplate3,
 			'</mvc:View>'
 		], {
-			models: {bar: oModel},
-			bindingContexts: {
-				bar: oModel.createBindingContext("/my/path")
+			models : {bar : oModel},
+			bindingContexts : {
+				bar : oModel.createBindingContext("/my/path")
 			}
 		});
 	});
@@ -1645,13 +1647,13 @@ sap.ui.require([
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: new JSONModel({
-				items: [{
-					src: "A"
+			models : new JSONModel({
+				items : [{
+					src : "A"
 				}, {
-					src: "B"
+					src : "B"
 				}, {
-					src: "C"
+					src : "C"
 				}]
 			})
 		}, [
@@ -1670,15 +1672,15 @@ sap.ui.require([
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: new JSONModel({
-				items: [{
-					src: "A"
+			models : new JSONModel({
+				items : [{
+					src : "A"
 				}, {
-					src: "B"
+					src : "B"
 				}, {
-					src: "C"
+					src : "C"
 				}, {
-					src: "D"
+					src : "D"
 				}]
 			})
 		}, [
@@ -1696,14 +1698,14 @@ sap.ui.require([
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: {
-				modelName: new JSONModel({
-					items: [{
-						src: "A"
+			models : {
+				modelName : new JSONModel({
+					items : [{
+						src : "A"
 					}, {
-						src: "B"
+						src : "B"
 					}, {
-						src: "C"
+						src : "C"
 					}]
 				})
 			}
@@ -1750,7 +1752,7 @@ sap.ui.require([
 			'<template:repeat list="{/unsupported/path}"/>',
 			'</mvc:View>'
 		], {
-			models: new JSONModel()
+			models : new JSONModel()
 		});
 	});
 
@@ -1764,14 +1766,14 @@ sap.ui.require([
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: {
-				modelName: new JSONModel({
-					items: [{
-						src: "A"
+			models : {
+				modelName : new JSONModel({
+					items : [{
+						src : "A"
 					}, {
-						src: "B"
+						src : "B"
 					}, {
-						src: "C"
+						src : "C"
 					}]
 				})
 			}
@@ -1794,21 +1796,21 @@ sap.ui.require([
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: {
-				customer: new JSONModel({
-					orders: [{
-						id: "A",
-						items: [{
-							no: "A1"
+			models : {
+				customer : new JSONModel({
+					orders : [{
+						id : "A",
+						items : [{
+							no : "A1"
 						}, {
-							no: "A2"
+							no : "A2"
 						}]
 					}, {
-						id: "B",
-						items: [{
-							no: "B1"
+						id : "B",
+						items : [{
+							no : "B1"
 						}, {
-							no: "B2"
+							no : "B2"
 						}]
 					}]
 				})
@@ -1832,14 +1834,14 @@ sap.ui.require([
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: {
-				modelName: new JSONModel({
-					items: [{
-						src: "A"
+			models : {
+				modelName : new JSONModel({
+					items : [{
+						src : "A"
 					}, {
-						src: "B"
+						src : "B"
 					}, {
-						src: "C"
+						src : "C"
 					}]
 				})
 			}
@@ -1942,13 +1944,13 @@ sap.ui.require([
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: new JSONModel({
-				items: [{
-					src: "A"
+			models : new JSONModel({
+				items : [{
+					src : "A"
 				}, {
-					src: "B"
+					src : "B"
 				}, {
-					src: "C"
+					src : "C"
 				}]
 			})
 		}, [
@@ -2015,7 +2017,7 @@ sap.ui.require([
 				'<Fragment fragmentName="A" type="XML"/>',
 				'</mvc:View>'
 			], "Cyclic reference to fragment 'B' {0}", {
-				models: new JSONModel()
+				models : new JSONModel()
 			}, aFragmentContent[3]);
 	});
 
@@ -2023,22 +2025,22 @@ sap.ui.require([
 	[false, true].forEach(function (bDebug) {
 		QUnit.test("tracing, debug=" + bDebug, function (assert) {
 			var oBarModel = new JSONModel({
-					"com.sap.vocabularies.UI.v1.HeaderInfo": {
-						"Title": {
-							"Label": {
-								"String": "Customer"
+					"com.sap.vocabularies.UI.v1.HeaderInfo" : {
+						"Title" : {
+							"Label" : {
+								"String" : "Customer"
 							},
-							"Value": {
-								"Path": "CustomerName"
+							"Value" : {
+								"Path" : "CustomerName"
 							}
 						}
 					},
-					"com.sap.vocabularies.UI.v1.Identification": [{
-						Value: { Path: "A"}
+					"com.sap.vocabularies.UI.v1.Identification" : [{
+						Value : { Path : "A"}
 					}, {
-						Value: { Path: "B"}
+						Value : { Path : "B"}
 					}, {
-						Value: { Path: "C"}
+						Value : { Path : "C"}
 					}]
 				}),
 				oBazModel = new JSONModel({}),
@@ -2079,37 +2081,37 @@ sap.ui.require([
 			delete sap.ui.core.CustomizingConfiguration;
 
 			checkTracing.call(oLogMock, assert, bDebug, [
-				{m: "[ 0] Start processing qux"},
-				{m: "[ 0] bar = /com.sap.vocabularies.UI.v1.HeaderInfo/Title"},
-				{m: "[ 0] baz = /"},
-				{m: "[ 1] foo = /com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label", d: 1},
-				{m: "[ 2] test == \"false\" --> false", d: 2},
-				{m: "[ 2] test == [object Object] --> true", d: 6},
-				{m: "[ 3] fragmentName = myFragment", d: 8},
-				{m: "[ 3] Finished", d: "</Fragment>"},
-				{m: "[ 2] Finished", d: 10},
-				{m: "[ 1] Finished", d: 11},
-				{m: "[ 1] Starting", d: 12},
-				{m: "[ 1] foo = /com.sap.vocabularies.UI.v1.Identification/0", d: 12},
-				{m: "[ 1] src = A", d: 13},
-				{m: "[ 1] foo = /com.sap.vocabularies.UI.v1.Identification/1", d: 12},
-				{m: "[ 1] src = B", d: 13},
-				{m: "[ 1] foo = /com.sap.vocabularies.UI.v1.Identification/2", d: 12},
-				{m: "[ 1] src = C", d: 13},
-				{m: "[ 1] Finished", d: 14},
-				{m: "[ 1] test == [object Array] --> true", d: 15},
-				{m: "[ 1] Finished", d: "</t:if>"},
-				{m: "[ 1] test == undefined --> false", d: 16},
-				{m: "[ 1] Finished", d: "</t:if>"},
-				{m: "[ 0] name = dynamicName", d: 18},
-				{m: "[ 0] Binding not ready for attribute name", d: 19},
-				{m: "[ 0] Finished processing qux"}
+				{m : "[ 0] Start processing qux"},
+				{m : "[ 0] bar = /com.sap.vocabularies.UI.v1.HeaderInfo/Title"},
+				{m : "[ 0] baz = /"},
+				{m : "[ 1] foo = /com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label", d : 1},
+				{m : "[ 2] test == \"false\" --> false", d : 2},
+				{m : "[ 2] test == [object Object] --> true", d : 6},
+				{m : "[ 3] fragmentName = myFragment", d : 8},
+				{m : "[ 3] Finished", d : "</Fragment>"},
+				{m : "[ 2] Finished", d : 10},
+				{m : "[ 1] Finished", d : 11},
+				{m : "[ 1] Starting", d : 12},
+				{m : "[ 1] foo = /com.sap.vocabularies.UI.v1.Identification/0", d : 12},
+				{m : "[ 1] src = A", d : 13},
+				{m : "[ 1] foo = /com.sap.vocabularies.UI.v1.Identification/1", d : 12},
+				{m : "[ 1] src = B", d : 13},
+				{m : "[ 1] foo = /com.sap.vocabularies.UI.v1.Identification/2", d : 12},
+				{m : "[ 1] src = C", d : 13},
+				{m : "[ 1] Finished", d : 14},
+				{m : "[ 1] test == [object Array] --> true", d : 15},
+				{m : "[ 1] Finished", d : "</t:if>"},
+				{m : "[ 1] test == undefined --> false", d : 16},
+				{m : "[ 1] Finished", d : "</t:if>"},
+				{m : "[ 0] name = dynamicName", d : 18},
+				{m : "[ 0] Binding not ready for attribute name", d : 19},
+				{m : "[ 0] Finished processing qux"}
 			], aViewContent, {
-				models: { bar: oBarModel, baz: oBazModel },
-				bindingContexts: {
-					bar: oBarModel.createBindingContext(
+				models : { bar : oBarModel, baz : oBazModel },
+				bindingContexts : {
+					bar : oBarModel.createBindingContext(
 							"/com.sap.vocabularies.UI.v1.HeaderInfo/Title"),
-					baz: oBazModel.createBindingContext("/")
+					baz : oBazModel.createBindingContext("/")
 				}
 			}, [
 				'<In />',
@@ -2284,13 +2286,13 @@ sap.ui.require([
 			fnGetObject = jQuery.sap.getObject;
 
 		window.foo = {
-			Helper: {
-				bar: function () {
+			Helper : {
+				bar : function () {
 					assert.ok(!this || !("bar" in this), "no jQuery.proxy(..., oScope) used");
 					// return absolute path so this function serves as helper & formatter!
 					return "/bar";
 				},
-				foo: function () {
+				foo : function () {
 					assert.ok(!this || !("foo" in this), "no jQuery.proxy(..., oScope) used");
 					return "/foo";
 				}
@@ -2344,7 +2346,7 @@ sap.ui.require([
 			'</template:alias>',
 			'</mvc:View>'
 		], {
-			models: new JSONModel({/*don't care*/})
+			models : new JSONModel({/*don't care*/})
 		}, [ // Note: XML serializer outputs &gt; encoding...
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",

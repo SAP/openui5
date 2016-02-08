@@ -35,9 +35,9 @@ sap.ui.define([
 	 */
 	var ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.ODataMetaListBinding"),
 		Resolver = ManagedObject.extend("sap.ui.model.odata._resolver", {
-			metadata: {
-				properties: {
-					any: "any"
+			metadata : {
+				properties : {
+					any : "any"
 				}
 			}
 		});

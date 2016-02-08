@@ -63,13 +63,13 @@ sap.ui.define([
 		 * @throws {SyntaxError}
 		 *   if the result is not of the expected type
 		 */
-		descend: function (oPathValue, vProperty, sExpectedType) {
+		descend : function (oPathValue, vProperty, sExpectedType) {
 			Basics.expectType(oPathValue, typeof vProperty === "number" ? "array" : "object");
 			oPathValue = {
-				asExpression: oPathValue.asExpression,
-				path: oPathValue.path + "/" + vProperty,
-				value: oPathValue.value[vProperty],
-				withType: oPathValue.withType
+				asExpression : oPathValue.asExpression,
+				path : oPathValue.path + "/" + vProperty,
+				value : oPathValue.value[vProperty],
+				withType : oPathValue.withType
 			};
 			if (sExpectedType) {
 				Basics.expectType(oPathValue, sExpectedType);
@@ -84,7 +84,7 @@ sap.ui.define([
 		 * @param {string} sMessage
 		 *   the message to log
 		 */
-		error: function (oPathValue, sMessage) {
+		error : function (oPathValue, sMessage) {
 			sMessage = oPathValue.path + ": " + sMessage;
 			jQuery.sap.log.error(sMessage, Basics.toErrorString(oPathValue.value),
 				sAnnotationHelper);
@@ -105,7 +105,7 @@ sap.ui.define([
 		 * @throws {SyntaxError}
 		 *   if the result is not of the expected type
 		 */
-		expectType: function (oPathValue, sExpectedType) {
+		expectType : function (oPathValue, sExpectedType) {
 			var bError,
 				vValue = oPathValue.value;
 
@@ -152,7 +152,7 @@ sap.ui.define([
 		 * @see sap.ui.model.odata.AnnotationHelper.isMultiple
 		 * @see sap.ui.model.odata.AnnotationHelper.resolvePath
 		 */
-		followPath: function (oInterface, oRawValue) {
+		followPath : function (oInterface, oRawValue) {
 			var oAssociationEnd,
 				sPath,
 				sContextPath,
@@ -226,7 +226,7 @@ sap.ui.define([
 		 * @returns {string}
 		 *   the path or <code>undefined</code> in case the raw value is not supported
 		 */
-		getPath: function (oRawValue) {
+		getPath : function (oRawValue) {
 			if (oRawValue) {
 				if (oRawValue.hasOwnProperty("AnnotationPath")) {
 					return oRawValue.AnnotationPath;
@@ -257,7 +257,7 @@ sap.ui.define([
 		 * @returns {string}
 		 *   the meta model path to use as a starting point for following the given path
 		 */
-		getStartingPoint: function (oInterface, sPath) {
+		getStartingPoint : function (oInterface, sPath) {
 			var oEntity,
 				aMatches = rEntityTypePath.exec(oInterface.getPath()),
 				oModel;
@@ -300,7 +300,7 @@ sap.ui.define([
 		 * @throws {SyntaxError}
 		 *   if the result is not of the expected type
 		 */
-		property: function (oPathValue, vProperty, sExpectedType) {
+		property : function (oPathValue, vProperty, sExpectedType) {
 			return Basics.descend(oPathValue, vProperty, sExpectedType).value;
 		},
 
@@ -326,7 +326,7 @@ sap.ui.define([
 		 * @returns {string}
 		 *   the resulting string to embed into an composite binding or a binding expression
 		 */
-		resultToString: function (oResult, bExpression, bWithType) {
+		resultToString : function (oResult, bExpression, bWithType) {
 			var sValue = oResult.value;
 
 			function binding(bAddType) {
@@ -391,7 +391,7 @@ sap.ui.define([
 		 * @param {any} vValue the value
 		 * @returns {string} the stringified value
 		 */
-		toErrorString: function (vValue) {
+		toErrorString : function (vValue) {
 			var sJSON;
 
 			if (typeof vValue !== "function") {
@@ -417,7 +417,7 @@ sap.ui.define([
 		 * @param {any} vValue the value
 		 * @returns {string} the stringified value
 		 */
-		toJSON: function (vValue) {
+		toJSON : function (vValue) {
 			var sStringified,
 				bEscaped = false,
 				sResult = "",

@@ -422,38 +422,39 @@ sap.ui.require([
 </edmx:Edmx>\
 		', mHeaders = {"Content-Type" : "application/xml"},
 		mFixture = {
-			"/fake/emptyDataServices/$metadata" : {headers: mHeaders, message: sEmptyDataServices},
-			"/fake/emptyEntityType/$metadata" : {headers: mHeaders, message: sEmptyEntityType},
-			"/fake/emptySchema/$metadata" : {headers: mHeaders, message: sEmptySchema},
+			"/fake/emptyDataServices/$metadata" :
+				{headers : mHeaders, message : sEmptyDataServices},
+			"/fake/emptyEntityType/$metadata" : {headers : mHeaders, message : sEmptyEntityType},
+			"/fake/emptySchema/$metadata" : {headers : mHeaders, message : sEmptySchema},
 			"/fake/emptySchemaWithAnnotations/$metadata" :
-				{headers: mHeaders, message: sEmptySchemaWithAnnotations},
-			"/fake/service/$metadata" : {headers: mHeaders, message: sMetadata},
-			"/fake/annotations" : {headers: mHeaders, message: sAnnotations},
-			"/fake/annotations2" : {headers: mHeaders, message: sAnnotations2},
-			"/fake/emptyAnnotations" : {headers: mHeaders, message: sEmptyAnnotations},
+				{headers : mHeaders, message : sEmptySchemaWithAnnotations},
+			"/fake/service/$metadata" : {headers : mHeaders, message : sMetadata},
+			"/fake/annotations" : {headers : mHeaders, message : sAnnotations},
+			"/fake/annotations2" : {headers : mHeaders, message : sAnnotations2},
+			"/fake/emptyAnnotations" : {headers : mHeaders, message : sEmptyAnnotations},
 			"/fake/multipleValueLists" :
-				{headers: mHeaders, message: sMultipleValueListAnnotations},
-			"/fake/valueListMetadata/$metadata" : {headers: mHeaders, message: sValueListMetadata},
+				{headers : mHeaders, message : sMultipleValueListAnnotations},
+			"/fake/valueListMetadata/$metadata" : {headers : mHeaders, message : sValueListMetadata},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata" :
-				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata.xml"},
+				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" :
-				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml"},
+				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode,FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
-				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode_ItemCustomer.xml"},
+				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode_ItemCustomer.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
-				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCustomer.xml"},
+				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCustomer.xml"},
 			// Note: Gateway says
 			// "Value-List FAR_CUSTOMER_LINE_ITEMS.Item/Invalid not found in Metadata", but we want
 			// to make our code more robust against empty responses
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FInvalid" :
-				{headers: mHeaders, message: sFARMetadataInvalid}, // no annotations at all
+				{headers : mHeaders, message : sFARMetadataInvalid}, // no annotations at all
 			// annotations for a different type
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Foo%2FInvalid" :
-				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml"},
+				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer" :
-				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_MyComplexTypeCustomer.xml"},
-			"/GWSAMPLE_BASIC/$metadata" : {source: "GWSAMPLE_BASIC.metadata.xml"},
-			"/GWSAMPLE_BASIC/annotations" : {source: "GWSAMPLE_BASIC.annotations.xml"}
+				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_MyComplexTypeCustomer.xml"},
+			"/GWSAMPLE_BASIC/$metadata" : {source : "GWSAMPLE_BASIC.metadata.xml"},
+			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"}
 		},
 		oGlobalSandbox; // global sandbox for async tests
 
@@ -936,67 +937,67 @@ sap.ui.require([
 
 			return withMetaModel(assert, function (oMetaModel) {
 				[{
-					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']",
-					o: "/dataServices/schema/0"
+					i : "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']",
+					o : "/dataServices/schema/0"
 				}, { // syntax error (missing closing ']')
-					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC'",
-					o: undefined
+					i : "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC'",
+					o : undefined
 				}, { // syntax error (text after closing ']')
-					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a",
-					o: undefined
+					i : "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a",
+					o : undefined
 				}, { // syntax error (text after closing ']')
-					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a/entityType/1",
-					o: undefined,
-					m: "Invalid part: entityType"
+					i : "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']a/entityType/1",
+					o : undefined,
+					m : "Invalid part: entityType"
 				}, { // query when we just landed in Nirvana
-					i: "/dataServices/unknown/[${namespace}==='GWSAMPLE_BASIC']",
-					o: undefined,
-					m: "Invalid part: [${namespace}==='GWSAMPLE_BASIC']"
+					i : "/dataServices/unknown/[${namespace}==='GWSAMPLE_BASIC']",
+					o : undefined,
+					m : "Invalid part: [${namespace}==='GWSAMPLE_BASIC']"
 				}, {
-					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					i : "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 						+ "[$\{name}==='Product']",
-					o: "/dataServices/schema/0/entityType/1",
-					c: {} // unnecessary context object (because of absolute path) silently ignored
+					o : "/dataServices/schema/0/entityType/1",
+					c : {} // unnecessary context object (because of absolute path) silently ignored
 				}, { // ensure we don't fail after a 'namespace' query that didn't find a result
-					i: "/dataServices/schema/[${namespace}==='unknown']/entityType/"
+					i : "/dataServices/schema/[${namespace}==='unknown']/entityType/"
 						+ "[$\{name}==='Product']",
-					o: undefined,
-					m: "Invalid part: entityType"
+					o : undefined,
+					m : "Invalid part: entityType"
 				}, { // ensure we don't fail after a 'name' query that didn't find a result
-					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					i : "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 						+ "[$\{name}==='unknown']/property/[$\{name=}'foo']",
-					o: undefined,
-					m: "Invalid part: property"
+					o : undefined,
+					m : "Invalid part: property"
 				}, {
-					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
+					i : "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 						+ "[$\{name}==='BusinessPartner']/com.sap.vocabularies.UI.v1.LineItem/"
 						+ "[${Value/Path}==='BusinessPartnerID']/Label/String",
-					o: "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.LineItem/0"
+					o : "/dataServices/schema/0/entityType/0/com.sap.vocabularies.UI.v1.LineItem/0"
 						+ "/Label/String"
 				}, {
-					i: "entityType/[$\{name}==='Product']",
-					o: "/dataServices/schema/0/entityType/1",
-					c: oMetaModel.getContext(
+					i : "entityType/[$\{name}==='Product']",
+					o : "/dataServices/schema/0/entityType/1",
+					c : oMetaModel.getContext(
 						"/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
 				}, { // query, but context is an object
-					i: "entityType/[$\{name}==='BusinessPartner']",
-					o: null,
-					c: oMetaModel.getObject(
+					i : "entityType/[$\{name}==='BusinessPartner']",
+					o : null,
+					c : oMetaModel.getObject(
 						"/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
 				}, { // query on non-array
-					i: "/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
-					o: null
+					i : "/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
+					o : null
 				}, { // stupid query with [], but returning true
-					i: "/dataServices/schema/['GWSAMPLE_BASIC/foo'.split('/')[0]===${namespace}]"
+					i : "/dataServices/schema/['GWSAMPLE_BASIC/foo'.split('/')[0]===${namespace}]"
 						+ "/entityType",
-					o: "/dataServices/schema/0/entityType"
+					o : "/dataServices/schema/0/entityType"
 				}, { // syntax error in query
-					i: "/dataServices/schema/[${namespace==='GWSAMPLE_BASIC']/entityType",
-					o: undefined,
-					m: "Invalid part: entityType"
+					i : "/dataServices/schema/[${namespace==='GWSAMPLE_BASIC']/entityType",
+					o : undefined,
+					m : "Invalid part: entityType"
 				}, { // search for the first property having a maxLength
-					i: "/dataServices/schema/0/entityType/0/property/[${maxLength}]",
-					o: "/dataServices/schema/0/entityType/0/property/1"
+					i : "/dataServices/schema/0/entityType/0/property/[${maxLength}]",
+					o : "/dataServices/schema/0/entityType/0/property/1"
 				}].forEach(function (oFixture) {
 					var fnBindObject, fnUnbindObject;
 
@@ -1240,7 +1241,7 @@ sap.ui.require([
 					assert.deepEqual(oVHSexSet["sap:" + sExtension], "false");
 					delete oVHSexSet["sap:" + sExtension];
 					oExpected = {};
-					oExpected[sProperty] = {"Bool": "false"};
+					oExpected[sProperty] = {"Bool" : "false"};
 					assert.deepEqual(oVHSexSet["Org.OData.Capabilities.V1." + sCapability],
 						oExpected, sExtension + " at entity set");
 					delete oVHSexSet["Org.OData.Capabilities.V1." + sCapability];
@@ -1429,7 +1430,7 @@ sap.ui.require([
 				assert.deepEqual(oCTAddressCity["sap:semantics"], "city");
 				delete oCTAddressCity["sap:semantics"];
 				assert.deepEqual(oCTAddress["com.sap.vocabularies.Communication.v1.Contact"],
-					{ "adr": { "locality": { "Path": "City" } } });
+					{ "adr" : { "locality" : { "Path" : "City" } } });
 				delete oCTAddress["com.sap.vocabularies.Communication.v1.Contact"];
 
 				assert.deepEqual(oParameter["sap:label"], "ID");
@@ -1594,15 +1595,15 @@ sap.ui.require([
 				});
 				assert.deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"], i === 0
 					? {
-						"adr": {
-							"code": { "Path": "Zip" }
+						"adr" : {
+							"code" : { "Path" : "Zip" }
 						},
-						"n": {
-							"given": { "Path": "FirstName" },
-							"prefix": { "Path": "Honorific" },
-							"surname": { "Path": "LastName" }
+						"n" : {
+							"given" : { "Path" : "FirstName" },
+							"prefix" : { "Path" : "Honorific" },
+							"surname" : { "Path" : "LastName" }
 						},
-						"nickname": { "Path": "NickName" },
+						"nickname" : { "Path" : "NickName" },
 						"tel" : [{
 							"type" : {
 								"EnumMember" :
@@ -1614,17 +1615,17 @@ sap.ui.require([
 						}]
 					}
 					: {
-						"n": {
-							"additional": { "Path": "MiddleName" },
-							"given": { "Path": "FirstName" },
-							"prefix": { "Path": "Honorific" },
-							"suffix": { "Path": "Suffix" },
-							"surname": { "Path": "LastName" }
+						"n" : {
+							"additional" : { "Path" : "MiddleName" },
+							"given" : { "Path" : "FirstName" },
+							"prefix" : { "Path" : "Honorific" },
+							"suffix" : { "Path" : "Suffix" },
+							"surname" : { "Path" : "LastName" }
 						},
-						"nickname": {
+						"nickname" : {
 							// TODO why is EdmType contained here but not in properties in n above?
-							"EdmType": "Edm.String",
-							"Path": "NickName"
+							"EdmType" : "Edm.String",
+							"Path" : "NickName"
 						},
 						"tel" : [{
 							"type" : {
@@ -2247,18 +2248,18 @@ sap.ui.require([
 				var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 					oContextNoValueList = oMetaModel.getMetaContext("/Items('foo')/GeneratedID"),
 					oExpectedVL = { //value list with no qualifier
-						"CollectionPath" : {"String":"VL_SH_DEBIA"},
-						"Parameters" :[{
-							"LocalDataProperty" : {"PropertyPath":"Customer"},
-							"ValueListProperty" : {"String":"KUNNR"},
-							"RecordType":"com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+						"CollectionPath" : {"String" : "VL_SH_DEBIA"},
+						"Parameters" : [{
+							"LocalDataProperty" : {"PropertyPath" : "Customer"},
+							"ValueListProperty" : {"String" : "KUNNR"},
+							"RecordType" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
 						}]
 					},
 					oExpectedVL_DEBID = { //value list for qualifier DEBID
-						"CollectionPath" : {"String": "VL_SH_DEBID"},
+						"CollectionPath" : {"String" : "VL_SH_DEBID"},
 						"Parameters" : [{
-							"LocalDataProperty" : {"PropertyPath": "CompanyCode"},
-							"ValueListProperty" : {"String": "BUKRS"},
+							"LocalDataProperty" : {"PropertyPath" : "CompanyCode"},
+							"ValueListProperty" : {"String" : "BUKRS"},
 							"RecordType" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
 						}]
 					},
@@ -2556,11 +2557,11 @@ sap.ui.require([
 			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
 				assert.deepEqual(mValueLists, {
 					"" : {
-						"CollectionPath" : {"String":"VL_SH_DEBIA"},
-						"Parameters" :[{
-							"LocalDataProperty" : {"PropertyPath":"Customer"},
-							"ValueListProperty" : {"String":"KUNNR"},
-							"RecordType":"com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+						"CollectionPath" : {"String" : "VL_SH_DEBIA"},
+						"Parameters" : [{
+							"LocalDataProperty" : {"PropertyPath" : "Customer"},
+							"ValueListProperty" : {"String" : "KUNNR"},
+							"RecordType" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
 						}]
 					}
 				});

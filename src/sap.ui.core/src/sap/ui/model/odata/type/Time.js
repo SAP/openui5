@@ -9,8 +9,8 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	"use strict";
 
 	var oDemoTime = {
-			__edmType: "Edm.Time",
-			ms: 49646000 // "13:47:26"
+			__edmType : "Edm.Time",
+			ms : 49646000 // "13:47:26"
 		};
 
 	/**
@@ -38,7 +38,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 		var oFormatOptions;
 
 		if (!oType.oFormat) {
-			oFormatOptions = jQuery.extend({strictParsing: true}, oType.oFormatOptions);
+			oFormatOptions = jQuery.extend({strictParsing : true}, oType.oFormatOptions);
 			oFormatOptions.UTC = true;
 			oType.oFormat = DateFormat.getTimeInstance(oFormatOptions);
 		}
@@ -72,7 +72,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 
 		oType.oConstraints = undefined;
 		if (vNullable === false || vNullable === "false") {
-			oType.oConstraints = {nullable: false};
+			oType.oConstraints = {nullable : false};
 		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
 			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 		}
@@ -103,8 +103,8 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 */
 	function toModel(oDate) {
 		return {
-			__edmType: "Edm.Time",
-			ms: ((oDate.getUTCHours() * 60 + oDate.getUTCMinutes()) * 60 + oDate.getUTCSeconds())
+			__edmType : "Edm.Time",
+			ms : ((oDate.getUTCHours() * 60 + oDate.getUTCMinutes()) * 60 + oDate.getUTCSeconds())
 				* 1000 + oDate.getUTCMilliseconds()
 		};
 	}
