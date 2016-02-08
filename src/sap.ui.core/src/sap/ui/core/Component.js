@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				// create a proxy for the metadata object and simulate to be an
 				// instance of the original metadata object of the Component
 				var MetadataProxy = function() {};
-				MetadataProxy.prototype = jQuery.sap.newObject(Object.getPrototypeOf(oMetadata));
+				MetadataProxy.prototype = Object.create(Object.getPrototypeOf(oMetadata));
 
 				// create a new instance of the metadata proxy
 				this._oMetadataProxy = new MetadataProxy();
@@ -1089,8 +1089,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// create an instance
 			var oInstance = new oClass(jQuery.extend({}, mSettings, {
 				id: sId,
-				componentData: oComponentData,
-				_manifest : vConfig._manifest
+				componentData: oComponentData
 			}));
 			jQuery.sap.assert(oInstance instanceof Component, "The specified component \"" + sController + "\" must be an instance of sap.ui.core.Component!");
 			jQuery.sap.log.info("Component instance Id = " + oInstance.getId());
@@ -1194,9 +1193,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				componentName: sName,
 				async: oConfig.async
 			});
-			// the manifest is stored in the configuration to pass it
-			// into the concrete component instance
-			oConfig._manifest = oManifest;
 		}
 
 		// once the manifest is available we extract the controller name
@@ -1235,9 +1231,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				async: oConfig.async,
 				failOnError: false
 			});
-			// the manifest is stored in the configuration to pass it
-			// into the concrete component instance
-			oConfig._manifest = oManifest;
 		}
 
 		function getControllerClass() {
@@ -1257,7 +1250,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				}
 			}
 
-			return oClass;
+			if (oManifest) {
+				return function() {
+
+					// create a copy of arguments for local modification
+					// and later handover to Component constructor
+					var args = Array.prototype.slice.call(arguments);
+
+					// inject the manifest to the settings object
+					var mSettings;
+					if (args.length === 0 || typeof args[0] === "object") {
+						mSettings = args[0] = args[0] || {};
+					} else if (typeof args[0] === "string") {
+						mSettings = args[1] = args[1] || {};
+					}
+					mSettings._manifest = oManifest;
+
+					// call the original constructor of the component class
+					var oInstance = Object.create(oClass.prototype);
+					oClass.apply(oInstance, args);
+					return oInstance;
+
+				};
+			} else {
+				return oClass;
+			}
 		}
 
 		/*
@@ -1383,10 +1400,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				// in case of manifest first we need to load the manifest
 				// to know the component name and preload the component itself
 				collect(oManifest.then(function(oManifest) {
-					// once the manifest is loaded we update the config object
-					// since the sap.ui.component call is using this config
-					// to read the manifest from when creating the controller
-					oConfig._manifest = oManifest;
 					// preload the component
 					return preload(oManifest.getComponentName(), true);
 				}));
@@ -1403,7 +1416,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			return Promise.all(promises).then(function(v) {
 				jQuery.sap.log.debug("Component.load: all promises fulfilled, then " + v);
 				if (oManifest) {
-					return oManifest.then(function(oManifest) {
+					return oManifest.then(function(oLoadedManifest) {
+						// store the loaded manifest in the oManifest variable
+						// which is used for the scope constructor function
+						oManifest = oLoadedManifest;
+						// read the component name from the manifest and
+						// preload the dependencies defined in the manifest
 						sName = oManifest.getComponentName();
 						return preloadDependencies(sName, oManifest, true);
 					});
