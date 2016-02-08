@@ -1654,14 +1654,27 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	 *
 	 * @overwrite
 	 * @public
-	 * @param oFilterItem The filter item to be removed
+	 * @param { int| sap.m.ViewSettingsFilterItem | string } vFilterItem The filter item's index, or the item itself, or its id
 	 * @returns {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
-	ViewSettingsDialog.prototype.removeFilterItem = function (oFilterItem) {
-		if (this._vContentPage === 3 && this._oContentItem && this._oContentItem.getId() === oFilterItem.getId()) {
-			resetFilterPage.call(this);
+	ViewSettingsDialog.prototype.removeFilterItem = function (vFilterItem) {
+		var sFilterItemId = "";
+
+		if (this._vContentPage === 3 && this._oContentItem) {
+			if (typeof (vFilterItem) === "object") {
+				sFilterItemId = vFilterItem.getId();
+			} else if (typeof (vFilterItem) === "string") {
+				sFilterItemId = vFilterItem;
+			} else if (typeof (vFilterItem) === "number") {
+				sFilterItemId = this.getFilterItems()[vFilterItem].getId();
+			}
+
+			if (this._oContentItem.getId() === sFilterItemId) {
+				resetFilterPage.call(this);
+			}
 		}
-		return this.removeAggregation('filterItems', oFilterItem);
+
+		return this.removeAggregation('filterItems', vFilterItem);
 	};
 
 	/**
