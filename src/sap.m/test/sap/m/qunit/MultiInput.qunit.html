@@ -480,6 +480,8 @@
 		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
 		equals(bHasClass, true, "multi-line mode still diaplays after item selected");
 		equals(oMLInput.$().find(".sapMTokenizer").css("white-space"), "normal");
+		
+		oMLInput.setValue("z");
 
 		oMultiInput = sap.ui.getCore().getControl("i1");
 
@@ -492,6 +494,9 @@
 		equals(oMLInput.getTokens()[2].getVisible(), false, "token3 is not visible");
 		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
 		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
+
+		oMultiInput.focus();
+		equals(oMLInput.getValue(), "z");
 
 		oMLInput.destroy();
 	});
@@ -538,7 +543,8 @@
 		equals(oTokenizerInPopup.getTokens()[1].getVisible(), true, "token2 can be displayed");
 		equals(oTokenizerInPopup.getTokens()[2].getVisible(), true, "token3 can be displayed");
 		equals(oTokenizerInPopup.getTokens()[3].getVisible(), true, "new token can be displayed");
-
+		
+		oMLInput2._oPopupInput.setValue("z");
 		oMLInput2._oSuggestionPopup.close();
 		this.clock.tick(500);
 		equals(oMLInput2._tokenizer.getTokens().length, 4, "new token is added");
@@ -546,6 +552,9 @@
 		equals(oMLInput2._tokenizer.getTokens()[1].getVisible(), false, "token2 not visible");
 		equals(oMLInput2._tokenizer.getTokens()[2].getVisible(), false, "token3 not visible");
 		equals(oMLInput2._tokenizer.getTokens()[3].getVisible(), true, "new token can be displayed");
+		
+		oMLInput2.focus();
+		equals(oMLInput2._oPopupInput.getValue(), "z");
 
 		oMLInput2.destroy();
 	});

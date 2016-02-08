@@ -359,10 +359,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 
 		if (iToken > 1) {
 
-			// no value is allowed to show in the input when multiline is closed. Rollback to 1.30 temporarily for sFIN demo
-			if (this.getValue() !== "") {
-				this.setValue() === "";
-			}
 			var i = 0;
 			for ( i = 0; i < iToken - 1; i++ ) {
 				aTokens[i].setVisible(false);
@@ -376,9 +372,30 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
 
 			this.$().find(".sapMTokenizer").after(sSpanText);
+			this._setValueInvisible();
 		}
 
 		this._bShowIndicator = true;
+	};
+
+	/**
+	 * Set value in input field invisible.
+	 *
+	 * @since 1.38
+	 * @private
+	 */
+	MultiInput.prototype._setValueInvisible = function() {
+		this.$("inner").css("opacity", "0");
+	};
+
+	/**
+	 * Show value in input field
+	 *
+	 * @since 1.38
+	 * @private
+	 */
+	MultiInput.prototype._setValueVisible = function() {
+		this.$("inner").css("opacity", "1");
 	};
 
 	/**
@@ -457,7 +474,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @public
 	 */
 	MultiInput.prototype.openMultiLine = function(){
-
+		this._setValueVisible();
 		this.$("border").addClass("sapMMultiInputMultiModeBorder");
 		if (this._$input) {
 			this._$input.parent().addClass("sapMMultiInputMultiModeInputContainer");
@@ -563,8 +580,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			$this.find(".sapMMultiInputBorder").removeClass("sapMMultiInputNarrowBorder");
 		}
 
-
-		jQuery($this.find(".sapMInputBaseInner")[0]).removeAttr("style");
+		this.$("inner").css("width", "");
 
 		// we go to the sapMMultiInputBorder child elements, this makes the computations easier
 		var availableWidth = $this.find(".sapMMultiInputBorder").width();
@@ -1040,7 +1056,17 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					this._removeIndicator();
 					this._oSuggestionPopup.open();
 					this._tokenizerInPopup = this.cloneTokenizer(this._tokenizer);
-					this._setAllTokenVisible(this._tokenizerInPopup);
+					var sValue = this._oPopupInput.getValue();
+
+					// keep input value in input field in popup.
+					// do not show token and suggestion table at same time, which is the same logic as live change.
+					if ( this._oSuggestionPopup && this._oSuggestionPopup.getContent().length > 0 && sValue.length > 0) {
+						this._tokenizerInPopup.setVisible(false);
+					} else {
+						this._tokenizerInPopup.setVisible(true);
+						this._setAllTokenVisible(this._tokenizerInPopup);
+					}
+
 					this._tokenizerInPopup._oScroller.setHorizontal(false);
 					this._tokenizerInPopup.addStyleClass("sapMTokenizerMultiLine");
 
