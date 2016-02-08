@@ -148,13 +148,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					this.addItem(oItem);
 				}, this);
 
-				setTimeout(function () {
-					if (!this.getSelectedItem()) {
-						this._setDefaultTab();
-			}
-				}.bind(this), 0);
 			}
 		});
+
+		/**
+		 * Called before the control is rendered.
+		 */
+		TabContainer.prototype.onBeforeRendering = function() {
+
+			if (this.getSelectedItem()) {
+				return;
+			}
+
+			this._setDefaultTab();
+		};
 
 		TabContainer.prototype._getAddNewTabButton = function() {
 			var oControl = this.getAggregation("_addNewButton");
@@ -238,7 +245,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				oSelectedItem = sap.ui.getCore().byId(sSelectedItem),
 				oTabStripItem = this._toTabStripItem(oSelectedItem);
 
-			// ToDo: Maybe the selected item of the TabStrip should not be handled here?
 			if (oTabStrip) {
 				// resolves error /getItems() of null/ in case only the _tabStrip aggregation was for some reason removed/destroyed from the container
 				oTabStrip.setSelectedItem(oTabStripItem);
@@ -307,10 +313,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 */
 		TabContainer.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 			if (sAggregationName === 'items') {
-				// ToDo: maybe these event listeners have to be also detached?
 				oObject.attachItemPropertyChanged(function (oEvent) {
 					var oTabStripItem = this._toTabStripItem(oEvent.getSource());
-					// ToDo: refactor code to remove inconsistency and avoid this mapping
 					var sPropertyKey = oEvent['mParameters'].propertyKey;
 					if (sPropertyKey === 'name') {
 						sPropertyKey = 'text';
