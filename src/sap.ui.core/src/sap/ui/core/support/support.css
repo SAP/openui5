@@ -1350,7 +1350,7 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 
 .sapUiSupportIntRecordingInfo {
 	margin-right: 5px;
-	margin-top: 5px;
+	margin-top: 8px;
 	float: right;
 }
 
@@ -1417,4 +1417,10 @@ html[data-sap-ui-browser^="cr"] .sapUiSupportIntFupInputMask > input {
 
 html[data-sap-ui-browser^="cr"] .sapUiSupportIntFupInputMask > input {
 	float: right;
+}
+
+.sapUiSupportIntODataLbl input[type=checkbox] {
+	position: relative;
+	vertical-align: middle;
+	bottom: 1px;
 }
