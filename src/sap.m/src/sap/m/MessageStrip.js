@@ -17,6 +17,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	 * MessageStrip is a control that enables the embedding of application-related messages in the application.
 	 * There are 4 types of messages: Information, Success, Warning and Error.
 	 * Each message can have a close button, so that it can be removed from the UI if needed.
+	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
 	 * @version ${version}
