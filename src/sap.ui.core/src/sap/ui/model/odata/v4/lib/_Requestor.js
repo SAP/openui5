@@ -64,7 +64,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		if (!this.oSecurityTokenPromise) {
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
 				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
-					method: "HEAD",
+					method : "HEAD",
 					headers : {
 						"X-CSRF-Token" : "Fetch"
 					}

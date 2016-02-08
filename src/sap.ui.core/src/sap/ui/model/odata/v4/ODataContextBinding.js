@@ -92,7 +92,7 @@ sap.ui.define([
 		return oPromise.then(function () {
 			// always fire asynchronously
 			that.oElementContext = that.getModel().getContext(sResolvedPath);
-			that._fireChange({reason: ChangeReason.Change});
+			that._fireChange({reason : ChangeReason.Change});
 		});
 	};
 

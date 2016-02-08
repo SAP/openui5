@@ -61,7 +61,7 @@ sap.ui.define([
 							iconTooltip : bRealOData ? "real OData service" : "mock OData service"
 						})
 					},
-					preprocessors: {
+					preprocessors : {
 						xml : {
 							models : {
 								meta : oMetaModel

@@ -28,8 +28,8 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   be a string or an array of strings; if it is an array, the resulting query string
 		 *   repeats the key for each array value
 		 *   Examples:
-		 *   buildQuery({foo: "bar", "bar": "baz"}) results in the query string "?foo=bar&bar=baz"
-		 *   buildQuery({foo: ["bar", "baz"]}) results in the query string "?foo=bar&foo=baz"
+		 *   buildQuery({foo : "bar", "bar" : "baz"}) results in the query string "?foo=bar&bar=baz"
+		 *   buildQuery({foo : ["bar", "baz"]}) results in the query string "?foo=bar&foo=baz"
 		 * @returns {string}
 		 *   The query string; it is empty if there are no parameters; it starts with "?" otherwise
 		 */

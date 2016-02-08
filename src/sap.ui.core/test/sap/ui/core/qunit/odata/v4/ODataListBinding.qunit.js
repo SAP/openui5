@@ -82,9 +82,9 @@ sap.ui.require([
 		 */
 		getCacheMock : function () {
 			var oCache = {
-					read: function () {},
-					refresh: function () {},
-					toString: function () { return "/service/EMPLOYEES"; }
+					read : function () {},
+					refresh : function () {},
+					toString : function () { return "/service/EMPLOYEES"; }
 				};
 
 			this.oSandbox.mock(Cache).expects("create").returns(oCache);
@@ -315,7 +315,7 @@ sap.ui.require([
 		//   sync - array with flags which indexes are to return a context synchronously to
 		//     simulate previous calls to getContexts
 		var oFixture  = [
-			{sync: []},
+			{sync : []},
 			{start : iSizeLimit, length : 1, sync : []}, // completely new contexts
 			{start : iSizeLimit, length : 2, sync : [true]}, // partially new contexts
 			{start : iSizeLimit, length : 2, sync : [true, true]}
@@ -512,10 +512,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{start : 0, result: 0, isFinal: true, length: 0, text: "no data"},
-		{start : 20, result: 29, isFinal: true, length: 49, text: "less data than requested"},
-		{start : 20, result: 0, isFinal: false, length: 10, text: "no data for given start > 0"},
-		{start : 20, result: 30, isFinal: false, length: 60, text: "maybe more data"}
+		{start : 0, result : 0, isFinal : true, length : 0, text : "no data"},
+		{start : 20, result : 29, isFinal : true, length : 49, text : "less data than requested"},
+		{start : 20, result : 0, isFinal : false, length : 10,
+			text : "no data for given start > 0"},
+		{start : 20, result : 30, isFinal : false, length : 60, text : "maybe more data"}
 	].forEach(function (oFixture) {
 		QUnit.test("paging: " + oFixture.text, function (assert) {
 			var oListBinding,
@@ -540,12 +541,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{start : 40, result: 5, isFinal: true, length: 45, text: "greater than before"},
-		{start : 20, result: 5, isFinal: true, length: 25, text: "less than before"},
-		{start : 0, result: 30, isFinal: true, length: 35, text: "full read before"},
-		{start : 20, result: 30, isFinal: false, length: 60, text: "full read after"},
-		{start : 15, result: 0, isFinal: true, length: 15, text: "empty read before"},
-		{start : 40, result: 0, isFinal: true, length: 35, text: "empty read after"}
+		{start : 40, result : 5, isFinal : true, length : 45, text : "greater than before"},
+		{start : 20, result : 5, isFinal : true, length : 25, text : "less than before"},
+		{start : 0, result : 30, isFinal : true, length : 35, text : "full read before"},
+		{start : 20, result : 30, isFinal : false, length : 60, text : "full read after"},
+		{start : 15, result : 0, isFinal : true, length : 15, text : "empty read before"},
+		{start : 40, result : 0, isFinal : true, length : 35, text : "empty read after"}
 	].forEach(function (oFixture) {
 		QUnit.test("paging: adjust final length: " + oFixture.text, function (assert) {
 			var oCacheMock = this.getCacheMock(),

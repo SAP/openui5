@@ -15,7 +15,7 @@ sap.ui.require([
 
 	function createResult(iIndex, iLength) {
 		return {
-			"@odata.context": "$metadata#TEAMS",
+			"@odata.context" : "$metadata#TEAMS",
 			value : aTestData.slice(iIndex, iIndex + iLength)
 		};
 	}
@@ -41,10 +41,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{index: 1, length: 1, result: ["b"]},
-		{index: 0, length: 2, result: ["a", "b"]},
-		{index: 4, length: 5, result: []},
-		{index: 1, length: 5, result: ["b", "c"]}
+		{index : 1, length : 1, result : ["b"]},
+		{index : 0, length : 2, result : ["a", "b"]},
+		{index : 4, length : 5, result : []},
+		{index : 1, length : 5, result : ["b", "c"]}
 	].forEach(function (oFixture) {
 		QUnit.test("read(" + oFixture.index + ", " + oFixture.length + ")", function (assert) {
 			var oRequestor = Requestor.create("/~/"),
@@ -53,7 +53,7 @@ sap.ui.require([
 				oPromise,
 				aData = ["a", "b", "c"],
 				oMockResult = {
-					"@odata.context": "$metadata#TEAMS",
+					"@odata.context" : "$metadata#TEAMS",
 					value : aData.slice(oFixture.index, oFixture.index + oFixture.length)
 				};
 
@@ -68,7 +68,7 @@ sap.ui.require([
 			assert.ok(oPromise instanceof Promise, "returns a Promise");
 			return oPromise.then(function (aResult) {
 				assert.deepEqual(aResult, {
-					"@odata.context": "$metadata#TEAMS",
+					"@odata.context" : "$metadata#TEAMS",
 					value : oFixture.result
 				});
 			});
@@ -105,45 +105,45 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		title: "second range completely before",
-		reads: [{index: 10, length: 2}, {index: 5, length: 2}],
-		expectedRequests: [{skip: 10, top: 2}, {skip: 5, top: 2}]
+		title : "second range completely before",
+		reads : [{index : 10, length : 2}, {index : 5, length : 2}],
+		expectedRequests : [{skip : 10, top : 2}, {skip : 5, top : 2}]
 	}, {
-		title: "second range overlaps before",
-		reads: [{index: 5, length: 4}, {index: 3, length: 4}],
-		expectedRequests: [{skip: 5, top: 4}, {skip: 3, top: 2}]
+		title : "second range overlaps before",
+		reads : [{index : 5, length : 4}, {index : 3, length : 4}],
+		expectedRequests : [{skip : 5, top : 4}, {skip : 3, top : 2}]
 	}, {
-		title: "same range",
-		reads: [{index: 1, length: 2}, {index: 1, length: 2}],
-		expectedRequests: [{skip: 1, top: 2}]
+		title : "same range",
+		reads : [{index : 1, length : 2}, {index : 1, length : 2}],
+		expectedRequests : [{skip : 1, top : 2}]
 	}, {
-		title: "second range overlaps after",
-		reads: [{index: 3, length: 4}, {index: 5, length: 4}],
-		expectedRequests: [{skip: 3, top: 4}, {skip: 7, top: 2}]
+		title : "second range overlaps after",
+		reads : [{index : 3, length : 4}, {index : 5, length : 4}],
+		expectedRequests : [{skip : 3, top : 4}, {skip : 7, top : 2}]
 	}, {
-		title: "second range completely behind",
-		reads: [{index: 5, length: 2}, {index: 10, length: 2}],
-		expectedRequests: [{skip: 5, top: 2}, {skip: 10, top: 2}]
+		title : "second range completely behind",
+		reads : [{index : 5, length : 2}, {index : 10, length : 2}],
+		expectedRequests : [{skip : 5, top : 2}, {skip : 10, top : 2}]
 	}, {
-		title: "second range part of first range",
-		reads: [{index: 5, length: 8}, {index: 7, length: 2}],
-		expectedRequests: [{skip: 5, top: 8}]
+		title : "second range part of first range",
+		reads : [{index : 5, length : 8}, {index : 7, length : 2}],
+		expectedRequests : [{skip : 5, top : 8}]
 	}, {
-		title: "first range part of second range",
-		reads: [{index: 7, length: 2}, {index: 5, length: 6}],
-		expectedRequests: [{skip: 7, top: 2}, {skip: 5, top: 2}, {skip: 9, top: 2}]
+		title : "first range part of second range",
+		reads : [{index : 7, length : 2}, {index : 5, length : 6}],
+		expectedRequests : [{skip : 7, top : 2}, {skip : 5, top : 2}, {skip : 9, top : 2}]
 	}, {
-		title: "read more than available",
-		reads: [{index: 10, length: 90}, {index: 0, length: 100}],
-		expectedRequests: [{skip: 10, top: 90}, {skip: 0, top: 10}]
+		title : "read more than available",
+		reads : [{index : 10, length : 90}, {index : 0, length : 100}],
+		expectedRequests : [{skip : 10, top : 90}, {skip : 0, top : 10}]
 	}, {
-		title: "read exactly max available",
-		reads: [{index: 0, length: 26}, {index: 26, length: 26}, {index: 26, length: 26}],
-		expectedRequests: [{skip: 0, top: 26}, {skip: 26, top: 26}]
+		title : "read exactly max available",
+		reads : [{index : 0, length : 26}, {index : 26, length : 26}, {index : 26, length : 26}],
+		expectedRequests : [{skip : 0, top : 26}, {skip : 26, top : 26}]
 	}, {
-		title: "different ranges",
-		reads: [{index: 2, length: 5}, {index: 0, length: 2}, {index: 1, length: 2}],
-		expectedRequests: [{skip: 2, top: 5}, {skip: 0, top: 2}]
+		title : "different ranges",
+		reads : [{index : 2, length : 5}, {index : 0, length : 2}, {index : 1, length : 2}],
+		expectedRequests : [{skip : 2, top : 5}, {skip : 0, top : 2}]
 	}].forEach(function (oFixture) {
 		QUnit.test("multiple read, " + oFixture.title + " (sequentially)", function (assert) {
 			var oRequestor = Requestor.create("/~/"),
@@ -288,49 +288,49 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("buildQueryString examples", function (assert) {
 		[{
-			o: {foo: ["bar", "€"], $select: "IDÖ"},
-			s: "foo=bar&foo=%E2%82%AC&$select=ID%C3%96"
+			o : {foo : ["bar", "€"], $select : "IDÖ"},
+			s : "foo=bar&foo=%E2%82%AC&$select=ID%C3%96"
 		}, {
-			o: {$select: ["ID"]},
-			s: "$select=ID"
+			o : {$select : ["ID"]},
+			s : "$select=ID"
 		}, {
-			o: {$select: ["ID", "Name"]},
-			s: "$select=ID,Name"
+			o : {$select : ["ID", "Name"]},
+			s : "$select=ID,Name"
 		}, {
-			o: {$expand: {"SO_2_BP": true, "SO_2_SOITEM": true}},
-			s: "$expand=SO_2_BP,SO_2_SOITEM"
+			o : {$expand : {"SO_2_BP" : true, "SO_2_SOITEM" : true}},
+			s : "$expand=SO_2_BP,SO_2_SOITEM"
 		}, {
-			o: {$expand: {"SO_2_BP": true, "SO_2_SOITEM": {$select: "CurrencyCode"}}},
-			s: "$expand=SO_2_BP,SO_2_SOITEM($select=CurrencyCode)"
+			o : {$expand : {"SO_2_BP" : true, "SO_2_SOITEM" : {$select : "CurrencyCode"}}},
+			s : "$expand=SO_2_BP,SO_2_SOITEM($select=CurrencyCode)"
 		}, {
-			o: {
-				$expand: {
-					"SO_2_BP": true,
-					"SO_2_SOITEM": {
-						"$select": ["ItemPosition", "Note"]
+			o : {
+				$expand : {
+					"SO_2_BP" : true,
+					"SO_2_SOITEM" : {
+						"$select" : ["ItemPosition", "Note"]
 					}
 				}
 			},
-			s: "$expand=SO_2_BP,SO_2_SOITEM($select=ItemPosition,Note)"
+			s : "$expand=SO_2_BP,SO_2_SOITEM($select=ItemPosition,Note)"
 		}, {
-			o: {
-				$expand: {
-					"SO_2_BP": true,
-					"SO_2_SOITEM": {
-						"$expand": {
-							"SOITEM_2_PRODUCT": {
+			o : {
+				$expand : {
+					"SO_2_BP" : true,
+					"SO_2_SOITEM" : {
+						"$expand" : {
+							"SOITEM_2_PRODUCT" : {
 								"$expand" : {
 									"PRODUCT_2_BP" : true
 								},
-								"$select": "CurrencyCode"
+								"$select" : "CurrencyCode"
 							},
-							"SOITEM_2_SO": true
+							"SOITEM_2_SO" : true
 						}
 					}
 				},
 				"sap-client" : "003"
 			},
-			s: "$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;"
+			s : "$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;"
 				+ "$select=CurrencyCode),SOITEM_2_SO)&sap-client=003"
 		}].forEach(function (oFixture) {
 			assert.strictEqual(Cache.buildQueryString(oFixture.o, false), "?" + oFixture.s,
@@ -355,7 +355,7 @@ sap.ui.require([
 
 		this.oSandbox.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sResourcePath + sQueryParams + "&$skip=0&$top=5")
-			.returns(Promise.resolve({value:[]}));
+			.returns(Promise.resolve({value :[]}));
 
 		// code under test
 		mQueryParams.$select = "foo"; // modification must not affect Cache
@@ -418,13 +418,13 @@ sap.ui.require([
 	if (TestUtils.isRealOData()) {
 		QUnit.test("read single employee (real OData)", function (assert) {
 			var oExpectedResult = {
-					"@odata.context": "$metadata#TEAMS/$entity",
-					"Team_Id": "TEAM_01",
-					Name: "Business Suite",
-					MEMBER_COUNT: 2,
-					MANAGER_ID: "3",
-					BudgetCurrency: "USD",
-					Budget: 555.55
+					"@odata.context" : "$metadata#TEAMS/$entity",
+					"Team_Id" : "TEAM_01",
+					Name : "Business Suite",
+					MEMBER_COUNT : 2,
+					MANAGER_ID : "3",
+					BudgetCurrency : "USD",
+					Budget : 555.55
 				},
 				oRequestor = Requestor.create(TestUtils.proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/")),
 				sResourcePath = "TEAMS('TEAM_01')",
@@ -545,7 +545,7 @@ sap.ui.require([
 	QUnit.test("Cache.toString", function (assert) {
 		var oCache,
 			oRequestor = Requestor.create("/~/"),
-			mQueryParams = {"$select": "ID"},
+			mQueryParams = {"$select" : "ID"},
 			sResourcePath = "Employees",
 			sResourcePathSingle = "Employees('1')";
 

@@ -153,12 +153,12 @@ sap.ui.require([
 		error : "System query option $expand is not supported"
 	}, {
 		mModelOptions : undefined,
-		mOptions : {"$expand" : {"foo": {"$select" : "bar"}}},
+		mOptions : {"$expand" : {"foo" : {"$select" : "bar"}}},
 		allowed : ["$expand"],
 		error : "System query option $select is not supported"
 	}, {
 		mModelOptions : undefined,
-		mOptions : {"$expand" : {"foo": {"select" : "bar"}}},
+		mOptions : {"$expand" : {"foo" : {"select" : "bar"}}},
 		allowed : ["$expand", "$select"],
 		error : "System query option select is not supported"
 	}, {

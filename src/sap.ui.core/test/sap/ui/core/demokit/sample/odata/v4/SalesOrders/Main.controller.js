@@ -108,7 +108,7 @@ sap.ui.define([
 			oModel.requestCanonicalPath(oSalesOrderContext).then(function (sCanonicalPath) {
 				oView.byId("ObjectPage").bindElement({
 					path : sCanonicalPath,
-					parameters: {
+					parameters : {
 						"$expand" : {
 							"SO_2_SOITEM" : {
 								"$expand" : {
