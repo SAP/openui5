@@ -103,7 +103,6 @@
 
 		module("Deletion", {
 			beforeEach: function () {
-                sinon.config.useFakeTimers = false;
 				this.oTabContainer = new sap.m.TabContainer({
 					items: {
 						path: "/ProductCollection",
@@ -120,7 +119,6 @@
 			afterEach: function () {
 				this.oTabContainer.destroy();
 				this.oTabContainer = null;
-                sinon.config.useFakeTimers = true;
 
 			}
 		});
@@ -130,7 +128,6 @@
 			var oFirstItem = this.oTabContainer.getItems()[0];
 			var oCloseButton = this.oTabContainer._toTabStripItem(oFirstItem).getAggregation("_closeButton");
 			var sName = oFirstItem.getName();
-			var done = assert.async();
 
 			strictEqual(this.oTabContainer.getSelectedItem(),oFirstItem.getId(),
 					"The default selected tab is the first one");
@@ -144,7 +141,8 @@
 			qutils.triggerTouchEvent('touchstart', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oCloseButton.getDomRef()});
 			qutils.triggerTouchEvent('touchend', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oCloseButton.getDomRef()});
 
-			setTimeout(function() {
+			this.clock.tick(1000);
+
 				equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
 
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -155,8 +153,6 @@
 			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('addButton').$()).attr('title'),
 					oMessageBundle.getText("TABCONTAINER_ADD_NEW_TAB"),
 					"The add button tooltip is correct");
-				done();
-			}.bind(this), 1000);
 
 		});
 
@@ -170,16 +166,16 @@
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
-        module("Misc", {
-            beforeEach: function () {
-                this.oTabContainer = new sap.m.TabContainer({
-                    items: {
-                        path: "/ProductCollection",
-                        template: oTemplate
-                    },
-                    itemSelect: fnOnItemSelected,
-                    addNewButtonPress: fnOnAddButtonClick
-                });
+		module("Misc", {
+			beforeEach: function () {
+				this.oTabContainer = new sap.m.TabContainer({
+					items: {
+						path: "/ProductCollection",
+						template: oTemplate
+					},
+					itemSelect: fnOnItemSelected,
+					addNewButtonPress: fnOnAddButtonClick
+				});
 
 				this.oTabContainer.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
