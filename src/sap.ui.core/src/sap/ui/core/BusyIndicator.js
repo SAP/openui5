@@ -141,7 +141,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 	 */
 	BusyIndicator.show = function(iDelay) {
 		jQuery.sap.log.debug("sap.ui.core.BusyIndicator.show (delay: " + iDelay + ") at " + new Date().getTime());
-
 		jQuery.sap.assert(iDelay === undefined || (typeof iDelay == "number" && (iDelay % 1 == 0)), "iDelay must be empty or an integer");
 
 		if ((iDelay === undefined)
@@ -149,7 +148,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 				|| (parseInt(iDelay, 10) < 0)) {
 			iDelay = this.iDEFAULT_DELAY_MS;
 		}
-
+		if (jQuery.sap.fesr.getActive()) {
+			this._fDelayedStartTime = jQuery.sap.now() + iDelay;
+		}
 		this.bOpenRequested = true;
 		if (iDelay === 0) { // avoid async call when there is no delay
 			this._showNowIfRequested();
@@ -221,9 +222,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 	 */
 	BusyIndicator.hide = function() {
 		jQuery.sap.log.debug("sap.ui.core.BusyIndicator.hide at " + new Date().getTime());
-
-		// Restore scope in case we are called with setTimeout or so...
-		var bi = BusyIndicator;
+			if (this._fDelayedStartTime) {  // Implies fesr header active
+			// The busy indicator shown duration d is calculated with:
+			// d = "time busy indicator was hidden" - "time busy indicator was requested" - "busy indicator delay"
+			var fBusyIndicatorShownDuration = jQuery.sap.now() - this._fDelayedStartTime;
+			jQuery.sap.fesr.addBusyDuration((fBusyIndicatorShownDuration > 0) ? fBusyIndicatorShownDuration : 0);
+			delete this._fDelayedStartTime;
+		}
+		var bi = BusyIndicator; // Restore scope in case we are called with setTimeout or so...
 
 		bi.bOpenRequested = false;
 
