@@ -536,6 +536,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return this._get("currencyFormat")[sContext] || this._get("currencyFormat").standard;
 		},
 
+		getCurrencySpacing : function(sPosition) {
+			return this._get("currencyFormat", "currencySpacing", sPosition === "after" ? "afterCurrency" : "beforeCurrency");
+		},
+
 		/**
 		 * Get percent format pattern
 		 *
