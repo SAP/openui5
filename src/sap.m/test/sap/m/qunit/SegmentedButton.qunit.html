@@ -432,10 +432,10 @@
 		// Assert
 		// + 1 are border compensations
 		equal(elementWidth, (expectedButtonOuterWidth * 2) + 1, "Control width should be " + ((expectedButtonOuterWidth * 2) + 1) + "px");
-		equal(oButton1.$().outerWidth(), expectedButtonOuterWidth, 'First button width should be ' + expectedButtonOuterWidth + 'px');
-		equal(oButton2.$().outerWidth(), expectedButtonOuterWidth + 1, 'Second button width should be ' + (expectedButtonOuterWidth + 1) + 'px');
-		equal(oButton1.$().width(), 33, 'First button width withouth padding shoud be 33px');
-		equal(oButton2.$().width(), 33, 'Second button width withouth padding shoud be 33px');
+		equal(oButton1.$().outerWidth(), expectedButtonOuterWidth + 1, 'First button width should be ' + (expectedButtonOuterWidth + 1) + 'px');
+		equal(oButton2.$().outerWidth(), expectedButtonOuterWidth, 'Second button width should be ' + expectedButtonOuterWidth + 'px');
+		equal(oButton1.$().width(), 34, 'First button width withouth padding shoud be 34px');
+		equal(oButton2.$().width(), 34, 'Second button width withouth padding shoud be 34px');
 
 		// Cleanup
 		oBar.destroy();
@@ -930,8 +930,9 @@
 						"Buttons in SegmentedButton should have identical width");
 				ok(Math.abs(oButton1.$().width() - oButton3.$().width()) <= 2,
 						"Buttons in SegmentedButton should have identical width");
+
 				ok(Math.abs(oBar.$().find(".sapMBarPH").width() - oButton1.$().outerWidth() - oButton2.$().outerWidth()
-						- oButton3.$().outerWidth()) <= 3, "SegmentedButton should occupy the whole width of dialog");
+						- oButton3.$().outerWidth()) <= 5, "SegmentedButton should occupy the whole width of dialog");
 
 				// Cleanup
 				oDialog.destroy();
@@ -951,7 +952,7 @@
 				oButton2 = new sap.m.Button({text: "Button2 with very long text 22"}),
 				oButton3 = new sap.m.Button({text: "Button3 with very long text 3333"}),
 				iScreenWidth = 360,
-				iExpectedButtonWidth = 87, // 360/3 - 33 = 87(33=child button padding+border)
+				iExpectedButtonWidth = 86, // 360/3 - 34 = 86(34=child button padding+border)
 				oOriginalFnWidth = jQuery.fn.width;
 
 		var	oStubWidth = sinon.stub(jQuery.fn, "width", function () {
@@ -985,7 +986,7 @@
 				oButton2 = new sap.m.Button({text: "Button2 with very long text 22"}),
 				oButton3 = new sap.m.Button({text: "Button3 with very long text 3333"}),
 				iScreenWidth = 360,
-				iExpectedButtonWidth = 83, // (360-10)/3 - 33 = 83(33=child button padding+border, 10=bar padding +  2px paddingFix)
+				iExpectedButtonWidth = 82, // (360-10)/3 - 34 = 83(34=child button padding+border, 10=bar padding +  2px paddingFix)
 		oOriginalFnWidth = jQuery.fn.width;
 
 		var	oStubWidth = sinon.stub(jQuery.fn, "width", function () {
