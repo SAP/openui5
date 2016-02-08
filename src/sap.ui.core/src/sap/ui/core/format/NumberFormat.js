@@ -706,18 +706,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			if (!oOptions.currencyCode) {
 				sMeasure = this.oLocaleData.getCurrencySymbol(sMeasure);
 			}
-			if (oOptions.showMeasure && sMeasure) {
-				sPattern = sPattern.replace(/\u00a4/, sMeasure);
-			} else {
-				// If measure is not shown, also remove whitespace next to the measure symbol
-				sPattern = sPattern.replace(/\s*\u00a4\s*/, "");
-			}
-			if (bNegative) {
-				sPattern = sPattern.replace(/-/, oOptions.minusSign);
-			}
-			sPattern = sPattern.replace(/[0#.,]+/, sResult);
 
-			sResult = sPattern;
+			sResult = this._composeCurrencyResult(sPattern, sResult, sMeasure, {
+				showMeasure: oOptions.showMeasure,
+				negative: bNegative,
+				minusSign: oOptions.minusSign
+			});
 		}
 
 		if (oOptions.type == mNumberType.PERCENT) {
@@ -736,6 +730,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 
 		return sResult;
 
+	};
+
+	NumberFormat.prototype._composeCurrencyResult = function(sPattern, sFormattedNumber, sMeasure, oOptions) {
+		if (oOptions.negative) {
+			sPattern = sPattern.replace(/-/, oOptions.minusSign);
+		}
+
+		sPattern = sPattern.replace(/[0#.,]+/, sFormattedNumber);
+
+		if (oOptions.showMeasure && sMeasure) {
+			var sPlaceHolder = "\u00a4",
+				// convert the PCRE regex in CLDR to the regex supported by Javascript
+				mRegex = {
+					"[:digit:]": /\d/,
+					"[:^S:]": /[^\$\xA2-\xA5\u058F\u060B\u09F2\u09F3\u09FB\u0AF1\u0BF9\u0E3F\u17DB\u20A0-\u20BD\uA838\uFDFC\uFE69\uFF04\uFFE0\uFFE1\uFFE5\uFFE6]/
+				},
+				iMeasureStart = sPattern.indexOf(sPlaceHolder),
+				// determine whether the measure is before the number or after it by comparing the position of measure placeholder with half of the length of the pattern string
+				sPosition = iMeasureStart < sPattern.length / 2 ? "after" : "before",
+				oSpacingSetting = this.oLocaleData.getCurrencySpacing(sPosition),
+				sCurrencyChar = (sPosition === "after" ? sMeasure.charAt(sMeasure.length - 1) : sMeasure.charAt(0)),
+				sNumberChar,
+				rCurrencyChar = mRegex[oSpacingSetting.currencyMatch],
+				rNumberChar = mRegex[oSpacingSetting.surroundingMatch],
+				iInsertPos;
+
+			sPattern = sPattern.replace(sPlaceHolder, sMeasure);
+
+			sNumberChar = (sPosition === "after" ? sPattern.charAt(iMeasureStart + sMeasure.length) : sPattern.charAt(iMeasureStart - 1));
+
+			if (rCurrencyChar && rCurrencyChar.test(sCurrencyChar) && rNumberChar && rNumberChar.test(sNumberChar)) {
+				// when both checks are valid, insert the defined space
+
+				if (sPosition === "after") {
+					iInsertPos = iMeasureStart + sMeasure.length;
+				} else {
+					iInsertPos = iMeasureStart;
+				}
+
+				// insert the space char between the measure and the number
+				sPattern = sPattern.slice(0, iInsertPos) + oSpacingSetting.insertBetween + sPattern.slice(iInsertPos);
+			}
+		} else {
+			// If measure is not shown, also remove whitespace next to the measure symbol
+			sPattern = sPattern.replace(/\s*\u00a4\s*/, "");
+		}
+
+		return sPattern;
 	};
 
 	/**
