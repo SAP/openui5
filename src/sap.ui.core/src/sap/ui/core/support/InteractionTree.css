@@ -311,6 +311,8 @@ li.sapUiInteractionItemExpanded {
 .sapUiSupportIntProgressBar {
 	height: inherit;
 	float: left;
+	min-width: 1px;
+	max-width: calc(100% - 4px)
 }
 
 .sapUiInteractionTitle {
