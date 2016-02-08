@@ -2780,5 +2780,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.28": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "40a7fcdaeb5004b79e664aa3a079ba6979cff076",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": []
+      },
+      {
+        "id": "c972ed31a822de40a97beaa14c5a9b6f115ddadc",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Do not delete entity for $links delete requests",
+        "references": []
+      }
+    ]
   }
 }
