@@ -1593,5 +1593,136 @@
         "references": []
       }
     ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "80976fcdb50f7220c9c0790ceb7cc498d40dccc1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "BusyIndicator: New Explored Examples",
+        "references": []
+      },
+      {
+        "id": "1c7268948c2e80ca8df24bc2f9dbfca03c5c30fd",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.format.DateFormat: relative format can be configured with \u0027relativeStyle\u0027",
+        "references": []
+      },
+      {
+        "id": "56248b555379dc0a4ae8433c205804be0ddca732",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Faster Adding of DOM",
+        "references": []
+      },
+      {
+        "id": "cd492f8686de9112cfeefd3e8c19d3be919454ff",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding: filter after data change",
+        "references": []
+      },
+      {
+        "id": "657ad0af1f63b19f46d444a39779b1a8d1fea4e2",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataState: Multiple Formatter Invocations",
+        "references": []
+      },
+      {
+        "id": "39e9e5533b9304b67ab85ea576974b7c1b282e66",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fieldgroup check is not done for sub-controls",
+        "references": []
+      },
+      {
+        "id": "fd9f503bfe0fa7d34af09a06ef661d89778dded5",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MS Edge: usage of Promise polyfill instead of native",
+        "references": []
+      },
+      {
+        "id": "d54215960a1f79c62a1557d7a488e091590c6384",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": []
+      },
+      {
+        "id": "c8ced623e4b1f2563a3ad95c14e69b6701246f3c",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: Changed hide/show",
+        "references": []
+      },
+      {
+        "id": "04c89cf94a668f443b2add0db67afd637a2f455d",
+        "author": "Clemens Maier \u003cc.maier@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.global.js: Restrict timeline measurements",
+        "references": []
+      },
+      {
+        "id": "edfc0be53ed1083d15715d681f29efd930e32855",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.global.js: jsdoc correction",
+        "references": []
+      },
+      {
+        "id": "d3d55dddeaf93db747fc46e15c03ffd9e336da16",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "jquery.sap.trace.js: fixed detection when only fesr is active",
+        "references": []
+      },
+      {
+        "id": "ec82723e5aa520623d62e9274da15511d2a9d7b4",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: don\u0027t break formatter if no date",
+        "references": []
+      },
+      {
+        "id": "938d1f0799b164e315e175e9b38eacabb3e7265a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.routing.Router: bypass event should be fired after the bypass target is loaded",
+        "references": []
+      },
+      {
+        "id": "b9db7ebd87d7cd09a06b8b4d2d0f8d3103e64d15",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.TreeBindingAdapter: fix \u0027toggleIndex\u0027 with fixed rows in table",
+        "references": []
+      },
+      {
+        "id": "cbc76d55199d534aef4e425993db8109b677a158",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: fix GrowingList endless loop",
+        "references": []
+      },
+      {
+        "id": "fe69ea94c58e8061fd12185cb63ffc49bef7380f",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Do not delete entity for $links delete requests",
+        "references": []
+      },
+      {
+        "id": "ad15c162a81712ab663d77bfca770ca017d1db14",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": ": Do not run OPA qUnit test under IOS  on non-safari browsers",
+        "references": []
+      }
+    ]
   }
 }

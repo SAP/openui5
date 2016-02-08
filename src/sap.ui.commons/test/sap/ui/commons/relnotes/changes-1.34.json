@@ -207,5 +207,38 @@
         "references": []
       }
     ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "d54215960a1f79c62a1557d7a488e091590c6384",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": []
+      },
+      {
+        "id": "66dd01469dc9ae97b434f0346a242156980a9c57",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: if date is deleted open calendar on today",
+        "references": []
+      },
+      {
+        "id": "1a3af974f1d30f5233cb552cc7d8bda3fdef7801",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: issues with date \u003e 99991231",
+        "references": []
+      },
+      {
+        "id": "910d7be04babec435f69385ce882c8ac5c0feb7c",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Generating correct tab id in createTab() method fixed.",
+        "references": []
+      }
+    ]
   }
 }

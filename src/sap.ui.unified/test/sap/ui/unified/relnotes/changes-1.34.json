@@ -195,5 +195,66 @@
         "references": []
       }
     ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "4f965623a919afafc358e4b46f72d0d252a5a1f6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Appointment wrong positioned",
+        "references": []
+      },
+      {
+        "id": "276d916643cd7200247543416dd5be5a0e0c3713",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: appointments in new line if invisible",
+        "references": []
+      },
+      {
+        "id": "65cb5bffe3dd5b14db744fef299f7da21cd4e6ba",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: multi-month switch blocks",
+        "references": []
+      },
+      {
+        "id": "82dee423604cf3f9508574fb7191c6a765c55318",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: startDateChange event too early",
+        "references": []
+      },
+      {
+        "id": "54930664d3b7f5fbfc37362136bae800de8d13d3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarDateInterval: wrong weekday names",
+        "references": []
+      },
+      {
+        "id": "98a748611a5c8a6c85d4f5be8cee8fd9c43990c4",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarLegend: rename \"normal Day\" to \"working day\"",
+        "references": []
+      },
+      {
+        "id": "d93aa41bc8b3e3dabf283ea00dd7343ae7f8036a",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: When \"maxPrecision\" is set to 0 only the base part is being displayed",
+        "references": []
+      },
+      {
+        "id": "494e2811a431fa628acba47bc76c4fccefc76a27",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Abort in case of parellel uploads corrected",
+        "references": []
+      }
+    ]
   }
 }

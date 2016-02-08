@@ -431,5 +431,73 @@
         "references": []
       }
     ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "33340da434caf270d8e1cef37e3c26bdfeb2e980",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Checkbox fixed position in form on compact size",
+        "references": []
+      },
+      {
+        "id": "4e6b7b12ef7b7a3c425276927c81539248fc9752",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Border, hover and focus changed in CSS",
+        "references": []
+      },
+      {
+        "id": "44951a5bf163cef7acc1aa3d71a1316390c35ea8",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar scroll arrow shows correct on phone",
+        "references": []
+      },
+      {
+        "id": "5cf3db290c8d77ac0a6227b2a15f5472c89fccb2",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: remove max-width of value state message",
+        "references": []
+      },
+      {
+        "id": "134491426a6f21d162df387038fb190202a9d19c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: prevents actions from occurring when the control is disabled in IE11",
+        "references": []
+      },
+      {
+        "id": "fad769967394aab85a7d48da0bcafb0e4d854ae0",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
+        "references": []
+      },
+      {
+        "id": "8cdf54fa56abbaa9ca4db13122625b9634752e94",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Token: add outline:none to token",
+        "references": []
+      },
+      {
+        "id": "229509a7e5a8c4dd10ffce0acb61a25627564e73",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Focus is now styled correctly",
+        "references": []
+      },
+      {
+        "id": "900a0117d77bbb573a0b8cedfea9b19d0baa9962",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.Shell: Left and right part of the header do not overlap",
+        "references": []
+      }
+    ]
   }
 }

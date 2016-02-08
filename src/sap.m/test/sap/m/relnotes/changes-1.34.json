@@ -2186,5 +2186,255 @@
         "references": []
       }
     ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "56248b555379dc0a4ae8433c205804be0ddca732",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Faster Adding of DOM",
+        "references": []
+      },
+      {
+        "id": "39e9e5533b9304b67ab85ea576974b7c1b282e66",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fieldgroup check is not done for sub-controls",
+        "references": []
+      },
+      {
+        "id": "795f9a69507dd9ddc8d0e94ac6055222e23972b9",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "Support Dialog: Fixed opening the support dialog on Windows Phone",
+        "references": []
+      },
+      {
+        "id": "c5c38bff7a41c59717d8b133e93be616037edeb8",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "TextArea placement in Fiori Client Windows Phone",
+        "references": []
+      },
+      {
+        "id": "81bbadfac60a79504c37bd8c74594eb04847923d",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Update library description for sap.m",
+        "references": []
+      },
+      {
+        "id": "1684e10d993830fce9e497868bc7a05c3d3b79fe",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Page: Start in qUnit Async-Test Moved",
+        "references": []
+      },
+      {
+        "id": "268ad608171f3a23fd904202cdb64f33b41bc58c",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsDialog: No console errors on cancel",
+        "references": []
+      },
+      {
+        "id": "022ca42570c7fa8e99176e40ab84fe7f0d07cb52",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Bar: Size of the middle content is now correct",
+        "references": []
+      },
+      {
+        "id": "1a4947de72a7a54665f241cb304de8574c75b1e1",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel - Content scrolling in IE and FF is now correct",
+        "references": []
+      },
+      {
+        "id": "19e8ecd5f20e7f1c5f896059fb0b623c7abe7360",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Keyboard handling in IE is correct now",
+        "references": []
+      },
+      {
+        "id": "0fb25c52d51e5a2c2750cab8aea730a252d4b841",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Shift+F7 functionality is now correct",
+        "references": []
+      },
+      {
+        "id": "33340da434caf270d8e1cef37e3c26bdfeb2e980",
+        "author": "Mihail Yordanov \u003cmihail.yordanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Checkbox fixed position in form on compact size",
+        "references": []
+      },
+      {
+        "id": "66dd01469dc9ae97b434f0346a242156980a9c57",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: if date is deleted open calendar on today",
+        "references": []
+      },
+      {
+        "id": "1a3af974f1d30f5233cb552cc7d8bda3fdef7801",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: issues with date \u003e 99991231",
+        "references": []
+      },
+      {
+        "id": "e2269e0aadb2b81392e87870b6b96c00d0da37f0",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: After reset, category items are now properly displayed",
+        "references": []
+      },
+      {
+        "id": "4e6b7b12ef7b7a3c425276927c81539248fc9752",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Border, hover and focus changed in CSS",
+        "references": []
+      },
+      {
+        "id": "44951a5bf163cef7acc1aa3d71a1316390c35ea8",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar scroll arrow shows correct on phone",
+        "references": []
+      },
+      {
+        "id": "710cf9745555ce1f4b7aec729cffc6990d4f01b6",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input suggestions: avoid unneeded list refreshes",
+        "references": []
+      },
+      {
+        "id": "d98a7aa10a42f3734751aa67e654db5d12c7c7cb",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: change duration to open message popup to zero",
+        "references": []
+      },
+      {
+        "id": "5cf3db290c8d77ac0a6227b2a15f5472c89fccb2",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: remove max-width of value state message",
+        "references": []
+      },
+      {
+        "id": "816a46715aca8acc16820fe6db9215bdff44c391",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: change flex style to support CustomListItem in IE",
+        "references": []
+      },
+      {
+        "id": "614b696cdc262c763aa7ef667eda13db5e4b0bcd",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: JSDoc of the metadata updated",
+        "references": []
+      },
+      {
+        "id": "e2aadda585a5594e3842a5fbcb6d3642aa3aae35",
+        "author": "Sylvia Strack \u003csylvia.strack@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NumericContent: The icon size is corrected",
+        "references": []
+      },
+      {
+        "id": "ac1a8a719d56dd355bd16019515077e94d690bc3",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: ObjectNumber inside has correct contrast ratio in high contrast black theme",
+        "references": []
+      },
+      {
+        "id": "4f965623a919afafc358e4b46f72d0d252a5a1f6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Appointment wrong positioned",
+        "references": []
+      },
+      {
+        "id": "276d916643cd7200247543416dd5be5a0e0c3713",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: appointments in new line if invisible",
+        "references": []
+      },
+      {
+        "id": "961a9eadb975c88f149eb687f317f1958c37c6b4",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: cursor pointer over icon is set to \u0027pointer\u0027 instead of \u0027default\u0027. BCP: 1670034214",
+        "references": []
+      },
+      {
+        "id": "134491426a6f21d162df387038fb190202a9d19c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: prevents actions from occurring when the control is disabled in IE11",
+        "references": []
+      },
+      {
+        "id": "fad769967394aab85a7d48da0bcafb0e4d854ae0",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Arrows\u0027 click behaviour in firefox is now handled properly",
+        "references": []
+      },
+      {
+        "id": "da10a85bac277f4fe546f947b424f55d925c6cd8",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: add focus border",
+        "references": []
+      },
+      {
+        "id": "722bdbd6b7693dca65a90ad3bb3f6b8b2dce3f73",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: remove tab index if tokenizer is in MultiInput",
+        "references": []
+      },
+      {
+        "id": "7a56f29f0f3c89e7cbf5c3315afec5b4609e59a9",
+        "author": "Eduard Klimenko \u003ceduard.klimenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Fixed visual design for checkbox in single and multi selection mode",
+        "references": []
+      },
+      {
+        "id": "145d2d9be8bc01be12b44d07e3340f13e27772f3",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Items aggregation handling improved in case instandUpload is false",
+        "references": []
+      },
+      {
+        "id": "18d3f6ccbb68da131975e81cb5caec44a1c3f465",
+        "author": "Bohdan Pukalskyi \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Managing event delegates improved",
+        "references": []
+      },
+      {
+        "id": "494e2811a431fa628acba47bc76c4fccefc76a27",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Abort in case of parellel uploads corrected",
+        "references": []
+      }
+    ]
   }
 }

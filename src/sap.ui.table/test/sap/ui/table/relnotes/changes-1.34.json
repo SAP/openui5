@@ -335,5 +335,52 @@
         "references": []
       }
     ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "b9db7ebd87d7cd09a06b8b4d2d0f8d3103e64d15",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.TreeBindingAdapter: fix \u0027toggleIndex\u0027 with fixed rows in table",
+        "references": []
+      },
+      {
+        "id": "6264b1118ebe1267f659d0c6f36ea08e1c404a0c",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Column: fixes _setFilterValue is not a function",
+        "references": []
+      },
+      {
+        "id": "aec16a2d6ec21e2fc9aa208cac290927c2af3bf6",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "ONLY",
+        "text": "when clicking on dummy td",
+        "references": []
+      },
+      {
+        "id": "7f1ac027296a13546830b3a4a02cad1ef36277d7",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fix invisible column header after column with HeaderSpan",
+        "references": []
+      },
+      {
+        "id": "045933bb60d1383d20de6a50f53818fe19427b90",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes null-ref issue with rowSelector of rows which do not have a parent",
+        "references": []
+      },
+      {
+        "id": "293554a6f8eaebfde1cd255d3a392f0a27755890",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes requestCounter for changing bindings while request is still pending",
+        "references": []
+      }
+    ]
   }
 }
