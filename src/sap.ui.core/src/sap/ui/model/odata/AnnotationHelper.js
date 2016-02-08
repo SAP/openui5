@@ -231,6 +231,18 @@ sap.ui.define([
 			 *   including type information and constraints as available from meta data,
 			 *   e.g. <code>"{path : 'Name', type : 'sap.ui.model.odata.type.String',
 			 *   constraints : {'maxLength':'255'}}"</code>.
+			 *   Depending on the used type, some additional constraints of this type are set:
+			 *   <ul>
+			 *     <li>Edm.DateTime: The "displayFormat" constraint is set to the value of the
+			 *     "sap:display-format" annotation of the referenced property.
+			 *     <li>Edm.Decimal: The "precision" and "scale" constraints are set to the values
+			 *     of the corresponding attributes of the referenced property.
+			 *     <li>Edm.String: The "maxLength" constraint is set to the value of the
+			 *     corresponding attribute of the referenced property and the "isDigitSequence"
+			 *     constraint is set to the value of the
+			 *     "com.sap.vocabularies.Common.v1.IsDigitSequence" annotation of the referenced
+			 *     property.
+			 *   </ul>
 			 * </ul>
 			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
 			 * as such. Proper escaping is used to make sure that data binding syntax is not
