@@ -99,21 +99,22 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 	GroupHeaderListItemRenderer.renderLIContent = function(rm, oLI) {
 		var sTextDir = oLI.getTitleTextDirection();
-		rm.write("<label class='sapMGHLITitle'");
+		rm.write("<span class='sapMGHLITitle'");
 
 		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
 			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
+
 		rm.write(">");
-
 		rm.writeEscaped(oLI.getTitle());
+		rm.write("</span>");
 
-		var iCount = oLI.getCount();
+		var iCount = oLI.getCount() || oLI.getCounter();
 		if (iCount) {
+			rm.write("<span class='sapMGHLICounter'>");
 			rm.writeEscaped(" (" + iCount + ")");
+			rm.write("</span>");
 		}
-
-		rm.write("</label>");
 	};
 
 	GroupHeaderListItemRenderer.addLegacyOutlineClass = function(rm, oLI) {
