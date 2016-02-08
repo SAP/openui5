@@ -79,7 +79,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			Plugin.prototype.init.apply(this, arguments);
 
 			this._bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test((window.opener) ? window.opener.location.search : window.location.search);
-			this._bODATA_Stats_On = /sap-statistics=(true|x|X)/.test((window.opener) ? window.opener.location.search : window.location.search);
+			this._bODATA_Stats_On = jQuery.sap.statistics() ||
+				/sap-statistics=(true|x|X)/.test((window.opener) ? window.opener.location.search : window.location.search);
 			if (this.isToolPlugin()) {
 				initInTools.call(this, oSupportStub);
 			} else {
@@ -97,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			var rm = sap.ui.getCore().createRenderManager();
 			rm.write("<div class=\"sapUiSupportToolbar\">");
 			rm.write("<button id=\"" + this.getId() + "-record\" class=\"sapUiSupportIntToggleRecordingBtn\"></button>");
-			rm.write("<label><input type='checkbox' id=\"" + this.getId() + "-odata\" > Enable ODATA Traces</label>");
+			rm.write("<label class='sapUiSupportIntODataLbl'><input type='checkbox' id=\"" + this.getId() + "-odata\" > Enable ODATA Traces</label>");
 			rm.write("<div class='sapUiSupportIntFupInputMask'>");
 			rm.write("<input id=\"" + this.getId() + "-fileImport\" tabindex='-1' size='1' accept='application/zip' type='file'/>");
 			rm.write("</div>");
@@ -161,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 				}
 				this._oStub.sendEvent(this.getId() + "Activate", {"active": bActive});
 			}, this));
-			this.$("odata").attr('checked',this._bODATA_Stats_On).change(jQuery.proxy(function(oEvent) {
+			this.$("odata").attr('checked',this._bODATA_Stats_On).click(jQuery.proxy(function(oEvent) {
 				jQuery.sap.statistics(!jQuery.sap.statistics());
 			}, this));
 
