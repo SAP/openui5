@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
        InteractionTree.prototype.render = function (rm) {
 
-          rm.write('<div id="' + this.getId() + '" class="sapUiInteractionTreeContainer">');
+          rm.write('<div id="' + this.getId() + '" class="sapUiInteractionTreeContainer sapUiSizeCompact">');
 
           rm.write('<div class="sapUiInteractionGridLinesContainer"></div>');
 
