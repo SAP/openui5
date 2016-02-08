@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 	var ODataTreeBindingAdapter = function() {
 
 		// ensure only TreeBindings are enhanced which have not been enhanced yet
-		if (!(this instanceof TreeBinding && this.getContexts === undefined)) {
+		if (!(this instanceof TreeBinding) || this._bIsAdapted) {
 			return;
 		}
 

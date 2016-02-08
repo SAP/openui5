@@ -9,15 +9,22 @@ sap.ui.define([
 			var oFormData = {
 				serviceURL: "",
 				collection: "orgHierarchy",
-				selectProperties: "HIERARCHY_NODE,DESCRIPTION,LEVEL,DRILLDOWN_STATE",
+				selectProperties: "HIERARCHY_NODE,DESCRIPTION,LEVEL,DRILLDOWN_STATE,MAGNITUDE",
+				initialLevel: 2,
 				countMode: "Inline",
-				operationMode: "Auto",
-				tableThreshold: 10,
-				bindingThreshold: 10000,
+				operationMode: "Server",
+				tableThreshold: 100,
+				bindingThreshold: 10,
 				rootLevel: 0,
 				filterProperty: "DESCRIPTION",
 				filterOperator: "Contains",
 				filterValue: "",
+				useLocalMetadata: false,
+				hierarchyLevelFor: "LEVEL",
+				hierarchyParentNodeFor: "PARENT_NODE",
+				hierarchyNodeFor: "HIERARCHY_NODE",
+				hierarchyDrillStateFor: "DRILLDOWN_STATE",
+				hierarchyDescendantCountFor: "MAGNITUDE",
 				visibleRowCount: 10,
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Fixed,
 				overall: 0,
@@ -46,18 +53,50 @@ sap.ui.define([
 			var sServiceUrl = oDataModel.getProperty("/serviceURL");
 			sServiceUrl = "../../../../../proxy/" + sServiceUrl.replace("://", "/");
 
+			if (sServiceUrl.indexOf("odataFake") >= 0) {
+				jQuery.sap.require("sap.ui.core.util.MockServer");
+				sServiceUrl = "/odataFake/";
+				//Mock server for use with navigation properties
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri: sServiceUrl
+				});
+				oMockServer.simulate("../../core/qunit/model/metadata_orgHierarchy.xml", "../../core/qunit/model/orgHierarchy/");
+				oMockServer.start();
+			}
+
 			var sCollection = oDataModel.getProperty("/collection");
 			var sSelectProperties = oDataModel.getProperty("/selectProperties");
 			var sCountMode = oDataModel.getProperty("/countMode");
 			var sOperationMode = oDataModel.getProperty("/operationMode");
 
+			// threshold for OperationMode.Auto
 			var sBindingThreshold = oDataModel.getProperty("/bindingThreshold");
+			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
+			
+			// table threshold
+			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue(), 10);
 
+			// the root level of the tree
+			var iRootLevel = parseInt(oView.byId("rootLevel").getValue(), 10);
+
+			// initial # of expanded levels
+			var iInitialLevel = parseInt(oView.byId("initialLevel").getValue(), 10);
+
+			// application filter values
 			var sFilterProperty = oDataModel.getProperty("/filterProperty");
 			var sFilterOperator = oDataModel.getProperty("/filterOperator");
 			var sFilterValue = oDataModel.getProperty("/filterValue");
 			var oApplicationFilter = sFilterProperty && sFilterOperator && sFilterValue ? new sap.ui.model.Filter(sFilterProperty, sFilterOperator, sFilterValue) : [];
 
+			// hierarchy properties
+			var bUseLocalMetadata = oView.byId("useLocalMetadata").getSelected();
+			var sHierarchyLevelFor = oView.byId("hierarchyLevelFor").getValue();
+			var sHierarchyParentNodeFor = oView.byId("hierarchyParentNodeFor").getValue();
+			var sHierarchyNodeFor = oView.byId("hierarchyNodeFor").getValue();
+			var sHierarchyDrillStateFor = oView.byId("hierarchyDrillStateFor").getValue();
+			var sHierarchyDescendantCountFor = oView.byId("hierarchyDescendantCountFor").getValue();
+
+			// table propertis
 			var iVisibleRowCount = oDataModel.getProperty("/visibleRowCount");
 			var sVisibleRowCountMode = oDataModel.getProperty("/visibleRowCountMode");
 
@@ -72,7 +111,7 @@ sap.ui.define([
 			 */
 			var oTableContainer = oView.byId("tableContainerPanel");
 
-			var oTable = oTableContainer.getContent()[0];
+			window.oTable = oTableContainer.getContent()[0];
 
 			//clean up
 			if (oTable) {
@@ -84,7 +123,10 @@ sap.ui.define([
 
 			jQuery.sap.measure.start("createTable");
 
-			oTable = new sap.ui.table.TreeTable();
+			oTable = new sap.ui.table.TreeTable({
+				rootLevel: iRootLevel,
+				threshold: iTableThreshold
+			});
 
 			oTableContainer.addContent(oTable);
 
@@ -154,6 +196,7 @@ sap.ui.define([
 			});
 
 			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, true);
+			oModel.setUseBatch(false);
 			oModel.setDefaultCountMode("Inline");
 
 			oTable.setModel(oModel);
@@ -161,17 +204,22 @@ sap.ui.define([
 				path: "/" + sCollection,
 				filters: oApplicationFilter,
 				parameters: {
-					threshold: sBindingThreshold,
+					threshold: iBindingThreshold,
 					countMode: sCountMode,
 					operationMode: sOperationMode,
-					treeAnnotationProperties: {
-						hierarchyLevelFor: "LEVEL",
-						hierarchyParentNodeFor: "PARENT_NODE",
-						hierarchyNodeFor: "HIERARCHY_NODE",
-						hierarchyDrillStateFor: "DRILLDOWN_STATE"
-					}
+					numberOfExpandedLevels: iInitialLevel == "" ?  0 : iInitialLevel,
+					//navigation: {orgHierarchyRoot: "toChildren", orgHierarchy: "toChildren"}
+					treeAnnotationProperties: bUseLocalMetadata ? {
+						hierarchyLevelFor: sHierarchyLevelFor,
+						hierarchyParentNodeFor: sHierarchyParentNodeFor,
+						hierarchyNodeFor: sHierarchyNodeFor,
+						hierarchyDrillStateFor: sHierarchyDrillStateFor,
+						hierarchyNodeDescendantCountFor: sHierarchyDescendantCountFor
+					} : undefined
 				}
 			});
+
+			oTable._setLargeDataScrolling(true);
 
 			//for easier table dbg
 			window.oTable = oTable;
