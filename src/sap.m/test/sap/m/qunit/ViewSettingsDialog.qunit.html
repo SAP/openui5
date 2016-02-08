@@ -1111,6 +1111,18 @@
 			}
 		});
 
+		//BCP: 1570899196
+		test("removeFilterItem works with index as a parameter", function() {
+			oVsdConfig.addFilterItems(this.oVSD);
+
+			var iFilterItemsCount = this.oVSD.getFilterItems().length;
+
+			this.oVSD.removeFilterItem(0);
+
+			ok(true, "removeFilterItem does not throw errors when called with item index");
+			strictEqual(this.oVSD.getFilterItems().length, iFilterItemsCount - 1, "a filter item is removed");
+		});
+
 		test("Check filter only mode", function  () {
 			var	sId = this.oVSD.getId();
 
