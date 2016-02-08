@@ -295,6 +295,10 @@ sap.ui.define([
 					this.getView().byId("deleteSelectedButton").setEnabled(false);
 				}
 			}
+		},
+
+		onAttributePress: function(oEvent) {
+			MessageToast.show(oEvent.getSource().getTitle() + ": " + oEvent.getSource().getText());
 		}
 	});
 

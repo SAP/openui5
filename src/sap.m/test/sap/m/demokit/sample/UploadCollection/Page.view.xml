@@ -71,7 +71,7 @@
 								title="{title}"
 								text="{path : 'text', formatter : '.formatAttribute'}"
 								active="{active}"
-								textDirection="{textDirection}"/>
+								press="onAttributePress"/>
 						</attributes>
 						<statuses>
 							<ObjectStatus
