@@ -2148,7 +2148,41 @@
 		});
 	});
 
-	</script>
+	asyncTest("Paging", function() {
+		oModel.attachMetadataLoaded(function() {
+			var oContext;
+			var iHandleCounter = 0;
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
+				rootLevel: 2
+			});
+
+			function handler1 (oEvent) {
+				oBinding.detachDataReceived(handler1);
+
+				var oData = oEvent.getParameter("data");
+				equals(oData.results.length, 4, "Data is set as an event-parameter of dataReceive event (getRootContexts)");
+
+				oBinding.attachDataReceived(handler2);
+
+				var oContext = oBinding.getRootContexts(1, 4)[0];
+				oBinding.getNodeContexts(oContext, 0, 3);
+			}
+
+			function handler2 (oEvent) {
+				oBinding.detachDataReceived(handler2);
+
+				var oData = oEvent.getParameter("data");
+				equals(oData.results.length, 3, "Data is set as an event-parameter of dataReceive event (getNodeContexts)");
+
+				start();
+			}
+
+			oBinding.attachDataReceived(handler1);
+			oBinding.getRootContexts(1, 4);
+		});
+	});
+
+</script>
 
 </head>
 <body>
