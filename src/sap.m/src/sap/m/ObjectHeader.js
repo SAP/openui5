@@ -752,16 +752,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._getImageControl = function() {
 		var sImgId = this.getId() + "-img";
 		var sSize = "2.5rem";
-		var sHeight = "3rem";
-		var sWidth = "3rem";
 
 		var mProperties = jQuery.extend(
 				{
 					src : this.getIcon(),
 					densityAware : this.getIconDensityAware()
 				},
-					IconPool.isIconURI(this.getIcon()) ?
-						{ size : sSize } : {height : sHeight, width : sWidth }
+					IconPool.isIconURI(this.getIcon()) ? { size : sSize } : {}
 		);
 
 		this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties);
