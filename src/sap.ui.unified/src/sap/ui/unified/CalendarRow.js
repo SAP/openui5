@@ -320,7 +320,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			_focusAppointment.call(this, oEvent.target.id);
 		} else {
 			// focus somewhere else -> focus appointment
-			this.getFocusedAppointment().focus();
+			var oAppointment = this.getFocusedAppointment();
+			if (oAppointment) {
+				oAppointment.focus();
+			}
 		}
 
 	};
