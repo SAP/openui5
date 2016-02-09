@@ -1981,6 +1981,18 @@
 
 			/* [end]  Actual unit tests of custom tabs */
 
+			module("Others");
+
+			test("customControl is cloned as expected", function(){
+				var oViewSettingsCustomItem = new sap.m.ViewSettingsCustomItem({
+					text     : "SomeText",
+					key      : "SomeKey",
+					customControl : new sap.m.Input()
+				});
+
+				var oClone = oViewSettingsCustomItem.clone();
+				ok(!!oClone.getCustomControl(), "Custom control is cloned");
+			});
 
 		</script>
 	</head>
