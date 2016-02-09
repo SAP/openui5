@@ -815,7 +815,76 @@
 			vsd._dialog.close();
 		});
 
-		module ("Filter only checks")
+		module ("Filter only checks");
+
+		//BCP: 1570899196
+		test("removeFilterItem works with index as a parameter", function() {
+			var oVSD = new sap.m.ViewSettingsDialog({
+				filterItems: [
+					new sap.m.ViewSettingsFilterItem({
+						key: "myNameFilter",
+						text: "Name",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "name1",
+								text: "Headphone"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name2",
+								text: "Mousepad"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name3",
+								text: "Monitor"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name4",
+								text: "Backpack"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name5",
+								text: "Printer"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name6",
+								text: "Optic Mouse"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name7",
+								text: "Dock Station"
+							})
+						]
+					}),
+					new sap.m.ViewSettingsFilterItem({
+						key: "myStatusFilter",
+						text: "Status",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "status1",
+								text: "Approved"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "status2",
+								text: "Open"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "status3",
+								text: "Denied"
+							})
+						]
+					})
+				]
+			});
+
+			var iFilterItemsCount = oVSD.getFilterItems().length;
+
+			oVSD.removeFilterItem(0);
+
+			ok(true, "removeFilterItem does not throw errors when called with item index");
+			strictEqual(oVSD.getFilterItems().length, iFilterItemsCount - 1, "a filter item is removed");
+
+			oVSD.destroy();
+		});
 
 		asyncTest("Check filter only mode", function  () {
 			var vsd = new sap.m.ViewSettingsDialog("vsd-filter", {
