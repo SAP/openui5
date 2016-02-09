@@ -212,7 +212,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert (should be Button1 after rendering)
-		strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing nullto the association \"selectedButton\"");
+		strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing null to the association \"selectedButton\"");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -434,8 +434,8 @@
 		equal(elementWidth, (expectedButtonOuterWidth * 2) + 1, "Control width should be " + ((expectedButtonOuterWidth * 2) + 1) + "px");
 		equal(oButton1.$().outerWidth(), expectedButtonOuterWidth + 1, 'First button width should be ' + (expectedButtonOuterWidth + 1) + 'px');
 		equal(oButton2.$().outerWidth(), expectedButtonOuterWidth, 'Second button width should be ' + expectedButtonOuterWidth + 'px');
-		equal(oButton1.$().width(), 34, 'First button width withouth padding shoud be 34px');
-		equal(oButton2.$().width(), 34, 'Second button width withouth padding shoud be 34px');
+		equal(oButton1.$().width(), 34, 'First button width without padding should be 34px');
+		equal(oButton2.$().width(), 34, 'Second button width without padding should be 34px');
 
 		// Cleanup
 		oBar.destroy();
@@ -464,11 +464,11 @@
 		var oButtons = oSegmentedButton.getButtons();
 
 		// Assert
-		strictEqual(oButtons[0].$().attr("dir"), "rtl", "Button 1 dir attribute shoud be set to 'rtl'.");
-		strictEqual(oButtons[1].$().attr("dir"), "ltr", "Button 2 dir attribute shoud be set to 'ltr'.");
-		strictEqual(oButtons[2].$().attr("dir"), undefined, "Button 3 dir attribute shoud not be rendered.");
-		strictEqual(oButtons[3].$().attr("dir"), "rtl", "Button 4 dir attribute shoud be set to 'rtl' button created using the createButton method.");
-		strictEqual(oButtons[4].$().attr("dir"), "ltr", "Button 5 dir attribute shoud be set to 'ltr' button created using the createButton method.");
+		strictEqual(oButtons[0].$().attr("dir"), "rtl", "Button 1 dir attribute should be set to 'rtl'.");
+		strictEqual(oButtons[1].$().attr("dir"), "ltr", "Button 2 dir attribute should be set to 'ltr'.");
+		strictEqual(oButtons[2].$().attr("dir"), undefined, "Button 3 dir attribute should not be rendered.");
+		strictEqual(oButtons[3].$().attr("dir"), "rtl", "Button 4 dir attribute should be set to 'rtl' button created using the createButton method.");
+		strictEqual(oButtons[4].$().attr("dir"), "ltr", "Button 5 dir attribute should be set to 'ltr' button created using the createButton method.");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -601,7 +601,7 @@
 		strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
 		strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
 		strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
-		strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text shoud be equal to xml view ListItem text");
+		strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text should be equal to xml view ListItem text");
 		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
 
 		// Cleanup
@@ -927,7 +927,7 @@
 		strictEqual(oSegmentedButton.getWidth(), "", "by default width property is empty string");
 		strictEqual(oSegmentedButton.getVisible(), true, "By default the SegmentedButton control is visible");
 		strictEqual(oSegmentedButton.getEnabled(), true, "By default the SegmentedButton control control is enabled");
-		strictEqual(oSegmentedButton.getSelectedKey(), "", "By default the selectedKey aggregation shoud be undefined when the segmented button is initialized with the buttons aggregation");
+		strictEqual(oSegmentedButton.getSelectedKey(), "", "By default the selectedKey aggregation should be undefined when the segmented button is initialized with the buttons aggregation");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1015,7 +1015,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Disbale single button", function() {
+	test("Disable single button", function() {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -1134,7 +1134,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons().length, 0, "There shoud be 0 buttons in the SegmentedButton");
+		strictEqual(oSegmentedButton.getButtons().length, 0, "There should be 0 buttons in the SegmentedButton");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1486,7 +1486,7 @@
 		mData.items[6].enabled = true;
 		mData.items[6].text = "sLabel";
 
-		// Update bingings with a change reason
+		// Update bindings with a change reason
 		oModel.updateBindings(sap.ui.model.ChangeReason.Change);
 
 		// Assert
@@ -1563,7 +1563,7 @@
 		strictEqual(oSegmentedButton.getItems().length, 8, "Should have 8 items");
 		strictEqual(oSegmentedButton.getButtons().length, 8, "Should have 8 buttons");
 		strictEqual(oSegmentedButton.$().find("li").length, 8, "Should have 8 buttons rendered");
-		strictEqual(oSegmentedButton.getSelectedKey(), "b7", "selectedKey shoud be qual to the second model selectedKey");
+		strictEqual(oSegmentedButton.getSelectedKey(), "b7", "selectedKey should be equal to the second model selectedKey");
 		strictEqual(oSegmentedButton.getButtons()[0].getText(), "btn 1",
 				"Button text should be equal to second Model text");
 		strictEqual(oSegmentedButton.getButtons()[1].getEnabled(), false,
