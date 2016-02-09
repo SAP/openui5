@@ -158,7 +158,7 @@
 			var oItemButton = oItem.getAggregation("_closeButton");
 			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
 			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
-			//TODO: sapMTabSelectListItemCloseButton should be changed to
+			//TODO: sapMTabStripSelectListItemCloseButton should be changed to
 			//sapMTabStripItemCloseButton in order to make sense everywhere
 
 			this.clock.tick(1000);
