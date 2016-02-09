@@ -185,6 +185,17 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 	};
 
 	/**
+	 * A Dummy Event implementation.
+	 */
+	function DummyEvent(sName) {
+		this.type = sName;
+	}
+
+	DummyEvent.prototype.preventDefault = function() {};
+	DummyEvent.prototype.stopImmediatePropagation = function() {};
+	DummyEvent.prototype.stopPropagation = function() {};
+
+	/**
 	 * Programmtically triggers an event specified by its name on a specified target with some optional parameters.
 	 * @see http://api.jquery.com/trigger/
 	 *
@@ -194,8 +205,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 	 * @public
 	 */
 	QUtils.triggerEvent = function(sEventName, oTarget, oParams) {
-		var tmpEvent = jQuery.Event(sEventName);
-		tmpEvent.originalEvent = tmpEvent.originalEvent || {};
+		var tmpEvent = jQuery.Event(new DummyEvent(sEventName));
 
 		if (oParams) {
 			for (var x in oParams) {
@@ -226,8 +236,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 		}
 		var $Target = jQuery(oTarget);
 
-		var oEvent = jQuery.Event(sEventName);
-		oEvent.originalEvent = {};
+		var oEvent = jQuery.Event(new DummyEvent(sEventName));
 		oEvent.target = oTarget;
 		if (oParams) {
 			for (var x in oParams) {
