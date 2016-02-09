@@ -9,32 +9,20 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 * The Press action is used to simulate a press interaction on a Control's dom ref.
 	 * This will work out of the box for most of the controls (even custom controls).
 	 *
-	 * Here is a List of supported controls:
+	 * Here is a List of supported controls (some controls will trigger the press on a specific region):
 	 *
 	 * <ul>
 	 *     <li>sap.m.Button</li>
 	 *     <li>sap.m.Link</li>
 	 *     <li>sap.m.StandardListItem</li>
 	 *     <li>sap.m.IconTabFilter</li>
-	 *     <li>sap.m.SearchField</li>
-	 *     <li>sap.m.Page</li>
-	 *     <li>sap.m.semantic.FullscreenPage</li>
-	 *     <li>sap.m.semantic.DetailPage</li>
-	 *     <li>sap.m.List</li>
-	 *     <li>sap.m.Table</li>
-	 *     <li>sap.m.StandardTile</li>
-	 * </ul>
-	 *
-	 * Some Controls will trigger the press on a specific region:
-	 *
-	 * Here are a List of special defaults:
-	 * <ul>
-	 *     <li>sap.m.SeachField - Search Button</li>
+	 *     <li>sap.m.SearchField - Search Button</li>
 	 *     <li>sap.m.Page - Back Button</li>
 	 *     <li>sap.m.semantic.FullscreenPage - Back Button</li>
 	 *     <li>sap.m.semantic.DetailPage - Back Button</li>
 	 *     <li>sap.m.List - More Button</li>
 	 *     <li>sap.m.Table - More Button</li>
+	 *     <li>sap.m.StandardTile</li>
 	 * </ul>
 	 *
 	 * @class
