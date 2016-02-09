@@ -185,11 +185,9 @@ li.sapUiInteractionItemExpanded {
 
 .sapUiInteractionBlue {
 	border: 1px solid rgb(0, 124, 192);
-	background-color: rgba(0, 124, 192, 0.9);
+	background-color: rgba(0, 124, 192, 0.8);
 
-	border-top-left-radius: 2px;
-	border-bottom-left-radius: 2px;
-	border-right: 1px solid rgba(255, 255, 255, 0.6);
+	border-radius: 2px;
 }
 
 .sapUiInteractionBlueLight {
