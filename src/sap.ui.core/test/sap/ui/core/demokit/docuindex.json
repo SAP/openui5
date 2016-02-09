@@ -149,7 +149,7 @@
 				]
 			},
 			{
-				"id" : "sap.ui.core.type.DateTime",
+				"id" : "sap.ui.model.type.DateTime",
 				"name" : "DateTime Type",
 				"category" : "Data Binding",
 				"since" : "1.28",
@@ -168,7 +168,7 @@
 				]
 			},
 			{
-				"id" : "sap.ui.core.type.Integer",
+				"id" : "sap.ui.model.type.Integer",
 				"name" : "Integer Type",
 				"category" : "Data Binding",
 				"since" : "1.28",
@@ -177,7 +177,7 @@
 				]
 			},
 			{
-				"id" : "sap.ui.core.type.Float",
+				"id" : "sap.ui.model.type.Float",
 				"name" : "Float Type",
 				"category" : "Data Binding",
 				"since" : "1.28",
@@ -186,7 +186,7 @@
 				]
 			},
 			{
-				"id" : "sap.ui.core.type.Currency",
+				"id" : "sap.ui.model.type.Currency",
 				"name" : "Currency Type",
 				"category" : "Data Binding",
 				"since" : "1.28",
@@ -195,7 +195,7 @@
 				]
 			},
 			{
-				"id" : "sap.ui.core.type.FileSize",
+				"id" : "sap.ui.model.type.FileSize",
 				"name" : "FileSize Type",
 				"category" : "Data Binding",
 				"since" : "1.28",
