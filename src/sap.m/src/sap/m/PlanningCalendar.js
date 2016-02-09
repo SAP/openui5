@@ -217,10 +217,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (sap.ui.Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 			this._iSize = 0;
+			this._iSizeScreen = 0;
 		}else if (sap.ui.Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
 			this._iSize = 1;
+			this._iSizeScreen = 1;
 		}else {
 			this._iSize = 2;
+			this._iSizeScreen = 2;
 		}
 
 		var sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
@@ -721,6 +724,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this.setProperty("singleSelection", bSingleSelection, true);
 
+		_positionSelectAllCheckBox.call(this);
+
 		var oTable = this.getAggregation("table");
 		if (bSingleSelection) {
 			oTable.setMode(sap.m.ListMode.SingleSelectMaster);
@@ -729,8 +734,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oTable.setMode(sap.m.ListMode.MultiSelect);
 			_updateSelectAllCheckBox.call(this);
 		}
-
-		_positionSelectAllCheckBox.call(this);
 
 		this.$().toggleClass("sapMPlanCalMultiSel", !bSingleSelection);
 
@@ -1121,6 +1124,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._iSize = 2; // desktop
 		}
 
+		// use header sizes, as m.Table uses this for it's resizing
+		if (jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+			this._iSizeScreen = 0;
+		}else if (jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
+			this._iSizeScreen = 1;
+		}else {
+			this._iSizeScreen = 2;
+		}
+
 	}
 
 	function _getViews() {
@@ -1377,9 +1389,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				});
 				this._oSelectAllCheckBox.attachEvent("select", _handleSelectAll, this);
 			}
-			if (this._iSize < 2 || !this.getShowRowHeaders()) {
+			if (this._iSizeScreen < 2 || !this.getShowRowHeaders()) {
 				var iIndex = this._oInfoToolbar.indexOfContent(this._oSelectAllCheckBox);
-				if (this._iSize < 2) {
+				if (this._iSizeScreen < 2) {
 					// on phone: checkbox below calendar
 					if (iIndex < this._oInfoToolbar.getContent().length - 1) {
 						this._oInfoToolbar.addContent(this._oSelectAllCheckBox);
