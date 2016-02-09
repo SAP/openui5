@@ -312,37 +312,45 @@ sap.ui.require([
 	//*********************************************************************************************
 	["/EMPLOYEES(ID='1')/Name", "Name"].forEach(function (sPath) {
 		QUnit.test("ManagedObject.bindProperty: type and value, path " + sPath, function (assert) {
-			var oBinding,
+			var bAbsolute = sPath[0] === "/",
+				oValue = "foo",
+				fnResolveRead,
+				oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;}),
 				oCache = {
-					read : function () {}
+					read : function (sGroupId, sReadPath, fnDataRequested) {
+						fnDataRequested();
+						// read returns an unresolved Promise to be resolved by submitBatch;
+						// otherwise this Promise would be resolved before the rendering and
+						// dataReceived would be fired before dataRequested
+						return oReadPromise;
+					}
 				},
 				oCacheMock = this.oSandbox.mock(_Cache),
 				oContextBindingMock,
 				sContextPath = "/EMPLOYEES(ID='42')",
+				iDataReceivedCount = 0,
+				iDataRequestedCount = 0,
 				done = assert.async(),
 				oModel = new ODataModel("/service/"),
 				oControl = new TestControl({models : oModel}),
 				sResolvedPath,
-				oType = new TypeString(),
-				oValue = null; //TODO test with other primitive values?
+				oType = new TypeString();
 
 			oCacheMock.expects("createSingle")
 				.withExactArgs(sinon.match.same(oModel.oRequestor), sContextPath.slice(1), {});
 			oControl.bindObject(sContextPath);
 			oContextBindingMock = this.oSandbox.mock(oControl.getObjectBinding());
-			if (sPath[0] === "/") { // absolute path: use cache on binding
+			if (bAbsolute) { // absolute path: use cache on binding
 				sResolvedPath = sPath;
 				oContextBindingMock.expects("requestValue").never();
 				oCacheMock.expects("createSingle")
 					.withExactArgs(sinon.match.same(oModel.oRequestor), sResolvedPath.slice(1), {},
 						true)
 					.returns(oCache);
-				this.oSandbox.mock(oCache).expects("read")
-					.withArgs(/*sGroupId*/"", /*sPath*/undefined)
-					.callsArg(2)
-					.returns(Promise.resolve(oValue));
-				this.oSandbox.mock(oModel).expects("dataRequested")
-					.withExactArgs("", sinon.match.typeOf("function"));
+				this.oSandbox.stub(oModel.oRequestor, "submitBatch", function () {
+					// submitBatch resolves the promise of the read
+					fnResolveRead(oValue);
+				});
 			} else {
 				sResolvedPath = sContextPath + "/" + sPath;
 				oContextBindingMock.expects("requestValue")
@@ -355,14 +363,37 @@ sap.ui.require([
 			this.oSandbox.mock(oType).expects("formatValue").withExactArgs(oValue, "string");
 
 			//code under test
-			oControl.bindProperty("text", sPath);
+			oControl.bindProperty("text", {path : sPath, events : {
+				change : function () {
+					var oBinding = oControl.getBinding("text");
 
-			oBinding = oControl.getBinding("text");
-			oBinding.attachChange(function () {
-				assert.strictEqual(oBinding.getType(), oType);
-				assert.strictEqual(oBinding.getValue(), oValue);
-				done();
-			});
+					assert.strictEqual(oBinding.getType(), oType);
+					assert.strictEqual(oBinding.getValue(), oValue);
+					if (!bAbsolute) {
+						assert.strictEqual(iDataRequestedCount, 0);
+						done();
+					}
+				},
+				dataRequested : function (oEvent) {
+					assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
+						"dataRequested - correct source");
+					iDataRequestedCount++;
+				},
+				dataReceived : function (oEvent) {
+					var oBinding = oControl.getBinding("text");
+
+					assert.strictEqual(oEvent.getSource(), oControl.getBinding("text"),
+						"dataReceived - correct source");
+					assert.strictEqual(iDataRequestedCount, 1);
+					assert.strictEqual(oBinding.getType(), oType);
+					assert.strictEqual(oBinding.getValue(), oValue);
+					iDataReceivedCount++;
+					done();
+				}
+			}});
+
+			assert.strictEqual(iDataRequestedCount, 0, "dataRequested not (yet) fired");
+			assert.strictEqual(iDataReceivedCount, 0, "dataReceived not (yet) fired");
 		});
 	});
 
@@ -376,9 +407,13 @@ sap.ui.require([
 		QUnit.test("bindProperty with non-primitive " + JSON.stringify(oValue), function (assert) {
 			var oBinding,
 				oCache = {
-					read : function () {}
+					read : function (sGroupId, sPath, fnDataRequested) {
+						fnDataRequested();
+						return Promise.resolve(oValue);
+					}
 				},
 				oCacheMock = this.oSandbox.mock(_Cache),
+				done = assert.async(),
 				oModel = new ODataModel("/service/"),
 				oControl = new TestControl({models : oModel}),
 				sPath = "/path",
@@ -386,8 +421,6 @@ sap.ui.require([
 				oTypeError = new Error("Unsupported EDM type...");
 
 			oCacheMock.expects("createSingle").returns(oCache);
-			this.oSandbox.mock(oCache).expects("read")
-				.returns(Promise.resolve(oValue));
 			this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
 				.withExactArgs(sPath)
 				.returns(Promise.reject(oTypeError));
@@ -397,13 +430,49 @@ sap.ui.require([
 				"sap.ui.model.odata.v4.ODataPropertyBinding");
 
 			//code under test
-			oControl.bindProperty("text", sPath);
+			oControl.bindProperty("text", {path : sPath, events : {
+				dataReceived : function (oEvent) {
+					var oBinding = oControl.getBinding("text");
+					assert.strictEqual(oBinding.getType(), undefined);
+					assert.strictEqual(oBinding.getValue(), undefined);
+					assert.strictEqual(oEvent.getParameter("error"), undefined, "no read error");
+					done();
+				}
+			}});
 
 			oBinding = oControl.getBinding("text");
 			return oSpy.returnValues[0].then(function () {
 				assert.strictEqual(oBinding.getType(), undefined);
 				assert.strictEqual(oBinding.getValue(), undefined);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("dataReceived with error", function (assert) {
+		var oError = new Error("Expected read failure"),
+			oCache = {
+				read : function (sGroupId, sPath, fnDataRequested) {
+					fnDataRequested();
+					return Promise.reject(oError);
+				}
+			},
+			done = assert.async(),
+			oModel = new ODataModel("/service/"),
+			oControl = new TestControl({models : oModel});
+
+		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
+		this.oLogMock.expects("error").withExactArgs("Failed to read path /path", oError,
+			"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+		//code under test
+		oControl.bindProperty("text", {path : "/path", type : new sap.ui.model.type.String(),
+			events : {
+				dataReceived : function (oEvent) {
+					assert.strictEqual(oEvent.getParameter("error"), oError, "expected error");
+					done();
+				}
+			}
 		});
 	});
 
@@ -567,6 +636,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh cancels pending read", function (assert) {
 		var oCacheMock = this.getCacheMock(),
+			iChangedCount = 0,
+			iDataReceivedCount = 0,
 			done = assert.async(),
 			oError = new Error(),
 			oModel = new ODataModel("/service/?sap-client=111"),
@@ -575,8 +646,8 @@ sap.ui.require([
 
 		oError.canceled = true; // simulate canceled cache read
 		// initial read and after refresh
-		oCacheMock.expects("read").returns(Promise.reject(oError));
-		oCacheMock.expects("read").returns(Promise.resolve("foo"));
+		oCacheMock.expects("read").callsArg(2).returns(Promise.reject(oError));
+		oCacheMock.expects("read").callsArg(2).returns(Promise.resolve("foo"));
 		oCacheMock.expects("refresh");
 		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type").twice()
 			.withExactArgs(sPath)
@@ -584,13 +655,20 @@ sap.ui.require([
 
 		oBinding = oModel.bindProperty(sPath);
 
-		// only refresh fires change
-		oBinding.attachChange(function () {
-			// log mock checks there is no console error from canceling processing of read
-			// and if change handler is called a second time test fails with error:
-			// Called the callback returned from 'assert.async' more than once
-			done();
+		// dataReceived is expected twice w/o error, even for the cancelled request
+		oBinding.attachDataReceived(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("error"), undefined, "no error");
+			iDataReceivedCount++;
+			if (iDataReceivedCount === 2) {
+				assert.strictEqual(iChangedCount, 1, "only refresh fires change");
+				done();
+			}
 		});
+
+		oBinding.attachChange(function () {
+			iChangedCount++;
+		});
+
 		// trigger read before refresh
 		oBinding.checkUpdate(false);
 		oBinding.refresh(true);
