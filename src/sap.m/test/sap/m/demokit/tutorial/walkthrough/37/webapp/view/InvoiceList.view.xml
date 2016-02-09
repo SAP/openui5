@@ -22,7 +22,7 @@
 		</headerToolbar>
 		<columns>
 			<Column
-				hAlign="Right"
+				hAlign="End"
 				minScreenWidth="Small"
 				demandPopin="true"
 				width="4em">
@@ -42,7 +42,7 @@
 				<Text text="{i18n>columnSupplier}"/>
 			</Column>
 			<Column
-				hAlign="Right">
+				hAlign="End">
 				<Text text="{i18n>columnPrice}"/>
 			</Column>
 		</columns>
