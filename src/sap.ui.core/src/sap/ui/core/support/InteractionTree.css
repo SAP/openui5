@@ -388,6 +388,7 @@ li.sapUiInteractionItemExpanded {
 	font-size: 12px;
 	line-height: 20px;
 	width: 20px;
+	margin: 0;
 }
 
 .sapUiSupportIntPopoverForm .sapUiForm .sapUiFormTitle {
