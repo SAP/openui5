@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 	function(Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.PlanningCalendar.Page", {
+	var PageController = Controller.extend("sap.m.sample.PlanningCalendarMulti.Page", {
 
 		onInit: function () {
 			// create model
@@ -31,15 +31,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 									              	 type: "Type04",
 									              	 tentative: false
 									               }
-									               ],
-									headers: [
-									          {
-									          	start: new Date("2015", "11", "16", "0", "0"),
-									          	end: new Date("2015", "11", "16", "23", "59"),
-									          	title: "Private",
-									          	type: "Type05"
-									          },
-									          ]
+									               ]
 								},
 								{
 									pic: "test-resources/sap/ui/demokit/explored/img/johnDoe.png",
@@ -69,14 +61,6 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 									              	 type: "Type03",
 									              	 tentative: true
 									               }
-									               ],
-									headers: [
-									          {
-									          	start: new Date("2015", "11", "15", "8", "0"),
-									          	end: new Date("2015", "11", "15", "10", "0"),
-									          	title: "Reminder",
-									          	type: "Type06"
-									          }
 									          ]
 								}
 				]
@@ -94,6 +78,35 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 				var sValue = aAppointments.length + " Appointments selected";
 				alert(sValue);
 			}
+		},
+
+		handleIntervalSelect: function (oEvent) {
+			var oPC = oEvent.oSource;
+			var oStartDate = oEvent.getParameter("startDate");
+			var oEndDate = oEvent.getParameter("endDate");
+			var oRow = oEvent.getParameter("row");
+			var oSubInterval = oEvent.getParameter("subInterval");
+			var oModel = this.getView().getModel();
+			var oData = oModel.getData();
+			var iIndex = -1;
+			var oAppointment = {start: oStartDate,
+					                end: oEndDate,
+					                title: "new appointment",
+					                type: "Type09"};
+
+			if (oRow) {
+				iIndex = oPC.indexOfRow(oRow);
+				oData.people[iIndex].appointments.push(oAppointment);
+			} else {
+				var aSelectedRows = oPC.getSelectedRows();
+				for (var i = 0; i < aSelectedRows.length; i++) {
+					iIndex = oPC.indexOfRow(aSelectedRows[i]);
+					oData.people[iIndex].appointments.push(oAppointment);
+				}
+			}
+
+			oModel.setData(oData);
+
 		}
 
 	});
