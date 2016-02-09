@@ -489,7 +489,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    initializePopOverRequestData.call(this);
                    initializePopOverSapStatisticsData.call(this);
 
-                   var requestBarElement = jQuery(this).children()[1];
+                   var requestBarElement = jQuery(this).children()[0];
                    oPopover.openBy(requestBarElement);
                 });
              }
