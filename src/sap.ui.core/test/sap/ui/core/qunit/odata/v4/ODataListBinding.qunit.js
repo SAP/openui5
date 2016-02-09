@@ -831,10 +831,6 @@ sap.ui.require([
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
 				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
-		this.oLogMock.expects("warning")
-			.withExactArgs("Call to 'dataRequested' event handler failed: Expected Error in event"
-					+ " handler",
-				/*stack trace*/ sinon.match.any, "sap.ui.model.odata.v4.ODataListBinding");
 
 		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
@@ -846,10 +842,6 @@ sap.ui.require([
 		});
 		oListBinding = this.oModel.bindList("/EMPLOYEES");
 
-		oListBinding.attachDataRequested(function (oEvent) {
-			// do not break if event handler throws an error
-			throw new Error("Expected Error in event handler");
-		});
 		oListBinding.attachDataReceived(function (oEvent) {
 			assert.strictEqual(oEvent.getSource(), oListBinding, "oEvent.getSource()");
 			assert.strictEqual(oEvent.getParameter("error"), oError,

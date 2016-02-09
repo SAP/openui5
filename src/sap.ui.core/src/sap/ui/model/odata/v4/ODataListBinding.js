@@ -206,14 +206,7 @@ sap.ui.define([
 			} else { // absolute path
 				this.oCache.read(iStart, iLength, function () {
 						bDataRequested = true;
-						try {
-							that.fireDataRequested();
-						} catch (e) {
-							jQuery.sap.log.warning("Call to 'dataRequested' event handler failed: "
-									+ (e.message || e.toString()),
-								e.stack, // may be undefined: only supported in Chrome, FF
-								sClassName);
-						}
+						that.fireDataRequested();
 					}).then(createContexts.bind(undefined, getBasePath)).then(function () {
 						//fire dataReceived after change event fired in createContexts()
 						if (bDataRequested) {
