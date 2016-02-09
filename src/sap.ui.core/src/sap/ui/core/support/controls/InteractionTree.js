@@ -275,14 +275,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write("</li>");
        };
 
-       InteractionTree.prototype.renderInteraction = function (rm, interaction, index) {
-          var request,
-              requests = interaction.requests;
-
+       InteractionTree.prototype.isInteractionVisible = function (interaction) {
           var start = interaction.start;
           var end = interaction.end;
 
           if (this.actualStartTime > end || this.actualEndTime < start) {
+             return false;
+          }
+
+          if (this.actualStartTime < start + interaction.duration && this.actualEndTime > start) {
+             return true;
+          }
+
+          return this.hasVisibleRequests(interaction);
+       };
+
+       InteractionTree.prototype.hasVisibleRequests = function (interaction) {
+          var request,
+              start,
+              end,
+              requests = interaction.requests;
+
+          for (var i = 0; i < requests.length; i++) {
+
+             request = requests[i];
+
+             start = request.fetchStartOffset + request.startTime;
+             end = request.fetchStartOffset + request.startTime + request.duration;
+
+             if (this.actualStartTime < end && this.actualEndTime > start) {
+                return true;
+             }
+          }
+
+          return false;
+       };
+
+       InteractionTree.prototype.renderInteraction = function (rm, interaction, index) {
+          var request,
+              requests = interaction.requests;
+
+          if (!this.isInteractionVisible(interaction)) {
              return;
           }
 
@@ -361,7 +394,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           var middle = Math.round(interaction.start + interaction.duration);
 
           this.renderInteractionPart(rm, interaction.start, middle, 'sapUiInteractionBlue');
-          this.renderInteractionPart(rm, middle, interaction.end, 'sapUiInteractionBlueLight');
+          // this.renderInteractionPart(rm, middle, interaction.end, 'sapUiInteractionBlueLight');
 
           rm.write('</div>');
           rm.write("</div>");
