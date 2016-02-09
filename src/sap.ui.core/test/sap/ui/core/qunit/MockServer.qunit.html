@@ -1741,6 +1741,139 @@
 
 	});
 
+	test("test load json mockdata from list of entity sets names", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMockdataBaseUrl = "testdata/rmtsampleflight/";
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml";
+		// Check simulate with specifying specific aEntitySetsNames (entity sets to fetch)
+		oMockServer.simulate(sMetadataUrl, {
+			'sMockdataBaseUrl' : sMockdataBaseUrl,
+			'bGenerateMissingMockData' : false,
+			'aEntitySetsNames' : ["TravelagencyCollection", "FlightCollection"]
+		});
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server has started");
+		// Ceck FlightCollection
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "FlightCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
+		// Ceck TravelagencyCollection
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/TravelagencyCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "TravelagencyCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
+		// Ceck CarrierCollection
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "CarrierCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 0, "CarrierCollection not retrieved since it was not in aEntitySetsNames");
+		oMockServer.destroy();
+
+		// Check simulate with specifying empty list of aEntitySetsNames - should behave as if no list was sent
+		oMockServer.simulate(sMetadataUrl, {
+			'sMockdataBaseUrl' : sMockdataBaseUrl,
+			'bGenerateMissingMockData' : false,
+			'aEntitySetsNames' : []
+		});
+
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server has started");
+		// Ceck FlightCollection
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "FlightCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
+		// Ceck TravelagencyCollection
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/TravelagencyCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "TravelagencyCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
+		// Ceck CarrierCollection
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "CarrierCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 18, "CarrierCollection json file");
+		oMockServer.destroy();
+
+		// Check simulate without specifying entity sets to fetch - should retrieve all entity sets
+		oMockServer.simulate(sMetadataUrl, {
+			'sMockdataBaseUrl' : sMockdataBaseUrl,
+			'bGenerateMissingMockData' : false
+		});
+
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server has started");
+		// Ceck FlightCollection
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "FlightCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 3, "FlightCollection json file");
+		// Ceck TravelagencyCollection
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/TravelagencyCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "TravelagencyCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
+		// Ceck CarrierCollection
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "CarrierCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 18, "CarrierCollection json file");
+		oMockServer.destroy();
+
+		// Check simulate with specifying wrong aEntitySetsNames - should not retrieve any entity set
+		oMockServer.simulate(sMetadataUrl, {
+			'sMockdataBaseUrl' : sMockdataBaseUrl,
+			'bGenerateMissingMockData' : false,
+			'aEntitySetsNames' : ["none01", "none02"]
+		});
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server has started");
+		// Ceck FlightCollection
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "FlightCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 0, "FlightCollection json file");
+		// Ceck TravelagencyCollection
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/TravelagencyCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "TravelagencyCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 0, "TravelagencyCollection json file");
+		// Ceck CarrierCollection
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/CarrierCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "CarrierCollection - mock server responded");
+		equal(oResponse.data.d.results.length, 0, "CarrierCollection not retrieved since it was not in aEntitySetsNames");
+		oMockServer.destroy();
+
+	});
+
 	test("test EDM.Binary", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
