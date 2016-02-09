@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ViewSettingsCustomItem.
-sap.ui.define(['jquery.sap.global', './ViewSettingsItem', './library'],
-	function(jQuery, ViewSettingsItem, library) {
+sap.ui.define(['jquery.sap.global', './ViewSettingsItem', 'sap/ui/base/ManagedObject', './library'],
+	function(jQuery, ViewSettingsItem, ManagedObject, library) {
 	"use strict";
 
 
@@ -107,6 +107,22 @@ sap.ui.define(['jquery.sap.global', './ViewSettingsItem', './library'],
 		return this;
 	};
 
+	/**
+	 * Creates a clone of the ViewSettingsCustomItem instance.
+	 *
+	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned object id
+	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
+	 * @param {Object} [oOptions] configuration object
+	 * @return {sap.ui.base.ManagedObject} reference to the newly created clone
+	 * @protected
+	 * @override
+	 */
+	ViewSettingsCustomItem.prototype.clone = function(sIdSuffix, aLocalIds, oOptions) {
+		var oClonedObj = ManagedObject.prototype.clone.apply(this, arguments);
+		//clones the 'customControl' aggregation instance, as the framework does not know about it
+		oClonedObj._control = this._control.clone();
+		return oClonedObj;
+	};
 
 	return ViewSettingsCustomItem;
 
