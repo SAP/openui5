@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+  Author: D061987
+-->
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>qUnit Page for XMLTemplateProcessor</title>
+
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-bindingSyntax="complex"
+		data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script id="root" type="application/xml">
+		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" id="root">
+		</mvc:View>
+	</script>
+
+	<script id="view" type="application/xml">
+		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" id="view">
+			<Panel id="panel">
+				<content>
+					<Button text="Button" id="button"></Button>
+				</content>
+			</Panel>
+			<mvc:XMLView name="example.mvc.test"
+		</mvc:View>
+	</script>
+
+	<script>
+		sap.ui.require(["sap/ui/core/XMLTemplateProcessor", "jquery.sap.xml"], function(XMLTemplateProcessor) {
+
+			var sRootView = jQuery('#root').html(),
+				sView = jQuery('#view').html();
+
+			QUnit.module("Flexibility hook", {
+				beforeEach: function() {
+					this.oView = sap.ui.xmlview({
+						viewContent: sRootView,
+						id: "root",
+						async: true
+					});
+					this.xml = jQuery.sap.parseXML(sView);
+				},
+				afterEach: function() {
+					this.oView.destroy();
+				}
+			});
+
+			QUnit.test("create IDs", function() {
+				var done = assert.async();
+				this.oView.loaded().then(function() {
+					assert.ok(jQuery.isXMLDoc(this.xml), "valid xml document as input");
+					var xml = XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
+					assert.ok(jQuery.isXMLDoc(xml), "valid xml document returned");
+					assert.strictEqual(xml.parentNode, this.xml, "no copying");
+					var node = this.xml.getElementById("root--button");
+					assert.ok(node, "button was found by full id");
+					assert.equal(node.getAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id"), "true", "full id flag is set to true");
+					done();
+				}.bind(this));
+			});
+
+			QUnit.test("create Controls", function() {
+				var done = assert.async();
+				this.oView.loaded().then(function() {
+					XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
+					assert.ok(!this.oView.byId("button"), "no control has been created yet");
+					XMLTemplateProcessor.parseTemplate(this.xml.documentElement, this.oView);
+					assert.ok(this.oView.byId("button"), "button control is created");
+					done();
+				}.bind(this));
+			});
+
+		});
+	</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">qUnit Page for XMLTemplateProcessor</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+
+</html>
