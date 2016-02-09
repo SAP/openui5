@@ -381,8 +381,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			aUrlParameters.push("$inlinecount=allpages");
 		}
 
-		//request data
 		this.fireDataRequested();
+
+		// TODO: Add additional filters to the read call, as soon as back-end implementations support it
+		// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
 		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
 			urlParameters: aUrlParameters,
 			filters: [new sap.ui.model.Filter(this.oTreeProperties["hierarchy-level-for"], "LE", this.getNumberOfExpandedLevels())],
@@ -515,6 +517,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		this.mRequestHandles[sRequestKey] = this.oModel.read(this.getPath(), {
 			urlParameters: aUrlParameters,
 			filters: [new sap.ui.model.Filter(this.oTreeProperties["hierarchy-parent-node-for"], "EQ", oParentNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]))],
+			sorters: this.aSorters || [],
 			success: _handleSuccess.bind(this),
 			error: _handleError.bind(this),
 			groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
