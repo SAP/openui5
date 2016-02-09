@@ -557,6 +557,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this.$().toggleClass("sapMPlanCalNoHead", !bShowRowHeaders);
 		_positionSelectAllCheckBox.call(this);
+		_setSelectionMode.call(this);
 
 		return this;
 
@@ -591,6 +592,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oCalendarRow.setShowSubIntervals(oView.getShowSubIntervals());
 		}
 
+		_setSelectionMode.call(this);
+
 		return this;
 
 	};
@@ -624,6 +627,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oCalendarRow.setShowSubIntervals(oView.getShowSubIntervals());
 		}
 
+		_setSelectionMode.call(this);
+
 		return this;
 
 	};
@@ -644,6 +649,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.detachEvent("intervalSelect", _handleIntervalSelect, this);
 
 		_updateSelectAllCheckBox.call(this);
+
+		_setSelectionMode.call(this);
 
 		return oRemoved;
 
@@ -669,6 +676,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		_updateSelectAllCheckBox.call(this);
 
+		_setSelectionMode.call(this);
+
 		return aRemoved;
 
 	};
@@ -681,6 +690,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oTable.destroyItems(true);
 
 		_updateSelectAllCheckBox.call(this);
+
+		_setSelectionMode.call(this);
 
 		return destroyed;
 
@@ -748,13 +759,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setProperty("singleSelection", bSingleSelection, true);
 
 		_positionSelectAllCheckBox.call(this);
+		_setSelectionMode.call(this);
 
-		var oTable = this.getAggregation("table");
 		if (bSingleSelection) {
-			oTable.setMode(sap.m.ListMode.SingleSelectMaster);
 			this.selectAllRows(false);
 		} else {
-			oTable.setMode(sap.m.ListMode.MultiSelect);
 			_updateSelectAllCheckBox.call(this);
 		}
 
@@ -1475,6 +1484,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (oEvent.getParameter("name") == "selected") {
 			_updateSelectAllCheckBox.call(this);
+		}
+
+	}
+
+	function _setSelectionMode() {
+
+		var oTable = this.getAggregation("table");
+		var sMode = oTable.getMode();
+		var sModeNew;
+
+		if (this.getSingleSelection()) {
+			if (!this.getShowRowHeaders() && this.getRows().length == 1) {
+				// if only one row is displayed without header - do not enable row selection
+				sModeNew = sap.m.ListMode.None;
+			} else {
+				sModeNew = sap.m.ListMode.SingleSelectMaster;
+			}
+		} else {
+			sModeNew = sap.m.ListMode.MultiSelect;
+		}
+
+		if (sMode != sModeNew) {
+			oTable.setMode(sModeNew);
 		}
 
 	}
