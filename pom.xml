@@ -51,6 +51,7 @@
 		<!-- TODO <module>src/themelib_sap_hcb</module> -->
 		<module>src/themelib_sap_bluecrystal</module>
 		<module>src/themelib_sap_goldreflection</module>
+		<module>src/themelib_sap_belize</module>
 
 	</modules>
 
