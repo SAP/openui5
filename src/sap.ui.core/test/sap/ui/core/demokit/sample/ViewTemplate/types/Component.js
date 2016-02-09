@@ -22,8 +22,8 @@ sap.ui.define([
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
-		metadata: "json",
-		createContent: function () {
+		metadata : "json",
+		createContent : function () {
 			var sUri = "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
 				oLayout = new HBox(),
 				sMockServerBaseUri =
@@ -37,43 +37,43 @@ sap.ui.define([
 			} else {
 				jQuery.sap.require("sap.ui.core.util.MockServer");
 
-				oMockServer = new MockServer({rootUri: sUri});
+				oMockServer = new MockServer({rootUri : sUri});
 				oMockServer.simulate(sMockServerBaseUri + "metadata.xml", {
-					sMockdataBaseUrl: sMockServerBaseUri
+					sMockdataBaseUrl : sMockServerBaseUri
 				});
 				oMockServer.start();
 			}
 
 			oModel = new ODataModel(sUri, {
-				annotationURI: sMockServerBaseUri + "annotations.xml",
-				defaultBindingMode: sap.ui.model.BindingMode.TwoWay
+				annotationURI : sMockServerBaseUri + "annotations.xml",
+				defaultBindingMode : sap.ui.model.BindingMode.TwoWay
 			});
 
 			oModel.getMetaModel().loaded().then(function () {
 				var oMetaModel = oModel.getMetaModel(),
 					oView = sap.ui.view({
 						models : {
-							undefined: oModel,
-							ui: new JSONModel({realOData: bRealOData, codeVisible: false})
+							undefined : oModel,
+							ui : new JSONModel({realOData : bRealOData, codeVisible : false})
 						},
-						preprocessors: {
-							xml: {
-								bindingContexts: {meta: oMetaModel.createBindingContext(
+						preprocessors : {
+							xml : {
+								bindingContexts : {meta : oMetaModel.createBindingContext(
 									"/dataServices/schema/0/entityType/0")
 								},
-								models: {meta: oMetaModel}
+								models : {meta : oMetaModel}
 							}
 						},
-						type: sap.ui.core.mvc.ViewType.XML,
-						viewName: "sap.ui.core.sample.ViewTemplate.types.Types"
+						type : sap.ui.core.mvc.ViewType.XML,
+						viewName : "sap.ui.core.sample.ViewTemplate.types.Types"
 					});
 
-				oView.setLayoutData(new FlexItemData({growFactor: 1.0, baseSize: "0%"}));
+				oView.setLayoutData(new FlexItemData({growFactor : 1.0, baseSize : "0%"}));
 				oLayout.addItem(oView);
 			}, function (oError) {
 				MessageBox.alert(oError.message, {
-					icon: sap.m.MessageBox.Icon.ERROR,
-					title: "Error"});
+					icon : sap.m.MessageBox.Icon.ERROR,
+					title : "Error"});
 			});
 			return oLayout;
 		},

@@ -37,14 +37,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Date", {
-		beforeEach: function () {
+		beforeEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		afterEach: function () {
+		afterEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
 		},
 
-		sDefaultLanguage: sap.ui.getCore().getConfiguration().getLanguage()
+		sDefaultLanguage : sap.ui.getCore().getConfiguration().getLanguage()
 
 	});
 
@@ -68,10 +68,10 @@ sap.ui.require([
 				this.mock(jQuery.sap.log).expects("warning").never();
 
 				oType = new DateType({}, {
-					foo: "a",
-					nullable: vNullable
+					foo : "a",
+					nullable : vNullable
 				});
-				assert.deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable: false});
+				assert.deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable : false});
 			});
 	});
 
@@ -82,17 +82,17 @@ sap.ui.require([
 		this.mock(jQuery.sap.log).expects("warning")
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Date");
 
-		oType = new DateType(null, {nullable: "foo"});
+		oType = new DateType(null, {nullable : "foo"});
 		assert.deepEqual(oType.oConstraints, undefined, "illegal nullable -> default to true");
 	});
 
 	//*********************************************************************************************
 	[
-		{i: undefined, o: null},
-		{i: null, o: null},
-		{i: "foo", t: "any", o: "foo"},
-		{i: "2014-11-27", t: "string", o: "Nov 27, 2014"},
-		{i: "2014-11-34", t: "string", o: "2014-11-34"}
+		{i : undefined, o : null},
+		{i : null, o : null},
+		{i : "foo", t : "any", o : "foo"},
+		{i : "2014-11-27", t : "string", o : "Nov 27, 2014"},
+		{i : "2014-11-34", t : "string", o : "2014-11-34"}
 	].forEach(function (oFixture) {
 		QUnit.test("format value", function (assert) {
 			var oType = new DateType();
@@ -119,14 +119,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{oOptions: {},  oExpected: { strictParsing : true, UTC : true}},
-		{oOptions: undefined, oExpected: {strictParsing: true, UTC: true}},
-		{oOptions: {strictParsing: false}, oExpected: {strictParsing: false, UTC: true}},
-		{oOptions: {foo: "bar"}, oExpected: {strictParsing: true, foo: "bar", UTC: true}},
-		{oOptions: {style: "medium"},
-			oExpected: {strictParsing: true, style: "medium", UTC: true}},
-		{oOptions: {strictParsing: false, UTC: false},
-			oExpected: {strictParsing: false, UTC: true}}
+		{oOptions : {},  oExpected : { strictParsing : true, UTC : true}},
+		{oOptions : undefined, oExpected : {strictParsing : true, UTC : true}},
+		{oOptions : {strictParsing : false}, oExpected : {strictParsing : false, UTC : true}},
+		{oOptions : {foo : "bar"}, oExpected : {strictParsing : true, foo : "bar", UTC : true}},
+		{oOptions : {style : "medium"},
+			oExpected : {strictParsing : true, style : "medium", UTC : true}},
+		{oOptions : {strictParsing : false, UTC : false},
+			oExpected : {strictParsing : false, UTC : true}}
 	].forEach(function (oFixture) {
 		QUnit.test("formatOptions=" + JSON.stringify(oFixture.oOptions), function (assert) {
 			var oSpy = this.spy(DateFormat, "getDateInstance"),
@@ -217,7 +217,7 @@ sap.ui.require([
 		var oControl = new sap.ui.core.Control(),
 			oType = new DateType();
 
-		oControl.bindProperty("tooltip", {path: "/unused", type: oType});
+		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		assert.strictEqual(oType.formatValue("0715-11-01", "string"), "Nov 1, 715");
 		sap.ui.getCore().getConfiguration().setLanguage("de-DE");
 		assert.strictEqual(oType.formatValue("0715-11-01", "string"), "01.11.715",

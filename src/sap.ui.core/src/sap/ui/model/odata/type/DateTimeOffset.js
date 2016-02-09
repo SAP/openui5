@@ -18,7 +18,7 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 */
 	function adjustConstraints(oType, oConstraints) {
 		return {
-			nullable: oConstraints && oConstraints.nullable
+			nullable : oConstraints && oConstraints.nullable
 		};
 	}
 

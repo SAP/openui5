@@ -41,7 +41,7 @@ sap.ui.define([
 		 *
 		 * Formatter functions like {@link #.format format} and {@link #.simplePath simplePath} can
 		 * be used in complex bindings to turn OData v4 annotations into texts or data bindings,
-		 * e.g. <code>&lt;sfi:SmartField value="{path: 'meta>Value', formatter:
+		 * e.g. <code>&lt;sfi:SmartField value="{path : 'meta>Value', formatter :
 		 * 'sap.ui.model.odata.AnnotationHelper.simplePath'}"/></code>.
 		 *
 		 * Helper functions like {@link #.resolvePath resolvePath} can be used by template
@@ -100,7 +100,7 @@ sap.ui.define([
 			 *
 			 * vPropertySetting =  sap.ui.model.odata.AnnotationHelper.createPropertySetting([
 			 *     sap.ui.model.odata.AnnotationHelper.format(oValueContext),
-			 *     "{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}",
+			 *     "{path : 'meta>Value', formatter : 'sap.ui.model.odata.AnnotationHelper.simplePath'}",
 			 *     "{:= 'Mr. ' + ${/FirstName} + ' ' + ${/LastName}}",
 			 *     "hello, world!",
 			 *     42

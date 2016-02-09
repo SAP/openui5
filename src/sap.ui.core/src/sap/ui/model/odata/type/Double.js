@@ -29,7 +29,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 		var oFormatOptions;
 
 		if (!oType.oFormat) {
-			oFormatOptions = jQuery.extend({groupingEnabled: true}, oType.oFormatOptions);
+			oFormatOptions = jQuery.extend({groupingEnabled : true}, oType.oFormatOptions);
 			oType.oFormat = NumberFormat.getFloatInstance(oFormatOptions);
 		}
 		return oType.oFormat;
@@ -60,7 +60,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 		oType.oConstraints = undefined;
 		if (vNullable === false || vNullable === "false") {
-			oType.oConstraints = {nullable: false};
+			oType.oConstraints = {nullable : false};
 		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
 			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 		}

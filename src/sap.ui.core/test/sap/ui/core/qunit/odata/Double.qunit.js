@@ -25,10 +25,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Double", {
-		beforeEach: function () {
+		beforeEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		afterEach: function () {
+		afterEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -47,12 +47,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{i: {}, o: undefined},
-		{i: {nullable: true}, o: undefined},
-		{i: {nullable: false}, o: {nullable: false}},
-		{i: {nullable: "true"}, o: undefined},
-		{i: {nullable: "false"}, o: {nullable: false}},
-		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"}
+		{i : {}, o : undefined},
+		{i : {nullable : true}, o : undefined},
+		{i : {nullable : false}, o : {nullable : false}},
+		{i : {nullable : "true"}, o : undefined},
+		{i : {nullable : "false"}, o : {nullable : false}},
+		{i : {nullable : "foo"}, o : undefined, warning : "Illegal nullable: foo"}
 	].forEach(function (oFixture) {
 		QUnit.test("constraints: " + JSON.stringify(oFixture.i) + ")", function (assert) {
 			var oType;
@@ -115,7 +115,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("format: modified Swedish", function (assert) {
-		var oType = new Double({plusSign: ">", minusSign: "<"});
+		var oType = new Double({plusSign : ">", minusSign : "<"});
 
 		// Swedish is interesting because it uses a different decimal separator, non-breaking
 		// space as grouping separator and _not_ the 'E' for the exponential format.
@@ -175,7 +175,7 @@ sap.ui.require([
 	[false, null, {}, "foo"].forEach(function (sValue) {
 		QUnit.test("validate errors: " + JSON.stringify(sValue), function (assert) {
 			TestUtils.withNormalizedMessages(function () {
-				var oType = new Double({}, {nullable: false});
+				var oType = new Double({}, {nullable : false});
 
 				try {
 					oType.validateValue(sValue);
@@ -204,7 +204,7 @@ sap.ui.require([
 		var oControl = new Control(),
 			oType = new Double();
 
-		oControl.bindProperty("tooltip", {path: "/unused", type: oType});
+		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		assert.strictEqual(oType.formatValue("1.234e3", "string"), "1,234",
 			"before language change");
 		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
@@ -214,11 +214,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		set: {foo: "bar"},
-		expect: {foo: "bar", groupingEnabled: true}
+		set : {foo : "bar"},
+		expect : {foo : "bar", groupingEnabled : true}
 	}, {
-		set: {decimals: 7, groupingEnabled: false},
-		expect: {decimals: 7, groupingEnabled: false}
+		set : {decimals : 7, groupingEnabled : false},
+		expect : {decimals : 7, groupingEnabled : false}
 	}].forEach(function (oFixture) {
 		QUnit.test("formatOptions: " + JSON.stringify(oFixture.set), function (assert) {
 			var oSpy,

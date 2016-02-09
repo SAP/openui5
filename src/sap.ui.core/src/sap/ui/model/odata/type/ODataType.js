@@ -15,11 +15,11 @@
  * <b>Example:</b>
  * <pre>
  *   &lt;Label text="ID"/&gt;
- *   &lt;Input value="{path: 'id', type: 'sap.ui.model.odata.type.String',
- *       constraints: {nullable: false, maxLength: 10}}"/&gt;
+ *   &lt;Input value="{path : 'id', type : 'sap.ui.model.odata.type.String',
+ *       constraints : {nullable : false, maxLength : 10}}"/&gt;
  *   &lt;Label text="valid through"/&gt;
- *   &lt;Input value="{path: 'validThrough', type: 'sap.ui.model.odata.type.DateTime',
- *       constraints: {displayFormat: 'Date'}}"/&gt;
+ *   &lt;Input value="{path : 'validThrough', type : 'sap.ui.model.odata.type.DateTime',
+ *       constraints : {displayFormat : 'Date'}}"/&gt;
  * </pre>
  *
  * All types support formatting from the representation used in ODataModel ("model format") to
@@ -43,7 +43,7 @@
  * </table>
  *
  * All constraints may be given as strings besides their natural types (e.g.
- * <code>nullable: "false"</code> or <code>maxLength: "10"</code>). This makes the life of
+ * <code>nullable : "false"</code> or <code>maxLength : "10"</code>). This makes the life of
  * template processors easier.
  *
  * <b>Handling of <code>null</code></b>:

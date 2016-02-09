@@ -10,10 +10,10 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 
 	var rInteger = /^[-+]?(\d+)$/, // user input for an Int64 w/o the sign
 		// The number range of an Int64
-		oRange = {minimum: "-9223372036854775808", maximum: "9223372036854775807"},
+		oRange = {minimum : "-9223372036854775808", maximum : "9223372036854775807"},
 		// The values Number.MIN_SAFE_INTEGER and Number.MAX_SAFE_INTEGER are the largest integer
 		// n such that n and n + 1 are both exactly representable as a Number value.
-		oSafeRange = {minimum: "-9007199254740991", maximum: "9007199254740991"};
+		oSafeRange = {minimum : "-9007199254740991", maximum : "9007199254740991"};
 
 	/**
 	 * Checks whether <code>sValue</code> is in the given range.
@@ -60,7 +60,7 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 		var oFormatOptions;
 
 		if (!oType.oFormat) {
-			oFormatOptions = jQuery.extend({groupingEnabled: true}, oType.oFormatOptions);
+			oFormatOptions = jQuery.extend({groupingEnabled : true}, oType.oFormatOptions);
 			oFormatOptions.parseAsString = true;
 			oType.oFormat = NumberFormat.getIntegerInstance(oFormatOptions);
 		}
@@ -243,8 +243,8 @@ sap.ui.define(['sap/ui/model/odata/type/ODataType', 'sap/ui/model/FormatExceptio
 		case "int":
 		case "float":
 			sResult = NumberFormat.getIntegerInstance({
-					maxIntegerDigits: Infinity,
-					groupingEnabled: false
+					maxIntegerDigits : Infinity,
+					groupingEnabled : false
 				}).format(vValue);
 			break;
 		default:
