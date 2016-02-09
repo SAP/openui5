@@ -107,11 +107,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 				// create a proxy for the metadata object and simulate to be an
 				// instance of the original metadata object of the Component
-				var MetadataProxy = function() {};
-				MetadataProxy.prototype = Object.create(Object.getPrototypeOf(oMetadata));
-
-				// create a new instance of the metadata proxy
-				this._oMetadataProxy = new MetadataProxy();
+				// => retrieving the prototype from the original metadata to
+				//    support to proxy sub-classes of ComponentMetadata
+				this._oMetadataProxy = Object.create(Object.getPrototypeOf(oMetadata));
 
 				// provide internal access to the static metadata object
 				this._oMetadataProxy._oMetadata = oMetadata;
