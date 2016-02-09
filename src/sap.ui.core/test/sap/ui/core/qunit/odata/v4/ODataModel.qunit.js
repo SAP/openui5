@@ -294,7 +294,7 @@ sap.ui.require([
 
 			this.mock(oModel.oRequestor).expects("request")
 				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
-				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, null,
+				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, undefined, null,
 					oEmployeeData).returns(oPromise);
 
 			assert.strictEqual(oModel.create("/EMPLOYEES", oEmployeeData), oPromise);
@@ -309,7 +309,8 @@ sap.ui.require([
 				sPath = "/EMPLOYEES[0];root=0";
 
 			this.oSandbox.mock(oModel.oRequestor).expects("request")
-				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, {"If-Match" : sEtag})
+				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, undefined,
+					{"If-Match" : sEtag})
 				.returns(Promise.resolve(undefined));
 			//TODO make such basic APIs like sap.ui.model.Context#getProperty work?!
 			//     they could be used instead of async read()...

@@ -241,7 +241,7 @@ sap.ui.define([
 	ODataModel.prototype.create = function (sPath, oEntityData) {
 		var sResourcePath = sPath.slice(1) + this._sQuery;
 
-		return this.oRequestor.request("POST", sResourcePath, null, oEntityData);
+		return this.oRequestor.request("POST", sResourcePath, undefined, null, oEntityData);
 	};
 
 	ODataModel.prototype.createBindingContext = function () {
@@ -361,7 +361,7 @@ sap.ui.define([
 			var sEtag = aValues[0].value,
 				sResourcePath = aValues[1] + that._sQuery; // "canonical path" w/o service URL
 
-			return that.oRequestor.request("DELETE", sResourcePath, {"If-Match" : sEtag})
+			return that.oRequestor.request("DELETE", sResourcePath, undefined, {"If-Match" : sEtag})
 				["catch"](function (oError) {
 					if (oError.status === 404) {
 						return; // map 404 to 200, i.e. resolve if already deleted
