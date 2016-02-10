@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				rm.write('<div class="' + sClassNameSeparator + '"></div>');
 			}
 
-			if (intIndex % 10 === 0 || index === 0) {
+			if (intIndex % 10 === 0 && intIndex !== this.stepCount) {
 				rm.write('<div class="sapUiInteractionTimelineTimeLbl">' + Math.round((index * this.timeRange /
 						this.stepCount) / 10 ) / 100 + 's</div>');
 			}
