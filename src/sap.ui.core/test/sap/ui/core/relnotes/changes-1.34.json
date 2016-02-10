@@ -1743,5 +1743,17 @@
         "references": []
       }
     ]
+  },
+  "1.34.6": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "9fb5cfbe1629a8cba6fb244da8d1a2183e183d22",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "core.Popup: BlockLayer Handling Fixed",
+        "references": []
+      }
+    ]
   }
 }
