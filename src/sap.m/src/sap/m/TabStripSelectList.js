@@ -30,21 +30,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		var TabStripSelectList = SelectList.extend("sap.m.TabStripSelectList", /** @lends sap.m.TabStripSelectList.prototype */ {
 			metadata: {
 				library: "sap.m"
-			},
-			//ToDo: [Refactoring] Incorrect metadata nesting - put this in the scope of metadata
-			aggregations: {
-				/**
-				 * Defines the items contained within this control.
-				 */
-				items: { type: "sap.m.TabStripItem", multiple: false, singularName: "item" }
 			}
 		});
 
-		// ToDo: align these with the file names (i.e. not tabselect but tabstripselect)
 		TabStripSelectList.CSS_CLASS_SELECTLIST             = 'sapMSelectList';
-		TabStripSelectList.CSS_CLASS_TABSELECTLIST          = 'sapMTabSelectList';
-		TabStripSelectList.CSS_CLASS_CLOSEBUTTON            = 'sapMTabSelectListItemCloseBtn';
-		TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabSelectListItemCloseBtnInvisible'; // ToDo: this belongs to item
+		TabStripSelectList.CSS_CLASS_TABSELECTLIST          = 'sapMTabStripSelectList';
+		TabStripSelectList.CSS_CLASS_CLOSEBUTTON            = 'sapMTabStripSelectListItemCloseBtn';
+		TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabStripSelectListItemCloseBtnInvisible'; // ToDo: this belongs to item
 
 		TabStripSelectList.prototype.init = function () {
 			SelectList.prototype.init.call(this);
@@ -128,13 +120,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		 * @param {boolean} bShowState
 		 */
 		TabStripSelectList.prototype.changeItemState = function(vItemId, bShowState) {
-			// ToDo: remove this hack !? - for some reason these are 'undefined' - can it be the lazy loading?
-			TabStripItem.CSS_CLASS_STATE            = "sapMTabSelectListItemModified";
-			TabStripItem.CSS_CLASS_STATEINVISIBLE   = "sapMTabSelectListItemModifiedInvisible";
-
 			var $oItemState;
 
-			// optimisation to not invalidate and rerender the whole parent DOM, but only manipulate the CSS class
+			// optimisation to not invalidate and re-render the whole parent DOM, but only manipulate the CSS class
 			// for invisibility on the concrete DOM element that needs to change
 			var aItems = this.getItems();
 			aItems.forEach(function (oItem) {
