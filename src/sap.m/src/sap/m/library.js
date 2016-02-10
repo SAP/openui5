@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * The main SAPUI5 control library, with responsive controls that can be used in touch devices as well as desktop browsers.
+	 * The main UI5 control library, with responsive controls that can be used in touch devices as well as desktop browsers.
 	 *
 	 * @namespace
 	 * @name sap.m
