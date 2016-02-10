@@ -295,6 +295,21 @@
 		});
 	});
 
+	QUnit.test("sap.ui.component: 'asyncHints.preloadOnly' should be ignored", function(assert) {
+
+		jQuery.sap.registerModulePath("sap.test", "./testdata/components/async")
+
+		return sap.ui.component({
+			name: "sap.test.mycomp",
+			async: true,
+			asyncHints: {
+				preloadOnly: true // this should only be passed to "sap.ui.component.load"!
+			}
+		}).then(function(oComponent) {
+			assert.ok(oComponent instanceof sap.ui.core.Component, "Component has been created.");
+		});
+	});
+
 	QUnit.module("Async (Pre-)Loading (Manifest First)", {
 		beforeEach: function() {
 			// Register test module path
