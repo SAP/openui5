@@ -243,14 +243,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				iIndexOfDot = sValue.indexOf("."),
 				iIndexOfENotation = sValue.indexOf("e-"),
 				bIndexOfENotationFound = iIndexOfENotation !== -1, // the "e-" is found in the value
-				bIndexOfDotFound = iIndexOfDot !== -1;	// the "." is found in the value
+				bIndexOfDotFound = iIndexOfDot !== -1; // the "." is found in the value
 
 			// note: numbers such as 0.0000005 are represented using the e-notation
 			// (for example, 0.0000005 becomes 5e-7)
 			if (bIndexOfENotationFound) {
 
+				// get the e-notation exponent e.g.: in the number 5e-7, the exponent is 7
 				var iENotationExponent = +sValue.slice(iIndexOfENotation + 2);
 
+				// If both, the e-notation and the dot character are found in the string representation of the number,
+				// it means that the number has a format similar to e.g.: 1.15e-7.
+				// In this case, the precision is calculated by adding the number of digits between the dot character
+				// and the e character, e.g.: the number 1.15e-7 has a precision of 9
 				if (bIndexOfDotFound) {
 					return iENotationExponent + sValue.slice(iIndexOfDot + 1, iIndexOfENotation).length;
 				}
