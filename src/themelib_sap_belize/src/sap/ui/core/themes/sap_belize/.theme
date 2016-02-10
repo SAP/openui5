@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<theme xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+	<name>sap_platinum</name>
+	<vendor>SAP SE</vendor>
+	<copyright>SAP UI development toolkit for HTML5 (SAPUI5)
+
+(c) Copyright 2009-2015 SAP SE. All rights reserved</copyright>
+	<version>@version@</version>
+
+	<documentation>SAPUI5 sap_platinum theme library.</documentation>
+
+	<appData>
+		<releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+			url="../../../../../../test-resources/sap/ui/core/themes/sap_platinum/relnotes/changes-{major}.{minor}.json"
+			resolve="lib" />
+	</appData>
+
+</theme>
