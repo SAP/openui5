@@ -75,6 +75,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 		return SemanticConfiguration._oTypeConfigs[sType].order;
 	};
 
+	SemanticConfiguration.getAriaId = function (sType) {
+
+		return SemanticConfiguration._oTypeConfigs[sType].getSettings().ariaLabelledBy;
+	};
+
 	SemanticConfiguration._oTypeConfigs = (function () { //TODO: set from outside?
 
 	var oTypeConfigs = {},
