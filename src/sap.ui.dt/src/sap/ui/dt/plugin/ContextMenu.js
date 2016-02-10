@@ -121,7 +121,9 @@ sap.ui.define([
 		var sId = oEvent.getParameter("item").data("id");
 		this._aMenuItems.some(function(oItem) {
 			if (sId === oItem.id) {
-				oItem.handler(that._oElement);
+				var oDesignTime = that.getDesignTime();
+				var aSelection = oDesignTime.getSelection();
+				oItem.handler(aSelection);
 				return true;
 			}
 		});
