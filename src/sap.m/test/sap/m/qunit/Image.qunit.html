@@ -77,14 +77,6 @@
 
 		i4.placeAt("uiArea4");
 
-		var i5 = new sap.m.Image("i5", {
-			src: "invalid_src.png",
-			width: "48px",
-			height: "48px"
-		});
-
-		i5.placeAt("uiArea5");
-
 		var i6 = new sap.m.Image("i6", {
 			src: sSrcAction,
 			activeSrc: sSrcActionPressed,
@@ -297,18 +289,54 @@
 			});
 		}
 
-		test("Image with Invalid src", function() {
-			var $i5 = jQuery.sap.byId("i5");
-			equal($i5.css("visibility"), "hidden", "Image with invalid src should be hidden");
+		asyncTest("Image with valid src", function() {
+			var oLoadSpy = sinon.spy(function() {
+					var $Image = oImage.$();
+					equal($Image.css("visibility"), "visible", "Image with valid src should be visible");
+					equal(oErrorSpy.callCount, 0, "Error handler isn't called");
+
+					oImage.destroy();
+					start();
+				}),
+				oErrorSpy = sinon.spy();
+
+			var oImage = new sap.m.Image({
+				src: sSrcAction,
+				load: oLoadSpy,
+				error: oErrorSpy
+			});
+
+			oImage.placeAt("uiArea4");
+			sap.ui.getCore().applyChanges();
 		});
 
-		asyncTest("Set image with invalid src to a valid src", function() {
-			i5.setSrc(sSrcAction);
-			setTimeout(function() {
-				var $i5 = jQuery.sap.byId("i5");
-				equal($i5.css("visibility"), "visible", "Image with valid src should be set back to visible");
-				start();
-			}, 200);
+		asyncTest("Image with Invalid src and src change", function() {
+			var oLoadSpy = sinon.spy(function() {
+					var $i5 = jQuery.sap.byId("i5");
+					equal($i5.css("visibility"), "visible", "Image with valid src should be set back to visible");
+					equal(oErrorSpy.callCount, 1, "error handler isn't called again");
+
+					i5.destroy();
+					start();
+				}),
+				oErrorSpy = sinon.spy(function() {
+					equal(oLoadSpy.callCount, 0 ,"load handler shouldn't be called");
+					var $i5 = jQuery.sap.byId("i5");
+					equal($i5.css("visibility"), "hidden", "Image with invalid src should be hidden");
+
+					i5.setSrc(sSrcAction);
+				});
+
+			var i5 = new sap.m.Image("i5", {
+				src: "invalid_src.png",
+				width: "48px",
+				height: "48px",
+				load: oLoadSpy,
+				error: oErrorSpy
+			});
+
+			i5.placeAt("uiArea5");
+			sap.ui.getCore().applyChanges();
 		});
 
 		asyncTest("Image with density 1.5, source handling after rerendering", function() {
