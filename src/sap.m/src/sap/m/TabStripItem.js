@@ -149,6 +149,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 		 */
 		TabStripItem.CSS_CLASS_CLOSEBUTTON = 'sapMTabStripSelectListItemCloseBtn';
 
+		TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabStripSelectListItemCloseBtnInvisible';
+
 
 		/**
 		 * Initialise the instance

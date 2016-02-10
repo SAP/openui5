@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 
 			oCloseButton = oItem.getAggregation('_closeButton');
 			if (sap.ui.Device.system.desktop) {
-				oCloseButton.addStyleClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+				oCloseButton.addStyleClass(TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE);
 			}
 
 			oRm.write("<li");
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 				}
 				if (oItem === oSelectedItem) {
 					oRm.addClass(CSS_CLASS + "ItemBaseSelected");
-					oItem.getAggregation('_closeButton').removeStyleClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+					oItem.getAggregation('_closeButton').removeStyleClass(TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE);
 				}
 			}
 			oRm.writeClasses();
