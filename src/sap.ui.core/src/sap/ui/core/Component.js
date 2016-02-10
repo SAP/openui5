@@ -1325,6 +1325,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				aPromises.push(oPromise);
 			} : jQuery.noop;
 
+			// if a URL is given we register this URL for the name of the component:
+			// the name is the package in which the component is located (dot separated)
+			if (sUrl) {
+				jQuery.sap.registerModulePath(sComponentName, sUrl);
+			}
+
 			// lookup the resource roots and call the register API
 			oManifest.defineResourceRoots();
 
