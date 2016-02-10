@@ -176,32 +176,32 @@
 				var $FormOverlay = oFormOverlay.$();
 
 				var $FormContainersOverlay = oFormOverlay.getAggregationOverlay("formContainers").$();
-				assert.ok($FormContainersOverlay.is(":visible"), "Overlay for aggregation FormContainers exists and is visible ");
+				assert.ok($FormContainersOverlay, "Overlay for aggregation FormContainers exists");
 				assert.ok(isElementChildOf($FormContainersOverlay, $FormOverlay), "... and is a child of a form overlay");
 
 				var oContainerOverlay1 = OverlayRegistry.getOverlay(this.oFormContainer1.getId());
 				var $ContainerOverlay1 = oContainerOverlay1.$();
-				assert.ok($ContainerOverlay1.is(":visible"), "Overlay for FormContainer1 exists and visible");
+				assert.ok($ContainerOverlay1, "Overlay for FormContainer1 exists");
 				assert.ok(isElementChildOf($ContainerOverlay1, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 
 				var $formElementsOverlay1 = oContainerOverlay1.getAggregationOverlay("formElements").$();
-				assert.ok($formElementsOverlay1.is(":visible"), "Overlay for aggregation formElements exists and is visible ");
+				assert.ok($formElementsOverlay1, "Overlay for aggregation formElements exists");
 				assert.ok(isElementChildOf($formElementsOverlay1, $ContainerOverlay1), "... and is a child of a FormContainer1 overlay");
 
 				var oElementOverlay1 = OverlayRegistry.getOverlay(this.oElement1.getId());
 				var $ElementOverlay1 = oElementOverlay1.$();
-				assert.ok($ElementOverlay1.is(":visible"), "Overlay for Element0 exists and visible");
+				assert.ok($ElementOverlay1, "Overlay for Element0 exists");
 				assert.ok(isElementChildOf($ElementOverlay1, $formElementsOverlay1), "... and is a child of a FormContainer1 overlay");
 
 				var oContainerOverlay2 = OverlayRegistry.getOverlay(this.oFormContainer2.getId());
 				var $ContainerOverlay2 = oContainerOverlay2.$();
-				assert.ok($ContainerOverlay2.is(":visible"), "Overlay for FormContainer2 exists and visible");
+				assert.ok($ContainerOverlay2, "Overlay for FormContainer2 exists");
 				assert.ok(isElementChildOf($ContainerOverlay2, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 
 
 				var oContainerOverlay3 = OverlayRegistry.getOverlay(this.oFormContainer3.getId());
 				var $ContainerOverlay3 = oContainerOverlay3.$();
-				assert.ok($ContainerOverlay3.is(":visible"), "Overlay for FormContainer3 exists and visible");
+				assert.ok($ContainerOverlay3, "Overlay for FormContainer3 exists");
 				assert.ok(isElementChildOf($ContainerOverlay3, $FormContainersOverlay), "... and is a child of a formContainers overlay");
 			};
 

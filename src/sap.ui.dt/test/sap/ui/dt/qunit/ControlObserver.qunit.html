@@ -40,23 +40,13 @@
 			QUnit.test("when the property of the Button is changed", function(assert) {
 				var done = assert.async();
 
-				this.oControlObserver.attachDomChanged(function(oEvent) {
+				this.oControlObserver.attachAfterRendering(function(oEvent) {
 					assert.ok(oEvent, 'DomChanged event is fired');
 					done();
 				});
 
 				this.oButton.rerender();
 				sap.ui.getCore().applyChanges();
-			});
-
-			QUnit.test("when window is resized", function(assert) {
-				var done = assert.async();
-
-				this.oControlObserver.attachDomChanged(function(oEvent) {
-					assert.ok(oEvent, 'DomChanged event is fired');
-					done();
-				});
-				jQuery(window).trigger("resize");
 			});
 
 			QUnit.test("when the property of the Button is modified", function(assert) {
@@ -88,20 +78,6 @@
 					this.oLabel.destroy();
 				}
 			});
-
-
-			QUnit.test("when the text node of a control is modified", function(assert) {
-				var done = assert.async();
-
-				this.oControlObserver.attachEventOnce("domChanged", function(oEvent) {
-					assert.ok(oEvent, 'then a "domChanged" event is fired because of the mutation observer');
-					done();
-				});
-
-				this.oLabel.setText("test");
-			});
-
-
 
 		</script>
 	</head>

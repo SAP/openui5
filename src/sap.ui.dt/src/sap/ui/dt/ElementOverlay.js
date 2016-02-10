@@ -160,6 +160,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 		this._oDefaultDesignTimeMetadata = null;
 		this.placeAt(Overlay.getOverlayContainer());
+		Overlay.getMutationObserver().attachDomChanged(this._onDomChanged, this);
 
 		// this is needed to prevent UI5 renderManager from removing overlay's node from DOM in a rendering phase
 		// see RenderManager.js "this._fPutIntoDom" function
@@ -174,6 +175,8 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @protected
 	 */
 	ElementOverlay.prototype.exit = function() {
+		Overlay.getMutationObserver().detachDomChanged(this._onDomChanged, this);
+
 		Overlay.prototype.exit.apply(this, arguments);
 
 		this._destroyDefaultDesignTimeMetadata();
@@ -182,6 +185,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		OverlayRegistry.deregister(this._sElementId);
 
 		if (!OverlayRegistry.hasOverlays()) {
+			Overlay.destroyMutationObserver();
 			Overlay.removeOverlayContainer();
 		}
 
@@ -214,7 +218,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		OverlayRegistry.register(oElement, this);
 		this._observe(oElement);
 
-		var oParentElementOverlay = OverlayUtil.getClosestOverlayFor(oElement);
+		var oParentElementOverlay = OverlayUtil.getClosestOverlayFor(oElement.getParent());
 		if (oParentElementOverlay) {
 			oParentElementOverlay.sync();
 		}
@@ -411,7 +415,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			this._oObserver = new ControlObserver({
 				target : oElement
 			});
-			this._oObserver.attachDomChanged(this._onElementDomChanged, this);
+			this._oObserver.attachAfterRendering(this._onElementAfterRendering, this);
 		} else {
 			this._oObserver = new ManagedObjectObserver({
 				target : oElement
@@ -514,20 +518,29 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	/**
 	 * @private
 	 */
-	ElementOverlay.prototype._onElementDomChanged = function(oEvent) {
-		if (this._mGeometry && !this._mGeometry.visible) {
-			this.invalidate();
-		} else {
-			this.sync();
-			var oParent = this.getParent();
-			if (oParent) {
-				if (!oParent.getDomRef) {
-					this.applyStyles();
-				}
+	ElementOverlay.prototype._onDomChanged = function(oEvent) {
+		var sId = oEvent.getParameters().elementId;
+		var oElement = this.getElementInstance();
+		if (oElement && sId === oElement.getId()) {
+			// if element's DOM turns visible (via DOM mutations, classes and so on)
+			if (this._mGeometry && !this._mGeometry.visible) {
+				delete this._mGeometry;
+				this.invalidate();
 			}
 		}
 
-		delete this._mGeometry;
+		// update styles (starting from root and update all overlay children)
+		if (this.isRoot()) {
+			this.applyStyles();
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	ElementOverlay.prototype._onElementAfterRendering = function() {
+		// we should sync aggregations onAfterRendering, because elements (or aggregations) might be created invisible
+		this.sync();
 	};
 
 	/**
@@ -638,7 +651,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		}
 
 	};
-
 
 	return ElementOverlay;
 }, /* bExport= */ true);
