@@ -28,6 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 			PropertyBinding.apply(this, arguments);
 			this.bInitial = true;
 			this.oValue = this._getValue();
+			this.vOriginalValue;
 			this.getDataState().setValue(this.oValue);
 		}
 
@@ -98,17 +99,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function(bForceUpdate){
 		var oDataState = this.getDataState();
+		var bChanged = false;
 
 		var vOriginalValue = this.oModel.getOriginalProperty(this.sPath, this.oContext);
-		oDataState.setOriginalValue(vOriginalValue);
+		if (bForceUpdate || !jQuery.sap.equal(vOriginalValue, this.vOriginalValue)) {
+			this.vOriginalValue = vOriginalValue;
+
+			oDataState.setOriginalValue(vOriginalValue);
+			bChanged = true;
+		}
 
 		var oValue = this._getValue();
 		if (bForceUpdate || !jQuery.sap.equal(oValue, this.oValue)) {
 			this.oValue = oValue;
 
 			oDataState.setValue(this.oValue);
-
 			this._fireChange({reason: ChangeReason.Change});
+			bChanged = true;
+		}
+		if (bChanged) {
+			this.checkDataState();
+		}
+	};
+
+	/**
+	 * Checks whether an update of the data state of this binding is required.
+	 *
+	 * @param {map} mPaths A Map of paths to check if update needed
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.checkDataState = function(mPaths) {
+		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
+			var oDataState = this.getDataState();
+			oDataState.setLaundering(!!mPaths && !!(sResolvedPath in mPaths));
+			PropertyBinding.prototype.checkDataState.apply(this, arguments);
 		}
 	};
 

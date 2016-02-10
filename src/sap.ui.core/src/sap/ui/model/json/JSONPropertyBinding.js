@@ -46,6 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		if (!jQuery.sap.equal(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.oValue = oValue;
 			this.getDataState().setValue(this.oValue);
+			this.checkDataState();
 			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
