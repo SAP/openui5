@@ -759,7 +759,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate);
-			oBinding.checkDataState(bForceUpdate);
 		});
 	};
 
@@ -770,8 +769,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * @public
 	 */
 	Model.prototype.setMessages = function(mMessages) {
+		//jQuery.sap.assert(!jQuery.isEmptyObject(mMessages), this + ": mMessages passed as emptyObject( {} ). Use null instead!");
+
 		this.mMessages = mMessages || {};
-		this.checkMessages();
+		if (mMessages !== null || !jQuery.sap.equal(this.mMessages, mMessages)) {
+			this.checkMessages();
+		}
 	};
 
 	/**
@@ -793,7 +796,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 */
 	Model.prototype.checkMessages = function() {
 		jQuery.each(this.aBindings, function(iIndex, oBinding) {
-			oBinding.checkDataState();
+			if (oBinding.checkDataState) {
+				oBinding.checkDataState();
+			}
 		});
 	};
 

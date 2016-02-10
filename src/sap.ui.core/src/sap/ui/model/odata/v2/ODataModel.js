@@ -1287,7 +1287,6 @@ sap.ui.define([
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
-				oBinding.checkDataState(bForceUpdate);
 			}
 		}.bind(this));
 		//handle calls after update
@@ -1304,10 +1303,12 @@ sap.ui.define([
 	 * @param {boolean} bForceUpdate force update of controls
 	 * @private
 	 */
-	ODataModel.prototype.checkDataState = function(bForceUpdate) {
+	ODataModel.prototype.checkDataState = function(mLaunderingState) {
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkDataState(bForceUpdate);
+			if (oBinding.checkDataState) {
+				oBinding.checkDataState(mLaunderingState);
+			}
 		});
 	};
 
@@ -2503,7 +2504,7 @@ sap.ui.define([
 				}
 			});
 		}
-		this.checkDataState();
+		this.checkDataState(this.mLaunderingState);
 		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
 	};
 
