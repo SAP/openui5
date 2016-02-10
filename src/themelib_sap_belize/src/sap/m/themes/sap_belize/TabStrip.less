@@ -1,0 +1,60 @@
+/* =============================== */
+/* CSS for control sap.m/TabStrip  */
+/* Belize theme                    */
+/* =============================== */
+
+.sapMTabStrip {
+	background: @sapUiPageHeaderBackground;
+	border: 1px solid @sapUiPageHeaderBorderColor;
+	.sapMTSLeftOverflowButtons {
+		background: linear-gradient(90deg, @sapUiPageHeaderBackground 0%, @sapUiPageHeaderBackground 75%, fade(@sapUiPageHeaderBackground, 0) 100%);
+	}
+	.sapMTSTabContainer {
+		.sapMTSTabs {
+			.sapMTabContainerItem {
+				background: @sapUiPageHeaderBackground;
+				border-right: 1px solid @sapUiPageHeaderBorderColor;
+				color: @sapUiPageHeaderTextColor;
+				&.selected {
+					background: lighten(@sapUiPageHeaderBackground, 5);
+					border-right: 1px solid @sapUiPageHeaderBorderColor;
+					color: @sapUiPageHeaderTextColor;
+				}
+				&:hover {
+					background: darken(@sapUiPageHeaderBackground, 5);
+					border-right: 1px solid @sapUiPageHeaderBorderColor;
+					color: @sapUiPageHeaderTextColor;
+				}
+				&:active {
+					background: @sapUiHighlight;
+					border-right: 1px solid @sapUiPageHeaderBorderColor;
+					color: @sapUiContentContrastTextColor;
+					.sapMTSTabCloseBtnCnt {
+						.sapMBtn {
+							.sapMBtnIcon {
+								color: @sapUiContentContrastIconColor;
+							}
+						}
+					}
+				}
+				&:focus {
+				  outline: none;
+				}
+				position: relative;
+				&:focus::before {
+				  pointer-events: none;
+				  content: "";
+				  position: absolute;
+				  top: 0;
+				  left: 0;
+				  right: 0;
+				  bottom: 0;
+				  border: 1px dotted @sapUiContentFocusColor;
+				}
+			}
+		}
+	}
+	.sapMTSRightOverflowButtons {
+		background: linear-gradient(90deg, fade(@sapUiPageHeaderBackground, 0) 0%, @sapUiPageHeaderBackground 25%, @sapUiPageHeaderBackground 100%);
+	}
+}
