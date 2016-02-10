@@ -58,7 +58,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 									freeHours: [0, 1, 2, 3, 4, 5, 6, 17, 19, 20, 21, 22, 23],
 									appointments: [
 									               {
-									              	 start: new Date(2016, 1, 8, 08, 30),
+									              	 start: new Date(2016, 1, 8, 8, 30),
 									              	 end: new Date(2016, 1, 8, 10, 30),
 									              	 title: "Meeting",
 									              	 type: "Type05",
