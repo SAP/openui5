@@ -6,7 +6,7 @@
   <copyright>${copyright}</copyright>
   <version>${version}</version>
 
-  <documentation>SAPUI5 library with controls specialized for mobile devices.</documentation>
+  <documentation>The main UI5 control library, with responsive controls that can be used in touch devices as well as desktop browsers.</documentation>
 
   <dependencies>
     <dependency>
