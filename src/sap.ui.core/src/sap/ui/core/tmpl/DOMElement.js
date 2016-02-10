@@ -42,6 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			 */
 			tag : {type : "string", group : "Behavior", defaultValue : 'span'}
 		},
+		defaultAggregation: "attributes",
 		aggregations : {
 
 			/**
@@ -60,23 +61,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	// TODO: maybe this is something for the sap.ui.core itself - something more general for UI5!!
 
 	/*
-	 * cleanup of event handlers of input elements
+	 * extracting the attributes from custom settings
 	 */
 	DOMElement.prototype.applySettings = function(mSettings) {
 
-		// apply the settings
-		Control.prototype.applySettings.apply(this, arguments);
-
 		// all unknown keys whose value is a string will be added
 		// as attribute to the DOM element
-		var that = this,
-			oMetadata = this.getMetadata(),
+		var oMetadata = this.getMetadata(),
 			mJSONKeys = oMetadata.getJSONKeys(); // must handle all keys that applySettings accepts
-		jQuery.each(mSettings, function(sKey, oValue) {
-			if (sKey !== "id" && sKey !== "text" && !mJSONKeys[sKey] && typeof oValue === "string") {
-				that.attr(sKey, oValue);
+		if (mSettings) {
+			// handle custom attributes if not already defined in settings
+			if (!mSettings["attributes"]) {
+				var aAttributes = mSettings["attributes"] = [];
+				jQuery.each(mSettings, function(sKey, oValue) {
+					if (sKey !== "id" && !mJSONKeys[sKey] && typeof oValue === "string") {
+						// add custom settings as DOM attributes
+						aAttributes.push(new sap.ui.core.tmpl.DOMAttribute({
+							name: sKey,
+							value: oValue
+						}));
+						delete mSettings[sKey]; // remove the custom entries
+					}
+				});
+			} else {
+				jQuery.sap.log.warning("DOMElement#" + this.getId() + ": custom attributes in settings will be ignored since attributes are provided!");
 			}
-		});
+		}
+
+		// apply the settings
+		Control.prototype.applySettings.apply(this, arguments);
 
 	};
 
@@ -124,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 			this.$().find("select option:selected").each(function() {
 				sText += jQuery(this).text() + " ";
 			});
-		this.setText(sText);
+			this.setText(sText);
 		}
 	};
 
@@ -205,6 +218,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/library'
 	};
 
 
+	/*
+	 * Overrides the generated setText method to avoid re-rendering
+	 */
 	DOMElement.prototype.setText = function(sText) {
 		this.setProperty("text", sText, true); // no re-rendering!
 		// do DOM modification to avoid re-rendering
