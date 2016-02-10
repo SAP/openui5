@@ -2180,12 +2180,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					success: bOverallSuccess,
 					errorobject: bOverallSuccess ? {} : oV1Errors
 				});
-			}
-			// notify all bindings of the model that the data has been changed!
-			// e.g. controls in the rows need to be updated as well
-			// fire only the change event is not sufficient for other bindings
-			if (bOverallSuccess) {
-				that.oModel.checkUpdate();
+				// notify all bindings of the model that the data has been changed!
+				// e.g. controls in the rows need to be updated as well
+				// fire only the change event is not sufficient for other bindings
+				if (bOverallSuccess) {
+					that.oModel.checkUpdate();
+				}
 			}
 		}
 
