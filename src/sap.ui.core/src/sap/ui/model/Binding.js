@@ -328,47 +328,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Checks whether an update of the data state of this binding is required.
-	 *
-	 * @private
-	 */
-	Binding.prototype.checkDataState = function() {
-		var oDataState = this._updateDataState();
-
-		if (oDataState && oDataState.changed()) {
-			this.fireEvent("DataStateChange", { dataState: oDataState });
-
-			if (!this._sDataStateTimout) {
-				this._sDataStateTimout = setTimeout(function() {
-					//console.info("[DS]" + JSON.stringify(jQuery.extend({}, oDataState), null, 4));
-					oDataState.calculateChanges();
-					this.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
-					oDataState.changed(false);
-					this._sDataStateTimout = null;
-				}.bind(this), 0);
-			}
-		}
-	};
-
-	/**
-	 * Updates the data state and returns it.
-	 *
-	 * @returns {sap.ui.model.DataStata} The data state
-	 * @private
-	 */
-	Binding.prototype._updateDataState = function() {
-		var oDataState = this.getDataState();
-		if (this.oModel && this.sPath) {
-			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
-				oDataState.setLaundering(this.oModel.isLaundering(this.sPath, this.oContext));
-			}
-		}
-		return oDataState;
-	};
-
-	/**
 	 * Refreshes the binding, check whether the model data has been changed and fire change event
 	 * if this is the case. For server side models this should refetch the data from the server.
 	 * To update a control, even if no data has been changed, e.g. to reset a control after failed

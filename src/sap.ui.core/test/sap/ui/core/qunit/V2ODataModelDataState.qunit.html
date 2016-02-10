@@ -730,7 +730,7 @@
 			if (oDataState.changed()) {
 				if (!sTimeoutId) {
 					sTimeoutId = setTimeout(function() {
-						oDataState.calculateChanges();
+						//oDataState.calculateChanges();
 						oNameBinding.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
 						oDataState.changed(false);
 						sTimeoutId = null;
@@ -838,15 +838,15 @@
 							ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
 							testDataState (oNameBinding,
 								function() {
-									oModel.setProperty("/ProductSet('HT-1000')/Name","blabla2");
+									oModel.setProperty("/ProductSet('HT-1000')/Name","blabla3");
 								},
 								{
 									originalValue : "blabla2",
-									value : "blabla2",
+									value : "blabla3",
 									invalidValue: null,
 									laundering: false
 								},
-								"Setting a 'blabla2' to a string type binding"
+								"Setting a 'blabla3' to a string type binding"
 							).then(start);
 						}
 					}
