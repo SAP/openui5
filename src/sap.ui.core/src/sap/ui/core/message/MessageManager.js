@@ -168,7 +168,8 @@ sap.ui.define([
 			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {};
 			that._sortMessages(vMessages);
 			//push a copy
-			oProcessor.setMessages(jQuery.extend(true, {}, vMessages));
+			vMessages = Object.keys(vMessages).length === 0 ? null : jQuery.extend(true, {}, vMessages);
+			oProcessor.setMessages(vMessages);
 		});
 	};
 
@@ -181,9 +182,11 @@ sap.ui.define([
 	MessageManager.prototype._sortMessages = function(mMessages) {
 		var mSortOrder = {'Error': 0,'Warning':1,'Success':2,'Info':3};
 		jQuery.each(mMessages, function(sTarget, aMessages){
-			aMessages.sort(function(a, b){
-				return mSortOrder[a.type] - mSortOrder[b.type];
-			});
+			if (!aMessages.length === 0) {
+				aMessages.sort(function(a, b){
+					return mSortOrder[a.type] - mSortOrder[b.type];
+				});
+			}
 		});
 	};
 
