@@ -799,6 +799,53 @@ sap.ui.define([
 			}
 		};
 
+		/*
+		 * This stuff is being executed during an animation is goind on. But if there
+		 * is no animation this stuff has to be done in advance, before fnOpened is
+		 * called
+		 */
+		var fnDuringOpen = function() {
+			// get (and 'show' i.e. activate) the BlindLayer
+			if (!!Device.browser.internet_explorer && !Device.os.windows_phone && Popup._activateBlindLayer) {
+				this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
+			} // -1 = BlindLayer, -2 = BlockLayer
+
+			if (this._bModal) {
+				this._showBlockLayer();
+			}
+
+			// add Delegate to hosted content for handling of events (e.g. onfocusin)
+			if (this.oContent instanceof Element) {
+				this.oContent.addDelegate(this);
+			}
+
+			this.bOpen = true;
+
+			if (this._bModal || this._bAutoClose) { // initialize focus handling
+				this._addFocusEventListeners();
+			}
+
+			this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
+
+			//autoclose implementation for mobile or desktop browser in touch mode
+			if (this.touchEnabled && !this._bModal && this._bAutoClose) {
+				jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
+			}
+
+			//  register resize handler for blindlayer resizing
+			if (this._oBlindLayer) {
+				this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
+			}
+
+			// preventScroll no matter what the property is set to in the jQuery.sap.initMobile()
+			// preventScroll can be set to false in jQuery.sap.initMobile(),
+			// then the scrolling for popups content in iOS is also scrolling the page content
+			// issue reported in Incident ID: 1472005153
+			if (Device.os.ios && Device.support.touch) {
+				jQuery(document).on("touchmove", this._fnPreventScroll);
+			}
+		}.bind(this);
+
 		// and show the popup content
 		$Ref.toggleClass("sapUiShd", this._bShadow);
 
@@ -810,57 +857,22 @@ sap.ui.define([
 		}
 
 		if (iRealDuration == 0) { // do not animate if there is a duration == 0
+			fnDuringOpen();
 			fnOpened.apply(); // otherwise call after-opening functions directly
-			// fnOpened is called synchronously above, and the Popup could have been already closed after fnOpened (from one of the "opened" event handlers).
-			// If the state isn't OPEN after fnOpened, it's needed to directly return from here. Otherwise the later registered listener and modified flag can't
+			// fnOpened is called synchronously above, and the Popup could have been
+			// already closed after fnOpened (from one of the "opened" event handlers).
+			// If the state isn't OPEN after fnOpened, it's needed to directly return
+			// from here. Otherwise the later registered listener and modified flag can't
 			// be cleared.
 			if (this.eOpenState !== sap.ui.core.OpenState.OPEN) {
 				return;
 			}
 		} else if (this._animations.open) { // if custom animation is defined, call it
 			this._animations.open.call(null, $Ref, iRealDuration, fnOpened);
+			fnDuringOpen();
 		} else { // otherwise play the default animation
 			$Ref.fadeIn(iRealDuration, fnOpened);
-		}
-
-		// get (and 'show' i.e. activate) the BlindLayer
-		if (!!Device.browser.internet_explorer && !Device.os.windows_phone && Popup._activateBlindLayer) {
-			this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
-		} // -1 = BlindLayer, -2 = BlockLayer
-
-		if (this._bModal) {
-			this._showBlockLayer();
-		}
-
-		// add Delegate to hosted content for handling of events (e.g. onfocusin)
-		if (this.oContent instanceof Element) {
-			this.oContent.addDelegate(this);
-		}
-
-		this.bOpen = true;
-
-		if (this._bModal || this._bAutoClose) { // initialize focus handling
-			this._addFocusEventListeners();
-		}
-
-		this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
-
-		//autoclose implementation for mobile or desktop browser in touch mode
-		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
-			jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
-		}
-
-		//  register resize handler for blindlayer resizing
-		if (this._oBlindLayer) {
-			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
-		}
-
-		// preventScroll no matter what the property is set to in the jQuery.sap.initMobile()
-		// preventScroll can be set to false in jQuery.sap.initMobile(),
-		// then the scrolling for popups content in iOS is also scrolling the page content
-		// issue reported in Incident ID: 1472005153
-		if (Device.os.ios && Device.support.touch) {
-			jQuery(document).on("touchmove", this._fnPreventScroll);
+			fnDuringOpen();
 		}
 	};
 
@@ -1173,22 +1185,32 @@ sap.ui.define([
 			}
 		};
 
+		/*
+		 * This stuff is being executed during an animation is goind on. But if there
+		 * is no animation this stuff has to be done in advance, before fnClosed is
+		 * called
+		 */
+		var fnDuringClose = function() {
+			if (this._bModal) {
+				this._hideBlockLayer();
+			}
+
+			//deregister resize handler
+			if (this._resizeListenerId) {
+				ResizeHandler.deregister(this._resizeListenerId);
+				this._resizeListenerId = null;
+			}
+		}.bind(this);
+
 		if (iRealDuration == 0) { // iRealDuration == 0 means: no animation!
+			fnDuringClose();
 			fnClosed.apply();
 		} else if (this._animations.close) {
 			this._animations.close.call(null, $Ref, iRealDuration, fnClosed); // play custom animation, if supplied
+			fnDuringClose();
 		} else {
 			$Ref.fadeOut(iRealDuration, fnClosed); // otherwise use jQuery animation
-		}
-
-		if (this._bModal) {
-			this._hideBlockLayer();
-		}
-
-		//deregister resize handler
-		if (this._resizeListenerId) {
-			ResizeHandler.deregister(this._resizeListenerId);
-			this._resizeListenerId = null;
+			fnDuringClose();
 		}
 	};
 
@@ -2230,12 +2252,16 @@ sap.ui.define([
 		// a dialog was closed so pop his z-index from the stack
 		Popup.blStack.pop();
 
-		var oBlockLayerDomRef = jQuery("#sap-ui-blocklayer-popup").get(0);
-		if (oBlockLayerDomRef) {
-			// if there are more z-indices this means there are more dialogs stacked up. So redisplay the blocklayer (with new z-index) under the new current dialog which should be displayed.
+		var $oBlockLayer = jQuery("#sap-ui-blocklayer-popup");
+		if ($oBlockLayer.length) {
+			// if there are more z-indices this means there are more dialogs stacked
+			// up. So redisplay the blocklayer (with new z-index) under the new
+			// current dialog which should be displayed.
+			var oBlockLayerDomRef = $oBlockLayer.get(0);
+
 			if (Popup.blStack.length > 0) {
 				// set the blocklayer z-index to the last z-index in the stack and show it
-				oBlockLayerDomRef.style.zindex = Popup.blStack[Popup.blStack.length - 1];
+				oBlockLayerDomRef.style.zIndex = Popup.blStack[Popup.blStack.length - 1];
 				oBlockLayerDomRef.style.visibility = "visible";
 				oBlockLayerDomRef.style.display = "block";
 			} else {
@@ -2245,6 +2271,8 @@ sap.ui.define([
 
 				// Allow scrolling again in HTML page only if there is no BlockLayer left
 				jQuery("html").removeClass("sapUiBLyBack");
+
+
 			}
 		}
 	};
