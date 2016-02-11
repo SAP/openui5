@@ -3978,37 +3978,54 @@
 	});
 
 	asyncTest("test oDataModel callFunction: Parameter without mode", function() {
-		var iCount = 0;
-		var oContext;
-
-		oModel.callFunction("/SalesOrder_InvoiceCreated",{method:"POST",urlParameters:{"SalesOrderID":"test"}})
+		oModel.callFunction("/SalesOrder_InvoiceCreated", {
+			method: "POST",
+			urlParameters: {"SalesOrderID": "test"}
+		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'");
+			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'", "Valid parameter is added to URL");
 			start();
 		});
 	});
 
 	asyncTest("test oDataModel callFunction: Parameter with mode", function() {
-		var iCount = 0;
-		var oContext;
-
-		oModel.callFunction("/SalesOrder_Confirm",{method:"POST",urlParameters:{"SalesOrderID":"test"}})
+		oModel.callFunction("/SalesOrder_Confirm",{
+			method: "POST",
+			urlParameters: {"SalesOrderID": "test"}
+		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'");
+			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
 			start();
 		});
 	});
 
 	asyncTest("test oDataModel callFunction: invalid parameter", function() {
-		var iCount = 0;
-		var oContext;
-
-		oModel.callFunction("/SalesOrder_Confirm",{method:"POST",urlParameters:{"Test":"test"}})
+		oModel.callFunction("/SalesOrder_Confirm",{
+			method: "POST",
+			urlParameters: {"Test": "test"}
+		});
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
-			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm");
+			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm", "Invalid parameter is omitted from URL");
+			start();
+		});
+	});
+
+	asyncTest("test oDataModel callFunction: parameters are preserved", function() {
+		var mUrlParams = {
+			"SalesOrderID": "test"
+		}
+
+		oModel.callFunction("/SalesOrder_Confirm",{
+			method: "POST",
+			urlParameters: mUrlParams
+		})
+
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
+			equal(mUrlParams["SalesOrderID"], "test", "Parameter still exists after sending function import");
 			start();
 		});
 	});
