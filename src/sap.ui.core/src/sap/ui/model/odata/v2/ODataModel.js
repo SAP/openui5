@@ -2551,7 +2551,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
-		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
+		var oResultData = oResponse.data, oImportData, bContent, sUri, sPath, aParts,
 		oEntityMetadata, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
@@ -2576,6 +2576,8 @@ sap.ui.define([
 				info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]},  success: false});
 			return false;
 		}
+
+		// broken implementations need this
 		if (oResultData && oResultData.results && !jQuery.isArray(oResultData.results)) {
 			oResultData = oResultData.results;
 		}
@@ -2583,8 +2585,8 @@ sap.ui.define([
 		// adding the result data to the data object
 		if (oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
 			//need a deep data copy for import
-			oResultData = jQuery.sap.extend(true, {}, oResultData);
-			that._importData(oResultData, mLocalGetEntities);
+			oImportData = jQuery.sap.extend(true, {}, oResultData);
+			that._importData(oImportData, mLocalGetEntities);
 		}
 
 		if (mLocalGetEntities && this.oData[oRequest.key] && this.oData[oRequest.key].__metadata.created && this.oData[oRequest.key].__metadata.created.functionImport) {
@@ -2650,7 +2652,7 @@ sap.ui.define([
 		this._updateETag(oRequest, oResponse);
 
 		if (fnSuccess) {
-			fnSuccess(oResponse.data, oResponse);
+			fnSuccess(oResultData, oResponse);
 		}
 
 		var oEventInfo = this._createEventInfo(oRequest, oResponse);
