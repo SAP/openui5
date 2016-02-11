@@ -73,6 +73,8 @@
 	font-size: 14px;
 	margin-left: 1rem;
 	display: inline-block;
+
+	max-width: 260px;
 }
 
 .sapUiInteractionItemTriggerText {
@@ -80,6 +82,9 @@
 	font-size: 12px;
 	margin-left: 1rem;
 	display: inline-block;
+
+	max-width: 260px;
+	word-wrap: break-word;
 }
 
 .sapUiHiddenUiInteractionItems {
@@ -160,6 +165,7 @@ li.sapUiInteractionItemExpanded {
 .sapUiInteractionRequestLeft {
 	box-sizing: border-box;
 	padding-top: 2px;
+	overflow-y: hidden;
 }
 
 .sapUiInteractionRequest.sapUiInteractionTreeItem:hover {
@@ -291,6 +297,8 @@ li.sapUiInteractionItemExpanded {
 	color: #333;
 	font-size: 12px;
 	display: inline-block;
+
+	max-width: 240px;
 }
 
 .sapUiSupportIntProgressBarParent {
