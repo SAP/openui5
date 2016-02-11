@@ -794,14 +794,17 @@
 			var endPosition = (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.firefox && sap.ui.Device.browser.version >= 12) ? 284 : 285;
 
 			oCtrl.scrollToIndex(16);
-			equal(oDomRef.scrollTop, endPosition, "scrolling to item on the last 'page' should result in the correct position");
+            var diff = Math.abs(oDomRef.scrollTop - endPosition) < 2;
+			equal(diff, true, "scrolling to item on the last 'page' should result in the correct position");
 
 			oCtrl.scrollToIndex(1);
 			oCtrl.scrollToIndex(19);
-			equal(oDomRef.scrollTop, endPosition, "scrolling to last item should result in the correct position");
+            diff = Math.abs(oDomRef.scrollTop - endPosition) < 2;
+			equal(diff, true, "scrolling to last item should result in the correct position");
 
 			oCtrl.scrollToIndex(-1);
-			equal(oDomRef.scrollTop, endPosition, "scrolling to item <0 should not do anything");
+            diff = Math.abs(oDomRef.scrollTop - endPosition) < 2;
+			equal(diff, true, "scrolling to item <0 should not do anything");
 
 			oCtrl.scrollToIndex(0);
 			equal(oDomRef.scrollTop, 0, "scrolling to first item should scroll to the very top");
