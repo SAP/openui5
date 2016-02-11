@@ -136,11 +136,14 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer._renderAnchorBar = function (oRm, oControl, oAnchorBar, bRender) {
+			var aSections = oControl.getAggregation("sections");
 			if (bRender) {
 				if (oControl.getIsChildPage()) {
 					oRm.write("<div ");
 					oRm.writeAttributeEscaped("id", oControl.getId() + "-childPageBar");
-					oRm.addClass('sapUxAPObjectChildPage');
+					if (jQuery.isArray(aSections) && aSections.length > 1) {
+						oRm.addClass('sapUxAPObjectChildPage');
+					}
 					oRm.writeClasses();
 					oRm.write("></div>");
 				}
