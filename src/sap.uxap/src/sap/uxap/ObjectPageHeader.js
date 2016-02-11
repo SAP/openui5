@@ -304,16 +304,19 @@ sap.ui.define([
 
 			if (sObjectImageURI.indexOf("sap-icon://") == 0) {
 				oObjectImage = new Icon();
+				oObjectImage.addStyleClass("sapUxAPObjectPageHeaderObjectImageIcon");
 			} else {
 				oObjectImage = new Image({
 					densityAware: oParent.getObjectImageDensityAware(),
 					alt: oParent.getObjectImageAlt(),
 					decorative: false
 				});
+
+				oObjectImage.addStyleClass("sapUxAPObjectPageHeaderObjectImage");
 			}
 
 			oObjectImage.setSrc(sObjectImageURI);
-			oObjectImage.addStyleClass("sapUxAPObjectPageHeaderObjectImage");
+
 			if (oParent.getObjectImageAlt()) {
 				oObjectImage.setTooltip(oParent.getObjectImageAlt());
 			}

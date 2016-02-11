@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
+sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLayout, Icon) {
 	"use strict";
 
 	/**
@@ -17,10 +17,11 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			bTitleVisible = (oControl.getIsObjectIconAlwaysVisible() || oControl.getIsObjectTitleAlwaysVisible() || oControl.getIsObjectSubtitleAlwaysVisible() || oControl.getIsActionAreaAlwaysVisible()),
 			oParent = oControl.getParent(),
 			oExpandButton = oControl.getAggregation("_expandButton"),
+			oObjectImage = oControl._getInternalAggregation("_objectImage"),
 			bIsDesktop = sap.ui.Device.system.desktop,
-			bIsHeaderContentVisible = oParent && oParent instanceof ObjectPageLayout
-					&& ((oParent.getHeaderContent() && oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent())
-					|| (oParent.getShowHeaderContent() && oParent.getShowTitleInHeaderContent()));
+			bIsHeaderContentVisible = oParent && oParent instanceof ObjectPageLayout && ((oParent.getHeaderContent()
+				&& oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent()) ||
+			(oParent.getShowHeaderContent() && oParent.getShowTitleInHeaderContent()));
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -67,14 +68,11 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.write("<span class='sapUxAPObjectPageHeaderObjectImageContainerSub'>");
-			if (oControl.getObjectImageURI()) {
-				oRm.renderControl(oControl._getInternalAggregation("_objectImage"));
-				if (oControl.getShowPlaceholder()) {
-					this._renderPlaceholder(oRm, oControl, false);
-				}
-			} else {
-				this._renderPlaceholder(oRm, oControl, true);
-			}
+
+			ObjectPageHeaderRenderer._renderInProperContainer(function () {
+				oRm.renderControl(oObjectImage);
+				ObjectPageHeaderRenderer._renderPlaceholder(oRm, oControl, !(oControl.getObjectImageShape() || oControl.getShowPlaceholder()));
+			}, oObjectImage, oRm);
 
 			oRm.write("</span>");
 			oRm.write("</span>");
@@ -119,6 +117,20 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 		oRm.write("</div>");
 
 		oRm.write("</div>");
+	};
+
+	ObjectPageHeaderRenderer._renderInProperContainer = function (fnRender, oObjectImage, oRm) {
+		if (oObjectImage instanceof Icon) {
+			oRm.write("<div");
+			oRm.addClass("sapUxAPObjectPageHeaderObjectImage");
+			oRm.addClass("sapUxAPObjectPageHeaderPlaceholder");
+			oRm.writeClasses();
+			oRm.write(">");
+			fnRender();
+			oRm.write("</div>");
+		} else {
+			fnRender();
+		}
 	};
 
 
