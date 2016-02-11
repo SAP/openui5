@@ -5,7 +5,7 @@
 -->
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>Test Page for the SAPUI5 Core Object [sap.ui.core.Core]</title>
 
@@ -30,7 +30,7 @@
 			data-sap-ui-noConflict="true"
 			data-sap-ui-theme-roots='{"my_third_preconfigured_theme" : "http://third.preconfig.com/ui5-themes"}'>
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -200,9 +200,16 @@
 				}
 			} else if (browser.internet_explorer) {
 				ok(value.indexOf("ie") === 0, "Browser is IE and data attribute is set right");
+			} else if (browser.edge) {
+				ok(value.indexOf("ed") === 0, "Browser is Edge and data attribute is set right");
 			}
 
-			ok(value.indexOf(Math.floor(version)) != -1, "Version is set right in data attribute");
+			if (!browser.safari || (!browser.fullscreen && !browser.webview)) {
+				ok(value.indexOf(Math.floor(version)) != -1, "Version is set right in data attribute");
+			} else {
+				ok(!/[0-9]+$/.test(value), "unknown browser versions shouldn't be added to the data attribute");
+			}
+
 		});
 
 		// now check the locale configuration to be applied as lang attribute
