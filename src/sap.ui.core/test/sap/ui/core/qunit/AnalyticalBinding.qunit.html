@@ -189,21 +189,18 @@
 
 			var iChangeHandlerCounter = 0;
 			function fnChangeHandler1() {
-				iChangeHandlerCounter++;
-				if (iChangeHandlerCounter == 2) {
-					equal(oRequestedSpy.callCount, 1, "After Initial Loading: Number of dataRequested Events = 1");
-					equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
+				equal(oRequestedSpy.callCount, 1, "After Initial Loading: Number of dataRequested Events = 1");
+				equal(oReceivedSpy.callCount, 1, "After Initial Loading: Number of dataReceived Events = 1");
 
-					equal(oRequestSentSpy.callCount, 3, "After Initial Loading: Number of requestSent Events = 3");
-					equal(oRequestCompletedSpy.callCount, 3, "After Initial Loading: Number of requestCompleted Events = 3")
+				equal(oRequestSentSpy.callCount, 3, "After Initial Loading: Number of requestSent Events = 3");
+				equal(oRequestCompletedSpy.callCount, 3, "After Initial Loading: Number of requestCompleted Events = 3")
 
-					oBinding.detachChange(fnChangeHandler1);
+				oBinding.detachChange(fnChangeHandler1);
 
-					oBinding.getContexts(0, 20, 100);
+				oBinding.getContexts(0, 20, 100);
 
-					oBinding.attachChange(fnExpandChangeHandler);
-					oBinding.expand(0);
-				}
+				oBinding.attachChange(fnExpandChangeHandler);
+				oBinding.expand(0);
 			}
 
 			function fnExpandChangeHandler() {
@@ -250,15 +247,12 @@
 
 			var iChangeHandlerCounter = 0;
 			function fnChangeHandler1() {
-				iChangeHandlerCounter++;
-				if (iChangeHandlerCounter == 2) {
-					//retrieve contexts, every thing should be loaded
-					var aContexts = oBinding.getContexts(0, 100);
+				//retrieve contexts, every thing should be loaded
+				var aContexts = oBinding.getContexts(0, 100);
 
-					equal(aContexts.length, 9, "All contexts on top level loaded");
+				equal(aContexts.length, 9, "All contexts on top level loaded");
 
-					start();
-				}
+				start();
 			}
 
 		});
@@ -274,25 +268,22 @@
 
 			var iChangeHandlerCounter = 0;
 			function fnChangeHandler1() {
-				iChangeHandlerCounter++;
-				if (iChangeHandlerCounter == 2) {
-					//retrieve contexts, every thing should be loaded
-					var aContexts = oBinding.getContexts(0, 1000);
+				//retrieve contexts, every thing should be loaded
+				var aContexts = oBinding.getContexts(0, 1000);
 
-					//even though 1000 were requested, we only receive 230, since that's all there is in the backend
-					equal(aContexts.length, 230, "Access via ATBA: All contexts over every level could be retrieved");
+				//even though 1000 were requested, we only receive 230, since that's all there is in the backend
+				equal(aContexts.length, 230, "Access via ATBA: All contexts over every level could be retrieved");
 
-					equal(aContexts[0].getProperty().CostCenter, "100-1000", "Cost Center of 1st row is correct");
-					equal(aContexts[0].getProperty().ActualCosts, "1588416", "Sum Node of 1st row is correctly set");
+				equal(aContexts[0].getProperty().CostCenter, "100-1000", "Cost Center of 1st row is correct");
+				equal(aContexts[0].getProperty().ActualCosts, "1588416", "Sum Node of 1st row is correctly set");
 
-					equal(aContexts[100].getProperty().CostCenter, "200-2000", "Cost Center of 100th row is correct");
-					equal(aContexts[100].getProperty().ActualCosts, "9254", "Sum Node of 100th row is correctly set");
+				equal(aContexts[100].getProperty().CostCenter, "200-2000", "Cost Center of 100th row is correct");
+				equal(aContexts[100].getProperty().ActualCosts, "9254", "Sum Node of 100th row is correctly set");
 
-					equal(aContexts[229].getProperty().CostCenter, "300-2000", "1. CostCenter of last row is correct (last subtotal row)");
-					equal(aContexts[229].getProperty().ActualCosts, "752475", "2. ActualCosts of last row is correct (last subtotal row)");
+				equal(aContexts[229].getProperty().CostCenter, "300-2000", "1. CostCenter of last row is correct (last subtotal row)");
+				equal(aContexts[229].getProperty().ActualCosts, "752475", "2. ActualCosts of last row is correct (last subtotal row)");
 
-					start();
-				}
+				start();
 			}
 
 		});
@@ -330,10 +321,7 @@
 			//just start() the test after the URL has been checked
 			var iChangeHandlerCounter = 0;
 			function fnChangeHandler1() {
-				iChangeHandlerCounter++;
-				if (iChangeHandlerCounter == 2) {
-					start();
-				}
+				start();
 			}
 
 		});
