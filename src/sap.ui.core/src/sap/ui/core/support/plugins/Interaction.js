@@ -417,6 +417,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 
 		Interaction.prototype._setMeasurementsData = function(aMeasurements) {
 			var requestsCount = 0,
+				margin = 100,
 				fnFixRequestSequence = function(aData) {
 					var fnFindRequestPosition = function(aRequests, requestToInsert) {
 						var pos = 0;
@@ -457,7 +458,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 						for (var i = requests.length - 1; i >= 0; i--) {
 							var request = requests[i];
 							// move requests which are started before the interaction, to the right interaction
-							if (measurementIndex > 0 && measurement.start > (request.fetchStartOffset + request.startTime)) {
+							if (measurementIndex > 0 && measurement.start - margin > (request.fetchStartOffset + request.startTime)) {
 								var insertInMeasurement = fnFindMeasurePosition(measurements, request);
 								var prevMeasureRequests = measurements[insertInMeasurement].requests;
 								// copy the request to the right measurement
