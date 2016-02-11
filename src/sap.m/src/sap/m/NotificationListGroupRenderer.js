@@ -42,6 +42,9 @@ sap.ui.define([], function () {
 		oRm.writeClasses();
 		oRm.writeControlData(oControl);
 		oRm.writeAttribute('tabindex', '0');
+		oRm.writeAccessibilityState(oControl, {
+			labelledby : oControl._getHeaderTitle().getId()
+		});
 		oRm.write('>');
 			this.renderHeader(oRm, oControl);
 			this.renderBody(oRm, oControl);
@@ -61,6 +64,7 @@ sap.ui.define([], function () {
 	 */
 	NotificationListGroupRenderer.renderHeader = function (oRm, oControl) {
 		oRm.write('<div class=' + classNameHeader + '>');
+
 		this.renderPriorityArea(oRm, oControl);
 		this.renderCloseButton(oRm, oControl);
 		this.renderTitle(oRm, oControl);
