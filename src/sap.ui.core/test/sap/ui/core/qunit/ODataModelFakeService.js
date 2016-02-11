@@ -179,6 +179,8 @@ xhr.onCreate = function(request) {
 			[200, oJSONHeaders, sCategory3JSON],
 		"Categories(4)":
 			[200, oJSONHeaders, sCategory4JSON],
+		"Categories(5)":
+			[200, oJSONHeaders, sCategoryBrokenJSON],
 		"Categories?$skip=0&$top=8&$select=CategoryName":
 			[200, oJSONHeaders, sCategorySelectJSON],
 		"Categories?$skip=0&$top=100&$select=CategoryName":
@@ -5104,6 +5106,25 @@ var sCategory4JSON = "{\n" +
 		"		\"Description\" : \"Cheeses\",\n" +
 		"		\"Picture\" : \"\"\n" +
 		"	}\n" +
+		"}"
+	;
+var sCategoryBrokenJSON = "{\n" +
+		"	\"d\" : { \"results\" : {\n" +
+		"		\"__metadata\" : {\n" +
+		"			\"id\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(5)\",\n" +
+		"			\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(5)\",\n" +
+		"			\"type\" : \"NorthwindModel.Category\"\n" +
+		"		},\n" +
+		"		\"Products\" : {\n" +
+		"			\"__deferred\" : {\n" +
+		"				\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(1)/Products\"\n" +
+		"			}\n" +
+		"		},\n" +
+		"		\"CategoryID\" : 5,\n" +
+		"		\"CategoryName\" : \"Grains/Cereals\",\n" +
+		"		\"Description\" : \"Breads, crackers, pasta, and cereal\",\n" +
+		"		\"Picture\" : \"\"\n" +
+		"	} }\n" +
 		"}"
 	;
 var sCategorySelectJSON = "\n" +
