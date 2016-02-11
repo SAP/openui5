@@ -57,6 +57,15 @@
 			]);
 		}
 
+
+		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 11) {
+			aExcludes = aExcludes.concat([
+				//NotificationListItem is not supported for IE 9 and IE 10
+				"sap.m.sample.NotificationListItem",
+				"sap.m.sample.NotificationListGroup"
+			]);
+		}
+
 		sap.ui.require(['sap/ui/demo/mock/qunit/SampleTester'], function(SampleTester) {
 			new SampleTester('sap.m', aExcludes).placeAt('content');
 		});
