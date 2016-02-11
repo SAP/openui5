@@ -143,6 +143,12 @@ sap.ui.define([
 		});
 	};
 
+	ObjectPageSection.prototype._allowPropagationToLoadedViews = function (bAllow) {
+		this.getSubSections().forEach(function (oSubSection) {
+			oSubSection._allowPropagationToLoadedViews(bAllow);
+		});
+	};
+
 	ObjectPageSection.prototype.onBeforeRendering = function () {
 		var sAriaLabeledBy = "ariaLabelledBy";
 
