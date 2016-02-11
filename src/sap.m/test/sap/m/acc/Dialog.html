@@ -15,7 +15,8 @@
             oSimpleDialog = new sap.m.Dialog({
                 title: "Simple Dialog",
                 content: new sap.ui.core.HTML({
-                    content: '<div>Hello world text</div>'
+                    content: '<div id="helloWorld">Hello world text</div>' +
+                        '<div id="testPageText">This is accessibility test page for sap.m.Dialog</div>'
                 }),
                 beginButton: new sap.m.Button('simpleDialogAcceptButton', {
                     text: "Accept", press: function () {
@@ -26,13 +27,14 @@
                     text: "Cancel", press: function () {
                         oSimpleDialog.close();
                     }
-                })
+                }),
+                ariaLabelledBy : ["helloWorld", "testPageText", "page-title"]
             }),
             oMessageDialog = new sap.m.Dialog({
                 title: "Message Dialog",
                 type: sap.m.DialogType.Message,
                 content: new sap.ui.core.HTML({
-                    content: '<div>Message dialog text</div>'
+                    content: '<div id="messageDialogText">Sample text</div>'
                 }),
                 beginButton: new sap.m.Button({
                     text: "Accept", press: function () {
@@ -43,7 +45,8 @@
                     text: "Cancel", press: function () {
                         oMessageDialog.close();
                     }
-                })
+                }),
+                ariaLabelledBy : ["messageDialogText"]
             }),
             oCustomHeaderDialog = new sap.m.Dialog({
                 title: "Dialog with Select",
@@ -53,19 +56,20 @@
                     contentRight: []
                 }),
                 content: [
-                    new sap.m.Text({text: "This is a dialog with custom header"})
+                    new sap.m.Text("contentText", {text: "This is a dialog with custom header"})
                 ],
                 beginButton: new sap.m.Button({
                     press: function () {
                         oCustomHeaderDialog.close();
                     },
                     text: "Close"
-                })
+                }),
+                ariaLabelledBy : ["contentText"]
             }),
             oStateDialog = new sap.m.Dialog("dialogWithState", {
                 title: "World Domination",
                 icon: "sap-icon://employee",
-                ariaDescribedBy: "p1",
+                ariaLabelledBy: "p1",
                 state: sap.ui.core.ValueState.Warning,
                 content: [
                     new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Do you want to start a new world domination campaign?</p>'})

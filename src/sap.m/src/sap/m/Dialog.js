@@ -202,7 +202,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					/**
 					 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 					 */
-					ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
+					ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+					/**
+					 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+					 */
+					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 				},
 				events: {
 
@@ -1148,6 +1153,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 
 			return originalResponse;
+		};
+
+		Dialog.prototype.getAriaLabelledBy = function() {
+			var header = this._getAnyHeader(),
+				// Due to a bug in getAssociation in ManagedObject slice the Array
+				// Remove slice when the bug is fixed.
+				labels = this.getAssociation("ariaLabelledBy", []).slice();
+
+			if (header) {
+				labels.unshift(header.getId());
+			}
+
+			return labels;
 		};
 
 		Dialog.prototype.setTitle = function (sTitle) {
