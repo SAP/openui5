@@ -572,7 +572,8 @@ sap.ui.require([
 					BudgetCurrency : "USD",
 					Budget : 555.55
 				},
-				oRequestor = Requestor.create(TestUtils.proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/")),
+				oRequestor = Requestor.create(TestUtils.proxy(
+					"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/")),
 				sResourcePath = "TEAMS('TEAM_01')",
 				oCache = Cache.createSingle(oRequestor, sResourcePath);
 

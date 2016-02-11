@@ -266,9 +266,9 @@ sap.ui.require([
 		QUnit.test("Integration test for formatLiteral", function (assert) {
 			var done = assert.async(),
 			sResolvedServiceUrl = TestUtils.proxy(
-				"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC");
+				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 
-			jQuery.ajax(sResolvedServiceUrl + "/BusinessPartnerList?"
+			jQuery.ajax(sResolvedServiceUrl + "BusinessPartnerList?"
 				+ "$filter=CompanyName eq + " + Helper.formatLiteral("Becker Berlin", "Edm.String")
 				, { method : "GET"}
 			).then(function (oData, sTextStatus, jqXHR) {

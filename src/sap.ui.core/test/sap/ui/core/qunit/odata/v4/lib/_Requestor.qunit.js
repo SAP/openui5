@@ -11,6 +11,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
+	var sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
+
 	/**
 	 * Creates a mock for jQuery's XHR wrapper.
 	 *
@@ -74,8 +76,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getServiceUrl", function (assert) {
-		var sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/",
-			oRequestor = Requestor.create(sServiceUrl, undefined, {"foo" : "bar"});
+		var oRequestor = Requestor.create(sServiceUrl, undefined, {"foo" : "bar"});
 
 		// code under test
 		assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl);
@@ -85,7 +86,6 @@ sap.ui.require([
 	QUnit.test("request", function (assert) {
 		var oPayload = {"foo" : 42},
 			oPromise,
-			sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/",
 			oRequestor = Requestor.create(sServiceUrl, undefined, {
 				"foo" : "URL params are ignored for normal requests"
 			}),
@@ -137,7 +137,7 @@ sap.ui.require([
 			var mDefaultHeaders = clone(mHeaders.defaultHeaders),
 				oPromise,
 				mRequestHeaders = clone(mHeaders.requestHeaders),
-				oRequestor = Requestor.create("/sap/opu/local_v4/IWBEP/TEA_BUSI/", mDefaultHeaders),
+				oRequestor = Requestor.create(sServiceUrl, mDefaultHeaders),
 				oResult = {},
 				// add predefined request headers for OData v4
 				mResultHeaders = jQuery.extend({}, {
@@ -153,7 +153,7 @@ sap.ui.require([
 			}
 
 			this.oSandbox.mock(jQuery).expects("ajax")
-				.withExactArgs("/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees", {
+				.withExactArgs(sServiceUrl + "Employees", {
 					data : undefined,
 					headers : mResultHeaders,
 					method : "GET"
@@ -618,7 +618,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
-			var oRequestor = Requestor.create(TestUtils.proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/")),
+			var oRequestor = Requestor.create(TestUtils.proxy(sServiceUrl)),
 				sResourcePath = "TEAMS('TEAM_01')";
 
 			function assertResult(oPayload){
@@ -645,7 +645,7 @@ sap.ui.require([
 
 		//*****************************************************************************************
 		QUnit.test("request(...)/submitBatch (realOData) fail", function (assert) {
-			var oRequestor = Requestor.create(TestUtils.proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/"));
+			var oRequestor = Requestor.create(TestUtils.proxy(sServiceUrl));
 
 			oRequestor.request("GET", "TEAMS('TEAM_01')", "group").then(function (oResult) {
 				assert.deepEqual(oResult, {

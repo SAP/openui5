@@ -208,7 +208,7 @@ sap.ui.require([
 			"BudgetCurrency" : "EUR",
 			"Budget" : 5555
 		},
-		sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/";
+		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
 
 	function parseResponses(aResponses) {
 		var i, oResponse;

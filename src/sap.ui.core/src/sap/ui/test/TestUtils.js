@@ -332,29 +332,28 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 * @param {map} mFixture
 		 *   the fixture for {@link sap.ui.test.TestUtils#.useFakeServer}. If the value for a URL
 		 *   contains <code>always:true</code>, this URL is faked even with <code>realOData</code>.
-		 * @param {string} [sBase="sap/ui/core/qunit/odata/v4/data"]
+		 * @param {string} [sSourceBase="sap/ui/core/qunit/odata/v4/data"]
 		 *   The base path for <code>source</code> values in the fixture. The path must be relative
 		 *   to the <code>test</code> folder of the <code>sap.ui.core</code> project, typically it
 		 *   should start with "sap". It must not end with '/'.
+		 * @param {string} [sFilterBase=""]
+		 *   A base path for the filter URLs. It is prepended to all keys in <code>mFixture</code>.
 		 */
-		setupODataV4Server : function (oSandbox, mFixture, sBase) {
-			var bStart = false, mAlwaysFixture;
+		setupODataV4Server : function (oSandbox, mFixture, sSourceBase, sFilterBase) {
+			var mResultingFixture = {},
+				bStart = false;
 
-			if (bRealOData) {
-				mAlwaysFixture = {};
-				Object.keys(mFixture).forEach(function (sUrl) {
-					if (mFixture[sUrl].always) {
-						mAlwaysFixture[sUrl] = mFixture[sUrl];
-						bStart = true;
-					}
-				});
-				if (!bStart) {
-					return;
+			sFilterBase = sFilterBase || "";
+			Object.keys(mFixture).forEach(function (sUrl) {
+				if (!bRealOData || mFixture[sUrl].always) {
+					mResultingFixture[sFilterBase + sUrl] = mFixture[sUrl];
+					bStart = true;
 				}
-				mFixture = mAlwaysFixture;
+			});
+			if (bStart) {
+				TestUtils.useFakeServer(oSandbox, sSourceBase || "sap/ui/core/qunit/odata/v4/data",
+					mResultingFixture);
 			}
-			TestUtils.useFakeServer(oSandbox, sBase || "sap/ui/core/qunit/odata/v4/data",
-				mFixture);
 		}
 	};
 

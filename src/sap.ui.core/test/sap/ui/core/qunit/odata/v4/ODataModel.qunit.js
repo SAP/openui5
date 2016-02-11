@@ -29,9 +29,8 @@ sap.ui.require([
 	 */
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')/Name" : {source : "Name.json"},
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')" :
-				{code : 404, source : "TEAMS('UNKNOWN').json"}
+			"TEAMS('TEAM_01')/Name" : {source : "Name.json"},
+			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
 		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
 			metadata : {
@@ -61,7 +60,8 @@ sap.ui.require([
 	 *   a URL within the service
 	 */
 	function getServiceUrl(sPath) {
-		var sAbsolutePath = "/sap/opu/local_v4/IWBEP/TEA_BUSI/" + (sPath && sPath.slice(1) || "");
+		var sAbsolutePath = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"
+				+ (sPath && sPath.slice(1) || "");
 
 		return TestUtils.proxy(sAbsolutePath);
 	}
@@ -70,7 +70,8 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
-			TestUtils.setupODataV4Server(this.oSandbox, mFixture);
+			TestUtils.setupODataV4Server(this.oSandbox, mFixture, undefined,
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
@@ -397,7 +398,7 @@ sap.ui.require([
 // oResponse.headers look like this:
 //Content-Type:application/json; odata.metadata=minimal;charset=utf-8
 //etag:W/"20150915102433.7994750"
-//location:.../sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('7')
+//location:.../sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES('7')
 //TODO can we make use of "location" header? relation to canonical URL?
 // oData looks like this:
 //{

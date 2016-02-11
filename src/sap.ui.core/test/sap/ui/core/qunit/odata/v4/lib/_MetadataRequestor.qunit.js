@@ -12,8 +12,10 @@ sap.ui.require([
 	"use strict";
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata" : {source : "metadata.xml"},
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/metadata.json" : {source : "metadata.json"}
+			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
+				: {source : "metadata.xml"},
+			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json"
+				: {source : "metadata.json"}
 		};
 
 	/**
@@ -122,8 +124,9 @@ sap.ui.require([
 		var oMetadataRequestor = MetadataRequestor.create();
 
 		return Promise.all([
-			oMetadataRequestor.read("/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata"),
-			jQuery.ajax("/sap/opu/local_v4/IWBEP/TEA_BUSI/metadata.json")
+			oMetadataRequestor.read(
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"),
+			jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json")
 		]).then(function (aResults) {
 			assert.deepEqual(aResults[0], aResults[1]);
 		});

@@ -353,14 +353,14 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   var oBatchRequest = Batch.serializeBatchRequest([
 		 *       {
 		 *           method : "GET",
-		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+		 *           url : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Employees('1')",
 		 *           headers : {
 		 *               Accept : "application/json"
 		 *           }
 		 *       },
 		 *       [{
 		 *           method : "POST",
-		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+		 *           url : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS",
 		 *           headers : {
 		 *               "Content-Type" : "application/json"
 		 *           },
@@ -375,7 +375,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *       }],
 		 *       {
 		 *           method : "PATCH",
-		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('3')",
+		 *           url : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Employees('3')",
 		 *           headers : {
 		 *               "Content-Type" : "application/json"
 		 *           },
