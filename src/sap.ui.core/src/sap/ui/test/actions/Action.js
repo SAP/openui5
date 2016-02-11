@@ -47,10 +47,6 @@ sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject', 'sap/ui/qunit/QU
 			return true;
 		},
 
-		init: function () {
-			this.controlAdapters = {};
-		},
-
 		/**
 		 * Used for retrieving the correct $ to execute your action on.
 		 * This will check the following conditions in order:
@@ -83,6 +79,19 @@ sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject', 'sap/ui/qunit/QU
 		},
 
 		/**
+		 * Returns the QUnitUtils
+		 * @returns {sap.ui.test.qunit.QUnitUtils} QUnit utils of the current window or the OPA frame
+		 * @protected
+		 */
+		getUtils : function () {
+			return Opa5.getUtils() || QUnitUtils;
+		},
+
+		init: function () {
+			this.controlAdapters = {};
+		},
+
+		/**
 		 * Traverses the metadata chain of ui5 to and looks for adapters
 		 * @param oMetadata a controls metadata
 		 * @returns {string|null}
@@ -100,15 +109,6 @@ sap.ui.define(['jquery.sap.global','sap/ui/base/ManagedObject', 'sap/ui/qunit/QU
 			}
 
 			return null;
-		},
-
-		/**
-		 * Returns the QUnitUtils
-		 * @returns {sap.ui.test.qunit.QUnitUtils} QUnit utils of the current window or the OPA frame
-		 * @protected
-		 */
-		getUtils : function () {
-			return Opa5.getUtils() || QUnitUtils;
 		},
 
 		_sLogPrefix : "Opa5 actions"
