@@ -121,7 +121,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Event is fired when the user clicks on the control.
 			 */
-			press : {}
+			press : {},
+
+			/**
+			 * Event is fired when the image resource is loaded.
+			 * @since 1.36.2
+			 */
+			load : {},
+
+			/**
+			 * Event is fired when the image resource can't be loaded. If densityAware is set to true, the event is fired when none of the fallback resources can be loaded.
+			 * @since 1.36.2
+			 */
+			error : {}
 		}
 	}});
 
@@ -183,6 +195,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		$DomNode.removeClass("sapMNoImg");
+
+		this.fireLoad();
 	};
 
 	/**
@@ -211,6 +225,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		// if src is empty or there's no image existing, just stop
 		if (!sSrc || this._iLoadImageDensity === 1) {
+			this.fireError();
 			return;
 		}
 
