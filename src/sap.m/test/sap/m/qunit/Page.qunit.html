@@ -414,11 +414,11 @@
 				oPage.setBusy(true);
 
 				jQuery.sap.delayedCall(1200, this, function() {
-					start();
-
 					var $busyIndicator = jQuery('.sapUiLocalBusyIndicator')[0];
 					var sZIndex = jQuery('.sapUiLocalBusyIndicator').css('z-index');
 					assert.strictEqual(sZIndex, sDesiredZIndex, "z-index of the BusyIndicator is set correctly for Page with header/footer also covered");
+
+					start();
 				});
 			});
 
