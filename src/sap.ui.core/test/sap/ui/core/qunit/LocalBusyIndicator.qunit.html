@@ -23,7 +23,12 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+
 		<script language="javascript">
+		sinon.config.useFakeTimers = false;
 
 		QUnit.module("Basic", {
 			beforeEach : function() {
@@ -190,28 +195,6 @@
 			}, 50);
 		});
 
-		QUnit.test("Check if small Animation is used", function(assert) {
-			var done = assert.async();
-			var oIcon = new sap.ui.core.Icon({
-					src: "sap-icon://nutrition-activity",
-					size: "3rem",
-					color:"#DD0000"
-			}).placeAt("target1");
-			oIcon.setBusyIndicatorDelay(0);
-			sap.ui.getCore().applyChanges();
-
-			oIcon.setBusy(true);
-
-			setTimeout(function() {
-				var $oAnimation = jQuery(".sapUiLocalBusyIndicatorAnimation");
-				assert.ok($oAnimation.length, "Animation exists");
-				assert.ok($oAnimation.hasClass("sapUiLocalBusyIndicatorAnimSmall"));
-
-				this.destroy();
-				done();
-			}.bind(oIcon), 50);
-		});
-
 		QUnit.module("Delay", {
 			beforeEach : function() {
 				this.iDelay = 500;
@@ -288,6 +271,43 @@
 					done();
 				}, that.iDelay);
 			}, 20);
+		});
+
+		QUnit.module("Busy Animation");
+
+		QUnit.test("Check if small Animation is used", function(assert) {
+			var done = assert.async();
+
+			this.oBtn = new sap.ui.commons.Button({
+				text : "Blub",
+				width : "45px",
+				busy : true,
+				busyIndicatorDelay : 0
+			}).placeAt("target1");
+
+			this.oDelegate = {
+				onAfterRendering : function(oEvent) {}
+			}
+			this.oBtn.addDelegate(this.oDelegate);
+			this.oSpy = sinon.spy(this.oDelegate, "onAfterRendering");
+
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				var $oAnimation = jQuery(".sapUiLocalBusyIndicatorAnimation");
+				assert.ok($oAnimation.length, "Animation exists");
+				assert.ok($oAnimation.hasClass("sapUiLocalBusyIndicatorAnimSmall"), "Correct CSS class set to DOM");
+
+				assert.equal(this.oSpy.callCount, 1, "Icon should be rendered once");
+
+				this.oSpy.restore();
+				delete this.oSpy;
+				this.oBtn.removeDelegate(this.oDelegate);
+				delete this.oDelegate;
+				this.oBtn.destroy();
+
+				done();
+			}.bind(this), 50);
 		});
 
     </script>
