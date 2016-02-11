@@ -333,6 +333,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			 * @public
 			 * @returns {sap.ui.core.routing.Targets} this pointer for chaining
 			 * @name sap.ui.core.routing.Targets#display
+			 * @function
 			 */
 
 			/**

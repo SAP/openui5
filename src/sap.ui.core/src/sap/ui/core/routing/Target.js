@@ -67,9 +67,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			},
 
 			/**
-			 * Creates a view and puts it in an aggregation of a control that has been defined in the {@link #constructor}.
+			 * Creates a view and puts it in an aggregation of a control that has been defined in the {@link sap.ui.core.routing.Target#constructor}.
 			 *
 			 * @name sap.ui.core.routing.Target#display
+			 * @function
 			 * @param {*} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
 			 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it resolves with {name: *, error: *}
 			 * @public
