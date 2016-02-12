@@ -614,9 +614,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
              var clientTotalTime = end - responseStart;
 
-             var serverTimePercent = 100 * serverTotalTime / duration;
-             var clientTimePercent = 100 * clientTotalTime / duration;
-             var preprocessingTimePercent = 100 *  preprocessingTime / duration;
+             var serverTimePercent = Math.floor(100 * serverTotalTime / duration);
+             var clientTimePercent = Math.floor(100 * clientTotalTime / duration);
+             var preprocessingTimePercent = Math.floor(100 *  preprocessingTime / duration);
 
              var titleTemplate = '<span class="sapUiInteractionTitleSection"><div class="sapUiInteractionTitleText">{Title}</div><div class="sapUiInteractionTitleSubText">{Subtitle}</div></span>';
 
