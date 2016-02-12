@@ -116,7 +116,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *         Defines the title text of the newly created tab
 	 * @param {sap.ui.core.Control} oContent
 	 *         Defines the root control of the content area
-	 * @type void
+	 * @returns {sap.ui.commons.Tab} oTab
+	 *         The created tab control
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
