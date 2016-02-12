@@ -368,6 +368,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				aTokens[i].setVisible(false);
 			}
 
+			// remove the old tokenizer indicator
+			if (this.$().find(".sapMMultiInputIndicator").length !== 0) {
+				this._removeIndicator();
+			}
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
 
