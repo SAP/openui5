@@ -2425,7 +2425,7 @@ sap.ui.define([
 				for (var i = 0; i < aChangeSet.length; i++) {
 					var oRequest = aChangeSet[i].request,
 						sKey = oRequest.requestUri.split('?')[0];
-					if (oRequest.method === "POST") {
+					if (oRequest.method === "POST" || oRequest.method === "DELETE") {
 						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + sKey);
 						if (oEntityMetadata) {
 							mEntityTypes[oEntityMetadata.entityType] = true;
