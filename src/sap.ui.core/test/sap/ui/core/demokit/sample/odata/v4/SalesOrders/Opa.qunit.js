@@ -20,7 +20,7 @@ sap.ui.require([
 		Given.iStartMyAppInAFrame(sUrl);
 
 		Then.waitFor({
-			controlType: "sap.m.Button",
+			controlType : "sap.m.Button",
 			matchers : new Properties({text : "Delete"}),
 			success : function (oControl) {
 				var sTypeName,

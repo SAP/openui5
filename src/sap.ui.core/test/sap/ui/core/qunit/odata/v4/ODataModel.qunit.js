@@ -28,14 +28,14 @@ sap.ui.require([
 	 */
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')/Name": {source: "Name.json"},
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')":
-				{code: 404, source: "TEAMS('UNKNOWN').json"}
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')/Name" : {source : "Name.json"},
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')" :
+				{code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
 		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
-			metadata: {
-				properties: {
-					text: "string"
+			metadata : {
+				properties : {
+					text : "string"
 				}
 			}
 		});
@@ -68,26 +68,27 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("ab-CD");
 			this.oSandbox = sinon.sandbox.create();
 			TestUtils.setupODataV4Server(this.oSandbox, mFixture);
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+			this.oSandbox.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag")
+				.atLeast(0).returns("ab-CD");
 		},
 
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			this.oSandbox.verifyAndRestore();
-			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
-		},
-
-		sDefaultLanguage : sap.ui.getCore().getConfiguration().getLanguage()
+		}
 	});
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var oHelperMock = this.mock(Helper),
+		var mHeaders = {
+				"Accept-Language" : "ab-CD"
+			},
+			oHelperMock = this.mock(Helper),
 			oMetadataRequestor = {},
 			oMetadataRequestorMock = this.mock(MetadataRequestor),
 			oMetaModel,
@@ -106,15 +107,15 @@ sap.ui.require([
 			"serviceUrl in mParameters");
 
 		oHelperMock.expects("buildQueryOptions").returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
 		//code under test
 		oModel = new ODataModel("/foo/");
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
+		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
 		//code under test
 		oModel = new ODataModel("/foo/?sap-client=111");
@@ -125,9 +126,9 @@ sap.ui.require([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, "/foo/$metadata");
 
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
+		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
 		//code under test, serviceUrlParams overwrite URL parameters from this.sServiceUrl
 		oModel = new ODataModel("/foo/?sap-client=222",
@@ -141,9 +142,11 @@ sap.ui.require([
 
 		this.mock(Requestor).expects("create").withExactArgs("/foo/", {
 			"Accept-Language" : "ab-CD"
+		}, {
+			"sap-client" : "123"
 		}).returns(oRequestor);
 
-		oModel = new ODataModel("/foo/");
+		oModel = new ODataModel("/foo/?sap-client=123");
 
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);
@@ -152,7 +155,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.skip("Property access from ManagedObject w/o context binding", function (assert) {
 		var oModel = createModel(),
-			oControl = new TestControl({models: oModel}),
+			oControl = new TestControl({models : oModel}),
 			done = assert.async();
 
 		oControl.bindProperty("text", {
@@ -170,7 +173,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.skip("Property access from ManagedObject w/ context binding", function (assert) {
 		var oModel = createModel(),
-			oControl = new TestControl({models: oModel}),
+			oControl = new TestControl({models : oModel}),
 			done = assert.async();
 
 		oControl.bindObject("/TEAMS('TEAM_01')");
@@ -291,7 +294,7 @@ sap.ui.require([
 
 			this.mock(oModel.oRequestor).expects("request")
 				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
-				.withExactArgs("POST", getServiceUrl("/EMPLOYEES") + oModel._sQuery, null,
+				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, undefined, null,
 					oEmployeeData).returns(oPromise);
 
 			assert.strictEqual(oModel.create("/EMPLOYEES", oEmployeeData), oPromise);
@@ -301,14 +304,14 @@ sap.ui.require([
 	//*********************************************************************************************
 	[undefined, "?foo=bar"].forEach(function (sQuery) {
 		QUnit.test("remove", function (assert) {
-			var sCanonicalUrl = getServiceUrl("/EMPLOYEES(ID='1')"),
-			sEtag = 'W/"19770724000000.0000000"',
-			oModel = createModel(sQuery),
-			sPath = "/EMPLOYEES[0];root=0";
+			var sEtag = 'W/"19770724000000.0000000"',
+				oModel = createModel(sQuery),
+				sPath = "/EMPLOYEES[0];root=0";
 
 			this.oSandbox.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("DELETE", sCanonicalUrl + oModel._sQuery, {"If-Match" : sEtag})
-			.returns(Promise.resolve(undefined));
+				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, undefined,
+					{"If-Match" : sEtag})
+				.returns(Promise.resolve(undefined));
 			//TODO make such basic APIs like sap.ui.model.Context#getProperty work?!
 			//     they could be used instead of async read()...
 			this.oSandbox.stub(oModel, "read", function (sPath0, bAllowObjectAccess) {
@@ -322,7 +325,8 @@ sap.ui.require([
 			});
 			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl",
 				function (sServiceUrl, sPath0, fnRead) {
-					assert.strictEqual(sServiceUrl, getServiceUrl());
+					assert.strictEqual(sServiceUrl, "",
+						"no service URL, return resource path only");
 					assert.strictEqual(sPath0, sPath);
 					// make sure that fnRead === oModel.read.bind(oModel)
 					oModel.read.reset();
@@ -331,7 +335,7 @@ sap.ui.require([
 					assert.ok(oModel.read.calledWithExactly(sPath, true),
 						"fnRead passes arguments");
 					assert.ok(oModel.read.calledOn(oModel), "fnRead bound to 'this'");
-					return Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')"));
+					return Promise.resolve("EMPLOYEES(ID='1')");
 				});
 
 			return oModel.remove(oModel.getContext(sPath)).then(function (oResult) {
@@ -378,8 +382,8 @@ sap.ui.require([
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 
 		oMetaModelMock.expects("requestCanonicalUrl")
-			.withExactArgs(oModel.sServiceUrl, oEntityContext.getPath(), sinon.match.func)
-			.returns(Promise.resolve(oModel.sServiceUrl + "EMPLOYEES(ID='1')"));
+			.withExactArgs("/", oEntityContext.getPath(), sinon.match.func)
+			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
 
 		return oModel.requestCanonicalPath(oEntityContext).then(function (sCanonicalPath) {
 			assert.strictEqual(sCanonicalPath, "/EMPLOYEES(ID='1')");

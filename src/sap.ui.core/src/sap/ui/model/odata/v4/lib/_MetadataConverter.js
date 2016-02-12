@@ -233,16 +233,16 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * This function is called by each annotatable entity to define a place for the annotations.
 	 * @param {object} oAggregate
-	 *   the aggregate
+	 *   The aggregate
 	 * @param {object|string} vTarget
-	 *   the target to which the annotations shall be added, may be directly an object or a target
+	 *   The target to which the annotations shall be added, may be directly an object or a target
 	 *   name to place it into $Annotations of the current Schema. The path in $Annotations is
 	 *   constructed from the given name and the current annotatable's path (if there is one and
 	 *   it has a path)
 	 * @param {string} [sPrefix=""]
-	 *   the prefix to put before the "@" and the term
+	 *   The prefix to put before the "@" and the term
 	 * @param {string} [sQualifier]
-	 *   the qualifier for all annotations
+	 *   The qualifier for all annotations
 	 */
 	function annotatable(oAggregate, vTarget, sPrefix, sQualifier) {
 		var oAnnotatable,
@@ -262,19 +262,19 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			}
 		}
 		oAggregate.annotatable = {
-			parent: oAggregate.annotatable,
-			path: sPath,
-			prefix: sPrefix || "",
-			qualifier: sQualifier,
-			target: vTarget
+			parent : oAggregate.annotatable,
+			path : sPath,
+			prefix : sPrefix || "",
+			qualifier : sQualifier,
+			target : vTarget
 		};
 	}
 
 	/**
 	 * Fetches the array at the given property. Ensures that there is at least an empty array.
-	 * @param {object} oParent the parent object
-	 * @param {string} sProperty the property name
-	 * @returns {any[]} the array at the given property
+	 * @param {object} oParent The parent object
+	 * @param {string} sProperty The property name
+	 * @returns {any[]} The array at the given property
 	 */
 	function getOrCreateArray(oParent, sProperty) {
 		var oResult = oParent[sProperty];
@@ -287,9 +287,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Fetches the object at the given property. Ensures that there is at least an empty object.
-	 * @param {object} oParent the parent object
-	 * @param {string} sProperty the property name
-	 * @returns {object} the object at the given property
+	 * @param {object} oParent The parent object
+	 * @param {string} sProperty The property name
+	 * @returns {object} The object at the given property
 	 */
 	function getOrCreateObject(oParent, sProperty) {
 		var oResult = oParent[sProperty];
@@ -303,14 +303,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Determines the value for an annotation of the given type.
 	 * @param {string} sType
-	 *   the annotation type (either from the attribute name in the Annotation element or from the
+	 *   The annotation type (either from the attribute name in the Annotation element or from the
 	 *   element name itself)
 	 * @param {string} sValue
-	 *   the value in the XML (either the attribute value or the element's text value)
+	 *   The value in the XML (either the attribute value or the element's text value)
 	 * @param {object} oAggregate
-	 *   the aggregate
+	 *   The aggregate
 	 * @returns {any}
-	 *   the value for the JSON
+	 *   The value for the JSON
 	 */
 	function getAnnotationValue(sType, sValue, oAggregate) {
 		var i, vValue, aValues;
@@ -340,15 +340,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				for (i = 0; i < aValues.length; i++) {
 					aValues[i] = MetadataConverter.resolveAliasInPath(aValues[i], oAggregate);
 				}
-				return {$EnumMember: aValues.join(" ")};
+				return {$EnumMember : aValues.join(" ")};
 			case "Float":
 				if (sValue === "NaN" || sValue === "INF" || sValue === "-INF") {
-					return {$Float: sValue};
+					return {$Float : sValue};
 				}
 				return parseFloat(sValue);
 			case "Int":
 				vValue = parseInt(sValue, 10);
-				return Helper.isSafeInteger(vValue) ? vValue : {$Int: sValue};
+				return Helper.isSafeInteger(vValue) ? vValue : {$Int : sValue};
 			case "String":
 				return sValue;
 			default:
@@ -359,11 +359,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Determines the value for an inline annotation in the element.
 	 *
-	 * @param {Element} oElement the element
+	 * @param {Element} oElement The element
 	 * @param {object} oAggregate
-	 *   the aggregate
+	 *   The aggregate
 	 * @returns {any}
-	 *   the value for the JSON
+	 *   The value for the JSON
 	 */
 	function getInlineAnnotationValue(oElement, oAggregate) {
 		var oAttribute,
@@ -386,9 +386,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 * Post-processing of an Annotation element. Sets the result of the single child element at the
 	 * annotation if there was a child.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
 	 */
 	function postProcessAnnotation(oElement, aResult, oAggregate) {
 		// oAggregate.annotatable is the Annotation itself currently.
@@ -401,10 +401,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of an Apply element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {object} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {object} The value for the JSON
 	 */
 	function postProcessApply(oElement, aResult, oAggregate) {
 		var oResult = oAggregate.annotatable.target;
@@ -418,10 +418,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a Cast or IsOf element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {object} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {object} The value for the JSON
 	 */
 	function postProcessCastOrIsOf(oElement, aResult, oAggregate) {
 		var sName = oElement.localName,
@@ -436,10 +436,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a Collection element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {object} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {object} The value for the JSON
 	 */
 	function postProcessCollection(oElement, aResult, oAggregate) {
 		return aResult;
@@ -448,10 +448,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a LabeledElement element within an Annotation element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {any} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {any} The value for the JSON
 	 */
 	function postProcessLabeledElement(oElement, aResult, oAggregate) {
 		var oResult = oAggregate.annotatable.target;
@@ -465,10 +465,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a LabeledElementReference element within an Annotation element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {any} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {any} The value for the JSON
 	 */
 	function postProcessLabeledElementReference(oElement, aResult, oAggregate) {
 		return {
@@ -480,10 +480,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a leaf element within an Annotation element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {any} the constant value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {any} The constant value for the JSON
 	 */
 	function postProcessLeaf(oElement, aResult, oAggregate) {
 		return getAnnotationValue(oElement.localName, oElement.textContent, oAggregate);
@@ -492,10 +492,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a Not element within an Annotation element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {object} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {object} The value for the JSON
 	 */
 	function postProcessNot(oElement, aResult, oAggregate) {
 		var oResult = oAggregate.annotatable.target;
@@ -507,10 +507,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a Null element within an Annotation element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {object} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {object} The value for the JSON
 	 */
 	function postProcessNull(oElement, aResult, oAggregate) {
 		var oAnnotatable = oAggregate.annotatable,
@@ -526,15 +526,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a PropertyValue element within a Record element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {any} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {any} The value for the JSON
 	 */
 	function postProcessPropertyValue(oElement, aResult, oAggregate) {
 		return {
-			property: oElement.getAttribute("Property"),
-			value: aResult.length ? aResult[0] :
+			property : oElement.getAttribute("Property"),
+			value : aResult.length ? aResult[0] :
 				getInlineAnnotationValue(oElement, oAggregate)
 		};
 	}
@@ -542,10 +542,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a Record element within an Annotation element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {object} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {object} The value for the JSON
 	 */
 	function postProcessRecord(oElement, aResult, oAggregate) {
 		var i,
@@ -566,10 +566,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of an operation element (And, Or, Eq etc) within an Annotation element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @param {object} oAggregate the aggregate
-	 * @returns {object} the value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 * @returns {object} The value for the JSON
 	 */
 	function postProcessOperation(oElement, aResult, oAggregate) {
 		var oResult = oAggregate.annotatable.target;
@@ -581,24 +581,24 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Post-processing of a UrlRef element within an Annotation element.
 	 *
-	 * @param {Element} oElement the element
-	 * @param {any[]} aResult the results from child elements
-	 * @returns {object} the constant value for the JSON
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @returns {object} The constant value for the JSON
 	 */
 	function postProcessUrlRef(oElement, aResult) {
-		return {$UrlRef: aResult[0]};
+		return {$UrlRef : aResult[0]};
 	}
 
 	/**
 	 * Processes an Action or Function element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processActionOrFunction(oElement, oAggregate) {
 		var sKind = oElement.localName,
 			sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			oAction = {
-				$kind: sKind
+				$kind : sKind
 			};
 
 		processAttributes(oElement, oAction, {
@@ -614,8 +614,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Extracts the Aliases from the Include and Schema elements.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processAlias(oElement, oAggregate) {
 		var sAlias = oElement.getAttribute("Alias");
@@ -627,8 +627,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes an element of an annotatable expression.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processAnnotatableExpression(oElement, oAggregate) {
 		annotatable(oAggregate, {});
@@ -636,8 +636,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes an Annotations element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processAnnotations(oElement, oAggregate) {
 		annotatable(oAggregate,
@@ -648,8 +648,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes an Annotation element within Annotations.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processAnnotation(oElement, oAggregate) {
 		var oAnnotatable = oAggregate.annotatable,
@@ -677,10 +677,10 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Copies all attributes from oAttributes to oTarget according to oConfig.
-	 * @param {Element} oElement the element
-	 * @param {object} oTarget the target object
+	 * @param {Element} oElement The element
+	 * @param {object} oTarget The target object
 	 * @param {object} oConfig
-	 *   the configuration: each property describes a property of oAttributes to copy; the value is
+	 *   The configuration: each property describes a property of oAttributes to copy; the value is
 	 *   a conversion function, if this function returns undefined, the property is not set
 	 */
 	function processAttributes(oElement, oTarget, oConfig) {
@@ -697,8 +697,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a ComplexType element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processComplexType(oElement, oAggregate) {
 		processType(oElement, oAggregate, {"$kind" : "ComplexType"});
@@ -706,19 +706,19 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes the Edmx element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processEdmx(oElement, oAggregate) {
 		processAttributes(oElement, oAggregate.result, {
-			"Version": setValue
+			"Version" : setValue
 		});
 	}
 
 	/**
 	 * Processes an EntityContainer element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processEntityContainer(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
@@ -732,8 +732,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes an EntitySet element at the EntityContainer.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processEntitySet(oElement, oAggregate) {
 		var sName = oElement.getAttribute("Name");
@@ -743,26 +743,26 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			$Type : MetadataConverter.resolveAlias(oElement.getAttribute("EntityType"), oAggregate)
 		};
 		processAttributes(oElement, oAggregate.entitySet, {
-			"IncludeInServiceDocument": setIfFalse
+			"IncludeInServiceDocument" : setIfFalse
 		});
 		annotatable(oAggregate, sName);
 	}
 
 	/**
 	 * Processes an EntityType element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processEntityType(oElement, oAggregate) {
 		processType(oElement, oAggregate, {
-			$kind: "EntityType"
+			$kind : "EntityType"
 		});
 	}
 
 	/**
 	 * Processes a PropertyRef element of the EntityType's Key.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processEntityTypeKeyPropertyRef(oElement, oAggregate) {
 		var sAlias = oElement.getAttribute("Alias"),
@@ -780,13 +780,13 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes an EnumType element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processEnumType(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			oEnumType = {
-				"$kind": "EnumType"
+				"$kind" : "EnumType"
 			};
 
 		processAttributes(oElement, oEnumType, {
@@ -803,8 +803,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a Member element within a EnumType.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processEnumTypeMember(oElement, oAggregate) {
 		var sName = oElement.getAttribute("Name"),
@@ -827,13 +827,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Processes an ActionImport or FunctionImport element.
 	 * @param {string} sWhat "Action" or "Function"
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processImport(sWhat, oElement, oAggregate) {
 		var oImport = {
-				$kind: sWhat + "Import"
-			};
+				$kind : sWhat + "Import"
+			},
+			sName = oElement.getAttribute("Name");
 
 		oImport["$" + sWhat]
 			= MetadataConverter.resolveAlias(oElement.getAttribute(sWhat), oAggregate);
@@ -844,14 +845,14 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"IncludeInServiceDocument" : setIfFalse
 		});
 
-		oAggregate.entityContainer[oElement.getAttribute("Name")] = oImport;
-		annotatable(oAggregate, oImport);
+		oAggregate.entityContainer[sName] = oImport;
+		annotatable(oAggregate, sName);
 	}
 
 	/**
 	 * Processes an Include element within a Reference.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processInclude(oElement, oAggregate) {
 		var oInclude = getOrCreateArray(oAggregate.reference, "$Include");
@@ -861,8 +862,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes an IncludeAnnotations element within a Reference.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processIncludeAnnotations(oElement, oAggregate) {
 		var oReference = oAggregate.reference,
@@ -883,8 +884,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a NavigationPropertyBinding element within an EntitySet or Singleton.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processNavigationPropertyBinding(oElement, oAggregate) {
 		var oNavigationPropertyBinding =
@@ -896,8 +897,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a Parameter element within an Action or Function.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processParameter(oElement, oAggregate) {
 		var oActionOrFunction = oAggregate.actionOrFunction,
@@ -916,8 +917,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a PropertyValue element within a Record.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processPropertyValue(oElement, oAggregate) {
 		annotatable(oAggregate, oAggregate.annotatable.target, oElement.getAttribute("Property"));
@@ -925,8 +926,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a Reference element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processReference(oElement, oAggregate) {
 		var oReference = getOrCreateObject(oAggregate.result, "$Reference");
@@ -937,8 +938,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a ReturnType element within an Action or Function.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processReturnType(oElement, oAggregate) {
 		var oActionOrFunction = oAggregate.actionOrFunction,
@@ -956,21 +957,21 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a Schema element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processSchema(oElement, oAggregate) {
 		oAggregate.namespace = oElement.getAttribute("Namespace") + ".";
 		oAggregate.result[oAggregate.namespace] = oAggregate.schema = {
-			"$kind": "Schema"
+			"$kind" : "Schema"
 		};
 		annotatable(oAggregate, oAggregate.schema);
 	}
 
 	/**
 	 * Processes a Singleton element at the EntityContainer.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processSingleton(oElement, oAggregate) {
 		var sName = oElement.getAttribute("Name");
@@ -984,13 +985,13 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a Term element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processTerm(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
 			oTerm = {
-				$kind: "Term"
+				$kind : "Term"
 			};
 
 		processTypedCollection(oElement.getAttribute("Type"), oTerm, oAggregate);
@@ -1008,9 +1009,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a ComplexType or EntityType element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
-	 * @param {object} oType the initial typed result object
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 * @param {object} oType The initial typed result object
 	 */
 	function processType(oElement, oAggregate, oType) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
@@ -1029,9 +1030,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Processes the type in the form "Type" or "Collection(Type)" and sets the appropriate
 	 * properties.
-	 * @param {string} sType the type attribute from the Element
-	 * @param {object} oProperty the property attribute in the JSON
-	 * @param {object} oAggregate the aggregate
+	 * @param {string} sType The type attribute from the Element
+	 * @param {object} oProperty The property attribute in the JSON
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypedCollection(sType, oProperty, oAggregate) {
 		var aMatches = rCollection.exec(sType);
@@ -1045,8 +1046,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a TypeDefinition element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeDefinition(oElement, oAggregate) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name"),
@@ -1062,8 +1063,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a NavigationProperty element of a structured type.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeNavigationProperty(oElement, oAggregate) {
 		var sName = oElement.getAttribute("Name"),
@@ -1084,8 +1085,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a NavigationProperty OnDelete element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeNavigationPropertyOnDelete(oElement, oAggregate) {
 		oAggregate.navigationProperty.$OnDelete = oElement.getAttribute("Action");
@@ -1094,8 +1095,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a NavigationProperty OnDelete element.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeNavigationPropertyReferentialConstraint(oElement, oAggregate) {
 		var sProperty = oElement.getAttribute("Property"),
@@ -1108,8 +1109,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Processes a Property element of a structured type.
-	 * @param {Element} oElement the element
-	 * @param {object} oAggregate the aggregate
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypeProperty(oElement, oAggregate) {
 		var sName = oElement.getAttribute("Name"),
@@ -1130,9 +1131,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Resolves a target path including resolve aliases.
-	 * @param {string} sPath the target path
-	 * @param {object} oAggregate the aggregate containing the aliases
-	 * @returns {string} the target path with the alias resolved (if there was one)
+	 * @param {string} sPath The target path
+	 * @param {object} oAggregate The aggregate containing the aliases
+	 * @returns {string} The target path with the alias resolved (if there was one)
 	 */
 	function resolveTargetPath(sPath, oAggregate) {
 		var iSlash;
@@ -1155,7 +1156,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Helper for processAttributes, returns false if sValue is "false", returns undefined
 	 * otherwise.
-	 * @param {string} sValue the attribute value in the element
+	 * @param {string} sValue The attribute value in the element
 	 * @returns {boolean} false or undefined
 	 */
 	function setIfFalse(sValue) {
@@ -1165,7 +1166,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	/**
 	 * Helper for processAttributes, returns true if sValue is "true", returns undefined
 	 * otherwise.
-	 * @param {string} sValue the attribute value in the element
+	 * @param {string} sValue The attribute value in the element
 	 * @returns {boolean} true or undefined
 	 */
 	function setIfTrue(sValue) {
@@ -1174,8 +1175,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Helper for processAttributes, returns sValue converted to a number.
-	 * @param {string} sValue the attribute value in the element
-	 * @returns {number} the value as number or undefined
+	 * @param {string} sValue The attribute value in the element
+	 * @returns {number} The value as number or undefined
 	 */
 	function setNumber(sValue) {
 		return sValue ? parseInt(sValue, 10) : undefined;
@@ -1183,7 +1184,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 	/**
 	 * Helper for processAttributes, returns sValue.
-	 * @param {string} sValue the attribute value in the element
+	 * @param {string} sValue The attribute value in the element
 	 * @returns {string} sValue
 	 */
 	function setValue(sValue) {
@@ -1195,9 +1196,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 * Converts the metadata from XML format to a JSON object.
 		 *
 		 * @param {Document} oDocument
-		 *   the XML DOM document
+		 *   The XML DOM document
 		 * @returns {object}
-		 *   the metadata JSON
+		 *   The metadata JSON
 		 */
 		convertXMLMetadata : function (oDocument) {
 			var oAggregate, oElement;
@@ -1232,8 +1233,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		/**
 		 * Processes the TFacetAttributes and TPropertyFacetAttributes of the elements Property,
 		 * TypeDefinition etc.
-		 * @param {Element} oElement the element
-		 * @param {object} oResult the result object to fill
+		 * @param {Element} oElement The element
+		 * @param {object} oResult The result object to fill
 		 */
 		processFacetAttributes : function (oElement, oResult) {
 			processAttributes(oElement, oResult, {
@@ -1249,9 +1250,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		/**
 		 * Resolves an alias in the given qualified name or full name.
-		 * @param {string} sName the name
-		 * @param {object} oAggregate the aggregate containing the aliases
-		 * @returns {string} the name with the alias resolved (if there was one)
+		 * @param {string} sName The name
+		 * @param {object} oAggregate The aggregate containing the aliases
+		 * @returns {string} The name with the alias resolved (if there was one)
 		 */
 		resolveAlias : function (sName, oAggregate) {
 			var iDot = sName.indexOf("."),
@@ -1268,9 +1269,9 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		/**
 		 * Resolves all aliases in the given path.
-		 * @param {string} sPath the path
-		 * @param {object} oAggregate the aggregate containing the aliases
-		 * @returns {string} the path with the alias resolved (if there was one)
+		 * @param {string} sPath The path
+		 * @param {object} oAggregate The aggregate containing the aliases
+		 * @returns {string} The path with the alias resolved (if there was one)
 		 */
 		resolveAliasInPath : function (sPath, oAggregate) {
 			var iAt, i, aSegments, sTerm = "";
@@ -1295,11 +1296,11 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 * (recursive) configuration.
 		 *
 		 * @param {Element} oElement
-		 *   an XML DOM element
+		 *   An XML DOM element
 		 * @param {object} oAggregate
-		 *   an aggregate object that is passed to every processor function
+		 *   An aggregate object that is passed to every processor function
 		 * @param {object} oConfig
-		 *   the configuration for this element with the following properties:
+		 *   The configuration for this element with the following properties:
 		 *   * __processor is an optional function called with this element and oAggregate as
 		 *     parameters before visiting the children.
 		 *   * __postProcessor is an optional function called after visiting the children. It gets
@@ -1310,7 +1311,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   * All other properties are known child elements, the value is the configuration for
 		 *     that child element.
 		 * @returns {any}
-		 *   the return value from __postProcessor or undefined if there is none
+		 *   The return value from __postProcessor or undefined if there is none
 		 */
 		traverse : function (oElement, oAggregate, oConfig) {
 			var oAnnotatable = oAggregate.annotatable, // "push" oAnnotatable to the recursion stack

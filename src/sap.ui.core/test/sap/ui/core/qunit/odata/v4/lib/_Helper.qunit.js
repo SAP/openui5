@@ -133,13 +133,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("encode", function (assert) {
-		var sUnchanged = "foo$,/:?@()";
+		var sUnchanged = "foo$,/:?@();";
 
 		assert.strictEqual(Helper.encode(sUnchanged, false), sUnchanged);
 		assert.strictEqual(Helper.encode(sUnchanged, true), sUnchanged);
 
-		assert.strictEqual(Helper.encode("€_&_=_#_+_;", false), "%E2%82%AC_%26_=_%23_%2B_%3B");
-		assert.strictEqual(Helper.encode("€_&_=_#_+_;", true), "%E2%82%AC_%26_%3D_%23_%2B_%3B");
+		assert.strictEqual(Helper.encode("€_&_=_#_+", false), "%E2%82%AC_%26_=_%23_%2B");
+		assert.strictEqual(Helper.encode("€_&_=_#_+", true), "%E2%82%AC_%26_%3D_%23_%2B");
 	});
 
 	//*********************************************************************************************
@@ -169,7 +169,7 @@ sap.ui.require([
 		oHelperMock.expects("encodePair").withExactArgs("c", "d").returns("c=d");
 		oHelperMock.expects("encodePair").withExactArgs("c", "e").returns("c=e");
 
-		sEncoded = Helper.buildQuery({a : "b", c: ["d", "e"]});
+		sEncoded = Helper.buildQuery({a : "b", c : ["d", "e"]});
 		assert.strictEqual(sEncoded, "?a=b&c=d&c=e");
 	});
 
@@ -184,7 +184,7 @@ sap.ui.require([
 			sComplexString = sComplexString + String.fromCharCode(i);
 		}
 
-		sUri = "/" + Helper.buildQuery({foo: sComplexString});
+		sUri = "/" + Helper.buildQuery({foo : sComplexString});
 
 		// decode via URI.js
 		assert.strictEqual(new URI(sUri).search(true).foo, sComplexString);
@@ -229,8 +229,8 @@ sap.ui.require([
 		{t : "Edm.Double", v : 3.14, e : "3.14"},
 		{t : "Edm.Double", v : "INF", e : "INF"},
 		{t : "Edm.Duration", v : "P1DT0H0M0S",	e : "duration'P1DT0H0M0S'"},
-		{t : "Edm.Guid", v: "936DA01F-9ABD-4D9D-80C7-02AF85C822A8",
-			e: "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"},
+		{t : "Edm.Guid", v : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8",
+			e : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"},
 		{t : "Edm.Int16", v : -32768, e : "-32768"},
 		{t : "Edm.Int32", v : 2147483647, e : "2147483647"},
 		{t : "Edm.Int64", v : "12345678901234568", e : "12345678901234568"},
@@ -270,7 +270,7 @@ sap.ui.require([
 
 			jQuery.ajax(sResolvedServiceUrl + "/BusinessPartnerList?"
 				+ "$filter=CompanyName eq + " + Helper.formatLiteral("Becker Berlin", "Edm.String")
-				, { method: "GET"}
+				, { method : "GET"}
 			).then(function (oData, sTextStatus, jqXHR) {
 				assert.strictEqual(oData.value[0].CompanyName, "Becker Berlin");
 				done();

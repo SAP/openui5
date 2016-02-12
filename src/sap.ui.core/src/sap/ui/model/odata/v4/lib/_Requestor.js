@@ -3,13 +3,16 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Requestor
-sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
+sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, Batch, Helper) {
 	"use strict";
 
 	var mFinalHeaders = { // final (cannot be overridden) request headers for OData v4
 			"Content-Type" : "application/json;charset=UTF-8"
 		},
-		mPredefinedHeaders = { // predefined request headers for OData v4
+		mPredefinedPartHeaders = { // predefined request headers in $batch parts
+			"Accept" : "application/json;odata.metadata=minimal"
+		},
+		mPredefinedRequestHeaders = { // predefined request headers for all requests
 			"Accept" : "application/json;odata.metadata=minimal",
 			"OData-MaxVersion" : "4.0",
 			"OData-Version" : "4.0",
@@ -17,21 +20,56 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		};
 
 	/**
+	 * The getResponseHeader() method imitates the jqXHR.getResponseHeader() method for a $batch
+	 * error response.
+	 *
+	 * @param {string} sHeaderName The header name
+	 * @returns {string} The response header value
+	 */
+	function getResponseHeader(sHeaderName) {
+		var sResponseHeader;
+
+		sHeaderName = sHeaderName.toLowerCase();
+
+		for (sResponseHeader in this.headers) {
+			if (sResponseHeader.toLowerCase() === sHeaderName) {
+				return this.headers[sResponseHeader];
+			}
+		}
+	}
+
+	/**
 	 * Constructor for a new <code>_Requestor<code> instance for the given service URL and default
 	 * headers.
 	 *
 	 * @param {string} sServiceUrl
-	 *   URL of the service document to request the CSRF token from
+	 *   URL of the service document to request the CSRF token from; also used to resolve
+	 *   relative resource paths (see {@link #request})
 	 * @param {object} mHeaders
-	 *   map of default headers; may be overridden with request-specific headers; certain
+	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData v4 headers are added by default, but may be overridden
+	 * @param {object} mQueryParams
+	 *   A map of query parameters as described in {@link _Header.buildQuery}; used only to
+	 *   request the CSRF token
 	 * @private
 	 */
-	function Requestor(sServiceUrl, mHeaders) {
+	function Requestor(sServiceUrl, mHeaders, mQueryParams) {
 		this.sServiceUrl = sServiceUrl;
 		this.mHeaders = mHeaders || {};
+		this.sQueryParams = Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
+		this.mBatchQueue = {};
 	}
+
+	/**
+	 * Returns this requestor's service URL.
+	 *
+	 * @returns {string}
+	 *   URL of the service document to request the CSRF token from
+	 */
+	Requestor.prototype.getServiceUrl = function () {
+		return this.sServiceUrl;
+	};
 
 	/**
 	 * Returns a promise that will be resolved once the CSRF token has been refreshed, or rejected
@@ -48,8 +86,8 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 
 		if (!this.oSecurityTokenPromise) {
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
-				jQuery.ajax(that.sServiceUrl, {
-					method: "HEAD",
+				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
+					method : "HEAD",
 					headers : {
 						"X-CSRF-Token" : "Fetch"
 					}
@@ -74,34 +112,78 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	 *
 	 * @param {string} sMethod
 	 *   HTTP method, e.g. "GET"
-	 * @param {string} sUrl
-	 *   some absolute URL (which must belong to the service for which this requestor has been
-	 *   created)
+	 * @param {string} sResourcePath
+	 *   A resource path relative to the service URL for which this requestor has been created;
+	 *   use "$batch" to send a batch request
+	 * @param {string} [sGroupId]
+	 *   Identifier of the batch group to associate the request with; if <code>undefined</code> the
+	 *   request is sent immediately; if provided, use {@link #submitBatch} to send all requests in
+	 *   that group
 	 * @param {object} [mHeaders]
-	 *   map of request-specific headers, overriding both the mandatory OData v4 headers and the
+	 *   Map of request-specific headers, overriding both the mandatory OData v4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
 	 *   "X-CSRF-Token" header.
 	 * @param {object} [oPayload]
-	 *   data to be sent to the server
+	 *   Data to be sent to the server
 	 * @param {boolean} [bIsFreshToken=false]
-	 *   whether the CSRF token has already been refreshed and thus should not be refreshed
+	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
 	 *   again
 	 * @returns {Promise}
-	 *   a promise on the outcome of the HTTP request
+	 *   A promise on the outcome of the HTTP request
 	 * @private
 	 */
-	Requestor.prototype.request = function (sMethod, sUrl, mHeaders, oPayload, bIsFreshToken) {
-		var that = this;
+	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
+		bIsFreshToken) {
+		var that = this,
+			mBatchHeaders,
+			oBatchRequest,
+			bIsBatch = sResourcePath === "$batch",
+			sPayload;
+
+		if (bIsBatch) {
+			oBatchRequest = Batch.serializeBatchRequest(oPayload);
+			sPayload = oBatchRequest.body;
+			mBatchHeaders = {
+				"Content-Type" : oBatchRequest["Content-Type"],
+				"MIME-Version" : oBatchRequest["MIME-Version"]
+			};
+			// This would have been the responsibility of submitBatch. But doing it here makes the
+			// $batch recognition easier.
+			sResourcePath += this.sQueryParams;
+		} else {
+			sPayload = JSON.stringify(oPayload);
+
+			if (sGroupId !== undefined) {
+				return new Promise(function (fnResolve, fnReject) {
+					if (!that.mBatchQueue[sGroupId]) {
+						that.mBatchQueue[sGroupId] = [];
+					}
+					that.mBatchQueue[sGroupId].push({
+						method: sMethod,
+						url: sResourcePath,
+						headers: jQuery.extend({}, mPredefinedPartHeaders, mHeaders),
+						body: sPayload,
+						$reject: fnReject,
+						$resolve: fnResolve
+					});
+				});
+			}
+		}
 
 		return new Promise(function (fnResolve, fnReject) {
-			jQuery.ajax(sUrl, {
-				data : JSON.stringify(oPayload),
-				headers : jQuery.extend({},
-					mPredefinedHeaders, that.mHeaders, mHeaders, mFinalHeaders),
+			jQuery.ajax(that.sServiceUrl + sResourcePath, {
+				data : sPayload,
+				headers : jQuery.extend({}, mPredefinedRequestHeaders, that.mHeaders,
+					mHeaders, bIsBatch ? mBatchHeaders : mFinalHeaders
+				),
 				method : sMethod
 			}).then(function (oPayload, sTextStatus, jqXHR) {
 				that.mHeaders["X-CSRF-Token"]
 					= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+				if (bIsBatch) {
+					oPayload = Batch.deserializeBatchResponse(
+						jqXHR.getResponseHeader("Content-Type"), oPayload);
+				}
 				fnResolve(oPayload);
 			}, function (jqXHR, sTextStatus, sErrorMessage) {
 				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
@@ -109,13 +191,67 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
 					// refresh CSRF token and repeat original request
 					that.refreshSecurityToken().then(function () {
-						fnResolve(that.request(sMethod, sUrl, mHeaders, oPayload, true));
+						fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
+							true));
 					}, fnReject);
 				} else {
 					fnReject(Helper.createError(jqXHR));
 				}
 			});
 		});
+	};
+
+	/**
+	 * Sends an OData batch request containing all requests referenced by batch group id.
+	 *
+	 * @param {string} sGroupId
+	 *   ID of the batch group which should be sent as an OData batch request
+	 * @returns {Promise}
+	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
+	 *   rejected with an error if the batch request itself fails
+	 */
+	Requestor.prototype.submitBatch = function (sGroupId) {
+		var aRequests = this.mBatchQueue[sGroupId];
+
+		if (!aRequests) {
+			return Promise.resolve();
+		}
+
+		delete this.mBatchQueue[sGroupId];
+
+		return this.request("POST", "$batch", undefined, undefined, aRequests)
+			.then(function (aResponses) {
+				var oCause;
+
+				aRequests.forEach(function (oRequest, index) {
+					var oError,
+						oResponse = aResponses[index];
+
+					if (oResponse) {
+						if (oResponse.status >= 400) {
+							oResponse.getResponseHeader = getResponseHeader;
+							oCause = Helper.createError(oResponse);
+							oRequest.$reject(oCause);
+						} else {
+							oRequest.$resolve(JSON.parse(oResponse.responseText));
+						}
+					} else {
+						oError = new Error(
+							"HTTP request was not processed because the previous request failed");
+						oError.cause = oCause;
+						oRequest.$reject(oError);
+					}
+				});
+			})["catch"](function (oError) {
+				var oRequestError = new Error(
+					"HTTP request was not processed because $batch failed");
+
+				oRequestError.cause = oError;
+				aRequests.forEach(function (oRequest) {
+					oRequest.$reject(oRequestError);
+				});
+				throw oError;
+			});
 	};
 
 	/**
@@ -129,9 +265,10 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		 * headers.
 		 *
 		 * @param {string} sServiceUrl
-		 *   URL of the service document to request the CSRF token from
+		 *   URL of the service document to request the CSRF token from; also used to resolve
+		 *   relative resource paths (see {@link #request})
 		 * @param {object} mHeaders
-		 *   map of default headers; may be overridden with request-specific headers; certain
+		 *   Map of default headers; may be overridden with request-specific headers; certain
 		 *   OData v4 headers are predefined, but may be overridden by the default or
 		 *   request-specific headers:
 		 *   <pre>{
@@ -142,11 +279,14 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
 		 *   <code>_Requestor<code> always sets the "Content-Type" header to
 		 *   "application/json;charset=UTF-8" value.
+		 * @param {object} mQueryParams
+		 *   A map of query parameters as described in {@link _Header.buildQuery}; used only to
+		 *   request the CSRF token
 		 * @returns {object}
-		 *   a new <code>_Requestor<code> instance
+		 *   A new <code>_Requestor<code> instance
 		 */
-		create : function (sServiceUrl, mHeaders) {
-			return new Requestor(sServiceUrl, mHeaders);
+		create : function (sServiceUrl, mHeaders, mQueryParams) {
+			return new Requestor(sServiceUrl, mHeaders, mQueryParams);
 		}
 	};
 }, /* bExport= */false);

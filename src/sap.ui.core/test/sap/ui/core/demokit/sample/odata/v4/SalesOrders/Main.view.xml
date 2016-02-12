@@ -23,8 +23,17 @@
 			</content>
 		</Toolbar>
 		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
-			items="{path: '/SalesOrderList', parameters: {'$expand':'SO_2_BP',
-				'$select' : 'SalesOrderID,BuyerName,GrossAmount,CurrencyCode'}}"
+			items="{
+					path : '/SalesOrderList',
+					parameters : {
+						'$expand' : 'SO_2_BP',
+						'$select' : 'SalesOrderID,BuyerName,GrossAmount,CurrencyCode'
+					},
+					events : {
+						dataReceived : '.onDataEvents',
+						dataRequested : '.onDataEvents'
+					}
+				}"
 			mode="SingleSelectMaster" selectionChange="onSalesOrdersSelect">
 			<headerToolbar>
 				<Toolbar>

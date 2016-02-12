@@ -47,6 +47,13 @@ sap.ui.define([
 			);
 		},
 
+		onDataEvents : function (oEvent) {
+			var oSource = oEvent.getSource();
+
+			jQuery.sap.log.info(oEvent.getId() + " event processed for path " + oSource.getPath(),
+				"sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
+		},
+
 		onDeleteSalesOrder : function (oEvent) {
 			var oSalesOrderContext = oEvent.getSource().getBindingContext(),
 				oModel = oSalesOrderContext.getModel(),
@@ -108,10 +115,24 @@ sap.ui.define([
 			oModel.requestCanonicalPath(oSalesOrderContext).then(function (sCanonicalPath) {
 				oView.byId("ObjectPage").bindElement({
 					path : sCanonicalPath,
-					parameters: {
-						"$expand" : "SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP"
-							+ "($expand=BP_2_CONTACT)))",
-						"$select" : "ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
+					parameters : {
+						"$expand" : {
+							"SO_2_SOITEM" : {
+								"$expand" : {
+									"SOITEM_2_PRODUCT" : {
+										"$expand" : {
+											"PRODUCT_2_BP" : {
+												"$expand" : {
+													"BP_2_CONTACT" : true
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"$select" : ["ChangedAt", "CreatedAt" , "LifecycleStatusDesc", "Note",
+							"SalesOrderID"]
 					}
 				});
 				oView.byId("SupplierContactData").setBindingContext(undefined);

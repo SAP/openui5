@@ -94,7 +94,7 @@ $expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
 
 			return sap.ui.view({
 				id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
-				models : { undefined: oModel,
+				models : { undefined : oModel,
 					ui : new JSONModel({
 						bRealOData : bRealOData,
 						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",

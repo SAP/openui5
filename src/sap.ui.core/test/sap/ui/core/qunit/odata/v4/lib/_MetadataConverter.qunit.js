@@ -114,31 +114,31 @@ sap.ui.require([
 				+ "<bar><included1/><included2/></bar>"
 				+ "\n<bar><innerBar/><innerBar/><innerBar2/></bar></foo>"),
 			oAggregate = {
-				bar: 0,
-				innerBar: 0,
-				innerBar2: 0,
-				included1: 0,
-				included2: 0
+				bar : 0,
+				innerBar : 0,
+				innerBar2 : 0,
+				included1 : 0,
+				included2 : 0
 			},
 			oInclude1Config = {
 				"included1" : {
-					__processor: processor.bind(null, "included1")
+					__processor : processor.bind(null, "included1")
 				}
 			},
 			oInclude2Config = {
 				"included2" : {
-					__processor: processor.bind(null, "included2")
+					__processor : processor.bind(null, "included2")
 				}
 			},
 			oSchemaConfig = {
-				"bar": {
-					__processor: processor.bind(null, "bar"),
-					__include: [oInclude1Config, oInclude2Config],
-					"innerBar": {
-						__processor: processor.bind(null, "innerBar")
+				"bar" : {
+					__processor : processor.bind(null, "bar"),
+					__include : [oInclude1Config, oInclude2Config],
+					"innerBar" : {
+						__processor : processor.bind(null, "innerBar")
 					},
-					"innerBar2": {
-						__processor: processor.bind(null, "innerBar2")
+					"innerBar2" : {
+						__processor : processor.bind(null, "innerBar2")
 					}
 				}
 			};
@@ -162,24 +162,24 @@ sap.ui.require([
 	QUnit.test("traverse: __postProcessor", function (assert) {
 		var oXML = xml(assert, "<And><Bool>true</Bool><Bool>false</Bool></And>"),
 			oResult = MetadataConverter.traverse(oXML.documentElement, {}, {
-				__postProcessor: function(oElement, aResults) {
-					return {$And: aResults};
+				__postProcessor : function(oElement, aResults) {
+					return {$And : aResults};
 				},
-				"Bool": {
-					__postProcessor: function(oElement, aResults) {
+				"Bool" : {
+					__postProcessor : function(oElement, aResults) {
 						assert.deepEqual(aResults, []);
 						return oElement.childNodes[0].nodeValue === "true";
 					}
 				}
 			});
-			assert.deepEqual(oResult, {$And: [true, false]});
+			assert.deepEqual(oResult, {$And : [true, false]});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("resolveAlias", function (assert) {
 		var oAggregate = {
 				aliases : {
-					"display": "org.example.vocabularies.display."
+					"display" : "org.example.vocabularies.display."
 				}
 			};
 
@@ -243,18 +243,18 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"$EntityContainer": "foo.Container",
-				"foo.": {
-					"$kind": "Schema"
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
+					"$kind" : "Schema"
 				},
-				"foo.Container": {
-					"$kind": "EntityContainer",
-					"Me": {
-						"$kind": "Singleton",
+				"foo.Container" : {
+					"$kind" : "EntityContainer",
+					"Me" : {
+						"$kind" : "Singleton",
 						"$NavigationPropertyBinding" : {
 							"Manager" : "foo.Manager"
 						},
-						"$Type": "foo.Worker"
+						"$Type" : "foo.Worker"
 					}
 				}
 			});
@@ -274,19 +274,19 @@ sap.ui.require([
 					<Include Namespace="bla"/>\
 				</Reference>',
 			{
-				"$Reference": {
-					"/qux/$metadata": {
-						"$Include": ["qux.foo.", "qux.bar."],
-						"$IncludeAnnotations": [{
-							"$TermNamespace": "qux.foo."
+				"$Reference" : {
+					"/qux/$metadata" : {
+						"$Include" : ["qux.foo.", "qux.bar."],
+						"$IncludeAnnotations" : [{
+							"$TermNamespace" : "qux.foo."
 						}, {
-							"$TermNamespace": "qux.bar.",
-							"$TargetNamespace": "qux.bar.",
-							"$Qualifier": "Tablet"
+							"$TermNamespace" : "qux.bar.",
+							"$TargetNamespace" : "qux.bar.",
+							"$Qualifier" : "Tablet"
 						}]
 					},
-					"/bla/$metadata": {
-						"$Include": ["bla."]
+					"/bla/$metadata" : {
+						"$Include" : ["bla."]
 					}
 				}
 			});
@@ -311,37 +311,37 @@ sap.ui.require([
 					<Schema Namespace="foo" Alias="f"/>\
 				</DataServices>',
 			{
-				"$Reference": {
-					"/qux/$metadata": {
-						"$Include": ["qux."]
+				"$Reference" : {
+					"/qux/$metadata" : {
+						"$Include" : ["qux."]
 					}
 				},
-				"bar.": {
-					"$kind": "Schema"
+				"bar." : {
+					"$kind" : "Schema"
 				},
-				"bar.Worker": {
-					"$kind": "ComplexType",
-					"Something": {
-						"$kind": "Property",
-						"$Type": "qux.Something"
+				"bar.Worker" : {
+					"$kind" : "ComplexType",
+					"Something" : {
+						"$kind" : "Property",
+						"$Type" : "qux.Something"
 					},
 					"ManyThings" : {
-						"$kind": "Property",
+						"$kind" : "Property",
 						"$isCollection" : true,
-						"$Type": "qux.Something"
+						"$Type" : "qux.Something"
 					},
-					"DefaultAddress": {
-						"$kind": "NavigationProperty",
-						"$Type": "foo.Address"
+					"DefaultAddress" : {
+						"$kind" : "NavigationProperty",
+						"$Type" : "foo.Address"
 					},
-					"AllAddresses": {
-						"$kind": "NavigationProperty",
+					"AllAddresses" : {
+						"$kind" : "NavigationProperty",
 						"$isCollection" : true,
-						"$Type": "foo.Address"
+						"$Type" : "foo.Address"
 					}
 				},
-				"foo.": {
-					"$kind": "Schema"
+				"foo." : {
+					"$kind" : "Schema"
 				}
 			});
 	});
@@ -368,25 +368,25 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"$EntityContainer": "foo.Container",
-				"foo.": {
-					"$kind": "Schema"
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
+					"$kind" : "Schema"
 				},
-				"foo.Container": {
-					"$kind": "EntityContainer",
-					"SpecialTeams": {
-						"$kind": "EntitySet",
-						"$Type": "foo.Team"
+				"foo.Container" : {
+					"$kind" : "EntityContainer",
+					"SpecialTeams" : {
+						"$kind" : "EntitySet",
+						"$Type" : "foo.Team"
 					},
-					"Teams": {
-						"$kind": "EntitySet",
+					"Teams" : {
+						"$kind" : "EntitySet",
 						"$NavigationPropertyBinding" : {
-							"Manager": "Managers",
-							"Foo": "other.Container/Foo",
-							"Bar": "foo.Container/Foo/Bar",
-							"Baz": "foo.Container/Manager/foo.Employee"
+							"Manager" : "Managers",
+							"Foo" : "other.Container/Foo",
+							"Bar" : "foo.Container/Foo/Bar",
+							"Baz" : "foo.Container/Manager/foo.Employee"
 						},
-						"$Type": "foo.Team"
+						"$Type" : "foo.Team"
 					}
 				}
 			});
@@ -407,24 +407,24 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"$EntityContainer": "foo.Container",
-				"foo.": {
-					"$kind": "Schema"
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
+					"$kind" : "Schema"
 				},
-				"foo.Container": {
-					"$kind": "EntityContainer",
-					"Teams": {
-						"$kind": "EntitySet",
-						"$Type": "foo.Team",
-						"$IncludeInServiceDocument": false
+				"foo.Container" : {
+					"$kind" : "EntityContainer",
+					"Teams" : {
+						"$kind" : "EntitySet",
+						"$Type" : "foo.Team",
+						"$IncludeInServiceDocument" : false
 					},
-					"Teams2": {
-						"$kind": "EntitySet",
-						"$Type": "foo.Team"
+					"Teams2" : {
+						"$kind" : "EntitySet",
+						"$Type" : "foo.Team"
 					},
-					"Teams3": {
-						"$kind": "EntitySet",
-						"$Type": "foo.Team"
+					"Teams3" : {
+						"$kind" : "EntitySet",
+						"$Type" : "foo.Team"
 					}
 				}
 			});
@@ -445,24 +445,24 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema"
+				"foo." : {
+					"$kind" : "Schema"
 				},
-				"foo.Worker": {
-					"$kind": "EntityType",
-					"$Key": [
-						{"qux": "Bar/Baz"}
+				"foo.Worker" : {
+					"$kind" : "EntityType",
+					"$Key" : [
+						{"qux" : "Bar/Baz"}
 					],
-					"$OpenType": true,
-					"$HasStream": true
+					"$OpenType" : true,
+					"$HasStream" : true
 				},
-				"foo.Base": {
-					"$kind": "EntityType",
-					"$Abstract": true
+				"foo.Base" : {
+					"$kind" : "EntityType",
+					"$Abstract" : true
 				},
-				"foo.Derived": {
-					"$kind": "EntityType",
-					"$BaseType": "foo.Base"
+				"foo.Derived" : {
+					"$kind" : "EntityType",
+					"$BaseType" : "foo.Base"
 				}
 			});
 	});
@@ -478,21 +478,21 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema"
+				"foo." : {
+					"$kind" : "Schema"
 				},
-				"foo.Worker": {
-					"$kind": "ComplexType",
-					"$OpenType": true,
-					"$HasStream": true
+				"foo.Worker" : {
+					"$kind" : "ComplexType",
+					"$OpenType" : true,
+					"$HasStream" : true
 				},
-				"foo.Base": {
-					"$kind": "ComplexType",
-					"$Abstract": true
+				"foo.Base" : {
+					"$kind" : "ComplexType",
+					"$Abstract" : true
 				},
-				"foo.Derived": {
-					"$kind": "ComplexType",
-					"$BaseType": "foo.Base"
+				"foo.Derived" : {
+					"$kind" : "ComplexType",
+					"$BaseType" : "foo.Base"
 				}
 			});
 	});
@@ -524,54 +524,54 @@ sap.ui.require([
 	["ComplexType", "EntityType"].forEach(function (sType) {
 		QUnit.test("convertXMLMetadata: " + sType + ": (Navigation)Property", function (assert) {
 			var oExpected = {
-					"foo.": {
-						"$kind": "Schema"
+					"foo." : {
+						"$kind" : "Schema"
 					},
-					"foo.Worker": {
-						"$kind": sType,
-						"Salary": {
-							"$kind": "Property",
-							"$Type": "Edm.Decimal",
-							"$Precision": 8,
-							"$Scale": 2
+					"foo.Worker" : {
+						"$kind" : sType,
+						"Salary" : {
+							"$kind" : "Property",
+							"$Type" : "Edm.Decimal",
+							"$Precision" : 8,
+							"$Scale" : 2
 						},
-						"p1": {
-							"$kind": "Property",
-							"$Type": "Edm.String",
-							"$Unicode": false
+						"p1" : {
+							"$kind" : "Property",
+							"$Type" : "Edm.String",
+							"$Unicode" : false
 						},
-						"p2": {
-							"$kind": "Property",
-							"$Type": "Edm.String"
+						"p2" : {
+							"$kind" : "Property",
+							"$Type" : "Edm.String"
 						},
-						"p3": {
-							"$kind": "Property",
-							"$Type": "Edm.Geometry",
-							"$SRID":"42"
+						"p3" : {
+							"$kind" : "Property",
+							"$Type" : "Edm.Geometry",
+							"$SRID" :"42"
 						},
-						"p4": {
-							"$kind": "Property",
-							"$Type": "Edm.Int32",
+						"p4" : {
+							"$kind" : "Property",
+							"$Type" : "Edm.Int32",
 							"$DefaultValue" : "42"
 						},
-						"team1": {
-							"$kind": "NavigationProperty",
-							"$Type": "foo.Team",
-							"$Partner": "worker",
-							"$OnDelete": "SetDefault",
-							"$ReferentialConstraint": {
-								"p1": "p1Key",
-								"p2": "p2Key"
+						"team1" : {
+							"$kind" : "NavigationProperty",
+							"$Type" : "foo.Team",
+							"$Partner" : "worker",
+							"$OnDelete" : "SetDefault",
+							"$ReferentialConstraint" : {
+								"p1" : "p1Key",
+								"p2" : "p2Key"
 							}
 						},
-						"team2": {
-							"$kind": "NavigationProperty",
-							"$Type": "foo.Team",
-							"$ContainsTarget": true
+						"team2" : {
+							"$kind" : "NavigationProperty",
+							"$Type" : "foo.Team",
+							"$ContainsTarget" : true
 						},
-						"team3": {
-							"$kind": "NavigationProperty",
-							"$Type": "foo.Team"
+						"team3" : {
+							"$kind" : "NavigationProperty",
+							"$Type" : "foo.Team"
 						}
 					}
 				};
@@ -636,45 +636,45 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema"
+				"foo." : {
+					"$kind" : "Schema"
 				},
-				"foo.Bar1": {
-					"$kind": "EnumType",
-					"$IsFlags": true,
-					"p_1": 1
+				"foo.Bar1" : {
+					"$kind" : "EnumType",
+					"$IsFlags" : true,
+					"p_1" : 1
 				},
-				"foo.Bar2": {
-					"$kind": "EnumType",
-					"_1": 0,
-					"_2": 1
+				"foo.Bar2" : {
+					"$kind" : "EnumType",
+					"_1" : 0,
+					"_2" : 1
 				},
-				"foo.Baz1": {
-					"$kind": "EnumType",
-					"$UnderlyingType": "Edm.Int64",
-					"_1": 9007199254740991,
-					"_2": "9007199254740992"
+				"foo.Baz1" : {
+					"$kind" : "EnumType",
+					"$UnderlyingType" : "Edm.Int64",
+					"_1" : 9007199254740991,
+					"_2" : "9007199254740992"
 				},
-				"foo.Baz2": {
-					"$kind": "EnumType",
-					"$UnderlyingType": "Edm.Int64",
-					"_1": 0,
-					"_2": 1
+				"foo.Baz2" : {
+					"$kind" : "EnumType",
+					"$UnderlyingType" : "Edm.Int64",
+					"_1" : 0,
+					"_2" : 1
 				},
-				"foo.Qux1": {
-					"$kind": "EnumType",
-					"$UnderlyingType": "Edm.Int16",
-					"_1": 0
+				"foo.Qux1" : {
+					"$kind" : "EnumType",
+					"$UnderlyingType" : "Edm.Int16",
+					"_1" : 0
 				},
-				"foo.Qux2": {
-					"$kind": "EnumType",
-					"$UnderlyingType": "Edm.Byte",
-					"_1": 0
+				"foo.Qux2" : {
+					"$kind" : "EnumType",
+					"$UnderlyingType" : "Edm.Byte",
+					"_1" : 0
 				},
-				"foo.Qux3": {
-					"$kind": "EnumType",
-					"$UnderlyingType": "Edm.SByte",
-					"_1": 0
+				"foo.Qux3" : {
+					"$kind" : "EnumType",
+					"$UnderlyingType" : "Edm.SByte",
+					"_1" : 0
 				}
 			});
 	});
@@ -685,8 +685,8 @@ sap.ui.require([
 			.withExactArgs(
 				sinon.match.has("localName", "TypeDefinition"),
 				{
-					$kind: "TypeDefinition",
-					$UnderlyingType: "Edm.String"
+					$kind : "TypeDefinition",
+					$UnderlyingType : "Edm.String"
 				});
 		testConversion(assert, '\
 				<DataServices>\
@@ -695,12 +695,12 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema"
+				"foo." : {
+					"$kind" : "Schema"
 				},
-				"foo.Bar": {
-					"$kind": "TypeDefinition",
-					"$UnderlyingType": "Edm.String"
+				"foo.Bar" : {
+					"$kind" : "TypeDefinition",
+					"$UnderlyingType" : "Edm.String"
 				}
 			});
 	});
@@ -723,38 +723,38 @@ sap.ui.require([
 						</Schema>\
 					</DataServices>',
 				{
-					"foo.": {
-						"$kind": "Schema"
+					"foo." : {
+						"$kind" : "Schema"
 					},
-					"foo.Baz": [{
-						"$kind": sRunnable,
-						"$EntitySetPath": "Employees",
-						"$Parameter": [{
-							"$Name": "p1",
-							"$Type": "foo.Bar",
-							"$Nullable": false
+					"foo.Baz" : [{
+						"$kind" : sRunnable,
+						"$EntitySetPath" : "Employees",
+						"$Parameter" : [{
+							"$Name" : "p1",
+							"$Type" : "foo.Bar",
+							"$Nullable" : false
 						},{
-							"$Name": "p2",
-							"$isCollection": true,
-							"$Type": "foo.Bar",
-							"$MaxLength": 10,
-							"$Precision": 2,
-							"$Scale": "variable",
-							"$SRID": "42"
+							"$Name" : "p2",
+							"$isCollection" : true,
+							"$Type" : "foo.Bar",
+							"$MaxLength" : 10,
+							"$Precision" : 2,
+							"$Scale" : "variable",
+							"$SRID" : "42"
 						}],
 						"$ReturnType" : {
-							"$isCollection": true,
-							"$Type": "Edm.String",
-							"$Nullable": false,
-							"$MaxLength": 10,
-							"$Precision": 2,
-							"$Scale": "variable",
-							"$SRID": "42"
+							"$isCollection" : true,
+							"$Type" : "Edm.String",
+							"$Nullable" : false,
+							"$MaxLength" : 10,
+							"$Precision" : 2,
+							"$Scale" : "variable",
+							"$SRID" : "42"
 						}
 					},{
-						"$kind": sRunnable,
-						"$IsBound": true,
-						"$IsComposable": true
+						"$kind" : sRunnable,
+						"$IsBound" : true,
+						"$IsComposable" : true
 					}]
 				});
 		});
@@ -764,26 +764,26 @@ sap.ui.require([
 	["Action", "Function"].forEach(function (sWhat) {
 		QUnit.test("convertXMLMetadata: " + sWhat + "Import", function (assert) {
 			var oExpected = {
-					"$EntityContainer": "foo.Container",
-					"foo.": {
-						"$kind": "Schema"
+					"$EntityContainer" : "foo.Container",
+					"foo." : {
+						"$kind" : "Schema"
 					},
-					"foo.Container": {
-						"$kind": "EntityContainer",
-						"Baz1": {
-							"$EntitySet": "Employees",
-							"$IncludeInServiceDocument": false
+					"foo.Container" : {
+						"$kind" : "EntityContainer",
+						"Baz1" : {
+							"$EntitySet" : "Employees",
+							"$IncludeInServiceDocument" : false
 						},
-						"Baz2": {
+						"Baz2" : {
 						},
-						"Baz3": {
-							"$EntitySet": "Employees"
+						"Baz3" : {
+							"$EntitySet" : "Employees"
 						},
-						"Baz4": {
-							"$EntitySet": "some.other.Container/Employees"
+						"Baz4" : {
+							"$EntitySet" : "some.other.Container/Employees"
 						},
-						"Baz5": {
-							"$EntitySet": "foo.Container/Employees/Team"
+						"Baz5" : {
+							"$EntitySet" : "foo.Container/Employees/Team"
 						}
 					}
 				},
@@ -828,23 +828,23 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema"
+				"foo." : {
+					"$kind" : "Schema"
 				},
-				"foo.Term1": {
-					"$kind": "Term",
-					"$isCollection": true,
-					"$Type": "Edm.String",
-					"$Nullable": false,
-					"$MaxLength": 10,
-					"$Precision": 2,
-					"$Scale": "variable",
-					"$SRID": "42"
+				"foo.Term1" : {
+					"$kind" : "Term",
+					"$isCollection" : true,
+					"$Type" : "Edm.String",
+					"$Nullable" : false,
+					"$MaxLength" : 10,
+					"$Precision" : 2,
+					"$Scale" : "variable",
+					"$SRID" : "42"
 				},
-				"foo.Term2": {
-					"$kind": "Term",
-					"$Type": "foo.Bar",
-					"$BaseTerm": "foo.Term1"
+				"foo.Term2" : {
+					"$kind" : "Term",
+					"$Type" : "foo.Bar",
+					"$BaseTerm" : "foo.Term1"
 				}
 			});
 	});
@@ -891,44 +891,44 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema",
-					"$Annotations": {
-						"foo.Bar/foo.Baz": {
-							"@foo.Binary": {"$Binary": "T0RhdGE"},
-							"@foo.Bool": false,
-							"@foo.Date": {"$Date" : "2015-01-01"},
-							"@foo.DateTimeOffset": {
+				"foo." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"foo.Bar/foo.Baz" : {
+							"@foo.Binary" : {"$Binary" : "T0RhdGE"},
+							"@foo.Bool" : false,
+							"@foo.Date" : {"$Date" : "2015-01-01"},
+							"@foo.DateTimeOffset" : {
 								"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"
 							},
-							"@foo.Decimal": {"$Decimal" : "3.14"},
-							"@foo.Duration": {"$Duration" : "P11D23H59M59S"},
-							"@foo.EnumMember": {
+							"@foo.Decimal" : {"$Decimal" : "3.14"},
+							"@foo.Duration" : {"$Duration" : "P11D23H59M59S"},
+							"@foo.EnumMember" : {
 								"$EnumMember" : "foo.Enum/Member1 foo.Enum/Member2"
 							},
-							"@foo.Float1": 2.718,
-							"@foo.Float2": {"$Float": "NaN"},
-							"@foo.Float3": {"$Float": "INF"},
-							"@foo.Float4": {"$Float": "-INF"},
-							"@foo.Guid": {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
-							"@foo.Int1": 42,
-							"@foo.Int2": 9007199254740991,
-							"@foo.Int3": {"$Int" : "9007199254740992"},
-							"@foo.String": "foobar",
-							"@foo.TimeOfDay": {"$TimeOfDay": "21:45:00"},
-							"@foo.AnnotationPath": {
-								"$AnnotationPath": "Path/foo.Bar/foo.Baz@foo.Term"
+							"@foo.Float1" : 2.718,
+							"@foo.Float2" : {"$Float" : "NaN"},
+							"@foo.Float3" : {"$Float" : "INF"},
+							"@foo.Float4" : {"$Float" : "-INF"},
+							"@foo.Guid" : {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
+							"@foo.Int1" : 42,
+							"@foo.Int2" : 9007199254740991,
+							"@foo.Int3" : {"$Int" : "9007199254740992"},
+							"@foo.String" : "foobar",
+							"@foo.TimeOfDay" : {"$TimeOfDay" : "21:45:00"},
+							"@foo.AnnotationPath" : {
+								"$AnnotationPath" : "Path/foo.Bar/foo.Baz@foo.Term"
 							},
-							"@foo.NavigationPropertyPath": {
-								"$NavigationPropertyPath": "Path/foo.Bar/foo.Baz"
+							"@foo.NavigationPropertyPath" : {
+								"$NavigationPropertyPath" : "Path/foo.Bar/foo.Baz"
 							},
-							"@foo.Path": {"$Path": "Path/foo.Bar/foo.Baz"},
-							"@foo.PropertyPath": {"$PropertyPath": "Path/foo.Bar/foo.Baz"},
-							"@foo.UrlRef": {"$UrlRef": "http://foo.bar"},
-							"@foo.Invalid": true,
-							"@foo.Baz#Employee": true
+							"@foo.Path" : {"$Path" : "Path/foo.Bar/foo.Baz"},
+							"@foo.PropertyPath" : {"$PropertyPath" : "Path/foo.Bar/foo.Baz"},
+							"@foo.UrlRef" : {"$UrlRef" : "http://foo.bar"},
+							"@foo.Invalid" : true,
+							"@foo.Baz#Employee" : true
 						},
-						"foo.Bar/Abc" : {"@foo.Baz#Employee": true}
+						"foo.Bar/Abc" : {"@foo.Baz#Employee" : true}
 					}
 				}
 			});
@@ -953,96 +953,96 @@ sap.ui.require([
 		testExpression(assert, '<EnumMember> foo.Enum/Member1  foo.Enum/Member2 </EnumMember>',
 			{"$EnumMember" : "foo.Enum/Member1 foo.Enum/Member2"});
 		testExpression(assert, '<Float>2.718</Float>', 2.718);
-		testExpression(assert, '<Float>NaN</Float>', {"$Float": "NaN"});
-		testExpression(assert, '<Float>-INF</Float>', {"$Float": "-INF"});
-		testExpression(assert, '<Float>INF</Float>', {"$Float": "INF"});
+		testExpression(assert, '<Float>NaN</Float>', {"$Float" : "NaN"});
+		testExpression(assert, '<Float>-INF</Float>', {"$Float" : "-INF"});
+		testExpression(assert, '<Float>INF</Float>', {"$Float" : "INF"});
 		testExpression(assert, '<Guid>21EC2020-3AEA-1069-A2DD-08002B30309D</Guid>',
 			{"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"});
 		testExpression(assert, '<Int>42</Int>', 42);
 		testExpression(assert, '<Int>9007199254740991</Int>', 9007199254740991);
 		testExpression(assert, '<Int>9007199254740992</Int>', {"$Int" : "9007199254740992"});
-		testExpression(assert, '<TimeOfDay>21:45:00</TimeOfDay>', {"$TimeOfDay": "21:45:00"});
+		testExpression(assert, '<TimeOfDay>21:45:00</TimeOfDay>', {"$TimeOfDay" : "21:45:00"});
 		testExpression(assert, '<AnnotationPath>Path/f.Bar@f.Term</AnnotationPath>',
-			{"$AnnotationPath": "Path/foo.Bar@foo.Term"});
+			{"$AnnotationPath" : "Path/foo.Bar@foo.Term"});
 		testExpression(assert,
 			'<NavigationPropertyPath>Path/f.Bar/f.Baz</NavigationPropertyPath>',
-			{"$NavigationPropertyPath": "Path/foo.Bar/foo.Baz"});
-		testExpression(assert, '<Path>Path/f.Bar/f.Baz</Path>', {"$Path": "Path/foo.Bar/foo.Baz"});
+			{"$NavigationPropertyPath" : "Path/foo.Bar/foo.Baz"});
+		testExpression(assert, '<Path>Path/f.Bar/f.Baz</Path>', {"$Path" : "Path/foo.Bar/foo.Baz"});
 		testExpression(assert, '<PropertyPath>Path/f.Bar/f.Baz</PropertyPath>',
-			{"$PropertyPath": "Path/foo.Bar/foo.Baz"});
+			{"$PropertyPath" : "Path/foo.Bar/foo.Baz"});
 		testExpression(assert, '<Null/>', null);
 		testExpression(assert,
 			'<LabeledElementReference>f.LabeledElement</LabeledElementReference>',
-			{"$LabeledElementReference": "foo.LabeledElement"});
+			{"$LabeledElementReference" : "foo.LabeledElement"});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: operators", function (assert) {
 		testExpression(assert, '<And><Path>IsMale</Path><Path>IsMarried</Path></And>',
-			{"$And": [{"$Path": "IsMale"}, {"$Path": "IsMarried"}]});
+			{"$And" : [{"$Path" : "IsMale"}, {"$Path" : "IsMarried"}]});
 		testExpression(assert, '<Or><Path>IsMale</Path><Path>IsMarried</Path></Or>',
-			{"$Or": [{"$Path": "IsMale"}, {"$Path": "IsMarried"}]});
-		testExpression(assert, '<Not><Path>IsMale</Path></Not>', {"$Not": {"$Path": "IsMale"}});
+			{"$Or" : [{"$Path" : "IsMale"}, {"$Path" : "IsMarried"}]});
+		testExpression(assert, '<Not><Path>IsMale</Path></Not>', {"$Not" : {"$Path" : "IsMale"}});
 		testExpression(assert, '<Eq><Null/><Path>IsMale</Path></Eq>',
-			{"$Eq": [null, {"$Path": "IsMale"}]});
+			{"$Eq" : [null, {"$Path" : "IsMale"}]});
 		testExpression(assert, '<Ne><Null/><Path>IsMale</Path></Ne>',
-			{"$Ne": [null, {"$Path": "IsMale"}]});
+			{"$Ne" : [null, {"$Path" : "IsMale"}]});
 		testExpression(assert, '<Gt><Path>Price</Path><Int>20</Int></Gt>',
-			{"$Gt": [{"$Path": "Price"}, 20]});
+			{"$Gt" : [{"$Path" : "Price"}, 20]});
 		testExpression(assert, '<Ge><Path>Price</Path><Int>20</Int></Ge>',
-			{"$Ge": [{"$Path": "Price"}, 20]});
+			{"$Ge" : [{"$Path" : "Price"}, 20]});
 		testExpression(assert, '<Le><Path>Price</Path><Int>20</Int></Le>',
-			{"$Le": [{"$Path": "Price"}, 20]});
+			{"$Le" : [{"$Path" : "Price"}, 20]});
 		testExpression(assert, '<Lt><Path>Price</Path><Int>20</Int></Lt>',
-			{"$Lt": [{"$Path": "Price"}, 20]});
+			{"$Lt" : [{"$Path" : "Price"}, 20]});
 		testExpression(assert,
 			'<If><Path>IsFemale</Path><String>Female</String><String>Male</String></If>',
-			{"$If": [{"$Path": "IsFemale"}, "Female", "Male"]});
+			{"$If" : [{"$Path" : "IsFemale"}, "Female", "Male"]});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: Apply", function (assert) {
 		testExpression(assert, '<Apply Function="f.Bar"/>',
-			{"$Apply": [], "$Function": "foo.Bar"});
+			{"$Apply" : [], "$Function" : "foo.Bar"});
 		testExpression(assert, '<Apply Function="odata.concat"><String>Product: </String>'
 			+ '<Path>ProductName</Path></Apply>',
-			{"$Apply": ["Product: ", {"$Path": "ProductName"}], "$Function": "odata.concat"});
+			{"$Apply" : ["Product: ", {"$Path" : "ProductName"}], "$Function" : "odata.concat"});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: Cast and IsOf", function (assert) {
 		testExpression(assert, '<Cast Type="Collection(f.Type)"><Path>Average</Path></Cast>', {
-			"$Cast": {"$Path": "Average"},
-			"$Type": "foo.Type",
-			"$isCollection": true
+			"$Cast" : {"$Path" : "Average"},
+			"$Type" : "foo.Type",
+			"$isCollection" : true
 		});
 		testExpression(assert, '<Cast Type="Edm.Decimal" MaxLength="10" Precision="8" Scale="2"'
 			+ ' SRID="42"><Float>42</Float></Cast>', {
-				"$Cast": 42,
-				"$Type": "Edm.Decimal",
-				"$MaxLength": 10,
-				"$Precision": 8,
-				"$Scale": 2,
-				"$SRID": "42"
+				"$Cast" : 42,
+				"$Type" : "Edm.Decimal",
+				"$MaxLength" : 10,
+				"$Precision" : 8,
+				"$Scale" : 2,
+				"$SRID" : "42"
 			});
 		testExpression(assert, '<Cast Type="Edm.Decimal"/>',
-			{"$Cast": undefined, "$Type": "Edm.Decimal"});  // do not crash
+			{"$Cast" : undefined, "$Type" : "Edm.Decimal"});  // do not crash
 		testExpression(assert, '<IsOf Type="Collection(f.Type)"><Path>Average</Path></IsOf>', {
-			"$IsOf": {"$Path": "Average"},
-			"$Type": "foo.Type",
-			"$isCollection": true
+			"$IsOf" : {"$Path" : "Average"},
+			"$Type" : "foo.Type",
+			"$isCollection" : true
 		});
 		testExpression(assert, '<IsOf Type="Edm.Decimal" MaxLength="10" Precision="8" Scale="2"'
 			+ ' SRID="42"><Float>42</Float></IsOf>', {
-				"$IsOf": 42,
-				"$Type": "Edm.Decimal",
-				"$MaxLength": 10,
-				"$Precision": 8,
-				"$Scale": 2,
-				"$SRID": "42"
+				"$IsOf" : 42,
+				"$Type" : "Edm.Decimal",
+				"$MaxLength" : 10,
+				"$Precision" : 8,
+				"$Scale" : 2,
+				"$SRID" : "42"
 			});
 		testExpression(assert, '<IsOf Type="Edm.Decimal"/>',
-			{"$IsOf": undefined, "$Type": "Edm.Decimal"});  // do not crash
+			{"$IsOf" : undefined, "$Type" : "Edm.Decimal"});  // do not crash
 	});
 
 	//*********************************************************************************************
@@ -1050,36 +1050,36 @@ sap.ui.require([
 		testExpression(assert, '<Collection/>', []);
 		testExpression(assert,
 			'<Collection><String>Product</String><Path>Supplier</Path></Collection>',
-			["Product", {"$Path": "Supplier"}]);
+			["Product", {"$Path" : "Supplier"}]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: LabeledElement", function (assert) {
 		testExpression(assert, '<LabeledElement Name="CustomerFirstName" Path="FirstName" />',
-			{"$LabeledElement": {"$Path": "FirstName"}, "$Name": "CustomerFirstName"});
+			{"$LabeledElement" : {"$Path" : "FirstName"}, "$Name" : "CustomerFirstName"});
 		testExpression(assert,
 			'<LabeledElement Name="CustomerFirstName"><Path>FirstName</Path></LabeledElement>',
-			{"$LabeledElement": {"$Path": "FirstName"}, "$Name": "CustomerFirstName"});
+			{"$LabeledElement" : {"$Path" : "FirstName"}, "$Name" : "CustomerFirstName"});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: Record", function (assert) {
-		testExpression(assert, '<Record Type="f.Record"/>', {"$Type": "foo.Record"});
+		testExpression(assert, '<Record Type="f.Record"/>', {"$Type" : "foo.Record"});
 		testExpression(assert, '\
 				<Record>\
 					<PropertyValue Property="GivenName" Path="FirstName"/>\
 					<PropertyValue Property="Surname"><Path>LastName</Path></PropertyValue>\
 				</Record>',
 			{
-				"GivenName": {"$Path": "FirstName"},
-				"Surname": {"$Path": "LastName"}
+				"GivenName" : {"$Path" : "FirstName"},
+				"Surname" : {"$Path" : "LastName"}
 			});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("annotations: UrlRef", function (assert) {
 		testExpression(assert, '<UrlRef><Path>/Url</Path></UrlRef>',
-			{"$UrlRef": {"$Path": "/Url"}});
+			{"$UrlRef" : {"$Path" : "/Url"}});
 	});
 	// TODO look at xml:base if the URL in UrlRef is static and relative
 
@@ -1111,44 +1111,44 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema",
-					"@foo.Term1": "Schema",
-					"@foo.Term2": "Schema",
-					"$Annotations": {
-						"foo.EntityType": {
-							"@foo.Term": "EntityType"
+				"foo." : {
+					"$kind" : "Schema",
+					"@foo.Term1" : "Schema",
+					"@foo.Term2" : "Schema",
+					"$Annotations" : {
+						"foo.EntityType" : {
+							"@foo.Term" : "EntityType"
 						},
-						"foo.EntityType/Property": {
-							"@foo.Term": "Property"
+						"foo.EntityType/Property" : {
+							"@foo.Term" : "Property"
 						},
-						"foo.EntityType/NavigationProperty": {
-							"@foo.Term": "NavigationProperty"
+						"foo.EntityType/NavigationProperty" : {
+							"@foo.Term" : "NavigationProperty"
 						},
-						"foo.ComplexType": {
-							"@foo.Term": "ComplexType"
+						"foo.ComplexType" : {
+							"@foo.Term" : "ComplexType"
 						}
 					}
 				},
-				"foo.EntityType": {
-					"$kind": "EntityType",
-					"Property": {
-						"$kind": "Property",
-						"$Type": "Edm.String"
+				"foo.EntityType" : {
+					"$kind" : "EntityType",
+					"Property" : {
+						"$kind" : "Property",
+						"$Type" : "Edm.String"
 					},
-					"NavigationProperty": {
-						"$kind": "NavigationProperty",
-						"$Type": "foo.Target",
-						"$ReferentialConstraint": {
-							"p": "r",
-							"p@foo.Term": "ReferentialConstraint"
+					"NavigationProperty" : {
+						"$kind" : "NavigationProperty",
+						"$Type" : "foo.Target",
+						"$ReferentialConstraint" : {
+							"p" : "r",
+							"p@foo.Term" : "ReferentialConstraint"
 						},
-						"$OnDelete": "a",
-						"$OnDelete@foo.Term": "OnDelete"
+						"$OnDelete" : "a",
+						"$OnDelete@foo.Term" : "OnDelete"
 					}
 				},
-				"foo.ComplexType": {
-					"$kind": "ComplexType"
+				"foo.ComplexType" : {
+					"$kind" : "ComplexType"
 				}
 			});
 	});
@@ -1173,34 +1173,34 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema",
-					"$Annotations": {
-						"foo.EnumType": {
-							"@foo.Term": "EnumType"
+				"foo." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"foo.EnumType" : {
+							"@foo.Term" : "EnumType"
 						},
-						"foo.EnumType/Member": {
-							"@foo.Term": "Member"
+						"foo.EnumType/Member" : {
+							"@foo.Term" : "Member"
 						},
-						"foo.Term": {
-							"@foo.Term": "Term"
+						"foo.Term" : {
+							"@foo.Term" : "Term"
 						},
-						"foo.TypeDefinition": {
-							"@foo.Term": "TypeDefinition"
+						"foo.TypeDefinition" : {
+							"@foo.Term" : "TypeDefinition"
 						}
 					}
 				},
-				"foo.EnumType": {
-					"$kind": "EnumType",
-					"Member": 0
+				"foo.EnumType" : {
+					"$kind" : "EnumType",
+					"Member" : 0
 				},
-				"foo.Term": {
-					"$kind": "Term",
-					"$Type": "Edm.String"
+				"foo.Term" : {
+					"$kind" : "Term",
+					"$Type" : "Edm.String"
 				},
-				"foo.TypeDefinition": {
-					"$kind": "TypeDefinition",
-					"$UnderlyingType": "Edm.String"
+				"foo.TypeDefinition" : {
+					"$kind" : "TypeDefinition",
+					"$UnderlyingType" : "Edm.String"
 				}
 			});
 	});
@@ -1228,28 +1228,28 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema"
+				"foo." : {
+					"$kind" : "Schema"
 				},
-				"foo.Action": [{
-					"$kind": "Action",
-					"$Parameter": [{
-						"$Name": "Parameter",
-						"$Type": "Edm.String",
-						"@foo.Term": "Parameter"
+				"foo.Action" : [{
+					"$kind" : "Action",
+					"$Parameter" : [{
+						"$Name" : "Parameter",
+						"$Type" : "Edm.String",
+						"@foo.Term" : "Parameter"
 					}],
-					"$ReturnType": {
-						"$Type": "Edm.String",
-						"@foo.Term": "ReturnType"
+					"$ReturnType" : {
+						"$Type" : "Edm.String",
+						"@foo.Term" : "ReturnType"
 					},
-					"@foo.Term": "Action1"
+					"@foo.Term" : "Action1"
 				}, {
-					"$kind": "Action",
-					"@foo.Term": "Action2"
+					"$kind" : "Action",
+					"@foo.Term" : "Action2"
 				}],
-				"foo.Function": [{
-					"$kind": "Function",
-					"@foo.Term": "Function"
+				"foo.Function" : [{
+					"$kind" : "Function",
+					"@foo.Term" : "Function"
 				}]
 			});
 	});
@@ -1280,41 +1280,45 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"$EntityContainer": "foo.Container",
-				"foo.": {
-					"$kind": "Schema",
-					"$Annotations": {
-						"foo.Container": {
-							"@foo.Term": "EntityContainer"
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"foo.Container" : {
+							"@foo.Term" : "EntityContainer"
 						},
-						"foo.Container/EntitySet": {
-							"@foo.Term1": "EntitySet",
-							"@foo.Term2": "EntitySet"
+						"foo.Container/EntitySet" : {
+							"@foo.Term1" : "EntitySet",
+							"@foo.Term2" : "EntitySet"
 						},
-						"foo.Container/Singleton": {
-							"@foo.Term": "Singleton"
+						"foo.Container/Singleton" : {
+							"@foo.Term" : "Singleton"
+						},
+						"foo.Container/ActionImport" : {
+							"@foo.Term" : "ActionImport"
+						},
+						"foo.Container/FunctionImport" : {
+							"@foo.Term" : "FunctionImport"
 						}
 					}
 				},
-				"foo.Container": {
-					"$kind": "EntityContainer",
-					"EntitySet": {
-						"$kind": "EntitySet",
-						"$Type": "foo.EntityType"
+				"foo.Container" : {
+					"$kind" : "EntityContainer",
+					"EntitySet" : {
+						"$kind" : "EntitySet",
+						"$Type" : "foo.EntityType"
 					},
-					"Singleton": {
-						"$kind": "Singleton",
-						"$Type": "foo.EntityType"
+					"Singleton" : {
+						"$kind" : "Singleton",
+						"$Type" : "foo.EntityType"
 					},
-					"ActionImport": {
-						"$kind": "ActionImport",
-						"$Action": "foo.Action",
-						"@foo.Term": "ActionImport"
+					"ActionImport" : {
+						"$kind" : "ActionImport",
+						"$Action" : "foo.Action"
 					},
-					"FunctionImport": {
-						"$kind": "FunctionImport",
-						"$Function": "foo.Function",
-						"@foo.Term": "FunctionImport"
+					"FunctionImport" : {
+						"$kind" : "FunctionImport",
+						"$Function" : "foo.Function"
 					}
 				}
 			});
@@ -1327,9 +1331,9 @@ sap.ui.require([
 					<Annotation Term="foo.Term" String="Reference"/>\
 				</Reference>',
 			{
-				"$Reference": {
-					"qux/$metadata": {
-						"@foo.Term": "Reference"
+				"$Reference" : {
+					"qux/$metadata" : {
+						"@foo.Term" : "Reference"
 					}
 				}
 			});
@@ -1353,20 +1357,20 @@ sap.ui.require([
 					</Schema>\
 				</DataServices>',
 			{
-				"foo.": {
-					"$kind": "Schema",
-					"@foo.Term1#q1": "Schema",
-					"@foo.Term1#q1@foo.Term2#q2": "Annotation2",
-					"@foo.Term1#q1@foo.Term2#q2@foo.Term3#q3": "Annotation3",
-					"$Annotations": {
-						"foo.ComplexType": {
-							"@foo.Term1": "ComplexType",
-							"@foo.Term1@foo.Term2": "Annotation"
+				"foo." : {
+					"$kind" : "Schema",
+					"@foo.Term1#q1" : "Schema",
+					"@foo.Term1#q1@foo.Term2#q2" : "Annotation2",
+					"@foo.Term1#q1@foo.Term2#q2@foo.Term3#q3" : "Annotation3",
+					"$Annotations" : {
+						"foo.ComplexType" : {
+							"@foo.Term1" : "ComplexType",
+							"@foo.Term1@foo.Term2" : "Annotation"
 						}
 					}
 				},
-				"foo.ComplexType": {
-					"$kind": "ComplexType"
+				"foo.ComplexType" : {
+					"$kind" : "ComplexType"
 				}
 			});
 	});
@@ -1378,24 +1382,24 @@ sap.ui.require([
 					<Annotation Term="f.Term" String="Apply"/>\
 				</Apply>',
 			{
-				"$Apply": [],
-				"$Function": "foo.Function",
-				"@foo.Term": "Apply"
+				"$Apply" : [],
+				"$Function" : "foo.Function",
+				"@foo.Term" : "Apply"
 			});
 		testExpression(assert, '\
 				<Cast Type="Edm.String">\
 					<Annotation Term="f.Term" String="Cast"/>\
 				</Cast>',
 			{
-				"$Cast": undefined,
-				"$Type": "Edm.String",
-				"@foo.Term": "Cast"
+				"$Cast" : undefined,
+				"$Type" : "Edm.String",
+				"@foo.Term" : "Cast"
 			});
 		["And", "Eq", "Ge", "Gt", "If", "Le", "Lt", "Ne", "Or"].forEach(
 			function (sOperator) {
 				var sXml = '<' + sOperator + '><Annotation Term="f.Term" String="Annotation"/></'
 						+ sOperator + '>',
-					oExpected = {"@foo.Term": "Annotation"};
+					oExpected = {"@foo.Term" : "Annotation"};
 
 				oExpected["$" + sOperator] = [];
 				testExpression(assert, sXml, oExpected);
@@ -1405,34 +1409,34 @@ sap.ui.require([
 					<Annotation Term="f.Term" String="IsOf"/>\
 				</IsOf>',
 			{
-				"$IsOf": undefined,
-				"$Type": "Edm.String",
-				"@foo.Term": "IsOf"
+				"$IsOf" : undefined,
+				"$Type" : "Edm.String",
+				"@foo.Term" : "IsOf"
 			});
 		testExpression(assert, '\
 				<LabeledElement Name="LabeledElement" String="Foo">\
 					<Annotation Term="f.Term" String="LabeledElement"/>\
 				</LabeledElement>',
 			{
-				"$Name": "LabeledElement",
-				"$LabeledElement": "Foo",
-				"@foo.Term": "LabeledElement"
+				"$Name" : "LabeledElement",
+				"$LabeledElement" : "Foo",
+				"@foo.Term" : "LabeledElement"
 			});
 		testExpression(assert, '\
 				<Not Type="Edm.String">\
 					<Annotation Term="f.Term" String="Not"/>\
 				</Not>',
 			{
-				"$Not": undefined,
-				"@foo.Term": "Not"
+				"$Not" : undefined,
+				"@foo.Term" : "Not"
 			});
 		testExpression(assert, '\
 				<Null>\
 					<Annotation Term="f.Term" String="Null"/>\
 				</Null>',
 			{
-				"$Null": null,
-				"@foo.Term": "Null"
+				"$Null" : null,
+				"@foo.Term" : "Null"
 			});
 		testExpression(assert, '\
 				<Record Type="f.Record">\
@@ -1442,10 +1446,10 @@ sap.ui.require([
 					</PropertyValue>\
 				</Record>',
 			{
-				"$Type": "foo.Record",
-				"GivenName": {"$Path": "FirstName"},
-				"@foo.Term": "Record",
-				"GivenName@foo.Term": "PropertyValue"
+				"$Type" : "foo.Record",
+				"GivenName" : {"$Path" : "FirstName"},
+				"@foo.Term" : "Record",
+				"GivenName@foo.Term" : "PropertyValue"
 			});
 	});
 

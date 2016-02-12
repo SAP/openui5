@@ -17,22 +17,26 @@ sap.ui.define([
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-	 *   the OData v4 model
+	 *   The OData v4 model
 	 * @param {String} sPath
-	 *   the binding path in the model
+	 *   The binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {number} iIndex
-	 *   the index of this context binding in the array of root bindings kept by the model, see
+	 *   The index of this context binding in the array of root bindings kept by the model, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext}
 	 * @param {object} [mParameters]
-	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and $select
-	 *   "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL Conventions")
-	 *   are allowed. All other query options lead to an error. Query options specified for the
-	 *   binding overwrite model query options.
+	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
+	 *   The following query options are allowed:
+	 *   <ul>
+	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *   <li> The $expand and $select "5.1 System Query Options"
+	 *   </ul>
+	 *   All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} when disallowed OData query options are provided
+	 * @throws {Error} When disallowed, OData query options are provided
 	 * @class Context binding for an OData v4 model.
 	 *
 	 * @author SAP SE
@@ -49,8 +53,7 @@ sap.ui.define([
 				ContextBinding.call(this, oModel, sBindingPath, oContext);
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.createSingle(oModel.oRequestor,
-						oModel.sServiceUrl + sPath.slice(1),
+					this.oCache = Cache.createSingle(oModel.oRequestor, sPath.slice(1),
 						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
@@ -68,9 +71,9 @@ sap.ui.define([
 	 * asynchronous.
 	 *
 	 * @param {boolean} [bForceUpdate=false]
-	 *   if <code>true</code> the change event is fired even if the value has not changed.
+	 *   If <code>true</code> the change event is fired even if the value has not changed
 	 * @returns {Promise}
-	 *   a Promise to be resolved when the check is finished
+	 *   A Promise to be resolved when the check is finished
 	 *
 	 * @protected
 	 */
@@ -89,7 +92,7 @@ sap.ui.define([
 		return oPromise.then(function () {
 			// always fire asynchronously
 			that.oElementContext = that.getModel().getContext(sResolvedPath);
-			that._fireChange({reason: ChangeReason.Change});
+			that._fireChange({reason : ChangeReason.Change});
 		});
 	};
 
@@ -97,11 +100,11 @@ sap.ui.define([
 	 * Returns a promise to read the value for the given path in the context binding.
 	 *
 	 * @param {string} sPath
-	 *   the relative path to the property
+	 *   The relative path to the property
 	 * @param {boolean} bAllowObjectAccess
-	 *   whether access to whole objects is allowed
+	 *   Whether access to whole objects is allowed
 	 * @return {Promise}
-	 *   the promise which is resolved with the value, e.g. <code>"foo"</code> for simple
+	 *   The promise which is resolved with the value, e.g. <code>"foo"</code> for simple
 	 *   properties, <code>[...]</code> for collections and <code>{"foo" : "bar", ...}</code> for
 	 *   objects
 	 * @private
@@ -144,14 +147,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
-	 * control, that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
+	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 * Refresh is supported for absolute bindings.
 	 *
 	 * @param {boolean} bForceUpdate
-	 *   <code>bForceUpdate</code> has to be <code>true</code>
-	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code> or refresh
+	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code>, refresh
 	 *   on this binding is not supported
 	 *
 	 * @public
@@ -169,21 +172,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the (base) context which is used when the binding path is relative. This triggers a
-	 * {@link #checkUpdate} resulting in an asynchronous change event if the bound context changes.
-	 * Dependent bindings then will react and also check for updates.
+	 * Sets the (base) context which is used when the binding path is relative.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @protected
 	 */
 	ODataContextBinding.prototype.setContext = function (oContext) {
-		// only trigger an update if this context can change something
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
 			if (this.isRelative()) {
-				// TODO not tested
-				this.checkUpdate(false);
+				throw new Error("Nested context bindings are not supported");
 			}
 		}
 	};
