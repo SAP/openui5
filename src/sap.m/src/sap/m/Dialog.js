@@ -273,6 +273,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			this._externalIcon = undefined;
 			this._oManuallySetSize = null;
 			this._oManuallySetPosition = null;
+			this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 			// used to judge if enableScrolling needs to be disabled
 			this._scrollContentList = ["NavContainer", "Page", "ScrollContainer"];
@@ -1384,6 +1385,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 						action();
 					}, 0);
 				};
+				var DIALOG_MIN_VISIBLE_SIZE = 30;
+				var windowWidth = window.innerWidth;
+				var windowHeight = window.innerHeight;
 				var initial = {
 					x: e.pageX,
 					y: e.pageY,
@@ -1414,8 +1418,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 					//set the new position of the dialog on mouse down when the transform is disabled by the class
 					that._$dialog.css({
-						left: that._oManuallySetPosition.x,
-						top: that._oManuallySetPosition.y
+						left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
+						top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE)
 					});
 				}
 
@@ -1431,8 +1435,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 							//move the dialog
 							that._$dialog.css({
-								left: that._oManuallySetPosition.x,
-								top: that._oManuallySetPosition.y
+								left: Math.min(Math.max(0, that._oManuallySetPosition.x), windowWidth - DIALOG_MIN_VISIBLE_SIZE),
+								top: Math.min(Math.max(0, that._oManuallySetPosition.y), windowHeight - DIALOG_MIN_VISIBLE_SIZE)
 							});
 						});
 					});
@@ -1440,7 +1444,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 					that._$dialog.addClass('sapMDialogResizing');
 
-					var isInRTLMode = sap.ui.getCore().getConfiguration().getRTL();
 					var styles = {};
 					var minWidth = parseInt(that._$dialog.css('min-width'), 10);
 					var maxLeftOffset = initial.x + initial.width - minWidth;
@@ -1454,7 +1457,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 								height: initial.height + e.pageY - initial.y
 							};
 
-							if (isInRTLMode) {
+							if (that._bRTL) {
 								styles.left = Math.min(Math.max(e.pageX, 0), maxLeftOffset);
 								that._oManuallySetSize.width = initial.width + initial.x - Math.max(e.pageX, 0);
 							}
