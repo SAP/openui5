@@ -6,19 +6,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 		"use strict";
 
 		/**
-		 * TabStripSelectListRenderer renderer.
+		 * <code>TabStripSelectList</code> renderer.
 		 *
 		 * @namespace
 		 */
 		var TabStripSelectListRenderer = Renderer.extend(SelectListRenderer);
 
 		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}
 		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
-		 * @param {sap.ui.core.Element} oItem An object representation of the element that should be rendered.
-		 * @param {object} mStates
+		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+		 * @param oList {sap.ui.core.Control} An object representation of the control that should be rendered
+		 * @param oItem {sap.ui.core.Element} An object representation of the element that should be rendered
+		 * @param mStates {object}
 		 */
 		TabStripSelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
 			if (!(oItem instanceof sap.ui.core.Element)) {
@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 
 			oCloseButton = oItem.getAggregation('_closeButton');
 			if (sap.ui.Device.system.desktop) {
-				oCloseButton.addStyleClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+				oCloseButton.addStyleClass(TabStripItem._CSS_CLASS_CLOSEBUTTONINVISIBLE);
 			}
 
 			oRm.write("<li");
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 				}
 				if (oItem === oSelectedItem) {
 					oRm.addClass(CSS_CLASS + "ItemBaseSelected");
-					oItem.getAggregation('_closeButton').removeStyleClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+					oItem.getAggregation('_closeButton').removeStyleClass(TabStripItem._CSS_CLASS_CLOSEBUTTONINVISIBLE);
 				}
 			}
 			oRm.writeClasses();
@@ -74,18 +74,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 			oRm.write('>');
 
 			// always show the full text on phone
-			oRm.writeEscaped(oItem.getText().slice(0, (sap.ui.Device.system.phone ? oItem.getText().length : TabStripItem.DISPLAY_TEXT_MAX_LENGHT)));
+			oRm.writeEscaped(oItem.getText().slice(0, (sap.ui.Device.system.phone ? oItem.getText().length : TabStripItem._DISPLAY_TEXT_MAX_LENGTH)));
 
 			// add three dots "..." at the end if not the whole text is shown
-			if (!sap.ui.Device.system.phone && oItem.getText().length > TabStripItem.DISPLAY_TEXT_MAX_LENGHT) {
+			if (!sap.ui.Device.system.phone && oItem.getText().length > TabStripItem._DISPLAY_TEXT_MAX_LENGTH) {
 				oRm.write('...');
 			}
 			oRm.write('</p>');
 
-
-
 			if (!oItem.getProperty('modified')) {
-				sStateClass += TabStripItem.CSS_CLASS_STATEINVISIBLE; // ToDo: fix the name of the variable
+				sStateClass += TabStripItem._CSS_CLASS_STATEINVISIBLE;
 			}
 
 			oRm.write("<p class=\"sapMTabStripSelectListItemModified" + sStateClass + "\">*</p>");

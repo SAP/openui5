@@ -90,7 +90,7 @@
 		test("Control defaults", function () {
 			//assert
 			ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
-			strictEqual(this.sut.$("touchArea").children(".sapMTabStripSelect").length, 0,
+			strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 0,
 					"Select is not rendered in DOM");
 			strictEqual(this.sut.getSelectedItem(), null, "Correct default selectedItem property value");
 
@@ -106,19 +106,18 @@
 					"Correctly set selectedItem property value");
 			this.clock.tick(1000);
 
-			strictEqual(this.sut.$("touchArea").children(".sapMTabStripSelect").length, 1,
+			strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 1,
 					"Toucharea is rendered in DOM");
 
 			strictEqual(this.sut.getFocusDomRef(), this.sut.getItems()[1].getDomRef(),
 					"When there is a selected item the focus is properly set as focused DOM ref");
 
 			strictEqual(this.sut.getAggregation('_select').getSelectedItem().getId(),
-					sap.m.TabStrip.SELECT_ITEMS_ID_PREFIX+this.sut.getSelectedItem(),
+					this.sut.getSelectedItem()+sap.m.TabStrip.SELECT_ITEMS_ID_SUFFIX,
 					"The selected item in the select aggregation is the same as the one in the TabStrip area");
 
 			var fnActivateItemSpy = sinon.spy(this.sut, "_activateItem");
 			var fnFireItemPressSpy = sinon.spy(this.sut, "fireItemPress");
-			var fnFireSelectionChangeSpy = sinon.spy(this.sut, "fireSelectionChange");
 			var fnSetSelectedItemSpy = sinon.spy(this.sut, "setSelectedItem");
 
 			var srcControl = this.sut.getItems()[1];
@@ -127,24 +126,19 @@
 			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
 
 			strictEqual(fnFireItemPressSpy.calledOnce, true, "On tap fires item press event");
-			strictEqual(fnFireSelectionChangeSpy.calledOnce, false,
-					"On tap does not fire selection change when the same selected tab is pressed");
 			strictEqual(fnSetSelectedItemSpy.calledOnce, false, "On tap does not fire selection change when the same selected tab is pressed");
 
-			var srcControl = this.sut.getItems()[2];
+			srcControl = this.sut.getItems()[2];
 			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
 			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: srcControl.$().offset().left + 2}], target: srcControl.getDomRef()});
 			strictEqual(fnActivateItemSpy.calledWith(srcControl), true, "On tap activates the correct item");
 
 			strictEqual(fnFireItemPressSpy.calledOnce, false, "On tap does not fire an item press event");
-			strictEqual(fnFireSelectionChangeSpy.calledOnce, true,
-					"On tap does not fire selection change when the same selected tab is pressed");
 			strictEqual(fnSetSelectedItemSpy.calledOnce, true,
 					"On tap does not fire selection change when the same selected tab is pressed");
 
 			fnActivateItemSpy.restore();
 			fnFireItemPressSpy.restore();
-			fnFireSelectionChangeSpy.restore();
 			fnSetSelectedItemSpy.restore();
 
 			strictEqual(this.sut.getItems().length, 3,
@@ -158,8 +152,6 @@
 			var oItemButton = oItem.getAggregation("_closeButton");
 			qutils.triggerTouchEvent('touchstart', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
 			qutils.triggerTouchEvent('touchend', this.sut.getDomRef(), {changedTouches: [{pageX: oItemButton.$().offset().left + 2}], target: oItemButton.getDomRef()});
-			//TODO: sapMTabStripSelectListItemCloseButton should be changed to
-			//sapMTabStripItemCloseButton in order to make sense everywhere
 
 			this.clock.tick(1000);
 			strictEqual(this.sut.getItems().length, 1,
@@ -188,8 +180,6 @@
 					"Add aggregation adds successfuly");
 		});
 
-
-
 		test("Render all tabs", function () {
 			//arrange
 			this.sut.addItem(new sap.m.TabStripItem({
@@ -216,7 +206,7 @@
 			strictEqual(this.sut.getItems()[4].getModified(), true,
 					"Modified state is correct");
 
-			var modifiedItem = 'sapMTabContainerItemModified';
+			var modifiedItem = sap.m.TabStripItem._CSS_CLASS_MODIFIED;
 			strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), false,
 					"The correspondent CSS class for the item change state is available ");
 			strictEqual(jQuery(this.sut.getItems()[4].getFocusDomRef()).hasClass(modifiedItem), true,
@@ -540,7 +530,7 @@
 			strictEqual(this.oTS.$("touchArea").length, 0, "Toucharea is not rendered");
 			strictEqual(this.oTS.$("leftOverflowButtons").length, 0, "Left overflow buttons are not rendered");
 			strictEqual(this.oTS.$("rightflowButtons").length, 0, "Right overflow buttons are not rendered");
-			strictEqual(this.oTS.$("tabContainer").length, 0, "Tab container is not rendered");
+			strictEqual(this.oTS.$("tabsContainer").length, 0, "Tab container is not rendered");
 
 			strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered');
 			strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered');
@@ -590,7 +580,7 @@
 			});
 			oCore.applyChanges();
 			//assert
-			strictEqual(this.sut.$("tabs").children(".selected").length, 0, "The initial selection is not applied");
+			strictEqual(this.sut.$("tabs").children("." + sap.m.TabStripItem._CSS_CLASS_SELECTED).length, 0, "The initial selection is not applied");
 			strictEqual(this.sut.getSelectedItem(), null, "Correct value of selectedItem association");
 		});
 
@@ -604,7 +594,7 @@
 			oCore.applyChanges();
 			//assert
 			strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
-			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass("selected"), "The initial selection is applied correctly");
+			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(sap.m.TabStripItem._CSS_CLASS_SELECTED), "The initial selection is applied correctly");
 		});
 
 		module("Tablet platform tests", {

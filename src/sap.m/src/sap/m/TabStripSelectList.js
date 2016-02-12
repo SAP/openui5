@@ -3,19 +3,19 @@
  */
 
 // Provides control sap.m.TabStripSelectList.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/SelectList', 'sap/m/TabStripItem', 'sap/ui/base/ManagedObject', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, SelectList, TabStripItem, ManagedObject) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/SelectList', 'sap/m/TabStripItem'],
+	function(jQuery, library, Control, SelectList, TabStripItem) {
 		"use strict";
 
 		/**
-	 * Constructor for a new TabStripSelectList.
+		 * Constructor for a new <code>TabStripSelectList</code>.
 		 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
-	 * @param {object} [mSettings] Initial settings for the new control.
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
 		 * The <code>sap.m.TabStripSelectList</code> displays a list of items that allows the user to select an item.
-	 * @extends sap.m.SelectList
+		 * @extends sap.ui.core.SelectList
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -24,40 +24,44 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		 * @public
 		 * @since 1.34
 		 * @alias sap.m.TabStripSelectList
-	     * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
+		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model
 		 */
 		var TabStripSelectList = SelectList.extend("sap.m.TabStripSelectList", /** @lends sap.m.TabStripSelectList.prototype */ {
 			metadata: {
 				library: "sap.m"
-			},
-			aggregations: {
-				/**
-				 * Defines the items contained within this control.
-				 */
-				items: { type: "sap.m.TabStripItem", multiple: false, singularName: "item" }
 			}
 		});
 
-		// ToDo: align these with the file names (i.e. not tabselect but tabstripselect)
-		TabStripSelectList.CSS_CLASS_SELECTLIST             = 'sapMSelectList';
-		TabStripSelectList.CSS_CLASS_TABSELECTLIST          = 'sapMTabStripSelectList';
-		TabStripSelectList.CSS_CLASS_CLOSEBUTTON            = 'sapMTabStripSelectListItemCloseBtn';
-		TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabStripSelectListItemCloseBtnInvisible'; // ToDo: this belongs to item
+		/**
+		 * The default CSS class name of <code>SelectList</code>.
+		 *
+		 * @type {string}
+		 * @private
+		 */
+		TabStripSelectList.CSS_CLASS_SELECTLIST = 'sapMSelectList';
 
-	/**
-	 * Initialize the control instance
-	 * @override
-	 * @private
-	 */
+		/**
+		 * The default CSS class name of <code>TabStripSelectList</code>.
+		 *
+		 * @type {string}
+		 * @private
+		 */
+		TabStripSelectList.CSS_CLASS_TABSTRIPSELECTLIST = 'sapMTabStripSelectList';
+
+		/**
+		 * Initializes the control.
+		 *
+		 * @override
+		 * @public
+		 */
 		TabStripSelectList.prototype.init = function () {
 			SelectList.prototype.init.call(this);
 			this.addStyleClass(TabStripSelectList.CSS_CLASS_SELECTLIST);
-			this.addStyleClass(TabStripSelectList.CSS_CLASS_TABSELECTLIST);
+			this.addStyleClass(TabStripSelectList.CSS_CLASS_TABSTRIPSELECTLIST);
 		};
 
-
 		/**
-	 * Override the method in order to attach event listeners
+		 * Overrides the method in order to attach event listeners.
 		 * @override
 		 * @private
 		 */
@@ -69,9 +73,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		};
 
 		/**
-	 * Handles the mouseenter event.
+		 * Handles the <code>mouseenter</code> event.
 		 *
-	 * @param {jQuery.Event} oEvent Event object
+		 * @param oEvent {jQuery.Event} Event object
 		 */
 		TabStripSelectList.prototype.mouseenter = function (oEvent) {
 			var oControl = jQuery(oEvent.target).control(0);
@@ -79,14 +83,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 				oControl instanceof sap.m.TabStripItem && // only this type has _closeButton aggregation
 				this.getSelectedItem() !== oControl
 			) {
-					oControl.getAggregation('_closeButton').$().removeClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+					oControl.getAggregation('_closeButton').$().removeClass(TabStripItem._CSS_CLASS_CLOSEBUTTONINVISIBLE);
 			}
 		};
 
 		/**
-	 * Handles the mouseleave event.
+		 * Handles the <code>mouseleave</code> event.
 		 *
-	 * @param {jQuery.Event} oEvent Event object
+		 * @param oEvent {jQuery.Event} Event object
 		*/
 		TabStripSelectList.prototype.mouseleave = function (oEvent) {
 			var oControl = jQuery(oEvent.target).control(0);
@@ -96,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 				jQuery(oEvent.target).hasClass('sapMSelectListItem') &&
 				this.getSelectedItem() !== oControl
 			) {
-					oControl.getAggregation('_closeButton').$().addClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+					oControl.getAggregation('_closeButton').$().addClass(TabStripItem._CSS_CLASS_CLOSEBUTTONINVISIBLE);
 			}
 		};
 
@@ -116,7 +120,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 				if (oPrevSelectedItem && oPrevSelectedItem !== oItem) {
 					if (sap.ui.Device.system.desktop) {
 						// close button is always visible on phone and tablet
-						oPrevSelectedItem.getAggregation('_closeButton').addStyleClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+						oPrevSelectedItem.getAggregation('_closeButton').addStyleClass(TabStripItem._CSS_CLASS_CLOSEBUTTONINVISIBLE);
 					}
 				}
 				this.setSelection(oItem);
@@ -126,35 +130,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 			}
 		};
 
-
 		/**
-	     * Change the visibility of the item "state" symbol
+		 * Changes the visibility of the item's state symbol (*).
 		 * @param {mixed} vItemId
 		 * @param {boolean} bShowState
 		 */
 		TabStripSelectList.prototype.changeItemState = function(vItemId, bShowState) {
-			// ToDo: remove this hack !? - for some reason these are 'undefined' - can it be the lazy loading?
-			TabStripItem.CSS_CLASS_STATE            = "sapMTabStripSelectListItemModified";
-			TabStripItem.CSS_CLASS_STATEINVISIBLE   = "sapMTabStripSelectListItemModifiedInvisible";
-
-
 			var $oItemState;
 
-			// optimisation to not invalidate and rerender the whole parent DOM, but only manipulate the CSS class
+			// optimisation to not invalidate and re-render the whole parent DOM, but only manipulate the CSS class
 			// for invisibility on the concrete DOM element that needs to change
 			var aItems = this.getItems();
 			aItems.forEach(function (oItem) {
 				if (vItemId === oItem.getId()) {
-					$oItemState = jQuery(oItem.$().children('.' + TabStripItem.CSS_CLASS_STATE)[0]);
+					$oItemState = jQuery(oItem.$().children('.' + TabStripItem._CSS_CLASS_STATE)[0]);
 					if (bShowState === true) {
-						$oItemState.removeClass(TabStripItem.CSS_CLASS_STATEINVISIBLE);
-					} else if (!$oItemState.hasClass(TabStripItem.CSS_CLASS_STATEINVISIBLE)) {
-						$oItemState.addClass(TabStripItem.CSS_CLASS_STATEINVISIBLE);
+						$oItemState.removeClass(TabStripItem._CSS_CLASS_STATEINVISIBLE);
+					} else if (!$oItemState.hasClass(TabStripItem._CSS_CLASS_STATEINVISIBLE)) {
+						$oItemState.addClass(TabStripItem._CSS_CLASS_STATEINVISIBLE);
 					}
 				}
 			});
 		};
 
 		return TabStripSelectList;
-
 	}, /* bExport= */ true);
