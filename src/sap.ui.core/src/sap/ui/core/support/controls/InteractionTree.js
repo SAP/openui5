@@ -678,6 +678,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    oPopover.close();
                 }
              }).addStyleClass("sapUiSupportReqPopoverCloseButton");
+             closeButton.setTooltip("Close");
              initiatorTypeText = new Text().addStyleClass("sapUiSupportIntRequestText");
              entryTypeText = new Text().addStyleClass("sapUiSupportIntRequestText");
              nameLink = new Link({target: "_blank", wrapping: true}).addStyleClass("sapUiSupportIntRequestLink");
@@ -820,6 +821,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
                    oPopover.close();
                 }
              }).addStyleClass("sapUiSupportIntPopoverCloseButton");
+             closeButton.setTooltip("Close");
              e2eDurationText = new Text().addStyleClass("sapUiSupportIntRequestText");
              processingText = new Text().addStyleClass("sapUiSupportIntRequestText");
              requestTimeText = new Text().addStyleClass("sapUiSupportIntRequestText");
