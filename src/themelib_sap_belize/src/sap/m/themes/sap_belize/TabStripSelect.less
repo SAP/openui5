@@ -7,15 +7,15 @@
 	color: white;
 }
 
-.sapMSlt.sapMTabStripSelect {
+.sapMSlt.sapMTSSlt {
 	background: transparent;
 }
-.sapMTabStripSelect.sapMSltPressed .sapMSltArrow {
+.sapMTSSlt.sapMSltPressed .sapMSltArrow {
 	color: white; /* ToDo: this must be variable when the styling of the button is fixed */
 	background-color: @sapUiFieldActiveBackground;
 }
 
-.sapMTabStripSelect { /* change this only in context of sap.m.TabStripSelect*/
+.sapMTSSlt { /* change this only in context of sap.m.TabStripSelect*/
 	&.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 				background-color: transparent;
 			&.sapMSltHoverable:hover {
@@ -41,11 +41,11 @@
 
 
 .sap-phone {
-	.sapMSlt.sapMTabStripSelect {
+	.sapMSlt.sapMTSSlt {
 		background: @sapUiFieldBackground;
 	}
 
-	.sapMTabStripSelect.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+	.sapMTSSlt.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 		background-color: @sapUiFieldBackground;
 	}
 }
