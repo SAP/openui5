@@ -27,8 +27,8 @@
 		</script>
 
 		<script language="javascript">
-		// this is needed because the loading the input invalidates the static UI area which make the test case fail
-		jQuery.sap.require("sap.m.Input");
+			// this is needed because the loading the input invalidates the static UI area which make the test case fail
+			jQuery.sap.require("sap.m.Input");
 
 			// mockup data
 			var data = {
@@ -268,6 +268,36 @@
 			assert.ok(this.oResponsivePopover.isOpen(), "responsive popover is opened");
 			assert.strictEqual(this.oResponsivePopover.getDomRef(), this.oResponsivePopover._oControl.getDomRef(), "getDomRef call is forwarded");
 
+		});
+
+
+		QUnit.test("ResponsivepPopover should act according to value of resizing property", function(assert) {
+			// Arrange
+			this.oResponsivePopover = new sap.m.ResponsivePopover();
+			this.oResponsivePopover.setResizable(true);
+
+			// Act
+			this.oResponsivePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			if (!sap.ui.Device.system.desktop) {
+				var domQueryLength = this.oResponsivePopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
+				assert.strictEqual(domQueryLength,  0, "Arrow not found in responsive popover because not desktop device");
+			} else {
+				// Assert when resizable
+				var domQueryLength = this.oResponsivePopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
+				assert.strictEqual(domQueryLength,  1, "Arrow found in responsive popover");
+
+				this.oResponsivePopover.close();
+
+				this.oResponsivePopover.setResizable(false);
+				this.oResponsivePopover.openBy(this.oButton);
+				this.clock.tick(500);
+
+				// Assert when not resizable
+				var domQueryLength = this.oResponsivePopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
+				assert.strictEqual(domQueryLength,  0, "Arrow not found in responsive popover");
+			}
 		});
 
 		</script>

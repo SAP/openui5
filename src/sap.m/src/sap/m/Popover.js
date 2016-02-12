@@ -119,7 +119,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					 * Whether bouncing is enabled.
 					 * @since 1.16.5
 					 */
-					bounce: {type: "boolean", group: "Behavior", defaultValue: null}
+					bounce: {type: "boolean", group: "Behavior", defaultValue: null},
+
+					/**
+					 * Whether resize option is enabled.
+					 * @experimental since 1.36.4 Do not use directly on Popover while in experimental mode!
+					 * @since 1.36.4
+					 * @private
+					 */
+					resizable: {type: "boolean", group: "Dimension", defaultValue: false}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -898,6 +906,59 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
 			}
+		};
+
+		/**
+		 * Takes care of resizing the popover
+		 */
+		Popover.prototype.onmousedown = function (oEvent) {
+
+			var minSize = {
+				width: 256,
+				height: 128
+			};
+
+			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+
+			if (oEvent.target.className !== "sapMPopoverResizeHandle") {
+				return;
+			}
+
+			var $d = jQuery(document);
+			var $popover = this.$();
+			var that = this;
+			$popover.addClass('sapMPopoverResizing');
+
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+
+			var initial = {
+				x: oEvent.pageX,
+				y: oEvent.pageY,
+
+				width: $popover.width(),
+				height: $popover.height()
+			};
+
+			$d.on("mousemove.sapMPopover", function (e) {
+				var width, height;
+
+				if (bRTL) {
+					width = initial.width + initial.x - e.pageX;
+					height = initial.height + (initial.y - e.pageY);
+				} else {
+					width = initial.width + e.pageX - initial.x;
+					height = initial.height + (initial.y - e.pageY);
+				}
+
+				that.setContentWidth(Math.max(width, minSize.width) + 'px');
+				that.setContentHeight(Math.max(height, minSize.height) + 'px');
+			});
+
+			$d.on("mouseup.sapMPopover", function () {
+				$popover.removeClass("sapMPopoverResizing");
+				$d.off("mouseup.sapMPopover, mousemove.sapMPopover");
+			});
 		};
 
 		/* =========================================================== */
@@ -2173,6 +2234,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}
 
 			return this;
+		};
+
+		Popover.prototype.setResizable = function (bValue) {
+			if (!sap.ui.Device.system.desktop) {
+				bValue = false;
+			}
+
+			this.setProperty("resizable", bValue, true);
 		};
 
 

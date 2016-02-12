@@ -1266,6 +1266,39 @@
 			oPopover.destroy();
 		});
 
+		test("Popover should act according to value of resizing property", function() {
+			var oButton = new sap.m.Button({
+				text: "Open Popover"
+			});
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Arrange
+			this.oPopover = new sap.m.Popover();
+			this.oPopover.setResizable(true);
+
+			// Act
+			this.oPopover.openBy(oButton);
+
+			if (!sap.ui.Device.system.desktop) {
+				// Assert when resizable
+				var domQueryLength = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
+				equal(domQueryLength,  0, "Arrow not found in popover because not desktop device");
+			} else {
+				// Assert when resizable
+				var domQueryLength = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
+				equal(domQueryLength,  1, "Arrow found in popover");
+
+				this.oPopover.setResizable(false);
+				this.oPopover.rerender();
+
+				// Assert when not resizable
+				var domQueryLength = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle').length;
+				equal(domQueryLength,  0, "Arrow not found in popover");
+			}
+		});
+
+
 		module("Internal methods");
 
 		test("_applyPosition should be called with two parameters from check docking", function () {
