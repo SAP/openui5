@@ -662,6 +662,32 @@
 				oDialog.destroy();
 			});
 
+			test("Association ariaLabelledBy", function () {
+				// Arrange
+				var TEXT_ID = "qunitText";
+				var oText = new sap.m.Text(TEXT_ID, {text : "Qunit test"});
+				var oDialog = new sap.m.Dialog({
+					title: "Qunit test",
+					content: [oText],
+					ariaLabelledBy: [TEXT_ID]
+				});
+
+				// Act
+				oDialog.open();
+				this.clock.tick(500);
+
+				// Assert
+				var dialogHeaderId = oDialog.getDomRef('header').getAttribute('id');
+				var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
+				strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogHeaderId + ' ' + TEXT_ID);
+				strictEqual(dialogAriaLabelledBy.length, 2)
+				strictEqual(dialogAriaLabelledBy.indexOf(dialogHeaderId), 0);
+				strictEqual(dialogAriaLabelledBy.indexOf(TEXT_ID), 1);
+
+				// Clean up
+				oDialog.destroy();
+			});
+
 			test("Focusable elements in content area", function () {
 				// Arrange
 				var oInput1 = new sap.m.Input();
