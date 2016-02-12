@@ -45,8 +45,7 @@
 					new sap.m.TabStripItem({
 						key: "2",
 						text: "item 2"
-					}),
-
+					})
 				]
 			});
 
@@ -71,8 +70,8 @@
 		test("Misc", function () {
 			this.oMITS.open();
 			this.clock.tick(1000);
-			strictEqual(this.oMITS.$().hasClass('sapMTabStripSelect'), true, 'Control style class is present.');
-			strictEqual(this.oMITS.getList().$().hasClass('sapMTabStripSelectList'), true, 'Control style class is present.');
+			strictEqual(this.oMITS.$().hasClass(sap.m.TabStripSelect.CSS_CLASS), true, 'Control style class is present.');
+			strictEqual(this.oMITS.getList().$().hasClass(sap.m.TabStripSelectList.CSS_CLASS_SELECTLIST), true, 'Control style class is present.');
 			strictEqual(this.oMITS.getList().$().children('.sapMSelectListItemBaseSelected').length, 0, 'Control has no item selected by default.');
 		});
 
@@ -97,7 +96,6 @@
 		});
 
 		test("Desktop", function () {
-			var iItemDomHeight = 32; // "base" height that is expected
 			this.oMITS.setSelectedItem(this.oFirstItem);
 			this.oMITS.open();
 			this.clock.tick(1000);

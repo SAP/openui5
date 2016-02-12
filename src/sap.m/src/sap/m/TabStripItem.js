@@ -79,30 +79,17 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 							 */
 							propertyValue:  {type: "mixed"}
 						}
-					},
-
-					/**
-					 * Fired when the <code>TabStripItem</code> is selected.
-					 * ToDo: Is this needed? (Vesko)
-					 */
-					tabSelected: {
-						parameters: {
-							tab: {type: "sap.m.TabStripItem"}
-						}
 					}
 				}
 			}
 		});
 
-
-		// ToDo: change the constants names
-		// ToDo: (2) move all css constants to an array constant
 		/**
 		 * The maximum text length of a <code>TabStripItem</code>.
-		 * ToDo: Add underscore to the beginning to mark this constant private
+		 *
 		 * @type {number}
 		 */
-		TabStripItem.DISPLAY_TEXT_MAX_LENGHT = 25;
+		TabStripItem._DISPLAY_TEXT_MAX_LENGTH = 25;
 
 		/**
 		 * The default CSS class name of <code>TabStripItem</code> in context of the <code>TabStrip</code>.
@@ -110,7 +97,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 		 * @type {string}
 		 * @private
 		 */
-		TabStripItem._CSS_CLASS = "sapMTabContainerItem";
+		TabStripItem._CSS_CLASS = "sapMTabStripItem";
 
 		/**
 		 * The default CSS class name of the <code>TabStripItem</code>'s label in context of <code>TabStrip</code>.
@@ -118,7 +105,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 		 * @type {string}
 		 * @private
 		 */
-		TabStripItem._CSS_CLASS_LABEL = "sapMTabContainerItemLabel";
+		TabStripItem._CSS_CLASS_LABEL = "sapMTabStripItemLabel";
 
 		/**
 		 * The default CSS class name of <code>TabStripItem</code>'s button in context of <code>TabStrip</code>.
@@ -126,30 +113,51 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 		 * @type {string}
 		 * @private
 		 */
-		TabStripItem._CSS_CLASS_BUTTON = "sapMTabContainerItemButton";
+		TabStripItem._CSS_CLASS_BUTTON = "sapMTabStripItemButton";
+
+		/**
+		 * The default CSS class name of <code>TabStripItem</code> modified state in context of <code>TabStrip</code>.
+		 *
+		 * @type {string}
+		 * @private
+		 */
+		TabStripItem._CSS_CLASS_MODIFIED = "sapMTabStripItemModified";
+
+		/**
+		 * The default CSS class name of <code>TabStripItem</code> selected state in context of <code>TabStrip</code>.
+		 *
+		 * @type {string}
+		 * @private
+		 */
+		TabStripItem._CSS_CLASS_SELECTED = "sapMTabStripItemSelected";
 
 		/**
 		 * The default CSS class name of <code>TabStripItem</code>'s modified state in context of <code>TabStripSelect</code>.
 		 *
 		 * @type {string}
 		 */
-		TabStripItem.CSS_CLASS_STATE = "sapMTabStripSelectListItemModified";
+		TabStripItem._CSS_CLASS_STATE = "sapMTabStripSelectListItemModified";
 
 		/**
 		 * The default CSS class name of <code>TabStripItem</code>'s invisible state in context of <code>TabStripSelect</code>.
 		 *
 		 * @type {string}
 		 */
-		TabStripItem.CSS_CLASS_STATEINVISIBLE = "sapMTabStripSelectListItemModifiedInvisible";
+		TabStripItem._CSS_CLASS_STATEINVISIBLE = "sapMTabStripSelectListItemModifiedInvisible";
 
 		/**
 		 * The default CSS class name of <code>TabStripItem</code>'s Close button in context of <code>TabStripSelect</code>.
 		 *
 		 * @type {string}
 		 */
-		TabStripItem.CSS_CLASS_CLOSEBUTTON = 'sapMTabStripSelectListItemCloseBtn';
+		TabStripItem._CSS_CLASS_CLOSEBUTTON = 'sapMTabStripSelectListItemCloseBtn';
 
-		TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabStripSelectListItemCloseBtnInvisible';
+		/**
+		 * The default CSS class name of <code>TabStripItem</code>'s Close button when invisible in context of <code>TabStripSelect</code>.
+		 *
+		 * @type {string}
+		 */
+		TabStripItem._CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabStripSelectListItemCloseBtnInvisible';
 
 
 		/**
@@ -162,7 +170,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 				icon: IconPool.getIconURI("decline"),
 				tabIndex: "-1",
 				ariaHidden: "true"
-			}).addStyleClass(TabStripItem.CSS_CLASS_CLOSEBUTTON);
+			}).addStyleClass(TabStripItem._CSS_CLASS_CLOSEBUTTON);
 			this.setAggregation('_closeButton', oButton);
 		};
 

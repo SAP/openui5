@@ -41,7 +41,7 @@
 			}
 		}
 	}
-	.sapMTSTabContainer {
+	.sapMTSTabsContainer {
 		height: 100%;
 		white-space: nowrap;
 		position: absolute;
@@ -53,7 +53,7 @@
 			float: left;
 			height: 100%;
 			margin-right: -999em;
-			.sapMTabContainerItem {
+			.sapMTabStripItem {
 				position: relative;
 				box-sizing: border-box;
 				height: 100%;
@@ -64,7 +64,7 @@
 				-moz-user-select: none;
 				-ms-user-select: none;
 				user-select: none;
-				.sapMTabContainerItemLabel {
+				.sapMTabStripItemLabel {
 					vertical-align: middle;
 					line-height: 3rem;
 					&:after {
@@ -72,7 +72,7 @@
 						vertical-align: middle;
 					}
 				}
-				.sapMTSTabCloseBtnCnt {
+				.sapMTSItemCloseBtnCnt {
 					display: inline-block;
 					height: 100%;
 					width: 2rem;
@@ -82,8 +82,8 @@
 						opacity: 1;
 					}
 				}
-				&.sapMTabContainerItemModified {
-					.sapMTabContainerItemLabel:after {
+				&.sapMTabStripItemModified {
+					.sapMTabStripItemLabel:after {
 						content: '*';
 						vertical-align: middle;
 					}
@@ -152,7 +152,7 @@
 	}
 }
 
-html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabContainer .sapMTSTabs .sapMTabContainerItem {
+html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem {
 	-webkit-transition: padding 0.3s;
 	-moz-transition: padding 0.3s;
 	-ms-transition: padding 0.3s;
@@ -160,7 +160,7 @@ html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabContainer .sapMTSTabs .
 	transition: padding 0.3s;
 }
 
-html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabContainer .sapMTSTabs .sapMTabContainerItem .sapMTSTabCloseBtnCnt .sapMBtn {
+html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabsContainer .sapMTSTabs .sapMTabStripItem .sapMTSItemCloseBtnCnt .sapMBtn {
 	-webkit-transition: opacity 0.3s;
 	-moz-transition: opacity 0.3s;
 	-ms-transition: opacity 0.3s;
@@ -200,11 +200,11 @@ html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabContainer .sapMTSTabs .
 				}
 			}
 		}
-		.sapMTSTabContainer {
+		.sapMTSTabsContainer {
 			.sapMTSTabs {
-				.sapMTabContainerItem {
+				.sapMTabStripItem {
 					padding: 0 1rem;
-					.sapMTabContainerItemLabel {
+					.sapMTabStripItemLabel {
 						vertical-align: middle;
 						line-height: 2rem;
 						&:after {
@@ -212,7 +212,7 @@ html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabContainer .sapMTSTabs .
 							vertical-align: middle;
 						}
 					}
-					.sapMTSTabCloseBtnCnt {
+					.sapMTSItemCloseBtnCnt {
 						width: 1.5rem;
 						position: absolute;
 						right: 0;
@@ -225,16 +225,16 @@ html[data-sap-ui-animation='on'] .sapMTabStrip .sapMTSTabContainer .sapMTSTabs .
 							}
 						}
 					}
-					&.selected, &:hover {
+					&.sapMTabStripItemSelected, &:hover {
 						padding: 0 1.5rem 0 0.5rem;
-						.sapMTSTabCloseBtnCnt {
+						.sapMTSItemCloseBtnCnt {
 							.sapMBtn {
 								opacity: 1;
 							}
 						}
 					}
-					&.sapMTabContainerItemModified {
-						.sapMTabContainerItemLabel:after {
+					&.sapMTabStripItemModified {
+						.sapMTabStripItemLabel:after {
 							content: '*';
 							vertical-align: middle;
 						}
