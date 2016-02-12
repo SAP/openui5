@@ -482,6 +482,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.MenuButton",
+		  "name": "Menu Button",
+		  "category": "User Input",
+		  "since": "1.38",
+		  "samples": [
+			"sap.m.sample.MenuButton"
+		  ]
+		},
+		{
 		  "id": "sap.m.MessageBox ",
 		  "name": "Message Box",
 		  "category": "Popup",
@@ -1994,6 +2003,11 @@
 		  "id": "sap.m.sample.MaskInput",
 		  "name": "MaskInput",
 		  "description": "The sap.m.MaskInput control allows users to easily enter data in a certain format and in a fixed-width input (for example: date, time, credit card number, and others)."
+		},
+		{
+		  "id": "sap.m.sample.MenuButton",
+		  "name": "Menu Button",
+		  "description": "This control is used to open a menu in both desktop and mobile."
 		},
 		{
 		  "id": "sap.m.sample.MessageBox",

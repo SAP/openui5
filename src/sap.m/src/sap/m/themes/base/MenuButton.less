@@ -1,0 +1,52 @@
+.sapMMenuBtn {
+	display: inline-block;
+	max-width: 12rem;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner {
+	text-align: left;
+	padding-right: 2rem;
+	position: relative;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
+	padding-right: 1.4375rem;
+}
+
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
+	position: absolute;
+	top: 0;
+	right: 0;
+	pointer-events: none;
+	font-family: 'SAP-icons';
+	content: '\e1ef';
+	display: inline-block;
+	font-size: 0.75rem;
+
+	height: 38px; //ie does not accept rem for height in pseudo elements, but it works with px when you zoom
+	line-height: 38px;
+	padding-right: 0.75rem;
+	padding-left: 0.5625rem;
+}
+
+.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner {
+	background-image: none;
+	text-shadow: none;
+}
+
+.sapUiSizeCompact {
+	.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner {
+		padding-right: 1.625rem;
+	}
+
+	.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
+		padding-right: 1.25rem;
+	}
+
+	.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
+		height: 24px; //ie does not accept rem for height in pseudo elements, but it works with px when you zoom
+		line-height: 24px;
+		padding-right: 0.5rem;
+		padding-left: 0.375rem;
+	}
+}
