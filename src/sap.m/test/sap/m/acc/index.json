@@ -67,7 +67,7 @@
 		},
 		{
 			"control": "sap.m.Dialog",
-			"url": "../Dialog.html",
+			"url": "Dialog.html",
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
@@ -102,7 +102,7 @@
 		},
 		{
 			"control": "sap.m.IconTabBar",
-			"url": "../IconTabBar.html",
+			"url": "IconTabBar.html",
 			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{

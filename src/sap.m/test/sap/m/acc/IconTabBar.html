@@ -1,0 +1,387 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>sap.m.IconTabBar</title>
+	<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<style>
+		.label {
+			font-weight:bold;
+			padding: 3rem 1rem 1rem;
+			width: auto;
+			white-space: normal;
+		}
+		.ITBContainer{
+			border: 1px solid #0F5D94;
+		}
+	</style>
+	<script>
+
+		jQuery.sap.require("sap.ui.core.format.NumberFormat");
+		var oFloat = sap.ui.core.format.NumberFormat.getFloatInstance({minFractionDigits: 2, maxFractionDigits: 2});
+
+		// create and add app
+		var app = new sap.m.App("myApp", {initialPage:"tabBarPage"});
+		app.placeAt("body");
+
+		var label3 = new sap.m.Label({
+			text: "IconTabBar with tabs which have labels. Tabs are expandable. Semantic colors are used. Some tabs are invisible."
+		});
+		label3.addStyleClass("label");
+
+		var label4 = new sap.m.Label({
+			text: "IconTabBar with tabs which have no icons, only labels. Tabs are expandable. Only default (brand) color is used."
+		});
+		label4.addStyleClass("label");
+
+		var label5 = new sap.m.Label({
+			text: "IconTabBar with tabs which have no icons, only labels. Tabs are expandable. Semanctic colors are used."
+		});
+		label5.addStyleClass("label");
+
+		var label6 = new sap.m.Label({
+			text: "Initially collapsed IconTabBar with no active item."
+		});
+		label6.addStyleClass("label");
+
+		var label10 = new sap.m.Label({
+			text: "IconTabBar with no parameters and no items."
+		});
+		label10.addStyleClass("label");
+		var label11 = new sap.m.Label({
+			text: "IconTabBar with images as items."
+		});
+		label11.addStyleClass("label");
+
+		// create and add a page with icon tab bar
+		var page = new sap.m.Page("tabBarPage", {
+			title:"IconTabBar",
+			content : [
+				label3,
+				new sap.m.IconTabBar("itb3", {
+					selectedKey: "key3",
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://hint",
+							iconColor: sap.ui.core.IconColor.Neutral,
+							count: "377",
+							key: "key1",
+							text: "Neutral with long text",
+							tooltip: "tooltip Neutral with long text",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://activity-items",
+							iconColor: sap.ui.core.IconColor.Critical,
+							count: "388898",
+							key: "key2",
+							text: "Critical lorem",
+							tooltip: "tooltip Critical lorem",
+							content: [
+								new sap.m.Input({
+									placeholder: "input placeholder"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://attachment",
+							iconColor: sap.ui.core.IconColor.Negative,
+							text: "Negative lorem long long",
+							tooltip: "tooltip Negative lorem long long",
+							key: "key3",
+							content: [
+								new sap.m.RatingIndicator({
+									value: 3
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://collaborate",
+							iconColor: sap.ui.core.IconColor.Positive,
+							text: "Positive lorem",
+							tooltip: "tooltip Positive lorem",
+							key: "key4",
+							count: "57",
+							content: [
+								new sap.m.Text({
+									text : "Tab Notes\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea  dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. Pellentesque tincidunt fermentum lectus, eu luctus mi ultrices quis. Sed luctus nulla sit amet sapien consequat quis pretium eros tincidunt. Nullam quam erat, ultricies in malesuada non, tincidunt at nibh. Curabitur nec lectus et justo auctor tincidunt. In rhoncus risus vitae turpis suscipit eget porta metus facilisis. Vestibulum bibendum vehicula velit eu porta. Donec tincidunt rutrum lacus at egestas. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque eu velit non quam facilisis ullamcorper.\rUt faucibus, dolor eu congue fringilla, libero leo dignissim eros, dignissim porta eros augue id orci. Phasellus in enim sed orci hendrerit accumsan. Vestibulum nibh libero, viverra sit amet pulvinar quis, molestie placerat velit. Suspendisse fringilla venenatis eleifend. Etiam in eros augue. Donec elit leo, aliquet nec vestibulum eu, blandit a lacus. Quisque ullamcorper consectetur lectus, cursus aliquam dolor consequat eu.\rProin orci turpis, rhoncus et egestas vitae, gravida nec diam. Pellentesque ante nisl, interdum id dictum ut, scelerisque at neque. Morbi egestas lobortis vestibulum. Nunc metus purus, facilisis id interdum at, rutrum at ante. Etiam euismod ultrices magna, sit amet hendrerit enim tempor sed. Quisque lacinia tempus risus, in feugiat leo dictum sit amet. Vestibulum non erat massa, ut placerat velit. In quis neque est, sed eleifend orci. Nulla ullamcorper porttitor cursus. Sed a massa tortor. Curabitur auctor, turpis et congue viverra, turpis sem eleifend justo, ut pellentesque nisl orci non leo. Ut vitae nibh eu ligula feugiat mollis vel a erat. Vivamus vel turpis auctor lorem fringilla blandit sit amet sit amet nulla. Fusce tempus lacus sit amet felis auctor fermentum."
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://alert",
+							iconColor: sap.ui.core.IconColor.Negative,
+							text: "Negative lorem",
+							tooltip: "tooltip Negative lorem",
+							key: "key5",
+							count: "1988",
+							content: [
+								new sap.m.Label({
+									text: "alert alert alert"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://hint",
+							iconColor: sap.ui.core.IconColor.Neutral,
+							count: "39",
+							key: "key6",
+							text: "Neutral with long text",
+							tooltip: "tooltip Neutral with long text",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							visible: false,
+							icon: "sap-icon://activity-items",
+							iconColor: sap.ui.core.IconColor.Critical,
+							count: "300",
+							key: "key7",
+							text: "Invisible Critical lorem",
+							tooltip: "tooltip Invisible Critical lorem",
+							content: [
+								new sap.m.Input({
+									placeholder: "input placeholder"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							visible: false,
+							icon: "sap-icon://attachment",
+							iconColor: sap.ui.core.IconColor.Negative,
+							text: "Invisible Negative lorem",
+							tooltip: "tooltip Invisible Negative lorem",
+							key: "key8",
+							content: [
+								new sap.m.RatingIndicator({
+									value: 3
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							visible: false,
+							icon: "sap-icon://collaborate",
+							iconColor: sap.ui.core.IconColor.Positive,
+							text: "Invisible Positive lorem",
+							tooltip: "tooltip Invisible Positive lorem",
+							key: "key9",
+							count: "599",
+							content: [
+								new sap.m.Text({
+									text : "Tab Notes\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea  dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. Pellentesque tincidunt fermentum lectus, eu luctus mi ultrices quis. Sed luctus nulla sit amet sapien consequat quis pretium eros tincidunt. Nullam quam erat, ultricies in malesuada non, tincidunt at nibh. Curabitur nec lectus et justo auctor tincidunt. In rhoncus risus vitae turpis suscipit eget porta metus facilisis. Vestibulum bibendum vehicula velit eu porta. Donec tincidunt rutrum lacus at egestas. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque eu velit non quam facilisis ullamcorper.\rUt faucibus, dolor eu congue fringilla, libero leo dignissim eros, dignissim porta eros augue id orci. Phasellus in enim sed orci hendrerit accumsan. Vestibulum nibh libero, viverra sit amet pulvinar quis, molestie placerat velit. Suspendisse fringilla venenatis eleifend. Etiam in eros augue. Donec elit leo, aliquet nec vestibulum eu, blandit a lacus. Quisque ullamcorper consectetur lectus, cursus aliquam dolor consequat eu.\rProin orci turpis, rhoncus et egestas vitae, gravida nec diam. Pellentesque ante nisl, interdum id dictum ut, scelerisque at neque. Morbi egestas lobortis vestibulum. Nunc metus purus, facilisis id interdum at, rutrum at ante. Etiam euismod ultrices magna, sit amet hendrerit enim tempor sed. Quisque lacinia tempus risus, in feugiat leo dictum sit amet. Vestibulum non erat massa, ut placerat velit. In quis neque est, sed eleifend orci. Nulla ullamcorper porttitor cursus. Sed a massa tortor. Curabitur auctor, turpis et congue viverra, turpis sem eleifend justo, ut pellentesque nisl orci non leo. Ut vitae nibh eu ligula feugiat mollis vel a erat. Vivamus vel turpis auctor lorem fringilla blandit sit amet sit amet nulla. Fusce tempus lacus sit amet felis auctor fermentum."
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://alert",
+							iconColor: sap.ui.core.IconColor.Negative,
+							text: "Negative lorem",
+							tooltip: "tooltip Negative lorem",
+							key: "key10",
+							count: "1900",
+							content: [
+								new sap.m.Label({
+									text: "alert alert alert"
+								}),
+							]
+						})
+					],
+				}),
+				label4,
+				new sap.m.IconTabBar("itb4", {
+					upperCase: true,
+					items: [
+						new sap.m.IconTabFilter("itf3", {
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "Lorem",
+							count: "3",
+							key: "k1",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "Ipsum",
+							count: "3",
+							key: "key2",
+							content: [
+								new sap.m.Input({
+									placeholder: "input placeholder"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Default,
+							text: "Lorem Ipsum",
+							key: "key3",
+							count: "233",
+							content: [
+								new sap.m.RatingIndicator({
+									value: 3
+								}),
+							]
+						}),
+					],
+				}),
+				label5,
+				new sap.m.IconTabBar("itb5", {
+					upperCase: true,
+					backgroundDesign: 'Transparent',
+					items: [
+						new sap.m.IconTabFilter("itf5", {
+							iconColor: sap.ui.core.IconColor.Negative,
+							text: "Lorem",
+							count: "3",
+							key: "k1",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Critical,
+							text: "Ipsum",
+							count: "3",
+							key: "key2",
+							content: [
+								new sap.m.Input({
+									placeholder: "input placeholder"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							iconColor: sap.ui.core.IconColor.Positive,
+							text: "Lorem Ipsum",
+							key: "key3",
+							count: "233",
+							content: [
+								new sap.m.RatingIndicator({
+									value: 3
+								}),
+							]
+						}),
+					],
+				}),
+				label6,
+				new sap.m.IconTabBar("itb6", {
+					expanded: false,
+					items: [
+						new sap.m.IconTabFilter("itf6", {
+							icon: "sap-icon://hint",
+							iconColor: sap.ui.core.IconColor.Neutral,
+							count: "377",
+							key: "key1",
+							tooltip: "tooltip Neutral with long text",
+							content: [
+								new sap.m.Label({
+									text: "info info info"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://activity-items",
+							iconColor: sap.ui.core.IconColor.Critical,
+							count: "388898",
+							key: "key2",
+							tooltip: "tooltip Critical lorem",
+							content: [
+								new sap.m.Input({
+									placeholder: "input placeholder"
+								}),
+							]
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://attachment",
+							iconColor: sap.ui.core.IconColor.Negative,
+							tooltip: "tooltip Negative lorem",
+							key: "key3",
+							content: [
+								new sap.m.RatingIndicator({
+									value: 3
+								}),
+							]
+						})
+					],
+				}),
+				label10,
+				new sap.m.IconTabBar("itb10", {
+				}),
+				label11,
+				new sap.m.IconTabBar("itb11", {
+					expanded: true,
+					expandable: true,
+					selectedKey: "key3",
+					items: [
+						new sap.m.IconTabFilter("itf8", {
+							icon: "sap-icon://hint",
+							iconColor: sap.ui.core.IconColor.Neutral,
+							count: "2 out of 10",
+							design: sap.m.IconTabFilterDesign.Horizontal,
+							key: "key1",
+							text: "Neutral with long long long text",
+							tooltip: "tooltip Neutral with long long long text"
+
+						}),
+						new sap.m.IconTabSeparator({icon: "sap-icon://process"}),
+						new sap.m.IconTabFilter({
+							icon: "../images/candy_v_46x46.png",
+							iconColor: sap.ui.core.IconColor.Critical,
+							design: sap.m.IconTabFilterDesign.Horizontal,
+							key: "key2",
+							text: "Critical lorem long text",
+							tooltip: "tooltip Critical lorem long text"
+						}),
+						new sap.m.IconTabSeparator({icon: "sap-icon://process"}),
+						new sap.m.IconTabFilter({
+							icon: "../images/candy_x_46x46.png",
+							count: "50 / 934 long counter",
+							design: sap.m.IconTabFilterDesign.Horizontal,
+							iconColor: sap.ui.core.IconColor.Negative,
+							text: "Short text",
+							tooltip: "tooltip Short text",
+							key: "key3"
+						}),
+						new sap.m.IconTabSeparator({icon: "sap-icon://process"}),
+						new sap.m.IconTabFilter({
+							icon: "../images/candy_star_46x46.png",
+							count: "42",
+							design: sap.m.IconTabFilterDesign.Horizontal,
+							iconColor: sap.ui.core.IconColor.Negative,
+							text: "Negative lorem",
+							tooltip: "tooltip Negative lorem",
+							key: "key3"
+						})
+					],
+					content: [
+						new sap.m.Label({
+							text: "info info info"
+						})
+					]
+				}),
+				new sap.m.Label({text: " "}) // placeholder to see content below
+			]
+		});
+		app.addPage(page);
+
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>
