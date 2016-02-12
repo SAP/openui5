@@ -1716,12 +1716,14 @@ sap.ui.define(['jquery.sap.global',
 		}
 	};
 
-	/**
-	 * Builds a download URL
-	 * TODO: Make this public as soon as the download URL feature is implemented correctly
-	 * @param {string} sFormat The format for the result data, when accessing the Download-URL
+  /**
+	 * Get a download URL with the specified format considering the
+	 * sort/filter/custom parameters.
 	 *
-	 * @private
+	 * @param {string} sFormat Value for the $format Parameter
+	 * @return {string} URL which can be used for downloading
+	 * @since 1.28
+	 * @public
 	 */
 	ODataTreeBinding.prototype.getDownloadUrl = function(sFormat) {
 		var aParams = [],
