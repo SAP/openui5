@@ -384,7 +384,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	Overlay.prototype.getGeometry = function(bForceCalculation) {
 		if (bForceCalculation || !this._mGeometry) {
 			var oDomRef = this.getAssociatedDomRef();
-			var mGeometry = DOMUtil.getGeometry(oDomRef);
+			var mGeometry = DOMUtil.getGeometry(oDomRef, this.isRoot());
 
 			if (!mGeometry) {
 				var aChildrenGeometry = [];

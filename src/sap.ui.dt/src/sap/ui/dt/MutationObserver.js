@@ -36,7 +36,9 @@ sap.ui.define([
 				 */
 				domChanged: {
 					parameters : {
-						sapUiId : { type : "string" }
+						type : { type : "string" },
+						elemenIds : { type : "string[]"},
+						targetNodes : { type : "element[]" }
 					}
 				}
 			}
@@ -49,10 +51,18 @@ sap.ui.define([
 	 * @protected
 	 */
 	MutationObserver.prototype.init = function() {
-		this._fnFireDomChanged = this.fireDomChanged.bind(this);
+		var that = this;
+
+		this._fnFireResizeDomChanged = function() {
+			that.fireDomChanged({
+				type : "resize"
+			});
+		};
+		this._onScroll = this._fireDomChangeOnScroll.bind(this);
 
 		this._startMutationObserver();
 		this._startResizeObserver();
+		this._startScrollObserver();
 	};
 
 	/**
@@ -63,6 +73,7 @@ sap.ui.define([
 	MutationObserver.prototype.exit = function() {
 		this._stopMutationObserver();
 		this._stopResizeObserver();
+		this._stopScrollObserver();
 	};
 
 	/**
@@ -78,9 +89,9 @@ sap.ui.define([
 		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 		if (MutationObserver) {
 			this._oMutationObserver = new MutationObserver(function(aMutations) {
-				var bFireChange = false;
-				var sElementId;
-				aMutations.some(function(oMutation) {
+				var aTargetNodes = [];
+				var aElementIds = [];
+				aMutations.forEach(function(oMutation) {
 					var oTarget = oMutation.target;
 
 					// text mutations have no class list, so we use a parent node as a target
@@ -89,20 +100,24 @@ sap.ui.define([
 					}
 
 					// filter out all mutation in overlays
-					if (oTarget && jQuery(oTarget).closest(".sapUiDtOverlay, #overlay-container").length === 0) {
-						bFireChange = true;
+					if (!OverlayUtil.isInOverlayContainer(oTarget)) {
+						aTargetNodes.push(oTarget);
 
 						// define closest element to notify it's overlay about the dom mutation
-						var oElement = ElementUtil.getClosestElementForNode(oTarget);
-						var oOverlay = OverlayUtil.getClosestOverlayFor(oElement);
-						sElementId = oOverlay ? oOverlay.getElementInstance().getId() : undefined;
-
-						return true;
+						var oOverlay = OverlayUtil.getClosestOverlayForNode(oTarget);
+						var sElementId = oOverlay ? oOverlay.getElementInstance().getId() : undefined;
+						if (sElementId) {
+							aElementIds.push(sElementId);
+						}
 					}
 				});
 
-				if (bFireChange) {
-					that.fireDomChanged({elementId : sElementId});
+				if (aTargetNodes.length) {
+					that.fireDomChanged({
+						type : "mutation",
+						elementIds : aElementIds,
+						targetNodes : aTargetNodes
+					});
 				}
 			});
 
@@ -133,16 +148,41 @@ sap.ui.define([
 	 * @private
 	 */
 	MutationObserver.prototype._startResizeObserver = function() {
-		jQuery(window).on("resize", this._fnFireDomChanged);
+		jQuery(window).on("resize", this._fnFireResizeDomChanged);
 	};
 
 	/**
 	 * @private
 	 */
 	MutationObserver.prototype._stopResizeObserver = function() {
-		jQuery(window).off("resize", this._fnFireDomChanged);
+		jQuery(window).off("resize", this._fnFireResizeDomChanged);
 	};
 
+	/**
+	 * @private
+	 */
+	MutationObserver.prototype._fireDomChangeOnScroll = function(oEvent) {
+		var oTarget = oEvent.target;
+		if (!OverlayUtil.isInOverlayContainer(oTarget) && !OverlayUtil.getClosestOverlayForNode(oTarget)) {
+			this.fireDomChanged({
+				type : "scroll"
+			});
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	MutationObserver.prototype._startScrollObserver = function() {
+		window.addEventListener("scroll", this._onScroll, true);
+	};
+
+	/**
+	 * @private
+	 */
+	MutationObserver.prototype._stopScrollObserver = function() {
+		window.removeEventListener("scroll", this._onScroll, true);
+	};
 
 	return MutationObserver;
 }, /* bExport= */true);

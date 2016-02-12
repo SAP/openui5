@@ -97,12 +97,18 @@ function(jQuery) {
 	/**
 	 *
 	 */
-	DOMUtil.getGeometry = function(oDomRef) {
+	DOMUtil.getGeometry = function(oDomRef, bUseWindowOffset) {
 		if (oDomRef) {
+			var oOffset = jQuery(oDomRef).offset();
+			if (bUseWindowOffset) {
+				oOffset.left = oOffset.left - jQuery(window).scrollLeft();
+				oOffset.top = oOffset.top - jQuery(window).scrollTop();
+			}
+
 			return {
 				domRef : oDomRef,
 				size : this.getSize(oDomRef),
-				position :  jQuery(oDomRef).offset(),
+				position :  oOffset,
 				visible : this.isVisible(oDomRef)
 			};
 		}
