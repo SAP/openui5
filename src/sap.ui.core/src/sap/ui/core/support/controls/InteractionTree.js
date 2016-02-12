@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              request = requests[i];
 
              start = request.fetchStartOffset + request.startTime;
-             end = request.fetchStartOffset + request.startTime + request.duration;
+             end = request.fetchStartOffset + request.startTime + this.getRequestDuration(request);
 
              if (this.actualStartTime < end && this.actualEndTime > start) {
                 return true;
@@ -420,7 +420,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           var fetchStartOffset = request.fetchStartOffset;
 
           var start = fetchStartOffset + request.startTime;
-          var end = fetchStartOffset + request.startTime + request.duration;
+          var end = fetchStartOffset + request.startTime + this.getRequestDuration(request);
 
           if (this.actualStartTime > end || this.actualEndTime < start) {
              return;
@@ -456,8 +456,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
           rm.write('<div class="sapUiInteractionTreeItemRight"');
           rm.write('>');
 
-          var requestStart = request.requestStart + fetchStartOffset;
-          var responseStart = request.responseStart + fetchStartOffset;
+          var requestStart = this.getRequestRequestStart(request) + fetchStartOffset;
+          var responseStart = this.getRequestResponseStart(request) + fetchStartOffset;
 
           this.renderRequestPart(rm, start, requestStart, colorClass + '70');
           this.renderRequestPart(rm, requestStart, responseStart, colorClass);
@@ -586,7 +586,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              nameLink.setText(request.name);
              nameLink.setHref(request.name);
 
-             var duration = request.duration;
+             var duration = that.getRequestDuration(request);
 
              var start = request.fetchStartOffset + request.startTime;
              var end = start + duration;
@@ -601,16 +601,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
              var request = that.getRequestFromElement(jQuery(this));
 
              var fetchStartOffset = request.fetchStartOffset;
-             var duration = request.duration;
+             var duration = that.getRequestDuration(request);
 
              var start = fetchStartOffset + request.startTime;
              var end = start + duration;
 
-             var requestStart = request.requestStart + fetchStartOffset;
-             var responseStart = request.responseStart + fetchStartOffset;
+             var requestStart = that.getRequestRequestStart(request) + fetchStartOffset;
+             var responseStart = that.getRequestResponseStart(request) + fetchStartOffset;
 
              var preprocessingTime = requestStart - start;
              var serverTotalTime = responseStart - requestStart;
+
              var clientTotalTime = end - responseStart;
 
              var serverTimePercent = 100 * serverTotalTime / duration;
@@ -880,6 +881,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
 
        };
 
+       InteractionTree.prototype.getRequestDuration = function(request) {
+          if (request.duration > 0) {
+             return request.duration;
+          }
+
+          var end = request.responseStart || request.requestStart || request.fetchStart;
+
+          return end - request.startTime;
+       };
+
+       InteractionTree.prototype.getRequestRequestStart = function(request) {
+          if (request.requestStart > 0) {
+             return request.requestStart;
+          }
+
+          return request.fetchStart || request.startTime;
+       };
+
+       InteractionTree.prototype.getRequestResponseStart = function(request) {
+          if (request.responseStart > 0) {
+             return request.responseStart;
+          }
+
+          return request.requestStart || request.fetchStart || request.startTime;
+       };
+
        InteractionTree.prototype.pad0 = function (i, w) {
           return ("000" + String(i)).slice(-w);
        };
@@ -893,6 +920,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Ic
        };
 
        InteractionTree.prototype.formatDuration = function (duration) {
+
+          duration = Math.max(duration, 0);
 
           if (duration < 3) {
              return duration.toFixed(2) + ' ms';
