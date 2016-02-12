@@ -579,8 +579,10 @@ sap.ui.require([
 	QUnit.test("request(...): call with $batch url", function (assert) {
 		var oBatchRequest = {
 				body: "abcd",
-				"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
-				"MIME-Version" : "1.0"
+				headers: {
+					"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
+					"MIME-Version" : "1.0"
+				}
 			},
 			aBatchRequests = [1],
 			aExpectedResponses = [],
@@ -597,8 +599,8 @@ sap.ui.require([
 			.withExactArgs("/Service/$batch?sap-client=123", {
 				data : oBatchRequest.body,
 				headers : sinon.match({
-					"Content-Type" : oBatchRequest["Content-Type"],
-					"MIME-Version" : oBatchRequest["MIME-Version"]
+					"Content-Type" : oBatchRequest.headers["Content-Type"],
+					"MIME-Version" : oBatchRequest.headers["MIME-Version"]
 				}),
 				method : "POST"
 			}).returns(oJqXHRMock);

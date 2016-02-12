@@ -135,7 +135,6 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
 		bIsFreshToken) {
 		var that = this,
-			mBatchHeaders,
 			oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
 			sPayload;
@@ -143,10 +142,6 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 		if (bIsBatch) {
 			oBatchRequest = Batch.serializeBatchRequest(oPayload);
 			sPayload = oBatchRequest.body;
-			mBatchHeaders = {
-				"Content-Type" : oBatchRequest["Content-Type"],
-				"MIME-Version" : oBatchRequest["MIME-Version"]
-			};
 			// This would have been the responsibility of submitBatch. But doing it here makes the
 			// $batch recognition easier.
 			sResourcePath += this.sQueryParams;
@@ -173,8 +168,8 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 		return new Promise(function (fnResolve, fnReject) {
 			jQuery.ajax(that.sServiceUrl + sResourcePath, {
 				data : sPayload,
-				headers : jQuery.extend({}, mPredefinedRequestHeaders, that.mHeaders,
-					mHeaders, bIsBatch ? mBatchHeaders : mFinalHeaders
+				headers : jQuery.extend({}, mPredefinedRequestHeaders, that.mHeaders, mHeaders,
+					bIsBatch ? oBatchRequest.headers : mFinalHeaders
 				),
 				method : sMethod
 			}).then(function (oPayload, sTextStatus, jqXHR) {

@@ -343,8 +343,11 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @returns {object} Object containing the following properties:
 		 *   <ul>
 		 *     <li><code>body</code>: Batch request body
-		 *     <li><code>Content-Type</code>: Value for the 'Content-Type' header
-		 *     <li><code>MIME-Version</code>: Value for the 'MIME-Version' header
+		 *     <li><code>headers</code>: Batch-specific request headers
+		 *     <ul>
+		 *       <li><code>Content-Type</code>: Value for the 'Content-Type' header
+		 *       <li><code>MIME-Version</code>: Value for the 'MIME-Version' header
+		 *     </ul>
 		 *   </ul>
 		 * @example
 		 *   var oBatchRequest = Batch.serializeBatchRequest([
@@ -385,8 +388,10 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 
 			return {
 				body : oBatchRequest.body.join(""),
-				"Content-Type" : "multipart/mixed; boundary=" + oBatchRequest.batchBoundary,
-				"MIME-Version" : "1.0"
+				headers : {
+					"Content-Type" : "multipart/mixed; boundary=" + oBatchRequest.batchBoundary,
+					"MIME-Version" : "1.0"
+				}
 			};
 		}
 	};

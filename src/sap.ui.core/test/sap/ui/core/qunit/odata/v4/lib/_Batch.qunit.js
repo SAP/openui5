@@ -599,7 +599,7 @@ sap.ui.require([
 				var oBatchRequest,
 					oMock = this.oSandbox.mock(jQuery.sap);
 
-				if (oFixture.expectedBoundaryIDs){
+				if (oFixture.expectedBoundaryIDs) {
 					oFixture.expectedBoundaryIDs.forEach(function (oValue) {
 						oMock.expects("uid").returns(oValue);
 					});
@@ -610,8 +610,8 @@ sap.ui.require([
 				oBatchRequest = Batch.serializeBatchRequest(oFixture.requests);
 
 				assert.strictEqual(oBatchRequest.body, oFixture.body);
-				assert.strictEqual(oBatchRequest["Content-Type"], oFixture["Content-Type"]);
-				assert.strictEqual(oBatchRequest["MIME-Version"], oFixture["MIME-Version"]);
+				assert.strictEqual(oBatchRequest.headers["Content-Type"], oFixture["Content-Type"]);
+				assert.strictEqual(oBatchRequest.headers["MIME-Version"], oFixture["MIME-Version"]);
 			});
 		}
 	);
@@ -1727,8 +1727,8 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					jQuery.ajax(sResolvedServiceUrl + '$batch', {
 						method : "POST",
 						headers : {
-							"Content-Type" : oBatchRequestContent["Content-Type"],
-							"MIME-Version" : oBatchRequestContent["MIME-Version"],
+							"Content-Type" : oBatchRequestContent.headers["Content-Type"],
+							"MIME-Version" : oBatchRequestContent.headers["MIME-Version"],
 							"X-CSRF-Token" : sCsrfToken
 						},
 						data : oBatchRequestContent.body
