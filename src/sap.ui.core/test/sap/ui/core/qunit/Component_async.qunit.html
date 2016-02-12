@@ -265,6 +265,36 @@
 		});
 	});
 
+	QUnit.test("waitFor component", function(assert) {
+		var done = assert.async();
+
+		var bPromiseResolved = false;
+
+		// resolve the Promise after 1sec
+		var p = new Promise(function(fnResolve, fnReject) {
+			setTimeout(function() {
+				bPromiseResolved = true;
+				assert.ok(true, "Promise was resolved."); // just for logging
+				fnResolve();
+			}, 0);
+		});
+
+		jQuery.sap.registerModulePath("sap.test", "./testdata/components/async")
+		sap.ui.component({
+			name: "sap.test.mycomp",
+			async: true,
+			asyncHints: {
+				waitFor: p
+			}
+		}).then(function(oComponent) {
+			assert.ok(bPromiseResolved, "Promise was resolved before Component instantiation.");
+			done();
+		}.bind(this), function(oError) {
+			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
+			done();
+		});
+	});
+
 	QUnit.module("Async (Pre-)Loading (Manifest First)", {
 		beforeEach: function() {
 			// Register test module path

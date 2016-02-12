@@ -1045,6 +1045,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @param {object} [vConfig.asyncHints] Hints for the asynchronous loading (experimental setting)
 	 * @param {string[]} [vConfig.asyncHints.libs] Libraries that should be (pre-)loaded before the Component (experimental setting)
 	 * @param {string[]} [vConfig.asyncHints.components] Components that should be (pre-)loaded before the Component (experimental setting)
+	 * @param {Promise|Promise[]} [vConfig.asyncHints.waitFor] @since 1.37.0 a <code>Promise</code> or and array of <code>Promise</code>s for which the Component instantiation should wait (experimental setting)
 	 * @param {string} [vConfig.manifestUrl] @since 1.33.0 Determines whether the component should be loaded and defined
 	 *                                       via the <code>manifest.json</code>
 	 * @param {string} [vConfig.manifestFirst] @since 1.33.0 defines whether the manifest is loaded before or after the
@@ -1114,6 +1115,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		var vClassOrPromise = sap.ui.component.load(vConfig, true);
 		if ( vConfig.async ) {
 			// async: instantiate component after Promise has been fulfilled with component constructor
+			var waitFor = vConfig.asyncHints && vConfig.asyncHints.waitFor;
+			if ( waitFor ) {
+				// when waitFor Promises have been specified we also wait for
+				// them before we call the component constructor
+				var aPromises = Array.isArray(waitFor) ? waitFor : [ waitFor ];
+				return Promise.all(aPromises).then(function() {
+					return vClassOrPromise;
+				}).then(createInstance);
+			}
 			return vClassOrPromise.then(createInstance);
 		} else {
 			// sync: constructor has been returned, instantiate component immediately
