@@ -51,6 +51,7 @@
 		<branch></branch>
 		<version></version>
 		<versionAlias></versionAlias>
+		<overrideAuthMethod></overrideAuthMethod>
 
 		<!-- skip properties for commands -->
 		<skipCheck>true</skipCheck>
@@ -204,6 +205,7 @@
 							<goal>helium-multiversion</goal>
 						</goals>
 						<configuration>
+							<overrideAuthenticationMethod>${overrideAuthMethod}</overrideAuthenticationMethod>
 							<skip>${skipMultiVersion}</skip>
 						</configuration>
 					</execution>
