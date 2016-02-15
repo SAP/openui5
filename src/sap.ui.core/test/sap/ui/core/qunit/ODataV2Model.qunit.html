@@ -483,6 +483,17 @@
 		}});
 	});
 
+	asyncTest("test create binding context with broken service", function(){
+		oLabel.setText("testText");
+		var oModel = initModel(sURI, {json:true});
+		sap.ui.getCore().setModel(oModel);
+		oModel.createBindingContext("/Categories(5)", null, function(oContext){
+			equal(oContext.getPath(), "/Categories(5)", "new Context");
+			equal(oContext.getProperty("CategoryName"), "Grains/Cereals", "Data can be accessed");
+			start();
+		});
+	});
+
 	asyncTest("test bindElement", 2, function(){
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);

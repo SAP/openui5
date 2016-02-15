@@ -2364,7 +2364,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @private
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
-		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
+		var oResultData = oResponse.data, oImportData, bContent, sUri, sPath, aParts,
 		oEntityMetadata, that = this;
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
@@ -2380,6 +2380,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]},  success: false});
 			return false;
 		}
+
+		// broken implementations need this
 		if (oResultData && oResultData.results && !jQuery.isArray(oResultData.results)) {
 			oResultData = oResultData.results;
 		}
@@ -2387,8 +2389,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		// adding the result data to the data object
 		if (oResultData && (jQuery.isArray(oResultData) || typeof oResultData == 'object')) {
 			//need a deep data copy for import
-			oResultData = jQuery.sap.extend(true, {}, oResultData);
-			that._importData(oResultData, mGetEntities);
+			oImportData = jQuery.sap.extend(true, {}, oResultData);
+			that._importData(oImportData, mGetEntities);
 		}
 
 		sUri = oRequest.requestUri;
@@ -2440,7 +2442,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		this._updateETag(oRequest, oResponse);
 
 		if (fnSuccess) {
-			fnSuccess(oResponse.data, oResponse);
+			fnSuccess(oResultData, oResponse);
 		}
 
 		var oEventInfo = this._createEventInfo(oRequest, oResponse);
