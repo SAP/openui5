@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context which is required as base for a relative path
+	 *   The parent context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
 	 *   The following query options are allowed:
@@ -71,6 +71,7 @@ sap.ui.define([
 
 	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * It is to be used by applications for example to switch on a busy indicator.
 	 * Registered event handlers are called without parameters.
 	 *
 	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
@@ -78,12 +79,19 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @see sap.ui.base.Event
 	 * @public
+	 * @since 1.37
 	 */
 
 	/**
 	 * The 'dataReceived' event is fired after the back end data has been processed and the
 	 * registered 'change' event listeners have been notified.
-	 * The 'dataReceived' event is also fired if a back end request failed.
+	 * It is to be used by applications for example to switch off a busy indicator or to process an
+	 * error.
+	 * If back end requests are successful, the event has no parameters. The response data is
+	 * available in the model. Note that controls bound to this data may not yet have been updated;
+	 * it is thus not safe for registered event handlers to access data via control APIs.
+	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * 'error' event parameter.
 	 *
 	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
 	 * @event
@@ -91,9 +99,9 @@ sap.ui.define([
 	 * @param {object} oEvent.getParameters
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
 	 *   If there are multiple failed back end requests, the error of the first one is provided.
-	 *   If all back end requests succeed, the event has no parameters.
 	 * @see sap.ui.base.Event
 	 * @public
+	 * @since 1.37
 	 */
 
 	/**
@@ -203,7 +211,8 @@ sap.ui.define([
 						that.fireDataRequested();
 					})
 				: oContext.requestValue(this.getPath());
-			oPromise.then(createContexts).then(function () {
+			oPromise.then(function (vResult) {
+				createContexts(vResult);
 				//fire dataReceived after change event fired in createContexts()
 				if (bDataRequested) {
 					that.fireDataReceived(); // no try catch needed: uncaught in promise
