@@ -5,6 +5,7 @@
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
@@ -13,8 +14,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/model/PropertyBinding"
-], function (jQuery, ContextBinding, Context, FilterProcessor, JSONListBinding, MetaModel, Helper,
-		SyncPromise, PropertyBinding) {
+], function (jQuery, BindingMode, ContextBinding, Context, FilterProcessor, JSONListBinding,
+		MetaModel, Helper, SyncPromise, PropertyBinding) {
 	"use strict";
 
 	var DEBUG = jQuery.sap.log.Level.DEBUG,
@@ -127,6 +128,9 @@ sap.ui.define([
 			},
 			getValue : function () {
 				return this.vValue;
+			},
+			setValue : function () {
+				throw new Error("Unsupported operation: ODataMetaPropertyBinding#setValue");
 			}
 		});
 
@@ -152,8 +156,10 @@ sap.ui.define([
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
 		constructor : function (oRequestor, sUrl) {
 			MetaModel.call(this);
+			this.sDefaultBindingMode = BindingMode.OneTime;
 			this.oMetadataPromise = null;
 			this.oRequestor = oRequestor;
+			this.mSupportedBindingModes = {"OneTime" : true};
 			this.sUrl = sUrl;
 		}
 	});
@@ -213,10 +219,13 @@ sap.ui.define([
 	 * Creates a list binding for this meta data model which iterates content from the given path
 	 * (relative to the given context), sorted and filtered as indicated.
 	 *
-	 * By default, OData names are iterated and OData simple identifier preparations are forced by
-	 * implicitly adding a "." to the path; technical properties and inline annotations are
-	 * filtered out. A path which ends with an "@" segment can be used to iterate all inline or
-	 * external targeting annotations; technical properties and OData names are then filtered out.
+	 * By default, OData names are iterated and a trailing slash is implicitly added to the path
+	 * (see {@link #requestObject requestObject} for the effects this has); technical properties
+	 * and inline annotations are filtered out.
+	 *
+	 * A path which ends with an "@" segment can be used to iterate all inline or external
+	 * targeting annotations; no trailing slash is added implicitly; technical properties and OData
+	 * names are filtered out.
 	 *
 	 * @param {string} sPath
 	 *   A relative or absolute path within the meta data model, for example "/EMPLOYEES"
@@ -583,6 +592,16 @@ sap.ui.define([
 	ODataMetaModel.prototype.getUI5Type = SyncPromise.createGetMethod("fetchUI5Type", true);
 
 	/**
+	 * Refresh not supported by OData meta model!
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataMetaModel.prototype.refresh = function () { // @override
+		throw new Error("Unsupported operation: ODataMetaModel#refresh");
+	};
+
+	/**
 	 * Returns a promise for the "4.3.1 Canonical URL" corresponding to the given service root URL
 	 * and absolute data binding path which must point to an entity.
 	 *
@@ -813,8 +832,8 @@ sap.ui.define([
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {string}
 	 *   Resolved path or <code>undefined</code>
-	 * @public
 	 * @throws Error if relative path starts with a dot which is not followed by a forward slash
+	 * @public
 	 */
 	ODataMetaModel.prototype.resolve = function (sPath, oContext) { // @override
 		var sContextPath,
@@ -840,6 +859,16 @@ sap.ui.define([
 		return sPathFirst === "@" || sContextPath.slice(-1) === "/"
 			? sContextPath + sPath
 			: sContextPath + "/" + sPath;
+	};
+
+	/**
+	 * Legacy syntax not supported by OData meta model!
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataMetaModel.prototype.setLegacySyntax = function () { // @override
+		throw new Error("Unsupported operation: ODataMetaModel#setLegacySyntax");
 	};
 
 	return ODataMetaModel;

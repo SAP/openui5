@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding",
@@ -12,8 +13,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (ContextBinding, FilterProcessor, JSONListBinding, MetaModel, Helper, SyncPromise,
-		ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
+], function (BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel, Helper,
+		SyncPromise, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -310,6 +311,27 @@ sap.ui.require([
 		assert.ok(oMetaModel instanceof MetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, sUrl);
+		assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("forbidden", function (assert) {
+		var oMetaModel = new ODataMetaModel();
+
+		assert.throws(function () {
+			oMetaModel.refresh();
+		}, /Unsupported operation: ODataMetaModel#refresh/);
+
+		assert.throws(function () {
+			oMetaModel.setLegacySyntax(false); // argument does not matter!
+		}, /Unsupported operation: ODataMetaModel#setLegacySyntax/);
+
+		assert.throws(function () {
+			oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
+		});
+		assert.throws(function () {
+			oMetaModel.setDefaultBindingMode(BindingMode.TwoWay);
+		});
 	});
 
 	//*********************************************************************************************
@@ -896,16 +918,22 @@ sap.ui.require([
 		this.mock(this.oMetaModel).expects("getProperty").withExactArgs(sPath, oContext)
 			.returns(oValue);
 
+		// code under test
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext);
 
 		assert.ok(oBinding instanceof PropertyBinding);
+		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
 		assert.strictEqual(oBinding.getPath(), sPath);
-		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getValue(), oValue);
 
 		// code under test: must not call getProperty() again!
 		assert.strictEqual(oBinding.getExternalValue(), oValue);
+
+		// code under test
+		assert.throws(function () {
+			oBinding.setExternalValue("foo");
+		}, /Unsupported operation: ODataMetaPropertyBinding#setValue/);
 	});
 
 	//*********************************************************************************************
