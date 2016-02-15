@@ -23,15 +23,24 @@ sap.ui.require([
 			"empty." : {
 				"$kind" : "Schema"
 			},
+			"name.space." : {
+				"$kind" : "Schema",
+				"$Annotations" : {
+					"name.space.Id" : {
+						// Common := com.sap.vocabularies.Common.v1
+						"@Common.Label" : "ID"
+					}
+				}
+			},
 			// tea_busi := com.sap.gateway.iwbep.tea_busi.v0001
 			"tea_busi." : {
 				"$kind" : "Schema",
 				"$Annotations" : {
 					"tea_busi.DefaultContainer" : {
-						"@empty" : {}
+						"@DefaultContainer" : {}
 					},
 					"tea_busi.DefaultContainer/T€AMS" : {
-						"@empty" : {}
+						"@T€AMS" : {}
 					},
 					"tea_busi.TEAM" : {
 						// UI := com.sap.vocabularies.UI.v1
@@ -39,7 +48,7 @@ sap.ui.require([
 							"@UI.Importance" : {
 								"$EnumMember" : "UI.ImportanceType/High"
 							},
-							"$Type" : "UI.LineItem",
+							"$Type" : "UI.DataField",
 							"Label" : "Team ID",
 							"Value" : {
 								"$Path" : "Team_Id"
@@ -47,7 +56,7 @@ sap.ui.require([
 						}]
 					},
 					"tea_busi.TEAM/Team_Id" : {
-						// Common := com.sap.vocabularies.Common.v1
+						"@Common.Label" : "Team ID",
 						"@Common.Text" : {
 							"$Path" : "Name"
 						},
@@ -59,21 +68,43 @@ sap.ui.require([
 					"tea_busi.Worker" : {
 						"@UI.Facets" : [{
 							"$Type" : "UI.ReferenceFacet",
-							"Label" : "Team",
 							"Target" : {
-								"$AnnotationPath" : "EMPLOYEE_2_TEAM/@UI.LineItem" // term cast
+								// term cast
+								"$AnnotationPath" : "@UI.LineItem"
+							}
+						}, {
+							"$Type" : "UI.ReferenceFacet",
+							"Target" : {
+								// term cast at navigation property itself
+								"$AnnotationPath" : "EMPLOYEE_2_TEAM@Common.Label"
+							}
+						}, {
+							"$Type" : "UI.ReferenceFacet",
+							"Target" : {
+								// navigation property and term cast
+								"$AnnotationPath" : "EMPLOYEE_2_TEAM/@UI.LineItem"
+							}
+						}, {
+							"$Type" : "UI.ReferenceFacet",
+							"Target" : {
+								// type cast, navigation properties and term cast (at its type)
+								"$AnnotationPath"
+									: "tea_busi.TEAM/TEAM_2_EMPLOYEES/EMPLOYEE_2_TEAM/@UI.LineItem"
 							}
 						}],
 						"@UI.LineItem" : [{
-							"$Type" : "UI.LineItem",
+							"$Type" : "UI.DataField",
 							"Label" : "Team ID",
 							"Value" : {
 								"$Path" : "EMPLOYEE_2_TEAM/Team_Id"
 							}
 						}]
+					},
+					"tea_busi.Worker/EMPLOYEE_2_TEAM" : {
+						"@Common.Label" : "Employee's Team"
 					}
 				},
-				"@empty" : {}
+				"@Schema" : {}
 			},
 			"empty.Container" : {
 				"$kind" : "EntityContainer"
@@ -100,7 +131,7 @@ sap.ui.require([
 				"$Key" : ["Team_Id"],
 				"Team_Id" : {
 					"$kind" : "Property",
-					"$Type" : "Edm.String",
+					"$Type" : "name.space.Id",
 					"$Nullable" : false,
 					"$MaxLength" : 10
 				},
@@ -140,11 +171,14 @@ sap.ui.require([
 				"$kind" : "Term",
 				"$Type" : "not.Found"
 			},
+			"name.space.Id" : {
+				"$kind" : "Type"
+			},
 			"name.space.Term" : { // only case with a qualified name and a $Type
 				"$kind" : "Term",
 				"$Type" : "tea_busi.Worker"
 			},
-			"$$Loop" : "$$Loop/.", // some endless loop
+			"$$Loop" : "$$Loop/", // some endless loop
 			"$$Term" : "name.space.Term" // replacement for any reference to the term
 		},
 		oContainerData = mScope["tea_busi.DefaultContainer"],
@@ -221,30 +255,28 @@ sap.ui.require([
 	/**
 	 * Runs the given test for each name/value pair in the given fixture. The name is interpreted
 	 * as a path "[<sContextPath>'|']<sMetaPath>" and cut accordingly. The test is called with
-	 * the resolved sPath (i.e. '|' replaced by '/').
+	 * an almost resolved sPath (just '|' replaced by '/').
 	 *
 	 * @param {object} mFixture
 	 *   map<string, any>
 	 * @param {function} fnTest
-	 *   function(string sPath, string sContextPath, string sMetaPath, any vResult)
+	 *   function(string sPath, any vResult, string sContextPath, string sMetaPath)
 	 */
 	function forEach(mFixture, fnTest) {
-		var i,
-			sContextPath = "",
-			sMetaPath,
-			sPath,
-			vValue;
+		var sPath;
 
 		for (sPath in mFixture) {
-			vValue = mFixture[sPath];
-			i = sPath.indexOf("|");
-			sMetaPath = sPath.slice(i + 1);
+			var i = sPath.indexOf("|"),
+				sContextPath = "",
+				sMetaPath = sPath.slice(i + 1),
+				vValue = mFixture[sPath];
+
 			if (i >= 0) {
 				sContextPath = sPath.slice(0, i);
 				sPath = sContextPath + "/" + sMetaPath;
 			}
 
-			fnTest(sPath, sContextPath, sMetaPath, vValue);
+			fnTest(sPath, vValue, sContextPath, sMetaPath);
 		}
 	}
 
@@ -330,8 +362,6 @@ sap.ui.require([
 		dataPath : "/Foo[0];bar=42/bar",
 		metaPath : "/Foo/bar"
 	}, { // any segment with digits only
-		//TODO remove once v4.ODataListBinding|getDependentPath() does not create such segments
-		//     anymore!
 		dataPath : "/Foo/" + Date.now(),
 		metaPath : "/Foo"
 	}, {
@@ -359,27 +389,75 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	forEach({
+		// absolute path
+		"/" : "/",
+		"/foo/bar|/" : "/", // context is ignored
+		// relative path
+		"" : undefined, // w/o context --> important for MetaModel#createBindingContext etc.
+		"|foo/bar" : undefined, // w/o context
+		"/|" : "/",
+		"/|foo/bar" : "/foo/bar",
+		"/foo|bar" : "/foo/bar",
+		"/foo/bar|" : "/foo/bar",
+		"/foo/|bar" : "/foo/bar",
+		// trailing slash is preserved
+		"/foo/bar/" : "/foo/bar/",
+		"/foo|bar/" : "/foo/bar/",
+		// relative path that starts with a dot
+		"/foo/bar|./" : "/foo/bar/",
+		"/foo|./bar/" : "/foo/bar/",
+		"/foo/|./bar/" : "/foo/bar/",
+		// annotations
+		"/foo|@bar" : "/foo@bar",
+		"/foo/|@bar" : "/foo/@bar",
+		"/foo|./@bar" : "/foo/@bar",
+		"/foo/|./@bar" : "/foo/@bar",
+		// technical properties
+		"/foo|$kind" : "/foo/$kind",
+		"/foo/|$kind" : "/foo/$kind",
+		"/foo|./$kind" : "/foo/$kind",
+		"/foo/|./$kind" : "/foo/$kind"
+	}, function (sPath, sResolvedPath, sContextPath, sMetaPath) {
+		QUnit.test("resolve: " + sContextPath + " > " + sMetaPath, function (assert) {
+			var oContext = sContextPath && this.oMetaModel.getContext(sContextPath);
+
+			assert.strictEqual(this.oMetaModel.resolve(sMetaPath, oContext), sResolvedPath);
+		});
+	});
+	//TODO make sure that Context objects are only created for absolute paths?!
+
+	//*********************************************************************************************
+	[".bar", ".@bar", ".$kind"].forEach(function (sPath) {
+		QUnit.test("resolve: unsupported relative path " + sPath, function (assert) {
+			var oContext = this.oMetaModel.getContext("/foo");
+
+			assert.raises(function () {
+				this.oMetaModel.resolve(sPath, oContext);
+			}, new Error("Unsupported relative path: " + sPath));
+		});
+	});
+
+	//*********************************************************************************************
+	//TODO better map meta model path to pure JSON path (look up inside JsonModel)?
+	// what about @sapui.name then, which requires a literal as expected result?
+	forEach({
 		// "JSON" drill-down ----------------------------------------------------------------------
-		"/" : mScope,
-		"/$Foo" : undefined,
 		"/$EntityContainer" : "tea_busi.DefaultContainer",
-		"/tea_busi." : mScope["tea_busi."], // access to schema
 		"/tea_busi./$kind" : "Schema",
 		"/tea_busi.DefaultContainer/$kind" : "EntityContainer",
-		"/tea_busi.DefaultContainer/$Foo" : undefined,
-		"/tea_busi.TEAM/$Key/not.Found" : undefined,
+		// trailing slash: object vs. name --------------------------------------------------------
+		"/" : oContainerData,
+		"/$EntityContainer/" : oContainerData,
+		"/T€AMS/" : oTeamData,
+		"/T€AMS/$Type/" : oTeamData,
 		// scope lookup ("17.3 QualifiedName") ----------------------------------------------------
 		"/$EntityContainer/$kind" : "EntityContainer",
-		"/$EntityContainer|$kind" : "EntityContainer",
-		"/$EntityContainer/$Foo" : undefined,
 		"/$EntityContainer/T€AMS/$Type" : "tea_busi.TEAM",
 		"/$EntityContainer/T€AMS/$Type/Team_Id" : oTeamData.Team_Id,
 		// "17.3 QualifiedName", e.g. type cast ---------------------------------------------------
+		"/tea_busi." : mScope["tea_busi."], // access to schema
 		"/tea_busi.DefaultContainer/EMPLOYEES/tea_busi.Worker/AGE" : oWorkerData.AGE,
 		// implicit $Type insertion ---------------------------------------------------------------
-		"/T€AMS/$Key" : undefined, // avoid for following $ segments
-		"/T€AMS/Foo" : undefined,
-		"/T€AMS/$Foo" : undefined,
 		"/T€AMS/Team_Id" : oTeamData.Team_Id,
 		"/T€AMS/TEAM_2_EMPLOYEES" : oTeamData.TEAM_2_EMPLOYEES,
 		"/T€AMS/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
@@ -387,76 +465,85 @@ sap.ui.require([
 		"/$$Term/AGE" : oWorkerData.AGE,
 		// "17.2 SimpleIdentifier": lookup inside current schema child ----------------------------
 		"/T€AMS" : oContainerData["T€AMS"],
-		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/." : oWorkerData,
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/" : oWorkerData,
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/$Type" : "tea_busi.Worker",
 		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE" : oWorkerData.AGE,
-		// "14.5.12 Expression edm:Path"
-		// Note: An edm:Path cannot address annotations at a structural property!
-		// Annotations at a navigation property can be addressed like "EMPLOYEE_2_TEAM@empty".
-		// "EMPLOYEE_2_TEAM/@empty" addresses an annotation at the target type.
-		//TODO Do we want to be consequent with this?
-		//     "T€AMS/@UI.LineItem" vs. "T€AMS@empty", no explicit $Type needed?
-		//     "Address@foo" vs. "Address/@foo", no explicit $Type needed?
-		//     For the path/context split, we need to undo the implicit "/" at times! How?
-		"/T€AMS/$Type/@UI.LineItem/0/Value/$Path/@empty"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@empty"],
-		"/EMPLOYEES/$Type/@UI.LineItem/0/Value/$Path/@empty"
-			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@empty"],
-		// "14.5.2 Expression edm:AnnotationPath"
-//TODO		"/EMPLOYEES/$Type/@UI.Facets/0/Target/$AnnotationPath/." // incl. term cast!
-//			: mScope["tea_busi."].$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
-		// placeholder "." ------------------------------------------------------------------------
-		"/." : oContainerData,
-		"/T€AMS/$Type/." : oTeamData,
-		"/T€AMS/." : oTeamData,
-		// @sapui.name ----------------------------------------------------------------------------
-		"/./@sapui.name" : "tea_busi.DefaultContainer",
-		"/tea_busi.DefaultContainer/@sapui.name" : "tea_busi.DefaultContainer",
-		"/tea_busi.DefaultContainer/./@sapui.name" : "tea_busi.DefaultContainer",
-		"/T€AMS/@sapui.name" : "T€AMS",
-		"/T€AMS/./@sapui.name" : "tea_busi.TEAM",
-		"/T€AMS/Team_Id/@sapui.name" : "Team_Id",
-		"/T€AMS/TEAM_2_EMPLOYEES/@sapui.name" : "TEAM_2_EMPLOYEES",
-		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/./@sapui.name" : "tea_busi.Worker",
-		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE/@sapui.name" : "AGE",
-		"/T€AMS/@empty/@sapui.name" : "@empty",
-		"/T€AMS/@/@empty/@sapui.name" : "@empty",
-		"/T€AMS/$Type/@UI.LineItem/0/@UI.Importance/@sapui.name" : "@UI.Importance",
 		// annotations ----------------------------------------------------------------------------
-		"/$EntityContainer/@empty"
-			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@empty"],
-		"/tea_busi.Worker/@missing" : undefined,
-		"/tea_busi.Worker/@/@missing" : undefined,
-		"/T€AMS/$Type/./@UI.LineItem" : oTeamLineItem,
+		"/@DefaultContainer"
+			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
+		"/tea_busi.DefaultContainer@DefaultContainer"
+			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
+		"/$EntityContainer@DefaultContainer"
+			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
+		"/$EntityContainer/@DefaultContainer" // Note: w/o $Type, slash makes no difference!
+			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
 		"/T€AMS/$Type/@UI.LineItem" : oTeamLineItem,
-		"/T€AMS/$Type/@UI.LineItem/0/Label" : oTeamLineItem[0].Label,
-		"/T€AMS/$Type/@UI.LineItem/0/@UI.Importance" : oTeamLineItem[0]["@UI.Importance"],
-		"/T€AMS/@empty"
-			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer/T€AMS"]["@empty"],
-		"/T€AMS/Team_Id/@Common.Text"
+		"/T€AMS/@UI.LineItem" : oTeamLineItem,
+		"/T€AMS/@UI.LineItem/0/Label" : oTeamLineItem[0].Label,
+		"/T€AMS/@UI.LineItem/0/@UI.Importance" : oTeamLineItem[0]["@UI.Importance"],
+		"/T€AMS@T€AMS"
+			: mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer/T€AMS"]["@T€AMS"],
+		"/T€AMS/Team_Id@Common.Text"
 			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
-		"/T€AMS/Team_Id/@Common.Text@UI.TextArrangement"
+		"/T€AMS/Team_Id@Common.Text@UI.TextArrangement"
 			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]
 				["@Common.Text@UI.TextArrangement"],
-		"/tea_busi./@empty" : mScope["tea_busi."]["@empty"],
+		"/tea_busi./@Schema" : mScope["tea_busi."]["@Schema"],
 		// "@" to access to all annotations, e.g. for iteration
-		"/T€AMS/Team_Id/@" : mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]
-	}, function (sPath, sContextPath, sMetaPath, vResult) {
+		"/T€AMS@" : mScope["tea_busi."].$Annotations["tea_busi.DefaultContainer/T€AMS"],
+		"/T€AMS/@" : mScope["tea_busi."].$Annotations["tea_busi.TEAM"],
+		"/T€AMS/Team_Id@" : mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"],
+		// "14.5.12 Expression edm:Path"
+		"/T€AMS/@UI.LineItem/0/Value/$Path@Common.Text"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
+		"/T€AMS/@UI.LineItem/0/Value/$Path/@Common.Label"
+			: mScope["name.space."].$Annotations["name.space.Id"]["@Common.Label"],
+		"/EMPLOYEES/@UI.LineItem/0/Value/$Path@Common.Text"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM/Team_Id"]["@Common.Text"],
+		// "14.5.2 Expression edm:AnnotationPath"
+		"/EMPLOYEES/@UI.Facets/0/Target/$AnnotationPath/"
+			: mScope["tea_busi."].$Annotations["tea_busi.Worker"]["@UI.LineItem"],
+		"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath/"
+			: mScope["tea_busi."].$Annotations["tea_busi.Worker/EMPLOYEE_2_TEAM"]["@Common.Label"],
+		"/EMPLOYEES/@UI.Facets/2/Target/$AnnotationPath/"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
+		"/EMPLOYEES/@UI.Facets/3/Target/$AnnotationPath/"
+			: mScope["tea_busi."].$Annotations["tea_busi.TEAM"]["@UI.LineItem"],
+		// @sapui.name ----------------------------------------------------------------------------
+		"/@sapui.name" : "tea_busi.DefaultContainer",
+		"/tea_busi.DefaultContainer@sapui.name" : "tea_busi.DefaultContainer",
+		"/tea_busi.DefaultContainer/@sapui.name" : "tea_busi.DefaultContainer", // no $Type here!
+		"/$EntityContainer/@sapui.name" : "tea_busi.DefaultContainer",
+		"/T€AMS@sapui.name" : "T€AMS",
+		"/T€AMS/@sapui.name" : "tea_busi.TEAM",
+		"/T€AMS/Team_Id@sapui.name" : "Team_Id",
+		"/T€AMS/TEAM_2_EMPLOYEES@sapui.name" : "TEAM_2_EMPLOYEES",
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/@sapui.name" : "tea_busi.Worker",
+		"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/AGE@sapui.name" : "AGE",
+		"/T€AMS@T€AMS@sapui.name" : "@T€AMS",
+		"/T€AMS@/@T€AMS@sapui.name" : "@T€AMS",
+		"/T€AMS@T€AMS/@sapui.name" : "@T€AMS", // no $Type inside @T€AMS, / makes no difference!
+		"/T€AMS@/@T€AMS/@sapui.name" : "@T€AMS", // dito
+		"/T€AMS/@UI.LineItem/0/@UI.Importance/@sapui.name" : "@UI.Importance", // in "JSON" mode
+		"/T€AMS/Team_Id@/@Common.Label@sapui.name" : "@Common.Label" // avoid indirection here!
+	}, function (sPath, vResult) {
 		QUnit.test("fetchObject: " + sPath, function (assert) {
-			var oContext = sContextPath && this.oMetaModel.getContext(sContextPath),
-				oSyncPromise;
+			var oSyncPromise;
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 
-			oSyncPromise = this.oMetaModel.fetchObject(sMetaPath, oContext);
+			oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			assert.strictEqual(oSyncPromise.getResult(), vResult);
+			// self-guard to avoid that a complex right-hand side evaluates to undefined
+			assert.notStrictEqual(vResult, undefined, "use this test for defined results only!");
 		});
 	});
+	//TODO annotations at enum member ".../<10.2.1 Member Name>@..." (Note: "<10.2.2 Member Value>"
+	// might be a string! Avoid indirection!)
 	//TODO special cases where inline and external targeting annotations need to be merged!
-	//TODO $AnnotationPath that refers to annotation at nav.property: "EMPLOYEE_2_TEAM@empty"
 	//TODO support also external targeting from a different schema!
 	//TODO MySchema.MyFunction/MyParameter --> requires search in array?!
 	//TODO $count?
@@ -466,6 +553,37 @@ sap.ui.require([
 	// Target of the enclosing edm:Annotations element, i.e. an empty path resolves to the
 	// outermost type, and the first segment of a non-empty path MUST be a property or navigation
 	// property of the outermost type, a type cast, or a term cast." --> consequences for us?
+
+	//*********************************************************************************************
+	[
+		// "JSON" drill-down ----------------------------------------------------------------------
+		"/$missing",
+		"/tea_busi.DefaultContainer/$missing",
+		"/tea_busi.TEAM/$Key/this.is.missing",
+		// scope lookup ("17.3 QualifiedName") ----------------------------------------------------
+		"/$EntityContainer/$missing",
+		// implicit $Type insertion ---------------------------------------------------------------
+		"/T€AMS/$Key", // avoid $Type insertion for following $ segments
+		"/T€AMS/missing",
+		"/T€AMS/$missing",
+		// annotations ----------------------------------------------------------------------------
+		"/tea_busi.Worker@missing",
+		"/tea_busi.Worker/@missing",
+		// "@" to access to all annotations, e.g. for iteration
+		"/tea_busi.Worker/@/@missing"
+	].forEach(function (sPath) {
+		QUnit.test("fetchObject: " + sPath + " --> undefined", function (assert) {
+			var oSyncPromise;
+
+			this.mock(this.oMetaModel).expects("fetchEntityContainer")
+				.returns(SyncPromise.resolve(mScope));
+
+			oSyncPromise = this.oMetaModel.fetchObject(sPath);
+
+			assert.strictEqual(oSyncPromise.isFulfilled(), true);
+			assert.strictEqual(oSyncPromise.getResult(), undefined);
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchObject: Invalid relative path w/o context", function (assert) {
@@ -482,7 +600,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["/empty.Container/@", "/T€AMS/Name/@"].forEach(function (sPath) {
+	["/empty.Container/@", "/T€AMS/Name@"].forEach(function (sPath) {
 		QUnit.test("fetchObject returns {} (anonymous empty object): " + sPath, function (assert) {
 			var oSyncPromise;
 
@@ -500,10 +618,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
 		forEach({
-			"/$$Loop/." : "Invalid recursion at /$$Loop",
+			"/$$Loop/" : "Invalid recursion at /$$Loop",
 			// Invalid segment --------------------------------------------------------------------
-			"//." : "Invalid empty segment",
-			"/$Foo/." : "Invalid segment: .",
+			"//$Foo" : "Invalid empty segment",
 			"/$Foo/@bar" : "Invalid segment: @bar",
 			"/$Foo/$Bar" : "Invalid segment: $Bar",
 			"/$Foo/$Bar/$Baz" : "Invalid segment: $Bar",
@@ -513,10 +630,13 @@ sap.ui.require([
 			// Unknown ... ------------------------------------------------------------------------
 			"/name.space.not.Found" :
 				"Unknown qualified name 'name.space.not.Found'",
+			"/name.space.not.Found@missing" :
+				"Unknown qualified name 'name.space.not.Found'",
+			"/." : "Unknown child '.' of 'tea_busi.DefaultContainer'",
 			"/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
 			"/$EntityContainer/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
 			"/tea_busi.DefaultContainer/Foo" : "Unknown child 'Foo' of 'tea_busi.DefaultContainer'",
-			"/$EntityContainer|$kind/Foo" : "Unknown child 'EntityContainer'"
+			"/$EntityContainer/$kind/Foo" : "Unknown child 'EntityContainer'"
 				+ " of 'tea_busi.DefaultContainer' at /$EntityContainer/$kind",
 			// implicit $Type insertion
 			"/name.space.Broken/Foo" :
@@ -524,23 +644,17 @@ sap.ui.require([
 			// implicit scope lookup
 			"/name.space.Broken/$Type/Foo" :
 				"Unknown qualified name 'not.Found' at /name.space.Broken/$Type",
-			// Unsupported path before @sapui.name ------------------------------------------------
-			"/@sapui.name" : "Unsupported path before @sapui.name",
-			"/@sapui.name/foo" : "Unsupported path before @sapui.name", // one warning is enough
-			"/$Foo/@sapui.name" : "Unsupported path before @sapui.name", // not "Invalid segment: "
-			// no @sapui.name for technical properties or inside "JSON" mode:
-			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unsupported path before @sapui.name",
+			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unknown child 'EntityContainer'"
+				+ " of 'tea_busi.DefaultContainer' at /tea_busi.DefaultContainer/$kind",
+			// Unsupported path before @sapui.name -------------------------------------------------
+			"/$Foo/@sapui.name" : "Unsupported path before @sapui.name",
 			"/tea_busi.TEAM/$Key/not.Found/@sapui.name" : "Unsupported path before @sapui.name",
-			"/T€AMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/@sapui.name"
-				: "Unsupported path before @sapui.name",
 			// Unsupported path after @sapui.name -------------------------------------------------
-			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name",
-			// Unsupported path before @... -------------------------------------------------------
-			"/@bar" : "Unsupported path before @bar"
-		}, function (sPath, sContextPath, sMetaPath, sWarning) {
+			"/@sapui.name/foo" : "Unsupported path after @sapui.name",
+			"/$EntityContainer/T€AMS/@sapui.name/foo" : "Unsupported path after @sapui.name"
+		}, function (sPath, sWarning) {
 			QUnit.test("fetchObject fails: " + sPath + ", warn = " + bWarn, function (assert) {
-				var oContext = sContextPath && this.oMetaModel.getContext(sContextPath),
-					oSyncPromise;
+				var oSyncPromise;
 
 				this.mock(this.oMetaModel).expects("fetchEntityContainer")
 					.returns(SyncPromise.resolve(mScope));
@@ -549,7 +663,7 @@ sap.ui.require([
 				this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
 					.withExactArgs(sWarning, sPath, "sap.ui.model.odata.v4.ODataMetaModel");
 
-				oSyncPromise = this.oMetaModel.fetchObject(sMetaPath, oContext);
+				oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
 				assert.strictEqual(oSyncPromise.isFulfilled(), true);
 				assert.deepEqual(oSyncPromise.getResult(), undefined);
@@ -921,7 +1035,7 @@ sap.ui.require([
 		//TODO support for $BaseType
 		contextPath : "/EMPLOYEES",
 		metaPath : "",
-		pathDot : ".",
+		pathIntoObject : "./",
 		result : {
 			"ID" : oWorkerData.ID,
 			"AGE" : oWorkerData.AGE,
@@ -932,7 +1046,7 @@ sap.ui.require([
 		// same as before, but with non-empty path
 		contextPath : "/",
 		metaPath : "EMPLOYEES",
-		pathDot : "EMPLOYEES/.",
+		pathIntoObject : "EMPLOYEES/",
 		result : {
 			"ID" : oWorkerData.ID,
 			"AGE" : oWorkerData.AGE,
@@ -943,7 +1057,6 @@ sap.ui.require([
 		// Iterate all OData path segments, i.e. entity sets.
 		// Implicit scope lookup happens here!
 		metaPath : "/",
-		pathDot : "/.",
 		result : {
 			"EMPLOYEES" : oContainerData.EMPLOYEES,
 			"T€AMS" : oContainerData["T€AMS"]
@@ -962,10 +1075,10 @@ sap.ui.require([
 		metaPath : "@",
 		result : {}
 	}, {
-		// <template:repeat list="{field>@}" ...>
+		// <template:repeat list="{field>./@}" ...>
 		// Iterate all inline annotations.
 		contextPath : "/T€AMS/$Type/@UI.LineItem/0",
-		metaPath : "@",
+		metaPath : "./@",
 		result : {
 			"@UI.Importance" : oTeamLineItem[0]["@UI.Importance"]
 		}
@@ -987,7 +1100,7 @@ sap.ui.require([
 				fnGetObjectSpy = this.spy(this.oMetaModel, "getObject"),
 				oMetadataClone = JSON.parse(JSON.stringify(mScope)),
 				oObject,
-				sPathDot = oFixture.pathDot || oFixture.metaPath;
+				sPathIntoObject = oFixture.pathIntoObject || oFixture.metaPath;
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
@@ -996,7 +1109,7 @@ sap.ui.require([
 			oObject = this.oMetaModel._getObject(oFixture.metaPath, oContext);
 
 			assert.strictEqual(fnGetObjectSpy.callCount, 1);
-			assert.ok(fnGetObjectSpy.alwaysCalledWithExactly(sPathDot, oContext),
+			assert.ok(fnGetObjectSpy.alwaysCalledWithExactly(sPathIntoObject, oContext),
 				fnGetObjectSpy.printf("%C"));
 			if (oFixture.strict) {
 				assert.strictEqual(oObject, oFixture.result);
@@ -1008,7 +1121,6 @@ sap.ui.require([
 	});
 	//TODO iterate mix of inline and external targeting annotations
 	//TODO iterate annotations like "foo@..." for our special cases, e.g. annotations of annotation
-	//TODO avoid additional "." in case metaPath already contains one? hard to check...
 	//TODO Avoid copies of objects? Makes sense only after we get rid of JSONListBinding which
 	// makes copies itself. If we get rid of it, we might become smarter in updateIndices and
 	// learn from the path which collection to iterate: sPath = "", "$", or "@", oContext holds
