@@ -26,11 +26,13 @@ sap.ui.define([
 		 * A block is the main element that will be displayed, mainly in an object page, but not necessarily
 		 * only there.
 		 *
-		 * A block is a control that use a view for storing its internal control tree.
+		 * A block is a control that use a XML view for storing its internal control tree.
 		 * A block is a control that has modes and a view associated to each modes.
 		 * At rendering time, the view associated to the mode is rendered.
 		 *
-		 * As any UI5 views, the view can have a controller which automatically comes a this.oParentBlock attribute (so that the controller can interacts with the block).
+		 * <b>Note:</b> The control supports only XML views.
+		 *
+		 * As any UI5 views, the XML view can have a controller which automatically comes a this.oParentBlock attribute (so that the controller can interacts with the block).
 		 * If the controller implements the onParentBlockModeChange method, this method will get called with the sMode parameter when the view is used or re-used by the block.
 		 *
 		 * @extends sap.ui.core.Control
