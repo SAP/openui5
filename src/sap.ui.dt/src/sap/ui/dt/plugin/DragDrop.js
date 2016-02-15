@@ -262,7 +262,7 @@ function(Plugin, DOMUtil, OverlayUtil, ElementUtil) {
 			this._$ghost = this.createGhost(oOverlay, oEvent);
 
 			// ghost should be visible to set it as dragImage
-			this._$ghost.appendTo("body");
+			this._$ghost.appendTo("#overlay-container");
 			// if ghost will be removed without timeout, setDragImage won't work
 			setTimeout(function() {
 				that._removeGhost();

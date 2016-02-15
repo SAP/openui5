@@ -160,7 +160,8 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 		this._oDefaultDesignTimeMetadata = null;
 		this.placeAt(Overlay.getOverlayContainer());
-		Overlay.getMutationObserver().attachDomChanged(this._onDomChanged, this);
+		this._oMutationObserver = Overlay.getMutationObserver();
+		this._oMutationObserver.attachDomChanged(this._onDomChanged, this);
 
 		// this is needed to prevent UI5 renderManager from removing overlay's node from DOM in a rendering phase
 		// see RenderManager.js "this._fPutIntoDom" function
@@ -175,7 +176,10 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @protected
 	 */
 	ElementOverlay.prototype.exit = function() {
-		Overlay.getMutationObserver().detachDomChanged(this._onDomChanged, this);
+		if (this._oMutationObserver) {
+			this._oMutationObserver.detachDomChanged(this._onDomChanged, this);
+			delete this._oMutationObserver;
+		}
 
 		Overlay.prototype.exit.apply(this, arguments);
 
@@ -519,9 +523,9 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @private
 	 */
 	ElementOverlay.prototype._onDomChanged = function(oEvent) {
-		var sId = oEvent.getParameters().elementId;
+		var aIds = oEvent.getParameters().elementIds || [];
 		var oElement = this.getElementInstance();
-		if (oElement && sId === oElement.getId()) {
+		if (aIds.indexOf(oElement.getId()) !== -1) {
 			// if element's DOM turns visible (via DOM mutations, classes and so on)
 			if (this._mGeometry && !this._mGeometry.visible) {
 				delete this._mGeometry;
@@ -539,6 +543,10 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @private
 	 */
 	ElementOverlay.prototype._onElementAfterRendering = function() {
+		// initial rendering of a UI5 element is not catched with a mutation observer
+		if (!this.getDomRef()) {
+			this.invalidate();
+		}
 		// we should sync aggregations onAfterRendering, because elements (or aggregations) might be created invisible
 		this.sync();
 	};
