@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		 * @private
 		 */
 		TabStripSelect.prototype.setValue = function(sValue) {
-			var $ModifiedDom = this.$().find(".sapMTabSelectListItemModified").eq(0);
+			var $ModifiedDom = this.$().find(".sapMTabStripSelectListItemModified").eq(0);
 			Select.prototype.setValue.apply(this, arguments);
 			if (this.getSelectedItem().getProperty('modified')) {
 				$ModifiedDom.removeClass(TabStripItem.CSS_CLASS_STATEINVISIBLE);
