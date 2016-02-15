@@ -164,6 +164,20 @@
 			oRadioButton2.destroy();
 		});
 
+		QUnit.test("setSelected after rendering with null value passed", function(assert) {
+			var oRadioButton = new sap.m.RadioButton();
+
+			oRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oRadioButton.setSelected(null);
+
+			assert.strictEqual(oRadioButton.getSelected(), false, "RadioButton should not be selected");
+			assert.strictEqual(oRadioButton.$().hasClass("sapMRbSel"), false, "RadioButton should not have Selected class");
+
+			oRadioButton.destroy();
+		});
+
 		test("Triggering tap should check RadioButton and uncheck all other RadioButtons from the same group", function () {
 			expect(5);
 
