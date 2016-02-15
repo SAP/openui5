@@ -448,7 +448,7 @@
 
 	test("Background is transparent", function() {
 
-		var transparentCssString = sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer ? "transparent" : "rgba(0, 0, 0, 0)";
+		var transparentCssString = sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge ? "transparent" : "rgba(0, 0, 0, 0)";
 
 		equal(jQuery("#ohc1.sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
 		equal(jQuery.sap.byId("ohc1").css("background-color"), transparentCssString, "Background color is transparent");
