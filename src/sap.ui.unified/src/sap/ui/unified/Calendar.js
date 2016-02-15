@@ -644,6 +644,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	Calendar.prototype.setMinDate = function(oDate){
 
+		if (jQuery.sap.equal(oDate, this.getMinDate())) {
+			return this;
+		}
+
 		if (!oDate) {
 			// restore default
 			this._oMinDate.getJSDate().setUTCFullYear(1);
@@ -681,6 +685,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	Calendar.prototype.setMaxDate = function(oDate){
+
+		if (jQuery.sap.equal(oDate, this.getMaxDate())) {
+			return this;
+		}
 
 		if (!oDate) {
 			// restore default

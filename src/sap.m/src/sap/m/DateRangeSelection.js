@@ -193,6 +193,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 			if (sValue) {
 				aDates = this._parseValue(sValue);
+				this._oWantedDate = aDates[0];
+				this._oWantedSecondDate = aDates[1];
 				aDates = _dateRangeValidityCheck.call(this, aDates[0], aDates[1]);
 				if (!aDates[0]) {
 					this._bValid = false;
@@ -202,6 +204,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			if (this._bValid) {
 				this.setProperty("dateValue", aDates[0], true);
 				this.setProperty("secondDateValue", aDates[1], true);
+				this._oWantedDate = undefined;
+				this._oWantedSecondDate = undefined;
 			}
 
 			// Do not call InputBase.setValue because the displayed value and the output value might have different pattern
@@ -332,10 +336,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			if (oDateValue && (oDateValue.getTime() < this._oMinDate.getTime() || oDateValue.getTime() > this._oMaxDate.getTime())) {
 				this._bValid = false;
 				jQuery.sap.assert(this._bValid, "Date must be in valid range");
+				this._oWantedDate = oDateValue;
 				oDateValue = undefined; // don't use wrong date to determine sValue
 			}else {
 				this._bValid = true;
 				this.setProperty("dateValue", oDateValue, true); // no rerendering
+				this._oWantedDate = undefined;
 			}
 
 			var oSecondDateValue = this.getSecondDateValue();
@@ -376,10 +382,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			if (oSecondDateValue && (oSecondDateValue.getTime() < this._oMinDate.getTime() || oSecondDateValue.getTime() > this._oMaxDate.getTime())) {
 				this._bValid = false;
 				jQuery.sap.assert(this._bValid, "Date must be in valid range");
+				this._oWantedSecondDate = oSecondDateValue;
 				oSecondDateValue = undefined; // don't use wrong date to determine sValue
 			}else {
 				this._bValid = true;
 				this.setProperty("secondDateValue", oSecondDateValue, true); // no rerendering
+				this._oWantedSecondDate = undefined;
 			}
 
 			var oDateValue = this.getDateValue();
@@ -404,6 +412,50 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			}
 
 			return this;
+
+		};
+
+		DateRangeSelection.prototype.setMinDate = function(oDate) {
+
+			DatePicker.prototype.setMinDate.apply(this, arguments);
+
+			if (oDate) {
+				var oSecondDateValue = this.getSecondDateValue();
+				if (oSecondDateValue && oSecondDateValue.getTime() < this._oMinDate.getTime()) {
+					jQuery.sap.log.warning("SecondDateValue not in valid date -> changed to minDate", this);
+					this.setSecondDateValue(new Date(this._oMinDate));
+				}
+			}
+
+			return this;
+
+		};
+
+		DateRangeSelection.prototype.setMaxDate = function(oDate) {
+
+			DatePicker.prototype.setMaxDate.apply(this, arguments);
+
+			if (oDate) {
+				var oSecondDateValue = this.getSecondDateValue();
+				if (oSecondDateValue && oSecondDateValue.getTime() > this._oMaxDate.getTime()) {
+					jQuery.sap.log.warning("SecondDateValue not in valid date -> changed to maxDate", this);
+					this.setSecondDateValue(new Date(this._oMaxDate));
+				}
+			}
+
+			return this;
+
+		};
+
+		DateRangeSelection.prototype._checkMinMaxDate = function() {
+
+			DatePicker.prototype._checkMinMaxDate.apply(this, arguments);
+
+			// check if wanted date now in range
+			if (this._oWantedSecondDate && this._oWantedSecondDate.getTime() >= this._oMinDate.getTime() && this._oWantedSecondDate.getTime() <= this._oMaxDate.getTime()) {
+				this.setSecondDateValue(this._oWantedSecondDate);
+			}
+
 		};
 
 		//Support of two date range version added into original DatePicker's version
@@ -491,6 +543,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 			var sValue = this._$input.val();
 			var aDates = [undefined, undefined];
+			this._oWantedDate = undefined;
+			this._oWantedSecondDate = undefined;
 			this._bValid = true;
 			if (sValue != "") {
 				aDates = this._parseValue(sValue);
