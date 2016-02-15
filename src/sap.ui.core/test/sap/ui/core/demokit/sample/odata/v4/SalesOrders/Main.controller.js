@@ -73,12 +73,15 @@ sap.ui.define([
 				}, onRejected);
 			}
 
-			oModel.read(oSalesOrderContext.getPath() + "/SalesOrderID").then(function (oValue) {
-				sOrderID = oValue.value;
-				MessageBox.confirm("Do you really want to delete? " + sOrderID, onConfirm,
-					"Sales Order Deletion");
+			//TODO make context public and allow access to index and value
+			//   oEvent.getSource().getBindingContext().getIndex() / .requestValue("SalesOrderID")
+			this.getView().byId("SalesOrders").getItems().forEach(function (oItem) {
+				if (oItem.getBindingContext() === oEvent.getSource().getBindingContext()) {
+					sOrderID = oItem.getCells()[0].getText();
+					MessageBox.confirm("Do you really want to delete? " + sOrderID, onConfirm,
+						"Sales Order Deletion");
 				}
-			);
+			});
 		},
 
 		onRefreshAll : function () {

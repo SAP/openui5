@@ -3,7 +3,7 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Cache
-sap.ui.define(["./_Helper"], function (Helper) {
+sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	"use strict";
 
 	var Cache;
@@ -36,6 +36,33 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			}
 			fnResultHandler(sKey, vValue);
 		});
+	}
+
+	/**
+	 * Drills down into the given object according to <code>sPath</code>.
+	 *
+	 * @param {object} oResult
+	 *   Some object
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into
+	 * @param {function} fnLog
+	 *   A function logging a warning which takes the invalid segment as parameter
+	 * @returns {object}
+	 *   The child object according to <code>sPath</code>
+	 */
+	function drillDown(oResult, sPath, fnLog) {
+		if (sPath) {
+			sPath.split("/").every(function (sSegment) {
+				if (!oResult || typeof oResult !== "object") {
+					fnLog(sSegment);
+					oResult = undefined;
+					return false;
+				}
+				oResult = oResult[sSegment];
+				return true;
+			});
+		}
+		return oResult;
 	}
 
 	/**
@@ -135,20 +162,24 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   The start index of the range; the first row has index 0
 	 * @param {int} iLength
 	 *   The length of the range
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into; <code>undefined</code> does not change the returned
+	 *   OData response object, but <code>""</code> already drills down into the element at
+	 *   <code>iIndex</code> (and requires <code>iLength === 1</code>)
 	 * @param {function} [fnDataRequested]
 	 *   The function is called directly after all back end requests have been triggered.
 	 *   If no back end request is needed, the function is not called.
 	 * @returns {Promise}
 	 *   A Promise to be resolved with the requested range given as an OData response object (with
-	 *   "@odata.context" and the rows as an array in the property <code>value</code>). If an HTTP
-	 *   request fails, the error from the _Requestor is returned and the requested range is reset
-	 *   to undefined.
+	 *   "@odata.context" and the rows as an array in the property <code>value</code>) or a single
+	 *   value (in case of drill-down). If an HTTP request fails, the error from the _Requestor is
+	 *   returned and the requested range is reset to undefined.
 	 *   A refresh cancels processing of all pending promises by throwing an error that has a
 	 *   property <code>canceled</code> which is set to <code>true</code>.
 	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	CollectionCache.prototype.read = function (iIndex, iLength, fnDataRequested) {
+	CollectionCache.prototype.read = function (iIndex, iLength, sPath, fnDataRequested) {
 		var i,
 			iEnd = iIndex + iLength,
 			iGapStart = -1,
@@ -160,6 +191,8 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		}
 		if (iLength < 0) {
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
+		} else if (iLength !== 1 && sPath != undefined) {
+			throw new Error("Cannot drill-down for length " + iLength);
 		}
 
 		if (this.iMaxElements >= 0 && iEnd > this.iMaxElements) {
@@ -187,6 +220,17 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		}
 
 		return Promise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
+			var oResult;
+
+			if (sPath != undefined) {
+				oResult = that.aElements[iIndex];
+				return drillDown(oResult, sPath, function (sSegment) {
+					jQuery.sap.log.warning("Failed to drill-down into " + that.sResourcePath
+						+ "$skip=" + iIndex + "&$top=1 via " + sPath
+						+ ", invalid segment: " + sSegment,
+						null, "sap.ui.model.odata.v4.lib._Cache");
+				});
+			}
 			return {
 				"@odata.context" : that.sContext,
 				value : that.aElements.slice(iIndex, iEnd)
@@ -221,22 +265,28 @@ sap.ui.define(["./_Helper"], function (Helper) {
 	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
+	 * @param {boolean} [bSingleProperty]
+	 *   Whether the cache is used to read a single property, not a single entity; automatic
+	 *   unwrapping of <code>{value : "..."}</code> happens then
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions) {
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty) {
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
+		this.bSingleProperty = bSingleProperty;
 		this.oPromise = null;
 	}
 
 	/**
 	 * Returns a promise resolved with an OData object for the requested data.
 	 *
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into
 	 * @returns {Promise}
 	 *   A Promise to be resolved with the element.
 	 *   A refresh cancels processing a pending promise by throwing an error that has a
 	 *   property <code>canceled</code> which is set to <code>true</code>.
 	 */
-	SingleCache.prototype.read = function () {
+	SingleCache.prototype.read = function (sPath) {
 		var that = this,
 			oError,
 			oPromise,
@@ -249,9 +299,22 @@ sap.ui.define(["./_Helper"], function (Helper) {
 					oError.canceled = true;
 					throw oError;
 				}
+				if (that.bSingleProperty) {
+					// 204 No Content: map undefined to null
+					oResult = oResult ? oResult.value : null;
+				}
 				return oResult;
 			});
 			this.oPromise = oPromise;
+		}
+		if (sPath) {
+			return this.oPromise.then(function (oResult) {
+				return drillDown(oResult, sPath, function (sSegment) {
+					jQuery.sap.log.warning("Failed to drill-down into " + sResourcePath + "/"
+						+ sPath + ", invalid segment: " + sSegment,
+						null, "sap.ui.model.odata.v4.lib._Cache");
+				});
+			});
 		}
 		return this.oPromise;
 	};
@@ -408,11 +471,15 @@ sap.ui.define(["./_Helper"], function (Helper) {
 		 *   Examples:
 		 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 		 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+		 * @param {boolean} [bSingleProperty]
+		 *   Whether the cache is used to read a single property, not a single entity; automatic
+		 *   unwrapping of <code>{value : "..."}</code> happens then
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */
-		createSingle : function _createSingle(oRequestor, sResourcePath, mQueryOptions) {
-			return new SingleCache(oRequestor, sResourcePath, mQueryOptions);
+		createSingle : function _createSingle(oRequestor, sResourcePath, mQueryOptions,
+			bSingleProperty) {
+			return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSingleProperty);
 		}
 	};
 

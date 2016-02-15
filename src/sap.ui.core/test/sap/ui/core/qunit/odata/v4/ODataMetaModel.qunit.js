@@ -355,12 +355,6 @@ sap.ui.require([
 	}, {
 		dataPath : "/Foo(key='value')(key='value')/bar",
 		metaPath : "/Foo/bar"
-	}, { // segment parameter names do not matter
-		dataPath : "/Foo[0];foo=42",
-		metaPath : "/Foo"
-	}, {
-		dataPath : "/Foo[0];bar=42/bar",
-		metaPath : "/Foo/bar"
 	}, { // any segment with digits only
 		dataPath : "/Foo/" + Date.now(),
 		metaPath : "/Foo"
@@ -735,7 +729,7 @@ sap.ui.require([
 			}
 
 			QUnit.test("fetchUI5Type: " + JSON.stringify(oProperty), function (assert) {
-				var sPath = "/EMPLOYEES[0];list=1/ENTRYDATE",
+				var sPath = "/EMPLOYEES/0/ENTRYDATE",
 					oType;
 
 				this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
@@ -753,7 +747,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: caching", function (assert) {
-		var sPath = "/EMPLOYEES[0];list=1/ENTRYDATE",
+		var sPath = "/EMPLOYEES/0/ENTRYDATE",
 			oProperty = {$Type : "Edm.String"},
 			oType;
 
@@ -772,7 +766,7 @@ sap.ui.require([
 	//TODO make these types work with odata v4
 	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
-			var sPath = "/EMPLOYEES[0];list=1/foo",
+			var sPath = "/EMPLOYEES/0/foo",
 				oSyncPromise;
 
 			this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
@@ -793,26 +787,26 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		dataPath : "/T€AMS[0];bar=42",
+		dataPath : "/T€AMS/0",
 		canonicalUrl : "/~/T%E2%82%ACAMS(...)",
 		entityType : "tea_busi.TEAM"
 	}, {
-		dataPath : "/T€AMS[0];bar=42/TEAM_2_EMPLOYEES/1",
+		dataPath : "/T€AMS/0/TEAM_2_EMPLOYEES/1",
 		canonicalUrl : "/~/EMPLOYEES(...)",
 		entityType : "tea_busi.Worker"
 	}, {
-		dataPath : "/T€AMS[0];bar=42/TEAM_2_EMPLOYEES/1/EMPLOYEE_2_TEAM",
+		dataPath : "/T€AMS/0/TEAM_2_EMPLOYEES/1/EMPLOYEE_2_TEAM",
 		canonicalUrl : "/~/T%E2%82%ACAMS(...)",
 		entityType : "tea_busi.TEAM"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestCanonicalUrl: " + oFixture.dataPath, function (assert) {
-			var oInstance = {};
-
-			function read(sPath, bAllowObjectAccess) {
-				assert.strictEqual(sPath, oFixture.dataPath);
-				assert.strictEqual(bAllowObjectAccess, true);
-				return Promise.resolve(oInstance);
-			}
+			var oInstance = {},
+				oContext = {
+					requestValue : function (sPath) {
+						assert.strictEqual(sPath, "");
+						return Promise.resolve(oInstance);
+					}
+				};
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
@@ -822,7 +816,7 @@ sap.ui.require([
 				return "(...)";
 			});
 
-			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, read)
+			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
 					assert.strictEqual(sCanonicalUrl, oFixture.canonicalUrl);
 				})["catch"](function (oError) {
@@ -837,24 +831,25 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		dataPath : "/T€AMS[0];list=0/Team_Id",
-		message : "Not a navigation property: Team_Id (/T€AMS[0];list=0/Team_Id)"
+		dataPath : "/T€AMS/0/Team_Id",
+		message : "Not a navigation property: Team_Id (/T€AMS/0/Team_Id)"
 	}, {
-		dataPath : "/T€AMS[0];list=0/TEAM_2_EMPLOYEES/0/ID",
-		message : "Not a navigation property: ID (/T€AMS[0];list=0/TEAM_2_EMPLOYEES/0/ID)"
+		dataPath : "/T€AMS/0/TEAM_2_EMPLOYEES/0/ID",
+		message : "Not a navigation property: ID (/T€AMS/0/TEAM_2_EMPLOYEES/0/ID)"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestCanonicalUrl: error for " + oFixture.dataPath, function (assert) {
-			function read(sPath, bAllowObjectAccess) {
-				assert.strictEqual(sPath, oFixture.dataPath);
-				assert.strictEqual(bAllowObjectAccess, true);
-				return Promise.resolve({});
-			}
+			var oContext = {
+					requestValue : function (sPath) {
+						assert.strictEqual(sPath, "");
+						return Promise.resolve({});
+					}
+				};
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 			this.oSandbox.mock(Helper).expects("getKeyPredicate").never();
 
-			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, read)
+			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
 					assert.ok(false, sCanonicalUrl);
 				})["catch"](function (oError) {

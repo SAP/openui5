@@ -34,16 +34,17 @@ sap.ui.require([
 	 *   array length
 	 * @param {number} [iStart=0]
 	 *   start index
+	 * @param {boolean} [bDrillDown]
+	 *   simulate drill-down, i.e. resolve with unwrapped array
 	 * @return {Promise}
 	 *   the promise which is fulfilled as specified
 	 */
-	function createResult(iLength, iStart) {
+	function createResult(iLength, iStart, bDrillDown) {
 		return new Promise(function (resolve, reject) {
-			var oData,
+			var oData = {value : []},
 				i;
 
 			iStart = iStart || 0;
-			oData = {value : []};
 			for (i = 0; i < iLength; i += 1) {
 				oData.value[i] = {
 					Name : "Name " + (iStart + i),
@@ -53,7 +54,7 @@ sap.ui.require([
 					NullValue : null
 				};
 			}
-			resolve(oData);
+			resolve(bDrillDown ? oData.value : oData);
 		});
 	}
 
@@ -115,8 +116,6 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES");
-		assert.strictEqual(oBinding.iIndex, 0, "list binding unique index");
-		assert.strictEqual(this.oModel.aRoots[0], oBinding, "model stores list bindings");
 		assert.deepEqual(oBinding.aContexts, []);
 		assert.strictEqual(oBinding.iMaxLength, Infinity);
 		assert.strictEqual(oBinding.isLengthFinal(), false);
@@ -143,6 +142,15 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["", "/", "foo/"].forEach(function (sPath) {
+		QUnit.test("bindList: invalid path: " + sPath, function (assert) {
+			assert.throws(function () {
+				this.oModel.bindList(sPath);
+			}, new Error("Invalid path: " + sPath));
+		});
+	});
+
+	//*********************************************************************************************
 	// fixture with range for aggregation binding info (default {}) and
 	//              number of entities (default is length requested to read)
 	[
@@ -154,7 +162,7 @@ sap.ui.require([
 			+ JSON.stringify(oFixture),
 		function (assert) {
 			var oCacheMock = this.getCacheMock(),
-				oControl = new TestControl(),
+				oControl = new TestControl({models : this.oModel}),
 				done = assert.async(),
 				oRange = oFixture.range || {},
 				iLength = oRange.length || this.oModel.iSizeLimit,
@@ -172,12 +180,11 @@ sap.ui.require([
 			function onChange() {
 				var aChildControls = oControl.getItems(),
 					sExpectedPath,
-					iListIndex = oControl.getBinding("items").iIndex,
 					i;
 
 				assert.strictEqual(aChildControls.length, iEntityCount, "# child controls");
 				for (i = 0; i < iEntityCount; i += 1) {
-					sExpectedPath = "/EMPLOYEES[" + (i + iStartIndex) + "];root=" + iListIndex;
+					sExpectedPath = "/EMPLOYEES/" + (i + iStartIndex);
 					assert.strictEqual(aChildControls[i].getBindingContext().getPath(),
 						sExpectedPath, "child control binding path: " + sExpectedPath);
 				}
@@ -201,7 +208,6 @@ sap.ui.require([
 			this.spy(ODataListBinding.prototype, "getContexts");
 
 			// code under test
-			oControl.setModel(this.oModel);
 			oControl.bindAggregation("items", jQuery.extend({
 				path : "/EMPLOYEES",
 				template : new TestControl()
@@ -220,51 +226,57 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("nested listbinding", function (assert) {
-		var oControl = new TestControl(),
+		var oBinding,
+			oControl = new TestControl({models : this.oModel}),
 			done = assert.async(),
-			oContext = new Context(this.oModel, "/TEAMS[0];root=0"),
 			sPath = "TEAM_2_EMPLOYEES",
-			oRange = {startIndex : 1, length : 3};
+			oRange = {startIndex : 1, length : 3},
+			that = this;
 
 		// change event handler for initial read for list binding
 		function onChange() {
 			var aChildControls = oControl.getItems(),
-			sExpectedPath,
-			i;
+				aOriginalContexts = oBinding.aContexts,
+				i;
 
 			assert.strictEqual(aChildControls.length, 3, "# child controls");
 			for (i = 0; i < 3; i += 1) {
-				sExpectedPath = oContext.getPath() + "/" + sPath + "/" + (i + oRange.startIndex);
 				assert.strictEqual(aChildControls[i].getBindingContext().getPath(),
-					sExpectedPath, "child control binding path: " + sExpectedPath);
+					"/TEAMS('4711')/" + sPath + "/" + (i + oRange.startIndex));
 			}
 
 			// code under test
-			oControl.getBinding("items").setContext();
-			assert.strictEqual(oControl.getBinding("items").aContexts.length, 0, "reset context");
+			oBinding.setContext(oBinding.getContext());
+			assert.strictEqual(oBinding.aContexts, aOriginalContexts);
+
+			// code under test
+			oBinding.setContext();
+			assert.strictEqual(oBinding.aContexts.length, 0, "reset context");
 			done();
 		}
 
-		oControl.setModel(this.oModel);
+		oControl.bindObject("/TEAMS('4711')"); // Note: fires change event async!
+		oControl.getObjectBinding().attachEventOnce("change", function () {
+			that.oSandbox.mock(oControl.getObjectBinding()).expects("requestValue")
+				.withExactArgs(sPath, undefined)
+				.returns(createResult(oRange.length, 0, true));
 
-		this.oSandbox.mock(this.oModel).expects("read")
-			.withExactArgs(oContext.getPath() + "/" + sPath, true)
-			.returns(createResult(oRange.length));
+			// code under test
+			// Note: if we do this before the context binding's change event, the list binding
+			// will fire another change event before it has retrieved its data
+			oControl.bindAggregation("items", jQuery.extend({
+					path : sPath,
+					template : new TestControl()
+				}, oRange));
 
-		// code under test
-		oControl.setBindingContext(oContext);
-
-		oControl.bindAggregation("items", jQuery.extend({
-				path : sPath,
-				template : new TestControl()
-			}, oRange));
-
-		oControl.getBinding("items").attachEventOnce("change", onChange);
+			oBinding = oControl.getBinding("items");
+			oBinding.attachEventOnce("change", onChange);
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("nested listbinding (context not yet set)", function (assert) {
-		var oControl = new TestControl(),
+		var oControl = new TestControl({models : this.oModel}),
 			oRange = {startIndex : 1, length : 3},
 			done = assert.async();
 
@@ -272,10 +284,6 @@ sap.ui.require([
 		function onChange() {
 			assert.ok(false, "unexpected event called");
 		}
-
-		oControl.setModel(this.oModel);
-
-		this.oSandbox.mock(this.oModel).expects("read").never();
 
 		// code under test
 		oControl.bindAggregation("items", jQuery.extend({
@@ -307,19 +315,21 @@ sap.ui.require([
 		var done = assert.async(),
 			oCacheMock = this.getCacheMock(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oListBindingMock = this.oSandbox.mock(oListBinding),
 			iSizeLimit = this.oModel.iSizeLimit,
-			iRangeIndex = 0;
-
-		// fixture with array of ranges for getContexts calls with
-		//   start, length - determine the range
-		//   sync - array with flags which indexes are to return a context synchronously to
-		//     simulate previous calls to getContexts
-		var oFixture  = [
-			{sync : []},
-			{start : iSizeLimit, length : 1, sync : []}, // completely new contexts
-			{start : iSizeLimit, length : 2, sync : [true]}, // partially new contexts
-			{start : iSizeLimit, length : 2, sync : [true, true]}
+			iRangeIndex = 0,
+			// fixture with array of ranges for getContexts calls with
+			//   start, length - determine the range
+			//   sync - array with flags which indexes are to return a context synchronously to
+			//     simulate previous calls to getContexts
+			oFixture  = [
+				{sync : []},
+				// completely new contexts
+				{start : iSizeLimit, length : 1, sync : []},
+				// partially new contexts
+				{start : iSizeLimit, length : 2, sync : [true]},
 				// completely existing contexts
+				{start : iSizeLimit, length : 2, sync : [true, true]}
 			];
 
 		// call getContexts for current range; considers previously accessed indexes
@@ -328,8 +338,9 @@ sap.ui.require([
 			var aContexts,
 				i,
 				iLength = oFixture[iRangeIndex].length || iSizeLimit,
+				sMessage,
 				iStart = oFixture[iRangeIndex].start || 0,
-				sMessage;
+				oPromise;
 
 			if (bSync && iRangeIndex < oFixture.length - 1) {
 				oCacheMock.expects("read").withArgs(iStart, iLength).returns(createResult(iLength));
@@ -340,14 +351,21 @@ sap.ui.require([
 
 			for (i = 0; i < iLength; i += 1) {
 				sMessage = (bSync ? "Synchronous" : "Asynchronous") + " result"
-					+ "/EMPLOYEES[" + (iStart + i) + "], getContexts("
+					+ "/EMPLOYEES/" + (iStart + i) + ", getContexts("
 					+ iStart + "," + iLength + ")";
 				if (bSync && !oFixture[iRangeIndex].sync[i]) {
 					assert.strictEqual(aContexts[i], undefined, sMessage);
 				} else {
 					assert.strictEqual(aContexts[i].getPath(),
-						"/EMPLOYEES[" + (iStart + i)  + "];root=" + oListBinding.iIndex,
+						"/EMPLOYEES/" + (iStart + i),
 						sMessage);
+					//check delegation of requestValue from context
+					oPromise = {}; // a fresh new object each turn around
+					oListBindingMock.expects("requestValue")
+						.withExactArgs("foo/bar/" + i, iStart + i)
+						.returns(oPromise);
+
+					assert.strictEqual(aContexts[i].requestValue("foo/bar/" + i), oPromise);
 				}
 			}
 		}
@@ -368,138 +386,50 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts sends no change event on failure of Cache#read and logs error",
-			function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			oError = new Error("Intentionally failed"),
-			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oPromise = Promise.reject(oError);
+	[false, true].forEach(function (bRelative) {
+		QUnit.test("getContexts sends no change event on failure of Cache#read and logs error, "
+				+ "path is relative: " + bRelative, function (assert) {
+			var oCacheMock,
+				oContext = {
+					getPath : function () { return "/EMPLOYEES(1)"; },
+					requestValue : function () {}
+				},
+				oContextMock,
+				oError = new Error("Intentionally failed"),
+				oListBinding,
+				oPromise = Promise.reject(oError),
+				sResolvedPath = bRelative
+					? "/service/EMPLOYEES(1)/TEAM_2_EMPLOYEES"
+					: "/service/EMPLOYEES";
 
-		oCacheMock.expects("read").once().returns(createResult(2));
-		oCacheMock.expects("read").once().returns(oPromise);
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 1 and "
-					+ "length 2",
-				oError, "sap.ui.model.odata.v4.ODataListBinding");
-
-		oListBinding.attachChange(function () {
-			var aContexts = oListBinding.getContexts(1, 2); // failing read
-			assert.strictEqual(aContexts.length, 1, "contexts from first read still exist");
-		});
-		oListBinding.getContexts(0, 2); // successful read
-
-		return oPromise["catch"](function () {
-			assert.ok(true);
-		});
-		//TODO implement faultTolerant setting on list binding which keeps existing contexts?
-	});
-
-	//*********************************************************************************************
-	//TODO QUnit.test!
-	QUnit.skip("getContexts handles error in change event handler", function (assert) {
-		var done = assert.async(),
-			oError = new SyntaxError("Intentionally failed"),
-			oListBinding = this.oModel.bindList("/EMPLOYEES");
-
-		this.getCacheMock().expects("read").once().returns(createResult(1));
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
-					+ "length 1",
-				oError, "sap.ui.model.odata.v4.ODataListBinding");
-		oListBinding.attachChange(function () {
-			throw oError;
-		});
-
-		oListBinding.getContexts(0, 1);
-
-		setTimeout(done, 10); //TODO Is there a better way to finalize the test after console log?
-	});
-
-	//*********************************************************************************************
-	QUnit.test("readValue accesses path with one segment on cached record", function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			iIndex = Math.floor(Math.random() * 10), // some index
-			oListBinding = this.oModel.bindList("/EMPLOYEES");
-
-		oCacheMock.expects("read").withArgs(0, 10).returns(createResult(10));
-		oCacheMock.expects("read")
-			.withExactArgs(iIndex, 1)
-			.exactly(4)
-			.returns(createResult(1, iIndex));
-		this.oLogMock.expects("warning")
-			.withExactArgs("Invalid segment Bar",
-				"path: Foo1/Bar" , "sap.ui.model.odata.v4.ODataListBinding");
-		oListBinding.getContexts(0, 10); // creates cache
-
-		return Promise.all([
-			oListBinding.readValue("LOCATION/COUNTRY", false, iIndex).then(function (oValue) {
-				assert.strictEqual(oValue, "COUNTRY " + iIndex, "LOCATION/COUNTRY");
-			}),
-			oListBinding.readValue("Foo", false, iIndex).then(function (oValue) {
-				assert.strictEqual(oValue, undefined, "Foo");
-			}),
-			oListBinding.readValue("Foo1/Bar", false, iIndex).then(function (oValue) {
-				assert.strictEqual(oValue, undefined, "Foo1/Bar");
-			}),
-			oListBinding.readValue("NullValue", false, iIndex).then(function (oValue) {
-				assert.strictEqual(oValue, null, "NullValue");
-			})
-		]);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("readValue rejects when accessing cached record", function (assert) {
-		//TODO the test's title is misleading, this is not "readValue() should reject when..."
-		// but it's about how readValue() behaves if read() fails
-		var oCacheMock = this.getCacheMock(),
-			oError = new Error(),
-			oListBinding = this.oModel.bindList("/EMPLOYEES");
-
-		//TODO it is hard to understand why we succeed for (0, 10) 1st and then fail for (0, 1)
-		oCacheMock.expects("read").withArgs(0, 10).returns(createResult(10));
-		oCacheMock.expects("read")
-			.withExactArgs(0, 1)
-			.returns(Promise.reject(oError));
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to read value with index 0 for /service/EMPLOYEES and "
-				+ "path foo/bar",
-				oError, "sap.ui.model.odata.v4.ODataListBinding");
-		oListBinding.getContexts(0, 10); // creates cache
-
-		return oListBinding.readValue("foo/bar", false, 0).then(
-			function () { assert.ok(false, "Unexpected success"); },
-			function (oError0) { assert.strictEqual(oError0, oError); }
-		);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("readValue rejects when accessing non-primitive value", function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			sMessage = "Accessed value is not primitive",
-			oListBinding = this.oModel.bindList("/EMPLOYEES");
-
-		oCacheMock.expects("read").withArgs(0, 10).returns(createResult(10));
-		oCacheMock.expects("read")
-			.withExactArgs(0, 1)
-			.returns(createResult(1));
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to read value with index 0 for /service/EMPLOYEES and "
-					+ "path LOCATION",
-				// custom matcher because mobile Safari adds line and column properties to Error
-				sinon.match(function (oError) {
-					return oError instanceof Error && oError.message === sMessage;
-				}),
-				"sap.ui.model.odata.v4.ODataListBinding");
-		oListBinding.getContexts(0, 10); // creates cache
-
-		return oListBinding.readValue("LOCATION", false, 0).then(
-			function () {
-				assert.ok(false, "Unexpected success");
-			},
-			function (oError0) {
-				assert.strictEqual(oError0.message, sMessage);
+			if (bRelative) {
+				oContextMock = this.oSandbox.mock(oContext);
+				oContextMock.expects("requestValue").once().returns(createResult(2));
+				oContextMock.expects("requestValue").once().returns(oPromise);
+			} else {
+				oCacheMock = this.getCacheMock();
+				oCacheMock.expects("read").once().returns(createResult(2));
+				oCacheMock.expects("read").once().returns(oPromise);
 			}
-		);
+			this.oLogMock.expects("error")
+				.withExactArgs("Failed to get contexts for " + sResolvedPath + " with start index 1"
+					+ " and length 2", oError, "sap.ui.model.odata.v4.ODataListBinding");
+
+			oListBinding = this.oModel.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
+					oContext);
+			oListBinding.attachChange(function () {
+				// code under test
+				var aContexts = oListBinding.getContexts(1, 2); // failing read
+
+				assert.strictEqual(aContexts.length, 1, "contexts from first read still exist");
+			});
+			oListBinding.getContexts(0, 2); // successful read
+
+			return oPromise["catch"](function () {
+				assert.ok(true);
+			});
+			//TODO implement faultTolerant setting on list binding which keeps existing contexts?
+		});
 	});
 
 	//*********************************************************************************************
@@ -511,12 +441,17 @@ sap.ui.require([
 		{start : 20, result : 30, isFinal : false, length : 60, text : "maybe more data"}
 	].forEach(function (oFixture) {
 		QUnit.test("paging: " + oFixture.text, function (assert) {
-			var oListBinding,
+			var oContext = {
+					requestValue : function () {
+						assert.ok(false, "context must be ignored for absolute bindings");
+					}
+				},
+				oListBinding,
 				done = assert.async();
 
 			this.getCacheMock().expects("read").withArgs(oFixture.start, 30)
 				.returns(createResult(oFixture.result));
-			oListBinding = this.oModel.bindList("/EMPLOYEES");
+			oListBinding = this.oModel.bindList("/EMPLOYEES", oContext);
 			assert.strictEqual(oListBinding.isLengthFinal(), false, "Length is not yet final");
 			assert.strictEqual(oListBinding.getLength(), 10, "Initial estimated length is 10");
 
@@ -564,7 +499,7 @@ sap.ui.require([
 						oFixture.length - (oFixture.isFinal ? 0 : 10), "Context array length");
 					for (i = oFixture.start, n = oFixture.start + oFixture.result; i < n; i++) {
 						assert.strictEqual(oListBinding.aContexts[i].sPath,
-							"/EMPLOYEES[" + i + "];root=0", "check content");
+							"/EMPLOYEES/" + i, "check content");
 					}
 					done();
 				}, 10);
@@ -684,29 +619,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("readValue: bAllowObjectAccess", function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			iIndex = Math.floor(Math.random() * 10), // some index
-			oListBinding = this.oModel.bindList("/EMPLOYEES");
-
-		oCacheMock.expects("read").withArgs(0, 10).returns(createResult(10));
-		oCacheMock.expects("read")
-			.withExactArgs(iIndex, 1)
-			.returns(createResult(1, iIndex));
-		oListBinding.getContexts(0, 10); // creates cache
-
-		return oListBinding.readValue(undefined, true, iIndex).then(function (oValue) {
-				assert.deepEqual(oValue, {
-					Name : "Name " + iIndex,
-					LOCATION : {
-						COUNTRY : "COUNTRY " + iIndex
-					},
-					NullValue : null
-				});
-			});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("refresh", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			done = assert.async(),
@@ -794,7 +706,7 @@ sap.ui.require([
 
 		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
-				read: function (iIndex, iLength, fnDataRequested) {
+				read: function (iIndex, iLength, sPath, fnDataRequested) {
 					fnDataRequested(); // synchronously
 					return createResult(iLength, iIndex);
 				}
@@ -834,7 +746,7 @@ sap.ui.require([
 
 		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
-				read: function (iIndex, iLength, fnDataRequested) {
+				read: function (iIndex, iLength, sPath, fnDataRequested) {
 					fnDataRequested();
 					return Promise.reject(oError);
 				}
@@ -867,7 +779,7 @@ sap.ui.require([
 
 		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
-				read: function (iIndex, iLength, fnDataRequested) {
+				read: function (iIndex, iLength, sPath, fnDataRequested) {
 					iReadCount++;
 					if (iReadCount === 1) {
 						fnDataRequested();
@@ -898,6 +810,43 @@ sap.ui.require([
 		// call it again in parallel
 		oListBinding.getContexts(0, 10);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValue: absolute binding", function (assert) {
+		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oPromise = {};
+
+		this.oSandbox.mock(oListBinding.oCache).expects("read")
+			.withExactArgs(42, 1, "bar")
+			.returns(oPromise);
+
+		assert.strictEqual(oListBinding.requestValue("bar", 42), oPromise);
+	});
+	//TODO support dataRequested/dataReceived event in requestValue:
+	//     common implementation used by requestValue and getContexts?
+
+	//*********************************************************************************************
+	QUnit.test("requestValue: relative binding", function (assert) {
+		var oContext = {
+				requestValue : function () {}
+			},
+			oContextMock = this.oSandbox.mock(oContext),
+			oListBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
+			oPromise = {};
+
+		oContextMock.expects("requestValue")
+			.withExactArgs("TEAM_2_EMPLOYEES/42/bar")
+			.returns(oPromise);
+
+		assert.strictEqual(oListBinding.requestValue("bar", 42), oPromise);
+
+		oContextMock.expects("requestValue")
+			.withExactArgs("TEAM_2_EMPLOYEES/42")
+			.returns(oPromise);
+
+		assert.strictEqual(oListBinding.requestValue("", 42), oPromise);
+	});
+	//TODO provide iStart, iLength parameter to requestValue to support paging on nested list
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
 //The implementation of getContexts needs to provide next to the resulting context array a diff

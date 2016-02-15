@@ -7,9 +7,10 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/_ODataHelper"
-], function (jQuery, ChangeReason, ContextBinding, Cache, Helper) {
+	"./lib/_Cache",
+	"./_Context",
+	"./_ODataHelper"
+], function (jQuery, ChangeReason, ContextBinding, Cache, _Context, Helper) {
 	"use strict";
 
 	/**
@@ -18,13 +19,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The OData v4 model
-	 * @param {String} sPath
-	 *   The binding path in the model
+	 * @param {string} sPath
+	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
-	 * @param {number} iIndex
-	 *   The index of this context binding in the array of root bindings kept by the model, see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext}
 	 * @param {object} [mParameters]
 	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
 	 *   The following query options are allowed:
@@ -36,7 +34,7 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} When disallowed, OData query options are provided
+	 * @throws {Error} When disallowed OData query options are provided
 	 * @class Context binding for an OData v4 model.
 	 *
 	 * @author SAP SE
@@ -46,11 +44,12 @@ sap.ui.define([
 	 * @public
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
-			constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
-				var bAbsolute = sPath[0] === "/",
-					sBindingPath = bAbsolute ? sPath + ";root=" + iIndex : sPath;
+			constructor : function (oModel, sPath, oContext, mParameters) {
+				ContextBinding.call(this, oModel, sPath, oContext);
 
-				ContextBinding.call(this, oModel, sBindingPath, oContext);
+				if (sPath.slice(-1) === "/") {
+					throw new Error("Invalid path: " + sPath);
+				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
 					this.oCache = Cache.createSingle(oModel.oRequestor, sPath.slice(1),
@@ -90,59 +89,11 @@ sap.ui.define([
 			return oPromise;
 		}
 		return oPromise.then(function () {
-			// always fire asynchronously
-			that.oElementContext = that.getModel().getContext(sResolvedPath);
+			//TODO always fire asynchronously - why? "data changes can not change the context"?!
+			//TODO find out if "change" relates to location or content; implement consistently in
+			// context and list binding
+			that.oElementContext = _Context.create(that.getModel(), that, sResolvedPath);
 			that._fireChange({reason : ChangeReason.Change});
-		});
-	};
-
-	/**
-	 * Returns a promise to read the value for the given path in the context binding.
-	 *
-	 * @param {string} sPath
-	 *   The relative path to the property
-	 * @param {boolean} bAllowObjectAccess
-	 *   Whether access to whole objects is allowed
-	 * @return {Promise}
-	 *   The promise which is resolved with the value, e.g. <code>"foo"</code> for simple
-	 *   properties, <code>[...]</code> for collections and <code>{"foo" : "bar", ...}</code> for
-	 *   objects
-	 * @private
-	 */
-	ODataContextBinding.prototype.readValue = function (sPath, bAllowObjectAccess) {
-		var that = this;
-
-		return new Promise(function (fnResolve, fnReject) {
-			function message() {
-				return "Failed to read value for " + that.oCache + " and path " + sPath;
-			}
-
-			function reject(oError) {
-				if (!oError.canceled) {
-					jQuery.sap.log.error(message(), oError,
-						"sap.ui.model.odata.v4.ODataContextBinding");
-				}
-				fnReject(oError);
-			}
-
-			that.oCache.read().then(function (oData) {
-				if (sPath) {
-					sPath.split("/").every(function (sSegment) {
-						if (!oData) {
-							jQuery.sap.log.warning(message() + ": Invalid segment " + sSegment,
-								null, "sap.ui.model.odata.v4.ODataContextBinding");
-							return false;
-						}
-						oData = oData[sSegment];
-						return true;
-					});
-				}
-				if (!bAllowObjectAccess && oData && typeof oData === "object") {
-					reject(new Error("Accessed value is not primitive"));
-					return;
-				}
-				fnResolve(oData);
-			}, reject);
 		});
 	};
 
@@ -169,6 +120,21 @@ sap.ui.define([
 		}
 		this.oCache.refresh();
 		this._fireChange();
+	};
+
+	/**
+	 * Requests the value for the given path; the value is requested from this binding's
+	 * cache or from its context in case it has no cache.
+	 *
+	 * @param {string} [sPath]
+	 *   Some relative path
+	 * @returns {Promise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 */
+	ODataContextBinding.prototype.requestValue = function (sPath) {
+		return this.oCache
+			? this.oCache.read(sPath)
+			: this.getContext().requestValue(this.getPath() + (sPath ? "/" + sPath : ""));
 	};
 
 	/**

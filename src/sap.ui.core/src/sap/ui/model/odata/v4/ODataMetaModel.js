@@ -21,8 +21,8 @@ sap.ui.define([
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
-		// rest of segment after opening ( or [ and segments that consist only of digits
-		rNotMetaContext = /[([][^/]*|\/\d+/g,
+		// rest of segment after opening ( and segments that consist only of digits
+		rNotMetaContext = /\([^/]*|\/\d+/g,
 		mUi5TypeForEdmType = {
 			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
 			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},
@@ -522,7 +522,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   An absolute data path within the OData data model, for example
-	 *   "/EMPLOYEES[0];list=1/ENTRYDATE"
+	 *   "/EMPLOYEES/0/ENTRYDATE"
 	 * @returns {sap.ui.model.Context}
 	 *   The corresponding meta data context within the OData meta data model, for example with
 	 *   meta data path "/EMPLOYEES/ENTRYDATE"
@@ -583,21 +583,21 @@ sap.ui.define([
 	 *   Root URL of the service
 	 * @param {string} sPath
 	 *   An absolute data binding path pointing to an entity, for example
-	 *   "/TEAMS[0];root=0/TEAM_2_EMPLOYEES/0"
-	 * @param {function} fnRead
-	 *   Function like {@link sap.ui.model.odata.v4.ODataModel#read} which provides access to data
+	 *   "/TEAMS/0/TEAM_2_EMPLOYEES/0"
+	 * @param {sap.ui.model.Context} oContext
+	 *   OData v4 context object which provides access to data via <code>requestValue()</code>
 	 * @returns {Promise}
 	 *   A promise which is resolved with the canonical URL (for example
 	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
 	 *   of <code>Error</code> in case of failure
 	 * @private
 	 */
-	ODataMetaModel.prototype.requestCanonicalUrl = function (sServiceUrl, sPath, fnRead) {
+	ODataMetaModel.prototype.requestCanonicalUrl = function (sServiceUrl, sPath, oContext) {
 		var sMetaPath = sPath.replace(rNotMetaContext, ""),
 			aSegments = sMetaPath.slice(1).split("/");
 
 		return Promise.all([
-			fnRead(sPath, true),
+			oContext.requestValue(""),
 			this.fetchEntityContainer()
 		]).then(function (aValues) {
 			var oEntityInstance = aValues[0],

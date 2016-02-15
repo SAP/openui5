@@ -6,10 +6,10 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/PropertyBinding"
-], function (jQuery, ChangeReason, Cache, Helper, PropertyBinding) {
+	"sap/ui/model/PropertyBinding",
+	"./lib/_Cache",
+	"./_ODataHelper"
+], function (jQuery, ChangeReason, PropertyBinding, Cache, Helper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding";
@@ -39,7 +39,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The OData v4 model
 	 * @param {string} sPath
-	 *   The binding path in the model
+	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
@@ -49,7 +49,7 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} When disallowed, OData query options are provided
+	 * @throws {Error} When disallowed OData query options are provided
 	 *
 	 * @class Property binding for an OData v4 model.
 	 *
@@ -62,15 +62,19 @@ sap.ui.define([
 	var ODataPropertyBinding = PropertyBinding.extend(sClassName, {
 			constructor : function (oModel, sPath, oContext, mParameters) {
 				PropertyBinding.call(this, oModel, sPath, oContext);
+
+				if (!sPath || sPath.slice(-1) === "/") {
+					throw new Error("Invalid path: " + sPath);
+				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
 					this.oCache = Cache.createSingle(oModel.oRequestor, sPath.slice(1),
-						Helper.buildQueryOptions(oModel.mUriParameters, mParameters));
+						Helper.buildQueryOptions(oModel.mUriParameters, mParameters), true);
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
 				}
 				this.bRequestTypeFailed = false;
-				this.oValue = undefined;
+				this.vValue = undefined;
 			},
 			metadata : {
 				publicMethods : []
@@ -109,12 +113,12 @@ sap.ui.define([
 
 		if (!sResolvedPath) {
 			oPromise = Promise.resolve();
-			if (that.oValue !== undefined) {
+			if (that.vValue !== undefined) {
 				oPromise = oPromise.then(function () {
 					that._fireChange({reason : ChangeReason.Change});
 				});
 			}
-			that.oValue = undefined; // ensure value is reset
+			that.vValue = undefined; // ensure value is reset
 			return oPromise;
 		}
 		if (!this.bRequestTypeFailed && !this.getType()) { // request type only once
@@ -127,25 +131,25 @@ sap.ui.define([
 				})
 			);
 		}
-		oReadPromise = this.isRelative() ? this.getModel().read(sResolvedPath) : this.oCache.read();
-		aPromises.push(oReadPromise.then(function (oData) {
-			if (oData.value === undefined || typeof oData.value === "object") {
+		oReadPromise = this.isRelative()
+			? this.getContext().requestValue(this.getPath())
+			: this.oCache.read();
+		aPromises.push(oReadPromise.then(function (vValue) {
+			if (vValue && typeof vValue === "object") {
 				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
-				bFire = that.oValue !== undefined;
-				that.oValue = undefined;
-			} else if (!jQuery.sap.equal(that.oValue, oData.value)) {
-				that.oValue = oData.value;
-				bFire = true;
+				vValue = undefined;
 			}
+			bFire = that.vValue !== vValue;
+			that.vValue = vValue;
 		})["catch"](function (oError) {
 			// do not rethrow, ManagedObject doesn't react on this either
 			// throwing an exception would cause "Uncaught (in promise)" in Chrome
 			if (!oError.canceled) {
 				jQuery.sap.log.error("Failed to read path " + sResolvedPath, oError, sClassName);
 				// fire change event only if error was not caused by refresh and value was undefined
-				bFire = that.oValue !== undefined;
+				bFire = that.vValue !== undefined;
 			}
-			that.oValue = undefined;
+			that.vValue = undefined;
 		}));
 
 		return Promise.all(aPromises).then(function () {
@@ -163,7 +167,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataPropertyBinding.prototype.getValue = function () {
-		return this.oValue;
+		return this.vValue;
 	};
 
 	/**
@@ -213,7 +217,7 @@ sap.ui.define([
 	 * Sets the value for this binding. A model implementation should check if the current default
 	 * binding mode permits setting the binding value and if so set the new value also in the model.
 	 *
-	 * @param {any} oValue The value to set for this binding
+	 * @param {any} vValue The value to set for this binding
 	 *
 	 * @public
 	 */

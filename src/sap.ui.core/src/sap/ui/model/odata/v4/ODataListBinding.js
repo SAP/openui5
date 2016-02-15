@@ -4,9 +4,14 @@
 
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/model/Binding", "sap/ui/model/ChangeReason",
-	"sap/ui/model/ListBinding", "./_ODataHelper", "./lib/_Cache"
-], function (jQuery, Binding, ChangeReason, ListBinding, Helper, Cache) {
+	"jquery.sap.global",
+	"sap/ui/model/Binding",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ListBinding",
+	"./_Context",
+	"./_ODataHelper",
+	"./lib/_Cache"
+], function (jQuery, Binding, ChangeReason, ListBinding, _Context, Helper, Cache) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding";
@@ -18,12 +23,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The OData v4 model
 	 * @param {string} sPath
-	 *   The path in the model
+	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
-	 * @param {number} iIndex
-	 *   The index of this list binding in the array of root bindings kept by the model, see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}
 	 * @param {object} [mParameters]
 	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
 	 *   The following query options are allowed:
@@ -35,7 +37,7 @@ sap.ui.define([
 	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} When disallowed, OData query options are provided
+	 * @throws {Error} When disallowed OData query options are provided
 	 * @class List binding for an OData v4 model.
 	 *
 	 * @author SAP SE
@@ -45,8 +47,12 @@ sap.ui.define([
 	 * @public
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
-			constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
+			constructor : function (oModel, sPath, oContext, mParameters) {
 				ListBinding.call(this, oModel, sPath, oContext);
+
+				if (!sPath || sPath.slice(-1) === "/") {
+					throw new Error("Invalid path: " + sPath);
+				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
 					this.oCache = Cache.create(oModel.oRequestor, sPath.slice(1),
@@ -58,7 +64,6 @@ sap.ui.define([
 				this.aContexts = [];
 				// upper boundary for server-side list length (based on observations so far)
 				this.iMaxLength = Infinity;
-				this.iIndex = iIndex;
 				// this.bLengthFinal = this.aContexts.length === this.iMaxLength
 				this.bLengthFinal = false;
 			}
@@ -111,7 +116,7 @@ sap.ui.define([
 	 * @param {number} [iLength]
 	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
-	 * @return {sap.ui.model.Context[]}
+	 * @returns {sap.ui.model.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
 	 * @see sap.ui.model.Binding#attachChange
@@ -121,20 +126,13 @@ sap.ui.define([
 		var oContext = this.getContext(),
 			bDataRequested = false,
 			oModel = this.getModel(),
+			oPromise,
 			sResolvedPath = oModel.resolve(this.getPath(), oContext),
 			that = this;
 
-		function getBasePath(iIndex) {
-			return sResolvedPath + "[" + iIndex + "];root=" + that.iIndex;
-		}
-
-		function getDependentPath(iIndex) {
-			return sResolvedPath + "/" + iIndex;
-		}
-
 		/**
 		 * Checks, whether the contexts exist for the requested range.
-		 * @return {boolean}
+		 * @returns {boolean}
 		 *   <code>true</code> if the contexts in the range exist
 		 */
 		function isRangeInContext() {
@@ -153,19 +151,18 @@ sap.ui.define([
 		 * Creates entries in aContexts for each value in oResult.
 		 * Uses fnGetPath to create the context path.
 		 * Fires "change" event if new contexts are created.
-		 * @param {function} fnGetPath Function calculating base or dependent path
-		 * @param {object} oResult Resolved OData result
+		 * @param {array|object} vResult Resolved OData result
 		 */
-		function createContexts(fnGetPath, oResult) {
+		function createContexts(vResult) {
 			var bChanged = false,
 				i,
-				iResultLength = oResult.value.length,
+				iResultLength = Array.isArray(vResult) ? vResult.length : vResult.value.length,
 				n = iStart + iResultLength;
 
 			for (i = iStart; i < n; i += 1) {
 				if (that.aContexts[i] === undefined) {
 					bChanged = true;
-					that.aContexts[i] = oModel.getContext(fnGetPath(i));
+					that.aContexts[i] = _Context.create(oModel, that, sResolvedPath + "/" + i, i);
 				}
 			}
 			if (that.aContexts.length > that.iMaxLength) {
@@ -200,32 +197,30 @@ sap.ui.define([
 		}
 
 		if (!isRangeInContext(iStart, iLength)) {
-			if (oContext) { // nested list binding
-				oModel.read(sResolvedPath, true)
-					.then(createContexts.bind(undefined, getDependentPath));
-			} else { // absolute path
-				this.oCache.read(iStart, iLength, function () {
+			oPromise = this.oCache
+				? this.oCache.read(iStart, iLength, undefined, function () {
 						bDataRequested = true;
 						that.fireDataRequested();
-					}).then(createContexts.bind(undefined, getBasePath)).then(function () {
-						//fire dataReceived after change event fired in createContexts()
-						if (bDataRequested) {
-							that.fireDataReceived(); // no try catch needed: uncaught in promise
-						}
-					}, function (oError) {
-						if (!oError.canceled) {
-							jQuery.sap.log.error("Failed to get contexts for "
-								+ oModel.sServiceUrl + sResolvedPath.slice(1)
-								+ " with start index " + iStart + " and length " + iLength, oError,
-								sClassName);
-						}
-						//cache shares promises for concurrent read
-						if (bDataRequested) {
-							// no try catch needed: uncaught in promise
-							that.fireDataReceived({error : oError});
-						}
-					});
-			}
+					})
+				: oContext.requestValue(this.getPath());
+			oPromise.then(createContexts).then(function () {
+				//fire dataReceived after change event fired in createContexts()
+				if (bDataRequested) {
+					that.fireDataReceived(); // no try catch needed: uncaught in promise
+				}
+			}, function (oError) {
+				if (!oError.canceled) {
+					jQuery.sap.log.error("Failed to get contexts for "
+						+ oModel.sServiceUrl + sResolvedPath.slice(1)
+						+ " with start index " + iStart + " and length " + iLength, oError,
+						sClassName);
+				}
+				//cache shares promises for concurrent read
+				if (bDataRequested) {
+					// no try catch needed: uncaught in promise
+					that.fireDataReceived({error : oError});
+				}
+			});
 		}
 		return this.aContexts.slice(iStart, iStart + iLength);
 	};
@@ -234,7 +229,7 @@ sap.ui.define([
 	 * Returns the number of entries in the list. As long as the client does not know the size on
 	 * the server an estimated length is returned.
 	 *
-	 * @return {number}
+	 * @returns {number}
 	 *   The number of entries in the list
 	 * @see sap.ui.model.ListBinding#getLength
 	 * @public
@@ -247,63 +242,13 @@ sap.ui.define([
 	 * Returns <code>true</code> if the length has been determined by the data returned from
 	 * server. If the length is a client side estimation <code>false</code> is returned.
 	 *
-	 * @return {boolean}
+	 * @returns {boolean}
 	 *   If <code>true</true> the length is determined by server side data
 	 * @see sap.ui.model.ListBinding#isLengthFinal
 	 * @public
 	 */
 	ODataListBinding.prototype.isLengthFinal = function() {
 		return this.bLengthFinal;
-	};
-
-	/**
-	 * Returns a promise to read the value for the given path in the list binding item with the
-	 * given index.
-	 *
-	 * @param {string} sPath
-	 *   The path to the property
-	 * @param {boolean} bAllowObjectAccess
-	 *   Whether access to whole objects is allowed
-	 * @param {number} iIndex
-	 *   The item's index
-	 * @return {Promise}
-	 *   The promise which is resolved with the value, e.g. <code>"foo"</code> for simple
-	 *   properties, <code>[...]</code> for collections and <code>{"foo" : "bar", ...}</code> for
-	 *   objects
-	 * @private
-	 */
-	ODataListBinding.prototype.readValue = function (sPath, bAllowObjectAccess, iIndex) {
-		var that = this;
-
-		return new Promise(function (fnResolve, fnReject) {
-			function reject(oError) {
-				jQuery.sap.log.error("Failed to read value with index " + iIndex + " for "
-					+ that.oCache + " and path " + sPath,
-					oError, sClassName);
-				fnReject(oError);
-			}
-
-			that.oCache.read(iIndex, 1).then(function (oData) {
-				var oResult = oData.value[0];
-
-				if (sPath) {
-					sPath.split("/").every(function (sSegment) {
-						if (!oResult){
-							jQuery.sap.log.warning("Invalid segment " + sSegment, "path: " + sPath,
-								sClassName);
-							return false;
-						}
-						oResult = oResult[sSegment];
-						return true;
-					});
-				}
-				if (!bAllowObjectAccess && oResult && typeof oResult === "object") {
-					reject(new Error("Accessed value is not primitive"));
-					return;
-				}
-				fnResolve(oResult);
-			}, reject);
-		});
 	};
 
 	/**
@@ -335,6 +280,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests the value for the given path and index; the value is requested from this binding's
+	 * cache or from its context in case it has no cache.
+	 *
+	 * @param {string} [sPath]
+	 *   Some relative path
+	 * @param {number} [iIndex]
+	 *   Index corresponding to some current context of this binding
+	 * @returns {Promise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 */
+	ODataListBinding.prototype.requestValue = function (sPath, iIndex) {
+		return this.oCache
+			? this.oCache.read(iIndex, /*iLength*/1, sPath)
+			: this.getContext().requestValue(this.getPath() + "/" + iIndex
+				+ (sPath ? "/" + sPath : ""));
+	};
+
+	/**
 	 * Sets the context and resets the cached contexts of the list items.
 	 *
 	 * @param {sap.ui.model.Context} oContext
@@ -343,8 +306,10 @@ sap.ui.define([
 	 * @override
 	 */
 	ODataListBinding.prototype.setContext = function (oContext) {
-		this.aContexts = [];
-		Binding.prototype.setContext.call(this, oContext);
+		if (this.oContext !== oContext) {
+			this.aContexts = [];
+			Binding.prototype.setContext.call(this, oContext);
+		}
 	};
 
 	return ODataListBinding;
