@@ -223,6 +223,7 @@ sap.ui.define([
 		this._bFirstRendering = true;
 		this._bDomReady = false;                    //dom is fully ready to be inspected
 		this._bStickyAnchorBar = false;             //status of the header
+		this._iStoredScrollPosition = 0;
 
 		// anchorbar management
 		this._bInternalAnchorBarVisible = true;
@@ -266,6 +267,8 @@ sap.ui.define([
 		this._bHContentAlwaysExpanded = this._checkAlwaysShowContentHeader();
 
 		this._initializeScroller();
+
+		this._storeScrollLocation();
 
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
 		this._oABHelper._getAnchorBar().setUpperCase(this.getUpperCaseAnchorBar());
@@ -343,13 +346,14 @@ sap.ui.define([
 		this._adjustHeaderHeights();
 
 		if (this.getUseIconTabBar()) {
-			this._setCurrentTabSection(this._oFirstVisibleSection);
+			this._setCurrentTabSection(this._oStoredSection || this._oFirstVisibleSection);
 		}
 
 		this._initAnchorBarScroll();
 		this.getHeaderTitle() && this.getHeaderTitle()._shiftHeaderTitle();
 
 		this._setSectionsFocusValues();
+		this._restoreScrollPosition();
 	};
 
 	ObjectPageLayout.prototype.exit = function () {
@@ -386,11 +390,8 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._initializeScroller = function () {
-		//are we re-rendering an existing objectPageLayout?
-		//if so we need to reset the scroller as it gets confused
 		if (this._oScroller) {
-			this._oScroller.scrollTo(0, 0, 0);         //reset the actual scroll position
-			this._oScroller.destroy();
+			return;
 		}
 
 		//Internal Incident: 1482023778: workaround BB10 = use zynga instead of iScroll
@@ -1768,6 +1769,16 @@ sap.ui.define([
 			return true;
 		}
 		return false;
+	};
+
+	ObjectPageLayout.prototype._restoreScrollPosition = function () {
+		this._scrollTo(this._iStoredScrollPosition, 0);
+	};
+
+	ObjectPageLayout.prototype._storeScrollLocation = function () {
+		this._iStoredScrollPosition = this._oScroller.getScrollTop();
+		this._oStoredSection = this._oCurrentTabSubSection || this._oCurrentTabSection;
+		this._oCurrentTabSection = null;
 	};
 
 	ObjectPageLayout.HEADER_CALC_DELAY = 350;   //ms. The higher the safer and the uglier...
