@@ -388,5 +388,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.12": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "3749b2f68587924c2d39e6e39562ca7b89c01a97",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": []
+      },
+      {
+        "id": "36dc8922488ab8b264f86f888a4dfa0481922cd7",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Focus outline on IE corrected",
+        "references": []
+      },
+      {
+        "id": "1401f6ed2bebc9a21bcfe50a8694016e1d64200a",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Generating correct tab id in createTab() method fixed.",
+        "references": []
+      }
+    ]
   }
 }
