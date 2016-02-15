@@ -57,7 +57,10 @@
 			</ObjectHeader>
 			<VBox alignItems="Center">
 				<Image
-					src= "{PictureUrl}"
+					src= "{
+							path : 'PictureUrl',
+							formatter : '.formatter.pictureUrl'
+						}"
 					decorative="true"
 					densityAware="false" />
 			</VBox>

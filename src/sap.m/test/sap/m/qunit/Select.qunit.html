@@ -3456,12 +3456,6 @@
 			ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.Select.prototype.removeAllAggregation() method was called with the expected argument");
 			strictEqual(fnListRemoveAllItemsSpy.callCount, 1, "sap.m.List.prototype.removeAllItems() method was called");
 			ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.Select.prototype.removeAllItems() method returns an array of the removed items");
-			ok(oSelect.getSelectedItem() === null);
-			strictEqual(oSelect.getSelectedItemId(), "");
-			strictEqual(oSelect.getSelectedKey(), "");
-			ok(oSelect.getList().getSelectedItem() === null);
-			strictEqual(oSelect.getList().getSelectedItemId(), "");
-			strictEqual(oSelect.getList().getSelectedKey(), "");
 			strictEqual(oSelect.$("label").text(), "");
 			strictEqual(oSelect.$("select").children().length, 0);
 

@@ -212,7 +212,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 					id : this.getId() + "-icon-image",
 					src : uri
 				}, sap.m.Image);
-				this._oIcon.addStyleClass("sapMNCIconImage").addStyleClass(this.getSize()).addStyleClass(this.getState());
 			}
 		}
 		return this.setProperty("icon", uri);

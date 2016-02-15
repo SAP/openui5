@@ -152,10 +152,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *
 		 */
 		SelectList.prototype.updateItems = function(sReason) {
-			this._bDataAvailable = false;
+			this.bItemsUpdated = false;
 			this.destroyItems();
 			this.updateAggregation("items");
-			this._bDataAvailable = true;
+			this.bItemsUpdated = true;
 
 			// Try to synchronize the selection (synchronous), but if any item's key match with the value of the "selectedKey" property,
 			// don't force the first enabled item to be selected when the forceSelection property is set to true.
@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @see sap.ui.base.ManagedObject#bindAggregation
 		 */
 		SelectList.prototype.refreshItems = function() {
-			this._bDataAvailable = false;
+			this.bItemsUpdated = false;
 			this.refreshAggregation("items");
 		};
 
@@ -230,10 +230,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * Initialization hook.
-		 *
-		 */
 		SelectList.prototype.init = function() {
 
 			// timeoutID used to cancel the active state added on touchstart
@@ -247,26 +243,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._fStartY = 0;
 		};
 
-		/**
-		 * This event handler is called before the rendering of the control is started.
-		 *
-		 */
 		SelectList.prototype.onBeforeRendering = function() {
 			this.synchronizeSelection();
 		};
 
-		/**
-		 * This event handler is called when the rendering of the control is completed.
-		 *
-		 */
 		SelectList.prototype.onAfterRendering = function() {
 			this.createItemNavigation();
 		};
 
-		/**
-		 * Cleans up before destruction.
-		 *
-		 */
 		SelectList.prototype.exit = function() {
 
 			if (this._oItemNavigation) {
@@ -524,7 +508,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// the aggregation items is not bound or
 			// it is bound and the data is already available
-			} else if (bForceSelection && this.getDefaultSelectedItem() && (!this.isBound("items") || this._bDataAvailable)) {
+			} else if (bForceSelection && this.getDefaultSelectedItem() && (!this.isBound("items") || this.bItemsUpdated)) {
 				this.setSelection(this.getDefaultSelectedItem());
 			}
 		};
@@ -850,18 +834,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Removes all the items in the aggregation named <code>items</code>.
-		 * Additionally unregisters them from the hosting UIArea and clears the selection.
+		 * Additionally unregisters them from the hosting UIArea.
 		 *
 		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
 		 * @public
 		 */
 		SelectList.prototype.removeAllItems = function() {
-			var aItems = this.removeAllAggregation("items");
-
-			// clear the selection
-			this.clearSelection();
-
-			return aItems;
+			return this.removeAllAggregation("items");
 		};
 
 		/**

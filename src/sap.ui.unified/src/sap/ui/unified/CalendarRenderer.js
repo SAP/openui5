@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sId = oCal.getId();
 		var sTooltip = oCal.getTooltip_AsString();
 		var aMonths = oCal.getAggregation("month");
+		var sWidth = oCal.getWidth();
 
 		oRm.write("<div");
 		oRm.writeControlData(oCal);
@@ -48,6 +49,12 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (sTooltip) {
 			oRm.writeAttributeEscaped('title', sTooltip);
+		}
+
+		if (sWidth) {
+			oRm.addClass("sapUiCalWidth");
+			oRm.addStyle("width", sWidth);
+			oRm.writeStyles();
 		}
 
 		if (this.addAttributes) {

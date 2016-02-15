@@ -3,9 +3,8 @@
  */
 
 // Provides control sap.m.TabStripSelectList.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/SelectList', 'sap/m/TabStripItem', 'sap/ui/base/ManagedObject', 'sap/ui/core/IconPool'],
-	//ToDo: [Refactoring] Incorrect dependency number - add icon pool dependency
-	function(jQuery, library, Control, SelectList, TabStripItem, ManagedObject) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/SelectList', 'sap/m/TabStripItem'],
+	function(jQuery, library, Control, SelectList, TabStripItem) {
 		"use strict";
 
 		/**
@@ -30,31 +29,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		var TabStripSelectList = SelectList.extend("sap.m.TabStripSelectList", /** @lends sap.m.TabStripSelectList.prototype */ {
 			metadata: {
 				library: "sap.m"
-			},
-			//ToDo: [Refactoring] Incorrect metadata nesting - put this in the scope of metadata
-			aggregations: {
-				/**
-				 * Defines the items contained within this control.
-				 */
-				items: { type: "sap.m.TabStripItem", multiple: false, singularName: "item" }
 			}
 		});
 
-		// ToDo: align these with the file names (i.e. not tabselect but tabstripselect)
 		TabStripSelectList.CSS_CLASS_SELECTLIST             = 'sapMSelectList';
-		TabStripSelectList.CSS_CLASS_TABSELECTLIST          = 'sapMTabSelectList';
-		TabStripSelectList.CSS_CLASS_CLOSEBUTTON            = 'sapMTabSelectListItemCloseBtn';
-		TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabSelectListItemCloseBtnInvisible'; // ToDo: this belongs to item
+		TabStripSelectList.CSS_CLASS_TABSTRIPSELECTLIST     = 'sapMTabStripSelectList';
 
-		/**
-		 * Initializes the control instance.
-		 * @override
-		 * @private
-		 */
 		TabStripSelectList.prototype.init = function () {
 			SelectList.prototype.init.call(this);
 			this.addStyleClass(TabStripSelectList.CSS_CLASS_SELECTLIST);
-			this.addStyleClass(TabStripSelectList.CSS_CLASS_TABSELECTLIST);
+			this.addStyleClass(TabStripSelectList.CSS_CLASS_TABSTRIPSELECTLIST);
 		};
 
 		/**
@@ -63,6 +47,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		 * @private
 		 */
 		TabStripSelectList.prototype.onAfterRendering = function () {
+			SelectList.prototype.onAfterRendering.apply(this, arguments);
 			var oDomRef = this.getDomRef();
 			oDomRef.addEventListener("mouseenter", jQuery.proxy(TabStripSelectList.prototype.mouseenter, this), true);
 			oDomRef.addEventListener("mouseleave", jQuery.proxy(TabStripSelectList.prototype.mouseleave, this), true);
@@ -79,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 				oControl instanceof sap.m.TabStripItem && // only this type has _closeButton aggregation
 				this.getSelectedItem() !== oControl
 			) {
-					oControl.getAggregation('_closeButton').$().removeClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+					oControl.getAggregation('_closeButton').$().removeClass(TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE);
 			}
 		};
 
@@ -96,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 				jQuery(oEvent.target).hasClass('sapMSelectListItem') &&
 				this.getSelectedItem() !== oControl
 			) {
-					oControl.getAggregation('_closeButton').$().addClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+					oControl.getAggregation('_closeButton').$().addClass(TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE);
 			}
 		};
 
@@ -116,7 +101,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 				if (oPrevSelectedItem && oPrevSelectedItem !== oItem) {
 					if (sap.ui.Device.system.desktop) {
 						// close button is always visible on phone and tablet
-						oPrevSelectedItem.getAggregation('_closeButton').addStyleClass(TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+						oPrevSelectedItem.getAggregation('_closeButton').addStyleClass(TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE);
 					}
 				}
 				this.setSelection(oItem);
@@ -132,13 +117,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		 * @param {boolean} bShowState
 		 */
 		TabStripSelectList.prototype.changeItemState = function(vItemId, bShowState) {
-			// ToDo: remove this hack !? - for some reason these are 'undefined' - can it be the lazy loading?
-			TabStripItem.CSS_CLASS_STATE            = "sapMTabSelectListItemModified";
-			TabStripItem.CSS_CLASS_STATEINVISIBLE   = "sapMTabSelectListItemModifiedInvisible";
-
 			var $oItemState;
 
-			// optimisation to not invalidate and rerender the whole parent DOM, but only manipulate the CSS class
+			// optimisation to not invalidate and re-render the whole parent DOM, but only manipulate the CSS class
 			// for invisibility on the concrete DOM element that needs to change
 			var aItems = this.getItems();
 			aItems.forEach(function (oItem) {

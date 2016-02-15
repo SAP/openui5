@@ -56,6 +56,18 @@
 
 .sapTntNavLI li:focus,
 .sapTntNavLIItem:focus {
-	outline: 0.125rem dotted @sapUiFocus;
-	outline-offset: -1px;
+	outline: none;
+}
+
+.sapTntNavLI li:focus::before,
+.sapTntNavLIItem:focus::before {
+	border: 0.125rem dotted @sapUiFocus;
+	position: absolute;
+	content: " ";
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	left: 1px;
+	z-index: 2;
+	pointer-events: none;
 }

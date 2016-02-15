@@ -325,6 +325,8 @@ sap.ui.define([
 				oFromPage.addStyleClass('sapMNavItemOffset');
 			}
 
+			oFromPage.$().parents('.sapMPanelContent').scrollTop(0);
+
 			this.fireNavigate(oEvent.getParameters());
 		};
 

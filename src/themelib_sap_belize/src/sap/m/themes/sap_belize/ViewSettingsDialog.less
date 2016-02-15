@@ -1,0 +1,29 @@
+/* ======================================== */
+/* CSS for control sap.m/TableFilterDialog  */
+/* Belize theme                             */
+/* ======================================== */
+
+/* workaround to remove the blurry effect on the icons */
+.sapMVSDSeg .sapMSegBBtn {
+	text-shadow: 0 0px;
+}
+
+.sapMTB.sapMVSDFilterHeaderToolbar {
+	background-color: @sapUiListHeaderBackground;
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	.sapMBarChild.sapMCb {
+		.sapMCbLabel {
+			font-family: @sapUiFontFamily;
+			color: @sapUiGroupTitleTextColor;
+			font-size: 1.125rem;
+			font-weight: bold;
+		}
+	}
+}
+
+.sapMSF.sapMVSDFilterSearchField {
+	border-bottom: 0.0625rem solid @sapUiGroupTitleBorderColor;
+	.sapMSFF {
+		border: none;
+	}
+}

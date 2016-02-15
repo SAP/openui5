@@ -29,34 +29,33 @@
 
 			sap.ui.require([
 				'sap/ui/test/opaQunit',
-				'sap/ui/test/Opa5'
-			], function (opaTest, Opa5) {
+				'sap/ui/test/matchers/AggregationFilled'
+			], function (opaTest, AggregationFilled) {
 
 				QUnit.module("iStartMyUIComponent");
 
 				opaTest("Should start and teardown a component", function (Given, When, Then) {
 
-					// Arrangements
+					// Loads the component with the given name
 					Given.iStartMyUIComponent({
 						componentConfig: {
 							name: "sap.ui.sample.appUnderTest"
 						},
+						// testing deeplinks is possible by setting a hash
 						hash: ""
-
-					}).done(
-						function(){
-						assert.ok(jQuery(".sapUiOpaComponent").length, "The component was loaded");
-
-					}).done(
-						function() {
-							// Assertions
-							Then.iTeardownMyUIComponent().done(function () {
-								assert.ok(!jQuery(".sapUiOpaComponent").length,
-									"The component was removed");
-							});
 					});
 
-					Opa5.emptyQueue();
+					// execute your tests
+					Then.waitFor({
+						viewName: "sap.ui.sample.appUnderTest.view.Main",
+						id: "productList",
+						matchers: new AggregationFilled({ name: "items" }),
+						success: function () {
+							assert.ok(true, "The component was removed");
+						}
+					}).and
+						// Removes the component again
+						.iTeardownMyUIComponent();
 
 				});
 				QUnit.start();
@@ -71,14 +70,9 @@
 
 	<body>
 
-		<!-- Please use always the qunit-wrapper for proper layout settings when running Opa tests with UIComponent-->
-		<div id="qunit-wrapper">
-			<div id="qunit"></div>
-			<div id="qunit-fixture"></div>
-
-			<!--Readme div is only needed for this example-->
-			<div id="readme"></div>
-		</div>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<div id="readme"></div>
 
 	</body>
 </html>

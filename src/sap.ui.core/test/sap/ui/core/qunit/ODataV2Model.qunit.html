@@ -973,7 +973,7 @@
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
 
-		oModel.oMetadata.loaded().then(function() {
+		oModel.metadataLoaded().then(function() {
 			oLabel.getElementBinding().refresh();
 			setTimeout(function() {
 				ok(oModel.mDeferredRequests['test'].requests.length === 2, "request deferred");
@@ -2189,6 +2189,49 @@
 		});
 	});
 
+	asyncTest("async test request events - don't auto refresh element binding when deleting", function(){
+		cleanServiceDataCache();
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest, oBinding, oCount = 0, fnHandler;
+		fnHandler = attachRequestEvents(oModel, oInfo);
+		oBinding = oModel.bindContext("/Categories(1)");
+		oBinding.attachChange(function(){});
+		oBinding.initialize();
+		oModel.attachBatchRequestCompleted(function() {
+			oCount++;
+			if (oCount == 1) { // Data loaded initially
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					detachRequestEvents(oModel, fnHandler);
+					oInfo = {};
+					fnHandler = attachRequestEvents(oModel, oInfo);
+					oRequest = oModel.remove("/Categories(1)", {});
+				}, 0);
+			} else if (oCount == 2) { // Data updated and refreshed
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
+	});
+	
 	asyncTest("async test request events - auto refresh list binding", function(){
 
 		removeSharedServicedata(sURI);
@@ -2219,6 +2262,53 @@
 					oInfo = {};
 					fnHandler = attachRequestEvents(oModel, oInfo);
 					oRequest = oModel.update("/Invoices(CustomerName='Alfreds%20Futterkiste',Discount=0f,OrderID=10702,ProductID=3,ProductName='Aniseed%20Syrup',Quantity=6,Salesperson='Margaret%20Peacock',ShipperName='Speedy%20Express',UnitPrice=10.0000M)", {});
+				}, 0);
+			} else if (oCount == 2) { // Data updated and refreshed
+				setTimeout(function() {
+					equal(oInfo.requestSent, 2, "Two requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 2, "Two requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					start();
+				}, 0);
+			} else {
+				ok(false, "More than two batch requests sent!");
+			}
+		});
+	});
+
+	asyncTest("async test request events - auto refresh list binding also when deleting", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+		var oInfo = {}, oRequest, oBinding, fnHandler, oCount = 0;
+		fnHandler = attachRequestEvents(oModel, oInfo);
+		oBinding = oModel.bindList("/Invoices", null, null, null, {countMode: "None"});
+		oBinding.attachChange(function(){});
+		oBinding.attachRefresh(function() {
+			this.getContexts();
+		});
+		oBinding.initialize();
+		oModel.attachBatchRequestCompleted(function() {
+			oCount++;
+			if (oCount == 1) { // Data loaded initially
+				setTimeout(function() {
+					equal(oInfo.requestSent, 1, "One requests sent");
+					equal(oInfo.requestFailed, 0, "No request failed");
+					equal(oInfo.requestCompleted, 1, "One requests completed");
+					equal(oInfo.batchRequestSent, 1, "One batch requests sent");
+					equal(oInfo.batchRequestFailed, 0, "No batch requests failed");
+					equal(oInfo.batchRequestCompleted, 1, "One batch requests completed");
+					detachRequestEvents(oModel, fnHandler);
+					oInfo = {};
+					fnHandler = attachRequestEvents(oModel, oInfo);
+					oRequest = oModel.remove("/Invoices(CustomerName='Alfreds%20Futterkiste',Discount=0f,OrderID=10702,ProductID=3,ProductName='Aniseed%20Syrup',Quantity=6,Salesperson='Margaret%20Peacock',ShipperName='Speedy%20Express',UnitPrice=10.0000M)", {});
 				}, 0);
 			} else if (oCount == 2) { // Data updated and refreshed
 				setTimeout(function() {
@@ -2558,7 +2648,7 @@
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
 			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
 			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl(sURI+"$metadata?sap-value-list=all").then(function(oParams) {
@@ -2579,7 +2669,7 @@
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
 			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
 			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
@@ -2606,7 +2696,7 @@
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
 			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
 			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
@@ -2648,7 +2738,7 @@
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
 			ok(oModel.getServiceMetadata(), "metadata loaded");
-			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getServiceAnnotations() || jQuery.isEmptyObject(oModel.getServiceAnnotations()), "annotations not loaded");
 			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
 			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
 			oModel.addAnnotationUrl("$metadata?sap-value-list=all").then(function() {

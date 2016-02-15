@@ -158,6 +158,19 @@
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
 
+			test("XML Fragment loaded from file with given Fragment ID and root control ID", function() {
+				var oFragment = sap.ui.xmlfragment("myXmlFrag1", "testdata.fragments.XMLTestFragmentWithId", oDummyController);
+				oFragment.placeAt("content1");
+				sap.ui.getCore().applyChanges();
+
+				var id = oFragment.getId();
+				equal(id, "myXmlFrag1--layout", "Root control ID should be prefixed");
+
+				// find controls by ID
+				var oLayout = sap.ui.core.Fragment.byId("myXmlFrag1", "layout");
+				ok(oLayout, "Layout should be found by ID");
+				ok(oLayout instanceof sap.ui.layout.HorizontalLayout, "Found object should be instance of layout");
+			});
 
 
 			test("HTML Fragment loaded from file", function() {
@@ -208,6 +221,21 @@
 				var btn = sap.ui.core.Fragment.byId("myHtmlFrag", "btnInHtmlFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
+			});
+
+
+			test("HTML Fragment loaded from file with given Fragment ID and root control ID", function() {
+				var oFragment = sap.ui.htmlfragment("myHtmlFrag1", "testdata.fragments.HTMLTestFragmentWithId", oDummyController);
+				oFragment.placeAt("content1");
+				sap.ui.getCore().applyChanges();
+
+				var id = oFragment.getId();
+				equal(id, "myHtmlFrag1--layout", "Root control ID should be prefixed");
+
+				// find controls by ID
+				var oLayout = sap.ui.core.Fragment.byId("myHtmlFrag1", "layout");
+				ok(oLayout, "Layout should be found by ID");
+				ok(oLayout instanceof sap.ui.layout.HorizontalLayout, "Found object should be instance of layout");
 			});
 
 
@@ -263,6 +291,19 @@
 			});
 
 
+			test("JS Fragment loaded from file with given Fragment ID and root control ID", function() {
+				var oFragment = sap.ui.jsfragment("myJsFrag1", "testdata.fragments.JSTestFragmentWithId", oDummyController);
+				oFragment.placeAt("content1");
+				sap.ui.getCore().applyChanges();
+
+				var id = oFragment.getId();
+				equal(id, "myJsFrag1--layout", "Root control ID should be prefixed");
+
+				// find controls by ID
+				var oLayout = sap.ui.core.Fragment.byId("myJsFrag1", "layout");
+				ok(oLayout, "Layout should be found by ID");
+				ok(oLayout instanceof sap.ui.layout.HorizontalLayout, "Found object should be instance of layout");
+			});
 
 
 			module("Inline Fragments");

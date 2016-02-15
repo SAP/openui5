@@ -2,5 +2,15 @@
 /* CSS for control sap.m/TabStripSelectList.control   */
 /* High Contrast Black theme                          */
 /* ================================================== */
-
-/* ToDo: Why is this file in the repository when it has no meaningful content??? */
+.sapMTabStripSelectList {
+	.sapMSelectListItem {
+		.sapMBtn:active {
+			.sapMBtnInner {
+				background-color: @sapHCHighlightAltBG;
+			}
+		}
+		&:active {
+			background-color: @sapHCHighlightAltBG;
+		}
+	}
+}

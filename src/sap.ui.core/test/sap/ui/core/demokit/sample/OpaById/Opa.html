@@ -14,7 +14,9 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 			QUnit.config.autostart = false;
 
-			sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5, opaTest) {
+			sap.ui.require(
+					["sap/ui/test/Opa5", "sap/ui/test/opaQunit", "sap/ui/test/actions/Press"],
+					function (Opa5, opaTest, Press) {
 				QUnit.module("Controls by id");
 
 				opaTest("Should find a Button with an id", function(Given, When, Then) {
@@ -25,9 +27,7 @@
 					When.waitFor({
 						viewName : "appUnderTest.view.Main",
 						id : "navigationButton",
-						success : function (oButton) {
-							oButton.$().trigger("tap");
-						},
+						actions : new Press(),
 						errorMessage : "Did not find the navigation-button"
 					});
 

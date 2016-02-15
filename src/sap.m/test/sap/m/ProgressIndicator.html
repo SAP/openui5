@@ -32,15 +32,6 @@
 				width:"10%"
 			});
 
-			var oButton =new sap.m.Button("button", {
-				text:"ChangePI",
-				press: function(){
-					var sPercent = sap.ui.getCore().byId("input").getValue();
-					oProgInd1.setPercentValue(parseInt(sPercent));
-					oProgInd1.setDisplayValue(sPercent + "%");
-				}
-			});
-
 			var label2 = new sap.m.Label({
 				text : "Progress Indicator with 75% negative without text (suggested normal size)"
 			});
@@ -129,6 +120,44 @@
 				state: sap.ui.core.ValueState.Success
 			});
 
+			var oButton =new sap.m.Button("button", {
+				text:"ChangePI",
+				press: function(){
+					var sPercent = sap.ui.getCore().byId("input").getValue();
+					oProgInd8.setPercentValue(parseInt(sPercent));
+					oProgInd8.setDisplayValue(sPercent + "%");
+				}
+			});
+
+			var oButton2 =new sap.m.Button("change_pi", {
+				text:"Change PI to 40%",
+				press: function(){
+					oProgInd8.setPercentValue(40);
+					oProgInd8.setDisplayValue("40%");
+				}
+			});
+
+			var oButton3 =new sap.m.Button("small_pi", {
+				text:"Set PI to small size",
+				press: function(){
+					oProgInd8.setHeight("1.375rem");
+				}
+			});
+
+			var oButton4 =new sap.m.Button("disable_pi", {
+				text:"Set PI to disable",
+				press: function(){
+					oProgInd8.setEnabled(false);
+				}
+			});
+
+			var oButton5 =new sap.m.Button("state_pi", {
+				text:"Set state",
+				press: function(){
+					oProgInd8.setState(sap.ui.core.ValueState.Neutral);
+				}
+			});
+
 			// create page
 			var page1 = new sap.m.Page("page1", {
 				title:"Progress Indicator",
@@ -150,7 +179,11 @@
 					label8,
 					oProgInd8,
 					oInput,
-					oButton
+					oButton,
+					oButton2,
+					oButton3,
+					oButton4,
+					oButton5
 				],
 			});
 

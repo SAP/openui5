@@ -1,0 +1,1038 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
+	<!-- Needed, otherwise iPad does rescaling on orientation change - What's with other devices? see jquery.sap.mobile.js (initMobile -> viewport) -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Needed for Windows Phone -->
+	<style>@-ms-viewport{width:device-width;}</style>
+
+	<title>Performance of ODataAnnotations compared</title>
+	<style>
+		html, body, #content, .benchmarkOverview {
+			height: 100%;
+			margin: 0px;
+			padding: 0 10px 0 10px;
+			box-sizing: border-box;
+		}
+
+		.title {
+			display: block;
+			height: 2rem;
+			line-height: 2rem;
+			font-size: 1.5rem;
+			font-weight: bold;
+			text-align: center;
+			white-space: nowrap;
+		}
+
+		.controls {
+			display: block;
+			height: 2rem;
+			line-height: 2rem;
+			white-space: nowrap;
+		}
+
+		.controls > * {
+			margin: 0 5px 0 5px;
+		}
+
+		.controls > .numberInput {
+			width: 50px;
+			text-align: right;
+		}
+
+		.comparisonTable {
+			width: 100%;
+			height: calc(60% - 6rem);
+			min-height: 350px;
+			border: 0px solid black;
+		}
+
+		.comparisonTable td {
+			width: 50%;
+			height: 100%;
+			vertical-align: top;
+		}
+
+		.comparisonTable td > .benchmarkResult {
+			margin: 10px 0 10px 0;
+			list-style: none none inside;
+			min-height: 350px;
+			max-height: 100%;
+			overflow-x: hidden;
+			overflow-y: auto;
+		}
+
+		.heading {
+			display: block;
+			height: 3rem;
+			line-height: 3rem;
+			font-size: 1.25rem;
+		}
+
+		.multiBenchmarkResults {
+			width: 100%;
+			height: calc(40% - 6rem);
+			min-height: 250px;
+			white-space: nowrap;
+			border: 1px solid black;
+			overflow-x: auto;
+			padding: 10px 0 10px 0;
+			overflow-y: hidden;
+		}
+
+		.multiBenchmarkResults > .result {
+			height: 100%;
+			display: inline-block;
+			width: 100px;
+			vertical-align: top;
+			margin-right: 10px;
+			border: 1px dashed red;
+		}
+
+		.multiBenchmarkResults > .result > .resultTitle {
+			font-weight: bold;
+			text-align: center;
+			height: 2rem;
+		}
+
+		.multiBenchmarkResults > .result > .resultChart {
+			position: relative;
+			width: 100%;
+			height: calc(100% - 2rem - 20px);
+			top: 10px;
+			box-sizing: border-box;
+		}
+
+		.multiBenchmarkResults > .result > .resultChart > .resultChartBar {
+			display: block;
+			position: absolute;
+			width: 20%;
+			bottom: 0;
+			transition: height ease 1s;
+		}
+
+		.hasTooltip:hover:after{
+			background: #333;
+			background: rgba(0,0,0,.8);
+			border-radius: 8px;
+			bottom: 50%;
+			color: #fff;
+			content: attr(title);
+			left: 150%;
+			padding: 5px 15px;
+			position: absolute;
+			z-index: 98;
+			width: 150px;
+			font-weight: bold;
+			font-size: 1.25rem;
+			text-align: center;
+		}
+
+		.hasTooltip:hover:before{
+			border: solid;
+			border-color: #333 transparent;
+			bottom: calc(50% + 0.5rem);
+		    content: "";
+		    left: calc(150% - 0.7rem);
+		    position: absolute;
+		    border-top: 0.5rem solid transparent;
+		    border-bottom: 0.5rem solid transparent;
+		    border-right: 0.5rem solid #333;
+		    z-index: 99;
+		}
+
+		.timeStamp {
+			font-family: monospace;
+			display: inline-block;
+			width: 75px;
+			text-align: right;
+			margin-right: 5px;
+		}
+
+		.preloadProgress {
+			display: block;
+			position: fixed;
+			margin: 0;
+			width: 80%;
+			top: 50%;
+			height: 5%;
+			margin-top: -2.5%;
+			background-color: transparent;
+		}
+
+		.innerPreloadProgress {
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			width: 0;
+			background-color: #3333ff;
+		}
+
+	</style>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<!--[if IE]>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
+
+	<script
+		id="sap-ui-bootstrap"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-theme="sap_bluecrystal"></script>
+
+	<script>
+
+		sap.ui.getCore().attachInit(function() {
+
+			var mService = {
+				serviceUrl: "fakeservice://perf/annotations/service/",
+				fakeUrls: [{
+					dataUrl: "testdata/annotations/metadata.xml",
+					match: "fakeservice://perf/annotations/service/$metadata",
+					headers: {
+						"content-type": "application/xml"
+					}
+				},{
+					dataUrl: "testdata/annotations/annotations01.xml",
+					match: /^fakeservice:\/\/perf\/annotations\/annotations.*/,
+					headers: {
+						"content-type": "application/xml"
+					}
+				}]
+			};
+
+			var oService = new FakeService(mService);
+			var oBenchmarkV1 = new AnnotationsBenchmark(1, oService);
+			var oBenchmarkV2 = new AnnotationsBenchmark(2, oService);
+
+			// Show overview page
+			var oOverviewScreen = new BenchmarkOverview({
+				service: oService,
+				benchmarks: [oBenchmarkV1, oBenchmarkV2]
+			});
+			document.querySelector("#content").appendChild(oOverviewScreen);
+		});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		function AnnotationsBenchmark(iVersion, mService) {
+			this.version(iVersion);
+			this.service(mService);
+			this._events = {
+				"step": [],
+			};
+		}
+
+		AnnotationsBenchmark.id = 0;
+
+		AnnotationsBenchmark.nextId = function() {
+			AnnotationsBenchmark.id++;
+		}
+
+		AnnotationsBenchmark.prototype.version = function(iVersion) {
+			if (iVersion === undefined) {
+				return this._version;
+			} else {
+				this._version = iVersion;
+				return this;
+			}
+		};
+
+		AnnotationsBenchmark.prototype.service = function(mService) {
+			if (mService === undefined) {
+				return this._service;
+			} else {
+				this._service = mService;
+				return this;
+			}
+		};
+
+		AnnotationsBenchmark.prototype.benchmark = function(fnResultCallback) {
+			this._benchmarkId = AnnotationsBenchmark.id;
+
+			switch (this._version) {
+				case 1:
+					return this._benchmarkV1();
+					break;
+
+				case 2:
+					return this._benchmarkV2();
+					break;
+
+				default:
+					throw new Error("Unknown AnnotatationLoader version: " + this._version);
+			}
+		};
+
+		AnnotationsBenchmark.prototype.on = function(sEvent, fnCallback) {
+			if (!this._events[sEvent]) {
+				this._events[sEvent] = [];
+			}
+			this._events[sEvent].push(fnCallback);
+		};
+
+		AnnotationsBenchmark.prototype.trigger = function(sEvent) {
+			if (!this._events[sEvent] || this._events[sEvent].length === 0) {
+				return
+			}
+
+			var aArguments = Array.prototype.slice.call(arguments, 0);
+			aArguments.shift();
+			for (var i = 0; i < this._events[sEvent].length; i++) {
+				this._events[sEvent][i].apply(this, aArguments);
+			}
+		};
+
+		AnnotationsBenchmark.prototype._timeStart = function(sMessage) {
+			this._startTime = performance.now();
+			this._lastTime = this._startTime;
+
+			var mData = {
+				start: true,
+				end: false,
+				id: this._benchmarkId,
+				number: this._version,
+				time: 0,
+				delta: 0,
+				message: sMessage,
+				responseDelay: this._service.responseDelay(),
+				randomizeResponseDelay: this._service.randomizeResponseDelay()
+			};
+
+			this.trigger("step", mData);
+			return mData;
+		};
+
+		AnnotationsBenchmark.prototype._timeStep = function(sMessage) {
+			var oTime = performance.now();
+
+			var mData = {
+				start: false,
+				end: false,
+				id: this._benchmarkId,
+				number: this._version,
+				time: oTime - this._startTime,
+				delta: oTime - this._lastTime,
+				message: sMessage,
+				responseDelay: this._service.responseDelay(),
+				randomizeResponseDelay: this._service.randomizeResponseDelay(),
+				numberOfAnnotations: this.numberOfAnnotations()
+			};
+
+			this._lastTime = oTime;
+			this.trigger("step", mData);
+			return mData;
+		};
+
+		AnnotationsBenchmark.prototype._timeEnd = function(sMessage) {
+			var oTime = performance.now();
+
+			var mData = {
+				start: false,
+				end: true,
+				id: this._benchmarkId,
+				number: this._version,
+				time: oTime - this._startTime,
+				delta: oTime - this._lastTime,
+				message: sMessage,
+				responseDelay: this._service.responseDelay(),
+				randomizeResponseDelay: this._service.randomizeResponseDelay(),
+				numberOfAnnotations: this.numberOfAnnotations()
+			};
+
+			this._lastTime = oTime;
+			this.trigger("step", mData);
+			return mData;
+		};
+
+		AnnotationsBenchmark.prototype.numberOfAnnotations = function(iNumber) {
+			if (iNumber === undefined) {
+				return this._numberOfAnnotations;
+			} else {
+				this._numberOfAnnotations = iNumber
+				return this;
+			}
+		};
+
+		AnnotationsBenchmark.prototype._getAnnotationsUrls = function() {
+			var aAnnotationUrls = [];
+			for (var i = 0; i < this._numberOfAnnotations; i++) {
+				aAnnotationUrls.push("fakeservice://perf/annotations/annotations" + i);
+			}
+			return aAnnotationUrls;
+		};
+
+		AnnotationsBenchmark.prototype._benchmarkV1 = function(mBenchmark) {
+			jQuery.sap.require("sap.ui.model.odata.ODataMetadata");
+			jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
+
+			var mService = this._service.serviceData();
+			var fnStep = this._timeStep.bind(this);
+
+			return new Promise(function(fnResolve, fnReject) {
+				this._timeStart();
+
+				var oMetadata = new sap.ui.model.odata.ODataMetadata(mService.serviceUrl + "$metadata", { asnc: true });
+
+				var oAnnotationsLoader = new sap.ui.model.odata.ODataAnnotations({
+					metadata: oMetadata,
+					urls: this._getAnnotationsUrls(),
+					async: true
+				});
+
+				fnStep("ODataAnnotations instance created.");
+
+
+				oMetadata.loaded().then(function() {
+					fnStep("Metadata loaded.");
+				});
+
+				var fnOriginalMerge = oAnnotationsLoader._mergeAnnotationData;
+				oAnnotationsLoader._mergeAnnotationData = function() {
+					var vReturnValue = fnOriginalMerge.apply(this, arguments);
+					fnStep("Annotation source loaded.");
+					return vReturnValue;
+				};
+
+				oAnnotationsLoader.attachLoaded(function() {
+					fnResolve(this._timeEnd());
+					oMetadata.destroy();
+					oAnnotationsLoader.destroy();
+				}.bind(this));
+
+				oAnnotationsLoader.attachFailed(function() {
+					var sError = "Loading annotations failed!";
+					alert(sError);
+					fnReject(new Error(sError))
+				});
+
+			}.bind(this));
+		}
+
+
+		AnnotationsBenchmark.prototype._benchmarkV2 = function(mBenchmark) {
+			jQuery.sap.require("sap.ui.model.odata.ODataMetadata");
+			jQuery.sap.require("sap.ui.model.odata.v2.ODataAnnotations");
+
+			var mService = this._service.serviceData();
+			var fnTrigger = this.trigger.bind(this);
+
+			return new Promise(function(fnResolve, fnReject) {
+				this._timeStart();
+
+				var oMetadata = new sap.ui.model.odata.ODataMetadata(mService.serviceUrl + "$metadata", { asnc: true });
+
+				var oAnnotationsLoader = new sap.ui.model.odata.v2.ODataAnnotations(oMetadata, {
+					skipMetadata: true,
+					source: this._getAnnotationsUrls()
+				});
+
+				this._timeStep("ODataAnnotations instance created");
+
+				oMetadata.loaded().then(function() {
+					this._timeStep("Metadata loaded.");
+				}.bind(this));
+
+				oAnnotationsLoader.attachSuccess(function(oEvent) {
+					var mSource = oEvent.getParameter("result");
+					this._timeStep("Annotation source loaded.");
+				}.bind(this));
+
+				oAnnotationsLoader.attachLoaded(function() {
+					fnResolve(this._timeEnd());
+					oMetadata.destroy();
+					oAnnotationsLoader.destroy();
+				}.bind(this));
+
+				oAnnotationsLoader.attachFailed(function() {
+					var sError = "Loading annotations failed!";
+					alert(sError);
+					fnReject(new Error(sError))
+				});
+
+			}.bind(this));
+		}
+
+
+
+		function BenchmarkResults(oBenchmark) {
+			var oThis = document.createElement("div");
+			oThis.className = "benchmarkResult";
+
+
+			// Add methods to element
+			for (var sMember in BenchmarkResults.prototype) {
+				if (BenchmarkResults.prototype.hasOwnProperty(sMember)) {
+					oThis[sMember] =  BenchmarkResults.prototype[sMember].bind(oThis);
+				}
+			}
+
+			oThis._benchmark = oBenchmark;
+
+			oThis._init();
+			return oThis;
+		};
+
+		BenchmarkResults.prototype._init = function() {
+			this._benchmark.on("step", this._onStep.bind(this));
+		};
+
+		BenchmarkResults.prototype._onStep = function(mStep) {
+			if (mStep.start) {
+				this.clear();
+
+				var oLi = document.createElement("li");
+				oLi.style.color = "green";
+				oLi.style.fontWeight = "bold";
+
+				oLi.appendChild(document.createTextNode("Starting Annotation loading procedure..."));
+				this.appendChild(oLi);
+
+				if (!mStep.message) {
+					mStep.message = "Starting Measurement...";
+				}
+				this._addStep(mStep);
+
+			} else if (mStep.end) {
+				if (!mStep.message) {
+					mStep.message = "...measurement ended.";
+				}
+				this._addStep(mStep);
+
+				var oLi = document.createElement("li");
+				oLi.style.color = "red";
+				oLi.style.fontWeight = "bold";
+
+				oLi.appendChild(document.createTextNode("Time to load all annotations: " + Math.round((mStep.time) / 10) / 100 + "s"));
+				this.appendChild(oLi);
+
+			} else {
+				this._addStep(mStep);
+			}
+		};
+
+
+		BenchmarkResults.prototype._addStep = function(mStep) {
+			this._timestamp = performance.now();
+
+			var fTime = round(mStep.time, 0);
+			var fDeltaTime = round(mStep.delta, 0);
+
+			var oLi = document.createElement("li");
+
+			var oTime = document.createElement("span");
+			oTime.className = "timeStamp";
+			oTime.appendChild(document.createTextNode(fTime));
+
+			var oDeltaTime = document.createElement("span");
+			oDeltaTime.className = "timeStamp";
+			oDeltaTime.appendChild(document.createTextNode("+" + fDeltaTime));
+
+			oLi.appendChild(oTime);
+			oLi.appendChild(oDeltaTime);
+			oLi.appendChild(document.createTextNode(mStep.message));
+
+			this.appendChild(oLi);
+
+		};
+
+		BenchmarkResults.prototype.clear = function() {
+			while (this.firstChild) {
+				this.removeChild(this.firstChild);
+			}
+		};
+
+
+
+		function MultiBenchmarkResults(aBenchmarks) {
+			var oThis = document.createElement("div");
+			oThis.className = "multiBenchmarkResults";
+
+
+			// Add methods to element
+			for (var sMember in MultiBenchmarkResults.prototype) {
+				if (MultiBenchmarkResults.prototype.hasOwnProperty(sMember)) {
+					oThis[sMember] =  MultiBenchmarkResults.prototype[sMember].bind(oThis);
+				}
+			}
+
+			oThis._benchmarks = aBenchmarks;
+
+			oThis._init();
+			return oThis;
+		};
+
+		MultiBenchmarkResults.prototype._init = function() {
+			for (var i = 0; i < this._benchmarks.length; i++) {
+				this._benchmarks[i].on("step", this._onStep.bind(this));
+			}
+		};
+
+		MultiBenchmarkResults.prototype._onStep = function(mStep) {
+			if (mStep.end) {
+				this.add(mStep);
+			}
+		};
+
+		MultiBenchmarkResults.prototype.clear = function() {
+			while (this.firstChild) {
+				this.removeChild(this.firstChild);
+			}
+		};
+
+
+		MultiBenchmarkResults.prototype.add = function(mBenchmarkData) {
+
+			var oResult = this.querySelector("#result-" + mBenchmarkData.id);
+
+			if (!oResult) {
+				oResult = document.createElement("div");
+				oResult.setAttribute("id", "result-" + mBenchmarkData.id);
+				oResult.className = "result";
+
+				var oTitle = document.createElement("div");
+				oTitle.className = "resultTitle";
+				oTitle.appendChild(document.createTextNode(
+					(mBenchmarkData.randomizeResponseDelay ? "\u2264" : "") + mBenchmarkData.responseDelay + "ms"
+				));
+				oTitle.appendChild(document.createElement("br"));
+				oTitle.appendChild(document.createTextNode("(" + mBenchmarkData.numberOfAnnotations + ")"));
+
+				var oChart = document.createElement("div");
+				oChart.className = "resultChart";
+
+				var oBar1 = document.createElement("div");
+				oBar1.className = "resultChartBar hasTooltip";
+				oBar1.setAttribute("id", "result-" + mBenchmarkData.id + "-1");
+				oBar1.style.backgroundColor = "red";
+				oBar1.style.left = "20%";
+				oBar1.style.height = "0%";
+
+				var oBar2 = document.createElement("div");
+				oBar2.className = "resultChartBar hasTooltip";
+				oBar2.setAttribute("id", "result-" + mBenchmarkData.id + "-2");
+				oBar2.style.backgroundColor = "green";
+				oBar2.style.left = "60%";
+				oBar2.style.height = "0%";
+
+
+
+				oChart.appendChild(oBar1);
+				oChart.appendChild(oBar2);
+
+				oResult.appendChild(oTitle);
+				oResult.appendChild(oChart);
+
+
+				if (this.firstChild) {
+					this.insertBefore(oResult, this.firstChild);
+				} else {
+					this.appendChild(oResult);
+				}
+
+			}
+
+			if (mBenchmarkData.number) {
+				var oBar = this.querySelector("#result-" + mBenchmarkData.id + "-" + mBenchmarkData.number);
+				oBar.setAttribute("data-benchmarktime", mBenchmarkData.time);
+				oBar.setAttribute("title", "Time: " + Math.round(mBenchmarkData.time) + "ms");
+
+				var aAllBars = Array.prototype.slice.call(document.querySelectorAll(".resultChartBar"), 0);
+				var fMaxTime = aAllBars.reduce(function(fPreviousResult, oBar) {
+					var fTime = parseFloat(oBar.getAttribute("data-benchmarktime"));
+					return fTime > fPreviousResult ? fTime : fPreviousResult;
+				}, 0);
+
+				for (var i = 0; i < aAllBars.length; i++) {
+					var oBar = aAllBars[i];
+					oBar.style.height = Math.round(oBar.getAttribute("data-benchmarktime") / fMaxTime * 100) + "%";
+				}
+			}
+		}
+
+
+
+		function FakeService(mServiceData) {
+			this._responseDelay = 500;
+			this._randomizeResponseDelay = false;
+			this.serviceData(mServiceData);
+			this._ready = this._start();
+		}
+
+		FakeService.prototype.ready = function() {
+			return this._ready;
+		};
+
+
+
+		FakeService.prototype.serviceData = function(mServiceData) {
+			if (mServiceData === undefined) {
+				return this._serviceData;
+			} else {
+				this._serviceData = mServiceData
+				return this;
+			}
+		};
+
+		FakeService.prototype.responseDelay = function(iResponseDelay) {
+			if (iResponseDelay === undefined) {
+				return this._responseDelay;
+			} else {
+				this._responseDelay = iResponseDelay
+				return this;
+			}
+		};
+
+		FakeService.prototype.randomizeResponseDelay = function(bRandomizeResponseDelay) {
+			if (bRandomizeResponseDelay === undefined) {
+				return this._randomizeResponseDelay;
+			} else {
+				this._randomizeResponseDelay = bRandomizeResponseDelay
+				return this;
+			}
+		};
+
+		FakeService.prototype._getCurrentResponseDelay = function(bRandomizeResponseDelay) {
+			 return this.randomizeResponseDelay() ? Math.random() * this.responseDelay() : this.responseDelay();
+		};
+
+
+		FakeService.prototype._start = function() {
+			this._xhr = window.sinon.useFakeXMLHttpRequest();
+			this._setTimeout = window.setTimeout.bind(window);
+
+			var mResponses = {};
+
+			this._xhr.useFilters = true;
+			this._xhr.addFilter(function(method, url) {
+				return url.indexOf("fakeservice://") != 0;
+			});
+			this._xhr.onCreate = function(request) {
+				request.onSend = function() {
+					// Default request answer values:
+
+					var iStatus = 500;
+					var mResponseHeaders = {
+						"content-type": "text/plain"
+					};
+					var sAnswer = "I don't know how to fake that URL...";
+
+					for (var i = 0; i < this._serviceData.fakeUrls.length; ++i) {
+						var mMatch = this._serviceData.fakeUrls[i];
+
+						if (typeof mMatch.match === "string" && mMatch.match === request.url) {
+							iStatus = 200;
+							mResponseHeaders = mMatch.headers;
+							sAnswer = mResponses[mMatch.dataUrl];
+							break;
+						} else if (mMatch.match.test && mMatch.match.test(request.url)) {
+							iStatus = 200;
+							mResponseHeaders = mMatch.headers;
+							sAnswer = mResponses[mMatch.dataUrl];
+							break;
+						}
+					}
+
+					if (request.async === true) {
+						var oRequest = request;
+						this._setTimeout(function() {
+							oRequest.respond(iStatus, mResponseHeaders, sAnswer);
+						}, this._getCurrentResponseDelay());
+					} else {
+						request.respond(iStatus, mResponseHeaders, sAnswer);
+					}
+				}.bind(this);
+			}.bind(this);
+
+			// Now fill the response map
+			var ms = {
+			};
+
+			var aLoadedPromises = [];
+			for (var i = 0; i < this._serviceData.fakeUrls.length; ++i) {
+				var mMatch = this._serviceData.fakeUrls[i];
+				aLoadedPromises.push(this._loadUrl(mMatch.dataUrl).then(function(sUrl, sAnswer) {
+					mResponses[sUrl] = sAnswer;
+				}.bind(this, mMatch.dataUrl)));
+			}
+
+			return Promise.all(aLoadedPromises);
+		}
+
+
+		// general helpers
+		FakeService.prototype._loadUrl = function(sUrl) {
+			return new Promise(function(fnResolve, fnReject) {
+				var req = new window.XMLHttpRequest();
+				req.open("GET", sUrl, true);
+
+				req.addEventListener("readystatechange", function() {
+					if (req.readyState === window.XMLHttpRequest.DONE) {
+						fnResolve(req.responseText);
+					}
+				});
+
+				req.addEventListener("error", function(error) {
+					fnReject(error);
+				});
+
+				req.addEventListener("timeout", function(error) {
+					fnReject(error);
+				});
+
+				req.send(null);
+			});
+		}
+
+
+
+		function BenchmarkOverview(mOptions) {
+
+			var oThis = document.createElement("div");
+			oThis.className = "benchmarkOverview";
+
+
+			// Add methods to element
+			for (var sMember in BenchmarkOverview.prototype) {
+				if (BenchmarkOverview.prototype.hasOwnProperty(sMember)) {
+					oThis[sMember] =  BenchmarkOverview.prototype[sMember].bind(oThis);
+				}
+			}
+
+
+			oThis._benchmarks = mOptions.benchmarks;
+			oThis._service = mOptions.service;
+			oThis._numberOfAnnotations = 0;
+			oThis._init();
+
+			return oThis;
+		};
+
+		BenchmarkOverview.prototype.numberOfAnnotations = function(iNumber) {
+			if (iNumber === undefined) {
+				return this._numberOfAnnotations;
+			} else {
+				for (var i = 0; i < this._benchmarks.length; i++) {
+					this._benchmarks[i].numberOfAnnotations(iNumber);
+				}
+				this._numberOfAnnotations = iNumber
+				return this;
+			}
+		};
+
+		BenchmarkOverview.prototype._init = function() {
+			this.numberOfAnnotations(8);
+			var aBenchmarkResults = this._benchmarks.map(function(oBenchmark) {
+				return new BenchmarkResults(oBenchmark);
+			});
+			var oMultiResult = new MultiBenchmarkResults(this._benchmarks);
+
+
+
+
+			var oTitle = document.createElement("div");
+			oTitle.className = "title";
+			oTitle.appendChild(document.createTextNode(
+				"Comparison of Annotation Loaders: ODataAnnotations vs v2.ODataAnnotations"
+			));
+
+			var oControls = document.createElement("div");
+			oControls.className = "controls";
+
+
+			var oComparisonTable = document.createElement("table");
+			oComparisonTable.className = "comparisonTable";
+			var oRow = document.createElement("tr");
+
+			for (var i = 0; i < aBenchmarkResults.length; ++i) {
+				var oCell = document.createElement("td");
+				oCell.appendChild(aBenchmarkResults[i]);
+				oRow.appendChild(oCell);
+			}
+
+			oComparisonTable.appendChild(oRow);
+
+
+			var iBenchmark = 0;
+			var oStartButton = document.createElement("button");
+			oStartButton.className = "buttonStart";
+			oStartButton.appendChild(document.createTextNode("Preloading data. Please wait..."));
+			oStartButton.addEventListener("click", function() {
+				AnnotationsBenchmark.nextId();
+				var pNext = Promise.resolve();
+				for (var i = 0; i < this._benchmarks.length; i++) {
+					pNext = pNext.then(this._benchmarks[i].benchmark.bind(this._benchmarks[i]));
+				}
+			}.bind(this));
+			oStartButton.setAttribute("disabled", "disabled");
+
+
+
+			var oMultiStartButton = document.createElement("button");
+			oMultiStartButton.className = "buttonStart";
+			oMultiStartButton.appendChild(document.createTextNode("Preloading data. Please wait..."));
+			oMultiStartButton.addEventListener("click", function() {
+				var iResponseTime = parseInt(oResponseDelay.value) || 750;
+				var aResponseTimes = [];
+				aResponseTimes.push(iResponseTime);
+				var iLastResponseTime = iResponseTime;
+				while (iResponseTime > 1) {
+					iResponseTime = Math.round(iResponseTime / 2);
+					if (iLastResponseTime - iResponseTime < 10) {
+						iResponseTime = 1;
+					}
+					iLastResponseTime = iResponseTime;
+					aResponseTimes.push(iResponseTime);
+				}
+
+				var pNext = Promise.resolve();
+				for (var i = 0; i < aResponseTimes.length; i++) {
+					pNext = pNext
+						.then(function() {
+							AnnotationsBenchmark.nextId();
+						})
+						.then(this._service.responseDelay.bind(this._service, aResponseTimes[i]));
+					for (var n = 0; n < this._benchmarks.length; n++) {
+						pNext = pNext.then(this._benchmarks[n].benchmark.bind(this._benchmarks[n]));
+					}
+				}
+				oMultiStartButton.setAttribute("disabled", "disabled");
+
+				pNext.then(function() {
+					oMultiStartButton.removeAttribute("disabled");
+				});
+
+			}.bind(this));
+			oMultiStartButton.setAttribute("disabled", "disabled");
+
+
+			var aReady = [];
+			this._service.ready().then(function() {
+				oStartButton.removeChild(oStartButton.firstChild);
+				oStartButton.appendChild(document.createTextNode("Start Benchmark!"));
+				oStartButton.removeAttribute("disabled");
+
+				oMultiStartButton.removeChild(oMultiStartButton.firstChild);
+				oMultiStartButton.appendChild(document.createTextNode("Start Multi Benchmark!"));
+				oMultiStartButton.removeAttribute("disabled");
+			});
+
+			var oResponseDelay = document.createElement("input");
+			oResponseDelay.className = "numberInput";
+			oResponseDelay.setAttribute("type", "number");
+			oResponseDelay.setAttribute("value", this._service.responseDelay());
+			oResponseDelay.addEventListener("input", function(oEvent) {
+				this._service.responseDelay(oEvent.target.value);
+			}.bind(this));
+
+			var oNumberAnnotations = document.createElement("input");
+			oNumberAnnotations.className = "numberInput";
+			oNumberAnnotations.setAttribute("type", "number");
+			oNumberAnnotations.setAttribute("value", this.numberOfAnnotations());
+			oNumberAnnotations.addEventListener("input", function(oEvent) {
+				this.numberOfAnnotations(oEvent.target.value);
+			}.bind(this));
+
+			var oCheckResponseDelay = document.createElement("input");
+			oCheckResponseDelay.setAttribute("type", "checkbox");
+			oCheckResponseDelay.checked = this._service.randomizeResponseDelay();
+			oCheckResponseDelay.addEventListener("click", function(oEvent) {
+				this._service.randomizeResponseDelay(oEvent.target.checked ? true : false);
+			}.bind(this));
+
+			var oClearButton = document.createElement("button");
+			oClearButton.className = "buttonClear";
+			oClearButton.appendChild(document.createTextNode("Clear results"));
+			oClearButton.addEventListener("click", function() {
+				var oResult = document.querySelector("#multiTestResults");
+
+				aBenchmarkResults.forEach(function(oResult) {
+					oResult.clear();
+				});
+				oMultiResult.clear();
+
+			});
+
+
+			oControls.appendChild(oStartButton);
+			oControls.appendChild(document.createTextNode("Response time: "));
+			oControls.appendChild(oResponseDelay);
+			oControls.appendChild(document.createTextNode("Randomize response time:"));
+			oControls.appendChild(oCheckResponseDelay);
+			oControls.appendChild(document.createTextNode("Annotations: "));
+			oControls.appendChild(oNumberAnnotations);
+			oControls.appendChild(oMultiStartButton);
+			oControls.appendChild(oClearButton);
+
+
+			var oHeading = document.createElement("div");
+			oHeading.className = "heading";
+			oHeading.appendChild(document.createTextNode("Previous results:"));
+
+
+
+
+
+			this.appendChild(oTitle);
+			this.appendChild(oControls);
+			this.appendChild(oComparisonTable);
+			this.appendChild(oHeading);
+			this.appendChild(oMultiResult);
+
+		};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		function round(fTime, iDigits) {
+			var iFactor = Math.pow(10, iDigits || 0);
+
+			fTime = String(Math.round(fTime * iFactor) / iFactor);
+			iDotPos = fTime.length - fTime.indexOf(".");
+			for (;iDotPos > -1 && iDotPos < iDigits; iDotPos++) {
+				fTime += "0";
+			}
+			return fTime
+		}
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content">
+
+	</div>
+</body>
+</html>

@@ -30,25 +30,25 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("w/ constraints", function (assert) {
 		var oType = new StringType({}, {
-			contains: "a",
-			endsWith: "foo",
-			endsWithIgnoreCase: "bar",
-			equals: "baz",
-			maxLength: 12,
-			minLength: 2,
-			search: "s2403r5j",
-			startsWith: "me",
-			startsWithIgnoreCase: "you"
+			contains : "a",
+			endsWith : "foo",
+			endsWithIgnoreCase : "bar",
+			equals : "baz",
+			maxLength : 12,
+			minLength : 2,
+			search : "s2403r5j",
+			startsWith : "me",
+			startsWithIgnoreCase : "you"
 		});
 
-		assert.deepEqual(oType.oConstraints, {maxLength: 12});
+		assert.deepEqual(oType.oConstraints, {maxLength : 12});
 	});
 
 	//*********************************************************************************************
 	[
-		{maxLength: "foo", warning: "Illegal maxLength: foo"},
-		{maxLength: -1, warning: "Illegal maxLength: -1"},
-		{maxLength: 0, warning: "Illegal maxLength: 0"}
+		{maxLength : "foo", warning : "Illegal maxLength: foo"},
+		{maxLength : -1, warning : "Illegal maxLength: -1"},
+		{maxLength : 0, warning : "Illegal maxLength: 0"}
 	].forEach(function (oFixture, i) {
 		QUnit.test("constraints error #" + i, function (assert) {
 			var oType = new StringType();
@@ -56,14 +56,14 @@ sap.ui.require([
 			this.mock(jQuery.sap.log).expects("warning")
 				.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.String");
 
-			oType = new StringType({}, {maxLength: oFixture.maxLength});
+			oType = new StringType({}, {maxLength : oFixture.maxLength});
 			assert.strictEqual(oType.oConstraints, undefined);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("format", function (assert) {
-		var oType = new StringType({}, {maxLength: 5});
+		var oType = new StringType({}, {maxLength : 5});
 
 		assert.strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
 		assert.strictEqual(oType.formatValue(null, "foo"), null, "null");
@@ -104,7 +104,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("validate", function (assert) {
-		var oType = new StringType({}, {maxLength: 3});
+		var oType = new StringType({}, {maxLength : 3});
 
 		["", "A", "AB", "ABC"].forEach(function (sValue) {
 			oType.validateValue(sValue);
@@ -132,9 +132,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("nullable", function (assert) {
 		TestUtils.withNormalizedMessages(function () {
-			var oType = new StringType({}, {nullable: false});
+			var oType = new StringType({}, {nullable : false});
 
-			assert.deepEqual(oType.oConstraints, {nullable: false}, "nullable: false");
+			assert.deepEqual(oType.oConstraints, {nullable : false}, "nullable: false");
 			try {
 				oType.validateValue(null);
 				assert.ok(false);
@@ -143,7 +143,7 @@ sap.ui.require([
 				assert.strictEqual(e.message, "EnterText");
 			}
 
-			oType = new StringType({}, {nullable: false, maxLength: 3});
+			oType = new StringType({}, {nullable : false, maxLength : 3});
 			try {
 				oType.validateValue(null);
 				assert.ok(false);
@@ -152,14 +152,14 @@ sap.ui.require([
 				assert.strictEqual(e.message, "EnterTextMaxLength 3");
 			}
 
-			oType = new StringType({}, {nullable: true});
+			oType = new StringType({}, {nullable : true});
 			oType.validateValue(null); // does not throw
 			assert.strictEqual(oType.oConstraints, undefined, "nullable: true");
 
 			this.mock(jQuery.sap.log).expects("warning").once()
 				.withExactArgs("Illegal nullable: ", null, "sap.ui.model.odata.type.String");
 
-			oType = new StringType(null, {nullable: ""});
+			oType = new StringType(null, {nullable : ""});
 			assert.strictEqual(oType.oConstraints, undefined, "illegal nullable -> default");
 		});
 	});
@@ -170,11 +170,11 @@ sap.ui.require([
 
 		this.mock(jQuery.sap.log).expects("warning").never();
 
-		oType = new StringType({}, {nullable: "true", maxLength: "10"});
-		assert.deepEqual(oType.oConstraints, {maxLength: 10});
+		oType = new StringType({}, {nullable : "true", maxLength : "10"});
+		assert.deepEqual(oType.oConstraints, {maxLength : 10});
 
-		oType = new StringType({}, {nullable: "false"});
-		assert.deepEqual(oType.oConstraints, {nullable: false});
+		oType = new StringType({}, {nullable : "false"});
+		assert.deepEqual(oType.oConstraints, {nullable : false});
 	});
 
 	//*********************************************************************************************

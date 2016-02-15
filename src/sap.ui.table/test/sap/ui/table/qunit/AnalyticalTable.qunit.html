@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="utf-8" />
 
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
@@ -10,7 +10,7 @@
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.m,sap.ui.table"></script>
 
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -174,16 +174,13 @@
 				equal(oContext.getProperty("ActualCosts"), "11775332", "Sum Row is correct");
 
 				// initial expand
-
-				// TODO: commented out this tests, because of timing issues with updateRows.
-				// We changed the execution of updateRows, to be called asynchronously by requestionAnimationFrame.
-				//attachEventHandler(this.oTable, 1, fnHandler2, this);
-				//this.oTable.expand(0);
-				start();
+				attachEventHandler(this.oTable, 1, fnHandler2, this);
+				this.oTable.expand(0);
 			};
 
 			var fnHandler2 = function () {
 				ok(this.oTable.isExpanded(0), "First row is now expanded");
+
 				var oContext = this.oTable.getContextByIndex(0);
 				var oSumContext = this.oTable.getContextByIndex(13);
 				deepEqual(oContext, oSumContext, "Subtotal-Row context is correct");

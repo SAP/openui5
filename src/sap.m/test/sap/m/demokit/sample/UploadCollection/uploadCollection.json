@@ -11,7 +11,8 @@
 			"attributes":[
 				{
 					"title":"Uploaded By",
-					"text":"Susan Baker"
+					"text":"Susan Baker",
+					"active" : true
 				},
 				{
 					"title":"Uploaded On",
@@ -43,11 +44,13 @@
 				},
 				{
 					"title":"Uploaded On",
-					"text":"2014-09-02"
+					"text":"2014-09-02",
+					"active" : true
 				},
 				{
 					"title":"File Size",
-					"text":"226600"
+					"text":"226600",
+					"active" : true
 				},
 				{
 					"title":"Attribute with a long text",
@@ -100,7 +103,8 @@
 			"attributes":[
 				{
 					"title":"Uploaded By",
-					"text":"Sean O'Connel"
+					"text":"Sean O'Connel",
+					"active" : true
 				},
 				{
 					"title":"Uploaded On",
@@ -158,7 +162,8 @@
 			"attributes":[
 				{
 					"title":"Uploaded By",
-					"text":"John Black"
+					"text":"John Black",
+					"active" : true
 				},
 				{
 					"title":"Uploaded On",

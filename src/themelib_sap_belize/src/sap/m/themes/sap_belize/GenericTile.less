@@ -1,0 +1,60 @@
+/* ================================== */
+/* CSS for control sap.m/GenericTile  */
+/* Belize theme                       */
+/* ================================== */
+
+.sapUiMedia-Std-Desktop .sapMGTHdrTxt.Auto > .sapMText,
+.sapMGTHdrTxt.L > .sapMText,
+.sapUiMedia-Std-Tablet .sapMGTHdrTxt.Auto > .sapMText,
+.sapMGTHdrTxt.M > .sapMText  {
+	color: @sapUiTileTextColor;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontHeader5Size;
+	font-weight: normal;
+}
+
+.sapMGTSubHdrTxt {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: lighten(@sapUiTileTextColor, 20);
+	line-height: @sapUiLineHeight;
+}
+
+.sapMGTHdrIconImage {
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiHighlight;
+}
+
+.sap-desktop .sapMGT:focus {
+	border-color: @sapUiContentFocusColor;
+}
+
+.sap-desktop .sapMGT:focus:not([tabindex]) {
+	border-color: transparent;
+}
+
+.sapMGT {
+	box-shadow: 0rem 0rem 0.25rem fade(@sapUiContentShadowColor, 10);
+}
+
+.sapMGenericTileFtrFldTxt {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontSmallSize;
+	color: lighten(@sapUiTileTextColor, 20);
+}
+
+.sap-desktop .sapMGT:hover,
+.sap-phone .sapMGTHvrOutln:hover,
+.sap-tablet .sapMGTHvrOutln:hover {
+	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiContentContrastShadowColor;
+}
+
+.sapMGenericTileFtrFldIcn {
+	color: lighten(@sapUiTileTextColor, 20);
+}
+
+.sapMGTOverlay {
+	background-color: @sapUiTileBackground;
+}

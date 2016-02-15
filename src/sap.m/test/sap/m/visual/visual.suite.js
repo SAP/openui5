@@ -1,8 +1,23 @@
 module.exports = [
 	"ActionSelect.spec.js",
-	"Table.spec.js",
+	"App.spec.js",
+	"AppWithBackground.spec.js",
 	"Breadcrumbs.spec.js",
-	"Wizard.spec.js",
+	"CheckBox.spec.js",
+	"Dialog.spec.js",
+	"IconTabBar.spec.js",
+	"MessagePage.spec.js",
+	"NotificationListGroup.spec.js",
+	"ObjectHeaderVisualTest.spec.js",
+	"ProgressIndicator.spec.js",
+	"SemanticPage.spec.js",
 	"NotificationListItem.spec.js",
-	"NotificationListGroup.spec.js"
+	"ObjectHeaderVisualTest.spec.js",
+	"OverflowToolbar.spec.js",
+	"Page.spec.js",
+	"SemanticPage.spec.js",
+	"TableSelectDialog.spec.js",
+	//"Table.spec.js",
+	"Toolbar.spec.js",
+	"Wizard.spec.js"
 ];

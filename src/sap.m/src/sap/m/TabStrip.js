@@ -110,6 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				}
 			},
 			constructor : function (vId, mSettings) {
+				var bHasSelect = false;
 				// normalize the expected arguments
 				if (!mSettings && typeof vId === 'object') {
 					mSettings = vId;
@@ -117,8 +118,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 				/* Stash the 'hasSelect' setting for later in order to have all items added to the tabstrip
 				* before the "select" control is instantiated. */
-				var bHasSelect = mSettings['hasSelect'];
-				delete mSettings['hasSelect'];
+				if (mSettings) {
+					bHasSelect = mSettings['hasSelect'];
+					delete mSettings['hasSelect'];
+				}
 
 				sap.ui.base.ManagedObject.prototype.constructor.apply(this, arguments);
 
@@ -1132,8 +1135,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype.changeItemState = function(vItemId, bShowState) {
 			// ToDo: remove this hack !? - for some reason otherwise these are 'undefined' - can it be the lazy loading?
-			TabStripItem.CSS_CLASS_STATE            = "sapMTabSelectListItemModified";
-			TabStripItem.CSS_CLASS_STATEINVISIBLE   = "sapMTabSelectListItemModifiedInvisible";
+			TabStripItem.CSS_CLASS_STATE            = "sapMTabStripSelectListItemModified";
+			TabStripItem.CSS_CLASS_STATEINVISIBLE   = "sapMTabStripSelectListItemModifiedInvisible";
 			TabStripItem._CSS_CLASS_LABEL           = "sapMTabContainerItemLabel";
 			// ToDo: fix mess and remove hilarious constant
 			TabStripItem.YET_ANOTHER_CSS_CLASS_FOR_THE_SAME_THING_THAT_LOST_ME_20_MINUTES_IN_CONFUSION = "sapMTabContainerItemModified";

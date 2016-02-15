@@ -1,8 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="utf-8" />
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -30,11 +30,6 @@
 	jQuery.sap.require("sap.ui.model.odata.ODataTreeBindingAdapter");
 	sinon.config.useFakeTimers = false;
 	var iDelay = 0;
-
-	// for unittest execution requestAnimationFrame may be queued when the page is not in focus
-	// therefore use setTimeout to get more stable tests
-	window.requestAnimationFrame = window.setTimeout;
-	window.cancelAnimationFrame = window.clearTimeout;
 
 	//Initialize mock servers
 
@@ -115,7 +110,7 @@
 		return oTable;
 	}
 
-	module("TreeTable with Annotations, starting level 1", {
+	module("TreeTable with Anotations, starting level 1", {
 		setup: function() {
 			oAnnotationMockServer.start();
 			this.oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:true});
@@ -517,20 +512,18 @@
 
 			// expand(0)
 			fnHandler4 = function() {
-
+				attachRowsUpdatedOnce(this.oTable, fnHandler5, this);
 				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Collapse(0), CollapseRecursive=false: SelectedIndices OK");
 				deepEqual(this.oTable.getSelectedIndices(), [0], "Collapse(0), CollapseRecursive=false: SelectedIndices Values OK");
 				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 1, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader should be selected");
-
-				attachRowsUpdatedOnce(this.oTable, fnHandler5, this);
 				this.oTable.expand(0);
 			}
 
 			fnHandler5 = function() {
 				deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Expand(0), CollapseRecursive=false: SelectedIndices OK");
 				deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "Expand(0), CollapseRecursive=false: SelectedIndices Values OK");
-				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 10, "10 rows selected");
+				equal(this.oTable.$().find(".sapUiTableRowHdr.sapUiTableRowSel").length, 10, "Only one row selected");
 				equal(this.oTable.$().find(".sapUiTableRowSel").length, 20, "Row and RowHeader should be selected");
 
 				this.oTable.clearSelection();

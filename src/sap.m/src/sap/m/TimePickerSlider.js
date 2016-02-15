@@ -320,6 +320,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					that = this,
 					iResultOffset;
 
+			if (!wheelData) {
+				return false;
+			}
+
 			if (!this._aWheelDeltas) {
 				this._aWheelDeltas = [];
 			}

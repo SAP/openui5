@@ -60,7 +60,10 @@
 					<ObjectListItem
 						intro="{cartProducts>Quantity} x"
 						type="{cfg>/listItemType}"
-						icon="{cartProducts>PictureUrl}"
+						icon="{
+							path : 'cartProducts>PictureUrl',
+							formatter : '.formatter.pictureUrl'
+						}"
 						title="{cartProducts>Name}"
 						number="{
 							path : 'cartProducts>Price',

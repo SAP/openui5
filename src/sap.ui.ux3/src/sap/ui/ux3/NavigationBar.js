@@ -208,6 +208,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			this._checkOverflowIntervalId = null;
 		}
 
+		this._iSoredScrollPosition = this.$("list").scrollLeft();
+
 		if (!!sap.ui.Device.browser.firefox) { // TODO: feature detection... not used yet because of performance implications (may involve creating elements)
 			this.$().unbind("DOMMouseScroll", this._handleScroll);
 		} else {
@@ -282,6 +284,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			$NavBar.children().scrollTop(0);
 			$NavBar.scrollTop(0);
 		});
+
+		if (this._iSoredScrollPosition) {
+			this.$("list").scrollLeft(this._iSoredScrollPosition);
+		}
 	};
 
 

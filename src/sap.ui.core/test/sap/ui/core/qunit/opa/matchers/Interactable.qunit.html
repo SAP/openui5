@@ -188,6 +188,29 @@
 						this.oDialog.open();
 					});
 
+				QUnit.test("Should not match a Button when a dialog is opened in front of it even if the dialog is still opening and no block layer is there", function (assert) {
+					// Arrange
+					var fnStart = assert.async();
+
+					// System under Test
+					var oInteractable = new Interactable();
+
+					// Act
+					var bResultBeforeOpening = oInteractable.isMatching(this.oButtonInPage);
+
+					this.oDialog.attachAfterOpen(fnStart);
+
+					this.oDialog.open();
+					this.oDialog.close();
+
+					var bResultAfterOpening = oInteractable.isMatching(this.oButtonInPage);
+
+					// Assert
+					assert.ok(bResultBeforeOpening, "Control is matching");
+					assert.ok(!bResultAfterOpening, "Control isn't matching after a dialog is opened");
+					sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind an Open dialog/), oInteractable._sLogPrefix);
+				});
+
 
 					QUnit.test("Should match a Button in an open dialog", function (assert) {
 						// Arrange
@@ -258,7 +281,12 @@
 						})
 					});
 
-					QUnit.start();
+					jQuery(function () {
+						// open a dialog and destroy it because it introduces a singleton global in IE
+						new Dialog().open().destroy();
+						// start after dom is ready
+						QUnit.start();
+					});
 				});
 		</script>
 	</head>

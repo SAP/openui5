@@ -15,7 +15,7 @@ sap.ui.require([
 								Opa5.getWindow().history.forward();
 							}
 						});
-					},
+					}
 				},
 				assertions: {}
 			}

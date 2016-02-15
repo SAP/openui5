@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		"use strict";
 
 		/**
-		 * Constructor for a new ComboBoxBase.
+		 * Constructor for a new <code>sap.m.ComboBoxBase</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
 		 * @param {object} [mSettings] Initial settings for the new control.
@@ -55,10 +55,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 *
 		 */
 		ComboBoxBase.prototype.updateItems = function(sReason) {
-			this.bDataUpdated = false;
+			this.bItemsUpdated = false;
 			this.destroyItems();
 			this.updateAggregation("items");
-			this.bDataUpdated = true;
+			this.bItemsUpdated = true;
 		};
 
 		/**
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @see sap.ui.base.ManagedObject#bindAggregation
 		 */
 		ComboBoxBase.prototype.refreshItems = function() {
-			this.bDataUpdated = false;
+			this.bItemsUpdated = false;
 			this.refreshAggregation("items");
 		};
 
@@ -91,10 +91,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * Initialization hook.
-		 *
-		 */
 		ComboBoxBase.prototype.init = function() {
 			ComboBoxTextField.prototype.init.apply(this, arguments);
 
@@ -107,13 +103,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			/**
 			 * To detect whether the data is updated.
 			 */
-			this.bDataUpdated = false;
+			this.bItemsUpdated = false;
 		};
 
-		/**
-		 * Cleans up before destruction.
-		 *
-		 */
 		ComboBoxBase.prototype.exit = function() {
 			ComboBoxTextField.prototype.exit.apply(this, arguments);
 
@@ -162,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
-			if ((!this.isOpen() || !this.hasContent()) && this.isOpenArea(oEvent.target)) {
+			if (!this.isOpen() && this.isOpenArea(oEvent.target)) {
 
 				// remove the active state of the control's field
 				this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
@@ -195,9 +187,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 					return;
 				}
 
-				if (this.hasContent()) {
-					this.open();
-				}
+				this.open();
 			}
 
 			if (this.isOpen()) {
@@ -236,13 +226,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				return;
 			}
 
-			// select all text
-			this.selectText(0, this.getValue().length);
-
-			// open only if the combobox has items
-			if (this.hasContent()) {
-				this.open();
-			}
+			this.selectText(0, this.getValue().length); // select all text
+			this.open();
 		};
 
 		/**
@@ -265,7 +250,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				oEvent.preventDefault();
 
 				this.close();
-			} else {	// the picker is closed
+			} else {
 
 				// cancel changes and revert to the value which the Input field had when it got the focus
 				ComboBoxTextField.prototype.onsapescape.apply(this, arguments);
@@ -399,7 +384,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @protected
 		 */
 		ComboBoxBase.prototype.hasContent = function() {
-			return !!this.getItems().length;
+			return this.getItems().length > 0;
 		};
 
 		/**
@@ -488,26 +473,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		ComboBoxBase.prototype.getSelectableItems = function() {
 			var oList = this.getList();
 			return oList ? oList.getSelectableItems() : [];
-		};
-
-		/**
-		 * Gets the trigger element of the control's picker popup.
-		 *
-		 * @returns {Element | null} The element that is used as trigger to open the control's picker popup.
-		 */
-		ComboBoxBase.prototype.getOpenArea = function() {
-			return this.getDomRef("arrow");
-		};
-
-		/**
-		 * Checks whether the provided element is the open area.
-		 *
-		 * @param {Element} oDomRef
-		 * @returns {boolean}
-		 */
-		ComboBoxBase.prototype.isOpenArea = function(oDomRef) {
-			var oOpenAreaDomRef = this.getOpenArea();
-			return oOpenAreaDomRef && oOpenAreaDomRef.contains(oDomRef);
 		};
 
 		/**

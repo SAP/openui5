@@ -55,6 +55,7 @@
 
 			var oCal2 = new sap.ui.unified.Calendar("Cal2",{
 				intervalSelection: true,
+				width: "400px",
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2011", "0", "10"), endDate: new Date("2011", "0", "13")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "1"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
 				               new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
@@ -76,6 +77,14 @@
 			qutils.delayTestStart();
 
 			module("Rendering");
+
+			test("width", function() {
+				var sStyle = jQuery("#Cal1").attr("style");
+				ok((!sStyle || sStyle.search("width") < 0), "Calendar1: no width set");
+
+				sStyle = jQuery("#Cal2").attr("style");
+				ok((sStyle && sStyle.search("width:") >= 0  && sStyle.search("400px") >= 0), "Calendar2: width set");
+			});
 
 			test("Week day orders", function() {
 				var $Month = sap.ui.getCore().byId("Cal1").getAggregation("month")[0].$();

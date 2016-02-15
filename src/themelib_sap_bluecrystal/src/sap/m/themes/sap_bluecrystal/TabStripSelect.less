@@ -1,49 +1,57 @@
 /* ================================================================= */
 /* CSS for control sap.m/TabStripSelect.control BlueCrystal theme    */
 /* ================================================================= */
-.sapMSltPressed .sapMSltIcon {
-	color: white;
-}
-
 .sapMSlt.sapMTabStripSelect {
+	border: none;
 	background: transparent;
-}
-.sapMTabStripSelect.sapMSltPressed .sapMSltArrow {
-	color: white; /* ToDo: this must be variable when the styling of the button is fixed */
-	background-color: @sapUiFieldActiveBackground;
-}
-
-.sapMTabStripSelect { /* change this only in contexxt of sap.m.TabStripSelect*/
-	&.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+	&.sapMSltPressed {
+		&.sapMSltIconOnly {
+			&:not(.sapMSltDisabled) {
 				background-color: transparent;
-			&.sapMSltHoverable:hover {
-				background-color: transparent;
-			}
-			.sapMSltInner {
-				.sapMSltIcon {
-					background-color: @sapUiFieldActiveBackground;
+				&.sapMSltHoverable:hover {
+					background-color: transparent;
+				}
+				.sapMSltInner {
+					.sapMSltIcon {
+						background-color: @sapUiFieldActiveBackground;
+					}
 				}
 			}
 		}
-
+		.sapMSltIcon {
+			color: @sapUiButtonActiveTextColor;
+		}
+		.sapMSltArrow {
+			color: @sapUiButtonActiveTextColor;
+			background-color: @sapUiFieldActiveBackground;
+		}
+	}
 	&:not(.sapMSltPressed) {
 		&.sapMSltHoverable:hover {
 			.sapMSltInner {
 				.sapMSltIcon {
-				  background-color: @sapUiButtonLiteHoverBackground;
+					background-color: @sapUiButtonLiteHoverBackground;
 				}
 			}
 		}
 	}
+	.sapMSltArrow {
+		color: @sapUiButtonIconColor;
+	}
 }
-
 
 .sap-phone {
 	.sapMSlt.sapMTabStripSelect {
 		background: @sapUiLightestBG;
+		&.sapMSltPressed {
+			&.sapMSltIconOnly:not(.sapMSltDisabled) {
+				background-color: @sapUiLightestBG;
+			}
+		}
 	}
 
-	.sapMTabStripSelect.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
-		background-color: @sapUiLightestBG;
+	.sapMDialogScroll {
+		background: @sapUiLightestBG
 	}
+
 }

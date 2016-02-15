@@ -121,9 +121,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TabStrip.prototype.createTab = function(sText,oContent) {
-		var oTabs = this.getTabs(),
-			oTitle = new sap.ui.core.Title(this.getId() + "-" + oTabs.length + "-title",{text:sText}),
-			oTab = new sap.ui.commons.Tab(this.getId() + "-" + oTabs.length);
+		var oTitle = new sap.ui.core.Title({text:sText}),
+			oTab = new sap.ui.commons.Tab();
+
 		oTab.setTitle(oTitle);
 		oTab.addContent(oContent);
 		this.addTab(oTab);

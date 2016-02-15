@@ -26,8 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 			// start control wrapper
 			oRm.write("<div ");
 			oRm.writeControlData(oControl);
-			oRm.addClass("sapMITB");
-			oRm.addClass("sapMITBStretch");
+			oRm.addClass("sapMTabContainer");
 			oRm.writeClasses();
 			oRm.write(">");
 
@@ -37,13 +36,13 @@ sap.ui.define(['jquery.sap.global'],
 
 			// render outer content
 			oRm.write("<div id='" + oControl.getId() + "-containerContent' ");
-			oRm.addClass("sapMITBContainerContent");
+			oRm.addClass("sapMTabContainerContent");
 
 			oRm.writeClasses();
 			oRm.write(">");
 
 			// render inner content
-			oRm.write("<div id='" + this.getContentDomId(oControl) + "' class='sapMITBContent'");
+			oRm.write("<div id='" + this.getContentDomId(oControl) + "' class='sapMTabContainerInnerContent'");
 			oRm.writeAccessibilityState(oControl, this.getTabContentAccAttributes(oControl));
 			oRm.write(">");
 

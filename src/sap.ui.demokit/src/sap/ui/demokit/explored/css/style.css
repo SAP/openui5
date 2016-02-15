@@ -109,3 +109,20 @@ code {
 .fs0875 {
 	font-size: 0.875rem;
 }
+
+.fs0875 pre {
+	white-space: pre-wrap;
+}
+
+.fs0875 > p {
+	margin-top: 0.6em;
+	margin-bottom: 0.6em;
+}
+
+.fs0875 > p:first-child {
+	margin-top: 0;
+}
+
+.fs0875 > p:last-child {
+	margin-bottom: 0;
+}

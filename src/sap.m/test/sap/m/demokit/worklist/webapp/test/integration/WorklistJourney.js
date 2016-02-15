@@ -29,8 +29,7 @@ sap.ui.define([
 
 		opaTest("Entering something that cannot be found into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {
 			//Actions
-			When.onTheWorklistPage.iTypeSomethingInTheSearchThatCannotBeFound().
-				and.iTriggerRefresh();
+			When.onTheWorklistPage.iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh();
 
 			// Assertions
 			Then.onTheWorklistPage.theTableHasEntries().and.iTeardownMyAppFrame();

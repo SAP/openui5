@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 	/**
-	 * SAPUI5 library with controls specialized for mobile devices.
+	 * The main UI5 control library, with responsive controls that can be used in touch devices as well as desktop browsers.
 	 *
 	 * @namespace
 	 * @name sap.m
@@ -2538,13 +2538,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			 *
 			 * @param {String} sURL Uniform resource locator
 			 * @param {boolean} [bNewWindow] Opens URL in a new browser window or tab. Please note that, opening a new window/tab can be ignored by browsers(e.g. on Windows Phone) or by popup blockers.
+			 * NOTE: On Windows Phone the URL will be enforced to open in the same window if opening in a new window/tab fails (because of a known system restriction on cross-window communications). Use sap.m.Link instead (with blank target) if you necessarily need to open URL in a new window.
+			 *
 			 * @public
 			 * @name sap.m.URLHelper#redirect
 			 * @function
 			 */
 			redirect : function (sURL, bNewWindow) {
 				$.sap.assert(isValidString(sURL), this + "#redirect: URL must be a string" );
-
 				this.fireEvent("redirect", sURL);
 				if (!bNewWindow) {
 					window.location.href = sURL;
@@ -2552,6 +2553,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					var oWindow = window.open(sURL, "_blank");
 					if (!oWindow) {
 						$.sap.log.error(this + "#redirect: Could not open " + sURL);
+						if (Device.os.windows_phone || (Device.browser.edge && Device.browser.mobile)) {
+							jQuery.sap.log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
+							window.location.href = sURL;
+						}
 					}
 				}
 			},

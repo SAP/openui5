@@ -37,6 +37,10 @@ sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
 
 		statusState: function (status) {
 			return mStatusState[status] || "None";
+		},
+
+		pictureUrl: function (sUrl) {
+			return jQuery.sap.getResourcePath("sap/ui/demo/cart/" + sUrl);
 		}
 	};
 

@@ -1,0 +1,79 @@
+<mvc:View
+	controllerName="sap.m.sample.PlanningCalendarViews.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:unified="sap.ui.unified"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<PlanningCalendar
+			id="PC1"
+			startDate="{path: '/startDate'}"
+			viewKey="D"
+			rows="{path: '/people'}"
+			appointmentSelect="handleAppointmentSelect"
+			intervalSelect="handleIntervalSelect">
+			<toolbarContent>
+				<Title text="Title" titleStyle="H4"/>
+			</toolbarContent>
+			<views>
+				<PlanningCalendarView
+					key="A"
+					intervalType="Hour"
+					description="hours view"
+					intervalsS="2"
+					intervalsM="4"
+					intervalsL="6"
+					showSubIntervals="true">
+				</PlanningCalendarView>
+				<PlanningCalendarView
+					key="D"
+					intervalType="Day"
+					description="days view"
+					intervalsS="1"
+					intervalsM="3"
+					intervalsL="7"
+					showSubIntervals="true">
+				</PlanningCalendarView>
+				<PlanningCalendarView
+					key="M"
+					intervalType="Month"
+					description="months view"
+					intervalsS="1"
+					intervalsM="2"
+					intervalsL="3"
+					showSubIntervals="true">
+				</PlanningCalendarView>
+			</views>
+			<rows>
+				<PlanningCalendarRow
+					icon="{pic}"
+					title="{name}"
+					text="{role}"
+					nonWorkingDays="{freeDays}"
+					nonWorkingHours= "{freeHours}"
+					appointments="{appointments}"
+					intervalHeaders="{headers}">
+					<appointments>
+						<unified:CalendarAppointment
+							startDate="{start}"
+							endDate="{end}"
+							icon="{pic}"
+							title="{title}"
+							text="{info}"
+							type="{type}"
+							tentative="{tentative}">
+						</unified:CalendarAppointment>
+					</appointments>
+					<intervalHeaders>
+						<unified:CalendarAppointment
+							startDate="{start}"
+							endDate="{end}"
+							icon="{pic}"
+							title="{title}"
+							type="{type}">
+						</unified:CalendarAppointment>
+					</intervalHeaders>
+				</PlanningCalendarRow>
+			</rows>
+		</PlanningCalendar>
+	</VBox>
+</mvc:View>

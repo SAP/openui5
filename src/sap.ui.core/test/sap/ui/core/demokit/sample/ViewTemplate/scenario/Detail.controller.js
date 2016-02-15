@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 		/*
 		 * Event handler for table.
 		 */
-		onSelectionChange: function (oEvent) {
+		onSelectionChange : function (oEvent) {
 			var oSelectedListItem = oEvent.getParameter("listItem");
 
 			this.getView().bindElement(oSelectedListItem.getBindingContext().getPath());
@@ -17,7 +17,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 		},
 
 		// show identification details
-		onDetailsPressed: function (oEvent) {
+		onDetailsPressed : function (oEvent) {
 			oEvent.getSource().getDependents()[0].openBy(oEvent.getSource());
 		}
 	});

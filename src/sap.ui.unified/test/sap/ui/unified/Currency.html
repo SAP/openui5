@@ -51,7 +51,24 @@
 			}
 		});
 
+		var oTemplate2 = new sap.ui.unified.Currency({
+			value: {
+				path: 'value',
+				type: new sap.ui.model.type.String()
+			},
+			currency: '{currency}',
+			maxPrecision: 0
+		});
+
+		var oLayout2 = new sap.ui.layout.VerticalLayout({
+			content: {
+				path: "/modelData",
+				template: oTemplate2
+			}
+		});
+
 		oLayout.placeAt("content");
+		oLayout2.placeAt("content");
 	</script>
 </head>
 <body class="sapUiBody" role="application">

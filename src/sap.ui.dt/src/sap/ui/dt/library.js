@@ -40,7 +40,7 @@ function(jQuery) {
 	 * Selection mode of the tree
 	 *
 	 * @enum {string}
-	 * @public
+	 * @private
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.dt.SelectionMode = {

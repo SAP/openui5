@@ -30,14 +30,14 @@
 			},
 			{
 				"text": "Worklist",
-				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/mockServer.html",
 				"config": "test-resources/sap/m/demokit/worklist/demoapp.json",
 				"icon": "task",
 				"desc": "Best-practice starting point for a worklist-style app"
 			},
 			{
 				"text": "Master-Detail",
-				"ref": "test-resources/sap/m/demokit/master-detail/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/master-detail/webapp/test/mockServer.html",
 				"config": "test-resources/sap/m/demokit/master-detail/demoapp.json",
 				"icon": "task",
 				"desc": "Best-practice starting point for a master-detail app"
@@ -324,7 +324,8 @@
 		  "since": "1.26",
 		  "samples": [
 			"sap.m.sample.UploadCollection",
-			"sap.m.sample.UploadCollectionForPendingUpload"
+			"sap.m.sample.UploadCollectionForPendingUpload",
+			"sap.m.sample.UploadCollectionVersioning"
 		  ]
 		},
 		{
@@ -659,7 +660,10 @@
 		  "category": "User Input",
 		  "since": "1.34",
 		  "formFactors": "L",
-		  "samples": ["sap.m.sample.PlanningCalendar"]
+		  "samples": ["sap.m.sample.PlanningCalendar",
+		  	"sap.m.sample.PlanningCalendarMulti",
+		  	"sap.m.sample.PlanningCalendarSingle",
+		  	"sap.m.sample.PlanningCalendarViews"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -1614,17 +1618,17 @@
 		{
 		  "id": "sap.m.sample.MultiInputMultiLine",
 		  "name": "MultiInput Multi-line Mode",
-		  "description": "Multi-line display mode allows to fully view all tokens and easily edit tokens in the MultiInput. This display mode should be used if you need overview of all content in the MultiInput."
+		  "description": "Multi-line display mode allows you to fully view all tokens and easily edit tokens in the MultiInput. This display mode should be used if you need an overview of all content in the MultiInput."
 		},
 		{
 			"id": "sap.m.sample.MultiInputDatabinding",
-			"name": "MultiInput Databinding",
-			"description": "MultiInput Databinding allows data to be binded to tokens in MultiInput."
+			"name": "MultiInput Data Binding",
+			"description": "MultiInput data binding allows data to be bound to tokens in MultiInput."
 		},
 		{
 			"id": "sap.m.sample.MultiInputMaxTokens",
 			"name": "MultiInput with Max Tokens",
-			"description": "Number of Tokens in MultiInput cannot exceeds the maxToken number."
+			"description": "Number of Tokens in MultiInput cannot exceed the maxToken number."
 		},
 		{
 			"id": "sap.m.sample.NumericContentDifSizes",
@@ -2067,6 +2071,11 @@
 		  "description": "With this UploadCollection scenario, you can select single or multiple files and add them to the upload list first. In a second step, the application can upload the selected files by calling the upload() function."
 		},
 		{
+		  "id": "sap.m.sample.UploadCollectionVersioning",
+		  "name": "Upload Collection with Download Option",
+		  "description": "Shows the UploadCollection control with the download option. As far one item is selected, the download feature can be used. This feature can only be used in Instant Upload scenario."
+		},
+		{
 		  "id": "sap.m.sample.StandardMarginsAll",
 		  "name": "Margins All Around",
 		  "description": "Use standard margin classes 'sapUiTinyMargin', 'sapUiSmallMargin', 'sapUiMediumMargin' or 'sapUiLargeMargin' to add a 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) margin to your control. This will clear the area all around your control (outside its border)."
@@ -2164,32 +2173,32 @@
 		{
 		  "id": "sap.m.sample.GenericTile1x1",
 		  "name": "Generic Tile 1x1",
-		  "description": "Shows the 1x1 frame type containing the title, the description, and the customizable main area."
+		  "description": "Shows the 1x1 frame type containing the title, the description, and the customizable main area. The 1x1 frame type is shown in two different sizes defined with explicit tile sizes."
 		},
 		{
 		  "id": "sap.m.sample.GenericTile2x1SingleCont",
 		  "name": "Generic Tile 2x1 - Single Content",
-		  "description": "Shows the 2x1 frame type containing the title, the description, and the customizable main area."
+		  "description": "Shows the 2x1 frame type containing the title, the description, and the customizable main area. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
 		},
 		{
 		  "id": "sap.m.sample.GenericTile2x1TwoCont",
 		  "name": "Generic Tile 2x1 - Two Contents",
-		  "description": "Shows the 2x1 frame type containing the title, the description and two customizable areas."
+		  "description": "Shows the 2x1 frame type containing the title, the description and two customizable areas. The 2x1 frame type is shown in different sizes defined with explicit tile sizes."
 		},
 		{
 		  "id": "sap.m.sample.SlideTile",
 		  "name": "Generic Tiles Sliding",
-		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles."
+		  "description": "Generic Tile controls with the 2x1 frame type are displayed as sliding tiles. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
 		},
 		{
 		  "id": "sap.m.sample.GenericTileStates",
 		  "name": "Generic Tile Statuses",
-		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status."
+		  "description": "Shows the GenericTile while it is loading, if loading fails, and in disabled status. The size of the tiles is defined with automatic sizing and depends on the device it is running on."
 		},
 		{
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
-		  "description": "Shows the universal container for different types of content and context information in the footer area."
+		  "description": "Shows the universal container for different content types and context information in the footer area. The tile is shown in two different sizes defined with explicit tile sizes."
 		},
 		{
 		  "id": "sap.m.sample.TileContentAutoSize",
@@ -2210,6 +2219,21 @@
 		  "id": "sap.m.sample.PlanningCalendar",
 		  "name": "simple PlanningCalendar",
 		  "description": "PlanningCalendar with single row selection."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarMulti",
+		  "name": "PlanningCalendar - mutiple selection",
+		  "description": "PlanningCalendar with multiple row selection. No interval headers are displayed. On click on an interval a new appointment is created."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarSingle",
+		  "name": "PlanningCalendar - for one person",
+		  "description": "PlanningCalendar with only one row without row header.  On click on an interval a new appointment is created."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarViews",
+		  "name": "PlanningCalendar - with custom views",
+		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. Sub-intervals are shown. Custom non-working days and hours are set."
 		}
 		]
 	}

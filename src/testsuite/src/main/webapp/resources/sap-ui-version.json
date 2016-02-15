@@ -102,6 +102,13 @@
 			"buildTimestamp": "${buildtimestamp}",
 			"scmRevision": "${lastchange}",
 			"gav": "com.sap.openui5:themelib_sap_goldreflection:${version}:jar"
+		},
+		{
+			"name": "themelib_sap_belize",
+			"version": "${version}",
+			"buildTimestamp": "${buildtimestamp}",
+			"scmRevision": "${lastchange}",
+			"gav": "com.sap.openui5:themelib_sap_belize:${version}:jar"
 		}
 	]
 }

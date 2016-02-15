@@ -22,8 +22,8 @@ sap.ui.require([
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
 		oMessages = {
-			"EnterDateTime": "EnterDateTime Nov 27, 2014, 1:47:26 PM",
-			"EnterDate": "EnterDate Nov 27, 2014"
+			"EnterDateTime" : "EnterDateTime Nov 27, 2014, 1:47:26 PM",
+			"EnterDate" : "EnterDate Nov 27, 2014"
 		};
 
 	function createInstance(sTypeName, oConstraints, oFormatOptions) {
@@ -170,7 +170,7 @@ sap.ui.require([
 			var oControl = new Control(),
 				oType = createInstance(sTypeName);
 
-			oControl.bindProperty("tooltip", {path: "/unused", type: oType});
+			oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 			sap.ui.getCore().getConfiguration().setLanguage("de-DE");
 			assert.strictEqual(oType.formatValue(oDateTime, "string"),
 				DateFormat.getDateTimeInstance().format(oDateTime),
@@ -180,10 +180,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.DateTime", {
-		beforeEach: function () {
+		beforeEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		afterEach: function () {
+		afterEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -192,14 +192,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{i: {}, o: undefined},
-		{i: {nullable: true, displayFormat: "Date"}, o: {isDateOnly: true}},
-		{i: {nullable: false, displayFormat: "foo"}, o: {nullable: false},
-			warning: "Illegal displayFormat: foo"},
-		{i: {nullable: "true", displayFormat: 1}, o: undefined,
-			warning: "Illegal displayFormat: 1"},
-		{i: {nullable: "false"}, o: {nullable: false}},
-		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"}
+		{i : {}, o : undefined},
+		{i : {nullable : true, displayFormat : "Date"}, o : {isDateOnly : true}},
+		{i : {nullable : false, displayFormat : "foo"}, o : {nullable : false},
+			warning : "Illegal displayFormat: foo"},
+		{i : {nullable : "true", displayFormat : 1}, o : undefined,
+			warning : "Illegal displayFormat: 1"},
+		{i : {nullable : "false"}, o : {nullable : false}},
+		{i : {nullable : "foo"}, o : undefined, warning : "Illegal nullable: foo"}
 	].forEach(function (oFixture) {
 		QUnit.test("constraints: " + JSON.stringify(oFixture.i) + ")", function (assert) {
 			var oType = new DateTime();
@@ -218,24 +218,24 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{oFormatOptions: {},  oExpected: {strictParsing: true}},
-		{oFormatOptions: undefined, oExpected: {strictParsing: true}},
-		{oFormatOptions: {strictParsing: false, UTC: true}, oExpected: {strictParsing: false}},
-		{oFormatOptions: {foo: "bar"}, oExpected: {strictParsing: true, foo: "bar"}},
-		{oFormatOptions: {style: "medium"}, oExpected: {strictParsing: true, style: "medium"}},
+		{oFormatOptions : {},  oExpected : {strictParsing : true}},
+		{oFormatOptions : undefined, oExpected : {strictParsing : true}},
+		{oFormatOptions : {strictParsing : false, UTC : true}, oExpected : {strictParsing : false}},
+		{oFormatOptions : {foo : "bar"}, oExpected : {strictParsing : true, foo : "bar"}},
+		{oFormatOptions : {style : "medium"}, oExpected : {strictParsing : true, style : "medium"}},
 		// with displayFormat = Date
-		{oFormatOptions: {}, oConstraints: {displayFormat: "Date"},
-			oExpected: {UTC: true, strictParsing: true}},
-		{oFormatOptions: undefined, oConstraints: {displayFormat: "Date"},
-			oExpected: {UTC: true, strictParsing: true}},
-		{oFormatOptions: {strictParsing: false}, oConstraints: {displayFormat: "Date"},
-			oExpected: {UTC: true, strictParsing: false}},
-		{oFormatOptions: {foo: "bar"}, oConstraints: {displayFormat: "Date"},
-			oExpected: {UTC: true, strictParsing: true, foo: "bar"}},
-		{oFormatOptions: {UTC: false}, oConstraints: {displayFormat: "Date"},
-			oExpected: {UTC: true, strictParsing: true}},
-		{oFormatOptions: {style: "medium"}, oConstraints: {displayFormat: "Date"},
-			oExpected: {UTC: true, strictParsing: true, style: "medium"}}
+		{oFormatOptions : {}, oConstraints : {displayFormat : "Date"},
+			oExpected : {UTC : true, strictParsing : true}},
+		{oFormatOptions : undefined, oConstraints : {displayFormat : "Date"},
+			oExpected : {UTC : true, strictParsing : true}},
+		{oFormatOptions : {strictParsing : false}, oConstraints : {displayFormat : "Date"},
+			oExpected : {UTC : true, strictParsing : false}},
+		{oFormatOptions : {foo : "bar"}, oConstraints : {displayFormat : "Date"},
+			oExpected : {UTC : true, strictParsing : true, foo : "bar"}},
+		{oFormatOptions : {UTC : false}, oConstraints : {displayFormat : "Date"},
+			oExpected : {UTC : true, strictParsing : true}},
+		{oFormatOptions : {style : "medium"}, oConstraints : {displayFormat : "Date"},
+			oExpected : {UTC : true, strictParsing : true, style : "medium"}}
 	].forEach(function (oFixture) {
 		QUnit.test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
 			function (assert) {
@@ -254,7 +254,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("format and parse (Date)", function (assert) {
-		var oType = new DateTime({}, {displayFormat: "Date"});
+		var oType = new DateTime({}, {displayFormat : "Date"});
 
 		assert.strictEqual(oType.formatValue(oDateOnly, "string"), sFormattedDateOnly,
 			"target type string");
@@ -265,22 +265,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("validate (Date)", function (assert) {
-		validate(assert, "sap.ui.model.odata.type.DateTime", {displayFormat: "Date"}, "EnterDate");
+		validate(assert, "sap.ui.model.odata.type.DateTime", {displayFormat : "Date"}, "EnterDate");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("format, parse, validate (Date)", function (assert) {
-		formatParseValidate(assert, "sap.ui.model.odata.type.DateTime", {displayFormat: "Date"},
+		formatParseValidate(assert, "sap.ui.model.odata.type.DateTime", {displayFormat : "Date"},
 			oDateOnly);
 	});
 
 	//*********************************************************************************************
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.DateTimeOffset", {
-		beforeEach: function () {
+		beforeEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		afterEach: function () {
+		afterEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -289,12 +289,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{i: {}, o: undefined},
-		{i: {nullable: true, displayFormat: "Date"}, o: undefined},
-		{i: {nullable: false, isDateOnly: true}, o: {nullable: false}},
-		{i: {nullable: "true"}, o: undefined},
-		{i: {nullable: "false"}, o: {nullable: false}},
-		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"}
+		{i : {}, o : undefined},
+		{i : {nullable : true, displayFormat : "Date"}, o : undefined},
+		{i : {nullable : false, isDateOnly : true}, o : {nullable : false}},
+		{i : {nullable : "true"}, o : undefined},
+		{i : {nullable : "false"}, o : {nullable : false}},
+		{i : {nullable : "foo"}, o : undefined, warning : "Illegal nullable: foo"}
 	].forEach(function (oFixture) {
 		QUnit.test("constraints: " + JSON.stringify(oFixture.i) + ")", function (assert) {
 			var oType;
@@ -314,11 +314,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{oFormatOptions: {},  oExpected: {strictParsing: true}},
-		{oFormatOptions: undefined, oExpected: {strictParsing: true}},
-		{oFormatOptions: {strictParsing: false}, oExpected: {strictParsing: false}},
-		{oFormatOptions: {foo: "bar"}, oExpected: {strictParsing: true, foo: "bar"}},
-		{oFormatOptions: {style: "medium"}, oExpected: {strictParsing: true, style: "medium"}}
+		{oFormatOptions : {},  oExpected : {strictParsing : true}},
+		{oFormatOptions : undefined, oExpected : {strictParsing : true}},
+		{oFormatOptions : {strictParsing : false}, oExpected : {strictParsing : false}},
+		{oFormatOptions : {foo : "bar"}, oExpected : {strictParsing : true, foo : "bar"}},
+		{oFormatOptions : {style : "medium"}, oExpected : {strictParsing : true, style : "medium"}}
 	].forEach(function (oFixture) {
 		QUnit.test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
 			function (assert) {

@@ -495,7 +495,7 @@
 	];
 
 
-	var oPage = new sap.m.Page({
+	var oPage = new sap.m.Page("toolbar-page", {
 		title : "Overflow Toolbar - the buttons that do not fit go to an action sheet",
 		enableScrolling : true,
 		subHeader: aAllToolbars[0],
@@ -575,6 +575,19 @@
 	});
 
 	oApp.addPage(oPage).placeAt("content");
+
+	var oB = new sap.m.Button("size_btn", {
+		text : "Change page size to 480px",
+		press : function() { jQuery("#toolbar-page").width("480px"); }
+	});
+
+	var oB2 = new sap.m.Button("size_btn2", {
+		text : "Change page size to 700px",
+		press : function() { jQuery("#toolbar-page").width("700px"); }
+	});
+
+	oB2.placeAt("content");
+	oB.placeAt("content");
 
 </script>
 </head>

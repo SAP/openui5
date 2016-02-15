@@ -55,6 +55,8 @@
 .sapUiTableVSb,
 .sapUiTableHSb {
 	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 
 .sapUiTableVSb {
@@ -139,9 +141,6 @@
 .sapUiTableColHdrCnt {
 	display: none;
 	background-color: @sapUiExtraLightBG;
-	max-width: 100%;
-	overflow: hidden;
-	white-space: nowrap;
 }
 
 .sapUiTableColHdrCnt {
@@ -154,22 +153,23 @@
 
 .sapUiTableColHdrScr {
 	height: 100%;
-	display: inline-block;
 	overflow: hidden;
 	margin: 0;
 	white-space: nowrap;
 }
 
-.sapUiTableColHdrFixed {
-	display: inline-block;
+.sapUiTableRSel .sapUiTableColHdrScr,
+.sapUiTableRSel .sapUiTableColHdrFixed {
+	margin-left: @sapUiTableRowHdrWidth;
 }
 
-.sapUiTableVScr .sapUiTableCtrlScr {
+.sapUiTableVScr .sapUiTableColHdrScr {
 	margin-right: 16px;
 }
 
 .sapUiTableColHdr {
 	display: table;
+	width: 1000%; /* to prevent wrapping of floating divs, percentage needed for tables without defined width */
 }
 
 .sapUiTableColHdrFixed {
@@ -181,7 +181,8 @@
 }
 
 .sapUiTableCol {
-	display: inline-block;
+	float: left;
+	display: block;
 	position: relative;
 	vertical-align: top;
 }
@@ -251,6 +252,10 @@
 	margin-left: @sapUiTableRowHdrWidth;
 }
 
+.sapUiTableVScr .sapUiTableCtrlScr {
+	margin-right: 16px;
+}
+
 .sapUiTableCtrlCol {
 	/* row defining the width of the cols */
 	height: 0px !important;
@@ -280,10 +285,6 @@
 	height: @sapUiTableRowHeight;
 }
 
-.sapUiTableResizing .sapUiTableCtrlCnt tr {
-	pointer-events:none;
-}
-
 .sapUiTableTr > td {
 	/* height: inherit; */
 	padding: 0;
@@ -307,20 +308,6 @@
 .sapUiTableCellHidden .sapUiTableCell {
 	visibility: hidden; /* hidden row (no content) */
 }
-
-.sapUiTableResizeSensor {
-	position: absolute;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	opacity: 0;
-	z-index: -1000;
-	pointer-events: none;
-}
-
- .sapUiTableNoOpacity {
-	 opacity: 0;
- }
 
 .sapUiTableColIcons {
 	position: absolute;
@@ -740,6 +727,8 @@ html[dir=rtl] {
 	background-repeat: no-repeat;
 	background-color: #dbe5ec;
 	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 
 .sapUiTableSplitterBar:hover {

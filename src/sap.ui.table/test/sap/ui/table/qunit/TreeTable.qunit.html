@@ -2,8 +2,8 @@
 <html>
 <head>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8" />
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
@@ -11,19 +11,13 @@
 		data-sap-ui-noConflict="true"
 	    data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.table" >
     </script>
-    <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
     <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-
     <script  language="javascript">
-
-	// for unittest execution requestAnimationFrame may be queued when the page is not in focus
-	// therefore use setTimeout to get more stable tests
-	window.requestAnimationFrame = window.setTimeout;
-	window.cancelAnimationFrame = window.clearTimeout;
 
     var oData = {
     	root: {
@@ -167,19 +161,15 @@
 		equal(oTable.getBinding("rows").getLength(), 6, "Row count is correct!");
 	});
 
-	asyncTest("Paginator", function() {
+	test("Paginator", function() {
 		oTable.setNavigationMode(sap.ui.table.NavigationMode.Paginator);
 		oTable.setVisibleRowCount(4);
 		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
-			var $table = oTable.$();
-			equal($table.find('#' + oTable.getId() + '-paginator').length, 1, 'The paginator exists');
-			oTable._oPaginator.getDomRef("-forwardLink").click();
-			equal(oTable.getFirstVisibleRow(), 4, "Navigation to last page OK");
-
-			start();
-		}, 0);
+		var $table = oTable.$();
+		equal($table.find('#' + oTable.getId() + '-paginator').length, 1, 'The paginator exists');
+		oTable._oPaginator.getDomRef("-forwardLink").click();
+		equal(oTable.getFirstVisibleRow(), 4, "Navigation to last page OK");
 	});
 
 

@@ -42,6 +42,26 @@
 	-webkit-focus-ring-color: none;
 }
 
+.sapMCb.sapMCbWarn .sapMCbBg {
+	border: 0.125rem dashed @sapHCStandardFG;
+}
+
+.sapMCb.sapMCbErr .sapMCbBg {
+	background-color: @sapHCHighlightBG;
+	border: 0.125rem dashed @sapHCStandardFG;
+}
+
+.sapMCb.sapMCbBgDis.sapMCbWarn .sapMCbBg.sapMCbMarkChecked:before {
+	color: @sapHCStandardFG;
+}
+
+.sapMCb.sapMCbBgDis.sapMCbErr .sapMCbBg {
+	border-color: @sapHCReducedAltFG;
+	&.sapMCbMarkChecked:before {
+		color: @sapHCStandardFG;
+	}
+}
+
 .sapUiForm .sapMCbBg { /* In forms, align left with '0.125rem' ( the focus width) */
 	left: 0.125rem;
 }
@@ -59,18 +79,36 @@
 }
 
 html[data-sap-ui-browser^=ff] .sapMCbBg > input {
-  /* in FF the input needs to be positioned exactly behind the visible checkbox for the focus outline */
-  position: absolute;
+	/* in FF the input needs to be positioned exactly behind the visible checkbox for the focus outline */
+	position: absolute;
 }
 
-.sapMCb:not(.sapMCbBgDis):focus > .sapMCbBg,
-.sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus, { /* in IE clicking on checkbox input does not cause focus on checkbox wrapper div */
-	outline-color: @sapHCStandardFG;
-	outline-width: 0.125rem;
-	outline-style: dotted;
+/* CheckBox focus */
+.sap-desktop {
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
+		outline-color: @sapHCStandardFG;
+		outline-width: 0.125rem;
+		outline-style: dotted;
+	}
+
+	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 0.6875rem;
+		bottom: 0.6875rem;
+		left: 0.6875rem;
+		right: -1px; /* Cb in HCB the outline should have offset 0 from the control */
+		border: 0.125rem dotted @sapHCStandardFG;
+	}
+
+	.sapUiSimpleForm .sapMCb:not(.sapMCbBgDis):focus:before {
+		left: -1px; /* Cb in SimpleForm: left and right border adjustment */
+		right: 0.125rem;
+	}
 }
 
-.sapMCbHoverable:hover {
+.sapMCb:not(.sapMCbWarn):not(.sapMCbErr) .sapMCbBg.sapMCbHoverable:hover {
 	background-color: @sapHCHighlightAltBG;
 }
 
@@ -119,6 +157,24 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 
 	.sapMLIBSelectM > .sapMCb {
 		width: 2rem;
+	}
+
+	.sapUiForm .sapMCbBg { /* In forms, align left with '0.125rem' ( the focus width) */
+		left: 0.125rem;
+	}
+}
+
+.sap-desktop {
+	.sapUiSizeCompact {
+		.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+			top:0.365rem;
+			bottom: 0.365rem;
+			left: 0.365rem;
+		}
+
+		.sapUiSimpleForm .sapMCb:not(.sapMCbBgDis):focus:before {
+			left: 0;
+		}
 	}
 }
 

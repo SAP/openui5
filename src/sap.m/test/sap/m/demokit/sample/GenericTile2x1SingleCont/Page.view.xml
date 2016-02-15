@@ -2,13 +2,12 @@
 	xmlns="sap.m" xmlns:core="sap.ui.core">
 
 	<GenericTile header="Guy Incognito mentioned you in Sales Pitch March:"
-		size="M" frameType="TwoByOne" press="press"
+		frameType="TwoByOne" press="press"
 		headerImage="test-resources/sap/m/demokit/GenericTile2x1SingleCont/images/headerImg2.jpg">
 		<tileContent>
-			<TileContent footer="New Notifications" size="M">
+			<TileContent footer="New Notifications">
 				<content>
-					<FeedContent size="M"
-						contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
+					<FeedContent contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
 						subheader="about 1 minute ago in Computer Market" value="132">
 					</FeedContent>
 				</content>
@@ -16,13 +15,12 @@
 		</tileContent>
 	</GenericTile>
 
-	<GenericTile size="M" frameType="TwoByOne" press="press"
-		backgroundImage="test-resources/sap/m/demokit/GenericTile2x1SingleCont/images/NewsImage1.png">
+	<GenericTile frameType="TwoByOne" press="press"
+		backgroundImage="test-resources/sap/m/demokit/sample/GenericTile2x1SingleCont/images/NewsImage1.png">
 		<tileContent>
-			<TileContent footer="August 21, 2013" size="M">
+			<TileContent footer="August 21, 2013">
 				<content>
-					<NewsContent size="M"
-						contentText="SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com"
+					<NewsContent contentText="SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com"
 						subheader="SAP News">
 					</NewsContent>
 				</content>
@@ -31,17 +29,16 @@
 	</GenericTile>
 
 	<GenericTile press="press" header="Comparative Annual Totals"
-		subheader="Expenses By Region" frameType="TwoByOne" size="Auto" state="Loaded">
+		subheader="Expenses By Region" frameType="TwoByOne" state="Loaded">
 		<tileContent>
-			<TileContent unit="EUR" size="Auto" footer="Compare across regions"
+			<TileContent unit="EUR" footer="Compare across regions"
 				frameType="TwoByOne">
 				<content>
 					<NumericContent value="-431.241.621,5" scale="MM"
-						indicator="Up" size="Auto" truncateValueTo="14" valueColor="Error"
+						indicator="Up" truncateValueTo="14" valueColor="Error"
 						width="100%" />
 				</content>
 			</TileContent>
 		</tileContent>
 	</GenericTile>
-
 </core:View>

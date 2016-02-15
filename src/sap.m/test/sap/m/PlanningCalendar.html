@@ -83,38 +83,48 @@
 			var oStartDate = oTC.getStartDate();
 			var sViewKey = oTC.getViewKey();
 			var oEventStartDate = oEvent.getParameter("startDate");
+			var oEventEndDate = oEvent.getParameter("endDate");
+			var oEventSubInterval = oEvent.getParameter("subInterval");
+			var oEventRow = oEvent.getParameter("row");
 			var oStartDate = oEventStartDate || oTC.getStartDate();
 			var aSelectedRows = oTC.getSelectedRows();
 			var iStartOffset = 3;
 			var iEndOffset = 3;
 
 			if (oEventStartDate) {
-				// add appointment in seledcted interval
+				// add appointment in selected interval
 				iStartOffset = 0;
 				iEndOffset = 1;
 			}
 
-			if(aSelectedRows.length > 0) {
+			if(aSelectedRows.length > 0 || oEventRow) {
+				var oRow = oEventRow || aSelectedRows[0];
 				var oAppointmentStartDate = new Date(oStartDate.getTime());
-				var oAppointmentEndDate = new Date(oStartDate.getTime());
+				var oAppointmentEndDate;
+				if (oEventEndDate) {
+					oAppointmentEndDate = new Date(oEventEndDate);
+				} else{
+					oAppointmentEndDate = new Date(oStartDate.getTime());
 
-				switch (sViewKey) {
-				case sap.ui.unified.CalendarIntervalType.Hour:
-					oAppointmentStartDate.setHours(oAppointmentStartDate.getHours() + iStartOffset);
-					oAppointmentEndDate.setHours(oAppointmentStartDate.getHours() + iEndOffset);
-					break;
+					switch (sViewKey) {
+					case sap.ui.unified.CalendarIntervalType.Hour:
+						oAppointmentStartDate.setHours(oAppointmentStartDate.getHours() + iStartOffset);
+						oAppointmentEndDate.setHours(oAppointmentStartDate.getHours() + iEndOffset);
+						break;
 
-				case sap.ui.unified.CalendarIntervalType.Day:
-					oAppointmentStartDate.setDate(oAppointmentStartDate.getDate() + iStartOffset);
-					oAppointmentEndDate.setDate(oAppointmentStartDate.getDate() + iEndOffset);
-					break;
+					case sap.ui.unified.CalendarIntervalType.Day:
+						oAppointmentStartDate.setDate(oAppointmentStartDate.getDate() + iStartOffset);
+						oAppointmentEndDate.setDate(oAppointmentStartDate.getDate() + iEndOffset);
+						break;
 
-				case sap.ui.unified.CalendarIntervalType.Month:
-					oAppointmentStartDate.setMonth(oAppointmentStartDate.getMonth() + iStartOffset);
-					oAppointmentEndDate.setMonth(oAppointmentStartDate.getMonth() + iEndOffset);
-					break;
+					case sap.ui.unified.CalendarIntervalType.Month:
+						oAppointmentStartDate.setMonth(oAppointmentStartDate.getMonth() + iStartOffset);
+						oAppointmentEndDate.setMonth(oAppointmentStartDate.getMonth() + iEndOffset);
+						break;
+					}
+					oAppointmentEndDate.setMinutes(oAppointmentEndDate.getMinutes() - 1);
 				}
-				oAppointmentEndDate.setMinutes(oAppointmentEndDate.getMinutes() - 1);
+
 				var oAppointment = new sap.ui.unified.CalendarAppointment({
 					startDate: oAppointmentStartDate,
 					endDate: oAppointmentEndDate,
@@ -123,7 +133,7 @@
 					text: sViewKey,
 					icon: "sap-icon://sap-ui5"
 				});
-				aSelectedRows[0].addAppointment(oAppointment);
+				oRow.addAppointment(oAppointment);
 			}else {
 				alert("No row selected");
 			}

@@ -93,6 +93,8 @@ xhr.onCreate = function(request) {
 			[200, oXMLHeaders, sCategoriesXML],
 		"Categories?$skip=0&$top=8":
 			[200, oXMLHeaders, sCategoriesXML],
+		"Categories?$skip=8&$top=8":
+			[200, oXMLHeaders, sCategoriesXMLEmpty],
 		"Categories?$skip=0&$top=100":
 			[200, oXMLHeaders, sCategoriesXML],
 		"Products(2)/Category":
@@ -1311,6 +1313,16 @@ var sCategoriesXML = '\
       </m:properties>\
     </content>\
   </entry>\
+</feed>\
+	';
+
+var sCategoriesXMLEmpty = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<feed xml:base="http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
+  <title type="text">Categories</title>\
+  <id>http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories</id>\
+  <updated>2013-01-31T14:16:20Z</updated>\
+  <link rel="self" title="Categories" href="Categories" />\
 </feed>\
 	';
 

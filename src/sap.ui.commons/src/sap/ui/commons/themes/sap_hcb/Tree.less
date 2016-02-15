@@ -33,6 +33,7 @@ must be re-inverted */
 }
 
 .sapUiTreeNode{
+	background-image: url(img/tree/TreeNode.gif);
 	background-position: left 1px;
 	padding-left: 18px;
 }
@@ -40,6 +41,14 @@ must be re-inverted */
 .sapUiTreeNode:hover{
 	border:1px solid @sapUiHighlight;
 	background-color: @sapUiHighlight;
+}
+
+.sapUiTreeNodeExpanded {
+	background-image: url(img/tree/TreeNode_Exp.gif);
+}
+
+.sapUiTreeNodeCollapsed {
+	background-image: url(img/tree/TreeNode_Coll.gif);
 }
 
 .sapUiTreeNodeSelectedParent, .sapUiTreeNodeSelectedParent:Hover, .sapUiTreeNodeSelected, .sapUiTreeNodeSelected:Hover{

@@ -22,8 +22,8 @@ sap.ui.require([
 
 	function createTime(hours, minutes, seconds, milliseconds) {
 		return {
-			__edmType:"Edm.Time",
-			ms: ((hours * 60 + minutes) * 60 + seconds) * 1000 + milliseconds
+			__edmType :"Edm.Time",
+			ms : ((hours * 60 + minutes) * 60 + seconds) * 1000 + milliseconds
 		};
 	}
 
@@ -46,10 +46,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Time", {
-		beforeEach: function () {
+		beforeEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		afterEach: function () {
+		afterEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -73,21 +73,21 @@ sap.ui.require([
 			this.mock(jQuery.sap.log).expects("warning").never();
 
 			oType = new Time({}, {
-				foo: "a",
-				nullable: vNullable
+				foo : "a",
+				nullable : vNullable
 			});
-			assert.deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable: false});
+			assert.deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable : false});
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("illegal value for nullable", function (assert) {
-		var oType = new Time({}, {nullable: false});
+		var oType = new Time({}, {nullable : false});
 
 		this.mock(jQuery.sap.log).expects("warning").once()
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Time");
 
-		oType = new Time(null, {nullable: "foo"});
+		oType = new Time(null, {nullable : "foo"});
 		assert.deepEqual(oType.oConstraints, undefined, "illegal nullable -> default to true");
 	});
 
@@ -122,9 +122,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	[
 		1,
-		{__edmType: "Edm.Time"},
-		{ms: 1},
-		{__edmType: "Edm.Time", ms: "foo"}
+		{__edmType : "Edm.Time"},
+		{ms : 1},
+		{__edmType : "Edm.Time", ms : "foo"}
 	].forEach(function (oTime) {
 		QUnit.test("format failure for " + JSON.stringify(oTime), function (assert) {
 			var oType = new Time();
@@ -182,7 +182,7 @@ sap.ui.require([
 	QUnit.test("validate success", function (assert) {
 		var oType = new Time();
 
-		[null, {__edmType: "Edm.Time", ms: 4711}].forEach(function (sValue) {
+		[null, {__edmType : "Edm.Time", ms : 4711}].forEach(function (sValue) {
 			oType.validateValue(sValue);
 		});
 		assert.expect(0);
@@ -191,7 +191,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("validate: nullable", function (assert) {
 		TestUtils.withNormalizedMessages(function () {
-			var oType = new Time({}, {nullable: false});
+			var oType = new Time({}, {nullable : false});
 			try {
 				oType.validateValue(null);
 				assert.ok(false);
@@ -204,10 +204,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{value: 1},
-		{value: {__edmType: "Edm.Time"}},
-		{value: {ms: 1}},
-		{value: oCircular, error: "[object Object]"}
+		{value : 1},
+		{value : {__edmType : "Edm.Time"}},
+		{value : {ms : 1}},
+		{value : oCircular, error : "[object Object]"}
 	].forEach(function (oFixture, i) {
 		QUnit.test("validation failure for illegal model type #" + i, function (assert) {
 			var oType = new Time();
@@ -229,7 +229,7 @@ sap.ui.require([
 			oType = new Time(),
 			oValue = createTime(13, 53, 49, 0);
 
-		oControl.bindProperty("tooltip", {path: "/unused", type: oType});
+		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		oType.formatValue(oValue, "string"); // ensure that a formatter exists
 		sap.ui.getCore().getConfiguration().setLanguage("de");
 		assert.strictEqual(oType.formatValue(oValue, "string"), "13:53:49",
@@ -238,13 +238,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{oFormatOptions: {}, oExpected: {UTC: true, strictParsing: true}},
-		{oFormatOptions: undefined, oExpected: {UTC: true, strictParsing: true}},
-		{oFormatOptions: {strictParsing: false}, oExpected: {UTC: true, strictParsing: false}},
-		{oFormatOptions: {UTC: false}, oExpected: {UTC: true, strictParsing: true}},
-		{oFormatOptions: {foo: "bar"}, oExpected: {UTC: true, strictParsing: true, foo: "bar"}},
-		{oFormatOptions: {style: "medium"},
-			oExpected: {UTC: true, strictParsing: true, style: "medium"}}
+		{oFormatOptions : {}, oExpected : {UTC : true, strictParsing : true}},
+		{oFormatOptions : undefined, oExpected : {UTC : true, strictParsing : true}},
+		{oFormatOptions : {strictParsing : false}, oExpected : {UTC : true, strictParsing : false}},
+		{oFormatOptions : {UTC : false}, oExpected : {UTC : true, strictParsing : true}},
+		{oFormatOptions : {foo : "bar"},
+			oExpected : {UTC : true, strictParsing : true, foo : "bar"}},
+		{oFormatOptions : {style : "medium"},
+			oExpected : {UTC : true, strictParsing : true, style : "medium"}}
 	].forEach(function (oFixture) {
 		QUnit.test("with oFormatOptions=" + JSON.stringify(oFixture.oFormatOptions),
 			function (assert) {
@@ -260,7 +261,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("parse milliseconds", function (assert) {
-		var oType = new Time({pattern: "HH:mm:ss.SSS"});
+		var oType = new Time({pattern : "HH:mm:ss.SSS"});
 
 		assert.deepEqual(oType.parseValue("12:34:56.789", "string"), createTime(12, 34, 56, 789));
 	});

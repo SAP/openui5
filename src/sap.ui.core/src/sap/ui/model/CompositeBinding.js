@@ -114,6 +114,8 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 				oBinding.setValue(oValue);
 			}
 		});
+
+		this.getDataState().setValue(this.getValue());
 	};
 
 	/**
@@ -129,6 +131,18 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 
 		jQuery.each(this.aBindings, function(i, oBinding) {
 			oValue = oBinding.getValue();
+			aValues.push(oValue);
+		});
+
+		return aValues;
+	};
+
+	CompositeBinding.prototype.getOriginalValue = function() {
+		var aValues = [],
+		oValue;
+
+		jQuery.each(this.aBindings, function(i, oBinding) {
+			oValue = oBinding.getDataState().getOriginalValue();
 			aValues.push(oValue);
 		});
 
@@ -153,6 +167,8 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			return;
 		}
 
+		var oDataState = this.getDataState();
+
 		if (this.oType) {
 			try {
 				if (this.oType.getParseWithValues()) {
@@ -168,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 				aValues = this.oType.parseValue(oValue, this.sInternalType, aCurrentValues);
 				this.oType.validateValue(aValues);
 			} catch (oException) {
-				this.vInvalidValue = oValue;
+				oDataState.setInvalidValue(oValue);
 				this.checkDataState(); //data ui state is dirty inform the control
 				throw oException;
 			}
@@ -180,6 +196,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 				aValues = [oValue];
 			}
 		}
+
 		if (this.bRawValues) {
 			this.setValue(aValues);
 		} else {
@@ -191,7 +208,8 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			});
 		}
 
-		this.vInvalidValue = null;
+		oDataState.setValue(this.getValue());
+		oDataState.setInvalidValue(null);
 	};
 
 	/**
@@ -463,82 +481,29 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 * @param {boolean} bForceupdate
 	 *
 	 */
-	CompositeBinding.prototype.checkUpdate = function(bForceupdate){
+	CompositeBinding.prototype.checkUpdate = function(bForceUpdate){
+		var bChanged = false;
 		if (this.bPreventUpdate) {
 			return;
 		}
+		var oDataState = this.getDataState();
+		var aOriginalValues = this.getOriginalValue();
+		if (bForceUpdate || !jQuery.sap.equal(aOriginalValues, this.aOriginalValues)) {
+			this.aOriginalValues = aOriginalValues;
+			oDataState.setOriginalValue(aOriginalValues);
+			bChanged = true;
+		}
 		var aValues = this.getValue();
-		if (!jQuery.sap.equal(aValues, this.aValues) || bForceupdate) {// optimize for not firing the events when unneeded
+		if (!jQuery.sap.equal(aValues, this.aValues) || bForceUpdate) {// optimize for not firing the events when unneeded
 			this.aValues = aValues;
+			oDataState.setValue(aValues);
 			this._fireChange({reason: ChangeReason.Change});
+			bChanged = true;
+		}
+		if (bChanged) {
+			this.checkDataState();
 		}
 	};
-
-	CompositeBinding.prototype._updateDataState = function() {
-		var oDataState = PropertyBinding.prototype._updateDataState.apply(this, arguments);
-
-		var mChanges = oDataState.getChanges();
-
-		for (var sKey in mChanges) {
-			switch (sKey) {
-				case "value":
-					oDataState.setValue(this._toExternalValue(mChanges[sKey]));
-					break;
-
-				case "originalValue":
-					oDataState.setOriginalValue(this._toExternalValue(mChanges[sKey]));
-					break;
-
-				case "invalidValue":
-				case "controlMessages":
-				case "modelMessages":
-				case "messages":
-				case "dirty":
-					// Ignore!!
-					break;
-
-				default:
-					oDataState.setProperty(sKey, mChanges[sKey]);
-					break;
-			}
-		}
-
-		if (this.vInvalidValue) {
-			oDataState.setInvalidValue(this.vInvalidValue);
-		} else {
-			var aInvalidValues = oDataState.getInternalProperty("invalidValue");
-			if (aInvalidValues && containsValues(aInvalidValues)) {
-				oDataState.setInvalidValue(this._toExternalValue(aInvalidValues));
-			} else {
-				oDataState.setInvalidValue(null);
-			}
-		}
-
-		return oDataState;
-	};
-
-
-	/**
-	 * Returns false if the given value is null, invalid or an array consisting entirely of null values
-	 *
-	 * @param {any} vValue - A value or an array of values
-	 * @returns {boolean} Whether there were any non-falsy values in the given argument
-	 * @private
-	 */
-	function containsValues(vValue) {
-		if (Array.isArray(vValue)) {
-			for (var i = 0; i < vValue.length; i++) {
-				if (vValue[i] !== null && vValue[i] !== undefined) {
-					return true;
-				}
-			}
-			return false;
-		} else {
-			return !!vValue;
-		}
-
-	}
-
 
 	return CompositeBinding;
 

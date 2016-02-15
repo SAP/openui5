@@ -87,6 +87,14 @@ function(jQuery) {
 	};
 
 	/**
+	 *
+	 */
+	ElementUtil.getClosestElementForNode = function(oNode) {
+		var $ClosestElement = jQuery(oNode).closest("[data-sap-ui]");
+		return $ClosestElement.length ? sap.ui.getCore().byId($ClosestElement.data("sap-ui")) : undefined;
+	};
+
+	/**
 	 * ! Please, use this method only if OverlayUtil.getClosestOverlayForType is not available in your case !
 	 * find the closest element of the given type
 	 * @param  {sap.ui.core.Element} oSourceElement to start search for

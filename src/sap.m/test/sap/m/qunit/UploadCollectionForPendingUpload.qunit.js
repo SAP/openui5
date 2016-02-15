@@ -1,10 +1,10 @@
 QUnit.module("PendingUpload", {
-	setup : function() {
+	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {});
 		this.oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = null;
 	}
@@ -123,7 +123,7 @@ QUnit.test("Test for method _onChange for instantUpload = false", function(asser
 });
 
 QUnit.module("PendingUpload: test setters", {
-	setup : function() {
+	beforeEach : function() {
 		this.createUploadCollection = function (oAddToContructor) {
 			if (this.oUploadCollection) {
 				this.oUploadCollection.destroy();
@@ -134,7 +134,7 @@ QUnit.module("PendingUpload: test setters", {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = null;
 	}
@@ -228,7 +228,7 @@ QUnit.test("Test for MultiSelect in pending upload (not supported)", function(as
 
 QUnit.module("Rendering of UploadCollection with instantUpload = false ", {
 
-	setup : function() {
+	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("uploadCollection1", {
 			instantUpload : false
 		});
@@ -237,7 +237,7 @@ QUnit.module("Rendering of UploadCollection with instantUpload = false ", {
 		var oFile = {name: "file1"};
 		this.aFiles = [oFile];
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 	}
 });
@@ -309,9 +309,13 @@ QUnit.test("Positions of the FileUploader instances in the toolbar", function(as
 	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[2], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
 });
 
+QUnit.test("Download fails in pending upload mode", function(assert) {
+	assert.equal(this.oUploadCollection.downloadItem(null, false), false, "In pending upload mode, the download method returns false.");
+});
+
 QUnit.module("PendingUpload",  {
 
-	setup : function() {
+	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection({instantUpload : false});
 		var oFile = {
 				name: "file1"
@@ -320,7 +324,7 @@ QUnit.module("PendingUpload",  {
 		this.oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 	}
 });
@@ -454,14 +458,14 @@ QUnit.test("Event beforeUploadStarts", function(assert) {
 });
 
 QUnit.module("Delete PendingUpload Item", {
-	setup : function() {
+	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
 			instantUpload : false
 		});
 		this.oUploadCollection.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = null;
 	}
@@ -539,7 +543,7 @@ QUnit.test("Check file list", function(assert) {
 });
 
 QUnit.module("Delete PendingUpload Item, multiple FileUploaderInstances", {
-	setup : function() {
+	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
 			instantUpload : false
 		});
@@ -590,7 +594,7 @@ QUnit.module("Delete PendingUpload Item, multiple FileUploaderInstances", {
 			return sEncodedValue;
 		};
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = null;
 		this.abortStub.restore();
@@ -699,7 +703,7 @@ QUnit.test("Checking if abort is properly called. 3 files with same names, 1 ins
 });
 
 QUnit.module("PendingUpload uploadProgress Event", {
-	setup : function() {
+	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
 			instantUpload : false
 		});
@@ -710,7 +714,7 @@ QUnit.module("PendingUpload uploadProgress Event", {
 		this.oUploadCollection2.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	},
-	teardown : function() {
+	afterEach : function() {
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = null;
 		this.oUploadCollection2.destroy();

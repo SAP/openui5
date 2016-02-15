@@ -1213,8 +1213,22 @@ sap.ui
 						jQuery.sap.log.warning("The mock data for all the entity types could not be found at \"" + sBaseUrl + "\"!");
 					}
 				} else {
+					var oEntitySets = {};
+					if (that._aEntitySetsNames && that._aEntitySetsNames.length > 0){
+						var sEntitySet;
+						// In case _aEntitySetsNames is specified - get data only for the specified entity sets
+						for (var i = 0; i < that._aEntitySetsNames.length ; i++) {
+							sEntitySet = that._aEntitySetsNames[i];
+							if (mEntitySets[sEntitySet]) {
+								oEntitySets[sEntitySet] = mEntitySets[sEntitySet];
+							}
+						}
+					} else {
+						// In case _aEntitySetsNames is not specified get data for all entity sets
+						oEntitySets = mEntitySets;
+					}
 					// load the mock data individually
-					jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
+					jQuery.each(oEntitySets, function(sEntitySetName, oEntitySet) {
 						if (!mData[oEntitySet.type] || !mData[oEntitySet.name]) {
 							// first look for a file by
 							// the entity set name
@@ -1337,6 +1351,10 @@ sap.ui
 						}
 					} else if (oEntitySet.keysType[sKey] === "Edm.Guid") {
 						if (sFirstChar === "'" || sLastChar !== "'") {
+							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
+						}
+					} else if (oEntitySet.keysType[sKey] === "Edm.Binary") {
+						if (!(new RegExp("(binary|X)'[A-Fa-f0-9][A-Fa-f0-9]*'").test(sRequestValue))) {
 							this._logAndThrowMockServerCustomError(400, this._oErrorMessages.MALFORMED_URI_LITERAL_SYNTAX_IN_KEY, sKey);
 						}
 					} else {
@@ -1715,9 +1733,10 @@ sap.ui
 			 * no base url for the mockdata is specified then the mockdata are generated from the metadata
 			 *
 			 * @param {string} sMetadataUrl url to the service metadata document
-			 * @param {string|object} [vMockdataSettings] (optional) base url which contains the path to the mockdata, or an object which contains the following properties: sMockdataBaseUrl, bGenerateMissingMockData. See below for descriptions of these parameters. Ommit this parameter to produce random mock data based on the service metadata.
+			 * @param {string|object} [vMockdataSettings] (optional) base url which contains the path to the mockdata, or an object which contains the following properties: sMockdataBaseUrl, bGenerateMissingMockData, aEntitySetsNames. See below for descriptions of these parameters. Ommit this parameter to produce random mock data based on the service metadata.
 			 * @param {string} [vMockdataSettings.sMockdataBaseUrl] base url which contains the mockdata as single .json files or the .json file containing the complete mock data
 			 * @param {boolean} [vMockdataSettings.bGenerateMissingMockData] true for the MockServer to generate mock data for missing .json files that are not found in sMockdataBaseUrl. Default value is false.
+			 * @param {array} [vMockdataSettings.aEntitySetsNames] list of entity set names to fetch. This parameter should be used to improve performance in case there are a lot of entity sets but only a few are needed to be fetched. Default value is empty - in this case all entity sets will be retrieved.
 			 *
 			 * @since 1.13.2
 			 * @public
@@ -1730,6 +1749,7 @@ sap.ui
 				} else {
 					this._sMockdataBaseUrl = vMockdataSettings.sMockdataBaseUrl;
 					this._bGenerateMissingMockData = vMockdataSettings.bGenerateMissingMockData;
+					this._aEntitySetsNames = vMockdataSettings.aEntitySetsNames;
 				}
 
 				// load the metadata
@@ -2486,6 +2506,7 @@ sap.ui
 															oFilteredData: oFilteredData
 														});
 
+														oFilteredData.results = oFilteredData.results || [];
 														oXhr
 															.respond(
 																200,

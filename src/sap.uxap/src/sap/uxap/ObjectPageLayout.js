@@ -232,6 +232,10 @@ sap.ui.define([
 	 */
 
 	ObjectPageLayout.prototype.onBeforeRendering = function () {
+		if (!this.getVisible()) {
+			return;
+		}
+
 		this._bMobileScenario = library.Utilities.isPhoneScenario();
 		this._bTabletScenario = library.Utilities.isTabletScenario();
 
@@ -386,16 +390,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._ensureCorrectParentHeight = function () {
-		var $parent;
-
 		if (this._bCorrectParentHeightIsSet) {
 			return;
 		}
 
-		$parent = this.$().parent();
-
-		if (["", "auto"].indexOf($parent.css("height") !== -1)) {
-			$parent.css("height", "100%");
+		/* BCP: 1670054830 - returned the original check here since it was breaking in a case where
+		the object page was embedded in sap.m.Page, the sap.m.Page already had height 100%,
+		but we set it to its content div where the ObjectPage is resulting in the sap.m.Page
+		footer would float above some of the ObjectPage content. Its still a bit strange that we check
+		for the framework controls parent's height, but then we apply height 100% to the direct dom parent. */
+		if (this.getParent().getHeight && ["", "auto"].indexOf(this.getParent().getHeight()) !== -1) {
+			this.$().parent().css("height", "100%");
 		}
 
 		this._bCorrectParentHeightIsSet = true;
@@ -801,13 +806,18 @@ sap.ui.define([
 		var oSection = sap.ui.getCore().byId(sId);
 
 		if (this.getUseIconTabBar()) {
-
-			this._setCurrentTabSection(oSection);
-
 			var oToSelect = oSection;
 			if (oToSelect instanceof sap.uxap.ObjectPageSubSection) {
 				oToSelect = oToSelect.getParent();
 			}
+
+			/* exclude the previously selected tab from propagation chain for performance reasons */
+			if (this._oCurrentTabSection) {
+				this._oCurrentTabSection._allowPropagationToLoadedViews(false);
+			}
+			oToSelect._allowPropagationToLoadedViews(true); /* include the newly selected tab back to the propagation chain */
+
+			this._setCurrentTabSection(oSection);
 			this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[oToSelect.getId()].buttonId);
 		}
 
@@ -1182,7 +1192,7 @@ sap.ui.define([
 			oSectionBase = sap.ui.getCore().byId(sSectionId);
 
 			bShouldDisplayParentTitle = oSectionBase && oSectionBase instanceof ObjectPageSubSection &&
-				(oSectionBase.getTitle().trim() === "" || !oSectionBase._getInternalTitleVisible() || oSectionBase.getParent()._getIsHidden());
+			(oSectionBase.getTitle().trim() === "" || !oSectionBase._getInternalTitleVisible() || oSectionBase.getParent()._getIsHidden());
 
 			//the sectionBase title needs to be visible (or the user won't "feel" scrolling that sectionBase but its parent)
 			//see Incident 1570016975 for more details

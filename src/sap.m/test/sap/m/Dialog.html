@@ -252,7 +252,7 @@
 				})
 			});
 
-			var oButton2 = new sap.m.Button("button2", {
+			var oButton2 = new sap.m.Button("listInDialogButton", {
 				text: "List in Dialog",
 				width: _buttonWidth,
 				press: function () {
@@ -264,7 +264,7 @@
 				title: "Dialog with TextArea",
 				contentWidth: "200px",
 				content: new sap.m.TextArea({cols: 60}),
-				beginButton: new sap.m.Button({
+				beginButton: new sap.m.Button('textareaDialogCloseButton', {
 					text: "Close",
 					press: function () {
 						oTextAreaDialog.close();
@@ -272,7 +272,7 @@
 				})
 			});
 
-			var oButton3 = new sap.m.Button("button3", {
+			var oButton3 = new sap.m.Button("textareaDialogButton", {
 				text: "Textarea in Dialog",
 				width: _buttonWidth,
 				press: function () {
@@ -456,7 +456,7 @@
 						]
 					})
 				],
-				endButton: new sap.m.Button({
+				endButton: new sap.m.Button('resizeDialogCloseButton', {
 					text: "Cancel", press: function () {
 						oDialogResize.close();
 					}
@@ -482,12 +482,12 @@
 				content: new sap.ui.core.HTML({
 					content: '<div>Lipsum limple text</div>'
 				}),
-				beginButton: new sap.m.Button({
+				beginButton: new sap.m.Button('simpleDialogAcceptButton', {
 					text: "Accept", press: function () {
 						oDialogSimple.close();
 					}
 				}),
-				endButton: new sap.m.Button({
+				endButton: new sap.m.Button('simpleDialogCancelButton', {
 					text: "Cancel", press: function () {
 						oDialogSimple.close();
 					}
@@ -549,7 +549,7 @@
 						oDialogNoHeader.close();
 					}
 				}),
-				endButton: new sap.m.Button({
+				endButton: new sap.m.Button('dialogNoHeaderCancelButton', {
 					text: "Cancel", press: function () {
 						oDialogNoHeader.close();
 					}
@@ -704,7 +704,7 @@
 
 			var oDialogWithSubheader = new sap.m.Dialog({
 				title: "Dialog with SubHeader",
-				content: new sap.m.Button({
+				content: new sap.m.Button('triggerSubheaderButton', {
 					text: 'trigger',
 					tap: function() {
 						subHeader.setVisible(!subHeader.getVisible());
@@ -716,7 +716,7 @@
 						oDialogWithSubheader.close();
 					}
 				}),
-				endButton: new sap.m.Button({
+				endButton: new sap.m.Button('dialogWithSubheaderCancelButton', {
 					text: "Cancel", press: function () {
 						oDialogWithSubheader.close();
 					}
@@ -734,7 +734,7 @@
 						oDialogStretched.close();
 					}
 				}),
-				endButton: new sap.m.Button({
+				endButton: new sap.m.Button('stretchedDialogCloseButton', {
 					text: "Cancel", press: function () {
 						oDialogStretched.close();
 					}
@@ -866,12 +866,9 @@
 					orientation: "Vertical",
 					contentAreas: [
 						new sap.m.Table({
-							columns: [new sap.m.Column(),
-								new sap.m.Column()],
-							rows: [
-								new sap.m.ColumnListItem(),
-								new sap.m.ColumnListItem(),
-								new sap.m.ColumnListItem()
+							columns: [
+								new sap.m.Column(),
+								new sap.m.Column()
 							]
 						}),
 						new sap.ui.layout.form.SimpleForm({
@@ -1098,7 +1095,7 @@
 			var page1 = new sap.m.Page("page1", {
 				title: "Mobile Dialog Control",
 				content: [
-					new sap.m.Button({
+					new sap.m.Button('simpleDialogButton', {
 						text: "Simple Dialog",
 						width: _buttonWidth,
 						press: function () {
@@ -1129,7 +1126,7 @@
 							oDialogNoFooter.open();
 						}
 					}),
-					new sap.m.Button({
+					new sap.m.Button('dialogNoHeaderButton', {
 						text: "Dialog No Header",
 						width: _buttonWidth,
 						press: function () {
@@ -1205,7 +1202,7 @@
 
 					new sap.ui.core.HTML({content: "<br>"}),
 
-					new sap.m.Button({
+					new sap.m.Button('dialogWithSubheaderButton', {
 						text: "With SubHeader",
 						width: _buttonWidth,
 						press: function () {
@@ -1219,7 +1216,7 @@
 							oDialogWithCustomHeader.open();
 						}
 					}),
-					new sap.m.Button({
+					new sap.m.Button('dialogWithStateButton', {
 						text: "With State",
 						width: _buttonWidth,
 						press: function () {
@@ -1230,7 +1227,7 @@
 					new sap.ui.core.HTML({content: "<br>"}),
 
 
-					new sap.m.Button({
+					new sap.m.Button('stretchedDialogButton', {
 						text: "Stretched",
 						width: _buttonWidth,
 						press: function () {
@@ -1286,7 +1283,7 @@
 							oDialogDrag.open();
 						}
 					}),
-					new sap.m.Button({
+					new sap.m.Button('resizeDialogButton', {
 						text: "Resize Enabled",
 						width: _buttonWidth,
 						press: function () {

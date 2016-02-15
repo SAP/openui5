@@ -90,7 +90,28 @@
 	top: 24px;
 }
 
-.sapUiTabDsbl:focus,
-html[data-sap-ui-browser^="ff"] .sapUiTabDsbl:focus{
-	outline: 3px solid @sapUiContentDisabledTextColor;
+.sapUiTabSel:focus,
+.sapUiTab:focus,
+.sapUiTabDsbl:focus {
+  outline: none;
+}
+
+.sapUiTabSel,
+.sapUiTab,
+.sapUiTabDsbl {
+  &:focus::before {
+	border: 0.1875rem solid @sapHCStandardFG;
+	position: absolute;
+	content: "";
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1;
+	pointer-events: none;
+  }
+}
+
+.sapUiTabDsbl:focus::before {
+  border-color: @sapUiContentDisabledTextColor;
 }

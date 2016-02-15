@@ -1,133 +1,130 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Notification List item - sap.m</title>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Notification List Group - sap.m</title>
 
-		<style>
-			#content {
-				padding: 30px 0 0 30px;
+	<style>
+		#content {
+			padding: 30px 0 0 30px;
+		}
+	</style>
+
+	<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<script type="text/javascript">
+
+		jQuery.sap.require('sap.m.MessageToast');
+
+		var listItem = new sap.m.NotificationListItem('firstNotification', {
+			title: 'Notification List Title',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+			showCloseButton: false,
+			authorPicture: 'sap-icon://car-rental',
+			authorName: 'Bai Marin',
+			datetime: '5 minutes',
+			priority: sap.ui.core.Priority.None
+		});
+
+		var listItem2 = new sap.m.NotificationListItem({
+			title: 'Notification List Title',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+			datetime: '2 hours',
+			unread: true,
+			priority: sap.ui.core.Priority.Medium,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel',
+					type: sap.m.ButtonType.Reject,
+					tap: function () {
+						listItem2.close();
+					}
+				})
+			]
+		});
+
+		var listItem3 = new sap.m.NotificationListItem({
+			title: 'Notification List Title',
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+			datetime: '2 hours',
+			unread: true,
+			priority: sap.ui.core.Priority.Low,
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel',
+					type: sap.m.ButtonType.Reject,
+					tap: function () {
+						listItem2.close();
+					}
+				})
+			]
+		});
+
+
+		var listGroup = new sap.m.NotificationListGroup({
+			id: 'notificationGroup',
+			title: 'Notification List Item Group',
+			datetime: 'More than 5 minutes',
+			authorPicture: 'images/SAPLogo.jpg',
+			authorName: 'Lorem Ipsum',
+			buttons: [
+				new sap.m.Button({
+					text: 'Accept All',
+					type: sap.m.ButtonType.Accept,
+					tap: function () {
+						sap.m.MessageToast.show('Accept all button pressed');
+					}
+				}),
+				new sap.m.Button({
+					text: 'Cancel All',
+					type: sap.m.ButtonType.Reject
+				})
+			],
+			items: [
+				listItem,
+				listItem2,
+				listItem3
+			]
+		});
+
+		var list = new sap.m.List({
+			items: [
+				listGroup
+			]
+		});
+
+		var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
+			text : 'Toggle Compact mode',
+			press : function() {
+				jQuery('body').toggleClass('sapUiSizeCompact');
 			}
-		</style>
+		}).placeAt('content');
 
-		<script src="../../../resources/sap-ui-core.js"
-				type="text/javascript"
-				id="sap-ui-bootstrap"
-				data-sap-ui-libs="sap.m"
-				data-sap-ui-theme="sap_bluecrystal">
-		</script>
+		list.setWidth('700px').placeAt('content');
+	</script>
+</head>
 
-		<script type="text/javascript">
-
-			jQuery.sap.require('sap.m.MessageToast');
-
-			var listItem = new sap.m.NotificationListItem({
-				title: 'Notification List Title',
-				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
-				showCloseButton: false,
-				authorPicture: 'sap-icon://car-rental',
-				authorName: 'Bai Marin',
-				datetime: '5 minutes',
-				priority: sap.ui.core.Priority.None
-			});
-
-			var listItem2 = new sap.m.NotificationListItem({
-				title: 'Notification List Title',
-				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
-				datetime: '2 hours',
-				unread: true,
-				priority: sap.ui.core.Priority.Medium,
-				buttons: [
-					new sap.m.Button({
-						text: 'Accept',
-						type: sap.m.ButtonType.Accept,
-						tap: function () {
-							sap.m.MessageToast.show('Accept button pressed');
-						}
-					}),
-					new sap.m.Button({
-						text: 'Cancel',
-						type: sap.m.ButtonType.Reject,
-						tap: function () {
-							listItem2.close();
-						}
-					})
-				]
-			});
-
-			var listItem3 = new sap.m.NotificationListItem({
-				title: 'Notification List Title',
-				description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
-				datetime: '2 hours',
-				unread: true,
-				priority: sap.ui.core.Priority.Low,
-				buttons: [
-					new sap.m.Button({
-						text: 'Accept',
-						type: sap.m.ButtonType.Accept,
-						tap: function () {
-							sap.m.MessageToast.show('Accept button pressed');
-						}
-					}),
-					new sap.m.Button({
-						text: 'Cancel',
-						type: sap.m.ButtonType.Reject,
-						tap: function () {
-							listItem2.close();
-						}
-					})
-				]
-			});
-
-
-			var listGroup = new sap.m.NotificationListGroup({
-				id: 'notificationGroup',
-				title: 'Notification List Item Group',
-				datetime: 'More than 5 minutes',
-				authorPicture: 'http://www.iconshock.com/img_jpg/SUNNYDAY/general/jpg/128/toy_icon.jpg',
-				authorName: 'Lorem Ipsum',
-				buttons: [
-					new sap.m.Button({
-						text: 'Accept All',
-						type: sap.m.ButtonType.Accept,
-						tap: function () {
-							sap.m.MessageToast.show('Accept all button pressed');
-						}
-					}),
-					new sap.m.Button({
-						text: 'Cancel All',
-						type: sap.m.ButtonType.Reject,
-						tap: function () {
-							listGroup.close();
-						}
-					})
-				],
-				items: [
-					listItem,
-					listItem2,
-					listItem3
-				]
-			});
-
-			var list = new sap.m.List({
-				items: [
-					listGroup
-				]
-			});
-
-			var compactSizeButton = new sap.m.Button('toggleCompactModeButton', {
-				text : 'Toggle Compact mode',
-				press : function() {
-					jQuery('body').toggleClass('sapUiSizeCompact');
-				}
-			}).placeAt('content');
-
-			list.setWidth('700px').placeAt('content');
-		</script>
-	</head>
-
-	<body id="body" class="sapUiBody">
-		<div id="content"></div>
-	</body>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
 
 </html>

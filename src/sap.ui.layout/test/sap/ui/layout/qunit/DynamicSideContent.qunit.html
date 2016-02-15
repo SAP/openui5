@@ -258,6 +258,7 @@
 						sap.ui.getCore().applyChanges();
 					},
 					teardown : function () {
+						$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
 						this._oDSC.destroy();
 						this._oDSC = null;
 					},
@@ -292,6 +293,18 @@
 					}
 				});
 
+				QUnit.test("Control should work with 0px width", function (assert) {
+					var sBreakpoint;
+
+					// _getBreakPointFromWidth
+					sBreakpoint = this._oDSC._getBreakPointFromWidth(0);
+					strictEqual(sBreakpoint, S, "If parent container's width is 0px, the breakpoint should default to 'S'");
+
+					// _setBreakpointFromWidth
+					this._oDSC._setBreakpointFromWidth(0);
+					strictEqual(this._oDSC.getCurrentBreakpoint(), S, "If setting the breakpoint from width 0px, the breakpoint should default to 'S'");
+				});
+
 				QUnit.test("Calculate breakpoint from width",function(assert){
 					var sBreakpoint;
 
@@ -320,9 +333,6 @@
 					sBreakpoint = this._oDSC._getBreakPointFromWidth(1500);
 					strictEqual(sBreakpoint, XL, "If parent container's width is above 1440px, the breakpoint should be 'XL'");
 
-					assert.throws(function () {
-						this._oDSC._setBreakPointFromWidth(-2);
-					}, "parent container's width should be greater then 0");
 				});
 
 				QUnit.test("The size of the main and side content is calculated correctly, according to the current breakpoint",function(){
@@ -573,6 +583,29 @@
 
 					strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_9, "Main content span size should be equal to " + SPAN_SIZE_9);
 					strictEqual(this._oDSC._iScSpan, SPAN_SIZE_3, "Side content span size should be equal to " + SPAN_SIZE_3);
+				});
+
+				QUnit.module("Content Query", {
+					setup : function () {
+						this._oDSC = new sap.ui.layout.DynamicSideContent({
+							containerQuery: true
+						});
+						sinon.spy(this._oDSC, "_adjustToScreenSize");
+						$("#qunit-fixture").width(960);
+						this._oDSC.placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+					},
+					teardown : function () {
+						$("#qunit-fixture").width(1000); // Reset qunit fixture size to original (1000px);
+						this._oDSC._adjustToScreenSize.restore();
+						this._oDSC.destroy();
+						this._oDSC = null;
+					}
+				});
+
+				QUnit.test("On init with contentQuery _adjustToScreenSize method should be called", function (){
+					assert.ok(this._oDSC._adjustToScreenSize.calledOnce, "The resize event handler is fired once initially");
+					strictEqual(this._oDSC.getCurrentBreakpoint(), M, "The current breakpoint in this setup should be 'M'");
 				});
 
 				QUnit.module("Construction / Destruction", {

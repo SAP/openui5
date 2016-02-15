@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>sap.m.ObjectHeader - Responsive Visual JS test</title>
+		<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script>
+		var oh1 = new sap.m.ObjectHeader("oh1", {
+			responsive: true,
+			intro: "Type XS",
+			introActive: true,
+			introPress: function() {},
+			title: "Responsive Object Header fullScreenOptimized with two states",
+			titleActive: true,
+			titlePress: function() {},
+			number: "624,00",
+			numberUnit: "Euro",
+			numberTextDirection: sap.ui.core.TextDirection.LTR,
+			fullScreenOptimized: true,
+			showMarkers: true,
+			markFlagged: true,
+			markFavorite: true,
+			numberState: sap.ui.core.ValueState.Success,
+			attributes: [
+				new sap.m.ObjectAttribute({
+					title: "Manufacturer",
+					text: "ACME Corp",
+					active: true
+				}),
+				new sap.m.ObjectAttribute({
+					title: "Contact",
+					text: "Denis Smith"
+				})
+			],
+			statuses: [
+				new sap.m.ObjectStatus({
+					title: "Approval",
+					text: "Pending",
+					state: sap.ui.core.ValueState.Success
+				})
+			]
+		});
+
+		var oa1 = new sap.m.ObjectAttribute({
+			title: "Owner",
+			text: "ACME Corp"
+		});
+
+		var os1 = new sap.m.ObjectStatus({
+			title: "Delivered",
+			text: "Pending",
+			state: sap.ui.core.ValueState.Error
+		});
+
+		oh1.placeAt("body");
+
+		var fullScreenBtn = new sap.m.Button("change_fullscreen", {
+			text: "Toggle fullscreen mode",
+			press: function() {
+					oh1.setFullScreenOptimized(!oh1.getFullScreenOptimized());
+				}
+		});
+
+		var statesBtn = new sap.m.Button("add_states", {
+			text: "Add states",
+			press: function() {
+					oh1.addAttribute(oa1);
+					oh1.addStatus(os1);
+				}
+		});
+
+		var typeBtn = new sap.m.Button("change_OH_type", {
+			text: "Toggle responsive",
+			press: function() {
+					oh1.setResponsive(!oh1.getResponsive());
+				}
+		});
+
+		var condBtn = new sap.m.Button("change_to_condensed", {
+			text: "Set to condensed mode",
+			press: function() {
+					oh1.setCondensed(true);
+				}
+		});
+
+		fullScreenBtn.placeAt("body");
+		statesBtn.placeAt("body");
+		typeBtn.placeAt("body");
+		condBtn.placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody" role="application">
+	</body>
+</html>

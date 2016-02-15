@@ -9,23 +9,38 @@
 		showHeader="false" >
 		<content>
 			<!-- in this example we set the delay until the busy indicator is shown to zero -->
-			<Panel id="panel1" busyIndicatorDelay="0" >
-				<headerToolbar>
-					<Toolbar>
-						<Title text="Panel 1" level="H2"/>
-						<ToolbarSpacer />
-						<Button icon="sap-icon://action" text="Trigger Action" press="onAction" />
-					</Toolbar>
-				</headerToolbar>
+			<Toolbar>
+				<Button
+					icon="sap-icon://action"
+					text="Toggle Busy State of Both Controls"
+					press="onAction"
+				/>
+			</Toolbar>
+
+			<Panel
+				id="panel1"
+				busyIndicatorDelay="0"
+				headerText="Default BusyIndicator (No Delay)"
+			>
+				<ToolbarSpacer />
 				<content>
 					<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
 				</content>
 			</Panel>
-			<Panel id="panel2" headerText="Panel 2" >
-				<content>
-					<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
-				</content>
+
+			<Panel
+				id="panel2"
+				headerText="Small BusyIndicator (Default Delay)"
+			>
+				<core:Icon
+					id="panel2-icon"
+					src="sap-icon://nutrition-activity"
+					size="3rem"
+					color="#DD0000"
+				>
+			</core:Icon>
 			</Panel>
+
 		</content>
 	</Page>
 </mvc:View>

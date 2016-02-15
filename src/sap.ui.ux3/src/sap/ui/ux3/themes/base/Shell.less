@@ -50,32 +50,38 @@
 	border: none;
 }
 
-.sapUiUx3ShellHeader > img { /* the logo image */
+.sapUiUx3ShellHeader > .sapUiUx3ShellHeaderTitleLeft {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding-top: 3px;
+}
+
+.sapUiUx3ShellHeader > .sapUiUx3ShellHeaderTitleLeft > span {
+	font-size: 0.75rem;
+	font-weight: bold;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.sapUiUx3ShellHeader > .sapUiUx3ShellHeaderTitleLeft > img { /* the logo image */
 	vertical-align: top;
 	max-height: 18px;
 	margin-right: 3px;
+	margin-top: -3px;
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	user-select: none;
 }
 
-.sapUiUx3ShellHeader.sapUiUx3ShellHeaderFlex > img {
+.sapUiUx3ShellHeader.sapUiUx3ShellHeaderFlex > .sapUiUx3ShellHeaderTitleLeft > img {
 	max-height: 40px;
 }
 
-.sapUiUx3ShellHeader > h1 {
-	font-size: 12px;
-	display: inline-block;
-	margin: 0;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	user-select: none;
-}
-
 .sapUiUx3ShellHeader .sapUiUx3ShellHeaderTitleRight {
-	position: absolute;
-	right: 20px;
-	font-weight: normal;
+	float: right;
 }
 
 .sapUiUx3ShellBlockHeaderAccess .sapUiUx3ShellHeaderTitleRight {
@@ -389,7 +395,6 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
 .sapUiUx3ShellPaneEntrySelected:hover {
 	font-size: 18px;
 	color: @sapUiHighlight;
-	background-image: url(img/shell/paneBar_arrow_selected.png);
 	background-position: center top;
 	background-repeat: no-repeat;
 	-moz-transition-property: font-size, color;
@@ -499,7 +504,7 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
 	padding: 0;
 }
 
-.sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellHeader > img,
+.sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellHeader > span > img,
 .sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellHeader > h1,
 .sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellHeader > span,
 .sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellWorksetBar,

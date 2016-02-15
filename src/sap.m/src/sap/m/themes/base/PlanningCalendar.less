@@ -35,8 +35,13 @@
 	border: none;
 }
 
+/* if Head is displayed next to CalendarRow, use head size as minimum */
+.sapMPlanCal:not(.sapMPlanCalNoHead) > .sapMList > table > tbody > tr > td > .sapUiCalendarRow:not(.sapMPlanCalRowLarge) > .sapUiCalendarRowApps{
+	min-height: 3rem;
+}
+
 /* if Head has 2 lines, CalendarRow must be large */
-.sapMPlanCalRowLarge.sapUiCalendarRow > .sapUiCalendarRowApps{
+.sapMPlanCal:not(.sapMPlanCalNoHead) > .sapMList > table > tbody > tr > td > .sapUiCalendarRow.sapMPlanCalRowLarge > .sapUiCalendarRowApps{
 	min-height: 4rem;
 }
 
@@ -71,9 +76,13 @@
 }
 
 .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt > .sapUiCalContent > .sapUiCalRow{
-	margin-left: 0;
-	margin-right: 0;
-	margin-bottom: 0;
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom: 0;
+}
+
+.sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt > .sapUiCalContent >.sapUiCalContentOver{
+	bottom: 0;
 }
 
 .sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalRowHead,

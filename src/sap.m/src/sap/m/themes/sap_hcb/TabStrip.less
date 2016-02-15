@@ -4,30 +4,21 @@
 /* ======================================== */
 .sapMTabStrip {
 	background: @sapHCStandardBG;
-	border: 1px solid @sapHCStandardFG;
+	border-bottom: 1px solid @sapHCStandardFG;
+	/* This class can override the default border-top style */
+	&.sapMTabStripTopBorderVisible {
+		border-top: 1px solid @sapHCStandardFG;
+	}
 	.sapMTSLeftOverflowButtons {
 		background: linear-gradient(90deg, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%);
-		.sapMBtn {
-			.sapMBtnInner  {
-				.sapUiIcon {
-				}
-			}
-		}
 	}
 	.sapMTSTabContainer {
 		.sapMTSTabs {
 			.sapMTabContainerItem {
+				font-size: @sapMFontMediumSize;
 				background: @sapHCStandardBG;
 				border-right: 1px solid @sapHCStandardFG;
 				color: @sapHCStandardFG;
-				.sapMTabContainerItemLabel {
-				}
-				.sapMTabContainerItemModified {
-				}
-				.sapMTabContainerItemModifiedInvisible {
-				}
-				.sapMTabContainerItemButton {
-				}
 				&.selected {
 					background: @sapHCHighlightAltBG;
 					border-right: 1px solid @sapHCStandardFG;
@@ -39,22 +30,34 @@
 					color: @sapHCStandardFG;
 				}
 				&:active {
-					background: @sapHCHighlightBG;
+					background: @sapHCHighlightAltBG;
 					border-right: 1px solid @sapHCStandardFG;
 					color: @sapHCStandardFG;
 				}
+				.sapMTSTabCloseBtnCnt {
+					.sapMBtn {
+						.sapMBtnInner  {
+							&:active {
+								background-color: @sapHCHighlightAltBG;
+							}
+						}
+					}
+				}
+				&:first-child {
+					border-left: 1px solid @sapHCStandardFG;
+				}
 				&:focus {
-				  	outline: none;
+					outline: none;
 				}
 				position: relative;
 				&:focus::before {
-				  	pointer-events: none;
+					pointer-events: none;
 					content: "";
 					position: absolute;
-					top: 0px;
-					left: 0px;
-					right: 0px;
-					bottom: 0px;
+					top: 0.0625rem;
+					left: 0.0625rem;
+					right: 0.0625rem;
+					bottom: 0.0625rem;
 					border: 0.125rem dotted @sapHCStandardFG;
 				}
 			}
@@ -62,27 +65,5 @@
 	}
 	.sapMTSRightOverflowButtons {
 		background: linear-gradient(90deg,  fade(@sapHCStandardBG, 0)  0%,  @sapHCStandardBG  25%, @sapHCStandardBG 100%);
-		.sapMBtn {
-			.sapMBtnInner  {
-				.sapUiIcon {
-				}
-			}
-		}
-	}
-	.sapMTSTouchArea {
-		.sapMSelectList {
-			.sapMTabSelectList {
-				.sapMTabSelectListItemCloseBtn {
-				}
-				.sapMTabSelectListItemCloseBtnInvisible {
-				}
-			}
-		}
-		.sapMBtn {
-			.sapMBtnInner {
-				.sapMBtnIcon {
-				}
-			}
-		}
 	}
 }

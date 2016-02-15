@@ -1,17 +1,19 @@
 jQuery.sap.declare("sap.ui.demo.cart.test.action.BuyProductJourneyAction");
 jQuery.sap.require("sap.ui.test.Opa5");
 jQuery.sap.require("sap.ui.test.matchers.PropertyStrictEquals");
+jQuery.sap.require("sap.ui.test.actions.Press");
+jQuery.sap.require("sap.ui.test.actions.EnterText");
 
 sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("sap.ui.demo.cart.test.action.BuyProductJourneyAction", {
-			iPressOnTheSecondCategory : function (sCategoryName) {
+			iPressOnTheSecondCategory : function () {
 
 				return this.waitFor({
 					controlType : "sap.m.StandardListItem",
 					matchers: function (oListItem) {
 						return oListItem.getBindingContextPath() === "/ProductCategories('FS')";
 					},
-					success : function (aListItems) {
-						aListItems[0].$().trigger("tap");
+					actions : new sap.ui.test.actions.Press(),
+					success: function (aListItems) {
 						this.getContext().sCategoryName = aListItems[0].getTitle();
 					},
 					errorMessage : "The category list did not contain a second item"
@@ -23,7 +25,7 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 
 				this.getContext().sProductName = oFirstItem.getTitle();
 
-				oFirstItem.$().trigger("tap");
+				new sap.ui.test.actions.Press().executeOn(oFirstItem);
 				return this;
 			},
 
@@ -41,9 +43,7 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 							return false;
 						}, this);
 					},
-					success : function () {
-						oAddButton.$().trigger("tap");
-					},
+					actions : new sap.ui.test.actions.Press(),
 					errorMessage : "Did not find the Add to Cart button"
 				});
 			},
@@ -55,9 +55,7 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 						name : "icon",
 						value : "sap-icon://cart"
 					}),
-					success : function (aButtons) {
-						aButtons[0].$().trigger("tap");
-					},
+					actions : new sap.ui.test.actions.Press(),
 					errorMessage : "did not find the cart button"
 				});
 			},
@@ -71,24 +69,31 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 				return this.waitFor({
 					viewName : "Cart",
 					id : "proceedButton",
-					success : function (oButton) {
-						oButton.$().trigger("tap");
-					}
+					actions : new sap.ui.test.actions.Press()
 				});
 
 			},
 
 			iFillTheForm : function () {
+				this.waitFor({
+					viewName : "Order",
+					id: "inputName",
+					actions: new sap.ui.test.actions.EnterText({ text: "MyName" })
+				});
+				this.waitFor({
+					viewName : "Order",
+					id: "inputAddress",
+					actions: new sap.ui.test.actions.EnterText({ text: "MyAddress" })
+				});
+				this.waitFor({
+					viewName : "Order",
+					id: "inputMail",
+					actions: new sap.ui.test.actions.EnterText({ text: "me@example.com" })
+				});
 				return this.waitFor({
 					viewName : "Order",
-					id : ["inputName", "inputAddress", "inputMail", "inputNumber"],
-					success : function (aControls) {
-						aControls[0].setValue("MyName");
-						aControls[1].setValue("MyAddress");
-						aControls[2].setValue("me@example.com");
-						aControls[3].setValue("1234567891234");
-					},
-					errorMessage : "Did not find the Order Now button"
+					id: "inputNumber",
+					actions: new sap.ui.test.actions.EnterText({ text: "1234567891234" })
 				});
 			},
 
@@ -106,9 +111,7 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 							value : true
 						})
 					],
-					success : function (aButtons) {
-						aButtons[0].$().trigger("tap");
-					},
+					actions : new sap.ui.test.actions.Press(),
 					errorMessage : "Did not find the Order Now button"
 				});
 			}

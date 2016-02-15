@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>sap.m.Page - Accessibility</title>
+
+    <script src="../../../resources/sap-ui-core.js"
+            type="text/javascript"
+            id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.m"
+            data-sap-ui-theme="sap_bluecrystal">
+    </script>
+    <script>
+        var oApp = new sap.m.App("myApp", {
+            initialPage: "page"
+        });
+
+        var aBackGrounds = ["List", "Solid", "Transparent", "Standard"];
+        var iCurrentBackground = 0;
+
+        var oSetBusyButton = new sap.m.Button({
+            id: "setbusy-button", text: "Set busy",
+            tooltip: "Set the page to busy", press: function () {
+                oPage.setBusy(true);
+            }
+        });
+
+        var fnCycleBackgrounds = function () {
+            oPage.setBackgroundDesign(aBackGrounds[iCurrentBackground]);
+
+            if (iCurrentBackground < aBackGrounds.length) {
+                iCurrentBackground++;
+            } else {
+                iCurrentBackground = 0;
+            }
+        };
+
+        var oChangeBackgroung = new sap.m.Button({
+            id: "background-change-button", text: "Cycle background",
+            tooltip: "Cycles the backgrounds", press: fnCycleBackgrounds
+        });
+
+        var oPage = new sap.m.Page("page", {
+            landmarkInfo: new sap.m.PageAccessibleLandmarkInfo(),
+            title: "Page Control",
+            showNavButton: true,
+            contentOnlyBusy: true,
+            content: [
+                new sap.m.Text({
+                    text: "This is a sample page which demonstrates the sap.m.Page control. The sap.m.Page control is just a container for other controls used in the application."
+                })
+            ],
+            footer: new sap.m.Bar({
+                contentLeft: oSetBusyButton,
+                contentRight: oChangeBackgroung
+            })
+        });
+        oApp.addPage(oPage).placeAt("content");
+    </script>
+</head>
+<body class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+</html>

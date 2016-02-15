@@ -16,7 +16,8 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite(),
 				contextPath = "/" + window.location.pathname.split("/")[1],
-				ie9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9);
+				ie9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9),
+				ie10 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 10);
 
 			if (!navigator.userAgent.match(/MSIE 8.0/g) && navigator.platform.indexOf("Linux") === -1) {
 				// Apps and samples
@@ -194,10 +195,11 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NewsContent.qunit.html");
 
 				// NotificationListGroup
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NotificationListGroup.qunit.html");
-
 				// NotificationListItem
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NotificationListItem.qunit.html");
+				if (!ie9 && !ie10) {
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NotificationListGroup.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NotificationListItem.qunit.html");
+				}
 
 				// NumericContent
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/NumericContent.qunit.html");

@@ -6,8 +6,10 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.sample.appUnderTest.controller.Main", {
 		onInit: function () {
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
-			this.getView().setModel(oModel);
+			setTimeout(function () {
+				var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+				this.getView().setModel(oModel);
+			}.bind(this), 2000);
 		}
 	});
 

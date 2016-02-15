@@ -76,6 +76,12 @@
 					}
 				});
 
+		var handleFieldGroupValidation = function (oEvent) {
+			var oDP = oEvent.oSource;
+			var oInput = sap.ui.getCore().byId("I2");
+			oInput.setValue("ValidateFieldGroup - Event: DatePicker " + oDP.getId());
+		};
+
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData({
 			dateValue: new Date()
@@ -86,9 +92,9 @@
 			title:"Mobile DatePicker",
 			content : [
 				new sap.m.Label({text: "initial DatePicker", labelFor: "DP1"}),
-				new sap.m.DatePicker("DP1", { change: handleChange }),
+				new sap.m.DatePicker("DP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.Label({text: "DatePicker with given Value and Formatter", labelFor: "DP2"}),
-				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", change: handleChange }),
+				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.Label({text: "DatePicker with given DateValue and Formatter", labelFor: "DP3"}),
 				new sap.m.DatePicker("DP3", { dateValue: new Date("2014", "02", "26"), displayFormat: "short", change: handleChange }),
 				new sap.m.Label({text: "readonly DatePicker with given DateValue and Formatter", labelFor: "DP4"}),

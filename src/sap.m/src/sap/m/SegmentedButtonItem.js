@@ -41,6 +41,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 				icon : {type : "string", group : "Appearance", defaultValue : null},
 
 				/**
+				 * Whether the button should be visible on the screen. If set to false, a placeholder is rendered instead of the real button.
+				 */
+				visible : {type: "boolean", group : "Appearance", defaultValue: true},
+
+				/**
 				 * Sets the width of the buttons.
 				 */
 				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
@@ -81,6 +86,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			this.setProperty("textDirection", sValue, true);
 			if (this.oButton) {
 				this.oButton.setTextDirection(this.getTextDirection());
+			}
+			return this;
+		};
+		SegmentedButtonItem.prototype.setVisible = function (bVisible) {
+			this.setProperty("visible", bVisible, true);
+			if (this.oButton) {
+				this.oButton.setVisible(bVisible);
 			}
 			return this;
 		};

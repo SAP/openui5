@@ -10,7 +10,7 @@
 	background-image: -ms-linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom); /* starting with IE10 this works in IE */
 	background-image: linear-gradient(top, @sapUiUx3ShellGradientTop 0, @sapUiUx3ShellGradientBottom 108px, @sapUiUx3ShellGradientBottom);
 	background-position: left top;
-	padding: 9px 20px 0;
+	padding: 9px 0 0 20px;
 }
 
 html[data-sap-ui-browser="ie9"] .sapUiUx3ShellHeader {
@@ -33,9 +33,12 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellHeader {
 	/* does not work, using the image... filter: Shadow(Color=#000, Direction=135, Strength=2);       */
 }
 
-.sapUiUx3ShellHeader > img,
-.sapUiUx3ShellHeader > h1 {
-	margin-top: 3px;
+.sapUiUx3ShellHeader > .sapUiUx3ShellHeaderTitleLeft {
+	padding-top: 2px;
+}
+
+.sapUiUx3ShellHeader > .sapUiUx3ShellHeaderTitleLeft > img {
+	margin-top: 1px;
 }
 
 .sapUiUx3ShellHeader .sapUiBtn,
@@ -262,6 +265,7 @@ html[data-sap-ui-browser="ie9"] .sapUiUx3ShellBgImg {
 .sapUiUx3ShellPaneEntrySelected,
 .sapUiUx3ShellPaneEntrySelected:hover {
 	background-position: center 34px;
+	background-image: url(img/shell/paneBar_arrow_selected.png);
 }
 
 .sapUiUx3ShellPaneBarRight:hover .sapUiUx3ShellPaneEntry:hover {

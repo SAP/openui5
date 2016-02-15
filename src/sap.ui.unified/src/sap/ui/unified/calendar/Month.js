@@ -84,7 +84,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * If not set, the dates are only displayed in the primary calendar type
 			 * @since 1.34.0
 			 */
-			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"}
+			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+
+			/**
+			 * Width of Month
+			 * @since 1.38.0
+			 */
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
 		},
 		aggregations : {
 
@@ -648,6 +654,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	Month.prototype.setWidth = function(sWidth){
+
+		this.setProperty("width", sWidth, true);
+
+		if (this.getDomRef()) {
+			sWidth = this.getWidth(); // to get in right type
+			this.$().css("width", sWidth);
+		}
+
+		return this;
+
+	};
+
 	Month.prototype._handleMouseMove = function(oEvent){
 
 		if (!this.$().is(":visible")) {
@@ -870,7 +889,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._bLongWeekDays = undefined;
 		var aWeekHeaders = this.$().find(".sapUiCalWH");
 		var oLocaleData = this._getLocaleData();
-		var iStartDay = this._getFirstDayOfWeek();
+		var iStartDay = this._getFirstWeekDay();
 		var aDayNames = oLocaleData.getDaysStandAlone("abbreviated", this.getPrimaryCalendarType());
 		for (var i = 0; i < aWeekHeaders.length; i++) {
 			var oWeekDay = aWeekHeaders[i];
@@ -985,6 +1004,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var aMonthNames = oLocaleData.getMonthsStandAlone("wide", this.getPrimaryCalendarType());
 			this.$("Head").text(aMonthNames[oDate.getUTCMonth()]);
 		}
+
+	};
+
+	/*
+	 * returns the first displayed week day. Needed to change week days if too long
+	 */
+	Month.prototype._getFirstWeekDay = function(){
+
+		return this._getFirstDayOfWeek();
 
 	};
 
@@ -1536,7 +1564,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (bTooLong) {
 				this._bLongWeekDays = false;
 				var oLocaleData = this._getLocaleData();
-				var iStartDay = this._getFirstDayOfWeek();
+				var iStartDay = this._getFirstWeekDay();
 				var aDayNames = oLocaleData.getDaysStandAlone("narrow", this.getPrimaryCalendarType());
 				for ( i = 0; i < aWeekHeaders.length; i++) {
 					oWeekDay = aWeekHeaders[i];

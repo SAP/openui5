@@ -321,6 +321,10 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		 */
 		DateRangeSelection.prototype.setDateValue = function(oDateValue) {
 
+			if (oDateValue && !(oDateValue instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
+
 			if (jQuery.sap.equal(this.getDateValue(), oDateValue)) {
 				return this;
 			}
@@ -328,6 +332,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			if (oDateValue && (oDateValue.getTime() < this._oMinDate.getTime() || oDateValue.getTime() > this._oMaxDate.getTime())) {
 				this._bValid = false;
 				jQuery.sap.assert(this._bValid, "Date must be in valid range");
+				oDateValue = undefined; // don't use wrong date to determine sValue
 			}else {
 				this._bValid = true;
 				this.setProperty("dateValue", oDateValue, true); // no rerendering
@@ -360,6 +365,10 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 		DateRangeSelection.prototype.setSecondDateValue = function(oSecondDateValue) {
 
+			if (oSecondDateValue && !(oSecondDateValue instanceof Date)) {
+				throw new Error("Date must be a JavaScript date object; " + this);
+			}
+
 			if (jQuery.sap.equal(this.getSecondDateValue(), oSecondDateValue)) {
 				return this;
 			}
@@ -367,6 +376,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			if (oSecondDateValue && (oSecondDateValue.getTime() < this._oMinDate.getTime() || oSecondDateValue.getTime() > this._oMaxDate.getTime())) {
 				this._bValid = false;
 				jQuery.sap.assert(this._bValid, "Date must be in valid range");
+				oSecondDateValue = undefined; // don't use wrong date to determine sValue
 			}else {
 				this._bValid = true;
 				this.setProperty("secondDateValue", oSecondDateValue, true); // no rerendering
@@ -573,19 +583,6 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			this._setLabelVisibility();
 
 			return this;
-		};
-
-		// overwrite InputBase function because this calls _getInputValue what calls _parseValue what updates the properties
-		// This should be redesigned at all, because parsing should not update the properties in every case
-		DateRangeSelection.prototype._setLabelVisibility = function() {
-
-			if (!this.bShowLabelAsPlaceholder || !this._$label || !this.isActive()) {
-				return;
-			}
-
-			var sValue = this._$input.val();
-			this._$label.css("display", sValue ? "none" : "inline");
-
 		};
 
 		//Do nothing in case of PageUp

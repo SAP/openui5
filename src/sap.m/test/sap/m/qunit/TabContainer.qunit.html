@@ -119,20 +119,31 @@
 			afterEach: function () {
 				this.oTabContainer.destroy();
 				this.oTabContainer = null;
+
 			}
 		});
 
 		test("Default behavior", function () {
 			var oTabStrip = this.oTabContainer._getTabStrip();
-			var oItem = oTabStrip.getItems()[0];
-			var oCloseButton = oItem.getAggregation("_closeButton");
-			var sName = oItem.getText();
+			var oFirstItem = this.oTabContainer.getItems()[0];
+			var oCloseButton = this.oTabContainer._toTabStripItem(oFirstItem).getAggregation("_closeButton");
+			var sName = oFirstItem.getName();
+
+			strictEqual(this.oTabContainer.getSelectedItem(),oFirstItem.getId(),
+					"The default selected tab is the first one");
+
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 			var aTargetTouches = [{pageX: oCloseButton.$().offset().left + 2}];
+
+			//when removing an item, the _moveToNextItem function is called where the focus is handled
+			//triggerTouchEvent removes the item but can't handle the focus part so we need to focus the item
+			oTabStrip._oItemNavigation.focusItem(0);
 			qutils.triggerTouchEvent('touchstart', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oCloseButton.getDomRef()});
 			qutils.triggerTouchEvent('touchend', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oCloseButton.getDomRef()});
+
 			this.clock.tick(1000);
-			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 0, 'Element with name "'+sName+'" is in not in the DOM.');
+
+				equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
 
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
@@ -142,6 +153,7 @@
 			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('addButton').$()).attr('title'),
 					oMessageBundle.getText("TABCONTAINER_ADD_NEW_TAB"),
 					"The add button tooltip is correct");
+
 		});
 
 		test("Deletion prevented", function () {
@@ -150,20 +162,20 @@
 
 			this.oTabContainer.attachItemClose(function (oEvent) {oEvent.preventDefault()});
 			sap.ui.test.qunit.triggerEvent("tap", oItem.getAggregation('_closeButton').$());
-			this.clock.tick(1000);
+
 			equal(jQuery( "span.sapMTabContainerItemLabel:contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
-        module("Misc", {
-            beforeEach: function () {
-                this.oTabContainer = new sap.m.TabContainer({
-                    items: {
-                        path: "/ProductCollection",
-                        template: oTemplate
-                    },
-                    itemSelect: fnOnItemSelected,
-                    addNewButtonPress: fnOnAddButtonClick
-                });
+		module("Misc", {
+			beforeEach: function () {
+				this.oTabContainer = new sap.m.TabContainer({
+					items: {
+						path: "/ProductCollection",
+						template: oTemplate
+					},
+					itemSelect: fnOnItemSelected,
+					addNewButtonPress: fnOnAddButtonClick
+				});
 
 				this.oTabContainer.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -172,6 +184,13 @@
 				this.oTabContainer.destroy();
 				this.oTabContainer = null;
 			}
+		});
+
+		test("Initialization without parameters", function () {
+			var oTabContainer = new sap.m.TabContainer();
+			strictEqual(typeof oTabContainer === 'object', true, 'Sucessfully initialized.');
+			oTabContainer.destroy();
+			oTabContainer = null;
 		});
 
 		test("Rerendering", function () {
@@ -335,7 +354,7 @@
 			}
 		});
 
-		test("Deault selected item", function () {
+		test("Default selected item", function () {
 			//arrange
 			var sConstructorSelectedItemName 	= this.item.getName();
 			var sContainerSelectedItem 			= this.oTabContainer.getSelectedItem();

@@ -1,0 +1,53 @@
+/* ===================================== */
+/* CSS for control sap.m/ActionListItem  */
+/* Belize theme                          */
+/* ===================================== */
+
+.sapMALI {
+	height: 3rem;
+}
+
+/*The active indicator of the list is not specific enough to overwrite this style*/
+.sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
+	background: @sapUiPageFooterBackground;
+	border-color: @sapUiPageFooterBorderColor;
+}
+
+.sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
+	background: @sapUiPageFooterBackground;
+	border-color: @sapUiPageFooterBorderColor;
+}
+
+.sapMList .sapMLIB.sapMALI:focus {
+	outline: 0.0625rem dotted @sapUiContentContrastFocusColor;
+	outline-offset: -0.0625rem;
+}
+
+.sapMALI > .sapMLIBContent {
+	line-height: 3rem;
+}
+
+.sapMALIText {
+	color: @sapUiContentContrastTextColor;
+	font-weight: normal;
+	line-height: 1.25rem;
+	font-size: 1.125rem;
+	margin: 0 0 0 0.5rem;
+}
+
+.sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) {
+	background: lighten(@sapUiPageFooterBackground, 6);
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapMALI {
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapMALI > .sapMLIBContent {
+	line-height: 2rem;
+}
+
+.sapUiSizeCompact .sapMALIText {
+	font-size: @sapMFontMediumSize;
+}

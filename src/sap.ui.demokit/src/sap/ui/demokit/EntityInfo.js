@@ -3,8 +3,8 @@
  */
 
 // Provides reuse functionality for reading documentation from metamodel entities
-sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
-	function(jQuery, analyzer) {
+sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer', './util/APIInfo'],
+	function(jQuery, analyzer, APIInfo) {
 	"use strict";
 
 	var oRootPackageInfo = {};
@@ -212,6 +212,18 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 		var oPackageInfo = getPackageInfo(sEntityName);
 		var oEntityDoc;
 
+		// api.json per library
+		if ( !oEntityDoc && !oPackageInfo.__noAPIJson ) {
+			oEntityDoc = APIInfo.getEntityInfo(sEntityName);
+			if ( oEntityDoc ) {
+				oPackageInfo.__noSource = true;
+				oPackageInfo.__noMetamodel = true;
+			}
+		} else if ( oPackageInfo.__noAPIJson ) {
+			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
+		}
+
+		// legacy metamodel files
 		if ( !oEntityDoc && !oPackageInfo.__noMetamodel ) {
 			if ( !oEntityDoc && bControl ) {
 				oEntityDoc = load(sEntityName, ".control", "xml", parseControlMetamodel, sEntityName);
@@ -225,6 +237,8 @@ sap.ui.define(['jquery.sap.global', './util/jsanalyzer/ModuleAnalyzer'],
 		} else if ( oPackageInfo.__noMetamodel ) {
 			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
 		}
+
+		// source code analysis
 		if ( !oEntityDoc && !oPackageInfo.noSource ) {
 			if ( !oEntityDoc && bType ) {
 				var sLibraryName = sEntityName.replace(/\.[^.]+$/, ".library");

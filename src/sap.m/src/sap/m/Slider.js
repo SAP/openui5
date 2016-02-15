@@ -402,10 +402,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * Initialization hook.
-		 *
-		 */
 		Slider.prototype.init = function() {
 
 			// used to track the id of touch points
@@ -414,9 +410,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._bSetValueFirstCall = true;
 		};
 
-		/**
-		 * This event handler is called before the rendering of the control is started.
-		 */
 		Slider.prototype.onBeforeRendering = function() {
 
 			var bError = this._validateProperties();

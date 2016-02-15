@@ -7,7 +7,8 @@
 
 	<title>qUnit Page for sap.ui.table.Column</title>
 
-	<script src="../../../../../resources/sap-ui-core.js">
+	<script src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.commons,sap.ui.table">
 	</script>
 
 	<script>
@@ -137,6 +138,58 @@
 						"enableGrouping: " + this._oTable.getEnableGrouping());
 			});
 
+			QUnit.module("Column Menu", {
+				setup: function() {
+					var oModel = new sap.ui.model.json.JSONModel();
+					oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
+					this._oTable = new Table();
+					this._oTable.bindRows("/");
+					this._oTable.setModel(oModel);
+					this._oColumnWithColumnMenu = new Column({
+						filterProperty: "myProp",
+						showFilterMenuEntry: true
+					});
+
+					this._oColumnWithUnifiedMenu = new Column({
+						filterProperty: "myOtherProp",
+						showFilterMenuEntry: true,
+						menu: new sap.ui.unified.Menu()
+					});
+
+					this._oTable.addColumn(this._oColumnWithColumnMenu);
+					this._oTable.addColumn(this._oColumnWithUnifiedMenu);
+
+					this._oTable.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown: function() {
+					this._oColumnWithColumnMenu.destroy();
+					this._oColumnWithUnifiedMenu.destroy();
+					this._oTable.destroy();
+				}
+			});
+
+			QUnit.test("Filter on Column with ColumnMenu and UnifiedMenu", function(assert) {
+				var oColumnMenu = this._oColumnWithColumnMenu.getMenu();
+				var oSpyColumnMenu = this.spy(oColumnMenu, "_setFilterValue");
+				this._oColumnWithColumnMenu.filter("filterValue");
+				oColumnMenu.open();
+
+				var oFilterField = sap.ui.getCore().byId(oColumnMenu.getId() + "-filter");
+				assert.equal(oFilterField.getValue(), "filterValue", "Filter value set on ColumnMenu");
+				assert.ok(oSpyColumnMenu.called, "_setFilterValue called on ColumnMenu");
+
+				var oUnifiedMenu = this._oColumnWithUnifiedMenu.getMenu();
+				// implement a dummy function to allow usage of sinon.spy
+				oUnifiedMenu._setFilterValue = function() {};
+				var oSpyUnifiedMenu = this.spy(oUnifiedMenu, "_setFilterValue");
+
+				// if filter is called on a column, the filter state of the other columns must be updated as well
+				var oSpyColumnMenuFilterState = this.spy(oColumnMenu, "_setFilterState");
+				this._oColumnWithUnifiedMenu.filter("filterValue");
+				assert.ok(!oSpyUnifiedMenu.called, "_setFilterValue not called on UnifiedMenu");
+				assert.ok(oSpyColumnMenuFilterState.calledOnce, "_setFilterState called on ColumnMenu");
+			});
 		})();
 	</script>
 </head>

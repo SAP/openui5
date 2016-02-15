@@ -22,8 +22,8 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 
 		if (!oType.oFormat) {
 			oFormatOptions = {
-				groupingEnabled: true,
-				maxIntegerDigits: Infinity
+				groupingEnabled : true,
+				maxIntegerDigits : Infinity
 			};
 			iScale = getScale(oType);
 			if (iScale !== Infinity) {

@@ -95,12 +95,6 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				});
 			}
 
-			if (oHeader) {
-				oRm.writeAccessibilityState(oControl, {
-					labelledby: oHeader.getId()
-				});
-			}
-
 			if (oControl._forceDisableScrolling) {
 				oRm.addClass("sapMDialogWithScrollCont");
 			}

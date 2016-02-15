@@ -11,8 +11,6 @@ sap.ui.define([
 ], function(jQuery, BindingParser, Basics, Expression) {
 		'use strict';
 
-		var AnnotationHelper;
-
 		/**
 		 * Returns a function representing the composition <code>fnAfter</code> after
 		 * <code>fnBefore</code>.
@@ -43,7 +41,7 @@ sap.ui.define([
 		 *
 		 * Formatter functions like {@link #.format format} and {@link #.simplePath simplePath} can
 		 * be used in complex bindings to turn OData v4 annotations into texts or data bindings,
-		 * e.g. <code>&lt;sfi:SmartField value="{path: 'meta>Value', formatter:
+		 * e.g. <code>&lt;sfi:SmartField value="{path : 'meta>Value', formatter :
 		 * 'sap.ui.model.odata.AnnotationHelper.simplePath'}"/></code>.
 		 *
 		 * Helper functions like {@link #.resolvePath resolvePath} can be used by template
@@ -54,9 +52,10 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @since 1.27.0
-		 * @namespace sap.ui.model.odata.AnnotationHelper
+		 * @namespace
+		 * @alias sap.ui.model.odata.AnnotationHelper
 		 */
-		AnnotationHelper = /** @lends sap.ui.model.odata.AnnotationHelper */ {
+		var AnnotationHelper = {
 			/**
 			 * Creates a property setting (which is either a constant value or a binding info
 			 * object) from the given parts and from the optional root formatter function.
@@ -101,7 +100,7 @@ sap.ui.define([
 			 *
 			 * vPropertySetting =  sap.ui.model.odata.AnnotationHelper.createPropertySetting([
 			 *     sap.ui.model.odata.AnnotationHelper.format(oValueContext),
-			 *     "{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}",
+			 *     "{path : 'meta>Value', formatter : 'sap.ui.model.odata.AnnotationHelper.simplePath'}",
 			 *     "{:= 'Mr. ' + ${/FirstName} + ' ' + ${/LastName}}",
 			 *     "hello, world!",
 			 *     42
@@ -232,6 +231,18 @@ sap.ui.define([
 			 *   including type information and constraints as available from meta data,
 			 *   e.g. <code>"{path : 'Name', type : 'sap.ui.model.odata.type.String',
 			 *   constraints : {'maxLength':'255'}}"</code>.
+			 *   Depending on the used type, some additional constraints of this type are set:
+			 *   <ul>
+			 *     <li>Edm.DateTime: The "displayFormat" constraint is set to the value of the
+			 *     "sap:display-format" annotation of the referenced property.
+			 *     <li>Edm.Decimal: The "precision" and "scale" constraints are set to the values
+			 *     of the corresponding attributes of the referenced property.
+			 *     <li>Edm.String: The "maxLength" constraint is set to the value of the
+			 *     corresponding attribute of the referenced property and the "isDigitSequence"
+			 *     constraint is set to the value of the
+			 *     "com.sap.vocabularies.Common.v1.IsDigitSequence" annotation of the referenced
+			 *     property.
+			 *   </ul>
 			 * </ul>
 			 * Unsupported or incorrect values are turned into a string nevertheless, but indicated
 			 * as such. Proper escaping is used to make sure that data binding syntax is not

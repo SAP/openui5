@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	function(Int) {
 	"use strict";
 
-	var oRange = {minimum: -2147483648, maximum: 2147483647};
+	var oRange = {minimum : -2147483648, maximum : 2147483647};
 
 	/**
 	 * Constructor for a primitive type <code>Edm.Int32</code>.

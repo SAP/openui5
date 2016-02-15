@@ -154,7 +154,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToas
 			// iframe examples have a separate index file and a component file to describe it
 			if (!oData.iframe) {
 				oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
-				oZipFile.file("index.html", this.createIndexFile(oData));
+				oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this.createIndexFile(oData)));
 			}
 
 			// add extra download files

@@ -353,12 +353,14 @@
 					ok(Math.abs(oItem2DomRef.getBoundingClientRect().bottom - oBox1DomRef.getBoundingClientRect().bottom) <= 1, "Item 2 should be placed at the vertical end");
 				});
 
-				test("Align Content: Space Around", function() {
-					oBox1.setAlignContent("SpaceAround");
-					ok(Math.abs(oItem4DomRef.getBoundingClientRect().top - oBox1DomRef.getBoundingClientRect().top - 40) <= 1, "Item 4 should be placed below the vertical start");
-					ok(Math.abs(oItem1DomRef.getBoundingClientRect().top - oBox1DomRef.getBoundingClientRect().top - 172) <= 1, "Item 1 should be placed at the vertical center");
-					ok(Math.abs(oItem2DomRef.getBoundingClientRect().top - oBox1DomRef.getBoundingClientRect().top - 305) <= 1, "Item 2 should be placed above the vertical end");
-				});
+				if(!jQuery.support.ie10FlexBoxLayout) {		// IE 10 doesn't support Space Around
+					test("Align Content: Space Around", function() {
+						oBox1.setAlignContent("SpaceAround");
+						ok(Math.abs(oItem4DomRef.getBoundingClientRect().top - oBox1DomRef.getBoundingClientRect().top - 40) <= 1, "Item 4 should be placed below the vertical start");
+						ok(Math.abs(oItem1DomRef.getBoundingClientRect().top - oBox1DomRef.getBoundingClientRect().top - 172) <= 1, "Item 1 should be placed at the vertical center");
+						ok(Math.abs(oItem2DomRef.getBoundingClientRect().top - oBox1DomRef.getBoundingClientRect().top - 305) <= 1, "Item 2 should be placed above the vertical end");
+					});
+				}
 
 				test("Align Content: Stretch", function() {
 					oBox1.setAlignContent("Stretch");

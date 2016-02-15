@@ -133,21 +133,23 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 		 *
 		 * @type {string}
 		 */
-		TabStripItem.CSS_CLASS_STATE = "sapMTabSelectListItemModified";
+		TabStripItem.CSS_CLASS_STATE = "sapMTabStripSelectListItemModified";
 
 		/**
 		 * The default CSS class name of <code>TabStripItem</code>'s invisible state in context of <code>TabStripSelect</code>.
 		 *
 		 * @type {string}
 		 */
-		TabStripItem.CSS_CLASS_STATEINVISIBLE = "sapMTabSelectListItemModifiedInvisible";
+		TabStripItem.CSS_CLASS_STATEINVISIBLE = "sapMTabStripSelectListItemModifiedInvisible";
 
 		/**
 		 * The default CSS class name of <code>TabStripItem</code>'s Close button in context of <code>TabStripSelect</code>.
 		 *
 		 * @type {string}
 		 */
-		TabStripItem.CSS_CLASS_CLOSEBUTTON = 'sapMTabSelectListItemCloseBtn';
+		TabStripItem.CSS_CLASS_CLOSEBUTTON = 'sapMTabStripSelectListItemCloseBtn';
+
+		TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabStripSelectListItemCloseBtnInvisible';
 
 
 		/**

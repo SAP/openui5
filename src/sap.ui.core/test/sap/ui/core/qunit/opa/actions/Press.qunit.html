@@ -20,10 +20,12 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 
 		sap.ui.require([
 			"sap/ui/test/actions/Press",
 			"sap/m/Button",
+			"sap/m/Link",
 			"sap/m/List",
 			"sap/m/StandardListItem",
 			"sap/m/ListMode",
@@ -34,9 +36,15 @@
 			"sap/ui/table/Column",
 			"sap/m/Label",
 			"sap/m/TileContainer",
-			"sap/m/StandardTile"],
+			"sap/m/StandardTile",
+			"sap/m/SearchField",
+			"sap/m/Page",
+			"sap/m/semantic/FullscreenPage",
+			"sap/m/semantic/DetailPage",
+			"sap/m/CheckBox"],
 		function(Press,
 				 Button,
+				 Link,
 				 List,
 				 StandardListItem,
 				 ListMode,
@@ -47,14 +55,19 @@
 				 Column,
 				 Label,
 				 TileContainer,
-				 StandardTile){
+				 StandardTile,
+				 SearchField,
+				 Page,
+				 FullscreenPage,
+				 DetailPage,
+				 CheckBox){
 			// stack contains controls to be destroyed
 			// and emptied after each test
 			var aControlsToClean = [];
 
 			QUnit.module("positive tests",{
 				beforeEach: function() {
-					this.oSpy = sinon.spy($.sap.log, "debug")
+					this.oSpy = sinon.spy($.sap.log, "debug");
 				},
 				afterEach: function() {
 					while(aControlsToClean.length) {
@@ -65,32 +78,57 @@
 				}
 			});
 
-			QUnit.test("Should request focus and trigger a 'press' event on a sap.m.Button control", function(assert) {
-				var done = assert.async();
 
-				// Arrange
-				var oButton = new Button({text: "Button Press Event"});
-				aControlsToClean.push(oButton);
-				oButton.placeAt("qunit-fixture");
+			[{
+				control: new Page({
+					showNavButton: true
+				}),
+				event: "NavButtonPress"
+			},{
+				control: new FullscreenPage({
+					showNavButton: true
+				}),
+				event: "NavButtonPress"
+			},{
+				control: new DetailPage({
+					showNavButton: true
+				}),
+				event: "NavButtonPress"
+			},{
+				control: new Button(),
+				event: "Press"
+			},{
+				control: new Link(),
+				event: "Press"
+			},{
+				control: new CheckBox(),
+				event: "Select"
+			}].forEach(function (oTestCase) {
+						QUnit.test("Should press a " + oTestCase.control.getMetadata().getName(), function (assert) {
+							var done = assert.async();
 
-				//Make sure that button is rendered
-				sap.ui.getCore().applyChanges();
+							// Arrange
+							var oControl = oTestCase.control;
+							aControlsToClean.push(oControl);
+							oControl.placeAt("qunit-fixture");
 
-				// System under Test
-				var oPressAction = new Press();
+							//Make sure that the control is rendered
+							sap.ui.getCore().applyChanges();
 
-				oButton.attachPress( function () {
-					assert.ok(true, "Press Event has been triggered");
-					assert.ok(jQuery(document.activeElement).is(oButton.$()), "Button has focus");
-					sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
-					//Call 'done' to resume qunit processing
-					done();
-				}, this);
+							// System under Test
+							var oPressAction = new Press();
 
-				// Act
-				oPressAction.executeOn(oButton);
+							oControl["attach" + oTestCase.event]( function () {
+								assert.ok(oPressAction.$(oControl).is(":focus"), "Control has focus");
+								sinon.assert.calledWith(this.oSpy, sinon.match(/Pressed the control/), oPressAction._sLogPrefix);
+								//Call 'done' to resume QUnit processing
+								done();
+							}, this);
 
-			});
+							// Act
+							oPressAction.executeOn(oControl);
+						});
+					});
 
 			QUnit.test("Should request focus and trigger a 'press' event on an sap.m.StandardListItem of type 'active'", function(assert) {
 				var done = assert.async();
@@ -131,18 +169,18 @@
 
 				// Arrange
 				var oFirstListItem = new StandardListItem({
-						title: "Initially selected item",
-						type: "Active"
-					}),
-					oSecondListItem = new StandardListItem({
-						title: "Pressed upon during test",
-						type: "Active"
-					}),
-					oList = new  List({
-						headerText: "Selection Change Test",
-						mode: ListMode.SingleSelectMaster,
-						items : [oFirstListItem, oSecondListItem]
-					});
+							title: "Initially selected item",
+							type: "Active"
+						}),
+						oSecondListItem = new StandardListItem({
+							title: "Pressed upon during test",
+							type: "Active"
+						}),
+						oList = new  List({
+							headerText: "Selection Change Test",
+							mode: ListMode.SingleSelectMaster,
+							items : [oFirstListItem, oSecondListItem]
+						});
 				oList.setSelectedItem(oFirstListItem);
 				oList.placeAt("qunit-fixture");
 
@@ -166,6 +204,48 @@
 
 				// Act
 				oPressAction.executeOn(oSecondListItem);
+			});
+
+			QUnit.test("List should load more items", function(assert) {
+				// Arrange
+				var fnDone = assert.async(),
+					oData = { items: [{}, {}]},
+					oModel = new JSONModel(),
+					oList = new sap.m.List({
+						growing : true,
+						growingThreshold: 1,
+						items : {
+							path : "/items",
+							template : new StandardListItem()
+						}
+					});
+
+				oModel.setData(oData);
+				oList.setModel(oModel);
+
+				oList.placeAt("qunit-fixture");
+
+				//No need to add the list items as they will be
+				//cleaned up by its list
+				aControlsToClean.push(oList);
+
+				//Make sure that the list is rendered
+				sap.ui.getCore().applyChanges();
+				assert.equal(oList.getItems().length, 1, "Only one item is visible");
+
+				// System under Test
+				var oPressAction = new Press();
+
+				oList.attachEventOnce("updateFinished", function () {
+					// Act
+					oPressAction.executeOn(oList);
+
+					oList.attachEventOnce("updateFinished", function () {
+						assert.equal(oList.getItems().length, 2, "Triggered growing");
+						fnDone();
+					});
+				});
+
 			});
 
 
@@ -199,7 +279,7 @@
 					assert.ok(true, "Select has been triggered");
 					assert.ok(jQuery(document.activeElement).is(oSecondTab.$()), "Pressed Tab has focus");
 					assert.strictEqual(oTabBar.getSelectedKey(), "bar", "Pressed Tab is selected");
-					//Call 'done' to resume qunit processing
+					//Call 'done' to resume QUnit processing
 					done();
 				}, this);
 
@@ -246,13 +326,12 @@
 				oPressAction.executeOn(oTable.getRows()[1].getCells()[0]);
 			});
 
-
 			QUnit.test("Should press a Tile in a Tile container", function (assert) {
 				var done = assert.async(),
-					oTile = new StandardTile(),
-					oTileContainer = new TileContainer({
-						tiles: oTile
-					});
+						oTile = new StandardTile(),
+						oTileContainer = new TileContainer({
+							tiles: oTile
+						});
 
 				oTileContainer.placeAt("qunit-fixture");
 
@@ -272,6 +351,55 @@
 				// Act
 				oPressAction.executeOn(oTile);
 			});
+
+
+
+			QUnit.module("SearchField",{
+				beforeEach: function() {
+					this.oSearchField = new SearchField();
+					this.oSearchField.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function() {
+					this.oSearchField.destroy();
+				}
+			});
+
+			QUnit.test("Should press a SearchField", function (assert) {
+				var done = assert.async();
+
+				// System under Test
+				var oPressAction = new Press();
+
+				this.oSearchField.attachSearch(function () {
+					// Assert
+					assert.ok(true, "Fired the event");
+					done();
+				});
+
+				// Act
+				oPressAction.executeOn(this.oSearchField);
+			});
+
+			QUnit.test("Should refresh a SearchField", function (assert) {
+				var done = assert.async();
+
+				this.oSearchField.setShowRefreshButton(true);
+				sap.ui.getCore().applyChanges();
+
+				// System under Test
+				var oPressAction = new Press();
+
+				this.oSearchField.attachSearch(function () {
+					// Assert
+					assert.ok(true, "Fired the event");
+					done();
+				});
+
+				// Act
+				oPressAction.executeOn(this.oSearchField);
+			});
+
 		});
 	</script>
 </head>

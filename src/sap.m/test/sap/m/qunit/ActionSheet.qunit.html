@@ -252,6 +252,39 @@
 
 			});
 
+			asyncTest("If first button is invinsible, focus goes to the second one", function () {
+				var oButton = new sap.m.Button({
+					text : "Open ActionSheet",
+					press : function() {
+						oActionSheet.openBy(this);
+					}
+				});
+
+				var button1 = new sap.m.Button({ text: "Button1", id: "asButton1", visible: false });
+				var button2 = new sap.m.Button({ text: "Button2", id: "asButton2" });
+				var oActionSheet = new sap.m.ActionSheet({
+					cancelButtonText: "Cancel",
+					title: "Title",
+					buttons: [
+						button1,
+						button2
+					]
+				});
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				setTimeout(function(){
+					ok(jQuery.sap.byId('asButton2').is(":focus"), 'The 2nd button should be focused');
+
+					start();
+					oActionSheet.close();
+					oButton.destroy();
+					oActionSheet.destroy();
+				}, 500)
+			});
+
 			module("keyboard handling")
 
 			asyncTest('PageDown keyboard handling mobile phone', function(){

@@ -17,10 +17,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Boolean", {
-		beforeEach: function () {
+		beforeEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		afterEach: function () {
+		afterEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -111,7 +111,7 @@ sap.ui.require([
 		}
 
 		TestUtils.withNormalizedMessages(function () {
-			oType = new BooleanType({}, {nullable: false});
+			oType = new BooleanType({}, {nullable : false});
 			try {
 				oType.validateValue(null);
 				assert.ok(false);
@@ -130,19 +130,19 @@ sap.ui.require([
 			.once()
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
 
-		oType = new BooleanType({}, {nullable: false});
-		assert.deepEqual(oType.oConstraints, {nullable: false}, "nullable false");
+		oType = new BooleanType({}, {nullable : false});
+		assert.deepEqual(oType.oConstraints, {nullable : false}, "nullable false");
 
-		oType = new BooleanType({}, {nullable: "false"});
-		assert.deepEqual(oType.oConstraints, {nullable: false}, 'nullable "false"');
+		oType = new BooleanType({}, {nullable : "false"});
+		assert.deepEqual(oType.oConstraints, {nullable : false}, 'nullable "false"');
 
-		oType = new BooleanType({}, {nullable: true});
+		oType = new BooleanType({}, {nullable : true});
 		assert.strictEqual(oType.oConstraints, undefined, "nullable true");
 
-		oType = new BooleanType({}, {nullable: "true"});
+		oType = new BooleanType({}, {nullable : "true"});
 		assert.strictEqual(oType.oConstraints, undefined, 'nullable "true"');
 
-		oType = new BooleanType({}, {nullable: "foo"});
+		oType = new BooleanType({}, {nullable : "foo"});
 		assert.strictEqual(oType.oConstraints, undefined, "illegal nullable -> ignored");
 	});
 });

@@ -7,20 +7,24 @@
 
 		<script
 			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-libs="sap.ui.commons, sap.m"
 			data-sap-ui-resourceroots='{
-			"samples" : "../../samples/"
+			"samples" : "../../samples/",
+			"unitTests" : "./opa5TestFiles"
 			}'>
 		</script>
 
 		<script>
-		(function () {
-			jQuery.sap.require("sap.ui.qunit.qunit-css");
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
-			jQuery.sap.require("sap.ui.qunit.qunit-junit");
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			jQuery.sap.require("sap.ui.thirdparty.sinon");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+		QUnit.config.autostart = false;
+
+		sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/Opa", 'unitTests/component', 'unitTests/logging'], function (Opa5, Opa) {
 			jQuery.sap.require("samples.components.button.Component");
 			jQuery.sap.require("sap.ui.core.routing.HashChanger");
 
@@ -28,131 +32,13 @@
 
 			var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
 
-			jQuery.sap.require("sap.ui.test.Opa5");
-			var Opa5 = sap.ui.test.Opa5;
-			var Opa = sap.ui.test.Opa;
-
-			QUnit.module("Component");
-
-
-			QUnit.test("Should start and teardown a UIComponent", function(assert) {
-				// System under Test
-				var oOpa5 = new Opa5();
-				var done = assert.async();
-
-				// Act
-				oOpa5.iStartMyUIComponent({
-					componentConfig: {
-						name: "samples.components.button"
-					},
-					hash: ""
-				}).done(function(){
-					assert.ok(jQuery(".sapUiOpaComponent").length, "The UIComponent was started");
-				});
-
-				oOpa5.iTeardownMyUIComponent();
-
-				oOpa5.emptyQueue().done(function () {
-					assert.ok(!jQuery(".sapUiOpaComponent").length, "The UIComponent was removed");
-					done();
-				});
-
-			});
-
-			QUnit.test("Should increase timeout to 40 seconds", function(assert) {
-				// System under Test
-				var oOpa5 = new Opa5();
-				var stub = this.stub(oOpa5, "waitFor", function(){});
-
-
-				oOpa5.iStartMyUIComponent({
-					componentConfig: {
-						name: "samples.components.button"
-					},
-					hash: "",
-					timeout: 40
-				});
-
-				assert.equal(stub.lastCall.args[0].timeout, 40, "Timeout was increased to 40 seconds")
-			});
-
-			function componentHashTestCase (oOptions){
-				// System under Test
-				var oOpa5 = new Opa5();
-				var done = assert.async();
-				var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
-
-				oHashChanger.setHash("#foo");
-
-				// Act
-				oOpa5.iStartMyUIComponent({
-					componentConfig: {
-						name: "samples.components.button"
-					},
-					hash: oOptions.hashValues.newHash
-				});
-
-				oOpa5.waitFor({
-					controlType: "sap.ui.commons.Button",
-					success: function () {
-						oOptions.assert.strictEqual(
-							oHashChanger.getHash(),
-							oOptions.hashValues.expectedHash,
-							oOptions.message
-						);
-					}
-				});
-
-				oOpa5.iTeardownMyUIComponent();
-
-				oOpa5.emptyQueue().done(function () {
-					done();
-				});
-
-			}
-
-			QUnit.test("Should set the hash to an empty hash if an empty hash is given", function(assert) {
-				// System under Test
-				//test for empty hash equal empty hash
-				componentHashTestCase.call(this, {
-					hashValues : {
-						expectedHash : "",
-						newHash : ""
-					},
-					assert : assert,
-					message : "A empty hash was set to url"
-				});
-
-			});
-
-			QUnit.test("Should set the hash to an empty hash if undefined is given", function(assert) {
-				//test for no hash equal empty hash
-				componentHashTestCase.call(this, {
-					hashValues : {
-						expectedHash : ""
-					},
-					assert : assert,
-					message : "A empty hash was set to url because no one was given"
-				});
-			});
-
-			QUnit.test("Should set the hash to 'test' if 'test' is specified", function(assert){
-				//test for value hash equal value hash
-				componentHashTestCase.call(this, {
-					hashValues : {
-						expectedHash : "test",
-						newHash : "test"
-					},
-					assert : assert,
-					message : "A given hash value was set to url"
-				});
-			});
 
 			QUnit.module("IFrame");
 
-			asyncTest("Should find an IFrame in the dom instead of creating it", function() {
+			QUnit.test("Should find an IFrame in the dom instead of creating it", function(assert) {
 				// System under Test
-				var oOpa5 = new Opa5();
+				var oOpa5 = new Opa5(),
+					done = assert.async();
 				jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
 				var oFrame = document.getElementById("OpaFrame");
 
@@ -160,14 +46,14 @@
 				oOpa5.iStartMyAppInAFrame().done(function() {
 
 					// Act + Assert
-					ok(oFrame === document.getElementById("OpaFrame"), "did not re-create the frame");
+					assert.ok(oFrame === document.getElementById("OpaFrame"), "did not re-create the frame");
 
 				});
 
 				oOpa5.iTeardownMyAppFrame().done(function () {
 
-					ok(!jQuery("#OpaFrame").length, "did remove the frame");
-					start();
+					assert.ok(!jQuery("#OpaFrame").length, "did remove the frame");
+					done();
 
 				});
 
@@ -179,9 +65,10 @@
 			// The page we test includes UI5 after some time so its not a test issue.
 			if (window["sap-ui-bootstrap-tests"]) {
 
-				asyncTest("Should be able to defer the loading of ui5 and replace the hashchanger", function() {
+				QUnit.test("Should be able to defer the loading of ui5 and replace the hashchanger", function(assert) {
 					// System under Test
-					var oOpa5 = new Opa5();
+					var oOpa5 = new Opa5(),
+						done = assert.async();
 
 					// Act
 					oOpa5.iStartMyAppInAFrame("../testdata/emptySiteDeferredUi5Load.html").done(function() {
@@ -193,46 +80,43 @@
 						oWindow.sap.ui.core.routing.HashChanger.replaceHashChanger(oNewHashChanger);
 
 						// Assert
-						notStrictEqual(oNewHashChanger.setHash, fnSetHash, "did modify the hashchanger");
+						assert.notStrictEqual(oNewHashChanger.setHash, fnSetHash, "did modify the hashchanger");
 
 					});
 
-					oOpa5.iTeardownMyAppFrame().done(function () {
-
-						start();
-
-					});
+					oOpa5.iTeardownMyAppFrame().done(done);
 
 					oOpa5.emptyQueue();
 				});
 
-				asyncTest("Should Create and destroy an IFrame", function() {
+				QUnit.test("Should Create and destroy an IFrame", function(assert) {
 					// System under Test
 					var oOpa5 = new Opa5(),
+						done = assert.async(),
 						oWindowOpaPlugin = Opa5.getPlugin();
 
 					// Act
 					oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html").done(function() {
 						// Act + Assert
-						strictEqual(jQuery("#OpaFrame").length, 1, "did create the frame");
-						ok(Opa5.getWindow(), "initalized the window of the frame");
-						ok(oWindowOpaPlugin !== Opa5.getPlugin(), "initalized the plugin");
-						ok(Opa5.getJQuery(), "initalized jQuery");
-						ok(Opa5.getUtils(), "initalized the utils");
-						ok(Opa5.getHashChanger(), "initalized the hashChanger");
+						assert.strictEqual(jQuery("#OpaFrame").length, 1, "did create the frame");
+						assert.ok(Opa5.getWindow(), "initalized the window of the frame");
+						assert.ok(oWindowOpaPlugin !== Opa5.getPlugin(), "initalized the plugin");
+						assert.ok(Opa5.getJQuery(), "initalized jQuery");
+						assert.ok(Opa5.getUtils(), "initalized the utils");
+						assert.ok(Opa5.getHashChanger(), "initalized the hashChanger");
 
 					});
 
 					oOpa5.iTeardownMyAppFrame().done(function () {
 
-						ok(!jQuery("#OpaFrame").length, "did remove the frame");
-						strictEqual(Opa5.getWindow(), null, "purged the window of the frame");
-						strictEqual(Opa5.getPlugin(), oWindowOpaPlugin, "purged the plugin");
-						strictEqual(Opa5.getJQuery(), null, "purged jQuery");
-						strictEqual(Opa5.getUtils(), null, "purged the utils");
-						strictEqual(Opa5.getHashChanger(), null, "purged the hashChanger");
+						assert.ok(!jQuery("#OpaFrame").length, "did remove the frame");
+						assert.strictEqual(Opa5.getWindow(), null, "purged the window of the frame");
+						assert.strictEqual(Opa5.getPlugin(), oWindowOpaPlugin, "purged the plugin");
+						assert.strictEqual(Opa5.getJQuery(), null, "purged jQuery");
+						assert.strictEqual(Opa5.getUtils(), null, "purged the utils");
+						assert.strictEqual(Opa5.getHashChanger(), null, "purged the hashChanger");
 
-						start();
+						done();
 
 					});
 
@@ -442,9 +326,10 @@
 
 			module("matchers without fake time");
 
-			asyncTest("Should find a control by id without matchers", function() {
+			QUnit.test("Should find a control by id without matchers", function(assert) {
 				// Arrange
-				var oButton = new sap.ui.commons.Button("testButton");
+				var oButton = new sap.ui.commons.Button("testButton"),
+					done = assert.async();
 				oButton.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
@@ -462,17 +347,18 @@
 				});
 				oOpa5.emptyQueue().done(function() {
 					var oSuccessButton = oSuccessSpy.args[0][0];
-					strictEqual(oSuccessButton, oButton, "found a control");
+					assert.strictEqual(oSuccessButton, oButton, "found a control");
 
-					start();
+					done();
 				});
 
 
 			});
 
-			asyncTest("Should not call check if no matcher is matching on a single control", function() {
+			QUnit.test("Should not call check if no matcher is matching on a single control", function(assert) {
 				// Arrange
-				var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
+				var oButton = new sap.ui.commons.Button("myButton", {text : "foo"}),
+					done = assert.async();
 				oButton.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
@@ -484,7 +370,6 @@
 					name : "text",
 					value : "bar"
 				});
-				var oMatchSpy = this.spy(oMatcher, "isMatching");
 
 				// Act
 				oOpa5.waitFor({
@@ -496,19 +381,20 @@
 				});
 				oOpa5.emptyQueue().fail(function () {
 					// Assert
-					strictEqual(oCheckSpy.callCount, 0, "did not call the check");
+					assert.strictEqual(oCheckSpy.callCount, 0, "did not call the check");
 
 					// Cleanup
 					oButton.destroy();
 
-					start();
+					done();
 				});
 			});
 
-			asyncTest("Should skip a check if matchers filtered out all controls", function() {
+			QUnit.test("Should skip a check if matchers filtered out all controls", function(assert) {
 				// Arrange
 				var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
-				var oButton2 = new sap.ui.commons.Button("myButton2", {text : "bar"});
+				var oButton2 = new sap.ui.commons.Button("myButton2", {text : "bar"}),
+					done = assert.async();
 				oButton.placeAt("qunit-fixture");
 				oButton2.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -532,23 +418,23 @@
 				});
 				Opa5.emptyQueue().fail(function () {
 					// Assert
-					strictEqual(oCheckSpy.callCount, 0, "did not call the check");
+					assert.strictEqual(oCheckSpy.callCount, 0, "did not call the check");
 
 					// Cleanup
 					oButton.destroy();
 					oButton2.destroy();
 
-					start();
+					done();
 				});
 
 			});
 
-			module("matchers in waitfor", {
-				setup : function () { sinon.config.useFakeTimers = true; },
-				teardown : function () { sinon.config.useFakeTimers = false; }
+			QUnit.module("matchers in waitfor", {
+				beforeEach : function () { sinon.config.useFakeTimers = true; },
+				afterEach : function () { sinon.config.useFakeTimers = false; }
 			});
 
-			test("Should not call check if no matcher is matching", function() {
+			QUnit.test("Should not call check if no matcher is matching", function() {
 				// Arrange
 				var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 				oButton.placeAt("qunit-fixture");
@@ -587,7 +473,7 @@
 				oButton.destroy();
 			});
 
-			test("Should call check when all matchers are matching", function() {
+			QUnit.test("Should call check when all matchers are matching", function() {
 				// Arrange
 				var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 				oButton.placeAt("qunit-fixture");
@@ -635,7 +521,7 @@
 				oButton.destroy();
 			});
 
-			test("Should only pass matching controls to success", function() {
+			QUnit.test("Should only pass matching controls to success", function() {
 				// Arrange
 				var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 				var oButton2 = new sap.ui.commons.Button("myButton2", {text : "bar"});
@@ -677,7 +563,7 @@
 				oButton2.destroy();
 			});
 
-			test("Should only pass a single matching control to success", function() {
+			QUnit.test("Should only pass a single matching control to success", function() {
 				// Arrange
 				var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 				oButton.placeAt("qunit-fixture");
@@ -715,7 +601,7 @@
 				oButton.destroy();
 			});
 
-			test("Should call a matcher which is an inline function", function() {
+			QUnit.test("Should call a matcher which is an inline function", function() {
 				// Arrange
 				var oButton = new sap.ui.commons.Button("myButton3");
 				oButton.placeAt("qunit-fixture");
@@ -794,7 +680,7 @@
 				Opa5.emptyQueue();
 			};
 
-			test("Should pass multiple truthy results of matching to the next matchers and to success as array", function() {
+			QUnit.test("Should pass multiple truthy results of matching to the next matchers and to success as array", function() {
 				// Arrange
 				var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 				var oButton2 = new sap.ui.commons.Button("myButton2", {text : "bar"});
@@ -827,7 +713,7 @@
 				oButton2.destroy();
 			});
 
-			test("Should pass only truthy result of matching to the next matchers and to success as value", function() {
+			QUnit.test("Should pass only truthy result of matching to the next matchers and to success as value", function() {
 				// Arrange
 				var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
 				oButton.placeAt("qunit-fixture");
@@ -899,17 +785,14 @@
 				assert.strictEqual(oOpaContext, oOpa5InstanceContext, "Opa and Opa5 instance share a context");
 			});
 
-		})();
+			QUnit.start();
+
+		});
 
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">qUnit Page for sap.ui.test.Opa5</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="qunit-fixture"></div>
-
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 	</body>
 </html>

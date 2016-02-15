@@ -36,7 +36,7 @@ sap.ui.define([
 			 ActionPipeline) {
 		"use strict";
 
-		var oPlugin = new OpaPlugin(),
+		var oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oMatcherPipeline = new MatcherPipeline(),
 			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
@@ -299,7 +299,7 @@ sap.ui.define([
 		 * The actions will be invoked directly before success is called.
 		 * In the documentation of the success parameter there is a list of conditions that have to be fulfilled.
 		 * They also apply for the actions.
-		 * There are some predefined actions in the @{link sap.ui.test.actions} namespace.
+		 * There are some predefined actions in the {@link sap.ui.test.actions} namespace.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 */
@@ -312,25 +312,26 @@ sap.ui.define([
 			var fnOriginalCheck = oOptions.check,
 				vControl = null,
 				fnOriginalSuccess = oOptions.success,
-				vResult;
+				vResult,
+				bPluginLooksForControls;
 
 			oOptions.check = function () {
 				//retrieve the constructor instance
 				if (!this._modifyControlType(oOptions)) {
-
 					// skip - control type resulted in undefined or lazy stub
 					return false;
-
 				}
-
 
 				// Create a new options object for the plugin to keep the original one as is
 				var oPluginOptions = $.extend({}, oOptions, {
-					// only pass interactable if there are actions for backwards compatibility
-					interactable: !!vActions
-				});
+						// only pass interactable if there are actions for backwards compatibility
+						interactable: !!vActions
+					}),
+					oPlugin = Opa5.getPlugin();
 
-				vControl = Opa5.getPlugin().getMatchingControls(oPluginOptions);
+				bPluginLooksForControls = oPlugin._isLookingForAControl(oPluginOptions);
+
+				vControl = oPlugin.getMatchingControls(oPluginOptions);
 
 				//Search for a controlType in a view or open dialog
 				if ((oOptions.viewName || oOptions.searchOpenDialogs) && !oOptions.id && !vControl || (vControl && vControl.length === 0)) {
@@ -368,7 +369,8 @@ sap.ui.define([
 					return false;
 				}
 
-				if (vControl && oOptions.matchers) {
+				// If the plugin does not look for controls execute matchers even if vControl is falsy
+				if ((vControl || !bPluginLooksForControls) && oOptions.matchers) {
 					vResult = oMatcherPipeline.process({
 						matchers: oOptions.matchers,
 						control: vControl
@@ -391,7 +393,8 @@ sap.ui.define([
 			};
 
 			oOptions.success = function () {
-				if (vActions && vResult) {
+				// If the plugin does not look for controls execute actions even if vControl is falsy
+				if (vActions && (vResult || !bPluginLooksForControls)) {
 					oActionPipeline.process({
 						actions: vActions,
 						control: vResult
@@ -559,28 +562,13 @@ sap.ui.define([
 				return true;
 			}
 
-			oOptions.sOriginalControlType = vControlType;
-			var oWindow = iFrameLauncher.getWindow() || window;
+			var oControlConstructor = Opa5.getPlugin().getControlConstructor(vControlType);
 
-			// if the new _isStub is available, check for a stub first before accessing the object via its global name
-			if (oWindow.sap.ui.lazyRequire && oWindow.sap.ui.lazyRequire._isStub && oWindow.sap.ui.lazyRequire._isStub(vControlType)) {
-				jQuery.sap.log.debug("The control type " + vControlType + " is currently a lazy stub. Skipped check and will wait until it is invoked", this);
+			if (!oControlConstructor) {
 				return false;
 			}
 
-			var fnControlType = oWindow.jQuery.sap.getObject(vControlType);
-
-			// no control type
-			if (!fnControlType) {
-				jQuery.sap.log.debug("The control type " + vControlType + " is undefined. Skipped check and will wait until it is required", this);
-				return false;
-			}
-			if (fnControlType._sapUiLazyLoader) {
-				jQuery.sap.log.debug("The control type " + vControlType + " is currently a lazy stub. Skipped check and will wait until it is invoked", this);
-				return false;
-			}
-
-			oOptions.controlType = fnControlType;
+			oOptions.controlType = oControlConstructor;
 			return true;
 		};
 

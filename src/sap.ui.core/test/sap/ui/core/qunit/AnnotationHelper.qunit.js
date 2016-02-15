@@ -28,26 +28,26 @@ sap.ui.require([
 		},
 		oDateTime = {
 			name : "sap.ui.model.odata.type.DateTime",
-			constraints : {"nullable": false, "isDateOnly": true}
+			constraints : {"nullable" : false, "isDateOnly" : true}
 		},
 		oDateTimeOffset = {
 			name : "sap.ui.model.odata.type.DateTimeOffset",
-			constraints : {"nullable": false}
+			constraints : {"nullable" : false}
 		},
 		oDecimal = {
 			name : "sap.ui.model.odata.type.Decimal",
-			constraints : {"nullable": false, "precision" : 13, "scale" : 3}
+			constraints : {"nullable" : false, "precision" : 13, "scale" : 3}
 		},
 		oDouble = {
 			name : "sap.ui.model.odata.type.Double",
-			constraints : {"nullable": false}
+			constraints : {"nullable" : false}
 		},
 		oFloat = {
 			name : "sap.ui.model.odata.type.Single"
 		},
 		oGuid = {
 			name : "sap.ui.model.odata.type.Guid",
-			constraints : {"nullable": false}
+			constraints : {"nullable" : false}
 		},
 		oInt16 = {
 			name : "sap.ui.model.odata.type.Int16",
@@ -297,6 +297,16 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 						</Or>\
 					</PropertyValue>\
 				</Record>\
+				<!-- If and types -->\
+				<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+					<PropertyValue Property="Value">\
+						<If>\
+							<Path>p1</Path>\
+							<Path>p2</Path>\
+							<Path>p3</Path>\
+						</If>\
+					</PropertyValue>\
+				</Record>\
 			</Collection>\
 		</Annotation>\
 	</Annotations>\
@@ -497,10 +507,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		fnIsMultiple = AnnotationHelper.isMultiple,
 		fnSimplePath = AnnotationHelper.simplePath,
 		TestControl = ManagedObject.extend("TestControl", {
-			metadata: {
-				properties: {
-					any: "any",
-					text: "string"
+			metadata : {
+				properties : {
+					any : "any",
+					text : "string"
 				}
 			}
 		}),
@@ -629,8 +639,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	function testBinding(assert, oCurrentContext, vExpected, oModelData) {
 		var oModel = new JSONModel(oModelData),
 			oControl = new TestControl({
-				models: oModel,
-				bindingContexts: oModel.createBindingContext("/")
+				models : oModel,
+				bindingContexts : oModel.createBindingContext("/")
 			}),
 			oRawValue = oCurrentContext.getObject(),
 			sBinding = format(oRawValue, oCurrentContext),
@@ -728,7 +738,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	[true, false].forEach(function (bWithRawValue) {
 		QUnit.test("forward to getExpression: with RawValue " + bWithRawValue, function (assert) {
 			var oInterface = {
-					getObject: function () {/* will be overwritten by mock*/}
+					getObject : function () {/* will be overwritten by mock*/}
 				},
 				oRawValue = {},
 				sResult = {},
@@ -836,14 +846,14 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	[
-		{typeName: "Bool", result: "true"},
-		{typeName: "Date", result: "2015-03-24"},
-		{typeName: "DateTimeOffset", result: "2015-03-24T14:03:27Z"},
-		{typeName: "Decimal", result: "-123456789012345678901234567890.1234567890"},
-		{typeName: "Float", result: "-7.4503e-36"},
-		{typeName: "Guid", result: "0050568D-393C-1ED4-9D97-E65F0F3FCC23"},
-		{typeName: "Int", result: "9007199254740992"},
-		{typeName: "TimeOfDay", result: "13:57:06"}
+		{typeName : "Bool", result : "true"},
+		{typeName : "Date", result : "2015-03-24"},
+		{typeName : "DateTimeOffset", result : "2015-03-24T14:03:27Z"},
+		{typeName : "Decimal", result : "-123456789012345678901234567890.1234567890"},
+		{typeName : "Float", result : "-7.4503e-36"},
+		{typeName : "Guid", result : "0050568D-393C-1ED4-9D97-E65F0F3FCC23"},
+		{typeName : "Int", result : "9007199254740992"},
+		{typeName : "TimeOfDay", result : "13:57:06"}
 	].forEach(function (oFixture, index) {
 		QUnit.test("14.4.x Constant Expression edm:" + oFixture.typeName, function (assert) {
 			return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
@@ -950,7 +960,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		{Apply : {Name : "odata.fillUriTemplate", Parameters : [{}]}},
 		{Apply : {Name : "odata.fillUriTemplate", Parameters : [null]}},
 		{Apply : {Name : "odata.fillUriTemplate", Parameters : ["no object"]}},
-		{Apply : {Name : "odata.fillUriTemplate", Parameters : [{Type: "NoString"}]}},
+		{Apply : {Name : "odata.fillUriTemplate", Parameters : [{Type : "NoString"}]}},
 		{Apply : {Name : "odata.uriEncode"}},
 		{Apply : {Name : "odata.uriEncode", Parameters : {}}},
 		{Apply : {Name : "odata.uriEncode", Parameters : []}},
@@ -980,8 +990,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			oRawValue.Apply.Parameters[1].Value = " ";
 
 			testBinding(assert, oMetaModel.getContext(sPath), "John Doe", {
-				FirstName: "John",
-				LastName: "Doe"
+				FirstName : "John",
+				LastName : "Doe"
 			});
 		});
 	});
@@ -993,13 +1003,13 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		return withGwsampleModel(assert, function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
-				oParameter = {Type: "Int16", Value: 42},
+				oParameter = {Type : "Int16", Value : 42},
 				oRawValue = {
-					Apply: {
-						Name: "odata.concat",
+					Apply : {
+						Name : "odata.concat",
 						// Note: 1st value needs proper escaping!
 						// Due to changed error handling this is not tested anymore here
-						Parameters: [{Type: "String", Value : "{foo}"}, oParameter]
+						Parameters : [{Type : "String", Value : "{foo}"}, oParameter]
 					}
 				};
 
@@ -1016,9 +1026,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
 				oRawValue = {
-					Apply: {
-						Name: "odata.concat",
-						Parameters: [{Type: "String", Value : "*foo*"}, null]
+					Apply : {
+						Name : "odata.concat",
+						Parameters : [{Type : "String", Value : "*foo*"}, null]
 					}
 				};
 
@@ -1056,7 +1066,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			testBinding(assert, oContext,
 				"#BusinessPartner-displayFactSheet?BusinessPartnerID=0815", {
-				BusinessPartnerID: "0815"
+				BusinessPartnerID : "0815"
 			});
 
 			// test that the binding still works with bindTexts
@@ -1095,8 +1105,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	[
-		{type: "String", value: "foo\\bar", result: "'foo\\bar'"},
-		{type: "Unsupported", value: "foo\\bar", error: true}
+		{type : "String", value : "foo\\bar", result : "'foo\\bar'"},
+		{type : "Unsupported", value : "foo\\bar", error : true}
 	].forEach(function (oFixture) {
 		QUnit.test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type),
 			function (assert) {
@@ -1110,11 +1120,11 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 							+ "/com.sap.vocabularies.UI.v1.Identification/0/Url",
 						oCurrentContext = oMetaModel.getContext(sMetaPath),
 						oRawValue = {
-							Apply: {
-								Name: "odata.uriEncode",
-								Parameters: [{
-									Type: oFixture.type,
-									Value: oFixture.value
+							Apply : {
+								Name : "odata.uriEncode",
+								Parameters : [{
+									Type : oFixture.type,
+									Value : oFixture.value
 								}]
 							}
 						};
@@ -1145,17 +1155,17 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	[ // see http://www.odata.org/documentation/odata-version-2-0/overview/
-		{type: "Bool", result: "false"},
-		{type: "Date", result: "datetime'2033-03-25T00:00:00'"},
+		{type : "Bool", result : "false"},
+		{type : "Date", result : "datetime'2033-03-25T00:00:00'"},
 		//TODO split seconds, e.g. ".123456789012"
-		{type: "DateTimeOffset", result: "datetimeoffset'2033-01-06T07:25:21Z'"},
-		{type: "Decimal", result: "-12345678901234567.12345678901234M"},
-		{type: "Float", result: "1.69e+308d"},
-		{type: "Guid", result: "guid'0050568D-393C-1EE4-A5AE-9AAE85248FF1'"},
-		{type: "Int", result: "-9223372036854775800L"},
-		{type: "String", result: "'String Filtered Maxlength 40'"},
+		{type : "DateTimeOffset", result : "datetimeoffset'2033-01-06T07:25:21Z'"},
+		{type : "Decimal", result : "-12345678901234567.12345678901234M"},
+		{type : "Float", result : "1.69e+308d"},
+		{type : "Guid", result : "guid'0050568D-393C-1EE4-A5AE-9AAE85248FF1'"},
+		{type : "Int", result : "-9223372036854775800L"},
+		{type : "String", result : "'String Filtered Maxlength 40'"},
 		//TODO split seconds, e.g. ".123456789012"
-		{type: "TimeOfDay", result: "time'PT11H11M11S'"}
+		{type : "TimeOfDay", result : "time'PT11H11M11S'"}
 	].forEach(function (oFixture, index) {
 		QUnit.test("14.5.3.1.3 odata.uriEncode of edm:" + oFixture.type, function (assert) {
 			return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
@@ -1218,7 +1228,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			testBinding(assert, oMetaModel.getContext(sMetaPath),
 				"https://www.google.de/maps/place/%27Domplatz%27,%27Speyer%27",
 				{
-					Address: {
+					Address : {
 						Street : "Domplatz",
 						City : "Speyer"
 					}
@@ -1239,12 +1249,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 						Apply : {
 							Name : "odata.fillUriTemplate",
 							Parameters : [{
-								Type: "String",
-								Value: "http://foo.bar/{x}"
+								Type : "String",
+								Value : "http://foo.bar/{x}"
 							}, {
-								Name: "x",
-								Value: {
-									Apply: {Name: "odata.uriEncode"}
+								Name : "x",
+								Value : {
+									Apply : {Name : "odata.uriEncode"}
 								}
 							}]
 						}
@@ -1263,8 +1273,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					+ "/com.sap.vocabularies.UI.v1.Identification/1/Value";
 
 			testBinding(assert, oMetaModel.getContext(sMetaPath), "SAP 'SE'", {
-				CompanyName: "SAP",
-				LegalForm: "SE"
+				CompanyName : "SAP",
+				LegalForm : "SE"
 			});
 		});
 	});
@@ -1276,8 +1286,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					+ "/com.sap.vocabularies.UI.v1.Identification/2/Value";
 
 			testBinding(assert, oMetaModel.getContext(sMetaPath), "'SAP SE'", {
-				CompanyName: "SAP",
-				LegalForm: "SE"
+				CompanyName : "SAP",
+				LegalForm : "SE"
 			});
 		});
 	});
@@ -1292,7 +1302,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			oGlobalSandbox.stub(Expression, "path", function (oInterface, oPathValue) {
 				// do not try to "determine type for property"
-				return {result: "binding", value: oPathValue.value};
+				return {result : "binding", value : oPathValue.value, type : "Edm.String"};
 			});
 
 			assert.strictEqual(format(oRawValue, oCurrentContext),
@@ -1310,7 +1320,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			oGlobalSandbox.stub(Expression, "path", function (oInterface, oPathValue) {
 				// do not try to "determine type for property"
-				return {result: "binding", value: oPathValue.value};
+				return {result : "binding", value : oPathValue.value};
 			});
 
 			assert.strictEqual(format(oRawValue, oCurrentContext),
@@ -1320,23 +1330,24 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	[
-	    {path: "_Boolean", value: true},
-	    {path: "_Byte", value: 255},
-	    {path: "_DateTime", value: new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
-	    {path: "_DateTimeOffset", value: new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
-	    {path: "_Decimal", value: "104245025234234502435.6430345"},
-	    {path: "_Double", value: 3.1415927},
-	    {path: "_Float", value: 0.30103},
-	    {path: "_Guid", value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23"},
-	    {path: "_Int16", value: 16},
-	    {path: "_Int32", value: 32},
-	    {path: "_Int64", value: "9007199254740992"},
-	    {path: "_Int64Small", value: "64"},
-	    {path: "_SByte", value: -126},
-	    {path: "_Single", value: 2.7182818},
-	    {path: "_String10", value: "foo"},
-	    {path: "_String80", value: "bar"},
-	    {path: "_Time", value: {__edmType: "Edm.Time", ms: Date.UTC(1970, 0, 1, 12, 43, 7, 236)}}
+		{path : "_Boolean", value : true},
+		{path : "_Byte", value : 255},
+		{path : "_DateTime", value : new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
+		{path : "_DateTimeOffset", value : new Date(Date.UTC(2015, 3, 22, 12, 43, 7, 236))},
+		{path : "_Decimal", value : "104245025234234502435.6430345"},
+		{path : "_Double", value : 3.1415927},
+		{path : "_Float", value : 0.30103},
+		{path : "_Guid", value : "0050568D-393C-1ED4-9D97-E65F0F3FCC23"},
+		{path : "_Int16", value : 16},
+		{path : "_Int32", value : 32},
+		{path : "_Int64", value : "9007199254740992"},
+		{path : "_Int64Small", value : "64"},
+		{path : "_SByte", value : -126},
+		{path : "_Single", value : 2.7182818},
+		{path : "_String10", value : "foo"},
+		{path : "_String80", value : "bar"},
+		{path : "_Time", value : {__edmType : "Edm.Time",
+			ms : Date.UTC(1970, 0, 1, 12, 43, 7, 236)}}
 	].forEach(function (oFixture, i) {
 		QUnit.test("14.5.1 Comparison and Logical Operators: Eq on" + oFixture.path,
 			function (assert) {
@@ -1362,9 +1373,28 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath);
 
-			testBinding(assert, oCurrentContext, "Mr. ", {Sex: "M"});
-			testBinding(assert, oCurrentContext, "Mrs. ", {Sex: "F"});
-			testBinding(assert, oCurrentContext, "", {Sex: ""});
+			testBinding(assert, oCurrentContext, "Mr. ", {Sex : "M"});
+			testBinding(assert, oCurrentContext, "Mrs. ", {Sex : "F"});
+			testBinding(assert, oCurrentContext, "", {Sex : ""});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("14.5.6 Expression edm:If: types", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
+			var sMetaPath = sPath2BusinessPartner
+					+ "/com.sap.vocabularies.UI.v1.Identification/8/Value",
+				oCurrentContext = oMetaModel.getContext(sMetaPath),
+				oRawValue = oMetaModel.getObject(sMetaPath);
+
+			oGlobalSandbox.stub(Expression, "path", function (oInterface, oPathValue) {
+				// do not try to "determine type for property"
+				return {result : "binding", value : oPathValue.value, type : "Edm.Boolean"};
+			});
+
+			assert.strictEqual(format(oRawValue, oCurrentContext),
+				"{=${p1}?${path:'p2',type:'sap.ui.model.odata.type.Boolean'}"
+				+ ":${path:'p3',type:'sap.ui.model.odata.type.Boolean'}}");
 		});
 	});
 
@@ -1375,10 +1405,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl/Url",
 				oCurrentContext = oMetaModel.getContext(sMetaPath);
 
-			testBinding(assert, oCurrentContext, undefined, {EmailAddress: null},
+			testBinding(assert, oCurrentContext, undefined, {EmailAddress : null},
 				"null from formatter converted to property's default value");
 			testBinding(assert, oCurrentContext, "mailto:foo@bar.com",
-				{EmailAddress: "foo@bar.com"});
+				{EmailAddress : "foo@bar.com"});
 		});
 	});
 
@@ -1389,7 +1419,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	[true, false].forEach(function (bWithRawValue) {
 		QUnit.test("forward to getExpression: with RawValue " + bWithRawValue, function (assert) {
 			var oInterface = {
-					getObject: function () {/* will be overwritten by mock*/}
+					getObject : function () {/* will be overwritten by mock*/}
 				},
 				oRawValue = {},
 				sResult = {},
@@ -1789,7 +1819,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		beforeEach : function beforeEach() {
 			var oModel = new JSONModel({bar : "world", foo : "hello"}),
 				oControl = new TestControl({
-					models: {
+					models : {
 						"undefined" : oModel,
 						"model" : oModel
 					}

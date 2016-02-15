@@ -215,6 +215,16 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		UIArea.rerenderControl(this);
 	};
 
+	// @see sap.ui.core.Element#getDomRef
+	Control.prototype.getDomRef = function(sSuffix) {
+		// while cloning we know that control DOM does not exist
+		if (this.bOutput === false && !this.oParent) {
+			return null;
+		}
+
+		return Element.prototype.getDomRef.call(this, sSuffix);
+	};
+
 	/**
 	 * Defines whether the user can select text inside this control.
 	 * Defaults to <code>true</code> as long as this method has not been called.
@@ -466,15 +476,18 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			if (!bIsUIArea) {
 				var oContentAggInfo = oContainer.getMetadata().getAggregation("content");
 				var bContainerSupportsPlaceAt = true;
+
 				if (oContentAggInfo) {
 					if (!oContentAggInfo.multiple || oContentAggInfo.type != "sap.ui.core.Control") {
 						bContainerSupportsPlaceAt = false;
 					}
-				} else {
-					//Temporary workaround for sap.ui.commons.AbsoluteLayout to enable placeAt even when no content aggregation is available. TODO: Find a proper solution
-					if (!oContainer.addContent || !oContainer.insertContent || !oContainer.removeAllContent) {
-						bContainerSupportsPlaceAt = false;
-					}
+				} else if (!oContainer.addContent ||
+						!oContainer.insertContent ||
+						!oContainer.removeAllContent) {
+					//Temporary workaround for sap.ui.commons.AbsoluteLayout to enable
+					// placeAt even when no content aggregation is available.
+					// TODO: Find a proper solution
+					bContainerSupportsPlaceAt = false;
 				}
 				if (!bContainerSupportsPlaceAt) {
 					jQuery.sap.log.warning("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
@@ -845,7 +858,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				}
 				return this.checkFieldGroupIds(vFieldGroupIds.split(","));
 			}
-			var aFieldGroups = this.getFieldGroupIds();
+			var aFieldGroups = this._getFieldGroupIds();
 			if (jQuery.isArray(vFieldGroupIds)) {
 				var iFound = 0;
 				for (var i = 0; i < vFieldGroupIds.length; i++) {

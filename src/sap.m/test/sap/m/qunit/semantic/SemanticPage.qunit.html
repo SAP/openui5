@@ -25,12 +25,23 @@
 		jQuery.sap.require("sap.m.semantic.FlagAction");
 		jQuery.sap.require("sap.m.semantic.FavoriteAction");
 		jQuery.sap.require("sap.m.semantic.EditAction");
+		jQuery.sap.require("sap.m.semantic.MessagesAction");
+		jQuery.sap.require("sap.m.semantic.MessagesIndicator");
 		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 		var _SemanticPageTypes = {
 			master: "master",
 			detail: "details",
 			fullscreen: "fullscreen"
+		};
+
+		var addMessage = function (oModelMessages) {
+		sap.ui.getCore().getMessageManager().addMessages(
+			new sap.ui.core.message.Message({
+				message: "Something wrong happend!",
+				type: sap.ui.core.MessageType.Warning,
+				processor: oModelMessages
+			}));
 		};
 
 		function createSemanticPageFactory(sPageType, oConfig) {
@@ -82,8 +93,64 @@
 			oSemanticPage.destroy();
 		});
 
-		test("Detail page share menu is rendered", function () {
+		test("Messages Action is rendered ", function (){
+			var oConfig = {
+						messagesAction: new sap.m.semantic.MessagesAction("messagesAction", {
+						visible: true,
+						count: 5
+					})
+				},
+				oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig),
+				oMessageAction = oSemanticPage.getAggregation("messagesAction");
 
+			ok(oMessageAction.$().length, "Message action is in the DOM");
+			equals(oMessageAction.$().find(".sapMBtnContent").text(), 5, "The message content is correct");
+
+			oMessageAction.setCount(0);
+			equals(oMessageAction.$().find(".sapMBtnContent").text(), 0, "The message content is correct");
+
+			oSemanticPage.destroy();
+			ok(oMessageAction.bIsDestroyed, "After the page is destroyed, the messageAction is as well");
+		});
+
+		test("Messages Indicator is rendered ", function (){
+			var oConfig = {
+						messagesIndicator: new sap.m.semantic.MessagesIndicator(),
+				},
+				oModelMessages = new sap.ui.model.json.JSONModel({}),
+				oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig),
+				oMessageIndicator = oSemanticPage.getAggregation("messagesIndicator");
+
+			ok(!oMessageIndicator.$().length, "When there are no system messages the indicator is not rendered");
+
+			addMessage(oModelMessages);
+			sap.ui.getCore().applyChanges();
+
+			ok(oMessageIndicator.$().length, "When theres one message the indicator is rendered");
+			equals(oMessageIndicator.$().find(".sapMBtnContent").text(), 1, "The message content is correct");
+		});
+
+		test("Both messageAction and messageIndicator are rendered", function (){
+			var oConfig = {
+						messagesIndicator: new sap.m.semantic.MessagesIndicator(),
+						messagesAction: new sap.m.semantic.MessagesAction("messagesAction", {
+						visible: true,
+						count: 5
+					})
+				},
+				oModelMessages = new sap.ui.model.json.JSONModel({}),
+				oSemanticPage = createSemanticPageFactory(_SemanticPageTypes.detail, oConfig),
+				oMessageAction = oSemanticPage.getAggregation("messagesAction"),
+				oMessageIndicator = oSemanticPage.getAggregation("messagesIndicator");
+
+			addMessage(oModelMessages);
+			sap.ui.getCore().applyChanges();
+
+			ok(oMessageAction.$().length, "Message action is in the DOM");
+			ok(oMessageIndicator.$().length, "Message indicator is also in the DOM");
+		});
+
+		test("Detail page share menu is rendered", function () {
 			var oConfig = {
 						customShareMenuContent: [
 							new sap.m.Button({text: "button1"}),

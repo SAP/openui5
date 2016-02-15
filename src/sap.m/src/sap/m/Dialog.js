@@ -202,7 +202,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					/**
 					 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
 					 */
-					ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"}
+					ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+					/**
+					 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+					 */
+					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 				},
 				events: {
 
@@ -835,6 +840,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			oFocusDomRef = oFocusDomRef || jQuery.sap.domById(sFocusId);
 
+			// if focus dom ref is not found
+			if (!oFocusDomRef) {
+				this.setInitialFocus(""); // clear the saved initial focus
+				oFocusDomRef = sap.ui.getCore().byId(this._getFocusId()); // recalculate the element on focus
+			}
+
 			//if there is no set initial focus, set the default one to the initialFocus association
 			if (!this.getInitialFocus()) {
 				this.setAssociation('initialFocus', oFocusDomRef ? oFocusDomRef.id : this.getId(), true);
@@ -1142,6 +1153,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 
 			return originalResponse;
+		};
+
+		Dialog.prototype.getAriaLabelledBy = function() {
+			var header = this._getAnyHeader(),
+				// Due to a bug in getAssociation in ManagedObject slice the Array
+				// Remove slice when the bug is fixed.
+				labels = this.getAssociation("ariaLabelledBy", []).slice();
+
+			if (header) {
+				labels.unshift(header.getId());
+			}
+
+			return labels;
 		};
 
 		Dialog.prototype.setTitle = function (sTitle) {

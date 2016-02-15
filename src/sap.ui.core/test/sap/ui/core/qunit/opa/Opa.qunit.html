@@ -335,7 +335,7 @@
 
 	});
 
-	function theCurrentBrowserSupporstStacktraces () {
+	function theCurrentBrowserSupportsStacktraces () {
 		if (sap.ui.Device.browser.phantomJS) {
 			return false;
 		}
@@ -344,7 +344,12 @@
 			return false;
 		}
 
-		if (sap.ui.Device.browser.safari) {
+		//Incident 1580223677: IOS does not support stacktraces
+		if (sap.ui.Device.os.ios) {
+			return false;
+		}
+
+		if(sap.ui.Device.browser.safari) {
 			return false;
 		}
 
@@ -373,7 +378,7 @@
 			ok(oOptions, "Options are passed");
 			ok(oOptions.errorMessage, "Error message is there");
 
-			if (theCurrentBrowserSupporstStacktraces()) {
+			if (theCurrentBrowserSupportsStacktraces()) {
 				ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
 			}
 
@@ -414,7 +419,7 @@
 			ok(oOptions, "Options are passed");
 			ok(oOptions.errorMessage, "Error message is there");
 
-			if (theCurrentBrowserSupporstStacktraces()) {
+			if (theCurrentBrowserSupportsStacktraces()) {
 				ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
 				ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
 			}
@@ -428,12 +433,8 @@
 </script>
 </head>
 <body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.test.Opa</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
 
 </body>
 </html>

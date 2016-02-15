@@ -48,9 +48,16 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 		border-left:  none;
 	}
 
-	 .sapMSegBBtnFocusable.sapMSegBBtnSel:focus  + .sapMSegBBtn{
-		outline: none;
-		border-left: none;
+	.sapMSegBBtnFocusable.sapMSegBBtnSel {
+		&:focus  + .sapMSegBBtn {
+			outline: none;
+			border-left: none;
+		}
+		// Fixes focus on shared border on the left that's why there is a negative margin
+		+ .sapMSegBBtn:focus {
+			border-left: 1px dotted @sapUiFocus;
+			margin-left: -1px;
+		}
 	}
 
 	.sapMSegBBtnFocusable:last-child:focus {
@@ -61,9 +68,14 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 		border-right: 1px dotted @sapUiInvertedFocus;
 	}
 
-	.sapMFooter-CTX .sapMSegBBtnFocusable:focus {
-        border-color: @sapUiInvertedFocus;
-    }
+	.sapMFooter-CTX {
+		.sapMSegBBtnFocusable:focus {
+			border-color: @sapUiInvertedFocus;
+		}
+		.sapMSegBBtnSel + .sapMSegBBtn:focus {
+			border-left: 1px dotted @sapUiInvertedFocus;
+		}
+	}
 }
 
 .sapMSegBIcons .sapMSegBBtn {
@@ -89,9 +101,17 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	}
 }
 
-.sapMSegBBtnFocusable.sapMSegBBtnSel:hover,
+.sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover,
 .sapMSegBBtnFocusable.sapMBtnActive:hover{
 	background: @sapUiSegmentedButtonSelectedHoverBackground;
+}
+
+.sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
+	border-right: 1px solid @sapUiSegmentedButtonSelectedHoverBorderColor;
+	// Hide next button left border
+	+ .sapMSegBBtn {
+		border-left: none;
+	}
 }
 
 .sapMSegB img {
@@ -109,30 +129,25 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 }
 
 /* Footer */
-.sapMFooter-CTX {
-	.sapMSegB,
-	.sapMSegBBtn {
+.sapMFooter-CTX .sapMSegBBtn {
+	background-color: transparent;
+	color: @sapUiTextInverted;
+	&:not(.sapMSegBBtnSel) {
 		border-color: @sapUiSegmentedButtonFooterBorderColor;
 	}
-	.sapMSegBBtn {
-		background-color: transparent;
-		color: @sapUiTextInverted;
-	}
-	.sapMSegBBtn:hover {
+	&:hover {
 		background: @sapUiSegmentedButtonFooterHoverBackground;
 	}
-	.sapMSegBBtn .sapUiIcon {
+	.sapUiIcon {
 		color: @sapUiInvertedElement;
 	}
-	.sapMSegBBtn.sapMBtnActive,
-	.sapMSegBBtn.sapMSegBBtnSel {
-			background: @sapUiSegmentedButtonSelectedBackground;
-			color: @sapUiSegmentedButtonSelectedTextColor;
+	&.sapMBtnActive,
+	&.sapMSegBBtnSel {
+		background: @sapUiSegmentedButtonSelectedBackground;
+		color: @sapUiSegmentedButtonSelectedTextColor;
+		&:hover {
+			background: @sapUiSegmentedButtonSelectedHoverBackground;
 		}
-	.sapMSegBBtn.sapMSegBBtnSel:hover,
-	.sapMSegBBtn.sapMBtnActive:hover{
-		background: @sapUiSegmentedButtonSelectedHoverBackground;
-		border-color: @sapUiSegmentedButtonSelectedHoverBorderColor;
 	}
 }
 

@@ -9,6 +9,8 @@
 	outline: none;
 	display: inline-block;
 	white-space: initial; /* To not inherit */
+	box-sizing: border-box;
+	text-align: center;
 }
 
 .sapUiCalInt{
@@ -26,6 +28,11 @@
 	height: @sapUiLineHeight;
 	position: relative;
 	text-align:center;
+	display: inline-block;
+}
+
+.sapUiCal:not(.sapUiCalInt) > .sapUiCalHead{
+	max-width: 40rem;
 }
 
 .sapUiCalHead > button,
@@ -116,6 +123,11 @@
 	display: inline-block;
 }
 
+.sapUiCal .sapUiCalMonthView,
+.sapUiCal .sapUiCalRow{
+	box-sizing: border-box;
+}
+
 .sapUiCalInt > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalInt > .sapUiCalContent > .sapUiCalYearPicker{
 	width: auto;
@@ -123,6 +135,11 @@
 
 .sapUiCalHeadText{
 	text-align: center;
+}
+
+.sapUiCalContentSingle .sapUiCalHeadText{
+	text-align: left;
+	margin-left: 12.5%;
 }
 
 .sapUiCalRow .sapUiCalHeadText{

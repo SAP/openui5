@@ -101,5 +101,94 @@
         "references": []
       }
     ]
+  },
+  "1.36.1": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "e889edfdc5317f183be879a8655051e7bca10540",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Column: fixes _setFilterValue is not a function",
+        "references": []
+      },
+      {
+        "id": "c9522255977dcd1fdb0ae11f9868c5122790d7bd",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: BusyIndicator gets not removed when fixed rows are requested",
+        "references": []
+      },
+      {
+        "id": "2a39fa060ae084e0d1b8b2d6422a4c73ad1cb562",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Column Header was not aligned to column",
+        "references": []
+      },
+      {
+        "id": "2f1563088fcfec2cb8bd83f0c38fba235b6ba669",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixed Scrollbar Flickering Bug",
+        "references": []
+      },
+      {
+        "id": "604ebdf9c9e80f859e4f08d6a3e2b1740656442d",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: IE should work with subpixel row height",
+        "references": []
+      },
+      {
+        "id": "de8e48d958363fa95191312bbcc95c66964a45e8",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: IE9 did not set correct row height",
+        "references": []
+      },
+      {
+        "id": "8e4aad4107e9d08d349fe4dabf3b3ca81cd434e1",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Resize Handler did not work correctly in Touch Mode",
+        "references": []
+      },
+      {
+        "id": "1f0b22c3f3cebd302968ffc17a869b6ee1483374",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "ONLY",
+        "text": "when clicking on dummy td",
+        "references": []
+      },
+      {
+        "id": "4ef7caf37aae2b7fd6eb513e3050a16d9a26b142",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes null-ref issue with rowSelector of rows which do not have a parent",
+        "references": []
+      },
+      {
+        "id": "c5533229b829edf895ce368297bdf102b44ec1f4",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes regressions related to table rendering - async DOM/ControlTree for updateTableSizes",
+        "references": []
+      },
+      {
+        "id": "aee028b292c172e7dacbbba090317d0cf5488a23",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes requestCounter for changing bindings while request is still pending",
+        "references": []
+      },
+      {
+        "id": "6d23fe44024a49ef6b3f5a57c2671e761b429206",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: resizing of columns which should not be resizable",
+        "references": []
+      }
+    ]
   }
 }

@@ -945,6 +945,165 @@
 
 			oDeepTree.destroy();
 		});
+
+		module("Data binding", {
+			beforeEach: function () {
+				this.oTree = new sap.ui.commons.Tree({
+					showHeader: false,
+					showHeaderIcons: false,
+					showHorizontalScrollbar: true,
+					selectionMode: sap.ui.commons.TreeSelectionMode.Single
+				});
+				this.oTree.setModel(new sap.ui.model.json.JSONModel({
+					children : [
+						{
+							bShow : true,
+							text : "node 1",
+							children : [
+								{
+									bShow : true,
+									text : "node 11"
+								},
+								{
+									bShow : true,
+									text : "node 12"
+								},
+								{
+									bShow : true,
+									text : "node 13"
+								}
+							]
+						},
+						{
+							bShow : false,
+							text : "node 2",
+							children : [
+								{
+									bShow : true,
+									text : "node 21"
+								},
+								{
+									bShow : true,
+									text : "node 22"
+								},
+								{
+									bShow : true,
+									text : "node 23"
+								}
+							]
+						},
+						{
+							bShow : true,
+							text : "node 3",
+							children : [
+								{
+									bShow : true,
+									text : "node 31"
+								},
+								{
+									bShow : false,
+									text : "node 32"
+								},
+								{
+									bShow : false,
+									text : "node 33"
+								}
+							]
+						}
+					]
+				}));
+				this.oTree.bindNodes({
+					path : "/",
+					template : new sap.ui.commons.TreeNode({
+						text : {
+							path : "text"
+						}
+					}),
+					parameters : { arrayNames : [ "children" ] }
+				});
+				this.oTree.placeAt("target5");
+				sap.ui.getCore().applyChanges();
+				this.fnSelectionChangeHandler = function (oEvent) {
+					this.oSelectionChangeEventStorage = jQuery.extend({}, oEvent);
+				}.bind(this);
+				this.spySelectNodeHandler = sinon.spy(sap.ui.commons.TreeNode.prototype, "fireSelected");
+				this.sandbox = sinon.sandbox;
+				this.spySelectionChangeHandler = sinon.spy(this.fnSelectionChangeHandler);
+				this.oTree.attachEvent('selectionChange', this.spySelectionChangeHandler);
+			},
+			afterEach: function () {
+				this.oTree.destroy();
+				this.fnSelectionChangeHandler = null;
+				this.oSelectionChangeEventStorage = null;
+				this.spySelectNodeHandler = null;
+				this.sandbox.restore();
+			},
+			applyFilter: function (sShowValue) {
+				var aFiltersToApply = [];
+				switch (sShowValue) {
+					case "True":
+						aFiltersToApply.push(new sap.ui.model.Filter('bShow', sap.ui.model.FilterOperator.EQ, true));
+						break;
+					case "False":
+						aFiltersToApply.push(new sap.ui.model.Filter('bShow', sap.ui.model.FilterOperator.EQ, false));
+						break;
+					default:
+						aFiltersToApply = [
+							new sap.ui.model.Filter('bShow', sap.ui.model.FilterOperator.EQ, true),
+							new sap.ui.model.Filter('bShow', sap.ui.model.FilterOperator.EQ, false)
+						];
+						break;
+				}
+				this.oTree.getBinding("nodes").filter(aFiltersToApply);
+			}
+		});
+
+		test("Selection is cleared on data model filtering", function () {
+			//arrange
+			var oTreeNodes = this.oTree.getAggregation("nodes"),
+				oNodeToSelect = oTreeNodes[1].getNodes()[1]; // node 2-2
+
+			this.oTree.setSelection(oNodeToSelect, false, sap.ui.commons.TreeSelectionMode.Single ,true);
+			sap.ui.getCore().applyChanges();
+			//assert
+			strictEqual(this.spySelectNodeHandler.callCount, 1, "TreeNode select event was fired successfully");
+			ok(this.spySelectionChangeHandler.calledOnce, "Tree selection change event was fired successfully");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], oNodeToSelect, "Tree selection change event was fired with correct node parameter");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], this.oTree.getNodeContext(oNodeToSelect), "Tree selection change event was fired with correct nodeContexts parameter");
+			strictEqual(this.oTree.getSelection(), oNodeToSelect, "The correct node was selected");
+			//arrange
+			this.applyFilter("False");
+			sap.ui.getCore().applyChanges();
+			//assert
+			strictEqual(this.spySelectNodeHandler.callCount, 1, "TreeNode select event was not fired on data model filtering");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], null, "Tree selection change event was fired with correct node parameter");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], null, "Tree selection change event was fired with correct nodeContexts parameter");
+			strictEqual(this.oTree.getSelection(), null, "getSelection() returned null when performing data model filtering");
+			//arrange
+			this.applyFilter("Reset"); //reset the filters and data to its original state
+			sap.ui.getCore().applyChanges();
+			//assert
+			strictEqual(this.spySelectNodeHandler.callCount, 1, "TreeNode select event was not fired on data model filtering");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], null, "Tree selection change event was fired with correct node parameter");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], null, "Tree selection change event was fired with correct nodeContexts parameter");
+			strictEqual(this.oTree.getSelection(), null, "getSelection() returned null when performing data model filtering");
+			//arrange
+			this.oTree.setSelection(oNodeToSelect, false, sap.ui.commons.TreeSelectionMode.Single ,true); //select the same (2-2) node
+			sap.ui.getCore().applyChanges();
+			//assert
+			strictEqual(this.spySelectNodeHandler.callCount, 2, "Tree selection change was fired on data model filtering");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], oNodeToSelect, "Tree selection change event was fired with correct node parameter");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], this.oTree.getNodeContext(oNodeToSelect), "Tree selection change event was fired with correct nodeContexts parameter");
+			strictEqual(this.oTree.getSelection(), oNodeToSelect, "getSelection() returned null when performing data model filtering");
+			//arrange
+			this.applyFilter("True");
+			sap.ui.getCore().applyChanges();
+			//assert
+			strictEqual(this.spySelectNodeHandler.callCount, 2, "TreeNode select event was not fired on data model filtering");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodes[0], null, "Tree selection change event was fired with correct node parameter");
+			equal(this.oSelectionChangeEventStorage.mParameters.nodeContexts[0], null, "Tree selection change event was fired with correct nodeContexts parameter");
+			strictEqual(this.oTree.getSelection(), null, "getSelection() returned null when performing data model filtering");
+		});
 		</script>
 	</head>
 	<body>
@@ -957,5 +1116,6 @@
 		<div id="target2"></div>
 		<div id="target3"></div>
 		<div id="target4"></div>
+		<div id="target5"></div>
 	</body>
 </html>

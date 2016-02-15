@@ -56,17 +56,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 *
 	 * @param {object} oObject Object
 	 * @param {string} sPath Path starting with a slash (/)
-	 * @return {any|null} value of a member specified by its path;
+	 * @return {any} value of a member specified by its path;
 	 *         if the path doesn't start with a slash it returns the value for the given path of the object
 	 */
 	function getObject(oObject, sPath) {
 		// if the incoming sPath is a path we do a nested lookup in the
 		// manifest object and return the concrete value, e.g. "/sap.ui5/extends"
 		if (oObject && sPath && typeof sPath === "string" && sPath[0] === "/") {
-			var aPaths = sPath.substring(1).split("/");
+			var aPaths = sPath.substring(1).split("/"),
+			    sPathSegment;
 			for (var i = 0, l = aPaths.length; i < l; i++) {
-				oObject = oObject[aPaths[i]] || null;
-				if (!oObject) {
+				sPathSegment = aPaths[i];
+
+				// Prevent access to native properties
+				oObject = oObject.hasOwnProperty(sPathSegment) ? oObject[sPathSegment] : undefined;
+
+				// Only continue with lookup if the value is an object.
+				// Accessing properties of other types is not allowed!
+				if (oObject === null || typeof oObject !== "object") {
+
+					// Clear the value in case this is not the last segment in the path.
+					// Otherwise e.g. "/foo/bar/baz" would return the value of "/foo/bar"
+					// in case it is not an object.
+					if (i + 1 < l && oObject !== undefined) {
+						oObject = undefined;
+					}
+
 					break;
 				}
 			}
@@ -75,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 		// if no path starting with slash is specified we access and
 		// return the value directly from the manifest
-		return oObject && oObject[sPath] || null;
+		return oObject && oObject[sPath];
 	}
 
 

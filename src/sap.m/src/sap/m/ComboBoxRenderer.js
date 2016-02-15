@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 		 *
 		 * @namespace
 		 */
-		var ComboBoxRenderer = Renderer.extend(sap.m.ComboBoxBaseRenderer);
+		var ComboBoxRenderer = Renderer.extend(ComboBoxBaseRenderer);
 
 		/**
 		 * CSS class to be applied to the root element of the ComboBox.

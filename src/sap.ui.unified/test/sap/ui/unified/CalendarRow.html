@@ -32,6 +32,14 @@
 				}
 			};
 
+			var handleIntervalSelect = function(oEvent){
+				var oTV = sap.ui.getCore().byId("EventTV");
+				var oStartDate = oEvent.getParameter("startDate");
+				var oEndDate = oEvent.getParameter("endDate");
+				var bSubInterval = oEvent.getParameter("subInterval");
+				oTV.setText("Interval selected - Start:" + oFormatYyyyMMddHHmm.format(oStartDate) + " , End:" + oFormatYyyyMMddHHmm.format(oEndDate) + " , SubInterval:" + bSubInterval);
+			};
+
 			var handleStartDateChange = function(oEvent){
 
 				var oRow = oEvent.oSource;
@@ -43,7 +51,8 @@
 
 			var oRow1 = new sap.ui.unified.CalendarRow("Row1",  {
 					select: handleSelect,
-					startDateChange: handleStartDateChange
+					startDateChange: handleStartDateChange,
+					intervalSelect: handleIntervalSelect
 				}).placeAt("sample1");
 
 			var oStartDate = new Date();

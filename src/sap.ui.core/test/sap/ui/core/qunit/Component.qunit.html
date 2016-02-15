@@ -33,8 +33,8 @@
 	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<!-- Initialization -->
-	<script language="javascript">
-	sinon.config.useFakeTimers = true;
+	<script>
+	sinon.config.useFakeTimers = false;
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 	QUnit.config.autostart = false;
@@ -186,7 +186,7 @@
 	});
 
 	QUnit.module("Routing", {
-		setup : function () {
+		beforeEach : function () {
 			// System under test
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "samples.components.routing"
@@ -252,7 +252,7 @@
 	});
 
 	QUnit.module("Root control", {
-		setup : function () {
+		beforeEach : function () {
 			// System under test
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "samples.components.routing"
@@ -276,36 +276,65 @@
 
 
 	QUnit.module("Manifest First", {
-		beforeEach : function() {},
+		beforeEach : function() {
+
+			//setup fake server
+			var oManifest = this.oManifest = {
+				"sap.app" : {
+					"id" : "samples.components.button"
+				}
+			};
+			var oAltManifest1 = this.oAltManifest1 = {
+				"sap.app" : {
+					"id" : "samples.components.config"
+				}
+			};
+
+			var oAltManifest2 = this.oAltManifest2 = {
+				"sap.app" : {
+					"id" : "samples.components.oneview"
+				}
+			};
+
+			var oServer = this.oServer = sinon.sandbox.useFakeServer();
+
+			oServer.xhr.useFilters = true;
+			oServer.xhr.filters = [];
+			oServer.xhr.addFilter(function(method, url) {
+				return ("/anylocation/manifest.json" !== url && "/anyotherlocation1/manifest.json" !== url && "/anyotherlocation2/manifest.json" !== url);
+			});
+
+			oServer.autoRespond = true;
+			oServer.respondWith("GET", "/anylocation/manifest.json", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifest)
+			]);
+			oServer.respondWith("GET", "/anyotherlocation1/manifest.json", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oAltManifest1)
+			]);
+			oServer.respondWith("GET", "/anyotherlocation2/manifest.json", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oAltManifest2)
+			]);
+
+		},
 		afterEach : function() {}
 	});
 
 
-	QUnit.test("Manifest from component instance (sync)", function(assert) {
+	QUnit.test("Manifest delegation to component instance (sync)", function(assert) {
 
-		//setup fake server
-		var oManifest = {
-			"sap.app" : {
-				"id" : "samples.components.button"
-			}
-		};
-
-		var oServer = this.sandbox.useFakeServer();
-
-		oServer.xhr.useFilters = true;
-		oServer.xhr.addFilter(function(method, url) {
-			return ("/anylocation/manifest.json" !== url && "/anylocation/manifest1.json" !== url);
-		});
-
-		oServer.autoRespond = true;
-		oServer.respondWith("GET", "/anylocation/manifest.json", [
-			200,
-			{
-				"Content-Type": "application/json"
-			},
-			JSON.stringify(oManifest)
-		]);
-
+		var oServer = this.oServer, oManifest = this.oManifest;
 
 		//start test
 		var oComponent = sap.ui.component({
@@ -321,6 +350,129 @@
 
 	});
 
+	QUnit.test("Manifest delegation to component instance (sync, delayed instantiation)", function(assert) {
+
+		var oServer = this.oServer, oManifest = this.oManifest;
+
+		//start test
+		var fnComponentClass = sap.ui.component.load({
+			manifestUrl : "/anylocation/manifest.json"
+		});
+
+		var oComponent = new fnComponentClass();
+
+		assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+		assert.ok(oComponent.getManifest(), "Manifest is available");
+		assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+
+		var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
+		assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
+
+	});
+
+	QUnit.test("Manifest delegation to component instance (async)", function(assert) {
+
+		var oServer = this.oServer, oManifest = this.oManifest;
+
+		//start test
+		var done = assert.async();
+		sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json",
+			async : true
+		}).then(function(oComponent) {
+
+			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.ok(oComponent.getManifest(), "Manifest is available");
+			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+
+			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
+			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
+
+			done();
+
+		});
+
+	});
+
+	QUnit.test("Manifest delegation to component instance (async, delayed instantiation)", function(assert) {
+
+		var oServer = this.oServer, oManifest = this.oManifest;
+
+		//start test
+		var done = assert.async();
+		sap.ui.component.load({
+			manifestUrl : "/anylocation/manifest.json",
+			async : true
+		}).then(function(fnComponentClass) {
+
+			var oComponent = new fnComponentClass();
+
+			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.ok(oComponent.getManifest(), "Manifest is available");
+			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+
+			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
+			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
+
+			done();
+
+		});
+
+	});
+
+	QUnit.test("Alternate URL for component (sync)", function(assert) {
+
+		var oServer = this.oServer, oManifest = this.oAltManifest1;
+
+		// create an invalid registration for samples.components.config to see that the "url" parameter works
+		jQuery.sap.registerModulePath("samples.components.config", "../../../../../test-resources/invalid/");
+
+		//start test
+		var fnComponentClass = sap.ui.component.load({
+			manifestUrl : "/anyotherlocation1/manifest.json",
+			url : "../../../../../test-resources/sap/ui/core/samples/components/config/"
+		});
+
+		var oComponent = new fnComponentClass();
+
+		assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+		assert.ok(oComponent.getManifest(), "Manifest is available");
+		assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+
+		var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
+		assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
+
+	});
+
+	QUnit.test("Alternate URL for component (async)", function(assert) {
+
+		var oServer = this.oServer, oManifest = this.oAltManifest2;
+
+		// create an invalid registration for samples.components.config to see that the "url" parameter works
+		jQuery.sap.registerModulePath("samples.components.oneview", "../../../../../test-resources/invalid/");
+
+		//start test
+		var done = assert.async();
+		sap.ui.component.load({
+			manifestUrl : "/anyotherlocation2/manifest.json",
+			url : "../../../../../test-resources/sap/ui/core/samples/components/oneview/",
+			async : true
+		}).then(function(fnComponentClass) {
+
+			var oComponent = new fnComponentClass();
+
+			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.ok(oComponent.getManifest(), "Manifest is available");
+			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+
+			var sAcceptLanguage = oServer.requests && oServer.requests[0] && oServer.requests[0].requestHeaders && oServer.requests[0].requestHeaders["Accept-Language"];
+			assert.equal(sAcceptLanguage, "en", "Manifest was requested with proper language");
+
+			done();
+
+		});
+
+	});
 
 
 	</script>

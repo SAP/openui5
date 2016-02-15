@@ -427,6 +427,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	ListItemBase.prototype.exit = function() {
 		this._oLastFocused = null;
+		this.setActive(false);
 		this.destroyControls([
 			"Delete",
 			"SingleSelect",
@@ -549,23 +550,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ListItemBase.prototype.setActive = function(bActive) {
-		if (bActive != this._active) {
-			var $This = this.$();
-			this._active = bActive;
-			this._activeHandling($This);
-
-			if (this.getType() == sap.m.ListType.Navigation) {
-				this._activeHandlingNav($This);
-			}
-
-			if (bActive) {
-				this._activeHandlingInheritor($This);
-			} else {
-				this._inactiveHandlingInheritor($This);
-			}
+		if (bActive == this._active) {
+			return this;
 		}
 
-		return this;
+		if (bActive && this.getListProperty("activeItem")) {
+			return this;
+		}
+
+		var $This = this.$();
+		this._active = bActive;
+		this._activeHandling($This);
+
+		if (this.getType() == sap.m.ListType.Navigation) {
+			this._activeHandlingNav($This);
+		}
+
+		if (bActive) {
+			this._activeHandlingInheritor($This);
+		} else {
+			this._inactiveHandlingInheritor($This);
+		}
+
+		this.informList("ActiveChange", bActive);
 	};
 
 	ListItemBase.prototype.ontap = function(oEvent) {

@@ -92,15 +92,10 @@
 			itemsBinding.filter(aFilters);
 		};
 
-		// cancel function to display a message
-		var fnCancelDialog = function (oEvent) {
-			sap.m.MessageBox.alert("Cancel Selected on " + (oEvent.oSource ? oEvent.oSource : oEvent.srcControl));
-		}
-
 		/* dialog data */
 		var oDialogData = {
 			title: "Choose your tech..",
-			noDataMessage: "We don't have any tech to show here and we are very sorry for that!",
+			noDataMessage: "We don't have any tech to show here and we are very sorry for that!"
 		};
 
 		var oModelDialog = new sap.ui.model.json.JSONModel();
@@ -393,9 +388,6 @@
 			}
 		});
 
-		// attach Cancel listener
-		oTableSelectDialog1.attachCancel(fnCancelDialog);
-
 		var oInput1 = new sap.m.Input({
 			type: "Text",
 			placeholder: "Open TableSelectDialog with Items Binding",
@@ -458,7 +450,7 @@
 			]
 		});
 
-		var oInput2 = new sap.m.Input({
+		var oInput2 = new sap.m.Input('tsdWithBindingInput', {
 			type: "Text",
 			placeholder: "Open TableSelectDialog with Dialog Binding & Items Binding",
 			showValueHelp: true,
@@ -483,9 +475,6 @@
 				oInput2.setValue("Item selected is : " + oCell.getText());
 			}
 		});
-
-		// attach Cancel listener
-		oTableSelectDialog2.attachCancel(fnCancelDialog);
 
 		/* 3) table dialog with binding auto destroy on close */
 		var oTableSelectDialog3 = new sap.m.TableSelectDialog("TableSelectDialog3", {
@@ -545,9 +534,6 @@
 			oTableSelectDialog3.destroy();
 			oTableSelectDialog3 = null;
 		});
-
-		// attach Cancel listener
-		oTableSelectDialog3.attachCancel(fnCancelDialog);
 
 		var oButton3 = new sap.m.Button("Button3", {
 			text: "Open TableSelectDialog with destroy call in close event & late binding",
@@ -627,10 +613,7 @@
 			}
 		});
 
-		// attach Cancel listener
-		oTableSelectDialog4.attachCancel(fnCancelDialog);
-
-		var oButton4 = new sap.m.Button("Button4", {
+		var oButton4 = new sap.m.Button("tsdWithMultiSelectButton", {
 			text: "Open TableSelectDialog in MultiSelect mode",
 			press: function () {
 				// open dialog
@@ -720,10 +703,7 @@
 			}
 		});
 
-		// attach Cancel listener
-		oTableSelectDialog5.attachCancel(fnCancelDialog);
-
-		var oButton5 = new sap.m.Button("Button5", {
+		var oButton5 = new sap.m.Button("tsdWithLargeDataAndMultiSelectButton", {
 			text: "Open TableSelectDialog in MultiSelect mode with large data",
 			press: function () {
 				// open dialog
@@ -852,10 +832,7 @@
 			}
 		});
 
-		// attach Cancel listener
-		oTableSelectDialog6.attachCancel(fnCancelDialog);
-
-		var oButton6 = new sap.m.Button("Button6", {
+		var oButton6 = new sap.m.Button("tsdWithVeryLargeDataButton", {
 			text: "Open TableSelectDialog with very large data",
 			press: function () {
 				// open dialog
@@ -952,9 +929,6 @@
 				}
 			}
 		});
-
-		// attach Cancel listener
-		oTableSelectDialog8.attachCancel(fnCancelDialog);
 
 		var oButton8 = new sap.m.Button("Button8", {
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, prefiltered by \"id_1\" with web service binding and no fixed width",
@@ -1057,9 +1031,6 @@
 				}
 			}
 		});
-
-		// attach Cancel listener
-		oTableSelectDialog9.attachCancel(fnCancelDialog);
 
 		var oButton9 = new sap.m.Button("Button9", {
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, late binding, with web service binding and 400px width",

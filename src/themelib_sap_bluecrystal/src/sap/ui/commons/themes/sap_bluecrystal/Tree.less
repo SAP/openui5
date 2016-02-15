@@ -33,16 +33,24 @@
 	top: 28px;
 }
 
-.sapUiTreeNode:hover{
-	background-color: @sapUiListHoverBackground;
+.sapUiTreeNode {
 	background-image: url(img/tree/TreeNode.gif);
+}
+
+/* use the white icon on black background */
+.sapUiInverted-CTX .sapUiTreeNode {
+	background-image: url(img/tree/TreeNode-inverted.gif);
+}
+
+.sapUiTreeNode:hover {
+	background-color: @sapUiListHoverBackground;
 }
 
 .sapUiTreeNode:focus {
 	outline: 1px dashed @sapUiListHighlightColor;
 }
 
-.sapUiTreeNodeSelectedParent:Hover, .sapUiTreeNodeSelected:Hover {
+.sapUiTreeNodeSelectedParent:hover, .sapUiTreeNodeSelected:hover {
 	background-color: @sapUiListSelectionHoverBackground;
 }
 
@@ -51,38 +59,22 @@
 	background-color: @sapUiListSelectionBackgroundColor;
 }
 
-.sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent,
-.sapUiTreeNodeExpanded.sapUiTreeNodeSelected {
+.sapUiTreeNodeExpanded {
 	background-image: url(img/tree/TreeNode_Exp.gif);
 }
 
-.sapUiTreeNodeExpanded.sapUiTreeNodeSelectedParent:Hover,
-.sapUiTreeNodeExpanded.sapUiTreeNodeSelected:Hover,
-.sapUiTreeNodeExpanded.sapUiTreeNodeSelected.sapUiTreeNode:Hover {
-	background-color: @sapUiListSelectionHoverBackground;
-	background-image: url(img/tree/TreeNode_Exp.gif);
+/* use the white icon on black background */
+.sapUiInverted-CTX .sapUiTreeNodeExpanded {
+	background-image: url(img/tree/TreeNode_Exp-inverted.gif)
 }
 
-.sapUiTreeNodeExpanded.sapUiTreeNode:Hover{
-	background-color: @sapUiListHoverBackground;
-	background-image: url(img/tree/TreeNode_Exp.gif);
-}
-
-.sapUiTreeNodeCollapsed.sapUiTreeNodeSelectedParent,
-.sapUiTreeNodeCollapsed.sapUiTreeNodeSelected {
+.sapUiTreeNodeCollapsed {
 	background-image: url(img/tree/TreeNode_Coll.gif);
 }
 
-.sapUiTreeNodeCollapsed.sapUiTreeNodeSelectedParent:Hover,
-.sapUiTreeNodeCollapsed.sapUiTreeNodeSelected:Hover,
-.sapUiTreeNodeCollapsed.sapUiTreeNodeSelected.sapUiTreeNode:Hover {
-	background-color: @sapUiListSelectionHoverBackground;
-	background-image: url(img/tree/TreeNode_Coll.gif);
-}
-
-.sapUiTreeNodeCollapsed.sapUiTreeNode:Hover {
-	background-color: @sapUiListHoverBackground;
-	background-image: url(img/tree/TreeNode_Coll.gif);
+/* use the white icon on black background */
+.sapUiInverted-CTX .sapUiTreeNodeCollapsed {
+	background-image: url(img/tree/TreeNode_Coll-inverted.gif)
 }
 
 .sapUiTreeTbCont > .sapUiBtn.sapUiBtnS.sapUiBtnLite{

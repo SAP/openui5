@@ -258,6 +258,9 @@
 				}
 			};
 
+
+
+
 			module("Initial Check", {
 				setup : function () {
 					this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -279,6 +282,40 @@
 				strictEqual(this.oVSD.getSelectedSortItem(), null, 'The default value for selectedSortItem should be "null"');
 				strictEqual(this.oVSD.getSelectedGroupItem(), null, 'The default value for selectedGroupItem should be "null"');
 				strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, 'The default value for selectedPresetFilterItem should be "null"');
+			});
+
+			module("States", {
+				setup : function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
+			});
+
+
+			test("Setting busy state", function () {
+				var done = assert.async();
+
+				this.oVSD.open();
+				setTimeout(function() {
+					strictEqual(this.oVSD.$().find('.sapUiLocalBusyIndicator').length, 0, 'No busy indicator is shown');
+
+					this.oVSD.setBusy(true);
+
+					setTimeout(function() {
+						strictEqual(this.oVSD.$().find('.sapUiLocalBusyIndicator').length, 1,'Busy indicator is shown');
+
+						this.oVSD.setBusy(false);
+						strictEqual(this.oVSD.$().find('.sapUiLocalBusyIndicator').length, 0, 'No busy indicator is shown');
+
+						this.oVSD.exit();
+						done();
+					}.bind(this), 1000);
+				}.bind(this), 1000);
 			});
 
 			module ("getter/setter", {
@@ -358,6 +395,18 @@
 				this.oVSD.open();
 				//assert
 				ok(this.oVSD._getDialog().isOpen(), "Dialog is still functional");
+
+				//clean
+				jQuery.sap.log.error.restore();
+			});
+
+			test("setSelectedSortItem does not throw error if the item is null or undefined", function () {
+				var oErrorLogSpy = sinon.spy(jQuery.sap.log, "error");
+
+				//act
+				this.oVSD.setSelectedSortItem(undefined);
+				//assert
+				strictEqual(oErrorLogSpy.callCount, 0, "setSelectedSortItem does not throw an error.");
 
 				//clean
 				jQuery.sap.log.error.restore();
@@ -684,6 +733,26 @@
 				});
 
 				this.oVSD._resetButton.firePress();
+			});
+
+			test("filterDetailPageOpened event", function () {
+				var done = assert.async(),
+					oFilterItem = this.oVSD.getFilterItems()[0];
+
+				strictEqual(typeof this.oVSD.fireFilterDetailPageOpened, 'function', 'fireFilterDetailPageOpened exists');
+
+				var fnFireItemPressSpy = sinon.spy(this.oVSD, "fireFilterDetailPageOpened");
+
+				this.oVSD.open();
+
+				jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+				this.oVSD._switchToPage(3, oFilterItem); // name details page
+
+
+				setTimeout(function() {
+					strictEqual(fnFireItemPressSpy.calledOnce, true, "filterDetailPageOpened event is fired when filter detial page is opened");
+					done();
+				}, 1000);
 			});
 
 			module ("Construction/Destruction", {
@@ -1130,7 +1199,7 @@
 					aFilteredItems;
 
 				//Act
-				oSearchField.fireSearch({ query: "Mo" }); // Matches: Mousepad, Monitor
+				oSearchField.fireLiveChange({ newValue: "Mo" }); // Matches: Mousepad, Monitor
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
 					return oItem.getVisible();
 				});
@@ -1138,7 +1207,7 @@
 				equal(aFilteredItems.length, 2, "After filter search there are 2 visible items left in the list.");
 
 				//Act
-				oSearchField.fireSearch({ query: "" }); // Matches: Mousepad, Monitor
+				oSearchField.fireLiveChange({ newValue: "" }); // Matches: Mousepad, Monitor
 				aFilteredItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
 					return oItem.getVisible();
 				});
@@ -1167,7 +1236,7 @@
 				ok(!oSelectAllCheckbox.getSelected(), "At first the select all checkbox is not selected.");
 
 				//Act
-				oSearchField.fireSearch({ query: "H" }); // Matches: Headphone
+				oSearchField.fireLiveChange({ newValue: "H" }); // Matches: Headphone
 				//Assert
 				ok(oSelectAllCheckbox.getSelected(), "After filter search with selected results only, the select all checkbox is also selected.");
 
@@ -1198,11 +1267,11 @@
 				equal(aSelectedItems.length, 4, "At first the selected items are 4.");
 
 				//Act
-				oSearchField.fireSearch({ query: "H" }); // Matches: Headphone
+				oSearchField.fireLiveChange({ newValue: "H" }); // Matches: Headphone
 				oSelectAllCheckbox.setSelected(false);
 				oSelectAllCheckbox.fireSelect({ selected: false });
 
-				oSearchField.fireSearch({ query: "" }); // Matches: All items
+				oSearchField.fireLiveChange({ newValue: "" }); // Matches: All items
 				aSelectedItems = that.oVSD._filterDetailList.getItems().filter(function(oItem) {
 					return oItem.getSelected();
 				});
@@ -1236,6 +1305,18 @@
 				this.oVSD.destroy();
 				this.oVSD = null;
 			}
+		});
+
+		//BCP: 1570899196
+		test("removeFilterItem works with index as a parameter", function() {
+			oVsdConfig.addFilterItems(this.oVSD);
+
+			var iFilterItemsCount = this.oVSD.getFilterItems().length;
+
+			this.oVSD.removeFilterItem(0);
+
+			ok(true, "removeFilterItem does not throw errors when called with item index");
+			strictEqual(this.oVSD.getFilterItems().length, iFilterItemsCount - 1, "a filter item is removed");
 		});
 
 		test("Check filter only mode", function  () {
@@ -1640,6 +1721,20 @@
 			this.oVSD.open();
 			strictEqual(this.oVSD._getSubHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
 		});
+
+		module("Others");
+
+		test("customControl is cloned as expected", function(){
+			var oViewSettingsCustomItem = new sap.m.ViewSettingsCustomItem({
+				text     : "SomeText",
+				key      : "SomeKey",
+				customControl : new sap.m.Input()
+			});
+
+			var oClone = oViewSettingsCustomItem.clone();
+			ok(!!oClone.getCustomControl(), "Custom control is cloned");
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

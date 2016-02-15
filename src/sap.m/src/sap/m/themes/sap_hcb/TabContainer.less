@@ -1,0 +1,20 @@
+/* =========================================== */
+/* CSS for control sap.m/TabContainer.control  */
+/* High Contrast Black theme                   */
+/* =========================================== */
+.sapMTabContainer {
+	.sapMTabContainerContent {
+		.sapMTabContainerInnerContent {
+			background-color: @sapHCStandardBG;
+		}
+	}
+}
+
+/* This selector covers the case when sap.m.TabContainer is first-child of sap.m.Page */
+.sapMPage section {
+	.sapMTabContainer:first-child {
+		.sapMTabStrip {
+			border-top: none;
+		}
+	}
+}

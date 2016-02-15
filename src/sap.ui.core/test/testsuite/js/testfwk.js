@@ -61,6 +61,7 @@ sap.ui.testfwk.TestFWK.LANGUAGES = {
 sap.ui.testfwk.TestFWK.THEMES = {
 	"base" : "Base",
 	"sap_bluecrystal" : "Blue Crystal",
+	"sap_belize" : "Belize",
 	"sap_goldreflection" : "Gold Reflection",
 	"sap_platinum" : "Platinum",
 	"sap_hcb" : "High Contrast Black",
@@ -74,13 +75,13 @@ sap.ui.testfwk.TestFWK.JQUERY_VERSIONS = {
 	"1.10.1" : "jQuery 1.10.1",
 	"1.10.2" : "jQuery 1.10.2",
 	"1.11.1" : "jQuery 1.11.1",
-	"2.1.4" : "jQuery 2.1.4"
+	"2.1.4" : "jQuery 2.1.4",
+	"2.2.0" : "jQuery 2.2.0"
 };
 
 // the themes supported by each library
 sap.ui.testfwk.TestFWK.LIBRARY_THEMES = {
-	"sap.ui.core" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
-	"sap.m" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_hcb"]},
+	"sap.m" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_belize","sap_hcb"]},
 	"sap.me" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal"]},
 	"sap.service.visualization" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum"]},
 	"sap.ui.commons" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
@@ -88,9 +89,8 @@ sap.ui.testfwk.TestFWK.LIBRARY_THEMES = {
 	"sap.ui.dev" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
 	"sap.ui.richtexteditor" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
 	"sap.ui.suite" : {"default":"sap_goldreflection", "supports":["sap_goldreflection","sap_hcb","sap_bluecrystal"]},
-	"sap.ui.table" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
 	"sap.ui.ux3" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb"]},
-	"all" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]}
+	"all" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_belize","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]}
 };
 
 sap.ui.testfwk.TestFWK.init = function(oContentWindow) {

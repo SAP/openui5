@@ -212,7 +212,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert (should be Button1 after rendering)
-		strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing nullto the association \"selectedButton\"");
+		strictEqual(oSegmentedButton.getSelectedButton(), oButton1.getId(), "The first button should be selected when passing null to the association \"selectedButton\"");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -432,10 +432,10 @@
 		// Assert
 		// + 1 are border compensations
 		equal(elementWidth, (expectedButtonOuterWidth * 2) + 1, "Control width should be " + ((expectedButtonOuterWidth * 2) + 1) + "px");
-		equal(oButton1.$().outerWidth(), expectedButtonOuterWidth, 'First button width should be ' + expectedButtonOuterWidth + 'px');
-		equal(oButton2.$().outerWidth(), expectedButtonOuterWidth + 1, 'Second button width should be ' + (expectedButtonOuterWidth + 1) + 'px');
-		equal(oButton1.$().width(), 33, 'First button width withouth padding shoud be 33px');
-		equal(oButton2.$().width(), 33, 'Second button width withouth padding shoud be 33px');
+		equal(oButton1.$().outerWidth(), expectedButtonOuterWidth + 1, 'First button width should be ' + (expectedButtonOuterWidth + 1) + 'px');
+		equal(oButton2.$().outerWidth(), expectedButtonOuterWidth, 'Second button width should be ' + expectedButtonOuterWidth + 'px');
+		equal(oButton1.$().width(), 34, 'First button width without padding should be 34px');
+		equal(oButton2.$().width(), 34, 'Second button width without padding should be 34px');
 
 		// Cleanup
 		oBar.destroy();
@@ -464,11 +464,54 @@
 		var oButtons = oSegmentedButton.getButtons();
 
 		// Assert
-		strictEqual(oButtons[0].$().attr("dir"), "rtl", "Button 1 dir attribute shoud be set to 'rtl'.");
-		strictEqual(oButtons[1].$().attr("dir"), "ltr", "Button 2 dir attribute shoud be set to 'ltr'.");
-		strictEqual(oButtons[2].$().attr("dir"), undefined, "Button 3 dir attribute shoud not be rendered.");
-		strictEqual(oButtons[3].$().attr("dir"), "rtl", "Button 4 dir attribute shoud be set to 'rtl' button created using the createButton method.");
-		strictEqual(oButtons[4].$().attr("dir"), "ltr", "Button 5 dir attribute shoud be set to 'ltr' button created using the createButton method.");
+		strictEqual(oButtons[0].$().attr("dir"), "rtl", "Button 1 dir attribute should be set to 'rtl'.");
+		strictEqual(oButtons[1].$().attr("dir"), "ltr", "Button 2 dir attribute should be set to 'ltr'.");
+		strictEqual(oButtons[2].$().attr("dir"), undefined, "Button 3 dir attribute should not be rendered.");
+		strictEqual(oButtons[3].$().attr("dir"), "rtl", "Button 4 dir attribute should be set to 'rtl' button created using the createButton method.");
+		strictEqual(oButtons[4].$().attr("dir"), "ltr", "Button 5 dir attribute should be set to 'ltr' button created using the createButton method.");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("Button visible attribute", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons: [
+				new sap.m.Button({
+					text: "Button 1"
+				}),
+				new sap.m.Button({
+					text: "Button 2"
+				}),
+				new sap.m.Button({
+					text: "Button 3"
+				}),
+				new sap.m.Button({
+					text: "Invisible Button",
+					visible: false
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
+
+		//Act
+		oSegmentedButton.getButtons()[3].setVisible(true);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 0, "Control should have 0 button invisible");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -573,6 +616,129 @@
 
 	});
 
+	test("Items aggregation visible property", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 2"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 3"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Invisible Button",
+					visible: false
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oSegmentedButton.getItems().length, 4, "Control should have 4 items");
+		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should have 4 buttons from the button aggregation");
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 3, "Control should have 3 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 1, "Control should have 1 button invisible");
+
+		//Act
+		oSegmentedButton.getItems()[3].setVisible(true);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn").length, 4, "Control should have 4 buttons visible");
+		strictEqual(oSegmentedButton.$().find("li.sapUiHiddenPlaceholder").length, 0, "Control should have 0 button invisible");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("selectedKey is set correctly for invisible items and removes the selection from other items", function() {
+
+		//Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					key: "k1",
+					text: "item 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "k2",
+					text: "item 2",
+					visible: false
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "k3",
+					text: "item 3"
+				})
+			],
+			selectedKey: "k1"
+		});
+
+		//System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 1, "1 selected button is rendered");
+
+		//Act
+		oSegmentedButton.setSelectedKey("k2");
+
+		//Assert
+		strictEqual(oSegmentedButton.getSelectedButton(), oSegmentedButton.getButtons()[1].getId(), "The invisible button is selected");
+		strictEqual(oSegmentedButton.$().find("li.sapMSegBBtn.sapMSegBBtnSel").length, 0, "No selected buttons are rendered");
+
+		//Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
+	test("Invisible button is not included in the width calculations", function() {
+
+		//Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					key: "k1",
+					text: "item 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "k2",
+					text: "item 2",
+					visible: false
+				}),
+				new sap.m.SegmentedButtonItem({
+					key: "k3",
+					text: "item 3"
+				})
+			]
+		});
+
+		var oSetGhostButtonSpy = sinon.spy(oSegmentedButton, "_setGhostButtonText"); //really should rename this method
+
+		//System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oSegmentedButton._aButtonWidth.length, 2, "Only visible buttons are considered when calculating widths");
+		ok(oSetGhostButtonSpy.calledWith(oSegmentedButton.getButtons()[0]), "Widths helper setter is called for one of the visible buttons");
+		ok(oSetGhostButtonSpy.calledWith(oSegmentedButton.getButtons()[2]), "Widths helper setter is called for the other visible button");
+		ok(!oSetGhostButtonSpy.calledWith(oSegmentedButton.getButtons()[1]), "Widths helper setter is not called for the invisible button");
+
+		//Cleanup
+		oSegmentedButton.destroy();
+
+	});
+
 	test("Initialize with XML view", function() {
 
 		// Arrange
@@ -601,7 +767,7 @@
 		strictEqual(oSegmentedButton.getItems().length, 3, "Control should have 3 items");
 		strictEqual(oSegmentedButton.getButtons().length, 3, "Control should have 3 buttons from the button aggregation");
 		strictEqual(oSegmentedButton.$().find("li").length, 3, "Control should have 3 buttons rendered");
-		strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text shoud be equal to xml view ListItem text");
+		strictEqual(oSegmentedButton.getButtons()[0].getText(), "Btn 1", "Button text should be equal to xml view ListItem text");
 		strictEqual(oSegmentedButton.getSelectedKey(), "b2", "selectedKey should be 'b2'");
 
 		// Cleanup
@@ -764,8 +930,9 @@
 						"Buttons in SegmentedButton should have identical width");
 				ok(Math.abs(oButton1.$().width() - oButton3.$().width()) <= 2,
 						"Buttons in SegmentedButton should have identical width");
+
 				ok(Math.abs(oBar.$().find(".sapMBarPH").width() - oButton1.$().outerWidth() - oButton2.$().outerWidth()
-						- oButton3.$().outerWidth()) <= 3, "SegmentedButton should occupy the whole width of dialog");
+						- oButton3.$().outerWidth()) <= 5, "SegmentedButton should occupy the whole width of dialog");
 
 				// Cleanup
 				oDialog.destroy();
@@ -785,7 +952,7 @@
 				oButton2 = new sap.m.Button({text: "Button2 with very long text 22"}),
 				oButton3 = new sap.m.Button({text: "Button3 with very long text 3333"}),
 				iScreenWidth = 360,
-				iExpectedButtonWidth = 87, // 360/3 - 33 = 87(33=child button padding+border)
+				iExpectedButtonWidth = 86, // 360/3 - 34 = 86(34=child button padding+border)
 				oOriginalFnWidth = jQuery.fn.width;
 
 		var	oStubWidth = sinon.stub(jQuery.fn, "width", function () {
@@ -819,7 +986,7 @@
 				oButton2 = new sap.m.Button({text: "Button2 with very long text 22"}),
 				oButton3 = new sap.m.Button({text: "Button3 with very long text 3333"}),
 				iScreenWidth = 360,
-				iExpectedButtonWidth = 83, // (360-10)/3 - 33 = 83(33=child button padding+border, 10=bar padding +  2px paddingFix)
+				iExpectedButtonWidth = 82, // (360-10)/3 - 34 = 83(34=child button padding+border, 10=bar padding +  2px paddingFix)
 		oOriginalFnWidth = jQuery.fn.width;
 
 		var	oStubWidth = sinon.stub(jQuery.fn, "width", function () {
@@ -926,7 +1093,7 @@
 		strictEqual(oSegmentedButton.getWidth(), "", "by default width property is empty string");
 		strictEqual(oSegmentedButton.getVisible(), true, "By default the SegmentedButton control is visible");
 		strictEqual(oSegmentedButton.getEnabled(), true, "By default the SegmentedButton control control is enabled");
-		strictEqual(oSegmentedButton.getSelectedKey(), "", "By default the selectedKey aggregation shoud be undefined when the segmented button is initialized with the buttons aggregation");
+		strictEqual(oSegmentedButton.getSelectedKey(), "", "By default the selectedKey aggregation should be undefined when the segmented button is initialized with the buttons aggregation");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1014,7 +1181,7 @@
 		oSegmentedButton.destroy();
 	});
 
-	test("Disbale single button", function() {
+	test("Disable single button", function() {
 		// Arrange
 		var oButton1 = new sap.m.Button();
 		var oButton2 = new sap.m.Button();
@@ -1133,7 +1300,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		strictEqual(oSegmentedButton.getButtons().length, 0, "There shoud be 0 buttons in the SegmentedButton");
+		strictEqual(oSegmentedButton.getButtons().length, 0, "There should be 0 buttons in the SegmentedButton");
 
 		// Cleanup
 		oSegmentedButton.destroy();
@@ -1485,7 +1652,7 @@
 		mData.items[6].enabled = true;
 		mData.items[6].text = "sLabel";
 
-		// Update bingings with a change reason
+		// Update bindings with a change reason
 		oModel.updateBindings(sap.ui.model.ChangeReason.Change);
 
 		// Assert
@@ -1562,7 +1729,7 @@
 		strictEqual(oSegmentedButton.getItems().length, 8, "Should have 8 items");
 		strictEqual(oSegmentedButton.getButtons().length, 8, "Should have 8 buttons");
 		strictEqual(oSegmentedButton.$().find("li").length, 8, "Should have 8 buttons rendered");
-		strictEqual(oSegmentedButton.getSelectedKey(), "b7", "selectedKey shoud be qual to the second model selectedKey");
+		strictEqual(oSegmentedButton.getSelectedKey(), "b7", "selectedKey should be equal to the second model selectedKey");
 		strictEqual(oSegmentedButton.getButtons()[0].getText(), "btn 1",
 				"Button text should be equal to second Model text");
 		strictEqual(oSegmentedButton.getButtons()[1].getEnabled(), false,
@@ -2021,6 +2188,49 @@
 				0,
 				"The select is not in the DOM");
 
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	test("_toSelectMode transfers only visible buttons into select items", function() {
+
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons: [
+				new sap.m.Button({
+					text: "Button 1"
+				}),
+				new sap.m.Button({
+					text: "Button 2",
+					visible: false
+				}),
+				new sap.m.Button({
+					text: "Button 3"
+				}),
+				new sap.m.Button({
+					text: "Invisible Button",
+					visible: false
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oSegmentedButton._toSelectMode();
+
+		// Assert
+		strictEqual(oSegmentedButton.getButtons().length, 4, "Control should still have 4 buttons");
+		strictEqual(oSegmentedButton.getAggregation("_select").getItems().length, 2, "Select should have 2 items");
+
+		//Act
+		oSegmentedButton.getButtons()[1].setVisible(true);
+
+		// Assert
+		strictEqual(oSegmentedButton.getAggregation("_select").getItems().length, 3, "Select should have 3 items");
 
 		// Cleanup
 		oSegmentedButton.destroy();

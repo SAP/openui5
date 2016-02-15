@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * This column addes additional properties to the tabl ecolumn which are needed for the analytical binding and table
+	 * This column adds additional properties to the table column which are needed for the analytical binding and table
 	 * @extends sap.ui.table.Column
 	 *
 	 * @author SAP SE

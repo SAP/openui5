@@ -1484,6 +1484,32 @@
 		});
 	});
 
+	asyncTest("toggleIndex after multiple getContexts calls (which happens when table has a fixed row)", function() {
+		oModel.attachMetadataLoaded(function() {
+			var oContext;
+			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				rootLevel: 1,
+				collapseRecursive: false
+			});
+
+			var fnChangeHandler1 = function() {
+				oBinding.getContexts(0, 10);
+				ok(!oBinding.findNode(0).nodeState.expanded, "node is initially collapsed");
+				oBinding.detachChange(fnChangeHandler1);
+
+				// clear the _aRowIndexMap internally
+				oBinding.getContexts(10, 20);
+
+				oBinding.toggleIndex(0);
+				ok(oBinding.findNode(0).nodeState.expanded, "node is now expanded");
+				start();
+			};
+
+			oBinding.attachChange(fnChangeHandler1);
+			oBinding.getContexts(0, 10);
+		});
+	});
+
 	</script>
 
 </head>

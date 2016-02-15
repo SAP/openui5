@@ -1,9 +1,10 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
+		"sap/ui/test/actions/Press",
 		"sap/ui/test/matchers/PropertyStrictEquals",
 		"sap/ui/demo/worklist/test/integration/pages/Common",
 		"sap/ui/demo/worklist/test/integration/pages/shareOptions"
-	], function(Opa5, PropertyStrictEquals, Common, shareOptions) {
+	], function(Opa5, Press, PropertyStrictEquals, Common, shareOptions) {
 		"use strict";
 
 		var sViewName = "Object";
@@ -18,7 +19,7 @@ sap.ui.define([
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
-							success : function (oPage) {
+							actions : function (oPage) {
 								oPage.$("navButton").trigger("tap");
 							},
 							errorMessage : "Did not find the nav button on object page"
@@ -33,7 +34,7 @@ sap.ui.define([
 						return this.waitFor({
 							success : function () {
 								var sBindingPath = this.getContext().currentItem.bindingPath;
-								return this.waitFor({
+								this.waitFor({
 									id : "page",
 									viewName : sViewName,
 									matchers : function (oPage) {

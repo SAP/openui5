@@ -863,6 +863,7 @@ sap.ui.define([
 				this.fireAddColumnsItem({
 					newItem: oColumnsItem
 				});
+				this._notifyChange();
 			} else {
 				oColumnsItem.setIndex(iNewIndex);
 				aExistingColumnsItems.push(oColumnsItem);
@@ -875,6 +876,7 @@ sap.ui.define([
 					newItems: aNewColumnsItems,
 					existingItems: aExistingColumnsItems
 				});
+				this._notifyChange();
 			}
 
 			// fire event for setting of changed data into model
@@ -926,6 +928,7 @@ sap.ui.define([
 					that.fireAddColumnsItem({
 						newItem: oColumnsItem
 					});
+					that._notifyChange();
 				} else {
 					oColumnsItem.setVisible(oItem.visible);
 					// in case a column will be made invisible -> remove the index property
@@ -944,6 +947,7 @@ sap.ui.define([
 					newItems: aNewColumnsItems,
 					existingItems: aExistingColumnsItems
 				});
+				this._notifyChange();
 			}
 
 			// fire event for setting of changed data into model
@@ -1486,7 +1490,6 @@ sap.ui.define([
 		this._oToolbarSpacer = new sap.m.ToolbarSpacer();
 
 		this._oToolbar = new sap.m.OverflowToolbar({
-			active: true,
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
 			content: [
 				this._oToolbarSpacer, this._oSearchField, this._oShowSelectedButton, this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton
@@ -1905,6 +1908,13 @@ sap.ui.define([
 		}
 
 		return bResult;
+	};
+
+	P13nColumnsPanel.prototype._notifyChange = function() {
+		var fListener = this.getChangeNotifier();
+		if (fListener) {
+			fListener(this);
+		}
 	};
 
 	return P13nColumnsPanel;

@@ -328,12 +328,31 @@
 
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
         <component>CA-UI5-COR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+
+        <component>
+            <name>CA-UI5-COR</name>
+            <patterns>
+                <pattern>jquery.sap.*</pattern>
+                <pattern>sap/ui/app/*</pattern>
+                <pattern>sap/ui/base/*</pattern>
+                <pattern>sap/ui/debug/*</pattern>
+                <pattern>sap/ui/model/*</pattern>
+                <pattern>sap/ui/qunit/*</pattern>
+                <pattern>sap/ui/test/*</pattern>
+            </patterns>
+            <modules>
+                <module>sap/ui/Device</module>
+                <module>sap/ui/Global</module>
+            </modules>
+        </component>
+
         <component>
             <name>CA-UI5-CTR</name>
             <modules>
                 <module>sap/ui/core/InvisibleText</module>
             </modules>
         </component>
+
         <component>
             <name>CA-WDE-MCK</name>
             <modules>

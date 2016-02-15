@@ -35,21 +35,21 @@ sap.ui.require([
 				this.mock(jQuery.sap.log).expects("warning").never();
 
 				oType = new Guid({}, {
-					foo: "a",
-					nullable: vNullable
+					foo : "a",
+					nullable : vNullable
 				});
-				assert.deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable: false});
+				assert.deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable : false});
 			});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("default nullable is true", function (assert) {
-		var oType = new Guid({}, {nullable: false});
+		var oType = new Guid({}, {nullable : false});
 
 		this.mock(jQuery.sap.log).expects("warning").once()
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Guid");
 
-		oType = new Guid(null, {nullable: "foo"});
+		oType = new Guid(null, {nullable : "foo"});
 		assert.deepEqual(oType.oConstraints, undefined, "illegal nullable -> default to true");
 	});
 
@@ -136,15 +136,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{value: 1234, message: "Illegal sap.ui.model.odata.type.Guid value: 1234"},
-		{value: "123", message: "EnterGuid"},
-		{value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23-2", message: "EnterGuid"},
-		{value: "G050568D-393C-1ED4-9D97-E65F0F3FCC23", message: "EnterGuid"},
-		{value: null, message: "EnterGuid"}
+		{value : 1234, message : "Illegal sap.ui.model.odata.type.Guid value: 1234"},
+		{value : "123", message : "EnterGuid"},
+		{value : "0050568D-393C-1ED4-9D97-E65F0F3FCC23-2", message : "EnterGuid"},
+		{value : "G050568D-393C-1ED4-9D97-E65F0F3FCC23", message : "EnterGuid"},
+		{value : null, message : "EnterGuid"}
 	].forEach(function (oFixture) {
 		QUnit.test("validate exception for value " + oFixture.value, function (assert) {
 			TestUtils.withNormalizedMessages(function () {
-				var oType = new Guid({}, {nullable: false});
+				var oType = new Guid({}, {nullable : false});
 
 				try {
 					oType.validateValue(oFixture.value);

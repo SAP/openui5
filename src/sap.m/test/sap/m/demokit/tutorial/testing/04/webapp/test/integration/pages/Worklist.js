@@ -4,7 +4,10 @@ sap.ui.require([
 		'sap/ui/test/matchers/PropertyStrictEquals',
 		'sap/ui/demo/bulletinboard/test/integration/pages/Common'
 	],
-	function (Opa5, AggregationLengthEquals, PropertyStrictEquals, Common) {
+	function (Opa5,
+			  AggregationLengthEquals,
+			  PropertyStrictEquals,
+			  Common) {
 		"use strict";
 
 		var sViewName = "Worklist",

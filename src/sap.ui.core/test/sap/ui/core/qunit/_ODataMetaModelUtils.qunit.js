@@ -568,13 +568,13 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	//*********************************************************************************************
 	[{
-		expectedAnnotations: {"Contact" : oContactAnnotationFromV2}, type: oContactType
+		expectedAnnotations : {"Contact" : oContactAnnotationFromV2}, type : oContactType
 	}, {
-		expectedAnnotations: {"Event" : oEventAnnotationFromV2}, type: oEventType
+		expectedAnnotations : {"Event" : oEventAnnotationFromV2}, type : oEventType
 	}, {
-		expectedAnnotations: {"Message" : oMessageAnnotationFromV2}, type: oMessageType
+		expectedAnnotations : {"Message" : oMessageAnnotationFromV2}, type : oMessageType
 	}, {
-		expectedAnnotations: {"Task" : oTaskAnnotationFromV2}, type: oTaskType
+		expectedAnnotations : {"Task" : oTaskAnnotationFromV2}, type : oTaskType
 	}].forEach(function (oFixture) {
 		var sTypeName = oFixture.type.name;
 
@@ -689,15 +689,15 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	//*********************************************************************************************
 	[{
-		test: "and v4 wins", annotations: oAnnotations,
-		expectedTypeAnnotations: oAnnotations["GWSAMPLE_BASIC.Contact"]
+		test : "and v4 wins", annotations : oAnnotations,
+		expectedTypeAnnotations : oAnnotations["GWSAMPLE_BASIC.Contact"]
 			["com.sap.vocabularies.Communication.v1.Contact"],
-		expectedComplexTypeAnnotations: oAnnotations["GWSAMPLE_BASIC.CT_Contact"]
+		expectedComplexTypeAnnotations : oAnnotations["GWSAMPLE_BASIC.CT_Contact"]
 			["com.sap.vocabularies.Communication.v1.Contact"]
 	}, {
-		test: "without v4 annotations",
-		expectedTypeAnnotations: oContactAnnotationFromV2,
-		expectedComplexTypeAnnotations: oContactAnnotationFromV2
+		test : "without v4 annotations",
+		expectedTypeAnnotations : oContactAnnotationFromV2,
+		expectedComplexTypeAnnotations : oContactAnnotationFromV2
 	}].forEach(function (oFixture) {
 		QUnit.test("merge: addSapSemantics called " + oFixture.test, function (assert) {
 			var oData = clone(oDataSchema),
@@ -741,9 +741,9 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 		oLogMock.expects("warning").never();
 
 		[
-			{i: "single-value", o: "SingleValue"},
-			{i: "multi-value", o: "MultiValue"},
-			{i: "interval", o: "SingleInterval"}
+			{i : "single-value", o : "SingleValue"},
+			{i : "multi-value", o : "MultiValue"},
+			{i : "interval", o : "SingleInterval"}
 		].forEach(function (oFixture, i) {
 			// prepare Property
 			oProperty = {

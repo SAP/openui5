@@ -21,10 +21,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Int64", {
-		beforeEach: function () {
+		beforeEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		afterEach: function () {
+		afterEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -43,11 +43,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{i: {nullable: true}, o: undefined},
-		{i: {nullable: "true"}, o: undefined},
-		{i: {nullable: false}, o: {nullable: false}},
-		{i: {nullable: "false"}, o: {nullable: false}},
-		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"}
+		{i : {nullable : true}, o : undefined},
+		{i : {nullable : "true"}, o : undefined},
+		{i : {nullable : false}, o : {nullable : false}},
+		{i : {nullable : "false"}, o : {nullable : false}},
+		{i : {nullable : "foo"}, o : undefined, warning : "Illegal nullable: foo"}
 	].forEach(function (oFixture) {
 		QUnit.test("setConstraints(" + JSON.stringify(oFixture.i) + ")", function (assert) {
 			var oType;
@@ -86,14 +86,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{test:"format to boolean", value:"12.34", targetType: "boolean",
-			errorText:"Don't know how to format sap.ui.model.odata.type.Int64 to boolean"},
-		{test:"format to int with overflow error", value: "9007199254740992",
-			targetType: "int",
-			errorText:"EnterIntMax 9,007,199,254,740,991"},
-		{test:"format to int with overflow error", value: "-9007199254740992",
-			targetType: "int",
-			errorText:"EnterIntMin -9,007,199,254,740,991"}
+		{test :"format to boolean", value :"12.34", targetType : "boolean",
+			errorText :"Don't know how to format sap.ui.model.odata.type.Int64 to boolean"},
+		{test :"format to int with overflow error", value : "9007199254740992",
+			targetType : "int",
+			errorText :"EnterIntMax 9,007,199,254,740,991"},
+		{test :"format to int with overflow error", value : "-9007199254740992",
+			targetType : "int",
+			errorText :"EnterIntMin -9,007,199,254,740,991"}
 	].forEach(function (oFixture) {
 		QUnit.test(oFixture.test, function (assert) {
 			TestUtils.withNormalizedMessages(function () {
@@ -157,7 +157,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("parse other minus/plus symbols, unbreakable spaces", function (assert) {
-		var oType = new Int64({plusSign: ">", minusSign: "<"});
+		var oType = new Int64({plusSign : ">", minusSign : "<"});
 
 		// special: non-breaking space as grouping separator
 		sap.ui.getCore().getConfiguration().setLanguage("sv");
@@ -171,16 +171,16 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("parse large numbers w/ format options", function (assert) {
 		var oFormatOptions = {
-				plusSign: '+',
-				minusSign: '-',
-				minFractionDigits: 5,
-				maxFractionDigits: 10,
-				minIntegerDigits: 5,
-				maxIntegerDigits: 10,
-				decimals: 10,
-				groupingEnabled: false,
-				groupingSeparator: "'",
-				decimalSeparator: '.'
+				plusSign : '+',
+				minusSign : '-',
+				minFractionDigits : 5,
+				maxFractionDigits : 10,
+				minIntegerDigits : 5,
+				maxIntegerDigits : 10,
+				decimals : 10,
+				groupingEnabled : false,
+				groupingSeparator : "'",
+				decimalSeparator : '.'
 			}, oType;
 
 		oType = new Int64();
@@ -198,8 +198,8 @@ sap.ui.require([
 			"1234567890123456789", "random format option");
 
 		// check that short style works
-		oType = new Int64({style: "short"});
-		assert.strictEqual(oType.parseValue("1K", "string"), "1000", 'style: "short"');
+		oType = new Int64({style : "short"});
+		assert.strictEqual(oType.parseValue("1K", "string"), "1000", 'style : "short"');
 
 		// error handling with short style
 		TestUtils.withNormalizedMessages(function () {
@@ -242,14 +242,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{ test: "exceeds min by length", value: "-92233720368547758090",
-			message: "EnterIntMin -9,223,372,036,854,775,808"},
-		{ test: "exceeds max by length", value: "92233720368547758080" ,
-			message: "EnterIntMax 9,223,372,036,854,775,807"},
-		{ test: "exceeds min by 1", value: "-9223372036854775809" ,
-			message: "EnterIntMin -9,223,372,036,854,775,808"},
-		{ test: "exceeds max by 1", value: "9223372036854775808",
-			message: "EnterIntMax 9,223,372,036,854,775,807"}
+		{ test : "exceeds min by length", value : "-92233720368547758090",
+			message : "EnterIntMin -9,223,372,036,854,775,808"},
+		{ test : "exceeds max by length", value : "92233720368547758080" ,
+			message : "EnterIntMax 9,223,372,036,854,775,807"},
+		{ test : "exceeds min by 1", value : "-9223372036854775809" ,
+			message : "EnterIntMin -9,223,372,036,854,775,808"},
+		{ test : "exceeds max by 1", value : "9223372036854775808",
+			message : "EnterIntMax 9,223,372,036,854,775,807"}
 	].forEach(function (oFixture) {
 		QUnit.test("validate: error: range " + oFixture.test, function (assert) {
 			TestUtils.withNormalizedMessages(function () {
@@ -273,7 +273,7 @@ sap.ui.require([
 		this.mock(jQuery.sap.log).expects("warning").never();
 
 		TestUtils.withNormalizedMessages(function () {
-			oType = new Int64({}, {nullable: false});
+			oType = new Int64({}, {nullable : false});
 			try {
 				oType.validateValue(null);
 				assert.ok(false);
@@ -289,7 +289,7 @@ sap.ui.require([
 		var oControl = new Control(),
 			oType = new Int64();
 
-		oControl.bindProperty("tooltip", {path: "/unused", type: oType});
+		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
 		assert.strictEqual(oType.formatValue("1234", "string"), "1'234",
 			"adjusted to changed language");
@@ -297,11 +297,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		set: {foo: "bar"},
-		expect: {foo: "bar", groupingEnabled: true, parseAsString: true}
+		set : {foo : "bar"},
+		expect : {foo : "bar", groupingEnabled : true, parseAsString : true}
 	}, {
-		set: {minIntegerDigits: 17, groupingEnabled: false},
-		expect: {minIntegerDigits: 17, groupingEnabled: false, parseAsString: true}
+		set : {minIntegerDigits : 17, groupingEnabled : false},
+		expect : {minIntegerDigits : 17, groupingEnabled : false, parseAsString : true}
 	}].forEach(function (oFixture) {
 		QUnit.test("formatOptions: " + JSON.stringify(oFixture.set), function (assert) {
 			var oSpy,

@@ -8,7 +8,7 @@
 
 	<script
 			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.ui.commons">
+			data-sap-ui-libs="sap.m">
 	</script>
 
 	<script>
@@ -82,7 +82,7 @@
 				});
 
 				// empty the queue
-				this.clock.tick(0);
+				this.clock.tick(100);
 			});
 
 			QUnit.test("Should execute success after an action", function(assert) {
@@ -167,10 +167,36 @@
 				// empty the queue
 				assert.throws(function () {
 					// triggers the exception
-					this.clock.tick(100)
+					this.clock.tick(100);
 				}.bind(this));
 				start();
 			});
+
+			QUnit.test("Should execute a matcher and pass its value to success if no control is searched", function () {
+				var oOpa5 = new Opa5(),
+					fnMatcherStub = this.stub().returns("foo"),
+					fnActionSpy = this.spy(),
+					start = assert.async();
+
+				// give some common defaults to see if they interfere and the plugin thinks we are looking for a control
+				Opa5.extendConfig({
+					viewNamespace: "foo",
+					visible: true
+				});
+
+				oOpa5.waitFor({
+					matchers: fnMatcherStub,
+					actions: fnActionSpy
+				});
+
+				oOpa5.emptyQueue().done(function () {
+					// Assert
+					sinon.assert.calledOnce(fnMatcherStub);
+					sinon.assert.calledWith(fnActionSpy, "foo");
+					start();
+				});
+				this.clock.tick(1000);
+			})
 		});
 	</script>
 <body>

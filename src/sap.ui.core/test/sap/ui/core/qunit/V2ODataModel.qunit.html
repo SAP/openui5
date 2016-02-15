@@ -9,14 +9,12 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>QUnit page for V2ODataModel - sap.ui.core</title>
-<script>
-	//fix IE 11 bug
-	window.ActiveXObject = undefined;
-</script>
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-language="en-US"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
 	</script>
 
 <link rel="stylesheet"
@@ -1228,6 +1226,38 @@
 
 			if (iCount === 1 && bRemove) {
 					ok(true, "requests with same default id should be in 1 batch requests");
+					start();
+			}
+		});
+	});
+
+	asyncTest("test oDataModel delete $links", function() {
+		var iCount = 0;
+		var bRemove = false;
+
+		oModel.read("/ProductSet('AD-1000')", {
+			urlParameters: {$expand: "ToSupplier"},
+			success: function() {
+				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "property is accessible after read");
+				oModel.remove("/ProductSet('AD-1000')/$links/ToSupplier", {
+					success : function(oData, oResponse) {
+						ok(true, "request succeeded");
+						equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "Flyer", "link deletion does not remove entity");
+						bRemove = true;
+					},
+					error : function(oError) {
+						ok(false, "request failed");
+					},
+					eTag: "*"
+				});
+			}
+		})
+
+		oModel.attachBatchRequestCompleted(this, function(test) {
+			iCount++;
+
+			if (iCount === 2 && bRemove) {
+					ok(true, "after second request the remove should have happened");
 					start();
 			}
 		});
@@ -3944,7 +3974,7 @@
 			});
 		};
 
-		oModel.attachMetadataLoaded(this, fnTest);
+		oModel.metadataLoaded().then(fnTest);
 	});
 
 	asyncTest("test oDataModel callFunction: Parameter without mode", function() {

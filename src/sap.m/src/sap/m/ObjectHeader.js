@@ -365,8 +365,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ObjectHeader.prototype.removeAttribute = function (oAttribute) {
-		this._deregisterControlListener(oAttribute);
-		return this.removeAggregation("attributes", oAttribute);
+		var vResult = this.removeAggregation("attributes", oAttribute);
+		this._deregisterControlListener(vResult);
+		return vResult;
 	};
 
 	ObjectHeader.prototype.removeAllAttributes = function () {
@@ -376,12 +377,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ObjectHeader.prototype.destroyAttributes = function () {
-		this.getAggregation("attributes").forEach(this._deregisterControlListener, this);
+		var aAttributes = this.getAggregation("attributes");
+		if (aAttributes !== null) {
+			aAttributes.forEach(this._deregisterControlListener, this);
+		}
 		return this.destroyAggregation("attributes");
 	};
 
 	ObjectHeader.prototype.insertStatus = function (oStatus, iIndex) {
-		var vResult = this.insertAggregation("attributes", oStatus, iIndex);
+		var vResult = this.insertAggregation("statuses", oStatus, iIndex);
 		this._registerControlListener(oStatus);
 		return vResult;
 	};
@@ -393,8 +397,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ObjectHeader.prototype.removeStatus = function (oStatus) {
-		this._deregisterControlListener(oStatus);
-		return this.removeAggregation("statuses", oStatus);
+		var vResult =  this.removeAggregation("statuses", oStatus);
+		this._deregisterControlListener(vResult);
+		return vResult;
 	};
 
 	ObjectHeader.prototype.removeAllStatuses = function () {
@@ -404,7 +409,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ObjectHeader.prototype.destroyStatuses = function () {
-		this.getAggregation("statuses").forEach(this._deregisterControlListener, this);
+		var aStatuses = this.getAggregation("statuses");
+		if (aStatuses !== null) {
+			aStatuses.forEach(this._deregisterControlListener, this);
+		}
 		return this.destroyAggregation("statuses");
 	};
 
@@ -777,8 +785,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype._getImageControl = function() {
 		var sImgId = this.getId() + "-img";
 		var sSize = "2.5rem";
-		var sHeight = "3rem";
-		var sWidth = "3rem";
 
 		var mProperties = jQuery.extend(
 			{
@@ -787,8 +793,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				useIconTooltip : false,
 				densityAware : this.getIconDensityAware()
 			},
-				IconPool.isIconURI(this.getIcon()) ?
-					{ size : sSize } : {height : sHeight, width : sWidth }
+				IconPool.isIconURI(this.getIcon()) ? { size : sSize } : {}
 		);
 
 		this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties);

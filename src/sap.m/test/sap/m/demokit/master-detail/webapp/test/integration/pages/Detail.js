@@ -1,10 +1,11 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
+		"sap/ui/test/actions/Press",
 		"sap/ui/demo/masterdetail/test/integration/pages/Common",
 		"sap/ui/test/matchers/AggregationLengthEquals",
 		"sap/ui/test/matchers/AggregationFilled",
 		"sap/ui/test/matchers/PropertyStrictEquals"
-	], function(Opa5, Common, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals) {
+	], function(Opa5, Press, Common, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals) {
 		"use strict";
 
 		var sViewName = "Detail";
@@ -19,7 +20,7 @@ sap.ui.define([
 						return this.waitFor({
 							id : "page",
 							viewName : sViewName,
-							success : function (oPage) {
+							actions : function (oPage) {
 								oPage.$("navButton").trigger("tap");
 							},
 							errorMessage : "Did not find the nav button on detail page"

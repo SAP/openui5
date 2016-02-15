@@ -1,0 +1,65 @@
+/* ============================================== */
+/* CSS for control sap.m/WizardProgressNavigator  */
+/* Belize theme                                   */
+/* ============================================== */
+
+.sapMWizardProgressNav {
+	background: @sapUiGroupContentBackground;
+	font-size: @sapMFontMediumSize;
+	border-color: @sapUiGroupContentBorderColor;
+}
+
+.sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
+	background: @sapUiButtonHoverBackground;
+}
+
+.sapMWizardProgressNavAnchor:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: 1px;
+}
+
+.sapMWizardProgressNavAnchorCircle {
+	color: @sapUiButtonTextColor;
+	background: @sapUiSegmentedButtonBackground;
+	border-color: @sapUiSegmentedButtonSelectedBackground;
+}
+
+.sapMWizardProgressNavAnchorIcon {
+	font-size: @sapMFontLargeSize;
+}
+
+.sapMWizardProgressNavAnchorTitle {
+	background: @sapUiGroupContentBackground;
+}
+
+.sapMWizardProgressNavStep::after {
+	border-bottom-color: @sapUiSelected;
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+	& .sapMWizardProgressNavAnchor::after {
+		background: @sapUiSelected;
+	}
+
+	& .sapMWizardProgressNavAnchorCircle {
+		color: @sapUiSegmentedButtonSelectedTextColor;
+		background: @sapUiSegmentedButtonSelectedBackground;
+		border: none;
+	}
+}
+
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
+
+	/* anchors in all steps after the active one have inactive style */
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
+		color: @sapUiSegmentedButtonIconColor;
+		background: @sapUiButtonBackground;
+		border-color: @sapUiSegmentedButtonBorderColor;
+	}
+
+	/* all separators after (and including) the active step have inactive style */
+	&::after,
+	& ~ .sapMWizardProgressNavStep::after {
+		border-bottom-color: @sapUiSegmentedButtonBorderColor;
+	}
+}

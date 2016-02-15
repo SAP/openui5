@@ -37,6 +37,7 @@
 			jQuery.sap.require("sap.ui.dt.DOMUtil");
 			jQuery.sap.require("sap.m.Button");
 			jQuery.sap.require("sap.m.Page");
+			jQuery.sap.require("sap.ui.layout.VerticalLayout");
 			jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 			jQuery.sap.require("sap.ui.dt.ElementDesignTimeMetadata");
 
@@ -58,7 +59,11 @@
 			});
 
 			QUnit.module("Given that an Overlay Container is created on RTL mode", {
-				beforeEach : function() {
+				beforeEach : function(assert) {
+					var done = assert.async();
+					sap.ui.getCore().attachLocalizationChanged(function(){
+						done();
+					});
 					sap.ui.getCore().getConfiguration().setRTL(true);
 					sap.ui.dt.Overlay.getOverlayContainer();
 				},
@@ -84,8 +89,8 @@
 						that.oOverlay = new sap.ui.dt.ElementOverlay({
 							element : that.oPage
 						});
-						done();
 						sap.ui.getCore().applyChanges();
+						done();
 					});
 				},
 				afterEach : function() {
@@ -101,8 +106,7 @@
 			QUnit.test("when the control is rendered", function(assert) {
 				var oDomRef = this.oOverlay.getDomRef();
 				var oElementDomRef = this.oOverlay.getElementInstance().getDomRef();
-				var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
-				assert.equal(oDomRef.parentNode, oDomRef.parentNode, 'then the overlay is added to the static UI area');
+				assert.strictEqual(this.oOverlay.$().parent().attr("id"), "overlay-container", 'then the overlay is added to the overlay container');
 
 				assert.notEqual(oDomRef.className.indexOf("sapUiDtOverlay"), -1, 'and the right CSS class overlay is set to the element');
 				assert.notEqual(oDomRef.className.indexOf("sapUiDtElementOverlay"), -1, 'and the right CSS element overlay class is set to the element');
@@ -186,7 +190,7 @@
 				setTimeout(function() {
 					assert.ok(that.oOverlay.hasFocus(), 'then the state of the overlay is "focused"');
 					done();
-				},0);
+				}, 0);
 			});
 
 			QUnit.test("when the overlay is changed to focusable", function(assert) {
@@ -196,6 +200,87 @@
 
 				this.oOverlay.setFocusable(true);
 				assert.equal(fnHandler.callCount, 1, 'then the event handler is called');
+			});
+
+			QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
+				beforeEach : function(assert) {
+					var that = this;
+					var done = assert.async();
+					this.oLabel = new sap.m.Label();
+					this.oLabel.placeAt("content");
+					sap.ui.dt.Preloader.load(["sap.m.oLabel"]).then(function() {
+						that.oOverlay = new sap.ui.dt.ElementOverlay({
+							element : that.oLabel
+						});
+						done();
+						sap.ui.getCore().applyChanges();
+					});
+				},
+				afterEach : function() {
+					this.oLabel.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the control's domRef is changed to visible...", function(assert) {
+				var done = assert.async();
+
+				this.oLabel.setText("test");
+				sap.ui.getCore().applyChanges();
+
+				var fnOriginalOnAfterRendering =  this.oOverlay.onAfterRendering;
+				this.oOverlay.onAfterRendering = function() {
+					var vOriginalReturn = fnOriginalOnAfterRendering.apply(this, arguments);
+					assert.ok(this.$().is(":visible"), "the overlay is also visible in DOM");
+
+					done();
+					return vOriginalReturn;
+				};
+			});
+
+			QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
+				beforeEach : function(assert) {
+					var that = this;
+					var done = assert.async();
+					this.oLabel = new sap.m.Label({text : "text"});
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel] });
+					this.oVerticalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					this.oVerticalLayout.$().css("display", "none");
+
+					sap.ui.dt.Preloader.load(["sap.m.oLabel"]).then(function() {
+						that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
+							element : that.oVerticalLayout
+						});
+						that.oLabelOverlay = new sap.ui.dt.ElementOverlay({
+							element : that.oLabel
+						});
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+				},
+				afterEach : function() {
+					this.oVerticalLayout.destroy();
+					this.oLayoutOverlay.destroy();
+					this.oLabelOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the layout's domRef is changed to visible...", function(assert) {
+				var that = this;
+				var done = assert.async();
+
+				this.oVerticalLayout.$().css("display", "block");
+
+				var fnOriginalOnAfterRendering =  this.oLabelOverlay.onAfterRendering;
+				this.oLabelOverlay.onAfterRendering = function() {
+					var vOriginalReturn = fnOriginalOnAfterRendering.apply(this, arguments);
+					assert.ok(that.oLayoutOverlay.$(), "the layout's overlay is also in DOM");
+					assert.ok(this.$(), "layout children's overlay is also in DOM");
+
+					done();
+					return vOriginalReturn;
+				};
 			});
 
 			QUnit.module("Given that an Overlay is created for a layout with child controls", {
@@ -301,8 +386,8 @@
 			});
 
 			QUnit.test("then...", function(assert) {
-				strictEqual(this.oOverlay.isVisible(), false, "the overlay is marked as invisible");
-				strictEqual(this.oOverlay.$().is(":visible"), false, "the overlay is hidden in DOM");
+				assert.strictEqual(this.oOverlay.isVisible(), false, "the overlay is marked as invisible");
+				assert.strictEqual(this.oOverlay.$().is(":visible"), false, "the overlay is hidden in DOM");
 			});
 
 			QUnit.module("Given that an Overlay is created for a control with an aggregation marked as ignored in designtime", {
@@ -333,8 +418,8 @@
 
 			QUnit.test("then...", function(assert) {
 				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("content");
-				strictEqual(oAggregationOverlay.isVisible(), false, "the aggregation overlay is marked as invisible");
-				strictEqual(oAggregationOverlay.$().is(":visible"), false, "the aggregation overlay is hidden in DOM");
+				assert.strictEqual(oAggregationOverlay.isVisible(), false, "the aggregation overlay is marked as invisible");
+				assert.strictEqual(oAggregationOverlay.$().is(":visible"), false, "the aggregation overlay is hidden in DOM");
 			});
 
 			QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored", {
@@ -368,8 +453,8 @@
 
 			QUnit.test("then...", function(assert) {
 				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
-				strictEqual(oAggregationOverlay.isVisible(), true, "the aggregation overlay is marked as invisible");
-				strictEqual(oAggregationOverlay.isInHiddenTree(), true, "the aggregation overlay is marked as inHiddenTree");
+				assert.strictEqual(oAggregationOverlay.isVisible(), true, "the aggregation overlay is marked as invisible");
+				assert.strictEqual(oAggregationOverlay.isInHiddenTree(), true, "the aggregation overlay is marked as inHiddenTree");
 			});
 
 
@@ -398,7 +483,7 @@
 			});
 
 			QUnit.test("when the overlay is rendered", function(assert) {
-				strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
+				assert.strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
 			});
 
 
@@ -426,7 +511,7 @@
 			});
 
 			QUnit.test("when the overlay is rendered", function(assert) {
-				strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
+				assert.strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
 			});
 
 			QUnit.module("Given that an Overlay is created for a control", {
@@ -450,7 +535,7 @@
 				this.oOverlay.destroy();
 				assert.strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(sId), undefined, "then OverlayRegistry.getOverlay should returns undefined for it's id");
 				var $container = jQuery("#overlay-container");
-				strictEqual($container.length, 0, "overlay container is also destroyed with a last overlay");
+				assert.strictEqual($container.length, 0, "overlay container is also destroyed with a last overlay");
 			});
 
 			QUnit.module("Given that an Overlay is created for a control", {

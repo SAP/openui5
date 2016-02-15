@@ -306,14 +306,16 @@ sap.ui.define([
 	Popup.prototype.touchEnabled = Device.support.touch || jQuery.sap.simulateMobileOnDesktop;
 
 	/**
-	 * This property changes how focus handling works. When it's set to true, focus will be restored after Popup is closed to the previous focused element before Popup is open. Otherwise, this function is disabled.
+	 * This property changes how focus handling works. When it's set to true,
+	 * focus will be restored after Popup is closed to the previous focused
+	 * element before Popup is open. Otherwise, this function is disabled.
 	 *
 	 * By default, the focus is restored only in non-touch environments.
 	 *
 	 * @type {boolean}
 	 * @private
 	 */
-	Popup.prototype.restoreFocus = !Device.support.touch && !jQuery.sap.simulateMobileOnDesktop;
+	Popup.prototype.restoreFocus = (!Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) || Device.system.combi;
 
 	//****************************************************
 	//Layer et al
@@ -391,8 +393,12 @@ sap.ui.define([
 	};
 
 	Popup.Layer.prototype.reset = function(){
-		this._$Ref.hide().css("visibility", "hidden")
-			.appendTo(sap.ui.getCore().getStaticAreaRef());
+		if (this._$Ref.length) {
+			this._$Ref[0].style.display = "none";
+			this._$Ref[0].style.visibility = "hidden";
+
+			this._$Ref.appendTo(sap.ui.getCore().getStaticAreaRef());
+		}
 	};
 
 	/**
@@ -740,8 +746,10 @@ sap.ui.define([
 		var fnOpened = function() {
 			// internal status that any animation has been finished should set to true;
 			that.bOpen = true;
-			$Ref.css("display","block");
 
+			if ($Ref[0] && $Ref[0].style) {
+				$Ref[0].style.display = "block";
+			}
 
 			// in modal and auto-close case the focus needs to be in the popup; provide this generic implementation as helper, but users can change the focus in the "opened" event handler
 			if (that._bModal || that._bAutoClose || that._sInitialFocusId) {
@@ -791,6 +799,53 @@ sap.ui.define([
 			}
 		};
 
+		/*
+		 * This stuff is being executed during an animation is goind on. But if there
+		 * is no animation this stuff has to be done in advance, before fnOpened is
+		 * called
+		 */
+		var fnDuringOpen = function() {
+			// get (and 'show' i.e. activate) the BlindLayer
+			if (!!Device.browser.internet_explorer && !Device.os.windows_phone && Popup._activateBlindLayer) {
+				this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
+			} // -1 = BlindLayer, -2 = BlockLayer
+
+			if (this._bModal) {
+				this._showBlockLayer();
+			}
+
+			// add Delegate to hosted content for handling of events (e.g. onfocusin)
+			if (this.oContent instanceof Element) {
+				this.oContent.addDelegate(this);
+			}
+
+			this.bOpen = true;
+
+			if (this._bModal || this._bAutoClose) { // initialize focus handling
+				this._addFocusEventListeners();
+			}
+
+			this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
+
+			//autoclose implementation for mobile or desktop browser in touch mode
+			if (this.touchEnabled && !this._bModal && this._bAutoClose) {
+				jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
+			}
+
+			//  register resize handler for blindlayer resizing
+			if (this._oBlindLayer) {
+				this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
+			}
+
+			// preventScroll no matter what the property is set to in the jQuery.sap.initMobile()
+			// preventScroll can be set to false in jQuery.sap.initMobile(),
+			// then the scrolling for popups content in iOS is also scrolling the page content
+			// issue reported in Incident ID: 1472005153
+			if (Device.os.ios && Device.support.touch) {
+				jQuery(document).on("touchmove", this._fnPreventScroll);
+			}
+		}.bind(this);
+
 		// and show the popup content
 		$Ref.toggleClass("sapUiShd", this._bShadow);
 
@@ -802,57 +857,22 @@ sap.ui.define([
 		}
 
 		if (iRealDuration == 0) { // do not animate if there is a duration == 0
+			fnDuringOpen();
 			fnOpened.apply(); // otherwise call after-opening functions directly
-			// fnOpened is called synchronously above, and the Popup could have been already closed after fnOpened (from one of the "opened" event handlers).
-			// If the state isn't OPEN after fnOpened, it's needed to directly return from here. Otherwise the later registered listener and modified flag can't
+			// fnOpened is called synchronously above, and the Popup could have been
+			// already closed after fnOpened (from one of the "opened" event handlers).
+			// If the state isn't OPEN after fnOpened, it's needed to directly return
+			// from here. Otherwise the later registered listener and modified flag can't
 			// be cleared.
 			if (this.eOpenState !== sap.ui.core.OpenState.OPEN) {
 				return;
 			}
 		} else if (this._animations.open) { // if custom animation is defined, call it
 			this._animations.open.call(null, $Ref, iRealDuration, fnOpened);
+			fnDuringOpen();
 		} else { // otherwise play the default animation
 			$Ref.fadeIn(iRealDuration, fnOpened);
-		}
-
-		// get (and 'show' i.e. activate) the BlindLayer
-		if (!!Device.browser.internet_explorer && !Device.os.windows_phone && Popup._activateBlindLayer) {
-			this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
-		} // -1 = BlindLayer, -2 = BlockLayer
-
-		if (this._bModal) {
-			this._showBlockLayer();
-		}
-
-		// add Delegate to hosted content for handling of events (e.g. onfocusin)
-		if (this.oContent instanceof Element) {
-			this.oContent.addDelegate(this);
-		}
-
-		this.bOpen = true;
-
-		if (this._bModal || this._bAutoClose) { // initialize focus handling
-			this._addFocusEventListeners();
-		}
-
-		this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
-
-		//autoclose implementation for mobile or desktop browser in touch mode
-		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
-			jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
-		}
-
-		//  register resize handler for blindlayer resizing
-		if (this._oBlindLayer) {
-			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
-		}
-
-		// preventScroll no matter what the property is set to in the jQuery.sap.initMobile()
-		// preventScroll can be set to false in jQuery.sap.initMobile(),
-		// then the scrolling for popups content in iOS is also scrolling the page content
-		// issue reported in Incident ID: 1472005153
-		if (Device.os.ios && Device.support.touch) {
-			jQuery(document).on("touchmove", this._fnPreventScroll);
+			fnDuringOpen();
 		}
 	};
 
@@ -1115,24 +1135,30 @@ sap.ui.define([
 		}
 
 		var fnClosed = function() { // the function to call when the popup closing animation has completed
-			// hide the old DOM ref
-			jQuery($Ref).hide().css({
-				"visibility" : "hidden",
-				"left" : "0px",
-				"top" : "0px",
-				"right" : ""
-			});
-
-			// update the DomRef because it could have been rerendered during closing
-			$Ref = that._$(/* forceRerender */ false, /* only get DOM */ true);
 			if ($Ref.length) {
-				// also hide the new DOM ref
-				jQuery($Ref).hide().css({
-					"visibility" : "hidden",
-					"left" : "0px",
-					"top" : "0px",
-					"right" : ""
-				});
+				var oDomRef = $Ref.get(0);
+
+				// hide the old DOM ref
+				if (oDomRef) {
+					oDomRef.style.display = "none";
+					oDomRef.style.visibility = "hidden";
+					oDomRef.style.left = "0px";
+					oDomRef.style.top = "0px";
+					oDomRef.style.right = "";
+				}
+
+				// update the DomRef because it could have been rerendered during closing
+				$Ref = that._$(/* forceRerender */ false, /* only get DOM */ true);
+				oDomRef = $Ref.length ? $Ref[0] : null;
+				if (oDomRef) {
+					// also hide the new DOM ref
+					oDomRef.style.display = "none";
+					oDomRef.style.visibility = "hidden";
+					oDomRef.style.left = "0px";
+					oDomRef.style.top = "0px";
+					oDomRef.style.right = "";
+				}
+
 			}
 
 			//disabled for mobile or desktop browser in touch mode
@@ -1159,22 +1185,32 @@ sap.ui.define([
 			}
 		};
 
+		/*
+		 * This stuff is being executed during an animation is goind on. But if there
+		 * is no animation this stuff has to be done in advance, before fnClosed is
+		 * called
+		 */
+		var fnDuringClose = function() {
+			if (this._bModal) {
+				this._hideBlockLayer();
+			}
+
+			//deregister resize handler
+			if (this._resizeListenerId) {
+				ResizeHandler.deregister(this._resizeListenerId);
+				this._resizeListenerId = null;
+			}
+		}.bind(this);
+
 		if (iRealDuration == 0) { // iRealDuration == 0 means: no animation!
+			fnDuringClose();
 			fnClosed.apply();
 		} else if (this._animations.close) {
 			this._animations.close.call(null, $Ref, iRealDuration, fnClosed); // play custom animation, if supplied
+			fnDuringClose();
 		} else {
 			$Ref.fadeOut(iRealDuration, fnClosed); // otherwise use jQuery animation
-		}
-
-		if (this._bModal) {
-			this._hideBlockLayer();
-		}
-
-		//deregister resize handler
-		if (this._resizeListenerId) {
-			ResizeHandler.deregister(this._resizeListenerId);
-			this._resizeListenerId = null;
+			fnDuringClose();
 		}
 	};
 
@@ -1427,40 +1463,44 @@ sap.ui.define([
 	Popup.prototype._applyPosition = function(oPosition) {
 		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 		var $Ref = this._$();
-		var oAt = oPosition.at;
 
-		if (typeof (oAt) === "string") {
-			$Ref.css("display", "block").position(this._resolveReference(this._convertPositionRTL(oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
-			this._fixPositioning(oPosition, bRtl);
-		} else if (sap.ui.core.CSSSize.isValid(oAt.left) && sap.ui.core.CSSSize.isValid(oAt.top)) {
-			$Ref.css({
-				"left" : oAt.left,
-				"top" : oAt.top
-			});
-		} else if (sap.ui.core.CSSSize.isValid(oAt.right) && sap.ui.core.CSSSize.isValid(oAt.top)) {
-			$Ref.css({
-				"right" : oAt.right,
-				"top" : oAt.top
-			});
-		} else if (typeof (oAt.left) === "number" && typeof (oAt.top) === "number") {
-			var domRef = $Ref[0];
-			if (domRef && domRef.style.right) { // in some RTL cases leave the Popup attached to the right side of the browser window
-				var width = $Ref.outerWidth();
+		if ($Ref.length) {
+			var oAt = oPosition.at;
+
+			if (typeof (oAt) === "string") {
+				$Ref.get(0).style.display = "block";
+				$Ref.position(this._resolveReference(this._convertPositionRTL(oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
+				this._fixPositioning(oPosition, bRtl);
+			} else if (sap.ui.core.CSSSize.isValid(oAt.left) && sap.ui.core.CSSSize.isValid(oAt.top)) {
 				$Ref.css({
-					"right" : (document.documentElement.clientWidth - (oAt.left + width)) + "px",
-					"top" : oAt.top + "px"
+					"left" : oAt.left,
+					"top" : oAt.top
 				});
-			} else {
+			} else if (sap.ui.core.CSSSize.isValid(oAt.right) && sap.ui.core.CSSSize.isValid(oAt.top)) {
 				$Ref.css({
-					"left" : oAt.left + "px",
-					"top" : oAt.top + "px"
+					"right" : oAt.right,
+					"top" : oAt.top
 				});
+			} else if (typeof (oAt.left) === "number" && typeof (oAt.top) === "number") {
+				var domRef = $Ref[0];
+				if (domRef && domRef.style.right) { // in some RTL cases leave the Popup attached to the right side of the browser window
+					var width = $Ref.outerWidth();
+					$Ref.css({
+						"right" : (document.documentElement.clientWidth - (oAt.left + width)) + "px",
+						"top" : oAt.top + "px"
+					});
+				} else {
+					$Ref.css({
+						"left" : oAt.left + "px",
+						"top" : oAt.top + "px"
+					});
+				}
 			}
-		}
 
-		// remember given position for later redraws
-		this._oLastPosition = oPosition;
-		this._oLastOfRect = this._calcOfRect(oPosition.of);
+			// remember given position for later redraws
+			this._oLastPosition = oPosition;
+			this._oLastOfRect = this._calcOfRect(oPosition.of);
+		}
 	};
 
 	/**
@@ -1917,9 +1957,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the Popup is currently open (this includes opening and closing animations).
+	 * Returns whether the Popup is currently open (this includes opening and
+	 * closing animations).
 	 *
-	 * @returns {boolean} whether the Popup is opened (or currently being opened or closed)
+	 * @returns {boolean} whether the Popup is opened (or currently being
+	 *                            opened or closed)
 	 * @public
 	 */
 	Popup.prototype.isOpen = function() {
@@ -2210,20 +2252,28 @@ sap.ui.define([
 		// a dialog was closed so pop his z-index from the stack
 		Popup.blStack.pop();
 
-		// if there are more z-indices this means there are more dialogs stacked up. So redisplay the blocklayer (with new z-index) under the new current dialog which should be displayed.
-		if (Popup.blStack.length > 0) {
+		var $oBlockLayer = jQuery("#sap-ui-blocklayer-popup");
+		if ($oBlockLayer.length) {
+			// if there are more z-indices this means there are more dialogs stacked
+			// up. So redisplay the blocklayer (with new z-index) under the new
+			// current dialog which should be displayed.
+			var oBlockLayerDomRef = $oBlockLayer.get(0);
 
-			// set the blocklayer z-index to the last z-index in the stack and show it
-			jQuery("#sap-ui-blocklayer-popup").css({
-				"z-index" : Popup.blStack[Popup.blStack.length - 1],
-				"visibility" : "visible"
-			}).show();
-		} else {
-			// the last dialog was closed so we can hide the block layer now
-			jQuery("#sap-ui-blocklayer-popup").css("visibility","hidden").hide();
+			if (Popup.blStack.length > 0) {
+				// set the blocklayer z-index to the last z-index in the stack and show it
+				oBlockLayerDomRef.style.zIndex = Popup.blStack[Popup.blStack.length - 1];
+				oBlockLayerDomRef.style.visibility = "visible";
+				oBlockLayerDomRef.style.display = "block";
+			} else {
+				// the last dialog was closed so we can hide the block layer now
+				oBlockLayerDomRef.style.visibility = "hidden";
+				oBlockLayerDomRef.style.display = "none";
 
-			// Allow scrolling again in HTML page only if there is no BlockLayer left
-			jQuery("html").removeClass("sapUiBLyBack");
+				// Allow scrolling again in HTML page only if there is no BlockLayer left
+				jQuery("html").removeClass("sapUiBLyBack");
+
+
+			}
 		}
 	};
 

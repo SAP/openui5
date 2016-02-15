@@ -18,7 +18,7 @@ sap.ui.define([
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
 		metadata : {
-			manifest: "json"
+			manifest : "json"
 		},
 
 		createContent : function () {

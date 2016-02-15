@@ -81,6 +81,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		/* ----------------------------------------------------------- */
 
 		function fnHandleKeyboardNavigation(oItem) {
+
+			if (!oItem) {
+				return;
+			}
+
 			var oDomRef = this.getFocusDomRef(),
 				iSelectionStart = oDomRef.selectionStart,
 				iSelectionEnd = oDomRef.selectionEnd,
@@ -88,7 +93,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
 				oSelectedItem = this.getSelectedItem();
 
-			if (oItem && (oItem !== oSelectedItem)) {
+			if (oItem !== oSelectedItem) {
 				this.updateDomValue(oItem.getText());
 				this.setSelection(oItem);
 				this.fireSelectionChange({ selectedItem: oItem });
@@ -291,10 +296,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
 
-		/**
-		 * This event handler is called before the rendering of the control is started.
-		 *
-		 */
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 			this.synchronizeSelection();
@@ -319,74 +320,89 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			}
 
 			var oSelectedItem = this.getSelectedItem(),
-				aItems = this.getItems(),
-				oInputDomRef = oEvent.target,
-				sValue = oInputDomRef.value,
-				bFirst = true,
-				bVisibleItems = false,
-				oItem,
-				bMatch,
-				i = 0;
+				sValue = oEvent.target.value,
+				bEmptyValue = sValue === "";
 
-			for (; i < aItems.length; i++) {
+			var aVisibleItems = this.filterItems({
+				property: "text",
+				value: sValue
+			}, this.getItems());
 
-				// the item match with the value
-				oItem = aItems[i];
-				bMatch = jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
+			var bItemsVisible = aVisibleItems.length;
+			var oFirstVisibleItem = aVisibleItems[0];	// first item that match the value
 
-				if (sValue === "") {
-					bMatch = true;
+			if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
+
+				if (this._bDoTypeAhead) {
+					oEvent.srcControl.updateDomValue(oFirstVisibleItem.getText());
 				}
 
-				this._setItemVisibility(oItem, bMatch);
+				this.setSelection(oFirstVisibleItem);
 
-				if (bMatch && !bVisibleItems) {
-					bVisibleItems = true;
+				if (oSelectedItem !== this.getSelectedItem()) {
+					this.fireSelectionChange({
+						selectedItem: this.getSelectedItem()
+					});
 				}
 
-				// first match of the value
-				if (bFirst && bMatch && sValue !== "") {
-					bFirst = false;
+				if (this._bDoTypeAhead) {
 
-					if (this._bDoTypeAhead) {
-						this.updateDomValue(oItem.getText());
+					if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android) {
+
+						// note: timeout required for a BlackBerry bug
+						setTimeout(fnSelectTextIfFocused.bind(this, sValue.length, this.getValue().length), 0);
+					} else {
+						oEvent.srcControl.selectText(sValue.length, 9999999);
 					}
-
-					this.setSelection(oItem);
-
-					if (oSelectedItem !== this.getSelectedItem()) {
-						this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-					}
-
-					if (this._bDoTypeAhead) {
-
-						if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android) {
-
-							// note: timeout required for a BlackBerry bug
-							setTimeout(fnSelectTextIfFocused.bind(this, sValue.length, this.getValue().length), 0);
-						} else {
-							this.selectText(sValue.length, 9999999);
-						}
-					}
-
-					this.scrollToItem(this.getSelectedItem());
 				}
 			}
 
-			if (sValue === "" || !bVisibleItems) {
+			if (bEmptyValue || !bItemsVisible) {
 				this.setSelection(null);
 
 				if (oSelectedItem !== this.getSelectedItem()) {
-					this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+					this.fireSelectionChange({
+						selectedItem: this.getSelectedItem()
+					});
 				}
 			}
 
-			// open the picker on input
-			if (bVisibleItems) {
+			if (bItemsVisible || bEmptyValue) {
 				this.open();
+				this.scrollToItem(this.getSelectedItem());
+			} else if (this.isOpen()) {
+				this.close();
 			} else {
-				this.isOpen() ? this.close() : this.clearFilter();
+				this.clearFilter();
 			}
+		};
+
+		ComboBox.prototype.filterItems = function(mOptions, aItems) {
+			var sProperty = mOptions.property,
+				sValue = mOptions.value,
+				bEmptyValue = sValue === "",
+				bMatch = false,
+				sMutator = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1),
+				aFilteredItems = [],
+				oItem = null;
+
+			aItems = aItems || this.getItems();
+
+			for (var i = 0; i < aItems.length; i++) {
+
+				oItem = aItems[i];
+
+				// the item match with the value
+				bMatch = jQuery.sap.startsWithIgnoreCase(oItem[sMutator](), sValue) || bEmptyValue;
+
+				if (bMatch) {
+					aFilteredItems.push(oItem);
+				}
+
+				this._setItemVisibility(oItem, bMatch);
+			}
+
+			return aFilteredItems;
 		};
 
 		/**
@@ -458,19 +474,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		ComboBox.prototype.onsapenter = function(oEvent) {
 			ComboBoxBase.prototype.onsapenter.apply(this, arguments);
 
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
 			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
-
-			var sValue = this.getValue();
-			this.setValue(sValue);
-
-			// no text selection
-			this.selectText(sValue.length, sValue.length);
 
 			if (this.isOpen()) {
 				this.close();
@@ -1278,7 +1285,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			vItem = ComboBoxBase.prototype.removeItem.apply(this, arguments);
 			var oItem;
 
-			if (this.isBound("items") && !this.bDataUpdated) {
+			if (this.isBound("items") && !this.bItemsUpdated) {
 				return vItem;
 			}
 

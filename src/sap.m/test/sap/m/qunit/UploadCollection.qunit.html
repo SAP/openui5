@@ -92,7 +92,7 @@
 	/* Test properties                         */
 	/* --------------------------------------- */
 	QUnit.module("Basic Rendering", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
@@ -102,7 +102,7 @@
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -120,7 +120,7 @@
 	/* Test methods                            */
 	/* --------------------------------------- */
 	QUnit.module("Internal Methods", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
@@ -137,7 +137,7 @@
 				return sEncodedValue;
 			};
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -294,7 +294,7 @@
 	});
 
 	QUnit.module("List API Methods", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
@@ -304,7 +304,7 @@
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -522,11 +522,32 @@
 		assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode after setting 'Delete' is 'None'");
 	});
 
+	QUnit.test("To download an item without URL fails.", function(assert) {
+		//Arrange
+		var oItem = this.oUploadCollection.getItems()[0];
+		oItem.setUrl(null)
+		//Act
+		var bIsDownloaded = this.oUploadCollection.downloadItem(oItem, false);
+		//Assert
+		assert.equal(bIsDownloaded, false, "Download fails because the item has not URL.");
+	});
+
+	QUnit.test("Download an item returns true.", function(assert) {
+		//Arrange
+		var stub = sinon.stub(this.oUploadCollection, "downloadItem");
+		var oItem = this.oUploadCollection.getItems()[3];
+		//Act
+		this.oUploadCollection.downloadItem(oItem, false);
+		//Assert
+		assert.ok(stub.called, "Download method was called.");
+		assert.equal(stub.returns().toString(), "downloadItem", "Download returns the right method.");
+	});
+
 	/* --------------------------------------- */
 	/* Test events                             */
 	/* --------------------------------------- */
 	QUnit.module("Event tests", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
 				maximumFilenameLength : 35,
 				items : {
@@ -538,7 +559,7 @@
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 			oData = this.oDataCopy;
@@ -833,7 +854,7 @@
 	});
 
 	QUnit.module("Edit tests", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
 				maximumFilenameLength : 35,
 				items : {
@@ -844,7 +865,7 @@
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -979,7 +1000,7 @@
 	});
 
 	QUnit.module("Display tests", {
-		setup : function() {
+		beforeEach : function() {
 			this.fnTriggerLink = sap.m.UploadCollection.prototype._triggerLink;
 			this.oUploadCollection = new sap.m.UploadCollection({
 				items : {
@@ -990,7 +1011,7 @@
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 			sap.m.UploadCollection.prototype._triggerLink = this.fnTriggerLink;
@@ -1023,12 +1044,12 @@
 	});
 
 	QUnit.module("Properties", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection();
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -1174,7 +1195,7 @@
 	});
 
 	QUnit.module("Binding", {
-		setup : function() {
+		beforeEach : function() {
 			var oData = {
 				"items" : [{
 					"contributor" : "Susan Baker",
@@ -1196,7 +1217,7 @@
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 			this.oModel.destroy();
@@ -1254,7 +1275,7 @@
 	});
 
 	QUnit.module("Screen Reader Support", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 				items : {
 					path : "/items",
@@ -1264,7 +1285,7 @@
 			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
 		}
@@ -1286,12 +1307,56 @@
 
 	QUnit.test("Edit Button", function(assert) {
 		var oEditButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
-		assert.strictEqual(oEditButton.getTooltip(), "Edit", "The edit button has correct tooltip");
+		assert.strictEqual(oEditButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"), "The edit button has correct tooltip");
 	});
 
 	QUnit.test("Delete Button", function(assert) {
 		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
-		assert.strictEqual(oDeleteButton.getTooltip(), "Delete", "The delete button has correct tooltip");
+		assert.strictEqual(oDeleteButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"), "The delete button has correct tooltip");
+	});
+
+	QUnit.module("Managing event delegates when entering and exiting edit mode", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			});
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+	QUnit.test("First rendering after initialisation of UploadCollection", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "No event delegations saved for deletion");
+	});
+	QUnit.test("In edit mode", function(assert) {
+		//Arrange
+		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+		//Act
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, true, "Event delegations saved to be deleted on the beginning of the next rendering cycle");
+	});
+	QUnit.test("After exiting edit mode", function(assert) {
+		//Arrange
+		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[0].getId();
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+		this.oUploadCollection.editModeItem = null;
+		//Act
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.strictEqual(!!this.oUploadCollection._oListEventDelegate, false, "Event delegation has been successfully deleted while exiting edit mode");
 	});
 </script>
 

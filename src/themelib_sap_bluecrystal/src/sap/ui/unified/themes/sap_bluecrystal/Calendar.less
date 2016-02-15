@@ -10,8 +10,17 @@
 	background-color: @sapUiListBackground;
 }
 
-.sapUiCalMulti{
-	max-width: 76rem; /* maximal 4 months in one row */
+.sapUiCal:not(.sapUiCalInt){
+	width: 20rem;
+	min-width: 20rem;
+}
+
+.sapUiCal.sapUiShd{
+	width: 20.125rem;
+}
+
+.sapUiCalMulti:not(.sapUiCalInt){
+	width: 39rem; /* to display 2 months side by side as default */
 }
 
 /* calendar should have only a border if on popup */
@@ -67,6 +76,10 @@
 	width: 5.75rem;
 }
 
+.sapUiMedia-Std-Phone .sapUiCalHeadB0{
+	width: 3rem; /* do not overflow buttons on phone */
+}
+
 .sapUiCalHeadBFirst{
 	margin-right: 0.25rem;
 }
@@ -103,9 +116,9 @@
 
 .sapUiCal .sapUiCalMonthView,
 .sapUiCal .sapUiCalRow{
-	margin-left: 0.5rem;
-	margin-right: 0.5rem;
-	margin-bottom: 1rem;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	padding-bottom: 1rem;
 }
 
 .sapUiCalWH,
@@ -237,6 +250,10 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	color: @sapUiStandardText;
 }
 
+.sapUiCalContentOver{
+	bottom: 0.5rem;
+}
+
 .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalContent > .sapUiCalYearPicker{
 	top: 0;
@@ -277,6 +294,8 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	padding-top: 2rem;
 }
 
+.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker,
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalMulti > .sapUiCalContent > .sapUiCalYearPicker{
 	top: 1rem;
@@ -287,6 +306,10 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 
 .sapUiCalContent > .sapUiCalYearPicker.sapUiCalYearNoTop{
 	padding-top: 0;
+}
+
+.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker.sapUiCalYearNoTop{
+	top: 0;
 }
 
 /* Day names inside day */
@@ -341,9 +364,20 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	padding: 0.5rem 0.25rem 0 0.25rem;
 }
 
-.sapUiSizeCompact .sapUiCalMulti,
-.sapUiSizeCompact.sapUiCalMulti{
-	max-width: 66rem; /* maximal 4 months in one row */
+.sapUiSizeCompact .sapUiCal:not(.sapUiCalInt),
+.sapUiSizeCompact.sapUiCal:not(.sapUiCalInt){
+	width: 17rem;
+	min-width: 17rem;
+}
+
+.sapUiSizeCompact .sapUiCal.sapUiShd,
+.sapUiSizeCompact.sapUiCal.sapUiShd{
+	width: 17.125rem;
+}
+
+.sapUiSizeCompact .sapUiCalMulti:not(.sapUiCalInt),
+.sapUiSizeCompact.sapUiCalMulti:not(.sapUiCalInt){
+	width: 33.5rem; /* to display 2 months side by side as default */
 }
 
 .sapUiSizeCompact .sapUiCalHead{
@@ -361,9 +395,9 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 .sapUiSizeCompact.sapUiCal .sapUiCalMonthView,
 .sapUiSizeCompact .sapUiCal .sapUiCalRow,
 .sapUiSizeCompact.sapUiCal .sapUiCalRow{
-	margin-left: 0.25rem;
-	margin-right: 0.25rem;
-	margin-bottom: 0.5rem;
+	padding-left: 0.25rem;
+	padding-right: 0.25rem;
+	padding-bottom: 0.5rem;
 }
 
 .sapUiSizeCompact .sapUiCalHead > button{
@@ -420,6 +454,10 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	line-height: 1.6875rem;
 }
 
+.sapUiSizeCompact .sapUiCalContentOver{
+	bottom: 0.25rem;
+}
+
 .sapUiSizeCompact .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiSizeCompact .sapUiCalContent > .sapUiCalYearPicker{
 	top: 0;
@@ -442,6 +480,10 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	margin-left: 0;
 }
 
+.sapUiSizeCompact .sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiSizeCompact.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiSizeCompact .sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker,
+.sapUiSizeCompact.sapUiCalWidth:not(.sapUiCalInt) > .sapUiCalContent > .sapUiCalYearPicker,
 .sapUiSizeCompact .sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiSizeCompact.sapUiCalMulti > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiSizeCompact .sapUiCalMulti > .sapUiCalContent > .sapUiCalYearPicker,
@@ -507,7 +549,6 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	border: none;
 }
 
-.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthView,
 .sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
 .sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPicker{
 	width: 100%;

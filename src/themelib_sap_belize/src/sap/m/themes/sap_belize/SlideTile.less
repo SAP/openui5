@@ -1,0 +1,24 @@
+/* ================================ */
+/* CSS for control sap.m/SlideTile  */
+/* Belize theme                     */
+/* ================================ */
+
+.sapMST {
+	box-shadow: 0rem 0rem 0.25rem fade(@sapUiContentShadowColor, 10);
+}
+
+.sap-desktop .sapMST:hover,
+.sap-tablet .sapMSTHvr:hover,
+.sap-phone .sapMSTHvr:hover {
+	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiContentContrastShadowColor;
+}
+
+.sap-desktop .sapMST:focus {
+	outline-color: @sapUiContentFocusColor;
+	outline-style: dotted;
+	outline-width: 1px; /* Usage of px as aligned with designers. */
+}
+
+.sapMSTIcon {
+	color: lighten(@sapUiContentIconColor, 34.1);
+}

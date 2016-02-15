@@ -38,11 +38,11 @@ sap.ui.require([
 
 		//*****************************************************************************************
 		QUnit.module(sName, {
-			beforeEach: function () {
+			beforeEach : function () {
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");
 				oType = createType();
 			},
-			afterEach: function () {
+			afterEach : function () {
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			}
 		});
@@ -60,7 +60,7 @@ sap.ui.require([
 			var oControl = new Control();
 
 			oType.formatValue(1234, "string"); // ensure that there is a formatter to remove
-			oControl.bindProperty("tooltip", {path: "/unused", type: oType});
+			oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 			sap.ui.getCore().getConfiguration().setLanguage("de-CH");
 			assert.strictEqual(oType.oFormat, null, "localization change resets formatter");
 			oType.formatValue(1234, "int");
@@ -149,10 +149,10 @@ sap.ui.require([
 
 		[undefined, false, true].forEach(function (bNullable) {
 			QUnit.test("setConstraints: nullable=" + bNullable, function (assert) {
-				var oExpectedConstraints = bNullable === false ? {nullable: false} : undefined;
+				var oExpectedConstraints = bNullable === false ? {nullable : false} : undefined;
 
 				oType = new (jQuery.sap.getObject(sName))({},
-					{minimum: -100, maximum: 100, nullable: bNullable});
+					{minimum : -100, maximum : 100, nullable : bNullable});
 				assert.deepEqual(oType.oConstraints, oExpectedConstraints,
 					"only nullable accepted");
 			});
@@ -178,7 +178,7 @@ sap.ui.require([
 		QUnit.test("range tests", function (assert) {
 			var sExpectedMessage,
 				oNumberFormat = NumberFormat.getIntegerInstance({
-					groupingEnabled:true});
+					groupingEnabled :true});
 
 			sExpectedMessage = "EnterIntMin " + oNumberFormat.format(iMin);
 			testRange(assert, -Infinity, sExpectedMessage);
@@ -198,26 +198,26 @@ sap.ui.require([
 			oType = new (jQuery.sap.getObject(sName))({});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable: true});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable : true});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "true"});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable : "true"});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable: undefined});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable : undefined});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable: 42});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable : 42});
 			assert.strictEqual(oType.oConstraints, undefined);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable: false});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable : false});
 			assert.strictEqual(oType.oConstraints.nullable, false);
 
-			oType = new (jQuery.sap.getObject(sName))({}, {nullable: "false"});
+			oType = new (jQuery.sap.getObject(sName))({}, {nullable : "false"});
 			assert.strictEqual(oType.oConstraints.nullable, false);
 
 			TestUtils.withNormalizedMessages(function () {
-				oType = createType({}, {nullable: false});
+				oType = createType({}, {nullable : false});
 				try {
 					oType.validateValue(null);
 					assert.ok(false);
@@ -229,11 +229,11 @@ sap.ui.require([
 		});
 
 		[{
-			set: {foo: "bar"},
-			expect: {foo: "bar", groupingEnabled: true}
+			set : {foo : "bar"},
+			expect : {foo : "bar", groupingEnabled : true}
 		}, {
-			set: {decimals: 7, groupingEnabled: false},
-			expect: {decimals: 7, groupingEnabled: false}
+			set : {decimals : 7, groupingEnabled : false},
+			expect : {decimals : 7, groupingEnabled : false}
 		}].forEach(function (oFixture) {
 			QUnit.test("formatOptions: " + JSON.stringify(oFixture.set), function (assert) {
 				var oSpy,

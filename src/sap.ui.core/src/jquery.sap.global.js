@@ -33,6 +33,13 @@
 		return;
 	}
 
+	// the Promise behaves wrong in MS Edge - therefore we rely on the Promise
+	// polyfill for the MS Edge which works properly (@see jQuery.sap.promise)
+	// Related to MS Edge issue: https://connect.microsoft.com/IE/feedback/details/1658365
+	if (sap.ui.Device.browser.edge) {
+		window.Promise = undefined;
+	}
+
 	// Enable promise polyfill if native promise is not available
 	if (!window.Promise) {
 		ES6Promise.polyfill();
@@ -1302,7 +1309,7 @@
 
 				// create timeline entries if available
 				/*eslint-disable no-console */
-				if (window.console && console.time) {
+				if (jQuery.sap.log.getLevel("sap.ui.Performance") >= 4 && window.console && console.time) {
 					console.time(sInfo + " - " + sId);
 				}
 				/*eslint-enable no-console */
@@ -1432,7 +1439,7 @@
 				if (oMeasurement) {
 					// end timeline entry
 					/*eslint-disable no-console */
-					if (window.console && console.timeEnd) {
+					if (jQuery.sap.log.getLevel("sap.ui.Performance") >= 4 && window.console && console.timeEnd) {
 						console.timeEnd(oMeasurement.info + " - " + sId);
 					}
 					/*eslint-enable no-console */
@@ -1553,18 +1560,12 @@
 				var oMeasurement = mMeasurements[sId];
 
 				if (oMeasurement) {
-					return {id: oMeasurement.id,
-							info: oMeasurement.info,
-							start: oMeasurement.start,
-							end: oMeasurement.end,
-							pause: oMeasurement.pause,
-							resume: oMeasurement.resume,
-							time: oMeasurement.time,
-							duration: oMeasurement.duration,
-							completeDuration: oMeasurement.completeDuration,
-							count: oMeasurement.count,
-							average: oMeasurement.average,
-							categories: oMeasurement.categories};
+					// create a flat copy
+					var oCopy = {};
+					for (var sProp in oMeasurement) {
+						oCopy[sProp] = oMeasurement[sProp];
+					}
+					return oCopy;
 				} else {
 					return false;
 				}
@@ -1574,7 +1575,7 @@
 			 * Gets all performance measurements
 			 *
 			 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
-			 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories
+			 * @return {object[]} current array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories
 			 * @name jQuery.sap.measure#getAllMeasurements
 			 * @function
 			 * @public
@@ -1586,19 +1587,18 @@
 			};
 
 			/**
-			 * Gets all performance measurements where a provided filter function returns true.
-			 * The filter function is called for every measurement and should return the measurement to be added.
+			 * Gets all performance measurements where a provided filter function returns a truthy value.
 			 * If no filter function is provided an empty array is returned.
 			 * To filter for certain categories of measurements a fnFilter can be implemented like this
 			 * <code>
 			 * function(oMeasurement) {
-			 *     return oMeasurement.categories.indexOf("rendering") > -1 ? oMeasurement : null
+			 *     return oMeasurement.categories.indexOf("rendering") > -1;
 			 * }</code>
 			 *
 			 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
 			 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
 			 *
-			 * @return {object} [] current measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
+			 * @return {object} [] filtered array with measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
 			 * @name jQuery.sap.measure#filterMeasurements
 			 * @function
 			 * @public
@@ -1606,16 +1606,17 @@
 		 	 */
 			this.filterMeasurements = function(fnFilter, bCompleted) {
 				var aMeasurements = [],
-					that = this;
-				jQuery.each(mMeasurements, function(sId){
-					var oMeasurement = that.getMeasurement(sId);
-					if (fnFilter) {
-						var oResult = fnFilter(oMeasurement);
-						if (oResult && ((bCompleted === false && oResult.end === 0) || (bCompleted !== false && (!bCompleted || oResult.end)))) {
-							aMeasurements.push(oResult);
+					oMeasurement,
+					bValid;
+				if (fnFilter) {
+					for (var sId in mMeasurements) {
+						oMeasurement = this.getMeasurement(sId);
+						bValid = (bCompleted === false && oMeasurement.end === 0) || (bCompleted !== false && (!bCompleted || oMeasurement.end));
+						if (bValid && fnFilter(oMeasurement)) {
+							aMeasurements.push(oMeasurement);
 						}
 					}
-				});
+				}
 				return aMeasurements;
 			};
 
@@ -1699,14 +1700,45 @@
 
 			/**
 			 * Gets all interaction measurements
+			 * @param {boolean} bFinalize finalize the current pending interaction so that it is contained in the returned array
 			 * @return {object[]} all interaction measurements
 			 * @name jQuery.sap.measure#getAllInteractionMeasurements
 			 * @function
 			 * @public
 			 * @since 1.34.0
 			 */
-			this.getAllInteractionMeasurements = function() {
+			this.getAllInteractionMeasurements = function(bFinalize) {
+				if (bFinalize) {
+					// force the finalization of the currently pending interaction
+					jQuery.sap.measure.endInteraction(true);
+				}
 				return aInteractions;
+			};
+
+			/**
+			 * Gets all interaction measurements for which a provided filter function returns a truthy value.
+			 * To filter for certain categories of measurements a fnFilter can be implemented like this
+			 * <code>
+			 * function(oInteractionMeasurement) {
+			 *     return oInteractionMeasurement.duration > 0
+			 * }</code>
+			 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
+			 * @return {object[]} all interaction measurements passing the filter function successfully
+			 * @name jQuery.sap.measure#filterInteractionMeasurements
+			 * @function
+			 * @public
+			 * @since 1.36.2
+			 */
+			this.filterInteractionMeasurements = function(fnFilter) {
+				var aFilteredInteractions = [];
+				if (fnFilter) {
+					for (var i = 0, l = aInteractions.length; i < l; i++) {
+						if (fnFilter(aInteractions[i])) {
+							aFilteredInteractions.push(aInteractions[i]);
+						}
+					}
+				}
+				return aFilteredInteractions;
 			};
 
 			/**
@@ -1723,7 +1755,7 @@
 
 			/**
 			 * Clears all interaction measurements
-			 * @name jQuery.sap.measure#getLastInteractionMeasurement
+			 * @name jQuery.sap.measure#clearInteractionMeasurements
 			 * @function
 			 * @public
 			 * @since 1.34.0
@@ -1777,7 +1809,7 @@
 						oPendingInteraction.processing = iProcessing > 0 ? iProcessing : 0;
 					}
 					aInteractions.push(oPendingInteraction);
-					jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length);
+					jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "jQuery.sap.measure");
 					oPendingInteraction = null;
 				}
 			}
@@ -1795,7 +1827,8 @@
 			 */
 			this.startInteraction = function(sType, oSrcElement) {
 				// component determination - heuristic
-				function identifyOwnerComponent(oSrcElement) {
+				function createOwnerComponentInfo(oSrcElement) {
+					var sId, sVersion;
 					if (oSrcElement) {
 						var Component, oComponent;
 						Component = sap.ui.require("sap/ui/core/Component");
@@ -1805,12 +1838,16 @@
 								oComponent = oComponent || oSrcElement;
 								var oApp = oComponent.getManifestEntry("sap.app");
 								// get app id or module name for FESR
-								return oApp && oApp.id || oComponent.getMetadata().getName();
+								sId = oApp && oApp.id || oComponent.getMetadata().getName();
+								sVersion = oApp && oApp.applicationVersion && oApp.applicationVersion.version;
 							}
 							oSrcElement = oSrcElement.getParent();
 						}
 					}
-					return "undetermined";
+					return {
+						id: sId ? sId : "undetermined",
+						version: sVersion ? sVersion : ""
+					};
 				}
 
 				var iTime = jQuery.sap.now();
@@ -1822,11 +1859,14 @@
 				// clear request timings for new interaction
 				this.clearRequestTimings();
 
+				var oComponentInfo = createOwnerComponentInfo(oSrcElement);
+
 				// setup new pending interaction
 				oPendingInteraction = {
 					event: sType, // event which triggered interaction
 					trigger: oSrcElement && oSrcElement.getId ? oSrcElement.getId() : "undetermined", // control which triggered interaction
-					component: identifyOwnerComponent(oSrcElement), // component or app identifier
+					component: oComponentInfo.id, // component or app identifier
+					appVersion: oComponentInfo.version, // application version as from app descriptor
 					start : iTime, // interaction start
 					end: 0, // interaction end
 					navigation: 0, // sum over all navigation times
@@ -1840,9 +1880,10 @@
 					networkTime: 0, // request time minus server time from the header, added by jQuery.sap.trace
 					bytesSent: 0, // sum over all requests bytes, added by jQuery.sap.trace
 					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
-					requestCompression: undefined // true if all responses have been sent gzipped
+					requestCompression: undefined, // true if all responses have been sent gzipped
+					busyDuration : 0 // summed GlobalBusyIndicator duration during this interaction
 				};
-				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event);
+				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "jQuery.sap.measure");
 			};
 
 			/**
@@ -1867,7 +1908,7 @@
 			};
 
 			/**
-			 * Sets the request buffer size for the interaction measurement
+			 * Sets the request buffer size for the measurement safely
 			 *
 			 * @param {integer} iSize size of the buffer
 			 *
@@ -1888,9 +1929,9 @@
 			};
 
 			/**
-			 * Gets the request timings for the interaction measurement
+			 * Gets the current request timings array for type 'resource' safely
 			 *
-			 * @return {object[]} iSize size of the buffer
+			 * @return {object[]} array of performance timing objects
 			 * @name jQuery.sap.measure#getRequestTimings
 			 * @function
 			 * @public
@@ -1898,13 +1939,13 @@
 			 */
 			this.getRequestTimings = function() {
 				if (window.performance && window.performance.getEntriesByType) {
-					return jQuery.extend(window.performance.getEntriesByType("resource"),{});
+					return window.performance.getEntriesByType("resource");
 				}
 				return [];
 			};
 
 			 /**
- 			 * Clears all request timings
+ 			 * Clears all request timings safely
  			 *
  			 * @name jQuery.sap.measure#clearRequestTimings
  			 * @function

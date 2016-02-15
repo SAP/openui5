@@ -2,9 +2,14 @@ sap.ui.require([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/AggregationLengthEquals',
 		'sap/ui/test/matchers/PropertyStrictEquals',
-		'sap/ui/demo/bulletinboard/test/integration/pages/Common'
+		'sap/ui/demo/bulletinboard/test/integration/pages/Common',
+		'sap/ui/test/actions/Press'
 	],
-	function (Opa5, AggregationLengthEquals, PropertyStrictEquals, Common) {
+	function (Opa5,
+			  AggregationLengthEquals,
+			  PropertyStrictEquals,
+			  Common,
+			  Press) {
 		"use strict";
 
 		var sViewName = "Worklist",
@@ -18,12 +23,7 @@ sap.ui.require([
 						return this.waitFor({
 							id: sTableId,
 							viewName: sViewName,
-							matchers: function (oTable) {
-								return !!oTable.$("trigger").length;
-							},
-							success: function (oTable) {
-								oTable.$("trigger").trigger("tap");
-							},
+							actions: new Press(),
 							errorMessage: "The Table does not have a trigger"
 						});
 					}

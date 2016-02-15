@@ -49,50 +49,50 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		aggregations : {
 
 			/**
-			 * the currently displayed tokens
+			 * The currently displayed tokens
 			 */
 			tokens : {type : "sap.m.Token", multiple : true, singularName : "token"},
 
 			/**
-			 * the tokenizer which displays the tokens
+			 * The tokenizer which displays the tokens
 			 */
 			tokenizer : {type : "sap.m.Tokenizer", multiple : false, visibility : "hidden"}
 		},
 		events : {
 
 			/**
-			 * fired when the tokens aggregation changed (add / remove token)
+			 * Fired when the tokens aggregation changed (add / remove token)
 			 */
 			tokenChange : {
 				parameters : {
 
 					/**
-					 * type of tokenChange event.
+					 * Type of tokenChange event.
 					 * There are four TokenChange types: "added", "removed", "removedAll", "tokensChanged".
 					 * Use Tokenizer.TokenChangeType.Added for "added",	Tokenizer.TokenChangeType.Removed for "removed", Tokenizer.TokenChangeType.RemovedAll for "removedAll" and Tokenizer.TokenChangeType.TokensChanged for "tokensChanged".
 					 */
 					type: { type : "string"},
 
 					/**
-					 * the added token or removed token.
+					 * The added token or removed token.
 					 * This parameter is used when tokenChange type is "added" or "removed".
 					 */
 					token: { type: "sap.m.Token"},
 
 					/**
-					 * the array of removed tokens.
+					 * The array of removed tokens.
 					 * This parameter is used when tokenChange type is "removedAll".
 					 */
 					tokens: { type: "sap.m.Token[]"},
 
 					/**
-					 * the array of tokens that are added.
+					 * The array of tokens that are added.
 					 * This parameter is used when tokenChange type is "tokenChanged".
 					 */
 					addedTokens :  { type: "sap.m.Token[]"},
 
 					/**
-					 * the array of tokens that are removed.
+					 * The array of tokens that are removed.
 					 * This parameter is used when tokenChange type is "tokenChanged".
 					 */
 					removedTokens :  { type: "sap.m.Token[]"}
@@ -365,10 +365,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 
 		if (iToken > 1) {
 
-			// no value is allowed to show in the input when multiline is closed. Rollback to 1.30 temporarily for sFIN demo
-			if (this.getValue() !== "") {
-				this.setValue() === "";
-			}
 			var i = 0;
 			for ( i = 0; i < iToken - 1; i++ ) {
 				aTokens[i].setVisible(false);
@@ -378,9 +374,30 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
 
 			this.$().find(".sapMTokenizer").after(sSpanText);
+			this._setValueInvisible();
 		}
 
 		this._bShowIndicator = true;
+	};
+
+	/**
+	 * Set value in input field invisible.
+	 *
+	 * @since 1.38
+	 * @private
+	 */
+	MultiInput.prototype._setValueInvisible = function() {
+		this.$("inner").css("opacity", "0");
+	};
+
+	/**
+	 * Show value in input field
+	 *
+	 * @since 1.38
+	 * @private
+	 */
+	MultiInput.prototype._setValueVisible = function() {
+		this.$("inner").css("opacity", "1");
 	};
 
 	/**
@@ -459,7 +476,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @public
 	 */
 	MultiInput.prototype.openMultiLine = function(){
-
+		this._setValueVisible();
 		this.$("border").addClass("sapMMultiInputMultiModeBorder");
 		if (this._$input) {
 			this._$input.parent().addClass("sapMMultiInputMultiModeInputContainer");
@@ -491,7 +508,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	};
 
 	/**
-	 * close multi-line MultiInput in multi-line mode
+	 * Close multi-line MultiInput in multi-line mode
 	 *
 	 * @since 1.28
 	 * @public
@@ -565,8 +582,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			$this.find(".sapMMultiInputBorder").removeClass("sapMMultiInputNarrowBorder");
 		}
 
-
-		jQuery($this.find(".sapMInputBaseInner")[0]).removeAttr("style");
+		this.$("inner").css("width", "");
 
 		// we go to the sapMMultiInputBorder child elements, this makes the computations easier
 		var availableWidth = $this.find(".sapMMultiInputBorder").width();
@@ -1042,7 +1058,17 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					this._removeIndicator();
 					this._oSuggestionPopup.open();
 					this._tokenizerInPopup = this.cloneTokenizer(this._tokenizer);
-					this._setAllTokenVisible(this._tokenizerInPopup);
+					var sValue = this._oPopupInput.getValue();
+
+					// keep input value in input field in popup.
+					// do not show token and suggestion table at same time, which is the same logic as live change.
+					if ( this._oSuggestionPopup && this._oSuggestionPopup.getContent().length > 0 && sValue.length > 0) {
+						this._tokenizerInPopup.setVisible(false);
+					} else {
+						this._tokenizerInPopup.setVisible(true);
+						this._setAllTokenVisible(this._tokenizerInPopup);
+					}
+
 					this._tokenizerInPopup._oScroller.setHorizontal(false);
 					this._tokenizerInPopup.addStyleClass("sapMTokenizerMultiLine");
 
@@ -1079,7 +1105,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 
 
 	/**
-	 * when tap on text field, deselect all tokens
+	 * When tap on text field, deselect all tokens
 	 * @public
 	 * @param {jQuery.Event} oEvent
 	 */
@@ -1094,7 +1120,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 
 
 	/**
-	 * focus is on MultiInput
+	 * Focus is on MultiInput
 	 * @public
 	 * @param {jQuery.Event} oEvent
 	 */
@@ -1112,7 +1138,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 
 
 	/**
-	 * when press ESC, deselect all tokens and all texts
+	 * When press ESC, deselect all tokens and all texts
 	 * @public
 	 * @param {jQuery.Event} oEvent
 	 */
@@ -1427,7 +1453,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	MultiInput.WaitForAsyncValidation = "sap.m.Tokenizer.WaitForAsyncValidation";
 
 	/**
-	 * get the reference element which the message popup should dock to
+	 * Get the reference element which the message popup should dock to
 	 *
 	 * @return {DOMRef} Dom Element which the message popup should dock to
 	 * @protected

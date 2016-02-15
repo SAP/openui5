@@ -9,20 +9,23 @@
 @sapUiLocalBusyIndicatorSizeBig: 2rem;
 
 .sapUiLocalBusyIndicator {
-	display: block;
 	background-color: @sapUiLocalBusyIndicatorBG;
 	position: absolute;
 	top: 0;
 	left: 0;
 	bottom: 0;
 	right: 0;
+
+	opacity: 0;
+	transition: opacity 0.3s ease-in;
+	-ms-transition: opacity 0.3s ease-in;
+	-moz-transition: opacity 0.3s ease-in;
+	-webkit-transition: opacity 0.3s ease-in;
 }
 
-/* Make sure busy indicators are not "nested", and the animations do not overlay each other */
-.sapUiLocalBusy .sapUiLocalBusy .sapUiLocalBusyIndicator {
-	display: none;
+.sapUiLocalBusyIndicatorFade {
+	opacity: 1;
 }
-
 
 /* Class for medium sized indicator in control overlay */
 .sapUiLocalBusyIndicatorSizeMedium {

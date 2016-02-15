@@ -19,7 +19,7 @@
 					id="tbSelect"
 					items="{/items}"
 					selectedKey="{/selectedKey}"
-					change="onSelectChange" >
+					change="onSeparatorsChange" >
 					<core:Item key="{key}" text="{text}"/>
 				</Select>
 			</OverflowToolbar>
@@ -34,6 +34,7 @@
 				filenameLengthExceed="onFilenameLengthExceed"
 				fileRenamed="onFileRenamed"
 				fileSizeExceed="onFileSizeExceed"
+				selectionChange="onSelectionChange"
 				typeMissmatch="onTypeMissmatch"
 				uploadComplete="onUploadComplete"
 				beforeUploadStarts="onBeforeUploadStarts"
@@ -46,8 +47,8 @@
 						<Title id="attachmentTitle"/>
 						<ToolbarSpacer/>
 						<SearchField width="10rem" search="onSearch"></SearchField>
-						<Button id="deleteSelectedButton" text="Delete" press="onDeleteSelectedItems" enabled="false" type="Transparent"></Button>
-						<ToggleButton id="selectAllButton" text="Select all" press="onSelectAllPress" enabled="false" type="Transparent"></ToggleButton>
+						<Button id="deleteSelectedButton" text="Delete" press="onDeleteSelectedItems" enabled="false" visible="false" type="Transparent"></Button>
+						<ToggleButton id="selectAllButton" text="Select all" press="onSelectAllPress" enabled="false" visible="false" type="Transparent"></ToggleButton>
 						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
 					</OverflowToolbar>
 				</toolbar>
@@ -70,7 +71,7 @@
 								title="{title}"
 								text="{path : 'text', formatter : '.formatAttribute'}"
 								active="{active}"
-								textDirection="{textDirection}"/>
+								press="onAttributePress"/>
 						</attributes>
 						<statuses>
 							<ObjectStatus

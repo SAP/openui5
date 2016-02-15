@@ -33,12 +33,12 @@
 	var oApp = new sap.m.App();
 	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
 
-	function getToolbarContent (sText) {
+	function getToolbarContent (sText, sSelId) {
 		return [
 			new sap.m.Button({text : "Button"}),
 			new sap.m.ToolbarSeparator(),
 			new sap.m.Button({text : "Test"}),
-			new sap.m.Select({
+			new sap.m.Select(sSelId, {
 				autoAdjustWidth: true,
 				items : [
 					new sap.ui.core.Item({
@@ -146,17 +146,17 @@
 
 	TBHeader = new sap.m.Toolbar({
         active: true,
-		content : getToolbarContent("This is a Header")
+		content : getToolbarContent("This is a Header", "selH")
 	});
 
 	TBSubHeader = new sap.m.Toolbar({
         active: true,
-		content : getToolbarContent("This is a SubHeader")
+		content : getToolbarContent("This is a SubHeader", "selSubH")
 	});
 
 	TBFooter = new sap.m.Toolbar({
         active: true,
-		content : getToolbarContent("This is a Footer")
+		content : getToolbarContent("This is a Footer", "selF")
 	});
 
 	// test toolbars in dialog
@@ -191,7 +191,7 @@
 	});
 
 	// add toolbars to the page
-	var oPage = new sap.m.Page({
+	var oPage = new sap.m.Page("toolbar-page", {
 		customHeader : TBHeader,
 		subHeader : TBSubHeader,
 		footer : TBFooter,
@@ -204,7 +204,7 @@
 			}
 		}),
 		content : [
-			new sap.m.Toolbar({
+			new sap.m.Toolbar("info_bar", {
 				active : true,
 				design : sap.m.ToolbarDesign.Info,
 				tooltip : "This is a info bar",
@@ -392,6 +392,13 @@
 
 	var oApp = new sap.m.App();
 	oApp.addPage(oPage).placeAt("body");
+
+	var oB = new sap.m.Button("size_btn", {
+		text : "Change page size",
+		press : function() { jQuery("#toolbar-page").width("400px"); }
+	});
+	
+	oB.placeAt("body");
 </script>
 </head>
 <body id="body" class="sapUiBody">

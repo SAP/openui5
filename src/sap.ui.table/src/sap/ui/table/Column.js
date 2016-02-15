@@ -534,8 +534,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	Column.prototype.setFilterValue = function(sValue) {
 		this.setProperty("filterValue", sValue, true);
 		this._setAppDefault("filterValue", sValue);
-		if (this.getMenu()) {
-			this.getMenu()._setFilterValue(sValue);
+		var oMenu = this.getMenu();
+		if (oMenu && oMenu instanceof sap.ui.table.ColumnMenu) {
+			oMenu._setFilterValue(sValue);
 		}
 		return this;
 	};
@@ -841,25 +842,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 
 				this.setProperty("filtered", !!sValue, true);
 				this.setProperty("filterValue", sValue, true);
-				if (this.getMenu()) {
+				var oMenu = this.getMenu();
+				if (oMenu && oMenu instanceof sap.ui.table.ColumnMenu) {
 					// update column menu input field
-					this.getMenu()._setFilterValue(sValue);
+					oMenu._setFilterValue(sValue);
 				}
 
 				var aFilters = [];
 				var aCols = oTable.getColumns();
 				for (var i = 0, l = aCols.length; i < l; i++) {
 					var oCol = aCols[i],
-						oMenu = oCol.getMenu(),
 						oFilter;
 
+					oMenu = oCol.getMenu();
 					try {
 						oFilter = oCol._getFilter();
-						if (oMenu._setFilterState) {
+						if (oMenu && oMenu instanceof sap.ui.table.ColumnMenu) {
 							oMenu._setFilterState(sap.ui.core.ValueState.None);
 						}
 					} catch (e) {
-						if (oMenu._setFilterState) {
+						if (oMenu && oMenu instanceof sap.ui.table.ColumnMenu) {
 							oMenu._setFilterState(sap.ui.core.ValueState.Error);
 						}
 						continue;

@@ -110,8 +110,15 @@ module.exports = function(grunt, config) {
 			});
 
 			aTasks.push('replace');
-			aTasks.push('concat');
-			aTasks.push('uglify');
+
+			// Only bundle core modules if library is included
+			if (config.libraries.indexOf('sap.ui.core') !== -1) {
+				aTasks.push('concat:coreNoJQueryJS');
+				aTasks.push('concat:coreJs');
+
+				aTasks.push('uglify:coreNoJQueryJS');
+				aTasks.push('uglify:coreJs');
+			}
 
 			config.libraries.forEach(function(library) {
 

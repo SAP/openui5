@@ -3,14 +3,23 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Test Page for sap.m.UploadCollectionItem</title>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal" type="text/javascript" data-sap-ui-noConflict="true"
-data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
+
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-language="en">
+</script>
+
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
 <script type="text/javascript">
 	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
@@ -20,7 +29,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 	/* Test properties                         */
 	/* --------------------------------------- */
 	QUnit.module("I. Initial Test deprecated properties", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
@@ -35,7 +44,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 			});
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
 		}
 	});
@@ -74,7 +83,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 	});
 
 	QUnit.module("II. Test deprecated properties with setter", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 //				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
@@ -89,7 +98,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 			});
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
 		}
 	});
@@ -115,7 +124,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 	});
 
 	QUnit.module("III. Test deprecated properties with prefilled aggregation", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
 					active : false,
@@ -124,7 +133,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 			});
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
 		}
 	});
@@ -198,7 +207,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 	});
 
 	QUnit.module("IV. Test getter for all attributes", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
 					active : false,
@@ -207,7 +216,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 			});
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
 		}
 	});
@@ -232,7 +241,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 	});
 
 	QUnit.module("UploadCollectionItem selected", {
-		setup : function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
 					active : false,
@@ -241,7 +250,7 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 			});
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oUploadCollectionItem.destroy();
 			this.oUploadCollectionItem.fireEvent.restore();
 		}
@@ -260,6 +269,135 @@ data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
 		assert.ok(eventSpy.calledWithExactly("selected"), "Function 'fireEvent' was called with parameter 'selected'")
 		assert.ok(this.oUploadCollectionItem.getSelected(), "Item has been selected");
 	});
+
+	QUnit.module("V. Test XMLHttpRequest", {
+		beforeEach : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				contributor : "Susan Baker",
+				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+				enableEdit : true,
+				enableDelete : true,
+				fileName : "Screenshot.ico",
+				fileSize : 20,
+				mimeType : "image/jpg",
+				thumbnailUrl : "",
+				uploadedDate : "2014-07-30",
+				url : "/pathToTheFile/Woman_04.png"
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		initFakeServer: function(sResponseCode) {
+			this.aFakeRequest = this.sandbox.useFakeXMLHttpRequest();
+		},
+		afterEach : function() {
+			this.oUploadCollectionItem.destroy();
+			this.oUploadCollectionItem = null;
+		}
+	});
+
+	QUnit.test("Test that XMLHttpRequest is correct", function(assert) {
+		if (sap.ui.Device.browser.name === "sf" || !sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		//Arrange
+		this.initFakeServer.bind(this)();
+
+		//Act
+		var bDownloadResult = this.oUploadCollectionItem.download(true);
+
+		//Assert
+		assert.equal(this.aFakeRequest.requests.length, 1, "The request was called only once");
+		var sURL = this.aFakeRequest.requests[0].url;
+		var sExpectedURL = this.oUploadCollectionItem.getUrl();
+		assert.equal(sURL, sExpectedURL, "The URL of the request is correct");
+	});
+
+	QUnit.test("Check that sap.ui.core.util.File.save was called and it was called with the right arguments", function(assert) {
+		if (sap.ui.Device.browser.name === "sf" || !sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		//Arrange
+		var stub = this.sandbox.stub(sap.ui.core.util.File, "save");
+		var sFileName = this.oUploadCollectionItem.getFileName();
+		var oFileNameAndExtension = this.oUploadCollectionItem._splitFileName(sFileName, false);
+		var sFileExtension = oFileNameAndExtension.extension;
+		sFileName = oFileNameAndExtension.name;
+
+		//Act
+		this.initFakeServer.bind(this)();
+		var bDownloadResult = this.oUploadCollectionItem.download(true);
+		this.aFakeRequest.requests[0].respond(200, {}, "Empty String");
+
+		//Assert
+		assert.ok(stub.calledWith(undefined, sFileName, sFileExtension, "image/jpg", 'utf-8'), "sap.ui.core.util.File.save was called with the right arguments");
+	});
+	
+	// REMARK: phantom.js reacts like Safari 
+	QUnit.test("Check if in case of safari sap.m.URLHelper is called", function(assert) {
+		if (sap.ui.Device.browser.name !== "sf" || sap.ui.Device.browser.phantomJS) {
+			assert.expect(0);
+			return;
+		}
+		//Arrange
+		var stub = this.sandbox.stub(sap.m.URLHelper, "redirect");
+
+		//Act
+		var bDownloadResult = this.oUploadCollectionItem.download(false);
+
+		//Assert
+		assert.ok(bDownloadResult, "Download call was succesfull");
+		assert.ok(stub.called, "Redirect was, at least, called");
+		assert.ok(stub.calledWith(this.oUploadCollectionItem.getUrl(), true), "Redirect was called with the right arguments");
+	});
+
+	QUnit.module("VI. Test download Methods", {
+		beforeEach : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				contributor : "Susan Baker",
+				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+				enableEdit : true,
+				enableDelete : true,
+				fileName : "Screenshot.ico",
+				fileSize : 20,
+				mimeType : "image/jpg",
+				thumbnailUrl : "",
+				uploadedDate : "2014-07-30",
+				url : "/pathToTheFile/Woman_04.png"
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollectionItem.destroy();
+			this.oUploadCollectionItem = null;
+		}
+	});
+
+	QUnit.test("Check that sap.m.URLHelper.redirect is called if askForLocation is set to false", function(assert) {
+		//Arrange
+		var stub = this.sandbox.stub(sap.m.URLHelper, "redirect");
+
+		//Act
+		var bDownloadResult = this.oUploadCollectionItem.download(false);
+
+		//Assert
+		assert.ok(bDownloadResult, "Download call was succesfull");
+		assert.ok(stub.called, "Redirect was, at least, called");
+		assert.ok(stub.calledWith(this.oUploadCollectionItem.getUrl(), true), "Redirect was called with the right arguments");
+	});
+
+	QUnit.test("Test to download an item without URL", function(assert) {
+		//Arrange
+		this.oUploadCollectionItem.setUrl(null);
+
+		//Act
+		var bDownloadResult = this.oUploadCollectionItem.download(false);
+
+		//Assert
+		assert.equal(bDownloadResult, false, "Item was downloaded successfully.");
+	});
+
 </script>
 
 </head>

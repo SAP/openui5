@@ -24,7 +24,7 @@ sap.ui.define([
 			// Note: 'NaN' and 'INF' are case sensitive, "e" is not!
 			Float : new RegExp("^" + sDecimalValue + "(?:[eE][-+]?\\d+)?$|^NaN$|^-INF$|^INF$"),
 			Date : new RegExp("^" + sDateValue + "$"),
-			DateTimeOffset: new RegExp("^" + sDateValue + "T" + sTimeOfDayValue
+			DateTimeOffset : new RegExp("^" + sDateValue + "T" + sTimeOfDayValue
 				+ "(?:Z|[-+](?:0\\d|1[0-3]):[0-5]\\d|[-+]14:00)$", "i"),
 			Decimal : new RegExp("^" + sDecimalValue + "$"),
 			Guid : /^[A-F0-9]{8}-(?:[A-F0-9]{4}-){3}[A-F0-9]{12}$/i,
@@ -37,35 +37,35 @@ sap.ui.define([
 		rI18n = /^\{@i18n>[^\\\{\}:]+\}$/,
 		rInteger = /^\d+$/,
 		mOData2JSOperators = { // mapping of OData operator to JavaScript operator
-			And: "&&",
-			Eq: "===",
-			Ge: ">=",
-			Gt: ">",
-			Le: "<=",
-			Lt: "<",
-			Ne: "!==",
-			Not: "!",
-			Or: "||"
+			And : "&&",
+			Eq : "===",
+			Ge : ">=",
+			Gt : ">",
+			Le : "<=",
+			Lt : "<",
+			Ne : "!==",
+			Not : "!",
+			Or : "||"
 		},
 		rSchemaPath = /^(\/dataServices\/schema\/\d+)(?:\/|$)/,
 		mType2Category = { // mapping of EDM type to a type category
-			"Edm.Boolean": "boolean",
-			"Edm.Byte": "number",
-			"Edm.Date": "date",
-			"Edm.DateTime": "datetime",
-			"Edm.DateTimeOffset": "datetime",
-			"Edm.Decimal": "decimal",
-			"Edm.Double": "number",
-			"Edm.Float": "number",
-			"Edm.Guid": "string",
-			"Edm.Int16": "number",
-			"Edm.Int32": "number",
-			"Edm.Int64": "decimal",
-			"Edm.SByte": "number",
-			"Edm.Single": "number",
-			"Edm.String": "string",
-			"Edm.Time": "time",
-			"Edm.TimeOfDay": "time"
+			"Edm.Boolean" : "boolean",
+			"Edm.Byte" : "number",
+			"Edm.Date" : "date",
+			"Edm.DateTime" : "datetime",
+			"Edm.DateTimeOffset" : "datetime",
+			"Edm.Decimal" : "decimal",
+			"Edm.Double" : "number",
+			"Edm.Float" : "number",
+			"Edm.Guid" : "string",
+			"Edm.Int16" : "number",
+			"Edm.Int32" : "number",
+			"Edm.Int64" : "decimal",
+			"Edm.SByte" : "number",
+			"Edm.Single" : "number",
+			"Edm.String" : "string",
+			"Edm.Time" : "time",
+			"Edm.TimeOfDay" : "time"
 		},
 		mType2Type = { // mapping of constant "edm:*" type to dynamic "Edm.*" type
 			Bool : "Edm.Boolean",
@@ -79,23 +79,35 @@ sap.ui.define([
 			TimeOfDay : "Edm.TimeOfDay"
 		},
 		mTypeCategoryNeedsCompare = {
-			"boolean": false,
-			"date": true,
-			"datetime": true,
-			"decimal": true,
-			"number": false,
-			"string": false,
-			"time": true
+			"boolean" : false,
+			"date" : true,
+			"datetime" : true,
+			"decimal" : true,
+			"number" : false,
+			"string" : false,
+			"time" : true
 		};
 
 	/**
 	 * This object contains helper functions to process an expression in OData V4 annotations.
 	 *
+	 * The handler functions corresponding to nodes of an annotation expression all use
+	 * a parameter <code>oPathValue</code>. This parameter contains the following properties:
+	 * <ul>
+	 *  <li><code>asExpression</code>: {boolean} parser state: if this property is
+	 *    <code>true</code>, an embedded <code>concat</code> must be rendered as an expression
+	 *    binding and not a composite binding.
+	 *  <li><code>path</code>: {string} the path in the metamodel that leads to the value
+	 *  <li><code>value</code>: {any} the value of the (sub) expression from the metamodel
+	 *  <li><code>withType</code>: {boolean} parser state: if this property is <code>true</code>,
+	 *    all bindings shall have type and constraints information
+	 * </ul>
+	 *
 	 * Unless specified otherwise all functions return a result object with the following
 	 * properties:
 	 * <ul>
 	 *  <li><code>result</code>: "binding", "composite", "constant" or "expression"
-	 *  <li><code>value</code>: depending on result:
+	 *  <li><code>value</code>: depending on <code>result</code>:
 	 *   <ul>
 	 *    <li>when "binding": {string} the binding path
 	 *    <li>when "composite": {string} the binding string incl. the curly braces
@@ -115,7 +127,7 @@ sap.ui.define([
 		 * @param {object} oOperand2
 		 *   the operand 2 (as a result object with category) - may be modified
 		 */
-		adjustOperands: function (oOperand1, oOperand2) {
+		adjustOperands : function (oOperand1, oOperand2) {
 			if (oOperand1.result !== "constant" && oOperand1.category === "number"
 					&& oOperand2.result === "constant" && oOperand2.type === "Edm.Int64") {
 				// adjust an integer constant of type "Edm.Int64" to the number
@@ -140,19 +152,17 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the apply
-		 * @param {boolean} bExpression
-		 *   if <code>true</code> an embedded concat must use expression binding
+		 *   path and value information pointing to the apply (see Expression object)
 		 * @returns {object}
 		 *   the result object
 		 */
-		apply: function (oInterface, oPathValue, bExpression) {
+		apply : function (oInterface, oPathValue) {
 			var oName = Basics.descend(oPathValue, "Name", "string"),
 				oParameters = Basics.descend(oPathValue, "Parameters");
 
 			switch (oName.value) {
 				case "odata.concat": // 14.5.3.1.1 Function odata.concat
-					return Expression.concat(oInterface, oParameters, bExpression);
+					return Expression.concat(oInterface, oParameters);
 				case "odata.fillUriTemplate": // 14.5.3.1.2 Function odata.fillUriTemplate
 					return Expression.fillUriTemplate(oInterface, oParameters);
 				case "odata.uriEncode": // 14.5.3.1.3 Function odata.uriEncode
@@ -168,14 +178,13 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the parameters array
-		 * @param {boolean} bExpression
-		 *   if <code>true</code> concat must use expression binding
+		 *   path and value information pointing to the parameters array (see Expression object)
 		 * @returns {object}
 		 *   the result object
 		 */
-		concat: function (oInterface, oPathValue, bExpression) {
-			var aParts = [],
+		concat : function (oInterface, oPathValue) {
+			var bExpression = oPathValue.asExpression,
+				aParts = [],
 				oResult,
 				aResults = [];
 
@@ -196,12 +205,12 @@ sap.ui.define([
 				}
 				if (oResult.type !== 'edm:Null') {
 					// ignore null (otherwise the string 'null' would appear in expressions)
-					aParts.push(Basics.resultToString(oResult, bExpression, true));
+					aParts.push(Basics.resultToString(oResult, bExpression, oPathValue.withType));
 				}
 			});
 			oResult = bExpression
-				? {result: "expression", value: aParts.join("+")}
-				: {result: "composite", value: aParts.join("")};
+				? {result : "expression", value : aParts.join("+")}
+				: {result : "composite", value : aParts.join("")};
 			oResult.type = "Edm.String";
 			return oResult;
 		},
@@ -212,17 +221,19 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the parameters array. The first parameter element is the
-		 *   conditional expression and must evaluate to a Edm.Boolean. The second and third child
-		 *   elements are the expressions, which are evaluated conditionally.
+		 *   path and value information pointing to the parameters array (see Expression object).
+		 *   The first parameter element is the conditional expression and must evaluate to an
+		 *   Edm.Boolean. The second and third child elements are the expressions, which are
+		 *   evaluated conditionally.
 		 * @returns {object}
 		 *   the result object
 		 */
-		conditional: function (oInterface, oPathValue) {
+		conditional : function (oInterface, oPathValue) {
 			var oCondition = Expression.parameter(oInterface, oPathValue, 0, "Edm.Boolean"),
 				oThen = Expression.parameter(oInterface, oPathValue, 1),
 				oElse = Expression.parameter(oInterface, oPathValue, 2),
-				sType = oThen.type;
+				sType = oThen.type,
+				bWithType = oPathValue.withType;
 
 			if (oThen.type === "edm:Null") {
 				sType = oElse.type;
@@ -232,11 +243,11 @@ sap.ui.define([
 					+ "' and '" + oElse.type + "'");
 			}
 			return {
-				result: "expression",
-				type: sType,
-				value: Basics.resultToString(Expression.wrapExpression(oCondition), true)
-					+ "?" + Basics.resultToString(Expression.wrapExpression(oThen), true)
-					+ ":" + Basics.resultToString(Expression.wrapExpression(oElse), true)
+				result : "expression",
+				type : sType,
+				value : Basics.resultToString(Expression.wrapExpression(oCondition), true, false)
+					+ "?" + Basics.resultToString(Expression.wrapExpression(oThen), true, bWithType)
+					+ ":" + Basics.resultToString(Expression.wrapExpression(oElse), true, bWithType)
 			};
 		},
 
@@ -257,13 +268,13 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the constant
+		 *   path and value information pointing to the constant (see Expression object)
 		 * @param {string} sEdmType
 		 *   the "edm:*" type of the constant, e.g. "Bool" or "Int"
 		 * @returns {object}
 		 *   the result object
 		 */
-		constant: function (oInterface, oPathValue, sEdmType) {
+		constant : function (oInterface, oPathValue, sEdmType) {
 			var sValue = oPathValue.value;
 
 			Basics.expectType(oPathValue, "string");
@@ -271,9 +282,9 @@ sap.ui.define([
 			if (sEdmType === "String") {
 				if (rI18n.test(sValue)) { // a simple binding to "@i18n" model
 					return {
-						ignoreTypeInPath: true,
+						ignoreTypeInPath : true,
 						result : "binding",
-						type: "Edm.String",
+						type : "Edm.String",
 						value : sValue.slice(1, -1) // cut off "{" and "}"
 					};
 				} else if (oInterface.getSetting && oInterface.getSetting("bindTexts")) {
@@ -282,8 +293,8 @@ sap.ui.define([
 					// "/##" is prepended because it leads from model to metamodel
 					return {
 						result : "binding",
-						type: "Edm.String",
-						ignoreTypeInPath: true,
+						type : "Edm.String",
+						ignoreTypeInPath : true,
 						value : "/##" + Expression.replaceIndexes(oInterface.getModel(),
 							oPathValue.path)
 					};
@@ -314,17 +325,11 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the parameters array
-		 * @param {string} oPathValue.path
-		 * 	 the metamodel path to start at
-		 * @param {any} oPathValue.value
-		 *   the value at this path
-		 * @param {boolean} bExpression
-		 *   if <code>true</code> an embedded concat must use expression binding
+		 *   path and value information pointing to the parameters array (see Expression object)
 		 * @returns {object}
 		 *   the result object
 		 */
-		expression: function (oInterface, oPathValue, bExpression) {
+		expression : function (oInterface, oPathValue) {
 			var oRawValue = oPathValue.value,
 				oSubPathValue,
 				sType;
@@ -348,7 +353,7 @@ sap.ui.define([
 
 			switch (sType) {
 				case "Apply": // 14.5.3 Expression edm:Apply
-					return Expression.apply(oInterface, oSubPathValue, bExpression);
+					return Expression.apply(oInterface, oSubPathValue);
 				case "If": // 14.5.6 Expression edm:If
 					return Expression.conditional(oInterface, oSubPathValue);
 				case "Path": // 14.5.12 Expression edm:Path
@@ -380,9 +385,9 @@ sap.ui.define([
 				case "Null":
 					// 14.5.10 Expression edm:Null
 					return {
-						result: "constant",
-						value: "null",
-						type: "edm:Null"
+						result : "constant",
+						value : "null",
+						type : "edm:Null"
 					};
 				default:
 					Basics.error(oPathValue, "Unsupported OData expression");
@@ -394,7 +399,8 @@ sap.ui.define([
 		 * constants accordingly.
 		 *
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the parameters array (for a possible error message)
+		 *   path and value information pointing to the parameters array (for a possible error
+		 *   message, see above)
 		 * @param {int} iIndex
 		 *   the parameter index (for a possible error message)
 		 * @param {object} oResult
@@ -404,7 +410,7 @@ sap.ui.define([
 		 * @returns {string}
 		 *   the formatted result
 		 */
-		formatOperand: function (oPathValue, iIndex, oResult, bWrapExpression) {
+		formatOperand : function (oPathValue, iIndex, oResult, bWrapExpression) {
 			var oDate;
 
 			if (oResult.result === "constant") {
@@ -451,7 +457,7 @@ sap.ui.define([
 		 *   the expression value or "Unsupported: oRawValue" in case of an error or
 		 *   <code>undefined</code> in case the raw value is undefined.
 		 */
-		getExpression: function (oInterface, oRawValue, bWithType) {
+		getExpression : function (oInterface, oRawValue, bWithType) {
 			var oResult;
 
 			if (oRawValue === undefined) {
@@ -469,9 +475,11 @@ sap.ui.define([
 
 			try {
 				oResult = Expression.expression(oInterface, {
-					path: oInterface.getPath(),
-					value: oRawValue
-				}, /*bExpression*/false);
+					asExpression : false,
+					path : oInterface.getPath(),
+					value : oRawValue,
+					withType : bWithType
+				});
 				jQuery.sap.measure.end(sPerformanceGetExpression);
 				return Basics.resultToString(oResult, false, bWithType);
 			} catch (e) {
@@ -490,11 +498,11 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the parameters array
+		 *   path and value information pointing to the parameters array (see Expression object)
 		 * @returns {object}
 		 *   the result object
 		 */
-		fillUriTemplate: function (oInterface, oPathValue) {
+		fillUriTemplate : function (oInterface, oPathValue) {
 			var i,
 				sName,
 				aParts = [],
@@ -516,9 +524,9 @@ sap.ui.define([
 			}
 			aParts.push("})");
 			return {
-				result: "expression",
-				value: aParts.join(""),
-				type: "Edm.String"
+				result : "expression",
+				value : aParts.join(""),
+				type : "Edm.String"
 			};
 		},
 
@@ -528,17 +536,19 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the parameter
+		 *   path and value information pointing to the parameter (see Expression object)
 		 * @returns {object}
 		 *   the result object
 		 */
-		not: function (oInterface, oPathValue) {
-			var oParameter = Expression.expression(oInterface, oPathValue, true);
+		not : function (oInterface, oPathValue) {
+			var oParameter;
 
+			oPathValue.asExpression = true;
+			oParameter = Expression.expression(oInterface, oPathValue);
 			return {
-				result: "expression",
-				value: "!" + Basics.resultToString(Expression.wrapExpression(oParameter), true),
-				type: "Edm.Boolean"
+				result : "expression",
+				value : "!" + Basics.resultToString(Expression.wrapExpression(oParameter), true),
+				type : "Edm.Boolean"
 			};
 		},
 
@@ -548,13 +558,13 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the parameter array
+		 *   path and value information pointing to the parameter array (see Expression object)
 		 * @param {string} sType
 		 *   the operator as text (like "And" or "Or")
 		 * @returns {object}
 		 *   the result object
 		 */
-		operator: function (oInterface, oPathValue, sType) {
+		operator : function (oInterface, oPathValue, sType) {
 			var sExpectedEdmType = sType === "And" || sType === "Or" ? "Edm.Boolean" : undefined,
 				oParameter0 = Expression.parameter(oInterface, oPathValue, 0, sExpectedEdmType),
 				oParameter1 = Expression.parameter(oInterface, oPathValue, 1, sExpectedEdmType),
@@ -580,12 +590,12 @@ sap.ui.define([
 			sValue0 = Expression.formatOperand(oPathValue, 0, oParameter0, !bNeedsCompare);
 			sValue1 = Expression.formatOperand(oPathValue, 1, oParameter1, !bNeedsCompare);
 			return {
-				result: "expression",
-				value: bNeedsCompare
+				result : "expression",
+				value : bNeedsCompare
 							? "odata.compare(" + sValue0 + "," + sValue1 + sTypeInfo + ")"
 								+ mOData2JSOperators[sType] + "0"
 							: sValue0 + mOData2JSOperators[sType] + sValue1,
-				type: "Edm.Boolean"
+				type : "Edm.Boolean"
 			};
 		},
 
@@ -600,7 +610,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the parameter array
+		 *   path and value information pointing to the parameter array (see Expression object)
 		 * @param {int} iIndex
 		 *   the parameter index
 		 * @param {string} [sEdmType]
@@ -608,9 +618,12 @@ sap.ui.define([
 		 * @returns {object}
 		 *   the result object
 		 */
-		parameter: function (oInterface, oPathValue, iIndex, sEdmType) {
+		parameter : function (oInterface, oPathValue, iIndex, sEdmType) {
 			var oParameter = Basics.descend(oPathValue, iIndex),
-				oResult = Expression.expression(oInterface, oParameter, /*bExpression*/true);
+				oResult;
+
+			oParameter.asExpression = true;
+			oResult = Expression.expression(oInterface, oParameter);
 
 			if (sEdmType && sEdmType !== oResult.type) {
 				Basics.error(oParameter,
@@ -627,11 +640,11 @@ sap.ui.define([
 		 * @returns {Date}
 		 *   the JavaScript Date value or <code>null</code> in case the input could not be parsed
 		 */
-		parseDate: function (sValue) {
+		parseDate : function (sValue) {
 			return DateFormat.getDateInstance({
-					pattern: "yyyy-MM-dd",
-					strictParsing: true,
-					UTC: true
+					pattern : "yyyy-MM-dd",
+					strictParsing : true,
+					UTC : true
 				}).parse(sValue);
 		},
 
@@ -643,7 +656,7 @@ sap.ui.define([
 		 * @returns {Date}
 		 *   the JavaScript Date value or <code>null</code> in case the input could not be parsed
 		 */
-		parseDateTimeOffset: function (sValue) {
+		parseDateTimeOffset : function (sValue) {
 			var aMatches = mEdmType2RegExp.DateTimeOffset.exec(sValue);
 			if (aMatches && aMatches[1] && aMatches[1].length > 4) {
 				// "round" to millis, BEWARE of the dot!
@@ -651,8 +664,8 @@ sap.ui.define([
 			}
 
 			return DateFormat.getDateTimeInstance({
-				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSX",
-				strictParsing: true
+				pattern : "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+				strictParsing : true
 			}).parse(sValue.toUpperCase());
 		},
 
@@ -664,16 +677,16 @@ sap.ui.define([
 		 * @returns {Date}
 		 *   the JavaScript Date value or <code>null</code> in case the input could not be parsed
 		 */
-		parseTimeOfDay: function (sValue) {
+		parseTimeOfDay : function (sValue) {
 			if (sValue.length > 12) {
 				// "round" to millis: "HH:mm:ss.SSS"
 				sValue = sValue.slice(0, 12);
 			}
 
 			return DateFormat.getTimeInstance({
-				pattern: "HH:mm:ss.SSS",
-				strictParsing: true,
-				UTC: true
+				pattern : "HH:mm:ss.SSS",
+				strictParsing : true,
+				UTC : true
 			}).parse(sValue);
 		},
 
@@ -684,11 +697,11 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the edm:Path
+		 *   path and value information pointing to the edm:Path (see Expression object)
 		 * @returns {object}
 		 *   the result object
 		 */
-		path: function (oInterface, oPathValue) {
+		path : function (oInterface, oPathValue) {
 			var sBindingPath = oPathValue.value,
 				oConstraints = {},
 				oIsDigitSequence,
@@ -698,7 +711,7 @@ sap.ui.define([
 					getPath : function () { return oPathValue.path; }
 				},
 				oProperty,
-				oResult = {result: "binding", value: sBindingPath},
+				oResult = {result : "binding", value : sBindingPath},
 				oTarget;
 
 			Basics.expectType(oPathValue, "string");
@@ -750,7 +763,7 @@ sap.ui.define([
 		 * @returns {string}
 		 *   the replaced path
 		 */
-		replaceIndexes: function (oModel, sPath) {
+		replaceIndexes : function (oModel, sPath) {
 			var aMatches,
 				aParts = sPath.split('/'),
 				sObjectPath,
@@ -822,11 +835,11 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {object} oPathValue
-		 *   a path/value pair pointing to the parameters array
+		 *   path and value information pointing to the parameters array (see Expression object)
 		 * @returns {object}
 		 *   the result object
 		 */
-		uriEncode: function (oInterface, oPathValue) {
+		uriEncode : function (oInterface, oPathValue) {
 			var oResult = Expression.parameter(oInterface, oPathValue, 0);
 
 			if (oResult.result === "constant") {
@@ -846,10 +859,10 @@ sap.ui.define([
 			}
 
 			return {
-				result: "expression",
-				value: 'odata.uriEncode(' + Basics.resultToString(oResult, true) + ","
+				result : "expression",
+				value : 'odata.uriEncode(' + Basics.resultToString(oResult, true) + ","
 					+ Basics.toJSON(oResult.type) + ")",
-				type: "Edm.String"
+				type : "Edm.String"
 			};
 		},
 
@@ -863,7 +876,7 @@ sap.ui.define([
 		 * @returns {object}
 		 *   the given result object (for chaining)
 		 */
-		wrapExpression: function (oResult) {
+		wrapExpression : function (oResult) {
 			if (oResult.result === "expression") {
 				oResult.value = "(" + oResult.value + ")";
 			}

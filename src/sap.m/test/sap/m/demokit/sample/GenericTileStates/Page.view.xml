@@ -1,28 +1,28 @@
 <core:View controllerName="sap.m.sample.GenericTileStates.Page"
 	xmlns="sap.m" xmlns:core="sap.ui.core">
 	<GenericTile class="sapUiSmallMargin" header="Cumulative Totals"
-		subheader="Expenses" size="M" frameType="OneByOne" state="Loading">
+		subheader="Expenses" frameType="OneByOne" state="Loading">
 		<tileContent>
-			<TileContent footer="Actual and Target" unit="EUR" size="M">
+			<TileContent footer="Actual and Target" unit="EUR">
 				<content>
-					<NumericContent size="S" scale="M" value="1.96"
+					<NumericContent scale="M" value="1.96"
 						valueColor="Error" indicator="Down" />
 				</content>
 			</TileContent>
 		</tileContent>
 	</GenericTile>
 	<GenericTile class="sapUiSmallMargin" header="Comparative Annual Totals"
-		subheader="Expenses By Region" size="M" frameType="TwoByOne" state="Failed">
+		subheader="Expenses By Region" frameType="TwoByOne" state="Failed">
 		<tileContent>
-			<TileContent footer="Actual and Target" unit="EUR" size="M">
+			<TileContent footer="Actual and Target" unit="EUR">
 				<content>
-					<NumericContent size="M" scale="M" value="1.96"
+					<NumericContent scale="M" value="1.96"
 						valueColor="Error" indicator="Up" />
 				</content>
 			</TileContent>
-			<TileContent size="M">
+			<TileContent>
 				<content>
-					<NumericContent size="M" value="3"
+					<NumericContent value="3"
 						icon="sap-icon://travel-expense" />
 				</content>
 			</TileContent>
@@ -65,11 +65,11 @@
 		</tiles>
 	</SlideTile>
 	<GenericTile class="sapUiSmallMargin" header="Cumulative Totals"
-		subheader="Expenses" size="M" frameType="OneByOne" state="Disabled">
+		subheader="Expenses" frameType="OneByOne" state="Disabled">
 		<tileContent>
-			<TileContent footer="Actual and Target" unit="EUR" size="M">
+			<TileContent footer="Actual and Target" unit="EUR">
 				<content>
-					<NumericContent size="M" value="3"
+					<NumericContent value="3"
 						icon="sap-icon://travel-expense" />
 				</content>
 			</TileContent>

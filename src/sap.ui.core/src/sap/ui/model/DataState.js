@@ -68,10 +68,12 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 				value : null,
 				invalidValue: null,
 				internalValue: null,
-				dirty: false
+				dirty: false,
+				messages: []
+
 			};
 			//the resolved path of the binding to check for binding context changes
-			this.mChangedProperties = {};
+			this.mChangedProperties = jQuery.extend({},this.mProperties);
 		}
 	});
 
@@ -97,47 +99,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @private
 	 */
 	DataState.prototype.setProperty = function(sProperty, vValue) {
-		if (sProperty === "modelMessages" || sProperty === "controlMessages") {
-			vValue = vValue || [];
-		}
-
-		vValue = vValue === undefined ? null : vValue;
-
-		if (jQuery.sap.equal(this.mProperties[sProperty], vValue)) {
-			delete this.mChangedProperties[sProperty];
-		} else {
-			if (!this.mChangedProperties[sProperty]) {
-				this.mChangedProperties[sProperty] = {};
-			}
-
-			this.mChangedProperties[sProperty] = {
-				oldValue : jQuery.isArray(this.mProperties[sProperty]) ? this.mProperties[sProperty].slice(0) : this.mProperties[sProperty],
-				value: vValue
-			};
-		}
-
-		if (sProperty === "modelMessages" || sProperty === "controlMessages") {
-			var aOldMessages = [].concat(this.mProperties["modelMessages"], this.mProperties["controlMessages"]);
-			this._sortMessages(aOldMessages);
-			this.mChangedProperties["messages"] = {
-				oldValue : aOldMessages,
-				value: this.getMessages().slice(0)
-			};
-
-			if (this.mChangedProperties["messages"].oldValue.length === 0 && this.mChangedProperties["messages"].value.length === 0) {
-				delete this.mChangedProperties["messages"];
-			}
-		}
-
-		if (this.isDirty() !== this.mProperties["dirty"]) {
-			this.mChangedProperties.dirty = {
-				oldValue: !this.isDirty(),
-				value: this.isDirty()
-			};
-		} else {
-			delete this.mChangedProperties.dirty;
-		}
-
+		this.mChangedProperties[sProperty] = vValue;
 		return this;
 	};
 
@@ -164,39 +126,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @private
 	 */
 	DataState.prototype.getProperty = function(sProperty) {
-		var vReturnValue;
-		var vControlDirty;
-
-		var fnGetCurrentValue = function(sName) {
-			return ((this.mChangedProperties[sName] && "value" in this.mChangedProperties[sName]) ? this.mChangedProperties[sName].value : this.mProperties[sName]);
-		}.bind(this);
-
-		switch (sProperty) {
-			case 'messages':
-				var aMessages = [],
-					aControlMessages = fnGetCurrentValue('controlMessages'),
-					aModelMessages = fnGetCurrentValue('modelMessages');
-
-				if (aModelMessages || aControlMessages) {
-					aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
-					this._sortMessages(aMessages);
-				}
-				vReturnValue = aMessages; //combine all messages
-				break;
-			case 'controlDirty':
-				vControlDirty = !!(this.mChangedProperties.invalidValue && this.mChangedProperties.invalidValue.value);
-				vReturnValue = vControlDirty;
-				break;
-			case 'dirty':
-				var vValue = this.mChangedProperties && this.mChangedProperties.value && ("value" in this.mChangedProperties.value) ? this.mChangedProperties.value.value : this.mProperties.value;
-				var vOriginalValue = this.mChangedProperties && this.mChangedProperties.originalValue && ("value" in this.mChangedProperties.originalValue) ? this.mChangedProperties.originalValue.value : this.mProperties.originalValue;
-				vControlDirty = !!(this.mChangedProperties.invalidValue && this.mChangedProperties.invalidValue.value);
-				vReturnValue = vControlDirty || !jQuery.sap.equal(vValue, vOriginalValue);
-				break;
-			default:
-				vReturnValue = fnGetCurrentValue(sProperty);
-		}
-		return vReturnValue;
+		return this.mChangedProperties[sProperty];
 	};
 
 	/**
@@ -207,7 +137,32 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @public
 	 */
 	DataState.prototype.getMessages = function() {
-		return this.getProperty("messages");
+		var aMessages = [];
+		var aControlMessages = this.mChangedProperties['controlMessages'];
+		var aModelMessages = this.mChangedProperties['modelMessages'];
+		if (aModelMessages || aControlMessages) {
+			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
+			this._sortMessages(aMessages);
+		}
+		return aMessages;
+	};
+
+	/**
+	 * Returns the array of all old state messages or null.
+	 * This combines the model and control messages.
+	 *
+	 * @returns {sap.ui.core.Message[]} the array of all messages or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @private
+	 */
+	DataState.prototype._getOldMessages = function() {
+		var aMessages = [];
+		var aControlMessages = this.mProperties['controlMessages'];
+		var aModelMessages = this.mProperties['modelMessages'];
+		if (aModelMessages || aControlMessages) {
+			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
+			this._sortMessages(aMessages);
+		}
+		return aMessages;
 	};
 
 	/**
@@ -218,7 +173,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @public
 	 */
 	DataState.prototype.setModelMessages = function(aMessages) {
-		return this.setProperty("modelMessages", aMessages);
+		this.mChangedProperties["modelMessages"] = aMessages || [];
+		return this;
 	};
 
 	/**
@@ -239,7 +195,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @protected
 	 */
 	DataState.prototype.setControlMessages = function(aMessages) {
-		return this.setProperty("controlMessages", aMessages);
+		this.mChangedProperties["controlMessages"] = aMessages || [];
+		return this;
 	};
 
 	/**
@@ -262,7 +219,11 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @public
 	 */
 	DataState.prototype.isDirty = function() {
-		return this.getProperty("dirty");
+		var vValue = this.mChangedProperties["value"];
+		var vOriginalValue = this.mChangedProperties["originalValue"];
+		var vControlDirty = this.mChangedProperties["invalidValue"];
+
+		return !!vControlDirty || !jQuery.sap.equal(vValue, vOriginalValue);
 	};
 
 	/**
@@ -273,9 +234,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @public
 	 */
 	DataState.prototype.isControlDirty = function() {
-		return this.getProperty("controlDirty");
+		return !!this.mChangedProperties["invalidValue"];
 	};
-
 
 	/**
 	 * Returns whether the data state is in laundering.
@@ -286,7 +246,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @public
 	 */
 	 DataState.prototype.isLaundering = function() {
-		return this.getProperty("laundering");
+		return this.mChangedProperties["laundering"];
 	};
 
 	/**
@@ -297,7 +257,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @protected
 	 */
 	DataState.prototype.setLaundering = function(bLaundering) {
-		return this.setProperty("laundering",bLaundering);
+		this.mChangedProperties["laundering"] = bLaundering;
+		return this;
 	};
 
 	/**
@@ -318,30 +279,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @protected
 	 */
 	DataState.prototype.setValue = function(vValue) {
-		return this.setProperty("value", vValue);
-	};
-
-	/**
-	 * Returns the value of the data state .
-	 * The internal value is not formatted
-	 * in the corresponding <code>PropertyBinding</code>.
-	 *
-	 * @returns {any} The internal value of the data.
-	 * @private
-	 */
-	DataState.prototype.getInternalValue = function(vValue) {
-		return this.getProperty("internalValue");
-	};
-
-	/**
-	 * Sets the internal value.
-	 *
-	 * @param {any} vInternalValue the value
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
-	 * @protected
-	 */
-	DataState.prototype.setInternalValue = function(vInternalValue) {
-		return this.setProperty("internalValue",vInternalValue);
+		this.mChangedProperties["value"] = vValue || null;
+		return this;
 	};
 
 	/**
@@ -365,7 +304,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @protected
 	 */
 	DataState.prototype.setInvalidValue = function(vInvalidValue) {
-		return this.setProperty("invalidValue",vInvalidValue);
+		this.mChangedProperties["invalidValue"] = vInvalidValue || null;
+		return this;
 	};
 
 	/**
@@ -387,30 +327,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @protected
 	 */
 	DataState.prototype.setOriginalValue = function(vOriginalValue) {
-		return this.setProperty("originalValue",vOriginalValue);
-	};
-
-	/**
-	 * Returns the original internal value of the data state.
-	 * The original internal value is the last confirmed data.
-	 *
-	 * @returns {any} the original confirmed value of the server
-	 * @private
-	 */
-	DataState.prototype.getOriginalInternalValue = function() {
-		return this.getProperty("originalInternalValue");
-	};
-
-	/**
-	 * Returns the original internal value of the data state.
-	 * The original internal value is the last confirmed data.
-	 *
-	 * @param {boolean} vOriginalInternalValue the original value
-	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
-	 * @protected
-	 */
-	DataState.prototype.setOriginalInternalValue = function(vOriginalInternalValue) {
-		return this.setProperty("originalInternalValue",vOriginalInternalValue);
+		this.mChangedProperties["originalValue"] = vOriginalValue || null;
+		return this;
 	};
 
 	/**
@@ -425,9 +343,9 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	DataState.prototype.changed = function(bNewState) {
 		if (bNewState === false) {
 			//clear the changed properties as changed was reset;
-			this.mChangedProperties = {};
+			this.mProperties = jQuery.extend({},this.mChangedProperties);
 		}
-		return !jQuery.isEmptyObject(this.mChangedProperties);
+		return !jQuery.sap.equal(this.mChangedProperties,this.mProperties);
 	};
 
 	/**
@@ -446,7 +364,23 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @public
 	 */
 	DataState.prototype.getChanges = function() {
-		return this.mChangedProperties;
+		var mChanges = {};
+		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
+			if (this.mChangedProperties[sProperty] &&
+					!jQuery.sap.equal(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
+				mChanges[sProperty] = {};
+				mChanges[sProperty].value = this.mChangedProperties[sProperty];
+				mChanges[sProperty].oldValue = this.mProperties[sProperty];
+			}
+		}.bind(this));
+		var aMessages = this.getMessages();
+		var aOldMessages = this._getOldMessages();
+		if (aMessages.length > 0 || aOldMessages.length > 0) {
+			mChanges["messages"] = {};
+			mChanges["messages"].oldValue = aOldMessages;
+			mChanges["messages"].value = aMessages;
+		}
+		return mChanges;
 	};
 
 	return DataState;

@@ -24,12 +24,12 @@ sap.ui.require([
 
 		assert.ok(ODataType.prototype.setConstraints !==
 			SimpleType.prototype.setConstraints, "type overwrites setConstraints");
-		oType.setConstraints({foo: "bar"});
+		oType.setConstraints({foo : "bar"});
 		assert.strictEqual(oType.oConstraints, undefined, "no constraints");
 
 		assert.ok(ODataType.prototype.setFormatOptions !==
 			SimpleType.prototype.setFormatOptions, "type overwrites setFormatOptions");
-		oType.setFormatOptions({foo: "bar"});
+		oType.setFormatOptions({foo : "bar"});
 		assert.strictEqual(oType.oFormatOptions, undefined, "no format options");
 		assert.strictEqual(oType.getInterface(), oType, "returns no interface facade");
 	});

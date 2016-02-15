@@ -10,8 +10,8 @@
  */
 
 // Provides class sap.m.semantic.SemanticConfiguration
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText", "sap/ui/core/IconPool"],
-	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText, IconPool) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/m/OverflowToolbarPriority", "sap/ui/core/InvisibleText", "sap/ui/core/IconPool"],
+	function(jQuery, Metadata, OverflowToolbarLayoutData, OverflowToolbarPriority, InvisibleText, IconPool) {
 	"use strict";
 
 	/**
@@ -73,6 +73,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 	SemanticConfiguration.getSequenceOrderIndex = function (sType) {
 
 		return SemanticConfiguration._oTypeConfigs[sType].order;
+	};
+
+	SemanticConfiguration.getAriaId = function (sType) {
+
+		return SemanticConfiguration._oTypeConfigs[sType].getSettings().ariaLabelledBy;
 	};
 
 	SemanticConfiguration._oTypeConfigs = (function () { //TODO: set from outside?
@@ -174,7 +179,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 						moveToOverflow: false,
 						stayInOverflow: false
 					}),
-					type: sap.m.ButtonType.Reject,
 					ariaLabelledBy: _ensureInvisibleText("DeleteAction", oBundle.getText("SEMANTIC_CONTROL_DELETE"))
 				};
 			},
@@ -527,6 +531,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					layoutData: new OverflowToolbarLayoutData({
 						moveToOverflow: false,
 						stayInOverflow: false
+					})
+				};
+			}
+		};
+
+		oTypeConfigs["sap.m.semantic.MessagesAction"] = {
+			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
+			getSettings: function() {
+				return {
+					icon: IconPool.getIconURI("message-popup"),
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
+					ariaLabelledBy: _ensureInvisibleText("MessagesIndicator", oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR")),
+					type: sap.m.ButtonType.Emphasized,
+					layoutData: new OverflowToolbarLayoutData({
+						priority: OverflowToolbarPriority.NeverOverflow
 					})
 				};
 			}

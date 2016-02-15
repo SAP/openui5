@@ -1,0 +1,70 @@
+/* ============================================ */
+/* CSS for control sap.m/NotificationListGroup  */
+/* Belize theme                                 */
+/* ============================================ */
+
+.sapMNLG {
+  background-color: @sapUiListBackground;
+  box-shadow: 0 0.125rem 0.5rem fade(@sapUiContentShadowColor, 50);
+}
+
+.sapMNLG.sapMLIB {
+  border-bottom: 0;
+}
+
+.sapMNLG-Header > .sapMTitle {
+  font-size: @sapMFontLargeSize;
+}
+
+.sapMNLG-None {
+  background-color: @sapUiNeutralBorder;
+}
+
+.sapMNLG-Low {
+  background-color: @sapUiSuccessBorder;
+}
+
+.sapMNLG-Medium {
+  background-color: @sapUiWarningBorder;
+}
+
+.sapMNLG-High {
+  background-color: @sapUiErrorBorder;
+}
+
+.sapMNLG .sapMNLI {
+  background-color:  darken(@sapUiListBackground, 2);
+  border-top: 1px solid @sapUiListBorderColor;
+}
+
+.sapMNLG-Header .sapMNLG-Details {
+  color:  @sapUiContentLabelColor;
+}
+
+.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
+  border: none;
+}
+
+// Focus Styles ========================================================================================================
+
+.sap-desktop .sapMLIB.sapMNLG:focus {
+  outline: none;
+}
+
+.sapMNLG:focus::before {
+  border: 1px dotted @sapUiContentFocusColor;
+  position: absolute;
+  content: " ";
+  top: 1px;
+  right: 1px;
+  bottom: 0.5625rem;
+  left: 1px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+// Footer styles =======================================================================================================
+
+.sapMNLG-Footer {
+  border-top: 1px solid @sapUiListBorderColor;
+}

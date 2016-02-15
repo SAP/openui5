@@ -385,11 +385,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._aNavSections = [];
 		this._bUpdating = false;
 		this._bRendering = false;
+		this._bActiveItem = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
 	ListBase.prototype.onBeforeRendering = function() {
 		this._bRendering = true;
+		this._bActiveItem = false;
 		this._aNavSections = [];
 		this._removeSwipeContent();
 	};
@@ -477,7 +479,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 	ListBase.prototype.destroyItems = function() {
 		this._oSelectedItem = null;
-		return this.destroyAggregation("items");
+
+		// suppress the synchronous DOM removal of the aggregation destroy
+		this.destroyAggregation("items", "KeepDom");
+
+		// invalidate to update the DOM on the next tick of the RenderManager
+		return this.invalidate();
 	};
 
 
@@ -835,12 +842,21 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		});
 	};
 
+	// return whether list has active item or not
+	ListBase.prototype.getActiveItem = function() {
+		return this._bActiveItem;
+	};
 
 	// this gets called when items DOM is changed
 	ListBase.prototype.onItemDOMUpdate = function(oListItem) {
 		if (!this._bRendering && this.bOutput) {
 			this._startItemNavigation(true);
 		}
+	};
+
+	// this gets called when items active state is changed
+	ListBase.prototype.onItemActiveChange = function(oListItem, bActive) {
+		this._bActiveItem = bActive;
 	};
 
 	// this gets called when selected property of the ListItem is changed

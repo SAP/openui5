@@ -2,11 +2,19 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], function ($, Action, Utils) {
+sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	"use strict";
 
 	/**
-	 * @class The EnterText action is used to simulate a user entering texts to inputs.
+	 * The EnterText action is used to simulate a user entering texts to inputs.
+	 * EnterText will be executed on a control's focus dom ref.
+	 * Supported controls are (for other controls this action still might work):
+	 * <ul>
+	 *     <li>sap.m.Input</li>
+	 *     <li>sap.m.SearchField</li>
+	 *     <li>sap.m.TextArea</li>
+	 * </ul>
+	 * @class
 	 * @extends sap.ui.test.actions.Action
 	 * @public
 	 * @name sap.ui.test.actions.EnterText
@@ -18,10 +26,19 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], func
 		metadata : {
 			properties: {
 				/**
-				 * The Text that is going to be typed to the control.
+				 * The Text that is going to be typed to the control. If you are entering an empty string, the value will be cleared.
 				 */
 				text: {
 					type: "string"
+				},
+				/**
+				 * @Since 1.38.0 If it is set to false, the current text of the Control will be preserved. By default the current text of the control will be cleared.
+				 * When the text is going to be cleared, a delete character event will be fired and then the value of the input is emptied.
+				 * This will trigger a liveChange event on the input with an empty value.
+				 */
+				clearTextFirst: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			publicMethods : [ "executeOn" ]
@@ -35,36 +52,47 @@ sap.ui.define(['jquery.sap.global', './Action', 'sap/ui/qunit/QUnitUtils'], func
 		 * @public
 		 */
 		executeOn : function (oControl) {
-			// Every input control should have a focusable domref
-			var oFocusDomRef = oControl.getFocusDomRef();
-			if (!oFocusDomRef) {
-				$.sap.log.error("Control " + oControl + " has no focusable dom representation", this._sLogPrefix);
+			// focus it
+			var $ActionDomRef = this.$(oControl),
+				oActionDomRef = $ActionDomRef[0];
+
+			if (!oActionDomRef) {
+				return;
+			}
+			if (this.getText() === undefined || (!this.getClearTextFirst() && !this.getText())) {
+				$.sap.log.error("Please provide a text for this EnterText action", this._sLogPrefix);
 				return;
 			}
 
-			// focus it
-			var $FocusDomRef = $(oFocusDomRef);
-			$FocusDomRef.focus();
+			$ActionDomRef.focus();
 
-			if (!$FocusDomRef.is(":focus")) {
+			if (!$ActionDomRef.is(":focus")) {
 				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
+			}
+			var oUtils = this.getUtils();
+
+			if (this.getClearTextFirst()) {
+				oUtils.triggerKeydown(oActionDomRef, $.sap.KeyCodes.DELETE);
+				oUtils.triggerKeyup(oActionDomRef, $.sap.KeyCodes.DELETE);
+				$ActionDomRef.val("");
+				oUtils.triggerEvent("input", oActionDomRef);
 			}
 
 			// Trigger events for every keystroke - livechange controls
 			this.getText().split("").forEach(function (sChar) {
 				// Change the domref and fire the input event
-				Utils.triggerCharacterInput(oFocusDomRef, sChar);
-				Utils.triggerEvent("input", oFocusDomRef);
+				oUtils.triggerCharacterInput(oActionDomRef, sChar);
+				oUtils.triggerEvent("input", oActionDomRef);
 			});
 
 			// trigger change by pressing enter - the dom should be updated by the events above
 
 			// Input change will fire here
-			Utils.triggerKeydown(oFocusDomRef, "ENTER");
+			oUtils.triggerKeydown(oActionDomRef, "ENTER");
 			// Seachfield will fire here
-			Utils.triggerKeyup(oFocusDomRef, "ENTER");
+			oUtils.triggerKeyup(oActionDomRef, "ENTER");
 			// To make extra sure - textarea only works with blur
-			Utils.triggerEvent("blur", oFocusDomRef);
+			oUtils.triggerEvent("blur", oActionDomRef);
 		}
 	});
 

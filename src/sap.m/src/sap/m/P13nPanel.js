@@ -50,8 +50,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Panel type for generic use. Due to extensibility reason the type of <code>type</code> property should be <code>string</code>. So it is feasible to add a
-				 * custom panel without expanding the type.
+				 * Panel type for generic use. Due to extensibility reason the type of <code>type</code> property should be <code>string</code>.
+				 * So it is feasible to add a custom panel without expanding the type.
 				 *
 				 * @since 1.26.0
 				 */
@@ -83,6 +83,14 @@ sap.ui.define([
 				 * Callback method which is called in order to register for validation result.
 				 */
 				validationListener: {
+					type: "object",
+					group: "Misc",
+					defaultValue: null
+				},
+				/**
+				 * Callback which notifies a change on this panel.
+				 */
+				changeNotifier: {
 					type: "object",
 					group: "Misc",
 					defaultValue: null

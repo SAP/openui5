@@ -1,14 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function (jQuery, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	"use strict";
 
 	///////////////////////////////
 	/// Privates
 	///////////////////////////////
-	var $ = jQuery,
-		queue = [],
+	var queue = [],
 		context = {};
 
 	function internalWait (fnCallback, oOptions, oDeferred) {
@@ -166,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function (jQuery, Device) 
 	 * @public
 	 */
 	Opa.extendConfig = function (options) {
-		Opa.config = jQuery.extend(Opa.config, options);
+		Opa.config = $.extend(Opa.config, options);
 	};
 
 	/**
@@ -238,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function (jQuery, Device) 
 			queue = [];
 			oOptions.errorMessage = oOptions.errorMessage || "Failed to wait for check";
 			oOptions.errorMessage += addStacks(oOptions);
-			jQuery.sap.log.error(oOptions.errorMessage);
+			$.sap.log.error(oOptions.errorMessage);
 		});
 	};
 
@@ -303,6 +302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function (jQuery, Device) 
 						try {
 							bResult = options.check.apply(this, arguments);
 						} catch (err) {
+							$.sap.log.error(err.stack, "OPA encountered an error");
 							deferred.reject(options);
 							throw err;
 						}
@@ -314,6 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function (jQuery, Device) 
 								var iCurrentQueueLength = queue.length;
 								options.success.apply(this, arguments);
 							} catch (err) {
+								$.sap.log.error(err.stack, "OPA encountered an error");
 								deferred.reject(options);
 								throw err;
 							} finally {

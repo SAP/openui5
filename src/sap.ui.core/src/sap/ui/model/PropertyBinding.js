@@ -28,7 +28,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 
 		constructor : function (oModel, sPath, oContext, mParameters) {
 			Binding.apply(this, arguments);
-			this.vInvalidValue = null;
 		},
 		metadata : {
 			"abstract" : true,
@@ -108,24 +107,25 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 	 * @public
 	 */
 	PropertyBinding.prototype.setExternalValue = function(oValue) {
-
 		// formatter doesn't support two way binding
 		if (this.fnFormatter) {
 			jQuery.sap.log.warning("Tried to use twoway binding, but a formatter function is used");
 			return;
 		}
+
+		var oDataState = this.getDataState();
 		try {
 			if (this.oType) {
 				oValue = this.oType.parseValue(oValue, this.sInternalType);
 				this.oType.validateValue(oValue);
 			}
 		} catch (oException) {
-			this.vInvalidValue = oValue;
+			oDataState.setInvalidValue(oValue);
 			this.checkDataState(); //data ui state is dirty inform the control
 			throw oException;
 		}
 		// if no type specified set value directly
-		this.vInvalidValue = null;
+		oDataState.setInvalidValue(null);
 		this.setValue(oValue);
 	};
 
@@ -190,34 +190,35 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 		this.sMode = sBindingMode;
 	};
 
-
 	/**
-	 * Checks whether an update of the messages of this binding is required.
+	 * Checks whether an update of the data state of this binding is required.
 	 *
+	 * @param {map} mPaths A Map of paths to check if update needed
 	 * @private
 	 */
-	PropertyBinding.prototype._updateDataState = function() {
-		var oDataState = Binding.prototype._updateDataState.call(this); //super first to apply general status data like messages and laundering
-		if (this.oModel && this.sPath) {
-			oDataState.setInvalidValue(this.vInvalidValue);
-			/*if (this.vInvalidValue) {
-				return oDataState; // no further processing needed
-			}*/
-			try  {
-				var oOriginalValue = this.oModel.getOriginalProperty(this.sPath, this.oContext);
-				oDataState.setOriginalValue(this._toExternalValue(oOriginalValue));
-				oDataState.setOriginalInternalValue(oOriginalValue);
-			} catch (ex) {
-				jQuery.sap.log.debug("type validation of original model value failed");
+	PropertyBinding.prototype.checkDataState = function(mPaths) {
+		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null;
+		var that = this;
+		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
+			var oDataState = this.getDataState();
+			if (sResolvedPath) {
+				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
 			}
-			try  {
-				oDataState.setValue(this.getExternalValue());
-			} catch (ex) {
-				jQuery.sap.log.debug("formatting of value failed");
+			if (oDataState && oDataState.changed()) {
+				if (this.mEventRegistry["DataStateChange"]) {
+					this.fireEvent("DataStateChange", { dataState: oDataState });
+				}
+				if (this.mEventRegistry["AggregatedDataStateChange"]) {
+					if (!this._sDataStateTimout) {
+						this._sDataStateTimout = setTimeout(function() {
+							that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
+							oDataState.changed(false);
+							that._sDataStateTimout = null;
+						}, 0);
+					}
+				}
 			}
 		}
-		oDataState.setInternalValue(this.getValue());
-		return oDataState;
 	};
 
 	return PropertyBinding;

@@ -5,10 +5,9 @@
 // Provides class sap.ui.dt.ControlObserver.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/dt/ManagedObjectObserver',
-	'sap/ui/dt/DOMUtil'
+	'sap/ui/dt/ManagedObjectObserver'
 ],
-function(jQuery, ManagedObjectObserver, DOMUtil) {
+function(jQuery, ManagedObjectObserver) {
 	"use strict";
 
 
@@ -53,7 +52,7 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 			 * Fired when the DOM of the observed control is changed
 			 */
 			events : {
-				"domChanged" : {}
+				"afterRendering" : {}
 			}
 		}
 	});
@@ -64,10 +63,8 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 	ControlObserver.prototype.init = function() {
 		ManagedObjectObserver.prototype.init.apply(this, arguments);
 
-		this._fnFireDomChanged = this.fireDomChanged.bind(this);
 		this._oControlDelegate = {
-			onAfterRendering : this._onAfterRendering,
-			onBeforeRendering : this._onBeforeRendering
+			onAfterRendering : this._onAfterRendering
 		};
 	};
 
@@ -79,7 +76,6 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 	ControlObserver.prototype.observe = function(oControl) {
 		ManagedObjectObserver.prototype.observe.apply(this, arguments);
 
-		this._startObservers();
 		oControl.addEventDelegate(this._oControlDelegate, this);
 	};
 
@@ -93,8 +89,6 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 		if (oControl) {
 			oControl.removeDelegate(this._oControlDelegate, this);
 		}
-		this._stopObservers();
-		delete this._oMutationObserver;
 
 		ManagedObjectObserver.prototype.unobserve.apply(this, arguments);
 	};
@@ -102,79 +96,9 @@ function(jQuery, ManagedObjectObserver, DOMUtil) {
 	/**
 	 * @private
 	 */
-	ControlObserver.prototype._onBeforeRendering = function() {
-		this._stopObservers();
-	};
-
-	/**
-	 * @private
-	 */
 	ControlObserver.prototype._onAfterRendering = function() {
-		this._startObservers();
-		this.fireDomChanged();
-	};
+		this.fireAfterRendering();
 
-	/**
-	 * @private
-	 */
-	ControlObserver.prototype._startMutationObserver = function() {
-		var that = this;
-		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-		var oDomRef = this.getTargetInstance().getDomRef();
-		if (MutationObserver && oDomRef) {
-			this._oMutationObserver = this._oMutationObserver || new MutationObserver(function(aMutations) {
-				that.fireDomChanged();
-			});
-			this._oMutationObserver.observe(oDomRef, {
-				childList : true,
-				subtree : true,
-				attributes : true,
-				characterData : true // also observe text node changes, see https://dom.spec.whatwg.org/#characterdata
-			});
-		}
-	};
-
-	/**
-	 * @private
-	 */
-	ControlObserver.prototype._stopMutationObserver = function() {
-		if (this._oMutationObserver) {
-			this._oMutationObserver.disconnect();
-		}
-	};
-
-	/**
-	 * @private
-	 */
-	ControlObserver.prototype._startResizeObserver = function() {
-		jQuery(window).on("resize", this._fnFireDomChanged);
-	};
-
-	/**
-	 * @private
-	 */
-	ControlObserver.prototype._stopResizeObserver = function() {
-		jQuery(window).off("resize", this._fnFireDomChanged);
-	};
-
-	/**
-	 * @private
-	 */
-	ControlObserver.prototype._startObservers = function() {
-		var bVisible = DOMUtil.isVisible(this.getTargetInstance().$());
-
-		if (bVisible) {
-			this._startResizeObserver();
-			this._startMutationObserver();
-		}
-	};
-
-	/**
-	 * @private
-	 */
-	ControlObserver.prototype._stopObservers = function() {
-		this._stopResizeObserver();
-		this._stopMutationObserver();
 	};
 
 	return ControlObserver;

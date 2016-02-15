@@ -200,6 +200,7 @@
 			oSplitter.rerender();
 		});
 
+
 		test("Mixed vertical sizing", function() {
 			oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
 			oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
@@ -231,6 +232,19 @@
 		test("Events and Rerendering", function() {
 			ok(iResizes === 3, "Number of resize-events fired (" + iResizes + ") is correct.");
 			ok(iRenderings === 7, "Number of rerenderings (" + iRenderings + ") is correct.");
+		});
+
+		QUnit.test("_getContentAreas hook", function(assert) {
+			var oSplitter = new sap.ui.layout.Splitter(),
+				oButton = new sap.ui.commons.Button();
+
+			oSplitter.addContentArea(oButton);
+			oSplitter.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			assert.strictEqual(oSplitter.getContentAreas().length, oSplitter._getContentAreas().length, "Should return same value as getContent()");
+			assert.strictEqual(oSplitter._getContentAreas().length, 1, "Should have 1 content Area");
 		});
 	}
 	else{

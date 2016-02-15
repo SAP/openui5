@@ -38,7 +38,10 @@
 				<items>
 					<ObjectListItem
 						type="{device>/listItemType}"
-						icon="{PictureUrl}"
+						icon="{
+							path : 'PictureUrl',
+							formatter : '.formatter.pictureUrl'
+						}"
 						title="{Name}"
 						number="{
 							path : 'Price',

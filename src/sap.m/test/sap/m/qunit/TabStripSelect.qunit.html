@@ -72,8 +72,18 @@
 			this.oMITS.open();
 			this.clock.tick(1000);
 			strictEqual(this.oMITS.$().hasClass('sapMTabStripSelect'), true, 'Control style class is present.');
-			strictEqual(this.oMITS.getList().$().hasClass('sapMTabSelectList'), true, 'Control style class is present.');
+			strictEqual(this.oMITS.getList().$().hasClass('sapMTabStripSelectList'), true, 'Control style class is present.');
 			strictEqual(this.oMITS.getList().$().children('.sapMSelectListItemBaseSelected').length, 0, 'Control has no item selected by default.');
+		});
+
+
+
+		test("Rendering dialog on phones", function () {
+			var stubs = prepareMobilePlatform.call(this, true);
+			beforeEachQUnitTest.call(this);
+			this.oMITS.open();
+			this.clock.tick(1000);
+			strictEqual(jQuery('.sapMDialog').length, 1, 'Dialog is rendered on mobile.')
 		});
 
 
@@ -92,36 +102,36 @@
 			this.oMITS.open();
 			this.clock.tick(1000);
 
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtnInvisible').length, 2, 'Number of hidden close buttons in the DOM is the same as the number of items in the list instance without the selected one.');
-			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'Close button for default selected item is visible');
+			strictEqual(this.oMITS.getList().$().find('.sapMTabStripSelectListItemCloseBtnInvisible').length, 2, 'Number of hidden close buttons in the DOM is the same as the number of items in the list instance without the selected one.');
+			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabStripSelectListItemCloseBtnInvisible').length, 0, 'Close button for default selected item is visible');
 
 			// for some reason the assert above is causing the select to close - reopen it
 			this.oMITS.open();
 			this.clock.tick(1000);
 
-			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 1, 'Close button for the item is invisible before mouse enter');
+			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabStripSelectListItemCloseBtnInvisible').length, 1, 'Close button for the item is invisible before mouse enter');
 			this.oMITS.getList().mouseenter({target: this.oMITS.getItems()[1].getDomRef()});
 
-			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'Close button for the item is visible after mouse enter');
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtnInvisible').length, 1, 'Two items total have visible close buttons');
+			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabStripSelectListItemCloseBtnInvisible').length, 0, 'Close button for the item is visible after mouse enter');
+			strictEqual(this.oMITS.getList().$().find('.sapMTabStripSelectListItemCloseBtnInvisible').length, 1, 'Two items total have visible close buttons');
 
 			this.oMITS.getList().mouseleave({target: this.oMITS.getItems()[1].getDomRef()});
-			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 1, 'Close button for the item is not visible after mouse leave');
+			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabStripSelectListItemCloseBtnInvisible').length, 1, 'Close button for the item is not visible after mouse leave');
 
 			var iSelectedItemId = 1;
 			// SETTING FIRST ITEM AS ACTIVE
 			this.oMITS.getList()._activateItem(this.oMITS.getItems()[iSelectedItemId]);
 			this.oMITS.open();
 			this.clock.tick(1000);
-			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 1, 'The first item is not selected anymore and the close button is hidden');
+			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabStripSelectListItemCloseBtnInvisible').length, 1, 'The first item is not selected anymore and the close button is hidden');
 			this.clock.tick(1000);
-			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'The close button for the second item is visible');
+			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabStripSelectListItemCloseBtnInvisible').length, 0, 'The close button for the second item is visible');
 
 
 			var oItem = this.oMITS.getItems()[0];
 			// ToDo: This is now handled in TabStrip by adding ontap delegate of TabStripSelectItems
 //			var fnFireItemClosePressedSpy = sinon.spy(oItem, "fireItemClosePressed");
-//			sap.ui.test.qunit.triggerTouchEvent("tap", oItem.$().children('.sapMTabSelectListItemCloseBtn')[0]);
+//			sap.ui.test.qunit.triggerTouchEvent("tap", oItem.$().children('.sapMTabStripSelectListItemCloseBtn')[0]);
 
 			this.clock.tick(1000);
 
@@ -206,13 +216,13 @@
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(1000);
 
-			strictEqual(this.oMITS.$().find('.sapMTabSelectListItemModified ').eq(0).hasClass('sapMTabSelectListItemModifiedInvisible'), !this.oMITS.getDefaultSelectedItem().getModified(), 'Item in the label is marked as modified');
+			strictEqual(this.oMITS.$().find('.sapMTabStripSelectListItemModified ').eq(0).hasClass('sapMTabStripSelectListItemModifiedInvisible'), !this.oMITS.getDefaultSelectedItem().getModified(), 'Item in the label is marked as modified');
 			strictEqual(this.oMITS.$().find('label').eq(0).text(), this.oMITS.getDefaultSelectedItem().getText(), 'Item im the label (first selected by default) is marked as modified');
 
 			this.oMITS.getItems()[1].setProperty('modified', false);
 			this.oMITS.setSelectedItem(this.oMITS.getItems()[1]);
 			sap.ui.getCore().applyChanges();
-			strictEqual(this.oMITS.$().find('.sapMTabSelectListItemModified ').eq(0).hasClass('sapMTabSelectListItemModifiedInvisible'), !this.oMITS.getSelectedItem().getModified(), 'Item in the label is not marked as modified');
+			strictEqual(this.oMITS.$().find('.sapMTabStripSelectListItemModified ').eq(0).hasClass('sapMTabStripSelectListItemModifiedInvisible'), !this.oMITS.getSelectedItem().getModified(), 'Item in the label is not marked as modified');
 			this.clock.tick(1000);
 			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});
@@ -223,18 +233,18 @@
 			this.oMITS.open();
 			this.clock.tick(1000);
 
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM');
+			strictEqual(this.oMITS.getList().$().find('.sapMTabStripSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM');
 			this.oMITS.close();
 			this.oMITS.getItems()[0].setProperty('modified', true);
 			this.oMITS.open();
 			this.clock.tick(1000);
-			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabSelectListItemModifiedInvisible').length, 0, 'Item marked as modified in the DOM');
+			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabStripSelectListItemModifiedInvisible').length, 0, 'Item marked as modified in the DOM');
 			this.oMITS.close();
 
 			this.oMITS.getItems()[0].setProperty('modified', false);
 			this.oMITS.open();
 			this.clock.tick(1000);
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM after some were marked as modified');
+			strictEqual(this.oMITS.getList().$().find('.sapMTabStripSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM after some were marked as modified');
 		});
 
 		// if not phone it is considered tablet
@@ -257,8 +267,8 @@
 		assertAllCloseButtonsVisible = function (bIsPhone) {
 			this.oMITS.open();
 			this.clock.tick(1000);
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtn').length, this.oMITS.getList().getItems().length, 'The number of close buttons in the DOM is the same as the number of items in the list instance.');
-			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'The number of invisible close buttons in the DOM is 0.');
+			strictEqual(this.oMITS.getList().$().find('.sapMTabStripSelectListItemCloseBtn').length, this.oMITS.getList().getItems().length, 'The number of close buttons in the DOM is the same as the number of items in the list instance.');
+			strictEqual(this.oMITS.getList().$().find('.sapMTabStripSelectListItemCloseBtnInvisible').length, 0, 'The number of invisible close buttons in the DOM is 0.');
 		}
 
 	</script>

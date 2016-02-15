@@ -11,12 +11,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
                 this.SIDE_LIST_WIDTH = 0;
                 this.LEFT_HANDLE_ID = 'left';
                 this.RIGHT_HANDLE_ID = 'right';
-                this.HANDLE_BORDER_SIZE = 1;
+                this.HANDLE_BORDER_SIZE = 0;
                 this.HANDLES_WIDTH = 3;
 
                 this.selectedInterval = {
                     start: 0,
-                    end: 0
+                    end: 0,
+                    duration: 0
                 };
                 this.nodes = {
                     slider: null,
@@ -53,11 +54,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
                 "<span id='interactionRightHandle'></span>" +
                 "</div>" +
                 "</div>");
+            rm.write("<div id='interactionSliderBottom'>" +
+                "<div id='interactionSlideHandleBottom'>" +
+                "<span id='interactionLeftHandleBottom'></span>" +
+                "<span id='interactionRightHandleBottom'></span>" +
+                "</div>" +
+                "</div>");
         };
 
         InteractionSlider.prototype.initialize = function () {
             this._registerEventListeners();
             this._initSlider();
+        };
+
+        InteractionSlider.prototype.setDuration = function(aMeasurements) {
+            if (!aMeasurements || !aMeasurements.length) {
+                return;
+            }
+
+            this.selectedInterval.duration = aMeasurements[aMeasurements.length - 1].end - aMeasurements[0].start;
         };
 
         InteractionSlider.prototype._registerEventListeners = function () {
@@ -70,16 +85,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             window.addEventListener('keyup', this._onArrowUp.bind(this));
             jQuery("#interactionSlideHandle").on('dblclick', this._initSlider.bind(this));
             jQuery("#interactionSlider").on('wheel', this._onMouseWheel.bind(this));
+            jQuery("#interactionSlideHandleBottom").on('dblclick', this._initSlider.bind(this));
+            jQuery("#interactionSliderBottom").on('wheel', this._onMouseWheel.bind(this));
         };
 
         InteractionSlider.prototype._initSlider = function () {
             this.nodes.slider = this.nodes.slider || document.querySelector('#interactionSlider');
+            this.nodes.sliderBottom = this.nodes.sliderBottom || document.querySelector('#interactionSliderBottom');
             this.nodes.handle = this.nodes.handle || document.querySelector('#interactionSlideHandle');
+            this.nodes.handleBottom = this.nodes.handleBottom || document.querySelector('#interactionSlideHandleBottom');
             this.nodes.leftResizeHandle = this.nodes.leftResizeHandle || document.querySelector('#interactionLeftHandle');
+            this.nodes.leftResizeHandleBottom = this.nodes.leftResizeHandleBottom ||
+                document.querySelector('#interactionLeftHandleBottom');
             this.nodes.rightResizeHandle = this.nodes.rightResizeHandle || document.querySelector('#interactionRightHandle');
+            this.nodes.rightResizeHandleBottom = this.nodes.rightResizeHandleBottom || document.querySelector('#interactionRightHandleBottom');
 
             this.nodes.handle.style.left = 0;
+            this.nodes.handleBottom.style.left = this.nodes.handle.style.left;
             this.nodes.handle.style.width = '100%';
+            this.nodes.handleBottom.style.width = this.nodes.handle.style.width;
 
             //set the slider width
             this._calculateSliderSize();
@@ -87,6 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             if (!this.fRefs.mousedown) {
                 this.fRefs.mousedown = this._onMouseDown.bind(this);
                 this.nodes.slider.addEventListener('mousedown', this.fRefs.mousedown);
+                this.nodes.sliderBottom.addEventListener('mousedown', this.fRefs.mousedown);
             } else {
                 this._fireSelectEvent();
             }
@@ -110,10 +135,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
             this.sizes.handleWidth = Math.max(this.sizes.handleMinWidth, Math.min(newHandleWidth, upperWidthBound));
             this.nodes.handle.style.width = this.sizes.handleWidth + 'px';
+            this.nodes.handleBottom.style.width = this.nodes.handle.style.width;
 
             if (this.sizes.width < (this.drag.handleOffsetLeft + this.sizes.handleWidth)) {
                 this.drag.handleOffsetLeft = this.sizes.width - this.sizes.handleWidth;
                 this.nodes.handle.style.left = this.drag.handleOffsetLeft + 'px';
+                this.nodes.handleBottom.style.left = this.nodes.handle.style.left;
             }
         };
 
@@ -148,6 +175,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
             this.drag.handleOffsetLeft = Math.max(maxLeftOffset, 0);
             this.nodes.handle.style.left = this.drag.handleOffsetLeft + 'px';
+            this.nodes.handleBottom.style.left = this.nodes.handle.style.left;
         };
 
         InteractionSlider.prototype._onArrowUp = function (evt) {
@@ -164,21 +192,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             var rightConstraint = this.sizes.width - this.sizes.handleWidth;
             var constrainedPosition = Math.min(leftConstraint, rightConstraint);
 
-            if (targetId === this.nodes.slider.id) {
+            if (targetId === this.nodes.slider.id || targetId === this.nodes.sliderBottom.id) {
                 this.nodes.handle.style.left = constrainedPosition + 'px';
+                this.nodes.handleBottom.style.left = this.nodes.handle.style.left;
                 this.drag.handleOffsetLeft = this.nodes.handle.offsetLeft;
                 this.drag.isResize = false;
-            } else if (targetId === this.nodes.handle.id) {
+            } else if (targetId === this.nodes.handle.id || targetId === this.nodes.handleBottom.id) {
                 this.drag.handleClickOffsetX = evt.offsetX;
                 this.drag.isResize = false;
 
                 this._registerOnMouseMoveListener();
-            } else if (targetId === this.nodes.leftResizeHandle.id) {
+            } else if (targetId === this.nodes.leftResizeHandle.id || targetId === this.nodes.leftResizeHandleBottom.id) {
                 this.drag.whichResizeHandle = this.LEFT_HANDLE_ID;
                 this.drag.isResize = true;
 
                 this._registerOnMouseMoveListener();
-            } else if (targetId === this.nodes.rightResizeHandle.id) {
+            } else if (targetId === this.nodes.rightResizeHandle.id || targetId === this.nodes.rightResizeHandleBottom.id) {
                 this.drag.whichResizeHandle = this.RIGHT_HANDLE_ID;
                 this.drag.isResize = true;
 
@@ -219,6 +248,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             var rightBorder = this.sizes.width - this.sizes.handleWidth + this.drag.handleClickOffsetX;
             constraintDistance = Math.max(Math.min(distance, rightBorder), this.drag.handleClickOffsetX);
             this.nodes.handle.style.left = constraintDistance - this.drag.handleClickOffsetX + 'px';
+            this.nodes.handleBottom.style.left = this.nodes.handle.style.left;
         };
 
         InteractionSlider.prototype._onMouseWheel = function (evt) {
@@ -246,6 +276,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
                 newWidth = Math.min(minWidth, maxWidth);
                 this.nodes.handle.style.width = newWidth + 'px';
+                this.nodes.handleBottom.style.width = this.nodes.handle.style.width;
             }
 
             if (this.drag.whichResizeHandle === this.LEFT_HANDLE_ID) {
@@ -263,7 +294,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
                 }
 
                 this.nodes.handle.style.left = (leftRightConstraints - DRAG_OFFSET_VALUE) + 'px';
+                this.nodes.handleBottom.style.left = this.nodes.handle.style.left;
                 this.nodes.handle.style.width = newWidth + 'px';
+                this.nodes.handleBottom.style.width = this.nodes.handle.style.width;
             }
         };
 
@@ -297,13 +330,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
                 newLeftHandlerPosition = Math.max(0, this.nodes.handle.offsetLeft - (sizeChangeStep / 2));
             }
             this.nodes.handle.style.left = newLeftHandlerPosition + 'px';
+            this.nodes.handleBottom.style.left = this.nodes.handle.style.left;
             this.nodes.handle.style.width = newWidth + 'px';
+            this.nodes.handleBottom.style.width = this.nodes.handle.style.width;
         };
 
         InteractionSlider.prototype._calculateHandlerSizePositionOnMouseWheelUp = function (sizeChangeStep) {
             if (this.sizes.handleWidth - sizeChangeStep > this.sizes.handleMinWidth) {
                 this.nodes.handle.style.left = (this.nodes.handle.offsetLeft + (sizeChangeStep / 2)) + 'px';
+                this.nodes.handleBottom.style.left = (this.nodes.handleBottom.offsetLeft + (sizeChangeStep / 2)) + 'px';
                 this.nodes.handle.style.width = (this.sizes.handleWidth - sizeChangeStep) + 'px';
+                this.nodes.handleBottom.style.width = this.nodes.handle.style.width;
             }
         };
 
@@ -332,19 +369,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             jQuery("#interactionSlider").trigger("InteractionSliderChange", [ this.selectedInterval.start, this.selectedInterval.end ]);
         };
 
-        InteractionSlider.prototype._calculateStartEndPeriod = function () {
-            var sliderWidth = this.nodes.slider.offsetWidth;
-            var leftHandlerPosition = this.nodes.leftResizeHandle.getBoundingClientRect().left -
-                this.nodes.slider.getBoundingClientRect().left - this.HANDLE_BORDER_SIZE;
-            var rightHandlerPosition = this.nodes.rightResizeHandle.getBoundingClientRect().left -
-                this.nodes.slider.getBoundingClientRect().left + this.HANDLE_BORDER_SIZE + this.HANDLES_WIDTH;
-            var leftHandlerPositionPercent = leftHandlerPosition / sliderWidth;
-            var rightHandlerPositionPercent = rightHandlerPosition / sliderWidth;
-            var leftHandlerPositionPercentRounded = Math.round(leftHandlerPositionPercent * 100) / 100;
-            var rightHandlerPositionPercentRounded = Math.round(rightHandlerPositionPercent * 100) / 100;
-            this.selectedInterval.start = leftHandlerPositionPercentRounded;
-            this.selectedInterval.end = rightHandlerPositionPercentRounded;
-        };
 
         InteractionSlider.prototype._calculateStartEndPeriod = function () {
             var sliderWidth = this.nodes.slider.offsetWidth;
@@ -353,7 +377,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
             var rightHandlerPosition = this.nodes.rightResizeHandle.getBoundingClientRect().left -
                 this.nodes.slider.getBoundingClientRect().left + this.HANDLE_BORDER_SIZE + this.HANDLES_WIDTH;
             var leftHandlerPositionPercent = leftHandlerPosition / sliderWidth;
-            var rightHandlerPositionPercent = rightHandlerPosition / sliderWidth;
+            var rightHandlerPositionPercent = rightHandlerPosition / sliderWidth,
+                that = this,
+                setTooltipText = function(handlerPosition, handlerId) {
+                    var getTooltipText = function (handlerPosition) {
+                            return "" + Math.round( handlerPosition * that.selectedInterval.duration / 10 ) / 100 + "s";
+                        };
+                    var sTooltip = getTooltipText(handlerPosition);
+
+                    jQuery("#" + handlerId).attr('title', sTooltip);
+                    jQuery("#" + handlerId + "Bottom").attr('title', sTooltip);
+                };
+
+            // update slider title before update the positions
+            if (leftHandlerPositionPercent != this.selectedInterval.start ) {
+                // left handler is moved
+                setTooltipText(leftHandlerPositionPercent, 'interactionLeftHandle');
+            }
+
+            if (rightHandlerPositionPercent != this.selectedInterval.end ) {
+                // right handler is moved
+                setTooltipText(rightHandlerPositionPercent, 'interactionRightHandle');
+            }
+            // end update slider tooltip
+
             this.selectedInterval.start = leftHandlerPositionPercent;
             this.selectedInterval.end = rightHandlerPositionPercent;
         };

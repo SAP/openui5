@@ -3,8 +3,9 @@
  */
 
 //Provides control sap.m.PlanningCalendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', './PlanningCalendarRow', './library', 'sap/ui/unified/library'],
-		function(jQuery, Control, LocaleData, PlanningCalendarRow, library, unifiedLibrary) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', './PlanningCalendarRow',
+               './library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils'],
+		function(jQuery, Control, LocaleData, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils) {
 	"use strict";
 
 	/**
@@ -141,14 +142,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			},
 
 			/**
-			 * Fired if an interval was selected in the header calendar
+			 * Fired if an interval was selected in the header calendar or in the row
 			 */
 			intervalSelect : {
 				parameters : {
 					/**
 					 * Start date, as JavaScript Date object, of the selected interval
 					 */
-					startDate : {type : "object"}
+					startDate : {type : "object"},
+
+					/**
+					 * Interval end date as JavaScript date object
+					 * @since 1.38.0
+					 */
+					endDate : {type : "object"},
+
+					/**
+					 * If set, the selected interval is a subinterval
+					 * @since 1.38.0
+					 */
+					subInterval : {type : "boolean"},
+
+					/**
+					 * Row of the selected interval
+					 * @since 1.38.0
+					 */
+					row : {type : "sap.m.PlanningCalendarRow"}
 				}
 			},
 
@@ -217,10 +236,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (sap.ui.Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 			this._iSize = 0;
+			this._iSizeScreen = 0;
 		}else if (sap.ui.Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
 			this._iSize = 1;
+			this._iSizeScreen = 1;
 		}else {
 			this._iSize = 2;
+			this._iSizeScreen = 2;
 		}
 
 		var sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
@@ -331,7 +353,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this._bBeforeRendering = true;
 
-		if ((!this._oTimeInterval && !this._oMonthInterval && !this._oMonthInterval) || this._bCheckView) {
+		if ((!this._oTimeInterval && !this._oDateInterval && !this._oMonthInterval) || this._bCheckView) {
 			// init intervalType settings if default is used
 			this.setViewKey(this.getViewKey());
 			this._bCheckView = undefined;
@@ -436,7 +458,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						pickerPopup: true
 					});
 					this._oTimeInterval.attachEvent("startDateChange", _handleStartDateChange, this);
-					this._oTimeInterval.attachEvent("select", _handleIntervalSelect, this);
+					this._oTimeInterval.attachEvent("select", _handleCalendarSelect, this);
 					this._oTimeInterval._oPlanningCalendar = this;
 					this._oTimeInterval.getSpecialDates = function(){
 						return this._oPlanningCalendar.getSpecialDates();
@@ -456,7 +478,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						pickerPopup: true
 					});
 					this._oDateInterval.attachEvent("startDateChange", _handleStartDateChange, this);
-					this._oDateInterval.attachEvent("select", _handleIntervalSelect, this);
+					this._oDateInterval.attachEvent("select", _handleCalendarSelect, this);
 					this._oDateInterval._oPlanningCalendar = this;
 					this._oDateInterval.getSpecialDates = function(){
 						return this._oPlanningCalendar.getSpecialDates();
@@ -475,7 +497,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						pickerPopup: true
 					});
 					this._oMonthInterval.attachEvent("startDateChange", _handleStartDateChange, this);
-					this._oMonthInterval.attachEvent("select", _handleIntervalSelect, this);
+					this._oMonthInterval.attachEvent("select", _handleCalendarSelect, this);
 					this._oMonthInterval._oPlanningCalendar = this;
 					this._oMonthInterval.getSpecialDates = function(){
 						return this._oPlanningCalendar.getSpecialDates();
@@ -535,6 +557,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this.$().toggleClass("sapMPlanCalNoHead", !bShowRowHeaders);
 		_positionSelectAllCheckBox.call(this);
+		_setSelectionMode.call(this);
 
 		return this;
 
@@ -555,10 +578,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 		oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 		oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
+		oCalendarRow.attachEvent("intervalSelect", _handleIntervalSelect, this);
 
 		_updateSelectAllCheckBox.call(this);
 
-		if (this.getDomRef()) {
+		if (this._oTimeInterval || this._oDateInterval || this._oMonthInterval) {
 			var sKey = this.getViewKey();
 			var oView = _getView.call(this, sKey);
 			var sIntervalType = oView.getIntervalType();
@@ -567,6 +591,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oCalendarRow.setIntervals(iIntervals);
 			oCalendarRow.setShowSubIntervals(oView.getShowSubIntervals());
 		}
+
+		_setSelectionMode.call(this);
 
 		return this;
 
@@ -587,10 +613,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 		oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 		oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
+		oCalendarRow.attachEvent("intervalSelect", _handleIntervalSelect, this);
 
 		_updateSelectAllCheckBox.call(this);
 
-		if (this.getDomRef()) {
+		if (this._oTimeInterval || this._oDateInterval || this._oMonthInterval) {
 			var sKey = this.getViewKey();
 			var oView = _getView.call(this, sKey);
 			var sIntervalType = oView.getIntervalType();
@@ -599,6 +626,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oCalendarRow.setIntervals(iIntervals);
 			oCalendarRow.setShowSubIntervals(oView.getShowSubIntervals());
 		}
+
+		_setSelectionMode.call(this);
 
 		return this;
 
@@ -617,8 +646,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.detachEvent("select", _handleAppointmentSelect, this);
 		oCalendarRow.detachEvent("startDateChange", _handleStartDateChange, this);
 		oCalendarRow.detachEvent("leaveRow", _handleLeaveRow, this);
+		oCalendarRow.detachEvent("intervalSelect", _handleIntervalSelect, this);
 
 		_updateSelectAllCheckBox.call(this);
+
+		_setSelectionMode.call(this);
 
 		return oRemoved;
 
@@ -639,9 +671,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oCalendarRow.detachEvent("select", _handleAppointmentSelect, this);
 			oCalendarRow.detachEvent("startDateChange", _handleStartDateChange, this);
 			oCalendarRow.detachEvent("leaveRow", _handleLeaveRow, this);
+			oCalendarRow.detachEvent("intervalSelect", _handleIntervalSelect, this);
 		}
 
 		_updateSelectAllCheckBox.call(this);
+
+		_setSelectionMode.call(this);
 
 		return aRemoved;
 
@@ -655,6 +690,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oTable.destroyItems(true);
 
 		_updateSelectAllCheckBox.call(this);
+
+		_setSelectionMode.call(this);
 
 		return destroyed;
 
@@ -721,16 +758,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this.setProperty("singleSelection", bSingleSelection, true);
 
-		var oTable = this.getAggregation("table");
+		_positionSelectAllCheckBox.call(this);
+		_setSelectionMode.call(this);
+
 		if (bSingleSelection) {
-			oTable.setMode(sap.m.ListMode.SingleSelectMaster);
 			this.selectAllRows(false);
 		} else {
-			oTable.setMode(sap.m.ListMode.MultiSelect);
 			_updateSelectAllCheckBox.call(this);
 		}
-
-		_positionSelectAllCheckBox.call(this);
 
 		this.$().toggleClass("sapMPlanCalMultiSel", !bSingleSelection);
 
@@ -911,7 +946,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}
 
-	function _handleIntervalSelect(oEvent){
+	function _handleCalendarSelect(oEvent){
 
 		var aSelectedDates = oEvent.oSource.getSelectedDates();
 		var oStartDate = new Date(aSelectedDates[0].getStartDate());
@@ -919,7 +954,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		// remove old selection
 		aSelectedDates[0].setStartDate();
 
-		this.fireIntervalSelect({startDate: oStartDate});
+		// calculate end date
+		var oEndDate = CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true);
+		var sKey = this.getViewKey();
+		var oView = _getView.call(this, sKey);
+		var sIntervalType = oView.getIntervalType();
+
+		switch (sIntervalType) {
+		case sap.ui.unified.CalendarIntervalType.Hour:
+			oEndDate.setUTCHours(oEndDate.getUTCHours() + 1);
+			break;
+
+		case sap.ui.unified.CalendarIntervalType.Day:
+			oEndDate.setUTCDate(oEndDate.getUTCDate() + 1);
+			break;
+
+		case sap.ui.unified.CalendarIntervalType.Month:
+			oEndDate.setUTCMonth(oEndDate.getUTCMonth() + 1);
+			break;
+
+		default:
+			throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
+		}
+
+		oEndDate.setUTCMilliseconds(oEndDate.getUTCMilliseconds() - 1);
+		oEndDate = CalendarUtils._createLocalDate(oEndDate, true);
+
+		this.fireIntervalSelect({startDate: oStartDate, endDate: oEndDate, subInterval: false, row: undefined});
+
+	}
+
+	function _handleIntervalSelect(oEvent){
+
+		var oStartDate = oEvent.getParameter("startDate");
+		var oEndDate = oEvent.getParameter("endDate");
+		var bSubInterval = oEvent.getParameter("subInterval");
+		var oRow = oEvent.oSource._oPlanningCalendarRow;
+
+		this.fireIntervalSelect({startDate: oStartDate, endDate: oEndDate, subInterval: bSubInterval, row: oRow});
 
 	}
 
@@ -1119,6 +1191,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._iSize = 1; // tablet
 		} else {
 			this._iSize = 2; // desktop
+		}
+
+		// use header sizes, as m.Table uses this for it's resizing
+		if (jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+			this._iSizeScreen = 0;
+		}else if (jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
+			this._iSizeScreen = 1;
+		}else {
+			this._iSizeScreen = 2;
 		}
 
 	}
@@ -1377,9 +1458,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				});
 				this._oSelectAllCheckBox.attachEvent("select", _handleSelectAll, this);
 			}
-			if (this._iSize < 2 || !this.getShowRowHeaders()) {
+			if (this._iSizeScreen < 2 || !this.getShowRowHeaders()) {
 				var iIndex = this._oInfoToolbar.indexOfContent(this._oSelectAllCheckBox);
-				if (this._iSize < 2) {
+				if (this._iSizeScreen < 2) {
 					// on phone: checkbox below calendar
 					if (iIndex < this._oInfoToolbar.getContent().length - 1) {
 						this._oInfoToolbar.addContent(this._oSelectAllCheckBox);
@@ -1403,6 +1484,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (oEvent.getParameter("name") == "selected") {
 			_updateSelectAllCheckBox.call(this);
+		}
+
+	}
+
+	function _setSelectionMode() {
+
+		var oTable = this.getAggregation("table");
+		var sMode = oTable.getMode();
+		var sModeNew;
+
+		if (this.getSingleSelection()) {
+			if (!this.getShowRowHeaders() && this.getRows().length == 1) {
+				// if only one row is displayed without header - do not enable row selection
+				sModeNew = sap.m.ListMode.None;
+			} else {
+				sModeNew = sap.m.ListMode.SingleSelectMaster;
+			}
+		} else {
+			sModeNew = sap.m.ListMode.MultiSelect;
+		}
+
+		if (sMode != sModeNew) {
+			oTable.setMode(sModeNew);
 		}
 
 	}

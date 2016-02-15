@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				/* Store the items for later and remove them for the initialization of the control to avoid racing
 				 * condition with the initialization of the tab strip. This is only required when the items aggregation
 				 * is initialized directly with an array of TabContainer items without data binding and a template. */
-				if (Array.isArray(mSettings['items'])) {
+				if (mSettings && Array.isArray(mSettings['items'])) {
 					aStashedItems = mSettings['items'];
 					delete mSettings['items'];
 				}
@@ -145,8 +145,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				aStashedItems.forEach(function (oItem) {
 					this.addItem(oItem);
 				}, this);
+
 			}
 		});
+
+		/**
+		 * Called before the control is rendered.
+		 */
+		TabContainer.prototype.onBeforeRendering = function() {
+
+			if (this.getSelectedItem()) {
+				return;
+			}
+
+			this._setDefaultTab();
+		};
 
 		/**
 		 * Lazy loads the control attached to the private <code>Add New Button</code> aggregation
@@ -246,7 +259,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				oSelectedItem = sap.ui.getCore().byId(sSelectedItem),
 				oTabStripItem = this._toTabStripItem(oSelectedItem);
 
-			// ToDo: Maybe the selected item of the TabStrip should not be handled here?
 			if (oTabStrip) {
 				// resolves error /getItems() of null/ in case only the _tabStrip aggregation was for some reason removed/destroyed from the container
 				oTabStrip.setSelectedItem(oTabStripItem);
@@ -316,10 +328,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 */
 		TabContainer.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 			if (sAggregationName === 'items') {
-				// ToDo: maybe these event listeners have to be also detached?
 				oObject.attachItemPropertyChanged(function (oEvent) {
 					var oTabStripItem = this._toTabStripItem(oEvent.getSource());
-					// ToDo: refactor code to remove inconsistency and avoid this mapping
 					var sPropertyKey = oEvent['mParameters'].propertyKey;
 					if (sPropertyKey === 'name') {
 						sPropertyKey = 'text';
@@ -426,12 +436,60 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * Override <code>showAddNewButton</code> property setter to proxy to the <code>TabStrip</code>.
 		 *
 		 * @param bShowButton {boolean} Whether to show the <code>addNewButton</code>
+		 * @override
 		 */
 		TabContainer.prototype.setShowAddNewButton = function (bShowButton) {
 			var oTabStrip = this._getTabStrip();
 			if (oTabStrip) {
 				oTabStrip.setAddButton(bShowButton ? this._getAddNewTabButton() : null);
 			}
+		};
+
+		/**
+		 * Override <code>selectedItem</code> property setter.
+		 *
+		 * @param oSelectedItem {sap.m.TabContainerItem} The new <code>TabContainerItem</code> to be selected
+		 * @override
+		 */
+		TabContainer.prototype.setSelectedItem = function (oSelectedItem) {
+			var oTabStrip = this._getTabStrip();
+
+			if (oSelectedItem && oTabStrip) {
+				oTabStrip.setSelectedItem(this._toTabStripItem(oSelectedItem));
+				this._rerenderContent(oSelectedItem.getContent());
+			}
+
+			return TabContainer.prototype.setAssociation.call(this, "selectedItem", oSelectedItem, true); //render manually;
+		};
+
+		/**
+		 * Re-renders only the displayed content.
+		 * @private
+		 * @param oContent Content, which should be rendered.
+		 */
+		TabContainer.prototype._rerenderContent = function(oContent) {
+			var $content = this.$("content"),
+				oRM;
+
+			if (!oContent || ($content.length <= 0)) {
+				return;
+			}
+
+			oRM = sap.ui.getCore().createRenderManager();
+			for (var i = 0; i < oContent.length; i++) {
+				oRM.renderControl(oContent[i]);
+			}
+			oRM.flush($content[0]);
+			oRM.destroy();
+		};
+
+		TabContainer.prototype._setDefaultTab = function() {
+
+			var oFirstItem = this.getItems()[0] || null;
+
+			this.setSelectedItem(oFirstItem);
+
+			return oFirstItem;
 		};
 
 		return TabContainer;

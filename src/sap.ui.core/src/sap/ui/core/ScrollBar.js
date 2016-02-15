@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.ScrollBar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
-	function(jQuery, Device, Control, library) {
+sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'jquery.sap.script', 'jquery.sap.trace'],
+	function(jQuery, Device, Control, library /*, jQuery*/) {
 	"use strict";
 
 
@@ -717,6 +717,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
 		this._iOldScrollPos = iScrollPos;
 		this._bMouseWheel = false;
 
+		// notify for a scroll event
+		jQuery.sap.interaction.notifyScrollEvent({type: eAction});
 	};
 
 	ScrollBar.prototype.onThemeChanged = function() {

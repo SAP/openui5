@@ -1,9 +1,10 @@
 sap.ui.require([
 		'sap/ui/test/Opa5',
 		'sap/ui/test/matchers/Properties',
-		'sap/ui/demo/bulletinboard/test/integration/pages/Common'
+		'sap/ui/demo/bulletinboard/test/integration/pages/Common',
+		'sap/ui/test/actions/Press'
 	],
-	function (Opa5, Properties, Common) {
+	function (Opa5, Properties, Common, Press) {
 		"use strict";
 
 		var sViewName = "Post";
@@ -16,19 +17,18 @@ sap.ui.require([
 						return this.waitFor({
 							id: "page",
 							viewName: sViewName,
-							success: function (oPage) {
-								oPage.$("navButton").trigger("tap");
-							},
+							actions: new Press(),
 							errorMessage: "Did not find the nav button on object page"
 						});
 					},
 					iPressOnTheTabWithTheKey: function (sKey) {
 						return this.waitFor({
-							id: "iconTabBar",
+							controlType: "sap.m.IconTabFilter",
 							viewName : sViewName,
-							success: function (oIconTabBar) {
-								oIconTabBar.setSelectedKey(sKey);
-							},
+							matchers: new Properties({
+								key: sKey
+							}),
+							actions: new Press(),
 							errorMessage: "Cannot find the icon tab bar"
 						});
 

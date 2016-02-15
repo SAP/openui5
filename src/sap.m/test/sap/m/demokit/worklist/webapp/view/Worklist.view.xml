@@ -19,8 +19,8 @@
 					sorter: {
 						path: 'Name',
 						descending: false
-						}
-					}"
+					}
+				}"
 				noDataText="{worklistView>/tableNoDataText}"
 				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
 				growing="true"
@@ -65,9 +65,7 @@
 						</cells>
 					</ColumnListItem>
 				</items>
-
 			</Table>
-
 		</semantic:content>
 
 		<semantic:sendEmailAction>

@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		if (!jQuery.sap.equal(this.oValue, oValue)) {
 			if (this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
 				this.oValue = oValue;
+				this.getDataState().setValue(this.oValue);
 			}
 		}
 	};
@@ -44,6 +45,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		var oValue = this._getValue();
 		if (!jQuery.sap.equal(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.oValue = oValue;
+			this.getDataState().setValue(this.oValue);
+			this.checkDataState();
 			this._fireChange({reason: ChangeReason.Change});
 		}
 	};

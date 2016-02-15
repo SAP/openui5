@@ -31,6 +31,10 @@
 <!-- Test functions -->
 <script language="javascript" charset="utf-8"> // IE needs this :-/
 
+jQuery.sap.require("sap.ui.thirdparty.sinon");
+jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+
 	var oModel;
 	var oModel2;
 	var testData;
@@ -39,13 +43,12 @@
 	var oTxt;
 
 	function setup(){
-
 		if (oTxt) {
 			oTxt.destroy();
 		}
 
 		// reset bindings
-		bindings = new Array();
+		bindings = [];
 		testData = {
 	  		"teamMembers":[
 				{"firstName":"Andreas", "lastName":"Klark", "gender":"male"},
@@ -67,9 +70,9 @@
 		testData2 = {
 				"values":
 					[
-					 {"value" : 7.55},
-					 {"value" : 555554.32241},
-					 {"value" : 2.418}
+						{"value" : 7.55},
+						{"value" : 555554.32241},
+						{"value" : 2.418}
 				]
 		}
 		oModel = new sap.ui.model.json.JSONModel();
@@ -83,16 +86,14 @@
 		oTxt.placeAt("txt");
 	};
 
-	function createPropertyBindings(path, property, context){
+	function createPropertyBindings(path, property, context) {
 		// create bindings
-
-		jQuery(testData[path.substr(1)]).each(function (i, entry){
+		jQuery(testData[path.substr(1)]).each(function (i) {
 			bindings[i] = oModel.bindProperty(path + "/" + i + "/" + property, context);
 		});
-
 	};
 
-	test("Binding syntax tests", function(){
+	test("Binding syntax tests", function() {
 		setup();
 
 		oTxt.bindValue("/teamMembers/4/firstName");
@@ -107,7 +108,7 @@
 				parts: [
 							{path: "/teamMembers/6/firstName"},
 							{path: "/teamMembers/6/lastName"}
-				        ]});
+						]});
 		equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
 		oTxt.unbindProperty("value");
 
@@ -116,20 +117,19 @@
 						"/teamMembers/2/firstName",
 						"/teamMembers/0/firstName",
 						"/teamMembers/2/lastName"
-			        ]});
+					]});
 		equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields syntax 2");
-
 	});
 
-	test("Binding syntax constructor tests", function(){
+	test("Binding syntax constructor tests", function() {
 		setup();
 
 		oTxt = new sap.ui.commons.TextField({
 			value: {
 				parts: [
-				    	{path: "/teamMembers/6/firstName"},
+						{path: "/teamMembers/6/firstName"},
 						{path: "/teamMembers/6/lastName"}
-				       ]
+						]
 			}
 		});
 
@@ -143,18 +143,15 @@
 						"/teamMembers/2/firstName",
 						"/teamMembers/0/firstName",
 						"/teamMembers/2/lastName"
-				       ]
+						]
 			}
 		});
 		oTxt.placeAt("txt");
 		equal(oTxt.getValue(), "Gina Andreas Rush", "calculated fields constructor syntax 2");
-
 	});
 
-
-	test("Composite Binding tests", function(){
+	test("Composite Binding tests", function() {
 		setup();
-
 
 		oTxt.bindValue({ path: "/teamMembers/4/firstName",
 				parts: [
@@ -162,7 +159,7 @@
 							{path: "/teamMembers/6/lastName",},
 							{path: "/teamMembers/3/lastName",},
 							{path: "/values/1/value", type: new sap.ui.model.type.Float()}
-				        ]});
+						]});
 
 		var oComp = oTxt.getBinding("value");
 		ok(oComp);
@@ -177,28 +174,26 @@
 		equals(oComp.getBindings()[3].getValue(), 5.322, "Bindings value check");
 
 		equals(oComp.getBindings()[3].getExternalValue(), "5.322", "Bindings value check");
-
 	});
 
-	test("Calculated fields model tests wrong path", function(){
+	test("Calculated fields model tests wrong path", function() {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/teamMembers/6/firstName"},
 						{path: "/tea/5/xyz"}
-			        ]});
+					]});
 		equal(oTxt.getValue(), "Frank ", "calculated fields wrong path");
-
 	});
 
-	test("Calculated fields model custom formatter", function(){
+	test("Calculated fields model custom formatter", function() {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/teamMembers/6/firstName"},
 						{path: "/teamMembers/6/lastName"},
 						{path: "/teamMembers/5/lastName"}
-			        ],
+					],
 			formatter: function(oV1, oV2, oV3){
 				equal(oV3, "Green", "name check");
 				return "Dear " + oV1 + " " + oV2;
@@ -206,46 +201,42 @@
 		});
 
 		equal(oTxt.getValue(), "Dear Frank Wallace", "calculated fields test custom formatter");
-
 	});
 
-	test("Calculated fields model tests wrong path", function(){
+	test("Calculated fields model tests wrong path", function() {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/teamMembers/6/firstName"},
 						{path: "/teamMembers/6/lastName"}
-			        ]});
+					]});
 		equal(oTxt.getValue(), "Frank Wallace", "calculated fields syntax 1");
-
-
 	});
 
-	test("Calculated fields multi model tests", function(){
+	test("Calculated fields multi model tests", function() {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/values/1/value"},
 						{path: "model2>/values/1/value"},
 						{path: "model2>/values/2/value"}
-			        ],
+					],
 			formatter: function(oV1, oV2, oV3){
 				return oV1 + oV2 + oV3;
 			}
 		});
 
 		equal(oTxt.getValue(), "555562.06241" , "calculated fields multi model bindings ");
-
 	});
 
-	test("Calculated fields multi model tests wrong path", function(){
+	test("Calculated fields multi model tests wrong path", function() {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/values/1/value"},
 						{path: "model2>/values/200/value"},
 						{path: "model2>/values/2/value"}
-			        ],
+					],
 			formatter: function(oV1, oV2, oV3){
 				ok(!oV2, "value should be undefined");
 				return oV1 + oV3;
@@ -253,18 +244,16 @@
 		});
 
 		equal(oTxt.getValue(), "7.74" , "calculated fields multi model bindings ");
-
-
 	});
 
-	test("Calculated fields with types and raw values", function(){
+	test("Calculated fields with types and raw values", function() {
 		setup();
 		oTxt.bindValue({
 			parts: [
 						{path: "/values/1/value", type: new sap.ui.model.type.Float()},
-						{path: "model2>/values/1/value", type: new sap.ui.model.type.Float() },
+						{path: "model2>/values/1/value", type: new sap.ui.model.type.Float()},
 						{path: "model2>/values/2/value", type: new sap.ui.model.type.Float()}
-			        ],
+					],
 			formatter: function(oV1, oV2, oV3){
 				return oV1 + oV2 + oV3; // strings are added
 			}
@@ -279,55 +268,60 @@
 						{path: "model2>/values/1/value"},
 						{path: "model2>/values/2/value", type: new sap.ui.model.type.Float()},
 						{path: "/teamMembers/6/lastName"}
-			        ],
-			formatter: function(oV1, oV2, oV3, oV4){
+					],
+			formatter: function(oV1, oV2, oV3){
 				return oV1 + oV2 + oV3; // raw values
 			},
 			useRawValues : true
 		});
 
 		equal(oTxt.getValue(), "555562.06241" , "calculated fields formatter raw values");
-
+	});
+	module("Table", {
+		setup: function() {
+			this.clock = sinon.useFakeTimers();
+		},
+		teardown: function() {
+			this.clock.restore();
+		}
 	});
 
-	test("Calculated fields with table", function(){
+	test("Calculated fields with table", function() {
 		setup();
-
 		 var oTable = new sap.ui.table.Table({
 			columns: [
-	                new sap.ui.table.Column({
-	                    label: new sap.ui.commons.Label({ text: "name" }),
-	                    template: new sap.ui.commons.TextView({ text: {
-	            			parts: [
-	        						{path: "firstName"},
-	        						{path: "lastName"}
-	        					],
-	                    	formatter: function (firstName, lastName){
-	                    		if (firstName && lastName) {
-	                    			return "Dear " + firstName + " " + lastName;
-	                    		}
-	                    		return null;
-	                    	}
-	                    } })
-	                })
-	            ]
+				new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({ text: "name" }),
+						template: new sap.ui.commons.TextView({ text: {
+							parts: [
+									{path: "firstName"},
+									{path: "lastName"}
+								],
+							formatter: function (firstName, lastName){
+								if (firstName && lastName) {
+									return "Dear " + firstName + " " + lastName;
+								}
+								return null;
+						}
+						}})
+					})
+				]
 		});
 
-	  oTable.bindRows("/teamMembers");
-	  oTable.placeAt("table");
+		oTable.bindRows("/teamMembers");
+		oTable.placeAt("table");
 
-	  sap.ui.getCore().applyChanges();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+		var counter = 0;
 
-	  var counter = 0;
-
-	  jQuery.each(oTable.getRows(), function(i, oRow){
-		  if (oRow.getCells()[0].getText()) {
-			  equal(oRow.getCells()[0].getText(), "Dear " + testData.teamMembers[i].firstName + " " + testData.teamMembers[i].lastName, "check names");
-			  counter++;
-		  }
-	  });
-	  equal(counter, 7, "table entries");
-
+		jQuery.each(oTable.getRows(), function(i, oRow){
+			if (oRow.getCells()[0].getText()) {
+				equal(oRow.getCells()[0].getText(), "Dear " + testData.teamMembers[i].firstName + " " + testData.teamMembers[i].lastName, "check names");
+				counter++;
+			}
+		});
+		equal(counter, 7, "table entries");
 	});
 
 

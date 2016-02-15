@@ -39,45 +39,45 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 									          	title: "Private",
 									          	type: "Type05"
 									          },
-								          ]
+									          ]
 								},
 								{
 									pic: "test-resources/sap/ui/demokit/explored/img/johnDoe.png",
 									name: "John Doe",
 									role: "team member",
-										appointments: [
-										               {
-										              	 start: new Date("2015", "11", "15", "08", "30"),
-										              	 end: new Date("2015", "11", "15", "09", "30"),
-										              	 title: "Meeting",
-										              	 type: "Type02",
-										              	 tentative: false
-										               },
-										               {
-										              	 start: new Date("2015", "11", "15", "10", "0"),
-										              	 end: new Date("2015", "11", "15", "12", "0"),
-										              	 title: "Team meeting",
-										              	 info: "room 1",
-										              	 type: "Type01",
-										              	 pic: "sap-icon://sap-ui5",
-										              	 tentative: false
-										               },
-										               {
-										              	 start: new Date("2015", "11", "15", "11", "30"),
-										              	 end: new Date("2015", "11", "15", "13", "30"),
-										              	 title: "Lunch",
-										              	 type: "Type03",
-										              	 tentative: true
-										               }
-										               ],
-										headers: [
-										          {
-										          	start: new Date("2015", "11", "15", "8", "0"),
-										          	end: new Date("2015", "11", "15", "10", "0"),
-										          	title: "Reminder",
-										          	type: "Type06"
-										          },
-										          ]
+									appointments: [
+									               {
+									              	 start: new Date("2015", "11", "15", "08", "30"),
+									              	 end: new Date("2015", "11", "15", "09", "30"),
+									              	 title: "Meeting",
+									              	 type: "Type02",
+									              	 tentative: false
+									               },
+									               {
+									              	 start: new Date("2015", "11", "15", "10", "0"),
+									              	 end: new Date("2015", "11", "15", "12", "0"),
+									              	 title: "Team meeting",
+									              	 info: "room 1",
+									              	 type: "Type01",
+									              	 pic: "sap-icon://sap-ui5",
+									              	 tentative: false
+									               },
+									               {
+									              	 start: new Date("2015", "11", "15", "11", "30"),
+									              	 end: new Date("2015", "11", "15", "13", "30"),
+									              	 title: "Lunch",
+									              	 type: "Type03",
+									              	 tentative: true
+									               }
+									               ],
+									headers: [
+									          {
+									          	start: new Date("2015", "11", "15", "8", "0"),
+									          	end: new Date("2015", "11", "15", "10", "0"),
+									          	title: "Reminder",
+									          	type: "Type06"
+									          }
+									          ]
 								}
 				]
 			});

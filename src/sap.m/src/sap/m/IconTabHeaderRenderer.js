@@ -138,6 +138,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			oRM.writeElementData(oItem);
 			oRM.addClass("sapMITBItem");
 
+			if (!(oItem instanceof sap.m.IconTabSeparator) && !this.getCount()) {
+				oRM.addClass("sapMITBItemNoCount");
+			}
+
 			if (oItem instanceof sap.m.IconTabFilter) {
 
 				if (oItem.getDesign() === sap.m.IconTabFilterDesign.Vertical) {

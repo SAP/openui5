@@ -68,17 +68,28 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 }
 
 .sapMCrslItemTable {
-	display: table;
+	height: 100%;
 }
 
 .sapMCrslItemTableCell {
 	height: 100%;
-	display: table-cell;
 }
 
 .sapMCrslImg {
 	text-align: center;
-	vertical-align: middle;
+	height: 100%;
+
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+}
+
+.sapMCrslItemTableCell.sapMCrslImg img {
+	position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
 }
 
 .sapMCrslInner.sapMCrslNoTransition {

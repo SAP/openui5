@@ -48,12 +48,12 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		var Support = (function ($, document) {
 
-			var dialog, startTime, isEventRegistered, lastTouchUID;
-			var timeDiff = 0;
-			var minHoldTime = 3000; // 3s(3000ms) two-finger hold time
-			var holdFingersNumber = 2; // two-fingers hold
-			var maxFingersAllowed = 3; // two-fingers hold + 1-finger tab
-			var releasedFingersNumber = 1,
+			var dialog, startTime, isEventRegistered, lastTouchUID,
+				timeDiff = 0,
+				minHoldTime = 3000, // 3s(3000ms) two-finger hold time
+				holdFingersNumber = 2, // two-fingers hold
+				maxFingersAllowed = 3, // two-fingers hold + 1-finger tab
+				releasedFingersNumber = 1,
 				oData = {},
 				e2eTraceConst = {
 					btnStart: "startE2ETrace",
@@ -67,7 +67,8 @@ sap.ui.define(['jquery.sap.global'],
 				controlIDs = {
 					dvLoadedLibs: "LoadedLibs",
 					dvLoadedModules: "LoadedModules"
-				};
+				},
+				windowsPhoneTouches; // variable used to open the support dialog on windows phone
 
 			// copied from core
 			function line(buffer, right, border, label, content) {
@@ -267,11 +268,17 @@ sap.ui.define(['jquery.sap.global'],
 				return dialog;
 			}
 
-
 			//function is triggered when a touch is detected
 			function onTouchStart(oEvent) {
 				if (oEvent.touches) {
 					var currentTouches = oEvent.touches.length;
+
+					if (sap.ui.Device.browser.mobile &&
+						(sap.ui.Device.browser.name === sap.ui.Device.browser.BROWSER.INTERNET_EXPLORER ||
+						sap.ui.Device.browser.name === sap.ui.Device.browser.BROWSER.EDGE)) {
+						windowsPhoneTouches = currentTouches;
+					}
+
 
 					if (currentTouches > maxFingersAllowed) {
 						document.removeEventListener('touchend', onTouchEnd);
@@ -297,11 +304,16 @@ sap.ui.define(['jquery.sap.global'],
 
 			//function is triggered when a touch is removed e.g. the user’s finger is removed from the touchscreen.
 			function onTouchEnd(oEvent) {
+				var windowsPhoneTouchCondition = sap.ui.Device.browser.mobile &&
+					(sap.ui.Device.browser.name === sap.ui.Device.browser.BROWSER.INTERNET_EXPLORER ||
+					sap.ui.Device.browser.name === sap.ui.Device.browser.BROWSER.EDGE) &&
+					windowsPhoneTouches == maxFingersAllowed;
+
 				document.removeEventListener('touchend', onTouchEnd);
 
 				// Check if two fingers are holded for 3 seconds or more and after that it`s tapped with a third finger
 				if (timeDiff > minHoldTime
-					&& oEvent.touches.length === holdFingersNumber
+					&& (oEvent.touches.length === holdFingersNumber || windowsPhoneTouchCondition) // on Windows Phone oEvent.touches.lenght is 0 instead of 2
 					&& oEvent.changedTouches.length === releasedFingersNumber
 					&& oEvent.changedTouches[0].identifier === lastTouchUID) {
 

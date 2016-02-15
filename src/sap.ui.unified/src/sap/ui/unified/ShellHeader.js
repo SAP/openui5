@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 					if (!aItems[i].getVisible()) {
 						rm.addClass("sapUiUfdShellHidden");
 					}
-					if (aItems[i].getSelected()) {
+					if (aItems[i].getSelected() && aItems[i].getToggleEnabled()) {
 						rm.addClass("sapUiUfdShellHeadItmSel");
 					}
 					if (aItems[i].getShowMarker()) {
@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 						rm.writeAccessibilityState(aItems[i], {
 							role: "button",
 							selected: null,
-							pressed: aItems[i].getSelected()
+							pressed: aItems[i].getToggleEnabled() ? aItems[i].getSelected() : null
 						});
 					}
 					rm.write("><span></span><div class='sapUiUfdShellHeadItmMarker'><div></div></div></a>");

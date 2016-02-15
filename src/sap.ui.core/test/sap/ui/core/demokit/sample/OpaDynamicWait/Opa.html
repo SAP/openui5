@@ -37,15 +37,12 @@
 											name : "expanded",
 											value : false
 										}),
-										success : function (aTreeNodes) {
-											var that = this;
-											aTreeNodes.forEach(function(oTreeNode) {
-												if (oTreeNode.getNodes().length){
-													oTreeNode.expand();
-													that.iExpandRecursively()
-												}
-											});
-										},
+										actions : function (oTreeNode) {
+											if (oTreeNode.getNodes().length){
+												oTreeNode.expand();
+												this.iExpandRecursively()
+											}
+										}.bind(this),
 										errorMessage : "Didn't find collapsed tree nodes"
 									});
 								}

@@ -2,46 +2,101 @@
 /* CSS for control sap.m/TabStrip.control   */
 /* High Contrast Black theme                */
 /* ======================================== */
-
-.sapMTabStripSelect.sapMSltPressed .sapMSltArrow {
-	color: @sapHCStandardFG; /* ToDo: check if this is the right color when the styling of the button is fixed */
-	background-color: @sapHCHighlightAltBG;
-}
-
-.sapMTabStripSelect { /* change this only in context of sap.m.TabStripSelect*/
-	&.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
-		background-color: transparent;
-
-	  &.sapMSltHoverable:hover {
-		  background-color: transparent;
-	  }
-
-	  .sapMSltInner {
-		  .sapMSltIcon {
-			  background-color: @sapHCHighlightAltBG;
-		  }
-	  }
-	}
-
+.sapMSlt.sapMTabStripSelect {
+	border: none;
+	color: @sapHCStandardFG;
 	.sapMSltInner {
-		background-color: @sapHCStandardBG;
 		border: 1px solid @sapHCStandardFG;
+		background-color: @sapHCStandardBG;
 		border-radius: 0.375rem;
 	}
-
+	&.sapMSltPressed {
+		background-color: @sapHCHighlightAltBG;
+		&.sapMSltIconOnly {
+			&:not(.sapMSltDisabled) {
+				background-color: transparent;
+				&.sapMSltHoverable:hover {
+					background-color: transparent;
+				}
+				.sapMSltInner {
+					.sapMSltIcon {
+						background-color: @sapHCHighlightAltBG;
+					}
+				}
+				&:hover {
+					.sapMSltIcon {
+						background-color: @sapHCHighlightBG;
+					}
+				}
+			}
+		}
+		.sapMSltArrow {
+			background-color: @sapHCHighlightAltBG;
+		}
+	}
 	&:not(.sapMSltPressed) {
 		&.sapMSltHoverable:hover {
-		  background-color: transparent;
-
-		  .sapMSltInner {
-			.sapMSltIcon {
-			  background-color: @sapHCHighlightBG;
+			.sapMSltInner {
+				.sapMSltIcon {
+					background-color: @sapHCHighlightBG;
+				}
 			}
-		  }
+		}
+	}
+	&:hover, &.sapMSltPressed:hover {
+		background-color: transparent;
+		.sapMSltInner {
+			background-color: @sapHCHighlightBG;
 		}
 	}
 }
 
-.sap-desktop .sapMTabStripSelect.sapMSltIconOnly:not(.sapMSltDisabled):focus {
-	outline: none;
+.sap-desktop {
+	.sapMSlt.sapMTabStripSelect {
+		&.sapMSltIconOnly {
+			&:not(.sapMSltDisabled):focus {
+				outline: none;
+			}
+			&:hover {
+				&:not(.sapMSltPressed) {
+					background-color: transparent;
+				}
+			}
+		}
+	}
+}
+
+.sap-phone {
+	.sapMSlt.sapMTabStripSelect {
+		background-color: transparent;
+		&.sapMSltPressed {
+			background-color: @sapHCHighlightAltBG;
+		}
+		&:hover, &.sapMSltPressed:hover {
+			background: none;
+			.sapMSltInner {
+				background: none;
+			}
+		}
+		&:active {
+			background-color: @sapHCHighlightAltBG;
+			.sapMSltInner {
+				background-color: @sapHCHighlightAltBG;
+			}
+		}
+		.sapMSltInner {
+			border: none;
+		}
+		.sapMSltArrow {
+			border: 1px solid @sapHCStandardFG;
+			border-radius: 0.375rem;
+		}
+	}
+
+	.sapMSltBar.sapMTSSltBar::after {
+		color: @sapHCStandardFG;
+		background: @sapHCHighlightAltBG;
+		border: 0.0625rem solid @sapHCStandardFG;
+		border-radius: 0.375rem;
+	}
 }

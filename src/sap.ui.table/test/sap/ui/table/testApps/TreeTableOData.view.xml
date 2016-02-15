@@ -87,6 +87,11 @@
 									<Input value="{/rootLevel}" id="rootLevel"/>
 								</f:fields>
 							</f:FormElement>
+							<f:FormElement label="# of exp. Level">
+								<f:fields>
+									<Input value="{/initialLevel}" id="initialLevel"/>
+								</f:fields>
+							</f:FormElement>
 							<f:FormElement label="Application Filter">
 								<f:fields>
 									<Input value="{/filterProperty}" id="filterProperty"/>
@@ -107,6 +112,69 @@
 											<core:Item text="Auto" key="Auto"/>
 										</items>
 									</Select>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+		</content>
+	</Panel>
+	<Panel
+		expandable="true"
+		expanded="true"
+		width="auto"
+		class="sapUiResponsiveMargin sapUiNoContentPadding">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Hierarchy Properties" level="H2"/>
+				<ToolbarSpacer />
+				<Button icon="sap-icon://restart" press="onCreateTableClick"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<f:Form id="hierarchyPropertiesForm"
+				editable="true">
+				<f:layout>
+					<f:ResponsiveGridLayout
+						labelSpanL="3"
+						labelSpanM="3"
+						emptySpanL="4"
+						emptySpanM="4"
+						columnsL="1"
+						columnsM="1" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement label="Level">
+								<f:fields>
+									<Input value="{/hierarchyLevelFor}" id="hierarchyLevelFor"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Parent-Node">
+								<f:fields>
+									<Input value="{/hierarchyParentNodeFor}" id="hierarchyParentNodeFor"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Hierarchy-Node">
+								<f:fields>
+									<Input value="{/hierarchyNodeFor}" id="hierarchyNodeFor"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Drill-State">
+								<f:fields>
+									<Input value="{/hierarchyDrillStateFor}" id="hierarchyDrillStateFor"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Descendant-Count">
+								<f:fields>
+									<Input value="{/hierarchyDescendantCountFor}" id="hierarchyDescendantCountFor"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Use Local Metadata">
+								<f:fields>
+									<CheckBox selected="{/useLocalMetadata}" id="useLocalMetadata"/>
 								</f:fields>
 							</f:FormElement>
 						</f:formElements>

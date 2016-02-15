@@ -62,9 +62,9 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 				this._oFormatMobile = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", strictParsing: true, calendarType: sap.ui.core.CalendarType.Gregorian});
 			}
 
-			this._oMinDate = new UniversalDate(1, 0, 1);
+			this._oMinDate = new Date(1, 0, 1);
 			this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
-			this._oMaxDate = new UniversalDate(9999, 11, 31);
+			this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 99);
 
 		};
 
@@ -608,6 +608,7 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 					oThis._oDateRange.setStartDate(new Date(oDate.getTime()));
 				}
 			} else {
+				oThis._oCalendar.focusDate(new Date());
 				if (oThis._oDateRange.getStartDate()) {
 					oThis._oDateRange.setStartDate(undefined);
 				}

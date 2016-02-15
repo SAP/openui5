@@ -671,12 +671,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (!this._isSuggestionItemSelectable(aListItems[iSelectedIndex])) {
 			// if no further visible item can be found -> do nothing (e.g. set the old item as selected again)
 			if (iOldIndex >= 0) {
-				aListItems[iOldIndex].setSelected(true);
+				aListItems[iOldIndex].setSelected(true).updateAccessibilityState();
 				this.$("inner").attr("aria-activedescendant", aListItems[iOldIndex].getId());
 			}
 			return;
 		} else {
-			aListItems[iSelectedIndex].setSelected(true);
+			aListItems[iSelectedIndex].setSelected(true).updateAccessibilityState();
 			this.$("inner").attr("aria-activedescendant", aListItems[iSelectedIndex].getId());
 		}
 
@@ -856,7 +856,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				// if binding is updated during suggest event, the list items don't need to be refreshed here
 				// because they will be refreshed in updateItems function.
 				// This solves the popup blinking problem
-				if (!this.bBindingUpdate) {
+				if (!this._bBindingUpdated) {
 					this._refreshItemsDelayed();
 				}
 			});
@@ -1188,7 +1188,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						oInput._$input.val(oInput
 								._getInputValue(oInput._oPopupInput
 										.getValue()));
-						oInput._changeProxy();
+						oInput.onChange();
 
 						if (oInput instanceof sap.m.MultiInput ) {
 							oInput._validateCurrentText();
@@ -1200,8 +1200,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 						oInput._updateTokenizerInMultiInput();
 						oInput._tokenizerInPopup.destroy();
-						oInput.setValue("");
 						oInput._showIndicator();
+
 						setTimeout(function() {
 							oInput._setContainerSizes();
 						}, 0);
@@ -1284,7 +1284,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						} else {
 							// call _getInputValue to apply the maxLength to the typed value
 							oInput._$input.val(oInput._getInputValue(sNewValue));
-							oInput._changeProxy();
+							oInput.onChange();
 						}
 						oInput._iPopupListSelectedIndex = -1;
 						if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode)) {
@@ -1599,7 +1599,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					} else {
 						// call _getInputValue to apply the maxLength to the typed value
 						that._$input.val(that._getInputValue(sNewValue));
-						that._changeProxy();
+						that.onChange();
 					}
 					that._iPopupListSelectedIndex = -1;
 

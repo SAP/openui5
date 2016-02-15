@@ -118,7 +118,10 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 *   if <code>true</code>, the value is handled as a sequence of digits; while formatting
 	 *   leading zeros are removed from the value and while parsing the value is enhanced with
 	 *   leading zeros (if a maxLength constraint is given) or leading zeros are removed from the
-	 *   value (if no maxLength constraint is given); this constraint is supported since 1.35.0
+	 *   value (if no maxLength constraint is given); this constraint is supported since 1.35.0.
+	 *   To make this type behave as ABAP type NUMC, use
+	 *   <code>oConstraints.isDigitSequence=true</code> together with
+	 *   <code>oConstraints.maxLength</code>.
 	 * @param {int|string} [oConstraints.maxLength]
 	 *   the maximal allowed length of the string; unlimited if not defined
 	 * @param {boolean|string} [oConstraints.nullable=true]

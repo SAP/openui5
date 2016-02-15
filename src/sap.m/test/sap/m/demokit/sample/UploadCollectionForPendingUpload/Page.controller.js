@@ -2,9 +2,8 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/m/MessageToast',
 		'sap/m/UploadCollectionParameter',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, UploadCollectionParameter, Controller, JSONModel) {
+		'sap/ui/core/mvc/Controller'
+	], function(jQuery, MessageToast, UploadCollectionParameter, Controller) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.UploadCollectionForPendingUpload.Page", {
@@ -69,39 +68,20 @@ sap.ui.define([
 		},
 
 		onUploadComplete : function(oEvent) {
-			var oPage = this.getView().byId("Page");
-			var oTextArea = this.getView().byId("TextArea");
-			var oButton = this.getView().byId("Button");
-
-			// destroy old UploadCollection instance and create a new one
-			var oUploadCollection = this.getView().byId("UploadCollection");
-
-			oPage.removeContent(oUploadCollection);
-			oUploadCollection.destroy();
-
-			oUploadCollection = new sap.m.UploadCollection({
-				id : this.getView().createId("UploadCollection"),
-				maximumFilenameLength : 55,
-				maximumFileSize : 10,
-				multiple : true,
-				sameFilenameAllowed : true,
-				instantUpload : false,
-				showSeparators : "All",
-				change : [this.getView().getController().onChange, this],
-				fileDeleted : [this.getView().getController().onFileDeleted, this],
-				filenameLengthExceed : [this.getView().getController().onFilenameLengthExceed, this],
-				fileSizeExceed : [this.getView().getController().onFileSizeExceed, this],
-				typeMissmatch : [this.getView().getController().onTypeMissmatch, this],
-				uploadComplete : [this.getView().getController().onUploadComplete, this],
-				beforeUploadStarts : [this.getView().getController().onBeforeUploadStarts, this]
-			});
-
-			oPage.insertContent(oUploadCollection, 3);
-
-			// delay the success message in order to see other messages before
+			var sUploadedFileName = oEvent.getParameter("files")[0].fileName;
 			setTimeout(function() {
-				MessageToast.show("Event uploadComplete triggered")
-			}, 8000);
+				var oUploadCollection = this.getView().byId("UploadCollection");
+
+				for (var i = 0; i < oUploadCollection.getItems().length; i++) {
+					if (oUploadCollection.getItems()[i].getFileName() === sUploadedFileName) {
+						oUploadCollection.removeItem(oUploadCollection.getItems()[i]);
+						break;
+					}
+				}
+
+				// delay the success message in order to see other messages before
+				MessageToast.show("Event uploadComplete triggered");
+			}.bind(this), 8000);
 		},
 
 		onSelectChange : function(oEvent) {

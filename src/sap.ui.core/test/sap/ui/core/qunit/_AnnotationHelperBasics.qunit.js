@@ -17,22 +17,22 @@ sap.ui.require([
 			fnTestFunction = function () {};
 
 		[
-			{value: undefined, json: undefined, js: "undefined"},
-			{value: NaN, js: "NaN"},
-			{value: Infinity, js: "Infinity"},
-			{value: -Infinity, js: "-Infinity"},
-			{value: null, json: "null"},
-			{value: false, json: "false"},
-			{value: 0, json: "0"},
-			{value: "", json: "''"},
-			{value: "foo", json: "'foo'"},
-			{value: {}, json: "{}"},
-			{value: {foo: 'bar'}, json: "{'foo':'bar'}"},
-			{value: {foo: "b'ar"}, json: "{'foo':'b\\'ar'}"},
-			{value: {foo: 'b"ar'}, json: "{'foo':'b\"ar'}"},
-			{value: {foo: 'b\\ar'}, json: "{'foo':'b\\\\ar'}"},
-			{value: {foo: 'b\\"ar'}, json: "{'foo':'b\\\\\"ar'}"},
-			{value: {foo: 'b\tar'}, json: "{'foo':'b\\tar'}"}
+			{value : undefined, json : undefined, js : "undefined"},
+			{value : NaN, js : "NaN"},
+			{value : Infinity, js : "Infinity"},
+			{value : -Infinity, js : "-Infinity"},
+			{value : null, json : "null"},
+			{value : false, json : "false"},
+			{value : 0, json : "0"},
+			{value : "", json : "''"},
+			{value : "foo", json : "'foo'"},
+			{value : {}, json : "{}"},
+			{value : {foo : 'bar'}, json : "{'foo':'bar'}"},
+			{value : {foo : "b'ar"}, json : "{'foo':'b\\'ar'}"},
+			{value : {foo : 'b"ar'}, json : "{'foo':'b\"ar'}"},
+			{value : {foo : 'b\\ar'}, json : "{'foo':'b\\\\ar'}"},
+			{value : {foo : 'b\\"ar'}, json : "{'foo':'b\\\\\"ar'}"},
+			{value : {foo : 'b\tar'}, json : "{'foo':'b\\tar'}"}
 		].forEach(function (oFixture) {
 			var vJS = oFixture.hasOwnProperty("js") ? oFixture.js : oFixture.json;
 
@@ -54,7 +54,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("error", function (assert) {
 		var sErrorText = "Wrong! So wrong!",
-			oPathValue = {path: "/path/to/foo", value: {foo: "bar"}},
+			oPathValue = {path : "/path/to/foo", value : {foo : "bar"}},
 			sMessage = oPathValue.path + ": " + sErrorText;
 
 		this.mock(jQuery.sap.log).expects("error").once().withExactArgs(sMessage,
@@ -73,14 +73,14 @@ sap.ui.require([
 			aTests = [aArray, oObject, sString, undefined, null, true, 0, NaN, Function];
 
 		[
-			{type: "array", ok: aArray},
-			{type: "object", ok: oObject},
-			{type: "string", ok: sString}
+			{type : "array", ok : aArray},
+			{type : "object", ok : oObject},
+			{type : "string", ok : sString}
 		].forEach(function (oFixture) {
 			aTests.forEach(sinon.test(function (vTest) {
 				var oPathValue = {
-						path: "/my/path",
-						value: vTest
+						path : "/my/path",
+						value : vTest
 					};
 
 				if (vTest === oFixture.ok) {
@@ -101,26 +101,27 @@ sap.ui.require([
 	[false, true].forEach(function (bTestProperty) {
 		QUnit.test("descend, bTestProperty=" + bTestProperty, function (assert) {
 			[
-				{type: "object", property: "p", value: {p: "foo"}},
-				{type: "array", property: 0, value: ["foo"]}
+				{type : "object", property : "p", value : {p : "foo"}},
+				{type : "array", property : 0, value : ["foo"]}
 			].forEach(sinon.test(function (oFixture) {
 				var oStart = {
-						path: "/my/path",
-						value: oFixture.value
+						asExpression : "asExpression",
+						path : "/my/path",
+						value : oFixture.value,
+						withType : "withType"
 					},
 					oEnd = {
-						path: "/my/path/" + oFixture.property,
-						value: "foo"
+						asExpression : "asExpression",
+						path : "/my/path/" + oFixture.property,
+						value : "foo",
+						withType : "withType"
 					},
 					oResult,
 					oBasics = this.mock(Basics);
 
 				oBasics.expects("expectType").withExactArgs(oStart, oFixture.type);
-				if (bTestProperty) {
-					oBasics.expects("expectType").withExactArgs(oEnd, "string");
-				} else {
-					oBasics.expects("expectType").never();
-				}
+				oBasics.expects("expectType").exactly(bTestProperty ? 1 : 0)
+					.withExactArgs(oEnd, "string");
 
 				oResult = bTestProperty ?
 					Basics.descend(oStart, oFixture.property, "string") :
@@ -135,7 +136,7 @@ sap.ui.require([
 		var oPathValue = {};
 
 		this.mock(Basics).expects("descend").once().withExactArgs(oPathValue, "p", "string")
-			.returns({value: "foo"});
+			.returns({value : "foo"});
 
 		assert.strictEqual(Basics.property(oPathValue, "p", "string"), "foo");
 	});
@@ -143,21 +144,21 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resultToString: bindings", function (assert) {
 		[{
-			value: {result: "binding", value: "path"},
-			binding: "{path}",
-			expression: "${path}"
+			value : {result : "binding", value : "path"},
+			binding : "{path}",
+			expression : "${path}"
 		}, {
-			value: {result: "binding", value: "{foo'bar}"},
-			binding: "{path:'{foo\\'bar}'}",
-			expression: "${path:'{foo\\'bar}'}"
+			value : {result : "binding", value : "{foo'bar}"},
+			binding : "{path:'{foo\\'bar}'}",
+			expression : "${path:'{foo\\'bar}'}"
 		}, {
-			value: {result: "constant", type: "Edm.String", value: "{foo\\bar}"},
-			binding: "\\{foo\\\\bar\\}",
-			expression: "'{foo\\\\bar}'"
+			value : {result : "constant", type : "Edm.String", value : "{foo\\bar}"},
+			binding : "\\{foo\\\\bar\\}",
+			expression : "'{foo\\\\bar}'"
 		}, {
-			value: {result: "expression", value: "foo(${path})"},
-			binding: "{=foo(${path})}",
-			expression: "foo(${path})"
+			value : {result : "expression", value : "foo(${path})"},
+			binding : "{=foo(${path})}",
+			expression : "foo(${path})"
 		}].forEach(function (oFixture) {
 			assert.strictEqual(Basics.resultToString(oFixture.value, false), oFixture.binding,
 				oFixture.binding);
@@ -166,10 +167,10 @@ sap.ui.require([
 		});
 
 		assert.strictEqual(
-			Basics.resultToString({result: "composite", value: "{FirstName} {LastName}"}, false),
+			Basics.resultToString({result : "composite", value : "{FirstName} {LastName}"}, false),
 			"{FirstName} {LastName}", "composite to binding");
 		assert.throws(function () {
-			Basics.resultToString({result: "composite", value: "{FirstName} {LastName}"}, true);
+			Basics.resultToString({result : "composite", value : "{FirstName} {LastName}"}, true);
 		}, /Trying to embed a composite binding into an expression binding/,
 			"composite to expression");
 	});
@@ -177,22 +178,22 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resultToString: constants", function (assert) {
 		[
-			{type: "edm:Null", value: "null", binding: null, expression: "null"},
-			{type: "Edm.Boolean", value: "false", expression: "false"},
-// TODO		{type: "Edm.Date", value: "2000-01-01", expression: ""},
-// TODO		{type: "Edm.DateTimeOffset", value: "2000-01-01T16:00Z", expression: ""},
-			{type: "Edm.Decimal", value: "3.1415", expression: "'3.1415'"},
-			{type: "Edm.Guid", value: "12345678-ABCD-EFab-cdef-123456789012",
-				expression: "'12345678-ABCD-EFab-cdef-123456789012'"},
-			{type: "Edm.Int32", value: "42", expression: "42"},
-			{type: "Edm.Int64", value: "9007199254740992", expression: "'9007199254740992'"},
-			{type: "Edm.String", value: "foo", expression: "'foo'"}
-// TODO		{type: "Edm.TimeOfDay", value: "23:59:59", expression: ""}
+			{type : "edm:Null", value : "null", binding : null, expression : "null"},
+			{type : "Edm.Boolean", value : "false", expression : "false"},
+// TODO		{type : "Edm.Date", value : "2000-01-01", expression : ""},
+// TODO		{type : "Edm.DateTimeOffset", value : "2000-01-01T16:00Z", expression : ""},
+			{type : "Edm.Decimal", value : "3.1415", expression : "'3.1415'"},
+			{type : "Edm.Guid", value : "12345678-ABCD-EFab-cdef-123456789012",
+				expression : "'12345678-ABCD-EFab-cdef-123456789012'"},
+			{type : "Edm.Int32", value : "42", expression : "42"},
+			{type : "Edm.Int64", value : "9007199254740992", expression : "'9007199254740992'"},
+			{type : "Edm.String", value : "foo", expression : "'foo'"}
+// TODO		{type : "Edm.TimeOfDay", value : "23:59:59", expression : ""}
 		].forEach(function (oFixture) {
 			var oResult = {
-					result: "constant",
-					type: oFixture.type,
-					value: oFixture.value
+					result : "constant",
+					type : oFixture.type,
+					value : oFixture.value
 				};
 
 			assert.strictEqual(Basics.resultToString(oResult, false),
@@ -206,75 +207,78 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resultToString with type", function (assert) {
 		[{
-			value: {type: "Edm.Boolean", constraints: {}},
+			value : {type : "Edm.Boolean", constraints : {}},
 			binding: ",type:'sap.ui.model.odata.type.Boolean'"
 		}, {
-			value: {type: "Edm.Byte", constraints: {nullable: false}},
-			binding: ",type:'sap.ui.model.odata.type.Byte',constraints:{'nullable':false}"
+			value : {type : "Edm.Byte", constraints : {nullable : false}},
+			binding : ",type:'sap.ui.model.odata.type.Byte',constraints:{'nullable':false}"
 		}, {
-			value: {type: "Edm.DateTime", constraints: {displayFormat: "DateOnly"}},
-			binding: ",type:'sap.ui.model.odata.type.DateTime'," +
+			value : {type : "Edm.DateTime", constraints : {displayFormat : "DateOnly"}},
+			binding : ",type:'sap.ui.model.odata.type.DateTime'," +
 				"constraints:{'displayFormat':'DateOnly'}"
 		}, {
-			value: {type: "Edm.DateTimeOffset", constraints: {nullable: false}},
-			binding: ",type:'sap.ui.model.odata.type.DateTimeOffset'," +
+			value : {type : "Edm.DateTimeOffset", constraints : {nullable : false}},
+			binding : ",type:'sap.ui.model.odata.type.DateTimeOffset'," +
 				"constraints:{'nullable':false}"
 		}, {
-			value: {type: "Edm.Decimal", constraints: {precision: 10, scale: "variable"}},
-			binding: ",type:'sap.ui.model.odata.type.Decimal'," +
+			value : {type : "Edm.Decimal", constraints : {precision : 10, scale : "variable"}},
+			binding : ",type:'sap.ui.model.odata.type.Decimal'," +
 				"constraints:{'precision':10,'scale':'variable'}"
 		}, {
-			value: {type: "Edm.Double", constraints: {nullable: false}},
-			binding: ",type:'sap.ui.model.odata.type.Double',constraints:{'nullable':false}"
+			value : {type : "Edm.Double", constraints : {nullable : false}},
+			binding : ",type:'sap.ui.model.odata.type.Double',constraints:{'nullable':false}"
 		}, {
-			value: {type: "Edm.Float"},
-			binding: ",type:'sap.ui.model.odata.type.Single'"
+			value : {type : "Edm.Float"},
+			binding : ",type:'sap.ui.model.odata.type.Single'"
 		}, {
-			value: {type: "Edm.Guid"},
-			binding: ",type:'sap.ui.model.odata.type.Guid'"
+			value : {type : "Edm.Guid"},
+			binding : ",type:'sap.ui.model.odata.type.Guid'"
 		}, {
-			value: {type: "Edm.Int16"},
-			binding: ",type:'sap.ui.model.odata.type.Int16'"
+			value : {type : "Edm.Int16"},
+			binding : ",type:'sap.ui.model.odata.type.Int16'"
 		}, {
-			value: {type: "Edm.Int32"},
-			binding: ",type:'sap.ui.model.odata.type.Int32'"
+			value : {type : "Edm.Int32"},
+			binding : ",type:'sap.ui.model.odata.type.Int32'"
 		}, {
-			value: {type: "Edm.Int64"},
-			binding: ",type:'sap.ui.model.odata.type.Int64'"
+			value : {type : "Edm.Int64"},
+			binding : ",type:'sap.ui.model.odata.type.Int64'"
 		}, {
-			value: {type: "Edm.SByte"},
-			binding: ",type:'sap.ui.model.odata.type.SByte'"
+			value : {type : "Edm.SByte"},
+			binding : ",type:'sap.ui.model.odata.type.SByte'"
 		}, {
-			value: {type: "Edm.String", constraints: {maxLength: 30}},
-			binding: ",type:'sap.ui.model.odata.type.String',constraints:{'maxLength':30}"
+			value : {type : "Edm.String", constraints : {maxLength : 30}},
+			binding : ",type:'sap.ui.model.odata.type.String',constraints:{'maxLength':30}"
 		}, {
-			value: {type: "Edm.Time"},
-			binding: ",type:'sap.ui.model.odata.type.Time'"
+			value : {type : "Edm.Time"},
+			binding : ",type:'sap.ui.model.odata.type.Time'"
 		}].forEach(function (oFixture) {
 			oFixture.value.result = "binding";
 			oFixture.value.value = "foo/'bar'";
 			assert.strictEqual(Basics.resultToString(oFixture.value, false, true),
 				"{path:'foo/\\'bar\\''" + oFixture.binding + "}",
-				JSON.stringify(oFixture.value));
+				JSON.stringify(oFixture.value) + " (binding)");
+			assert.strictEqual(Basics.resultToString(oFixture.value, true, true),
+				"${path:'foo/\\'bar\\''" + oFixture.binding + "}",
+				JSON.stringify(oFixture.value) + " (expression)");
 		});
 
 		assert.strictEqual(Basics.resultToString({
-			result: "binding",
-			value: "foo",
-			type: "Edm.String",
-			ignoreTypeInPath: true
+			result : "binding",
+			value : "foo",
+			type : "Edm.String",
+			ignoreTypeInPath : true
 		}, false, true), "{foo}");
 
 		assert.strictEqual(Basics.resultToString({
-			result: "binding",
-			value: "foo:bar",
-			type: "Edm.String",
-			ignoreTypeInPath: true
+			result : "binding",
+			value : "foo:bar",
+			type : "Edm.String",
+			ignoreTypeInPath : true
 		}, false, true), "{path:'foo:bar'}");
 
 		assert.strictEqual(Basics.resultToString({
-			result: "binding",
-			value: "foo/bar"
+			result : "binding",
+			value : "foo/bar"
 			/*no type*/
 		}, false, true), "{foo/bar}", "complex binding syntax not needed w/o type");
 	});
@@ -289,12 +293,12 @@ sap.ui.require([
 			oMockedInterface = {
 				getModel : function () {
 					return {
-						getObject: function () { return {}; },
-						getODataAssociationEnd: function () {},
-						getODataProperty: function () {}
+						getObject : function () { return {}; },
+						getODataAssociationEnd : function () {},
+						getODataProperty : function () {}
 					};
 				},
-				getPath: function () {
+				getPath : function () {
 					return "/dataServices/schema/0/entityType/0/property/0";
 				}
 			};

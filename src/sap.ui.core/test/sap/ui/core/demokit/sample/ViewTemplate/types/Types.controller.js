@@ -12,20 +12,20 @@ sap.ui.define([
 	], function(jQuery, Controller, MessageBox, MessageToast) {
 	"use strict";
 	var TypesController = Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
-		onInit: function () {
+		onInit : function () {
 
 			this.messagePopover = new sap.m.MessagePopover({
-				items: {
-					path:"message>/",
-					template: new sap.m.MessagePopoverItem({description: "{message>description}",
-						type: "{message>type}", title:"{message>message}"})
+				items : {
+					path :"message>/",
+					template : new sap.m.MessagePopoverItem({description : "{message>description}",
+						type : "{message>type}", title :"{message>message}"})
 				}
 			});
 			this.messagePopover.setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
 				"message");
 		},
 
-		onReset: function () {
+		onReset : function () {
 			var that = this,
 				aObjects = this.getView().findAggregatedObjects(true),
 				i;
@@ -37,17 +37,17 @@ sap.ui.define([
 			}
 			this.getView().getModel().resetChanges();
 			this.getView().getModel().callFunction("/ResetEdmTypes", {
-				method: "POST",
-				success: function () {
+				method : "POST",
+				success : function () {
 					MessageToast.show("Data successfully reset");
 				},
-				error: function (oError) {
+				error : function (oError) {
 					that.messagePopover.openBy(that.getView().byId("onResetID"));
 				}
 			});
 		},
 
-		onSave: function () {
+		onSave : function () {
 			var that = this;
 			this.getView().getModel().attachEventOnce("requestCompleted", this, function(oEvent) {
 				if (oEvent.getParameter("success")) {
@@ -59,7 +59,7 @@ sap.ui.define([
 			this.getView().getModel().submitChanges();
 		},
 
-		onSourceCode: function (oEvent) {
+		onSourceCode : function (oEvent) {
 			var oView = this.getView(),
 				sSource,
 				bVisible = oView.byId("toggleSourceCode").getPressed();

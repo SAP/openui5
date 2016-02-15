@@ -245,18 +245,13 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 			this.aApplicationFilters = [];
 		}
 
-		// reset previous stored filter contexts
-		this.filterInfo.aFilteredContexts = [];
-		this.filterInfo.oParentContext = {};
-		if (!aFilters || !jQuery.isArray(aFilters) || aFilters.length == 0) {
-			this.aFilters = [];
-			this.aApplicationFilters = [];
+
+		aFilters = this.aFilters.concat(this.aApplicationFilters);
+		if (aFilters.length == 0) {
 			this.aAllFilters = null;
 		} else {
-			this.aAllFilters = this.aFilters.concat(this.aApplicationFilters);
-			// start with binding path root
-			var oContext = new Context(this.oModel, this.sPath);
-			this.filterRecursive(oContext);
+			this.aAllFilters = aFilters;
+			this.applyFilter();
 		}
 		this._mLengthsCache = {};
 		this._fireChange({reason: "filter"});
@@ -267,59 +262,58 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	};
 
 	/**
-	 * filters the tree recursively.
+	 * Apply the current defined filters on the existing dataset.
+	 * @private
+	 */
+	ClientTreeBinding.prototype.applyFilter = function(){
+		// reset previous stored filter contexts
+		this.filterInfo.aFilteredContexts = [];
+		this.filterInfo.oParentContext = {};
+		// start with binding path root
+		var oContext = this.oModel.getContext(this.sPath);
+		this._applyFilterRecursive(oContext);
+	};
+
+	/**
+	 * Filters the tree recursively.
+	 * Performs the real filtering and stores all filtered contexts and its parent context into an array.
 	 * @param {object} oParentContext the context where to start. The children of this node context are then filtered recursively.
 	 * @private
 	 */
-	ClientTreeBinding.prototype.filterRecursive = function(oParentContext){
+	ClientTreeBinding.prototype._applyFilterRecursive = function(oParentContext){
 
-		this.bIsFiltering = true;
-		var aChildren = this.getNodeContexts(oParentContext);
-		this.bIsFiltering = false;
-
-		if (aChildren.length > 0) {
-			var that = this;
-			jQuery.each(aChildren, function(i, oChildContext){
-				that.filterRecursive(oChildContext);
-			});
-			this.applyFilter(oParentContext);
-		}
-	};
-
-
-	/**
-	 * Performs the real filtering and stores all filtered contexts and its parent context into an array.
-	 * @param {object} oParentContext the context where to start. The children of this node context are filtered.
-	 * @private
-	 */
-	ClientTreeBinding.prototype.applyFilter = function(oParentContext){
-
-		if (jQuery.isEmptyObject(this.aAllFilters)) {
-			return;
-		}
 		var that = this,
-			aFiltered = [];
+			aFilteredContexts = [];
 
 		this.bIsFiltering = true;
 		var aUnfilteredContexts = this.getNodeContexts(oParentContext);
 		this.bIsFiltering = false;
 
-		aFiltered = FilterProcessor.apply(aUnfilteredContexts, this.aAllFilters, function (oContext, sPath) {
-			return that.oModel.getProperty(sPath, oContext);
-		});
+		if (aUnfilteredContexts.length > 0) {
+			jQuery.each(aUnfilteredContexts, function(i, oContext){
+				that._applyFilterRecursive(oContext);
+			});
 
-		if (aFiltered.length > 0) {
-			jQuery.merge(this.filterInfo.aFilteredContexts, aFiltered);
-			this.filterInfo.aFilteredContexts.push(oParentContext);
-			this.filterInfo.oParentContext = oParentContext;
-		}
-		// push additionally parentcontexts if any children are already included in filtered contexts
-		if (jQuery.inArray(this.filterInfo.oParentContext, aUnfilteredContexts) != -1) {
-			this.filterInfo.aFilteredContexts.push(oParentContext);
-			// set the parent context which was added to be the new parent context
-			this.filterInfo.oParentContext = oParentContext;
-		}
+			if (jQuery.isEmptyObject(this.aAllFilters)) {
+				return;
+			}
 
+			aFilteredContexts = FilterProcessor.apply(aUnfilteredContexts, this.aAllFilters, function (oContext, sPath) {
+				return that.oModel.getProperty(sPath, oContext);
+			});
+
+			if (aFilteredContexts.length > 0) {
+				jQuery.merge(this.filterInfo.aFilteredContexts, aFilteredContexts);
+				this.filterInfo.aFilteredContexts.push(oParentContext);
+				this.filterInfo.oParentContext = oParentContext;
+			}
+			// push additionally parentcontexts if any children are already included in filtered contexts
+			if (jQuery.inArray(this.filterInfo.oParentContext, aUnfilteredContexts) != -1) {
+				this.filterInfo.aFilteredContexts.push(oParentContext);
+				// set the parent context which was added to be the new parent context
+				this.filterInfo.oParentContext = oParentContext;
+			}
+		}
 	};
 
 	/**
@@ -372,6 +366,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	 *
 	 */
 	ClientTreeBinding.prototype.checkUpdate = function(bForceupdate){
+		// apply filter again
+		this.applyFilter();
 		this._mLengthsCache = {};
 		this._fireChange();
 	};

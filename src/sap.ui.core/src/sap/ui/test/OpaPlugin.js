@@ -26,7 +26,12 @@ sap.ui.define(['jquery.sap.global',
 	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline) {
 		var oMatcherPipeline = new MatcherPipeline(),
 			oInteractableMatcher = new Interactable(),
-			oVisibleMatcher = new Visible();
+			oVisibleMatcher = new Visible(),
+			aControlSelectorsForMatchingControls = [
+				"id",
+				"viewName",
+				"controlType"
+			];
 
 		/**
 		 * @class A Plugin to search UI5 controls.
@@ -38,8 +43,9 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		var OpaPlugin = UI5Object.extend("sap.ui.test.OpaPlugin", /** @lends sap.ui.test.OpaPlugin.prototype */ {
 
-			constructor : function() {
+			constructor : function(sLogPrefix) {
 				var that = this;
+				this._sLogPrefix = sLogPrefix || "";
 
 				sap.ui.getCore().registerPlugin({
 					startPlugin: function(oCore) {
@@ -121,7 +127,7 @@ sap.ui.define(['jquery.sap.global',
 					sViewId;
 
 				if (!oView) {
-					$.sap.log.info("Found no view with the name: " + sViewName);
+					$.sap.log.debug("Found no view with the name: " + sViewName, this._sLogPrefix);
 					return null;
 				}
 
@@ -137,7 +143,12 @@ sap.ui.define(['jquery.sap.global',
 				}
 
 				if (typeof oOptions.id === "string") {
-					return oView.byId(oOptions.id);
+					var oElement = oView.byId(oOptions.id);
+					if (!oElement) {
+						$.sap.log.debug("Found no control with the id " + oOptions.id + " in the view " + sViewName, this._sLogPrefix);
+					}
+
+					return oElement;
 				}
 
 				var aAllControlsOfTheView = this.getAllControlsWithTheParent(oView, oOptions.controlType);
@@ -281,6 +292,42 @@ sap.ui.define(['jquery.sap.global',
 				}).filter(function (oControl) {
 					//only return defined controls
 					return that._checkControlType(oControl, oOptions) && oControl && !oControl.bIsDestroyed;
+				});
+			},
+
+			/**
+			 * Gets the constructor function of a certain controlType
+			 *
+			 * @param {string} sControlType the name of the type eg: "sap.m.Button"
+			 * @returns {null|function} When the type is loaded, the contstructor is returned, if it is a lazy stub or not yet loaded, null will be returned and there will be a log entry.
+			 * @public
+			 */
+			getControlConstructor : function (sControlType) {
+				if (sap.ui.lazyRequire._isStub(sControlType)) {
+					$.sap.log.debug("The control type " + sControlType + " is currently a lazy stub. Skipped check and will wait until it is invoked", "Opa5");
+					return null;
+				}
+
+				var fnControlType = $.sap.getObject(sControlType);
+
+				// no control type
+				if (!fnControlType) {
+					$.sap.log.debug("The control type " + sControlType + " is undefined. Skipped check and will wait until it is required", "Opa5");
+					return null;
+				}
+
+				return fnControlType;
+			},
+
+			/**
+			 * Checks if the option when they would be passed to getMatchingControls could return a result
+			 * @param oOptions
+			 * @returns boolean
+			 * @private
+			 */
+			_isLookingForAControl : function (oOptions) {
+				return Object.keys(oOptions).some(function (sKey) {
+					return aControlSelectorsForMatchingControls.indexOf(sKey) !== -1;
 				});
 			},
 

@@ -1,37 +1,17 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
+		"sap/ui/test/actions/Press",
+		"sap/ui/test/actions/EnterText",
 		"sap/ui/demo/masterdetail/test/integration/pages/Common",
 		"sap/ui/test/matchers/AggregationLengthEquals",
 		"sap/ui/test/matchers/AggregationFilled",
 		"sap/ui/test/matchers/PropertyStrictEquals"
-	], function(Opa5, Common, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals) {
+	], function(Opa5, Press, EnterText, Common, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals) {
 		"use strict";
 
 		var sViewName = "Master",
 			sSomethingThatCannotBeFound = "*#-Q@@||",
 			iGroupingBoundary = 100;
-
-		function enterSomethingInASearchField (oSearchField, oSearchParams) {
-			oSearchParams = oSearchParams || {};
-
-			if (oSearchParams.searchValue) {
-				oSearchField.setValue(oSearchParams.searchValue);
-			}
-
-			if (oSearchParams.skipEvent) {
-				return;
-			}
-
-			/*eslint-disable new-cap */
-			var oEvent = jQuery.Event("touchend");
-			/*eslint-enable new-cap */
-			oEvent.originalEvent = {query: oSearchParams.searchValue, refreshButtonPressed: oSearchParams.refreshButtonPressed, id: oSearchField.getId()};
-			oEvent.target = oSearchField;
-			oEvent.srcElement = oSearchField;
-			jQuery.extend(oEvent, oEvent.originalEvent);
-
-			oSearchField.fireSearch(oEvent);
-		}
 
 		Opa5.createPageObjects({
 			onTheMasterPage : {
@@ -100,9 +80,7 @@ sap.ui.define([
 								// if there is no view settings dialog yet, there is no need to wait
 								return !oViewSettingsDialog || oViewSettingsDialog.$().length === 0;
 							},
-							success : function (oButton) {
-								oButton.$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "Did not find the 'filter' button."
 						});
 					},
@@ -124,9 +102,7 @@ sap.ui.define([
 							searchOpenDialogs : true,
 							controlType : "sap.m.Button",
 							matchers :  new Opa5.matchers.PropertyStrictEquals({name : "text", value : "OK"}),
-							success : function (aButtons) {
-								aButtons[0].$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "Did not find the ViewSettingDialog's 'OK' button."
 						});
 					},
@@ -136,9 +112,7 @@ sap.ui.define([
 							searchOpenDialogs : true,
 							controlType : "sap.m.Button",
 							matchers : new Opa5.matchers.PropertyStrictEquals({name : "icon", value : "sap-icon://refresh"}),
-							success : function (aButtons) {
-								aButtons[0].$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "Did not find the ViewSettingDialog's 'Reset' button."
 						});
 					},
@@ -213,7 +187,12 @@ sap.ui.define([
 											sCurrentId = aItemsNotInTheList[0].ObjectID;
 										}
 
-										this.getContext().currentItem.id = sCurrentId;
+										var oCurrentItem = this.getContext().currentItem;
+										// Construct a binding path since the list item is not created yet and we only have the id.
+										oCurrentItem.bindingPath = "/" + oList.getModel().createKey("Objects", {
+											ObjectID : sCurrentId
+										});
+										oCurrentItem.id = sCurrentId;
 									},
 									errorMessage : "the model does not have a item that is not in the list"
 								});
@@ -228,9 +207,7 @@ sap.ui.define([
 							matchers : function (oList) {
 								return oList.getItems()[iPositon];
 							},
-							success : function (oListItem) {
-								oListItem.$().trigger("tap");
-							},
+							actions : new Press(),
 							errorMessage : "List 'list' in view '" + sViewName + "' does not contain an ObjectListItem at position '" + iPositon + "'"
 						});
 					},
@@ -244,37 +221,47 @@ sap.ui.define([
 							matchers: new AggregationFilled({name : "items"}),
 							success : function (oList) {
 								sFirstObjectTitle = oList.getItems()[0].getTitle();
-								return this.iSearchForValue({searchValue : sFirstObjectTitle});
+								return this.iSearchForValue(new EnterText({text: sFirstObjectTitle}), new Press());
 							},
 							errorMessage : "Did not find list items while trying to search for the first item."
 						});
 					},
 
-					iTypeSomethingInTheSearchThatCannotBeFound : function () {
-						return this.iSearchForValue({searchValue : sSomethingThatCannotBeFound, skipEvent : true});
+					iTypeSomethingInTheSearchThatCannotBeFoundAndTriggerRefresh : function () {
+						var fireRefreshButtonPressedOnSearchField = function (oSearchField) {
+
+							/*eslint-disable new-cap */
+							var oEvent = jQuery.Event("touchend");
+							/*eslint-enable new-cap */
+							oEvent.originalEvent = {refreshButtonPressed: true, id: oSearchField.getId()};
+							oEvent.target = oSearchField;
+							oEvent.srcElement = oSearchField;
+							jQuery.extend(oEvent, oEvent.originalEvent);
+
+							oSearchField.fireSearch(oEvent);
+						};
+						return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), fireRefreshButtonPressedOnSearchField]);
 					},
 
-					iSearchForValue : function (oSearchParams) {
+					iSearchForValue : function (aActions) {
 						return this.waitFor({
 							id : "searchField",
 							viewName : sViewName,
-							success : function (oSearchField) {
-								enterSomethingInASearchField(oSearchField, oSearchParams);
-							},
+							actions: aActions,
 							errorMessage : "Failed to find search field in Master view.'"
 						});
 					},
 
 					iClearTheSearch : function () {
-						return this.iSearchForValue({searchValue : ""});
+						//can not use 'EnterText' action to enter empty strings (yet)
+						var fnClearSearchField = function(oSearchField) {
+							oSearchField.clear();
+						};
+						return this.iSearchForValue([fnClearSearchField]);
 					},
 
 					iSearchForSomethingWithNoResults : function () {
-						return this.iSearchForValue({ searchValue : sSomethingThatCannotBeFound});
-					},
-
-					iTriggerRefresh : function () {
-						return this.iSearchForValue({refreshButtonPressed : true});
+						return this.iSearchForValue([new EnterText({text: sSomethingThatCannotBeFound}), new Press()]);
 					},
 
 					iRememberTheListItem : function (oListItem) {

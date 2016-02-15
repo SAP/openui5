@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.UploadCollectionItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/m/ObjectStatus'],
-	function(jQuery, library, Element, ObjectAttribute, ObjectStatus) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/m/ObjectStatus', 'sap/ui/core/util/File'],
+	function(jQuery, library, Element, ObjectAttribute, ObjectStatus, FileUtil) {
 	"use strict";
 
 	/**
@@ -270,6 +270,64 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 			this.setProperty("selected", selected, true);
 			this.fireEvent("selected");
 		}
+	};
+
+	/**
+	 * Downloads the item.
+	 * The sap.ui.core.util.File method is used here. For further details on this method, see {sap.ui.core.util.File.save}.
+	 * @param {boolean} askForLocation Decides whether to ask for a location to download or not.
+	 * @since 1.36.0
+	 * @public
+	 */
+	UploadCollectionItem.prototype.download = function(askForLocation) {
+		// File.save doesn't work in Safari but URLHelper.redirect does work.
+		// So, this overwrites the value of askForLocation in order to make it work.
+		if (sap.ui.Device.browser.name === "sf") {
+			askForLocation = false;
+		}
+		// If there isn't URL, download is not possible
+		if (!this.getUrl()) {
+			jQuery.sap.log.warning("Items to download do not have an URL.");
+			return false;
+		} else if (askForLocation) {
+			var oBlob = null;
+			var oXhr = new window.XMLHttpRequest();
+			oXhr.open("GET", this.getUrl());
+			oXhr.responseType = "blob";// force the HTTP response, response-type header to be blob
+			oXhr.onload = function() {
+				var sFileName = this.getFileName();
+				var oFileNameAndExtension = this._splitFileName(sFileName, false);
+				var sFileExtension = oFileNameAndExtension.extension;
+				sFileName = oFileNameAndExtension.name;
+				oBlob = oXhr.response; // oXhr.response is now a blob object
+				FileUtil.save(oBlob, sFileName, sFileExtension, this.getMimeType(), 'utf-8');
+			}.bind(this);
+			oXhr.send();
+			return true;
+		} else {
+			library.URLHelper.redirect(this.getUrl(), true);
+			return true;
+		}
+	};
+
+	/**
+	 * @description Split file name into name and extension.
+	 * @param {string} fileName Full file name inclusive the extension
+	 * @param {boolean} withDot True if the extension should be returned starting with a dot (ie: '.jpg'). False for no dot. If not value is provided, the extension name is given without dot
+	 * @returns {object} oResult Filename and Extension
+	 * @private
+	 */
+	UploadCollectionItem.prototype._splitFileName = function(fileName, withDot) {
+		var oResult = {};
+		var oRegex = /(?:\.([^.]+))?$/;
+		var aFileExtension = oRegex.exec(fileName);
+		oResult.name = fileName.slice(0, fileName.indexOf(aFileExtension[0]));
+		if (withDot) {
+			oResult.extension = aFileExtension[0];
+		} else {
+			oResult.extension = aFileExtension[1];
+		}
+		return oResult;
 	};
 
 	/**
