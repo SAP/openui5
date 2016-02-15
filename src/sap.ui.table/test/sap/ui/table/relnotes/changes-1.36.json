@@ -190,5 +190,24 @@
         "references": []
       }
     ]
+  },
+  "1.36.2": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "453e763b24ad68143569154c312a1734da1223cc",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.TreeBindingAdapter: fix \u0027toggleIndex\u0027 with fixed rows in table",
+        "references": []
+      },
+      {
+        "id": "ef85759e45b09b812536e344344b265ab4996fc0",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fix invisible column header after column with HeaderSpan",
+        "references": []
+      }
+    ]
   }
 }

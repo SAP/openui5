@@ -71,5 +71,17 @@
         "references": []
       }
     ]
+  },
+  "1.36.2": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "8fa8b026b035f364b3d68125036a8aad3dfe24c3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: improve documentation",
+        "references": []
+      }
+    ]
   }
 }
