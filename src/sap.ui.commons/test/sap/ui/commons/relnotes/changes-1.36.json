@@ -92,5 +92,24 @@
         "references": []
       }
     ]
+  },
+  "1.36.2": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "e8e777884bcd16a82aa1c6357b71c7e9f66ae2ef",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Trigger Re-Rendering for Setting Title",
+        "references": []
+      },
+      {
+        "id": "eed05e4ca1170b978a75cc1f8ba4a6ce95d527b0",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Focus outline on IE corrected",
+        "references": []
+      }
+    ]
   }
 }
