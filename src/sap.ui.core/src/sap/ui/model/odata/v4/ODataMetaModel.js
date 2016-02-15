@@ -17,7 +17,8 @@ sap.ui.define([
 		SyncPromise, PropertyBinding) {
 	"use strict";
 
-	var ODataMetaContextBinding,
+	var DEBUG = jQuery.sap.log.Level.DEBUG,
+		ODataMetaContextBinding,
 		ODataMetaListBinding,
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
@@ -43,7 +44,8 @@ sap.ui.define([
 				type : "sap.ui.model.odata.type.String",
 				constraints : {"$MaxLength" : "maxLength"}
 			}
-		};
+		},
+		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
 	 * @class Context binding implementation for the OData meta data model.
@@ -121,9 +123,10 @@ sap.ui.define([
 		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataMetaPropertyBinding", {
 			constructor : function () {
 				PropertyBinding.apply(this, arguments);
+				this.vValue = this.getModel().getProperty(this.getPath(), this.getContext());
 			},
 			getValue : function () {
-				return this.getModel().getProperty(this.getPath(), this.getContext());
+				return this.vValue;
 			}
 		});
 
@@ -287,6 +290,33 @@ sap.ui.define([
 				vResult = mScope; // current object
 
 			/*
+			 * Outputs a log message for the given level. Leads to an <code>undefined</code> result.
+			 *
+			 * @param {jQuery.sap.log.Level} iLevel
+			 *   A log level, either DEBUG or WARNING
+			 * @param {...string} aTexts
+			 *   The main text of the message is constructed from the rest of the arguments by
+			 *   joining them
+			 * @returns {boolean}
+			 *   <code>false</code>
+			 */
+			function log(iLevel) {
+				var sLocation;
+
+				if (jQuery.sap.log.isLoggable(iLevel)) {
+					sLocation = Array.isArray(vLocation)
+						? vLocation.join("/")
+						: vLocation;
+					jQuery.sap.log[iLevel === DEBUG ? "debug" : "warning"](
+						Array.prototype.slice.call(arguments, 1).join("")
+						+ (sLocation ? " at /" + sLocation : ""),
+						sResolvedPath, sODataMetaModel);
+				}
+				vResult = undefined;
+				return false;
+			}
+
+			/*
 			 * Looks up the given qualified name in the global scope.
 			 *
 			 * @param {string} sQualifiedName
@@ -297,7 +327,7 @@ sap.ui.define([
 			function scopeLookup(sQualifiedName) {
 				if (!(sQualifiedName in mScope)) {
 					vLocation = vLocation || sTarget && sTarget + "/$Type";
-					return warn("Unknown qualified name '", sQualifiedName, "'");
+					return log(WARNING, "Unknown qualified name '", sQualifiedName, "'");
 				}
 				sTarget = sName = sSchemaChildName = sQualifiedName;
 				vResult = oSchemaChild = mScope[sSchemaChildName];
@@ -323,7 +353,7 @@ sap.ui.define([
 					bSplitSegment;
 
 				if (sSegment === "$Annotations") {
-					return warn("Invalid segment: $Annotations");
+					return log(WARNING, "Invalid segment: $Annotations");
 				}
 
 				if (sSegment.length > 11 && sSegment.slice(-11) === "@sapui.name") {
@@ -367,7 +397,7 @@ sap.ui.define([
 							vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
 							if (sSegment && sSegment[0] !== "@"
 								&& !(sSegment in oSchemaChild)) {
-								return warn("Unknown child '", sSegment,
+								return log(WARNING, "Unknown child '", sSegment,
 									"' of '", sSchemaChildName, "'");
 							}
 						}
@@ -376,20 +406,20 @@ sap.ui.define([
 
 				// Note: trailing slash is useful to force implicit lookup or $Type insertion
 				if (!sSegment) { // empty segment is at end or else...
-					return i + 1 >= aSegments.length || warn("Invalid empty segment");
+					return i + 1 >= aSegments.length || log(WARNING, "Invalid empty segment");
 				}
 				if (sSegment === "@sapui.name") {
 					vResult = sName;
 					if (vResult === undefined) {
-						warn("Unsupported path before @sapui.name");
+						log(WARNING, "Unsupported path before @sapui.name");
 					} else if (i + 1 < aSegments.length) {
-						warn("Unsupported path after @sapui.name");
+						log(WARNING, "Unsupported path after @sapui.name");
 					}
 					return false;
 				}
 				if (!vResult || typeof vResult !== "object") {
 					// Note: even an OData path cannot continue here (e.g. by type cast)
-					return warn("Invalid segment: ", sSegment);
+					return log(DEBUG, "Invalid segment: ", sSegment);
 				}
 				if (bODataMode && sSegment[0] === "@") {
 					// annotation(s) via external targeting
@@ -426,7 +456,7 @@ sap.ui.define([
 				var bContinue;
 
 				if (vLocation) {
-					return warn("Invalid recursion");
+					return log(WARNING, "Invalid recursion");
 				}
 				vLocation = vNewLocation;
 
@@ -436,29 +466,6 @@ sap.ui.define([
 
 				vLocation = undefined;
 				return bContinue;
-			}
-
-			/*
-			 * Outputs a warning message. Leads to an <code>undefined</code> result.
-			 *
-			 * @param {...string} aTexts
-			 *   The main text of the message is constructed from the arguments by joining them
-			 * @returns {boolean}
-			 *   <code>false</code>
-			 */
-			function warn() {
-				var sLocation;
-
-				if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-					sLocation = Array.isArray(vLocation)
-						? vLocation.join("/")
-						: vLocation;
-					jQuery.sap.log.warning(Array.prototype.join.call(arguments, "")
-						+ (sLocation ? " at /" + sLocation : ""),
-						sResolvedPath, sODataMetaModel);
-				}
-				vResult = undefined;
-				return false;
 			}
 
 			steps(sResolvedPath.slice(1));

@@ -51,8 +51,7 @@
 								<template:if test="{field>Label}">
 									<template:then>
 										<!-- TODO $EnumMember is a bit strange, what about computed values etc.? -->
-										<Label design="{:= ${field>@com.sap.vocabularies.UI.v1.Importance}
-											&amp;&amp; ${field>@com.sap.vocabularies.UI.v1.Importance}['$EnumMember']
+										<Label design="{:= ${field>@com.sap.vocabularies.UI.v1.Importance/$EnumMember}
 											=== 'com.sap.vocabularies.UI.v1.ImportanceType/High' ? 'Bold' : 'Standard'}"
 											text="{field>Label}"/>
 									</template:then>
