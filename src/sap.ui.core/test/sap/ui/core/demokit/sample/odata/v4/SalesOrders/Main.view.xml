@@ -17,9 +17,13 @@
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
 				</Text>
-				<Button icon="sap-icon://refresh" press="onRefreshFavoriteProduct"/>
+				<Button icon="sap-icon://refresh"
+					enabled="{ui>/bRealOData}"
+					press="onRefreshFavoriteProduct"/>
 				<ToolbarSpacer />
-				<Button text="Refresh all" press="onRefreshAll"/>
+				<Button text="Refresh all"
+					enabled="{ui>/bRealOData}"
+					press="onRefreshAll"/>
 			</content>
 		</Toolbar>
 		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
@@ -43,7 +47,9 @@
 							press="onCreateSalesOrderDialog"/>
 						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
 							type="Transparent"/>
-						<Button icon="sap-icon://refresh" press="onRefreshSalesOrdersList"/>
+						<Button icon="sap-icon://refresh"
+							enabled="{ui>/bRealOData}"
+							press="onRefreshSalesOrdersList"/>
 					</content>
 					<dependents>
 						<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
