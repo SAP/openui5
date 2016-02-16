@@ -315,20 +315,21 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDialog.prototype.showValidationDialog = function(fCallbackIgnore, aFailedPanelTypes, aValidationResult) {
+		var bWithBulletPoint = (aFailedPanelTypes.length + aValidationResult.length) > 1;
 		var sMessageText = "";
 		aFailedPanelTypes.forEach(function(sPanelType) {
 			switch (sPanelType) {
 				case sap.m.P13nPanelType.filter:
-					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE") + "\n" + sMessageText;
+					sMessageText = (bWithBulletPoint ? "• " : "") + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE") + "\n" + sMessageText;
 					break;
 				case sap.m.P13nPanelType.columns:
-					sMessageText = "• " + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE") + "\n" + sMessageText;
+					sMessageText = (bWithBulletPoint ? "• " : "") + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE") + "\n" + sMessageText;
 					break;
 			}
 		});
 		for ( var sType in aValidationResult) {
 			var oMessage = aValidationResult[sType];
-			sMessageText = "• " + oMessage.messageText + "\n" + sMessageText;
+			sMessageText = (bWithBulletPoint ? "• " : "") + oMessage.messageText + "\n" + sMessageText;
 		}
 		jQuery.sap.require("sap.m.MessageBox");
 		sap.m.MessageBox.show(sMessageText, {
