@@ -40,9 +40,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 
 		// ToDo: align these with the file names (i.e. not tabselect but tabstripselect)
 		TabStripSelectList.CSS_CLASS_SELECTLIST             = 'sapMSelectList';
-		TabStripSelectList.CSS_CLASS_TABSELECTLIST          = 'sapMTabSelectList';
-		TabStripSelectList.CSS_CLASS_CLOSEBUTTON            = 'sapMTabSelectListItemCloseBtn';
-		TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabSelectListItemCloseBtnInvisible'; // ToDo: this belongs to item
+		TabStripSelectList.CSS_CLASS_TABSELECTLIST          = 'sapMTabStripSelectList';
+		TabStripSelectList.CSS_CLASS_CLOSEBUTTON            = 'sapMTabStripSelectListItemCloseBtn';
+		TabStripSelectList.CSS_CLASS_CLOSEBUTTONINVISIBLE   = 'sapMTabStripSelectListItemCloseBtnInvisible'; // ToDo: this belongs to item
 
 	/**
 	 * Initialize the control instance
@@ -134,8 +134,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		 */
 		TabStripSelectList.prototype.changeItemState = function(vItemId, bShowState) {
 			// ToDo: remove this hack !? - for some reason these are 'undefined' - can it be the lazy loading?
-			TabStripItem.CSS_CLASS_STATE            = "sapMTabSelectListItemModified";
-			TabStripItem.CSS_CLASS_STATEINVISIBLE   = "sapMTabSelectListItemModifiedInvisible";
+			TabStripItem.CSS_CLASS_STATE            = "sapMTabStripSelectListItemModified";
+			TabStripItem.CSS_CLASS_STATEINVISIBLE   = "sapMTabStripSelectListItemModifiedInvisible";
 
 
 			var $oItemState;

@@ -196,7 +196,7 @@
 		test("Rerendering", function () {
 			var oItem = this.oTabContainer._getTabStrip().getItems()[0];
 			var sName = oItem.getText();
-			//sapMTabSelect
+			//sapMTabStripSelect
 			strictEqual(jQuery(this.oTabContainer.$()).children('.sapMTabStrip').length, 1, 'TabStrip is initially rendered.');
 			this.oTabContainer.destroyAggregation('_tabStrip');
 			this.clock.tick(1000);

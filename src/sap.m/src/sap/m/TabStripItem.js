@@ -83,9 +83,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 		TabStripItem._CSS_CLASS = "sapMTabContainerItem";
 		TabStripItem._CSS_CLASS_LABEL = "sapMTabContainerItemLabel";
 		TabStripItem._CSS_CLASS_BUTTON = "sapMTabContainerItemButton";
-		TabStripItem.CSS_CLASS_STATE = "sapMTabSelectListItemModified";
-		TabStripItem.CSS_CLASS_STATEINVISIBLE = "sapMTabSelectListItemModifiedInvisible";
-		TabStripItem.CSS_CLASS_CLOSEBUTTON = 'sapMTabSelectListItemCloseBtn';
+		TabStripItem.CSS_CLASS_STATE = "sapMTabStripSelectListItemModified";
+		TabStripItem.CSS_CLASS_STATEINVISIBLE = "sapMTabStripSelectListItemModifiedInvisible";
+		TabStripItem.CSS_CLASS_CLOSEBUTTON = 'sapMTabStripSelectListItemCloseBtn';
 
 
 		/**

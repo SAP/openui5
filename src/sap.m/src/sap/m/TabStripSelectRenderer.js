@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 				sStateClass += TabStripItem.CSS_CLASS_STATEINVISIBLE; // ToDo: fix the name of the variable
 			}
 			oRm.write('</label>');
-			oRm.write('<span style="position: absolute" class="sapMTabSelectListItemModified' + sStateClass + '">*</span>');
+			oRm.write('<span style="position: absolute" class="sapMTabStripSelectListItemModified' + sStateClass + '">*</span>');
 		};
 
 		return TabStripSelectRenderer;
