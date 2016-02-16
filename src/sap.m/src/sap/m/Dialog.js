@@ -680,6 +680,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				$dialogContent.height(parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10));
 			}
 
+			if (!this.getStretch()) {
+				return;
+			}
+
 			iDialogWidth = $dialog.innerWidth();
 			iDialogHeight = $dialog.innerHeight();
 
