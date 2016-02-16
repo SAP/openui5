@@ -130,6 +130,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 
 			// Set layout properties
 			var oLayoutData = oItem.getLayoutData();
+
 			if (oLayoutData instanceof sap.m.FlexItemData) {
 				// FlexItemData is an element not a control, so we need to write id and style class ourselves
 				if (oLayoutData.getId()) {
