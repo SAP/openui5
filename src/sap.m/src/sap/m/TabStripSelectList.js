@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 				oControl instanceof sap.m.TabStripItem && // only this type has _closeButton aggregation
 				this.getSelectedItem() !== oControl
 			) {
-					oControl.getAggregation('_closeButton').$().removeClass(TabStripItem.CSS_CLASS_CLOSE_BUTTON_INVISIBLE);
+				oControl.getAggregation('_closeButton').$().removeClass(TabStripItem.CSS_CLASS_CLOSE_BUTTON_INVISIBLE);
 			}
 		};
 
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 				jQuery(oEvent.target).hasClass('sapMSelectListItem') &&
 				this.getSelectedItem() !== oControl
 			) {
-					oControl.getAggregation('_closeButton').$().addClass(TabStripItem.CSS_CLASS_CLOSE_BUTTON_INVISIBLE);
+				oControl.getAggregation('_closeButton').$().addClass(TabStripItem.CSS_CLASS_CLOSE_BUTTON_INVISIBLE);
 			}
 		};
 
