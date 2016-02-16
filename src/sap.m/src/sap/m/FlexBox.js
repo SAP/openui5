@@ -172,16 +172,21 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			return;
 		}
 
-		// Render or remove flex item if visibility changes
-		var oLayoutData = sap.ui.getCore().byId(oControlEvent.getParameter("id")).getLayoutData();
-		if (!(oLayoutData instanceof sap.m.FlexItemData)) {
-			return;
+		// Sync visibility of flex item wrapper, if visibility changes
+		var oWrapper = null;
+		var oItem = sap.ui.getCore().byId(oControlEvent.getParameter("id"));
+
+		if (oItem instanceof sap.m.FlexBox) {
+			// If the flex item is itself a FlexBox, it's not wrapped
+			oWrapper = oItem.$();
+		} else {
+			oWrapper = oItem.$().parent();
 		}
 
 		if (oControlEvent.getParameter("newValue")) {
-			oLayoutData.$().removeClass("sapUiHiddenPlaceholder").removeAttr("aria-hidden");
+			oWrapper.removeClass("sapUiHiddenPlaceholder").removeAttr("aria-hidden");
 		} else {
-			oLayoutData.$().addClass("sapUiHiddenPlaceholder").attr("aria-hidden", "true");
+			oWrapper.addClass("sapUiHiddenPlaceholder").attr("aria-hidden", "true");
 		}
 	};
 
