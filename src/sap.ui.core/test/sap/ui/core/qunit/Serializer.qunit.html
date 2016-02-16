@@ -52,7 +52,6 @@
 				"<div id=\"myButtonSimple3\" data-sap-ui-type=\"sap.ui.commons.Button\"></div>"
 				];
 
-			var aCode = [];
 			var aContent = sap.ui.getCore().getUIArea("area1").getContent();
 			for (var i=0; i < aContent.length; i++) {
 				var oControlSerializer = new sap.ui.core.util.serializer.Serializer(aContent[i], oHTML, false);
@@ -70,15 +69,12 @@
 							"<sap.ui.commons:Button id=\"myButtonSimple3\"></sap.ui.commons:Button>"
 							];
 
-			var aCode = [];
 			var aContent = sap.ui.getCore().getUIArea("area1").getContent();
 			for (var i=0; i < aContent.length; i++) {
 				var oControlSerializer = new sap.ui.core.util.serializer.Serializer(aContent[i], oXML, false);
 				var s = oControlSerializer.serialize();
 				equals(s, aResults[i], "The generated string is right for control " + aContent[i].getId());
 			}
-
-
 		});
 
 		module("Complex", {
@@ -102,7 +98,6 @@
 		test("Complex HTML Serializing", function() {
 			var oHTML = new sap.ui.core.util.serializer.delegate.HTML();
 
-
 			var aCode = [];
 			var aContent = sap.ui.getCore().getUIArea("area2").getContent();
 			for (var i=0; i < aContent.length; i++) {
@@ -115,7 +110,6 @@
 		test("Complex XML Serializing", function() {
 			var oXML = new sap.ui.core.util.serializer.delegate.XML();
 
-
 			var aCode = [];
 			var aContent = sap.ui.getCore().getUIArea("area2").getContent();
 			for (var i=0; i < aContent.length; i++) {
@@ -123,6 +117,21 @@
 				aCode.push(oControlSerializer.serialize());
 			}
 			equals(aCode.join(""), '<sap.ui.commons:Panel id=\"myPanel\" text=\"My Panel\"><sap.ui.commons:customData><sap.ui.core:CustomData key=\"sap-ui-fastnavgroup\" value=\"true\" writeToDom=\"true\"></sap.ui.core:CustomData></sap.ui.commons:customData><sap.ui.commons:content><sap.ui.commons:Button id=\"myButton\" ariaDescribedBy=\"myButton2\"><sap.ui.commons:customData><sap.ui.core:CustomData key=\"myCustomData\" value=\"myValue\"></sap.ui.core:CustomData></sap.ui.commons:customData></sap.ui.commons:Button></sap.ui.commons:content><sap.ui.commons:title><sap.ui.commons:Title id=\"myTitle\" text=\"My Panel\"></sap.ui.commons:Title></sap.ui.commons:title></sap.ui.commons:Panel>', "The generated string is right");
+		});
+
+		test("Complex XML Serializing with excluding children using callback", function() {
+			var oXML = new sap.ui.core.util.serializer.delegate.XML();
+
+			var aCode = [];
+			var aContent = sap.ui.getCore().getUIArea("area2").getContent();
+			for (var i=0; i < aContent.length; i++) {
+				var oControlSerializer = new sap.ui.core.util.serializer.Serializer(aContent[i], oXML, false, window,
+						undefined, function (oObject) {
+							return oObject.getMetadata().getName() === "sap.ui.core.CustomData";
+						});
+				aCode.push(oControlSerializer.serialize());
+			}
+			equals(aCode.join(""), '<sap.ui.commons:Panel id=\"myPanel\" text=\"My Panel\"><sap.ui.commons:content><sap.ui.commons:Button id=\"myButton\" ariaDescribedBy=\"myButton2\"></sap.ui.commons:Button></sap.ui.commons:content><sap.ui.commons:title><sap.ui.commons:Title id=\"myTitle\" text=\"My Panel\"></sap.ui.commons:Title></sap.ui.commons:title></sap.ui.commons:Panel>', "The generated string is right");
 		});
 
 	</script>
