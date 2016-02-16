@@ -260,7 +260,7 @@
 				}
 			});
 
-			var oTextAreaDialog = new sap.m.Dialog({
+			var oTextAreaDialog = new sap.m.Dialog('textAreaDialog', {
 				title: "Dialog with TextArea",
 				contentWidth: "200px",
 				content: new sap.m.TextArea({cols: 60}),
@@ -439,7 +439,7 @@
 				})
 			});
 
-			var oDialogResize = new sap.m.Dialog({
+			var oDialogResize = new sap.m.Dialog('resizableDialog', {
 				title: "Resizable Dialog",
 				resizable: true,
 				content: [
@@ -477,7 +477,7 @@
 				})
 			});
 
-			var oDialogSimple = new sap.m.Dialog({
+			var oDialogSimple = new sap.m.Dialog('simpleDialog', {
 				title: "Simple Dialog",
 				content: new sap.ui.core.HTML({
 					content: '<div>Lipsum limple text</div>'
@@ -539,7 +539,7 @@
 				})
 			});
 
-			var oDialogNoHeader = new sap.m.Dialog({
+			var oDialogNoHeader = new sap.m.Dialog('noHeaderDialog', {
 				showHeader: false,
 				content: new sap.ui.core.HTML({
 					content: '<div>Lipsum limple text</div>'
@@ -702,7 +702,7 @@
 				visible: false
 			});
 
-			var oDialogWithSubheader = new sap.m.Dialog({
+			var oDialogWithSubheader = new sap.m.Dialog('subheaderDialog', {
 				title: "Dialog with SubHeader",
 				content: new sap.m.Button('triggerSubheaderButton', {
 					text: 'trigger',
@@ -723,7 +723,7 @@
 				})
 			});
 
-			var oDialogStretched = new sap.m.Dialog({
+			var oDialogStretched = new sap.m.Dialog('stretchedDialog', {
 				title: "Stretched Dialog",
 				stretch: true,
 				content: new sap.ui.core.HTML({
