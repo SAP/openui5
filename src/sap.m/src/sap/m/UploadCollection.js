@@ -547,6 +547,30 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 	};
 
+	UploadCollection.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+		if (!this.getInstantUpload() && sAggregationName === "items" && vObject) {
+			this._aDeletedItemForPendingUpload.push(vObject);
+		}
+		if (Control.prototype.removeAggregation) {
+			return Control.prototype.removeAggregation.apply(this, arguments);
+		}
+	};
+
+	UploadCollection.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
+		if (!this.getInstantUpload() && sAggregationName === "items") {
+			if (this._aFileUploadersForPendingUpload) {
+				for (var i = 0; i < this._aFileUploadersForPendingUpload.length; i++) {
+					this._aFileUploadersForPendingUpload[i].destroy();
+					this._aFileUploadersForPendingUpload[i] = null;
+				}
+				this._aFileUploadersForPendingUpload = [];
+			}
+		}
+		if (Control.prototype.removeAllAggregation) {
+			return Control.prototype.removeAllAggregation.apply(this, arguments);
+		}
+	};
+
 	/* =========================================================== */
 	/* Lifecycle methods                                           */
 	/* =========================================================== */
@@ -908,8 +932,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				oFileName = new sap.m.Link(sItemId + "-ta_filenameHL", {
 					enabled : bEnabled,
 					press : function(oEvent) {
-						sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
-					}
+						this._triggerLink(oEvent, that);
+					}.bind(this)
 				}).addStyleClass("sapMUCFileName");
 				oFileName.setModel(oItem.getModel());
 				oFileName.setText(sFileNameLong);
@@ -2048,8 +2072,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		};
 		oEvent.getParameter("requestHeaders").push(oRequestHeaders);
 
-		var iDeletedItemForPendingUploadLength = this._aDeletedItemForPendingUpload.length;
-		for ( i = 0; i < iDeletedItemForPendingUploadLength; i++ ) {
+		for ( i = 0; i < this._aDeletedItemForPendingUpload.length; i++ ) {
 			if (this._aDeletedItemForPendingUpload[i].getAssociation("fileUploader") === oEvent.oSource.sId &&
 					this._aDeletedItemForPendingUpload[i].getFileName() === sFileName &&
 					this._aDeletedItemForPendingUpload[i]._internalFileIndexWithinFileUploader === this._iUploadStartCallCounter){
@@ -2331,12 +2354,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection.prototype._handleF2 = function(oEvent, oContext) {
 
 		var oObj = sap.ui.getCore().byId(oEvent.target.id);
-		var o$Obj = jQuery.sap.byId(oEvent.target.id);
 
 		if (oObj !== undefined) {
 			if (oObj._status === UploadCollection._displayStatus) {
 				//focus at list line (status = "display") and F2 pressed --> status = "Edit"
-				o$Obj = jQuery.sap.byId(oEvent.target.id);
+				var o$Obj = jQuery.sap.byId(oEvent.target.id);
 				var o$EditButton = o$Obj.find("[id$='-editButton']");
 				var oEditButton = sap.ui.getCore().byId(o$EditButton[0].id);
 				if (oEditButton.getEnabled()) {
