@@ -127,6 +127,7 @@ sap.ui.define([
 				childList : true,
 				subtree : true,
 				attributes : true,
+				attributeFilter : ["style", "width", "height", "border"],
 				characterData : true // also observe text node changes, see https://dom.spec.whatwg.org/#characterdata
 			});
 		} else {
