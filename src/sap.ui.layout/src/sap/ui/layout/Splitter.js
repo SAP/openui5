@@ -140,6 +140,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		// Flag tracking the preserved state of this control. In case the control is preserved, no resizing attempts should be made.
 		this._isPreserved = false;
 		sap.ui.getCore().getEventBus().subscribe("sap.ui","__preserveContent", this._preserveHandler, this);
+
+		// Use Icon for separators
+		this._bUseIconForSeparator = true;
 	};
 
 	Splitter.prototype.exit = function() {
