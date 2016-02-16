@@ -13,6 +13,10 @@ sap.ui.require([
 
 	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders");
 
+	if (Device.browser.msie && Device.browser.version === 9) {
+		return;
+	}
+
 	opaTest("Find view elements", function (Given, When, Then) {
 		var sUrl = "../../../common/index.html?component=odata.v4.SalesOrders&realOData="
 				+ encodeURIComponent(jQuery.sap.getUriParameters().get("realOData"));
