@@ -469,8 +469,8 @@ sap.ui.define([
 			return oView;
 		};
 
-		// This offset is needed so the breakpoints of the simpleForm match those of the GridLayout
-		BlockBase.FORM_ADUSTMENT_OFFSET = 24;
+		// This offset is needed so the breakpoints of the simpleForm match those of the GridLayout (offset = left-padding of grid + margins of grid-cells [that create the horizontal spacing between the cells])
+		BlockBase.FORM_ADUSTMENT_OFFSET = 32;
 
 		BlockBase._FORM_ADJUSTMENT_CONST = {
 			breakpoints: {
