@@ -377,13 +377,13 @@
 		var sVisibilityMenuItemId = oColumn1.getMenu().getId() + "-column-visibilty";
 
 		oMenu.open();
-		qutils.triggerMouseEvent(sVisibilityMenuItemId, "mouseover");
+		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
 		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-0", "click");
 
 		equal(oColumn0.getVisible(), true, "lastName column should be still visible (preventDefault)");
 
 		oMenu.open();
-		qutils.triggerMouseEvent(sVisibilityMenuItemId, "mouseover");
+		qutils.triggerMouseEvent(sVisibilityMenuItemId, "click");
 		qutils.triggerMouseEvent(sVisibilityMenuItemId + "-menu-item-1", "click");
 
 		equal(oColumn1.getVisible(), false, "firstName column should be invisible (no preventDefault)");
