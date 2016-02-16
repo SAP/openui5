@@ -120,7 +120,9 @@
 				oPage.setBackgroundDesign("Transparent");
 				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgTransparent"), "Page content should be transparent");
 
-				var transparentCssString = (sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer) ? "transparent" : "rgba(0, 0, 0, 0)"
+				var transparentCssString = (sap.ui.Device.browser.firefox ||
+                                    sap.ui.Device.browser.internet_explorer ||
+                                    sap.ui.Device.browser.edge) ? "transparent" : "rgba(0, 0, 0, 0)"
 				equal(jQuery.sap.byId("myFirstPage-cont").css("background-color"), transparentCssString, "Page content should be transparent");
 			});
 
