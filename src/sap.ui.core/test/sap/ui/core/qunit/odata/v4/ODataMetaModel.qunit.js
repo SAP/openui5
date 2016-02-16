@@ -613,13 +613,8 @@ sap.ui.require([
 	[false, true].forEach(function (bWarn) {
 		forEach({
 			"/$$Loop/" : "Invalid recursion at /$$Loop",
-			// Invalid segment --------------------------------------------------------------------
+			// Invalid segment (warning) ----------------------------------------------------------
 			"//$Foo" : "Invalid empty segment",
-			"/$Foo/@bar" : "Invalid segment: @bar",
-			"/$Foo/$Bar" : "Invalid segment: $Bar",
-			"/$Foo/$Bar/$Baz" : "Invalid segment: $Bar",
-			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid segment: .",
-			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: .",
 			"/tea_busi./$Annotations" : "Invalid segment: $Annotations", // entrance forbidden!
 			// Unknown ... ------------------------------------------------------------------------
 			"/name.space.not.Found" :
@@ -656,6 +651,34 @@ sap.ui.require([
 					.withExactArgs(jQuery.sap.log.Level.WARNING).returns(bWarn);
 				this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
 					.withExactArgs(sWarning, sPath, "sap.ui.model.odata.v4.ODataMetaModel");
+
+				oSyncPromise = this.oMetaModel.fetchObject(sPath);
+
+				assert.strictEqual(oSyncPromise.isFulfilled(), true);
+				assert.deepEqual(oSyncPromise.getResult(), undefined);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bDebug) {
+		forEach({
+			// Invalid segment (debug) ------------------------------------------------------------
+			"/$Foo/@bar" : "Invalid segment: @bar",
+			"/$Foo/$Bar" : "Invalid segment: $Bar",
+			"/$Foo/$Bar/$Baz" : "Invalid segment: $Bar",
+			"/$EntityContainer/T€AMS/Team_Id/$MaxLength/." : "Invalid segment: .",
+			"/$EntityContainer/T€AMS/Team_Id/$Nullable/." : "Invalid segment: ."
+		}, function (sPath, sMessage) {
+			QUnit.test("fetchObject fails: " + sPath + ", debug = " + bDebug, function (assert) {
+				var oSyncPromise;
+
+				this.mock(this.oMetaModel).expects("fetchEntityContainer")
+					.returns(SyncPromise.resolve(mScope));
+				this.oLogMock.expects("isLoggable")
+					.withExactArgs(jQuery.sap.log.Level.DEBUG).returns(bDebug);
+				this.oLogMock.expects("debug").exactly(bDebug ? 1 : 0)
+					.withExactArgs(sMessage, sPath, "sap.ui.model.odata.v4.ODataMetaModel");
 
 				oSyncPromise = this.oMetaModel.fetchObject(sPath);
 
@@ -880,6 +903,9 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getPath(), sPath);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getValue(), oValue);
+
+		// code under test: must not call getProperty() again!
+		assert.strictEqual(oBinding.getExternalValue(), oValue);
 	});
 
 	//*********************************************************************************************
