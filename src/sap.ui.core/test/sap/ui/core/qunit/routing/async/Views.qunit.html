@@ -188,6 +188,8 @@
 
 					oViews.setView("foo", oView1);
 					oViews.setView("bar", oView2);
+					// test whether destroy checks the null case of the view cache
+					oViews.setView("foo1", null);
 
 					//Act
 					oViews.destroy();
