@@ -22,7 +22,7 @@ sap.ui.require([
 
 	function mockRequest(oRequestorMock, sUrl, iStart, iLength) {
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sUrl + "?$skip=" + iStart + "&$top=" + iLength)
+			.withExactArgs("GET", sUrl + "?$skip=" + iStart + "&$top=" + iLength, undefined)
 			.returns(Promise.resolve(createResult(iStart, iLength)));
 	}
 
@@ -65,11 +65,11 @@ sap.ui.require([
 
 			this.oSandbox.mock(oRequestor).expects("request")
 				.withExactArgs("GET", sResourcePath + "?$skip=" + oFixture.index + "&$top="
-					+ oFixture.length)
+					+ oFixture.length, "group")
 				.returns(Promise.resolve(oMockResult));
 
 			// code under test
-			oPromise = oCache.read(oFixture.index, oFixture.length);
+			oPromise = oCache.read(oFixture.index, oFixture.length, "group");
 
 			assert.ok(oPromise instanceof Promise, "returns a Promise");
 			return oPromise.then(function (aResult) {
@@ -98,37 +98,37 @@ sap.ui.require([
 			aPromises = [];
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + "?$select=foo&$skip=0&$top=1")
+			.withExactArgs("GET", sResourcePath + "?$select=foo&$skip=0&$top=1", undefined)
 			.returns(Promise.resolve(oExpectedResult));
 
 		assert.throws(function () {
-			oCache.read(0, 0, "");
+			oCache.read(0, 0, undefined, "");
 		}, new Error("Cannot drill-down for length 0"));
-		aPromises.push(oCache.read(0, 1, "").then(function (oResult) {
+		aPromises.push(oCache.read(0, 1, undefined, "").then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedResult.value[0],
 				"empty path drills down into single array element");
 		}));
 		assert.throws(function () {
-			oCache.read(0, 2, "");
+			oCache.read(0, 2, undefined, "");
 		}, new Error("Cannot drill-down for length 2"));
-		aPromises.push(oCache.read(0, 1, "foo").then(function (oResult) {
+		aPromises.push(oCache.read(0, 1, undefined, "foo").then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedResult.value[0].foo);
 		}));
-		aPromises.push(oCache.read(0, 1, "foo/bar").then(function (oResult) {
+		aPromises.push(oCache.read(0, 1, undefined, "foo/bar").then(function (oResult) {
 			assert.strictEqual(oResult, 42);
 		}));
 		this.oLogMock.expects("warning").withExactArgs(
 			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
 				+ " via foo/bar/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
-		aPromises.push(oCache.read(0, 1, "foo/bar/invalid").then(function (oResult) {
+		aPromises.push(oCache.read(0, 1, undefined, "foo/bar/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
 		this.oLogMock.expects("warning").withExactArgs(
 			"Failed to drill-down into Employees?$select=foo&$skip=0&$top=1"
 				+ " via foo/null/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
-		aPromises.push(oCache.read(0, 1, "foo/null/invalid").then(function (oResult) {
+		aPromises.push(oCache.read(0, 1, undefined, "foo/null/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
 		return Promise.all(aPromises);
@@ -221,7 +221,8 @@ sap.ui.require([
 
 			oFixture.reads.forEach(function (oRead) {
 				oPromise = oPromise.then(function () {
-					return oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
+					return oCache.read(oRead.index, oRead.length, undefined, undefined,
+							fnDataRequested)
 						.then(function (oResult) {
 							assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
 					});
@@ -249,7 +250,8 @@ sap.ui.require([
 			});
 
 			oFixture.reads.forEach(function (oRead) {
-				aPromises.push(oCache.read(oRead.index, oRead.length, undefined, fnDataRequested)
+				aPromises.push(oCache.read(oRead.index, oRead.length, undefined, undefined,
+						fnDataRequested)
 					.then(function (oResult) {
 						assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
 				}));
@@ -425,8 +427,8 @@ sap.ui.require([
 		oCache = Cache.create(oRequestor, sResourcePath, mQueryParams);
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + sQueryParams + "&$skip=0&$top=5")
-			.returns(Promise.resolve({value :[]}));
+			.withExactArgs("GET", sResourcePath + sQueryParams + "&$skip=0&$top=5", undefined)
+			.returns(Promise.resolve({value: []}));
 
 		// code under test
 		mQueryParams.$select = "foo"; // modification must not affect Cache
@@ -443,10 +445,10 @@ sap.ui.require([
 			oRequestorMock = this.oSandbox.mock(oRequestor);
 
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined)
 			.returns(Promise.reject(oError));
 		oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=5", undefined)
 			.returns(Promise.resolve(oSuccess));
 
 		// code under test
@@ -640,7 +642,7 @@ sap.ui.require([
 			sResourcePath = "Employees";
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=20")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=20", undefined)
 			.returns(Promise.resolve(createResult(0, 10)));
 
 		oCache = Cache.create(oRequestor, sResourcePath);
@@ -666,7 +668,7 @@ sap.ui.require([
 			sResourcePath = "Employees";
 
 		this.oSandbox.mock(oRequestor).expects("request").twice()
-			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=10")
+			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=10", undefined)
 			.returns(Promise.resolve(createResult(0, 10)));
 
 		oCache = Cache.create(oRequestor, sResourcePath);

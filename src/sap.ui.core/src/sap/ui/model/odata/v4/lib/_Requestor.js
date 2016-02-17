@@ -59,6 +59,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 		this.sQueryParams = Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.mBatchQueue = {};
+		this.mPendingSubmits = {};
 	}
 
 	/**
@@ -201,12 +202,28 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 	 *
 	 * @param {string} sGroupId
 	 *   ID of the batch group which should be sent as an OData batch request
+	 * @param {boolean} [bAsynchronous=false]
+	 *   If <code>true</code>, the submit is performed asynchronously, so that the queue can gather
+	 *   further requests in the meantime.
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails
 	 */
-	Requestor.prototype.submitBatch = function (sGroupId) {
-		var aRequests = this.mBatchQueue[sGroupId];
+	Requestor.prototype.submitBatch = function (sGroupId, bAsynchronous) {
+		var that = this,
+			oPromise,
+			aRequests = this.mBatchQueue[sGroupId];
+
+		if (bAsynchronous) {
+			oPromise = this.mPendingSubmits[sGroupId];
+			if (!oPromise) {
+				oPromise = this.mPendingSubmits[sGroupId] = Promise.resolve().then(function () {
+					delete that.mPendingSubmits[sGroupId];
+					return that.submitBatch(sGroupId);
+				});
+			}
+			return oPromise;
+		}
 
 		if (!aRequests) {
 			return Promise.resolve();

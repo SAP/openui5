@@ -98,14 +98,16 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	 *   The index of the first element to request ($skip)
 	 * @param {int} iEnd
 	 *   The position of the last element to request ($skip + $top)
+	 * @param {string} sGroupId
+	 *   The batch group ID
 	 */
-	function requestElements(oCache, iStart, iEnd) {
+	function requestElements(oCache, iStart, iEnd, sGroupId) {
 		var aElements = oCache.aElements,
 			iExpectedLength = iEnd - iStart,
 			oPromise,
 			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength;
 
-		oPromise = oCache.oRequestor.request("GET", sResourcePath)
+		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId)
 			.then(function (oResult) {
 				var i, iResultLength = oResult.value.length, oError;
 
@@ -162,6 +164,9 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	 *   The start index of the range; the first row has index 0
 	 * @param {int} iLength
 	 *   The length of the range
+	 * @param {string} [sGroupId]
+	 *   ID of the batch group to associate the requests with; if <code>undefined</code>
+	 *   the requests are sent immediately
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into; <code>undefined</code> does not change the returned
 	 *   OData response object, but <code>""</code> already drills down into the element at
@@ -179,7 +184,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	CollectionCache.prototype.read = function (iIndex, iLength, sPath, fnDataRequested) {
+	CollectionCache.prototype.read = function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
 		var i,
 			iEnd = iIndex + iLength,
 			iGapStart = -1,
@@ -202,7 +207,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		for (i = iIndex; i < iEnd; i++) {
 			if (this.aElements[i] !== undefined) {
 				if (iGapStart >= 0) {
-					requestElements(this, iGapStart, i);
+					requestElements(this, iGapStart, i, sGroupId);
 					bIsDataRequested = true;
 					iGapStart = -1;
 				}
@@ -211,7 +216,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 			}
 		}
 		if (iGapStart >= 0) {
-			requestElements(this, iGapStart, iEnd);
+			requestElements(this, iGapStart, iEnd, sGroupId);
 			bIsDataRequested = true;
 		}
 

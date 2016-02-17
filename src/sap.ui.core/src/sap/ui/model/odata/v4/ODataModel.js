@@ -116,6 +116,16 @@ sap.ui.define([
 			});
 
 	/**
+	 * Informs the model that a request has been added to the given group.
+	 *
+	 * @param {string} sGroupId
+	 *   ID of the batch group which should be sent as an OData batch request
+	 */
+	ODataModel.prototype.addedRequestToGroup = function (sGroupId) {
+		this.oRequestor.submitBatch(sGroupId, true);
+	};
+
+	/**
 	 * Creates a new context binding for the given path and context. The key value pairs from the
 	 * given parameters map combined with the query options provided in the
 	 * {@link sap.ui.model.odata.v4.ODataModel model constructor} are used as OData query options in

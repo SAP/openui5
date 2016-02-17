@@ -193,13 +193,13 @@ sap.ui.require([
 
 			if (iEntityCount < iLength) {
 				oCacheMock.expects("read")
-					.withArgs(iStartIndex, iLength)
+					.withArgs(iStartIndex, iLength, "")
 					// read is called twice because contexts are created asynchronously
 					.twice()
 					.returns(createResult(iEntityCount));
 			} else {
 				oCacheMock.expects("read")
-					.withArgs(iStartIndex, iLength)
+					.withArgs(iStartIndex, iLength, "")
 					.returns(createResult(iEntityCount));
 			}
 			// spies to check and document calls to model and binding methods from ManagedObject
@@ -343,7 +343,8 @@ sap.ui.require([
 				oPromise;
 
 			if (bSync && iRangeIndex < oFixture.length - 1) {
-				oCacheMock.expects("read").withArgs(iStart, iLength).returns(createResult(iLength));
+				oCacheMock.expects("read").withArgs(iStart, iLength, "")
+					.returns(createResult(iLength));
 			}
 
 			// code under test, read synchronously with previous range
@@ -449,7 +450,7 @@ sap.ui.require([
 				oListBinding,
 				done = assert.async();
 
-			this.getCacheMock().expects("read").withArgs(oFixture.start, 30)
+			this.getCacheMock().expects("read").withArgs(oFixture.start, 30, "")
 				.returns(createResult(oFixture.result));
 			oListBinding = this.oModel.bindList("/EMPLOYEES", oContext);
 			assert.strictEqual(oListBinding.isLengthFinal(), false, "Length is not yet final");
@@ -481,8 +482,8 @@ sap.ui.require([
 				i, n,
 				done = assert.async();
 
-			oCacheMock.expects("read").withArgs(20, 30).returns(createResult(15));
-			oCacheMock.expects("read").withArgs(oFixture.start, 30)
+			oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(15));
+			oCacheMock.expects("read").withArgs(oFixture.start, 30, "")
 				.returns(createResult(oFixture.result));
 
 			oListBinding.getContexts(20, 30); // creates cache
@@ -514,11 +515,11 @@ sap.ui.require([
 			done = assert.async();
 
 		// 1. read and get [20..50) -> estimated length 60
-		oCacheMock.expects("read").withArgs(20, 30).returns(createResult(30));
+		oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(30));
 		// 2. read and get [0..30) -> length still 60
-		oCacheMock.expects("read").withArgs(0, 30).returns(createResult(30));
+		oCacheMock.expects("read").withArgs(0, 30, "").returns(createResult(30));
 		// 3. read [50..80) get no entries -> length is now final 50
-		oCacheMock.expects("read").withArgs(50, 30).returns(createResult(0));
+		oCacheMock.expects("read").withArgs(50, 30, "").returns(createResult(0));
 
 		oListBinding.getContexts(20, 30);
 
@@ -550,11 +551,11 @@ sap.ui.require([
 			done = assert.async();
 
 		// 1. read [20..50) and get [20..35) -> final length 35
-		oCacheMock.expects("read").withArgs(20, 30).returns(createResult(15));
+		oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(15));
 		// 2. read [30..60) and get no entries -> estimated length 10 (after lower boundary reset)
-		oCacheMock.expects("read").withArgs(30, 30).returns(createResult(0));
+		oCacheMock.expects("read").withArgs(30, 30, "").returns(createResult(0));
 		// 3. read [35..65) and get no entries -> estimated length still 10
-		oCacheMock.expects("read").withArgs(35, 30).returns(createResult(0));
+		oCacheMock.expects("read").withArgs(35, 30, "").returns(createResult(0));
 
 		oListBinding.getContexts(20, 30);
 
@@ -589,11 +590,11 @@ sap.ui.require([
 			done = assert.async();
 
 		// 1. read [20..50) and get [20..35) -> final length 35
-		oCacheMock.expects("read").withArgs(20, 30).returns(createResult(15));
+		oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(15));
 		// 2. read [20..50) and get [20..34) -> final length 34
-		oCacheMock.expects("read").withArgs(20, 30).returns(createResult(14));
+		oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(14));
 		// 3. read [35..65) and get no entries -> final length still 34
-		oCacheMock.expects("read").withArgs(35, 30).returns(createResult(0));
+		oCacheMock.expects("read").withArgs(35, 30, "").returns(createResult(0));
 
 		oListBinding.getContexts(20, 30);
 
@@ -631,7 +632,7 @@ sap.ui.require([
 		// refresh event during refresh
 		oListBindingMock.expects("_fireRefresh")
 			.withExactArgs({reason : ChangeReason.Refresh});
-		oCacheMock.expects("read").withArgs(0, 10).returns(createResult(9));
+		oCacheMock.expects("read").withArgs(0, 10, "").returns(createResult(9));
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
@@ -685,7 +686,7 @@ sap.ui.require([
 		// change event during getContexts
 		oListBindingMock.expects("_fireChange").never();
 		oError.canceled = true;
-		oCacheMock.expects("read").withArgs(0, 10).returns(Promise.reject(oError));
+		oCacheMock.expects("read").withArgs(0, 10, "").returns(Promise.reject(oError));
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
@@ -706,7 +707,7 @@ sap.ui.require([
 
 		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
-				read: function (iIndex, iLength, sPath, fnDataRequested) {
+				read: function (iIndex, iLength, sQueueId, sPath, fnDataRequested) {
 					fnDataRequested(); // synchronously
 					return createResult(iLength, iIndex);
 				}
@@ -746,7 +747,7 @@ sap.ui.require([
 
 		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
-				read: function (iIndex, iLength, sPath, fnDataRequested) {
+				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
 					fnDataRequested();
 					return Promise.reject(oError);
 				}
@@ -779,7 +780,7 @@ sap.ui.require([
 
 		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
-				read: function (iIndex, iLength, sPath, fnDataRequested) {
+				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
 					iReadCount++;
 					if (iReadCount === 1) {
 						fnDataRequested();
@@ -817,7 +818,7 @@ sap.ui.require([
 			oPromise = {};
 
 		this.oSandbox.mock(oListBinding.oCache).expects("read")
-			.withExactArgs(42, 1, "bar")
+			.withExactArgs(42, 1, undefined, "bar")
 			.returns(oPromise);
 
 		assert.strictEqual(oListBinding.requestValue("bar", 42), oPromise);
@@ -847,6 +848,26 @@ sap.ui.require([
 		assert.strictEqual(oListBinding.requestValue("", 42), oPromise);
 	});
 	//TODO provide iStart, iLength parameter to requestValue to support paging on nested list
+
+	//*********************************************************************************************
+	QUnit.test("getContexts calls addedRequestToGroup", function (assert) {
+		var oListBinding;
+
+		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
+			return {
+				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
+					fnDataRequested();
+					return createResult(iLength, iIndex);
+				}
+			};
+		});
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+			.withExactArgs("");
+
+		oListBinding = this.oModel.bindList("/EMPLOYEES");
+
+		return oListBinding.getContexts(0, 10);
+	});
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
 //The implementation of getContexts needs to provide next to the resulting context array a diff
