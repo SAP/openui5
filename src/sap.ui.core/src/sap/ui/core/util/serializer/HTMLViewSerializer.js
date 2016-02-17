@@ -41,10 +41,10 @@ sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', '
 	 * @returns {string} the serialized HTML view.
 	 */
 	HTMLViewSerializer.prototype.serialize = function () {
-
+		var that = this;
 		// a function to understand if to skip aggregations
 		var fnSkipAggregations = function (oControl) {
-			return (oControl instanceof this._oWindow.sap.ui.core.mvc.View);
+			return oControl instanceof this._oWindow.sap.ui.core.mvc.View && oControl !== that._oView;
 		};
 
 		// create serializer
