@@ -5,13 +5,14 @@ sap.ui.require([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
+	"sap/ui/model/ListBinding",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Context, Model, Cache, Requestor, Helper,
+], function (ManagedObject, ChangeReason, Context, ListBinding, Model, Cache, Requestor, Helper,
 		ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -302,9 +303,8 @@ sap.ui.require([
 		var oListBinding = this.oModel.bindList("/Products");
 
 		this.mock(oListBinding).expects("_fireChange")
-			.withExactArgs({reason : ChangeReason.Change}).twice();
+			.withExactArgs({reason : ChangeReason.Change});
 
-		oListBinding.checkUpdate();
 		oListBinding.checkUpdate(true);
 		//TODO check last read range for an update and only send change event then
 	});
@@ -643,12 +643,6 @@ sap.ui.require([
 			assert.strictEqual(oListBinding.isLengthFinal(), true);
 
 			//code under test
-			assert.throws(function () {
-				oListBinding.refresh();
-			}, new Error("Falsy values for bForceUpdate are not supported"));
-			assert.throws(function () {
-				oListBinding.refresh(false);
-			}, new Error("Falsy values for bForceUpdate are not supported"));
 			oListBinding.refresh(true);
 
 			assert.strictEqual(oListBinding.oCache, oCache);
@@ -867,6 +861,73 @@ sap.ui.require([
 		oListBinding = this.oModel.bindList("/EMPLOYEES");
 
 		return oListBinding.getContexts(0, 10);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("forbidden", function (assert) {
+		var oListBinding = this.oModel.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			oListBinding.checkUpdate(false);
+		}, new Error("Unsupported operation: ODataListBinding#checkUpdate, "
+			+ "bForceUpdate must be true"));
+
+		assert.throws(function () { //TODO implement
+			oListBinding.filter();
+		}, new Error("Unsupported operation: ODataListBinding#filter"));
+
+		assert.throws(function () { //TODO implement?
+			oListBinding.getContexts(0, 42, 0);
+		}, new Error("Unsupported operation: ODataListBinding#getContexts, "
+				+ "iThreshold parameter must not be set"));
+
+		assert.throws(function () { //TODO implement
+			oListBinding.getCurrentContexts();
+		}, new Error("Unsupported operation: ODataListBinding#getCurrentContexts"));
+
+		assert.throws(function () {
+			oListBinding.getDistinctValues();
+		}, new Error("Unsupported operation: ODataListBinding#getDistinctValues"));
+
+		assert.throws(function () { //TODO implement
+			oListBinding.refresh(false);
+		}, new Error("Unsupported operation: ODataListBinding#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () {
+			oListBinding.refresh("foo"/*truthy*/);
+		}, new Error("Unsupported operation: ODataListBinding#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () { //TODO implement
+			oListBinding.refresh(true, "");
+		}, new Error("Unsupported operation: ODataListBinding#refresh, "
+				+ "sGroupId parameter must not be set"));
+
+		assert.throws(function () { //TODO implement
+			oListBinding.sort();
+		}, new Error("Unsupported operation: ODataListBinding#sort"));
+	});
+	//TODO errors on _fireFilter(mArguments) and below in Wiki
+
+	//*********************************************************************************************
+	QUnit.test("events", function (assert) {
+		var mEventParameters = {},
+			oListBinding,
+			oReturn = {};
+
+		this.oSandbox.mock(ListBinding.prototype).expects("attachEvent")
+			.withExactArgs("change", mEventParameters).returns(oReturn);
+
+		oListBinding = this.oModel.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			oListBinding.attachEvent("filter");
+		}, new Error("Unsupported event 'filter': ODataListBinding#attachEvent"));
+
+		assert.throws(function () {
+			oListBinding.attachEvent("sort");
+		}, new Error("Unsupported event 'sort': ODataListBinding#attachEvent"));
+
+		assert.strictEqual(oListBinding.attachEvent("change", mEventParameters), oReturn);
 	});
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
