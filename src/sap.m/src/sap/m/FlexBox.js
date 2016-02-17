@@ -149,7 +149,11 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 
 		if (oItem) {
 			oItem.detachEvent("_change", this.onItemChange, this);
-			oItem.$().parent().remove();
+			if (oItem instanceof sap.m.FlexBox) {
+				oItem.$().remove();
+			} else {
+				oItem.$().parent().remove();
+			}
 		}
 
 		return oItem;
