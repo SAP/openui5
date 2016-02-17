@@ -65,10 +65,10 @@
 				if (jQuery && jQuery.sap) {
 					jQuery.sap.require._hook = function(sScript, sModuleName) {
 						// manage includes and excludes with blanket utils
-						var bFiltered = window.blanket.utils.matchPatternAttribute(sModuleName, window.blanket.options("filter"));
-						bFiltered &= !window.blanket.utils.matchPatternAttribute(sModuleName, window.blanket.options("anti-filter"));
+						var bFiltered = !window.blanket.utils.matchPatternAttribute(sModuleName, window.blanket.options("antifilter"));
+						bFiltered &= window.blanket.utils.matchPatternAttribute(sModuleName, window.blanket.options("filter"));
 						// avoid duplicate instrumentation on server and client-side
-						if (sScript.indexOf("window['sap-ui-qunit-coverage'] = 'server';") !== 0) {
+						if (bFiltered && sScript.indexOf("window['sap-ui-qunit-coverage'] = 'server';") !== 0) {
 							window.blanket.instrument({
 								inputFile: sScript,
 								inputFileName: sModuleName,
