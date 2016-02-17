@@ -13,7 +13,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {sap.ui.core.Control|sap.ui.core.UIArea} oRootControl the root control to serialize
 	 * @param {object} serializeDelegate the serializer delegate. Has to implement start/middle/end methods.
 	 * @param {boolean} bSkipRoot whether to skip the root node or not
-	 * @param {booolean} fnSkipAggregations whether to skip aggregations
+	 * @param {function} fnSkipAggregations whether to skip aggregations
+	 * @param {function} fnSkipElement whether to skip an element
 	 *
 	 * @public
 	 * @class Serializer class.
@@ -25,20 +26,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 */
 	var Serializer = EventProvider.extend("sap.ui.core.util.serializer.Serializer", /** @lends sap.ui.core.util.serializer.Serializer.prototype */
 	{
-		constructor : function (oRootControl, serializeDelegate, bSkipRoot, oWindow, fnSkipAggregations) {
+		constructor : function (oRootControl, serializeDelegate, bSkipRoot, oWindow, fnSkipAggregations, fnSkipElement) {
 			EventProvider.apply(this);
 			this._oRootControl = oRootControl;
 			this._delegate = serializeDelegate;
 			this._bSkipRoot = !!bSkipRoot;
 			this._oWindow = oWindow || window;
 			this._fnSkipAggregations = fnSkipAggregations;
+			this._fnSkipElement = fnSkipElement;
 		}
 	});
 
 	/**
 	 * Serializes the complete control tree.
 	 *
-	 * @returns {string} the serialized control tree.
+	 * @return {string} the serialized control tree.
 	 */
 	Serializer.prototype.serialize = function () {
 		return this._serializeRecursive(this._oRootControl, 0);
@@ -51,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {int} iLevel The nesting level of the recursion.
 	 * @param {string} sAggregationName The name of the aggregation which aggregates the control.
 	 * @param {boolean} isDefaultAggregation whether the aggregation is the default aggregation.
-	 * @returns {string} the serialized control tree.
+	 * @return {string} the serialized control tree.
 	 */
 	Serializer.prototype._serializeRecursive = function (oControl, iLevel, sAggregationName, isDefaultAggregation) {
 
@@ -83,11 +85,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					} else if (oValue && oValue.length) { // TODO: ARRAY CHECK
 						for (var i = 0 ; i < oValue.length ; i++) {
 							var oObj = oValue[i];
-							if (oObj instanceof this._oWindow.sap.ui.core.Element) {
+							if (this._isObjectSerializable(oObj)) {
 								mElementsToSerialize.push(oObj);
 							}
 						}
-					} else if (oValue instanceof this._oWindow.sap.ui.core.Element) {
+					} else if (this._isObjectSerializable(oValue)) {
 						mElementsToSerialize.push(oValue);
 					}
 
@@ -97,8 +99,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							aCode.push(this._delegate.startAggregation(oControl, sName));
 						}
 						var isDefault = this._isDefaultAggregation(oControl, sName);
-						for (var i = 0 ; i < mElementsToSerialize.length ; i++) {
-							aCode.push(this._serializeRecursive(mElementsToSerialize[i], iLevel + 1, sName, isDefault));
+						for (var j = 0 ; j < mElementsToSerialize.length ; j++) {
+							aCode.push(this._serializeRecursive(mElementsToSerialize[j], iLevel + 1, sName, isDefault));
 						}
 						if (bWriteDelegate) {
 							aCode.push(this._delegate.endAggregation(oControl, sName));
@@ -118,11 +120,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
+	 * Checks if the given object should be serialized
+	 * @param {object} oObject
+	 * @return {boolean}
+	 * @private
+	 */
+	Serializer.prototype._isObjectSerializable = function (oObject) {
+		return oObject instanceof this._oWindow.sap.ui.core.Element &&
+			!(this._fnSkipElement && this._fnSkipElement(oObject));
+	};
+
+	/**
 	 * Checks if a given aggregation is the default aggregation.
 	 *
 	 * @param {sap.ui.core.Control|sap.ui.core.UIArea} oControl The current control to process.
 	 * @param {string} sAggregationName The name of the aggregation.
-	 * @returns {boolean} Whether the given aggregation is the default aggregation or not
+	 * @return {boolean} Whether the given aggregation is the default aggregation or not
 	 * @private
 	 */
 	Serializer.prototype._isDefaultAggregation = function (oControl, sAggregationName) {
