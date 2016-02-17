@@ -124,6 +124,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				});
 			};
 
+			var fnFlexProcessor = function(xContent) {
+				if (XMLView._flexProcessor) {
+					// for the flexProcessor fully qualified Ids are necessary and get hence enriched on the xml source
+					this._xContent = XMLTemplateProcessor.enrichTemplateIds(this._xContent, this);
+					return XMLView._flexProcessor(this._xContent, this._sOwnerId).then(function(xContent) {
+						this._xContent = xContent;
+						fnProcessView();
+						// Cache.set("this.getId()", xContent)
+					}.bind(this));
+				} else {
+					fnProcessView();
+				}
+			}.bind(this);
+
 			if (!mSettings) {
 				throw new Error("mSettings must be given");
 			}
@@ -145,16 +159,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			if (mSettings.viewName) {
 				var sResourceName = jQuery.sap.getResourceName(mSettings.viewName, ".view.xml");
 				if (mSettings.async) {
-					return jQuery.sap.loadResource(sResourceName, {async: true})
+					var xmlFromCache = /*Cache.get(sResourcename) !=*/ false;
+					if (xmlFromCache) {
+						that._xContent = xmlFromCache;
+						fnProcessView();
+					} else {
+						return jQuery.sap.loadResource(sResourceName, {async: true})
 						.then(function(oData) {
 							that._xContent = oData.documentElement; // result is the document node
 							return that.runPreprocessor("xml", that._xContent);
 						})
 						.then(function(xContent) {
-							that._xContent = xContent;
-							fnProcessView();
+							return fnFlexProcessor(xContent);
 						});
-					// end of loadResource
+					} // end of loadResource
 				} else {
 					this._xContent = jQuery.sap.loadResource(sResourceName).documentElement;
 				}
@@ -178,7 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				return this.runPreprocessor("xml", this._xContent)
 					.then(function(xContent) {
 						that._xContent = xContent;
-						fnProcessView();
+						return fnFlexProcessor(xContent);
 					});
 			} else {
 				this._xContent = this.runPreprocessor("xml", this._xContent, true);
@@ -292,6 +310,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				jQuery.sap.log.error("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
 			}
 		};
+
+		/**
+		 * A preprocessor hook for flexibility in async views
+		 *
+		 * The preprocessor function receives an XML document with full qualified Ids and should return a promise returning
+		 * with the processed XML document, which is ready for XML template processing. In case the result has been cached
+		 * and the cache is still valid, this hook is skipped as the cached XML will be used for further processing.
+		 *
+		 * @name sap.ui.core.mvc.XMLView._flexProcessor
+		 * @function
+		 * @param {xml} xmlDoc the xml document to be processed
+		 * @param {string} [sOwnerComonentId] owner component id if available
+		 * @return {Promise} a promise resolving with the processed xml doc
+		 * @private
+		 */
 
 		/**
 		 * Specifies the available preprocessor types for XMLViews
