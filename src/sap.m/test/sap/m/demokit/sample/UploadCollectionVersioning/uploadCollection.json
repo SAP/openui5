@@ -19,7 +19,12 @@
 				},
 				{
 					"title":"File Size",
-					"text":"5"
+					"type" :"size",
+					"text":"50"
+				},
+				{
+					"title":"Version",
+					"text":"1"
 				}
 			],
 			"statuses":[
@@ -47,11 +52,12 @@
 				},
 				{
 					"title":"File Size",
-					"text":"226600"
+					"type" :"size",
+					"text":"2266000"
 				},
 				{
-					"title":"Attribute with a long text",
-					"text":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+					"title":"Version",
+					"text":"1"
 				}
 			],
 			"statuses":[
@@ -79,7 +85,12 @@
 				},
 				{
 					"title":"File Size",
-					"text":"1500"
+					"type" :"size",
+					"text":"15000"
+				},
+				{
+					"title":"Version",
+					"text":"1"
 				}
 			],
 			"statuses":[
@@ -108,7 +119,12 @@
 				},
 				{
 					"title":"File Size",
-					"text":"200"
+					"type" :"size",
+					"text":"2000"
+				},
+				{
+					"title":"Version",
+					"text":"1"
 				}
 			],
 			"statuses":[
@@ -137,7 +153,12 @@
 				},
 				{
 					"title":"File Size",
-					"text":"25"
+					"type" :"size",
+					"text":"250"
+				},
+				{
+					"title":"Version",
+					"text":"1"
 				}
 			],
 			"statuses":[
@@ -166,7 +187,12 @@
 				},
 				{
 					"title":"File Size",
+					"type" :"size",
 					"text":"3000000"
+				},
+				{
+					"title":"Version",
+					"text":"1"
 				}
 			]
 		}, {
@@ -188,7 +214,12 @@
 				},
 				{
 					"title":"File Size",
+					"type" :"size",
 					"text":"35000"
+				},
+				{
+					"title":"Version",
+					"text":"1"
 				}
 			]
 		}, {
@@ -210,7 +241,12 @@
 				},
 				{
 					"title":"File Size",
+					"type" :"size",
 					"text":"40000000"
+				},
+				{
+					"title":"Version",
+					"text":"2"
 				}
 			]
 		}

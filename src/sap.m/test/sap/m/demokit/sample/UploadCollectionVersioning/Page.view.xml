@@ -21,7 +21,7 @@
 				id="UploadCollection"
 				maximumFilenameLength="55"
 				maximumFileSize="10"
-				multiple="true"
+				multiple="false"
 				showSeparators="All"
 				change="onChange"
 				fileSizeExceed="onFileSizeExceed"
@@ -38,6 +38,7 @@
 						<Title id="attachmentTitle"/>
 						<ToolbarSpacer/>
 						<Button id="downloadButton" text="Download" press="onDownloadItem" enabled="false" type="Transparent"></Button>
+						<Button id="versionButton" text="Upload a new version" press="onVersion" enabled="false" type="Transparent"></Button>
 						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
 					</OverflowToolbar>
 				</toolbar>
@@ -58,9 +59,8 @@
 						<attributes>
 							<ObjectAttribute
 								title="{title}"
-								text="{path : 'text', formatter : '.formatAttribute'}"
-								active="{active}"
-								textDirection="{textDirection}"/>
+								text="{parts : ['text', 'type'], formatter : '.formatAttribute'}"
+								active="{active}"/>
 						</attributes>
 						<statuses>
 							<ObjectStatus
