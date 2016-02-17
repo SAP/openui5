@@ -133,7 +133,9 @@ sap.ui.define([
 		}
 		oReadPromise = this.isRelative()
 			? this.getContext().requestValue(this.getPath())
-			: this.oCache.read();
+			: this.oCache.read(/*sGroupId*/"", /*sPath*/undefined, function () {
+					that.getModel().addedRequestToGroup("");
+				});
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {
 				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);

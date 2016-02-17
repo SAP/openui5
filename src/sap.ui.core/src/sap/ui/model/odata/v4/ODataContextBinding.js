@@ -132,8 +132,12 @@ sap.ui.define([
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 */
 	ODataContextBinding.prototype.requestValue = function (sPath) {
+		var that = this;
+
 		return this.oCache
-			? this.oCache.read(sPath)
+			? this.oCache.read(/*sGroupId*/"", sPath, function () {
+					that.getModel().addedRequestToGroup("");
+				})
 			: this.getContext().requestValue(this.getPath() + (sPath ? "/" + sPath : ""));
 	};
 

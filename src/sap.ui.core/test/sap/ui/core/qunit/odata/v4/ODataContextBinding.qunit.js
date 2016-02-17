@@ -297,8 +297,11 @@ sap.ui.require([
 			var oPromise = {};
 
 			that.oSandbox.mock(oBinding.oCache).expects("read")
-				.withExactArgs("bar")
+				.withArgs("", "bar")
+				.callsArg(2)
 				.returns(oPromise);
+			that.oSandbox.mock(oBinding.getModel()).expects("addedRequestToGroup")
+				.withExactArgs("");
 
 			assert.strictEqual(oBinding.requestValue("bar"), oPromise);
 		});

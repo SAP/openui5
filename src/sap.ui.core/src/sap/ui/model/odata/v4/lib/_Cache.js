@@ -284,32 +284,43 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	/**
 	 * Returns a promise resolved with an OData object for the requested data.
 	 *
+	 * @param {string} [sGroupId]
+	 *   ID of the batch group to associate the requests with; if <code>undefined</code>
+	 *   the requests are sent immediately
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
+	 * @param {function()} [fnDataRequested]
+	 *   The function is called directly after the back end request has been triggered.
+	 *   If no back end request is needed, the function is not called.
 	 * @returns {Promise}
 	 *   A Promise to be resolved with the element.
 	 *   A refresh cancels processing a pending promise by throwing an error that has a
 	 *   property <code>canceled</code> which is set to <code>true</code>.
 	 */
-	SingleCache.prototype.read = function (sPath) {
+	SingleCache.prototype.read = function (sGroupId, sPath, fnDataRequested) {
 		var that = this,
 			oError,
 			oPromise,
 			sResourcePath = this.sResourcePath;
 
 		if (!this.oPromise) {
-			oPromise = this.oRequestor.request("GET", sResourcePath).then(function (oResult) {
-				if (that.oPromise !== oPromise) {
-					oError = new Error("Refresh canceled processing of pending request: " + that);
-					oError.canceled = true;
-					throw oError;
-				}
-				if (that.bSingleProperty) {
-					// 204 No Content: map undefined to null
-					oResult = oResult ? oResult.value : null;
-				}
-				return oResult;
-			});
+			oPromise = this.oRequestor.request("GET", sResourcePath, sGroupId)
+				.then(function (oResult) {
+					if (that.oPromise !== oPromise) {
+						oError = new Error("Refresh canceled processing of pending request: "
+							+ that);
+						oError.canceled = true;
+						throw oError;
+					}
+					if (that.bSingleProperty) {
+						// 204 No Content: map undefined to null
+						oResult = oResult ? oResult.value : null;
+					}
+					return oResult;
+				});
+			if (fnDataRequested) {
+				fnDataRequested();
+			}
 			this.oPromise = oPromise;
 		}
 		if (sPath) {

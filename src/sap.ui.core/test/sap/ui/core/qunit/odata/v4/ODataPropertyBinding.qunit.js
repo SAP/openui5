@@ -86,11 +86,11 @@ sap.ui.require([
 				oContextBindingMock = that.oSandbox.mock(oControl.getObjectBinding());
 				oContextBindingMock.expects("requestValue")
 					.exactly(iNoOfRequests || 1)
-					.withExactArgs("property", undefined)
+					.withExactArgs("property", /*sPath*/undefined)
 					.returns(Promise.resolve("value"));
 				if (oError) {
 					oContextBindingMock.expects("requestValue")
-						.withExactArgs("property", undefined)
+						.withExactArgs("property", /*sPath*/undefined)
 						.returns(Promise.reject(oError));
 				}
 				oControl.bindProperty("text", {
@@ -98,7 +98,8 @@ sap.ui.require([
 					type : new TypeString()
 				});
 
-				assert.strictEqual(oControl.getText(), undefined, "synchronous: no value yet");
+				assert.strictEqual(oControl.getText(), /*sPath*/undefined,
+					"synchronous: no value yet");
 				oBinding = oControl.getBinding("text");
 				oBinding.attachChange(fnChangeHandler);
 			});
@@ -282,7 +283,7 @@ sap.ui.require([
 		oCacheMock.expects("createSingle")
 			.withExactArgs(sinon.match.object, "EntitySet('foo')", {})
 			.returns({
-				read : function (sPath) {
+				read : function (sGroupId, sPath) {
 					assert.strictEqual(sPath, "property");
 					return Promise.resolve("value");
 				}
@@ -337,11 +338,14 @@ sap.ui.require([
 						true)
 					.returns(oCache);
 				this.oSandbox.mock(oCache).expects("read")
+					.withArgs(/*sGroupId*/"", /*sPath*/undefined)
+					.callsArg(2)
 					.returns(Promise.resolve(oValue));
+				this.oSandbox.mock(oModel).expects("addedRequestToGroup").withExactArgs("");
 			} else {
 				sResolvedPath = sContextPath + "/" + sPath;
 				oContextBindingMock.expects("requestValue")
-					.withExactArgs(sPath, undefined)
+					.withExactArgs(sPath, /*iIndex*/undefined)
 					.returns(Promise.resolve(oValue));
 			}
 			this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")

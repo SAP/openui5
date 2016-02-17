@@ -462,29 +462,34 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("read single employee", function (assert) {
-		var mQueryParams = {
+		var oCache,
+			iDataRequestedCount = 0,
+			fnDataRequested = function () {iDataRequestedCount++;},
+			oExpectedResult = {},
+			aPromises = [],
+			mQueryParams = {
 				"sap-client" : "300"
 			},
-			oExpectedResult = {},
 			oRequestor = Requestor.create("/~/"),
-			sResourcePath = "Employees('1')",
-			oCache,
-			aPromises = [];
+			sResourcePath = "Employees('1')";
 
 		this.oSandbox.mock(Cache).expects("buildQueryString")
 			.withExactArgs(mQueryParams).returns("?~");
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath + "?~")
+			.withExactArgs("GET", sResourcePath + "?~", "group")
 			.returns(Promise.resolve(oExpectedResult));
 
 		oCache = Cache.createSingle(oRequestor, sResourcePath, mQueryParams);
-		aPromises.push(oCache.read().then(function (oResult) {
+		aPromises.push(oCache.read("group", undefined, fnDataRequested).then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedResult);
 		}));
-		aPromises.push(oCache.read().then(function (oResult) {
+		assert.strictEqual(iDataRequestedCount, 1, "data requested called only once");
+		aPromises.push(oCache.read("group", undefined, fnDataRequested).then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedResult);
 		}));
-		return Promise.all(aPromises);
+		return Promise.all(aPromises).then(function () {
+			assert.strictEqual(iDataRequestedCount, 1, "data requested called only once");
+		});
 	});
 
 	//*********************************************************************************************
@@ -495,7 +500,7 @@ sap.ui.require([
 			oCache;
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath)
+			.withExactArgs("GET", sResourcePath, undefined)
 			.returns(Promise.resolve(oExpectedResult));
 
 		// code under test
@@ -513,7 +518,7 @@ sap.ui.require([
 			oCache;
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath)
+			.withExactArgs("GET", sResourcePath, undefined)
 			.returns(Promise.resolve(undefined)); // 204 No Content
 
 		// code under test
@@ -538,25 +543,25 @@ sap.ui.require([
 			aPromises = [];
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sResourcePath)
+			.withExactArgs("GET", sResourcePath, undefined)
 			.returns(Promise.resolve(oExpectedResult));
 
-		aPromises.push(oCache.read("foo").then(function (oResult) {
+		aPromises.push(oCache.read(undefined, "foo").then(function (oResult) {
 			assert.strictEqual(oResult, oExpectedResult.foo);
 		}));
-		aPromises.push(oCache.read("foo/bar").then(function (oResult) {
+		aPromises.push(oCache.read(undefined, "foo/bar").then(function (oResult) {
 			assert.strictEqual(oResult, 42);
 		}));
 		this.oLogMock.expects("warning").withExactArgs(
 			"Failed to drill-down into Employees('1')/foo/bar/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
-		aPromises.push(oCache.read("foo/bar/invalid").then(function (oResult) {
+		aPromises.push(oCache.read(undefined, "foo/bar/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
 		this.oLogMock.expects("warning").withExactArgs(
 			"Failed to drill-down into Employees('1')/foo/null/invalid, invalid segment: invalid",
 			null, "sap.ui.model.odata.v4.lib._Cache");
-		aPromises.push(oCache.read("foo/null/invalid").then(function (oResult) {
+		aPromises.push(oCache.read(undefined, "foo/null/invalid").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		}));
 		return Promise.all(aPromises);
@@ -592,7 +597,8 @@ sap.ui.require([
 			oRequestor = Requestor.create("/~/"),
 			sResourcePath = "Employees('1')";
 
-		this.oSandbox.mock(oRequestor).expects("request").withExactArgs("GET", sResourcePath)
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("GET", sResourcePath, undefined)
 			.returns(Promise.resolve({}));
 
 		oCache = Cache.createSingle(oRequestor, sResourcePath);
@@ -614,7 +620,7 @@ sap.ui.require([
 			sResourcePath = "Employees('1')";
 
 		this.oSandbox.mock(oRequestor).expects("request").twice()
-			.withExactArgs("GET", sResourcePath)
+			.withExactArgs("GET", sResourcePath, undefined)
 			.onFirstCall().returns(Promise.resolve({}))
 			.onSecondCall().returns(Promise.resolve({}));
 
