@@ -155,6 +155,9 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 		},
 
 		onNavBack : function (oEvt) {
+			if (this._oComp && this._oComp.exit) {
+				this._oComp.exit();
+			}
 			this.router.myNavBack("home", {});
 		},
 
