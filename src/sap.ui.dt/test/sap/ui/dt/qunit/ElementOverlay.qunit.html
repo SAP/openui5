@@ -234,7 +234,7 @@
 					var done = assert.async();
 					this.oLabel = new sap.m.Label();
 					this.oLabel.placeAt("content");
-					sap.ui.dt.Preloader.load(["sap.m.oLabel"]).then(function() {
+					sap.ui.dt.Preloader.load(["sap.m.Label"]).then(function() {
 						that.oOverlay = new sap.ui.dt.ElementOverlay({
 							element : that.oLabel
 						});
@@ -274,7 +274,7 @@
 					sap.ui.getCore().applyChanges();
 					this.oVerticalLayout.$().css("display", "none");
 
-					sap.ui.dt.Preloader.load(["sap.m.oLabel"]).then(function() {
+					sap.ui.dt.Preloader.load(["sap.m.Label"]).then(function() {
 						that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
 							element : that.oVerticalLayout
 						});
