@@ -441,36 +441,67 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @private
 	 */
 	Overlay.prototype._updateDom = function() {
+		if (this.isRoot()) {
+			this._ensureIsInOverlayContainer();
+
+			// apply styles propagated from root overlays to all their children
+			this.applyStyles();
+		} else {
+			this._ensureDomOrder();
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._ensureDomOrder = function() {
 		var $this = this.$();
+		var $currentDomParent = $this.parent();
+		var oParent = this.getParent();
+		var $parentDomRef = oParent.$();
+		var $parentContainer = $parentDomRef.find(">.sapUiDtOverlayChildren");
+		var bIsInParentContainer = $parentContainer.get(0) === $currentDomParent.get(0);
 
-		if (!this.isRoot()) {
-			var oParent = this.getParent();
-			var oParentDomRef = oParent.getDomRef();
-			if (oParentDomRef !== this.$().parent().get(0)) {
-				var $parentDomRef = oParent.$();
-				var $parentContainer = $parentDomRef.find(">.sapUiDtOverlayChildren");
+		var aDomRefChildren = $parentContainer.children();
+		var iDomPosition = aDomRefChildren.index($this);
+		var aChildren = oParent.getChildren();
+		var iPosition = aChildren.indexOf(this);
+		var bIsDomOrderCorrect = iDomPosition === iPosition;
 
-				var aDomRefChildren = $parentContainer.children();
-				var iDomPosition = aDomRefChildren.index($this);
-				var aChildren = oParent.getChildren();
-				var iPosition = aChildren.indexOf(this);
-				if (iDomPosition !== iPosition) {
-					if (iPosition === 0) {
-						$parentContainer.prepend($this);
-					} else {
-						aChildren[iPosition - 1].$().after($this);
-					}
+		if (!bIsInParentContainer || !bIsDomOrderCorrect) {
+			if (iPosition === 0) {
+				// insert as a first dom child
+				$parentContainer.prepend($this);
+			} else {
+				// find previous child dom...
+				var iPreviousChildPosition = iPosition - 1;
+				var $PreviousChildDom = aChildren[iPreviousChildPosition].$();
+				while (!$PreviousChildDom.length && iPreviousChildPosition > 0) {
+					$PreviousChildDom = aChildren[iPreviousChildPosition].$();
+					iPreviousChildPosition--;
+				}
+				if ($PreviousChildDom.length) {
+					// ... and insert afterwards
+					$PreviousChildDom.after($this);
+				} else {
+					// ... or insert as a first dom child, if no previous child dom was found
+					$parentContainer.prepend($this);
 				}
 			}
-		} else {
-			// instead of adding the created DOM into the UIArea's DOM, we are adding it to overlay-container to avoid clearing of the DOM
-			var oOverlayContainer = Overlay.getOverlayContainer();
-			var $parent = $this.parent();
-			var oParentElement = $parent.length ? $parent.get(0) : null;
-			if (oOverlayContainer !== oParentElement) {
-				$this.appendTo(oOverlayContainer);
-			}
-			this.applyStyles();
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._ensureIsInOverlayContainer = function() {
+		var $this = this.$();
+		var $currentDomParent = $this.parent();
+		// instead of adding the created DOM into the UIArea's DOM, we are adding it to overlay-container to avoid clearing of the DOM
+		var oOverlayContainer = Overlay.getOverlayContainer();
+		var oParentElement = $currentDomParent.length ? $currentDomParent.get(0) : null;
+		if (oOverlayContainer !== oParentElement) {
+			$this.appendTo(oOverlayContainer);
 		}
 	};
 
