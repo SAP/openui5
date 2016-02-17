@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.setProperty("selected", bSelected, true); // No re-rendering
 		this._changeGroupName(this.getGroupName());
 
-		if (bSelected && sGroupName && sGroupName !== "") { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
+		if (!!bSelected && sGroupName && sGroupName !== "") { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
 			for (var i = 0; i < iLength; i++) {
 				oControl = aControlsInGroup[i];
 
@@ -263,7 +263,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
-		if ((bSelectedOld !== bSelected) && this.getDomRef()) {
+		if ((bSelectedOld !== !!bSelected) && this.getDomRef()) {
 			this.$().toggleClass("sapMRbSel", bSelected);
 
 			if (bSelected) {
