@@ -210,7 +210,8 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 					type: "sap.m.DraftIndicator",
 					multiple: false
 				}
-			}
+			},
+			designTime : true
 		},
 		renderer: SemanticPageRenderer.render
 	});
