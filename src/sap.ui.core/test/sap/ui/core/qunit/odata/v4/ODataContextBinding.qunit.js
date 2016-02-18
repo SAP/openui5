@@ -4,13 +4,14 @@
 sap.ui.require([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ContextBinding",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Cache, _Context, Helper, ODataContextBinding,
-		ODataModel) {
+], function (ManagedObject, ChangeReason, ContextBinding, Cache, _Context, Helper,
+		ODataContextBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -81,20 +82,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bForceUpdate) {
-		QUnit.test("checkUpdate(" + bForceUpdate + "): unchanged", function (assert) {
-			return this.createContextBinding(assert).then(function (oBinding) {
-				var bGotChangeEvent = false;
+	QUnit.test("checkUpdate: unchanged", function (assert) {
+		return this.createContextBinding(assert).then(function (oBinding) {
+			var bGotChangeEvent = false;
 
-				oBinding.attachChange(function () {
-					bGotChangeEvent = true;
-				});
+			oBinding.attachChange(function () {
+				bGotChangeEvent = true;
+			});
 
-				// code under test
-				oBinding.checkUpdate(bForceUpdate).then(function () {
-					assert.strictEqual(bGotChangeEvent, bForceUpdate,
-						"got change event as expected");
-				});
+			// code under test
+			oBinding.checkUpdate(true).then(function () {
+				assert.ok(bGotChangeEvent, "got change event as expected");
 			});
 		});
 	});
@@ -237,13 +235,6 @@ sap.ui.require([
 		this.oSandbox.mock(oCache).expects("refresh");
 		this.oSandbox.mock(oBinding).expects("_fireChange");
 
-		assert.throws(function () {
-			oBinding.refresh();
-		}, new Error("Falsy values for bForceUpdate are not supported"));
-		assert.throws(function () {
-			oBinding.refresh(false);
-		}, new Error("Falsy values for bForceUpdate are not supported"));
-
 		oBinding.refresh(true);
 	});
 
@@ -332,5 +323,48 @@ sap.ui.require([
 					assert.strictEqual(oNestedBinding.requestValue(""), oPromise);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("forbidden", function (assert) {
+		var oModel = new ODataModel("/service/"),
+			oContextBinding = oModel.bindContext("SO_2_BP");
+
+		assert.throws(function () {
+			oContextBinding.checkUpdate(false);
+		}, new Error("Unsupported operation: ODataContextBinding#checkUpdate, "
+				+ "bForceUpdate must be true"));
+
+		assert.throws(function () { //TODO implement
+			oContextBinding.refresh(false);
+		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () { //TODO implement
+			oContextBinding.refresh(true, "");
+		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+				+ "sGroupId parameter must not be set"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("events", function (assert) {
+		var oContextBinding,
+			mEventParameters = {},
+			oModel = new ODataModel("/service/"),
+			oReturn = {};
+
+		this.oSandbox.mock(ContextBinding.prototype).expects("attachEvent")
+			.withExactArgs("change", mEventParameters).returns(oReturn);
+
+		oContextBinding = oModel.bindContext("SO_2_BP");
+
+		assert.throws(function () {
+			oContextBinding.attachEvent("dataReceived");
+		}, new Error("Unsupported event 'dataReceived': ODataContextBinding#attachEvent"));
+
+		assert.throws(function () {
+			oContextBinding.attachEvent("dataRequested");
+		}, new Error("Unsupported event 'dataRequested': ODataContextBinding#attachEvent"));
+
+		assert.strictEqual(oContextBinding.attachEvent("change", mEventParameters), oReturn);
 	});
 });

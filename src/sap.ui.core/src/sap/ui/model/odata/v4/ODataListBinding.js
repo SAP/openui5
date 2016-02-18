@@ -45,8 +45,8 @@ sap.ui.define([
 	 *   lead to a data service request.
 	 * @throws {Error} When disallowed OData query options are provided
 	 * @class List binding for an OData v4 model.
-	 * It only supports the following events: 'change', 'dataReceived', 'dataRequested', 'refresh'.
-	 * If you attach to other events, an error is thrown.
+	 *   It only supports the following events: 'change', 'dataReceived', 'dataRequested',
+	 *   'refresh'. If you attach to other events, an error is thrown.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -334,7 +334,7 @@ sap.ui.define([
 	 * @param {boolean} bForceUpdate
 	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
 	 * @param {string} [sGroupId]
-	 *   The parameter <code>sGroupId</code> is not supported
+	 *   The parameter <code>sGroupId</code> is not supported.
 	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code> or
 	 *   <code>sGroupId</code> is set, refresh on this binding is not supported.
 	 * @public

@@ -13,6 +13,10 @@ sap.ui.define([
 ], function (jQuery, ChangeReason, ContextBinding, Cache, _Context, Helper) {
 	"use strict";
 
+	var mSupportedEvents = {
+			change : true
+		};
+
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataContextBinding</code>,
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext} instead!
@@ -36,6 +40,8 @@ sap.ui.define([
 	 *   lead to a data service request.
 	 * @throws {Error} When disallowed OData query options are provided
 	 * @class Context binding for an OData v4 model.
+	 *   It only supports the following event: 'change'.
+	 *   If you attach to other events, an error is thrown.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -64,15 +70,26 @@ sap.ui.define([
 			}
 		});
 
+	ODataContextBinding.prototype.attachEvent = function (sEventId) {
+		if (!(sEventId in mSupportedEvents)) {
+			throw new Error("Unsupported event '" + sEventId
+				+ "': ODataContextBinding#attachEvent");
+		}
+		return ContextBinding.prototype.attachEvent.apply(this, arguments);
+	};
+
 	/**
 	 * Checks for an update of this binding's context. If the binding can be resolved and the bound
 	 * context does not match the resolved path, a change event is fired; this event will always be
 	 * asynchronous.
 	 *
-	 * @param {boolean} [bForceUpdate=false]
-	 *   If <code>true</code> the change event is fired even if the value has not changed
+	 * @param {boolean} [bForceUpdate]
+	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
 	 * @returns {Promise}
 	 *   A Promise to be resolved when the check is finished
+	 * @throws {Error}
+	 *   When <code>bForceUpdate</code> is not given or <code>false</code>, checkUpdate on this
+	 *   binding is not supported.
 	 *
 	 * @protected
 	 */
@@ -81,11 +98,14 @@ sap.ui.define([
 			sResolvedPath = this.getModel().resolve(this.getPath(), this.getContext()),
 			that = this;
 
+		if (bForceUpdate !== true) {
+			throw new Error("Unsupported operation: ODataContextBinding#checkUpdate, "
+				+ "bForceUpdate must be true");
+		}
+
 		// works with oElementContext from ContextBinding which describes the resolved binding
 		// (whereas oContext from Binding is the base if sPath is relative)
-		if (!sResolvedPath
-				|| (!bForceUpdate && this.oElementContext
-					&& this.oElementContext.getPath() === sResolvedPath)) {
+		if (!sResolvedPath) {
 			return oPromise;
 		}
 		return oPromise.then(function () {
@@ -105,15 +125,21 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bForceUpdate
 	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
-	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code>, refresh
-	 *   on this binding is not supported
-	 *
+	 * @param {string} [sGroupId]
+	 *   The parameter <code>sGroupId</code> is not supported.
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code> or
+	 *   <code>sGroupId</code> is set, refresh on this binding is not supported.
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 */
-	ODataContextBinding.prototype.refresh = function (bForceUpdate) {
-		if (!bForceUpdate) {
-			throw new Error("Falsy values for bForceUpdate are not supported");
+	ODataContextBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
+		if (bForceUpdate !== true) {
+			throw new Error("Unsupported operation: ODataContextBinding#refresh, "
+				+ "bForceUpdate must be true");
+		}
+		if (sGroupId !== undefined) {
+			throw new Error("Unsupported operation: ODataContextBinding#refresh, "
+				+ "sGroupId parameter must not be set");
 		}
 		if (!this.oCache) {
 			throw new Error("Refresh on this binding is not supported");
