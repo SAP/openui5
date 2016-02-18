@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 				"getPath", "getContext", "getModel", "attachChange", "detachChange", "refresh", "isInitial",
 				"attachDataStateChange","detachDataStateChange",
 				"attachAggregatedDataStateChange", "detachAggregatedDataStateChange",
-				"attachDataRequested","detachDataRequested","attachDataReceived","detachDataReceived","suspend","resume"
+				"attachDataRequested","detachDataRequested","attachDataReceived","detachDataReceived","suspend","resume", "isSuspended"
 			]
 		}
 
@@ -475,6 +475,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 */
 	Binding.prototype.suspend = function() {
 		this.bSuspended = true;
+	};
+
+	/**
+	 * Returns true if the binding is suspended or false if not.
+	 *
+	 * @return {boolean} whether binding is suspended
+	 * @public
+	 */
+	Binding.prototype.isSuspended = function() {
+		return this.bSuspended;
 	};
 
 	/**

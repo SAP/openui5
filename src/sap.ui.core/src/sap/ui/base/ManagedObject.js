@@ -2537,6 +2537,7 @@ sap.ui.define([
 			oBindingInfo.parts[0] = {
 				path: oBindingInfo.path,
 				type: oBindingInfo.type,
+				suspended: oBindingInfo.suspended,
 				formatOptions: oBindingInfo.formatOptions,
 				constraints: oBindingInfo.constraints,
 				model: oBindingInfo.model,
@@ -2651,6 +2652,9 @@ sap.ui.define([
 			oBinding = oModel.bindProperty(oPart.path, oContext, oBindingInfo.parameters);
 			oBinding.setType(oType, sInternalType);
 			oBinding.setFormatter(oPart.formatter);
+			if (oPart.suspended) {
+				oBinding.suspend(true);
+			}
 
 			sMode = oPart.mode || oModel.getDefaultBindingMode();
 			oBinding.setBindingMode(sMode);
@@ -2782,7 +2786,7 @@ sap.ui.define([
 				oBinding = oBindingInfo.binding;
 
 			// If property change was triggered by the model, don't update the model again
-			if (oBindingInfo.skipModelUpdate) {
+			if (oBindingInfo.skipModelUpdate || (oBinding && oBinding.isSuspended())) {
 				return;
 			}
 

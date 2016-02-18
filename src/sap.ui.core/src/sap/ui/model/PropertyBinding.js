@@ -191,6 +191,18 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 	};
 
 	/**
+	 * Resumes the binding update. Change events will be fired again.
+	 *
+	 * When the binding is resumed and the control value was changed in the meantime, the control value will be set to the
+	 * current value from the model and a change event will be fired.
+	 * @public
+	 */
+	PropertyBinding.prototype.resume = function() {
+		this.bSuspended = false;
+		this.checkUpdate(true);
+	};
+
+	/**
 	 * Checks whether an update of the data state of this binding is required.
 	 *
 	 * @param {map} mPaths A Map of paths to check if update needed
