@@ -391,15 +391,36 @@ sap.ui.require([
 		});
 
 	//*********************************************************************************************
-	QUnit.test("addedRequestToGroup", function (assert) {
-		var oError = new Error("Error in submitBatch"),
-			sGroupId = "group",
-			oModel = createModel();
+	QUnit.test("dataRequested", function (assert) {
+		var done = assert.async(),
+			sGroupId1 = "group1",
+			sGroupId2 = "group2",
+			oModel = createModel(),
+			fnSpy1 = sinon.spy(),
+			fnSpy2 = sinon.spy(),
+			oSandbox = this.oSandbox,
+			oRequestorMock = oSandbox.mock(oModel.oRequestor);
 
-		this.mock(oModel.oRequestor).expects("submitBatch")
-			.withExactArgs(sGroupId, true);
+		oRequestorMock.expects("submitBatch").never();
 
-		assert.strictEqual(oModel.addedRequestToGroup(sGroupId), undefined);
+		// code under test
+		oModel.dataRequested(sGroupId1, function () {
+			oModel.dataRequested(sGroupId1, function () {
+				assert.ok(fnSpy1.called, "second callback for group1");
+				assert.ok(fnSpy2.called, "callback for group2");
+				done();
+			});
+
+			oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
+		});
+		oModel.dataRequested(sGroupId1, fnSpy1);
+		oModel.dataRequested(sGroupId2, fnSpy2);
+
+		// expect it afterwards so that we know that it has not been called synchronously
+		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
+		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId2);
+
+		assert.ok(!fnSpy1.called && !fnSpy2.called, "not called synchronously");
 	});
 });
 // TODO constructor: sDefaultBindingMode, mSupportedBindingModes

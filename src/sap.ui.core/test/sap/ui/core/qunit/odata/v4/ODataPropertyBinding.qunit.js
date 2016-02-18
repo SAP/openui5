@@ -341,7 +341,8 @@ sap.ui.require([
 					.withArgs(/*sGroupId*/"", /*sPath*/undefined)
 					.callsArg(2)
 					.returns(Promise.resolve(oValue));
-				this.oSandbox.mock(oModel).expects("addedRequestToGroup").withExactArgs("");
+				this.oSandbox.mock(oModel).expects("dataRequested")
+					.withExactArgs("", sinon.match.typeOf("function"));
 			} else {
 				sResolvedPath = sContextPath + "/" + sPath;
 				oContextBindingMock.expects("requestValue")

@@ -697,15 +697,24 @@ sap.ui.require([
 		var iDataReceivedCount = 0,
 			iDataRequestedCount = 0,
 			done = assert.async(),
-			oListBinding;
+			oListBinding,
+			fnResolveRead,
+			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;});
 
 		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
 				read: function (iIndex, iLength, sQueueId, sPath, fnDataRequested) {
 					fnDataRequested(); // synchronously
-					return createResult(iLength, iIndex);
+					// read returns an unresolved Promise to be resolved by submitBatch; otherwise
+					// this Promise would be resolved before the rendering and dataReceived would
+					// be fired before dataRequested
+					return oReadPromise;
 				}
 			};
+		});
+		this.oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
+			// submitBatch resolves the promise of the read
+			fnResolveRead(createResult(10));
 		});
 		oListBinding = this.oModel.bindList("/EMPLOYEES");
 
@@ -724,7 +733,7 @@ sap.ui.require([
 			assert.strictEqual(iDataReceivedCount, 0, "change event before dataReceived event");
 		});
 		oListBinding.getContexts(0, 10);
-		assert.strictEqual(iDataRequestedCount, 1, "dataRequested event fired synchrounously");
+		assert.strictEqual(iDataRequestedCount, 0, "dataRequested not yet fired");
 		assert.strictEqual(iDataReceivedCount, 0, "dataReceived not yet fired");
 		assert.strictEqual(oListBinding.aContexts.length, 0, "data is not yet available");
 	});
@@ -765,7 +774,8 @@ sap.ui.require([
 			done = assert.async(),
 			oError = new Error("Expected Error"),
 			oListBinding,
-			oPromise = Promise.reject(oError),
+			fnRejectRead,
+			oReadPromise = new Promise(function (fn, fnReject) {fnRejectRead = fnReject;}),
 			iReadCount = 0;
 
 		this.oLogMock.expects("error").twice()
@@ -779,12 +789,17 @@ sap.ui.require([
 					if (iReadCount === 1) {
 						fnDataRequested();
 					}
-					// Cache implementation returns new Promise based on reused Promise for the
-					// request
-					return oPromise.then();
+					// read returns an unresolved Promise
+					return oReadPromise.then();
 				}
 			};
 		});
+		this.oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
+			// submitBatch resolves the promise of the read
+			fnRejectRead(oError);
+		});
+
+
 		oListBinding = this.oModel.bindList("/EMPLOYEES");
 
 		oListBinding.attachDataRequested(function (oEvent) {
@@ -844,7 +859,7 @@ sap.ui.require([
 	//TODO provide iStart, iLength parameter to requestValue to support paging on nested list
 
 	//*********************************************************************************************
-	QUnit.test("getContexts calls addedRequestToGroup", function (assert) {
+	QUnit.test("getContexts calls dataRequested", function (assert) {
 		var oListBinding;
 
 		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
@@ -855,8 +870,8 @@ sap.ui.require([
 				}
 			};
 		});
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
-			.withExactArgs("");
+		this.oSandbox.mock(this.oModel).expects("dataRequested")
+			.withExactArgs("", sinon.match.typeOf("function"));
 
 		oListBinding = this.oModel.bindList("/EMPLOYEES");
 

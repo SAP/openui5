@@ -112,6 +112,7 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata");
 					this.oRequestor = Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters);
+					this.mDataRequestedCallbacks = {};
 				}
 			});
 
@@ -120,9 +121,25 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   ID of the batch group which should be sent as an OData batch request
+	 * @param {function} fnBatchRequestSent
+	 *   a function that is called synchronously after the batch request has been sent
 	 */
-	ODataModel.prototype.addedRequestToGroup = function (sGroupId) {
-		this.oRequestor.submitBatch(sGroupId, true);
+	ODataModel.prototype.dataRequested = function (sGroupId, fnBatchRequestSent) {
+		var that = this,
+			aCallbacks = this.mDataRequestedCallbacks[sGroupId];
+
+		if (aCallbacks) {
+			aCallbacks.push(fnBatchRequestSent);
+		} else {
+			aCallbacks = this.mDataRequestedCallbacks[sGroupId] = [fnBatchRequestSent];
+			sap.ui.getCore().addPrerenderingTask(function () {
+				delete that.mDataRequestedCallbacks[sGroupId];
+				that.oRequestor.submitBatch(sGroupId);
+				aCallbacks.forEach(function (fnCallback) {
+					fnCallback();
+				});
+			});
+		}
 	};
 
 	/**

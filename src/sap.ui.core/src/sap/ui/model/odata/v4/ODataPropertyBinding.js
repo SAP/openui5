@@ -134,7 +134,7 @@ sap.ui.define([
 		oReadPromise = this.isRelative()
 			? this.getContext().requestValue(this.getPath())
 			: this.oCache.read(/*sGroupId*/"", /*sPath*/undefined, function () {
-					that.getModel().addedRequestToGroup("");
+					that.getModel().dataRequested("", function () {});
 				});
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {

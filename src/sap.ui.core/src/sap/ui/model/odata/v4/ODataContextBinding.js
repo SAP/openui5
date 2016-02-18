@@ -136,7 +136,7 @@ sap.ui.define([
 
 		return this.oCache
 			? this.oCache.read(/*sGroupId*/"", sPath, function () {
-					that.getModel().addedRequestToGroup("");
+					that.getModel().dataRequested("", function() {});
 				})
 			: this.getContext().requestValue(this.getPath() + (sPath ? "/" + sPath : ""));
 	};

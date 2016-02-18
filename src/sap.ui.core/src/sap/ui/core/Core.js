@@ -181,6 +181,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			 */
 			this.bInitLegacyLib = false;
 
+			/**
+			 * Tasks that are called just before the rendering starts.
+			 * @private
+			 */
+			this.aPrerenderingTasks = [];
+
 			log.info("Creating Core",null,METHOD);
 
 			jQuery.sap.measure.start("coreComplete", "Core.js - complete");
@@ -389,7 +395,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 							 "attachLocalizationChanged", "detachLocalizationChanged",
 							 "attachLibraryChanged", "detachLibraryChanged",
 							 "isStaticAreaRef", "createComponent", "getRootComponent", "getApplication",
-							 "setMessageManager", "getMessageManager","byFieldGroupId"]
+							 "setMessageManager", "getMessageManager","byFieldGroupId",
+							 "addPrerenderingTask"]
 		}
 
 	});
@@ -1810,6 +1817,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				this._sRerenderTimer = undefined;
 			}
 
+			this.runPrerenderingTasks();
+
 			// avoid 'concurrent modifications' as IE8 can't handle them
 			var mUIAreas = this.mUIAreas;
 			for (var sId in mUIAreas) {
@@ -3006,6 +3015,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 */
 	Core.prototype._getEventProvider = function() {
 		return _oEventProvider;
+	};
+
+	/**
+	 * Adds a task that is guaranteed to run once, just before the next rendering. Triggers a
+	 * rendering request, so that this happens as soon as possible.
+	 *
+	 * @param {function} fnPrerenderingTask
+	 *   A function that is called before the rendering
+	 * @private
+	 */
+	Core.prototype.addPrerenderingTask = function (fnPrerenderingTask) {
+		this.aPrerenderingTasks.push(fnPrerenderingTask);
+		this.addInvalidatedUIArea(); // to trigger rendering
+	};
+
+	/**
+	 * Runs all prerendering tasks and resets the list.
+	 * @private
+	 */
+	Core.prototype.runPrerenderingTasks = function () {
+		var aTasks = this.aPrerenderingTasks.slice();
+
+		this.aPrerenderingTasks = [];
+		aTasks.forEach(function (fnPrerenderingTask) {
+			fnPrerenderingTask();
+		});
 	};
 
 	Core.prototype.destroy = function() {

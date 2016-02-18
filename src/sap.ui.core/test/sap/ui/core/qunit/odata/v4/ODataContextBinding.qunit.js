@@ -300,8 +300,8 @@ sap.ui.require([
 				.withArgs("", "bar")
 				.callsArg(2)
 				.returns(oPromise);
-			that.oSandbox.mock(oBinding.getModel()).expects("addedRequestToGroup")
-				.withExactArgs("");
+			that.oSandbox.mock(oBinding.getModel()).expects("dataRequested")
+				.withExactArgs("", sinon.match.typeOf("function"));
 
 			assert.strictEqual(oBinding.requestValue("bar"), oPromise);
 		});
