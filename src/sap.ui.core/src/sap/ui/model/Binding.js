@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * model for the control, so it is the event provider for changes in the data model
 	 * and provides getters for accessing properties or lists.
 	 *
-	 * @param {sap.ui.model.Model} the model
+	 * @param {sap.ui.model.Model} oModel the model
 	 * @param {String} sPath the path
 	 * @param {sap.ui.model.Context} oContext the context object
 	 * @param {object} [mParameters]
