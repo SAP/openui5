@@ -132,7 +132,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		NavigationListItem.prototype.getNavigationList = function () {
 			var parent = this.getParent();
 
-			while (parent.getMetadata().getName() != 'sap.tnt.NavigationList') {
+			while (parent && parent.getMetadata().getName() != 'sap.tnt.NavigationList') {
 				parent = parent.getParent();
 			}
 
@@ -619,11 +619,16 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 */
 		NavigationListItem.prototype._unselect = function() {
 
-			var $this = this.$();
+			var $this = this.$(),
+				navList = this.getNavigationList();
+
+			if (!navList) {
+				return;
+			}
+
 			$this.removeClass('sapTntNavLIItemSelected');
 
-			var isListExpanded = this.getNavigationList().getExpanded();
-			if (isListExpanded) {
+			if (navList.getExpanded()) {
 
 				if (this.getLevel() == 0) {
 					$this = $this.find('.sapTntNavLIGroup');
@@ -641,11 +646,16 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 */
 		NavigationListItem.prototype._select = function() {
 
-			var $this = this.$();
+			var $this = this.$(),
+				navList = this.getNavigationList();
+
+			if (!navList) {
+				return;
+			}
+
 			$this.addClass('sapTntNavLIItemSelected');
 
-			var isListExpanded = this.getNavigationList().getExpanded();
-			if (isListExpanded) {
+			if (navList.getExpanded()) {
 
 				if (this.getLevel() == 0) {
 					$this = $this.find('.sapTntNavLIGroup');
