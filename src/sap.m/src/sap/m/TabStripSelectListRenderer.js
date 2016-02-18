@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 
 			oCloseButton = oItem.getAggregation('_closeButton');
 			if (sap.ui.Device.system.desktop) {
-				oCloseButton.addStyleClass(TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+				oCloseButton.addStyleClass(TabStripItem._CSS_CLASS_CLOSEBUTTONINVISIBLE);
 			}
 
 			oRm.write("<li");
@@ -59,7 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 				}
 				if (oItem === oSelectedItem) {
 					oRm.addClass(CSS_CLASS + "ItemBaseSelected");
-					oItem.getAggregation('_closeButton').removeStyleClass(TabStripItem.CSS_CLASS_CLOSEBUTTONINVISIBLE);
+					oItem.getAggregation('_closeButton').removeStyleClass(TabStripItem._CSS_CLASS_CLOSEBUTTONINVISIBLE);
 				}
 			}
 			oRm.writeClasses();
@@ -74,16 +74,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 			oRm.write('>');
 
 			// always show the full text on phone
-			oRm.writeEscaped(oItem.getText().slice(0, (sap.ui.Device.system.phone ? oItem.getText().length : TabStripItem.DISPLAY_TEXT_MAX_LENGHT)));
+			oRm.writeEscaped(oItem.getText().slice(0, (sap.ui.Device.system.phone ? oItem.getText().length : TabStripItem._DISPLAY_TEXT_MAX_LENGTH)));
 
 			// add three dots "..." at the end if not the whole text is shown
-			if (!sap.ui.Device.system.phone && oItem.getText().length > TabStripItem.DISPLAY_TEXT_MAX_LENGHT) {
+			if (!sap.ui.Device.system.phone && oItem.getText().length > TabStripItem._DISPLAY_TEXT_MAX_LENGTH) {
 				oRm.write('...');
 			}
 			oRm.write('</p>');
 
 			if (!oItem.getProperty('modified')) {
-				sStateClass += TabStripItem.CSS_CLASS_STATEINVISIBLE; // ToDo: fix the name of the variable
+				sStateClass += TabStripItem._CSS_CLASS_STATEINVISIBLE;
 			}
 
 			oRm.write("<p class=\"sapMTabStripSelectListItemModified" + sStateClass + "\">*</p>");

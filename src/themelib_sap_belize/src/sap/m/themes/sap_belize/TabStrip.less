@@ -9,13 +9,13 @@
 	.sapMTSLeftOverflowButtons {
 		background: linear-gradient(90deg, @sapUiPageHeaderBackground 0%, @sapUiPageHeaderBackground 75%, fade(@sapUiPageHeaderBackground, 0) 100%);
 	}
-	.sapMTSTabContainer {
+	.sapMTSTabsContainer {
 		.sapMTSTabs {
-			.sapMTabContainerItem {
+			.sapMTabStripItem {
 				background: @sapUiPageHeaderBackground;
 				border-right: 1px solid @sapUiPageHeaderBorderColor;
 				color: @sapUiPageHeaderTextColor;
-				&.selected {
+				&.sapMTabStripItemSelected {
 					background: lighten(@sapUiPageHeaderBackground, 5);
 					border-right: 1px solid @sapUiPageHeaderBorderColor;
 					color: @sapUiPageHeaderTextColor;
@@ -29,7 +29,7 @@
 					background: @sapUiHighlight;
 					border-right: 1px solid @sapUiPageHeaderBorderColor;
 					color: @sapUiContentContrastTextColor;
-					.sapMTSTabCloseBtnCnt {
+					.sapMTSItemCloseBtnCnt {
 						.sapMBtn {
 							.sapMBtnIcon {
 								color: @sapUiContentContrastIconColor;
