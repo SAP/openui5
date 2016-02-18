@@ -6,10 +6,10 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		"use strict";
 
 		/**
-		 * Provides a convenient way for placing views into the correct containers of your application
-		 * The mobile extension for targets that target the controls {@link sap.m.SplitContainer} or a {@link sap.m.NavContainer} and all controls extending these.
+		 * Provides a convenient way for placing views into the correct containers of your application.
+		 * The mobile extension of Targets also handles the triggering of page navigation when the target control is a {@link sap.m.SplitContainer}, a {@link sap.m.NavContainer} or a control which extends one of these.
 		 * Other controls are also allowed, but the extra parameters viewLevel, transition and transitionParameters are ignored and it will behave like {@link sap.ui.core.routing.Targets}.
-		 * When a target is displayed, dialogs will be closed. To Change this use {@link #getTargetHandler} and {@link sap.m.routing.TargetHandler#setCloseDialogs}.
+		 * When a target is displayed, dialogs will be closed. To change this use {@link #getTargetHandler} and {@link sap.m.routing.TargetHandler#setCloseDialogs}.
 		 *
 		 * @class
 		 * @extends sap.ui.core.routing.Targets
