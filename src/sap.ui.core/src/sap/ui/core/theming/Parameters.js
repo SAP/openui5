@@ -27,6 +27,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		var mParameters = null;
 		var sTheme = null;
 
+		var aParametersToLoad = [];
+
 		function resetParameters() {
 			mParameters = null;
 		}
@@ -140,6 +142,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		}
 
 		function getParameters() {
+
+			// Inital loading
 			if (!mParameters) {
 
 				mParameters = {};
@@ -147,7 +151,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 
 				forEachStyleSheet(loadParameters);
 			}
+
 			return mParameters;
+		}
+
+		function loadPendingLibraryParameters() {
+			// lazy loading of further library parameters
+			aParametersToLoad.forEach(function(oInfo) {
+				loadParameters("sap-ui-theme-" + oInfo.id, oInfo.url);
+			});
+
+			// clear queue
+			aParametersToLoad = [];
 		}
 
 		/**
@@ -158,10 +173,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @private
 		 */
 		Parameters._addLibraryTheme = function(sThemeId, sCssUrl) {
-			// only load parameters if someone had requested them before
-			// otherwise they will be loaded from getParameters function
+			// only queue new libraries if some have been loaded already
+			// otherwise they will be loaded when the first one requests a parameter
+			// see "Parameters.get" for lazy loading of queued library parameters
 			if (mParameters) {
-				loadParameters(sThemeId, sCssUrl);
+				aParametersToLoad.push({ id: sThemeId, url: sCssUrl });
 			}
 		};
 
@@ -178,8 +194,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		Parameters.get = function(sName) {
 
 			if (arguments.length == 1) {
-
-				var sParam = getParameters()[sName];
+				var oParams = getParameters();
+				var sParam = oParams[sName];
 
 				if (typeof sParam === "undefined" && typeof sName === "string") {
 					// compatibility for theming parameters with colon
@@ -187,12 +203,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					if (iIndex !== -1) {
 						sName = sName.substr(iIndex + 1);
 					}
-					sParam = getParameters()[sName];
+					sParam = oParams[sName];
+				}
+
+				if (typeof sParam === "undefined") {
+					loadPendingLibraryParameters();
+					oParams = getParameters();
+					sParam = oParams[sName];
 				}
 
 				return sParam;
-
 			} else if (arguments.length == 0) {
+				loadPendingLibraryParameters();
 				return jQuery.extend({}, getParameters());
 			} else {
 				return undefined;
