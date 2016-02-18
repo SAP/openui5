@@ -18,15 +18,18 @@ QUnit.test("The property multiple of the UploadCollection is set to true", funct
 	// Arrange
 	this.oUploadCollection.setMultiple(true);
 	var oItem = this.oUploadCollection.getItems()[0];
+	sinon.spy(jQuery.sap.log, "warning");
 
 	// Act
 	var oReturnValue = this.oUploadCollection.openFileDialog(oItem);
-	var aLogs = jQuery.sap.log.getLog();
-	var oLog = aLogs[aLogs.length - 1];
 
 	// Assert
 	assert.ok(oReturnValue instanceof sap.m.UploadCollection, "Function returns an instance of UploadCollection");
-	assert.equal(oLog.message, "Version Upload cannot be used in multiple upload mode", "Warning log was generated correctly");
+	assert.equal(jQuery.sap.log.warning.callCount, 1, "Warning log was generated correctly");
+	assert.ok(jQuery.sap.log.warning.calledWith("Version Upload cannot be used in multiple upload mode"), "Warning log was generated with the correct message");
+
+	// Restore
+	jQuery.sap.log.warning.restore()
 });
 
 QUnit.test("Check trigger click event on FileUploader input element with item passed to openFileDialog", function(assert) {
