@@ -44,6 +44,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 				 * Characters which don't, are considered immutable characters (for example, the mask '2099', where '9' corresponds to a rule
 				 * for digits, has the characters '2' and '0' as immutable).
 				 * 2. Adding a rule corresponding to the <code>placeholderSymbol</code> is not recommended and would lead to an unpredictable behavior.
+				 * 3. You can use the special escape character '^' called "Caret" prepending a rule character to make it immutable.
+				 * Use the double escape '^^' if you want to make use of the escape character as a immutable one.
 				 */
 				mask: {type: "string", group: "Misc", defaultValue: null}
 			},
@@ -57,6 +59,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		}
 	});
 
+	var ESCAPE_CHARACTER = '^';
 
 	/**
 	 * Initializes the control.
@@ -604,19 +607,63 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	MaskInput.prototype._setupMaskVariables = function () {
 		var aRules = this.getRules(),
 			sMask = this.getMask(),
-			aMask = sMask.split(""),
-			aValue,
-			aTests,
-			sPlaceholderSymbol = this.getPlaceholderSymbol();
+			aSkipIndexes = this._getSkipIndexes(sMask), // Used to collect indexes which should be skipped when building validation rules
+			aMask = this._getMaskArray(sMask, aSkipIndexes),
+			sPlaceholderSymbol = this.getPlaceholderSymbol(),
+			aInitial = this._buildMaskValueArray(aMask, sPlaceholderSymbol, aRules, aSkipIndexes),
+			aTestRules = this._buildRules(aMask, aRules, aSkipIndexes);
 
-		aValue = this._buildInitialArray(aMask, sPlaceholderSymbol, aRules);
-		this._oTempValue = new CharArray(aValue);
-
-		aTests = this._buildRules(aMask, aRules);
-		this._iMaskLength = aTests.length;
-
-		this._oRules = new TestRules(aTests);
+		this._oTempValue = new CharArray(aInitial);
+		this._iMaskLength = aTestRules.length;
+		this._oRules = new TestRules(aTestRules);
 		this._iUserInputStartPosition = this._oRules.nextTo();
+	};
+
+	/**
+	 * Converts mask value string to array and skips the escape characters.
+	 * @since 1.38
+	 * @private
+	 * @param {string} sMask Mask value
+	 * @param {Array} aSkipIndexes List of character indexes to skip
+	 * @returns {Array}
+	 */
+	MaskInput.prototype._getMaskArray = function (sMask, aSkipIndexes) {
+		var iLength = Array.isArray(aSkipIndexes) ? aSkipIndexes.length : 0,
+			aMaskArray = (sMask) ? sMask.split("") : [],
+			i;
+
+		for (i = 0; i < iLength; i++) {
+			aMaskArray.splice(aSkipIndexes[i], 1);
+		}
+		return aMaskArray;
+	};
+
+	/**
+	 * Creates an array of indexes for all the characters that are escaped.
+	 * @since 1.38
+	 * @private
+	 * @param {string} sMask Mask value
+	 * @returns {Array}
+	 */
+	MaskInput.prototype._getSkipIndexes = function (sMask) {
+		var iLength = (sMask) ? sMask.length : 0,
+			i,
+			aSkipIndexes = [],
+			iPosCorrection = 0,
+			bLastCharEscape = false; // Keeps if the last character iterated was an escape character
+
+		for (i = 0; i < iLength; i++) {
+			if (sMask[i] === ESCAPE_CHARACTER && !bLastCharEscape) {
+				aSkipIndexes.push(i - iPosCorrection);
+				// Escape the escape character
+				bLastCharEscape = true;
+				// Correction for multiple escape characters
+				iPosCorrection++;
+			} else {
+				bLastCharEscape = false;
+			}
+		}
+		return aSkipIndexes;
 	};
 
 	/**
@@ -933,27 +980,35 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
+	 * @param {Array} aSkipIndexes @since 1.38 List of indexes to skip
 	 * @private
 	 */
-	MaskInput.prototype._buildInitialArray = function (aMask, sPlaceholderSymbol, aRules) {
+	MaskInput.prototype._buildMaskValueArray = function (aMask, sPlaceholderSymbol, aRules, aSkipIndexes) {
 		return aMask.map(function (sChar, iIndex) {
-			return this._findRuleBySymbol(sChar, aRules) ? sPlaceholderSymbol : sChar;
+			var bNotSkip = aSkipIndexes.indexOf(iIndex) === -1,
+				bRuleFound = this._findRuleBySymbol(sChar, aRules);
+			return (bNotSkip && bRuleFound) ? sPlaceholderSymbol : sChar;
 		}, this);
 	};
 
 	/**
 	 * Builds the test rules according to the mask input rule's regex string.
+	 * @param {Array} aSkipIndexes @since 1.38 List of indexes to skip
 	 * @private
 	 */
-	MaskInput.prototype._buildRules = function (aMask, aRules) {
+	MaskInput.prototype._buildRules = function (aMask, aRules, aSkipIndexes) {
 		var aTestRules = [],
 			oSearchResult,
 			iLength = aMask.length,
 			i = 0;
 
 		for (; i < iLength; i++) {
-			oSearchResult = this._findRuleBySymbol(aMask[i], aRules);
-			aTestRules.push(oSearchResult ? new RegExp(oSearchResult.oRule.getRegex()) : null);
+			if (aSkipIndexes.indexOf(i) === -1) {
+				oSearchResult = this._findRuleBySymbol(aMask[i], aRules);
+				aTestRules.push(oSearchResult ? new RegExp(oSearchResult.oRule.getRegex()) : null);
+			} else {
+				aTestRules.push(null);
+			}
 		}
 		return aTestRules;
 	};
