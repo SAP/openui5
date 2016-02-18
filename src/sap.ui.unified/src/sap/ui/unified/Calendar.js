@@ -983,6 +983,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	Calendar.prototype.getFocusDomRef = function(){
+
+		// set focus on the day
+		var aMonths = this.getAggregation("month");
+		var oMonth = aMonths[0];
+		return oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()];
+
+	};
+
 	Calendar.prototype.onThemeChanged = function() {
 
 		//If the calendar is not yet rendered we cannot perform the theme change operations, which include DOM manipulation

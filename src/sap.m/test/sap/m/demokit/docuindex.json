@@ -215,6 +215,14 @@
 		  "samples": ["sap.m.sample.DateTimeInput"]
 		},
 		{
+		  "id": "sap.m.DateTimePicker",
+		  "name": "Date Time Picker",
+		  "category": "User Input",
+		  "since": "1.38",
+		  "formFactors": "L",
+		  "samples": ["sap.m.sample.DateTimePicker"]
+		},
+		{
 		  "id": "sap.m.Dialog",
 		  "name": "Dialog",
 		  "category": "Popup",
@@ -1518,7 +1526,12 @@
 		{
 		  "id": "sap.m.sample.DateTimeInput",
 		  "name": "Date Time Input",
-		  "description": "The Date & Time Input is an extension of the Input control and is dedicated to Date and Time. [Deprecated since 1.32.8]"
+		  "description": "The Date & Time Input control allows input of dates and times using date and time pickers. [Deprecated since 1.32.8]"
+		},
+		{
+		  "id": "sap.m.sample.DateTimePicker",
+		  "name": "Date Time Picker",
+		  "description": "With the DateTimePicker a Date can be entered or selected including the time part."
 		},
 		{
 		  "id": "sap.m.sample.RadioButton",
@@ -2222,7 +2235,7 @@
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarMulti",
-		  "name": "PlanningCalendar - mutiple selection",
+		  "name": "PlanningCalendar - multiple selection",
 		  "description": "PlanningCalendar with multiple row selection. No interval headers are displayed. On click on an interval a new appointment is created."
 		},
 		{
