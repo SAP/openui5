@@ -71,44 +71,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		// step down into recursion along the aggregations
-		if (iLevel === 0 || !(this._fnSkipAggregations && this._fnSkipAggregations(oControl))) {
-			var mAggregations = oControl.getMetadata().getAllAggregations();
-			if (mAggregations) {
-				for (var sName in mAggregations) {
+        var mAggregations = oControl.getMetadata().getAllAggregations();
+        if (mAggregations) {
+            for (var sName in mAggregations) {
+                if (this._fnSkipAggregations && this._fnSkipAggregations(oControl, sName)) {
+                    continue;
+                }
+                // compute those elements that shall be serialized
+                var mElementsToSerialize = [];
+                var oAggregation = mAggregations[sName];
+                var oValue = oControl[oAggregation._sGetter]();
+                if (oControl.getBindingPath(sName) && oControl.getBindingInfo(sName).template) {
+                    mElementsToSerialize.push(oControl.getBindingInfo(sName).template);
+                } else if (oValue && oValue.length) { // TODO: ARRAY CHECK
+                    for (var i = 0 ; i < oValue.length ; i++) {
+                        var oObj = oValue[i];
+                        if (this._isObjectSerializable(oObj)) {
+                            mElementsToSerialize.push(oObj);
+                        }
+                    }
+                } else if (this._isObjectSerializable(oValue)) {
+                    mElementsToSerialize.push(oValue);
+                }
 
-					// compute those elements that shall be serialized
-					var mElementsToSerialize = [];
-					var oAggregation = mAggregations[sName];
-					var oValue = oControl[oAggregation._sGetter]();
-					if (oControl.getBindingPath(sName) && oControl.getBindingInfo(sName).template) {
-						mElementsToSerialize.push(oControl.getBindingInfo(sName).template);
-					} else if (oValue && oValue.length) { // TODO: ARRAY CHECK
-						for (var i = 0 ; i < oValue.length ; i++) {
-							var oObj = oValue[i];
-							if (this._isObjectSerializable(oObj)) {
-								mElementsToSerialize.push(oObj);
-							}
-						}
-					} else if (this._isObjectSerializable(oValue)) {
-						mElementsToSerialize.push(oValue);
-					}
-
-					// write and step down into recursion for elements
-					if (mElementsToSerialize.length > 0) {
-						if (bWriteDelegate) {
-							aCode.push(this._delegate.startAggregation(oControl, sName));
-						}
-						var isDefault = this._isDefaultAggregation(oControl, sName);
-						for (var j = 0 ; j < mElementsToSerialize.length ; j++) {
-							aCode.push(this._serializeRecursive(mElementsToSerialize[j], iLevel + 1, sName, isDefault));
-						}
-						if (bWriteDelegate) {
-							aCode.push(this._delegate.endAggregation(oControl, sName));
-						}
-					}
-				}
-			}
-		}
+                // write and step down into recursion for elements
+                if (mElementsToSerialize.length > 0) {
+                    if (bWriteDelegate) {
+                        aCode.push(this._delegate.startAggregation(oControl, sName));
+                    }
+                    var isDefault = this._isDefaultAggregation(oControl, sName);
+                    for (var j = 0 ; j < mElementsToSerialize.length ; j++) {
+                        aCode.push(this._serializeRecursive(mElementsToSerialize[j], iLevel + 1, sName, isDefault));
+                    }
+                    if (bWriteDelegate) {
+                        aCode.push(this._delegate.endAggregation(oControl, sName));
+                    }
+                }
+            }
+        }
 
 		// write end
 		if (bWriteDelegate) {

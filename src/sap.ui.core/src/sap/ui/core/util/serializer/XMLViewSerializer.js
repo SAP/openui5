@@ -55,10 +55,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Serializer',
 				mPackages.push(sPackage);
 			}
 		};
-
+		var that = this;
 		// a function to understand if to skip aggregations
 		var fnSkipAggregations = function (oControl) {
-			return (oControl instanceof this._oWindow.sap.ui.core.mvc.View);
+			return oControl instanceof this._oWindow.sap.ui.core.mvc.View && oControl !== that._oView;
 		};
 
 		// create serializer
