@@ -128,7 +128,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				if (XMLView._flexProcessor) {
 					// for the flexProcessor fully qualified Ids are necessary and get hence enriched on the xml source
 					this._xContent = XMLTemplateProcessor.enrichTemplateIds(this._xContent, this);
-					return XMLView._flexProcessor(this._xContent, this._sOwnerId).then(function(xContent) {
+					return XMLView._flexProcessor(this._xContent, {
+						viewId: this.getId(),
+						componentId: this._sOwnerId
+					}).then(function(xContent) {
 						this._xContent = xContent;
 						fnProcessView();
 						// Cache.set("this.getId()", xContent)
