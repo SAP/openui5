@@ -82,6 +82,15 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 		};
 	}
 
+	// Re-implement jQuery.now to always delegate to Date.now.
+	//
+	// Otherwise, fake timers that are installed after jQuery don't work with jQuery animations
+	// as those animations internally use jQuery.now which then is a reference to the original,
+	// native Date.now.
+	jQuery.now = function() {
+		return Date.now();
+	};
+
 	// PhantomJS fix for invalid date handling:
 	// ==> https://github.com/ariya/phantomjs/issues/11151
 	if (Device.browser.phantomJS) {
@@ -184,19 +193,76 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 		}
 	};
 
-	/**
-	 * A Dummy Event implementation.
-	 */
-	function DummyEvent(sName) {
-		this.type = sName;
+	var fixOriginalEvent = jQuery.noop;
+
+	try {
+
+		// check whether preventDefault throws an error for a dummy event
+		new jQuery.Event({type: "mousedown"}).preventDefault();
+
+	} catch (e) {
+
+		// if so, we might be running on top of jQuery 2.2.0 or higher and we have to add the native Event methods to the 'originalEvent'
+		fixOriginalEvent = function(origEvent) {
+			if ( origEvent ) {
+				origEvent.preventDefault = origEvent.preventDefault || jQuery.noop;
+				origEvent.stopPropagation = origEvent.stopPropagation || jQuery.noop;
+				origEvent.stopImmediatePropagation = origEvent.stopImmediatePropagation || jQuery.noop;
+			}
+		};
+
+		var OrigjQEvent = jQuery.Event;
+		jQuery.Event = function(src, props) {
+			var event = new OrigjQEvent(src, props);
+			fixOriginalEvent(event.originalEvent);
+			return event;
+		};
+		jQuery.Event.prototype = OrigjQEvent.prototype;
 	}
 
-	DummyEvent.prototype.preventDefault = function() {};
-	DummyEvent.prototype.stopImmediatePropagation = function() {};
-	DummyEvent.prototype.stopPropagation = function() {};
+	/*
+	 * Creates a fake event of type jQuery.Event, according to current UI5 practices; it will always
+	 * contain a pseudo browser event (property <code>originalEvent</code>).
+	 *
+	 * Please note that the <code>originalEvent</code> could be created as a native browser event (class <code>Event</code>)
+	 * as some existing test cases specify a <code>target</code> property which is readonly in the <code>Event</code> class.
+	 *
+	 * Any given <code>oParams</code> are added to the new <code>jQuery.Event</code> as well as to its <code>originalEvent</code>
+	 * object. To be compatible with older versions, this function does not propagate properties to <code>originalEvent</code> when
+	 * they are given before an eventual <code>originalEvent</code> property in <code>oParams</code>.
+	 *
+	 * @param {string} sEventName mandatory name (type) of the newly created event
+	 * @param {EventTarget} [oTarget] optional target of the event
+	 * @param {object} [oParams] optional map of properties to be added to the event
+	 */
+	function fakeEvent(sEventName, oTarget, oParams) {
+
+		var oEvent = jQuery.Event({type : sEventName});
+		if ( oTarget != null ) {
+			oEvent.target = oTarget;
+		}
+
+		if (oParams) {
+			for (var x in oParams) {
+
+				// propagate property to event
+				oEvent[x] = oParams[x];
+
+				if ( x === 'originalEvent' ) {
+					// if 'originalEvent' has been changed, fix it
+					fixOriginalEvent(oEvent[x]);
+				} else {
+					// otherwise propagate property to 'originalEvent' as well
+					oEvent.originalEvent[x] = oParams[x];
+				}
+			}
+		}
+
+		return oEvent;
+	}
 
 	/**
-	 * Programmtically triggers an event specified by its name on a specified target with some optional parameters.
+	 * Programmatically triggers an event specified by its name on a specified target with some optional parameters.
 	 * @see http://api.jquery.com/trigger/
 	 *
 	 * @param {string} sEventName The name of the browser event (like "click")
@@ -205,19 +271,15 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 	 * @public
 	 */
 	QUtils.triggerEvent = function(sEventName, oTarget, oParams) {
-		var tmpEvent = jQuery.Event(new DummyEvent(sEventName));
-
-		if (oParams) {
-			for (var x in oParams) {
-				tmpEvent[x] = oParams[x];
-				tmpEvent.originalEvent[x] = oParams[x];
-			}
-		}
 
 		if (typeof (oTarget) == "string") {
 			oTarget = jQuery.sap.domById(oTarget);
 		}
-		jQuery(oTarget).trigger(tmpEvent);
+
+		var oEvent = fakeEvent(sEventName, /* no target */ null, oParams);
+
+		jQuery(oTarget).trigger(oEvent);
+
 	};
 
 
@@ -228,27 +290,23 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 	 * @param {string} sEventName The name of the touch event (touchstart, touchmove, touchend)
 	 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
 	 * @param {object} [oParams] The parameters which should be attached to the event in JSON notation (depending on the event type).
+	 * @param {string} [sEventHandlerPrefix='on'] prefix to use for the event handler name, defaults to 'on'
 	 * @public
 	 */
-	QUtils.triggerTouchEvent = function(sEventName, oTarget, oParams) {
+	QUtils.triggerTouchEvent = function(sEventName, oTarget, oParams, sEventHandlerPrefix) {
+
 		if (typeof (oTarget) == "string") {
 			oTarget = jQuery.sap.domById(oTarget);
 		}
-		var $Target = jQuery(oTarget);
 
-		var oEvent = jQuery.Event(new DummyEvent(sEventName));
-		oEvent.target = oTarget;
-		if (oParams) {
-			for (var x in oParams) {
-				oEvent[x] = oParams[x];
-				oEvent.originalEvent[x] = oParams[x];
-			}
+		var oEvent = fakeEvent(sEventName, oTarget, oParams),
+			oElement = jQuery(oTarget).control(0),
+			sEventHandlerName = (sEventHandlerPrefix == null ? 'on' : sEventHandlerPrefix) + sEventName;
+
+		if (oElement && oElement[sEventHandlerName]) {
+			oElement[sEventHandlerName].call(oElement, oEvent);
 		}
 
-		var oElement = $Target.control(0);
-		if (oElement && oElement["on" + sEventName]) {
-			oElement["on" + sEventName].apply(oElement, [oEvent]);
-		}
 	};
 
 

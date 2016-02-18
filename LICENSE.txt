@@ -362,6 +362,13 @@ License: MIT License
 <year> = 2014
 <copyright holders> = jQuery Foundation and other contributors
 
+Component: jQuery 2.2.0
+Licensor: jQuery Foundation and other contributors
+Website: http://jquery.com/
+License: MIT License
+<year> = 2016
+<copyright holders> = jQuery Foundation and other contributors
+
 Component: jQuery-UI 1.10.4
 Licensor: Paul Bakaus
 Website: http://github.com/jquery/jquery-ui/

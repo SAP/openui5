@@ -387,15 +387,15 @@
 			}
 		}
 
-		var oCopyEvent = jQuery.Event("copy");
-		oCopyEvent.originalEvent = {
+		var oCopyEvent = jQuery.Event({ 
+			type: "copy",
 			clipboardData : {
 				setData : function(sType, sSelectedText) {
 					testCopiedText(sSelectedText);
 					equals(sType, "text/plain", "Copied text type is correct");
 				}
 			}
-		};
+		});
 		tokenizer1.$("clip").trigger(oCopyEvent);
 
 		if (window.clipboardData) {

@@ -61,39 +61,6 @@
 				mOptions.control.destroy();
 			};
 
-			/**
-			 * Programmatically triggers a touch event specified by its name.
-			 * The onEVENTNAME functions are called directly on the "nearest" control / element of the given target.
-			 *
-			 * @param {string} sEventName The name of the touch event (touchstart, touchmove, touchend)
-			 * @param {string | DOMElement} oTarget The ID of a DOM element or a DOM element which serves as target of the event
-			 * @param {object} [oParams] The parameters which should be attached to the event in JSON notation (depending on the event type).
-			 * @public
-			 */
-			var triggerTouchEvent = function(sEventName, oTarget, oParams) {
-				if (typeof oTarget === "string") {
-					oTarget = jQuery.sap.domById(oTarget);
-				}
-
-				var $Target = jQuery(oTarget);
-
-				var oEvent = jQuery.Event(sEventName);
-				oEvent.originalEvent = {};
-				oEvent.target = oTarget;
-
-				if (oParams) {
-					for(var x in oParams){
-						oEvent[x] = oParams[x];
-						oEvent.originalEvent[x] = oParams[x];
-					}
-				}
-
-				var oElement = $Target.control(0);
-				if (oElement && oElement["_on" + sEventName]) {
-					oElement["_on" + sEventName].apply(oElement, [oEvent]);
-				}
-			};
-
 			/* =========================================================== */
 			/* HTML module                                                 */
 			/* =========================================================== */
@@ -1306,18 +1273,18 @@
 
 					oTouches["0"].pageX = i;
 
-					triggerTouchEvent("touchmove", oSlider.getDomRef(), {
+					sap.ui.test.qunit.triggerTouchEvent("touchmove", oSlider.getDomRef(), {
 						targetTouches: oTouches,
 						pageX: i
-					});
+					}, '_on');
 
 					// assert
 					strictEqual(oSlider.getValue(), i);
 				}
 
-				triggerTouchEvent("touchend", oSlider.getDomRef(), {
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 					targetTouches: oTouches
-				});
+				}, '_on');
 
 				// assert
 				strictEqual(oSlider.getValue(), 100);
@@ -1370,9 +1337,9 @@
 						targetTouches: oTouches
 					});
 
-					triggerTouchEvent("touchend", oSlider.getDomRef(), {
+					sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 						targetTouches: oTouches
-					});
+					}, '_on');
 
 					// assert
 					strictEqual(oSlider.getValue(), iPageX);
@@ -1420,9 +1387,9 @@
 					targetTouches: oTouches
 				});
 
-				triggerTouchEvent("touchend", oSlider.getDomRef(), {
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 					targetTouches: oTouches
-				});
+				}, '_on');
 
 				// assert
 				strictEqual(fnFireLiveChangeSpy.callCount, 1, 'The "livechange" event handler must be fired exactly once');
@@ -1782,9 +1749,9 @@
 					targetTouches: oTouches
 				});
 
-				triggerTouchEvent("touchend", oSlider.getDomRef(), {
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 					targetTouches: oTouches
-				});
+				}, '_on');
 
 				var fValue = oSlider.getValue();
 
@@ -1829,9 +1796,9 @@
 					targetTouches: oTouches
 				});
 
-				triggerTouchEvent("touchend", oSlider.getDomRef(), {
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 					targetTouches: oTouches
-				});
+				}, '_on');
 
 				var fValue = oSlider.getValue();
 
@@ -1876,9 +1843,9 @@
 					targetTouches: oTouches
 				});
 
-				triggerTouchEvent("touchend", oSlider.getDomRef(), {
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 					targetTouches: oTouches
-				});
+				}, '_on');
 
 				// post-assert
 				strictEqual(oSlider.getValue(), 80);
@@ -1921,9 +1888,9 @@
 					targetTouches: oTouches
 				});
 
-				triggerTouchEvent("touchend", oSlider.getDomRef(), {
+				sap.ui.test.qunit.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 					targetTouches: oTouches
-				});
+				}, '_on');
 
 				// pre-assert
 				strictEqual(oSlider.getValue(), 80);

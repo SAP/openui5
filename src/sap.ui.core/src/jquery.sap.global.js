@@ -2383,19 +2383,25 @@
 				'sap/ui/thirdparty/jquery.js': {
 					amd: true
 				},
-				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': {
+				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': {
 					amd: true
 				},
-				'sap/ui/thirdparty/jquery/jquery-1.10.2.js': {
+				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': {
 					amd: true
 				},
 				'sap/ui/thirdparty/jquery/jquery-1.10.1.js': {
 					amd: true
 				},
-				'sap/ui/thirdparty/jquery/jquery.1.7.1.js': {
+				'sap/ui/thirdparty/jquery/jquery-1.10.2.js': {
 					amd: true
 				},
-				'sap/ui/thirdparty/jquery/jquery.1.8.1.js': {
+				'sap/ui/thirdparty/jquery/jquery-1.11.1.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery-2.1.4.js': {
+					amd: true
+				},
+				'sap/ui/thirdparty/jquery/jquery-2.2.0.js': {
 					amd: true
 				},
 				'sap/ui/thirdparty/jquery-mobile-custom.js': {
