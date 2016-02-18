@@ -1135,6 +1135,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
             var fnRenderContent = function (oThis) {
                 var oContentDomRef = oThis.getDomRef("content");
+
+                if (!oContentDomRef) {
+                    return;
+                }
+
                 oContentDomRef.innerHTML = "";
 
                 var aContent = oThis.getContent();
