@@ -191,12 +191,6 @@
 		assert.ok(aSelectItems.length === 5, "All links are in select along with the currrent location item");
 	});
 
-	QUnit.test("Select has cancel button on mobile", function (assert) {
-		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
-
-		assert.ok(oStandardBreadCrumbsControl._getSelect().getButtons().length, "Has one button");
-	});
-
 	/*------------------------------------------------------------------------------------*/
 	QUnit.module("Breadcrumbs - Special cases", {
 		teardown: function () {
