@@ -863,9 +863,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		var aSeparatedText = this._tokenizer._parseString(sOriginalText);
 		setTimeout(function() {
 			if (aSeparatedText) {
-				if (this.hasListeners("_validateOnPaste")) {
-					this.fireEvent("_validateOnPaste", {texts: aSeparatedText});
-				} else {
+				if (this.fireEvent("_validateOnPaste", {texts: aSeparatedText}, true)) {
 					var i = 0;
 					for ( i = 0; i < aSeparatedText.length; i++) {
 						this.setValue(aSeparatedText[i]);
