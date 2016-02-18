@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	FlexBox.prototype.addItem = function(oItem) {
 		this.addAggregation("items", oItem);
 
-		if (oItem) {
+		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
 			oItem.attachEvent("_change", this.onItemChange, this);
 		}
 
@@ -137,7 +137,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	FlexBox.prototype.insertItem = function(oItem, iIndex) {
 		this.insertAggregation("items", oItem, iIndex);
 
-		if (oItem) {
+		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
 			oItem.attachEvent("_change", this.onItemChange, this);
 		}
 
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	FlexBox.prototype.removeItem = function(vItem) {
 		var oItem = this.removeAggregation("items", vItem, true);
 
-		if (oItem) {
+		if (oItem && !(oItem instanceof sap.m.FlexBox)) {
 			oItem.detachEvent("_change", this.onItemChange, this);
 			if (oItem instanceof sap.m.FlexBox) {
 				oItem.$().remove();
@@ -177,14 +177,13 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 		}
 
 		// Sync visibility of flex item wrapper, if visibility changes
-		var oWrapper = null;
-		var oItem = sap.ui.getCore().byId(oControlEvent.getParameter("id"));
+		var oItem = sap.ui.getCore().byId(oControlEvent.getParameter("id")),
+			oWrapper = null;
 
-		if (oItem instanceof sap.m.FlexBox) {
-			// If the flex item is itself a FlexBox, it's not wrapped
-			oWrapper = oItem.$();
+		if (oItem.getLayoutData()) {
+			oWrapper = jQuery.sap.byId(oItem.getLayoutData().getId());
 		} else {
-			oWrapper = oItem.$().parent();
+			oWrapper = jQuery.sap.byId(sap.ui.core.RenderPrefixes.Invisible + oItem.getId()).parent();
 		}
 
 		if (oControlEvent.getParameter("newValue")) {
