@@ -109,7 +109,7 @@
 					new sap.m.IconTabBar("itb1", {
 						expandable: false,
 						items: [
-							new sap.m.IconTabFilter("itf1", {
+							new sap.m.IconTabFilter({
 								showAll: true,
 								count: "8",
 								text: "Orders Productive",
@@ -124,7 +124,7 @@
 								text: "Open",
 								key: "Open"
 							}),
-							new sap.m.IconTabFilter({
+							new sap.m.IconTabFilter("itf1", {
 								icon: "sap-icon://instance",
 								iconColor: sap.ui.core.IconColor.Negative,
 								count: "2",
@@ -976,8 +976,6 @@
 									}).addStyleClass("sapUiResponsiveContentPadding")
 								]
 							}).addStyleClass("ITBContainer"),
-							//TODO: remove next line after partial screenshot is avaialable
-							new sap.m.Button ("btn", {text: "for JS visual test"}),
 							new sap.m.Label({text: " "}) // placeholder to see content below
 				]
 			});
