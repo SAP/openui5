@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Link.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, library, Control, EnabledPropagator) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/LabelEnablement'],
+	function(jQuery, library, Control, EnabledPropagator, LabelEnablement) {
 	"use strict";
 
 
@@ -108,6 +108,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	EnabledPropagator.call(Link.prototype);
+
+	/**
+	 * Required adaptations before rendering.
+	 *
+	 * @private
+	 */
+	Link.prototype.onBeforeRendering = function() {
+		// add/remove self reference for aria-labelledby  to fix reading issues
+		this.removeAssociation("ariaLabelledBy", this.getId(), true);
+		if (this.getAriaLabelledBy().length > 0 || LabelEnablement.getReferencingLabels(this).length > 0) {
+			this.addAssociation("ariaLabelledBy", this.getId(), true);
+		}
+	};
 
 	/**
 	 * Also trigger link activation when space is pressed on the focused control
