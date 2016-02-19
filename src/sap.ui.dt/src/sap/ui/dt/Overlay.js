@@ -200,17 +200,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 		return true;
 	};
 
-	/*
-	 * Called before Overlay rendering phase
-	 * @protected
-	 */
-	Overlay.prototype.onBeforeRendering = function() {
-		// UI5 restore focus won't restore focus on overlay, because DOM ref isn't changed
-		if (this.hasFocus()) {
-			this._bRestoreFocus = true;
-		}
-	};
-
 	/**
 	 * Called after Overlay rendering phase
 	 * @protected
@@ -225,12 +214,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 		var bFocusable = this.isFocusable();
 		if (bFocusable) {
 			this.$().attr("tabindex", 0);
-
-			if (this._bRestoreFocus) {
-				delete this._bRestoreFocus;
-
-				this.focus();
-			}
 		} else {
 			this.$().attr("tabindex", null);
 		}
@@ -471,7 +454,9 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 		if (!bIsInParentContainer || !bIsDomOrderCorrect) {
 			if (iPosition === 0) {
 				// insert as a first dom child
-				$parentContainer.prepend($this);
+				if ($parentContainer.children().get(0) !== $this.get(0)) {
+					$parentContainer.prepend($this);
+				}
 			} else {
 				// find previous child dom...
 				var iPreviousChildPosition = iPosition - 1;
@@ -481,11 +466,15 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 					iPreviousChildPosition--;
 				}
 				if ($PreviousChildDom.length) {
-					// ... and insert afterwards
-					$PreviousChildDom.after($this);
+					// ... and insert afterwards, if needed
+					if ($this.prev().get(0) !== $PreviousChildDom.get(0)) {
+						$PreviousChildDom.after($this);
+					}
 				} else {
 					// ... or insert as a first dom child, if no previous child dom was found
-					$parentContainer.prepend($this);
+					if ($parentContainer.children().get(0) !== $this.get(0)) {
+						$parentContainer.prepend($this);
+					}
 				}
 			}
 		}
