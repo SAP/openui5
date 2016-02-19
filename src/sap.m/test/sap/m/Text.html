@@ -71,6 +71,10 @@
 			var page = new sap.m.Page("textPage", {
 				title:"Text",
 				content : [
+					new sap.m.Text("text8", {
+						text: "[8. INVISIBLE] " + lorem,
+						visible: false
+					}),
 			   		new sap.m.Text("text1", {
 			   			text: "[1. STANDARD] " + lorem
 			   		}),
@@ -79,29 +83,61 @@
 			   			wrapping: false
 			   		}),
 			   		new sap.m.Text("text3", {
-			   			text: "[3. FIXED WIDTH] " + lorem,
+			   			text: "[3. FIXED WIDTH in em] " + lorem,
 			   			width: "45em"
 			   		}),
+					new sap.m.Text("text3a", {
+						text: "[3a. FIXED WIDTH in %] " + lorem,
+						width: "50%"
+					}),
+					new sap.m.Text("text3b", {
+						text: "[3b. FIXED WIDTH in px] " + lorem,
+						width: "600px"
+					}),
 			   		new sap.m.Text("text4", {
 			   			text: "[4. STYLED] " + lorem
 			   		}),
 			   		new sap.m.Text("text5", {
-			   			text: "[5. RIGHT ALIGNED] " + lorem,
-			   			textAlign: sap.ui.core.TextAlign.End
+			   			text: "[5. ALIGN RIGHT] " + lorem,
+			   			textAlign: sap.ui.core.TextAlign.Right
 			   		}),
+					new sap.m.Text("text5a", {
+						text: "[5a. ALIGN LEFT] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Left
+					}),
+					new sap.m.Text("text5b", {
+						text: "[5b. ALIGN END] " + lorem,
+						textAlign: sap.ui.core.TextAlign.End
+					}),
+					new sap.m.Text("text5c", {
+						text: "[5c. ALIGN BEGIN] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Begin
+					}),
+					new sap.m.Text("text5d", {
+						text: "[5d. ALIGN CENTER] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Center
+					}),
+					new sap.m.Text("text5e", {
+						text: "[5e. ALIGN INITIAL] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Inititial
+					}),
 			   		new sap.m.Text("text6", {
 			   			text: "Text [6. RTL] " + lorem,
 			   			textDirection: sap.ui.core.TextDirection.RTL
 			   		}),
+					new sap.m.Text("text6a", {
+						text: "Text [6a. LTR] " + lorem,
+						textDirection: sap.ui.core.TextDirection.LTR
+					}),
+					new sap.m.Text("text6b", {
+						text: "Text [6b. DIRECTION INHERIT] " + lorem,
+						textDirection: sap.ui.core.TextDirection.Inherit
+					}),
 			   		new sap.m.Text("text7", {
 			   			text: "[7. LINE BREAKS]\n...\n" + lorem
 			   		}),
-			   		new sap.m.Text("text8", {
-			   			text: "[8. INVISIBLE] " + lorem,
-			   			visible: false
-			   		}),
 			   		new sap.m.Text("text9", {
-			   			text: "[9. MAXLINE:3] " + lorem + lorem + lorem,
+			   			text: "[9. MAXLINES:3] " + lorem + lorem + lorem,
 			   			maxLines: 3
 			   		}),
 			   		new sap.m.Text("text10", {

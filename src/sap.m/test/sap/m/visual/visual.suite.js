@@ -18,6 +18,7 @@ module.exports = [
 	"SemanticPage.spec.js",
 	"TableSelectDialog.spec.js",
 	//"Table.spec.js",
+	"Text.spec.js",
 	"Toolbar.spec.js",
 	"Wizard.spec.js"
 ];
