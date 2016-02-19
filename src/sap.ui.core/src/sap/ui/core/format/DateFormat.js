@@ -907,9 +907,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		if (bValid) {
 			if (bUTC || iTZDiff != null) {
 				oDate = UniversalDate.getInstance(new Date(0), sCalendarType);
-				if (iEra != null) {
-					oDate.setUTCEra(iEra);
-				}
+				oDate.setUTCEra(iEra || UniversalDate.getCurrentEra(sCalendarType));
 				oDate.setUTCFullYear(iYear || 1970);
 				oDate.setUTCMonth(iMonth || 0);
 				oDate.setUTCDate(iDay || 1);
@@ -927,9 +925,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 				}
 			} else {
 				oDate = UniversalDate.getInstance(new Date(1970, 0, 1, 0, 0, 0), sCalendarType);
-				if (iEra != null) {
-					oDate.setEra(iEra);
-				}
+				oDate.setEra(iEra || UniversalDate.getCurrentEra(sCalendarType));
 				oDate.setFullYear(iYear || 1970);
 				oDate.setMonth(iMonth || 0);
 				oDate.setDate(iDay || 1);
