@@ -165,9 +165,8 @@ function(jQuery) {
 	 *
 	 */
 	DOMUtil.isVisible = function(oDomRef) {
-		oDomRef = jQuery(oDomRef);
-
-		return oDomRef.is(":visible");
+		// mimic the jQuery 1.11.1 impl of the ':visible' selector as the jQuery 2.2.0 selector no longer reports empty SPANs etc. as 'hidden'
+		return oDomRef ? oDomRef.offsetWidth > 0 || oDomRef.offsetHeight > 0 : false;
 	};
 
 	/**

@@ -39,6 +39,9 @@
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.8.1.js" />
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.1.js" />
         <raw-module name="sap/ui/thirdparty/jquery/jquery-1.10.2.js" />
+        <raw-module name="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
+        <raw-module name="sap/ui/thirdparty/jquery/jquery-2.1.4.js" />
+        <raw-module name="sap/ui/thirdparty/jquery/jquery-2.2.0.js" />
         <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
@@ -109,11 +112,8 @@
         <!-- exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5) -->
         <exclude name="jquery-*.js" />
         <exclude name="sap-*" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.7.1.js" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.8.1.js" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.10.1.js" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.10.2.js" />
-        <exclude name="sap/ui/thirdparty/jquery/jquery-1.11.1.js" />
+        <!-- exclude all jQuery versions with an explicit version number -->
+        <exclude name="sap/ui/thirdparty/jquery/*" />
         <!-- CorePlugin, shouldn't be installed by default -->
         <exclude name="sap/ui/core/plugin/DeclarativeSupport.js" />
         <exclude name="sap/ui/core/plugin/LessSupport.js" />

@@ -891,7 +891,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oRow = aRows[0];
 
 			var oNewEvent = new jQuery.Event("saphome");
-			oNewEvent.originalEvent = oNewEvent.originalEvent || {};
 			oNewEvent._bPlanningCalendar = true;
 
 			oRow.getCalendarRow().onsaphome(oNewEvent);
@@ -909,7 +908,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oRow = aRows[aRows.length - 1];
 
 			var oNewEvent = new jQuery.Event("sapend");
-			oNewEvent.originalEvent = oNewEvent.originalEvent || {};
 			oNewEvent._bPlanningCalendar = true;
 
 			oRow.getCalendarRow().onsapend(oNewEvent);
@@ -1402,7 +1400,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oNewRow = aRows[0];
 
 				oNewEvent = new jQuery.Event(sType);
-				oNewEvent.originalEvent = oNewEvent.originalEvent || {};
 				oNewEvent._bPlanningCalendar = true;
 
 				oNewRow.getCalendarRow().onsaphome(oNewEvent);
@@ -1415,7 +1412,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oNewRow = aRows[aRows.length - 1];
 
 				oNewEvent = new jQuery.Event(sType);
-				oNewEvent.originalEvent = oNewEvent.originalEvent || {};
 				oNewEvent._bPlanningCalendar = true;
 
 				oNewRow.getCalendarRow().onsapend(oNewEvent);
