@@ -8,8 +8,12 @@
     jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
     sinon.config.useFakeTimers = false;
 
+    if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+        jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+    }
+
     var classNameHeader = '.sapMNLG-Header';
-    var classNameDatetime = '.sapMNLG-Datetime';
+    var classNameDatetime = '.sapMNLI-Datetime';
     var classNameFooterToolbar = '.sapMTB';
     var classNameCloseButton = '.sapMNLG-CloseButton';
 
@@ -50,7 +54,8 @@
 
         assert.strictEqual(jQuery(classNameCloseButton).length, 1, 'Group Close Button should be rendered');
         assert.strictEqual(jQuery(classNameHeader).length, 1, 'Title should be rendered');
-        assert.strictEqual(jQuery(classNameDatetime).length, 1, 'DateTime should be rendered');
+
+        assert.strictEqual(this.NotificationListGroup.getDomRef('datetime').innerHTML, '3 hours', 'DateTime should be rendered');
 
         sap.ui.getCore().applyChanges();
 
