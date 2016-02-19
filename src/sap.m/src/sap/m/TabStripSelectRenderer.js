@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 			oRm.write(">");
 			oRm.writeEscaped(oSelectedItem ? oSelectedItem.getText() : "");
 			if (!oSelectedItem.getProperty('modified')) {
-				sStateClass += TabStripItem._CSS_CLASS_STATEINVISIBLE;
+				sStateClass += TabStripItem.CSS_CLASS_STATE_INVISIBLE;
 			}
 			oRm.write('</label>');
 			oRm.write('<span style="position: absolute" class="sapMTabStripSelectListItemModified' + sStateClass + '">*</span>');

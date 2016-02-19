@@ -63,12 +63,12 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 */
 	TabStripRenderer.renderItem = function (oRm, oControl, oItem, bSelected) {
 		oRm.write("<div id='" + oItem.getId() + "'");
-		oRm.addClass(TabStripItem._CSS_CLASS);
+		oRm.addClass(TabStripItem.CSS_CLASS);
 		if (oItem.getModified()) {
-			oRm.addClass(TabStripItem._CSS_CLASS_MODIFIED);
+			oRm.addClass(TabStripItem.CSS_CLASS_MODIFIED);
 		}
 		if (bSelected) {
-			oRm.addClass(TabStripItem._CSS_CLASS_SELECTED);
+			oRm.addClass(TabStripItem.CSS_CLASS_SELECTED);
 		}
 		oRm.writeClasses();
 
@@ -79,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 		oRm.write(">");
 
 
-		oRm.write("<span id='" + getTabTextDomId(oItem) + "' class='" + TabStripItem._CSS_CLASS_LABEL + "'>");
+		oRm.write("<span id='" + getTabTextDomId(oItem) + "' class='" + TabStripItem.CSS_CLASS_LABEL + "'>");
 
 		this.renderItemText(oRm, oItem);
 
@@ -99,8 +99,8 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	TabStripRenderer.renderItemText = function (oRm, oItem) {
 		var sItemText = oItem.getText();
 
-		if (sItemText.length > TabStripItem._DISPLAY_TEXT_MAX_LENGTH) {
-			oRm.writeEscaped(sItemText.slice(0, TabStripItem._DISPLAY_TEXT_MAX_LENGTH));
+		if (sItemText.length > TabStripItem.DISPLAY_TEXT_MAX_LENGTH) {
+			oRm.writeEscaped(sItemText.slice(0, TabStripItem.DISPLAY_TEXT_MAX_LENGTH));
 			oRm.write('...');
 		} else {
 			oRm.writeEscaped(sItemText);
