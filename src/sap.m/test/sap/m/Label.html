@@ -12,71 +12,84 @@
 		<script type="text/javascript">
 			jQuery.sap.initMobile({preventScroll : false});
 
-			var oLabel = new sap.m.Label({text:'mobile standard label '});
+			var oLabel = new sap.m.Label("lbl1", {text:'mobile standard label '});
 			oLabel.placeAt("label");
 
-			var oLabelRequired = new sap.m.Label({required: true, text:'required label'});
+			var oLabelRequired = new sap.m.Label("lbl2", {required: true, text:'required label'});
 			oLabelRequired.placeAt("labelRequired");
 
-			var oLabelBold = new sap.m.Label({
+			var oLabelBold = new sap.m.Label("lbl3", {
 				text: "mobile bold label",
 				design: "Bold"
 			});
 			oLabelBold.placeAt("labelBold");
 
-			var oLabelLTR = new sap.m.Label({
+			var oLabelLTR = new sap.m.Label("lbl4", {
 				text: "mobile LTR label",
 				textDirection: "LTR",
 				width: "400px"
 			});
 			oLabelLTR.placeAt("LTR");
 
-			var oLabelRTL = new sap.m.Label({
+			var oLabelRTL = new sap.m.Label("lbl5", {
 				text: "mobile RTL label",
 				textDirection: "RTL",
 				width: "400px"
 			});
 			oLabelRTL.placeAt("RTL");
 
-			var oLabelBegin = new sap.m.Label({
+			var oLabelInherit = new sap.m.Label("lbl6", {
+				text: "mobile Inherit label",
+				textDirection: "Inherit",
+				width: "400px"
+			});
+			oLabelInherit.placeAt("Inherit");
+
+			var oLabelBegin = new sap.m.Label("lbl7", {
 				text: "mobile begin label",
 				width: "400px",
 				textAlign: "Begin"
 			});
 			oLabelBegin.placeAt("Begin");
 
-			var oLabelCenter = new sap.m.Label({
+			var oLabelCenter = new sap.m.Label("lbl8", {
 				text: "mobile center label",
 				width: "400px",
 				textAlign: "Center"
 			});
 			oLabelCenter.placeAt("Center");
 
-			var oLabelEnd = new sap.m.Label({
+			var oLabelEnd = new sap.m.Label("lbl9", {
 				text: "mobile end label",
 				width: "400px",
 				textAlign: "End"
 			});
 			oLabelEnd.placeAt("End");
 
-			var oLabelLeft = new sap.m.Label({
+			var oLabelLeft = new sap.m.Label("lbl10", {
 				text: "mobile left label",
 				width: "400px",
 				textAlign: "Left"
 			});
 			oLabelLeft.placeAt("Left");
 
-			var oLabelRight = new sap.m.Label({
+			var oLabelRight = new sap.m.Label("lbl11", {
 				text: "mobile right label",
 				width: "400px",
 				textAlign: "Right"
 			});
 			oLabelRight.placeAt("Right");
 
-			var oLabelNoText = new sap.m.Label({
+			var oLabelNoText = new sap.m.Label("lbl12", {
 				text: ""
 			});
 			oLabelNoText.placeAt("NoText");
+
+			var oLabelWidth = new sap.m.Label("lbl13", {
+				text: "mobile label with width set to 400px with loooooooooooooooooooooooooooooooong content",
+				width: "400px"
+			});
+			oLabelWidth.placeAt("Width");
 
 			var oHeader1 = new sap.m.Label({
 				text: "Label with text set:",
@@ -101,6 +114,18 @@
 				design: "Bold"
 			});
 			oHeader4.placeAt("Header4");
+
+			var oHeader5 = new sap.m.Label({
+				text: "Label with no text:",
+				design: "Bold"
+			});
+			oHeader5.placeAt("Header5");
+
+			var oHeader6 = new sap.m.Label({
+				text: "Label with width property set:",
+				design: "Bold"
+			});
+			oHeader6.placeAt("Header6");
 
 			var oVL = new sap.ui.layout.VerticalLayout({
 				content:[
@@ -165,13 +190,17 @@
 		<div class="labelHeader" id="Header3"></div>
 		<div id="LTR"></div>
 		<div id="RTL"></div>
+		<div id="Inherit"></div>
 		<div class="labelHeader" id="Header4"></div>
 		<div id="Begin"></div>
 		<div id="Center"></div>
 		<div id="End"></div>
 		<div id="Left"></div>
 		<div id="Right"></div>
+		<div class="labelHeader" id="Header5"></div>
 		<div id="NoText"></div>
+		<div class="labelHeader" id="Header6"></div>
+		<div id="Width"></div>
 		<div id="RTLTesting"></div>
 	</body>
 </html>
