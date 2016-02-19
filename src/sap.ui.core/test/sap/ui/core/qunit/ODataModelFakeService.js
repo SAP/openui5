@@ -226,6 +226,12 @@ xhr.onCreate = function(request) {
 			}
 		}
 
+		// Special handling SAML authentication redirect
+		if (request.url.indexOf("SAML200") > 0 || (request.requestBody && request.requestBody.indexOf("SAML200") > 0)) {
+			respond(200, oSAMLHeaders, sSAMLLoginPage);
+			return;
+		}
+
 		// Special handling based on headers
 		if (request.url == baseURL + "Categories" || request.url == baseURL + "Categories?horst=true") {
 			if (request.requestHeaders["Accept"] == "application/atom+xml,application/atomsvc+xml,application/xml") {
@@ -402,7 +408,12 @@ var oBatchHeaders = 	{
 var oHTMLHeaders = 	{
 		"Content-Type": "text/html"
 	};
+var oSAMLHeaders = 	{
+		"Content-Type": "text/html",
+		"com.sap.cloud.security.login": "login-request"
+	};
 
+var sSAMLLoginPage = '<html><body><h1>SAML Login Page</h1></body></html>';
 
 var sMetaData = '\
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>\

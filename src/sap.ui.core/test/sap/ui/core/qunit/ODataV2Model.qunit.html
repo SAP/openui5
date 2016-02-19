@@ -2582,6 +2582,51 @@
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
+	
+	asyncTest("SAML redirect - without batch", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: false
+		});
+
+		oModel.read("/SAML200", {
+			success: function() {
+				ok(false, "Success handler must not be called in case of SAML redirect");
+				start();
+			},
+			error: function(oError) {
+				ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
+				ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
+				start();
+			}
+		});
+	});
+
+	asyncTest("SAML redirect - with batch", function(){
+
+		removeSharedMetadata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+
+		oModel.read("/SAML200", {
+			success: function() {
+				ok(false, "Success handler must not be called in case of SAML redirect");
+				start();
+			},
+			error: function(oError) {
+				ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
+				ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
+				start();
+			}
+		});
+	});
+
 	</script>
 
 </head>
