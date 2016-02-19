@@ -493,7 +493,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): $batch failure", function (assert) {
 		var oBatchError = new Error("$batch request failed"),
-			oRequestError = new Error("HTTP request was not processed because $batch failed"),
 			aPromises = [],
 			oRequestor = Requestor.create("/Service/");
 
@@ -502,10 +501,12 @@ sap.ui.require([
 		}
 
 		function assertError(oError) {
-			assert.deepEqual(oError, oRequestError);
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message,
+				"HTTP request was not processed because $batch failed");
+			assert.strictEqual(oError.cause, oBatchError);
 		}
 
-		oRequestError.cause = oBatchError;
 		aPromises.push(oRequestor.request("GET", "Products", "group")
 			.then(unexpectedSuccess, assertError));
 		aPromises.push(oRequestor.request("GET", "Customers", "group")
