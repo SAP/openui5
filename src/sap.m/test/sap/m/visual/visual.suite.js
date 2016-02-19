@@ -16,6 +16,7 @@ module.exports = [
 	"OverflowToolbar.spec.js",
 	"Page.spec.js",
 	"SemanticPage.spec.js",
+	"SplitApp.spec.js",
 	"TableSelectDialog.spec.js",
 	//"Table.spec.js",
 	"Text.spec.js",
