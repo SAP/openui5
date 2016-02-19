@@ -78,6 +78,25 @@ sap.ui.define([
 		});
 
 	/**
+	 * The 'change' event is fired when the binding is initialized or new contexts are created or
+	 * its parent context is changed. It is to be used by controls to get notified about changes to
+	 * the binding contexts of this list binding. Registered event handlers are called with the
+	 * change reason as parameter.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#change
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
+	 *   The reason for the 'change' event which is {@link sap.ui.model.ChangeReason#Change Change}
+	 *   for binding initialization and new context creation or
+	 *   {@link sap.ui.model.ChangeReason#Context Context} if the parent context is changed.
+	 * @see sap.ui.base.Event
+	 * @protected
+	 * @since 1.37
+	 */
+
+	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
 	 * It is to be used by applications for example to switch on a busy indicator.
 	 * Registered event handlers are called without parameters.
@@ -120,24 +139,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Always fires a change event on this list binding.
-	 *
-	 * @param {boolean} bForceUpdate
-	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
-	 * @throws {Error}
-	 *   When <code>bForceUpdate</code> is not given or <code>false</code>, checkUpdate on this
-	 *   binding is not supported.
-	 */
-	ODataListBinding.prototype.checkUpdate = function (bForceUpdate) {
-		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: ODataListBinding#checkUpdate, "
-				+ "bForceUpdate must be true");
-		}
-
-		this._fireChange({reason : ChangeReason.Change});
-	};
-
-	/**
 	 * Filter not supported by OData list binding
 	 *
 	 * @throws {Error}
@@ -150,9 +151,9 @@ sap.ui.define([
 	 /**
 	 * Returns already created binding contexts for all entities in this list binding for the range
 	 * determined by the given start index <code>iStart</code> and <code>iLength</code>.
-	 * If at least one of the entities in the given range has not yet been loaded, fires a change
+	 * If at least one of the entities in the given range has not yet been loaded, fires a 'change'
 	 * event on this list binding once these entities have been loaded <em>asynchronously</em>.
-	 * A further call to this method in the change event handler with the same index range then
+	 * A further call to this method in the 'change' event handler with the same index range then
 	 * yields the updated array of contexts.
 	 *
 	 * @param {number} [iStart=0]
@@ -198,7 +199,7 @@ sap.ui.define([
 		/**
 		 * Creates entries in aContexts for each value in oResult.
 		 * Uses fnGetPath to create the context path.
-		 * Fires "change" event if new contexts are created.
+		 * Fires 'change' event if new contexts are created.
 		 * @param {array|object} vResult Resolved OData result
 		 */
 		function createContexts(vResult) {
@@ -314,6 +315,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Initializes the OData list binding. Fires a 'change' event in case the binding has a
+	 * resolved path.
+	 *
+	 * @protected
+	 */
+	ODataListBinding.prototype.initialize = function () {
+		if (this.oModel.resolve(this.sPath, this.oContext)) {
+			this._fireChange({reason : ChangeReason.Change});
+		}
+	};
+
+	/**
 	 * Returns <code>true</code> if the length has been determined by the data returned from
 	 * server. If the length is a client side estimation <code>false</code> is returned.
 	 *
@@ -374,7 +387,7 @@ sap.ui.define([
 	ODataListBinding.prototype.requestValue = function (sPath, iIndex) {
 		return this.oCache
 			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath)
-			: this.getContext().requestValue(this.getPath() + "/" + iIndex
+			: this.oContext.requestValue(this.sPath + "/" + iIndex
 				+ (sPath ? "/" + sPath : ""));
 	};
 
