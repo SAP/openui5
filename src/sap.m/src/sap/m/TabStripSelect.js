@@ -29,22 +29,6 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 		var TabStripSelect = Select.extend("sap.m.TabStripSelect", /** @lends sap.m.TabStripSelect.prototype */ {
 			metadata: {
 				library: "sap.m"
-			},
-			//ToDo: [Refactoring] Incorrect metadata nesting - put this in the scope of metadata
-			aggregations: {
-				/**
-				 * Holds the items contained within this control.
-				 */
-				items: { type: "sap.m.TabStripItem", multiple: true, singularName: "item", bindable: "bindable" },
-				list: { type: "sap.m.TabStripSelectList", multiple: false, bindable: "bindable" }
-			},
-			//ToDo: [Refactoring] Incorrect metadata nesting - put this in the scope of metadata
-			properties: {
-				/*
-				 * Altering this property hides/shows the control in the DOM tree
-				 * // ToDo: remove this todo comment when it is confirmed this property will be used
-				 */
-				visible: { type: "boolean", group : "Misc", defaultValue : true }
 			}
 		});
 
@@ -347,9 +331,9 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 			var $ModifiedDom = this.$().find(".sapMTabStripSelectListItemModified").eq(0);
 			Select.prototype.setValue.apply(this, arguments);
 			if (this.getSelectedItem().getProperty('modified')) {
-				$ModifiedDom.removeClass(TabStripItem.CSS_CLASS_STATEINVISIBLE);
+				$ModifiedDom.removeClass(TabStripItem._CSS_CLASS_STATEINVISIBLE);
 			} else {
-				$ModifiedDom.addClass(TabStripItem.CSS_CLASS_STATEINVISIBLE);
+				$ModifiedDom.addClass(TabStripItem._CSS_CLASS_STATEINVISIBLE);
 			}
 		};
 

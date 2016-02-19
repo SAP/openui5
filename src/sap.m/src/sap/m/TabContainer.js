@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TabContainer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
+	function(jQuery, library, Control, IconPool) {
 		"use strict";
 
 
@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					/**
 					 * The items displayed in the TabContainer.
 					 */
-					items : {type : "sap.m.TabContainerItem", multiple : true},
+					items : {type : "sap.m.TabContainerItem", multiple : true, singularName: "item", bindable: "bindable"},
 
 					/**
 					 * The add button displayed in the TabStrip.
@@ -124,9 +124,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 						this.setSelectedItem(oSelectedItem);
 					}.bind(this),
-					itemCloseRequest: function(oEvent) {
+					itemClose: function(oEvent) {
 						var oItem = oEvent.getParameter("item"),
-						    oRemovedItem = this._fromTabStripItem(oItem);
+							oRemovedItem = this._fromTabStripItem(oItem);
 
 						// prevent the tabstrip from closing the item by default
 						oEvent.preventDefault();
@@ -171,7 +171,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				oControl = new sap.m.Button({
 					type: sap.m.ButtonType.Transparent,
 					tooltip: oRb.getText("TABCONTAINER_ADD_NEW_TAB"),
-					icon: sap.ui.core.IconPool.getIconURI("add"),
+					icon: IconPool.getIconURI("add"),
 					press: function() {
 						this.getParent().getParent().fireAddNewButtonPress();
 					}
@@ -194,12 +194,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		TabContainer.prototype._fromTabStripItem = function(oItem) {
 			var aItems = this.getItems() || [],
-			    iItemsCount = aItems.length,
-			    i = 0;
+				iItemsCount = aItems.length,
+				iIndex = 0;
 
-			for (; i < iItemsCount; i++) {
-				if (aItems[i].getId() === oItem.getKey()) {
-					return aItems[i];
+			for (; iIndex < iItemsCount; iIndex++) {
+				if (aItems[iIndex].getId() === oItem.getKey()) {
+					return aItems[iIndex];
 				}
 			}
 
@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @protected
 		 */
 		TabContainer.prototype._toTabStripItem = function(vItem) {
-			var i = 0,
+			var iIndex = 0,
 				sKey = vItem,
 				oTabStripItems,
 				oTabStripItemsCount,
@@ -223,16 +223,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				// resolves error /getItems() of null/ in case only the _tabStrip aggregation was for some reason removed/destroyed from the container
 				return null;
 			}
+
 			oTabStripItems = oTabStrip.getItems();
-		    oTabStripItemsCount = oTabStripItems.length;
+			oTabStripItemsCount = oTabStripItems.length;
 
 			if (typeof vItem === "object") {
 				sKey = vItem.getId();
 			}
 
-			for (; i < oTabStripItemsCount; i++) {
-				if (oTabStripItems[i].getKey() === sKey) {
-					return oTabStripItems[i];
+			for (; iIndex < oTabStripItemsCount; iIndex++) {
+				if (oTabStripItems[iIndex].getKey() === sKey) {
+					return oTabStripItems[iIndex];
 				}
 			}
 
@@ -240,7 +241,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		};
 
 		TabContainer.prototype._getSelectedItemContent = function() {
-			var oTabStrip     = this._getTabStrip(),
+			var oTabStrip = this._getTabStrip(),
 				sSelectedItem = this.getSelectedItem(),
 				oSelectedItem = sap.ui.getCore().byId(sSelectedItem),
 				oTabStripItem = this._toTabStripItem(oSelectedItem);
@@ -300,7 +301,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			// Perform selection switch
 			this._moveToNextItem(bIsSelected);
 
-
 			return vItem;
 		};
 
@@ -312,16 +312,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @returns {object} This instance for chaining
 		 */
 		TabContainer.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+			var oTabStripItem,
+				sPropertyKey;
+
 			if (sAggregationName === 'items') {
 				oObject.attachItemPropertyChanged(function (oEvent) {
-					var oTabStripItem = this._toTabStripItem(oEvent.getSource());
-					var sPropertyKey = oEvent['mParameters'].propertyKey;
+					oTabStripItem = this._toTabStripItem(oEvent.getSource());
+					sPropertyKey = oEvent['mParameters'].propertyKey;
 					if (sPropertyKey === 'name') {
 						sPropertyKey = 'text';
 					}
 
 					if (oTabStripItem) {
-						oTabStripItem.setProperty(sPropertyKey, oEvent['mParameters'].propertyValue);
+						oTabStripItem.setProperty(sPropertyKey, oEvent['mParameters'].propertyValue, false);
 					}
 				}.bind(this));
 			}
@@ -330,7 +333,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 
 		TabContainer.prototype.addItem = function(oItem) {
-			this.addAggregation("items", oItem);
+			this.addAggregation("items", oItem, false);
 
 			this._getTabStrip().addItem(
 				new sap.m.TabStripItem({
@@ -396,6 +399,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 			if (oSelectedItem && oTabStrip) {
 				oTabStrip.setSelectedItem(this._toTabStripItem(oSelectedItem));
+				this.fireItemSelect({item: oSelectedItem});
 				this._rerenderContent(oSelectedItem.getContent());
 			}
 
@@ -423,6 +427,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			oRM.destroy();
 		};
 
+		/**
+		 * Sets the default selected item to the first item
+		 *
+		 * @returns {sap.m.TabStripItem|null}
+		 * @private
+		 */
 		TabContainer.prototype._setDefaultTab = function() {
 
 			var oFirstItem = this.getItems()[0] || null;
