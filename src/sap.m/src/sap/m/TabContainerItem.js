@@ -3,18 +3,18 @@
  */
 
 // Provides control sap.ui.core.Item.
-sap.ui.define(['sap/ui/core/Element', './library'],
-	function(Element, library) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/Control'],
+	function(Element, Control) {
 		"use strict";
 
 		/**
-		 * Constructor for a new <code>Item</code>.
+		 * Constructor for a new <code>TabContainerItem</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * A control base type.
+		 * An item to be used in a TabContainer.
 		 * @extends sap.ui.core.Element
 		 *
 		 * @author SAP SE
@@ -23,10 +23,10 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 		 * @constructor
 		 * @public
 		 * @since 1.34
-		 * @alias sap.ui.core.Item
+		 * @alias sap.m.TabContainerItem
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var TabContainerItem = Element.extend("sap.m.TabContainerItem", /** @lends sap.ui.core.Item.prototype */ { metadata : {
+		var TabContainerItem = Element.extend("sap.m.TabContainerItem", /** @lends sap.m.TabContainerItem.prototype */ { metadata : {
 
 			library : "sap.ui.core",
 			properties : {
@@ -101,7 +101,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 				propertyValue : vValue
 			});
 
-			return sap.ui.core.Control.prototype.setProperty.call(this, sName, vValue, bSuppressInvalidation);
+			return Element.prototype.setProperty.call(this, sName, vValue, bSuppressInvalidation);
 		};
 
 		return TabContainerItem;

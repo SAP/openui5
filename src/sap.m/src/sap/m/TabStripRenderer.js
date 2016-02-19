@@ -28,9 +28,9 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 			oRm.renderControl(oControl.getAggregation('_select'));
 		} else {
 			this.renderLeftOverflowButtons(oRm, oControl);
-			this.beginTabContainer(oRm, oControl);
-			this.renderTabs(oRm, oControl);
-			this.endTabContainer(oRm);
+			this.beginTabsContainer(oRm, oControl);
+			this.renderItems(oRm, oControl);
+			this.endTabsContainer(oRm);
 			this.renderRightOverflowButtons(oRm, oControl);
 			this.renderTouchArea(oRm, oControl);
 		}
@@ -38,19 +38,19 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Renders all tabs.
+	 * Renders all <code>TabStripItems</code>.
 	 *
 	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
 	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
-	TabStripRenderer.renderTabs = function (oRm, oControl) {
-		var aTabs = oControl.getItems(),
+	TabStripRenderer.renderItems = function (oRm, oControl) {
+		var aItems = oControl.getItems(),
 			sSelectedItemId = oControl.getSelectedItem();
 
-		aTabs.forEach(function (oTab, iIndex, aTabs) {
-			var bIsSelected = sSelectedItemId && sSelectedItemId === oTab.getId();
-			this.renderTab(oRm, oControl, oTab, bIsSelected);
-		}.bind(this));
+		aItems.forEach(function (oItem) {
+			var bIsSelected = sSelectedItemId && sSelectedItemId === oItem.getId();
+			this.renderItem(oRm, oControl, oItem, bIsSelected);
+		}, this);
 	};
 
 	/**
@@ -58,36 +58,34 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 *
 	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
 	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
-	 * @param oTab {sap.m.TabStripItem} <code>TabStripItem</code> instance for which text is to be rendered
+	 * @param oItem {sap.m.TabStripItem} <code>TabStripItem</code> instance for which text is to be rendered
 	 * @param bSelected {boolean} Flag indicating if this is the currently selected item
 	 */
-	//ToDo: rename "tab" to "item" everywhere
-	TabStripRenderer.renderTab = function (oRm, oControl, oTab, bSelected) {
-		var sItemClass = TabStripItem._CSS_CLASS + (bSelected ? " selected" : ""),
-			bIsTabModified = oTab.getModified(),
-			oSelectedItem = sap.ui.getCore().byId(oControl.getSelectedItem());
-
-
-		// ToDo: fix the hilarious concatenation..
-		if (bIsTabModified) {
-			sItemClass += " " + sItemClass + " sapMTabContainerItemModified"; // ToDo: move the string to a constant
+	TabStripRenderer.renderItem = function (oRm, oControl, oItem, bSelected) {
+		oRm.write("<div id='" + oItem.getId() + "'");
+		oRm.addClass(TabStripItem._CSS_CLASS);
+		if (oItem.getModified()) {
+			oRm.addClass(TabStripItem._CSS_CLASS_MODIFIED);
 		}
+		if (bSelected) {
+			oRm.addClass(TabStripItem._CSS_CLASS_SELECTED);
+		}
+		oRm.writeClasses();
 
-		oRm.write("<div id='" + oTab.getId() + "' class='" + sItemClass + "'");
-		oRm.writeElementData(oTab);
+		oRm.writeElementData(oItem);
 
-		oRm.writeAccessibilityState(oTab, getTabStripItemAccAttributes(oTab, oControl.getParent(), oSelectedItem));
+		oRm.writeAccessibilityState(oItem, getTabStripItemAccAttributes(oItem, oControl.getParent(), sap.ui.getCore().byId(oControl.getSelectedItem())));
 
 		oRm.write(">");
 
 
-		oRm.write("<span id='" + getTabTextDomId(oTab) + "' class='" + TabStripItem._CSS_CLASS_LABEL + "'>");
+		oRm.write("<span id='" + getTabTextDomId(oItem) + "' class='" + TabStripItem._CSS_CLASS_LABEL + "'>");
 
-		this.renderTabText(oRm, oTab);
+		this.renderItemText(oRm, oItem);
 
 		oRm.write("</span>");
 
-		this.renderTabCloseButton(oRm, oTab);
+		this.renderItemCloseButton(oRm, oItem);
 
 		oRm.write("</div>");
 	};
@@ -96,16 +94,16 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 * Renders the text of a passed <code>TabStripItem</code>.
 	 *
 	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
-	 * @param oTab {sap.m.TabStripItem} <code>TabStripItem</code> instance which text to be rendered
+	 * @param oItem {sap.m.TabStripItem} <code>TabStripItem</code> instance which text to be rendered
 	 */
-	TabStripRenderer.renderTabText = function (oRm, oTab) {
-		var sTabText = oTab.getText();
+	TabStripRenderer.renderItemText = function (oRm, oItem) {
+		var sItemText = oItem.getText();
 
-		if (sTabText.length > TabStripItem.DISPLAY_TEXT_MAX_LENGHT) {
-			oRm.writeEscaped(sTabText.slice(0, TabStripItem.DISPLAY_TEXT_MAX_LENGHT));
+		if (sItemText.length > TabStripItem._DISPLAY_TEXT_MAX_LENGTH) {
+			oRm.writeEscaped(sItemText.slice(0, TabStripItem._DISPLAY_TEXT_MAX_LENGTH));
 			oRm.write('...');
 		} else {
-			oRm.writeEscaped(sTabText);
+			oRm.writeEscaped(sItemText);
 		}
 	};
 
@@ -113,11 +111,11 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 * Renders the Close button of a passed <code>TabStripItem</code>.
 	 *
 	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
-	 * @param oTab {sap.m.TabStripItem} <code>TabStripItem</code> instance for which text is to be rendered
+	 * @param oItem {sap.m.TabStripItem} <code>TabStripItem</code> instance for which text is to be rendered
 	 */
-	TabStripRenderer.renderTabCloseButton = function (oRm, oTab) {
-		oRm.write("<div class='sapMTSTabCloseBtnCnt'>");
-		oRm.renderControl(oTab.getAggregation("_closeButton"));
+	TabStripRenderer.renderItemCloseButton = function (oRm, oItem) {
+		oRm.write("<div class='sapMTSItemCloseBtnCnt'>");
+		oRm.renderControl(oItem.getAggregation("_closeButton"));
 		oRm.write("</div>");
 	};
 
@@ -145,13 +143,13 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Begins rendering the <code>TabContainer</code> region.
+	 * Begins rendering the <code>TabsContainer</code> region.
 	 *
 	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
 	 * @param oControl {sap.m.TabStrip} An object representation of the <code>TabStrip</code> control that should be rendered
 	 */
-	TabStripRenderer.beginTabContainer = function (oRm, oControl) {
-		oRm.write("<div id='" + oControl.getId() + "-tabContainer' class='sapMTSTabContainer'>");
+	TabStripRenderer.beginTabsContainer = function (oRm, oControl) {
+		oRm.write("<div id='" + oControl.getId() + "-tabsContainer' class='sapMTSTabsContainer'>");
 		oRm.write("<div id='" + oControl.getId() + "-tabs'  class='sapMTSTabs'");
 		oRm.writeAccessibilityState(oControl, {
 			role: "tablist"
@@ -160,11 +158,11 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	};
 
 	/**
-	 * Ends rendering the <code>TabContainer</code> region.
+	 * Ends rendering the <code>TabsContainer</code> region.
 	 *
 	 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
 	 */
-	TabStripRenderer.endTabContainer = function (oRm) {
+	TabStripRenderer.endTabsContainer = function (oRm) {
 		oRm.write("</div>");
 		oRm.write("</div>");
 	};
@@ -236,9 +234,9 @@ sap.ui.define(['jquery.sap.global', './TabStripItem', './TabStrip'], function(jQ
 	 */
 	function getTabStripItemAccAttributes(oItem, oTabStripParent, oSelectedItem) {
 		var mAccAttributes = { role: "tab"},
-			sDescribedBy = TabStrip._ariaStaticTexts.closable.getId() + " ";
+			sDescribedBy = TabStrip.ARIA_STATIC_TEXTS.closable.getId() + " ";
 
-		sDescribedBy += oItem.getModified() ? TabStrip._ariaStaticTexts.modified.getId() : TabStrip._ariaStaticTexts.notModified.getId();
+		sDescribedBy += oItem.getModified() ? TabStrip.ARIA_STATIC_TEXTS.modified.getId() : TabStrip.ARIA_STATIC_TEXTS.notModified.getId();
 		mAccAttributes["describedby"] = sDescribedBy;
 		mAccAttributes["labelledby"] = getTabTextDomId(oItem);
 		if (oTabStripParent && oTabStripParent.getRenderer && oTabStripParent.getRenderer().getContentDomId) {
