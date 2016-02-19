@@ -545,6 +545,83 @@
 	});
 
 	/* --------------------------------------- */
+	/* Test for upload progress rendering      */
+	/* --------------------------------------- */
+	QUnit.module("Upload progress rendering tests", {
+		beforeEach : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			});
+			// stub UploadCollection's attributes
+			this.oUploadCollection._headerParamConst.requestIdName = "1";
+			this.oUploadCollection._getRequestId = function () {
+				return "1"
+			};
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Rendering of uploadProgress 50% uploaded", function(assert) {
+		//Arrange
+		var sUploadProgress = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOADING", [50]);
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+
+		//Act
+		oFileUploader.fireChange({
+			files : [{
+				name: "file1",
+			}]
+		});
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		oFileUploader.fireUploadProgress({
+			fileName : "file1",
+			loaded: 50,
+			total: 100,
+		});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadProgress, "Correct uploadProgress text");
+		assert.equal(jQuery.sap.domById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-valuenow"), "50", "Correct ARIA-valuenow attribute");
+	});
+
+	QUnit.test("Rendering of uploadProgress 100% uploaded", function(assert) {
+		//Arrange
+		var sUploadCompleted = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOAD_COMPLETED");
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+
+		//Act
+		oFileUploader.fireChange({
+			files : [{
+				name: "file1",
+			}]
+		});
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		oFileUploader.fireUploadProgress({
+			fileName : "file1",
+			loaded: 100,
+			total: 100,
+		});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadCompleted, "Correct uploadCompleted text");
+		assert.equal(jQuery.sap.domById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-label"), sUploadCompleted, "Correct ARIA-label attribute");
+	});
+
+	/* --------------------------------------- */
 	/* Test events                             */
 	/* --------------------------------------- */
 	QUnit.module("Event tests", {
