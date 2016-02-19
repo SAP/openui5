@@ -279,10 +279,10 @@ sap.ui.define([
 					--i; // Decrease counter as one element has been removed
 				}
 			}
-		}
-		// delete empty message array
-		if (mMessages[oMessage.getTarget()].length === 0) {
-			delete mMessages[oMessage.getTarget()];
+			// delete empty message array
+			if (mMessages[oMessage.getTarget()].length === 0) {
+				delete mMessages[oMessage.getTarget()];
+			}
 		}
 	};
 
