@@ -167,8 +167,24 @@
 				equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
 				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.setContext(null);
-			} else {
+			} else if (iCount == 2) {
 				equal(oBinding.getLength(), 0, "length of items");
+				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				oContext = oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"});
+				oBinding.setContext(oContext)
+			} else if (iCount == 3) {
+				equal(oBinding.getLength(), 1, "length of items after filtering");
+				var oContext = oBinding.getContexts(0, 1)[0];
+				equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
+				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				// Modify binding so a change can be detected, although data returned by the server is the same
+				oBinding.aExpandRefs = [];
+				oBinding.aLastContexts = [];
+				oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"}, function() {}, true);
+			} else {
+				equal(oBinding.getLength(), 1, "length of items after filtering");
+				var oContext = oBinding.getContexts(0, 1)[0];
+				equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
 				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
 				oBinding.detachChange(changeHandler);
 				start(); // resume normal testing
@@ -179,10 +195,12 @@
 			this.getContexts();
 		});
 		oBinding.attachChange(changeHandler);
-		oBinding.initialize();
-		oBinding.filter(new sap.ui.model.Filter("ProductName", "Contains", "Uncle"));
-		oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"}, function(oContext) {
-			oBinding.setContext(oContext);
+		oModel.metadataLoaded().then(function() {
+			oBinding.initialize();
+			oBinding.filter(new sap.ui.model.Filter("ProductName", "Contains", "Uncle"));
+			oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"}, function(oContext) {
+				oBinding.setContext(oContext);
+			});
 		});
 	});
 

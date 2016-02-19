@@ -528,10 +528,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			// For clientside sorting filtering store all keys separately and set length to final
 			if (that.bClientOperation) {
 				that.aAllKeys = that.aKeys.slice();
-				that.applyFilter();
-				that.applySort();
 				that.iLength = that.aKeys.length;
 				that.bLengthFinal = true;
+				that.applyFilter();
+				that.applySort();
 			}
 
 			delete that.mRequestHandles[sGuid];
@@ -816,21 +816,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 			// check if data in listbinding contains data loaded via expand
 			// if yes and there was a change detected we:
-			// - set the new keys if there are no sortes/filters set
-			// - trigger a refresh if there are sorters/filters set
+			// - set the new keys
+			// - trigger clientside filter/sorter
 			oRef = this.oModel._getObject(this.sPath, this.oContext);
 			bRefChanged = jQuery.isArray(oRef) && !jQuery.sap.equal(oRef,this.aExpandRefs);
 			this.aExpandRefs = oRef;
 			if (bRefChanged) {
-				if (this.aSorters.length > 0 || this.aFilters.length > 0) {
-					this._refresh();
-					return false;
-				} else {
-					this.aKeys = oRef;
-					this.iLength = oRef.length;
-					this.bLengthFinal = true;
-					bChangeDetected = true;
-				}
+				this.aAllKeys = oRef;
+				this.iLength = oRef.length;
+				this.bLengthFinal = true;
+				this.applyFilter();
+				this.applySort();
+				bChangeDetected = true;
 			} else if (mChangedEntities) {
 				jQuery.each(this.aKeys, function(i, sKey) {
 					if (sKey in mChangedEntities) {
