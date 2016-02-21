@@ -1220,12 +1220,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// check the type of the name
 			jQuery.sap.assert(typeof sName === 'string', "sName must be a string");
 
-			// if a URL is given we register this URL for the name of the component:
-			// the name is the package in which the component is located (dot separated)
-			if (sUrl) {
-				jQuery.sap.registerModulePath(sName, sUrl);
-			}
+		}
 
+		// if a component name and a URL is given we register this URL for the name of the component:
+		// the name is the package in which the component is located (dot separated)
+		if (sName && sUrl) {
+			jQuery.sap.registerModulePath(sName, sUrl);
 		}
 
 		// in case of loading the manifest first by configuration we need to
@@ -1335,12 +1335,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				aPromises.push(oPromise);
 			} : jQuery.noop;
 
-			// if a URL is given we register this URL for the name of the component:
-			// the name is the package in which the component is located (dot separated)
-			if (sUrl) {
-				jQuery.sap.registerModulePath(sComponentName, sUrl);
-			}
-
 			// lookup the resource roots and call the register API
 			oManifest.defineResourceRoots();
 
@@ -1414,8 +1408,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				// in case of manifest first we need to load the manifest
 				// to know the component name and preload the component itself
 				collect(oManifest.then(function(oManifest) {
+					var sComponentName = oManifest.getComponentName();
+
+					// if a URL is given we register this URL for the name of the component:
+					// the name is the package in which the component is located (dot separated)
+					if (sUrl) {
+						jQuery.sap.registerModulePath(sComponentName, sUrl);
+					}
+
 					// preload the component
-					return preload(oManifest.getComponentName(), true);
+					return preload(sComponentName, true);
 				}));
 			}
 
