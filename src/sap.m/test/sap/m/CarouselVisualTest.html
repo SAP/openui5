@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<title>sap.m.Carousel Test</title>
+	<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-compatVersion="1.20">
+	</script>
+
+	<script type="text/javascript">
+
+
+		// Create Images
+		var imgDesert = new sap.m.Image("desert", {
+			src: "images/demo/nature/desert.jpg",
+			alt: "Majestic Desert",
+			densityAware: false,
+			decorative: false
+		});
+
+		var imgElephant = new sap.m.Image("elephant", {
+			src: "images/demo/nature/elephant.jpg",
+			alt: "Mighty Elephant",
+			densityAware: false,
+			decorative: false
+		});
+
+		var imgPrairie = new sap.m.Image("prairie", {
+			src: "images/demo/nature/prairie.jpg",
+			alt: "Prairie in Dawn",
+			densityAware: false,
+			decorative: false
+		});
+
+		//Please uncomment any of the following lines to test the corresponding
+		//carousel attribute
+		var carousel = new sap.m.Carousel("myCarousel", {
+			//pageIndicatorPlacement: sap.m.PlacementType.Top,
+			//pageIndicatorPlacement: sap.m.PlacementType.Bottom,
+			activePage: imgElephant,
+			//width: "50%",
+			//height: "50%",
+			//showPageIndicator: false,
+			loop: true,
+			//showBusyIndicator: false,
+			pages: [imgDesert, imgElephant, imgPrairie]
+		});
+
+
+		carousel.placeAt("carouselConatiner");
+		sap.ui.getCore().applyChanges();
+
+		var buttonChangeHeightTo50Percents = new sap.m.Button("btnHeight50", {
+			text: "change height to 50%",
+			press: function () {
+				carousel.setHeight("50%")
+			}
+		}).placeAt("buttonsConatiner");
+
+		var buttonChangeHeightTo600px = new sap.m.Button("btnHeight600px", {
+			text: "change height to 600 px",
+			press: function () {
+				carousel.setHeight("600px");
+			}
+		}).placeAt("buttonsConatiner");
+
+		var buttonChangeWidthTo60Percents = new sap.m.Button("btnWidth60", {
+			text: "change width to 60%",
+			press: function () {
+				carousel.setWidth("60%");
+				carousel.rerender();
+			}
+		}).placeAt("buttonsConatiner");
+
+		var buttonChangeWidthTo400px = new sap.m.Button("btnWidth400px", {
+			text: "change width to 400 px",
+			press: function () {
+				carousel.setWidth("400px");
+				carousel.rerender();
+			}
+		}).placeAt("buttonsConatiner");
+
+		var buttonHidePageIndicator = new sap.m.Button("btnHideIndicator", {
+			text: "hide page indicator",
+			press: function () {
+				carousel.setWidth("100%");
+				carousel.setHeight("100%");
+				carousel.rerender();
+				carousel.setShowPageIndicator(false);
+			}
+		}).placeAt("buttonsConatiner");
+
+		var buttonMovePageIndicatorTop = new sap.m.Button("btnMoveIndicatorTop", {
+			text: "page indicator top",
+			press: function () {
+				carousel.setPageIndicatorPlacement(sap.m.PlacementType.Top);
+				carousel.setShowPageIndicator(true);
+			}
+		}).placeAt("buttonsConatiner");
+
+	</script>
+
+</head>
+<body id="body" class="sapUiBody" role="application">
+
+<div id="carouselConatiner" style="height:800px; width:100%"></div>
+<div id="buttonsConatiner" style="height:10%"></div>
+
+</body>
+</html>
