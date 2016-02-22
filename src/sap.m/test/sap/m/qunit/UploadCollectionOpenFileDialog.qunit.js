@@ -7,8 +7,10 @@ QUnit.module("openFileDialog method", {
 			}
 		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
+		sinon.stub(jQuery.prototype, "trigger");
 	},
 	afterEach : function() {
+		jQuery.prototype.trigger.restore();
 		this.oUploadCollection.destroy();
 		this.oUploadCollection = null;
 	}
