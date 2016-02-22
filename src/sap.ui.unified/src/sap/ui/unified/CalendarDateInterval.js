@@ -93,6 +93,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
 		}
 
+		if (oStartDate.getTime() < this._oMinDate.getTime() || oStartDate.getTime() > this._oMaxDate.getTime()) {
+			throw new Error("Date must not be in valid range (minDate and maxDate); " + this);
+		}
+
 		var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate, this.getPrimaryCalendarType());
 		this.setProperty("startDate", oStartDate, true);
 		this._oUTCStartDate = oUTCDate;
@@ -301,6 +305,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	Calendar.prototype._setMinMaxDateExtend = function(oDate){
+
+		if (this._oUTCStartDate) {
+			// check if still in valid range
+			if (this._oUTCStartDate.getTime() < this._oMinDate.getTime()) {
+				jQuery.sap.log.warning("start date < minDate -> minDate will be start date", this);
+				_setStartDate.call(this, this._newUniversalDate(this._oMinDate), true, true);
+			} else if (this._oUTCStartDate.getTime() > this._oMaxDate.getTime()) {
+				jQuery.sap.log.warning("start date > maxDate -> start date will be changed", this);
+				_setStartDate.call(this, this._newUniversalDate(this._oMaxDate), true, true);
+			}
+		}
+
+	};
+
 	CalendarDateInterval.prototype.setPickerPopup = function(bPickerPopup){
 
 		this.setProperty("pickerPopup", bPickerPopup, true);
@@ -318,6 +337,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oMonthPicker.setMonths(6);
 			oYearPicker.setColumns(0);
 			oYearPicker.setYears(6);
+		}
+
+	};
+
+	CalendarDateInterval.prototype._togglePrevNext = function(oDate, bCheckMonth){
+
+		if (this._iMode != 0) {
+			return Calendar.prototype._togglePrevNext.apply(this, arguments);
+		}
+
+		var iYearMax = this._oMaxDate.getJSDate().getUTCFullYear();
+		var iYearMin = this._oMinDate.getJSDate().getUTCFullYear();
+		var iMonthMax = this._oMaxDate.getJSDate().getUTCMonth();
+		var iMonthMin = this._oMinDate.getJSDate().getUTCMonth();
+		var iDateMin = this._oMinDate.getJSDate().getUTCDate();
+		var iDateMax = this._oMaxDate.getJSDate().getUTCDate();
+		var oHeader = this.getAggregation("header");
+		var iDays = this._getDays();
+		var oCheckDate = this._newUniversalDate(oDate);
+		var iYear = oCheckDate.getJSDate().getUTCFullYear();
+		var iMonth = oCheckDate.getJSDate().getUTCMonth();
+		var iDate = oCheckDate.getJSDate().getUTCDate();
+
+		if (iYear < iYearMin ||
+				(iYear == iYearMin &&
+						(!bCheckMonth || iMonth < iMonthMin || (iMonth == iMonthMin && iDate <= iDateMin)))) {
+			oHeader.setEnabledPrevious(false);
+		}else {
+			oHeader.setEnabledPrevious(true);
+		}
+
+		oCheckDate.setUTCDate(oCheckDate.getUTCDate() + iDays);
+		iYear = oCheckDate.getJSDate().getUTCFullYear();
+		iMonth = oCheckDate.getJSDate().getUTCMonth();
+		iDate = oCheckDate.getJSDate().getUTCDate();
+
+		if (iYear > iYearMax ||
+				(iYear == iYearMax &&
+						(!bCheckMonth || iMonth > iMonthMax || (iMonth == iMonthMax && iDate >= iDateMax)))) {
+			oHeader.setEnabledNext(false);
+		} else {
+			oHeader.setEnabledNext(true);
 		}
 
 	};
@@ -355,6 +416,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		case 2: // year picker
 			oYearPicker.previousPage();
+			this._togglePrevNexYearPicker();
 			break;
 			// no default
 		}
@@ -394,6 +456,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		case 2: // year picker
 			oYearPicker.nextPage();
+			this._togglePrevNexYearPicker();
 			break;
 			// no default
 		}
@@ -464,9 +527,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	function _setStartDate(oStartDate, bSetFocusDate, bNoEvent){
 
 		var oMaxDate = this._newUniversalDate(this._oMaxDate);
-		oMaxDate.setUTCDate(oMaxDate.getUTCDate() - this._getDays());
+		oMaxDate.setUTCDate(oMaxDate.getUTCDate() - this._getDays() + 1);
 		if (oStartDate.getTime() < this._oMinDate.getTime()) {
-			oStartDate = this._oMinDate;
+			oStartDate = this._newUniversalDate(this._oMinDate);
 		}else if (oStartDate.getTime() > oMaxDate.getTime()){
 			oStartDate = oMaxDate;
 		}

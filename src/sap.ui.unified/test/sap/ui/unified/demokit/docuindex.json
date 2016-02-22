@@ -48,7 +48,8 @@
 					"sap.ui.unified.sample.CalendarMultipleDaySelection",
 					"sap.ui.unified.sample.CalendarSpecialDaysLegend",
 					"sap.ui.unified.sample.CalendarMultipleMonth",
-					"sap.ui.unified.sample.CalendarCalendarType"
+					"sap.ui.unified.sample.CalendarCalendarType",
+					"sap.ui.unified.sample.CalendarMinMax"
 				]
 			},
 			{
@@ -134,6 +135,11 @@
 				"id": "sap.ui.unified.sample.CalendarCalendarType",
 				"name": "calendar type",
 				"description": "islamic Calendar with secondary gregorian type"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarMinMax",
+				"name": "calendar - min., max. and disabled",
+				"description": "Calendar with minimum date 2000-01-01 and maximum date 2050-12-31 and some disabled days (in January 2016)."
 			},
 			{
 				"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",

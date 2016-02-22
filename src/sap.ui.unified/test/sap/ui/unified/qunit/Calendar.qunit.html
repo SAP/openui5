@@ -67,7 +67,11 @@
 				months: 2,
 				firstDayOfWeek: 2,
 				nonWorkingDays: [3, 5],
+				minDate: new Date("2000", "0", "7"),
+				maxDate: new Date("2015", "1", "25"),
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "0", "5")})],
+				disabledDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "0", "10")}),
+				                new sap.ui.unified.DateRange({startDate: new Date("2015", "1", "10"), endDate: new Date("2015", "1", "20")})],
 				startDateChange: handleStartDateChange
 			}).placeAt("uiArea3");
 			oCal3.setLocale("de-DE");
@@ -164,6 +168,21 @@
 					bOK = true;
 				}
 				ok(bOK, "Custom weekend used");
+			});
+
+			test("disabled date", function() {
+				ok(jQuery("#Cal3--Month0-20150110").hasClass("sapUiCalItemDsbl"), "Calendar3: 20150110 is disabled");
+				ok(jQuery("#Cal3--Month0-20150110").attr("aria-disabled"), "Calendar3: 20150110 has aria-disabled");
+				ok(jQuery("#Cal3--Month1-20150211").hasClass("sapUiCalItemDsbl"), "Calendar3: 20150211 is disabled");
+				ok(jQuery("#Cal3--Month1-20150211").attr("aria-disabled"), "Calendar3: 20150211 has aria-disabled");
+				ok(jQuery("#Cal3--Month1-20150212").hasClass("sapUiCalItemDsbl"), "Calendar3: 20150212 is disabled");
+				ok(jQuery("#Cal3--Month1-20150212").attr("aria-disabled"), "Calendar3: 20150212 has aria-disabled");
+				ok(jQuery("#Cal3--Month1-20150219").hasClass("sapUiCalItemDsbl"), "Calendar3: 20150219 is disabled");
+				ok(jQuery("#Cal3--Month1-20150219").attr("aria-disabled"), "Calendar3: 20150219 has aria-disabled");
+				ok(!jQuery("#Cal3--Month1-20150220").hasClass("sapUiCalItemDsbl"), "Calendar3: 20150220 is not disabled");
+				ok(!jQuery("#Cal3--Month1-20150220").attr("aria-disabled"), "Calendar3: 20150220 has no aria-disabled");
+				ok(jQuery("#Cal3--Month1-20150226").hasClass("sapUiCalItemDsbl"), "Calendar3: 20150226 is disabled");
+				ok(jQuery("#Cal3--Month1-20150226").attr("aria-disabled"), "Calendar3: 20150226 has aria-disabled");
 			});
 
 			test("focusDate method", function() {
@@ -405,6 +424,24 @@
 				qutils.triggerEvent("click", "Cal1--Head-B2");
 
 				oCal1.focusDate(new Date());
+
+				ok(!jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button enabled");
+				ok(jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button disabled");
+				qutils.triggerEvent("click", "Cal3--Head-B2");
+				var aYears = jQuery("#Cal3--YP").find(".sapUiCalItem");
+				equal(jQuery(aYears[0]).text(), "1996", "Calendar3: first displayed year");
+				ok(jQuery(aYears[0]).hasClass("sapUiCalItemDsbl"), "Calendar3: 1996 is disabled");
+				ok(jQuery(aYears[0]).attr("aria-disabled"), "Calendar3: 1996 has aria-disabled");
+				equal(jQuery(aYears[4]).text(), "2000", "Calendar3: 4. displayed year");
+				ok(!jQuery(aYears[4]).hasClass("sapUiCalItemDsbl"), "Calendar3: 2000 is enabled");
+				ok(!jQuery(aYears[4]).attr("aria-disabled"), "Calendar3: 2000 has no aria-disabled");
+				qutils.triggerEvent("click", "Cal3--Head-B2");
+
+				oCal3.focusDate(new Date(2000, 0, 10));
+				ok(jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button disabled");
+				ok(!jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button enabled");
+
+				oCal3.focusDate(new Date(2015, 0, 5));
 			});
 
 			test("select event", function() {
@@ -417,6 +454,14 @@
 				ok(bSelectFired, "Select event fired");
 				equal(oSelectedDate.getDate(), oToday.getDate(), "Today was selected");
 				ok($Today.hasClass("sapUiCalItemSel"), "Today marked as selected");
+
+				bSelectFired = false;
+				oSelectedDate = undefined;
+				var $Date = jQuery("#Cal3--Month0-20150110");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+				ok(!bSelectFired, "No Select event fired on disabled date");
+				ok(!$Date.hasClass("sapUiCalItemSel"), "Disabled date not marked as selected");
 			});
 
 		</script>

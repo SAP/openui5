@@ -223,8 +223,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		// focused item must be selected
 		var iIndex = this._oItemNavigation.getFocusedIndex();
 
-		_selectYear.call(this, iIndex);
-		this.fireSelect();
+		var bSelected = _selectYear.call(this, iIndex);
+		if (bSelected) {
+			this.fireSelect();
+		}
 
 	};
 
@@ -236,6 +238,59 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			this._bMousedownChange = false;
 			this.fireSelect();
 		}
+
+	};
+
+	/**
+	 * return the first date of the first rendered year
+	 * <b>Note:</b> If the YearPicker is not rendered no date is returned
+	 *
+	 * @returns {object} JavaScript Date Object
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.38.0
+	 */
+	YearPicker.prototype.getFirstRenderedDate = function(){
+
+		var oFirstDate;
+
+		if (this.getDomRef()) {
+			var aDomRefs = this._oItemNavigation.getItemDomRefs();
+			oFirstDate =  this._oFormatYyyymmdd.parse(jQuery(aDomRefs[0]).attr("data-sap-year-start"), true);
+		}
+
+		return oFirstDate;
+
+	};
+
+	YearPicker.prototype._checkFirstDate = function(oDate){
+
+		// check if first date is outside of min and max date
+		var iYears = this.getYears();
+		var oMaxStartYear = this._newUniversalDate(this._oMaxDate);
+		oMaxStartYear.setUTCFullYear(oMaxStartYear.getUTCFullYear() - iYears + 1);
+		if (oDate.getTime() > oMaxStartYear.getTime() && oDate.getFullYear() != oMaxStartYear.getUTCFullYear()) {
+			oDate = this._newUniversalDate(oMaxStartYear);
+			oDate.setUTCMonth(0,1);
+		} else if (oDate.getTime() < this._oMinDate.getTime() && oDate.getFullYear() != this._oMinDate.getUTCFullYear()) {
+			oDate = this._newUniversalDate(this._oMinDate);
+			oDate.setUTCMonth(0,1);
+		}
+
+		return oDate;
+
+	};
+
+	YearPicker.prototype._checkDateEnabled = function(oDate){
+
+		var bEnabled = true;
+
+		if ((oDate.getTime() > this._oMaxDate.getTime() && oDate.getFullYear() != this._oMaxDate.getUTCFullYear()) ||
+				(oDate.getTime() < this._oMinDate.getTime() && oDate.getFullYear() != this._oMinDate.getUTCFullYear())) {
+			bEnabled = false;
+		}
+
+		return bEnabled;
 
 	};
 
@@ -317,8 +372,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			return;
 		}
 
-		_selectYear.call(this, iIndex);
-		this._bMousedownChange = true;
+		var bSelected = _selectYear.call(this, iIndex);
+		if (bSelected) {
+			this._bMousedownChange = true;
+		}
 
 		oEvent.preventDefault(); // to prevent focus set outside of DatePicker
 		oEvent.setMark("cancelAutoClose");
@@ -379,9 +436,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	function _selectYear(iIndex){
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
-		var sYyyymmdd = jQuery(aDomRefs[iIndex]).attr("data-sap-year-start");
+		var $DomRef = jQuery(aDomRefs[iIndex]);
+
+		if ($DomRef.hasClass("sapUiCalItemDsbl")) {
+			return false; // don't select disabled items
+		}
+
+		var sYyyymmdd = $DomRef.attr("data-sap-year-start");
 		var oDate =  this._newUniversalDate(this._oFormatYyyymmdd.parse(sYyyymmdd, true));
-		var $DomRef;
 		var sId = this.getId() + "-y" + sYyyymmdd;
 		for ( var i = 0; i < aDomRefs.length; i++) {
 			$DomRef = jQuery(aDomRefs[i]);
@@ -395,6 +457,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		var oLocalDate = CalendarUtils._createLocalDate(oDate);
 		this.setProperty("date", oLocalDate, true);
 		this.setProperty("year", oDate.getUTCFullYear(), true);
+
+		return true;
 
 	}
 
@@ -416,19 +480,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	function _updateYears(oFirstDate, iSelectedIndex){
 
 		var sCurrentYyyymmdd = this._oFormatYyyymmdd.format(this._getDate().getJSDate(), true);
-		var iYears = this.getYears();
-		var iFirstYear = oFirstDate.getUTCFullYear();
-		var iMinYear = this._oMinDate.getUTCFullYear();
-		var iMaxYear = this._oMaxDate.getUTCFullYear();
-
-		if (iFirstYear >= iMaxYear - iYears) {
-			iSelectedIndex = iSelectedIndex + iFirstYear - iMaxYear + iYears;
-			iFirstYear = iMaxYear - iYears + 1;
-			oFirstDate.setUTCFullYear(iFirstYear);
-		}else if (iFirstYear < iMinYear) {
-			iSelectedIndex = iSelectedIndex + iFirstYear - iMinYear;
-			iFirstYear = iMinYear;
-			oFirstDate.setUTCFullYear(iFirstYear);
+		var bEnabledCheck = false; // check for disabled years only needed if borders touched
+		var oFirstDate2 = this._checkFirstDate(oFirstDate);
+		var oSelectedDate;
+		if (oFirstDate2.getTime() != oFirstDate.getTime()) {
+			oSelectedDate = this._newUniversalDate(oFirstDate);
+			oSelectedDate.setUTCFullYear(oSelectedDate.getUTCFullYear() + iSelectedIndex);
+			oFirstDate = oFirstDate2;
+			bEnabledCheck = true;
 		}
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs();
@@ -444,6 +503,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			} else if (!$DomRef.hasClass("sapUiCalItemSel") && sYyyymmdd == sCurrentYyyymmdd) {
 				$DomRef.addClass("sapUiCalItemSel");
 			}
+
+			var bEnabled = true;
+			if (bEnabledCheck) {
+				bEnabled = this._checkDateEnabled(oDate);
+				if (oDate.getTime() == oSelectedDate.getTime()) {
+					iSelectedIndex = i;
+				}
+			}
+
+			if (bEnabled) {
+				$DomRef.removeClass("sapUiCalItemDsbl");
+				$DomRef.removeAttr("aria-disabled");
+			} else {
+				$DomRef.addClass("sapUiCalItemDsbl");
+				$DomRef.attr("aria-disabled", true);
+			}
+
 			oDate.setUTCFullYear(oDate.getUTCFullYear() + 1);
 		}
 
