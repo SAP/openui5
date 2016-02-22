@@ -6,6 +6,7 @@ module.exports = [
 	"CheckBox.spec.js",
 	"Dialog.spec.js",
 	"IconTabBar.spec.js",
+	"Label.spec.js",
 	"MessagePage.spec.js",
 	"NotificationListGroup.spec.js",
 	"ObjectHeaderVisualTest.spec.js",
