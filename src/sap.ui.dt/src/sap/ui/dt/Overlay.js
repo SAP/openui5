@@ -342,13 +342,14 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 				DOMUtil.syncScroll(oGeometry.domRef, this.getDomRef());
 			}
 
-			this.getChildren().forEach(function(oChild) {
-				oChild.applyStyles();
-			});
 
 			if (!this.$().is(":visible")) {
 				this.$().css("display", "block");
 			}
+
+			this.getChildren().forEach(function(oChild) {
+				oChild.applyStyles();
+			});
 
 			this._cloneDomRef(oGeometry.domRef);
 		} else if (this.$().is(":visible")) {
@@ -439,43 +440,40 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype._ensureDomOrder = function() {
 		var $this = this.$();
+
 		var $currentDomParent = $this.parent();
 		var oParent = this.getParent();
 		var $parentDomRef = oParent.$();
 		var $parentContainer = $parentDomRef.find(">.sapUiDtOverlayChildren");
-		var bIsInParentContainer = $parentContainer.get(0) === $currentDomParent.get(0);
+		// if our dom is already in a parent container...
+		var bIsDomOrderCorrect = $parentContainer.get(0) === $currentDomParent.get(0);
 
-		var aDomRefChildren = $parentContainer.children();
-		var iDomPosition = aDomRefChildren.index($this);
-		var aChildren = oParent.getChildren();
-		var iPosition = aChildren.indexOf(this);
-		var bIsDomOrderCorrect = iDomPosition === iPosition;
-
-		if (!bIsInParentContainer || !bIsDomOrderCorrect) {
-			if (iPosition === 0) {
-				// insert as a first dom child
-				if ($parentContainer.children().get(0) !== $this.get(0)) {
-					$parentContainer.prepend($this);
+		var $PreviousChildWithDom;
+		if (bIsDomOrderCorrect) {
+			var aChildren = oParent.getChildren();
+			var iPreviousChildWithDomIndex = aChildren.indexOf(this) - 1;
+			while (iPreviousChildWithDomIndex >= 0) {
+				$PreviousChildWithDom = aChildren[iPreviousChildWithDomIndex].$();
+				if ($PreviousChildWithDom.length) {
+					break;
 				}
+				iPreviousChildWithDomIndex--;
+			}
+
+			// if our dom is already after out previous sibling
+			if ($PreviousChildWithDom && $PreviousChildWithDom.length) {
+				bIsDomOrderCorrect = $this.prev().get(0) === $PreviousChildWithDom.get(0);
+			// .. or first in parent container
 			} else {
-				// find previous child dom...
-				var iPreviousChildPosition = iPosition - 1;
-				var $PreviousChildDom = aChildren[iPreviousChildPosition].$();
-				while (!$PreviousChildDom.length && iPreviousChildPosition > 0) {
-					$PreviousChildDom = aChildren[iPreviousChildPosition].$();
-					iPreviousChildPosition--;
-				}
-				if ($PreviousChildDom.length) {
-					// ... and insert afterwards, if needed
-					if ($this.prev().get(0) !== $PreviousChildDom.get(0)) {
-						$PreviousChildDom.after($this);
-					}
-				} else {
-					// ... or insert as a first dom child, if no previous child dom was found
-					if ($parentContainer.children().get(0) !== $this.get(0)) {
-						$parentContainer.prepend($this);
-					}
-				}
+				bIsDomOrderCorrect = $parentContainer.children().index($this) === 0;
+			}
+		}
+
+		if (!bIsDomOrderCorrect) {
+			if ($PreviousChildWithDom && $PreviousChildWithDom.length) {
+				$PreviousChildWithDom.after($this);
+			} else {
+				$parentContainer.prepend($this);
 			}
 		}
 	};
