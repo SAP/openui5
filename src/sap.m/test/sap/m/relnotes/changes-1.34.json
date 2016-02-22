@@ -2483,5 +2483,108 @@
         "references": []
       }
     ]
+  },
+  "1.34.7": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "56b768fba4520b687614a6f5c4151adae251138d",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Update the sap.m library description and make it consistent",
+        "references": []
+      },
+      {
+        "id": "8cf1420d04f593776db8bab24c17dafc4a50ac12",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "2552cefeda7c8c18a3c08a8253672ebb54e85e05",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.ViewSettingsCustomItem: customControl is cloned as expected",
+        "references": []
+      },
+      {
+        "id": "14f93a940858dfc687bb684821e36d70e66792f7",
+        "author": "Mingxin Fu \u003cmingxin.fu@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Sizing issue when using HCB theme fixed",
+        "references": []
+      },
+      {
+        "id": "a950ed97d9ee17ce935d92c664b607dc43f36054",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: setSelectedItem method is working correctly now",
+        "references": []
+      },
+      {
+        "id": "b1ce2b9ef6f21b6f05bda38e876acd864605b6f3",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput",
+        "references": []
+      },
+      {
+        "id": "a9e1464dfb6491804fcab7befb953ecd83292a46",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: add new event validateOnPaste",
+        "references": []
+      },
+      {
+        "id": "918be1dd2e12601823b33bb09a643be72f83dd7b",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: remove old tokenizer indicator in phone mode",
+        "references": []
+      },
+      {
+        "id": "ddc5323c174662f37d15a057b4c1411f402d9c45",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: Attribute and Statuses columns take equal space",
+        "references": []
+      },
+      {
+        "id": "2977590099430685091e7e5da33e920dd7514431",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: When passing null value to the setSelected function is handled as false",
+        "references": []
+      },
+      {
+        "id": "f0a660874896c4707ee618321d41ac048562836a",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": []
+      },
+      {
+        "id": "1bc1f841f84f2076a840bae566d3073f1a43ad38",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Items aggregation handling improved in case instandUpload is false",
+        "references": []
+      },
+      {
+        "id": "2d02d53eef11790123a7fbd679a7e45a3d65abde",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Text for upload completed improved",
+        "references": []
+      },
+      {
+        "id": "dd1dce11d27390b021736693bdc121fb65afd91c",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing.Targets: fix documentation",
+        "references": []
+      }
+    ]
   }
 }

@@ -240,5 +240,45 @@
         "references": []
       }
     ]
+  },
+  "1.34.7": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "6dbb3044ef5447c4b0831a7608e91b1314fb3e96",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.TabStrip: Scroll position is fixed",
+        "references": []
+      },
+      {
+        "id": "8cf1420d04f593776db8bab24c17dafc4a50ac12",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "f0a660874896c4707ee618321d41ac048562836a",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": []
+      },
+      {
+        "id": "2df4fb777c9a595ab717b0ed4d0c623be1f5910d",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ApplicationHeader: Composite parts are initialized only once now",
+        "references": []
+      },
+      {
+        "id": "845d470e31791d25a1aea5cfe9f20ed1e59314a0",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Focus outline on IE corrected",
+        "references": []
+      }
+    ]
   }
 }

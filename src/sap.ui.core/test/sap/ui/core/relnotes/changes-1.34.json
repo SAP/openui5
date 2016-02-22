@@ -1755,5 +1755,66 @@
         "references": []
       }
     ]
+  },
+  "1.34.7": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "34f321b49d8f4ecf65ea42ea2e3d8f1238406e10",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "JSDoc: v2.ODataListBinding/ODataTreeBinding getDownloadUrl",
+        "references": []
+      },
+      {
+        "id": "73a7f6f56a68d1125358a8473903cbac23357199",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Japanese date: Parse dates without era as current era",
+        "references": []
+      },
+      {
+        "id": "079608c29fa160cce8e26ca3ba8ecf9ab6c0d301",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageManager: avoid undefined error after removal of messages",
+        "references": []
+      },
+      {
+        "id": "f246fadeceaadcc6076107f38fefdab10d3e69af",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "model.Binding: fix constructor JSDoc",
+        "references": []
+      },
+      {
+        "id": "614d3e0af84e0044279b183fc3ee7a00cc5047e7",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: insert space between currency code and number based on spacing rule in CLDR",
+        "references": []
+      },
+      {
+        "id": "5ac6e7ed079571911cddea6302044b24da8e9a4c",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Don\u0027t delete function import url parameters",
+        "references": []
+      },
+      {
+        "id": "a00dec595f1bfdfaecb475436d0f41e9cec70f95",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Don\u0027t refresh element bindings when deleting",
+        "references": []
+      },
+      {
+        "id": "64dc97c59f4c6030b4c03448705e193f496eceeb",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Fixed support for broken service implementations",
+        "references": []
+      }
+    ]
   }
 }
