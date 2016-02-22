@@ -202,7 +202,8 @@ public class AnonymousLogLine {
 		if (VERSIONED_CORE_CHECK_PATTERN.matcher(line).matches()) { // check whether this is a versioned URL
 			m = VERSIONED_CORE_LOGLINE_PATTERN.matcher(line);
 			if (!m.matches()) {
-				throw new RuntimeException("Line for versioned URL does not match even though checked: " + line);
+				System.out.println("ERROR: Line for versioned URL does not match even though checked: " + line);
+				return null;
 			}
 			url = m.group(13);
 			version = m.group(15);

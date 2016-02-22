@@ -423,10 +423,12 @@ public class AkamaiLogDownloader {
 	 */
 	private List<File> unzipLogFiles(List<File> gzFiles) {
 		List<File> unzippedFiles = new ArrayList<File>();
-		byte[] buffer = new byte[1024];
+		byte[] buffer = new byte[65536];
 		
 		try {
 			for (File gzFile : gzFiles) {
+				log("- " + gzFile.getName());
+				
 				int indexOfGz = gzFile.getName().lastIndexOf(".gz");
 				if (indexOfGz < 8) {
 					throw new RuntimeException("Unexpected log file name (not compressed?): " + gzFile.getName());
