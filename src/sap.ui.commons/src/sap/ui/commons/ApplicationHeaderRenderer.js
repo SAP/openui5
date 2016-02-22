@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	ApplicationHeaderRenderer.render = function(oRenderManager, oAppHeader){
 
-		if (!this.initializationDone) {
+		if (!oAppHeader.initializationDone) {
 			oAppHeader.initControls();
 			oAppHeader.initializationDone = true;
 		}
