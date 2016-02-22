@@ -2157,9 +2157,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			sRequestId = this._getRequestId(oEvent);
 			iPercentUploaded = Math.round(oEvent.getParameter("loaded") / oEvent.getParameter("total") * 100);
 			if (iPercentUploaded === 100) {
-				iPercentUploaded = iPercentUploaded - 1;
+				sPercentUploaded = this._oRb.getText("UPLOADCOLLECTION_UPLOAD_COMPLETED");
+			} else {
+				sPercentUploaded = this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [iPercentUploaded]);
 			}
-			sPercentUploaded = this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [iPercentUploaded]);
 			cItems = this.aItems.length;
 			for (i = 0; i < cItems; i++) {
 				if (this.aItems[i].getProperty("fileName") === sUploadedFile && this.aItems[i]._requestIdName == sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
@@ -2171,7 +2172,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 						// add ARIA attribute for screen reader support
 						sItemId = this.aItems[i].getId();
 						$busyIndicator = jQuery.sap.byId(sItemId + "-ia_indicator");
-						$busyIndicator.attr("aria-valuenow", iPercentUploaded);
+						if (iPercentUploaded === 100) {
+							$busyIndicator.attr("aria-label", sPercentUploaded);
+						} else {
+							$busyIndicator.attr("aria-valuenow", iPercentUploaded);
+						}
 						break;
 					}
 				}
