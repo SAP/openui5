@@ -470,7 +470,7 @@ sap.ui.require([
 
 		this.oSandbox.stub(oRequestor, "request", function (sMethod, sResourcePath) {
 			if (sResourcePath === "$batch") {
-				return Promise.resolve([{responseText : "{}"}])
+				return Promise.resolve([{responseText : "{}"}]);
 			}
 			return fnRequest.apply(this, arguments);
 		});
@@ -485,7 +485,7 @@ sap.ui.require([
 			// ensure that a subsequent asynchronous request is processed correctly
 			return Promise.all([
 				oRequestor.request("GET", "Products", "group1"),
-				oRequestor.submitBatch("group1", true),
+				oRequestor.submitBatch("group1", true)
 			]);
 		});
 	});
