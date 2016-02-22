@@ -538,52 +538,119 @@
 		});
 
 		module("Mouse");
+		
+		sap.ui.unified.Menu._DELAY_SUBMENU_TIMER = 10;
+		sap.ui.unified.Menu._DELAY_SUBMENU_TIMER_EXT = 10;
+		var DELAY_SUBMENU_TIMER = sap.ui.unified.Menu._DELAY_SUBMENU_TIMER + 20;
+		
+		if (sap.ui.Device.system.desktop) {
+			asyncTest("Delayed Open Submenu", function() {
+				openRootMenu(true);
+				qutils.triggerEvent("mouseover", "item7", {});
+				checkHoveredItem("item7");
+				ok(oRootMenu.bOpen, "Rootmenu open");
+				ok(!oSubMenu.bOpen, "Submenu not yet open");
+				setTimeout(function(){
+					checkHoveredItem("item7");
+					ok(oRootMenu.bOpen, "Rootmenu open");
+					ok(oSubMenu.bOpen, "Submenu open");
+					closeAllMenusAndCheck();
+					start();
+				}, DELAY_SUBMENU_TIMER);
+			});
+		}
 
-		test("Select", function() {
-			openRootMenu(true);
-			lastSelectedItemId = null;
-			checkHoveredItem(null);
-			qutils.triggerEvent("mouseover", "item7", {});
-			checkHoveredItem("item7");
-			checkHoveredItem(null, oSubMenu);
-			ok(oRootMenu.bOpen, "Rootmenu open");
-			ok(oSubMenu.bOpen, "Submenu open");
-			qutils.triggerEvent("mouseover", "item8", {});
-			checkHoveredItem("item8", oSubMenu);
-			qutils.triggerEvent("click", "item8", {});
-			equals(lastSelectedItemId, "item8", "Event triggered on item:");
-			closeAllMenusAndCheck();
-		});
+		if (sap.ui.Device.system.desktop) {
+			asyncTest("Select", function() {
+				openRootMenu(true);
+				lastSelectedItemId = null;
+				checkHoveredItem(null);
+				qutils.triggerEvent("mouseover", "item7", {});
+				setTimeout(function(){
+					checkHoveredItem("item7");
+					checkHoveredItem(null, oSubMenu);
+					ok(oRootMenu.bOpen, "Rootmenu open");
+					ok(oSubMenu.bOpen, "Submenu open");
+					qutils.triggerEvent("mouseover", "item8", {});
+					setTimeout(function(){
+						checkHoveredItem("item8", oSubMenu);
+						qutils.triggerEvent("click", "item8", {});
+						equals(lastSelectedItemId, "item8", "Event triggered on item:");
+						closeAllMenusAndCheck();
+						start();
+					}, DELAY_SUBMENU_TIMER);
+				}, DELAY_SUBMENU_TIMER);
+			});
+		} else {
+			test("Select", function() {
+				openRootMenu(true);
+				lastSelectedItemId = null;
+				checkHoveredItem(null);
+				qutils.triggerEvent("click", "item7", {});
+				checkHoveredItem(null, oSubMenu);
+				ok(oRootMenu.bOpen, "Rootmenu open");
+				ok(oSubMenu.bOpen, "Submenu open");
+				qutils.triggerEvent("click", "item8", {});
+				equals(lastSelectedItemId, "item8", "Event triggered on item:");
+				closeAllMenusAndCheck();
+			});
+		}
 
 		test("Disabled Item", function() {
 			openRootMenu(true);
 			lastSelectedItemId = null;
-			qutils.triggerEvent("mouseover", "item5", {});
-			checkHoveredItem("item5");
+			if (sap.ui.Device.system.desktop) {
+				qutils.triggerEvent("mouseover", "item5", {});
+				checkHoveredItem("item5");
+			}
 			qutils.triggerEvent("click", "item5", {});
 			equals(lastSelectedItemId, null, "No Event triggered on disabled item:");
 			ok(oRootMenu.bOpen, "Rootmenu still open");
 			closeAllMenusAndCheck();
 		});
 
-		test("Disabled Item with Submenu", function() {
-			openRootMenu(true);
-			lastSelectedItemId = null;
-			checkHoveredItem(null);
-			qutils.triggerEvent("mouseover", "item7", {});
-			checkHoveredItem("item7");
-			checkHoveredItem(null, oSubMenu);
-			ok(oRootMenu.bOpen, "Rootmenu open");
-			ok(oSubMenu.bOpen, "Submenu open");
-			qutils.triggerEvent("mouseover", "item10", {});
-			checkHoveredItem("item10", oSubMenu);
-			qutils.triggerEvent("click", "item10", {});
-			equals(lastSelectedItemId, null, "Event not triggered on disabled item:");
-			ok(oRootMenu.bOpen, "Rootmenu still open");
-			ok(oSubMenu.bOpen, "Submenu still open");
-			ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
-			closeAllMenusAndCheck();
-		});
+		if (sap.ui.Device.system.desktop) {
+			asyncTest("Disabled Item with Submenu", function() {
+				openRootMenu(true);
+				lastSelectedItemId = null;
+				checkHoveredItem(null);
+				qutils.triggerEvent("mouseover", "item7", {});
+				setTimeout(function(){
+					checkHoveredItem("item7");
+					checkHoveredItem(null, oSubMenu);
+					ok(oRootMenu.bOpen, "Rootmenu open");
+					ok(oSubMenu.bOpen, "Submenu open");
+					qutils.triggerEvent("mouseover", "item10", {});
+					setTimeout(function(){
+						checkHoveredItem("item10", oSubMenu);
+						qutils.triggerEvent("click", "item10", {});
+						equals(lastSelectedItemId, null, "Event not triggered on disabled item:");
+						ok(oRootMenu.bOpen, "Rootmenu still open");
+						ok(oSubMenu.bOpen, "Submenu still open");
+						ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
+						closeAllMenusAndCheck();
+						start();
+					}, DELAY_SUBMENU_TIMER);
+				}, DELAY_SUBMENU_TIMER);
+			});
+		} else {
+			test("Disabled Item with Submenu", function() {
+				openRootMenu(true);
+				lastSelectedItemId = null;
+				checkHoveredItem(null);
+				qutils.triggerEvent("click", "item7", {});
+				checkHoveredItem(null, oSubMenu);
+				ok(oRootMenu.bOpen, "Rootmenu open");
+				ok(oSubMenu.bOpen, "Submenu open");
+				lastSelectedItemId = null;
+				qutils.triggerEvent("click", "item10", {});
+				equals(lastSelectedItemId, null, "Event not triggered on disabled item:");
+				ok(oRootMenu.bOpen, "Rootmenu still open");
+				ok(oSubMenu.bOpen, "Submenu still open");
+				ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
+				closeAllMenusAndCheck();
+			});
+		}
 
 		test("Disabled Menu", function() {
 			qutils.triggerEvent("click", "button2", {});
@@ -625,7 +692,11 @@
 			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
 			checkHoveredItem("item8", oSubMenu);
-			jQuery("#input").get(0).focus();
+			if (sap.ui.Device.system.desktop) {
+				jQuery("#input").get(0).focus();
+			} else {
+				qutils.triggerEvent("touchstart", "input", {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
+			}
 			checkMenusClosed("after focus leave to outer html");
 
 			openRootMenu();
@@ -633,7 +704,11 @@
 			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
 			checkHoveredItem("item8", oSubMenu);
-			oButton.focus();
+			if (sap.ui.Device.system.desktop) {
+				oButton.focus();
+			} else {
+				qutils.triggerEvent("touchstart", oButton.getId(), {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
+			}
 			checkMenusClosed("after focus leave to other control");
 
 			closeAllMenusAndCheck();
