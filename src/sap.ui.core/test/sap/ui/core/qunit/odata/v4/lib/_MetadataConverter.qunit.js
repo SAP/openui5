@@ -1458,7 +1458,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
 		return Promise.all([
-			jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata")
+			Promise.resolve(
+					jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"))
 				.then(function (oXML) {
 					return MetadataConverter.convertXMLMetadata(oXML);
 				}),
