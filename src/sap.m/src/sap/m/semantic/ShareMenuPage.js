@@ -51,7 +51,8 @@ sap.ui.define(['jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/semant
 					visibility: "hidden"
 				}
 
-			}
+			},
+			designTime : true
 		},
 		renderer: SemanticPageRenderer.render
 	});

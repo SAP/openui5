@@ -162,7 +162,8 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 				 * See {@link sap.m.Page#navButtonPress}
 				 */
 				navButtonPress: {}
-			}
+			},
+			designTime : true
 		}
 	});
 
