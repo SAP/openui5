@@ -437,186 +437,188 @@
 			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
 		});
 
-		// temporary disabling because keyboard handling does not work with phantomjs - uncomment when the issue is fixed
-//			module("RTL support", {
-//				beforeEach: function () {
-//					this.sTestLatinValue = "abcd";
-//					this.sTestHebrewValue = "אני רוצה";//"I want" in Hebrew
-//					this.sTestMixedValue = "1234אני רוצה";//"1234I want" in Hebrew
-//					this.oMaskInputLatin = new sap.m.MaskInput( {
-//						textDirection: sap.ui.core.TextDirection.RTL,
-//						value: this.sTestLatinValue,
-//						mask: "aaaa"
-//					});
-//					this.oMaskInputLatin.placeAt("content");
-//
-//					this.oMaskInputHebrew = new sap.m.MaskInput({
-//						textDirection: sap.ui.core.TextDirection.RTL,
-//						value: this.sTestHebrewValue,
-//						mask: "~~~s~~~~",
-//						rules: [
-//							new sap.m.MaskInputRule({
-//								maskFormatSymbol: "~",
-//								regex: "[\u0591-\u05F4]"
-//							}),
-//							new sap.m.MaskInputRule({
-//								maskFormatSymbol: "s",
-//								regex: "[ ]"
-//							})
-//						]
-//					});
-//					this.oMaskInputHebrew.placeAt("content");
-//
-//					sap.ui.getCore().applyChanges();
-//					this.sandbox = sinon.sandbox;
-//				},
-//
-//				afterEach: function () {
-//					this.oMaskInputLatin.destroy();
-//					this.oMaskInputHebrew.destroy();
-//					this.sandbox.restore();
-//				},
-//				testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
-//					jQuery(oControl).focus();
-//					oClock.tick(1000);
-//					oControl.selectText(0, oControl.getValue().length);
-//					qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
-//					oClock.tick(1000);
-//					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
-//
-//					//consecutive presses should not move the carret
-//					qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
-//
-//					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix + " Consecutive presses do nothing");
-//				},
-//				testCarretAtPositionAndMoveWithArrow: function(oControl, oClock, iStartPosition, sArrowName, iExpectedPosition, sMessagePrefix) {
-//					jQuery(oControl).focus();
-//					oClock.tick(1000);
-//					setCursorPosition(iStartPosition, oControl);
-//					qutils.triggerKeydown(oControl.getDomRef(),  sArrowName.toLowerCase() === "left"  ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
-//
-//					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
-//				},
-//				testTypeInEmptyField: function(oControl, oClock, sUserInput, iExpectedPosition, sMessagePrefix) {
-//					var i = 0;
-//					jQuery(oControl).focus();
-//					oClock.tick(1000);
-//
-//					for (i = 0; i < sUserInput.length; i++) {
-//						qutils.triggerKeypress(oControl.getDomRef(), sUserInput[i]);
-//					}
-//					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
-//				}
-//			});
-//
-//			test("Left arrow on selected string moves the carret to the most left position", function() {
-//				this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "left", 0, "Latin content");
-//				this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "left", this.sTestHebrewValue.length, "Hebrew content");
-//				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
-//			});
-//
-//			test("Right arrow on selected string moves the carret to the most right position", function() {
-//				this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "right", this.sTestLatinValue.length, "Latin content");
-//				this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "right", 0, "Hebrew content");
-//			});
-//
-//			test("Left arrow when caret is at the middle moves to the left", function() {
-//				var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
-//					iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
-//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "left", iStartPositionHebrew + 1, "Hebrew content");
-//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "left", iStartPositionLatin - 1, "Latin content");
-//				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
-//			});
-//
-//			test("Left arrow when caret is at the rightmost position moves to the left", function() {
-//				var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
-//				for (var i = iStartPositionLatin; i > 0; i-- ) {
-//					this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "left", i - 1, "Latin content. Start position: " + i);
-//				}
-//			});
-//
-//			test("Navigate the whole field with left arrow when caret is at the middle moves to the left between RTL and LTR characters", function() {
-//				// this test is needed because the native behavior of some browsers is different - we're mimicking IE11
-//				this.oMaskInputMixed = new sap.m.MaskInput({
-//					textDirection: sap.ui.core.TextDirection.RTL,
-//					value: this.sTestMixedValue,
-//					mask: "9999~~~s~~~~",
-//					rules: [
-//						new sap.m.MaskInputRule({
-//							maskFormatSymbol: "~",
-//							regex: "[\u0591-\u05F4]"
-//						}),
-//						new sap.m.MaskInputRule({
-//							maskFormatSymbol: "s",
-//							regex: "[ ]"
-//						})
-//					]
-//				});
-//				this.oMaskInputMixed.placeAt("content");
-//				var iStartPosition = 4;
-//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "left", iStartPosition + 1, "Mixed content");
-//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "right", iStartPosition - 1, "Mixed content");
-//				this.oMaskInputMixed.destroy();
-//
-//				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
-//			});
-//
-//			test("Right arrow when caret is at the middle moves to the right", function() {
-//				var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
-//					iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
-//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "right", iStartPositionHebrew - 1, "Hebrew content");
-//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "right", iStartPositionLatin + 1, "Latin content");
-//				//Note: iStartPosition - 1 is correct, since when content is hebrew, selectionStarts & selectionEnd are mirrored.
-//			});
-//
-//			test("Navigate the whole field with right arrow when caret is at the leftmost moves to the right", function() {
-//				var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
-//				for (var i = 0; i < iStartPositionLatin; i++ ) {
-//					this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "right", i + 1, "Latin content. Start position: " + i);
-//				}
-//			});
-//
-//			test("Typing in a empty field (Latin content)", function() {
-//				this.oMaskInputLatin.destroy();
-//				this.oMaskInputLatin = new sap.m.MaskInput( {
-//					textDirection: sap.ui.core.TextDirection.RTL,
-//					mask: "aaaa"
-//				});
-//				this.oMaskInputLatin.placeAt("content");
-//				sap.ui.getCore().applyChanges();
-//				this.clock.tick(1000);
-//				sContent = "abc";
-//				this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
-//				jQuery(this.oMaskInputHebrew).focus(); //make sure complete handler for latin mask worked-out
-//				equals(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");
-//			});
-//
-//			test("Typing in a empty field (Hebrew content)", function() {
-//				this.oMaskInputHebrew.destroy();
-//				this.oMaskInputHebrew = new sap.m.MaskInput({
-//					textDirection: sap.ui.core.TextDirection.RTL,
-//					value: this.sTestHebrewValue,
-//					mask: "~~~s~~~~",
-//					rules: [
-//						new sap.m.MaskInputRule({
-//							maskFormatSymbol: "~",
-//							regex: "[\u0591-\u05F4]"
-//						}),
-//						new sap.m.MaskInputRule({
-//							maskFormatSymbol: "s",
-//							regex: "[ ]"
-//						})
-//					]
-//				});
-//				this.oMaskInputHebrew.placeAt("content");
-//				sap.ui.getCore().applyChanges();
-//				this.clock.tick(1000);
-//				var sContent =  "וצה"; /*3 chars*/
-//				this.testTypeInEmptyField(this.oMaskInputHebrew, this.clock, sContent, 3, "Hebrew content");
-//				jQuery(this.oMaskInputLatin).focus(); //make sure complete handler for hebrew mask worked-out
-//				equals(this.oMaskInputHebrew.getValue(), sContent + "_____", "Hebrew content check.");
-//
-//			});
+		// Disabling for phantomJS browser only because keyboard handling does not work - remove this check when resolved
+		if (!sap.ui.Device.browser.phantomJS) {
+			module("RTL support", {
+				beforeEach: function () {
+					this.sTestLatinValue = "abcd";
+					this.sTestHebrewValue = "אני רוצה";//"I want" in Hebrew
+					this.sTestMixedValue = "1234אני רוצה";//"1234I want" in Hebrew
+					this.oMaskInputLatin = new sap.m.MaskInput( {
+						textDirection: sap.ui.core.TextDirection.RTL,
+						value: this.sTestLatinValue,
+						mask: "aaaa"
+					});
+					this.oMaskInputLatin.placeAt("content");
+
+					this.oMaskInputHebrew = new sap.m.MaskInput({
+						textDirection: sap.ui.core.TextDirection.RTL,
+						value: this.sTestHebrewValue,
+						mask: "~~~s~~~~",
+						rules: [
+							new sap.m.MaskInputRule({
+								maskFormatSymbol: "~",
+								regex: "[\u0591-\u05F4]"
+							}),
+							new sap.m.MaskInputRule({
+								maskFormatSymbol: "s",
+								regex: "[ ]"
+							})
+						]
+					});
+					this.oMaskInputHebrew.placeAt("content");
+
+					sap.ui.getCore().applyChanges();
+					this.sandbox = sinon.sandbox;
+				},
+
+				afterEach: function () {
+					this.oMaskInputLatin.destroy();
+					this.oMaskInputHebrew.destroy();
+					this.sandbox.restore();
+				},
+				testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
+					jQuery(oControl).focus();
+					oClock.tick(1000);
+					oControl.selectText(0, oControl.getValue().length);
+					qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+					oClock.tick(1000);
+					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+
+					//consecutive presses should not move the carret
+					qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix + " Consecutive presses do nothing");
+				},
+				testCarretAtPositionAndMoveWithArrow: function(oControl, oClock, iStartPosition, sArrowName, iExpectedPosition, sMessagePrefix) {
+					jQuery(oControl).focus();
+					oClock.tick(1000);
+					setCursorPosition(iStartPosition, oControl);
+					qutils.triggerKeydown(oControl.getDomRef(),  sArrowName.toLowerCase() === "left"  ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+				},
+				testTypeInEmptyField: function(oControl, oClock, sUserInput, iExpectedPosition, sMessagePrefix) {
+					var i = 0;
+					jQuery(oControl).focus();
+					oClock.tick(1000);
+
+					for (i = 0; i < sUserInput.length; i++) {
+						qutils.triggerKeypress(oControl.getDomRef(), sUserInput[i]);
+					}
+					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+				}
+			});
+
+			test("Left arrow on selected string moves the carret to the most left position", function() {
+				this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "left", 0, "Latin content");
+				this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "left", this.sTestHebrewValue.length, "Hebrew content");
+				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+			});
+
+			test("Right arrow on selected string moves the carret to the most right position", function() {
+				this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "right", this.sTestLatinValue.length, "Latin content");
+				this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "right", 0, "Hebrew content");
+			});
+
+			test("Left arrow when caret is at the middle moves to the left", function() {
+				var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
+					iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
+				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "left", iStartPositionHebrew + 1, "Hebrew content");
+				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "left", iStartPositionLatin - 1, "Latin content");
+				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+			});
+
+			test("Left arrow when caret is at the rightmost position moves to the left", function() {
+				var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
+				for (var i = iStartPositionLatin; i > 0; i-- ) {
+					this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "left", i - 1, "Latin content. Start position: " + i);
+				}
+			});
+
+			test("Navigate the whole field with left arrow when caret is at the middle moves to the left between RTL and LTR characters", function() {
+				// this test is needed because the native behavior of some browsers is different - we're mimicking IE11
+				this.oMaskInputMixed = new sap.m.MaskInput({
+					textDirection: sap.ui.core.TextDirection.RTL,
+					value: this.sTestMixedValue,
+					mask: "9999~~~s~~~~",
+					rules: [
+						new sap.m.MaskInputRule({
+							maskFormatSymbol: "~",
+							regex: "[\u0591-\u05F4]"
+						}),
+						new sap.m.MaskInputRule({
+							maskFormatSymbol: "s",
+							regex: "[ ]"
+						})
+					]
+				});
+				this.oMaskInputMixed.placeAt("content");
+				var iStartPosition = 4;
+				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "left", iStartPosition + 1, "Mixed content");
+				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "right", iStartPosition - 1, "Mixed content");
+				this.oMaskInputMixed.destroy();
+
+				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+			});
+
+			test("Right arrow when caret is at the middle moves to the right", function() {
+				var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
+					iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
+				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "right", iStartPositionHebrew - 1, "Hebrew content");
+				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "right", iStartPositionLatin + 1, "Latin content");
+				//Note: iStartPosition - 1 is correct, since when content is hebrew, selectionStarts & selectionEnd are mirrored.
+			});
+
+			test("Navigate the whole field with right arrow when caret is at the leftmost moves to the right", function() {
+				var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
+				for (var i = 0; i < iStartPositionLatin; i++ ) {
+					this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "right", i + 1, "Latin content. Start position: " + i);
+				}
+			});
+
+			test("Typing in a empty field (Latin content)", function() {
+				this.oMaskInputLatin.destroy();
+				this.oMaskInputLatin = new sap.m.MaskInput( {
+					textDirection: sap.ui.core.TextDirection.RTL,
+					mask: "aaaa"
+				});
+				this.oMaskInputLatin.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(1000);
+				sContent = "abc";
+				this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
+				jQuery(this.oMaskInputHebrew).focus(); //make sure complete handler for latin mask worked-out
+				equals(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");
+			});
+
+			test("Typing in a empty field (Hebrew content)", function() {
+				this.oMaskInputHebrew.destroy();
+				this.oMaskInputHebrew = new sap.m.MaskInput({
+					textDirection: sap.ui.core.TextDirection.RTL,
+					value: this.sTestHebrewValue,
+					mask: "~~~s~~~~",
+					rules: [
+						new sap.m.MaskInputRule({
+							maskFormatSymbol: "~",
+							regex: "[\u0591-\u05F4]"
+						}),
+						new sap.m.MaskInputRule({
+							maskFormatSymbol: "s",
+							regex: "[ ]"
+						})
+					]
+				});
+				this.oMaskInputHebrew.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				this.clock.tick(1000);
+				var sContent =  "וצה"; /*3 chars*/
+				this.testTypeInEmptyField(this.oMaskInputHebrew, this.clock, sContent, 3, "Hebrew content");
+				jQuery(this.oMaskInputLatin).focus(); //make sure complete handler for hebrew mask worked-out
+				equals(this.oMaskInputHebrew.getValue(), sContent + "_____", "Hebrew content check.");
+
+			});
+		}
 
 
 		module("Others", {
