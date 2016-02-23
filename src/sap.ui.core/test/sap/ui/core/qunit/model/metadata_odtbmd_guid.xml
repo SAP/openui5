@@ -85,7 +85,7 @@
 					Nullable="false" MaxLength="45" sap:aggregation-role="dimension"
 					sap:label="Financial Statement Item Text" sap:creatable="false"
 					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
-				<Property Name="FinStatementHierarchyLevelVal" Type="Edm.String"
+				<Property Name="FinStatementHierarchyLevelVal" Type="Edm.Int32"
 					Nullable="false" MaxLength="2" sap:aggregation-role="dimension"
 					sap:hierarchy-level-for="HierarchyNode" sap:label="Hierarchy level"
 					sap:creatable="false" sap:updatable="false" sap:sortable="false"
