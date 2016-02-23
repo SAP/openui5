@@ -207,6 +207,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh cancels pending read", function (assert) {
 		var oBinding,
+			bGotDataReceived = false,
 			oModel = new ODataModel("/service/?sap-client=111"),
 			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oPromise;
@@ -216,34 +217,98 @@ sap.ui.require([
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oBinding).expects("_fireChange");
 
+		oBinding.attachDataReceived(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("error"), undefined);
+			bGotDataReceived = true;
+		});
+
 		// trigger read before refresh
 		oPromise = oBinding.requestValue("ID").then(function () {
 			assert.ok(false, "First read has to be canceled");
 		}, function (oError1) {
 			assert.strictEqual(oError1.canceled, true);
 			// no Error is logged because error has canceled flag
+			assert.ok(bGotDataReceived);
 		});
 		oBinding.refresh(true);
 		return oPromise;
 	});
-	// TODO check behavior if request for refresh fails (e.g. if data is already deleted)
-	// TODO events dataRequested, dataReceived
 	// TODO bSuspended? In v2 it is ignored (check with core)
 
 	//*********************************************************************************************
-	QUnit.test("requestValue: absolute binding", function (assert) {
+	QUnit.test("requestValue: absolute binding (success)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
-			oPromise = {};
+			oCacheMock = this.oSandbox.mock(oBinding.oCache),
+			iDataReceivedCount = 0,
+			iDataRequestedCount = 0,
+			oModel = oBinding.getModel(),
+			fnResolveRead,
+			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;});
 
-		this.oSandbox.mock(oBinding.oCache).expects("read")
-			.withArgs("", "bar")
+		oBinding.attachDataRequested(function (oEvent) {
+			assert.strictEqual(oEvent.getSource(), oBinding, "dataRequested - correct source");
+			iDataRequestedCount++;
+		});
+
+		oBinding.attachDataReceived(function (oEvent) {
+			assert.strictEqual(oEvent.getSource(), oBinding, "dataReceived - correct source");
+			assert.strictEqual(iDataRequestedCount, 1, "dataRequested fired");
+			iDataReceivedCount++;
+		});
+
+		// read returns an unresolved Promise to be resolved by submitBatch; otherwise this
+		// Promise would be resolved before the rendering and dataReceived would be fired
+		// before dataRequested
+		oCacheMock.expects("read").withArgs("", "bar")
 			.callsArg(2)
-			.returns(oPromise);
-		this.oSandbox.mock(oBinding.getModel()).expects("dataRequested")
-			.withExactArgs("", sinon.match.typeOf("function"));
+			.returns(oReadPromise);
+		this.oSandbox.stub(oModel.oRequestor, "submitBatch", function () {
+			// submitBatch resolves the promise of the read
+			fnResolveRead("value");
+		});
 
-		assert.strictEqual(oBinding.requestValue("bar"), oPromise);
+		return oBinding.requestValue("bar").then(function (vValue) {
+			assert.strictEqual(vValue, "value");
+			assert.strictEqual(iDataReceivedCount, 1, "dataReceived fired");
+
+			// the second time the cache has the value and returns a resolved promise
+			oCacheMock.expects("read").withArgs("", "bar")
+				.returns(Promise.resolve("value"));
+
+			return oBinding.requestValue("bar").then(function (vValue) {
+				assert.strictEqual(vValue, "value");
+				assert.strictEqual(iDataRequestedCount, 1, "dataReceived not fired again");
+				assert.strictEqual(iDataReceivedCount, 1, "dataReceived not fired again");
+			});
+		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValue: absolute binding (failure)", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute"),
+			iDataReceivedCount = 0,
+			oExpectedError = new Error("Expected read failure");
+
+		oBinding.attachDataReceived(function (oEvent) {
+			assert.strictEqual(oEvent.getSource(), oBinding, "dataReceived - correct source");
+			assert.strictEqual(oEvent.getParameter("error"), oExpectedError, "expected error");
+			iDataReceivedCount++;
+		});
+
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("", "bar")
+			.callsArg(2)
+			.returns(Promise.reject(oExpectedError));
+		this.oLogMock.expects("error").withExactArgs("Failed to read path /absolute",
+			oExpectedError, "sap.ui.model.odata.v4.ODataContextBinding");
+
+		return oBinding.requestValue("bar").then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError, oExpectedError);
+			assert.strictEqual(iDataReceivedCount, 1);
+		});
+	});
+
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: relative binding", function (assert) {
@@ -289,23 +354,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
 		var oContextBinding,
+			oContextBindingMock = this.oSandbox.mock(ContextBinding.prototype),
 			mEventParameters = {},
 			oModel = new ODataModel("/service/"),
 			oReturn = {};
 
-		this.oSandbox.mock(ContextBinding.prototype).expects("attachEvent")
-			.withExactArgs("change", mEventParameters).returns(oReturn);
-
 		oContextBinding = oModel.bindContext("SO_2_BP");
 
-		assert.throws(function () {
-			oContextBinding.attachEvent("dataReceived");
-		}, new Error("Unsupported event 'dataReceived': ODataContextBinding#attachEvent"));
+		["change", "dataRequested", "dataReceived"].forEach(function (sEvent) {
+			oContextBindingMock.expects("attachEvent")
+			.withExactArgs(sEvent, mEventParameters).returns(oReturn);
 
-		assert.throws(function () {
-			oContextBinding.attachEvent("dataRequested");
-		}, new Error("Unsupported event 'dataRequested': ODataContextBinding#attachEvent"));
-
-		assert.strictEqual(oContextBinding.attachEvent("change", mEventParameters), oReturn);
+			assert.strictEqual(oContextBinding.attachEvent(sEvent, mEventParameters), oReturn);
+		});
 	});
 });

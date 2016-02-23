@@ -51,7 +51,7 @@ sap.ui.define([
 			var oSource = oEvent.getSource();
 
 			jQuery.sap.log.info(oEvent.getId() + " event processed for path " + oSource.getPath(),
-				"sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
+				oSource, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
@@ -109,6 +109,7 @@ sap.ui.define([
 		onSalesOrdersSelect : function (oEvent) {
 			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
 				oModel = oSalesOrderContext.getModel(),
+				that = this,
 				oView = this.getView();
 
 			//TODO use path "" for bindElement and call setBindingContext(oSalesOrderContext) on
@@ -117,6 +118,10 @@ sap.ui.define([
 			//  binding has parameters.
 			oModel.requestCanonicalPath(oSalesOrderContext).then(function (sCanonicalPath) {
 				oView.byId("ObjectPage").bindElement({
+					events : {
+						dataReceived : that.onDataEvents.bind(that),
+						dataRequested : that.onDataEvents.bind(that)
+					},
 					path : sCanonicalPath,
 					parameters : {
 						"$expand" : {
