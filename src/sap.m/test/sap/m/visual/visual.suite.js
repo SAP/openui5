@@ -3,6 +3,7 @@ module.exports = [
 	"App.spec.js",
 	"AppWithBackground.spec.js",
 	"Breadcrumbs.spec.js",
+	"CarouselVisualTest.spec.js",
 	"CheckBox.spec.js",
 	"Dialog.spec.js",
 	"IconTabBar.spec.js",
