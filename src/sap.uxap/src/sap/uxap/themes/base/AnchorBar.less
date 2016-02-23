@@ -250,16 +250,30 @@ COZY
 Compact
 **********************************/
 
-.sapUiSizeCompact .sapUxAPAnchorBar {
-	height: 3rem;
+.sapUiSizeCompact .sapUxAPAnchorBar,
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton {
+	height: 2rem;
 }
 
-.sapUiSizeCompact .sapUxAPAnchorBarButton {
-	padding: 0.25rem 0 0 0;
+.sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnText > .sapMBtnIcon {
+	top: 0.1rem
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBarButton .sapMBtnInner {
 	padding-bottom: 1px;
+	height: 2rem;
+}
+
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+	width: 2rem;
+	height: 2rem;
+}
+
+// Scroll buttons
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+.sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+	top: 0.125rem;
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon,
@@ -270,8 +284,8 @@ Compact
 
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent,
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnIcon {
-	height: 2.55rem;
-	line-height: 2.6rem;
+	height: 1.8rem;
+	line-height: 1.8rem;
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnIconLast {
@@ -280,7 +294,7 @@ Compact
 
 .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon {
 	right: 0;
-	line-height: 2.5rem;
+	line-height: 1.5rem;
 	margin: 0;
 }
 
@@ -289,7 +303,7 @@ Compact
 }
 
 .sapUiSizeCompact .sapUxAPAnchorBarButton .sapMBtnContent {
-	line-height: 2.375rem;
+	line-height: 1.375rem;
 }
 
 .sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton,
@@ -300,4 +314,9 @@ Compact
 
 .sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner {
 	padding-left: 0.5rem;
+}
+
+// Scroll button container
+.sapUiSizeCompact .sapUxAPAnchorBar .anchorBarArrow > .sapUiHLayoutChildWrapper {
+	height: 2rem;
 }
