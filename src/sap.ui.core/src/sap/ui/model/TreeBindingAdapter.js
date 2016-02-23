@@ -279,7 +279,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		/**
 		 * Retrieves the requested part from the tree.
 		 */
-		TreeBindingAdapter.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
+		TreeBindingAdapter.prototype.getContexts = function(iStartIndex, iLength, iThreshold, bReturnNodes) {
 
 			//step out if the binding is initial (as long as the metadata is not yet loaded)
 			if (this.isInitial()) {
@@ -356,7 +356,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				}
 			}
 
-			return aContexts;
+			if (bReturnNodes) {
+				return aNodes;
+			} else {
+				return aContexts;
+			}
+		};
+
+		/**
+		 * Retrieves the requested part from the tree and returns node objects.
+		 * @param iStartIndex
+		 * @param iLength
+		 * @param iThreshold
+		 * @return {Object} Tree Node
+		 * @protected
+		 */
+		TreeBindingAdapter.prototype.getNodes = function (iStartIndex, iLength, iThreshold) {
+			return this.getContexts(iStartIndex, iLength, iThreshold, true);
 		};
 
 		/**

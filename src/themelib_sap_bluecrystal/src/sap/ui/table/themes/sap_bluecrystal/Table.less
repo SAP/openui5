@@ -105,7 +105,7 @@
 .sapUiTableColRowHdr,
 .sapUiTableCol {
 	padding-top: 7px;
-	padding-bottom: 5px;
+	padding-bottom: 7px;
 }
 
 .sapUiTableColIcons {
@@ -180,19 +180,9 @@
 	border-bottom: 1px solid @sapUiListTableFixedBorder !important;
 }
 
-// Hide last row bottom cell border
-.sapUiTableRowHdr:last-child,
-.sapUiTableCtrl:last-child tr:not(.sapUiTableFixedLastTopRow):last-child > td,
-.sapUiTableCtrlScrFixed tr:not(.sapUiTableFixedLastTopRow):last-child > td,
-.sapUiTableCtrlRowFixedBottom tr:not(.sapUiTableFixedLastTopRow):last-child > td
-{
-	border-bottom: none;
-}
-
 .sapUiTableEdt .sapUiTableCtrl {
 	background: @sapUiListBackground;
 }
-
 
 /* Table Row (only) Selected */
 /* data cells of row */
@@ -319,7 +309,6 @@
 }
 
 .sapUiSizeCondensed .sapUiTableSelModeMultiToggle .sapUiTableColRowHdr.sapUiTableSelAllEnabled::after {
-	margin-top: 2px;
 	font-size: 10px;
 }
 
@@ -334,9 +323,18 @@
 	padding: 0 0.5rem;
 }
 
-.sapUiTable>div.sapUiTableCnt {
+// Hide last row bottom cell border
+.sapUiTableRowHdr:last-child,
+.sapUiTableCtrl:last-child tr:not(.sapUiTableFixedLastTopRow):last-child > td,
+.sapUiTableCtrlScrFixed tr:not(.sapUiTableFixedLastTopRow):last-child > td,
+.sapUiTableCtrlRowFixedBottom tr:not(.sapUiTableFixedLastTopRow):last-child > td
+{
+	border-bottom: 1px solid transparent;
+}
+
+.sapUiTable > div.sapUiTableCnt {
+	background-color: @sapUiListBackground;
 	border-top: 1px solid @sapUiListBorderColor;
-	border-bottom: 1px solid @sapUiListBorderColor;
 }
 .sapUiTable>div:last-child {
 	border-bottom: 1px solid @sapUiListBorderColor;
@@ -441,8 +439,6 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 }
 
 .sapUiTableRSel {
-	.sapUiTableColHdrScr,
-	.sapUiTableColHdrFixed,
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
 		margin-left: @sapUiTableRowHdrWidth;
@@ -450,8 +446,6 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 }
 
 .sapUiSizeCompact .sapUiTableRSel {
-	.sapUiTableColHdrScr,
-	.sapUiTableColHdrFixed,
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
 		margin-left: @sapUiTableCompactRowHdrWidth;
@@ -459,8 +453,6 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 }
 
 .sapUiSizeCozy .sapUiTableRSel {
-	.sapUiTableColHdrScr,
-	.sapUiTableColHdrFixed,
 	.sapUiTableCtrlScr,
 	.sapUiTableCtrlScrFixed {
 		margin-left: @sapUiTableCozyRowHdrWidth;
@@ -475,6 +467,13 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 
 .sapUiTableRowHdrScr,.sapUiTableColRowHdr {
 	width: @sapUiTableRowHdrWidth;
+}
+
+.sapUiSizeCondensed {
+	.sapUiTableRowHdrScr,
+	.sapUiTableColRowHdr {
+		min-height: 32px;
+	}
 }
 
 .sapUiSizeCompact {
@@ -494,7 +493,7 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 }
 
 /* Table Column Resizer */
-.sapUiTableColRsz:hover {
+.sapUiTableColRsz:hover, .sapUiTableColRszActive {
 	background-color: @sapUiListHighlightColor;
 }
 
@@ -513,7 +512,7 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 	height: @sapUiTableCondensedRowHeight;
 }
 
-.sapUiSizeCondensed .sapUiTableCell .sapMDP>.sapUiIcon, .sapUiSizeCondensed .sapUiTableCell .sapMDP.sapMInputIE9>.sapUiIcon {
+.sapUiSizeCondensed .sapUiTableCell .sapMDP>.sapUiIcon {
 	height: 1.5rem;
 	line-height: 1.5rem;
 }
@@ -538,6 +537,11 @@ tr.sapUiTableRowHvr .sapUiLnk:hover,
 
 .sapUiSizeCompact .sapUiTableGroupIcon {
 	font-size: 0.875rem;
+}
+
+.sapUiSizeCondensed .sapUiTableGroupIcon {
+	height: 24px;
+	line-height: 24px;
 }
 
 /* Table Cell Tree Node */
@@ -640,4 +644,33 @@ div.sapUiTable {
 
 .sapUiTableColTouchRszActive {
 	background: @sapUiListActiveBackground;
+}
+
+.sapUiTableM {
+	.sapUiTableHeightResizer {
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		height: 5px;
+		width: 100%;
+		position: relative;
+		text-align:center;
+	}
+	.sapUiTableHeightResizer::before {
+		font-family: SAP-icons;
+		content: "\e1fb";
+		position: absolute;
+		top: 0px;
+		line-height: 5px;
+	}
+
+	.sapUiTableHeightResizer:focus {
+		outline: 0;
+	}
+
+	.sapUiTableHeightResizer:hover {
+		cursor: n-resize;
+		background-color: @sapUiDarkBG;
+		color: @sapUiTextInverted;
+	}
 }

@@ -770,6 +770,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		 * @private
 		 */
 		DataTable.prototype.onAfterRendering = function() {
+			var aRows = this.getRows();
+			for (var i = 0; i < aRows.length; i++) {
+				aRows[i].initDomRefs();
+			}
 
 			this._bOnAfterRendering = true;
 
@@ -862,10 +866,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					var $rowDomRefs = oRow.getDomRefs(true);
 
 					// update row header tooltip
-					if (oRow.getBindingContext()) {
-						$rowDomRefs.rowSelector.attr("title", this._oResBundle.getText("TBL_ROW_SELECT"));
-					} else {
-						$rowDomRefs.rowSelector.attr("title", "");
+					if ($rowDomRefs.rowSelector) {
+						if (oRow.getBindingContext()) {
+							$rowDomRefs.rowSelector.attr("title", this._oResBundle.getText("TBL_ROW_SELECT"));
+						} else {
+							$rowDomRefs.rowSelector.attr("title", "");
+						}
 					}
 
 					if (iFixedTopRows > 0) {

@@ -70,6 +70,7 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 					oColumn.setGrouped(!bGrouped);
 					oTable.fireGroup({column: oColumn, groupedColumns: oTable._aGroupedColumns, type: sap.ui.table.GroupEventType.group});
 					oMenuItem.setIcon(!bGrouped ? "sap-icon://accept" : null);
+					oTable._getRowContexts();
 				}, this)
 			);
 			this.addItem(this._oGroupIcon);
@@ -97,6 +98,7 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 
 					oColumn.setSummed(!bSummed);
 					oMenuItem.setIcon(!bSummed ? "sap-icon://accept" : null);
+					oTable._getRowContexts();
 				}, this)
 			);
 			this.addItem(this._oSumItem);

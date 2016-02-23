@@ -1,0 +1,41 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<Popover
+			showHeader="false"
+			placement="Top"
+			contentWidth = "300px"
+			contentHeight = "600px"
+			afterClose="_applySettings">
+			<Page
+				title="Test Settings">
+				<List id="settingsList" >
+					<InputListItem label="JSON Model">
+						<Switch state="{settings>/jsonModel}" />
+					</InputListItem>
+					<InputListItem label="Row Count">
+						<Input
+								width="5rem"
+								value="{path: 'settings>/visibleRowCount', type: 'sap.ui.model.type.Integer'}"/>
+					</InputListItem>
+					<InputListItem label="Rows (Data)">
+						<Input
+								width="5rem"
+								value="{settings>/rows}"/>
+					</InputListItem>
+					<InputListItem label="Columns">
+						<Input
+								width="5rem"
+								value="{settings>/columns}"/>
+					</InputListItem>
+					<InputListItem label="Row Count Mode">
+						<Select selectedKey="{settings>/visibleRowCountMode}">
+							<core:Item key="Fixed" text="Fixed" />
+							<core:Item key="Auto" text="Auto" />
+							<core:Item key="Interactive" text="Interactive" />
+						</Select>
+					</InputListItem>
+				</List>
+			</Page>
+	</Popover>
+</core:FragmentDefinition>
