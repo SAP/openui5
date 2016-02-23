@@ -79,42 +79,38 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks for an update of this binding's context. If the binding can be resolved and the bound
-	 * context does not match the resolved path, a change event is fired; this event will always be
-	 * asynchronous.
+	 * The 'change' event is fired when the binding is initialized or its parent context is changed.
+	 * It is to be used by controls to get notified about changes to the bound context of this
+	 * context binding.
+	 * Registered event handlers are called with the change reason as parameter.
 	 *
-	 * @param {boolean} [bForceUpdate]
-	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
-	 * @returns {Promise}
-	 *   A Promise to be resolved when the check is finished
-	 * @throws {Error}
-	 *   When <code>bForceUpdate</code> is not given or <code>false</code>, checkUpdate on this
-	 *   binding is not supported.
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#change
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
+	 *   The reason for the 'change' event which is {@link sap.ui.model.ChangeReason#Change Change}
+	 *   for binding initialization or {@link sap.ui.model.ChangeReason#Context Context} if the
+	 *   parent context is changed.
+	 * @see sap.ui.base.Event
+	 * @protected
+	 * @since 1.37
+	 */
+
+	/**
+	 * Initializes the OData context binding. Fires a 'change' event in case the binding has a
+	 * resolved path.
 	 *
 	 * @protected
 	 */
-	ODataContextBinding.prototype.checkUpdate = function (bForceUpdate) {
-		var oPromise = Promise.resolve(),
-			sResolvedPath = this.getModel().resolve(this.getPath(), this.getContext()),
-			that = this;
+	ODataContextBinding.prototype.initialize = function () {
+		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
-		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: ODataContextBinding#checkUpdate, "
-				+ "bForceUpdate must be true");
-		}
-
-		// works with oElementContext from ContextBinding which describes the resolved binding
-		// (whereas oContext from Binding is the base if sPath is relative)
 		if (!sResolvedPath) {
-			return oPromise;
+			return;
 		}
-		return oPromise.then(function () {
-			//TODO always fire asynchronously - why? "data changes can not change the context"?!
-			//TODO find out if "change" relates to location or content; implement consistently in
-			// context and list binding
-			that.oElementContext = _Context.create(that.getModel(), that, sResolvedPath);
-			that._fireChange({reason : ChangeReason.Change});
-		});
+		this.oElementContext = _Context.create(this.oModel, this, sResolvedPath);
+		this._fireChange({reason : ChangeReason.Change});
 	};
 
 	/**
@@ -164,7 +160,7 @@ sap.ui.define([
 			? this.oCache.read(/*sGroupId*/"", sPath, function () {
 					that.getModel().dataRequested("", function() {});
 				})
-			: this.getContext().requestValue(this.getPath() + (sPath ? "/" + sPath : ""));
+			: this.oContext.requestValue(this.sPath + (sPath ? "/" + sPath : ""));
 	};
 
 	/**

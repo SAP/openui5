@@ -68,7 +68,7 @@ sap.ui.require([
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
 
-			// create ODataModel and mock Cache
+			// create ODataModel
 			this.oModel = new ODataModel("/service/?sap-client=111");
 			this.oModel.setSizeLimit(3);
 		},
@@ -256,23 +256,19 @@ sap.ui.require([
 			done();
 		}
 
-		oControl.bindObject("/TEAMS('4711')"); // Note: fires change event async!
-		oControl.getObjectBinding().attachEventOnce("change", function () {
-			that.oSandbox.mock(oControl.getObjectBinding()).expects("requestValue")
-				.withExactArgs(sPath, undefined)
-				.returns(createResult(oRange.length, 0, true));
+		oControl.bindObject("/TEAMS('4711')");
+		that.oSandbox.mock(oControl.getObjectBinding()).expects("requestValue")
+			.withExactArgs(sPath, undefined)
+			.returns(createResult(oRange.length, 0, true));
 
-			// code under test
-			// Note: if we do this before the context binding's change event, the list binding
-			// will fire another change event before it has retrieved its data
-			oControl.bindAggregation("items", jQuery.extend({
-					path : sPath,
-					template : new TestControl()
-				}, oRange));
+		// code under test
+		oControl.bindAggregation("items", jQuery.extend({
+				path : sPath,
+				template : new TestControl()
+			}, oRange));
 
-			oBinding = oControl.getBinding("items");
-			oBinding.attachEventOnce("change", onChange);
-		});
+		oBinding = oControl.getBinding("items");
+		oBinding.attachEventOnce("change", onChange);
 	});
 
 	//*********************************************************************************************

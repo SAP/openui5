@@ -16,85 +16,62 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataContextBinding", {
-			metadata : {
-				properties : {
-					text : "string"
-				},
-				aggregations : {
-					child : {
-						multiple : false,
-						type : "test.sap.ui.model.odata.v4.ODataContextBinding"
-					}
-				}
-			}
-		});
-
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataContextBinding", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
+
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+
+			// create ODataModel
+			this.oModel = new ODataModel("/service/?sap-client=111");
 		},
 
 		afterEach : function () {
 			this.oSandbox.verifyAndRestore();
-		},
-
-		/**
-		 * Initializes the control's text property asynchronously. Waits for the bound context
-		 * to be present and passes the context binding to the resolve handler.
-		 *
-		 * @param {object} assert
-		 *   the QUnit assert methods
-		 * @param {string} [sPath="/EntitySet('foo')/child"]
-		 *   Some path
-		 * @param {sap.ui.model.Context} [oContext]
-		 *   Some context
-		 * @returns {Promise}
-		 *   a promise to be resolved when the control's bound context has been initialized.
-		 *   The resolve function passes the context binding as parameter.
-		 */
-		createContextBinding : function (assert, sPath, oContext) {
-			var oModel = new ODataModel("/service/"),
-				oControl = new TestControl({models : oModel});
-
-			sPath = sPath || "/EntitySet('foo')/child";
-			return new Promise(function (fnResolve, fnReject) {
-				var oBinding;
-
-				oControl.setBindingContext(oContext);
-				oControl.bindObject(sPath);
-				oBinding = oControl.getObjectBinding();
-				assert.strictEqual(oBinding.getBoundContext(), null,
-					"synchronous: no bound context yet");
-				oBinding.attachChange(function () {
-					if (!oContext) {
-						assert.strictEqual(oBinding.getBoundContext().getPath(), sPath,
-							"after initialize");
-					}
-					fnResolve(oBinding);
-				});
-			});
 		}
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate: unchanged", function (assert) {
-		return this.createContextBinding(assert).then(function (oBinding) {
-			var bGotChangeEvent = false;
+	QUnit.test("initialize, resolved path", function (assert) {
+		var oContext = {},
+			oBoundContext = {},
+			oBinding = this.oModel.bindContext("foo", oContext);
 
-			oBinding.attachChange(function () {
-				bGotChangeEvent = true;
-			});
+		this.mock(this.oModel).expects("resolve").withExactArgs("foo", sinon.match.same(oContext))
+			.returns("/absolute");
+		this.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+		this.mock(_Context).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
+			.returns(oBoundContext);
 
-			// code under test
-			oBinding.checkUpdate(true).then(function () {
-				assert.ok(bGotChangeEvent, "got change event as expected");
-			});
-		});
+		assert.strictEqual(oBinding.initialize(), undefined, "no chaining");
+		assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize, unresolved path", function () {
+		var oBinding = this.oModel.bindContext("foo");
+
+		this.mock(this.oModel).expects("resolve")
+			.returns(undefined /*relative path, no context*/);
+		this.mock(oBinding).expects("_fireChange").never();
+
+		oBinding.initialize();
+	});
+
+	//*********************************************************************************************
+	//TODO support nested context bindings
+	QUnit.skip("setContext, change event", function (assert) {
+		var oContext = {},
+			oBinding = this.oModel.bindContext("foo");
+
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
+
+		oBinding.setContext(oContext);
 	});
 
 	//*********************************************************************************************
@@ -111,38 +88,11 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("relative path", function (assert) {
 		var oModel = new ODataModel("/service/"),
-			oContext = oModel.bindContext("SO_2_BP");
+			oBinding = oModel.bindContext("SO_2_BP");
 
 		assert.throws(function () {
-			oContext.setContext("/SalesOrders(ID='1')");
+			oBinding.setContext("/SalesOrders(ID='1')");
 		}, new Error("Nested context bindings are not supported"));
-	});
-
-	//*********************************************************************************************
-	//TODO support nested context bindings
-	QUnit.skip("ManagedObject.bindObject on child (relative), then on parent", function (assert) {
-		var oBinding,
-			oChild = new TestControl(),
-			done = assert.async(),
-			oModel = new ODataModel("/service/"),
-			oParent = new TestControl({models : oModel, child : oChild});
-
-		// This should not trigger anything yet
-		oChild.bindObject("child");
-
-		oBinding = oChild.getObjectBinding();
-		oBinding.attachChange(function () {
-			assert.strictEqual(oBinding.getBoundContext().getPath(),
-				"/EntitySet('foo')/child");
-
-			done();
-		});
-
-		// This creates and initializes a context binding at the parent. The change handler of the
-		// context binding calls setContext at the child's context binding which completes the path
-		// and triggers a checkUpdate. This then fires a change event at the child's context
-		// binding.
-		oParent.bindObject("/EntitySet('foo')");
 	});
 
 	//*********************************************************************************************
@@ -282,58 +232,45 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding", function (assert) {
-		var that = this;
+		var oBinding = this.oModel.bindContext("/absolute"),
+			oPromise = {};
 
-		return this.createContextBinding(assert).then(function (oBinding) {
-			var oPromise = {};
+		this.oSandbox.mock(oBinding.oCache).expects("read")
+			.withArgs("", "bar")
+			.callsArg(2)
+			.returns(oPromise);
+		this.oSandbox.mock(oBinding.getModel()).expects("dataRequested")
+			.withExactArgs("", sinon.match.typeOf("function"));
 
-			that.oSandbox.mock(oBinding.oCache).expects("read")
-				.withArgs("", "bar")
-				.callsArg(2)
-				.returns(oPromise);
-			that.oSandbox.mock(oBinding.getModel()).expects("dataRequested")
-				.withExactArgs("", sinon.match.typeOf("function"));
-
-			assert.strictEqual(oBinding.requestValue("bar"), oPromise);
-		});
+		assert.strictEqual(oBinding.requestValue("bar"), oPromise);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: relative binding", function (assert) {
-		var that = this;
+		var oBinding = this.oModel.bindContext("/absolute"),
+			oContext,
+			oContextMock,
+			oNestedBinding,
+			oPromise = {};
 
-		return this.createContextBinding(assert).then(function (oBinding) {
-			var oContext = oBinding.getBoundContext(),
-				oContextMock = that.oSandbox.mock(oContext);
+		oBinding.initialize();
+		oContext = oBinding.getBoundContext();
+		oContextMock = this.oSandbox.mock(oContext);
+		oNestedBinding = this.oModel.bindContext("navigation", oContext);
 
-			return that.createContextBinding(assert, "navigation", oContext)
-				.then(function (oNestedBinding) {
-					var oPromise = {};
+		oContextMock.expects("requestValue").withExactArgs("navigation/bar").returns(oPromise);
 
-					oContextMock.expects("requestValue")
-						.withExactArgs("navigation/bar")
-						.returns(oPromise);
+		assert.strictEqual(oNestedBinding.requestValue("bar"), oPromise);
 
-					assert.strictEqual(oNestedBinding.requestValue("bar"), oPromise);
+		oContextMock.expects("requestValue").withExactArgs("navigation").returns(oPromise);
 
-					oContextMock.expects("requestValue")
-						.withExactArgs("navigation")
-						.returns(oPromise);
-
-					assert.strictEqual(oNestedBinding.requestValue(""), oPromise);
-				});
-		});
+		assert.strictEqual(oNestedBinding.requestValue(""), oPromise);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var oModel = new ODataModel("/service/"),
 			oContextBinding = oModel.bindContext("SO_2_BP");
-
-		assert.throws(function () {
-			oContextBinding.checkUpdate(false);
-		}, new Error("Unsupported operation: ODataContextBinding#checkUpdate, "
-				+ "bForceUpdate must be true"));
 
 		assert.throws(function () { //TODO implement
 			oContextBinding.refresh(false);
