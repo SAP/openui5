@@ -82,6 +82,42 @@ sap.ui.define([
 		});
 
 	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * It is to be used by applications for example to switch on a busy indicator. Registered event
+	 * handlers are called without parameters.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @see sap.ui.base.Event
+	 * @public
+	 * @since 1.37
+	 */
+
+	/**
+	 * The 'dataReceived' event is fired after the back end data has been processed and the
+	 * registered 'change' event listeners have been notified. It is to be used by applications for
+	 * example to switch off a busy indicator or to process an error.
+	 *
+	 * If back end requests are successful, the event has no parameters. The response data is
+	 * available in the model. Note that controls bound to this data may not yet have been updated;
+	 * it is thus not safe for registered event handlers to access data via control APIs.
+	 *
+	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * 'error' event parameter.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
+	 *   If there are multiple failed back end requests, the error of the first one is provided.
+	 * @see sap.ui.base.Event
+	 * @public
+	 * @since 1.37
+	 */
+
+	/**
 	 * Updates the binding's value and sends a change event if necessary. A change event is sent
 	 * if the <code>bForceUpdate</code> parameter is set to <code>true</code> or if the value
 	 * has changed. If a relative binding has no context the <code>bForceUpdate</code> parameter
@@ -104,7 +140,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate) {
-		var bFire = false,
+		var bDataRequested = false,
+			bFire = false,
+			mParametersForDataReceived,
 			oPromise,
 			aPromises = [],
 			oReadPromise,
@@ -134,7 +172,8 @@ sap.ui.define([
 		oReadPromise = this.isRelative()
 			? this.getContext().requestValue(this.getPath())
 			: this.oCache.read(/*sGroupId*/"", /*sPath*/undefined, function () {
-					that.getModel().dataRequested("", function () {});
+					bDataRequested = true;
+					that.getModel().dataRequested("", that.fireDataRequested.bind(that));
 				});
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {
@@ -150,6 +189,7 @@ sap.ui.define([
 				jQuery.sap.log.error("Failed to read path " + sResolvedPath, oError, sClassName);
 				// fire change event only if error was not caused by refresh and value was undefined
 				bFire = that.vValue !== undefined;
+				mParametersForDataReceived = {error : oError};
 			}
 			that.vValue = undefined;
 		}));
@@ -157,6 +197,9 @@ sap.ui.define([
 		return Promise.all(aPromises).then(function () {
 			if (bForceUpdate || bFire) {
 				that._fireChange({reason : ChangeReason.Change});
+			}
+			if (bDataRequested) {
+				that.fireDataReceived(mParametersForDataReceived);
 			}
 		});
 	};

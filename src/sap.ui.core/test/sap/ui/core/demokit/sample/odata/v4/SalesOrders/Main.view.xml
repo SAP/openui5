@@ -12,7 +12,13 @@
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
 				</Label>
-				<Text id="FavoriteProduct" text="{/ProductList('HT-1000')/Name}">
+				<Text id="FavoriteProduct" text="{
+						path: '/ProductList(\'HT-1000\')/Name',
+						events : {
+							dataReceived : '.onDataEvents',
+							dataRequested : '.onDataEvents'
+						}
+					}">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
