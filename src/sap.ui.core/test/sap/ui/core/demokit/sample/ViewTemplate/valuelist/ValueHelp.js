@@ -87,8 +87,7 @@ sap.ui.define(['sap/m/Column',
 					oControl = oEvent.getSource(),
 					oPopover = new Popover({endButton : oButton,
 						placement : sap.m.PlacementType.Auto, modal : true}),
-					oTable = new Table(),
-					aVHTitle = [];
+					oTable = new Table();
 
 				function createTextOrValueHelp(sPropertyPath, bAsColumnHeader) {
 					var oMetaModel = oControl.getModel().getMetaModel(),
