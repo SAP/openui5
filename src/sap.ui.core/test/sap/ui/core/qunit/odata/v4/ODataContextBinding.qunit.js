@@ -339,6 +339,10 @@ sap.ui.require([
 			oContextBinding.refresh(false);
 		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
 			+ "bForceUpdate must be true"));
+		assert.throws(function () {
+			oContextBinding.refresh("foo"/*truthy*/);
+		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+			+ "bForceUpdate must be true"));
 		assert.throws(function () { //TODO implement
 			oContextBinding.refresh(true, "");
 		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
