@@ -32,13 +32,15 @@ sap.ui.define([
 				 * Specifies a threshold of visible items. If the end user makes a lot of columns visible, this might cause performance to slow down.
 				 * When this happens, the user can receive a corresponding warning triggered by the <code>visibleItemsThreshold</code> property. The
 				 * property needs to be activated and set to the required value by the consuming application to ensure that the warning message is
-				 * shown when the threshold has been exceeded. In the following example the message will be shown if more then 100 visible columns are
-				 * selected: <code>
-				 * <smartTable:customData>
-				 *  <core:CustomData key="p13nDialogSettings" value='\{"columns":\{"visible": true, "payload": \{"visibleItemsThreshold": 100\}\}\}'/>
-				 * </smartTable:customData>
-				 * </code>
+				 * shown when the threshold has been exceeded. In the following example the message will be shown if more than 100 visible columns are
+				 * selected:
 				 *
+				 * @example
+				 * <code>
+				 * &lt;smartTable:customData&gt;
+				 *  &lt;core:CustomData key=&quot;p13nDialogSettings&quot; value='\{&quot;columns&quot;:\{&quot;visible&quot;: true, &quot;payload&quot;: \{&quot;visibleItemsThreshold&quot;: 100\}\}\}'/&gt;
+				 * &lt;/smartTable:customData&gt;
+				 * </code>
 				 * @since 1.26.7
 				 */
 				visibleItemsThreshold: {
