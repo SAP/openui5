@@ -11,18 +11,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * Constructor for a new <code>PlanningCalendar</code>.
 	 *
-	 * @param {string} [sID] Id for the new control, generated automatically if no ID is given
+	 * @param {string} [sID] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * The <code>PlanningCalendar</code> can display rows with appointments for different persons.
 	 * It is possible to define different views and switch between the views.
-	 * Own buttons or other controls could be added to the toolbar.
+	 * You can add your own buttons or other controls to the toolbar.
 	 *
 	 * <b>Note:</b> The <code>PlanningCalendar</code> uses parts of the <code>sap.ui.unified</code> library.
 	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>PlanningCalendar</code> is loaded,
 	 * it will be loaded after the <code>PlanningCalendar</code> is loaded.
-	 * This could lead to a waiting time before a <code>PlanningCalendar</code> is used the first time.
+	 * This could lead to a waiting time before a <code>PlanningCalendar</code> is used for the first time.
 	 * To prevent this, applications using the <code>PlanningCalendar</code> should also load the <code>sap.ui.unified</code> library.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
@@ -39,13 +39,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		properties : {
 
 			/**
-			 * Start date, as JavaScript Date object, of the row. As default the current date is used.
+			 * Start date of the row, as JavaScript date object. As a default the current date is used.
 			 */
 			startDate : {type : "object", group : "Data"},
 
 			/**
 			 * Key of the <code>PlanningCalendarView</code> used for the output. The default value uses a default view.
-			 * If own views are used the keys of this views must be used.
+			 * If you are using own views, the keys of these views must be used instead.
 			 */
 			viewKey : {type : "string", group : "Appearance", defaultValue : sap.ui.unified.CalendarIntervalType.Hour},
 
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * If set, headers of the <code>PlanningCalendarRows</code> are shown. This means the column with the headers is shown.
 			 *
-			 * If not set, the header column is not shown at all, even if header information are provided.
+			 * If not set, the header column is not shown at all, even if header information is provided.
 			 */
 			showRowHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
 
@@ -92,16 +92,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			rows : {type : "sap.m.PlanningCalendarRow", multiple : true, singularName : "row"},
 
 			/**
-			 * views of the <code>PlanningCalendar</code>.
+			 * Views of the <code>PlanningCalendar</code>.
 			 *
-			 * If not set, 3 default views are used to allow to switch between hour, day and month granularity.
+			 * If not set, three default views are used to allow you to switch between hour, day and month granularity.
 			 * The default views have the keys defined in </code>sap.ui.unified.CalendarIntervalType</code>
 			 */
 			views : {type : "sap.m.PlanningCalendarView", multiple : true, singularName : "view"},
 
 			/**
-			 * Date Range with type to visualize special days in the header calendar.
-			 * If one day is assigned to more than one Type, only the first one will be used.
+			 * Date range along with a type to visualize special days in the header calendar.
+			 * If one day is assigned to more than one type, only the first one will be used.
 			 */
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
@@ -124,18 +124,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			appointmentSelect : {
 				parameters : {
 					/**
-					 * selected appointment
+					 * Selected appointment
 					 */
 					appointment : {type : "sap.ui.unified.CalendarAppointment"},
 
 					/**
-					 * selected appointments in case a group appointment is selected
+					 * Selected appointments in case a group appointment is selected
 					 */
 					appointments : {type : "sap.ui.unified.CalendarAppointment[]"},
 
 					/**
-					 * If set the appointment was selected by multiple selection (e.g. shift + mouse click).
-					 * So more than the current appointment could be selected.
+					 * If set, the appointment was selected using multiple selection (e.g. Shift + single mouse click),
+					 * meaning more than the current appointment could be selected.
 					 */
 					multiSelect : {type : "boolean"}
 				}
@@ -147,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			intervalSelect : {
 				parameters : {
 					/**
-					 * Start date, as JavaScript Date object, of the selected interval
+					 * Start date of the selected interval, as JavaScript date object.
 					 */
 					startDate : {type : "object"},
 
@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			},
 
 			/**
-			 * <code>startDate</code> was changed while navigation in <code>PlanningCalendar</code>
+			 * <code>startDate</code> was changed while navigating in <code>PlanningCalendar</code>
 			 */
 			startDateChange : {},
 
@@ -860,7 +860,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 *
 	 * <b>Note:</b> Selection only works if <code>singleSelection</code> is not set
 	 *
-	 * @param {boolean} bSelect Indicator if <code>PlanningCalendarRows</code> should be selected or deselected
+	 * @param {boolean} bSelect Indicator showing whether <code>PlanningCalendarRows</code> should be selected or deselected
 	 * @returns {sap.m.PlanningCalendar} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
