@@ -40,9 +40,13 @@
 .sapUiNotiHover {
 	position: absolute;
 	height: @sapUiNotificationBarHeight;
+	/* IE workaround to detect bar hovering in Min mode */
+	background-color: inherit;
+	opacity: 0;
 }
 
 .sapUiNotiHover:hover .sapUiBarToggle,
+.sapUiNotiHover:hover + .sapUiBarToggle,
 .sapUiNotificationBar:hover .sapUiBarToggle {
 	display: block;
 }
