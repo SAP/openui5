@@ -30,6 +30,11 @@
 			displayFormatType="Islamic"
 			secondaryCalendarType="Gregorian"
 			change="handleChange"/>
+		<Label text="DatePicker with minDate=2016-01-01 and maxDate=2016-12-31" labelFor="DP6"/>
+		<DatePicker
+			id="DP6"
+			displayFormat="short"
+			change="handleChange"/>
 		<Text
 			id="T1"
 			text="change event result"

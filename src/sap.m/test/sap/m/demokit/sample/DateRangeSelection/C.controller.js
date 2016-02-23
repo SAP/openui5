@@ -20,7 +20,11 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 				delimiterDRS1: "@",
 				dateValueDRS1: dateFrom,
 				secondDateValueDRS1: dateTo,
-				dateFormatDRS1: "yyyy/MM/dd"
+				dateFormatDRS1: "yyyy/MM/dd",
+				dateValueDRS2: new Date(2016, 1, 16),
+				secondDateValueDRS2: new Date(2016, 1, 18),
+				dateMinDRS2: new Date(2016, 0, 1),
+				dateMaxDRS2: new Date(2016, 11, 31)
 			});
 			this.getView().setModel(oModel);
 
