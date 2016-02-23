@@ -10,8 +10,8 @@
  */
 
 // Provides class sap.m.semantic.SemanticConfiguration
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/m/OverflowToolbarPriority", "sap/ui/core/InvisibleText", "sap/ui/core/IconPool"],
-	function(jQuery, Metadata, OverflowToolbarLayoutData, OverflowToolbarPriority, InvisibleText, IconPool) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText", "sap/ui/core/IconPool"],
+	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText, IconPool) {
 	"use strict";
 
 	/**
@@ -531,21 +531,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					layoutData: new OverflowToolbarLayoutData({
 						moveToOverflow: false,
 						stayInOverflow: false
-					})
-				};
-			}
-		};
-
-		oTypeConfigs["sap.m.semantic.MessagesAction"] = {
-			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
-			getSettings: function() {
-				return {
-					icon: IconPool.getIconURI("message-popup"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
-					ariaLabelledBy: _ensureInvisibleText("MessagesIndicator", oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR")),
-					type: sap.m.ButtonType.Emphasized,
-					layoutData: new OverflowToolbarLayoutData({
-						priority: OverflowToolbarPriority.NeverOverflow
 					})
 				};
 			}
