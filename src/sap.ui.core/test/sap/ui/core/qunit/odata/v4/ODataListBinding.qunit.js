@@ -461,7 +461,7 @@ sap.ui.require([
 	[
 		{start : 0, result : 0, isFinal : true, length : 0, text : "no data"},
 		{start : 20, result : 29, isFinal : true, length : 49, text : "less data than requested"},
-		{start : 20, result : 0, isFinal : false, length : 10,
+		{start : 20, result : 0, isFinal : false, length : 10, changeEvent : false,
 			text : "no data for given start > 0"},
 		{start : 20, result : 30, isFinal : false, length : 60, text : "maybe more data"}
 	].forEach(function (oFixture) {
@@ -472,22 +472,26 @@ sap.ui.require([
 					}
 				},
 				oListBinding,
-				done = assert.async();
+				oPromise = createResult(oFixture.result);
 
-			this.getCacheMock().expects("read").withArgs(oFixture.start, 30, "")
-				.returns(createResult(oFixture.result));
+			this.getCacheMock().expects("read").withArgs(oFixture.start, 30, "").returns(oPromise);
 			oListBinding = this.oModel.bindList("/EMPLOYEES", oContext);
+			this.oSandbox.mock(oListBinding).expects("_fireChange")
+				.exactly(oFixture.changeEvent === false ? 0 : 1)
+				.withExactArgs({reason : ChangeReason.Change});
+
 			assert.strictEqual(oListBinding.isLengthFinal(), false, "Length is not yet final");
 			assert.strictEqual(oListBinding.getLength(), 10, "Initial estimated length is 10");
 
-			oListBinding.getContexts(oFixture.start, 30); // creates cache
+			oListBinding.getContexts(oFixture.start, 30);
 
-			setTimeout(function () {
+			// attach then handler after ODataListBinding attached its then handler to be
+			// able to check length and isLengthFinal
+			return oPromise.then(function () {
 				// if there are less entries returned than requested then final length is known
 				assert.strictEqual(oListBinding.isLengthFinal(), oFixture.isFinal);
 				assert.strictEqual(oListBinding.getLength(), oFixture.length);
-				done();
-			}, 10);
+			});
 		});
 	});
 

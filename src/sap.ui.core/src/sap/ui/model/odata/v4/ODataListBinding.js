@@ -205,6 +205,7 @@ sap.ui.define([
 		function createContexts(vResult) {
 			var bChanged = false,
 				i,
+				bNewLengthFinal,
 				iResultLength = Array.isArray(vResult) ? vResult.length : vResult.value.length,
 				n = iStart + iResultLength;
 
@@ -227,8 +228,14 @@ sap.ui.define([
 						that.aContexts.length - that.iMaxLength);
 				}
 			}
-			// some controls use this flag instead of calling isLengthFinal
-			that.bLengthFinal = that.aContexts.length === that.iMaxLength;
+			bNewLengthFinal = that.aContexts.length === that.iMaxLength;
+			if (that.bLengthFinal !== bNewLengthFinal) {
+				// some controls use this flag instead of calling isLengthFinal
+				that.bLengthFinal = bNewLengthFinal;
+				// bLengthFinal changed --> control needs to be informed even if no new data is
+				// available
+				bChanged = true;
+			}
 
 			if (bChanged) {
 				that._fireChange({reason : ChangeReason.Change});
