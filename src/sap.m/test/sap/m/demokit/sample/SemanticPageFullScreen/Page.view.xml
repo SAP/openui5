@@ -41,9 +41,9 @@
 					<semantic:printAction>
 						<semantic:PrintAction press="onSemanticButtonPress"/>
 					</semantic:printAction>
-					<semantic:messagesAction>
-						<semantic:MessagesAction id="messagesActionBtn" press="onMessagesButtonPress"/>
-					</semantic:messagesAction>
+					<semantic:messagesIndicator>
+						<semantic:MessagesIndicator press="onMessagesButtonPress"/>
+					</semantic:messagesIndicator>
 
 					<semantic:customFooterContent>
 						<Button text="CustomFooterBtn" press="onPress"/>
