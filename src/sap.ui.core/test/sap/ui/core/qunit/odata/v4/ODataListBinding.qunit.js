@@ -205,7 +205,7 @@ sap.ui.require([
 			}
 			// spies to check and document calls to model and binding methods from ManagedObject
 			this.spy(this.oModel, "bindList");
-			this.spy(ODataListBinding.prototype, "checkUpdate");
+			this.spy(ODataListBinding.prototype, "initialize");
 			this.spy(ODataListBinding.prototype, "getContexts");
 
 			// code under test
@@ -217,7 +217,7 @@ sap.ui.require([
 			// check v4 ODataModel APIs are called as expected from ManagedObject
 			checkCall(this.oModel.bindList, "/EMPLOYEES", undefined, undefined, undefined,
 				undefined);
-			checkCall(ODataListBinding.prototype.checkUpdate, true);
+			checkCall(ODataListBinding.prototype.initialize);
 			checkCall(ODataListBinding.prototype.getContexts, oRange.startIndex, oRange.length);
 
 			oControl.getBinding("items").attachChange(onChange);
@@ -299,14 +299,38 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdate fires change event", function () {
-		var oListBinding = this.oModel.bindList("/Products");
+	QUnit.test("initialize, resolved path", function (assert) {
+		var oContext = {},
+			oListBinding = this.oModel.bindList("foo", oContext);
 
+		this.mock(this.oModel).expects("resolve").withExactArgs("foo", sinon.match.same(oContext))
+			.returns("/absolute");
 		this.mock(oListBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
 
-		oListBinding.checkUpdate(true);
-		//TODO check last read range for an update and only send change event then
+		assert.strictEqual(oListBinding.initialize(), undefined, "no chaining");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize, unresolved path", function () {
+		var oListBinding = this.oModel.bindList("Suppliers");
+
+		this.mock(this.oModel).expects("resolve")
+			.returns(undefined /*relative path, no context*/);
+		this.mock(oListBinding).expects("_fireChange").never();
+
+		oListBinding.initialize();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setContext, change event", function (assert) {
+		var oContext = {},
+			oListBinding = this.oModel.bindList("Suppliers");
+
+		this.mock(oListBinding).expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Context});
+
+		oListBinding.setContext(oContext);
 	});
 
 	//*********************************************************************************************
@@ -881,11 +905,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var oListBinding = this.oModel.bindList("/EMPLOYEES");
-
-		assert.throws(function () {
-			oListBinding.checkUpdate(false);
-		}, new Error("Unsupported operation: ODataListBinding#checkUpdate, "
-			+ "bForceUpdate must be true"));
 
 		assert.throws(function () { //TODO implement
 			oListBinding.filter();
