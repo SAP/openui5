@@ -57,23 +57,6 @@
 				assert.strictEqual($container.offset().left, 0, "overlay container position is left = 0px");
 			});
 
-			QUnit.module("Given that an Overlay Container is created on RTL mode", {
-				beforeEach : function() {
-					sap.ui.getCore().getConfiguration().setRTL(true);
-					sap.ui.dt.Overlay.getOverlayContainer();
-				},
-				afterEach : function() {
-					sap.ui.dt.Overlay.removeOverlayContainer();
-					sap.ui.getCore().getConfiguration().setRTL(false);
-				}
-			});
-
-			QUnit.test("then", function(assert) {
-				var $container = jQuery("#overlay-container");
-				assert.strictEqual($container.offset().top, 0, "overlay container position is still top = 0px");
-				assert.strictEqual($container.offset().left, 0, "overlay container position is still left = 0px");
-			});
-
 			QUnit.module("Given that an Overlay is created for a control", {
 				beforeEach : function(assert) {
 					var that = this;
