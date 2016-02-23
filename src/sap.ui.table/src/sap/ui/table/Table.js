@@ -5755,6 +5755,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	};
 
 	/**
+	 * Sets the threshold value, which will be added to all data requests in
+	 * case the Table is bound against an OData service.
+	 * @public
+	 */
+	Table.prototype.setThreshold = function (iThreshold) {
+		this.setProperty("threshold", iThreshold, true);
+	};
+
+	/**
 	 *
 	 * @private
 	 */
