@@ -1500,8 +1500,15 @@
 	});
 
 	test("Data binding items aggregation live model change", function() {
+		var mDataInitial,
+			mDataSecond,
+			oSegmentedButton,
+			aButtons,
+			oModel,
+			i;
+
 		// Arrange
-		var mDataInitial = {
+		mDataInitial = {
 			items: [
 				{key: "b1", text: "Initial btn 1"},
 				{key: "b2", text: "Initial btn 2"},
@@ -1509,7 +1516,7 @@
 			]
 		};
 
-		var mDataSecond = {
+		mDataSecond = {
 			selectedKey: "b7",
 			items: [
 				{key: "b1", text: "btn 1", icon: "sap-icon://attachment"},
@@ -1524,7 +1531,7 @@
 		};
 
 		// System under Test
-		var oSegmentedButton = new sap.m.SegmentedButton({
+		oSegmentedButton = new sap.m.SegmentedButton({
 			selectedKey: "{/selectedKey}",
 			items : {
 				path : "/items",
@@ -1538,7 +1545,7 @@
 			}
 		});
 
-		var oModel = new sap.ui.model.json.JSONModel();
+		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(mDataInitial);
 
 		sap.ui.getCore().setModel(oModel);
@@ -1553,6 +1560,14 @@
 		strictEqual(oSegmentedButton.getSelectedKey(), "b1", "selectedKey should be the default first item key");
 		strictEqual(oSegmentedButton.getItems()[0].getText(),
 				"Initial btn 1", "Button text should be equal to initial Model text");
+
+		// Get the buttons prior to changing the model of the control.
+		aButtons = oSegmentedButton.getButtons();
+
+		// Spy on destroy method of the internal buttons
+		for (i = 0;i < aButtons.length;i++) {
+			sinon.spy(aButtons[i], "destroy");
+		}
 
 		// Act
 		oModel.setData(mDataSecond);
@@ -1574,7 +1589,13 @@
 		strictEqual(oSegmentedButton.getButtons()[3].getIcon(), "sap-icon://home",
 				"Button icon should be equal to second Model icon");
 
+		for (i = 0;i < aButtons.length;i++) {
+			ok(aButtons[i].destroy.calledOnce, "Internally created button with index " + i + " from the old model should be destroyed ");
+			aButtons[i].destroy.restore();
+		}
+
 		// Cleanup
+		aButtons = null;
 		oSegmentedButton.destroy();
 	});
 
