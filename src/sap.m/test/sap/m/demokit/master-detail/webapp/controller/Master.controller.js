@@ -227,6 +227,15 @@ sap.ui.define([
 				});
 			},
 
+			/**
+			 * Event handler for navigating back.
+			 * We navigate back in the browser historz
+			 * @public
+			 */
+			onNavBack : function() {
+				history.go(-1);
+			},
+
 			/* =========================================================== */
 			/* begin: internal methods                                     */
 			/* =========================================================== */
