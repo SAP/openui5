@@ -967,8 +967,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		if (this._bFirstRendering && this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
 			this._bFirstRendering = false;
-			// Wait until everything is rendered (parent height!) before reading/updating sizes.
-			this._mTimeouts.onAfterRenderingUpdateTableSizes = this._mTimeouts.onAfterRenderingUpdateTableSizes || window.setTimeout(this._updateTableSizes.bind(this), 0);
+			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
+			// to be executed before timeouts may be executed.
+			Promise.resolve().then(this._updateTableSizes.bind(this));
 		} else if (!this._mTimeouts.onAfterRenderingUpdateTableSizes) {
 			this._updateTableSizes();
 		}
