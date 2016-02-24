@@ -3,8 +3,9 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/demo/worklist/model/formatter",
 		"sap/ui/model/Filter",
-		"sap/ui/model/FilterOperator"
-	], function (BaseController, JSONModel, formatter, Filter, FilterOperator) {
+		"sap/ui/model/FilterOperator",
+		"sap/ui/core/routing/History"
+	], function (BaseController, JSONModel, formatter, Filter, FilterOperator, History) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.worklist.controller.Worklist", {
@@ -91,19 +92,14 @@ sap.ui.define([
 				this._showObject(oEvent.getSource());
 			},
 
+
 			/**
-			 * Navigates back in the browser history, if the entry was created by this app.
-			 * If not, it navigates to the Fiori Launchpad home page.
+			 * Event handler for navigating back.
+			 * We navigate back in the browser historz
 			 * @public
 			 */
-			onNavBack : function () {
-				var oHistory = sap.ui.core.routing.History.getInstance(),
-					sPreviousHash = oHistory.getPreviousHash();
-
-				if (sPreviousHash !== undefined) {
-					// The history contains a previous entry
-					history.go(-1);
-				}
+			onNavBack : function() {
+				history.go(-1);
 			},
 
 
