@@ -20,8 +20,7 @@ sap.ui.define([
 		metadata : "json",
 
 		createContent : function () {
-			var oMockServer,
-				sMockServerBaseUri
+			var sMockServerBaseUri
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/valuelist/data/",
 				oModel,
 				sServiceUri = "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/",
@@ -35,23 +34,24 @@ sap.ui.define([
 				}
 				sServiceUri = this.proxy(sServiceUri);
 			} else {
-				oMockServer = new MockServer({rootUri : sServiceUri});
-				oMockServer.simulate(sMockServerBaseUri + (sValueList === "none" ?
+
+				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
+				this.aMockServers[0].simulate(sMockServerBaseUri + (sValueList === "none" ?
 						"metadata_none.xml" : "metadata.xml"), {
 					sMockdataBaseUrl : sMockServerBaseUri,
 					bGenerateMissingMockData : false
 				});
 				// mock server only simulates $metadata request without query parameters
-				oMockServer.getRequests().some(function (oRequest) {
+				this.aMockServers[0].getRequests().some(function (oRequest) {
 					if (jQuery.sap.startsWith(oRequest.path.source, "\\$metadata")) {
 						oRequest.path = /\$metadata$/;
 						return true;
 					}
 				});
-				oMockServer.start();
+				this.aMockServers[0].start();
 
 				// yet another mock server to handle value list requests
-				new MockServer({
+				this.aMockServers.push(new MockServer({
 					requests : [{ // mock server responses for value list requests
 						valueList : "none",
 						response : "metadata_none.xml"
@@ -79,10 +79,11 @@ sap.ui.define([
 							}
 						};
 					})
-				}).start();
+				}));
+				this.aMockServers[1].start();
 				if (sValueList === "none") {
 					// yet another mock server to handle value list data requests
-					new MockServer({
+					this.aMockServers.push(new MockServer({
 						requests : [{
 							param : "VL_SH_H_T001/$count"
 						}, {
@@ -125,7 +126,8 @@ sap.ui.define([
 								}
 							};
 						})
-					}).start();
+					}));
+					this.aMockServers[2].start();
 				}
 			}
 			oModel = new ODataModel(sServiceUri, {
@@ -141,10 +143,6 @@ sap.ui.define([
 				type : sap.ui.core.mvc.ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.valuelist.Main"
 			});
-		},
-
-		exit : function () {
-			MockServer.destroyAll();
 		}
 	});
 

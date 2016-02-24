@@ -42,7 +42,7 @@ sap.ui.define([
 			oMetaModel = oModel.getMetaModel();
 
 			if (!bHasOwnProxy) {
-				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
+				TestUtils.setupODataV4Server(this.oSandbox, {
 					"$metadata" : {source : "metadata.xml"},
 					"$batch" : {
 						"BusinessPartnerList" : {
