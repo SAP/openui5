@@ -14,7 +14,9 @@ sap.ui.define([
 	"use strict";
 
 	var mSupportedEvents = {
-			change : true
+			change : true,
+			dataReceived : true,
+			dataRequested : true
 		};
 
 	/**
@@ -40,7 +42,7 @@ sap.ui.define([
 	 *   lead to a data service request.
 	 * @throws {Error} When disallowed OData query options are provided
 	 * @class Context binding for an OData v4 model.
-	 *   It only supports the following event: 'change'.
+	 *   It only supports the following events: 'change', 'dataReceived', 'dataRequested'.
 	 *   If you attach to other events, an error is thrown.
 	 *
 	 * @author SAP SE
@@ -94,6 +96,41 @@ sap.ui.define([
 	 *   parent context is changed.
 	 * @see sap.ui.base.Event
 	 * @protected
+	 * @since 1.37
+	 */
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * It is to be used by applications for example to switch on a busy indicator. Registered event
+	 * handlers are called without parameters.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataRequested
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @see sap.ui.base.Event
+	 * @public
+	 * @since 1.37
+	 */
+
+	/**
+	 * The 'dataReceived' event is fired after the back end data has been processed. It is to be
+	 * used by applications for example to switch off a busy indicator or to process an error.
+	 *
+	 * If back end requests are successful, the event has no parameters. The response data is
+	 * available in the model. Note that controls bound to this data may not yet have been updated;
+	 * it is thus not safe for registered event handlers to access data via control APIs.
+	 *
+	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * 'error' event parameter.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataReceived
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
+	 *   If there are multiple failed back end requests, the error of the first one is provided.
+	 * @see sap.ui.base.Event
+	 * @public
 	 * @since 1.37
 	 */
 
@@ -154,13 +191,28 @@ sap.ui.define([
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 */
 	ODataContextBinding.prototype.requestValue = function (sPath) {
-		var that = this;
+		var that = this,
+			bDataRequested = false;
 
-		return this.oCache
-			? this.oCache.read(/*sGroupId*/"", sPath, function () {
-					that.getModel().dataRequested("", function() {});
-				})
-			: this.oContext.requestValue(this.sPath + (sPath ? "/" + sPath : ""));
+		if (this.oCache) {
+			return this.oCache.read(/*sGroupId*/"", sPath, function () {
+				bDataRequested = true;
+				that.getModel().dataRequested("", that.fireDataRequested.bind(that));
+			}).then(function (vValue) {
+				if (bDataRequested) {
+					that.fireDataReceived();
+				}
+				return vValue;
+			}, function (oError) {
+				if (!oError.canceled) {
+					jQuery.sap.log.error("Failed to read path " + that.getPath(), oError,
+						"sap.ui.model.odata.v4.ODataContextBinding");
+				}
+				that.fireDataReceived(oError.canceled ? undefined : {error : oError});
+				throw oError;
+			});
+		}
+		return this.oContext.requestValue(this.sPath + (sPath ? "/" + sPath : ""));
 	};
 
 	/**
