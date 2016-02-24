@@ -1,0 +1,21 @@
+/* ==================================================== */
+/* CSS for control sap.m.FormattedText                  */
+/* ==================================================== */
+
+.sapMFT {
+	font-family: @sapUiFontFamily;
+	font-size: @sapUiFontSize;
+	vertical-align: top;
+	line-height: @sapUiLineHeight;
+	display: inline-block;
+}
+
+/* If control is used on black/dark background */
+.sapUiInverted-CTX .sapMFT {
+	color: @sapUiTextInverted;
+}
+
+/* Do not invert for table */
+.sapUiInverted-CTX .sapUiTable .sapMFT {
+	color: @sapUiBaseText;
+}

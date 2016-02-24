@@ -328,6 +328,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.FormattedText",
+		  "name": "Formatted Text",
+		  "category": "Display",
+		  "since": "1.38",
+		  "samples": [
+			"sap.m.sample.FormattedText"
+		  ]
+		},
+		{
 		  "id": "sap.m.UploadCollection",
 		  "name": "Upload Collection",
 		  "category": "Action",
@@ -1350,6 +1359,11 @@
 		  "id": "sap.m.sample.FlexBoxNested",
 		  "name": "Flex Box - Nested",
 		  "description": "Flex Boxes can be nested. Remember also that HBox and VBox are 'convenience' controls based on the Flex Box control."
+		},
+		{
+		  "id": "sap.m.sample.FormattedText",
+		  "name": "Formatted Text",
+		  "description": "The control can be used for embedding formatted HTML text into your application."
 		},
 		{
 		  "id": "sap.m.sample.Page",
