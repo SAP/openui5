@@ -417,6 +417,38 @@
 		oTA.destroy();
 	});
 
+
+	module("Growing");
+	test("after rendering whole content should be visible", function() {
+		var sLongText = new Array(1000).join("text ");
+		var oTA = new sap.m.TextArea({
+			value: sLongText,
+			growing: true,
+			width: "100%"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oTA.focus();
+		ok(oTA.getFocusDomRef().scrollHeight <= oTA.getFocusDomRef().offsetHeight, "No scrollbar. Whole content is visible");
+		oTA.destroy();
+	});
+	
+	test("maxHeight should be defined if maxLines is set", function() {
+		var sLongText = new Array(1000).join("text ");
+		var oTA = new sap.m.TextArea({
+			value: sLongText,
+			growing: true,
+			growingMaxLines: 5,
+			width: "100%"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oTA.focus();
+		ok(oTA.getFocusDomRef().scrollHeight > oTA.getFocusDomRef().offsetHeight, "There is scroll bar. Whole content is not visible");
+		ok(jQuery(oTA.getFocusDomRef()).css("max-height"), "There is a max-height defined");
+		oTA.destroy();
+	});
+
 })(jQuery, sap.ui.getCore());
 
 </script>

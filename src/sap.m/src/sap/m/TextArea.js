@@ -64,7 +64,20 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			 * Indicates when the <code>value</code> property gets updated with the user changes. Setting it to <code>true</code> updates the <code>value</code> property whenever the user has modified the text shown on the text area.
 			 * @since 1.30
 			 */
-			valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false}
+			valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Indicates the ability of the control to automatically grow and shrink dynamically with its content.
+			 * <b>Note:</b> The <code>height</code> property is ignored, if this property set to <code>true</code>.
+			 * @since 1.38.0
+			 */
+			growing : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Defines the maximum number of lines that the control can grow.
+			 * @since 1.38.0
+			 */
+			growingMaxLines : {type : "int", group : "Behavior", defaultValue : 0}
 		},
 		events : {
 
@@ -83,28 +96,53 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		}
 	}});
 
+	TextArea.prototype.exit = function() {
+		InputBase.prototype.exit.call(this);
+		jQuery(window).off("resize.sapMTextAreaGrowing");
+	};
+
 	// Attach listeners on after rendering and find iscroll
 	TextArea.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
 
-		// touch browser behaviour differs
-		if (sap.ui.Device.support.touch) {
+		if (this.getGrowing()) {
+			// adjust textarea height
+			var oTextArea = this.getFocusDomRef();
+			if (this.getGrowingMaxLines() > 0) {
+				var oStyle = window.getComputedStyle(oTextArea),
+					fMaxHeight = parseFloat(oStyle.lineHeight) * this.getGrowingMaxLines() +
+								parseFloat(oStyle.paddingTop) + parseFloat(oStyle.borderTopWidth) + parseFloat(oStyle.borderBottomWidth);
 
-			// check behaviour mode
-			if (this._behaviour.INSIDE_SCROLLABLE_WITHOUT_FOCUS) {
+				// bottom padding is out of scrolling content in firefox
+				if (sap.ui.Device.browser.firefox) {
+					fMaxHeight += parseFloat(oStyle.paddingBottom);
+				}
 
-				// Bind browser events to mimic native scrolling
-				this._$input.on("touchstart", jQuery.proxy(this._onTouchStart, this));
-				this._$input.on("touchmove", jQuery.proxy(this._onTouchMove, this));
-			} else if (this._behaviour.PAGE_NON_SCROLLABLE_AFTER_FOCUS) {
-
-				// stop bubbling to disable preventDefault calls
-				this._$input.on("touchmove", function(e) {
-					if (jQuery(this).is(":focus")) {
-						e.stopPropagation();
-					}
-				});
+				oTextArea.style.maxHeight = fMaxHeight + "px";
 			}
+
+			this._adjustHeight(oTextArea);
+		}
+
+		if (!sap.ui.Device.support.touch) {
+			return;
+		}
+
+		// check behaviour mode
+		var $TextArea = this.$("inner");
+		if (this._behaviour.INSIDE_SCROLLABLE_WITHOUT_FOCUS) {
+
+			// Bind browser events to mimic native scrolling
+			$TextArea.on("touchstart", jQuery.proxy(this._onTouchStart, this));
+			$TextArea.on("touchmove", jQuery.proxy(this._onTouchMove, this));
+		} else if (this._behaviour.PAGE_NON_SCROLLABLE_AFTER_FOCUS) {
+
+			// stop bubbling to disable preventDefault calls
+			$TextArea.on("touchmove", function(e) {
+				if ($TextArea.is(":focus")) {
+					e.stopPropagation();
+				}
+			});
 		}
 	};
 
@@ -141,8 +179,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	 * @public
 	 */
 	TextArea.prototype.getValue = function() {
-		var oDomRef = this.getFocusDomRef();
-		return oDomRef ? oDomRef.value : this.getProperty("value");
+		var oTextArea = this.getFocusDomRef();
+		return oTextArea ? oTextArea.value : this.getProperty("value");
 	};
 
 	TextArea.prototype.oninput = function(oEvent) {
@@ -151,13 +189,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			return;
 		}
 
-		var sValue = this._$input.val(),
+		var oTextArea = this.getFocusDomRef(),
+			sValue = oTextArea.value,
 			iMaxLength = this.getMaxLength();
 
 		// some browsers do not respect to maxlength property of textarea
 		if (iMaxLength > 0 && sValue.length > iMaxLength) {
 			sValue = sValue.substring(0, iMaxLength);
-			this._$input.val(sValue);
+			oTextArea.value = sValue;
 		}
 
 		// update value property if needed
@@ -168,12 +207,39 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			sValue = this.getValue();
 		}
 
+		// handle growing
+		if (this.getGrowing()) {
+			this._adjustHeight(oTextArea);
+		}
+
 		this.fireLiveChange({
 			value: sValue,
 
 			// backwards compatibility
 			newValue: sValue
 		});
+	};
+
+	TextArea.prototype.setGrowing = function(bGrowing) {
+		this.setProperty("growing", bGrowing);
+		if (this.getGrowing()) {
+			jQuery(window).on("resize.sapMTextAreaGrowing", this._updateOverflow.bind(this));
+		} else {
+			jQuery(window).off("resize.sapMTextAreaGrowing");
+		}
+		return this;
+	};
+
+	TextArea.prototype._adjustHeight = function(oTextArea) {
+		oTextArea.style.height = sap.ui.Device.browser.firefox ? "0px" : "auto";
+		oTextArea.style.height = oTextArea.scrollHeight + oTextArea.offsetHeight - oTextArea.clientHeight - 1 + "px";
+		this._updateOverflow();
+	};
+
+	TextArea.prototype._updateOverflow = function() {
+		var oTextArea = this.getFocusDomRef();
+		var fMaxHeight = parseFloat(window.getComputedStyle(oTextArea)["max-height"]);
+		oTextArea.style.overflowY = (oTextArea.scrollHeight > fMaxHeight) ? "auto" : "";
 	};
 
 	TextArea.prototype._getInputValue = function(sValue) {
@@ -223,11 +289,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	 */
 	TextArea.prototype._onTouchMove = function(oEvent) {
 
-		var oDomRef = this._$input[0],	// textarea dom reference
+		var oTextArea = this.getFocusDomRef(),
 			iPageY = oEvent.touches[0].pageY,
-			iScrollTop = oDomRef.scrollTop,
+			iScrollTop = oTextArea.scrollTop,
 			bTop = iScrollTop <= 0,
-			bBottom = iScrollTop + oDomRef.clientHeight >= oDomRef.scrollHeight,
+			bBottom = iScrollTop + oTextArea.clientHeight >= oTextArea.scrollHeight,
 			bGoingUp = this._iStartY > iPageY,
 			bGoingDown =  this._iStartY < iPageY,
 			bOnEnd = bTop && bGoingDown || bBottom && bGoingUp;
