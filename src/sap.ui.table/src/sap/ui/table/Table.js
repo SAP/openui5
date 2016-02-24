@@ -1380,7 +1380,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// update the bindings:
 		//  - prevent the rerendering
 		//  - use the databinding fwk to update the content of the rows
-		if (this.getBinding("rows") && !this._bRefreshing) {
+		if (bFirstVisibleRowChanged && this.getBinding("rows") && !this._bRefreshing) {
 			this.updateRows();
 			if (!bOnScroll) {
 				var oVSb = this.getDomRef("vsb");
@@ -1874,7 +1874,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			var iBindingTimerDelay = (sReason == ChangeReason.Change || (!this._mTimeouts.bindingTimer && Date.now() - this._lastCalledUpdateRows > this._iBindingTimerDelay) || sReason == "unbindAggregation" ? 0 : this._iBindingTimerDelay);
 
-			if (iBindingTimerDelay == 0) {
+			if (iBindingTimerDelay == 0 && sReason) {
 				this._performUpdateRows(sReason);
 			} else {
 				var that = this;
