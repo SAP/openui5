@@ -26,7 +26,8 @@ sap.ui.define(['jquery.sap.global'],
 
 		for (i = 0 ; i < aActionButtons.length ; i++) {
 			oButton = aActionButtons[i];
-			if (oButton.getIcon()) {
+			oButton.removeStyleClass("sapMActionSheetButtonNoIcon");
+			if (oButton.getIcon() && oButton.getVisible()) {
 				bMixedButtons = true;
 			} else {
 				oButton.addStyleClass("sapMActionSheetButtonNoIcon");
