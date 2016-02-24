@@ -486,8 +486,7 @@
 		createListBinding("/teamMembers");
 
 		var listBinding = bindings[0];
-		var oSorter = new sap.ui.model.Sorter("firstName", false);
-		oSorter.fnCompare = function(a, b) {
+		var oSorter = new sap.ui.model.Sorter("firstName", false, false, function(a, b) {
 			a = a.substr(1);
 			b = b.substr(1);
 			if (a < b) {
@@ -497,7 +496,7 @@
 				return 1;
 			}
 			return 0;
-		};
+		});
 		listBinding.sort(oSorter);
 
 		var sortedContexts = listBinding.getContexts();

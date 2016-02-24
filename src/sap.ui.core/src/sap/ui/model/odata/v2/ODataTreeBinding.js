@@ -1411,6 +1411,7 @@ sap.ui.define(['jquery.sap.global',
 			});
 
 			if (this.bClientOperation) {
+				this.addSortComparators(aSorters, this.oEntityType);
 				if (this.oAllKeys) {
 					//apply client side sorter
 					this._applySort();
@@ -1432,6 +1433,28 @@ sap.ui.define(['jquery.sap.global',
 		} else {
 			return this;
 		}
+	};
+
+	/**
+	 * Sets the comparator for each sorter in the sorters array according to the
+	 * Edm type of the sort property
+	 * @private
+	 */
+	ODataTreeBinding.prototype.addSortComparators = function(aSorters, oEntityType) {
+		var oPropertyMetadata, sType;
+
+		if (!oEntityType) {
+			jQuery.sap.log.warning("Cannot determine sort comparators, as entitytype of the collection is unkown!");
+			return;
+		}
+		jQuery.each(aSorters, function(i, oSorter) {
+			if (!oSorter.fnCompare) {
+				oPropertyMetadata = this.oModel.oMetadata._getPropertyMetadata(oEntityType, oSorter.sPath);
+				sType = oPropertyMetadata && oPropertyMetadata.type;
+				jQuery.sap.assert(oPropertyMetadata, "PropertyType for property " + oSorter.sPath + " of EntityType " + oEntityType.name + " not found!");
+				oSorter.fnCompare = ODataUtils.getComparator(sType);
+			}
+		}.bind(this));
 	};
 
 	/**
