@@ -8,11 +8,10 @@ sap.ui.require([
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Context, ListBinding, Model, Cache, Requestor, Helper,
+], function (ManagedObject, ChangeReason, Context, ListBinding, Model, _Cache, _ODataHelper,
 		ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -27,7 +26,7 @@ sap.ui.require([
 	});
 
 	/**
-	 * Creates a promise as mock for Cache.read which is fulfilled asynchronously with a result of
+	 * Creates a promise as mock for _Cache.read which is fulfilled asynchronously with a result of
 	 * the given length.
 	 * iStart determines the start index for the records contained in the result.
 	 *
@@ -89,7 +88,7 @@ sap.ui.require([
 					toString : function () { return "/service/EMPLOYEES"; }
 				};
 
-			this.oSandbox.mock(Cache).expects("create").returns(oCache);
+			this.oSandbox.mock(_Cache).expects("create").returns(oCache);
 			return this.oSandbox.mock(oCache);
 		}
 	});
@@ -103,11 +102,11 @@ sap.ui.require([
 			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
 			mQueryOptions = {};
 
-		oHelperMock = this.mock(Helper);
+		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
 			.returns(mQueryOptions);
-		this.mock(Cache).expects("create")
+		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
 				sinon.match.same(mQueryOptions));
 
@@ -408,7 +407,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRelative) {
-		QUnit.test("getContexts sends no change event on failure of Cache#read and logs error, "
+		QUnit.test("getContexts sends no change event on failure of _Cache#read and logs error, "
 				+ "path is relative: " + bRelative, function (assert) {
 			var oCacheMock,
 				oContext = {
@@ -682,7 +681,7 @@ sap.ui.require([
 		var oListBinding = this.oModel.bindList("EMPLOYEES"),
 			oListBindingMock = this.oSandbox.mock(oListBinding);
 
-		this.oSandbox.mock(Cache).expects("create").never();
+		this.oSandbox.mock(_Cache).expects("create").never();
 		// refresh event during refresh
 		oListBindingMock.expects("_fireRefresh").never();
 
@@ -725,7 +724,7 @@ sap.ui.require([
 			fnResolveRead,
 			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;});
 
-		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
+		this.oSandbox.stub(_Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
 				read: function (iIndex, iLength, sQueueId, sPath, fnDataRequested) {
 					fnDataRequested(); // synchronously
@@ -772,7 +771,7 @@ sap.ui.require([
 			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
 				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
 
-		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
+		this.oSandbox.stub(_Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
 				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
 					fnDataRequested();
@@ -806,7 +805,7 @@ sap.ui.require([
 			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
 				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
 
-		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
+		this.oSandbox.stub(_Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
 				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
 					iReadCount++;
@@ -886,7 +885,7 @@ sap.ui.require([
 	QUnit.test("getContexts calls dataRequested", function (assert) {
 		var oListBinding;
 
-		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
+		this.oSandbox.stub(_Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
 				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
 					fnDataRequested();

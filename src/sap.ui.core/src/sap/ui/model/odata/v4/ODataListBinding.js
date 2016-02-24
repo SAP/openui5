@@ -8,10 +8,10 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ListBinding",
+	"./lib/_Cache",
 	"./_Context",
-	"./_ODataHelper",
-	"./lib/_Cache"
-], function (jQuery, Binding, ChangeReason, ListBinding, _Context, Helper, Cache) {
+	"./_ODataHelper"
+], function (jQuery, Binding, ChangeReason, ListBinding, _Cache, _Context, _ODataHelper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -63,8 +63,8 @@ sap.ui.define([
 				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.create(oModel.oRequestor, sPath.slice(1),
-						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
+					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
+						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");

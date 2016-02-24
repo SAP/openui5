@@ -22,7 +22,7 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Model, URI, MetadataRequestor, Requestor, Helper, ODataContextBinding,
+], function(jQuery, Model, URI, _MetadataRequestor, _Requestor, _ODataHelper, ODataContextBinding,
 		ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 	"use strict";
 
@@ -103,14 +103,14 @@ sap.ui.define([
 						throw new Error("Service root URL must end with '/'");
 					}
 					this._sQuery = oUri.search(); //return query part with leading "?"
-					this.mUriParameters = Helper.buildQueryOptions(jQuery.extend({},
+					this.mUriParameters = _ODataHelper.buildQueryOptions(jQuery.extend({},
 						oUri.query(true), mParameters && mParameters.serviceUrlParams));
 					this.sServiceUrl = oUri.query("").toString();
 
 					this.oMetaModel = new ODataMetaModel(
-						MetadataRequestor.create(mHeaders, this.mUriParameters),
+						_MetadataRequestor.create(mHeaders, this.mUriParameters),
 						this.sServiceUrl + "$metadata");
-					this.oRequestor = Requestor.create(this.sServiceUrl, mHeaders,
+					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters);
 					this.mDataRequestedCallbacks = {};
 				}

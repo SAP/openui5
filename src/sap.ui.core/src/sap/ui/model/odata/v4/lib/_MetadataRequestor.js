@@ -7,7 +7,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"./_Helper",
 	"./_MetadataConverter"
-], function (jQuery, Helper, MetadataConverter) {
+], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
 	return {
@@ -21,7 +21,7 @@ sap.ui.define([
 		 *   A new MetadataRequestor object
 		 */
 		create : function (mHeaders, mQueryParams) {
-			var sQueryStr = Helper.buildQuery(mQueryParams);
+			var sQueryStr = _Helper.buildQuery(mQueryParams);
 
 			return {
 				/**
@@ -41,10 +41,10 @@ sap.ui.define([
 						.then(function (oData /*, sTextStatus, jqXHR */) {
 							fnResolve(oData);
 						}, function (jqXHR, sTextStatus, sErrorMessage) {
-							fnReject(Helper.createError(jqXHR));
+							fnReject(_Helper.createError(jqXHR));
 						});
 					}).then(function (oXMLMetadata) {
-						return MetadataConverter.convertXMLMetadata(oXMLMetadata);
+						return _MetadataConverter.convertXMLMetadata(oXMLMetadata);
 					});
 				}
 			};

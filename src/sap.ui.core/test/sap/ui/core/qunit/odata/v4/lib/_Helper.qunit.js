@@ -5,7 +5,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (Helper, TestUtils, URI) {
+], function (_Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -120,7 +120,7 @@ sap.ui.require([
 					oFixture.response.responseText, "sap.ui.model.odata.v4.lib._Helper");
 			}
 
-			oError = Helper.createError(jqXHR);
+			oError = _Helper.createError(jqXHR);
 
 			assert.ok(oError instanceof Error);
 			assert.deepEqual(oError.error, oFixture.body && oFixture.body.error);
@@ -135,41 +135,41 @@ sap.ui.require([
 	QUnit.test("encode", function (assert) {
 		var sUnchanged = "foo$,/:?@();";
 
-		assert.strictEqual(Helper.encode(sUnchanged, false), sUnchanged);
-		assert.strictEqual(Helper.encode(sUnchanged, true), sUnchanged);
+		assert.strictEqual(_Helper.encode(sUnchanged, false), sUnchanged);
+		assert.strictEqual(_Helper.encode(sUnchanged, true), sUnchanged);
 
-		assert.strictEqual(Helper.encode("€_&_=_#_+", false), "%E2%82%AC_%26_=_%23_%2B");
-		assert.strictEqual(Helper.encode("€_&_=_#_+", true), "%E2%82%AC_%26_%3D_%23_%2B");
+		assert.strictEqual(_Helper.encode("€_&_=_#_+", false), "%E2%82%AC_%26_=_%23_%2B");
+		assert.strictEqual(_Helper.encode("€_&_=_#_+", true), "%E2%82%AC_%26_%3D_%23_%2B");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("encodePair", function (assert) {
 		var sEncoded,
-			oHelperMock = this.mock(Helper);
+			oHelperMock = this.mock(_Helper);
 
 		oHelperMock.expects("encode").withExactArgs("key", true).returns("~key~");
 		oHelperMock.expects("encode").withExactArgs("value", false).returns("~value~");
 
-		sEncoded = Helper.encodePair("key", "value");
+		sEncoded = _Helper.encodePair("key", "value");
 		assert.strictEqual(sEncoded, "~key~=~value~");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("buildQuery: no query", function (assert) {
-		assert.strictEqual(Helper.buildQuery(), "");
-		assert.strictEqual(Helper.buildQuery({}), "");
+		assert.strictEqual(_Helper.buildQuery(), "");
+		assert.strictEqual(_Helper.buildQuery({}), "");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("buildQuery: query", function (assert) {
 		var sEncoded,
-			oHelperMock = this.mock(Helper);
+			oHelperMock = this.mock(_Helper);
 
 		oHelperMock.expects("encodePair").withExactArgs("a", "b").returns("a=b");
 		oHelperMock.expects("encodePair").withExactArgs("c", "d").returns("c=d");
 		oHelperMock.expects("encodePair").withExactArgs("c", "e").returns("c=e");
 
-		sEncoded = Helper.buildQuery({a : "b", c : ["d", "e"]});
+		sEncoded = _Helper.buildQuery({a : "b", c : ["d", "e"]});
 		assert.strictEqual(sEncoded, "?a=b&c=d&c=e");
 	});
 
@@ -184,13 +184,13 @@ sap.ui.require([
 			sComplexString = sComplexString + String.fromCharCode(i);
 		}
 
-		sUri = "/" + Helper.buildQuery({foo : sComplexString});
+		sUri = "/" + _Helper.buildQuery({foo : sComplexString});
 
 		// decode via URI.js
 		assert.strictEqual(new URI(sUri).search(true).foo, sComplexString);
 
 		mParameters[sComplexString] = "foo";
-		sUri = "/" + Helper.buildQuery(mParameters);
+		sUri = "/" + _Helper.buildQuery(mParameters);
 
 		// decode via URI.js
 		assert.strictEqual(new URI(sUri).search(true)[sComplexString], "foo");
@@ -199,7 +199,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("isSafeInteger", function (assert) {
 		function test(sNumber, bValue) {
-			assert.strictEqual(Helper.isSafeInteger(sNumber), bValue, sNumber);
+			assert.strictEqual(_Helper.isSafeInteger(sNumber), bValue, sNumber);
 		}
 		test(0, true);
 		test((Math.pow(2, 53) - 1), true);
@@ -248,14 +248,14 @@ sap.ui.require([
 	].forEach(function(oFixture) {
 		QUnit.test("formatLiteral: " + oFixture.t + " " +  oFixture.v, function (assert) {
 			assert.strictEqual(
-				Helper.formatLiteral(oFixture.v, oFixture.t), oFixture.e);
+				_Helper.formatLiteral(oFixture.v, oFixture.t), oFixture.e);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("formatLiteral: error case", function (assert) {
 		assert.throws(
-			function () { Helper.formatLiteral("foo", "Edm.bar"); },
+			function () { _Helper.formatLiteral("foo", "Edm.bar"); },
 			new Error("Unsupported type: Edm.bar")
 		);
 	});
@@ -269,7 +269,7 @@ sap.ui.require([
 				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 
 			jQuery.ajax(sResolvedServiceUrl + "BusinessPartnerList?"
-				+ "$filter=CompanyName eq + " + Helper.formatLiteral("Becker Berlin", "Edm.String")
+				+ "$filter=CompanyName eq + " + _Helper.formatLiteral("Becker Berlin", "Edm.String")
 				, { method : "GET"}
 			).then(function (oData, sTextStatus, jqXHR) {
 				assert.strictEqual(oData.value[0].CompanyName, "Becker Berlin");

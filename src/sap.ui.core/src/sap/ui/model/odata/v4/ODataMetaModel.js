@@ -11,11 +11,11 @@ sap.ui.define([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
-	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/_SyncPromise",
-	"sap/ui/model/PropertyBinding"
+	"sap/ui/model/PropertyBinding",
+	"./_ODataHelper",
+	"./_SyncPromise"
 ], function (jQuery, BindingMode, ContextBinding, Context, FilterProcessor, JSONListBinding,
-		MetaModel, Helper, SyncPromise, PropertyBinding) {
+		MetaModel, PropertyBinding, _ODataHelper, _SyncPromise) {
 	"use strict";
 
 	var DEBUG = jQuery.sap.log.Level.DEBUG,
@@ -261,7 +261,7 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.fetchEntityContainer = function () {
 		if (!this.oMetadataPromise) {
-			this.oMetadataPromise = SyncPromise.resolve(this.oRequestor.read(this.sUrl));
+			this.oMetadataPromise = _SyncPromise.resolve(this.oRequestor.read(this.sUrl));
 		}
 		return this.oMetadataPromise;
 	};
@@ -282,7 +282,7 @@ sap.ui.define([
 
 		if (!sResolvedPath) {
 			jQuery.sap.log.error("Invalid relative path w/o context", sPath, sODataMetaModel);
-			return SyncPromise.resolve(null);
+			return _SyncPromise.resolve(null);
 		}
 
 		return this.fetchEntityContainer().then(function (mScope) {
@@ -563,7 +563,7 @@ sap.ui.define([
 	 * @public
 	 * @see #requestObject
 	 */
-	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("fetchObject");
+	ODataMetaModel.prototype.getObject = _SyncPromise.createGetMethod("fetchObject");
 
 	/**
 	 * @deprecated Use {@link #getObject getObject}.
@@ -589,7 +589,7 @@ sap.ui.define([
 	 * @public
 	 * @see #requestUI5Type
 	 */
-	ODataMetaModel.prototype.getUI5Type = SyncPromise.createGetMethod("fetchUI5Type", true);
+	ODataMetaModel.prototype.getUI5Type = _SyncPromise.createGetMethod("fetchUI5Type", true);
 
 	/**
 	 * Refresh not supported by OData meta model!
@@ -646,7 +646,7 @@ sap.ui.define([
 			});
 
 			return sServiceUrl + encodeURIComponent(sEntitySetName)
-				+ Helper.getKeyPredicate(oEntityType, oEntityInstance);
+				+ _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
 		});
 	};
 
@@ -788,7 +788,7 @@ sap.ui.define([
 	 * @public
 	 * @see #getObject
 	 */
-	ODataMetaModel.prototype.requestObject = SyncPromise.createRequestMethod("fetchObject");
+	ODataMetaModel.prototype.requestObject = _SyncPromise.createRequestMethod("fetchObject");
 
 	/**
 	 * Requests the UI5 type for the given property path that formats and parses corresponding to
@@ -806,7 +806,7 @@ sap.ui.define([
 	 * @see #getUI5Type
 	 */
 	ODataMetaModel.prototype.requestUI5Type
-		= SyncPromise.createRequestMethod("fetchUI5Type");
+		= _SyncPromise.createRequestMethod("fetchUI5Type");
 
 	/**
 	 * Resolves the given path relative to the given context. Without a context, a relative path

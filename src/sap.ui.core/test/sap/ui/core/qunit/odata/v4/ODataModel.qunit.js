@@ -7,7 +7,6 @@ sap.ui.require([
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
@@ -16,8 +15,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (Model, TypeString, ODataUtils, _Context, Helper, SyncPromise, MetadataRequestor,
-		Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
+], function (Model, TypeString, ODataUtils, _Context, _ODataHelper, _MetadataRequestor,
+		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
 		ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -90,9 +89,9 @@ sap.ui.require([
 		var mHeaders = {
 				"Accept-Language" : "ab-CD"
 			},
-			oHelperMock = this.mock(Helper),
+			oHelperMock = this.mock(_ODataHelper),
 			oMetadataRequestor = {},
-			oMetadataRequestorMock = this.mock(MetadataRequestor),
+			oMetadataRequestorMock = this.mock(_MetadataRequestor),
 			oMetaModel,
 			oModel,
 			mModelOptions = {};
@@ -138,11 +137,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Model creates Requestor", function (assert) {
+	QUnit.test("Model creates _Requestor", function (assert) {
 		var oModel,
 			oRequestor = {};
 
-		this.mock(Requestor).expects("create").withExactArgs("/foo/", {
+		this.mock(_Requestor).expects("create").withExactArgs("/foo/", {
 			"Accept-Language" : "ab-CD"
 		}, {
 			"sap-client" : "123"
