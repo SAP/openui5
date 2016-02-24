@@ -26,15 +26,13 @@ sap.ui.define([
 		ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataModel",
-		// /TEAMS[2];root=0/Name or /TEAMS('4711');root=0/Name
-		rRootBindingPath = /^\/.+(?:(?:\[(\d+)\])|(?:\(.+\)));root=(\d+)(?:\/(.+))?$/;
+	var sClassName = "sap.ui.model.odata.v4.ODataModel";
 
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
 	 * framework. The error message includes the arguments to the method call.
-	 * @param {string} sMethodName - the method name
-	 * @param {object} args - the arguments passed to this method when called by SAPUI5
+	 * @param {string} sMethodName The method name
+	 * @param {object} args The arguments passed to this method when called by SAPUI5
 	 */
 	function notImplemented(sMethodName, args) {
 		var sArgs;
@@ -52,25 +50,25 @@ sap.ui.define([
 	 * Constructor for a new ODataModel.
 	 *
 	 * @param {string} [sServiceUrl]
-	 *   root URL of the service to request data from; it is required, but may also be given via
+	 *   Root URL of the service to request data from; it is required, but may also be given via
 	 *   <code>mParameters.serviceUrl</code>. Must end with a forward slash according to OData v4
 	 *   specification ABNF, rule "serviceRoot" unless you append OData custom query options
 	 *   to the service root URL separated with a "?", e.g. "/MyService/?custom=foo". See parameter
 	 *   <code>mParameters.serviceUrlParams</code> for details on custom query options.
 	 * @param {object} [mParameters]
-	 *   the parameters
+	 *   The parameters
 	 * @param {string} [mParameters.serviceUrl]
-	 *   root URL of the service to request data from as specified for the parameter
+	 *   Root URL of the service to request data from as specified for the parameter
 	 *   <code>sServiceUrl</code>; only used if the parameter <code>sServiceUrl</code> has not been
 	 *   given
 	 * @param {object} [mParameters.serviceUrlParams]
-	 *   map of OData custom query options to be used in each data service request for this model,
+	 *   Map of OData custom query options to be used in each data service request for this model,
 	 *   see specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
 	 *   OData system query options
 	 *   and OData parameter aliases lead to an error.
 	 *   Query options from this map overwrite query options with the same name specified via the
 	 *   <code>sServiceUrl</code> parameter.
-	 * @throws {Error} if the given service root URL does not end with a forward slash or if
+	 * @throws {Error} If the given service root URL does not end with a forward slash or if
 	 *   OData system query options or parameter aliases are specified as parameters
 	 *
 	 * @class Model implementation for OData v4.
@@ -85,7 +83,10 @@ sap.ui.define([
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
 				constructor : function (sServiceUrl, mParameters) {
-					var oUri;
+					var mHeaders = {
+							"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()
+						},
+						oUri;
 
 					// do not pass any parameters to Model
 					Model.apply(this);
@@ -107,14 +108,39 @@ sap.ui.define([
 					this.sServiceUrl = oUri.query("").toString();
 
 					this.oMetaModel = new ODataMetaModel(
-						MetadataRequestor.create(null, this.mUriParameters),
+						MetadataRequestor.create(mHeaders, this.mUriParameters),
 						this.sServiceUrl + "$metadata");
-					this.oRequestor = Requestor.create(this.sServiceUrl, {
-						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
-					});
-					this.aRoots = [];
+					this.oRequestor = Requestor.create(this.sServiceUrl, mHeaders,
+						this.mUriParameters);
+					this.mDataRequestedCallbacks = {};
 				}
 			});
+
+	/**
+	 * Informs the model that a request has been added to the given group.
+	 *
+	 * @param {string} sGroupId
+	 *   ID of the batch group which should be sent as an OData batch request
+	 * @param {function} fnBatchRequestSent
+	 *   a function that is called synchronously after the batch request has been sent
+	 */
+	ODataModel.prototype.dataRequested = function (sGroupId, fnBatchRequestSent) {
+		var that = this,
+			aCallbacks = this.mDataRequestedCallbacks[sGroupId];
+
+		if (aCallbacks) {
+			aCallbacks.push(fnBatchRequestSent);
+		} else {
+			aCallbacks = this.mDataRequestedCallbacks[sGroupId] = [fnBatchRequestSent];
+			sap.ui.getCore().addPrerenderingTask(function () {
+				delete that.mDataRequestedCallbacks[sGroupId];
+				that.oRequestor.submitBatch(sGroupId);
+				aCallbacks.forEach(function (fnCallback) {
+					fnCallback();
+				});
+			});
+		}
+	};
 
 	/**
 	 * Creates a new context binding for the given path and context. The key value pairs from the
@@ -129,27 +155,27 @@ sap.ui.define([
 	 * context is available.
 	 *
 	 * @param {string} sPath
-	 *   the binding path in the model
+	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
-	 *   $select "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL
-	 *   Conventions") are allowed. All other query options lead to an error. Query options
-	 *   specified for the binding overwrite model query options.
+	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
+	 *   The following query options are allowed:
+	 *   <ul>
+	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *   <li> The $expand and $select "5.1 System Query Options"
+	 *   </ul>
+	 *   All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
-	 *   the context binding
-	 * @throws {Error} when disallowed OData query options are provided
+	 *   The context binding
+	 * @throws {Error} When disallowed OData query options are provided
 	 * @public
 	 */
 	ODataModel.prototype.bindContext = function (sPath, oContext, mParameters) {
-		var oContextBinding = new ODataContextBinding(this, sPath, oContext, this.aRoots.length,
-				mParameters);
-
-		this.aRoots.push(oContextBinding);
-		return oContextBinding;
+		return new ODataContextBinding(this, sPath, oContext, mParameters);
 	};
 
 	/**
@@ -157,31 +183,31 @@ sap.ui.define([
 	 * resolve to an absolute OData path for an entity set.
 	 *
 	 * @param {string} sPath
-	 *   the binding path in the model
+	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter[]} [aSorters]
-	 *   initial sort order
+	 *   Initial sort order
 	 * @param {sap.ui.model.Filter[]} [aFilters]
-	 *   predefined filters
+	 *   Predefined filters
 	 * @param {object} [mParameters]
-	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and
-	 *   $select "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL
-	 *   Conventions") are allowed. All other query options lead to an error. Query options
-	 *   specified for the binding overwrite model query options.
+	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
+	 *   The following query options are allowed:
+	 *   <ul>
+	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *   <li> The $expand and $select "5.1 System Query Options"
+	 *   </ul>
+	 *   All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @return {sap.ui.model.odata.v4.ODataListBinding}
-	 *   the list binding
-	 * @throws {Error} when disallowed OData query options are provided
+	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
+	 *   The list binding
+	 * @throws {Error} When disallowed OData query options are provided
 	 * @public
 	 */
 	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
-		var oListBinding = new ODataListBinding(this, sPath, oContext, this.aRoots.length,
-				mParameters);
-
-		this.aRoots.push(oListBinding);
-		return oListBinding;
+		return new ODataListBinding(this, sPath, oContext, mParameters);
 	};
 
 	/**
@@ -191,18 +217,19 @@ sap.ui.define([
 	 * to be informed when the value is available.
 	 *
 	 * @param {string} sPath
-	 *   the binding path in the model
+	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   map of OData query options where only "5.2 Custom Query Options" (see specification "OData
-	 *   Version 4.0 Part 2: URL Conventions") are allowed. All other query options lead to an
-	 *   error. Query options specified for the binding overwrite model query options.
+	 *   Map of OData query options where only "5.2 Custom Query Options" are allowed (see
+	 *   specification "OData Version 4.0 Part 2: URL Conventions"), except for those with a name
+	 *   starting with "sap-". All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
-	 *   the property binding
-	 * @throws {Error} when parameters are provided
+	 *   The property binding
+	 * @throws {Error} When parameters are provided
 	 * @public
 	 */
 	ODataModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
@@ -217,32 +244,57 @@ sap.ui.define([
 	 * Creates a new entity from the given data in the collection pointed to by the given path.
 	 *
 	 * @param {string} sPath
-	 *   an absolute data binding path pointing to an entity set, e.g. "/EMPLOYEES"
+	 *   An absolute data binding path pointing to an entity set, e.g. "/EMPLOYEES"
 	 * @param {object} oEntityData
-	 *   the new entity's properties, e.g.
+	 *   The new entity's properties, e.g.
 	 *   <code>{"ID" : "1", "AGE" : 52, "ENTRYDATE" : "1977-07-24", "Is_Manager" : false}</code>
 	 * @returns {Promise}
-	 *   a promise which is resolved with the server's response data in case of success, or
+	 *   A promise which is resolved with the server's response data in case of success, or
 	 *   rejected with an instance of <code>Error</code> in case of failure
 	 *
 	 * @private
 	 */
 	ODataModel.prototype.create = function (sPath, oEntityData) {
-		var sUrl = this.sServiceUrl + sPath.slice(1) + this._sQuery;
+		var sResourcePath = sPath.slice(1) + this._sQuery;
 
-		return this.oRequestor.request("POST", sUrl, null, oEntityData);
-	};
-
-	ODataModel.prototype.createBindingContext = function () {
-		notImplemented("createBindingContext", arguments);
-	};
-
-	ODataModel.prototype.destroyBindingContext = function () {
-		notImplemented("destroyBindingContext", arguments);
+		return this.oRequestor.request("POST", sResourcePath, undefined, null, oEntityData);
 	};
 
 	/**
-	 * Returns the meta model for this ODataModel
+	 * Cannot create contexts at this model at will; retrieve them from a binding instead.
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
+	 * @see sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts
+	 * @throws {Error}
+	 */
+	ODataModel.prototype.createBindingContext = function () {
+		throw new Error("Cannot create context at model");
+	};
+
+	/**
+	 * Cannot destroy contexts.
+	 *
+	 * @public
+	 * @throws {Error}
+	 */
+	ODataModel.prototype.destroyBindingContext = function () {
+		throw new Error("Cannot destroy context");
+	};
+
+	/**
+	 * Cannot get a shared context for a path. Contexts are created by bindings instead and there
+	 * may be multiple contexts for the same path.
+	 *
+	 * @private
+	 * @throws {Error}
+	 */
+	ODataModel.prototype.getContext = function () {
+		throw new Error("Cannot get context at model");
+	};
+
+	/**
+	 * Returns the meta model for this ODataModel.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ODataMetaModel}
 	 *   The meta model for this ODataModel
@@ -257,54 +309,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Triggers a GET request to this model's OData service. The data will be stored in the model.
-	 *
-	 * @param {string} sPath
-	 *   An absolute data binding path to the data which should be retrieved
-	 * @param {boolean} [bAllowObjectAccess=false]
-	 *   whether access to whole objects is allowed
-	 * @returns {Promise}
-	 *   A promise to be resolved when the OData request is finished, providing a data object
-	 *   just like the OData v4 JSON format, e.g. <code>{"value" : "foo"}</code> for simple
-	 *   properties, <code>{"value" : [...]}</code> for collections and
-	 *   <code>{"foo" : "bar", ...}</code> for objects
-	 *
-	 * @protected
-	 */
-	ODataModel.prototype.read = function (sPath, bAllowObjectAccess) {
-		var that = this;
-
-		if (sPath[0] !== "/") {
-			throw new Error("Not an absolute data binding path: " + sPath);
-		}
-
-		return new Promise(function (fnResolve, fnReject) {
-			var aMatches = rRootBindingPath.exec(sPath);
-
-			if (aMatches) { // use list binding to retrieve the value
-				that.aRoots[Number(aMatches[2])]
-					.readValue(aMatches[3], bAllowObjectAccess, Number(aMatches[1]))
-					.then(function (oValue) {
-						// property access: wrap property value just like OData does
-						fnResolve(typeof oValue === "object" && !Array.isArray(oValue)
-							? oValue
-							: {value : oValue});
-					}, function (oError) {
-						fnReject(oError);
-					});
-				return;
-			}
-		});
-	};
-
-	/**
 	 * Refreshes the model by calling refresh on all bindings which have a change event handler
 	 * attached. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 *
 	 * @param {boolean} bForceUpdate
-	 *   <code>bForceUpdate</code> has to be <code>true</code>
-	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code>
+	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code>
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#refresh
@@ -344,13 +355,13 @@ sap.ui.define([
 			that = this;
 
 		return Promise.all([
-			this.read(sPath + "/@odata.etag"),
-			this.getMetaModel().requestCanonicalUrl(this.sServiceUrl, sPath, this.read.bind(this))
+			oContext.requestValue("@odata.etag"),
+			this.getMetaModel().requestCanonicalUrl("", sPath, oContext)
 		]).then(function (aValues) {
-			var sEtag = aValues[0].value,
-				sCanonicalUrl = aValues[1] + that._sQuery;
+			var sEtag = aValues[0],
+				sResourcePath = aValues[1] + that._sQuery; // "canonical path" w/o service URL
 
-			return that.oRequestor.request("DELETE", sCanonicalUrl, {"If-Match" : sEtag})
+			return that.oRequestor.request("DELETE", sResourcePath, undefined, {"If-Match" : sEtag})
 				["catch"](function (oError) {
 					if (oError.status === 404) {
 						return; // map 404 to 200, i.e. resolve if already deleted
@@ -369,24 +380,19 @@ sap.ui.define([
 	 * binding.
 	 *
 	 * @param {sap.ui.model.Context} oEntityContext
-	 *   a context in this model which must point to a non-contained OData entity
+	 *   A context in this model which must point to a non-contained OData entity
 	 * @returns {Promise}
-	 *   a promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
+	 *   A promise which is resolved with the canonical path (e.g. "/EMPLOYEES(ID='1')") in case of
 	 *   success, or rejected with an instance of <code>Error</code> in case of failure, e.g. when
 	 *   the given context does not point to an entity
 	 *
 	 * @public
 	 */
 	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
-		var that = this;
-
 		jQuery.sap.assert(oEntityContext.getModel() === this,
 				"oEntityContext must belong to this model");
 		return this.getMetaModel()
-			.requestCanonicalUrl(this.sServiceUrl, oEntityContext.getPath(), this.read.bind(this))
-			.then(function (sCanonicalUrl) {
-				return sCanonicalUrl.slice(that.sServiceUrl.length - 1);
-			});
+			.requestCanonicalUrl("/", oEntityContext.getPath(), oEntityContext);
 	};
 
 	return ODataModel;

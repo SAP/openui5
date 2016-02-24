@@ -5,11 +5,11 @@ sap.ui.require([
 	"sap/ui/base/BindingParser", "sap/ui/model/BindingMode", "sap/ui/model/ClientContextBinding",
 	"sap/ui/model/Context", "sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding", "sap/ui/model/json/JSONPropertyBinding",
-	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/MetaModel", "sap/ui/model/Model",
+	"sap/ui/model/json/JSONTreeBinding", "sap/ui/model/Model",
 	"sap/ui/model/odata/_ODataMetaModelUtils", "sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataModel", "sap/ui/model/odata/v2/ODataModel", "sap/ui/test/TestUtils"
 ], function(BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
-	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, MetaModel, Model, Utils, ODataMetaModel,
+	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, Model, Utils, ODataMetaModel,
 	ODataModel1, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
@@ -751,8 +751,6 @@ sap.ui.require([
 			assert.deepEqual(arguments[0], undefined, "almost no args");
 
 			oGlobalSandbox.mock(Model.prototype).expects("destroy");
-			// do not mock/stub this or else "destroy" will not bubble up!
-			oGlobalSandbox.spy(MetaModel.prototype, "destroy");
 
 			// generic dispatching
 			["destroy", "isList"].forEach(function (sName) {
@@ -765,8 +763,6 @@ sap.ui.require([
 			oMetaModelMock.expects("_getObject").withExactArgs("foo", 0, false)
 				.returns(oResult);
 			assert.strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
-
-			assert.ok(MetaModel.prototype.destroy.calledOnce);
 
 			assert.throws(function () {
 				oMetaModel.refresh();

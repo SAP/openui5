@@ -2,7 +2,7 @@
 	"$Version" : "4.0",
 	"$EntityContainer" : "com.sap.gateway.iwbep.tea_busi.v0001.DefaultContainer",
 	"$Reference" : {
-		"/sap/opu/local_V4/IWBEP/TEA_BUSI_PRODUCT/$metadata" : {
+		"../../../default/iwbep/tea_busi_product/0001/$metadata" : {
 			"$Include" : ["com.sap.gateway.iwbep.tea_busi_product.v0001."]
 		},
 		"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" : {

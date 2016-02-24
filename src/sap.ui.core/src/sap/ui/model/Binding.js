@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		if (this.oContext != oContext) {
 			this.oContext = oContext;
 			this.oDataState = null;
-			this._fireChange();
+			this._fireChange({reason : ChangeReason.Context});
 		}
 	};
 

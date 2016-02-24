@@ -4,8 +4,9 @@
 sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/_ODataHelper"
-], function (Context, Helper, ODataHelper) {
+], function (Context, Helper, Parser, ODataHelper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -89,7 +90,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		mModelOptions : {"sap-client" : "111"},
-		mOptions : {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
+		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
 		allowed : ["$expand", "$select"]
 	}, {
 		mModelOptions : {"custom" : "bar"},
@@ -115,11 +116,31 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
+		var oExpand = {"foo" : true},
+			oParserMock = this.mock(Parser),
+			aSelect = ["bar"];
+
+		oParserMock.expects("parseSystemQueryOption")
+			.withExactArgs("$expand=foo").returns({"$expand" : oExpand});
+		oParserMock.expects("parseSystemQueryOption")
+			.withExactArgs("$select=bar").returns({"$select" : aSelect});
+
+		assert.deepEqual(ODataHelper.buildQueryOptions({}, {
+			$expand : "foo",
+			$select : "bar"
+		}, ["$expand", "$select"]), {
+			$expand : oExpand,
+			$select : aSelect
+		});
+	});
+
+	//*********************************************************************************************
 	[{
 		mModelOptions : {},
 		mOptions : {"$foo" : "foo"},
 		allowed : ["$expand", "$select"],
-		error : "Parameter $foo is not supported"
+		error : "System query option $foo is not supported"
 	}, {
 		mModelOptions : {},
 		mOptions : {"@alias" : "alias"},
@@ -127,9 +148,24 @@ sap.ui.require([
 		error : "Parameter @alias is not supported"
 	}, {
 		mModelOptions : undefined,
-		mOptions : {"$expand" : "foo"},
+		mOptions : {"$expand" : {"foo" : true}},
 		allowed : undefined,
-		error : "Parameter $expand is not supported"
+		error : "System query option $expand is not supported"
+	}, {
+		mModelOptions : undefined,
+		mOptions : {"$expand" : {"foo" : {"$select" : "bar"}}},
+		allowed : ["$expand"],
+		error : "System query option $select is not supported"
+	}, {
+		mModelOptions : undefined,
+		mOptions : {"$expand" : {"foo" : {"select" : "bar"}}},
+		allowed : ["$expand", "$select"],
+		error : "System query option select is not supported"
+	}, {
+		mModelOptions : undefined,
+		mOptions : {"sap-foo" : "300"},
+		allowed : undefined,
+		error : "Custom query option sap-foo is not supported"
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
 			assert.throws(function () {

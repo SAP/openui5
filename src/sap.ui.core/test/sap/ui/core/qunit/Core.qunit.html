@@ -228,6 +228,19 @@
 
 		});
 
+		test("prerendering tasks", function (assert) {
+			var done = assert.async(),
+				bCalled = false,
+				oCore = sap.ui.getCore();
+
+			function task () {
+				bCalled = true;
+				oCore.addPrerenderingTask(done);
+			}
+
+			oCore.addPrerenderingTask(task);
+			assert.ok(!bCalled, "not called synchronously");
+		});
 
 		</script>
 	</head>

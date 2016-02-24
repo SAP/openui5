@@ -12,8 +12,10 @@ sap.ui.require([
 	"use strict";
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata" : {source : "metadata.xml"},
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/metadata.json" : {source : "metadata.json"}
+			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
+				: {source : "metadata.xml"},
+			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json"
+				: {source : "metadata.json"}
 		};
 
 	/**
@@ -43,6 +45,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._MetadataRequestor", {
 		beforeEach : function () {
+			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
+			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
+			sap.ui.getVersionInfo();
+
 			this.oSandbox = sinon.sandbox.create();
 			TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data", mFixture);
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
@@ -66,7 +72,7 @@ sap.ui.require([
 			oExpectedXml = "xml",
 			oHeaders = {},
 			oQueryParams = {
-				"sap-client":"300"
+				"sap-client" :"300"
 			},
 			oMetadataRequestor,
 			sUrl = "/~/";
@@ -118,8 +124,9 @@ sap.ui.require([
 		var oMetadataRequestor = MetadataRequestor.create();
 
 		return Promise.all([
-			oMetadataRequestor.read("/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata"),
-			jQuery.ajax("/sap/opu/local_v4/IWBEP/TEA_BUSI/metadata.json")
+			oMetadataRequestor.read(
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"),
+			jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json")
 		]).then(function (aResults) {
 			assert.deepEqual(aResults[0], aResults[1]);
 		});

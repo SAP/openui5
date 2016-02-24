@@ -47,6 +47,13 @@ sap.ui.define([
 			);
 		},
 
+		onDataEvents : function (oEvent) {
+			var oSource = oEvent.getSource();
+
+			jQuery.sap.log.info(oEvent.getId() + " event processed for path " + oSource.getPath(),
+				oSource, "sap.ui.core.sample.odata.v4.SalesOrders.Main.controller");
+		},
+
 		onDeleteSalesOrder : function (oEvent) {
 			var oSalesOrderContext = oEvent.getSource().getBindingContext(),
 				oModel = oSalesOrderContext.getModel(),
@@ -66,12 +73,15 @@ sap.ui.define([
 				}, onRejected);
 			}
 
-			oModel.read(oSalesOrderContext.getPath() + "/SalesOrderID").then(function (oValue) {
-				sOrderID = oValue.value;
-				MessageBox.confirm("Do you really want to delete? " + sOrderID, onConfirm,
-					"Sales Order Deletion");
+			//TODO make context public and allow access to index and value
+			//   oEvent.getSource().getBindingContext().getIndex() / .requestValue("SalesOrderID")
+			this.getView().byId("SalesOrders").getItems().forEach(function (oItem) {
+				if (oItem.getBindingContext() === oEvent.getSource().getBindingContext()) {
+					sOrderID = oItem.getCells()[0].getText();
+					MessageBox.confirm("Do you really want to delete? " + sOrderID, onConfirm,
+						"Sales Order Deletion");
 				}
-			);
+			});
 		},
 
 		onRefreshAll : function () {
@@ -99,6 +109,7 @@ sap.ui.define([
 		onSalesOrdersSelect : function (oEvent) {
 			var oSalesOrderContext = oEvent.getParameters().listItem.getBindingContext(),
 				oModel = oSalesOrderContext.getModel(),
+				that = this,
 				oView = this.getView();
 
 			//TODO use path "" for bindElement and call setBindingContext(oSalesOrderContext) on
@@ -107,11 +118,29 @@ sap.ui.define([
 			//  binding has parameters.
 			oModel.requestCanonicalPath(oSalesOrderContext).then(function (sCanonicalPath) {
 				oView.byId("ObjectPage").bindElement({
+					events : {
+						dataReceived : that.onDataEvents.bind(that),
+						dataRequested : that.onDataEvents.bind(that)
+					},
 					path : sCanonicalPath,
-					parameters: {
-						"$expand" : "SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP"
-							+ "($expand=BP_2_CONTACT)))",
-						"$select" : "ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
+					parameters : {
+						"$expand" : {
+							"SO_2_SOITEM" : {
+								"$expand" : {
+									"SOITEM_2_PRODUCT" : {
+										"$expand" : {
+											"PRODUCT_2_BP" : {
+												"$expand" : {
+													"BP_2_CONTACT" : true
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"$select" : ["ChangedAt", "CreatedAt" , "LifecycleStatusDesc", "Note",
+							"SalesOrderID"]
 					}
 				});
 				oView.byId("SupplierContactData").setBindingContext(undefined);
