@@ -328,6 +328,11 @@ xhr.onCreate = function(request) {
 			return;
 		}
 
+		// Special handling SAML authentication redirect
+		if (request.url.indexOf("SAML200") > 0 || (request.requestBody && request.requestBody.indexOf("SAML200") > 0)) {
+			respond(200, oSAMLHeaders, sSAMLLoginPage);
+			return;
+		}
 
 		// Special handling based on headers
 		if (request.url == baseURL + "Categories" || request.url == baseURL + "Categories?horst=true") {
@@ -505,6 +510,10 @@ var oBatchHeaders = 	{
 var oHTMLHeaders = 	{
 		"Content-Type": "text/html"
 	};
+var oSAMLHeaders = 	{
+		"Content-Type": "text/html",
+		"com.sap.cloud.security.login": "login-request"
+	};
 var oCsrfRequireHeaders = 	{
 		"Content-Type": "text/plain;charset=utf-8",
 		"DataServiceVersion": "2.0",
@@ -515,6 +524,8 @@ var oCsrfResponseHeaders = 	{
 		"DataServiceVersion": "1.0",
 		"X-CSRF-Token": ""
 	};
+
+var sSAMLLoginPage = '<html><body><h1>SAML Login Page</h1></body></html>';
 
 var sServiceDocXML = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
 	<service xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns="http://www.w3.org/2007/app">\
