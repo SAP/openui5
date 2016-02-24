@@ -3,15 +3,17 @@
  */
 sap.ui.require([
 	"sap/ui/base/ManagedObject",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding"
-], function (ManagedObject, ChangeReason, TypeString, _Context, _ODataHelper, _Cache,
-		ODataModel, ODataPropertyBinding) {
+], function (ManagedObject, BindingMode, ChangeReason, PropertyBinding, TypeString, _Context,
+		_ODataHelper, _Cache, ODataModel, ODataPropertyBinding) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -627,12 +629,6 @@ sap.ui.require([
 			done();
 		});
 
-		assert.throws(function () {
-			oBinding.refresh();
-		}, new Error("Falsy values for bForceUpdate are not supported"));
-		assert.throws(function () {
-			oBinding.refresh(false);
-		}, new Error("Falsy values for bForceUpdate are not supported"));
 		oBinding.refresh(true);
 	});
 
@@ -689,6 +685,73 @@ sap.ui.require([
 			oBinding.refresh(true);
 		}, new Error("Refresh on this binding is not supported"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("binding Mode", function (assert) {
+		var oModel = new ODataModel("/service/"),
+		oPropertyBinding = oModel.bindProperty("Name");
+
+		oPropertyBinding.setBindingMode(BindingMode.OneTime);
+		oPropertyBinding.setBindingMode(BindingMode.OneWay);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("forbidden", function (assert) {
+		var oModel = new ODataModel("/service/"),
+			oPropertyBinding = oModel.bindProperty("Name");
+
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.refresh(false);
+		}, new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () {
+			oPropertyBinding.refresh("foo"/*truthy*/);
+		}, new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.refresh(true, "");
+		}, new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+				+ "sGroupId parameter must not be set"));
+
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.setBindingMode(BindingMode.TwoWay);
+		}, new Error("Unsupported operation: ODataPropertyBinding#setBindingMode "
+				+ "sBindingMode must not be 'TwoWay'"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("events", function (assert) {
+		var mEventParameters = {},
+			oModel = new ODataModel("/service/"),
+			oPropertyBinding,
+			oReturn = {};
+
+		var oMock = this.oSandbox.mock(PropertyBinding.prototype);
+
+		oMock.expects("attachEvent").withExactArgs("change", mEventParameters).returns(oReturn);
+		oMock.expects("attachEvent").withExactArgs("dataReceived", mEventParameters)
+			.returns(oReturn);
+		oMock.expects("attachEvent").withExactArgs("dataRequested", mEventParameters)
+			.returns(oReturn);
+
+		oPropertyBinding = oModel.bindProperty("Name");
+
+		assert.strictEqual(oPropertyBinding.attachEvent("change", mEventParameters), oReturn);
+		assert.strictEqual(oPropertyBinding.attachEvent("dataReceived", mEventParameters),
+			oReturn);
+		assert.strictEqual(oPropertyBinding.attachEvent("dataRequested", mEventParameters),
+			oReturn);
+
+		assert.throws(function () {
+			oPropertyBinding.attachDataStateChange();
+		}, new Error("Unsupported event 'DataStateChange': ODataPropertyBinding#attachEvent"));
+
+		assert.throws(function () {
+			oPropertyBinding.attachAggregatedDataStateChange();
+		}, new Error("Unsupported event 'AggregatedDataStateChange': "
+				+ "ODataPropertyBinding#attachEvent"));
+	});
+
 	// TODO bSuspended? In v2 it is ignored (check with core)
 	// TODO read in initialize and refresh? This forces checkUpdate to use getProperty.
 

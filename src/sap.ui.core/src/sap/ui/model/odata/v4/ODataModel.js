@@ -13,6 +13,7 @@
 //Provides class sap.ui.model.odata.v4.ODataModel
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/thirdparty/URI",
 	"./lib/_MetadataRequestor",
@@ -22,8 +23,9 @@ sap.ui.define([
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Model, URI, _MetadataRequestor, _Requestor, _ODataHelper, ODataContextBinding,
-		ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
+], function(jQuery, BindingMode, Model, URI, _MetadataRequestor, _Requestor, _ODataHelper,
+		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
+
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel";
@@ -113,6 +115,11 @@ sap.ui.define([
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters);
 					this.mDataRequestedCallbacks = {};
+					this.sDefaultBindingMode = BindingMode.OneWay;
+					this.mSupportedBindingModes = {
+						OneTime : true,
+						OneWay : true
+					};
 				}
 			});
 

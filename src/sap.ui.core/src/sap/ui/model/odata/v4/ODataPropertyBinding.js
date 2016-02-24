@@ -5,14 +5,20 @@
 //Provides class sap.ui.model.odata.v4.ODataPropertyBinding
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/PropertyBinding",
 	"./lib/_Cache",
 	"./_ODataHelper"
-], function (jQuery, ChangeReason, PropertyBinding, _Cache, _ODataHelper) {
+], function (jQuery, BindingMode, ChangeReason, PropertyBinding, _Cache, _ODataHelper) {
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding";
+	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
+		mSupportedEvents = {
+			change : true,
+			dataReceived : true,
+			dataRequested : true
+		};
 
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
@@ -50,8 +56,10 @@ sap.ui.define([
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @throws {Error} When disallowed OData query options are provided
-	 *
 	 * @class Property binding for an OData v4 model.
+	 *   An event handler can only be attached to this binding for the following events: 'change',
+	 *   'dataReceived', and 'dataRequested'.
+	 *   For other events, an error is thrown.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -136,6 +144,15 @@ sap.ui.define([
 	 * @public
 	 * @since 1.37
 	 */
+
+	// See class documentation
+	ODataPropertyBinding.prototype.attachEvent = function (sEventId) {
+		if (!(sEventId in mSupportedEvents)) {
+			throw new Error("Unsupported event '" + sEventId
+				+ "': ODataPropertyBinding#attachEvent");
+		}
+		return PropertyBinding.prototype.attachEvent.apply(this, arguments);
+	};
 
 	/**
 	 * Updates the binding's value and sends a change event if necessary. A change event is sent
@@ -246,21 +263,45 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bForceUpdate
 	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
-	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code> or when
-	 *   refresh on this binding is not supported
-	 *
+	 * @param {string} [sGroupId]
+	 *   The parameter <code>sGroupId</code> is not supported.
+	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
+	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 */
-	ODataPropertyBinding.prototype.refresh = function (bForceUpdate) {
-		if (!bForceUpdate) {
-			throw new Error("Falsy values for bForceUpdate are not supported");
+	ODataPropertyBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
+		if (bForceUpdate !== true) {
+			throw new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+					+ "bForceUpdate must be true");
+		}
+		if (sGroupId !== undefined) {
+			throw new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+				+ "sGroupId parameter must not be set");
 		}
 		if (!this.oCache) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 		this.oCache.refresh();
 		this.checkUpdate(true, ChangeReason.Refresh);
+	};
+
+	/**
+	 * Sets the binding mode of this property binding to the given value; the binding modes
+	 * 'OneTime' and 'OneWay' are supported.
+	 *
+	 * @param {sap.ui.model.BindingMode} sBindingMode
+	 *   The binding mode
+	 * @throws {Error}
+	 *   When 'TwoWay' binding mode is used (not supported)
+	 * @protected
+	 */
+	ODataPropertyBinding.prototype.setBindingMode = function (sBindingMode) {
+		if (sBindingMode === BindingMode.TwoWay) {
+			throw new Error("Unsupported operation: ODataPropertyBinding#setBindingMode "
+					+ "sBindingMode must not be 'TwoWay'");
+		}
+		return PropertyBinding.prototype.setBindingMode.apply(this, arguments);
 	};
 
 	/**

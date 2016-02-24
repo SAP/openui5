@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
@@ -15,7 +16,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (Model, TypeString, ODataUtils, _Context, _ODataHelper, _MetadataRequestor,
+], function (BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper, _MetadataRequestor,
 		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
 		ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
@@ -122,6 +123,8 @@ sap.ui.require([
 		oModel = new ODataModel("/foo/?sap-client=111");
 		assert.strictEqual(oModel.sServiceUrl, "/foo/");
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
+		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.OneWay);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
@@ -421,8 +424,18 @@ sap.ui.require([
 
 		assert.ok(!fnSpy1.called && !fnSpy2.called, "not called synchronously");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("forbidden", function (assert) {
+		var oModel = createModel();
+
+		assert.throws(function () {
+			oModel.setDefaultBindingMode(BindingMode.TwoWay);
+		});
+	});
 });
-// TODO constructor: sDefaultBindingMode, mSupportedBindingModes
+// TODO DefaultBindingMode is set to 'OneWay' now. It must be changed if we can 'TwoWay'
+// TODO Extend mSupportedBindingModes for 'TwoWay'
 // TODO constructor: test that the service root URL is absolute?
 // TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
 // TODO read etc.: provide access to "abort" functionality
