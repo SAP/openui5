@@ -24,12 +24,13 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {array} aData the data array to be filtered
 	 * @param {array} aFilters the filter array
 	 * @param {function} fnGetValue the method to get the actual value to filter on
+	 * @return {array} a new array instance containing the filtered data set
 	 *
 	 * @public
 	 */
 	FilterProcessor.apply = function(aData, aFilters, fnGetValue){
 		if (!aFilters || aFilters.length == 0) {
-			return aData;
+			return aData.slice();
 		}
 		var that = this,
 			oFilterGroups = {},
