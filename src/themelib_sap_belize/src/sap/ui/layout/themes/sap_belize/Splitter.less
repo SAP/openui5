@@ -1,0 +1,24 @@
+/* ======================================= */
+/* CSS for control sap.ui.layout/Splitter  */
+/* Belize theme                            */
+/* ======================================= */
+
+.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	color: darken(@sapUiContentIconColor, 20);
+	text-shadow: 1px 1px @sapUiContentContrastShadowColor;
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar:hover {
+	background-color: darken(@sapUiContentForegroundBorderColor, 28.2);
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	background-color: @sapUiHighlight;
+	color: @sapUiContentContrastIconColor;
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}
