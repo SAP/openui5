@@ -978,6 +978,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * The window unload hook. Override this method in your Component class
 	 * implementation, to handle cleanup of the component once the window
 	 * will be unloaded (e.g. closed).
+	 * <p>
+	 * <b>Warning:</b> The exact handling of the unload hook has varied from
+	 * version to version of browsers. For example, some versions of Firefox
+	 * trigger the event when a link is followed, but not when the window is
+	 * closed. In practical usage, behavior should be tested on all supported
+	 * browsers, and contrasted with the proprietary beforeunload event.
 	 *
 	 * @public
 	 * @since 1.15.1
