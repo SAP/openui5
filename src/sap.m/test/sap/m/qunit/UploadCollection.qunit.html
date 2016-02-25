@@ -189,6 +189,79 @@
 		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name is null");
 	});
 
+	/* --------------------------------------- */
+	/* Test for upload progress rendering      */
+	/* --------------------------------------- */
+	module("Upload progress rendering tests", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			});
+			// stub UploadCollection's attributes
+			this.oUploadCollection._getRequestId = function () {
+				return "1"
+			};
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	test("Rendering of uploadProgress 50% uploaded", function() {
+		//Arrange
+		var sUploadProgress = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOADING", [50]);
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+
+		//Act
+		oFileUploader.fireChange({
+			files : [{
+				name: "file1",
+			}]
+		});
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		oFileUploader.fireUploadProgress({
+			fileName : "file1",
+			loaded: 50,
+			total: 100,
+		});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadProgress, "Correct uploadProgress text");
+	});
+
+	test("Rendering of uploadProgress 100% uploaded", function() {
+		//Arrange
+		var sUploadCompleted = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOAD_COMPLETED");
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+
+		//Act
+		oFileUploader.fireChange({
+			files : [{
+				name: "file1",
+			}]
+		});
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		oFileUploader.fireUploadProgress({
+			fileName : "file1",
+			loaded: 100,
+			total: 100,
+		});
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		equal(sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadCompleted, "Correct uploadCompleted text");
+	});
 
 	/* --------------------------------------- */
 	/* Test events                             */
