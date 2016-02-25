@@ -7,11 +7,11 @@ sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Model",
-	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Context, ListBinding, Model, _Cache, _ODataHelper,
+], function (ManagedObject, ChangeReason, Context, ListBinding, Model, _ODataHelper, _Cache,
 		ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
