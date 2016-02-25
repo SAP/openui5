@@ -1250,12 +1250,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (bEditable) {
 				jQuery(this.oDomRef).removeClass('sapUiSliRo').addClass('sapUiSliStd');
 				if (this.bAcc) {
-					jQuery(this.oGrip).attr('aria-disabled', false);
+					jQuery(this.oGrip).attr('aria-disabled', false).attr('aria-readonly', false);
 				}
 			} else {
 				jQuery(this.oDomRef).removeClass('sapUiSliStd').addClass('sapUiSliRo');
 				if (this.bAcc) {
-					jQuery(this.oGrip).attr('aria-disabled', true);
+					jQuery(this.oGrip).attr('aria-disabled', true).attr('aria-readonly', true);
 				}
 			}
 		}
