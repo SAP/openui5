@@ -1174,8 +1174,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					customHeader : new Bar(oInput.getId()
 							+ "-popup-header", {
 						contentMiddle : oInput._oPopupInput.addEventDelegate({onsapenter: function(){
+							if (!(sap.m.MultiInput && oInput instanceof sap.m.MultiInput)) {
 								oInput._closeSuggestionPopup();
-							}}, this)
+							}
+						}}, this)
 					}),
 					horizontalScrolling : false,
 					initialFocus : oInput._oPopupInput

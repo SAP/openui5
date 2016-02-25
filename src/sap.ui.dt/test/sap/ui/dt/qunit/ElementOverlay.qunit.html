@@ -245,23 +245,19 @@
 			QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
 				beforeEach : function(assert) {
 					var that = this;
-					var done = assert.async();
 					this.oLabel = new sap.m.Label({text : "text"});
 					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel] });
 					this.oVerticalLayout.placeAt("content");
 					sap.ui.getCore().applyChanges();
 					this.oVerticalLayout.$().css("display", "none");
 
-					sap.ui.dt.Preloader.load(["sap.m.Label"]).then(function() {
-						that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
-							element : that.oVerticalLayout
-						});
-						that.oLabelOverlay = new sap.ui.dt.ElementOverlay({
-							element : that.oLabel
-						});
-						sap.ui.getCore().applyChanges();
-						done();
+					that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
+						element : that.oVerticalLayout
 					});
+					that.oLabelOverlay = new sap.ui.dt.ElementOverlay({
+						element : that.oLabel
+					});
+					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
 					this.oVerticalLayout.destroy();
@@ -285,6 +281,53 @@
 					done();
 					return vOriginalReturn;
 				};
+			});
+
+			QUnit.module("Given that an Overlay is created for a layout with a visible domRef", {
+				beforeEach : function(assert) {
+					var that = this;
+					this.oLabel1 = new sap.m.Label({text : "text 1"});
+					this.oLabel2 = new sap.m.Label({text : "text 2"});
+					this.oInnerLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel2] });
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel1, this.oInnerLayout] });
+					this.oVerticalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
+						element : that.oVerticalLayout
+					});
+					that.oInnerLayoutOverlay = new sap.ui.dt.ElementOverlay({
+						element : that.oInnerLayout
+					});
+					that.oLabelOverlay1 = new sap.ui.dt.ElementOverlay({
+						element : that.oLabel1
+					});
+					that.oLabelOverlay2 = new sap.ui.dt.ElementOverlay({
+						element : that.oLabel2
+					});
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oVerticalLayout.destroy();
+				}
+			});
+
+			QUnit.test("when the layout is switched to invisible and the back to visible...", function(assert) {
+				var that = this;
+				var done = assert.async();
+
+				this.oVerticalLayout.setVisible(false);
+				sap.ui.getCore().applyChanges();
+				this.oVerticalLayout.setVisible(true);
+				sap.ui.getCore().applyChanges();
+
+				// timeout is needed to handle applyStyles
+				setTimeout(function() {
+					assert.deepEqual(that.oLayoutOverlay.$().offset(), that.oVerticalLayout.$().offset(), "g");
+					assert.deepEqual(that.oLabelOverlay1.$().offset(), that.oLabel1.$().offset(), "g");
+
+					done();
+				}, 0);
 			});
 
 			QUnit.module("Given that an Overlay is created for a layout with child controls", {

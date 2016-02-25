@@ -570,7 +570,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		} else { // only partial update (invalidated controls)
 
 			var isRenderedTogetherWithAncestor = function(oCandidate) {
-				do {
+
+				for (;;) {
+
 					// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
 					// Therefore the search for to-be-rendered ancestors must be stopped when such a control is reached.
 					if ( oCandidate.getMetadata && oCandidate.getMetadata().isInstanceOf("sap.ui.core.PopupInterface") ) {
@@ -579,13 +581,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 					oCandidate = oCandidate.getParent();
 
-					if ( oCandidate && mInvalidatedControls.hasOwnProperty(oCandidate.getId()) ) {
+					// If the candidate is null/undefined or the UIArea itself
+					// they do-while loop will be interrupted
+					if ( !oCandidate || oCandidate === that ) {
+						return false;
+					}
+
+					// If the candidate is listed in the invalidated controls map
+					// it will be re-rendered together with the UIArea. Inline
+					// templates are a special case because they share their ID
+					// with the UIArea and therefore the detection will ignore
+					// the inline templates since they should be re-rendered with
+					// their UIArea.
+					if ( mInvalidatedControls.hasOwnProperty(oCandidate.getId()) ) {
 						return true;
 					}
 
-				} while ( oCandidate && oCandidate !== that )
+				}
 
-				return false;
 			};
 
 			for (var n in mInvalidatedControls) {
