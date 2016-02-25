@@ -27,7 +27,6 @@ sap.ui.define([
 				sServiceUri,
 				sMockServerBaseUri
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
-				oMockServer,
 				oUriParameters = jQuery.sap.getUriParameters(),
 				fnModel = oUriParameters.get("oldOData") === "true"
 					? sap.ui.model.odata.ODataModel
@@ -46,15 +45,15 @@ sap.ui.define([
 				sServiceUri = this.proxy(sServiceUri);
 			} else {
 				jQuery.sap.require("sap.ui.core.util.MockServer");
-
-				oMockServer = new MockServer({rootUri : sServiceUri});
-				oMockServer.simulate(/*TODO sServiceUri?!*/sMockServerBaseUri + "metadata.xml", {
+				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
+				this.aMockServers[0].simulate(/*TODO sServiceUri?!*/sMockServerBaseUri
+					+ "metadata.xml", {
 					sMockdataBaseUrl : sMockServerBaseUri,
 					bGenerateMissingMockData : true
 				});
-				oMockServer.start();
+				this.aMockServers[0].start();
 				// yet another mock server to handle annotations
-				new MockServer({
+				this.aMockServers.push(new MockServer({
 					requests : [{
 						method : "GET",
 						//TODO have MockServer fixed and pass just the URL!
@@ -72,7 +71,8 @@ sap.ui.define([
 							oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations2.xml");
 						}
 					}]
-				}).start();
+				}));
+				this.aMockServers[1].start();
 			}
 
 			oModel = new fnModel(sServiceUri, {
@@ -87,10 +87,6 @@ sap.ui.define([
 					viewName : "sap.ui.core.sample.ViewTemplate.scenario.Main",
 					models : oModel
 				});
-		},
-
-		exit : function () {
-			MockServer.destroyAll();
 		}
 	});
 

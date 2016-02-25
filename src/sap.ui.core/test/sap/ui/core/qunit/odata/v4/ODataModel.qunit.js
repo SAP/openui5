@@ -5,6 +5,7 @@ sap.ui.require([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
@@ -15,9 +16,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (Model, TypeString, ODataUtils, Helper, SyncPromise, MetadataRequestor, Requestor,
-		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
-		TestUtils) {
+], function (Model, TypeString, ODataUtils, _Context, Helper, SyncPromise, MetadataRequestor,
+		Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
+		ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -28,14 +29,13 @@ sap.ui.require([
 	 */
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('TEAM_01')/Name": {source: "Name.json"},
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')":
-				{code: 404, source: "TEAMS('UNKNOWN').json"}
+			"TEAMS('TEAM_01')/Name" : {source : "Name.json"},
+			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
 		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
-			metadata: {
-				properties: {
-					text: "string"
+			metadata : {
+				properties : {
+					text : "string"
 				}
 			}
 		});
@@ -60,7 +60,8 @@ sap.ui.require([
 	 *   a URL within the service
 	 */
 	function getServiceUrl(sPath) {
-		var sAbsolutePath = "/sap/opu/local_v4/IWBEP/TEA_BUSI/" + (sPath && sPath.slice(1) || "");
+		var sAbsolutePath = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"
+				+ (sPath && sPath.slice(1) || "");
 
 		return TestUtils.proxy(sAbsolutePath);
 	}
@@ -68,26 +69,28 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("ab-CD");
 			this.oSandbox = sinon.sandbox.create();
-			TestUtils.setupODataV4Server(this.oSandbox, mFixture);
+			TestUtils.setupODataV4Server(this.oSandbox, mFixture, undefined,
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+			this.oSandbox.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag")
+				.atLeast(0).returns("ab-CD");
 		},
 
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			this.oSandbox.verifyAndRestore();
-			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
-		},
-
-		sDefaultLanguage : sap.ui.getCore().getConfiguration().getLanguage()
+		}
 	});
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var oHelperMock = this.mock(Helper),
+		var mHeaders = {
+				"Accept-Language" : "ab-CD"
+			},
+			oHelperMock = this.mock(Helper),
 			oMetadataRequestor = {},
 			oMetadataRequestorMock = this.mock(MetadataRequestor),
 			oMetaModel,
@@ -106,15 +109,15 @@ sap.ui.require([
 			"serviceUrl in mParameters");
 
 		oHelperMock.expects("buildQueryOptions").returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
 		//code under test
 		oModel = new ODataModel("/foo/");
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
 
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
+		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
 		//code under test
 		oModel = new ODataModel("/foo/?sap-client=111");
@@ -125,9 +128,9 @@ sap.ui.require([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, "/foo/$metadata");
 
-		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client": "111"})
+		oHelperMock.expects("buildQueryOptions").withExactArgs({"sap-client" : "111"})
 			.returns(mModelOptions);
-		oMetadataRequestorMock.expects("create").withExactArgs(null, mModelOptions)
+		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
 			.returns(oMetadataRequestor);
 		//code under test, serviceUrlParams overwrite URL parameters from this.sServiceUrl
 		oModel = new ODataModel("/foo/?sap-client=222",
@@ -141,9 +144,11 @@ sap.ui.require([
 
 		this.mock(Requestor).expects("create").withExactArgs("/foo/", {
 			"Accept-Language" : "ab-CD"
+		}, {
+			"sap-client" : "123"
 		}).returns(oRequestor);
 
-		oModel = new ODataModel("/foo/");
+		oModel = new ODataModel("/foo/?sap-client=123");
 
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);
@@ -152,7 +157,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.skip("Property access from ManagedObject w/o context binding", function (assert) {
 		var oModel = createModel(),
-			oControl = new TestControl({models: oModel}),
+			oControl = new TestControl({models : oModel}),
 			done = assert.async();
 
 		oControl.bindProperty("text", {
@@ -170,7 +175,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.skip("Property access from ManagedObject w/ context binding", function (assert) {
 		var oModel = createModel(),
-			oControl = new TestControl({models: oModel}),
+			oControl = new TestControl({models : oModel}),
 			done = assert.async();
 
 		oControl.bindObject("/TEAMS('TEAM_01')");
@@ -184,95 +189,6 @@ sap.ui.require([
 			assert.strictEqual(oControl.getText(), "Business Suite", "property value");
 			done();
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("ODataModel.read: missing /", function (assert) {
-		var oModel = createModel();
-
-		assert.throws(function () {
-			oModel.read("TEAMS('TEAM_01')/Name");
-		}, new Error("Not an absolute data binding path: TEAMS('TEAM_01')/Name"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("read /TEAMS[*];root=0", function (assert) {
-		var i = Math.floor(Math.random() * 50), // some index
-			oModel = createModel(),
-			oListBinding = oModel.bindList("/TEAMS"),
-			oResult = {};
-
-		this.oSandbox.mock(oListBinding).expects("readValue")
-			.withExactArgs(undefined, true, i)
-			.returns(Promise.resolve(oResult));
-
-		return oModel.read("/TEAMS[" + i + "];root=0", true)
-			.then(function (oData) {
-				assert.strictEqual(oData, oResult);
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("read /TEAMS[*];root=0/Name", function (assert) {
-		var i = Math.floor(Math.random() * 50), // some index
-			oModel = createModel(),
-			oListBinding = oModel.bindList("/TEAMS");
-
-		this.oSandbox.mock(oListBinding).expects("readValue")
-			.withExactArgs("Name", undefined, i)
-			.returns(Promise.resolve("Business Suite"));
-
-		return oModel.read("/TEAMS[" + i + "];root=0/Name")
-			.then(function (oData) {
-				assert.deepEqual(oData, {value : "Business Suite"});
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("read /TEAMS[*];root=0/TEAM_2_EMPLOYEES", function (assert) {
-		var i = Math.floor(Math.random() * 50), // some index
-			oModel = createModel(),
-			oListBinding = oModel.bindList("/TEAMS");
-
-		this.oSandbox.mock(oListBinding).expects("readValue")
-			.withExactArgs("TEAM_2_EMPLOYEES", true, i)
-			.returns(Promise.resolve([]));
-
-		return oModel.read("/TEAMS[" + i + "];root=0/TEAM_2_EMPLOYEES", true)
-			.then(function (oData) {
-				assert.deepEqual(oData, {value : []});
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("read for list binding path propagates ODataListBinding#readValue failure",
-		function (assert) {
-			var oModel = createModel(),
-				oListBinding = oModel.bindList("/TEAMS"),
-				oError = new Error("Intentionally failed");
-
-			this.oSandbox.mock(oListBinding).expects("readValue").returns(Promise.reject(oError));
-
-			return oModel.read("/TEAMS[0];root=0/foo/bar").then(
-				function () { assert.ok(false, "Unexpected success"); },
-				function (oError0) { assert.strictEqual(oError0, oError); }
-			);
-		}
-	);
-
-	//*********************************************************************************************
-	QUnit.test("read /TEAMS('4711');root=0/Name", function (assert) {
-		var oModel = createModel(),
-			oContextBinding = oModel.bindContext("/TEAMS('4711')");
-
-		this.oSandbox.mock(oContextBinding).expects("readValue")
-			.withArgs("Name", false)
-			.returns(Promise.resolve("Business Suite"));
-
-		return oModel.read("/TEAMS('4711');root=0/Name", false)
-			.then(function (oData) {
-				assert.deepEqual(oData, {value : "Business Suite"});
-			});
 	});
 
 	//*********************************************************************************************
@@ -291,7 +207,7 @@ sap.ui.require([
 
 			this.mock(oModel.oRequestor).expects("request")
 				//TODO remove usage of oModel._sQuery once cache is used for all CRUD operations
-				.withExactArgs("POST", getServiceUrl("/EMPLOYEES") + oModel._sQuery, null,
+				.withExactArgs("POST", "EMPLOYEES" + oModel._sQuery, undefined, null,
 					oEmployeeData).returns(oPromise);
 
 			assert.strictEqual(oModel.create("/EMPLOYEES", oEmployeeData), oPromise);
@@ -301,40 +217,27 @@ sap.ui.require([
 	//*********************************************************************************************
 	[undefined, "?foo=bar"].forEach(function (sQuery) {
 		QUnit.test("remove", function (assert) {
-			var sCanonicalUrl = getServiceUrl("/EMPLOYEES(ID='1')"),
-			sEtag = 'W/"19770724000000.0000000"',
-			oModel = createModel(sQuery),
-			sPath = "/EMPLOYEES[0];root=0";
+			var sEtag = 'W/"19770724000000.0000000"',
+				oModel = createModel(sQuery),
+				sPath = "/EMPLOYEES/0",
+				oContext = _Context.create(oModel, null, sPath);
 
 			this.oSandbox.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("DELETE", sCanonicalUrl + oModel._sQuery, {"If-Match" : sEtag})
-			.returns(Promise.resolve(undefined));
-			//TODO make such basic APIs like sap.ui.model.Context#getProperty work?!
-			//     they could be used instead of async read()...
-			this.oSandbox.stub(oModel, "read", function (sPath0, bAllowObjectAccess) {
-				if (bAllowObjectAccess) {
-					// ignore "probe call" by requestCanonicalUrl's stub
-				} else {
-					assert.strictEqual(sPath0, sPath + "/@odata.etag");
-					assert.strictEqual(bAllowObjectAccess, undefined);
-				}
-				return Promise.resolve({value : sEtag});
-			});
+				.withExactArgs("DELETE", "EMPLOYEES(ID='1')" + oModel._sQuery, undefined,
+					{"If-Match" : sEtag})
+				.returns(Promise.resolve(undefined));
+			this.oSandbox.mock(oContext).expects("requestValue").withExactArgs("@odata.etag")
+				.returns(Promise.resolve(sEtag));
 			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl",
-				function (sServiceUrl, sPath0, fnRead) {
-					assert.strictEqual(sServiceUrl, getServiceUrl());
+				function (sServiceUrl, sPath0, oContext0) {
+					assert.strictEqual(sServiceUrl, "",
+						"no service URL, return resource path only");
 					assert.strictEqual(sPath0, sPath);
-					// make sure that fnRead === oModel.read.bind(oModel)
-					oModel.read.reset();
-					fnRead(sPath, true);
-					assert.ok(oModel.read.calledOnce);
-					assert.ok(oModel.read.calledWithExactly(sPath, true),
-						"fnRead passes arguments");
-					assert.ok(oModel.read.calledOn(oModel), "fnRead bound to 'this'");
-					return Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')"));
+					assert.strictEqual(oContext0, oContext);
+					return Promise.resolve("EMPLOYEES(ID='1')");
 				});
 
-			return oModel.remove(oModel.getContext(sPath)).then(function (oResult) {
+			return oModel.remove(oContext).then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 			}, function (oError) {
 				assert.ok(false);
@@ -343,23 +246,23 @@ sap.ui.require([
 	});
 	//TODO trigger update in case of isConcurrentModification?!
 	//TODO do it anyway? what and when to return, result of remove vs. re-read?
-	//TODO make sure Context objects are deleted from this.mContexts
 
 	//*********************************************************************************************
 	[404, 500].forEach(function (iStatus) {
 		QUnit.test("remove: map 404 to 200, status: " + iStatus, function (assert) {
 			var oError = new Error(""),
-				oModel = createModel();
+				oModel = createModel(),
+				oContext = _Context.create(oModel, null, "/EMPLOYEES/0");
 
 			oError.status = iStatus;
-			this.oSandbox.stub(oModel, "read")
-				.returns(Promise.resolve({value : 'W/""'}));
+			this.oSandbox.mock(oContext).expects("requestValue").withExactArgs("@odata.etag")
+				.returns(Promise.resolve('W/""'));
 			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl")
 				.returns(Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')")));
 			this.oSandbox.stub(oModel.oRequestor, "request")
 				.returns(Promise.reject(oError));
 
-			return oModel.remove(oModel.getContext("/EMPLOYEES[0];root=0"))
+			return oModel.remove(oContext)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, undefined);
 					assert.ok(iStatus === 404, "unexpected success");
@@ -373,13 +276,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestCanonicalPath fulfills", function (assert) {
 		var oModel = createModel(),
-			oEntityContext = oModel.getContext("/EMPLOYEES[42];root=2"),
+			oEntityContext = _Context.create(oModel, null, "/EMPLOYEES/42"),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 
 		oMetaModelMock.expects("requestCanonicalUrl")
-			.withExactArgs(oModel.sServiceUrl, oEntityContext.getPath(), sinon.match.func)
-			.returns(Promise.resolve(oModel.sServiceUrl + "EMPLOYEES(ID='1')"));
+			.withExactArgs("/", oEntityContext.getPath(), oEntityContext)
+			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
 
 		return oModel.requestCanonicalPath(oEntityContext).then(function (sCanonicalPath) {
 			assert.strictEqual(sCanonicalPath, "/EMPLOYEES(ID='1')");
@@ -390,7 +293,7 @@ sap.ui.require([
 	QUnit.test("requestCanonicalPath rejects", function (assert) {
 		var oError = new Error("Intentionally failed"),
 			oModel = createModel(),
-			oNotAnEntityContext = oModel.getContext("/EMPLOYEES[42];root=2/Name"),
+			oNotAnEntityContext = _Context.create(oModel, null, "/EMPLOYEES/42/Name"),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 
@@ -407,7 +310,7 @@ sap.ui.require([
 	QUnit.test("requestCanonicalPath, context from different model", function (assert) {
 		var oModel = createModel(),
 			oModel2 = createModel(),
-			oEntityContext = oModel2.getContext("/EMPLOYEES[42];root=2"),
+			oEntityContext = _Context.create(oModel2, null, "/EMPLOYEES/42"),
 			oMetaModel = oModel.getMetaModel(),
 			oMetaModelMock = this.oSandbox.mock(oMetaModel);
 
@@ -468,6 +371,57 @@ sap.ui.require([
 
 		assert.strictEqual(iCallCount, 2, "refresh called for both bindings");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("createBindingContext, destroyBindingContext, getContext not supported",
+		function (assert) {
+			var oModel = createModel();
+
+			assert.throws(function () {
+				oModel.createBindingContext();
+			}, new Error("Cannot create context at model"));
+
+			assert.throws(function () {
+				oModel.destroyBindingContext();
+			}, new Error("Cannot destroy context"));
+
+			assert.throws(function () {
+				oModel.getContext();
+			}, new Error("Cannot get context at model"));
+		});
+
+	//*********************************************************************************************
+	QUnit.test("dataRequested", function (assert) {
+		var done = assert.async(),
+			sGroupId1 = "group1",
+			sGroupId2 = "group2",
+			oModel = createModel(),
+			fnSpy1 = sinon.spy(),
+			fnSpy2 = sinon.spy(),
+			oSandbox = this.oSandbox,
+			oRequestorMock = oSandbox.mock(oModel.oRequestor);
+
+		oRequestorMock.expects("submitBatch").never();
+
+		// code under test
+		oModel.dataRequested(sGroupId1, function () {
+			oModel.dataRequested(sGroupId1, function () {
+				assert.ok(fnSpy1.called, "second callback for group1");
+				assert.ok(fnSpy2.called, "callback for group2");
+				done();
+			});
+
+			oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
+		});
+		oModel.dataRequested(sGroupId1, fnSpy1);
+		oModel.dataRequested(sGroupId2, fnSpy2);
+
+		// expect it afterwards so that we know that it has not been called synchronously
+		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
+		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId2);
+
+		assert.ok(!fnSpy1.called && !fnSpy2.called, "not called synchronously");
+	});
 });
 // TODO constructor: sDefaultBindingMode, mSupportedBindingModes
 // TODO constructor: test that the service root URL is absolute?
@@ -477,7 +431,7 @@ sap.ui.require([
 // oResponse.headers look like this:
 //Content-Type:application/json; odata.metadata=minimal;charset=utf-8
 //etag:W/"20150915102433.7994750"
-//location:.../sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('7')
+//location:.../sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/EMPLOYEES('7')
 //TODO can we make use of "location" header? relation to canonical URL?
 // oData looks like this:
 //{

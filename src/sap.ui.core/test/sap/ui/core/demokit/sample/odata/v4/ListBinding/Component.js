@@ -26,15 +26,19 @@ sap.ui.define([
 					? this.proxy // if overridden, use it!
 					: TestUtils.proxy,
 				oModel = new ODataModel({
-					serviceUrl: fnProxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/")
+					serviceUrl : fnProxy("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/")
 				});
 
 			if (!bHasOwnProxy) {
-				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
-					"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER&$skip=0&$top=100"
-						: {source : "TEAMS.json"},
-					"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata" : {source : "metadata.xml"}
-				}, "sap/ui/core/demokit/sample/odata/v4/ListBinding/data");
+				TestUtils.setupODataV4Server(this.oSandbox, {
+					"$batch" : {
+						"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER&$skip=0&$top=100" : {
+							source : "TEAMS.txt"
+						}
+					},
+					"$metadata" : {source : "metadata.xml"}
+				}, "sap/ui/core/demokit/sample/odata/v4/ListBinding/data",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/");
 			}
 
 			return sap.ui.view({

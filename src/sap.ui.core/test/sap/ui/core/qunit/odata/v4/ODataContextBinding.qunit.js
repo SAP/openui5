@@ -4,128 +4,103 @@
 sap.ui.require([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ContextBinding",
 	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Cache, Helper, ODataContextBinding, ODataModel) {
+], function (ManagedObject, ChangeReason, ContextBinding, Cache, _Context, Helper,
+		ODataContextBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
-
-	var TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataContextBinding", {
-			metadata: {
-				properties: {
-					text: "string"
-				},
-				aggregations: {
-					child: {multiple: false, type: "test.sap.ui.model.odata.v4.ODataContextBinding"}
-				}
-			}
-		});
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataContextBinding", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
+
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+
+			// create ODataModel
+			this.oModel = new ODataModel("/service/?sap-client=111");
 		},
 
 		afterEach : function () {
 			this.oSandbox.verifyAndRestore();
-		},
-
-		/**
-		 * Initializes the control's text property asynchronously. Waits for the bound context
-		 * to be present and passes the context binding to the resolve handler.
-		 *
-		 * Note: This function mocks the model and holds the mock in this.oModelMock.
-		 *
-		 * @param {object} assert
-		 *   the QUnit assert methods
-		 * @returns {Promise}
-		 *   a promise to be resolved when the control's bound context has been initialized.
-		 *   The resolve function passes the context binding as parameter.
-		 */
-		createContextBinding : function (assert) {
-			var oModel = new ODataModel("/service/"),
-				oControl = new TestControl({models: oModel});
-
-			this.oModelMock = this.oSandbox.mock(oModel);
-			this.oModelMock.expects("read").never();
-			return new Promise(function (fnResolve, fnReject) {
-				var oBinding;
-
-				oControl.bindObject("/EntitySet('foo')/child");
-				oBinding = oControl.getObjectBinding();
-				assert.strictEqual(oBinding.getBoundContext(), null,
-					"synchronous: no bound context yet");
-				oBinding.attachChange(function () {
-					assert.strictEqual(oBinding.getBoundContext().getPath(),
-						"/EntitySet('foo')/child;root=0", "after initialize");
-					fnResolve(oBinding);
-				});
-			});
 		}
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bForceUpdate) {
-		QUnit.test("checkUpdate(" + bForceUpdate + "): unchanged", function (assert) {
-			return this.createContextBinding(assert).then(function (oBinding) {
-				var bGotChangeEvent = false;
+	QUnit.test("initialize, resolved path", function (assert) {
+		var oContext = {},
+			oBoundContext = {},
+			oBinding = this.oModel.bindContext("foo", oContext);
 
-				oBinding.attachChange(function () {
-					bGotChangeEvent = true;
-				});
+		this.mock(this.oModel).expects("resolve").withExactArgs("foo", sinon.match.same(oContext))
+			.returns("/absolute");
+		this.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+		this.mock(_Context).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
+			.returns(oBoundContext);
 
-				// code under test
-				oBinding.checkUpdate(bForceUpdate).then(function () {
-					assert.strictEqual(bGotChangeEvent, bForceUpdate,
-						"got change event as expected");
-				});
-			});
-		});
+		assert.strictEqual(oBinding.initialize(), undefined, "no chaining");
+		assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("initialize, unresolved path", function () {
+		var oBinding = this.oModel.bindContext("foo");
+
+		this.mock(this.oModel).expects("resolve")
+			.returns(undefined /*relative path, no context*/);
+		this.mock(oBinding).expects("_fireChange").never();
+
+		oBinding.initialize();
 	});
 
 	//*********************************************************************************************
 	//TODO support nested context bindings
-	QUnit.skip("ManagedObject.bindObject on child (relative), then on parent", function (assert) {
-		var oBinding,
-			oChild = new TestControl(),
-			done = assert.async(),
-			oModel = new ODataModel("/service/"),
-			oParent = new TestControl({models: oModel, child: oChild});
+	QUnit.skip("setContext, change event", function (assert) {
+		var oContext = {},
+			oBinding = this.oModel.bindContext("foo");
 
-		// This should not trigger anything yet
-		oChild.bindObject("child");
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
 
-		oBinding = oChild.getObjectBinding();
-		oBinding.attachChange(function () {
-			assert.strictEqual(oBinding.getBoundContext().getPath(),
-				"/EntitySet('foo')/child");
+		oBinding.setContext(oContext);
+	});
 
-			done();
+	//*********************************************************************************************
+	["/", "foo/"].forEach(function (sPath) {
+		QUnit.test("bindContext: invalid path: " + sPath, function (assert) {
+			var oModel = new ODataModel("/service/");
+
+			assert.throws(function () {
+				oModel.bindContext(sPath);
+			}, new Error("Invalid path: " + sPath));
 		});
+	});
 
-		// This creates and initializes a context binding at the parent. The change handler of the
-		// context binding calls setContext at the child's context binding which completes the path
-		// and triggers a checkUpdate. This then fires a change event at the child's context
-		// binding.
-		oParent.bindObject("/EntitySet('foo')");
+	//*********************************************************************************************
+	QUnit.test("relative path", function (assert) {
+		var oModel = new ODataModel("/service/"),
+			oBinding = oModel.bindContext("SO_2_BP");
+
+		assert.throws(function () {
+			oBinding.setContext("/SalesOrders(ID='1')");
+		}, new Error("Nested context bindings are not supported"));
 	});
 
 	//*********************************************************************************************
 	QUnit.test("setContext on resolved binding", function (assert) {
 		var oModel = new ODataModel("/service/"),
-			oModelMock = this.oSandbox.mock(oModel),
 			oBinding = oModel.bindContext("/EntitySet('foo')/child");
 
-		oModelMock.expects("read").never(); // no read expected due to absolute path
-
-		oBinding.setContext(oModel.getContext("/EntitySet('bar')"));
+		oBinding.setContext(_Context.create(oModel, null, "/EntitySet('bar')"));
 
 		assert.strictEqual(oBinding.getContext().getPath(), "/EntitySet('bar')",
 			"stored nevertheless");
@@ -137,16 +112,14 @@ sap.ui.require([
 			var bAbsolute = jQuery.sap.startsWith(sPath, "/"),
 				oModel = new ODataModel("/service/?sap-client=111"),
 				oCache = {},
-				oContext = oModel.getContext("/TEAMS('TEAM_01')"),
+				oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 				oBinding;
 
 			if (bAbsolute) {
 				this.oSandbox.mock(Cache).expects("createSingle")
-				.withExactArgs(sinon.match.same(oModel.oRequestor),
-					oModel.sServiceUrl + sPath.slice(1), {
+				.withExactArgs(sinon.match.same(oModel.oRequestor), sPath.slice(1), {
 					"sap-client" : "111"
-				})
-				.returns(oCache);
+				}).returns(oCache);
 			} else {
 				this.oSandbox.mock(Cache).expects("createSingle").never();
 			}
@@ -156,117 +129,10 @@ sap.ui.require([
 			assert.ok(oBinding instanceof ODataContextBinding);
 			assert.strictEqual(oBinding.getModel(), oModel);
 			assert.strictEqual(oBinding.getContext(), oContext);
-			assert.strictEqual(oBinding.getPath(), bAbsolute ? sPath + ";root=0" : sPath);
+			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache is initialized");
 			assert.strictEqual(oBinding.oCache, bAbsolute ? oCache : undefined);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("readValue fulfill", function (assert) {
-		var oBinding,
-			oCache = {
-				read: function () {},
-				toString: function () { return "/service/EMPLOYEES(ID='1')?sap-client=111"; }
-			},
-			oCacheMock = this.oSandbox.mock(oCache),
-			oModel = new ODataModel("/service/?sap-client=111"),
-			oResult = {
-				AGE : 32,
-				Name : "Frederic Fall",
-				LOCATION : {
-					COUNTRY : "Germany"
-				},
-				NullValue : null
-			};
-
-		oCacheMock.expects("read").exactly(6).returns(Promise.resolve(oResult));
-		this.oSandbox.mock(Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oModel.oRequestor), "/service/EMPLOYEES(ID='1')", {
-				"sap-client" : "111"
-			})
-			.returns(oCache);
-
-		this.oLogMock.expects("warning").withExactArgs(
-			"Failed to read value for /service/EMPLOYEES(ID='1')"
-				+ "?sap-client=111 and path Foo/COUNTRY: "
-				+ "Invalid segment COUNTRY",
-			null,
-			"sap.ui.model.odata.v4.ODataContextBinding");
-
-		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')");
-		return Promise.all([
-			oBinding.readValue("Name"),
-			oBinding.readValue("LOCATION/COUNTRY"),
-			oBinding.readValue("Foo/COUNTRY"),
-			oBinding.readValue("NullValue"),
-			oBinding.readValue("", true),
-			oBinding.readValue("Name", true)
-		]).then(function (aData) {
-			assert.strictEqual(aData[0], "Frederic Fall");
-			assert.strictEqual(aData[1], "Germany");
-			assert.strictEqual(aData[2], undefined, "Foo/COUNTRY");
-			assert.strictEqual(aData[3], null);
-			assert.strictEqual(aData[4], oResult);
-			assert.strictEqual(aData[5], "Frederic Fall");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("readValue reject", function (assert) {
-		var oBinding,
-			oCache = {
-				read: function () {},
-				toString: function () { return "/service/EMPLOYEES(ID='1')?sap-client=111"; }
-			},
-			sMessage = "Accessed value is not primitive",
-			oErrorRead = new Error("Cache read error"),
-			oCacheMock = this.oSandbox.mock(oCache),
-			oModel = new ODataModel("/service/?sap-client=111"),
-			oResult = {
-				AGE : 32,
-				Name : "Frederic Fall",
-				LOCATION : {
-					COUNTRY : "Germany"
-				},
-				NullValue : null
-			};
-
-		oCacheMock.expects("read").returns(Promise.resolve(oResult));
-		this.oSandbox.mock(Cache).expects("createSingle").returns(oCache);
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to read value for /service/EMPLOYEES(ID='1')?sap-client=111"
-				+ " and path LOCATION",
-				// custom matcher because mobile Safari adds line and column properties to Error
-				sinon.match(function (oError) {
-					return oError instanceof Error && oError.message === sMessage;
-				}), "sap.ui.model.odata.v4.ODataContextBinding");
-
-		oCacheMock.expects("read").returns(Promise.reject(oErrorRead));
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to read value for /service/EMPLOYEES(ID='1')?sap-client=111"
-				+ " and path Name",
-				oErrorRead, "sap.ui.model.odata.v4.ODataContextBinding");
-
-		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')");
-		return Promise.all([
-			oBinding.readValue("LOCATION", false).then(
-				function () {
-					assert.ok(false, "Unexpected success");
-				},
-				function (oError0) {
-					assert.strictEqual(oError0.message, sMessage);
-				}
-			),
-			oBinding.readValue("Name").then(
-				function () {
-					assert.ok(false, "Unexpected success");
-				},
-				function (oError0) {
-					assert.strictEqual(oError0, oErrorRead);
-				}
-			)
-		]);
 	});
 
 	//*********************************************************************************************
@@ -283,7 +149,7 @@ sap.ui.require([
 			.withExactArgs(oModel.mUriParameters, mParameters, ["$expand", "$select"])
 			.returns(mQueryOptions);
 		this.mock(Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(oModel.oRequestor), "/service/EMPLOYEES(ID='1')",
+			.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES(ID='1')",
 				sinon.match.same(mQueryOptions));
 
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", null, mParameters);
@@ -307,10 +173,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh absolute path", function (assert) {
 		var oCache = {
-				refresh: function () {}
+				refresh : function () {}
 			},
 			oModel = new ODataModel("/service/?sap-client=111"),
-			oContext = oModel.getContext("/TEAMS('TEAM_01')"),
+			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oBinding;
 
 		this.oSandbox.mock(Cache).expects("createSingle").returns(oCache);
@@ -319,20 +185,13 @@ sap.ui.require([
 		this.oSandbox.mock(oCache).expects("refresh");
 		this.oSandbox.mock(oBinding).expects("_fireChange");
 
-		assert.throws(function () {
-			oBinding.refresh();
-		}, new Error("Falsy values for bForceUpdate are not supported"));
-		assert.throws(function () {
-			oBinding.refresh(false);
-		}, new Error("Falsy values for bForceUpdate are not supported"));
-
 		oBinding.refresh(true);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("refresh on relative binding is not supported", function (assert) {
 		var oModel = new ODataModel("/service/?sap-client=111"),
-			oContext = oModel.getContext("/TEAMS('TEAM_01')"),
+			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oBinding;
 
 		this.oSandbox.mock(Cache).expects("createSingle").never();
@@ -348,26 +207,165 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh cancels pending read", function (assert) {
 		var oBinding,
+			bGotDataReceived = false,
 			oModel = new ODataModel("/service/?sap-client=111"),
-			oContext = oModel.getContext("/TEAMS('TEAM_01')"),
+			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oPromise;
 
 		this.oSandbox.mock(oModel.oRequestor).expects("request")
-			.returns(Promise.resolve({value: {"ID" : "1"}}));
+			.returns(Promise.resolve({"ID" : "1"}));
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oBinding).expects("_fireChange");
 
+		oBinding.attachDataReceived(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("error"), undefined);
+			bGotDataReceived = true;
+		});
+
 		// trigger read before refresh
-		oPromise = oBinding.readValue("ID").then(function () {
+		oPromise = oBinding.requestValue("ID").then(function () {
 			assert.ok(false, "First read has to be canceled");
 		}, function (oError1) {
 			assert.strictEqual(oError1.canceled, true);
 			// no Error is logged because error has canceled flag
+			assert.ok(bGotDataReceived);
 		});
 		oBinding.refresh(true);
 		return oPromise;
 	});
-	// TODO check behavior if request for refresh fails (e.g. if data is already deleted)
-	// TODO events dataRequested, dataReceived
 	// TODO bSuspended? In v2 it is ignored (check with core)
+
+	//*********************************************************************************************
+	QUnit.test("requestValue: absolute binding (success)", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute"),
+			oCacheMock = this.oSandbox.mock(oBinding.oCache),
+			iDataReceivedCount = 0,
+			iDataRequestedCount = 0,
+			oModel = oBinding.getModel(),
+			fnResolveRead,
+			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;});
+
+		oBinding.attachDataRequested(function (oEvent) {
+			assert.strictEqual(oEvent.getSource(), oBinding, "dataRequested - correct source");
+			iDataRequestedCount++;
+		});
+
+		oBinding.attachDataReceived(function (oEvent) {
+			assert.strictEqual(oEvent.getSource(), oBinding, "dataReceived - correct source");
+			assert.strictEqual(iDataRequestedCount, 1, "dataRequested fired");
+			iDataReceivedCount++;
+		});
+
+		// read returns an unresolved Promise to be resolved by submitBatch; otherwise this
+		// Promise would be resolved before the rendering and dataReceived would be fired
+		// before dataRequested
+		oCacheMock.expects("read").withArgs("", "bar")
+			.callsArg(2)
+			.returns(oReadPromise);
+		this.oSandbox.stub(oModel.oRequestor, "submitBatch", function () {
+			// submitBatch resolves the promise of the read
+			fnResolveRead("value");
+		});
+
+		return oBinding.requestValue("bar").then(function (vValue) {
+			assert.strictEqual(vValue, "value");
+			assert.strictEqual(iDataReceivedCount, 1, "dataReceived fired");
+
+			// the second time the cache has the value and returns a resolved promise
+			oCacheMock.expects("read").withArgs("", "bar")
+				.returns(Promise.resolve("value"));
+
+			return oBinding.requestValue("bar").then(function (vValue) {
+				assert.strictEqual(vValue, "value");
+				assert.strictEqual(iDataRequestedCount, 1, "dataReceived not fired again");
+				assert.strictEqual(iDataReceivedCount, 1, "dataReceived not fired again");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValue: absolute binding (failure)", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute"),
+			iDataReceivedCount = 0,
+			oExpectedError = new Error("Expected read failure");
+
+		oBinding.attachDataReceived(function (oEvent) {
+			assert.strictEqual(oEvent.getSource(), oBinding, "dataReceived - correct source");
+			assert.strictEqual(oEvent.getParameter("error"), oExpectedError, "expected error");
+			iDataReceivedCount++;
+		});
+
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("", "bar")
+			.callsArg(2)
+			.returns(Promise.reject(oExpectedError));
+		this.oLogMock.expects("error").withExactArgs("Failed to read path /absolute",
+			oExpectedError, "sap.ui.model.odata.v4.ODataContextBinding");
+
+		return oBinding.requestValue("bar").then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError, oExpectedError);
+			assert.strictEqual(iDataReceivedCount, 1);
+		});
+	});
+
+
+	//*********************************************************************************************
+	QUnit.test("requestValue: relative binding", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute"),
+			oContext,
+			oContextMock,
+			oNestedBinding,
+			oPromise = {};
+
+		oBinding.initialize();
+		oContext = oBinding.getBoundContext();
+		oContextMock = this.oSandbox.mock(oContext);
+		oNestedBinding = this.oModel.bindContext("navigation", oContext);
+
+		oContextMock.expects("requestValue").withExactArgs("navigation/bar").returns(oPromise);
+
+		assert.strictEqual(oNestedBinding.requestValue("bar"), oPromise);
+
+		oContextMock.expects("requestValue").withExactArgs("navigation").returns(oPromise);
+
+		assert.strictEqual(oNestedBinding.requestValue(""), oPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("forbidden", function (assert) {
+		var oModel = new ODataModel("/service/"),
+			oContextBinding = oModel.bindContext("SO_2_BP");
+
+		assert.throws(function () { //TODO implement
+			oContextBinding.refresh(false);
+		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () {
+			oContextBinding.refresh("foo"/*truthy*/);
+		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () { //TODO implement
+			oContextBinding.refresh(true, "");
+		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+				+ "sGroupId parameter must not be set"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("events", function (assert) {
+		var oContextBinding,
+			oContextBindingMock = this.oSandbox.mock(ContextBinding.prototype),
+			mEventParameters = {},
+			oModel = new ODataModel("/service/"),
+			oReturn = {};
+
+		oContextBinding = oModel.bindContext("SO_2_BP");
+
+		["change", "dataRequested", "dataReceived"].forEach(function (sEvent) {
+			oContextBindingMock.expects("attachEvent")
+			.withExactArgs(sEvent, mEventParameters).returns(oReturn);
+
+			assert.strictEqual(oContextBinding.attachEvent(sEvent, mEventParameters), oReturn);
+		});
+	});
 });

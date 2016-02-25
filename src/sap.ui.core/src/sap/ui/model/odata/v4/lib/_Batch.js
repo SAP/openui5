@@ -8,16 +8,16 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 
 	var mAllowedChangeSetMethods = {"POST" : true, "PUT" : true, "PATCH" : true, "DELETE" : true},
 		oBatch,
-		rContentIdReference = /\$(?:\d*)*/,
+		rContentIdReference = /\$\d+/,
 		rHeaderParameter = /(\S*?)=(?:"(.+)"|(\S+))/;
 
 	/**
 	 * Create regular expression based on boundary parameter of the given "multipart/mixed"
 	 * Content-Type header value.
 	 * @param {string} sContentType
-	 *   value of the "multipart/mixed" Content-Type header value
-	 * @returns {object} regular expression which will be used to parse the $batch request body
-	 * @throws {Error} if the specified Content-Type header value does not represent
+	 *   Value of the "multipart/mixed" Content-Type header value
+	 * @returns {object} Regular expression which will be used to parse the $batch request body
+	 * @throws {Error} If the specified Content-Type header value does not represent
 	 *   "multipart/mixed" MIME type with "boundary" parameter.
 	 */
 	function getBoundaryRegExp(sContentType) {
@@ -40,8 +40,8 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	 * @param {string} sHeaderValue
 	 *   HTTP header value e.g. "application/json;charset=utf-8"
 	 * @param {string} sParameterName
-	 *   name of HTTP header parameter e.g. "charset"
-	 * @returns {string} the HTTP header parameter value
+	 *   Name of HTTP header parameter e.g. "charset"
+	 * @returns {string} The HTTP header parameter value
 	 */
 	function getHeaderParameterValue(sHeaderValue, sParameterName) {
 		var iParamIndex,
@@ -64,7 +64,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	 * <code>sMimeTypeHeaders</code> if it is "multipart/mixed".
 	 *
 	 * @param {string} sMimeTypeHeaders
-	 *   section of MIME part representing HTTP headers
+	 *   Section of MIME part representing HTTP headers
 	 * @returns {string} Content-Type header value e.g.
 	 *   "multipart/mixed; boundary=batch_id-0123456789012-345" or undefined
 	 */
@@ -80,9 +80,9 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	 * where <code>i</code> represents the index of the response inside of the change set.
 	 *
 	 * @param {string} sMimeTypeHeaders
-	 *   section of MIME part representing MIME HTTP headers of the change set response
-	 * @returns {number} zero-based index of the response inside of the change set
-	 * @throws {Error} if there is no Content-ID header in the specified
+	 *   Section of MIME part representing MIME HTTP headers of the change set response
+	 * @returns {number} Zero-based index of the response inside of the change set
+	 * @throws {Error} If there is no Content-ID header in the specified
 	 *   <code>sMimeTypeHeaders</code> or the available Content-ID header value is not a number.
 	 */
 	function getChangeSetResponseIndex(sMimeTypeHeaders) {
@@ -105,10 +105,10 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	 * the specified <code>sHeaders</code> section of MIME part.
 	 *
 	 * @param {string} sHeaders
-	 *   section of MIME part representing HTTP headers
+	 *   Section of MIME part representing HTTP headers
 	 * @param {string} sHeaderName
-	 *   name of HTTP header in lower case
-	 * @returns {string} the HTTP header value
+	 *   Name of HTTP header in lower case
+	 * @returns {string} The HTTP header value
 	 */
 	function getHeaderValue(sHeaders, sHeaderName) {
 		var i,
@@ -208,8 +208,8 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	 * Serializes a map of request headers to be used in a $batch request.
 	 *
 	 * @param {object} mHeaders
-	 *   a map of request headers
-	 * @returns {object[]} array representing the serialized headers
+	 *   A map of request headers
+	 * @returns {object[]} Array representing the serialized headers
 	 */
 	function serializeHeaders (mHeaders) {
 		var sHeaderName,
@@ -226,16 +226,16 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	 * Serializes the given array of request objects into $batch request body.
 	 *
 	 * @param {object[]} aRequests
-	 *   see parameter <code>aRequests</code> of serializeBatchRequest function
+	 *   See parameter <code>aRequests</code> of serializeBatchRequest function
 	 * @param {number} [iChangeSetIndex]
-	 *   is only specified if the function is called to serialize change sets and
+	 *   Is only specified if the function is called to serialize change sets and
 	 *   contains zero-based index of the change set within <code>aRequests</code> array.
 	 * @returns {object}
-	 *   the $batch request object with the following structure
+	 *   The $batch request object with the following structure
 	 *   <ul>
-	 *     <li><code>body</code>: {object[]} array of strings representing batch request
+	 *     <li><code>body</code>: {object[]} Array of strings representing batch request
 	 *      body
-	 *     <li><code>batchBoundary</code>: {string} batch boundary value
+	 *     <li><code>batchBoundary</code>: {string} Batch boundary value
 	 *   </ul>
 	 */
 	function _serializeBatchRequest(aRequests, iChangeSetIndex) {
@@ -294,25 +294,25 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * 'Content-Type' header.
 		 *
 		 * @param {string} sContentType
-		 *   value of the Content-Type header from the batch response
+		 *   Value of the Content-Type header from the batch response
 		 *   (e.g. "multipart/mixed; boundary=batch_123456")
 		 * @param {string} sResponseBody
-		 *   batch response body
-		 * @returns {object[]} array containing responses from the batch response body. Each of the
+		 *   Batch response body
+		 * @returns {object[]} Array containing responses from the batch response body. Each of the
 		 *   returned responses has the following structure:
 		 *   <ul>
-		 *     <li><code>status</code>: {number} HTTP status code;
-		 *     <li><code>statusText</code>: {string} HTTP status text;
-		 *     <li><code>headers</code>: {object} map of the response headers;
-		 *     <li><code>responseText</code>: {string} response body.
+		 *     <li><code>status</code>: {number} HTTP status code
+		 *     <li><code>statusText</code>: {string} HTTP status text
+		 *     <li><code>headers</code>: {object} Map of the response headers
+		 *     <li><code>responseText</code>: {string} Response body
 		 *   </ul>
 		 *   If the specified <code>sResponseBody</code> contains responses for change sets, then
 		 *   the corresponding response objects will be returned in a nested array.
 		 * @throws {Error}
 		 *   <ul>
-		 *     <li>if <code>sContentType</code> parameter does not represent "multipart/mixed"
+		 *     <li>If <code>sContentType</code> parameter does not represent "multipart/mixed"
 		 *       media type with "boundary" parameter
-		 *     <li>if "charset" parameter of "Content-Type" header of a nested response has value
+		 *     <li>If "charset" parameter of "Content-Type" header of a nested response has value
 		 *       other than "utf-8".
 		 *   </ul>
 		 */
@@ -325,39 +325,42 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * mandatory headers for the batch request.
 		 *
 		 * @param {object[]} aRequests
-		 *  an array consisting of request objects <code>oRequest</code> or out of array(s)
+		 *  An array consisting of request objects <code>oRequest</code> or out of array(s)
 		 *  of request objects <code>oRequest</code>, in case requests need to be sent in scope of
 		 *  a change set. See example below.
 		 * @param {string} oRequest.method
 		 *   HTTP method, e.g. "GET"
 		 * @param {string} oRequest.url
-		 *   absolute or relative URL. If the URL contains Content-ID reference then the reference
+		 *   Absolute or relative URL. If the URL contains Content-ID reference then the reference
 		 *   has to be specified as zero-based index of the referred request inside the change set.
 		 *   See example below.
 		 * @param {object} oRequest.headers
-		 *   map of request headers. RFC-2047 encoding rules are not supported. Nevertheless non
+		 *   Map of request headers. RFC-2047 encoding rules are not supported. Nevertheless non
 		 *   US-ASCII values can be used.
 		 * @param {string} oRequest.body
-		 *   request body. If specified, oRequest.headers map must contain "Content-Type" header
+		 *   Request body. If specified, oRequest.headers map must contain "Content-Type" header
 		 *   either without "charset" parameter or with "charset" parameter having value "UTF-8".
-		 * @returns {object} object containing the following properties:
+		 * @returns {object} Object containing the following properties:
 		 *   <ul>
-		 *     <li><code>body</code>: batch request body;
-		 *     <li><code>Content-Type</code>: value for the 'Content-Type' header;
-		 *     <li><code>MIME-Version</code>: value for the 'MIME-Version' header.
+		 *     <li><code>body</code>: Batch request body
+		 *     <li><code>headers</code>: Batch-specific request headers
+		 *     <ul>
+		 *       <li><code>Content-Type</code>: Value for the 'Content-Type' header
+		 *       <li><code>MIME-Version</code>: Value for the 'MIME-Version' header
+		 *     </ul>
 		 *   </ul>
 		 * @example
 		 *   var oBatchRequest = Batch.serializeBatchRequest([
 		 *       {
 		 *           method : "GET",
-		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+		 *           url : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Employees('1')",
 		 *           headers : {
 		 *               Accept : "application/json"
 		 *           }
 		 *       },
 		 *       [{
 		 *           method : "POST",
-		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+		 *           url : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS",
 		 *           headers : {
 		 *               "Content-Type" : "application/json"
 		 *           },
@@ -372,7 +375,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *       }],
 		 *       {
 		 *           method : "PATCH",
-		 *           url : "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('3')",
+		 *           url : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Employees('3')",
 		 *           headers : {
 		 *               "Content-Type" : "application/json"
 		 *           },
@@ -385,8 +388,10 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 
 			return {
 				body : oBatchRequest.body.join(""),
-				"Content-Type" : "multipart/mixed; boundary=" + oBatchRequest.batchBoundary,
-				"MIME-Version" : "1.0"
+				headers : {
+					"Content-Type" : "multipart/mixed; boundary=" + oBatchRequest.batchBoundary,
+					"MIME-Version" : "1.0"
+				}
 			};
 		}
 	};

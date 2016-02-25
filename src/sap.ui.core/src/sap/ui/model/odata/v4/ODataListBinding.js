@@ -4,33 +4,49 @@
 
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/model/Binding", "sap/ui/model/ChangeReason",
-	"sap/ui/model/ListBinding", "./_ODataHelper", "./lib/_Cache"
-], function (jQuery, Binding, ChangeReason, ListBinding, Helper, Cache) {
+	"jquery.sap.global",
+	"sap/ui/model/Binding",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/ListBinding",
+	"./_Context",
+	"./_ODataHelper",
+	"./lib/_Cache"
+], function (jQuery, Binding, ChangeReason, ListBinding, _Context, Helper, Cache) {
 	"use strict";
+
+	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
+		mSupportedEvents = {
+			change : true,
+			dataReceived : true,
+			dataRequested : true,
+			refresh : true
+		};
 
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataListBinding</code>,
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-	 *   the OData v4 model
+	 *   The OData v4 model
 	 * @param {string} sPath
-	 *   the path in the model
+	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
-	 * @param {number} iIndex
-	 *   the index of this list binding in the array of root bindings kept by the model, see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}
+	 *   The parent context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and $select
-	 *   "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL Conventions")
-	 *   are allowed. All other query options lead to an error. Query options specified for the
-	 *   binding overwrite model query options.
+	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
+	 *   The following query options are allowed:
+	 *   <ul>
+	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *   <li> The $expand and $select "5.1 System Query Options"
+	 *   </ul>
+	 *   All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} when disallowed OData query options are provided
+	 * @throws {Error} When disallowed OData query options are provided
 	 * @class List binding for an OData v4 model.
+	 *   It only supports the following events: 'change', 'dataReceived', 'dataRequested',
+	 *   'refresh'. If you attach to other events, an error is thrown.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -39,12 +55,15 @@ sap.ui.define([
 	 * @public
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
-			constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
+			constructor : function (oModel, sPath, oContext, mParameters) {
 				ListBinding.call(this, oModel, sPath, oContext);
+
+				if (!sPath || sPath.slice(-1) === "/") {
+					throw new Error("Invalid path: " + sPath);
+				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.create(oModel.oRequestor,
-						oModel.sServiceUrl + sPath.slice(1),
+					this.oCache = Cache.create(oModel.oRequestor, sPath.slice(1),
 						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
@@ -53,55 +72,116 @@ sap.ui.define([
 				this.aContexts = [];
 				// upper boundary for server-side list length (based on observations so far)
 				this.iMaxLength = Infinity;
-				this.iIndex = iIndex;
 				// this.bLengthFinal = this.aContexts.length === this.iMaxLength
 				this.bLengthFinal = false;
 			}
 		});
 
 	/**
-	 * Always fires a change event on this list binding.
+	 * The 'change' event is fired when the binding is initialized or new contexts are created or
+	 * its parent context is changed. It is to be used by controls to get notified about changes to
+	 * the binding contexts of this list binding. Registered event handlers are called with the
+	 * change reason as parameter.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#change
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
+	 *   The reason for the 'change' event which is {@link sap.ui.model.ChangeReason#Change Change}
+	 *   for binding initialization and new context creation or
+	 *   {@link sap.ui.model.ChangeReason#Context Context} if the parent context is changed.
+	 * @see sap.ui.base.Event
+	 * @protected
+	 * @since 1.37
 	 */
-	ODataListBinding.prototype.checkUpdate = function () {
-		this._fireChange({reason : ChangeReason.Change});
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * It is to be used by applications for example to switch on a busy indicator.
+	 * Registered event handlers are called without parameters.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @see sap.ui.base.Event
+	 * @public
+	 * @since 1.37
+	 */
+
+	/**
+	 * The 'dataReceived' event is fired after the back end data has been processed and the
+	 * registered 'change' event listeners have been notified.
+	 * It is to be used by applications for example to switch off a busy indicator or to process an
+	 * error.
+	 * If back end requests are successful, the event has no parameters. The response data is
+	 * available in the model. Note that controls bound to this data may not yet have been updated;
+	 * it is thus not safe for registered event handlers to access data via control APIs.
+	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * 'error' event parameter.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
+	 *   If there are multiple failed back end requests, the error of the first one is provided.
+	 * @see sap.ui.base.Event
+	 * @public
+	 * @since 1.37
+	 */
+
+	ODataListBinding.prototype.attachEvent = function (sEventId) {
+		if (!(sEventId in mSupportedEvents)) {
+			throw new Error("Unsupported event '" + sEventId + "': ODataListBinding#attachEvent");
+		}
+		return ListBinding.prototype.attachEvent.apply(this, arguments);
 	};
 
 	/**
+	 * Filter not supported by OData list binding
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataListBinding.prototype.filter = function () {
+		throw new Error("Unsupported operation: ODataListBinding#filter");
+	};
+
+	 /**
 	 * Returns already created binding contexts for all entities in this list binding for the range
 	 * determined by the given start index <code>iStart</code> and <code>iLength</code>.
-	 * If at least one of the entities in the given range has not yet been loaded, fires a change
+	 * If at least one of the entities in the given range has not yet been loaded, fires a 'change'
 	 * event on this list binding once these entities have been loaded <em>asynchronously</em>.
-	 * A further call to this method in the change event handler with the same index range then
+	 * A further call to this method in the 'change' event handler with the same index range then
 	 * yields the updated array of contexts.
 	 *
 	 * @param {number} [iStart=0]
-	 *   the index where to start the retrieval of contexts
+	 *   The index where to start the retrieval of contexts
 	 * @param {number} [iLength]
-	 *   the number of contexts to retrieve beginning from the start index; defaults to the model's
+	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
-	 * @return {sap.ui.model.Context[]}
-	 *   the array of already created contexts with the first entry containing the context for
+	 * @param {number} [iThreshold]
+	 *   The parameter <code>iThreshold</code> is not supported.
+	 * @returns {sap.ui.model.Context[]}
+	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
+	 * @throws {Error}
+	 *   When <code>iThreshold</code> is given
 	 * @see sap.ui.model.Binding#attachChange
 	 * @protected
 	 */
-	ODataListBinding.prototype.getContexts = function (iStart, iLength) {
+	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
 		var oContext = this.getContext(),
+			bDataRequested = false,
 			oModel = this.getModel(),
+			oPromise,
 			sResolvedPath = oModel.resolve(this.getPath(), oContext),
 			that = this;
 
-		function getBasePath(iIndex) {
-			return sResolvedPath + "[" + iIndex + "];root=" + that.iIndex;
-		}
-
-		function getDependentPath(iIndex) {
-			return sResolvedPath + "/" + iIndex;
-		}
-
 		/**
 		 * Checks, whether the contexts exist for the requested range.
-		 * @return {boolean}
+		 * @returns {boolean}
 		 *   <code>true</code> if the contexts in the range exist
 		 */
 		function isRangeInContext() {
@@ -119,20 +199,20 @@ sap.ui.define([
 		/**
 		 * Creates entries in aContexts for each value in oResult.
 		 * Uses fnGetPath to create the context path.
-		 * Fires "change" event if new contexts are created.
-		 * @param {function} fnGetPath function calculating base or dependent path
-		 * @param {object} oResult resolved OData result
+		 * Fires 'change' event if new contexts are created.
+		 * @param {array|object} vResult Resolved OData result
 		 */
-		function createContexts(fnGetPath, oResult) {
+		function createContexts(vResult) {
 			var bChanged = false,
 				i,
-				iResultLength = oResult.value.length,
+				bNewLengthFinal,
+				iResultLength = Array.isArray(vResult) ? vResult.length : vResult.value.length,
 				n = iStart + iResultLength;
 
 			for (i = iStart; i < n; i += 1) {
 				if (that.aContexts[i] === undefined) {
 					bChanged = true;
-					that.aContexts[i] = oModel.getContext(fnGetPath(i));
+					that.aContexts[i] = _Context.create(oModel, that, sResolvedPath + "/" + i, i);
 				}
 			}
 			if (that.aContexts.length > that.iMaxLength) {
@@ -148,13 +228,24 @@ sap.ui.define([
 						that.aContexts.length - that.iMaxLength);
 				}
 			}
-			// some controls use this flag instead of calling isLengthFinal
-			that.bLengthFinal = that.aContexts.length === that.iMaxLength;
+			bNewLengthFinal = that.aContexts.length === that.iMaxLength;
+			if (that.bLengthFinal !== bNewLengthFinal) {
+				// some controls use this flag instead of calling isLengthFinal
+				that.bLengthFinal = bNewLengthFinal;
+				// bLengthFinal changed --> control needs to be informed even if no new data is
+				// available
+				bChanged = true;
+			}
 
 			if (bChanged) {
 				that._fireChange({reason : ChangeReason.Change});
 				// no code below this line
 			}
+		}
+
+		if (iThreshold !== undefined) {
+			throw new Error("Unsupported operation: ODataListBinding#getContexts, "
+				+ "iThreshold parameter must not be set");
 		}
 
 		iStart = iStart || 0;
@@ -167,30 +258,61 @@ sap.ui.define([
 		}
 
 		if (!isRangeInContext(iStart, iLength)) {
-			if (oContext) { // nested list binding
-				oModel.read(sResolvedPath, true)
-					.then(createContexts.bind(undefined, getDependentPath));
-			} else { // absolute path
-				this.oCache.read(iStart, iLength)
-					.then(createContexts.bind(undefined, getBasePath), function (oError) {
-						if (!oError.canceled) {
-							jQuery.sap.log.error("Failed to get contexts for "
-								+ oModel.sServiceUrl + sResolvedPath.slice(1)
-								+ " with start index " + iStart + " and length " + iLength, oError,
-								"sap.ui.model.odata.v4.ODataListBinding");
-						}
-					});
-			}
+			oPromise = this.oCache
+				? this.oCache.read(iStart, iLength, "", undefined, function () {
+						bDataRequested = true;
+						that.oModel.dataRequested("", that.fireDataRequested.bind(that));
+					})
+				: oContext.requestValue(this.getPath());
+			oPromise.then(function (vResult) {
+				createContexts(vResult);
+				//fire dataReceived after change event fired in createContexts()
+				if (bDataRequested) {
+					that.fireDataReceived(); // no try catch needed: uncaught in promise
+				}
+			}, function (oError) {
+				if (!oError.canceled) {
+					jQuery.sap.log.error("Failed to get contexts for "
+						+ oModel.sServiceUrl + sResolvedPath.slice(1)
+						+ " with start index " + iStart + " and length " + iLength, oError,
+						sClassName);
+				}
+				//cache shares promises for concurrent read
+				if (bDataRequested) {
+					// no try catch needed: uncaught in promise
+					that.fireDataReceived({error : oError});
+				}
+			});
 		}
 		return this.aContexts.slice(iStart, iStart + iLength);
+	};
+
+	/**
+	 * Get current contexts not supported by OData list binding
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataListBinding.prototype.getCurrentContexts = function () {
+		throw new Error("Unsupported operation: ODataListBinding#getCurrentContexts");
+	};
+
+	/**
+	 * Get distinct values not supported by OData list binding
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataListBinding.prototype.getDistinctValues = function () {
+		throw new Error("Unsupported operation: ODataListBinding#getDistinctValues");
 	};
 
 	/**
 	 * Returns the number of entries in the list. As long as the client does not know the size on
 	 * the server an estimated length is returned.
 	 *
-	 * @return {number}
-	 *   the number of entries in the list
+	 * @returns {number}
+	 *   The number of entries in the list
 	 * @see sap.ui.model.ListBinding#getLength
 	 * @public
 	 */
@@ -199,11 +321,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Initializes the OData list binding. Fires a 'change' event in case the binding has a
+	 * resolved path.
+	 *
+	 * @protected
+	 */
+	ODataListBinding.prototype.initialize = function () {
+		if (this.oModel.resolve(this.sPath, this.oContext)) {
+			this._fireChange({reason : ChangeReason.Change});
+		}
+	};
+
+	/**
 	 * Returns <code>true</code> if the length has been determined by the data returned from
 	 * server. If the length is a client side estimation <code>false</code> is returned.
 	 *
-	 * @return {boolean}
-	 *   <code>true</true> if the length is determined by server side data
+	 * @returns {boolean}
+	 *   If <code>true</true> the length is determined by server side data
 	 * @see sap.ui.model.ListBinding#isLengthFinal
 	 * @public
 	 */
@@ -212,72 +346,28 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise to read the value for the given path in the list binding item with the
-	 * given index.
-	 *
-	 * @param {string} sPath
-	 *   the path to the property
-	 * @param {boolean} bAllowObjectAccess
-	 *   whether access to whole objects is allowed
-	 * @param {number} iIndex
-	 *   the item's index
-	 * @return {Promise}
-	 *   the promise which is resolved with the value, e.g. <code>"foo"</code> for simple
-	 *   properties, <code>[...]</code> for collections and <code>{"foo" : "bar", ...}</code> for
-	 *   objects
-	 * @private
-	 */
-	ODataListBinding.prototype.readValue = function (sPath, bAllowObjectAccess, iIndex) {
-		var that = this;
-
-		return new Promise(function (fnResolve, fnReject) {
-			function reject(oError) {
-				jQuery.sap.log.error("Failed to read value with index " + iIndex + " for "
-					+ that.oCache + " and path " + sPath,
-					oError, "sap.ui.model.odata.v4.ODataListBinding");
-				fnReject(oError);
-			}
-
-			that.oCache.read(iIndex, 1).then(function (oData) {
-				var oResult = oData.value[0];
-
-				if (sPath) {
-					sPath.split("/").every(function (sSegment) {
-						if (!oResult){
-							jQuery.sap.log.warning("Invalid segment " + sSegment, "path: " + sPath,
-								"sap.ui.model.odata.v4.ODataListBinding");
-							return false;
-						}
-						oResult = oResult[sSegment];
-						return true;
-					});
-				}
-				if (!bAllowObjectAccess && oResult && typeof oResult === "object") {
-					reject(new Error("Accessed value is not primitive"));
-					return;
-				}
-				fnResolve(oResult);
-			}, reject);
-		});
-	};
-
-	/**
-	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
-	 * control, that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
+	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 * Refresh is supported for absolute bindings.
 	 *
 	 * @param {boolean} bForceUpdate
-	 *   <code>bForceUpdate</code> has to be <code>true</code>
-	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code> or refresh
-	 *   on this binding is not supported
-	 *
+	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 * @param {string} [sGroupId]
+	 *   The parameter <code>sGroupId</code> is not supported.
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code> or
+	 *   <code>sGroupId</code> is set, refresh on this binding is not supported.
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 */
-	ODataListBinding.prototype.refresh = function (bForceUpdate) {
-		if (!bForceUpdate) {
-			throw new Error("Falsy values for bForceUpdate are not supported");
+	ODataListBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
+		if (bForceUpdate !== true) {
+			throw new Error("Unsupported operation: ODataListBinding#refresh, "
+				+ "bForceUpdate must be true");
+		}
+		if (sGroupId !== undefined) {
+			throw new Error("Unsupported operation: ODataListBinding#refresh, "
+				+ "sGroupId parameter must not be set");
 		}
 		if (!this.oCache) {
 			throw new Error("Refresh on this binding is not supported");
@@ -286,20 +376,50 @@ sap.ui.define([
 		this.aContexts = [];
 		this.iMaxLength = Infinity;
 		this.bLengthFinal = false;
-		this._fireRefresh({reason: ChangeReason.Refresh});
+		this._fireRefresh({reason : ChangeReason.Refresh});
+	};
+
+	/**
+	 * Requests the value for the given path and index; the value is requested from this binding's
+	 * cache or from its context in case it has no cache.
+	 *
+	 * @param {string} [sPath]
+	 *   Some relative path
+	 * @param {number} [iIndex]
+	 *   Index corresponding to some current context of this binding
+	 * @returns {Promise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 */
+	ODataListBinding.prototype.requestValue = function (sPath, iIndex) {
+		return this.oCache
+			? this.oCache.read(iIndex, /*iLength*/1, undefined, sPath)
+			: this.oContext.requestValue(this.sPath + "/" + iIndex
+				+ (sPath ? "/" + sPath : ""));
 	};
 
 	/**
 	 * Sets the context and resets the cached contexts of the list items.
 	 *
 	 * @param {sap.ui.model.Context} oContext
-	 *   the context object
+	 *   The context object
 	 * @protected
 	 * @override
 	 */
 	ODataListBinding.prototype.setContext = function (oContext) {
-		this.aContexts = [];
-		Binding.prototype.setContext.call(this, oContext);
+		if (this.oContext !== oContext) {
+			this.aContexts = [];
+			Binding.prototype.setContext.call(this, oContext);
+		}
+	};
+
+	/**
+	 * Sort not supported by OData list binding
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataListBinding.prototype.sort = function () {
+		throw new Error("Unsupported operation: ODataListBinding#sort");
 	};
 
 	return ODataListBinding;

@@ -3,7 +3,7 @@
 	<edmx:Reference Uri="[...]">
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="/sap/opu/local_V4/IWBEP/TEA_BUSI/$metadata">
+	<edmx:Reference Uri="/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata">
 		<edmx:Include Namespace="com.sap.gateway.iwbep.tea_busi.v0001"/>
 	</edmx:Reference>
 	<edmx:DataServices>

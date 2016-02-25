@@ -12,19 +12,38 @@
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
 				</Label>
-				<Text id="FavoriteProduct" text="{/ProductList('HT-1000')/Name}">
+				<Text id="FavoriteProduct" text="{
+						path: '/ProductList(\'HT-1000\')/Name',
+						events : {
+							dataReceived : '.onDataEvents',
+							dataRequested : '.onDataEvents'
+						}
+					}">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
 				</Text>
-				<Button icon="sap-icon://refresh" press="onRefreshFavoriteProduct"/>
+				<Button icon="sap-icon://refresh"
+					enabled="{ui>/bRealOData}"
+					press="onRefreshFavoriteProduct"/>
 				<ToolbarSpacer />
-				<Button text="Refresh all" press="onRefreshAll"/>
+				<Button text="Refresh all"
+					enabled="{ui>/bRealOData}"
+					press="onRefreshAll"/>
 			</content>
 		</Toolbar>
 		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
-			items="{path: '/SalesOrderList', parameters: {'$expand':'SO_2_BP',
-				'$select' : 'SalesOrderID,BuyerName,GrossAmount,CurrencyCode'}}"
+			items="{
+					path : '/SalesOrderList',
+					parameters : {
+						'$expand' : 'SO_2_BP',
+						'$select' : 'SalesOrderID,BuyerName,GrossAmount,CurrencyCode'
+					},
+					events : {
+						dataReceived : '.onDataEvents',
+						dataRequested : '.onDataEvents'
+					}
+				}"
 			mode="SingleSelectMaster" selectionChange="onSalesOrdersSelect">
 			<headerToolbar>
 				<Toolbar>
@@ -34,7 +53,9 @@
 							press="onCreateSalesOrderDialog"/>
 						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
 							type="Transparent"/>
-						<Button icon="sap-icon://refresh" press="onRefreshSalesOrdersList"/>
+						<Button icon="sap-icon://refresh"
+							enabled="{ui>/bRealOData}"
+							press="onRefreshSalesOrdersList"/>
 					</content>
 					<dependents>
 						<Dialog id="createSalesOrderDialog" title="Create New Sales Order">

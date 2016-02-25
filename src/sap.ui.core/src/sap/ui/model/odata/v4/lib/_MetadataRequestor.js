@@ -14,11 +14,11 @@ sap.ui.define([
 		/**
 		 * Creates a requestor for meta data documents.
 		 * @param {object} mHeaders
-		 *   a map of headers
+		 *   A map of headers
 		 * @param {object} mQueryParams
-		 *   a map of query parameters as described in {@link _Header.buildQuery}
+		 *   A map of query parameters as described in {@link _Header.buildQuery}
 		 * @returns {object}
-		 *   a new MetadataRequestor object
+		 *   A new MetadataRequestor object
 		 */
 		create : function (mHeaders, mQueryParams) {
 			var sQueryStr = Helper.buildQuery(mQueryParams);
@@ -27,12 +27,12 @@ sap.ui.define([
 				/**
 				 * Reads a metadata document from the given URL.
 				 * @param {string} sUrl
-				 *   the URL of a metadata document, it must not contain a query string or a
+				 *   The URL of a metadata document, it must not contain a query string or a
 				 *   fragment part
 				 * @returns {Promise}
-				 *   a promise fulfilled with the metadata as a JSON object
+				 *   A promise fulfilled with the metadata as a JSON object
 				 */
-				read: function (sUrl) {
+				read : function (sUrl) {
 					return new Promise(function (fnResolve, fnReject) {
 						jQuery.ajax(sUrl + sQueryStr, {
 							method : "GET",

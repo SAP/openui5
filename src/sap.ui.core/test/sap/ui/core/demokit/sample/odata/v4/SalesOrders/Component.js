@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/URI"
 ], function (View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon, URI) {
-	/*eslint no-multi-str: 0*/
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
@@ -43,58 +42,40 @@ sap.ui.define([
 			}
 
 			// TODO: Add Mockdata for single sales orders *with expand*
-			// http://localhost:8080/testsuite/proxy/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList('050001110')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))
+			// http://localhost:8080/testsuite/proxy/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/SalesOrderList('050001110')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))
 			if (!bHasOwnProxy) {
-				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/$metadata"
-						: {source : "metadata.xml"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=100"
-						: {source : "BusinessPartnerList.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/ProductList('HT-1000')/Name"
-						: {source : "Product_Name.json"},
-					// TODO enhance TestUtils to support also regular expressions as URLs
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-?$expand=SO_2_BP&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=0&$top=5"
-						: {source : "SalesOrderList.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-?$expand=SO_2_BP&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=6&$top=4"
-						: {source : "SalesOrderListNoMoreData.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500000002')?$expand=SO_2_SOITEM(\
-$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
-&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
-						: {source : "SalesOrderList_0.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500000003')?$expand=SO_2_SOITEM(\
-$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
-&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
-						: {source : "SalesOrderList_1.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500000004')?$expand=SO_2_SOITEM(\
-$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
-&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
-						: {source : "SalesOrderList_2.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500000005')?$expand=SO_2_SOITEM(\
-$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
-&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
-						: {source : "SalesOrderList_3.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500000006')?$expand=SO_2_SOITEM(\
-$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
-&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
-						: {source : "SalesOrderList_4.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList\
-(SalesOrderID='0500000007')?$expand=SO_2_SOITEM(\
-$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))\
-&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID"
-						: {source : "SalesOrderList_5.json"}
-				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data");
+				TestUtils.setupODataV4Server(this.oSandbox, {
+					"$metadata" : {source : "metadata.xml" },
+					"$batch" : {
+						"SalesOrderList\?$expand=SO_2_BP\&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=0&$top=5" : {
+							source : "SalesOrderAndBusinessPartnerList.txt"
+						},
+						"SalesOrderList?$expand=SO_2_BP&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=5&$top=5" : {
+							source : "SalesOrderListNoMoreData.txt"
+						},
+						"SalesOrderList(SalesOrderID='0500000000')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+							source : "SalesOrderList_0.txt"
+						},
+						"SalesOrderList(SalesOrderID='0500000001')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+							source : "SalesOrderList_1.txt"
+						},
+						"SalesOrderList(SalesOrderID='0500000002')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+							source : "SalesOrderList_2.txt"
+						},
+						"SalesOrderList(SalesOrderID='0500000003')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+							source : "SalesOrderList_3.txt"
+						},
+						"SalesOrderList(SalesOrderID='0500000004')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
+							source : "SalesOrderList_4.txt"
+						}
+					},
+				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data",
+				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 			}
 
 			return sap.ui.view({
 				id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
-				models : { undefined: oModel,
+				models : { undefined : oModel,
 					ui : new JSONModel({
 						bRealOData : bRealOData,
 						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",

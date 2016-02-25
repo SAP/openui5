@@ -42,12 +42,15 @@ sap.ui.define([
 			oMetaModel = oModel.getMetaModel();
 
 			if (!bHasOwnProxy) {
-				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/$metadata"
-						: {source : "metadata.xml"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=5"
-						: {source : "BusinessPartnerList.json"},
-				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrdersTemplate/data");
+				TestUtils.setupODataV4Server(this.oSandbox, {
+					"$metadata" : {source : "metadata.xml"},
+					"$batch" : {
+						"BusinessPartnerList" : {
+							source : "BusinessPartnerList.txt"
+						}
+					}
+				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrdersTemplate/data",
+				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 			}
 
 			oMetaModel.requestObject("/$EntityContainer/SalesOrderList/$Type").then(function () {
@@ -61,7 +64,7 @@ sap.ui.define([
 							iconTooltip : bRealOData ? "real OData service" : "mock OData service"
 						})
 					},
-					preprocessors: {
+					preprocessors : {
 						xml : {
 							models : {
 								meta : oMetaModel

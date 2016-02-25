@@ -6,10 +6,10 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/PropertyBinding"
-], function (jQuery, ChangeReason, Cache, Helper, PropertyBinding) {
+	"sap/ui/model/PropertyBinding",
+	"./lib/_Cache",
+	"./_ODataHelper"
+], function (jQuery, ChangeReason, PropertyBinding, Cache, Helper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding";
@@ -17,8 +17,8 @@ sap.ui.define([
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
 	 * framework. The error message includes the arguments to the method call.
-	 * @param {string} sMethodName - the method name
-	 * @param {object} args - the arguments passed to this method when called by SAPUI5
+	 * @param {string} sMethodName The method name
+	 * @param {object} args The arguments passed to this method when called by SAPUI5
 	 */
 	function notImplemented(sMethodName, args) {
 		var sArgs;
@@ -37,18 +37,19 @@ sap.ui.define([
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindProperty bindProperty} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-	 *   the OData v4 model
+	 *   The OData v4 model
 	 * @param {string} sPath
-	 *   the binding path in the model
+	 *   The binding path in the model; must not be empty or end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   map of OData query options where only "5.2 Custom Query Options" (see specification "OData
-	 *   Version 4.0 Part 2: URL Conventions") are allowed. All other query options lead to an
-	 *   error. Query options specified for the binding overwrite model query options.
+	 *   Map of OData query options where only "5.2 Custom Query Options" are allowed (see
+	 *   specification "OData Version 4.0 Part 2: URL Conventions"), except for those with a name
+	 *   starting with "sap-". All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} when disallowed OData query options are provided
+	 * @throws {Error} When disallowed OData query options are provided
 	 *
 	 * @class Property binding for an OData v4 model.
 	 *
@@ -61,21 +62,60 @@ sap.ui.define([
 	var ODataPropertyBinding = PropertyBinding.extend(sClassName, {
 			constructor : function (oModel, sPath, oContext, mParameters) {
 				PropertyBinding.call(this, oModel, sPath, oContext);
+
+				if (!sPath || sPath.slice(-1) === "/") {
+					throw new Error("Invalid path: " + sPath);
+				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.createSingle(oModel.oRequestor,
-						oModel.sServiceUrl + sPath.slice(1),
-						Helper.buildQueryOptions(oModel.mUriParameters, mParameters));
+					this.oCache = Cache.createSingle(oModel.oRequestor, sPath.slice(1),
+						Helper.buildQueryOptions(oModel.mUriParameters, mParameters), true);
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
 				}
 				this.bRequestTypeFailed = false;
-				this.oValue = undefined;
+				this.vValue = undefined;
 			},
 			metadata : {
 				publicMethods : []
 			}
 		});
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * It is to be used by applications for example to switch on a busy indicator. Registered event
+	 * handlers are called without parameters.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @see sap.ui.base.Event
+	 * @public
+	 * @since 1.37
+	 */
+
+	/**
+	 * The 'dataReceived' event is fired after the back end data has been processed and the
+	 * registered 'change' event listeners have been notified. It is to be used by applications for
+	 * example to switch off a busy indicator or to process an error.
+	 *
+	 * If back end requests are successful, the event has no parameters. The response data is
+	 * available in the model. Note that controls bound to this data may not yet have been updated;
+	 * it is thus not safe for registered event handlers to access data via control APIs.
+	 *
+	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * 'error' event parameter.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
+	 *   If there are multiple failed back end requests, the error of the first one is provided.
+	 * @see sap.ui.base.Event
+	 * @public
+	 * @since 1.37
+	 */
 
 	/**
 	 * Updates the binding's value and sends a change event if necessary. A change event is sent
@@ -92,15 +132,17 @@ sap.ui.define([
 	 * previous value and the <code>bForceUpdate</code> parameter.
 	 *
 	 * @param {boolean} [bForceUpdate=false]
-	 *   if <code>true</code> the change event is always fired except there is no context for a
+	 *   If <code>true</code> the change event is always fired except there is no context for a
 	 *   relative binding and the value is <code>undefined</code>.
 	 * @returns {Promise}
-	 *   a Promise to be resolved when the check is finished
+	 *   A Promise to be resolved when the check is finished
 	 *
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate) {
-		var bFire = false,
+		var bDataRequested = false,
+			bFire = false,
+			mParametersForDataReceived,
 			oPromise,
 			aPromises = [],
 			oReadPromise,
@@ -109,12 +151,12 @@ sap.ui.define([
 
 		if (!sResolvedPath) {
 			oPromise = Promise.resolve();
-			if (that.oValue !== undefined) {
+			if (that.vValue !== undefined) {
 				oPromise = oPromise.then(function () {
-					that._fireChange({reason: ChangeReason.Change});
+					that._fireChange({reason : ChangeReason.Change});
 				});
 			}
-			that.oValue = undefined; // ensure value is reset
+			that.vValue = undefined; // ensure value is reset
 			return oPromise;
 		}
 		if (!this.bRequestTypeFailed && !this.getType()) { // request type only once
@@ -127,30 +169,37 @@ sap.ui.define([
 				})
 			);
 		}
-		oReadPromise = this.isRelative() ? this.getModel().read(sResolvedPath) : this.oCache.read();
-		aPromises.push(oReadPromise.then(function (oData) {
-			if (oData.value === undefined || typeof oData.value === "object") {
+		oReadPromise = this.isRelative()
+			? this.getContext().requestValue(this.getPath())
+			: this.oCache.read(/*sGroupId*/"", /*sPath*/undefined, function () {
+					bDataRequested = true;
+					that.getModel().dataRequested("", that.fireDataRequested.bind(that));
+				});
+		aPromises.push(oReadPromise.then(function (vValue) {
+			if (vValue && typeof vValue === "object") {
 				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
-				bFire = that.oValue !== undefined;
-				that.oValue = undefined;
-			} else if (!jQuery.sap.equal(that.oValue, oData.value)) {
-				that.oValue = oData.value;
-				bFire = true;
+				vValue = undefined;
 			}
+			bFire = that.vValue !== vValue;
+			that.vValue = vValue;
 		})["catch"](function (oError) {
 			// do not rethrow, ManagedObject doesn't react on this either
 			// throwing an exception would cause "Uncaught (in promise)" in Chrome
 			if (!oError.canceled) {
 				jQuery.sap.log.error("Failed to read path " + sResolvedPath, oError, sClassName);
 				// fire change event only if error was not caused by refresh and value was undefined
-				bFire = that.oValue !== undefined;
+				bFire = that.vValue !== undefined;
+				mParametersForDataReceived = {error : oError};
 			}
-			that.oValue = undefined;
+			that.vValue = undefined;
 		}));
 
 		return Promise.all(aPromises).then(function () {
 			if (bForceUpdate || bFire) {
-				that._fireChange({reason: ChangeReason.Change});
+				that._fireChange({reason : ChangeReason.Change});
+			}
+			if (bDataRequested) {
+				that.fireDataReceived(mParametersForDataReceived);
 			}
 		});
 	};
@@ -159,22 +208,22 @@ sap.ui.define([
 	 * Returns the current value of the bound property.
 	 *
 	 * @returns {any}
-	 *   the current value of the bound property
+	 *   The current value of the bound property
 	 * @public
 	 */
 	ODataPropertyBinding.prototype.getValue = function () {
-		return this.oValue;
+		return this.vValue;
 	};
 
 	/**
-	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
-	 * control, that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
+	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 * Refresh is supported for absolute bindings.
 	 *
 	 * @param {boolean} bForceUpdate
-	 *   <code>bForceUpdate</code> has to be <code>true</code>
-	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code> or refresh
+	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code>, refresh
 	 *   on this binding is not supported
 	 *
 	 * @public
@@ -197,7 +246,7 @@ sap.ui.define([
 	 * In case of absolute bindings nothing is done.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @protected
 	 */
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
@@ -210,11 +259,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * TODO Sets the value for this binding. A model implementation should check if the current
-	 * default binding mode permits setting the binding value and if so set the new value also in
-	 * the model.
+	 * Sets the value for this binding. A model implementation should check if the current default
+	 * binding mode permits setting the binding value and if so set the new value also in the model.
 	 *
-	 * @param {any} oValue the value to set for this binding
+	 * @param {any} vValue The value to set for this binding
 	 *
 	 * @public
 	 */

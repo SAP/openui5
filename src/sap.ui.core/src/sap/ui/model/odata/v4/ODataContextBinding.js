@@ -7,33 +7,43 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/_ODataHelper"
-], function (jQuery, ChangeReason, ContextBinding, Cache, Helper) {
+	"./lib/_Cache",
+	"./_Context",
+	"./_ODataHelper"
+], function (jQuery, ChangeReason, ContextBinding, Cache, _Context, Helper) {
 	"use strict";
+
+	var mSupportedEvents = {
+			change : true,
+			dataReceived : true,
+			dataRequested : true
+		};
 
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataContextBinding</code>,
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-	 *   the OData v4 model
-	 * @param {String} sPath
-	 *   the binding path in the model
+	 *   The OData v4 model
+	 * @param {string} sPath
+	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
-	 * @param {number} iIndex
-	 *   the index of this context binding in the array of root bindings kept by the model, see
-	 *   {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext}
+	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   map of OData query options where "5.2 Custom Query Options" and the $expand and $select
-	 *   "5.1 System Query Options" (see specification "OData Version 4.0 Part 2: URL Conventions")
-	 *   are allowed. All other query options lead to an error. Query options specified for the
-	 *   binding overwrite model query options.
+	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
+	 *   The following query options are allowed:
+	 *   <ul>
+	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
+	 *   <li> The $expand and $select "5.1 System Query Options"
+	 *   </ul>
+	 *   All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} when disallowed OData query options are provided
+	 * @throws {Error} When disallowed OData query options are provided
 	 * @class Context binding for an OData v4 model.
+	 *   It only supports the following events: 'change', 'dataReceived', 'dataRequested'.
+	 *   If you attach to other events, an error is thrown.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -42,15 +52,15 @@ sap.ui.define([
 	 * @public
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
-			constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
-				var bAbsolute = sPath[0] === "/",
-					sBindingPath = bAbsolute ? sPath + ";root=" + iIndex : sPath;
+			constructor : function (oModel, sPath, oContext, mParameters) {
+				ContextBinding.call(this, oModel, sPath, oContext);
 
-				ContextBinding.call(this, oModel, sBindingPath, oContext);
+				if (sPath.slice(-1) === "/") {
+					throw new Error("Invalid path: " + sPath);
+				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.createSingle(oModel.oRequestor,
-						oModel.sServiceUrl + sPath.slice(1),
+					this.oCache = Cache.createSingle(oModel.oRequestor, sPath.slice(1),
 						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
@@ -62,104 +72,107 @@ sap.ui.define([
 			}
 		});
 
+	ODataContextBinding.prototype.attachEvent = function (sEventId) {
+		if (!(sEventId in mSupportedEvents)) {
+			throw new Error("Unsupported event '" + sEventId
+				+ "': ODataContextBinding#attachEvent");
+		}
+		return ContextBinding.prototype.attachEvent.apply(this, arguments);
+	};
+
 	/**
-	 * Checks for an update of this binding's context. If the binding can be resolved and the bound
-	 * context does not match the resolved path, a change event is fired; this event will always be
-	 * asynchronous.
+	 * The 'change' event is fired when the binding is initialized or its parent context is changed.
+	 * It is to be used by controls to get notified about changes to the bound context of this
+	 * context binding.
+	 * Registered event handlers are called with the change reason as parameter.
 	 *
-	 * @param {boolean} [bForceUpdate=false]
-	 *   if <code>true</code> the change event is fired even if the value has not changed.
-	 * @returns {Promise}
-	 *   a Promise to be resolved when the check is finished
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#change
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
+	 *   The reason for the 'change' event which is {@link sap.ui.model.ChangeReason#Change Change}
+	 *   for binding initialization or {@link sap.ui.model.ChangeReason#Context Context} if the
+	 *   parent context is changed.
+	 * @see sap.ui.base.Event
+	 * @protected
+	 * @since 1.37
+	 */
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * It is to be used by applications for example to switch on a busy indicator. Registered event
+	 * handlers are called without parameters.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataRequested
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @see sap.ui.base.Event
+	 * @public
+	 * @since 1.37
+	 */
+
+	/**
+	 * The 'dataReceived' event is fired after the back end data has been processed. It is to be
+	 * used by applications for example to switch off a busy indicator or to process an error.
+	 *
+	 * If back end requests are successful, the event has no parameters. The response data is
+	 * available in the model. Note that controls bound to this data may not yet have been updated;
+	 * it is thus not safe for registered event handlers to access data via control APIs.
+	 *
+	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * 'error' event parameter.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataReceived
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
+	 *   If there are multiple failed back end requests, the error of the first one is provided.
+	 * @see sap.ui.base.Event
+	 * @public
+	 * @since 1.37
+	 */
+
+	/**
+	 * Initializes the OData context binding. Fires a 'change' event in case the binding has a
+	 * resolved path.
 	 *
 	 * @protected
 	 */
-	ODataContextBinding.prototype.checkUpdate = function (bForceUpdate) {
-		var oPromise = Promise.resolve(),
-			sResolvedPath = this.getModel().resolve(this.getPath(), this.getContext()),
-			that = this;
+	ODataContextBinding.prototype.initialize = function () {
+		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
-		// works with oElementContext from ContextBinding which describes the resolved binding
-		// (whereas oContext from Binding is the base if sPath is relative)
-		if (!sResolvedPath
-				|| (!bForceUpdate && this.oElementContext
-					&& this.oElementContext.getPath() === sResolvedPath)) {
-			return oPromise;
+		if (!sResolvedPath) {
+			return;
 		}
-		return oPromise.then(function () {
-			// always fire asynchronously
-			that.oElementContext = that.getModel().getContext(sResolvedPath);
-			that._fireChange({reason: ChangeReason.Change});
-		});
+		this.oElementContext = _Context.create(this.oModel, this, sResolvedPath);
+		this._fireChange({reason : ChangeReason.Change});
 	};
 
 	/**
-	 * Returns a promise to read the value for the given path in the context binding.
-	 *
-	 * @param {string} sPath
-	 *   the relative path to the property
-	 * @param {boolean} bAllowObjectAccess
-	 *   whether access to whole objects is allowed
-	 * @return {Promise}
-	 *   the promise which is resolved with the value, e.g. <code>"foo"</code> for simple
-	 *   properties, <code>[...]</code> for collections and <code>{"foo" : "bar", ...}</code> for
-	 *   objects
-	 * @private
-	 */
-	ODataContextBinding.prototype.readValue = function (sPath, bAllowObjectAccess) {
-		var that = this;
-
-		return new Promise(function (fnResolve, fnReject) {
-			function message() {
-				return "Failed to read value for " + that.oCache + " and path " + sPath;
-			}
-
-			function reject(oError) {
-				if (!oError.canceled) {
-					jQuery.sap.log.error(message(), oError,
-						"sap.ui.model.odata.v4.ODataContextBinding");
-				}
-				fnReject(oError);
-			}
-
-			that.oCache.read().then(function (oData) {
-				if (sPath) {
-					sPath.split("/").every(function (sSegment) {
-						if (!oData) {
-							jQuery.sap.log.warning(message() + ": Invalid segment " + sSegment,
-								null, "sap.ui.model.odata.v4.ODataContextBinding");
-							return false;
-						}
-						oData = oData[sSegment];
-						return true;
-					});
-				}
-				if (!bAllowObjectAccess && oData && typeof oData === "object") {
-					reject(new Error("Accessed value is not primitive"));
-					return;
-				}
-				fnResolve(oData);
-			}, reject);
-		});
-	};
-
-	/**
-	 * Refreshes the binding. Makes the model retrieve data from the server and notifies the
-	 * control, that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code> an error is thrown.
+	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
+	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
 	 * Refresh is supported for absolute bindings.
 	 *
 	 * @param {boolean} bForceUpdate
-	 *   <code>bForceUpdate</code> has to be <code>true</code>
-	 * @throws {Error} when <code>bForceUpdate</code> is not given or <code>false</code> or refresh
-	 *   on this binding is not supported
-	 *
+	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
+	 * @param {string} [sGroupId]
+	 *   The parameter <code>sGroupId</code> is not supported.
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code> or
+	 *   <code>sGroupId</code> is set, refresh on this binding is not supported.
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 */
-	ODataContextBinding.prototype.refresh = function (bForceUpdate) {
-		if (!bForceUpdate) {
-			throw new Error("Falsy values for bForceUpdate are not supported");
+	ODataContextBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
+		if (bForceUpdate !== true) {
+			throw new Error("Unsupported operation: ODataContextBinding#refresh, "
+				+ "bForceUpdate must be true");
+		}
+		if (sGroupId !== undefined) {
+			throw new Error("Unsupported operation: ODataContextBinding#refresh, "
+				+ "sGroupId parameter must not be set");
 		}
 		if (!this.oCache) {
 			throw new Error("Refresh on this binding is not supported");
@@ -169,21 +182,51 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the (base) context which is used when the binding path is relative. This triggers a
-	 * {@link #checkUpdate} resulting in an asynchronous change event if the bound context changes.
-	 * Dependent bindings then will react and also check for updates.
+	 * Requests the value for the given path; the value is requested from this binding's
+	 * cache or from its context in case it has no cache.
+	 *
+	 * @param {string} [sPath]
+	 *   Some relative path
+	 * @returns {Promise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 */
+	ODataContextBinding.prototype.requestValue = function (sPath) {
+		var that = this,
+			bDataRequested = false;
+
+		if (this.oCache) {
+			return this.oCache.read(/*sGroupId*/"", sPath, function () {
+				bDataRequested = true;
+				that.getModel().dataRequested("", that.fireDataRequested.bind(that));
+			}).then(function (vValue) {
+				if (bDataRequested) {
+					that.fireDataReceived();
+				}
+				return vValue;
+			}, function (oError) {
+				if (!oError.canceled) {
+					jQuery.sap.log.error("Failed to read path " + that.getPath(), oError,
+						"sap.ui.model.odata.v4.ODataContextBinding");
+				}
+				that.fireDataReceived(oError.canceled ? undefined : {error : oError});
+				throw oError;
+			});
+		}
+		return this.oContext.requestValue(this.sPath + (sPath ? "/" + sPath : ""));
+	};
+
+	/**
+	 * Sets the (base) context which is used when the binding path is relative.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   the context which is required as base for a relative path
+	 *   The context which is required as base for a relative path
 	 * @protected
 	 */
 	ODataContextBinding.prototype.setContext = function (oContext) {
-		// only trigger an update if this context can change something
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
 			if (this.isRelative()) {
-				// TODO not tested
-				this.checkUpdate(false);
+				throw new Error("Nested context bindings are not supported");
 			}
 		}
 	};
