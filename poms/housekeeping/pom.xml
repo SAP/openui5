@@ -499,6 +499,12 @@
                   <artifactId>services</artifactId>
                   <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
+                <deployable>
+                  <groupId>com.sap.ui2.srvc</groupId>
+                  <artifactId>proxy</artifactId>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
+                  <contextPath>ROOT</contextPath>
+                </deployable>
                 <!-- only because of Anila! -->
                 <deployable>
                   <groupId>com.sap.ca</groupId>
