@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 			bReloadNeeded;
 
 		// don't fire any requests if metadata is not loaded yet.
-		if (this.oModel.oMetadata.isLoaded()) {
+		if (this.oModel.oMetadata.isLoaded() && this.bInitial) {
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
 			if (sResolvedPath && bReloadNeeded) {
