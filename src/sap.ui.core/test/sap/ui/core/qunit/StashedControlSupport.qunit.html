@@ -35,14 +35,10 @@
 				var fnClone = this.Button.prototype.clone,
 					fnDestroy = this.Button.prototype.destroy;
 				StashedControlSupport.mixInto(this.Button);
-				// assert.ok(this.Button.getMetadata().hasProperty("stashed"), "Control class has 'stashed' property");
 				assert.ok(this.Button.getMetadata().hasSpecialSetting("stashed"), "Control class has 'stashed' special setting");
 				assert.ok(this.Button.getMetadata().hasSpecialSetting("stashed"), "Control class has 'stashed' special setting");
 				assert.ok(this.Button.prototype.getStashed, "Control class has method 'getStashed'");
 				assert.ok(this.Button.prototype.setStashed, "Control class has method 'setStashed'");
-				// assert.ok(this.Button.prototype.getStashedAlias, "Control class has method 'getStashedAlias'");
-				// assert.ok(this.Button.prototype.setStashedAlias, "Control class has method 'setStashedAlias'");
-				// assert.notStrictEqual(this.Button.prototype.clone, fnClone, "Control class method 'clone' overwritten");
 				assert.notStrictEqual(this.Button.prototype.destroy, fnDestroy, "Control class method 'destroy' overwritten'");
 			});
 
@@ -52,42 +48,9 @@
 				assert.ok(!oButton.mProperties.stashed, "Control instance has 'stashed' property");
 				assert.ok(oButton.getStashed, "Control instance has method 'getStashed'");
 				assert.ok(oButton.setStashed, "Control instance has method 'setStashed'");
-				// assert.ok(oButton.getStashedAlias, "Control instance has method 'getStashedAlias'");
-				// assert.ok(oButton.setStashedAlias, "Control instance has method 'setStashedAlias'");
 				assert.strictEqual(oButton.getStashed(), undefined, "'stashed' property default value is undefined");
-				// assert.strictEqual(oButton.getStashedAlias(), undefined, "'stashed' property default value is undefined");
 				oButton.destroy();
 			});
-
-			// QUnit.module("StashedControlSupport", {
-			// 	beforeEach: function() {
-			// 		this.Button = Button.extend("Button");
-			// 		StashedControlSupport.mixInto(this.Button);
-			// 		this.oPanel1 = new Panel("parent1", {
-			// 			content: [
-			// 				new this.Button("control11", {
-			// 					stashed: true,
-			// 					stashedAlias: "control11"
-			// 				}),
-			// 				new this.Button("control12")
-			// 			]
-			// 		});
-			// 		this.oPanel2 = new Panel("parent2", {
-			// 			content: [
-			// 				new this.Button("control21", {
-			// 					stashed: true,
-			// 					stashedAlias: "control21"
-			// 				}),
-			// 				new this.Button("control22")
-			// 			]
-			// 		});
-			// 	},
-			// 	afterEach: function() {
-			// 		this.oPanel1.destroy();
-			// 		this.oPanel2.destroy();
-			// 	}
-			//
-			// });
 
 			QUnit.module("StashedControl", {
 				beforeEach: function() {
@@ -123,12 +86,9 @@
 				assert.strictEqual(this.oStashedControl.fnCreate, this.create, "fnCreate hook is set");
 				assert.ok(this.oStashedControl.setStashed, "setStashed method is available");
 				assert.ok(this.oStashedControl.getStashed, "getStashed method is available");
-				// assert.ok(this.oStashedControl.setStashedAlias, "setStashedAlias method is available");
-				// assert.ok(this.oStashedControl.getStashedAlias, "getStashedAlias method is available");
 				assert.ok(this.oStashedControl.clone, "clone method is available");
 				assert.ok(this.oStashedControl.destroy, "destroy method is available");
 				assert.strictEqual(this.oStashedControl.getStashed(), true, "'stashed' is true");
-				// assert.strictEqual(this.oStashedControl.getStashedAlias(), "alias", "'stashedAlias' is set");
 				this.oStashedControl.destroy();
 			});
 
@@ -145,10 +105,6 @@
 				this.oPanel.addAggregation("content", this.oButton);
 				assert.ok(this.oButton.getParent(), "Control has a parent");
 				this.oButton.setStashed(true);
-				// assert.strictEqual(sap.ui.getCore().byId(this.sId), this.oButton, "Control is available by id");
-				// assert.ok(!this.oButton.getParent(), "Control has no parent");
-				// assert.ok(!this.oPanel.getAggregation("content").length, "Panel has empty content");
-				// assert.strictEqual(this.oButton.getStashed(), true, "Control is stashed");
 				assert.ok(oSpy.calledWithExactly("Cannot re-stash a control", this.sId), "log warning");
 			});
 
