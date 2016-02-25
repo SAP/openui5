@@ -11,7 +11,8 @@
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m"
+	data-sap-ui-bindingSyntax="complex">
 	</script>
 
 <link rel="stylesheet"
@@ -32,6 +33,18 @@
 <!-- This test is not running against the real Northwind service, but a fake service based on
      Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
 <script type="text/javascript" src="ODataModelFakeService.js"></script>
+
+<script type="text/xmlview" id="xmlview">
+	<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns="sap.m" controllerName="my.Controller">
+				<List id='myList' items="{path: '/Categories', suspended: true}">
+					<InputListItem>
+						<content>
+							<Input value="{path: 'CategoryName', suspended: true}"/>
+						</content>
+					</InputListItem>
+				</List>
+	</mvc:View>
+</script>
 
 <!-- Test functions -->
 <script language="javascript">
@@ -1247,6 +1260,26 @@
 			oBinding.resume();
 		});
 		oModel.read("/Categories");
+	});
+
+	asyncTest("Declarative property and list binding with suspend",function(){
+		sap.ui.controller("my.Controller", {});
+		var oView = sap.ui.xmlview("xmlview", {viewContent: document.getElementById("xmlview").innerHTML});
+		var oModel = initModel(sURI, {json:false});
+		oView.setModel(oModel);
+		oView.placeAt("target1");
+		var oList = oView.byId('myList');
+		var oBinding = oList.getBinding('items');
+		var handler = function() { // delay the following test
+			var oItem = oView.byId('myList').getItems()[0];
+			var oPropBinding = oItem.getContent()[0].getBinding('value');
+			ok(oBinding.isSuspended(), "suspended flag should be true");
+			ok(oPropBinding.isSuspended(), "suspended flag should be true");
+			oBinding.detachChange(handler);
+			oView.destroy();
+			start();          // resume normal testing
+		};
+		oBinding.attachChange(this,handler);
 	});
 
 	asyncTest("test setProperty on complex Types (internal)",function(){
