@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/model/PropertyBinding",
 	"./lib/_Cache",
 	"./_ODataHelper"
-], function (jQuery, ChangeReason, PropertyBinding, Cache, Helper) {
+], function (jQuery, ChangeReason, PropertyBinding, _Cache, _ODataHelper) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding";
@@ -68,8 +68,8 @@ sap.ui.define([
 				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.createSingle(oModel.oRequestor, sPath.slice(1),
-						Helper.buildQueryOptions(oModel.mUriParameters, mParameters), true);
+					this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
+						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters), true);
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
 				}

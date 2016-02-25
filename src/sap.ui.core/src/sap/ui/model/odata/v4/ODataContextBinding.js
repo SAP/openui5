@@ -10,7 +10,7 @@ sap.ui.define([
 	"./lib/_Cache",
 	"./_Context",
 	"./_ODataHelper"
-], function (jQuery, ChangeReason, ContextBinding, Cache, _Context, Helper) {
+], function (jQuery, ChangeReason, ContextBinding, _Cache, _Context, _ODataHelper) {
 	"use strict";
 
 	var mSupportedEvents = {
@@ -60,8 +60,8 @@ sap.ui.define([
 				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.createSingle(oModel.oRequestor, sPath.slice(1),
-						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
+					this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
+						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");

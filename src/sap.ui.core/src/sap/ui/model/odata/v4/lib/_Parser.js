@@ -3,7 +3,8 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Parser
-sap.ui.define([], function () {
+sap.ui.define([
+], function () {
 	"use strict";
 
 	var mSymbols,

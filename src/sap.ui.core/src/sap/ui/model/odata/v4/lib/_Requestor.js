@@ -3,7 +3,11 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Requestor
-sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, Batch, Helper) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./_Batch",
+	"./_Helper"
+], function (jQuery, _Batch, _Helper) {
 	"use strict";
 
 	var mFinalHeaders = { // final (cannot be overridden) request headers for OData v4
@@ -56,7 +60,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 	function Requestor(sServiceUrl, mHeaders, mQueryParams) {
 		this.sServiceUrl = sServiceUrl;
 		this.mHeaders = mHeaders || {};
-		this.sQueryParams = Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
+		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.mBatchQueue = {};
 	}
@@ -97,7 +101,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 					fnResolve();
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
 					that.oSecurityTokenPromise = null;
-					fnReject(Helper.createError(jqXHR));
+					fnReject(_Helper.createError(jqXHR));
 				});
 			});
 		}
@@ -140,7 +144,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 			sPayload;
 
 		if (bIsBatch) {
-			oBatchRequest = Batch.serializeBatchRequest(oPayload);
+			oBatchRequest = _Batch.serializeBatchRequest(oPayload);
 			sPayload = oBatchRequest.body;
 			// This would have been the responsibility of submitBatch. But doing it here makes the
 			// $batch recognition easier.
@@ -176,7 +180,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 				that.mHeaders["X-CSRF-Token"]
 					= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
 				if (bIsBatch) {
-					oPayload = Batch.deserializeBatchResponse(
+					oPayload = _Batch.deserializeBatchResponse(
 						jqXHR.getResponseHeader("Content-Type"), oPayload);
 				}
 				fnResolve(oPayload);
@@ -190,7 +194,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 							true));
 					}, fnReject);
 				} else {
-					fnReject(Helper.createError(jqXHR));
+					fnReject(_Helper.createError(jqXHR));
 				}
 			});
 		});
@@ -225,7 +229,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 					if (oResponse) {
 						if (oResponse.status >= 400) {
 							oResponse.getResponseHeader = getResponseHeader;
-							oCause = Helper.createError(oResponse);
+							oCause = _Helper.createError(oResponse);
 							oRequest.$reject(oCause);
 						} else {
 							oRequest.$resolve(JSON.parse(oResponse.responseText));

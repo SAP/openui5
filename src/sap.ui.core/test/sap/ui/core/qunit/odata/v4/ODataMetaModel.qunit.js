@@ -13,7 +13,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel, Helper,
+], function (BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel, _ODataHelper,
 		SyncPromise, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -855,11 +855,13 @@ sap.ui.require([
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
-			this.oSandbox.stub(Helper, "getKeyPredicate", function (oEntityType0, oInstance0) {
-				assert.strictEqual(oEntityType0, mScope[oFixture.entityType]);
-				assert.strictEqual(oInstance0, oInstance);
-				return "(...)";
-			});
+			this.oSandbox.stub(_ODataHelper, "getKeyPredicate",
+				function (oEntityType0, oInstance0) {
+					assert.strictEqual(oEntityType0, mScope[oFixture.entityType]);
+					assert.strictEqual(oInstance0, oInstance);
+					return "(...)";
+				}
+			);
 
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
@@ -892,7 +894,7 @@ sap.ui.require([
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
-			this.oSandbox.mock(Helper).expects("getKeyPredicate").never();
+			this.oSandbox.mock(_ODataHelper).expects("getKeyPredicate").never();
 
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {

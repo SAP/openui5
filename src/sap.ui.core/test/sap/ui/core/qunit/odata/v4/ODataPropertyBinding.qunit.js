@@ -5,13 +5,13 @@ sap.ui.require([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/type/String",
-	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/ODataPropertyBinding",
-	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, TypeString, _Cache, _Context, Helper, ODataPropertyBinding,
-		ODataModel) {
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/odata/v4/ODataPropertyBinding"
+], function (ManagedObject, ChangeReason, TypeString, _Context, _ODataHelper, _Cache,
+		ODataModel, ODataPropertyBinding) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -143,7 +143,7 @@ sap.ui.require([
 			mParameters = {"custom" : "foo"},
 			mQueryOptions = {};
 
-		oHelperMock = this.mock(Helper);
+		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(oModel.mUriParameters, mParameters)
 			.returns(mQueryOptions);

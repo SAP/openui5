@@ -6,7 +6,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (Batch, Helper, Requestor,TestUtils) {
+], function (_Batch, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -70,13 +70,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Requestor is an object, not a constructor function", function (assert) {
-		assert.strictEqual(typeof Requestor, "object");
+	QUnit.test("_Requestor is an object, not a constructor function", function (assert) {
+		assert.strictEqual(typeof _Requestor, "object");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getServiceUrl", function (assert) {
-		var oRequestor = Requestor.create(sServiceUrl, undefined, {"foo" : "bar"});
+		var oRequestor = _Requestor.create(sServiceUrl, undefined, {"foo" : "bar"});
 
 		// code under test
 		assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl);
@@ -86,7 +86,7 @@ sap.ui.require([
 	QUnit.test("request", function (assert) {
 		var oPayload = {"foo" : 42},
 			oPromise,
-			oRequestor = Requestor.create(sServiceUrl, undefined, {
+			oRequestor = _Requestor.create(sServiceUrl, undefined, {
 				"foo" : "URL params are ignored for normal requests"
 			}),
 			oResult = {};
@@ -137,7 +137,7 @@ sap.ui.require([
 			var mDefaultHeaders = clone(mHeaders.defaultHeaders),
 				oPromise,
 				mRequestHeaders = clone(mHeaders.requestHeaders),
-				oRequestor = Requestor.create(sServiceUrl, mDefaultHeaders),
+				oRequestor = _Requestor.create(sServiceUrl, mDefaultHeaders),
 				oResult = {},
 				// add predefined request headers for OData v4
 				mResultHeaders = jQuery.extend({}, {
@@ -175,7 +175,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(), store CSRF token from server", function (assert) {
-		var oRequestor = Requestor.create("/");
+		var oRequestor = _Requestor.create("/");
 
 		this.oSandbox.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
@@ -188,7 +188,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(), keep old CSRF token in case no one is sent", function (assert) {
-		var oRequestor = Requestor.create("/", {"X-CSRF-Token" : "abc123"});
+		var oRequestor = _Requestor.create("/", {"X-CSRF-Token" : "abc123"});
 
 		this.oSandbox.mock(jQuery).expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "abc123"}}))
@@ -202,7 +202,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request(), keep fetching CSRF token in case no one is sent", function (assert) {
 		var oMock = this.oSandbox.mock(jQuery),
-			oRequestor = Requestor.create("/");
+			oRequestor = _Requestor.create("/");
 
 		oMock.expects("ajax")
 			.withExactArgs("/", sinon.match({headers : {"X-CSRF-Token" : "Fetch"}}))
@@ -222,10 +222,10 @@ sap.ui.require([
 		QUnit.test("refreshSecurityToken: success = " + bSuccess, function (assert) {
 			var oError = {},
 				oPromise,
-				oRequestor = Requestor.create("/Service/", undefined, {"sap-client" : "123"}),
+				oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}),
 				oTokenRequiredResponse = {};
 
-			this.oSandbox.mock(Helper).expects("createError")
+			this.oSandbox.mock(_Helper).expects("createError")
 				.exactly(bSuccess ? 0 : 2)
 				.withExactArgs(oTokenRequiredResponse)
 				.returns(oError);
@@ -296,7 +296,7 @@ sap.ui.require([
 		QUnit.test("request: " + o.sTitle, function (assert) {
 			var oError = {},
 				oReadFailure = {},
-				oRequestor = Requestor.create("/Service/"),
+				oRequestor = _Requestor.create("/Service/"),
 				oRequestPayload = {},
 				oResponsePayload = {},
 				bSuccess = o.bRequestSucceeds !== false && !o.bReadFails && !o.bDoNotDeliverToken,
@@ -309,7 +309,7 @@ sap.ui.require([
 					"status" : o.iStatus || 403
 				};
 
-			this.oSandbox.mock(Helper).expects("createError")
+			this.oSandbox.mock(_Helper).expects("createError")
 				.exactly(bSuccess || o.bReadFails ? 0 : 1)
 				.withExactArgs(oTokenRequiredResponse)
 				.returns(oError);
@@ -372,7 +372,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): with empty group", function (assert) {
-		var oRequestor = Requestor.create("/Service/");
+		var oRequestor = _Requestor.create("/Service/");
 
 		this.oSandbox.mock(oRequestor).expects("request").never();
 
@@ -410,7 +410,7 @@ sap.ui.require([
 				{responseText: JSON.stringify(aResults[0])},
 				{responseText: JSON.stringify(aResults[1])}
 			],
-			oRequestor = Requestor.create("/Service/", {"sap-client" : "123"});
+			oRequestor = _Requestor.create("/Service/", {"sap-client" : "123"});
 
 		aPromises.push(oRequestor.request("GET", "Products", "group1", {
 			Foo : "bar",
@@ -453,7 +453,7 @@ sap.ui.require([
 	QUnit.test("submitBatch(...): $batch failure", function (assert) {
 		var oBatchError = new Error("$batch request failed"),
 			aPromises = [],
-			oRequestor = Requestor.create("/Service/");
+			oRequestor = _Requestor.create("/Service/");
 
 		function unexpectedSuccess() {
 			assert.ok(false, "unexpected success");
@@ -498,7 +498,7 @@ sap.ui.require([
 				status : 404,
 				statusText : "Not found"
 			}],
-			oRequestor = Requestor.create("/Service/"),
+			oRequestor = _Requestor.create("/Service/"),
 			aPromises = [];
 
 		function unexpected () {
@@ -543,7 +543,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(...): batch group id", function (assert) {
-		var oRequestor = Requestor.create("/Service/");
+		var oRequestor = _Requestor.create("/Service/");
 
 		oRequestor.request("PATCH", "EntitySet", "group", {"foo": "bar"}, {"a": "b"});
 		oRequestor.request("PATCH", "EntitySet", "group", {"bar": "baz"}, {"c": "d"});
@@ -587,12 +587,12 @@ sap.ui.require([
 			},
 			aBatchRequests = [1],
 			aExpectedResponses = [],
-			oRequestor = Requestor.create("/Service/", undefined, {"sap-client" : "123"}),
+			oRequestor = _Requestor.create("/Service/", undefined, {"sap-client" : "123"}),
 			oResult = "abc",
 			sResponseContentType = "multipart/mixed; boundary=foo",
 			oJqXHRMock = createMock(assert, oResult, "OK", "abc123", sResponseContentType);
 
-		this.oSandbox.mock(Batch).expects("serializeBatchRequest")
+		this.oSandbox.mock(_Batch).expects("serializeBatchRequest")
 			.withExactArgs(aBatchRequests)
 			.returns(oBatchRequest);
 
@@ -606,7 +606,7 @@ sap.ui.require([
 				method : "POST"
 			}).returns(oJqXHRMock);
 
-		this.oSandbox.mock(Batch).expects("deserializeBatchResponse")
+		this.oSandbox.mock(_Batch).expects("deserializeBatchResponse")
 			.withExactArgs(sResponseContentType, oResult)
 			.returns(aExpectedResponses);
 
@@ -619,7 +619,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
-			var oRequestor = Requestor.create(TestUtils.proxy(sServiceUrl)),
+			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl)),
 				sResourcePath = "TEAMS('TEAM_01')";
 
 			function assertResult(oPayload){
@@ -646,7 +646,7 @@ sap.ui.require([
 
 		//*****************************************************************************************
 		QUnit.test("request(...)/submitBatch (realOData) fail", function (assert) {
-			var oRequestor = Requestor.create(TestUtils.proxy(sServiceUrl));
+			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl));
 
 			oRequestor.request("GET", "TEAMS('TEAM_01')", "group").then(function (oResult) {
 				assert.deepEqual(oResult, {

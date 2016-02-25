@@ -10,7 +10,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, ContextBinding, Cache, _Context, Helper,
+], function (ManagedObject, ChangeReason, ContextBinding, _Cache, _Context, _ODataHelper,
 		ODataContextBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -116,12 +116,12 @@ sap.ui.require([
 				oBinding;
 
 			if (bAbsolute) {
-				this.oSandbox.mock(Cache).expects("createSingle")
+				this.oSandbox.mock(_Cache).expects("createSingle")
 				.withExactArgs(sinon.match.same(oModel.oRequestor), sPath.slice(1), {
 					"sap-client" : "111"
 				}).returns(oCache);
 			} else {
-				this.oSandbox.mock(Cache).expects("createSingle").never();
+				this.oSandbox.mock(_Cache).expects("createSingle").never();
 			}
 
 			oBinding = oModel.bindContext(sPath, oContext);
@@ -144,11 +144,11 @@ sap.ui.require([
 			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
 			mQueryOptions = {};
 
-		oHelperMock = this.mock(Helper);
+		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(oModel.mUriParameters, mParameters, ["$expand", "$select"])
 			.returns(mQueryOptions);
-		this.mock(Cache).expects("createSingle")
+		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES(ID='1')",
 				sinon.match.same(mQueryOptions));
 
@@ -179,7 +179,7 @@ sap.ui.require([
 			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oBinding;
 
-		this.oSandbox.mock(Cache).expects("createSingle").returns(oCache);
+		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
 
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oCache).expects("refresh");
@@ -194,7 +194,7 @@ sap.ui.require([
 			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oBinding;
 
-		this.oSandbox.mock(Cache).expects("createSingle").never();
+		this.oSandbox.mock(_Cache).expects("createSingle").never();
 
 		oBinding = oModel.bindContext("TEAM_2_EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oBinding).expects("_fireChange").never();
