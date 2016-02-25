@@ -134,8 +134,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 		 * @return an array containing Controls and/or plain HTML element strings
 		 */
 		XMLTemplateProcessor.parseTemplate = function(xmlNode, oView) {
-
+			var bDesignMode = sap.ui.getCore().getConfiguration().getDesignMode();
 			var aResult = [];
+			if (bDesignMode) {
+				oView._sapui_declarativeSourceInfo = {
+					// the node representing the current control
+					xmlNode: xmlNode,
+					// the the document root node
+					xmlRootNode: oView._oContainingView === oView ? xmlNode :
+						oView._oContainingView._sapui_declarativeSourceInfo.xmlRootNode
+				};
+			}
 			var sCurrentName = oView.sViewName || oView._sFragmentName; // TODO: should Fragments and Views be separated here?
 			if (!sCurrentName) {
 				var oTopView = oView;
@@ -163,11 +172,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 			 * XHTML will be added to the aResult array as a sequence of strings,
 			 * UI5 controls will be instantiated and added as controls
 			 *
-			 * @param xmlNode the XML node to parse
-			 * @param bRoot whether this node is the root node
-			 * @return undefined but the aResult array is filled
+			 * @param {Element} xmlNode the XML node to parse
+			 * @param {boolean} bRoot whether this node is the root node
+			 * @param {boolean} bIgnoreTopLevelTextNodes
+ 			 * @return undefined but the aResult array is filled
 			 */
-			function parseNode(xmlNode, bRoot, bIgnoreToplevelTextNodes) {
+			function parseNode(xmlNode, bRoot, bIgnoreTopLevelTextNodes) {
 
 				if ( xmlNode.nodeType === 1 /* ELEMENT_NODE */ ) {
 
@@ -223,7 +233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 
 					}
 
-				} else if (xmlNode.nodeType === 3 /* TEXT_NODE */ && !bIgnoreToplevelTextNodes) {
+				} else if (xmlNode.nodeType === 3 /* TEXT_NODE */ && !bIgnoreTopLevelTextNodes) {
 
 					var text = xmlNode.textContent || xmlNode.text,
 					parentName = localName(xmlNode.parentNode);
@@ -311,7 +321,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 			function createControlOrExtension(node) { // this will also be extended for Fragments with multiple roots
 
 				if (localName(node) === "ExtensionPoint" && node.namespaceURI === "sap.ui.core") {
-					// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
+					// create extension point with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
 					return sap.ui.extensionpoint(oView, node.getAttribute("name"), function(){
 						var children = node.childNodes;
 						var oDefaultContent = [];
@@ -565,6 +575,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 				} else if (!jQuery.isArray(vNewControlInstance)) {
 					vNewControlInstance = [vNewControlInstance];
 				}
+
+				if (bDesignMode) {
+					vNewControlInstance.forEach(function (oInstance) {
+						oInstance._sapui_declarativeSourceInfo = {
+							xmlNode: node,
+							xmlRootNode: oView._sapui_declarativeSourceInfo.xmlRootNode,
+							fragmentName: oMetadata.getName() === 'sap.ui.core.Fragment' ? mSettings['fragmentName'] : null
+						};
+					});
+				}
+
 				return vNewControlInstance;
 			}
 
@@ -582,9 +603,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 			}
 
 		};
-
-
-
 
 	return XMLTemplateProcessor;
 
