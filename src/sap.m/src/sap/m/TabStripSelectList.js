@@ -114,17 +114,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 					item: oItem
 				});
 
-				var oPrevSelectedItem = this.getSelectedItem();
-				if (oPrevSelectedItem && oPrevSelectedItem !== oItem) {
-					if (sap.ui.Device.system.desktop) {
-						// close button is always visible on phone and tablet
-						oPrevSelectedItem.getAggregation('_closeButton').addStyleClass(TabStripItem.CSS_CLASS_CLOSE_BUTTON_INVISIBLE);
+				if (this.fireSelectionChange({selectedItem: oItem})) {
+					var oPrevSelectedItem = this.getSelectedItem();
+					if (oPrevSelectedItem && oPrevSelectedItem !== oItem) {
+						if (sap.ui.Device.system.desktop) {
+							// close button is always visible on phone and tablet
+							oPrevSelectedItem.getAggregation('_closeButton').addStyleClass(TabStripItem.CSS_CLASS_CLOSE_BUTTON_INVISIBLE);
+						}
 					}
+					this.setSelection(oItem);
 				}
-				this.setSelection(oItem);
-				this.fireSelectionChange({
-					selectedItem: oItem
-				});
 			}
 		};
 
@@ -149,6 +148,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 					}
 				}
 			});
+		};
+
+		/**
+		 * Override the method in order to force 'allowPreventDefault' to 'true'.
+		 * @override
+		 * @param {object} mParameters Parameters to be included in the event
+		 * @returns {sap.ui.core.support.Support|sap.ui.base.EventProvider|boolean|sap.ui.core.Element|*}
+		 */
+		TabStripSelectList.prototype.fireSelectionChange = function(mParameters) {
+			var bAllowPreventDefault = true;
+			return this.fireEvent("selectionChange", mParameters, bAllowPreventDefault);
 		};
 
 		return TabStripSelectList;
