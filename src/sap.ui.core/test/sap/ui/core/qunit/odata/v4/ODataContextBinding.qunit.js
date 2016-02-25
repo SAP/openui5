@@ -207,7 +207,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh cancels pending read", function (assert) {
 		var oBinding,
-			bGotDataReceived = false,
+			oBindingMock,
 			oModel = new ODataModel("/service/?sap-client=111"),
 			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oPromise;
@@ -215,12 +215,10 @@ sap.ui.require([
 		this.oSandbox.mock(oModel.oRequestor).expects("request")
 			.returns(Promise.resolve({"ID" : "1"}));
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
-		this.oSandbox.mock(oBinding).expects("_fireChange");
 
-		oBinding.attachDataReceived(function (oEvent) {
-			assert.strictEqual(oEvent.getParameter("error"), undefined);
-			bGotDataReceived = true;
-		});
+		oBindingMock = this.oSandbox.mock(oBinding);
+		oBindingMock.expects("_fireChange");
+		oBindingMock.expects("fireDataReceived").withExactArgs();
 
 		// trigger read before refresh
 		oPromise = oBinding.requestValue("ID").then(function () {
@@ -228,7 +226,6 @@ sap.ui.require([
 		}, function (oError1) {
 			assert.strictEqual(oError1.canceled, true);
 			// no Error is logged because error has canceled flag
-			assert.ok(bGotDataReceived);
 		});
 		oBinding.refresh(true);
 		return oPromise;
@@ -236,25 +233,16 @@ sap.ui.require([
 	// TODO bSuspended? In v2 it is ignored (check with core)
 
 	//*********************************************************************************************
-	QUnit.test("requestValue: absolute binding (success)", function (assert) {
+	QUnit.test("requestValue: absolute binding (read required)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
+			oBindingMock = this.oSandbox.mock(oBinding),
 			oCacheMock = this.oSandbox.mock(oBinding.oCache),
-			iDataReceivedCount = 0,
-			iDataRequestedCount = 0,
 			oModel = oBinding.getModel(),
 			fnResolveRead,
 			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;});
 
-		oBinding.attachDataRequested(function (oEvent) {
-			assert.strictEqual(oEvent.getSource(), oBinding, "dataRequested - correct source");
-			iDataRequestedCount++;
-		});
-
-		oBinding.attachDataReceived(function (oEvent) {
-			assert.strictEqual(oEvent.getSource(), oBinding, "dataReceived - correct source");
-			assert.strictEqual(iDataRequestedCount, 1, "dataRequested fired");
-			iDataReceivedCount++;
-		});
+		oBindingMock.expects("fireDataRequested").withExactArgs();
+		oBindingMock.expects("fireDataReceived").withExactArgs();
 
 		// read returns an unresolved Promise to be resolved by submitBatch; otherwise this
 		// Promise would be resolved before the rendering and dataReceived would be fired
@@ -269,35 +257,35 @@ sap.ui.require([
 
 		return oBinding.requestValue("bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
-			assert.strictEqual(iDataReceivedCount, 1, "dataReceived fired");
+		});
+	});
 
-			// the second time the cache has the value and returns a resolved promise
-			oCacheMock.expects("read").withArgs("", "bar")
-				.returns(Promise.resolve("value"));
+	//*********************************************************************************************
+	QUnit.test("requestValue: absolute binding (no read required)", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute"),
+			oBindingMock = this.oSandbox.mock(oBinding),
+			oCacheMock = this.oSandbox.mock(oBinding.oCache);
 
-			return oBinding.requestValue("bar").then(function (vValue) {
-				assert.strictEqual(vValue, "value");
-				assert.strictEqual(iDataRequestedCount, 1, "dataReceived not fired again");
-				assert.strictEqual(iDataReceivedCount, 1, "dataReceived not fired again");
-			});
+		oBindingMock.expects("fireDataRequested").never();
+		oBindingMock.expects("fireDataReceived").never();
+
+		oCacheMock.expects("read").withArgs("", "bar").returns(Promise.resolve("value"));
+
+		return oBinding.requestValue("bar").then(function (vValue) {
+			assert.strictEqual(vValue, "value");
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (failure)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
-			iDataReceivedCount = 0,
 			oExpectedError = new Error("Expected read failure");
-
-		oBinding.attachDataReceived(function (oEvent) {
-			assert.strictEqual(oEvent.getSource(), oBinding, "dataReceived - correct source");
-			assert.strictEqual(oEvent.getParameter("error"), oExpectedError, "expected error");
-			iDataReceivedCount++;
-		});
 
 		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("", "bar")
 			.callsArg(2)
 			.returns(Promise.reject(oExpectedError));
+		this.oSandbox.mock(oBinding).expects("fireDataReceived")
+			.withExactArgs({error : oExpectedError});
 		this.oLogMock.expects("error").withExactArgs("Failed to read path /absolute",
 			oExpectedError, "sap.ui.model.odata.v4.ODataContextBinding");
 
@@ -305,10 +293,8 @@ sap.ui.require([
 			assert.ok(false, "unexpected success");
 		}, function (oError) {
 			assert.strictEqual(oError, oExpectedError);
-			assert.strictEqual(iDataReceivedCount, 1);
 		});
 	});
-
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: relative binding", function (assert) {
