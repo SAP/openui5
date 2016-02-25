@@ -845,73 +845,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 		};
 
-		var fnMouseMoveListener = function(oEvent) {
-			var height = jQuery(window).height();
-
-			var oNotiBar = oEvent.data.notibar;
-			var $hoverDomRef = oNotiBar.$("hoverItem");
-
-			var clientY = oEvent.clientY;
-			var iClientTop = parseInt(clientY, 10);
-
-			/*
-			 * Border has to be moved up a little since the IE doesn't react anymore
-			 * if the mouse cursor is too close to the boder.
-			 */
-			var iBorder = height - $hoverDomRef.outerHeight();
-			if (oNotiBar._isHovered) {
-				if (iClientTop < iBorder) {
-					var fnHoverProxy = jQuery.proxy(fnHover, oNotiBar);
-					$hoverDomRef.on("mouseleave", fnHoverProxy);
-
-					window.setTimeout(function() {
-						var oEvt = jQuery.Event("mouseleave", {
-							notibar : oNotiBar
-						});
-						$hoverDomRef.trigger(oEvt);
-
-						$hoverDomRef.off("mouseleave", fnHoverProxy);
-					}, 100);
-
-					delete oNotiBar._isHovered;
-				}
-			} else {
-				if (iClientTop >= iBorder) {
-					var fnHoverProxy = jQuery.proxy(fnHover, oNotiBar);
-					$hoverDomRef.on("mouseenter", fnHoverProxy);
-
-					window.setTimeout(function() {
-						var oEvt = jQuery.Event("mouseenter", {
-							notibar : oNotiBar
-						});
-						$hoverDomRef.trigger(oEvt);
-
-						$hoverDomRef.off("mouseenter", fnHoverProxy);
-					}, 100);
-
-					oNotiBar._isHovered = true;
-				}
-			}
-		};
-
-		/*
-		 * When the NotiBar is minimized the IE doesn't get the mouseenter and
-		 * mouseleave events on the bar's parent element. So it's needed to simulate
-		 * these events with checking if the mouse cursor is near the bottom of the
-		 * window to manually trigger these events.
-		 */
-		var simulateMouseEventsForIE = function(oNotiBar) {
-			var $doc = jQuery(document);
-
-			if (oNotiBar.getVisibleStatus() === "Min") {
-				$doc.on("mousemove", {
-					notibar : oNotiBar
-				}, fnMouseMoveListener);
-			} else {
-				$doc.off("mousemove", fnMouseMoveListener);
-			}
-		};
-
 		/**
 		 * @private
 		 */
@@ -998,10 +931,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			// set descriptions for all normal notifiers
 			fnSetItemsDescription(this);
 
-			if (!!sap.ui.Device.browser.internet_explorer) {
-				simulateMouseEventsForIE(this);
-			}
-
 			// set toggler always to visible if running on a mobile device
 			if (sap.ui.Device.browser.mobile) {
 				var $toggler = this.$("toggler");
@@ -1069,26 +998,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 			var sMessage = oThis._oResBundle.getText(sKey, [ iCount ]);
 			$description.html(sMessage);
-		};
-
-		/*
-		 * Event listener for mouseenter/mouseleave for NotificationBar's parent
-		 * HTML-element
-		 */
-		var fnHover = function(oEvent) {
-			var $toggler = this.$("toggler");
-
-			var bDisplay = ($toggler.css("display") === "block") ? true : false;
-			if (bDisplay) {
-				// if toggler is being displayed
-				if (oEvent.type === "mouseleave") {
-					$toggler.css("display", "none");
-				}
-			} else {
-				if (oEvent.type === "mouseenter") {
-					$toggler.css("display", "block");
-				}
-			}
 		};
 
 		/*
