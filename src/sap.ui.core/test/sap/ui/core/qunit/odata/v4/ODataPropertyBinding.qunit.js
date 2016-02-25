@@ -75,8 +75,9 @@ sap.ui.require([
 
 			return new Promise(function (fnResolve, fnReject) {
 				var oBinding,
-					fnChangeHandler = function () {
+					fnChangeHandler = function (oEvent) {
 						assert.strictEqual(oControl.getText(), "value", "initialized");
+						assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
 						oBinding.detachChange(fnChangeHandler);
 						fnResolve(oBinding);
 					},
@@ -276,7 +277,8 @@ sap.ui.require([
 			type : new TypeString()
 		});
 
-		oControl.getBinding("text").attachChange(function () {
+		oControl.getBinding("text").attachChange(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Context);
 			assert.strictEqual(oControl.getText(), "value");
 			done();
 		});
@@ -620,7 +622,8 @@ sap.ui.require([
 		oBinding = oModel.bindProperty(sPath);
 
 		// refresh triggers change
-		oBinding.attachChange(function () {
+		oBinding.attachChange(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh);
 			done();
 		});
 

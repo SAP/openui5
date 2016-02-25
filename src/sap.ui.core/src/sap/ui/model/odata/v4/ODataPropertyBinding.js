@@ -82,11 +82,31 @@ sap.ui.define([
 		});
 
 	/**
+	 * The 'change' event is fired when the binding is initialized, refreshed or its parent context
+	 * is changed. It is to be used by controls to get notified about changes to the value of this
+	 * property binding. Registered event handlers are called with the change reason as parameter.
+	 *
+	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#change
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason#Change Change}
+	 *   when the binding is initialized, {@link sap.ui.model.ChangeReason#Refresh Refresh} when
+	 *   the binding is refreshed, and {@link sap.ui.model.ChangeReason#Context Context} when the
+	 *   parent context is changed
+	 *
+	 * @see sap.ui.base.Event
+	 * @protected
+	 * @since 1.37
+	 */
+
+	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
 	 * It is to be used by applications for example to switch on a busy indicator. Registered event
 	 * handlers are called without parameters.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
+	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataRequested
 	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @see sap.ui.base.Event
@@ -106,7 +126,7 @@ sap.ui.define([
 	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
+	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataReceived
 	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
@@ -134,33 +154,36 @@ sap.ui.define([
 	 * @param {boolean} [bForceUpdate=false]
 	 *   If <code>true</code> the change event is always fired except there is no context for a
 	 *   relative binding and the value is <code>undefined</code>.
+	 * @param {sap.ui.model.ChangeReason} [sChangeReason=ChangeReason.Change]
+	 *   The change reason for the change event
 	 * @returns {Promise}
 	 *   A Promise to be resolved when the check is finished
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate) {
-		var bDataRequested = false,
+	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason) {
+		var oChangeReason = {reason : sChangeReason ? sChangeReason : ChangeReason.Change},
+			bDataRequested = false,
 			bFire = false,
 			mParametersForDataReceived,
 			oPromise,
 			aPromises = [],
 			oReadPromise,
-			sResolvedPath = this.getModel().resolve(this.getPath(), this.getContext()),
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			that = this;
 
 		if (!sResolvedPath) {
 			oPromise = Promise.resolve();
 			if (that.vValue !== undefined) {
 				oPromise = oPromise.then(function () {
-					that._fireChange({reason : ChangeReason.Change});
+					that._fireChange(oChangeReason);
 				});
 			}
 			that.vValue = undefined; // ensure value is reset
 			return oPromise;
 		}
-		if (!this.bRequestTypeFailed && !this.getType()) { // request type only once
-			aPromises.push(this.getModel().getMetaModel().requestUI5Type(sResolvedPath)
+		if (!this.bRequestTypeFailed && !this.oType) { // request type only once
+			aPromises.push(this.oModel.getMetaModel().requestUI5Type(sResolvedPath)
 				.then(function (oType) {
 					that.setType(oType, that.sInternalType);
 				})["catch"](function (oError) {
@@ -170,10 +193,10 @@ sap.ui.define([
 			);
 		}
 		oReadPromise = this.isRelative()
-			? this.getContext().requestValue(this.getPath())
+			? this.oContext.requestValue(this.sPath)
 			: this.oCache.read(/*sGroupId*/"", /*sPath*/undefined, function () {
 					bDataRequested = true;
-					that.getModel().dataRequested("", that.fireDataRequested.bind(that));
+					that.oModel.dataRequested("", that.fireDataRequested.bind(that));
 				});
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {
@@ -196,7 +219,7 @@ sap.ui.define([
 
 		return Promise.all(aPromises).then(function () {
 			if (bForceUpdate || bFire) {
-				that._fireChange({reason : ChangeReason.Change});
+				that._fireChange(oChangeReason);
 			}
 			if (bDataRequested) {
 				that.fireDataReceived(mParametersForDataReceived);
@@ -216,15 +239,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
-	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
+	 * Refreshes this binding; refresh is supported for absolute bindings only.
+	 * A refresh retrieves data from the server and fires a change event when new data is available.
+	 * <code>bForceUpdate</code> has to be <code>true</code>.
 	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
-	 * Refresh is supported for absolute bindings.
 	 *
 	 * @param {boolean} bForceUpdate
 	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
-	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code>, refresh
-	 *   on this binding is not supported
+	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code> or when
+	 *   refresh on this binding is not supported
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
@@ -237,7 +260,7 @@ sap.ui.define([
 			throw new Error("Refresh on this binding is not supported");
 		}
 		this.oCache.refresh();
-		this.checkUpdate(true);
+		this.checkUpdate(true, ChangeReason.Refresh);
 	};
 
 	/**
@@ -253,7 +276,7 @@ sap.ui.define([
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
 			if (this.isRelative()) {
-				this.checkUpdate(false);
+				this.checkUpdate(false, ChangeReason.Context);
 			}
 		}
 	};
