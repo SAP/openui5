@@ -183,7 +183,8 @@ sap.ui.require([
 
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oCache).expects("refresh");
-		this.oSandbox.mock(oBinding).expects("_fireChange");
+		this.oSandbox.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Refresh});
 
 		oBinding.refresh(true);
 	});
