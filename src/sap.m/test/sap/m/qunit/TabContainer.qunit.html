@@ -132,7 +132,7 @@
 			strictEqual(this.oTabContainer.getSelectedItem(),oFirstItem.getId(),
 					"The default selected tab is the first one");
 
-			equal(jQuery( "span." + sap.m.TabStripItem._CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
+			equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 			var aTargetTouches = [{pageX: oCloseButton.$().offset().left + 2}];
 
 			//when removing an item, the _moveToNextItem function is called where the focus is handled
@@ -143,7 +143,7 @@
 
 			this.clock.tick(1000);
 
-				equal(jQuery( "span." + sap.m.TabStripItem._CSS_CLASS_LABEL + ":contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
+				equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 0, 'Element with name "'+sName+'" is not in the DOM.');
 
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
@@ -163,7 +163,7 @@
 			this.oTabContainer.attachItemClose(function (oEvent) {oEvent.preventDefault()});
 			sap.ui.test.qunit.triggerEvent("tap", oItem.getAggregation('_closeButton').$());
 
-			equal(jQuery( "span." + sap.m.TabStripItem._CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
+			equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
 		module("Misc", {

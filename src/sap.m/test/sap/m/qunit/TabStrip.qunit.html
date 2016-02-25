@@ -206,7 +206,7 @@
 			strictEqual(this.sut.getItems()[4].getModified(), true,
 					"Modified state is correct");
 
-			var modifiedItem = sap.m.TabStripItem._CSS_CLASS_MODIFIED;
+			var modifiedItem = sap.m.TabStripItem.CSS_CLASS_MODIFIED;
 			strictEqual(jQuery(this.sut.getItems()[3].getFocusDomRef()).hasClass(modifiedItem), false,
 					"The correspondent CSS class for the item change state is available ");
 			strictEqual(jQuery(this.sut.getItems()[4].getFocusDomRef()).hasClass(modifiedItem), true,
@@ -580,7 +580,7 @@
 			});
 			oCore.applyChanges();
 			//assert
-			strictEqual(this.sut.$("tabs").children("." + sap.m.TabStripItem._CSS_CLASS_SELECTED).length, 0, "The initial selection is not applied");
+			strictEqual(this.sut.$("tabs").children("." + sap.m.TabStripItem.CSS_CLASS_SELECTED).length, 0, "The initial selection is not applied");
 			strictEqual(this.sut.getSelectedItem(), null, "Correct value of selectedItem association");
 		});
 
@@ -594,7 +594,7 @@
 			oCore.applyChanges();
 			//assert
 			strictEqual(this.sut.getSelectedItem(), this.sut.getItems()[this.selectedItemIndex].getId(), "Correct selectedItem aggregation value");
-			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(sap.m.TabStripItem._CSS_CLASS_SELECTED), "The initial selection is applied correctly");
+			ok(this.sut.$("tabs").children().eq(this.selectedItemIndex).hasClass(sap.m.TabStripItem.CSS_CLASS_SELECTED), "The initial selection is applied correctly");
 		});
 
 		module("Tablet platform tests", {
