@@ -778,13 +778,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype._attachItemEventListeners = function (oObject) {
 			if (oObject instanceof TabStripItem) {
-				// make sure we always have one listener at a time only
-				oObject.detachItemClosePressed(this._handleItemClosePressed);
-				oObject.detachItemPropertyChanged(this._handleTabStripItemPropertyChanged.bind(this));
+				var aEvents = [
+						'itemClosePressed',
+						'itemPropertyChanged'
+				    ];
+				aEvents.forEach(function (sEventName) {
+					sEventName = sEventName.charAt(0).toUpperCase() + sEventName.slice(1); // Capitalize
 
+					// detach any listeners - make sure we always have one listener at a time only
+					oObject['detach' + sEventName](this['_handle' + sEventName]);
+					//e.g. oObject['detachItemClosePressed'](this.['_handleItemClosePressed'])
 
-				oObject.attachItemClosePressed(this._handleItemClosePressed);
-				oObject.attachItemPropertyChanged(this._handleTabStripItemPropertyChanged.bind(this));
+					// attach the listeners
+					oObject['attach' + sEventName](this['_handle' + sEventName].bind(this));
+				}, this);
 			}
 		};
 
@@ -816,7 +823,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * @param oEvent {jQuery.Event} Event object
 		 * @private
 		 */
-		TabStrip.prototype._handleTabStripItemPropertyChanged = function (oEvent) {
+		TabStrip.prototype._handleItemPropertyChanged = function (oEvent) {
 			var oSelectItem = this._findSelectItemFromTabStripItem(oEvent.getSource());
 			oSelectItem.setProperty(oEvent['mParameters'].propertyKey, oEvent['mParameters'].propertyValue);
 		};
