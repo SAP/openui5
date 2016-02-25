@@ -1076,6 +1076,31 @@
 		fnCheckChangeEvent();
 	});
 
+	module("Accessibility");
+
+	test("ARIA readonly", function () {
+		var oSlider = new sap.ui.commons.Slider({
+			editable: false
+		});
+		oSlider.placeAt("uiArea14");
+		sap.ui.getCore().applyChanges();
+
+		var $oSliderGrip = oSlider.oMovingGrip;
+		equal($oSliderGrip.getAttribute("aria-readonly"), "true", "Init slider in readonly mode");
+
+		oSlider.setEditable(true);
+		sap.ui.getCore().applyChanges();
+		equal($oSliderGrip.getAttribute("aria-readonly"), "false", "Remove readonly mode");
+
+		oSlider.setEditable(false);
+		sap.ui.getCore().applyChanges();
+		equal($oSliderGrip.getAttribute("aria-readonly"), "true", "Set it again to readonly");
+
+		$oSliderGrip = null;
+		oSlider.destroy();
+		oSlider = null;
+	});
+
 	</script>
 
 	<title>qunit Test for Slider</title>
@@ -1103,6 +1128,7 @@
 	<div id="uiArea11"></div>
 	<div id="uiArea12"></div>
 	<div id="uiArea13"></div>
+	<div id="uiArea14"></div>
 
 </body>
 </html>
