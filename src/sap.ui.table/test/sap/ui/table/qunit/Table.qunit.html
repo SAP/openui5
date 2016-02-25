@@ -531,23 +531,21 @@
 	module("VisibleRowcountMode Auto", {
 		setup: function() {
 			document.getElementById("qunit-fixture").style.height = "800px";
-			this.clock = sinon.useFakeTimers();
 			createTable({
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Auto
 			});
 		},
 		teardown: function() {
 			destroyTable();
-			this.clock.restore();
 			document.getElementById("qunit-fixture").style.height = "";
 		}
 	});
 
-	test("After initialization", function(){
-		this.clock.tick(1000);
-		this.clock.tick(1000);
-		equal(oTable.getVisibleRowCount(), 27, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
-
+	asyncTest("After initialization", function(){
+		window.setTimeout(function() {
+			equal(oTable.getVisibleRowCount(), 27, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
+			start();
+		}, 0);
 	});
 
 	module("VisibleRowcountMode Interactive", {
