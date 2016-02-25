@@ -33,12 +33,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		properties : {
 
 			/**
-			 * key of the view. Must be set to identify the used view in the <code>PlanningCalendar</code>
+			 * Key of the view. This must be set to identify the used view in the <code>PlanningCalendar</code>
 			 */
 			key : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * Type of the intervals of the row. The default is one hour.
+			 * Type of the intervals of the row. Default is Hour.
 			 */
 			intervalType : {type : "sap.ui.unified.CalendarIntervalType", group : "Appearance", defaultValue : sap.ui.unified.CalendarIntervalType.Hour},
 
@@ -50,32 +50,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			/**
 			 * Number of intervals (defined with <code>intervalType</code>) that are displayed on small size (phones).
 			 *
-			 * <b>Note:</b> not only the screen size is used to determine the available space. The size of the <code>PlanningCalendar</code> is used.
+			 * <b>Note:</b> It is not only the screen size which is used to determine the available space, the size of the <code>PlanningCalendar</code> is used as well.
 			 */
 			intervalsS : {type : "int", group : "Appearance", defaultValue : 6},
 
 			/**
 			 * Number of intervals (defined with <code>intervalType</code>) that are displayed on medium size (tablet)
 			 *
-			 * <b>Note:</b> not only the screen size is used to determine the available space. The size of the <code>PlanningCalendar</code> is used.
+			 * <b>Note:</b> It is not only the screen size which is used to determine the available space, the size of the <code>PlanningCalendar</code> is used as well.
 			 */
 			intervalsM : {type : "int", group : "Appearance", defaultValue : 8},
 
 			/**
 			 * Number of intervals (defined with <code>intervalType</code>) that are displayed on large size (desktop)
 			 *
-			 * <b>Note:</b> not only the screen size is used to determine the available space. The size of the <code>PlanningCalendar</code> is used.
+			 * <b>Note:</b> It is not only the screen size which is used to determine the available space, the size of the <code>PlanningCalendar</code> is used as well.
 			 */
 			intervalsL : {type : "int", group : "Appearance", defaultValue : 12},
 
 			/**
 			 * If set subintervals are shown.
 			 *
-			 * If the interval type is <code>Hour</code> quarter hours are shown.
+			 * If the interval type is <code>Hour</code>, quarter hours are shown.
 			 *
-			 * If the interval type is <code>Day</code> hours are shown.
+			 * If the interval type is <code>Day</code>, hours are shown.
 			 *
-			 * If the interval type is <code>Month</code> days are shown.
+			 * If the interval type is <code>Month</code>, days are shown.
 			 */
 			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false}
 
