@@ -122,7 +122,39 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMCrsl", ~"> .sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll");
 
+/*
+  Carousel control base styling
+*/
+.sapMCrslControls {
+  padding-top: 0.625rem;
+  text-align: center;
+}
 
+.sapMCrslControls a {
+  padding: 0.3125rem;
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -moz-user-drag: -moz-none;
+  user-drag: none;
+}
+
+.sapMCrslBulleted.sapMCrslBottomOffset {
+  position: absolute;
+  padding-top: 0;
+  bottom: 0.3125rem;
+  width: 100%;
+  z-index: 10;
+}
+
+.sapMCrslBulleted.sapMCrslTopOffset {
+  position: absolute;
+  padding-bottom: 0.125rem;
+  width: 100%;
+  z-index: 10;
+  padding-top: 0.1875rem;
+}
 
 /* Styles needed for keyboard handling
    ========================================================================== */
