@@ -915,20 +915,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		if ((sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive) ||
 			sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed ||
-			(sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Auto && this._iTableRowContentHeight)) {
+			(sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Auto && this._iTableRowContentHeight && this.getRows().length == 0)) {
 			if (this.getBinding("rows")) {
 				this._adjustRows(this._calculateRowsToDisplay());
-			} /*else {
-			Think about providing a flag to let the row creation happen in the think-time of the user.
-			If there is no binding, the rows don't need to be created right away.
-				var that = this;
-				this._mTimeouts.onBeforeRenderingAdjustRows = window.setTimeout(function() {
-					that._adjustRows(that._calculateRowsToDisplay());
-				}, 0);
-			}*/
+			}
 		}
 	};
-
 
 	/**
 	 * Rerendering handling
@@ -1015,7 +1007,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return;
 		}
 
-		var aRowHeights = this._determineDefaultRowHeight();
+		var aRowHeights = this._collectRowHeights();
+		this._getDefaultRowHeight(aRowHeights);
+
 		var iRowContentSpace = 0;
 		if (this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
 			iRowContentSpace = this._determineAvailableSpace();
@@ -1385,7 +1379,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			if (!bOnScroll) {
 				var oVSb = this.getDomRef("vsb");
 				if (oVSb) {
-					oVSb.scrollTop = iRowIndex * (this._iDefaultRowHeight || 28);
+					oVSb.scrollTop = iRowIndex * (this._getDefaultRowHeight() || 28);
 				}
 			}
 		}
@@ -2228,8 +2222,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 		}
 
-		this.getDomRef("vsb-content").style.height = this._iBindingLength * this._iDefaultRowHeight + "px";
-		oVSb.scrollTop = this._getSanitizedFirstVisibleRow() * this._iDefaultRowHeight;
+		var iDefaultRowHeight = this._getDefaultRowHeight();
+		this.getDomRef("vsb-content").style.height = this._iBindingLength * iDefaultRowHeight + "px";
+		oVSb.scrollTop = this._getSanitizedFirstVisibleRow() * iDefaultRowHeight;
 
 	};
 
@@ -2576,12 +2571,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype._getFirstVisibleRowByScrollTop = function(iScrollTop) {
 		var oVsb = this.getDomRef("vsb");
 		if (oVsb) {
-			if (this._iDefaultRowHeight) {
-				iScrollTop = (typeof iScrollTop === "undefined") ? oVsb.scrollTop : iScrollTop;
-				return Math.ceil(iScrollTop / this._iDefaultRowHeight);
-			} else {
-				return 0;
-			}
+			iScrollTop = (typeof iScrollTop === "undefined") ? oVsb.scrollTop : iScrollTop;
+			return Math.ceil(iScrollTop / this._getDefaultRowHeight());
 		} else {
 			if (this.getNavigationMode() === sap.ui.table.NavigationMode.Paginator) {
 				return (((this._oPaginator.getCurrentPage() || 1) - 1) * this.getVisibleRowCount());
@@ -6369,18 +6360,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * Determines the default row height, based upon the height of the row template.
 	 * @private
 	 */
-	Table.prototype._determineDefaultRowHeight = function() {
-		var aRowHeights;
+	Table.prototype._getDefaultRowHeight = function(aRowHeights) {
 		if (!this._iDefaultRowHeight && this.getDomRef()) {
-			aRowHeights = this._collectRowHeights();
+			aRowHeights = aRowHeights || this._collectRowHeights();
 			if (aRowHeights && aRowHeights.length > 0) {
 				this._iDefaultRowHeight = aRowHeights[0];
-			} else {
-				this._iDefaultRowHeight = 28;
 			}
 		}
 
-		return aRowHeights;
+		if (!this._iDefaultRowHeight) {
+			this._iDefaultRowHeight = 28;
+		}
+
+		return this._iDefaultRowHeight;
 	};
 
 	/**
@@ -6395,25 +6387,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var iMinVisibleRowCount = this.getMinAutoRowCount();
 		var iMinHeight;
 
+		var iDefaultRowHeight = this._getDefaultRowHeight();
 		if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed) {
-			iMinHeight = iVisibleRowCount * this._iDefaultRowHeight;
+			iMinHeight = iVisibleRowCount * iDefaultRowHeight;
 			iHeight = iMinHeight;
 		} else if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive) {
 			if (this._iTableRowContentHeight) {
-				iMinHeight = iMinVisibleRowCount * this._iDefaultRowHeight;
+				iMinHeight = iMinVisibleRowCount * iDefaultRowHeight;
 				if (!iHeight) {
 					iHeight = this._iTableRowContentHeight;
 				}
 			} else {
-				iMinHeight = iVisibleRowCount * this._iDefaultRowHeight;
+				iMinHeight = iVisibleRowCount * iDefaultRowHeight;
 				iHeight = iMinHeight;
 			}
 		} else if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Auto) {
-			iMinHeight = iMinVisibleRowCount * this._iDefaultRowHeight;
+			iMinHeight = iMinVisibleRowCount * iDefaultRowHeight;
 		}
 
 		var iRowContentHeight = Math.max(iHeight, iMinHeight);
-		this._iTableRowContentHeight = Math.floor(iRowContentHeight / this._iDefaultRowHeight) * this._iDefaultRowHeight;
+		this._iTableRowContentHeight = Math.floor(iRowContentHeight / iDefaultRowHeight) * iDefaultRowHeight;
 
 		var sCssKey = "height";
 		if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed) {
@@ -6449,8 +6442,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			iCalculatedRowsToDisplay = this.getVisibleRowCount() || 0;
 		} else if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive || sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Auto) {
 			var iMinAutoRowCount = this._determineMinAutoRowCount();
-
-			if (!this._iDefaultRowHeight || !iTableRowContentHeight) {
+			var iDefaultRowHeight = this._getDefaultRowHeight();
+			if (!iDefaultRowHeight || !iTableRowContentHeight) {
 				iCalculatedRowsToDisplay = iMinAutoRowCount;
 			} else {
 				// Make sure that table does not grow to infinity
@@ -6459,7 +6452,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				// the last content row height is iRowHeight - 1, therefore + 1 in the formula below:
 				// to avoid issues with having more fixed rows than visible row count, the number of visible rows must be
 				// adjusted.
-				var iRowCount = Math.floor(iAvailableSpace / this._iDefaultRowHeight);
+				var iRowCount = Math.floor(iAvailableSpace / iDefaultRowHeight);
 				iCalculatedRowsToDisplay = Math.max((this.getFixedRowCount() + this.getFixedBottomRowCount() + 1), Math.max(iMinAutoRowCount, iRowCount));
 			}
 		}
