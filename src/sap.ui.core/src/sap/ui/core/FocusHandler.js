@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				return null;
 			}
 
-			var oControl = this.oCore.byId(sControlId);
+			var oControl = this.oCore && this.oCore.byId(sControlId);
 			if (oControl) {
 				return {
 				    id : sControlId,
@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				return;
 			}
 
-			var oControl = this.oCore.byId(oInfo.id);
+			var oControl = this.oCore && this.oCore.byId(oInfo.id);
 			if (oControl && oInfo.info
 					&& oControl.getMetadata().getName() == oInfo.type
 					&& oControl.getFocusDomRef() != oInfo.focusref
@@ -212,7 +212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * @private
 		 */
 		FocusHandler.prototype.onfocusEvent = function(sControlId){
-			var oControl = this.oCore.byId(sControlId);
+			var oControl = this.oCore && this.oCore.byId(sControlId);
 			if (oControl) {
 				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
 				jQuery.sap.log.debug("Store focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");
@@ -289,9 +289,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * @private
 		 */
 		var triggerFocusleave = function(sControlId, sRelatedControlId, oCore){
-			var oControl = sControlId ? sap.ui.getCore().byId(sControlId) : null;
+			var oControl = sControlId ? oCore && oCore.byId(sControlId) : null;
 			if (oControl) {
-				var oRelatedControl = sRelatedControlId ? sap.ui.getCore().byId(sRelatedControlId) : null;
+				var oRelatedControl = sRelatedControlId ? oCore.byId(sRelatedControlId) : null;
 				var oEvent = jQuery.Event("sapfocusleave");
 				oEvent.target = oControl.getDomRef();
 				oEvent.relatedControlId = oRelatedControl ? oRelatedControl.getId() : null;
@@ -302,7 +302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 				if (oControlUIArea) {
 					oUiArea = oCore.getUIArea(oControlUIArea.getId());
 				} else {
-					var oPopupUIAreaDomRef = sap.ui.getCore().getStaticAreaRef();
+					var oPopupUIAreaDomRef = oCore.getStaticAreaRef();
 					if (jQuery.sap.containsOrEquals(oPopupUIAreaDomRef, oEvent.target)) {
 						oUiArea = oCore.getUIArea(oPopupUIAreaDomRef.id);
 					}
