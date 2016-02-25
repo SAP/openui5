@@ -37,7 +37,6 @@
 					<Button text="Button" id="button"></Button>
 				</content>
 			</Panel>
-			<mvc:XMLView name="example.mvc.test"
 		</mvc:View>
 	</script>
 
@@ -68,8 +67,9 @@
 					var xml = XMLTemplateProcessor.enrichTemplateIds(this.xml.documentElement, this.oView);
 					assert.ok(jQuery.isXMLDoc(xml), "valid xml document returned");
 					assert.strictEqual(xml.parentNode, this.xml, "no copying");
-					var node = this.xml.getElementById("root--button");
-					assert.ok(node, "button was found by full id");
+					var node = jQuery(this.xml).find("#root--button")[0];
+					assert.ok(node, "control was found by full id");
+					assert.equal(node.nodeName, "Button", "button is a button");
 					assert.equal(node.getAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id"), "true", "full id flag is set to true");
 					done();
 				}.bind(this));
