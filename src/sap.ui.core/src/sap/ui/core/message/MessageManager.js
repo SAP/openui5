@@ -124,7 +124,7 @@ sap.ui.define([
 	/**
 	 * Add messages to MessageManager
 	 *
-	 * @param {sap.ui.core.Message|array} vMessages Array of sap.ui.core.Message or single sap.ui.core.Message
+	 * @param {sap.ui.core.message.Message|sap.ui.core.message.Message[]} vMessages Array of sap.ui.core.message.Message or single sap.ui.core.message.Message
 	 * @public
 	 */
 	MessageManager.prototype.addMessages = function(vMessages) {
@@ -176,7 +176,7 @@ sap.ui.define([
 	/**
 	 * sort messages by type 'Error', 'Warning', 'Success', 'Info'
 	 *
-	 * @param {map} mMessages Map of Messages: {'target':[array of Messages]}
+	 * @param {map|sap.ui.core.message.Message[]} mMessages Map or array of Messages to be sorted (in order of severity) by their type property
 	 * @private
 	 */
 	MessageManager.prototype._sortMessages = function(mMessages) {
