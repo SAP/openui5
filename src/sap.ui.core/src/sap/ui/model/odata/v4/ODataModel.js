@@ -28,25 +28,10 @@ sap.ui.define([
 
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataModel";
-
-	/**
-	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
-	 * framework. The error message includes the arguments to the method call.
-	 * @param {string} sMethodName The method name
-	 * @param {object} args The arguments passed to this method when called by SAPUI5
-	 */
-	function notImplemented(sMethodName, args) {
-		var sArgs;
-
-		try {
-			sArgs = JSON.stringify(args);
-		} catch (e) {
-			sArgs = "JSON.stringify error for arguments "  + String(args);
-		}
-		throw new Error("Not implemented method v4.ODataModel." + sMethodName
-			+ " called with arguments " + sArgs);
-	}
+	var sClassName = "sap.ui.model.odata.v4.ODataModel",
+		mSupportedEvents = {
+			messageChange : true
+		};
 
 	/**
 	 * Constructor for a new ODataModel.
@@ -74,6 +59,10 @@ sap.ui.define([
 	 *   OData system query options or parameter aliases are specified as parameters
 	 *
 	 * @class Model implementation for OData v4.
+	 *   An event handler can only be attached to this model for the following event:
+	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
+	 *   messageChange}.
+	 *   For other events, an error is thrown.
 	 *
 	 * @author SAP SE
 	 * @alias sap.ui.model.odata.v4.ODataModel
@@ -122,6 +111,15 @@ sap.ui.define([
 					};
 				}
 			});
+
+	// See class documentation
+	ODataModel.prototype.attachEvent = function (sEventId) {
+		if (!(sEventId in mSupportedEvents)) {
+			throw new Error("Unsupported event '" + sEventId
+				+ "': v4.ODataModel#attachEvent");
+		}
+		return Model.prototype.attachEvent.apply(this, arguments);
+	};
 
 	/**
 	 * Informs the model that a request has been added to the given group.
@@ -214,6 +212,14 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
+		if (aFilters) {
+			throw new Error("Unsupported operation: v4.ODataModel#bindList, "
+					+ "aSorters parameter must not be set");
+		}
+		if (aSorters) {
+			throw new Error("Unsupported operation: v4.ODataModel#bindList, "
+				+ "aFilters parameter must not be set");
+		}
 		return new ODataListBinding(this, sPath, oContext, mParameters);
 	};
 
@@ -243,8 +249,14 @@ sap.ui.define([
 		return new ODataPropertyBinding(this, sPath, oContext, mParameters);
 	};
 
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
 	ODataModel.prototype.bindTree = function () {
-		notImplemented("bindTree", arguments);
+		throw new Error("Unsupported operation: v4.ODataModel#bindTree");
 	};
 
 	/**
@@ -276,17 +288,17 @@ sap.ui.define([
 	 * @throws {Error}
 	 */
 	ODataModel.prototype.createBindingContext = function () {
-		throw new Error("Cannot create context at model");
+		throw new Error("Unsupported operation: v4.ODataModel#createBindingContext");
 	};
 
 	/**
-	 * Cannot destroy contexts.
+	 * Method not supported
 	 *
 	 * @public
 	 * @throws {Error}
 	 */
 	ODataModel.prototype.destroyBindingContext = function () {
-		throw new Error("Cannot destroy context");
+		throw new Error("Unsupported operation: v4.ODataModel#destroyBindingContext");
 	};
 
 	/**
@@ -297,7 +309,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 */
 	ODataModel.prototype.getContext = function () {
-		throw new Error("Cannot get context at model");
+		throw new Error("Unsupported operation: v4.ODataModel#getContext");
 	};
 
 	/**
@@ -311,27 +323,61 @@ sap.ui.define([
 		return this.oMetaModel;
 	};
 
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataModel.prototype.getOriginalProperty = function () {
+		throw new Error("Unsupported operation: v4.ODataModel#getOriginalProperty");
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
 	ODataModel.prototype.getProperty = function () {
-		notImplemented("getProperty", arguments);
+		throw new Error("Unsupported operation: v4.ODataModel#getProperty");
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataModel.prototype.isList = function () {
+		throw new Error("Unsupported operation: v4.ODataModel#isList");
 	};
 
 	/**
 	 * Refreshes the model by calling refresh on all bindings which have a change event handler
 	 * attached. <code>bForceUpdate</code> has to be <code>true</code>.
-	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
+	 * If <code>bForceUpdate</code> is not <code>true</code> or <code>sGroupId</code> is set, an
+	 * error is thrown.
 	 *
 	 * @param {boolean} bForceUpdate
 	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
-	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code>
-	 *
+	 * @param {string} [sGroupId]
+	 *   The parameter <code>sGroupId</code> is not supported.
+	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
+	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#refresh
 	 * @see sap.ui.model.odata.v4.ODataListBinding#refresh
 	 * @see sap.ui.model.odata.v4.ODataPropertyBinding#refresh
 	 */
-	ODataModel.prototype.refresh = function (bForceUpdate) {
-		if (!bForceUpdate) {
-			throw new Error("Falsy values for bForceUpdate are not supported");
+	ODataModel.prototype.refresh = function (bForceUpdate, sGroupId) {
+		if (bForceUpdate !== true) {
+			throw new Error("Unsupported operation: v4.ODataModel#refresh, "
+					+ "bForceUpdate must be true");
+		}
+		if (sGroupId !== undefined) {
+			throw new Error("Unsupported operation: v4.ODataModel#refresh, "
+				+ "sGroupId parameter must not be set");
 		}
 		this.aBindings.slice().forEach(function (oBinding) {
 			if (oBinding.oCache) { // relative bindings have no cache and cannot be refreshed
@@ -400,6 +446,16 @@ sap.ui.define([
 				"oEntityContext must belong to this model");
 		return this.getMetaModel()
 			.requestCanonicalUrl("/", oEntityContext.getPath(), oEntityContext);
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataModel.prototype.setLegacySyntax = function () {
+		throw new Error("Unsupported operation: v4.ODataModel#setLegacySyntax");
 	};
 
 	return ODataModel;
