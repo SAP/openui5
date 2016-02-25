@@ -781,7 +781,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			if (!oLayout._mainGrid || !oLayout._mainGrid.__bIsUsed ) {
 				// no main grid used -> only 1 container
 				var aContainers = oLayout.getParent().getFormContainers();
-				if (!oLayout.mContainers[aContainers[0].getId()] || aContainers[0].getId() != this.__myParentContainerId) {
+				var oFirstContainer;
+				for (var i = 0; i < aContainers.length; i++) {
+					if (aContainers[i].getVisible()) {
+						oFirstContainer = aContainers[i];
+						break;
+					}
+				}
+				if (!oFirstContainer || !oLayout.mContainers[oFirstContainer.getId()] || oFirstContainer.getId() != this.__myParentContainerId) {
 					// Form seems to be invalidated (container changed) but rerendering still not done
 					// -> ignore resize, it will be rerendered soon
 					return;
