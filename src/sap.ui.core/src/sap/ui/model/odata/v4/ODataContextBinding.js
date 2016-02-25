@@ -204,11 +204,13 @@ sap.ui.define([
 				}
 				return vValue;
 			}, function (oError) {
-				if (!oError.canceled) {
+				if (oError.canceled) {
+					that.fireDataReceived();
+				} else {
 					jQuery.sap.log.error("Failed to read path " + that.getPath(), oError,
 						"sap.ui.model.odata.v4.ODataContextBinding");
+					that.fireDataReceived({error : oError});
 				}
-				that.fireDataReceived(oError.canceled ? undefined : {error : oError});
 				throw oError;
 			});
 		}
