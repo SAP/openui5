@@ -8,6 +8,10 @@
 	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
 	sinon.config.useFakeTimers = false;
 
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
 	var classNameUnread = '.sapMNLI-Unread';
 	var classNameHeader = '.sapMNLI-Header';
 	var classNameDetails = '.sapMNLI-Details';
@@ -423,34 +427,34 @@
 		this.NotificationListItem.setPriority(sap.ui.core.Priority.None);
 		this.NotificationListItem.invalidate();
 		sap.ui.getCore().applyChanges();
-		priorityDiv = this.NotificationListItem.$().find('.sapMNLI-Priority');
+		priorityDiv = this.NotificationListItem.$().find('.sapMNLB-Priority');
 
 	    // assert
-	    assert.strictEqual(priorityDiv.hasClass('sapMNLI-None'), true, 'Priority should be set to "None"');
+	    assert.strictEqual(priorityDiv.hasClass('sapMNLB-None'), true, 'Priority should be set to "None"');
 
 		// act
 		this.NotificationListItem.setPriority(sap.ui.core.Priority.Low);
 		sap.ui.getCore().applyChanges();
-		priorityDiv = this.NotificationListItem.$().find('.sapMNLI-Priority');
+		priorityDiv = this.NotificationListItem.$().find('.sapMNLB-Priority');
 
 		// assert
-		assert.strictEqual(priorityDiv.hasClass('sapMNLI-Low'), true, 'Priority should be set to "Low"');
+		assert.strictEqual(priorityDiv.hasClass('sapMNLB-Low'), true, 'Priority should be set to "Low"');
 
 		// act
 		this.NotificationListItem.setPriority(sap.ui.core.Priority.Medium);
 		sap.ui.getCore().applyChanges();
-		priorityDiv = this.NotificationListItem.$().find('.sapMNLI-Priority');
+		priorityDiv = this.NotificationListItem.$().find('.sapMNLB-Priority');
 
 		// assert
-		assert.strictEqual(priorityDiv.hasClass('sapMNLI-Medium'), true, 'Priority should be set to "Medium"');
+		assert.strictEqual(priorityDiv.hasClass('sapMNLB-Medium'), true, 'Priority should be set to "Medium"');
 
 		// act
 		this.NotificationListItem.setPriority(sap.ui.core.Priority.High);
 		sap.ui.getCore().applyChanges();
-		priorityDiv = this.NotificationListItem.$().find('.sapMNLI-Priority');
+		priorityDiv = this.NotificationListItem.$().find('.sapMNLB-Priority');
 
 		// assert
-		assert.strictEqual(priorityDiv.hasClass('sapMNLI-High'), true, 'Priority should be set to "High"');
+		assert.strictEqual(priorityDiv.hasClass('sapMNLB-High'), true, 'Priority should be set to "High"');
 
 	});
 

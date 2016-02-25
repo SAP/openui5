@@ -12,13 +12,14 @@ sap.ui.define([], function () {
 	var NotificationListGroupRenderer = {};
 
 	var classNameItem = 'sapMNLG';
+	var classNameBase = 'sapMNLB';
 	var classNameListBaseItem = 'sapMLIB';
 	var classNameAuthor = 'sapMNLG-AuthorPicture';
 	var classNameHeader = 'sapMNLG-Header';
 	var classNameBody = 'sapMNLG-Body';
 	var classNameFooter = 'sapMNLG-Footer';
 	var classNameCloseButton = 'sapMNLG-CloseButton';
-	var classNamePriority = 'sapMNLG-Priority';
+	var classNamePriority = 'sapMNLB-Priority';
 	var classNameDetails = 'sapMNLG-Details';
 	var classNameBullet = 'sapMNLG-Bullet';
 	var classNameDescription = 'sapMNLG-Description';
@@ -33,6 +34,7 @@ sap.ui.define([], function () {
 	NotificationListGroupRenderer.render = function (oRm, oControl) {
 		oRm.write('<li');
 		oRm.addClass(classNameItem);
+		oRm.addClass(classNameBase);
 		oRm.addClass(classNameListBaseItem);
 
 		if (oControl.getCollapsed()) {
@@ -200,13 +202,13 @@ sap.ui.define([], function () {
 	 */
 	NotificationListGroupRenderer.renderFooter = function (oRm, oControl) {
 		/** @type {sap.m.Button[]} */
-		var aButtons = oControl.getButtons();
+		var buttons = oControl.getButtons();
 
 		oRm.write('<div class=' + classNameFooter + '>');
 		this.renderPriorityArea(oRm, oControl);
 		this.renderCollapseGroupButton(oRm, oControl);
 
-		if (aButtons && aButtons.length && oControl.getShowButtons()) {
+		if (buttons && buttons.length && oControl.getShowButtons()) {
 			oRm.renderControl(oControl.getAggregation('_overflowToolbar'));
 		}
 
@@ -227,16 +229,16 @@ sap.ui.define([], function () {
 
 		switch (controlPriority) {
 			case (sap.ui.core.Priority.Low):
-				classPriority = 'sapMNLG-Low';
+				classPriority = 'sapMNLB-Low';
 				break;
 			case (sap.ui.core.Priority.Medium):
-				classPriority = 'sapMNLG-Medium';
+				classPriority = 'sapMNLB-Medium';
 				break;
 			case (sap.ui.core.Priority.High):
-				classPriority = 'sapMNLG-High';
+				classPriority = 'sapMNLB-High';
 				break;
 			default:
-				classPriority = 'sapMNLG-None';
+				classPriority = 'sapMNLB-None';
 				break;
 		}
 
