@@ -2401,7 +2401,7 @@
 				'sap/ui/thirdparty/jquery/jquery-2.1.4.js': {
 					amd: true
 				},
-				'sap/ui/thirdparty/jquery/jquery-2.2.0.js': {
+				'sap/ui/thirdparty/jquery/jquery-2.2.1.js': {
 					amd: true
 				},
 				'sap/ui/thirdparty/jquery-mobile-custom.js': {
