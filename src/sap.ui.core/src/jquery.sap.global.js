@@ -1774,12 +1774,7 @@
 				if (oPendingInteraction) {
 					oPendingInteraction.end = iTime;
 					oPendingInteraction.duration = oPendingInteraction.processing;
-					jQuery.sap.measure.getRequestTimings().forEach(function(oTiming) {
-						// only add related requests to this interaction, none which are made during another or in between other interactions
-						if (oPendingInteraction.start <= oTiming.startTime || oPendingInteraction.event === "startup") {
-							oPendingInteraction.requests.push(oTiming);
-						}
-					});
+					oPendingInteraction.requests = jQuery.sap.measure.getRequestTimings();
 					oPendingInteraction.measurements = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 						return (oMeasurement.start > oPendingInteraction.start && oMeasurement.end < oPendingInteraction.end) ? oMeasurement : null;
 					}, true);
