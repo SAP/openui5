@@ -226,6 +226,43 @@
 		});
 
 
+		test("Selection prevented", function () {
+			var oTabStrip = new sap.m.TabStrip({
+				selectedItem: 0,
+				itemSelect: function (oEvent) {
+					oEvent.preventDefault();
+				},
+				items: [
+					new sap.m.TabStripItem({
+						text: "Tab 1"
+					}),
+					new sap.m.TabStripItem({
+						text: "Tab 2"
+					})
+				]
+			});
+
+			oTabStrip.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oItem = oTabStrip.getItems()[1];
+			var sName = oItem.getText();
+
+			strictEqual(oItem.getId() === oTabStrip.getSelectedItem(), false);
+
+			var aTargetTouches = [{pageX: oItem.$().offset().left}];
+			qutils.triggerTouchEvent('touchstart', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oItem.getDomRef()}, 'on', true);
+			qutils.triggerTouchEvent('touchend', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oItem.getDomRef()}, 'on', true);
+
+			this.clock.tick(1000);
+
+			strictEqual(oItem.getId() === oTabStrip.getSelectedItem(), false);
+
+			oTabStrip.destroy();
+			oTabStrip = null;
+		});
+
+
 		module("Keyboard Handling", {
 			beforeEach: function () {
 				this.items = [
