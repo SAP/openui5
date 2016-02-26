@@ -518,5 +518,31 @@
         "references": []
       }
     ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "e1e3049815f06ec71d5b99d27c2f8309f0921294",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet visual design bug fix",
+        "references": []
+      },
+      {
+        "id": "2c545186a7eb7f45aac4e534c66318709086e35b",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - Left padding on compact mode and buttons with icons is now correct",
+        "references": []
+      },
+      {
+        "id": "badec57d023950f9e5d129ff7e9e60f7622e6992",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Token: adjust the icon position to be aligned in the middle",
+        "references": []
+      }
+    ]
   }
 }

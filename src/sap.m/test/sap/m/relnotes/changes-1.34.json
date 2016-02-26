@@ -2586,5 +2586,52 @@
         "references": []
       }
     ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "e3195e85936e36650dbfbf532c6eb651d766ef0f",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "b69fe74b8e692c0b4cb26b3e78eb51d6e09d9068",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet - buttons without icons have margin if there is an invinsible button with icon",
+        "references": []
+      },
+      {
+        "id": "e1e3049815f06ec71d5b99d27c2f8309f0921294",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet visual design bug fix",
+        "references": []
+      },
+      {
+        "id": "2482ed0057cccad8b8d2a85891b3b905e3b5637c",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: do not close dialog in phone mode if the input is MultiInput",
+        "references": []
+      },
+      {
+        "id": "2c545186a7eb7f45aac4e534c66318709086e35b",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - Left padding on compact mode and buttons with icons is now correct",
+        "references": []
+      },
+      {
+        "id": "9ed370f5e52429cb79be149277259afc68fb893f",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Popover mode is fixed",
+        "references": []
+      }
+    ]
   }
 }

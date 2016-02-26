@@ -1816,5 +1816,45 @@
         "references": []
       }
     ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "f8e2f9a5eb20898e2d4892b9aae9d4665dd20a43",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component#onWindowUnload: execution cannot be guaranteed",
+        "references": []
+      },
+      {
+        "id": "78482e4e89674d97754e8311ea2da783f11f6c3a",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "FocusHandler: fail safety after destruction",
+        "references": []
+      },
+      {
+        "id": "b3cbf0fef2a9deb3f70d3adee88399d178dd547c",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataContextBinding: Fix duplicate requests in initial function",
+        "references": []
+      },
+      {
+        "id": "f15e05ff7e09fb0de7a36ccd90c627ae0d9eadae",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Call error handler in case of SAML redirect",
+        "references": []
+      },
+      {
+        "id": "ff2bd1ef5d9ee022d2613c1737ac99970d77e931",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding - Correct Datatype in $filter",
+        "references": []
+      }
+    ]
   }
 }

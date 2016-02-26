@@ -280,5 +280,17 @@
         "references": []
       }
     ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "e3195e85936e36650dbfbf532c6eb651d766ef0f",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      }
+    ]
   }
 }

@@ -184,5 +184,17 @@
         "references": []
       }
     ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "f4b787160e2e6ba9ffebb18d1395cc1cb985ab60",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: 1st container invisible",
+        "references": []
+      }
+    ]
   }
 }
