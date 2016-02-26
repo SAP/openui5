@@ -231,6 +231,17 @@
 	});
 	oTooltipInput.bindValue("/tooltip");
 
+	var oUpdateValueLbl = new sap.m.Label({
+		text : "Update Value",
+		labelFor : "update-value"
+	});
+
+	var oUpdateValueInput = new sap.m.Input("update-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter value for update ...'
+	});
+	oUpdateValueInput.bindValue("/value");
+
 	var oDescInput = new sap.m.Input("desc-value", {
 		type : sap.m.InputType.Text,
 		placeholder : 'Enter description ...'
@@ -415,7 +426,7 @@
 		editable : true,
 		content : [new sap.ui.core.Title({ // this starts a new group
 			text : "Modify Tile"
-		}), oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oTitleUnit,
+		}), oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oUpdateValueLbl, oUpdateValueInput, oTitleUnit,
 				oUnitInput, oFailedLabel, oFailedInput, oSizeLbl, oSizeSlct, oFtLbl, oFtSlct, oPictureLbl, oPictureSlct,
 				oImageDescLbl, oImageDescInput, oTriggerLoadLbl, oTriggerLoadSlct, oPressLbl, oPressSwtch]
 	});
