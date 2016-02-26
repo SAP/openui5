@@ -16,7 +16,7 @@ sap.ui.define([
 		 * @param {object} mHeaders
 		 *   A map of headers
 		 * @param {object} mQueryParams
-		 *   A map of query parameters as described in {@link _Header.buildQuery}
+		 *   A map of query parameters as described in {@link _Helper.buildQuery}
 		 * @returns {object}
 		 *   A new MetadataRequestor object
 		 */

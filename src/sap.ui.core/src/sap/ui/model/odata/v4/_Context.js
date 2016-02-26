@@ -19,7 +19,8 @@ sap.ui.define([
 	var _Context = Context.extend("sap.ui.model.odata.v4._Context", {
 			/**
 			 * Do <strong>NOT</strong> call this private constructor for a new
-			 * <code>_Context</code>, but rather use {@link _Context#create create} instead.
+			 * <code>_Context</code>, but rather use
+			 * {@link sap.ui.model.odata.v4._Context.create create} instead.
 			 *
 			 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 			 *   The model

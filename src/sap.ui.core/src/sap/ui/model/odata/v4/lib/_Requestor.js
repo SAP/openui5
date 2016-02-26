@@ -53,7 +53,7 @@ sap.ui.define([
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData v4 headers are added by default, but may be overridden
 	 * @param {object} mQueryParams
-	 *   A map of query parameters as described in {@link _Header.buildQuery}; used only to
+	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
 	 * @private
 	 */
@@ -279,7 +279,7 @@ sap.ui.define([
 		 *   <code>_Requestor<code> always sets the "Content-Type" header to
 		 *   "application/json;charset=UTF-8" value.
 		 * @param {object} mQueryParams
-		 *   A map of query parameters as described in {@link _Header.buildQuery}; used only to
+		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token
 		 * @returns {object}
 		 *   A new <code>_Requestor<code> instance
