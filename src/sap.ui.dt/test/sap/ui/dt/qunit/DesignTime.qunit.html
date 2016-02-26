@@ -142,6 +142,17 @@
 				oOverlay.setSelected(true);
 			});
 
+			QUnit.test("when an overlay is created via API function 'createOverlay'...", function(assert) {
+				var oButton = new sap.m.Button();
+				var oOverlay = this.oDesignTime.createOverlay(oButton, true);
+
+				oOverlay.setLazyRendering(false);
+
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(oOverlay.getDomRef(), "then a created overlay is also visible");
+			});
+
 			QUnit.module("Given that an DesignTime is created for two root controls", {
 				beforeEach : function() {
 					this.oLayout1 = new sap.ui.layout.VerticalLayout({
