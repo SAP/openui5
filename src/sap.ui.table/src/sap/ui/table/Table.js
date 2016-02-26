@@ -6142,7 +6142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		var iNewHeight = iLocationY - $this.find(".sapUiTableCCnt").offset().top - $splitterBarGhost.height() - $this.find(".sapUiTableFtr").height();
 		this._setRowContentHeight(iNewHeight);
-		this._adjustRows(this._calculateRowsToDisplay(this._iTableRowContentHeight));
+		this._adjustRows(this._calculateRowsToDisplay(iNewHeight));
 
 		$splitterBarGhost.remove();
 		this.$("overlay").remove();
@@ -6389,10 +6389,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var iMinHeight;
 
 		var iDefaultRowHeight = this._getDefaultRowHeight();
-		if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed) {
-			iMinHeight = iVisibleRowCount * iDefaultRowHeight;
-			iHeight = iMinHeight;
-		} else if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive) {
+		if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive || sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed) {
 			if (this._iTableRowContentHeight) {
 				iMinHeight = iMinVisibleRowCount * iDefaultRowHeight;
 				if (!iHeight) {
@@ -6409,11 +6406,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var iRowContentHeight = Math.max(iHeight, iMinHeight);
 		this._iTableRowContentHeight = Math.floor(iRowContentHeight / iDefaultRowHeight) * iDefaultRowHeight;
 
-		var sCssKey = "height";
-		if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed) {
-			sCssKey = "min-height";
+		if ((sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed || sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive) && this.getRows().length > 0) {
+			jQuery(this.getDomRef("tableCtrlCnt")).css("height", "auto");
+		} else {
+			jQuery(this.getDomRef("tableCtrlCnt")).css("height", this._iTableRowContentHeight + "px");
 		}
-		jQuery(this.getDomRef("tableCtrlCnt")).css(sCssKey, this._iTableRowContentHeight + "px");
 	};
 
 	/**
