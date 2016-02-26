@@ -1886,7 +1886,8 @@
 					networkTime: 0, // request time minus server time from the header, added by jQuery.sap.trace
 					bytesSent: 0, // sum over all requests bytes, added by jQuery.sap.trace
 					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
-					requestCompression: undefined // true if all responses have been sent gzipped
+					requestCompression: undefined, // true if all responses have been sent gzipped
+					busyDuration : 0 // summed GlobalBusyIndicator duration during this interaction
 				};
 				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "jQuery.sap.measure");
 			};
