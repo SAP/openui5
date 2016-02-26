@@ -1868,11 +1868,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			// we do an immediate update instead of a delayed one
 
 			var iBindingTimerDelay = (sReason == ChangeReason.Change || (!this._mTimeouts.bindingTimer && Date.now() - this._lastCalledUpdateRows > this._iBindingTimerDelay) || sReason == "unbindAggregation" ? 0 : this._iBindingTimerDelay);
-
+			var that = this;
 			if (iBindingTimerDelay == 0 && sReason) {
-				this._performUpdateRows(sReason);
+				Promise.resolve().then(function() {
+					that._performUpdateRows(sReason);
+				});
 			} else {
-				var that = this;
 				this._mTimeouts.bindingTimer = this._mTimeouts.bindingTimer || window.setTimeout(function() {
 						that._performUpdateRows(sReason);
 					}, iBindingTimerDelay);
@@ -6262,15 +6263,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		this.setProperty("visibleRowCount", iNumberOfRows, true);
 
+		// this call might cause the cell (controls) to invalidate theirself and therefore also the table. It should be
+		// avoided to rerender the complete table since rendering of the rows is handled here. All child controls get
+		// rendered.
+		this._ignoreInvalidateOfChildControls = true;
+		var aContexts;
+		if (!bNoUpdate) {
+			aContexts = this._getRowContexts(iNumberOfRows);
+			for (i = 0; i < aRows.length; i++) {
+				// set binding contexts for known rows
+				aRows[i].setBindingContext(aContexts[i], oBindingInfo && oBindingInfo.model);
+			}
+		}
+
 		if (aRows.length < iNumberOfRows) {
 			// rows must be created
 			var oRowTemplate = this._getRowTemplate();
 
+			var oBindingInfo = this.getBindingInfo("rows");
+
 			for (i = aRows.length; i < iNumberOfRows; i++) {
+				// add new rows and set their binding contexts in the same run in order to avoid unnecessary context
+				// propagations.
 				var oClone = oRowTemplate.clone("row" + i);
+				if (!bNoUpdate) {
+					oClone.setBindingContext(aContexts[i], oBindingInfo && oBindingInfo.model);
+				}
 				this.addAggregation("rows", oClone, true);
 			}
 		}
+		this._ignoreInvalidateOfChildControls = false;
 
 		aRows = this.getRows();
 		return this._insertTableRows(aRows, bNoUpdate);
@@ -6285,22 +6307,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._insertTableRows = function(aRows, bNoUpdate) {
 		var bReturn = false;
-		if (this._bInvalid) {
-			if (!bNoUpdate) {
-				this._updateBindingContexts();
-			}
-		} else {
+		if (!this._bInvalid) {
 			this._detachEvents();
-
-			// this call might cause the cell (controls) to invalidate theirself and therefore also the table. It should be
-			// avoided to rerender the complete table since rendering of the rows is handled here. All child controls get
-			// rendered.
-			this._ignoreInvalidateOfChildControls = true;
-			if (!bNoUpdate) {
-				this._updateBindingContexts();
-			}
-
-			this._ignoreInvalidateOfChildControls = false;
 
 			var oTBody = this.getDomRef("tableCCnt");
 			aRows = aRows || this.getRows();

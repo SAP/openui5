@@ -243,7 +243,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		// collect rendering information for new binding context
 		this._collectRenderingInformation(oContext, oNode);
 
-		return sap.ui.core.Element.prototype.setBindingContext.call(this, oContext, sModelName);
+		if (oContext) {
+			return sap.ui.core.Element.prototype.setBindingContext.call(this, oContext, sModelName);
+		} else {
+			// since undefined won't be a valid context which gets propagated we put null
+			return sap.ui.core.Element.prototype.setBindingContext.call(this, null, sModelName);
+		}
 	};
 
 	Row.prototype._collectRenderingInformation = function(oContext, oNode) {
