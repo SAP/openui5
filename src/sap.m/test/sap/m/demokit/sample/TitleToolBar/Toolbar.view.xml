@@ -8,7 +8,7 @@
 	<OverflowToolbar design="Transparent" height="3rem">
 		<Title text="Title and Actions"/>
 		<ToolbarSpacer/>
-		<Button type="Transparent" icon="sap-icon://group-2"/>
-		<Button type="Transparent" icon="sap-icon://action-settings"/>
+		<Button icon="sap-icon://group-2"/>
+		<Button icon="sap-icon://action-settings"/>
 	</OverflowToolbar>
 </mvc:View>
