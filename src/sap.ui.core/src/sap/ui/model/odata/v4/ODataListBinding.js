@@ -88,9 +88,9 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason#Change Change}
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change Change}
 	 *   when the binding is initialized and or a new context is created, or
-	 *   {@link sap.ui.model.ChangeReason#Context Context} when the parent context is changed
+	 *   {@link sap.ui.model.ChangeReason.Context Context} when the parent context is changed
 	 * @see sap.ui.base.Event
 	 * @protected
 	 * @since 1.37
