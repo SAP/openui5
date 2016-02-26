@@ -372,6 +372,16 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	};
 
 	/**
+	 * Create an overlay for an element and register it in the DesignTime
+	 * @param {sap.ui.core.Element} oElement element
+	 * @return {sap.ui.dt.ElementOverlay} created ElementOverlay
+	 * @public
+	 */
+	DesignTime.prototype.createOverlay = function(oElement) {
+		return this._createElementOverlay(oElement);
+	};
+
+	/**
 	 * @param {sap.ui.core.Element} oElement element
 	 * @private
 	 */
