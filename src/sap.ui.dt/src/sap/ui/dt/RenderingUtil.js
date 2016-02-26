@@ -32,34 +32,35 @@ function(jQuery) {
 	 */
 	RenderingUtil.renderOverlay = function(oRm, oOverlay, sClassName) {
 		var oGeometry = oOverlay.getGeometry();
-		if (!oOverlay.isVisible() || !oGeometry || !oGeometry.visible) {
-			return;
+		var bGeometryVisible = oGeometry && oGeometry.visible;
+		var bRenderOverlay = !oOverlay.getLazyRendering() || bGeometryVisible;
+
+		if (oOverlay.isVisible() && bRenderOverlay) {
+			if (oOverlay.getDomRef()) {
+				this._triggerOnAfterRenderingWithoutRendering(oRm, oOverlay);
+
+				return;
+			}
+
+			oRm.addClass("sapUiDtOverlay");
+			oRm.addClass(sClassName);
+			oRm.write("<div");
+			oRm.writeControlData(oOverlay);
+			var sAggregationName = oOverlay.getAggregationName && oOverlay.getAggregationName();
+			if (sAggregationName) {
+				oRm.write("data-sap-ui-dt-aggregation='" + oOverlay.getAggregationName() + "'");
+			} else {
+				oRm.write("data-sap-ui-dt-for='" + oOverlay.getElementInstance().getId() + "'");
+			}
+			oRm.writeClasses();
+
+			oRm.writeStyles();
+			oRm.write(">");
+
+			this._renderChildren(oRm, oOverlay);
+
+			oRm.write("</div>");
 		}
-
-		if (oOverlay.getDomRef()) {
-			this._triggerOnAfterRenderingWithoutRendering(oRm, oOverlay);
-
-			return;
-		}
-
-		oRm.addClass("sapUiDtOverlay");
-		oRm.addClass(sClassName);
-		oRm.write("<div");
-		oRm.writeControlData(oOverlay);
-		var sAggregationName = oOverlay.getAggregationName && oOverlay.getAggregationName();
-		if (sAggregationName) {
-			oRm.write("data-sap-ui-dt-aggregation='" + oOverlay.getAggregationName() + "'");
-		} else {
-			oRm.write("data-sap-ui-dt-for='" + oOverlay.getElementInstance().getId() + "'");
-		}
-		oRm.writeClasses();
-
-		oRm.writeStyles();
-		oRm.write(">");
-
-		this._renderChildren(oRm, oOverlay);
-
-		oRm.write("</div>");
 	};
 
 	/**

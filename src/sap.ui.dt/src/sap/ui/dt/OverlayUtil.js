@@ -35,18 +35,28 @@ sap.ui.define([
 	 * Returns an object with parent, aggregation and index
 	 */
 	OverlayUtil.getParentInformation = function(oElementOverlay) {
-		var oPublicParent = oElementOverlay.getParentElementOverlay().getElementInstance();
-		var sPublicParentAggregationName = oElementOverlay.getParentAggregationOverlay().getAggregationName();
+		var oParent = oElementOverlay.getParentElementOverlay();
+		if (oParent) {
+			var oPublicParent = oParent.getElementInstance();
+			var sPublicParentAggregationName = oElementOverlay.getParentAggregationOverlay().getAggregationName();
 
-		var aChildren = ElementUtil.getAggregation(oPublicParent, sPublicParentAggregationName);
-		var oElement = oElementOverlay.getElementInstance();
-		var iIndex = aChildren.indexOf(oElement);
+			var aChildren = ElementUtil.getAggregation(oPublicParent, sPublicParentAggregationName);
+			var oElement = oElementOverlay.getElementInstance();
+			var iIndex = aChildren.indexOf(oElement);
 
-		return {
-			parent: oPublicParent,
-			aggregation: sPublicParentAggregationName,
-			index: iIndex
-		};
+			return {
+				parent: oPublicParent,
+				aggregation: sPublicParentAggregationName,
+				index: iIndex
+			};
+		} else {
+			return {
+				parent: null,
+				aggregation: "",
+				index: -1
+			};
+		}
+
 	};
 
 	/**
