@@ -1106,7 +1106,7 @@
 					"name5": true,
 					"name6": true,
 					"status1": true,
-					"status2": true,
+					"status2": false,
 					"status3": true,
 					"value3": true
 				};
@@ -1140,6 +1140,30 @@
 				done();
 			}, 1000);
 
+		});
+
+		test("Select and deselect a filter detail item works correctly", function  (assert) {
+			var done = assert.async(),
+				that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[1]); // name details page
+
+			setTimeout(function() {
+				strictEqual(this.oVSD._filterDetailList.getItems()[0].getSelected(),  true, 'The first item is initially selected');
+
+//				//Act
+				this.oVSD._filterDetailList.getItems()[0].$().trigger('tap');
+
+				setTimeout(function () {
+						strictEqual(that.oVSD._filterDetailList.getItems()[0].getSelected(), false, 'The first item is not selected');
+						done();
+				}.bind(this), 1000);
+			}.bind(this), 1000);
 		});
 
 		test("Select All checkbox works correctly", function  (assert) {
