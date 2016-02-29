@@ -701,22 +701,38 @@ sap.ui.require([
 			oPropertyBinding = oModel.bindProperty("Name");
 
 		assert.throws(function () { //TODO implement
+			oPropertyBinding.isInitial();
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial"));
+
+		assert.throws(function () { //TODO implement
 			oPropertyBinding.refresh(false);
-		}, new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () {
 			oPropertyBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () { //TODO implement
 			oPropertyBinding.refresh(true, "");
-		}, new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
 				+ "sGroupId parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
+			oPropertyBinding.resume();
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#resume"));
+
+		assert.throws(function () { //TODO implement
 			oPropertyBinding.setBindingMode(BindingMode.TwoWay);
-		}, new Error("Unsupported operation: ODataPropertyBinding#setBindingMode "
-				+ "sBindingMode must not be 'TwoWay'"));
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#setBindingMode, "
+				+ "sBindingMode must not be TwoWay"));
+
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.setValue();
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#setValue"));
+
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.suspend();
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#suspend"));
 	});
 
 	//*********************************************************************************************
@@ -744,12 +760,12 @@ sap.ui.require([
 
 		assert.throws(function () {
 			oPropertyBinding.attachDataStateChange();
-		}, new Error("Unsupported event 'DataStateChange': ODataPropertyBinding#attachEvent"));
+		}, new Error("Unsupported event 'DataStateChange': v4.ODataPropertyBinding#attachEvent"));
 
 		assert.throws(function () {
 			oPropertyBinding.attachAggregatedDataStateChange();
 		}, new Error("Unsupported event 'AggregatedDataStateChange': "
-				+ "ODataPropertyBinding#attachEvent"));
+				+ "v4.ODataPropertyBinding#attachEvent"));
 	});
 
 	// TODO bSuspended? In v2 it is ignored (check with core)

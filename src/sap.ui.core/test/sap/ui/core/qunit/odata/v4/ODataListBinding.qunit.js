@@ -855,37 +855,49 @@ sap.ui.require([
 
 		assert.throws(function () { //TODO implement
 			oListBinding.filter();
-		}, new Error("Unsupported operation: ODataListBinding#filter"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#filter"));
 
 		assert.throws(function () { //TODO implement?
 			oListBinding.getContexts(0, 42, 0);
-		}, new Error("Unsupported operation: ODataListBinding#getContexts, "
+		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, "
 				+ "iThreshold parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
 			oListBinding.getCurrentContexts();
-		}, new Error("Unsupported operation: ODataListBinding#getCurrentContexts"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#getCurrentContexts"));
 
 		assert.throws(function () {
 			oListBinding.getDistinctValues();
-		}, new Error("Unsupported operation: ODataListBinding#getDistinctValues"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues"));
+
+		assert.throws(function () { //TODO implement
+			oListBinding.isInitial();
+		}, new Error("Unsupported operation: v4.ODataListBinding#isInitial"));
 
 		assert.throws(function () { //TODO implement
 			oListBinding.refresh(false);
-		}, new Error("Unsupported operation: ODataListBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () {
 			oListBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: ODataListBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () { //TODO implement
 			oListBinding.refresh(true, "");
-		}, new Error("Unsupported operation: ODataListBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
 				+ "sGroupId parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
+			oListBinding.resume();
+		}, new Error("Unsupported operation: v4.ODataListBinding#resume"));
+
+		assert.throws(function () { //TODO implement
 			oListBinding.sort();
-		}, new Error("Unsupported operation: ODataListBinding#sort"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#sort"));
+
+		assert.throws(function () { //TODO implement
+			oListBinding.suspend();
+		}, new Error("Unsupported operation: v4.ODataListBinding#suspend"));
 	});
 	//TODO errors on _fireFilter(mArguments) and below in Wiki
 
@@ -902,11 +914,11 @@ sap.ui.require([
 
 		assert.throws(function () {
 			oListBinding.attachEvent("filter");
-		}, new Error("Unsupported event 'filter': ODataListBinding#attachEvent"));
+		}, new Error("Unsupported event 'filter': v4.ODataListBinding#attachEvent"));
 
 		assert.throws(function () {
 			oListBinding.attachEvent("sort");
-		}, new Error("Unsupported event 'sort': ODataListBinding#attachEvent"));
+		}, new Error("Unsupported event 'sort': v4.ODataListBinding#attachEvent"));
 
 		assert.strictEqual(oListBinding.attachEvent("change", mEventParameters), oReturn);
 	});
