@@ -1,0 +1,51 @@
+/* =========================================== */
+/* CSS for control sap.ui.unified/ShellLayout  */
+/* Belize theme                                */
+/* =========================================== */
+
+@sapUiUfdShellCurtainBGStartColor: fade(@sapUiGroupContentBackground,97);
+@sapUiUfdShellCurtainBGEndColor: fade(lighten(desaturate(@sapUiHighlight,37),56),97);
+@sapUiUfdShellCurtainBGStartColor_IE: fade(@sapUiGroupContentBackground, 100);
+@sapUiUfdShellCurtainBGEndColor_IE: fade(lighten(desaturate(@sapUiHighlight,37),56),100); /*#e5f2f9*/
+/*@sapUiUfdShellHeadBGStartColor: lighten(@sapUiShellBackground,2);
+@sapUiUfdShellHeadBGEndColor: darken(@sapUiShellBackground,2);*/
+
+
+._sapUiUfdShellSubHdr { /* Testpage only */
+	background-color: mix(@sapUiHighlight, #fff, 10);
+	color: @sapUiShellTextColor;
+}
+
+.sapUiUfdShell .sapUiUfdShellHead {
+	background-color: @sapUiBlockLayerBackground;
+}
+
+.sapUiUfdShell .sapUiUfdShellHead > div {
+	background-color: @sapUiShellBackground;
+	/*filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiUfdShellHeadBGStartColor}', EndColorStr='@{sapUiUfdShellHeadBGEndColor}',GradientType=0)";
+	background: -ms-linear-gradient(top,@sapUiUfdShellHeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@sapUiUfdShellHeadBGEndColor 100%);
+	background: -webkit-gradient(linear,left top,left bottom,color-stop(0,@sapUiUfdShellHeadBGStartColor),color-stop(0.33,@sapUiShellBackground),color-stop(0.75,@sapUiShellBackground),color-stop(1,@sapUiUfdShellHeadBGEndColor));
+	background-image: -webkit-linear-gradient(top,@sapUiUfdShellHeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@sapUiUfdShellHeadBGEndColor 100%);
+	background: linear-gradient(top,@sapUiUfdShellHeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@sapUiUfdShellHeadBGEndColor 100%);*/
+	box-shadow: inset 0 -0.0625em @sapUiShellBorderColor;
+}
+
+.sapUiUfdShell.sapUiUfdShellCurtainVisible .sapUiUfdShellHead,
+.sapUiUfdShell.sapUiUfdShellCurtainVisible .sapUiUfdShellHead > div {
+	background: none;
+	background-color: @sapUiShellBackground;
+	filter: none;
+}
+
+.sapUiUfdShellCurtain {
+	border-bottom: 1px solid @sapUiShellBorderColor;
+	background-image: linear-gradient(to bottom, @sapUiUfdShellCurtainBGStartColor 0%, @sapUiUfdShellCurtainBGEndColor 100%);
+	background-image: -webkit-linear-gradient(top, @sapUiUfdShellCurtainBGStartColor 0%, @sapUiUfdShellCurtainBGEndColor 100%);
+	background-image: -ms-linear-gradient(top, @sapUiUfdShellCurtainBGStartColor 0%, @sapUiUfdShellCurtainBGEndColor 100%);
+	background-attachment: fixed;
+	background-repeat: repeat, no-repeat;
+}
+
+html[data-sap-ui-browser="ie9"] .sapUiUfdShellCurtain {
+	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiUfdShellCurtainBGStartColor_IE}', EndColorStr='@{sapUiUfdShellCurtainBGEndColor_IE}',GradientType=0)";
+}
