@@ -47,7 +47,20 @@ sap.ui.define(['jquery.sap.global',
 			"sap.ui.table.AnalyticalColumn",
 			"sap.ui.table.Column",
 			"sap.ui.table.Row"
-		]
+		],
+		extensions: {
+			flChangeHandlers: {
+				"sap.ui.table.Column": {
+					"propertyChange" : "default"
+				},
+				"sap.ui.table.Table" : {
+					"moveElements": "default"
+				},
+				"sap.ui.table.AnalyticalTable" : {
+					"moveElements": "default"
+				}
+			}
+		}
 	});
 
 
