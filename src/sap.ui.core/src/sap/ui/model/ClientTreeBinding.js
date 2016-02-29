@@ -285,6 +285,10 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 		var that = this,
 			aFilteredContexts = [];
 
+		if (jQuery.isEmptyObject(this.aAllFilters)) {
+			return;
+		}
+
 		this.bIsFiltering = true;
 		var aUnfilteredContexts = this.getNodeContexts(oParentContext);
 		this.bIsFiltering = false;
@@ -293,10 +297,6 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 			jQuery.each(aUnfilteredContexts, function(i, oContext){
 				that._applyFilterRecursive(oContext);
 			});
-
-			if (jQuery.isEmptyObject(this.aAllFilters)) {
-				return;
-			}
 
 			aFilteredContexts = FilterProcessor.apply(aUnfilteredContexts, this.aAllFilters, function (oContext, sPath) {
 				return that.oModel.getProperty(sPath, oContext);
