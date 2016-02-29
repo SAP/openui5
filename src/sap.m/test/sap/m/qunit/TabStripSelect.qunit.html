@@ -85,6 +85,37 @@
 			strictEqual(jQuery('.sapMDialog').length, 1, 'Dialog is rendered on mobile.')
 		});
 
+		test("Selection prevented", function () {
+			var oSelect = new sap.m.TabStripSelect({
+				type: sap.m.SelectType.IconOnly,
+				autoAdjustWidth: true,
+				icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
+				items: [new sap.m.TabStripItem({key: "1",text: "item 1"}),new sap.m.TabStripItem({key: "2",text: "item 2"})],
+				change: function (oEvent) {
+					console.log('change handler');
+					oEvent.preventDefault();
+				}
+			});
+			oSelect.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oSelect.open();
+			this.clock.tick(1000);
+
+			var oItem = oSelect.getList().getItems()[1];
+
+			strictEqual(oItem.getId() === oSelect.getSelectedItem(), false);
+
+			oItem.$().tap();
+
+			this.clock.tick(1000);
+
+			strictEqual(oItem.getId() === oSelect.getSelectedItem(), false);
+
+			oSelect.destroy();
+			oSelect = null;
+		});
+
 
 		module("Close Button", {
 			beforeEach: function () {
@@ -150,6 +181,7 @@
 			strictEqual(this.oMITS.isOpen(), false, 'Select must close after an item was clicked.');
 			this.oMITS.close();
 		});
+
 
 		test("Phone", function () {
 			var stubs = prepareMobilePlatform.call(this, true);
