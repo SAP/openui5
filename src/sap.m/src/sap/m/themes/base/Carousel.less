@@ -78,18 +78,17 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 .sapMCrslImg {
 	text-align: center;
 	height: 100%;
+}
 
-	-webkit-transform-style: preserve-3d;
-	-moz-transform-style: preserve-3d;
-	transform-style: preserve-3d;
+.sapMCrslImg:before {
+	content: ' ';
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
 }
 
 .sapMCrslItemTableCell.sapMCrslImg img {
-	position: relative;
-	top: 50%;
-	-webkit-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	transform: translateY(-50%);
+	vertical-align: middle;
 }
 
 .sapMCrslInner.sapMCrslNoTransition {
