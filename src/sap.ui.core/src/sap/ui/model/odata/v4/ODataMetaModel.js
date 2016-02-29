@@ -46,6 +46,9 @@ sap.ui.define([
 				constraints : {"$MaxLength" : "maxLength"}
 			}
 		},
+		mSupportedEvents = {
+			messageChange : true
+		},
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
@@ -144,7 +147,11 @@ sap.ui.define([
 	 *   The URL to the $metadata document of the service
 	 *
 	 * @class Implementation of an OData meta data model which offers access to OData v4 meta data.
-	 *
+	 *   An event handler can only be attached to this meta model for the following event:
+	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
+	 *   messageChange}.
+	 *   For other events, an error is thrown.
+	.*
 	 * This model is read-only.
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
@@ -211,6 +218,15 @@ sap.ui.define([
 		return vResult;
 	};
 
+	// See class documentation
+	ODataMetaModel.prototype.attachEvent = function (sEventId) {
+		if (!(sEventId in mSupportedEvents)) {
+			throw new Error("Unsupported event '" + sEventId
+				+ "': v4.ODataMetaModel#attachEvent");
+		}
+		return MetaModel.prototype.attachEvent.apply(this, arguments);
+	};
+
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext) {
 		return new ODataMetaContextBinding(this, sPath, oContext);
 	};
@@ -246,6 +262,16 @@ sap.ui.define([
 
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext) {
 		return new ODataMetaPropertyBinding(this, sPath, oContext);
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataMetaModel.prototype.bindTree = function () {
+		throw new Error("Unsupported operation: v4.ODataMetaModel#bindTree");
 	};
 
 	/**
@@ -549,6 +575,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataMetaModel.prototype.getOriginalProperty = function () { // @override
+		throw new Error("Unsupported operation: v4.ODataMetaModel#getOriginalProperty");
+	};
+
+	/**
 	 * Returns the meta data object for the given path relative to the given context. Returns
 	 * <code>undefined</code> in case the meta data is not (yet) available. Use
 	 * {@link #requestObject requestObject} for asynchronous access.
@@ -592,13 +628,23 @@ sap.ui.define([
 	ODataMetaModel.prototype.getUI5Type = _SyncPromise.createGetMethod("fetchUI5Type", true);
 
 	/**
-	 * Refresh not supported by OData meta model!
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataMetaModel.prototype.isList = function () {
+		throw new Error("Unsupported operation: v4.ODataMetaModel#isList");
+	};
+
+	/**
+	 * Method not supported
 	 *
 	 * @throws {Error}
 	 * @public
 	 */
 	ODataMetaModel.prototype.refresh = function () { // @override
-		throw new Error("Unsupported operation: ODataMetaModel#refresh");
+		throw new Error("Unsupported operation: v4.ODataMetaModel#refresh");
 	};
 
 	/**
@@ -862,13 +908,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Legacy syntax not supported by OData meta model!
+	 * Method not supported
 	 *
 	 * @throws {Error}
 	 * @public
 	 */
 	ODataMetaModel.prototype.setLegacySyntax = function () { // @override
-		throw new Error("Unsupported operation: ODataMetaModel#setLegacySyntax");
+		throw new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax");
 	};
 
 	return ODataMetaModel;
