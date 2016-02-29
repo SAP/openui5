@@ -287,8 +287,6 @@ sap.ui.require([
 			.returns(Promise.reject(oExpectedError));
 		this.oSandbox.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
-		this.oLogMock.expects("error").withExactArgs("Failed to read path /absolute",
-			oExpectedError, "sap.ui.model.odata.v4.ODataContextBinding");
 
 		return oBinding.requestValue("bar").then(function () {
 			assert.ok(false, "unexpected success");
