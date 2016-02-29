@@ -19,7 +19,16 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<!-- use the sinon faketimers for this test -->
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+		// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
+		jQuery.now = function() {
+			return Date.now();
+		};
+	</script>
 	<!-- Control initialization -->
 	<script language="javascript">
 
@@ -168,6 +177,8 @@
 			//click on title ID -> otherwise DOM element would be needed
 			qutils.triggerMouseEvent("tab1", "mousedown");
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			this.clock.tick(100);
+
 			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after click on 2. Tab :");
 			equal(iEvent, 1, "Event number after click on 2. Tab :");
 			equal(iIndex, 1, "event index after click on 2. Tab :");
@@ -182,6 +193,8 @@
 
 			qutils.triggerMouseEvent("tab2", "mousedown"); // disabled tab
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			this.clock.tick(100);
+
 			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after click on 3. Tab :");
 			equal(iEvent, 0, "Event number after click on 3. Tab :");
 			equal(iIndex, -1, "event index after click on 3. Tab :");
@@ -207,7 +220,9 @@
 		test("keyboard interaction", function() {
 			qutils.triggerKeyboardEvent("tabstrip1-0", "SPACE");
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			this.clock.tick(100);
 			equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after SPACE on 1. Tab :");
+
 			equal(iEvent, 1, "Event number after SPACE on 1. Tab :");
 			equal(iIndex, 0, "event index after SPACE on 1. Tab :");
 			iEvent = 0;
@@ -221,6 +236,8 @@
 
 			qutils.triggerKeyboardEvent("tab2", "SPACE"); // disabled tab
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			this.clock.tick(100);
+
 			equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after SPACE on 3. Tab :");
 			equal(iEvent, 0, "Event number after SPACE on 3. Tab :");
 			equal(iIndex, -1, "event index after SPACE on 3. Tab :");
@@ -235,6 +252,7 @@
 
 			qutils.triggerKeyboardEvent("tab1", "DELETE");
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			this.clock.tick(100);
 			equal(iEvent, 2, "Event number after DELETE on 2. Tab :");
 			equal(iIndex, 1, "event index after DELETE on 2. Tab :");
 			iEvent = 0;

@@ -161,11 +161,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var iOldIndex = this.getSelectedIndex();
 				this.setProperty( 'selectedIndex', iIdx, true ); // no complete rerendering required
 
-				this.rerenderPanel(iOldIndex);
+				this.rerenderPanel(iOldIndex, true);
 
 				this.oItemNavigation.setSelectedIndex(this.oItemNavigation.getFocusedIndex());
-
-				this.fireSelect({index:iIdx});
 			}
 		}
 	};
@@ -493,7 +491,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @private
 	 */
-	TabStrip.prototype.rerenderPanel = function(iOldIndex) {
+	TabStrip.prototype.rerenderPanel = function(iOldIndex, fireSelect) {
 
 		var iNewIndex = this.getSelectedIndex();
 		var oOldTab = this.getTabs()[iOldIndex];
@@ -520,6 +518,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// call after rendering method of tab to set scroll functions
 			oTab.onAfterRendering();
+
+			if (fireSelect) {
+				this.fireSelect({index: iNewIndex});
+			}
 		});
 
 		this.toggleTabClasses(iOldIndex, iNewIndex);
