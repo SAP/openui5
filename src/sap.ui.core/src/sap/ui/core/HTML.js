@@ -64,9 +64,9 @@ sap.ui.define(['jquery.sap.global', './Control', './RenderManager', './library']
 			 * Please consider to consult the jQuery documentation as well.
 			 *
 			 * The HTML control currently doesn't prevent the usage of multiple root nodes in its DOM content
-			 * (e.g. setContent("<div/><div/>")), but this is not a guaranteed feature. The accepted content
-			 * might be restricted to single root nodes in future versions. To notify applications about this
-			 * fact, a warning is written in the log when multiple root nodes are used.
+			 * (e.g. <code>setContent("&lt;div/>&lt;div/>")</code>), but this is not a guaranteed feature.
+			 * The accepted content might be restricted to single root nodes in future versions.
+			 * To notify applications about this fact, a warning is written in the log when multiple root nodes are used.
 			 *
 			 * @SecSink {,XSS} The content of the 'content' property is rendered 1:1 to allow the full
 			 * flexibility of HTML in UI5 applications. Applications therefore must ensure, that they don't
