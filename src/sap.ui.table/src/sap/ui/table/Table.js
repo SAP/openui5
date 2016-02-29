@@ -1507,7 +1507,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype.unbindAggregation = function(sName, bSuppressReset) {
 		var oBinding = this.getBinding("rows");
-		if (sName === "rows" && oBinding) {
+		if (sName === "rows" && this.isBound("rows")) {
 			bSuppressReset = true;
 		}
 
