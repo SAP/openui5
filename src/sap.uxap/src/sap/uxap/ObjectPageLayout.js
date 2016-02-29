@@ -178,7 +178,22 @@ sap.ui.define([
 				/**
 				 * The event is fired when the Edit Header button is pressed
 				 */
-				editHeaderButtonPress: {}
+				editHeaderButtonPress: {},
+
+				/**
+				 * The event is fired when the selected tab changes.
+				 * <b>Note:</b> Event is fired only when IconTabBar is used for navigation.
+				 */
+				tabSelect: {
+					parameters: {
+
+						/**
+						 * The selected section object.
+						 */
+						section: {type: "sap.uxap.ObjectPageSection"}
+					}
+				}
+
 			},
 			designTime: true
 		}
@@ -592,7 +607,7 @@ sap.ui.define([
 	 * @param oSection
 	 * @private
 	 */
-	ObjectPageLayout.prototype._setCurrentTabSection = function (oSection) {
+	ObjectPageLayout.prototype._setCurrentTabSection = function (oSection, bIsTabClicked) {
 		if (!oSection) {
 			return;
 		}
@@ -607,6 +622,9 @@ sap.ui.define([
 		}
 
 		if (this._oCurrentTabSection !== oSection) {
+			if (bIsTabClicked) {
+				this.fireTabSelect({section: oSection});
+			}
 			this._renderSection(oSection);
 			this._oCurrentTabSection = oSection;
 		}
@@ -801,8 +819,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset) {
-
+	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked) {
 		var oSection = sap.ui.getCore().byId(sId);
 
 		if (this.getUseIconTabBar()) {
@@ -817,7 +834,7 @@ sap.ui.define([
 			}
 			oToSelect._allowPropagationToLoadedViews(true); /* include the newly selected tab back to the propagation chain */
 
-			this._setCurrentTabSection(oSection);
+			this._setCurrentTabSection(oSection, bIsTabClicked);
 			this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[oToSelect.getId()].buttonId);
 		}
 
