@@ -556,27 +556,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	SegmentedButton.prototype.updateItems = function(sReason) {
 
-		var oButtons = this.getButtons(),
-			oItems = null,
-			bUpdate = false,
-			i = 0;
+		var aButtons = this.getButtons(),
+			aItems,
+			bUpdate,
+			i;
 
 		/* Update aggregation only if an update reason is available */
 		if (sReason !== undefined) {
 			this.updateAggregation("items");
 		}
 
-		oItems = this.getAggregation("items");
+		aItems = this.getAggregation("items");
 
 		/* If the buttons are already rendered and items are initiated remove all created buttons */
-		if (oItems && oButtons.length !== 0) {
-			this.removeAllButtons();
+		if (aItems && aButtons.length !== 0) {
+
+			for (i = 0;i < aButtons.length;i++) {
+				this.removeButton(aButtons[i]);
+				aButtons[i].destroy();
+				aButtons[i] = null;
+			}
+
 			bUpdate = true;
 		}
 
 		/* Create buttons */
-		for (; i < oItems.length; i++) {
-			this._createButtonFromItem(oItems[i]);
+		for (i = 0; i < aItems.length; i++) {
+			this._createButtonFromItem(aItems[i]);
 		}
 
 		// on update: recalculate width
