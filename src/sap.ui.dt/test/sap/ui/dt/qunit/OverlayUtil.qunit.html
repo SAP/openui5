@@ -133,6 +133,29 @@
 			});
 
 
+			QUnit.test("when getParentInformation is requested for a control with a parent ", function(assert) {
+				var oParentInformation = sap.ui.dt.OverlayUtil.getParentInformation(this.oButtonOverlay01);
+
+				assert.ok(oParentInformation, "then parent information is returned");
+				assert.strictEqual(oParentInformation.parent, this.oLayout0, "parent is correct");
+				assert.strictEqual(oParentInformation.aggregation, "content", "aggregation name is correct");
+				assert.strictEqual(oParentInformation.index, 0, "index in aggregation is correct");
+			});
+
+			QUnit.test("when getParentInformation is requested for a control with no parent ", function(assert) {
+				var oButton = new sap.m.Button();
+				var oOverlay = new sap.ui.dt.ElementOverlay({element : oButton});
+
+				var oParentInformation = sap.ui.dt.OverlayUtil.getParentInformation(oOverlay);
+
+				assert.ok(oParentInformation, "then parent information is returned");
+				assert.ok(!oParentInformation.parent, "parent is undefined");
+				assert.strictEqual(oParentInformation.aggregation, "", "aggregation is empty string");
+				assert.strictEqual(oParentInformation.index, -1, "index in aggregation is -1");
+
+				oButton.destroy();
+			});
+
 		</script>
 	</head>
 	<body>

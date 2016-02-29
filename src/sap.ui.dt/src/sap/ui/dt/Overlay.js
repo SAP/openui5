@@ -53,6 +53,13 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 					defaultValue : true
 				},
 				/**
+				 * Render overlay only if associated element is visible
+				 */
+				lazyRendering : {
+					type : "boolean",
+					defaultValue : true
+				},
+				/**
 				 * Whether the overlay is created for an element or aggregation, which is not accessible via the public tree
 				 */
 				inHiddenTree : {
