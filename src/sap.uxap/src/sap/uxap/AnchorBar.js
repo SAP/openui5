@@ -148,6 +148,7 @@ sap.ui.define([
 	 ******************************************************************************/
 	AnchorBar.SCROLL_STEP = 250;// how many pixels to scroll with every overflow arrow click
 	AnchorBar.SCROLL_DURATION = 500; // ms
+	AnchorBar.DOM_CALC_DELAY = 200; // ms
 
 	AnchorBar.prototype.setSelectedButton = function (oButton) {
 
@@ -981,7 +982,9 @@ sap.ui.define([
 
 		//initial state
 		if (this._bHasButtonsBar) {
-			this._adjustSize();
+			jQuery.sap.delayedCall(AnchorBar.DOM_CALC_DELAY, this, function () {
+				this._adjustSize();
+			});
 		}
 	};
 
