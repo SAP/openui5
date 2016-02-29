@@ -16,6 +16,8 @@ module.exports = [
 	"OverflowToolbar.spec.js",
 	"Page.spec.js",
 	"ProgressIndicator.spec.js",
+	"QuickView.spec.js",
+	"QuickViewCard.spec.js",
 	"RadioButtonGroup.spec.js",
 	"SemanticPage.spec.js",
 	"SplitApp.spec.js",
