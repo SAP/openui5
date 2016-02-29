@@ -2799,5 +2799,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.29": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "e85ca9ddb713052be7437ec159de21e424110aad",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Explored: namespaces for types are correct",
+        "references": []
+      },
+      {
+        "id": "6335042904eca07bc1f8d5a133bc62f2f23e9862",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Don\u0027t refresh element bindings when deleting",
+        "references": []
+      },
+      {
+        "id": "c1795fd24ca4064995634b23698a9fe34346cdc9",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Fixed support for broken service implementations",
+        "references": []
+      },
+      {
+        "id": "fe66224a3d8ffa026cab8f0b8b52639e4eb995fb",
+        "author": "D051856 \u003cmartin.wittmann@sap.com\u003e",
+        "type": "FIX",
+        "text": ": Do not run OPA qUnit test under IOS  on non-safari browsers",
+        "references": []
+      }
+    ]
   }
 }
