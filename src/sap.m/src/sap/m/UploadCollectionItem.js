@@ -176,8 +176,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 			aggregations : {
 				/**
 				 * Attributes of an uploaded item, for example, 'Uploaded By', 'Uploaded On', 'File Size'
-				 * Attributes are displayed after an item has been uploaded.
-				 * The Active property of sap.m.ObjectAttribute is not supported.
+				 * attributes are displayed after an item has been uploaded.
+				 * Additionally, the Active property of sap.m.ObjectAttribute is supported.<br>
 				 * Note that if one of the deprecated properties contributor, fileSize or UploadedDate is filled in addition to this attribute, two attributes with the same title
 				 * are displayed as these properties get displayed as an attribute.
 				 * Example: An application passes the property ‘contributor’ with the value ‘A’ and the aggregation attributes ‘contributor’: ‘B’. As a result, the attributes
