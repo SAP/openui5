@@ -734,5 +734,52 @@
         "references": []
       }
     ]
+  },
+  "1.36.3": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "f62344641f46c60574acca8d77c05621732fb475",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Japanese date: Parse dates without era as current era",
+        "references": []
+      },
+      {
+        "id": "64b12a740d33fc59d0003641c5f5b71bc5ec9dd1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "LocalBusyIndicator: Skip Delayed-Call If Delay \"0\"",
+        "references": []
+      },
+      {
+        "id": "d0773eff16c6fd12c8da8ce9d502c656216472f0",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageManager: avoid undefined error after removal of messages",
+        "references": []
+      },
+      {
+        "id": "21c158a10b9f61cf98cb9e039d58b0e4804d501e",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "model.Binding: fix constructor JSDoc",
+        "references": []
+      },
+      {
+        "id": "e0b2736c651ebf9e62bcd080c56bc95633ee3792",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: insert space between currency code and number based on spacing rule in CLDR",
+        "references": []
+      },
+      {
+        "id": "dc6cacc0b04bb0d32aaeb478fac626a5c09c1c4d",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Fixed support for broken service implementations",
+        "references": []
+      }
+    ]
   }
 }
