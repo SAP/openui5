@@ -334,6 +334,15 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	color: @sapUiContentContrastTextColor;
 }
 
+.sapUiCalItemTextAmPm{
+	line-height: 2.8rem;
+	font-size: 0.625rem;
+}
+
+.sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm{
+	line-height: 2.5rem;
+}
+
 /* 2 calendar types */
 .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
 	line-height: 2.125rem;
@@ -517,6 +526,14 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	padding-right: 0.5rem;
 	text-align: right;
 	box-sizing: border-box;
+}
+
+.sapUiSizeCompact .sapUiCalItemTextAmPm{
+	line-height: 1.8rem;
+}
+
+.sapUiSizeCompact .sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm{
+	line-height: 1.5rem;
 }
 
 /* 2 calendar types */

@@ -65,11 +65,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * If set, interval headers are shown even if no <code>intervalHeaders</code> are assigned to the row in the visible time frame.
+			 * If set, interval headers are shown like specified in <code>showEmptyIntervalHeaders</code>.
 			 *
-			 * If not set, no interval headers are shown even if <code>intervalHeaders</code> are assigned to the row.
+			 * If not set, no interval headers are shown even if <code>intervalHeaders</code> are assigned.
 			 */
 			showIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * If set, interval headers are shown even if no <code>intervalHeaders</code> are assigned to the visible time frame.
+			 *
+			 * If not set, no interval headers are shown if no <code>intervalHeaders</code> are assigned.
+			 *
+			 * <b>Note:</b> This property is only used if <code>showIntervalHeaders</code> is set to true.
+			 * @since 1.38.0
+			 */
+			showEmptyIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
 			 * If set, headers of the <code>PlanningCalendarRows</code> are shown. This means the column with the headers is shown.
@@ -81,7 +91,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * This text is displayed when no rows are assigned.
 			 */
-			noDataText : {type : "string", group : "Misc", defaultValue : null}
+			noDataText : {type : "string", group : "Misc", defaultValue : null},
+
+			/**
+			 * If set the appointments without text (only title) are rendered with a smaller height.
+			 *
+			 * <b>Note:</b> On phone devices this property is ignored, appointments are always rendered in full height
+			 * to allow touching.
+			 * @since 1.38.0
+			 */
+			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false}
 
 		},
 		aggregations : {
@@ -545,6 +564,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	PlanningCalendar.prototype.setShowEmptyIntervalHeaders = function(bShowEmptyIntervalHeaders){
+
+		this.setProperty("showEmptyIntervalHeaders", bShowEmptyIntervalHeaders, true);
+
+		var aRows = this.getRows();
+		for (var i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			oRow.getCalendarRow().setShowEmptyIntervalHeaders(bShowEmptyIntervalHeaders);
+		}
+
+		return this;
+
+	};
+
+	PlanningCalendar.prototype.setAppointmentsReducedHeight = function(bAppointmentsReducedHeight){
+
+		this.setProperty("appointmentsReducedHeight", bAppointmentsReducedHeight, true);
+
+		var aRows = this.getRows();
+		for (var i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			oRow.getCalendarRow().setAppointmentsReducedHeight(bAppointmentsReducedHeight);
+		}
+
+		return this;
+
+	};
+
 	PlanningCalendar.prototype.setShowRowHeaders = function(bShowRowHeaders){
 
 		// set header column to invisible as each row is a ColumnListItem with two columns
@@ -575,6 +622,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oCalendarRow = oRow.getCalendarRow();
 		oCalendarRow.setStartDate(this.getStartDate());
 		oCalendarRow.setShowIntervalHeaders(this.getShowIntervalHeaders());
+		oCalendarRow.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
+		oCalendarRow.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 		oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 		oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
@@ -610,6 +659,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oCalendarRow = oRow.getCalendarRow();
 		oCalendarRow.setStartDate(this.getStartDate());
 		oCalendarRow.setShowIntervalHeaders(this.getShowIntervalHeaders());
+		oCalendarRow.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
+		oCalendarRow.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 		oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 		oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);

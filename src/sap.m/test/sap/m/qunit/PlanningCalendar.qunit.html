@@ -407,18 +407,40 @@
 
 			test("showIntervalHeaders", function() {
 				ok(oPC1.getShowIntervalHeaders(), "ShowIntervalHeaders is enabled by default");
+				ok(oPC1.getShowEmptyIntervalHeaders(), "ShowEmptyIntervalHeaders is enabled by default");
 				var aRows = oPC1.getRows();
 				for(var i = 0; i < aRows.length; i++) {
 					ok(aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders set");
+					ok(aRows[i].getCalendarRow().getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders set");
 				}
 
 				oPC1.setShowIntervalHeaders(false);
+				oPC1.setShowEmptyIntervalHeaders(false);
 				sap.ui.getCore().applyChanges();
 				for(var i = 0; i < aRows.length; i++) {
 					ok(!aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders not set");
+					ok(!aRows[i].getCalendarRow().getShowEmptyIntervalHeaders(), "Row " + i + ": ShowEmptyIntervalHeaders not set");
 				}
 
 				oPC1.setShowIntervalHeaders(true);
+				oPC1.setShowEmptyIntervalHeaders(true);
+				sap.ui.getCore().applyChanges();
+			});
+
+			test("appointmentsReducedHeight", function() {
+				ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
+				var aRows = oPC1.getRows();
+				for(var i = 0; i < aRows.length; i++) {
+					ok(!aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": ShowIntervalHeaders notset");
+				}
+
+				oPC1.setAppointmentsReducedHeight(true);
+				sap.ui.getCore().applyChanges();
+				for(var i = 0; i < aRows.length; i++) {
+					ok(aRows[i].getCalendarRow().getAppointmentsReducedHeight(), "Row " + i + ": ShowIntervalHeaders set");
+				}
+
+				oPC1.setAppointmentsReducedHeight(false);
 				sap.ui.getCore().applyChanges();
 			});
 

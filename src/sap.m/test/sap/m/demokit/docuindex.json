@@ -663,7 +663,8 @@
 		  "samples": ["sap.m.sample.PlanningCalendar",
 		  	"sap.m.sample.PlanningCalendarMulti",
 		  	"sap.m.sample.PlanningCalendarSingle",
-		  	"sap.m.sample.PlanningCalendarViews"]
+		  	"sap.m.sample.PlanningCalendarViews",
+		  	"sap.m.sample.PlanningCalendarOneLine"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -2234,6 +2235,11 @@
 		  "id": "sap.m.sample.PlanningCalendarViews",
 		  "name": "PlanningCalendar - with custom views",
 		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. Sub-intervals are shown. Custom non-working days and hours are set."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarOneLine",
+		  "name": "PlanningCalendar - with one line appointments",
+		  "description": "PlanningCalendar showing appointment with only title in one line to save space."
 		}
 		]
 	}
