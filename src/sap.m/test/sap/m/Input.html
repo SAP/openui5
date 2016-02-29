@@ -979,15 +979,18 @@
 			footer: createFooter()
 		});
 
-		var p4i1 = new sap.m.Input();
+		var b4i = new sap.m.Button({text: "Submit", press: function() {
+			sap.m.MessageToast.show("" + oModel2.getProperty('/0/name'));
+		}})
+		var p4i1 = new sap.m.Input({
+			change: function(){ b4i.invalidate(); }
+		});
 		p4i1.setModel(oModel2);
 		p4i1.bindValue("/0/name");
 
 		page4.addContent(new sap.m.Label({text: "JSON Model binding"}));
 		page4.addContent(p4i1);
-		page4.addContent(new sap.m.Button({text: "Submit", press: function() {
-			alert(oModel2.getProperty('/0/name'));
-		}}));
+		page4.addContent(b4i);
 		app.addPage(page1).addPage(page2).addPage(page3).addPage(page4);
 		app.placeAt("body");
 
