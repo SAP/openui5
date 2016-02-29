@@ -1187,6 +1187,26 @@
 		assert.ok(oTable.getEnableBusyIndicator(), "The overwritten function still works");
 	});
 
+	module("Binding", {
+		setup: function() {
+			createTable();
+		},
+		teardown: destroyTable
+	});
+
+	test("BindRows", function() {
+		var spy = this.spy(oTable, "destroyRows");
+		// bind rows again, binding could be resolved because model is set
+		oTable.bindRows(oTable.getBindingInfo("rows"));
+
+		// bind rows to different model which is not yet set
+		oTable.bindRows("otherModel>/root");
+		// bind rows again. Binding was not yet resolved
+		oTable.bindRows("otherModel>/root");
+		// destroy rows must not be called
+		sinon.assert.notCalled(spy);
+	});
+
 	</script>
 </head>
 <body class="sapUiBody">

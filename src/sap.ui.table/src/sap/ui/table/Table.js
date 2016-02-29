@@ -1185,14 +1185,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var oBinding = this.getBinding("rows");
 		if (sName === "rows" && oBinding) {
 			oBinding.detachChange(this._onBindingChange);
-			//Reset needs to be resetted, else destroyRows is called, which is not allowed to be called
-			bSuppressReset = true;
+
 			this._restoreAppDefaultsColumnHeaderSortFilter();
 			// metadata might have changed
 			this._invalidateColumnMenus();
 			this.updateRows(); // TODO: shouldn't this be more a central feature?!
 		}
 
+		//Reset needs to be resetted, else destroyRows is called, which is not allowed to be called
+		bSuppressReset = sName === "rows" && this.isBound("rows");
 		return sap.ui.core.Element.prototype.unbindAggregation.apply(this, [sName, bSuppressReset]);
 	};
 
