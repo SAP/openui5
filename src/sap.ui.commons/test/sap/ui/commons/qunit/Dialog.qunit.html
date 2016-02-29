@@ -105,6 +105,16 @@
 			assert.ok(this.initialPopupFocusSpy.calledWithExactly('btnCancel'), 'setInitialFocusId should be called with the proper sId');
 		});
 
+		QUnit.test('Setting inital focus to null', function(assert) {
+			this.oDialog.setInitialFocus(null);
+			assert.ok(this.initialPopupFocusSpy.calledWithExactly(null), 'setInitialFocusId should be called with the proper sId');
+		});
+
+		QUnit.test('Setting inital focus to undefined', function(assert) {
+			this.oDialog.setInitialFocus(undefined);
+			assert.ok(this.initialPopupFocusSpy.calledWithExactly(undefined), 'setInitialFocusId should be called with the proper sId');
+		});
+
 		QUnit.test('Get minimal reasonable size', function(assert){
 			var done = assert.async(),
 				that = this;
