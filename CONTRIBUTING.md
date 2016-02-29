@@ -34,7 +34,7 @@ Once you have familiarized with the guidelines, you can go to the [Github issue 
  * Good summary
  * Well-documented
  * Minimal example
- * Use the [template](http://openui5.org/bugreport_template.txt)
+ * Use the [template](ISSUE_TEMPLATE.md)
 
 
 ### Requirements for a bug report
@@ -61,7 +61,7 @@ These eight requirements are the mandatory base of a good bug report:
  7. Minimal example: it is highly encouraged to provide a minimal example to reproduce in e.g. jsbin: isolate the application code which triggers the issue and strip it down as much as possible as long as the issue still occurs. If several files are required, you can create a gist. This may not always be possible and sometimes be overkill, but it always helps analyzing a bug.
  8. Only one bug per report: open different tickets for different issues
 
-You are encouraged to use [this template](http://openui5.org/bugreport_template.txt).
+You are encouraged to use [this template](ISSUE_TEMPLATE.md).
 
 Please report bugs in English, so all users can understand them.
 
@@ -188,7 +188,7 @@ If this list sounds lengthy and hard to achieve - well, that's what WE have to c
     -   When you have several commits, squash them into one (see [this explanation](http://davidwalsh.name/squash-commits-git)) - this also needs to be done when additional changes are required after the code review
 
 4.  In the commit message follow the [commit message guidelines](docs/guidelines.md#git-guidelines)
-5.  If your change fixes an issue reported at GitHub, add the following line to the commit message: 
+5.  If your change fixes an issue reported at GitHub, add the following line to the commit message:
     - ```Fixes https://github.com/SAP/openui5/issues/(issueNumber)```
     - Do NOT add a colon after "Fixes" - this prevents automatic closing.
 	- When your pull request number is known (e.g. because you enhance a pull request after a code review), you can also add the line ```Closes https://github.com/SAP/openui5/pull/(pullRequestNumber)```
