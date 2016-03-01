@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', 'sap/ui/model/ChangeReason', './Row', './library', 'sap/ui/core/IconPool', 'sap/ui/Device', 'jquery.sap.trace'],
-	function(jQuery, Control, ResizeHandler, ItemNavigation, Parameters, SelectionModel, ChangeReason, Row, library, IconPool, Device /*,jQuerySAPTrace*/) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', 'sap/ui/model/ChangeReason', './Row', './library', 'sap/ui/core/IconPool', 'sap/ui/Device', './TableAccExtension', 'jquery.sap.trace'],
+	function(jQuery, Control, ResizeHandler, ItemNavigation, Parameters, SelectionModel, ChangeReason, Row, library, IconPool, Device, TableAccExtension /*,jQuerySAPTrace*/) {
 	"use strict";
 
 
@@ -603,8 +603,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._iBaseFontSize = parseFloat(jQuery("body").css("font-size")) || 16;
 		// create an information object which contains always required infos
 		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
-		this._bAccMode = sap.ui.getCore().getConfiguration().getAccessibility();
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
+		this._oAccExtension = new TableAccExtension(this);
+		this._bAccMode = this._oAccExtension.getAccMode();
 
 		this._bBindingLengthChanged = false;
 		this._mTimeouts = {};
@@ -625,6 +626,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 				if (!that._bInvalid) {
 					// subsequent DOM updates are only required if there is no rendering to be expected
+					that._getAccExtension().updateAccForCurrentCell(false);
 					that._updateSelection();
 					that._updateGroupHeader();
 
@@ -716,6 +718,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._oPaginator.destroy();
 		}
 
+		this._oAccExtension.destroy();
+
 		this._resetRowTemplate();
 
 		// destroy helpers
@@ -723,6 +727,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// cleanup
 		this._cleanUpTimers();
 		this._detachEvents();
+	};
+
+	Table.prototype._getAccExtension = function(){
+		return this._oAccExtension;
+	};
+
+	Table.prototype._getAccRenderExtension = function(){
+		return this._getAccExtension().getAccRenderExtension();
 	};
 
 	/**
@@ -1389,30 +1401,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			}
 		}
 
-		this._updateAriaRowOfRowsText(true);
-
-		if (bOnScroll && !this._$AriaLiveDomRef && this._bAccMode) {
-			if (this._mTimeouts.ariaLiveTimer) {
-				jQuery.sap.clearDelayedCall(this._mTimeouts.ariaLiveTimer);
-			}
-
-			var fnSetAriaLive = function() {
-				if (this._oItemNavigation) {
-					this._$AriaLiveDomRef = jQuery(this._oItemNavigation.getFocusedDomRef()).attr("aria-live", "rude");
-					var oTable = this;
-					var fnRemoveAriaLive = function () {
-						if (oTable._$AriaLiveDomRef) {
-							oTable._$AriaLiveDomRef.removeAttr("aria-live");
-							delete oTable._$AriaLiveDomRef;
-						}
-					};
-					this._mTimeouts.setAriaLive = jQuery.sap.delayedCall(0, this, fnRemoveAriaLive);
-					delete this._mTimeouts.ariaLiveTimer;
-				}
-			};
-
-			this._mTimeouts.ariaLiveTimer = jQuery.sap.delayedCall(60, this, fnSetAriaLive);
-		}
+		this._getAccExtension().updateAccForCurrentCell(false);
 
 		if (bFirstVisibleRowChanged && !bSupressEvent) {
 			this.fireFirstVisibleRowChanged({firstVisibleRow: iRowIndex});
@@ -1861,7 +1850,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// when not scrolling we update also the scroll position of the scrollbar
 		//if (this._oVSb.getScrollPosition() !== iStartIndex) {
 			// TODO
-			this._updateAriaRowOfRowsText(true);
+			//this._updateAriaRowOfRowsText(true);
 		//}
 
 		// update the bindings only once the table is rendered
@@ -3358,7 +3347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var $target = jQuery(oEvent.target);
 		var bNoData = this.$().hasClass("sapUiTableEmpty");
 		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
-		this._updateAriaRowOfRowsText();
+		this._getAccExtension().updateAccForCurrentCell(true);
 
 		// KEYBOARD HANDLING (_bIgnoreFocusIn is set in onsaptabXXX)
 		if (!this._bIgnoreFocusIn && (bControlBefore || $target.hasClass("sapUiTableCtrlAfter"))) {
@@ -5133,37 +5122,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				this._bIgnoreFocusIn = true;
 				$this.find(".sapUiTableCtrlAfter").focus();
 				this._bIgnoreFocusIn = false;
-			}
-		}
-	};
-
-	/**
-	 *
-	 * @param bForceUpdate
-	 * @private
-	 */
-	Table.prototype._updateAriaRowOfRowsText = function(bForceUpdate) {
-		var oAriaElement = document.getElementById(this.getId() + "-rownumberofrows");
-
-		if (!oAriaElement) {
-			// table is not in DOM anymore
-			return;
-		}
-
-		var oIN = this._oItemNavigation;
-		if (oIN) {
-			var iIndex = oIN.getFocusedIndex();
-			var iColumnNumber = iIndex % oIN.iColumns;
-
-			var iFirstVisibleRow = this.getFirstVisibleRow();
-			var iTotalRowCount = this._getRowCount();
-			var iRowIndex = Math.floor(iIndex / oIN.iColumns) + iFirstVisibleRow + 1 - this._getHeaderRowCount();
-
-			var sRowCountText = this._oResBundle.getText("TBL_ROW_ROWCOUNT", [iRowIndex, iTotalRowCount]);
-			if (iRowIndex > 0 && iColumnNumber === 0 || bForceUpdate) {
-				oAriaElement.innerText = sRowCountText;
-			} else {
-				oAriaElement.innerText = " ";
 			}
 		}
 	};

@@ -95,18 +95,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		Table.prototype.init.apply(this, arguments);
 		this._iLastFixedColIndex = 0;
 
-		// adopting properties and load icon fonts for bluecrystal
-		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_bluecrystal" ||
-			sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
-
-			// add the icon fonts
-			jQuery.sap.require("sap.ui.core.IconPool");
-			sap.ui.core.IconPool.insertFontFaceStyle();
-
-			// defaulting the rowHeight
-			// this.setRowHeight(32); --> is done via CSS
-
-		}
+		this._getAccExtension().setTreeMode(true);
 	};
 
 	TreeTable.prototype.bindRows = function(oBindingInfo, vTemplate, aSorters, aFilters) {
@@ -184,15 +173,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		return this;
 	};
 
-
-	/**
-	 * Rerendering handling
-	 * @private
-	 */
-	TreeTable.prototype.onAfterRendering = function() {
-		Table.prototype.onAfterRendering.apply(this, arguments);
-		this.$().find("[role=grid]").attr("role", "treegrid");
-	};
 
 	TreeTable.prototype.isTreeBinding = function(sName) {
 		sName = sName || "rows";
