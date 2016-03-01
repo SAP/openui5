@@ -363,7 +363,7 @@ sap.ui.define([
 
 		return Promise.all([
 			oContext.requestValue("@odata.etag"),
-			this.getMetaModel().requestCanonicalUrl("", sPath, oContext)
+			this.oMetaModel.requestCanonicalUrl("", sPath, oContext)
 		]).then(function (aValues) {
 			var sEtag = aValues[0],
 				sResourcePath = aValues[1] + that._sQuery; // "canonical path" w/o service URL
@@ -398,7 +398,7 @@ sap.ui.define([
 	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
 		jQuery.sap.assert(oEntityContext.getModel() === this,
 				"oEntityContext must belong to this model");
-		return this.getMetaModel()
+		return this.oMetaModel
 			.requestCanonicalUrl("/", oEntityContext.getPath(), oEntityContext);
 	};
 

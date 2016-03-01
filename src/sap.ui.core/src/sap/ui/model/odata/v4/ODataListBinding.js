@@ -172,11 +172,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
-		var oContext = this.getContext(),
+		var oContext = this.oContext,
 			bDataRequested = false,
-			oModel = this.getModel(),
+			oModel = this.oModel,
 			oPromise,
-			sResolvedPath = oModel.resolve(this.getPath(), oContext),
+			sResolvedPath = oModel.resolve(this.sPath, oContext),
 			that = this;
 
 		/**
@@ -265,7 +265,7 @@ sap.ui.define([
 							that.fireDataRequested();
 						});
 					})
-				: oContext.requestValue(this.getPath());
+				: oContext.requestValue(this.sPath);
 			oPromise.then(function (vResult) {
 				createContexts(vResult);
 				//fire dataReceived after change event fired in createContexts()

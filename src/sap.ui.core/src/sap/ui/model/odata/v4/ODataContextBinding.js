@@ -198,7 +198,7 @@ sap.ui.define([
 		if (this.oCache) {
 			return this.oCache.read(/*sGroupId*/"", sPath, function () {
 				bDataRequested = true;
-				that.getModel().dataRequested("", that.fireDataRequested.bind(that));
+				that.oModel.dataRequested("", that.fireDataRequested.bind(that));
 			}).then(function (vValue) {
 				if (bDataRequested) {
 					that.fireDataReceived();

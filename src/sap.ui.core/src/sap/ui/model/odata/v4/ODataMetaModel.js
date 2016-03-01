@@ -124,7 +124,7 @@ sap.ui.define([
 		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataMetaPropertyBinding", {
 			constructor : function () {
 				PropertyBinding.apply(this, arguments);
-				this.vValue = this.getModel().getProperty(this.getPath(), this.getContext());
+				this.vValue = this.oModel.getProperty(this.sPath, this.oContext);
 			},
 			getValue : function () {
 				return this.vValue;
