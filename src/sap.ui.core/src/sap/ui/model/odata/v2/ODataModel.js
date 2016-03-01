@@ -1597,17 +1597,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/**
 	 * Returns the key part from the entry URI or the given context or object
 	 *
-	 * @param {object|sap.ui.model.Context} oObject The context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
 	 * @returns {string} [sKey] key of the entry
 	 * @private
 	 */
-	ODataModel.prototype._getKey = function(oObject) {
+	ODataModel.prototype._getKey = function(vValue) {
 		var sKey, sURI;
-		if (oObject instanceof sap.ui.model.Context) {
-			sKey = oObject.getPath().substr(1);
-		} else if (oObject && oObject.__metadata && oObject.__metadata.uri) {
-			sURI = oObject.__metadata.uri;
+		if (vValue instanceof sap.ui.model.Context) {
+			sKey = vValue.getPath().substr(1);
+		} else if (vValue && vValue.__metadata && vValue.__metadata.uri) {
+			sURI = vValue.__metadata.uri;
 			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
+		} else if (typeof vValue === 'string') {
+			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
 		return sKey;
 	};
@@ -1615,12 +1617,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/**
 	 * Returns the key part from the entry URI or the given context or object
 	 *
-	 * @param {object|sap.ui.model.Context} oObject The context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
 	 * @returns {string} [sKey] key of the entry
 	 * @public
 	 */
-	ODataModel.prototype.getKey = function(oObject) {
-		return this._getKey(oObject);
+	ODataModel.prototype.getKey = function(vValue) {
+		return this._getKey(vValue);
 	};
 
 	/**
@@ -2742,6 +2744,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
+	 * Force the update on the server of an entity by setting its ETag to '*'.
+	 * ETag handling must be active so the force update will work.
+	 * @param {string} sKey The key to an Entity e.g.: Customer(4711)
+	 * @public
+	 */
+	 ODataModel.prototype.forceEntityUpdate = function(sKey) {
+		 var oData = this.mChangedEntities[sKey];
+		 if (oData && oData.__metadata) {
+			 oData.__metadata.etag = '*';
+		 } else {
+			 jQuery.sap.log.error(this + " - Entity with key " + sKey + " does not exist or has no change");
+		 }
+	 };
+
+	/**
 	 * creation of a request object
 	 *
 	 * @param {string} sUrl The request Url
@@ -3465,7 +3482,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		for (var i = aParts.length - 1; i >= 0; i--) {
 			sEntryPath = aParts.join("/");
 			oEntry = this._getObject(sEntryPath);
-			if (oEntry) {
+			if (jQuery.isPlainObject(oEntry)) {
 				sKey = this._getKey(oEntry);
 				if (sKey) {
 					break;
@@ -4161,7 +4178,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 		return this.oMetaModel;
 	};
-
 	return ODataModel;
-
 }, /* bExport= */ true);
+
