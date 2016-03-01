@@ -726,8 +726,13 @@ sap.ui.require([
 		// dataRequested
 		oSandbox.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
 		oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
+			var oListBindingMock = oSandbox.mock(oListBinding);
+
 			// These events must be fired _after_ submitBatch
-			oSandbox.mock(oListBinding).expects("fireDataRequested").withExactArgs();
+			oListBindingMock.expects("fireEvent")
+				.withExactArgs("dataRequested", undefined);
+			oListBindingMock.expects("fireEvent")
+				.withExactArgs("change", {reason : "change"});
 			oSandbox.stub(oListBinding, "fireDataReceived", function () {
 				assert.strictEqual(oListBinding.aContexts.length, 10, "data already processed");
 			});
@@ -777,7 +782,8 @@ sap.ui.require([
 		oCacheMock.expects("read").callsArg(4).returns(oReadPromise);
 		oCacheMock.expects("read").returns(oReadPromise);
 		oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
-			oSandbox.mock(oListBinding).expects("fireDataRequested");
+			oSandbox.mock(oListBinding).expects("fireEvent")
+				.withExactArgs("dataRequested", undefined);
 			oSandbox.mock(oListBinding).expects("fireDataReceived")
 				.withExactArgs({error : oError});
 

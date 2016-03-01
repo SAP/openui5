@@ -261,9 +261,7 @@ sap.ui.define([
 			oPromise = this.oCache
 				? this.oCache.read(iStart, iLength, "", undefined, function () {
 						bDataRequested = true;
-						that.oModel.dataRequested("", function () {
-							that.fireDataRequested();
-						});
+						that.oModel.dataRequested("", that.fireDataRequested.bind(that));
 					})
 				: oContext.requestValue(this.getPath());
 			oPromise.then(function (vResult) {
