@@ -3812,8 +3812,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				sWidth = iColumnWidth + "%";
 			}
 
-			this._updateColumnWidth(oColumn, sWidth);
-			this._resizeDependentColumns(oColumn, sWidth);
+			if (this._updateColumnWidth(oColumn, sWidth, true)) {
+				this._resizeDependentColumns(oColumn, sWidth);
+			}
 
 			delete oColumn._iNewWidth;
 
@@ -3973,18 +3974,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @param sWidth
 	 * @private
 	 */
-	Table.prototype._updateColumnWidth = function(oColumn, sWidth) {
+	Table.prototype._updateColumnWidth = function(oColumn, sWidth, bFireEvent) {
 		// forward the event
-		var bExecuteDefault = this.fireColumnResize({
-			column: oColumn,
-			width: sWidth
-		});
+		var bExecuteDefault = true;
+		if (bFireEvent) {
+			bExecuteDefault = this.fireColumnResize({
+				column: oColumn,
+				width: sWidth
+			});
+		}
 
 		// set the width of the column (when not cancelled)
 		if (bExecuteDefault) {
 			oColumn.setProperty("width", sWidth, true);
 			this.$().find('th[aria-owns="' + oColumn.getId() + '"]').css('width', sWidth);
 		}
+
+		return bExecuteDefault;
 	};
 
 	/**
