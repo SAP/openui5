@@ -225,7 +225,8 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageManager.prototype.removeMessages = function(vMessages) {
-		this._removeMessages(vMessages);
+		// Do not expose bOnlyValidationMessages to public API
+		return this._removeMessages.apply(this, arguments);
 	};
 
 	/**
