@@ -205,10 +205,12 @@ sap.ui.define([
 				}
 				return vValue;
 			}, function (oError) {
-				if (oError.canceled) {
-					that.fireDataReceived();
-				} else {
-					that.fireDataReceived({error : oError});
+				if (bDataRequested) {
+					if (oError.canceled) {
+						that.fireDataReceived();
+					} else {
+						that.fireDataReceived({error : oError});
+					}
 				}
 				throw oError;
 			});

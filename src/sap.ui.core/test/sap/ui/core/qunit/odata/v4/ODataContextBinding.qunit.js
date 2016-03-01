@@ -280,14 +280,20 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (failure)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
-			oExpectedError = new Error("Expected read failure");
+			oCacheMock = this.oSandbox.mock(oBinding.oCache),
+			oExpectedError = new Error("Expected read failure"),
+			oCachePromise = Promise.reject(oExpectedError);
 
-		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("", "bar")
-			.callsArg(2)
-			.returns(Promise.reject(oExpectedError));
+		oCacheMock.expects("read").withArgs("", "foo").callsArg(2).returns(oCachePromise);
+		oCacheMock.expects("read").withArgs("", "bar").returns(oCachePromise);
 		this.oSandbox.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
 
+		oBinding.requestValue("foo").then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError, oExpectedError);
+		});
 		return oBinding.requestValue("bar").then(function () {
 			assert.ok(false, "unexpected success");
 		}, function (oError) {
