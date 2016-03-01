@@ -65,7 +65,7 @@
 					oControl.attachEventOnce("_rowsUpdated", fnHandler, that);
 				}
 			}
-			jQuery.sap.delayedCall(iDelay, that, fnTest);
+			Promise.resolve().then(fnTest.bind(this));
 		};
 
 		oControl.attachEvent("_rowsUpdated", fnEventHandler);
@@ -73,7 +73,7 @@
 
 	function attachRowsUpdatedOnce(oControl, fnHandler, that) {
 		var fnEventHandler = function() {
-			jQuery.sap.delayedCall(iDelay, that, fnHandler);
+			Promise.resolve().then(fnHandler.bind(this));
 		};
 
 		oControl.attachEventOnce("_rowsUpdated", fnEventHandler, that);
@@ -81,7 +81,7 @@
 
 	function attachRowsUpdated(oControl, fnHandler, that) {
 		var fnEventHandler = function() {
-			jQuery.sap.delayedCall(iDelay, that, fnHandler);
+			Promise.resolve().then(fnHandler.bind(this));
 		};
 
 		oControl.attachEvent("_rowsUpdated", fnEventHandler, that);

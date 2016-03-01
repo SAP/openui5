@@ -67,7 +67,7 @@
 					oControl.attachEventOnce("_rowsUpdated", fnHandler, that);
 				}
 			}
-			jQuery.sap.delayedCall(iDelay, that, fnTest);
+			Promise.resolve().then(fnTest.bind(this));
 		};
 
 		oControl.attachEvent("_rowsUpdated", fnEventHandler);
@@ -75,7 +75,7 @@
 
 	function attachRowsUpdatedOnce(oControl, fnHandler, that) {
 		var fnEventHandler = function() {
-			jQuery.sap.delayedCall(iDelay, that, fnHandler);
+			Promise.resolve().then(fnHandler.bind(this));
 		};
 
 		oControl.attachEventOnce("_rowsUpdated", fnEventHandler, that);
@@ -83,7 +83,7 @@
 
 	function attachRowsUpdated(oControl, fnHandler, that) {
 		var fnEventHandler = function() {
-			jQuery.sap.delayedCall(iDelay, that, fnHandler);
+			Promise.resolve().then(fnHandler.bind(this));
 		};
 
 		oControl.attachEvent("_rowsUpdated", fnEventHandler, that);
@@ -377,7 +377,7 @@
 
 			};
 
-			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
+			attachEventHandler(this.oTable, 1, fnHandler1, this);
 			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 		}, this);
 	});
@@ -535,7 +535,7 @@
 				start();
 			}
 
-			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
+			attachEventHandler(this.oTable, 1, fnHandler1, this);
 			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 		}, this);
 	});
@@ -571,7 +571,7 @@
 				this.oTable.setFirstVisibleRow(i);
 			};
 
-			attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
+			attachEventHandler(this.oTable, 1, fnHandler1, this);
 			this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 		}, this);
 	});
