@@ -426,14 +426,16 @@ sap.ui.require([
 				oContextMock = this.oSandbox.mock(oContext);
 				oContextMock.expects("requestValue").once().returns(createResult(2));
 				oContextMock.expects("requestValue").once().returns(oPromise);
+				// no error logged by ODataListBinding; parent context logged the error already
 			} else {
 				oCacheMock = this.getCacheMock();
-				oCacheMock.expects("read").once().returns(createResult(2));
-				oCacheMock.expects("read").once().returns(oPromise);
+				oCacheMock.expects("read").once().callsArg(4).returns(createResult(2));
+				oCacheMock.expects("read").once().callsArg(4).returns(oPromise);
+				this.oLogMock.expects("error")
+					.withExactArgs("Failed to get contexts for " + sResolvedPath
+							+ " with start index 1" + " and length 2",
+						oError, "sap.ui.model.odata.v4.ODataListBinding");
 			}
-			this.oLogMock.expects("error")
-				.withExactArgs("Failed to get contexts for " + sResolvedPath + " with start index 1"
-					+ " and length 2", oError, "sap.ui.model.odata.v4.ODataListBinding");
 
 			oListBinding = this.oModel.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
 					oContext);
@@ -704,8 +706,9 @@ sap.ui.require([
 
 		// change event during getContexts
 		oListBindingMock.expects("_fireChange").never();
+		oListBindingMock.expects("fireDataReceived").withExactArgs();
 		oError.canceled = true;
-		oCacheMock.expects("read").withArgs(0, 10, "").returns(oReadPromise);
+		oCacheMock.expects("read").withArgs(0, 10, "").callsArg(4).returns(oReadPromise);
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
@@ -769,8 +772,7 @@ sap.ui.require([
 			oReadPromise = new Promise(function (fn, fnReject) {fnRejectRead = fnReject;}),
 			oSandbox = this.oSandbox;
 
-		// TODO why twice? Wouldn't once be sufficient?
-		this.oLogMock.expects("error").twice()
+		this.oLogMock.expects("error")
 			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
 				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
 		oCacheMock = oSandbox.mock(oListBinding.oCache);

@@ -226,8 +226,12 @@ sap.ui.define([
 			// do not rethrow, ManagedObject doesn't react on this either
 			// throwing an exception would cause "Uncaught (in promise)" in Chrome
 			if (!oError.canceled) {
-				jQuery.sap.log.error("Failed to read path " + sResolvedPath, oError, sClassName);
-				// fire change event only if error was not caused by refresh and value was undefined
+				if (bDataRequested) {
+					jQuery.sap.log.error("Failed to read path " + sResolvedPath, oError,
+						sClassName);
+				}
+				// fire change event only if error was not caused by refresh
+				// and value was not undefined
 				bFire = that.vValue !== undefined;
 				mParametersForDataReceived = {error : oError};
 			}
