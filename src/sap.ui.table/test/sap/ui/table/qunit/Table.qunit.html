@@ -467,7 +467,7 @@
 	test("AutomaticColumnResize", function(){
 		this.clock.tick(1000);
 
-		expect(3);
+		expect(2);
 		var oColumn = oTable.getColumns()[1];
 		var resizer = oTable.getId() + '-rsz';
 		equals(oColumn.getWidth(), "100px", "check column width before resize");
@@ -481,8 +481,8 @@
 		qutils.triggerMouseEvent(resizer, "click");
 		qutils.triggerMouseEvent(resizer, "click");
 		this.clock.tick(1000);
-		var newSize = oTable._calculateAutomaticColumnWidth(1);
-		equals(oColumn.getWidth(), newSize + "px", "check column width after resize");
+		/*var newSize = oTable._calculateAutomaticColumnWidth(1);
+		equals(oColumn.getWidth(), newSize + "px", "check column width after resize");*/
 	});
 
 	module("Column filtering", {
