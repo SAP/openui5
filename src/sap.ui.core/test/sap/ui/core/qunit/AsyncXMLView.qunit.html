@@ -80,6 +80,9 @@ QUnit.test("function", function(assert) {
 	}).loaded().then(function(oView) {
 		assert.ok(oSpy.calledOnce);
 		assert.ok(oSpy.args[0][0].isEqualNode(xmlDoc));
+		var oInfo = oSpy.args[0][1];
+		assert.equal(oInfo.componentId, undefined, "no component id");
+		assert.equal(oInfo.viewId, oView.getId(), "view id set");
 		return oSpy.returnValues[0].then(function(xml) {
 			assert.ok(xmlDoc.isEqualNode(xml));
 			done();
