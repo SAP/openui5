@@ -3135,6 +3135,64 @@
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
+
+	asyncTest("submit:check eTag - forceUpdate", function() {
+		var that = this;
+		this.oModel
+		this.oModel.metadataLoaded().then(function() {
+			var fnReadCompleted = function() {
+				that.oModel.detachRequestCompleted(fnReadCompleted);
+				that.oModel.detachRequestFailed(fnReadFailed);
+				//set some etag
+				that.oModel.setProperty("/Categories(1)/__metadata/etag", "testETag");
+				var oCategory = that.oModel.getProperty("/Categories(1)");
+				ok(oCategory.__metadata.etag === "testETag", "eTag set correctly");
+				//change data
+				that.oModel.setProperty("/Categories(1)/CategoryName", "TestETag");
+				var fnCompl = function(oInfo) {
+					that.oModel.detachRequestCompleted(fnCompl);
+				/*	ok(!oInfo.getParameter('success'), "request should fail");
+					ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');*/
+				};
+
+				var fnFailed = function(oInfo) {
+					that.oModel.detachRequestFailed(fnFailed);
+					ok(true, "request failed");
+					ok(oInfo.getParameter('headers')['If-Match'] === 'testETag', 'header for eTag set correctly');
+					ok(oInfo.getParameter('response').statusCode === 412, 'status code = 412');
+					var sKey = that.oModel.getKey(oInfo.getParameter('url'));
+					ok(sKey === "Categories(1)");
+					that.oModel.forceEntityUpdate(sKey);
+					var oCategory = that.oModel.getProperty("/Categories(1)");
+					ok(oCategory.__metadata.etag === '*', "eTag set to *");
+
+					that.oModel.attachRequestFailed(function(oInfo) {
+						that.oModel.detachRequestFailed(fnFailed);
+						ok(false, "request should be succesful");
+					});
+
+					that.oModel.attachRequestCompleted(function(oInfo) {
+						that.oModel.detachRequestCompleted(fnCompl);
+						ok(oInfo.getParameter('success'), "request successful");
+						ok(oInfo.getParameter('response').statusCode === 204, 'status code = 204');
+						ok(oInfo.getParameter('headers')['If-Match'] === '*', 'header for eTag set correctly');
+						start();
+					});
+					that.oModel.submitChanges();
+				};
+				that.oModel.attachRequestFailed(fnFailed);
+				that.oModel.attachRequestCompleted(fnCompl);
+				that.oModel.submitChanges();
+			};
+			var fnReadFailed = function() {
+				ok(false, "Read of Category should not fail");
+			};
+			this.oModel.read("/Categories(1)", {error: function() {ok(false,"reading Category 1 failed")}});
+			that.oModel.attachRequestCompleted(fnReadCompleted);
+			that.oModel.attachRequestFailed(fnReadFailed);
+		}.bind(this))
+	});
+
 	asyncTest("submit:check success", function() {
 		assert.expect( 6 );
 		var that = this;
