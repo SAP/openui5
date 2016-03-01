@@ -619,22 +619,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		this._performUpdateRows = function(sReason) {
 			// update only if control not marked as destroyed (could happen because updateRows is called during destroying the table)
-			if (!that._bInvalid) {
+			if (!that.bIsDestroyed) {
 				that._lastCalledUpdateRows = Date.now();
 				that._updateBindingContexts(undefined, undefined, sReason);
-				that._updateSelection();
-				that._updateGroupHeader();
 
-				// for TreeTable and AnalyticalTable
-				if (that._updateTableContent) {
-					that._updateTableContent();
-				}
+				if (!that._bInvalid) {
+					// subsequent DOM updates are only required if there is no rendering to be expected
+					that._updateSelection();
+					that._updateGroupHeader();
 
-				var oTableSizes = that._collectTableSizes();
-				that._updateRowHeader(oTableSizes.tableRowHeights);
-				that._syncColumnHeaders(oTableSizes);
-				if (that._bBindingLengthChanged) {
-					that._updateVSb(oTableSizes);
+					// for TreeTable and AnalyticalTable
+					if (that._updateTableContent) {
+						that._updateTableContent();
+					}
+
+					var oTableSizes = that._collectTableSizes();
+					that._updateRowHeader(oTableSizes.tableRowHeights);
+					that._syncColumnHeaders(oTableSizes);
+					if (that._bBindingLengthChanged) {
+						that._updateVSb(oTableSizes);
+					}
 				}
 
 				that._mTimeouts.bindingTimer = undefined;
