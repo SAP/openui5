@@ -69,6 +69,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	ODataPropertyBinding.prototype.setValue = function(oValue){
+		if (this.bSuspended) {
+			return;
+		}
+
 		if (!jQuery.sap.equal(oValue, this.oValue) && this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
 			this.oValue = oValue;
 
@@ -98,6 +102,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 	 *
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function(bForceUpdate){
+		if (this.bSuspended && !bForceUpdate) {
+			return;
+		}
+
 		var oDataState = this.getDataState();
 		var bChanged = false;
 

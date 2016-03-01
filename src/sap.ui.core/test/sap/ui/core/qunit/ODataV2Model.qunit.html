@@ -11,7 +11,7 @@
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table">
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
 	</script>
 
 <link rel="stylesheet"
@@ -1079,6 +1079,174 @@
 			equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Expanded entity key");
 			start();
 		});
+	});
+
+	asyncTest("PropertyBinding suspend/resume with control value change", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+
+		oModel.attachRequestCompleted(this, function() {
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			oBinding.attachChange(function() {
+				equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+				equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+				equal(oModel.getProperty("/Categories(2)/CategoryName"), "Condiments", "model value");
+				equal(oInput.getValue(), "Condiments", "input field returns value");
+				oInput.destroy();
+				start();
+			});
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			oBinding.suspend();
+			oInput.setValue("Condis");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "Condiments", "model value");
+
+			oBinding.resume();
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("PropertyBinding suspend/resume with model value change", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+
+		oModel.attachRequestCompleted(this, function() {
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			oBinding.attachChange(function() {
+				equal(oBinding.getValue(), "blubb", "Property Binding returns value");
+				equal(oBinding.oValue, "blubb", "Property Binding internal value");
+				equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+				equal(oInput.getValue(), "blubb", "input field returns value");
+				oInput.destroy();
+				start();
+			});
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			oBinding.suspend();
+			oModel.setProperty(oBinding.getPath(), "blubb", oBinding.getContext());
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+
+			oBinding.resume();
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("PropertyBinding suspend/resume with control and model value change", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+
+		oModel.attachRequestCompleted(this, function() {
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			oBinding.attachChange(function() {
+				equal(oBinding.getValue(), "blubb", "Property Binding returns value");
+				equal(oBinding.oValue, "blubb", "Property Binding internal value");
+				equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+				equal(oInput.getValue(), "blubb", "input field returns value");
+				oInput.destroy();
+				start();
+			});
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			oBinding.suspend();
+			oInput.setValue("Condis");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "Condiments", "model value");
+			oBinding.setValue("test");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "Condiments", "model value");
+			oModel.setProperty(oBinding.getPath(), "blubb", oBinding.getContext());
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+
+			oBinding.resume();
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("PropertyBinding suspend/resume with model and control value change", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+
+		oModel.attachRequestCompleted(this, function() {
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			oBinding.attachChange(function() {
+				equal(oBinding.getValue(), "blubb", "Property Binding returns value");
+				equal(oBinding.oValue, "blubb", "Property Binding internal value");
+				equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+				equal(oInput.getValue(), "blubb", "input field returns value");
+				oInput.destroy();
+				start();
+			});
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			oBinding.suspend();
+			oModel.setProperty(oBinding.getPath(), "blubb", oBinding.getContext());
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+			oInput.setValue("Condis");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+			oBinding.setValue("test");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+
+			oBinding.resume();
+		});
+		oModel.read("/Categories");
 	});
 
 	asyncTest("test setProperty on complex Types (internal)",function(){
