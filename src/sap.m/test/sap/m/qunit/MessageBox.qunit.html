@@ -601,6 +601,16 @@
 		});
 
 		test("Aria-labelledby attrbute:", function () {
+			/* The aria-labelledby attribute is updated in the afterOpen event of the Popup.
+			 On IE9 the event is fired with delay and we cannot test it from here.
+			 There is no way to pass a promise to the Popup event from the MessageBox tests.
+			 If there is an issue with the attribute it will be seen on all browsers, so it is safe to exclude IE9 in this case.
+			 */
+			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9) {
+				expect(0);
+				return;
+			}
+
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
 				id: "messagebox6",
@@ -615,6 +625,16 @@
 		});
 
 		test("When used with undefined message aria-labelledby attrbute", function () {
+			/* The aria-labelledby attribute is updated in the afterOpen event of the Popup.
+			 On IE9 the event is fired with delay and we cannot test it from here.
+			 There is no way to pass a promise to the Popup event from the MessageBox tests.
+			 If there is an issue with the attribute it will be seen on all browsers, so it is safe to exclude IE9 in this case.
+			 */
+			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9) {
+				expect(0);
+				return;
+			}
+
 			sap.m.MessageBox.show(undefined, {
 				title: sMessageTitle,
 				id: "messagebox7",
@@ -629,6 +649,16 @@
 		});
 
 		test("When used with details aria-labelledby attrbute:", function () {
+			/* The aria-labelledby attribute is updated in the afterOpen event of the Popup.
+			 On IE9 the event is fired with delay and we cannot test it from here.
+			 There is no way to pass a promise to the Popup event from the MessageBox tests.
+			 If there is an issue with the attribute it will be seen on all browsers, so it is safe to exclude IE9 in this case.
+			 */
+			if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9) {
+				expect(0);
+				return;
+			}
+
 			sap.m.MessageBox.show(sMessageText, {
 				title: sMessageTitle,
 				details: "Some details",
