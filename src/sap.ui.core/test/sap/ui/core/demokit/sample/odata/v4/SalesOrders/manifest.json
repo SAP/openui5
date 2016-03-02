@@ -56,7 +56,7 @@
 				"sap.m": {}
 			}
 		},
-		"handleValidation": false,
+		"handleValidation": true,
 		"models": {
 			"": {
 				"dataSource": "default"

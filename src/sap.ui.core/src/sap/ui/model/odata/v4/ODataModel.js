@@ -115,10 +115,11 @@ sap.ui.define([
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters);
 					this.mDataRequestedCallbacks = {};
-					this.sDefaultBindingMode = BindingMode.OneWay;
+					this.sDefaultBindingMode = BindingMode.TwoWay;
 					this.mSupportedBindingModes = {
 						OneTime : true,
-						OneWay : true
+						OneWay : true,
+						TwoWay : true
 					};
 				}
 			});

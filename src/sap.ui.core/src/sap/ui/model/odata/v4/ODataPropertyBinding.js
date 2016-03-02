@@ -15,6 +15,7 @@ sap.ui.define([
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 		mSupportedEvents = {
+			AggregatedDataStateChange : true,
 			change : true,
 			dataReceived : true,
 			dataRequested : true
@@ -240,10 +241,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the current value of the bound property.
+	 * Returns the current value.
 	 *
 	 * @returns {any}
-	 *   The current value of the bound property
+	 *   The current value
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#getValue
@@ -316,29 +317,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the binding mode of this property binding to the given value; the binding modes
-	 * 'OneTime' and 'OneWay' are supported.
-	 *
-	 * @param {sap.ui.model.BindingMode} sBindingMode
-	 *   The binding mode
-	 * @returns {undefined}
-	 * @throws {Error}
-	 *   When 'TwoWay' binding mode is used (not supported)
-	 *
-	 * @protected
-	 * @see sap.ui.model.PropertyBinding#setBindingMode
-	 * @since 1.37.0
-	 */
-	// @override
-	ODataPropertyBinding.prototype.setBindingMode = function (sBindingMode) {
-		if (sBindingMode !== BindingMode.OneTime && sBindingMode !== BindingMode.OneWay) {
-			throw new Error("Unsupported operation: v4.ODataPropertyBinding#setBindingMode, "
-					+ "sBindingMode must not be " + sBindingMode);
-		}
-		return PropertyBinding.prototype.setBindingMode.apply(this, arguments);
-	};
-
-	/**
 	 * Sets the (base) context if the binding path is relative and triggers a
 	 * {@link #checkUpdate} to check for the current value if the context has changed.
 	 * In case of absolute bindings nothing is done.
@@ -360,16 +338,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Method not supported
+	 * Sets the new current value.
 	 *
-	 * @throws {Error}
+	 * @param {any} vValue
+	 *   The new value
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
 	 * @since 1.37.0
 	 */
-	ODataPropertyBinding.prototype.setValue = function () {
-		throw new Error("Unsupported operation: v4.ODataPropertyBinding#setValue");
+	ODataPropertyBinding.prototype.setValue = function (vValue) {
+		var oBody = {},
+			sGroupId = this.oModel.getGroupId(),
+			iLastSlash = this.sPath.lastIndexOf("/"),
+			sEditUrl = this.sPath.slice(1, iLastSlash);
+
+		this.vValue = vValue;
+		oBody[this.sPath.slice(iLastSlash + 1)] = vValue;
+		this.oModel.oRequestor.request("PATCH", sEditUrl, sGroupId, null, oBody);
+		this.oModel.dataRequested(sGroupId, function () {});
 	};
 
 	/**

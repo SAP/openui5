@@ -89,17 +89,11 @@ sap.ui.define([
 		},
 
 		onRefreshFavoriteProduct : function (oEvent) {
-			var oBinding = this.getView().byId("FavoriteProduct").getBinding("text");
-			if (oBinding) {
-				oBinding.refresh(true);
-			}
+			this.getView().byId("FavoriteProduct").getBinding("value").refresh(true);
 		},
 
 		onRefreshSalesOrderDetails : function (oEvent) {
-			var oBinding = this.getView().byId("ObjectPage").getElementBinding();
-			if (oBinding) {
-				oBinding.refresh(true);
-			}
+			this.getView().byId("ObjectPage").getElementBinding().refresh(true);
 		},
 
 		onRefreshSalesOrdersList : function (oEvent) {

@@ -123,8 +123,10 @@ sap.ui.require([
 		oModel = new ODataModel("/foo/?sap-client=111");
 		assert.strictEqual(oModel.sServiceUrl, "/foo/");
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
-		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.OneWay);
+		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.TwoWay);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), true);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
@@ -471,10 +473,6 @@ sap.ui.require([
 			oModel.refresh(true, "");
 		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
 				+ "sGroupId parameter must not be set"));
-
-		assert.throws(function () {
-			oModel.setDefaultBindingMode(BindingMode.TwoWay);
-		});
 
 		assert.throws(function () {
 			oModel.setLegacySyntax();
