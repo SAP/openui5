@@ -77,6 +77,7 @@
 .sapMCrslHud a {
 	z-index: 2;
 	opacity: 0;
+	display: none;
 	position: absolute;
 	top: calc(50% - 3.875rem);
 	width: 3rem;
@@ -113,11 +114,13 @@
 
 .sapMCrsl:hover .sapMCrslHud a {
 	opacity: 0.3;
+	display: block;
 }
 
 .sapMCrsl .sapMCrslHud a:hover,
 .sapMCrsl .sapMCrslHud a:focus {
 	opacity: 1;
+	display: block;
 }
 
 .sapMCrsl .sapMCrslHud.sapMCrslLeftmost a.sapMCrslPrev,
