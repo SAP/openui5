@@ -372,19 +372,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 
 					function onOpen () {
 						if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-							var $Dialog = oDialog.$(),
-								sMessageTextId;
-
-							$Dialog.attr("role", "alertdialog");
-
-							if (oMessageText) {
-								sMessageTextId = oMessageText.getId();
-
-								// Appends a value to the aria-labelledby attribute
-								$Dialog.attr("aria-labelledby", function (ix, val) {
-									return val ? val + " " + sMessageTextId : sMessageTextId;
-								});
-							}
+							oDialog.$().attr("role", "alertdialog");
 						}
 					}
 
@@ -399,7 +387,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 						horizontalScrolling: mOptions.horizontalScrolling,
 						afterOpen: onOpen,
 						afterClose: onclose,
-						buttons: aButtons
+						buttons: aButtons,
+						ariaLabelledBy: oMessageText ? oMessageText.getId() : undefined
 					});
 
 					if (mClasses[mOptions.icon]) {
