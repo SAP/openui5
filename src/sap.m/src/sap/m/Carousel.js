@@ -500,12 +500,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//visible later on and then it should be at the right place
 		if (sap.m.PlacementType.Top === sPlacement) {
 			this.$().prepend($PageIndicator);
-			$PageIndicator.removeClass('sapMCrslBottomOffset');
-			this.$().find(Carousel._ITEM_SELECTOR).removeClass('sapMCrslBottomOffset');
+			$PageIndicator.removeClass('sapMCrslBottomOffset').addClass('sapMCrslTopOffset');
+			this.$().find(Carousel._ITEM_SELECTOR).removeClass('sapMCrslBottomOffset').addClass('sapMCrslTopOffset');
 		} else {
 			this.$().append($PageIndicator);
-			$PageIndicator.addClass('sapMCrslBottomOffset');
-			this.$().find(Carousel._ITEM_SELECTOR).addClass('sapMCrslBottomOffset');
+			$PageIndicator.addClass('sapMCrslBottomOffset').removeClass('sapMCrslTopOffset');
+			this.$().find(Carousel._ITEM_SELECTOR).addClass('sapMCrslBottomOffset').removeClass('sapMCrslTopOffset');
 		}
 		return this;
 	};
