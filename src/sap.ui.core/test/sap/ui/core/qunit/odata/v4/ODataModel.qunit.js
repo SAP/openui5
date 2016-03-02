@@ -341,13 +341,6 @@ sap.ui.require([
 		this.oSandbox.mock(oPropertyBinding).expects("refresh").never();
 
 		oModel.refresh(true);
-
-		assert.throws(function () {
-			oModel.refresh();
-		}, new Error("Falsy values for bForceUpdate are not supported"));
-		assert.throws(function () {
-			oModel.refresh(false);
-		}, new Error("Falsy values for bForceUpdate are not supported"));
 	});
 
 	//*********************************************************************************************
@@ -373,24 +366,6 @@ sap.ui.require([
 
 		assert.strictEqual(iCallCount, 2, "refresh called for both bindings");
 	});
-
-	//*********************************************************************************************
-	QUnit.test("createBindingContext, destroyBindingContext, getContext not supported",
-		function (assert) {
-			var oModel = createModel();
-
-			assert.throws(function () {
-				oModel.createBindingContext();
-			}, new Error("Cannot create context at model"));
-
-			assert.throws(function () {
-				oModel.destroyBindingContext();
-			}, new Error("Cannot destroy context"));
-
-			assert.throws(function () {
-				oModel.getContext();
-			}, new Error("Cannot get context at model"));
-		});
 
 	//*********************************************************************************************
 	QUnit.test("dataRequested", function (assert) {
@@ -427,11 +402,88 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
-		var oModel = createModel();
+		var aFilters = [],
+			oModel = createModel(),
+			aSorters = [];
+
+		assert.throws(function () { //TODO implement
+			oModel.bindList(undefined, undefined,  undefined, aFilters);
+		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
+				+ "aSorters parameter must not be set"));
+		assert.throws(function () { //TODO implement
+			oModel.bindList(undefined, undefined,  aSorters);
+		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
+				+ "aFilters parameter must not be set"));
+
+		assert.throws(function () { //TODO implement
+			oModel.bindTree();
+		}, new Error("Unsupported operation: v4.ODataModel#bindTree"));
+
+		assert.throws(function () {
+			oModel.createBindingContext();
+		}, new Error("Unsupported operation: v4.ODataModel#createBindingContext"));
+
+		assert.throws(function () {
+			oModel.destroyBindingContext();
+		}, new Error("Unsupported operation: v4.ODataModel#destroyBindingContext"));
+
+		assert.throws(function () {
+			oModel.getContext();
+		}, new Error("Unsupported operation: v4.ODataModel#getContext"));
+
+		assert.throws(function () { //TODO implement
+			oModel.getOriginalProperty();
+		}, new Error("Unsupported operation: v4.ODataModel#getOriginalProperty"));
+
+		assert.throws(function () {
+			oModel.getProperty();
+		}, new Error("Unsupported operation: v4.ODataModel#getProperty"));
+
+		assert.throws(function () { //TODO implement
+			oModel.isList();
+		}, new Error("Unsupported operation: v4.ODataModel#isList"));
+
+		assert.throws(function () { //TODO implement
+			oModel.refresh(false);
+		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () {
+			oModel.refresh("foo"/*truthy*/);
+		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () { //TODO implement
+			oModel.refresh(true, "");
+		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
+				+ "sGroupId parameter must not be set"));
 
 		assert.throws(function () {
 			oModel.setDefaultBindingMode(BindingMode.TwoWay);
 		});
+
+		assert.throws(function () {
+			oModel.setLegacySyntax();
+		}, new Error("Unsupported operation: v4.ODataModel#setLegacySyntax"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("events", function (assert) {
+		var oModel = createModel();
+
+		assert.throws(function () {
+			oModel.attachParseError();
+		}, new Error("Unsupported event 'parseError': v4.ODataModel#attachEvent"));
+
+		assert.throws(function () {
+			oModel.attachRequestCompleted();
+		}, new Error("Unsupported event 'requestCompleted': v4.ODataModel#attachEvent"));
+
+		assert.throws(function () {
+			oModel.attachRequestFailed();
+		}, new Error("Unsupported event 'requestFailed': v4.ODataModel#attachEvent"));
+
+		assert.throws(function () {
+			oModel.attachRequestSent();
+		}, new Error("Unsupported event 'requestSent': v4.ODataModel#attachEvent"));
 	});
 });
 // TODO DefaultBindingMode is set to 'OneWay' now. It must be changed if we can 'TwoWay'
