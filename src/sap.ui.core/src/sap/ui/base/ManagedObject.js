@@ -2991,6 +2991,10 @@ sap.ui.define([
 			oBinding.enableExtendedChangeDetection();
 		}
 
+		if (oBindingInfo.suspended) {
+			oBinding.suspend(true);
+		}
+
 		oBindingInfo.binding = oBinding;
 		oBindingInfo.modelChangeHandler = fModelChangeHandler;
 		oBindingInfo.modelRefreshHandler = fModelRefreshHandler;
