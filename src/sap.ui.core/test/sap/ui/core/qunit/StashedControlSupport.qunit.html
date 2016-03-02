@@ -36,7 +36,6 @@
 					fnDestroy = this.Button.prototype.destroy;
 				StashedControlSupport.mixInto(this.Button);
 				assert.ok(this.Button.getMetadata().hasSpecialSetting("stashed"), "Control class has 'stashed' special setting");
-				assert.ok(this.Button.getMetadata().hasSpecialSetting("stashed"), "Control class has 'stashed' special setting");
 				assert.ok(this.Button.prototype.getStashed, "Control class has method 'getStashed'");
 				assert.ok(this.Button.prototype.setStashed, "Control class has method 'setStashed'");
 				assert.notStrictEqual(this.Button.prototype.destroy, fnDestroy, "Control class method 'destroy' overwritten'");
