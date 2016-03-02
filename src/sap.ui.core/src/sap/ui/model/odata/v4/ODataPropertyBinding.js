@@ -21,24 +21,6 @@ sap.ui.define([
 		};
 
 	/**
-	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
-	 * framework. The error message includes the arguments to the method call.
-	 * @param {string} sMethodName The method name
-	 * @param {object} args The arguments passed to this method when called by SAPUI5
-	 */
-	function notImplemented(sMethodName, args) {
-		var sArgs;
-
-		try {
-			sArgs = JSON.stringify(args);
-		} catch (e) {
-			sArgs = "JSON.stringify error for arguments "  + String(args);
-		}
-		throw new Error("Not implemented method v4.ODataPropertyBinding." + sMethodName
-			+ " called with arguments " + sArgs);
-	}
-
-	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataPropertyBinding</code>,
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindProperty bindProperty} instead!
 	 *
@@ -149,7 +131,7 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
-				+ "': ODataPropertyBinding#attachEvent");
+				+ "': v4.ODataPropertyBinding#attachEvent");
 		}
 		return PropertyBinding.prototype.attachEvent.apply(this, arguments);
 	};
@@ -256,6 +238,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataPropertyBinding.prototype.isInitial = function () {
+		throw new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial");
+	};
+
+	/**
 	 * Refreshes this binding; refresh is supported for absolute bindings only.
 	 * A refresh retrieves data from the server and fires a change event when new data is available.
 	 * <code>bForceUpdate</code> has to be <code>true</code>.
@@ -272,11 +264,11 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
 		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+			throw new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
 					+ "bForceUpdate must be true");
 		}
 		if (sGroupId !== undefined) {
-			throw new Error("Unsupported operation: ODataPropertyBinding#refresh, "
+			throw new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
 				+ "sGroupId parameter must not be set");
 		}
 		if (!this.oCache) {
@@ -284,6 +276,16 @@ sap.ui.define([
 		}
 		this.oCache.refresh();
 		this.checkUpdate(true, ChangeReason.Refresh);
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataPropertyBinding.prototype.resume = function () {
+		throw new Error("Unsupported operation: v4.ODataPropertyBinding#resume");
 	};
 
 	/**
@@ -297,11 +299,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	ODataPropertyBinding.prototype.setBindingMode = function (sBindingMode) {
-		if (sBindingMode === BindingMode.TwoWay) {
-			throw new Error("Unsupported operation: ODataPropertyBinding#setBindingMode "
-					+ "sBindingMode must not be 'TwoWay'");
+		if (sBindingMode !== BindingMode.OneTime && sBindingMode !== BindingMode.OneWay) {
+			throw new Error("Unsupported operation: v4.ODataPropertyBinding#setBindingMode, "
+					+ "sBindingMode must not be " + sBindingMode);
 		}
-		return PropertyBinding.prototype.setBindingMode.apply(this, arguments);
+		PropertyBinding.prototype.setBindingMode.apply(this, arguments);
 	};
 
 	/**
@@ -323,17 +325,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the value for this binding. A model implementation should check if the current default
-	 * binding mode permits setting the binding value and if so set the new value also in the model.
+	 * Method not supported
 	 *
-	 * @param {any} vValue The value to set for this binding
-	 *
+	 * @throws {Error}
 	 * @public
 	 */
 	ODataPropertyBinding.prototype.setValue = function () {
-		notImplemented("setValue", arguments);
+		throw new Error("Unsupported operation: v4.ODataPropertyBinding#setValue");
 	};
 
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataPropertyBinding.prototype.suspend = function () {
+		throw new Error("Unsupported operation: v4.ODataPropertyBinding#suspend");
+	};
 	return ODataPropertyBinding;
 
 }, /* bExport= */ true);

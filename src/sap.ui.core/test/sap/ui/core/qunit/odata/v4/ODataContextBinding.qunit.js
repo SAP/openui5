@@ -329,17 +329,29 @@ sap.ui.require([
 			oContextBinding = oModel.bindContext("SO_2_BP");
 
 		assert.throws(function () { //TODO implement
+			oContextBinding.isInitial();
+		}, new Error("Unsupported operation: v4.ODataContextBinding#isInitial"));
+
+		assert.throws(function () { //TODO implement
 			oContextBinding.refresh(false);
-		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () {
 			oContextBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () { //TODO implement
 			oContextBinding.refresh(true, "");
-		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 				+ "sGroupId parameter must not be set"));
+
+		assert.throws(function () { //TODO implement
+			oContextBinding.resume();
+		}, new Error("Unsupported operation: v4.ODataContextBinding#resume"));
+
+		assert.throws(function () { //TODO implement
+			oContextBinding.suspend();
+		}, new Error("Unsupported operation: v4.ODataContextBinding#suspend"));
 	});
 
 	//*********************************************************************************************

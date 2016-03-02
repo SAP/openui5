@@ -42,8 +42,9 @@ sap.ui.define([
 	 *   lead to a data service request.
 	 * @throws {Error} When disallowed OData query options are provided
 	 * @class Context binding for an OData v4 model.
-	 *   It only supports the following events: 'change', 'dataReceived', 'dataRequested'.
-	 *   If you attach to other events, an error is thrown.
+	 *   An event handler can only be attached to this binding for the following events: 'change',
+	 *   'dataReceived', and 'dataRequested'.
+	 *   For other events, an error is thrown.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -72,10 +73,11 @@ sap.ui.define([
 			}
 		});
 
+	// See class documentation
 	ODataContextBinding.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
-				+ "': ODataContextBinding#attachEvent");
+				+ "': v4.ODataContextBinding#attachEvent");
 		}
 		return ContextBinding.prototype.attachEvent.apply(this, arguments);
 	};
@@ -152,6 +154,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataContextBinding.prototype.isInitial = function () {
+		throw new Error("Unsupported operation: v4.ODataContextBinding#isInitial");
+	};
+
+	/**
 	 * Refreshes the binding. Prompts the model to retrieve data from the server and notifies the
 	 * control that new data is available. <code>bForceUpdate</code> has to be <code>true</code>.
 	 * If <code>bForceUpdate</code> is not given or <code>false</code>, an error is thrown.
@@ -161,18 +173,18 @@ sap.ui.define([
 	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The parameter <code>sGroupId</code> is not supported.
-	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code> or
-	 *   <code>sGroupId</code> is set, refresh on this binding is not supported.
+	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
+	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 */
 	ODataContextBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
 		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: ODataContextBinding#refresh, "
+			throw new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 				+ "bForceUpdate must be true");
 		}
 		if (sGroupId !== undefined) {
-			throw new Error("Unsupported operation: ODataContextBinding#refresh, "
+			throw new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 				+ "sGroupId parameter must not be set");
 		}
 		if (!this.oCache) {
@@ -219,6 +231,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataContextBinding.prototype.resume = function () {
+		throw new Error("Unsupported operation: v4.ODataContextBinding#resume");
+	};
+
+	/**
 	 * Sets the (base) context which is used when the binding path is relative.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
@@ -232,6 +254,16 @@ sap.ui.define([
 				throw new Error("Nested context bindings are not supported");
 			}
 		}
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 * @public
+	 */
+	ODataContextBinding.prototype.suspend = function () {
+		throw new Error("Unsupported operation: v4.ODataContextBinding#suspend");
 	};
 
 	return ODataContextBinding;
