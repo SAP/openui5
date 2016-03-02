@@ -922,6 +922,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			(sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Auto && this._iTableRowContentHeight && this.getRows().length == 0)) {
 			if (this.getBinding("rows")) {
 				this._adjustRows(this._calculateRowsToDisplay());
+			} else {
+				var that = this;
+				this._mTimeouts.onBeforeRenderingAdjustRows = this._mTimeouts.onBeforeRenderingAdjustRows || window.setTimeout(function() {
+						that._adjustRows(that._calculateRowsToDisplay());
+						that._mTimeouts.onBeforeRenderingAdjustRows = undefined;
+					}, 0);
 			}
 		}
 	};
@@ -965,7 +971,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._bFirstRendering = false;
 			// Wait until everything is rendered (parent height!) before reading/updating sizes. Use a promise to make sure
 			// to be executed before timeouts may be executed.
-			Promise.resolve().then(this._updateTableSizes.bind(this));
+			Promise.resolve().then(this._updateTableSizes.bind(this, true));
 		} else if (!this._mTimeouts.onAfterRenderingUpdateTableSizes) {
 			this._updateTableSizes();
 		}
@@ -1004,7 +1010,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * First collects all table sizes, then synchronizes row/column heights, updates scrollbars and selection.
 	 * @private
 	 */
-	Table.prototype._updateTableSizes = function() {
+	Table.prototype._updateTableSizes = function(forceUpdateTableSizes) {
 		this._mTimeouts.onAfterRenderingUpdateTableSizes = undefined;
 		var oDomRef = this.getDomRef();
 
@@ -1018,13 +1024,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var iRowContentSpace = 0;
 		if (this.getVisibleRowCountMode() == sap.ui.table.VisibleRowCountMode.Auto) {
 			iRowContentSpace = this._determineAvailableSpace();
-			// if no binding available and no height is granted we do not need to do any further row adjustment or layout sync.
+			// if no height is granted we do not need to do any further row adjustment or layout sync.
 			// Saves time on initial start up and reduces flickering on rendering.
-			if (!this.getBinding("rows") && iRowContentSpace < 0) {
-				return;
-			}
-
-			if (this._handleRowCountModeAuto(iRowContentSpace)) {
+			if (iRowContentSpace < 0 || (this._handleRowCountModeAuto(iRowContentSpace) && !forceUpdateTableSizes)) {
 				// updateTableSizes was already called by insertTableRows, therefore skip the rest of this function execution
 				return;
 			}
@@ -2717,6 +2719,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	Table.prototype._handleRowCountModeAuto = function(iTableAvailableSpace) {
+		var oBinding = this.getBinding("rows");
+		if (oBinding && this.getRows().length > 0) {
+			return this._executeAdjustRows(iTableAvailableSpace);
+		} else {
+			var that = this;
+			var bReturn = !this._mTimeouts.handleRowCountModeAutoAdjustRows;
+			var iBusyIndicatorDelay = that.getBusyIndicatorDelay();
+			var bEnableBusyIndicator = this.getEnableBusyIndicator();
+			if (oBinding && bEnableBusyIndicator) {
+				that.setBusyIndicatorDelay(0);
+				that.setBusy(true);
+			}
+
+			if (iTableAvailableSpace) {
+				this._setRowContentHeight(iTableAvailableSpace);
+			}
+
+			this._mTimeouts.handleRowCountModeAutoAdjustRows = this._mTimeouts.handleRowCountModeAutoAdjustRows || window.setTimeout(function() {
+					that._executeAdjustRows();
+					that._mTimeouts.handleRowCountModeAutoAdjustRows = undefined;
+					if (bEnableBusyIndicator) {
+						that.setBusy(false);
+						that.setBusyIndicatorDelay(iBusyIndicatorDelay);
+					}
+				}, 0);
+			return bReturn;
+		}
+	};
+
+	Table.prototype._executeAdjustRows = function(iTableAvailableSpace) {
+		iTableAvailableSpace = iTableAvailableSpace || this._determineAvailableSpace();
+
 		//if visibleRowCountMode is auto change the visibleRowCount according to the parents container height
 		var iRows = this._calculateRowsToDisplay(iTableAvailableSpace);
 		// if minAutoRowCount has reached, table should use block this height.
@@ -2727,9 +2761,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this.$().height("0px");
 		}
 
-		if (this.getBinding("rows")) {
-			return this._adjustRows(iRows);
-		}
+		return this._adjustRows(iRows);
 	};
 
 	/**
@@ -6252,7 +6284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._adjustRows = function(iNumberOfRows, bNoUpdate) {
 		if (isNaN(iNumberOfRows)) {
-			return;
+			return false;
 		}
 
 		var i;
@@ -6305,6 +6337,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this._ignoreInvalidateOfChildControls = false;
 
 		aRows = this.getRows();
+		bNoUpdate = bNoUpdate || aContexts.length == 0;
 		return this._insertTableRows(aRows, bNoUpdate);
 	};
 
