@@ -774,7 +774,7 @@ sap.ui.require([
 						"$kind" : "EntityContainer",
 						"Baz1" : {
 							"$EntitySet" : "Employees",
-							"$IncludeInServiceDocument" : false
+							"$IncludeInServiceDocument" : true
 						},
 						"Baz2" : {
 						},
@@ -803,9 +803,9 @@ sap.ui.require([
 						<Schema Namespace="foo" Alias="f">\
 							<EntityContainer Name="Container">\
 								<' + sWhat + 'Import Name="Baz1" ' + sWhat + '="foo.Baz"\
-									EntitySet="Employees" IncludeInServiceDocument="false"/>\
+									EntitySet="Employees" IncludeInServiceDocument="true"/>\
 								<' + sWhat + 'Import Name="Baz2" ' + sWhat + '="f.Baz"\
-									IncludeInServiceDocument="true"/>\
+									IncludeInServiceDocument="false"/>\
 								<' + sWhat + 'Import Name="Baz3" ' + sWhat + '="f.Baz"\
 									EntitySet="f.Container/Employees"/>\
 								<' + sWhat + 'Import Name="Baz4" ' + sWhat + '="f.Baz"\
