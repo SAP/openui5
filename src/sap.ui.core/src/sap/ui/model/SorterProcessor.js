@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', './Sorter'],
+	function(jQuery, Sorter) {
 	"use strict";
 
 	/**
@@ -34,34 +34,12 @@ sap.ui.define(['jquery.sap.global'],
 			return aData;
 		}
 
-		function fnCompare(a, b) {
-			if (a == b) {
-				return 0;
-			}
-			if (b == null) {
-				return -1;
-			}
-			if (a == null) {
-				return 1;
-			}
-			if (typeof a == "string" && typeof b == "string") {
-				return a.localeCompare(b);
-			}
-			if (a < b) {
-				return -1;
-			}
-			if (a > b) {
-				return 1;
-			}
-			return 0;
-		}
-
 		for (var j = 0; j < aSorters.length; j++) {
 			oSorter = aSorters[j];
 			aCompareFunctions[j] = oSorter.fnCompare;
 
 			if (!aCompareFunctions[j]) {
-				aCompareFunctions[j] = fnCompare;
+				aCompareFunctions[j] = Sorter.defaultComparator;
 			}
 			/*eslint-disable no-loop-func */
 			jQuery.each(aData, function(i, vRef) {
