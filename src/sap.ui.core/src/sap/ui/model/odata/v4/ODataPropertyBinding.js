@@ -179,7 +179,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason) {
-		var oChangeReason = {reason : sChangeReason ? sChangeReason : ChangeReason.Change},
+		var oChangeReason = {reason : sChangeReason || ChangeReason.Change},
 			bDataRequested = false,
 			bFire = false,
 			mParametersForDataReceived,
