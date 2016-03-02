@@ -12,8 +12,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				]
 			},
 			includes : [
-			           	"style.css"
-			          ],
+				"../style.css"
+			],
 			config : {
 				sample : {
 					files : [
