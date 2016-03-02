@@ -83,8 +83,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 * Fired when an item is pressed.
 					 */
 					itemSelect: {
+						allowPreventDefault: true,
 						parameters: {
-
 							/**
 							 * The selected item.
 							 */
@@ -117,12 +117,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				sap.ui.base.ManagedObject.prototype.constructor.apply(this, arguments);
 				var oControl = new sap.m.TabStrip(this.getId() + "--tabstrip", {
 					hasSelect: true,
-					itemPress: function(oEvent) {
+					itemSelect: function(oEvent) {
 						var oItem = oEvent.getParameter("item"),
 						    oSelectedItem = this._fromTabStripItem(oItem);
-						this.fireItemSelect({ item: oSelectedItem });
-
-						this.setSelectedItem(oSelectedItem);
+						this.setSelectedItem(oSelectedItem, oEvent);
 					}.bind(this),
 					itemClose: function(oEvent) {
 						var oItem = oEvent.getParameter("item"),
@@ -392,18 +390,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Override <code>selectedItem</code> property setter.
 		 *
 		 * @param oSelectedItem {sap.m.TabContainerItem} The new <code>TabContainerItem</code> to be selected
+		 * @param oEvent {object} Event object that may be present when the selection change is bubbling
+		 * @returns {sap.m.TabContainer} <code>this</code> pointer for chaining
 		 * @override
 		 */
-		TabContainer.prototype.setSelectedItem = function (oSelectedItem) {
-			var oTabStrip = this._getTabStrip();
-
-			if (oSelectedItem && oTabStrip) {
-				oTabStrip.setSelectedItem(this._toTabStripItem(oSelectedItem));
-				this.fireItemSelect({item: oSelectedItem});
-				this._rerenderContent(oSelectedItem.getContent());
+		TabContainer.prototype.setSelectedItem = function (oSelectedItem, oEvent) {
+			/* As the 'setSelectedItem' might be part of a bubbling selection change event, allow the final event handler
+			 * to prevent it. */
+			if (this.fireItemSelect({item: oSelectedItem})) {
+				var oTabStrip = this._getTabStrip();
+				if (oSelectedItem && oTabStrip) {
+					oTabStrip.setSelectedItem(this._toTabStripItem(oSelectedItem));
+					this._rerenderContent(oSelectedItem.getContent());
+				}
+				TabContainer.prototype.setAssociation.call(this, "selectedItem", oSelectedItem, true); //render manually;
+				return this;
 			}
-
-			return TabContainer.prototype.setAssociation.call(this, "selectedItem", oSelectedItem, true); //render manually;
+			if (oEvent) {
+				oEvent.preventDefault();
+			}
+			return this;
 		};
 
 		/**
