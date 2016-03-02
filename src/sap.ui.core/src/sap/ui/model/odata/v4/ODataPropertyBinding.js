@@ -294,6 +294,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.BindingMode} sBindingMode
 	 *   The binding mode
+	 * @returns {undefined}
 	 * @throws {Error}
 	 *   When 'TwoWay' binding mode is used (not supported)
 	 * @protected
@@ -303,7 +304,7 @@ sap.ui.define([
 			throw new Error("Unsupported operation: v4.ODataPropertyBinding#setBindingMode, "
 					+ "sBindingMode must not be " + sBindingMode);
 		}
-		PropertyBinding.prototype.setBindingMode.apply(this, arguments);
+		return PropertyBinding.prototype.setBindingMode.apply(this, arguments);
 	};
 
 	/**

@@ -688,11 +688,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("binding Mode", function (assert) {
-		var oModel = new ODataModel("/service/"),
-		oPropertyBinding = oModel.bindProperty("Name");
+		var oMock = this.oSandbox.mock(PropertyBinding.prototype),
+			oModel = new ODataModel("/service/"),
+			oPropertyBinding = oModel.bindProperty("Name"),
+			oReturn = {};
 
-		oPropertyBinding.setBindingMode(BindingMode.OneTime);
-		oPropertyBinding.setBindingMode(BindingMode.OneWay);
+		oMock.expects("setBindingMode").withExactArgs(BindingMode.OneTime).returns(oReturn);
+		oMock.expects("setBindingMode").withExactArgs(BindingMode.OneWay, "foo");
+
+		assert.strictEqual(oPropertyBinding.setBindingMode(BindingMode.OneTime), oReturn);
+		oPropertyBinding.setBindingMode(BindingMode.OneWay, "foo");
 	});
 
 	//*********************************************************************************************
@@ -738,11 +743,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
 		var mEventParameters = {},
+			oMock = this.oSandbox.mock(PropertyBinding.prototype),
 			oModel = new ODataModel("/service/"),
 			oPropertyBinding,
 			oReturn = {};
-
-		var oMock = this.oSandbox.mock(PropertyBinding.prototype);
 
 		oMock.expects("attachEvent").withExactArgs("change", mEventParameters).returns(oReturn);
 		oMock.expects("attachEvent").withExactArgs("dataReceived", mEventParameters)
