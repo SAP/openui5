@@ -318,13 +318,25 @@ sap.ui.require([
 	QUnit.test("forbidden", function (assert) {
 		var oMetaModel = new ODataMetaModel();
 
-		assert.throws(function () {
-			oMetaModel.refresh();
-		}, /Unsupported operation: ODataMetaModel#refresh/);
+		assert.throws(function () { //TODO implement
+			oMetaModel.bindTree();
+		}, new Error("Unsupported operation: v4.ODataMetaModel#bindTree"));
 
 		assert.throws(function () {
-			oMetaModel.setLegacySyntax(false); // argument does not matter!
-		}, /Unsupported operation: ODataMetaModel#setLegacySyntax/);
+			oMetaModel.getOriginalProperty();
+		}, new Error("Unsupported operation: v4.ODataMetaModel#getOriginalProperty"));
+
+		assert.throws(function () { //TODO implement
+			oMetaModel.isList();
+		}, new Error("Unsupported operation: v4.ODataMetaModel#isList"));
+
+		assert.throws(function () {
+			oMetaModel.refresh();
+		}, new Error("Unsupported operation: v4.ODataMetaModel#refresh"));
+
+		assert.throws(function () {
+			oMetaModel.setLegacySyntax(); // argument does not matter!
+		}, new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax"));
 
 		assert.throws(function () {
 			oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
@@ -1168,6 +1180,27 @@ sap.ui.require([
 				assert.deepEqual(oObject, oFixture.result);
 			}
 			assert.deepEqual(mScope, oMetadataClone, "meta data unchanged");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("events", function (assert) {
+			var oMetaModel = new ODataMetaModel();
+
+			assert.throws(function () {
+				oMetaModel.attachParseError();
+			}, new Error("Unsupported event 'parseError': v4.ODataMetaModel#attachEvent"));
+
+			assert.throws(function () {
+				oMetaModel.attachRequestCompleted();
+			}, new Error("Unsupported event 'requestCompleted': v4.ODataMetaModel#attachEvent"));
+
+			assert.throws(function () {
+				oMetaModel.attachRequestFailed();
+			}, new Error("Unsupported event 'requestFailed': v4.ODataMetaModel#attachEvent"));
+
+			assert.throws(function () {
+				oMetaModel.attachRequestSent();
+			}, new Error("Unsupported event 'requestSent': v4.ODataMetaModel#attachEvent"));
 		});
 	});
 	//TODO iterate mix of inline and external targeting annotations
