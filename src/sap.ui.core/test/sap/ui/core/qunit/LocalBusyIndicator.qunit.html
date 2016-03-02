@@ -23,6 +23,10 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+
 		<script language="javascript">
 
 		module("Basic", {
@@ -252,6 +256,40 @@
 					start();
 				}, that.iDelay);
 			}, 20);
+		});
+
+		QUnit.module("Busy Animation");
+
+		QUnit.test("Check if animations are stacked", function(assert) {
+			var done = assert.async();
+			this.oVBox = new sap.m.VBox({
+				items : [
+					new sap.m.List({
+						busyIndicatorDelay : 0,
+						busy : true
+					}),
+					new sap.m.List({
+						busyIndicatorDelay : 0,
+						busy : true
+					})
+				],
+				busyIndicatorDelay : 0,
+				busy : true
+			}).placeAt("target3");
+
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
+
+				assert.equal($Animation.length, 3, "3 animations should be in DOM");
+				assert.ok(!jQuery($Animation.get(0)).is(":visible"), "List1's animation is hidden");
+				assert.ok(!jQuery($Animation.get(1)).is(":visible"), "List2's animation is hidden");
+				assert.ok(jQuery($Animation.get(2)).is(":visible"), "VBox's animation is visible");
+
+				this.oVBox.destroy();
+				done();
+			}.bind(this), 50);
 		});
 
     </script>
