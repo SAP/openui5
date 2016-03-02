@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
                     },
 
                     /**
-                     * Determines the title of the NotificationListItem.
+                     * Determines the title of the NotificationListBase item.
                      */
                     title: {type: 'string', group: 'Appearance', defaultValue: ''},
 
@@ -80,13 +80,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
                     buttons: {type: 'sap.m.Button', multiple: true},
 
                     /**
-                     * The title control that holds the datetime text of the NotificationListItem.
+                     * The title control that holds the datetime text of the NotificationListBase item.
                      * @private
                      */
                     _headerTitle: {type: 'sap.m.Text', multiple: false, visibility: "hidden"},
 
                     /**
-                     * The timestamp string that will be displayed in the NotificationListGroup.
+                     * The timestamp string that will be displayed in the NotificationListBase item.
                      */
                     _dateTime: {type: 'sap.m.Text', multiple: false, visibility: 'hidden'},
 
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
                 },
                 events: {
                     /**
-                     * Fired when the list item is closed.
+                     * Fired when the notification is closed.
                      */
                     close: {}
 
