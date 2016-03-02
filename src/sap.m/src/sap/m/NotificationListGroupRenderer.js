@@ -14,14 +14,16 @@ sap.ui.define([], function () {
 	var classNameItem = 'sapMNLG';
 	var classNameBase = 'sapMNLB';
 	var classNameListBaseItem = 'sapMLIB';
-	var classNameAuthor = 'sapMNLG-AuthorPicture';
+	var classNameAuthor = 'sapMNLB-AuthorPicture';
+	var classNameBaseHeader = 'sapMNLB-Header';
 	var classNameHeader = 'sapMNLG-Header';
 	var classNameBody = 'sapMNLG-Body';
+	var classNameBaseFooter = 'sapMNLB-Footer';
 	var classNameFooter = 'sapMNLG-Footer';
-	var classNameCloseButton = 'sapMNLG-CloseButton';
+	var classNameCloseButton = 'sapMNLB-CloseButton';
 	var classNamePriority = 'sapMNLB-Priority';
 	var classNameDetails = 'sapMNLG-Details';
-	var classNameBullet = 'sapMNLG-Bullet';
+	var classNameBullet = 'sapMNLB-Bullet';
 	var classNameDescription = 'sapMNLG-Description';
 	var classNameCollapsed = 'sapMNLG-Collapsed';
 
@@ -65,7 +67,12 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	NotificationListGroupRenderer.renderHeader = function (oRm, oControl) {
-		oRm.write('<div class=' + classNameHeader + '>');
+		oRm.write('<div');
+		oRm.addClass(classNameBaseHeader);
+		oRm.addClass(classNameHeader);
+
+		oRm.writeClasses();
+		oRm.write('>');
 
 		this.renderPriorityArea(oRm, oControl);
 		this.renderCloseButton(oRm, oControl);
@@ -204,7 +211,15 @@ sap.ui.define([], function () {
 		/** @type {sap.m.Button[]} */
 		var buttons = oControl.getButtons();
 
-		oRm.write('<div class=' + classNameFooter + '>');
+		//oRm.write('<div class=' + classNameFooter + '>');
+
+		oRm.write('<div');
+		oRm.addClass(classNameFooter);
+		oRm.addClass(classNameBaseFooter);
+
+		oRm.writeClasses();
+		oRm.write('>');
+
 		this.renderPriorityArea(oRm, oControl);
 		this.renderCollapseGroupButton(oRm, oControl);
 

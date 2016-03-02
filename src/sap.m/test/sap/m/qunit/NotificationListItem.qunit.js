@@ -15,11 +15,11 @@
 	var classNameUnread = '.sapMNLI-Unread';
 	var classNameHeader = '.sapMNLI-Header';
 	var classNameDetails = '.sapMNLI-Details';
-	var classNameAuthorPicture = '.sapMNLI-AuthorPicture';
+	var classNameAuthorPicture = '.sapMNLB-AuthorPicture';
 	var classNameText = '.sapMNLI-Text';
 	var classNameDatetime = '.sapMNLI-Datetime';
 	var classNameFooter = '.sapMNLI-Footer';
-	var classNameCloseButton = '.sapMNLI-CloseButton';
+	var classNameCloseButton = '.sapMNLB-CloseButton';
 	var RENDER_LOCATION = 'qunit-fixture';
 
 	//================================================================================
