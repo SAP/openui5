@@ -45,8 +45,9 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @throws {Error}
+	 * @see sap.ui.model.Context#getObject
 	 */
-	_Context.prototype.getObject = function () {
+	_Context.prototype.getObject = function () { //@override
 		throw new Error("No synchronous access to data");
 	};
 
@@ -55,8 +56,9 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @throws {Error}
+	 * @see sap.ui.model.Context#getProperty
 	 */
-	_Context.prototype.getProperty = function () {
+	_Context.prototype.getProperty = function () { //@override
 		throw new Error("No synchronous access to data");
 	};
 

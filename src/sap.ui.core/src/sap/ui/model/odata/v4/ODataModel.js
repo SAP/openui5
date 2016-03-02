@@ -113,7 +113,8 @@ sap.ui.define([
 			});
 
 	// See class documentation
-	ODataModel.prototype.attachEvent = function (sEventId) {
+	// @see sap.ui.base.EventProvider#attachEvent
+	ODataModel.prototype.attachEvent = function (sEventId) { //@override
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
 				+ "': v4.ODataModel#attachEvent");
@@ -178,6 +179,7 @@ sap.ui.define([
 	 *   The context binding
 	 * @throws {Error} When disallowed OData query options are provided
 	 * @public
+	 * @see sap.ui.model.Model#bindContext
 	 */
 	ODataModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ODataContextBinding(this, sPath, oContext, mParameters);
@@ -210,6 +212,7 @@ sap.ui.define([
 	 *   The list binding
 	 * @throws {Error} When disallowed OData query options are provided
 	 * @public
+	 * @see sap.ui.model.Model#bindList
 	 */
 	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
 		if (aFilters) {
@@ -244,6 +247,7 @@ sap.ui.define([
 	 *   The property binding
 	 * @throws {Error} When parameters are provided
 	 * @public
+	 * @see sap.ui.model.Model#bindProperty
 	 */
 	ODataModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 		return new ODataPropertyBinding(this, sPath, oContext, mParameters);
@@ -254,6 +258,7 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 * @public
+	 * @see sap.ui.model.Model#bindTree
 	 */
 	ODataModel.prototype.bindTree = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#bindTree");
@@ -285,6 +290,7 @@ sap.ui.define([
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
 	 * @see sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts
+	 * @see sap.ui.model.Model#createBindingContext
 	 * @throws {Error}
 	 */
 	ODataModel.prototype.createBindingContext = function () {
@@ -296,6 +302,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @throws {Error}
+	 * @see sap.ui.model.Model#destroyBindingContext
 	 */
 	ODataModel.prototype.destroyBindingContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#destroyBindingContext");
@@ -307,8 +314,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @throws {Error}
+	 * @see sap.ui.model.Model#getContext
 	 */
-	ODataModel.prototype.getContext = function () {
+	ODataModel.prototype.getContext = function () { //@override
 		throw new Error("Unsupported operation: v4.ODataModel#getContext");
 	};
 
@@ -318,8 +326,9 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataMetaModel}
 	 *   The meta model for this ODataModel
 	 * @public
+	 * @see sap.ui.model.Model#getMetaModel
 	 */
-	ODataModel.prototype.getMetaModel = function () {
+	ODataModel.prototype.getMetaModel = function () { //@override
 		return this.oMetaModel;
 	};
 
@@ -328,8 +337,9 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 * @public
+	 * @see sap.ui.model.Model#getOriginalProperty
 	 */
-	ODataModel.prototype.getOriginalProperty = function () {
+	ODataModel.prototype.getOriginalProperty = function () { //@override
 		throw new Error("Unsupported operation: v4.ODataModel#getOriginalProperty");
 	};
 
@@ -338,6 +348,7 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 * @public
+	 * @see sap.ui.model.Model#getProperty
 	 */
 	ODataModel.prototype.getProperty = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getProperty");
@@ -348,6 +359,7 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 * @public
+	 * @see sap.ui.model.Model#isList
 	 */
 	ODataModel.prototype.isList = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#isList");
@@ -369,8 +381,9 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#refresh
 	 * @see sap.ui.model.odata.v4.ODataListBinding#refresh
 	 * @see sap.ui.model.odata.v4.ODataPropertyBinding#refresh
+	 * @see sap.ui.model.Model#refresh
 	 */
-	ODataModel.prototype.refresh = function (bForceUpdate, sGroupId) {
+	ODataModel.prototype.refresh = function (bForceUpdate, sGroupId) { //@override
 		if (bForceUpdate !== true) {
 			throw new Error("Unsupported operation: v4.ODataModel#refresh, "
 					+ "bForceUpdate must be true");
@@ -453,8 +466,9 @@ sap.ui.define([
 	 *
 	 * @throws {Error}
 	 * @public
+	 * @see sap.ui.model.Model#setLegacySyntax
 	 */
-	ODataModel.prototype.setLegacySyntax = function () {
+	ODataModel.prototype.setLegacySyntax = function () { //@override
 		throw new Error("Unsupported operation: v4.ODataModel#setLegacySyntax");
 	};
 
