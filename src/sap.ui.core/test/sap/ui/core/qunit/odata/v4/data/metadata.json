@@ -473,25 +473,30 @@
 		},
 		"GetEmployeeAges" : {
 			"$kind" : "FunctionImport",
-			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeAges"
+			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeAges",
+			"$IncludeInServiceDocument" : true
 		},
 		"GetEmployeeByID" : {
 			"$kind" : "FunctionImport",
 			"$EntitySet" : "EMPLOYEES",
-			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeByID"
+			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeByID",
+			"$IncludeInServiceDocument" : true
 		},
 		"GetEmployeeByManagerID" : {
 			"$kind" : "FunctionImport",
 			"$EntitySet" : "EMPLOYEES",
-			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeByManagerID"
+			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeByManagerID",
+			"$IncludeInServiceDocument" : true
 		},
 		"GetEmployeeLocationByEmployeeID" : {
 			"$kind" : "FunctionImport",
-			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeLocationByEmployeeID"
+			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeLocationByEmployeeID",
+			"$IncludeInServiceDocument" : true
 		},
 		"GetEmployeeMaxAge" : {
 			"$kind" : "FunctionImport",
-			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeMaxAge"
+			"$Function" : "com.sap.gateway.iwbep.tea_busi.v0001.FuGetEmployeeMaxAge",
+			"$IncludeInServiceDocument" : true
 		},
 		"IncreaseSalaryByFactor" : {
 			"$kind" : "ActionImport",

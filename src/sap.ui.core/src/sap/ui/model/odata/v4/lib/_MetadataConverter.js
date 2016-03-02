@@ -844,7 +844,7 @@ sap.ui.define([
 			"EntitySet" : function (sValue) {
 				return resolveTargetPath(sValue, oAggregate);
 			},
-			"IncludeInServiceDocument" : setIfFalse
+			"IncludeInServiceDocument" : setIfTrue
 		});
 
 		oAggregate.entityContainer[sName] = oImport;
