@@ -1269,7 +1269,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 				var oSubItem,
 				    aEventListItems = oEvent.getParameter("listItems"),
 				    aSubItems,
-				    i = 0;
+				    i = 0,
+				    bNewValue;
 
 				that._clearPresetFilter();
 
@@ -1299,8 +1300,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 							}
 						}
 					}
-					if (oSubItem.getProperty('selected') !== true) {
-						oSubItem.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
+
+					bNewValue = oEvent.getParameter("listItem").getSelected();
+					if (oSubItem.getProperty('selected') !== bNewValue) {
+						oSubItem.setProperty('selected', bNewValue, true);
 					}
 				}
 			}.bind(this)
