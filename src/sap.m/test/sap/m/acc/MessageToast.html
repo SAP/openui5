@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MessageToast - sap.m</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script>
+		var oPage = new sap.m.Page("myPage", {
+			title: "Mobile MessageToast control",
+			content: [new sap.m.Button({
+				text: "Show",
+				press: function () {
+					sap.m.MessageToast.show("Message toast control test page.");
+				}
+			})]
+		});
+
+		var oApp = new sap.m.App("myApp", {
+			initialPage: "myPage"
+		});
+
+		oApp.addPage(oPage);
+		oApp.placeAt("content");
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
+</html>
