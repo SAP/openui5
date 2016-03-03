@@ -44,6 +44,8 @@ sap.ui.define([
 	 *   <code>mParameters.serviceUrlParams</code> for details on custom query options.
 	 * @param {object} [mParameters]
 	 *   The parameters
+	 * @param {string} [mParameters.defaultGroup]
+	 *   Set to '$direct' to send requests directly, i.e. without batch
 	 * @param {string} [mParameters.serviceUrl]
 	 *   Root URL of the service to request data from as specified for the parameter
 	 *   <code>sServiceUrl</code>; only used if the parameter <code>sServiceUrl</code> has not been
@@ -55,8 +57,9 @@ sap.ui.define([
 	 *   and OData parameter aliases lead to an error.
 	 *   Query options from this map overwrite query options with the same name specified via the
 	 *   <code>sServiceUrl</code> parameter.
-	 * @throws {Error} If the given service root URL does not end with a forward slash or if
-	 *   OData system query options or parameter aliases are specified as parameters
+	 * @throws {Error} If the given service root URL does not end with a forward slash, if
+	 *   OData system query options or parameter aliases are specified as parameters or if a
+	 *   default group different from '$direct' is given
 	 *
 	 * @class Model implementation for OData v4.
 	 *   An event handler can only be attached to this model for the following event:
@@ -97,6 +100,15 @@ sap.ui.define([
 					this.mUriParameters = _ODataHelper.buildQueryOptions(jQuery.extend({},
 						oUri.query(true), mParameters && mParameters.serviceUrlParams));
 					this.sServiceUrl = oUri.query("").toString();
+					this.sGroupId = mParameters && mParameters.defaultGroup;
+					// map sGroupId to corresponding parameter value for _Requestor#request
+					if (this.sGroupId === undefined) {
+						this.sGroupId = "";
+					} else if (this.sGroupId === "$direct") {
+						this.sGroupId = undefined;
+					} else {
+						throw new Error("Default service group must be '$direct'");
+					}
 
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
@@ -310,6 +322,19 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getContext");
+	};
+
+	/**
+	 * Returns the model's group id as needed by
+	 * {@link sap.ui.model.odata.v4.lib._Requestor#request}.
+	 *
+	 * @returns {string}
+	 *   The group id
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.getGroupId = function () {
+		return this.sGroupId;
 	};
 
 	/**

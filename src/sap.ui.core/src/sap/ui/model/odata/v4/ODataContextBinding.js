@@ -208,9 +208,10 @@ sap.ui.define([
 			bDataRequested = false;
 
 		if (this.oCache) {
-			return this.oCache.read(/*sGroupId*/"", sPath, function () {
+			return this.oCache.read(this.oModel.getGroupId(), sPath, function () {
 				bDataRequested = true;
-				that.oModel.dataRequested("", that.fireDataRequested.bind(that));
+				that.oModel.dataRequested(that.oModel.getGroupId(),
+					that.fireDataRequested.bind(that));
 			}).then(function (vValue) {
 				if (bDataRequested) {
 					that.fireDataReceived();

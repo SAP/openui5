@@ -138,6 +138,22 @@ sap.ui.require([
 		oModel = new ODataModel("/foo/?sap-client=222",
 			{serviceUrlParams : {"sap-client" : "111"}});
 	});
+	//TODO test serviceUrl in parameter map!
+
+	//*********************************************************************************************
+	QUnit.test("Model construction with default group", function (assert) {
+		var oModel;
+
+		oModel = new ODataModel("/foo/");
+		assert.strictEqual(oModel.getGroupId(), ""/*sGroupId for _Requestor#request*/);
+
+		oModel = new ODataModel("/foo/", {defaultGroup : "$direct"});
+		assert.strictEqual(oModel.getGroupId(), undefined);
+
+		assert.throws(function () {
+			oModel = new ODataModel("/foo/", {defaultGroup : "foo"});
+		}, new Error("Default service group must be '$direct'"));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {

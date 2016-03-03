@@ -260,6 +260,7 @@ sap.ui.require([
 			assert.strictEqual(vValue, "value");
 		});
 	});
+	//TODO simplify: replace stub on submitBatch by mock on oModel.dataRequested
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (no read required)", function (assert) {
@@ -370,5 +371,19 @@ sap.ui.require([
 
 			assert.strictEqual(oContextBinding.attachEvent(sEvent, mEventParameters), oReturn);
 		});
+	});
+	//*********************************************************************************************
+	QUnit.test("Use model's groupId", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute"),
+			oReadPromise = Promise.resolve();
+
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
+			.returns("groupId");
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId").callsArg(2)
+			.returns(oReadPromise);
+		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
+
+		// code under test
+		return oBinding.requestValue("foo");
 	});
 });

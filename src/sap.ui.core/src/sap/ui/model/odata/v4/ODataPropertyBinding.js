@@ -193,9 +193,10 @@ sap.ui.define([
 		}
 		oReadPromise = this.isRelative()
 			? this.oContext.requestValue(this.sPath)
-			: this.oCache.read(/*sGroupId*/"", /*sPath*/undefined, function () {
+			: this.oCache.read(this.oModel.getGroupId(), /*sPath*/undefined, function () {
 					bDataRequested = true;
-					that.oModel.dataRequested("", that.fireDataRequested.bind(that));
+					that.oModel.dataRequested(that.oModel.getGroupId(),
+						that.fireDataRequested.bind(that));
 				});
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {
