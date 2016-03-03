@@ -89,19 +89,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	 */
 	InputRenderer.writeInnerContent = function(oRm, oControl) {
 
-		if (!oControl.getDescription()) {
+		var id = oControl.getId(),
+			description = oControl.getDescription();
+
+		if (!description) {
 			this.writeValueHelpIcon(oRm, oControl);
-		}else {
-			var sDescription = oControl.getDescription();
-			oRm.write("<span>");
+		} else {
+			oRm.write("<span id=\"" + oControl.getId() + "-Descr\">");
 			this.writeValueHelpIcon(oRm, oControl);
-			oRm.writeEscaped(sDescription);
+			oRm.writeEscaped(description);
 			oRm.write("</span>");
 		}
 
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
-				oRm.write("<span id=\"" + oControl.getId() + "-SuggDescr\" class=\"sapUiInvisibleText\" role=\"status\" aria-live=\"polite\"></span>");
+				oRm.write("<span id=\"" + id + "-SuggDescr\" class=\"sapUiInvisibleText\" role=\"status\" aria-live=\"polite\"></span>");
 			}
 		}
 
@@ -129,6 +131,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			oRm.addStyle("width", oControl.getFieldWidth() || "50%");
 		}
 
+	};
+
+	InputRenderer.getAriaLabelledBy = function(oControl) {
+		var ariaLabels = InputBaseRenderer.getAriaLabelledBy.call(this, oControl) || "";
+		if (oControl.getDescription()) {
+			ariaLabels = ariaLabels + " " + oControl.getId() + "-Descr";
+		}
+		return ariaLabels;
 	};
 
 	InputRenderer.getAriaDescribedBy = function(oControl) {
