@@ -1667,7 +1667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// since the tree gets only build once (as result of getContexts call). If first the fixed bottom row would
 		// be requested the analytical binding would build the tree twice.
 		aTmpContexts = this._getContexts(iStartIndex, iLength, iThreshold);
-		var iBindingLength = this._updateBindingLength();
+		var iBindingLength = this._updateBindingLength(sReason);
 		// iLength is the number of rows which shall get filled. It might be more than the binding actually has data.
 		// Therefore Math.min is required to make sure to not request data again from the binding.
 		bRecievedLessThanRequested = aTmpContexts.length < Math.min(iLength, iBindingLength - iFixedBottomRowCount);
@@ -1763,7 +1763,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		return iFirstVisibleRow;
 	};
 
-	Table.prototype._updateBindingLength = function() {
+	Table.prototype._updateBindingLength = function(sReason) {
 		// get current binding length. If the binding length changes it must call updateAggregation (updateRows)
 		// therefore it should be save to buffer the binding lenght here. This gives some performance advantage
 		// especially for tree bindings using the TreeBindingAdapter where a tree structure must be created to
@@ -1776,19 +1776,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		if (iBindingLength != this._iBindingLength) {
 			this._iBindingLength = iBindingLength;
-			this._onBindingLengthChange();
+			this._onBindingLengthChange(sReason);
 		}
 
 		return iBindingLength;
 	};
 
-	Table.prototype._onBindingLengthChange = function() {
+	Table.prototype._onBindingLengthChange = function(sReason) {
 		// update visualization of fixed bottom row
 		this._updateFixedBottomRows();
 		this._toggleVSb();
 		this._bBindingLengthChanged = true;
 		// show or hide the no data container
-		this._updateNoData();
+		if (sReason != "skipNoDataUpdate") {
+			// in order to have less UI updates, the NoData text should not be updated when the reason is refresh. When
+			// refreshRows was called, the table will request data and later get another change event. In that turn, the
+			// noData text gets updated.
+			this._updateNoData();
+		}
 	};
 
 	/**
@@ -1820,7 +1825,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				});
 			}
 			// request contexts from binding
-			this._updateBindingContexts(true, iRowsToDisplay);
+			var sUpdateReason;
+			if (sReason == ChangeReason.Filter || sReason == ChangeReason.Sort) {
+				sUpdateReason = "skipNoDataUpdate";
+			}
+			this._updateBindingContexts(true, iRowsToDisplay, sUpdateReason);
 		}
 	};
 
