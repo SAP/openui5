@@ -186,8 +186,9 @@
 		window.Promise = Promise;
 	}
 
-	if (window.sap && window.sap.__ui5PublishPromisePolyfill) { //For testing purposes
+	if (window.sap && window.sap.__ui5PublishPromisePolyfill && !window._UI5Promise) { //For testing purposes
 		window._UI5Promise = Promise;
 	}
+
 
 })(jQuery);
