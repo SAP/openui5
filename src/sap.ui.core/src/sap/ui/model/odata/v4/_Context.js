@@ -46,6 +46,7 @@ sap.ui.define([
 	 * @public
 	 * @throws {Error}
 	 * @see sap.ui.model.Context#getObject
+	 * @since 1.37.0
 	 */
 	_Context.prototype.getObject = function () { //@override
 		throw new Error("No synchronous access to data");
@@ -57,6 +58,7 @@ sap.ui.define([
 	 * @public
 	 * @throws {Error}
 	 * @see sap.ui.model.Context#getProperty
+	 * @since 1.37.0
 	 */
 	_Context.prototype.getProperty = function () { //@override
 		throw new Error("No synchronous access to data");
@@ -71,6 +73,7 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise on the outcome of the binding's <code>requestValue</code> call
 	 * @public
+	 * @since 1.37.0
 	 */
 	_Context.prototype.requestValue = function (sPath) {
 		return this.oBinding.requestValue(sPath, this.iIndex);

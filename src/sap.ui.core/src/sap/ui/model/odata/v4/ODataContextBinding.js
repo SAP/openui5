@@ -74,7 +74,9 @@ sap.ui.define([
 		});
 
 	// See class documentation
-	//@see sap.ui.base.EventProvider#attachEvent
+	// @public
+	// @see sap.ui.base.EventProvider#attachEvent
+	// @since 1.37.0
 	ODataContextBinding.prototype.attachEvent = function (sEventId) { //@override
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
@@ -100,7 +102,7 @@ sap.ui.define([
 	 *   parent context is changed
 	 * @see sap.ui.base.Event
 	 * @protected
-	 * @since 1.37
+	 * @since 1.37.0
 	 */
 
 	/**
@@ -113,7 +115,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @see sap.ui.base.Event
 	 * @public
-	 * @since 1.37
+	 * @since 1.37.0
 	 */
 
 	/**
@@ -135,7 +137,7 @@ sap.ui.define([
 	 *   If there are multiple failed back end requests, the error of the first one is provided.
 	 * @see sap.ui.base.Event
 	 * @public
-	 * @since 1.37
+	 * @since 1.37.0
 	 */
 
 	/**
@@ -144,6 +146,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 * @see sap.ui.model.Binding#initialize
+	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.initialize = function () { //@override
 		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
@@ -162,6 +165,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see sap.ui.model.Binding#isInitial
+	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.isInitial = function () { //@override
 		throw new Error("Unsupported operation: v4.ODataContextBinding#isInitial");
@@ -181,6 +185,7 @@ sap.ui.define([
 	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
+	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.refresh = function (bForceUpdate, sGroupId) { //@override
 		if (bForceUpdate !== true) {
@@ -206,6 +211,7 @@ sap.ui.define([
 	 *   Some relative path
 	 * @returns {Promise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *  @private
 	 */
 	ODataContextBinding.prototype.requestValue = function (sPath) {
 		var that = this,
@@ -240,6 +246,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 * @public
 	 * @see sap.ui.model.Binding#resume
+	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.resume = function () { //@override
 		throw new Error("Unsupported operation: v4.ODataContextBinding#resume");
@@ -250,7 +257,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
-	 * @protected
+	 * @private
 	 * @see sap.ui.model.Binding#setContext
 	 */
 	ODataContextBinding.prototype.setContext = function (oContext) { //@override
@@ -268,6 +275,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 * @public
 	 * @see sap.ui.model.Binding#suspend
+	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.suspend = function () { //@override
 		throw new Error("Unsupported operation: v4.ODataContextBinding#suspend");

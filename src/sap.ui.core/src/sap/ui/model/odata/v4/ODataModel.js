@@ -113,7 +113,9 @@ sap.ui.define([
 			});
 
 	// See class documentation
+	// @public
 	// @see sap.ui.base.EventProvider#attachEvent
+	// @since 1.37.0
 	ODataModel.prototype.attachEvent = function (sEventId) { //@override
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
@@ -129,6 +131,7 @@ sap.ui.define([
 	 *   ID of the batch group which should be sent as an OData batch request
 	 * @param {function} fnBatchRequestSent
 	 *   a function that is called synchronously after the batch request has been sent
+	 * @private
 	 */
 	ODataModel.prototype.dataRequested = function (sGroupId, fnBatchRequestSent) {
 		var that = this,
@@ -180,6 +183,7 @@ sap.ui.define([
 	 * @throws {Error} When disallowed OData query options are provided
 	 * @public
 	 * @see sap.ui.model.Model#bindContext
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ODataContextBinding(this, sPath, oContext, mParameters);
@@ -213,6 +217,7 @@ sap.ui.define([
 	 * @throws {Error} When disallowed OData query options are provided
 	 * @public
 	 * @see sap.ui.model.Model#bindList
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
 		if (aFilters) {
@@ -248,6 +253,7 @@ sap.ui.define([
 	 * @throws {Error} When parameters are provided
 	 * @public
 	 * @see sap.ui.model.Model#bindProperty
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 		return new ODataPropertyBinding(this, sPath, oContext, mParameters);
@@ -259,6 +265,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 * @public
 	 * @see sap.ui.model.Model#bindTree
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.bindTree = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#bindTree");
@@ -275,7 +282,6 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which is resolved with the server's response data in case of success, or
 	 *   rejected with an instance of <code>Error</code> in case of failure
-	 *
 	 * @private
 	 */
 	ODataModel.prototype.create = function (sPath, oEntityData) {
@@ -292,6 +298,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts
 	 * @see sap.ui.model.Model#createBindingContext
 	 * @throws {Error}
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.createBindingContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#createBindingContext");
@@ -303,6 +310,7 @@ sap.ui.define([
 	 * @public
 	 * @throws {Error}
 	 * @see sap.ui.model.Model#destroyBindingContext
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.destroyBindingContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#destroyBindingContext");
@@ -327,6 +335,7 @@ sap.ui.define([
 	 *   The meta model for this ODataModel
 	 * @public
 	 * @see sap.ui.model.Model#getMetaModel
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.getMetaModel = function () { //@override
 		return this.oMetaModel;
@@ -338,6 +347,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 * @public
 	 * @see sap.ui.model.Model#getOriginalProperty
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.getOriginalProperty = function () { //@override
 		throw new Error("Unsupported operation: v4.ODataModel#getOriginalProperty");
@@ -349,6 +359,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 * @public
 	 * @see sap.ui.model.Model#getProperty
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.getProperty = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getProperty");
@@ -360,6 +371,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 * @public
 	 * @see sap.ui.model.Model#isList
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.isList = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#isList");
@@ -382,6 +394,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataListBinding#refresh
 	 * @see sap.ui.model.odata.v4.ODataPropertyBinding#refresh
 	 * @see sap.ui.model.Model#refresh
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.refresh = function (bForceUpdate, sGroupId) { //@override
 		if (bForceUpdate !== true) {
@@ -414,7 +427,7 @@ sap.ui.define([
 	 *   user) of the entity between loading and removal has been detected; this should be shown
 	 *   to the user who needs to decide whether to try removal again. If the entity does not exist,
 	 *   we assume it has already been deleted by someone else and report success.
-	 * @public
+	 * @private
 	 */
 	ODataModel.prototype.remove = function (oContext) {
 		var sPath = oContext.getPath(),
@@ -453,6 +466,7 @@ sap.ui.define([
 	 *   the given context does not point to an entity
 	 *
 	 * @public
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.requestCanonicalPath = function (oEntityContext) {
 		jQuery.sap.assert(oEntityContext.getModel() === this,
@@ -467,6 +481,7 @@ sap.ui.define([
 	 * @throws {Error}
 	 * @public
 	 * @see sap.ui.model.Model#setLegacySyntax
+	 * @since 1.37.0
 	 */
 	ODataModel.prototype.setLegacySyntax = function () { //@override
 		throw new Error("Unsupported operation: v4.ODataModel#setLegacySyntax");
