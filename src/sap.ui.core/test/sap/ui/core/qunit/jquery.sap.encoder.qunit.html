@@ -1,0 +1,399 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested jquery.sap.escaping.js
+  Author: i040589, d040216
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" >
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+<!-- Output encodings should follow the guide  -->
+<!-- <SAPWIKI>/wiki/download/attachments/867713114/XSS_Char_Table.pdf -->
+
+module("HTML context");
+test("encode HTML", function(){
+	equal(jQuery.sap.encodeHTML("+"), "&#x2b;", "Plus");
+	equal(jQuery.sap.encodeHTML("<>&\""), "&lt;&gt;&amp;&quot;", "<>&\"");
+	equal(jQuery.sap.encodeHTML("\x00\x01\x02"), "&#xfffd;&#xfffd;&#xfffd;", "0x00 0x01 0x02");
+	equal(jQuery.sap.encodeHTML(">&<\"\'\\/"), "&gt;&amp;&lt;&quot;&#x27;&#x5c;&#x2f;", ">&<\"\'\\/");
+});
+
+test("should not encode", function(){
+	equal(jQuery.sap.encodeHTML("nothingtoencode123,.-_"), "nothingtoencode123,.-_", "nothingtoencode123,.-_");
+});
+
+<!-- http://unicode.org/review/pr-121.html -->
+test("should replaced with 0xfffd", function(){
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(8)),  "&#xfffd;", "Backspace");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(9)), "&#x9;", "Tab");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(10)), "&#xa;", "Line feed");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(11)), "&#xfffd;", "Vertical tab");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(12)), "&#xfffd;", "Form feed");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(13)), "&#xd;", "Carriage return");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(14)), "&#xfffd;", "Shift out");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(15)), "&#xfffd;", "Shift in");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(16)), "&#xfffd;", "Data link escape");
+
+});
+
+test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(256)),  "Ā", "Ā (0x100)");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(257)),  "ā", "ā (0x101)");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(0x2028)),  "&#x2028;", "(0x2028)");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(0x2029)),  "&#x2029;", "(0x2029)");
+});
+
+module("JS context");
+test("encode JS", function(){
+	equal(jQuery.sap.encodeJS("\""), "\\x22", "Quote");
+	equal(jQuery.sap.encodeJS("\'"), "\\x27", "Apostrophe");
+	equal(jQuery.sap.encodeJS("\x00\x01\x02"), "\\x00\\x01\\x02", "0x00 0x01 0x02");
+	equal(jQuery.sap.encodeJS(">&<\"\'\\/"), "\\x3e\\x26\\x3c\\x22\\x27\\x5c\\x2f", ">&<\"\'\\/");
+});
+
+
+test("should not encode", function(){
+	equal(jQuery.sap.encodeJS("nothingtoencode123,._"), "nothingtoencode123,._", "nothingtoencode123,._");
+});
+
+test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){
+	equal(jQuery.sap.encodeJS(String.fromCharCode(256)),  "Ā", "Ā (0x100)");
+	equal(jQuery.sap.encodeJS(String.fromCharCode(257)),  "ā", "ā (0x101)");
+	equal(jQuery.sap.encodeJS(String.fromCharCode(0x2028)),  "\\u2028", "(0x2028)");
+	equal(jQuery.sap.encodeJS(String.fromCharCode(0x2029)),  "\\u2029", "(0x2029)");
+});
+
+module("URL context");
+test("encode URL", function(){
+	equal(jQuery.sap.encodeURL("*"), "%2a", "Asterisk");
+	equal(jQuery.sap.encodeURL("+"), "%2b", "Plus");
+	equal(jQuery.sap.encodeURL("ä"), "%c3%a4", "Umlaut");
+	equal(jQuery.sap.encodeURL("\x00\x01\x02"), "%00%01%02", "0x00 0x01 0x02");
+	equal(jQuery.sap.encodeURL(">&<\"\'\\/"), "%3e%26%3c%22%27%5c%2f", ">&<\"\'\\/");
+});
+test("encode URL parameters", function(){
+	equal(jQuery.sap.encodeURLParameters({
+		"?": "=",
+		"&": "?",
+		">&<\"\'\\/": String.fromCharCode(256)
+	}),  "%3f=%3d&%26=%3f&%3e%26%3c%22%27%5c%2f=%c4%80", "parameter map");
+	equal(jQuery.sap.encodeURLParameters({}), "", "empty parameter map");
+	equal(jQuery.sap.encodeURLParameters(), "", "no parameter map");
+});
+test("should not encode", function(){
+	equal(jQuery.sap.encodeURL("nothingtoencode123-._"), "nothingtoencode123-._", "nothingtoencode123-._");
+});
+
+test("characters above (>) 255 (0xff) should be encoded always", function(){
+	equal(jQuery.sap.encodeURL(String.fromCharCode(256)),  "%c4%80", "Ā (0x100)");
+	equal(jQuery.sap.encodeURL(String.fromCharCode(257)),  "%c4%81", "ā (0x101)");
+});
+
+module("CSS context");
+test("encode CSS", function(){
+	equal(jQuery.sap.encodeCSS("+"), "\\2b", "Plus");
+	equal(jQuery.sap.encodeCSS("~7"), "\\7e 7", "~7");
+	equal(jQuery.sap.encodeCSS("+apple"), "\\2b apple", "+apple");
+	equal(jQuery.sap.encodeCSS("/BUG"), "\\2f BUG", "/BUG");
+	equal(jQuery.sap.encodeCSS("~test"), "\\7etest", "~test");
+	equal(jQuery.sap.encodeCSS("\x00\x01\x02"), "\\0\\1\\2", "0x00 0x01 0x02");
+	equal(jQuery.sap.encodeCSS(">&<\"\'\\/"), "\\3e\\26\\3c\\22\\27\\5c\\2f", ">&<\"\'\\/");
+});
+
+test("should not encode", function(){
+	equal(jQuery.sap.encodeCSS("nothingtoencode123"), "nothingtoencode123", "nothingtoencode123");
+
+});
+
+test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){
+	equal(jQuery.sap.encodeCSS(String.fromCharCode(256)),  "Ā", "Ā (0x100)");
+	equal(jQuery.sap.encodeCSS(String.fromCharCode(257)),  "ā", "ā (0x101)");
+	equal(jQuery.sap.encodeCSS(String.fromCharCode(0x2028)),  "\\2028", "(0x2028)");
+	equal(jQuery.sap.encodeCSS(String.fromCharCode(0x2029)),  "\\2029", "(0x2029)");
+});
+
+module("URL validation");
+test("HTTP urls", function() {
+	equal(jQuery.sap.validateUrl("http://host"), true, "http://host");
+	equal(jQuery.sap.validateUrl("http://host/path"), true, "http://host/path");
+	equal(jQuery.sap.validateUrl("http://www.host.com"), true, "http://www.host.com");
+	equal(jQuery.sap.validateUrl("http://www.host.com?name=value"), true, "http://www.host.com?name=value");
+	equal(jQuery.sap.validateUrl("http://www.host.com#somehash"), true, "http://www.host.com#somehash");
+	equal(jQuery.sap.validateUrl("http://www.host.com?name=value#somehash"), true, "http://www.host.com?name=value#somehash");
+	equal(jQuery.sap.validateUrl("http://www.host.com/path%7e+13?_name@=!value+#somehash?/"), true, "http://www.host.com/path%7e+13?_name@=!value+#somehash?/");
+
+	equal(jQuery.sap.validateUrl("http://www.host.com/invalid\\path"), false, "Invalid character in path");
+	equal(jQuery.sap.validateUrl("http://www.host.com/path?name=invalid>value"), false, "Invalid character in query");
+	equal(jQuery.sap.validateUrl("http://www.host.com/path?invalid>value"), false, "Invalid character in query without equal sign");
+	equal(jQuery.sap.validateUrl("http://www.host.com/path#invalid#hash"), false, "Invalid character in hash");
+	equal(jQuery.sap.validateUrl("http://www.host.com/invalid%path"), false, "Invalid percent encoding");
+	
+});
+
+test("mailto urls", function() {
+	jQuery.sap.addUrlWhitelist("mailto");
+	equal(jQuery.sap.validateUrl("mailto:name@domain.com"), true, "mailto:name@domain.com");
+	equal(jQuery.sap.validateUrl("mailto:NAME@domain.com"), true, "mailto:NAME@domain.com");
+	equal(jQuery.sap.validateUrl("mailto:name@some-domain.com"), true, "mailto:name@some-domain.com");
+	equal(jQuery.sap.validateUrl("mailto:someone@example.com?subject=This%20is%20the%20subject&cc=someone_else@example.com&body=This%20is%20the%20body"), true, "should accept mailto URL with parameters");
+	equal(jQuery.sap.validateUrl("mailto:someone@example.com,someoneelse@example.com"), true, "should accept mailto URL with multiple addresses");
+	equal(jQuery.sap.validateUrl("mailto:?to=&subject=mailto"), true, "should accept mailto URL without addresses");
+	equal(jQuery.sap.validateUrl("mailto:name-with$lot_of!strange%23characters@domain.com"), true, "mailto:name-with$lot_of!strange#characters@domain.com");
+	jQuery.sap.clearUrlWhitelist();
+});
+
+test("Syntax check", function() {
+
+	var sUrl = "http://www.sap.com";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http:\\www.sap.com";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "https://www.sap.com";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "ftp://sap.com";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "images/pic.gif";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "../images/pic.gif";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "//test.html";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "<script>alert('Hello');<"+"/script>";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "<%53cript>alert('Hello');<"+"/script>";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "<SCRIPT>alert('Hello');<"+"/script>";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = '<script language="javascript">alert("Hello");<'+'/script>';
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "Hello\nWorld";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "http://www.sap.com/index.html?sap-par1=true&sap-par2=false";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://www.sap.com/index.html?sap-par1=1%2";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "http://www.sap.com/index.html?sap-par1=1<script>alert('Test')<"+"/script>";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "http://www.sap.com/index.html#home";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://www.sap.com/index.html?#1<script>alert('Test')<"+"/script>";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "http://www.sap.com/index.html?sap-par1=true&sap-par2=false#home";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://www.sap.com/index.html#hash/with/slashes?and/question/marks";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+});
+
+test("Whitelist", function() {
+
+	var aWhitelist = new Array();
+	jQuery.sap.addUrlWhitelist("http","www.sap.com");
+	jQuery.sap.addUrlWhitelist("http","www.sap.de");
+	jQuery.sap.addUrlWhitelist("http","sap.com");
+	jQuery.sap.addUrlWhitelist("http","sap.de");
+	jQuery.sap.addUrlWhitelist("","www.ard.de");
+	jQuery.sap.addUrlWhitelist("http","www.zdf.de","8080");
+	jQuery.sap.addUrlWhitelist("https","www.rtl.de","","/tv-program");
+	jQuery.sap.addUrlWhitelist("https","www.rtl.de","","/info*");
+	jQuery.sap.addUrlWhitelist("","*vox.de");
+
+	var sUrl = "http://www.sap.com";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://de.sap.com";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "ftp://www.sap.de";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "http://www.sap.de/index.html";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://www.sap.de:1080/index.html";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://www.sap.com/global/images/SAPLogo.gif";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://www.test.de";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "https://www.ard.de";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "ftp://www.ard.de";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://www.ard.de/index.html";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://www.zdf.de";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "http://www.zdf.de:8080";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://www.rtl.de/tv-program";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "https://www.rtl.de/tv-program";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "https://www.rtl.de/tv-program?parameter=value";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "https://www.rtl.de";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "https://www.rtl.de/tv-program/today";
+	ok(!jQuery.sap.validateUrl(sUrl), sUrl+" not valid");
+
+	sUrl = "https://www.rtl.de/info";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "https://www.rtl.de/info/today";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://vox.de";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	sUrl = "http://info.vox.de";
+	ok(jQuery.sap.validateUrl(sUrl), sUrl+" valid");
+
+	jQuery.sap.clearUrlWhitelist();
+});
+
+module("Sanitize check");
+
+test("valid HTML5", function() {
+
+	var sHTML = "<div><article></article><progress></progress></div>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+	var sHTML = "<table><tr><td></td></tr></table>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+	var sHTML = "<div><input><audio></audio></div>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+	var sHTML = '<div><img draggable="true"><video></video></div>';
+	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+});
+
+test("obsolete HTML4 (not valid)", function() {
+
+	var sHTML = "<div><font></font><center></center></div>";
+	var sresultHTML = "<div></div>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+	var sHTML = "<table><tr><td><frame></frame></td></tr></table>";
+	var sresultHTML = "<table><tr><td></td></tr></table>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+	var sHTML = "<div><dir></dir></div>";
+	var sresultHTML = "<div></div>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+	var sHTML = "<div><img><nobr>Some Text</nobr></div>";
+	var sresultHTML = "<div><img>Some Text</div>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+});
+
+test("dangerous code (not valid)", function() {
+
+	var sHTML = "<table><tr><td><script>alert('XSS attack');</" + "script></td></tr></table>";
+	var sresultHTML = "<table><tr><td></td></tr></table>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+	var sHTML = "<div><object></object><audio></audio></div>";
+	var sresultHTML = "<div><audio></audio></div>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+	var sHTML = "<div><title></title><audio></audio></div>";
+	var sresultHTML = "<div><audio></audio></div>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+	var sHTML = "<html><head></head><body><div></div></body></html>";
+	var sresultHTML = "<div></div>";
+	equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+});
+
+test("valid URLs", function() {
+
+	var sHTML = '<div><a href="http://anonymous.org">Some Link</a></div>';
+	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+	var sHTML = '<table><tr><td><a href="http://www.sap.com">SAP</a></td></tr></table>';
+	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+	var sHTML = '<div><a href="https://sdn.sap.com">SDN</a><audio></audio></div>';
+	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+	var sHTML = '<div><img draggable="true"><a href="http://www.sap.com/index.epx">SAP with path</a><video></video></div>';
+	equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+});
+
+test("invalid URLs (not valid)", function() {
+
+	var sHTML = '<div><a href="xxxxx%%%%%%-----------;;;;;;">Some Link</a></div>';
+	var sresultHTML = '<div><a>Some Link</a></div>';
+	equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+});
+
+
+</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: String Encoding/Escaping Functions</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>
