@@ -538,9 +538,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	};
 
 	TableRenderer.getAriaAttributesForRowHdrRow = function(oTable, oRow, iRowIndex) {
-		var mAriaAttributes = {
-			"aria-labelledby": {value: oTable.getId() + "-rownumberofrows " + oTable.getId() + "-cellacc " + oRow.getId() + "-rowselecttext"}
-		};
+		var mAriaAttributes = {};
 
 		var sSelctionMode = oTable.getSelectionMode();
 		if (sSelctionMode !== sap.ui.table.SelectionMode.None) {
@@ -634,13 +632,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 			this.renderTableControl(rm, oTable, true);
 
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-ariafixedcolumn");
-			rm.addStyle("position", "absolute");
-			rm.addStyle("top", "-20000px");
-			rm.writeStyles();
-			rm.write(">");
-			rm.write(oTable._oResBundle.getText("TBL_FIXED_COLUMN"));
 			rm.write("</div>");
 		}
 
@@ -992,9 +983,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		mAriaAttributes["headers"] = {value: oTable.getId() + "_col" + iColIndex};
 		mAriaAttributes["role"] = {value: "gridcell"};
 
-		var sRowSelectorId = oTable.getId() + "-rownumberofrows";
-
-
 		var aMultiLabels = oColumn.getMultiLabels();
 		var iMultiLabels = aMultiLabels.length;
 		var sLabels = "";
@@ -1030,7 +1018,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 
 
-		var sLabelledBy = sRowSelectorId + " " + oTable.getId() + "-ariadesc " + sLabels;
+		var sLabelledBy = oTable.getId() + "-ariadesc " + sLabels;
 
 		if (bFixedTable) {
 			sLabelledBy += " " + oTable.getId() + "-ariafixedcolumn";

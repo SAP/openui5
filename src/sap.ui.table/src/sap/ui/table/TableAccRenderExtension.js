@@ -58,18 +58,16 @@ sap.ui.define(['jquery.sap.global'],
 			_writeAccText(oRm, sTableId, "ariacount");
 			// aria description for toggling the edit mode
 			_writeAccText(oRm, sTableId, "toggleedit", oBundle.getText("TBL_TOGGLE_EDIT_KEY"));
-			/*// aria description for row selection behavior with no line selected
-			_writeAccText(oRm, sTableId, "selectrow", oBundle.getText("TBL_ROW_SELECT_KEY"));
-			// aria description for row selection behavior with line selected
-			_writeAccText(oRm, sTableId, "selectrowmulti", oBundle.getText("TBL_ROW_SELECT_MULTI_KEY"));
-			// aria description for row deselection behavior with no line selected
-			_writeAccText(oRm, sTableId, "deselectrow", oBundle.getText("TBL_ROW_DESELECT_KEY"));
-			// aria description for row deselection behavior with line selected
-			_writeAccText(oRm, sTableId, "deselectrowmulti", oBundle.getText("TBL_ROW_DESELECT_MULTI_KEY"));*/
 			// aria description for table row count
 			_writeAccText(oRm, sTableId, "rownumberofrows");
+			// aria description for table column count
+			_writeAccText(oRm, sTableId, "colnumberofcols");
 			// aria description for table cell content
 			_writeAccText(oRm, sTableId, "cellacc");
+			if (oTable.getFixedColumnCount() > 0) {
+				// aria description for fixed columns
+				_writeAccText(oRm, sTableId, "ariafixedcolumn", oBundle.getText("TBL_FIXED_COLUMN"));
+			}
 
 			oRm.write("</div>");
 		},

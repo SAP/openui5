@@ -302,19 +302,19 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	};
 
 	TreeTable.prototype._getTreeIconAttributes = function(oRow) {
-		var oBinding = this.getBinding("rows");
-		var oAttr = {};
-		if (oBinding) {
+		var oAttr = {
+			"aria-label" : "",
+			"title" : "",
+			"role" : ""
+		};
+
+		if (this.getBinding("rows")) {
+			oAttr["role"] = "button";
 			if (oRow._bHasChildren) {
-				oAttr["aria-label"] = "";
-				oAttr["title"] = oRow._bIsExpanded ? this._oResBundle.getText("TBL_COLLAPSE") : this._oResBundle.getText("TBL_EXPAND");
+				oAttr["title"] = this._oResBundle.getText(oRow._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
 			} else {
 				oAttr["aria-label"] = this._oResBundle.getText("TBL_LEAF");
-				oAttr["title"] = "";
 			}
-		} else {
-			oAttr["aria-label"] = "";
-			oAttr["title"] = "";
 		}
 
 		return oAttr;
