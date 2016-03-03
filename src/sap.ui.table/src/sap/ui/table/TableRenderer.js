@@ -115,83 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		this.renderColHdr(rm, oTable);
 		this.renderTable(rm, oTable);
 
-		if (oTable._bAccMode) {
-			// aria description for the row count
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-ariadesc");
-			rm.addStyle("position", "absolute");
-			rm.addStyle("top", "-20000px");
-			rm.writeStyles();
-			rm.write(">");
-			if (oTable.getTitle() && oTable.getTitle().getText && oTable.getTitle().getText() != "") {
-				rm.writeEscaped(oTable.getTitle().getText());
-			} else {
-				rm.write(oTable._oResBundle.getText("TBL_TABLE"));
-			}
-
-			rm.write("</span>");
-			// aria description for the row count
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-ariacount");
-			rm.addStyle("position", "absolute");
-			rm.addStyle("top", "-20000px");
-			rm.writeStyles();
-			rm.write(">");
-			rm.write("</span>");
-			// aria description for toggling the edit mode
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-toggleedit");
-			rm.addStyle("position", "absolute");
-			rm.addStyle("top", "-20000px");
-			rm.writeStyles();
-			rm.write(">");
-			rm.write(oTable._oResBundle.getText("TBL_TOGGLE_EDIT_KEY"));
-			rm.write("</span>");
-			// aria description for row selection behavior with no line selected
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-selectrow");
-			rm.addStyle("position", "absolute");
-			rm.addStyle("top", "-20000px");
-			rm.writeStyles();
-			rm.write(">");
-			rm.write(oTable._oResBundle.getText("TBL_ROW_SELECT_KEY"));
-			rm.write("</span>");
-			// aria description for row selection behavior with line selected
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-selectrowmulti");
-			rm.addStyle("position", "absolute");
-			rm.addStyle("top", "-20000px");
-			rm.writeStyles();
-			rm.write(">");
-			rm.write(oTable._oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY"));
-			rm.write("</span>");
-			// aria description for row deselection behavior with no line selected
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-deselectrow");
-			rm.addStyle("position", "absolute");
-			rm.addStyle("top", "-20000px");
-			rm.writeStyles();
-			rm.write(">");
-			rm.write(oTable._oResBundle.getText("TBL_ROW_DESELECT_KEY"));
-			rm.write("</span>");
-			// aria description for row deselection behavior with line selected
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-deselectrowmulti");
-			rm.addStyle("position", "absolute");
-			rm.addStyle("top", "-20000px");
-			rm.writeStyles();
-			rm.write(">");
-			rm.write(oTable._oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY"));
-			rm.write("</span>");
-			// table row count
-			rm.write("<span");
-			rm.writeAttribute("id", oTable.getId() + "-rownumberofrows");
-			rm.addStyle("position", "absolute");
-			rm.addStyle("top", "-20000px");
-			rm.writeStyles();
-			rm.write(">");
-			rm.write("</span>");
-		}
+		oTable._getAccRenderExtension().writeHiddenAccTexts(rm, oTable);
 
 		rm.write("</div>");
 
@@ -615,7 +539,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 	TableRenderer.getAriaAttributesForRowHdrRow = function(oTable, oRow, iRowIndex) {
 		var mAriaAttributes = {
-			"aria-labelledby": {value: oTable.getId() + "-rownumberofrows " + oRow.getId() + "-rowselecttext"}
+			"aria-labelledby": {value: oTable.getId() + "-rownumberofrows " + oTable.getId() + "-cellacc " + oRow.getId() + "-rowselecttext"}
 		};
 
 		var sSelctionMode = oTable.getSelectionMode();
@@ -625,15 +549,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			mAriaAttributes["aria-selected"] = {value: bIsSelected};
 
 			var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
-
-			var sSelectReference = "rowSelect";
-			if (bIsSelected) {
-				// when the row is selected it must show texts how to deselect
-				sSelectReference = "rowDeselect";
-			}
-
-			mAriaAttributes["title"] = {value: mTooltipTexts.mouse[sSelectReference]};
-			mAriaAttributes["aria-label"] = {value: mTooltipTexts.keyboard[sSelectReference]};
+			mAriaAttributes["title"] = {value: mTooltipTexts.mouse[bIsSelected ? "rowDeselect" : "rowSelect"]};
 		}
 
 		return mAriaAttributes;
@@ -849,9 +765,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.addClass("sapUiTableCtrlRowScroll");
 		}
 		rm.writeAttribute("id", sId);
-		if (oTable._bAccMode) {
-			rm.writeAttribute("role", "grid");
-		}
+
+		oTable._getAccRenderExtension().writeTableAccRole(rm, oTable);
+
 		rm.addClass("sapUiTableCtrl");
 		rm.writeClasses();
 		rm.addStyle("min-width", oTable._getColumnsWidth(iStartColumn, iEndColumn) + "px");
@@ -952,7 +868,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.write("</table>");
 	};
 
-	TableRenderer.getAriaAttributesForRowTr = function(oTable, iRowIndex, aCells) {
+	TableRenderer.getAriaAttributesForRowTr = function(oTable, oRow, iRowIndex, aCells) {
 		var mAriaAttributes = {};
 
 		mAriaAttributes["role"] = {value: "row"};
@@ -964,16 +880,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
 
-		var sSelectReference = "rowSelect";
-		if (bIsSelected) {
-			// when the row is selected it must show texts how to deselect
-			sSelectReference = "rowDeselect";
-		}
 		var bSelectOnCellsAllowed = oTable._getSelectOnCellsAllowed();
 		if (bSelectOnCellsAllowed) {
 			// the row requires a tooltip for selection if the cell selection is allowed
-			mAriaAttributes["title"] = {value: mTooltipTexts.mouse[sSelectReference]};
-			mAriaAttributes["aria-label"] = {value: mTooltipTexts.keyboard[sSelectReference]};
+			mAriaAttributes["title"] = {value: mTooltipTexts.mouse[bIsSelected ? "rowDeselect" : "rowSelect"]};
 		}
 
 		return mAriaAttributes;
@@ -1007,7 +917,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	};
 
 	TableRenderer.getRowSelectorContent = function(rm, oTable, oRow, iRowIndex) {
-		return "";
+		return oTable._getAccRenderExtension().getAccRowSelectorText(oTable, oRow, iRowIndex);
 	};
 
 	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed) {
@@ -1047,7 +957,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 		rm.writeStyles();
 
-		var mAriaAttributes = this.getAriaAttributesForRowTr(oTable, iRowIndex);
+		var mAriaAttributes = this.getAriaAttributesForRowTr(oTable, oRow, iRowIndex);
 		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
 
 		rm.write(">");
@@ -1060,26 +970,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			var mAriaAttributes = this.getAriaAttributesForRowTd(oTable, oRow, iRowIndex, aCells);
 			this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
 
-			rm.write(">");
-			if (oTable._bAccMode) {
-				var bIsSelected = oTable.isIndexSelected(iRowIndex);
-
-				var sSelectReference = "rowSelect";
-				if (bIsSelected) {
-					// when the row is selected it must show texts how to deselect
-					sSelectReference = "rowDeselect";
-				}
-
-				rm.write("<div");
-				rm.writeAttribute("id", oRow.getId() + "-rowselecttext");
-				rm.addClass("sapUiTableAriaRowSel");
-				rm.writeClasses();
-				rm.write(">");
-				var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
-				rm.write(mTooltipTexts.keyboard[sSelectReference]);
-				rm.write("</div>");
-			}
-			rm.write("</td>");
+			rm.write("></td>");
 		}
 
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {
@@ -1141,20 +1032,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		var sLabelledBy = sRowSelectorId + " " + oTable.getId() + "-ariadesc " + sLabels;
 
-		sLabelledBy +=  " " + oCell.getId();
-
-		var sDescribedBy = "";
 		if (bFixedTable) {
 			sLabelledBy += " " + oTable.getId() + "-ariafixedcolumn";
 		}
 
+		oCell._sLabelledBy = sLabelledBy;
+
 		mAriaAttributes["aria-labelledby"] = {value: sLabelledBy};
-		mAriaAttributes["aria-describedby"] = {value: oTable.getId() + "-toggleedit" + sDescribedBy};
 
 		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
 			mAriaAttributes["aria-selected"] = {value: "false"};
 		}
-
 
 		return mAriaAttributes;
 	};

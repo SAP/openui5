@@ -172,7 +172,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		// update tooltips and aria texts
 		if ($DomRefs.rowSelector) {
 			$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
-			$DomRefs.rowSelector.attr("aria-label", mTooltipTexts.keyboard[sSelectReference]);
 		}
 
 		if ($DomRefs.rowSelectorText) {
@@ -187,10 +186,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		if (bSelectOnCellsAllowed) {
 			// the row requires a tooltip for selection if the cell selection is allowed
 			$Row.attr("title", mTooltipTexts.mouse[sSelectReference]);
-			$Row.attr("aria-label", mTooltipTexts.keyboard[sSelectReference]);
 		} else {
 			$Row.removeAttr("title");
-			$Row.removeAttr("aria-label");
 		}
 
 		// update aria-selected state, do at the very end since this forces the screen reader to read the aria texts again
