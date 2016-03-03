@@ -366,8 +366,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	DataState.prototype.getChanges = function() {
 		var mChanges = {};
 		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
-			if (this.mChangedProperties[sProperty] &&
-					!jQuery.sap.equal(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
+			if (!jQuery.sap.equal(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
 				mChanges[sProperty] = {};
 				mChanges[sProperty].value = this.mChangedProperties[sProperty];
 				mChanges[sProperty].oldValue = this.mProperties[sProperty];
