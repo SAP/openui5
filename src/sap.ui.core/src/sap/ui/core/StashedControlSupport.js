@@ -177,9 +177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 			var aStashedChildren = [];
 			for (var sId in stashedControls) {
 				var vInstanceOrId = bAsInstance ? stashedControls[sId] : stashedControls[sId].getId();
-				if (!sParentId) {
-					aStashedChildren.push(vInstanceOrId);
-				} else if (stashedControls[sId].sParentId === sParentId) {
+				if (!sParentId || stashedControls[sId].sParentId === sParentId) {
 					aStashedChildren.push(vInstanceOrId);
 				}
 			}
