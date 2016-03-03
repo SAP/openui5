@@ -22,41 +22,53 @@ function getLastUpdated() {
 
 function createSelect(oPullDown, iSelectedItem){
 	var sId = oPullDown.getId();
+	var iconSelect = new sap.m.Select({
+		title: "Show Logo",
+		items: [
+			new sap.ui.core.Item(sId + "0", { key: "0", text: "Standard Icon" }),
+			new sap.ui.core.Item(sId + "1", { key: "1", text: "Custom Icon" }),
+			new sap.ui.core.Item(sId + "2", { key: "2", text: "No Icon" })
+		],
+		selectedItem: sId + (iSelectedItem || "0"),
+		change: function(oControlEvent){
+			var sKey = oControlEvent.getParameter("selectedItem").getKey();
+			switch(sKey){
+				case "0": oPullDown.setShowIcon(true).setCustomIcon(null); break;
+				case "1": oPullDown.setShowIcon(true).setCustomIcon("images/SAPUI5Logo.png"); break;
+				case "2": oPullDown.setShowIcon(false); break;
+			}
+			// re-render the parent container after content change
+			oPullDown.getParent().invalidate();
+		}
+	});
+	var visibilitySelect = new sap.m.Select({
+		title: "Visibility",
+		items: [
+			new sap.ui.core.Item(sId + "v0", { key: "0", text: "Visible" }),
+			new sap.ui.core.Item(sId + "v1", { key: "1", text: "Hidden" })
+		],
+		selectedItem: sId +  "v0",
+		change: function(oControlEvent){
+			var sKey = oControlEvent.getParameter("selectedItem").getKey();
+			switch(sKey){
+				case "0": oPullDown.setVisible(true); break;
+				case "1": oPullDown.setVisible(false); break;
+			}
+		}
+	});
+	var iconLabel = new sap.m.Label({
+		text : "Icon:",
+		labelFor: iconSelect
+	});
+	var visibilityLabel = new sap.m.Label({
+		text : "Visibility:",
+		labelFor: visibilitySelect
+	});
 	return [
-		new sap.m.Select({
-			title: "Show Logo",
-			items: [
-				new sap.ui.core.Item(sId + "0", { key: "0", text: "Standard Icon" }),
-				new sap.ui.core.Item(sId + "1", { key: "1", text: "Custom Icon" }),
-				new sap.ui.core.Item(sId + "2", { key: "2", text: "No Icon" })
-			],
-			selectedItem: sId + (iSelectedItem || "0"),
-			change: function(oControlEvent){
-				var sKey = oControlEvent.getParameter("selectedItem").getKey();
-				switch(sKey){
-					case "0": oPullDown.setShowIcon(true).setCustomIcon(null); break;
-					case "1": oPullDown.setShowIcon(true).setCustomIcon("images/SAPUI5Logo.png"); break;
-					case "2": oPullDown.setShowIcon(false); break;
-				}
-				// re-render the parent container after content change
-				oPullDown.getParent().invalidate();
-			}
-		}),
-		new sap.m.Select({
-			title: "Visibility",
-			items: [
-				new sap.ui.core.Item(sId + "v0", { key: "0", text: "Visible" }),
-				new sap.ui.core.Item(sId + "v1", { key: "1", text: "Hidden" })
-			],
-			selectedItem: sId +  "v0",
-			change: function(oControlEvent){
-				var sKey = oControlEvent.getParameter("selectedItem").getKey();
-				switch(sKey){
-					case "0": oPullDown.setVisible(true); break;
-					case "1": oPullDown.setVisible(false); break;
-				}
-			}
-		})
+		iconLabel,
+		iconSelect,
+		visibilityLabel,
+		visibilitySelect
 	];
 }
 
