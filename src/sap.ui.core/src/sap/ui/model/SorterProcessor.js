@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', './Sorter'],
+	function(jQuery, Sorter) {
 	"use strict";
 
 	/**
@@ -21,6 +21,8 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {array} aSorters the sorter array
 	 * @param {function} fnGetValue the method to get the actual value use for sorting
 	 * @param {function} [fnGetKey] method to get a key value for the given data entry
+	 * @return {array} the given array instance after applying the sort order
+	 *
 	 * @public
 	 */
 	SorterProcessor.apply = function(aData, aSorters, fnGetValue, fnGetKey){
@@ -34,35 +36,10 @@ sap.ui.define(['jquery.sap.global'],
 			return aData;
 		}
 
-		function fnCompare(a, b) {
-			if (a == b) {
-				return 0;
-			}
-			if (b == null) {
-				return -1;
-			}
-			if (a == null) {
-				return 1;
-			}
-			if (typeof a == "string" && typeof b == "string") {
-				return a.localeCompare(b);
-			}
-			if (a < b) {
-				return -1;
-			}
-			if (a > b) {
-				return 1;
-			}
-			return 0;
-		}
-
 		for (var j = 0; j < aSorters.length; j++) {
 			oSorter = aSorters[j];
-			aCompareFunctions[j] = oSorter.fnCompare;
+			aCompareFunctions[j] = oSorter.fnCompare || Sorter.defaultComparator;
 
-			if (!aCompareFunctions[j]) {
-				aCompareFunctions[j] = fnCompare;
-			}
 			/*eslint-disable no-loop-func */
 			jQuery.each(aData, function(i, vRef) {
 				oValue = fnGetValue(vRef, oSorter.sPath);
