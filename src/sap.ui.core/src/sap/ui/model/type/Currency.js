@@ -40,7 +40,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	});
 
 	/**
-	 * @see sap.ui.model.CompositeType.prototype.formatValue
+	 * Format the given array containing amount and currency code to an output value of type string.
+	 * Other internal types than 'string' are not supported by the Currency type.
+	 * If an source format is has been defined for this type, the formatValue does also accept
+	 * a string value as input, which will be parsed into an array using the source format.
+	 * If aValues is not defined or null, null will be returned.
+	 *
+	 * @function
+	 * @name sap.ui.model.type.Currency.prototype.formatValue
+	 * @param {array|string} vValue the array of values or string value to be formatted
+	 * @param {string} sInternalType the target type
+	 * @return {any} the formatted output value
+	 *
+	 * @public
 	 */
 	Currency.prototype.formatValue = function(vValue, sInternalType) {
 		var aValues = vValue;
@@ -68,7 +80,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	};
 
 	/**
-	 * @see sap.ui.model.CompositeType.prototype.parseValue
+	 * Parse a string value to an array containing amount and currency. Parsing of other
+	 * internal types than 'string' is not supported by the Currency type.
+	 * In case a source format has been defined, after parsing the currency is formatted
+	 * using the source format and a string value is returned instead.
+	 *
+	 * @function
+	 * @name sap.ui.model.type.Currency.prototype.parseValue
+	 * @param {any} vValue the value to be parsed
+	 * @param {string} sInternalType the source type
+	 * @param {array} aCurrentValues the current values of all binding parts
+	 * @return {array|string} the parse result array
+	 *
+	 * @public
 	 */
 	Currency.prototype.parseValue = function(vValue, sInternalType) {
 		var vResult, oBundle;
@@ -91,9 +115,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		return vResult;
 	};
 
-	/**
-	 * @see sap.ui.model.CompositeType.prototype.validateValue
-	 */
 	Currency.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
@@ -126,9 +147,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		}
 	};
 
-	/**
-	 * @see sap.ui.model.CompositeType.prototype.setFormatOptions
-	 */
 	Currency.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
 		this._createFormats();

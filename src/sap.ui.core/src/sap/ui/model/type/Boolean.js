@@ -34,9 +34,6 @@ sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/u
 
 	});
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.formatValue
-	 */
 	BooleanType.prototype.formatValue = function(bValue, sInternalType) {
 		if (bValue == undefined || bValue == null) {
 			return null;
@@ -54,9 +51,6 @@ sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/u
 		}
 	};
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.parseValue
-	 */
 	BooleanType.prototype.parseValue = function(oValue, sInternalType) {
 		var oBundle;
 		switch (this.getPrimitiveType(sInternalType)) {
@@ -78,9 +72,6 @@ sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/u
 		}
 	};
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.validateValue
-	 */
 	BooleanType.prototype.validateValue = function(sValue) {
 
 	};

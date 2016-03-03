@@ -41,9 +41,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 
 	});
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.formatValue
-	 */
 	FileSize.prototype.formatValue = function(vValue, sInternalType) {
 		var fValue;
 
@@ -81,9 +78,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 		}
 	};
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.parseValue
-	 */
 	FileSize.prototype.parseValue = function(vValue, sInternalType) {
 		var vResult, oBundle;
 
@@ -114,9 +108,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 		return vResult;
 	};
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.validateValue
-	 */
 	FileSize.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
@@ -156,9 +147,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/FileSizeFormat', 'sap/ui
 		}
 	};
 
-	/**
-	 * @see sap.ui.model.SimpleType.prototype.setFormatOptions
-	 */
 	FileSize.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
 		this._handleLocalizationChange();
