@@ -46,9 +46,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		return null;
 	};
 
+	//TODO: Maybe spread this over the controls later
 	var _getAccessibleInfoOfControl = function(oControl, oBundle) {
 		if (!oControl) {
 			return null;
+		}
+
+		function getEnabledStateText() {
+			var bEnabled = oControl.getEnabled ? oControl.getEnabled() : true;
+			if (oControl.getEditable) {
+				bEnabled = bEnabled && oControl.getEditable();
+			}
+			return bEnabled ? "" : " " + oBundle.getText("TBL_CTRL_STATE_DISABLED");
 		}
 
 		switch (oControl.getMetadata().getName()) {
@@ -63,21 +72,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			case "sap.ui.commons.Button":
 				return {
 					editable: oControl.getEnabled(),
-					text: oBundle.getText("TBL_CTR_TYPE_BUTTON") + " " + (oControl.getText() || oControl.getTooltipAsString()) +
-							" " + (!oControl.getEnabled() ? oBundle.getText("TBL_CTRL_STATE_DISABLED") : "")
+					text: oBundle.getText("TBL_CTR_TYPE_BUTTON") + " " + (oControl.getText() || oControl.getTooltip_AsString()) + getEnabledStateText()
 				};
 			case "sap.m.Input":
 			case "sap.ui.commons.TextField":
 				return {
 					editable: oControl.getEnabled() && oControl.getEditable(),
-					text: oBundle.getText("TBL_CTR_TYPE_INPUT") + " " + oControl.getValue() + (oControl.getDescription ? oControl.getDescription() || "" : "") +
-							" " + (!(oControl.getEnabled() && oControl.getEditable()) ? oBundle.getText("TBL_CTRL_STATE_DISABLED") : "")
+					text: oBundle.getText("TBL_CTR_TYPE_INPUT") + " " + oControl.getValue() + (oControl.getDescription ? oControl.getDescription() || "" : "")
+							+ getEnabledStateText()
+				};
+			case "sap.m.DatePicker":
+			case "sap.ui.commons.DatePicker":
+				return {
+					editable: oControl.getEnabled() && oControl.getEditable(),
+					text: oBundle.getText("TBL_CTR_TYPE_DATEINPUT") + " " + oControl.getValue() + getEnabledStateText()
 				};
 			case "sap.m.RatingIndicator":
 				return {
 					editable: oControl.getEnabled(),
-					text: oBundle.getText("TBL_CTR_TYPE_RATING") + " " + oBundle.getText("TBL_CTRL_STATE_RATING", [oControl.getValue(), oControl.getMaxValue()]) +
-							" " + (!oControl.getEnabled() ? oBundle.getText("TBL_CTRL_STATE_DISABLED") : "")
+					text: oBundle.getText("TBL_CTR_TYPE_RATING") + " " + oBundle.getText("TBL_CTRL_STATE_RATING", [oControl.getValue(), oControl.getMaxValue()])
+							+ getEnabledStateText()
 				};
 			case "sap.m.ObjectStatus":
 				var sState = oControl.getState() != sap.ui.core.ValueState.None ? ValueStateSupport.getAdditionalText(oControl.getState()) : "";
@@ -90,39 +104,113 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 					editable: false,
 					text: (oControl.getFormattedValue() || "") + " " + (oControl.getCurrency() || "")
 				};
-			//TBD: Do this for all supported table cell controls:
-			//Icon
-			//DatePicker
-			//Select
-			//ComboBox
-			//MultiComboBox
-			//CheckBox
-			//Link
-			//ProgressBar
+			case "sap.m.Link":
+			case "sap.ui.commons.Link":
+				return {
+					editable: oControl.getEnabled(),
+					text: oBundle.getText("TBL_CTR_TYPE_LINK") + " " + (oControl.getText() || "") + getEnabledStateText()
+				};
+			case "sap.ui.core.Icon":
+				var oAtts = oControl._getAccessibilityAttributes();
+				return {
+					editable : oAtts.role === "button",
+					text: oBundle.getText(oAtts.role === "button" ? "TBL_CTR_TYPE_BUTTON" : "TBL_CTR_TYPE_IMAGE") + " " + (oAtts.label || ""),
+					labelled : oAtts.labelledby || null
+				};
+			case "sap.m.CheckBox":
+			case "sap.ui.commons.CheckBox":
+				var bChecked = oControl.getChecked ? oControl.getChecked() : oControl.getSelected();
+				return {
+					editable : oControl.getEnabled() && oControl.getEditable(),
+					text: oBundle.getText("TBL_CTR_TYPE_CHECKBOX") + " " + (oControl.getText() || "")
+							+ " " + (bChecked ? oBundle.getText("TBL_CTRL_STATE_CHECKBOX") : "")
+				};
+			case "sap.m.ProgressIndicator":
+				return {
+					editable: oControl.getEnabled(),
+					text: oBundle.getText("TBL_CTR_TYPE_PROGRESS") + " " + oBundle.getText("TBL_CTRL_STATE_PROGRESS", oControl.getPercentValue())
+							+ getEnabledStateText()
+				};
+			case "sap.m.ComboBox":
+			case "sap.ui.commons.ComboBox":
+			case "sap.ui.commons.DropdownBox":
+				return {
+					editable: oControl.getEnabled() && oControl.getEditable(),
+					text: oBundle.getText("TBL_CTR_TYPE_COMBO") + " " + oControl.getValue() + getEnabledStateText()
+				};
+			case "sap.m.Select":
+				if (oControl.getType() === "IconOnly") {
+					var sTooltip = oControl.getTooltip_AsString();
+					if (!sTooltip) {
+						var oIconInfo = sap.ui.core.IconPool.getIconInfo(oControl.getIcon());
+						sTooltip = oIconInfo && oIconInfo.text ? oIconInfo.text : "";
+					}
+					return {
+						editable: oControl.getEnabled(),
+						text: oBundle.getText("TBL_CTR_TYPE_BUTTON") + " " + sTooltip + getEnabledStateText()
+					};
+				} else {
+					return {
+						editable: oControl.getEnabled(),
+						text: oBundle.getText("TBL_CTR_TYPE_COMBO") + " " + oControl._getSelectedItemText() + getEnabledStateText()
+					};
+				}
+				break;
+			case "sap.m.MultiComboBox":
+				var aSelectedItems = oControl.getSelectedItems();
+				var sText = "";
+				if (aSelectedItems) {
+					for (var i = 0; i < aSelectedItems.length; i++) {
+						var oItem = sap.ui.getCore().byId(aSelectedItems[i]);
+						if (oItem) {
+							sText = sText + (oItem.getText() || "") + " ";
+						}
+					}
+				}
+				return {
+					editable: oControl.getEnabled() && oControl.getEditable(),
+					text: oBundle.getText("TBL_CTR_TYPE_MULTICOMBO") + " " + sText + getEnabledStateText()
+				};
+			case "sap.m.MultiInput":
+				var aTokens = oControl.getTokens();
+				var sText = "";
+				if (aTokens) {
+					for (var i = 0; i < aTokens.length; i++) {
+						var oToken = sap.ui.getCore().byId(aTokens[i]);
+						if (oToken) {
+							sText = sText + (oToken.getText() || "") + " ";
+						}
+					}
+				}
+				return {
+					editable: oControl.getEnabled() && oControl.getEditable(),
+					text: oBundle.getText("TBL_CTR_TYPE_MULTIINPUT") + " " + sText + getEnabledStateText()
+				};
 		}
 		return null;
 	};
 
-	var _updateRowCount = function(oExtension) {
+	var _updateRowColCount = function(oExtension) {
 		var oTable = oExtension.getTable(),
 			oIN = oTable._oItemNavigation,
 			bIsRowChanged = false;
 
 		if (oIN) {
 			var oRowNoElem = document.getElementById(oTable.getId() + "-rownumberofrows");
+			var oColNoElem = document.getElementById(oTable.getId() + "-colnumberofcols");
 
 			var iIndex = oIN.getFocusedIndex();
 			var iColumnNumber = iIndex % oIN.iColumns;
 			var iFirstVisibleRow = oTable.getFirstVisibleRow();
 			var iTotalRowCount = oTable._getRowCount();
 			var iRowIndex = Math.floor(iIndex / oIN.iColumns) + iFirstVisibleRow + 1 - oTable._getHeaderRowCount();
-			var sRowCountText = oTable._oResBundle.getText("TBL_ROW_ROWCOUNT", [iRowIndex, iTotalRowCount]);
 
-			bIsRowChanged = oExtension._iLastRowIndex != iRowIndex || (oExtension._iLastRowIndex == iRowIndex && oExtension._iLastColumnNumber == iColumnNumber);
+			bIsRowChanged = oExtension._iLastRowNumber != iRowIndex || (oExtension._iLastRowNumber == iRowIndex && oExtension._iLastColumnNumber == iColumnNumber);
 
-			oRowNoElem.innerText = bIsRowChanged ? sRowCountText : " ";
+			oRowNoElem.innerText = bIsRowChanged ? oTable._oResBundle.getText("TBL_ROW_ROWCOUNT", [iRowIndex, iTotalRowCount]) : " ";
+			oColNoElem.innerText = oExtension._iLastColumnNumber != iColumnNumber ? oTable._oResBundle.getText("TBL_COL_COLCOUNT", [iColumnNumber, oTable._getVisibleColumnCount()]) : " ";
 
-			oExtension._iLastRowIndex = iRowIndex;
+			oExtension._iLastRowNumber = iRowIndex;
 			oExtension._iLastColumnNumber = iColumnNumber;
 		}
 
@@ -204,6 +292,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		if (!this._accMode) {
 			return;
 		}
+		if (bOnCellFocus) {
+			if (this._cleanupInfo) {
+				this._cleanupInfo.cell.attr(this._cleanupInfo.attr);
+				this._cleanupInfo = null;
+			}
+		}
 		var oInfo = _getInfoOfFocusedCell(this._table);
 		if (!oInfo || !oInfo.cell || !oInfo.type || !this["_updateAccFor" + oInfo.type]) {
 			return;
@@ -226,9 +320,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			var oInfo = _getAccessibleInfoOfControl(oCell, oTable._oResBundle);
 			var bIsTreeColumnCell = this._treeMode && oTable._getTreeIconAttributes && $Cell.hasClass("sapUiTableTdFirst"); //TreeTable
 
-			var bRowChanged = _updateRowCount(this);
+			var bRowChanged = _updateRowColCount(this);
 
-			$Cell.attr("aria-labelledby", (oCell._sLabelledBy || "") + (oInfo ? " " + oTable.getId() + "-cellacc" : oCell.getId()) + (oInfo && oInfo.labelled ? " " + oInfo.labelled : ""));
+			this._cleanupInfo = {
+				cell: $Cell,
+				attr: {
+					"aria-labelledby" : oCell._sLabelledBy || "",
+					"aria-describedby" : ""
+				}
+			};
+
+			$Cell.attr("aria-labelledby", oTable.getId() + "-rownumberofrows " + oTable.getId() + "-colnumberofcols " + (oCell._sLabelledBy || "") +
+											(oInfo ? " " + oTable.getId() + "-cellacc" : oCell.getId()) +
+											(oInfo && oInfo.labelled ? " " + oInfo.labelled : ""));
 			$Cell.attr("aria-describedby", (oInfo && oInfo.described ? oInfo.described + " " : "") +
 											((((!oInfo || oInfo.editable) && !this._readonly) || bIsTreeColumnCell) ? (oTable.getId() + "-toggleedit ") : "") +
 											(oTable._getSelectOnCellsAllowed() && bRowChanged ? (oRow.getId() + "-rowselecttext") : ""));
@@ -246,8 +350,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	};
 
 	TableAccExtension.prototype._updateAccForROWHEADER = function($Cell, bOnCellFocus) {
+		var oTable = this.getTable();
+		var oRow = oTable.getRows()[$Cell.attr("data-sap-ui-rowindex")];
+
+		this._cleanupInfo = {
+			cell: $Cell,
+			attr: {
+				"aria-labelledby" : ""
+			}
+		};
+
+		$Cell.attr("aria-labelledby", oTable.getId() + "-cellacc " + oTable.getId() + "-rownumberofrows " + oRow.getId() + "-rowselecttext");
 		_updateCellAccText(this, this.getTable()._oResBundle.getText("TBL_ROW_HEADER_LABEL"));
-		_updateRowCount(this);
+		_updateRowColCount(this);
 	};
 
 	TableAccExtension.prototype._updateAccForGROUPROWCELL = function($Cell, bOnCellFocus) {
@@ -266,11 +381,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			var sSumId = oTable.getId() + "-rows-row" + iRow + "-col" + iCol + "-ariaTextForSum";
 			var sLabelId = jQuery.sap.domById(sSumId) ? sSumId : sRowHeaderId;
 
+			this._cleanupInfo = {
+				cell: $Cell,
+				attr: {
+					"aria-labelledby" : oCell._sLabelledBy || "",
+					"aria-describedby" : ""
+				}
+			};
+
 			$Cell.attr("aria-labelledby", (oCell._sLabelledBy || "") + " " + sLabelId + " " + oTable.getId() + "-cellacc" + (oInfo && oInfo.labelled ? " " + oInfo.labelled : ""));
 			$Cell.attr("aria-describedby", oInfo && oInfo.described ? " " + oInfo.described : "");
 
 			_updateCellAccText(this, oTable._oResBundle.getText("TBL_ROW_GROUP_LABEL") + " " + (oInfo ? oInfo.text : " "));
-			_updateRowCount(this);
+			_updateRowColCount(this);
 		}
 	};
 
