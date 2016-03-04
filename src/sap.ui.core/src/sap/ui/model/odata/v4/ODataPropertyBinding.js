@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/PropertyBinding",
-	"./lib/_Cache",
-	"./_ODataHelper"
-], function (jQuery, BindingMode, ChangeReason, PropertyBinding, _Cache, _ODataHelper) {
+	"./_ODataHelper",
+	"./lib/_Cache"
+], function (jQuery, BindingMode, ChangeReason, PropertyBinding, _ODataHelper, _Cache) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",

@@ -7,10 +7,10 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"./lib/_Cache",
 	"./_Context",
-	"./_ODataHelper"
-], function (jQuery, ChangeReason, ContextBinding, _Cache, _Context, _ODataHelper) {
+	"./_ODataHelper",
+	"./lib/_Cache"
+], function (jQuery, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache) {
 	"use strict";
 
 	var mSupportedEvents = {
