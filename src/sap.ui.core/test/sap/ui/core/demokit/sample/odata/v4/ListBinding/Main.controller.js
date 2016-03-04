@@ -76,6 +76,10 @@ sap.ui.define([
 			this.getView().byId("EmployeeEquipments").setBindingContext(oContext);
 		},
 
+		onGetEmployeeMaxAge : function (oEvent) {
+			this.getView().byId("GetEmployeeMaxAge").getObjectBinding().execute();
+		},
+
 		onSaveEmployee : function (oEvent) {
 			var oCreateEmployeeDialog = this.getView().byId("createEmployeeDialog"),
 				oEmployeeData = oCreateEmployeeDialog.getModel("new").getObject("/"),
