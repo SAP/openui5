@@ -16,14 +16,14 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/thirdparty/URI",
+	"./_ODataHelper",
 	"./lib/_MetadataRequestor",
 	"./lib/_Requestor",
-	"./_ODataHelper",
 	"./ODataContextBinding",
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, BindingMode, Model, URI, _MetadataRequestor, _Requestor, _ODataHelper,
+], function(jQuery, BindingMode, Model, URI, _ODataHelper, _MetadataRequestor, _Requestor,
 		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 
 	"use strict";

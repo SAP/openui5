@@ -8,10 +8,10 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ListBinding",
-	"./lib/_Cache",
 	"./_Context",
-	"./_ODataHelper"
-], function (jQuery, Binding, ChangeReason, ListBinding, _Cache, _Context, _ODataHelper) {
+	"./_ODataHelper",
+	"./lib/_Cache"
+], function (jQuery, Binding, ChangeReason, ListBinding, _Context, _ODataHelper, _Cache) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
