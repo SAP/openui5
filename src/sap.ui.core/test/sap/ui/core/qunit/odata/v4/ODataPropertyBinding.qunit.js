@@ -218,17 +218,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdate(): read error", function (assert) {
-		var that = this,
-			oError = new Error("Expected failure");
+		var oError = new Error("Expected failure");
 
 		return this.createTextBinding(assert, 1, oError).then(function (oBinding) {
 			var bChangeReceived = false;
 
 			assert.strictEqual(oBinding.getValue(), "value",
 				"value is set before failing read");
-			that.oLogMock.expects("error").withExactArgs(
-				"Failed to read path /EntitySet('foo')/property", oError,
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
 			oBinding.attachChange(function () {
 				bChangeReceived = true;
 			});
@@ -246,15 +242,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdate(): read error with force update", function (assert) {
-		var that = this,
-			oError = new Error("Expected failure");
+		var oError = new Error("Expected failure");
 
 		return this.createTextBinding(assert, 1, oError).then(function (oBinding) {
 			var done = assert.async();
 
-			that.oLogMock.expects("error").withExactArgs(
-				"Failed to read path /EntitySet('foo')/property", oError,
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
 			oBinding.attachChange(function () {
 				done();
 			});

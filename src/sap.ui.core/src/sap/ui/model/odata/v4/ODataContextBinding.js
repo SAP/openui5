@@ -231,6 +231,9 @@ sap.ui.define([
 					if (oError.canceled) {
 						that.fireDataReceived();
 					} else {
+						// log error only once when data request failed
+						jQuery.sap.log.error("Failed to read path " + that.sPath, oError,
+							"sap.ui.model.odata.v4.ODataContextBinding");
 						that.fireDataReceived({error : oError});
 					}
 				}

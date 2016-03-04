@@ -280,16 +280,17 @@ sap.ui.define([
 					that.fireDataReceived(); // no try catch needed: uncaught in promise
 				}
 			}, function (oError) {
-				if (!oError.canceled) {
-					jQuery.sap.log.error("Failed to get contexts for "
-						+ oModel.sServiceUrl + sResolvedPath.slice(1)
-						+ " with start index " + iStart + " and length " + iLength, oError,
-						sClassName);
-				}
 				//cache shares promises for concurrent read
 				if (bDataRequested) {
-					// no try catch needed: uncaught in promise
-					that.fireDataReceived({error : oError});
+					if (oError.canceled) {
+						that.fireDataReceived();
+					} else {
+						jQuery.sap.log.error("Failed to get contexts for "
+								+ oModel.sServiceUrl + sResolvedPath.slice(1)
+								+ " with start index " + iStart + " and length " + iLength,
+							oError, sClassName);
+						that.fireDataReceived({error : oError});
+					}
 				}
 			});
 		}
