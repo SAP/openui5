@@ -840,7 +840,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @public
 		 */
 		SelectList.prototype.removeAllItems = function() {
-			return this.removeAllAggregation("items");
+			var aItems = this.removeAllAggregation("items", true);
+			this.$().empty();
+			return aItems;
 		};
 
 		/**
@@ -850,7 +852,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @public
 		 */
 		SelectList.prototype.destroyItems = function() {
-			this.destroyAggregation("items");
+			this.destroyAggregation("items", true);
+			this.$().empty();
 			return this;
 		};
 
