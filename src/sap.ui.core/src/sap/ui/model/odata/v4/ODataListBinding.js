@@ -276,10 +276,13 @@ sap.ui.define([
 
 		if (!isRangeInContext(iStart, iLength)) {
 			oPromise = this.oCache
-				? this.oCache.read(iStart, iLength, "", undefined, function () {
+				? this.oCache.read(iStart, iLength, this.oModel.getGroupId(), undefined,
+					function () {
 						bDataRequested = true;
-						that.oModel.dataRequested("", that.fireDataRequested.bind(that));
-					})
+						that.oModel.dataRequested(that.oModel.getGroupId(),
+							that.fireDataRequested.bind(that));
+					}
+				)
 				: oContext.requestValue(this.sPath);
 			oPromise.then(function (vResult) {
 				createContexts(vResult);

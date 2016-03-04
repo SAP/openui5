@@ -849,6 +849,7 @@ sap.ui.require([
 				}
 			};
 		});
+
 		this.oSandbox.mock(this.oModel).expects("dataRequested")
 			.withExactArgs("", sinon.match.typeOf("function"));
 
@@ -929,6 +930,21 @@ sap.ui.require([
 		}, new Error("Unsupported event 'sort': v4.ODataListBinding#attachEvent"));
 
 		assert.strictEqual(oListBinding.attachEvent("change", mEventParameters), oReturn);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Use model's groupId", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oReadPromise = Promise.resolve();
+
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
+			.returns("groupId");
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs(0, 10, "groupId").callsArg(4)
+			.returns(oReadPromise);
+		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
+
+		oBinding.getContexts(0, 10);
+		return oReadPromise;
 	});
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support

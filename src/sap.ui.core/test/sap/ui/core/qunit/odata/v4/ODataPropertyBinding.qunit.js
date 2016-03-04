@@ -764,6 +764,24 @@ sap.ui.require([
 				+ "v4.ODataPropertyBinding#attachEvent"));
 	});
 
+	//*********************************************************************************************
+	QUnit.test("Use model's groupId", function (assert) {
+		var oModel = new ODataModel("/service/"),
+			oBinding = oModel.bindProperty("/absolute"),
+			oTypePromise = Promise.resolve(new TypeString()),
+			oReadPromise = Promise.resolve();
+
+		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type").returns(oTypePromise);
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId").callsArg(2)
+			.returns(oReadPromise);
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
+			.returns("groupId");
+		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
+
+		oBinding.initialize();
+
+		return Promise.all([oTypePromise, oReadPromise]);
+	});
 	// TODO bSuspended? In v2 it is ignored (check with core)
 	// TODO read in initialize and refresh? This forces checkUpdate to use getProperty.
 
