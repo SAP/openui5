@@ -58,14 +58,13 @@ sap.ui.define([
 	 * @throws {Error} If the given service root URL does not end with a forward slash or if
 	 *   OData system query options or parameter aliases are specified as parameters
 	 *
+	 * @alias sap.ui.model.odata.v4.ODataModel
+	 * @author SAP SE
 	 * @class Model implementation for OData v4.
 	 *   An event handler can only be attached to this model for the following event:
 	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
 	 *   messageChange}.
 	 *   For other events, an error is thrown.
-	 *
-	 * @author SAP SE
-	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @version ${version}
@@ -113,10 +112,11 @@ sap.ui.define([
 			});
 
 	// See class documentation
+	// @override
 	// @public
 	// @see sap.ui.base.EventProvider#attachEvent
 	// @since 1.37.0
-	ODataModel.prototype.attachEvent = function (sEventId) { //@override
+	ODataModel.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
 				+ "': v4.ODataModel#attachEvent");
@@ -131,6 +131,7 @@ sap.ui.define([
 	 *   ID of the batch group which should be sent as an OData batch request
 	 * @param {function} fnBatchRequestSent
 	 *   a function that is called synchronously after the batch request has been sent
+	 *
 	 * @private
 	 */
 	ODataModel.prototype.dataRequested = function (sGroupId, fnBatchRequestSent) {
@@ -181,6 +182,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
 	 *   The context binding
 	 * @throws {Error} When disallowed OData query options are provided
+	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindContext
 	 * @since 1.37.0
@@ -215,6 +217,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   The list binding
 	 * @throws {Error} When disallowed OData query options are provided
+	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindList
 	 * @since 1.37.0
@@ -251,6 +254,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
 	 * @throws {Error} When parameters are provided
+	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindProperty
 	 * @since 1.37.0
@@ -263,6 +267,7 @@ sap.ui.define([
 	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindTree
 	 * @since 1.37.0
@@ -282,6 +287,7 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which is resolved with the server's response data in case of success, or
 	 *   rejected with an instance of <code>Error</code> in case of failure
+	 *
 	 * @private
 	 */
 	ODataModel.prototype.create = function (sPath, oEntityData) {
@@ -293,11 +299,12 @@ sap.ui.define([
 	/**
 	 * Cannot create contexts at this model at will; retrieve them from a binding instead.
 	 *
+	 * @throws {Error}
+	 *
 	 * @public
+	 * @see sap.ui.model.Model#createBindingContext
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#getBoundContext
 	 * @see sap.ui.model.odata.v4.ODataListBinding#getCurrentContexts
-	 * @see sap.ui.model.Model#createBindingContext
-	 * @throws {Error}
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.createBindingContext = function () {
@@ -307,8 +314,9 @@ sap.ui.define([
 	/**
 	 * Method not supported
 	 *
-	 * @public
 	 * @throws {Error}
+	 *
+	 * @public
 	 * @see sap.ui.model.Model#destroyBindingContext
 	 * @since 1.37.0
 	 */
@@ -320,11 +328,13 @@ sap.ui.define([
 	 * Cannot get a shared context for a path. Contexts are created by bindings instead and there
 	 * may be multiple contexts for the same path.
 	 *
-	 * @private
 	 * @throws {Error}
+	 *
+	 * @private
 	 * @see sap.ui.model.Model#getContext
 	 */
-	ODataModel.prototype.getContext = function () { //@override
+	// @override
+	ODataModel.prototype.getContext = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getContext");
 	};
 
@@ -333,11 +343,13 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.model.odata.v4.ODataMetaModel}
 	 *   The meta model for this ODataModel
+	 *
 	 * @public
 	 * @see sap.ui.model.Model#getMetaModel
 	 * @since 1.37.0
 	 */
-	ODataModel.prototype.getMetaModel = function () { //@override
+	// @override
+	ODataModel.prototype.getMetaModel = function () {
 		return this.oMetaModel;
 	};
 
@@ -345,11 +357,13 @@ sap.ui.define([
 	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
 	 * @see sap.ui.model.Model#getOriginalProperty
 	 * @since 1.37.0
 	 */
-	ODataModel.prototype.getOriginalProperty = function () { //@override
+	// @override
+	ODataModel.prototype.getOriginalProperty = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getOriginalProperty");
 	};
 
@@ -357,6 +371,7 @@ sap.ui.define([
 	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
 	 * @see sap.ui.model.Model#getProperty
 	 * @since 1.37.0
@@ -369,6 +384,7 @@ sap.ui.define([
 	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
 	 * @see sap.ui.model.Model#isList
 	 * @since 1.37.0
@@ -389,14 +405,16 @@ sap.ui.define([
 	 *   The parameter <code>sGroupId</code> is not supported.
 	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
 	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
+	 *
 	 * @public
+	 * @see sap.ui.model.Model#refresh
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#refresh
 	 * @see sap.ui.model.odata.v4.ODataListBinding#refresh
 	 * @see sap.ui.model.odata.v4.ODataPropertyBinding#refresh
-	 * @see sap.ui.model.Model#refresh
 	 * @since 1.37.0
 	 */
-	ODataModel.prototype.refresh = function (bForceUpdate, sGroupId) { //@override
+	// @override
+	ODataModel.prototype.refresh = function (bForceUpdate, sGroupId) {
 		if (bForceUpdate !== true) {
 			throw new Error("Unsupported operation: v4.ODataModel#refresh, "
 					+ "bForceUpdate must be true");
@@ -427,6 +445,7 @@ sap.ui.define([
 	 *   user) of the entity between loading and removal has been detected; this should be shown
 	 *   to the user who needs to decide whether to try removal again. If the entity does not exist,
 	 *   we assume it has already been deleted by someone else and report success.
+	 *
 	 * @private
 	 */
 	ODataModel.prototype.remove = function (oContext) {
@@ -479,11 +498,13 @@ sap.ui.define([
 	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
 	 * @see sap.ui.model.Model#setLegacySyntax
 	 * @since 1.37.0
 	 */
-	ODataModel.prototype.setLegacySyntax = function () { //@override
+	// @override
+	ODataModel.prototype.setLegacySyntax = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#setLegacySyntax");
 	};
 

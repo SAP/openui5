@@ -38,16 +38,16 @@ sap.ui.define([
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @throws {Error} When disallowed OData query options are provided
+	 *
+	 * @alias sap.ui.model.odata.v4.ODataPropertyBinding
+	 * @author SAP SE
 	 * @class Property binding for an OData v4 model.
 	 *   An event handler can only be attached to this binding for the following events: 'change',
 	 *   'dataReceived', and 'dataRequested'.
 	 *   For other events, an error is thrown.
-	 *
-	 * @author SAP SE
-	 * @version ${version}
-	 * @alias sap.ui.model.odata.v4.ODataPropertyBinding
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
+	 * @version ${version}
 	 */
 	var ODataPropertyBinding = PropertyBinding.extend(sClassName, {
 			constructor : function (oModel, sPath, oContext, mParameters) {
@@ -76,8 +76,6 @@ sap.ui.define([
 	 * is changed. It is to be used by controls to get notified about changes to the value of this
 	 * property binding. Registered event handlers are called with the change reason as parameter.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#change
-	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
@@ -86,8 +84,10 @@ sap.ui.define([
 	 *   the binding is refreshed, and {@link sap.ui.model.ChangeReason.Context Context} when the
 	 *   parent context is changed
 	 *
-	 * @see sap.ui.base.Event
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#change
 	 * @protected
+	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
 
@@ -96,11 +96,12 @@ sap.ui.define([
 	 * It is to be used by applications for example to switch on a busy indicator. Registered event
 	 * handlers are called without parameters.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataRequested
-	 * @event
 	 * @param {sap.ui.base.Event} oEvent
-	 * @see sap.ui.base.Event
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataRequested
 	 * @public
+	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
 
@@ -116,22 +117,24 @@ sap.ui.define([
 	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataReceived
-	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
 	 *   If there are multiple failed back end requests, the error of the first one is provided.
-	 * @see sap.ui.base.Event
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataReceived
 	 * @public
+	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
 
 	// See class documentation
+	// @override
 	// @public
 	// @see sap.ui.base.EventProvider#attachEvent
 	// @since 1.37.0
-	ODataPropertyBinding.prototype.attachEvent = function (sEventId) { //@override
+	ODataPropertyBinding.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
 				+ "': v4.ODataPropertyBinding#attachEvent");
@@ -164,8 +167,8 @@ sap.ui.define([
 	 * @private
 	 * @see sap.ui.model.Binding#checkUpdate
 	 */
+	// @override
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason) {
-		//@override
 		var oChangeReason = {reason : sChangeReason || ChangeReason.Change},
 			bDataRequested = false,
 			bFire = false,
@@ -240,6 +243,7 @@ sap.ui.define([
 	 *
 	 * @returns {any}
 	 *   The current value of the bound property
+	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#getValue
 	 * @since 1.37.0
@@ -252,11 +256,13 @@ sap.ui.define([
 	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
 	 * @see sap.ui.model.Binding#isInitial
 	 * @since 1.37.0
 	 */
-	ODataPropertyBinding.prototype.isInitial = function () { //@override
+	// @override
+	ODataPropertyBinding.prototype.isInitial = function () {
 		throw new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial");
 	};
 
@@ -272,11 +278,13 @@ sap.ui.define([
 	 *   The parameter <code>sGroupId</code> is not supported.
 	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
 	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
+	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 * @since 1.37.0
 	 */
-	ODataPropertyBinding.prototype.refresh = function (bForceUpdate, sGroupId) { //@override
+	// @override
+	ODataPropertyBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
 		if (bForceUpdate !== true) {
 			throw new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
 					+ "bForceUpdate must be true");
@@ -296,11 +304,13 @@ sap.ui.define([
 	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
 	 * @see sap.ui.model.Binding#resume
 	 * @since 1.37.0
 	 */
-	ODataPropertyBinding.prototype.resume = function () { //@override
+	// @override
+	ODataPropertyBinding.prototype.resume = function () {
 		throw new Error("Unsupported operation: v4.ODataPropertyBinding#resume");
 	};
 
@@ -313,11 +323,13 @@ sap.ui.define([
 	 * @returns {undefined}
 	 * @throws {Error}
 	 *   When 'TwoWay' binding mode is used (not supported)
+	 *
 	 * @protected
 	 * @see sap.ui.model.PropertyBinding#setBindingMode
 	 * @since 1.37.0
 	 */
-	ODataPropertyBinding.prototype.setBindingMode = function (sBindingMode) { //@override
+	// @override
+	ODataPropertyBinding.prototype.setBindingMode = function (sBindingMode) {
 		if (sBindingMode !== BindingMode.OneTime && sBindingMode !== BindingMode.OneWay) {
 			throw new Error("Unsupported operation: v4.ODataPropertyBinding#setBindingMode, "
 					+ "sBindingMode must not be " + sBindingMode);
@@ -332,10 +344,12 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
+	 *
 	 * @private
 	 * @see sap.ui.model.Binding#setContext
 	 */
-	ODataPropertyBinding.prototype.setContext = function (oContext) { //@override
+	// @override
+	ODataPropertyBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
 			if (this.isRelative()) {
@@ -348,6 +362,7 @@ sap.ui.define([
 	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
 	 * @since 1.37.0
@@ -360,11 +375,13 @@ sap.ui.define([
 	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
 	 * @see sap.ui.model.Binding#suspend
 	 * @since 1.37.0
 	 */
-	ODataPropertyBinding.prototype.suspend = function () { //@override
+	// @override
+	ODataPropertyBinding.prototype.suspend = function () {
 		throw new Error("Unsupported operation: v4.ODataPropertyBinding#suspend");
 	};
 	return ODataPropertyBinding;
