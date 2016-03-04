@@ -79,6 +79,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', './l
 
 	}});
 
+	Title.prototype.setText = function(sText) {
+		var oRef = this.getDomRef("inner");
+		var bPatchDom = oRef && !this._getTitle();
+		this.setProperty("text", sText, bPatchDom);
+		if (bPatchDom) {
+			oRef.innerHTML = jQuery.sap.encodeHTML(this.getText() || "");
+		}
+		return this;
+	};
+
+
 	// Returns the instance of the associated sap.ui.core.Title if exists
 	Title.prototype._getTitle = function(){
 		var sTitle = this.getTitle();
