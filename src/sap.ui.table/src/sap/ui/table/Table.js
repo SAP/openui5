@@ -990,8 +990,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		this._updateGroupHeader();
 
-		this._onAfterRenderingHookForUpdateTableCell();
-
 		// for TreeTable and AnalyticalTable
 		if (this._updateTableContent) {
 			this._updateTableContent();
@@ -1114,37 +1112,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			jQuery.each(this.getRows(), function(iIndex, oRow) {
 				that._modifyRow(iIndex + that.getFirstVisibleRow(), oRow.$());
 				that._modifyRow(iIndex + that.getFirstVisibleRow(), oRow.$("fixed"));
-			});
-		}
-	};
-
-	/**
-	 * Call _updateTableCell on child classes or cell controls which implement this hook.
-	 * @private
-	 */
-	Table.prototype._onAfterRenderingHookForUpdateTableCell = function() {
-		var that = this;
-
-		// hook for update table cell after rendering is complete
-		if (this._bCallUpdateTableCell || typeof this._updateTableCell === "function") {
-			var oBindingInfo = this.mBindingInfos["rows"];
-			jQuery.each(this.getRows(), function(iIndex, oRow) {
-				var iAbsoluteRowIndex = that.getFirstVisibleRow() + iIndex; //get the absolute row index
-
-				jQuery.each(oRow.getCells(), function(iIndex, oCell) {
-					if (oCell._updateTableCell) {
-						oCell._updateTableCell(oCell /* cell control */,
-							oCell.getBindingContext(oBindingInfo && oBindingInfo.model) /* cell context */,
-							oCell.$().closest("td") /* jQuery object for td */,
-							iAbsoluteRowIndex);
-					}
-					if (that._updateTableCell) {
-						that._updateTableCell(oCell /* cell control */,
-							oCell.getBindingContext(oBindingInfo && oBindingInfo.model) /* cell context */,
-							oCell.$().closest("td") /* jQuery object for td */,
-							iAbsoluteRowIndex);
-					}
-				});
 			});
 		}
 	};
@@ -2289,12 +2256,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 	/**
 	 * updates the binding contexts of the currently visible controls
+	 * @param {boolean} bSuppressUpdate if true, only context will be requested but no binding context set
+	 * @param {Integer} iRowCount number of rows to be updated and number of contexts to be requested from binding
+	 * @param {String} sReason reason for the update; used to control further lifecycle
 	 * @private
 	 */
 	Table.prototype._updateBindingContexts = function(bSuppressUpdate, iRowCount, sReason) {
 		var aRows = this.getRows(),
 			oBinding = this.getBinding("rows"),
-			oBindinginfo = this.mBindingInfos["rows"],
+			oBindingInfo = this.mBindingInfos["rows"],
 			aContexts;
 
 		// fetch the contexts from the binding
@@ -2302,16 +2272,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			aContexts = this._getRowContexts(iRowCount, false, sReason);
 		}
 
-		// update the binding contexts only for the visible columns
-		//for (var iIndex = 0, iLength = this.getRows().length; iIndex < iLength; iIndex++) {
 		if (!bSuppressUpdate) {
+			var iFirstVisibleRow = this.getFirstVisibleRow();
+			var bExecuteCallback = typeof this._updateTableCell === "function";
 			for (var iIndex = aRows.length - 1; iIndex >= 0; iIndex--) {
 				var oContext = aContexts ? aContexts[iIndex] : undefined;
 				var oRow = aRows[iIndex];
 				if (oRow) {
 					//calculate the absolute row index, used by the Tree/AnalyticalTable to find the rendering infos for this row
-					var iAbsoluteRowIndex = this.getFirstVisibleRow() + iIndex;
-					this._updateRowBindingContext(oRow, oContext, oBindinginfo && oBindinginfo.model, iAbsoluteRowIndex);
+					var iAbsoluteRowIndex = iFirstVisibleRow + iIndex;
+					this._updateRowBindingContext(oRow, oContext, oBindingInfo && oBindingInfo.model, iAbsoluteRowIndex, bExecuteCallback, oBinding);
 				}
 			}
 		}
@@ -2319,46 +2289,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 	/**
 	 * updates the binding context a row
-	 * @param {sap.ui.table.Row} row to update
-	 * @param {sap.ui.model.Context} binding context of the row
+	 * @param {sap.ui.table.Row} oRow row to update
+	 * @param {sap.ui.model.Context} oContext binding context of the row
+	 * @param {String} sModelName name of the model
+	 * @param {Integer} iAbsoluteRowIndex index of row considering the scroll position
+	 * @param {boolean} bExecuteCallback if true this._updateTableCell must be implemented and will be executed
 	 * @private
 	 */
-	Table.prototype._updateRowBindingContext = function(oRow, oContext, sModelName, iAbsoluteRowIndex) {
-		var aCells = oRow.getCells();
-
+	Table.prototype._updateRowBindingContext = function(oRow, oContext, sModelName, iAbsoluteRowIndex, bExecuteCallback, oBinding) {
 		// check for a context object (in case of grouping there could be custom context objects)
-		oRow.setBindingContext(oContext, sModelName);
-		if (oContext && oContext instanceof sap.ui.model.Context) {
-			for (var i = 0, l = this._aVisibleColumns.length; i < l; i++) {
-				var col = this._aIdxCols2Cells[this._aVisibleColumns[i]];
-				if (aCells[col]) {
-					this._updateCellBindingContext(aCells[col], oContext, sModelName, iAbsoluteRowIndex);
-				}
-			}
-		} else {
-			for (var i = 0, l = this._aVisibleColumns.length; i < l; i++) {
-				var col = this._aIdxCols2Cells[this._aVisibleColumns[i]];
-				if (aCells[col]) {
-					this._updateCellBindingContext(aCells[col], oContext, sModelName, iAbsoluteRowIndex);
+		oRow.setRowBindingContext(oContext, sModelName, oBinding);
+
+		if (bExecuteCallback) {
+			// call _updateTableCell on table control. _updateTableCell will be called on cell controls inside Row.setBindingContext
+			var aCells = oRow.getCells();
+			for (var i = 0, l = aCells.length; i < l; i++) {
+				if (aCells[i]) {
+					this._updateTableCell(aCells[i], oContext, aCells[i].$().closest("td"), iAbsoluteRowIndex);
 				}
 			}
 		}
-	};
-
-	/**
-	 * updates the binding context a cell
-	 * @param {sap.ui.core.Control} control of the cell
-	 * @param {sap.ui.model.Context} binding context of the cell
-	 * @private
-	 */
-	Table.prototype._updateCellBindingContext = function(oCell, oContext, sModelName, iAbsoluteRowIndex) {
-			//oCell.setBindingContext(oContext, sModelName);
-			if (this._bCallUpdateTableCell && oCell._updateTableCell) {
-				oCell._updateTableCell(oCell /* cell control */, oContext /* cell context */, oCell.$().closest("td") /* jQuery object for td */, iAbsoluteRowIndex);
-			}
-			if (typeof this._updateTableCell === "function") {
-				this._updateTableCell(oCell /* cell control */, oContext /* cell context */, oCell.$().closest("td") /* jQuery object for td */, iAbsoluteRowIndex);
-			}
 	};
 
 	/**
@@ -6277,26 +6227,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// rendered.
 		this._ignoreInvalidateOfChildControls = true;
 		var aContexts;
+		var iFirstVisibleRow = this.getFirstVisibleRow();
+		var iAbsoluteRowIndex = 0;
+		var bExecuteCallback = false;
+		var oBindingInfo;
+		var oBinding = this.getBinding("rows");
+
 		if (!bNoUpdate) {
+			// set binding contexts for known rows
+			oBindingInfo = this.getBindingInfo("rows");
+			bExecuteCallback = typeof this._updateTableCell === "function";
 			aContexts = this._getRowContexts(iNumberOfRows);
+
 			for (i = 0; i < aRows.length; i++) {
-				// set binding contexts for known rows
-				aRows[i].setBindingContext(aContexts[i], oBindingInfo && oBindingInfo.model);
+				iAbsoluteRowIndex = iFirstVisibleRow + i;
+				this._updateRowBindingContext(aRows[i], aContexts[i], oBindingInfo && oBindingInfo.model, iAbsoluteRowIndex, bExecuteCallback, oBinding);
 			}
 		}
 
 		if (aRows.length < iNumberOfRows) {
-			// rows must be created
+			// clone rows and set binding context for them
 			var oRowTemplate = this._getRowTemplate();
-
-			var oBindingInfo = this.getBindingInfo("rows");
 
 			for (i = aRows.length; i < iNumberOfRows; i++) {
 				// add new rows and set their binding contexts in the same run in order to avoid unnecessary context
 				// propagations.
 				var oClone = oRowTemplate.clone("row" + i);
 				if (!bNoUpdate) {
-					oClone.setBindingContext(aContexts[i], oBindingInfo && oBindingInfo.model);
+					iAbsoluteRowIndex = iFirstVisibleRow + i;
+					this._updateRowBindingContext(oClone, aContexts[i], oBindingInfo && oBindingInfo.model, iAbsoluteRowIndex, bExecuteCallback, oBinding);
 				}
 				this.addAggregation("rows", oClone, true);
 			}

@@ -1318,6 +1318,49 @@
 		sinon.assert.notCalled(spy);
 	});
 
+	module("Callbacks", {
+		teardown: destroyTable
+	});
+
+	asyncTest("_updateTableCell callback", function() {
+		var iCallCountUpdateTableCellOnTable = 0;
+		var iCallCountUpdateTableCell = 0;
+		var fnTest = function() {
+			assert.equal(iCallCountUpdateTableCellOnTable, 20, "UpdateTableCell callback called on table ok");
+			assert.equal(iCallCountUpdateTableCell, 20, "UpdateTableCell callback called on cell ok");
+			oTable.attachEventOnce("_rowsUpdated", fnTestScroll);
+			oTable.setFirstVisibleRow(5);
+		};
+
+		var fnTestScroll = function() {
+			assert.equal(iCallCountUpdateTableCellOnTable, 40, "UpdateTableCell callback called on table ok");
+			assert.equal(iCallCountUpdateTableCell, 40, "UpdateTableCell callback called on cell ok");
+			start();
+		}
+
+		// create a dummy control for this test which has _updateTableCell implemented
+		var oRenderer = new sap.ui.commons.TextView().getRenderer();
+		var TextView = sap.ui.commons.TextView.extend("sap.ui.table.qunitTextView", {renderer: oRenderer});
+		TextView.prototype._updateTableCell = function() { iCallCountUpdateTableCell++; };
+
+		oTable = new sap.ui.table.Table({columns: [
+			new sap.ui.table.Column({template: new TextView()}),
+			new sap.ui.table.Column({template: new TextView()})
+		]});
+
+		// implement _updateTableCell for table instance
+		oTable._updateTableCell = function(){ iCallCountUpdateTableCellOnTable++; };
+
+		oTable.attachEventOnce("_rowsUpdated", fnTest);
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({modelData: aData});
+		oTable.setModel(oModel);
+		oTable.bindRows("/modelData");
+
+		oTable.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	});
+
 	</script>
 </head>
 <body class="sapUiBody">
