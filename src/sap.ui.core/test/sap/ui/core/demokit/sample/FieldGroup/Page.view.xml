@@ -126,7 +126,7 @@
 		<footer>
 			<Toolbar>
 				<content>
-					<Button id="submit" text="Sumbit" press="onAccept" type="Accept"
+					<Button id="submit" text="Submit" press="onAccept" type="Accept"
 						width="33%" />
 					<Button id="reset" text="Reset" press="onReset" type="Reject"
 						width="33%" />
