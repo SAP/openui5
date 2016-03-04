@@ -563,7 +563,7 @@ sap.ui.define([
 		 *   array of Action/Function (for which the $ReturnType is chosen).
 		 * @returns {sap.ui.model.odata.type.ODataType}
 		 *   The type
-		 * @throws Error If there is no UI5 type for the referenced EDM type
+		 * @throws {Error} If there is no UI5 type for the referenced EDM type
 		 */
 		function getType(oMetadata) {
 			var mConstraints, sName, oProperty, oType, oTypeInfo;
@@ -578,14 +578,21 @@ sap.ui.define([
 			oProperty = Array.isArray(oMetadata) && oMetadata[0].$ReturnType
 				? oMetadata[0].$ReturnType
 				: oMetadata;
+
 			oType = oProperty["$ui5.type"];
 			if (oType) {
 				return oType;
 			}
+
+			if (oProperty.$isCollection) {
+				throw new Error("Unsupported collection type at " + sPath);
+			}
+
 			oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
 			if (!oTypeInfo) {
 				throw new Error("Unsupported EDM type '" + oProperty.$Type + "' at " + sPath);
 			}
+
 			for (sName in oTypeInfo.constraints) {
 				setConstraint(oTypeInfo.constraints[sName], oProperty[sName]);
 			}
@@ -594,6 +601,7 @@ sap.ui.define([
 			}
 			oType = new (jQuery.sap.getObject(oTypeInfo.type, 0))({}, mConstraints);
 			oProperty["$ui5.type"] = oType;
+
 			return oType;
 		}
 
