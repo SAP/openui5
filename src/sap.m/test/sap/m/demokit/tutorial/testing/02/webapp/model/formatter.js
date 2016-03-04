@@ -1,6 +1,4 @@
-sap.ui.define([
-	"sap/m/Text"
-], function (Text) {
+sap.ui.define([], function () {
 	"use strict";
 
 	return {
