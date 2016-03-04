@@ -841,7 +841,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		SelectList.prototype.removeAllItems = function() {
 			var aItems = this.removeAllAggregation("items", true);
-			this.$().empty();
+			this.$().children("li").remove();
 			return aItems;
 		};
 
@@ -853,7 +853,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		SelectList.prototype.destroyItems = function() {
 			this.destroyAggregation("items", true);
-			this.$().empty();
 			return this;
 		};
 
