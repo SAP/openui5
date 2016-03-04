@@ -198,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 	};
 
-	Row.prototype.setBindingContext = function(oContext, sModelName) {
+	Row.prototype.setRowBindingContext = function(oContext, sModelName, oBinding) {
 		var oNode;
 		if (oContext && !(oContext instanceof sap.ui.model.Context)) {
 			oNode = oContext;
@@ -238,17 +238,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 
 		// collect rendering information for new binding context
-		this._collectRenderingInformation(oContext, oNode);
+		this._collectRenderingInformation(oContext, oNode, oBinding);
 
-		if (oContext) {
-			return sap.ui.core.Element.prototype.setBindingContext.call(this, oContext, sModelName);
-		} else {
-			// since undefined won't be a valid context which gets propagated we put null
-			return sap.ui.core.Element.prototype.setBindingContext.call(this, null, sModelName);
+		this.setBindingContext(oContext, sModelName);
+	};
+
+	Row.prototype.setBindingContext = function(oContext, sModelName) {
+		var bReturn = sap.ui.core.Element.prototype.setBindingContext.call(this, oContext || null, sModelName);
+
+		this._updateTableCells(oContext);
+		return bReturn;
+	};
+
+	Row.prototype._updateTableCells = function(oContext) {
+		var aCells = this.getCells();
+		var iAbsoluteRowIndex = this.getIndex();
+		for (var i = 0; i < aCells.length; i++) {
+			var oCell = aCells[i];
+			if (oCell._updateTableCell) {
+				oCell._updateTableCell(oCell, oContext, oCell.$().closest("td"), iAbsoluteRowIndex);
+			}
 		}
 	};
 
-	Row.prototype._collectRenderingInformation = function(oContext, oNode) {
+	Row.prototype._collectRenderingInformation = function(oContext, oNode, oBinding) {
 		// init node states
 		this._oNodeState = undefined;
 		this._iLevel = 0;
@@ -263,12 +276,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			this._bHasChildren = false;
 			this._sTreeIconClass = "sapUiTableTreeIconLeaf";
 			this._sGroupIconClass = "";
-
-			var oBinding;
-			var oParent = this.getParent();
-			if (oParent) {
-				oBinding = oParent.getBinding("rows");
-			}
 
 			if (oBinding) {
 				if (oBinding.getLevel) {
