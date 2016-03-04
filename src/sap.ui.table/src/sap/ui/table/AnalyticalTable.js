@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		var vReturn = this.bindAggregation("rows", oBindingInfoSanitized);
 
 		var aColumnInfo = this._getColumnInformation();
-		this._updateTotalRow(aColumnInfo);
+		this._updateTotalRow(aColumnInfo, true);
 
 		return vReturn;
 	};
