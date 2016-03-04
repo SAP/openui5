@@ -4,10 +4,13 @@
 sap.ui.define([
 		'sap/m/Dialog',
 		'sap/m/MessageBox',
+		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function (Dialog, MessageBox, Controller, JSONModel) {
+	], function (Dialog, MessageBox, DateFormat, Controller, JSONModel) {
 	"use strict";
+
+	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"});
 
 	function onRejected(oError) {
 		jQuery.sap.log.error(oError.message, oError.stack);
@@ -146,6 +149,18 @@ sap.ui.define([
 				oSalesOrderLineItemContext = oEvent.getParameters().listItem.getBindingContext();
 
 			oView.byId("SupplierContactData").setBindingContext(oSalesOrderLineItemContext);
+		},
+
+		/**
+		 * Update the favorite product's name by replacing it with the current time (hour/minute).
+		 * This shows a somehow useful update, you should be able to see changes on the UI quite
+		 * frequently, but not too many backend requests.
+		 */
+		onUpdateFavoriteProduct : function (/*oEvent*/) {
+			var oBinding = this.getView().byId("FavoriteProduct").getBinding("value");
+
+			oBinding.setValue(oDateFormat.format(new Date()));
+//			oBinding.refresh(true); // triggers a GET
 		}
 	});
 

@@ -762,20 +762,42 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setValue", function (assert) {
-		var oModel = new ODataModel("/"),
-			oPropertyBinding = oModel.bindProperty("/ProductList('HT-1000')/Name");
+	QUnit.test("setValue via control or API", function (assert) {
+		var oControl,
+			oModel = new ODataModel("/"),
+			oPropertyBinding,
+			oRequestorMock = this.oSandbox.mock(oModel.oRequestor);
 
-		this.oSandbox.mock(oModel).expects("getGroupId").withExactArgs().returns("groupId");
-		this.oSandbox.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("PATCH", "ProductList('HT-1000')", "groupId", /*mHeaders*/null,
-				{"Name" : "foo"});
-		this.oSandbox.mock(oModel).expects("dataRequested")
+		this.getCacheMock().expects("read").returns(Promise.resolve("HT-1000's Name"));
+		oControl = new TestControl({
+			models : oModel,
+			text : "{path : '/ProductList(\\'HT-1000\\')/Name'"
+				+ ", type : 'sap.ui.model.odata.type.String'}"
+		});
+		this.oSandbox.mock(oModel).expects("getGroupId").twice()
+			.withExactArgs().returns("groupId");
+		this.oSandbox.mock(oModel).expects("dataRequested").twice()
 			.withExactArgs("groupId", sinon.match.func);
+		oRequestorMock.expects("request").withExactArgs("PATCH", "ProductList('HT-1000')",
+			"groupId", /*mHeaders*/null, {"Name" : "foo"});
 
-		oPropertyBinding.setValue("foo");
+		// code under test
+		oControl.setText("foo");
 
+		oPropertyBinding = oControl.getBinding("text");
 		assert.strictEqual(oPropertyBinding.getValue(), "foo");
+
+		// code under test
+		oPropertyBinding.setValue("foo"); // must not trigger a 2nd PATCH
+
+		// set a different value via API
+		oRequestorMock.expects("request").withExactArgs("PATCH", "ProductList('HT-1000')",
+			"groupId", /*mHeaders*/null, {"Name" : "bar"});
+
+		// code under test
+		oPropertyBinding.setValue("bar");
+
+		assert.strictEqual(oControl.getText(), "bar");
 	});
 	//TODO {"If-Match" : "eTag"} - a request for a single property does not return an ETag
 	//TODO for PATCH we need the edit URL (for single property we can't determine the canonical URL
@@ -783,8 +805,24 @@ sap.ui.require([
 	//     /EMPLOYEES('2')/EMPLOYEE_2_MANAGER/TEAM_ID) --> accept limitation for now
 	//TODO if the backend returns a different value we should take care
 	//TODO PUT of primitive property versus PATCH of entity (with select *), what is better?
-	//TODO error handling
-	//TODO unchanged values (via API call)
-	//TODO check that new value is primitive (via API call)
+	//     --> PATCH with header "Prefer: return=minimal" followed by
+	//         GET with appropriate $expand/$select
+	//TODO error handling, both technical HTTP errors as well as business logic errors
+
+	//*********************************************************************************************
+	QUnit.test("setValue: Not a primitive value", function (assert) {
+		var oModel = new ODataModel("/"),
+			oPropertyBinding = oModel.bindProperty("/absolute");
+
+		// code under test
+		assert.throws(function () {
+			oPropertyBinding.setValue({});
+		}, new Error("Not a primitive value"));
+
+		// code under test
+		assert.throws(function () {
+			oPropertyBinding.setValue(Function);
+		}, new Error("Not a primitive value"));
+	});
 });
 // TODO read in initialize and refresh? This forces checkUpdate to use getProperty.
