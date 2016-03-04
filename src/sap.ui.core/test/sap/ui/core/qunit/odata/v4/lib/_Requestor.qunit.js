@@ -11,7 +11,9 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
+	var sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+		sSampleServiceUrl
+			= "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/";
 
 	/**
 	 * Creates a mock for jQuery's XHR wrapper.
@@ -76,7 +78,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getServiceUrl", function (assert) {
-		var oRequestor = _Requestor.create(sServiceUrl, undefined, {"foo" : "bar"});
+		var oRequestor = _Requestor.create(sServiceUrl, undefined, {"foo" : "must be ignored"});
 
 		// code under test
 		assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl);
@@ -372,7 +374,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): with empty group", function (assert) {
-		var oRequestor = _Requestor.create("/Service/");
+		var oRequestor = _Requestor.create();
 
 		this.oSandbox.mock(oRequestor).expects("request").never();
 
@@ -388,6 +390,8 @@ sap.ui.require([
 				url: "Products",
 				headers: {
 					"Accept" : "application/json;odata.metadata=full",
+					"Accept-Language" : "ab-CD",
+					"Content-Type" : "application/json;charset=UTF-8",
 					"Foo" : "bar"
 				},
 				body: undefined,
@@ -398,6 +402,8 @@ sap.ui.require([
 				url: "Customers",
 				headers: {
 					"Accept" : "application/json;odata.metadata=minimal",
+					"Accept-Language" : "ab-CD",
+					"Content-Type" : "application/json;charset=UTF-8",
 					"Foo" : "baz"
 				},
 				body: '{"ID":1}',
@@ -410,7 +416,7 @@ sap.ui.require([
 				{responseText: JSON.stringify(aResults[0])},
 				{responseText: JSON.stringify(aResults[1])}
 			],
-			oRequestor = _Requestor.create("/Service/", {"sap-client" : "123"});
+			oRequestor = _Requestor.create("/Service/", {"Accept-Language" : "ab-CD"});
 
 		aPromises.push(oRequestor.request("GET", "Products", "group1", {
 			Foo : "bar",
@@ -447,13 +453,12 @@ sap.ui.require([
 
 		return Promise.all(aPromises);
 	});
-	// TODO Is that.mHeaders relevant for requests in the body of a $batch?
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): $batch failure", function (assert) {
 		var oBatchError = new Error("$batch request failed"),
 			aPromises = [],
-			oRequestor = _Requestor.create("/Service/");
+			oRequestor = _Requestor.create();
 
 		function unexpectedSuccess() {
 			assert.ok(false, "unexpected success");
@@ -498,7 +503,7 @@ sap.ui.require([
 				status : 404,
 				statusText : "Not found"
 			}],
-			oRequestor = _Requestor.create("/Service/"),
+			oRequestor = _Requestor.create(),
 			aPromises = [];
 
 		function unexpected () {
@@ -543,7 +548,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("request(...): batch group id", function (assert) {
-		var oRequestor = _Requestor.create("/Service/");
+		var oRequestor = _Requestor.create();
 
 		oRequestor.request("PATCH", "EntitySet", "group", {"foo": "bar"}, {"a": "b"});
 		oRequestor.request("PATCH", "EntitySet", "group", {"bar": "baz"}, {"c": "d"});
@@ -676,6 +681,22 @@ sap.ui.require([
 				assert.strictEqual(oResult, undefined);
 			});
 		});
+
+		//*****************************************************************************************
+		QUnit.test("request(ProductList)/submitBatch (realOData) patch", function (assert) {
+			var oBody = {Name : "modified by QUnit test"},
+				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl)),
+				sResourcePath = "ProductList('HT-1001')";
+
+			return Promise.all([
+					oRequestor.request("PATCH", sResourcePath, "group", {"If-Match" : "*"}, oBody)
+						.then(function (oResult) {
+							TestUtils.deepContains(oResult, oBody);
+						}),
+					oRequestor.submitBatch("group")
+				]);
+			}
+		);
 	}
 });
 // TODO: continue-on-error? -> flag on model

@@ -160,7 +160,8 @@ sap.ui.define([
 					that.mBatchQueue[sGroupId].push({
 						method: sMethod,
 						url: sResourcePath,
-						headers: jQuery.extend({}, mPredefinedPartHeaders, mHeaders),
+						headers: jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
+							mFinalHeaders),
 						body: sPayload,
 						$reject: fnReject,
 						$resolve: fnResolve
@@ -173,8 +174,7 @@ sap.ui.define([
 			jQuery.ajax(that.sServiceUrl + sResourcePath, {
 				data : sPayload,
 				headers : jQuery.extend({}, mPredefinedRequestHeaders, that.mHeaders, mHeaders,
-					bIsBatch ? oBatchRequest.headers : mFinalHeaders
-				),
+					bIsBatch ? oBatchRequest.headers : mFinalHeaders),
 				method : sMethod
 			}).then(function (oPayload, sTextStatus, jqXHR) {
 				that.mHeaders["X-CSRF-Token"]
