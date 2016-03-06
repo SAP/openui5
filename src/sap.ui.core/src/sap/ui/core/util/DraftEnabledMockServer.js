@@ -71,6 +71,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 					if (oEntitySetAnnotations[this._oConstants.COM_SAP_VOCABULARIES_COMMON_V1_DRAFTROOT]) {
 						this._oDraftMetadata.draftRootName = sEntityset;
 						this._oDraftMetadata.annotations = oAnnotations;
+						this._oDraftMetadata.mockServerRootUri = oMockServer.getRootUri();
 						this._oDraftMetadata.draftRootActivationName = oEntitySetAnnotations[this._oConstants.COM_SAP_VOCABULARIES_COMMON_V1_DRAFTROOT][this
 							._oConstants.ACTIVATION_ACTION
 						].String;
@@ -401,7 +402,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 						aFilter.push(property + " eq " + oRequestBody[property]);
 					}
 					var oResponse = jQuery.sap.sjax({
-						url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
+						url: that._oDraftMetadata.mockServerRootUri + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
 						dataType: "json"
 					});
 					if (!oResponse.success || !oResponse.data.d.results[0]) {
@@ -462,7 +463,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 							}
 						}
 						var oResponse = jQuery.sap.sjax({
-							url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
+							url: that._oDraftMetadata.mockServerRootUri + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
 							dataType: "json"
 						});
 						if (!oResponse.success || !oResponse.data.d.results[0]) {
@@ -571,7 +572,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 							aFilter.push(property + " eq " + oRequestBody[property]);
 						}
 						var oResponse = jQuery.sap.sjax({
-							url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
+							url: that._oDraftMetadata.mockServerRootUri + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
 							dataType: "json"
 						});
 						if (!oResponse.success || !oResponse.data.d.results[0]) {
