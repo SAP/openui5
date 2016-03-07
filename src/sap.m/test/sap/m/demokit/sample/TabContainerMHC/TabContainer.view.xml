@@ -1,0 +1,93 @@
+<mvc:View controllerName="sap.m.sample.TabContainerMHC.TabContainer"
+          height="100%"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m">
+
+    <NavContainer id="navCon">
+        <Page id="table"
+              title="Product List">
+
+            <Table id="idProductsTable"
+                   mode="MultiSelect"
+                   items="{path: '/ProductCollection'}">
+
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <ToolbarSpacer/>
+                        <OverflowToolbarButton
+                                type="Transparent"
+                                icon="sap-icon://add"
+                                press="handleNewItemAdd"/>
+                    </OverflowToolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column width="12em">
+                        <Text text="Product"/>
+                    </Column>
+                    <Column width="12em">
+                        <Text text="Supplier"/>
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{Name}"/>
+                            <Text text="{SupplierName}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+
+            <footer>
+                <Toolbar>
+                    <ToolbarSpacer/>
+                    <Button id="idOpenSelected"
+                            text="Open selected item(s)"
+                            press="openSelectedItems"
+                            type="Emphasized"
+                            visible="false"/>
+                </Toolbar>
+            </footer>
+        </Page>
+
+        <Page id="tabContainerPage"
+              title="Tab Container"
+              showNavButton="true">
+
+            <footer>
+                <Toolbar>
+                    <ToolbarSpacer/>
+                    <Button id="idEditItem"
+                            text="Edit"
+                            press="handleTabContainerEditItem"
+                            type="Default"/>
+                    <Button id="idSaveItem"
+                            text="Save"
+                            press="handleTabContainerSaveItem"
+                            type="Emphasized"
+                            visible="false"/>
+                    <Button id="idCancel"
+                            text="Cancel"
+                            press="handleTabContainerCancelUpdate"
+                            type="Default"
+                            visible="false"/>
+                </Toolbar>
+            </footer>
+        </Page>
+
+        <Page id="addItemPage" showNavButton="true">
+            <footer>
+                <Toolbar>
+                    <ToolbarSpacer/>
+                    <Button text="Save"
+                            press="handleNewItemSave"
+                            type="Emphasized"/>
+                    <Button text="Cancel"
+                            press="handleNewItemCancel"
+                            type="Default"/>
+                </Toolbar>
+            </footer>
+        </Page>
+    </NavContainer>
+</mvc:View>
