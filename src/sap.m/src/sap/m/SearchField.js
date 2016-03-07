@@ -271,11 +271,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	SearchField.prototype.clear = function(oOptions) {
-		if (!this._inputElement || this.getValue() === "") {
+
+		// in case of escape, revert to the original value, otherwise clear with ""
+		var value = oOptions && oOptions.value || "";
+
+		if (!this._inputElement || this.getValue() === value) {
 			return;
 		}
 
-		this.setValue("");
+		this.setValue(value);
 		updateSuggestions(this);
 		this.fireLiveChange({newValue: ""});
 		this.fireSearch({
@@ -445,11 +449,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			event.stopPropagation();
 			event.preventDefault();
 		}
-		if (event.which === jQuery.sap.KeyCodes.ESCAPE && suggestionsOn(this)) {
-			// close picker
-			closeSuggestions(this);
+		if (event.which === jQuery.sap.KeyCodes.ESCAPE) {
+			if (suggestionsOn(this)) {
+				// close picker, do not reset the search field value
+				closeSuggestions(this);
+			} else {
+				// clear value, fire liveChange and change events
+				this.clear({ value: this._sOriginalValue });
+			}
 
-			// do not reset the search field value
+			// Chrome fires input event on escape,
+			// prevent it to avoid doubled change/liveChange:
 			event.stopPropagation();
 			event.preventDefault();
 		}
@@ -509,6 +519,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getShowRefreshButton()) {
 			this.$("search").removeAttr("title");
 		}
+
+		// Remember the original value for the case when the user presses ESC
+		this._sOriginalValue = this.getValue();
+
 		// Some applications do re-render during the liveSearch event.
 		// The input is focused and most browsers select the input text for copy.
 		// Any following key press deletes the whole selection.
