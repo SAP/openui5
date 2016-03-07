@@ -46,7 +46,26 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 			"sap.uxap.ModelMapping",
 			"sap.uxap.ObjectPageHeaderLayoutData"
 		],
-		version: "${version}"
+		version: "${version}",
+		extensions: {
+			flChangeHandlers: {
+				"sap.uxap.ObjectPageLayout": {
+					"moveElements": "default",
+					"propertyChange": "default"
+				},
+				"sap.uxap.ObjectPageSection": {
+					"hideControl": "default",
+					"unhideControl": "default",
+					"propertyChange": "default"
+				},
+				"sap.uxap.ObjectPageHeader": {
+					"propertyChange": "default"
+				},
+				"sap.uxap.ObjectPageHeaderActionButton": {
+					"propertyChange": "default"
+				}
+			}
+		}
 	});
 
 	/**
