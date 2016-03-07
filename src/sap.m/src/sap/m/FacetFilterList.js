@@ -456,6 +456,11 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		var bindingInfoaFilters;
 		var numberOfsPath = 0;
 
+		//Checks whether given model is one of the OData Model(s)
+		function isODataModel(oModel) {
+			return oModel instanceof sap.ui.model.odata.ODataModel || oModel instanceof sap.ui.model.odata.v2.ODataModel;
+		}
+
 		if (force || (sSearchVal !== this._searchValue)) {
 			this._searchValue = sSearchVal;
 			var oBinding = this.getBinding("items");
@@ -476,7 +481,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 					var path = this.getBindingInfo("items").template.getBindingInfo("text").parts[0].path;
 					if (path) {
 						var oUserFilter = new sap.ui.model.Filter(path, sap.ui.model.FilterOperator.Contains, sSearchVal);
-						if (oBinding.getModel() instanceof sap.ui.model.odata.ODataModel && this.getEnableCaseInsensitiveSearch()){
+						if (this.getEnableCaseInsensitiveSearch() && isODataModel(oBinding.getModel())){
 							 //notice the single quotes wrapping the value from the UI control!
 							var sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
 							sEncodedString = sEncodedString.toLowerCase();
