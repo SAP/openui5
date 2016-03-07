@@ -223,13 +223,14 @@ sap.ui.define([
 	 *  @private
 	 */
 	ODataContextBinding.prototype.requestValue = function (sPath) {
-		var that = this,
-			bDataRequested = false;
+		var bDataRequested = false,
+			sGroupId = this.oModel.getGroupId(),
+			that = this;
 
 		if (this.oCache) {
-			return this.oCache.read(this.oModel.getGroupId(), sPath, function () {
+			return this.oCache.read(sGroupId, sPath, function () {
 				bDataRequested = true;
-				that.oModel.dataRequested(that.oModel.getGroupId(),
+				that.oModel.dataRequested(sGroupId,
 					that.fireDataRequested.bind(that));
 			}).then(function (vValue) {
 				if (bDataRequested) {

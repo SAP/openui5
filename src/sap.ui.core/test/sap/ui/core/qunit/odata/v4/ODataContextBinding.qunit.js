@@ -374,12 +374,13 @@ sap.ui.require([
 			assert.strictEqual(oContextBinding.attachEvent(sEvent, mEventParameters), oReturn);
 		});
 	});
+
 	//*********************************************************************************************
 	QUnit.test("Use model's groupId", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
 			oReadPromise = Promise.resolve();
 
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
 			.returns("groupId");
 		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId").callsArg(2)
 			.returns(oReadPromise);

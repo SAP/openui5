@@ -39,7 +39,7 @@ sap.ui.define([
 				sQuery = URI.buildQuery(oModel.mUriParameters);
 				sQuery = sQuery ? "?" + sQuery : "";
 				if (jQuery.sap.getUriParameters().get("$direct")) { // switch off batch
-					mModelParameters = {defaultGroup : "$direct"}
+					mModelParameters = {defaultGroup : "$direct"};
 				}
 				oModel = new ODataModel(sServiceUrl + sQuery, mModelParameters);
 				this.setModel(oModel);

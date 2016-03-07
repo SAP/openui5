@@ -150,6 +150,11 @@ sap.ui.define([
 		var that = this,
 			aCallbacks = this.mDataRequestedCallbacks[sGroupId];
 
+		if (sGroupId === undefined) {
+			fnBatchRequestSent();
+			return;
+		}
+
 		if (aCallbacks) {
 			aCallbacks.push(fnBatchRequestSent);
 		} else {
@@ -351,7 +356,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the model's group id as needed by
+	 * Returns the model's group ID as needed by
 	 * {@link sap.ui.model.odata.v4.lib._Requestor#request}.
 	 *
 	 * @returns {string}
