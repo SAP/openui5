@@ -137,7 +137,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this._oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
 		this._oFormatLong = sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long"});
-		this._oFormatTime = sap.ui.core.format.DateFormat.getTimeInstance({style: "short"});
 		this._oFormatDate = sap.ui.core.format.DateFormat.getDateInstance({style: "medium"});
 
 		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
@@ -248,6 +247,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		this.setProperty("intervalMinutes", iMinutes, false); // rerender
+
+		this._oFormatTime = undefined; // could change
 
 		return this;
 
@@ -395,9 +396,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		var sLocale = this._getLocale();
 
-		if (this._oFormatTime.oLocale.toString() != sLocale) {
+		if (!this._oFormatTime || this._oFormatTime.oLocale.toString() != sLocale) {
 			var oLocale = new sap.ui.core.Locale(sLocale);
-			this._oFormatTime = sap.ui.core.format.DateFormat.getTimeInstance({style: "short"}, oLocale);
+			var iIntervalMinutes = this.getIntervalMinutes();
+			var oLocaleData = this._getLocaleData();
+			var sPattern;
+			this._oFormatTimeAmPm = undefined;
+
+			if (iIntervalMinutes % 60 == 0) {
+				// don't display minutes
+				sPattern = oLocaleData.getPreferredHourSymbol();
+				if (oLocaleData.getTimePattern("short").search("a") >= 0) {
+					// AP/PM indicator used
+					this._oFormatTimeAmPm = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "a"}, oLocale);
+				}
+			} else {
+				sPattern = oLocaleData.getTimePattern("short");
+				// no leading zeros
+				sPattern = sPattern.replace("HH", "H");
+				sPattern = sPattern.replace("hh", "h");
+				if (sPattern.search("a") >= 0) {
+					// AP/PM indicator used
+					this._oFormatTimeAmPm = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "a"}, oLocale);
+					sPattern = sPattern.replace("a", "").trim();
+				}
+			}
+			this._oFormatTime = sap.ui.core.format.DateFormat.getTimeInstance({pattern: sPattern}, oLocale);
 		}
 
 		return this._oFormatTime;

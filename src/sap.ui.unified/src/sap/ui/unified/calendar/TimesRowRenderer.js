@@ -129,9 +129,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		var iItems = oTimesRow.getItems();
 		var sWidth = ( 100 / iItems ) + "%";
 		var oItemDate = oTimesRow._getIntervalStart(oDate);
+		var sOldAmPm = "";
+		var sAmPm = "";
 
 		for (var i = 0; i < iItems; i++) {
-			this.renderTime(oRm, oTimesRow, oItemDate, oHelper, sWidth);
+			if (oHelper.oFormatTimeAmPm) {
+				sAmPm = oHelper.oFormatTimeAmPm.format(oItemDate, true);
+				if (sOldAmPm == sAmPm) {
+					sAmPm = "";
+				} else {
+					sOldAmPm = sAmPm;
+				}
+			}
+			this.renderTime(oRm, oTimesRow, oItemDate, oHelper, sWidth, sAmPm);
 			oItemDate.setUTCMinutes(oItemDate.getUTCMinutes() + oHelper.iMinutes);
 		}
 
@@ -148,13 +158,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		oHelper.sId = oTimesRow.getId();
 		oHelper.oFormatLong = oTimesRow._getFormatLong();
 		oHelper.oFormatTime = oTimesRow._getFormatTime();
+		oHelper.oFormatTimeAmPm = oTimesRow._oFormatTimeAmPm;
 		oHelper.iMinutes = oTimesRow.getIntervalMinutes();
 
 		return oHelper;
 
 	};
 
-	TimesRowRenderer.renderTime = function(oRm, oTimesRow, oDate, oHelper, sWidth){
+	TimesRowRenderer.renderTime = function(oRm, oTimesRow, oDate, oHelper, sWidth, sAmPm){
 
 		var mAccProps = {
 				role: "gridcell",
@@ -221,6 +232,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		oRm.writeClasses();
 		oRm.write(">"); // span
 		oRm.write(oHelper.oFormatTime.format(oDate, true));
+//		oRm.write("</span>");
+
+		if (sAmPm) {
+			oRm.write("<span");
+			oRm.addClass("sapUiCalItemTextAmPm");
+			oRm.writeClasses();
+			oRm.write(">"); // span
+			oRm.write(sAmPm);
+			oRm.write("</span>");
+		}
 		oRm.write("</span>");
 
 		oRm.write("</div>");

@@ -70,24 +70,24 @@
 		};
 
 		var handleAddRow = function(oEvent){
-			var oTC = sap.ui.getCore().byId("PC1");
+			var oPC = sap.ui.getCore().byId("PC1");
 			var oRow = new sap.m.PlanningCalendarRow({
 				icon: "sap-icon://employee",
 				title: "new Row"
 			});
-			oTC.addRow(oRow);
+			oPC.addRow(oRow);
 		};
 
 		var handleAddAppointment = function(oEvent){
-			var oTC = sap.ui.getCore().byId("PC1");
-			var oStartDate = oTC.getStartDate();
-			var sViewKey = oTC.getViewKey();
+			var oPC = sap.ui.getCore().byId("PC1");
+			var oStartDate = oPC.getStartDate();
+			var sViewKey = oPC.getViewKey();
 			var oEventStartDate = oEvent.getParameter("startDate");
 			var oEventEndDate = oEvent.getParameter("endDate");
 			var oEventSubInterval = oEvent.getParameter("subInterval");
 			var oEventRow = oEvent.getParameter("row");
-			var oStartDate = oEventStartDate || oTC.getStartDate();
-			var aSelectedRows = oTC.getSelectedRows();
+			var oStartDate = oEventStartDate || oPC.getStartDate();
+			var aSelectedRows = oPC.getSelectedRows();
 			var iStartOffset = 3;
 			var iEndOffset = 3;
 
@@ -163,11 +163,11 @@
 			icon: "sap-icon://multi-select",
 			type: sap.m.ButtonType.Transparent,
 			press: function(oEvent) {
-								var oTC = sap.ui.getCore().byId("PC1");
+								var oPC = sap.ui.getCore().byId("PC1");
 								if(oEvent.getParameter("pressed")) {
-									oTC.setSingleSelection(false);
+									oPC.setSingleSelection(false);
 								}else {
-									oTC.setSingleSelection(true);
+									oPC.setSingleSelection(true);
 								}
 							}
 		});
@@ -189,9 +189,9 @@
 			type: sap.m.ButtonType.Transparent,
 			pressed: true,
 			press: function(oEvent) {
-				var oTC = sap.ui.getCore().byId("PC1");
+				var oPC = sap.ui.getCore().byId("PC1");
 				var bPressed = oEvent.getParameter("pressed");
-				oTC.setShowIntervalHeaders(bPressed);
+				oPC.setShowIntervalHeaders(bPressed);
 			}
 		});
 
@@ -200,9 +200,9 @@
 			type: sap.m.ButtonType.Transparent,
 			pressed: true,
 			press: function(oEvent) {
-				var oTC = sap.ui.getCore().byId("PC1");
+				var oPC = sap.ui.getCore().byId("PC1");
 				var bPressed = oEvent.getParameter("pressed");
-				oTC.setShowRowHeaders(bPressed);
+				oPC.setShowRowHeaders(bPressed);
 			}
 		});
 
@@ -210,6 +210,17 @@
 			icon: "sap-icon://legend",
 			type: sap.m.ButtonType.Transparent,
 			press: handleLegend
+		});
+
+		var oButtonReducedHeight = new sap.m.ToggleButton("B_ReducedHeight", {
+			icon: "sap-icon://resize-vertical",
+			type: sap.m.ButtonType.Transparent,
+			pressed: false,
+			press: function(oEvent) {
+				var oPC = sap.ui.getCore().byId("PC1");
+				var bPressed = oEvent.getParameter("pressed");
+				oPC.setAppointmentsReducedHeight(bPressed);
+			}
 		});
 
 		var oTitle = new sap.m.Title("Title1", {
@@ -347,7 +358,8 @@
 			                 oButtonAddRow,
 			                 oButtonShowIntervalHeaders,
 			                 oButtonShowRowHeaders,
-			                 oButtonLegend],
+			                 oButtonLegend,
+			                 oButtonReducedHeight],
 			appointmentSelect: handleAppointmentSelect,
 			intervalSelect: handleAddAppointment
 		});

@@ -466,6 +466,21 @@
 				ok(!$Appointment6.get(0), "Appointment6 not rendered");
 				ok(!$Appointment7.get(0), "Appointment7 not rendered");
 				ok(!$Appointment8.get(0), "Appointment8 not rendered");
+
+			});
+
+			test("Appointments - EmptyIntervalHeaders", function() {
+				oRow1.setShowEmptyIntervalHeaders(false);
+				sap.ui.getCore().applyChanges();
+				var oHead = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
+				ok(!oHead, "no empty Head area rendered");
+
+				oRow1.setShowEmptyIntervalHeaders(true);
+				sap.ui.getCore().applyChanges();
+				oHead = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
+				ok(oHead, "Interval0: Head area rendered again");
+				equal(jQuery(oHead).children().length, 0, "Interval0: Head has no content");
+
 			});
 
 			test("Appointments - change properties", function() {
@@ -556,6 +571,9 @@
 				equal(jQuery(oHead).children().length, 0, "Interval5: Head has no content");
 				ok(!jQuery(oHead).attr("title"), "Interval5: Head has no tooltip rendered");
 				ok(!jQuery(oHead).hasClass("sapUiCalendarRowAppsIntHeadType01"), "Interval5: Head has no type rendered");
+
+				ok(jQuery("#Row1-AppsInt0").hasClass("sapUiCalendarRowAppsIntLast"), "Interval0 is last of month");
+				ok(jQuery("#Row1-AppsInt1").hasClass("sapUiCalendarRowAppsIntFirst"), "Interval1 is first of month");
 			});
 
 			test("Subintervals - days view", function() {
