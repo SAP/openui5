@@ -1862,67 +1862,46 @@ oPopover.setContentWidth("30%");
 	 * @private
 	 */
 	FacetFilter.prototype._checkOverflow = function() {
-
-		var oBarHead = this.getDomRef("head");
-		var $bar = this.$();
-
-		var bScrolling = false;
-
-		if (oBarHead) {
-
-			if (oBarHead.scrollWidth > oBarHead.clientWidth) {
-				// scrolling possible
-				bScrolling = true;
-			}
-		}
-
-		$bar.toggleClass("sapMFFScrolling", bScrolling);
-		$bar.toggleClass("sapMFFNoScrolling", !bScrolling);
-		this._lastScrolling = bScrolling;
+		var oBarHead = this.getDomRef("head"),
+			$List = jQuery(oBarHead),
+			$Bar = this.$(),
+			bScrollBack = false,
+			bScrollForward = false,
+			bScrolling = false,
+			iBarScrollLeft = null,
+			iBarScrollWidth = null,
+			iBarClientWidth = null;
 
 		if (oBarHead) {
-			var iScrollLeft = oBarHead.scrollLeft;
+			iBarScrollLeft = oBarHead.scrollLeft;
+			iBarScrollWidth = oBarHead.scrollWidth; //sp realwidth>availablewidth
+			iBarClientWidth = oBarHead.clientWidth;
 
-			// check whether scrolling to the left is possible
-			var bScrollBack = false;
-			var bScrollForward = false;
-
-			var realWidth = oBarHead.scrollWidth;  //sp realwidth>availablewidth
-			var availableWidth = oBarHead.clientWidth;
-
-
-			if (Math.abs(realWidth - availableWidth) == 1) { // Avoid rounding issues see CSN 1316630 2013
-				realWidth = availableWidth;
-			}
-
-			if (!this._bRtl) { // normal LTR mode
-
-				if (iScrollLeft > 0 ) {
-								bScrollBack = true;
-
-				}
-				if ((realWidth > availableWidth) && (iScrollLeft + availableWidth < realWidth)) {
-					bScrollForward = true;
-
-				}
-
-			} else { // RTL mode
-				var $List = jQuery(oBarHead);
-				if ($List.scrollLeftRTL() > 0) {
-					bScrollForward = true;
-				}
-				if ($List.scrollRightRTL() > 0 ) {
-
-					bScrollBack = true;
+			if (iBarScrollWidth > iBarClientWidth) {
+				if (iBarScrollWidth - iBarClientWidth == 1) {
+					// Avoid rounding issues see CSN 1316630 2013
+					iBarScrollWidth = iBarClientWidth;
+				} else {
+					bScrolling = true;
 				}
 			}
+			$Bar.toggleClass("sapMFFScrolling", bScrolling);
+			$Bar.toggleClass("sapMFFNoScrolling", !bScrolling);
+			this._lastScrolling = bScrolling;
 
+			if (!this._bRtl) {
+				bScrollBack = iBarScrollLeft > 0;
+				bScrollForward = (iBarScrollWidth > iBarClientWidth) && (iBarScrollWidth > iBarScrollLeft + iBarClientWidth);
+			} else {
+				bScrollForward = $List.scrollLeftRTL() > 0;
+				bScrollBack = $List.scrollRightRTL() > 0;
+			}
 			// only do DOM changes if the state changed to avoid periodic application of identical values
 			if ((bScrollForward != this._bPreviousScrollForward) || (bScrollBack != this._bPreviousScrollBack)) {
-				$bar.toggleClass("sapMFFNoScrollBack", !bScrollBack);
-				$bar.toggleClass("sapMFFNoScrollForward", !bScrollForward);
+				$Bar.toggleClass("sapMFFNoScrollBack", !bScrollBack);
+				$Bar.toggleClass("sapMFFNoScrollForward", !bScrollForward);
 			}
-			}
+		}
 	};
 
 	/**
