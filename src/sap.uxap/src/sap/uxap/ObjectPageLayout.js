@@ -1231,7 +1231,7 @@ sap.ui.define([
 
 			this._adjustLayout(null, true);
 
-			this._oScroller.scrollTo(0, this._$opWrapper.scrollTop(), 0);
+			this._scrollTo(this._$opWrapper.scrollTop(), 0);
 		});
 
 	};
