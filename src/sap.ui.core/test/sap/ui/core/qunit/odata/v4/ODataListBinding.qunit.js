@@ -935,7 +935,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("Use model's groupId", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
-			oReadPromise = Promise.resolve();
+			oReadPromise = createResult(0);
 
 		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
 			.returns("groupId");
