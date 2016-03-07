@@ -23,12 +23,10 @@
 				<Panel width="auto" height="100%" headerText="Configruation Area">
 					<content>
 						<l:VerticalLayout width="100%">
-							<RadioButtonGroup>
-							<buttons>
-								<RadioButton selected="{path: '/mode/maniFirstServer'}" text="Load manifest.json from server via parameter manifestFirst=true (Default Behavior)"></RadioButton>
-								<RadioButton selected="{path: '/mode/maniFirstDynamic'}" text="Redirect Request for manifest.json to Dynamic Codeing Box below"></RadioButton>
-								<RadioButton selected="{path: '/mode/maniUrl'}" text="Load manifest.json from server via parameter manifestUrl=..."></RadioButton>
-							</buttons>
+							<RadioButtonGroup selectedIndex="{/mode}">
+								<RadioButton text="Load manifest.json from server via parameter manifestFirst=true (Default Behavior)"></RadioButton>
+								<RadioButton text="Redirect Request for manifest.json to Dynamic Codeing Box below"></RadioButton>
+								<RadioButton text="Load manifest.json from server via parameter manifestUrl=..."></RadioButton>
 							</RadioButtonGroup>
 							<Label text="Predefined Manifest"></Label>
 							<ComboBox width="100%" id="ManiSelector" items="{path: '/manifests'}" selectionChange="selectChange" selectedKey="{/selectedManifestKey}">
@@ -130,6 +128,7 @@
 			}
 		},
 		"selectedManifestKey": "m3",
+		"mode": 0,
 		"async": true
 	};
 
@@ -203,18 +202,23 @@
 
 		var manifirst = true;
 
-		if (sap.ui.getCore().byId("__group0-0").getSelected()){
-			initFakeServer();
-			manifirst = true;
-
-		} else if (sap.ui.getCore().byId("__group0-1").getSelected()){
-			initFakeServer("./samples/manifestfirst/customer/manifest.json");
-			manifirst = true;
-
-		} else if (sap.ui.getCore().byId("__group0-2").getSelected()){
-			initFakeServer("anylocation/manifest.json");
-			manifirst = false;
-		}
+		var iMode = oManifestModel.getProperty("/mode");
+		switch (iMode) {
+			case 0:
+				initFakeServer();
+				manifirst = true;
+				break;
+			case 1:
+				initFakeServer("./samples/manifestfirst/customer/manifest.json");
+				manifirst = true;
+				break;
+			case 2:
+				initFakeServer("anylocation/manifest.json");
+				manifirst = false;
+				break;
+			default:
+				manifirst = false;
+		};
 
 		var oConfig = {
 			manifestUrl: manifirst ? undefined : "anylocation/manifest.json",
