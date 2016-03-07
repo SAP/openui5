@@ -70,18 +70,24 @@ sap.ui.define(['jquery.sap.global'],
 		if (oFileUploader.getTooltip()) {
 			sTooltip = oFileUploader.getTooltip_AsString();
 		}
+
 		var sPlaceholder = "";
 		if (oFileUploader.getPlaceholder()) {
 			sPlaceholder = oFileUploader.getPlaceholder();
 		}
+
 		var sValue = "";
 		if (oFileUploader.getValue()) {
 			sValue = oFileUploader.getValue();
 		}
+
 		var sButtonText = "";
 		if (oFileUploader.getButtonText()) {
 			sButtonText = oFileUploader.getButtonText();
+		} else {
+			sButtonText = oFileUploader.getBrowseText();
 		}
+
 		if (!sValue) {
 			sAriaText = sTooltip + " " + sPlaceholder + " " + sButtonText;
 		} else {
