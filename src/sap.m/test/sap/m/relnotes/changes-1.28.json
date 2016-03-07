@@ -4728,5 +4728,64 @@
         "references": []
       }
     ]
+  },
+  "1.28.29": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "3493ed8132a08db8fa072d036d492c901a99f1ff",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.SplitContainer: Popover mode is fixed",
+        "references": []
+      },
+      {
+        "id": "af1790b0c3ec746ff774dc2470a5afd51cb771c2",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: setSelectedItem method is working correctly now",
+        "references": []
+      },
+      {
+        "id": "f802f844482de508df24cc27dd9b272993582314",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: Image preserves aspect ratio",
+        "references": []
+      },
+      {
+        "id": "7349859e8d4f0a51a6bf1139ff0c16f0cb10ea25",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: Attribute and Statuses columns take equal space",
+        "references": []
+      }
+    ]
+  },
+  "1.28.30": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "c6d4c38701a91d4cc0789ab201546df61bd52b24",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: press event survives re-rendering",
+        "references": []
+      },
+      {
+        "id": "18a47fb9ba8284bfdc396cb9753317799564401d",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Control is now rendered correctly inside a dialog",
+        "references": []
+      },
+      {
+        "id": "82a0a89b7c03b3dc2b5f9cfa591f5f4b1942a8a6",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Text for upload completed improved",
+        "references": []
+      }
+    ]
   }
 }
