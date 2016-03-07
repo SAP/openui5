@@ -384,9 +384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	};
 
 	TableRenderer.getAriaAttributesForRowHdr = function(oTable) {
-		return {
-			"aria-label": {value: oTable._oResBundle.getText("TBL_SELECT_ALL_KEY"), escaped: true}
-		};
+		return {};
 	};
 
 	TableRenderer.renderColRowHdr = function(rm, oTable) {

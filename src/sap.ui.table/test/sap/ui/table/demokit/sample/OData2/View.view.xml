@@ -21,10 +21,11 @@
 				columns="{
 					path: 'meta>/dataServices/schema/[${namespace}===\'MYSAMPLE\']/entityType/[${name}===\'Product\']/property',
 					factory: '.columnFactory'
-				}">
+				}"
+				ariaLabelledBy="title">
 				<toolbar>
 					<m:Toolbar>
-						<m:Title text="Products"></m:Title>
+						<m:Title id="title" text="Products"></m:Title>
 					</m:Toolbar>
 				</toolbar>
 				<noData>

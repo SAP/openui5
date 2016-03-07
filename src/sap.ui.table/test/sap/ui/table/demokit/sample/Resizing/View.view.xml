@@ -17,10 +17,11 @@
 				visibleRowCount="7"
 				minAutoRowCount="5"
 				visibleRowCountMode="{/visibleRowCountMode}"
-				columnResize="onColumnResize">
+				columnResize="onColumnResize"
+				ariaLabelledBy="title">
 				<toolbar>
 					<m:Toolbar>
-						<m:Title text="Products"></m:Title>
+						<m:Title id="title" text="Products"></m:Title>
 					</m:Toolbar>
 				</toolbar>
 				<columns>
