@@ -820,6 +820,24 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchUI5Type: collection", function (assert) {
+		var sPath = "/EMPLOYEES/0/foo",
+			oSyncPromise;
+
+		this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
+			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
+			.returns(SyncPromise.resolve({
+				$Type : "Edm.String",
+				$isCollection : true
+			}));
+
+		oSyncPromise = this.oMetaModel.fetchUI5Type(sPath);
+		assert.ok(oSyncPromise.isRejected());
+		assert.strictEqual(oSyncPromise.getResult().message,
+			"Unsupported collection type at " + sPath);
+	});
+
+	//*********************************************************************************************
 	//TODO make these types work with odata v4
 	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
