@@ -2832,5 +2832,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.30": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "265d9bc027a301ddd31bf04069405b5f8ccf67a5",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "FocusHandler: fail safety after destruction",
+        "references": []
+      },
+      {
+        "id": "28085c356e007382d487327a0288cc274016dd35",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Call error handler in case of SAML redirect",
+        "references": []
+      }
+    ]
   }
 }

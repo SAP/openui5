@@ -4761,5 +4761,31 @@
         "references": []
       }
     ]
+  },
+  "1.28.30": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "c6d4c38701a91d4cc0789ab201546df61bd52b24",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: press event survives re-rendering",
+        "references": []
+      },
+      {
+        "id": "18a47fb9ba8284bfdc396cb9753317799564401d",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Control is now rendered correctly inside a dialog",
+        "references": []
+      },
+      {
+        "id": "82a0a89b7c03b3dc2b5f9cfa591f5f4b1942a8a6",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Text for upload completed improved",
+        "references": []
+      }
+    ]
   }
 }
