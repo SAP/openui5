@@ -139,5 +139,45 @@
         "references": []
       }
     ]
+  },
+  "1.36.4": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "db8d7c7475500f50af340ff2f1aa20920c7dbbb1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: calendar loose focus by keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "83023213594785d598f4230b103f18a205ba871c",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified Explored Examples: Fix styling",
+        "references": []
+      },
+      {
+        "id": "04866520a9689f3af901f0253cd8fb7d59495cf1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: improve sample pages - calendarType",
+        "references": []
+      },
+      {
+        "id": "08ac6ec294fb362c69be581bb72f9fe5ad8437aa",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: clickable area fixed",
+        "references": []
+      },
+      {
+        "id": "ac051d5e077c044fef74a26510f09dfe17bc6fc9",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.SplitContainer: Left-to-right - Right-to-Left mode switch not recognized after control initialization",
+        "references": []
+      }
+    ]
   }
 }
