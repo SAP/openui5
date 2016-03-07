@@ -112,6 +112,9 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 		}
 		var oOverflowButton = oControl.getAggregation("_overflowButton");
 		oRm.renderControl(oOverflowButton);
+
+		this._renderSideContentBtn(oRm, oControl);
+
 		oRm.write("</span>");
 
 		oRm.write("</div>");
@@ -258,7 +261,7 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 	 * @param {sap.ui.core.RenderManager}
 	 *            oRm the RenderManager that can be used for writing to the render output buffer
 	 *
-	 * @param {sap.m.ObjectHeader}
+	 * @param {sap.uxap.ObjectPageHeader}
 	 *            oControl the ObjectPageHeader
 	 * @param {boolean}
 	 *      bTitleInContent - if the arrow will be rendered in content or in title
@@ -278,6 +281,32 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon"], function (ObjectPageLa
 			oRm.write("</span>"); // end title arrow container
 		}
 	};
+
+	/**
+	 * Renders the showSideContentButton button.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRm the RenderManager that can be used for writing to the render output buffer
+	 *
+	 * @param {sap.uxap.ObjectPageHeader}
+	 *            oControl the ObjectPageHeader
+	 * @private
+	 */
+	ObjectPageHeaderRenderer._renderSideContentBtn = function (oRm, oControl) {
+		if (oControl.getShowSideContentButton()) { // render sideContent button
+			oRm.write("<span"); // Start title arrow container
+			oRm.addClass("sapUxAPObjectPageHeaderSideContentBtn");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.write("<span");
+			oRm.addClass("sapUxAPObjectPageHeaderSeparator");
+			oRm.writeClasses();
+			oRm.write("></span>");
+			oRm.renderControl(oControl._oSideContentBtn);
+			oRm.write("</span>"); // end title arrow container
+		}
+	};
+
 
 	/**
 	 * Renders the Unsaved Changes icon.
