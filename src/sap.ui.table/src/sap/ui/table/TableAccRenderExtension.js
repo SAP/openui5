@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global'],
 							oTable.getTitle().getText() :
 							oBundle.getText("TBL_TABLE");
 			_writeAccText(oRm, sTableId, "ariadesc", sDesc);
-			// aria description for the row count
+			// aria description for the row and column count
 			_writeAccText(oRm, sTableId, "ariacount");
 			// aria description for toggling the edit mode
 			_writeAccText(oRm, sTableId, "toggleedit", oBundle.getText("TBL_TOGGLE_EDIT_KEY"));
@@ -83,6 +83,47 @@ sap.ui.define(['jquery.sap.global'],
 			var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
 			sText += mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
 			return sText + "</div>";
+		},
+
+		getCellLabels: function(oTable, oColumn, bFixedColumn, bJoin) {
+			var aLabels = [oTable.getId() + "-ariadesc"];
+
+			var aMultiLabels = oColumn.getMultiLabels();
+			var iMultiLabels = aMultiLabels.length;
+
+			// get IDs of column labels
+			if (oTable.getColumnHeaderVisible()) {
+				var sColumnId = oColumn.getId();
+				aLabels.push(sColumnId); // first column header has no suffix, just the column ID
+				if (iMultiLabels > 1) {
+					for (var i = 1; i < iMultiLabels; i++) {
+						aLabels.push(sColumnId + "_" + i); // for all other column header rows we add the suffix
+					}
+				}
+			} else {
+				// column header is not rendered therefore there is no <div> tag. Link aria description to label
+				var oLabel;
+				if (iMultiLabels == 0) {
+					oLabel = oColumn.getLabel();
+					if (oLabel) {
+						aLabels.push(oLabel.getId());
+					}
+				} else {
+					for (var i = 0; i < iMultiLabels; i++) {
+						// for all other column header rows we add the suffix
+						oLabel = aMultiLabels[i];
+						if (oLabel) {
+							aLabels.push(oLabel.getId());
+						}
+					}
+				}
+			}
+
+			if (bFixedColumn) {
+				aLabels.push(oTable.getId() + "-ariafixedcolumn");
+			}
+
+			return bJoin ? aLabels.join(" ") : aLabels;
 		}
 
 	};

@@ -2330,20 +2330,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	Table.prototype._updateNoData = function() {
 		// no data?
 		if (this.getShowNoData()) {
-			var oBinding = this.getBinding("rows");
-			if (!this._hasData()) {
-				if (!this.$().hasClass("sapUiTableEmpty")) {
-					this.$().addClass("sapUiTableEmpty");
-				}
-				// update the ARIA text for the row count
-				this.$("ariacount").text(this._oResBundle.getText("TBL_DATA_ROWS", [0]));
-			} else {
-				if (this.$().hasClass("sapUiTableEmpty")) {
-					this.$().removeClass("sapUiTableEmpty");
-				}
-				// update the ARIA text for the row count
-				this.$("ariacount").text(this._oResBundle.getText("TBL_DATA_ROWS", [(oBinding.getLength() || 0)]));
-			}
+			this.$().toggleClass("sapUiTableEmpty", !this._hasData());
 		}
 	};
 
@@ -2507,8 +2494,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._getRowCount = function() {
-		var oBinding = this.getBinding("rows");
-		return oBinding ? (oBinding.getLength() || 0) : 0;
+		return this._iBindingLength;
 	};
 
 	/**
@@ -3338,7 +3324,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		var $target = jQuery(oEvent.target);
 		var bNoData = this.$().hasClass("sapUiTableEmpty");
 		var bControlBefore = $target.hasClass("sapUiTableCtrlBefore");
-		this._getAccExtension().updateAccForCurrentCell(true);
 
 		// KEYBOARD HANDLING (_bIgnoreFocusIn is set in onsaptabXXX)
 		if (!this._bIgnoreFocusIn && (bControlBefore || $target.hasClass("sapUiTableCtrlAfter"))) {

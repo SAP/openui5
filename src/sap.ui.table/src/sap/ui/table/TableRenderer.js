@@ -106,9 +106,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		// Define group for F6 handling
 		rm.writeAttribute("data-sap-ui-fastnavgroup", "true");
-		if (oTable._bAccMode) {
-			rm.writeAttribute("aria-describedby", oTable.getId() + "-ariacount");
-		}
 		rm.write(">");
 
 		this.renderColRsz(rm, oTable);
@@ -978,55 +975,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	};
 
 	TableRenderer.getAriaAttributesForCell = function(oTable, bFixedTable, oRow, oColumn, iColIndex, oCell) {
-		var mAriaAttributes = {};
-
-		mAriaAttributes["headers"] = {value: oTable.getId() + "_col" + iColIndex};
-		mAriaAttributes["role"] = {value: "gridcell"};
-
-		var aMultiLabels = oColumn.getMultiLabels();
-		var iMultiLabels = aMultiLabels.length;
-		var sLabels = "";
-
-		// get IDs of column labels
-		if (oTable.getColumnHeaderVisible()) {
-			var sColumnId = oColumn.getId();
-			// first column header has no suffix, just the column ID
-			sLabels = sColumnId;
-			if (iMultiLabels > 1) {
-				for (var i = 1; i < iMultiLabels; i++) {
-					// for all other column header rows we add the suffix
-					sLabels += " " + sColumnId + "_" + i;
-				}
-			}
-		} else {
-			// column header is not rendered therfore there is no <div> tag. Link aria description to label
-			var oLabel;
-			if (iMultiLabels == 0) {
-				oLabel = oColumn.getLabel();
-				if (oLabel) {
-					sLabels = oLabel.getId();
-				}
-			} else {
-				for (var i = 0; i < iMultiLabels; i++) {
-					// for all other column header rows we add the suffix
-					oLabel = aMultiLabels[i];
-					if (oLabel) {
-						sLabels += " " + oLabel.getId() + " ";
-					}
-				}
-			}
-		}
-
-
-		var sLabelledBy = oTable.getId() + "-ariadesc " + sLabels;
-
-		if (bFixedTable) {
-			sLabelledBy += " " + oTable.getId() + "-ariafixedcolumn";
-		}
-
-		oCell._sLabelledBy = sLabelledBy;
-
-		mAriaAttributes["aria-labelledby"] = {value: sLabelledBy};
+		var mAriaAttributes = {
+			"headers" : {value: oTable.getId() + "_col" + iColIndex},
+			"role" : {value: "gridcell"},
+			"aria-labelledby" : {value: oTable._getAccRenderExtension().getCellLabels(oTable, oColumn, bFixedTable, true)}
+		};
 
 		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
 			mAriaAttributes["aria-selected"] = {value: "false"};

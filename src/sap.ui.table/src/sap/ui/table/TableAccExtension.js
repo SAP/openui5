@@ -198,6 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		if (oIN) {
 			var oRowNoElem = document.getElementById(oTable.getId() + "-rownumberofrows");
 			var oColNoElem = document.getElementById(oTable.getId() + "-colnumberofcols");
+			var oRowColNoElem = document.getElementById(oTable.getId() + "-ariacount");
 
 			var iIndex = oIN.getFocusedIndex();
 			var iColumnNumber = iIndex % oIN.iColumns;
@@ -207,8 +208,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 
 			bIsRowChanged = oExtension._iLastRowNumber != iRowIndex || (oExtension._iLastRowNumber == iRowIndex && oExtension._iLastColumnNumber == iColumnNumber);
 
-			oRowNoElem.innerText = bIsRowChanged ? oTable._oResBundle.getText("TBL_ROW_ROWCOUNT", [iRowIndex, iTotalRowCount]) : " ";
+			oRowNoElem.innerText = bIsRowChanged ? oTable._oResBundle.getText("TBL_ROW_ROWCOUNT", [iRowIndex, Math.max(iTotalRowCount, oTable.getVisibleRowCount())]) : " ";
 			oColNoElem.innerText = oExtension._iLastColumnNumber != iColumnNumber ? oTable._oResBundle.getText("TBL_COL_COLCOUNT", [iColumnNumber, oTable._getVisibleColumnCount()]) : " ";
+			oRowColNoElem.innerText = !oExtension._iLastRowNumber && !oExtension._iLastColumnNumber ?
+										oTable._oResBundle.getText("TBL_DATA_ROWS_COLS", [Math.max(iTotalRowCount, oTable.getVisibleRowCount()), oTable._getVisibleColumnCount()]) : " ";
 
 			oExtension._iLastRowNumber = iRowIndex;
 			oExtension._iLastColumnNumber = iColumnNumber;
@@ -221,6 +224,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		var oCellAccElem = document.getElementById(oExtension.getTable().getId() + "-cellacc");
 		if (oCellAccElem) {
 			oCellAccElem.innerText = sText;
+		}
+	};
+
+	var _cleanupLastFocusedCell = function(oExtension) {
+		if (oExtension._cleanupInfo) {
+			oExtension._cleanupInfo.cell.attr(oExtension._cleanupInfo.attr);
+			oExtension._cleanupInfo = null;
 		}
 	};
 
@@ -244,6 +254,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			BaseObject.call(this);
 			this._table = oTable;
 			this._accMode = sap.ui.getCore().getConfiguration().getAccessibility();
+
+			var that = this;
+
+			this._table.addEventDelegate({
+				onfocusin : function(oEvent) {
+					if (that._table._mTimeouts._cleanupACCExtension) {
+						jQuery.sap.clearDelayedCall(that._table._mTimeouts._cleanupACCExtension);
+						that._table._mTimeouts._cleanupACCExtension = null;
+					}
+					that.updateAccForCurrentCell(true);
+				},
+				onfocusout: function(oEvent) {
+					that._table._mTimeouts._cleanupACCExtension = jQuery.sap.delayedCall(100, that, function(){
+						this._iLastRowNumber = null;
+						this._iLastColumnNumber = null;
+						_cleanupLastFocusedCell(this);
+						this._table._mTimeouts._cleanupACCExtension = null;
+					});
+				}
+			});
 		}
 	});
 
@@ -293,10 +323,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			return;
 		}
 		if (bOnCellFocus) {
-			if (this._cleanupInfo) {
-				this._cleanupInfo.cell.attr(this._cleanupInfo.attr);
-				this._cleanupInfo = null;
-			}
+			_cleanupLastFocusedCell(this);
 		}
 		var oInfo = _getInfoOfFocusedCell(this._table);
 		if (!oInfo || !oInfo.cell || !oInfo.type || !this["_updateAccFor" + oInfo.type]) {
@@ -316,29 +343,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			var iCol = aMatches[2];
 			var oRow = oTable.getRows()[iRow];
 			var oCell = oRow && oRow.getCells()[iCol];
-			//var oColumn = oTable._getVisibleColumns()[iCol];
-			var oInfo = _getAccessibleInfoOfControl(oCell, oTable._oResBundle);
+			var oColumn = oTable._getVisibleColumns()[iCol];
+			var bHidden = $Cell.parent().hasClass("sapUiTableRowHidden");
+			var oInfo = bHidden ? null : _getAccessibleInfoOfControl(oCell, oTable._oResBundle);
 			var bIsTreeColumnCell = this._treeMode && oTable._getTreeIconAttributes && $Cell.hasClass("sapUiTableTdFirst"); //TreeTable
+			var sCellLabels = this.getAccRenderExtension().getCellLabels(oTable, oColumn, iCol < oTable.getFixedColumnCount(), true) || "";
+			var sCellDescription = "";
+			if (!bHidden) {
+				sCellDescription = oInfo ? (oTable.getId() + "-cellacc") : oCell.getId();
+			}
 
 			var bRowChanged = _updateRowColCount(this);
 
 			this._cleanupInfo = {
 				cell: $Cell,
 				attr: {
-					"aria-labelledby" : oCell._sLabelledBy || "",
+					"aria-labelledby" : sCellLabels,
 					"aria-describedby" : ""
 				}
 			};
 
-			$Cell.attr("aria-labelledby", oTable.getId() + "-rownumberofrows " + oTable.getId() + "-colnumberofcols " + (oCell._sLabelledBy || "") +
-											(oInfo ? " " + oTable.getId() + "-cellacc" : oCell.getId()) +
-											(oInfo && oInfo.labelled ? " " + oInfo.labelled : ""));
-			$Cell.attr("aria-describedby", (oInfo && oInfo.described ? oInfo.described + " " : "") +
-											((((!oInfo || oInfo.editable) && !this._readonly) || bIsTreeColumnCell) ? (oTable.getId() + "-toggleedit ") : "") +
-											(oTable._getSelectOnCellsAllowed() && bRowChanged ? (oRow.getId() + "-rowselecttext") : ""));
+			$Cell.attr("aria-labelledby", oTable.getId() + "-ariacount " + oTable.getId() + "-rownumberofrows " + oTable.getId() + "-colnumberofcols " + sCellLabels +
+											" " + sCellDescription + " " + (oInfo && oInfo.labelled ? " " + oInfo.labelled : ""));
+			if (bHidden) {
+				$Cell.attr("aria-describedby", "");
+			} else {
+				$Cell.attr("aria-describedby", (oInfo && oInfo.described ? oInfo.described + " " : "") +
+							((((!oInfo || oInfo.editable) && !this._readonly) || bIsTreeColumnCell) ? (oTable.getId() + "-toggleedit ") : "") +
+							(oTable._getSelectOnCellsAllowed() && bRowChanged ? (oRow.getId() + "-rowselecttext") : ""));
+			}
 
 			var sTreeText = "";
-			if (bIsTreeColumnCell) {
+			if (bIsTreeColumnCell && !bHidden) {
 				var oAttributes = oTable._getTreeIconAttributes(oRow);
 				if (oAttributes && oAttributes["aria-label"]) {
 					sTreeText = oAttributes["aria-label"];
@@ -352,6 +388,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	TableAccExtension.prototype._updateAccForROWHEADER = function($Cell, bOnCellFocus) {
 		var oTable = this.getTable();
 		var oRow = oTable.getRows()[$Cell.attr("data-sap-ui-rowindex")];
+		var bHidden = $Cell.hasClass("sapUiTableRowHidden");
 
 		this._cleanupInfo = {
 			cell: $Cell,
@@ -360,7 +397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			}
 		};
 
-		$Cell.attr("aria-labelledby", oTable.getId() + "-cellacc " + oTable.getId() + "-rownumberofrows " + oRow.getId() + "-rowselecttext");
+		$Cell.attr("aria-labelledby", oTable.getId() + "-ariacount " + oTable.getId() + "-cellacc " + oTable.getId() + "-rownumberofrows " + (bHidden ? "" : oRow.getId() + "-rowselecttext"));
 		_updateCellAccText(this, this.getTable()._oResBundle.getText("TBL_ROW_HEADER_LABEL"));
 		_updateRowColCount(this);
 	};
@@ -375,21 +412,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			var iCol = aMatches[2];
 			var oRow = oTable.getRows()[iRow];
 			var oCell = oRow && oRow.getCells()[iCol];
-			//var oColumn = oTable._getVisibleColumns()[iCol];
+			var oColumn = oTable._getVisibleColumns()[iCol];
 			var oInfo = _getAccessibleInfoOfControl(oCell);
 			var sRowHeaderId = oTable.getId() + "-rows-row" + iRow + "-groupHeader";
 			var sSumId = oTable.getId() + "-rows-row" + iRow + "-col" + iCol + "-ariaTextForSum";
 			var sLabelId = jQuery.sap.domById(sSumId) ? sSumId : sRowHeaderId;
+			var sCellLabels = this.getAccRenderExtension().getCellLabels(oTable, oColumn, iCol < oTable.getFixedColumnCount(), true) || "";
 
 			this._cleanupInfo = {
 				cell: $Cell,
 				attr: {
-					"aria-labelledby" : oCell._sLabelledBy || "",
+					"aria-labelledby" : sCellLabels || "",
 					"aria-describedby" : ""
 				}
 			};
 
-			$Cell.attr("aria-labelledby", (oCell._sLabelledBy || "") + " " + sLabelId + " " + oTable.getId() + "-cellacc" + (oInfo && oInfo.labelled ? " " + oInfo.labelled : ""));
+			$Cell.attr("aria-labelledby", sCellLabels + " " + sLabelId + " " + oTable.getId() + "-cellacc" + (oInfo && oInfo.labelled ? " " + oInfo.labelled : ""));
 			$Cell.attr("aria-describedby", oInfo && oInfo.described ? " " + oInfo.described : "");
 
 			_updateCellAccText(this, oTable._oResBundle.getText("TBL_ROW_GROUP_LABEL") + " " + (oInfo ? oInfo.text : " "));
