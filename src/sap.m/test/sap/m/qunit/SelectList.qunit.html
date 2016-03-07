@@ -1362,6 +1362,30 @@
 			oSelectList.destroy();
 		});
 
+		test("it should not throw an error when showSecondaryValues property is set to true", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				showSecondaryValues: true,
+				items: [
+					new sap.ui.core.SeparatorItem(),
+					new sap.ui.core.Item()
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getFirstItem().isActive());
+			ok(oSelectList.getFirstItem().$().hasClass(oSelectList.getRenderer().CSS_CLASS + "SeparatorItem"));
+			ok(oSelectList.getFirstItem().$().hasClass(oSelectList.getRenderer().CSS_CLASS + "Row"));
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
 		module("insertItem()");
 
 		test("insertItem()", function() {
