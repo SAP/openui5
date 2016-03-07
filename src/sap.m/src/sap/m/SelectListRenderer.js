@@ -95,6 +95,10 @@ sap.ui.define(['jquery.sap.global'],
 
 			if (oItem instanceof sap.ui.core.SeparatorItem) {
 				oRm.addClass(CSS_CLASS + "SeparatorItem");
+
+				if (bShowSecondaryValues) {
+					oRm.addClass(CSS_CLASS + "Row");
+				}
 			} else {
 
 				oRm.addClass(CSS_CLASS + "ItemBase");
@@ -151,7 +155,11 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.addClass(CSS_CLASS + "LastCell");
 				oRm.writeClasses();
 				oRm.write(">");
-				oRm.writeEscaped(oItem.getAdditionalText());
+
+				if (typeof oItem.getAdditionalText === "function") {
+					oRm.writeEscaped(oItem.getAdditionalText());
+				}
+
 				oRm.write("</span>");
 			} else {
 				oRm.writeEscaped(oItem.getText());
