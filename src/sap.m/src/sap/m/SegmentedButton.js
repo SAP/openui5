@@ -479,7 +479,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @since 1.28
 	 */
 	SegmentedButton.prototype._createButtonFromItem = function (oItem) {
-		var oButton = new sap.m.Button({
+		var oButton = new sap.m.Button(oItem.getId() + "-button", {
 			text: oItem.getText(),
 			icon: oItem.getIcon(),
 			enabled: oItem.getEnabled(),

@@ -815,6 +815,67 @@
 		});
 	}
 
+	test("ID's of internal elements properly set/rendered", function() {
+
+		var sItemIdComponent = "segmentedButtonItem-",
+			aButtons,
+			oSegmentedButton,
+			getExpectedButtonId,
+			getExpectedImageId,
+			i = 0;
+
+		getExpectedButtonId = function (iIndex) {
+			return sItemIdComponent + iIndex + "-button";
+		};
+
+		getExpectedImageId = function (iIndex) {
+			return sItemIdComponent + iIndex + "-button-img";
+		};
+
+		// Arrange
+		oSegmentedButton = new sap.m.SegmentedButton("segmentedButton", {
+			items: [
+				new sap.m.SegmentedButtonItem(sItemIdComponent + 0, {
+					icon: "sap-icon://home",
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem(sItemIdComponent + 1, {
+					icon: "sap-icon://home",
+					text: "Button 2"
+				}),
+				new sap.m.SegmentedButtonItem(sItemIdComponent + 2, {
+					icon: "images/candy_star_46x46.png",
+					text: "Button 3"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		aButtons = oSegmentedButton.getButtons();
+
+		// Assert
+		for (;i < aButtons.length;i++) {
+			// Buttons
+			strictEqual(aButtons[i].getId(), getExpectedButtonId(i),
+					"Internal button id should be equal to the expected id");
+
+			strictEqual(aButtons[i].$().attr("id"), getExpectedButtonId(i),
+					"Rendered button id should be equal to the expected id");
+
+			// Images|icons
+			strictEqual(aButtons[i].$().find(".sapMBtnIcon").attr("id"), getExpectedImageId(i),
+					"Rendered image id should be equal to the expected id");
+		}
+
+		// Cleanup
+		aButtons = null;
+		oSegmentedButton.destroy();
+
+	});
+
 	/* =========================================================== */
 	/* Event module                                                */
 	/* =========================================================== */
