@@ -288,7 +288,7 @@
 		},
 		{
 			"control": "sap.m.RatingIndicator",
-			"url": "../RatingIndicator.html",
+			"url": "RatingIndicator.html",
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
