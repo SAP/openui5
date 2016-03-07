@@ -74,6 +74,12 @@
 				}));
 			}
 
+			var oDate = new Date();
+			oDate.setDate(oDate.getDate() + 2);
+			oCal.addDisabledDate(new sap.ui.unified.DateRange({
+				startDate: oDate
+			}));
+
 			// single interval selection
 			oCal = new sap.ui.unified.Calendar("Cal2",{
 				intervalSelection: true,

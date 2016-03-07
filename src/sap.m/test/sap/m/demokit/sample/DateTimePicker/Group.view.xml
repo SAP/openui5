@@ -1,0 +1,44 @@
+<mvc:View
+	controllerName="sap.m.sample.DateTimePicker.Group"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<Label text="simple DateTimePicker" labelFor="DTP1"/>
+		<DateTimePicker
+			id="DTP1"
+			placeholder="Enter Date ..."
+			change="handleChange"/>
+		<Label text="DateTimePicker with given Value and Formatter" labelFor="DTP2"/>
+		<DateTimePicker
+			id="DTP2"
+			value="2016-02-18-10-32-30" valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="long"
+			change="handleChange"/>
+		<Label text="DateTimePicker with given DateValue and Formatter" labelFor="DTP3"/>
+		<DateTimePicker
+			id="DTP3"
+			displayFormat="short"
+			change="handleChange"/>
+		<Label text="DateTimePicker with islamic date and secondray gregorian date in calendar" labelFor="DTP4"/>
+		<DateTimePicker
+			id="DTP4"
+			value="2016-02-18-10-32-30"
+			valueFormat="yyyy-MM-dd-HH-mm-ss"
+			displayFormat="short"
+			displayFormatType="Islamic"
+			secondaryCalendarType="Gregorian"
+			change="handleChange"/>
+		<Text
+			id="T1"
+			text="change event result"/>
+		<Label text="DateTimePicker using DataBinding" labelFor="DTP5"/>
+		<DateTimePicker
+			id="DTP5"
+			value="{path:'/dateValue', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'medium', strictParsing: true}}"
+			/>
+		<Label text="Text bound to the same model like DateTimePicker" labelFor="T2" />
+		<Text
+			id="T2"
+			text="{path:'/dateValue', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'long'}}"
+			/>
+	</VBox>
+</mvc:View>
