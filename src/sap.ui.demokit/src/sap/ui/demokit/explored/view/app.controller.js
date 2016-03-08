@@ -32,6 +32,16 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 				sap.ui.getCore().applyTheme(oData.themeActive);
 				//handle compact mode
 				jQuery('body').toggleClass("sapUiSizeCompact", oData.compactOn).toggleClass("sapUiSizeCozy", !oData.compactOn);
+
+				// apply theme and compact mode also to iframe samples
+				var oSampleFrame = sap.ui.getCore().byId("sampleFrame");
+				if (oSampleFrame) {
+					var oSampleFrameContent = oSampleFrame.$()[0].contentWindow;
+					if (oSampleFrameContent) {
+						oSampleFrameContent.sap.ui.getCore().applyTheme(oData.themeActive);
+						oSampleFrameContent.jQuery('body').toggleClass("sapUiSizeCompact", oData.compactOn).toggleClass("sapUiSizeCozy", !oData.compactOn);
+					}
+				}
 			} else {
 				this._themeActive = oData.themeActive;
 				this._compactOn = oData.compactOn;
