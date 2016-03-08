@@ -155,6 +155,10 @@ sap.ui.define([
 
 		this._oNavContainer = new NavContainer(oNavConfig);
 
+		this._oNavContainer.invalidate = function () {
+			// suppress invalidation of the navContainer
+		};
+
 		var that = this;
 
 		this._oPopover = new ResponsivePopover(this.getId() + '-quickView', {
