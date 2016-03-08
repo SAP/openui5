@@ -1041,7 +1041,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			iRowContentSpace = this._determineAvailableSpace();
 			// if no height is granted we do not need to do any further row adjustment or layout sync.
 			// Saves time on initial start up and reduces flickering on rendering.
-			if (iRowContentSpace < 0 || (this._handleRowCountModeAuto(iRowContentSpace) && !forceUpdateTableSizes)) {
+			if (this._handleRowCountModeAuto(iRowContentSpace) && !forceUpdateTableSizes) {
 				// updateTableSizes was already called by insertTableRows, therefore skip the rest of this function execution
 				return;
 			}
