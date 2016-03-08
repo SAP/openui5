@@ -56,8 +56,8 @@
 	};
 
 	var iLoadingDelay = 500;
-	var oConfigModel = new sap.ui.model.json.JSONModel(
-		"model/ObjectPageConfig.json");
+	var oConfigModel = new sap.ui.model.json.JSONModel();
+	oConfigModel.loadData("model/ObjectPageConfig.json", {}, false);
 
 	var oView = sap.ui.xmlview("UxAP-27_ObjectPageConfig", {
 		viewName: "view.UxAP-27_ObjectPageConfig",
@@ -134,7 +134,9 @@
 		var oObjectPageLayout = oComponentContainer
 			.getObjectPageLayoutInstance();
 
-		var oDataModel = new sap.ui.model.json.JSONModel("model/HRData.json");
+		var oDataModel = new sap.ui.model.json.JSONModel();
+		oDataModel.loadData("model/HRData.json", {}, false);
+		
 		oView.setModel(oDataModel, "objectPageData");
 
 		sap.ui.getCore().applyChanges();
