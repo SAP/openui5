@@ -275,7 +275,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			/**
 			 * Group By Column (experimental!)
 			 */
-			groupBy : {type : "sap.ui.table.Column", multiple : false}
+			groupBy : {type : "sap.ui.table.Column", multiple : false},
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
 
@@ -1229,9 +1234,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._iLastSelectedDataRow = this._getHeaderRowCount();
 			this._oItemNavigation = new ItemNavigation();
 			this._oItemNavigation.setTableMode(true);
-			this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, function(oEvent) {
-				this.$("ariadesc").text("");
-			}, this);
 			this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, function(oEvent) {
 				var iRow = Math.floor(oEvent.getParameter("index") / this._oItemNavigation.iColumns);
 				if (iRow > 0) {
@@ -3327,12 +3329,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		// KEYBOARD HANDLING (_bIgnoreFocusIn is set in onsaptabXXX)
 		if (!this._bIgnoreFocusIn && (bControlBefore || $target.hasClass("sapUiTableCtrlAfter"))) {
-			// set the focus on the last focused dom ref of the item navigation or
-			// in case if not set yet (tab previous into item nav) then we set the
-			// focus to the root domref
-			// reset the aria description of the table that the table is announced the
-			// first time the table grabs the focus
-			this.$("ariadesc").text(this._oResBundle.getText("TBL_TABLE"));
 			// when entering the before or after helper DOM elements we put the
 			// focus on the current focus element of the item navigation and we
 			// leave the action mode!

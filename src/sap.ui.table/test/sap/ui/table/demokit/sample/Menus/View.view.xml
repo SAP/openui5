@@ -18,10 +18,11 @@
 				enableColumnFreeze="{ui>/showFreezeMenuEntry}"
 				enableCellFilter="{ui>/enableCellFilter}"
 				columnSelect="onColumnSelect"
-				cellContextmenu="onProductIdCellContextMenu">
+				cellContextmenu="onProductIdCellContextMenu"
+				ariaLabelledBy="title">
 				<toolbar>
 					<m:Toolbar>
-						<m:Title text="Products"></m:Title>
+						<m:Title id="title" text="Products"></m:Title>
 						<m:ToolbarSpacer/>
 						<m:ToggleButton
 							icon="sap-icon://show"

@@ -14,7 +14,8 @@
 				id="table"
 				selectionMode="MultiToggle"
 				rows="{/ProductCollection}"
-				visibleRowCount="7">
+				visibleRowCount="7"
+				ariaLabelledBy="title">
 				<title>
 					<m:HBox>
 						<m:items>
@@ -25,7 +26,7 @@
 				</title>
 				<toolbar>
 					<m:Toolbar>
-						<m:Title text="Products"/>
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:SearchField
 							placeholder="Filter"

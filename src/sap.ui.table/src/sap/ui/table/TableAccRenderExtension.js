@@ -51,13 +51,14 @@ sap.ui.define(['jquery.sap.global'],
 
 			// aria description for the table
 			var sDesc = oTable.getTitle() && oTable.getTitle().getText && oTable.getTitle().getText() != "" ?
-							oTable.getTitle().getText() :
-							oBundle.getText("TBL_TABLE");
+							oTable.getTitle().getText() : "";
 			_writeAccText(oRm, sTableId, "ariadesc", sDesc);
 			// aria description for the row and column count
 			_writeAccText(oRm, sTableId, "ariacount");
 			// aria description for toggling the edit mode
 			_writeAccText(oRm, sTableId, "toggleedit", oBundle.getText("TBL_TOGGLE_EDIT_KEY"));
+			// aria description for toggling the edit mode
+			_writeAccText(oRm, sTableId, "ariaselectall", oBundle.getText("TBL_SELECT_ALL_KEY"));
 			// aria description for table row count
 			_writeAccText(oRm, sTableId, "rownumberofrows");
 			// aria description for table column count
@@ -86,7 +87,7 @@ sap.ui.define(['jquery.sap.global'],
 		},
 
 		getCellLabels: function(oTable, oColumn, bFixedColumn, bJoin) {
-			var aLabels = [oTable.getId() + "-ariadesc"];
+			var aLabels = [];
 
 			var aMultiLabels = oColumn.getMultiLabels();
 			var iMultiLabels = aMultiLabels.length;
