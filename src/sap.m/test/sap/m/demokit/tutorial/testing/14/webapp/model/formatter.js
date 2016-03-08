@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/m/Text",
 	"sap/ui/demo/bulletinboard/model/DateFormatter"
-], function (Text, DateFormatter) {
+], function (DateFormatter) {
 	"use strict";
 
 	return {
