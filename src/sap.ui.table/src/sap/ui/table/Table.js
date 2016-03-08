@@ -560,7 +560,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				 */
 				busy : {type : "boolean"}
 			}
-		}
+		},
+		designTime : true
 	}});
 
 

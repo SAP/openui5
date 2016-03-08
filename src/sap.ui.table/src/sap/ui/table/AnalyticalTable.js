@@ -65,7 +65,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			 * Please use setShowOverlay instead.
 			 */
 			dirty : {type : "boolean", group : "Appearance", defaultValue : null, deprecated: true}
-		}
+		},
+		designTime : true
 	}});
 
 
