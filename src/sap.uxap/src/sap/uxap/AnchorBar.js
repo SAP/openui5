@@ -421,7 +421,7 @@ sap.ui.define([
 			// we set *direct* scrolling by which we instruct the page to *skip* processing of intermediate sections (sections between current and requested)
 			this.getParent().setDirectScrollingToSection(sNextSelectedSection);
 			// finally request the page to scroll to the requested section
-			this.getParent().scrollToSection(oRequestedSection.getId());
+			this.getParent().scrollToSection(oRequestedSection.getId(), null, 0, true);
 		}
 
 		if (oRequestedSection instanceof library.ObjectPageSubSection &&
