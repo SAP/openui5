@@ -292,6 +292,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		var $text = this.$("realtext");
 		var $threeDots = this.$("threeDots");
 		if (this._bTextExpanded) {
+			this._getCollapsedText();
 			$text.html(jQuery.sap.encodeHTML(this._sShortText).replace(/&#xa;/g, "<br>"));
 			$threeDots.text(" ... ");
 			this._oLinkExpandCollapse.setText(FeedListItem._sTextShowMore);
