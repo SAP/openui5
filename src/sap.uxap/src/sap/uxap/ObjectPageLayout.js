@@ -459,6 +459,12 @@ sap.ui.define([
 		}
 	};
 
+	ObjectPageLayout.prototype._updateNavigation = function () {
+		if (this.getShowAnchorBar()) {
+			this._oABHelper._buildAnchorBar();
+		}
+	};
+
 	/*************************************************************************************
 	 * Ux rules
 	 ************************************************************************************/
