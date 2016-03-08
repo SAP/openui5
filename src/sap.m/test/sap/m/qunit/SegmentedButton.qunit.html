@@ -1824,6 +1824,19 @@
 				}),
 				new sap.m.SegmentedButtonItem({
 					text: "button 3"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "button 4",
+					tooltip: "tooltip 4"
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://attachment",
+					tooltip: "tooltip 5"
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://attachment",
+					text: "button 6",
+					tooltip: "tooltip 6"
 				})
 			]
 		});
@@ -1844,6 +1857,24 @@
 
 		strictEqual(aButtons[2].$().attr("aria-label"), undefined,
 				"If we don't have a SAP Icon we don't need the aria-label attribute");
+
+		strictEqual(aButtons[3].$().attr("aria-label"), undefined,
+				"Don't put aria-label for text and tooltip");
+
+		strictEqual(aButtons[3].$().attr("title"), "tooltip 4",
+				"For text and tooltip use the later for title attr");
+
+		strictEqual(aButtons[4].$().attr("aria-label"), undefined,
+				"Don't use aria-label with icon + tooltip");
+
+		strictEqual(aButtons[4].$().attr("title"), "tooltip 5",
+				"Read the title attr when icon + tooltip are used");
+
+		strictEqual(aButtons[5].$().attr("aria-label"), undefined,
+				"Don't use aria-label with icon, tooltip and text");
+
+		strictEqual(aButtons[5].$().attr("title"), "tooltip 6",
+				"Read the title attr when icon, tooltip and text are used");
 
 		// Cleanup
 		oSegmentedButton.destroy();
