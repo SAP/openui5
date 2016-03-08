@@ -1270,16 +1270,25 @@
 		oView.placeAt("target1");
 		var oList = oView.byId('myList');
 		var oBinding = oList.getBinding('items');
-		var handler = function() { // delay the following test
+		var handler1 = function() {
 			var oItem = oView.byId('myList').getItems()[0];
 			var oPropBinding = oItem.getContent()[0].getBinding('value');
-			ok(oBinding.isSuspended(), "suspended flag should be true");
+			ok(!oBinding.isSuspended(), "suspended flag should be false");
 			ok(oPropBinding.isSuspended(), "suspended flag should be true");
-			oBinding.detachChange(handler);
+			oBinding.detachChange(handler1);
 			oView.destroy();
 			start();          // resume normal testing
 		};
-		oBinding.attachChange(this,handler);
+		var handler2 = function() {
+			ok(!oBinding.isSuspended(), "suspended flag should be false");
+			oBinding.detachChange(handler2);
+		};
+		oBinding.attachChange(this,handler1);
+		oBinding.attachRefresh(this,handler2);
+			ok(oBinding.isSuspended(), "suspended flag should be true");
+			oBinding.resume();
+		oModel.attachMetadataLoaded(function(){
+		});
 	});
 
 	asyncTest("test setProperty on complex Types (internal)",function(){
