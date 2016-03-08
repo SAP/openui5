@@ -2,7 +2,9 @@ var xhr = sinon.useFakeXMLHttpRequest(),
 	baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
 	responseDelay = 10,
 	_setTimeout = window.setTimeout,
-	csrfToken;
+	csrfToken,
+	iSessionCount = 0,
+	sessionContextId;
 
 function updateCsrfToken() {
 	csrfToken = "" + Math.floor(Math.random() * 1000000000);
@@ -10,6 +12,10 @@ function updateCsrfToken() {
 
 function deleteCsrfToken() {
 	csrfToken = undefined;
+}
+
+function updateSessionContextId() {
+		sessionContextId = "SID-" + Math.floor(Math.random() * 1000000000) + "-NEW";
 }
 
 function getHeader(headers, header) {
@@ -309,19 +315,25 @@ xhr.onCreate = function(request) {
 			if (request.url == baseURL) {
 				window.odataFakeServiceData.csrfRequests.push(request.method); // Log Requests to service document
 			}
-
 			respond(500, oHTMLHeaders, "Server Error");
 			return;
 		}
 
+
+
 		if (["GET", "HEAD"].indexOf(request.method) === -1 && csrfToken) {
 			if (getHeader(request.requestHeaders, "X-CSRF-Token") != csrfToken) {
+
 				respond(403, oCsrfRequireHeaders, "");
 				return;
 			}
 		}
 
 		if (request.url == baseURL) {
+			// Simulate Soft State header handling
+			updateSessionContextId();
+			oCsrfResponseHeaders["sap-contextid"] = sessionContextId;
+
 			oCsrfResponseHeaders["X-CSRF-Token"] = csrfToken;
 			window.odataFakeServiceData.csrfRequests.push(request.method); // Log Requests to service document
 			respond(200, oCsrfResponseHeaders, sServiceDocXML);
@@ -337,10 +349,14 @@ xhr.onCreate = function(request) {
 		// Special handling based on headers
 		if (request.url == baseURL + "Categories" || request.url == baseURL + "Categories?horst=true") {
 			if (request.requestHeaders["Accept"] == "application/atom+xml,application/atomsvc+xml,application/xml") {
-				respond(200, oXMLHeaders, sCategoriesXML)
+				respond(200, oXMLHeaders, sCategoriesXML);
 			}
 			else {
-				respond(200, oJSONHeaders, sCategoriesJSON)
+				// Simulate Soft State header handling
+				updateSessionContextId();
+				oJSONHeaders["sap-contextid"] = sessionContextId;
+
+				respond(200, oJSONHeaders, sCategoriesJSON);
 			}
 			return;
 		}
@@ -377,6 +393,10 @@ xhr.onCreate = function(request) {
 				}
 			}
 			batchResponse = createBatchResponse(batchResponses, "batch-408D0D264EF1AB69CA1BF7");
+
+			updateSessionContextId();
+			oBatchHeaders["sap-contextid"] = sessionContextId;
+
 			respond(202, oBatchHeaders, batchResponse);
 			return;
 		}
