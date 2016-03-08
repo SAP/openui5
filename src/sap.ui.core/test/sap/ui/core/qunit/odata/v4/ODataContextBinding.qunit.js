@@ -236,31 +236,20 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (read required)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
-			oBindingMock = this.oSandbox.mock(oBinding),
-			oCacheMock = this.oSandbox.mock(oBinding.oCache),
-			oModel = oBinding.getModel(),
-			fnResolveRead,
-			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;});
+			oBindingMock = this.oSandbox.mock(oBinding);
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
 
-		// read returns an unresolved Promise to be resolved by submitBatch; otherwise this
-		// Promise would be resolved before the rendering and dataReceived would be fired
-		// before dataRequested
-		oCacheMock.expects("read").withArgs("", "bar")
-			.callsArg(2)
-			.returns(oReadPromise);
-		this.oSandbox.stub(oModel.oRequestor, "submitBatch", function () {
-			// submitBatch resolves the promise of the read
-			fnResolveRead("value");
-		});
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("", "bar").callsArg(2)
+			.returns(Promise.resolve("value"));
+
+		this.oSandbox.mock(oBinding.getModel()).expects("dataRequested").withArgs("").callsArg(1);
 
 		return oBinding.requestValue("bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
 		});
 	});
-	//TODO simplify: replace stub on submitBatch by mock on oModel.dataRequested
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (no read required)", function (assert) {
