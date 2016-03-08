@@ -596,6 +596,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		var isInMenuHierarchy = false,
 			touchEnabled = this.getPopup().touchEnabled;
 
+		this.bIgnoreOpenerDOMRef = false;
+
 		if (oEvent.type == "mousedown" || oEvent.type == "touchstart") {
 			// Suppress the delayed mouse event from mobile browser
 			if (touchEnabled && (oEvent.isMarked("delayedMouseEvent") || oEvent.isMarked("cancelAutoClose"))) {
@@ -622,10 +624,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 					that = that.oOpenedSubMenu;
 				}
 			}
+			if (!isInMenuHierarchy) {
+				this.bIgnoreOpenerDOMRef = true;
+			}
 		}
 
 		if (!isInMenuHierarchy) {
-			this.bIgnoreOpenerDOMRef = true;
 			this.close();
 		}
 	};
