@@ -54,7 +54,8 @@
 	var iLoadingDelay = 5000;
 	var oConfigModel = new sap.ui.model.json.JSONModel(
 		"model/ObjectPageConfig.json");
-	var oDataModel = new sap.ui.model.json.JSONModel("model/HRData.json");
+	var oDataModel = new sap.ui.model.json.JSONModel();
+	oDataModel.loadData("model/HRData.json", {}, false);
 
 	var oView = sap.ui.xmlview("UxAP-27_ObjectPageConfig", {
 		viewName: "view.UxAP-27_ObjectPageConfig"

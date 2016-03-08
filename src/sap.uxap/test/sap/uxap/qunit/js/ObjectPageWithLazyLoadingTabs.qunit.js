@@ -80,7 +80,8 @@
 		};
 
 	var iLoadingDelay = 2500;
-	var oConfigModel = new JSONModel("model/OPLazyLoadingWithTabs.json");
+	var oConfigModel = new JSONModel();
+	oConfigModel.loadData("model/OPLazyLoadingWithTabs.json", {}, false);
 
 	var oView = xmlview("UxAP-27_ObjectPageConfig", {
 		viewName: "view.UxAP-27_ObjectPageConfig",
