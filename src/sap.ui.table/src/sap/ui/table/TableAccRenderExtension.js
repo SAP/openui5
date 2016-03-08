@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global'],
 			var oBundle = oTable._oResBundle,
 				sTableId = oTable.getId();
 
-			oRm.write("<div style='display:none;'>");
+			oRm.write("<div class='sapUiTableHiddenTexts' style='display:none;'>");
 
 			// aria description for the table
 			var sDesc = oTable.getTitle() && oTable.getTitle().getText && oTable.getTitle().getText() != "" ?
@@ -59,6 +59,10 @@ sap.ui.define(['jquery.sap.global'],
 			_writeAccText(oRm, sTableId, "toggleedit", oBundle.getText("TBL_TOGGLE_EDIT_KEY"));
 			// aria description for toggling the edit mode
 			_writeAccText(oRm, sTableId, "ariaselectall", oBundle.getText("TBL_SELECT_ALL_KEY"));
+			// aria label for row headers
+			_writeAccText(oRm, sTableId, "ariarowheaderlabel", oBundle.getText("TBL_ROW_HEADER_LABEL"));
+			// aria label for column row header
+			_writeAccText(oRm, sTableId, "ariacolrowheaderlabel", oBundle.getText("TBL_ROW_COL_HEADER_LABEL"));
 			// aria description for table row count
 			_writeAccText(oRm, sTableId, "rownumberofrows");
 			// aria description for table column count
