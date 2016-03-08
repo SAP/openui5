@@ -441,12 +441,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var iNewIndex = this.getSelectedIndex();
 		var oOldTab = this.getTabs()[iOldIndex];
-		var $panel = oOldTab.$("panel");
 		var sNewId = this.getTabs()[iNewIndex].getId();
 		var oTab = this.getTabs()[iNewIndex];
 
 		// ensure that events from the controls in the panel are fired
 		jQuery.sap.delayedCall(0, this, function() {
+
+			var $panel = this.$().find('.sapUiTabPanel');
 
 			if ($panel.length > 0) {
 				var rm = sap.ui.getCore().createRenderManager();
