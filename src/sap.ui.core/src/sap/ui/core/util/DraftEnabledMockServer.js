@@ -355,7 +355,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 						});
 						if (oResponse.success && oResponse.data && oResponse.data.d && oResponse.data.d.results) {
 							var oNode;
-							for (var j = 0; i < oResponse.data.d.results.length; j++) {
+							for (var j = 0; j < oResponse.data.d.results.length; j++) {
 								oNode = oResponse.data.d.results[j];
 								oNode.IsActiveEntity = true;
 								oNode.HasActiveEntity = false;
@@ -421,7 +421,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 							url: oSiblingEntityUri,
 							dataType: "json"
 						});
-						if (oResponse.success && oResponse.data) {
+						if (oResponse.success && oResponse.data && oResponse.data.d.__metadata) {
 							var oSibling = oResponse.data.d;
 							oResponse = jQuery.sap.sjax({
 								url: oSibling.__metadata.uri,
