@@ -21,6 +21,7 @@
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script type="text/javascript">
 		var core = sap.ui.getCore();
@@ -527,6 +528,79 @@
 			var oNewTile = new sap.m.StandardTile();
 			this.sut.addTile(oNewTile);
 			deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
+		});
+
+		module("Data Binding", {
+			beforeEach: function () {
+				this.sandbox = sinon.sandbox;
+				sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({
+					"TileCollection" : [
+						{
+							"icon" : "hint",
+							"type" : "Monitor",
+							"title" : "1"
+						},
+						{
+							"icon" : "inbox",
+							"type" : "Create",
+							"number" : "89",
+							"title" : "2",
+							"info" : "Overdue",
+							"infoState" : "Error"
+						},
+						{
+							"type" : "Create",
+							"title" : "3",
+							"info" : "28 Days Left",
+							"infoState" : "Success"
+						},
+						{
+							"type" : "Create",
+							"title" : "4",
+							"info" : "28 Days Left",
+							"infoState" : "Success"
+						},
+						{
+							"type" : "Create",
+							"title" : "5",
+							"info" : "28 Days Left",
+							"infoState" : "Success"
+						}
+					]
+				}));
+				this.oTileContainer = new sap.m.TileContainer();
+				this.oTileContainer.bindAggregation('tiles', '/TileCollection', new sap.m.StandardTile({
+					type: "{type}",
+					title: "{title}",
+					info: "{info}",
+					infoState: "{infoState}",
+					number: "{number}",
+					icon: "{icon}"
+				}));
+				this.oTileContainer.placeAt('qunit-fixture');
+			},
+			afterEach: function () {
+				this.oTileContainer.destroy();
+				this.sandbox.restore();
+			}
+		});
+
+		test("Tiles are destroyed when model is changed", function () {
+			//Arrange
+			var fnDestroyTilesSpy = this.sandbox.spy(this.oTileContainer, 'destroyTiles'),
+				newDataModel = new sap.ui.model.json.JSONModel({
+					"TileCollection" : [
+						{
+							"icon" : "hint",
+							"type" : "Create",
+							"title" : "2222222222"
+						}
+					]
+				});
+
+			sap.ui.getCore().setModel(newDataModel);
+			//Assert
+			strictEqual(fnDestroyTilesSpy.callCount, 1, "Tiles are destroyed when data model was updated");
 		});
 	</script>
 </head>

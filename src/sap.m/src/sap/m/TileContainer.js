@@ -481,6 +481,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Called whenever the model is updated
+	 *
+	 * @private
+	 */
+	TileContainer.prototype.updateTiles = function (sReason) {
+		this.destroyTiles();
+		this.updateAggregation('tiles');
+	};
+
+	/**
 	 * Applies the container's dimensions.
 	 *
 	 * @private
