@@ -27,6 +27,10 @@
 				<Button icon="sap-icon://refresh"
 					enabled="{ui>/bRealOData}"
 					press="onRefreshFavoriteProduct"/>
+				<Button icon="sap-icon://hello-world"
+					enabled="{ui>/bRealOData}"
+					press="onUpdateFavoriteProduct"
+					tooltip="Update with current time as HH:mm"/>
 				<ToolbarSpacer />
 				<Button text="Refresh all"
 					enabled="{ui>/bRealOData}"

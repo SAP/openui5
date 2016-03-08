@@ -348,15 +348,25 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue) {
-		var oBody = {},
-			sGroupId = this.oModel.getGroupId(),
-			iLastSlash = this.sPath.lastIndexOf("/"),
-			sEditUrl = this.sPath.slice(1, iLastSlash);
+		var oBody, sEditUrl, sGroupId, iLastSlash;
 
-		this.vValue = vValue;
-		oBody[this.sPath.slice(iLastSlash + 1)] = vValue;
-		this.oModel.oRequestor.request("PATCH", sEditUrl, sGroupId, null, oBody);
-		this.oModel.dataRequested(sGroupId, function () {});
+		if (typeof vValue === "function" || typeof vValue === "object") {
+			throw new Error("Not a primitive value");
+		}
+
+		if (this.vValue !== vValue) {
+			this.vValue = vValue;
+			this._fireChange({reason : ChangeReason.Change});
+
+			iLastSlash = this.sPath.lastIndexOf("/");
+			oBody = {};
+			oBody[this.sPath.slice(iLastSlash + 1)] = vValue;
+
+			sEditUrl = this.sPath.slice(1, iLastSlash);
+			sGroupId = this.oModel.getGroupId();
+			this.oModel.oRequestor.request("PATCH", sEditUrl, sGroupId, null, oBody);
+			this.oModel.dataRequested(sGroupId, function () {});
+		}
 	};
 
 	/**
