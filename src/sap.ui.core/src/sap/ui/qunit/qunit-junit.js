@@ -73,7 +73,19 @@
 			window.assert = QUnit.config.current.assert;
 		});
 		QUnit.testDone(function(assert) {
-			delete window.assert;
+			try {
+				delete window.assert;
+			} catch (ex) {
+				// report that the cleanup of the window.assert compatibility object
+				// failed because some script loaded via script tag defined an assert
+				// function which finally causes the "delete window.assert" to fail
+				if (!window._$cleanupFailed) {
+					QUnit.test("A script loaded via script tag defines a global assert function!", function(assert) {
+						QUnit.ok(QUnit.config.ignoreCleanupFailure, ex);
+					});
+					window._$cleanupFailed = true;
+				}
+			}
 		});
 		QUnit.log(function(data) {
 			// manipulate data.message for failing tests with source info

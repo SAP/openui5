@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<script id="sap-ui-bootstrap" type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"></script>
+
+	<script>
+
+	// include the required CSS and JS
+	jQuery.sap.require("sap.ui.qunit.qunit-css");
+	jQuery.sap.require("sap.ui.thirdparty.qunit");
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.thirdparty.require");
+
+	// make sure that the cleanup issue will not report an error!
+	QUnit.config.ignoreCleanupFailure = true;
+
+	QUnit.module("window.assert");
+
+	QUnit.test("set by qunit-junit (clean)", function(assert) {
+		QUnit.ok(typeof window.assert === "object", "window.assert is an object!");
+	});
+
+	QUnit.test("overridden by external script (jQuery.sap.require)", function(assert) {
+		jQuery.sap.registerModulePath("dummy", "./");
+		jQuery.sap.require("dummy.QUnitExt");
+		QUnit.ok(typeof window.assert === "function", "window.assert is a function!");
+	});
+
+	QUnit.test("overridden by external script (requirejs)", function(assert) {
+		var done = assert.async();
+		require(["QUnitExt"], function(QUnitExt) {
+			QUnit.ok(typeof window.assert === "function", "window.assert is a function!");
+			done();
+		});
+	});
+
+	QUnit.test("set by qunit-junit (polluted)", function(assert) {
+		QUnit.ok(typeof window.assert === "object", "window.assert is an object!");
+	});
+
+	</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: General QUnit checks</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>
