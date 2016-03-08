@@ -1567,8 +1567,6 @@
 			}, delay);
 		});
 
-
-
 		test("Reopening filter detail page of a removed detail with model change - remove single filter", function (assert) {
 			var delay = 1000,
 				done = assert.async(),
@@ -1603,7 +1601,6 @@
 				}, delay);
 			}, delay);
 		});
-
 
 		test("Reopening filter detail page of a removed detail with model change - remove all filters", function (assert) {
 			var delay = 1000,
@@ -1641,7 +1638,7 @@
 			}, delay);
 		});
 
-		test("Reset Button is availabe on second open of the ViewSettinsDialog", function () {
+		test("Reset Button is available on second open of the ViewSettinsDialog", function () {
 			var modelData = this.getFirstModelData();
 			var modelData2 = this.getSecondModelData();
 			var oModel = new sap.ui.model.json.JSONModel();
@@ -1664,6 +1661,46 @@
 			this.oVSD.setModel(model2);
 			this.oVSD.open();
 			strictEqual(this.oVSD._getSubHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
+		});
+
+		test("Reset group items selection on cancel", function () {
+			var delay = 1000,
+				done = assert.async();
+
+			var aGroupItems = [
+				new sap.m.ViewSettingsItem({
+					key: "test1",
+					text: "test1"
+				}),
+				new sap.m.ViewSettingsItem({
+					key: "test2",
+					text: "test2"
+				}),
+				new sap.m.ViewSettingsItem({
+					key: "test3",
+					text: "test3"
+				})];
+
+			aGroupItems.forEach(function (oItem) {
+				this.oVSD.addGroupItem(oItem);
+			}, this);
+			this.oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(), "None", "Should have None button selected");
+
+			this.oVSD.setSelectedGroupItem(aGroupItems[0]);
+			sap.ui.getCore().applyChanges();
+			notStrictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(), "None", "Should have changed the selection");
+
+			this.oVSD._dialog.getEndButton().firePress();
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function () {
+				this.oVSD.open();
+				strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(), "None", "Previous selection should have been reset");
+				done();
+			}.bind(this), delay);
 		});
 
 		module("Data binding", {
