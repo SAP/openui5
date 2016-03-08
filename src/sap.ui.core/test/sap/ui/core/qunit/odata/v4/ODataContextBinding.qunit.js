@@ -373,6 +373,10 @@ sap.ui.require([
 
 			assert.strictEqual(oContextBinding.attachEvent(sEvent, mEventParameters), oReturn);
 		});
+
+		assert.throws(function () {
+			oContextBinding.attachDataStateChange();
+		}, new Error("Unsupported event 'DataStateChange': v4.ODataContextBinding#attachEvent"));
 	});
 	//*********************************************************************************************
 	QUnit.test("Use model's groupId", function (assert) {
