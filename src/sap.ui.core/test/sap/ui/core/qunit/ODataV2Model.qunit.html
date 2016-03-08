@@ -1291,6 +1291,111 @@
 		});
 	});
 
+	asyncTest("propertyChange event", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+
+		oModel.attachRequestCompleted(this, function() {
+			oModel.attachPropertyChange(this, function(oEvent){
+				var sPath = oEvent.getParameter('path');
+				var oContext = oEvent.getParameter('context');
+				var oValue = oEvent.getParameter('value');
+				var sReason = oEvent.getParameter('reason');
+				equal(sPath, "/Categories(2)/CategoryName", "path check!");
+				equal(oContext, undefined, "context check!");
+				equal(oValue, "blubb", "property value check!");
+				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				oInput.destroy();
+				start();
+			});
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			// should not trigger event 
+			oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
+			// should trigger event
+			oInput.setValue("blubb");
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("propertyChange event relative", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+
+		oModel.attachRequestCompleted(this, function() {
+			oModel.attachPropertyChange(this, function(oEvent){
+				var sPath = oEvent.getParameter('path');
+				var oContext = oEvent.getParameter('context');
+				var oValue = oEvent.getParameter('value');
+				var sReason = oEvent.getParameter('reason');
+				equal(sPath, "CategoryName", "path check!");
+				equal(oContext.getPath(), "/Categories(2)", "context check!");
+				equal(oValue, "blubb", "property value check!");
+				equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				oInput.destroy();
+				start();
+			});
+			oInput.bindObject("/Categories(2)");
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			// should not trigger event 
+			oModel.setProperty(oBinding.getPath(), "blubb2", oBinding.getContext());
+			// should trigger event
+			oInput.setValue("blubb");
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("propertyChange event reset", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		var iCount = 0;
+		oModel.attachRequestCompleted(this, function() {
+			oModel.attachPropertyChange(this, function(oEvent){
+				iCount++;
+				var sPath = oEvent.getParameter('path');
+				var oContext = oEvent.getParameter('context');
+				var oValue = oEvent.getParameter('value');
+				var sReason = oEvent.getParameter('reason');
+				if (iCount === 1) {
+					equal(sPath, "/Categories(2)/CategoryName", "path check!");
+					equal(oContext, undefined, "context check!");
+					equal(oValue, "blubb", "property value check!");
+					equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+					oInput.setValue("Condiments");
+					
+				} else if (iCount === 2) {
+					equal(sPath, "/Categories(2)/CategoryName", "path check!");
+					equal(oContext, undefined, "context check!");
+					equal(oValue, "Condiments", "property value check!");
+					equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				}
+			});
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			equal(oBinding.getValue(), "Condiments", "property name check!");
+			oInput.setValue("blubb");
+			oInput.destroy();
+			start();
+		});
+		oModel.read("/Categories");
+	});
+
 	asyncTest("test setProperty on complex Types (internal)",function(){
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
