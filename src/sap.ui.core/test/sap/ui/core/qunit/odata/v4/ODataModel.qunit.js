@@ -107,6 +107,8 @@ sap.ui.require([
 		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo/");
 		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo/",
 			"serviceUrl in mParameters");
+		assert.strictEqual(new ODataModel("/foo/", {"serviceUrl" : "/bar/"}).sServiceUrl, "/foo/",
+			"explicit service URL parameter wins over serviceUrl in mParameters");
 
 		oHelperMock.expects("buildQueryOptions").returns(mModelOptions);
 		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
@@ -140,7 +142,6 @@ sap.ui.require([
 		oModel = new ODataModel("/foo/?sap-client=222",
 			{serviceUrlParams : {"sap-client" : "111"}});
 	});
-	//TODO test serviceUrl in parameter map!
 
 	//*********************************************************************************************
 	QUnit.test("Model construction with default group", function (assert) {
