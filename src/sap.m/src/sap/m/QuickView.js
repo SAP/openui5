@@ -155,8 +155,11 @@ sap.ui.define([
 
 		this._oNavContainer = new NavContainer(oNavConfig);
 
-		this._oNavContainer.invalidate = function () {
+		this._oNavContainer.invalidate = function (oSource) {
 			// suppress invalidation of the navContainer
+			if (!oSource) {
+				this.forceInvalidation();
+			}
 		};
 
 		var that = this;
@@ -374,6 +377,7 @@ sap.ui.define([
 	 * @public
 	 */
 	QuickView.prototype.openBy = function(oControl) {
+		this._bItemsChanged = true;
 		this._oPopover.openBy(oControl);
 
 		return this;
