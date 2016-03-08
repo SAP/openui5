@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 *
 			 * If not set, no interval headers are shown if no <code>intervalHeaders</code> are assigned.
 			 *
-			 * <b>Note:</b> This property is only used if <code>showIntervalHeaders</code> is set to true.
+			 * <b>Note:</b> This property is only used if <code>showIntervalHeaders</code> is set to <code>true</code>.
 			 * @since 1.38.0
 			 */
 			showEmptyIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},

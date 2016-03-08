@@ -2252,7 +2252,7 @@
 		{
 		  "id": "sap.m.sample.PlanningCalendarOneLine",
 		  "name": "PlanningCalendar - with one line appointments",
-		  "description": "PlanningCalendar showing appointment with only title in one line to save space."
+		  "description": "PlanningCalendar showing appointment with only title in one line to save space. The interval headers are only shown if there are some assigned in the visible area."
 		}
 		]
 	}

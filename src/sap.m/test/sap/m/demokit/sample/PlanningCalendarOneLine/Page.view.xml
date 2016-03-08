@@ -6,7 +6,8 @@
 	<VBox class="sapUiSmallMargin">
 		<PlanningCalendar
 			id="PC1"
-			showIntervalHeaders="false"
+			showIntervalHeaders="true"
+			showEmptyIntervalHeaders="false"
 			appointmentsReducedHeight="true"
 			startDate="{path: '/startDate'}"
 			rows="{path: '/people'}"
@@ -20,7 +21,8 @@
 					icon="{pic}"
 					title="{name}"
 					text="{role}"
-					appointments="{appointments}">
+					appointments="{appointments}"
+					intervalHeaders="{headers}">
 					<appointments>
 						<unified:CalendarAppointment
 							startDate="{start}"
@@ -32,6 +34,15 @@
 							tentative="{tentative}">
 						</unified:CalendarAppointment>
 					</appointments>
+					<intervalHeaders>
+						<unified:CalendarAppointment
+							startDate="{start}"
+							endDate="{end}"
+							icon="{pic}"
+							title="{title}"
+							type="{type}">
+						</unified:CalendarAppointment>
+					</intervalHeaders>
 				</PlanningCalendarRow>
 			</rows>
 		</PlanningCalendar>
