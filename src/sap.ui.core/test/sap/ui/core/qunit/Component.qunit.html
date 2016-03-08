@@ -359,6 +359,13 @@
 			manifestUrl : "/anylocation/manifest.json"
 		});
 
+		assert.ok(fnComponentClass.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+		assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
+		assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+		assert.throws(function() {
+			fnComponentClass.extend("new.Component", {});
+		}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
+
 		var oComponent = new fnComponentClass();
 
 		assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -405,6 +412,13 @@
 			async : true
 		}).then(function(fnComponentClass) {
 
+			assert.ok(fnComponentClass.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
+			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.throws(function() {
+				fnComponentClass.extend("new.Component", {});
+			}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
+
 			var oComponent = new fnComponentClass();
 
 			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -433,6 +447,13 @@
 			url : "../../../../../test-resources/sap/ui/core/samples/components/config/"
 		});
 
+		assert.ok(fnComponentClass.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+		assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
+		assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+		assert.throws(function() {
+			fnComponentClass.extend("new.Component", {});
+		}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
+
 		var oComponent = new fnComponentClass();
 
 		assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
@@ -458,6 +479,13 @@
 			url : "../../../../../test-resources/sap/ui/core/samples/components/oneview/",
 			async : true
 		}).then(function(fnComponentClass) {
+
+			assert.ok(fnComponentClass.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.ok(fnComponentClass.getMetadata().getManifest(), "Manifest is available");
+			assert.deepEqual(fnComponentClass.getMetadata().getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			assert.throws(function() {
+				fnComponentClass.extend("new.Component", {});
+			}, new Error("Extending Components created by Manifest is not supported!"), "Extend should raise an exception");
 
 			var oComponent = new fnComponentClass();
 
