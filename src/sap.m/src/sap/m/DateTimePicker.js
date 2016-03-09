@@ -10,14 +10,14 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 	/**
 	 * Constructor for a new DateTimePicker.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * This is a date input control with a calendar and a time selector as date time picker.
 	 *
 	 * A date can be entered using a calendar or time selector that opens in a popup. Alternatively a value can be entered directly in the input field by typing it in.
-	 * If a date is entered by typing it into the input field, it must fit to the used date format and locale. (See <code>sap.ui.core.format.DateFormat</code>)
+	 * If a date is entered by typing it into the input field, it must fit the used date format and locale. (See <code>sap.ui.core.format.DateFormat</code>)
 	 *
 	 * There are two options to provide a date for the <code>DateTimePicker</code>.
 	 * You can put a date as a string to the property <code>value</code> or you can put a JavaScript Date object to the property <code>dateValue</code>.
@@ -25,18 +25,18 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 	 * What property you should use depends on the use case of the application:
 	 * <ul>
 	 * <li>Use the <code>value</code> property if you want to bind the <code>DateTimePicker</code> to a model using the <code>sap.ui.model.type.DateTime</code>.</li>
-	 * <li>Use the <code>value</code> property if the date is provided as a string from the backend or inside the application (e.g. as ABAP type DATS field).</li>
+	 * <li>Use the <code>value</code> property if the date is provided as a string from the back end or inside the application (e.g. as ABAP type DATS field).</li>
 	 * <li>Use the <code>dateValue</code> property if the date is already provided as a JavaScript Date object or you want to work with a JavaScript Date object.</li>
 	 * </ul>
 	 *
-	 * All formatting and parsing of dates from and to strings is done using the {@link sap.ui.core.format.DateFormat}, so read the corresponding documentation if you need some information about this.
+	 * All formatting and parsing of dates to and from strings is done using the {@link sap.ui.core.format.DateFormat}, so please read the corresponding documentation if you need more information about this.
 	 *
 	 * Supported format options are pattern-based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
 	 *
 	 * For example, if the <code>valueFormat</code> is "yyyy-MM-dd-HH-mm-ss", <code>displayFormat</code> is "MMM d, y, HH:mm:ss" and the used locale is English,
 	 * a valid <code>value</code> string is "2015-07-30-10-30-15", which leads to an output of "Jul 30, 2015, 10:30:15".
 	 *
-	 * If no <code>placeholder</code> is set to the <code>DateTimePicker</code> the used <code>displayFormat</code> is shown as placeholder.
+	 * If no <code>placeholder</code> is set to the <code>DateTimePicker</code>, the used <code>displayFormat</code> is shown as a placeholder.
 	 * If another placeholder is needed, it must be set.
 	 *
 	 * Internally the <code>sap.ui.unified.Calendar</code> is used, but it is only needed if the <code>DateTimePicker</code> is opened. This means that it is not needed for the initial rendering.
