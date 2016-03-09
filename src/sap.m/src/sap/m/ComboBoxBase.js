@@ -39,6 +39,24 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				 * Internal aggregation to hold the inner picker popup.
 				 */
 				picker: { type: "sap.ui.core.PopupInterface", multiple: false, visibility: "hidden" }
+			},
+			events: {
+
+				/**
+				 * This event is fired when the end user moves the cursor to the text field, performs
+				 * an action that requires items to be loaded, and items are not already loaded. For example,
+				 * pressing F4 to open the dropdown list or typing something in the text field fires the event.
+				 *
+				 * <b>Note:</b> We strongly recommend to only use this feature in performance critical scenarios.
+				 * Loading the items lazily (on demand) to defer initialization has several implications for the end user
+				 * experience. For example, the busy indicator has to be shown while the items are being loaded and
+				 * assistive technology software also has to announce the state changes (which may be confusing
+				 * for some screen reader users).
+				 *
+				 * <b>Note</b>: Currently the <code>sap.m.MultiComboBox</code> does not support this event.
+				 * @since 1.38
+				 */
+				loadItems: {}
 			}
 		}});
 
@@ -56,9 +74,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 */
 		ComboBoxBase.prototype.updateItems = function(sReason) {
 			this.bItemsUpdated = false;
+
+			// note: for backward compatibility and to keep the old data binding behavior,
+			// the items should be destroyed before calling .updateAggregation("items")
 			this.destroyItems();
 			this.updateAggregation("items");
 			this.bItemsUpdated = true;
+
+			if (this.hasLoadItemsEventListeners()) {
+				this.onItemsLoaded();
+			}
 		};
 
 		/**
@@ -87,6 +112,101 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			return this._oList;
 		};
 
+		ComboBoxBase.prototype.loadItems = function(fnCallBack) {
+			var bCallBackIsAFunction = typeof fnCallBack === "function";
+
+			// items are not loaded
+			if (this.hasLoadItemsEventListeners() && (this.getItems().length === 0)) {
+				this._bOnItemsLoadedScheduled = false;
+
+				if (bCallBackIsAFunction) {
+					this.aEventQueue.push(fnCallBack);
+
+					// sets up a timeout to know if the items are not loaded after a 300ms delay,
+					// to show the busy indicator in the text field, notice that if the items
+					// are loaded before 300ms the timeout is canceled
+					if ((this.iLoadItemsEventInitialProcessingTimeoutID === -1) &&
+
+						// the busy indicator in the input field should not be shown while the user is typing
+						(fnCallBack.name !== "input")) {
+
+						this.iLoadItemsEventInitialProcessingTimeoutID = setTimeout(function onItemsNotLoadedAfterDelay() {
+							this.setInternalBusyIndicatorDelay(0);
+							this.setInternalBusyIndicator(true);
+						}.bind(this), ComboBoxBase.LOAD_ITEMS_BUSY_INDICATOR_DELAY);
+					}
+				}
+
+				// process the loadItems event only once
+				if (!this.bProcessingLoadItemsEvent) {
+					this.bProcessingLoadItemsEvent = true;
+
+					// application code must provide the items
+					// in the loadItems event listener
+					this.fireLoadItems();
+				}
+
+			// items are already loaded
+			} else if (bCallBackIsAFunction) {
+
+				// synchronous callback
+				fnCallBack.call(this);
+			}
+		};
+
+		ComboBoxBase.prototype.onItemsLoaded = function() {
+			var sInputEventHandleName = "input";
+			this.bProcessingLoadItemsEvent = false;
+			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
+
+			// restore the busy indicator state to its previous state (if it has not been changed)
+			// note: this is needed to avoid overriding application settings
+			if (this.bInitialBusyIndicatorState !== this.getBusy()) {
+				this.setInternalBusyIndicator(this.bInitialBusyIndicatorState);
+			}
+
+			// restore the busy indicator delay to its previous state (if it has not been changed)
+			// note: this is needed to avoid overriding application settings
+			if (this.iInitialBusyIndicatorDelay !== this.getBusyIndicatorDelay()) {
+				this.setInternalBusyIndicatorDelay(this.iInitialBusyIndicatorDelay);
+			}
+
+			// process the event queue
+			for (var i = 0, fnCurrentEvent, fnNextEvent, bIsCurrentEventTheLast; i < this.aEventQueue.length; i++) {
+				fnCurrentEvent = this.aEventQueue.shift(); // get and delete the first event from the queue
+				i--;
+				bIsCurrentEventTheLast = (i + 1) === this.aEventQueue.length;
+				fnNextEvent = bIsCurrentEventTheLast ? null : this.aEventQueue[i + 1];
+
+				if (typeof fnCurrentEvent === "function") {
+					if ((fnCurrentEvent.name === sInputEventHandleName) &&
+						!bIsCurrentEventTheLast &&
+						(fnNextEvent.name === sInputEventHandleName)) {
+
+						// no need to process this input event because the next is pending
+						continue;
+					}
+
+					fnCurrentEvent.call(this);
+				}
+			}
+		};
+
+		ComboBoxBase.prototype.hasLoadItemsEventListeners = function() {
+			return this.hasListeners("loadItems");
+		};
+
+		ComboBoxBase.prototype._scheduleOnItemsLoadedOnce = function() {
+			if (!this._bOnItemsLoadedScheduled &&
+				!this.isBound("items") &&
+				this.hasLoadItemsEventListeners() &&
+				this.bProcessingLoadItemsEvent) {
+
+				this._bOnItemsLoadedScheduled = true;
+				setTimeout(this.onItemsLoaded.bind(this), 0);
+			}
+		};
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
@@ -100,10 +220,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			// initialize composites
 			this.createPicker(this.getPickerType());
 
-			/**
-			 * To detect whether the data is updated.
-			 */
+			// indicate whether the items are updated
 			this.bItemsUpdated = false;
+
+			this.bProcessingLoadItemsEvent = false;
+			this.iLoadItemsEventInitialProcessingTimeoutID = -1;
+			this.aEventQueue = [];
+			this.bInitialBusyIndicatorState = this.getBusy();
+			this.iInitialBusyIndicatorDelay = this.getBusyIndicatorDelay();
+			this._bOnItemsLoadedScheduled = false;
 		};
 
 		ComboBoxBase.prototype.exit = function() {
@@ -113,6 +238,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				this.getList().destroy();
 				this._oList = null;
 			}
+
+			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
+			this.aEventQueue = [];
 		};
 
 		/* =========================================================== */
@@ -187,6 +315,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 					return;
 				}
 
+				this.loadItems();
 				this.open();
 			}
 
@@ -227,6 +356,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 			}
 
 			this.selectText(0, this.getValue().length); // select all text
+			this.loadItems();
 			this.open();
 		};
 
@@ -299,6 +429,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		/* =========================================================== */
 
 		/**
+		 * Indicates the delay in milliseconds after which the busy indicator is shown when the end user moves
+		 * the cursor in the text field and performs an action that requires items to be loaded,
+		 * items are not already loaded, and there is an {@link #loadItems} event listener attached.
+		 */
+		ComboBoxBase.LOAD_ITEMS_BUSY_INDICATOR_DELAY = 300;
+
+		/**
 		 * Indicates whether the custom placeholder is used.
 		 *
 		 * IE9 does not have a native placeholder support.
@@ -359,7 +496,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @returns {sap.m.Popover | sap.m.Dialog} The picker popup to be used.
 		 * @protected
 		 */
-		ComboBoxBase.prototype.createPicker = function() {};
+		ComboBoxBase.prototype.createPicker = function(sPickerType) {};
 
 		/**
 		 * Gets the control's picker popup.
@@ -551,7 +688,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @param {sap.ui.base.Event} oControlEvent
 		 * @since 1.30
 		 */
-		ComboBoxBase.prototype.onItemChange = function() {};
+		ComboBoxBase.prototype.onItemChange = function(oControlEvent) {};
 
 		/**
 		 * Clears the selection.
@@ -560,6 +697,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		 * @protected
 		 */
 		ComboBoxBase.prototype.clearSelection = function() {};
+
+		ComboBoxBase.prototype.setInternalBusyIndicator = function(bBusy) {
+			this.bInitialBusyIndicatorState = this.getBusy();
+			return this.setBusy.apply(this, arguments);
+		};
+
+		ComboBoxBase.prototype.setInternalBusyIndicatorDelay = function(iDelay) {
+			this.iInitialBusyIndicatorDelay = this.getBusyIndicatorDelay();
+			return this.setBusyIndicatorDelay.apply(this, arguments);
+		};
 
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
@@ -601,6 +748,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				oItem.attachEvent("_change", this.onItemChange, this);
 			}
 
+			this._scheduleOnItemsLoadedOnce();
 			return this;
 		};
 
@@ -621,6 +769,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				oItem.attachEvent("_change", this.onItemChange, this);
 			}
 
+			this._scheduleOnItemsLoadedOnce();
 			return this;
 		};
 

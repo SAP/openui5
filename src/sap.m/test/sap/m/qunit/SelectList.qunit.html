@@ -2247,6 +2247,31 @@
 			oSelectList.destroy();
 		});
 
+		test("it should only remove the items, but not the busy indicator", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item()
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelectList.setBusyIndicatorDelay(0);
+			oSelectList.setBusy(true);
+
+			// act
+			oSelectList.destroyItems();
+
+			// assert
+			strictEqual(oSelectList.getDomRef().childElementCount, 1);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
 		module("findFirstEnabledItem()");
 
 		test("findFirstEnabledItem()", function() {
