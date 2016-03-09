@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 * Adds the classes needed to recognize the element as focusable.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered
+	 * @param {sap.ui.core.Control} [oLI] an object representation of the control that should be rendered
 	 * @protected
 	 */
 	ListItemBaseRenderer.addFocusableClasses = function(rm, oLI) {
@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	 * Adds the classes for legacy browsers, which do not support normal outlines.
 	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oLI an object representation of the control that should be rendered
+	 * @param {sap.ui.core.Control} [oLI] an object representation of the control that should be rendered
 	 * @protected
 	 */
 	ListItemBaseRenderer.addLegacyOutlineClass = function(rm, oLI) {
