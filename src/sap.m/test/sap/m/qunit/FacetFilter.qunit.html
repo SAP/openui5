@@ -3284,6 +3284,78 @@
 			destroyFF(oFF);
 		});
 
+		module('Overflow Arrows', {
+			beforeEach: function () {
+				this.oFacetFilter = new sap.m.FacetFilter({
+					showPersonalization: true,
+					type: "Simple",
+					liveSearch: true,
+					showSummaryBar: false,
+					showReset: false,
+					showPopoverOKButton: true,
+					lists: [
+						new sap.m.FacetFilterList({
+							key: "20160831",
+							text: "8/31/2016",
+							selected: false
+						}),
+						new sap.m.FacetFilterList({
+							key: "20160930",
+							text: "9/30/2016",
+							selected: true
+						}),
+						new sap.m.FacetFilterList({
+							key: "20161031",
+							text: "10/31/2016",
+							selected: false
+						}),
+						new sap.m.FacetFilterList({
+							key: "20161130",
+							text: "11/30/2016",
+							selected: false
+						}),
+						new sap.m.FacetFilterList({
+							key: "20161231",
+							text: "12/31/2016",
+							selected: false
+						}),
+						new sap.m.FacetFilterList({
+							key: "20170131",
+							text: "1/31/2017",
+							selected: false
+						})
+					]
+				});
+				var aItems = [this.oFacetFilter];
+				this.oHBox = new sap.m.HBox({
+					height: "",
+					width: "",
+					displayInline: false,
+					direction: "Row",
+					fitContainer: false,
+					renderType: "Div",
+					justifyContent: "Start",
+					alignItems: "Stretch",
+					wrap: "NoWrap",
+					alignContent: "Stretch",
+					items: aItems
+				});
+				this.oHBox.placeAt('content');
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oFacetFilter.destroy();
+				this.oHBox.destroy();
+			}
+		});
+		test("Overflow arrows are not shown when FacetFilter is inside an flex element", function () {
+			var sLeftArrowCSSVisibility = jQuery(this.oFacetFilter.getDomRef('arrowScrollLeft')).css('visibility');
+			var sRightArrowCSSVisibility = jQuery(this.oFacetFilter.getDomRef("arrowScrollRight")).css('visibility');
+
+			strictEqual(sLeftArrowCSSVisibility, "hidden", "Left arrow is hidden");
+			strictEqual(sRightArrowCSSVisibility, "hidden", "Right arrow is hidden");
+		});
+
 		// Helper functions
 
 		function getButtonCtrl(oFF, iIndex) {
