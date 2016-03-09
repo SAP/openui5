@@ -383,14 +383,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 	};
 
-	TableRenderer.getAriaAttributesForRowHdr = function(oTable) {
-		return {};
-	};
-
 	TableRenderer.renderColRowHdr = function(rm, oTable) {
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-selall");
 		var oSelMode = oTable.getSelectionMode();
+		var bEnabled = false;
 		if ((oSelMode == "Multi" || oSelMode == "MultiToggle") && oTable.getEnableSelectAll()) {
 			rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_SELECT_ALL"));
 			//TODO: remove second _getSelectableRowCount Call!
@@ -398,6 +395,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 				rm.addClass("sapUiTableSelAll");
 			}
 			rm.addClass("sapUiTableSelAllEnabled");
+			bEnabled = true;
 		} else {
 			rm.addClass("sapUiTableSelAllDisabled");
 		}
@@ -406,8 +404,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		rm.writeAttribute("tabindex", "-1");
 
-		var mAriaAttributes = this.getAriaAttributesForRowHdr(oTable);
-		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNROWHEADER", {enabled: bEnabled});
 
 		rm.write(">");
 		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.Single) {
@@ -423,24 +420,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.write("</div>");
 	};
 
-	TableRenderer.getAriaAttributesForCol = function(oTable, oColumn, iColumnIndex) {
-		var mAriaAttributes = {};
-
-		// aria-haspopup should only be added if the column has a column menu
-		// the column menu always gets created but might have no items.
-		if (oColumn._menuHasItems()) {
-			mAriaAttributes["aria-haspopup"] = {value: "true"};
-		}
-
-		mAriaAttributes.role = {value: "columnheader"};
-
-		if (iColumnIndex < oTable.getFixedColumnCount()) {
-			mAriaAttributes["aria-labelledby"] = {value: oColumn.getId() + " " + oTable.getId() + "-ariafixedcolumn"};
-		}
-
-		return mAriaAttributes;
-	};
-
 	TableRenderer.renderCol = function(rm, oTable, oColumn, iIndex, iHeader, bInvisible) {
 		var oLabel;
 		if (oColumn.getMultiLabels().length > 0) {
@@ -450,20 +429,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 
 		rm.write("<div");
+		var sHeaderId = oColumn.getId();
 		if (iHeader === 0) {
 			rm.writeElementData(oColumn);
 		} else {
 			// TODO: we need a writeElementData with suffix - it is another HTML element
 			//       which belongs to the same column but it is not in one structure!
-			rm.writeAttribute('id', oColumn.getId() + "_" + iHeader);
+			sHeaderId = sHeaderId + "_" + iHeader;
+			rm.writeAttribute('id', sHeaderId);
 		}
 		rm.writeAttribute('data-sap-ui-colid', oColumn.getId());
 		rm.writeAttribute("data-sap-ui-colindex", iIndex);
 
 		rm.writeAttribute("tabindex", "-1");
 
-		var mAriaAttributes = this.getAriaAttributesForCol(oTable, oColumn, iIndex);
-		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNHEADER", {
+			column: oColumn,
+			headerId: sHeaderId,
+			index: iIndex
+		});
 
 		rm.addClass("sapUiTableCol");
 		if (oTable.getFixedColumnCount() === iIndex + 1) {
@@ -532,22 +516,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.write("</div>");
 	};
 
-	TableRenderer.getAriaAttributesForRowHdrRow = function(oTable, oRow, iRowIndex) {
-		var mAriaAttributes = {};
-
-		var sSelctionMode = oTable.getSelectionMode();
-		if (sSelctionMode !== sap.ui.table.SelectionMode.None) {
-
-			var bIsSelected = oTable.isIndexSelected(iRowIndex);
-			mAriaAttributes["aria-selected"] = {value: bIsSelected};
-
-			var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
-			mAriaAttributes["title"] = {value: mTooltipTexts.mouse[bIsSelected ? "rowDeselect" : "rowSelect"]};
-		}
-
-		return mAriaAttributes;
-	};
-
 	TableRenderer._addFixedRowCSSClasses = function(rm, oTable, iIndex) {
 		var iFixedRowCount = oTable.getFixedRowCount();
 		var iFixedBottomRowCount = oTable.getFixedBottomRowCount();
@@ -587,11 +555,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.writeAttribute("data-sap-ui-rowindex", iRowIndex);
 		rm.addClass("sapUiTableRowHdr");
 		this._addFixedRowCSSClasses(rm, oTable, iRowIndex);
+		var bRowSelected = false;
 		if (oRow._bHidden) {
 			rm.addClass("sapUiTableRowHidden");
 		} else {
 			if (oTable.isIndexSelected(iRowIndex)) {
 				rm.addClass("sapUiTableRowSel");
+				bRowSelected = true;
 			}
 		}
 
@@ -602,8 +572,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		rm.writeAttribute("tabindex", "-1");
 
-		var mAriaAttributes = this.getAriaAttributesForRowHdrRow(oTable, oRow, iRowIndex);
-		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER", {rowSelected: bRowSelected});
 
 		var aCellIds = [];
 		jQuery.each(oRow.getCells(), function(iIndex, oCell) {
