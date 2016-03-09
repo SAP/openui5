@@ -7,11 +7,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	function(jQuery, BaseObject, TableAccRenderExtension, ValueStateSupport) {
 	"use strict";
 
+	var CELLTYPES = {
+		DATACELL : "DATACELL", // standard data cell
+		GROUPROWCELL : "GROUPROWCELL", // cell in a grouping row
+		COLUMNHEADER : "COLUMNHEADER", // column header
+		ROWHEADER : "ROWHEADER", // row header
+		GROUPROWHEADER : "GROUPROWHEADER", // row header of a grouping row
+		COLUMNROWHEADER : "COLUMNROWHEADER" // select all row selector (top left cell)
+	};
 
-	var _getInfoOfFocusedCell = function(oTable) {
+	var _getInfoOfFocusedCell = function(oExtension) {
+		var oTable = oExtension.getTable();
 		var oIN = oTable._oItemNavigation;
 		var oTableRef = oTable.getDomRef();
-		if (!oTable._bAccMode || !oTableRef || !oIN) {
+		if (!oExtension.getAccMode() || !oTableRef || !oIN) {
 			return null;
 		}
 		var oCellRef = oIN.getFocusedDomRef();
@@ -23,23 +32,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			var $Cell = jQuery(oCellRef);
 			if ($Cell.attr("role") == "gridcell") {
 				if ($Cell.parent().hasClass("sapUiTableGroupHeader")) {
-					return {type: "GROUPROWCELL", cell: $Cell};
+					return {type: CELLTYPES.GROUPROWCELL, cell: $Cell};
 				}
-				return {type: "DATACELL", cell: $Cell};
+				return {type: CELLTYPES.DATACELL, cell: $Cell};
 			}
 		} else {
 			var $Cell = jQuery(oCellRef);
 			if ($Cell.attr("role") == "columnheader") {
-				return {type: "COLUMNHEADER", cell: $Cell};
+				return {type: CELLTYPES.COLUMNHEADER, cell: $Cell};
 			}
 			if ($Cell.hasClass("sapUiTableRowHdr")) {
 				if ($Cell.hasClass("sapUiTableGroupHeader")) {
-					return {type: "GROUPROWHEADER", cell: $Cell};
+					return {type: CELLTYPES.GROUPROWHEADER, cell: $Cell};
 				}
-				return {type: "ROWHEADER", cell: $Cell};
+				return {type: CELLTYPES.ROWHEADER, cell: $Cell};
 			}
 			if ($Cell.hasClass("sapUiTableColRowHdr")) {
-				return {type: "COLUMNROWHEADER", cell: $Cell};
+				return {type: CELLTYPES.COLUMNROWHEADER, cell: $Cell};
 			}
 		}
 
@@ -228,18 +237,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		};
 	};
 
-	var _updateCellAccText = function(oExtension, sText) {
-		var oCellAccElem = document.getElementById(oExtension.getTable().getId() + "-cellacc");
-		if (oCellAccElem) {
-			jQuery(oCellAccElem).text(sText);
-		}
-	};
-
 	var _cleanupLastFocusedCell = function(oExtension) {
 		if (oExtension._cleanupInfo) {
 			oExtension._cleanupInfo.cell.attr(oExtension._cleanupInfo.attr);
 			oExtension._cleanupInfo = null;
 		}
+	};
+
+	var _updateCell = function(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions, aLabels, aDescriptions, sText, fAdapt) {
+		oExtension._cleanupInfo = {
+			cell: $Cell,
+			attr: {
+				"aria-labelledby" : aDefaultLabels && aDefaultLabels.length ? aDefaultLabels.join(" ") : " ",
+				"aria-describedby" : aDefaultDescriptions && aDefaultDescriptions.length ? aDefaultDescriptions.join(" ") : " "
+			}
+		};
+
+		var oCountChangeInfo = _updateRowColCount(oExtension);
+		oExtension.getTable().$("cellacc").text(sText || " ");
+
+		if (fAdapt) {
+			fAdapt(oExtension, $Cell, oCountChangeInfo, aLabels, aDescriptions);
+		}
+
+		$Cell.attr({
+			"aria-labelledby" : oCountChangeInfo.initialLabels + " " + (aLabels && aLabels.length ? aLabels.join(" ") : ""),
+			"aria-describedby" : aDescriptions && aDescriptions.length ? aDescriptions.join(" ") : " "
+		});
 	};
 
 
@@ -284,6 +308,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			});
 		}
 	});
+
+	TableAccExtension.CELLTYPES = CELLTYPES;
 
 	/**
 	 * @see sap.ui.base.Object#destroy
@@ -333,123 +359,117 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		if (bOnCellFocus) {
 			_cleanupLastFocusedCell(this);
 		}
-		var oInfo = _getInfoOfFocusedCell(this._table);
+		var oInfo = _getInfoOfFocusedCell(this);
 		if (!oInfo || !oInfo.cell || !oInfo.type || !this["_updateAccFor" + oInfo.type]) {
 			return;
 		}
-		//DATACELL, ROWHEADER, GROUPROWCELL / Not yet handled: GROUPROWHEADER
+		//Not yet handled: GROUPROWHEADER
 		this["_updateAccFor" + oInfo.type](oInfo.cell, bOnCellFocus);
 	};
 
 	TableAccExtension.prototype._updateAccForDATACELL = function($Cell, bOnCellFocus) {
-		var sId = $Cell.attr("id"),
-			oTable = this.getTable();
+		var oTable = this.getTable(),
+			oIN = oTable._oItemNavigation;
 
-		var aMatches = /.*-row(\d*)-col(\d*)/i.exec(sId);
-		if (aMatches) {
-			var iRow = aMatches[1];
-			var iCol = aMatches[2];
-			var oRow = oTable.getRows()[iRow];
-			var oCell = oRow && oRow.getCells()[iCol];
-			var oColumn = oTable._getVisibleColumns()[iCol];
-			var bHidden = $Cell.parent().hasClass("sapUiTableRowHidden");
-			var oInfo = bHidden ? null : _getAccessibleInfoOfControl(oCell, oTable._oResBundle);
-			var bIsTreeColumnCell = this._treeMode && oTable._getTreeIconAttributes && $Cell.hasClass("sapUiTableTdFirst"); //TreeTable
-			var sCellLabels = this.getAccRenderExtension().getCellLabels(oTable, oColumn, iCol < oTable.getFixedColumnCount(), true) || "";
-			var sCellDescription = "";
-			if (!bHidden) {
-				sCellDescription = oInfo ? (oTable.getId() + "-cellacc") : oCell.getId();
-			}
-
-			var oCountChangeInfo = _updateRowColCount(this);
-
-			this._cleanupInfo = {
-				cell: $Cell,
-				attr: {
-					"aria-labelledby" : sCellLabels,
-					"aria-describedby" : ""
-				}
-			};
-
-			$Cell.attr("aria-labelledby", oCountChangeInfo.initialLabels + oTable.getId() + "-rownumberofrows " + oTable.getId() + "-colnumberofcols " + sCellLabels +
-											" " + sCellDescription + " " + (oInfo && oInfo.labelled ? " " + oInfo.labelled : ""));
-			if (bHidden) {
-				$Cell.attr("aria-describedby", "");
-			} else {
-				$Cell.attr("aria-describedby", (oInfo && oInfo.described ? oInfo.described + " " : "") +
-							((((!oInfo || oInfo.editable) && !this._readonly) || bIsTreeColumnCell) ? (oTable.getId() + "-toggleedit ") : "") +
-							(oTable._getSelectOnCellsAllowed() && oCountChangeInfo.rowChange ? (oRow.getId() + "-rowselecttext") : ""));
-			}
-
-			var sTreeText = "";
-			if (bIsTreeColumnCell && !bHidden) {
-				var oAttributes = oTable._getTreeIconAttributes(oRow);
-				if (oAttributes && oAttributes["aria-label"]) {
-					sTreeText = oAttributes["aria-label"];
-				}
-			}
-
-			_updateCellAccText(this, sTreeText + " " + (oInfo ? oInfo.text : " "));
+		if (!oIN) {
+			return;
 		}
+
+		var iRow = Math.floor(oIN.iFocusedIndex / oIN.iColumns) - oTable._getHeaderRowCount(),
+			iCol = (oIN.iFocusedIndex % oIN.iColumns) - 1,
+			oRow = oTable.getRows()[iRow],
+			oColumn = oTable._getVisibleColumns()[iCol],
+			oCell = oRow && oRow.getCells()[iCol],
+			oInfo = null,
+			bHidden = $Cell.parent().hasClass("sapUiTableRowHidden"),
+			bIsTreeColumnCell = this._treeMode && oTable._getTreeIconAttributes && $Cell.hasClass("sapUiTableTdFirst"), //TreeTable
+			aDefaultLabels = this.getAccRenderExtension().getCellLabels(oTable, oColumn, iCol < oTable.getFixedColumnCount(), false) || [],
+			aDescriptions = [],
+			aLabels = [oTable.getId() + "-rownumberofrows", oTable.getId() + "-colnumberofcols"].concat(aDefaultLabels);
+
+		//TBD: Clarify why this is needed!
+		if (oCell.data("sap-ui-colid") != oColumn.getId()) {
+			var aCells = oRow.getCells();
+			for (var i = 0; i < aCells.length; i++) {
+				if (aCells[i].data("sap-ui-colid") === oColumn.getId()) {
+					oCell = aCells[i];
+					break;
+				}
+			}
+		}
+
+		if (!bHidden) {
+			oInfo = _getAccessibleInfoOfControl(oCell, oTable._oResBundle);
+			aLabels.push(oInfo ? (oTable.getId() + "-cellacc") : oCell.getId());
+
+			if (oInfo && oInfo.labelled) {
+				aLabels.push(oInfo.labelled);
+			}
+			if (oInfo && oInfo.described) {
+				aDescriptions.push(oInfo.described);
+			}
+			if (((!oInfo || oInfo.editable) && !this._readonly) || bIsTreeColumnCell) {
+				aDescriptions.push(oTable.getId() + "-toggleedit");
+			}
+		}
+
+		var sText = oInfo ? oInfo.text : " ";
+		if (bIsTreeColumnCell && !bHidden) {
+			var oAttributes = oTable._getTreeIconAttributes(oRow);
+			if (oAttributes && oAttributes["aria-label"]) {
+				sText = oAttributes["aria-label"] + " " + sText;
+			}
+		}
+
+		_updateCell(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, sText, function(oExtension, $Cell, oCountChangeInfo, aLabels, aDescriptions) {
+			if (!bHidden && oTable._getSelectOnCellsAllowed() && oCountChangeInfo.rowChange) {
+				aDescriptions.push(oRow.getId() + "-rowselecttext");
+			}
+		});
 	};
 
 	TableAccExtension.prototype._updateAccForROWHEADER = function($Cell, bOnCellFocus) {
 		var oTable = this.getTable();
-		var oRow = oTable.getRows()[$Cell.attr("data-sap-ui-rowindex")];
-		var bHidden = $Cell.hasClass("sapUiTableRowHidden");
+		var aLabels = [oTable.getId() + "-ariarowheaderlabel", oTable.getId() + "-rownumberofrows"];
 
-		this._cleanupInfo = {
-			cell: $Cell,
-			attr: {
-				"aria-labelledby" : ""
-			}
-		};
+		if (!$Cell.hasClass("sapUiTableRowHidden")) {
+			var oRow = oTable.getRows()[$Cell.attr("data-sap-ui-rowindex")];
+			aLabels.push(oRow.getId() + "-rowselecttext");
+		}
 
-		var oCountChangeInfo = _updateRowColCount(this);
-
-		$Cell.attr("aria-labelledby", oCountChangeInfo.initialLabels + oTable.getId() + "-cellacc " + oTable.getId() + "-rownumberofrows " + (bHidden ? "" : oRow.getId() + "-rowselecttext"));
-		_updateCellAccText(this, oTable._oResBundle.getText("TBL_ROW_HEADER_LABEL"));
+		//TBD: cleanup and align defaults TableRenderer.getAriaAttributesForRowHdr
+		_updateCell(this, $Cell, [oTable.getId() + "-ariarowheaderlabel"], null, aLabels, null, null);
 	};
 
 	TableAccExtension.prototype._updateAccForCOLUMNHEADER = function($Cell, bOnCellFocus) {
 		var oTable = this.getTable(),
 			iCol = $Cell.attr("data-sap-ui-colindex"),
-			bFixed = iCol < oTable.getFixedColumnCount();
+			aDefaultLabels = null, //TBD: cleanup and align TableRenderer.getAriaAttributesForCol
+			aLabels = [oTable.getId() + "-colnumberofcols", $Cell.attr("id")];
 
-		this._cleanupInfo = {
-			cell: $Cell,
-			attr: {
-				//TBD: cleanup and align TableRenderer.getAriaAttributesForCol
-				"aria-labelledby" : bFixed ? ($Cell.attr("id") + " " + oTable.getId() + "-ariafixedcolumn") : ""
-			}
-		};
+		if (iCol < oTable.getFixedColumnCount()) { // fixed column
+			aDefaultLabels = [$Cell.attr("id"), oTable.getId() + "-ariafixedcolumn"];
+			aLabels.push(oTable.getId() + "-ariafixedcolumn");
+		}
 
-		var oCountChangeInfo = _updateRowColCount(this);
-
-		$Cell.attr("aria-labelledby", oCountChangeInfo.initialLabels + oTable.getId() + "-colnumberofcols " + $Cell.attr("id") +
-					" " + (bFixed ? oTable.getId() + "-ariafixedcolumn" : ""));
-		_updateCellAccText(this, " ");
-		//TBD: Improve handling for multiple handling, discuss announcements for menu, sorting state and filter
+		//TBD: Improve handling for multiple headers, discuss announcements for menu, sorting state and filter
+		_updateCell(this, $Cell, aDefaultLabels, null, aLabels, null, null);
 	};
 
 	TableAccExtension.prototype._updateAccForCOLUMNROWHEADER = function($Cell, bOnCellFocus) {
 		var oTable = this.getTable(),
-			bEnabled = $Cell.hasClass("sapUiTableSelAllEnabled");
+			//TBD: cleanup and align defaults TableRenderer.getAriaAttributesForRowHdr
+			aDefaultLabels = [oTable.getId() + "-ariacolrowheaderlabel"],
+			aLabels = aDefaultLabels;
 
-		this._cleanupInfo = {
-			cell: $Cell,
-			attr: {
-				"aria-labelledby" : ""
-			}
-		};
+		if ($Cell.hasClass("sapUiTableSelAllEnabled")) {
+			aLabels = aDefaultLabels.concat([oTable.getId() + "-ariaselectall"]);
+		}
 
-		var oCountChangeInfo = _updateRowColCount(this);
-
-		$Cell.attr("aria-labelledby", oCountChangeInfo.initialLabels + oTable.getId() + "-cellacc " + (bEnabled ? oTable.getId() + "-ariaselectall" : ""));
-		_updateCellAccText(this, oTable._oResBundle.getText("TBL_ROW_COL_HEADER_LABEL"));
+		_updateCell(this, $Cell, aDefaultLabels, null, aLabels, null, null);
 	};
 
-	TableAccExtension.prototype._updateAccForGROUPROWCELL = function($Cell, bOnCellFocus) {
+/*	TableAccExtension.prototype._updateAccForGROUPROWCELL = function($Cell, bOnCellFocus) {
 		var sId = $Cell.attr("id"),
 			oTable = this.getTable();
 
@@ -480,7 +500,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			_updateCellAccText(this, oTable._oResBundle.getText("TBL_ROW_GROUP_LABEL") + " " + (oInfo ? oInfo.text : " "));
 			_updateRowColCount(this);
 		}
-	};
+	};*/
 
 	return TableAccExtension;
 
