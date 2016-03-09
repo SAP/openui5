@@ -69,6 +69,17 @@ sap.ui.define(['jquery.sap.global'],
 			_writeAccText(oRm, sTableId, "colnumberofcols");
 			// aria description for table cell content
 			_writeAccText(oRm, sTableId, "cellacc");
+			// aria description for selected row
+			_writeAccText(oRm, sTableId, "ariarowselected", oBundle.getText("TBL_ROW_DESC_SELECTED"));
+			// aria description for column menu
+			_writeAccText(oRm, sTableId, "ariacolmenu", oBundle.getText("TBL_COL_DESC_MENU"));
+			// aria description for a filtered column
+			_writeAccText(oRm, sTableId, "ariacolfiltered", oBundle.getText("TBL_COL_DESC_FILTERED"));
+			// aria description for a sorted column
+			_writeAccText(oRm, sTableId, "ariacolsortedasc", oBundle.getText("TBL_COL_DESC_SORTED_ASC"));
+			// aria description for a sorted column
+			_writeAccText(oRm, sTableId, "ariacolsorteddes", oBundle.getText("TBL_COL_DESC_SORTED_DES"));
+
 			if (oTable.getFixedColumnCount() > 0) {
 				// aria description for fixed columns
 				_writeAccText(oRm, sTableId, "ariafixedcolumn", oBundle.getText("TBL_FIXED_COLUMN"));
