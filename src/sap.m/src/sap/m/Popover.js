@@ -290,7 +290,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
 
 			this._arrowOffset = 18;
-			if (sap.m._bSizeCompact || !!document.querySelector('.sapUiSizeCompact')) {
+			if (sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact')) {
 				this._arrowOffset = 9;
 			}
 
@@ -639,7 +639,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				}
 
 				// Set compact style class if the referenced DOM element is compact too
-				this.toggleStyleClass("sapUiSizeCompact", sap.m._bSizeCompact || !!document.querySelector('.sapUiSizeCompact'));
+				this.toggleStyleClass("sapUiSizeCompact", sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact'));
 
 				oPopup.setAutoCloseAreas([oParentDomRef]);
 				oPopup.setContent(this);
@@ -1680,7 +1680,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				this._arrowOffset = 18;
 				this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
 
-				if (sap.m._bSizeCompact || !!document.querySelector('.sapUiSizeCompact')) {
+				if (sap.m._bSizeCompact || !!document.querySelector('body.sapUiSizeCompact')) {
 					this._arrowOffset = 9;
 					this._offsets = ["0 -9", "9 0", "0 9", "-9 0"];
 				}
