@@ -64,6 +64,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	// Add extra classes for TextArea element
 	TextAreaRenderer.addInnerClasses = function(oRm, oControl) {
 		oRm.addClass("sapMTextAreaInner");
+		if (oControl.getGrowing()) {
+			oRm.addClass("sapMTextAreaGrow");
+		}
 	};
 
 	// Returns the accessibility state of the control.

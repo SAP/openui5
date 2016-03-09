@@ -7,13 +7,20 @@
 }
 
 .sapMTextAreaInner {
-	line-height: 1.6em;
 	overflow: auto; /* remove scrollbars if not needed */
 	-webkit-transform: none; /* transform is blocking scroll */
 	resize: none;
 }
 
 .sapMTextArea > .sapMTextAreaInner{
+	-webkit-overflow-scrolling: touch;
+	line-height: 1.4;
 	height: 100%;
 	width: 100%;
+}
+
+.sapMTextAreaGrow {
+	/* should not grow more than screen size */
+	max-height: calc(~"100vh - 6rem");
+	overflow: hidden;
 }
