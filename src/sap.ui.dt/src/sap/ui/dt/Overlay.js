@@ -184,7 +184,9 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	Overlay.prototype.init = function() {
 		this._bVisible = null;
 
-		this.attachBrowserEvent("scroll", this._onScroll, this);
+		this._domRefScrollHandler = this._syncScrollWithDomRef.bind(this);
+
+		this.attachBrowserEvent("scroll", this._onOverlayScroll, this);
 	};
 
 	/**
@@ -192,6 +194,8 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @protected
 	 */
 	Overlay.prototype.exit = function() {
+		this._detachDomRefScrollHandler();
+
 		delete this._oDomRef;
 		delete this._bVisible;
 		window.clearTimeout(this._iCloneDomTimeout);
@@ -293,15 +297,25 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function() {
+		// invalidate cached geometry
+		delete this._mGeometry;
+
 		if (!this.getDomRef()) {
 			return;
 		}
 
-		delete this._mGeometry;
+		if (!this.isVisible()) {
+			this.$().css("display", "none");
+			return;
+		}
+
 		var oGeometry = this.getGeometry();
 
 		if (oGeometry && oGeometry.visible) {
 			var $overlay = this.$();
+
+			// ensure visibility
+			$overlay.css("display", "block");
 
 			var oOverlayParent = this.getParent();
 
@@ -313,55 +327,90 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 
 			var mSize = oGeometry.size;
 
+			// OVERLAY SIZE
 			$overlay.css("width", mSize.width + "px");
 			$overlay.css("height", mSize.height + "px");
 			$overlay.css("top", mPosition.top + "px");
 			$overlay.css("left", mPosition.left + "px");
 
-			var iZIndex = DOMUtil.getZIndex(oGeometry.domRef);
-			if (iZIndex) {
-				$overlay.css("z-index", iZIndex);
-			}
-			var oOverflows = DOMUtil.getOverflows(oGeometry.domRef);
-			if (oOverflows) {
-				if (oOverflows.overflowX) {
-					$overlay.css("overflow-x", oOverflows.overflowX);
+			if (oGeometry.domRef) {
+				var iZIndex = DOMUtil.getZIndex(oGeometry.domRef);
+				if (iZIndex) {
+					$overlay.css("z-index", iZIndex);
 				}
-				if (oOverflows.overflowY) {
-					$overlay.css("overflow-y", oOverflows.overflowY);
-				}
-				var iScrollHeight = oGeometry.domRef.scrollHeight;
-				var iScrollWidth = oGeometry.domRef.scrollWidth;
-				if (iScrollHeight > mSize.height || iScrollWidth > mSize.width) {
-					if (!this._oDummyScrollContainer) {
-						this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
-						this.$().append(this._oDummyScrollContainer);
-					} else {
-						this._oDummyScrollContainer.css({
-							"height": iScrollHeight,
-							"width" : iScrollWidth
-						});
+
+				// OVERFLOW & SCROLLING
+				var oOverflows = DOMUtil.getOverflows(oGeometry.domRef);
+				if (oOverflows) {
+					if (oOverflows.overflowX) {
+						$overlay.css("overflow-x", oOverflows.overflowX);
 					}
-				} else if (this._oDummyScrollContainer) {
-					this._oDummyScrollContainer.remove();
-					delete this._oDummyScrollContainer;
+					if (oOverflows.overflowY) {
+						$overlay.css("overflow-y", oOverflows.overflowY);
+					}
+					var iScrollHeight = oGeometry.domRef.scrollHeight;
+					var iScrollWidth = oGeometry.domRef.scrollWidth;
+					if (iScrollHeight > mSize.height || iScrollWidth > mSize.width) {
+						if (!this._oDummyScrollContainer) {
+							this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
+							this.$().append(this._oDummyScrollContainer);
+						} else {
+							this._oDummyScrollContainer.css({
+								"height": iScrollHeight,
+								"width" : iScrollWidth
+							});
+						}
+					} else if (this._oDummyScrollContainer) {
+						this._oDummyScrollContainer.remove();
+						delete this._oDummyScrollContainer;
+					}
+					this._attachDomRefScrollHandler();
+
+					this._syncScrollWithDomRef();
 				}
-				DOMUtil.syncScroll(oGeometry.domRef, this.getDomRef());
-			}
 
-
-			if (!this.$().is(":visible")) {
-				this.$().css("display", "block");
+				this._cloneDomRef(oGeometry.domRef);
 			}
 
 			this.getChildren().forEach(function(oChild) {
 				oChild.applyStyles();
 			});
 
-			this._cloneDomRef(oGeometry.domRef);
-		} else if (this.$().is(":visible")) {
+		} else {
 			this.$().css("display", "none");
 		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._attachDomRefScrollHandler = function() {
+		this._detachDomRefScrollHandler();
+
+		var oGeometry = this.getGeometry();
+		var oDomRef = oGeometry ? oGeometry.domRef : null;
+		if (oDomRef) {
+			this._oDomRefWithScrollHandler = oDomRef;
+
+			jQuery(this._oDomRefWithScrollHandler).on("scroll", this._domRefScrollHandler);
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._detachDomRefScrollHandler = function(oDomRef) {
+		if (this._oDomRefWithScrollHandler) {
+			jQuery(this._oDomRefWithScrollHandler).off("scroll", this._domRefScrollHandler);
+			delete this._oDomRefWithScrollHandler;
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._syncScrollWithDomRef = function() {
+		DOMUtil.syncScroll(this._oDomRefWithScrollHandler, this.$());
 	};
 
 	/**
@@ -385,6 +434,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 				mGeometry = OverlayUtil.getGeometry(aChildrenGeometry);
 			}
 
+			// cache geometry
 			this._mGeometry = mGeometry;
 		}
 
@@ -502,7 +552,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	/**
 	 * @private
 	 */
-	Overlay.prototype._onScroll = function() {
+	Overlay.prototype._onOverlayScroll = function() {
 		var oGeometry = this.getGeometry();
 		var oDomRef = oGeometry ? oGeometry.domRef : null;
 		if (oDomRef) {

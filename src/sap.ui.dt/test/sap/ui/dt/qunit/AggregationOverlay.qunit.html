@@ -156,6 +156,9 @@
 					});
 					this.oAggregationOverlay.placeAt(sap.ui.dt.Overlay.getOverlayContainer());
 					sap.ui.getCore().applyChanges();
+
+					this.$PageContentOverlay = this.oAggregationOverlay.$();
+					this.$PageContent = jQuery(this.oAggregationOverlay.getGeometry().domRef);
 				},
 				afterEach : function() {
 					this.oPage.destroy();
@@ -164,16 +167,26 @@
 				}
 			});
 
-			QUnit.test("when AggregationOverlay is initialized", function(assert) {
+			QUnit.test("when AggregationOverlay is scrolled", function(assert) {
 				var done = assert.async();
+				var that = this;
 
-				var $PageContentOverlay = this.oAggregationOverlay.$();
-				var $PageContent = jQuery(this.oAggregationOverlay.getGeometry().domRef);
-				strictEqual($PageContent.scrollTop(), $PageContentOverlay.scrollTop(), "initial scroll position is equal");
+				strictEqual(this.$PageContent.scrollTop(), this.$PageContentOverlay.scrollTop(), "initial scroll position is equal");
 
-				$PageContentOverlay.scrollTop(20);
-				$PageContent.on("scroll", function() {
-					strictEqual($PageContent.scrollTop(), 20, "page content is scrolled to position 20");
+				this.$PageContentOverlay.scrollTop(20);
+				this.$PageContent.on("scroll", function() {
+					strictEqual(that.$PageContent.scrollTop(), 20, "page content is also scrolled to same position");
+					done();
+				});
+			});
+
+			QUnit.test("when aggregation dom is scrolled", function(assert) {
+				var done = assert.async();
+				var that = this;
+
+				this.$PageContent.scrollTop(20);
+				this.$PageContentOverlay.on("scroll", function() {
+					strictEqual(that.$PageContentOverlay.scrollTop(), 20, "page content overlay is also scrolled to same position");
 					done();
 				});
 			});
