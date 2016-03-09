@@ -59,7 +59,9 @@
 					this.oVerticalLayout.placeAt("content");
 					sap.ui.getCore().applyChanges();
 
-					this.oFormDesignTime = new sap.ui.dt.DesignTime({
+					var done = assert.async();
+
+					this.oDesignTime = new sap.ui.dt.DesignTime({
 						designTimeMetadata : {
 							"sap.ui.layout.form.SimpleForm" : {
 								aggregations: {
@@ -74,10 +76,15 @@
 						},
 						rootElements : [this.oVerticalLayout]
 					});
+
+					this.oDesignTime.attachEventOnce("synced", function() {
+						sap.ui.getCore().applyChanges();
+						done();
+					});
 				},
 				afterEach : function() {
 					this.oSimpleForm.destroy();
-					this.oFormDesignTime.destroy();
+					this.oDesignTime.destroy();
 				}
 			});
 

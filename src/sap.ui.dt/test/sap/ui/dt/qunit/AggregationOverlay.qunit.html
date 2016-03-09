@@ -104,8 +104,10 @@
 					});
 					this.oPage.placeAt("content");
 
-					this.oButton1Overlay = new sap.ui.dt.ElementOverlay({element : this.oButton1});
-					this.oButton2Overlay = new sap.ui.dt.ElementOverlay({element : this.oButton2});
+					this.oButton1Overlay = new sap.ui.dt.ElementOverlay({designTimeMetadata : {}, element : this.oButton1});
+					this.oButton2Overlay = new sap.ui.dt.ElementOverlay({designTimeMetadata : {}, element : this.oButton2});
+					this.oButton1Overlay.placeInOverlayContainer();
+					this.oButton2Overlay.placeInOverlayContainer();
 
 
 					this.oAggregationOverlay = new sap.ui.dt.AggregationOverlay({

@@ -559,8 +559,13 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.getVisible = function() {
+
 		if (this._bVisible === null) {
-			return !this.getDesignTimeMetadata().isIgnored();
+			if (!this.getLazyRendering()) {
+				return true;
+			}
+			var oDesignTimeMetadata = this.getDesignTimeMetadata();
+			return oDesignTimeMetadata ? !oDesignTimeMetadata.isIgnored() : false;
 		} else {
 			return this.getProperty("visible");
 		}

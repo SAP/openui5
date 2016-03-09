@@ -39,7 +39,6 @@
 	jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 	jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 	jQuery.sap.require("sap.ui.dt.DesignTime");
-	jQuery.sap.require("sap.ui.dt.Preloader");
 
 	function stubEventFor(oOverlay) {
 		return {
@@ -55,6 +54,7 @@
 
 	QUnit.module("Given overlays are created for controls that fit into aggregations of each other and don't fit to the other control", {
 		beforeEach: function() {
+			var that = this;
 
 			//Test Setup:
 			//VerticalLayout
@@ -95,6 +95,8 @@
 				movableTypes: aALL_MOVABLE_TYPES
 			});
 
+			var done = assert.async();
+
 			this.oDesignTime = new sap.ui.dt.DesignTime({
 				rootElements: [
 					this.oLayout
@@ -104,15 +106,18 @@
 				]
 			});
 
-			this.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
-			this.oLayoutAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
-			this.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
-			this.oObjectAttributeOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oObjectAttribute);
-			this.oObjectHeaderOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oObjectHeader);
-			this.oObjectHeaderAggregationOverlay = this.oObjectHeaderOverlay.getAggregationOverlay("attributes");
+			this.oDesignTime.attachEventOnce("synced", function() {
+				sap.ui.getCore().applyChanges();
 
-			sap.ui.getCore().applyChanges();
+				that.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oLayout);
+				that.oLayoutAggregationOverlay = that.oLayoutOverlay.getAggregationOverlay("content");
+				that.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oButton);
+				that.oObjectAttributeOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oObjectAttribute);
+				that.oObjectHeaderOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oObjectHeader);
+				that.oObjectHeaderAggregationOverlay = that.oObjectHeaderOverlay.getAggregationOverlay("attributes");
 
+				done();
+			});
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();
@@ -339,14 +344,13 @@
 
 	QUnit.module("Given overlays are created for a control with two aggregations", {
 		beforeEach: function(assert) {
+			var that = this;
 
 			//Test Setup:
 			//SplitPage
 			//	masterPages
 			//		Page
 			//	detailPages
-
-			var done = assert.async();
 
 			var aALL_MOVABLE_TYPES = [
 				"sap.m.Page"
@@ -372,17 +376,19 @@
 				movableTypes: aALL_MOVABLE_TYPES
 			});
 
-			var that = this;
-			sap.ui.dt.Preloader.load([this.oSplitContainer, this.oPage]).then(function() {
+			var done = assert.async();
 
-				that.oDesignTime = new sap.ui.dt.DesignTime({
-					rootElements: [
-						that.oSplitContainer
-					],
-					plugins: [
-						that.oControlDragDrop, that.oCutPaste
-					]
-				});
+			this.oDesignTime = new sap.ui.dt.DesignTime({
+				rootElements: [
+					this.oSplitContainer
+				],
+				plugins: [
+					this.oControlDragDrop, this.oCutPaste
+				]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				sap.ui.getCore().applyChanges();
 
 				that.oSplitContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oSplitContainer);
 				that.oSplitContainerMasterPagesAggregationOverlay = that.oSplitContainerOverlay.getAggregationOverlay("masterPages");
@@ -392,12 +398,8 @@
 				that.oPage1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oPage1);
 				that.oPage2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oPage2);
 
-				sap.ui.getCore().applyChanges();
 				done();
 			});
-
-
-
 		},
 		afterEach: function() {
 			this.oDesignTime.destroy();

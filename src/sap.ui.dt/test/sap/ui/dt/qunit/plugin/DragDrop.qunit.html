@@ -33,7 +33,6 @@
 
 		jQuery.sap.require("sap.ui.dt.ElementOverlay");
 		jQuery.sap.require("sap.ui.dt.plugin.DragDrop");
-		jQuery.sap.require("sap.ui.dt.Preloader");
 
 		function testDragAndDropEventHandlerTriggering(sHandlerFunctionName, oOverlay, sDomDragEvent, assert){
 			done = assert.async();
@@ -53,9 +52,10 @@
 				sap.ui.getCore().applyChanges();
 
 
-				this.oLayoutOverlay = new sap.ui.dt.ElementOverlay({element : this.oLayout});
+				this.oLayoutOverlay = new sap.ui.dt.ElementOverlay({element : this.oLayout, designTimeMetadata : {}});
+				this.oLayoutOverlay.placeInOverlayContainer();
 				this.oAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
-				this.oButtonOverlay = new sap.ui.dt.ElementOverlay({element : this.oButton});
+				this.oButtonOverlay = new sap.ui.dt.ElementOverlay({element : this.oButton, designTimeMetadata : {}});
 				this.oButtonOverlay.setMovable(true);
 
 				sap.ui.getCore().applyChanges();
@@ -132,9 +132,10 @@
 						content: this.aPanels
 					}).placeAt("content");
 
-					sap.ui.dt.Preloader.load(["sap.m.Page"]).then(function() {
+					sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oPage).then(function(oDesignTimeMetadata) {
 						that.oPageOverlay = new sap.ui.dt.ElementOverlay({
-							element : that.oPage
+							element : that.oPage,
+							designTimeMetadata : { data : oDesignTimeMetadata }
 						});
 						sap.ui.getCore().applyChanges();
 						that.oDragDrop = new sap.ui.dt.plugin.DragDrop();

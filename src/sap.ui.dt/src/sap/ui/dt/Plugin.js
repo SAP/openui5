@@ -128,8 +128,6 @@ function(ManagedObject) {
 			oDesignTime.attachEvent("elementOverlayCreated", this._onElementOverlayCreated, this);
 		}
 
-
-
 		return this;
 	};
 
