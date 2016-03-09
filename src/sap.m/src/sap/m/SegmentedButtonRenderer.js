@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global'],
 				var oImage = oButton._getImage((oButton.getId() + "-img"), oButtonIcon);
 				if (oImage instanceof sap.m.Image) {
 					oControl._overwriteImageOnload(oImage);
-				} else {
+				} else if (!oButton.getTooltip()) { //BCP: 1670076777- Put aria-label only for icon or icon+text
 					sIconAriaLabel = oControl._getIconAriaLabel(oImage);
 				}
 			}
