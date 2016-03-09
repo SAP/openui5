@@ -462,7 +462,9 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			});
 		}
 		this.bPreventUpdate = false;
-		this.checkUpdate(true);
+		if (!this.bSuspended) {
+			this.checkUpdate(true);
+		}
 		return this;
 	};
 
