@@ -999,7 +999,8 @@ sap.ui.define([
 			//performance improvements possible here as .position() is costly
 			oInfo.realTop = $this.position().top; //first get the dom position = scrollTop to get the section at the window top
 			var bHasTitle = (oSectionBase._getInternalTitleVisible() && (oSectionBase.getTitle().trim() !== ""));
-			if (!oInfo.isSection && !bHasTitle) {
+			var bHasButtons = !oInfo.isSection && oSectionBase.getAggregation("actions").length > 0;
+			if (!oInfo.isSection && !bHasTitle && !bHasButtons) {
 				oInfo.realTop = $this.find(".sapUiResponsiveMargin.sapUxAPBlockContainer").position().top;
 			}
 
