@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	//********************************************************************
 
 	/**
-	 * Extension for sap.ui.zable.Table which handles ACC related things.
+	 * Extension for sap.ui.table.Table which handles ACC related things.
 	 *
 	 * @class Extension for sap.ui.zable.Table which handles ACC related things.
 	 *
@@ -437,6 +437,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			aLabels.push(oRow.getId() + "-rowselecttext");
 		}
 
+		if ($Cell.attr("aria-selected") == "true") {
+			aLabels.push(oTable.getId() + "-ariarowselected");
+		}
+
 		//TBD: cleanup and align defaults TableRenderer.getAriaAttributesForRowHdr
 		_updateCell(this, $Cell, [oTable.getId() + "-ariarowheaderlabel"], null, aLabels, null, null);
 	};
@@ -445,15 +449,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		var oTable = this.getTable(),
 			iCol = $Cell.attr("data-sap-ui-colindex"),
 			aDefaultLabels = null, //TBD: cleanup and align TableRenderer.getAriaAttributesForCol
-			aLabels = [oTable.getId() + "-colnumberofcols", $Cell.attr("id")];
+			aLabels = [oTable.getId() + "-colnumberofcols", $Cell.attr("id")],
+			aDescriptions = [],
+			oColumn = sap.ui.getCore().byId($Cell.attr("id"));
 
 		if (iCol < oTable.getFixedColumnCount()) { // fixed column
 			aDefaultLabels = [$Cell.attr("id"), oTable.getId() + "-ariafixedcolumn"];
 			aLabels.push(oTable.getId() + "-ariafixedcolumn");
 		}
 
-		//TBD: Improve handling for multiple headers, discuss announcements for menu, sorting state and filter
-		_updateCell(this, $Cell, aDefaultLabels, null, aLabels, null, null);
+		if ($Cell.attr("aria-haspopup") == "true") {
+			aDescriptions.push(oTable.getId() + "-ariacolmenu");
+		}
+
+		if (oColumn && oColumn.getSorted()) {
+			aLabels.push(oTable.getId() + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
+		}
+
+		if (oColumn && oColumn.getFiltered()) {
+			aLabels.push(oTable.getId() + "-ariacolfiltered");
+		}
+
+		//TBD: Improve handling for multiple headers
+		_updateCell(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, null);
 	};
 
 	TableAccExtension.prototype._updateAccForCOLUMNROWHEADER = function($Cell, bOnCellFocus) {
