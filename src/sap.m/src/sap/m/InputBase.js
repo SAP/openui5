@@ -43,12 +43,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Indicates whether the user can interact with the control or not.
-			 * <b>Note:<b> Disabled controls cannot be focused and they are out of the tab-chain.
+			 * <b>Note:</b> Disabled controls cannot be focused and they are out of the tab-chain.
 			 */
 			enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
 			/**
-			 * Visualizes the validation state of the the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
+			 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
 			 */
 			valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: sap.ui.core.ValueState.None },
 
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Defines whether the control can be modified by the user or not.
-			 * <b>Note:<b> A user can tab to non-editable control, highlight it, and copy the text from it.
+			 * <b>Note:</b> A user can tab to non-editable control, highlight it, and copy the text from it.
 			 * @since 1.12.0
 			 */
 			editable: { type: "boolean", group: "Behavior", defaultValue: true },

@@ -10,12 +10,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	/**
 	 * Constructor for a new DateTimeInput.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Allows end users to interact with date and/or time and select from a date and/or time pad.
-	 * Note: Since 1.22, this control should not be used as a date picker(type property "Date"), instead please use dedicated sap.m.DatePicker control.
+	 *
+	 * <b>Note:</b> This control should not be used any longer, instead please use the dedicated <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> control.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -24,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.9.1
-	 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> controls.
+	 * @deprecated Since version 1.32.8. Instead, use the dedicated <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> controls.
 	 * @alias sap.m.DateTimeInput
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -38,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			 *
 			 * The new value must be in the format set by <code>valueFormat</code>.
 			 *
-			 * Also "Now" literal can be assigned as a parameter to show the current date and/or time.
+			 * The "Now" literal can also be assigned as a parameter to show the current date and/or time.
 			 */
 			value: { type: "string", group: "Data", defaultValue: null, bindable: "bindable" },
 
@@ -49,19 +50,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 			/**
 			 * Indicates whether the user can interact with the control or not.
-			 * <b>Note:<b> Disabled controls cannot be focused and they are out of the tab-chain.
+			 * <b>Note:</b> Disabled controls cannot be focused and they are out of the tab-chain.
 			 */
 			enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
 			/**
 			 * Defines whether the control can be modified by the user or not.
-			 * <b>Note:<b> A user can tab to non-editable control, highlight it, and copy the text from it.
+			 * <b>Note:</b> A user can tab to non-editable control, highlight it, and copy the text from it.
 			 * @since 1.12.0
 			 */
 			editable: { type: "boolean", group: "Behavior", defaultValue: true },
 
 			/**
-			 * Visualizes the validation state of the the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
+			 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
 			 */
 			valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: sap.ui.core.ValueState.None },
 
@@ -106,15 +107,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 			/**
 			 * Displays date value in this given format in text field. Default value is taken from locale settings.
-			 * If you use data-binding on value property with type sap.ui.model.type.Date then you can ignore this property or latter wins.
-			 * If user browser supports native picker then this property is overwritten by browser with locale settings.
+			 * If you use data-binding on value property with type sap.ui.model.type.Date then you can ignore this property or the latter wins.
+			 * If the user's browser supports native picker then this property is overwritten by browser with locale settings.
 			 */
 			displayFormat : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
 			 * Given value property should match with valueFormat to parse date. Default value is taken from locale settings.
 			 * You can only set and get value in this format.
-			 * If you use data-binding on value property with type sap.ui.model.type.Date you can ignore this property or latter wins.
+			 * If you use data-binding on value property with type sap.ui.model.type.Date you can ignore this property or the latter wins.
 			 */
 			valueFormat : {type : "string", group : "Data", defaultValue : null},
 
@@ -145,7 +146,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				parameters : {
 
 					/**
-					 * The string value of the control in given valueFormat(or locale format).
+					 * The string value of the control in given valueFormat (or locale format).
 					 */
 					value : {type : "string"},
 
@@ -156,7 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 					/**
 					 * if set, the entered value is a valid date.
-					 * If not set the entered value can not be converted to a date.
+					 * If not set the entered value cannot be converted to a date.
 					 * @since 1.38.0
 					 */
 					valid : {type : "boolean"}
