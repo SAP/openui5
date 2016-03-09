@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './DatePickerRendere
 
 	DateTimePickerRenderer._getIcon = function() {
 
-		return "sap-icon://appointment-2";
+		return "sap-icon://date-time";
 
 	};
 
