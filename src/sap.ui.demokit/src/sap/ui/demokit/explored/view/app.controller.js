@@ -20,7 +20,7 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 			if (this.hasOwnProperty("_compactOn")) {
 				jQuery('body').toggleClass("sapUiSizeCompact", this._compactOn).toggleClass("sapUiSizeCozy", !this._compactOn);
 			}
-			if (this.hasOwnProperty("_themeActive") && !jQuery.sap.getUriParameters().get("sap-theme")) {
+			if (this.hasOwnProperty("_themeActive") && !jQuery.sap.getUriParameters().get("sap-theme") && !jQuery.sap.getUriParameters().get("sap-ui-theme")) {
 				sap.ui.getCore().applyTheme(this._themeActive);
 			}
 			this._afterRenderingDone = true;
