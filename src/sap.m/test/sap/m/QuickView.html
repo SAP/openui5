@@ -226,7 +226,7 @@
 		var app = new sap.m.App("myApp", {initialPage:"quickViewPage"});
 		app.placeAt("body");
 
-		var oQuickView = new sap.m.QuickView({
+		var oQuickView = new sap.m.QuickView("QV1", {
 			placement : sap.m.PlacementType.VerticalPreferedBottom,
 			tooltip: "Employee QuickView",
 			pages : {
@@ -261,7 +261,7 @@
 			placement : sap.m.PlacementType.VerticalPreferedBottom
 		});
 
-		var oQuickView2 = new sap.m.QuickView({
+		var oQuickView2 = new sap.m.QuickView("QV2", {
 			placement : sap.m.PlacementType.VerticalPreferedBottom,
 			pages : [
 				new sap.m.QuickViewPage({
@@ -302,7 +302,7 @@
 
 		oQuickView.setModel(oModel);
 
-		var oButton = new sap.m.Button({
+		var oButton = new sap.m.Button("QVButton", {
 			text: "Open Quick View with binding",
 			press: function() {
 				oQuickView.openBy(this);
@@ -323,14 +323,14 @@
 			}
 		});
 
-		var oOpenEmptyQuickViewButton = new sap.m.Button({
+		var oOpenEmptyQuickViewButton = new sap.m.Button("EmptyQVButton", {
 			text: "Open empty quick view",
 			press: function() {
 				oQuickView1.openBy(this);
 			}
 		});
 
-		var oSinglePageQuickViewButton = new sap.m.Button({
+		var oSinglePageQuickViewButton = new sap.m.Button("SinglePageQVButton", {
 			text: "Open a single page quick view",
 			press: function() {
 				oQuickView2.openBy(this);
@@ -384,7 +384,7 @@
 			title : "Quick View",
 			content : [
 				oButton,
-				oModifyJsonButton,
+				//oModifyJsonButton,
 				oOpenEmptyQuickViewButton,
 				oSinglePageQuickViewButton,
 				oPanel

@@ -205,7 +205,7 @@
 		var app = new sap.m.App("myApp", {initialPage:"quickViewPage"});
 		app.placeAt("body");
 
-		var oQuickViewCard = new sap.m.QuickViewCard({
+		var oQuickViewCard = new sap.m.QuickViewCard("QVC", {
 			afterNavigate : function (oEvent) {
 				if (oButton) {
 					oButton.setEnabled(!oEvent.getParameter('isTopPage'));
@@ -238,7 +238,7 @@
 			}
 		});
 
-		var oButton = new sap.m.Button({
+		var oButton = new sap.m.Button("BackBtn", {
 			text : 'Back',
 			enabled : false,
 			press : function () {
@@ -246,17 +246,24 @@
 			}
 		});
 
-		var oHideScrollButton = new sap.m.Button({
+		var oHideScrollButton = new sap.m.Button("HideBtn", {
 			text : 'Hide ScrollBar',
 			press : function () {
 				oQuickViewCard.setShowVerticalScrollBar(false);
 			}
 		});
 
-		var oShowScrollButton = new sap.m.Button({
+		var oShowScrollButton = new sap.m.Button("ShowBtn", {
 			text : 'Show ScrollBar',
 			press : function () {
 				oQuickViewCard.setShowVerticalScrollBar(true);
+			}
+		});
+
+		var oShowFullHeightButton = new sap.m.Button("FullHeightBtn", {
+			text : 'Show full height',
+			press : function () {
+				oPanel.setHeight("490px");
 			}
 		});
 
@@ -276,6 +283,7 @@
 				oButton,
 				oHideScrollButton,
 				oShowScrollButton,
+				oShowFullHeightButton,
 				oPanel
 			]
 		});
