@@ -189,6 +189,7 @@ sap.ui.define([
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
 		var oContext = this.oContext,
 			bDataRequested = false,
+			sGroupId = this.oModel.getGroupId(),
 			oModel = this.oModel,
 			oPromise,
 			sResolvedPath = oModel.resolve(this.sPath, oContext),
@@ -276,10 +277,10 @@ sap.ui.define([
 
 		if (!isRangeInContext(iStart, iLength)) {
 			oPromise = this.oCache
-				? this.oCache.read(iStart, iLength, this.oModel.getGroupId(), undefined,
+				? this.oCache.read(iStart, iLength, sGroupId, undefined,
 					function () {
 						bDataRequested = true;
-						that.oModel.dataRequested(that.oModel.getGroupId(),
+						that.oModel.dataRequested(sGroupId,
 							that.fireDataRequested.bind(that));
 					}
 				)

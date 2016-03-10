@@ -147,7 +147,7 @@ sap.ui.require([
 	QUnit.test("Model construction with default group", function (assert) {
 		var oModel;
 
-		oModel = new ODataModel("/foo/");
+		oModel = new ODataModel("/");
 		assert.strictEqual(oModel.getGroupId(), ""/*sGroupId for _Requestor#request*/);
 
 		oModel = new ODataModel("/foo/", {defaultGroup : "$direct"});
@@ -417,6 +417,23 @@ sap.ui.require([
 		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId2);
 
 		assert.ok(!fnSpy1.called && !fnSpy2.called, "not called synchronously");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("dataRequested with group ID 'undefined'", function (assert) {
+		var bDataRequested = false,
+			oModel = createModel();
+
+		this.oSandbox.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").never();
+
+		// code under test
+		oModel.dataRequested(undefined, function () {
+			bDataRequested = true;
+		});
+
+		assert.strictEqual(bDataRequested, true);
+		assert.strictEqual("undefined" in oModel.mDataRequestedCallbacks, false);
 	});
 
 	//*********************************************************************************************

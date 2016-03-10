@@ -746,13 +746,13 @@ sap.ui.require([
 	QUnit.test("Use model's groupId", function (assert) {
 		var oModel = new ODataModel("/service/"),
 			oBinding = oModel.bindProperty("/absolute"),
-			oTypePromise = Promise.resolve(new TypeString()),
-			oReadPromise = Promise.resolve();
+			oReadPromise = Promise.resolve(),
+			oTypePromise = Promise.resolve(new TypeString());
 
 		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type").returns(oTypePromise);
 		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId").callsArg(2)
 			.returns(oReadPromise);
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
 			.returns("groupId");
 		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
 

@@ -173,6 +173,7 @@ sap.ui.define([
 		var oChangeReason = {reason : sChangeReason || ChangeReason.Change},
 			bDataRequested = false,
 			bFire = false,
+			sGroupId = this.oModel.getGroupId(),
 			mParametersForDataReceived,
 			oPromise,
 			aPromises = [],
@@ -202,9 +203,9 @@ sap.ui.define([
 		}
 		oReadPromise = this.isRelative()
 			? this.oContext.requestValue(this.sPath)
-			: this.oCache.read(this.oModel.getGroupId(), /*sPath*/undefined, function () {
+			: this.oCache.read(sGroupId, /*sPath*/undefined, function () {
 					bDataRequested = true;
-					that.oModel.dataRequested(that.oModel.getGroupId(),
+					that.oModel.dataRequested(sGroupId,
 						that.fireDataRequested.bind(that));
 				});
 		aPromises.push(oReadPromise.then(function (vValue) {

@@ -849,7 +849,6 @@ sap.ui.require([
 				}
 			};
 		});
-
 		this.oSandbox.mock(this.oModel).expects("dataRequested")
 			.withExactArgs("", sinon.match.typeOf("function"));
 
@@ -937,7 +936,7 @@ sap.ui.require([
 		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oReadPromise = createResult(0);
 
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
 			.returns("groupId");
 		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs(0, 10, "groupId").callsArg(4)
 			.returns(oReadPromise);

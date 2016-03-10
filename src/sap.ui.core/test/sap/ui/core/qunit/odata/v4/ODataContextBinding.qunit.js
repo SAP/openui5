@@ -367,12 +367,13 @@ sap.ui.require([
 			oContextBinding.attachDataStateChange();
 		}, new Error("Unsupported event 'DataStateChange': v4.ODataContextBinding#attachEvent"));
 	});
+
 	//*********************************************************************************************
 	QUnit.test("Use model's groupId", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
 			oReadPromise = Promise.resolve();
 
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
 			.returns("groupId");
 		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId").callsArg(2)
 			.returns(oReadPromise);
