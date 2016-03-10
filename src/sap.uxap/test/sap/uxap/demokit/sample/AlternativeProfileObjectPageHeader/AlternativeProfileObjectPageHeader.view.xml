@@ -15,7 +15,7 @@
 					  showTitleInHeaderContent="true">
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
-							  headerDesign="Dark"
+							  headerDesign="Light"
 							  objectTitle="Denise Smith"
 							  showTitleSelector="true"
 							  showMarkers="true"
@@ -32,8 +32,7 @@
 							  isActionAreaAlwaysVisible="true"
 							  showPlaceholder="true">
 				<actions>
-					<ObjectPageHeaderActionButton text="Public Profile" hideText="false"
-												  press="handlePress"/>
+					<ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://edit" press="handlePress"/>
 					<ObjectPageHeaderActionButton text="Take Action" iconFirst="true" icon="sap-icon://action"/>
 				</actions>
 			</ObjectPageHeader>
@@ -64,7 +63,6 @@
 		<sections>
 			<ObjectPageSection title="2014 Goals Plan">
 				<subSections>
-				
 					<ObjectPageSubSection title=" ">
 						<blocks>
 							<goals:GoalsBlock id="goalsblock"/>
