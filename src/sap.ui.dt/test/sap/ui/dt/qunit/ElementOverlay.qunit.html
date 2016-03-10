@@ -724,6 +724,7 @@
 					});
 					this.oOverlayButton4.placeInOverlayContainer();
 
+					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
 
@@ -752,7 +753,8 @@
 				var oDomRefButton3 = this.oOverlayButton3.getDomRef();
 				var oDomRefButton4 = this.oOverlayButton4.getDomRef();
 
-				assert.strictEqual(oDomRefButton4, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order");
+				assert.strictEqual(oDomRefButton3, oDomRefButton2.previousElementSibling, "then Overlay DOM elements in target layout are in correct order - button3 before button2");
+				assert.strictEqual(oDomRefButton4, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order - button4 after button2");
 				assert.strictEqual(null, oDomRefButton1.nextElementSibling, "and source layout contains only one control");
 			});
 

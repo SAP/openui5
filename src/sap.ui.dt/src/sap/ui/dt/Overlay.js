@@ -498,32 +498,30 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	Overlay.prototype._ensureDomOrder = function() {
 		var $this = this.$();
 
-		var $currentDomParent = $this.parent();
 		var oParent = this.getParent();
 		var $parentDomRef = oParent.$();
 		var $parentContainer = $parentDomRef.find(">.sapUiDtOverlayChildren");
-		// if our dom is already in a parent container...
-		var bIsDomOrderCorrect = $parentContainer.get(0) === $currentDomParent.get(0);
+
+		var bIsDomOrderCorrect;
 
 		var $PreviousChildWithDom;
-		if (bIsDomOrderCorrect) {
-			var aChildren = oParent.getChildren();
-			var iPreviousChildWithDomIndex = aChildren.indexOf(this) - 1;
-			while (iPreviousChildWithDomIndex >= 0) {
-				$PreviousChildWithDom = aChildren[iPreviousChildWithDomIndex].$();
-				if ($PreviousChildWithDom.length) {
-					break;
-				}
-				iPreviousChildWithDomIndex--;
-			}
 
-			// if our dom is already after out previous sibling
-			if ($PreviousChildWithDom && $PreviousChildWithDom.length) {
-				bIsDomOrderCorrect = $this.prev().get(0) === $PreviousChildWithDom.get(0);
-			// .. or first in parent container
-			} else {
-				bIsDomOrderCorrect = $parentContainer.children().index($this) === 0;
+		var aChildren = oParent.getChildren();
+		var iPreviousChildWithDomIndex = aChildren.indexOf(this) - 1;
+		while (iPreviousChildWithDomIndex >= 0) {
+			$PreviousChildWithDom = aChildren[iPreviousChildWithDomIndex].$();
+			if ($PreviousChildWithDom.length) {
+				break;
 			}
+			iPreviousChildWithDomIndex--;
+		}
+
+		// if our dom is already after out previous sibling
+		if ($PreviousChildWithDom && $PreviousChildWithDom.length) {
+			bIsDomOrderCorrect = $this.prev().get(0) === $PreviousChildWithDom.get(0);
+		// .. or first in parent container
+		} else {
+			bIsDomOrderCorrect = $parentContainer.children().index($this) === 0;
 		}
 
 		if (!bIsDomOrderCorrect) {
