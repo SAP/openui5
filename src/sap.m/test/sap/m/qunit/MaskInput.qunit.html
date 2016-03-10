@@ -180,6 +180,76 @@
 			equal(oControl.getRules()[2].getRegex(), "[{}]", "The rule with mask format symbol '~' regex must be the last one set");
 		});
 
+		test("Single escaped character", function () {
+			var oControl = this.oMaskInput.setMask("999^9");
+
+			jQuery(oControl).focus();
+			strictEqual(getMaskInputDomValue(oControl), "___9", "Result value should have 1 escaped rule character as " +
+					"immutable on their predefined place");
+		});
+
+		test("Multiple escape characters in value", function () {
+			var oControl = this.oMaskInput.setMask("^99aaa^aaa^a");
+
+			jQuery(oControl).focus();
+			strictEqual(getMaskInputDomValue(oControl), "9____a__a", "Result value should have 3 escaped rule characters as " +
+					"immutable on their predefined place");
+		});
+
+		test("Escape the escape character", function () {
+			var oControl = this.oMaskInput.setMask("99^^99");
+
+			jQuery(oControl).focus();
+			strictEqual(getMaskInputDomValue(oControl), "__^__", "Result value should have 1 immutable character which is the" +
+					"escape character");
+		});
+
+		module("Helper functionality", {
+			beforeEach: function () {
+				this.oMaskInput = new sap.m.MaskInput();
+			},
+			afterEach: function () {
+				this.oMaskInput.destroy();
+			}
+		});
+
+		test("_getSkipIndexes", function () {
+			var that = this;
+
+			// Returns result of _getSkipIndexes as string - helper method to make the asserts more readable
+			var getSkipIndexes = function (sValue) {
+				return that.oMaskInput._getSkipIndexes(sValue).toString();
+			};
+
+			strictEqual(this.oMaskInput._getSkipIndexes().length, 0, "Calling the method with no arguments should return " +
+					"empty array");
+			strictEqual(getSkipIndexes("99^9"), "2", "One escape character should be at position 2");
+			strictEqual(getSkipIndexes("^99^9^"), "0,2,3", "Multiple escape characters. Consider here we are taking " +
+					"care for fixing the position of every consecutive escape character after the first one");
+			strictEqual(getSkipIndexes("^99^^9^"), "0,2,4", "Escape the escape character");
+			strictEqual(getSkipIndexes("^^^^^^"), "0,1,2", "Six escape character should produce " +
+					"3 skipped indexes (escape characters) and 3 escape characters as immutable as they are escaped");
+
+		});
+
+		test("_getMaskArray", function () {
+			var that = this;
+
+			// Returns result of _getMaskArray as string - helper method to make the asserts more readable
+			var getMaskArray = function (sMask, aSkipIndexes) {
+				return that.oMaskInput._getMaskArray(sMask, aSkipIndexes).toString();
+			};
+
+			strictEqual(this.oMaskInput._getMaskArray().length, 0, "Calling the method with no arguments should return " +
+					"empty array");
+			strictEqual(getMaskArray("99^9", [2]), "9,9,9", "One skip index");
+			strictEqual(getMaskArray("^99^9^", [0, 2, 3]), "9,9,9", "Multiple skip indexes");
+			strictEqual(getMaskArray("^99^^9^", [0, 2, 4]), "9,9,^,9", "Escape the escape character");
+			strictEqual(getMaskArray("^^^^^^", [0, 1, 2]), "^,^,^", "Multiple escape the escape character. Should return " +
+					"array of three escaped characters as immutable ones");
+
+		});
+
 		module("Deletion", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
