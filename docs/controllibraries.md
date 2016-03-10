@@ -1,4 +1,4 @@
-Developing Content for SAPUI5
+Developing Content for UI5
 =============================
 
 1.  [Control Libraries](#control-libraries)
