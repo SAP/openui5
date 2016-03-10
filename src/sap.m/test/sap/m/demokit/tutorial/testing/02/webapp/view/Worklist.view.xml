@@ -37,7 +37,7 @@
 					</Column>
 				</columns>
 				<items>
-					<ColumnListItem>
+					<ColumnListItem vAlign="Middle">
 						<cells>
 							<ObjectIdentifier
 								title="{Title}"/>

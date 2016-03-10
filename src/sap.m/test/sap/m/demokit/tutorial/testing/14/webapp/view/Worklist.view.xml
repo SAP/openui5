@@ -36,10 +36,11 @@
 					<Column width="33%" id="unitNumberColumn" hAlign="End" vAlign="Middle">
 						<Text text="{i18n>TableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
 					</Column>
-					<Column width="80px" id="flaggedColumn" demandPopin="true"/>
+					<Column width="80px" id="flaggedColumn" demandPopin="true" vAlign="Middle"/>
 				</columns>
 				<items>
 					<ColumnListItem
+						vAlign="Middle"
 						type="Navigation"
 						press="onPress">
 						<cells>
