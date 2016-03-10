@@ -345,7 +345,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 				iPos,
 				oMessageToastDomRef,
 				sPointerEvents = "mousedown." + CSSCLASS + " touchstart." + CSSCLASS,
-				iCloseTimeoutId;
+				iCloseTimeoutId,
+				iMouseLeaveTimeoutId;
 
 			mOptions = normalizeOptions(mOptions);
 
@@ -426,10 +427,18 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 
 			// close the message toast
 			iCloseTimeoutId = jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
-
 			function fnClearTimeout() {
 				jQuery.sap.clearDelayedCall(iCloseTimeoutId);
 				iCloseTimeoutId = null;
+
+				function fnMouseLeave() {
+					iMouseLeaveTimeoutId = jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+					oPopup.getContent().removeEventListener("mouseleave", fnMouseLeave);
+				}
+
+				oPopup.getContent().addEventListener("mouseleave", fnMouseLeave);
+				jQuery.sap.clearDelayedCall(iMouseLeaveTimeoutId);
+				iMouseLeaveTimeoutId = null;
 			}
 
 			oPopup.getContent().addEventListener("touchstart", fnClearTimeout);
