@@ -264,15 +264,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._iSizeScreen = 2;
 		}
 
-		var sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
-		var oLocale = new sap.ui.core.Locale(sLocale);
-		this._oLocaleData = LocaleData.getInstance(oLocale);
+		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._oIntervalTypeSelect = new sap.m.Select(this.getId() + "-IntType", {maxWidth: "15rem"});
 		this._oIntervalTypeSelect.attachEvent("change", _changeIntervalType, this);
 
 		this._oTodayButton = new sap.m.Button(this.getId() + "-Today", {
-			text: this._oLocaleData.getRelativeDay(0),
+			text: this._oRB.getText("PLANNINGCALENDAR_TODAY"),
 			type: sap.m.ButtonType.Transparent
 		});
 		this._oTodayButton.attachEvent("press", _handleTodayPress, this);
@@ -1264,7 +1262,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oViewHour = new sap.m.PlanningCalendarView(this.getId() + "-HourView", {
 					key: sap.ui.unified.CalendarIntervalType.Hour,
 					intervalType: sap.ui.unified.CalendarIntervalType.Hour,
-					description: this._oLocaleData.getDisplayName("hour"),
+					description: this._oRB.getText("PLANNINGCALENDAR_HOURS"),
 					intervalsS: 6,
 					intervalsM: 6,
 					intervalsL: 12
@@ -1274,7 +1272,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oViewDay = new sap.m.PlanningCalendarView(this.getId() + "-DayView", {
 					key: sap.ui.unified.CalendarIntervalType.Day,
 					intervalType: sap.ui.unified.CalendarIntervalType.Day,
-					description: this._oLocaleData.getDisplayName("day"),
+					description: this._oRB.getText("PLANNINGCALENDAR_DAYS"),
 					intervalsS: 7,
 					intervalsM: 7,
 					intervalsL: 14
@@ -1284,7 +1282,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oViewMonth = new sap.m.PlanningCalendarView(this.getId() + "-MonthView", {
 					key: sap.ui.unified.CalendarIntervalType.Month,
 					intervalType: sap.ui.unified.CalendarIntervalType.Month,
-					description: this._oLocaleData.getDisplayName("month"),
+					description: this._oRB.getText("PLANNINGCALENDAR_MONTHS"),
 					intervalsS: 3,
 					intervalsM: 6,
 					intervalsL: 12
@@ -1501,7 +1499,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		} else {
 			if (!this._oSelectAllCheckBox) {
 				this._oSelectAllCheckBox = new sap.m.CheckBox(this.getId() + "-All", {
-					text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COLUMNSPANEL_SELECT_ALL")
+					text: this._oRB.getText("COLUMNSPANEL_SELECT_ALL")
 				});
 				this._oSelectAllCheckBox.attachEvent("select", _handleSelectAll, this);
 			}
