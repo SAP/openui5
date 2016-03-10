@@ -78,9 +78,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 			/**
 			 * Adds or overwrites a view in the cache of the Views instance. The viewName serves as a key for caching.
 			 *
+			 * If the second parameter is set to null or undefined, the previous cache view under the same name isn't managed by the Views instance.
+			 * The lifecycle (for example the destroy of the view) of the view instance should be maintained by additional code.
+			 *
+			 *
 			 * @param {string} sViewName Name of the view, may differ from the actual viewName of the oView parameter provided, since you can retrieve this view per {@link getView}.
-			 * @param {sap.ui.core.mvc.View} oView the view instance
-			 * @returns {sap.ui.core.routing.Views} this for chaining.
+			 * @param {sap.ui.core.mvc.View|null|undefined} oView the view instance
+			 * @return {sap.ui.core.routing.Views} this for chaining.
 			 */
 			setView : function (sViewName, oView) {
 				this._checkViewName(sViewName);
@@ -100,7 +104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 				EventProvider.prototype.destroy.apply(this);
 
 				for (sProperty in this._oViews) {
-					if (this._oViews.hasOwnProperty(sProperty)) {
+					if (this._oViews.hasOwnProperty(sProperty) && this._oViews[sProperty]) {
 						this._oViews[sProperty].destroy();
 					}
 				}
