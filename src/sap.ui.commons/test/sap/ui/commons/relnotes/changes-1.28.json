@@ -1074,5 +1074,29 @@
         "references": []
       }
     ]
+  },
+  "1.28.29": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "63596fba8090d697ea6012f003a2ba39ac7907e4",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.TabStrip: Scroll position is fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.30": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "27c6c82a8df89b68cdefdbb24c236373836b4832",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Event flow is now correct",
+        "references": []
+      }
+    ]
   }
 }
