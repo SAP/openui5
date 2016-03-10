@@ -265,6 +265,10 @@ function(jQuery, library, Control, IconPool) {
 			this._ariaSortOrderInvisibleText = null;
 		}
 
+		if (this._oGroupingNoneItem) {
+			this._oGroupingNoneItem.destroy();
+			this._oGroupingNoneItem = null;
+		}
 		if (this._groupList) {
 			this._groupList.destroy();
 			this._groupList = null;
@@ -1389,28 +1393,47 @@ function(jQuery, library, Control, IconPool) {
 	 * Create list item instance for each group item.
 	 * @private
 	 */
-	ViewSettingsDialog.prototype._initGroupItems = function() {
-		var aGroupItems,
-		    oListItem;
+	ViewSettingsDialog.prototype._initGroupItems = function () {
+		var oListItem,
+			bHasSelections,
+			aGroupItems = this.getGroupItems();
+
 		this._groupList.removeAllItems();
-		aGroupItems = this.getGroupItems();
-		if (aGroupItems.length) {
-			aGroupItems.forEach(function(oItem) {
+
+		if (!!aGroupItems.length) {
+			aGroupItems.forEach(function (oItem) {
 				oListItem = new sap.m.StandardListItem({
-					title : oItem.getText(),
-					type : sap.m.ListType.Active,
-					selected : oItem.getSelected()
+					title: oItem.getText(),
+					type: sap.m.ListType.Active,
+					selected: oItem.getSelected()
 				}).data("item", oItem);
 				this._groupList.addItem(oListItem);
 			}, this);
-		}
-		// add none item to group list
-		if (aGroupItems.length) {
+
+			if (!this._oGroupingNoneItem || this._oGroupingNoneItem.bIsDestroyed) {
+				bHasSelections = !!this.getSelectedGroupItem();
+				this._oGroupingNoneItem = new sap.m.ViewSettingsItem({
+					text: this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
+					selected: !bHasSelections,
+					/**
+					 * Set properly selections. ViewSettingsItem-s are attached
+					 * to that listener when addAggregation is executed
+					 */
+					itemPropertyChanged: function () {
+						this._initGroupContent();
+						this._initGroupItems();
+					}.bind(this)
+				});
+
+				!bHasSelections && this.setAssociation("selectedGroupItem", this._oGroupingNoneItem, true);
+			}
+
+			// Append the None button to the list
 			oListItem = new sap.m.StandardListItem({
-				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
-				type : sap.m.ListType.Active,
-				selected : !!this.getSelectedGroupItem()
-			});
+				title: this._oGroupingNoneItem.getText(),
+				type: sap.m.ListType.Active,
+				selected: this._oGroupingNoneItem.getSelected()
+			}).data("item", this._oGroupingNoneItem);
 			this._groupList.addItem(oListItem);
 		}
 	};
@@ -1456,9 +1479,14 @@ function(jQuery, library, Control, IconPool) {
 			{
 				mode : sap.m.ListMode.SingleSelectLeft,
 				includeItemInSelection : true,
-				selectionChange : function(oEvent) {
-					var item = oEvent.getParameter("listItem").data("item");
-					if (item) {
+				selectionChange: function (oEvent) {
+					var oSelectedGroupItem = sap.ui.getCore().byId(that.getSelectedGroupItem()),
+						item = oEvent.getParameter("listItem").data("item");
+
+					if (!!item) {
+						if (!!oSelectedGroupItem) {
+							oSelectedGroupItem.setSelected(!oEvent.getParameter("listItem").getSelected());
+						}
 						item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 					}
 					that.setAssociation("selectedGroupItem", item, true);
