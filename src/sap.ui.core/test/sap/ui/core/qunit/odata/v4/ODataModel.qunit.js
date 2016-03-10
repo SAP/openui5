@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
@@ -16,8 +16,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (Model, TypeString, ODataUtils, _Context, Helper, SyncPromise, MetadataRequestor,
-		Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
+], function (BindingMode, Model, TypeString, ODataUtils, _Context, _ODataHelper, _MetadataRequestor,
+		_Requestor, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
 		ODataPropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -90,9 +90,9 @@ sap.ui.require([
 		var mHeaders = {
 				"Accept-Language" : "ab-CD"
 			},
-			oHelperMock = this.mock(Helper),
+			oHelperMock = this.mock(_ODataHelper),
 			oMetadataRequestor = {},
-			oMetadataRequestorMock = this.mock(MetadataRequestor),
+			oMetadataRequestorMock = this.mock(_MetadataRequestor),
 			oMetaModel,
 			oModel,
 			mModelOptions = {};
@@ -107,6 +107,8 @@ sap.ui.require([
 		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo/");
 		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo/",
 			"serviceUrl in mParameters");
+		assert.strictEqual(new ODataModel("/foo/", {"serviceUrl" : "/bar/"}).sServiceUrl, "/foo/",
+			"explicit service URL parameter wins over serviceUrl in mParameters");
 
 		oHelperMock.expects("buildQueryOptions").returns(mModelOptions);
 		oMetadataRequestorMock.expects("create").withExactArgs(mHeaders, mModelOptions)
@@ -123,6 +125,10 @@ sap.ui.require([
 		oModel = new ODataModel("/foo/?sap-client=111");
 		assert.strictEqual(oModel.sServiceUrl, "/foo/");
 		assert.strictEqual(oModel.mUriParameters, mModelOptions);
+		assert.strictEqual(oModel.getDefaultBindingMode(), BindingMode.TwoWay);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneTime), true);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
+		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), true);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
@@ -138,11 +144,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Model creates Requestor", function (assert) {
+	QUnit.test("Model construction with default group", function (assert) {
+		var oModel;
+
+		oModel = new ODataModel("/");
+		assert.strictEqual(oModel.getGroupId(), ""/*sGroupId for _Requestor#request*/);
+
+		oModel = new ODataModel("/foo/", {defaultGroup : "$direct"});
+		assert.strictEqual(oModel.getGroupId(), undefined);
+
+		assert.throws(function () {
+			oModel = new ODataModel("/foo/", {defaultGroup : "foo"});
+		}, new Error("Default service group must be '$direct'"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Model creates _Requestor", function (assert) {
 		var oModel,
 			oRequestor = {};
 
-		this.mock(Requestor).expects("create").withExactArgs("/foo/", {
+		this.mock(_Requestor).expects("create").withExactArgs("/foo/", {
 			"Accept-Language" : "ab-CD"
 		}, {
 			"sap-client" : "123"
@@ -339,13 +360,6 @@ sap.ui.require([
 		this.oSandbox.mock(oPropertyBinding).expects("refresh").never();
 
 		oModel.refresh(true);
-
-		assert.throws(function () {
-			oModel.refresh();
-		}, new Error("Falsy values for bForceUpdate are not supported"));
-		assert.throws(function () {
-			oModel.refresh(false);
-		}, new Error("Falsy values for bForceUpdate are not supported"));
 	});
 
 	//*********************************************************************************************
@@ -371,24 +385,6 @@ sap.ui.require([
 
 		assert.strictEqual(iCallCount, 2, "refresh called for both bindings");
 	});
-
-	//*********************************************************************************************
-	QUnit.test("createBindingContext, destroyBindingContext, getContext not supported",
-		function (assert) {
-			var oModel = createModel();
-
-			assert.throws(function () {
-				oModel.createBindingContext();
-			}, new Error("Cannot create context at model"));
-
-			assert.throws(function () {
-				oModel.destroyBindingContext();
-			}, new Error("Cannot destroy context"));
-
-			assert.throws(function () {
-				oModel.getContext();
-			}, new Error("Cannot get context at model"));
-		});
 
 	//*********************************************************************************************
 	QUnit.test("dataRequested", function (assert) {
@@ -422,8 +418,108 @@ sap.ui.require([
 
 		assert.ok(!fnSpy1.called && !fnSpy2.called, "not called synchronously");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("dataRequested with group ID 'undefined'", function (assert) {
+		var bDataRequested = false,
+			oModel = createModel();
+
+		this.oSandbox.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").never();
+
+		// code under test
+		oModel.dataRequested(undefined, function () {
+			bDataRequested = true;
+		});
+
+		assert.strictEqual(bDataRequested, true);
+		assert.strictEqual("undefined" in oModel.mDataRequestedCallbacks, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("forbidden", function (assert) {
+		var aFilters = [],
+			oModel = createModel(),
+			aSorters = [];
+
+		assert.throws(function () { //TODO implement
+			oModel.bindList(undefined, undefined,  undefined, aFilters);
+		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
+				+ "aSorters parameter must not be set"));
+		assert.throws(function () { //TODO implement
+			oModel.bindList(undefined, undefined,  aSorters);
+		}, new Error("Unsupported operation: v4.ODataModel#bindList, "
+				+ "aFilters parameter must not be set"));
+
+		assert.throws(function () { //TODO implement
+			oModel.bindTree();
+		}, new Error("Unsupported operation: v4.ODataModel#bindTree"));
+
+		assert.throws(function () {
+			oModel.createBindingContext();
+		}, new Error("Unsupported operation: v4.ODataModel#createBindingContext"));
+
+		assert.throws(function () {
+			oModel.destroyBindingContext();
+		}, new Error("Unsupported operation: v4.ODataModel#destroyBindingContext"));
+
+		assert.throws(function () {
+			oModel.getContext();
+		}, new Error("Unsupported operation: v4.ODataModel#getContext"));
+
+		assert.throws(function () { //TODO implement
+			oModel.getOriginalProperty();
+		}, new Error("Unsupported operation: v4.ODataModel#getOriginalProperty"));
+
+		assert.throws(function () {
+			oModel.getProperty();
+		}, new Error("Unsupported operation: v4.ODataModel#getProperty"));
+
+		assert.throws(function () { //TODO implement
+			oModel.isList();
+		}, new Error("Unsupported operation: v4.ODataModel#isList"));
+
+		assert.throws(function () { //TODO implement
+			oModel.refresh(false);
+		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () {
+			oModel.refresh("foo"/*truthy*/);
+		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () { //TODO implement
+			oModel.refresh(true, "");
+		}, new Error("Unsupported operation: v4.ODataModel#refresh, "
+				+ "sGroupId parameter must not be set"));
+
+		assert.throws(function () {
+			oModel.setLegacySyntax();
+		}, new Error("Unsupported operation: v4.ODataModel#setLegacySyntax"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("events", function (assert) {
+		var oModel = createModel();
+
+		assert.throws(function () {
+			oModel.attachParseError();
+		}, new Error("Unsupported event 'parseError': v4.ODataModel#attachEvent"));
+
+		assert.throws(function () {
+			oModel.attachRequestCompleted();
+		}, new Error("Unsupported event 'requestCompleted': v4.ODataModel#attachEvent"));
+
+		assert.throws(function () {
+			oModel.attachRequestFailed();
+		}, new Error("Unsupported event 'requestFailed': v4.ODataModel#attachEvent"));
+
+		assert.throws(function () {
+			oModel.attachRequestSent();
+		}, new Error("Unsupported event 'requestSent': v4.ODataModel#attachEvent"));
+	});
 });
-// TODO constructor: sDefaultBindingMode, mSupportedBindingModes
+// TODO DefaultBindingMode is set to 'OneWay' now. It must be changed if we can 'TwoWay'
+// TODO Extend mSupportedBindingModes for 'TwoWay'
 // TODO constructor: test that the service root URL is absolute?
 // TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
 // TODO read etc.: provide access to "abort" functionality

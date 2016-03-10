@@ -7,12 +7,11 @@ sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Model",
-	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Context, ListBinding, Model, Cache, Requestor, Helper,
+], function (ManagedObject, ChangeReason, Context, ListBinding, Model, _ODataHelper, _Cache,
 		ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -27,7 +26,7 @@ sap.ui.require([
 	});
 
 	/**
-	 * Creates a promise as mock for Cache.read which is fulfilled asynchronously with a result of
+	 * Creates a promise as mock for _Cache.read which is fulfilled asynchronously with a result of
 	 * the given length.
 	 * iStart determines the start index for the records contained in the result.
 	 *
@@ -89,7 +88,7 @@ sap.ui.require([
 					toString : function () { return "/service/EMPLOYEES"; }
 				};
 
-			this.oSandbox.mock(Cache).expects("create").returns(oCache);
+			this.oSandbox.mock(_Cache).expects("create").returns(oCache);
 			return this.oSandbox.mock(oCache);
 		}
 	});
@@ -103,11 +102,11 @@ sap.ui.require([
 			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
 			mQueryOptions = {};
 
-		oHelperMock = this.mock(Helper);
+		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
 			.returns(mQueryOptions);
-		this.mock(Cache).expects("create")
+		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
 				sinon.match.same(mQueryOptions));
 
@@ -164,11 +163,11 @@ sap.ui.require([
 		function (assert) {
 			var oCacheMock = this.getCacheMock(),
 				oControl = new TestControl({models : this.oModel}),
-				done = assert.async(),
 				oRange = oFixture.range || {},
 				iLength = oRange.length || this.oModel.iSizeLimit,
 				iEntityCount = oFixture.entityCount || iLength,
-				iStartIndex = oRange.startIndex || 0;
+				iStartIndex = oRange.startIndex || 0,
+				oPromise = createResult(iEntityCount);
 
 			// check that given spy is called with exact arguments
 			function checkCall(oSpy) {
@@ -189,7 +188,6 @@ sap.ui.require([
 					assert.strictEqual(aChildControls[i].getBindingContext().getPath(),
 						sExpectedPath, "child control binding path: " + sExpectedPath);
 				}
-				done();
 			}
 
 			if (iEntityCount < iLength) {
@@ -197,11 +195,11 @@ sap.ui.require([
 					.withArgs(iStartIndex, iLength, "")
 					// read is called twice because contexts are created asynchronously
 					.twice()
-					.returns(createResult(iEntityCount));
+					.returns(oPromise);
 			} else {
 				oCacheMock.expects("read")
 					.withArgs(iStartIndex, iLength, "")
-					.returns(createResult(iEntityCount));
+					.returns(oPromise);
 			}
 			// spies to check and document calls to model and binding methods from ManagedObject
 			this.spy(this.oModel, "bindList");
@@ -222,6 +220,8 @@ sap.ui.require([
 
 			oControl.getBinding("items").attachChange(onChange);
 			assert.deepEqual(oControl.getItems(), [], "initial synchronous result");
+
+			return oPromise;
 		});
 	});
 
@@ -229,9 +229,9 @@ sap.ui.require([
 	QUnit.test("nested listbinding", function (assert) {
 		var oBinding,
 			oControl = new TestControl({models : this.oModel}),
-			done = assert.async(),
 			sPath = "TEAM_2_EMPLOYEES",
 			oRange = {startIndex : 1, length : 3},
+			oPromise = createResult(oRange.length, 0, true),
 			that = this;
 
 		// change event handler for initial read for list binding
@@ -253,13 +253,12 @@ sap.ui.require([
 			// code under test
 			oBinding.setContext();
 			assert.strictEqual(oBinding.aContexts.length, 0, "reset context");
-			done();
 		}
 
 		oControl.bindObject("/TEAMS('4711')");
 		that.oSandbox.mock(oControl.getObjectBinding()).expects("requestValue")
 			.withExactArgs(sPath, undefined)
-			.returns(createResult(oRange.length, 0, true));
+			.returns(oPromise);
 
 		// code under test
 		oControl.bindAggregation("items", jQuery.extend({
@@ -269,13 +268,14 @@ sap.ui.require([
 
 		oBinding = oControl.getBinding("items");
 		oBinding.attachEventOnce("change", onChange);
+
+		return oPromise;
 	});
 
 	//*********************************************************************************************
 	QUnit.test("nested listbinding (context not yet set)", function (assert) {
 		var oControl = new TestControl({models : this.oModel}),
-			oRange = {startIndex : 1, length : 3},
-			done = assert.async();
+			oRange = {startIndex : 1, length : 3};
 
 		// change event handler for initial read for list binding
 		function onChange() {
@@ -291,7 +291,6 @@ sap.ui.require([
 		oControl.getBinding("items").attachChange(onChange);
 		assert.deepEqual(oControl.getBinding("items").getContexts(), [],
 			"list binding contexts not set");
-		setTimeout(done, 10); //TODO Is there a better way to finalize the test after console log?
 	});
 
 	//*********************************************************************************************
@@ -408,7 +407,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRelative) {
-		QUnit.test("getContexts sends no change event on failure of Cache#read and logs error, "
+		QUnit.test("getContexts sends no change event on failure of _Cache#read and logs error, "
 				+ "path is relative: " + bRelative, function (assert) {
 			var oCacheMock,
 				oContext = {
@@ -427,14 +426,16 @@ sap.ui.require([
 				oContextMock = this.oSandbox.mock(oContext);
 				oContextMock.expects("requestValue").once().returns(createResult(2));
 				oContextMock.expects("requestValue").once().returns(oPromise);
+				// no error logged by ODataListBinding; parent context logged the error already
 			} else {
 				oCacheMock = this.getCacheMock();
-				oCacheMock.expects("read").once().returns(createResult(2));
-				oCacheMock.expects("read").once().returns(oPromise);
+				oCacheMock.expects("read").once().callsArg(4).returns(createResult(2));
+				oCacheMock.expects("read").once().callsArg(4).returns(oPromise);
+				this.oLogMock.expects("error")
+					.withExactArgs("Failed to get contexts for " + sResolvedPath
+							+ " with start index 1" + " and length 2",
+						oError, "sap.ui.model.odata.v4.ODataListBinding");
 			}
-			this.oLogMock.expects("error")
-				.withExactArgs("Failed to get contexts for " + sResolvedPath + " with start index 1"
-					+ " and length 2", oError, "sap.ui.model.odata.v4.ODataListBinding");
 
 			oListBinding = this.oModel.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES",
 					oContext);
@@ -504,31 +505,31 @@ sap.ui.require([
 			var oCacheMock = this.getCacheMock(),
 				oListBinding = this.oModel.bindList("/EMPLOYEES"),
 				i, n,
-				done = assert.async();
+				oReadPromise1 = createResult(15),
+				oReadPromise2 = Promise.resolve(createResult(oFixture.result));
 
-			oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(15));
+			oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise1);
 			oCacheMock.expects("read").withArgs(oFixture.start, 30, "")
-				.returns(createResult(oFixture.result));
+				.returns(oReadPromise2);
 
 			oListBinding.getContexts(20, 30); // creates cache
 
-			setTimeout(function () {
+			return oReadPromise1.then(function () {
 				assert.strictEqual(oListBinding.isLengthFinal(), true);
 				assert.strictEqual(oListBinding.getLength(), 35);
 				oListBinding.getContexts(oFixture.start, 30);
 
-				setTimeout(function () {
-					assert.strictEqual(oListBinding.isLengthFinal(), oFixture.isFinal, "final");
-					assert.strictEqual(oListBinding.getLength(), oFixture.length);
-					assert.strictEqual(oListBinding.aContexts.length,
-						oFixture.length - (oFixture.isFinal ? 0 : 10), "Context array length");
-					for (i = oFixture.start, n = oFixture.start + oFixture.result; i < n; i++) {
-						assert.strictEqual(oListBinding.aContexts[i].sPath,
-							"/EMPLOYEES/" + i, "check content");
-					}
-					done();
-				}, 10);
-			}, 10);
+				return oReadPromise2;
+			}).then(function () {
+				assert.strictEqual(oListBinding.isLengthFinal(), oFixture.isFinal, "final");
+				assert.strictEqual(oListBinding.getLength(), oFixture.length);
+				assert.strictEqual(oListBinding.aContexts.length,
+					oFixture.length - (oFixture.isFinal ? 0 : 10), "Context array length");
+				for (i = oFixture.start, n = oFixture.start + oFixture.result; i < n; i++) {
+					assert.strictEqual(oListBinding.aContexts[i].sPath,
+						"/EMPLOYEES/" + i, "check content");
+				}
+			});
 		});
 	});
 
@@ -536,119 +537,122 @@ sap.ui.require([
 	QUnit.test("paging: full read before length; length at boundary", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			done = assert.async();
+			oReadPromise1 = createResult(30),
+			oReadPromise2 = createResult(30),
+			oReadPromise3 = createResult(0);
 
 		// 1. read and get [20..50) -> estimated length 60
-		oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(30));
+		oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise1);
 		// 2. read and get [0..30) -> length still 60
-		oCacheMock.expects("read").withArgs(0, 30, "").returns(createResult(30));
+		oCacheMock.expects("read").withArgs(0, 30, "").returns(oReadPromise2);
 		// 3. read [50..80) get no entries -> length is now final 50
-		oCacheMock.expects("read").withArgs(50, 30, "").returns(createResult(0));
+		oCacheMock.expects("read").withArgs(50, 30, "").returns(oReadPromise3);
 
 		oListBinding.getContexts(20, 30);
 
-		setTimeout(function () {
+		return oReadPromise1.then(function () {
 			assert.strictEqual(oListBinding.isLengthFinal(), false);
 			assert.strictEqual(oListBinding.getLength(), 60);
 
 			oListBinding.getContexts(0, 30); // read more data from beginning
 
-			setTimeout(function () {
-				assert.strictEqual(oListBinding.isLengthFinal(), false, "still not final");
-				assert.strictEqual(oListBinding.getLength(), 60, "length not reduced");
+			return oReadPromise2;
+		}).then(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), false, "still not final");
+			assert.strictEqual(oListBinding.getLength(), 60, "length not reduced");
 
-				oListBinding.getContexts(50, 30); // no more data; length at paging boundary
+			oListBinding.getContexts(50, 30); // no more data; length at paging boundary
 
-				setTimeout(function () {
-					assert.strictEqual(oListBinding.isLengthFinal(), true, "now final");
-					assert.strictEqual(oListBinding.getLength(), 50, "length at boundary");
-					done();
-				}, 10);
-			}, 10);
-		}, 10);
+			return oReadPromise3;
+		}).then(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "now final");
+			assert.strictEqual(oListBinding.getLength(), 50, "length at boundary");
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("paging: lower boundary reset", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			done = assert.async();
+			oReadPromise1 = createResult(15),
+			oReadPromise2 = createResult(0),
+			oReadPromise3 = createResult(0);
 
 		// 1. read [20..50) and get [20..35) -> final length 35
-		oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(15));
+		oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise1);
 		// 2. read [30..60) and get no entries -> estimated length 10 (after lower boundary reset)
-		oCacheMock.expects("read").withArgs(30, 30, "").returns(createResult(0));
+		oCacheMock.expects("read").withArgs(30, 30, "").returns(oReadPromise2);
 		// 3. read [35..65) and get no entries -> estimated length still 10
-		oCacheMock.expects("read").withArgs(35, 30, "").returns(createResult(0));
+		oCacheMock.expects("read").withArgs(35, 30, "").returns(oReadPromise3);
 
 		oListBinding.getContexts(20, 30);
 
-		setTimeout(function () {
+		return oReadPromise1.then(function () {
 			assert.strictEqual(oListBinding.isLengthFinal(), true);
 			assert.strictEqual(oListBinding.getLength(), 35);
 			assert.strictEqual(oListBinding.aContexts.length, 35);
 
 			oListBinding.getContexts(30, 30);
 
-			setTimeout(function () {
-				assert.strictEqual(oListBinding.isLengthFinal(), true, "new lower boundary");
-				assert.strictEqual(oListBinding.getLength(), 30,
-					"length 10 (after lower boundary reset)");
-				assert.strictEqual(oListBinding.aContexts.length, 30, "contexts array reduced");
+			return oReadPromise2;
+		}).then(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "new lower boundary");
+			assert.strictEqual(oListBinding.getLength(), 30,
+				"length 10 (after lower boundary reset)");
+			assert.strictEqual(oListBinding.aContexts.length, 30, "contexts array reduced");
 
-				oListBinding.getContexts(35, 30);
+			oListBinding.getContexts(35, 30);
 
-				setTimeout(function () {
-					assert.strictEqual(oListBinding.isLengthFinal(), true, "still estimated");
-					assert.strictEqual(oListBinding.getLength(), 30, "still 30");
-					done();
-				}, 10);
-			}, 10);
-		}, 10);
+			return oReadPromise3;
+		}).then(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "still estimated");
+			assert.strictEqual(oListBinding.getLength(), 30, "still 30");
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("paging: adjust max length got from server", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			done = assert.async();
+			oReadPromise1 = createResult(15),
+			oReadPromise2 = createResult(14),
+			oReadPromise3 = createResult(0);
 
 		// 1. read [20..50) and get [20..35) -> final length 35
-		oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(15));
+		oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise1);
 		// 2. read [20..50) and get [20..34) -> final length 34
-		oCacheMock.expects("read").withArgs(20, 30, "").returns(createResult(14));
+		oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise2);
 		// 3. read [35..65) and get no entries -> final length still 34
-		oCacheMock.expects("read").withArgs(35, 30, "").returns(createResult(0));
+		oCacheMock.expects("read").withArgs(35, 30, "").returns(oReadPromise3);
 
 		oListBinding.getContexts(20, 30);
 
-		setTimeout(function () {
+		return oReadPromise1.then(function () {
 			assert.strictEqual(oListBinding.isLengthFinal(), true);
 			assert.strictEqual(oListBinding.getLength(), 35);
 
 			oListBinding.getContexts(20, 30);
 
-			setTimeout(function () {
-				assert.strictEqual(oListBinding.isLengthFinal(), true, "final 34");
-				assert.strictEqual(oListBinding.getLength(), 34, "length 34");
+			return oReadPromise2;
+		}).then(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "final 34");
+			assert.strictEqual(oListBinding.getLength(), 34, "length 34");
 
-				oListBinding.getContexts(35, 30);
+			oListBinding.getContexts(35, 30);
 
-				setTimeout(function () {
-					assert.strictEqual(oListBinding.isLengthFinal(), true, "still final");
-					assert.strictEqual(oListBinding.getLength(), 34, "length still 34");
-					done();
-				}, 10);
-			}, 10);
-		}, 10);
+			return oReadPromise3;
+		}).then(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "still final");
+			assert.strictEqual(oListBinding.getLength(), 34, "length still 34");
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("refresh", function (assert) {
 		var oCacheMock = this.getCacheMock(),
-			done = assert.async(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oListBindingMock = this.oSandbox.mock(oListBinding);
+			oListBindingMock = this.oSandbox.mock(oListBinding),
+			oReadPromise = createResult(9);
 
 		// change event during getContexts
 		oListBindingMock.expects("_fireChange")
@@ -656,12 +660,12 @@ sap.ui.require([
 		// refresh event during refresh
 		oListBindingMock.expects("_fireRefresh")
 			.withExactArgs({reason : ChangeReason.Refresh});
-		oCacheMock.expects("read").withArgs(0, 10, "").returns(createResult(9));
+		oCacheMock.expects("read").withArgs(0, 10, "").returns(oReadPromise);
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
 
-		setTimeout(function () {
+		return oReadPromise.then(function () {
 			var oCache = oListBinding.oCache;
 			assert.strictEqual(oListBinding.iMaxLength, 9);
 			assert.strictEqual(oListBinding.isLengthFinal(), true);
@@ -673,8 +677,7 @@ sap.ui.require([
 			assert.deepEqual(oListBinding.aContexts, []);
 			assert.strictEqual(oListBinding.iMaxLength, Infinity);
 			assert.strictEqual(oListBinding.isLengthFinal(), false);
-			done();
-		}, 10); //wait until read is finished
+		});
 	});
 
 	//*********************************************************************************************
@@ -682,7 +685,7 @@ sap.ui.require([
 		var oListBinding = this.oModel.bindList("EMPLOYEES"),
 			oListBindingMock = this.oSandbox.mock(oListBinding);
 
-		this.oSandbox.mock(Cache).expects("create").never();
+		this.oSandbox.mock(_Cache).expects("create").never();
 		// refresh event during refresh
 		oListBindingMock.expects("_fireRefresh").never();
 
@@ -696,153 +699,105 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh cancels pending getContexts", function (assert) {
 		var oCacheMock = this.getCacheMock(),
-			done = assert.async(),
 			oError = new Error(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			oListBindingMock = this.oSandbox.mock(oListBinding);
+			oListBindingMock = this.oSandbox.mock(oListBinding),
+			oReadPromise = Promise.reject(oError);
 
 		// change event during getContexts
 		oListBindingMock.expects("_fireChange").never();
+		oListBindingMock.expects("fireDataReceived").withExactArgs();
 		oError.canceled = true;
-		oCacheMock.expects("read").withArgs(0, 10, "").returns(Promise.reject(oError));
+		oCacheMock.expects("read").withArgs(0, 10, "").callsArg(4).returns(oReadPromise);
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
 		oListBinding.refresh(true);
 
-		setTimeout(function () {
-			// log mock checks there is no console error from canceling processing of getContexts
-			done();
-		}, 10); //wait until read is finished
+		return oReadPromise["catch"](function () {});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts fires dataRequested and dataReceived events", function (assert) {
-		var iDataReceivedCount = 0,
-			iDataRequestedCount = 0,
-			done = assert.async(),
-			oListBinding,
+		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			fnResolveRead,
-			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;});
+			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;}),
+			oSandbox = this.oSandbox;
 
-		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
-			return {
-				read: function (iIndex, iLength, sQueueId, sPath, fnDataRequested) {
-					fnDataRequested(); // synchronously
-					// read returns an unresolved Promise to be resolved by submitBatch; otherwise
-					// this Promise would be resolved before the rendering and dataReceived would
-					// be fired before dataRequested
-					return oReadPromise;
-				}
-			};
-		});
-		this.oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
+		// read returns an unresolved Promise to be resolved by submitBatch; otherwise this Promise
+		// would be resolved before the rendering and dataReceived would be fired before
+		// dataRequested
+		oSandbox.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
+		oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
+			var oListBindingMock = oSandbox.mock(oListBinding);
+
+			// These events must be fired _after_ submitBatch
+			oListBindingMock.expects("fireEvent")
+				.withExactArgs("dataRequested", undefined);
+			oListBindingMock.expects("fireEvent")
+				.withExactArgs("change", {reason : "change"});
+			oSandbox.stub(oListBinding, "fireDataReceived", function () {
+				assert.strictEqual(oListBinding.aContexts.length, 10, "data already processed");
+			});
+
 			// submitBatch resolves the promise of the read
 			fnResolveRead(createResult(10));
 		});
-		oListBinding = this.oModel.bindList("/EMPLOYEES");
 
-		oListBinding.attachDataRequested(function (oEvent) {
-			assert.strictEqual(oEvent.getSource(), oListBinding, "dataRequested - correct source");
-			iDataRequestedCount++;
-		});
-		oListBinding.attachDataReceived(function (oEvent) {
-			assert.strictEqual(oEvent.getSource(), oListBinding, "dataReceived - correct source");
-			iDataReceivedCount++;
-			assert.strictEqual(iDataReceivedCount, 1, "dataReceived event fired once");
-			assert.strictEqual(oListBinding.aContexts.length, 10, "data already processed");
-			done();
-		});
-		oListBinding.attachChange(function (oEvent) {
-			assert.strictEqual(iDataReceivedCount, 0, "change event before dataReceived event");
-		});
 		oListBinding.getContexts(0, 10);
-		assert.strictEqual(iDataRequestedCount, 0, "dataRequested not yet fired");
-		assert.strictEqual(iDataReceivedCount, 0, "dataReceived not yet fired");
-		assert.strictEqual(oListBinding.aContexts.length, 0, "data is not yet available");
+
+		return oReadPromise.then(function () {
+			sinon.assert.calledOnce(oListBinding.fireDataReceived);
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts - error handling for dataRequested/dataReceived", function (assert) {
-		var done = assert.async(),
-			oError = new Error("Expected Error"),
-			oListBinding;
+		var oError = new Error("Expected Error"),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			oReadPromise = Promise.reject(oError);
 
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
 				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
+		this.oSandbox.mock(oListBinding.oCache).expects("read").callsArg(4).returns(oReadPromise);
+		this.oSandbox.mock(oListBinding).expects("fireDataReceived")
+			.withExactArgs({error : oError});
 
-		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
-			return {
-				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
-					fnDataRequested();
-					return Promise.reject(oError);
-				}
-			};
-		});
-		oListBinding = this.oModel.bindList("/EMPLOYEES");
-
-		oListBinding.attachDataReceived(function (oEvent) {
-			assert.strictEqual(oEvent.getSource(), oListBinding, "oEvent.getSource()");
-			assert.strictEqual(oEvent.getParameter("error"), oError,
-				"error is passed to event handler");
-			done();
-		});
 		oListBinding.getContexts(0, 10);
+		return oReadPromise["catch"](function () {});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts - concurrent call with read errors", function (assert) {
-		var iDataReceivedCount = 0,
-			iDataRequestedCount = 0,
-			done = assert.async(),
+		var oCacheMock,
 			oError = new Error("Expected Error"),
-			oListBinding,
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			fnRejectRead,
 			oReadPromise = new Promise(function (fn, fnReject) {fnRejectRead = fnReject;}),
-			iReadCount = 0;
+			oSandbox = this.oSandbox;
 
-		this.oLogMock.expects("error").twice()
+		this.oLogMock.expects("error")
 			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
 				+ "length 10", oError, "sap.ui.model.odata.v4.ODataListBinding");
+		oCacheMock = oSandbox.mock(oListBinding.oCache);
+		oCacheMock.expects("read").callsArg(4).returns(oReadPromise);
+		oCacheMock.expects("read").returns(oReadPromise);
+		oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
+			oSandbox.mock(oListBinding).expects("fireEvent")
+				.withExactArgs("dataRequested", undefined);
+			oSandbox.mock(oListBinding).expects("fireDataReceived")
+				.withExactArgs({error : oError});
 
-		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
-			return {
-				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
-					iReadCount++;
-					if (iReadCount === 1) {
-						fnDataRequested();
-					}
-					// read returns an unresolved Promise
-					return oReadPromise.then();
-				}
-			};
-		});
-		this.oSandbox.stub(this.oModel.oRequestor, "submitBatch", function () {
 			// submitBatch resolves the promise of the read
 			fnRejectRead(oError);
 		});
 
-
-		oListBinding = this.oModel.bindList("/EMPLOYEES");
-
-		oListBinding.attachDataRequested(function (oEvent) {
-			iDataRequestedCount++;
-		});
-		oListBinding.attachDataReceived(function (oEvent) {
-			iDataReceivedCount++;
-			assert.strictEqual(iDataRequestedCount, 1, "dataRequested event fired once");
-			assert.strictEqual(iDataReceivedCount, 1, "dataReceived event fired once");
-			assert.strictEqual(oEvent.getParameter("error"), oError,
-				"error is passed to event handler");
-			Promise.resolve().then(function () {
-				// wait until second getContext call is completed
-				done();
-			});
-		});
 		oListBinding.getContexts(0, 10);
 		// call it again in parallel
 		oListBinding.getContexts(0, 10);
+
+		return oReadPromise["catch"](function () {});
 	});
 
 	//*********************************************************************************************
@@ -886,7 +841,7 @@ sap.ui.require([
 	QUnit.test("getContexts calls dataRequested", function (assert) {
 		var oListBinding;
 
-		this.oSandbox.stub(Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
+		this.oSandbox.stub(_Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
 			return {
 				read: function (iIndex, iLength, sGroupId, sPath, fnDataRequested) {
 					fnDataRequested();
@@ -908,37 +863,49 @@ sap.ui.require([
 
 		assert.throws(function () { //TODO implement
 			oListBinding.filter();
-		}, new Error("Unsupported operation: ODataListBinding#filter"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#filter"));
 
 		assert.throws(function () { //TODO implement?
 			oListBinding.getContexts(0, 42, 0);
-		}, new Error("Unsupported operation: ODataListBinding#getContexts, "
+		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, "
 				+ "iThreshold parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
 			oListBinding.getCurrentContexts();
-		}, new Error("Unsupported operation: ODataListBinding#getCurrentContexts"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#getCurrentContexts"));
 
 		assert.throws(function () {
 			oListBinding.getDistinctValues();
-		}, new Error("Unsupported operation: ODataListBinding#getDistinctValues"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues"));
+
+		assert.throws(function () { //TODO implement
+			oListBinding.isInitial();
+		}, new Error("Unsupported operation: v4.ODataListBinding#isInitial"));
 
 		assert.throws(function () { //TODO implement
 			oListBinding.refresh(false);
-		}, new Error("Unsupported operation: ODataListBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () {
 			oListBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: ODataListBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () { //TODO implement
 			oListBinding.refresh(true, "");
-		}, new Error("Unsupported operation: ODataListBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataListBinding#refresh, "
 				+ "sGroupId parameter must not be set"));
 
 		assert.throws(function () { //TODO implement
+			oListBinding.resume();
+		}, new Error("Unsupported operation: v4.ODataListBinding#resume"));
+
+		assert.throws(function () { //TODO implement
 			oListBinding.sort();
-		}, new Error("Unsupported operation: ODataListBinding#sort"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#sort"));
+
+		assert.throws(function () { //TODO implement
+			oListBinding.suspend();
+		}, new Error("Unsupported operation: v4.ODataListBinding#suspend"));
 	});
 	//TODO errors on _fireFilter(mArguments) and below in Wiki
 
@@ -955,13 +922,28 @@ sap.ui.require([
 
 		assert.throws(function () {
 			oListBinding.attachEvent("filter");
-		}, new Error("Unsupported event 'filter': ODataListBinding#attachEvent"));
+		}, new Error("Unsupported event 'filter': v4.ODataListBinding#attachEvent"));
 
 		assert.throws(function () {
 			oListBinding.attachEvent("sort");
-		}, new Error("Unsupported event 'sort': ODataListBinding#attachEvent"));
+		}, new Error("Unsupported event 'sort': v4.ODataListBinding#attachEvent"));
 
 		assert.strictEqual(oListBinding.attachEvent("change", mEventParameters), oReturn);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Use model's groupId", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oReadPromise = createResult(0);
+
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
+			.returns("groupId");
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs(0, 10, "groupId").callsArg(4)
+			.returns(oReadPromise);
+		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
+
+		oBinding.getContexts(0, 10);
+		return oReadPromise;
 	});
 });
 //TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support

@@ -3,15 +3,17 @@
  */
 sap.ui.require([
 	"sap/ui/base/ManagedObject",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/type/String",
-	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/ODataPropertyBinding",
-	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, TypeString, _Cache, _Context, Helper, ODataPropertyBinding,
-		ODataModel) {
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/odata/v4/ODataPropertyBinding"
+], function (ManagedObject, BindingMode, ChangeReason, PropertyBinding, TypeString, _Context,
+		_ODataHelper, _Cache, ODataModel, ODataPropertyBinding) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -75,8 +77,9 @@ sap.ui.require([
 
 			return new Promise(function (fnResolve, fnReject) {
 				var oBinding,
-					fnChangeHandler = function () {
+					fnChangeHandler = function (oEvent) {
 						assert.strictEqual(oControl.getText(), "value", "initialized");
+						assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
 						oBinding.detachChange(fnChangeHandler);
 						fnResolve(oBinding);
 					},
@@ -143,7 +146,7 @@ sap.ui.require([
 			mParameters = {"custom" : "foo"},
 			mQueryOptions = {};
 
-		oHelperMock = this.mock(Helper);
+		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(oModel.mUriParameters, mParameters)
 			.returns(mQueryOptions);
@@ -215,17 +218,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdate(): read error", function (assert) {
-		var that = this,
-			oError = new Error("Expected failure");
+		var oError = new Error("Expected failure");
 
 		return this.createTextBinding(assert, 1, oError).then(function (oBinding) {
 			var bChangeReceived = false;
 
 			assert.strictEqual(oBinding.getValue(), "value",
 				"value is set before failing read");
-			that.oLogMock.expects("error").withExactArgs(
-				"Failed to read path /EntitySet('foo')/property", oError,
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
 			oBinding.attachChange(function () {
 				bChangeReceived = true;
 			});
@@ -243,15 +242,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdate(): read error with force update", function (assert) {
-		var that = this,
-			oError = new Error("Expected failure");
+		var oError = new Error("Expected failure");
 
 		return this.createTextBinding(assert, 1, oError).then(function (oBinding) {
 			var done = assert.async();
 
-			that.oLogMock.expects("error").withExactArgs(
-				"Failed to read path /EntitySet('foo')/property", oError,
-				"sap.ui.model.odata.v4.ODataPropertyBinding");
 			oBinding.attachChange(function () {
 				done();
 			});
@@ -276,7 +271,8 @@ sap.ui.require([
 			type : new TypeString()
 		});
 
-		oControl.getBinding("text").attachChange(function () {
+		oControl.getBinding("text").attachChange(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Context);
 			assert.strictEqual(oControl.getText(), "value");
 			done();
 		});
@@ -620,16 +616,11 @@ sap.ui.require([
 		oBinding = oModel.bindProperty(sPath);
 
 		// refresh triggers change
-		oBinding.attachChange(function () {
+		oBinding.attachChange(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh);
 			done();
 		});
 
-		assert.throws(function () {
-			oBinding.refresh();
-		}, new Error("Falsy values for bForceUpdate are not supported"));
-		assert.throws(function () {
-			oBinding.refresh(false);
-		}, new Error("Falsy values for bForceUpdate are not supported"));
 		oBinding.refresh(true);
 	});
 
@@ -686,7 +677,152 @@ sap.ui.require([
 			oBinding.refresh(true);
 		}, new Error("Refresh on this binding is not supported"));
 	});
-	// TODO bSuspended? In v2 it is ignored (check with core)
-	// TODO read in initialize and refresh? This forces checkUpdate to use getProperty.
 
+	//*********************************************************************************************
+	QUnit.test("forbidden", function (assert) {
+		var oModel = new ODataModel("/service/"),
+			oPropertyBinding = oModel.bindProperty("Name");
+
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.isInitial();
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#isInitial"));
+
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.refresh(false);
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () {
+			oPropertyBinding.refresh("foo"/*truthy*/);
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
+			+ "bForceUpdate must be true"));
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.refresh(true, "");
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#refresh, "
+				+ "sGroupId parameter must not be set"));
+
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.resume();
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#resume"));
+
+		assert.throws(function () { //TODO implement
+			oPropertyBinding.suspend();
+		}, new Error("Unsupported operation: v4.ODataPropertyBinding#suspend"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("events", function (assert) {
+		var mParams = {},
+			oMock = this.oSandbox.mock(PropertyBinding.prototype),
+			oModel = new ODataModel("/service/"),
+			oPropertyBinding,
+			oReturn = {};
+
+		oMock.expects("attachEvent").withExactArgs("AggregatedDataStateChange", mParams)
+			.returns(oReturn);
+		oMock.expects("attachEvent").withExactArgs("change", mParams)
+			.returns(oReturn);
+		oMock.expects("attachEvent").withExactArgs("dataReceived", mParams)
+			.returns(oReturn);
+		oMock.expects("attachEvent").withExactArgs("dataRequested", mParams)
+			.returns(oReturn);
+
+		oPropertyBinding = oModel.bindProperty("Name");
+
+		assert.strictEqual(oPropertyBinding.attachEvent("AggregatedDataStateChange", mParams),
+			oReturn);
+		assert.strictEqual(oPropertyBinding.attachEvent("change", mParams),
+			oReturn);
+		assert.strictEqual(oPropertyBinding.attachEvent("dataReceived", mParams),
+			oReturn);
+		assert.strictEqual(oPropertyBinding.attachEvent("dataRequested", mParams),
+			oReturn);
+
+		assert.throws(function () {
+			oPropertyBinding.attachDataStateChange();
+		}, new Error("Unsupported event 'DataStateChange': v4.ODataPropertyBinding#attachEvent"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Use model's groupId", function (assert) {
+		var oModel = new ODataModel("/service/"),
+			oBinding = oModel.bindProperty("/absolute"),
+			oReadPromise = Promise.resolve(),
+			oTypePromise = Promise.resolve(new TypeString());
+
+		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type").returns(oTypePromise);
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId").callsArg(2)
+			.returns(oReadPromise);
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
+			.returns("groupId");
+		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
+
+		oBinding.initialize();
+
+		return Promise.all([oTypePromise, oReadPromise]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setValue via control or API", function (assert) {
+		var oControl,
+			oModel = new ODataModel("/"),
+			oPropertyBinding,
+			oRequestorMock = this.oSandbox.mock(oModel.oRequestor);
+
+		this.getCacheMock().expects("read").returns(Promise.resolve("HT-1000's Name"));
+		oControl = new TestControl({
+			models : oModel,
+			text : "{path : '/ProductList(\\'HT-1000\\')/Name'"
+				+ ", type : 'sap.ui.model.odata.type.String'}"
+		});
+		this.oSandbox.mock(oModel).expects("getGroupId").twice()
+			.withExactArgs().returns("groupId");
+		this.oSandbox.mock(oModel).expects("dataRequested").twice()
+			.withExactArgs("groupId", sinon.match.func);
+		oRequestorMock.expects("request").withExactArgs("PATCH", "ProductList('HT-1000')",
+			"groupId", /*mHeaders*/null, {"Name" : "foo"});
+
+		// code under test
+		oControl.setText("foo");
+
+		oPropertyBinding = oControl.getBinding("text");
+		assert.strictEqual(oPropertyBinding.getValue(), "foo");
+
+		// code under test
+		oPropertyBinding.setValue("foo"); // must not trigger a 2nd PATCH
+
+		// set a different value via API
+		oRequestorMock.expects("request").withExactArgs("PATCH", "ProductList('HT-1000')",
+			"groupId", /*mHeaders*/null, {"Name" : "bar"});
+
+		// code under test
+		oPropertyBinding.setValue("bar");
+
+		assert.strictEqual(oControl.getText(), "bar");
+	});
+	//TODO {"If-Match" : "eTag"} - a request for a single property does not return an ETag
+	//TODO for PATCH we need the edit URL (for single property we can't determine the canonical URL
+	//     because the path need not contain the key properties e.g.
+	//     /EMPLOYEES('2')/EMPLOYEE_2_MANAGER/TEAM_ID) --> accept limitation for now
+	//TODO if the backend returns a different value we should take care
+	//TODO PUT of primitive property versus PATCH of entity (with select *), what is better?
+	//     --> PATCH with header "Prefer: return=minimal" followed by
+	//         GET with appropriate $expand/$select
+	//TODO error handling, both technical HTTP errors as well as business logic errors
+
+	//*********************************************************************************************
+	QUnit.test("setValue: Not a primitive value", function (assert) {
+		var oModel = new ODataModel("/"),
+			oPropertyBinding = oModel.bindProperty("/absolute");
+
+		// code under test
+		assert.throws(function () {
+			oPropertyBinding.setValue({});
+		}, new Error("Not a primitive value"));
+
+		// code under test
+		assert.throws(function () {
+			oPropertyBinding.setValue(Function);
+		}, new Error("Not a primitive value"));
+	});
 });
+// TODO read in initialize and refresh? This forces checkUpdate to use getProperty.

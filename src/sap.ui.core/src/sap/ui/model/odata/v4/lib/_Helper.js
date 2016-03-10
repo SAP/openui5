@@ -2,8 +2,10 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.model.odata.v4.lib.Requestor
-sap.ui.define(["jquery.sap.global"], function (jQuery) {
+//Provides class sap.ui.model.odata.v4.lib._Helper
+sap.ui.define([
+	"jquery.sap.global"
+], function (jQuery) {
 	"use strict";
 
 	var rAmpersand = /&/g,

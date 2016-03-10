@@ -6,7 +6,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/test/TestUtils"
-], function (Helper, MetadataConverter, MetadataRequestor, TestUtils) {
+], function (_Helper, _MetadataConverter, _MetadataRequestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -62,8 +62,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("MetadataRequestor is not a constructor", function (assert) {
-		assert.strictEqual(typeof MetadataRequestor, "object");
+	QUnit.test("_MetadataRequestor is not a constructor", function (assert) {
+		assert.strictEqual(typeof _MetadataRequestor, "object");
 	});
 
 	//*********************************************************************************************
@@ -77,7 +77,7 @@ sap.ui.require([
 			oMetadataRequestor,
 			sUrl = "/~/";
 
-		this.oSandbox.mock(Helper).expects("buildQuery")
+		this.oSandbox.mock(_Helper).expects("buildQuery")
 			.withExactArgs(sinon.match.same(oQueryParams))
 			.returns("?...");
 
@@ -87,11 +87,11 @@ sap.ui.require([
 				method : "GET"
 			}).returns(createMock(oExpectedXml));
 
-		this.oSandbox.mock(MetadataConverter).expects("convertXMLMetadata")
+		this.oSandbox.mock(_MetadataConverter).expects("convertXMLMetadata")
 			.withExactArgs(sinon.match.same(oExpectedXml))
 			.returns(oExpectedJson);
 
-		oMetadataRequestor = MetadataRequestor.create(oHeaders, oQueryParams);
+		oMetadataRequestor = _MetadataRequestor.create(oHeaders, oQueryParams);
 		assert.strictEqual(typeof oMetadataRequestor, "object");
 
 		return oMetadataRequestor.read(sUrl).then(function (oResult) {
@@ -103,11 +103,11 @@ sap.ui.require([
 	QUnit.test("read: failure", function (assert) {
 		var jqXHR = {},
 			oExpectedError = {},
-			oMetadataRequestor = MetadataRequestor.create();
+			oMetadataRequestor = _MetadataRequestor.create();
 
 		this.oSandbox.mock(jQuery).expects("ajax")
 			.returns(createMock(jqXHR, true)); // true  = fail
-		this.oSandbox.mock(Helper).expects("createError")
+		this.oSandbox.mock(_Helper).expects("createError")
 			.withExactArgs(sinon.match.same(jqXHR))
 			.returns(oExpectedError);
 
@@ -121,7 +121,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("read: test service", function (assert) {
-		var oMetadataRequestor = MetadataRequestor.create();
+		var oMetadataRequestor = _MetadataRequestor.create();
 
 		return Promise.all([
 			oMetadataRequestor.read(

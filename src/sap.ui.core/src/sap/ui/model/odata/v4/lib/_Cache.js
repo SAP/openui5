@@ -3,7 +3,10 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Cache
-sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./_Helper"
+], function (jQuery, _Helper) {
 	"use strict";
 
 	var Cache;
@@ -381,7 +384,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 		 *	}
 		 */
 		buildQueryString : function (mQueryOptions) {
-			return Helper.buildQuery(Cache.convertQueryOptions(mQueryOptions));
+			return _Helper.buildQuery(Cache.convertQueryOptions(mQueryOptions));
 		},
 
 		/**
@@ -432,7 +435,7 @@ sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 
 		/**
 		 * Converts the query options. All system query options are converted to strings, so that
-		 * the result can be used for Helper.buildQuery.
+		 * the result can be used for _Helper.buildQuery.
 		 *
 		 * @param {object} mQueryOptions The query options
 		 * @returns {object} The converted query options

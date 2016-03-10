@@ -5,12 +5,12 @@ sap.ui.require([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, ContextBinding, Cache, _Context, Helper,
+], function (ManagedObject, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache,
 		ODataContextBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -116,12 +116,12 @@ sap.ui.require([
 				oBinding;
 
 			if (bAbsolute) {
-				this.oSandbox.mock(Cache).expects("createSingle")
+				this.oSandbox.mock(_Cache).expects("createSingle")
 				.withExactArgs(sinon.match.same(oModel.oRequestor), sPath.slice(1), {
 					"sap-client" : "111"
 				}).returns(oCache);
 			} else {
-				this.oSandbox.mock(Cache).expects("createSingle").never();
+				this.oSandbox.mock(_Cache).expects("createSingle").never();
 			}
 
 			oBinding = oModel.bindContext(sPath, oContext);
@@ -144,11 +144,11 @@ sap.ui.require([
 			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
 			mQueryOptions = {};
 
-		oHelperMock = this.mock(Helper);
+		oHelperMock = this.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(oModel.mUriParameters, mParameters, ["$expand", "$select"])
 			.returns(mQueryOptions);
-		this.mock(Cache).expects("createSingle")
+		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(oModel.oRequestor), "EMPLOYEES(ID='1')",
 				sinon.match.same(mQueryOptions));
 
@@ -179,11 +179,12 @@ sap.ui.require([
 			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oBinding;
 
-		this.oSandbox.mock(Cache).expects("createSingle").returns(oCache);
+		this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
 
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oCache).expects("refresh");
-		this.oSandbox.mock(oBinding).expects("_fireChange");
+		this.oSandbox.mock(oBinding).expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Refresh});
 
 		oBinding.refresh(true);
 	});
@@ -194,7 +195,7 @@ sap.ui.require([
 			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oBinding;
 
-		this.oSandbox.mock(Cache).expects("createSingle").never();
+		this.oSandbox.mock(_Cache).expects("createSingle").never();
 
 		oBinding = oModel.bindContext("TEAM_2_EMPLOYEES(ID='1')", oContext);
 		this.oSandbox.mock(oBinding).expects("_fireChange").never();
@@ -207,7 +208,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("refresh cancels pending read", function (assert) {
 		var oBinding,
-			bGotDataReceived = false,
+			oBindingMock,
 			oModel = new ODataModel("/service/?sap-client=111"),
 			oContext = _Context.create(oModel, null, "/TEAMS('TEAM_01')"),
 			oPromise;
@@ -215,12 +216,10 @@ sap.ui.require([
 		this.oSandbox.mock(oModel.oRequestor).expects("request")
 			.returns(Promise.resolve({"ID" : "1"}));
 		oBinding = oModel.bindContext("/EMPLOYEES(ID='1')", oContext);
-		this.oSandbox.mock(oBinding).expects("_fireChange");
 
-		oBinding.attachDataReceived(function (oEvent) {
-			assert.strictEqual(oEvent.getParameter("error"), undefined);
-			bGotDataReceived = true;
-		});
+		oBindingMock = this.oSandbox.mock(oBinding);
+		oBindingMock.expects("_fireChange");
+		oBindingMock.expects("fireDataReceived").withExactArgs();
 
 		// trigger read before refresh
 		oPromise = oBinding.requestValue("ID").then(function () {
@@ -228,7 +227,6 @@ sap.ui.require([
 		}, function (oError1) {
 			assert.strictEqual(oError1.canceled, true);
 			// no Error is logged because error has canceled flag
-			assert.ok(bGotDataReceived);
 		});
 		oBinding.refresh(true);
 		return oPromise;
@@ -236,79 +234,64 @@ sap.ui.require([
 	// TODO bSuspended? In v2 it is ignored (check with core)
 
 	//*********************************************************************************************
-	QUnit.test("requestValue: absolute binding (success)", function (assert) {
+	QUnit.test("requestValue: absolute binding (read required)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
-			oCacheMock = this.oSandbox.mock(oBinding.oCache),
-			iDataReceivedCount = 0,
-			iDataRequestedCount = 0,
-			oModel = oBinding.getModel(),
-			fnResolveRead,
-			oReadPromise = new Promise(function (fnResolve) {fnResolveRead = fnResolve;});
+			oBindingMock = this.oSandbox.mock(oBinding);
 
-		oBinding.attachDataRequested(function (oEvent) {
-			assert.strictEqual(oEvent.getSource(), oBinding, "dataRequested - correct source");
-			iDataRequestedCount++;
-		});
+		oBindingMock.expects("fireDataRequested").withExactArgs();
+		oBindingMock.expects("fireDataReceived").withExactArgs();
 
-		oBinding.attachDataReceived(function (oEvent) {
-			assert.strictEqual(oEvent.getSource(), oBinding, "dataReceived - correct source");
-			assert.strictEqual(iDataRequestedCount, 1, "dataRequested fired");
-			iDataReceivedCount++;
-		});
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("", "bar").callsArg(2)
+			.returns(Promise.resolve("value"));
 
-		// read returns an unresolved Promise to be resolved by submitBatch; otherwise this
-		// Promise would be resolved before the rendering and dataReceived would be fired
-		// before dataRequested
-		oCacheMock.expects("read").withArgs("", "bar")
-			.callsArg(2)
-			.returns(oReadPromise);
-		this.oSandbox.stub(oModel.oRequestor, "submitBatch", function () {
-			// submitBatch resolves the promise of the read
-			fnResolveRead("value");
-		});
+		this.oSandbox.mock(oBinding.getModel()).expects("dataRequested").withArgs("").callsArg(1);
 
 		return oBinding.requestValue("bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
-			assert.strictEqual(iDataReceivedCount, 1, "dataReceived fired");
+		});
+	});
 
-			// the second time the cache has the value and returns a resolved promise
-			oCacheMock.expects("read").withArgs("", "bar")
-				.returns(Promise.resolve("value"));
+	//*********************************************************************************************
+	QUnit.test("requestValue: absolute binding (no read required)", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute"),
+			oBindingMock = this.oSandbox.mock(oBinding),
+			oCacheMock = this.oSandbox.mock(oBinding.oCache);
 
-			return oBinding.requestValue("bar").then(function (vValue) {
-				assert.strictEqual(vValue, "value");
-				assert.strictEqual(iDataRequestedCount, 1, "dataReceived not fired again");
-				assert.strictEqual(iDataReceivedCount, 1, "dataReceived not fired again");
-			});
+		oBindingMock.expects("fireDataRequested").never();
+		oBindingMock.expects("fireDataReceived").never();
+
+		oCacheMock.expects("read").withArgs("", "bar").returns(Promise.resolve("value"));
+
+		return oBinding.requestValue("bar").then(function (vValue) {
+			assert.strictEqual(vValue, "value");
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (failure)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute"),
-			iDataReceivedCount = 0,
-			oExpectedError = new Error("Expected read failure");
+			oCacheMock = this.oSandbox.mock(oBinding.oCache),
+			oExpectedError = new Error("Expected read failure"),
+			oCachePromise = Promise.reject(oExpectedError);
 
-		oBinding.attachDataReceived(function (oEvent) {
-			assert.strictEqual(oEvent.getSource(), oBinding, "dataReceived - correct source");
-			assert.strictEqual(oEvent.getParameter("error"), oExpectedError, "expected error");
-			iDataReceivedCount++;
-		});
-
-		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("", "bar")
-			.callsArg(2)
-			.returns(Promise.reject(oExpectedError));
+		oCacheMock.expects("read").withArgs("", "foo").callsArg(2).returns(oCachePromise);
+		oCacheMock.expects("read").withArgs("", "bar").returns(oCachePromise);
+		this.oSandbox.mock(oBinding).expects("fireDataReceived")
+			.withExactArgs({error : oExpectedError});
 		this.oLogMock.expects("error").withExactArgs("Failed to read path /absolute",
 			oExpectedError, "sap.ui.model.odata.v4.ODataContextBinding");
 
+		oBinding.requestValue("foo").then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (oError) {
+			assert.strictEqual(oError, oExpectedError);
+		});
 		return oBinding.requestValue("bar").then(function () {
 			assert.ok(false, "unexpected success");
 		}, function (oError) {
 			assert.strictEqual(oError, oExpectedError);
-			assert.strictEqual(iDataReceivedCount, 1);
 		});
 	});
-
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: relative binding", function (assert) {
@@ -338,17 +321,29 @@ sap.ui.require([
 			oContextBinding = oModel.bindContext("SO_2_BP");
 
 		assert.throws(function () { //TODO implement
+			oContextBinding.isInitial();
+		}, new Error("Unsupported operation: v4.ODataContextBinding#isInitial"));
+
+		assert.throws(function () { //TODO implement
 			oContextBinding.refresh(false);
-		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () {
 			oContextBinding.refresh("foo"/*truthy*/);
-		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 			+ "bForceUpdate must be true"));
 		assert.throws(function () { //TODO implement
 			oContextBinding.refresh(true, "");
-		}, new Error("Unsupported operation: ODataContextBinding#refresh, "
+		}, new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 				+ "sGroupId parameter must not be set"));
+
+		assert.throws(function () { //TODO implement
+			oContextBinding.resume();
+		}, new Error("Unsupported operation: v4.ODataContextBinding#resume"));
+
+		assert.throws(function () { //TODO implement
+			oContextBinding.suspend();
+		}, new Error("Unsupported operation: v4.ODataContextBinding#suspend"));
 	});
 
 	//*********************************************************************************************
@@ -367,5 +362,24 @@ sap.ui.require([
 
 			assert.strictEqual(oContextBinding.attachEvent(sEvent, mEventParameters), oReturn);
 		});
+
+		assert.throws(function () {
+			oContextBinding.attachDataStateChange();
+		}, new Error("Unsupported event 'DataStateChange': v4.ODataContextBinding#attachEvent"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Use model's groupId", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute"),
+			oReadPromise = Promise.resolve();
+
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
+			.returns("groupId");
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId").callsArg(2)
+			.returns(oReadPromise);
+		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
+
+		// code under test
+		return oBinding.requestValue("foo");
 	});
 });

@@ -3,7 +3,11 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Requestor
-sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, Batch, Helper) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./_Batch",
+	"./_Helper"
+], function (jQuery, _Batch, _Helper) {
 	"use strict";
 
 	var mFinalHeaders = { // final (cannot be overridden) request headers for OData v4
@@ -49,14 +53,14 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData v4 headers are added by default, but may be overridden
 	 * @param {object} mQueryParams
-	 *   A map of query parameters as described in {@link _Header.buildQuery}; used only to
+	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
 	 * @private
 	 */
 	function Requestor(sServiceUrl, mHeaders, mQueryParams) {
 		this.sServiceUrl = sServiceUrl;
 		this.mHeaders = mHeaders || {};
-		this.sQueryParams = Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
+		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.mBatchQueue = {};
 	}
@@ -97,7 +101,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 					fnResolve();
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
 					that.oSecurityTokenPromise = null;
-					fnReject(Helper.createError(jqXHR));
+					fnReject(_Helper.createError(jqXHR));
 				});
 			});
 		}
@@ -140,7 +144,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 			sPayload;
 
 		if (bIsBatch) {
-			oBatchRequest = Batch.serializeBatchRequest(oPayload);
+			oBatchRequest = _Batch.serializeBatchRequest(oPayload);
 			sPayload = oBatchRequest.body;
 			// This would have been the responsibility of submitBatch. But doing it here makes the
 			// $batch recognition easier.
@@ -156,7 +160,8 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 					that.mBatchQueue[sGroupId].push({
 						method: sMethod,
 						url: sResourcePath,
-						headers: jQuery.extend({}, mPredefinedPartHeaders, mHeaders),
+						headers: jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
+							mFinalHeaders),
 						body: sPayload,
 						$reject: fnReject,
 						$resolve: fnResolve
@@ -169,14 +174,13 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 			jQuery.ajax(that.sServiceUrl + sResourcePath, {
 				data : sPayload,
 				headers : jQuery.extend({}, mPredefinedRequestHeaders, that.mHeaders, mHeaders,
-					bIsBatch ? oBatchRequest.headers : mFinalHeaders
-				),
+					bIsBatch ? oBatchRequest.headers : mFinalHeaders),
 				method : sMethod
 			}).then(function (oPayload, sTextStatus, jqXHR) {
 				that.mHeaders["X-CSRF-Token"]
 					= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
 				if (bIsBatch) {
-					oPayload = Batch.deserializeBatchResponse(
+					oPayload = _Batch.deserializeBatchResponse(
 						jqXHR.getResponseHeader("Content-Type"), oPayload);
 				}
 				fnResolve(oPayload);
@@ -190,7 +194,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 							true));
 					}, fnReject);
 				} else {
-					fnReject(Helper.createError(jqXHR));
+					fnReject(_Helper.createError(jqXHR));
 				}
 			});
 		});
@@ -225,7 +229,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 					if (oResponse) {
 						if (oResponse.status >= 400) {
 							oResponse.getResponseHeader = getResponseHeader;
-							oCause = Helper.createError(oResponse);
+							oCause = _Helper.createError(oResponse);
 							oRequest.$reject(oCause);
 						} else {
 							oRequest.$resolve(JSON.parse(oResponse.responseText));
@@ -275,7 +279,7 @@ sap.ui.define(["jquery.sap.global", "./_Batch", "./_Helper"], function (jQuery, 
 		 *   <code>_Requestor<code> always sets the "Content-Type" header to
 		 *   "application/json;charset=UTF-8" value.
 		 * @param {object} mQueryParams
-		 *   A map of query parameters as described in {@link _Header.buildQuery}; used only to
+		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token
 		 * @returns {object}
 		 *   A new <code>_Requestor<code> instance

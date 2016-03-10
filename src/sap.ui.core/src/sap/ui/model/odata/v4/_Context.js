@@ -19,7 +19,8 @@ sap.ui.define([
 	var _Context = Context.extend("sap.ui.model.odata.v4._Context", {
 			/**
 			 * Do <strong>NOT</strong> call this private constructor for a new
-			 * <code>_Context</code>, but rather use {@link _Context#create create} instead.
+			 * <code>_Context</code>, but rather use
+			 * {@link sap.ui.model.odata.v4._Context.create create} instead.
 			 *
 			 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 			 *   The model
@@ -30,6 +31,7 @@ sap.ui.define([
 			 * @param {number} [iIndex]
 			 *   Index of item (within the collection addressed by <code>sPath</code>) represented
 			 *   by this context; used by list bindings, not context bindings
+			 *
 			 * @private
 			 */
 			constructor : function (oModel, oBinding, sPath, iIndex) {
@@ -42,9 +44,13 @@ sap.ui.define([
 	/**
 	 * Cannot access data synchronously, use {@link #requestValue} instead.
 	 *
-	 * @public
 	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Context#getObject
+	 * @since 1.37.0
 	 */
+	// @override
 	_Context.prototype.getObject = function () {
 		throw new Error("No synchronous access to data");
 	};
@@ -52,9 +58,13 @@ sap.ui.define([
 	/**
 	 * Cannot access data synchronously, use {@link #requestValue} instead.
 	 *
-	 * @public
 	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Context#getProperty
+	 * @since 1.37.0
 	 */
+	// @override
 	_Context.prototype.getProperty = function () {
 		throw new Error("No synchronous access to data");
 	};
@@ -67,7 +77,9 @@ sap.ui.define([
 	 *   Some relative path
 	 * @returns {Promise}
 	 *   A promise on the outcome of the binding's <code>requestValue</code> call
+	 *
 	 * @public
+	 * @since 1.37.0
 	 */
 	_Context.prototype.requestValue = function (sPath) {
 		return this.oBinding.requestValue(sPath, this.iIndex);
@@ -89,6 +101,8 @@ sap.ui.define([
 		 *   A context for an OData v4 model
 		 * @throws {Error}
 		 *   If an invalid path is given
+		 *
+		 * @private
 		 */
 		create : function (oModel, oBinding, sPath, iIndex) {
 			if (sPath[0] !== "/") {

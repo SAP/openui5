@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/model/odata/v4/lib/_Parser"
-], function (Helper, Parser) {
+	"./lib/_Helper",
+	"./lib/_Parser"
+], function (_Helper, _Parser) {
 	"use strict";
 
 	var ODataHelper;
@@ -78,7 +78,7 @@ sap.ui.define([
 				}
 				if (sKey[0] === "$") {
 					if ((sKey === "$expand" || sKey === "$select") && typeof vValue === "string") {
-						vValue = Parser.parseSystemQueryOption(sKey + "=" + vValue)[sKey];
+						vValue = _Parser.parseSystemQueryOption(sKey + "=" + vValue)[sKey];
 					}
 					validateSystemQueryOption(sKey, vValue);
 				} else if (sKey.indexOf("sap-") === 0) {
@@ -105,7 +105,7 @@ sap.ui.define([
 
 			oEntityType.$Key.forEach(function (sName) {
 				var sType = oEntityType[sName].$Type,
-					sValue = Helper.formatLiteral(oEntityInstance[sName], sType);
+					sValue = _Helper.formatLiteral(oEntityInstance[sName], sType);
 
 				aKeyValuePairs.push(
 					encodeURIComponent(sName) + "=" + encodeURIComponent(sValue));

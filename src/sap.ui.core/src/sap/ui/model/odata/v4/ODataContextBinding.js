@@ -7,10 +7,10 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ContextBinding",
-	"./lib/_Cache",
 	"./_Context",
-	"./_ODataHelper"
-], function (jQuery, ChangeReason, ContextBinding, Cache, _Context, Helper) {
+	"./_ODataHelper",
+	"./lib/_Cache"
+], function (jQuery, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache) {
 	"use strict";
 
 	var mSupportedEvents = {
@@ -41,15 +41,16 @@ sap.ui.define([
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @throws {Error} When disallowed OData query options are provided
-	 * @class Context binding for an OData v4 model.
-	 *   It only supports the following events: 'change', 'dataReceived', 'dataRequested'.
-	 *   If you attach to other events, an error is thrown.
 	 *
-	 * @author SAP SE
-	 * @version ${version}
 	 * @alias sap.ui.model.odata.v4.ODataContextBinding
+	 * @author SAP SE
+	 * @class Context binding for an OData v4 model.
+	 *   An event handler can only be attached to this binding for the following events: 'change',
+	 *   'dataReceived', and 'dataRequested'.
+	 *   For other events, an error is thrown.
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
+	 * @version ${version}
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
@@ -60,8 +61,8 @@ sap.ui.define([
 				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.createSingle(oModel.oRequestor, sPath.slice(1),
-						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
+					this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
+						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
@@ -72,10 +73,15 @@ sap.ui.define([
 			}
 		});
 
+	// See class documentation
+	// @override
+	// @public
+	// @see sap.ui.base.EventProvider#attachEvent
+	// @since 1.37.0
 	ODataContextBinding.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
 			throw new Error("Unsupported event '" + sEventId
-				+ "': ODataContextBinding#attachEvent");
+				+ "': v4.ODataContextBinding#attachEvent");
 		}
 		return ContextBinding.prototype.attachEvent.apply(this, arguments);
 	};
@@ -86,17 +92,19 @@ sap.ui.define([
 	 * context binding.
 	 * Registered event handlers are called with the change reason as parameter.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#change
-	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
-	 *   The reason for the 'change' event which is {@link sap.ui.model.ChangeReason#Change Change}
-	 *   for binding initialization or {@link sap.ui.model.ChangeReason#Context Context} if the
-	 *   parent context is changed.
-	 * @see sap.ui.base.Event
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change Change}
+	 *   when the binding is initialized, {@link sap.ui.model.ChangeReason.Refresh Refresh} when
+	 *   the binding is refreshed, and {@link sap.ui.model.ChangeReason.Context Context} when the
+	 *   parent context is changed
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#change
 	 * @protected
-	 * @since 1.37
+	 * @see sap.ui.base.Event
+	 * @since 1.37.0
 	 */
 
 	/**
@@ -104,12 +112,13 @@ sap.ui.define([
 	 * It is to be used by applications for example to switch on a busy indicator. Registered event
 	 * handlers are called without parameters.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataRequested
-	 * @event
 	 * @param {sap.ui.base.Event} oEvent
-	 * @see sap.ui.base.Event
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataRequested
 	 * @public
-	 * @since 1.37
+	 * @see sap.ui.base.Event
+	 * @since 1.37.0
 	 */
 
 	/**
@@ -123,15 +132,16 @@ sap.ui.define([
 	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataReceived
-	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
 	 *   If there are multiple failed back end requests, the error of the first one is provided.
-	 * @see sap.ui.base.Event
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataReceived
 	 * @public
-	 * @since 1.37
+	 * @see sap.ui.base.Event
+	 * @since 1.37.0
 	 */
 
 	/**
@@ -139,7 +149,10 @@ sap.ui.define([
 	 * resolved path.
 	 *
 	 * @protected
+	 * @see sap.ui.model.Binding#initialize
+	 * @since 1.37.0
 	 */
+	// @override
 	ODataContextBinding.prototype.initialize = function () {
 		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
@@ -148,6 +161,20 @@ sap.ui.define([
 		}
 		this.oElementContext = _Context.create(this.oModel, this, sResolvedPath);
 		this._fireChange({reason : ChangeReason.Change});
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#isInitial
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataContextBinding.prototype.isInitial = function () {
+		throw new Error("Unsupported operation: v4.ODataContextBinding#isInitial");
 	};
 
 	/**
@@ -160,25 +187,28 @@ sap.ui.define([
 	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The parameter <code>sGroupId</code> is not supported.
-	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code> or
-	 *   <code>sGroupId</code> is set, refresh on this binding is not supported.
+	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
+	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
+	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
+	 * @since 1.37.0
 	 */
+	// @override
 	ODataContextBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
 		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: ODataContextBinding#refresh, "
+			throw new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 				+ "bForceUpdate must be true");
 		}
 		if (sGroupId !== undefined) {
-			throw new Error("Unsupported operation: ODataContextBinding#refresh, "
+			throw new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 				+ "sGroupId parameter must not be set");
 		}
 		if (!this.oCache) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 		this.oCache.refresh();
-		this._fireChange();
+		this._fireChange({reason : ChangeReason.Refresh});
 	};
 
 	/**
@@ -189,26 +219,35 @@ sap.ui.define([
 	 *   Some relative path
 	 * @returns {Promise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *
+	 *  @private
 	 */
 	ODataContextBinding.prototype.requestValue = function (sPath) {
-		var that = this,
-			bDataRequested = false;
+		var bDataRequested = false,
+			sGroupId = this.oModel.getGroupId(),
+			that = this;
 
 		if (this.oCache) {
-			return this.oCache.read(/*sGroupId*/"", sPath, function () {
+			return this.oCache.read(sGroupId, sPath, function () {
 				bDataRequested = true;
-				that.getModel().dataRequested("", that.fireDataRequested.bind(that));
+				that.oModel.dataRequested(sGroupId,
+					that.fireDataRequested.bind(that));
 			}).then(function (vValue) {
 				if (bDataRequested) {
 					that.fireDataReceived();
 				}
 				return vValue;
 			}, function (oError) {
-				if (!oError.canceled) {
-					jQuery.sap.log.error("Failed to read path " + that.getPath(), oError,
-						"sap.ui.model.odata.v4.ODataContextBinding");
+				if (bDataRequested) {
+					if (oError.canceled) {
+						that.fireDataReceived();
+					} else {
+						// log error only once when data request failed
+						jQuery.sap.log.error("Failed to read path " + that.sPath, oError,
+							"sap.ui.model.odata.v4.ODataContextBinding");
+						that.fireDataReceived({error : oError});
+					}
 				}
-				that.fireDataReceived(oError.canceled ? undefined : {error : oError});
 				throw oError;
 			});
 		}
@@ -216,12 +255,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#resume
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataContextBinding.prototype.resume = function () {
+		throw new Error("Unsupported operation: v4.ODataContextBinding#resume");
+	};
+
+	/**
 	 * Sets the (base) context which is used when the binding path is relative.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
-	 * @protected
+	 *
+	 * @private
+	 * @see sap.ui.model.Binding#setContext
 	 */
+	// @override
 	ODataContextBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
@@ -229,6 +285,20 @@ sap.ui.define([
 				throw new Error("Nested context bindings are not supported");
 			}
 		}
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#suspend
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataContextBinding.prototype.suspend = function () {
+		throw new Error("Unsupported operation: v4.ODataContextBinding#suspend");
 	};
 
 	return ODataContextBinding;
