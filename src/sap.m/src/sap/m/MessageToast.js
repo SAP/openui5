@@ -340,7 +340,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 				oPopup = new Popup(),
 				iPos,
 				oMessageToastDomRef,
-				iCloseTimeoutId;
+				iCloseTimeoutId,
+				iMouseLeaveTimeoutId;
 
 			mOptions = normalizeOptions(mOptions);
 
@@ -426,6 +427,15 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			function fnClearTimeout() {
 				jQuery.sap.clearDelayedCall(iCloseTimeoutId);
 				iCloseTimeoutId = null;
+
+				function fnMouseLeave() {
+					iMouseLeaveTimeoutId = jQuery.sap.delayedCall(mSettings.duration, oPopup, "close");
+					oPopup.getContent().removeEventListener("mouseleave", fnMouseLeave);
+				}
+
+				oPopup.getContent().addEventListener("mouseleave", fnMouseLeave);
+				jQuery.sap.clearDelayedCall(iMouseLeaveTimeoutId);
+				iMouseLeaveTimeoutId = null;
 			}
 
 			oPopup.getContent().addEventListener("touchstart", fnClearTimeout);
