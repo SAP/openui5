@@ -192,13 +192,13 @@ sap.ui.require([
 
 			if (iEntityCount < iLength) {
 				oCacheMock.expects("read")
-					.withArgs(iStartIndex, iLength, "")
+					.withExactArgs(iStartIndex, iLength, "$auto", undefined, sinon.match.func)
 					// read is called twice because contexts are created asynchronously
 					.twice()
 					.returns(oPromise);
 			} else {
 				oCacheMock.expects("read")
-					.withArgs(iStartIndex, iLength, "")
+					.withExactArgs(iStartIndex, iLength, "$auto", undefined, sinon.match.func)
 					.returns(oPromise);
 			}
 			// spies to check and document calls to model and binding methods from ManagedObject
@@ -362,7 +362,8 @@ sap.ui.require([
 				oPromise;
 
 			if (bSync && iRangeIndex < oFixture.length - 1) {
-				oCacheMock.expects("read").withArgs(iStart, iLength, "")
+				oCacheMock.expects("read")
+					.withExactArgs(iStart, iLength, "$auto", undefined, sinon.match.func)
 					.returns(createResult(iLength));
 			}
 
@@ -471,7 +472,8 @@ sap.ui.require([
 				oListBinding,
 				oPromise = createResult(oFixture.result);
 
-			this.getCacheMock().expects("read").withArgs(oFixture.start, 30, "").returns(oPromise);
+			this.getCacheMock().expects("read").withArgs(oFixture.start, 30)
+				.returns(oPromise);
 			oListBinding = this.oModel.bindList("/EMPLOYEES", oContext);
 			this.oSandbox.mock(oListBinding).expects("_fireChange")
 				.exactly(oFixture.changeEvent === false ? 0 : 1)
@@ -508,8 +510,10 @@ sap.ui.require([
 				oReadPromise1 = createResult(15),
 				oReadPromise2 = Promise.resolve(createResult(oFixture.result));
 
-			oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise1);
-			oCacheMock.expects("read").withArgs(oFixture.start, 30, "")
+			oCacheMock.expects("read")
+				.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise1);
+			oCacheMock.expects("read")
+				.withExactArgs(oFixture.start, 30, "$auto", undefined, sinon.match.func)
 				.returns(oReadPromise2);
 
 			oListBinding.getContexts(20, 30); // creates cache
@@ -542,11 +546,14 @@ sap.ui.require([
 			oReadPromise3 = createResult(0);
 
 		// 1. read and get [20..50) -> estimated length 60
-		oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise1);
+		oCacheMock.expects("read")
+			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise1);
 		// 2. read and get [0..30) -> length still 60
-		oCacheMock.expects("read").withArgs(0, 30, "").returns(oReadPromise2);
+		oCacheMock.expects("read")
+			.withExactArgs(0, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise2);
 		// 3. read [50..80) get no entries -> length is now final 50
-		oCacheMock.expects("read").withArgs(50, 30, "").returns(oReadPromise3);
+		oCacheMock.expects("read")
+			.withExactArgs(50, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise3);
 
 		oListBinding.getContexts(20, 30);
 
@@ -579,11 +586,14 @@ sap.ui.require([
 			oReadPromise3 = createResult(0);
 
 		// 1. read [20..50) and get [20..35) -> final length 35
-		oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise1);
+		oCacheMock.expects("read")
+			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise1);
 		// 2. read [30..60) and get no entries -> estimated length 10 (after lower boundary reset)
-		oCacheMock.expects("read").withArgs(30, 30, "").returns(oReadPromise2);
+		oCacheMock.expects("read")
+			.withExactArgs(30, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise2);
 		// 3. read [35..65) and get no entries -> estimated length still 10
-		oCacheMock.expects("read").withArgs(35, 30, "").returns(oReadPromise3);
+		oCacheMock.expects("read")
+			.withExactArgs(35, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise3);
 
 		oListBinding.getContexts(20, 30);
 
@@ -619,11 +629,14 @@ sap.ui.require([
 			oReadPromise3 = createResult(0);
 
 		// 1. read [20..50) and get [20..35) -> final length 35
-		oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise1);
+		oCacheMock.expects("read")
+			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise1);
 		// 2. read [20..50) and get [20..34) -> final length 34
-		oCacheMock.expects("read").withArgs(20, 30, "").returns(oReadPromise2);
+		oCacheMock.expects("read")
+			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise2);
 		// 3. read [35..65) and get no entries -> final length still 34
-		oCacheMock.expects("read").withArgs(35, 30, "").returns(oReadPromise3);
+		oCacheMock.expects("read")
+			.withExactArgs(35, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise3);
 
 		oListBinding.getContexts(20, 30);
 
@@ -660,7 +673,8 @@ sap.ui.require([
 		// refresh event during refresh
 		oListBindingMock.expects("_fireRefresh")
 			.withExactArgs({reason : ChangeReason.Refresh});
-		oCacheMock.expects("read").withArgs(0, 10, "").returns(oReadPromise);
+		oCacheMock.expects("read").withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
+			.returns(oReadPromise);
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
@@ -708,7 +722,8 @@ sap.ui.require([
 		oListBindingMock.expects("_fireChange").never();
 		oListBindingMock.expects("fireDataReceived").withExactArgs();
 		oError.canceled = true;
-		oCacheMock.expects("read").withArgs(0, 10, "").callsArg(4).returns(oReadPromise);
+		oCacheMock.expects("read").withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
+			.callsArg(4).returns(oReadPromise);
 		oCacheMock.expects("refresh");
 
 		oListBinding.getContexts(0, 10);
@@ -850,7 +865,7 @@ sap.ui.require([
 			};
 		});
 		this.oSandbox.mock(this.oModel).expects("dataRequested")
-			.withExactArgs("", sinon.match.typeOf("function"));
+			.withExactArgs("$auto", sinon.match.typeOf("function"));
 
 		oListBinding = this.oModel.bindList("/EMPLOYEES");
 

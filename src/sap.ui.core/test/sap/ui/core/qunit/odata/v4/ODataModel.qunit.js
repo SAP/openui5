@@ -148,14 +148,17 @@ sap.ui.require([
 		var oModel;
 
 		oModel = new ODataModel("/");
-		assert.strictEqual(oModel.getGroupId(), ""/*sGroupId for _Requestor#request*/);
+		assert.strictEqual(oModel.getGroupId(), "$auto");
 
 		oModel = new ODataModel("/foo/", {defaultGroup : "$direct"});
-		assert.strictEqual(oModel.getGroupId(), undefined);
+		assert.strictEqual(oModel.getGroupId(), "$direct");
+
+		oModel = new ODataModel("/foo/", {defaultGroup : "$auto"});
+		assert.strictEqual(oModel.getGroupId(), "$auto");
 
 		assert.throws(function () {
 			oModel = new ODataModel("/foo/", {defaultGroup : "foo"});
-		}, new Error("Default service group must be '$direct'"));
+		}, new Error("Default group must be '$auto' or '$direct'"));
 	});
 
 	//*********************************************************************************************
@@ -420,7 +423,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("dataRequested with group ID 'undefined'", function (assert) {
+	QUnit.test("dataRequested with group ID '$direct'", function (assert) {
 		var bDataRequested = false,
 			oModel = createModel();
 
@@ -428,7 +431,7 @@ sap.ui.require([
 		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").never();
 
 		// code under test
-		oModel.dataRequested(undefined, function () {
+		oModel.dataRequested("$direct", function () {
 			bDataRequested = true;
 		});
 

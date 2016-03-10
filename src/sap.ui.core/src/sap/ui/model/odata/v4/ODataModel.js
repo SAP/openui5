@@ -44,8 +44,10 @@ sap.ui.define([
 	 *   <code>mParameters.serviceUrlParams</code> for details on custom query options.
 	 * @param {object} [mParameters]
 	 *   The parameters
-	 * @param {string} [mParameters.defaultGroup]
-	 *   Set to '$direct' to send requests directly, i.e. without batch
+	 * @param {string} [mParameters.defaultGroup="$auto"]
+	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
+	 *   batch request which is sent automatically before rendering; '$direct' sends requests
+	 *   directly without batch
 	 * @param {string} [mParameters.serviceUrl]
 	 *   Root URL of the service to request data from as specified for the parameter
 	 *   <code>sServiceUrl</code>; only used if the parameter <code>sServiceUrl</code> has not been
@@ -100,13 +102,11 @@ sap.ui.define([
 						oUri.query(true), mParameters && mParameters.serviceUrlParams));
 					this.sServiceUrl = oUri.query("").toString();
 					this.sGroupId = mParameters && mParameters.defaultGroup;
-					// map sGroupId to corresponding parameter value for _Requestor#request
 					if (this.sGroupId === undefined) {
-						this.sGroupId = "";
-					} else if (this.sGroupId === "$direct") {
-						this.sGroupId = undefined;
-					} else {
-						throw new Error("Default service group must be '$direct'");
+						this.sGroupId = "$auto";
+					}
+					if (this.sGroupId !== "$auto" && this.sGroupId !== "$direct") {
+						throw new Error("Default group must be '$auto' or '$direct'");
 					}
 
 					this.oMetaModel = new ODataMetaModel(
@@ -151,7 +151,7 @@ sap.ui.define([
 		var that = this,
 			aCallbacks = this.mDataRequestedCallbacks[sGroupId];
 
-		if (sGroupId === undefined) {
+		if (sGroupId === "$direct") {
 			fnBatchRequestSent();
 			return;
 		}

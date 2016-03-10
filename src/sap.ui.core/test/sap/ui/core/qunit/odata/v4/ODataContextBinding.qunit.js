@@ -241,10 +241,11 @@ sap.ui.require([
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
 
-		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("", "bar").callsArg(2)
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("$auto", "bar").callsArg(2)
 			.returns(Promise.resolve("value"));
 
-		this.oSandbox.mock(oBinding.getModel()).expects("dataRequested").withArgs("").callsArg(1);
+		this.oSandbox.mock(oBinding.getModel()).expects("dataRequested").withArgs("$auto")
+			.callsArg(1);
 
 		return oBinding.requestValue("bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
@@ -260,7 +261,7 @@ sap.ui.require([
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
 
-		oCacheMock.expects("read").withArgs("", "bar").returns(Promise.resolve("value"));
+		oCacheMock.expects("read").withArgs("$auto", "bar").returns(Promise.resolve("value"));
 
 		return oBinding.requestValue("bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
@@ -274,8 +275,8 @@ sap.ui.require([
 			oExpectedError = new Error("Expected read failure"),
 			oCachePromise = Promise.reject(oExpectedError);
 
-		oCacheMock.expects("read").withArgs("", "foo").callsArg(2).returns(oCachePromise);
-		oCacheMock.expects("read").withArgs("", "bar").returns(oCachePromise);
+		oCacheMock.expects("read").withArgs("$auto", "foo").callsArg(2).returns(oCachePromise);
+		oCacheMock.expects("read").withArgs("$auto", "bar").returns(oCachePromise);
 		this.oSandbox.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
 		this.oLogMock.expects("error").withExactArgs("Failed to read path /absolute",
