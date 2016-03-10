@@ -65,8 +65,8 @@ describe("sap.ui.unified.CalendarVisual", function() {
 
 	function keyboardTest(){
 		it("should handle keyboard navigation", function () {
-			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-				// only on desktop
+			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios" && browser.testrunner.runtime.browserName != "safari") {
+				// only on desktop and not in Safari (sendKeys needs an Element in Safari, so test makes no sense there)
 				_initCalendar("1");
 				browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform(); // focus on 9
 				expect(takeScreenshot(oCal)).toLookAs("011_keyboard_Arrow_Down");
@@ -115,8 +115,8 @@ describe("sap.ui.unified.CalendarVisual", function() {
 
 		it("should handle keyboard navigation for MonthPicker", function () {
 			// MonthPicker
-			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-				// only on desktop
+			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios" && browser.testrunner.runtime.browserName != "safari") {
+				// only on desktop and not in Safari (sendKeys needs an Element in Safari, so test makes no sense there)
 				browser.actions().sendKeys(protractor.Key.TAB).perform();
 				browser.actions().sendKeys(protractor.Key.SPACE).perform(); // month picker open, focus on December
 				expect(takeScreenshot(oCal)).toLookAs("026_keyboard_Month_Space");
@@ -139,8 +139,8 @@ describe("sap.ui.unified.CalendarVisual", function() {
 
 		it("should handle keyboard navigation for YearPicker", function () {
 			// YearPicker
-			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-				// only on desktop
+			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios" && browser.testrunner.runtime.browserName != "safari") {
+				// only on desktop and not in Safari (sendKeys needs an Element in Safari, so test makes no sense there)
 				browser.actions().sendKeys(protractor.Key.TAB).perform();
 				browser.actions().sendKeys(protractor.Key.TAB).perform();
 				browser.actions().sendKeys(protractor.Key.SPACE).perform(); // year Picker open, focus on 2014
@@ -252,9 +252,8 @@ describe("sap.ui.unified.CalendarVisual", function() {
 		});
 
 		it("should test multiple month display keyboard handling", function () {
-			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-				// only on desktop
-				// only on desktop
+			if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios" && browser.testrunner.runtime.browserName != "safari") {
+				// only on desktop and not in Safari (sendKeys needs an Element in Safari, so test makes no sense there)
 				_initCalendar("6");
 				browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform(); // focus on February 1
 				expect(takeScreenshot(oCal)).toLookAs("097_multiple_month_keyboard_Arrow_Right");
