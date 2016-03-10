@@ -672,11 +672,18 @@ sap.ui.define([
 		}
 
 		if (!this._iResizeId) {
-			this._iResizeId = ResizeHandler.register(this, this._adaptLayout.bind(this));
+			this._iResizeId = ResizeHandler.register(this, this._onHeaderResize.bind(this));
 		}
 		this._shiftHeaderTitle();
 
 		this._attachDetachActionButtonsHandler(true);
+	};
+
+	ObjectPageHeader.prototype._onHeaderResize = function () {
+		this._adaptLayout();
+		if (this.getParent() && typeof this.getParent()._adjustHeaderHeights === "function") {
+			this.getParent()._adjustHeaderHeights();
+		}
 	};
 
 	ObjectPageHeader.prototype._attachDetachActionButtonsHandler = function (bAttach) {
