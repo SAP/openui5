@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 					if ((this.iLoadItemsEventInitialProcessingTimeoutID === -1) &&
 
 						// the busy indicator in the input field should not be shown while the user is typing
-						(fnCallBack.name !== "input")) {
+						(!fnCallBack.bInput)) {
 
 						this.iLoadItemsEventInitialProcessingTimeoutID = setTimeout(function onItemsNotLoadedAfterDelay() {
 							this.setInternalBusyIndicatorDelay(0);
@@ -155,7 +155,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 		};
 
 		ComboBoxBase.prototype.onItemsLoaded = function() {
-			var sInputEventHandleName = "input";
 			this.bProcessingLoadItemsEvent = false;
 			clearTimeout(this.iLoadItemsEventInitialProcessingTimeoutID);
 
@@ -179,9 +178,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Select
 				fnNextEvent = bIsCurrentEventTheLast ? null : this.aEventQueue[i + 1];
 
 				if (typeof fnCurrentEvent === "function") {
-					if ((fnCurrentEvent.name === sInputEventHandleName) &&
+					if ((fnCurrentEvent.bInput) &&
 						!bIsCurrentEventTheLast &&
-						(fnNextEvent.name === sInputEventHandleName)) {
+						(fnNextEvent.bInput)) {
 
 						// no need to process this input event because the next is pending
 						continue;
