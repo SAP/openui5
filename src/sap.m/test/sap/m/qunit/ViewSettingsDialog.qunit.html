@@ -1956,6 +1956,49 @@
 				vsd9.destroy();
 			});
 
+			test("Reset group items selection on cancel", function () {
+				var delay = 1000,
+						done = assert.async(),
+						oVSD = new sap.m.ViewSettingsDialog();
+
+				var aGroupItems = [
+					new sap.m.ViewSettingsItem({
+						key: "test1",
+						text: "test1"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "test2",
+						text: "test2"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "test3",
+						text: "test3"
+					})];
+
+				aGroupItems.forEach(function (oItem) {
+					oVSD.addGroupItem(oItem);
+				}, this);
+				oVSD.open();
+				sap.ui.getCore().applyChanges();
+
+				strictEqual(sap.ui.getCore().byId(oVSD.getSelectedGroupItem()).getText(), "None", "Should have None button selected");
+
+				oVSD.setSelectedGroupItem(aGroupItems[0]);
+				sap.ui.getCore().applyChanges();
+				notStrictEqual(sap.ui.getCore().byId(oVSD.getSelectedGroupItem()).getText(), "None", "Should have changed the selection");
+
+				oVSD._dialog.getEndButton().firePress();
+				sap.ui.getCore().applyChanges();
+
+				setTimeout(function () {
+					oVSD.open();
+					strictEqual(sap.ui.getCore().byId(oVSD.getSelectedGroupItem()).getText(), "None", "Previous selection should have been reset");
+					oVSD.destroy();
+					oVSD = null;
+					done();
+				}.bind(this), delay);
+			});
+
 			module("Test");
 
 //			module("Focus", {
