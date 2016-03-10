@@ -9,11 +9,13 @@ sap.ui.define([
 	"sap/ui/model/ContextBinding",
 	"./_Context",
 	"./_ODataHelper",
-	"./lib/_Cache"
-], function (jQuery, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache) {
+	"./lib/_Cache",
+	"./lib/_Helper"
+], function (jQuery, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache, _Helper) {
 	"use strict";
 
-	var mSupportedEvents = {
+	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",
+		mSupportedEvents = {
 			change : true,
 			dataReceived : true,
 			dataRequested : true
@@ -67,7 +69,8 @@ sap.ui.define([
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
-				var iPos = sPath.indexOf("(...)");
+				var iPos = sPath.indexOf("(...)"),
+					bDeferred = iPos >= 0;
 
 				ContextBinding.call(this, oModel, sPath, oContext);
 
@@ -76,10 +79,11 @@ sap.ui.define([
 				}
 				this.oCache = undefined;
 				this.sGroupId = undefined;
+				this.mOperationParameters = undefined;
 				this.mQueryOptions = undefined;
-				this.bDeferred = iPos >= 0;
 
-				if (this.bDeferred) {
+				if (bDeferred) {
+					this.mOperationParameters = {};
 					if (iPos !== sPath.length - 5) {
 						throw new Error("Composable functions are not supported: " + sPath);
 					}
@@ -93,7 +97,7 @@ sap.ui.define([
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 						mParameters, ["$expand", "$select"]);
 					this.sGroupId = _ODataHelper.buildBindingParameters(mParameters).$$groupId;
-					if (!this.bDeferred) {
+					if (!bDeferred) {
 						this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
 							this.mQueryOptions);
 					}
@@ -180,23 +184,73 @@ sap.ui.define([
 	/**
 	 * Calls the OData function that corresponds to this operation binding.
 	 *
+	 * Parameters for the operation must be set via {@link #setParameter} beforehand.
+	 *
 	 * The value of this binding is the result of the operation. To access the result, bind a
 	 * control to the empty path, for example <code>&lt;Text text="{}"/&gt;<code>. The OData
 	 * function is only called when a property binding relative to the operation binding exists.
 	 *
-	 * @throws {Error} If the binding is not deferred.
+	 * @throws {Error} If the binding is not a deferred operation binding (see
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}).
 	 *
 	 * @public
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.execute = function () {
-		if (!this.bDeferred) {
+		var oMetaModel = this.oModel.getMetaModel(),
+			that = this;
+
+		if (!this.mOperationParameters) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
-		this.oCache = this.oCache || _Cache.createSingle(this.oModel.oRequestor,
-			this.sPath.slice(1).replace("...", ""), this.mQueryOptions, true);
+		if (!this.oMetadataPromise) {
+			// Note: undefined is more efficient than "" here
+			this.oMetadataPromise = oMetaModel.requestObject(undefined,
+					oMetaModel.getMetaContext(this.sPath))
+				.then(function (oMetaData) {
+					if (!oMetaData) {
+						throw new Error("Unknown operation");
+					}
+					if (oMetaData.$kind !== "FunctionImport") {
+						throw new Error("Not a FunctionImport");
+					}
+					return oMetaModel.requestObject("/" + oMetaData.$Function);
+				}).then(function (aOperationMetaData) {
+					var oOperationMetaData = aOperationMetaData[0];
 
-		this.refresh(true);
+					if (aOperationMetaData.length !== 1) {
+						throw new Error("Unsupported: operation overloading");
+					}
+					if (oOperationMetaData.$IsBound) {
+						throw new Error("Unsupported: bound operation");
+					}
+					return oOperationMetaData;
+				});
+		}
+		this.oMetadataPromise.then(function (oOperationMetaData) {
+			var aOperationParameters = oOperationMetaData.$Parameter,
+				aParameters = [];
+
+			if (aOperationParameters) {
+				aOperationParameters.forEach(function (oParameter) {
+					var sName = oParameter.$Name;
+
+					if (sName in that.mOperationParameters) {
+						if (oParameter.$IsCollection) {
+							throw new Error("Unsupported: collection parameter");
+						}
+						aParameters.push(sName + "=" + _Helper.formatLiteral(
+							that.mOperationParameters[sName], oParameter.$Type));
+					}
+				});
+			}
+			that.oCache = _Cache.createSingle(that.oModel.oRequestor,
+				that.sPath.slice(1).replace("...", aParameters.join(',')),
+				that.mQueryOptions);
+			that.refresh(true);
+		}).catch(function (oError) {
+			jQuery.sap.log.error(oError.message, that.sPath, sClassName);
+		});
 	};
 
 	/**
@@ -274,7 +328,7 @@ sap.ui.define([
 		if (this.oCache) {
 			this.oCache.refresh();
 			this._fireChange({reason : ChangeReason.Refresh});
-		} else if (!this.bDeferred) {
+		} else if (!this.mOperationParameters) {
 			throw new Error("Refresh on this binding is not supported");
 		}
 	};
@@ -312,7 +366,7 @@ sap.ui.define([
 					} else {
 						// log error only once when data request failed
 						jQuery.sap.log.error("Failed to read path " + that.sPath, oError,
-							"sap.ui.model.odata.v4.ODataContextBinding");
+							sClassName);
 						that.fireDataReceived({error : oError});
 					}
 				}
@@ -366,6 +420,29 @@ sap.ui.define([
 				}
 			}
 		}
+	};
+
+	/**
+	 * Sets a parameter for an operation call.
+	 *
+	 * @param {string} sParameterName
+	 *   The parameter name
+	 * @param {any} vValue
+	 *   The parameter value
+	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
+	 *   <code>this</code> to enable method chaining
+	 * @throws {Error} If the binding is not a deferred operation binding (see
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}).
+	 *
+	 * @public
+	 * @since 1.37.0
+	 */
+	ODataContextBinding.prototype.setParameter = function (sParameterName, vValue) {
+		if (!this.mOperationParameters) {
+			throw new Error("The binding must be deferred: " + this.sPath);
+		}
+		this.mOperationParameters[sParameterName] = vValue;
+		return this;
 	};
 
 	/**

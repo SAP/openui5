@@ -8,13 +8,16 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/_Context",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache,
+], function (ManagedObject, ChangeReason, ContextBinding, _Context, _ODataHelper, _Cache, _Helper,
 		ODataContextBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
+
+	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataContextBinding", {
@@ -457,50 +460,165 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("function, execute", function (assert) {
-		var oCache = {},
-			oCacheMock = this.oSandbox.mock(_Cache),
+	QUnit.test("execute function", function (assert) {
+		var oCacheMock = this.oSandbox.mock(_Cache),
+			done = assert.async(),
 			oContextBinding,
-			oContextBindingMock,
-			mParameters = {},
-			mQueryOptions = {};
+			oHelperMock = this.oSandbox.mock(_Helper),
+			oMetaModel = this.oModel.getMetaModel(),
+			oMetaModelMock = this.oSandbox.mock(oMetaModel),
+			sPath = "/FunctionImport(...)",
+			oSingleCache = {
+				refresh : function () {}
+			},
+			oSingleCacheMock = this.oSandbox.mock(oSingleCache);
 
-		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
-				sinon.match.same(mParameters), ["$expand", "$select"])
-			.returns(mQueryOptions);
 		oCacheMock.expects("createSingle").never();
 
-		oContextBinding = this.oModel.bindContext("/FunctionImport(...)", undefined, mParameters);
-		oContextBindingMock = this.oSandbox.mock(oContextBinding);
+		oContextBinding = this.oModel.bindContext(sPath);
 
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs(undefined, oMetaModel.getMetaContext(sPath))
+			.returns(Promise.resolve({
+				$kind : "FunctionImport",
+				$Function : "schema.Function"
+			}));
+		oMetaModelMock.expects("requestObject").withExactArgs("/schema.Function")
+			.returns(Promise.resolve([{
+				$kind : "Function",
+				$Parameter : [{
+					$Name : "p1",
+					$Type : "Edm.String"
+				}, {
+					$Name : "p2",
+					$Type : "Edm.Int16"
+				}, { // unused collection parameter must not lead to an error
+					$Name : "p3",
+					//$Nullable : true,
+					$IsCollection : true
+				}]
+			}]));
+		oHelperMock.expects("formatLiteral").withExactArgs("v'1", "Edm.String").returns("'v''1'");
+		oHelperMock.expects("formatLiteral").withExactArgs(42, "Edm.Int16").returns("42");
 		oCacheMock.expects("createSingle")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "FunctionImport()",
-				sinon.match.same(mQueryOptions), true)
-			.returns(oCache);
-		oContextBindingMock.expects("refresh").withExactArgs(true);
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
+				"FunctionImport(p1='v''1',p2=42)", {"sap-client" : "111"})
+			.returns(oSingleCache);
+		oSingleCacheMock.expects("refresh");
 
 		// code under test
-		oContextBinding.execute();
+		oContextBinding.setParameter("p1", "v'1").setParameter("p2", 42).execute();
 
-		assert.strictEqual(oContextBinding.oCache, oCache);
+		oContextBinding.attachEventOnce("change", function (oEvent) {
+			assert.deepEqual(oEvent.getParameters(), {reason : "refresh"});
 
-		// second execute must not recreate the cache
-		oContextBindingMock.expects("refresh").withExactArgs(true);
+			oHelperMock.expects("formatLiteral")
+				.withExactArgs("v'2", "Edm.String").returns("'v''2'");
+			oHelperMock.expects("formatLiteral")
+				.withExactArgs(42, "Edm.Int16").returns("42");
+			oCacheMock.expects("createSingle")
+				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
+					"FunctionImport(p1='v''2',p2=42)", {"sap-client" : "111"})
+				.returns(oSingleCache);
+			oSingleCacheMock.expects("refresh");
 
-		// code under test
-		oContextBinding.execute();
+			oContextBinding.attachEventOnce("change", done);
+
+			// code under test
+			oContextBinding.setParameter("p1", "v'2").execute();
+		});
 	});
-	//TODO execute: support structured return type
-	//TODO execute: support collection return type
+	// TODO function returning collection
+	// TODO function overloading
 
 	//*********************************************************************************************
-	QUnit.test("execute on non-deferred", function (assert) {
-		var oContextBinding = this.oModel.bindContext("/Employees(ID='42')");
+	[{
+		result : undefined,
+		message : "Unknown operation"
+	}, {
+		result : {$kind : "EntitySet"},
+		message : "Not a FunctionImport"
+	}].forEach(function (oFixture) {
+		QUnit.test("execute, " + oFixture.message, function (assert) {
+			var oContextBinding,
+				done = assert.async(),
+				oMetaModel = this.oModel.getMetaModel(),
+				sPath = "/Employees(...)";
+
+			this.oSandbox.mock(_Cache).expects("createSingle").never();
+
+			oContextBinding = this.oModel.bindContext(sPath);
+
+			this.oSandbox.mock(oMetaModel).expects("requestObject")
+				.withExactArgs(undefined, oMetaModel.getMetaContext(sPath))
+				.returns(Promise.resolve(oFixture.result));
+
+			this.oLogMock.restore();
+			this.oSandbox.stub(jQuery.sap.log, "error", function (sMessage, sDetail, sClass) {
+				assert.strictEqual(sMessage, oFixture.message);
+				assert.strictEqual(sDetail, sPath);
+				assert.strictEqual(sClass, sClassName);
+				done();
+			});
+
+			// code under test
+			oContextBinding.execute();
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		result : [{}, {}],
+		message : "operation overloading"
+	}, {
+		result : [{$IsBound : true}],
+		message : "bound operation"
+	}, {
+		result : [{$Parameter : [{$Name : "foo", $IsCollection : true}]}],
+		message : "collection parameter"
+	}].forEach(function (oFixture) {
+		QUnit.test("execute, " + oFixture.message, function (assert) {
+			var oContextBinding,
+				done = assert.async(),
+				oMetaModel = this.oModel.getMetaModel(),
+				oMetaModelMock = this.oSandbox.mock(oMetaModel),
+				sPath = "/FunctionImport(...)";
+
+			oMetaModelMock.expects("requestObject")
+				.withExactArgs(undefined, oMetaModel.getMetaContext(sPath))
+				.returns(Promise.resolve({
+					$kind : "FunctionImport",
+					$Function : "schema.Function"
+				}));
+			oMetaModelMock.expects("requestObject").withExactArgs("/schema.Function")
+				.returns(Promise.resolve(oFixture.result));
+			this.oSandbox.mock(_Cache).expects("createSingle").never();
+			this.oLogMock.restore();
+			this.oSandbox.stub(jQuery.sap.log, "error", function (sMessage, sDetail, sClass) {
+				assert.strictEqual(sMessage, "Unsupported: " + oFixture.message);
+				assert.strictEqual(sDetail, sPath);
+				assert.strictEqual(sClass, sClassName);
+				done();
+			});
+
+			oContextBinding = this.oModel.bindContext(sPath);
+			this.oSandbox.mock(oContextBinding).expects("refresh").never();
+
+			// code under test
+			oContextBinding.setParameter("foo", [42]).execute();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setParameter, execute: not deferred", function (assert) {
+		var oContextBinding = this.oModel.bindContext("/Function()");
 
 		assert.throws(function () {
-			oContextBinding.execute();
-		}, /The binding must be deferred: \/Employees\(ID='42'\)/);
+			return oContextBinding.setParameter();
+		}, /The binding must be deferred/);
+		assert.throws(function () {
+			return oContextBinding.execute();
+		}, /The binding must be deferred/);
 	});
 
 	//*********************************************************************************************

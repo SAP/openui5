@@ -855,31 +855,6 @@ sap.ui.require([
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("fetchUI5Type: FunctionImport returning PrimitiveType", function (assert) {
-		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-			sPath = "/FunctionImport()",
-			oType;
-
-		oMetaModelMock.expects("fetchObject")
-			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
-			.returns(SyncPromise.resolve({
-				$kind : "FunctionImport",
-				$Function : "schema.Function"
-			}));
-		oMetaModelMock.expects("fetchObject")
-			.withExactArgs(undefined, this.oMetaModel.getMetaContext("/schema.Function"))
-			.returns(SyncPromise.resolve([{
-				$ReturnType : {
-					$Type : "Edm.Int16",
-					$Nullable : false
-				}
-			}]));
-
-		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
-		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Int16");
-		assert.deepEqual(oType.oConstraints, {nullable : false});
-	});
 	// TODO ActionImport
 	// TODO bound Function/Action
 	// TODO StructuredType: "/FunctionImport()/Property" -> ODataMetaModel#fetchObject
