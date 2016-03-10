@@ -2727,7 +2727,7 @@ sap.ui.define([
 		// remove metadata, navigation properties to reduce payload
 		if (oPayload.__metadata) {
 			for (var n in oPayload.__metadata) {
-				if (n !== 'type' && n !== 'uri' && n !== 'etag') {
+				if (n !== 'type' && n !== 'uri' && n !== 'etag' && n !== 'content_type' && n !== 'media_src') {
 					delete oPayload.__metadata[n];
 				}
 			}
