@@ -6,7 +6,7 @@
 	jQuery.sap.require('sap.ui.thirdparty.qunit');
 	jQuery.sap.require('sap.ui.thirdparty.sinon');
 	jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
-	sinon.config.useFakeTimers = false;
+	sinon.config.useFakeTimers = true;
 
 	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
@@ -39,6 +39,7 @@
 		},
 		teardown: function() {
 			this.NotificationListItem.destroy();
+			this.list.destroy();
 		}
 	});
 
@@ -294,6 +295,7 @@
 		},
 		teardown: function() {
 			this.NotificationListItem.destroy();
+			this.list.destroy();
 		}
 	});
 
@@ -456,6 +458,118 @@
 		// assert
 		assert.strictEqual(priorityDiv.hasClass('sapMNLB-High'), true, 'Priority should be set to "High"');
 
+	});
+
+	QUnit.test('Check if text is truncated', function(assert) {
+		// arrange
+		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
+			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
+			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
+			'Mauris vehicula posuere tortor ac vulputate.');
+
+		this.NotificationListItem.setDescription('Donec felis sem, tincidunt vitae gravida eget, egestas sit amet dolor. ' +
+			'Duis mauris erat, eleifend sit amet dapibus vel, cursus quis ante. Pellentesque erat dui, aliquet id ' +
+			'fringilla eget, aliquam at odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. ' +
+			'Donec tincidunt semper mattis. Nunc id convallis ex. Sed bibendum volutpat urna, vitae eleifend nisi ' +
+			'maximus id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
+			'Nunc suscipit nulla ligula, ut faucibus ex pellentesque vel. Suspendisse id aliquet mauris. ');
+
+		this.NotificationListItem.setAuthorPicture('sap-icon://group');
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').hidden, false, 'The "Show More" button should appear');
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, 'Show More',
+			'The button text should state "Show More" when truncated.');
+		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'Notification should be truncated.');
+
+		// act
+		this.NotificationListItem.setTruncate(false);
+		sap.ui.getCore().applyChanges();
+
+		// arrange
+		var headerClassList = this.NotificationListItem.getDomRef().querySelector('.sapMNLI-Header').classList;
+		var textClassList = this.NotificationListItem.getDomRef().querySelector('.sapMNLI-TextWrapper').classList;
+
+		// assert
+		assert.strictEqual(headerClassList.contains('sapMNLI-TitleWrapper--is-expanded'), true, 'Notification title shouldn\'t be truncated.');
+		assert.strictEqual(textClassList.contains('sapMNLI-TextWrapper--is-expanded'), true, 'Notification text shouldn\'t be truncated.');
+	});
+
+	QUnit.test('Collapsing and expanding a notification', function(assert) {
+		// arrange
+		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
+			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
+			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
+			'Mauris vehicula posuere tortor ac vulputate.');
+
+		this.NotificationListItem.setDescription('Donec felis sem, tincidunt vitae gravida eget, egestas sit amet dolor. ' +
+			'Duis mauris erat, eleifend sit amet dapibus vel, cursus quis ante. Pellentesque erat dui, aliquet id ' +
+			'fringilla eget, aliquam at odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. ' +
+			'Donec tincidunt semper mattis. Nunc id convallis ex. Sed bibendum volutpat urna, vitae eleifend nisi ' +
+			'maximus id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
+			'Nunc suscipit nulla ligula, ut faucibus ex pellentesque vel. Suspendisse id aliquet mauris. ');
+
+		this.NotificationListItem.setAuthorPicture('sap-icon://group');
+
+		sap.ui.getCore().applyChanges();
+
+		// arrange
+		//The _deregisterResize() method is initialized here because it is also called in onBeforeRendering
+		var fnEventSpy = sinon.spy(this.NotificationListItem, '_deregisterResize');
+
+		// assert
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').hidden, false, 'The "Show More" button should appear');
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, 'Show More',
+			'The button text should state "Show More" when truncated.');
+		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'Notification should be truncated.');
+
+		// act
+		this.NotificationListItem._collapseButton.firePress();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(this.NotificationListItem.getTruncate(), false, 'Notification shouldn\'t be truncated after pressing "Show More" button.');
+		assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the "Show More" button should call the _deregisterResize() method.');
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, 'Show Less',
+			'The "Show More" button text should be changed.');
+	});
+
+	QUnit.test('When resizing _registerResize() should be called', function(assert) {
+		// arrange
+		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
+			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
+			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
+			'Mauris vehicula posuere tortor ac vulputate.');
+
+		this.NotificationListItem.setDescription('Donec felis sem, tincidunt vitae gravida eget, egestas sit amet dolor. ' +
+			'Duis mauris erat, eleifend sit amet dapibus vel, cursus quis ante. Pellentesque erat dui, aliquet id ' +
+			'fringilla eget, aliquam at odio. Interdum et malesuada fames ac ante ipsum primis in faucibus. ' +
+			'Donec tincidunt semper mattis. Nunc id convallis ex. Sed bibendum volutpat urna, vitae eleifend nisi ' +
+			'maximus id. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ' +
+			'Nunc suscipit nulla ligula, ut faucibus ex pellentesque vel. Suspendisse id aliquet mauris. ');
+
+		this.NotificationListItem.setAuthorPicture('sap-icon://group');
+
+		sap.ui.getCore().applyChanges();
+
+		var fnEventSpy = sinon.spy(this.NotificationListItem, '_registerResize');
+		this.NotificationListItem._deregisterResize();
+
+		// arrange
+		this.list.setWidth('50%');
+		sap.ui.getCore().applyChanges();
+
+		var headerClassList = this.NotificationListItem.getDomRef().querySelector('.sapMNLI-Header').classList;
+		var textClassList = this.NotificationListItem.getDomRef().querySelector('.sapMNLI-TextWrapper').classList;
+		//debugger;
+
+		// assert
+		assert.strictEqual(fnEventSpy.callCount, 1, 'The _registerResize() method should be called.');
+		assert.strictEqual(headerClassList.contains('sapMNLI-TitleWrapper--is-expanded'), false, 'The title should be truncated.');
+		assert.strictEqual(textClassList.contains('sapMNLI-TextWrapper--is-expanded'), false, 'The text should be truncated.');
 	});
 
 	//================================================================================

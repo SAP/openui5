@@ -148,6 +148,80 @@
             'The cloned notification shoould have the hidden aggregations as well');
     });
 
+    QUnit.test('Pressing the collapse button should collapse the group', function(assert) {
+        // arrange
+        this.NotificationListGroup.setCollapsed(true);
+        var firstNotification = new sap.m.NotificationListItem({title: 'First Notification'});
+        var secondNotification = new sap.m.NotificationListItem({title: 'Second Notification'});
+        var fnEventSpy = sinon.spy(this.NotificationListGroup, 'setCollapsed');
+
+        this.NotificationListGroup.addItem(firstNotification);
+        this.NotificationListGroup.addItem(secondNotification);
+        sap.ui.getCore().applyChanges();
+
+        // act
+        this.NotificationListGroup._collapseButton.firePress();
+        sap.ui.getCore().applyChanges();
+
+        // assert
+        assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the button should trigger collapse of the group.');
+        assert.strictEqual(this.NotificationListGroup.getCollapsed(), false, 'Pressing the button should set the group as collapsed.');
+    });
+
+    QUnit.test('Priority must be set to the highest if there are more than two notifications', function(assert) {
+        // arrange
+        this.NotificationListGroup.setAutoPriority(true);
+
+        // act
+        var firstNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.None});
+        var secondNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.Medium});
+        var thirdNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.Low});
+
+        this.NotificationListGroup.addItem(firstNotification);
+        this.NotificationListGroup.addItem(secondNotification);
+        this.NotificationListGroup.addItem(thirdNotification);
+        sap.ui.getCore().applyChanges();
+
+        // assert
+        assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.Medium, 'The priority should be set to "Medium".');
+    });
+
+    QUnit.test('Priority must be set accordingly', function(assert) {
+        // arrange
+        this.NotificationListGroup.setAutoPriority(true);
+
+        // act
+        var firstNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.None});
+        var secondNotification = new sap.m.NotificationListItem({priority: sap.ui.core.Priority.Low});
+
+        this.NotificationListGroup.addItem(firstNotification);
+        this.NotificationListGroup.addItem(secondNotification);
+        sap.ui.getCore().applyChanges();
+
+        // assert
+        assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.Low, 'The priority should be set to "Low".');
+
+        // act
+        firstNotification.setPriority(sap.ui.core.Priority.Low);
+        secondNotification.setPriority(sap.ui.core.Priority.Medium);
+
+        // assert
+        assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.Medium, 'The priority should be set to "Medium".');
+
+        // act
+        firstNotification.setPriority(sap.ui.core.Priority.Medium);
+        secondNotification.setPriority(sap.ui.core.Priority.High);
+
+        // assert
+        assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.High, 'The priority should be set to "High".');
+
+        // act
+        firstNotification.setPriority(sap.ui.core.Priority.None);
+        secondNotification.setPriority(sap.ui.core.Priority.None);
+
+        // assert
+        assert.strictEqual(this.NotificationListGroup.getPriority(), sap.ui.core.Priority.None, 'The priority should be set to "None".');
+    });
 
     //================================================================================
     // Notification List Group rendering methods
@@ -226,8 +300,34 @@
         assert.strictEqual(jQuery(classNameDatetime).text(), datetime, 'The datetime in the title aggregation should be set to ' + datetime);
     });
 
+    QUnit.test('Collapsing and expanding the group', function(assert) {
+        // arrange
+        var groupBody;
+        var firstNotification = new sap.m.NotificationListItem({title: 'First Notification'});
+        var secondNotification = new sap.m.NotificationListItem({title: 'Second Notification'});
+
+        this.NotificationListGroup.addItem(firstNotification);
+        this.NotificationListGroup.addItem(secondNotification);
+
+        // act
+        this.NotificationListGroup.setCollapsed(true);
+        sap.ui.getCore().applyChanges();
+        groupBody = this.NotificationListGroup.getDomRef().querySelector('.sapMNLG-Body');
+
+        // assert
+        assert.strictEqual(groupBody.offsetHeight, 0, 'When collapsed the body must be hidden.');
+
+        // act
+        this.NotificationListGroup.setCollapsed(false);
+        sap.ui.getCore().applyChanges();
+        groupBody = this.NotificationListGroup.getDomRef().querySelector('.sapMNLG-Body');
+
+        // assert
+        assert.notEqual(groupBody.offsetHeight, 0, 'When expanded the body must be shown.');
+    });
+
     //================================================================================
-    // Notification List Item events
+    // Notification List Group events
     //================================================================================
 
     QUnit.module('Events', {
