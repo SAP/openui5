@@ -358,7 +358,7 @@ sap.ui.require([
 
 		["change", "dataRequested", "dataReceived"].forEach(function (sEvent) {
 			oContextBindingMock.expects("attachEvent")
-			.withExactArgs(sEvent, mEventParameters).returns(oReturn);
+				.withExactArgs(sEvent, mEventParameters).returns(oReturn);
 
 			assert.strictEqual(oContextBinding.attachEvent(sEvent, mEventParameters), oReturn);
 		});
@@ -381,5 +381,79 @@ sap.ui.require([
 
 		// code under test
 		return oBinding.requestValue("foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("function, no execute", function (assert) {
+		var oContextBinding = this.oModel.bindContext("/FunctionImport(...)");
+
+		this.oSandbox.mock(oContextBinding).expects("_fireChange").never();
+
+		assert.strictEqual(oContextBinding.oCache, undefined);
+		oContextBinding.refresh(true);
+		return oContextBinding.requestValue("").then(function (vValue) {
+			assert.strictEqual(vValue, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("function, execute", function (assert) {
+		var oCache = {},
+			oCacheMock = this.oSandbox.mock(_Cache),
+			oContextBinding,
+			oContextBindingMock,
+			mParameters = {},
+			mQueryOptions = {};
+
+		this.oSandbox.mock(_ODataHelper).expects("buildQueryOptions")
+			.withExactArgs(sinon.match.same(this.oModel.mUriParameters),
+				sinon.match.same(mParameters), ["$expand", "$select"])
+			.returns(mQueryOptions);
+		oCacheMock.expects("createSingle").never();
+
+		oContextBinding = this.oModel.bindContext("/FunctionImport(...)", undefined, mParameters);
+		oContextBindingMock = this.oSandbox.mock(oContextBinding);
+
+		oCacheMock.expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "FunctionImport()",
+				sinon.match.same(mQueryOptions), true)
+			.returns(oCache);
+		oContextBindingMock.expects("refresh").withExactArgs(true);
+
+		// code under test
+		oContextBinding.execute();
+
+		assert.strictEqual(oContextBinding.oCache, oCache);
+
+		// second execute must not recreate the cache
+		oContextBindingMock.expects("refresh").withExactArgs(true);
+
+		// code under test
+		oContextBinding.execute();
+	});
+	//TODO execute: support structured return type
+	//TODO execute: support collection return type
+
+	//*********************************************************************************************
+	QUnit.test("execute on non-deferred", function (assert) {
+		var oContextBinding = this.oModel.bindContext("/Employees(ID='42')");
+
+		assert.throws(function () {
+			oContextBinding.execute();
+		}, /The binding must be deferred: \/Employees\(ID='42'\)/);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("function on relative binding", function (assert) {
+		assert.throws(function () {
+			return this.oModel.bindContext("Function(...)");
+		}, /Deferred bindings with a relative path are not supported: Function\(\.\.\.\)/);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("composable function", function (assert) {
+		assert.throws(function () {
+			return this.oModel.bindContext("/Function(...)/Property");
+		}, /Composable functions are not supported: \/Function\(\.\.\.\)\/Property/);
 	});
 });

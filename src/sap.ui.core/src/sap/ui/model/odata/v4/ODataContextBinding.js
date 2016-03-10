@@ -48,22 +48,46 @@ sap.ui.define([
 	 *   An event handler can only be attached to this binding for the following events: 'change',
 	 *   'dataReceived', and 'dataRequested'.
 	 *   For other events, an error is thrown.
+	 *
+	 *   A context binding can also be used as an <i>operation binding</i> to support function
+	 *   imports with an absolute binding path. If you want to control the execution time of a
+	 *   function import named "GetNumberOfAvailableItems", create a context binding for the path
+	 *   "/GetNumberOfAvailableItems(...)" (as specified here, including the three dots). Such an
+	 *   operation binding is <i>deferred</i>; meaning that it does not request automatically, but
+	 *   only when you call {@link #execute}. {@link #refresh} is ignored if the OData function has
+	 *   not been called yet. Refreshing the binding later results in another call of the function.
 	 * @extends sap.ui.model.ContextBinding
 	 * @public
 	 * @version ${version}
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v4.ODataContextBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
+				var iPos = sPath.indexOf("(...)");
+
 				ContextBinding.call(this, oModel, sPath, oContext);
 
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
 				this.oCache = undefined;
-				if (!this.isRelative()) {
-					this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
-						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters,
-							["$expand", "$select"]));
+				this.bDeferred = iPos >= 0;
+				if (this.bDeferred) {
+					if (iPos !== sPath.length - 5) {
+						throw new Error("Composable functions are not supported: " + sPath);
+					}
+					if (this.bRelative) {
+						throw new Error("Deferred bindings with a relative path are not supported: "
+							+ sPath);
+					}
+				}
+				this.oCache = undefined;
+				if (!this.bRelative) {
+					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
+						mParameters, ["$expand", "$select"]);
+					if (!this.bDeferred) {
+						this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
+							this.mQueryOptions);
+					}
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
 				}
@@ -145,6 +169,28 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Calls the OData function that corresponds to this operation binding.
+	 *
+	 * The value of this binding is the result of the operation. To access the result, bind a
+	 * control to the empty path, for example <code>&lt;Text text="{}"/&gt;<code>. The OData
+	 * function is only called when a property binding relative to the operation binding exists.
+	 *
+	 * @throws {Error} If the binding is not deferred.
+	 *
+	 * @public
+	 * @since 1.37.0
+	 */
+	ODataContextBinding.prototype.execute = function () {
+		if (!this.bDeferred) {
+			throw new Error("The binding must be deferred: " + this.sPath);
+		}
+		this.oCache = this.oCache || _Cache.createSingle(this.oModel.oRequestor,
+			this.sPath.slice(1).replace("...", ""), this.mQueryOptions, true);
+
+		this.refresh(true);
+	};
+
+	/**
 	 * Initializes the OData context binding. Fires a 'change' event in case the binding has a
 	 * resolved path.
 	 *
@@ -204,11 +250,12 @@ sap.ui.define([
 			throw new Error("Unsupported operation: v4.ODataContextBinding#refresh, "
 				+ "sGroupId parameter must not be set");
 		}
-		if (!this.oCache) {
+		if (this.oCache) {
+			this.oCache.refresh();
+			this._fireChange({reason : ChangeReason.Refresh});
+		} else if (!this.bDeferred) {
 			throw new Error("Refresh on this binding is not supported");
 		}
-		this.oCache.refresh();
-		this._fireChange({reason : ChangeReason.Refresh});
 	};
 
 	/**
@@ -251,7 +298,10 @@ sap.ui.define([
 				throw oError;
 			});
 		}
-		return this.oContext.requestValue(this.sPath + (sPath ? "/" + sPath : ""));
+		if (this.oContext) {
+			return this.oContext.requestValue(this.sPath + (sPath ? "/" + sPath : ""));
+		}
+		return Promise.resolve();
 	};
 
 	/**

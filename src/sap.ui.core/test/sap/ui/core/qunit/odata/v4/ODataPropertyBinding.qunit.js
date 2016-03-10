@@ -110,7 +110,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["/EMPLOYEES(ID='1')/Name", "Name"].forEach(function (sPath) {
+	["/EMPLOYEES(ID='1')/Name", "Name", ""].forEach(function (sPath) {
 		QUnit.test("bindProperty, sPath = '" + sPath + "'", function (assert) {
 			var bAbsolute = sPath[0] === "/",
 				oBinding,
@@ -173,7 +173,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["", "/", "foo/"].forEach(function (sPath) {
+	["/", "foo/"].forEach(function (sPath) {
 		QUnit.test("bindProperty: invalid path: " + sPath, function (assert) {
 			var oModel = new ODataModel("/service/");
 

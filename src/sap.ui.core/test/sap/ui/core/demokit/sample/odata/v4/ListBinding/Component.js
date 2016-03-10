@@ -34,6 +34,9 @@ sap.ui.define([
 					"$batch" : {
 						"TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER&$skip=0&$top=100" : {
 							source : "TEAMS.txt"
+						},
+						"GetEmployeeMaxAge()" : {
+							source : "GetEmployeeMaxAge.txt"
 						}
 					},
 					"$metadata" : {source : "metadata.xml"}
