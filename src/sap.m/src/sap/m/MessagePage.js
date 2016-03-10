@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				/**
 				 * Determines the icon displayed on the MessagePage.
 				 */
-				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : IconPool.getIconURI("documents") },
+				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : "sap-icon://documents" },
 				/**
 				 * Determines the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 */
