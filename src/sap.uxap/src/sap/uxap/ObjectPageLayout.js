@@ -648,13 +648,11 @@ sap.ui.define([
 			oRm;
 
 		if (oSection && $objectPageContainer.length) {
-
 			oRm = sap.ui.getCore().createRenderManager();
 			oRm.renderControl(oSection);
-			oRm.flush($objectPageContainer[0]);// place the section in the ObjectPageContainer
+			oRm.flush($objectPageContainer[0]); // place the section in the ObjectPageContainer
+			oRm.destroy();
 		}
-
-		oRm.destroy();
 	};
 
 	/*************************************************************************************
@@ -681,7 +679,6 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._adjustLayout = function (oEvent, bImmediate, bNeedLazyLoading) {
-
 		//adjust the layout only if the object page is full ready
 		if (!this._bDomReady) {
 			return;
@@ -786,10 +783,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._cleanMemory = function () {
-
 		var oAnchorBar = this.getAggregation("_anchorBar");
+
 		if (oAnchorBar) {
-			oAnchorBar.destroyContent();
+			oAnchorBar._resetControl();
 		}
 
 		this._oSectionInfo = {};

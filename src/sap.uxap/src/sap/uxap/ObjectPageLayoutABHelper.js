@@ -37,6 +37,7 @@ sap.ui.define([
 		if (!oAnchorBar) {
 
 			oAnchorBar = new AnchorBar({
+				id: this.getObjectPageLayout().getId() + "-anchBar",
 				showPopover: this.getObjectPageLayout().getShowAnchorBarPopover()
 			});
 
@@ -57,13 +58,13 @@ sap.ui.define([
 		//tablet & desktop mechanism
 		if (oAnchorBar && this.getObjectPageLayout().getShowAnchorBar()) {
 
-			oAnchorBar.removeAllContent();
+			oAnchorBar._resetControl();
 
 			//first level
 			aSections.forEach(function (oSection) {
 
 				if (!oSection.getVisible() || !oSection._getInternalVisible()) {
-					return true;
+					return;
 				}
 
 				var oButtonClone,
@@ -81,10 +82,10 @@ sap.ui.define([
 							return;
 						}
 
-						var oButtonClone = this._buildAnchorBarButton(oSubSection, false);
+						var oSecondLevelButtonClone = this._buildAnchorBarButton(oSubSection, false);
 
-						if (oButtonClone) {
-							oAnchorBar.addContent(oButtonClone);
+						if (oSecondLevelButtonClone) {
+							oAnchorBar.addContent(oSecondLevelButtonClone);
 						}
 
 					}, this);
@@ -103,12 +104,13 @@ sap.ui.define([
 	 * @private
 	 */
 	ABHelper.prototype._buildAnchorBarButton = function (oSectionBase, bIsSection) {
-
 		var oButtonClone = null,
 			oObjectPageLayout = this.getObjectPageLayout(),
 			oButton,
+			oAnchorBar = this._getAnchorBar(),
 			oSectionBindingInfo,
 			sModelName,
+			sId,
 			aSubSections = oSectionBase.getAggregation("subSections");
 
 		if (oSectionBase.getVisible() && oSectionBase._getInternalVisible()) {
@@ -116,8 +118,11 @@ sap.ui.define([
 
 			//by default we get create a button with the section title as text
 			if (!oButton) {
+				sId = oAnchorBar.getId() + "-" + oSectionBase.getId() + "-anchor";
+
 				oButtonClone = new Button({
-					ariaDescribedBy: oSectionBase
+					ariaDescribedBy: oSectionBase,
+					id: sId
 				});
 
 				//has a ux rule been applied that we need to reflect here?
