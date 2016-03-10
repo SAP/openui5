@@ -548,6 +548,11 @@
 	});
 
 	QUnit.test("Rendering of uploadProgress 50% uploaded", function(assert) {
+		// at present it is very hard to simulate IE9 in QUnits with requestID
+		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+			assert.expect(0);
+			return;
+		}
 		//Arrange
 		var sUploadProgress = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOADING", [50]);
 		var oFileUploader = this.oUploadCollection._getFileUploader();
@@ -574,6 +579,11 @@
 	});
 
 	QUnit.test("Rendering of uploadProgress 100% uploaded", function(assert) {
+		// at present it is very hard to simulate IE9 in QUnits with requestID
+		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+			assert.expect(0);
+			return;
+		}
 		//Arrange
 		var sUploadCompleted = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOAD_COMPLETED");
 		var oFileUploader = this.oUploadCollection._getFileUploader();
