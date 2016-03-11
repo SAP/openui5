@@ -533,6 +533,10 @@ sap.ui.define([
 		return ObjectPageSectionBase.prototype.addAggregation.apply(this, arguments);
 	};
 
+	/**
+	 * InsertAggregation is not supported by design.
+	 * If used, it works as addAggregation, e.g. the method adds a single block to the end of blocks or moreBlocks aggregations.
+	 */
 	ObjectPageSubSection.prototype.insertAggregation = function (sAggregationName, oObject, iIndex) {
 		if (this.hasProxy(sAggregationName)) {
 			jQuery.sap.log.warning("ObjectPageSubSection :: used of insertAggregation for " + sAggregationName + " is not supported, will use addAggregation instead");

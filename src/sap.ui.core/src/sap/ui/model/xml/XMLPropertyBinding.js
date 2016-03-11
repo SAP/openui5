@@ -26,6 +26,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
 	 */
 	XMLPropertyBinding.prototype.setValue = function(oValue){
+		if (this.bSuspended) {
+			return;
+		}
+
 		if (this.oValue != oValue) {
 			if (this.oModel.setProperty(this.sPath, oValue, this.oContext, true)) {
 				this.oValue = oValue;
@@ -41,6 +45,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 *
 	 */
 	XMLPropertyBinding.prototype.checkUpdate = function(bForceupdate){
+		if (this.bSuspended && !bForceupdate) {
+			return;
+		}
+
 		var oValue = this._getValue();
 		if (!jQuery.sap.equal(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.oValue = oValue;

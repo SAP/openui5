@@ -143,7 +143,14 @@ sap.ui.define([
 				 * If both are set to true, only the locked state will be displayed.
 				 * @since 1.34.0
 				 */
-				markChanges: {type: "boolean", group: "Misc", defaultValue: false}
+				markChanges: {type: "boolean", group: "Misc", defaultValue: false},
+
+				/**
+				 * Set to true if the objectPageHeader is inside DynamicSideContent control and you want to show a button
+				 * and use it for opening the Side Content.
+				 * @since 1.38.0
+				 */
+				showSideContentButton: {type: "boolean", group: "Misc", defaultValue: false}
 			},
 			defaultAggregation: "actions",
 			aggregations: {
@@ -186,6 +193,7 @@ sap.ui.define([
 				_overflowActionSheet: {type: "sap.m.ActionSheet", multiple: false, visibility: "hidden"},
 				_changesIconCont: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 				_changesIcon: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
+				_sideContentBtn: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 
 				/**
 				 *
@@ -241,6 +249,20 @@ sap.ui.define([
 						 */
 						domRef: {type: "string"}
 					}
+				},
+
+				/**
+				 * The event is fired when the unsaved changes button is pressed
+				 */
+				showSideContentButtonPress: {
+					parameters: {
+
+						/**
+						 * DOM reference of the changed item's icon to be used for positioning.
+						 * @since 1.34.0
+						 */
+						domRef: {type: "string"}
+					}
 				}
 			}
 		}
@@ -273,6 +295,7 @@ sap.ui.define([
 		this._oLockIconCont = this._getInternalAggregation("_lockIconCont").attachPress(this._handleLockPress, this);
 		this._oChangesIcon = this._getInternalAggregation("_changesIcon").attachPress(this._handleChangesPress, this);
 		this._oChangesIconCont = this._getInternalAggregation("_changesIconCont").attachPress(this._handleChangesPress, this);
+		this._oSideContentBtn = this._getInternalAggregation("_sideContentBtn").attachPress(this._handleShowSideContentButtonPress, this);
 	};
 
 	ObjectPageHeader.prototype._handleOverflowButtonPress = function (oEvent) {
@@ -293,6 +316,12 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype._handleChangesPress = function (oEvent) {
 		this.fireMarkChangesPress({
+			domRef: oEvent.getSource().getDomRef()
+		});
+	};
+
+	ObjectPageHeader.prototype._handleShowSideContentButtonPress = function (oEvent) {
+		this.fireShowSideContentButtonPress({
 			domRef: oEvent.getSource().getDomRef()
 		});
 	};
@@ -359,6 +388,9 @@ sap.ui.define([
 		},
 		"_changesIcon": function (oParent) {
 			return this._getButton(oParent, "sap-icon://request", "changes", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_CHANGES_MARK_VALUE"));
+		},
+		"_sideContentBtn": function (oParent) {
+			return this._getButton(oParent, "sap-icon://detail-view", "sideContent", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_SHOW_SIDE_CONTENT"));
 		},
 		_getIcon: function (oParent, sIcon, sTooltip) {
 			return IconPool.createControlByURI({
@@ -464,7 +496,7 @@ sap.ui.define([
 	};
 
 	var aPropertiesToOverride = ["objectSubtitle", "showTitleSelector", "markLocked", "markFavorite", "markFlagged",
-			"showMarkers", "showPlaceholder", "markChanges"],
+			"showMarkers", "showPlaceholder", "markChanges", "showSideContentButton"],
 		aObjectImageProperties = ["objectImageURI", "objectImageAlt", "objectImageDensityAware", "objectImageShape"];
 
 	var fnGenerateSetter = function (sPropertyName) {
@@ -559,6 +591,7 @@ sap.ui.define([
 		this._oTitleArrowIcon.setVisible(this.getShowTitleSelector());
 		this._oFavIcon.setVisible(this.getMarkFavorite());
 		this._oFlagIcon.setVisible(this.getMarkFlagged());
+		this._oSideContentBtn.setVisible(this.getShowSideContentButton());
 		this._attachDetachActionButtonsHandler(false);
 	};
 
@@ -639,11 +672,18 @@ sap.ui.define([
 		}
 
 		if (!this._iResizeId) {
-			this._iResizeId = ResizeHandler.register(this, this._adaptLayout.bind(this));
+			this._iResizeId = ResizeHandler.register(this, this._onHeaderResize.bind(this));
 		}
 		this._shiftHeaderTitle();
 
 		this._attachDetachActionButtonsHandler(true);
+	};
+
+	ObjectPageHeader.prototype._onHeaderResize = function () {
+		this._adaptLayout();
+		if (this.getParent() && typeof this.getParent()._adjustHeaderHeights === "function") {
+			this.getParent()._adjustHeaderHeights();
+		}
 	};
 
 	ObjectPageHeader.prototype._attachDetachActionButtonsHandler = function (bAttach) {

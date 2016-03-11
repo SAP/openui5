@@ -12,10 +12,11 @@ sap.ui.define([], function () {
 	var NotificationListItemRenderer = {};
 
 	var classNameItem = 'sapMNLI';
+	var classNameBase = 'sapMNLB';
 	var classNameTextWrapper = 'sapMNLI-TextWrapper';
 	var classNameListBaseItem = 'sapMLIB';
 	var classNameAuthor = 'sapMNLI-AuthorPicture';
-	var classNamePriority = 'sapMNLI-Priority';
+	var classNamePriority = 'sapMNLB-Priority';
 	var classNameHeader = 'sapMNLI-Header';
 	var classNameBody = 'sapMNLI-Body';
 	var classNameDescription = 'sapMNLI-Description';
@@ -38,6 +39,7 @@ sap.ui.define([], function () {
 
 		oRm.write('<li');
 		oRm.addClass(classNameItem);
+		oRm.addClass(classNameBase);
 		oRm.addClass(classNameListBaseItem);
 		oRm.writeControlData(oControl);
 		oRm.writeAttribute('tabindex', '0');
@@ -78,16 +80,16 @@ sap.ui.define([], function () {
 
 		switch (oControl.getPriority()) {
 			case (sap.ui.core.Priority.Low):
-				classPriority = 'sapMNLI-Low';
+				classPriority = 'sapMNLB-Low';
 				break;
 			case (sap.ui.core.Priority.Medium):
-				classPriority = 'sapMNLI-Medium';
+				classPriority = 'sapMNLB-Medium';
 				break;
 			case (sap.ui.core.Priority.High):
-				classPriority = 'sapMNLI-High';
+				classPriority = 'sapMNLB-High';
 				break;
 			default:
-				classPriority = 'sapMNLI-None';
+				classPriority = 'sapMNLB-None';
 				break;
 		}
 
@@ -155,12 +157,9 @@ sap.ui.define([], function () {
 		oRm.addClass(classNameHeader);
 		oRm.addClass(classNameInitialOverwriteTitle);
 
-		if (!oControl.getTruncate()) {
-			//oRm.addClass(classNameTitleExpanded);
-		}
-
 		oRm.writeClasses();
 		oRm.write('>');
+
 		this.renderTitle(oRm, oControl);
 		oRm.write('</div>');
 	};
@@ -208,10 +207,6 @@ sap.ui.define([], function () {
 		oRm.write('<div');
 		oRm.addClass(classNameTextWrapper);
 		oRm.addClass(classNameInitialOverwriteText);
-
-		if (!oControl.getTruncate()) {
-			//oRm.addClass(classNameTextExpanded);
-		}
 
 		oRm.writeClasses();
 		oRm.write('>');

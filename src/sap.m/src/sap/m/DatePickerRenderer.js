@@ -43,9 +43,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			mAttributes["tabindex"] = "-1"; // to get focus events on it, needed for popup autoclose handling
 			mAttributes["title"] = null;
 			oRm.write('<div class="sapMInputValHelp">');
-			oRm.writeIcon("sap-icon://appointment-2", aClasses, mAttributes);
+			oRm.writeIcon(this._getIcon(), aClasses, mAttributes);
 			oRm.write("</div>");
 		}
+
+	};
+
+	DatePickerRenderer._getIcon = function() {
+
+		return "sap-icon://appointment-2";
 
 	};
 

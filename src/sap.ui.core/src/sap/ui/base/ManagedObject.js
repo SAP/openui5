@@ -2537,6 +2537,7 @@ sap.ui.define([
 			oBindingInfo.parts[0] = {
 				path: oBindingInfo.path,
 				type: oBindingInfo.type,
+				suspended: oBindingInfo.suspended,
 				formatOptions: oBindingInfo.formatOptions,
 				constraints: oBindingInfo.constraints,
 				model: oBindingInfo.model,
@@ -2651,6 +2652,9 @@ sap.ui.define([
 			oBinding = oModel.bindProperty(oPart.path, oContext, oBindingInfo.parameters);
 			oBinding.setType(oType, sInternalType);
 			oBinding.setFormatter(oPart.formatter);
+			if (oPart.suspended) {
+				oBinding.suspend(true);
+			}
 
 			sMode = oPart.mode || oModel.getDefaultBindingMode();
 			oBinding.setBindingMode(sMode);
@@ -2782,7 +2786,7 @@ sap.ui.define([
 				oBinding = oBindingInfo.binding;
 
 			// If property change was triggered by the model, don't update the model again
-			if (oBindingInfo.skipModelUpdate) {
+			if (oBindingInfo.skipModelUpdate || (oBinding && oBinding.isSuspended())) {
 				return;
 			}
 
@@ -2985,6 +2989,10 @@ sap.ui.define([
 
 		if (this.bUseExtendedChangeDetection === true) {
 			oBinding.enableExtendedChangeDetection();
+		}
+
+		if (oBindingInfo.suspended) {
+			oBinding.suspend(true);
 		}
 
 		oBindingInfo.binding = oBinding;
@@ -3248,6 +3256,14 @@ sap.ui.define([
 
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
+				// Remove the validation controlMessages for this Binding from the MessageManager so they will not be propagated again
+				var oDataState = oBindingInfo.binding.getDataState();
+				sap.ui.getCore().getMessageManager().removeMessages(oDataState.getControlMessages(), true);
+				// Also tell the Control that the messages have been removed (if any)
+				if (this.refreshDataState) {
+					this.refreshDataState(sName, oDataState);
+				}
+
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				if (oBindingInfo.modelRefreshHandler) { // only list bindings currently have a refresh handler attached
 					oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);

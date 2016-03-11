@@ -61,7 +61,8 @@ sap.ui.define(['jquery.sap.global'],
 			this._renderPageIndicator({
 				rm: rm,
 				iPageCount: iPageCount,
-				sShowPageIndicator: oCarousel.getShowPageIndicator()
+				bBottom: false,
+				bShowPageIndicator: oCarousel.getShowPageIndicator()
 			});
 		}
 
@@ -73,9 +74,14 @@ sap.ui.define(['jquery.sap.global'],
 		var fnRenderPage = function(oPage, iIndex, aArray) {
 			//item div
 			rm.write("<div class='sapMCrslItem");
-			if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
-				rm.write(" sapMCrslBottomOffset");
+			if (aArray.length > 1 && oCarousel.getShowPageIndicator()) {
+				if (sPageIndicatorPlacement === sap.m.PlacementType.Bottom) {
+					rm.write(" sapMCrslBottomOffset");
+				} else {
+					rm.write(" sapMCrslTopOffset");
+				}
 			}
+
 			rm.write("' id='" + oCarousel.sId + "-" + oPage.sId + "-slide'");
 
 			// ARIA
@@ -138,13 +144,20 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	CarouselRenderer._renderPageIndicator = function(settings){
 		var rm = settings.rm,
-		iPageCount = settings.iPageCount,
-		bBottom = settings.bBottom,
-		bShowPageIndicator = settings.bShowPageIndicator;
+			iPageCount = settings.iPageCount,
+			bBottom = settings.bBottom,
+			bShowPageIndicator = settings.bShowPageIndicator,
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
+			sOffsetCSSClass = "",
+			sDisplayStyle = bShowPageIndicator ? "" : "display: none";
 
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m'),
-		sOffsetCSSClass = bBottom ? " sapMCrslBottomOffset" : "",
-		sDisplayStyle = bShowPageIndicator ? "" : "display: none";
+		if (iPageCount > 1 && bShowPageIndicator) {
+			if (bBottom) {
+				sOffsetCSSClass = " sapMCrslBottomOffset";
+			} else {
+				sOffsetCSSClass = " sapMCrslTopOffset";
+			}
+		}
 
 		// If there is only one page - do not render the indicator
 		if (iPageCount <= 1) {

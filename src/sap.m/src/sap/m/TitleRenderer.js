@@ -60,7 +60,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		oRm.writeClasses();
 		oRm.writeStyles();
 
-		oRm.write("><span>");
+		oRm.write("><span");
+		oRm.writeAttribute("id", oTitle.getId() + "-inner");
+		oRm.write(">");
 		oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oTitle.getText());
 		oRm.write("</span></", sTag, ">");
 	};

@@ -1196,5 +1196,218 @@
         "references": []
       }
     ]
+  },
+  "1.36.3": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "7cbd27392bb80cea7d6455d05929fe148e243e0d",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.SplitContainer: Popover mode is fixed",
+        "references": []
+      },
+      {
+        "id": "577e3c7a3696873e6ef79555f8a08472164f181a",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "NavContainer didn\u0027t get properly invalidated",
+        "references": []
+      },
+      {
+        "id": "5b2076d06a695418e630978d50132293cc95a13b",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "667f3d47d1fa8acc42c909d263718d5898f31df6",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Hide wrapper if no layout data is set",
+        "references": []
+      },
+      {
+        "id": "76fe6e1885e56341036888110bab09bade86ed11",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Invisible nested FlexBox rendered correctly",
+        "references": []
+      },
+      {
+        "id": "dac8ce8e36ed034825cf19d8ac75b7bfe1319329",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: removeItem doesn\u0027t erroneously remove its parent if the item is a FlexBox itself",
+        "references": []
+      },
+      {
+        "id": "af8e8e846b48b43255b02cd5ed0b73665e5e56fe",
+        "author": "Dominic Holzwarth \u003cdominic.holzwarth@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Sizing issue when using HCB theme fixed",
+        "references": []
+      },
+      {
+        "id": "8150b464857352f1986e4dcbee2c70a85da52bc2",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: add new event validateOnPaste",
+        "references": []
+      },
+      {
+        "id": "5105f048a8a0577376cd93d89ebeebac0c8a518a",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: When passing null value to the setSelected function is handled as false",
+        "references": []
+      },
+      {
+        "id": "e894579f9a2d931834df96a90eaf9c2929eb3ec6",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": []
+      },
+      {
+        "id": "5a3a5760aa65ef9db71cb917b0255c739ef476fc",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Items aggregation handling improved in case instantUpload is false",
+        "references": []
+      },
+      {
+        "id": "4d7635e949c765ad5e54ceb11122159e54f167b1",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Text for upload completed improved",
+        "references": []
+      },
+      {
+        "id": "256040e6001ef032276b7a8a0f9ebb88a93050b0",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing.Targets: fix documentation",
+        "references": []
+      }
+    ]
+  },
+  "1.36.4": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "60995790396cfdb229e63743b65823ea6842066a",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "64348792bece6a10a32ba4119ac9bc9de36380de",
+        "author": "Thomas Marz \u003cthomas.marz@sap.com\u003e",
+        "type": "FIX",
+        "text": "openUI5 templates app - nav back fixes",
+        "references": []
+      },
+      {
+        "id": "2165f0b0bb17255cc2564ebb1148a5fbbf2ea9fc",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet - buttons without icons have margin if there is an invinsible button with icon",
+        "references": []
+      },
+      {
+        "id": "8b116035ecb4fa207f8af4c19dabcd10196b5ce0",
+        "author": "Shtiliyan Uzunov \u003cshtiliyan.uzunov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet visual design bug fix",
+        "references": []
+      },
+      {
+        "id": "fe47b8e986a80728f53ad7924a56e63959f23cd0",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: press event survives re-rendering",
+        "references": []
+      },
+      {
+        "id": "7d7a897e9c02d3e657db81c24e2c7737b06f40fd",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Control is now rendered correctly inside a dialog",
+        "references": []
+      },
+      {
+        "id": "7ba2ec26c36fd52acf6f51f60c1a5a6558ea86fa",
+        "author": "Pia Kinkel \u003cpia.kinkel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Short text always updated before displaying",
+        "references": []
+      },
+      {
+        "id": "1b637b3c7e6f3236e18c5322670a111334bf9f9d",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: column flex items set to align-items:center overflow their container.",
+        "references": []
+      },
+      {
+        "id": "33a5f618378e4126fd78da4f9ae7ca3cdebf724d",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: do not close dialog in phone mode if the input is MultiInput",
+        "references": []
+      },
+      {
+        "id": "978318c83cf9dfeed881f8e176556ec3cf3af7fc",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Do not cache jQuery object of the input.",
+        "references": []
+      },
+      {
+        "id": "31b12bd0dc7b98caa81f6a11345a66fc9f552ff3",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageBox: A control provided as \u0027Message\u0027 is now handled correctly",
+        "references": []
+      },
+      {
+        "id": "430795b4f5978eddc772b952478d2fe899f16483",
+        "author": "Martin R. Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: Focus opacity of the close button removed",
+        "references": []
+      },
+      {
+        "id": "b07db8479aa90423f87c19a27010bfb7754092b7",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField: no liveChange event on Escape",
+        "references": []
+      },
+      {
+        "id": "bce8d9d7ab73469866053d7f3b50e96ffd72f38e",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton - Left padding on compact mode and buttons with icons is now correct",
+        "references": []
+      },
+      {
+        "id": "ff66660c0d8ec047d03d8b6a5bcc98ccab7307e5",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SelectList: fix error when adding a separator item",
+        "references": []
+      },
+      {
+        "id": "7fddde7703e9bf0c6eafc16f67c5aeeb4945605e",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: incorrect visual state",
+        "references": []
+      }
+    ]
   }
 }

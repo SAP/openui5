@@ -226,8 +226,8 @@
 	// -----------------------------------------------------------------------
 
 	var oJQVersion = Version(jQuery.fn.jquery);
-	if ( !oJQVersion.inRange("1.7.0", "2.2.1") ) {
-		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2.1; current version is " + jQuery.fn.jquery);
+	if ( !oJQVersion.inRange("1.7.0", "2.2.2") ) {
+		_earlyLog("error", "SAPUI5 requires a jQuery version of 1.7 or higher, but lower than 2.2.2; current version is " + jQuery.fn.jquery);
 	}
 
 	// TODO move to a separate module? Only adds 385 bytes (compressed), but...
@@ -2401,7 +2401,7 @@
 				'sap/ui/thirdparty/jquery/jquery-2.1.4.js': {
 					amd: true
 				},
-				'sap/ui/thirdparty/jquery/jquery-2.2.0.js': {
+				'sap/ui/thirdparty/jquery/jquery-2.2.1.js': {
 					amd: true
 				},
 				'sap/ui/thirdparty/jquery-mobile-custom.js': {
@@ -2846,6 +2846,30 @@
 
 		}
 
+		/**
+		 * Executes the wrapper function around a preloaded, non-AMD module.
+		 * The only purpose of this function is to isolate the execution time of function parsing in performance measurements.
+		 * @no-rename
+		 * @private
+		 */
+		function callPreloadWrapperFn(fn) {
+			callPreloadWrapperFn.count++;
+			return fn.call(window);
+		}
+		callPreloadWrapperFn.count = 0;
+
+		/**
+		 * Executes the factory function for an AMD-module.
+		 * The only purpose of this function is to isolate the execution time of function parsing in performance measurements.
+		 * @no-rename
+		 * @private
+		 */
+		function applyAMDFactoryFn(fn, dep) {
+			applyAMDFactoryFn.count++;
+			return fn.apply(window, dep);
+		}
+		applyAMDFactoryFn.count = 0;
+
 		// sModuleName must be a normalized resource name of type .js
 		function execModule(sModuleName) {
 
@@ -2875,7 +2899,7 @@
 					oModule.state = EXECUTING;
 					_execStack.push(sModuleName);
 					if ( typeof oModule.data === "function" ) {
-						oModule.data.call(window);
+						callPreloadWrapperFn(oModule.data);
 					} else if ( jQuery.isArray(oModule.data) ) {
 						sap.ui.define.apply(sap.ui, oModule.data);
 					} else {
@@ -3594,7 +3618,7 @@
 				}
 
 				if ( typeof vFactory === 'function' ) {
-					oModule.content = vFactory.apply(window, aModules);
+					oModule.content = applyAMDFactoryFn(vFactory, aModules);
 				} else {
 					oModule.content = vFactory;
 				}
@@ -3627,7 +3651,7 @@
 			var sResourceName = sModuleName + '.js';
 			var oModule = mModules[sResourceName];
 			if ( !oModule ) {
-				mModules[sResourceName] = { state : PRELOADED, url : "TODO???/" + sModuleName, data : [sModuleName, aDependencies, vFactory, bExport], group: null };
+				mModules[sResourceName] = { state : PRELOADED, url : "<unknown>/" + sModuleName, data : [sModuleName, aDependencies, vFactory, bExport], group: null };
 			}
 
 			// when a library file is preloaded, also mark its preload file as loaded

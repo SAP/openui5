@@ -794,10 +794,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial) {
 			this.bInitial = false;
 			this._initSortersFilters();
-			if (this.bDataAvailable) {
-				this._fireChange({reason: ChangeReason.Change});
-			} else {
-				this._fireRefresh({reason: ChangeReason.Refresh});
+			if (!this.bSuspended) {
+				if (this.bDataAvailable) {
+					this._fireChange({reason: ChangeReason.Change});
+				} else {
+					this._fireRefresh({reason: ChangeReason.Refresh});
+				}
 			}
 		}
 		return this;
@@ -989,9 +991,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		if (!this.bInitial) {
 			if (this.bClientOperation) {
+				this.addSortComparators(aSorters, this.oEntityType);
 				// apply clientside sorters only if data is available
 				if (this.aAllKeys) {
-					this.applySort();
+					// If no sorters are defined, restore initial sort order by calling applyFilter
+					if (aSorters.length == 0) {
+						this.applyFilter();
+					} else {
+						this.applySort();
+					}
 					this._fireChange({reason: ChangeReason.Sort});
 				} else {
 					this.sChangeReason = ChangeReason.Sort;
@@ -1013,6 +1021,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		} else {
 			return this;
 		}
+	};
+
+	/**
+	 * Sets the comparator for each sorter in the sorters array according to the
+	 * Edm type of the sort property
+	 * @private
+	 */
+	ODataListBinding.prototype.addSortComparators = function(aSorters, oEntityType) {
+		var oPropertyMetadata, sType;
+
+		if (!oEntityType) {
+			jQuery.sap.log.warning("Cannot determine sort comparators, as entitytype of the collection is unkown!");
+			return;
+		}
+		jQuery.each(aSorters, function(i, oSorter) {
+			if (!oSorter.fnCompare) {
+				oPropertyMetadata = this.oModel.oMetadata._getPropertyMetadata(oEntityType, oSorter.sPath);
+				sType = oPropertyMetadata && oPropertyMetadata.type;
+				jQuery.sap.assert(oPropertyMetadata, "PropertyType for property " + oSorter.sPath + " of EntityType " + oEntityType.name + " not found!");
+				oSorter.fnCompare = ODataUtils.getComparator(sType);
+			}
+		}.bind(this));
 	};
 
 	ODataListBinding.prototype.applySort = function() {
@@ -1164,9 +1194,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 	ODataListBinding.prototype.resume = function() {
 		this.bIgnoreSuspend = false;
-		ListBinding.prototype.resume.apply(this, arguments);
+		this.bSuspended = false;
 		if (this.bPendingRefresh) {
 			this._refresh();
+		} else {
+			this.checkUpdate();
 		}
 	};
 

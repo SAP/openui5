@@ -57,6 +57,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	};
 
 	ToggleButton.prototype.setPressed = function(bPressed) {
+		bPressed = !!bPressed;
 		if (bPressed != this.getPressed()) {
 			this.setProperty("pressed", bPressed, true);
 			this.$().attr("aria-pressed", bPressed);

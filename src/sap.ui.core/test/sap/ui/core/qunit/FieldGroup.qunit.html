@@ -14,7 +14,7 @@
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
-		data-sap-ui-libs="sap.ui.commons,sap.m"
+		data-sap-ui-libs="sap.ui.commons"
 >
 </script>
 
@@ -83,7 +83,7 @@
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 4 with group3",labelFor:"field34"}),
-			new sap.m.DateTimeInput({id:"field34",width:"200px",fieldGroupIds:["group3"]})
+			new sap.ui.commons.DatePicker({id:"field34",width:"200px",fieldGroupIds:["group3"]})
 	);
 	oMatrixLayout.createRow(
 			new sap.ui.commons.Label({text: "Field 2 with no group",labelFor:"field2"}),

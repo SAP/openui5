@@ -78,6 +78,32 @@
 			oMessageBox.destroy();
 		});
 
+		test("show with control as content", function () {
+			var oMessageBox, $TextArea,
+				sTextAreaId = "myTextArea",
+				oTextArea = new sap.m.TextArea(sTextAreaId, {
+					value: sMessageText
+				});
+
+			sap.m.MessageBox.show(oTextArea, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.NO, "Custom Text"],
+				onClose: callback,
+				id: "messagebox1",
+				styleClass: sClassName
+			});
+			sap.ui.getCore().applyChanges();
+			oMessageBox = sap.ui.getCore().byId("messagebox1");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			ok(oMessageBox.$().hasClass(sClassName));
+			$TextArea = jQuery.sap.byId(sTextAreaId);
+			equal($TextArea.length, 1, "TextArea should be created");
+			oMessageBox.destroy();
+		});
+
 		test("show error", function () {
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sap.m.MessageBox.error(sMessageText, {
@@ -325,6 +351,27 @@
 			oMessageBox.destroy();
 		});
 
+		test("show with OLD API and control as content", function () {
+			var oMessageBox, $TextArea,
+				sTextAreaId = "myTextArea",
+				oTextArea = new sap.m.TextArea(sTextAreaId, {
+					value: sMessageText
+				});
+
+			// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId, sClassName)
+			sap.m.MessageBox.show(oTextArea, null, sMessageTitle, [sap.m.MessageBox.Action.OK, "Custom Text", sap.m.MessageBox.Action.NO], callback, "messagebox1", sClassName);
+			sap.ui.getCore().applyChanges();
+			oMessageBox = sap.ui.getCore().byId("messagebox1");
+			ok(oMessageBox, "Dialog should be created");
+			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+			equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+			ok(oMessageBox.$().hasClass(sClassName));
+			$TextArea = jQuery.sap.byId(sTextAreaId);
+			equal($TextArea.length, 1, "TextArea should be created");
+			oMessageBox.destroy();
+		});
+
 		test("alert with OLD API", function () {
 			// MessageBox.alert(vMessage, fnCallback, sTitle, sDialogId, sStyleClass)
 			sap.m.MessageBox.alert(sMessageText, callback, sMessageTitle, "alertbox1", sClassName);
@@ -429,18 +476,20 @@
 		jQuery.sap.require("sap.ui.layout.VerticalLayout");
 
 		test("add details within control content", function () {
-			var oLayout = new sap.ui.layout.VerticalLayout({
-				width: "100%",
-				content: [
-					new sap.m.Text({
-						text: "Do you want to see the status of the CheckBox in an additional MessageBox?"
-					}),
-					new sap.m.CheckBox("checkBoxId", {
-						text: "The CheckBox this checked",
-						selected: false
-					})
-				]
-			});
+			var oMessageBox, $Layout,
+				sLayoutId = "myLayout",
+				oLayout = new sap.ui.layout.VerticalLayout(sLayoutId, {
+					width: "100%",
+					content: [
+						new sap.m.Text({
+							text: "Do you want to see the status of the CheckBox in an additional MessageBox?"
+						}),
+						new sap.m.CheckBox("checkBoxId", {
+							text: "The CheckBox this checked",
+							selected: false
+						})
+					]
+				});
 			sap.m.MessageBox.show(oLayout, {
 				id: "messagedialog2",
 				title: sMessageTitle,
@@ -458,6 +507,8 @@
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.getContent()[0] instanceof sap.ui.core.Control, "Content is control");
 			ok(oMessageBox.$().hasClass(sClassName));
+			$Layout = jQuery.sap.byId(sLayoutId);
+			equal($Layout.length, 1, "Layout should be created");
 			oMessageBox.destroy();
 		});
 

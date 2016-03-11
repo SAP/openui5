@@ -1,0 +1,241 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.m.DateTimePicker
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>DatePicker - sap.m</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.m.DatePicker.gif">
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-language="en-US">
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<!-- Test functions -->
+		<script language="javascript">
+
+			var bChange = false;
+			var sValue = "";
+			var bValid = false;
+			var sId = "";
+
+			function handleChange(oEvent){
+					var oDTP = oEvent.oSource;
+					sValue = oEvent.getParameter("newValue");
+					bValid = oEvent.getParameter("valid");
+					bChange = true;
+					sId = oDTP.getId();
+				};
+
+			var oDTP1 = new sap.m.DateTimePicker("DTP1", {
+				change: handleChange
+				}).placeAt("uiArea1");
+
+			var oDTP2 = new sap.m.DateTimePicker("DTP2", {
+				width: "250px",
+				value: "2016-02-17,10-11-12",
+				valueFormat: "yyyy-MM-dd,HH-mm-ss",
+				displayFormat: "dd+MM+yyyy:HH+mm",
+				change: handleChange
+				}).placeAt("uiArea2");
+
+			var oDTP3 = new sap.m.DateTimePicker("DTP3", {
+				dateValue: new Date("2016", "01", "17", "10", "11", "12"),
+				displayFormat: "long",
+				change: handleChange
+				}).placeAt("uiArea3");
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({
+				dateValue: new Date("2016", "01", "17", "10", "11", "12")
+			});
+			sap.ui.getCore().setModel(oModel);
+
+			var bParseError = false;
+			sap.ui.getCore().attachParseError(
+					function(oEvent) {
+						sId = oEvent.getParameter("element").getId();
+						sValue = oEvent.getParameter('newValue');
+						bValid = false;
+						bParseError = true;
+					});
+
+			var bValidationSuccess = false;
+			sap.ui.getCore().attachValidationSuccess(
+					function(oEvent) {
+						sId = oEvent.getParameter("element").getId();
+						sValue = oEvent.getParameter('newValue');
+						bValid = true;
+						bValidationSuccess = true;
+					});
+
+			var oDTP4 = new sap.m.DateTimePicker("DTP4", {
+				width: "250px",
+				value: {
+					path: "/dateValue",
+					type: new sap.ui.model.type.DateTime({style: "medium", strictParsing: true})}
+				}).placeAt("uiArea4");
+
+			qutils.delayTestStart();
+
+			module("initialization");
+
+			test("Date formatter", function() {
+				ok(!oDTP1.getValue(), "DTP1: no value");
+				ok(!oDTP1.getDateValue(), "DTP1: no DateValue");
+				equal(oDTP2.getValue(), "2016-02-17,10-11-12", "DTP2: Value in internal format set");
+				equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP2: DateValue set");
+				equal(oDTP3.getValue(), "2/17/16, 10:11 AM", "DTP3: Value in internal format set");
+				equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP3: DateValue set");
+				equal(oDTP4.getValue(), "Feb 17, 2016, 10:11:12 AM", "DTP4: Value in internal format set");
+				equal(oDTP4.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
+			});
+
+			module("Rendering");
+
+			test("date format", function() {
+				ok(!jQuery("#DTP1").children("input").val(), "DTP1: empty date");
+				equal(jQuery("#DTP2").children("input").val(), "17+02+2016:10+11", "DTP2: defined output format used");
+				equal(jQuery("#DTP3").children("input").val(), "February 17, 2016 at 10:11:12 AM GMT+01:00", "DTP3: defined output format used");
+				equal(jQuery("#DTP4").children("input").val(), "Feb 17, 2016, 10:11:12 AM", "DTP4: defined output format from binding used");
+			});
+
+			test("placeholder", function() {
+				if(sap.ui.Device.support.input.placeholder) {
+					equal(jQuery("#DTP1").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a" , "DTP1: placeholder");
+					equal(jQuery("#DTP2").children("input").attr("placeholder"), "dd+MM+yyyy:HH+mm", "DTP2: placeholder");
+					equal(jQuery("#DTP3").children("input").attr("placeholder"), "MMMM d, y 'at' h:mm:ss a z", "DTP3: placeholder");
+					equal(jQuery("#DTP4").children("input").attr("placeholder"), "MMM d, y, h:mm:ss a", "DTP4: placeholder from binding used");
+				} else {
+					ok(!jQuery("#DTP1").children("input").attr("placeholder"), "No placeholder attribute");
+				}
+			});
+
+			module("interaction");
+
+			test("change date by typing", function() {
+				bChange = false;
+				sValue = "";
+				bValid = true;
+				sId = "";
+				oDTP2.focus();
+				jQuery("#DTP2").children("input").val("37+02+2016:10+11");
+				qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DTP2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				equal(sId, "DTP2", "Change event fired");
+				equal(sValue, "37+02+2016:10+11", "Value of event has entered value if invalid");
+				ok(!bValid, "Value is not valid");
+				equal(oDTP2.getValue(), "37+02+2016:10+11", "Value has entered value if invalid");
+				equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DateValue not changed set");
+
+				bChange = false;
+				sValue = "";
+				bValid = true;
+				sId = "";
+				oDTP2.focus();
+				jQuery("#DTP2").children("input").val("18+02+2016:10+30");
+				qutils.triggerKeyboardEvent("DTP2-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				jQuery("#DTP2").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				equal(sId, "DTP2", "Change event fired");
+				equal(sValue, "2016-02-18,10-30-00", "Value of event has entered value if valid");
+				ok(bValid, "Value is valid");
+				equal(oDTP2.getValue(), "2016-02-18,10-30-00", "Value has entered value if valid");
+				equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "18", "10", "30", "00").getTime(), "DateValue not changed set");
+
+			});
+/*
+			test("change date by Pageup/down", function() {
+			});
+*/
+			asyncTest("change date using calendar - open", function() {
+				bChange = false;
+				sValue = "";
+				sId = "";
+				oDTP3.focus();
+				qutils.triggerEvent("click", "DTP3-icon");
+				sap.ui.getCore().applyChanges();
+				setTimeout(function(){
+					ok(jQuery("#DTP3-cal")[0], "calendar rendered");
+					ok(jQuery("#DTP3-cal").is(":visible"), "calendar is visible");
+					ok(jQuery("#DTP3-Sliders")[0], "Slider rendered");
+					ok(jQuery("#DTP3-Sliders").is(":visible"), "Slider is visible");
+					var oSliders = sap.ui.getCore().byId("DTP3-Sliders");
+					equal(oSliders.getAggregation("_columns").length, 4 , "DTP3: number of rendered sliders");
+
+					var aDays = jQuery("#DTP3-cal--Month0-days").find(".sapUiCalItem");
+					var oDay;
+					for ( var i = 0; i < aDays.length; i++) {
+						oDay = aDays[i];
+						if (jQuery(oDay).attr("data-sap-day") == "20160210") {
+							oDay.focus();
+							break;
+						}
+					}
+
+					// use ENTER to not run into itemNavigation
+					qutils.triggerKeyboardEvent(oDay, jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+					var aHours = jQuery("#DTP3-Sliders-listHours-content").find(".sapMTimePickerItem");
+					var iIndex = 0;
+					for ( iIndex = 0; iIndex < aHours.length; iIndex++) {
+						if (jQuery(aHours[iIndex]).hasClass("sapMTimePickerItemSelected")) {
+							break;
+						}
+					}
+					aHours[iIndex].focus();
+					qutils.triggerKeyboardEvent(aHours[iIndex], jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+					start();
+				}, 200);
+			});
+
+			asyncTest("change date using calendar - choose", function() {
+				setTimeout(function(){
+					jQuery("#DTP3-OK").focus();
+					qutils.triggerKeydown("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
+					qutils.triggerKeyup("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
+					setTimeout(function(){
+						ok(!jQuery("#DTP3-cal").is(":visible"), "calendar is invisible");
+						ok(!jQuery("#DTP3-Sliders").is(":visible"), "Silder is invisible");
+						equal(sId, "DTP3", "Change event fired");
+						equal(sValue, "2/10/16, 11:11 AM", "Value in internal format priovided");
+						equal(oDTP3.getValue(), "2/10/16, 11:11 AM", "Value in internal format set");
+						equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11", "12").getTime(), "DateValue set");
+						start();
+					}, 300);
+				}, 200);
+			});
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.m.DateTimePicker</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="uiArea1"></div>
+		<br>
+		<div id="uiArea2"></div>
+		<br>
+		<div id="uiArea3"></div>
+		<br>
+		<div id="uiArea4"></div>
+		<br>
+		<div id="uiArea5"></div>
+		<br>
+		<div id="uiArea6"></div>
+	</body>
+</html>

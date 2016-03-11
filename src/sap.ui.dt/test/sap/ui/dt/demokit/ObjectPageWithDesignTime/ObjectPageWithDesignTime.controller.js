@@ -4,9 +4,8 @@ sap.ui.define([
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/plugin/TabHandling',
 	'sap/ui/dt/plugin/ControlDragDrop',
-	'sap/ui/dt/plugin/MouseSelection',
-	'sap/ui/dt/Preloader'
-], function (Controller, DesignTime, ElementUtil, TabHandling, ControlDragDrop, MouseSelection, Preloader) {
+	'sap/ui/dt/plugin/MouseSelection'
+], function (Controller, DesignTime, ElementUtil, TabHandling, ControlDragDrop, MouseSelection) {
 	"use strict";
 	return Controller.extend("sap.ui.dt.demo.ObjectPageWithDesignTime", {
 		onInit: function () {
@@ -19,16 +18,13 @@ sap.ui.define([
 			});
 
 			var oView = this.getView();
-			var aElements = ElementUtil.findAllPublicElements(oView);
-			Preloader.load(aElements).then(function() {
-				new DesignTime({
-					rootElements : [oView],
-					plugins : [
-					  oTabHandlingPlugin,
-						oSelectionPlugin,
-						oDragPlugin
-					]
-				});
+			new DesignTime({
+				rootElements : [oView],
+				plugins : [
+				  oTabHandlingPlugin,
+					oSelectionPlugin,
+					oDragPlugin
+				]
 			});
 		}
 	});

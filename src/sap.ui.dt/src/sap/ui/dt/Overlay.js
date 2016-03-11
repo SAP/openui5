@@ -55,6 +55,13 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 					defaultValue : true
 				},
 				/**
+				 * Render overlay only if associated element is visible
+				 */
+				lazyRendering : {
+					type : "boolean",
+					defaultValue : true
+				},
+				/**
 				 * Whether the overlay is created for an element or aggregation, which is not accessible via the public tree
 				 */
 				inHiddenTree : {
@@ -177,7 +184,9 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	Overlay.prototype.init = function() {
 		this._bVisible = null;
 
-		this.attachBrowserEvent("scroll", this._onScroll, this);
+		this._domRefScrollHandler = this._syncScrollWithDomRef.bind(this);
+
+		this.attachBrowserEvent("scroll", this._onOverlayScroll, this);
 	};
 
 	/**
@@ -185,6 +194,8 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @protected
 	 */
 	Overlay.prototype.exit = function() {
+		this._detachDomRefScrollHandler();
+
 		delete this._oDomRef;
 		delete this._bVisible;
 		window.clearTimeout(this._iCloneDomTimeout);
@@ -286,15 +297,25 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function() {
+		// invalidate cached geometry
+		delete this._mGeometry;
+
 		if (!this.getDomRef()) {
 			return;
 		}
 
-		delete this._mGeometry;
+		if (!this.isVisible()) {
+			this.$().css("display", "none");
+			return;
+		}
+
 		var oGeometry = this.getGeometry();
 
 		if (oGeometry && oGeometry.visible) {
 			var $overlay = this.$();
+
+			// ensure visibility
+			$overlay.css("display", "block");
 
 			var oOverlayParent = this.getParent();
 
@@ -306,54 +327,90 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 
 			var mSize = oGeometry.size;
 
+			// OVERLAY SIZE
 			$overlay.css("width", mSize.width + "px");
 			$overlay.css("height", mSize.height + "px");
 			$overlay.css("top", mPosition.top + "px");
 			$overlay.css("left", mPosition.left + "px");
 
-			var iZIndex = DOMUtil.getZIndex(oGeometry.domRef);
-			if (iZIndex) {
-				$overlay.css("z-index", iZIndex);
-			}
-			var oOverflows = DOMUtil.getOverflows(oGeometry.domRef);
-			if (oOverflows) {
-				if (oOverflows.overflowX) {
-					$overlay.css("overflow-x", oOverflows.overflowX);
+			if (oGeometry.domRef) {
+				var iZIndex = DOMUtil.getZIndex(oGeometry.domRef);
+				if (iZIndex) {
+					$overlay.css("z-index", iZIndex);
 				}
-				if (oOverflows.overflowY) {
-					$overlay.css("overflow-y", oOverflows.overflowY);
-				}
-				var iScrollHeight = oGeometry.domRef.scrollHeight;
-				var iScrollWidth = oGeometry.domRef.scrollWidth;
-				if (iScrollHeight > mSize.height || iScrollWidth > mSize.width) {
-					if (!this._oDummyScrollContainer) {
-						this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
-						this.$().append(this._oDummyScrollContainer);
-					} else {
-						this._oDummyScrollContainer.css({
-							"height": iScrollHeight,
-							"width" : iScrollWidth
-						});
+
+				// OVERFLOW & SCROLLING
+				var oOverflows = DOMUtil.getOverflows(oGeometry.domRef);
+				if (oOverflows) {
+					if (oOverflows.overflowX) {
+						$overlay.css("overflow-x", oOverflows.overflowX);
 					}
-				} else if (this._oDummyScrollContainer) {
-					this._oDummyScrollContainer.remove();
-					delete this._oDummyScrollContainer;
+					if (oOverflows.overflowY) {
+						$overlay.css("overflow-y", oOverflows.overflowY);
+					}
+					var iScrollHeight = oGeometry.domRef.scrollHeight;
+					var iScrollWidth = oGeometry.domRef.scrollWidth;
+					if (iScrollHeight > mSize.height || iScrollWidth > mSize.width) {
+						if (!this._oDummyScrollContainer) {
+							this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
+							this.$().append(this._oDummyScrollContainer);
+						} else {
+							this._oDummyScrollContainer.css({
+								"height": iScrollHeight,
+								"width" : iScrollWidth
+							});
+						}
+					} else if (this._oDummyScrollContainer) {
+						this._oDummyScrollContainer.remove();
+						delete this._oDummyScrollContainer;
+					}
+					this._attachDomRefScrollHandler();
+
+					this._syncScrollWithDomRef();
 				}
-				DOMUtil.syncScroll(oGeometry.domRef, this.getDomRef());
+
+				this._cloneDomRef(oGeometry.domRef);
 			}
 
 			this.getChildren().forEach(function(oChild) {
 				oChild.applyStyles();
 			});
 
-			if (!this.$().is(":visible")) {
-				this.$().css("display", "block");
-			}
-
-			this._cloneDomRef(oGeometry.domRef);
-		} else if (this.$().is(":visible")) {
+		} else {
 			this.$().css("display", "none");
 		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._attachDomRefScrollHandler = function() {
+		this._detachDomRefScrollHandler();
+
+		var oGeometry = this.getGeometry();
+		var oDomRef = oGeometry ? oGeometry.domRef : null;
+		if (oDomRef) {
+			this._oDomRefWithScrollHandler = oDomRef;
+
+			jQuery(this._oDomRefWithScrollHandler).on("scroll", this._domRefScrollHandler);
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._detachDomRefScrollHandler = function(oDomRef) {
+		if (this._oDomRefWithScrollHandler) {
+			jQuery(this._oDomRefWithScrollHandler).off("scroll", this._domRefScrollHandler);
+			delete this._oDomRefWithScrollHandler;
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Overlay.prototype._syncScrollWithDomRef = function() {
+		DOMUtil.syncScroll(this._oDomRefWithScrollHandler, this.$());
 	};
 
 	/**
@@ -377,6 +434,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 				mGeometry = OverlayUtil.getGeometry(aChildrenGeometry);
 			}
 
+			// cache geometry
 			this._mGeometry = mGeometry;
 		}
 
@@ -439,43 +497,40 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype._ensureDomOrder = function() {
 		var $this = this.$();
+
 		var $currentDomParent = $this.parent();
 		var oParent = this.getParent();
 		var $parentDomRef = oParent.$();
 		var $parentContainer = $parentDomRef.find(">.sapUiDtOverlayChildren");
-		var bIsInParentContainer = $parentContainer.get(0) === $currentDomParent.get(0);
+		// if our dom is already in a parent container...
+		var bIsDomOrderCorrect = $parentContainer.get(0) === $currentDomParent.get(0);
 
-		var aDomRefChildren = $parentContainer.children();
-		var iDomPosition = aDomRefChildren.index($this);
-		var aChildren = oParent.getChildren();
-		var iPosition = aChildren.indexOf(this);
-		var bIsDomOrderCorrect = iDomPosition === iPosition;
-
-		if (!bIsInParentContainer || !bIsDomOrderCorrect) {
-			if (iPosition === 0) {
-				// insert as a first dom child
-				if ($parentContainer.children().get(0) !== $this.get(0)) {
-					$parentContainer.prepend($this);
+		var $PreviousChildWithDom;
+		if (bIsDomOrderCorrect) {
+			var aChildren = oParent.getChildren();
+			var iPreviousChildWithDomIndex = aChildren.indexOf(this) - 1;
+			while (iPreviousChildWithDomIndex >= 0) {
+				$PreviousChildWithDom = aChildren[iPreviousChildWithDomIndex].$();
+				if ($PreviousChildWithDom.length) {
+					break;
 				}
+				iPreviousChildWithDomIndex--;
+			}
+
+			// if our dom is already after out previous sibling
+			if ($PreviousChildWithDom && $PreviousChildWithDom.length) {
+				bIsDomOrderCorrect = $this.prev().get(0) === $PreviousChildWithDom.get(0);
+			// .. or first in parent container
 			} else {
-				// find previous child dom...
-				var iPreviousChildPosition = iPosition - 1;
-				var $PreviousChildDom = aChildren[iPreviousChildPosition].$();
-				while (!$PreviousChildDom.length && iPreviousChildPosition > 0) {
-					$PreviousChildDom = aChildren[iPreviousChildPosition].$();
-					iPreviousChildPosition--;
-				}
-				if ($PreviousChildDom.length) {
-					// ... and insert afterwards, if needed
-					if ($this.prev().get(0) !== $PreviousChildDom.get(0)) {
-						$PreviousChildDom.after($this);
-					}
-				} else {
-					// ... or insert as a first dom child, if no previous child dom was found
-					if ($parentContainer.children().get(0) !== $this.get(0)) {
-						$parentContainer.prepend($this);
-					}
-				}
+				bIsDomOrderCorrect = $parentContainer.children().index($this) === 0;
+			}
+		}
+
+		if (!bIsDomOrderCorrect) {
+			if ($PreviousChildWithDom && $PreviousChildWithDom.length) {
+				$PreviousChildWithDom.after($this);
+			} else {
+				$parentContainer.prepend($this);
 			}
 		}
 	};
@@ -497,7 +552,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	/**
 	 * @private
 	 */
-	Overlay.prototype._onScroll = function() {
+	Overlay.prototype._onOverlayScroll = function() {
 		var oGeometry = this.getGeometry();
 		var oDomRef = oGeometry ? oGeometry.domRef : null;
 		if (oDomRef) {
@@ -554,8 +609,13 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.getVisible = function() {
+
 		if (this._bVisible === null) {
-			return !this.getDesignTimeMetadata().isIgnored();
+			if (!this.getLazyRendering()) {
+				return true;
+			}
+			var oDesignTimeMetadata = this.getDesignTimeMetadata();
+			return oDesignTimeMetadata ? !oDesignTimeMetadata.isIgnored() : false;
 		} else {
 			return this.getProperty("visible");
 		}

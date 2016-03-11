@@ -172,7 +172,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		// update tooltips and aria texts
 		if ($DomRefs.rowSelector) {
 			$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
-			$DomRefs.rowSelector.attr("aria-label", mTooltipTexts.keyboard[sSelectReference]);
 		}
 
 		if ($DomRefs.rowSelectorText) {
@@ -187,10 +186,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		if (bSelectOnCellsAllowed) {
 			// the row requires a tooltip for selection if the cell selection is allowed
 			$Row.attr("title", mTooltipTexts.mouse[sSelectReference]);
-			$Row.attr("aria-label", mTooltipTexts.keyboard[sSelectReference]);
 		} else {
 			$Row.removeAttr("title");
-			$Row.removeAttr("aria-label");
 		}
 
 		// update aria-selected state, do at the very end since this forces the screen reader to read the aria texts again
@@ -201,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 	};
 
-	Row.prototype.setBindingContext = function(oContext, sModelName) {
+	Row.prototype.setRowBindingContext = function(oContext, sModelName, oBinding) {
 		var oNode;
 		if (oContext && !(oContext instanceof sap.ui.model.Context)) {
 			oNode = oContext;
@@ -241,12 +238,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 
 		// collect rendering information for new binding context
-		this._collectRenderingInformation(oContext, oNode);
+		this._collectRenderingInformation(oContext, oNode, oBinding);
 
-		return sap.ui.core.Element.prototype.setBindingContext.call(this, oContext, sModelName);
+		this.setBindingContext(oContext, sModelName);
 	};
 
-	Row.prototype._collectRenderingInformation = function(oContext, oNode) {
+	Row.prototype.setBindingContext = function(oContext, sModelName) {
+		var bReturn = sap.ui.core.Element.prototype.setBindingContext.call(this, oContext || null, sModelName);
+
+		this._updateTableCells(oContext);
+		return bReturn;
+	};
+
+	Row.prototype._updateTableCells = function(oContext) {
+		var aCells = this.getCells();
+		var iAbsoluteRowIndex = this.getIndex();
+		for (var i = 0; i < aCells.length; i++) {
+			var oCell = aCells[i];
+			if (oCell._updateTableCell) {
+				oCell._updateTableCell(oCell, oContext, oCell.$().closest("td"), iAbsoluteRowIndex);
+			}
+		}
+	};
+
+	Row.prototype._collectRenderingInformation = function(oContext, oNode, oBinding) {
 		// init node states
 		this._oNodeState = undefined;
 		this._iLevel = 0;
@@ -261,12 +276,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			this._bHasChildren = false;
 			this._sTreeIconClass = "sapUiTableTreeIconLeaf";
 			this._sGroupIconClass = "";
-
-			var oBinding;
-			var oParent = this.getParent();
-			if (oParent) {
-				oBinding = oParent.getBinding("rows");
-			}
 
 			if (oBinding) {
 				if (oBinding.getLevel) {

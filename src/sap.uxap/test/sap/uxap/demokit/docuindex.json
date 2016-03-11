@@ -18,7 +18,8 @@
 		  "sap.uxap.sample.ObjectPageHeaderWithAllControls",
 		  "sap.uxap.sample.ProfileObjectPageHeader",
 		  "sap.uxap.sample.AlternativeProfileObjectPageHeader",
-		  "sap.uxap.sample.KPIObjectPageHeader"
+		  "sap.uxap.sample.KPIObjectPageHeader",
+		  "sap.uxap.sample.ObjectPageDynamicSideContentBtn"
 		]
 	  },
 	  {
@@ -247,6 +248,11 @@
 		"id": "sap.uxap.sample.ObjectPageFormLayout",
 		"name": "ObjectPage with forms",
 		"description": "Object Page automatically adjusts form layout to match block column layout"
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageDynamicSideContentBtn",
+		"name": "ObjectPage with DynamicSideContent Button",
+		"description": "The sample shows Object Page inside a main content of DynamicSideContent. The ObjectPageHeader has property DynamicSideContentButton set to true which is used to show the side panel of DynamicSideContent."
 	  }
 	]
   }

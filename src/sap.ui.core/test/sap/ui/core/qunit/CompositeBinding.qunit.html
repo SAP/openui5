@@ -124,6 +124,20 @@ test("simple type", function() {
 		Error, "setting a simple type on a composite binding throws")
 });
 
+asyncTest("suspend/resume", function() {
+	equal(jQuery.sap.equal(this.composite.getValue(), [1,2,3]), true, "getValue() returns array of bound model values");
+	this.composite.attachChange(this, function() {
+		equal(jQuery.sap.equal(this.getValue(), [666,2,3]), true, "getValue() returns array of bound model values");
+		start();
+	});
+	this.composite.suspend();
+	this.composite.setValue([3,2,1]);
+	equal(jQuery.sap.equal(this.composite.getValue(), [1,2,3]), true, "getValue() returns array of bound model values");
+	this.model.setProperty("/a",666);
+	equal(jQuery.sap.equal(this.composite.getValue(), [1,2,3]), true, "getValue() returns array of bound model values");
+	this.composite.resume();
+});
+
 module("With inner types/formatters", {
 	setup: function() {
 		this.model = new sap.ui.model.json.JSONModel({

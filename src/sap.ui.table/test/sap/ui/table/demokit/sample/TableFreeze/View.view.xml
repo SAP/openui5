@@ -14,11 +14,12 @@
 			<Table id="table1"
 				rows="{/ProductCollection}"
 				selectionMode="MultiToggle"
-				visibleRowCount="7">
+				visibleRowCount="7"
+				ariaLabelledBy="title">
 				<toolbar>
 					<m:Toolbar>
 						<m:content>
-							<m:Title text="Products" />
+							<m:Title id="title" text="Products" />
 							<m:ToolbarSpacer/>
 							<m:Input
 								id="inputColumn"

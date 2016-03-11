@@ -69,7 +69,6 @@
           "src/sap.ui.commons/pom.xml": "1"
         }
       },
-
       "lastCommitId": "53038f855cb42b19c8a826588747bd6354e9fcbc"
     },
     "rel-1.36": {
@@ -95,7 +94,7 @@
           "src/testsuite-utils/pom.xml": "1"
         }
       },
-      "lastCommitId": "4878f5d38fefcf92cb5db5410030f19d15c12bd6"
+      "lastCommitId": "150474caeb182cd3c18b367727ded4e17c2047bf"
     }
   }
 }

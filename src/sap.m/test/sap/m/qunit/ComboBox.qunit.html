@@ -110,6 +110,10 @@
 			ok(oComboBox.getSelectedItem() === null, "By default the selected items of the ComboBox control is null");
 			strictEqual(oComboBox.getSelectedItemId(), "", 'By default the selected items id of the ComboBox control is ""');
 			strictEqual(oComboBox.getSelectedKey(), "", 'By default the selected key of the ComboBox control is ""');
+			strictEqual(oComboBox.getList().getBusyIndicatorDelay(), 0);
+			strictEqual(oComboBox.getList().getWidth(), "100%");
+			ok(oComboBox.getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "List"));
+			ok(oComboBox.getList().hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "List"));
 
 			// cleanup
 			oComboBox.destroy();
@@ -154,7 +158,7 @@
 					{
 						"value": "CU",
 						"text": "Cuba"
-					},
+					}
 				],
 
 				"selected": "GER",
@@ -2508,6 +2512,8 @@
 			// arrange
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
+			oComboBox.open();
+			this.clock.tick(1000); // wait 1s after the open animation is completed
 			var fnDestroyItemsSpy = this.spy(oComboBox, "destroyItems");
 
 			// act
@@ -2521,6 +2527,8 @@
 			for (var i = 0; i < aItems.length; i++) {
 				strictEqual(aItems[i].hasListeners("_change"), false);
 			}
+
+			strictEqual(oComboBox.getList().getDomRef().childElementCount, 0);
 
 			// cleanup
 			oComboBox.destroy();
@@ -2598,7 +2606,7 @@
 					new sap.ui.core.Item({
 						key: "2",
 						text: "item 2"
-					}),
+					})
 				]
 			});
 
@@ -3195,6 +3203,28 @@
 			oComboBox.destroy();
 		});
 
+		module("destroy()");
+
+		test("it should cleans up the value of some internal properties before destruction", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: []
+			});
+
+			// arrange
+			oComboBox.aEventQueue.push(function() {});
+
+			// act
+			oComboBox.destroy();
+
+			// assert
+			strictEqual(oComboBox.aEventQueue.length, 0);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		module("setValue()");
 
 		test("setValue()", function() {
@@ -3233,11 +3263,11 @@
 					}),
 					new sap.ui.core.Item({
 						key: "GER",
-						text: "Germany",
+						text: "Germany"
 					}),
 					new sap.ui.core.Item({
 						key: "CU",
-						text: "Cuba",
+						text: "Cuba"
 					})
 				]
 			});
@@ -3597,7 +3627,10 @@
 
 			oComboBox.setSelectedKey("id_5");
 			oComboBox.placeAt("content");
-			this.clock.tick(iAutoRespondAfter + 1);	// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting to make sure that the data from the OData model is available)
+
+			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+			// to make sure that the data from the OData model is available)
+			this.clock.tick(iAutoRespondAfter + 1);
 
 			// assert
 			strictEqual(oComboBox.getSelectedKey(), "id_5");
@@ -4146,6 +4179,59 @@
 			strictEqual(jQuery(oComboBox.getDomRef("arrow")).css("display"), "none");
 		});
 
+		module("loadItems");
+
+		test("it should fire the loadItems event", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: [],
+
+				// enable lazy loading
+				loadItems: function() {
+
+				}
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
+
+			// act
+			oComboBox.open();
+
+			// assert
+			strictEqual(fnLoadItemsSpy.callCount, 1, 'The "loadItems" event was fired');
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
+		test("it should not fire the loadItems event", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: []
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			var fnLoadItemsSpy = this.spy(oComboBox, "fireLoadItems");
+
+			// act
+			oComboBox.open();
+
+			// assert
+			strictEqual(fnLoadItemsSpy.callCount, 0);
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		module("rendering");
 
 		test("rendering", function() {
@@ -4216,7 +4302,7 @@
 					new sap.ui.core.Item({
 						key: "9",
 						text: "item 9"
-					}),
+					})
 				]
 			});
 
@@ -4240,7 +4326,7 @@
 					new sap.ui.core.Item({
 						key: "13",
 						text: "item 13"
-					}),
+					})
 				],
 
 				selectedKey: "13"
@@ -4320,8 +4406,22 @@
 			});
 
 			var oComboBox8 = new sap.m.ComboBox({
-				width: "4em",
-				items: []
+				items: [
+					new sap.ui.core.Item({
+						key: "52",
+						text: "item 52"
+					}),
+
+					new sap.ui.core.Item({
+						key: "53",
+						text: "item 53"
+					}),
+
+					new sap.ui.core.Item({
+						key: "54",
+						text: "item 54"
+					})
+				]
 			});
 
 			var oComboBox9 = new sap.m.ComboBox({
@@ -4495,25 +4595,6 @@
 						key: "51",
 						text: "item 51"
 					})
-				]
-			});
-
-			var oComboBox8 = new sap.m.ComboBox({
-				items: [
-					new sap.ui.core.Item({
-						key: "52",
-						text: "item 52"
-					}),
-
-					new sap.ui.core.Item({
-						key: "53",
-						text: "item 53"
-					}),
-
-					new sap.ui.core.Item({
-						key: "54",
-						text: "item 54"
-					}),
 				]
 			});
 
@@ -5194,8 +5275,12 @@
 			var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
 			// act
-			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.F4);	// open the picker pop-up
-			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.F4);	// close the picker pop-up
+
+			// open the dropdown list picker
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.F4);
+
+			// close the dropdown list picker
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.F4);
 			this.clock.tick(1000);
 
 			// assert
@@ -5273,8 +5358,12 @@
 			var fnShowSpy = this.spy(oComboBox, "onsapshow");
 
 			// act
-			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);	// open the picker pop-up
-			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);	// close the picker pop-up
+
+			// open the dropdown list picker
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+
+			// close the dropdown list picker
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 			this.clock.tick(1000);
 
 			// assert
@@ -5302,11 +5391,16 @@
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			oComboBox.focus();
-			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+
+			// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event
+			// handler does not override the type ahead
+			this.clock.tick(0);
+
+			// open the dropdown list picker
 			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
 
 			// act
-			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true /* ctrl key is down */);	// open the picker pop-up
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true /* ctrl key is down */);
 
 			// assert
 			strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
@@ -5314,6 +5408,54 @@
 
 			// cleanup
 			oComboBox.destroy();
+		});
+
+		test("it should open the dropdown list, show the busy indicator and load the items asynchronous when Alt + Down keys are pressed", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: {
+					path: "/Products",
+					template: new sap.ui.core.Item({
+						key: "{ProductId}",
+						text: "{Name}"
+					})
+				},
+				loadItems: function() {
+					oComboBox.setModel(oModel);
+				}
+			});
+
+			// arrange
+			var sUri = "/service/";
+			var iAutoRespondAfter = 10;
+			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+			var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+
+			// assert
+			ok(oComboBox.isOpen(), "the dropdown list is open");
+			strictEqual(oComboBox.getList().getBusy(), true, "the loading indicator in the dropdown list is shown");
+			strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-busy"), "true");
+
+			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+			// to make sure that the data from the OData model is available)
+			this.clock.tick(iAutoRespondAfter + 1);
+
+			ok(oComboBox.getItems().length > 0, "the items are loaded");
+			strictEqual(oComboBox.getList().getBusy(), false, "the loading indicator in the dropdown list is not shown");
+			strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-busy"), undefined);
+
+			// cleanup
+			oMockServer.stop();
+			oMockServer.destroy();
+			oComboBox.destroy();
+			oModel.destroy();
 		});
 
 		module("onsaphide");
@@ -6085,7 +6227,7 @@
 			sap.ui.getCore().applyChanges();
 			oComboBox.focus();
 			oComboBox.open();
-			this.clock.tick(1000);	// wait after the open animation is completed
+			this.clock.tick(1000); // wait after the open animation is completed
 			var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 			// act
@@ -6096,6 +6238,100 @@
 
 			// cleanup
 			oComboBox.destroy();
+		});
+
+		test("it should load the items asynchronous when the Down arrow key is pressed and afterwards process the even", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: {
+					path: "/Products",
+					template: new sap.ui.core.Item({
+						key: "{ProductId}",
+						text: "{Name}"
+					})
+				},
+				loadItems: function() {
+					oComboBox.setModel(oModel);
+				}
+			});
+
+			// arrange
+			var sUri = "/service/";
+			var iAutoRespondAfter = 10;
+			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+			var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+			// to make sure that the data from the OData model is available)
+			this.clock.tick(iAutoRespondAfter + 1);
+
+			// assert
+			ok(oComboBox.getItems().length > 0, "the items are loaded");
+			strictEqual(oComboBox.getValue(), "Psimax");
+			strictEqual(oComboBox.getSelectedText(), "Psimax", "the value in the input field is selected");
+			strictEqual(oComboBox.getSelectedItem().getText(), "Psimax");
+			strictEqual(oComboBox.getSelectedItem().getKey(), "id_2");
+			strictEqual(oComboBox.getSelectedKey(), "id_2");
+			strictEqual(oComboBox.getList().getSelectedItem().getText(),  "Psimax");
+			strictEqual(oComboBox.getList().getSelectedItem().getKey(), "id_2");
+			strictEqual(oComboBox.getList().getSelectedKey(), "id_2");
+
+			// cleanup
+			oMockServer.stop();
+			oMockServer.destroy();
+			oComboBox.destroy();
+			oModel.destroy();
+		});
+
+		test("it should show busy indicator in the text field if the items are not loaded after a 300ms delay", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: {
+					path: "/Products",
+					template: new sap.ui.core.Item({
+						key: "{ProductId}",
+						text: "{Name}"
+					})
+				},
+				loadItems: function() {
+					oComboBox.setModel(oModel);
+				}
+			});
+
+			// arrange
+			var sUri = "/service/";
+			var iAutoRespondAfter = 400;
+			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+			var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+			// tick the clock ahead some ms millisecond
+			this.clock.tick(sap.m.ComboBoxBase.LOAD_ITEMS_BUSY_INDICATOR_DELAY);
+
+			// assert
+			strictEqual(oComboBox.getBusy(), true);
+			this.clock.tick(iAutoRespondAfter);
+			strictEqual(oComboBox.getBusy(), false);
+
+			// cleanup
+			oMockServer.stop();
+			oMockServer.destroy();
+			oComboBox.destroy();
+			oModel.destroy();
 		});
 
 		module("onsapup");
@@ -6733,6 +6969,56 @@
 			oComboBox.destroy();
 		});
 
+		test("it should load the items asynchronous when the Home key is pressed select the first selectable item", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: {
+					path: "/Products",
+					template: new sap.ui.core.Item({
+						key: "{ProductId}",
+						text: "{Name}"
+					})
+				},
+				loadItems: function() {
+					oComboBox.setModel(oModel);
+				}
+			});
+
+			// arrange
+			var sUri = "/service/";
+			var iAutoRespondAfter = 10;
+			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+			var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
+
+			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+			// to make sure that the data from the OData model is available)
+			this.clock.tick(iAutoRespondAfter + 1);
+
+			// assert
+			ok(oComboBox.getItems().length > 0, "the items are loaded");
+			strictEqual(oComboBox.getValue(),  "Gladiator MX");
+			strictEqual(oComboBox.getSelectedText(), "Gladiator MX");
+			strictEqual(oComboBox.getSelectedItem().getText(), "Gladiator MX");
+			strictEqual(oComboBox.getSelectedItem().getKey(), "id_1");
+			strictEqual(oComboBox.getSelectedKey(), "id_1");
+			strictEqual(oComboBox.getList().getSelectedItem().getText(), "Gladiator MX");
+			strictEqual(oComboBox.getList().getSelectedItem().getKey(), "id_1");
+			strictEqual(oComboBox.getList().getSelectedKey(), "id_1");
+
+			// cleanup
+			oMockServer.stop();
+			oMockServer.destroy();
+			oComboBox.destroy();
+			oModel.destroy();
+		});
+
 		module("onsapend");
 
 		test("onsapend", function() {
@@ -6773,7 +7059,7 @@
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			oComboBox.focus();
-			this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
+			this.clock.tick(0); // tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 			var fnKeyEndSpy = this.spy(oComboBox, "onsapend");
 			var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
 
@@ -6932,6 +7218,56 @@
 
 			// cleanup
 			oComboBox.destroy();
+		});
+
+		test("it should load the items asynchronous when the End key is pressed and afterwards process the event", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: {
+					path: "/Products",
+					template: new sap.ui.core.Item({
+						key: "{ProductId}",
+						text: "{Name}"
+					})
+				},
+				loadItems: function() {
+					oComboBox.setModel(oModel);
+				}
+			});
+
+			// arrange
+			var sUri = "/service/";
+			var iAutoRespondAfter = 10;
+			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+			var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.END);
+
+			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+			// to make sure that the data from the OData model is available)
+			this.clock.tick(iAutoRespondAfter + 1);
+
+			// assert
+			ok(oComboBox.getItems().length > 0, "the items are loaded");
+			strictEqual(oComboBox.getValue(),  "Hardcore Hacker");
+			strictEqual(oComboBox.getSelectedText(), "Hardcore Hacker", "the value in the input field is selected");
+			strictEqual(oComboBox.getSelectedItem().getText(), "Hardcore Hacker");
+			strictEqual(oComboBox.getSelectedItem().getKey(), "id_16");
+			strictEqual(oComboBox.getSelectedKey(), "id_16");
+			strictEqual(oComboBox.getList().getSelectedItem().getText(),  "Hardcore Hacker");
+			strictEqual(oComboBox.getList().getSelectedItem().getKey(), "id_16");
+			strictEqual(oComboBox.getList().getSelectedKey(), "id_16");
+
+			// cleanup
+			oMockServer.stop();
+			oMockServer.destroy();
+			oComboBox.destroy();
+			oModel.destroy();
 		});
 
 		module("onsappagedown");
@@ -7252,6 +7588,56 @@
 
 			// cleanup
 			oComboBox.destroy();
+		});
+
+		test("it should load the items asynchronous when the Page Down key is pressed and afterwards process the even", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: {
+					path: "/Products",
+					template: new sap.ui.core.Item({
+						key: "{ProductId}",
+						text: "{Name}"
+					})
+				},
+				loadItems: function() {
+					oComboBox.setModel(oModel);
+				}
+			});
+
+			// arrange
+			var sUri = "/service/";
+			var iAutoRespondAfter = 10;
+			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+			var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+
+			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+			// to make sure that the data from the OData model is available)
+			this.clock.tick(iAutoRespondAfter + 1);
+
+			// assert
+			ok(oComboBox.getItems().length > 0, "the items are loaded");
+			strictEqual(oComboBox.getValue(),  "Laser Allround Pro");
+			strictEqual(oComboBox.getSelectedText(), "Laser Allround Pro", "the value in the input field is selected");
+			strictEqual(oComboBox.getSelectedItem().getText(), "Laser Allround Pro");
+			strictEqual(oComboBox.getSelectedItem().getKey(), "id_10");
+			strictEqual(oComboBox.getSelectedKey(), "id_10");
+			strictEqual(oComboBox.getList().getSelectedItem().getText(),  "Laser Allround Pro");
+			strictEqual(oComboBox.getList().getSelectedItem().getKey(), "id_10");
+			strictEqual(oComboBox.getList().getSelectedKey(), "id_10");
+
+			// cleanup
+			oMockServer.stop();
+			oMockServer.destroy();
+			oComboBox.destroy();
+			oModel.destroy();
 		});
 
 		module("onsappageup");
@@ -7578,6 +7964,56 @@
 			oComboBox.destroy();
 		});
 
+		test("it should load the items asynchronous when the Page Up key is pressed and afterwards process the even", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: {
+					path: "/Products",
+					template: new sap.ui.core.Item({
+						key: "{ProductId}",
+						text: "{Name}"
+					})
+				},
+				loadItems: function() {
+					oComboBox.setModel(oModel);
+				}
+			});
+
+			// arrange
+			var sUri = "/service/";
+			var iAutoRespondAfter = 10;
+			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+			var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+
+			// act
+			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+
+			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+			// to make sure that the data from the OData model is available)
+			this.clock.tick(iAutoRespondAfter + 1);
+
+			// assert
+			ok(oComboBox.getItems().length > 0, "the items are loaded");
+			strictEqual(oComboBox.getValue(),  "Gladiator MX");
+			strictEqual(oComboBox.getSelectedText(), "Gladiator MX", "the value in the input field is selected");
+			strictEqual(oComboBox.getSelectedItem().getText(), "Gladiator MX");
+			strictEqual(oComboBox.getSelectedItem().getKey(), "id_1");
+			strictEqual(oComboBox.getSelectedKey(), "id_1");
+			strictEqual(oComboBox.getList().getSelectedItem().getText(), "Gladiator MX");
+			strictEqual(oComboBox.getList().getSelectedItem().getKey(), "id_1");
+			strictEqual(oComboBox.getList().getSelectedKey(), "id_1");
+
+			// cleanup
+			oMockServer.stop();
+			oMockServer.destroy();
+			oComboBox.destroy();
+			oModel.destroy();
+		});
+
 		module("oninput");
 
 		test("oninput the ComboBox's picker pop-up should open", function() {
@@ -7631,7 +8067,7 @@
 				items: [
 					new sap.ui.core.Item({
 						key: "GER",
-						text: "Germany",
+						text: "Germany"
 					})
 				]
 			});
@@ -7669,7 +8105,7 @@
 				items: [
 					new sap.ui.core.Item({
 						key: "GER",
-						text: "Germany",
+						text: "Germany"
 					})
 				],
 
@@ -7708,7 +8144,7 @@
 				items: [
 					new sap.ui.core.Item({
 						key: "GER",
-						text: "Germany",
+						text: "Germany"
 					})
 				],
 				selectedKey: "GER"
@@ -7742,7 +8178,7 @@
 				editable: false,
 				items: [
 					new sap.ui.core.Item({
-						text: "",
+						text: ""
 					})
 				]
 			});
@@ -7796,6 +8232,67 @@
 
 			// cleanup
 			oComboBox.destroy();
+		});
+
+		test("it should load the items asynchronous and perform autocomplete", function() {
+
+			// system under test
+			var oComboBox = new sap.m.ComboBox({
+				items: {
+					path: "/Products",
+					template: new sap.ui.core.Item({
+						key: "{ProductId}",
+						text: "{Name}"
+					})
+				},
+				loadItems: function() {
+					oComboBox.setModel(oModel);
+				}
+			});
+
+			// arrange
+			var sUri = "/service/";
+			var iAutoRespondAfter = 10;
+			var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+			var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox.focus();
+			var oTarget = oComboBox.getFocusDomRef();
+
+			// act
+
+			// fake user interaction, (the keydown and input events)
+			oTarget.value = "F";
+			sap.ui.qunit.QUnitUtils.triggerKeydown(oTarget, jQuery.sap.KeyCodes.F);
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
+
+			oTarget.value = "Fl";
+			sap.ui.qunit.QUnitUtils.triggerKeydown(oTarget, jQuery.sap.KeyCodes.L);
+			sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
+
+			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+			// to make sure that the data from the OData model is available)
+			this.clock.tick(iAutoRespondAfter + 2);
+
+			// assert
+			strictEqual(oComboBox.getValue(), "Flat S", "the value is correct");
+			strictEqual(oComboBox.getSelectedText(), "at S", "the word completion is correct");
+			strictEqual(oComboBox.getSelectedItem().getText(), "Flat S");
+			strictEqual(oComboBox.getSelectedItem().getKey(), "id_11");
+			strictEqual(oComboBox.getSelectedKey(), "id_11");
+			strictEqual(oComboBox.getList().getSelectedItem().getText(), "Flat S");
+			strictEqual(oComboBox.getList().getSelectedItem().getKey(), "id_11");
+			strictEqual(oComboBox.getList().getSelectedKey(), "id_11");
+			strictEqual(oComboBox.getItems().length, 16, "the items are loaded");
+			strictEqual(oComboBox.getVisibleItems().length, 3, "the suggestion list is filtered");
+			ok(oComboBox.isOpen());
+
+			// cleanup
+			oMockServer.stop();
+			oMockServer.destroy();
+			oComboBox.destroy();
+			oModel.destroy();
 		});
 
 		module("onfocusin");

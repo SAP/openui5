@@ -99,17 +99,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			/**
 			 * Specifies the value of the filter as string (will be converted into the proper data type). It is possible
 			 * to provide a filterOperator as string, as shown here:
-			 * > 50
-			 * < 100
-			 * >= 150
-			 * <= 200
+			 * <pre>
+			 * &gt; 50
+			 * &lt; 100
+			 * &gt;= 150
+			 * &lt;= 200
 			 * = 250
 			 * != 300
-			 * *something	ends with
-			 * something*	starts with
-			 * *something*	contains
-			 * some..thing	between
-			 * 50..100		between
+			 * *something    ends with
+			 * something*    starts with
+			 * *something*   contains
+			 * some..thing   between
+			 * 50..100       between
+			 * </pre>
 			 */
 			filterValue : {type : "string", group : "Behavior", defaultValue : null},
 

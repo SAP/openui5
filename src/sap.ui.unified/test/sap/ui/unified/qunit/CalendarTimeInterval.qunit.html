@@ -105,8 +105,8 @@
 				aItems = $TimesRow.find(".sapUiCalItem");
 				equal(aItems.length, 24, "Calendar2: 24 items rendered");
 				equal(jQuery(aItems[0]).attr("data-sap-time"), "201508130800", "Calendar2: first item");
-				equal(jQuery(aItems[0]).text(), "8:00 AM", "Calendar2: first item text");
-				equal(jQuery(aItems[1]).text(), "10:00 AM", "Calendar2: second item text");
+				equal(jQuery(aItems[0]).text(), "8AM", "Calendar2: first item text");
+				equal(jQuery(aItems[1]).text(), "10", "Calendar2: second item text");
 				ok(jQuery("#Cal2--TimesRow-Head").get(0), "Calendar2: hader line rendered")
 				var aHeaders = jQuery("#Cal2--TimesRow-Head").children();
 				equal(aHeaders.length, 3, "Calendar2: 3 days in header");
@@ -116,8 +116,8 @@
 				aItems = $TimesRow.find(".sapUiCalItem");
 				equal(aItems.length, 6, "Calendar3: 6 items rendered");
 				equal(jQuery(aItems[0]).attr("data-sap-time"), "201508130800", "Calendar3: first item");
-				equal(jQuery(aItems[0]).text(), "8:00 AM", "Calendar3: first item text");
-				equal(jQuery(aItems[1]).text(), "8:30 AM", "Calendar3: second item text");
+				equal(jQuery(aItems[0]).text(), "8:00AM", "Calendar3: first item text");
+				equal(jQuery(aItems[1]).text(), "8:30", "Calendar3: second item text");
 			});
 
 			test("Header", function() {
@@ -327,7 +327,7 @@
 				var $MP = sap.ui.getCore().byId("Cal1").getAggregation("monthPicker").$();
 				var aMonths = $MP.find(".sapUiCalItem");
 				equal(aMonths.length, 6, "Calendar1: 4 months rendered");
-				equal(jQuery(aMonths[0]).text(), "January", "Calendar1: first displayed month");
+				equal(jQuery(aMonths[0]).text(), "Jan", "Calendar1: first displayed month");
 				equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
 				ok(jQuery(aMonths[2]).hasClass("sapUiCalItemSel"), "Calendar1: 3. displayed month is selected");
 
@@ -359,13 +359,13 @@
 				qutils.triggerEvent("click", "Cal1--Head-next");
 				var $MP = sap.ui.getCore().byId("Cal1").getAggregation("monthPicker").$();
 				var aMonths = $MP.find(".sapUiCalItem");
-				equal(jQuery(aMonths[0]).text(), "July", "Calendar1: first displayed month");
+				equal(jQuery(aMonths[0]).text(), "Jul", "Calendar1: first displayed month");
 				equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
 
 				qutils.triggerEvent("click", "Cal1--Head-prev");
 				$MP = sap.ui.getCore().byId("Cal1").getAggregation("monthPicker").$();
 				aMonths = $MP.find(".sapUiCalItem");
-				equal(jQuery(aMonths[0]).text(), "January", "Calendar1: first displayed month");
+				equal(jQuery(aMonths[0]).text(), "Jan", "Calendar1: first displayed month");
 				equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
 
 				qutils.triggerEvent("click", "Cal1--Head-B1");

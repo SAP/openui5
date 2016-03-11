@@ -1362,6 +1362,30 @@
 			oSelectList.destroy();
 		});
 
+		test("it should not throw an error when showSecondaryValues property is set to true", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				showSecondaryValues: true,
+				items: [
+					new sap.ui.core.SeparatorItem(),
+					new sap.ui.core.Item()
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getFirstItem().isActive());
+			ok(oSelectList.getFirstItem().$().hasClass(oSelectList.getRenderer().CSS_CLASS + "SeparatorItem"));
+			ok(oSelectList.getFirstItem().$().hasClass(oSelectList.getRenderer().CSS_CLASS + "Row"));
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
 		module("insertItem()");
 
 		test("insertItem()", function() {
@@ -2218,6 +2242,31 @@
 			// assert
 			ok(fnDestroyItemsSpy.returned(oSelectList), "sap.m.SelectList.prototype.destroyItems() method returns the Select instance");
 			ok(oSelectList.getSelectedItem() === null);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("it should only remove the items, but not the busy indicator", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item()
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelectList.setBusyIndicatorDelay(0);
+			oSelectList.setBusy(true);
+
+			// act
+			oSelectList.destroyItems();
+
+			// assert
+			strictEqual(oSelectList.getDomRef().childElementCount, 1);
 
 			// cleanup
 			oSelectList.destroy();

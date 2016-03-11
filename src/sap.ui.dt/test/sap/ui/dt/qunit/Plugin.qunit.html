@@ -34,7 +34,9 @@
 		jQuery.sap.require("sap.ui.dt.Plugin");
 
 		QUnit.module("Given that an Plugin is initialized with register methods", {
-			beforeEach : function() {
+			beforeEach : function(assert) {
+				var done = assert.async();
+
 				this.oButton = new sap.m.Button();
 				this.oLayout = new sap.ui.layout.VerticalLayout({
 					content : [
@@ -44,6 +46,11 @@
 
 				this.oDesignTime = new sap.ui.dt.DesignTime({
 					rootElements : [this.oLayout]
+				});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					sap.ui.getCore().applyChanges();
+					done();
 				});
 
 				this.oPlugin = new sap.ui.dt.Plugin();
@@ -62,8 +69,6 @@
 				this.oPlugin.deregisterAggregationOverlay = function() {
 					that.iRegisterAggregationOverlayCalls -= 1;
 				};
-
-				sap.ui.getCore().applyChanges();
 			},
 			afterEach : function() {
 				this.oButton.destroy();
@@ -81,6 +86,9 @@
 		});
 
 		QUnit.test("when the plugin is added to designTime and new controls are added to designTime", function(assert) {
+			var done = assert.async();
+			var that = this;
+
 			var oButton = new sap.m.Button();
 			var oLayout = new sap.ui.layout.VerticalLayout({
 				content : oButton
@@ -91,11 +99,16 @@
 			this.iRegisterAggregationOverlayCalls = 0;
 
 			oLayout.placeAt("content");
-			this.oDesignTime.addRootElement(oLayout);
 			sap.ui.getCore().applyChanges();
 
-			assert.strictEqual(this.iregisterElementOverlayCalls, 2, "register was called for all new control");
-			assert.strictEqual(this.iRegisterAggregationOverlayCalls, Object.keys(oLayout.getMetadata().getAllAggregations()).length + Object.keys(oButton.getMetadata().getAllAggregations()).length , "register was called for all new aggregations");
+			this.oDesignTime.addRootElement(oLayout);
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.strictEqual(that.iregisterElementOverlayCalls, 2, "register was called for all new control");
+				assert.strictEqual(that.iRegisterAggregationOverlayCalls, Object.keys(oLayout.getMetadata().getAllAggregations()).length + Object.keys(oButton.getMetadata().getAllAggregations()).length , "register was called for all new aggregations");
+
+				done();
+			});
 		});
 
 		QUnit.test("when the plugin is added to designTime and then removed from DT", function(assert) {

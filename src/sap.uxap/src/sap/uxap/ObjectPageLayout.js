@@ -178,7 +178,22 @@ sap.ui.define([
 				/**
 				 * The event is fired when the Edit Header button is pressed
 				 */
-				editHeaderButtonPress: {}
+				editHeaderButtonPress: {},
+
+				/**
+				 * The event is fired when the selected tab changes.
+				 * <b>Note:</b> Event is fired only when IconTabBar is used for navigation.
+				 */
+				tabSelect: {
+					parameters: {
+
+						/**
+						 * The selected section object.
+						 */
+						section: {type: "sap.uxap.ObjectPageSection"}
+					}
+				}
+
 			},
 			designTime: true
 		}
@@ -459,6 +474,12 @@ sap.ui.define([
 		}
 	};
 
+	ObjectPageLayout.prototype._updateNavigation = function () {
+		if (this.getShowAnchorBar()) {
+			this._oABHelper._buildAnchorBar();
+		}
+	};
+
 	/*************************************************************************************
 	 * Ux rules
 	 ************************************************************************************/
@@ -592,7 +613,7 @@ sap.ui.define([
 	 * @param oSection
 	 * @private
 	 */
-	ObjectPageLayout.prototype._setCurrentTabSection = function (oSection) {
+	ObjectPageLayout.prototype._setCurrentTabSection = function (oSection, bIsTabClicked) {
 		if (!oSection) {
 			return;
 		}
@@ -607,6 +628,9 @@ sap.ui.define([
 		}
 
 		if (this._oCurrentTabSection !== oSection) {
+			if (bIsTabClicked) {
+				this.fireTabSelect({section: oSection});
+			}
 			this._renderSection(oSection);
 			this._oCurrentTabSection = oSection;
 		}
@@ -624,13 +648,11 @@ sap.ui.define([
 			oRm;
 
 		if (oSection && $objectPageContainer.length) {
-
 			oRm = sap.ui.getCore().createRenderManager();
 			oRm.renderControl(oSection);
-			oRm.flush($objectPageContainer[0]);// place the section in the ObjectPageContainer
+			oRm.flush($objectPageContainer[0]); // place the section in the ObjectPageContainer
+			oRm.destroy();
 		}
-
-		oRm.destroy();
 	};
 
 	/*************************************************************************************
@@ -657,7 +679,6 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._adjustLayout = function (oEvent, bImmediate, bNeedLazyLoading) {
-
 		//adjust the layout only if the object page is full ready
 		if (!this._bDomReady) {
 			return;
@@ -762,10 +783,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._cleanMemory = function () {
-
 		var oAnchorBar = this.getAggregation("_anchorBar");
+
 		if (oAnchorBar) {
-			oAnchorBar.destroyContent();
+			oAnchorBar._resetControl();
 		}
 
 		this._oSectionInfo = {};
@@ -801,8 +822,7 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset) {
-
+	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked) {
 		var oSection = sap.ui.getCore().byId(sId);
 
 		if (this.getUseIconTabBar()) {
@@ -817,7 +837,7 @@ sap.ui.define([
 			}
 			oToSelect._allowPropagationToLoadedViews(true); /* include the newly selected tab back to the propagation chain */
 
-			this._setCurrentTabSection(oSection);
+			this._setCurrentTabSection(oSection, bIsTabClicked);
 			this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[oToSelect.getId()].buttonId);
 		}
 
@@ -1235,7 +1255,7 @@ sap.ui.define([
 
 			this._adjustLayout(null, true);
 
-			this._oScroller.scrollTo(0, this._$opWrapper.scrollTop(), 0);
+			this._scrollTo(this._$opWrapper.scrollTop(), 0);
 		});
 
 	};

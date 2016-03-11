@@ -2,11 +2,6 @@
 module.exports = function(grunt, config) {
 
 	var browsers = grunt.option('browsers');
-	if (!browsers) {
-		browsers = [ 'chrome' ]; // default
-	} else {
-		browsers = browsers.split(',');
-	}
 
 	var libs = grunt.option('libs');
 	var specs = grunt.option('specs');

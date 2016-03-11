@@ -53,7 +53,8 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
 	 * @param {boolean} [mParameters.disableHeadRequestForToken=false] Set this flag to true if your service does not support HEAD requests for fetching the service document (and thus the CSRF-token) to avoid sending a HEAD-request before falling back to GET
 	 * @param {boolean} [mParameters.sequentializeRequests=false] Whether to sequentialize all requests, needed in case the service cannot handle parallel requests
-	 *
+	 * @param {boolean} [mParameters.disableSoftStateHeader=false] Set this flag to true if don´t want to start a new soft state session with context id (SID) through header mechanism. This useful if you want to share a SID between different browser windows.
+	 	 *
 	 * @class
 	 * Model implementation for oData format
 	 *
@@ -78,7 +79,7 @@ sap.ui.define([
 			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
 			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
 			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod, bDisableHeadRequestForToken,
-			bSequentializeRequests, that = this;
+			bSequentializeRequests, bDisableSoftStateHeader, that = this;
 
 			if (typeof (sServiceUrl) === "object") {
 				mParameters = sServiceUrl;
@@ -108,6 +109,7 @@ sap.ui.define([
 				sDefaultUpdateMethod = mParameters.defaultUpdateMethod;
 				bDisableHeadRequestForToken = mParameters.disableHeadRequestForToken;
 				bSequentializeRequests = mParameters.sequentializeRequests;
+				bDisableSoftStateHeader = mParameters.disableSoftStateHeader;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.sDefaultBindingMode = sDefaultBindingMode || BindingMode.OneWay;
@@ -139,6 +141,7 @@ sap.ui.define([
 			this.bSkipMetadataAnnotationParsing = !!bSkipMetadataAnnotationParsing;
 			this.bDisableHeadRequestForToken = !!bDisableHeadRequestForToken;
 			this.bSequentializeRequests = !!bSequentializeRequests;
+			this.bDisableSoftStateHeader = !!bDisableSoftStateHeader;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -185,6 +188,10 @@ sap.ui.define([
 			this.oHeaders = {};
 			this.setHeaders(mHeaders);
 
+			if (!this.bDisableSoftStateHeader) {
+				this.oHeaders["sap-contextid-accept"] = "header";
+				this.mCustomHeaders["sap-contextid-accept"] = "header";
+			}
 			// Get/create service specific data container
 			aMetadataUrlParams = ODataUtils._createUrlParamsArray(mMetadataUrlParams);
 			var sMetadataUrl = this._createRequestUrl("/$metadata", undefined, aMetadataUrlParams);
@@ -215,6 +222,9 @@ sap.ui.define([
 				headers: this.mCustomHeaders,
 				combineEvents: true
 			});
+			if (!this.bDisableSoftStateHeader) {
+				delete this.mCustomHeaders["sap-contextid-accept"];
+			}
 			this.oAnnotations.attachAllFailed(this.onAnnotationsFailed, this);
 			this.oAnnotations.attachSomeLoaded(this.onAnnotationsLoaded, this);
 			this.pAnnotationsLoaded = this.oAnnotations.loaded();
@@ -262,6 +272,8 @@ sap.ui.define([
 			if (this.sMaxDataServiceVersion) {
 				this.oHeaders["MaxDataServiceVersion"] = this.sMaxDataServiceVersion;
 			}
+
+
 		},
 		metadata : {
 			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata", "metadataLoaded",
@@ -1911,6 +1923,7 @@ sap.ui.define([
 		function _handleSuccess(oData, oResponse) {
 			if (oResponse) {
 				sToken = that._getHeader("x-csrf-token", oResponse.headers);
+				that._setSessionContextIdHeader(that._getHeader("sap-contextid", oResponse.headers));
 				if (sToken) {
 					that.oServiceData.securityToken = sToken;
 					that.pSecurityToken = Promise.resolve(sToken);
@@ -2052,6 +2065,9 @@ sap.ui.define([
 		};
 
 		function _submit() {
+			if (that.sSessionContextId) {
+				oRequest.headers["sap-contextid"] = that.sSessionContextId;
+			}
 			oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
 			if (oRequest.eventInfo) {
 				fireEvent("Sent", oRequest, null);
@@ -2084,7 +2100,17 @@ sap.ui.define([
 			}
 		};
 	};
-
+	/**
+	 * Sets the new context session id (SID). This SID will be send in the header of every following OData request in order to reuse the same OData Service session.
+	 *
+	 * @param {string} new session context id
+	 * @private
+	 */
+	ODataModel.prototype._setSessionContextIdHeader = function(sSessionContextId) {
+		if (sSessionContextId){
+			this.sSessionContextId = sSessionContextId;
+		}
+	};
 	/**
 	 * submit of a single request
 	 *
@@ -2102,6 +2128,16 @@ sap.ui.define([
 			mEntityTypes = {};
 
 		var handleSuccess = function(oData, oResponse) {
+			// If there is a 200 response which does not contain valid data, this should be treated as an error.
+			// This may happen in case of SAML session expiration.
+			if (oData === undefined && oResponse.statusCode === 200) {
+				handleError({
+					message: "Response did not contain a valid OData result",
+					response: oResponse
+				});
+				return;
+			}
+
 			var fnSingleSuccess = function(oData, oResponse) {
 				if (fnSuccess) {
 					fnSuccess(oData, oResponse);
@@ -2114,6 +2150,7 @@ sap.ui.define([
 				}
 			};
 			that._processSuccess(oRequest, oResponse, fnSingleSuccess, mGetEntities, mChangeEntities, mEntityTypes);
+			that._setSessionContextIdHeader(that._getHeader("sap-contextid", oResponse.headers));
 		};
 		var handleError = function(oError) {
 			if (oError.message == "Request aborted") {
@@ -2142,6 +2179,16 @@ sap.ui.define([
 		var that = this;
 
 		var handleSuccess = function(oData, oBatchResponse) {
+			// If there is a 200 response which does not contain valid data, this should be treated as an error.
+			// This may happen in case of SAML session expiration.
+			if (oData === undefined && oBatchResponse.statusCode === 200) {
+				handleError({
+					message: "Response did not contain a valid OData batch result",
+					response: oBatchResponse
+				});
+				return;
+			}
+
 			var oResponse, oRequestObject, aChangeResponses,
 				aBatchResponses = oData.__batchResponses,
 				oEventInfo,
@@ -2201,6 +2248,7 @@ sap.ui.define([
 				fnSuccess(oData);
 			}
 			oEventInfo = that._createEventInfo(oBatchRequest, oBatchResponse, aRequests);
+			that._setSessionContextIdHeader(that._getHeader("sap-contextid", oBatchResponse.headers));
 			that.fireBatchRequestCompleted(oEventInfo);
 		};
 
@@ -3020,6 +3068,7 @@ sap.ui.define([
 			mHeaders["x-http-method"] = "MERGE";
 			sMethod = "POST";
 		}
+
 
 		var oRequest = {
 				headers : mHeaders,
@@ -4021,6 +4070,9 @@ sap.ui.define([
 			return true;
 		case "x-csrf-token":
 			return this.bTokenHandling;
+		case "sap-contextid-accept":
+		case "sap-contextid":
+			return !this.bDisableSoftStateHeader;
 		default:
 			return false;
 		}

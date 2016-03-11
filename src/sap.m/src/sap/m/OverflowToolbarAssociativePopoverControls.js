@@ -184,6 +184,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 				listenForEvents: ["change"],
 				noInvalidationProps: ["enabled", "value", "dateValue"]
 			},
+			"sap.m.DatePicker": {
+				canOverflow: true,
+				listenForEvents: ["change"],
+				noInvalidationProps: ["enabled", "value", "dateValue", "displayFormat", "valueFormat", "displayFormatType", "secondaryCalendarType", "minDate", "maxDate"]
+			},
+			"sap.m.DateTimePicker": {
+				canOverflow: true,
+				listenForEvents: ["change"],
+				noInvalidationProps: ["enabled", "value", "dateValue", "displayFormat", "valueFormat", "displayFormatType", "secondaryCalendarType", "minDate", "maxDate"]
+			},
+			"sap.m.TimePicker": {
+				canOverflow: true,
+				listenForEvents: ["change"],
+				noInvalidationProps: ["enabled", "value", "dateValue", "displayFormat", "valueFormat"]
+			},
 			"sap.m.RadioButton": {
 				canOverflow: false,
 				listenForEvents: [],

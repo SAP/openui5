@@ -193,6 +193,51 @@
 			});
 			oRow1.addAppointment(oApp);
 
+			oStartDate = new Date();
+			oStartDate.setHours(oStartDate.getHours() + 7);
+			oStartDate.setMinutes(0);
+			oStartDate.setSeconds(0);
+			oStartDate.setMilliseconds(0);
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setHours(oEndDate.getHours() + 2);
+			oApp = new sap.ui.unified.CalendarAppointment("App9", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type08,
+				title: "Appointment 9",
+				tooltip: "Tooltip 9",
+				key: "A9"
+			});
+			oRow1.addAppointment(oApp);
+
+			oStartDate = new Date(oStartDate.getTime());
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setHours(oEndDate.getHours() + 1);
+			oApp = new sap.ui.unified.CalendarAppointment("App10", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type09,
+				title: "Appointment 10",
+				icon: "sap-icon://sap-ui5",
+				tooltip: "Tooltip 10",
+				key: "A10"
+			});
+			oRow1.addAppointment(oApp);
+
+			oStartDate = new Date(oEndDate.getTime());
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setHours(oEndDate.getHours() + 2);
+			oApp = new sap.ui.unified.CalendarAppointment("App11", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type10,
+				title: "Appointment 11",
+				tooltip: "Tooltip 11",
+				text: "Appointment of 120 minutes, 7 hour in future",
+				key: "A11"
+			});
+			oRow1.addAppointment(oApp);
+
 			// Interval Headers
 			oStartDate = new Date();
 			oStartDate.setHours(oStartDate.getHours() + 1);
@@ -368,13 +413,32 @@
 				}
 			}).placeAt("event1");
 
-
 			oButton = new sap.ui.commons.ToggleButton({
 				text: "IntervalHeaders",
 				pressed: true,
 				press: function(oEvent){
 					var bPressed = oEvent.getParameter("pressed");
 					oRow1.setShowIntervalHeaders(bPressed);
+					var oButtonEmpty = sap.ui.getCore().byId("B-Empty");
+					oButtonEmpty.setVisible(bPressed);
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton("B-Empty", {
+				text: "EmptyIntervalHeaders",
+				pressed: true,
+				press: function(oEvent){
+					var bPressed = oEvent.getParameter("pressed");
+					oRow1.setShowEmptyIntervalHeaders(bPressed);
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton("B-OneLine", {
+				text: "Single line Appointments",
+				pressed: false,
+				press: function(oEvent){
+					var bPressed = oEvent.getParameter("pressed");
+					oRow1.setAppointmentsReducedHeight(bPressed);
 				}
 			}).placeAt("event1");
 

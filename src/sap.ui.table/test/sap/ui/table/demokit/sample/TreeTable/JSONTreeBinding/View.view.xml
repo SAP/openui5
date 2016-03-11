@@ -14,10 +14,11 @@
                     id="TreeTableBasic"
                     rows="{path:'/catalog/clothing', parameters: {arrayNames:['categories']}}"
                     selectionMode="MultiToggle"
-                    enableSelectAll="false">
+                    enableSelectAll="false"
+                    ariaLabelledBy="title">
                 <toolbar>
                     <m:Toolbar>
-                        <m:Title text="Clothing"/>
+                        <m:Title id="title" text="Clothing"/>
                         <m:ToolbarSpacer/>
                         <m:Button text="Collapse all" press="onCollapseAll"/>
                         <m:Button text="Expand first level" press="onExpandFirstLevel"/>

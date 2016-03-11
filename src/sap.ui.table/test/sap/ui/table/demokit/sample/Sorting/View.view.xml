@@ -15,10 +15,11 @@
 				selectionMode="MultiToggle"
 				rows="{/ProductCollection}"
 				visibleRowCount="7"
-				sort="sortDeliveryDate">
+				sort="sortDeliveryDate"
+				ariaLabelledBy="title">
 				<toolbar>
 					<m:Toolbar>
-						<m:Title text="Products"></m:Title>
+						<m:Title id="title" text="Products"></m:Title>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://sorting-ranking"

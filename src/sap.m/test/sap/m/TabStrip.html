@@ -14,17 +14,13 @@
 			jQuery.sap.require("sap.ui.core.IconPool");
             jQuery.sap.require("sap.m.MessageToast");
 			var IconPool = sap.ui.core.IconPool;
-			var fnOnTabClick = function (oEvent) {
-				var oTarget = oEvent.oSource || oEvent.target;
-				alert("Tab with id: " + oTarget.getId() + " was clicked");
-			};
 			var oItem2 = new sap.m.TabStripItem({
 				key: "1",
 				text: "One",
 				modified: true
 			});
 			var oTabStrip = new sap.m.TabStrip('TabStripFirst', {
-                itemCloseRequest: function(oEvent) {
+                itemClose: function(oEvent) {
                     var oItem = oEvent.getParameter("item"),
                         sMessage = "itemCloseRequest handler for item " + oItem.getId() + " received";
                     if (oItem.getModified()) {
@@ -83,17 +79,7 @@
 						key: "10",
 						text: "Ten"
 					})
-				],
-				downArrowButton: new sap.m.Button("downArrowButton", {
-					type: sap.m.ButtonType.Transparent,
-					icon: IconPool.getIconURI("slim-arrow-down"),
-					press: fnOnTabClick
-				}),
-				addButton: new sap.m.Button("addButton", {
-					type: sap.m.ButtonType.Transparent,
-					icon: IconPool.getIconURI("add"),
-					press: fnOnTabClick
-				})
+				]
 			});
 			oTabStrip.placeAt('body');
 		</script>

@@ -676,6 +676,32 @@
 			this.clock.tick(500);
 		});
 
+		QUnit.module("Aggregation headerButton");
+
+		QUnit.test("custom button aggregation", function (assert) {
+			var customButton = new sap.m.Button({
+				text: "custom btn"
+			});
+			var oMessagePopover = new sap.m.MessagePopover({
+				headerButton: customButton
+			});
+			var oButton = new sap.m.Button({
+				text: "Show MessagePopover"
+			});
+
+			oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oMessagePopover.openBy(oButton);
+
+			var btnId = '#' + customButton.getId();
+			assert.equal(document.querySelectorAll(btnId).length, 1, "custom header button is rendered");
+
+			customButton.destroy();
+			oMessagePopover.destroy();
+			oButton.destroy();
+		});
+
 		QUnit.module("Internal ResponsivePopover");
 
 		QUnit.test("openBy method should not call setShowArrow on phone", function (assert) {

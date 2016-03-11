@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>RatingIndicator - sap.m</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script>
+		var sInactiveRatingId = "inactiveRating",
+				sActiveRatingId = "activeRating",
+				oPage = new sap.m.Page("myPage", {
+					title: "Ratings",
+					content: [
+						new sap.m.VBox({
+							items: [
+								new sap.m.Label({text: 'Active rating:', labelFor: sActiveRatingId}),
+								new sap.m.RatingIndicator(sActiveRatingId, {
+									value: 2.5,
+									tooltip: "This is a tooltip"
+								}),
+								new sap.m.Label({text: 'Inactive rating:', labelFor: sInactiveRatingId}),
+								new sap.m.RatingIndicator(sInactiveRatingId, {
+									enabled: false,
+									value: 2.5,
+									tooltip: "This is a tooltip"
+								})
+							]
+						})
+					]
+				});
+
+		var oApp = new sap.m.App("myApp", {
+			initialPage: "myPage"
+		});
+
+		oApp.addPage(oPage);
+		oApp.placeAt("content");
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
+</html>

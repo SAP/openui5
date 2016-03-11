@@ -113,7 +113,8 @@ QUnit.test("onChange event ends in rerendering without the item which is updated
 	this.oUploadCollection._oItemToUpdate = oItemToUpdate;
 	// Act
 	this.oUploadCollection._getFileUploader().fireChange({
-		files : this.aFile
+		files : this.aFile,
+		newValue : this.aFile[0].name
 	});
 	this.oUploadCollection.invalidate();
 	sap.ui.getCore().applyChanges();
@@ -129,7 +130,8 @@ QUnit.test("onChange event test NumberOfAttachmentTitle", function(assert) {
 	this.oUploadCollection._oItemToUpdate = oItemToUpdate;
 	// Act
 	this.oUploadCollection._getFileUploader().fireChange({
-		files : this.aFile
+		files : this.aFile,
+		newValue : this.aFile[0].name
 	});
 	this.oUploadCollection.invalidate();
 	sap.ui.getCore().applyChanges();
@@ -156,7 +158,8 @@ QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in th
 	};
 	// Act
 	this.oUploadCollection._getFileUploader().fireChange({
-		files : this.aFile
+		files : this.aFile,
+		newValue : this.aFile[0].name
 	});
 	this.oUploadCollection._getFileUploader().fireUploadStart({
 		fileName : this.aFile[0].name,
@@ -187,7 +190,8 @@ QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in th
 	};
 	// Act
 	this.oUploadCollection._getFileUploader().fireChange({
-		files : this.aFile
+		files : this.aFile,
+		newValue : this.aFile[0].name
 	});
 	this.oUploadCollection._getFileUploader().fireUploadStart({
 		fileName : this.aFile[0].name,
@@ -200,6 +204,11 @@ QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in th
 });
 
 QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the third case of uploadComplete", function(assert) {
+	// at present it is very hard to simulate IE9 in QUnits
+	if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+		assert.expect(0);
+		return;
+	}
 	// Arrange
 	this.oUploadCollection.setMultiple(false);
 	var oItemToUpdate = this.oUploadCollection.getItems()[0];
@@ -219,7 +228,8 @@ QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in th
 	};
 	// Act
 	this.oUploadCollection._getFileUploader().fireChange({
-		files : this.aFile
+		files : this.aFile,
+		newValue : this.aFile[0].name
 	});
 	this.oUploadCollection._getFileUploader().fireUploadStart({
 		fileName : this.aFile[0].name,
@@ -232,6 +242,11 @@ QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in th
 });
 
 QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the fourth case of uploadComplete", function(assert) {
+	// at present it is very hard to simulate IE9 in QUnits
+	if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9) {
+		assert.expect(0);
+		return;
+	}
 	// Arrange
 	this.oUploadCollection.setMultiple(false);
 	var oItemToUpdate = this.oUploadCollection.getItems()[0];
@@ -251,7 +266,8 @@ QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in th
 	};
 	// Act
 	this.oUploadCollection._getFileUploader().fireChange({
-		files : this.aFile
+		files : this.aFile,
+		newValue : this.aFile[0].name
 	});
 	this.oUploadCollection._getFileUploader().fireUploadStart({
 		fileName : this.aFile[0].name,

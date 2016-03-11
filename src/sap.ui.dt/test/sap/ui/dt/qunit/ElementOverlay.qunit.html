@@ -31,7 +31,6 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.ui.dt.ElementOverlay");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			jQuery.sap.require("sap.ui.dt.DOMUtil");
@@ -66,8 +65,10 @@
 					});
 
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
-						element : this.oButton
+						element : this.oButton,
+						designTimeMetadata : {}
 					});
+					this.oOverlay.placeInOverlayContainer();
 
 					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
@@ -89,10 +90,12 @@
 					var done = assert.async();
 					this.oPage = new sap.m.Page();
 					this.oPage.placeAt("content");
-					sap.ui.dt.Preloader.load(["sap.m.Page"]).then(function() {
+					sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oPage).then(function(oDesignTimeMetadata) {
 						that.oOverlay = new sap.ui.dt.ElementOverlay({
+							designTimeMetadata : { data : oDesignTimeMetadata},
 							element : that.oPage
 						});
+						that.oOverlay.placeInOverlayContainer();
 						sap.ui.getCore().applyChanges();
 						done();
 					});
@@ -206,19 +209,40 @@
 				assert.equal(fnHandler.callCount, 1, 'then the event handler is called');
 			});
 
-			QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
+
+			QUnit.module("Given that an Overlay is created for a control with an existing designTime metadata", {
 				beforeEach : function(assert) {
 					var that = this;
 					var done = assert.async();
+					this.oPage = new sap.m.Page();
+					this.oPage.placeAt("content");
+					sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oPage).then(function(oDesignTimeMetadata) {
+						that.oOverlay = new sap.ui.dt.ElementOverlay({
+							designTimeMetadata : { data : oDesignTimeMetadata},
+							element : that.oPage
+						});
+						that.oOverlay.placeInOverlayContainer();
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+				},
+				afterEach : function() {
+					this.oPage.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
+				beforeEach : function(assert) {
+					var that = this;
 					this.oLabel = new sap.m.Label();
 					this.oLabel.placeAt("content");
-					sap.ui.dt.Preloader.load(["sap.m.Label"]).then(function() {
-						that.oOverlay = new sap.ui.dt.ElementOverlay({
-							element : that.oLabel
-						});
-						done();
-						sap.ui.getCore().applyChanges();
+					that.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : that.oLabel
 					});
+					that.oOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
 					this.oLabel.destroy();
@@ -229,9 +253,6 @@
 			QUnit.test("when the control's domRef is changed to visible...", function(assert) {
 				var done = assert.async();
 
-				this.oLabel.setText("test");
-				sap.ui.getCore().applyChanges();
-
 				var fnOriginalOnAfterRendering =  this.oOverlay.onAfterRendering;
 				this.oOverlay.onAfterRendering = function() {
 					var vOriginalReturn = fnOriginalOnAfterRendering.apply(this, arguments);
@@ -240,28 +261,31 @@
 					done();
 					return vOriginalReturn;
 				};
+
+				this.oLabel.setText("test");
+				sap.ui.getCore().applyChanges();
 			});
 
 			QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
 				beforeEach : function(assert) {
 					var that = this;
-					var done = assert.async();
 					this.oLabel = new sap.m.Label({text : "text"});
 					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel] });
 					this.oVerticalLayout.placeAt("content");
 					sap.ui.getCore().applyChanges();
 					this.oVerticalLayout.$().css("display", "none");
 
-					sap.ui.dt.Preloader.load(["sap.m.Label"]).then(function() {
-						that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
-							element : that.oVerticalLayout
-						});
-						that.oLabelOverlay = new sap.ui.dt.ElementOverlay({
-							element : that.oLabel
-						});
-						sap.ui.getCore().applyChanges();
-						done();
+					that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : that.oVerticalLayout
 					});
+					that.oLayoutOverlay.placeInOverlayContainer();
+					that.oLabelOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
+						element : that.oLabel
+					});
+					that.oLabelOverlay.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
 					this.oVerticalLayout.destroy();
@@ -274,8 +298,6 @@
 				var that = this;
 				var done = assert.async();
 
-				this.oVerticalLayout.$().css("display", "block");
-
 				var fnOriginalOnAfterRendering =  this.oLabelOverlay.onAfterRendering;
 				this.oLabelOverlay.onAfterRendering = function() {
 					var vOriginalReturn = fnOriginalOnAfterRendering.apply(this, arguments);
@@ -285,6 +307,63 @@
 					done();
 					return vOriginalReturn;
 				};
+
+				this.oVerticalLayout.$().css("display", "block");
+			});
+
+			QUnit.module("Given that an Overlay is created for a layout with a visible domRef", {
+				beforeEach : function(assert) {
+					var that = this;
+					this.oLabel1 = new sap.m.Label({text : "text 1"});
+					this.oLabel2 = new sap.m.Label({text : "text 2"});
+					this.oInnerLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel2] });
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({ content : [this.oLabel1, this.oInnerLayout] });
+					this.oVerticalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					that.oLayoutOverlay = new sap.ui.dt.ElementOverlay({
+						element : that.oVerticalLayout,
+						designTimeMetadata : {}
+					});
+					that.oLayoutOverlay.placeInOverlayContainer();
+					that.oInnerLayoutOverlay = new sap.ui.dt.ElementOverlay({
+						element : that.oInnerLayout,
+						designTimeMetadata : {}
+					});
+					that.oInnerLayoutOverlay.placeInOverlayContainer();
+					that.oLabelOverlay1 = new sap.ui.dt.ElementOverlay({
+						element : that.oLabel1,
+						designTimeMetadata : {}
+					});
+					that.oLabelOverlay1.placeInOverlayContainer();
+					that.oLabelOverlay2 = new sap.ui.dt.ElementOverlay({
+						element : that.oLabel2,
+						designTimeMetadata : {}
+					});
+					that.oLabelOverlay2.placeInOverlayContainer();
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oVerticalLayout.destroy();
+				}
+			});
+
+			QUnit.test("when the layout is switched to invisible and the back to visible...", function(assert) {
+				var that = this;
+				var done = assert.async();
+
+				this.oVerticalLayout.setVisible(false);
+				sap.ui.getCore().applyChanges();
+				this.oVerticalLayout.setVisible(true);
+				sap.ui.getCore().applyChanges();
+
+				// timeout is needed to handle applyStyles
+				setTimeout(function() {
+					assert.deepEqual(that.oLayoutOverlay.$().offset(), that.oVerticalLayout.$().offset(), "g");
+					assert.deepEqual(that.oLabelOverlay1.$().offset(), that.oLabel1.$().offset(), "g");
+
+					done();
+				}, 0);
 			});
 
 			QUnit.module("Given that an Overlay is created for a layout with child controls", {
@@ -302,16 +381,22 @@
 
 
 					this.oOverlayLayout1 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oVerticalLayout1
 					});
+					this.oOverlayLayout1.placeInOverlayContainer();
 
 					this.oOverlayButton1 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oButton1
 					});
+					this.oOverlayButton1.placeInOverlayContainer();
 
 					this.oOverlayLayout2 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oVerticalLayout2
 					});
+					this.oOverlayLayout2.placeInOverlayContainer();
 
 				},
 				afterEach : function() {
@@ -350,6 +435,7 @@
 							}
 						})
 					});
+					this.oOverlay.placeInOverlayContainer();
 					this.oButton.placeAt("content");
 					// Render Controls
 					sap.ui.getCore().applyChanges();
@@ -379,6 +465,7 @@
 							}
 						})
 					});
+					this.oOverlay.placeInOverlayContainer();
 					this.oButton.placeAt("content");
 					// Render Controls
 					sap.ui.getCore().applyChanges();
@@ -409,6 +496,7 @@
 							}
 						})
 					});
+					this.oOverlay.placeInOverlayContainer();
 					this.oOverlay.setElement(this.oPage);
 					this.oPage.placeAt("content");
 					// Render Controls
@@ -444,6 +532,7 @@
 							}
 						})
 					});
+					this.oOverlay.placeInOverlayContainer();
 					this.oOverlay.setElement(this.oSimpleForm);
 					this.oSimpleForm.placeAt("content");
 					// Render Controls
@@ -472,11 +561,12 @@
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton,
 						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
-							data : {
+							data: {
 								cloneDomRef : true
 							}
 						})
 					});
+					this.oOverlay.placeInOverlayContainer();
 					// Render Controls
 					sap.ui.getCore().applyChanges();
 				},
@@ -499,11 +589,12 @@
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton,
 						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
-							data : {
+							data: {
 								cloneDomRef : ":sap-domref"
 							}
 						})
 					});
+					this.oOverlay.placeInOverlayContainer();
 					this.oButton.placeAt("content");
 					// Render Controls
 					sap.ui.getCore().applyChanges();
@@ -524,8 +615,10 @@
 						text : "Button"
 					});
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oButton
 					});
+					this.oOverlay.placeInOverlayContainer();
 					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 				},
@@ -548,8 +641,10 @@
 						text : "Button"
 					});
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oButton
 					});
+					this.oOverlay.placeInOverlayContainer();
 					this.oButton.placeAt("content");
 					sap.ui.getCore().applyChanges();
 				},
@@ -594,28 +689,40 @@
 
 
 					this.oOverlayLayout1 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oVerticalLayout1
 					});
+					this.oOverlayLayout1.placeInOverlayContainer();
 
 					this.oOverlayLayout2 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oVerticalLayout2
 					});
+					this.oOverlayLayout2.placeInOverlayContainer();
 
 					this.oOverlayButton1 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oButton1
 					});
+					this.oOverlayButton1.placeInOverlayContainer();
 
 					this.oOverlayButton2 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oButton2
 					});
+					this.oOverlayButton2.placeInOverlayContainer();
 
 					this.oOverlayButton3 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oButton3
 					});
+					this.oOverlayButton3.placeInOverlayContainer();
 
 					this.oOverlayButton4 = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oButton4
 					});
+					this.oOverlayButton4.placeInOverlayContainer();
 
 				},
 				afterEach : function() {
@@ -673,8 +780,10 @@
 					});
 
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : {},
 						element : this.oButton
 					});
+					this.oOverlay.placeInOverlayContainer();
 
 					this.oButton.placeAt("scroll-content");
 					sap.ui.getCore().applyChanges();

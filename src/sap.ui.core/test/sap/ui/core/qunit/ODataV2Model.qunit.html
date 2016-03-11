@@ -11,7 +11,8 @@
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table">
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m"
+	data-sap-ui-bindingSyntax="complex">
 	</script>
 
 <link rel="stylesheet"
@@ -32,6 +33,18 @@
 <!-- This test is not running against the real Northwind service, but a fake service based on
      Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
 <script type="text/javascript" src="ODataModelFakeService.js"></script>
+
+<script type="text/xmlview" id="xmlview">
+	<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns="sap.m" controllerName="my.Controller">
+				<List id='myList' items="{path: '/Categories', suspended: true}">
+					<InputListItem>
+						<content>
+							<Input value="{path: 'CategoryName', suspended: true}"/>
+						</content>
+					</InputListItem>
+				</List>
+	</mvc:View>
+</script>
 
 <!-- Test functions -->
 <script language="javascript">
@@ -1078,6 +1091,203 @@
 			equal(oModel.createKey("Products", {ProductID: 1}), "Products(1)", "Created product key");
 			equal(oModel.createKey("Order_Details", {OrderID: 1, ProductID :2}), "Order_Details(OrderID=1,ProductID=2)", "Expanded entity key");
 			start();
+		});
+	});
+
+	asyncTest("PropertyBinding suspend/resume with control value change", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+
+		oModel.attachRequestCompleted(this, function() {
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			oBinding.attachChange(function() {
+				equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+				equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+				equal(oModel.getProperty("/Categories(2)/CategoryName"), "Condiments", "model value");
+				equal(oInput.getValue(), "Condiments", "input field returns value");
+				oInput.destroy();
+				start();
+			});
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			oBinding.suspend();
+			oInput.setValue("Condis");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "Condiments", "model value");
+
+			oBinding.resume();
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("PropertyBinding suspend/resume with model value change", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+
+		oModel.attachRequestCompleted(this, function() {
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			oBinding.attachChange(function() {
+				equal(oBinding.getValue(), "blubb", "Property Binding returns value");
+				equal(oBinding.oValue, "blubb", "Property Binding internal value");
+				equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+				equal(oInput.getValue(), "blubb", "input field returns value");
+				oInput.destroy();
+				start();
+			});
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			oBinding.suspend();
+			oModel.setProperty(oBinding.getPath(), "blubb", oBinding.getContext());
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+
+			oBinding.resume();
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("PropertyBinding suspend/resume with control and model value change", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+
+		oModel.attachRequestCompleted(this, function() {
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			oBinding.attachChange(function() {
+				equal(oBinding.getValue(), "blubb", "Property Binding returns value");
+				equal(oBinding.oValue, "blubb", "Property Binding internal value");
+				equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+				equal(oInput.getValue(), "blubb", "input field returns value");
+				oInput.destroy();
+				start();
+			});
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			oBinding.suspend();
+			oInput.setValue("Condis");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "Condiments", "model value");
+			oBinding.setValue("test");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "Condiments", "model value");
+			oModel.setProperty(oBinding.getPath(), "blubb", oBinding.getContext());
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+
+			oBinding.resume();
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("PropertyBinding suspend/resume with model and control value change", function(){
+		var oModel = initModel(sURI, {json:false});
+		oModel.setDefaultBindingMode("TwoWay");
+		var oInput = new sap.m.Input({
+			value: "{/Categories(2)/CategoryName}"
+		});
+		oInput.setModel(oModel);
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+
+		oModel.attachRequestCompleted(this, function() {
+			var oBinding = oInput.getBinding("value");
+			ok(oBinding !== undefined, "binding check");
+			oBinding.attachChange(function() {
+				equal(oBinding.getValue(), "blubb", "Property Binding returns value");
+				equal(oBinding.oValue, "blubb", "Property Binding internal value");
+				equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+				equal(oInput.getValue(), "blubb", "input field returns value");
+				oInput.destroy();
+				start();
+			});
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			oBinding.suspend();
+			oModel.setProperty(oBinding.getPath(), "blubb", oBinding.getContext());
+			equal(oInput.getValue(), "Condiments", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+			oInput.setValue("Condis");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+			oBinding.setValue("test");
+			equal(oInput.getValue(), "Condis", "input field returns value");
+			equal(oBinding.getValue(), "Condiments", "Property Binding returns value");
+			equal(oBinding.oValue, "Condiments", "Property Binding internal value");
+			equal(oModel.getProperty("/Categories(2)/CategoryName"), "blubb", "model value");
+
+			oBinding.resume();
+		});
+		oModel.read("/Categories");
+	});
+
+	asyncTest("Declarative property and list binding with suspend",function(){
+		sap.ui.controller("my.Controller", {});
+		var oView = sap.ui.xmlview("xmlview", {viewContent: document.getElementById("xmlview").innerHTML});
+		var oModel = initModel(sURI, {json:false});
+		oView.setModel(oModel);
+		oView.placeAt("target1");
+		var oList = oView.byId('myList');
+		var oBinding = oList.getBinding('items');
+		var handler1 = function() {
+			var oItem = oView.byId('myList').getItems()[0];
+			var oPropBinding = oItem.getContent()[0].getBinding('value');
+			ok(!oBinding.isSuspended(), "suspended flag should be false");
+			ok(oPropBinding.isSuspended(), "suspended flag should be true");
+			oBinding.detachChange(handler1);
+			oView.destroy();
+			start();          // resume normal testing
+		};
+		var handler2 = function() {
+			ok(!oBinding.isSuspended(), "suspended flag should be false");
+			oBinding.detachChange(handler2);
+		};
+		oBinding.attachChange(this,handler1);
+		oBinding.attachRefresh(this,handler2);
+			ok(oBinding.isSuspended(), "suspended flag should be true");
+			oBinding.resume();
+		oModel.attachMetadataLoaded(function(){
 		});
 	});
 
@@ -2242,7 +2452,7 @@
 			}
 		});
 	});
-	
+
 	asyncTest("async test request events - auto refresh list binding", function(){
 
 		removeSharedServicedata(sURI);
@@ -2919,6 +3129,45 @@
 		});
 	});
 
+	module("Soft State Header Support");
+
+	asyncTest("Soft State Support for CSRF-, Single- and Batchrequests", 9, function(){
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var sPath = "/Categories";
+		this.oModel = new sap.ui.model.odata.v2.ODataModel(sURI);
+		this.oModel.securityTokenAvailable().then(function() {
+			equal(spy.getCall(0).args[0].headers["sap-contextid-accept"], "header", "Metadaten Request: Soft State Acceptance header was set.");
+			equal(spy.getCall(1).args[0].headers["sap-contextid-accept"], "header", "CSRF Request: Soft State Acceptance header was set.");
+			var sCurrentContextSessionId = this.oModel.sSessionContextId;
+			ok(this.oModel.sSessionContextId,"CSRF Request: Soft State Context ID in response was set in Model.");
+			this.oModel.read(sPath, {
+				success: function() {
+					equal(spy.getCall(2).args[0].headers["sap-contextid-accept"], "header", "Batch Request: Soft State Acceptance header was set.");
+					equal(spy.getCall(2).args[0].headers["sap-contextid"], sCurrentContextSessionId, "Batch Request: Soft State Context ID header was set.");
+					sCurrentContextSessionId = spy.getCall(2).args[1].arguments[0]["headers"]["sap-contextid"];
+					this.oModel.setUseBatch(false);
+					this.oModel.read(sPath, {
+						success: function() {
+							equal(this.oModel.sSessionContextId,sCurrentContextSessionId, "Batch Request: Soft State Context ID in response was set in Model.");
+							equal(spy.getCall(3).args[0].headers["sap-contextid-accept"], "header", "Single Request: Soft State Acceptance header was set.");
+							equal(spy.getCall(3).args[0].headers["sap-contextid"], sCurrentContextSessionId, "Single Request: Soft State Context ID header was set.");
+							sCurrentContextSessionId = spy.getCall(3).args[1].arguments[0]["headers"]["sap-contextid"];
+							this.oModel.read(sPath, {
+								success: function() {
+									equal(this.oModel.sSessionContextId, sCurrentContextSessionId, "Single Request: Soft State Context ID in response was set in Model.");
+									OData.defaultHttpClient.request.restore();
+									this.oModel.destroy();
+									delete this.oModel;
+									start();
+								}.bind(this)
+							});
+						}.bind(this)
+					});
+				}.bind(this)
+			});
+		}.bind(this));
+	});
+
 	module("Metamodel binding", {
 		setup: function() {
 			this.oModel = initModel(sURI, {json: false});
@@ -3259,6 +3508,51 @@
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
+
+	asyncTest("SAML redirect - without batch", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: false
+		});
+
+		oModel.read("/SAML200", {
+			success: function() {
+				ok(false, "Success handler must not be called in case of SAML redirect");
+				start();
+			},
+			error: function(oError) {
+				ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
+				ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
+				start();
+			}
+		});
+	});
+
+	asyncTest("SAML redirect - with batch", function(){
+
+		removeSharedServicedata(sURI);
+
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true
+		});
+
+		oModel.read("/SAML200", {
+			success: function() {
+				ok(false, "Success handler must not be called in case of SAML redirect");
+				start();
+			},
+			error: function(oError) {
+				ok(oError.statusCode, 200, "SAML redirect has a 200 response code");
+				ok(oError.headers["com.sap.cloud.security.login"], "SAML login header is contained in response");
+				start();
+			}
+		});
+	});
+
 	</script>
 
 </head>

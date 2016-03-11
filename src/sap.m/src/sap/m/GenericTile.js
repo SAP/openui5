@@ -430,7 +430,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			case sap.m.LoadState.Failed :
 				return this._oFailedText.getText();
 			default :
-				return this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText();
+				return (this.getTooltip_AsString() && !this._isTooltipSuppressed()) ? this.getTooltip_AsString() : (this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText());
 		}
 	};
 
@@ -523,11 +523,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 */
 	GenericTile.prototype._updateAriaAndTitle = function () {
-		var sAriaAndTitle = this._getAriaAndTooltipText();
+		var sAriaAndTitleText = this._getAriaAndTooltipText();
+		var sTooltipText = this._getTooltipText();
+		var sAriaText = this._getAriaText();
 		var $Tile = this.$();
 
-		if ($Tile.attr("title") !== sAriaAndTitle) {
-			$Tile.attr("aria-label", sAriaAndTitle).attr("title", sAriaAndTitle);
+		if ($Tile.attr("title") !== sAriaAndTitleText) {
+			$Tile.attr("aria-label", sAriaText).attr("title", sTooltipText);
 		}
 		$Tile.find('*').removeAttr("aria-label").removeAttr("title");
 	};

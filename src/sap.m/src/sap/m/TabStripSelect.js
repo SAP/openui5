@@ -324,6 +324,35 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 			}
 		};
 
+
+		/**
+		 * Handles the <code>selectionChange</code> event on the list.
+		 *
+		 * @param {sap.ui.base.Event} oEvent
+		 * @private
+		 */
+		TabStripSelect.prototype.onSelectionChange = function(oEvent) {
+			var oItem = oEvent.getParameter("selectedItem");
+			if (this.fireChange({selectedItem: oItem})) {
+				this.close();
+				this.setSelection(oItem);
+				this.setValue(this._getSelectedItemText());
+			} else {
+				oEvent.preventDefault();
+			}
+		};
+
+		/**
+		 * Fire a 'change' event that can be prevented although by default it is not preventable
+		 * @param {object} mParameters
+		 * @returns {sap.ui.core.support.Support|sap.ui.base.EventProvider|boolean|sap.ui.core.Element|*}
+		 */
+		TabStripSelect.prototype.fireChange = function(mParameters) {
+			this._oSelectionOnFocus = mParameters.selectedItem;
+			var bAllowPreventDefault = true;
+			return this.fireEvent("change", mParameters, bAllowPreventDefault);
+		};
+
 		return TabStripSelect;
 
 }, /* bExport= */ false);

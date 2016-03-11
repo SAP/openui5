@@ -165,7 +165,9 @@
 		  "since": "1.22",
 		  "samples": [
 		  	"sap.m.sample.ComboBox",
-			"sap.m.sample.ComboBox2Columns"]
+			"sap.m.sample.ComboBox2Columns",
+            "sap.m.sample.ComboBoxLazyLoading"
+          ]
 		},
 		{
 		  "id": "sap.m.ColumnListItem",
@@ -213,6 +215,14 @@
 		  "since": "1.10",
 		  "formFactors": "L",
 		  "samples": ["sap.m.sample.DateTimeInput"]
+		},
+		{
+		  "id": "sap.m.DateTimePicker",
+		  "name": "Date Time Picker",
+		  "category": "User Input",
+		  "since": "1.38",
+		  "formFactors": "L",
+		  "samples": ["sap.m.sample.DateTimePicker"]
 		},
 		{
 		  "id": "sap.m.Dialog",
@@ -663,7 +673,8 @@
 		  "samples": ["sap.m.sample.PlanningCalendar",
 		  	"sap.m.sample.PlanningCalendarMulti",
 		  	"sap.m.sample.PlanningCalendarSingle",
-		  	"sap.m.sample.PlanningCalendarViews"]
+		  	"sap.m.sample.PlanningCalendarViews",
+		  	"sap.m.sample.PlanningCalendarOneLine"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -895,7 +906,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.TextArea",
-			"sap.m.sample.TextAreaValueUpdate"
+			"sap.m.sample.TextAreaValueUpdate",
+			"sap.m.sample.TextAreaGrowing"
 		  ]
 		},
 		{
@@ -1152,14 +1164,19 @@
 		},
 		{
 		  "id": "sap.m.sample.ComboBox",
-		  "name": "ComboBox",
-		  "description": "The ComboBox control provides a list box with items and a text field allowing the user to either type a value directly into the control or choose from the list of existing items."
+		  "name": "Combo box",
+		  "description": "The combo box control provides a list box with items and a text field allowing the user to either type a value directly into the control or choose from the list of existing items."
 		},
 		{
 		  "id": "sap.m.sample.ComboBox2Columns",
-		  "name": "ComboBox with 2 Columns Layout",
-		  "description": "This combo box displays information in 2 columns"
+		  "name": "Combo box - Two columns layout",
+		  "description": "Use the combo box dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
 		},
+        {
+          "id": "sap.m.sample.ComboBoxLazyLoading",
+          "name": "Combo box - Lazy loading",
+          "description": "Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips."
+        },
 		{
 		  "id": "sap.m.sample.DateRangeSelection",
 		  "name": "Date Range Selection",
@@ -1518,7 +1535,12 @@
 		{
 		  "id": "sap.m.sample.DateTimeInput",
 		  "name": "Date Time Input",
-		  "description": "The Date & Time Input is an extension of the Input control and is dedicated to Date and Time. [Deprecated since 1.32.8]"
+		  "description": "The Date & Time Input control allows input of dates and times using date and time pickers. [Deprecated since 1.32.8]"
+		},
+		{
+		  "id": "sap.m.sample.DateTimePicker",
+		  "name": "Date Time Picker",
+		  "description": "With the DateTimePicker a Date can be entered or selected including the time part."
 		},
 		{
 		  "id": "sap.m.sample.RadioButton",
@@ -1669,6 +1691,11 @@
 		  "id": "sap.m.sample.TextAreaValueUpdate",
 		  "name": "TextArea - Value Update",
 		  "description": "Since 1.30 the value property of sap.m.TextArea is not updated on every keystroke, but first when the user presses Enter or leaves the input. The change was necessary to fully support the standard UI5 data binding with formatters and types. If you still need immediate update you have 2 options: Handle liveChange events or enable the boolean property valueLiveUpdate."
+		},
+		{
+		  "id": "sap.m.sample.TextAreaGrowing",
+		  "name": "TextArea - Growing",
+		  "description": "Since 1.38 the growing property of sap.m.TextArea gives the ability of a control to automatically grow and shrink dynamically with its content."
 		},
 		{
 		  "id": "sap.m.sample.Switch",
@@ -2222,7 +2249,7 @@
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarMulti",
-		  "name": "PlanningCalendar - mutiple selection",
+		  "name": "PlanningCalendar - multiple selection",
 		  "description": "PlanningCalendar with multiple row selection. No interval headers are displayed. On click on an interval a new appointment is created."
 		},
 		{
@@ -2234,6 +2261,11 @@
 		  "id": "sap.m.sample.PlanningCalendarViews",
 		  "name": "PlanningCalendar - with custom views",
 		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. Sub-intervals are shown. Custom non-working days and hours are set."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarOneLine",
+		  "name": "PlanningCalendar - with one line appointments",
+		  "description": "PlanningCalendar showing appointment with only title in one line to save space. The interval headers are only shown if there are some assigned in the visible area."
 		}
 		]
 	}

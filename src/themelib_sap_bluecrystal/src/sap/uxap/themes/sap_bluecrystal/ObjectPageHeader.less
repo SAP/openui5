@@ -128,10 +128,22 @@ html.sap-desktop .sapUxAPObjectPageHeaderDesign-Dark .sapMBtn:focus > .sapMFocus
 	outline: 1px dotted @sapUiInvertedFocus;
 }
 
+html.sap-desktop .sapUxAPObjectPageHeaderDesign-Dark .sapMBtn:focus > .sapMFocusable.sapMIE {
+	outline: none;
+}
+
+html.sap-desktop .sapUxAPObjectPageHeaderDesign-Dark .sapMBtn:focus .sapMBtnFocusDiv {
+	border: 1px dashed @sapUiInvertedFocus;
+}
+
 .sapUxAPObjectPageHeaderObjectImageContainer .sapUiIcon {
 	color: @sapUiElement;
 }
 
 .sapUxAPObjectPageHeaderDesign-Dark .sapUxAPObjectPageHeaderObjectImageContainer .sapUiIcon {
 	color: @sapUiInvertedElement;
+}
+
+.sapUxAPObjectPageHeaderSeparator {
+	background-color: @sapUiFieldBorderColor;
 }

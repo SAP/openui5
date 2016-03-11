@@ -1861,7 +1861,7 @@ sap.ui.define([
 			var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || ["", false, true ];
 			var sTrueValue = aValues[aValues.length - 1].toString();
 			oValue1 = sValue1 === sTrueValue;
-			oValue2 = sValue2 === sTrueValue;
+			oValue2 = null; // for boolean we only support EQ and value2 can be null
 		}
 
 		var bShowIfGrouped = oConditionGrid.showIfGrouped.getSelected();

@@ -158,7 +158,7 @@
 		},
 		{
 			"control": "sap.m.MessageToast",
-			"url": "../MessageToast.html",
+			"url": "MessageToast.html",
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
@@ -288,7 +288,7 @@
 		},
 		{
 			"control": "sap.m.RatingIndicator",
-			"url": "../RatingIndicator.html",
+			"url": "RatingIndicator.html",
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{

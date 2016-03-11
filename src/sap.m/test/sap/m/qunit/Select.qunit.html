@@ -1595,8 +1595,13 @@
 
 			oSelect.setSelectedKey("id_5");
 			oSelect.placeAt("content");
-			this.clock.tick(iAutoRespondAfter + 1);	// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting to make sure that the data from the OData model is available)
-			sap.ui.getCore().applyChanges();	// enforces an immediate update of the visible UI (aka "rendering")
+
+			// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+			// to make sure that the data from the OData model is available)
+			this.clock.tick(iAutoRespondAfter + 1);
+
+			// enforces an immediate update of the visible UI (aka "rendering")
+			sap.ui.getCore().applyChanges();
 
 			oSelect.getBinding("items").filter(new sap.ui.model.Filter([
 				new sap.ui.model.Filter({

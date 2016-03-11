@@ -93,6 +93,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "./library"], functio
 		}
 	};
 
+	ObjectPageSectionBase.prototype.setCustomAnchorBarButton = function (oButton) {
+		var vResult = this.setAggregation("customAnchorBarButton", oButton, true);
+
+		if (this._getObjectPageLayout()){
+			this._getObjectPageLayout()._updateNavigation();
+		}
+
+		return vResult;
+	};
+
 	/**
 	 * set the internal visibility of the sectionBase. This is set by the ux rules (for example don't display a section that has no subSections)
 	 * @param bValue

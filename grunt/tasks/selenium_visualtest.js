@@ -76,9 +76,9 @@ module.exports = function (grunt) {
 			function (error,result,code) {
 				if (code!=0) {
 					if (code == 127){
-						grunt.log.error('ui5test was not found in path. Did you forget to install it globally ?');
+						grunt.log.error('visualtest was not found in path. Did you forget to install it globally ?');
 					} else {
-						grunt.log.error('Error while executing tests: ' + error);
+						grunt.log.error('Error while executing visual tests, exit code: ' + code +  ' ,details: ' + error);
 					}
 					done(false);
 				} else {

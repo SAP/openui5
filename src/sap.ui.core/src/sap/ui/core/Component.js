@@ -49,6 +49,86 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	}
 
 	/**
+	 * Returns the configuration of a manifest section or the value for a
+	 * specific path. If no section or key is specified, the return value is null.
+	 *
+	 * @param {sap.ui.core.ComponentMetadata} oMetadata the Component metadata
+	 * @param {sap.ui.core.Manifest} oManifest the manifest
+	 * @param {string} sKey Either the manifest section name (namespace) or a concrete path
+	 * @param {boolean} [bMerged] Indicates whether the manifest entry is merged with the manifest entries of the parent component.
+	 * @return {any|null} Value of the manifest section or the key (could be any kind of value)
+	 * @private
+	 * @see {@link sap.ui.core.Component#getManifestEntry}
+	 */
+	function getManifestEntry(oMetadata, oManifest, sKey, bMerged) {
+		var oData = oManifest.getEntry(sKey);
+
+		// merge / extend should only be done for objects or when entry wasn't found
+		if (oData !== undefined && !jQuery.isPlainObject(oData)) {
+			return oData;
+		}
+
+		// merge the configuration of the parent manifest with local manifest
+		// the configuration of the static component metadata will be ignored
+		var oParent, oParentData;
+		if (bMerged && (oParent = oMetadata.getParent()) instanceof ComponentMetadata) {
+			oParentData = oParent.getManifestEntry(sKey, bMerged);
+		}
+
+		// only extend / clone if there is data
+		// otherwise "null" will be converted into an empty object
+		if (oParentData || oData) {
+				oData = jQuery.extend(true, {}, oParentData, oData);
+		}
+
+		return oData;
+	}
+
+	/**
+	 * Utility function which creates a metadata proxy object for the given
+	 * metadata object
+	 *
+	 * @param {sap.ui.core.ComponentMetadata} oMetadata the Component metadata
+	 * @param {sap.ui.core.Manifest} oManifest the manifest
+	 * @return {sap.ui.core.ComponentMetadata} a metadata proxy object
+	 */
+	function createMetadataProxy(oMetadata, oManifest) {
+
+		// create a proxy for the metadata object and simulate to be an
+		// instance of the original metadata object of the Component
+		// => retrieving the prototype from the original metadata to
+		//    support to proxy sub-classes of ComponentMetadata
+		var oMetadataProxy = Object.create(Object.getPrototypeOf(oMetadata));
+
+		// provide internal access to the static metadata object
+		oMetadataProxy._oMetadata = oMetadata;
+		oMetadataProxy._oManifest = oManifest;
+
+		// copy all functions from the metadata object except of the
+		// manifest related functions which will be instance specific now
+		for (var m in oMetadata) {
+			if (!/^(getManifest|getManifestEntry|getMetadataVersion)$/.test(m) && typeof oMetadata[m] === "function") {
+				oMetadataProxy[m] = oMetadata[m].bind(oMetadata);
+			}
+		}
+
+		// return the content of the manifest instead of the static metadata
+		oMetadataProxy.getManifest = function() {
+			return oManifest && oManifest.getJson();
+		};
+		oMetadataProxy.getManifestEntry = function(sKey, bMerged) {
+			return getManifestEntry(oMetadata, oManifest, sKey, bMerged);
+		};
+		oMetadataProxy.getMetadataVersion = function() {
+			return 2; // instance specific manifest => metadata version 2!
+		};
+
+		return oMetadataProxy;
+
+	}
+
+
+	/**
 	 * Creates and initializes a new Component with the given <code>sId</code> and
 	 * settings.
 	 *
@@ -88,46 +168,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			}
 
 			/**
-			 * Checks whether a settings object was provided plus an URL that points
-			 * to a manifest.json file. If <strong>true</strong> the manifest will
-			 * be stored at the instance of the Component.
+			 * Checks whether a settings object was provided plus a proxy for
+			 * the metadata object. If <strong>true</strong> the metadata proxy
+			 * and the manifest will be stored at the instance of the Component.
 			 *
-			 * @param  {string} [mSettings._manifest]
-			 *         The parsed manifest object
+			 * @param  {string} [mSettings._metadataProxy]
+			 *         The proxy object for the metadata
 			 */
-			if (mSettings && typeof mSettings._manifest === "object") {
+			if (mSettings && typeof mSettings._metadataProxy === "object") {
 
-				// read the metadata to override it and enable instance
-				// specific manifest access (backwards compatibility)
-				var oMetadata = this.getMetadata();
-
-				// set the concrete manifest and delete the manifest setting
-				this._oManifest = mSettings._manifest;
-				delete mSettings._manifest;
-
-				// create a proxy for the metadata object and simulate to be an
-				// instance of the original metadata object of the Component
-				// => retrieving the prototype from the original metadata to
-				//    support to proxy sub-classes of ComponentMetadata
-				this._oMetadataProxy = Object.create(Object.getPrototypeOf(oMetadata));
-
-				// provide internal access to the static metadata object
-				this._oMetadataProxy._oMetadata = oMetadata;
-
-				// copy all functions from the metadata object except of the
-				// manifest related functions which will be instance specific now
-				for (var m in oMetadata) {
-					if (!/^(getManifest|getManifestEntry)$/.test(m) && typeof oMetadata[m] === "function") {
-						this._oMetadataProxy[m] = oMetadata[m].bind(oMetadata);
-					}
-				}
-
-				// use the manifest related functions and delegate them to the component instance
-				this._oMetadataProxy.getManifest = this.getManifest.bind(this);
-				this._oMetadataProxy.getManifestEntry = this.getManifestEntry.bind(this);
-				this._oMetadataProxy.getMetadataVersion = function() {
-					return 2; // instance specific manifest => metadata version 2!
-				};
+				// set the concrete metadata proxy and the manifest and
+				// delete the metadata proxy setting to avoid assert issues
+				this._oMetadataProxy = mSettings._metadataProxy;
+				this._oManifest = mSettings._metadataProxy._oManifest;
+				delete mSettings._metadataProxy;
 
 				/**
 				 * Returns the metadata object which has been adopted to return
@@ -297,28 +351,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		if (!this._oManifest) {
 			return this.getMetadata().getManifestEntry(sKey, bMerged);
 		} else {
-
-			var oData = this._oManifest.getEntry(sKey);
-
-			// merge / extend should only be done for objects or when entry wasn't found
-			if (oData !== undefined && !jQuery.isPlainObject(oData)) {
-				return oData;
-			}
-
-			// merge the configuration of the parent manifest with local manifest
-			// the configuration of the static component metadata will be ignored
-			var oParent, oParentData;
-			if (bMerged && (oParent = this.getMetadata().getParent()) instanceof ComponentMetadata) {
-				oParentData = oParent.getManifestEntry(sKey, bMerged);
-			}
-
-			// only extend / clone if there is data
-			// otherwise "null" will be converted into an empty object
-			if (oParentData || oData) {
-					oData = jQuery.extend(true, {}, oParentData, oData);
-			}
-
-			return oData;
+			return getManifestEntry(this.getMetadata(), this._oManifest, sKey, bMerged);
 		}
 	};
 
@@ -978,6 +1011,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * The window unload hook. Override this method in your Component class
 	 * implementation, to handle cleanup of the component once the window
 	 * will be unloaded (e.g. closed).
+	 * <p>
+	 * <b>Warning:</b> The exact handling of the unload hook has varied from
+	 * version to version of browsers. For example, some versions of Firefox
+	 * trigger the event when a link is followed, but not when the window is
+	 * closed. In practical usage, behavior should be tested on all supported
+	 * browsers, and contrasted with the proprietary beforeunload event.
 	 *
 	 * @public
 	 * @since 1.15.1
@@ -1259,7 +1298,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			}
 
 			if (oManifest) {
-				return function() {
+				// create the proxy metadata object
+				var oMetadataProxy = createMetadataProxy(oClass.getMetadata(), oManifest);
+				// create the proxy class for passing the manifest
+				var oClassProxy = function() {
 
 					// create a copy of arguments for local modification
 					// and later handover to Component constructor
@@ -1272,7 +1314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					} else if (typeof args[0] === "string") {
 						mSettings = args[1] = args[1] || {};
 					}
-					mSettings._manifest = oManifest;
+					mSettings._metadataProxy = oMetadataProxy;
 
 					// call the original constructor of the component class
 					var oInstance = Object.create(oClass.prototype);
@@ -1280,6 +1322,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					return oInstance;
 
 				};
+				// overload the getMetadata function
+				oClassProxy.getMetadata = function() {
+					return oMetadataProxy;
+				};
+				// overload the extend function
+				oClassProxy.extend = function() {
+					throw new Error("Extending Components created by Manifest is not supported!");
+				};
+				return oClassProxy;
 			} else {
 				return oClass;
 			}

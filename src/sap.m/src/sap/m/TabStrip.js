@@ -86,6 +86,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 							 */
 							item: { type: "sap.m.TabStripItem" }
 						}
+					},
+
+					/**
+					 * Fired when an item is pressed.
+					 * @since 1.38
+					 */
+					itemSelect: {
+						allowPreventDefault: true,
+						parameters: {
+
+							/**
+							 * The selected item.
+							 */
+							item: { type: "sap.m.TabContainerItem" }
+						}
 					}
 				}
 			},
@@ -533,7 +548,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					change: function (oEvent) {
 						oSelectedSelectItem = oEvent.getParameters()['selectedItem'];
 						oSelectedTabStripItem = this._findTabStripItemFromSelectItem(oSelectedSelectItem);
-						this._activateItem(oSelectedTabStripItem);
+						this._activateItem(oSelectedTabStripItem, oEvent);
 					}.bind(this)
 				};
 
@@ -553,9 +568,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		TabStrip.prototype.onsapselect = function(oEvent) {
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
-			// note: prevent document scrolling when space keys is pressed
 			oEvent.preventDefault();
-			this._activateItem(oEvent.srcControl);
+			this._activateItem(oEvent.srcControl, oEvent);
 		};
 
 		/**
@@ -603,16 +617,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * Activates an item on the <code>TabStrip</code>.
 		 *
 		 * @param oItem {sap.m.TabStripItem} The item to be activated
+		 * @param oEvent {object} Event object that probably will be present as the item activation is bubbling
 		 * @private
 		 */
-		TabStrip.prototype._activateItem = function(oItem) {
-			if (oItem && oItem instanceof sap.m.TabStripItem) {
-				if (!this.getSelectedItem() || this.getSelectedItem() !== oItem.getId()) {
-					this.setSelectedItem(oItem);
+		TabStrip.prototype._activateItem = function(oItem, oEvent) {
+			/* As the '_activateItem' is part of a bubbling selection change event, allow the final event handler
+			 * to prevent it. */
+			if (this.fireItemSelect({item: oItem})) {
+				if (oItem && oItem instanceof sap.m.TabStripItem) {
+					if (!this.getSelectedItem() || this.getSelectedItem() !== oItem.getId()) {
+						this.setSelectedItem(oItem);
+					}
+					this.fireItemPress({
+						item: oItem
+					});
 				}
-				this.fireItemPress({
-					item: oItem
-				});
+			} else if (oEvent && !oEvent.isDefaultPrevented()) {
+				oEvent.preventDefault();
 			}
 		};
 
@@ -757,12 +778,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype._attachItemEventListeners = function (oObject) {
 			if (oObject instanceof TabStripItem) {
-				// make sure we always have one listener at a time only
-				oObject.detachItemClosePressed(this._handleItemClosePressed);
-				oObject.detachItemPropertyChanged(this._handleTabStripItemPropertyChanged);
+				var aEvents = [
+						'itemClosePressed',
+						'itemPropertyChanged'
+				    ];
+				aEvents.forEach(function (sEventName) {
+					sEventName = sEventName.charAt(0).toUpperCase() + sEventName.slice(1); // Capitalize
 
-				oObject.attachItemPropertyChanged(this._handleItemClosePressed);
-				oObject.attachItemClosePressed(this._handleTabStripItemPropertyChanged);
+					// detach any listeners - make sure we always have one listener at a time only
+					oObject['detach' + sEventName](this['_handle' + sEventName]);
+					//e.g. oObject['detachItemClosePressed'](this.['_handleItemClosePressed'])
+
+					// attach the listeners
+					oObject['attach' + sEventName](this['_handle' + sEventName].bind(this));
+				}, this);
 			}
 		};
 
@@ -794,7 +823,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * @param oEvent {jQuery.Event} Event object
 		 * @private
 		 */
-		TabStrip.prototype._handleTabStripItemPropertyChanged = function (oEvent) {
+		TabStrip.prototype._handleItemPropertyChanged = function (oEvent) {
 			var oSelectItem = this._findSelectItemFromTabStripItem(oEvent.getSource());
 			oSelectItem.setProperty(oEvent['mParameters'].propertyKey, oEvent['mParameters'].propertyValue);
 		};
@@ -1107,7 +1136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			if (iDeltaX < TabStrip.MIN_DRAG_OFFSET) {
 				if (oTarget instanceof TabStripItem) {
 					// TabStripItem clicked
-					this._activateItem(oTarget);
+					this._activateItem(oTarget, oEvent);
 				} else if (oTarget instanceof sap.m.AccButton) {
 					// TabStripItem close button clicked
 					if (oTarget && oTarget.getParent && oTarget.getParent() instanceof TabStripItem) {

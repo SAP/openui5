@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		Dialog.prototype.setInitialFocus = function (sId) {
-			if (sId !== null && typeof sId != "string") {
+			if (sId && typeof sId != "string") {
 				sId = sId.getId();
 			}
 			this.oPopup.setInitialFocusId(sId);

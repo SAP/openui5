@@ -71,6 +71,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 					if (oEntitySetAnnotations[this._oConstants.COM_SAP_VOCABULARIES_COMMON_V1_DRAFTROOT]) {
 						this._oDraftMetadata.draftRootName = sEntityset;
 						this._oDraftMetadata.annotations = oAnnotations;
+						this._oDraftMetadata.mockServerRootUri = oMockServer.getRootUri();
 						this._oDraftMetadata.draftRootActivationName = oEntitySetAnnotations[this._oConstants.COM_SAP_VOCABULARIES_COMMON_V1_DRAFTROOT][this
 							._oConstants.ACTIVATION_ACTION
 						].String;
@@ -354,7 +355,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 						});
 						if (oResponse.success && oResponse.data && oResponse.data.d && oResponse.data.d.results) {
 							var oNode;
-							for (var j = 0; i < oResponse.data.d.results.length; j++) {
+							for (var j = 0; j < oResponse.data.d.results.length; j++) {
 								oNode = oResponse.data.d.results[j];
 								oNode.IsActiveEntity = true;
 								oNode.HasActiveEntity = false;
@@ -401,7 +402,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 						aFilter.push(property + " eq " + oRequestBody[property]);
 					}
 					var oResponse = jQuery.sap.sjax({
-						url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
+						url: that._oDraftMetadata.mockServerRootUri + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
 						dataType: "json"
 					});
 					if (!oResponse.success || !oResponse.data.d.results[0]) {
@@ -420,7 +421,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 							url: oSiblingEntityUri,
 							dataType: "json"
 						});
-						if (oResponse.success && oResponse.data) {
+						if (oResponse.success && oResponse.data && oResponse.data.d.__metadata) {
 							var oSibling = oResponse.data.d;
 							oResponse = jQuery.sap.sjax({
 								url: oSibling.__metadata.uri,
@@ -462,7 +463,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 							}
 						}
 						var oResponse = jQuery.sap.sjax({
-							url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
+							url: that._oDraftMetadata.mockServerRootUri + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
 							dataType: "json"
 						});
 						if (!oResponse.success || !oResponse.data.d.results[0]) {
@@ -571,7 +572,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 							aFilter.push(property + " eq " + oRequestBody[property]);
 						}
 						var oResponse = jQuery.sap.sjax({
-							url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
+							url: that._oDraftMetadata.mockServerRootUri + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
 							dataType: "json"
 						});
 						if (!oResponse.success || !oResponse.data.d.results[0]) {

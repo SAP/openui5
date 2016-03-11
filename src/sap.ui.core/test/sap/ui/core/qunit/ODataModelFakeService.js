@@ -2,7 +2,9 @@ var xhr = sinon.useFakeXMLHttpRequest(),
 	baseURL = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
 	responseDelay = 10,
 	_setTimeout = window.setTimeout,
-	csrfToken;
+	csrfToken,
+	iSessionCount = 0,
+	sessionContextId;
 
 function updateCsrfToken() {
 	csrfToken = "" + Math.floor(Math.random() * 1000000000);
@@ -10,6 +12,10 @@ function updateCsrfToken() {
 
 function deleteCsrfToken() {
 	csrfToken = undefined;
+}
+
+function updateSessionContextId() {
+		sessionContextId = "SID-" + Math.floor(Math.random() * 1000000000) + "-NEW";
 }
 
 function getHeader(headers, header) {
@@ -309,33 +315,48 @@ xhr.onCreate = function(request) {
 			if (request.url == baseURL) {
 				window.odataFakeServiceData.csrfRequests.push(request.method); // Log Requests to service document
 			}
-
 			respond(500, oHTMLHeaders, "Server Error");
 			return;
 		}
 
+
+
 		if (["GET", "HEAD"].indexOf(request.method) === -1 && csrfToken) {
 			if (getHeader(request.requestHeaders, "X-CSRF-Token") != csrfToken) {
+
 				respond(403, oCsrfRequireHeaders, "");
 				return;
 			}
 		}
 
 		if (request.url == baseURL) {
+			// Simulate Soft State header handling
+			updateSessionContextId();
+			oCsrfResponseHeaders["sap-contextid"] = sessionContextId;
+
 			oCsrfResponseHeaders["X-CSRF-Token"] = csrfToken;
 			window.odataFakeServiceData.csrfRequests.push(request.method); // Log Requests to service document
 			respond(200, oCsrfResponseHeaders, sServiceDocXML);
 			return;
 		}
 
+		// Special handling SAML authentication redirect
+		if (request.url.indexOf("SAML200") > 0 || (request.requestBody && request.requestBody.indexOf("SAML200") > 0)) {
+			respond(200, oSAMLHeaders, sSAMLLoginPage);
+			return;
+		}
 
 		// Special handling based on headers
 		if (request.url == baseURL + "Categories" || request.url == baseURL + "Categories?horst=true") {
 			if (request.requestHeaders["Accept"] == "application/atom+xml,application/atomsvc+xml,application/xml") {
-				respond(200, oXMLHeaders, sCategoriesXML)
+				respond(200, oXMLHeaders, sCategoriesXML);
 			}
 			else {
-				respond(200, oJSONHeaders, sCategoriesJSON)
+				// Simulate Soft State header handling
+				updateSessionContextId();
+				oJSONHeaders["sap-contextid"] = sessionContextId;
+
+				respond(200, oJSONHeaders, sCategoriesJSON);
 			}
 			return;
 		}
@@ -372,6 +393,10 @@ xhr.onCreate = function(request) {
 				}
 			}
 			batchResponse = createBatchResponse(batchResponses, "batch-408D0D264EF1AB69CA1BF7");
+
+			updateSessionContextId();
+			oBatchHeaders["sap-contextid"] = sessionContextId;
+
 			respond(202, oBatchHeaders, batchResponse);
 			return;
 		}
@@ -505,6 +530,10 @@ var oBatchHeaders = 	{
 var oHTMLHeaders = 	{
 		"Content-Type": "text/html"
 	};
+var oSAMLHeaders = 	{
+		"Content-Type": "text/html",
+		"com.sap.cloud.security.login": "login-request"
+	};
 var oCsrfRequireHeaders = 	{
 		"Content-Type": "text/plain;charset=utf-8",
 		"DataServiceVersion": "2.0",
@@ -515,6 +544,8 @@ var oCsrfResponseHeaders = 	{
 		"DataServiceVersion": "1.0",
 		"X-CSRF-Token": ""
 	};
+
+var sSAMLLoginPage = '<html><body><h1>SAML Login Page</h1></body></html>';
 
 var sServiceDocXML = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
 	<service xml:base="http://services.odata.org/V2/Northwind/Northwind.svc/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns="http://www.w3.org/2007/app">\

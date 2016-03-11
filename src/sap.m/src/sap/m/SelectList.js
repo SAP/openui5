@@ -153,6 +153,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		SelectList.prototype.updateItems = function(sReason) {
 			this.bItemsUpdated = false;
+
+			// note: for backward compatibility and to keep the old data binding behavior,
+			// the items should be destroyed before calling .updateAggregation("items")
 			this.destroyItems();
 			this.updateAggregation("items");
 			this.bItemsUpdated = true;
@@ -840,7 +843,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @public
 		 */
 		SelectList.prototype.removeAllItems = function() {
-			return this.removeAllAggregation("items");
+			var aItems = this.removeAllAggregation("items", true);
+			this.$().children("li").remove();
+			return aItems;
 		};
 
 		/**
@@ -850,7 +855,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @public
 		 */
 		SelectList.prototype.destroyItems = function() {
-			this.destroyAggregation("items");
+			this.destroyAggregation("items", true);
 			return this;
 		};
 

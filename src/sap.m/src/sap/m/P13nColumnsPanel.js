@@ -35,12 +35,13 @@ sap.ui.define([
 				 * shown when the threshold has been exceeded. In the following example the message will be shown if more than 100 visible columns are
 				 * selected:
 				 *
-				 * @example
-				 * <code>
-				 * &lt;smartTable:customData&gt;
-				 *  &lt;core:CustomData key=&quot;p13nDialogSettings&quot; value='\{&quot;columns&quot;:\{&quot;visible&quot;: true, &quot;payload&quot;: \{&quot;visibleItemsThreshold&quot;: 100\}\}\}'/&gt;
-				 * &lt;/smartTable:customData&gt;
-				 * </code>
+				 * <pre>
+				 * customData&gt;
+				 * core:CustomData key=&quot;p13nDialogSettings&quot;
+				 * value='\{&quot;columns&quot;:\{&quot;visible&quot;: true, &quot;payload&quot;: \{&quot;visibleItemsThreshold&quot;: 3\}\}\}' /&gt;
+				 * /customData&gt;
+				 * </pre>
+				 *
 				 * @since 1.26.7
 				 */
 				visibleItemsThreshold: {

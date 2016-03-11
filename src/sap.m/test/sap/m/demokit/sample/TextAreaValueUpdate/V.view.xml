@@ -7,7 +7,7 @@
 		<Label text="ValueLiveUpdate"/>
 		<Switch state="{/ValueLiveUpdate}"/>
 		<Label text="Type here"/>
-		<Input id="TypeHere"
+		<TextArea id="TypeHere"
 			value="{/InputValue}"
 			valueLiveUpdate="{/ValueLiveUpdate}"
 			liveChange="handleLiveChange"

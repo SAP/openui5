@@ -209,5 +209,36 @@
         "references": []
       }
     ]
+  },
+  "1.36.3": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "511ce03ff25ea6de4872b5a7b46ac7037eba7577",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes requestCounter for changing bindings while request is still pending",
+        "references": []
+      }
+    ]
+  },
+  "1.36.4": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "c523f99883c709aa197778808745db63c26ff264",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: SuppressReset for rows aggregation if bound",
+        "references": []
+      },
+      {
+        "id": "e4ea2bd1f747ddb683972de0a2a7b07fb3b0ab5b",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes events for columnResize on dependant columns",
+        "references": []
+      }
+    ]
   }
 }

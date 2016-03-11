@@ -30,9 +30,7 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 			jQuery.sap.require("sap.ui.dt.DesignTime");
-			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-			var Preloader = sap.ui.dt.Preloader;
 			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
 
 			// ----- ResponsiveLayout -----
@@ -153,7 +151,12 @@
 				sap.ui.getCore().applyChanges();
 
 				var aElements = sap.ui.dt.ElementUtil.findAllPublicElements(this.oForm);
-				Preloader.load(aElements).then(function() {
+				var aQueue = [];
+				aElements.forEach(function(oElement) {
+					aQueue.push(sap.ui.dt.ElementUtil.loadDesignTimeMetadata(oElement));
+				});
+
+				Promise.all(aQueue).then(function() {
 					that.oFormDesignTime = new sap.ui.dt.DesignTime({
 						rootElements : [that.oForm]
 					});

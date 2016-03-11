@@ -3,37 +3,6 @@
 /* BlueCrystal theme                             */
 /* ============================================= */
 
-/*
-  Carousel control base styling
-*/
-.sapMCrslControls {
-	padding-top: 0.625rem;
-	text-align: center;
-}
-
-.sapMCrslControls a {
-	padding: 0.3125rem;
-	-webkit-user-select: none;
-	-moz-user-select: -moz-none;
-	user-select: none;
-	-webkit-user-drag: none;
-	-moz-user-drag: -moz-none;
-	user-drag: none;
-}
-
-.sapMCrslBulleted.sapMCrslBottomOffset {
-	position: absolute;
-	padding-top: 0;
-	bottom: 0.3125rem;
-	width: 100%;
-	z-index: 10;
-}
-
-.sapMCrslBulleted:not(.sapMCrslBottomOffset){
-	padding-bottom: 0.1875rem;
-	padding-top: 0.125rem;
-}
-
 /* Carousel controls: Bulleted */
 .sapMCrslBulleted > span {
 	text-indent: 2rem;
@@ -73,6 +42,7 @@
 .sapMCrslHud a {
 	z-index: 2;
 	opacity: 0;
+	display: none;
 	position: absolute;
 	top: calc(50% - 3.875rem);
 	width: 3rem;
@@ -101,11 +71,13 @@
 
 .sapMCrsl:hover .sapMCrslHud a {
 	opacity: 0.3;
+	display: block;
 }
 
 .sapMCrsl .sapMCrslHud a:hover,
 .sapMCrsl .sapMCrslHud a:focus {
 	opacity: 1;
+	display: block;
 }
 
 .sapMCrsl .sapMCrslHud.sapMCrslLeftmost a.sapMCrslPrev,
@@ -186,4 +158,8 @@ html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
 
 .sapMCrslItem.sapMCrslBottomOffset {
 	padding-bottom: 1.6875rem;
+}
+
+.sapMCrslItem.sapMCrslTopOffset {
+  padding-top: 1.6875rem;
 }

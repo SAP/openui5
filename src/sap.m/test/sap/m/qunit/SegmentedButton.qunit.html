@@ -815,6 +815,67 @@
 		});
 	}
 
+	test("ID's of internal elements properly set/rendered", function() {
+
+		var sItemIdComponent = "segmentedButtonItem-",
+			aButtons,
+			oSegmentedButton,
+			getExpectedButtonId,
+			getExpectedImageId,
+			i = 0;
+
+		getExpectedButtonId = function (iIndex) {
+			return sItemIdComponent + iIndex + "-button";
+		};
+
+		getExpectedImageId = function (iIndex) {
+			return sItemIdComponent + iIndex + "-button-img";
+		};
+
+		// Arrange
+		oSegmentedButton = new sap.m.SegmentedButton("segmentedButton", {
+			items: [
+				new sap.m.SegmentedButtonItem(sItemIdComponent + 0, {
+					icon: "sap-icon://home",
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem(sItemIdComponent + 1, {
+					icon: "sap-icon://home",
+					text: "Button 2"
+				}),
+				new sap.m.SegmentedButtonItem(sItemIdComponent + 2, {
+					icon: "images/candy_star_46x46.png",
+					text: "Button 3"
+				})
+			]
+		});
+
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		aButtons = oSegmentedButton.getButtons();
+
+		// Assert
+		for (;i < aButtons.length;i++) {
+			// Buttons
+			strictEqual(aButtons[i].getId(), getExpectedButtonId(i),
+					"Internal button id should be equal to the expected id");
+
+			strictEqual(aButtons[i].$().attr("id"), getExpectedButtonId(i),
+					"Rendered button id should be equal to the expected id");
+
+			// Images|icons
+			strictEqual(aButtons[i].$().find(".sapMBtnIcon").attr("id"), getExpectedImageId(i),
+					"Rendered image id should be equal to the expected id");
+		}
+
+		// Cleanup
+		aButtons = null;
+		oSegmentedButton.destroy();
+
+	});
+
 	/* =========================================================== */
 	/* Event module                                                */
 	/* =========================================================== */
@@ -1667,8 +1728,15 @@
 	});
 
 	test("Data binding items aggregation live model change", function() {
+		var mDataInitial,
+			mDataSecond,
+			oSegmentedButton,
+			aButtons,
+			oModel,
+			i;
+
 		// Arrange
-		var mDataInitial = {
+		mDataInitial = {
 			items: [
 				{key: "b1", text: "Initial btn 1"},
 				{key: "b2", text: "Initial btn 2"},
@@ -1676,7 +1744,7 @@
 			]
 		};
 
-		var mDataSecond = {
+		mDataSecond = {
 			selectedKey: "b7",
 			items: [
 				{key: "b1", text: "btn 1", icon: "sap-icon://attachment"},
@@ -1691,7 +1759,7 @@
 		};
 
 		// System under Test
-		var oSegmentedButton = new sap.m.SegmentedButton({
+		oSegmentedButton = new sap.m.SegmentedButton({
 			selectedKey: "{/selectedKey}",
 			items : {
 				path : "/items",
@@ -1705,7 +1773,7 @@
 			}
 		});
 
-		var oModel = new sap.ui.model.json.JSONModel();
+		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(mDataInitial);
 
 		sap.ui.getCore().setModel(oModel);
@@ -1720,6 +1788,14 @@
 		strictEqual(oSegmentedButton.getSelectedKey(), "b1", "selectedKey should be the default first item key");
 		strictEqual(oSegmentedButton.getItems()[0].getText(),
 				"Initial btn 1", "Button text should be equal to initial Model text");
+
+		// Get the buttons prior to changing the model of the control.
+		aButtons = oSegmentedButton.getButtons();
+
+		// Spy on destroy method of the internal buttons
+		for (i = 0;i < aButtons.length;i++) {
+			sinon.spy(aButtons[i], "destroy");
+		}
 
 		// Act
 		oModel.setData(mDataSecond);
@@ -1741,7 +1817,13 @@
 		strictEqual(oSegmentedButton.getButtons()[3].getIcon(), "sap-icon://home",
 				"Button icon should be equal to second Model icon");
 
+		for (i = 0;i < aButtons.length;i++) {
+			ok(aButtons[i].destroy.calledOnce, "Internally created button with index " + i + " from the old model should be destroyed ");
+			aButtons[i].destroy.restore();
+		}
+
 		// Cleanup
+		aButtons = null;
 		oSegmentedButton.destroy();
 	});
 
@@ -1969,6 +2051,19 @@
 				}),
 				new sap.m.SegmentedButtonItem({
 					text: "button 3"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "button 4",
+					tooltip: "tooltip 4"
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://attachment",
+					tooltip: "tooltip 5"
+				}),
+				new sap.m.SegmentedButtonItem({
+					icon: "sap-icon://attachment",
+					text: "button 6",
+					tooltip: "tooltip 6"
 				})
 			]
 		});
@@ -1989,6 +2084,24 @@
 
 		strictEqual(aButtons[2].$().attr("aria-label"), undefined,
 				"If we don't have a SAP Icon we don't need the aria-label attribute");
+
+		strictEqual(aButtons[3].$().attr("aria-label"), undefined,
+				"Don't put aria-label for text and tooltip");
+
+		strictEqual(aButtons[3].$().attr("title"), "tooltip 4",
+				"For text and tooltip use the later for title attr");
+
+		strictEqual(aButtons[4].$().attr("aria-label"), undefined,
+				"Don't use aria-label with icon + tooltip");
+
+		strictEqual(aButtons[4].$().attr("title"), "tooltip 5",
+				"Read the title attr when icon + tooltip are used");
+
+		strictEqual(aButtons[5].$().attr("aria-label"), undefined,
+				"Don't use aria-label with icon, tooltip and text");
+
+		strictEqual(aButtons[5].$().attr("title"), "tooltip 6",
+				"Read the title attr when icon, tooltip and text are used");
 
 		// Cleanup
 		oSegmentedButton.destroy();

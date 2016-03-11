@@ -111,5 +111,71 @@
         "references": []
       }
     ]
+  },
+  "1.36.3": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "cd2a450228ca1bec705fe19787de7d11bbd955d3",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.TabStrip: Scroll position is fixed",
+        "references": []
+      },
+      {
+        "id": "5b2076d06a695418e630978d50132293cc95a13b",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "e894579f9a2d931834df96a90eaf9c2929eb3ec6",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": []
+      },
+      {
+        "id": "25696f79619443099ad47dd2a8197c79568c8656",
+        "author": "Nikolay Kolarov \u003cnikolay.kolarov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ApplicationHeader: Composite parts are initialized only once now",
+        "references": []
+      }
+    ]
+  },
+  "1.36.4": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "60995790396cfdb229e63743b65823ea6842066a",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "ce480820f635f3e449c15306167b02483c5552b8",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.commons.Dialog: setInitialFocus is fixed",
+        "references": []
+      },
+      {
+        "id": "92979decba5e02f87df78082ff5eb35d2450c13d",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Aria-readonly property is now correctly read",
+        "references": []
+      },
+      {
+        "id": "b828a42e1fe7eb0664349de2575ae421eaf371b0",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Event flow is now correct",
+        "references": []
+      }
+    ]
   }
 }

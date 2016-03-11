@@ -66,11 +66,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * If set, interval headers are shown even if no <code>intervalHeaders</code> are assigned to the visible time frame.
+			 * If set, interval headers are shown like specified in <code>showEmptyIntervalHeaders</code>.
 			 *
 			 * If not set, no interval headers are shown even if <code>intervalHeaders</code> are assigned.
 			 */
 			showIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * If set, interval headers are shown even if no <code>intervalHeaders</code> are assigned to the visible time frame.
+			 *
+			 * If not set, no interval headers are shown if no <code>intervalHeaders</code> are assigned.
+			 *
+			 * <b>Note:</b> This property is only used if <code>showIntervalHeaders</code> is set to true.
+			 * @since 1.38.0
+			 */
+			showEmptyIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
 			 * If set, the provided weekdays are displayed as non-working days.
@@ -116,7 +126,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * the periodic update should be triggered only by this container control. Then the container control should
 			 * call <code>updateCurrentTimeVisualization</code> of the <code>CalendarRow</code> to update the visualization.
 			 */
-			updateCurrentTime : {type : "boolean", group : "Behavior", defaultValue : true}
+			updateCurrentTime : {type : "boolean", group : "Behavior", defaultValue : true},
+
+			/**
+			 * If set the appointments without text (only title) are rendered with a smaller height.
+			 *
+			 * <b>Note:</b> On phone devices this property is ignored, appointments are always rendered in full height
+			 * to allow touching.
+			 * @since 1.38.0
+			 */
+			appointmentsReducedHeight : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -271,6 +290,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	CalendarRow.prototype.invalidate = function(oOrigin) {
+
+		if (oOrigin && oOrigin instanceof sap.ui.unified.CalendarAppointment) {
+			// as position could change -> delete visible appointments to recalculate positions
+			var bFound = false;
+			for (var i = 0; i < this._aVisibleAppointments.length; i++) {
+				if (this._aVisibleAppointments[i].appointment == oOrigin) {
+					bFound = true;
+					break;
+				}
+			}
+
+			if (bFound) {
+				this._aVisibleAppointments = [];
+			}
+		}
+
+		Control.prototype.invalidate.apply(this, arguments);
+
+	};
+
 	CalendarRow.prototype.setStartDate = function(oStartDate){
 
 		if (!oStartDate) {
@@ -310,6 +350,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._aVisibleAppointments = [];
 
 		return this;
+
+	};
+
+	CalendarRow.prototype.setAppointmentsReducedHeight = function(bAppointmentsReducedHeight){
+
+		this.setProperty("appointmentsReducedHeight", bAppointmentsReducedHeight);
+
+		// as levels must be new calculated
+		this._aVisibleAppointments = [];
+
+		return this;
+
+	};
+
+	CalendarRow.prototype._getAppointmentReducedHeight = function(oAppointment){
+
+		var bReducedHeight = false;
+
+		if (!sap.ui.Device.system.phone && this.getAppointmentsReducedHeight() && !oAppointment.getText()) {
+			bReducedHeight = true;
+		}
+
+		return bReducedHeight;
 
 	};
 
@@ -1180,8 +1243,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var iStaticHeight = 0;
 		var iLevels = 0;
 		var i = 0;
+		var bAppointmentsReducedHeight = !sap.ui.Device.system.phone && this.getAppointmentsReducedHeight();
 
-		if (this.getShowIntervalHeaders()) {
+		if (this.getShowIntervalHeaders() && (this.getShowEmptyIntervalHeaders() || this._getVisibleIntervalHeaders().length > 0)) {
 			iStaticHeight = jQuery(this.$("AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0]).outerHeight(true);
 		}
 
@@ -1221,13 +1285,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oAppointment = this._aVisibleAppointments[i];
 			$Appointment = oAppointment.appointment.$();
 			var oBlockedLevels = {};
+			var bTwoLevels = bAppointmentsReducedHeight && !this._getAppointmentReducedHeight(oAppointment.appointment);
 
 			if (oAppointment.level < 0) {
 				for (var j = 0; j < this._aVisibleAppointments.length; j++) {
 					var oVisibleAppointment = this._aVisibleAppointments[j];
 					if (oAppointment != oVisibleAppointment &&
-							oAppointment.begin < 100 - oVisibleAppointment.end &&
-							100 - oAppointment.end > oVisibleAppointment.begin &&
+							oAppointment.begin < (Math.floor(1000 * (100 - oVisibleAppointment.end)) / 1000) &&
+							(Math.floor(1000 * (100 - oAppointment.end)) / 1000) > oVisibleAppointment.begin &&
 							oVisibleAppointment.level >= 0) {
 						// if one appointment starts directly at the end of an other one place it at the same level
 						if (oBlockedLevels[oVisibleAppointment.level]) {
@@ -1235,11 +1300,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						} else {
 							oBlockedLevels[oVisibleAppointment.level] = 1;
 						}
+
+						if (bAppointmentsReducedHeight && !this._getAppointmentReducedHeight(oVisibleAppointment.appointment)) {
+							// 2 levels used
+							if (oBlockedLevels[oVisibleAppointment.level + 1]) {
+								oBlockedLevels[oVisibleAppointment.level + 1]++;
+							} else {
+								oBlockedLevels[oVisibleAppointment.level + 1] = 1;
+							}
+						}
 					}
 				}
 
 				oAppointment.level = 0;
-				while (oBlockedLevels[oAppointment.level]) {
+				while (oBlockedLevels[oAppointment.level] || (bTwoLevels && oBlockedLevels[oAppointment.level + 1])) {
 					oAppointment.level++;
 				}
 				$Appointment.attr("data-sap-level", oAppointment.level);
@@ -1247,8 +1321,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			$Appointment.css("top", (iHeight * oAppointment.level + iStaticHeight) + "px");
 
-			if (iLevels < oAppointment.level) {
-				iLevels = oAppointment.level;
+			var iAppointmentEndLevel = oAppointment.level;
+			if (bTwoLevels) {
+				iAppointmentEndLevel++;
+			}
+			if (iLevels < iAppointmentEndLevel) {
+				iLevels = iAppointmentEndLevel;
 			}
 		}
 
@@ -1313,7 +1391,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		aAppointments.sort(function(oApp1, oApp2){
 
-			return oApp1.getStartDate() - oApp2.getStartDate();
+			var iResult = oApp1.getStartDate() - oApp2.getStartDate();
+
+			if (iResult == 0) {
+				// same start date -> longest appointment should be on top
+				iResult = oApp2.getEndDate() - oApp1.getEndDate();
+			}
+
+			return iResult;
 
 		});
 

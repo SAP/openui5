@@ -255,12 +255,12 @@
 		};
 		model.setData(data);
 
-		var sideNavigation = new sap.tnt.SideNavigation({
+		var sideNavigation = new sap.tnt.SideNavigation("SNav", {
 			expanded: false,
 			itemSelect: function (event) {
 				navContainer.to(event.getParameter('item').getKey())
 			},
-			item: new sap.tnt.NavigationList({
+			item: new sap.tnt.NavigationList("NList", {
 				items: {
 					template: new sap.tnt.NavigationListItem({
 						text: '{title}',

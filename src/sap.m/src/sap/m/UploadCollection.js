@@ -2136,23 +2136,23 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 						this._oItemToUpdate = null;
 						break;
 					} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-							this.aItems[i]._status === UploadCollection._uploadingStatus) {
+										 this.aItems[i]._status === UploadCollection._uploadingStatus) {
 						this.aItems.splice(i, 1);
 						this._oItemToUpdate = null;
 						break;
 					}
 				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-						this.aItems[i]._requestIdName === sRequestId &&
-						this.aItems[i]._status === UploadCollection._uploadingStatus &&
-						bUploadSuccessful) {
+									 this.aItems[i]._requestIdName === sRequestId &&
+									 this.aItems[i]._status === UploadCollection._uploadingStatus &&
+									 bUploadSuccessful) {
 					this.aItems[i]._percentUploaded = 100;
 					this.aItems[i]._status = UploadCollection._displayStatus;
 					this._oItemToUpdate = null;
 					break;
 				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-						this.aItems[i]._requestIdName === sRequestId &&
-						this.aItems[i]._status === UploadCollection._uploadingStatus ||
-						this.aItems[i]._status === UploadCollection._pendingUploadStatus) {
+									 this.aItems[i]._requestIdName === sRequestId &&
+									 this.aItems[i]._status === UploadCollection._uploadingStatus ||
+									 this.aItems[i]._status === UploadCollection._pendingUploadStatus) {
 					this.aItems.splice(i, 1);
 					this._oItemToUpdate = null;
 					break;

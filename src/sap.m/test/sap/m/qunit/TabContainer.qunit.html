@@ -166,6 +166,7 @@
 			equal(jQuery( "span." + sap.m.TabStripItem.CSS_CLASS_LABEL + ":contains("+sName+")").length, 1, 'Element with name "'+sName+'" is in the DOM.');
 		});
 
+
 		module("Misc", {
 			beforeEach: function () {
 				this.oTabContainer = new sap.m.TabContainer({
@@ -276,6 +277,37 @@
 			equal(this.oTabContainer.getItems().indexOf(oTabContainerItemToRemove), -1, "The item should not exist at any index");
 			equal(this.oTabContainer.getSelectedItem(), oTabContainerItemToBeSelected.getId(), "Selection is applied to the right item");
 			strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
+		});
+
+		test("Selection prevented", function () {
+			var oTabContainer = new sap.m.TabContainer({
+				items: {
+					path: "/ProductCollection",
+					template: oTemplate
+				},
+				itemSelect: function (oEvent) {
+					oEvent.preventDefault();
+				}
+			});
+
+			oTabContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var oItem = oTabContainer._getTabStrip().getItems()[1];
+			var oTabStrip = oTabContainer._getTabStrip();
+
+
+			strictEqual(oItem.getId() === oTabContainer.getSelectedItem(), false);
+
+			var aTargetTouches = [{pageX: oItem.$().offset().left + 2}];
+			qutils.triggerTouchEvent('touchstart', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oItem.getDomRef()}, 'on', true);
+			qutils.triggerTouchEvent('touchend', oTabStrip.getDomRef(), {changedTouches: aTargetTouches, target: oItem.getDomRef()}, 'on', true);
+
+			this.clock.tick(1000);
+
+			strictEqual(oItem.getId() === oTabContainer.getSelectedItem(), false);
+			oTabContainer.destroy();
+			oTabContainer = null;
 		});
 
 		test("Add button", function () {

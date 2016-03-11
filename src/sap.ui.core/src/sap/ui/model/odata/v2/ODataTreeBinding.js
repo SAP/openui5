@@ -175,10 +175,22 @@ sap.ui.define(['jquery.sap.global',
 		Leaf: "leaf"
 	};
 
+	/**
+	 * Builds a node filter string.
+	 * mParams.id holds the ID value for filtering on the hierarchy node.
+	 */
 	ODataTreeBinding.prototype._getNodeFilterParams = function (mParams) {
 		var sPropName = mParams.isRoot ? this.oTreeProperties["hierarchy-node-for"] : this.oTreeProperties["hierarchy-parent-node-for"];
 		var oEntityType = this._getEntityType();
 		return ODataUtils._createFilterParams([new sap.ui.model.Filter(sPropName, "EQ", mParams.id)], this.oModel.oMetadata, oEntityType);
+	};
+
+	/**
+	 * Builds the Level-Filter string
+	 */
+	ODataTreeBinding.prototype._getLevelFilterParams = function (sOperator, iLevel) {
+		var oEntityType = this._getEntityType();
+		return ODataUtils._createFilterParams([new sap.ui.model.Filter(this.oTreeProperties["hierarchy-level-for"], sOperator, iLevel)], this.oModel.oMetadata, oEntityType);
 	};
 
 	/**
@@ -585,11 +597,15 @@ sap.ui.define(['jquery.sap.global',
 					}
 
 					if (sNodeId) {
+						sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
+
 						//retrieve the correct context for the sNodeId (it's an OData-Key) and resolve the correct hierarchy node property as a filter value
 						var oNodeContext = this.oModel.getContext("/" + sNodeId);
 						var sNodeIdForFilter = oNodeContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
-						sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeIdForFilter + "'") + sFilterParams);
+
+						//construct node filter parameter
+						var sNodeFilterParameter = this._getNodeFilterParams({id: sNodeIdForFilter});
+						aParams.push("$filter=" + sNodeFilterParameter + sFilterParams);
 					} else if (sNodeId == null) {
 						// no root node id is given: sNodeId === null
 						// in this case we use the root level
@@ -601,8 +617,8 @@ sap.ui.define(['jquery.sap.global',
 						// this is for compatibility reasons with different backend-systems, which do not support GE operators on the level
 						var sLevelFilter = "";
 						if (!this.bClientOperation || this.iRootLevel > 0) {
-							var sLevelFilterOperator = this.bClientOperation ? " ge " : " eq ";
-							sLevelFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + sLevelFilterOperator + this.iRootLevel);
+							var sLevelFilterOperator = this.bClientOperation ? "GE" : "EQ";
+							sLevelFilter = this._getLevelFilterParams(sLevelFilterOperator, this.iRootLevel);
 						}
 
 						//only build filter statement if necessary
@@ -698,7 +714,7 @@ sap.ui.define(['jquery.sap.global',
 		// default filter is on the rootLevel
 		var sLevelFilter = "";
 		if (this.iRootLevel > 0) {
-			sLevelFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " ge " + this.getRootLevel());
+			sLevelFilter = this._getLevelFilterParams("GE", this.getRootLevel());
 		}
 
 		// if necessary we add all other filters to the count request
@@ -780,7 +796,7 @@ sap.ui.define(['jquery.sap.global',
 			if (sNodeId != null) {
 				sNodeFilter = this._getNodeFilterParams({id: sHierarchyNodeId});
 			} else {
-				sNodeFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + this.getRootLevel());
+				sNodeFilter = this._getLevelFilterParams("EQ", this.getRootLevel());
 			}
 
 		} else {
@@ -1411,6 +1427,7 @@ sap.ui.define(['jquery.sap.global',
 			});
 
 			if (this.bClientOperation) {
+				this.addSortComparators(aSorters, this.oEntityType);
 				if (this.oAllKeys) {
 					//apply client side sorter
 					this._applySort();
@@ -1432,6 +1449,28 @@ sap.ui.define(['jquery.sap.global',
 		} else {
 			return this;
 		}
+	};
+
+	/**
+	 * Sets the comparator for each sorter in the sorters array according to the
+	 * Edm type of the sort property
+	 * @private
+	 */
+	ODataTreeBinding.prototype.addSortComparators = function(aSorters, oEntityType) {
+		var oPropertyMetadata, sType;
+
+		if (!oEntityType) {
+			jQuery.sap.log.warning("Cannot determine sort comparators, as entitytype of the collection is unkown!");
+			return;
+		}
+		jQuery.each(aSorters, function(i, oSorter) {
+			if (!oSorter.fnCompare) {
+				oPropertyMetadata = this.oModel.oMetadata._getPropertyMetadata(oEntityType, oSorter.sPath);
+				sType = oPropertyMetadata && oPropertyMetadata.type;
+				jQuery.sap.assert(oPropertyMetadata, "PropertyType for property " + oSorter.sPath + " of EntityType " + oEntityType.name + " not found!");
+				oSorter.fnCompare = ODataUtils.getComparator(sType);
+			}
+		}.bind(this));
 	};
 
 	/**
@@ -1921,7 +1960,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @public
 	 */
 	ODataTreeBinding.prototype.getRootLevel = function() {
-		return this.iRootLevel;
+		return parseInt(this.iRootLevel, 10);
 	};
 
 	/**

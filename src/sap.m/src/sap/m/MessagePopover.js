@@ -74,7 +74,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					/**
 					 * A list with message items
 					 */
-					items: {type: "sap.m.MessagePopoverItem", multiple: true, singularName: "item"}
+					items: {type: "sap.m.MessagePopoverItem", multiple: true, singularName: "item"},
+
+					/**
+					 * A custom header button
+					 */
+					headerButton: {type: "sap.m.Button", multiple: false}
 				},
 				events: {
 					/**
@@ -313,8 +318,13 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 */
 		MessagePopover.prototype.onBeforeRenderingPopover = function () {
 
+			var headerButton = this.getHeaderButton();
+			if (headerButton) {
+				this._oListHeader.insertContent(headerButton, 2);
+			}
+
 			// Bind automatically to the MessageModel if no items are bound
-			if (!this.getBindingInfo("items")) {
+			if (!this.getItems().length) {
 				this._makeAutomaticBinding();
 			}
 

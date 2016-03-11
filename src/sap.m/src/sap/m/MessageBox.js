@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 				 * @static
 				 */
 				MessageBox.show = function (vMessage, mOptions) {
-					var oDialog, oMessageText, oMessageContent, oResult = null, that = this, aButtons = [], i,
+					var oDialog, oMessageText, vMessageContent, oResult = null, that = this, aButtons = [], i,
 							sIcon, sTitle, vActions, fnCallback, sDialogId, sClass,
 							mDefaults = {
 								id: sap.ui.core.ElementMetadata.uid("mbox"),
@@ -355,32 +355,24 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 					}
 
 					if (typeof (vMessage) === "string") {
-						oMessageText = new Text({
+						vMessageContent = new Text({
 								textDirection: mOptions.textDirection
 							}).setText(vMessage).addStyleClass("sapMMsgBoxText");
+
+						// If we have only text we need to keep a reference to it and add it to the aria-labelledby attribute of the dialog.
+						oMessageText = vMessageContent;
+					} else if (vMessage instanceof sap.ui.core.Control) {
+						vMessageContent = vMessage.addStyleClass("sapMMsgBoxText");
 					}
 
+					// If we have additional details, we should wrap the content in a details layout.
 					if (mOptions && mOptions.hasOwnProperty("details") && mOptions.details !== "") {
-						oMessageContent = getInformationLayout(mOptions, oMessageText);
-					} else {
-						oMessageContent = oMessageText;
+						vMessageContent = getInformationLayout(mOptions, vMessageContent);
 					}
 
 					function onOpen () {
 						if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-							var $Dialog = oDialog.$(),
-								sMessageTextId;
-
-							$Dialog.attr("role", "alertdialog");
-
-							if (oMessageText) {
-								sMessageTextId = oMessageText.getId();
-
-								// Appends a value to the aria-labelledby attribute
-								$Dialog.attr("aria-labelledby", function (ix, val) {
-									return val ? val + " " + sMessageTextId : sMessageTextId;
-								});
-							}
+							oDialog.$().attr("role", "alertdialog");
 						}
 					}
 
@@ -388,14 +380,15 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './TextAre
 						id: mOptions.id,
 						type: sap.m.DialogType.Message,
 						title: mOptions.title,
-						content: oMessageContent,
+						content: vMessageContent,
 						icon: mIcons[mOptions.icon],
 						initialFocus: getInitialFocusControl(),
 						verticalScrolling: mOptions.verticalScrolling,
 						horizontalScrolling: mOptions.horizontalScrolling,
 						afterOpen: onOpen,
 						afterClose: onclose,
-						buttons: aButtons
+						buttons: aButtons,
+						ariaLabelledBy: oMessageText ? oMessageText.getId() : undefined
 					});
 
 					if (mClasses[mOptions.icon]) {

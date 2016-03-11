@@ -31,8 +31,8 @@
 		content : [taComment = new sap.m.TextArea({
 			placeholder : "Please add your comment",
 			rows : 6,
+			growing: true,
 			value: lorem,
-			maxLength: 255,
 			width: "100%"
 		})],
 		leftButton : new sap.m.Button({
@@ -105,11 +105,18 @@
 				placeholder : "Max Length : 5",
 				maxLength : 5,
 				rows : 2
+			}),
+			ta8 = new sap.m.TextArea({
+				value : "Growing TextArea:\n\n" + lorem + lorem,
+				width : "100%",
+				growing : true,
+				//growingMaxLines : 5
 			})
 		]
 	});
 
 	new sap.m.App().addPage(page).placeAt("body");
+
 </script>
 </head>
 <body id="body" class="sapUiBody">

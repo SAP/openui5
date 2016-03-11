@@ -16,7 +16,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 * A model implementation should specify its supported binding modes and set the default binding mode accordingly
 	 * (e.g. if the model supports only one way binding the default binding mode should also be set to one way).
 	 *
-	 * This MessageProcessor is able to handle Messages with the normal binding syntax as target.
 	 *
 	 * @namespace
 	 * @name sap.ui.model
@@ -25,6 +24,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 
 	/**
 	 * Constructor for a new Model.
+	 *
+	 * Every Model is a MessageProcessor that is able to handle Messages with the normal binding path syntax in the target.
 	 *
 	 * @class
 	 * This is an abstract base class for model objects.

@@ -106,12 +106,15 @@
 				}
 			});
 
+			var headerButton = new sap.m.Button({text: "Clear"});
+
 			//list.bindAggregation("items", "/", oMessageTemplate);
 			var oMessagePopover = new sap.m.MessagePopover({
 				items: {
 					path: "/messages",
 					template: oMessageTemplate
 				},
+				headerButton: headerButton,
 				beforeOpen: function (oEvt) {
 					console.log("beforeOpen", oEvt.getParameters());
 				},

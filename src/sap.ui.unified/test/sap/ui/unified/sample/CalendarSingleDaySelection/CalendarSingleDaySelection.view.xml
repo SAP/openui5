@@ -10,10 +10,10 @@
 			<u:Calendar
 					id="calendar"
 					select="handleCalendarSelect" />
+			<Button
+					press="handleSelectToday"
+					text="Select Today" />
 			<l:HorizontalLayout>
-				<Button
-						press="handleSelectToday"
-						text="Select Today" />
 				<Label
 						text="Selected Date (yyyy-mm-dd):"
 						class="labelMarginLeft" />

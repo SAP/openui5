@@ -1106,7 +1106,7 @@
 					"name5": true,
 					"name6": true,
 					"status1": true,
-					"status2": true,
+					"status2": false,
 					"status3": true,
 					"value3": true
 				};
@@ -1140,6 +1140,30 @@
 				done();
 			}, 1000);
 
+		});
+
+		test("Select and deselect a filter detail item works correctly", function  (assert) {
+			var done = assert.async(),
+				that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[1]); // name details page
+
+			setTimeout(function() {
+				strictEqual(this.oVSD._filterDetailList.getItems()[0].getSelected(),  true, 'The first item is initially selected');
+
+//				//Act
+				this.oVSD._filterDetailList.getItems()[0].$().trigger('tap');
+
+				setTimeout(function () {
+						strictEqual(that.oVSD._filterDetailList.getItems()[0].getSelected(), false, 'The first item is not selected');
+						done();
+				}.bind(this), 1000);
+			}.bind(this), 1000);
 		});
 
 		test("Select All checkbox works correctly", function  (assert) {
@@ -1621,8 +1645,6 @@
 			}, delay);
 		});
 
-
-
 		test("Reopening filter detail page of a removed detail with model change - remove single filter", function (assert) {
 			var delay = 1000,
 				done = assert.async(),
@@ -1657,7 +1679,6 @@
 				}, delay);
 			}, delay);
 		});
-
 
 		test("Reopening filter detail page of a removed detail with model change - remove all filters", function (assert) {
 			var delay = 1000,
@@ -1695,7 +1716,7 @@
 			}, delay);
 		});
 
-		test("Reset Button is availabe on second open of the ViewSettinsDialog", function () {
+		test("Reset Button is available on second open of the ViewSettinsDialog", function () {
 			var modelData = this.getFirstModelData();
 			var modelData2 = this.getSecondModelData();
 			var oModel = new sap.ui.model.json.JSONModel();
@@ -1718,6 +1739,46 @@
 			this.oVSD.setModel(model2);
 			this.oVSD.open();
 			strictEqual(this.oVSD._getSubHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
+		});
+
+		test("Reset group items selection on cancel", function () {
+			var delay = 1000,
+				done = assert.async();
+
+			var aGroupItems = [
+				new sap.m.ViewSettingsItem({
+					key: "test1",
+					text: "test1"
+				}),
+				new sap.m.ViewSettingsItem({
+					key: "test2",
+					text: "test2"
+				}),
+				new sap.m.ViewSettingsItem({
+					key: "test3",
+					text: "test3"
+				})];
+
+			aGroupItems.forEach(function (oItem) {
+				this.oVSD.addGroupItem(oItem);
+			}, this);
+			this.oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(), "None", "Should have None button selected");
+
+			this.oVSD.setSelectedGroupItem(aGroupItems[0]);
+			sap.ui.getCore().applyChanges();
+			notStrictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(), "None", "Should have changed the selection");
+
+			this.oVSD._dialog.getEndButton().firePress();
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function () {
+				this.oVSD.open();
+				strictEqual(sap.ui.getCore().byId(this.oVSD.getSelectedGroupItem()).getText(), "None", "Previous selection should have been reset");
+				done();
+			}.bind(this), delay);
 		});
 
 		module("Data binding", {

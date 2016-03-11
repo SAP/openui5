@@ -207,6 +207,24 @@
 				}
 			});
 
+			var oActionSheetWithoutIcons = new sap.m.ActionSheet({
+				buttons: [
+					new sap.m.Button("specialButton",{
+						icon: "sap-icon://decline",
+						visible: false,
+						text: "First button"
+					}),
+					new sap.m.Button({
+						text: "Second button"
+					}),
+					new sap.m.Button({
+						text: "Third Button"
+					}),
+					new sap.m.Button({
+						text: "Fourth button"
+					})
+				]
+			});
 
 			var page1 = new sap.m.Page("page1", {
 				title: "Mobile ActionSheet Control",
@@ -243,6 +261,12 @@
 							oActionSheetWithManyButtons.openBy(this);
 						}
 					}).addStyleClass("newButton"),
+					new sap.m.Button({
+						text: "Without icons",
+						press: function () {
+							oActionSheetWithoutIcons.openBy(this);
+						}
+					}),
 					oList2
 				],
 				footer: new sap.m.Bar({

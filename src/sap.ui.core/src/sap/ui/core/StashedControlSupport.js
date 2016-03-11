@@ -54,10 +54,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 						 * the stashed state of the control
 						 */
 						stashed: true,
-						// /**
-						//  * description of the stashed control for display purposes
-						//  */
-						// stashedAlias: true,
 						/**
 						 * id of the actual parent of the control (virtual control tree position)
 						 */
@@ -119,10 +115,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 		 * @private
 		 */
 		StashedControlSupport.mixInto = function(fnClass, bDefaultValue /*=true*/) {
-			// Ensure only Controls are enhanced // FIXME check does not work
-			// if (!(fnClass.getMetadata().isInstanceOf("sap.ui.core.Control"))) {
-			// 	throw new Error("StashedControlSupport only supports subclasses of Control - " + fnClass.getMetadata().getName());
-			// }
 			jQuery.sap.assert(!fnClass.getMetadata().hasProperty("stashed"), "StashedControlSupport: fnClass already has property 'active', sideeffects possible", fnClass.getMetadata().getName());
 			jQuery.sap.assert(!fnClass.prototype.setStashed, "StashedControlSupport: fnClass already has method 'setStashed', sideeffects possible", fnClass.getMetadata().getName());
 			mixInto(fnClass, bDefaultValue);
@@ -131,55 +123,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 		// private function without validity checks
 		function mixInto(fnClass, bDefaultValue) {
 			// add the properties
-			// fnClass.getMetadata().addProperty("stashed", {type: "boolean", defaultValue: (bDefaultValue === true)});
-			// fnClass.getMetadata().addProperty("stashedAlias", {type: "string"});
-			// fnClass.getMetadata().generateAccessors();
 			fnClass.getMetadata().addSpecialSetting("stashed", {type: "boolean", defaultValue: !!bDefaultValue});
-			// fnClass.getMetadata().addSpecialSetting("stashedAlias", {type: "string"});
 
 			// mix the required methods into the target fnClass
 			fnClass.prototype.setStashed = function(bStashed) {
 				if (this.stashed === true && !bStashed) {
-					// if (bStashed === false) {
-						if (this.sParentId) {
-							var oControl = unstash(this, sap.ui.getCore().byId(this.sParentId));
-							// we need to set the property to the stashed control
-							// oControl.setProperty("stashed", bStashed);
-							oControl.stashed = false;
-							return;
-						}
-					// }
-					// else if (bStashed === true && this.getParent()) {
-					// 	stash(this, this.getParent());
-					// }
+					if (this.sParentId) {
+						var oControl = unstash(this, sap.ui.getCore().byId(this.sParentId));
+						// we need to set the property to the stashed control
+						oControl.stashed = false;
+						return;
+					}
 				} else if (bStashed) {
 					jQuery.sap.log.warning("Cannot re-stash a control", this.getId());
 				}
-				// this.setProperty("stashed", bStashed);
 			};
 
 			fnClass.prototype.getStashed = function() {
 				return this.stashed;
 			};
 
-			// fnClass.prototype.getStashedAlias = function() {
-			// 	return this.stashedAlias;
-			// };
-
 			var fnDestroy = fnClass.prototype.destroy;
 			fnClass.prototype.destroy = function() {
 				delete stashedControls[this.getId()];
 				fnDestroy.apply(this, arguments);
 			};
-
-			// var fnClone = fnClass.prototype.clone;
-			// fnClass.prototype.clone = function() {
-			// 	var c = fnClone.apply(this, arguments);
-			// 	if (c.stashed === true) {
-			// 		stashedControls[c.getId()] = c;
-			// 	}
-			// 	return c;
-			// };
 
 			fnClass.prototype._stash = function(sParentId, sParentAggregationName) {
 				// for later unstash these parent infos have to be kept
@@ -201,33 +169,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 					oParent.getMetadata().getAggregation(sParentAggregationName).add(oParent, c);
 				});
 			}
-			// else {
-				// control has already been instantiated and must hence not be created
-				// oParent.getMetadata().getAggregation(oControl.sParentAggregationName).add(oParent, oControl);
-				// delete oControl.sParentId;
-			// }
 			delete stashedControls[oControl.getId()];
 			return oControl;
 		}
-
-		// function stash(oControl, oParent) {
-		// 	var sParentAggregationName = oControl.sParentAggregationName;
-		// 	// remove from control tree - disable event propagation, databinding, etc
-		// 	oParent.getMetadata().getAggregation(sParentAggregationName).remove(oParent, oControl);
-		// 	// remember parent info for later assignment
-		// 	oControl.sParentId = oParent.getId();
-		// 	oControl.sParentAggregationName = sParentAggregationName;
-		// 	// register deactivated control for later reactivation
-		// 	stashedControls[oControl.getId()] = oControl;
-		// }
 
 		function getStashedControls(bAsInstance, sParentId) {
 			var aStashedChildren = [];
 			for (var sId in stashedControls) {
 				var vInstanceOrId = bAsInstance ? stashedControls[sId] : stashedControls[sId].getId();
-				if (!sParentId) {
-					aStashedChildren.push(vInstanceOrId);
-				} else if (stashedControls[sId].sParentId === sParentId) {
+				if (!sParentId || stashedControls[sId].sParentId === sParentId) {
 					aStashedChildren.push(vInstanceOrId);
 				}
 			}
@@ -266,7 +216,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 		 * @name sap.ui.core.StashedControlSupport.createStashedControl
 		 * @param {string} sId id of the actual control the StashedControl serves as surrogate for
 		 * @param {object} mSettings the settings object
-		//  * @param {string} mSettings.stashedAlias description of the stashed control for display purposes
 		 * @param {string} mSettings.sParentId id of the actual parent of the control (virtual control tree position)
 		 * @param {string} mSettings.sParentAggregationName name of the aggregation in which the actual control would be placed
 		 * @param {string} mSettings.fnCreate hook for the later creation, which should return the actual control
@@ -275,7 +224,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 		 * @private
 		 */
 		StashedControlSupport.createStashedControl = function(sId, mSettings) {
-			// jQuery.sap.assert(mSettings.stashedAlias, "StashedControl should have a 'stashedAlias'", sId);
 			return new StashedControl(sId, mSettings);
 		};
 

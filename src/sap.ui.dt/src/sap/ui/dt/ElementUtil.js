@@ -370,7 +370,12 @@ function(jQuery) {
 		return oDTMetadata || {};
 	};
 
-
+	/**
+	 *
+	 */
+	ElementUtil.loadDesignTimeMetadata = function(oElement) {
+		return oElement ? oElement.getMetadata().loadDesignTime() : Promise.resolve({});
+	};
 
 	return ElementUtil;
 }, /* bExport= */ true);

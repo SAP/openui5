@@ -20,13 +20,14 @@
 					parameters: {operationMode: 'Server'}
 				}"
 				threshold="15"
-				enableBusyIndicator="true">
+				enableBusyIndicator="true"
+				ariaLabelledBy="title">
 				<noData>
 					<m:BusyIndicator class="sapUiMediumMargin"/>
 				</noData>
 				<toolbar>
 					<m:Toolbar>
-						<m:Title text="Products"></m:Title>
+						<m:Title id="title" text="Products"></m:Title>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://refresh"

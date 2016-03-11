@@ -6,7 +6,7 @@
 
 <!-- Initialization -->
 <script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
+	src="../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.ui.commons,sap.ui.layout,sap.m"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-language="en_US">
 </script>
 
@@ -143,6 +143,141 @@
 
 	});
 
+	asyncTest("PropertyBinding suspend/resume with control value change", function() {
+		setup();
+		var oInput = new sap.m.Input({
+			value: "{/name}"
+		});
+		oInput.placeAt("target1");
+		oInput.attachChange(function() {
+			ok(false, "should not land here!");
+		});
+		var oBinding = oInput.getBinding("value");
+		oBinding.attachChange(function() {
+			equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+			equal(oBinding.oValue, "Peter", "Property Binding internal value");
+			equal(oModel.getProperty("/name"), "Peter", "model value");
+			equal(oInput.getValue(), "Peter", "Input field returns value");
+			oInput.destroy();
+			start();
+		});
+		ok(oBinding !== undefined, "binding check");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		oBinding.suspend();
+		oInput.setValue("Petre");
+		equal(oInput.getValue(), "Petre", "Input field returns value");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		equal(oModel.getProperty("/name"), "Peter", "model value");
+
+		oBinding.resume();
+	});
+
+	asyncTest("PropertyBinding suspend/resume with model value change", function() {
+		setup();
+		var oInput = new sap.m.Input({
+			value: "{/name}"
+		});
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+		var oBinding = oInput.getBinding("value");
+		oBinding.attachChange(function() {
+			equal(oBinding.getValue(), "Petre", "Property Binding returns value");
+			equal(oBinding.oValue, "Petre", "Property Binding internal value");
+			equal(oModel.getProperty("/name"), "Petre", "model value");
+			equal(oInput.getValue(), "Petre", "Input field returns value");
+			oInput.destroy();
+			start();
+		});
+		ok(oBinding !== undefined, "binding check");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oInput.getValue(), "Peter", "Input field returns value");
+		oBinding.suspend();
+		oModel.setProperty("/name", "Petre");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		equal(oModel.getProperty("/name"), "Petre", "model value");
+		equal(oInput.getValue(), "Peter", "Input field returns value");
+
+		oBinding.resume();
+	});
+
+	asyncTest("PropertyBinding suspend/resume with control and model value change", function() {
+		setup();
+		var oInput = new sap.m.Input({
+			value: "{/name}"
+		});
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+		var oBinding = oInput.getBinding("value");
+		oBinding.attachChange(function() {
+			equal(oBinding.getValue(), "Petre", "Property Binding returns value");
+			equal(oBinding.oValue, "Petre", "Property Binding internal value");
+			equal(oModel.getProperty("/name"), "Petre", "model value");
+			equal(oInput.getValue(), "Petre", "Input field returns value");
+			oInput.destroy();
+			start();
+		});
+		ok(oBinding !== undefined, "binding check");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oInput.getValue(), "Peter", "Input field returns value");
+		oBinding.suspend();
+		oInput.setValue("Petrus");
+		equal(oInput.getValue(), "Petrus", "Input field returns value");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		oBinding.setValue("xxx");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		equal(oModel.getProperty("/name"), "Peter", "model value");
+		oModel.setProperty("/name", "Petre");
+		equal(oInput.getValue(), "Petrus", "Input field returns value");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		equal(oModel.getProperty("/name"), "Petre", "model value");
+		
+		oBinding.resume();
+	});
+
+	asyncTest("PropertyBinding suspend/resume with model and control value change", function() {
+		setup();
+		var oInput = new sap.m.Input({
+			value: "{/name}"
+		});
+		oInput.placeAt("target1");
+		oInput.attachChange(this, function() {
+			ok(false, "should not land here!");
+		});
+		var oBinding = oInput.getBinding("value");
+		oBinding.attachChange(function() {
+			equal(oBinding.getValue(), "Petre", "Property Binding returns value");
+			equal(oBinding.oValue, "Petre", "Property Binding internal value");
+			equal(oModel.getProperty("/name"), "Petre", "model value");
+			equal(oInput.getValue(), "Petre", "Input field returns value");
+			oInput.destroy();
+			start();
+		});
+		ok(oBinding !== undefined, "binding check");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oInput.getValue(), "Peter", "Input field returns value");
+		oBinding.suspend();
+		oModel.setProperty("/name", "Petre");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		equal(oInput.getValue(), "Peter", "Input field returns value");
+		equal(oModel.getProperty("/name"), "Petre", "model value");
+		oInput.setValue("Petrus");
+		equal(oInput.getValue(), "Petrus", "Input field returns value");
+		equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		equal(oBinding.oValue, "Peter", "Property Binding internal value");
+		equal(oModel.getProperty("/name"), "Petre", "model value");
+		oBinding.resume();
+	});
+
 </script>
 
 </head>
@@ -152,5 +287,8 @@
 <h2 id="qunit-userAgent"></h2>
 <div id="qunit-testrunner-toolbar"></div>
 <ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
 </body>
 </html>

@@ -65,7 +65,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			 * Please use setShowOverlay instead.
 			 */
 			dirty : {type : "boolean", group : "Appearance", defaultValue : null, deprecated: true}
-		}
+		},
+		designTime : true
 	}});
 
 
@@ -94,6 +95,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
 
+		var oAccExtension = this._getAccExtension();
+		oAccExtension.setReadOnly(true);
+		oAccExtension.setTreeMode(true);
+
 		this.addStyleClass("sapUiAnalyticalTable");
 
 		this.attachBrowserEvent("contextmenu", this._onContextMenu);
@@ -104,16 +109,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this.setEnableColumnFreeze(true);
 		this.setEnableCellFilter(true);
 		this._aGroupedColumns = [];
-
-		// adopting properties and load icon fonts for bluecrystal
-		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_bluecrystal") {
-
-			// add the icon fonts
-			jQuery.sap.require("sap.ui.core.IconPool");
-			sap.ui.core.IconPool.insertFontFaceStyle();
-
-			// defaulting the rowHeight -> is set via CSS
-		}
 	};
 
 	AnalyticalTable.prototype.setFixedRowCount = function() {
@@ -124,15 +119,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.setFixedBottomRowCount = function() {
 		jQuery.sap.log.error("The property fixedBottomRowCount is managed by the AnalyticalTable and must not be set!");
 		return this;
-	};
-
-	/**
-	 * Rerendering handling
-	 * @private
-	 */
-	AnalyticalTable.prototype.onAfterRendering = function() {
-		Table.prototype.onAfterRendering.apply(this, arguments);
-		this.$().find("[role=grid]").attr("role", "treegrid");
 	};
 
 	AnalyticalTable.prototype.setDirty = function(bDirty) {
@@ -173,7 +159,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		var vReturn = this.bindAggregation("rows", oBindingInfoSanitized);
 
 		var aColumnInfo = this._getColumnInformation();
-		this._updateTotalRow(aColumnInfo);
+		this._updateTotalRow(aColumnInfo, true);
 
 		return vReturn;
 	};

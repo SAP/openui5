@@ -16,10 +16,11 @@
 				rows="{/ProductCollection}"
 				visibleRowCount="7"
 				enableCellFilter="{ui>/cellFilterOn}"
-				filter="filterPrice">
+				filter="filterPrice"
+				ariaLabelledBy="title">
 				<toolbar>
 					<m:Toolbar>
-						<m:Title text="Products"></m:Title>
+						<m:Title id="title" text="Products"></m:Title>
 						<m:ToolbarSpacer/>
 						<m:ToggleButton
 							icon="sap-icon://complete"

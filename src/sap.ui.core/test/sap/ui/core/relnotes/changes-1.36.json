@@ -734,5 +734,134 @@
         "references": []
       }
     ]
+  },
+  "1.36.3": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "f62344641f46c60574acca8d77c05621732fb475",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Japanese date: Parse dates without era as current era",
+        "references": []
+      },
+      {
+        "id": "64b12a740d33fc59d0003641c5f5b71bc5ec9dd1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "LocalBusyIndicator: Skip Delayed-Call If Delay \"0\"",
+        "references": []
+      },
+      {
+        "id": "d0773eff16c6fd12c8da8ce9d502c656216472f0",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageManager: avoid undefined error after removal of messages",
+        "references": []
+      },
+      {
+        "id": "21c158a10b9f61cf98cb9e039d58b0e4804d501e",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "model.Binding: fix constructor JSDoc",
+        "references": []
+      },
+      {
+        "id": "e0b2736c651ebf9e62bcd080c56bc95633ee3792",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.NumberFormat: insert space between currency code and number based on spacing rule in CLDR",
+        "references": []
+      },
+      {
+        "id": "dc6cacc0b04bb0d32aaeb478fac626a5c09c1c4d",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Fixed support for broken service implementations",
+        "references": []
+      }
+    ]
+  },
+  "1.36.4": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "3770457524e35fdb4c484ab76d49a8c0c354161e",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Avoid stacked animations",
+        "references": []
+      },
+      {
+        "id": "6677e370f151ed62d7e08c2357ea2b7ba02778af",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding: fix filterrecursive if no filter defined",
+        "references": []
+      },
+      {
+        "id": "27ff6278fa8c16c130b7f406b5f7591513b40df9",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component#onWindowUnload: execution cannot be guaranteed",
+        "references": []
+      },
+      {
+        "id": "f4eea2b5605e61947e66a75f3cf5d3d3d5022d52",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataState: Remove Control Messages With New Binding",
+        "references": []
+      },
+      {
+        "id": "00a9a3d1c3b0308202516553c3420202ffddae47",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "FocusHandler: fail safety after destruction",
+        "references": []
+      },
+      {
+        "id": "22b8550e5701464e9983a152462615c27a1c8f2e",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataContextBinding: Fix duplicate requests in initial function",
+        "references": []
+      },
+      {
+        "id": "455bffcc3f1c71256468d95c4756177bb8a6ff3e",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "Revert sap.ui.core.mvc.XMLView: fixed request assignment",
+        "references": []
+      },
+      {
+        "id": "f46f8d621440407a49fa75aabc3be8eeb4b1602a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.tutorial.navigation: explicit set log level for steps 16 and 17",
+        "references": []
+      },
+      {
+        "id": "c1b9e6ba9daa9aef01524736a00de63dcb81ac03",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.OData(List|Tree)Binding: Correctly sort according to Edm type",
+        "references": []
+      },
+      {
+        "id": "2b72c2657b3d9f3a336484ce3ce7938e49df304b",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Call error handler in case of SAML redirect",
+        "references": []
+      },
+      {
+        "id": "fb660111d9ce1aa6980a1b858c0dc436052f0ebd",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding - Correct Datatype in $filter",
+        "references": []
+      }
+    ]
   }
 }

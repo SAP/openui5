@@ -58,7 +58,9 @@
 			});
 
 			QUnit.module("Given the ComponentContainer is created..", {
-				beforeEach : function() {
+				beforeEach : function(assert) {
+					var done = assert.async();
+
 					this.oComponent = new CustomComponent();
 
 					this.oComponentContainer = new sap.ui.core.ComponentContainer("CompCont1", {
@@ -71,7 +73,10 @@
 						rootElements : [this.oLayout]
 					});
 
-					sap.ui.getCore().applyChanges();
+					this.oDesignTime.attachEventOnce("synced", function() {
+						sap.ui.getCore().applyChanges();
+						done();
+					});
 				},
 				afterEach : function() {
 					this.oLayout.destroy();

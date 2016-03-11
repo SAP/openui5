@@ -306,6 +306,138 @@
 		assert.ok(jQuery.sap.domById("numeric-cnt-failed-icon-image"), "Icon was rendered successfully");
 	});
 
+	/* --------------------------------------- */
+	/* Test internal methods                   */
+	/* --------------------------------------- */
+	QUnit.module("Internal methods for ARIA-label and tooltip handling", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				header : "header text of GenericTile",
+				subheader : "subheader text of GenericTile",
+				tileContent : [new sap.m.TileContent("tile-cont-1"), new sap.m.TileContent("tile-cont-2")]
+			}).placeAt("qunit-fixture");
+			// stub function _getAriaAndTooltipText of the content
+			this.oGenericTile.getTileContent()[0]._getAriaAndTooltipText = function() {
+				return "ARIA and tooltip text of TileContent 1";
+			};
+			// stub function _getAriaAndTooltipText of the content
+			this.oGenericTile.getTileContent()[1]._getAriaAndTooltipText = function() {
+				return "ARIA and tooltip text of TileContent 2";
+			};
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Internal method _getHeaderAriaAndTooltipText", function(assert) {
+		//Arrange
+		var sHeaderAriaAndTooltipText,
+		sExpectedHeaderAriaAndTooltipText = "header text of GenericTile\nsubheader text of GenericTile";
+		//Act
+		sHeaderAriaAndTooltipText = this.oGenericTile._getHeaderAriaAndTooltipText();
+		//Assert
+		assert.equal(sHeaderAriaAndTooltipText, sExpectedHeaderAriaAndTooltipText, "Expected text for header ARIA-label and tooltip generated if no tooltip set");
+		//Act
+		this.oGenericTile.setTooltip(" ");
+		sHeaderAriaAndTooltipText = this.oGenericTile._getHeaderAriaAndTooltipText();
+		//Assert
+		assert.equal(sHeaderAriaAndTooltipText, sExpectedHeaderAriaAndTooltipText, "Expected text for header ARIA-label and tooltip generated if tooltip is supressed");
+		//Act
+		this.oGenericTile.setTooltip("someTooltipText");
+		sHeaderAriaAndTooltipText = this.oGenericTile._getHeaderAriaAndTooltipText();
+		//Assert
+		assert.equal(sHeaderAriaAndTooltipText, sExpectedHeaderAriaAndTooltipText, "Expected text for header ARIA-label and tooltip generated if an explicite tooltip is set");
+	});
+
+	QUnit.test("Internal method _getContentAriaAndTooltipText", function(assert) {
+		//Arrange
+		var sContentAriaAndTooltipText,
+		sExpectedContentAriaAndTooltipText = "ARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		//Act
+		sContentAriaAndTooltipText = this.oGenericTile._getContentAriaAndTooltipText();
+		//Assert
+		assert.equal(sContentAriaAndTooltipText, sExpectedContentAriaAndTooltipText, "Expected text for ARIA-label and tooltip of content generated if no tooltip set");
+		//Act
+		this.oGenericTile.setTooltip(" ");
+		sContentAriaAndTooltipText = this.oGenericTile._getContentAriaAndTooltipText();
+		//Assert
+		assert.equal(sContentAriaAndTooltipText, sExpectedContentAriaAndTooltipText, "Expected text for ARIA-label and tooltip  of content generated if tooltip is supressed");
+		//Act
+		this.oGenericTile.setTooltip("someTooltipText");
+		sContentAriaAndTooltipText = this.oGenericTile._getContentAriaAndTooltipText();
+		//Assert
+		assert.equal(sContentAriaAndTooltipText, sExpectedContentAriaAndTooltipText, "Expected text for ARIA-label and tooltip  of content generated if an explicite tooltip is set");
+	});
+
+	QUnit.test("Internal method _getAriaAndTooltipText", function(assert) {
+		//Arrange
+		var sAriaAndTooltipText,
+		sExpectedAriaAndTooltipText = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		//Act
+		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
+		//Assert
+		assert.equal(sAriaAndTooltipText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label and tooltip generated if no tooltip set");
+		//Act
+		this.oGenericTile.setTooltip(" ");
+		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
+		//Assert
+		assert.equal(sAriaAndTooltipText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label and tooltip generated if tooltip is supressed");
+		//Act
+		this.oGenericTile.setTooltip("someTooltipText");
+		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
+		//Assert
+		assert.equal(sAriaAndTooltipText, "someTooltipText", "Expected text for ARIA-label and tooltip generated if an explicite tooltip is set");
+	});
+
+	QUnit.test("Internal method _getAriaText", function(assert) {
+		//Arrange
+		var sAriaText;
+		// stub GenericTile's function _getAriaAndTooltipText
+		this.oGenericTile._getAriaAndTooltipText = function() {
+			return "ARIA and tooltip text";
+		};
+		//Act
+		sAriaText = this.oGenericTile._getAriaText();
+		//Assert
+		assert.equal(sAriaText, "ARIA and tooltip text", "Expected text for ARIA-label generated if no tooltip set");
+		//Act
+		this.oGenericTile.setTooltip(" ");
+		sAriaText = this.oGenericTile._getAriaText();
+		//Assert
+		assert.equal(sAriaText, "ARIA and tooltip text", "Expected text for ARIA-label generated in case tooltip is supressed");
+		//Act
+		this.oGenericTile.setTooltip("someTooltipText");
+		sAriaText = this.oGenericTile._getAriaText();
+		//Assert
+		assert.equal(sAriaText, "someTooltipText", "Expected text for ARIA-label generated in case an explicite tooltip is set");
+	});
+
+	QUnit.test("Internal method _getTooltipText", function(assert) {
+		//Arrange
+		var sTooltipText;
+		// stub GenericTile's function _getAriaText
+		this.oGenericTile._getAriaText = function() {
+			return "ARIA-text";
+		};
+		//Act
+		sTooltipText = this.oGenericTile._getTooltipText();
+		//Assert
+		assert.equal(sTooltipText, "ARIA-text", "Expected text for tooltip generated if no tooltip set");
+		//Act
+		this.oGenericTile.setTooltip(" ");
+		sTooltipText = this.oGenericTile._getTooltipText();
+		//Assert
+		assert.equal(sTooltipText, null, "No text for tooltip generated in case tooltip is supressed");
+		//Act
+		this.oGenericTile.setTooltip("someTooltipText");
+		sTooltipText = this.oGenericTile._getTooltipText();
+		//Assert
+		assert.equal(sTooltipText, "someTooltipText", "Expected text for tooltip generated in case an explicite tooltip is set");
+	});
+
 	QUnit.module("Tests for ARIA-label and tooltip text", {
 		beforeEach : function() {
 			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
@@ -354,6 +486,40 @@
 		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
 		//Assert
 		assert.equal(sAriaAndTooltipText, "", "Text for ARIA-label and tooltip has been generated for Disabled state");
+	});
+
+	QUnit.test("Generation of text for ARIA-label and tooltip after updated content", function(assert) {
+		//Arrange
+		//Act
+		var sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText(),
+			sExpectedAriaAndTooltipText = "Comparative Annual Totals\nExpenses By Region\n20M\nAscending\nGood\nEUR\nCurrent Quarter";
+		//Assert
+		assert.equal(sAriaAndTooltipText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label and tooltip has been generated");
+		//Arrange
+		sExpectedAriaAndTooltipText = "Comparative Annual Totals\nExpenses By Region\n555M\nAscending\nGood\nEUR\nCurrent Quarter";
+		//Act
+		this.oGenericTile.getTileContent()[0].getContent().setValue(555);
+		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
+		//Assert
+		assert.equal(sAriaAndTooltipText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label and tooltip has been generated after was content updated");
+		//Arrange
+		var sAriaText = this.oGenericTile._getAriaText(),
+			sTooltipText;
+		//Act
+		this.oGenericTile.setTooltip(" ");
+		sTooltipText = this.oGenericTile._getTooltipText();
+		//Assert
+		assert.equal(sAriaAndTooltipText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label and tooltip has been generated after content was updated and tooltip was suppressed");
+		assert.equal(sAriaText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label has been generated after content was updated and tooltip was suppressed");
+		assert.equal(sTooltipText, null, "No text for tooltip has been generated after content was updated and tooltip was suppressed");
+		//Arrange
+		sExpectedAriaAndTooltipText = "Comparative Annual Totals\nExpenses By Region\n777M\nAscending\nGood\nEUR\nCurrent Quarter";
+		//Act
+		this.oGenericTile.getTileContent()[0].getContent().setValue(777);
+		this.oGenericTile.destroyTooltip();
+		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
+		//Assert
+		assert.equal(sAriaAndTooltipText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label and tooltip has been generated after content was updated and tooltip was destroyed");
 	});
 
 	QUnit.module("Tooltip handling", {
