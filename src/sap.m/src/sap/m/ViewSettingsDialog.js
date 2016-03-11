@@ -444,10 +444,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 
 		// Attach 'itemPropertyChaged' handler, that will re-initiate (specific) dialog content
 		oObject.attachEvent('itemPropertyChanged', function (sAggregationName, oEvent) {
-			/* If the the changed item was a filter item, but not an instance of 'sap.m.ViewSettingsFilterItem'
+			/* If the the changed item was a 'sap.m.ViewSettingsItem'
 			 * then threat it differently as filter detail item.
 			 * */
-			if (sAggregationName === 'filterItems' && !(oEvent.getParameter('changedItem') instanceof sap.m.ViewSettingsFilterItem)) {
+			if (sAggregationName === 'filterItems' &&
+				oEvent.getParameter('changedItem').getMetadata().getName() === 'sap.m.ViewSettingsItem') {
 				// handle the select differently
 				if (oEvent.getParameter('propertyKey') !== 'selected') {
 					// if on filter details page for a concrete filter item
