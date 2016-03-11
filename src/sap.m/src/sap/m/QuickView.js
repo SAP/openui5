@@ -149,10 +149,6 @@ sap.ui.define([
 			afterNavigate: this._afterNavigate.bind(this)
 		};
 
-		if (!sap.ui.Device.system.phone) {
-			oNavConfig.width = this.getWidth();
-		}
-
 		this._oNavContainer = new NavContainer(oNavConfig);
 
 		this._oNavContainer.invalidate = function (oSource) {
@@ -167,6 +163,7 @@ sap.ui.define([
 		this._oPopover = new ResponsivePopover(this.getId() + '-quickView', {
 			placement: this.getPlacement(),
 			content: [this._oNavContainer],
+			contentWidth: this.getWidth(),
 			showHeader: false,
 			showCloseButton : false,
 			afterOpen: function (oEvent) {
@@ -362,8 +359,8 @@ sap.ui.define([
 	 * @public
 	 */
 	QuickView.prototype.setWidth = function (sWidth) {
-		if (this._oNavContainer) {
-			this._oNavContainer.setWidth(sWidth);
+		if (this._oPopover) {
+			this._oPopover.setContentWidth(sWidth);
 			this.setProperty('width', sWidth, true);
 		}
 
