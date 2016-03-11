@@ -143,7 +143,7 @@
 			},
 			{
 				"id" : "sap.ui.model.odata.v4.ODataModel",
-				"name" : "OData v4 Model",
+				"name" : "OData V4 Model",
 				"category" : "Data Binding",
 				"since" : "1.32",
 				"samples" : [
@@ -409,17 +409,17 @@
 			{
 				"id": "sap.ui.core.sample.odata.v4.SalesOrders",
 				"name": "Sales Orders",
-				"description": "Example for OData v4 EPM Sales Orders"
+				"description": "Example for OData V4 EPM Sales Orders"
 			},
 			{
 				"id": "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
 				"name": "Sales Orders Template",
-				"description": "Example for OData v4 EPM Sales Orders using XML Templating"
+				"description": "Example for OData V4 EPM Sales Orders using XML Templating"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
 				"name": "XML Templating: demo scenario",
-				"description": "Complete demo scenario for XML Templating based on OData v4 annotations"
+				"description": "Complete demo scenario for XML Templating based on OData V4 annotations"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario.extension",

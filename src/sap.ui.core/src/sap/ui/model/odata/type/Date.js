@@ -82,7 +82,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	/**
 	 * Constructor for an OData primitive type <code>Edm.Date</code>.
 	 *
-	 * @class This class represents the OData v4 primitive type <code>Edm.Date</code>.
+	 * @class This class represents the OData V4 primitive type <code>Edm.Date</code>.
 	 *
 	 * In {@link sap.ui.model.odata.v4.ODataModel ODataModel} this type is represented as a
 	 * <code>string</code> in the format "yyyy-mm-dd".

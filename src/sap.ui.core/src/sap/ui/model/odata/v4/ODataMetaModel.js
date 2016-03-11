@@ -158,7 +158,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
-	 * @class Implementation of an OData meta data model which offers access to OData v4 meta data.
+	 * @class Implementation of an OData meta data model which offers access to OData V4 meta data.
 	 *   An event handler can only be attached to this meta model for the following event:
 	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
 	 *   messageChange}.
@@ -734,7 +734,7 @@ sap.ui.define([
 	 *   An absolute data binding path pointing to an entity, for example
 	 *   "/TEAMS/0/TEAM_2_EMPLOYEES/0"
 	 * @param {sap.ui.model.Context} oContext
-	 *   OData v4 context object which provides access to data via <code>requestValue()</code>
+	 *   OData V4 context object which provides access to data via <code>requestValue()</code>
 	 * @returns {Promise}
 	 *   A promise which is resolved with the canonical URL (for example
 	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance

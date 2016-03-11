@@ -47,7 +47,7 @@ sap.ui.require([
 			"statusText" : "Unauthorized"
 		}
 	}, {
-		// OData v4 error response body as JSON
+		// OData V4 error response body as JSON
 		// "The error response MUST be a single JSON object. This object MUST have a
 		// single name/value pair named error. The value must be a JSON object."
 		body : {

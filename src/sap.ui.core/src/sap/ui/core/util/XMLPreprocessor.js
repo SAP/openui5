@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * model).
 			 *
 			 * This interface provides callback functions to access the model and path  which are
-			 * needed to process OData v4 annotations. It initially offers a subset of methods
+			 * needed to process OData V4 annotations. It initially offers a subset of methods
 			 * from {@link sap.ui.model.Context} so that formatters might also be called with a
 			 * context object for convenience, e.g. outside of XML template processing (see below
 			 * for an exception to this rule).

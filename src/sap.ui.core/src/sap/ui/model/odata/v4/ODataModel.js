@@ -3,7 +3,7 @@
  */
 
 /**
- * Model and related classes like bindings for OData v4.
+ * Model and related classes like bindings for OData V4.
  *
  * @namespace
  * @name sap.ui.model.odata.v4
@@ -38,7 +38,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sServiceUrl]
 	 *   Root URL of the service to request data from; it is required, but may also be given via
-	 *   <code>mParameters.serviceUrl</code>. Must end with a forward slash according to OData v4
+	 *   <code>mParameters.serviceUrl</code>. Must end with a forward slash according to OData V4
 	 *   specification ABNF, rule "serviceRoot" unless you append OData custom query options
 	 *   to the service root URL separated with a "?", e.g. "/MyService/?custom=foo". See parameter
 	 *   <code>mParameters.serviceUrlParams</code> for details on custom query options.
@@ -63,7 +63,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @author SAP SE
-	 * @class Model implementation for OData v4.
+	 * @class Model implementation for OData V4.
 	 *   An event handler can only be attached to this model for the following event:
 	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
 	 *   messageChange}.

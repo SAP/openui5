@@ -10,7 +10,7 @@ sap.ui.define([
 ], function (jQuery, _Batch, _Helper) {
 	"use strict";
 
-	var mFinalHeaders = { // final (cannot be overridden) request headers for OData v4
+	var mFinalHeaders = { // final (cannot be overridden) request headers for OData V4
 			"Content-Type" : "application/json;charset=UTF-8"
 		},
 		mPredefinedPartHeaders = { // predefined request headers in $batch parts
@@ -51,7 +51,7 @@ sap.ui.define([
 	 *   relative resource paths (see {@link #request})
 	 * @param {object} mHeaders
 	 *   Map of default headers; may be overridden with request-specific headers; certain
-	 *   predefined OData v4 headers are added by default, but may be overridden
+	 *   predefined OData V4 headers are added by default, but may be overridden
 	 * @param {object} mQueryParams
 	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
@@ -111,7 +111,7 @@ sap.ui.define([
 
 	/**
 	 * Sends an HTTP request using the given method to the given relative URL, using the given
-	 * request-specific headers in addition to the mandatory OData v4 headers and the default
+	 * request-specific headers in addition to the mandatory OData V4 headers and the default
 	 * headers given to the factory. Takes care of CSRF token handling.
 	 *
 	 * @param {string} sMethod
@@ -124,7 +124,7 @@ sap.ui.define([
 	 *   request is sent immediately; if provided, use {@link #submitBatch} to send all requests in
 	 *   that group
 	 * @param {object} [mHeaders]
-	 *   Map of request-specific headers, overriding both the mandatory OData v4 headers and the
+	 *   Map of request-specific headers, overriding both the mandatory OData V4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
 	 *   "X-CSRF-Token" header.
 	 * @param {object} [oPayload]
@@ -268,7 +268,7 @@ sap.ui.define([
 		 *   relative resource paths (see {@link #request})
 		 * @param {object} mHeaders
 		 *   Map of default headers; may be overridden with request-specific headers; certain
-		 *   OData v4 headers are predefined, but may be overridden by the default or
+		 *   OData V4 headers are predefined, but may be overridden by the default or
 		 *   request-specific headers:
 		 *   <pre>{
 		 *     "Accept" : "application/json;odata.metadata=minimal",
