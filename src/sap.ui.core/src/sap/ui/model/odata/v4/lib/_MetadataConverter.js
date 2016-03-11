@@ -3,7 +3,9 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib._MetadataConverter
-sap.ui.define(["./_Helper"], function (Helper) {
+sap.ui.define([
+	"./_Helper"
+], function (_Helper) {
 	"use strict";
 
 	var MetadataConverter,
@@ -348,7 +350,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 				return parseFloat(sValue);
 			case "Int":
 				vValue = parseInt(sValue, 10);
-				return Helper.isSafeInteger(vValue) ? vValue : {$Int : sValue};
+				return _Helper.isSafeInteger(vValue) ? vValue : {$Int : sValue};
 			case "String":
 				return sValue;
 			default:
@@ -813,7 +815,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 
 		if (sValue) {
 			vValue = parseInt(sValue, 10);
-			if (!Helper.isSafeInteger(vValue)) {
+			if (!_Helper.isSafeInteger(vValue)) {
 				vValue = sValue;
 			}
 		} else {
@@ -842,7 +844,7 @@ sap.ui.define(["./_Helper"], function (Helper) {
 			"EntitySet" : function (sValue) {
 				return resolveTargetPath(sValue, oAggregate);
 			},
-			"IncludeInServiceDocument" : setIfFalse
+			"IncludeInServiceDocument" : setIfTrue
 		});
 
 		oAggregate.entityContainer[sName] = oImport;

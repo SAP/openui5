@@ -13,7 +13,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel, Helper,
+], function (BindingMode, ContextBinding, FilterProcessor, JSONListBinding, MetaModel, _ODataHelper,
 		SyncPromise, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -318,13 +318,25 @@ sap.ui.require([
 	QUnit.test("forbidden", function (assert) {
 		var oMetaModel = new ODataMetaModel();
 
-		assert.throws(function () {
-			oMetaModel.refresh();
-		}, /Unsupported operation: ODataMetaModel#refresh/);
+		assert.throws(function () { //TODO implement
+			oMetaModel.bindTree();
+		}, new Error("Unsupported operation: v4.ODataMetaModel#bindTree"));
 
 		assert.throws(function () {
-			oMetaModel.setLegacySyntax(false); // argument does not matter!
-		}, /Unsupported operation: ODataMetaModel#setLegacySyntax/);
+			oMetaModel.getOriginalProperty();
+		}, new Error("Unsupported operation: v4.ODataMetaModel#getOriginalProperty"));
+
+		assert.throws(function () { //TODO implement
+			oMetaModel.isList();
+		}, new Error("Unsupported operation: v4.ODataMetaModel#isList"));
+
+		assert.throws(function () {
+			oMetaModel.refresh();
+		}, new Error("Unsupported operation: v4.ODataMetaModel#refresh"));
+
+		assert.throws(function () {
+			oMetaModel.setLegacySyntax(); // argument does not matter!
+		}, new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax"));
 
 		assert.throws(function () {
 			oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
@@ -808,6 +820,24 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchUI5Type: collection", function (assert) {
+		var sPath = "/EMPLOYEES/0/foo",
+			oSyncPromise;
+
+		this.oSandbox.mock(this.oMetaModel).expects("fetchObject")
+			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
+			.returns(SyncPromise.resolve({
+				$Type : "Edm.String",
+				$isCollection : true
+			}));
+
+		oSyncPromise = this.oMetaModel.fetchUI5Type(sPath);
+		assert.ok(oSyncPromise.isRejected());
+		assert.strictEqual(oSyncPromise.getResult().message,
+			"Unsupported collection type at " + sPath);
+	});
+
+	//*********************************************************************************************
 	//TODO make these types work with odata v4
 	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
@@ -824,6 +854,35 @@ sap.ui.require([
 				"Unsupported EDM type '" + sQualifiedName + "' at " + sPath);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchUI5Type: FunctionImport returning PrimitiveType", function (assert) {
+		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
+			sPath = "/FunctionImport()",
+			oType;
+
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
+			.returns(SyncPromise.resolve({
+				$kind : "FunctionImport",
+				$Function : "schema.Function"
+			}));
+		oMetaModelMock.expects("fetchObject")
+			.withExactArgs(undefined, this.oMetaModel.getMetaContext("/schema.Function"))
+			.returns(SyncPromise.resolve([{
+				$ReturnType : {
+					$Type : "Edm.Int16",
+					$Nullable : false
+				}
+			}]));
+
+		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
+		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Int16");
+		assert.deepEqual(oType.oConstraints, {nullable : false});
+	});
+	// TODO ActionImport
+	// TODO bound Function/Action
+	// TODO StructuredType: "/FunctionImport()/Property" -> ODataMetaModel#fetchObject
 
 	//*********************************************************************************************
 	QUnit.test("getUI5Type, requestUI5Type", function (assert) {
@@ -855,11 +914,13 @@ sap.ui.require([
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
-			this.oSandbox.stub(Helper, "getKeyPredicate", function (oEntityType0, oInstance0) {
-				assert.strictEqual(oEntityType0, mScope[oFixture.entityType]);
-				assert.strictEqual(oInstance0, oInstance);
-				return "(...)";
-			});
+			this.oSandbox.stub(_ODataHelper, "getKeyPredicate",
+				function (oEntityType0, oInstance0) {
+					assert.strictEqual(oEntityType0, mScope[oFixture.entityType]);
+					assert.strictEqual(oInstance0, oInstance);
+					return "(...)";
+				}
+			);
 
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
@@ -892,7 +953,7 @@ sap.ui.require([
 
 			this.mock(this.oMetaModel).expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
-			this.oSandbox.mock(Helper).expects("getKeyPredicate").never();
+			this.oSandbox.mock(_ODataHelper).expects("getKeyPredicate").never();
 
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.dataPath, oContext)
 				.then(function (sCanonicalUrl) {
@@ -1166,6 +1227,27 @@ sap.ui.require([
 				assert.deepEqual(oObject, oFixture.result);
 			}
 			assert.deepEqual(mScope, oMetadataClone, "meta data unchanged");
+		});
+
+		//*********************************************************************************************
+		QUnit.test("events", function (assert) {
+			var oMetaModel = new ODataMetaModel();
+
+			assert.throws(function () {
+				oMetaModel.attachParseError();
+			}, new Error("Unsupported event 'parseError': v4.ODataMetaModel#attachEvent"));
+
+			assert.throws(function () {
+				oMetaModel.attachRequestCompleted();
+			}, new Error("Unsupported event 'requestCompleted': v4.ODataMetaModel#attachEvent"));
+
+			assert.throws(function () {
+				oMetaModel.attachRequestFailed();
+			}, new Error("Unsupported event 'requestFailed': v4.ODataMetaModel#attachEvent"));
+
+			assert.throws(function () {
+				oMetaModel.attachRequestSent();
+			}, new Error("Unsupported event 'requestSent': v4.ODataMetaModel#attachEvent"));
 		});
 	});
 	//TODO iterate mix of inline and external targeting annotations

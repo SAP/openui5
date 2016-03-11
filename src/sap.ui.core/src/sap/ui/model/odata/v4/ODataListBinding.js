@@ -11,7 +11,7 @@ sap.ui.define([
 	"./_Context",
 	"./_ODataHelper",
 	"./lib/_Cache"
-], function (jQuery, Binding, ChangeReason, ListBinding, _Context, Helper, Cache) {
+], function (jQuery, Binding, ChangeReason, ListBinding, _Context, _ODataHelper, _Cache) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -44,15 +44,16 @@ sap.ui.define([
 	 *   Note: Query options may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 * @throws {Error} When disallowed OData query options are provided
-	 * @class List binding for an OData v4 model.
-	 *   It only supports the following events: 'change', 'dataReceived', 'dataRequested',
-	 *   'refresh'. If you attach to other events, an error is thrown.
 	 *
-	 * @author SAP SE
-	 * @version ${version}
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
+	 * @author SAP SE
+	 * @class List binding for an OData v4 model.
+	 *   An event handler can only be attached to this binding for the following events: 'change',
+	 *   'dataReceived', 'dataRequested', and 'refresh'.
+	 *   For other events, an error is thrown.
 	 * @extends sap.ui.model.ListBinding
 	 * @public
+	 * @version ${version}
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding", {
 			constructor : function (oModel, sPath, oContext, mParameters) {
@@ -63,8 +64,8 @@ sap.ui.define([
 				}
 				this.oCache = undefined;
 				if (!this.isRelative()) {
-					this.oCache = Cache.create(oModel.oRequestor, sPath.slice(1),
-						Helper.buildQueryOptions(oModel.mUriParameters, mParameters,
+					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
+						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
@@ -83,17 +84,18 @@ sap.ui.define([
 	 * the binding contexts of this list binding. Registered event handlers are called with the
 	 * change reason as parameter.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataListBinding#change
-	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
-	 *   The reason for the 'change' event which is {@link sap.ui.model.ChangeReason#Change Change}
-	 *   for binding initialization and new context creation or
-	 *   {@link sap.ui.model.ChangeReason#Context Context} if the parent context is changed.
-	 * @see sap.ui.base.Event
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change Change}
+	 *   when the binding is initialized and or a new context is created, or
+	 *   {@link sap.ui.model.ChangeReason.Context Context} when the parent context is changed
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#change
 	 * @protected
-	 * @since 1.37
+	 * @see sap.ui.base.Event
+	 * @since 1.37.0
 	 */
 
 	/**
@@ -101,12 +103,13 @@ sap.ui.define([
 	 * It is to be used by applications for example to switch on a busy indicator.
 	 * Registered event handlers are called without parameters.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
-	 * @event
 	 * @param {sap.ui.base.Event} oEvent
-	 * @see sap.ui.base.Event
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
 	 * @public
-	 * @since 1.37
+	 * @see sap.ui.base.Event
+	 * @since 1.37.0
 	 */
 
 	/**
@@ -120,41 +123,51 @@ sap.ui.define([
 	 * If a back end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
-	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
-	 * @event
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back end request failed.
 	 *   If there are multiple failed back end requests, the error of the first one is provided.
-	 * @see sap.ui.base.Event
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
 	 * @public
-	 * @since 1.37
+	 * @see sap.ui.base.Event
+	 * @since 1.37.0
 	 */
 
+	// See class documentation
+	// @override
+	// @public
+	// @see sap.ui.base.EventProvider#attachEvent
+	// @since 1.37.0
 	ODataListBinding.prototype.attachEvent = function (sEventId) {
 		if (!(sEventId in mSupportedEvents)) {
-			throw new Error("Unsupported event '" + sEventId + "': ODataListBinding#attachEvent");
+			throw new Error("Unsupported event '" + sEventId
+				+ "': v4.ODataListBinding#attachEvent");
 		}
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
 	};
 
 	/**
-	 * Filter not supported by OData list binding
+	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
+	 * @see sap.ui.model.ListBinding#filter
+	 * @since 1.37.0
 	 */
 	ODataListBinding.prototype.filter = function () {
-		throw new Error("Unsupported operation: ODataListBinding#filter");
+		throw new Error("Unsupported operation: v4.ODataListBinding#filter");
 	};
 
 	 /**
 	 * Returns already created binding contexts for all entities in this list binding for the range
 	 * determined by the given start index <code>iStart</code> and <code>iLength</code>.
-	 * If at least one of the entities in the given range has not yet been loaded, fires a 'change'
-	 * event on this list binding once these entities have been loaded <em>asynchronously</em>.
-	 * A further call to this method in the 'change' event handler with the same index range then
-	 * yields the updated array of contexts.
+	 * If at least one of the entities in the given range has not yet been loaded, fires a
+	 * {@link sap.ui.model.Binding#attachChange 'change'} event on this list binding once these
+	 * entities have been loaded <em>asynchronously</em>. A further call to this method in the
+	 * 'change' event handler with the same index range then yields the updated array of contexts.
 	 *
 	 * @param {number} [iStart=0]
 	 *   The index where to start the retrieval of contexts
@@ -168,19 +181,23 @@ sap.ui.define([
 	 *   <code>iStart</code>
 	 * @throws {Error}
 	 *   When <code>iThreshold</code> is given
-	 * @see sap.ui.model.Binding#attachChange
+	 *
 	 * @protected
+	 * @see sap.ui.model.ListBinding#getContexts
+	 * @since 1.37.0
 	 */
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
-		var oContext = this.getContext(),
+		var oContext = this.oContext,
 			bDataRequested = false,
-			oModel = this.getModel(),
+			sGroupId = this.oModel.getGroupId(),
+			oModel = this.oModel,
 			oPromise,
-			sResolvedPath = oModel.resolve(this.getPath(), oContext),
+			sResolvedPath = oModel.resolve(this.sPath, oContext),
 			that = this;
 
 		/**
 		 * Checks, whether the contexts exist for the requested range.
+		 *
 		 * @returns {boolean}
 		 *   <code>true</code> if the contexts in the range exist
 		 */
@@ -200,6 +217,7 @@ sap.ui.define([
 		 * Creates entries in aContexts for each value in oResult.
 		 * Uses fnGetPath to create the context path.
 		 * Fires 'change' event if new contexts are created.
+		 *
 		 * @param {array|object} vResult Resolved OData result
 		 */
 		function createContexts(vResult) {
@@ -244,7 +262,7 @@ sap.ui.define([
 		}
 
 		if (iThreshold !== undefined) {
-			throw new Error("Unsupported operation: ODataListBinding#getContexts, "
+			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts, "
 				+ "iThreshold parameter must not be set");
 		}
 
@@ -259,11 +277,14 @@ sap.ui.define([
 
 		if (!isRangeInContext(iStart, iLength)) {
 			oPromise = this.oCache
-				? this.oCache.read(iStart, iLength, "", undefined, function () {
+				? this.oCache.read(iStart, iLength, sGroupId, undefined,
+					function () {
 						bDataRequested = true;
-						that.oModel.dataRequested("", that.fireDataRequested.bind(that));
-					})
-				: oContext.requestValue(this.getPath());
+						that.oModel.dataRequested(sGroupId,
+							that.fireDataRequested.bind(that));
+					}
+				)
+				: oContext.requestValue(this.sPath);
 			oPromise.then(function (vResult) {
 				createContexts(vResult);
 				//fire dataReceived after change event fired in createContexts()
@@ -271,16 +292,17 @@ sap.ui.define([
 					that.fireDataReceived(); // no try catch needed: uncaught in promise
 				}
 			}, function (oError) {
-				if (!oError.canceled) {
-					jQuery.sap.log.error("Failed to get contexts for "
-						+ oModel.sServiceUrl + sResolvedPath.slice(1)
-						+ " with start index " + iStart + " and length " + iLength, oError,
-						sClassName);
-				}
 				//cache shares promises for concurrent read
 				if (bDataRequested) {
-					// no try catch needed: uncaught in promise
-					that.fireDataReceived({error : oError});
+					if (oError.canceled) {
+						that.fireDataReceived();
+					} else {
+						jQuery.sap.log.error("Failed to get contexts for "
+								+ oModel.sServiceUrl + sResolvedPath.slice(1)
+								+ " with start index " + iStart + " and length " + iLength,
+							oError, sClassName);
+						that.fireDataReceived({error : oError});
+					}
 				}
 			});
 		}
@@ -288,23 +310,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get current contexts not supported by OData list binding
+	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
+	 * @see sap.ui.model.ListBinding#getCurrentContexts
+	 * @since 1.37.0
 	 */
+	// @override
 	ODataListBinding.prototype.getCurrentContexts = function () {
-		throw new Error("Unsupported operation: ODataListBinding#getCurrentContexts");
+		throw new Error("Unsupported operation: v4.ODataListBinding#getCurrentContexts");
 	};
 
 	/**
-	 * Get distinct values not supported by OData list binding
+	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
+	 * @see sap.ui.model.ListBinding#getDistinctValues
+	 * @since 1.37.0
 	 */
+	// @override
 	ODataListBinding.prototype.getDistinctValues = function () {
-		throw new Error("Unsupported operation: ODataListBinding#getDistinctValues");
+		throw new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues");
 	};
 
 	/**
@@ -313,9 +343,12 @@ sap.ui.define([
 	 *
 	 * @returns {number}
 	 *   The number of entries in the list
-	 * @see sap.ui.model.ListBinding#getLength
+	 *
 	 * @public
+	 * @see sap.ui.model.ListBinding#getLength
+	 * @since 1.37.0
 	 */
+	 // @override
 	ODataListBinding.prototype.getLength = function() {
 		return this.bLengthFinal ? this.aContexts.length : this.aContexts.length + 10;
 	};
@@ -325,11 +358,28 @@ sap.ui.define([
 	 * resolved path.
 	 *
 	 * @protected
+	 * @see sap.ui.model.Binding#initialize
+	 * @since 1.37.0
 	 */
+	// @override
 	ODataListBinding.prototype.initialize = function () {
 		if (this.oModel.resolve(this.sPath, this.oContext)) {
 			this._fireChange({reason : ChangeReason.Change});
 		}
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#isInitial
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataListBinding.prototype.isInitial = function () {
+		throw new Error("Unsupported operation: v4.ODataListBinding#isInitial");
 	};
 
 	/**
@@ -338,9 +388,12 @@ sap.ui.define([
 	 *
 	 * @returns {boolean}
 	 *   If <code>true</true> the length is determined by server side data
-	 * @see sap.ui.model.ListBinding#isLengthFinal
+	 *
 	 * @public
+	 * @see sap.ui.model.ListBinding#isLengthFinal
+	 * @since 1.37.0
 	 */
+	// @override
 	ODataListBinding.prototype.isLengthFinal = function() {
 		return this.bLengthFinal;
 	};
@@ -355,18 +408,21 @@ sap.ui.define([
 	 *   The parameter <code>bForceUpdate</code> has to be <code>true</code>.
 	 * @param {string} [sGroupId]
 	 *   The parameter <code>sGroupId</code> is not supported.
-	 * @throws {Error} When <code>bForceUpdate</code> is not given or <code>false</code> or
-	 *   <code>sGroupId</code> is set, refresh on this binding is not supported.
+	 * @throws {Error} When <code>bForceUpdate</code> is not <code>true</code> or
+	 *   <code>sGroupId</code> is set or refresh on this binding is not supported.
+	 *
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
+	 * @since 1.37.0
 	 */
+	// @override
 	ODataListBinding.prototype.refresh = function (bForceUpdate, sGroupId) {
 		if (bForceUpdate !== true) {
-			throw new Error("Unsupported operation: ODataListBinding#refresh, "
+			throw new Error("Unsupported operation: v4.ODataListBinding#refresh, "
 				+ "bForceUpdate must be true");
 		}
 		if (sGroupId !== undefined) {
-			throw new Error("Unsupported operation: ODataListBinding#refresh, "
+			throw new Error("Unsupported operation: v4.ODataListBinding#refresh, "
 				+ "sGroupId parameter must not be set");
 		}
 		if (!this.oCache) {
@@ -389,6 +445,8 @@ sap.ui.define([
 	 *   Index corresponding to some current context of this binding
 	 * @returns {Promise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *
+	 * @private
 	 */
 	ODataListBinding.prototype.requestValue = function (sPath, iIndex) {
 		return this.oCache
@@ -398,13 +456,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#resume
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataListBinding.prototype.resume = function () {
+		throw new Error("Unsupported operation: v4.ODataListBinding#resume");
+	};
+
+	/**
 	 * Sets the context and resets the cached contexts of the list items.
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
-	 * @protected
-	 * @override
+	 *
+	 * @private
+	 * @see sap.ui.model.Binding#setContext
 	 */
+	// @override
 	ODataListBinding.prototype.setContext = function (oContext) {
 		if (this.oContext !== oContext) {
 			this.aContexts = [];
@@ -413,13 +487,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sort not supported by OData list binding
+	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
+	 * @see sap.ui.model.ListBinding#sort
+	 * @since 1.37.0
 	 */
 	ODataListBinding.prototype.sort = function () {
-		throw new Error("Unsupported operation: ODataListBinding#sort");
+		throw new Error("Unsupported operation: v4.ODataListBinding#sort");
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Binding#suspend
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataListBinding.prototype.suspend = function () {
+		throw new Error("Unsupported operation: v4.ODataListBinding#suspend");
 	};
 
 	return ODataListBinding;

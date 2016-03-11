@@ -4,7 +4,7 @@
 sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/test/TestUtils"
-], function (Batch, TestUtils) {
+], function (_Batch, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -607,7 +607,7 @@ sap.ui.require([
 					oMock.expects("uid").returns("id-0123456789012-345");
 				}
 
-				oBatchRequest = Batch.serializeBatchRequest(oFixture.requests);
+				oBatchRequest = _Batch.serializeBatchRequest(oFixture.requests);
 
 				assert.strictEqual(oBatchRequest.body, oFixture.body);
 				assert.strictEqual(oBatchRequest.headers["Content-Type"], oFixture["Content-Type"]);
@@ -664,7 +664,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 			QUnit.test("validation serializeBatchRequest: " + oFixture.title, function (assert) {
 				assert.throws(
-					function () { Batch.serializeBatchRequest(oFixture.requests); },
+					function () { _Batch.serializeBatchRequest(oFixture.requests); },
 					new Error(oFixture.errorMessage));
 			});
 		}
@@ -1046,7 +1046,7 @@ etag: W/\"20151211144619.4660570\"\r\n\
 	}].forEach(function (oFixture) {
 			QUnit.test("deserializeBatchResponse: " + oFixture.testTitle, function (assert) {
 				var aResponses =
-					Batch.deserializeBatchResponse(oFixture.contentType, oFixture.body);
+					_Batch.deserializeBatchResponse(oFixture.contentType, oFixture.body);
 				assert.deepEqual(aResponses, oFixture.expectedResponses);
 			});
 		}
@@ -1114,7 +1114,7 @@ etag: W/\"20151211144619.4760440\"\r\n\
 	}].forEach(function (oFixture) {
 		QUnit.test("Validation for deserializeBatchResponse: " + oFixture.title, function (assert) {
 			assert.throws(function () {
-				Batch.deserializeBatchResponse(
+				_Batch.deserializeBatchResponse(
 					"multipart/mixed; boundary=batch_id-0123456789012-345",
 					oFixture.body);
 			}, new Error(oFixture.errorMessage));
@@ -1140,7 +1140,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 --batch_id-0123456789012-345--\r\n";
 
 			assert.throws(function () {
-				Batch.deserializeBatchResponse(sContentType, sBody);
+				_Batch.deserializeBatchResponse(sContentType, sBody);
 			}, new Error('Invalid $batch response header "Content-Type": ' + sContentType));
 		});
 	});
@@ -1660,7 +1660,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					var oBatchRequestContent,
 						done = assert.async();
 
-					oBatchRequestContent = Batch.serializeBatchRequest(oFixture.batchRequests);
+					oBatchRequestContent = _Batch.serializeBatchRequest(oFixture.batchRequests);
 
 					jQuery.ajax(TestUtils.proxy(sServiceUrl), {
 						method : "HEAD",
@@ -1687,7 +1687,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 							var aResponses;
 
 							assert.strictEqual(jqXHR.status, 200);
-							aResponses = Batch.deserializeBatchResponse(
+							aResponses = _Batch.deserializeBatchResponse(
 								jqXHR.getResponseHeader("Content-Type"), oData);
 
 							parseResponses(aResponses);
@@ -1715,7 +1715,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						headers : { "Accept" : "application/json" }
 					}];
 
-				oBatchRequestContent = Batch.serializeBatchRequest(aBatchRequests);
+				oBatchRequestContent = _Batch.serializeBatchRequest(aBatchRequests);
 
 				jQuery.ajax(sResolvedServiceUrl, {
 					method : "HEAD",
@@ -1736,7 +1736,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						var aResponses, oResponse;
 
 						assert.strictEqual(jqXHR.status, 200);
-						aResponses = Batch.deserializeBatchResponse(
+						aResponses = _Batch.deserializeBatchResponse(
 							jqXHR.getResponseHeader("Content-Type"), oData);
 
 						assert.strictEqual(aResponses.length, 1);

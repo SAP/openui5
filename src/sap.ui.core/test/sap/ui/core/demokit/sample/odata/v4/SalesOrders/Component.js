@@ -26,6 +26,7 @@ sap.ui.define([
 		createContent : function () {
 			var bHasOwnProxy = this.proxy !== sap.ui.core.sample.common.Component.prototype.proxy,
 				oModel = this.getModel(),
+				mModelParameters,
 				fnProxy = bHasOwnProxy
 					? this.proxy
 					: TestUtils.proxy,
@@ -37,7 +38,10 @@ sap.ui.define([
 				//replace model from manifest in case of proxy
 				sQuery = URI.buildQuery(oModel.mUriParameters);
 				sQuery = sQuery ? "?" + sQuery : "";
-				oModel = new ODataModel(sServiceUrl + sQuery);
+				if (jQuery.sap.getUriParameters().get("$direct")) { // switch off batch
+					mModelParameters = {defaultGroup : "$direct"};
+				}
+				oModel = new ODataModel(sServiceUrl + sQuery, mModelParameters);
 				this.setModel(oModel);
 			}
 
@@ -68,7 +72,7 @@ sap.ui.define([
 						"SalesOrderList(SalesOrderID='0500000004')?$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID" : {
 							source : "SalesOrderList_4.txt"
 						}
-					},
+					}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data",
 				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
 			}

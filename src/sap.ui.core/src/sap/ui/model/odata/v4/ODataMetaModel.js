@@ -11,11 +11,11 @@ sap.ui.define([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
-	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/_SyncPromise",
-	"sap/ui/model/PropertyBinding"
+	"sap/ui/model/PropertyBinding",
+	"./_ODataHelper",
+	"./_SyncPromise"
 ], function (jQuery, BindingMode, ContextBinding, Context, FilterProcessor, JSONListBinding,
-		MetaModel, Helper, SyncPromise, PropertyBinding) {
+		MetaModel, PropertyBinding, _ODataHelper, _SyncPromise) {
 	"use strict";
 
 	var DEBUG = jQuery.sap.log.Level.DEBUG,
@@ -46,6 +46,9 @@ sap.ui.define([
 				constraints : {"$MaxLength" : "maxLength"}
 			}
 		},
+		mSupportedEvents = {
+			messageChange : true
+		},
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
@@ -61,6 +64,8 @@ sap.ui.define([
 					"oContext must belong to this model");
 				ContextBinding.call(this, oModel, sPath, oContext);
 			},
+			// @override
+			// @see sap.ui.model.Binding#initialize
 			initialize : function () {
 				var oElementContext = this.oModel.createBindingContext(this.sPath, this.oContext);
 				this.bInitial = false; // initialize() has been called
@@ -69,6 +74,8 @@ sap.ui.define([
 					this._fireChange();
 				}
 			},
+			// @override
+			// @see sap.ui.model.Binding#setContext
 			setContext : function (oContext) {
 				jQuery.sap.assert(!oContext || oContext.getModel() === this.oModel,
 					"oContext must belong to this model");
@@ -95,6 +102,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.v4.ODataMetaListBinding", {
+		// @override
+		// @see sap.ui.model.ClientListBinding#applyFilter
 		applyFilter : function () {
 			var that = this;
 
@@ -109,6 +118,8 @@ sap.ui.define([
 		constructor : function () {
 			JSONListBinding.apply(this, arguments);
 		},
+		// @override
+		// @see sap.ui.model.ListBinding#enableExtendedChangeDetection
 		enableExtendedChangeDetection : function () {
 			throw new Error("Unsupported operation");
 		}
@@ -124,11 +135,13 @@ sap.ui.define([
 		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataMetaPropertyBinding", {
 			constructor : function () {
 				PropertyBinding.apply(this, arguments);
-				this.vValue = this.getModel().getProperty(this.getPath(), this.getContext());
+				this.vValue = this.oModel.getProperty(this.sPath, this.oContext);
 			},
+			// @see sap.ui.model.PropertyBinding#getValue
 			getValue : function () {
 				return this.vValue;
 			},
+			// @see sap.ui.model.PropertyBinding#setValue
 			setValue : function () {
 				throw new Error("Unsupported operation: ODataMetaPropertyBinding#setValue");
 			}
@@ -143,12 +156,16 @@ sap.ui.define([
 	 * @param {string} sUrl
 	 *   The URL to the $metadata document of the service
 	 *
-	 * @class Implementation of an OData meta data model which offers access to OData v4 meta data.
-	 *
-	 * This model is read-only.
-	 *
 	 * @alias sap.ui.model.odata.v4.ODataMetaModel
 	 * @author SAP SE
+	 * @class Implementation of an OData meta data model which offers access to OData v4 meta data.
+	 *   An event handler can only be attached to this meta model for the following event:
+	 *   'messageChange', see {@link sap.ui.core.messages.MessageProcessor#messageChange
+	 *   messageChange}.
+	 *   For other events, an error is thrown.
+	 *
+	 *   This model is read-only.
+	 *
 	 * @extends sap.ui.model.MetaModel
 	 * @public
 	 * @version ${version}
@@ -177,6 +194,7 @@ sap.ui.define([
 	 * @returns {any}
 	 *   The value of the object or property or <code>null</code> in case a relative path without
 	 *   a context is given
+	 *
 	 * @private
 	 */
 	ODataMetaModel.prototype._getObject = function (sPath, oContext) {
@@ -211,6 +229,22 @@ sap.ui.define([
 		return vResult;
 	};
 
+	// See class documentation
+	// @override
+	// @public
+	// @see sap.ui.base.EventProvider#attachEvent
+	// @since 1.37.0
+	ODataMetaModel.prototype.attachEvent = function (sEventId) {
+		if (!(sEventId in mSupportedEvents)) {
+			throw new Error("Unsupported event '" + sEventId
+				+ "': v4.ODataMetaModel#attachEvent");
+		}
+		return MetaModel.prototype.attachEvent.apply(this, arguments);
+	};
+
+	// @public
+	// @see sap.ui.model.Model#bindContext
+	// @since 1.37.0
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext) {
 		return new ODataMetaContextBinding(this, sPath, oContext);
 	};
@@ -237,15 +271,34 @@ sap.ui.define([
 	 *   Initial application filter(s), see {@link sap.ui.model.ListBinding#filter filter}
 	 * @returns {sap.ui.model.ListBinding}
 	 *   A list binding for this meta data model
+	 *
 	 * @public
 	 * @see #requestObject
+	 * @see sap.ui.model.Model#bindList
+	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters) {
 		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters);
 	};
 
+	// @public
+	// @see sap.ui.model.Model#bindProperty
+	// @since 1.37.0
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext) {
 		return new ODataMetaPropertyBinding(this, sPath, oContext);
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#bindTree
+	 * @since 1.37.0
+	 */
+	ODataMetaModel.prototype.bindTree = function () {
+		throw new Error("Unsupported operation: v4.ODataMetaModel#bindTree");
 	};
 
 	/**
@@ -257,11 +310,12 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   A promise which is resolved with the $metadata JSON object as soon as the entity container
 	 *   is fully available, or rejected with an error.
+	 *
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchEntityContainer = function () {
 		if (!this.oMetadataPromise) {
-			this.oMetadataPromise = SyncPromise.resolve(this.oRequestor.read(this.sUrl));
+			this.oMetadataPromise = _SyncPromise.resolve(this.oRequestor.read(this.sUrl));
 		}
 		return this.oMetadataPromise;
 	};
@@ -274,6 +328,7 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   A promise which is resolved with the requested meta data object as soon as it is
 	 *   available
+	 *
 	 * @private
 	 * @see #requestObject
 	 */
@@ -282,7 +337,7 @@ sap.ui.define([
 
 		if (!sResolvedPath) {
 			jQuery.sap.log.error("Invalid relative path w/o context", sPath, sODataMetaModel);
-			return SyncPromise.resolve(null);
+			return _SyncPromise.resolve(null);
 		}
 
 		return this.fetchEntityContainer().then(function (mScope) {
@@ -493,16 +548,25 @@ sap.ui.define([
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
 	 *   rejected with the corresponding error
+	 *
 	 * @private
 	 * @see #requestUI5Type
 	 */
 	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
-		// Note: undefined is more efficient than "" here
-		return this.fetchObject(undefined, this.getMetaContext(sPath)).then(function (oProperty) {
-			var mConstraints,
-				sName,
-				oType = oProperty["$ui5.type"],
-				oTypeInfo;
+		var that = this;
+
+		/**
+		 * Determines the type and constraints for the given JSON metadata.
+		 *
+		 * @param {object} oMetadata
+		 *   The JSON metadata for which the type is requested. This can be either a Property or an
+		 *   array of Action/Function (for which the $ReturnType is chosen).
+		 * @returns {sap.ui.model.odata.type.ODataType}
+		 *   The type
+		 * @throws {Error} If there is no UI5 type for the referenced EDM type
+		 */
+		function getType(oMetadata) {
+			var mConstraints, sName, oProperty, oType, oTypeInfo;
 
 			function setConstraint(sKey, vValue) {
 				if (vValue !== undefined) {
@@ -511,8 +575,17 @@ sap.ui.define([
 				}
 			}
 
+			oProperty = Array.isArray(oMetadata) && oMetadata[0].$ReturnType
+				? oMetadata[0].$ReturnType
+				: oMetadata;
+
+			oType = oProperty["$ui5.type"];
 			if (oType) {
 				return oType;
+			}
+
+			if (oProperty.$isCollection) {
+				throw new Error("Unsupported collection type at " + sPath);
 			}
 
 			oTypeInfo = mUi5TypeForEdmType[oProperty.$Type];
@@ -530,6 +603,15 @@ sap.ui.define([
 			oProperty["$ui5.type"] = oType;
 
 			return oType;
+		}
+
+		// Note: undefined is more efficient than "" here
+		return this.fetchObject(undefined, this.getMetaContext(sPath)).then(function (oMetadata) {
+			if (oMetadata.$kind === "FunctionImport") {
+				return that.fetchObject(undefined, that.getMetaContext("/" + oMetadata.$Function))
+					.then(getType);
+			}
+			return getType(oMetadata);
 		});
 	};
 
@@ -542,10 +624,26 @@ sap.ui.define([
 	 * @returns {sap.ui.model.Context}
 	 *   The corresponding meta data context within the OData meta data model, for example with
 	 *   meta data path "/EMPLOYEES/ENTRYDATE"
+	 *
 	 * @public
+	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.getMetaContext = function (sPath) {
 		return new Context(this, sPath.replace(rNotMetaContext, ""));
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#getOriginalProperty
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataMetaModel.prototype.getOriginalProperty = function () {
+		throw new Error("Unsupported operation: v4.ODataMetaModel#getOriginalProperty");
 	};
 
 	/**
@@ -559,16 +657,22 @@ sap.ui.define([
 	 *   The context to be used as a starting point in case of a relative path
 	 * @returns {any}
 	 *   The requested meta data object if it is already available, or <code>undefined</code>
+	 *
 	 * @function
 	 * @public
 	 * @see #requestObject
+	 * @see sap.ui.model.Model#getObject
+	 * @since 1.37.0
 	 */
-	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("fetchObject");
+	// @override
+	ODataMetaModel.prototype.getObject = _SyncPromise.createGetMethod("fetchObject");
 
 	/**
 	 * @deprecated Use {@link #getObject getObject}.
 	 * @function
 	 * @public
+	 * @see sap.ui.model.Model#getProperty
+	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.getProperty = ODataMetaModel.prototype.getObject;
 
@@ -585,20 +689,39 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If the UI5 type cannot be determined synchronously (due to a pending meta data request) or
 	 *   cannot be determined at all (due to a wrong data path)
+	 *
 	 * @function
 	 * @public
 	 * @see #requestUI5Type
+	 * @since 1.37.0
 	 */
-	ODataMetaModel.prototype.getUI5Type = SyncPromise.createGetMethod("fetchUI5Type", true);
+	ODataMetaModel.prototype.getUI5Type = _SyncPromise.createGetMethod("fetchUI5Type", true);
 
 	/**
-	 * Refresh not supported by OData meta model!
+	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
+	 * @see sap.ui.model.Model#isList
+	 * @since 1.37.0
 	 */
-	ODataMetaModel.prototype.refresh = function () { // @override
-		throw new Error("Unsupported operation: ODataMetaModel#refresh");
+	ODataMetaModel.prototype.isList = function () {
+		throw new Error("Unsupported operation: v4.ODataMetaModel#isList");
+	};
+
+	/**
+	 * Method not supported
+	 *
+	 * @throws {Error}
+	 *
+	 * @public
+	 * @see sap.ui.model.Model#refresh
+	 * @since 1.37.0
+	 */
+	// @override
+	ODataMetaModel.prototype.refresh = function () {
+		throw new Error("Unsupported operation: v4.ODataMetaModel#refresh");
 	};
 
 	/**
@@ -616,6 +739,7 @@ sap.ui.define([
 	 *   A promise which is resolved with the canonical URL (for example
 	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
 	 *   of <code>Error</code> in case of failure
+	 *
 	 * @private
 	 */
 	ODataMetaModel.prototype.requestCanonicalUrl = function (sServiceUrl, sPath, oContext) {
@@ -646,7 +770,7 @@ sap.ui.define([
 			});
 
 			return sServiceUrl + encodeURIComponent(sEntitySetName)
-				+ Helper.getKeyPredicate(oEntityType, oEntityInstance);
+				+ _ODataHelper.getKeyPredicate(oEntityType, oEntityInstance);
 		});
 	};
 
@@ -784,11 +908,13 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which is resolved with the requested meta data value as soon as it is
 	 *   available
+	 *
 	 * @function
 	 * @public
 	 * @see #getObject
+	 * @since 1.37.0
 	 */
-	ODataMetaModel.prototype.requestObject = SyncPromise.createRequestMethod("fetchObject");
+	ODataMetaModel.prototype.requestObject = _SyncPromise.createRequestMethod("fetchObject");
 
 	/**
 	 * Requests the UI5 type for the given property path that formats and parses corresponding to
@@ -801,12 +927,14 @@ sap.ui.define([
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
 	 *   rejected with the corresponding error
+	 *
 	 * @function
 	 * @public
 	 * @see #getUI5Type
+	 * @since 1.37.0
 	 */
 	ODataMetaModel.prototype.requestUI5Type
-		= SyncPromise.createRequestMethod("fetchUI5Type");
+		= _SyncPromise.createRequestMethod("fetchUI5Type");
 
 	/**
 	 * Resolves the given path relative to the given context. Without a context, a relative path
@@ -833,9 +961,12 @@ sap.ui.define([
 	 * @returns {string}
 	 *   Resolved path or <code>undefined</code>
 	 * @throws Error if relative path starts with a dot which is not followed by a forward slash
-	 * @public
+	 *
+	 * @private
+	 * @see sap.ui.model.Model#resolve
 	 */
-	ODataMetaModel.prototype.resolve = function (sPath, oContext) { // @override
+	// @override
+	ODataMetaModel.prototype.resolve = function (sPath, oContext) {
 		var sContextPath,
 			sPathFirst;
 
@@ -862,13 +993,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Legacy syntax not supported by OData meta model!
+	 * Method not supported
 	 *
 	 * @throws {Error}
+	 *
 	 * @public
+	 * @see sap.ui.model.Model#setLegacySyntax
+	 * @since 1.37.0
 	 */
-	ODataMetaModel.prototype.setLegacySyntax = function () { // @override
-		throw new Error("Unsupported operation: ODataMetaModel#setLegacySyntax");
+	// @override
+	ODataMetaModel.prototype.setLegacySyntax = function () {
+		throw new Error("Unsupported operation: v4.ODataMetaModel#setLegacySyntax");
 	};
 
 	return ODataMetaModel;

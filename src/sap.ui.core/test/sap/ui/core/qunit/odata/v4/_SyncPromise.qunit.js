@@ -4,7 +4,7 @@
 sap.ui.require([
 	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (SyncPromise, TestUtils) {
+], function (_SyncPromise, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks:[1,5], no-warning-comments: 0 */
 	"use strict";
@@ -46,10 +46,10 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[42, undefined, {then : 42}, {then : function () {}}, [SyncPromise.resolve()]
+	[42, undefined, {then : 42}, {then : function () {}}, [_SyncPromise.resolve()]
 	].forEach(function (vResult) {
-		QUnit.test("SyncPromise.resolve with non-Promise value: " + vResult, function (assert) {
-			assertFulfilled(assert, SyncPromise.resolve(vResult), vResult);
+		QUnit.test("_SyncPromise.resolve with non-Promise value: " + vResult, function (assert) {
+			assertFulfilled(assert, _SyncPromise.resolve(vResult), vResult);
 		});
 	});
 
@@ -60,12 +60,12 @@ sap.ui.require([
 			oPromise = Promise.resolve(42),
 			oSyncPromise;
 
-		oSyncPromise = SyncPromise.resolve(oPromise);
+		oSyncPromise = _SyncPromise.resolve(oPromise);
 
 		assertPending(assert, oSyncPromise);
 
-		assert.strictEqual(SyncPromise.resolve(oSyncPromise), oSyncPromise,
-			"resolve() does not wrap a SyncPromise again");
+		assert.strictEqual(_SyncPromise.resolve(oSyncPromise), oSyncPromise,
+			"resolve() does not wrap a _SyncPromise again");
 
 		oNewPromise = oSyncPromise.then(function (iResult) {
 			assertFulfilled(assert, oSyncPromise, iResult);
@@ -75,16 +75,16 @@ sap.ui.require([
 		assertPending(assert, oNewPromise);
 
 		return oPromise.then(function (iResult) {
-			// SyncPromise fulfills as soon as Promise fulfills
+			// _SyncPromise fulfills as soon as Promise fulfills
 			assertFulfilled(assert, oSyncPromise, iResult);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("'then' on a fulfilled SyncPromise", function (assert) {
+	QUnit.test("'then' on a fulfilled _SyncPromise", function (assert) {
 		var bCalled = false,
 			oNewSyncPromise,
-			oSyncPromise = SyncPromise.resolve(42);
+			oSyncPromise = _SyncPromise.resolve(42);
 
 		oNewSyncPromise = oSyncPromise
 			.then(/* then w/o fnOnFulfilled does not change result */)
@@ -117,7 +117,7 @@ sap.ui.require([
 		QUnit.test("sync -> async: " + JSON.stringify(oFixture), function (assert) {
 			var done = assert.async(),
 				oPromise = oFixture.reject ? Promise.reject() : Promise.resolve(),
-				oSyncPromise = SyncPromise.resolve(oPromise);
+				oSyncPromise = _SyncPromise.resolve(oPromise);
 
 			return oPromise[oFixture.reject ? "catch" : "then"](function () {
 				var oFulfillment = {},
@@ -140,10 +140,10 @@ sap.ui.require([
 				}
 
 				if (oFixture.wrap) {
-					oResult = SyncPromise.resolve(oResult);
+					oResult = _SyncPromise.resolve(oResult);
 				}
 
-				// 'then' on a settled SyncPromise is called synchronously
+				// 'then' on a settled _SyncPromise is called synchronously
 				oNewSyncPromise = oFixture.reject
 					? oSyncPromise.then(fail, callback)
 					: oSyncPromise.then(callback, fail);
@@ -169,21 +169,21 @@ sap.ui.require([
 		QUnit.test("sync -> sync: " + JSON.stringify(oFixture), function (assert) {
 			var oResult = {},
 				oInitialPromise = oFixture.initialReject ? Promise.reject() : Promise.resolve(),
-				oInitialSyncPromise = SyncPromise.resolve(oInitialPromise),
+				oInitialSyncPromise = _SyncPromise.resolve(oInitialPromise),
 				sMethod = oFixture.initialReject || oFixture.thenReject ? "catch" : "then",
 				oThenPromise = oFixture.thenReject
 					? Promise.reject(oResult)
 					: Promise.resolve(oResult),
-				oThenSyncPromise = SyncPromise.resolve(oThenPromise);
+				oThenSyncPromise = _SyncPromise.resolve(oThenPromise);
 
 			return Promise.all([oInitialPromise, oThenPromise])[sMethod](function () {
-				// 'then' on a settled SyncPromise is called synchronously
+				// 'then' on a settled _SyncPromise is called synchronously
 				var oNewSyncPromise = oFixture.initialReject
 					? oInitialSyncPromise.then(fail, callback)
 					: oInitialSyncPromise.then(callback, fail);
 
 				function callback() {
-					// returning a settled SyncPromise keeps us sync
+					// returning a settled _SyncPromise keeps us sync
 					return oThenSyncPromise;
 				}
 
@@ -203,8 +203,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("sync -> sync: throws", function (assert) {
 		var oError = new Error(),
-			oInitialSyncPromise = SyncPromise.resolve(),
-		// 'then' on a settled SyncPromise is called synchronously
+			oInitialSyncPromise = _SyncPromise.resolve(),
+		// 'then' on a settled _SyncPromise is called synchronously
 			oNewSyncPromise = oInitialSyncPromise.then(callback, fail);
 
 		function callback() {
@@ -226,7 +226,7 @@ sap.ui.require([
 			oPromise = Promise.reject(oReason),
 			oSyncPromise;
 
-		oSyncPromise = SyncPromise.resolve(oPromise);
+		oSyncPromise = _SyncPromise.resolve(oPromise);
 
 		assertPending(assert, oSyncPromise);
 
@@ -246,10 +246,10 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("'then' on a rejected SyncPromise", function (assert) {
+	QUnit.test("'then' on a rejected _SyncPromise", function (assert) {
 		var oReason = {},
 			oPromise = Promise.reject(oReason),
-			oSyncPromise = SyncPromise.resolve(oPromise);
+			oSyncPromise = _SyncPromise.resolve(oPromise);
 
 		return oPromise["catch"](function () {
 			var bCalled = false,
@@ -278,23 +278,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SyncPromise.all: simple values", function (assert) {
-		assertFulfilled(assert, SyncPromise.all([]), []);
-		assertFulfilled(assert, SyncPromise.all([42]), [42]);
-		assertFulfilled(assert, SyncPromise.all([SyncPromise.resolve(42)]), [42]);
+	QUnit.test("_SyncPromise.all: simple values", function (assert) {
+		assertFulfilled(assert, _SyncPromise.all([]), []);
+		assertFulfilled(assert, _SyncPromise.all([42]), [42]);
+		assertFulfilled(assert, _SyncPromise.all([_SyncPromise.resolve(42)]), [42]);
 	});
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bWrap) {
-		QUnit.test("SyncPromise.all: one Promise resolves, wrap = " + bWrap, function (assert) {
+		QUnit.test("_SyncPromise.all: one Promise resolves, wrap = " + bWrap, function (assert) {
 			var oPromise = Promise.resolve(42),
 				oPromiseAll;
 
 			if (bWrap) {
-				oPromise = SyncPromise.resolve(oPromise);
+				oPromise = _SyncPromise.resolve(oPromise);
 			}
 
-			oPromiseAll = SyncPromise.all([oPromise]);
+			oPromiseAll = _SyncPromise.all([oPromise]);
 
 			assertPending(assert, oPromiseAll);
 			return oPromise.then(function () {
@@ -304,7 +304,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SyncPromise.all: two Promises resolve", function (assert) {
+	QUnit.test("_SyncPromise.all: two Promises resolve", function (assert) {
 		var oPromiseAll,
 			oPromise0 = Promise.resolve(42), // timeout 0
 			oPromise1 = new Promise(function (resolve, reject) {
@@ -317,7 +317,7 @@ sap.ui.require([
 			}),
 			aPromises = [oPromise0, oPromise1];
 
-		oPromiseAll = SyncPromise.all(aPromises);
+		oPromiseAll = _SyncPromise.all(aPromises);
 
 		assertPending(assert, oPromiseAll);
 		return Promise.all(aPromises).then(function () {
@@ -327,12 +327,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SyncPromise.all: one Promise rejects", function (assert) {
+	QUnit.test("_SyncPromise.all: one Promise rejects", function (assert) {
 		var oReason = {},
 			oPromise = Promise.reject(oReason),
 			oPromiseAll;
 
-		oPromiseAll = SyncPromise.all([oPromise]);
+		oPromiseAll = _SyncPromise.all([oPromise]);
 
 		assertPending(assert, oPromiseAll);
 		return oPromise["catch"](function () {
@@ -341,7 +341,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SyncPromise.all: two Promises reject", function (assert) {
+	QUnit.test("_SyncPromise.all: two Promises reject", function (assert) {
 		var oReason = {},
 			oPromiseAll,
 			oPromise0 = Promise.reject(oReason), // timeout 0
@@ -355,7 +355,7 @@ sap.ui.require([
 			}),
 			aPromises = [oPromise0, oPromise1];
 
-		oPromiseAll = SyncPromise.all(aPromises);
+		oPromiseAll = _SyncPromise.all(aPromises);
 
 		assertPending(assert, oPromiseAll);
 		return oPromise1["catch"](function () { // wait for the "slower" promise
@@ -368,7 +368,7 @@ sap.ui.require([
 	QUnit.test("'catch' delegates to 'then'", function (assert) {
 		var oNewPromise = {},
 			fnOnRejected = function () {},
-			oSyncPromise = SyncPromise.resolve();
+			oSyncPromise = _SyncPromise.resolve();
 
 		this.mock(oSyncPromise).expects("then")
 			.withExactArgs(undefined, fnOnRejected)
@@ -378,8 +378,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Promise.resolve on SyncPromise", function (assert) {
-		return Promise.resolve(SyncPromise.resolve(42)).then(function (iResult) {
+	QUnit.test("Promise.resolve on _SyncPromise", function (assert) {
+		return Promise.resolve(_SyncPromise.resolve(42)).then(function (iResult) {
 			assert.strictEqual(iResult, 42);
 		});
 	});
@@ -388,7 +388,7 @@ sap.ui.require([
 	QUnit.test("createGetMethod, not throwing", function (assert) {
 		var aArguments = ["foo", "bar"],
 			oResult = {},
-			oSyncPromise = SyncPromise.resolve(oResult),
+			oSyncPromise = _SyncPromise.resolve(oResult),
 			oContext = {
 				fetch : function () {
 					assert.strictEqual(this, oContext);
@@ -401,7 +401,7 @@ sap.ui.require([
 		// code under test
 		// Note: passing the function's name instead of reference allows for dynamic dispatch, thus
 		// making a mock for "fetch*" possible in the first place
-		fnGet = SyncPromise.createGetMethod("fetch");
+		fnGet = _SyncPromise.createGetMethod("fetch");
 
 		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
 		this.mock(oSyncPromise).expects("isFulfilled").returns(false);
@@ -412,7 +412,7 @@ sap.ui.require([
 	QUnit.test("createGetMethod, throwing", function (assert) {
 		var aArguments = ["foo", "bar"],
 			oResult = {},
-			oSyncPromise = SyncPromise.resolve(oResult),
+			oSyncPromise = _SyncPromise.resolve(oResult),
 			oContext = {
 				fetch : function () {
 					assert.strictEqual(this, oContext);
@@ -424,7 +424,7 @@ sap.ui.require([
 			oSyncPromiseMock = this.mock(oSyncPromise);
 
 		// code under test
-		fnGet = SyncPromise.createGetMethod("fetch", true);
+		fnGet = _SyncPromise.createGetMethod("fetch", true);
 
 		// fulfilled
 		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
@@ -452,7 +452,7 @@ sap.ui.require([
 	QUnit.test("createRequestMethod", function (assert) {
 		var aArguments = ["foo", "bar"],
 			oResult = {},
-			oSyncPromise = SyncPromise.resolve(),
+			oSyncPromise = _SyncPromise.resolve(),
 			oContext = {
 				fetch : function () {
 					assert.strictEqual(this, oContext);
@@ -465,7 +465,7 @@ sap.ui.require([
 		this.mock(Promise).expects("resolve").withExactArgs(oSyncPromise).returns(oResult);
 
 		// code under test
-		fnRequest = SyncPromise.createRequestMethod("fetch");
+		fnRequest = _SyncPromise.createRequestMethod("fetch");
 
 		assert.strictEqual(fnRequest.apply(oContext, aArguments), oResult);
 	});

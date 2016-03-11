@@ -3,7 +3,7 @@
  */
 sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Parser"
-], function (Parser) {
+], function (_Parser) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -43,8 +43,8 @@ sap.ui.require([
 			}
 		}
 	}].forEach(function (oFixture) {
-		QUnit.test("Parser: $expand=" + oFixture.s, function (assert) {
-			assert.deepEqual(Parser.parseSystemQueryOption("$expand=" + oFixture.s),
+		QUnit.test("_Parser: $expand=" + oFixture.s, function (assert) {
+			assert.deepEqual(_Parser.parseSystemQueryOption("$expand=" + oFixture.s),
 				{"$expand" : oFixture.r});
 		});
 	});
@@ -60,8 +60,8 @@ sap.ui.require([
 		s : "SalesOrderID,Note",
 		r : ["SalesOrderID", "Note"]
 	}].forEach(function (oFixture) {
-		QUnit.test("Parser: $select=" + oFixture.s, function (assert) {
-			assert.deepEqual(Parser.parseSystemQueryOption("$select=" + oFixture.s),
+		QUnit.test("_Parser: $select=" + oFixture.s, function (assert) {
+			assert.deepEqual(_Parser.parseSystemQueryOption("$select=" + oFixture.s),
 					{"$select" : oFixture.r});
 		});
 	});
@@ -86,9 +86,9 @@ sap.ui.require([
 		s : "$expand=SO_2_BP$",
 		e : "Unknown character '$' at 15"
 	}].forEach(function (oFixture) {
-		QUnit.test("Parser: =" + oFixture.s, function (assert) {
+		QUnit.test("_Parser: =" + oFixture.s, function (assert) {
 			assert.throws(function () {
-				Parser.parseSystemQueryOption(oFixture.s);
+				_Parser.parseSystemQueryOption(oFixture.s);
 			}, new SyntaxError(oFixture.e));
 		});
 	});
@@ -122,7 +122,7 @@ sap.ui.require([
 				"TEAM_2_MANAGER" : null
 			}
 		}].forEach(function (oFixture) {
-			assert.deepEqual(Parser.parseSystemQueryOption("$expand=" + oFixture.s),
+			assert.deepEqual(_Parser.parseSystemQueryOption("$expand=" + oFixture.s),
 				{"$expand" : oFixture.o}, oFixture.s);
 		});
 	});

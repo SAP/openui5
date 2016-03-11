@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.xml", // needed to have jQuery.sap.parseXML
 	"sap/ui/model/odata/v4/lib/_MetadataConverter",
-	"sap/ui/test/TestUtils",
-	'jquery.sap.xml' // needed to have jQuery.sap.parseXML
-], function (MetadataConverter, TestUtils) {
+	"sap/ui/test/TestUtils"
+], function (jQueryXML, _MetadataConverter, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -28,7 +28,7 @@ sap.ui.require([
 	 */
 	function testConversion(assert, sXmlSnippet, oExpected) {
 		var oXML = xml(assert, '<Edmx>' + sXmlSnippet + '</Edmx>'),
-			oResult = MetadataConverter.convertXMLMetadata(oXML);
+			oResult = _MetadataConverter.convertXMLMetadata(oXML);
 
 		assert.deepEqual(oResult, oExpected);
 	}
@@ -62,7 +62,7 @@ sap.ui.require([
 						</DataServices>\
 					</Edmx>'),
 				// code under test
-				oResult = MetadataConverter.convertXMLMetadata(oXml);
+				oResult = _MetadataConverter.convertXMLMetadata(oXml);
 			assert.deepEqual(oResult["foo."].$Annotations["foo.Bar"]["@foo.Term"], vExpected,
 				sXmlSnippet);
 		}
@@ -152,7 +152,7 @@ sap.ui.require([
 			oMyAggregate[sExpectedName]++;
 		}
 
-		MetadataConverter.traverse(oXML.documentElement, oAggregate, oSchemaConfig);
+		_MetadataConverter.traverse(oXML.documentElement, oAggregate, oSchemaConfig);
 		assert.strictEqual(oAggregate.bar, 4);
 		assert.strictEqual(oAggregate.innerBar, 2);
 		assert.strictEqual(oAggregate.innerBar2, 1);
@@ -163,7 +163,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("traverse: __postProcessor", function (assert) {
 		var oXML = xml(assert, "<And><Bool>true</Bool><Bool>false</Bool></And>"),
-			oResult = MetadataConverter.traverse(oXML.documentElement, {}, {
+			oResult = _MetadataConverter.traverse(oXML.documentElement, {}, {
 				__postProcessor : function(oElement, aResults) {
 					return {$And : aResults};
 				},
@@ -185,22 +185,22 @@ sap.ui.require([
 				}
 			};
 
-		assert.strictEqual(MetadataConverter.resolveAlias("", oAggregate), "");
-		assert.strictEqual(MetadataConverter.resolveAlias("display.Foo", oAggregate),
+		assert.strictEqual(_MetadataConverter.resolveAlias("", oAggregate), "");
+		assert.strictEqual(_MetadataConverter.resolveAlias("display.Foo", oAggregate),
 			"org.example.vocabularies.display.Foo");
-		assert.strictEqual(MetadataConverter.resolveAlias("display.bar.Foo", oAggregate),
+		assert.strictEqual(_MetadataConverter.resolveAlias("display.bar.Foo", oAggregate),
 			"display.bar.Foo");
-		assert.strictEqual(MetadataConverter.resolveAlias("bar.Foo", oAggregate), "bar.Foo");
-		assert.strictEqual(MetadataConverter.resolveAlias("Foo", oAggregate), "Foo");
+		assert.strictEqual(_MetadataConverter.resolveAlias("bar.Foo", oAggregate), "bar.Foo");
+		assert.strictEqual(_MetadataConverter.resolveAlias("Foo", oAggregate), "Foo");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("resolveAliasInPath", function (assert) {
 		var oAggregate = {},
-			oMock = this.mock(MetadataConverter);
+			oMock = this.mock(_MetadataConverter);
 
 			function test(sPath, sExpected) {
-				assert.strictEqual(MetadataConverter.resolveAliasInPath(sPath, oAggregate),
+				assert.strictEqual(_MetadataConverter.resolveAliasInPath(sPath, oAggregate),
 					sExpected || sPath);
 			}
 
@@ -509,7 +509,7 @@ sap.ui.require([
 			if (vExpectedValue !== undefined) {
 				oExpectedResult["$" + sProperty] = vExpectedValue;
 			}
-			MetadataConverter.processFacetAttributes(oXml.documentElement, oResult);
+			_MetadataConverter.processFacetAttributes(oXml.documentElement, oResult);
 			assert.deepEqual(oResult, oExpectedResult);
 		}
 
@@ -683,7 +683,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: TypeDefinition", function (assert) {
-		this.mock(MetadataConverter).expects("processFacetAttributes")
+		this.mock(_MetadataConverter).expects("processFacetAttributes")
 			.withExactArgs(
 				sinon.match.has("localName", "TypeDefinition"),
 				{
@@ -774,7 +774,7 @@ sap.ui.require([
 						"$kind" : "EntityContainer",
 						"Baz1" : {
 							"$EntitySet" : "Employees",
-							"$IncludeInServiceDocument" : false
+							"$IncludeInServiceDocument" : true
 						},
 						"Baz2" : {
 						},
@@ -803,9 +803,9 @@ sap.ui.require([
 						<Schema Namespace="foo" Alias="f">\
 							<EntityContainer Name="Container">\
 								<' + sWhat + 'Import Name="Baz1" ' + sWhat + '="foo.Baz"\
-									EntitySet="Employees" IncludeInServiceDocument="false"/>\
+									EntitySet="Employees" IncludeInServiceDocument="true"/>\
 								<' + sWhat + 'Import Name="Baz2" ' + sWhat + '="f.Baz"\
-									IncludeInServiceDocument="true"/>\
+									IncludeInServiceDocument="false"/>\
 								<' + sWhat + 'Import Name="Baz3" ' + sWhat + '="f.Baz"\
 									EntitySet="f.Container/Employees"/>\
 								<' + sWhat + 'Import Name="Baz4" ' + sWhat + '="f.Baz"\
@@ -1461,7 +1461,7 @@ sap.ui.require([
 			Promise.resolve(
 					jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"))
 				.then(function (oXML) {
-					return MetadataConverter.convertXMLMetadata(oXML);
+					return _MetadataConverter.convertXMLMetadata(oXML);
 				}),
 			jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json")
 		]).then(function (aResults) {

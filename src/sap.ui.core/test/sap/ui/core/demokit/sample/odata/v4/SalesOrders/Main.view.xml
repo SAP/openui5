@@ -12,7 +12,8 @@
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
 				</Label>
-				<Text id="FavoriteProduct" text="{
+				<Input id="FavoriteProduct" enabled="{ui>/bRealOData}" width="auto"
+					value="{
 						path: '/ProductList(\'HT-1000\')/Name',
 						events : {
 							dataReceived : '.onDataEvents',
@@ -22,10 +23,14 @@
 					<layoutData>
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
-				</Text>
+				</Input>
 				<Button icon="sap-icon://refresh"
 					enabled="{ui>/bRealOData}"
 					press="onRefreshFavoriteProduct"/>
+				<Button icon="sap-icon://hello-world"
+					enabled="{ui>/bRealOData}"
+					press="onUpdateFavoriteProduct"
+					tooltip="Update with current time as HH:mm"/>
 				<ToolbarSpacer />
 				<Button text="Refresh all"
 					enabled="{ui>/bRealOData}"
