@@ -33,17 +33,22 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The parent context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
-	 *   The following query options are allowed:
+	 *   Map of binding parameters which can be OData query options as specified in
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
+	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
+	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
 	 *   <li> The $expand and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
-	 *   Note: Query options may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
-	 * @throws {Error} When disallowed OData query options are provided
+	 * @param {string} [mParameters.$$groupId]
+	 *   The batch group ID to be used for requests triggered by this binding; if not specified,
+	 *   the model's default group is used, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 * @throws {Error} When disallowed binding parameters are provided
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
 	 * @author SAP SE
@@ -62,14 +67,18 @@ sap.ui.define([
 				if (!sPath || sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
+
 				this.oCache = undefined;
-				if (!this.isRelative()) {
+				this.sGroupId = undefined;
+				if (!this.bRelative) {
 					this.oCache = _Cache.create(oModel.oRequestor, sPath.slice(1),
 						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters,
 							["$expand", "$select"]));
+					this.sGroupId = _ODataHelper.buildBindingParameters(mParameters).$$groupId;
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
 				}
+
 				this.aContexts = [];
 				// upper boundary for server-side list length (based on observations so far)
 				this.iMaxLength = Infinity;
@@ -277,7 +286,7 @@ sap.ui.define([
 
 		if (!isRangeInContext(iStart, iLength)) {
 			if (this.oCache) {
-				sGroupId = this.oModel.getGroupId();
+				sGroupId = this.getGroupId();
 				oPromise = this.oCache.read(iStart, iLength, sGroupId, undefined, function () {
 					bDataRequested = true;
 					that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
@@ -335,6 +344,18 @@ sap.ui.define([
 	// @override
 	ODataListBinding.prototype.getDistinctValues = function () {
 		throw new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues");
+	};
+
+	/**
+	 * Returns the batch group ID of the binding that has to be used for read requests.
+	 *
+	 * @returns {string}
+	 *   The group ID
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getGroupId = function() {
+		return this.sGroupId || this.oModel.getGroupId();
 	};
 
 	/**

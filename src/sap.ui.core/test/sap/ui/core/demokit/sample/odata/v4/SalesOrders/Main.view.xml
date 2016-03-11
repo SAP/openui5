@@ -14,7 +14,7 @@
 				</Label>
 				<Input id="FavoriteProduct" enabled="{ui>/bRealOData}" width="auto"
 					value="{
-						path: '/ProductList(\'HT-1000\')/Name',
+						path : '/ProductList(\'HT-1000\')/Name',
 						events : {
 							dataReceived : '.onDataEvents',
 							dataRequested : '.onDataEvents'
@@ -78,16 +78,12 @@
 										<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
 										<Input id = "BuyerID"
 											maxLength="10" value="{
-												path: 'new>/BuyerID',
-												type: 'sap.ui.model.odata.type.String',
-												constraints: {maxLength: 10, nullable: false}}"
+												path : 'new>/BuyerID',
+												type : 'sap.ui.model.odata.type.String',
+												constraints : {maxLength: 10, nullable: false}}"
 											type="Text"
 											placeholder="Enter Buyer ID starting with '0'..."
-											showSuggestion="true"
-											suggestionItems="{/BusinessPartnerList}" >
-											<suggestionItems>
-												<core:Item text="{BusinessPartnerID}" />
-											</suggestionItems>
+											showSuggestion="true">
 										</Input>
 									</form:content>
 								</form:SimpleForm>

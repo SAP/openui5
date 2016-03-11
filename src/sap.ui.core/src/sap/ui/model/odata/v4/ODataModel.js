@@ -175,11 +175,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a new context binding for the given path and context. The key value pairs from the
-	 * given parameters map combined with the query options provided in the
-	 * {@link sap.ui.model.odata.v4.ODataModel model constructor} are used as OData query options in
-	 * each data service request. Query options specified for the binding overwrite model query
-	 * options.
+	 * Creates a new context binding for the given path, context and parameters.
 	 *
 	 * This binding is inactive and will not know the bound context initially.
 	 * You have to call {@link sap.ui.model.Binding#initialize initialize()} to get it updated
@@ -191,19 +187,24 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
-	 *   The following query options are allowed:
+	 *   Map of binding parameters which can be OData query options as specified in
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
+	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
+	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
 	 *   <li> The $expand and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
-	 *   Note: Query options may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
+	 * @param {string} [mParameters.$$groupId]
+	 *   The batch group ID to be used for requests triggered by the binding; if not specified,
+	 *   the model's default group is used, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor model constructor}.
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding}
 	 *   The context binding
-	 * @throws {Error} When disallowed OData query options are provided
+	 * @throws {Error} When disallowed binding parameters are provided
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindContext
@@ -226,19 +227,24 @@ sap.ui.define([
 	 * @param {sap.ui.model.Filter[]} [aFilters]
 	 *   Predefined filters
 	 * @param {object} [mParameters]
-	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
-	 *   The following query options are allowed:
+	 *   Map of binding parameters which can be OData query options as specified in
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
+	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
+	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
 	 *   <li> The $expand and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
-	 *   Note: Query options may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
+	 * @param {string} [mParameters.$$groupId]
+	 *   The batch group ID to be used for requests triggered by the binding; if not specified,
+	 *   the model's default group is used, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor model constructor}.
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   The list binding
-	 * @throws {Error} When disallowed OData query options are provided
+	 * @throws {Error} When disallowed binding parameters are provided
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindList
@@ -267,15 +273,20 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of OData query options where only "5.2 Custom Query Options" are allowed (see
-	 *   specification "OData Version 4.0 Part 2: URL Conventions"), except for those with a name
-	 *   starting with "sap-". All other query options lead to an error.
-	 *   Query options specified for the binding overwrite model query options.
-	 *   Note: Query options may only be provided for absolute binding paths as only those
+	 *   Map of binding parameters which can be OData query options as specified in
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
+	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
+	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
+	 *   "sap-". All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
+	 * @param {string} [mParameters.$$groupId]
+	 *   The batch group ID to be used for requests triggered by this binding; if not specified,
+	 *   the model's default group is used, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
-	 * @throws {Error} When parameters are provided
+	 * @throws {Error} When disallowed binding parameters are provided
 	 *
 	 * @public
 	 * @see sap.ui.model.Model#bindProperty

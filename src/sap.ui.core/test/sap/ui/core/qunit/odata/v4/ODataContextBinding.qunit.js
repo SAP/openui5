@@ -132,6 +132,11 @@ sap.ui.require([
 			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache is initialized");
 			assert.strictEqual(oBinding.oCache, bAbsolute ? oCache : undefined);
+			assert.strictEqual(oBinding.hasOwnProperty("mQueryOptions"), true);
+			assert.deepEqual(oBinding.mQueryOptions,
+				bAbsolute ? {"sap-client" : "111"} : undefined);
+			assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
+			assert.strictEqual(oBinding.sGroupId, undefined);
 		});
 	});
 
@@ -235,19 +240,19 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (read required)", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute"),
+		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oBindingMock = this.oSandbox.mock(oBinding);
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
-			.returns("groupId");
 
-		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId", "bar").callsArg(2)
+		this.oSandbox.mock(oBinding.oCache).expects("read")
+			.withExactArgs("$direct", "bar", sinon.match.func)
+			.callsArg(2)
 			.returns(Promise.resolve("value"));
 
-		this.oSandbox.mock(oBinding.getModel()).expects("addedRequestToGroup").withArgs("groupId")
-			.callsArg(1);
+		this.oSandbox.mock(oBinding.getModel()).expects("addedRequestToGroup")
+			.withExactArgs("$direct", sinon.match.func).callsArg(1);
 
 		return oBinding.requestValue("bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
@@ -256,16 +261,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (no read required)", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute"),
+		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oBindingMock = this.oSandbox.mock(oBinding),
 			oCacheMock = this.oSandbox.mock(oBinding.oCache);
 
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
-			.returns("groupId");
 
-		oCacheMock.expects("read").withArgs("groupId", "bar").returns(Promise.resolve("value"));
+		oCacheMock.expects("read").withExactArgs("$direct", "bar", sinon.match.func)
+			.returns(Promise.resolve("value"));
 
 		return oBinding.requestValue("bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
@@ -274,15 +278,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (failure)", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute"),
+		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oCacheMock = this.oSandbox.mock(oBinding.oCache),
 			oExpectedError = new Error("Expected read failure"),
 			oCachePromise = Promise.reject(oExpectedError);
 
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
-			.returns("groupId");
-		oCacheMock.expects("read").withArgs("groupId", "foo").callsArg(2).returns(oCachePromise);
-		oCacheMock.expects("read").withArgs("groupId", "bar").returns(oCachePromise);
+		oCacheMock.expects("read").withExactArgs("$direct", "foo", sinon.match.func)
+			.callsArg(2).returns(oCachePromise);
+		oCacheMock.expects("read").withExactArgs("$direct", "bar", sinon.match.func)
+			.returns(oCachePromise);
 		this.oSandbox.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
 		this.oLogMock.expects("error").withExactArgs("Failed to read path /absolute",
@@ -377,15 +381,32 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Use model's groupId", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute"),
+	QUnit.test("$$groupId", function (assert) {
+		var oBinding,
+			mParameters = {};
+
+		this.mock(_ODataHelper).expects("buildBindingParameters").withExactArgs(mParameters)
+			.returns({$$groupId : "foo"});
+
+		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "foo");
+
+		// buildBindingParameters not called for relative binding
+		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getGroupId", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oReadPromise = Promise.resolve();
 
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
-			.returns("groupId");
-		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId").callsArg(2)
+		this.oSandbox.mock(oBinding.oCache).expects("read")
+			.withExactArgs("$direct", "foo", sinon.match.func)
+			.callsArg(2)
 			.returns(oReadPromise);
-		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup").withArgs("groupId");
+		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup")
+			.withExactArgs("$direct", sinon.match.func)
+			.callsArg(1);
 
 		// code under test
 		return oBinding.requestValue("foo");

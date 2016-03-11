@@ -30,17 +30,22 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of OData query options as specified in "OData Version 4.0 Part 2: URL Conventions".
-	 *   The following query options are allowed:
+	 *   Map of binding parameters which can be OData query options as specified in
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
+	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
+	 *   lead to a data service request.
+	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
 	 *   <li> The $expand and $select "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
-	 *   Note: Query options may only be provided for absolute binding paths as only those
-	 *   lead to a data service request.
-	 * @throws {Error} When disallowed OData query options are provided
+	 * @param {string} [mParameters.$$groupId]
+	 *   The batch group ID to be used for requests triggered by this binding; if not specified,
+	 *   the model's default group is used, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 * @throws {Error} When disallowed binding parameters are provided
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataContextBinding
 	 * @author SAP SE
@@ -70,7 +75,10 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 				this.oCache = undefined;
+				this.sGroupId = undefined;
+				this.mQueryOptions = undefined;
 				this.bDeferred = iPos >= 0;
+
 				if (this.bDeferred) {
 					if (iPos !== sPath.length - 5) {
 						throw new Error("Composable functions are not supported: " + sPath);
@@ -80,10 +88,11 @@ sap.ui.define([
 							+ sPath);
 					}
 				}
-				this.oCache = undefined;
+
 				if (!this.bRelative) {
 					this.mQueryOptions = _ODataHelper.buildQueryOptions(oModel.mUriParameters,
 						mParameters, ["$expand", "$select"]);
+					this.sGroupId = _ODataHelper.buildBindingParameters(mParameters).$$groupId;
 					if (!this.bDeferred) {
 						this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
 							this.mQueryOptions);
@@ -191,6 +200,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the batch group ID of the binding that has to be used for read requests.
+	 *
+	 * @returns {string}
+	 *   The group ID
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.getGroupId = function() {
+		return this.sGroupId || this.oModel.getGroupId();
+	};
+
+	/**
 	 * Initializes the OData context binding. Fires a 'change' event in case the binding has a
 	 * resolved path.
 	 *
@@ -275,7 +296,7 @@ sap.ui.define([
 			that = this;
 
 		if (this.oCache) {
-			sGroupId = this.oModel.getGroupId();
+			sGroupId = this.getGroupId();
 			return this.oCache.read(sGroupId, sPath, function () {
 				bDataRequested = true;
 				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
