@@ -410,6 +410,40 @@
 				jQuery.sap.log.error.restore();
 			});
 
+			test("setFilter count doe not throw an error when filter item type is sap.m.ViewSettingsCustomItem", function () {
+				var done = assert.async(),
+						oVSD = new sap.m.ViewSettingsDialog({
+							filterItems: [
+								new sap.m.ViewSettingsCustomItem({
+									text: "Material",
+									key: "MaterialID",
+									customControl: new sap.m.Input({width: "100%", placeholder: "{i18n>ENTER_FILTER}"})
+								}),
+								new sap.m.ViewSettingsCustomItem({
+									text: "Material Description",
+									key: "MaterialDescription",
+									customControl: new sap.m.Input({width: "100%", placeholder: "{i18n>ENTER_FILTER}"})
+								})
+							],
+							confirm: function () {
+								var oItem0 = oVSD.getFilterItems()[0];
+								oItem0.setFilterCount(1);
+								oItem0.setSelected(true);
+
+								strictEqual(oItem0.getFilterCount(), 1, "To have set filter count properly");
+								strictEqual(oItem0.getSelected(), true, "To set property selected to TRUE");
+
+								oVSD.destroy();
+								oVSD = null;
+								done();
+							}
+						});
+
+				oVSD.open();
+				oVSD._filterList.getItems()[0].firePress();
+				oVSD._dialog.getBeginButton().firePress();
+			});
+
 			module("Performance", {
 				setup : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
