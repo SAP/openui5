@@ -15,7 +15,7 @@
     var classNameHeader = '.sapMNLG-Header';
     var classNameDatetime = '.sapMNLI-Datetime';
     var classNameFooterToolbar = '.sapMTB';
-    var classNameCloseButton = '.sapMNLG-CloseButton';
+    var classNameCloseButton = '.sapMNLB-CloseButton';
 
     var RENDER_LOCATION = 'qunit-fixture';
 
@@ -36,6 +36,7 @@
 
     QUnit.test('Initialization', function(assert) {
         // arrange
+        var id = this.NotificationListGroup.getId();
         this.NotificationListGroup.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.');
         this.NotificationListGroup.setDatetime('3 hours');
         for (var index = 0; index < 5; index++) {
@@ -52,8 +53,8 @@
         // assert
         assert.ok(this.NotificationListGroup, 'NotificationListItem should be rendered');
 
-        assert.strictEqual(jQuery(classNameCloseButton).length, 1, 'Group Close Button should be rendered');
-        assert.strictEqual(jQuery(classNameHeader).length, 1, 'Title should be rendered');
+        assert.strictEqual(this.NotificationListGroup.getDomRef('closeButton').hidden, false, 'Group Close Button should be rendered');
+        assert.strictEqual(this.NotificationListGroup.getDomRef('title').hidden, false, 'Title should be rendered');
 
         assert.strictEqual(this.NotificationListGroup.getDomRef('datetime').innerHTML, '3 hours', 'DateTime should be rendered');
 
@@ -148,7 +149,7 @@
             'The cloned notification shoould have the hidden aggregations as well');
     });
 
-    QUnit.test('Pressing the collapse button should collapse the group', function(assert) {
+    QUnit.test('Pressing the collapse button should expand a collapsed group', function(assert) {
         // arrange
         this.NotificationListGroup.setCollapsed(true);
         var firstNotification = new sap.m.NotificationListItem({title: 'First Notification'});
@@ -164,8 +165,8 @@
         sap.ui.getCore().applyChanges();
 
         // assert
-        assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the button should trigger collapse of the group.');
-        assert.strictEqual(this.NotificationListGroup.getCollapsed(), false, 'Pressing the button should set the group as collapsed.');
+        assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the button should trigger collapse/expand of the group.');
+        assert.strictEqual(this.NotificationListGroup.getCollapsed(), false, 'Pressing the button should expand the collapsed group.');
     });
 
     QUnit.test('Priority must be set to the highest if there are more than two notifications', function(assert) {

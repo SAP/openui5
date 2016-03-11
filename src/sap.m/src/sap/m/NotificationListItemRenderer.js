@@ -15,15 +15,17 @@ sap.ui.define([], function () {
 	var classNameBase = 'sapMNLB';
 	var classNameTextWrapper = 'sapMNLI-TextWrapper';
 	var classNameListBaseItem = 'sapMLIB';
-	var classNameAuthor = 'sapMNLI-AuthorPicture';
+	var classNameAuthor = 'sapMNLB-AuthorPicture';
 	var classNamePriority = 'sapMNLB-Priority';
+	var classNameBaseHeader = 'sapMNLB-Header';
 	var classNameHeader = 'sapMNLI-Header';
 	var classNameBody = 'sapMNLI-Body';
 	var classNameDescription = 'sapMNLI-Description';
 	var classNameDetails = 'sapMNLI-Details';
-	var classNameBullet = 'sapMNLI-Bullet';
+	var classNameBullet = 'sapMNLB-Bullet';
+	var classNameBaseFooter = 'sapMNLB-Footer';
 	var classNameFooter = 'sapMNLI-Footer';
-	var classNameCloseButton = 'sapMNLI-CloseButton';
+	var classNameCloseButton = 'sapMNLB-CloseButton';
 	var classNameCollapseButton = 'sapMNLI-CollapseButton';
 	var classNameInitialOverwriteTitle = 'sapMNLI-TitleWrapper--initial-overwrite';
 	var classNameInitialOverwriteText = 'sapMNLI-TextWrapper--initial-overwrite';
@@ -58,7 +60,6 @@ sap.ui.define([], function () {
 		this.renderHeader(oRm, oControl);
 		this.renderBody(oRm, oControl);
 		this.renderFooter(oRm, oControl);
-		this.renderCloseButton(oRm, oControl);
 
 		oRm.write('</li>');
 	};
@@ -154,12 +155,14 @@ sap.ui.define([], function () {
 	 */
 	NotificationListItemRenderer.renderHeader = function (oRm, oControl) {
 		oRm.write('<div');
+		oRm.addClass(classNameBaseHeader);
 		oRm.addClass(classNameHeader);
 		oRm.addClass(classNameInitialOverwriteTitle);
 
 		oRm.writeClasses();
 		oRm.write('>');
 
+		this.renderCloseButton(oRm, oControl);
 		this.renderTitle(oRm, oControl);
 		oRm.write('</div>');
 	};
@@ -275,7 +278,15 @@ sap.ui.define([], function () {
 	NotificationListItemRenderer.renderFooter = function (oRm, oControl) {
 		var aButtons = oControl.getButtons();
 
-		oRm.write('<div class=' + classNameFooter + '>');
+		//oRm.write('<div class=' + classNameFooter + '>');
+
+		oRm.write('<div');
+		oRm.addClass(classNameFooter);
+		oRm.addClass(classNameBaseFooter);
+
+		oRm.writeClasses();
+		oRm.write('>');
+
 		this.renderCollapseButton(oRm, oControl);
 
 		if (aButtons && aButtons.length && oControl.getShowButtons()) {
