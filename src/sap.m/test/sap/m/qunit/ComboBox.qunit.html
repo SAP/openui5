@@ -6320,7 +6320,7 @@
 			sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 
 			// tick the clock ahead some ms millisecond
-			this.clock.tick(sap.m.ComboBoxBase.LOAD_ITEMS_BUSY_INDICATOR_DELAY);
+			this.clock.tick(300);
 
 			// assert
 			strictEqual(oComboBox.getBusy(), true);

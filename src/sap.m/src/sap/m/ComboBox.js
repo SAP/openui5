@@ -353,7 +353,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				return;
 			}
 
-			function fn() {
+			this.loadItems(function() {
 				var oSelectedItem = this.getSelectedItem(),
 					sValue = oEvent.target.value,
 					bEmptyValue = sValue === "";
@@ -410,10 +410,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 				} else {
 					this.clearFilter();
 				}
-			}
-
-			fn.bInput = true;
-			this.loadItems(fn);
+			}, {
+				id: "input",
+				busyIndicator: false
+			});
 
 			// if the loadItems event is being processed,
 			// we need to open the dropdown list to show the busy indicator
