@@ -259,7 +259,7 @@ sap.ui.define([
 
 						/**
 						 * DOM reference of the changed item's icon to be used for positioning.
-						 * @since 1.34.0
+						 * @since 1.38.0
 						 */
 						domRef: {type: "string"}
 					}
