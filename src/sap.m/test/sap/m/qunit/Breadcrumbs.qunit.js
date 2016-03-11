@@ -41,7 +41,7 @@
 	};
 
 	helpers = {
-		verifyFocusOnKeyDown: function (assert, iKeyCode, oItemToStartWith, oExpectedItemToBeFocused, sMessage ) {
+		verifyFocusOnKeyDown: function (assert, iKeyCode, oItemToStartWith, oExpectedItemToBeFocused, sMessage) {
 			oItemToStartWith.$().focus();
 			sap.ui.test.qunit.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
 			assert.ok(oExpectedItemToBeFocused.jQuery().is(':focus'), sMessage);
@@ -95,35 +95,55 @@
 
 	QUnit.test("Changing the control dynamically", function (assert) {
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
-			iLinksCount = oStandardBreadCrumbsControl.getLinks().length;
+			iExpectedLinkCount = oStandardBreadCrumbsControl.getLinks().length,
+			oRemovedLink,
+			oNewLink;
 
 		oStandardBreadCrumbsControl.addLink(oFactory.getLink());
-		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, iLinksCount + 1,
+		iExpectedLinkCount++;
+
+		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, iExpectedLinkCount,
 			"the link is correctly added to the control");
 
+		oNewLink = oFactory.getLink();
+		oStandardBreadCrumbsControl.insertLink(oNewLink, 2);
+		iExpectedLinkCount++;
+
+		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, iExpectedLinkCount,
+				"the link is inserted correctly");
+
+		assert.strictEqual(oStandardBreadCrumbsControl.getLinks()[2], oNewLink,
+			"the link is correctly inserted at position 2");
+
+		oNewLink = oFactory.getLink();
+		oStandardBreadCrumbsControl.insertLink(oNewLink);
+		iExpectedLinkCount++;
+
+		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, iExpectedLinkCount,
+				"the link is inserted correctly");
+
+		assert.strictEqual(oStandardBreadCrumbsControl.getLinks()[0], oNewLink,
+				"the link is correctly inserted at the beginning of the array");
+
 		oStandardBreadCrumbsControl.removeLink(oStandardBreadCrumbsControl.getLinks()[0]);
-		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, iLinksCount,
+		iExpectedLinkCount--;
+		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, iExpectedLinkCount,
 			"the link is correctly removed from the control");
+
+		oRemovedLink = oStandardBreadCrumbsControl.getLinks()[1];
+		oStandardBreadCrumbsControl.removeLink(1);
+		iExpectedLinkCount--;
+
+		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, iExpectedLinkCount,
+			"the link is correctly removed from the control using its index");
+
+		assert.ok(oStandardBreadCrumbsControl.getLinks().indexOf(oRemovedLink) === -1,
+			"the link is correctly removed from the control using its index");
 
 		assert.throws(function () {
 			oStandardBreadCrumbsControl.addLink(oFactory.getText());
 		}, "an exception is thrown when trying to add an incorrect type to the links aggregation");
 	});
-
-/*There are some issuue with the sinon spy. Must be investigated.
-	QUnit.test("Changing breadcrumb item that affects control size", function (assert) {
-		var spy = this.spy(sap.m.Breadcrumbs.prototype, "_resetControl"),
-			oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
-
-		helpers.renderObject(oStandardBreadCrumbsControl);
-
-		oStandardBreadCrumbsControl.getLinks().forEach(function (oLink) {
-			oLink.setWidth("100px");
-			this.clock.tick(1000);
-		}, this);
-
-		assert.ok(spy.callCount === 4, "Handler is called");
-	});*/
 
 	QUnit.test("Current location setter", function (assert) {
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
@@ -206,7 +226,7 @@
 
 	QUnit.test("Only links", function (assert) {
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4);
-		helpers.renderObject(this.oStandardBreadCrumbsControl );
+		helpers.renderObject(this.oStandardBreadCrumbsControl);
 		assert.ok(!this.oStandardBreadCrumbsControl._getCurrentLocation().getDomRef(), "Current location has no dom ref");
 		var $lastSeparator = this.oStandardBreadCrumbsControl.$().find("li.sapMBreadcrumbsItem:last-child > span.sapMBreadcrumbsSeparator");
 
@@ -225,7 +245,7 @@
 
 	QUnit.test("Prevent dependency bug with select's popover", function (assert) {
 		var pickerAfterOpenSpy = this.spy(sap.m.Breadcrumbs.prototype, "_removeItemNavigation"),
-				pickerBeforeCloseSpy = this.spy(sap.m.Breadcrumbs.prototype, "_restoreItemNavigation");
+			pickerBeforeCloseSpy = this.spy(sap.m.Breadcrumbs.prototype, "_restoreItemNavigation");
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(15, "Current location text");
 
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
