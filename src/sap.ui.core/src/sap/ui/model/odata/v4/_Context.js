@@ -70,8 +70,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Delegates to this context's binding <code>requestValue</code> method which requests the
-	 * value for the given path, relative to this context, as maintained by that binding.
+	 * Delegates to the <code>requestValue</code> method of this context's binding which requests
+	 * the value for the given path, relative to this context, as maintained by that binding.
 	 *
 	 * @param {string} [sPath]
 	 *   Some relative path
@@ -83,6 +83,39 @@ sap.ui.define([
 	 */
 	_Context.prototype.requestValue = function (sPath) {
 		return this.oBinding.requestValue(sPath, this.iIndex);
+	};
+
+	/**
+	 * Delegates to the <code>updateValue</code> method of this context's binding which updates the
+	 * value for the given path, relative to this context, as maintained by that binding.
+	 *
+	 * @param {string} sPropertyName
+	 *   Name of property to update
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} [sEditUrl]
+	 *   The edit URL corresponding to the entity to be updated
+	 * @param {string} [sPath]
+	 *   Some relative path
+	 * @returns {Promise}
+	 *   A promise on the outcome of the binding's <code>updateValue</code> call
+	 *
+	 * @private
+	 */
+	_Context.prototype.updateValue = function (sPropertyName, vValue, sEditUrl, sPath) {
+		var that = this;
+
+		if (this.iIndex !== undefined) {
+			sPath = this.iIndex + (sPath ? "/" + sPath : "");
+		}
+
+		if (sEditUrl) {
+			return this.oBinding.updateValue(sPropertyName, vValue, sEditUrl, sPath);
+		}
+
+		return this.oModel.requestCanonicalPath(this).then(function (sEditUrl) {
+			return that.oBinding.updateValue(sPropertyName, vValue, sEditUrl.slice(1), sPath);
+		});
 	};
 
 	return {

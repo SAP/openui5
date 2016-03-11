@@ -462,7 +462,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath]
 	 *   Some relative path
-	 * @param {number} [iIndex]
+	 * @param {number} iIndex
 	 *   Index corresponding to some current context of this binding
 	 * @returns {Promise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
@@ -534,6 +534,36 @@ sap.ui.define([
 		throw new Error("Unsupported operation: v4.ODataListBinding#suspend");
 	};
 
-	return ODataListBinding;
+	/**
+	 * Updates the value for the given property name inside the entity with the given relative path;
+	 * the value is updated in this binding's cache or in its parent context in case it has no
+	 * cache.
+	 *
+	 * @param {string} sPropertyName
+	 *   Name of property to update
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} sEditUrl
+	 *   The edit URL for the entity which is updated
+	 * @param {string} sPath
+	 *   Some relative path
+	 * @returns {Promise}
+	 *   A promise on the outcome of the cache's <code>update</code> call
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.updateValue = function (sPropertyName, vValue, sEditUrl, sPath) {
+		var sGroupId, oPromise;
 
+		if (this.oCache) {
+			sGroupId = this.getGroupId();
+			oPromise = this.oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
+			this.oModel.addedRequestToGroup(sGroupId);
+			return oPromise;
+		}
+
+		return this.oContext.updateValue(sPropertyName, vValue, sEditUrl, this.sPath + "/" + sPath);
+	};
+
+	return ODataListBinding;
 }, /* bExport= */ true);

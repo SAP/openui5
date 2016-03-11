@@ -73,15 +73,103 @@ sap.ui.require([
 		var oBinding = {
 				requestValue : function () {}
 			},
-			sPath = "/foo",
-			oContext = _Context.create(null, oBinding, sPath, 42),
-			oPromise = {},
-			sRelativePath = "bar";
+			oContext = _Context.create(null, oBinding, "/foo", 42),
+			oResult = {},
+			sPath = "bar";
 
-		this.mock(oBinding).expects("requestValue")
-			.withExactArgs(sRelativePath, 42)
-			.returns(oPromise);
+		this.oSandbox.mock(oBinding).expects("requestValue").withExactArgs(sPath, 42)
+			.returns(oResult);
 
-		assert.strictEqual(oContext.requestValue(sRelativePath), oPromise);
+		assert.strictEqual(oContext.requestValue(sPath), oResult);
+	});
+
+	//*********************************************************************************************
+	[undefined, 0, 42].forEach(function (iIndex) {
+		QUnit.test("updateValue (PropertyBinding -> "
+			+ (iIndex === undefined ? "Context" : "List") + "Binding)", function (assert) {
+			var oBinding = {
+					updateValue : function () {}
+				},
+				oModel = {
+					requestCanonicalPath : function () {}
+				},
+				oContext = _Context.create(oModel, oBinding, "/foo", iIndex),
+				oResult = {},
+				sPropertyName = "bar",
+				vValue = Math.PI;
+
+			this.oSandbox.mock(oModel).expects("requestCanonicalPath")
+				.withExactArgs(sinon.match.same(oContext))
+				.returns(Promise.resolve("/edit('URL')"));
+			this.oSandbox.mock(oBinding).expects("updateValue")
+				.withExactArgs(sPropertyName, vValue, "edit('URL')",
+					iIndex === undefined ? undefined : "" + iIndex)
+				.returns(Promise.resolve(oResult));
+
+			return oContext.updateValue(sPropertyName, vValue).then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateValue: error handling", function (assert) {
+		var oBinding = {
+				updateValue : function () {}
+			},
+			oModel = {
+				requestCanonicalPath : function () {}
+			},
+			oContext = _Context.create(oModel, oBinding, "/foo", 0),
+			oError = new Error();
+
+		this.oSandbox.mock(oModel).expects("requestCanonicalPath")
+			.withExactArgs(sinon.match.same(oContext))
+			.returns(Promise.reject(oError)); // rejected!
+		this.oSandbox.mock(oBinding).expects("updateValue").never();
+
+		return oContext.updateValue("bar", Math.PI).then(function (oResult0) {
+			assert.ok(false);
+		}, function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateValue (Context/ListBinding -> ContextBinding)", function (assert) {
+		var oBinding = {
+				updateValue : function () {}
+			},
+			oContext = _Context.create(null, oBinding, "/foo"),
+			oResult = {},
+			sPropertyName = "bar",
+			vValue = Math.PI;
+
+		this.oSandbox.mock(oBinding).expects("updateValue")
+			.withExactArgs(sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42")
+			.returns(oResult);
+
+		assert.strictEqual(
+			oContext.updateValue(sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42"),
+			oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateValue (Context/ListBinding -> ListBinding)", function (assert) {
+		var oBinding = {
+				updateValue : function () {}
+			},
+			oContext = _Context.create(null, oBinding, "/foo", 0),
+			oResult = {},
+			sPropertyName = "bar",
+			vValue = Math.PI;
+
+		this.oSandbox.mock(oBinding).expects("updateValue")
+			.withExactArgs(sPropertyName, vValue, "edit('URL')", "0/SO_2_SOITEM/42")
+			.returns(oResult);
+
+		assert.strictEqual(
+			oContext.updateValue(sPropertyName, vValue, "edit('URL')", "SO_2_SOITEM/42"),
+			oResult);
 	});
 });

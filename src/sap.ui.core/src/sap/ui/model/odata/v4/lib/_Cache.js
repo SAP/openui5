@@ -76,9 +76,9 @@ sap.ui.define([
 	 *   The array
 	 * @param {any} vValue
 	 *   The value
-	 * @param {int} iStart
+	 * @param {number} iStart
 	 *   The start index
-	 * @param {int} iEnd
+	 * @param {number} iEnd
 	 *   The end index (will not be filled)
 	 */
 	function fill(aArray, vValue, iStart, iEnd) {
@@ -97,9 +97,9 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 	 *   The cache
-	 * @param {int} iStart
+	 * @param {number} iStart
 	 *   The index of the first element to request ($skip)
-	 * @param {int} iEnd
+	 * @param {number} iEnd
 	 *   The position of the last element to request ($skip + $top)
 	 * @param {string} sGroupId
 	 *   The batch group ID
@@ -163,9 +163,9 @@ sap.ui.define([
 	/**
 	 * Returns a promise resolved with an OData object for a range of the requested data.
 	 *
-	 * @param {int} iIndex
+	 * @param {number} iIndex
 	 *   The start index of the range; the first row has index 0
-	 * @param {int} iLength
+	 * @param {number} iLength
 	 *   The length of the range
 	 * @param {string} [sGroupId]
 	 *   ID of the batch group to associate the requests with; if <code>undefined</code>
@@ -265,6 +265,39 @@ sap.ui.define([
 	};
 
 	/**
+	 * Updates the property of the given name with the given new value, using the given group ID
+	 * for batch control and the given edit URL to send a PATCH request.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sPropertyName
+	 *   Name of property to update
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} sEditUrl
+	 *   The edit URL for the entity which is updated via PATCH
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into
+	 * @returns {Promise}
+	 *   A Promise for the PATCH request
+	 */
+	CollectionCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
+		var oBody = {},
+			mHeaders,
+			oResult = drillDown(this.aElements, sPath),
+			that = this;
+
+		oBody[sPropertyName] = vValue;
+		mHeaders = {"If-Match" : oResult["@odata.etag"]};
+
+		return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
+			.then(function (oPatchResult) {
+				oResult["@odata.etag"] = oPatchResult["@odata.etag"];
+				return oPatchResult;
+			});
+	};
+
+	/**
 	 * Creates a cache for a single entity that performs requests using the given requestor.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
@@ -352,6 +385,44 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.toString = function () {
 		return this.oRequestor.getServiceUrl() + this.sResourcePath;
+	};
+
+	/**
+	 * Updates the property of the given name with the given new value, using the given group ID
+	 * for batch control and the given edit URL to send a PATCH request.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string} sPropertyName
+	 *   Name of property to update
+	 * @param {any} vValue
+	 *   The new value
+	 * @param {string} sEditUrl
+	 *   The edit URL for the entity which is updated via PATCH
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into
+	 * @returns {Promise}
+	 *   A Promise for the PATCH request
+	 */
+	SingleCache.prototype.update = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
+		var oBody = {},
+			that = this;
+
+		oBody[sPropertyName] = vValue;
+		return this.oPromise.then(function (oResult) {
+			var mHeaders;
+
+			oResult = drillDown(oResult, sPath);
+			mHeaders = {"If-Match" : oResult["@odata.etag"]};
+
+			return that.oRequestor.request("PATCH", sEditUrl, sGroupId, mHeaders, oBody)
+				.then(function (oPatchResult) {
+					if (!that.bSingleProperty) {
+						oResult["@odata.etag"] = oPatchResult["@odata.etag"];
+					}
+					return oPatchResult;
+				});
+		});
 	};
 
 	Cache = {
@@ -483,7 +554,7 @@ sap.ui.define([
 		 * @param {string} sResourcePath
 		 *   A resource path relative to the service URL; it must not contain a query string<br>
 		 *   Example: Products
-		 * @param {object} mQueryOptions
+		 * @param {object} [mQueryOptions]
 		 *   A map of key-value pairs representing the query string, the value in this pair has to
 		 *   be a string or an array of strings; if it is an array, the resulting query string
 		 *   repeats the key for each array value.

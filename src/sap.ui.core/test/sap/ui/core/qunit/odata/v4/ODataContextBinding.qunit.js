@@ -276,13 +276,11 @@ sap.ui.require([
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
-
 		this.oSandbox.mock(oBinding.oCache).expects("read")
 			.withExactArgs("$direct", "bar", sinon.match.func)
 			.callsArg(2)
 			.returns(Promise.resolve("value"));
-
-		this.oSandbox.mock(oBinding.getModel()).expects("addedRequestToGroup")
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
 			.withExactArgs("$direct", sinon.match.func).callsArg(1);
 
 		return oBinding.requestValue("bar").then(function (vValue) {
@@ -293,13 +291,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (no read required)", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
-			oBindingMock = this.oSandbox.mock(oBinding),
-			oCacheMock = this.oSandbox.mock(oBinding.oCache);
+			oBindingMock = this.oSandbox.mock(oBinding);
 
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
-
-		oCacheMock.expects("read").withExactArgs("$direct", "bar", sinon.match.func)
+		this.oSandbox.mock(oBinding.oCache).expects("read")
+			.withExactArgs("$direct", "bar", sinon.match.func)
+			// no read required! .callsArg(2)
 			.returns(Promise.resolve("value"));
 
 		return oBinding.requestValue("bar").then(function (vValue) {
@@ -343,7 +341,7 @@ sap.ui.require([
 			oNestedBinding,
 			oPromise = {};
 
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").never();
+		this.oSandbox.mock(oBinding).expects("getGroupId").never();
 		oBinding.initialize();
 		oContext = oBinding.getBoundContext();
 		oContextMock = this.oSandbox.mock(oContext);
@@ -356,6 +354,47 @@ sap.ui.require([
 		oContextMock.expects("requestValue").withExactArgs("navigation").returns(oPromise);
 
 		assert.strictEqual(oNestedBinding.requestValue(""), oPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateValue: absolute binding", function (assert) {
+		var oBinding = this.oModel.bindContext("/absolute", null, {$$groupId : "$direct"}),
+			sPath = "SO_2_SOITEM/42",
+			oResult = {};
+
+		this.oSandbox.mock(oBinding).expects("fireEvent").never();
+		this.oSandbox.mock(oBinding.oCache).expects("update")
+			.withExactArgs("$direct", "bar", Math.PI, "edit('URL')", sPath)
+			.returns(Promise.resolve(oResult));
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("$direct");
+
+		// code under test
+		return oBinding.updateValue("bar", Math.PI, "edit('URL')", sPath)
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateValue: relative binding", function (assert) {
+		var oContext = {
+				updateValue : function () {}
+			},
+			oBinding = this.oModel.bindContext("PRODUCT_2_BP", oContext),
+			oResult = {};
+
+		this.oSandbox.mock(oBinding).expects("fireEvent").never();
+		this.oSandbox.mock(oBinding).expects("getGroupId").never();
+		this.oSandbox.mock(oContext).expects("updateValue")
+			.withExactArgs("bar", Math.PI, "edit('URL')", "PRODUCT_2_BP/BP_2_XYZ/42")
+			.returns(Promise.resolve(oResult));
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").never();
+
+		// code under test
+		return oBinding.updateValue("bar", Math.PI, "edit('URL')", "BP_2_XYZ/42")
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
 	});
 
 	//*********************************************************************************************
@@ -435,7 +474,7 @@ sap.ui.require([
 			.withExactArgs("$direct", "foo", sinon.match.func)
 			.callsArg(2)
 			.returns(oReadPromise);
-		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup")
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
 			.withExactArgs("$direct", sinon.match.func)
 			.callsArg(1);
 

@@ -51,7 +51,8 @@ sap.ui.require([
 		getCacheMock : function () {
 			var oCache = {
 					read : function () {},
-					refresh : function () {}
+					refresh : function () {},
+					update : function () {}
 				};
 
 			this.oSandbox.mock(_Cache).expects("createSingle").returns(oCache);
@@ -793,7 +794,7 @@ sap.ui.require([
 		var oControl,
 			oModel = new ODataModel("/"),
 			oPropertyBinding,
-			oRequestorMock = this.oSandbox.mock(oModel.oRequestor);
+			oPropertyBindingCacheMock;
 
 		this.getCacheMock().expects("read").returns(Promise.resolve("HT-1000's Name"));
 		oControl = new TestControl({
@@ -802,29 +803,34 @@ sap.ui.require([
 				+ ", path : '/ProductList(\\'HT-1000\\')/Name'"
 				+ ", type : 'sap.ui.model.odata.type.String'}"
 		});
+		oPropertyBinding = oControl.getBinding("text");
+		oPropertyBindingCacheMock = this.oSandbox.mock(oPropertyBinding.oCache);
 		this.oSandbox.mock(oModel).expects("addedRequestToGroup").twice().withExactArgs("$direct");
-		oRequestorMock.expects("request").withExactArgs("PATCH", "ProductList('HT-1000')",
-			"$direct", {"If-Match" : undefined}, {"Name" : "foo"});
+		oPropertyBindingCacheMock.expects("update")
+			.withExactArgs("$direct", "Name", "foo", "ProductList('HT-1000')")
+			.returns(Promise.resolve());
 
 		// code under test
 		oControl.setText("foo");
 
-		oPropertyBinding = oControl.getBinding("text");
 		assert.strictEqual(oPropertyBinding.getValue(), "foo");
 
 		// code under test
 		oPropertyBinding.setValue("foo"); // must not trigger a 2nd PATCH
 
 		// set a different value via API
-		oRequestorMock.expects("request").withExactArgs("PATCH", "ProductList('HT-1000')",
-			"$direct", {"If-Match" : undefined}, {"Name" : "bar"});
+		oPropertyBindingCacheMock.expects("update")
+			.withExactArgs("$direct", "Name", "bar", "ProductList('HT-1000')")
+			.returns(Promise.resolve());
 
 		// code under test
 		oPropertyBinding.setValue("bar");
 
 		assert.strictEqual(oControl.getText(), "bar");
 	});
-	//TODO {"If-Match" : "eTag"} - a request for a single property does not return an ETag
+	//TODO "DataRequested" event? probably not ("GET" only), not done by v2 AFAIK
+	//TODO {"If-Match" : sEtag} - a request for a single property does not return an "@odata.etag"
+	//     annotation, but an "etag(?)" header which is not supported by _Cache so far
 	//TODO for PATCH we need the edit URL (for single property we can't determine the canonical URL
 	//     because the path need not contain the key properties e.g.
 	//     /EMPLOYEES('2')/EMPLOYEE_2_MANAGER/TEAM_ID) --> accept limitation for now
@@ -851,70 +857,93 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setValue (absolute binding): error handling", function (assert) {
+		var sMessage = "This call intentionally failed",
+			oError = new Error(sMessage),
+			oModel = new ODataModel("/", {defaultGroup : "$direct"}),
+			oPromise = Promise.reject(oError),
+			oPropertyBinding = oModel.bindProperty("/ProductList('0')/Name");
+
+		this.oSandbox.mock(oModel).expects("addedRequestToGroup").withExactArgs("$direct");
+		this.oSandbox.mock(oPropertyBinding.oCache).expects("update")
+			.withExactArgs("$direct", "Name", "foo", "ProductList('0')")
+			.returns(oPromise);
+		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack,
+			"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+		// code under test
+		oPropertyBinding.setValue("foo");
+
+		assert.strictEqual(oPropertyBinding.getValue(), "foo", "keep user input");
+
+		return oPromise.catch(function () {}); // wait, but do not fail
+	});
+
+	//*********************************************************************************************
 	QUnit.test("setValue (relative binding) via control", function (assert) {
 		var oCacheMock = this.getCacheMock(),
-			sEtag = 'W/"19770724000000.0000000"',
 			oModel = new ODataModel("/", {defaultGroup : "$direct"}),
 			oControl = new TestControl({
 				models : oModel,
 				objectBindings : "/SalesOrderList('0500000000')"
 			}),
-			oContext = oControl.getObjectBinding().getBoundContext(),
-			oPromise = Promise.resolve("/SalesOrderList('0500000000')");
+			oContext = oControl.getObjectBinding().getBoundContext();
 
+		this.oSandbox.mock(oModel).expects("addedRequestToGroup").never();
 		oCacheMock.expects("read").withExactArgs("$direct", "Note", sinon.match.func)
 			.returns(Promise.resolve("Some note")); // text property of control
 		oControl.applySettings({
 			text : "{path : 'Note', type : 'sap.ui.model.odata.type.String'}"
 		});
-		this.oSandbox.mock(oContext).expects("requestValue").withExactArgs("@odata.etag")
-			.returns(Promise.resolve(sEtag));
-		this.oSandbox.mock(oModel).expects("requestCanonicalPath").withExactArgs(oContext)
-			.returns(oPromise);
-		this.oSandbox.mock(oModel).expects("addedRequestToGroup").withExactArgs("$direct");
-		this.oSandbox.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("PATCH", "SalesOrderList('0500000000')", "$direct",
-				{"If-Match" : sEtag}, {"Note" : "foo"});
+		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs("Note", "foo")
+			.returns(Promise.resolve());
 
 		// code under test
 		oControl.setText("foo");
-
-		return oPromise;
 	});
+	//TODO relative path which is not simply a property name (Address/Street)?
 
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding): error handling", function (assert) {
-		var oCacheMock = this.getCacheMock(),
-			sEtag = 'W/"19770724000000.0000000"',
+		var oContext = {
+				updateValue : function () {}
+			},
+			sMessage = "This call intentionally failed",
+			oError = new Error(sMessage),
 			oModel = new ODataModel("/"),
+			oPromise = Promise.reject(oError),
+			oPropertyBinding = oModel.bindProperty("Name", oContext);
+
+		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs("Name", "foo")
+			.returns(oPromise);
+		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack,
+			"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+		// code under test
+		oPropertyBinding.setValue("foo");
+
+		assert.strictEqual(oPropertyBinding.getValue(), "foo", "keep user input");
+
+		return oPromise.catch(function () {}); // wait, but do not fail
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setValue (relative binding w/o context) via control", function (assert) {
+		var oModel = new ODataModel("/"),
 			oControl = new TestControl({
 				models : oModel,
-				objectBindings : "/SalesOrderList('0500000000')/Address"
-			}),
-			oContext = oControl.getObjectBinding().getBoundContext(),
-			sMessage = "Not a navigation property: Address (/SalesOrderList('0500000000')/Address)",
-			oError = new Error(sMessage),
-			oPromise = Promise.reject(oError);
+				text : "{path : 'Note', type : 'sap.ui.model.odata.type.String'}"
+			});
 
-		this.oSandbox.mock(oModel).expects("getGroupId").withExactArgs().returns("groupId");
-		oCacheMock.expects("read").withExactArgs("groupId", "Note", sinon.match.func)
-			.returns(Promise.resolve("Some note")); // text property of control
-		oControl.applySettings({
-			text : "{path : 'Note', type : 'sap.ui.model.odata.type.String'}"
-		});
-		this.oSandbox.mock(oContext).expects("requestValue").withExactArgs("@odata.etag")
-			.returns(Promise.resolve(sEtag));
-		this.oSandbox.mock(oModel).expects("requestCanonicalPath").withExactArgs(oContext)
-			.returns(oPromise); // rejected!
-		this.oSandbox.mock(oModel).expects("addedRequestToGroup").never();
-		this.oSandbox.mock(oModel.oRequestor).expects("request").never();
-		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack,
+		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
+		this.oLogMock.expects("warning").withExactArgs(
+			"Cannot set value on relative binding without context", "Note",
 			"sap.ui.model.odata.v4.ODataPropertyBinding");
 
 		// code under test
 		oControl.setText("foo");
 
-		return oPromise.catch(function () {}); // wait for promise but do not fail
+		assert.strictEqual(oControl.getText(), undefined, "control change is rolled back");
 	});
 
 	//*********************************************************************************************

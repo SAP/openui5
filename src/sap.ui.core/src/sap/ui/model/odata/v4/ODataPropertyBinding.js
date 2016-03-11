@@ -361,7 +361,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the new current value and sends a PATCH request.
+	 * Sets the new current value and updates the cache.
 	 *
 	 * @param {any} vValue
 	 *   The new value which must be primitive
@@ -373,46 +373,37 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue) {
-		var oBody, sGroupId, iLastSlash, that = this;
-
-		/**
-		 * Sends a PATCH request with the given entity tag and edit URL.
-		 *
-		 * @param {string[]} aValues
-		 *   Entity tag and edit URL
-		 */
-		function patch(aValues) {
-			var sEtag = aValues[0],
-				sEditUrl = aValues[1].slice(1);
-
-			sGroupId = that.getGroupId();
-			that.oModel.oRequestor.request("PATCH", sEditUrl, sGroupId, {"If-Match" : sEtag},
-				oBody);
-			that.oModel.addedRequestToGroup(sGroupId);
-		}
+		var sGroupId, iLastSlash;
 
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
 		}
 
 		if (this.vValue !== vValue) {
+			if (this.bRelative) {
+				if (this.oContext) {
+					this.oContext.updateValue(this.sPath, vValue)
+						.catch(function (oError) {
+							jQuery.sap.log.error(oError.message, oError.stack, sClassName);
+						});
+				} else {
+					jQuery.sap.log.warning("Cannot set value on relative binding without context",
+						this.sPath, sClassName);
+					return; // do not update this.vValue!
+				}
+			} else {
+				sGroupId = this.getGroupId();
+				iLastSlash = this.sPath.lastIndexOf("/");
+				this.oCache.update(sGroupId, /*sPropertyName*/this.sPath.slice(iLastSlash + 1),
+						vValue, /*sEditUrl*/this.sPath.slice(1, iLastSlash))
+					.catch(function (oError) {
+						jQuery.sap.log.error(oError.message, oError.stack, sClassName);
+					});
+				this.oModel.addedRequestToGroup(sGroupId);
+			}
+
 			this.vValue = vValue;
 			this._fireChange({reason : ChangeReason.Change});
-
-			iLastSlash = this.sPath.lastIndexOf("/");
-			oBody = {};
-			oBody[this.sPath.slice(iLastSlash + 1)] = vValue;
-
-			if (this.isRelative()) {
-				Promise.all([
-					this.oContext.requestValue("@odata.etag"),
-					this.oModel.requestCanonicalPath(this.oContext)
-				]).then(patch, function (oError) {
-					jQuery.sap.log.error(oError.message, oError.stack, sClassName);
-				});
-			} else {
-				patch([undefined, this.sPath.slice(0, iLastSlash)]);
-			}
 		}
 	};
 

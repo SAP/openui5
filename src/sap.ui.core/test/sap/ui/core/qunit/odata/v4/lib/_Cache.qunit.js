@@ -568,6 +568,52 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("update", function (assert) {
+		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+			sEtag = 'W/"19700101000000.0000000"',
+			oPromise = Promise.resolve({
+				value : [{
+					"SalesOrderID" : "0",
+					"SO_2_SOITEM" : [{
+						"@odata.etag" : sEtag,
+						"ItemPosition" : "0",
+						"Note" : "Some Note"
+					}]
+				}]
+			}),
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.oSandbox.mock(oRequestor),
+			sResourcePath = "/SalesOrderList(SalesOrderID='0')",
+			oResult = {"@odata.etag" : 'W/"19700101000000.9999999"'},
+			oCache = _Cache.create(oRequestor, sResourcePath, {"$expand" : {"SO_2_SOITEM" : true}});
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath + "?$expand=SO_2_SOITEM&$skip=0&$top=1", "groupId")
+			.returns(oPromise);
+		// triggers GET
+		oCache.read(0, 1, "groupId");
+		oRequestorMock.expects("request")
+			.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sEtag},
+				{"Note" : "foo"})
+			.returns(Promise.resolve(oResult));
+
+		return oPromise.then(function () {
+			// code under test
+			return oCache.update("updateGroupId", "Note", "foo", sEditUrl, "0/SO_2_SOITEM/0")
+				.then(function (oResult0) {
+					assert.strictEqual(oResult0, oResult, "A Promise for the PATCH request");
+
+					return oCache.read(0, 1, undefined, "SO_2_SOITEM/0/@odata.etag")
+						.then(function (sNewEtag) {
+							assert.strictEqual(sNewEtag, oResult["@odata.etag"],
+								"@odata.etag has been updated");
+						});
+				});
+			});
+	});
+	// TODO fnLog of drillDown in CollectionCache#update
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("read single employee (real OData)", function (assert) {
 			var oExpectedResult = {
@@ -711,5 +757,84 @@ sap.ui.require([
 		assert.strictEqual(oCache.toString(), "/~/" + sResourcePathSingle);
 
 	});
-	//TODO: dataRequested handling for SingleCache
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bIsRelative) {
+		QUnit.test("SingleCache.update (property binding, relative: " + bIsRelative + ")",
+			function (assert) {
+				var sEtag = bIsRelative ? 'W/"19700101000000.0000000"' : undefined,
+					oRequestor = _Requestor.create("/"),
+					oRequestorMock = this.oSandbox.mock(oRequestor),
+					sResourcePath = "ProductList('HT-1000')" + (bIsRelative ? "" : "/Name"),
+					oResult = {"@odata.etag" : 'W/"19700101000000.9999999"'},
+					oCache = _Cache.createSingle(oRequestor, sResourcePath, null, !bIsRelative);
+
+				oRequestorMock.expects("request")
+					.withExactArgs("GET", sResourcePath, "groupId")
+					.returns(Promise.resolve(
+						bIsRelative ? {"@odata.etag" : sEtag} : {value : "MyName"}));
+				// triggers GET
+				oCache.read("groupId", /*sPath*/bIsRelative ? "Name" : undefined);
+				oRequestorMock.expects("request")
+					.withExactArgs("PATCH", "ProductList('HT-1000')", "updateGroupId",
+						{"If-Match" : sEtag}, {"Name" : "foo"})
+					.returns(Promise.resolve(oResult));
+
+				// code under test
+				return oCache.update("updateGroupId", "Name", "foo", "ProductList('HT-1000')")
+					.then(function (oResult0) {
+						assert.strictEqual(oResult0, oResult, "A Promise for the PATCH request");
+
+						if (bIsRelative) {
+							return oCache.read(undefined, "@odata.etag")
+								.then(function (sNewEtag) {
+									assert.strictEqual(sNewEtag, oResult["@odata.etag"],
+										"@odata.etag has been updated");
+								});
+						}
+					});
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache.update (relative list binding", function (assert) {
+		var sEditUrl = "SOLineItemList(SalesOrderID='0',ItemPosition='0')",
+			sEtag = 'W/"19700101000000.0000000"',
+			oRequestor = _Requestor.create("/"),
+			oRequestorMock = this.oSandbox.mock(oRequestor),
+			sResourcePath = "/SalesOrderList(SalesOrderID='0')?$expand=SO_2_SOITEM",
+			oResult = {"@odata.etag" : 'W/"19700101000000.9999999"'},
+			oCache = _Cache.createSingle(oRequestor, sResourcePath);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath, "groupId")
+			.returns(Promise.resolve({
+				"SalesOrderID" : "0",
+				"SO_2_SOITEM" : [{
+					"@odata.etag" : sEtag,
+					"ItemPosition" : "0",
+					"Note" : "Some Note"
+				}]
+			}));
+		// triggers GET
+		oCache.read("groupId", /*sPath*/"SO_2_SOITEM");
+		oRequestorMock.expects("request")
+			.withExactArgs("PATCH", sEditUrl, "updateGroupId", {"If-Match" : sEtag},
+				{"Note" : "foo"})
+			.returns(Promise.resolve(oResult));
+
+		// code under test
+		return oCache.update("updateGroupId", "Note", "foo", sEditUrl, "SO_2_SOITEM/0")
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult, "A Promise for the PATCH request");
+
+				return oCache.read(undefined, "SO_2_SOITEM/0/@odata.etag")
+					.then(function (sNewEtag) {
+						assert.strictEqual(sNewEtag, oResult["@odata.etag"],
+							"@odata.etag has been updated");
+					});
+			});
+	});
+	// TODO fnLog of drillDown in SingleCache#update
 });
+//TODO: dataRequested handling for SingleCache
