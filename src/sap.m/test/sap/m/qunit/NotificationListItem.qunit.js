@@ -462,6 +462,9 @@
 
 	QUnit.test('Check if text is truncated', function(assert) {
 		// arrange
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
+
 		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
 			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
 			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
@@ -480,8 +483,8 @@
 
 		// assert
 		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').hidden, false, 'The "Show More" button should appear');
-		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, 'Show More',
-			'The button text should state "Show More" when truncated.');
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, expandText,
+			'The button text should state "' + expandText + '" when truncated.');
 		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'Notification should be truncated.');
 
 		// act
@@ -499,6 +502,10 @@
 
 	QUnit.test('Collapsing and expanding a notification', function(assert) {
 		// arrange
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE');
+		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS');
+
 		this.NotificationListItem.setTitle('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id lorem at ' +
 			'magna laoreet lobortis quis id tortor. Cras in tellus a nibh cursus porttitor et vel purus. Nulla neque ' +
 			'lacus, eleifend sed quam eget, facilisis luctus nulla. Vestibulum ut mollis sem, ac sollicitudin massa. ' +
@@ -521,8 +528,8 @@
 
 		// assert
 		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').hidden, false, 'The "Show More" button should appear');
-		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, 'Show More',
-			'The button text should state "Show More" when truncated.');
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, expandText,
+			'The button text should state "' + expandText + '" when truncated.');
 		assert.strictEqual(this.NotificationListItem.getTruncate(), true, 'Notification should be truncated.');
 
 		// act
@@ -533,8 +540,8 @@
 		// assert
 		assert.strictEqual(this.NotificationListItem.getTruncate(), false, 'Notification shouldn\'t be truncated after pressing "Show More" button.');
 		assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the "Show More" button should call the _deregisterResize() method.');
-		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, 'Show Less',
-			'The "Show More" button text should be changed.');
+		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, collapseText,
+			'The "'+ expandText +'" button text should be changed to "' + collapseText + '".');
 	});
 
 	QUnit.test('When resizing _registerResize() should be called', function(assert) {
