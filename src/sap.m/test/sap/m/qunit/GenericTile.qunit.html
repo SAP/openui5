@@ -390,6 +390,24 @@
 		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
 		//Assert
 		assert.equal(sAriaAndTooltipText, "someTooltipText", "Expected text for ARIA-label and tooltip generated if an explicite tooltip is set");
+
+		//Arrange - stubs GenericTile's functions, no store & restore needed on the instance level
+		this.oGenericTile.getTooltip_AsString = function () {
+			return "";
+		};
+		this.oGenericTile._isTooltipSuppressed = function () {
+			return false;
+		};
+		this.oGenericTile._getHeaderAriaAndTooltipText = function () {
+			return "";
+		};
+		this.oGenericTile._getContentAriaAndTooltipText = function () {
+			return " ";
+		};
+		//Act
+		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
+		//Assert
+		assert.equal(sAriaAndTooltipText, "", "Expected empty string for ARIA-label and tooltip generated");
 	});
 
 	QUnit.test("Internal method _getAriaText", function(assert) {
