@@ -7,7 +7,7 @@
 	<VBox>
 		<Toolbar design="Transparent">
 			<content>
-				<Label design="Bold" text="Favorite product:">
+				<Label design="Bold" labelFor="FavoriteProduct" text="Favorite product:">
 					<layoutData>
 						<ToolbarLayoutData shrinkable="false" />
 					</layoutData>
@@ -71,12 +71,12 @@
 									press="onCancelSalesOrder" type="Reject"/>
 							</buttons>
 							<content>
-								<form:SimpleForm layout="ResponsiveGridLayout">
+								<form:SimpleForm editable="true" layout="ResponsiveGridLayout">
 									<form:content>
 										<!-- TODO types should be determined automatically from OData $metadata -->
-										<Label text="Buyer ID"/>
+										<Label labelFor="BuyerID" text="Buyer ID"/>
 										<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
-										<Input
+										<Input id = "BuyerID"
 											maxLength="10" value="{
 												path: 'new>/BuyerID',
 												type: 'sap.ui.model.odata.type.String',
@@ -180,6 +180,9 @@
 					<Column>
 						<Text text="Delivery Date"/>
 					</Column>
+					<Column>
+						<Text text="Note ({:= ${ui>/bRealOData} ? 'editable' : 'read-only'})"/>
+					</Column>
 				</columns>
 				<items>
 					<ColumnListItem>
@@ -198,9 +201,28 @@
 						<cells>
 							<Text text="{DeliveryDate}"/>
 						</cells>
+						<cells>
+							<Input editable="{ui>/bRealOData}" value="{Note}"/>
+						</cells>
 					</ColumnListItem>
 				</items>
 			</Table>
+		</VBox>
+		<VBox>
+			<Toolbar design="Transparent">
+				<content>
+					<Title level="H2" titleStyle="H2" text="Supplier Details"/>
+				</content>
+			</Toolbar>
+			<form:SimpleForm binding="{SOITEM_2_PRODUCT/PRODUCT_2_BP}" editable="true"
+				id="SupplierDetailsForm" layout="ResponsiveGridLayout">
+				<form:content>
+					<Label text="Supplier" />
+					<Text text="{CompanyName} {LegalForm}" />
+					<Label labelFor="PhoneNumber" text="Phone Number" />
+					<Input editable="{ui>/bRealOData}" id="PhoneNumber" value="{PhoneNumber}"/>
+				</form:content>
+			</form:SimpleForm>
 		</VBox>
 		<List id="SupplierContactData"
 			headerText="Supplier Contact Information"

@@ -140,15 +140,30 @@ sap.ui.define([
 							"SalesOrderID"]
 					}
 				});
+				oView.byId("SupplierDetailsForm").unbindObject();
 				oView.byId("SupplierContactData").setBindingContext(undefined);
 			});
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {
 			var oView = this.getView(),
-				oSalesOrderLineItemContext = oEvent.getParameters().listItem.getBindingContext();
+				oSalesOrderLineItemContext = oEvent.getParameters().listItem.getBindingContext(),
+				oSupplierDetailsForm = this.getView().byId("SupplierDetailsForm");
 
 			oView.byId("SupplierContactData").setBindingContext(oSalesOrderLineItemContext);
+
+			//TODO the following does not work because requestCanonicalPath() fails later on, when
+			//     the PATCH request is sent, because ProductList has no NavigationPropertyBindings
+//			oSupplierDetailsForm.setBindingContext(oSalesOrderLineItemContext);
+
+			// workaround: manual computation of canonical URL for the time being
+			oSalesOrderLineItemContext
+				.requestValue("SOITEM_2_PRODUCT/PRODUCT_2_BP/BusinessPartnerID")
+				.then(function (sBusinessPartnerID) {
+					//TODO _Helper.formatLiteral
+					oSupplierDetailsForm.bindObject(
+						"/BusinessPartnerList('" + sBusinessPartnerID + "')");
+				});
 		},
 
 		/**
@@ -160,7 +175,6 @@ sap.ui.define([
 			var oBinding = this.getView().byId("FavoriteProduct").getBinding("value");
 
 			oBinding.setValue(oDateFormat.format(new Date()));
-//			oBinding.refresh(true); // triggers a GET
 		}
 	});
 

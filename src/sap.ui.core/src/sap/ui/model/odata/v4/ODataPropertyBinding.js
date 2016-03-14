@@ -339,17 +339,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the new current value.
+	 * Sets the new current value and sends a PATCH request.
 	 *
 	 * @param {any} vValue
-	 *   The new value
+	 *   The new value which must be primitive
+	 * @throws {Error}
+	 *   When the new value is not primitive
 	 *
 	 * @public
 	 * @see sap.ui.model.PropertyBinding#setValue
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue) {
-		var oBody, sEditUrl, sGroupId, iLastSlash;
+		var oBody, sGroupId, iLastSlash, that = this;
+
+		/**
+		 * Sends a PATCH request with the given entity tag and edit URL.
+		 *
+		 * @param {string[]} aValues
+		 *   Entity tag and edit URL
+		 */
+		function patch(aValues) {
+			var sEtag = aValues[0],
+				sEditUrl = aValues[1].slice(1);
+
+			sGroupId = that.oModel.getGroupId();
+			that.oModel.oRequestor.request("PATCH", sEditUrl, sGroupId, {"If-Match" : sEtag},
+				oBody);
+			that.oModel.dataRequested(sGroupId, function () {});
+		}
 
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
@@ -363,10 +381,16 @@ sap.ui.define([
 			oBody = {};
 			oBody[this.sPath.slice(iLastSlash + 1)] = vValue;
 
-			sEditUrl = this.sPath.slice(1, iLastSlash);
-			sGroupId = this.oModel.getGroupId();
-			this.oModel.oRequestor.request("PATCH", sEditUrl, sGroupId, null, oBody);
-			this.oModel.dataRequested(sGroupId, function () {});
+			if (this.isRelative()) {
+				Promise.all([
+					this.oContext.requestValue("@odata.etag"),
+					this.oModel.requestCanonicalPath(this.oContext)
+				]).then(patch, function (oError) {
+					jQuery.sap.log.error(oError.message, oError.stack, sClassName);
+				});
+			} else {
+				patch([undefined, this.sPath.slice(0, iLastSlash)]);
+			}
 		}
 	};
 
