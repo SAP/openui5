@@ -3,8 +3,12 @@
  */
 
 // Provides control sap.ui.commons.TabStrip.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
+		'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Icon',
+		'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/Device'],
+	function(jQuery, library, Control,
+	         ItemNavigation, Icon,
+	         ScrollEnablement, Device) {
 	"use strict";
 
 
@@ -60,7 +64,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * The tabs contained in the TabStrip.
 			 */
-			tabs : {type : "sap.ui.commons.Tab", multiple : true, singularName : "tab"}
+			tabs : {type : "sap.ui.commons.Tab", multiple : true, singularName : "tab"},
+			/**
+			 * The left arrow, used for tab scrolling.
+			 */
+			_leftArrowControl: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
+			/**
+			 * The right arrow, used for tab scrolling.
+			 */
+			_rightArrowControl: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
 		},
 		events : {
 
@@ -92,18 +104,83 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
-	TabStrip.ANIMATION_DURATION = 200;
+	TabStrip.SCROLL_SIZE = 320;
+	TabStrip.ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 200 : 0;
+	TabStrip.SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 500 : 0;
 
 	TabStrip.prototype.init = function() {
+
+		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._iCurrentScrollLeft = 0;
+		this._iMaxOffsetLeft = null;
+		this._scrollable = null;
+
+		this._oScroller = new ScrollEnablement(this, this.getId() + "-tablist", {
+			horizontal: !this.getEnableTabReordering(),
+			vertical: false,
+			nonTouchScrolling: true
+		});
+
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+	};
+
+	/**
+	 * Sets whether tab reordering is enabled.
+	 *
+	 * @param {boolean} bValue The value.
+	 * @returns {sap.ui.commons.TabStrip} Pointer to the control instance for chaining.
+	 * @public
+	 */
+	TabStrip.prototype.setEnableTabReordering = function (bValue) {
+
+		this.setProperty("enableTabReordering", bValue, true); // no re-rendering
+
+		if (this._oScroller) {
+			this._oScroller.setHorizontal(!bValue);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Called before the rendering of the control is started.
+	 *
+	 * @override
+	 * @public
+	 */
+	TabStrip.prototype.onBeforeRendering = function () {
+		if (this._sResizeListenerId) {
+			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			this._sResizeListenerId = null;
+		}
 	};
 
 	TabStrip.prototype.onAfterRendering = function() {
 
+		if (this._oScroller) {
+			this._oScroller.setIconTabBar(this, jQuery.proxy(this._updateScrollingAppearance, this), null);
+		}
+
 		this._initItemNavigation();
 
-		// Notify the tabs
+		this._updateScrollingAppearance();
+
+		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._updateScrollingAppearance, this));
+
 		var aTabs = this.getTabs();
+		var iSelectedIndex = this.getSelectedIndex();
+		var oTab = aTabs[iSelectedIndex];
+
+		if (oTab && oTab.$().length > 0) {
+
+			if (!this._oScroller._$Container) {
+				this._oScroller.onAfterRendering();
+			}
+
+			this._scrollIntoView(oTab.$(), TabStrip.SCROLL_ANIMATION_DURATION);
+		}
+
+		// Notify the tabs
 		for (var i = 0;i < aTabs.length;i++) {
 			aTabs[i].onAfterRendering();
 		}
@@ -192,7 +269,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Called from Element's destroy() method.
 	 * @private
 	 */
-	TabStrip.prototype.exit = function (){
+	TabStrip.prototype.exit = function () {
+
+		this._iCurrentScrollLeft = null;
+		this._iMaxOffsetLeft = null;
+		this._scrollable = null;
+
+		if (this._oScroller) {
+			this._oScroller.destroy();
+			this._oScroller = null;
+		}
+
+		if (this._sResizeListenerId) {
+			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			this._sResizeListenerId = null;
+		}
+
 		if (this.oItemNavigation) {
 			this.removeDelegate(this.oItemNavigation);
 			this.oItemNavigation.destroy();
@@ -272,6 +364,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var aTabs = this.getTabs();
 		var oTab = aTabs[iSelectedIndex];
+
+		if (oTab && oTab.$().length > 0) {
+			this._scrollIntoView(oTab.$(), TabStrip.SCROLL_ANIMATION_DURATION);
+		}
 
 		if (!oTab && !this.getDomRef()) {
 			// tab don't exist but not rendered. In initial setup index might be set before tab is added
@@ -428,6 +524,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (bTabFocused) {
 			this.oItemNavigation.focusItem(iFocusedIndex);
 		}
+
+		this._updateScrollingAppearance();
 	};
 
 	/*
@@ -817,8 +915,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	TabStrip.prototype._initItemNavigation = function() {
 
 		// find a collection of all tabs
-		var oFocusRef = this.getFocusDomRef(),
-			aTabs = oFocusRef.lastChild.childNodes,
+		var oFocusRef = this.getDomRef('tablist'),
+			aTabs = oFocusRef.childNodes,
 			aTabDomRefs = [],
 			iSelectedDomIndex = -1;
 
@@ -833,6 +931,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//Initialize the ItemNavigation
 		if (!this.oItemNavigation) {
 			this.oItemNavigation = new ItemNavigation();
+			this.oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, this._onItemNavigationAfterFocus, this);
+			this.oItemNavigation.setCycling(false);
 			this.addDelegate(this.oItemNavigation);
 		}
 
@@ -891,6 +991,211 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return 0;
 	};
 
+	/**
+	 * Returns the sap.ui.core.Icon control used to display left scrolling arrow.
+	 * @returns {sap.ui.core.Icon}
+	 * @private
+	 */
+	TabStrip.prototype._getLeftArrowControl = function () {
+		var iconControl = this.getAggregation('_leftArrowControl');
+		var that = this;
+
+		if (!iconControl) {
+			iconControl = new Icon({
+				src: 'sap-icon://navigation-left-arrow',
+				noTabStop: true,
+				useIconTooltip: false,
+				tooltip: '',
+				press: function (oEvent) {
+					that._scroll(-TabStrip.SCROLL_SIZE, TabStrip.SCROLL_ANIMATION_DURATION);
+				}
+			}).addStyleClass('sapUiTabStripScrollIcon sapUiTabStripLeftScrollIcon');
+
+			this.setAggregation("_leftArrowControl", iconControl, true);
+		}
+
+		return iconControl;
+	};
+
+	/**
+	 * Returns the sap.ui.core.Icon control used to display right scrolling arrow.
+	 * @returns {sap.ui.core.Icon}
+	 * @private
+	 */
+	TabStrip.prototype._getRightArrowControl = function () {
+		var iconControl = this.getAggregation('_rightArrowControl');
+		var that = this;
+
+		if (!iconControl) {
+			iconControl = new Icon({
+				src: 'sap-icon://navigation-right-arrow',
+				noTabStop: true,
+				useIconTooltip: false,
+				tooltip: '',
+				press: function (oEvent) {
+					that._scroll(TabStrip.SCROLL_SIZE, TabStrip.SCROLL_ANIMATION_DURATION);
+				}
+			}).addStyleClass('sapUiTabStripScrollIcon sapUiTabStripRightScrollIcon');
+
+			this.setAggregation("_rightArrowControl", iconControl, true);
+		}
+
+		return iconControl;
+	};
+
+	TabStrip.prototype._scroll = function(iDelta, iDuration) {
+		var iScrollLeft = this.getDomRef("scrollCont").scrollLeft,
+			iScrollTarget;
+
+		if (this._bRtl && Device.browser.firefox) {
+			iScrollTarget = iScrollLeft - iDelta;
+
+			// Avoid out ofRange situation
+			if (iScrollTarget < -this._iMaxOffsetLeft) {
+				iScrollTarget = -this._iMaxOffsetLeft;
+			}
+			if (iScrollTarget > 0) {
+				iScrollTarget = 0;
+			}
+		} else {
+			iScrollTarget = iScrollLeft + iDelta;
+
+			if (iScrollTarget < 0) {
+				iScrollTarget = 0;
+			}
+			if (iScrollTarget > this._iMaxOffsetLeft) {
+				iScrollTarget = this._iMaxOffsetLeft;
+			}
+		}
+
+		this._oScroller.scrollTo(iScrollTarget, 0, iDuration);
+		this._iCurrentScrollLeft = iScrollTarget;
+	};
+
+	/**
+	 * Handles scrolling arrow press.
+	 * @private
+	 */
+	TabStrip.prototype._scrollIntoView = function ($item, iDuration) {
+		var $tablist = this.$("tablist"),
+			iTabsPaddingWidth = $tablist.innerWidth() - $tablist.width(),
+			iItemWidth = $item.outerWidth(true),
+			iItemPosLeft = $item.position().left - iTabsPaddingWidth / 2,
+			oScrollContainerDomRef = this.getDomRef("scrollCont"),
+			iScrollLeft = oScrollContainerDomRef.scrollLeft,
+			iContainerWidth = this.$("scrollCont").width(),
+			iNewScrollLeft = iScrollLeft;
+
+		// check if item is outside of viewport
+		if (iItemPosLeft < 0 || iItemPosLeft > iContainerWidth - iItemWidth) {
+
+			if (this._bRtl && Device.browser.firefox) {
+				if (iItemPosLeft < 0) { // right side: make this the last item
+					iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
+				} else { // left side: make this the first item
+					iNewScrollLeft += iItemPosLeft;
+				}
+			} else {
+				if (iItemPosLeft < 0) { // left side: make this the first item
+					iNewScrollLeft += iItemPosLeft;
+				} else { // right side: make this the last item
+					iNewScrollLeft += iItemPosLeft + iItemWidth - iContainerWidth;
+				}
+			}
+
+			// store current scroll state to set it after re-rendering
+			this._iCurrentScrollLeft = iNewScrollLeft;
+			this._oScroller.scrollTo(iNewScrollLeft, 0, iDuration);
+		}
+	};
+
+	/**
+	 * Checks if scrolling is needed.
+	 *
+	 * @returns {boolean} Whether scrolling is needed
+	 * @private
+	 */
+	TabStrip.prototype._hasScrolling = function() {
+		var oTabListDomRef = this.getDomRef("tablist"),
+			scrollCont = this.getDomRef("scrollCont"),
+			bScrollNeeded = oTabListDomRef && (oTabListDomRef.scrollWidth > scrollCont.clientWidth);
+
+		this.$().toggleClass("sapUiTabStripScrollable", bScrollNeeded);
+
+		return bScrollNeeded;
+	};
+
+	/**
+	 * Updates scrolling appearance.
+	 *
+	 * @private
+	 */
+	TabStrip.prototype._updateScrollingAppearance = function() {
+		var oTabListDomRef = this.getDomRef("tablist"),
+			oScrollContainerDomRef = this.getDomRef("scrollCont"),
+			iScrollLeft,
+			realWidth,
+			availableWidth,
+			bScrollBack = false,
+			bScrollForward = false;
+
+		if (this._hasScrolling() && oTabListDomRef && oScrollContainerDomRef) {
+			if (this._bRtl && Device.browser.firefox) {
+				iScrollLeft = -oScrollContainerDomRef.scrollLeft;
+			} else {
+				iScrollLeft = oScrollContainerDomRef.scrollLeft;
+			}
+
+			realWidth = oTabListDomRef.scrollWidth;
+			availableWidth = oScrollContainerDomRef.clientWidth;
+
+			if (Math.abs(realWidth - availableWidth) === 1) {
+				realWidth = availableWidth;
+			}
+
+			if (iScrollLeft > 0) {
+				bScrollBack = true;
+			}
+
+			if ((realWidth > availableWidth) && (iScrollLeft + availableWidth < realWidth)) {
+				bScrollForward = true;
+			}
+		}
+
+		this.$().toggleClass("sapUiTabStripScrollBack", bScrollBack)
+			.toggleClass("sapUiTabStripScrollForward", bScrollForward);
+
+		this._iMaxOffsetLeft = Math.abs(jQuery(oScrollContainerDomRef).width() - jQuery(oTabListDomRef).width());
+	};
+
+	/**
+	 * Adjusts arrows when keyboard is used for navigation and the beginning/end of the toolbar is reached.
+	 * @private
+	 */
+	TabStrip.prototype._onItemNavigationAfterFocus = function(oEvent) {
+		var oIndex = oEvent.getParameter("index"),
+			$event = oEvent.getParameter('event');
+
+		if (!$event) {
+			return;
+		}
+
+		var $target = jQuery($event.target);
+
+		// handle only keyboard navigation here
+		if (!$target || $event.keyCode === undefined) {
+			return;
+		}
+
+		if (oIndex !== null && oIndex !== undefined) {
+
+			var oNext = jQuery($target.parent().children()[oIndex]);
+
+			if (oNext && oNext.length) {
+				this._scrollIntoView(oNext, 0);
+			}
+		}
+	};
 
 	return TabStrip;
 

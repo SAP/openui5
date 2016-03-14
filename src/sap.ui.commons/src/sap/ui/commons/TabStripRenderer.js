@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
+		var sControlId = oControl.getId();
 
 		//outer DIV
 		rm.write("<div role='presentation'");
@@ -36,12 +37,20 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeStyles();
 		rm.writeControlData(oControl);
 		//header area
-		rm.write("><div class=\"sapUiTabBar\" tabIndex=\"0\"");
+		rm.write('><div class="sapUiTabBar"');
 		if (oControl.getTooltip_AsString()) {
 			rm.writeAttributeEscaped('title', oControl.getTooltip_AsString());
 		}
-		// menu and list header
-		rm.write("><div class=\"sapUiTabMenu\"></div><ul class=\"sapUiTabBarCnt\" role=\"tablist\">");
+		// menu
+		rm.write("><div class=\"sapUiTabMenu\"></div>");
+
+		rm.renderControl(oControl._getLeftArrowControl());
+
+		// scroll container
+		rm.write('<div id="' + sControlId + '-scrollCont" class="sapUiTabStripScrollContainer">');
+
+		// list header
+		rm.write('<ul id="' + sControlId + '-tablist" class="sapUiTabBarCnt" role="tablist">');
 
 		var aTabs = oControl.getTabs();
 		// check if selected tab exists and is visible -> otherwise select first active one
@@ -153,11 +162,15 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write("</ul></div>");
 
+		rm.renderControl(oControl._getRightArrowControl());
+
+		rm.write("</div>");
+
 		if (bWrongIndex) {
 			// still wrong index - no tab is selected -> render empty panel area
 			oControl.setProperty( 'selectedIndex', -1, true );
 			iSelectedIndex = -1;
-			rm.write("<div id=\"" + oControl.getId() + "-panel" + "\" role=\"tabpanel\"");
+			rm.write("<div id=\"" + sControlId + "-panel" + "\" role=\"tabpanel\"");
 			rm.addClass("sapUiTabPanel");
 			if (oControl.getHeight()) {
 				rm.addClass("sapUiTabPanelHeight");
