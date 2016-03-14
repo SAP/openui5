@@ -501,20 +501,22 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("execute function", function (assert) {
 		var oCacheMock = this.oSandbox.mock(_Cache),
-			done = assert.async(),
 			oContextBinding,
+			oContextBindingMock,
 			oHelperMock = this.oSandbox.mock(_Helper),
 			oMetaModel = this.oModel.getMetaModel(),
 			oMetaModelMock = this.oSandbox.mock(oMetaModel),
 			sPath = "/FunctionImport(...)",
 			oSingleCache = {
-				refresh : function () {}
+				read : function () {}
 			},
-			oSingleCacheMock = this.oSandbox.mock(oSingleCache);
+			oSingleCacheMock = this.oSandbox.mock(oSingleCache),
+			that = this;
 
 		oCacheMock.expects("createSingle").never();
 
 		oContextBinding = this.oModel.bindContext(sPath);
+		oContextBindingMock = this.oSandbox.mock(oContextBinding);
 
 		oMetaModelMock.expects("requestObject")
 			.withExactArgs(undefined, oMetaModel.getMetaContext(sPath))
@@ -543,32 +545,176 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor),
 				"FunctionImport(p1='v''1',p2=42)", {"sap-client" : "111"})
 			.returns(oSingleCache);
-		oSingleCacheMock.expects("refresh");
+		oContextBindingMock.expects("getGroupId").returns("foo");
+		oSingleCacheMock.expects("read").withExactArgs("foo").returns(Promise.resolve({}));
+		oContextBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
-		oContextBinding.setParameter("p1", "v'1").setParameter("p2", 42).execute();
+		return oContextBinding.setParameter("p1", "v'1").setParameter("p2", 42)
+			.execute().then(function (oResult) {
+				assert.strictEqual(oContextBinding.oCache, oSingleCache);
+				assert.strictEqual(oResult, undefined);
 
-		oContextBinding.attachEventOnce("change", function (oEvent) {
-			assert.deepEqual(oEvent.getParameters(), {reason : "refresh"});
+				oHelperMock.expects("formatLiteral")
+					.withExactArgs("v'2", "Edm.String").returns("'v''2'");
+				oHelperMock.expects("formatLiteral")
+					.withExactArgs(42, "Edm.Int16").returns("42");
+				oCacheMock.expects("createSingle")
+					.withExactArgs(sinon.match.same(that.oModel.oRequestor),
+						"FunctionImport(p1='v''2',p2=42)", {"sap-client" : "111"})
+					.returns(oSingleCache);
+				oContextBindingMock.expects("getGroupId").returns("foo");
+				oSingleCacheMock.expects("read").withExactArgs("foo").returns(Promise.resolve({}));
+				oContextBindingMock.expects("_fireChange")
+					.withExactArgs({reason : ChangeReason.Change});
 
-			oHelperMock.expects("formatLiteral")
-				.withExactArgs("v'2", "Edm.String").returns("'v''2'");
-			oHelperMock.expects("formatLiteral")
-				.withExactArgs(42, "Edm.Int16").returns("42");
-			oCacheMock.expects("createSingle")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-					"FunctionImport(p1='v''2',p2=42)", {"sap-client" : "111"})
-				.returns(oSingleCache);
-			oSingleCacheMock.expects("refresh");
-
-			oContextBinding.attachEventOnce("change", done);
-
-			// code under test
-			oContextBinding.setParameter("p1", "v'2").execute();
-		});
+				// code under test
+				return oContextBinding.setParameter("p1", "v'2").execute();
+			});
 	});
 	// TODO function returning collection
 	// TODO function overloading
+
+	//*********************************************************************************************
+	QUnit.test("execute action, success", function (assert) {
+		var oContextBinding,
+			oContextBindingMock,
+			oMetaModel = this.oModel.getMetaModel(),
+			oMetaModelMock = this.oSandbox.mock(oMetaModel),
+			oModelMock = this.oSandbox.mock(this.oModel),
+			mParameters = {},
+			sPath = "/ActionImport(...)",
+			oSingleCache = {
+				post : function () {},
+				refresh : function () {}
+			},
+			oSingleCacheMock = this.oSandbox.mock(oSingleCache),
+			that = this;
+
+		oSingleCacheMock.expects("refresh").never();
+
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs(undefined, oMetaModel.getMetaContext(sPath))
+			.returns(Promise.resolve({
+				$kind : "ActionImport",
+				$Action : "schema.Action"
+			}));
+		oMetaModelMock.expects("requestObject").withExactArgs("/schema.Action")
+			.returns(Promise.resolve([{$kind : "Action"}]));
+
+		oContextBinding = this.oModel.bindContext(sPath, undefined, mParameters);
+		oContextBindingMock = this.oSandbox.mock(oContextBinding);
+
+		this.oSandbox.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(that.oModel.oRequestor), "ActionImport",
+				{"sap-client" : "111"})
+			.returns(oSingleCache);
+		oContextBindingMock.expects("getGroupId").returns("foo");
+		oSingleCacheMock.expects("post")
+			.withExactArgs("foo", sinon.match.same(oContextBinding.oOperation.mParameters))
+			.returns(Promise.resolve({}));
+		oModelMock.expects("addedRequestToGroup").withExactArgs("foo");
+		oContextBindingMock.expects("_fireChange")
+			.withExactArgs({reason : ChangeReason.Change});
+
+		// code under test
+		return oContextBinding.execute().then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+
+			oContextBindingMock.expects("getGroupId").returns("foo");
+			oSingleCacheMock.expects("post")
+				.withExactArgs("foo", sinon.match.same(oContextBinding.oOperation.mParameters))
+				.returns(Promise.resolve({}));
+			oModelMock.expects("addedRequestToGroup").withExactArgs("foo");
+			oContextBindingMock.expects("_fireChange")
+				.withExactArgs({reason : ChangeReason.Change});
+
+			// code under test
+			return oContextBinding.execute().then(function () {
+
+				// code under test: must not refresh the cache
+				oContextBinding.refresh(true);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("execute action, failure", function (assert) {
+		var oCacheMock = this.oSandbox.mock(_Cache),
+			sPath = "/ActionImport(...)",
+			oContextBinding = this.oModel.bindContext(sPath),
+			oMetaModel = this.oModel.getMetaModel(),
+			oMetaModelMock = this.oSandbox.mock(oMetaModel),
+			sMessage = "deliberate failure",
+			oSingleCache = {
+				post : function () {}
+			};
+
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs(undefined, oMetaModel.getMetaContext(sPath))
+			.returns(Promise.resolve({
+				$kind : "ActionImport",
+				$Action : "schema.Action"
+			}));
+		oMetaModelMock.expects("requestObject").withExactArgs("/schema.Action")
+			.returns(Promise.resolve([{$kind : "Action"}]));
+		oCacheMock.expects("createSingle")
+			.withArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport")
+			.returns(oSingleCache);
+		this.oSandbox.mock(oContextBinding).expects("getGroupId").returns("foo");
+		this.oSandbox.mock(oSingleCache).expects("post")
+			.withExactArgs("foo", sinon.match.same(oContextBinding.oOperation.mParameters))
+			.returns(Promise.reject(new Error(sMessage)));
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("foo");
+		this.oSandbox.mock(oContextBinding).expects("_fireChange").never();
+		this.oLogMock.expects("error").withExactArgs(sMessage, sPath, sClassName);
+
+		// code under test
+		return oContextBinding.execute().then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message, sMessage);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("execute action, error in change handler", function (assert) {
+		var oCacheMock = this.oSandbox.mock(_Cache),
+			sPath = "/ActionImport(...)",
+			oContextBinding = this.oModel.bindContext(sPath),
+			oMetaModel = this.oModel.getMetaModel(),
+			oMetaModelMock = this.oSandbox.mock(oMetaModel),
+			sMessage = "deliberate failure",
+			oSingleCache = {
+				post : function () {
+					return Promise.resolve();
+				}
+			};
+
+		oMetaModelMock.expects("requestObject")
+			.withExactArgs(undefined, oMetaModel.getMetaContext(sPath))
+			.returns(Promise.resolve({
+				$kind : "ActionImport",
+				$Action : "schema.Action"
+			}));
+		oMetaModelMock.expects("requestObject").withExactArgs("/schema.Action")
+			.returns(Promise.resolve([{$kind : "Action"}]));
+		oCacheMock.expects("createSingle")
+			.withArgs(sinon.match.same(this.oModel.oRequestor), "ActionImport")
+			.returns(oSingleCache);
+		this.oLogMock.expects("error").withExactArgs(sMessage, sPath, sClassName);
+
+		oContextBinding.attachChange(function () {
+			throw new Error(sMessage);
+		});
+
+		// code under test
+		return oContextBinding.execute().then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError.message, sMessage);
+		});
+	});
 
 	//*********************************************************************************************
 	[{
@@ -576,32 +722,28 @@ sap.ui.require([
 		message : "Unknown operation"
 	}, {
 		result : {$kind : "EntitySet"},
-		message : "Not a FunctionImport"
+		message : "Not an ActionImport or FunctionImport"
 	}].forEach(function (oFixture) {
 		QUnit.test("execute, " + oFixture.message, function (assert) {
 			var oContextBinding,
-				done = assert.async(),
 				oMetaModel = this.oModel.getMetaModel(),
-				sPath = "/Employees(...)";
+				oMetaModelMock = this.oSandbox.mock(oMetaModel),
+				sPath = "/Foo(...)";
 
+			oMetaModelMock.expects("requestObject")
+				.withExactArgs(undefined, oMetaModel.getMetaContext(sPath))
+				.returns(Promise.resolve(oFixture.result));
 			this.oSandbox.mock(_Cache).expects("createSingle").never();
+			this.oLogMock.expects("error").withExactArgs(oFixture.message, sPath, sClassName);
 
 			oContextBinding = this.oModel.bindContext(sPath);
 
-			this.oSandbox.mock(oMetaModel).expects("requestObject")
-				.withExactArgs(undefined, oMetaModel.getMetaContext(sPath))
-				.returns(Promise.resolve(oFixture.result));
-
-			this.oLogMock.restore();
-			this.oSandbox.stub(jQuery.sap.log, "error", function (sMessage, sDetail, sClass) {
-				assert.strictEqual(sMessage, oFixture.message);
-				assert.strictEqual(sDetail, sPath);
-				assert.strictEqual(sClass, sClassName);
-				done();
-			});
-
 			// code under test
-			oContextBinding.execute();
+			return oContextBinding.execute().then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, oFixture.message);
+			});
 		});
 	});
 
@@ -618,7 +760,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("execute, " + oFixture.message, function (assert) {
 			var oContextBinding,
-				done = assert.async(),
+				sMessage = "Unsupported: " + oFixture.message,
 				oMetaModel = this.oModel.getMetaModel(),
 				oMetaModelMock = this.oSandbox.mock(oMetaModel),
 				sPath = "/FunctionImport(...)";
@@ -632,19 +774,16 @@ sap.ui.require([
 			oMetaModelMock.expects("requestObject").withExactArgs("/schema.Function")
 				.returns(Promise.resolve(oFixture.result));
 			this.oSandbox.mock(_Cache).expects("createSingle").never();
-			this.oLogMock.restore();
-			this.oSandbox.stub(jQuery.sap.log, "error", function (sMessage, sDetail, sClass) {
-				assert.strictEqual(sMessage, "Unsupported: " + oFixture.message);
-				assert.strictEqual(sDetail, sPath);
-				assert.strictEqual(sClass, sClassName);
-				done();
-			});
+			this.oLogMock.expects("error").withExactArgs(sMessage, sPath, sClassName);
 
 			oContextBinding = this.oModel.bindContext(sPath);
-			this.oSandbox.mock(oContextBinding).expects("refresh").never();
 
 			// code under test
-			oContextBinding.setParameter("foo", [42]).execute();
+			return oContextBinding.setParameter("foo", [42]).execute().then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, sMessage);
+			});
 		});
 	});
 

@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	var mFinalHeaders = { // final (cannot be overridden) request headers for OData V4
-			"Content-Type" : "application/json;charset=UTF-8"
+			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 		},
 		mPredefinedPartHeaders = { // predefined request headers in $batch parts
 			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
@@ -272,13 +272,13 @@ sap.ui.define([
 		 *   OData V4 headers are predefined, but may be overridden by the default or
 		 *   request-specific headers:
 		 *   <pre>{
-		 *     "Accept" : "application/json;odata.metadata=minimal",
+		 *     "Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 		 *     "OData-MaxVersion" : "4.0",
 		 *     "OData-Version" : "4.0"
 		 *   }</pre>
 		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
 		 *   <code>_Requestor<code> always sets the "Content-Type" header to
-		 *   "application/json;charset=UTF-8" value.
+		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" value.
 		 * @param {object} mQueryParams
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token

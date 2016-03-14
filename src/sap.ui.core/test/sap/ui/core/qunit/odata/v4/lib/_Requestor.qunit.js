@@ -96,7 +96,9 @@ sap.ui.require([
 		this.oSandbox.mock(jQuery).expects("ajax")
 			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
 				data : JSON.stringify(oPayload),
-				headers : sinon.match({"Content-Type" : "application/json;charset=UTF-8"}),
+				headers : sinon.match({
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+				}),
 				method : "FOO"
 			}).returns(createMock(assert, oResult, "OK"));
 
@@ -144,7 +146,7 @@ sap.ui.require([
 				// add predefined request headers for OData V4
 				mResultHeaders = jQuery.extend({}, {
 					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-					"Content-Type" : "application/json;charset=UTF-8",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"OData-MaxVersion" : "4.0",
 					"OData-Version" : "4.0",
 					"X-CSRF-Token" : "Fetch"
@@ -391,7 +393,7 @@ sap.ui.require([
 				headers: {
 					"Accept" : "application/json;odata.metadata=full",
 					"Accept-Language" : "ab-CD",
-					"Content-Type" : "application/json;charset=UTF-8",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"Foo" : "bar"
 				},
 				body: undefined,
@@ -403,7 +405,7 @@ sap.ui.require([
 				headers: {
 					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
-					"Content-Type" : "application/json;charset=UTF-8",
+					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"Foo" : "baz"
 				},
 				body: '{"ID":1}',

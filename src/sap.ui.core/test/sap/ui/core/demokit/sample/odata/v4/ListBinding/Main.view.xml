@@ -13,13 +13,39 @@
 				parameters: {'$expand':
 					{'TEAM_2_EMPLOYEES': {'$expand': {'EMPLOYEE_2_EQUIPMENTS': true}},
 					'TEAM_2_MANAGER': true}}}" >
-			<core:Item  key="{Team_Id}" text="{Name}"/>
+			<core:Item key="{Team_Id}" text="{Name}"/>
 		</Select>
+		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit" press="onChangeBudgetDialog"
+				text="Change Budget">
+			<dependents>
+				<Dialog id="changeBudgetDialog" title="Change Team Budget">
+					<buttons>
+						<Button icon="sap-icon://sys-cancel-2" press="onCancelChangeBudget"
+							text="Cancel" type="Reject"/>
+						<Button icon="sap-icon://save" press="onChangeBudget"
+							text="Change" type="Accept"/>
+					</buttons>
+					<content>
+						<form:SimpleForm binding="{/ChangeTeamBudgetByID(...)}" editable="true"
+								id="ChangeTeamBudgetByID" layout="ResponsiveGridLayout">
+							<form:content>
+								<Label text="Team ID" />
+								<!-- <Text text="{$Parameter('TeamID'}" /> -->
+								<Text text="{ui>/TeamID}" />
+								<Label text="Budget" />
+								<!-- <Input value="{$Parameter('Budget'}" /> -->
+								<Input value="{ui>/Budget}" />
+							</form:content>
+						</form:SimpleForm>
+					</content>
+				</Dialog>
+			</dependents>
+		</Button>
 	</Toolbar>
 	<form:SimpleForm id="TeamDetails" layout="ResponsiveGridLayout">
 		<form:content>
 			<Label text="Team ID" />
-			<Text text="{Team_Id}" />
+			<Text id="Team_Id" text="{Team_Id}" />
 			<Label text="Team Name" />
 			<Text text="{Name}" />
 			<Label text="Member Count" />
@@ -27,7 +53,7 @@
 			<Label text="Manager ID" />
 			<Text text="{TEAM_2_MANAGER/ID}" />
 			<Label text="Budget" />
-			<Text text="{Budget}" />
+			<Text id="Budget" text="{Budget}" />
 			<Label text="Currency" />
 			<Text text="{BudgetCurrency}" />
 		</form:content>
