@@ -489,11 +489,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 							results: mResults
 						};
 
-						if (that.bAsync) {
-							that.fireLoaded(mSuccess);
-						} else {
-							that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [ mSuccess ]);
-						}
+						that.fireLoaded(mSuccess);
 					}
 
 					if (mResults.success.length < aUris.length) {
