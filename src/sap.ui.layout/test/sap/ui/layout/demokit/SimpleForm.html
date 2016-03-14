@@ -21,7 +21,7 @@
 var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 	"sf1",
 	{
-		maxContainerCols: 2,
+		layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 		editable: true,
 		content:[
 				new sap.ui.core.Title({text:"Person"}),
@@ -65,7 +65,7 @@ var oSimpleForm = new sap.ui.layout.form.SimpleForm(
 
 		<script id='samplescript2' type="text/javascript">
 var html =	'<template>' +
-		'<div data-sap-ui-type="sap.ui.layout.form.SimpleForm" id="sf2" data-editable="true">' +
+		'<div data-sap-ui-type="sap.ui.layout.form.SimpleForm" id="sf2" data-editable="true" data-layout="ResponsiveGridLayout">' +
 		'<div data-sap-ui-type="sap.ui.core.Title" id="T1" data-text="Person"></div>' +
 		'<div data-sap-ui-type="sap.ui.commons.Label" id="L1" data-text="Name"></div>' +
 		'<div data-sap-ui-type="sap.ui.commons.TextField" id="TF1" data-value="Max"></div>' +
