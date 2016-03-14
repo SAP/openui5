@@ -119,10 +119,10 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL for which this requestor has been created;
 	 *   use "$batch" to send a batch request
-	 * @param {string} [sGroupId]
-	 *   Identifier of the batch group to associate the request with; if <code>undefined</code> the
-	 *   request is sent immediately; if provided, use {@link #submitBatch} to send all requests in
-	 *   that group
+	 * @param {string} [sGroupId="$direct"]
+	 *   Identifier of the batch group to associate the request with; if '$direct', the request is
+	 *   sent immediately; for all other group ID values, the request is added to the given group
+	 *   and you can use {@link #submitBatch} to send all requests in that group.
 	 * @param {object} [mHeaders]
 	 *   Map of request-specific headers, overriding both the mandatory OData v4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
@@ -143,6 +143,7 @@ sap.ui.define([
 			bIsBatch = sResourcePath === "$batch",
 			sPayload;
 
+		sGroupId = sGroupId || "$direct";
 		if (bIsBatch) {
 			oBatchRequest = _Batch.serializeBatchRequest(oPayload);
 			sPayload = oBatchRequest.body;
@@ -152,7 +153,7 @@ sap.ui.define([
 		} else {
 			sPayload = JSON.stringify(oPayload);
 
-			if (sGroupId !== undefined) {
+			if (sGroupId !== "$direct") {
 				return new Promise(function (fnResolve, fnReject) {
 					if (!that.mBatchQueue[sGroupId]) {
 						that.mBatchQueue[sGroupId] = [];

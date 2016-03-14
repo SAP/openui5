@@ -101,7 +101,7 @@ sap.ui.require([
 			}).returns(createMock(assert, oResult, "OK"));
 
 		// code under test
-		oPromise = oRequestor.request("FOO", "Employees?foo=bar", undefined,
+		oPromise = oRequestor.request("FOO", "Employees?foo=bar", "$direct",
 			{"Content-Type" : "wrong"}, oPayload);
 
 		return oPromise.then(function (result){
@@ -162,7 +162,7 @@ sap.ui.require([
 				}).returns(createMock(assert, oResult, "OK"));
 
 			// code under test
-			oPromise = oRequestor.request("GET", "Employees", undefined, mRequestHeaders);
+			oPromise = oRequestor.request("GET", "Employees", "$direct", mRequestHeaders);
 
 			assert.deepEqual(mDefaultHeaders, mHeaders.defaultHeaders,
 				"caller's map is unchanged");
@@ -361,7 +361,7 @@ sap.ui.require([
 				});
 			}
 
-			return oRequestor.request("FOO", "foo", undefined, {"foo" : "bar"}, oRequestPayload)
+			return oRequestor.request("FOO", "foo", "$direct", {"foo" : "bar"}, oRequestPayload)
 				.then(function (oPayload) {
 					assert.ok(bSuccess, "success possible");
 					assert.strictEqual(oPayload, oResponsePayload);
@@ -552,7 +552,7 @@ sap.ui.require([
 
 		oRequestor.request("PATCH", "EntitySet", "group", {"foo": "bar"}, {"a": "b"});
 		oRequestor.request("PATCH", "EntitySet", "group", {"bar": "baz"}, {"c": "d"});
-		oRequestor.request("PATCH", "EntitySet", "", {"header": "value"}, {"e": "f"});
+		oRequestor.request("PATCH", "EntitySet", "$auto", {"header": "value"}, {"e": "f"});
 
 		TestUtils.deepContains(oRequestor.mBatchQueue, {
 			"group" : [{
@@ -570,7 +570,7 @@ sap.ui.require([
 				},
 				body: JSON.stringify({"c": "d"})
 			}],
-			"": [{
+			"$auto": [{
 				method: "PATCH",
 				url: "EntitySet",
 				headers: {
@@ -615,7 +615,7 @@ sap.ui.require([
 			.withExactArgs(sResponseContentType, oResult)
 			.returns(aExpectedResponses);
 
-		return oRequestor.request("POST", "$batch", undefined, undefined, aBatchRequests, true)
+		return oRequestor.request("POST", "$batch", "$direct", undefined, aBatchRequests, true)
 			.then(function (oPayload) {
 				assert.strictEqual(aExpectedResponses, oPayload);
 			});
