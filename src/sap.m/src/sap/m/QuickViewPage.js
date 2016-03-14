@@ -542,6 +542,9 @@ sap.ui.define([
 					this._bItemsChanged = true;
 
 					mNavContext.popover.focus();
+
+					mNavContext.quickView._clearContainerHeight();
+
 					this._createPage();
 					mNavContext.quickView._restoreFocus();
 				}
