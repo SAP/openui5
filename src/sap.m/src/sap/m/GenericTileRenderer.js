@@ -124,6 +124,12 @@ sap.ui.define([], function() {
 			oRm.renderControl(oControl.getTileContent()[i]);
 		}
 		oRm.write("</div>");
+		oRm.write("<div");
+		oRm.addClass("sapMGTFocusDiv");
+		oRm.writeClasses();
+		oRm.writeAttribute("id", oControl.getId() + "-focus");
+		oRm.write(">");
+		oRm.write("</div>");
 		oRm.write("</div>");
 	};
 
