@@ -41,6 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		 * @public
 		 * @alias sap.ui.table.DataTable
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 * @deprecated Since version 1.5.1. The DataTable has been replaced via the Table/TreeTable control.
 		 */
 		var DataTable = Control.extend("sap.ui.table.DataTable", /** @lends sap.ui.table.DataTable.prototype */{ metadata : {
 

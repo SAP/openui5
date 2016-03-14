@@ -233,7 +233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			rowChange: bIsRowChanged,
 			colChange: bIsColChanged,
 			initial: bIsInitial,
-			initialLabels : bIsInitial ? (oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariadesc " + oTable.getId() + "-ariacount ") : ""
+			initialLabels : bIsInitial ? (oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariadesc " + oTable.getId() + "-ariacount") : ""
 		};
 	};
 
@@ -248,8 +248,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		oExtension._cleanupInfo = {
 			cell: $Cell,
 			attr: {
-				"aria-labelledby" : aDefaultLabels && aDefaultLabels.length ? aDefaultLabels.join(" ") : " ",
-				"aria-describedby" : aDefaultDescriptions && aDefaultDescriptions.length ? aDefaultDescriptions.join(" ") : " "
+				"aria-labelledby" : aDefaultLabels && aDefaultLabels.length ? aDefaultLabels.join(" ") : null,
+				"aria-describedby" : aDefaultDescriptions && aDefaultDescriptions.length ? aDefaultDescriptions.join(" ") : null
 			}
 		};
 
@@ -260,9 +260,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			fAdapt(oExtension, $Cell, oCountChangeInfo, aLabels, aDescriptions);
 		}
 
+		var sLabel = oCountChangeInfo.initialLabels ? oCountChangeInfo.initialLabels + " " : "";
+		if (aLabels && aLabels.length) {
+			sLabel = sLabel + aLabels.join(" ");
+		}
+
 		$Cell.attr({
-			"aria-labelledby" : oCountChangeInfo.initialLabels + " " + (aLabels && aLabels.length ? aLabels.join(" ") : ""),
-			"aria-describedby" : aDescriptions && aDescriptions.length ? aDescriptions.join(" ") : " "
+			"aria-labelledby" : sLabel ? sLabel : null,
+			"aria-describedby" : aDescriptions && aDescriptions.length ? aDescriptions.join(" ") : null
 		});
 	};
 
@@ -310,6 +315,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	});
 
 	TableAccExtension.CELLTYPES = CELLTYPES;
+	TableAccRenderExtension.CELLTYPES = CELLTYPES;
 
 	/**
 	 * @see sap.ui.base.Object#destroy
@@ -350,6 +356,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 
 	TableAccExtension.prototype.getAccRenderExtension = function() {
 		return TableAccRenderExtension;
+	};
+
+	TableAccExtension.prototype.updateAriaStateOfColumn = function(oColumn) {
+		if (!this._accMode) {
+			return;
+		}
+
+		var mAttributes = TableAccRenderExtension._getAriaAttributesFor(this.getTable(), "COLUMNHEADER", {
+			headerId: oColumn.getId(),
+			column: oColumn,
+			index: this.getTable().indexOfColumn(oColumn)
+		});
+
+		oColumn.$().attr({
+			"aria-sort" : mAttributes["aria-sort"] || null,
+			"aria-labelledby" : mAttributes["aria-labelledby"] || null
+		});
 	};
 
 	TableAccExtension.prototype.updateAccForCurrentCell = function(bOnCellFocus) {
@@ -429,8 +452,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	};
 
 	TableAccExtension.prototype._updateAccForROWHEADER = function($Cell, bOnCellFocus) {
-		var oTable = this.getTable();
-		var aLabels = [oTable.getId() + "-ariarowheaderlabel", oTable.getId() + "-rownumberofrows"];
+		var oTable = this.getTable(),
+			aDefaultLabels = TableAccRenderExtension._getAriaAttributesFor(this.getTable(), "ROWHEADER")["aria-labelledby"] || [],
+			aLabels = aDefaultLabels.concat([oTable.getId() + "-rownumberofrows"]);
 
 		if (!$Cell.hasClass("sapUiTableRowHidden")) {
 			var oRow = oTable.getRows()[$Cell.attr("data-sap-ui-rowindex")];
@@ -441,50 +465,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			aLabels.push(oTable.getId() + "-ariarowselected");
 		}
 
-		//TBD: cleanup and align defaults TableRenderer.getAriaAttributesForRowHdr
-		_updateCell(this, $Cell, [oTable.getId() + "-ariarowheaderlabel"], null, aLabels, null, null);
+		_updateCell(this, $Cell, aDefaultLabels, null, aLabels, null, null);
 	};
 
 	TableAccExtension.prototype._updateAccForCOLUMNHEADER = function($Cell, bOnCellFocus) {
 		var oTable = this.getTable(),
-			iCol = $Cell.attr("data-sap-ui-colindex"),
-			aDefaultLabels = null, //TBD: cleanup and align TableRenderer.getAriaAttributesForCol
-			aLabels = [oTable.getId() + "-colnumberofcols", $Cell.attr("id")],
-			aDescriptions = [],
-			oColumn = sap.ui.getCore().byId($Cell.attr("id"));
-
-		if (iCol < oTable.getFixedColumnCount()) { // fixed column
-			aDefaultLabels = [$Cell.attr("id"), oTable.getId() + "-ariafixedcolumn"];
-			aLabels.push(oTable.getId() + "-ariafixedcolumn");
-		}
-
-		if ($Cell.attr("aria-haspopup") == "true") {
-			aDescriptions.push(oTable.getId() + "-ariacolmenu");
-		}
-
-		if (oColumn && oColumn.getSorted()) {
-			aLabels.push(oTable.getId() + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
-		}
-
-		if (oColumn && oColumn.getFiltered()) {
-			aLabels.push(oTable.getId() + "-ariacolfiltered");
-		}
+			mAttributes = TableAccRenderExtension._getAriaAttributesFor(oTable, "COLUMNHEADER", {
+				headerId: $Cell.attr("id"),
+				column: sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid")),
+				index: $Cell.attr("data-sap-ui-colindex")
+			}),
+			aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]);
 
 		//TBD: Improve handling for multiple headers
-		_updateCell(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, null);
+		_updateCell(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"], aLabels, mAttributes["aria-describedby"], null);
 	};
 
 	TableAccExtension.prototype._updateAccForCOLUMNROWHEADER = function($Cell, bOnCellFocus) {
-		var oTable = this.getTable(),
-			//TBD: cleanup and align defaults TableRenderer.getAriaAttributesForRowHdr
-			aDefaultLabels = [oTable.getId() + "-ariacolrowheaderlabel"],
-			aLabels = aDefaultLabels;
-
-		if ($Cell.hasClass("sapUiTableSelAllEnabled")) {
-			aLabels = aDefaultLabels.concat([oTable.getId() + "-ariaselectall"]);
-		}
-
-		_updateCell(this, $Cell, aDefaultLabels, null, aLabels, null, null);
+		var mAttributes = TableAccRenderExtension._getAriaAttributesFor(this.getTable(), "COLUMNROWHEADER", {enabled: $Cell.hasClass("sapUiTableSelAllEnabled")});
+		_updateCell(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"], mAttributes["aria-labelledby"], mAttributes["aria-describedby"], null);
 	};
 
 /*	TableAccExtension.prototype._updateAccForGROUPROWCELL = function($Cell, bOnCellFocus) {
