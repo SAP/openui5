@@ -738,9 +738,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 				this.$().find(".sapUiTableColCell").removeClass("sapUiTableColSorted");
 
 			}
-			if (oTable._getAccExtension) { //Check needed due to DataTable
-				oTable._getAccExtension().updateAriaStateOfColumn(this);
-			}
+			oTable._getAccExtension().updateAriaStateOfColumn(this);
 		}
 
 	};
@@ -921,9 +919,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			} else {
 				this.$().find(".sapUiTableColCell").removeClass("sapUiTableColFiltered");
 			}
-			if (oTable._getAccExtension) { //Check needed due to DataTable
-				oTable._getAccExtension().updateAriaStateOfColumn(this);
-			}
+			oTable._getAccExtension().updateAriaStateOfColumn(this);
 		}
 	};
 

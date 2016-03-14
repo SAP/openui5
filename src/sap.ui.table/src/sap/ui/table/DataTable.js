@@ -745,6 +745,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		};
 
 
+		DataTable.prototype._getAccExtension = function(){
+			//Only to ensure that code in Column and Row does not break!
+			return {
+				updateAriaStateOfColumn: function(oColumn) {
+					var sSort = null;
+					if (oColumn.getSorted()) {
+						sSort = oColumn.getSortOrder() === sap.ui.table.SortOrder.Ascending ? "ascending" : "descending";
+					}
+					oColumn.$().attr({"aria-sort" : sSort});
+				}
+			};
+		};
+
+
 		/**
 		 * theme changed
 		 * @private

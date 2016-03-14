@@ -34,13 +34,6 @@ sap.ui.define(['jquery.sap.global'],
 
 
 
-		writeTableAccRole: function(oRm, oTable) {
-			var oExtension = oTable._getAccExtension();
-			if (oExtension.getAccMode()) {
-				oRm.writeAttribute("role", oExtension.getTableAccRole());
-			}
-		},
-
 		writeHiddenAccTexts: function(oRm, oTable) {
 			if (!oTable._getAccExtension().getAccMode()) {
 				return;
@@ -90,58 +83,12 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("</div>");
 		},
 
-		_getAriaAttributesFor: function(oTable, sType, mParams) {
-			var CELLTYPES = AccRenderExtension.CELLTYPES,
-				mAttributes = {},
-				sTableId = oTable.getId();
-
-			switch (sType) {
-				case CELLTYPES.COLUMNROWHEADER:
-					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
-					if (mParams && mParams.enabled) {
-						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
-					}
-					break;
-				case CELLTYPES.ROWHEADER:
-					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
-					if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
-						var bSelected = mParams && mParams.rowSelected;
-						mAttributes["aria-selected"] = "" + bSelected;
-						var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
-						mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
-					}
-					break;
-				case CELLTYPES.COLUMNHEADER:
-					var oColumn = mParams && mParams.column;
-					var bIsMainHeader = oColumn && oColumn.getId() === mParams.headerId;
-					mAttributes["role"] = "columnheader";
-					mAttributes["aria-labelledby"] = mParams && mParams.headerId ?  [mParams.headerId] : [];
-					if (oColumn && oColumn._menuHasItems()) {
-						mAttributes["aria-haspopup"] = "true";
-						mAttributes["aria-describedby"] = [sTableId + "-ariacolmenu"];
-					}
-					if (mParams && (mParams.index < oTable.getFixedColumnCount())) {
-						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
-					}
-					if (bIsMainHeader && oColumn.getSorted()) {
-						mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
-						mAttributes["aria-labelledby"].push(sTableId + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
-					}
-					if (bIsMainHeader && oColumn.getFiltered()) {
-						mAttributes["aria-labelledby"].push(sTableId + "-ariacolfiltered");
-					}
-					break;
-			}
-
-			return mAttributes;
-		},
-
 		writeAriaAttributesFor: function(oRm, oTable, sType, mParams) {
 			if (!oTable._getAccExtension().getAccMode()) {
 				return;
 			}
 
-			var mAttributes = AccRenderExtension._getAriaAttributesFor(oTable, sType, mParams);
+			var mAttributes = oTable._getAccExtension()._getAriaAttributesFor(oTable, sType, mParams);
 
 			var oValue, sKey;
 			for (sKey in mAttributes) {
@@ -163,7 +110,7 @@ sap.ui.define(['jquery.sap.global'],
 			var bIsSelected = oTable.isIndexSelected(iRowIndex);
 
 			var sText = "<div id='" + oRow.getId() + "-rowselecttext' aria-hidden='true' class='sapUiTableAriaRowSel sapUiInvisibleText'>";
-			var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
+			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
 			sText += mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
 			return sText + "</div>";
 		},

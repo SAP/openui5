@@ -212,7 +212,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			var $RowColNoElem = oTable.$("ariacount");
 
 			var iIndex = oIN.getFocusedIndex();
-			var iColumnNumber = iIndex % oIN.iColumns;
+			var bHasRowHeader = oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None && oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
+			var iColumnNumber = iIndex % oIN.iColumns + (bHasRowHeader ? 0 : 1);
 			var iFirstVisibleRow = oTable.getFirstVisibleRow();
 			var iTotalRowCount = oTable._getRowCount();
 			var iRowIndex = Math.floor(iIndex / oIN.iColumns) + iFirstVisibleRow + 1 - oTable._getHeaderRowCount();
@@ -346,10 +347,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		return this._accMode;
 	};
 
-	TableAccExtension.prototype.getTableAccRole = function() {
-		return this._treeMode ? "treegrid" : "grid";
-	};
-
 	TableAccExtension.prototype.getTable = function() {
 		return this._table;
 	};
@@ -363,7 +360,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			return;
 		}
 
-		var mAttributes = TableAccRenderExtension._getAriaAttributesFor(this.getTable(), "COLUMNHEADER", {
+		var mAttributes = this._getAriaAttributesFor(this.getTable(), "COLUMNHEADER", {
 			headerId: oColumn.getId(),
 			column: oColumn,
 			index: this.getTable().indexOfColumn(oColumn)
@@ -390,6 +387,175 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		this["_updateAccFor" + oInfo.type](oInfo.cell, bOnCellFocus);
 	};
 
+	/**
+	 * Retrieve Aria descriptions from resource bundle for a certain selection mode
+	 * @param {Boolean} [bConsiderSelectionState] set to true if the current selection state of the table shall be considered
+	 * @param {String} [sSelectionMode] optional parameter. If no selection mode is set, the current selection mode of the table is used
+	 * @returns {{mouse: {rowSelect: string, rowDeselect: string}, keyboard: {rowSelect: string, rowDeselect: string}}}
+	 * @private
+	 */
+	TableAccExtension.prototype.getAriaTextsForSelectionMode = function (bConsiderSelectionState, sSelectionMode) {
+		var oTable = this.getTable();
+
+		if (!sSelectionMode) {
+			sSelectionMode = oTable.getSelectionMode();
+		}
+
+		var oResBundle = oTable._oResBundle;
+		var mTooltipTexts = {
+			mouse: {
+				rowSelect: "",
+				rowDeselect: ""
+			},
+			keyboard: {
+				rowSelect: "",
+				rowDeselect: ""
+			}};
+
+		if (sSelectionMode === sap.ui.table.SelectionMode.Single) {
+			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
+			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
+			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
+			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+		} else if (sSelectionMode === sap.ui.table.SelectionMode.Multi) {
+			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI");
+			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI");
+			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY");
+			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY");
+
+			if (bConsiderSelectionState === true) {
+				if (oTable.getSelectedIndices().length === 1) {
+					// in multi selection case, if there is only one row selected it's not required
+					// to press CTRL in order to only deselect this single row hence use the description text
+					// of the single de-selection.
+					// for selection it's different since the description for SHIFT/CTRL handling is required
+					mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
+					mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+				} else if (oTable.getSelectedIndices().length === 0) {
+					// if there are no rows selected in multi selection mode, it's not required to press CTRL or SHIFT
+					// in order to enhance the selection.
+					mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
+					mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
+				}
+			}
+
+		} else if (sSelectionMode === sap.ui.table.SelectionMode.MultiToggle) {
+			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE");
+			// text for de-select is the same like for single selection
+			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
+			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
+			// text for de-select is the same like for single selection
+			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+
+			if (bConsiderSelectionState === true && oTable.getSelectedIndices().length === 0) {
+				// if there is no row selected yet, the selection is like in single selection case
+				mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
+				mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
+			}
+		}
+
+		return mTooltipTexts;
+	};
+
+	//*****************************************************************************************
+
+	TableAccExtension.prototype._getAriaAttributesFor = function(oTable, sType, mParams) {
+		var mAttributes = {},
+			sTableId = oTable.getId();
+
+		switch (sType) {
+			case CELLTYPES.COLUMNROWHEADER:
+				mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
+				if (mParams && mParams.enabled) {
+					mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
+				}
+				break;
+			case CELLTYPES.ROWHEADER:
+				mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
+				if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
+					var bSelected = mParams && mParams.rowSelected;
+					mAttributes["aria-selected"] = "" + bSelected;
+					var mTooltipTexts = this.getAriaTextsForSelectionMode(true);
+					mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
+				}
+				break;
+			case CELLTYPES.COLUMNHEADER:
+				var oColumn = mParams && mParams.column;
+				var bIsMainHeader = oColumn && oColumn.getId() === mParams.headerId;
+				mAttributes["role"] = "columnheader";
+				mAttributes["aria-labelledby"] = mParams && mParams.headerId ?  [mParams.headerId] : [];
+				if (oColumn && oColumn._menuHasItems()) {
+					mAttributes["aria-haspopup"] = "true";
+					mAttributes["aria-describedby"] = [sTableId + "-ariacolmenu"];
+				}
+				if (mParams && (mParams.index < oTable.getFixedColumnCount())) {
+					mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
+				}
+				if (bIsMainHeader && oColumn.getSorted()) {
+					mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
+					mAttributes["aria-labelledby"].push(sTableId + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
+				}
+				if (bIsMainHeader && oColumn.getFiltered()) {
+					mAttributes["aria-labelledby"].push(sTableId + "-ariacolfiltered");
+				}
+				break;
+			case "ROOT": //The tables root dom element
+				//TBD: Taken directly from TableRenderer, Clarify whether all this is really necessary on the root element
+				mAttributes["aria-readonly"] = "true";
+				if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi) {
+					mAttributes["aria-multiselectable"] = "true";
+				}
+				mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
+				if (oTable.getTitle()) {
+					mAttributes["aria-labelledby"].push(oTable.getTitle().getId());
+				}
+				mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
+				var aAriaOwns = [];
+				if (oTable.getToolbar()) {
+					aAriaOwns.push(oTable.getToolbar().getId());
+				}
+				aAriaOwns.push(oTable.getId() + "-table");
+				mAttributes["aria-owns"] = aAriaOwns;
+				break;
+			case "TABLE": //The "real" table element(s)
+				mAttributes["role"] = this._treeMode ? "treegrid" : "grid";
+				break;
+			case "TH": //The "technical" column headers
+				mAttributes["role"] = "columnheader";
+				mAttributes["scope"] = "col";
+				if (mParams && mParams.column) {
+					mAttributes["aria-owns"] = mParams.column.getId();
+					mAttributes["aria-labelledby"] = mParams.column.getId();
+				}
+				break;
+			case "ROWHEADER_TD": //The "technical" row headers
+				mAttributes["role"] = "rowheader";
+				mAttributes["headers"] = oTable.getId() + "-colsel";
+				if (mParams && typeof mParams.index === "number") {
+					mAttributes["aria-owns"] = oTable.getId() + "-rowsel" + mParams.index;
+				}
+				if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
+					var bSelected = mParams && mParams.rowSelected;
+					mAttributes["aria-selected"] = "" + bSelected;
+				}
+				break;
+			case "TR": //The rows
+				mAttributes["role"] = "row";
+				var bSelected = false;
+				if (mParams && typeof mParams.index === "number" && oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None && oTable.isIndexSelected(mParams.index)) {
+					mAttributes["aria-selected"] = "true";
+					bSelected = true;
+				}
+				if (oTable._getSelectOnCellsAllowed()) {
+					var mTooltipTexts = this.getAriaTextsForSelectionMode(true);
+					mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
+				}
+				break;
+		}
+
+		return mAttributes;
+	};
+
 	TableAccExtension.prototype._updateAccForDATACELL = function($Cell, bOnCellFocus) {
 		var oTable = this.getTable(),
 			oIN = oTable._oItemNavigation;
@@ -398,8 +564,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			return;
 		}
 
-		var iRow = Math.floor(oIN.iFocusedIndex / oIN.iColumns) - oTable._getHeaderRowCount(),
-			iCol = (oIN.iFocusedIndex % oIN.iColumns) - 1,
+		var bHasRowHeader = oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None && oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly,
+			iRow = Math.floor(oIN.iFocusedIndex / oIN.iColumns) - oTable._getHeaderRowCount(),
+			iCol = (oIN.iFocusedIndex % oIN.iColumns) - (bHasRowHeader ? 1 : 0),
 			oRow = oTable.getRows()[iRow],
 			oColumn = oTable._getVisibleColumns()[iCol],
 			oCell = oRow && oRow.getCells()[iCol],
@@ -453,7 +620,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 
 	TableAccExtension.prototype._updateAccForROWHEADER = function($Cell, bOnCellFocus) {
 		var oTable = this.getTable(),
-			aDefaultLabels = TableAccRenderExtension._getAriaAttributesFor(this.getTable(), "ROWHEADER")["aria-labelledby"] || [],
+			aDefaultLabels = this._getAriaAttributesFor(this.getTable(), "ROWHEADER")["aria-labelledby"] || [],
 			aLabels = aDefaultLabels.concat([oTable.getId() + "-rownumberofrows"]);
 
 		if (!$Cell.hasClass("sapUiTableRowHidden")) {
@@ -470,7 +637,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 
 	TableAccExtension.prototype._updateAccForCOLUMNHEADER = function($Cell, bOnCellFocus) {
 		var oTable = this.getTable(),
-			mAttributes = TableAccRenderExtension._getAriaAttributesFor(oTable, "COLUMNHEADER", {
+			mAttributes = this._getAriaAttributesFor(oTable, "COLUMNHEADER", {
 				headerId: $Cell.attr("id"),
 				column: sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid")),
 				index: $Cell.attr("data-sap-ui-colindex")
@@ -482,7 +649,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	};
 
 	TableAccExtension.prototype._updateAccForCOLUMNROWHEADER = function($Cell, bOnCellFocus) {
-		var mAttributes = TableAccRenderExtension._getAriaAttributesFor(this.getTable(), "COLUMNROWHEADER", {enabled: $Cell.hasClass("sapUiTableSelAllEnabled")});
+		var mAttributes = this._getAriaAttributesFor(this.getTable(), "COLUMNROWHEADER", {enabled: $Cell.hasClass("sapUiTableSelAllEnabled")});
 		_updateCell(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"], mAttributes["aria-labelledby"], mAttributes["aria-describedby"], null);
 	};
 
