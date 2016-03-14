@@ -5,7 +5,7 @@
 
 <title>Test Page for sap.m.Button</title>
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" data-sap-ui-noConflict="true"
+	type="text/javascript" data-sap-ui-noConflict="true" data-sap-ui-language="en"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
 </script>
 
@@ -389,6 +389,34 @@
 
 		// Cleanup
 		oButton.destroy();
+	});
+
+	module("Acc Info");
+
+	test("getAccessibilityInfo", function() {
+		var oButton = new sap.m.Button({tooltip: "Tooltip"});
+		var oInfo = oButton.getAccessibilityInfo();
+		strictEqual(oInfo.getAriaRole(), "button", "AriaRole");
+		strictEqual(oInfo.getType(), "button", "Type");
+		strictEqual(oInfo.getDescription(), "Tooltip", "Description");
+		strictEqual(oInfo.getFocusable(), true, "Focusable");
+		strictEqual(oInfo.getEnabled(), true, "Enabled");
+		strictEqual(oInfo.getEditable(), null, "Editable");
+		strictEqual(oInfo.getFullDescription(), "button Tooltip", "getFullDescription");
+		oButton.setText("Text");
+		oButton.setEnabled(false);
+		oInfo = oButton.getAccessibilityInfo();
+		strictEqual(oInfo.getDescription(), "Text", "Description");
+		strictEqual(oInfo.getFocusable(), false, "Focusable");
+		strictEqual(oInfo.getEnabled(), false, "Enabled");
+		strictEqual(oInfo.getEditable(), null, "Editable");
+		strictEqual(oInfo.getFullDescription(), "button Text disabled", "getFullDescription");
+		oButton.setText(null);
+		oButton.setTooltip(null);
+		oButton.setIcon("sap-icon://search");
+		oInfo = oButton.getAccessibilityInfo();
+		strictEqual(oInfo.getDescription(), "Search", "Description");
+		strictEqual(oInfo.getFullDescription(), "button Search disabled", "getFullDescription");
 	});
 
 </script>
