@@ -1701,12 +1701,14 @@ sap.ui.define(['jquery.sap.global',
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial) {
 			this.bInitial = false;
 			this.bHasTreeAnnotations = this._hasTreeAnnotations();
-			this._processSelectParameters();
 			this.oEntityType = this._getEntityType();
 
 			if (this._bShouldBeAdapted) {
 				this._applyAdapter();
 			}
+
+			// build up the $select, based on the given select-properties and the known/necessary annotated properties
+			this._processSelectParameters();
 
 			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
