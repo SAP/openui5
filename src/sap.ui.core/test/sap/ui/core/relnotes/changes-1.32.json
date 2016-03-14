@@ -1974,5 +1974,94 @@
         "references": []
       }
     ]
+  },
+  "1.32.13": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "67ce5743033682cce7e958e34c4306d01df8f030",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "v2.ODataModel: force Entity update by setting ETag to \u0027*\u0027",
+        "references": []
+      },
+      {
+        "id": "8b8d12b003e2d898dedd659fba30c6f2d7b7a14a",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Avoid stacked animations",
+        "references": []
+      },
+      {
+        "id": "d9ced98ec55bbeb2c29c75754bb6f9f24d577bec",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "BusyIndicator: Use New Fade In Animation",
+        "references": []
+      },
+      {
+        "id": "cc7eb073a84524b1a856623ff395bb14c3fc7190",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component#onWindowUnload: execution cannot be guaranteed",
+        "references": []
+      },
+      {
+        "id": "3325e679e9d4683f653a62a98ba4db1a5dd5cd0a",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "DataState: Remove Control Messages With New Binding",
+        "references": []
+      },
+      {
+        "id": "deb161dc73db645c7f0b67015a154e4e2e2c85f3",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "FocusHandler: fail safety after destruction",
+        "references": []
+      },
+      {
+        "id": "b5857e05e541abc303d3a3b84935c2c9b48249be",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageManager: avoid undefined error after removal of messages",
+        "references": []
+      },
+      {
+        "id": "7e4f9a3facff236839e67ba5b2ce53b6542cdb22",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: include metadata payload for media entities",
+        "references": []
+      },
+      {
+        "id": "897886b4617fd741d6bf4ad68d71660e4d5c1950",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.ItemNavigation: make focusItem more fail-safe when called without event",
+        "references": []
+      },
+      {
+        "id": "c4dfc58087d6c2b914a4e08d5fe87c9b817ee585",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.tutorial.navigation: explicit set log level for steps 16 and 17",
+        "references": []
+      },
+      {
+        "id": "287bd10b1beac0d980f85b0a4d37bb270222ee24",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Fixed issue with checkUpdate on expand data",
+        "references": []
+      },
+      {
+        "id": "fdd3cc63fe1da8007249e9404dc4adeaf4136675",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Fixed support for broken service implementations",
+        "references": []
+      }
+    ]
   }
 }

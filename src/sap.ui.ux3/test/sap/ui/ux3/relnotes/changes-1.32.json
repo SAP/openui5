@@ -157,5 +157,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.13": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "4c87aaf5d759de1ce10017355b98e45097d60f8d",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "852530a0081246a6127c7ae366df0ee78680357a",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "089a586c34e6bbe1df9bfd21563dd482194b033a",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NotificationBar: Minimized bar hovering is now consistent across all desktop browsers",
+        "references": []
+      }
+    ]
   }
 }

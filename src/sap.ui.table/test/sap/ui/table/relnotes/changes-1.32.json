@@ -625,5 +625,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.13": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "6800e29ea3593bbc37bfa9038aa94dcc56f2e436",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes requestCounter for changing bindings while request is still pending",
+        "references": []
+      }
+    ]
   }
 }

@@ -414,5 +414,66 @@
         "references": []
       }
     ]
+  },
+  "1.32.13": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "4c87aaf5d759de1ce10017355b98e45097d60f8d",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "baa808884b4dcb72626ed76a920ac7edbc04ea82",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.TabStrip: Scroll position is fixed",
+        "references": []
+      },
+      {
+        "id": "852530a0081246a6127c7ae366df0ee78680357a",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      },
+      {
+        "id": "931575d4191830a40e1ada99976e77012ae81f5e",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.commons.Dialog: setInitialFocus is fixed",
+        "references": []
+      },
+      {
+        "id": "6e3413ab6a7c143bdfbf8ab6d8e3b26179fccf15",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButtonGroup: setEnabled behaviour corrected",
+        "references": []
+      },
+      {
+        "id": "e851602ed8d8a2df1ecd4596ebdd6064ba0b2b75",
+        "author": "Yavor Ivanov \u003cyavor.ivanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Slider: Aria-readonly property is now correctly read",
+        "references": []
+      },
+      {
+        "id": "e8493cd53ce81335015d2c79ad83eed1ddbda228",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Closing tab is now fixed",
+        "references": []
+      },
+      {
+        "id": "43638cff428a82ebcf16a638f18bf49e5aa2a26b",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Event flow is now correct",
+        "references": []
+      }
+    ]
   }
 }
