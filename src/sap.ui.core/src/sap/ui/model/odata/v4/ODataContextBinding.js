@@ -24,7 +24,7 @@ sap.ui.define([
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#bindContext bindContext} instead!
 	 *
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-	 *   The OData v4 model
+	 *   The OData V4 model
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.Context} [oContext]
@@ -44,7 +44,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataContextBinding
 	 * @author SAP SE
-	 * @class Context binding for an OData v4 model.
+	 * @class Context binding for an OData V4 model.
 	 *   An event handler can only be attached to this binding for the following events: 'change',
 	 *   'dataReceived', and 'dataRequested'.
 	 *   For other events, an error is thrown.

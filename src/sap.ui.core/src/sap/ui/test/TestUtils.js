@@ -370,7 +370,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		},
 
 		/**
-		 * Sets up the fake server for OData v4 responses unless real OData responses are requested.
+		 * Sets up the fake server for OData V4 responses unless real OData responses are requested.
 		 *
 		 * The behavior is controlled by the request property "realOData". There are two options:
 		 * <ul>

@@ -212,7 +212,7 @@ sap.ui.require([
 				template : new TestControl()
 			}, oRange));
 
-			// check v4 ODataModel APIs are called as expected from ManagedObject
+			// check V4 ODataModel APIs are called as expected from ManagedObject
 			checkCall(this.oModel.bindList, "/EMPLOYEES", undefined, undefined, undefined,
 				undefined);
 			checkCall(ODataListBinding.prototype.initialize);

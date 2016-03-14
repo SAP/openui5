@@ -73,8 +73,8 @@ sap.ui.define([
 	 *   fully loaded
 	 *
 	 * @class Implementation of an OData meta model which offers a unified access to both OData v2
-	 * meta data and v4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
-	 * as a foundation and merges v4 annotations from the existing
+	 * meta data and V4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
+	 * as a foundation and merges V4 annotations from the existing
 	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding model element.
 	 *
 	 * Also, annotations from the "http://www.sap.com/Protocols/SAPData" namespace are lifted up
@@ -96,7 +96,7 @@ sap.ui.define([
 	 *
 	 * As of 1.29.0, the corresponding vocabulary-based annotations for the following
 	 * "<a href="http://www.sap.com/Protocols/SAPData">SAP Annotations for OData Version 2.0</a>"
-	 * are added, if they are not yet defined in the v4 annotations:
+	 * are added, if they are not yet defined in the V4 annotations:
 	 * <ul>
 	 * <li><code>label</code>;</li>
 	 * <li><code>creatable</code>, <code>deletable</code>, <code>deletable-path</code>,
@@ -114,14 +114,14 @@ sap.ui.define([
 	 * "email;type=home,pref"), "familyname", "givenname", "honorific", "middlename", "name",
 	 * "nickname", "note", "org", "org-unit", "org-role", "photo", "pobox", "region", "street",
 	 * "suffix", "tel" (including support for types, for example "tel;type=cell,pref"), "title" and
-	 * "zip" (mapped to v4 annotation <code>com.sap.vocabularies.Communication.v1.Contact</code>);
+	 * "zip" (mapped to V4 annotation <code>com.sap.vocabularies.Communication.v1.Contact</code>);
 	 * </li>
 	 * <li>"class", "dtend", "dtstart", "duration", "fbtype", "location", "status", "transp" and
-	 * "wholeday" (mapped to v4 annotation
+	 * "wholeday" (mapped to V4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Event</code>);</li>
-	 * <li>"body", "from", "received", "sender" and "subject" (mapped to v4 annotation
+	 * <li>"body", "from", "received", "sender" and "subject" (mapped to V4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Message</code>);</li>
-	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to v4 annotation
+	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to V4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Task</code>).</li>
 	 * </ul>
 	 * </ul>

@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Implementation of an OData v4 model's context.
+	 * @class Implementation of an OData V4 model's context.
 	 *
 	 * @alias sap.ui.model.odata.v4._Context
 	 * @author SAP SE
@@ -87,7 +87,7 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Creates a context for an OData v4 model.
+		 * Creates a context for an OData V4 model.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 		 *   The model
@@ -98,7 +98,7 @@ sap.ui.define([
 		 * @param {number} [iIndex]
 		 *   Index of item represented by this context, used by list bindings, not context bindings
 		 * @returns {sap.ui.model.Context}
-		 *   A context for an OData v4 model
+		 *   A context for an OData V4 model
 		 * @throws {Error}
 		 *   If an invalid path is given
 		 *

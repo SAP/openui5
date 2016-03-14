@@ -24,7 +24,7 @@ sap.ui.require([
 	"use strict";
 
 	/*
-	 * You can run various tests in this module against a real OData v4 service using the request
+	 * You can run various tests in this module against a real OData V4 service using the request
 	 * property "realOData". See src/sap/ui/test/TestUtils.js for details.
 	 */
 
@@ -41,7 +41,7 @@ sap.ui.require([
 		});
 
 	/**
-	 * Creates a v4 OData service for <code>TEA_BUSI</code>.
+	 * Creates a V4 OData service for <code>TEA_BUSI</code>.
 	 *
 	 * @param {string} [sQuery] URI query parameters starting with '?'
 	 * @returns {sap.ui.model.odata.v4.oDataModel} the model

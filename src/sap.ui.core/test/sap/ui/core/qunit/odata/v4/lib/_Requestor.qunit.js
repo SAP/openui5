@@ -141,7 +141,7 @@ sap.ui.require([
 				mRequestHeaders = clone(mHeaders.requestHeaders),
 				oRequestor = _Requestor.create(sServiceUrl, mDefaultHeaders),
 				oResult = {},
-				// add predefined request headers for OData v4
+				// add predefined request headers for OData V4
 				mResultHeaders = jQuery.extend({}, {
 					"Accept" : "application/json;odata.metadata=minimal",
 					"Content-Type" : "application/json;charset=UTF-8",
