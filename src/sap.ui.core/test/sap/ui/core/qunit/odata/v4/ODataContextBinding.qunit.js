@@ -240,11 +240,13 @@ sap.ui.require([
 
 		oBindingMock.expects("fireDataRequested").withExactArgs();
 		oBindingMock.expects("fireDataReceived").withExactArgs();
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
+			.returns("groupId");
 
-		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("$auto", "bar").callsArg(2)
+		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId", "bar").callsArg(2)
 			.returns(Promise.resolve("value"));
 
-		this.oSandbox.mock(oBinding.getModel()).expects("dataRequested").withArgs("$auto")
+		this.oSandbox.mock(oBinding.getModel()).expects("dataRequested").withArgs("groupId")
 			.callsArg(1);
 
 		return oBinding.requestValue("bar").then(function (vValue) {
@@ -260,8 +262,10 @@ sap.ui.require([
 
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
+			.returns("groupId");
 
-		oCacheMock.expects("read").withArgs("$auto", "bar").returns(Promise.resolve("value"));
+		oCacheMock.expects("read").withArgs("groupId", "bar").returns(Promise.resolve("value"));
 
 		return oBinding.requestValue("bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
@@ -275,8 +279,10 @@ sap.ui.require([
 			oExpectedError = new Error("Expected read failure"),
 			oCachePromise = Promise.reject(oExpectedError);
 
-		oCacheMock.expects("read").withArgs("$auto", "foo").callsArg(2).returns(oCachePromise);
-		oCacheMock.expects("read").withArgs("$auto", "bar").returns(oCachePromise);
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").twice().withExactArgs()
+			.returns("groupId");
+		oCacheMock.expects("read").withArgs("groupId", "foo").callsArg(2).returns(oCachePromise);
+		oCacheMock.expects("read").withArgs("groupId", "bar").returns(oCachePromise);
 		this.oSandbox.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
 		this.oLogMock.expects("error").withExactArgs("Failed to read path /absolute",
@@ -302,6 +308,7 @@ sap.ui.require([
 			oNestedBinding,
 			oPromise = {};
 
+		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").never();
 		oBinding.initialize();
 		oContext = oBinding.getBoundContext();
 		oContextMock = this.oSandbox.mock(oContext);

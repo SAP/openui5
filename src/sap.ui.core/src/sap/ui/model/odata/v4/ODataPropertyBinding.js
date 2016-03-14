@@ -173,7 +173,7 @@ sap.ui.define([
 		var oChangeReason = {reason : sChangeReason || ChangeReason.Change},
 			bDataRequested = false,
 			bFire = false,
-			sGroupId = this.oModel.getGroupId(),
+			sGroupId,
 			mParametersForDataReceived,
 			oPromise,
 			aPromises = [],
@@ -201,13 +201,16 @@ sap.ui.define([
 				})
 			);
 		}
-		oReadPromise = this.isRelative()
-			? this.oContext.requestValue(this.sPath)
-			: this.oCache.read(sGroupId, /*sPath*/undefined, function () {
-					bDataRequested = true;
-					that.oModel.dataRequested(sGroupId,
-						that.fireDataRequested.bind(that));
-				});
+		if (this.isRelative()) {
+			oReadPromise = this.oContext.requestValue(this.sPath);
+		} else {
+			sGroupId = this.oModel.getGroupId();
+			oReadPromise = this.oCache.read(sGroupId, /*sPath*/undefined, function () {
+				bDataRequested = true;
+				that.oModel.dataRequested(sGroupId,
+					that.fireDataRequested.bind(that));
+			});
+		}
 		aPromises.push(oReadPromise.then(function (vValue) {
 			if (vValue && typeof vValue === "object") {
 				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);

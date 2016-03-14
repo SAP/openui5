@@ -191,14 +191,18 @@ sap.ui.require([
 			}
 
 			if (iEntityCount < iLength) {
+				this.oSandbox.mock(this.oModel).expects("getGroupId").twice().withExactArgs()
+					.returns("groupId");
 				oCacheMock.expects("read")
-					.withExactArgs(iStartIndex, iLength, "$auto", undefined, sinon.match.func)
+					.withExactArgs(iStartIndex, iLength, "groupId", undefined, sinon.match.func)
 					// read is called twice because contexts are created asynchronously
 					.twice()
 					.returns(oPromise);
 			} else {
+				this.oSandbox.mock(this.oModel).expects("getGroupId").withExactArgs()
+					.returns("groupId");
 				oCacheMock.expects("read")
-					.withExactArgs(iStartIndex, iLength, "$auto", undefined, sinon.match.func)
+					.withExactArgs(iStartIndex, iLength, "groupId", undefined, sinon.match.func)
 					.returns(oPromise);
 			}
 			// spies to check and document calls to model and binding methods from ManagedObject
@@ -255,6 +259,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.aContexts.length, 0, "reset context");
 		}
 
+		this.oSandbox.mock(this.oModel).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
 		that.oSandbox.mock(oControl.getObjectBinding()).expects("requestValue")
 			.withExactArgs(sPath, undefined)

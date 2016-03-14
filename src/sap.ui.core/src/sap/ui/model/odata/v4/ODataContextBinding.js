@@ -271,10 +271,11 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.requestValue = function (sPath) {
 		var bDataRequested = false,
-			sGroupId = this.oModel.getGroupId(),
+			sGroupId,
 			that = this;
 
 		if (this.oCache) {
+			sGroupId = this.oModel.getGroupId();
 			return this.oCache.read(sGroupId, sPath, function () {
 				bDataRequested = true;
 				that.oModel.dataRequested(sGroupId,

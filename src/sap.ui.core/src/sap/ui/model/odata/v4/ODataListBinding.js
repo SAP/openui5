@@ -189,7 +189,7 @@ sap.ui.define([
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iThreshold) {
 		var oContext = this.oContext,
 			bDataRequested = false,
-			sGroupId = this.oModel.getGroupId(),
+			sGroupId,
 			oModel = this.oModel,
 			oPromise,
 			sResolvedPath = oModel.resolve(this.sPath, oContext),
@@ -276,15 +276,16 @@ sap.ui.define([
 		}
 
 		if (!isRangeInContext(iStart, iLength)) {
-			oPromise = this.oCache
-				? this.oCache.read(iStart, iLength, sGroupId, undefined,
-					function () {
-						bDataRequested = true;
-						that.oModel.dataRequested(sGroupId,
-							that.fireDataRequested.bind(that));
-					}
-				)
-				: oContext.requestValue(this.sPath);
+			if (this.oCache) {
+				sGroupId = this.oModel.getGroupId();
+				oPromise = this.oCache.read(iStart, iLength, sGroupId, undefined, function () {
+					bDataRequested = true;
+					that.oModel.dataRequested(sGroupId,
+						that.fireDataRequested.bind(that));
+				});
+			} else {
+				oPromise = oContext.requestValue(this.sPath);
+			}
 			oPromise.then(function (vResult) {
 				createContexts(vResult);
 				//fire dataReceived after change event fired in createContexts()
