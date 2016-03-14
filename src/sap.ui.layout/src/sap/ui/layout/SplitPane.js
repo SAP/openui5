@@ -24,9 +24,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * @constructor
 	 * @public
 	 * @since 1.38
-	 * @alias sap.m.SplitPane
+	 * @alias sap.ui.layout.SplitPane
 	 */
-
 	var SplitPane = Element.extend("sap.ui.layout.SplitPane", { metadata : {
 
 		library : "sap.ui.layout",

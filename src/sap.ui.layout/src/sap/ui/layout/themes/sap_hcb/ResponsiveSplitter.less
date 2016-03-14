@@ -1,0 +1,73 @@
+.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	background-color: @sapHCReducedAltFG;
+
+	&:hover, &:active {
+		background-color: @sapHCStandardFG;
+	}
+}
+
+.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	background-color: @sapHCStandardFG;
+}
+
+.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon {
+		margin-top: 0px;
+	}
+
+	& .sapUiLoSplitterBarIcon:after {
+		border-color: @sapHCStandardFG;
+		background-color: @sapHCStandardBG;
+
+	}
+}
+
+.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon:after {
+		border-color: @sapHCStandardFG;
+		background-color: @sapHCHighlightBG;
+	}
+}
+
+.sapUiRSVisiblePaginator {
+	.sapUiResponsiveSplitterPaginator {
+		box-sizing: border-box; 
+		border-top: 1px solid @sapHCReducedAltFG;
+		background-color: @sapHCStandardBG;
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorButton {
+	&:after {
+		background-color: @sapHCReducedAltFG;
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorButton:hover {
+	background-color: @sapHCHighlightBG;
+
+	&:after {
+		background-color: @sapHCStandardFG;
+	}
+}
+
+.sapUiResponsiveSplitterPaginatorSelectedButton {
+	background-color: transparent !important;
+	&:after {
+		background-color: @sapHCStandardFG;
+	}
+}
+
+.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterBar,
+.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar,
+.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterBar,
+.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon {
+		margin-left: -30px;
+	}
+}

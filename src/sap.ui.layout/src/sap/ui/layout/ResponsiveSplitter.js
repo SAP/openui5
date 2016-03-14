@@ -26,7 +26,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 * @since 1.38
 	 * @alias sap.ui.layout.ResponsiveSplitter
 	 */
-
 	var ResponsiveSplitter = Control.extend("sap.ui.layout.ResponsiveSplitter", /** @lends sap.ui.layout.ResponsiveSplitter.prototype */ {
 		metadata: {
 			library: "sap.ui.layout",

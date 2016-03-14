@@ -24,11 +24,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 	 * @constructor
 	 * @public
 	 * @since 1.38
-	 * @alias sap.m.PaneContainer
+	 * @alias sap.ui.layout.PaneContainer
 	 */
-
 	var PaneContainer = Element.extend("sap.ui.layout.PaneContainer", { metadata : {
-
 		library : "sap.ui.layout",
 		properties : {
 			/**
@@ -59,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 	 * Default value is sap.ui.core.Orientation.Horizontal
 	 * @public
 	 * @param {sap.ui.core.Orientation} sOrientation The Orientation type.
-	 * @returns {sap.ui.layout.ResponsiveSplitter} this to allow method chaining.
+	 * @returns {sap.ui.layout.PaneContainer} this to allow method chaining.
 	 */
 	PaneContainer.prototype.setOrientation = function(sOrientation) {
 		this._oSplitter.setOrientation(sOrientation);
@@ -71,27 +69,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 	 * Adds a SplitPane or a PaneContainer to the PaneContainer.
 	 * @public
 	 * @param {sap.ui.core.Element} oElement The Element to be added.
-	 * @returns {sap.ui.layout.ResponsiveSplitter} this to allow method chaining.
+	 * @returns {sap.ui.layout.PaneContainer} this to allow method chaining.
 	 */
 	PaneContainer.prototype.addPane = function(oElement) {
 		this.addAggregation("panes", oElement);
-		var that = this;
 
 		if (oElement instanceof sap.ui.layout.SplitPane) {
-			that._oSplitter.addAssociatedContentArea(oElement.getContent());
+			this._oSplitter.addAssociatedContentArea(oElement.getContent());
 		} else {
-			that._oSplitter.addAssociatedContentArea(oElement._oSplitter);
+			this._oSplitter.addAssociatedContentArea(oElement._oSplitter);
 		}
+		return this;
 	};
 
 	/**
 	 * Setter for property layoutData.
 	 * @public
 	 * @param {sap.ui.core.LayoutData} oLayoutData The LayoutData object.
-	 * @returns {sap.ui.layout.ResponsiveSplitter} this to allow method chaining.
+	 * @returns {sap.ui.layout.PaneContainer} this to allow method chaining.
 	 */
 	PaneContainer.prototype.setLayoutData = function(oLayoutData) {
-		this._oSplitter.setLayoutData(oLayoutData);
+		return this._oSplitter.setLayoutData(oLayoutData);
 	};
 
 	return PaneContainer;
