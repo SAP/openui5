@@ -137,10 +137,10 @@
 				done();
 				return;
 			}
-			assert.equal($tile.css("border-bottom-style"), "dotted", "Generic Tile focus bottom border was rendered successfully");
-			assert.equal($tile.css("border-top-style"), "dotted", "Generic Tile focus top border was rendered successfully");
-			assert.equal($tile.css("border-right-style"), "dotted", "Generic Tile focus right border was rendered successfully");
-			assert.equal($tile.css("border-left-style"), "dotted", "Generic Tile focus left border was rendered successfully");
+			assert.equal(jQuery.sap.byId("generic-tile-focus").css('border-bottom-style'), "dotted", "Generic Tile focus bottom border was rendered successfully");
+			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-top-style"), "dotted", "Generic Tile focus top border was rendered successfully");
+			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-right-style"), "dotted", "Generic Tile focus right border was rendered successfully");
+			assert.equal(jQuery.sap.byId("generic-tile-focus").css("border-left-style"), "dotted", "Generic Tile focus left border was rendered successfully");
 			done();
 		}.bind(this));
 	});

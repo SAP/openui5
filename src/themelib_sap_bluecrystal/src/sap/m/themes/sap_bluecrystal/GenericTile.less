@@ -29,6 +29,23 @@
 	border: 1px solid @sapUiTileBorderColor;
 }
 
+.sapMGTFocusDiv {
+	position: absolute;
+	left: 1px;
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+	border-radius: 0.25rem;
+}
+
+.sap-desktop .sapMGT:focus .sapMGTFocusDiv {
+	border: 1px dotted @sapUiFocus;
+}
+
+.sap-desktop .sapMGT:focus:not([tabindex]) {
+	border-color: transparent;
+}
+
 .sapMGTBackgroundImage {
 	border-color: fade(@sapUiTileBorderColor, 60);
 }
@@ -51,14 +68,6 @@
 .sap-tablet .sapMGTBackgroundHvrOutln:hover {
 	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiLightShadowTint;
 	border-color: fade(@sapUiTileBorderColor, 60);
-}
-
-.sap-desktop .sapMGT:focus {
-	border: 1px dotted @sapUiFocus;
-}
-
-.sap-desktop .sapMGT:focus:not([tabindex]) {
-	border-color: transparent;
 }
 
 .sapMGenericTileFtrFldIcn {
