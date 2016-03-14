@@ -702,7 +702,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this._oMaxDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
 
-			var iYear = this._oMinDate.getUTCFullYear();
+			var iYear = this._oMaxDate.getUTCFullYear();
 			if (iYear < 1 || iYear > 9999) {
 				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
 			}
@@ -1141,6 +1141,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oHeader.setAdditionalTextButton2();
 			}
 			this._togglePrevNext(oFocusedDate);
+			this._setDisabledMonths(oFocusedDate.getUTCFullYear());
 			break;
 
 		case 2: // year picker
@@ -1184,6 +1185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oHeader.setAdditionalTextButton2();
 			}
 			this._togglePrevNext(oFocusedDate);
+			this._setDisabledMonths(oFocusedDate.getUTCFullYear());
 			break;
 
 		case 2: // year picker
@@ -1248,6 +1250,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			break;
 			// no default
 		}
+
+	};
+
+	Calendar.prototype._setDisabledMonths = function(iYear, oMonthPicker) {
+
+		var iMinMonth = 0;
+		var iMaxMonth = 11;
+
+		if (iYear == this._oMinDate.getUTCFullYear()) {
+			iMinMonth = this._oMinDate.getUTCMonth();
+		}
+
+
+		if (iYear == this._oMaxDate.getUTCFullYear()) {
+			iMaxMonth = this._oMaxDate.getUTCMonth();
+		}
+
+		if (!oMonthPicker) {
+			oMonthPicker = this.getAggregation("monthPicker");
+		}
+		oMonthPicker.setMinMax(iMinMonth, iMaxMonth);
 
 	};
 
@@ -1361,6 +1384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (!bNoFocus) {
 			oMonthPicker.setMonth(oDate.getUTCMonth());
+			this._setDisabledMonths(oDate.getUTCFullYear(), oMonthPicker);
 
 			if (this._iMode == 0) {
 				// remove tabindex from month

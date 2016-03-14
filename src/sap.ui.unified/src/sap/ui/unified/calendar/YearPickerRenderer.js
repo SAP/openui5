@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 				oRm.addClass("sapUiCalItemSel");
 			}
 			if (!bEnabled) {
-				oRm.addClass("sapUiCalItemDsbl"); // day disabled
+				oRm.addClass("sapUiCalItemDsbl"); // year disabled
 				mAccProps["disabled"] = true;
 			}
 			oRm.writeAttribute("tabindex", "-1");
