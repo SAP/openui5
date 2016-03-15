@@ -57,6 +57,18 @@ function getDimensions( elem ) {
 			offset: { top: raw.pageY, left: raw.pageX }
 		};
 	}
+	// ##### BEGIN: MODIFIED BY SAP
+	// When positioning around SVG elements, method getBoundingClientRect should be used
+	if (typeof window.SVGElement !== "undefined" && raw instanceof window.SVGElement) {
+		var boundingClientRect = raw.getBoundingClientRect();
+
+		return {
+			width: boundingClientRect.width,
+			height: boundingClientRect.height,
+			offset: elem.offset()
+		};
+	}
+	// ##### END: MODIFIED BY SAP
 	return {
 		width: elem.outerWidth(),
 		height: elem.outerHeight(),

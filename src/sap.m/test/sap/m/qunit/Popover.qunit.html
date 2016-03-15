@@ -1510,10 +1510,10 @@
 					oExpectedPos = {
 						top: 355
 					},
-					stubPopoverOuterWidth = sinon.stub(sap.m.Popover, "outerWidth").returns(416),
+					stubPopoverOuterWidth = sinon.stub(oPosParams._$popover, "outerWidth").returns(416),
 					stubPopoverOuterHeight = sinon.stub(oPosParams._$popover, "outerHeight").returns(802),
 					stubPopoverOffset = sinon.stub(oPosParams._$popover, "offset").returns({top: 50, left: 265}),
-					stubParentOuterHeight = sinon.stub(oPosParams._$parent, "outerHeight").returns(40),
+					stubParentOuterHeight = sinon.stub(sap.m.Popover, "outerHeight").returns(40),
 					stubParentOffset = sinon.stub(oPosParams._$parent, "offset").returns({top: 402, left: 100}),
 					stubArrowOuterHeight = sinon.stub(oPosParams._$arrow, "outerHeight").returns(32);
 
