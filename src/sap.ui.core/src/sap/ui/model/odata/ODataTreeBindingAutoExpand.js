@@ -381,6 +381,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			aUrlParameters.push("$inlinecount=allpages");
 		}
 
+		// add custom parameters (including $selects)
+		if (this.sCustomParams) {
+			aUrlParameters.push(this.sCustomParams);
+		}
+
 		this.fireDataRequested();
 
 		// TODO: Add additional filters to the read call, as soon as back-end implementations support it
@@ -508,6 +513,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		// request inlinecount only once
 		if (oParentNode.childCount == undefined) {
 			aUrlParameters.push("$inlinecount=allpages");
+		}
+
+		// add custom parameters (including $selects)
+		if (this.sCustomParams) {
+			aUrlParameters.push(this.sCustomParams);
 		}
 
 		this.fireDataRequested();
