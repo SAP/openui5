@@ -1498,6 +1498,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return this;
 		}
 
+		var sVisibleRowCountMode = this.getVisibleRowCountMode();
+		if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Auto) {
+			jQuery.sap.log.error("VisibleRowCount will be ignored since VisibleRowCountMode is set to Auto", this);
+			return this;
+		}
+
 		var iFixedRowsCount = this.getFixedRowCount() + this.getFixedBottomRowCount();
 		if (iVisibleRowCount <= iFixedRowsCount && iFixedRowsCount > 0) {
 			jQuery.sap.log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')", this);
@@ -1509,6 +1515,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this.setProperty("firstVisibleRow", 0);
 		}
 		this.setProperty("visibleRowCount", iVisibleRowCount);
+		this._setRowContentHeight(iVisibleRowCount * this._getDefaultRowHeight());
 		return this;
 	};
 
@@ -6349,12 +6356,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 		var iDefaultRowHeight = this._getDefaultRowHeight();
 		if (sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive || sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Fixed) {
-			if (this._iTableRowContentHeight) {
+			if (this._iTableRowContentHeight && sVisibleRowCountMode == sap.ui.table.VisibleRowCountMode.Interactive) {
 				iMinHeight = iMinVisibleRowCount * iDefaultRowHeight;
 				if (!iHeight) {
 					iHeight = this._iTableRowContentHeight;
 				}
 			} else {
+				// Fixed or Interactive without RowContentHeight (Height was not yet adjusted by user)
 				iMinHeight = iVisibleRowCount * iDefaultRowHeight;
 				iHeight = iMinHeight;
 			}
