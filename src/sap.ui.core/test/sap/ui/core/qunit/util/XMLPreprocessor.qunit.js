@@ -134,11 +134,15 @@ sap.ui.require([
 		try {
 			oSandbox.stub(ManagedObject.prototype, "bindProperty",
 				function (sName, oBindingInfo) {
+					var aParts = oBindingInfo.parts;
+
 					assert.strictEqual(sName, "any");
 					assert.strictEqual(oBindingInfo.mode, BindingMode.OneTime);
-					(oBindingInfo.parts || []).forEach(function (oInfoPart) {
-						assert.strictEqual(oInfoPart.mode, BindingMode.OneTime);
-					});
+					if (aParts) {
+						aParts.forEach(function (oInfoPart) {
+							assert.strictEqual(oInfoPart.mode, BindingMode.OneTime);
+						});
+					}
 					fnBindProperty.apply(this, arguments);
 				});
 			oSandbox.spy(ManagedObject.prototype, "unbindProperty");

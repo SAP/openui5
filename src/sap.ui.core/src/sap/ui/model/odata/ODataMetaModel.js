@@ -614,18 +614,22 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataMetaModel.prototype.getODataEntityContainer = function (bAsPath) {
-		var vResult = bAsPath ? undefined : null;
+		var vResult = bAsPath ? undefined : null,
+			aSchemas = this.oModel.getObject("/dataServices/schema");
 
-		(this.oModel.getObject("/dataServices/schema") || []).forEach(function (oSchema, i) {
-			var j = Utils.findIndex(oSchema.entityContainer, "true", "isDefaultEntityContainer");
+		if (aSchemas) {
+			aSchemas.forEach(function (oSchema, i) {
+				var j = Utils.findIndex(oSchema.entityContainer, "true",
+						"isDefaultEntityContainer");
 
-			if (j >= 0) {
-				vResult = bAsPath
-					? "/dataServices/schema/" + i + "/entityContainer/" + j
-					: oSchema.entityContainer[j];
-				return false; //break
-			}
-		});
+				if (j >= 0) {
+					vResult = bAsPath
+						? "/dataServices/schema/" + i + "/entityContainer/" + j
+						: oSchema.entityContainer[j];
+					return false; //break
+				}
+			});
+		}
 
 		return vResult;
 	};

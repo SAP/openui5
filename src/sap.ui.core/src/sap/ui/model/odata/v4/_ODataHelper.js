@@ -59,7 +59,7 @@ sap.ui.define([
 			function validateSystemQueryOption(sOption, vValue) {
 				var sPath;
 
-				if (aAllowed.indexOf(sOption) < 0) {
+				if (!aAllowed || aAllowed.indexOf(sOption) < 0) {
 					throw new Error("System query option " + sOption + " is not supported");
 				}
 				if (sOption === "$expand") {
@@ -69,23 +69,25 @@ sap.ui.define([
 				}
 			}
 
-			aAllowed = aAllowed || [];
-			Object.keys(mOptions || {}).forEach(function (sKey) {
-				var vValue = mOptions[sKey];
+			if (mOptions) {
+				Object.keys(mOptions).forEach(function (sKey) {
+					var vValue = mOptions[sKey];
 
-				if (sKey[0] === "@") {
-					throw new Error("Parameter " + sKey + " is not supported");
-				}
-				if (sKey[0] === "$") {
-					if ((sKey === "$expand" || sKey === "$select") && typeof vValue === "string") {
-						vValue = _Parser.parseSystemQueryOption(sKey + "=" + vValue)[sKey];
+					if (sKey[0] === "@") {
+						throw new Error("Parameter " + sKey + " is not supported");
 					}
-					validateSystemQueryOption(sKey, vValue);
-				} else if (sKey.indexOf("sap-") === 0) {
-					throw new Error("Custom query option " + sKey + " is not supported");
-				}
-				mResult[sKey] = vValue;
-			});
+					if (sKey[0] === "$") {
+						if ((sKey === "$expand" || sKey === "$select")
+								&& typeof vValue === "string") {
+							vValue = _Parser.parseSystemQueryOption(sKey + "=" + vValue)[sKey];
+						}
+						validateSystemQueryOption(sKey, vValue);
+					} else if (sKey.indexOf("sap-") === 0) {
+						throw new Error("Custom query option " + sKey + " is not supported");
+					}
+					mResult[sKey] = vValue;
+				});
+			}
 			return mResult;
 		},
 

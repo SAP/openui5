@@ -606,14 +606,16 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			var oSchema = null,
 				aSchemas = Array.isArray(vModel)
 					? vModel
-					: (vModel.getObject("/dataServices/schema") || []);
+					: vModel.getObject("/dataServices/schema");
 
-			aSchemas.forEach(function (o) {
-				if (o.namespace === sNamespace) {
-					oSchema = o;
-					return false; // break
-				}
-			});
+			if (aSchemas) {
+				aSchemas.forEach(function (o) {
+					if (o.namespace === sNamespace) {
+						oSchema = o;
+						return false; // break
+					}
+				});
+			}
 
 			return oSchema;
 		},
@@ -732,7 +734,11 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   meta data "JSON"
 		 */
 		merge : function (oAnnotations, oData) {
-			var aSchemas = oData.dataServices.schema || [];
+			var aSchemas = oData.dataServices.schema;
+
+			if (!aSchemas) {
+				return;
+			}
 			aSchemas.forEach(function (oSchema, i) {
 				// remove datajs artefact for inline annotations in $metadata
 				delete oSchema.annotations;
