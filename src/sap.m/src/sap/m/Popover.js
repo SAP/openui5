@@ -292,7 +292,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
 
 			// This is data used to position the popover depending on the placement property
-			this._placements = [sap.m.PlacementType.Top, sap.m.PlacementType.Right, sap.m.PlacementType.Bottom, sap.m.PlacementType.Left, sap.m.PlacementType.Vertical, sap.m.PlacementType.Horizontal, sap.m.PlacementType.Auto, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.VerticalPreferredTop, sap.m.PlacementType.VerticalPreferredBottom, sap.m.PlacementType.HorizontalPreferredLeft, sap.m.PlacementType.HorizontalPreferredRight];
+			this._placements = [sap.m.PlacementType.Top, sap.m.PlacementType.Right, sap.m.PlacementType.Bottom, sap.m.PlacementType.Left,
+				sap.m.PlacementType.Vertical, sap.m.PlacementType.Horizontal, sap.m.PlacementType.Auto,
+				sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom,
+				sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight,
+				sap.m.PlacementType.VerticalPreferredTop, sap.m.PlacementType.VerticalPreferredBottom,
+				sap.m.PlacementType.HorizontalPreferredLeft, sap.m.PlacementType.HorizontalPreferredRight,
+				sap.m.PlacementType.PreferredRightOrFlip, sap.m.PlacementType.PreferredLeftOrFlip,
+				sap.m.PlacementType.PreferredTopOrFlip, sap.m.PlacementType.PreferredBottomOrFlip];
+
 			this._myPositions = ["center bottom", "begin center", "center top", "end center"];
 			this._atPositions = ["center top", "end center", "center bottom", "begin center"];
 			this._offsets = ["0 -18", "18 0", "0 18", "-18 0"];
@@ -1060,8 +1068,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 * @private
 		 */
 		Popover.prototype._getOffsetX = function () {
+			var oFlipPlacement = this.getPlacement(),
+				iFlipOffset = 0;
+
+			if (this._bHorizontalFlip) {
+				var oParent = this._getOpenByDomRef();
+				var bHasParent = oParent !== undefined;
+				var iParentWidth = bHasParent ? oParent.getBoundingClientRect().width : 0;
+				iFlipOffset = oFlipPlacement === "PreferredRightOrFlip" ? Math.abs(iParentWidth) : -Math.abs(iParentWidth);
+			}
+
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-			return this.getOffsetX() * (bRtl ? -1 : 1);
+			return iFlipOffset + this.getOffsetX() * (bRtl ? -1 : 1);
 		};
 
 		/**
@@ -1071,7 +1089,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 * @private
 		 */
 		Popover.prototype._getOffsetY = function () {
-			return this.getOffsetY();
+			var oFlipPlacement = this.getPlacement(),
+				iFlipOffset = 0;
+
+			if (this._bVerticalFlip) {
+				var oParent = this._getOpenByDomRef();
+				var bHasParent = oParent !== undefined;
+				var iParentHeight = bHasParent ? oParent.getBoundingClientRect().height : 0;
+				iFlipOffset = oFlipPlacement === "PreferredTopOrFlip" ? -Math.abs(iParentHeight) : Math.abs(iParentHeight);
+			}
+			return iFlipOffset + this.getOffsetY();
 		};
 
 		Popover.prototype._calcOffset = function (sOffset) {
@@ -1096,6 +1123,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				case sap.m.PlacementType.VerticalPreferredTop:
 				case sap.m.PlacementType.VerticalPreferedBottom:
 				case sap.m.PlacementType.VerticalPreferredBottom:
+				case sap.m.PlacementType.PreferredTopOrFlip:
+				case sap.m.PlacementType.PreferredBottomOrFlip:
 					this._calcVertical();
 					break;
 				case sap.m.PlacementType.Horizontal:
@@ -1103,6 +1132,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				case sap.m.PlacementType.HorizontalPreferredLeft:
 				case sap.m.PlacementType.HorizontalPreferedRight:
 				case sap.m.PlacementType.HorizontalPreferredRight:
+				case sap.m.PlacementType.PreferredRightOrFlip:
+				case sap.m.PlacementType.PreferredLeftOrFlip:
 					this._calcHorizontal();
 					break;
 			}
@@ -1119,6 +1150,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var bHasParent = $parent[0] !== undefined;
 			var bPreferredPlacementTop = this.getPlacement() === sap.m.PlacementType.VerticalPreferedTop || this.getPlacement() === sap.m.PlacementType.VerticalPreferredTop;
 			var bPreferredPlacementBottom = this.getPlacement() === sap.m.PlacementType.VerticalPreferedBottom || this.getPlacement() === sap.m.PlacementType.VerticalPreferredBottom;
+			var bPreferredTopOrFlip = this.getPlacement() === sap.m.PlacementType.PreferredTopOrFlip;
+			var bPreferredBottomOrFlip = this.getPlacement() === sap.m.PlacementType.PreferredBottomOrFlip;
 			var iParentTop = bHasParent ? $parent[0].getBoundingClientRect().top : 0;
 			var iParentHeight = bHasParent ? $parent[0].getBoundingClientRect().height : 0;
 			var iOffsetY = this._getOffsetY();
@@ -1127,10 +1160,22 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 			var iPopoverHeight = this.$().outerHeight();
 
-			if (bPreferredPlacementTop && iTopSpace > iPopoverHeight + this._arrowOffset) {
-				this._oCalcedPos = sap.m.PlacementType.Top;
-			} else if (bPreferredPlacementBottom && iBottomSpace > iPopoverHeight + this._arrowOffset) {
-				this._oCalcedPos = sap.m.PlacementType.Bottom;
+			if (bPreferredPlacementTop || bPreferredTopOrFlip) {
+				if (iTopSpace > iPopoverHeight + this._arrowOffset) {
+					this._oCalcedPos = sap.m.PlacementType.Top;
+					this._bVerticalFlip = false;
+				} else {
+					this._bVerticalFlip = bPreferredTopOrFlip ? true : false;
+					this._oCalcedPos = sap.m.PlacementType.Bottom;
+				}
+			} else if (bPreferredPlacementBottom || bPreferredBottomOrFlip) {
+				if (iBottomSpace > iPopoverHeight + this._arrowOffset) {
+					this._oCalcedPos = sap.m.PlacementType.Bottom;
+					this._bVerticalFlip = false;
+				} else {
+					this._bVerticalFlip = bPreferredBottomOrFlip ? true : false;
+					this._oCalcedPos = sap.m.PlacementType.Top;
+				}
 			} else if (iTopSpace > iBottomSpace) {
 				this._oCalcedPos = sap.m.PlacementType.Top;
 			} else {
@@ -1150,13 +1195,26 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var iParentRight = iParentLeft + iParentWidth;
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 			var iPopoverWidth = this.$().outerWidth();
-
+			var bPreferredLeftOrFlip = this.getPlacement() === sap.m.PlacementType.PreferredLeftOrFlip;
+			var bPreferredRightOrFlip = this.getPlacement() === sap.m.PlacementType.PreferredRightOrFlip;
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
-			if (bPreferredPlacementLeft && iLeftSpace > iPopoverWidth + this._arrowOffset) {
-				this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
-			} else if (bPreferredPlacementRight && iRightSpace > iPopoverWidth + this._arrowOffset) {
-				this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
+			if ((bPreferredPlacementLeft || bPreferredLeftOrFlip)) {
+				if (iLeftSpace > iPopoverWidth + this._arrowOffset) {
+					this._bHorizontalFlip = false;
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
+				} else {
+					this._bHorizontalFlip = bPreferredLeftOrFlip ? true : false;
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
+				}
+			} else if ((bPreferredPlacementRight || bPreferredRightOrFlip)) {
+				if (iRightSpace > iPopoverWidth + this._arrowOffset) {
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
+					this._bHorizontalFlip = false;
+				} else {
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
+					this._bHorizontalFlip = bPreferredRightOrFlip ? true : false;
+				}
 			} else if (iLeftSpace > iRightSpace) {
 				this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
 			} else {
@@ -1397,7 +1455,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					if (bRtl) {
 						oPosParams._fMarginLeft = oPosParams._$parent.offset().left + Popover.outerWidth(oPosParams._$parent[0], false) + this._arrowOffset + oPosParams._fOffsetX;
 					} else {
-						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset + oPosParams._fOffsetX;
+						oPosParams._fMarginRight = oPosParams._fDocumentWidth - oPosParams._$parent.offset().left + this._arrowOffset - oPosParams._fOffsetX;
 					}
 					break;
 				case sap.m.PlacementType.Right:
@@ -1408,7 +1466,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					}
 					break;
 				case sap.m.PlacementType.Top:
-					oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset + oPosParams._fOffsetY;
+					oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset - oPosParams._fOffsetY;
 					break;
 				case sap.m.PlacementType.Bottom:
 					oPosParams._fMarginTop = oPosParams._$parent.offset().top + oPosParams._$parent.outerHeight() + this._arrowOffset + oPosParams._fOffsetY;
@@ -2006,6 +2064,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 */
 		Popover.prototype.setPlacement = function (sPlacement) {
 			this.setProperty("placement", sPlacement, true);
+			this._bVerticalFlip = false;
+			this._bHorizontalFlip = false;
 			var iPlacePos = jQuery.inArray(sPlacement, this._placements);
 			if (iPlacePos <= 3) {
 				// this variable is internal used for the placement of the popover
