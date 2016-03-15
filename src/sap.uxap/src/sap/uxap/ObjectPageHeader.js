@@ -693,10 +693,17 @@ sap.ui.define([
 		}
 		aActions.forEach(function (oAction) {
 			if (oAction instanceof ObjectPageHeaderActionButton) {
+				var oActionSheetButton = this._oActionSheetButtonMap[oAction.getId()];
 				if (bAttach) {
 					oAction.attachEvent("_change", this._adaptLayout, this);
+					if (oActionSheetButton) {
+						oActionSheetButton.attachEvent("_change", this._adaptOverflow, this);
+					}
 				} else {
 					oAction.detachEvent("_change", this._adaptLayout, this);
+					if (oActionSheetButton) {
+						oActionSheetButton.detachEvent("_change", this._adaptOverflow, this);
+					}
 				}
 			}
 		}, this);
@@ -762,7 +769,7 @@ sap.ui.define([
 	 * Adapt title/subtitle container and action buttons and overflow button
 	 * @private
 	 */
-	ObjectPageHeader.prototype._adaptLayout = function () {
+	ObjectPageHeader.prototype._adaptLayout = function (oEvent) {
 		var iIdentifierContWidth = this.$("identifierLine").width(),
 			iActionsWidth = this._getActionsWidth(), // the width off all actions without hidden one
 			iActionsContProportion = iActionsWidth / iIdentifierContWidth, // the percentage(proportion) that action buttons take from the available space
@@ -772,6 +779,8 @@ sap.ui.define([
 
 		if (iActionsContProportion > this._iAvailablePercentageForActions) {
 			this._adaptActions(iAvailableSpaceForActions);
+		} else if (oEvent && oEvent.getSource() instanceof ObjectPageHeaderActionButton) {
+			oEvent.getSource()._setInternalVisible(true);
 		}
 
 		$actionButtons.css("visibility", "visible");
@@ -835,14 +844,27 @@ sap.ui.define([
 			//separators and non sap.m.Button or not visible buttons have no equivalent in the overflow
 			if (oActionSheetButton) {
 				iVisibleActionsWidth += oAction.$().width();
-
 				if (iAvailableSpaceForActions > iVisibleActionsWidth && !bMobileScenario) {
-					oActionSheetButton.setVisible(false);
+					this._setActionButtonVisibility(oAction, true);
 				} else {
 					this._setActionButtonVisibility(oAction, false);
 				}
 			}
 		}, this);
+	};
+
+	/**
+	 * Show or hide the overflow button and action sheet according to visible buttons inside
+	 * @private
+	 */
+	ObjectPageHeader.prototype._adaptOverflow = function () {
+		var aActionSheetButtons = this._oOverflowActionSheet.getButtons();
+
+		var bHasVisible = aActionSheetButtons.some(function(oActionSheetButton) {
+			 return oActionSheetButton.getVisible();
+		});
+
+		this._oOverflowButton.$().toggle(bHasVisible);
 	};
 
 	/**
@@ -854,12 +876,12 @@ sap.ui.define([
 
 		//separators and non sap.m.Button or not visible buttons have no equivalent in the overflow
 		if (oActionSheetButton) {
-			if (bVisible) {
-				oAction.$().show();
+			if (oAction.getVisible()) {
+				oAction._setInternalVisible(bVisible);
+				oActionSheetButton.setVisible(!bVisible);
 			} else {
-				oAction.$().hide();
+				oActionSheetButton.setVisible(false);
 			}
-			oActionSheetButton.setVisible(!bVisible);
 		}
 	};
 
