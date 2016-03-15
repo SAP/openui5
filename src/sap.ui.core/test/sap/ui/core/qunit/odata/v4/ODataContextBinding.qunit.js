@@ -246,7 +246,7 @@ sap.ui.require([
 		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId", "bar").callsArg(2)
 			.returns(Promise.resolve("value"));
 
-		this.oSandbox.mock(oBinding.getModel()).expects("dataRequested").withArgs("groupId")
+		this.oSandbox.mock(oBinding.getModel()).expects("addedRequestToGroup").withArgs("groupId")
 			.callsArg(1);
 
 		return oBinding.requestValue("bar").then(function (vValue) {
@@ -385,7 +385,7 @@ sap.ui.require([
 			.returns("groupId");
 		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs("groupId").callsArg(2)
 			.returns(oReadPromise);
-		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
+		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup").withArgs("groupId");
 
 		// code under test
 		return oBinding.requestValue("foo");

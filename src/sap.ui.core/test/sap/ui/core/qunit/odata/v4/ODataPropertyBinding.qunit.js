@@ -757,7 +757,7 @@ sap.ui.require([
 			.returns(oReadPromise);
 		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
 			.returns("groupId");
-		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
+		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup").withArgs("groupId");
 
 		oBinding.initialize();
 
@@ -779,8 +779,7 @@ sap.ui.require([
 		});
 		this.oSandbox.mock(oModel).expects("getGroupId").twice()
 			.withExactArgs().returns("groupId");
-		this.oSandbox.mock(oModel).expects("dataRequested").twice()
-			.withExactArgs("groupId", sinon.match.func);
+		this.oSandbox.mock(oModel).expects("addedRequestToGroup").twice().withExactArgs("groupId");
 		oRequestorMock.expects("request").withExactArgs("PATCH", "ProductList('HT-1000')",
 			"groupId", {"If-Match" : undefined}, {"Name" : "foo"});
 
@@ -851,8 +850,7 @@ sap.ui.require([
 			.returns(Promise.resolve(sEtag));
 		this.oSandbox.mock(oModel).expects("requestCanonicalPath").withExactArgs(oContext)
 			.returns(oPromise);
-		this.oSandbox.mock(oModel).expects("dataRequested")
-			.withExactArgs("groupId", sinon.match.func);
+		this.oSandbox.mock(oModel).expects("addedRequestToGroup").withExactArgs("groupId");
 		this.oSandbox.mock(oModel.oRequestor).expects("request")
 			.withExactArgs("PATCH", "SalesOrderList('0500000000')", "groupId",
 				{"If-Match" : sEtag}, {"Note" : "foo"});
@@ -887,7 +885,7 @@ sap.ui.require([
 			.returns(Promise.resolve(sEtag));
 		this.oSandbox.mock(oModel).expects("requestCanonicalPath").withExactArgs(oContext)
 			.returns(oPromise); // rejected!
-		this.oSandbox.mock(oModel).expects("dataRequested").never();
+		this.oSandbox.mock(oModel).expects("addedRequestToGroup").never();
 		this.oSandbox.mock(oModel.oRequestor).expects("request").never();
 		this.oLogMock.expects("error").withExactArgs(sMessage, oError.stack,
 			"sap.ui.model.odata.v4.ODataPropertyBinding");

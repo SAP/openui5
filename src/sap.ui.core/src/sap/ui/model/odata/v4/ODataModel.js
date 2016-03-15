@@ -114,7 +114,7 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata");
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters);
-					this.mDataRequestedCallbacks = {};
+					this.mCallbacksByGroupId = {};
 					this.sDefaultBindingMode = BindingMode.TwoWay;
 					this.mSupportedBindingModes = {
 						OneTime : true,
@@ -123,6 +123,43 @@ sap.ui.define([
 					};
 				}
 			});
+
+	/**
+	 * Informs the model that a request has been added to the given group.
+	 *
+	 * @param {string} sGroupId
+	 *   ID of the batch group which should be sent as an OData batch request
+	 * @param {function} [fnGroupSentCallback]
+	 *   A function that is called synchronously after the group has been sent
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.addedRequestToGroup = function (sGroupId, fnGroupSentCallback) {
+		var that = this,
+			aCallbacks = this.mCallbacksByGroupId[sGroupId];
+
+		if (sGroupId === "$direct") {
+			if (fnGroupSentCallback) {
+				fnGroupSentCallback();
+			}
+			return;
+		}
+
+		if (!aCallbacks) {
+			aCallbacks = this.mCallbacksByGroupId[sGroupId] = [];
+			sap.ui.getCore().addPrerenderingTask(function () {
+				delete that.mCallbacksByGroupId[sGroupId];
+				that.oRequestor.submitBatch(sGroupId);
+				aCallbacks.forEach(function (fnCallback) {
+					fnCallback();
+				});
+			});
+		}
+
+		if (fnGroupSentCallback) {
+			aCallbacks.push(fnGroupSentCallback);
+		}
+	};
 
 	// See class documentation
 	// @override
@@ -135,39 +172,6 @@ sap.ui.define([
 				+ "': v4.ODataModel#attachEvent");
 		}
 		return Model.prototype.attachEvent.apply(this, arguments);
-	};
-
-	/**
-	 * Informs the model that a request has been added to the given group.
-	 *
-	 * @param {string} sGroupId
-	 *   ID of the batch group which should be sent as an OData batch request
-	 * @param {function} fnBatchRequestSent
-	 *   a function that is called synchronously after the batch request has been sent
-	 *
-	 * @private
-	 */
-	ODataModel.prototype.dataRequested = function (sGroupId, fnBatchRequestSent) {
-		var that = this,
-			aCallbacks = this.mDataRequestedCallbacks[sGroupId];
-
-		if (sGroupId === "$direct") {
-			fnBatchRequestSent();
-			return;
-		}
-
-		if (aCallbacks) {
-			aCallbacks.push(fnBatchRequestSent);
-		} else {
-			aCallbacks = this.mDataRequestedCallbacks[sGroupId] = [fnBatchRequestSent];
-			sap.ui.getCore().addPrerenderingTask(function () {
-				delete that.mDataRequestedCallbacks[sGroupId];
-				that.oRequestor.submitBatch(sGroupId);
-				aCallbacks.forEach(function (fnCallback) {
-					fnCallback();
-				});
-			});
-		}
 	};
 
 	/**

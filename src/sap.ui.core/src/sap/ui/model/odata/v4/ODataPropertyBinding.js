@@ -207,8 +207,7 @@ sap.ui.define([
 			sGroupId = this.oModel.getGroupId();
 			oReadPromise = this.oCache.read(sGroupId, /*sPath*/undefined, function () {
 				bDataRequested = true;
-				that.oModel.dataRequested(sGroupId,
-					that.fireDataRequested.bind(that));
+				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
 			});
 		}
 		aPromises.push(oReadPromise.then(function (vValue) {
@@ -369,7 +368,7 @@ sap.ui.define([
 			sGroupId = that.oModel.getGroupId();
 			that.oModel.oRequestor.request("PATCH", sEditUrl, sGroupId, {"If-Match" : sEtag},
 				oBody);
-			that.oModel.dataRequested(sGroupId, function () {});
+			that.oModel.addedRequestToGroup(sGroupId);
 		}
 
 		if (typeof vValue === "function" || typeof vValue === "object") {

@@ -390,8 +390,9 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("dataRequested", function (assert) {
+	QUnit.test("addedRequestToGroup", function (assert) {
 		var done = assert.async(),
+			sGroupId0 = "group0",
 			sGroupId1 = "group1",
 			sGroupId2 = "group2",
 			oModel = createModel(),
@@ -403,8 +404,9 @@ sap.ui.require([
 		oRequestorMock.expects("submitBatch").never();
 
 		// code under test
-		oModel.dataRequested(sGroupId1, function () {
-			oModel.dataRequested(sGroupId1, function () {
+		oModel.addedRequestToGroup(sGroupId0);
+		oModel.addedRequestToGroup(sGroupId1, function () {
+			oModel.addedRequestToGroup(sGroupId1, function () {
 				assert.ok(fnSpy1.called, "second callback for group1");
 				assert.ok(fnSpy2.called, "callback for group2");
 				done();
@@ -412,10 +414,13 @@ sap.ui.require([
 
 			oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
 		});
-		oModel.dataRequested(sGroupId1, fnSpy1);
-		oModel.dataRequested(sGroupId2, fnSpy2);
+		oModel.addedRequestToGroup(sGroupId1, fnSpy1);
+		oModel.addedRequestToGroup(sGroupId1);
+		oModel.addedRequestToGroup(sGroupId2);
+		oModel.addedRequestToGroup(sGroupId2, fnSpy2);
 
 		// expect it afterwards so that we know that it has not been called synchronously
+		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId0);
 		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
 		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId2);
 
@@ -423,7 +428,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("dataRequested with group ID '$direct'", function (assert) {
+	QUnit.test("addedRequestToGroup with group ID '$direct'", function (assert) {
 		var bDataRequested = false,
 			oModel = createModel();
 
@@ -431,12 +436,15 @@ sap.ui.require([
 		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").never();
 
 		// code under test
-		oModel.dataRequested("$direct", function () {
+		oModel.addedRequestToGroup("$direct");
+
+		// code under test
+		oModel.addedRequestToGroup("$direct", function () {
 			bDataRequested = true;
 		});
 
 		assert.strictEqual(bDataRequested, true);
-		assert.strictEqual("undefined" in oModel.mDataRequestedCallbacks, false);
+		assert.strictEqual("$direct" in oModel.mCallbacksByGroupId, false);
 	});
 
 	//*********************************************************************************************
