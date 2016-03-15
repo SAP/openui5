@@ -1532,7 +1532,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}
 
-			if (!bIsInPages || oSource.getId() === this.getCurrentPage()) {
+			if (!bIsInPages || oSource === this.getCurrentPage()) {
 				// TODO: there will be more cases where invalidation is not required...
 				this.forceInvalidation();
 			} // else : the invalidation source is a non-current page, so do not rerender anything
