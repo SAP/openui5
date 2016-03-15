@@ -304,7 +304,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					/**
 					 * array of row indices which selection has been changed (either selected or deselected)
 					 */
-					rowIndices : {type : "int[]"}
+					rowIndices : {type : "int[]"},
+
+					/**
+					 * indicator if "select all" function is used to select rows
+					 */
+					selectAll : {type : "boolean"}
 				}
 			},
 
@@ -4512,6 +4517,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._onSelectionChanged = function(oEvent) {
 		var aRowIndices = oEvent.getParameter("rowIndices");
+		var bSelectAll = oEvent.getParameter("selectAll");
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : this.getSelectedIndex();
 		this._updateSelection();
 		var oSelMode = this.getSelectionMode();
@@ -4521,7 +4527,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		this.fireRowSelectionChange({
 			rowIndex: iRowIndex,
 			rowContext: this.getContextByIndex(iRowIndex),
-			rowIndices: aRowIndices
+			rowIndices: aRowIndices,
+			selectAll: bSelectAll
 		});
 	};
 
@@ -4610,11 +4617,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			// first give the higher number. The toIndex will be used as leadIndex. It more likely that
-			// in oData case the index 0 is already loaded than that the last index is loaded. The leadIndex will
-			// be used to determine the leadContext in the selectionChange event. If not yet loaded it would need to
-			// be request. To avoid unnecessary roundtrips the lead index is set to 0.
-			this._oSelection.setSelectionInterval((oBinding.getLength() || 0) - 1, 0);
+			this._oSelection.selectAll((oBinding.getLength() || 0) - 1);
 			this.$("selall").attr('title',this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
 		}
 		return this;

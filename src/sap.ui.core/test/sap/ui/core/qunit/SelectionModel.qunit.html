@@ -32,7 +32,7 @@
 
 	var oSelectionModel;
 
-	function check(sCaption, fnChange, aIndices, iLeadSelection, bEvent) {
+	function check(sCaption, fnChange, aIndices, iLeadSelection, bEvent, bAll) {
 
 		test(sCaption, function() {
 
@@ -79,6 +79,7 @@
 				if ( bEvent === true ) {
 					ok(!!oEventParams, "a SelectionChanged event should have been fired");
 					deepEqual(oEventParams.rowIndices, aDiff, "rowindices should match the difference between before and after");
+					equal(oEventParams.selectAll, bAll, "selectAll indicator")
 				} else if ( jQuery.isArray(bEvent) && bEvent.length === 0 ) {
 					ok(!!oEventParams, "a SelectionChanged event should have been fired");
 					deepEqual(oEventParams.rowIndices, aDiff, "rowindices should match the difference between before and after");
@@ -133,6 +134,10 @@
 	check("set interval, no change", function() {
 		this.setSelectionInterval(1, 12);
 	}, [1,2,3,4,5,6,7,8,9,10,11,12], 12, false);
+
+	check("selectAll", function() {
+		this.selectAll(12);
+	}, [0,1,2,3,4,5,6,7,8,9,10,11,12], 0, true, true);
 
 	check("clearSelection", function() {
 		this.clearSelection();
