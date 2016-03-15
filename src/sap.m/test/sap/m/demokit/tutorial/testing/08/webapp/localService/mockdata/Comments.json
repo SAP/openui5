@@ -2,7 +2,7 @@
 	{
 		"CommentID": "CommentID 1",
 		"ParentID": "PostID_1",
-		"CommentText": "Nice bike, i will definitely consider buying",
+		"CommentText": "Nice bike, I will definitely consider buying",
 		"Author": "John",
 		"Date": "/Date(1271774249000)/",
 		"__metadata": {
@@ -24,7 +24,7 @@
 	{
 		"CommentID": "CommentID 3",
 		"ParentID": "PostID_1",
-		"CommentText": "Depends on your size i guess",
+		"CommentText": "Depends on your size I guess",
 		"Author": "Michael",
 		"Date": "/Date(1423579562000)/",
 		"__metadata": {
@@ -35,7 +35,7 @@
 	{
 		"CommentID": "CommentID 4",
 		"ParentID": "PostID_2",
-		"CommentText": "OMG i need this, i was actually at this game",
+		"CommentText": "OMG I need this, I was actually at this game",
 		"Author": "Jens",
 		"Date": "/Date(1086964649000)/",
 		"__metadata": {
@@ -68,7 +68,7 @@
 	{
 		"CommentID": "CommentID 7",
 		"ParentID": "PostID_2",
-		"CommentText": "Unfortuantely, my camera is broken right now, will post something later",
+		"CommentText": "Unfortunately, my camera is broken right now, will post something later",
 		"Author": "John",
 		"Date": "/Date(1217083049000)/",
 		"__metadata": {
