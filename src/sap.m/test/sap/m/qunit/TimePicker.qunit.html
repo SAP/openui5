@@ -324,6 +324,34 @@
 					});
 		});
 
+		test("When setValue is called mask buffer is always up to date with its valid representation", function () {
+			var oTP = new sap.m.TimePicker({
+					displayFormat: "HH:mm"
+				}),
+				oOtherControl = new sap.m.Input({value: "some other input"}),
+				sFirstSetValue = '17:45',
+				sSecondSetValue = '-3:20',
+				sThirdSetValue = 'jfssf',
+				sFourthSetValue = '13:85',
+				sFifthSetValue = '--:--';
+
+			oTP.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
+			oTP.setValue(sFirstSetValue);
+			strictEqual(oTP._oTempValue._aContent.join(''), sFirstSetValue, "When setting a valid value mask buffer value is modified with the correct (same) value");
+			oTP.setValue(sSecondSetValue);
+			strictEqual(oTP._oTempValue._aContent.join(''), "20:--", "When setting a partial completed " + sSecondSetValue + " value mask buffer value is modified with the correct validated value");
+			oTP.setValue(sThirdSetValue);
+			strictEqual(oTP._oTempValue._aContent.join(''), "--:--", "Mask buffer value is modified with the correct validated value");
+			oTP.setValue(sFourthSetValue);
+			strictEqual(oTP._oTempValue._aContent.join(''), "13:5-", "Mask buffer value is modified with the correct validated value");
+			oTP.setValue(sFifthSetValue);
+			strictEqual(oTP._oTempValue._aContent.join(''), "13:5-", "Mask buffer value is not modified when trying to set initial value");
+
+			oTP.destroy();
+		});
+
 		module("Keyboard handling of picker");
 
 		test("initial focus", function() {
