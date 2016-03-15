@@ -8,6 +8,10 @@
 	min-width: 40.0625rem;
 }
 
+html[data-sap-ui-browser^=ie]:not(.sapUiMedia-Std-Phone) .sapMDateTimePopupCont{
+	min-width: 40.07rem; /* because of IE rounding issues*/
+}
+
 .sapMDateTimePopupCont > .sapUiCal,
 .sapMDateTimePopupCont > .sapMTimePickerContainer{
 	float: left;
