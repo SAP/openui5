@@ -1004,6 +1004,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (this.getBinding("rows")) {
 			this.fireEvent("_rowsUpdated");
 		}
+
+		this._updateNoData();
 	};
 
 	Table.prototype.invalidate = function() {
@@ -2331,9 +2333,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	Table.prototype._updateNoData = function() {
-		// no data?
+		// no data or no visible cols?
 		if (this.getShowNoData()) {
-			this.$().toggleClass("sapUiTableEmpty", !this._hasData());
+			this.$().toggleClass("sapUiTableEmpty", (!this._hasData() || this._getVisibleColumnCount() === 0));
 		}
 	};
 

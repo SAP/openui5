@@ -1361,6 +1361,31 @@
 		sap.ui.getCore().applyChanges();
 	});
 
+	module("NoData", {
+		setup: function() {
+			createTable();
+		},
+		teardown: destroyTable
+	});
+
+	asyncTest("Empty message shows if no data", function(assert) {
+		assert.ok(!oTable.$().find(".sapUiTableCtrlEmpty").is(':visible'), "empty message shown");
+		oTable.getModel().setData([]);
+		setTimeout(function() {
+			assert.ok(oTable.$().find(".sapUiTableCtrlEmpty").is(':visible'), "empty message not shown");
+			QUnit.start();
+		}, 0);
+	});
+
+	asyncTest("Empty message shows if no columns", function(assert) {
+		assert.ok(!oTable.$().find(".sapUiTableCtrlEmpty").is(':visible'), "empty message shown");
+		oTable.removeAllColumns();
+		setTimeout(function() {
+			assert.ok(oTable.$().find(".sapUiTableCtrlEmpty").is(':visible'), "empty message not shown");
+			QUnit.start();
+		}, 0);
+	});
+
 	</script>
 </head>
 <body class="sapUiBody">
