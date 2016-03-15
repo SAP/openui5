@@ -28,7 +28,7 @@
 
 .sapUiResponsiveSplitterPaginatorButton:hover {
 	background-color: @sapUiListHoverBackground;
-	
+
 	&:after {
 		background-color: @sapUiBrand;
 	}
@@ -100,7 +100,6 @@
 .sapUiResponsiveSplitterPaginatorButtonForward {
 	&::after {
 		content: '\e066';
-
 	}
 }
 
@@ -111,7 +110,6 @@
 }
 
 .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar {
-	width: 0.25rem;
 	background-color: @sapUiMediumBorder;
 
 	&:hover {
@@ -161,7 +159,6 @@
 
 .sapUiResponsiveSplitter .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
 .sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	
 	&:hover {
 		cursor: n-resize;
 	}
@@ -169,19 +166,16 @@
 
 .sapUiResponsiveSplitter .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
 .sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	
+
 	&:hover {
 		cursor: e-resize;
 	}
 }
 
-
-
 .sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterBar,
 .sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar,
 .sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterBar,
 .sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar {
-
 	& .sapUiLoSplitterBarIcon {
 		position: absolute;
 		margin-top: -22px;
@@ -192,32 +186,24 @@
 		top: 25%;
 		left: 25%;
 	}
-
 }
 
 .sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar,
 .sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage .sapUiLoSplitter.sapUiLoSplitterV .sapUiLoSplitterOverlayBar {
-	height: 0.25rem;
-
 	& .sapUiLoSplitterBarIcon {
 		left: 50%;
 		width: 3rem;
 		height: 3rem;
 		margin-left: -30px;
 	}
-
 }
 
-.sap-phone .sapUiResponsiveSplitter .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sap-tablet .sapUiResponsiveSplitter .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sap-phone .sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar,
-.sap-tablet .sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	height: 0.25rem;
+.sapUiResponsiveSplitter .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiResponsiveSplitter .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	height: 0.25rem !important;
 }
 
-.sap-phone .sapUiResponsiveSplitter .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sap-tablet .sapUiResponsiveSplitter .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
-.sap-phone .sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar,
-.sap-tablet .sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
-	width: 0.25rem;
- }
+.sapUiResponsiveSplitter .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
+.sapUiResponsiveSplitter .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	width: 0.25rem !important;
+}

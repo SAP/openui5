@@ -23,7 +23,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 	 * @constructor
 	 * @private
 	 * @since 1.38
-	 * @alias sap.ui.layout.AssociativeSplitter",
+	 * @alias sap.ui.layout.AssociativeSplitter
 	 */
 	var AssociativeSplitter = Splitter.extend("sap.ui.layout.AssociativeSplitter", /** @lends sap.ui.layout.AssociativeSplitter.prototype */ {
 		metadata : {
