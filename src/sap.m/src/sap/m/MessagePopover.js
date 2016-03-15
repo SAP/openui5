@@ -1105,6 +1105,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			if (oResponsivePopoverControl instanceof Popover) {
 				if ((oParent instanceof Toolbar || oParent instanceof Bar || oParent instanceof SemanticPage)) {
 					oResponsivePopoverControl.setShowArrow(false);
+					oResponsivePopoverControl.setResizable(true);
 				} else {
 					oResponsivePopoverControl.setShowArrow(true);
 				}

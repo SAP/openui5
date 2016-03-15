@@ -91,7 +91,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			/**
 			 * Determines if a close button should be inserted into the dialog's header dynamically to close the dialog. This property only takes effect on phone.
 			 */
-			showCloseButton : {type : "boolean", group : "Misc", defaultValue : true}
+			showCloseButton : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * Whether resize option is enabled.
+			 * @experimental since 1.36.4 Do not use directly on ResponsivePopover while in experimental mode!
+			 * @since 1.36.4
+			 * @private
+			 */
+			resizable: {type: "boolean", group: "Dimension", defaultValue: false}
 		},
 		aggregations : {
 
@@ -238,6 +246,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this._bAppendedToUIArea = false;
 
 		var settings = {
+			resizable: that.getResizable(),
 			beforeOpen: function(oEvent){
 				that.fireBeforeOpen({openBy: oEvent.getParameter('openBy')});
 			},

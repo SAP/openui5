@@ -187,3 +187,25 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
 .sapUiContainerContentPadding(~".sapMPopover", ~"> .sapMPopoverCont > .sapMPopoverScroll");
+
+.sapMPopoverResizeHandle {
+	transform: rotate(45deg);
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	cursor: ne-resize;
+	z-index: 2;
+
+	border-top: 6px solid transparent;
+	border-bottom: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-left: 6px solid transparent;
+}
+
+.sapMPopoverResizing,
+.sapMPopoverResizing * {
+	-moz-user-select: none !important;
+	-webkit-user-select: none !important;
+	-ms-user-select: none !important;
+	user-select: none !important;
+}
