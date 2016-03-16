@@ -102,12 +102,17 @@
 
 			oControl.setValue("");
 			strictEqual(oControl.getValue(), "", "When setValue is called the string is not modified.");
+			ok(!oControl._oTempValue.differsFromOriginal(), "When setting empty string buffer is not modified");
 
 			oControl.setValue("bc-d9");
 			strictEqual(oControl.getValue(), "bc-d9", "When setValue is called with mask incompatible string, the value it is not modified.");
+			strictEqual(getMaskInputDomValue(oControl), "bc-d9", "The value was updated successfully (EVEN NOT VALID)");
+			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-d_", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
 
 			oControl.setValue("bc-de");
 			strictEqual(oControl.getValue(), "bc-de", "When setValue is called with mask compatible string, the value is not modified.");
+			strictEqual(getMaskInputDomValue(oControl), "bc-de", "The value was updated successfully");
+			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "bc-de", "Buffer is successfully modified");
 		});
 
 		test("Placeholder symbol default value", function () {
@@ -389,6 +394,26 @@
 			oOtherControl.destroy();
 		});
 
+		test("Focusout after partially filled value is set through the API validates it against MaskInput rules", function () {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('#').setMask('99-99'),
+				oOtherControl = new sap.m.Input({value: "some other value"});
+
+			oOtherControl.placeAt('content');
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+
+			oControl.setValue('#1-23');
+			jQuery(oControl).focus();
+			strictEqual(getMaskInputDomValue(oControl), "#1-23", "The value was not validated on focusin");
+			ok(oControl._oTempValue.differsFromOriginal() && oControl._oTempValue._aContent.join('') == "12-3#", "Buffer is successfully modified with the correct ALREADY VALIDATED value");
+
+
+			jQuery(oOtherControl).focus();
+			this.clock.tick(1000);
+
+			strictEqual(getMaskInputDomValue(oControl), '12-3#', "DOM value is validated against MaskInput rules on focusout");
+			strictEqual(oControl._oTempValue._aContent.join(''), '12-3#', "The buffer value is identical with the DOM value");
+		});
 
 		test("Focus after invalid value is set through the API", function () {
 			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
@@ -414,7 +439,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 
-			strictEqual(getMaskInputDomValue(oControl), 'ab-c#');
+			strictEqual(getMaskInputDomValue(oControl), '#a-bc');
 		});
 
 		module("Events", {

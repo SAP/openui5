@@ -215,6 +215,27 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	MaskInput.prototype.onsapfocusleave = function(oEvent) {
 	};
 
+	/**
+	 * Setter for property <code>value</code>.
+	 *
+	 * @param {string} sValue New value for property <code>value</code>.
+	 * @return {sap.m.MaskInput} <code>this</code> to allow method chaining.
+	 * @public
+	 */
+	MaskInput.prototype.setValue = function (sValue) {
+		InputBase.prototype.setValue.apply(this, arguments);
+		// We need this check in case when MaskInput is initialized with specific value
+		if (!this._oTempValue) {
+			this._setupMaskVariables();
+		}
+		// We don't need to validate the initial MaskInput placeholder value because this will break setting it to empty value on focusout
+		if (this._oTempValue._aInitial.join('') !== sValue) {
+			this._applyRules(sValue);
+		}
+
+		return this;
+	};
+
 	MaskInput.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 		if (sAggregationName === "rules") {
 			if (!this._validateRegexAgainstPlaceHolderSymbol(oObject)) {
