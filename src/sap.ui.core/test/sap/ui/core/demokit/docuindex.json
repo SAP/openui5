@@ -145,7 +145,7 @@
 				"id" : "sap.ui.model.odata.v4.ODataModel",
 				"name" : "OData V4 Model",
 				"category" : "Data Binding",
-				"since" : "1.32",
+				"since" : "1.38",
 				"samples" : [
 					"sap.ui.core.sample.odata.v4.ListBinding",
 					"sap.ui.core.sample.odata.v4.SalesOrders",
