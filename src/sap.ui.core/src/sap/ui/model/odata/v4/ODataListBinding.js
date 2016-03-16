@@ -280,8 +280,7 @@ sap.ui.define([
 				sGroupId = this.oModel.getGroupId();
 				oPromise = this.oCache.read(iStart, iLength, sGroupId, undefined, function () {
 					bDataRequested = true;
-					that.oModel.dataRequested(sGroupId,
-						that.fireDataRequested.bind(that));
+					that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
 				});
 			} else {
 				oPromise = oContext.requestValue(this.sPath);

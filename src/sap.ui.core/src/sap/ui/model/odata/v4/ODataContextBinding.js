@@ -278,8 +278,7 @@ sap.ui.define([
 			sGroupId = this.oModel.getGroupId();
 			return this.oCache.read(sGroupId, sPath, function () {
 				bDataRequested = true;
-				that.oModel.dataRequested(sGroupId,
-					that.fireDataRequested.bind(that));
+				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
 			}).then(function (vValue) {
 				if (bDataRequested) {
 					that.fireDataReceived();

@@ -858,7 +858,7 @@ sap.ui.require([
 	//TODO provide iStart, iLength parameter to requestValue to support paging on nested list
 
 	//*********************************************************************************************
-	QUnit.test("getContexts calls dataRequested", function (assert) {
+	QUnit.test("getContexts calls addedRequestToGroup", function (assert) {
 		var oListBinding;
 
 		this.oSandbox.stub(_Cache, "create", function (oRequestor, sUrl, mQueryOptions) {
@@ -869,8 +869,8 @@ sap.ui.require([
 				}
 			};
 		});
-		this.oSandbox.mock(this.oModel).expects("dataRequested")
-			.withExactArgs("$auto", sinon.match.typeOf("function"));
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+			.withExactArgs("$auto", sinon.match.func);
 
 		oListBinding = this.oModel.bindList("/EMPLOYEES");
 
@@ -960,7 +960,7 @@ sap.ui.require([
 			.returns("groupId");
 		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs(0, 10, "groupId").callsArg(4)
 			.returns(oReadPromise);
-		this.oSandbox.mock(oBinding.oModel).expects("dataRequested").withArgs("groupId");
+		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup").withArgs("groupId");
 
 		oBinding.getContexts(0, 10);
 		return oReadPromise;
