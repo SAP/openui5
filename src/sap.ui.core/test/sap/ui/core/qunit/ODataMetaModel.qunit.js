@@ -581,11 +581,11 @@ sap.ui.require([
 		assert.strictEqual(
 			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 				+ "com.sap.vocabularies.Common.v1.Label/String"),
-			"Bus. Part. ID", "v2 --> V4");
+			"Bus. Part. ID", "V2 --> V4");
 		assert.strictEqual(
 			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
 				+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
-			"Business Partner", "v4 annotations available");
+			"Business Partner", "V4 annotations available");
 
 		return oMetaModel.loaded().then(function () {
 			assert.strictEqual(arguments.length, 1, "almost no args");
@@ -614,11 +614,11 @@ sap.ui.require([
 			assert.strictEqual(
 				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 					+ "com.sap.vocabularies.Common.v1.Label/String"),
-				"Bus. Part. ID", "v2 --> V4");
+				"Bus. Part. ID", "V2 --> V4");
 			assert.strictEqual(
 				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
 					+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
-				"Business Partner", "v4 annotations available");
+				"Business Partner", "V4 annotations available");
 		});
 	});
 
@@ -649,11 +649,11 @@ sap.ui.require([
 					assert.strictEqual(
 						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 							+ "com.sap.vocabularies.Common.v1.Label/String"),
-						"Bus. Part. ID", "v2 --> V4");
+						"Bus. Part. ID", "V2 --> V4");
 					assert.strictEqual(
 						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
 							+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
-						"Business Partner", "v4 annotations available");
+						"Business Partner", "V4 annotations available");
 				} catch (ex) {
 					assert.ok(false, ex);
 				}
@@ -2483,7 +2483,7 @@ sap.ui.require([
 					oItemTypeLabel,
 					"existing types remain unchanged, as reference");
 
-				// check that V4 annotations are properly merged and that v2 ones are lifted etc.
+				// check that V4 annotations are properly merged and that V2 ones are lifted etc.
 				assert.strictEqual(
 					oClonedType_DEBIA.property[2/*LAND1*/]
 						["com.sap.vocabularies.Common.v1.ValueList"].CollectionPath.String,
@@ -2498,10 +2498,10 @@ sap.ui.require([
 				assert.strictEqual(oClonedSet_DEBIA["sap:deletable"], "false");
 				assert.deepEqual(
 					oClonedSet_DEBIA["Org.OData.Capabilities.V1.InsertRestrictions"],
-					{Insertable : {Bool : "false"}}, "v2 --> V4");
+					{Insertable : {Bool : "false"}}, "V2 --> V4");
 				assert.deepEqual(
 					oClonedSet_DEBIA["Org.OData.Capabilities.V1.DeleteRestrictions"],
-					{Deletable : {Bool : "true"}}, "v4 wins");
+					{Deletable : {Bool : "true"}}, "V4 wins");
 			});
 		});
 	});

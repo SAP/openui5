@@ -3401,7 +3401,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 
 
 	/**
-	 * Returns an instance of an OData meta model which offers a unified access to both OData v2
+	 * Returns an instance of an OData meta model which offers a unified access to both OData V2
 	 * meta data and V4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
 	 * as a foundation and merges V4 annotations from the existing
 	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding model element.

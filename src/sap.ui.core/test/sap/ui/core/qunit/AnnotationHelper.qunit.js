@@ -1590,7 +1590,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		resolvedPath : "/dataServices/schema/0/complexType/0/property/2"
 	}, {
 		// annotation at entity set: "an empty path resolves to the entity set"
-		// Note: no singletons in v2!
+		// Note: no singletons in V2!
 		Path : "",
 		metaPath : "/dataServices/schema/0/entityContainer/0/entitySet/1"
 			+ "/com.sap.vocabularies.UI.v1.DataPoint/Value",

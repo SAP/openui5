@@ -404,7 +404,7 @@
 			{
 				"id": "sap.ui.core.sample.odata.v4.ListBinding",
 				"name": "List Binding",
-				"description": "Example for list binding with an OData v4 model"
+				"description": "Example for list binding with an OData V4 model"
 			},
 			{
 				"id": "sap.ui.core.sample.odata.v4.SalesOrders",

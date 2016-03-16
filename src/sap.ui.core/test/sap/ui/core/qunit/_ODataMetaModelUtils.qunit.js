@@ -472,7 +472,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			sSemantics : "tel",
 			sTypes : "work"
 		},
-		// v2 types which are not supported in V4
+		// V2 types which are not supported in V4
 		{
 			oExpectedMessage : "pager",
 			sOutput : "",

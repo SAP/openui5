@@ -26,8 +26,8 @@ var mSeverityMap = {
  * @property {string} target - The target entity path for which the message is meant
  * @property {string} message - The error message description
  * @property {string} code - The error code (message)
- * @property {string} [@sap-severity] - The level of the error (alternatively in v2: oMessageObject.severity) can be one of "success", "info", "warning", "error"
- * @property {string} [severity] - The level of the error (alternatively in v4: oMessageObject.@sap-severity) can be one of "success", "info", "warning", "error"
+ * @property {string} [@sap-severity] - The level of the error (alternatively in V2: oMessageObject.severity) can be one of "success", "info", "warning", "error"
+ * @property {string} [severity] - The level of the error (alternatively in V4: oMessageObject.@sap-severity) can be one of "success", "info", "warning", "error"
  */
 
 /**
@@ -571,7 +571,7 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
  */
 ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oResponse, mRequestInfo, sContentType) {
 	try {
-		// TODO: I do not have a v4 service to test this with.
+		// TODO: I do not have a V4 service to test this with.
 
 		var oDoc = new DOMParser().parseFromString(oResponse.body, sContentType);
 		var aElements = getAllElements(oDoc, [ "error", "errordetail" ]);
@@ -592,7 +592,7 @@ ODataMessageParser.prototype._parseBodyXML = function(/* ref: */ aMessages, oRes
 				}
 
 				if (sChildName === "message" && oChildNode.hasChildNodes() && oChildNode.firstChild.nodeType !== window.Node.TEXT_NODE) {
-					// Special case for v2 error message - the message is in the child node "value"
+					// Special case for V2 error message - the message is in the child node "value"
 					for (var m = 0; m < oChildNode.childNodes.length; ++m) {
 						if (oChildNode.childNodes[m].nodeName === "value") {
 							oError["message"] = oChildNode.childNodes[m].text || oChildNode.childNodes[m].textContent;
@@ -624,10 +624,10 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 
 		var oError;
 		if (oErrorResponse["error"]) {
-			// v4 response according to OData specification or v2 response according to MS specification and SAP message specification
+			// V4 response according to OData specification or V2 response according to MS specification and SAP message specification
 			oError = oErrorResponse["error"];
 		} else {
-			// Actual v2 response in some tested services
+			// Actual V2 response in some tested services
 			oError = oErrorResponse["odata.error"];
 		}
 
@@ -644,10 +644,10 @@ ODataMessageParser.prototype._parseBodyJSON = function(/* ref: */ aMessages, oRe
 		// Check if more than one error has been returned from the back-end
 		var aFurtherErrors = null;
 		if (jQuery.isArray(oError.details)) {
-			// v4 errors
+			// V4 errors
 			aFurtherErrors = oError.details;
 		} else if (oError.innererror && jQuery.isArray(oError.innererror.errordetails)) {
-			// v2 errors
+			// V2 errors
 			aFurtherErrors = oError.innererror.errordetails;
 		} else {
 			// No further errors

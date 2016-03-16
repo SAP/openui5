@@ -838,7 +838,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	//TODO make these types work with odata V4
+	//TODO make these types work with OData V4
 	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
 		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
 			var sPath = "/EMPLOYEES/0/foo",

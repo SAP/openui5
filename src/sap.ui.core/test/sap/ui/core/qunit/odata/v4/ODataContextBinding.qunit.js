@@ -231,7 +231,6 @@ sap.ui.require([
 		oBinding.refresh(true);
 		return oPromise;
 	});
-	// TODO bSuspended? In v2 it is ignored (check with core)
 
 	//*********************************************************************************************
 	QUnit.test("requestValue: absolute binding (read required)", function (assert) {

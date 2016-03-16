@@ -72,7 +72,7 @@ sap.ui.define([
 	 *   a promise which is resolved by the OData model once meta data and annotations have been
 	 *   fully loaded
 	 *
-	 * @class Implementation of an OData meta model which offers a unified access to both OData v2
+	 * @class Implementation of an OData meta model which offers a unified access to both OData V2
 	 * meta data and V4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
 	 * as a foundation and merges V4 annotations from the existing
 	 * {@link sap.ui.model.odata.ODataAnnotations} directly into the corresponding model element.
@@ -365,9 +365,9 @@ sap.ui.define([
 					oSchema = Utils.getSchema(aSchemas, sNamespace);
 					oSchema.entityType.push(JSON.parse(JSON.stringify(oEntityType)));
 
-					// visit all entity types before visiting the entity sets to ensure that v2
+					// visit all entity types before visiting the entity sets to ensure that V2
 					// annotations are already lifted up and can be used for calculating entity
-					// set annotations which are based on v2 annotations on entity properties
+					// set annotations which are based on V2 annotations on entity properties
 					Utils.visitParents(oSchema, oResponse.annotations,
 						"entityType", Utils.visitEntityType,
 						oSchema.entityType.length - 1);
@@ -454,7 +454,7 @@ sap.ui.define([
 	 *   an absolute path pointing to an entity or property, e.g.
 	 *   "/ProductSet(1)/ToSupplier/BusinessPartnerID"; this equals the
 	 *   <a href="http://www.odata.org/documentation/odata-version-2-0/uri-conventions#ResourcePath">
-	 *   resource path</a> component of a URI according to OData v2 URI conventions
+	 *   resource path</a> component of a URI according to OData V2 URI conventions
 	 * @returns {sap.ui.model.Context}
 	 *   the context for the corresponding meta data object, i.e. an entity type or its property,
 	 *   or <code>null</code> in case no path is given
