@@ -186,16 +186,13 @@ html[dir=rtl] .sapMTC .sapMCustomTile{
 	display:none;
 }
 
-.sapMTC.sapMTCEditable .sapMTileContent {
-	margin-top : -1em;
-}
-
 .sapMTC.sapMTCEditable .sapMTile {
 	cursor: move;
 	box-shadow: 0px 1px 5px fade(@sapUiDarkShadowTint,60);
 }
 
 .sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
+	position: absolute;
 	background-color: @sapUiElement;
 	display:block;
 	height:2rem;
@@ -204,8 +201,8 @@ html[dir=rtl] .sapMTC .sapMCustomTile{
 	font-family:"SAP-icons";
 	font-size: 16px;
 	color: @sapUiInvertedElement;
-	padding-top: 0.375rem;
-	padding-left: 0.5rem;
+	line-height: 2rem;
+	text-align: center;
 	box-sizing:border-box;
 	margin-top : -0.5rem;
 	margin-left : -0.5rem;
