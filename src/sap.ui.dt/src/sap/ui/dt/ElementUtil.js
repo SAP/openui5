@@ -27,6 +27,7 @@ function(jQuery) {
 
 	var ElementUtil = {};
 
+	ElementUtil.sACTION_MOVE = 'move';
 	/**
 	 *
 	 */
@@ -375,6 +376,38 @@ function(jQuery) {
 	 */
 	ElementUtil.loadDesignTimeMetadata = function(oElement) {
 		return oElement ? oElement.getMetadata().loadDesignTime() : Promise.resolve({});
+	};
+
+	/**
+	.* Executes an array of actions. An action is a JSON object having the following structure:
+	.*
+	.*	<action> =	{
+	.*			'element' : <ui5 id of element to be moved>,
+	.*					'source' : {
+	.*						'index': <source index>,
+	.*						'parent' : <ui5 id of element actual parent>,
+	.*						'aggregation' : <name of aggregation>
+	.*					},
+	.*					'target' : {
+	.*						'index': <target index>,
+	.*						'parent' : <ui5 id of element future parent>,
+	.*						'aggregation' : <name of aggregation>
+	.*					},
+	.*					'changeType' : <name of change type e.g "Move"
+	.*				})
+	 */
+	ElementUtil.executeActions = function(aActions) {
+		for (var i = 0; i < aActions.length; i++) {
+			var oAction = aActions[i];
+			switch (oAction.changeType) {
+				case ElementUtil.sACTION_MOVE:
+					var oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
+					var oMovedElement = sap.ui.getCore().byId(oAction.element);
+					ElementUtil.insertAggregation(oTargetParent, oAction.target.aggregation, oMovedElement, oAction.target.index);
+					break;
+				default:
+			}
+		}
 	};
 
 	return ElementUtil;

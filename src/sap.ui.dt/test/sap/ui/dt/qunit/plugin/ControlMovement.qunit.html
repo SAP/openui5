@@ -233,8 +233,10 @@
 		this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oLayoutAggregationOverlay));
 
 		var that = this;
-		this.oControlDragDrop.attachElementMoved(function(oEvent) {
-			assert.deepEqual(oEvent.getParameter("data"), {
+		this.oControlDragDrop.getElementMover().attachElementMoved(function(oEvent) {
+			var aActions = oEvent.getParameter("data");
+			assert.equal(aActions.length, 1, "the expected number of actions is found")
+			assert.deepEqual(aActions[0], {
 				element: that.oObjectAttribute,
 				source: {
 					parent: that.oObjectHeader,
@@ -296,8 +298,10 @@
 		sap.ui.test.qunit.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
 
 		var that = this;
-		this.oCutPaste.attachElementMoved(function(oEvent) {
-			assert.deepEqual(oEvent.getParameter("data"), {
+		this.oCutPaste.getElementMover().attachElementMoved(function(oEvent) {
+			var aActions = oEvent.getParameter("data");
+			assert.equal(aActions.length, 1, "the expected number of actions is found")
+			assert.deepEqual(aActions[0], {
 				element: that.oObjectAttribute,
 				source: {
 					parent: that.oObjectHeader,

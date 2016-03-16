@@ -148,10 +148,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oMoveEvent = this.getElementMover().buildMoveEvent();
-			this.fireElementMoved({
-				data: oMoveEvent
-			});
+			this.getElementMover().buildMoveEvent();
 		}
 
 		// focus get invalidated, see https://support.wdf.sap.corp/sap/support/message/1580061207

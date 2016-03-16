@@ -127,17 +127,13 @@ sap.ui.define([
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnd = function(oOverlay) {
-		var oMoveEvent = this.getElementMover().buildMoveEvent();
+		this.getElementMover().buildMoveEvent();
 		delete this._oPreviousTarget;
 
 		this.getElementMover().deactivateAllTargetZones(this.getDesignTime(), sDROP_ZONE_STYLE);
 
 		delete this._oDraggedOverlay;
 		this.getElementMover().setMovedOverlay(null);
-
-		this.fireElementMoved({
-			data: oMoveEvent
-		});
 	};
 
 	/**
