@@ -171,4 +171,41 @@
 		assert.ok(!!this.oButton2.getDomRef(), "Button 2 sould have a dom ref");
 		assert.strictEqual(!!this.oButton1.getDomRef(), false, "Button 1 sould not have a dom ref");
 	});
+
+	QUnit.module("API", {
+		setup: function() {
+			this.oResponsiveSplitter = new sap.ui.layout.ResponsiveSplitter();
+			this.oScrollContainer = new sap.m.ScrollContainer({ horizontal: false, content: this.oResponsiveSplitter, width: "500px" });
+			this.oButton1 = new sap.m.Button({ text: "first" });
+			this.oButton2 = new sap.m.Button({ text: "second"});
+			this.oButton3 = new sap.m.Button();
+			this.oSplitPane1 = new sap.ui.layout.SplitPane("first", { content: this.oButton1, requiredParentWidth: 400 });
+			this.oSplitPane2 = new sap.ui.layout.SplitPane("second", { content: this.oButton2, requiredParentWidth: 800 });
+			this.oSplitPane3 = new sap.ui.layout.SplitPane("third", { content: this.oButton3, requiredParentWidth: 1200 });
+			this.oPaneContainer2 = new sap.ui.layout.PaneContainer({ orientation: "Vertical", panes: [this.oSplitPane2, this.oSplitPane3]});
+			this.oPaneContainer1 = new sap.ui.layout.PaneContainer({ panes: [this.oSplitPane1, this.oPaneContainer2]});
+			this.oResponsiveSplitter.setRootPaneContainer(this.oPaneContainer1);
+
+			this.oScrollContainer.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		}, teardown: function() {
+			this.oResponsiveSplitter.destroy();
+			this.oScrollContainer.destroy();
+			this.oButton1.destroy();
+			this.oButton2.destroy();
+			this.oButton3.destroy();
+			this.oSplitPane1.destroy();
+			this.oSplitPane2.destroy();
+			this.oSplitPane3.destroy();
+			this.oPaneContainer1.destroy();
+			this.oPaneContainer2.destroy();
+		}
+	});
+
+	QUnit.test("If no defaultPane is set the first added pane is set as default", function(assert) {
+		assert.strictEqual(this.oResponsiveSplitter.getAssociation("defaultPane"), "first", "When no defaultPane we fallback to the first pane that is added");
+		
+	});
+
 })();

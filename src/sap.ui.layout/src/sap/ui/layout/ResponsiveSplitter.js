@@ -13,7 +13,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * ResponsiveSplitter is a control that enables responsibility of normal Splitter.
+	 * ResponsiveSplitter is a control that enables responsiveness of normal Splitter.
 	 * ResponsiveSplitter consists of PaneContainers that further  agregate other PaneContainers and SplitPanes.
 	 * SplitPanes can be moved to the pagination when a minimum width of their parent is reached.
 	 * @extends sap.ui.core.Control
@@ -54,6 +54,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 			associations: {
 				/**
 				 * The default pane that will remain always visible
+				 * If no defaultPane is specified, the ResponsiveSplitter sets the first SplitPane that is added to a PaneContainer in it as a default.
 				 */
 				defaultPane: { type: "sap.ui.layout.SplitPane", multiple: false }
 			},
@@ -64,6 +65,17 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	});
 
 	ResponsiveSplitter.prototype.onBeforeRendering = function() {
+		var bDefaultPane = this._checkForDefault();
+		if (!bDefaultPane) {
+			var sFirstPaneId = this._getfirstPaneId();
+			if (sFirstPaneId) {
+				this.setAssociation("defaultPane", sFirstPaneId);
+				jQuery.sap.log.warning("No defaultPane association defined so the first pane added in the ResponsiveSplitter is set as а default");
+			} else {
+				return;
+			}
+		}
+
 		this._detachResizeHandler();
 		this._createWidthIntervals();
 		this._createPages();
@@ -104,11 +116,40 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		}
 	};
 
+	/**
+	 * @returns {boolean}
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._checkForDefault = function() {
+		return this.getAssociation("defaultPane") ? true : false;
+	};
+
+	/**
+	 * @returns {*} Returns the ID of the first SplitPane found in a PaneContainer or false if there are no SplitPanes
+	 * @private
+	 */
+	ResponsiveSplitter.prototype._getfirstPaneId = function() {
+		var bFirstPane = true,
+			sFirstPaneId;
+		RSUtil.visitPanes(this.getRootPaneContainer(), function (oPane) {
+			if (bFirstPane) {
+				sFirstPaneId = oPane.getId();
+				bFirstPane = false;
+			}
+		});
+
+		return sFirstPaneId ? sFirstPaneId : false;
+	};
+
+	/**
+	 * Handles when forward button in the paginator is pressed
+	 * @param oEvent
+	 * @private
+	 */
 	ResponsiveSplitter.prototype._handlePaginatorForward = function(oEvent) {
 		var aVisibleButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton:not(.sapUiResponsiveSplitterHiddenElement):not(.sapUiResponsiveSplitterHiddenPaginatorButton)");
 		var aHiddenRightButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton.sapUiResponsiveSplitterHiddenElement");
 
-		// FIX THIS!!
 		// To check when restoring the visibility of paginator
 		aHiddenRightButtons = Array.prototype.splice.call(aHiddenRightButtons, 0, aHiddenRightButtons.length - ((this._currentInterval.pages[0].length || 0) - 1) -
 			((this._currentInterval.pagesCount - 1) - this._currentInterval.pages.filter(function(page) { return page.demandPane; }).length));
@@ -121,6 +162,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		jQuery(aHiddenRightButtons[0]).removeClass("sapUiResponsiveSplitterHiddenElement");
 	};
 
+	/**
+	 * Handles when back button in the paginator is pressed
+	 * @param oEvent
+	 * @returns {void}
+	 * @private
+	 */
 	ResponsiveSplitter.prototype._handlePaginatorBack = function(oEvent) {
 		var aVisibleButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton:not(.sapUiResponsiveSplitterHiddenElement):not(.sapUiResponsiveSplitterHiddenPaginatorButton)");
 		var aHiddenLeftButtons = this.$().find(".sapUiResponsiveSplitterPaginatorButton.sapUiResponsiveSplitterHiddenPaginatorButton");
@@ -140,12 +187,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	/**
 	 * Sets the indexed page to visible and changes the selected button in the paginator
 	 * @param index
+	 * @returns {void}
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._activatePage = function (iPageIndex, iButtonIndex) {
 		iButtonIndex = iButtonIndex || iPageIndex;
-
-
 		this.getAggregation("pages")[iPageIndex].setVisible(true);
 		this.$().find(".sapUiResponsiveSplitterPaginatorButton").removeClass("sapUiResponsiveSplitterPaginatorSelectedButton");
 		jQuery(this.$().find(".sapUiResponsiveSplitterPaginatorButton")[iButtonIndex]).addClass("sapUiResponsiveSplitterPaginatorSelectedButton");
@@ -154,6 +200,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	/**
 	 * After the rendering of the control is done, and the outer width is known
 	 * The content of the Layout gets moved into pages (If pages are needed)
+	 * @returns {void}
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._arrangeContent = function () {
@@ -300,7 +347,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Sets the visibility of the paginator buttons
-	 * @param width
+	 * @returns {void}
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._setPaginatorVisibility = function () {
@@ -332,6 +379,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Initiates the internal pages aggregation
+	 * @returns {void}
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._createPages = function () {
@@ -345,6 +393,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Iterates all intervals, and returns the maximum page count found
+	 * @returns {number}
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._getMaxPageCount = function () {
@@ -363,6 +412,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 * The interval is defined as 2 sequent array elements.
 	 * This array includes Number.MIN_VALUE and Number.MAX_VALUE as -Infinity and +Infinity,
 	 * and covers the whole numeric axis
+	 * @returns {void}
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._createWidthIntervals = function () {
@@ -391,6 +441,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Detaches the parent resize handler
+	 * @returns {void}
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._detachResizeHandler = function () {
