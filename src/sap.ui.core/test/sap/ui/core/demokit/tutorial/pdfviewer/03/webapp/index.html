@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>UI5 PDF Tutorial</title>
+		<script
+				id="sap-ui-bootstrap"
+				src="../../../../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-bindingSyntax="complex"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-preload="async"
+				data-sap-ui-resourceroots='{
+					"sap.ui.demo.pdf": "./"
+				}'>
+		</script>
+
+		<script>
+
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/m/Shell",
+					"sap/ui/core/ComponentContainer"
+				], function (Shell, ComponentContainer) {
+					new Shell({
+						app: new ComponentContainer({
+							name: "sap.ui.demo.pdf",
+							height: "100%"
+						})
+					}).placeAt("content");
+				});
+			});
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" id="content">
+	</body>
+</html>
