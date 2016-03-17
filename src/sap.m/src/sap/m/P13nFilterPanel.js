@@ -451,7 +451,6 @@ sap.ui.define([
 
 		this._oIncludeFilterPanel = new P13nConditionPanel({
 			maxConditions: this.getMaxIncludes(),
-			autoAddNewRow: true,
 			alwaysShowAddIcon: false,
 			layoutMode: this.getLayoutMode(),
 			dataChange: this._handleDataChange()
@@ -475,7 +474,6 @@ sap.ui.define([
 		this._oExcludeFilterPanel = new P13nConditionPanel({
 			exclude: true,
 			maxConditions: this.getMaxExcludes(),
-			autoAddNewRow: true,
 			alwaysShowAddIcon: false,
 			layoutMode: this.getLayoutMode(),
 			dataChange: this._handleDataChange()
