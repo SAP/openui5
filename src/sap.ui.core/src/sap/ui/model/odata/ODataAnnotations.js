@@ -500,7 +500,11 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 
 					if (mResults.success.length < aUris.length) {
 						// firefailed is called for every failed URL in _loadFromUrl
-						fnReject(mResults);
+						var oError = new Error("At least one annotation failed to load/parse/merge");
+						oError.annotations = mResults.annotations;
+						oError.success = mResults.success;
+						oError.fail = mResults.fail;
+						fnReject(oError);
 					} else {
 						// All URLs could be loaded and parsed
 						fnResolve(mResults);
