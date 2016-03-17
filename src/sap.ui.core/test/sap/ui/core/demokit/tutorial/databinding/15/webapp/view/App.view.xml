@@ -34,7 +34,10 @@
 	</Panel>
 	<Panel headerText="{i18n>panel3HeaderText}" class="sapUiResponsiveMargin" width="auto">
 		<content>
-			<List id="ProductList" headerText="{i18n>productListTitle}" />
+			<List id="ProductList" headerText="{i18n>productListTitle}" items="{
+				path: 'products>/Products',
+				factory: '.productListFactory'
+			}" />
 		</content>
 	</Panel>
 	<Panel id="productDetailsPanel" headerText="{i18n>panel4HeaderText}" class="sapUiResponsiveMargin" width="auto">
@@ -55,7 +58,7 @@
 			<Input value="{products>UnitsInStock}"/>
 
 			<Label text="{i18n>Discontinued}:"/>
-			<CheckBox value="{products>Discontinued}"/>
+			<CheckBox selected="{products>Discontinued}"/>
 		</l:Grid>
 	</Panel>
 </mvc:View>

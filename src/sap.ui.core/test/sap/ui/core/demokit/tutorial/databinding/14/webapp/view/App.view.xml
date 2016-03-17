@@ -83,7 +83,7 @@
 			<Input value="{products>UnitsInStock}"/>
 
 			<Label text="{i18n>Discontinued}:"/>
-			<CheckBox value="{products>Discontinued}"/>
+			<CheckBox selected="{products>Discontinued}"/>
 		</l:Grid>
 	</Panel>
 </mvc:View>
