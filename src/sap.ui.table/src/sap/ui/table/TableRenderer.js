@@ -23,21 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	TableRenderer.render = function(rm, oTable) {
 		// basic table div
 		rm.write("<div");
-		if (oTable._bAccMode) {
-			var aAriaOwnsIds = [];
-			if (oTable.getToolbar()) {
-				aAriaOwnsIds.push(oTable.getToolbar().getId());
-			}
-			aAriaOwnsIds.push(oTable.getId() + "-table");
-			rm.writeAttribute("aria-owns", aAriaOwnsIds.join(" "));
-			rm.writeAttribute("aria-readonly", "true");
-			if (oTable.getTitle()) {
-				rm.writeAttribute("aria-labelledby", oTable.getTitle().getId());
-			}
-			if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.Multi) {
-				rm.writeAttribute("aria-multiselectable", "true");
-			}
-		}
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROOT");
 		rm.writeControlData(oTable);
 		rm.addClass("sapUiTable");
 		if ('ontouchstart' in document) {
@@ -686,20 +672,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 	};
 
-	TableRenderer.getAriaAttributesForTableControlCntColTh = function(oColumn, bHasRowSelector) {
-		var mAriaAttributes = {
-			"role": {value: "columnheader"},
-			"scope": {value: "col"}
-		};
-
-		if (bHasRowSelector) {
-			mAriaAttributes["aria-owns"] = {value: "" + oColumn.getId()};
-			mAriaAttributes["aria-labelledby"] = {value: "" + oColumn.getId()};
-		}
-
-		return mAriaAttributes;
-	};
-
 	TableRenderer.renderTableControlCnt = function(rm, oTable, bFixedTable, iStartColumn, iEndColumn, bFixedRow, bFixedBottomRow, iStartRow, iEndRow) {
 		rm.write("<table");
 		var sId = oTable.getId() + "-table";
@@ -721,7 +693,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 		rm.writeAttribute("id", sId);
 
-		oTable._getAccRenderExtension().writeTableAccRole(rm, oTable);
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TABLE");
 
 		rm.addClass("sapUiTableCtrl");
 		rm.writeClasses();
@@ -750,9 +722,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.addStyle("width", "0px");
 			rm.writeStyles();
 			if (iStartRow == 0) {
-				var mAriaAttributes = this.getAriaAttributesForTableControlCntColTh(oColumn);
-				this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
-				rm.writeAttribute("id", oTable.getId() + "_colsel");
+				oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TH");
+				rm.writeAttribute("id", oTable.getId() + "-colsel");
 				rm.addClass("sapUiTableColSel");
 				rm.writeClasses();
 			}
@@ -771,8 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 				rm.addStyle("width", oColumn.getWidth());
 				rm.writeStyles();
 				if (iStartRow == 0) {
-					var mAriaAttributes = this.getAriaAttributesForTableControlCntColTh(oColumn, true);
-					this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+					oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TH", {column: oColumn});
 					rm.writeAttribute("id", oTable.getId() + "_col" + col);
 				}
 				rm.writeAttribute("data-sap-ui-headcolindex", col);
@@ -811,7 +781,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			iEndRow = 1;
 		}
 		// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
-		var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
+		var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
 
 		// check whether the row can be clicked to change the selection
 		var bSelectOnCellsAllowed = oTable._getSelectOnCellsAllowed();
@@ -821,50 +791,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 		rm.write("</tbody>");
 		rm.write("</table>");
-	};
-
-	TableRenderer.getAriaAttributesForRowTr = function(oTable, oRow, iRowIndex, aCells) {
-		var mAriaAttributes = {};
-
-		mAriaAttributes["role"] = {value: "row"};
-
-		var bIsSelected = oTable.isIndexSelected(iRowIndex);
-		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
-			mAriaAttributes["aria-selected"] = {value: bIsSelected};
-		}
-
-		var mTooltipTexts = oTable._getAriaTextsForSelectionMode(true);
-
-		var bSelectOnCellsAllowed = oTable._getSelectOnCellsAllowed();
-		if (bSelectOnCellsAllowed) {
-			// the row requires a tooltip for selection if the cell selection is allowed
-			mAriaAttributes["title"] = {value: mTooltipTexts.mouse[bIsSelected ? "rowDeselect" : "rowSelect"]};
-		}
-
-		return mAriaAttributes;
-	};
-
-	TableRenderer.getAriaAttributesForRowTd = function(oTable, oRow, iRowIndex, aCells) {
-		var mAriaAttributes = {};
-
-		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None &&
-			oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) {
-			mAriaAttributes["role"] = {value: "rowheader"};
-		} else {
-			if (aCells.length === 0) {
-				mAriaAttributes["role"] = {value: "gridcell"};
-			}
-		}
-
-		mAriaAttributes["headers"] = {value: oTable.getId() + "_colsel"};
-		mAriaAttributes["aria-owns"] = {value: oTable.getId() + "-rowsel" + iRowIndex};
-		mAriaAttributes["role"] = {value: "rowheader"};
-
-		if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
-			mAriaAttributes["aria-selected"] = {value: "false"};
-		}
-
-		return mAriaAttributes;
 	};
 
 	TableRenderer.addTrClasses = function(rm, oTable, oRow, iRowIndex) {
@@ -912,8 +838,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		}
 		rm.writeStyles();
 
-		var mAriaAttributes = this.getAriaAttributesForRowTr(oTable, oRow, iRowIndex);
-		this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex});
 
 		rm.write(">");
 		var aCells = oRow.getCells();
@@ -922,9 +847,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			oTable.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) ||
 			aCells.length === 0) {
 			rm.write("<td");
-			var mAriaAttributes = this.getAriaAttributesForRowTd(oTable, oRow, iRowIndex, aCells);
-			this.renderAriaAttributes(rm, mAriaAttributes, oTable._bAccMode);
-
+			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWHEADER_TD", {
+				rowSelected: !oRow._bHidden && oTable.isIndexSelected(iRowIndex), //see TableRenderer.renderRowHdrRow
+				index: iRowIndex
+			});
 			rm.write("></td>");
 		}
 

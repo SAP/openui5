@@ -4418,74 +4418,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
-	 * Retrieve Aria descriptions from resource bundle for a certain selection mode
-	 * @param {Boolean} [bConsiderSelectionState] set to true if the current selection state of the table shall be considered
-	 * @param {String} [sSelectionMode] optional parameter. If no selection mode is set, the current selection mode of the table is used
-	 * @returns {{mouse: {rowSelect: string, rowDeselect: string}, keyboard: {rowSelect: string, rowDeselect: string}}}
-	 * @private
-	 */
-	Table.prototype._getAriaTextsForSelectionMode = function (bConsiderSelectionState, sSelectionMode) {
-		if (!sSelectionMode) {
-			sSelectionMode = this.getSelectionMode();
-		}
-
-		var oResBundle = this._oResBundle;
-		var mTooltipTexts = {
-			mouse: {
-				rowSelect: "",
-				rowDeselect: ""
-			},
-			keyboard: {
-				rowSelect: "",
-				rowDeselect: ""
-			}};
-
-		if (sSelectionMode === sap.ui.table.SelectionMode.Single) {
-			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
-			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-		} else if (sSelectionMode === sap.ui.table.SelectionMode.Multi) {
-			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI");
-			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI");
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_KEY");
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_MULTI_KEY");
-
-			if (bConsiderSelectionState === true) {
-				if (this.getSelectedIndices().length === 1) {
-					// in multi selection case, if there is only one row selected it's not required
-					// to press CTRL in order to only deselect this single row hence use the description text
-					// of the single de-selection.
-					// for selection it's different since the description for SHIFT/CTRL handling is required
-					mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
-					mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-				} else if (this.getSelectedIndices().length === 0) {
-					// if there are no rows selected in multi selection mode, it's not required to press CTRL or SHIFT
-					// in order to enhance the selection.
-					mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
-					mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
-				}
-			}
-
-		} else if (sSelectionMode === sap.ui.table.SelectionMode.MultiToggle) {
-			mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE");
-			// text for de-select is the same like for single selection
-			mTooltipTexts.mouse.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT");
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
-			// text for de-select is the same like for single selection
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
-
-			if (bConsiderSelectionState === true && this.getSelectedIndices().length === 0) {
-				// if there is no row selected yet, the selection is like in single selection case
-				mTooltipTexts.mouse.rowSelect = oResBundle.getText("TBL_ROW_SELECT");
-				mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
-			}
-		}
-
-		return mTooltipTexts;
-	};
-
-	/**
 	 * updates the visual selection in the HTML markup
 	 * @private
 	 */
@@ -4497,7 +4429,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 
 		// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
-		var mTooltipTexts = this._getAriaTextsForSelectionMode(true);
+		var mTooltipTexts = this._getAccExtension().getAriaTextsForSelectionMode(true);
 
 		// check whether the row can be clicked to change the selection
 		var bSelectOnCellsAllowed = this._getSelectOnCellsAllowed();
