@@ -621,7 +621,13 @@ sap.ui.define([
 		this._iFirstConditionIndex = 0;
 		this._iConditionPageSize = 10;
 
+		this._oInvisibleTextField = new sap.ui.core.InvisibleText({ text: this._oRb.getText("CONDITIONPANEL_FIELD_LABEL")});
+		this._oInvisibleTextOperator = new sap.ui.core.InvisibleText({ text: this._oRb.getText("CONDITIONPANEL_OPERATOR_LABEL")});
+		this.addAggregation("content", this._oInvisibleTextField);
+		this.addAggregation("content", this._oInvisibleTextOperator);
+
 		this.addAggregation("content", this._oConditionsGrid);
+
 
 		this._registerResizeHandler();
 
@@ -1125,7 +1131,8 @@ sap.ui.define([
 				case "ComboBox":
 					if (field["ID"] === "keyField") {
 						oControl = new sap.m.ComboBox({ // before we used the new sap.m.Select control
-							width: "100%"
+							width: "100%",
+							ariaLabelledBy: this._oInvisibleTextField
 						});
 
 						var fOriginalKey = jQuery.proxy(oControl.setSelectedKey, oControl);
@@ -1213,6 +1220,7 @@ sap.ui.define([
 					if (field["ID"] === "operation") {
 						oControl = new sap.m.Select({
 							width: "100%",
+							ariaLabelledBy: this._oInvisibleTextOperator,
 							layoutData: new sap.ui.layout.GridData({
 								span: field["Span" + this._sConditionType]
 							})
