@@ -56,6 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	}
 
 	function internalEmpty(deferred) {
+		var iInitialDelay = Device.browser.msie ? 50 : 0;
 		if (queue.length === 0) {
 			deferred.resolve();
 			return true;
@@ -68,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		// I don't have a proper explanation for this.
 		setTimeout(function () {
 			internalWait(queueElement.callback, queueElement.options, deferred);
-		}, 0);
+		}, iInitialDelay);
 	}
 
 	function ensureNewlyAddedWaitForStatementsPrepended(iPreviousQueueLength, nestedInOptions){
