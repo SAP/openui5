@@ -783,6 +783,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	};
 
 	/**
+	 * Resets the height style property of all TR elements of the table
+	 * @private
+	 */
+	Table.prototype._resetRowHeights = function() {
+		var iRowHeight = this.getRowHeight();
+
+		var sRowHeight = "";
+		if (iRowHeight) {
+			sRowHeight = iRowHeight + "px";
+		}
+
+		var aRowItems = this.getDomRef().querySelectorAll(".sapUiTableCtrlFixed > tbody > tr, .sapUiTableCtrlScroll > tbody > tr");
+		for (var i = 0; i < aRowItems.length; i++) {
+			aRowItems[i].style.height = sRowHeight;
+		}
+	};
+
+	/**
 	 * Determines all needed table size at one dedicated point,
 	 * for avoiding layout thrashing through read/write UI operations.
 	 * @private
@@ -1034,6 +1052,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return;
 		}
 
+		this._resetRowHeights();
 		var aRowHeights = this._collectRowHeights();
 		this._getDefaultRowHeight(aRowHeights);
 
@@ -2002,16 +2021,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._getScrollTargets().bind("wheel.sapUiTableMouseWheel", this._onMouseWheel.bind(this));
 		}
 
-		if (this._bLargeDataScrolling) {
-			//this._attachLargeDataScrollEventHandler();
-		}
-
-		jQuery("body").bind('webkitTransitionEnd transitionend',
-			jQuery.proxy(function(oEvent) {
-				if (jQuery(oEvent.target).has($this).length > 0) {
-					this._updateTableSizes();
-				}
+		if (sap.ui.getCore().getConfiguration().getAnimation()) {
+			jQuery("body").bind('webkitTransitionEnd transitionend',
+				jQuery.proxy(function(oEvent) {
+					if (jQuery(oEvent.target).has($this).length > 0) {
+						this._iDefaultRowHeight = undefined;
+						this._updateTableSizes();
+					}
 			}, this));
+		}
 	};
 
 	/**
@@ -2285,6 +2303,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		if (!bSuppressUpdate) {
 			var iFirstVisibleRow = this.getFirstVisibleRow();
 			var bExecuteCallback = typeof this._updateTableCell === "function";
+			// row heights must be reset to make sure that rows can shrink if they may have smaller content. The content
+			// shall control the row height.
+			this._resetRowHeights();
 			for (var iIndex = aRows.length - 1; iIndex >= 0; iIndex--) {
 				var oContext = aContexts ? aContexts[iIndex] : undefined;
 				var oRow = aRows[iIndex];
@@ -2650,8 +2671,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 	/**
 	 * Triggered by the ResizeHandler if width/height changed.
-	 * Calls updateTableSizes at the next animation frame,
-	 * and quits unexecuted updating task.
 	 * @private
 	 */
 	Table.prototype._onTableResize = function() {
