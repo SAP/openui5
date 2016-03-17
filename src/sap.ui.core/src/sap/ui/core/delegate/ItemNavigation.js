@@ -577,6 +577,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	ItemNavigation.prototype.setFocusedIndex = function(iIndex) {
 		var $Item;
 
+		if (this.aItemDomRefs.length < 0) {
+			// no items -> don't change TabIndex
+			this.iFocusedIndex = -1;
+			return this;
+		}
+
 		if (iIndex < 0) {
 			iIndex = 0;
 		}
