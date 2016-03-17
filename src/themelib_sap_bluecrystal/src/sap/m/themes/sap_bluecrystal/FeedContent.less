@@ -1,19 +1,26 @@
 /* ======================================== */
 /* CSS for control sap.m/FeedContent.control */
 /* ======================================== */
-.sapUiMedia-Std-Desktop .sapMFCCTxt.Auto > .sapMText,
-.sapUiMedia-Std-Tablet .sapMFCCTxt.Auto > .sapMText,
-.sapMFCCTxt.L > .sapMText, .sapMFCCTxt.M > .sapMText,
-.sapUiMedia-Std-Desktop .sapMFCSbh.Auto,
-.sapUiMedia-Std-Tablet .sapMFCSbh.Auto,
-.sapMFCSbh.L, .sapMFCSbh.M {
+
+.sapMFCCTxt {
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+	color: @sapUiTileTextColor;
+
+	font-size: @sapMFontSmallSize;
+}
+
+.sapMFCSbh {
+	color: lighten(@sapUiTileTextColor, 20);
+	font-family: @sapUiFontFamily;
+	font-weight: normal;
+}
+
+.sapMFCCTxt > .sapMText,
+.sapMFCSbh {
 	font-size: @sapMFontMediumSize;
 }
 
-.sapMFCValue {
-	font-family: @sapUiFontHeaderFamily;
-	font-weight: @sapUiFontHeaderWeight;
-}
 
 .sapMFCValue.Neutral {
 	color: @sapUiChartNeutral;
@@ -32,7 +39,13 @@
 }
 
 .sap-desktop .sapMFC:focus {
-	outline-color: @sapUiFocus;
-	outline-style: dotted;
-	outline-width: 1px; /* Usage of px as aligned with designers. */
+	outline: 1px dotted @sapUiFocus; /* Usage of px as aligned with designers. */
+}
+
+/* BREAKPOINT FOR SMALL PHONES */
+@media screen and (max-width: 374px) {
+	.sapMFCCTxt > .sapMText,
+	.sapMFCSbh {
+		font-size: @sapMFontSmallSize;
+	}
 }

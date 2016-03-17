@@ -83,7 +83,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	 */
 	FeedContent.prototype.init = function() {
 		this._oContentText = new sap.m.Text(this.getId() + "-content-text", {
-			maxLines : 3
+			maxLines : 2
 		});
 		this._oContentText.cacheLineHeight = false;
 		this.setAggregation("contentTextAgr", this._oContentText);
