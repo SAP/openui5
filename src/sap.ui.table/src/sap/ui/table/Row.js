@@ -205,29 +205,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			oContext = oContext.context;
 		}
 
-		var $row = this.getDomRefs(false);
-		var oParent = this.getParent();
-		var iRowHeight;
-		if (oParent) {
-			iRowHeight = oParent.getRowHeight();
-		}
-
-		if ($row.rowScrollPart) {
-			if (iRowHeight) {
-				$row.rowScrollPart.style.height = iRowHeight + "px";
-			} else {
-				$row.rowScrollPart.style.height = "";
-			}
-		}
-
-		if ($row.rowFixedPart) {
-			if (iRowHeight) {
-				$row.rowFixedPart.style.height = iRowHeight + "px";
-			} else {
-				$row.rowFixedPart.style.height = "";
-			}
-		}
-
 		var $rowTargets = this.getDomRefs(true).row;
 		if (oContext) {
 			this._bHidden = false;
