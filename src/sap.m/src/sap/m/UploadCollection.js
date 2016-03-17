@@ -183,7 +183,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 		events : {
 			/**
-			 * The event is triggered when files are selected. Applications can set parameters and headerParameters which will be dispatched to the embedded FileUploader control.
+			 * The event is triggered when files are selected in the FileUploader dialog. Applications can set parameters and headerParameters which will be dispatched to the embedded FileUploader control.
 			 * Limitation: parameters and headerParameters are not supported by Internet Explorer 9.
 			 */
 			change : {
