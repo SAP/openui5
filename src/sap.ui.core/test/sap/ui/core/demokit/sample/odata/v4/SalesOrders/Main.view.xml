@@ -38,7 +38,8 @@
 					path : '/SalesOrderList',
 					parameters : {
 						'$expand' : 'SO_2_BP',
-						'$select' : 'BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID'
+						'$select' : 'BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID',
+						'$$updateGroupId' : 'SalesOrderListUpdateGroup'
 					},
 					events : {
 						dataReceived : '.onDataEvents',
@@ -55,6 +56,8 @@
 							type="Transparent"/>
 						<Button enabled="{ui>/bRealOData}" icon="sap-icon://refresh"
 							press="onRefreshSalesOrdersList"/>
+						<Button enabled="{ui>/bRealOData}" icon="sap-icon://save"
+							press="onSaveSalesOrderList" tooltip="Save sales orders"/>
 					</content>
 					<dependents>
 						<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
@@ -145,6 +148,7 @@
 				<content>
 					<Title level="H2" text="Sales Order Details" titleStyle="H2"/>
 					<Button icon="sap-icon://refresh" press="onRefreshSalesOrderDetails"/>
+					<Button icon="sap-icon://save" press="onSaveSalesOrder"/>
 				</content>
 			</Toolbar>
 			<form:SimpleForm layout="ResponsiveGridLayout">

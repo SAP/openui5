@@ -48,11 +48,12 @@ sap.ui.require([
 			oBoundContext = {},
 			oBinding = this.oModel.bindContext("foo", oContext);
 
-		this.mock(this.oModel).expects("resolve").withExactArgs("foo", sinon.match.same(oContext))
+		this.oSandbox.mock(this.oModel).expects("resolve")
+			.withExactArgs("foo", sinon.match.same(oContext))
 			.returns("/absolute");
-		this.mock(oBinding).expects("_fireChange")
+		this.oSandbox.mock(oBinding).expects("_fireChange")
 			.withExactArgs({reason : ChangeReason.Change});
-		this.mock(_Context).expects("create")
+		this.oSandbox.mock(_Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
 			.returns(oBoundContext);
 
@@ -64,9 +65,9 @@ sap.ui.require([
 	QUnit.test("initialize, unresolved path", function () {
 		var oBinding = this.oModel.bindContext("foo");
 
-		this.mock(this.oModel).expects("resolve")
+		this.oSandbox.mock(this.oModel).expects("resolve")
 			.returns(undefined /*relative path, no context*/);
-		this.mock(oBinding).expects("_fireChange").never();
+		this.oSandbox.mock(oBinding).expects("_fireChange").never();
 
 		oBinding.initialize();
 	});
@@ -161,6 +162,8 @@ sap.ui.require([
 				bAbsolute ? {"sap-client" : "111"} : undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 			assert.strictEqual(oBinding.sGroupId, undefined);
+			assert.strictEqual(oBinding.hasOwnProperty("sUpdateGroupId"), true);
+			assert.strictEqual(oBinding.sUpdateGroupId, undefined);
 		});
 	});
 
@@ -172,11 +175,11 @@ sap.ui.require([
 			mParameters = {"$expand" : "foo", "$select" : "bar", "custom" : "baz"},
 			mQueryOptions = {};
 
-		oHelperMock = this.mock(_ODataHelper);
+		oHelperMock = this.oSandbox.mock(_ODataHelper);
 		oHelperMock.expects("buildQueryOptions")
 			.withExactArgs(this.oModel.mUriParameters, mParameters, ["$expand", "$select"])
 			.returns(mQueryOptions);
-		this.mock(_Cache).expects("createSingle")
+		this.oSandbox.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES(ID='1')",
 				sinon.match.same(mQueryOptions));
 
@@ -345,15 +348,17 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("updateValue: absolute binding", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute", null, {$$groupId : "$direct"}),
+		var oBinding = this.oModel.bindContext("/absolute", null,
+				{$$groupId : "myGroup", $$updateGroupId : "myUpdateGroup"}),
 			sPath = "SO_2_SOITEM/42",
 			oResult = {};
 
 		this.oSandbox.mock(oBinding).expects("fireEvent").never();
 		this.oSandbox.mock(oBinding.oCache).expects("update")
-			.withExactArgs("$direct", "bar", Math.PI, "edit('URL')", sPath)
+			.withExactArgs("myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
 			.returns(Promise.resolve(oResult));
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup").withExactArgs("$direct");
+		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+			.withExactArgs("myUpdateGroup");
 
 		// code under test
 		return oBinding.updateValue("bar", Math.PI, "edit('URL')", sPath)
@@ -436,15 +441,33 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("$$groupId", function (assert) {
+	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
 		var oBinding,
+			oHelperMock = this.oSandbox.mock(_ODataHelper),
 			mParameters = {};
 
-		this.mock(_ODataHelper).expects("buildBindingParameters").withExactArgs(mParameters)
-			.returns({$$groupId : "foo"});
+		this.oSandbox.mock(this.oModel).expects("getGroupId").twice()
+			.withExactArgs().returns("baz");
 
+		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+			.returns({$$groupId : "foo", $$updateGroupId : "bar"});
+		// code under test
 		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
 		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
+
+		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters)
+			.returns({$$groupId : "foo"});
+		// code under test
+		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "foo");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "foo");
+
+		oHelperMock.expects("buildBindingParameters").withExactArgs(mParameters).returns({});
+		// code under test
+		oBinding = this.oModel.bindContext("/EMPLOYEES('4711')", undefined, mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "baz");
+		assert.strictEqual(oBinding.getUpdateGroupId(), "baz");
 
 		// buildBindingParameters not called for relative binding
 		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM");
@@ -453,18 +476,27 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getGroupId", function (assert) {
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
+			oBinding2 = this.oModel.bindContext("/absolute"),
+			oModelMock = this.oSandbox.mock(this.oModel),
 			oReadPromise = Promise.resolve();
 
 		this.oSandbox.mock(oBinding.oCache).expects("read")
 			.withExactArgs("$direct", "foo", sinon.match.func)
 			.callsArg(2)
 			.returns(oReadPromise);
-		this.oSandbox.mock(this.oModel).expects("addedRequestToGroup")
+		oModelMock.expects("addedRequestToGroup")
 			.withExactArgs("$direct", sinon.match.func)
+			.callsArg(1);
+		this.oSandbox.mock(oBinding2.oCache).expects("read")
+			.withExactArgs("$auto", "bar", sinon.match.func)
+			.callsArg(2)
+			.returns(oReadPromise);
+		oModelMock.expects("addedRequestToGroup")
+			.withExactArgs("$auto", sinon.match.func)
 			.callsArg(1);
 
 		// code under test
-		return oBinding.requestValue("foo");
+		return Promise.all([oBinding.requestValue("foo"), oBinding2.requestValue("bar")]);
 	});
 
 	//*********************************************************************************************

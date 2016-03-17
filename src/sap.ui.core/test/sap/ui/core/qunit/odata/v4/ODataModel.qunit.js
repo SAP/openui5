@@ -404,44 +404,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addedRequestToGroup", function (assert) {
-		var done = assert.async(),
-			sGroupId0 = "group0",
-			sGroupId1 = "group1",
-			sGroupId2 = "group2",
-			oModel = createModel(),
-			fnSpy1 = sinon.spy(),
-			fnSpy2 = sinon.spy(),
-			oSandbox = this.oSandbox,
-			oRequestorMock = oSandbox.mock(oModel.oRequestor);
-
-		oRequestorMock.expects("submitBatch").never();
-
-		// code under test
-		oModel.addedRequestToGroup(sGroupId0);
-		oModel.addedRequestToGroup(sGroupId1, function () {
-			oModel.addedRequestToGroup(sGroupId1, function () {
-				assert.ok(fnSpy1.called, "second callback for group1");
-				assert.ok(fnSpy2.called, "callback for group2");
-				done();
-			});
-
-			oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
-		});
-		oModel.addedRequestToGroup(sGroupId1, fnSpy1);
-		oModel.addedRequestToGroup(sGroupId1);
-		oModel.addedRequestToGroup(sGroupId2);
-		oModel.addedRequestToGroup(sGroupId2, fnSpy2);
-
-		// expect it afterwards so that we know that it has not been called synchronously
-		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId0);
-		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId1);
-		oRequestorMock.expects("submitBatch").withExactArgs(sGroupId2);
-
-		assert.ok(!fnSpy1.called && !fnSpy2.called, "not called synchronously");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("addedRequestToGroup with group ID '$direct'", function (assert) {
 		var bDataRequested = false,
 			oModel = createModel();
@@ -459,6 +421,89 @@ sap.ui.require([
 
 		assert.strictEqual(bDataRequested, true);
 		assert.strictEqual("$direct" in oModel.mCallbacksByGroupId, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addedRequestToGroup with group ID '$auto'", function (assert) {
+		var oModel = createModel(),
+			fnGroupSentCallback = function () {},
+			fnGroupSentCallback2 = function () {},
+			fnSubmitAuto = function () {};
+
+		this.oSandbox.mock(oModel._submitBatch).expects("bind")
+			.withExactArgs(sinon.match.same(oModel), "$auto")
+			.returns(fnSubmitAuto);
+		this.oSandbox.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			.withExactArgs(fnSubmitAuto);
+
+		// code under test
+		oModel.addedRequestToGroup("$auto");
+
+		assert.deepEqual(oModel.mCallbacksByGroupId["$auto"], []);
+
+		// code under test
+		oModel.addedRequestToGroup("$auto", fnGroupSentCallback);
+		oModel.addedRequestToGroup("$auto", fnGroupSentCallback2);
+
+		assert.deepEqual(oModel.mCallbacksByGroupId["$auto"],
+			[fnGroupSentCallback, fnGroupSentCallback2]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addedRequestToGroup with application group ID", function (assert) {
+		var oModel = createModel(),
+			fnGroupSentCallback = {},
+			fnGroupSentCallback2 = {};
+
+		this.oSandbox.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+
+		// code under test
+		oModel.addedRequestToGroup("groupId");
+
+		assert.deepEqual(oModel.mCallbacksByGroupId["groupId"], []);
+
+		// code under test
+		oModel.addedRequestToGroup("groupId", fnGroupSentCallback);
+		oModel.addedRequestToGroup("groupId", fnGroupSentCallback2);
+
+		assert.deepEqual(oModel.mCallbacksByGroupId["groupId"],
+			[fnGroupSentCallback, fnGroupSentCallback2]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch", function (assert) {
+		var fnCallback = sinon.spy(),
+			fnCallback2 = sinon.spy(),
+			oModel = createModel(),
+			oReturn,
+			oSubmitPromise = {};
+
+		this.oSandbox.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
+			.returns(oSubmitPromise);
+		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("groupId", true)
+			.returns(true);
+		oModel.mCallbacksByGroupId["groupId"] = [fnCallback, fnCallback2];
+
+		// code under test
+		oReturn = oModel.submitBatch("groupId");
+
+		assert.strictEqual(oReturn, oSubmitPromise);
+		assert.strictEqual(oModel.mCallbacksByGroupId["groupId"], undefined);
+		assert.ok(fnCallback.calledOnce);
+		assert.ok(fnCallback2.calledOnce);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch, invalid group ID", function (assert) {
+		var oModel = createModel();
+
+		this.oSandbox.mock(oModel).expects("_submitBatch").never();
+		this.oSandbox.mock(_ODataHelper).expects("checkGroupId").withExactArgs("$auto", true)
+			.returns(false);
+
+		assert.throws(function () {
+			oModel.submitBatch("$auto");
+		}, new Error("Unsupported group ID: $auto"));
 	});
 
 	//*********************************************************************************************
