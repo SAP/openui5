@@ -95,10 +95,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
 
-		var oAccExtension = this._getAccExtension();
-		oAccExtension.setReadOnly(true);
-		oAccExtension.setTreeMode(true);
-
 		this.addStyleClass("sapUiAnalyticalTable");
 
 		this.attachBrowserEvent("contextmenu", this._onContextMenu);

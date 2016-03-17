@@ -272,7 +272,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		});
 	};
 
-
 	//********************************************************************
 
 	/**
@@ -288,10 +287,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 	 * @alias sap.ui.table.TableAccExtension
 	 */
 	var TableAccExtension = BaseObject.extend("sap.ui.table.TableAccExtension", /* @lends sap.ui.table.TableAccExtension */ {
-		constructor : function(oTable) {
+		constructor : function(oTable, bReadOnly, bTreeMode, bHasTreeColumn) {
 			BaseObject.call(this);
 			this._table = oTable;
 			this._accMode = sap.ui.getCore().getConfiguration().getAccessibility();
+			this._readonly = bReadOnly;
+			this._treeMode = bTreeMode;
+			this._hasTreeColumn = bHasTreeColumn;
 
 			var that = this;
 
@@ -325,37 +327,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 		this._table = null;
 		this._readonly = false;
 		this._treeMode = false;
+		this._hasTreeColumn = false;
 		BaseObject.prototype.destroy.apply(this, arguments);
 	};
 
 	/**
 	 * @see sap.ui.base.Object#getInterface
 	 */
-	TableAccExtension.prototype.getInterface = function() {
-		return this;
-	};
+	TableAccExtension.prototype.getInterface = function() { return this; };
 
-	TableAccExtension.prototype.setReadOnly = function(bReadOnly) {
-		this._readonly = !!bReadOnly;
-	};
+	TableAccExtension.prototype.getAccMode = function() { return this._accMode; };
 
-	TableAccExtension.prototype.setTreeMode = function(bTreeMode) {
-		this._treeMode = !!bTreeMode;
-	};
+	TableAccExtension.prototype.getTable = function() { return this._table; };
 
-	TableAccExtension.prototype.getAccMode = function() {
-		return this._accMode;
-	};
-
-	TableAccExtension.prototype.getTable = function() {
-		return this._table;
-	};
-
-	TableAccExtension.prototype.getAccRenderExtension = function() {
-		return TableAccRenderExtension;
-	};
-
-	TableAccExtension.prototype.updateAriaStateOfColumn = function(oColumn) {
+	TableAccExtension.prototype.updateAriaStateOfColumn = function(oColumn, $Ref) {
 		if (!this._accMode) {
 			return;
 		}
@@ -366,10 +351,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			index: this.getTable().indexOfColumn(oColumn)
 		});
 
-		oColumn.$().attr({
+		$Ref = $Ref ? $Ref : oColumn.$();
+
+		$Ref.attr({
 			"aria-sort" : mAttributes["aria-sort"] || null,
 			"aria-labelledby" : mAttributes["aria-labelledby"] || null
 		});
+	};
+
+	TableAccExtension.prototype.updateAriaStateOfRow = function(oRow, $Ref, bIsSelected) {
+		if (!this._accMode) {
+			return;
+		}
+
+		if (!$Ref) {
+			$Ref = oRow.getDomRefs(true);
+		}
+
+		if ($Ref.row) {
+			$Ref.row.children("td").add($Ref.row).attr("aria-selected", bIsSelected ? "true" : null);
+		}
+	};
+
+	TableAccExtension.prototype.updateAriaExpandState = function(oRow, $Row, $Icon) {
+		if (!this._hasTreeColumn || !this._accMode) {
+			return;
+		}
+
+		var $FirstTd = $Row.children("td.sapUiTableTdFirst");
+		var oAttr = {
+			"aria-level" : null,
+			"aria-expanded" : null
+		};
+		var oBindingInfo = this.getTable().mBindingInfos["rows"];
+		if (oRow.getBindingContext(oBindingInfo && oBindingInfo.model)) { //see _getAriaAttributesFor(DATACELL)
+			oAttr["aria-level"] = oRow._iLevel + 1;
+			oAttr["aria-expanded"] = "" + oRow._bIsExpanded;
+		}
+		$FirstTd.attr(oAttr);
+		$Icon.attr(this._getAriaAttributesFor(this.getTable(), "TREEICON", {row: oRow}));
 	};
 
 	TableAccExtension.prototype.updateAccForCurrentCell = function(bOnCellFocus) {
@@ -470,6 +490,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 					mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
 				}
 				break;
+
 			case CELLTYPES.ROWHEADER:
 				mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
 				if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
@@ -479,6 +500,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 					mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
 				}
 				break;
+
 			case CELLTYPES.COLUMNHEADER:
 				var oColumn = mParams && mParams.column;
 				var bIsMainHeader = oColumn && oColumn.getId() === mParams.headerId;
@@ -499,6 +521,69 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 					mAttributes["aria-labelledby"].push(sTableId + "-ariacolfiltered");
 				}
 				break;
+
+			case CELLTYPES.DATACELL:
+				mAttributes["role"] = "gridcell";
+				if (mParams && typeof mParams.index === "number") {
+					mAttributes["headers"] = sTableId + "_col" + mParams.index;
+				}
+
+				var aLabels = [],
+					oColumn = mParams && mParams.column ? mParams.column : null;
+
+				if (oColumn) {
+					var aMultiLabels = oColumn.getMultiLabels();
+					var iMultiLabels = aMultiLabels.length;
+
+					// get IDs of column labels
+					if (oTable.getColumnHeaderVisible()) {
+						var sColumnId = oColumn.getId();
+						aLabels.push(sColumnId); // first column header has no suffix, just the column ID
+						if (iMultiLabels > 1) {
+							for (var i = 1; i < iMultiLabels; i++) {
+								aLabels.push(sColumnId + "_" + i); // for all other column header rows we add the suffix
+							}
+						}
+					} else {
+						// column header is not rendered therefore there is no <div> tag. Link aria description to label
+						var oLabel;
+						if (iMultiLabels == 0) {
+							oLabel = oColumn.getLabel();
+							if (oLabel) {
+								aLabels.push(oLabel.getId());
+							}
+						} else {
+							for (var i = 0; i < iMultiLabels; i++) {
+								// for all other column header rows we add the suffix
+								oLabel = aMultiLabels[i];
+								if (oLabel) {
+									aLabels.push(oLabel.getId());
+								}
+							}
+						}
+					}
+
+					if (mParams && mParams.fixed) {
+						aLabels.push(sTableId + "-ariafixedcolumn");
+					}
+				}
+
+				mAttributes["aria-labelledby"] = aLabels;
+
+				/*if (oTable.getSelectionMode() !== sap.ui.table.SelectionMode.None) {
+					mAttributes["aria-selected"] = "false";
+				}*/
+
+				// Handle expand state for first Column in TreeTable
+				if (this._hasTreeColumn && mParams && mParams.firstCol && mParams.row) {
+					var oBindingInfo = oTable.mBindingInfos["rows"];
+					if (mParams.row.getBindingContext(oBindingInfo && oBindingInfo.model)) {
+						mAttributes["aria-level"] = mParams.row._iLevel + 1;
+						mAttributes["aria-expanded"] = "" + mParams.row._bIsExpanded;
+					}
+				}
+				break;
+
 			case "ROOT": //The tables root dom element
 				//TBD: Taken directly from TableRenderer, Clarify whether all this is really necessary on the root element
 				mAttributes["aria-readonly"] = "true";
@@ -517,9 +602,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 				aAriaOwns.push(oTable.getId() + "-table");
 				mAttributes["aria-owns"] = aAriaOwns;
 				break;
+
 			case "TABLE": //The "real" table element(s)
 				mAttributes["role"] = this._treeMode ? "treegrid" : "grid";
 				break;
+
+			case "TABLEHEADER": //The table header area
+				mAttributes["role"] = "heading";
+				break;
+
+			case "COLUMNHEADER_ROW": //The area which contains the column headers (CELLTYPES.COLUMNHEADER)
+				if (oTable.getSelectionMode() === sap.ui.table.SelectionMode.None ||
+						 oTable.getSelectionBehavior() === sap.ui.table.SelectionBehavior.RowOnly) {
+					mAttributes["role"] = "row";
+				}
+				break;
+
 			case "TH": //The "technical" column headers
 				mAttributes["role"] = "columnheader";
 				mAttributes["scope"] = "col";
@@ -528,6 +626,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 					mAttributes["aria-labelledby"] = mParams.column.getId();
 				}
 				break;
+
 			case "ROWHEADER_TD": //The "technical" row headers
 				mAttributes["role"] = "rowheader";
 				mAttributes["headers"] = oTable.getId() + "-colsel";
@@ -539,6 +638,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 					mAttributes["aria-selected"] = "" + bSelected;
 				}
 				break;
+
 			case "TR": //The rows
 				mAttributes["role"] = "row";
 				var bSelected = false;
@@ -549,6 +649,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 				if (oTable._getSelectOnCellsAllowed()) {
 					var mTooltipTexts = this.getAriaTextsForSelectionMode(true);
 					mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
+				}
+				break;
+
+			case "TREEICON": //The expand/collapse icon in the TreeTable
+				if (this._hasTreeColumn) {
+					mAttributes = {
+						"aria-label" : "",
+						"title" : "",
+						"role" : ""
+					};
+					if (oTable.getBinding("rows")) {
+						mAttributes["role"] = "button";
+						if (mParams && mParams.row) {
+							if (mParams.row._bHasChildren) {
+								mAttributes["title"] = oTable._oResBundle.getText(mParams.row._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
+							} else {
+								mAttributes["aria-label"] = oTable._oResBundle.getText("TBL_LEAF");
+							}
+						}
+					}
 				}
 				break;
 		}
@@ -572,8 +692,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			oCell = oRow && oRow.getCells()[iCol],
 			oInfo = null,
 			bHidden = $Cell.parent().hasClass("sapUiTableRowHidden"),
-			bIsTreeColumnCell = this._treeMode && oTable._getTreeIconAttributes && $Cell.hasClass("sapUiTableTdFirst"), //TreeTable
-			aDefaultLabels = this.getAccRenderExtension().getCellLabels(oTable, oColumn, iCol < oTable.getFixedColumnCount(), false) || [],
+			bIsTreeColumnCell = this._hasTreeColumn && $Cell.hasClass("sapUiTableTdFirst"), //TreeTable
+			aDefaultLabels = this._getAriaAttributesFor(oTable, "DATACELL", {
+				index: iCol,
+				column: oColumn,
+				fixed: iCol < oTable.getFixedColumnCount()
+			})["aria-labelledby"] || [],
 			aDescriptions = [],
 			aLabels = [oTable.getId() + "-rownumberofrows", oTable.getId() + "-colnumberofcols"].concat(aDefaultLabels);
 
@@ -605,7 +729,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 
 		var sText = oInfo ? oInfo.text : " ";
 		if (bIsTreeColumnCell && !bHidden) {
-			var oAttributes = oTable._getTreeIconAttributes(oRow);
+			var oAttributes = this._getAriaAttributesFor(oTable, "TREEICON", {row: oRow});
 			if (oAttributes && oAttributes["aria-label"]) {
 				sText = oAttributes["aria-label"] + " " + sText;
 			}
@@ -668,7 +792,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			var sRowHeaderId = oTable.getId() + "-rows-row" + iRow + "-groupHeader";
 			var sSumId = oTable.getId() + "-rows-row" + iRow + "-col" + iCol + "-ariaTextForSum";
 			var sLabelId = jQuery.sap.domById(sSumId) ? sSumId : sRowHeaderId;
-			var sCellLabels = this.getAccRenderExtension().getCellLabels(oTable, oColumn, iCol < oTable.getFixedColumnCount(), true) || "";
+			//var sCellLabels = this.getAccRenderExtension().getCellLabels(oTable, oColumn, iCol < oTable.getFixedColumnCount(), true) || "";
 
 			this._cleanupInfo = {
 				cell: $Cell,
@@ -685,6 +809,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableAccRenderExten
 			_updateRowColCount(this);
 		}
 	};*/
+
+	TableAccExtension.enrich = function(oTable) {
+		var oExtension;
+
+		function _isInstanceOf(oControl, sType) {
+			var oType = sap.ui.require(sType);
+			return oType && (oControl instanceof oType);
+		}
+
+		if (_isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
+			oExtension = new TableAccExtension(oTable, false, true, true);
+		} else if (_isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
+			oExtension = new TableAccExtension(oTable, true, true, false);
+		} else {
+			oExtension = new TableAccExtension(oTable, false, false, false);
+		}
+
+		oTable._getAccExtension = function(){ return oExtension; };
+		oTable._getAccRenderExtension = function(){ return TableAccRenderExtension; };
+	};
 
 	return TableAccExtension;
 

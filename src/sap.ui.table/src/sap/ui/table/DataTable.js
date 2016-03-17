@@ -754,6 +754,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						sSort = oColumn.getSortOrder() === sap.ui.table.SortOrder.Ascending ? "ascending" : "descending";
 					}
 					oColumn.$().attr({"aria-sort" : sSort});
+				},
+				updateAriaStateOfRow: function(oRow, $Ref, bIsSelected) {
+					var $DomRefs = oRow.getDomRefs(true);
+					if ($DomRefs.row) {
+						$DomRefs.row.children("td").add($DomRefs.row).attr("aria-selected", bIsSelected.toString());
+					}
 				}
 			};
 		};

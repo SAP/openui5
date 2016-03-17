@@ -610,8 +610,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// create an information object which contains always required infos
 		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
-		this._oAccExtension = new TableAccExtension(this);
-		this._bAccMode = this._oAccExtension.getAccMode();
+
+		TableAccExtension.enrich(this);
 
 		this._bBindingLengthChanged = false;
 		this._mTimeouts = {};
@@ -724,7 +724,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			this._oPaginator.destroy();
 		}
 
-		this._oAccExtension.destroy();
+		this._getAccExtension().destroy();
 
 		this._resetRowTemplate();
 
@@ -733,14 +733,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// cleanup
 		this._cleanUpTimers();
 		this._detachEvents();
-	};
-
-	Table.prototype._getAccExtension = function(){
-		return this._oAccExtension;
-	};
-
-	Table.prototype._getAccRenderExtension = function(){
-		return this._getAccExtension().getAccRenderExtension();
 	};
 
 	/**
@@ -4310,7 +4302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		// set the width of the column (when not cancelled)
 		if (bExecuteDefault) {
 			oColumn.setProperty("width", sWidth, true);
-			this.$().find('th[aria-owns="' + oColumn.getId() + '"]').css('width', sWidth);
+			this.$().find('th[data-sap-ui-colid="' + oColumn.getId() + '"]').css('width', sWidth);
 		}
 
 		return bExecuteDefault;
@@ -6774,10 +6766,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	Table.prototype._setLargeDataScrolling = function(bLargeDataScrolling) {
 		this._bLargeDataScrolling = !!bLargeDataScrolling;
-	};
-
-	Table.prototype._getFirstColumnAttributes = function(oRow) {
-		return {};
 	};
 
 	return Table;
