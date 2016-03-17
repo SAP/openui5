@@ -147,8 +147,10 @@
 					<Button icon="sap-icon://refresh" press="onRefreshSalesOrderDetails"/>
 				</content>
 			</Toolbar>
-			<form:SimpleForm id="SalesOrderForm" layout="ResponsiveGridLayout">
-				<form:content>
+			<form:SimpleForm layout="ResponsiveGridLayout">
+				<form:SimpleForm backgroundDesign="Transparent" labelSpanM="4"
+					layout="ResponsiveGridLayout">
+					<core:Title text="Sales Order"/>
 					<Label text="Sales Order ID" />
 					<Text text="{SalesOrderID}" />
 					<Label text="Created At" />
@@ -159,7 +161,17 @@
 					<Text text="{LifecycleStatusDesc}" />
 					<Label text="Note" />
 					<Text text="{Note}" />
-				</form:content>
+				</form:SimpleForm>
+				<form:SimpleForm backgroundDesign="Transparent" binding="{SO_2_BP}"
+					labelSpanM="4" layout="ResponsiveGridLayout">
+					<core:Title text="Business Partner"/>
+					<Label text="Business Partner ID" />
+					<Text text="{BusinessPartnerID}" />
+					<Label text="CompanyName" />
+					<Text text="{CompanyName}" />
+					<Label text="PhoneNumber" />
+					<Text text="{PhoneNumber}" />
+				</form:SimpleForm>
 			</form:SimpleForm>
 			<Table id="SalesOrderLineItems" headerText="Sales Order Line Items"
 				items="{SO_2_SOITEM}" mode="SingleSelectMaster"
