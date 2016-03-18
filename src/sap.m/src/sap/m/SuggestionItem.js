@@ -80,6 +80,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/ui/cor
 		var icon = oItem.getIcon();
 		var separator = "";
 		var description = oItem.getDescription();
+		var parent = oItem.getParent();
+		var items = parent && parent.getSuggestionItems && parent.getSuggestionItems() || [];
+		var index = items.indexOf(oItem);
 		sSearch = sSearch || "";
 
 		rm.write("<li");
@@ -88,9 +91,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/ui/cor
 		rm.addClass("sapMSelectListItem");
 		rm.addClass("sapMSelectListItemBase");
 		rm.addClass("sapMSelectListItemBaseHoverable");
+
+		rm.writeAttribute("role", "option");
+		rm.writeAttribute("aria-posinset", index + 1);
+		rm.writeAttribute("aria-setsize", items.length);
 		if (bSelected) {
 			rm.addClass("sapMSelectListItemBaseSelected");
 			rm.writeAttribute("aria-selected", "true");
+			if (parent) {
+				parent.$("I").attr("aria-activedecendant", oItem.getId());
+			}
 		}
 		rm.writeClasses();
 		rm.write(">");
