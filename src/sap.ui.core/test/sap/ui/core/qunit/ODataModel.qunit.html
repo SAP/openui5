@@ -1621,6 +1621,85 @@
 			}.bind(this));
 		}.bind(this));
 	});
+
+
+
+	module("Annotation Loading", {
+		setup: function() {},
+		teardown: function() {}
+	});
+
+
+	asyncTest("Synchronous loading: Annotation Events", function() {
+		expect(6);
+
+		new Promise(function(fnResolve, fnReject) {
+			var bAnnotationsFailed = false;
+
+			var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+				skipMetadataAnnotationParsing: true,
+				annotationURI: "/invalid/annotation/url"
+			});
+
+			oModel.attachMetadataLoaded(function() {
+				ok(bAnnotationsFailed, "Annotations failed event was fired before metadata loaded event");
+				ok(true, "Metadata loaded successfully");
+
+
+				oModel.destroy();
+				fnResolve();
+			});
+
+			oModel.attachMetadataFailed(function() {
+				ok(false, "Metadata should have been loaded");
+			});
+
+			oModel.attachAnnotationsLoaded(function() {
+				ok(false, "Annotations should have failed");
+			});
+
+			oModel.attachAnnotationsFailed(function() {
+				ok(true, "Annotations failed and event was fired asynchronously");
+				bAnnotationsFailed = true;
+			});
+
+		}).then(function() {
+			var bAnnotationsLoaded = false;
+
+			var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+				skipMetadataAnnotationParsing: true,
+				annotationURI: "testdata/annotations/annotations01.xml"
+			});
+
+
+			oModel.attachMetadataLoaded(function() {
+				ok(bAnnotationsLoaded, "Annotations loaded event was fired before metadata loaded event");
+				ok(true, "Metadata loaded successfully");
+
+
+				oModel.destroy();
+				start();
+			});
+
+			oModel.attachMetadataFailed(function() {
+				ok(false, "Metadata should have been loaded");
+			});
+
+			oModel.attachAnnotationsLoaded(function() {
+				ok(true, "Annotations loaded event was fired asynchronously");
+				bAnnotationsLoaded = true;
+			});
+
+			oModel.attachAnnotationsFailed(function() {
+				ok(false, "Annotations should have loaded");
+			});
+
+		});
+
+
+	});
+
+
 	</script>
 
 </head>
