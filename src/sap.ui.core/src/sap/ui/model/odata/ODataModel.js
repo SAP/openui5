@@ -337,12 +337,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			}
 		};
 
-		if (this.bLoadMetadataAsync && this.sAnnotationURI && this.bLoadAnnotationsJoined) {
+		if (this.sAnnotationURI && this.bLoadAnnotationsJoined) {
 			// In case of joined loading, wait for the annotations before firing the event
 			// This is also tested in the fireMetadataLoaded-method and no event is fired in case
 			// of joined loading.
-			if (this.oAnnotations && this.oAnnotations.bInitialized) {
-				doFire();
+			if (this.oAnnotations && (this.oAnnotations.bInitialized || this.oAnnotations.isFailed())) {
+				doFire(!this.bLoadMetadataAsync);
 			} else {
 				this.oAnnotations.attachEventOnce("loaded", function() {
 					doFire(true);
@@ -365,7 +365,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @protected
 	 */
 	ODataModel.prototype.fireAnnotationsLoaded = function(mArguments) {
-		this.fireEvent("annotationsLoaded", mArguments);
+		if (!this.bLoadMetadataAsync) {
+			setTimeout(this.fireEvent.bind(this, "annotationsLoaded", mArguments), 0);
+		} else {
+			this.fireEvent("annotationsLoaded", mArguments);
+		}
 		return this;
 	};
 
@@ -418,7 +422,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @protected
 	 */
 	ODataModel.prototype.fireAnnotationsFailed = function(mArguments) {
-		this.fireEvent("annotationsFailed", mArguments);
+		if (!this.bLoadMetadataAsync) {
+			setTimeout(this.fireEvent.bind(this, "annotationsFailed", mArguments), 0);
+		} else {
+			this.fireEvent("annotationsFailed", mArguments);
+		}
 		jQuery.sap.log.debug("ODataModel fired annotationsfailed");
 		return this;
 	};
