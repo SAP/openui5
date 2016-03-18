@@ -5,9 +5,10 @@ sap.ui.define([
 		'sap/m/Dialog',
 		'sap/m/MessageBox',
 		'sap/ui/core/format/DateFormat',
+		'sap/ui/core/Item',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function (Dialog, MessageBox, DateFormat, Controller, JSONModel) {
+	], function (Dialog, MessageBox, DateFormat, Item, Controller, JSONModel) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"});
@@ -27,9 +28,18 @@ sap.ui.define([
 		},
 
 		onCreateSalesOrderDialog : function (oEvent) {
-			var oCreateSalesOrderDialog = this.getView().byId("createSalesOrderDialog");
+			var oView = this.getView(),
+				oBuyerIdInput = oView.byId("BuyerID"),
+				oCreateSalesOrderDialog = oView.byId("createSalesOrderDialog");
 
 			oCreateSalesOrderDialog.setModel(new JSONModel({}), "new");
+			if (!oBuyerIdInput.getBinding("suggestionItems")) {
+				oBuyerIdInput.bindAggregation("suggestionItems", {
+					path : '/BusinessPartnerList',
+					parameters : {'$$groupId' : '$direct'},
+					template : new Item({text : "{BusinessPartnerID}"})
+				});
+			}
 			oCreateSalesOrderDialog.open();
 		},
 

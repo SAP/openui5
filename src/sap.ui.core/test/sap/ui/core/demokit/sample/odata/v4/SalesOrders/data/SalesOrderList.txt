@@ -1,0 +1,23 @@
+--809A185964CC4BAFEA5DDDD8683903A50
+Content-Type: application/http
+Content-Length: 203
+content-transfer-encoding: binary
+
+HTTP/1.1 200 OK
+Content-Type: application/json;odata.metadata=minimal
+Content-Length: 89
+odata-version: 4.0
+
+{"@odata.context":"../$metadata#ProductList('HT-1000')/Name","value":"Notebook Basic 15"}
+--809A185964CC4BAFEA5DDDD8683903A50
+Content-Type: application/http
+Content-Length: 3640
+content-transfer-encoding: binary
+
+HTTP/1.1 200 OK
+Content-Type: application/json;odata.metadata=minimal
+Content-Length: 3524
+odata-version: 4.0
+
+{"@odata.context":"$metadata#SalesOrderList(SalesOrderID,BuyerName,GrossAmount,CurrencyCode)","value":[{"SalesOrderID":"0500000000","BuyerName":"SAP","GrossAmount":25867.03,"CurrencyCode":"EUR","SO_2_BP":{"@odata.etag":"W/\"20160311103929.0000000\"","BusinessPartnerID":"0100000000","BusinessPartnerRole":"01","CompanyName":"SAP","WebAddress":"http://www.sap.com","EmailAddress":"do.not.reply@sap.com","PhoneNumber":"0622734567","FaxNumber":"0622734004","LegalForm":"SE","CurrencyCode":"EUR","CreatedAt":"2016-03-11T10:39:29Z","ChangedAt":"2016-03-11T10:39:29Z","Address":{"City":"Walldorf","PostalCode":"69190","Street":"Dietmar-Hopp-Allee","Building":"16","Country":"DE","AddressType":"02","GeoLocation":{"Longitude":8.641701933686,"Latitude":49.293673600000}}}},{"SalesOrderID":"0500000001","BuyerName":"DelBont Industries","GrossAmount":14602.49,"CurrencyCode":"EUR","SO_2_BP":{"@odata.etag":"W/\"20160311103929.0000000\"","BusinessPartnerID":"0100000002","BusinessPartnerRole":"01","CompanyName":"DelBont Industries","WebAddress":"http://www.delbont.com","EmailAddress":"maria.brown@delbont.com","PhoneNumber":"3023352668","FaxNumber":"3023352004","LegalForm":"Ltd.","CurrencyCode":"USD","CreatedAt":"2016-03-11T10:39:29Z","ChangedAt":"2016-03-11T10:39:29Z","Address":{"City":"Wilmington, Delaware","PostalCode":"19899","Street":"1 2345 King Street","Building":"1","Country":"US","AddressType":"02","GeoLocation":{"Longitude":-75.546589000000,"Latitude":39.745946800000}}}},{"SalesOrderID":"0500000002","BuyerName":"TECUM","GrossAmount":5631.08,"CurrencyCode":"EUR","SO_2_BP":{"@odata.etag":"W/\"20160311103929.0000000\"","BusinessPartnerID":"0100000005","BusinessPartnerRole":"01","CompanyName":"TECUM","WebAddress":"http://www.tecum-ag.de","EmailAddress":"bart.koenig@tecum-ag.de","PhoneNumber":"2511415","FaxNumber":"2511004","LegalForm":"AG","CurrencyCode":"EUR","CreatedAt":"2016-03-11T10:39:29Z","ChangedAt":"2016-03-11T10:39:29Z","Address":{"City":"MÃ¼nster","PostalCode":"48155","Street":"Albersloher Weg","Building":"24","Country":"DE","AddressType":"02","GeoLocation":{"Longitude":7.651731300000,"Latitude":51.940081800000}}}},{"SalesOrderID":"0500000003","BuyerName":"Asia High tech","GrossAmount":1704.04,"CurrencyCode":"EUR","SO_2_BP":{"@odata.etag":"W/\"20160311103929.0000000\"","BusinessPartnerID":"0100000006","BusinessPartnerRole":"01","CompanyName":"Asia High tech","WebAddress":"http://www.asia-ht.com","EmailAddress":"yoko.nakamura@asia-ht.com","PhoneNumber":"9078563412","FaxNumber":"9078563004","LegalForm":"Inc.","CurrencyCode":"JPY","CreatedAt":"2016-03-11T10:39:29Z","ChangedAt":"2016-03-11T10:39:29Z","Address":{"City":"Tokyo","PostalCode":"100-0004","Street":"1-7-2 Otemachi","Building":"1","Country":"JP","AddressType":"02","GeoLocation":{"Longitude":139.763682287452,"Latitude":35.693347450000}}}},{"SalesOrderID":"0500000004","BuyerName":"Asia High tech","GrossAmount":761.24,"CurrencyCode":"EUR","SO_2_BP":{"@odata.etag":"W/\"20160311103929.0000000\"","BusinessPartnerID":"0100000006","BusinessPartnerRole":"01","CompanyName":"Asia High tech","WebAddress":"http://www.asia-ht.com","EmailAddress":"yoko.nakamura@asia-ht.com","PhoneNumber":"9078563412","FaxNumber":"9078563004","LegalForm":"Inc.","CurrencyCode":"JPY","CreatedAt":"2016-03-11T10:39:29Z","ChangedAt":"2016-03-11T10:39:29Z","Address":{"City":"Tokyo","PostalCode":"100-0004","Street":"1-7-2 Otemachi","Building":"1","Country":"JP","AddressType":"02","GeoLocation":{"Longitude":139.763682287452,"Latitude":35.693347450000}}}}]}
+--809A185964CC4BAFEA5DDDD8683903A50--

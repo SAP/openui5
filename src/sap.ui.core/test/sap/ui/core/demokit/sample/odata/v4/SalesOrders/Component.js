@@ -50,9 +50,10 @@ sap.ui.define([
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
 					"$metadata" : {source : "metadata.xml" },
+					"BusinessPartnerList?$skip=0&$top=100" : {source : "BusinessPartnerList.json"},
 					"$batch" : {
 						"SalesOrderList\?$expand=SO_2_BP\&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=0&$top=5" : {
-							source : "SalesOrderAndBusinessPartnerList.txt"
+							source : "SalesOrderList.txt"
 						},
 						"SalesOrderList?$expand=SO_2_BP&$select=SalesOrderID,BuyerName,GrossAmount,CurrencyCode&$skip=5&$top=5" : {
 							source : "SalesOrderListNoMoreData.txt"

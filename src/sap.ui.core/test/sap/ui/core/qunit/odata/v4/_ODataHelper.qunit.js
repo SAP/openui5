@@ -116,6 +116,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("buildQueryOptions with $$ options", function (assert) {
+		assert.deepEqual(_ODataHelper.buildQueryOptions({}, {$$groupId : "$direct"}), {});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
 		var oExpand = {"foo" : true},
 			oParserMock = this.mock(_Parser),
@@ -172,5 +177,23 @@ sap.ui.require([
 				_ODataHelper.buildQueryOptions(o.mModelOptions, o.mOptions, o.allowed);
 			}, new Error(o.error));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildBindingParameters", function (assert) {
+		assert.deepEqual(_ODataHelper.buildBindingParameters(undefined), {});
+		assert.deepEqual(_ODataHelper.buildBindingParameters({}), {});
+		assert.deepEqual(_ODataHelper.buildBindingParameters({$$groupId : "$auto"}),
+			{$$groupId : "$auto"});
+		assert.deepEqual(_ODataHelper.buildBindingParameters(
+			{$$groupId : "$direct", custom : "foo"}), {$$groupId : "$direct"});
+
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$unsupported : "foo"});
+		}, new Error("Unsupported binding parameter: $$unsupported"));
+
+		assert.throws(function () {
+			_ODataHelper.buildBindingParameters({$$groupId : "invalid"});
+		}, new Error("Unsupported value 'invalid' for binding parameter '$$groupId'"));
 	});
 });

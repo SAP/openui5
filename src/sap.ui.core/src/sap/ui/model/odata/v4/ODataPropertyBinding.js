@@ -32,13 +32,18 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of OData query options where only "5.2 Custom Query Options" are allowed (see
-	 *   specification "OData Version 4.0 Part 2: URL Conventions"), except for those with a name
-	 *   starting with "sap-". All other query options lead to an error.
-	 *   Query options specified for the binding overwrite model query options.
-	 *   Note: Query options may only be provided for absolute binding paths as only those
+	 *   Map of binding parameters which can be OData query options as specified in
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
+	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
-	 * @throws {Error} When disallowed OData query options are provided
+	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
+	 *   "sap-". All other query options lead to an error.
+	 *   Query options specified for the binding overwrite model query options.
+	 * @param {string} [mParameters.$$groupId]
+	 *   The batch group ID to be used for requests triggered by this binding; if not specified,
+	 *   the model's default group is used, see
+	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}.
+	 * @throws {Error} When disallowed binding parameters are provided
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataPropertyBinding
 	 * @author SAP SE
@@ -46,7 +51,7 @@ sap.ui.define([
 	 *   An event handler can only be attached to this binding for the following events: 'change',
 	 *   'dataReceived', and 'dataRequested'.
 	 *   For other events, an error is thrown.
-	 * @extends sap.ui.model.ContextBinding
+	 * @extends sap.ui.model.PropertyBinding
 	 * @public
 	 * @version ${version}
 	 */
@@ -58,12 +63,15 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 				this.oCache = undefined;
+				this.sGroupId = undefined;
 				if (!this.isRelative()) {
 					this.oCache = _Cache.createSingle(oModel.oRequestor, sPath.slice(1),
 						_ODataHelper.buildQueryOptions(oModel.mUriParameters, mParameters), true);
+					this.sGroupId = _ODataHelper.buildBindingParameters(mParameters).$$groupId;
 				} else if (mParameters) {
 					throw new Error("Bindings with a relative path do not support parameters");
 				}
+
 				this.bRequestTypeFailed = false;
 				this.vValue = undefined;
 			},
@@ -204,7 +212,7 @@ sap.ui.define([
 		if (this.isRelative()) {
 			oReadPromise = this.oContext.requestValue(this.sPath);
 		} else {
-			sGroupId = this.oModel.getGroupId();
+			sGroupId = this.getGroupId();
 			oReadPromise = this.oCache.read(sGroupId, /*sPath*/undefined, function () {
 				bDataRequested = true;
 				that.oModel.addedRequestToGroup(sGroupId, that.fireDataRequested.bind(that));
@@ -241,6 +249,18 @@ sap.ui.define([
 				that.fireDataReceived(mParametersForDataReceived);
 			}
 		});
+	};
+
+	/**
+	 * Returns the batch group ID of the binding that has to be used for read requests.
+	 *
+	 * @returns {string}
+	 *   The group ID
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.getGroupId = function() {
+		return this.sGroupId || this.oModel.getGroupId();
 	};
 
 	/**
@@ -365,7 +385,7 @@ sap.ui.define([
 			var sEtag = aValues[0],
 				sEditUrl = aValues[1].slice(1);
 
-			sGroupId = that.oModel.getGroupId();
+			sGroupId = that.getGroupId();
 			that.oModel.oRequestor.request("PATCH", sEditUrl, sGroupId, {"If-Match" : sEtag},
 				oBody);
 			that.oModel.addedRequestToGroup(sGroupId);

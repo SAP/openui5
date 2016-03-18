@@ -94,7 +94,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("bindList with parameters", function (assert) {
+	QUnit.test("bindList with OData query options", function (assert) {
 		var oBinding,
 			oContext = {},
 			oError = new Error("Unsupported ..."),
@@ -125,6 +125,8 @@ sap.ui.require([
 		oBinding = this.oModel.bindList("EMPLOYEE_2_TEAM");
 		assert.strictEqual(oBinding.hasOwnProperty("oCache"), true, "oCache property is set");
 		assert.strictEqual(oBinding.oCache, undefined, "oCache property is undefined");
+		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
+		assert.strictEqual(oBinding.sGroupId, undefined);
 
 		//error for invalid parameters
 		oHelperMock.expects("buildQueryOptions").throws(oError);
@@ -191,18 +193,16 @@ sap.ui.require([
 			}
 
 			if (iEntityCount < iLength) {
-				this.oSandbox.mock(this.oModel).expects("getGroupId").twice().withExactArgs()
-					.returns("groupId");
 				oCacheMock.expects("read")
-					.withExactArgs(iStartIndex, iLength, "groupId", undefined, sinon.match.func)
+					.withExactArgs(iStartIndex, iLength, "$direct", undefined, sinon.match.func)
+					.callsArg(4)
 					// read is called twice because contexts are created asynchronously
 					.twice()
 					.returns(oPromise);
 			} else {
-				this.oSandbox.mock(this.oModel).expects("getGroupId").withExactArgs()
-					.returns("groupId");
 				oCacheMock.expects("read")
-					.withExactArgs(iStartIndex, iLength, "groupId", undefined, sinon.match.func)
+					.withExactArgs(iStartIndex, iLength, "$direct", undefined, sinon.match.func)
+					.callsArg(4)
 					.returns(oPromise);
 			}
 			// spies to check and document calls to model and binding methods from ManagedObject
@@ -212,13 +212,14 @@ sap.ui.require([
 
 			// code under test
 			oControl.bindAggregation("items", jQuery.extend({
+				parameters : {$$groupId : "$direct"}, //TODO test with application group 'groupId'
 				path : "/EMPLOYEES",
 				template : new TestControl()
 			}, oRange));
 
 			// check v4.ODataModel APIs are called as expected from ManagedObject
 			checkCall(this.oModel.bindList, "/EMPLOYEES", undefined, undefined, undefined,
-				undefined);
+				{$$groupId : "$direct"});
 			checkCall(ODataListBinding.prototype.initialize);
 			checkCall(ODataListBinding.prototype.getContexts, oRange.startIndex, oRange.length);
 
@@ -259,7 +260,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.aContexts.length, 0, "reset context");
 		}
 
-		this.oSandbox.mock(this.oModel).expects("getGroupId").never();
+		this.oSandbox.mock(ODataListBinding.prototype).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
 		that.oSandbox.mock(oControl.getObjectBinding()).expects("requestValue")
 			.withExactArgs(sPath, undefined)
@@ -369,6 +370,7 @@ sap.ui.require([
 			if (bSync && iRangeIndex < oFixture.length - 1) {
 				oCacheMock.expects("read")
 					.withExactArgs(iStart, iLength, "$auto", undefined, sinon.match.func)
+					.callsArg(4)
 					.returns(createResult(iLength));
 			}
 
@@ -477,9 +479,12 @@ sap.ui.require([
 				oListBinding,
 				oPromise = createResult(oFixture.result);
 
-			this.getCacheMock().expects("read").withArgs(oFixture.start, 30)
+			this.getCacheMock().expects("read")
+				.withExactArgs(oFixture.start, 30, "$direct", undefined, sinon.match.func)
+				.callsArg(4)
 				.returns(oPromise);
-			oListBinding = this.oModel.bindList("/EMPLOYEES", oContext);
+			oListBinding = this.oModel.bindList("/EMPLOYEES", oContext, undefined, undefined,
+				{$$groupId : "$direct"});
 			this.oSandbox.mock(oListBinding).expects("_fireChange")
 				.exactly(oFixture.changeEvent === false ? 0 : 1)
 				.withExactArgs({reason : ChangeReason.Change});
@@ -516,9 +521,12 @@ sap.ui.require([
 				oReadPromise2 = Promise.resolve(createResult(oFixture.result));
 
 			oCacheMock.expects("read")
-				.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise1);
+				.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
+				.callsArg(4)
+				.returns(oReadPromise1);
 			oCacheMock.expects("read")
 				.withExactArgs(oFixture.start, 30, "$auto", undefined, sinon.match.func)
+				.callsArg(4)
 				.returns(oReadPromise2);
 
 			oListBinding.getContexts(20, 30); // creates cache
@@ -552,13 +560,19 @@ sap.ui.require([
 
 		// 1. read and get [20..50) -> estimated length 60
 		oCacheMock.expects("read")
-			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise1);
+			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise1);
 		// 2. read and get [0..30) -> length still 60
 		oCacheMock.expects("read")
-			.withExactArgs(0, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise2);
+			.withExactArgs(0, 30, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise2);
 		// 3. read [50..80) get no entries -> length is now final 50
 		oCacheMock.expects("read")
-			.withExactArgs(50, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise3);
+			.withExactArgs(50, 30, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise3);
 
 		oListBinding.getContexts(20, 30);
 
@@ -592,13 +606,19 @@ sap.ui.require([
 
 		// 1. read [20..50) and get [20..35) -> final length 35
 		oCacheMock.expects("read")
-			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise1);
+			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise1);
 		// 2. read [30..60) and get no entries -> estimated length 10 (after lower boundary reset)
 		oCacheMock.expects("read")
-			.withExactArgs(30, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise2);
+			.withExactArgs(30, 30, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise2);
 		// 3. read [35..65) and get no entries -> estimated length still 10
 		oCacheMock.expects("read")
-			.withExactArgs(35, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise3);
+			.withExactArgs(35, 30, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise3);
 
 		oListBinding.getContexts(20, 30);
 
@@ -635,13 +655,19 @@ sap.ui.require([
 
 		// 1. read [20..50) and get [20..35) -> final length 35
 		oCacheMock.expects("read")
-			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise1);
+			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise1);
 		// 2. read [20..50) and get [20..34) -> final length 34
 		oCacheMock.expects("read")
-			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise2);
+			.withExactArgs(20, 30, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise2);
 		// 3. read [35..65) and get no entries -> final length still 34
 		oCacheMock.expects("read")
-			.withExactArgs(35, 30, "$auto", undefined, sinon.match.func).returns(oReadPromise3);
+			.withExactArgs(35, 30, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
+			.returns(oReadPromise3);
 
 		oListBinding.getContexts(20, 30);
 
@@ -678,7 +704,9 @@ sap.ui.require([
 		// refresh event during refresh
 		oListBindingMock.expects("_fireRefresh")
 			.withExactArgs({reason : ChangeReason.Refresh});
-		oCacheMock.expects("read").withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
+		oCacheMock.expects("read")
+			.withExactArgs(0, 10, "$auto", undefined, sinon.match.func)
+			.callsArg(4)
 			.returns(oReadPromise);
 		oCacheMock.expects("refresh");
 
@@ -952,15 +980,33 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Use model's groupId", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+	QUnit.test("$$groupId", function (assert) {
+		var oBinding,
+			mParameters = {};
+
+		this.mock(_ODataHelper).expects("buildBindingParameters").withExactArgs(mParameters)
+			.returns({$$groupId : "foo"});
+
+		oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, mParameters);
+		assert.strictEqual(oBinding.getGroupId(), "foo");
+
+		// buildBindingParameters not called for relative binding
+		oBinding = this.oModel.bindList("EMPLOYEE_2_EQUIPMENTS");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getGroupId", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+				{$$groupId : "$direct"}),
 			oReadPromise = createResult(0);
 
-		this.oSandbox.mock(oBinding.oModel).expects("getGroupId").withExactArgs()
-			.returns("groupId");
-		this.oSandbox.mock(oBinding.oCache).expects("read").withArgs(0, 10, "groupId").callsArg(4)
+		this.oSandbox.mock(oBinding.oCache).expects("read")
+			.withExactArgs(0, 10, "$direct", undefined, sinon.match.func)
+			.callsArg(4)
 			.returns(oReadPromise);
-		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup").withArgs("groupId");
+		this.oSandbox.mock(oBinding.oModel).expects("addedRequestToGroup")
+			.withExactArgs("$direct", sinon.match.func)
+			.callsArg(1);
 
 		oBinding.getContexts(0, 10);
 		return oReadPromise;
