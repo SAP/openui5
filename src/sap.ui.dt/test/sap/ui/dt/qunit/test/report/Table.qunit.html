@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.test.report.Table</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-libs="sap.ui.dt,sap.ui.layout,sap.m"
+				src="../../../../../../../resources/sap-ui-core.js">
+		</script>
+		<style>
+			.minSize {
+				min-width : 100px;
+				min-height: 100px;
+			}
+		</style>
+		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.dt.test.LibraryEnablementTest");
+			jQuery.sap.require("sap.ui.dt.test.report.Table");
+
+			var LibraryEnablementTest = sap.ui.dt.test.LibraryEnablementTest;
+
+			QUnit.module("Given that a sap.m Library is tested", {
+				beforeEach : function(assert) {
+					this.oLibraryEnablementTest = new LibraryEnablementTest({
+						libraryName : "sap.m"
+					});
+				},
+				afterEach : function() {
+					this.oLibraryEnablementTest.destroy();
+				}
+			});
+
+			QUnit.test("when the result is returned and displayed with the Table report", function(assert) {
+				var done = assert.async();
+				this.oLibraryEnablementTest.run().then(function(oResult) {
+					var oTable = new sap.ui.dt.test.report.Table({
+						data : oResult
+					});
+					oTable.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					assert.ok(oTable, "then the table is rendered");
+					var iBeforeFiltered = oTable._getTable().getModel().getData().length;
+					oTable.filter("sap.m.Button");
+					assert.equal(oTable._getTable().getModel().getData().length, 1, "and the table can be filtered");
+					oTable.filter("");
+					assert.equal(oTable._getTable().getModel().getData().length, iBeforeFiltered, "and the filter can be reset");
+					sap.ui.qunit.QUnitUtils.triggerTouchEvent("tap", oTable.$().find("#" + oTable.getId() + "--toolbar-expand-button"));
+					sap.ui.getCore().applyChanges();
+					window.setTimeout(function() {
+						assert.ok(oTable._getTable().isExpanded(1), "and when the expand button is pressed then the table is expanded");
+
+
+						sap.ui.qunit.QUnitUtils.triggerTouchEvent("tap", oTable.$().find("#" + oTable.getId() + "--toolbar-collapse-button"));
+						sap.ui.getCore().applyChanges();
+						window.setTimeout(function() {
+							assert.ok(!oTable._getTable().isExpanded(0), "and when the collapse button is pressed then the table is collapsed again");
+							oTable.destroy();
+							done();
+						});
+					});
+
+				});
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.test.report.Table</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>
