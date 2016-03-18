@@ -672,7 +672,7 @@ and (orientation: landscape) {
 		bottom: 0.25rem;
 	}
 
-	.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent{
+	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalContent{
 		position: absolute;
 		top:2.875rem;
 		left: 0.5rem;
@@ -708,8 +708,15 @@ and (orientation: landscape) {
 		right: 0;
 	}
 
-	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItems{
-		padding-top: 0.375rem;
+	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalContent > .sapUiCalMonthView > .sapUiCalItems{
+		position: absolute;
+		top: 0.5rem;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: auto;
+		margin: 1rem;
+		min-height: 11.25rem;
 	}
 
 	.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
@@ -718,11 +725,13 @@ and (orientation: landscape) {
 		min-height: 11.25rem;
 	}
 
-	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItem{
+	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItems > div{
 		height: 16.66%;
 		min-height: 1.875rem;
 	}
-
+	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItem{
+		height: 100%;
+	}
 	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItem,
 	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalWeekNum{
 		line-height: 2.1875rem;
@@ -730,6 +739,11 @@ and (orientation: landscape) {
 
 	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalItemNow > .sapUiCalItemText {
 		line-height: 1.9375rem;
+	}
+
+	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
+		line-height: 1.75rem;
+		height: 100%;
 	}
 
 	.sap-phone .sapUiCal[data-sap-ui-popup] .sapUiCalWeekNum{
