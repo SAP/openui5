@@ -424,6 +424,25 @@
 			testCase(450, 50, 500, sap.m.PlacementType.VerticalPreferredBottom, sap.m.PlacementType.Top); // You do not have enough space at the preferred position, so the position with more space is used
 		});
 
+		test("Vertical calculation of Popover position when Popover's content is bigger than the screen height and preferredVertical is set", function() {
+
+			var oList = new sap.m.List();
+			var oPopover = new sap.m.Popover({ placement: "VerticalPreferedBottom"});
+
+			for (var i = 0; i<1000; i++) {
+				oList.addItem(new sap.m.StandardListItem);
+			}
+
+			oPopover.addContent(oList);
+
+			oPopover.openBy(oButton2);
+
+			strictEqual(oPopover._oCalcedPos, sap.m.PlacementType.Bottom);
+
+			oList.destroy();
+			oPopover.destroy();
+		});
+
 		test("Vertical (top/bottom) calculation and flip functionality", function () {
 			var testCase = function (offset, outerHeight, height, placement, expectedPlace) {
 				var stubOffset = sinon.stub(Element.prototype, "getBoundingClientRect").returns({top: offset, height: outerHeight});
