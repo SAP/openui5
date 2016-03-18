@@ -86,19 +86,51 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("relative path", function (assert) {
-		var oModel = new ODataModel("/service/"),
-			oBinding = oModel.bindContext("SO_2_BP");
+	QUnit.test("setContext, relative path", function (assert) {
+		var oContext = {},
+			oBoundContext = {},
+			oModel = this.oModel,
+			oBinding = oModel.bindContext("relative"),
+			oModelMock = this.mock(oModel);
 
-		assert.throws(function () {
-			oBinding.setContext("/SalesOrders(ID='1')");
-		}, new Error("Nested context bindings are not supported"));
+		oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
+			.returns("/absolute");
+		this.mock(oBinding).expects("_fireChange").twice()
+			.withExactArgs({reason : ChangeReason.Context});
+		this.mock(_Context).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), "/absolute")
+			.returns(oBoundContext);
+
+		// code under test
+		oBinding.setContext(oContext);
+		assert.strictEqual(oBinding.oContext, oContext);
+		assert.strictEqual(oBinding.getBoundContext(), oBoundContext);
+
+		oModelMock.expects("resolve").withExactArgs("relative", undefined)
+			.returns(undefined);
+
+		// reset parent binding fires change
+		// code under test
+		oBinding.setContext(undefined);
+		assert.strictEqual(oBinding.oContext, undefined);
+		assert.strictEqual(oBinding.getBoundContext(), null);
+
+		oModelMock.expects("resolve").withExactArgs("relative", null)
+			.returns(undefined);
+
+		// set parent context to null does not change the bound context -> no change event
+		// code under test
+		oBinding.setContext(null);
+		assert.strictEqual(oBinding.oContext, null);
+		assert.strictEqual(oBinding.getBoundContext(), null);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("setContext on resolved binding", function (assert) {
 		var oModel = new ODataModel("/service/"),
 			oBinding = oModel.bindContext("/EntitySet('foo')/child");
+
+		this.mock(oBinding).expects("_fireChange").never();
 
 		oBinding.setContext(_Context.create(oModel, null, "/EntitySet('bar')"));
 

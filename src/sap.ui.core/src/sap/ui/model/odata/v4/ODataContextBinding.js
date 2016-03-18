@@ -341,6 +341,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the (base) context which is used when the binding path is relative.
+	 * Fires a change event if the bound context is changed.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
@@ -350,10 +351,19 @@ sap.ui.define([
 	 */
 	// @override
 	ODataContextBinding.prototype.setContext = function (oContext) {
+		var oElementContext = this.oElementContext,
+			sResolvedPath;
+
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
-			if (this.isRelative()) {
-				throw new Error("Nested context bindings are not supported");
+			if (this.bRelative) {
+				sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+				this.oElementContext = sResolvedPath
+					? _Context.create(this.oModel, this, sResolvedPath)
+					: null;
+				if (this.oElementContext !== oElementContext) {
+					this._fireChange({reason : ChangeReason.Context});
+				}
 			}
 		}
 	};

@@ -144,6 +144,9 @@ sap.ui.define([
 										}
 									}
 								}
+							},
+							"SO_2_BP" : {
+								"$select" : ["BusinessPartnerID", "CompanyName", "PhoneNumber"]
 							}
 						},
 						"$select" : ["ChangedAt", "CreatedAt" , "LifecycleStatusDesc", "Note",
