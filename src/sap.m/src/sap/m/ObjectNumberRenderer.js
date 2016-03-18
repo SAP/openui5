@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.ui.core.Control} oON An object representation of the control that should be rendered
 	 */
 	ObjectNumberRenderer.render = function(oRm, oON) {
-		var sTooltip = oON._getEnrichedTooltip(),
+		var sTooltip = oON.getTooltip_AsString(),
 			sTextDir = oON.getTextDirection(),
 			sTextAlign = oON.getTextAlign();
 
