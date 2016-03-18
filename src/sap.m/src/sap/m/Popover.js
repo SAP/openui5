@@ -922,7 +922,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		Popover.prototype.onmousedown = function (oEvent) {
 
 			var minSize = {
-				width: 256,
+				width: 400,
 				height: 128
 			};
 
