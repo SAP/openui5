@@ -1160,20 +1160,26 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 			var iPopoverHeight = this.$().outerHeight();
 
-			if (bPreferredPlacementTop || bPreferredTopOrFlip) {
-				if (iTopSpace > iPopoverHeight + this._arrowOffset) {
-					this._oCalcedPos = sap.m.PlacementType.Top;
+			if (bPreferredPlacementTop && iTopSpace > iPopoverHeight + this._arrowOffset) {
 					this._bVerticalFlip = false;
+					this._oCalcedPos = sap.m.PlacementType.Top;
+			} else if (bPreferredTopOrFlip) {
+				if (iTopSpace > iPopoverHeight + this._arrowOffset) {
+					this._bVerticalFlip = false;
+					this._oCalcedPos = sap.m.PlacementType.Top;
 				} else {
-					this._bVerticalFlip = bPreferredTopOrFlip ? true : false;
+					this._bVerticalFlip = true;
 					this._oCalcedPos = sap.m.PlacementType.Bottom;
 				}
-			} else if (bPreferredPlacementBottom || bPreferredBottomOrFlip) {
+			} else if (bPreferredPlacementBottom && iBottomSpace > iPopoverHeight + this._arrowOffset) {
+				this._oCalcedPos = sap.m.PlacementType.Bottom;
+				this._bVerticalFlip = false;
+			} else if (bPreferredBottomOrFlip) {
 				if (iBottomSpace > iPopoverHeight + this._arrowOffset) {
-					this._oCalcedPos = sap.m.PlacementType.Bottom;
 					this._bVerticalFlip = false;
+					this._oCalcedPos = sap.m.PlacementType.Bottom;
 				} else {
-					this._bVerticalFlip = bPreferredBottomOrFlip ? true : false;
+					this._bVerticalFlip = true;
 					this._oCalcedPos = sap.m.PlacementType.Top;
 				}
 			} else if (iTopSpace > iBottomSpace) {
@@ -1199,21 +1205,27 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var bPreferredRightOrFlip = this.getPlacement() === sap.m.PlacementType.PreferredRightOrFlip;
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
-			if ((bPreferredPlacementLeft || bPreferredLeftOrFlip)) {
+			if (bPreferredPlacementLeft && iLeftSpace > iPopoverWidth + this._arrowOffset) {
+					this._bHorizontalFlip = false;
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
+			} else if (bPreferredLeftOrFlip) {
 				if (iLeftSpace > iPopoverWidth + this._arrowOffset) {
 					this._bHorizontalFlip = false;
 					this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
 				} else {
-					this._bHorizontalFlip = bPreferredLeftOrFlip ? true : false;
+					this._bHorizontalFlip = true;
 					this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
 				}
-			} else if ((bPreferredPlacementRight || bPreferredRightOrFlip)) {
-				if (iRightSpace > iPopoverWidth + this._arrowOffset) {
-					this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
+			} else if (bPreferredPlacementRight && iRightSpace > iPopoverWidth + this._arrowOffset) {
 					this._bHorizontalFlip = false;
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
+			} else if (bPreferredRightOrFlip) {
+				if (iRightSpace > iPopoverWidth + this._arrowOffset) {
+					this._bHorizontalFlip = false;
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
 				} else {
+					this._bHorizontalFlip = true;
 					this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
-					this._bHorizontalFlip = bPreferredRightOrFlip ? true : false;
 				}
 			} else if (iLeftSpace > iRightSpace) {
 				this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
