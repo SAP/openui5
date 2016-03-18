@@ -31,7 +31,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control"],
 			library: "sap.ui.layout",
 			associations: {
 				/**
-				 * The content of the SpliiterPage
+				 * The content of the SplitterPage
 				 */
 				content: {type : "sap.ui.core.Control", multiple : false, singularName : "content"}
 			}
