@@ -337,34 +337,6 @@
 			oObjectNumber.destroy();
 		}
 
-		module("Others");
-
-		test("Tooltip is enriched with the value state", function() {
-			//System under test
-			var oObjectNumber = new sap.m.ObjectNumber({
-					number: 256,
-					unit: "EUR",
-					state: sap.ui.core.ValueState.Error
-				}),
-				rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
-				sErrorState = rb.getText("VALUE_STATE_ERROR"),
-				sTestTooltip = "testTooltip value";
-
-			oObjectNumber.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			//Assert
-			equal(oObjectNumber.$().attr("title"), sErrorState, "There is a tooltip");
-
-			//Act
-			oObjectNumber.setTooltip(sTestTooltip);
-			//Assert
-			equal(oObjectNumber.$().attr("title"), sTestTooltip + " " + sErrorState, "The error state is concatenated to the existing tooltip");
-
-			// Clean up
-			oObjectNumber.destroy();
-		});
-
 	</script>
 </head>
 

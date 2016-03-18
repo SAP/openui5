@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ObjectNumber.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, library, Control, Renderer, ValueStateSupport) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Renderer'],
+	function(jQuery, library, Control, Renderer) {
 	"use strict";
 
 
@@ -92,9 +92,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//remove the current value state css class
 		this.$().removeClass(this._sCSSPrefixObjNumberStatus + this.getState());
 
-		//do suppress re-rendering
+		//do suppress rerendering
 		this.setProperty("state", sState, true);
-		this._updateTooltipDom();
 
 		//now set the new css state class
 		this.$().addClass(this._sCSSPrefixObjNumberStatus + this.getState());
@@ -117,56 +116,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		sAlignVal = sAlignVal || sAlign;
 		this.$().css("text-align", sAlign);
-	};
-
-	/*
-	 * Overwrite of generated function - no new JS-doc.
-	 * Property setter for the Tooltip
-	 *
-	 * @param {string|sap.ui.core.TooltipBase} vTooltip New tooltip value
-	 * @return {sap.m.ObjectNumber} <code>this</code> to allow method chaining
-	 * @public
-	 * @override
-	 */
-	ObjectNumber.prototype.setTooltip = function(vTooltip) {
-		this._refreshTooltipBaseDelegate(vTooltip);
-		this.setAggregation("tooltip", vTooltip, true);
-
-		this._updateTooltipDom();
-
-		return this;
-	};
-
-	/**
-	 * Enriches the tooltip to contain the string representation of the <code>state</code> property.
-	 * @returns {string} The enriched tooltip string
-	 * @private
-	 */
-	ObjectNumber.prototype._getEnrichedTooltip = function() {
-		var sTooltip = this.getTooltip_AsString(),
-			sToolTipAdditionalValueState = ValueStateSupport.getAdditionalText(this.getState());
-
-		sTooltip = sTooltip || "";
-		if (sToolTipAdditionalValueState) {
-			if (sTooltip) {
-				sTooltip += " ";
-			}
-			sTooltip += sToolTipAdditionalValueState;
-		}
-
-		return sTooltip;
-	};
-
-	/**
-	 * Updates the <code>title</code> attribute of the root dom element to include the <code>state</code>.
-	 * @private
-	 */
-	ObjectNumber.prototype._updateTooltipDom = function() {
-		var oONDomRef = this.getDomRef();
-
-		if (oONDomRef) {
-			jQuery(oONDomRef).attr("title", this._getEnrichedTooltip());
-		}
 	};
 
 	return ObjectNumber;
