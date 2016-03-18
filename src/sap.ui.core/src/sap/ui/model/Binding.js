@@ -69,20 +69,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @public
 	 */
 
-	/**
-	 * The 'dataReceived' event is fired, when data was received from a backend. This event may also be fired when an error occured.
-	 *
-	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
-	 *
-	 * @name sap.ui.model.Binding#dataReceived
-	 * @event
-	 * @param {sap.ui.base.Event} oEvent
-	 * @param {sap.ui.base.EventProvider} oEvent.getSource
-	 * @param {object} oEvent.getParameters
+	 /**
+ 	 * The 'dataReceived' event is fired, when data was received from a backend. This event may also be fired when an error occured.
+ 	 *
+ 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+ 	 *
+ 	 * @name sap.ui.model.Binding#dataReceived
+ 	 * @event
+ 	 * @param {sap.ui.base.Event} oEvent
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+ 	 * @param {object} oEvent.getParameters
 
-	 * @param {string} [oEvent.getParameters.data] The data received. In error cases it will be undefined.
-	 * @public
-	 */
+ 	 * @param {string} [oEvent.getParameters.data] The data received. In error cases it will be undefined.
+ 	 * @public
+ 	 */
+
+	 /**
+ 	 * The 'change' event is fired, when the data of the Binding is changed from the model. The reason parameter of the event provides a hint where the change came from.
+ 	 *
+ 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+ 	 *
+ 	 * @name sap.ui.model.Binding#change
+ 	 * @event
+ 	 * @param {sap.ui.base.Event} oEvent
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+ 	 * @param {object} oEvent.getParameters
+
+ 	 * @param {string} [oEvent.getParameters.reason] A string stating the reason for the data change. Can be any string and new values can be added in the future.
+ 	 * @public
+ 	 */
 
 	// Getter
 	/**
