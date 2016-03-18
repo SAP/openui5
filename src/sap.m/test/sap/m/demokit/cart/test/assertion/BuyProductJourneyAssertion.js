@@ -1,7 +1,9 @@
 sap.ui.define([
 		"sap/ui/test/Opa5",
-		"sap/ui/test/matchers/AggregationFilled"
-	], function (Opa5, AggregationFilled) {
+		"sap/ui/test/matchers/AggregationFilled",
+		"sap/ui/test/matchers/AggregationLengthEquals",
+		"sap/ui/test/matchers/Interactable"
+	], function (Opa5, AggregationFilled, AggregationLengthEquals, Interactable) {
 
 		return Opa5.extend("sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion", {
 
@@ -75,9 +77,13 @@ sap.ui.define([
 				return this.waitFor({
 					viewName : "Cart",
 					id : "entryList",
-					check : function (oList) {
-						return oList.getItems().length === 0;
-					},
+					matchers: [
+						new Interactable(),
+						new AggregationLengthEquals({
+							name: "items",
+							length: 0
+						})
+					],
 					success : function (oList) {
 						Opa5.assert.strictEqual(oList.getItems().length, 0, "The cart was empty after shopping");
 					},

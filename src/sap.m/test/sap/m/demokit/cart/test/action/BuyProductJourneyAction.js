@@ -106,8 +106,8 @@ sap.ui.demo.cart.test.action.BuyProductJourneyAction = sap.ui.test.Opa5.extend("
 							value : true
 						})
 					],
-					success : function (aButtons) {
-						aButtons[0].$().trigger("tap");
+					actions : function (oButton) {
+						oButton.$().trigger("tap");
 					},
 					errorMessage : "Did not find the Order Now button"
 				});
