@@ -307,8 +307,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 
 	ObjectHeader.prototype.init = function() {
-		var that = this,
-			oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle;
+		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle;
 
 		//TODO Remove placeholder when Safari iconFont issue is addressed.
 		this._oPlaceholderIcon = IconPool.createControlByURI({
@@ -340,9 +339,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			tooltip: oLibraryResourceBundle.getText("OH_SELECT_ARROW_TOOLTIP"),
 			size: "1.375rem",
 			press : function(oEvent) {
-				that.fireTitleSelectorPress({
-					domRef : this.getDomRef()
-				});
+				// empty function here becuase icon needs an event handler in order to show pointer cursor
 			}
 		});
 
@@ -558,6 +555,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		} else if (this.getIconActive() && (sSourceId === this.getId() + "-img" || sSourceId === this.getId() + "-icon")) {
 			this.fireIconPress({
+				domRef : jQuery.sap.domById(sSourceId)
+			});
+		} else if (sSourceId === this.getId() + "-titleArrow") {
+			this.fireTitleSelectorPress({
 				domRef : jQuery.sap.domById(sSourceId)
 			});
 		}
