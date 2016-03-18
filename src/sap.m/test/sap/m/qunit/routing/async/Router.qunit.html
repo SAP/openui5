@@ -290,6 +290,107 @@
 
 							});
 
+							QUnit.test("Should pass some data to the initial page of NavContainer", function(assert) {
+								assert.expect(2);
+
+								var oNavContainer = new NavContainer(),
+									oRouter = fnCreateRouter({
+										"route1": {
+											targetControl: oNavContainer.getId(),
+											pattern: "{id}",
+											view: "view1",
+											viewType: "JS",
+											targetAggregation: "pages"
+										}
+									}),
+									data = null,
+									oRouteMatchedSpy = sinon.spy(oRouter.getRoute("route1"), "_routeMatched"),
+									done = assert.async();
+
+								// views
+								createViewAndController("view1");
+								oRouter.getView("view1", "JS").addEventDelegate({
+									onBeforeShow: function(oEvent) {
+										data = oEvent.data.id;
+										// Assert
+										assert.strictEqual(data, "5", "should pass 5 to the page");
+										// Cleanup
+										oNavContainer.destroy();
+										oRouter.destroy();
+
+										oRouteMatchedSpy.restore();
+										done();
+									}
+								});
+
+								oRouter.getRoute("route1").attachPatternMatched(function() {
+									oNavContainer.placeAt("content");
+								});
+
+								// Act
+								oRouter.parse("5");
+								assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched method is called once");
+							});
+
+							QUnit.test("Should pass some data to the initial pages of SplitContainer", function() {
+								assert.expect(3);
+
+								var oSplitContainer = new SplitContainer(),
+									oRouter = fnCreateRouter({
+										route1: {
+											pattern: "{id}",
+											target: ["master", "detail"]
+										}
+									}, {
+										viewType: "JS",
+										controlId: oSplitContainer.getId()
+									}, null, {
+										master: {
+											controlAggregation: "masterPages",
+											viewName: "master"
+										},
+										detail: {
+											controlAggregation: "detailPages",
+											viewName: "detail"
+										}
+									}),
+									oMasterData = null,
+									oDetailData = null,
+									oRouteMatchedSpy = sinon.spy(oRouter.getRoute("route1"), "_routeMatched"),
+									done = assert.async();
+
+								// views
+								createViewAndController("master");
+								createViewAndController("detail");
+								oRouter.getView("master", "JS").addEventDelegate({
+									onBeforeShow: function(oEvent) {
+										oMasterData = oEvent.data.id;
+									}
+								});
+								oRouter.getView("detail", "JS").addEventDelegate({
+									onBeforeShow: function(oEvent) {
+										oDetailData = oEvent.data.id;
+										// Assert
+										assert.strictEqual(oMasterData, "5", "should pass 5 to the master page");
+										assert.strictEqual(oDetailData, "5", "should pass 5 to the detail page");
+
+										// Cleanup
+										oSplitContainer.destroy();
+										oRouter.destroy();
+										oRouteMatchedSpy.restore();
+										done();
+									}
+								});
+
+								oRouter.getRoute("route1").attachMatched(function() {
+									oSplitContainer.placeAt("content");
+								});
+
+								// Act
+								oRouter.parse("5");
+								assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched method is called once");
+							});
+
 							QUnit.module("Routes using targets mixed with old routes", {
 								setup: function () {
 									this.oMasterDummy = new Page();
@@ -388,5 +489,6 @@
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
 </body>
 </html>
