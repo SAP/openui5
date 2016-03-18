@@ -1737,6 +1737,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		HorizontalPreferredLeft : "HorizontalPreferredLeft",
 
 		/**
+		 * Popover will be placed to the left of the reference control. If the available space is less than the Popover's width,
+		 * it will appear to the right of the same reference control left border.
+		 * @public
+		 * @since 1.38
+		 */
+		PreferredLeftOrFlip : "PreferredLeftOrFlip",
+
+		/**
+		 * Popover will be placed to the right of the reference control. If the available space is less than the Popover's width,
+		 * it will appear to the left of the same reference control right border.
+		 * @public
+		 * @since 1.38
+		 */
+		PreferredRightOrFlip : "PreferredRightOrFlip",
+
+		/**
+		 * Popover will be placed to the top of the reference control. If the available space is less than the Popover's height,
+		 * it will appear to the bottom of the same reference control top border.
+		 * @public
+		 * @since 1.38
+		 */
+		PreferredTopOrFlip : "PreferredTopOrFlip",
+
+		/**
+		 * Popover will be placed to the bottom of the reference control. If the available space is less than the Popover's height,
+		 * it will appear to the top of the same reference control bottom border.
+		 * @public
+		 * @since 1.38
+		 */
+		PreferredBottomOrFlip : "PreferredBottomOrFlip",
+
+		/**
 		 * Popover will be placed automatically at the reference control.
 		 * @public
 		 */
