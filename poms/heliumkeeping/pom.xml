@@ -316,6 +316,7 @@
 			<properties>
 				<branch>master</branch>
 				<versionAlias>snapshot</versionAlias>
+				<destination>sapui5nightly</destination>
 				<application.dir>${application}-master</application.dir>
 				<skipCheck>false</skipCheck>
 				<skipPrepare>false</skipPrepare>

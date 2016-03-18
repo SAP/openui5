@@ -12,10 +12,10 @@
 		"path": "/",
 		"target": {
 			"type": "destination",
-			"name": "ui5sdk-snapshot",
+			"name": "${destination}",
 			"resolutionType": "localAccount",
 			"preferLocal": true
 		},
-		"description": "SAPUI5 SDK (incl. CDN) - Version Alias: snapshot"
+		"description": "SAPUI5 SDK (incl. CDN) - Version Alias: ${versionAlias} / Destination: ${destination}"
 	}]
 }
