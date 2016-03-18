@@ -2195,10 +2195,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 
 		function fnError (oError) {
-			that._deregisterHandleOfCompletedRequest(iRequestHandleId);
-			for (var j = -1, oExecutedRequestDetails; (oExecutedRequestDetails = aExecutedRequestDetails[++j]) !== undefined;) {
-				that._deregisterCompletedRequest(oExecutedRequestDetails.sRequestId);
-				that._cleanupGroupingForCompletedRequest(oExecutedRequestDetails.sRequestId);
+			// in case the error is triggered by an aborted request, don't cleanup the handle queue, as it is already cleaned-up by the abort call.
+			if (oError && oError.statusText != "abort") {
+				that._deregisterHandleOfCompletedRequest(iRequestHandleId);
+				for (var j = -1, oExecutedRequestDetails; (oExecutedRequestDetails = aExecutedRequestDetails[++j]) !== undefined;) {
+					that._deregisterCompletedRequest(oExecutedRequestDetails.sRequestId);
+					that._cleanupGroupingForCompletedRequest(oExecutedRequestDetails.sRequestId);
+				}
 			}
 			if (iCurrentAnalyticalInfoVersion != that.iAnalyticalInfoVersionNumber) {
 				// discard responses for outdated analytical infos
@@ -2341,11 +2344,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			}
 		}
 
-		function fnError(oData) {
+		function fnError(oError) {
+			// in case the error is triggered by an aborted request, don't cleanup the request-handle queue, as it is already cleaned-up by the abort call
+			if (oError && oError.statusText == "abort") {
+				that.fireDataReceived();
+				return;
+			}
 
 			that._deregisterHandleOfCompletedRequest(iRequestHandleId);
 			that._deregisterCompletedRequest(oRequestDetails.sRequestId);
 			that._cleanupGroupingForCompletedRequest(oRequestDetails.sRequestId);
+
 			if (iCurrentAnalyticalInfoVersion != that.iAnalyticalInfoVersionNumber) {
 				// discard responses for outdated analytical infos
 				return;

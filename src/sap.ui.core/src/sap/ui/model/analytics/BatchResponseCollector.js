@@ -124,7 +124,7 @@ sap.ui.define(function() {
 					requestUri: this.oAnalyticalBinding.oModel.sServiceUrl + "/$batch"
 				});
 			} else {
-				this.fnErrorHandler.call(window, this.aCollectedErrors[0]);
+				this.fnErrorHandler.call(window, this.aCollectedErrors[0] || {});
 			}
 		}
 	};
