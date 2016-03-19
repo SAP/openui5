@@ -8,6 +8,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	"use strict";
 
 
+	// shortcut for enum(s)
+	var ViewType = library.mvc.ViewType;
+
 	/**
 	 * @namespace
 	 * @name sap.ui.core.mvc
@@ -666,16 +669,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		// view creation
 		if (!oView.type) {
 			throw new Error("No view type specified.");
-		} else if (oView.type === sap.ui.core.mvc.ViewType.JS) {
-			view = new sap.ui.core.mvc.JSView(oView);
-		} else if (oView.type === sap.ui.core.mvc.ViewType.JSON) {
-			view = new sap.ui.core.mvc.JSONView(oView);
-		} else if (oView.type === sap.ui.core.mvc.ViewType.XML) {
-			view = new sap.ui.core.mvc.XMLView(oView);
-		} else if (oView.type === sap.ui.core.mvc.ViewType.HTML) {
-			view = new sap.ui.core.mvc.HTMLView(oView);
-		} else if (oView.type === sap.ui.core.mvc.ViewType.Template) {
-			view = new sap.ui.core.mvc.TemplateView(oView);
+		} else if (oView.type === ViewType.JS) {
+			var JSView = sap.ui.requireSync('sap/ui/core/mvc/JSView');
+			view = new JSView(oView);
+		} else if (oView.type === ViewType.JSON) {
+			var JSONView = sap.ui.requireSync('sap/ui/core/mvc/JSONView');
+			view = new JSONView(oView);
+		} else if (oView.type === ViewType.XML) {
+			var XMLView = sap.ui.requireSync('sap/ui/core/mvc/XMLView');
+			view = new XMLView(oView);
+		} else if (oView.type === ViewType.HTML) {
+			var HTMLView = sap.ui.requireSync('sap/ui/core/mvc/HTMLView');
+			view = new HTMLView(oView);
+		} else if (oView.type === ViewType.Template) {
+			var TemplateView = sap.ui.requireSync('sap/ui/core/mvc/TemplateView');
+			view = new TemplateView(oView);
 		} else { // unknown view type
 			throw new Error("Unknown view type " + oView.type + " specified.");
 		}

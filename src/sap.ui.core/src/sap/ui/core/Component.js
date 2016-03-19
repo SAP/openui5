@@ -514,8 +514,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			var oExtends = oUI5 && oUI5["extends"];
 			var oExtensions = oExtends && oExtends["extensions"];
 			if (oExtensions) {
-				jQuery.sap.require("sap.ui.core.CustomizingConfiguration");
-				var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+				var CustomizingConfiguration = sap.ui.requireSync('sap/ui/core/CustomizingConfiguration');
 				CustomizingConfiguration.activateForComponentInstance(this);
 			}
 
@@ -629,8 +628,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 */
 	Component.prototype.getEventBus = function() {
 		if (!this._oEventBus) {
-			jQuery.sap.require("sap.ui.core.EventBus");
-			this._oEventBus = new sap.ui.core.EventBus();
+			var EventBus = sap.ui.requireSync("sap/ui/core/EventBus");
+			this._oEventBus = new EventBus();
 		}
 		return this._oEventBus;
 	};
@@ -1026,10 +1025,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// lazy load the ODataUtils if systemParameter is given
 			var bAddOrigin = false;
 			var ODataUtils;
-			if (sSystemParameter && jQuery.inArray(oModelConfig.type, ["sap.ui.model.odata.ODataModel", "sap.ui.model.odata.v2.ODataModel"]) != -1) {
+			if (sSystemParameter && ["sap.ui.model.odata.ODataModel", "sap.ui.model.odata.v2.ODataModel"].indexOf(oModelConfig.type) != -1) {
 				bAddOrigin = true;
-				jQuery.sap.require("sap.ui.model.odata.ODataUtils");
-				ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
+				ODataUtils = sap.ui.requireSync("sap/ui/model/odata/ODataUtils");
 			}
 
 			// include "uri" property in "settings" object, depending on "uriSettingName"

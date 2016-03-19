@@ -7,6 +7,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 	function(jQuery, XMLTemplateProcessor, library, View, ResourceModel, ManagedObject, Control/* , jQuerySap */) {
 	"use strict";
 
+	// shortcut for enum(s)
+	var RenderPrefixes = library.RenderPrefixes,
+		ViewType = library.mvc.ViewType;
+
+
 	/**
 	 * Constructor for a new mvc/XMLView.
 	 *
@@ -70,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * @return {sap.ui.core.mvc.XMLView} the created XMLView instance
 		 */
 		sap.ui.xmlview = function(sId, vView) {
-			return sap.ui.view(sId, vView, sap.ui.core.mvc.ViewType.XML);
+			return sap.ui.view(sId, vView, ViewType.XML);
 		};
 
 		/**
@@ -79,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * view type.
 		 * @private
 		 */
-		XMLView._sType = sap.ui.core.mvc.ViewType.XML;
+		XMLView._sType = ViewType.XML;
 
 		/**
 		 * Flag for feature detection of asynchronous loading/rendering
@@ -116,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				}
 
 				// Delegate for after rendering notification before onAfterRendering of child controls
-				that.oAfterRenderingNotifier = new sap.ui.core.mvc.XMLAfterRenderingNotifier();
+				that.oAfterRenderingNotifier = new XMLAfterRenderingNotifier();
 				that.oAfterRenderingNotifier.addDelegate({
 					onAfterRendering: function() {
 						that.onAfterRenderingBeforeChildren();
@@ -258,19 +263,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 						}
 						var $childDOM = aChildren[i].$();
 						// jQuery.sap.log.debug("replacing placeholder for " + aChildren[i] + " with content");
-						jQuery.sap.byId(sap.ui.core.RenderPrefixes.Dummy + aChildren[i].getId(), this._$oldContent).replaceWith($childDOM);
+						jQuery.sap.byId(RenderPrefixes.Dummy + aChildren[i].getId(), this._$oldContent).replaceWith($childDOM);
 					}
 				}
 				// move preserved DOM into place
 				// jQuery.sap.log.debug("moving preserved dom into place for " + this);
-				jQuery.sap.byId(sap.ui.core.RenderPrefixes.Dummy + this.getId()).replaceWith(this._$oldContent);
+				jQuery.sap.byId(RenderPrefixes.Dummy + this.getId()).replaceWith(this._$oldContent);
 			}
 			this._$oldContent = undefined;
 		};
 
 		XMLView.prototype._onChildRerenderedEmpty = function(oControl, oElement) {
 			// when the render manager notifies us about an empty child rendering, we replace the old DOM with a dummy
-			jQuery(oElement).replaceWith('<div id="' + sap.ui.core.RenderPrefixes.Dummy + oControl.getId() + '" class="sapUiHidden"/>');
+			jQuery(oElement).replaceWith('<div id="' + RenderPrefixes.Dummy + oControl.getId() + '" class="sapUiHidden"/>');
 			return true; // indicates that we have taken care
 		};
 
@@ -308,7 +313,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		XMLView.registerPreprocessor = function(sType, vPreprocessor, bSyncSupport, bOnDemand, mSettings) {
 			sType = sType.toUpperCase();
 			if (XMLView.PreprocessorType[sType]) {
-				sap.ui.core.mvc.View.registerPreprocessor(XMLView.PreprocessorType[sType], vPreprocessor, this.getMetadata().getClass()._sType, bSyncSupport, bOnDemand, mSettings);
+				View.registerPreprocessor(XMLView.PreprocessorType[sType], vPreprocessor, this.getMetadata().getClass()._sType, bSyncSupport, bOnDemand, mSettings);
 			} else {
 				jQuery.sap.log.error("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
 			}
@@ -359,7 +364,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * @alias sap.ui.core.mvc.XMLAfterRenderingNotifier
 		 * @private
 		 */
-		Control.extend("sap.ui.core.mvc.XMLAfterRenderingNotifier", {
+		var XMLAfterRenderingNotifier = Control.extend("sap.ui.core.mvc.XMLAfterRenderingNotifier", {
 			renderer: function(oRM, oControl) {
 				oRM.write(""); // onAfterRendering is only called if control produces output
 			}

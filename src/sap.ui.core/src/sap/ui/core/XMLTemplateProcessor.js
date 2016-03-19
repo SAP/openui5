@@ -4,11 +4,9 @@
 
 /*global HTMLTemplateElement, DocumentFragment*/
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', './ExtensionPoint', './StashedControlSupport'],
-	function(jQuery, ManagedObject, View, ExtensionPoint, StashedControlSupport) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/ManagedObject', 'sap/ui/core/CustomData', './mvc/View', './ExtensionPoint', './StashedControlSupport'],
+	function(jQuery, DataType, ManagedObject, CustomData, View, ExtensionPoint, StashedControlSupport) {
 	"use strict";
-
-
 
 
 
@@ -20,9 +18,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 			}
 
 			var vValue = sValue = oBindingInfo || sValue; // oBindingInfo could be an unescaped string
-			var oType = sap.ui.base.DataType.getType(sType);
+			var oType = DataType.getType(sType);
 			if (oType) {
-				if (oType instanceof sap.ui.base.DataType) {
+				if (oType instanceof DataType) {
 					vValue = oType.parseValue(sValue);
 				}
 				// else keep original sValue (e.g. for enums)
@@ -297,7 +295,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 						return [];
 					} else {
 						// plain HTML node - create a new View control
-						return [ new sap.ui.core.mvc.XMLView({
+						var XMLView = sap.ui.requireSync("sap/ui/core/mvc/XMLView");
+						return [ new XMLView({
 							id: id ? getId(oView, node, id) : undefined,
 							xmlNode:node,
 							containingView:oView._oContainingView})
@@ -321,8 +320,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 			function createControlOrExtension(node) { // this will also be extended for Fragments with multiple roots
 
 				if (localName(node) === "ExtensionPoint" && node.namespaceURI === "sap.ui.core") {
-					// create extension point with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
-					return sap.ui.extensionpoint(oView, node.getAttribute("name"), function(){
+					// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
+					return ExtensionPoint(oView, node.getAttribute("name"), function(){
 						var children = node.childNodes;
 						var oDefaultContent = [];
 						for (var i = 0; i < children.length; i++) {
@@ -398,7 +397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 						} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
 							if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1") {  // CustomData attribute found
 								var sLocalName = localName(attr);
-								aCustomData.push(new sap.ui.core.CustomData({
+								aCustomData.push(new CustomData({
 									key:sLocalName,
 									value:parseScalarType("any", sValue, sLocalName, oView._oContainingView.oController)
 								}));
@@ -448,7 +447,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 							}
 						} else if (oInfo && oInfo._iKind === -1) {
 							// SPECIAL SETTING - currently only allowed for View´s async setting
-							if (sap.ui.core.mvc.View.prototype.isPrototypeOf(oClass.prototype) && sName == "async") {
+							if (View.prototype.isPrototypeOf(oClass.prototype) && sName == "async") {
 								mSettings[sName] = parseScalarType(oInfo.type, sValue, sName, oView._oContainingView.oController);
 							} else {
 								jQuery.sap.log.warning(oView + ": setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "') is not supported");
@@ -554,7 +553,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 				if (bEnrichFullIds && node.hasAttribute("id")) {
 						setId(oView, node);
 				} else {
-					if (sap.ui.core.mvc.View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
+					if (View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
 						// for views having a factory function defined we use the factory function!
 						vNewControlInstance = sap.ui.view(mSettings, undefined, oClass._sType);
 					} else {
