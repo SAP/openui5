@@ -1,0 +1,13 @@
+<mvc:View
+	controllerName="sap.ui.demo.pdf.controller.PdfIframe"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		id="pdfIframePage"
+		title="{i18n>pdfIframePageTitle}"
+		showNavButton="true"
+		navButtonPress="onNavBack"
+		class="sapUiResponsiveContentPadding">
+
+	</Page>
+</mvc:View>

@@ -1,0 +1,13 @@
+<mvc:View
+	controllerName="sap.ui.demo.pdf.controller.Home"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page title="{i18n>homePageTitle}" class="sapUiResponsiveContentPadding">
+		<content>
+			<VBox>
+				<Button id="pdfEmbedBtn" text="{i18n>ShowPdfViaEmbed}" press="onNavToPdfEmbed" class="sapUiTinyMarginEnd"/>
+				<Button id="pdfIframeBtn" text="{i18n>ShowPdfViaIframe}" press="onNavToPdfIframe" class="sapUiTinyMarginEnd"/>
+			</VBox>
+		</content>
+	</Page>
+</mvc:View>

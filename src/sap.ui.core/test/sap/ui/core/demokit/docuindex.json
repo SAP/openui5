@@ -303,6 +303,21 @@
 				  "Handling Custom URL Parameters",
 				  "Calling a Function Import"
 				]
+		    },
+			{
+				"id": "sap.ui.core.tutorial.pdfviewer",
+				"name": "PDF Viewer",
+				"category": "Tutorial",
+				"since": "1.30",
+				"formFactors": "-",
+				"description": "Learn how to display PDF files in your UI5 apps.",
+				"docuLink": "",
+				"samplesAsSteps": [
+				  "Displaying a PDF file via embed tag",
+				  "Displaying a PDF file via iFrame",
+				  "Displaying a PDF file via HTML file referenced by iFrame",
+				  "Displaying PDF files even on mobile browsers using pdf.js (not part of the download)"
+				]
 		    }
 		],
 		"samples" : [
