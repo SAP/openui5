@@ -683,7 +683,7 @@ sap.ui.define(['jquery.sap.global'],
 				// Parse a name value.
 				var name = '',
 					allowed = function(ch) {
-						return ch === "_" ||
+						return ch === "_" || ch === "$" ||
 							(ch >= "0" && ch <= "9") ||
 							(ch >= "a" && ch <= "z") ||
 							(ch >= "A" && ch <= "Z");

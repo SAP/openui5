@@ -101,6 +101,16 @@
 		equal(o.events.event, Global.eventHandler, "parse should return the global event handler function");
 	});
 
+	test("Single Binding with $ in property name", function(){
+		var o = parse("{$params : 0, path:'something'}");
+		equal(typeof o, "object", "parse should return an object");
+		ok(o.hasOwnProperty("$params"), "binding info should have a property with name $params");
+		var o = parse("Some text {$params : 0, path:'something'}");
+		equal(typeof o, "object", "parse should return a binding info");
+		ok(Array.isArray(o.parts) && o.parts.length === 1 && typeof o.parts[0] === "object", "binding info should contain a parts array with one element");
+		ok(o.parts[0].hasOwnProperty("$params"), "part should have a property with name $params");
+	});
+
 	test("Single Binding with constraint regex", function(){
 		var o = parse("{path:'something' , type:'sap.ui.model.type.String', constraints:{search: '@'}}");
 		equal(typeof o, "object", "parse should return an object");
