@@ -34,7 +34,8 @@
 				"category": "List",
 				"since": "1.36",
 				"samples": [
-			  	    "sap.ui.table.sample.TreeTable.JSONTreeBinding"
+			  	    "sap.ui.table.sample.TreeTable.JSONTreeBinding",
+					"sap.ui.table.sample.TreeTable.BasicODataTreeBinding"
 				]
 		  	}
 		],
@@ -87,7 +88,11 @@
 			  "id": "sap.ui.table.sample.TreeTable.JSONTreeBinding",
 			  "name": "JSONTreeBinding",
 			  "description": "Basic example showing how a TreeTable can be build by using a JSONModel"
-			}
+		  	},{
+				"id": "sap.ui.table.sample.TreeTable.BasicODataTreeBinding",
+				"name": "Basic OData TreeBinding",
+				"description": "Illustrates how to bind to data from an OData model without using $metadata annotations or navigation properties. Instead, treeAnnotationProperties is filled for the TreeBinding."
+			}		  
 		]
 	}
 }
