@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides control sap.m.Select.
 sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
 	function(jQuery, Bar, Dialog, InputBase, Popover, SelectList, library, Control, EnabledPropagator, IconPool) {
 		"use strict";
@@ -25,138 +24,207 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @alias sap.m.Select
 		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
-		var Select = Control.extend("sap.m.Select", /** @lends sap.m.Select.prototype */ { metadata: {
+		var Select = Control.extend("sap.m.Select", /** @lends sap.m.Select.prototype */ {
+			metadata: {
+				library: "sap.m",
+				properties: {
 
-			library: "sap.m",
-			properties: {
+					/**
+					 * The name to be used in the HTML code (for example, for HTML forms that send data to the server via submit).
+					 */
+					name: {
+						type: "string",
+						group: "Misc",
+						defaultValue: ""
+					},
 
-				/**
-				 * The name to be used in the HTML code (for example, for HTML forms that send data to the server via submit).
-				 */
-				name: { type : "string", group : "Misc", defaultValue: "" },
+					/**
+					 * Indicates whether the user can change the selection.
+					 */
+					enabled: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: true
+					},
 
-				/**
-				 * Indicates whether the user can change the selection.
-				 */
-				enabled: { type: "boolean", group: "Behavior", defaultValue: true },
+					/**
+					 * Sets the width of the control. The default width is derived from the widest item.
+					 * If the width defined is smaller than the widest item in the selection list, only the width of
+					 * the selection field will be changed: the list will keep the width of its widest item.
+					 * If the list is wider than the viewport, it is truncated and an ellipsis is displayed for each item.
+					 * For phones, the width of the list is always the same as the viewport.
+					 *
+					 * <b>Note:</b> This property is ignored if the <code>autoAdjustWidth</code> property is set to <code>true</code>.
+					 */
+					width: {
+						type: "sap.ui.core.CSSSize",
+						group: "Dimension",
+						defaultValue: "auto"
+					},
 
-				/**
-				 * Sets the width of the control. The default width is derived from the widest item.
-				 * If the width defined is smaller than the widest item in the selection list, only the width of the selection field will be changed:
-				 * the list will keep the width of its widest item.
-				 * If the list is wider than the viewport, it is truncated and an ellipsis is displayed for each item.
-				 * For phones, the width of the list is always the same as the viewport.
-				 *
-				 * <b>Note:</b> This property is ignored if the <code>autoAdjustWidth</code> property is set to <code>true</code>.
-				 */
-				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto" },
+					/**
+					 * Sets the maximum width of the control.
+					 *
+					 * <b>Note:</b> This property is ignored if the <code>autoAdjustWidth</code> property is set to <code>true</code>.
+					 */
+					maxWidth: {
+						type: "sap.ui.core.CSSSize",
+						group: "Dimension",
+						defaultValue: "100%"
+					},
 
-				/**
-				 * Sets the maximum width of the control.
-				 *
-				 * <b>Note:</b> This property is ignored if the <code>autoAdjustWidth</code> property is set to <code>true</code>.
-				 */
-				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
+					/**
+					 * Key of the selected item.
+					 *
+					 * <b>Note:</b> If duplicate keys exist, the first item matching the key is used.
+					 * @since 1.11
+					 */
+					selectedKey: {
+						type: "string",
+						group: "Data",
+						defaultValue: ""
+					},
 
-				/**
-				 * Key of the selected item.
-				 *
-				 * <b>Note:</b> If duplicate keys exist, the first item matching the key is used.
-				 * @since 1.11
-				 */
-				selectedKey: { type: "string", group: "Data", defaultValue: "" },
+					/**
+					 * ID of the selected item.
+					 * @since 1.12
+					 */
+					selectedItemId: {
+						type: "string",
+						group: "Misc",
+						defaultValue: ""
+					},
 
-				/**
-				 * ID of the selected item.
-				 * @since 1.12
-				 */
-				selectedItemId: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * The URI to the icon that will be displayed only when using the <code>IconOnly</code> type.
+					 * @since 1.16
+					 */
+					icon: {
+						type: "sap.ui.core.URI",
+						group: "Appearance",
+						defaultValue: ""
+					},
 
-				/**
-				 * The URI to the icon that will be displayed only when using the <code>IconOnly</code> type.
-				 * @since 1.16
-				 */
-				icon: { type: "sap.ui.core.URI", group: "Appearance", defaultValue: "" },
+					/**
+					 * Type of a select. Possible values <code>Default</code>, <code>IconOnly</code>.
+					 * @since 1.16
+					 */
+					type: {
+						type: "sap.m.SelectType",
+						group: "Appearance",
+						defaultValue: sap.m.SelectType.Default
+					},
 
-				/**
-				 * Type of a select. Possible values <code>Default</code>, <code>IconOnly</code>.
-				 * @since 1.16
-				 */
-				type: { type: "sap.m.SelectType", group: "Appearance", defaultValue: sap.m.SelectType.Default },
+					/**
+					 * Indicates whether the width of the input field is determined by the selected item's content.
+					 * @since 1.16
+					 */
+					autoAdjustWidth: {
+						type: "boolean",
+						group: "Appearance",
+						defaultValue: false
+					},
 
-				/**
-				 * Indicates whether the width of the input field is determined by the selected item's content.
-				 * @since 1.16
-				 */
-				autoAdjustWidth: { type: "boolean", group: "Appearance", defaultValue: false },
+					/**
+					 * Sets the horizontal alignment of the text within the input field.
+					 * @since 1.28
+					 */
+					textAlign: {
+						type: "sap.ui.core.TextAlign",
+						group: "Appearance",
+						defaultValue: sap.ui.core.TextAlign.Initial
+					},
 
-				/**
-				 * Sets the horizontal alignment of the text within the input field.
-				 * @since 1.28
-				 */
-				textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: sap.ui.core.TextAlign.Initial },
+					/**
+					 * Specifies the direction of the text within the input field with enumerated options.
+					 * By default, the control inherits text direction from the DOM.
+					 * @since 1.28
+					 */
+					textDirection: {
+						type: "sap.ui.core.TextDirection",
+						group: "Appearance",
+						defaultValue: sap.ui.core.TextDirection.Inherit
+					},
 
-				/**
-				 * Specifies the direction of the text within the input field with enumerated options. By default, the control inherits text direction from the DOM.
-				 * @since 1.28
-				 */
-				textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit },
+					/**
+					 * Indicates whether the selection is restricted to one of the items in the list.
+					 * <b>Note:</b> We strongly recommend that you always set this property to <code>false</code> and bind
+					 * the <code>selectedKey</code> property to the desired value for better interoperability with data binding.
+					 * @since 1.34
+					 */
+					forceSelection: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: true
+					}
+				},
+				defaultAggregation : "items",
+				aggregations: {
 
-				/**
-				 * Indicates whether the selection is restricted to one of the items in the list.
-				 * <b>Note:</b> We strongly recommend that you always set this property to <code>false</code> and bind
-				 * the <code>selectedKey</code> property to the desired value for better interoperability with data binding.
-				 * @since 1.34
-				 */
-				forceSelection: { type: "boolean", group: "Behavior", defaultValue: true }
-			},
-			defaultAggregation : "items",
-			aggregations: {
+					/**
+					 * Defines the items contained within this control.
+					 */
+					items: {
+						type: "sap.ui.core.Item",
+						multiple: true,
+						singularName: "item",
+						bindable: "bindable"
+					},
 
-				/**
-				 * Defines the items contained within this control.
-				 */
-				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" },
+					/**
+					 * Internal aggregation to hold the inner picker popup.
+					 */
+					picker: {
+						type: "sap.ui.core.PopupInterface",
+						multiple: false,
+						visibility: "hidden"
+					}
+				},
+				associations: {
 
-				/**
-				 * Internal aggregation to hold the inner picker popup.
-				 */
-				picker: { type : "sap.ui.core.PopupInterface", multiple: false, visibility: "hidden" }
-			},
-			associations: {
+					/**
+					 * Sets or retrieves the selected item from the aggregation named items.
+					 */
+					selectedItem: {
+						type: "sap.ui.core.Item",
+						multiple: false
+					},
 
-				/**
-				 * Sets or retrieves the selected item from the aggregation named items.
-				 */
-				selectedItem: { type: "sap.ui.core.Item", multiple: false },
+					/**
+					 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+					 * @since 1.27.0
+					 */
+					ariaLabelledBy: {
+						type: "sap.ui.core.Control",
+						multiple: true,
+						singularName: "ariaLabelledBy"
+					}
+				},
+				events: {
 
-				/**
-				 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
-				 * @since 1.27.0
-				 */
-				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-			},
-			events: {
+					/**
+					 * This event is fired when the value in the selection field is changed in combination with one of
+					 * the following actions:
+					 * <ul>
+					 * 	<li>The focus leaves the selection field</li>
+					 * 	<li>The <i>Enter</i> key is pressed</li>
+					 * 	<li>The item is pressed</li>
+					 * </ul>
+					 */
+					change: {
+						parameters: {
 
-				/**
-				 * This event is fired when the value in the selection field is changed in combination with one of the following actions:
-				 * <ul>
-				 * 	<li>The focus leaves the selection field</li>
-				 * 	<li>The <i>Enter</i> key is pressed</li>
-				 * 	<li>The item is pressed</li>
-				 * </ul>
-				 */
-				change: {
-					parameters: {
-
-						/**
-						 * The selected item.
-						 */
-						selectedItem: { type : "sap.ui.core.Item" }
+							/**
+							 * The selected item.
+							 */
+							selectedItem: {
+								type: "sap.ui.core.Item"
+							}
+						}
 					}
 				}
 			}
-		}});
+		});
 
 		IconPool.insertFontFaceStyle();
 		EnabledPropagator.apply(Select.prototype, [true]);
