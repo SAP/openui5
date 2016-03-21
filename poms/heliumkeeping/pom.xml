@@ -52,6 +52,7 @@
 		<version></version>
 		<versionAlias></versionAlias>
 		<overrideAuthMethod></overrideAuthMethod>
+		<ignoreSnapshots>true</ignoreSnapshots>
 
 		<!-- skip properties for commands -->
 		<skipCheck>true</skipCheck>
@@ -206,6 +207,7 @@
 						</goals>
 						<configuration>
 							<overrideAuthenticationMethod>${overrideAuthMethod}</overrideAuthenticationMethod>
+							<ignoreSnapshots>${ignoreSnapshots}</ignoreSnapshots>
 							<skip>${skipMultiVersion}</skip>
 						</configuration>
 					</execution>
