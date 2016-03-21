@@ -7,10 +7,13 @@ sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
 
-	var _writeAccText = function(oRm, sTableId, sId, sText) {
+	var _writeAccText = function(oRm, sParentId, sId, sText, aCSSClasses) {
+		aCSSClasses = aCSSClasses || [];
+		aCSSClasses.push("sapUiInvisibleText");
+
 		oRm.write("<span");
-		oRm.writeAttribute("id", sTableId + "-" + sId);
-		oRm.writeAttribute("class", "sapUiInvisibleText");
+		oRm.writeAttribute("id", sParentId + "-" + sId);
+		oRm.writeAttribute("class", aCSSClasses.join(" "));
 		oRm.writeAttribute("aria-hidden", "true");
 		oRm.write(">");
 		if (sText) {
@@ -31,8 +34,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @alias sap.ui.table.TableAccRenderExtension
 	 */
 	var AccRenderExtension = {
-
-
 
 		writeHiddenAccTexts: function(oRm, oTable) {
 			if (!oTable._getAccExtension().getAccMode()) {
@@ -102,58 +103,16 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		},
 
-		getAccRowSelectorText: function(oTable, oRow, iRowIndex) {
+		writeAccRowSelectorText: function(oRm, oTable, oRow, iRowIndex) {
 			if (!oTable._getAccExtension().getAccMode()) {
 				return "";
 			}
 
 			var bIsSelected = oTable.isIndexSelected(iRowIndex);
-
-			var sText = "<div id='" + oRow.getId() + "-rowselecttext' aria-hidden='true' class='sapUiTableAriaRowSel sapUiInvisibleText'>";
 			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
-			sText += mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
-			return sText + "</div>";
-		},
+			var sText = mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
 
-		getCellLabels: function(oTable, oColumn, bFixedColumn, bJoin) {
-			var aLabels = [];
-
-			var aMultiLabels = oColumn.getMultiLabels();
-			var iMultiLabels = aMultiLabels.length;
-
-			// get IDs of column labels
-			if (oTable.getColumnHeaderVisible()) {
-				var sColumnId = oColumn.getId();
-				aLabels.push(sColumnId); // first column header has no suffix, just the column ID
-				if (iMultiLabels > 1) {
-					for (var i = 1; i < iMultiLabels; i++) {
-						aLabels.push(sColumnId + "_" + i); // for all other column header rows we add the suffix
-					}
-				}
-			} else {
-				// column header is not rendered therefore there is no <div> tag. Link aria description to label
-				var oLabel;
-				if (iMultiLabels == 0) {
-					oLabel = oColumn.getLabel();
-					if (oLabel) {
-						aLabels.push(oLabel.getId());
-					}
-				} else {
-					for (var i = 0; i < iMultiLabels; i++) {
-						// for all other column header rows we add the suffix
-						oLabel = aMultiLabels[i];
-						if (oLabel) {
-							aLabels.push(oLabel.getId());
-						}
-					}
-				}
-			}
-
-			if (bFixedColumn) {
-				aLabels.push(oTable.getId() + "-ariafixedcolumn");
-			}
-
-			return bJoin ? aLabels.join(" ") : aLabels;
+			_writeAccText(oRm, oRow.getId(), "rowselecttext", sText, ["sapUiTableAriaRowSel"]);
 		}
 
 	};

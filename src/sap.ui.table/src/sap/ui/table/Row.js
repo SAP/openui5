@@ -169,7 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			sSelectReference = "rowDeselect";
 		}
 
-		// update tooltips and aria texts
+		// update tooltips
 		if ($DomRefs.rowSelector) {
 			$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
 		}
@@ -190,11 +190,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			$Row.removeAttr("title");
 		}
 
-		// update aria-selected state, do at the very end since this forces the screen reader to read the aria texts again
 		if ($DomRefs.row) {
 			// update visual selection state
 			$DomRefs.row.toggleClass("sapUiTableRowSel", bIsSelected);
-			$DomRefs.row.children("td").add($DomRefs.row).attr("aria-selected", bIsSelected.toString());
+			oTable._getAccExtension().updateAriaStateOfRow(this, $DomRefs, bIsSelected);
 		}
 	};
 
