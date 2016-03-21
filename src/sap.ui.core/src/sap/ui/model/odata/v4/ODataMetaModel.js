@@ -553,20 +553,12 @@ sap.ui.define([
 	 * @see #requestUI5Type
 	 */
 	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
-		var that = this;
-
-		/**
-		 * Determines the type and constraints for the given JSON metadata.
-		 *
-		 * @param {object} oMetadata
-		 *   The JSON metadata for which the type is requested. This can be either a Property or an
-		 *   array of Action/Function (for which the $ReturnType is chosen).
-		 * @returns {sap.ui.model.odata.type.ODataType}
-		 *   The type
-		 * @throws {Error} If there is no UI5 type for the referenced EDM type
-		 */
-		function getType(oMetadata) {
-			var mConstraints, sName, oProperty, oType, oTypeInfo;
+		// Note: undefined is more efficient than "" here
+		return this.fetchObject(undefined, this.getMetaContext(sPath)).then(function (oProperty) {
+			var mConstraints,
+				sName,
+				oType = oProperty["$ui5.type"],
+				oTypeInfo;
 
 			function setConstraint(sKey, vValue) {
 				if (vValue !== undefined) {
@@ -575,11 +567,6 @@ sap.ui.define([
 				}
 			}
 
-			oProperty = Array.isArray(oMetadata) && oMetadata[0].$ReturnType
-				? oMetadata[0].$ReturnType
-				: oMetadata;
-
-			oType = oProperty["$ui5.type"];
 			if (oType) {
 				return oType;
 			}
@@ -603,15 +590,6 @@ sap.ui.define([
 			oProperty["$ui5.type"] = oType;
 
 			return oType;
-		}
-
-		// Note: undefined is more efficient than "" here
-		return this.fetchObject(undefined, this.getMetaContext(sPath)).then(function (oMetadata) {
-			if (oMetadata.$kind === "FunctionImport") {
-				return that.fetchObject(undefined, that.getMetaContext("/" + oMetadata.$Function))
-					.then(getType);
-			}
-			return getType(oMetadata);
 		});
 	};
 

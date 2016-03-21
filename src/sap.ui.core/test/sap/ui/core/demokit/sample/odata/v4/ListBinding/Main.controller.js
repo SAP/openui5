@@ -76,8 +76,22 @@ sap.ui.define([
 			this.getView().byId("EmployeeEquipments").setBindingContext(oContext);
 		},
 
+		onGetEmployeeByID : function (oEvent) {
+			var oOperation = this.getView().byId("GetEmployeeByID").getObjectBinding();
+
+			oOperation.setParameter("EmployeeID",
+				this.getView().getModel("search").getProperty("/EmployeeID"));
+			oOperation.execute();
+		},
+
 		onGetEmployeeMaxAge : function (oEvent) {
 			this.getView().byId("GetEmployeeMaxAge").getObjectBinding().execute();
+		},
+
+		onInit : function () {
+			this.getView().setModel(new JSONModel({
+				EmployeeID: undefined
+			}), "search");
 		},
 
 		onSaveEmployee : function (oEvent) {

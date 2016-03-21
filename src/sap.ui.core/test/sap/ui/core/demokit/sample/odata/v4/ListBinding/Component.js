@@ -11,10 +11,11 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/core/mvc/View',
 		'sap/ui/core/sample/common/Component',
+		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/odata/v4/ODataModel',
 		'sap/ui/test/TestUtils',
 		'sap/ui/thirdparty/sinon'
-	], function (jQuery, View, BaseComponent, ODataModel, TestUtils, sinon) {
+	], function (jQuery, View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon) {
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.odata.v4.ListBinding.Component", {
@@ -25,6 +26,7 @@ sap.ui.define([
 				fnProxy = bHasOwnProxy
 					? this.proxy // if overridden, use it!
 					: TestUtils.proxy,
+				bRealOData = TestUtils.isRealOData(),
 				oModel = new ODataModel({
 					serviceUrl : fnProxy("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/")
 				});
@@ -47,7 +49,12 @@ sap.ui.define([
 			return sap.ui.view({
 				type : sap.ui.core.mvc.ViewType.XML,
 				viewName : "sap.ui.core.sample.odata.v4.ListBinding.Main",
-				models : oModel
+				models : {
+					undefined : oModel,
+					ui : new JSONModel({
+						bRealOData : bRealOData
+					})
+				}
 			});
 		}
 	});
