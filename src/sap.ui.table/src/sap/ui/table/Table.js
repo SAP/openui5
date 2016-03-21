@@ -1400,6 +1400,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		$this.find(".sapUiTableCtrlScr").scroll(jQuery.proxy(this._oncntscroll, this));
 		$this.find(".sapUiTableCtrlScrFixed").scroll(jQuery.proxy(this._oncntscroll, this));
 
+		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
+
 		// sync row header > content (hover effect)
 		$this.find(".sapUiTableRowHdr").hover(function() {
 			jQuery(this).addClass("sapUiTableRowHvr");
@@ -1481,6 +1483,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._oHSb.unbind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.unbind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.unbind($this.find(".sapUiTableRowHdrScr").get(0));
+
+		$this.find(".sapUiTableCtrlScrFixed, .sapUiTableColHdrFixed").unbind("scroll.sapUiTablePreventFixedAreaScroll");
 
 		jQuery("body").unbind('webkitTransitionEnd transitionend');
 	};
