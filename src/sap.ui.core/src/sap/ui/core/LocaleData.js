@@ -307,6 +307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				iDistance,
 				bMatch,
 				sBestPattern,
+				aBestPatternTokens,
 				aBestMissingTokens,
 				iBestDistance = 10000,
 				sPattern,
@@ -350,6 +351,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					iBestDistance = iDistance;
 					aBestMissingTokens = aMissingTokens;
 					sBestPattern = oAvailableFormats[sTestSkeleton];
+					aBestPatternTokens = aTestTokens;
 				}
 			}
 
@@ -365,11 +367,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					if (rMixedSkeleton.test(sSkeleton)) {
 						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableFormats, sCalendarType);
 					} else {
-						sPattern = this._expandFields(sBestPattern, aTokens);
+						sPattern = this._expandFields(sBestPattern, aBestPatternTokens, aTokens);
 						sPattern = this._appendItems(sPattern, aBestMissingTokens, sCalendarType);
 					}
 				} else {
-					sPattern = this._expandFields(sBestPattern, aTokens);
+					sPattern = this._expandFields(sBestPattern, aBestPatternTokens, aTokens);
 				}
 			}
 			// If special input token "J" was used, remove dayperiod from pattern
@@ -380,19 +382,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return sPattern;
 		},
 
-		_expandFields: function(sPattern, aTokens) {
+		_expandFields: function(sPattern, aPatternTokens, aTokens) {
 			var mGroups = {},
+				mPatternGroups = {},
 				sResultPatterm = "",
 				bQuoted = false,
 				i = 0,
 				iSkeletonLength,
+				iPatternLength,
 				iOldLength,
 				iNewLength,
+				oSkeletonToken,
+				oBestToken,
 				oSymbol,
+				oSkeletonSymbol,
+				oBestSymbol,
 				sChar;
-			// Create a map of group names to length
+			// Create a map of group names to token
 			aTokens.forEach(function(oToken) {
-				mGroups[oToken.group] = oToken.length;
+				mGroups[oToken.group] = oToken;
+			});
+			// Create a map of group names to token in best pattern
+			aPatternTokens.forEach(function(oToken) {
+				mPatternGroups[oToken.group] = oToken;
 			});
 			// Loop through pattern and adjust symbol length
 			while (i < sPattern.length) {
@@ -405,14 +417,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				} else {
 					oSymbol = mCLDRSymbols[sChar];
 					// If symbol is a CLDR symbol and is contained in the group, expand length
-					if (oSymbol && mGroups[oSymbol.group]) {
-						iSkeletonLength = mGroups[oSymbol.group];
+					if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
+						oSkeletonToken = mGroups[oSymbol.group];
+						oBestToken = mPatternGroups[oSymbol.group];
+						oSkeletonSymbol = oSkeletonToken.symbol;
+						oBestSymbol = oBestToken.symbol;
+
+						iSkeletonLength = oSkeletonToken.length;
+						iPatternLength = oBestToken.length;
+
 						iOldLength = 1;
 						while (sPattern.charAt(i + 1) == sChar) {
 							i++;
 							iOldLength++;
 						}
-						iNewLength = Math.max(iOldLength, iSkeletonLength);
+
+						// Prevent expanding the length of the field when:
+						// 1. The length in the best matching skeleton (iPatternLength) matches the length of the application provided skeleton (iSkeletonLength) or
+						// 2. The length of the provided skeleton (iSkeletonLength) and the length of the result pattern (iOldLength) are not in the same category (numeric or text)
+						//	because swtiching between numeric to text representation is wrong in all cases
+						if (iSkeletonLength === iPatternLength ||
+							((iSkeletonLength < oSkeletonSymbol.numericCeiling) ?
+								(iPatternLength >= oBestSymbol.numericCeiling) : (iPatternLength < oBestSymbol.numericCeiling)
+							)) {
+							iNewLength = iOldLength;
+						} else {
+							iNewLength = Math.max(iOldLength, iSkeletonLength);
+						}
+
 						for (var j = 0; j < iNewLength; j++) {
 							sResultPatterm += sChar;
 						}
@@ -1059,43 +1091,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	};
 
 	var mCLDRSymbols = {
-		"G": { group: "Era", match: "Era" },
-		"y": { group: "Year", match: "Year" },
-		"Y": { group: "Year", match: "Year" },
-		"Q": { group: "Quarter", match: "Quarter" },
-		"q": { group: "Quarter", match: "Quarter" },
-		"M": { group: "Month", match: "Month" },
-		"L": { group: "Month", match: "Month" },
-		"w": { group: "Week", match: "Week" },
-		"W": { group: "Week", match: "Week" },
-		"d": { group: "Day", match: "Day" },
-		"D": { group: "Day", match: "Day" },
-		"E": { group: "Day-Of-Week", match: "Day-Of-Week" },
-		"e": { group: "Day-Of-Week", match: "Day-Of-Week" },
-		"c": { group: "Day-Of-Week", match: "Day-Of-Week" },
-		"h": { group: "Hour", match: "Hour12" },
-		"H": { group: "Hour", match: "Hour24" },
-		"k": { group: "Hour", match: "Hour24" },
-		"K": { group: "Hour", match: "Hour12" },
-		"m": { group: "Minute", match: "Minute" },
-		"s": { group: "Second", match: "Second" },
-		"z": { group: "Timezone", match: "Timezone" },
-		"Z": { group: "Timezone", match: "Timezone" },
-		"O": { group: "Timezone", match: "Timezone" },
-		"v": { group: "Timezone", match: "Timezone" },
-		"V": { group: "Timezone", match: "Timezone" },
-		"X": { group: "Timezone", match: "Timezone" },
-		"x": { group: "Timezone", match: "Timezone" },
-		"S": { group: "Other" },
-		"u": { group: "Other" },
-		"U": { group: "Other" },
-		"r": { group: "Other" },
-		"F": { group: "Other" },
-		"g": { group: "Other" },
-		"a": { group: "Other" },
-		"b": { group: "Other" },
-		"B": { group: "Other" },
-		"A": { group: "Other" }
+		"G": { group: "Era", match: "Era", numericCeiling: 1},
+		"y": { group: "Year", match: "Year", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"Y": { group: "Year", match: "Year", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"Q": { group: "Quarter", match: "Quarter", numericCeiling: 3},
+		"q": { group: "Quarter", match: "Quarter", numericCeiling: 3},
+		"M": { group: "Month", match: "Month", numericCeiling: 3},
+		"L": { group: "Month", match: "Month", numericCeiling: 3},
+		"w": { group: "Week", match: "Week", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"W": { group: "Week", match: "Week", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"d": { group: "Day", match: "Day", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"D": { group: "Day", match: "Day", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"E": { group: "Day-Of-Week", match: "Day-Of-Week", numericCeiling: 1},
+		"e": { group: "Day-Of-Week", match: "Day-Of-Week", numericCeiling: 3},
+		"c": { group: "Day-Of-Week", match: "Day-Of-Week", numericCeiling: 2},
+		"h": { group: "Hour", match: "Hour12", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"H": { group: "Hour", match: "Hour24", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"k": { group: "Hour", match: "Hour24", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"K": { group: "Hour", match: "Hour12", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"m": { group: "Minute", match: "Minute", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"s": { group: "Second", match: "Second", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"z": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"Z": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"O": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"v": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"V": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"X": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"x": { group: "Timezone", match: "Timezone", numericCeiling: 1},
+		"S": { group: "Other", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"u": { group: "Other", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"U": { group: "Other", numericCeiling: 1},
+		"r": { group: "Other", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"F": { group: "Other", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"g": { group: "Other", numericCeiling: Number.MAX_SAFE_INTEGER},
+		"a": { group: "Other", numericCeiling: 1},
+		"b": { group: "Other", numericCeiling: 1},
+		"B": { group: "Other", numericCeiling: 1},
+		"A": { group: "Other", numericCeiling: Number.MAX_SAFE_INTEGER}
 	};
 
 	/**
