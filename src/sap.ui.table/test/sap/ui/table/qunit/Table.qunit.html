@@ -543,11 +543,15 @@
 
 	asyncTest("After initialization", function(){
 		var fnTest = function() {
+			oTable.attachEvent("_rowsUpdated", fnTest2);
+		};
+
+		var fnTest2 = function() {
 			equal(oTable.getVisibleRowCount(), 27, "Expected visibleRowCount: 27, Is: " + oTable.getVisibleRowCount());
 			start();
 		};
 
-		oTable.attachEvent("_rowsUpdated", fnTest);
+		oTable.attachEventOnce("_rowsUpdated", fnTest);
 	});
 
 	module("VisibleRowcountMode Interactive", {
@@ -932,8 +936,11 @@
 	});
 
 	asyncTest("Grouping rendering", 10, function() {
-		var oColumn = oTable.getColumns()[3],
-			oBinding;
+		var oColumn = oTable.getColumns()[3];
+
+		var fnHandlerProxy = function() {
+			oTable.attachEventOnce("_rowsUpdated", fnHandler);
+		};
 
 		var fnHandler = function() {
 			var $Table = oTable.$(),
@@ -952,7 +959,7 @@
 			start();
 		}
 
-		oTable.attachEventOnce("_rowsUpdated", fnHandler);
+		oTable.attachEventOnce("_rowsUpdated", fnHandlerProxy);
 		oTable.setGroupBy(oColumn);
 	});
 
