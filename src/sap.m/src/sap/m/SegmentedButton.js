@@ -326,7 +326,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iCntOutWidth = $this.outerWidth(true) - $this.width(),
 			iBarContainerPadding = $this.closest('.sapMBarContainer').outerWidth() - $this.closest('.sapMBarContainer').width(),
 			iBarContainerPaddingFix = 2,//Temporary solution to fix the segmentedButton with 100% width in dialog issue.
-			iInnerWidth = $this.children('#' + this.getButtons()[0].getId()).outerWidth(true) - $this.children('#' + this.getButtons()[0].getId()).width(),
+			$FirstButton = this.getButtons()[0].$(),
+			iInnerWidth = $FirstButton.outerWidth(true) - $FirstButton.width(),
 			oButtons = this.getButtons();
 		// If parent width is bigger than actual screen width set parent width to screen width => android 2.3
 		iParentWidth;
