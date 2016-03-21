@@ -1213,7 +1213,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 			var mParams = {
 				rowIndices: [],
-				oldIndex: -1
+				oldIndex: -1,
+				selectAll: true
 			};
 
 			// recursion variables
